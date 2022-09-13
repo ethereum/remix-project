@@ -161,16 +161,16 @@ export function Workspace () {
       <>
         <label id="selectWsTemplate" className="form-check-label">Choose a template</label>
         <select name="wstemplate"  className="form-control custom-select" id="wstemplate" defaultValue='remixDefault' ref={workspaceCreateTemplateInput} onChange={updateWsName}>
-          <optgroup className="text-light" label="General">
-            <option className="text-dark" value='remixDefault'>Default</option>
-            <option className="text-dark" value='blank'>Blank</option>
+          <optgroup className="text-dark" label="General">
+            <option className="" value='remixDefault'>Default</option>
+            <option className="" value='blank'>Blank</option>
           </optgroup>
-          <optgroup className="text-light" label="OpenZepplin">
-            <option className="text-dark" value='ozerc20'>ERC20</option>
-            <option className="text-dark" value='ozerc721'>ERC721</option>
+          <optgroup className="text-dark" label="OpenZepplin">
+            <option className="" value='ozerc20'>ERC20</option>
+            <option className="" value='ozerc721'>ERC721</option>
           </optgroup>
-          <optgroup className="text-light" label="0xProject">
-            <option className="text-dark" value='zeroxErc20'>ERC20</option>
+          <optgroup className="text-dark" label="0xProject">
+            <option className="" value='zeroxErc20'>ERC20</option>
           </optgroup>
         </select>
         <br/><br/>
@@ -286,9 +286,9 @@ export function Workspace () {
 
                 <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items">
                   <Dropdown.Item
-                      onClick={() => {
-                        createWorkspace()
-                      }}
+                    onClick={() => {
+                      createWorkspace()
+                    }}
                   >
                     { 
                       <span className="pl-3"> - create a new workspace - </span>
@@ -397,6 +397,84 @@ export function Workspace () {
               />
             </div>
           }
+            { !(global.fs.browser.isRequestingWorkspace || 
+              global.fs.browser.isRequestingCloning) &&
+              (global.fs.mode === 'browser') && (currentWorkspace !== NO_WORKSPACE) && 
+              <div className='h-100 remixui_treeview' data-id='filePanelFileExplorerTree'>
+                <FileExplorer
+                  name={currentWorkspace}
+                  menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
+                  contextMenuItems={global.fs.browser.contextMenu.registeredMenuItems}
+                  removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
+                  files={global.fs.browser.files}
+                  fileState={global.fs.browser.fileState}
+                  expandPath={global.fs.browser.expandPath}
+                  focusEdit={global.fs.focusEdit}
+                  focusElement={global.fs.focusElement}
+                  dispatchCreateNewFile={global.dispatchCreateNewFile}
+                  modal={global.modal}
+                  dispatchCreateNewFolder={global.dispatchCreateNewFolder}
+                  readonly={global.fs.readonly}
+                  toast={global.toast}
+                  dispatchDeletePath={global.dispatchDeletePath}
+                  dispatchRenamePath={global.dispatchRenamePath}
+                  dispatchUploadFile={global.dispatchUploadFile}
+                  dispatchCopyFile={global.dispatchCopyFile}
+                  dispatchCopyFolder={global.dispatchCopyFolder}
+                  dispatchPublishToGist={global.dispatchPublishToGist}
+                  dispatchRunScript={global.dispatchRunScript}
+                  dispatchEmitContextMenuEvent={global.dispatchEmitContextMenuEvent}
+                  dispatchHandleClickFile={global.dispatchHandleClickFile}
+                  dispatchSetFocusElement={global.dispatchSetFocusElement}
+                  dispatchFetchDirectory={global.dispatchFetchDirectory}
+                  dispatchRemoveInputField={global.dispatchRemoveInputField}
+                  dispatchAddInputField={global.dispatchAddInputField}
+                  dispatchHandleExpandPath={global.dispatchHandleExpandPath}
+                  dispatchMoveFile={global.dispatchMoveFile}
+                  dispatchMoveFolder={global.dispatchMoveFolder}
+                />
+              </div>
+            }
+            {
+              global.fs.localhost.isRequestingLocalhost ? <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>
+                : <div className='h-100 filesystemexplorer remixui_treeview'>
+                { global.fs.mode === 'localhost' && global.fs.localhost.isSuccessfulLocalhost &&
+                  <FileExplorer
+                    name='localhost'
+                    menuItems={['createNewFile', 'createNewFolder']}
+                    contextMenuItems={global.fs.localhost.contextMenu.registeredMenuItems}
+                    removedContextMenuItems={global.fs.localhost.contextMenu.removedMenuItems}
+                    files={global.fs.localhost.files}
+                    fileState={[]}
+                    expandPath={global.fs.localhost.expandPath}
+                    focusEdit={global.fs.focusEdit}
+                    focusElement={global.fs.focusElement}
+                    dispatchCreateNewFile={global.dispatchCreateNewFile}
+                    modal={global.modal}
+                    dispatchCreateNewFolder={global.dispatchCreateNewFolder}
+                    readonly={global.fs.readonly}
+                    toast={global.toast}
+                    dispatchDeletePath={global.dispatchDeletePath}
+                    dispatchRenamePath={global.dispatchRenamePath}
+                    dispatchUploadFile={global.dispatchUploadFile}
+                    dispatchCopyFile={global.dispatchCopyFile}
+                    dispatchCopyFolder={global.dispatchCopyFolder}
+                    dispatchPublishToGist={global.dispatchPublishToGist}
+                    dispatchRunScript={global.dispatchRunScript}
+                    dispatchEmitContextMenuEvent={global.dispatchEmitContextMenuEvent}
+                    dispatchHandleClickFile={global.dispatchHandleClickFile}
+                    dispatchSetFocusElement={global.dispatchSetFocusElement}
+                    dispatchFetchDirectory={global.dispatchFetchDirectory}
+                    dispatchRemoveInputField={global.dispatchRemoveInputField}
+                    dispatchAddInputField={global.dispatchAddInputField}
+                    dispatchHandleExpandPath={global.dispatchHandleExpandPath}
+                    dispatchMoveFile={global.dispatchMoveFile}
+                    dispatchMoveFolder={global.dispatchMoveFolder}
+                  />
+                }
+              </div>
+            }
+>>>>>>> 1a3a8ea0e (better colors for create workspace modal)
           </div>
         </div>
       </div>
