@@ -178,8 +178,9 @@ export default class CodeParserCompiler {
         const decorators: fileDecoration[] = []
         for (const fileName in sortedErrorsPerFiles) {
             const errors = sortedErrorsPerFiles[fileName]
+            const fileTarget = await this.plugin.call('fileManager', 'getPathFromUrl', fileName)
             const decorator: fileDecoration = {
-                path: fileName,
+                path: fileTarget.file,
                 isDirectory: false,
                 fileStateType: errors[0].severity == MarkerSeverity.Error? fileDecorationType.Error : fileDecorationType.Warning,
                 fileStateLabelClass: errors[0].severity == MarkerSeverity.Error ? 'text-danger' : 'text-warning',
@@ -193,8 +194,9 @@ export default class CodeParserCompiler {
             decorators.push(decorator)
         }
         for (const fileName of filesWithOutErrors) {
+            const fileTarget = await this.plugin.call('fileManager', 'getPathFromUrl', fileName)
             const decorator: fileDecoration = {
-                path: fileName,
+                path: fileTarget.file,
                 isDirectory: false,
                 fileStateType: fileDecorationType.None,
                 fileStateLabelClass: '',
