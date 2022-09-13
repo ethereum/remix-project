@@ -90,7 +90,10 @@ export class CodeParser extends Plugin {
     async handleChangeEvents() {
         const completionSettings = await this.call('config', 'getAppParameter', 'auto-completion')
         if (completionSettings) {
-            await this.antlrService.getCurrentFileAST()
+            // current timestamp
+            console.log('get ast', Date.now())
+            //this.antlrService.getCurrentFileAST()
+            console.log('done', Date.now())
         }
         const showGasSettings = await this.call('config', 'getAppParameter', 'show-gas')
         const showErrorSettings = await this.call('config', 'getAppParameter', 'display-errors')
@@ -551,7 +554,7 @@ export class CodeParser extends Plugin {
     async getNodeLink(node: genericASTNode) {
         const lineColumn = await this.getLineColumnOfNode(node)
         const position = await this.positionOfDefinition(node)
-        if (this.compilerAbstract && this.compilerAbstract.source) {
+        if (this.compilerAbstract && this.compilerAbstract.source && position) {
             const fileName = this.compilerAbstract.getSourceName(position.file)
             return lineColumn ? `${fileName} ${lineColumn.start.line}:${lineColumn.start.column}` : null
         }

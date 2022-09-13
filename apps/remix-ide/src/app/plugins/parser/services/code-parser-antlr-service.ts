@@ -33,7 +33,7 @@ export default class CodeParserAntlrService {
             if (!this.plugin.currentFile) return
             const fileContent = text || await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile)
             try {
-                const ast = await this.parseSolidity(fileContent)
+                const ast = (SolidityParser as any).parse(fileContent, { loc: true, range: true, tolerant: true })
                 this.plugin.antlrParserResult = ast
             } catch (e) {
                 // do nothing
@@ -127,6 +127,22 @@ export default class CodeParserAntlrService {
         }
         return lastNode
     }
+    /*
+    * get the code blocks of the current file
+    */
+    async getCurrentFileBlocks(text: string | null = null) {
+        this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
+        if (this.plugin.currentFile && this.plugin.currentFile.endsWith('.sol')) {
+            if (!this.plugin.currentFile) return
+            const fileContent = text || await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile)
+            try {
+                const blocks = (SolidityParser as any).parseBlock(fileContent, { loc: true, range: true, tolerant: true })
+                return blocks
+            } catch (e) {
+                // do nothing
+            }
+        }
+    }
 
     /**
     * Returns the block surrounding the given position
@@ -136,23 +152,21 @@ export default class CodeParserAntlrService {
     * @return {any}
     * */
     async getANTLRBlockAtPosition(position: any, text: string = null) {
-        await this.getCurrentFileAST(text)
-        const allowedTypes = ['SourceUnit', 'ContractDefinition', 'FunctionDefinition']
-        const walkAst = (node: any) => {
-            if (node.loc.start.line <= position.lineNumber && node.loc.end.line >= position.lineNumber) {
-                const children = node.children || node.subNodes
-                if (children && allowedTypes.indexOf(node.type) !== -1) {
-                    for (const child of children) {
-                        const result = walkAst(child)
-                        if (result) return result
-                    }
+        const blocks = await this.getCurrentFileBlocks(text)
+        const walkAst = (blocks) => {
+            let nodeFound = null
+            for(const object of blocks){
+                if(object.start <= position && object.end >= position){
+                    nodeFound = object
+                    break
                 }
-                return node
             }
-            return null
+            return nodeFound
         }
-        if (!this.plugin.antlrParserResult) return
-        return walkAst(this.plugin.antlrParserResult)
+        if (!blocks) return
+        const block =  walkAst(blocks)
+        console.log(block)
+        return block
     }
 
 }
