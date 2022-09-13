@@ -108,7 +108,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               break
             case 'Paste':
               paste(path, type)
-              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'past'])
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'paste'])
               break
             case 'Delete All':
               deletePath(getPath())
