@@ -108,7 +108,7 @@ export const listenOnProviderEvents = (provider) => (reducerDispatch: React.Disp
     dispatch(loadLocalhostRequest())
   })
 
-  provider.event.on('fileExternallyChanged', (path: string, content: string) => {    
+  provider.event.on('fileExternallyChanged', (path: string, content: string) => {
     const config = plugin.registry.get('config').api
     const editor = plugin.registry.get('editor').api
 
