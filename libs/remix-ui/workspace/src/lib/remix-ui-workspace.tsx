@@ -30,7 +30,7 @@ export function Workspace () {
   const workspaceCreateTemplateInput = useRef()
   const cloneUrlRef = useRef<HTMLInputElement>()
   const initGitRepoRef = useRef<HTMLInputElement>()
-  const filteredBranches = selectedWorkspace ? (selectedWorkspace.branches || []).filter(branch => branch.name.includes(branchFilter) && branch.remote).slice(0, 20) : []
+  const filteredBranches = selectedWorkspace ? (selectedWorkspace.branches || []).filter(branch => branch.name.includes(branchFilter) && branch.name !== 'HEAD').slice(0, 20) : []
   const currentBranch = selectedWorkspace ? selectedWorkspace.currentBranch : null
 
   useEffect(() => {
@@ -67,7 +67,6 @@ export function Workspace () {
     const workspace = global.fs.browser.workspaces.find(workspace => workspace.name === currentWorkspace)
 
     setSelectedWorkspace(workspace)
-    // workspace && setSelectedBranch(workspace.currentBranch)
   }, [currentWorkspace])
 
   const renameCurrentWorkspace = () => {
@@ -218,9 +217,13 @@ export function Workspace () {
     global.dispatchShowAllBranches()
   }
 
-  const switchToBranch = async (branch: string) => {
+  const switchToBranch = async (branch: { remote: any, name: string }) => {
     try {
-      await global.dispatchSwitchToBranch(branch)
+      if (branch.remote) {
+        await global.dispatchSwitchToNewBranch(branch.name)
+      } else {
+        await global.dispatchSwitchToBranch(branch.name)
+      }
     } catch (e) {
       global.modal('Checkout Git Branch', e.message, 'OK', () => {})
     }
@@ -744,11 +747,11 @@ export function Workspace () {
                     {
                       filteredBranches.length > 0 ? filteredBranches.map((branch, index) => {
                         return (
-                          <Dropdown.Item key={index} onClick={() => { switchToBranch(branch.name) }}>
+                          <Dropdown.Item key={index} onClick={() => { switchToBranch(branch) }} title={branch.remote ? 'Checkout new branch from remote branch' : 'Checkout to local branch'}>
                             { 
-                              currentBranch === branch.name ?
-                              <span>&#10003; { branch.name } </span> :
-                              <span className="pl-3">{ branch.name }</span>
+                              (currentBranch === branch.name) && !branch.remote ?
+                              <span>&#10003; <i className='far fa-code-branch'></i><span className='pl-1'>{ branch.name }</span></span> :
+                              <span className='pl-3'><i className={`far ${ branch.remote ? 'fa-cloud' : 'fa-code-branch'}`}></i><span className='pl-1'>{ branch.remote ? `${branch.remote}/${branch.name}` : branch.name }</span></span>
                             }
                           </Dropdown.Item>
                         )

@@ -480,13 +480,27 @@ export const switchToNewBranch = async (branch: string) => {
   promise.then(async () => {
     await fetchWorkspaceDirectory(ROOT_PATH)
     dispatch(setCurrentWorkspaceCurrentBranch(branch))
-    const workspacesPath = plugin.fileProviders.workspace.workspacesPath
-    const branches = await getGitRepoBranches(workspacesPath + '/' + branch)
+    // const workspacesPath = plugin.fileProviders.workspace.workspacesPath
+    // const branches = await getGitRepoBranches(workspacesPath + '/' + branch)
 
-    dispatch(setCurrentWorkspaceBranches(branches))
+    // dispatch(setCurrentWorkspaceBranches(branches))
     dispatch(cloneRepositorySuccess())
   }).catch(() => {
     dispatch(cloneRepositoryFailed())
   })
   return promise
+}
+
+export const hasLocalChanges = async (branch: string) => {
+  const staged = await plugin.call('dGitProvider', 'lsfiles', { ref: branch })
+  const untracked = await plugin.call('dGitProvider', 'unstagedStatus', { ref: branch })
+  const deleted = await plugin.call('dGitProvider', 'deleteStatus', { ref: branch })
+  const modified = await plugin.call('dGitProvider', 'modifiedStatus', { ref: branch })
+
+  console.log('staged: ', staged)
+  console.log('untracked: ', untracked)
+  console.log('deleted: ', deleted)
+  console.log('modified: ', modified)
+
+  return deleted.length > 0 || staged.length > 0 ||  untracked.length > 0 || modified.length > 0
 }
