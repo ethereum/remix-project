@@ -160,20 +160,19 @@ export function Workspace () {
     return (
       <>
         <label id="selectWsTemplate" className="form-check-label">Choose a template</label>
-        <select name="wstemplate"  className="form-control custom-select" id="wstemplate" defaultValue='remixDefault' ref={workspaceCreateTemplateInput} onChange={updateWsName}>
-          <optgroup className="text-dark" label="General">
-            <option className="" value='remixDefault'>Default</option>
-            <option className="" value='blank'>Blank</option>
+        <select name="wstemplate" className="mb-4 form-control custom-select" id="wstemplate" defaultValue='remixDefault' ref={workspaceCreateTemplateInput} onChange={updateWsName}>
+          <optgroup className="" label="General">
+            <option className="" style={{fontSize: "small"}} value='remixDefault'>Default</option>
+            <option className="" style={{fontSize: "small"}} value='blank'>Blank</option>
           </optgroup>
-          <optgroup className="text-dark" label="OpenZepplin">
-            <option className="" value='ozerc20'>ERC20</option>
-            <option className="" value='ozerc721'>ERC721</option>
+          <optgroup className="" label="OpenZepplin">
+            <option className="" style={{fontSize: "small"}} value='ozerc20'>ERC20</option>
+            <option className="" style={{fontSize: "small"}} value='ozerc721'>ERC721</option>
           </optgroup>
-          <optgroup className="text-dark" label="0xProject">
-            <option className="" value='zeroxErc20'>ERC20</option>
+          <optgroup className="" label="0xProject">
+            <option className="" style={{fontSize: "small"}} value='zeroxErc20'>ERC20</option>
           </optgroup>
         </select>
-        <br/><br/>
         <label id="wsName" className="form-check-label">Workspace name</label>
         <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`remixDefault_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
       </>
