@@ -30,7 +30,7 @@ export class Web3ProviderModule extends Plugin {
             // see https://github.com/ethereum/web3.js/pull/1018/files#diff-d25786686c1053b786cc2626dc6e048675050593c0ebaafbf0814e1996f22022R129
             provider[provider.sendAsync ? 'sendAsync' : 'send'](payload, async (error, message) => {
               if (error) {
-                const errorData = error.data ? error.data : error.message
+                const errorData = error.data ? error.data : error.message ? error.message : error
                 // See: https://github.com/ethers-io/ethers.js/issues/901
                 if (!(typeof errorData === 'string' && errorData.includes("unknown method eth_chainId"))) this.call('terminal', 'log', error.data ? error.data : error.message)
                 return reject(errorData)
