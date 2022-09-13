@@ -5,10 +5,10 @@ import { rlp, keccak, bufferToHex } from 'ethereumjs-util'
 import { execution } from '@remix-project/remix-lib'
 const { LogsManager } = execution
 import { VmProxy } from './VmProxy'
-import VM from '@ethereumjs/vm'
-import Common from '@ethereumjs/common'
-import StateManager from '@ethereumjs/vm/dist/state/stateManager'
-import { StorageDump } from '@ethereumjs/vm/dist/state/interface'
+import { VM } from '@ethereumjs/vm'
+import { Common } from '@ethereumjs/common'
+import { DefaultStateManager } from '@ethereumjs/statemanager'
+import { StorageDump } from '@ethereumjs/statemanager/dist/interface'
 import { Block } from '@ethereumjs/block'
 import { Transaction } from '@ethereumjs/tx'
 
@@ -16,7 +16,7 @@ import { Transaction } from '@ethereumjs/tx'
   extend vm state manager and instanciate VM
 */
 
-class StateManagerCommonStorageDump extends StateManager {
+class StateManagerCommonStorageDump extends DefaultStateManager {
   keyHashes: { [key: string]: string }
   constructor () {
     super()
@@ -50,33 +50,7 @@ class StateManagerCommonStorageDump extends StateManager {
           reject(e)
         })
     })
-  }
-
-  async getStateRoot (force = false) {
-    await this._cache.flush()
-
-    const stateRoot = this._trie.root
-    return stateRoot
-  }
-
-  async setStateRoot (stateRoot) {
-    if (this._checkpointCount !== 0) {
-      throw new Error('Cannot set state root with uncommitted checkpoints')
-    }
-
-    await this._cache.flush()
-
-    if (!stateRoot.equals(this._trie.EMPTY_TRIE_ROOT)) {
-      const hasRoot = await this._trie.checkRoot(stateRoot)
-      if (!hasRoot) {
-        throw new Error('State trie does not contain state root')
-      }
-    }
-
-    this._trie.root = stateRoot
-    this._cache.clear()
-    this._storageTries = {}
-  }
+  }  
 }
 
 export type CurrentVm = {
@@ -106,7 +80,7 @@ export class VMContext {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
     this.currentFork = fork || 'london'
-    this.currentVm = this.createVm(this.currentFork)
+    this.createVm(this.currentFork).then(vm => this.currentVm = vm).catch(console.error)
     this.blocks = {}
     this.latestBlockNumber = "0x0"
     this.blockByTxHash = {}
@@ -115,14 +89,13 @@ export class VMContext {
     this.logsManager = new LogsManager()
   }
 
-  createVm (hardfork) {
+  async createVm (hardfork) {
     const stateManager = new StateManagerCommonStorageDump()
     const common = new Common({ chain: 'mainnet', hardfork })
-    const vm = new VM({
+    const vm = await VM.create({
       common,
       activatePrecompiles: true,
-      stateManager,
-      allowUnlimitedContractSize: true
+      stateManager
     })
 
     // VmProxy and VMContext are very intricated.
@@ -153,7 +126,7 @@ export class VMContext {
   }
 
   addBlock (block: Block) {
-    let blockNumber = '0x' + block.header.number.toString('hex')
+    let blockNumber = '0x' + block.header.number.toString()
     if (blockNumber === '0x') {
       blockNumber = '0x0'
     }

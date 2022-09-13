@@ -90,7 +90,7 @@ export class VmProxy {
     if (this.vm === vm) return
     this.vm = vm
     this.vm.on('step', async (data, next) => {
-      await this.pushTrace(data)
+      // await this.pushTrace(data)
       next()
     })
     this.vm.on('afterTx', async (data, next) => {
@@ -134,7 +134,7 @@ export class VmProxy {
     this.storageCache[this.processingHash] = {}
     if (data.to) {
       try {
-        const storage = await this.vm.stateManager.dumpStorage(data.to)
+        const storage = {} // await this.vm.stateManager.dumpStorage(data.to)
         this.storageCache[this.processingHash][tx['to']] = storage
         this.lastProcessedStorageTxHash[tx['to']] = this.processingHash
       } catch (e) {
@@ -250,7 +250,7 @@ export class VmProxy {
         if (!this.storageCache[this.processingHash][this.processingAddress]) {
           const account = Address.fromString(this.processingAddress)
           try {
-            const storage = await this.vm.stateManager.dumpStorage(account)
+            const storage = {} // await this.vm.stateManager.dumpStorage(account)
             this.storageCache[this.processingHash][this.processingAddress] = storage
             this.lastProcessedStorageTxHash[this.processingAddress] = this.processingHash
           } catch (e) {
