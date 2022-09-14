@@ -4,6 +4,7 @@ import { writeFileSync } from 'fs'
 import init from '../helpers/init'
 import * as hardhatCompilation from '../helpers/foundry_compilation.json'
 import * as foundryCompilation from '../helpers/foundry_compilation.json'
+import * as truffle_compilation from '../helpers/truffle_compilation.json'
 
 const assetsTestContract = `import "./contract.sol";
 contract Assets {
@@ -156,6 +157,25 @@ module.exports = {
           done()
         })
       })      
+   },
+
+   'Should listen on compilation result from truffle #group7': function (browser: NightwatchBrowser) {
+    browser.perform((done) => {
+      console.log('working directory', process.cwd())
+      writeFileSync('./apps/remix-ide/contracts/build/contracts/Migrations.json', JSON.stringify(truffle_compilation))
+      done()
+    })
+    .expect.element('*[data-id="terminalJournal"]').text.to.contain('updated compilation result from truffle').before(60000)
+    
+    browser.clickLaunchIcon('udapp')
+      .assert.textContains('*[data-id="udappCompiledBy"]', 'Compiled by truffle')
+      .selectContract('Migrations')
+      .createContract('')
+      .testFunction('last',
+        {
+          status: 'true Transaction mined and execution succeed',
+          'decoded output': { 0: 'uint256: 8' }
+        })   
    }
 }
 
