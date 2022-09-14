@@ -11,6 +11,7 @@ export class TruffleClient extends PluginClient {
   websocket: WS
   currentSharedFolder: string
   watcher: chokidar.FSWatcher
+  warnLog: boolean
 
   constructor (private readOnly = false) {
     super()
@@ -20,6 +21,7 @@ export class TruffleClient extends PluginClient {
   setWebSocket (websocket: WS): void {
     this.websocket = websocket
     this.websocket.addEventListener('close', () => {
+      this.warnLog = false
       if (this.watcher) this.watcher.close()
     })
   }
@@ -59,7 +61,7 @@ export class TruffleClient extends PluginClient {
   listenOnTruffleCompilation () {
     try {
       const buildPath = utils.absolutePath('out', this.currentSharedFolder)
-      this.watcher = chokidar.watch(buildPath, { depth: 3, ignorePermissionErrors: true })
+      this.watcher = chokidar.watch(buildPath, { depth: 3, ignorePermissionErrors: true, ignoreInitial: true })
       const compilationResult = {
         input: {},
         output: {
@@ -72,11 +74,16 @@ export class TruffleClient extends PluginClient {
         const folderFiles = await fs.readdir(buildPath)
         // name of folders are file names
         for (const file of folderFiles) {
-          const content = await fs.readFile(join(buildPath, file), { encoding: 'utf-8' })
-          await this.feedContractArtifactFile(file, content, compilationResult)
+          if (file.endsWith('.json')) {
+            const content = await fs.readFile(join(buildPath, file), { encoding: 'utf-8' })
+            await this.feedContractArtifactFile(file, content, compilationResult)
+          }
         }
-        // @ts-ignore
-        this.call('terminal', 'log', 'updated compilation result from truffle')
+        if (!this.warnLog) {
+          // @ts-ignore
+          this.call('terminal', 'log', 'receiving compilation result from truffle')
+          this.warnLog = true
+        }
         this.emit('compilationFinished', '', compilationResult.input, 'soljson', compilationResult.output, compilationResult.solcVersion)      
       }
       this.watcher.on('change', async (f: string) => processArtifact())
