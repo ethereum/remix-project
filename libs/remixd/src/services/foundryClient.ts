@@ -11,6 +11,7 @@ export class FoundryClient extends PluginClient {
   websocket: WS
   currentSharedFolder: string
   watcher: chokidar.FSWatcher
+  warnlog: boolean
 
   constructor (private readOnly = false) {
     super()
@@ -20,6 +21,7 @@ export class FoundryClient extends PluginClient {
   setWebSocket (websocket: WS): void {
     this.websocket = websocket
     this.websocket.addEventListener('close', () => {
+      this.warnlog = false
       if (this.watcher) this.watcher.close()
     })
   }
@@ -59,7 +61,7 @@ export class FoundryClient extends PluginClient {
   listenOnFoundryCompilation () {
     try {
       const buildPath = utils.absolutePath('out', this.currentSharedFolder)
-      this.watcher = chokidar.watch(buildPath, { depth: 3, ignorePermissionErrors: true })
+      this.watcher = chokidar.watch(buildPath, { depth: 3, ignorePermissionErrors: true, ignoreInitial: true })
       const compilationResult = {
         input: {},
         output: {
@@ -74,8 +76,11 @@ export class FoundryClient extends PluginClient {
         for (const file of folderFiles) {
           await this.readContract(join(buildPath, file), compilationResult)
         }
-        // @ts-ignore
-        this.call('terminal', 'log', 'updated compilation result from foundry')
+        if (!this.warnlog) {
+          // @ts-ignore
+          this.call('terminal', 'log', 'receiving compilation result from foundry')
+          this.warnlog = true
+        }
         this.emit('compilationFinished', '', compilationResult.input, 'soljson', compilationResult.output, compilationResult.solcVersion)      
       }
       this.watcher.on('change', async (f: string) => processArtifact())
@@ -105,7 +110,6 @@ export class FoundryClient extends PluginClient {
           const content = await fs.readFile(absPath, { encoding: 'utf-8' })
           compilationResultPart.input[path] = { content }
         } catch (e) {
-          console.log('unable to get the content of', path)
           compilationResultPart.input[path] = { content: '' }
         }        
       }
