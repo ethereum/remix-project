@@ -9,6 +9,7 @@ export class HardhatClient extends PluginClient {
   methods: Array<string>
   websocket: WS
   currentSharedFolder: string
+  watcher: chokidar.FSWatcher
 
   constructor (private readOnly = false) {
     super()
@@ -17,6 +18,9 @@ export class HardhatClient extends PluginClient {
 
   setWebSocket (websocket: WS): void {
     this.websocket = websocket
+    this.websocket.addEventListener('close', () => {
+      if (this.watcher) this.watcher.close()
+    })
   }
 
   sharedFolder (currentSharedFolder: string): void {
@@ -54,8 +58,8 @@ export class HardhatClient extends PluginClient {
   listenOnHardhatCompilation () {
     try {
       const buildPath = utils.absolutePath('artifacts/build-info', this.currentSharedFolder)
-      const watcher = chokidar.watch(buildPath, { depth: 0, ignorePermissionErrors: true })
-      watcher.on('change', async (f: string) => {
+      this.watcher = chokidar.watch(buildPath, { depth: 0, ignorePermissionErrors: true })
+      this.watcher.on('change', async (f: string) => {
         const content = await fs.readFile(f, { encoding: 'utf-8' })
         const compilationResult = JSON.parse(content)
         // @ts-ignore
