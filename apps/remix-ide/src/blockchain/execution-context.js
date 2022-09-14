@@ -93,6 +93,7 @@ export class ExecutionContext {
         else if (id === 4) name = 'Rinkeby'
         else if (id === 5) name = 'Goerli'
         else if (id === 42) name = 'Kovan'
+        else if (id === 11155111) name = 'Sepolia'
         else name = 'Custom'
 
         if (id === '1') {
@@ -250,6 +251,7 @@ export class ExecutionContext {
       Main: 'https://www.etherscan.io/tx/',
       Rinkeby: 'https://rinkeby.etherscan.io/tx/',
       Ropsten: 'https://ropsten.etherscan.io/tx/',
+      Sepolia: 'https://sepolia.etherscan.io/tx/',
       Kovan: 'https://kovan.etherscan.io/tx/',
       Goerli: 'https://goerli.etherscan.io/tx/'
     }
