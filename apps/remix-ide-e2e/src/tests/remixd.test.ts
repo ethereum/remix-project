@@ -2,7 +2,7 @@
 import { NightwatchBrowser } from 'nightwatch'
 import { writeFileSync } from 'fs'
 import init from '../helpers/init'
-import * as hardhatCompilation from '../helpers/foundry_compilation.json'
+import * as hardhatCompilation from '../helpers/hardhat_compilation_8a7ab689ec618720f53ce867a3031c03.json'
 import * as foundryCompilation from '../helpers/foundry_compilation.json'
 import * as truffle_compilation from '../helpers/truffle_compilation.json'
 
