@@ -568,6 +568,20 @@ export const EditorUI = (props: EditorUIProps) => {
       ],
       run: () => { editor.updateOptions({ fontSize: editor.getOption(43).fontSize - 1 }) },
     }
+    const formatAction = {
+      id: "autoFormat",
+      label: "Format Code",
+      contextMenuOrder: 0, // choose the order
+      contextMenuGroupId: "formatting", // create a new grouping
+      keybindings: [
+        // eslint-disable-next-line no-bitwise
+        monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyF,
+      ],
+      run: async () => { 
+        await props.plugin.call('codeFormat', 'format')
+      },
+    }
+    editor.addAction(formatAction)
     editor.addAction(zoomOutAction)
     editor.addAction(zoominAction)
     const editorService = editor._codeEditorService;
