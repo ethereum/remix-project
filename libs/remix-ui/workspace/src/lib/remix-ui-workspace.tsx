@@ -534,7 +534,7 @@ export function Workspace () {
 
   return (
     <>
-    <div className='remixui_container' style={{ height: '95%' }}>
+    <div className='remixui_container' style={{ height: selectedWorkspace && selectedWorkspace.isGitRepo ? '95%' : '100%' }}>
       <div className='d-flex flex-column w-100 remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
         <div>
           <header>
@@ -720,7 +720,7 @@ export function Workspace () {
       </div>
       {
         selectedWorkspace &&
-        <div className='bg-light border-top' style={{ height: '5%' }}>
+        <div className={`bg-light border-top ${selectedWorkspace.isGitRepo ? 'd-block' : 'd-none'}`} style={{ height: '5%' }}>
           <div className='d-flex justify-space-between p-1'>
             <div className="mr-auto text-uppercase text-dark pt-2 pl-2">DGIT</div>
             <div className="pt-1 mr-1">
