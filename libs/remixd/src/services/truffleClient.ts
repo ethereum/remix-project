@@ -84,7 +84,7 @@ export class TruffleClient extends PluginClient {
           this.call('terminal', 'log', 'receiving compilation result from truffle')
           this.warnLog = true
         }
-        this.emit('compilationFinished', '', compilationResult.input, 'soljson', compilationResult.output, compilationResult.solcVersion)      
+        this.emit('compilationFinished', '', { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)      
       }
       this.watcher.on('change', async (f: string) => processArtifact())
       this.watcher.on('add', async (f: string) => processArtifact())
@@ -99,23 +99,28 @@ export class TruffleClient extends PluginClient {
     compilationResultPart.solcVersion = contentJSON.compiler.version
     compilationResultPart.input[path] = { content: contentJSON.source }
     // extract data
-    if (!compilationResultPart.output['sources'][contentJSON.ast.absolutePath]) compilationResultPart.output['sources'][contentJSON.ast.absolutePath] = {}
-    compilationResultPart.output['sources'][contentJSON.ast.absolutePath] = {
-      ast: contentJSON['ast'],
-      id: contentJSON['id']
+    const relPath = utils.relativePath(contentJSON.ast.absolutePath, this.currentSharedFolder)
+    if (!compilationResultPart.output['sources'][relPath]) compilationResultPart.output['sources'][relPath] = {}
+    
+    const location = contentJSON.ast.src.split(':')
+    const id = parseInt(location[location.length - 1])
+    
+    compilationResultPart.output['sources'][relPath] = {
+      ast: contentJSON.ast,
+      id
     }
-    if (!compilationResultPart.output['contracts'][contentJSON.ast.absolutePath]) compilationResultPart.output['contracts'][contentJSON.ast.absolutePath] = {}
+    if (!compilationResultPart.output['contracts'][relPath]) compilationResultPart.output['contracts'][relPath] = {}
     // delete contentJSON['ast']
-    compilationResultPart.output['contracts'][contentJSON.ast.absolutePath][contractName] = {
+    compilationResultPart.output['contracts'][relPath][contractName] = {
       abi: contentJSON.abi,
       evm: {
         bytecode: {
-          object: contentJSON.bytecode,
+          object: contentJSON.bytecode.replace('0x', ''),
           sourceMap: contentJSON.sourceMap,
           linkReferences: contentJSON.linkReferences
         },
         deployedBytecode: {
-          object: contentJSON.deployedBytecode,
+          object: contentJSON.deployedBytecode.replace('0x', ''),
           sourceMap: contentJSON.deployedSourceMap,
           linkReferences: contentJSON.deployedLinkReferences
         }
