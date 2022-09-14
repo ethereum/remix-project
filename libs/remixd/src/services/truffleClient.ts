@@ -10,6 +10,7 @@ export class TruffleClient extends PluginClient {
   methods: Array<string>
   websocket: WS
   currentSharedFolder: string
+  watcher: chokidar.FSWatcher
 
   constructor (private readOnly = false) {
     super()
@@ -18,6 +19,9 @@ export class TruffleClient extends PluginClient {
 
   setWebSocket (websocket: WS): void {
     this.websocket = websocket
+    this.websocket.addEventListener('close', () => {
+      if (this.watcher) this.watcher.close()
+    })
   }
 
   sharedFolder (currentSharedFolder: string): void {
@@ -55,7 +59,7 @@ export class TruffleClient extends PluginClient {
   listenOnTruffleCompilation () {
     try {
       const buildPath = utils.absolutePath('out', this.currentSharedFolder)
-      const watcher = chokidar.watch(buildPath, { depth: 3, ignorePermissionErrors: true })
+      this.watcher = chokidar.watch(buildPath, { depth: 3, ignorePermissionErrors: true })
       const compilationResult = {
         input: {},
         output: {
@@ -75,8 +79,8 @@ export class TruffleClient extends PluginClient {
         this.call('terminal', 'log', 'updated compilation result from truffle')
         this.emit('compilationFinished', '', compilationResult.input, 'soljson', compilationResult.output, compilationResult.solcVersion)      
       }
-      watcher.on('change', async (f: string) => processArtifact())
-      watcher.on('add', async (f: string) => processArtifact())
+      this.watcher.on('change', async (f: string) => processArtifact())
+      this.watcher.on('add', async (f: string) => processArtifact())
     } catch (e) {
       console.log(e)
     }    

@@ -10,6 +10,7 @@ export class FoundryClient extends PluginClient {
   methods: Array<string>
   websocket: WS
   currentSharedFolder: string
+  watcher: chokidar.FSWatcher
 
   constructor (private readOnly = false) {
     super()
@@ -18,6 +19,9 @@ export class FoundryClient extends PluginClient {
 
   setWebSocket (websocket: WS): void {
     this.websocket = websocket
+    this.websocket.addEventListener('close', () => {
+      if (this.watcher) this.watcher.close()
+    })
   }
 
   sharedFolder (currentSharedFolder: string): void {
@@ -55,7 +59,7 @@ export class FoundryClient extends PluginClient {
   listenOnFoundryCompilation () {
     try {
       const buildPath = utils.absolutePath('out', this.currentSharedFolder)
-      const watcher = chokidar.watch(buildPath, { depth: 3, ignorePermissionErrors: true })
+      this.watcher = chokidar.watch(buildPath, { depth: 3, ignorePermissionErrors: true })
       const compilationResult = {
         input: {},
         output: {
@@ -64,7 +68,7 @@ export class FoundryClient extends PluginClient {
         },
         solcVersion: null
       }
-      watcher.on('change', async (f: string) => {
+      const processArtifact = async () => {
         const folderFiles = await fs.readdir(buildPath)
         // name of folders are file names
         for (const file of folderFiles) {
@@ -72,8 +76,10 @@ export class FoundryClient extends PluginClient {
         }
         // @ts-ignore
         this.call('terminal', 'log', 'updated compilation result from foundry')
-        this.emit('compilationFinished', '', compilationResult.input, 'soljson', compilationResult.output, compilationResult.solcVersion)
-      })
+        this.emit('compilationFinished', '', compilationResult.input, 'soljson', compilationResult.output, compilationResult.solcVersion)      
+      }
+      this.watcher.on('change', async (f: string) => processArtifact())
+      this.watcher.on('add', async (f: string) => processArtifact())
     } catch (e) {
       console.log(e)
     }    
