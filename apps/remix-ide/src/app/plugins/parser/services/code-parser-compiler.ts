@@ -131,7 +131,7 @@ export default class CodeParserCompiler {
                                 "*": ["evm.gasEstimates"]
                             }
                         },
-                        "evmVersion": state.evmVersion && state.evmVersion.toString() || "byzantium",
+                        "evmVersion": state.evmVersion && state.evmVersion.toString() || "berlin",
                     }
                 }
 
