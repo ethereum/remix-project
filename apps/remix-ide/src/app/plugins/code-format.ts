@@ -2,8 +2,7 @@
 import { Plugin } from '@remixproject/engine'
 import prettier from 'prettier/standalone'
 import { Options } from 'prettier';
-import * as sol from 'prettier-plugin-solidity'
-import { parse } from './code-format/parser'
+import sol from './code-format/index'
 import * as ts from 'prettier/parser-typescript'
 import * as babel from 'prettier/parser-babel'
 import * as espree from 'prettier/parser-espree'
@@ -21,15 +20,6 @@ export class CodeFormat extends Plugin {
 
     constructor() {
         super(profile)
-        // need to change the parser in the npm package because it conflicts with the parser already in the app
-        const loc = {
-            locEnd: (node) => getRange(1, node),
-            locStart: (node) => getRange(0, node)
-        }
-        const parser = { astFormat: 'solidity-ast', parse, ...loc };
-        sol.parsers = {
-            'solidity-parse': parser
-        }
     }
 
     async format() {
@@ -67,7 +57,7 @@ export class CodeFormat extends Plugin {
                 break
         }
         const result = prettier.format(content, {
-            plugins: [sol, ts, babel, espree],
+            plugins: [sol as any, ts, babel, espree],
             parser: parserName,
             ...options
         })
