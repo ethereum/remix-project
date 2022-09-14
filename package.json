@@ -197,6 +197,8 @@
     "merge": "^2.1.1",
     "monaco-editor": "^0.30.1",
     "npm-install-version": "^6.0.2",
+    "prettier": "^2.7.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.24",
     "raw-loader": "^4.0.2",
     "react": "^17.0.2",
     "react-beautiful-dnd": "^13.1.0",
