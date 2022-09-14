@@ -29,15 +29,16 @@ const { SlitherHandle } = require('../files/slither-handle.js')
 
 const profile = {
   name: 'filePanel',
-  displayName: 'File explorers',
+  displayName: 'File explorer',
   methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'setWorkspace', 'registerContextMenuItem', 'renameWorkspace', 'deleteWorkspace'],
   events: ['setWorkspace', 'workspaceRenamed', 'workspaceDeleted', 'workspaceCreated'],
   icon: 'assets/img/fileManager.webp',
-  description: ' - ',
+  description: 'Remix IDE file explorer',
   kind: 'fileexplorer',
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/file_explorer.html',
-  version: packageJson.version
+  version: packageJson.version,
+  maintainedBy: 'Remix'
 }
 module.exports = class Filepanel extends ViewPlugin {
   constructor (appManager) {
@@ -56,7 +57,7 @@ module.exports = class Filepanel extends ViewPlugin {
     this.slitherHandle = new SlitherHandle()
     this.workspaces = []
     this.appManager = appManager
-    this.currentWorkspaceMetadata = {}
+    this.currentWorkspaceMetadata = null
   }
 
   render () {
@@ -121,9 +122,9 @@ module.exports = class Filepanel extends ViewPlugin {
     })
   }
 
-  createWorkspace (workspaceName, isEmpty) {
+  createWorkspace (workspaceName, workspaceTemplateName, isEmpty) {
     return new Promise((resolve, reject) => {
-      this.emit('createWorkspaceReducerEvent', workspaceName, isEmpty, (err, data) => {
+      this.emit('createWorkspaceReducerEvent', workspaceName, workspaceTemplateName, isEmpty, (err, data) => {
         if (err) reject(err)
         else resolve(data || true)
       })
@@ -152,6 +153,9 @@ module.exports = class Filepanel extends ViewPlugin {
     const workspaceProvider = this.fileProviders.workspace
 
     this.currentWorkspaceMetadata = { name: workspace.name, isLocalhost: workspace.isLocalhost, absolutePath: `${workspaceProvider.workspacesPath}/${workspace.name}` }
+    if (workspace.name !== " - connect to localhost - ") {
+      localStorage.setItem('currentWorkspace', workspace.name)
+    }
     this.emit('setWorkspace', workspace)
   }
 

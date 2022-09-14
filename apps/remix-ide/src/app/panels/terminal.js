@@ -20,7 +20,7 @@ const profile = {
   name: 'terminal',
   methods: ['log', 'logHtml'],
   events: [],
-  description: ' - ',
+  description: 'Remix IDE terminal',
   version: packageJson.version
 }
 
@@ -100,8 +100,8 @@ class Terminal extends Plugin {
     this.terminalApi.logHtml(html)
   }
 
-  log (message) {
-    this.terminalApi.log(message)
+  log (message, type) {
+    this.terminalApi.log(message, type)
   }
 
   setDispatch(dispatch) {

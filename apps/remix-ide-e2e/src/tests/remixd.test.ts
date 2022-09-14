@@ -1,6 +1,8 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
+import { writeFileSync } from 'fs'
 import init from '../helpers/init'
+import * as hardhatCompilation from '../helpers/hardhat_compilation_8a7ab689ec618720f53ce867a3031c03.json'
 
 const assetsTestContract = `import "./contract.sol";
 contract Assets {
@@ -55,6 +57,7 @@ module.exports = {
   },
   'start Remixd': function (browser) {
     startRemixd(browser)
+
   },
   'run Remixd tests #group4': function (browser) {
     runTests(browser)
@@ -84,6 +87,7 @@ module.exports = {
   'Static Analysis run with remixd #group3': function (browser) {
     browser.testContracts('test_static_analysis_with_remixd_and_hardhat.sol', sources[5]['test_static_analysis_with_remixd_and_hardhat.sol'], ['test5']).pause(2000)
       .clickLaunchIcon('solidityStaticAnalysis')
+      /*
       .click('#staticanalysisButton button').pause(4000)
       .waitForElementPresent('#staticanalysisresult .warning', 2000, true, function () {
         browser
@@ -96,11 +100,12 @@ module.exports = {
             'code has not been loaded')
           })
       })
+      */
   },
 
   'Run git status': '' + function (browser) {
     browser
-      .executeScript('git status')
+      .executeScriptInTerminal('git status')
       .pause(3000)
       .journalLastChildIncludes('On branch ')
   },
@@ -109,8 +114,22 @@ module.exports = {
     browser
       .clickLaunchIcon('pluginManager')
       .scrollAndClick('#pluginManager *[data-id="pluginManagerComponentDeactivateButtonremixd"]')
-      .end()
-  }
+  },
+
+  'Should listen on compilation result from hardhat #group5': function (browser: NightwatchBrowser) {
+    browser.perform((done) => {
+      console.log('working directory', process.cwd())
+      writeFileSync('./apps/remix-ide/contracts/artifacts/build-info/c7062fdd360381a85af23eeef31c98f8.json', JSON.stringify(hardhatCompilation))
+      done()
+    })
+    .expect.element('*[data-id="terminalJournal"]').text.to.contain('received compilation result from hardhat').before(60000)
+      
+    browser.clickLaunchIcon('udapp')
+      .assert.textContains('*[data-id="udappCompiledBy"]', 'Compiled by hardhat')
+      .selectContract('Lock')
+      .createContract('1')
+      .expect.element('*[data-id="terminalJournal"]').text.to.contain('Unlock time should be in the future').before(60000)
+   }
 }
 
 function startRemixd (browser: NightwatchBrowser) {
@@ -129,6 +148,7 @@ function startRemixd (browser: NightwatchBrowser) {
     .waitForElementVisible('*[data-id="remixdConnect-modal-footer-ok-react"]', 2000)
     .pause(2000)
     .click('*[data-id="remixdConnect-modal-footer-ok-react"]')
+    .pause(10000)
     // .click('*[data-id="workspacesModalDialog-modal-footer-ok-react"]')
 }
 

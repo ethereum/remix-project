@@ -17,7 +17,7 @@ module.exports = {
 
   'Loads Side Panel': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeSidePanel"]')
-      .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORERS')
+      .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORER')
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemscripts"]')
@@ -40,12 +40,12 @@ module.exports = {
 
   'Toggles Side Panel': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeSidePanel"]')
-      .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORERS')
+      .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORER')
       .clickLaunchIcon('filePanel')
-      .assert.hidden('div[data-id="remixIdeSidePanel"]')
+      .assert.not.visible('div[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('filePanel')
       .assert.visible('div[data-id="remixIdeSidePanel"]')
-      .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORERS')
+      .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORER')
   },
 
   'Toggles Terminal': function (browser: NightwatchBrowser) {

@@ -127,7 +127,13 @@ class FileProvider {
 
   async createDir (path, cb) {
     const unprefixedpath = this.removePrefix(path)
-    const paths = unprefixedpath.split('/')
+
+    await this.forceCreateDir(unprefixedpath)
+    if (cb) cb()
+  }
+
+  async forceCreateDir (path) {
+    const paths = path.split('/')
     if (paths.length && paths[0] === '') paths.shift()
     let currentCheck = ''
     for (const value of paths) {
@@ -135,17 +141,12 @@ class FileProvider {
       if (!await window.remixFileSystem.exists(currentCheck)) {
         try {
           await window.remixFileSystem.mkdir(currentCheck)
+          this.event.emit('folderAdded', this._normalizePath(currentCheck))
         } catch (error) {
           console.log(error)
         }
       }
     }
-    currentCheck = ''
-    for (const value of paths) {
-      currentCheck = currentCheck + '/' + value
-      this.event.emit('folderAdded', this._normalizePath(currentCheck))
-    }
-    if (cb) cb()
   }
 
   // this will not add a folder as readonly but keep the original url to be able to restore it later

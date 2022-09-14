@@ -1,7 +1,9 @@
+import { fileDecoration } from '@remix-ui/file-decorators'
 import { extractParentFromKey } from '@remix-ui/helper'
 import React from 'react'
-import { action } from '../types'
-import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, removeFocus, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode } from './payload'
+import { action, WorkspaceTemplate } from '../types'
+import { ROOT_PATH } from '../utils/constants'
+import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, removeFocus, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode, setFileDecorationSuccess } from './payload'
 import { addInputField, createWorkspace, deleteWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile } from './workspace'
 
 const LOCALHOST = ' - connect to localhost - '
@@ -10,8 +12,8 @@ let plugin, dispatch: React.Dispatch<any>
 export const listenOnPluginEvents = (filePanelPlugin) => {
   plugin = filePanelPlugin
 
-  plugin.on('filePanel', 'createWorkspaceReducerEvent', (name: string, isEmpty = false, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
-    createWorkspace(name, isEmpty, cb)
+  plugin.on('filePanel', 'createWorkspaceReducerEvent', (name: string, workspaceTemplateName: WorkspaceTemplate, isEmpty = false, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+    createWorkspace(name, workspaceTemplateName, isEmpty, cb)
   })
 
   plugin.on('filePanel', 'renameWorkspaceReducerEvent', (oldName: string, workspaceName: string, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
@@ -38,6 +40,10 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
     uploadFile(target, dir, cb)
   })
 
+  plugin.on('fileDecorator', 'fileDecoratorsChanged', async (items: fileDecoration[]) => {
+    setFileDecorators(items)
+  })
+
   plugin.on('remixd', 'rootFolderChanged', async (path: string) => {
     rootFolderChanged(path)
   })
@@ -48,6 +54,16 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
 
   plugin.on('fileManager', 'fileClosed', async (file: string) => {
     dispatch(removeFocus(file))
+  })
+
+  plugin.on('fileManager', 'currentFileChanged', async (file: string) => {
+    const paths = file.split('/')
+    if (paths.length && paths[0] === '') paths.shift()
+    let currentCheck = ''
+    for (const value of paths) {
+      currentCheck = currentCheck + '/' + value
+      await folderAdded(currentCheck)
+    }
   })
 }
 
@@ -149,7 +165,7 @@ const fileAdded = async (filePath: string) => {
 
 const folderAdded = async (folderPath: string) => {
   const provider = plugin.fileManager.currentFileProvider()
-  const path = extractParentFromKey(folderPath) || provider.workspace || provider.type || ''
+  const path = extractParentFromKey(folderPath) || ROOT_PATH
 
   const promise = new Promise((resolve) => {
     provider.resolveDirectory(path, (error, fileTree) => {
@@ -173,7 +189,7 @@ const fileRemoved = async (removePath: string) => {
 
 const fileRenamed = async (oldPath: string) => {
   const provider = plugin.fileManager.currentFileProvider()
-  const path = extractParentFromKey(oldPath) || provider.workspace || provider.type || ''
+  const path = extractParentFromKey(oldPath) || ROOT_PATH
   const promise = new Promise((resolve) => {
     provider.resolveDirectory(path, (error, fileTree) => {
       if (error) console.error(error)
@@ -191,4 +207,9 @@ const fileRenamed = async (oldPath: string) => {
 
 const rootFolderChanged = async (path) => {
   await dispatch(rootFolderChangedSuccess(path))
+}
+
+const setFileDecorators = async (items: fileDecoration[], cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+  dispatch && await dispatch(setFileDecorationSuccess(items))
+  cb && cb(null, true)
 }

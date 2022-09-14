@@ -8,7 +8,7 @@ import { PluginViewWrapper } from '@remix-ui/helper'
 const profile = {
   name: 'hiddenPanel',
   displayName: 'Hidden Panel',
-  description: '',
+  description: 'Remix IDE hidden panel',
   version: packageJson.version,
   methods: ['addView', 'removeView']
 }

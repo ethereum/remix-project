@@ -4,8 +4,8 @@ import './remix-ui-home-tab.css'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import PluginButton from './components/pluginButton' // eslint-disable-line
-import { QueryParams } from '@remix-project/remix-lib'
 import { ThemeContext, themes } from './themeContext'
+import { RSSFeed } from './components/rssFeed'
 declare global {
   interface Window {
     _paq: any
@@ -54,13 +54,16 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     contentImport.import(
       state.importSource,
       (loadingMsg) => dispatch({ tooltip: loadingMsg }),
-      (error, content, cleanUrl, type, url) => {
+      async (error, content, cleanUrl, type, url) => {
         if (error) {
           toast(error.message || error)
         } else {
           try {
-            workspace.addExternal(type + '/' + cleanUrl, content, url)
-            plugin.call('menuicons', 'select', 'filePanel')
+            if (await workspace.exists(type + '/' + cleanUrl)) toast('File already exists in workspace')
+            else {
+              workspace.addExternal(type + '/' + cleanUrl, content, url)
+              plugin.call('menuicons', 'select', 'filePanel')
+            }   
           } catch (e) {
             toast(e.message)
           }
@@ -108,14 +111,8 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     scriptTwitter.src = 'https://platform.twitter.com/widgets.js'
     scriptTwitter.async = true
     document.body.appendChild(scriptTwitter)
-    // to retrieve medium publications
-    const scriptMedium = document.createElement('script')
-    scriptMedium.src = 'https://www.twilik.com/assets/retainable/rss-embed/retainable-rss-embed.js'
-    scriptMedium.async = true
-    document.body.appendChild(scriptMedium)
     return () => {
       document.body.removeChild(scriptTwitter)
-      document.body.removeChild(scriptMedium)
     }
   }, [])
 
@@ -223,12 +220,30 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
       <Toaster message={state.toasterMsg} />
       <div className="d-flex flex-column ml-4" id="remixUiRightPanel">
         <div className="border-bottom d-flex flex-column mr-4 pb-3 mb-3">
-          <div className="d-flex justify-content-between ">
-            <div className="mx-4 my-4 d-flex">
-              <label style={ { fontSize: 'xxx-large', height: 'auto', alignSelf: 'flex-end' } }>Remix IDE</label>
+          <div className="pt-2 d-flex justify-content-between">
+            <div>
+              <div className="mx-4 my-4 pt-4 d-flex">
+                <label style={ { fontSize: 'xxx-large' } }>Remix IDE</label>
+              </div>
+              <div className="pt-4 align-self-end mb-2 d-flex flex-column">
+                <span className="pl-4 text-danger mt-2">
+                  <i className="pr-2 text-danger fas fa-exclamation-triangle"></i>
+                  <b>Scam Alerts:</b>
+                </span>
+                <span className="pl-4 text-danger mt-1">
+                  The only URL Remix uses is remix.ethereum.org 
+                </span>
+                <span className="pl-4 text-danger mt-1">        
+                  Beware of online videos promoting "liquidity front runner bots":  
+                  <a className="pl-2 remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">Learn more</a>
+                </span>
+                <span className="pl-4 text-danger mt-1">
+                  Additional safety tips: &nbsp;<a className="remixui_home_text" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/security.html">here</a>
+                </span>
+              </div>
             </div>
             <div className="mr-4 d-flex">
-              <img className="mt-4 mb-2 remixui_home_logoImg" src="assets/img/guitarRemiCroped.webp" onClick={ () => playRemi() } alt=""></img>
+              <img className="align-self-end remixui_home_logoImg" src="assets/img/guitarRemiCroped.webp" onClick={ () => playRemi() } alt=""></img>
               <audio
                 id="remiAudio"
                 muted={false}
@@ -236,13 +251,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 ref={remiAudioEl}
               ></audio>
             </div>
-          </div>
-          <div>
-            <i className="pl-4 text-danger fas fa-exclamation-triangle"></i>
-            <span className="px-2 remixui_home_text text-danger mt-4 pt-4">
-              Scam Alert: Beware of online videos promoting "liquidity front runner bots".
-            </span>
-            <a className="remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">Learn more</a>
           </div>
         </div>
         <div className="row mx-2 mr-4" data-id="landingPageHpSections">
@@ -255,7 +263,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                   <PluginButton imgPath="assets/img/starkNetLogo.webp" envID="starkNetLogo" envText="StarkNet" l2={true} callback={() => startStarkNet()} />
                   <PluginButton imgPath="assets/img/solhintLogo.webp" envID="solhintLogo" envText="Solhint linter" callback={() => startSolhint()} />
                   <PluginButton imgPath="assets/img/learnEthLogo.webp" envID="learnEthLogo" envText="LearnEth" callback={() => startLearnEth()} />
-                  <PluginButton imgPath="assets/img/sourcifyLogo.webp" envID="sourcifyLogo" envText="Sourcify" callback={() => startSourceVerify()} />
+                  <PluginButton imgPath="assets/img/sourcifyNewLogo.webp" envID="sourcifyLogo" envText="Sourcify" callback={() => startSourceVerify()} />
                   <PluginButton imgPath="assets/img/moreLogo.webp" envID="moreLogo" envText="More" callback={startPluginManager} />
                 </ThemeContext.Provider>
               </div>
@@ -285,7 +293,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 <p className="mt-3 mb-0"><label>LOAD FROM:</label></p>
                 <div className="btn-group">
                   <button className="btn mr-1 btn-secondary" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>Gist</button>
-                  <button className="btn mx-1 btn-secondary" data-id="landingPageImportFromGitHubButton" onClick={() => showFullMessage('Github', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}>GitHub</button>
+                  <button className="btn mx-1 btn-secondary" data-id="landingPageImportFromGitHubButton" onClick={() => showFullMessage('GitHub', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}>GitHub</button>
                   <button className="btn mx-1 btn-secondary" onClick={() => showFullMessage('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}>Ipfs</button>
                   <button className="btn mx-1 btn-secondary" onClick={() => showFullMessage('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])}>https</button>
                 </div>
@@ -341,17 +349,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
           >
             <div id="remixIDE_MediumBlock" className="p-2 mx-1 mt-3 mb-0 remixui_home_remixHomeMedia" style={ { maxHeight: maxHeight } }>
               <div id="medium-widget" className="px-3 remixui_home_media" hidden={state.showMediaPanel !== 'medium'} style={ { maxHeight: '10000px' } }>
-                <div
-                  id="retainable-rss-embed"
-                  data-rss="https://medium.com/feed/remix-ide"
-                  data-maxcols="1"
-                  data-layout="grid"
-                  data-poststyle="external"
-                  data-readmore="More..."
-                  data-buttonclass="btn mb-3"
-                  data-offset="-100"
-                >
-                </div>
+                <RSSFeed feedUrl='https://rss.remixproject.org/' maxItems={10} />
               </div>
             </div>
             <div id="remixIDE_TwitterBlock" className="p-2 mx-1 mt-3 mb-0 remixui_home_remixHomeMedia" hidden={state.showMediaPanel !== 'twitter'} style={ { maxHeight: maxHeight, marginRight: '28px' } } >

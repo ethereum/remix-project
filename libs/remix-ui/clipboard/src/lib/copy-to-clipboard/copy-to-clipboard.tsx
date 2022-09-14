@@ -36,7 +36,7 @@ export const CopyToClipboard = (props: ICopyToClipboard) => {
     }
   }
 
-  const handleClick = (e) => {
+  const handleClick = (e: any) => {
     if (content) { // module `copy` keeps last copied thing in the memory, so don't show tooltip if nothing is copied, because nothing was added to memory
       copyData()
     } else {

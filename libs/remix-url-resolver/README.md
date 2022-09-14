@@ -6,13 +6,13 @@
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/ethereum/remix-project/issues)
 
 
-`@remix-project/remix-url-resolver` is a tool to handle import from different sources and resolve the content. It is used in Remix IDE to handle imports from `Github`, `Swarm`, `IPFS` and other URLs. 
+`@remix-project/remix-url-resolver` is a tool to handle import from different sources and resolve the content. It is used in Remix IDE to handle imports from `GitHub`, `Swarm`, `IPFS` and other URLs. 
 
 ### Installation
 
 `@remix-project/remix-url-resolver` is an NPM package and can be installed using NPM as:
 
-`npm install @remix-project/remix-url-resolver`
+`yarn add @remix-project/remix-url-resolver`
 
 ### How to use
 

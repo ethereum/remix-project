@@ -9,7 +9,6 @@ This document includes:
  - git checkout origin/master
  - git checkout -b bumpVersion
  - update package.json version
- - remove package-lock.json version and generate a new one with `npm install`
  - merge PR
  - git fetch origin master
  - git checkout origin/master
@@ -18,9 +17,9 @@ This document includes:
  - github-changes -o ethereum -r remix-ide -a --only-pulls --use-commit-body --only-merges --between-tags previous_version...next_version
  - publish a release in github using the changelog
  - rm -rf node_modules
- - npm install
+ - yarn install
  - remove all soljson.js files in root folder
- - npm run build
+ - yarn run build
  - npm publish
  - after remix_live is updated, drop the zip (from https://github.com/ethereum/remix-live/) to the release.
 
@@ -29,7 +28,6 @@ This document includes:
  - git checkout origin/master
  - git checkout -b bumpVersion
  - update package.json version to the new version "vx.x.x-beta.1"
- - remove package-lock/json version and generate a new one with `npm install`
  - merge PR
  - git fetch origin master
  - git checkout origin/master

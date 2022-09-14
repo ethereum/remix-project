@@ -3,8 +3,12 @@
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
 version: 2.1
+parameters:
+  run_flaky_tests:
+    type: boolean
+    default: false
 orbs:
-  browser-tools: circleci/browser-tools@1.2.3
+  browser-tools: circleci/browser-tools@1.3.0
 jobs:
   build:
     docker:
@@ -25,17 +29,17 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
       - save_cache:
-          key: v1-deps-{{ checksum "package-lock.json" }}
+          key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-      - run: npm run downloadsolc_assets      
+      - run: yarn run downloadsolc_assets
       - run: npx nx build remix-ide
       - run: npx nx build remix-ide-e2e-src-local-plugin
-
-      - run: npm run build:libs
+      
+      - run: yarn run build:libs
       - run: mkdir persist && zip -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
@@ -60,8 +64,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
       - run:
           name: Remix Libs Linting
           command: ./apps/remix-ide/ci/lint.sh
@@ -87,11 +91,11 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm i
-      - run: cd dist/libs/remix-tests && npm install
-      - run: npm run test:libs
-
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
+      - run: cd dist/libs/remix-tests && yarn install
+      - run: yarn run test:libs
+          
   remix-ide-chrome:
     docker:
       # specify the version you desire here
@@ -123,13 +127,56 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
           background: true
       - run: ./apps/remix-ide/ci/browser_test.sh chrome
+      - store_test_results:
+          path: ./reports/tests
+      - store_artifacts:
+          path: ./reports/screenshots
+
+  flaky-chrome:
+    docker:
+      # specify the version you desire here
+      - image: cimg/node:14.17.6-browsers
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    resource_class: xlarge
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+    working_directory: ~/remix-project
+
+    parallelism: 80
+    steps:
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
+      - run:
+          command: |
+              google-chrome --version
+              chromedriver --version
+              java -jar /usr/local/bin/selenium.jar --version
+          name: Check install
+      - checkout
+      - attach_workspace:
+            at: .
+      - run: unzip ./persist/dist.zip
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
+      - run:
+          name: Start Selenium
+          command: java -jar /usr/local/bin/selenium.jar
+          background: true
+      - run: ./apps/remix-ide/ci/flaky.sh chrome
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
@@ -166,8 +213,8 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
@@ -177,7 +224,137 @@ jobs:
           path: ./reports/tests
       - store_artifacts:
           path: ./reports/screenshots
+  flaky-firefox:
+    docker:
+      # specify the version you desire here
+      - image: cimg/node:14.17.6-browsers
 
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    resource_class: xlarge
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+    working_directory: ~/remix-project
+
+    parallelism: 80
+    steps:
+      - browser-tools/install-firefox
+      - browser-tools/install-geckodriver
+      - run:
+          command: |
+              firefox --version
+              geckodriver --version
+              java -jar /usr/local/bin/selenium.jar --version
+          name: Check install
+      - checkout
+      - attach_workspace:
+            at: .
+      - run: unzip ./persist/dist.zip
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
+      - run:
+          name: Start Selenium
+          command: java -jar /usr/local/bin/selenium.jar
+          background: true
+      - run: ./apps/remix-ide/ci/flaky.sh firefox
+      - store_test_results:
+          path: ./reports/tests
+      - store_artifacts:
+          path: ./reports/screenshots
+
+  remix-ide-vyper-plugin:
+    docker:
+      # specify the version you desire here
+      - image: cimg/node:14.17.6-browsers
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    resource_class: xlarge
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+    working_directory: ~/remix-project
+    parallelism: 10
+    steps:
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
+      - run:
+          command: |
+              google-chrome --version
+              chromedriver --version
+              java -jar /usr/local/bin/selenium.jar --version
+          name: Check install
+      - checkout
+      - checkout
+      - attach_workspace:
+            at: .
+      - run: unzip ./persist/dist.zip
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
+      - run:
+          name: Start Selenium
+          command: java -jar /usr/local/bin/selenium.jar
+          background: true
+      - run: npx nx build vyper
+      - run: ./apps/remix-ide/ci/browser_tests_vyper_plugin.sh
+      - store_test_results:
+          path: ./reports/tests
+      - store_artifacts:
+          path: ./reports/screenshots
+
+  remix-ide-etherscan-plugin:
+    docker:
+      # specify the version you desire here
+      - image: cimg/node:14.17.6-browsers
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    resource_class: xlarge
+      # - image: circleci/mongo:3.4.4
+    environment:
+      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      - COMMIT_AUTHOR: "Circle CI"
+    working_directory: ~/remix-project
+    parallelism: 10
+    steps:
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
+      - run:
+          command: |
+              google-chrome --version
+              chromedriver --version
+              java -jar /usr/local/bin/selenium.jar --version
+          name: Check install
+      - checkout
+      - checkout
+      - attach_workspace:
+            at: .
+      - run: unzip ./persist/dist.zip
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
+      - run:
+          name: Start Selenium
+          command: java -jar /usr/local/bin/selenium.jar
+          background: true
+      - run: npx nx build etherscan
+      - run: ./apps/remix-ide/ci/browser_tests_etherscan_plugin.sh
+      - store_test_results:
+          path: ./reports/tests
+      - store_artifacts:
+          path: ./reports/screenshots
+          
   remix-ide-plugin-api:
     docker:
       # specify the version you desire here
@@ -209,8 +386,8 @@ jobs:
       - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn install
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
@@ -234,14 +411,14 @@ jobs:
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "dist/apps/remix-ide/index.html dist/apps/remix-ide/raw-loader*.js dist/apps/remix-ide/assets dist/apps/remix-ide/main*.js dist/apps/remix-ide/polyfills*.js dist/apps/remix-ide/favicon.ico dist/apps/remix-ide/vendors~app*.js dist/apps/remix-ide/app*.js"
+      - FILES_TO_PACKAGE: "dist/apps/remix-ide/index.html dist/apps/remix-ide/404.html dist/apps/remix-ide/*raw-loader*.js dist/apps/remix-ide/assets dist/apps/remix-ide/main*.js dist/apps/remix-ide/polyfills*.js dist/apps/remix-ide/favicon.ico dist/apps/remix-ide/vendors~app*.js dist/apps/remix-ide/app*.js"
     working_directory: ~/remix-project
 
     steps:
       - checkout
-      - run: npm install
-      - run: npm run downloadsolc_assets
-      - run: npm run build:production
+      - run: yarn install
+      - run: yarn run downloadsolc_assets
+      - run: yarn run build:production
       - run: 
           name: Deploy
           command: |
@@ -263,14 +440,14 @@ jobs:
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "dist/apps/remix-ide/index.html dist/apps/remix-ide/raw-loader*.js dist/apps/remix-ide/assets dist/apps/remix-ide/main*.js dist/apps/remix-ide/polyfills*.js dist/apps/remix-ide/favicon.ico dist/apps/remix-ide/vendors~app*.js dist/apps/remix-ide/app*.js"
+      - FILES_TO_PACKAGE: "dist/apps/remix-ide/index.html dist/apps/remix-ide/404.html dist/apps/remix-ide/*raw-loader*.js dist/apps/remix-ide/assets dist/apps/remix-ide/main*.js dist/apps/remix-ide/polyfills*.js dist/apps/remix-ide/favicon.ico dist/apps/remix-ide/vendors~app*.js dist/apps/remix-ide/app*.js"
     working_directory: ~/remix-project
 
     steps:
       - checkout
-      - run: npm install
-      - run: npm run downloadsolc_assets
-      - run: npm run build:production
+      - run: yarn install
+      - run: yarn run downloadsolc_assets
+      - run: yarn run build:production
       - run: 
           name: Deploy
           command: |
@@ -291,25 +468,35 @@ jobs:
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "dist/apps/remix-ide/index.html dist/apps/remix-ide/raw-loader*.js dist/apps/remix-ide/assets dist/apps/remix-ide/main*.js dist/apps/remix-ide/polyfills*.js dist/apps/remix-ide/favicon.ico dist/apps/remix-ide/vendors~app*.js dist/apps/remix-ide/app*.js"
+      - FILES_TO_PACKAGE: "dist/apps/remix-ide/index.html dist/apps/remix-ide/404.html dist/apps/remix-ide/*raw-loader*.js dist/apps/remix-ide/assets dist/apps/remix-ide/main*.js dist/apps/remix-ide/polyfills*.js dist/apps/remix-ide/favicon.ico dist/apps/remix-ide/vendors~app*.js dist/apps/remix-ide/app*.js"
     working_directory: ~/remix-project
 
     steps:
       - checkout
-      - run: npm install
-      - run: npm run build:libs
-      - run: npm run downloadsolc_assets
-      - run: npm run build:production
+      - run: yarn install
+      - run: yarn run build:libs
+      - run: yarn run downloadsolc_assets
+      - run: yarn run build:production
       - run: 
           name: Deploy
           command: |
             if [ "${CIRCLE_BRANCH}" == "remix_beta" ]; then
               ./apps/remix-ide/ci/deploy_from_travis_remix-beta.sh;
             fi
-
 workflows:
   version: 2
+  run_flaky_tests:
+    when: << pipeline.parameters.run_flaky_tests >>
+    jobs:
+      - build
+      - flaky-chrome:
+          requires:
+            - build
+      - flaky-firefox:
+          requires:
+            - build
   build_all:
+    unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - build
       - lint:
@@ -319,6 +506,12 @@ workflows:
           requires:
             - build
       - remix-ide-plugin-api:
+          requires:
+            - build
+      - remix-ide-vyper-plugin:
+          requires:
+            - build
+      - remix-ide-etherscan-plugin:
           requires:
             - build
       - remix-ide-chrome:
@@ -334,6 +527,8 @@ workflows:
             - remix-ide-chrome
             - remix-ide-firefox
             - remix-ide-plugin-api
+            - remix-ide-vyper-plugin
+            - remix-ide-etherscan-plugin
           filters:
             branches:
               only: remix_live
@@ -344,6 +539,8 @@ workflows:
             - remix-ide-chrome
             - remix-ide-firefox
             - remix-ide-plugin-api
+            - remix-ide-vyper-plugin
+            - remix-ide-etherscan-plugin
           filters:
             branches:
               only: master
@@ -354,6 +551,8 @@ workflows:
             - remix-ide-chrome
             - remix-ide-firefox
             - remix-ide-plugin-api
+            - remix-ide-vyper-plugin
+            - remix-ide-etherscan-plugin
           filters:
             branches:
               only: remix_beta

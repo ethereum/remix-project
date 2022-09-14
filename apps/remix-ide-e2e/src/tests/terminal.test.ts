@@ -7,11 +7,10 @@ module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://127.0.0.1:8080?plugins=solidity,udapp', false)
   },
-
   'Should execution a simple console command #group1 #group999': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="terminalCli"]', 10000)
-      .executeScript('console.log(1 + 1)')
+      .executeScriptInTerminal('console.log(1 + 1)')
       .pause(2000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '2', 60000)
   },
@@ -27,7 +26,7 @@ module.exports = {
   'Async/Await Script #group1': function (browser: NightwatchBrowser) {
     browser
       .addFile('asyncAwait.js', { content: asyncAwait })
-      .executeScript('remix.execute("asyncAwait.js")')
+      .executeScriptInTerminal('remix.execute("asyncAwait.js")')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Waiting Promise', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'result - ', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Promise Resolved', 60000)
@@ -36,23 +35,23 @@ module.exports = {
   'Call Remix File Manager from a script #group2': function (browser: NightwatchBrowser) {
     browser
       .addFile('asyncAwaitWithFileManagerAccess.js', { content: asyncAwaitWithFileManagerAccess })
-      .executeScript('remix.execute(\'asyncAwaitWithFileManagerAccess.js\')')
+      .executeScriptInTerminal('remix.execute(\'asyncAwaitWithFileManagerAccess.js\')')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'contract Ballot {', 60000)
   },
 
-  'Call web3.eth.getAccounts() using JavaScript VM #group2': function (browser: NightwatchBrowser) {
+  'Call web3.eth.getAccounts() using Remix VM #group2': function (browser: NightwatchBrowser) {
     browser
-      .executeScript('web3.eth.getAccounts()')
+      .executeScriptInTerminal('web3.eth.getAccounts()')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '["0x5B38Da6a701c568545dCfcB03FcB875f56beddC4","0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2","0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db","0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB","0x617F2E2fD72FD9D5503197092aC168c91465E7f2","0x17F6AD8Ef982297579C203069C1DbfFE4348c372","0x5c6B0f7Bf3E7ce046039Bd8FABdfD3f9F5021678","0x03C6FcED478cBbC9a4FAB34eF9f40767739D1Ff7","0x1aE0EA34a72D944a8C7603FfB3eC30a6669E454C","0x0A098Eda01Ce92ff4A4CCb7A4fFFb5A43EBC70DC","0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c","0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C","0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB","0x583031D1113aD414F02576BD6afaBfb302140225","0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]')
   },
 
-  'Call web3.eth.getAccounts() using Web3 Provider #group5': function (browser: NightwatchBrowser) {
+  'Call web3.eth.getAccounts() using External Http Provider #group5': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="terminalClearConsole"]') // clear  the terminal
       .clickLaunchIcon('udapp')
-      .click('*[data-id="settingsWeb3Mode"]')
-      .modalFooterOKClick('envNotification')
-      .executeScript('web3.eth.getAccounts()')
+      .switchEnvironment('External Http Provider')
+      .modalFooterOKClick('basic-http-provider')
+      .executeScriptInTerminal('web3.eth.getAccounts()')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '["', 60000) // we check if an array is present, don't need to check for the content
       .waitForElementContainsText('*[data-id="terminalJournal"]', '"]', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '","', 60000)
@@ -64,7 +63,7 @@ module.exports = {
       .addFile('resolveExternalUrlAndSave.js', { content: resolveExternalUrlAndSave })
       .openFile('resolveExternalUrlAndSave.js')
       .pause(1000)
-      .executeScript('remix.execute(\'resolveExternalUrlAndSave.js\')')
+      .executeScriptInTerminal('remix.execute(\'resolveExternalUrlAndSave.js\')')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Implementation of the {IERC20} interface.', 60000)
       .openFile('.deps/github/OpenZeppelin/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol')
   },
@@ -75,7 +74,7 @@ module.exports = {
       .addFile('resolveUrl.js', { content: resolveUrl })
       .openFile('resolveUrl.js')
       .pause(1000)
-      .executeScript('remix.execute(\'resolveUrl.js\')')
+      .executeScriptInTerminal('remix.execute(\'resolveUrl.js\')')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'contract Ballot {', 60000)
   },
 
@@ -85,7 +84,7 @@ module.exports = {
       .addFile('resolveExternalUrlAndSaveToaPath.js', { content: resolveExternalUrlAndSaveToaPath })
       .openFile('resolveExternalUrlAndSaveToaPath.js')
       .pause(1000)
-      .executeScript('remix.execute(\'resolveExternalUrlAndSaveToaPath.js\')')
+      .executeScriptInTerminal('remix.execute(\'resolveExternalUrlAndSaveToaPath.js\')')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'abstract contract ERC20Burnable', 60000)
       .openFile('.deps/github/newFile.sol')
 
@@ -95,7 +94,7 @@ module.exports = {
     browser
       .clickLaunchIcon('settings')
       .clickLaunchIcon('udapp')
-      .click('*[data-id="settingsVMLondonMode"]')
+      .switchEnvironment('vm-london')
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .clickLaunchIcon('filePanel')
       .click('*[data-id="treeViewDivtreeViewItem"]') // make sure we create the file at the root folder
@@ -106,7 +105,7 @@ module.exports = {
       .openFile('contracts/2_Owner.sol')
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]').pause(5000) // compile Owner
-      .executeScript('remix.execute(\'deployWithEthersJs.js\')')
+      .executeScriptInTerminal('remix.execute(\'deployWithEthersJs.js\')')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Contract Address:', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deployment successful.', 60000)
@@ -128,17 +127,18 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]')
       .pause(1000) // compile Storage
-      .executeScript('remix.execute(\'scripts/storage.test.js\')')
+      .executeScriptInTerminal('remix.execute(\'scripts/storage.test.js\')')
       .pause(1000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Running tests....')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'RUNS scripts/script.ts....')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'storage contract Address:')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test initial value')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test updating and retrieving updated value')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✘ fail test updating and retrieving updated value')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Expected: 55')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Actual: 56')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Received: 56')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Message: incorrect number: expected 56 to equal 55')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '2 passing, 1 failing')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Passed: 2')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Failed: 1')
   },
   'Run tests using Mocha for a contract with library deployment and check result logging in the terminal #group4': function (browser: NightwatchBrowser) {
     browser
@@ -150,24 +150,24 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]')
       .pause(1000) // compile StorageWithLib
-      .executeScript('remix.execute(\'scripts/storageWithLib.test.js\')')
+      .executeScriptInTerminal('remix.execute(\'scripts/storageWithLib.test.js\')')
       .pause(1000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Running tests....')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Storage with lib')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'RUNS scripts/script.ts....')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Storage')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'deploying lib:')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✘ test library integration by calling a lib method')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Expected: 34')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Actual: 14')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Received: 14')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Message: expected \'14\' to equal \'34\'')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '0 passing, 1 failing')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Passed: 0')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Failed: 1')
   },
   'Should print hardhat logs #group4': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
-      .addFile('printHardhatlog.sol', { content: hardhatLog })
-      .clickLaunchIcon('solidity')
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]')
+      .clickLaunchIcon('udapp')
       .testContracts('printHardhatlog.sol', { content: hardhatLog }, ['OwnerTest'])
       .clickLaunchIcon('udapp')
       .click('*[data-id="deployAndRunClearInstances"]')
@@ -196,14 +196,97 @@ module.exports = {
 
   'Should run a script right after compilation #group6': function (browser: NightwatchBrowser) {
     browser
-      .addFile('contracts/storage.sol', { content: scriptAutoExec.contract } )
-      .addFile('scripts/deploy_storage.js', { content: scriptAutoExec.script } )
+      .addFile('contracts/storage.sol', { content: scriptAutoExec.contract })
+      .addFile('scripts/deploy_storage.js', { content: scriptAutoExec.script })
       .openFile('contracts/storage.sol')
       .sendKeys('body', [browser.Keys.CONTROL, browser.Keys.SHIFT, 's'])
-      .pause(5000)
+      .pause(15000)
       .journalLastChildIncludes('147')
+  },
+
+  'Should run a script which log transaction and block using web3.js and ethers #group7': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('udapp')
+      .switchEnvironment('External Http Provider')
+      .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
+      .execute(() => {
+        (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
+      }, [], () => { })
+      .setValue('[data-id="modalDialogCustomPromp"]', 'https://remix-goerli.ethdevops.io')
+      .modalFooterOKClick('basic-http-provider')
+      .clickLaunchIcon('filePanel')
+      .openFile('README.txt')
+      .addFile('scripts/log_tx_block.js', { content: scriptBlockAndTransaction })
+      .pause(1000)
+      .executeScriptInTerminal('remix.execute(\'scripts/log_tx_block.js\')')
+      // check if the input of the transaction is being logged (web3 call)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '0x775526410000000000000000000000000000000000000000000000000000000000000060464c0335b2f1609abd9de25141c0a3b49db516fc7375970dc737c32b986e88e3000000000000000000000000000000000000000000000000000000000000039e000000000000000000000000000000000000000000000000000000000000000602926b30b10e7a514d92bc71e085f5bff2687fac2856ae43ef7621bf1756fa370516d310bec5727543089be9a4d5f68471174ee528e95a2520b0ca36c2b6c6eb0000000000000000000000000000000000000000000000000000000000046f49036f5e4ea4dd042801c8841e3db8e654124305da0f11824fc1db60c405dbb39f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000', 120000)
+      // check if the logsBloom is being logged (web3 call)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '0x00000000000000000000000000100000000000000000020000000000002000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000040000000060000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000100000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000001', 120000)
+      // check if the logsBloom is being logged (ethers.js call)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '"hex":"0x025cd8"', 120000)
+  },
+
+  'Should listen on all transactions #group8': function (browser: NightwatchBrowser) {
+    const url = 'http://127.0.0.1:8545'
+    const identifier = 'Custom'
+    browser
+      .clickLaunchIcon('udapp') // connect to mainnet
+      .connectToExternalHttpProvider(url, identifier)
+      .openFile('contracts')
+      .openFile('contracts/1_Storage.sol')
+      .clickLaunchIcon('solidity')
+      .click({
+        selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
+      })
+      .pause(10000)
+      .waitForElementNotPresent({
+        locateStrategy: 'xpath',
+        selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
+        timeout: 120000
+      })
+      .click({
+        selector: '[data-id="listenNetworkCheckInput"]',
+      }) // start to listen
+      .click({
+        selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
+      })
+      .pause(10000)
+      .findElements(
+        {
+          locateStrategy: 'xpath',
+          selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
+          timeout: 120000,
+        }
+        , async (result) => {
+          if (Array.isArray(result.value) && result.value.length > 0) {
+            console.log('Found ' + result.value.length + ' transactions')
+            browser
+            .click({
+              selector: '[data-id="listenNetworkCheckInput"]',
+            })
+            .click({
+              selector: '*[data-id="terminalClearConsole"]',
+            })
+            .click({
+              selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
+            })
+            .pause(10000)
+            .waitForElementNotPresent({
+              locateStrategy: 'xpath',
+              selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
+              timeout: 120000
+            })
+            .end()
+          } else {
+            browser
+              .assert.fail('No transaction found')
+              .end()
+          }
+        })
   }
 }
+
 
 const asyncAwait = `
   var p = function () {
@@ -291,7 +374,7 @@ const deployWithEthersJs = `
         // 'web3Provider' is a remix global variable object
         const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
     
-        let factory = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+        let factory = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
     
         let contract = await factory.deploy(...constructorArgs);
     
@@ -320,7 +403,7 @@ describe("Storage with lib", function () {
     // Make sure contract is compiled and artifacts are generated
     const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
     const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
-    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
     let storage = await Storage.deploy();
     console.log('storage contract Address: ' + storage.address);
     await storage.deployed()
@@ -330,7 +413,7 @@ describe("Storage with lib", function () {
   it("test updating and retrieving updated value", async function () {
     const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
     const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
-    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
     let storage = await Storage.deploy();
     await storage.deployed()
     const setValue = await storage.store(56);
@@ -341,7 +424,7 @@ describe("Storage with lib", function () {
   it("fail test updating and retrieving updated value", async function () {
     const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
     const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
-    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer);
+    let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
     let storage = await Storage.deploy();
     await storage.deployed()
     const setValue = await storage.store(56);
@@ -607,3 +690,17 @@ const scriptAutoExec = {
     })()
   `
 }
+
+const scriptBlockAndTransaction = `
+// Right click on the script name and hit "Run" to execute
+(async () => {
+    try {
+        web3.eth.getTransaction('0x022ccd55747677ac50f8d9dfd1bf5b843fa2f36438a28c1d0a0958e057bb3e2a').then(console.log)
+        web3.eth.getBlock('7367447').then(console.log);
+        let ethersProvider = new ethers.providers.Web3Provider(web3Provider)
+        ethersProvider.getBlock(7367447).then(console.log)
+    } catch (e) {
+        console.log(e.message)
+    }
+})()
+`
