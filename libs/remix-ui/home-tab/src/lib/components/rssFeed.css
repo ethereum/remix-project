@@ -1,0 +1,12 @@
+.RSSFeed-item img  {
+    width: 100%;
+}
+
+.RSSFeed-item .truncate {
+    max-height: 500px;
+    overflow: hidden;
+}
+
+.RSSFeed-item .more-button {
+
+}

@@ -1,9 +1,11 @@
 'use strict'
 import React from 'react' // eslint-disable-line
+import { resolve } from 'path'
 import { EditorUI } from '@remix-ui/editor' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import { PluginViewWrapper } from '@remix-ui/helper'
+import { exists } from 'fs'
 
 const EventManager = require('../../lib/events')
 
@@ -12,7 +14,7 @@ const profile = {
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition']
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel','addErrorMarker', 'clearErrorMarkers'],
 }
 
 class Editor extends Plugin {
@@ -25,8 +27,8 @@ class Editor extends Plugin {
       remixDark: 'remix-dark'
     }
 
-    this.registeredDecorations = { sourceAnnotationsPerFile: {}, markerPerFile: {} }
-    this.currentDecorations = { sourceAnnotationsPerFile: {}, markerPerFile: {} }
+    this.registeredDecorations = { sourceAnnotationsPerFile: {}, markerPerFile: {}, lineTextPerFile: {} }
+    this.currentDecorations = { sourceAnnotationsPerFile: {}, markerPerFile: {}, lineTextPerFile: {} }
 
     // Init
     this.event = new EventManager()
@@ -73,30 +75,15 @@ class Editor extends Plugin {
 
   updateComponent(state) {
     return <EditorUI
-    editorAPI={state.api}
-    themeType={state.currentThemeType}
-    currentFile={state.currentFile}
-    events={state.events}
-    plugin={state.plugin}
-  />
+      editorAPI={state.api}
+      themeType={state.currentThemeType}
+      currentFile={state.currentFile}
+      events={state.events}
+      plugin={state.plugin}
+    />
   }
 
   render () {
-    
-/*     if (this.el) return this.el
-
-    this.el = document.createElement('div')
-    this.el.setAttribute('id', 'editorView')
-    this.el.currentContent = () => this.currentContent() // used by e2e test
-    this.el.setCurrentContent = (value) => {
-      if (this.sessions[this.currentFile]) {
-        this.sessions[this.currentFile].setValue(value)
-        this._onChange(this.currentFile)
-      }
-    }
-    this.el.gotoLine = (line, column) => this.gotoLine(line, column || 0)
-    this.el.getCursorPosition = () => this.getCursorPosition() */
-
     return <div ref={(element)=>{ 
       this.ref = element
       this.ref.currentContent = () => this.currentContent() // used by e2e test
@@ -112,7 +99,7 @@ class Editor extends Plugin {
       this.ref.clearDecorationsByPlugin = (filePath, plugin, typeOfDecoration) => this.clearDecorationsByPlugin(filePath, plugin, typeOfDecoration)      
       this.ref.keepDecorationsFor = (name, typeOfDecoration) => this.keepDecorationsFor(name, typeOfDecoration)
     }} id='editorView'>
-      <PluginViewWrapper plugin={this} />
+        <PluginViewWrapper plugin={this} />
       </div>
   }
 
@@ -140,13 +127,12 @@ class Editor extends Plugin {
     this.on('sidePanel', 'pluginDisabled', (name) => {
       this.clearAllDecorationsFor(name)
     })
-    this.on('fileManager', 'fileClosed', (name) => {
-      if (name === this.currentFile) {
-        this.currentFile = null
-      }
-    })
     this.on('theme', 'themeLoaded', (theme) => {
       this.currentThemeType = theme.quality
+      this.renderComponent()
+    })
+    this.on('fileManager', 'noFileSelected', async () => {
+      this.currentFile = null
       this.renderComponent()
     })
     try {
@@ -163,6 +149,7 @@ class Editor extends Plugin {
   }
 
   async _onChange (file) {
+    this.triggerEvent('didChangeFile', [file])
     const currentFile = await this.call('fileManager', 'file')
     if (!currentFile) {
       return
@@ -212,14 +199,48 @@ class Editor extends Plugin {
     return ext && this.modes[ext] ? this.modes[ext] : this.modes.txt
   }
 
+  async handleTypeScriptDependenciesOf (path, content, readFile) {
+    if (path.endsWith('.ts')) {
+      // extract the import, resolve their content
+      // and add the imported files to Monaco through the `addModel`
+      // so Monaco can provide auto completion
+      const paths = path.split('/')
+      paths.pop()
+      const fromPath = paths.join('/') // get current execution context path
+      for (const match of content.matchAll(/import\s+.*\s+from\s+(?:"(.*?)"|'(.*?)')/g)) {
+        let pathDep = match[2]
+        if (pathDep.startsWith('./') || pathDep.startsWith('../')) pathDep = resolve(fromPath, pathDep)
+        if (pathDep.startsWith('/')) pathDep = pathDep.substring(1)
+        if (!pathDep.endsWith('.ts')) pathDep = pathDep + '.ts'
+        try {
+          // we can't use the fileManager plugin call directly
+          // because it's itself called in a plugin context, and that causes a timeout in the plugin stack
+          const pathExists = await exists(pathDep)
+          let contentDep = ''
+          if (pathExists) {
+            contentDep = await readFile(pathDep)
+            if (contentDep !== '') {
+              this.emit('addModel', contentDep, 'typescript', pathDep, false)
+            }
+          } else {
+            console.log("The file ", pathDep, " can't be found.")
+          }
+        } catch (e) {
+          console.log(e)
+        }
+      }
+    }
+  }
+
   /**
    * Create an editor session
    * @param {string} path path of the file
    * @param {string} content Content of the file to open
    * @param {string} mode Mode for this file [Default is `text`]
    */
-  _createSession (path, content, mode) {
+  async _createSession (path, content, mode) {
     if (!this.activated) return
+    
     this.emit('addModel', content, mode, path, false)
     return {
       path,
@@ -242,6 +263,10 @@ class Editor extends Plugin {
    */
   find (string) {
     return this.api.findMatches(this.currentFile, string)
+  }
+
+  addModel(path, content) {
+    this.emit('addModel', content, this._getMode(path), path, false)
   }
 
   /**
@@ -268,7 +293,7 @@ class Editor extends Plugin {
    * @param {string} path Path of the session to open.
    * @param {string} content Content of the document or update.
    */
-  open (path, content) {
+  async open (path, content) {
     /*
       we have the following cases:
        - URL prepended with "localhost"
@@ -276,7 +301,7 @@ class Editor extends Plugin {
        - URL not prepended with the file explorer. We assume (as it is in the whole app, that this is a "browser" URL
     */
     if (!this.sessions[path]) {
-      const session = this._createSession(path, content, this._getMode(path))
+      const session = await this._createSession(path, content, this._getMode(path))
       this.sessions[path] = session
       this.readOnlySessions[path] = false
     } else if (this.sessions[path].getValue() !== content) {
@@ -290,9 +315,9 @@ class Editor extends Plugin {
    * @param {string} path Path of the session to open.
    * @param {string} content Content of the document or update.
    */
-  openReadOnly (path, content) {
+  async openReadOnly (path, content) {
     if (!this.sessions[path]) {
-      const session = this._createSession(path, content, this._getMode(path))
+      const session = await this._createSession(path, content, this._getMode(path))
       this.sessions[path] = session
       this.readOnlySessions[path] = true
     }
@@ -456,6 +481,17 @@ class Editor extends Plugin {
     }
   }
 
+  // error markers
+  async addErrorMarker (error){
+    const { from } = this.currentRequest
+    this.api.addErrorMarker(error, from)
+  }
+
+  async clearErrorMarkers(sources){
+    const { from } = this.currentRequest
+    this.api.clearErrorMarkers(sources, from)
+  }
+
   /**
    * Clears all the annotations for the given @arg filePath, the plugin name is retrieved from the context, if none is given, the current sesssion is used.
    * An annotation has the following shape:
@@ -517,6 +553,18 @@ class Editor extends Plugin {
     const { from } = this.currentRequest
     for (const session in this.sessions) {
       this.clearDecorationsByPlugin(session, from, 'markerPerFile', this.registeredDecorations, this.currentDecorations)
+    }
+  }
+
+  async addLineText (lineText, filePath) {
+    filePath = filePath || this.currentFile
+    await this.addDecoration(lineText, filePath, 'lineTextPerFile')
+  }
+
+  discardLineTexts() {
+    const { from } = this.currentRequest
+    for (const session in this.sessions) {
+      this.clearDecorationsByPlugin(session, from, 'lineTextPerFile', this.registeredDecorations, this.currentDecorations)
     }
   }
 }

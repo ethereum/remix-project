@@ -85,7 +85,7 @@ export class TxRunnerWeb3 {
 
   runInNode (from, to, data, value, gasLimit, useCall, timestamp, confirmCb, gasEstimationForceSend, promptCb, callback) {
     const tx = { from: from, to: to, data: data, value: value }
-
+    if (!from) return callback('the value of "from" is not defined. Please make sure an account is selected.')
     if (useCall) {
       tx['gas'] = gasLimit
       if (this._api && this._api.isVM()) tx['timestamp'] = timestamp

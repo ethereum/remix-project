@@ -9,10 +9,11 @@ const testData = {
 // 99266d6da54cc12f37f11586e8171546c7700d67
 
 module.exports = {
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
-  UploadToGists: function (browser: NightwatchBrowser) {
+  'UploadToGists #group1': function (browser: NightwatchBrowser) {
     /*
        - set the access token
        - publish to gist
@@ -34,7 +35,7 @@ module.exports = {
       .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemBrowser_Tests"]')
       .addFile('File.sol', { content: '' })
-      .executeScript(`remix.loadgist('${gistid}')`)
+      .executeScriptInTerminal(`remix.loadgist('${gistid}')`)
       // .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('gists') } done() })
       .waitForElementVisible(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
       .click(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
@@ -58,7 +59,7 @@ module.exports = {
           const gistid = id[1]
           browser
             .click('[data-id="default_workspace-modal-footer-cancel-react"]')
-            .executeScript(`remix.loadgist('${gistid}')`)
+            .executeScriptInTerminal(`remix.loadgist('${gistid}')`)
             // .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('gists') } done() })
             .waitForElementVisible(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
             .click(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
@@ -68,7 +69,7 @@ module.exports = {
       */
   },
 
-  'Load Gist Modal': function (browser: NightwatchBrowser) {
+  'Load Gist Modal #group1': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('home')
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
@@ -84,7 +85,7 @@ module.exports = {
       .modalFooterCancelClick('gisthandler')
   },
 
-  'Display Error Message For Invalid Gist ID': function (browser: NightwatchBrowser) {
+  'Display Error Message For Invalid Gist ID #group1': function (browser: NightwatchBrowser) {
     browser
       .pause(1000)
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
@@ -101,7 +102,7 @@ module.exports = {
       .modalFooterOKClick('gisthandler')
   },
 
-  'Display Error Message For Missing Gist Token When Publishing': function (browser: NightwatchBrowser) {
+  'Display Error Message For Missing Gist Token When Publishing #group1': function (browser: NightwatchBrowser) {
     browser
       .pause(1000)
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
@@ -125,9 +126,9 @@ module.exports = {
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
   },
 
-  'Import From Gist For Valid Gist ID': function (browser: NightwatchBrowser) {
+  'Import From Gist For Valid Gist ID #group2': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 15000)
       .clickLaunchIcon('settings')
       .click('*[data-id="settingsTabGenerateContractMetadataLabel"]')
       .setValue('[data-id="settingsTabGistAccessToken"]', process.env.gist_token)
@@ -140,6 +141,7 @@ module.exports = {
       })
       .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]', testData.validGistId)
       .modalFooterOKClick('gisthandler')
+      .pause(10000)
       .openFile(`gist-${testData.validGistId}/README.txt`)
       .waitForElementVisible(`div[title='default_workspace/gist-${testData.validGistId}/README.txt']`)
       .assert.containsText(`div[title='default_workspace/gist-${testData.validGistId}/README.txt'] > span`, 'README.txt')

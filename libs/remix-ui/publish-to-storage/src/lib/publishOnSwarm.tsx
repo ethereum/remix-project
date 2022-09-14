@@ -26,33 +26,41 @@ export const publishToSwarm = async (contract, api) => {
   }
 
   await Promise.all(Object.keys(metadata.sources).map(fileName => {
-    // find hash
-    let hash = null
-    try {
-      // we try extract the hash defined in the metadata.json
-      // in order to check if the hash that we get after publishing is the same as the one located in metadata.json
-      // if it's not the same, we throw "hash mismatch between solidity bytecode and uploaded content"
-      // if we don't find the hash in the metadata.json, the check is not done.
-      //
-      // TODO: refactor this with publishOnIpfs
-      if (metadata.sources[fileName].urls) {
-        metadata.sources[fileName].urls.forEach(url => {
-          if (url.includes('bzz')) hash = url.match('bzz-raw://(.+)')[1]
-        })
+    return new Promise((resolve, reject) => {
+      // find hash
+      let hash = null
+      try {
+        // we try extract the hash defined in the metadata.json
+        // in order to check if the hash that we get after publishing is the same as the one located in metadata.json
+        // if it's not the same, we throw "hash mismatch between solidity bytecode and uploaded content"
+        // if we don't find the hash in the metadata.json, the check is not done.
+        //
+        // TODO: refactor this with publishOnIpfs
+        if (metadata.sources[fileName].urls) {
+          metadata.sources[fileName].urls.forEach(url => {
+            if (url.includes('bzz')) hash = url.match('bzz-raw://(.+)')[1]
+          })
+        }
+      } catch (e) {
+        return reject(new Error('Error while extracting the hash from metadata.json'))
       }
-    } catch (e) {
-      throw new Error('Error while extracting the hash from metadata.json')
-    }
 
-    api.readFile(fileName).then((content) => {
-      sources.push({
-        content: content,
-        hash: hash,
-        filename: fileName
+      api.readFile(fileName).then((content) => {
+        sources.push({
+          content: content,
+          hash: hash,
+          filename: fileName
+        })
+        resolve({
+          content: content,
+          hash: hash,
+          filename: fileName
+        })
+      }).catch((error) => {
+        console.log(error)
+        reject(error)
       })
-    }).catch((error) => {
-      console.log(error)
-    })
+    })    
   }))
 
   // the list of nodes to publish to
@@ -71,7 +79,7 @@ export const publishToSwarm = async (contract, api) => {
   // publish the list of sources in order, fail if any failed
   await Promise.all(sources.map(async (item) => {
     try {
-      const result = await swarmVerifiedPublish(beeNodes, postageStampId, item.content, item.hash)
+      const result = await swarmVerifiedPublish(beeNodes, postageStampId, item.content, item.hash, api)
 
       try {
         item.hash = result.url.match('bzz-raw://(.+)')[1]
@@ -88,9 +96,9 @@ export const publishToSwarm = async (contract, api) => {
     }
   }))
 
-  const metadataContent = JSON.stringify(metadata)
+  const metadataContent = JSON.stringify(metadata, null, '\t')
   try {
-    const result = await swarmVerifiedPublish(beeNodes, postageStampId, metadataContent, '')
+    const result = await swarmVerifiedPublish(beeNodes, postageStampId, metadataContent, '', api)
 
     try {
       contract.metadataHash = result.url.match('bzz-raw://(.+)')[1]
@@ -113,7 +121,7 @@ export const publishToSwarm = async (contract, api) => {
   return { uploaded, item }
 }
 
-const swarmVerifiedPublish = async (beeNodes: Bee[], postageStampId: string, content, expectedHash): Promise<Record<string, any>> => {
+const swarmVerifiedPublish = async (beeNodes: Bee[], postageStampId: string, content, expectedHash, api): Promise<Record<string, any>> => {
   try {
     const results = await uploadToBeeNodes(beeNodes, postageStampId, content)
     const hash = hashFromResults(results)
@@ -121,6 +129,7 @@ const swarmVerifiedPublish = async (beeNodes: Bee[], postageStampId: string, con
     if (expectedHash && hash !== expectedHash) {
       return { message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'bzz-raw://' + hash, hash }
     } else {
+      api.writeFile('swarm/' + hash, content)
       return { message: 'ok', url: 'bzz-raw://' + hash, hash }
     }
   } catch (error) {

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useReducer, useRef } from 'react' // eslint
 import Button from './Button/StaticAnalyserButton' // eslint-disable-line
 import { util } from '@remix-project/remix-lib'
 import _ from 'lodash'
+import * as semver from 'semver'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { RemixUiCheckbox } from '@remix-ui/checkbox' // eslint-disable-line
 import ErrorRenderer from './ErrorRenderer' // eslint-disable-line
@@ -64,13 +65,29 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [autoRun, setAutoRun] = useState(true)
   const [slitherEnabled, setSlitherEnabled] = useState(false)
   const [showSlither, setShowSlither] = useState(false)
+  const [isSupportedVersion, setIsSupportedVersion] = useState(false)
   let [showLibsWarning, setShowLibsWarning] = useState(false) // eslint-disable-line prefer-const
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
   const [warningState, setWarningState] = useState({})
+  const [runButtonTitle, setRunButtonTitle] = useState<string>('Run Static Analysis')
 
   const warningContainer = useRef(null)
   const allWarnings = useRef({})
   const [state, dispatch] = useReducer(analysisReducer, initialState)
+
+  const setDisableForRun = (version: string) => {
+    const truncateVersion = (version: string) => {
+      const tmp: RegExpExecArray | null = /^(\d+.\d+.\d+)/.exec(version)
+      return tmp ? tmp[1] : version
+    }
+    if (version != '' && !semver.gt(truncateVersion(version), '0.4.12')) {
+      setIsSupportedVersion(false)
+      setRunButtonTitle('Sselect Solidity compiler version greater than 0.4.12.')
+    } else {
+      setIsSupportedVersion(true)
+      setRunButtonTitle('Run static analysis')
+    }
+  }
 
   useEffect(() => {
     compilation(props.analysisModule, dispatch)
@@ -90,6 +107,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
     return () => { }
   }, [state])
+
+  useEffect(() => {
+    props.analysisModule.call('solidity', 'getCompilerState').then((compilerState) => setDisableForRun(compilerState.currentVersion))
+  }, [])
 
   useEffect(() => {
     props.analysisModule.on('filePanel', 'setWorkspace', (currentWorkspace) => {
@@ -119,20 +140,24 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         setSlitherEnabled(false)
       }
     })
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    props.analysisModule.on('solidity', 'compilerLoaded', async (version: string, license: string) => {
+      setDisableForRun(version)
+    })
     return () => { }
   }, [props])
 
   const message = (name, warning, more, fileName, locationString) : string => {
     return (`
-    <span className='d-flex flex-column'>
-    <span className='h6 font-weight-bold'>${name}</span>
-    ${warning}
-    ${more
-      ? (<span><a href={more} target='_blank'>more</a></span>)
-      : (<span> </span>)
-    }
-    <span className="" title={Position in ${fileName}}>Pos: ${locationString}</span>
-    </span>`
+      <span className='d-flex flex-column'>
+      <span className='h6 font-weight-bold'>${name}</span>
+      ${warning}
+      ${more
+        ? (<span><a href={more} target='_blank'>more</a></span>)
+        : (<span> </span>)
+      }
+      <span className="" title={Position in ${fileName}}>Pos: ${locationString}</span>
+      </span>`
     )
   }
 
@@ -183,6 +208,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }
 
   const run = async (lastCompilationResult, lastCompilationSource, currentFile) => {
+    if (!isSupportedVersion) return
     if (state.data !== null) {
       if (lastCompilationResult && (categoryIndex.length > 0 || slitherEnabled)) {
         const warningMessage = []
@@ -474,7 +500,12 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             label="Autorun"
             onChange={() => {}}
           />
-          <Button buttonText="Run" onClick={async () => await run(state.data, state.source, state.file)} disabled={(state.data === null || categoryIndex.length === 0) && !slitherEnabled }/>
+          <Button
+            buttonText="Run"
+            title={runButtonTitle}
+            onClick={async () => await run(state.data, state.source, state.file)}
+            disabled={(state.data === null || categoryIndex.length === 0) && !slitherEnabled || !isSupportedVersion }
+          />
         </div>
         { showSlither &&
           <div className="d-flex mt-2" id="enableSlitherAnalysis">
@@ -490,7 +521,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             <a className="mt-1 text-nowrap" href='https://remix-ide.readthedocs.io/en/latest/slither.html#enable-slither-analysis' target={'_blank'}>
               <OverlayTrigger placement={'right'} overlay={
                 <Tooltip className="text-nowrap" id="overlay-tooltip">
-                  <span className="p-1 pr-3" style={{ backgroundColor: 'black', minWidth: '230px' }}>Learn how to use Slither Analysis</span>
+                  <span className="border bg-light text-dark p-1 pr-3" style={{minWidth: '230px' }}>Learn how to use Slither Analysis</span>
                 </Tooltip>
               }>
                 <i style={{ fontSize: 'medium' }} className={'fal fa-info-circle ml-3'} aria-hidden="true"></i>
@@ -520,15 +551,15 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       {Object.entries(warningState).length > 0 &&
         <div id='staticanalysisresult' >
           <RemixUiCheckbox
-          id="showLibWarnings"
-          name="showLibWarnings"
-          categoryId="showLibWarnings"
-          title="when checked, the results are also displayed for external contract libraries"
-          inputType="checkbox"
-          checked={showLibsWarning}
-          label="Show warnings for external libraries"
-          onClick={handleShowLibsWarning}
-          onChange={() => {}}
+            id="showLibWarnings"
+            name="showLibWarnings"
+            categoryId="showLibWarnings"
+            title="when checked, the results are also displayed for external contract libraries"
+            inputType="checkbox"
+            checked={showLibsWarning}
+            label="Show warnings for external libraries"
+            onClick={handleShowLibsWarning}
+            onChange={() => {}}
           />
           <br/>
           <div className="mb-4">
@@ -541,7 +572,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                       <div data-id={`staticAnalysisModule${x.warningModuleName}${i}`} id={`staticAnalysisModule${x.warningModuleName}${i}`} key={i}>
                         <ErrorRenderer name={`staticAnalysisModule${x.warningModuleName}${i}`} message={x.msg} opt={x.options} warningErrors={ x.warningErrors} editor={props.analysisModule}/>
                       </div>
-
                     ) : null
                   ))}
                 </div>

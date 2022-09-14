@@ -10,9 +10,11 @@ import '../css/file-explorer.css'
 import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileRender } from './file-render'
+import { Drag } from "@remix-ui/drag-n-drop"
+import { ROOT_PATH } from '../utils/constants'
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { name, contextMenuItems, removedContextMenuItems, files } = props
+  const { name, contextMenuItems, removedContextMenuItems, files, fileState } = props
   const [state, setState] = useState<FileExplorerState>({
     ctrlKey: false,
     newFileName: '',
@@ -31,7 +33,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     },
     mouseOverElement: null,
     showContextMenu: false,
-    reservedKeywords: [name, 'gist-'],
+    reservedKeywords: [ROOT_PATH, 'gist-'],
     copyElement: []
   })
   const [canPaste, setCanPaste] = useState(false)
@@ -78,7 +80,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   
       targetDocument.addEventListener('keydown', keyPressHandler)
       targetDocument.addEventListener('keyup', keyUpHandler)
-      targetDocument.focus()
       return () => {
         targetDocument.removeEventListener('keydown', keyPressHandler)
         targetDocument.removeEventListener('keyup', keyUpHandler)
@@ -137,14 +138,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (props.focusElement[0]) {
       if (props.focusElement[0].type === 'folder' && props.focusElement[0].key) return props.focusElement[0].key
       else if (props.focusElement[0].type === 'gist' && props.focusElement[0].key) return props.focusElement[0].key
-      else if (props.focusElement[0].type === 'file' && props.focusElement[0].key) return extractParentFromKey(props.focusElement[0].key) ? extractParentFromKey(props.focusElement[0].key) : name
-      else return name
+      else if (props.focusElement[0].type === 'file' && props.focusElement[0].key) return extractParentFromKey(props.focusElement[0].key) ? extractParentFromKey(props.focusElement[0].key) : ROOT_PATH
+      else return ROOT_PATH
     }
   }
 
   const createNewFile = async (newFilePath: string) => {
     try {
-      props.dispatchCreateNewFile(newFilePath, props.name)
+      props.dispatchCreateNewFile(newFilePath, ROOT_PATH)
     } catch (error) {
       return props.modal('File Creation Failed', typeof error === 'string' ? error : error.message, 'Close', async () => {})
     }
@@ -152,7 +153,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const createNewFolder = async (newFolderPath: string) => {
     try {
-      props.dispatchCreateNewFolder(newFolderPath, props.name)
+      props.dispatchCreateNewFolder(newFolderPath, ROOT_PATH)
     } catch (e) {
       return props.modal('Folder Creation Failed', typeof e === 'string' ? e : e.message, 'Close', async () => {})
     }
@@ -174,10 +175,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const uploadFile = (target) => {
-    let parentFolder = getFocusedFolder()
+    const parentFolder = getFocusedFolder()
     const expandPath = [...new Set([...props.expandPath, parentFolder])]
 
-    parentFolder = parentFolder === name ? '/' : parentFolder
     props.dispatchHandleExpandPath(expandPath)
     props.dispatchUploadFile(target, parentFolder)
   }
@@ -235,7 +235,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleClickFile = (path: string, type: 'folder' | 'file' | 'gist') => {
-    path = path.indexOf(props.name + '/') === 0 ? path.replace(props.name + '/', '') : path
     if (!state.ctrlKey) {
       props.dispatchHandleClickFile(path, type)
     } else {
@@ -379,7 +378,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handlePasteClick = (dest: string, destType: string) => {
-    dest = destType === 'file' ? extractParentFromKey(dest) || props.name : dest
+    dest = destType === 'file' ? extractParentFromKey(dest) || ROOT_PATH : dest
     state.copyElement.map(({ key, type }) => {
       type === 'file' ? copyFile(key, dest) : copyFolder(key, dest)
     })
@@ -402,15 +401,31 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (e && (e.target as any).getAttribute('data-id') === 'fileExplorerFileUpload') return // we don't want to let propagate the input of type file
     let expandPath = []
 
-    if (!props.expandPath.includes(props.name)) {
-      expandPath = [props.name, ...new Set([...props.expandPath])]
+    if (!props.expandPath.includes(ROOT_PATH)) {
+      expandPath = [ROOT_PATH, ...new Set([...props.expandPath])]
     } else {
-      expandPath = [...new Set(props.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(props.name)))]
+      expandPath = [...new Set(props.expandPath.filter(key => key && (typeof key === 'string')))]
     }
     props.dispatchHandleExpandPath(expandPath)
   }
 
+  const handleFileMove = (dest: string, src: string) => {
+    try {
+      props.dispatchMoveFile(src, dest)
+    } catch (error) {
+      props.modal('Moving File Failed', 'Unexpected error while moving file: ' + src, 'Close', async () => {})
+    }   
+  }
+
+  const handleFolderMove = (dest: string, src: string) => {
+    try {
+      props.dispatchMoveFolder(src, dest)
+    } catch (error) {
+      props.modal('Moving Folder Failed', 'Unexpected error while moving folder: ' + src, 'Close', async () => {})
+    }   
+  }
   return (
+    <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
     <div ref={treeRef} tabIndex={0} style={{ outline: "none" }}>
       <TreeView id='treeView'>
         <TreeViewItem id="treeViewItem"
@@ -431,8 +446,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
           <div className='pb-2'>
             <TreeView id='treeViewMenu'>
               {
-                files[props.name] && Object.keys(files[props.name]).map((key, index) => <FileRender
-                  file={files[props.name][key]}
+                files[ROOT_PATH] && Object.keys(files[ROOT_PATH]).map((key, index) => <FileRender
+                  file={files[ROOT_PATH][key]}
+                  fileDecorations={fileState}
                   index={index}
                   focusContext={state.focusContext}
                   focusEdit={state.focusEdit}
@@ -444,6 +460,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                   handleClickFolder={handleClickFolder}
                   handleContextMenu={handleContextMenu}
                   key={index}
+                  
                 />)
               }
             </TreeView>
@@ -473,6 +490,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         />
       }
     </div>
+    </Drag>
   )
 }
 

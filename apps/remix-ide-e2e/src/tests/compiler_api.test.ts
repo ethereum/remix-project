@@ -21,7 +21,7 @@ module.exports = {
   'Should compile using "compileWithParamaters" API #group1': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsCompile.js', { content: jsCompile })
-      .executeScript('remix.exeCurrent()')
+      .executeScriptInTerminal('remix.exeCurrent()')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '"languageversion":"0.6.8+commit.0bbfe453"', 60000)
       .click('*[data-id="terminalClearConsole"]')
   },
@@ -29,7 +29,7 @@ module.exports = {
   'Should compile using "compileWithParamaters" API with optimization On #group2': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsCompileWithOptimization.js', { content: jsCompileWithOptimization })
-      .executeScript('remix.exeCurrent()')
+      .executeScriptInTerminal('remix.exeCurrent()')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '\\"optimizer\\":{\\"enabled\\":true,\\"runs\\":300}', 60000)
       .click('*[data-id="terminalClearConsole"]')
   },
@@ -37,7 +37,7 @@ module.exports = {
   'Should compile using "compileWithParamaters" API with optimization off check default runs #group3': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsCompileWithOptimizationDefault.js', { content: jsCompileWithOptimizationDefault })
-      .executeScript('remix.exeCurrent()')
+      .executeScriptInTerminal('remix.exeCurrent()')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '\\"optimizer\\":{\\"enabled\\":false,\\"runs\\":200}', 60000)
       .click('*[data-id="terminalClearConsole"]')
   },
@@ -45,8 +45,8 @@ module.exports = {
   'Should update the compiler configuration with "setCompilerConfig" API #group4': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_updateConfiguration.js', { content: updateConfiguration })
-      .executeScript('remix.exeCurrent()')
-      .pause(5000)
+      .executeScriptInTerminal('remix.exeCurrent()')
+      .pause(15000)
       .addFile('test_updateConfiguration.sol', { content: simpleContract })
       .verifyContracts(['StorageTestUpdateConfiguration'], { wait: 5000, version: '0.6.8+commit.0bbfe453' })
   },
@@ -168,3 +168,4 @@ contract DoesNotCompile {
     function fStackLimit(uint u1, uint u2, uint u3, uint u4, uint u5, uint u6, uint u7, uint u8, uint u9, uint u10, uint u11, uint u12) public {        
     }
 }`
+

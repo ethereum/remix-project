@@ -1,17 +1,19 @@
 import React from 'react'
 import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import axios, { AxiosResponse } from 'axios'
-import { addInputFieldSuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
+import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
 import { checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
-import { JSONStandardInput } from '../types'
-import { examples } from '../templates/examples'
+import { JSONStandardInput, WorkspaceTemplate } from '../types'
 import { QueryParams } from '@remix-project/remix-lib'
+import * as templateWithContent from '@remix-project/remix-ws-templates'
+import { ROOT_PATH } from '../utils/constants'
 
 
 const LOCALHOST = ' - connect to localhost - '
 const NO_WORKSPACE = ' - none - '
 const queryParams = new QueryParams()
+const _paq = window._paq = window._paq || [] //eslint-disable-line
 let plugin, dispatch: React.Dispatch<any>
 
 export const setPlugin = (filePanelPlugin, reducerDispatch) => {
@@ -41,17 +43,17 @@ export const addInputField = async (type: 'file' | 'folder', path: string, cb?: 
   return promise
 }
 
-export const createWorkspace = async (workspaceName: string, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+export const createWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void, isGitRepo: boolean = false) => {
   await plugin.fileManager.closeAllFiles()
-  const promise = createWorkspaceTemplate(workspaceName, 'default-template')
+  const promise = createWorkspaceTemplate(workspaceName, workspaceTemplateName)
 
   dispatch(createWorkspaceRequest(promise))
   promise.then(async () => {
-    dispatch(createWorkspaceSuccess(workspaceName))
+    dispatch(createWorkspaceSuccess({ name: workspaceName, isGitRepo }))
     await plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
     await plugin.setWorkspaces(await getWorkspaces())
     await plugin.workspaceCreated(workspaceName)
-    if (!isEmpty) await loadWorkspacePreset('default-template')
+    if (!isEmpty) await loadWorkspacePreset(workspaceTemplateName)
     cb && cb(null, workspaceName)
   }).catch((error) => {
     dispatch(createWorkspaceError({ error }))
@@ -60,10 +62,10 @@ export const createWorkspace = async (workspaceName: string, isEmpty = false, cb
   return promise
 }
 
-export const createWorkspaceTemplate = async (workspaceName: string, template: 'gist-template' | 'code-template' | 'default-template' = 'default-template') => {
+export const createWorkspaceTemplate = async (workspaceName: string, template: WorkspaceTemplate = 'remixDefault') => {
   if (!workspaceName) throw new Error('workspace name cannot be empty')
   if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
-  if (await workspaceExists(workspaceName) && template === 'default-template') throw new Error('workspace already exists')
+  if (await workspaceExists(workspaceName) && template === 'remixDefault') throw new Error('workspace already exists')
   else {
     const workspaceProvider = plugin.fileProviders.workspace
 
@@ -74,10 +76,11 @@ export const createWorkspaceTemplate = async (workspaceName: string, template: '
 export type UrlParametersType = {
   gist: string,
   code: string,
-  url: string
+  url: string,
+  language: string
 }
 
-export const loadWorkspacePreset = async (template: 'gist-template' | 'code-template' | 'default-template' = 'default-template') => {
+export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDefault') => {
   const workspaceProvider = plugin.fileProviders.workspace
   const params = queryParams.get() as UrlParametersType
 
@@ -90,7 +93,7 @@ export const loadWorkspacePreset = async (template: 'gist-template' | 'code-temp
       if (params.code) {
         const hash = bufferToHex(keccakFromString(params.code))
 
-        path = 'contract-' + hash.replace('0x', '').substring(0, 10) + '.sol'
+        path = 'contract-' + hash.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul': '.sol')
         content = atob(params.code)
         await workspaceProvider.set(path, content)
       }
@@ -150,15 +153,23 @@ export const loadWorkspacePreset = async (template: 'gist-template' | 'code-temp
       }
       break
 
-    case 'default-template':
-      // creates a new workspace and populates it with default project template.
-      // insert example contracts
-      for (const file in examples) {
-        try {
-          await workspaceProvider.set(examples[file].name, examples[file].content)
-        } catch (error) {
-          console.error(error)
+    default:
+      try {
+        const templateList = Object.keys(templateWithContent)
+        if (!templateList.includes(template)) break
+        _paq.push(['trackEvent', 'workspace', 'template', template])
+        // @ts-ignore
+        const files = await templateWithContent[template]()
+        for (const file in files) {
+          try {
+            await workspaceProvider.set(file, files[file])
+          } catch (error) {
+            console.error(error)
+          }
         }
+      } catch (e) {
+        dispatch(displayNotification('Workspace load error', e.message, 'OK', null, () => { dispatch(hideNotification()) }, null))
+        console.error(e)
       }
       break
   }
@@ -236,17 +247,19 @@ export const switchToWorkspace = async (name: string) => {
     dispatch(setMode('localhost'))
     plugin.emit('setWorkspace', { name: null, isLocalhost: true })
   } else if (name === NO_WORKSPACE) {
-    await plugin.fileProviders.workspace.clearWorkspace()
-    await plugin.setWorkspace({ name: null, isLocalhost: false })
-    dispatch(setCurrentWorkspace(null))
+    // if there is no other workspace, create remix default workspace
+    plugin.call('notification', 'toast', `No workspace found! Creating default workspace ....`)
+    await createWorkspace('default_workspace', 'remixDefault')
   } else {
     const isActive = await plugin.call('manager', 'isActive', 'remixd')
 
     if (isActive) await plugin.call('manager', 'deactivatePlugin', 'remixd')
     await plugin.fileProviders.workspace.setWorkspace(name)
     await plugin.setWorkspace({ name, isLocalhost: false })
+    const isGitRepo = await plugin.fileManager.isGitRepo()
+
     dispatch(setMode('browser'))
-    dispatch(setCurrentWorkspace(name))
+    dispatch(setCurrentWorkspace({ name, isGitRepo }))
     dispatch(setReadOnlyMode(false))
   }
 }
@@ -293,22 +306,87 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
   })
 }
 
-export const getWorkspaces = async (): Promise<string[]> | undefined => {
+export const getWorkspaces = async (): Promise<{name: string, isGitRepo: boolean}[]> | undefined => {
   try {
-    const workspaces: string[] = await new Promise((resolve, reject) => {
+    const workspaces: {name: string, isGitRepo: boolean}[] = await new Promise((resolve, reject) => {
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
 
       plugin.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
         if (error) {
           return reject(error)
         }
-        resolve(Object.keys(items)
+        Promise.all(Object.keys(items)
           .filter((item) => items[item].isDirectory)
-          .map((folder) => folder.replace(workspacesPath + '/', '')))
+          .map(async (folder) => {
+            const isGitRepo: boolean = await plugin.fileProviders.browser.exists('/' + folder + '/.git')
+            return {
+              name: folder.replace(workspacesPath + '/', ''),
+              isGitRepo
+            }
+          })).then(workspacesList => resolve(workspacesList))
       })
     })
-
     await plugin.setWorkspaces(workspaces)
     return workspaces
-  } catch (e) {}
+ } catch (e) {}
+}
+
+export const cloneRepository = async (url: string) => {
+  const config = plugin.registry.get('config').api
+  const token = config.get('settings/gist-access-token')
+  const repoConfig = { url, token }
+
+  try {
+    const repoName = await getRepositoryTitle(url)
+
+    await createWorkspace(repoName, 'blank', true, null, true)
+    const promise = plugin.call('dGitProvider', 'clone', repoConfig, repoName, true)
+
+    dispatch(cloneRepositoryRequest())
+    promise.then(async () => {
+      const isActive = await plugin.call('manager', 'isActive', 'dgit')
+
+      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+      await fetchWorkspaceDirectory(ROOT_PATH)
+      dispatch(cloneRepositorySuccess())
+    }).catch(() => {
+      const cloneModal = {
+        id: 'cloneGitRepository',
+        title: 'Clone Git Repository',
+        message: 'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in Settings plugin',
+        modalType: 'modal',
+        okLabel: 'OK',
+        okFn: async () => {
+          await deleteWorkspace(repoName)
+          dispatch(cloneRepositoryFailed())
+        },
+        hideFn: async () => {
+          await deleteWorkspace(repoName)
+          dispatch(cloneRepositoryFailed())
+        }
+      }
+      plugin.call('notification', 'modal', cloneModal)
+    })
+  } catch (e) {
+    dispatch(displayPopUp('An error occured: ' + e))
+  }
+}
+
+export const getRepositoryTitle = async (url: string) => {
+  const urlArray = url.split('/')
+  let name = urlArray.length > 0 ? urlArray[urlArray.length - 1] : ''
+
+  if (!name) name = 'Undefined'
+  let _counter
+  let exist = true
+
+  do {
+    const isDuplicate = await workspaceExists(name + (_counter || ''))
+
+    if (isDuplicate) _counter = (_counter || 0) + 1
+    else exist = false
+  } while (exist)
+  const counter = _counter || ''
+
+  return name + counter
 }

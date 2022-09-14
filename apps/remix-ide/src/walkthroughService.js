@@ -5,7 +5,7 @@ const introJs = require('intro.js')
 const profile = {
   name: 'walkthrough',
   displayName: 'Walkthrough',
-  description: '',
+  description: 'Remix walkthrough for beginner',
   version: packageJson.version,
   methods: ['start']
 }
@@ -33,7 +33,7 @@ export class WalkthroughService extends Plugin {
         {
           element: document.querySelector('#verticalIconsKindsolidity'),
           title: 'Solidity Compiler',
-          intro: 'Having selected a .sol file in the File Explorers (the icon above), compile it with the Solidity Compiler.',
+          intro: 'Having selected a .sol file in the File Explorer (the icon above), compile it with the Solidity Compiler.',
           tooltipClass: 'bg-light text-dark',
           position: 'right'
         },

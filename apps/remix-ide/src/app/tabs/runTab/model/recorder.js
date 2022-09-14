@@ -1,16 +1,28 @@
 var async = require('async')
 var ethutil = require('ethereumjs-util')
 var remixLib = require('@remix-project/remix-lib')
+import { Plugin } from '@remixproject/engine'
+import * as packageJson from '../../../../.././../../package.json'
 var EventManager = remixLib.EventManager
 var format = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
 const helper = require('../../../../lib/helper')
 
+const _paq = window._paq = window._paq || []  //eslint-disable-line
+
+const profile = {
+  name: 'recorder',
+  displayName: 'Recorder',
+  description: 'Records transactions to save and run',
+  version: packageJson.version,
+  methods: [  ]
+}
 /**
   * Record transaction as long as the user create them.
   */
-class Recorder {
+class Recorder extends Plugin {
   constructor (blockchain) {
+    super(profile)
     this.event = new EventManager()
     this.blockchain = blockchain
     this.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {}, _contractABIReferences: {}, _linkReferences: {} }
@@ -21,7 +33,13 @@ class Recorder {
 
       // convert to and from to tokens
       if (this.data._listen) {
-        var record = { value, parameters: payLoad.funArgs }
+        var record = { 
+          value,
+          inputs: txHelper.serializeInputs(payLoad.funAbi),
+          parameters: payLoad.funArgs,
+          name: payLoad.funAbi.name,          
+          type: payLoad.funAbi.type
+        }
         if (!to) {
           var abi = payLoad.contractABI
           var keccak = ethutil.bufferToHex(ethutil.keccakFromString(JSON.stringify(abi)))
@@ -43,10 +61,7 @@ class Recorder {
           var creationTimestamp = this.data._createdContracts[to]
           record.to = `created{${creationTimestamp}}`
           record.abi = this.data._contractABIReferences[creationTimestamp]
-        }
-        record.name = payLoad.funAbi.name
-        record.inputs = txHelper.serializeInputs(payLoad.funAbi)
-        record.type = payLoad.funAbi.type
+        }        
         for (var p in record.parameters) {
           var thisarg = record.parameters[p]
           var thistimestamp = this.data._createdContracts[thisarg]
@@ -169,16 +184,33 @@ class Recorder {
   /**
     * run the list of records
     *
+    * @param {Object} records
     * @param {Object} accounts
     * @param {Object} options
     * @param {Object} abis
+    * @param {Object} linkReferences
+    * @param {Function} confirmationCb
+    * @param {Function} continueCb
+    * @param {Function} promptCb
+    * @param {Function} alertCb
+    * @param {Function} logCallBack
+    * @param {Function} liveMode
     * @param {Function} newContractFn
     *
     */
-  run (records, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, newContractFn) {
+  run (records, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, liveMode, newContractFn) {
     this.setListen(false)
-    logCallBack(`Running ${records.length} transaction(s) ...`)
-    async.eachOfSeries(records, (tx, index, cb) => {
+    const liveMsg = liveMode ? ' with updated contracts' : ''
+    logCallBack(`Running ${records.length} transaction(s)${liveMsg} ...`)
+    async.eachOfSeries(records, async (tx, index, cb) => {
+      if (liveMode && tx.record.type === 'constructor') {
+        // resolve the bytecode and ABI using the contract name, this ensure getting the last compiled one.
+        const data = await this.call('compilerArtefacts', 'getArtefactsByContractName', tx.record.contractName)
+        tx.record.bytecode = data.artefact.evm.bytecode.object
+        const updatedABIKeccak = ethutil.bufferToHex(ethutil.keccakFromString(JSON.stringify(data.artefact.abi)))
+        abis[updatedABIKeccak] = data.artefact.abi
+        tx.record.abi = updatedABIKeccak
+      }
       var record = this.resolveAddress(tx.record, accounts, options)
       var abi = abis[tx.record.abi]
       if (!abi) {
@@ -257,8 +289,10 @@ class Recorder {
     }, () => { this.setListen(true) })
   }
 
-  runScenario (json, continueCb, promptCb, alertCb, confirmationCb, logCallBack, cb) {
+  runScenario (liveMode, json, continueCb, promptCb, alertCb, confirmationCb, logCallBack, cb) {
+    _paq.push(['trackEvent', 'run', 'recorder', 'start'])
     if (!json) {
+      _paq.push(['trackEvent', 'run', 'recorder', 'wrong-json'])
       return cb('a json content must be provided')
     }
     if (typeof json === 'string') {
@@ -269,21 +303,26 @@ class Recorder {
       }
     }
 
+    let txArray
+    let accounts
+    let options
+    let abis
+    let linkReferences
     try {
-      var txArray = json.transactions || []
-      var accounts = json.accounts || []
-      var options = json.options || {}
-      var abis = json.abis || {}
-      var linkReferences = json.linkReferences || {}
+      txArray = json.transactions || []
+      accounts = json.accounts || []
+      options = json.options || {}
+      abis = json.abis || {}
+      linkReferences = json.linkReferences || {}
     } catch (e) {
-      return cb('Invalid Scenario File. Please try again')
+      return cb('Invalid scenario file. Please try again')
     }
 
     if (!txArray.length) {
-      return
+      return cb('No transactions found in scenario file')
     }
 
-    this.run(txArray, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, (abi, address, contractName) => {
+    this.run(txArray, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, liveMode, (abi, address, contractName) => {
       cb(null, abi, address, contractName)
     })
   }

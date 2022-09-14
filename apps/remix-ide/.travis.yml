@@ -9,8 +9,8 @@ branches:
   - master
   - remix_live
 script:
-  - npm install
-  - npm run lint && npm run test && npm run make-mock-compiler && npm run build
+  - yarn install
+  - yarn run lint && yarn run test && yarn run make-mock-compiler && yarn run build
   - wget http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
   - wget http://chromedriver.storage.googleapis.com/2.30/chromedriver_linux64.zip
   - unzip chromedriver_linux64.zip

@@ -41,18 +41,42 @@ export const useMatomoAnalytics = (config, checked, dispatch) => {
   }
 }
 
+export const useAutoCompletion = (config, checked, dispatch) => {
+  config.set('settings/auto-completion', checked)
+  dispatch({ type: 'useAutoCompletion', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+}
+
+export const useShowGasInEditor = (config, checked, dispatch) => {
+  config.set('settings/show-gas', checked)
+  dispatch({ type: 'useShowGasInEditor', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+}
+
+export const useDisplayErrors = (config, checked, dispatch) => {
+  config.set('settings/display-errors', checked)
+  dispatch({ type: 'displayErrors', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+}
+
 export const saveTokenToast = (config, dispatch, tokenValue, key) => {
   config.set('settings/' + key, tokenValue)
-  dispatch({ type: 'save', payload: { message: 'Access token has been saved' } })
+  dispatch({ type: 'save', payload: { message: 'Credentials updated' } })
 }
 
 export const removeTokenToast = (config, dispatch, key) => {
   config.set('settings/' + key, '')
-  dispatch({ type: 'removed', payload: { message: 'Access token removed' } })
+  dispatch({ type: 'removed', payload: { message: 'Credentials removed' } })
 }
 
 export const saveSwarmSettingsToast = (config, dispatch, privateBeeAddress, postageStampId) => {
   config.set('settings/swarm-private-bee-address', privateBeeAddress)
   config.set('settings/swarm-postage-stamp-id', postageStampId)
   dispatch({ type: 'save', payload: { message: 'Swarm settings have been saved' } })
+}
+
+export const saveIpfsSettingsToast = (config, dispatch, ipfsURL, ipfsProtocol, ipfsPort, ipfsProjectId, ipfsProjectSecret) => {
+  config.set('settings/ipfs-url', ipfsURL)
+  config.set('settings/ipfs-protocol', ipfsProtocol)
+  config.set('settings/ipfs-port', ipfsPort)
+  config.set('settings/ipfs-project-id', ipfsProjectId)
+  config.set('settings/ipfs-project-secret', ipfsProjectSecret)
+  dispatch({ type: 'save', payload: { message: 'IPFS settings have been saved' } })
 }

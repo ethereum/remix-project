@@ -11,7 +11,7 @@
     overflow-y: auto;
   }
   .container {
-    padding-bottom: 5%;
+    padding-bottom: 0.5rem;
     max-height: 300px;
     overflow-y: auto;
   }

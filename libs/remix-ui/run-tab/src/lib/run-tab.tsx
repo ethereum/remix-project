@@ -11,22 +11,22 @@ import { Modal, Network, RunTabProps, Tx } from './types'
 import { ContractData } from '@remix-project/core-plugin'
 import { runTabInitialState, runTabReducer } from './reducers/runTab'
 import {
-  initRunTab, setAccount,
-  setUnit, setGasFee,
-  setExecutionContext, setWeb3Endpoint,
-  clearPopUp, createNewBlockchainAccount,
-  setPassphrasePrompt, setMatchPassphrasePrompt,
-  signMessageWithAddress, getSelectedContract,
-  createInstance, setSendTransactionValue,
-  updateBaseFeePerGas, updateConfirmSettings,
-  updateGasPrice, updateGasPriceStatus,
-  updateMaxFee, updateMaxPriorityFee,
-  updateTxFeeContent, clearInstances,
-  removeInstance, getContext,
-  runTransactions, loadAddress,
-  storeScenario, runCurrentScenario,
-  updateScenarioPath, getFuncABIInputs,
-  setNetworkNameFromProvider
+  initRunTab, setAccountAddress,
+  setUnitValue, setGasFeeAmount,
+  setExecutionEnvironment,
+  hideToaster, createNewAddress,
+  setPassphraseModal, setMatchPassphraseModal,
+  signMessage, fetchSelectedContract,
+  createNewInstance, setSendValue,
+  setBaseFeePerGas, setConfirmSettings,
+  setGasPrice, setGasPriceStatus,
+  setMaxFee, setMaxPriorityFee,
+  removeInstances,
+  removeSingleInstance, getExecutionContext,
+  executeTransactions, loadFromAddress,
+  storeNewScenario, runScenario,
+  setScenarioPath, getFuncABIValues,
+  setNetworkName, updateSelectedContract
 } from './actions'
 import './css/run-tab.css'
 import { PublishToStorage } from '@remix-ui/publish-to-storage'
@@ -56,10 +56,11 @@ export function RunTabUI (props: RunTabProps) {
     storage: null,
     contract: null
   })
-  runTabInitialState.selectExEnv = props.plugin.blockchain.getProvider()
+  runTabInitialState.selectExEnv = plugin.blockchain.getProvider()
   runTabInitialState.selectExEnv = runTabInitialState.selectExEnv === 'vm' ? 'vm-london' : runTabInitialState.selectExEnv
   const [runTab, dispatch] = useReducer(runTabReducer, runTabInitialState)
   const REACT_API = { runTab }
+  const currentfile = plugin.config.get('currentFile')
 
   useEffect(() => {
     initRunTab(plugin)(dispatch)
@@ -134,7 +135,7 @@ export function RunTabUI (props: RunTabProps) {
 
   const handleToaster = () => {
     setFocusToaster('')
-    clearPopUp()
+    hideToaster()
   }
 
   const toast = (toasterMsg: string) => {
@@ -166,16 +167,12 @@ export function RunTabUI (props: RunTabProps) {
     )
   }
 
-  const logBuilder = (msg: string) => {
-    return <pre>{msg}</pre>
-  }
-
   const passphrasePrompt = (message: string) => {
-    return <PassphrasePrompt message={message} setPassphrase={setPassphrasePrompt} defaultValue={runTab.passphrase} />
+    return <PassphrasePrompt message={message} setPassphrase={setPassphraseModal} defaultValue={runTab.passphrase} />
   }
 
   const scenarioPrompt = (message: string, defaultValue) => {
-    return <ScenarioPrompt message={message} setScenarioPath={updateScenarioPath} defaultValue={defaultValue} />
+    return <ScenarioPrompt message={message} setScenarioPath={setScenarioPath} defaultValue={defaultValue} />
   }
 
   const mainnetPrompt = (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => {
@@ -186,14 +183,12 @@ export function RunTabUI (props: RunTabProps) {
       amount={amount}
       gasEstimation={gasEstimation}
       setNewGasPrice={gasFees}
-      updateBaseFeePerGas={updateBaseFeePerGas}
-      updateConfirmSettings={updateConfirmSettings}
-      updateGasPrice={updateGasPrice}
-      updateGasPriceStatus={updateGasPriceStatus}
-      updateMaxFee={updateMaxFee}
-      updateMaxPriorityFee={updateMaxPriorityFee}
-      setTxFeeContent={updateTxFeeContent}
-      txFeeContent={runTab.txFeeContent}
+      updateBaseFeePerGas={setBaseFeePerGas}
+      updateConfirmSettings={setConfirmSettings}
+      updateGasPrice={setGasPrice}
+      updateGasPriceStatus={setGasPriceStatus}
+      updateMaxFee={setMaxFee}
+      updateMaxPriorityFee={setMaxPriorityFee}
       maxFee={runTab.maxFee}
       maxPriorityFee={runTab.maxPriorityFee}
     />
@@ -207,73 +202,71 @@ export function RunTabUI (props: RunTabProps) {
             networkName={runTab.networkName}
             personalMode={runTab.personalMode}
             selectExEnv={runTab.selectExEnv}
-            setWeb3Endpoint={setWeb3Endpoint}
             accounts={runTab.accounts}
-            setAccount={setAccount}
-            setUnit={setUnit}
+            setAccount={setAccountAddress}
+            setUnit={setUnitValue}
             sendValue={runTab.sendValue}
-            setSendValue={setSendTransactionValue}
+            setSendValue={setSendValue}
             sendUnit={runTab.sendUnit}
             gasLimit={runTab.gasLimit}
-            setGasFee={setGasFee}
+            setGasFee={setGasFeeAmount}
             providers={runTab.providers}
-            setExecutionContext={setExecutionContext}
-            createNewBlockchainAccount={createNewBlockchainAccount}
-            setPassphrase={setPassphrasePrompt}
-            setMatchPassphrase={setMatchPassphrasePrompt}
+            setExecutionContext={setExecutionEnvironment}
+            createNewBlockchainAccount={createNewAddress}
+            setPassphrase={setPassphraseModal}
+            setMatchPassphrase={setMatchPassphraseModal}
             modal={modal}
             tooltip={toast}
-            signMessageWithAddress={signMessageWithAddress}
+            signMessageWithAddress={signMessage}
             passphrase={runTab.passphrase}
           />
           <ContractDropdownUI
             exEnvironment={runTab.selectExEnv}
             contracts={runTab.contracts}
-            getSelectedContract={getSelectedContract}
+            getSelectedContract={fetchSelectedContract}
             modal={modal}
             passphrase={runTab.passphrase}
-            setPassphrase={setPassphrasePrompt}
-            createInstance={createInstance}
+            setPassphrase={setPassphraseModal}
+            createInstance={createNewInstance}
             ipfsCheckedState={runTab.ipfsChecked}
             setIpfsCheckedState={setCheckIpfs}
             publishToStorage={publishToStorage}
             gasEstimationPrompt={gasEstimationPrompt}
-            logBuilder={logBuilder}
             passphrasePrompt={passphrasePrompt}
             mainnetPrompt={mainnetPrompt}
             tooltip={toast}
-            loadAddress={loadAddress}
+            loadAddress={loadFromAddress}
             networkName={runTab.networkName}
-            setNetworkName={setNetworkNameFromProvider}
+            setNetworkName={setNetworkName}
+            setSelectedContract={updateSelectedContract}
           />
           <RecorderUI
             gasEstimationPrompt={gasEstimationPrompt}
-            logBuilder={logBuilder}
             passphrasePrompt={passphrasePrompt}
             mainnetPrompt={mainnetPrompt}
-            storeScenario={storeScenario}
-            runCurrentScenario={runCurrentScenario}
+            storeScenario={storeNewScenario}
+            runCurrentScenario={runScenario}
             scenarioPrompt={scenarioPrompt}
             count={runTab.recorder.transactionCount}
+            currentFile={currentfile}
           />
           <InstanceContainerUI
             instances={runTab.instances}
-            clearInstances={clearInstances}
-            removeInstance={removeInstance}
-            getContext={getContext}
+            clearInstances={removeInstances}
+            removeInstance={removeSingleInstance}
+            getContext={getExecutionContext}
             gasEstimationPrompt={gasEstimationPrompt}
-            logBuilder={logBuilder}
             passphrasePrompt={passphrasePrompt}
             mainnetPrompt={mainnetPrompt}
-            runTransactions={runTransactions}
+            runTransactions={executeTransactions}
             sendValue={runTab.sendValue}
-            getFuncABIInputs={getFuncABIInputs}
+            getFuncABIInputs={getFuncABIValues}
           />
         </div>
       </div>
       <ModalDialog id='udappNotify' { ...focusModal } handleHide={ handleHideModal } />
       <Toaster message={focusToaster} handleHide={handleToaster} />
-      <PublishToStorage id='udapp' api={props.plugin} resetStorage={resetStorage} storage={publishData.storage} contract={publishData.contract} />
+      <PublishToStorage id='udapp' api={plugin} resetStorage={resetStorage} storage={publishData.storage} contract={publishData.contract} />
     </Fragment>
   )
 }
