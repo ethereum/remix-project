@@ -402,7 +402,6 @@ export function GeCompletionUnits(range: IRange, monaco): monaco.languages.Compl
 }
 export function GetImports(range: IRange, monaco): monaco.languages.CompletionItem[] {
     let list = []
-    list.filter
     list = OZContracts
         .map((item) => {
         const filename = path.basename(item)
@@ -413,7 +412,6 @@ export function GetImports(range: IRange, monaco): monaco.languages.CompletionIt
             insertText: `@openzeppelin${item}`,
         }
     })
-    console.log(list)
     return list;
 };
 
