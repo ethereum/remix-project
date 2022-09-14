@@ -10,6 +10,7 @@ export class HardhatClient extends PluginClient {
   websocket: WS
   currentSharedFolder: string
   watcher: chokidar.FSWatcher
+  warnlog: boolean
 
   constructor (private readOnly = false) {
     super()
@@ -19,6 +20,7 @@ export class HardhatClient extends PluginClient {
   setWebSocket (websocket: WS): void {
     this.websocket = websocket
     this.websocket.addEventListener('close', () => {
+      this.warnlog = false
       if (this.watcher) this.watcher.close()
     })
   }
@@ -58,14 +60,19 @@ export class HardhatClient extends PluginClient {
   listenOnHardhatCompilation () {
     try {
       const buildPath = utils.absolutePath('artifacts/build-info', this.currentSharedFolder)
-      this.watcher = chokidar.watch(buildPath, { depth: 0, ignorePermissionErrors: true })
+      this.watcher = chokidar.watch(buildPath, { depth: 0, ignorePermissionErrors: true, ignoreInitial: true })
 
       const processArtifact = async (path: string) => {
-        const content = await fs.readFile(path, { encoding: 'utf-8' })
-        const compilationResult = JSON.parse(content)
-        // @ts-ignore
-        this.call('terminal', 'log', 'updated compilation result from hardhat')
-        this.emit('compilationFinished', '', compilationResult.input, 'soljson', compilationResult.output, compilationResult.solcVersion)
+        if (path.endsWith('.json')) {
+          const content = await fs.readFile(path, { encoding: 'utf-8' })
+          const compilationResult = JSON.parse(content)
+          if (!this.warnlog) {
+            // @ts-ignore
+            this.call('terminal', 'log', 'receiving compilation result from hardhat')
+            this.warnlog = true
+          }
+          this.emit('compilationFinished', '', compilationResult.input, 'soljson', compilationResult.output, compilationResult.solcVersion)
+        }
       }
 
       this.watcher.on('change', (path: string) => processArtifact(path))

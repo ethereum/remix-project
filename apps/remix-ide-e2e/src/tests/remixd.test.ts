@@ -124,7 +124,7 @@ module.exports = {
       writeFileSync('./apps/remix-ide/contracts/artifacts/build-info/c7062fdd360381a85af23eeef31c98f8.json', JSON.stringify(hardhatCompilation))
       done()
     })
-    .expect.element('*[data-id="terminalJournal"]').text.to.contain('updated compilation result from hardhat').before(60000)
+    .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from hardhat').before(60000)
       
     browser.clickLaunchIcon('udapp')
       .assert.textContains('*[data-id="udappCompiledBy"]', 'Compiled by hardhat')
@@ -139,7 +139,7 @@ module.exports = {
       writeFileSync('./apps/remix-ide/contracts/out/Counter.sol/Counter.json', JSON.stringify(foundryCompilation))
       done()
     })
-    .expect.element('*[data-id="terminalJournal"]').text.to.contain('updated compilation result from foundry').before(60000)
+    .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from foundry').before(60000)
     
     let contractAaddress
     browser.clickLaunchIcon('udapp')
@@ -165,7 +165,7 @@ module.exports = {
       writeFileSync('./apps/remix-ide/contracts/build/contracts/Migrations.json', JSON.stringify(truffle_compilation))
       done()
     })
-    .expect.element('*[data-id="terminalJournal"]').text.to.contain('updated compilation result from truffle').before(60000)
+    .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from truffle').before(60000)
     
     browser.clickLaunchIcon('udapp')
       .assert.textContains('*[data-id="udappCompiledBy"]', 'Compiled by truffle')
