@@ -578,7 +578,7 @@ export const EditorUI = (props: EditorUIProps) => {
         monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyF,
       ],
       run: async () => { 
-        await props.plugin.call('codeFormat', 'format')
+        await props.plugin.call('codeFormatter', 'format')
       },
     }
     editor.addAction(formatAction)

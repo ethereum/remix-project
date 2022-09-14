@@ -10,7 +10,7 @@ import * as espree from 'prettier/parser-espree'
 import path from 'path'
 
 const profile = {
-    name: 'codeFormat',
+    name: 'codeFormatter',
     desciption: 'prettier plugin for Remix',
     methods: ['format'],
     events: [''],
