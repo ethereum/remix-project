@@ -1,11 +1,15 @@
 import * as WS from 'ws' // eslint-disable-line
 import { PluginClient } from '@remixproject/plugin'
+import * as chokidar from 'chokidar'
+import * as utils from '../utils'
+import * as fs from 'fs-extra'
 const { spawn } = require('child_process') // eslint-disable-line
 
 export class HardhatClient extends PluginClient {
   methods: Array<string>
   websocket: WS
   currentSharedFolder: string
+  watcher: chokidar.FSWatcher
 
   constructor (private readOnly = false) {
     super()
@@ -14,10 +18,14 @@ export class HardhatClient extends PluginClient {
 
   setWebSocket (websocket: WS): void {
     this.websocket = websocket
+    this.websocket.addEventListener('close', () => {
+      if (this.watcher) this.watcher.close()
+    })
   }
 
   sharedFolder (currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
+    this.listenOnHardhatCompilation()
   }
 
   compile (configPath: string) {
@@ -45,5 +53,25 @@ export class HardhatClient extends PluginClient {
         else resolve(result)
       })
     })
+  }
+
+  listenOnHardhatCompilation () {
+    try {
+      const buildPath = utils.absolutePath('artifacts/build-info', this.currentSharedFolder)
+      this.watcher = chokidar.watch(buildPath, { depth: 0, ignorePermissionErrors: true })
+
+      const processArtifact = async (path: string) => {
+        const content = await fs.readFile(path, { encoding: 'utf-8' })
+        const compilationResult = JSON.parse(content)
+        // @ts-ignore
+        this.call('terminal', 'log', 'received compilation result from hardhat')
+        this.emit('compilationFinished', '', compilationResult.input, 'soljson', compilationResult.output, compilationResult.solcVersion)
+      }
+
+      this.watcher.on('change', (path: string) => processArtifact(path))
+      this.watcher.on('add', (path: string) => processArtifact(path))
+    } catch (e) {
+      console.log(e)
+    }    
   }
 }
