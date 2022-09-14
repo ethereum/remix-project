@@ -1,0 +1,123 @@
+* {
+  box-sizing: border-box;
+}
+html, body, #root, main {
+  height: 100%;
+  margin: 0;
+}
+
+#vyper-plugin header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  padding: 5px 15px;
+}
+
+#vyper-plugin header a,
+#vyper-plugin header .title {
+  display: flex;
+  height: 60%;
+}
+
+#vyper-plugin header svg,
+#vyper-plugin header img {
+  width: auto;
+  height: 100%;
+}
+
+#vyper-plugin section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: calc(100% - 50px);
+}
+
+.btn-group-toggle {
+  width: 90%;
+  text-transform: uppercase;
+  margin: 10px 0;
+}
+
+.btn-group-toggle .btn {
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+#local-url {
+  width: 90%;
+}
+
+#compile-btn {
+  width: 100%;
+}
+
+#compile-btn * {
+  width: 100%;
+}
+
+#result {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding-top: 10px;
+  overflow: hidden;
+}
+
+#result.error {
+  justify-content: flex-start;
+}
+#result.error svg {
+  width: 40px;
+  height: 40px;
+  margin: 10px;
+}
+
+#result nav {
+  width: 100%;
+  flex-wrap: nowrap;
+  justify-content: space-evenly;
+}
+
+
+#result nav a {
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+}
+
+#result .tab-content {
+  flex: 1;
+  width: 100%;
+  padding: 15px;
+  overflow: auto;
+}
+
+#result .tab-pane.active {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+#result .copy {
+  padding: 5x;
+  font-size: 0.8rem;
+  margin: 10px;
+}
+
+#result p {
+  text-align: center;
+  width: 100% !important;
+}
+
+#result .react-json-view {
+  overflow-y: auto;
+}
+
+#result textarea {
+  border: none;
+  height: 100%;
+  width: 100%;
+}

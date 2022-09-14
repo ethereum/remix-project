@@ -10,7 +10,7 @@
 ### Installation
 `@remix-project/remix-debug` is an NPM package and can be installed using NPM as:
 
-`npm install @remix-project/remix-debug`
+`yarn add @remix-project/remix-debug`
 
 ### How to use
 

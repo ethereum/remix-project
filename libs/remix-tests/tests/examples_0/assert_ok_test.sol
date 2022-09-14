@@ -1,7 +1,5 @@
 import "remix_tests.sol"; // this import is automatically injected by Remix.
-
-
-import "./hardhat/console.sol";
+import "hardhat/console.sol";
 
 contract AssertOkTest {
 

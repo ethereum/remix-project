@@ -26,6 +26,21 @@ export const initialState = {
       name: 'useMatomoAnalytics',
       isChecked: false,
       textClass: textSecondary
+    },
+    {
+      name: 'useAutoCompletion',
+      isChecked: true,
+      textClass: textSecondary
+    },
+    {
+      name: 'useShowGasInEditor',
+      isChecked: true,
+      textClass: textSecondary
+    },
+    {
+      name: 'displayErrors',
+      isChecked: true,
+      textClass: textSecondary
     }
   ]
 }
@@ -82,9 +97,41 @@ export const settingReducer = (state, action) => {
       return {
         ...state
       }
+    
+    case 'useAutoCompletion':
+      state.elementState.map(element => {
+        if (element.name === 'useAutoCompletion') {
+          element.isChecked = action.payload.isChecked
+          element.textClass = action.payload.textClass
+        }
+      })
+      return {
+        ...state
+      }
+      case 'displayErrors':
+        state.elementState.map(element => {
+          if (element.name === 'displayErrors') {
+            element.isChecked = action.payload.isChecked
+            element.textClass = action.payload.textClass
+          }
+        })
+        return {
+          ...state
+        }
+    case 'useShowGasInEditor':
+      state.elementState.map(element => {
+        if (element.name === 'useShowGasInEditor') {
+          element.isChecked = action.payload.isChecked
+          element.textClass = action.payload.textClass
+        }
+      })
+      return {
+        ...state
+      }
     default:
       return initialState
   }
+  
 }
 
 export const toastInitialState = {

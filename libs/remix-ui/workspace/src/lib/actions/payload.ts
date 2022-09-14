@@ -1,13 +1,14 @@
+import { fileDecoration } from '@remix-ui/file-decorators'
 import { action } from '../types'
 
-export const setCurrentWorkspace = (workspace: string) => {
+export const setCurrentWorkspace = (workspace: { name: string; isGitRepo: boolean; }) => {
   return {
     type: 'SET_CURRENT_WORKSPACE',
     payload: workspace
   }
 }
 
-export const setWorkspaces = (workspaces: string[]) => {
+export const setWorkspaces = (workspaces: { name: string; isGitRepo: boolean; }[]) => {
   return {
     type: 'SET_WORKSPACES',
     payload: workspaces
@@ -125,7 +126,7 @@ export const createWorkspaceRequest = (promise: Promise<any>) => {
   }
 }
 
-export const createWorkspaceSuccess = (workspaceName: string) => {
+export const createWorkspaceSuccess = (workspaceName: { name: string; isGitRepo: boolean; }) => {
   return {
     type: 'CREATE_WORKSPACE_SUCCESS',
     payload: workspaceName
@@ -237,5 +238,29 @@ export const loadLocalhostSuccess = () => {
 export const fsInitializationCompleted = () => {
   return {
     type: 'FS_INITIALIZATION_COMPLETED'
+  }
+}
+
+export const setFileDecorationSuccess = (items: fileDecoration[]) => {
+  return {
+    type: 'SET_FILE_DECORATION_SUCCESS',
+    payload: items
+  }
+}
+export const cloneRepositoryRequest = () => {
+  return {
+    type: 'CLONE_REPOSITORY_REQUEST'
+  }
+}
+
+export const cloneRepositorySuccess = () => {
+  return {
+    type: 'CLONE_REPOSITORY_SUCCESS'
+  }
+}
+
+export const cloneRepositoryFailed = () => {
+  return {
+    type: 'CLONE_REPOSITORY_FAILED'
   }
 }

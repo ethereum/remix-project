@@ -42,7 +42,7 @@ module.exports = {
     .waitForElementPresent('#staticanalysisresult .warning', 5000)
     .assert.containsText('#verticalIconsKindsolidityStaticAnalysis .remixui_status', '1') // Check warning count
     .verify.elementPresent('input[name="showLibWarnings"]')
-    .verify.elementNotPresent('input[name="showLibWarnings"]:checked')
+    .verify.not.elementPresent('input[name="showLibWarnings"]:checked')
     .verify.elementPresent('label[id="headingshowLibWarnings"]')
     .click('label[id="headingshowLibWarnings"]')
     .pause(1000)
@@ -62,7 +62,7 @@ function runTests (browser: NightwatchBrowser) {
     .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['TooMuchGas', 'test1', 'test2'])
     .clickLaunchIcon('solidityStaticAnalysis')
     .click('#staticanalysisButton button')
-    .waitForElementPresent('#staticanalysisresult .warning', 2000, true, function () {
+    .waitForElementPresent('#staticanalysisresult .warning', 2000, 500, true, function () {
       listSelectorContains(['Use of tx.origin',
         'Fallback function of contract TooMuchGas requires too much gas',
         'TooMuchGas.() : Variables have very similar names "test" and "test1".',

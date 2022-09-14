@@ -4,7 +4,7 @@ import { runTest } from './testRunner'
 import { TestResultInterface, ResultsInterface, CompilerConfiguration, compilationInterface, ASTInterface, Options, AstNode } from './types'
 import colors from 'colors'
 import Web3 from 'web3'
-
+import { format } from 'util'
 import { compileFileOrFiles } from './compiler'
 import { deployAll } from './deployer'
 
@@ -22,6 +22,15 @@ export function runTestFiles (filepath: string, isDirectory: boolean, web3: Web3
   opts = opts || {}
   compilerConfig = compilerConfig || {} as CompilerConfiguration
   const sourceASTs: any = {}
+  const printLog = (log: string[]) => {
+    let formattedLog
+    if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
+      formattedLog = format(log[0], ...log.slice(1))
+    } else {
+      formattedLog = log.join(' ')
+    }
+    signale.log(formattedLog)
+  }
   const { Signale } = require('signale') // eslint-disable-line
   // signale configuration
   const options = {
@@ -33,6 +42,11 @@ export function runTestFiles (filepath: string, isDirectory: boolean, web3: Web3
       },
       name: {
         badge: '\n\t◼',
+        label: '',
+        color: 'whiteBright'
+      },
+      log: {
+        badge: '\t',
         label: '',
         color: 'white'
       },
@@ -104,17 +118,24 @@ export function runTestFiles (filepath: string, isDirectory: boolean, web3: Web3
       let totalPassing = 0
       let totalFailing = 0
       let totalTime = 0
-      const errors: any[] = []
 
       const _testCallback = function (err: Error | null | undefined, result: TestResultInterface) {
         if (err) throw err
         if (result.type === 'contract') {
-          signale.name(result.value.white)
+          signale.name(result.value)
+          console.log('\n')
         } else if (result.type === 'testPass') {
-          signale.result(result.value)
+          if (result?.hhLogs?.length) result.hhLogs.forEach(printLog)
+          signale.result(result.value.white)
         } else if (result.type === 'testFailure') {
-          signale.error(result.value.red)
-          errors.push(result)
+          if (result?.hhLogs?.length) result.hhLogs.forEach(printLog)
+          signale.error(result.value.white)
+          if (result.assertMethod) {
+            console.log(colors.green('\t    Expected value should be ' + result.assertMethod + ' to: ' + result.expected))
+            console.log(colors.red('\t    Received: ' + result.returned))
+          }
+          console.log(colors.red('\t    Message: ' + result.errMsg))
+          console.log('\n')
         }
       }
       const _resultsCallback = (_err: Error | null | undefined, result: ResultsInterface, cb) => {
@@ -127,7 +148,7 @@ export function runTestFiles (filepath: string, isDirectory: boolean, web3: Web3
       async.eachOfLimit(contractsToTest, 1, (contractName: string, index, cb) => {
         try {
           const fileAST: AstNode = sourceASTs[contracts[contractName]['filename']]
-          runTest(contractName, contracts[contractName], contractsToTestDetails[index], fileAST, { accounts }, _testCallback, (err, result) => {
+          runTest(contractName, contracts[contractName], contractsToTestDetails[index], fileAST, { accounts, web3 }, _testCallback, (err, result) => {
             if (err) {
               console.log(err)
               return cb(err)
@@ -141,23 +162,16 @@ export function runTestFiles (filepath: string, isDirectory: boolean, web3: Web3
         if (err) {
           return next(err)
         }
-
         console.log('\n')
-        if (totalPassing > 0) {
-          console.log(colors.green(totalPassing + ' passing ') + colors.grey('(' + totalTime + 's)'))
-        }
-        if (totalFailing > 0) {
-          console.log(colors.red(totalFailing + ' failing'))
-        }
-        console.log('')
+        console.log(colors.bold.underline('Tests Summary: '))
 
-        errors.forEach((error, index) => {
-          console.log('  ' + (index + 1) + ') ' + colors.bold(error.context + ': ') + error.value)
-          console.log('')
-          console.log(colors.red('\t error: ' + error.errMsg))
-          console.log(colors.green('\t expected value to be ' + error.assertMethod + ' to: ' + error.expected))
-          console.log(colors.red('\t returned: ' + error.returned))
-        })
+        if (totalPassing >= 0) {
+          console.log(colors.green('Passed: ' + totalPassing))
+        }
+        if (totalFailing >= 0) {
+          console.log(colors.red('Failed: ' + totalFailing))
+        }
+        console.log(colors.white('Time Taken: ' + totalTime + 's'))
         console.log('')
 
         next()

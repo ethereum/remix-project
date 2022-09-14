@@ -4,13 +4,17 @@ import { QueryParams } from '@remix-project/remix-lib'
 import { IframePlugin } from '@remixproject/engine-web'
 const _paq = window._paq = window._paq || []
 
+// requiredModule removes the plugin from the plugin manager list on UI
 const requiredModules = [ // services + layout views + system views
   'manager', 'config', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme',
   'fileManager', 'contentImport', 'blockchain', 'web3Provider', 'scriptRunner', 'fetchAndCompile', 'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons',
-  'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity-logic', 'gistHandler', 'layout',
-  'notification', 'permissionhandler', 'walkthrough', 'storage', 'restorebackupzip', 'link-libraries', 'deploy-libraries', 'openzeppelin-proxy', 'hardhat-provider', 'compileAndRun', 'search']
+  'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity', 'solidity-logic', 'gistHandler', 'layout',
+  'notification', 'permissionhandler', 'walkthrough', 'storage', 'restorebackupzip', 'link-libraries', 'deploy-libraries', 'openzeppelin-proxy', 
+  'hardhat-provider', 'ganache-provider', 'foundry-provider', 'basic-http-provider', 'injected-optimism-provider', 'injected-arbitrum-one-provider',
+  'compileAndRun', 'search', 'recorder', 'fileDecorator', 'codeParser']
 
-const dependentModules = ['git', 'hardhat', 'truffle', 'slither'] // module which shouldn't be manually activated (e.g git is activated by remixd)
+// dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
+const dependentModules = ['hardhat', 'truffle', 'slither'] 
 
 const sensitiveCalls = {
   'fileManager': ['writeFile', 'copyFile', 'rename', 'copyDir'],
@@ -19,7 +23,10 @@ const sensitiveCalls = {
 }
 
 export function isNative(name) {
-  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'hardhat-provider', 'solidityStaticAnalysis', 'solidityUnitTesting', 'layout', 'notification', 'hardhat-provider', 'ganache-provider']
+  // nativePlugin allows to bypass the permission request
+  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'solidity-logic', 'solidityStaticAnalysis', 'solidityUnitTesting', 
+    'layout', 'notification', 'hardhat-provider', 'ganache-provider', 'foundry-provider', 'basic-http-provider', 'injected-optimism-provider',
+    'tabs', 'injected-arbitrum-one-provider']
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
@@ -140,9 +147,11 @@ export class RemixAppManager extends PluginManager {
         }
       }
     }
-    return plugins.map(plugin => {
+    const testPluginName = localStorage.getItem('test-plugin-name')
+    const testPluginUrl = localStorage.getItem('test-plugin-url')
+    return plugins.map(plugin => {      
+      if (plugin.name === testPluginName) plugin.url = testPluginUrl
       return new IframePlugin(plugin)
-      // return new IframeReactPlugin(plugin)
     })
   }
 

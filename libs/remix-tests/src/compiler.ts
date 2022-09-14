@@ -4,6 +4,7 @@ import path from 'path'
 import deepequal from 'deep-equal'
 import Log from './logger'
 import { Compiler as RemixCompiler } from '@remix-project/remix-solidity'
+import { RemixURLResolver } from '@remix-project/remix-url-resolver'
 import { SrcIfc, CompilerConfiguration, CompilationErrors } from './types'
 const logger = new Log()
 const log = logger.logger
@@ -85,6 +86,17 @@ export function compileFileOrFiles (filename: string, isDirectory: boolean, opts
     'remix_accounts.sol': { content: writeTestAccountsContract(accounts) }
   }
   const filepath: string = (isDirectory ? filename : path.dirname(filename))
+  const importsCallback = (url, cb) => {
+    try {
+      if(fs.existsSync(url)) cb(null, fs.readFileSync(url, 'utf-8'))
+      else {
+        const urlResolver = new RemixURLResolver()
+        urlResolver.resolve(url).then((result) => cb(null, result.content)).catch((error) => cb(error.message))
+      }
+    } catch (e) {
+      cb(e.message)
+    }
+  }
   try {
     if (!isDirectory && fs.existsSync(filename)) {
       if (filename.split('.').pop() === 'sol') {
@@ -114,13 +126,7 @@ export function compileFileOrFiles (filename: string, isDirectory: boolean, opts
   } finally {
     async.waterfall([
       function loadCompiler (next) {
-        compiler = new RemixCompiler((url, cb) => {
-          try {
-            cb(null, fs.readFileSync(url, 'utf-8'))
-          } catch (e) {
-            cb(e.message)
-          }
-        })
+        compiler = new RemixCompiler(importsCallback)
         if (compilerConfig) {
           const { currentCompilerUrl, evmVersion, optimize, runs } = compilerConfig
           if (evmVersion) compiler.set('evmVersion', evmVersion)
@@ -128,7 +134,7 @@ export function compileFileOrFiles (filename: string, isDirectory: boolean, opts
           if (runs) compiler.set('runs', runs)
           if (currentCompilerUrl) {
             compiler.loadRemoteVersion(currentCompilerUrl)
-            compiler.event.register('compilerLoaded', this, function (version) {
+            compiler.event.register('compilerLoaded', this, function (version, license) {
               next()
             })
           } else {
@@ -192,7 +198,7 @@ export function compileContractSources (sources: SrcIfc, newCompConfig: any, imp
         compiler.set('runs', runs)
         compiler.loadVersion(usingWorker, currentCompilerUrl)
         // @ts-ignore
-        compiler.event.register('compilerLoaded', this, (version) => {
+        compiler.event.register('compilerLoaded', this, (version, license) => {
           next()
         })
       } else {

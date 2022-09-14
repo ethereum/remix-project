@@ -41,7 +41,7 @@ module.exports = {
       .setValue('*[data-id="settingsTabGistAccessToken"]', '**********')
       .click('*[data-id="settingsTabSaveGistToken"]')
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
-      .assert.containsText('*[data-shared="tooltipPopup"]', 'Access token has been saved')
+      .assert.containsText('*[data-shared="tooltipPopup"]', 'Credentials updated')
       .pause(3000)
   },
 
@@ -59,7 +59,7 @@ module.exports = {
       .pause(1000)
       .click('*[data-id="settingsTabRemoveGistToken"]')
       .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
-      .assert.containsText('*[data-shared="tooltipPopup"]', 'Access token removed')
+      .assert.containsText('*[data-shared="tooltipPopup"]', 'Credentials removed')
       .assert.containsText('*[data-id="settingsTabGistAccessToken"]', '')
   },
 

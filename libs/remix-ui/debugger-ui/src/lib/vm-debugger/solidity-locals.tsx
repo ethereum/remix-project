@@ -3,7 +3,7 @@ import DropdownPanel from './dropdown-panel' // eslint-disable-line
 import { extractData } from '../../utils/solidityTypeFormatter' // eslint-disable-line
 import { ExtractData } from '../../types' // eslint-disable-line
 
-export const SolidityLocals = ({ data, message, registerEvent, triggerEvent }) => {
+export const SolidityLocals = ({ data, message, registerEvent, triggerEvent, className = "" }) => {
   const [calldata, setCalldata] = useState(null)
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export const SolidityLocals = ({ data, message, registerEvent, triggerEvent }) =
   }
 
   return (
-    <div id='soliditylocals' data-id="solidityLocals">
+    <div className={className} id='soliditylocals' data-id="solidityLocals">
       <DropdownPanel
         dropdownName='Solidity Locals'
         dropdownMessage={message}

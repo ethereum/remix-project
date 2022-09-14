@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, ReactElement } from 'react' // eslint-disable-line
+import * as semver from 'semver'
 import { eachOfSeries } from 'async' // eslint-disable-line
 import type Web3 from 'web3'
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
@@ -154,8 +155,23 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
       await setCurrentPath(defaultPath)
     })
 
+    const truncateVersion = (version: string) => {
+      const tmp: RegExpExecArray | null = /^(\d+.\d+.\d+)/.exec(version)
+      return tmp ? tmp[1] : version
+    }
+
     testTab.fileManager.events.on('noFileSelected', async () => { await updateForNewCurrent() })
-    testTab.fileManager.events.on('currentFileChanged', async (file: string) => await updateForNewCurrent(file))
+    testTab.fileManager.events.on('currentFileChanged', async (file: string) => {
+      await updateForNewCurrent(file)
+    })
+    testTab.on('solidity', 'compilerLoaded', async (version: string, license: string) => {
+      const { currentVersion } = testTab.compileTab.getCurrentCompilerConfig()
+
+      if (!semver.gt(truncateVersion(currentVersion), '0.4.12')) {
+        setDisableRunButton(true)
+        setRunButtonTitle('Please select Solidity compiler version greater than 0.4.12.')
+      }
+    })
 
   }, []) // eslint-disable-line
 
@@ -677,7 +693,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
           <button
             className="btn border w-50"
             data-id="testTabGenerateTestFile"
-            title="Generate sample test file."
+            title="Generate a sample test file"
             disabled={disableGenerateButton}
             onClick={async () => {
               await testTabLogic.generateTestFile((err:any) => { if (err) setToasterMsg(err)}) // eslint-disable-line @typescript-eslint/no-explicit-any

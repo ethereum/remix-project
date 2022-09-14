@@ -5,8 +5,14 @@ const { globSource } = IpfsHttpClient
 const folder = process.cwd() + '/dist/apps/remix-ide';
 
 (async () => {
-  const host = 'ipfs.remixproject.org'
-  const ipfs = IpfsHttpClient({ host, port: 443, protocol: 'https' })
+  const host = 'ipfs.infura.io'
+  const projectId = process.argv[2]
+  const projectSecret = process.argv[3]
+  const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
+
+  const ipfs = IpfsHttpClient({ port: 5001, host, protocol: 'https', headers: {
+    authorization: auth
+  } })
   try {
     let result = await ipfs.add(globSource(folder, { recursive: true}), { pin: false })
     const hash = result.cid.toString()

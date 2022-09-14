@@ -22,7 +22,8 @@ export function web3DebugNode (network) {
     Main: 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym',
     Rinkeby: 'https://remix-rinkeby.ethdevops.io',
     Ropsten: 'https://remix-ropsten.ethdevops.io',
-    Goerli: 'https://remix-goerli.ethdevops.io'
+    Goerli: 'https://remix-goerli.ethdevops.io',
+    Sepolia: 'https://remix-sepolia.ethdevops.io'
   }
   if (web3DebugNodes[network]) {
     return loadWeb3(web3DebugNodes[network])

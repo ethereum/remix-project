@@ -20,6 +20,7 @@ export function UniversalDappUI (props: UdappProps) {
   const [llIError, setLlIError] = useState<string>('')
   const [calldataValue, setCalldataValue] = useState<string>('')
   const [evmBC, setEvmBC] = useState(null)
+  const [instanceBalance, setInstanceBalance] = useState(0)
 
   useEffect(() => {
     if (!props.instance.abi) {
@@ -46,6 +47,12 @@ export function UniversalDappUI (props: UdappProps) {
       setEvmBC(props.instance.contractData.bytecodeObject)
     }
   }, [props.instance.contractData])
+
+  useEffect(() => {
+    if (props.instance.balance) {
+      setInstanceBalance(props.instance.balance)
+    }
+  }, [props.instance.balance])
 
   const sendData = () => {
     setLlIError('')
@@ -119,7 +126,6 @@ export function UniversalDappUI (props: UdappProps) {
       props.instance.contractData,
       address,
       logMsg,
-      props.logBuilder,
       props.mainnetPrompt,
       props.gasEstimationPrompt,
       props.passphrasePrompt,
@@ -184,7 +190,7 @@ export function UniversalDappUI (props: UdappProps) {
 
   const renderData = (item, parent, key: string | number, keyPath: string) => {
     const data = extractDataDefault(item, parent)
-    const children = (data.children || []).map((child) => {
+    const children = (data.children || []).map((child, index) => {
       return (
         renderData(child.value, data, child.key, keyPath + '/' + child.key)
       )
@@ -205,10 +211,10 @@ export function UniversalDappUI (props: UdappProps) {
 
   return (
     <div className={`instance udapp_instance udapp_run-instance border-dark ${toggleExpander ? 'udapp_hidesub' : 'bg-light'}`} id={`instance${address}`} data-shared="universalDappUiInstance">
-      <div className="udapp_title alert alert-secondary">
-        <button data-id={`universalDappUiTitleExpander${props.index}`} className="btn udapp_titleExpander" onClick={toggleClass}>
+      <div className="udapp_title pb-0 alert alert-secondary">
+        <span data-id={`universalDappUiTitleExpander${props.index}`} className="btn udapp_titleExpander" onClick={toggleClass}>
           <i className={`fas ${toggleExpander ? 'fa-angle-right' : 'fa-angle-down'}`} aria-hidden="true"></i>
-        </button>
+        </span>
         <div className="input-group udapp_nameNbuts">
           <div className="udapp_titleText input-group-prepend">
             <span className="input-group-text udapp_spanTitleText">
@@ -230,6 +236,9 @@ export function UniversalDappUI (props: UdappProps) {
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">
+        <div className="d-flex" data-id="instanceContractBal">
+          <label>Balance: {instanceBalance} ETH</label>
+        </div>
           {
             contractABI && contractABI.map((funcABI, index) => {
               if (funcABI.type !== 'function') return null
@@ -237,7 +246,7 @@ export function UniversalDappUI (props: UdappProps) {
               const lookupOnly = funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure' || isConstant
               const inputs = props.getFuncABIInputs(funcABI)
 
-              return <>
+              return <div key={index}>
                 <ContractGUI
                   funcABI={funcABI}
                   clickCallBack={(valArray: { name: string, type: string }[], inputsValues: string) => {
@@ -255,14 +264,14 @@ export function UniversalDappUI (props: UdappProps) {
                         const funcIndex = index.toString()
                         const response = props.instance.decodedResponse[key]
 
-                        return key === funcIndex ? Object.keys(response || {}).map((innerkey) => {
+                        return key === funcIndex ? Object.keys(response || {}).map((innerkey, index) => {
                           return renderData(props.instance.decodedResponse[key][innerkey], response, innerkey, innerkey)
                         }) : null
                       })
                     }
                   </TreeView>
                 </div>
-              </>
+              </div>
             })
           }
         </div>
@@ -283,7 +292,15 @@ export function UniversalDappUI (props: UdappProps) {
             <label className="">CALLDATA</label>
             <div className="d-flex justify-content-end w-100 align-items-center">
               <input id="deployAndRunLLTxCalldata" onChange={handleCalldataChange} className="udapp_calldataInput form-control" title="The Calldata to send to fallback function of the contract." />
-              <button id="deployAndRunLLTxSendTransaction" data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction" className="udapp_instanceButton p-0 w-50 btn border-warning text-warning" title="Send data to contract." onClick={sendData}>Transact</button>
+              <button
+                id="deployAndRunLLTxSendTransaction"
+                data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"
+                className="btn udapp_instanceButton p-0 w-50 border-warning text-warning"
+                title="Send data to contract."
+                onClick={sendData}
+              >
+                Transact
+              </button>
             </div>
           </div>
           <div>

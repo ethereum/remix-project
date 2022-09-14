@@ -60,6 +60,9 @@
   text-align: center;
   padding: 0 14px 16px;
 }
+.udapp_deployedContracts {
+  font-size: 1rem;
+}
 .udapp_pendingTxsContainer  {
   display: flex;
   flex-direction: column;
@@ -70,9 +73,6 @@
 .udapp_container {
   padding: 0 24px 16px;
 }
-.udapp_recorderDescription {
-  margin: 0 15px 15px 0;
-  }
 .udapp_contractNames {
   width: 100%;
   border: 1px solid
@@ -121,7 +121,14 @@
 .udapp_ataddressinput {
   padding: .25rem;
 }
-.udapp_create {
+.udapp_recorderSection:hover {
+  cursor: pointer;
+}.udapp_recorderSectionLabel:hover {
+  cursor: pointer;
+}
+.udapp_recorderSectionLabel {
+  cursor: pointer;
+  font-size: 1rem;
 }
 .udapp_input {
   font-size: 10px !important;
@@ -269,7 +276,7 @@
   color: var(--primary);
 }
 .udapp_titleExpander {
-  padding: 5px 7px;
+  margin-top: 2px;
 }
 .udapp_nameNbuts {
   display: contents;
@@ -279,7 +286,6 @@
 .udapp_instance {
   display: block;
   flex-direction: column;
-  margin-bottom: 12px;
   background: none;
   border-radius: 2px;
 }
@@ -351,7 +357,7 @@
   border-bottom-left-radius: 0;
 }
 .udapp_contractProperty button {
-  min-width: 100px;
+  min-width: 80px;
   width: 100px;
   margin:0;
   word-break: inherit;
@@ -394,7 +400,6 @@
 }
 .udapp_contractActionsContainerMultiInner {
   width: 100%;
-  padding: 16px 8px 16px 14px;
   border-radius: 3px;
   margin-bottom: 8px;
 }
@@ -505,5 +510,26 @@
   white-space: -pre-wrap;      /* Opera 4-6 */
   white-space: -o-pre-wrap;    /* Opera 7 */
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+.deploy-items {
+  padding: 0.25rem 0.25rem;
+  border-radius: .25rem;
+}
+.deploy-items a {
+  border-radius: .25rem;
+  text-transform: none;
+  text-decoration: none;
+  font-weight: normal;
+  font-size: .8rem;
+  padding: 0.25rem 0.25rem;
+  width:auto;
+}
+.dropdown-item.hover, .dropdown-item:hover {
+  color: #fff;
+  text-decoration: none;
+  background-color: #007aa6;
+}
+.udapp_selectExEnvOptions {
+  width: 100%;
 }
 

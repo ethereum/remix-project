@@ -3,21 +3,21 @@ import { AppModal, AlertModal, ModalTypes } from '@remix-ui/app'
 import { Blockchain } from '../../blockchain/blockchain'
 import { ethers } from 'ethers'
 
-type JsonDataRequest = {
+export type JsonDataRequest = {
   id: number,
   jsonrpc: string // version
   method: string,
   params: Array<any>,
 }
 
-type JsonDataResult = {
+export type JsonDataResult = {
   id: number,
   jsonrpc: string // version
   result: any
 }
 
-type RejectRequest = (error: Error) => void
-type SuccessRequest = (data: JsonDataResult) => void
+export type RejectRequest = (error: Error) => void
+export type SuccessRequest = (data: JsonDataResult) => void
 
 export abstract class AbstractProvider extends Plugin {
   provider: ethers.providers.JsonRpcProvider
@@ -58,6 +58,20 @@ export abstract class AbstractProvider extends Plugin {
                 modalType: ModalTypes.prompt,
                 okLabel: 'OK',
                 cancelLabel: 'Cancel',
+                validationFn: (value) => {
+                  if (!value) return { valid: false, message: "value is empty" }
+                  if (value.startsWith('https://') || value.startsWith('http://')) {
+                    return { 
+                      valid: true, 
+                      message: ''
+                    }
+                  } else {
+                    return {
+                      valid: false, 
+                      message: 'the provided value should contain the protocol ( e.g starts with http:// or https:// )'
+                    }
+                  }
+                },
                 okFn: (value: string) => {
                   setTimeout(() => resolve(value), 0)
                 },
@@ -87,7 +101,7 @@ export abstract class AbstractProvider extends Plugin {
               reject('Unable to connect')
             }
           }, 2000)
-          await this.provider.ready
+          await this.provider.detectNetwork() // this throws if the network cannot be detected
           this.connected = true
         } catch (e) {
           this.switchAway(true)
@@ -102,6 +116,7 @@ export abstract class AbstractProvider extends Plugin {
   }
 
   private async switchAway (showError) {
+    if (!this.provider) return
     this.provider = null
     this.blocked = true
     this.connected = false

@@ -15,7 +15,7 @@ export class DebuggerStepManager {
     this.event = new EventManager()
     this.debugger = _debugger
     this.traceManager = traceManager
-    this.currentStepIndex = 0
+    this.currentStepIndex = -1
     this.traceLength = 0
     this.codeTraceLength = 0
     this.revertionPoint = null
@@ -34,13 +34,18 @@ export class DebuggerStepManager {
           this.traceLength = newLength
           this.codeTraceLength = this.calculateCodeLength()
         }
-        this.jumpTo(0)
+        setTimeout(() => {
+          this.jumpTo(0) // wait for the ui to render
+        }, 500)
+        
       })
     })
 
     this.debugger.callTree.event.register('callTreeReady', () => {
       if (this.debugger.callTree.functionCallStack.length) {
-        this.jumpTo(this.debugger.callTree.functionCallStack[0])
+        setTimeout(() => {
+          this.jumpTo(this.debugger.callTree.functionCallStack[0]) // wait for the ui to be render
+        }, 500)
       }
     })
 

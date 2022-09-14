@@ -1,5 +1,6 @@
 import React from 'react'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
+import { fileDecoration } from '@remix-ui/file-decorators';
 
 export type action = { name: string, type?: Array<'folder' | 'gist' | 'file'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean }
 export interface JSONStandardInput {
@@ -13,10 +14,11 @@ export interface JSONStandardInput {
   };
 }
 export type MenuItems = action[]
+export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721'
 export interface WorkspaceProps {
   plugin: {
     setWorkspace: ({ name: string, isLocalhost: boolean }, setEvent: boolean) => void,
-    createWorkspace: (name: string) => void,
+    createWorkspace: (name: string, workspaceTemplateName: string) => void,
     renameWorkspace: (oldName: string, newName: string) => void
     workspaceRenamed: ({ name: string }) => void,
     workspaceCreated: ({ name: string }) => void,
@@ -72,6 +74,7 @@ export interface FileExplorerProps {
     contextMenuItems: MenuItems,
     removedContextMenuItems: MenuItems,
     files: { [x: string]: Record<string, FileType> },
+    fileState: fileDecoration[],
     expandPath: string[],
     focusEdit: string,
     focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[],
@@ -94,7 +97,9 @@ export interface FileExplorerProps {
     dispatchFetchDirectory:(path: string) => Promise<void>,
     dispatchRemoveInputField:(path: string) => Promise<void>,
     dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,
-    dispatchHandleExpandPath: (paths: string[]) => Promise<void>
+    dispatchHandleExpandPath: (paths: string[]) => Promise<void>,
+    dispatchMoveFile: (src: string, dest: string) => Promise<void>,
+    dispatchMoveFolder: (src: string, dest: string) => Promise<void>
 }
 
 export interface FileExplorerMenuProps {

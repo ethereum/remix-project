@@ -11,6 +11,7 @@ export class RemixdClient extends PluginClient {
   trackDownStreamUpdate: TrackDownStreamUpdate = {}
   websocket: WS
   currentSharedFolder: string
+  watcher: chokidar.FSWatcher
 
   constructor (private readOnly = false) {
     super()
@@ -19,6 +20,9 @@ export class RemixdClient extends PluginClient {
 
   setWebSocket (websocket: WS): void {
     this.websocket = websocket
+    this.websocket.addEventListener('close', () => {
+      if (this.watcher) this.watcher.close()
+    })
   }
 
   sharedFolder (currentSharedFolder: string): void {
@@ -246,7 +250,7 @@ export class RemixdClient extends PluginClient {
     const absPath = utils.absolutePath('./', path)
 
     if (!isRealPath(absPath)) return
-    const watcher = chokidar.watch(path, { depth: 0, ignorePermissionErrors: true })
+    this.watcher = chokidar.watch(path, { depth: 0, ignorePermissionErrors: true })
     console.log('setup notifications for ' + path)
     /* we can't listen on created file / folder
     watcher.on('add', (f, stat) => {
@@ -260,18 +264,24 @@ export class RemixdClient extends PluginClient {
       this.emit('created', { path: utils.relativePath(f, this.currentSharedFolder), isReadOnly: false, isFolder: true })
     })
     */
-    watcher.on('change', (f: string) => {
+    this.watcher.on('change', async (f: string) => {
       if (this.trackDownStreamUpdate[f]) {
         delete this.trackDownStreamUpdate[f]
         return
       }
-      this.emit('changed', utils.relativePath(f, this.currentSharedFolder))
+      if (this.isLoaded) {
+        this.emit('changed', utils.relativePath(f, this.currentSharedFolder))
+      }
     })
-    watcher.on('unlink', (f: string) => {
-      this.emit('removed', utils.relativePath(f, this.currentSharedFolder), false)
+    this.watcher.on('unlink', async (f: string) => {
+      if (this.isLoaded) {
+        this.emit('removed', utils.relativePath(f, this.currentSharedFolder), false)    
+      }
     })
-    watcher.on('unlinkDir', (f: string) => {
-      this.emit('removed', utils.relativePath(f, this.currentSharedFolder), true)
+    this.watcher.on('unlinkDir', async (f: string) => {
+      if (this.isLoaded) {
+        this.emit('removed', utils.relativePath(f, this.currentSharedFolder), true)    
+      }
     })
   }
 }

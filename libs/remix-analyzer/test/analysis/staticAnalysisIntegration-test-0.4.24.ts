@@ -38,7 +38,7 @@ const testFiles: string[] = [
   'forLoopIteratesOverDynamicArray.sol'
 ]
 
-let compilationResults: Record<string, CompilationResult> = {}
+const compilationResults: Record<string, CompilationResult> = {}
 
 test('setup', function (t: test.Test) {
   solcOrg.loadRemoteVersion('v0.4.24+commit.e67f0147', (error, compiler) => {

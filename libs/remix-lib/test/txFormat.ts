@@ -35,7 +35,7 @@ tape('ContractParameters - (TxFormat.buildData) - format input parameters', func
 
 function testWithInput (st, params, expected) {
   txFormat.buildData('uintContractTest', context.contract, context.output.contracts, true, context.contract.abi[0], params, (error, data) => {
-    if (error) { return st.fails(error) }
+    if (error) { return st.fail(error) }
     console.log(data)
     if (!data.dataHex.endsWith(expected)) {
       st.fail(`result of buildData ${data.dataHex} should end with ${expected} . `)
@@ -62,7 +62,7 @@ tape('ContractStringParameters - (TxFormat.buildData) - format string input para
 
 function testWithStringInput (st, params, expected) {
   txFormat.buildData('stringContractTest', context.contract, context.output.contracts, true, context.contract.abi[0], params, (error, data) => {
-    if (error) { return st.fails(error) }
+    if (error) { return st.fail(error) }
     console.log(data)
     if (!data.dataHex.endsWith(expected)) {
       st.fail(`result of buildData ${data.dataHex} should end with ${expected} . `)
@@ -88,7 +88,7 @@ tape('ContractArrayParameters - (TxFormat.buildData) - format array input parame
 
 function testWithArrayInput (st, params, expected) {
   txFormat.buildData('arrayContractTest', context.contract, context.output.contracts, true, context.contract.abi[0], params, (error, data) => {
-    if (error) { return st.fails(error) }
+    if (error) { return st.fail(error) }
     console.log(data)
     if (!data.dataHex.endsWith(expected)) {
       st.fail(`result of buildData ${data.dataHex} should end with ${expected} . `)
@@ -113,7 +113,7 @@ tape('ContractNestedArrayParameters - (TxFormat.buildData) - format nested array
 function testWithNestedArrayInput (st, params, expected) {
   txFormat.buildData('nestedArrayContractTest', context.contract, context.output.contracts, true, context.contract.abi[4], params, (error, data) => {
     if (error) {
-      return st.fails(error)
+      return st.fail(error)
     }
     console.log(data)
     if (!data.dataHex.endsWith(expected)) {
@@ -185,7 +185,7 @@ function testLinkLibrary (st, fakeDeployedContracts, callbackDeployLibraries) {
   const deployMsg = ['creation of library test.sol:lib1 pending...',
   'creation of library test.sol:lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2 pending...']
   txFormat.buildData('testContractLinkLibrary', context.contract, context.output.contracts, true, context.contract.abi[0], '', (error, data) => {
-    if (error) { return st.fails(error) }
+    if (error) { return st.fail(error) }
     console.log(data)
     const linkedbyteCode = data.dataHex
     let libReference = context.contract.evm.bytecode.linkReferences['test.sol']['lib1']

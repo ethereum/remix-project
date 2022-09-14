@@ -1,0 +1,32 @@
+{
+  "name": "@remix-project/remix-ws-templates",
+  "version": "1.0.3",
+  "description": "Create a Remix IDE workspace using different templates",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethereum/remix-project.git"
+  },
+  "author": "Aniket-Engg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethereum/remix-project/issues"
+  },
+  "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-ws-templates#readme",
+  "typings": "./src/index.d.ts",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.7.3",
+    "@openzeppelin/wizard": "^0.1.1",
+    "ethers": "^5.4.2",
+    "web3": "^1.5.1"
+    
+  },
+  "gitHead": "0c1957c9b2f890076a5062309bc81b41f93af57c"
+}

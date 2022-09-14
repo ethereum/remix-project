@@ -1,5 +1,9 @@
 import { CompilerAbstract } from '@remix-project/remix-solidity-ts'
 import { ContractData } from '@remix-project/core-plugin'
+import { DeployOptions } from '../types'
+import { ADD_INSTANCE, ADD_PROVIDER, CLEAR_INSTANCES, CLEAR_RECORDER_COUNT, DISPLAY_NOTIFICATION, DISPLAY_POPUP_MESSAGE, FETCH_ACCOUNTS_LIST_FAILED, FETCH_ACCOUNTS_LIST_REQUEST, FETCH_ACCOUNTS_LIST_SUCCESS, FETCH_CONTRACT_LIST_FAILED, FETCH_CONTRACT_LIST_REQUEST, FETCH_CONTRACT_LIST_SUCCESS, FETCH_PROVIDER_LIST_FAILED, FETCH_PROVIDER_LIST_REQUEST, FETCH_PROVIDER_LIST_SUCCESS, HIDE_NOTIFICATION, HIDE_POPUP_MESSAGE, REMOVE_INSTANCE, REMOVE_PROVIDER, RESET_STATE, SET_BASE_FEE_PER_GAS, SET_CONFIRM_SETTINGS, SET_CURRENT_CONTRACT, SET_CURRENT_FILE, SET_DECODED_RESPONSE, SET_DEPLOY_OPTIONS, SET_EXECUTION_ENVIRONMENT, SET_EXTERNAL_WEB3_ENDPOINT, SET_GAS_LIMIT, SET_GAS_PRICE, SET_GAS_PRICE_STATUS, SET_IPFS_CHECKED_STATE, SET_LOAD_TYPE, SET_MATCH_PASSPHRASE, SET_MAX_FEE, SET_MAX_PRIORITY_FEE, SET_NETWORK_NAME, SET_PASSPHRASE, SET_PATH_TO_SCENARIO, SET_PERSONAL_MODE, SET_RECORDER_COUNT, SET_SELECTED_ACCOUNT, SET_SEND_UNIT, SET_SEND_VALUE, SET_PROXY_ENV_ADDRESS, ADD_DEPLOY_OPTION, REMOVE_DEPLOY_OPTION, SET_COMPILATION_SOURCE } from '../constants'
+
+declare const window: any
 interface Action {
   type: string
   payload: any
@@ -62,8 +66,12 @@ export interface RunTabState {
         compiler: CompilerAbstract
       }[]
     },
+    deployOptions: { [file: string]: { [name: string]: DeployOptions } },
+    proxyKey: string,
     loadType: 'abi' | 'sol' | 'other'
     currentFile: string,
+    compilationSource: string,
+    currentContract: string,
     compilationCount: number,
     isRequesting: boolean,
     isSuccessful: boolean,
@@ -75,12 +83,12 @@ export interface RunTabState {
   maxFee: string,
   maxPriorityFee: string,
   baseFeePerGas: string,
-  txFeeContent: string,
   gasPrice: string,
   instances: {
     instanceList: {
       contractData?: ContractData,
       address: string,
+      balance?: number,
       name: string,
       decodedResponse?: Record<number, any>,
       abi?: any
@@ -111,30 +119,23 @@ export const runTabInitialState: RunTabState = {
     providerList: [{
       id: 'vm-mode-london',
       dataId: 'settingsVMLondonMode',
-      title: 'Execution environment does not connect to any node, everything is local and in memory only.',
+      title: 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.',
       value: 'vm-london',
       fork: 'london',
-      content: 'JavaScript VM (London)'
+      content: 'Remix VM (London)'
     }, {
       id: 'vm-mode-berlin',
       dataId: 'settingsVMBerlinMode',
-      title: 'Execution environment does not connect to any node, everything is local and in memory only.',
+      title: 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.',
       value: 'vm-berlin',
       fork: 'berlin',
-      content: 'JavaScript VM (Berlin)'
+      content: 'Remix VM (Berlin)'
     }, {
       id: 'injected-mode',
       dataId: 'settingsInjectedMode',
       title: 'Execution environment has been provided by Metamask or similar provider.',
       value: 'injected',
-      content: 'Injected Web3'
-    }, {
-      id: 'web3-mode',
-      dataId: 'settingsWeb3Mode',
-      title: `Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!
-      If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http.`,
-      value: 'web3',
-      content: 'Web3 Provider'
+      content: `Injected Provider${(window && window.ethereum && window.ethereum.isMetaMask) ? ' - Metamask' : ''}`
     }],
     isRequesting: false,
     isSuccessful: false,
@@ -154,8 +155,12 @@ export const runTabInitialState: RunTabState = {
   matchPassphrase: '',
   contracts: {
     contractList: {},
+    deployOptions: {} as any,
+    proxyKey: '',
+    compilationSource: '',
     loadType: 'other',
     currentFile: '',
+    currentContract: '',
     compilationCount: 0,
     isRequesting: false,
     isSuccessful: false,
@@ -167,7 +172,6 @@ export const runTabInitialState: RunTabState = {
   maxFee: '',
   maxPriorityFee: '1',
   baseFeePerGas: '',
-  txFeeContent: '',
   gasPrice: '',
   instances: {
     instanceList: [],
@@ -186,7 +190,7 @@ type AddProvider = {
 
 export const runTabReducer = (state: RunTabState = runTabInitialState, action: Action) => {
   switch (action.type) {
-    case 'FETCH_ACCOUNTS_LIST_REQUEST': {
+    case FETCH_ACCOUNTS_LIST_REQUEST: {
       return {
         ...state,
         accounts: {
@@ -198,7 +202,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'FETCH_ACCOUNTS_LIST_SUCCESS': {
+    case FETCH_ACCOUNTS_LIST_SUCCESS: {
       const payload: Record<string, string> = action.payload
 
       return {
@@ -213,7 +217,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'FETCH_ACCOUNTS_LIST_FAILED': {
+    case FETCH_ACCOUNTS_LIST_FAILED: {
       const payload: string = action.payload
 
       return {
@@ -227,7 +231,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_SEND_VALUE': {
+    case SET_SEND_VALUE: {
       const payload: string = action.payload
 
       return {
@@ -236,7 +240,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_SELECTED_ACCOUNT': {
+    case SET_SELECTED_ACCOUNT: {
       const payload: string = action.payload
 
       return {
@@ -248,7 +252,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_SEND_UNIT': {
+    case SET_SEND_UNIT: {
       const payload: 'ether' | 'finney' | 'gwei' | 'wei' = action.payload
 
       return {
@@ -257,7 +261,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_GAS_LIMIT': {
+    case SET_GAS_LIMIT: {
       const payload: number = action.payload
 
       return {
@@ -266,7 +270,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_EXECUTION_ENVIRONMENT': {
+    case SET_EXECUTION_ENVIRONMENT: {
       const payload: string = action.payload
 
       return {
@@ -281,7 +285,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_PERSONAL_MODE': {
+    case SET_PERSONAL_MODE: {
       const payload: boolean = action.payload
 
       return {
@@ -290,7 +294,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_NETWORK_NAME': {
+    case SET_NETWORK_NAME: {
       const payload: string = action.payload
 
       return {
@@ -299,7 +303,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'FETCH_PROVIDER_LIST_REQUEST': {
+    case FETCH_PROVIDER_LIST_REQUEST: {
       return {
         ...state,
         providers: {
@@ -311,7 +315,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'FETCH_PROVIDER_LIST_SUCCESS': {
+    case FETCH_PROVIDER_LIST_SUCCESS: {
       const payload: { id?: string, dataId?: string, title?: string, value: string, fork?: string, content: string }[] = action.payload
 
       return {
@@ -326,7 +330,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'FETCH_PROVIDER_LIST_FAILED': {
+    case FETCH_PROVIDER_LIST_FAILED: {
       const payload: string = action.payload
 
       return {
@@ -340,7 +344,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'ADD_PROVIDER': {
+    case ADD_PROVIDER: {
       const payload: AddProvider = action.payload
       const id = action.payload.name
       state.providers.providerList.push({
@@ -359,7 +363,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'REMOVE_PROVIDER': {
+    case REMOVE_PROVIDER: {
       const id: string = action.payload
       const providers = state.providers.providerList.filter((el) => el.id !== id)
       return {
@@ -371,7 +375,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'DISPLAY_NOTIFICATION': {
+    case DISPLAY_NOTIFICATION: {
       const payload = action.payload as { title: string, message: string, actionOk: () => void, actionCancel: () => void, labelOk: string, labelCancel: string }
 
       return {
@@ -387,14 +391,14 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'HIDE_NOTIFICATION': {
+    case HIDE_NOTIFICATION: {
       return {
         ...state,
         notification: runTabInitialState.notification
       }
     }
 
-    case 'SET_EXTERNAL_WEB3_ENDPOINT': {
+    case SET_EXTERNAL_WEB3_ENDPOINT: {
       const payload: string = action.payload
 
       return {
@@ -403,7 +407,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'DISPLAY_POPUP_MESSAGE': {
+    case DISPLAY_POPUP_MESSAGE: {
       const payload = action.payload as string
 
       return {
@@ -412,14 +416,14 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'HIDE_POPUP_MESSAGE': {
+    case HIDE_POPUP_MESSAGE: {
       return {
         ...state,
         popup: ''
       }
     }
 
-    case 'SET_PASSPHRASE': {
+    case SET_PASSPHRASE: {
       const passphrase: string = action.payload
 
       return {
@@ -428,7 +432,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_MATCH_PASSPHRASE': {
+    case SET_MATCH_PASSPHRASE: {
       const passphrase: string = action.payload
 
       return {
@@ -437,7 +441,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'FETCH_CONTRACT_LIST_REQUEST': {
+    case FETCH_CONTRACT_LIST_REQUEST: {
       return {
         ...state,
         contracts: {
@@ -449,7 +453,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'FETCH_CONTRACT_LIST_SUCCESS': {
+    case FETCH_CONTRACT_LIST_SUCCESS: {
       const payload: ContractList = action.payload
 
       return {
@@ -464,7 +468,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'FETCH_CONTRACT_LIST_FAILED': {
+    case FETCH_CONTRACT_LIST_FAILED: {
       const payload: string = action.payload
 
       return {
@@ -478,7 +482,19 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_LOAD_TYPE': {
+    case SET_CURRENT_CONTRACT: {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        contracts: {
+          ...state.contracts,
+          currentContract: payload
+        }
+      }
+    }
+
+    case SET_LOAD_TYPE: {
       const payload: 'abi' | 'sol' | 'other' = action.payload
 
       return {
@@ -490,7 +506,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_CURRENT_FILE': {
+    case SET_CURRENT_FILE: {
       const payload: string = action.payload
 
       return {
@@ -503,7 +519,19 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_IPFS_CHECKED_STATE': {
+    case SET_COMPILATION_SOURCE: {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        contracts: {
+          ...state.contracts,
+          compilationSource: payload,
+        }
+      }
+    }
+
+    case SET_IPFS_CHECKED_STATE: {
       const payload: boolean = action.payload
 
       return {
@@ -512,7 +540,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_GAS_PRICE_STATUS': {
+    case SET_GAS_PRICE_STATUS: {
       const payload: boolean = action.payload
 
       return {
@@ -521,7 +549,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_CONFIRM_SETTINGS': {
+    case SET_CONFIRM_SETTINGS: {
       const payload: boolean = action.payload
 
       return {
@@ -530,7 +558,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_MAX_FEE': {
+    case SET_MAX_FEE: {
       const payload: string = action.payload
 
       return {
@@ -539,7 +567,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_MAX_PRIORITY_FEE': {
+    case SET_MAX_PRIORITY_FEE: {
       const payload: string = action.payload
 
       return {
@@ -548,7 +576,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_BASE_FEE_PER_GAS': {
+    case SET_BASE_FEE_PER_GAS: {
       const payload: string = action.payload
 
       return {
@@ -557,7 +585,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_GAS_PRICE': {
+    case SET_GAS_PRICE: {
       const payload: string = action.payload
 
       return {
@@ -566,16 +594,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_TX_FEE_CONTENT': {
-      const payload: string = action.payload
-
-      return {
-        ...state,
-        txFeeContent: payload
-      }
-    }
-
-    case 'ADD_INSTANCE': {
+    case ADD_INSTANCE: {
       const payload: { contractData: ContractData, address: string, name: string, abi?: any, decodedResponse?: Record<number, any> } = action.payload
 
       return {
@@ -587,7 +606,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'REMOVE_INSTANCE': {
+    case REMOVE_INSTANCE: {
       const payload: number = action.payload
 
       return {
@@ -599,7 +618,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'CLEAR_INSTANCES': {
+    case CLEAR_INSTANCES: {
       return {
         ...state,
         instances: {
@@ -609,7 +628,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_DECODED_RESPONSE': {
+    case SET_DECODED_RESPONSE: {
       const payload: { instanceIndex: number, funcIndex: number, response: any } = action.payload
 
       return {
@@ -624,7 +643,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_PATH_TO_SCENARIO': {
+    case SET_PATH_TO_SCENARIO: {
       const payload: string = action.payload
 
       return {
@@ -636,7 +655,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'SET_RECORDER_COUNT': {
+    case SET_RECORDER_COUNT: {
       const payload: number = action.payload
 
       return {
@@ -648,7 +667,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'CLEAR_RECORDER_COUNT': {
+    case CLEAR_RECORDER_COUNT: {
       return {
         ...state,
         recorder: {
@@ -658,10 +677,60 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case 'RESET_STATE': {
+    case RESET_STATE: {
       return {
         ...runTabInitialState,
         ipfsChecked: state.ipfsChecked
+      }
+    }
+
+    case ADD_DEPLOY_OPTION: {
+      const payload: { [file: string]: { [name: string]: DeployOptions } } = action.payload
+
+      return {
+        ...state,
+        contracts: {
+          ...state.contracts,
+          deployOptions: {...state.contracts.deployOptions, ...payload }
+        }
+      }
+    }
+
+    case REMOVE_DEPLOY_OPTION: {
+      const payload: string = action.payload
+      const options = state.contracts.deployOptions
+
+      delete options[payload]
+      return {
+        ...state,
+        contracts: {
+          ...state.contracts,
+          deployOptions: options
+        }
+      }
+    }
+
+    case SET_DEPLOY_OPTIONS: {
+      const payload: { [file: string]: { [name: string]: DeployOptions } } = action.payload
+
+      return {
+        ...state,
+        contracts: {
+          ...state.contracts,
+          deployOptions: payload
+        }
+      }
+    }
+
+    case SET_PROXY_ENV_ADDRESS: {
+      const payload: string = action.payload
+
+      return {
+        ...state,
+        contracts: {
+          ...state.contracts,
+            proxyKey: payload
+        }
       }
     }
 

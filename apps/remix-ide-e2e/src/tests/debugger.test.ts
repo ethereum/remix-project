@@ -192,7 +192,7 @@ module.exports = {
   'Should call the debugger api: getTrace #group4': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsGetTrace.js', { content: jsGetTrace })
-      .executeScript('remix.exeCurrent()')
+      .executeScriptInTerminal('remix.exeCurrent()')
       .pause(3000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '{"gas":"0x575f","return":"0x0000000000000000000000000000000000000000000000000000000000000000","structLogs":', 60000)
   },
@@ -200,11 +200,12 @@ module.exports = {
   'Should call the debugger api: debug #group4': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsDebug.js', { content: jsDebug })
-      .executeScript('remix.exeCurrent()')
+      .executeScriptInTerminal('remix.exeCurrent()')
       .pause(3000)
       .clickLaunchIcon('debugger')
       .waitForElementVisible('*[data-id="slider"]')
       .goToVMTraceStep(154)
+      .scrollInto('*[data-id="stepdetail"]')
       .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n154', 60000)
   },
 
@@ -214,7 +215,7 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.8.7+commit.e28d00a7.js')
       .addFile('useDebugNodes.sol', sources[5]['useDebugNodes.sol']) // compile contract
       .clickLaunchIcon('udapp')
-      .click('*[data-id="settingsWeb3Mode"]') // select web3 provider with debug nodes URL
+      .switchEnvironment('External Http Provider') // select web3 provider with debug nodes URL
       .clearValue('*[data-id="modalDialogCustomPromptText"]')
       .setValue('*[data-id="modalDialogCustomPromptText"]', 'https://remix-rinkeby.ethdevops.io')
       .modalFooterOKClick()
@@ -240,6 +241,7 @@ module.exports = {
       .clickInstance(0)
       .clickFunction('callA - transact (not payable)')
       .debugTransaction(1)
+      .pause(4000)
       .goToVMTraceStep(79)
       .waitForElementVisible('*[data-id="debugGoToRevert"]', 60000)
       .click('*[data-id="debugGoToRevert"]')

@@ -10,15 +10,15 @@ const testData = {
 }
 
 module.exports = {
-
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
 
-  'Should create a new file `5_New_contract.sol` in file explorer': function (browser: NightwatchBrowser) {
+  'Should create a new file `5_New_contract.sol` in file explorer #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('filePanel')
-      .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORERS')
+      .assert.containsText('h6[data-id="sidePanelSwapitTitle"]', 'FILE EXPLORER')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"]') // focus on root directory
       .click('*[data-id="fileExplorerNewFilecreateNewFile"]')
       .pause(1000)
@@ -28,7 +28,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem5_New_contract.sol"]', 7000)
   },
 
-  'Should rename `5_New_contract.sol` to 5_Renamed_Contract.sol': function (browser: NightwatchBrowser) {
+  'Should rename `5_New_contract.sol` to 5_Renamed_Contract.sol #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem5_New_contract.sol"]')
       .click('*[data-id="treeViewLitreeViewItem5_New_contract.sol"]')
@@ -36,14 +36,14 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem5_Renamed_Contract.sol"]')
   },
 
-  'Should delete file `5_Renamed_Contract.sol` from file explorer': function (browser: NightwatchBrowser) {
+  'Should delete file `5_Renamed_Contract.sol` from file explorer #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem5_Renamed_Contract.sol"]')
       .removeFile('5_Renamed_Contract.sol', 'default_workspace')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItem5_Renamed_Contract.sol"')
   },
 
-  'Should create a new folder': function (browser: NightwatchBrowser) {
+  'Should create a new folder #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME.txt"]')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"]') // focus on root directory
@@ -55,7 +55,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemBrowser_Tests"]')
   },
 
-  'Should rename Browser_Tests folder to Browser_E2E_Tests': function (browser: NightwatchBrowser) {
+  'Should rename Browser_Tests folder to Browser_E2E_Tests #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemBrowser_Tests"]')
       .click('*[data-id="treeViewLitreeViewItemBrowser_Tests"]')
@@ -63,10 +63,10 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemBrowser_E2E_Tests"]')
   },
 
-  'Should delete Browser_E2E_Tests folder': function (browser: NightwatchBrowser) {
+  'Should delete Browser_E2E_Tests folder #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemBrowser_E2E_Tests"]')
-      .rightClick('[data-path="Browser_E2E_Tests"]')
+      .rightClickCustom('[data-path="Browser_E2E_Tests"]')
       .click('*[id="menuitemdelete"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok', 60000)
       .pause(2000)
@@ -99,12 +99,16 @@ module.exports = {
       })
   },
 
-  'Should open local filesystem explorer': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="filePanelFileExplorerTree"]')
+  'Should open local filesystem explorer #group2': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('div[data-id="remixIdeSidePanel"]')
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible('*[data-id="filePanelFileExplorerTree"]')
       .click('[data-id="remixUIWorkspaceExplorer"]')
-      .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile1)
-      .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile2)
-      .setValue('*[data-id="fileExplorerFileUpload"]', testData.testFile3)
+      .waitForElementPresent('*[data-id="fileExplorerFileUpload"]')
+      .uploadFile('*[data-id="fileExplorerFileUpload"]', testData.testFile1)
+      .uploadFile('*[data-id="fileExplorerFileUpload"]', testData.testFile2)
+      .uploadFile('*[data-id="fileExplorerFileUpload"]', testData.testFile3)
       .waitForElementVisible('[data-id="treeViewLitreeViewItemeditor.test.js"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemfileExplorer.test.js"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemgeneralSettings.test.js"]')

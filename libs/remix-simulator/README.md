@@ -10,7 +10,7 @@
 ### Installation
 `@remix-project/remix-simulator` is an NPM package and can be installed using NPM as:
 
-`npm install @remix-project/remix-simulator`
+`yarn add @remix-project/remix-simulator`
 
 ### How to use
 

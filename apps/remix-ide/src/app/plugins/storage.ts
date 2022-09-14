@@ -15,14 +15,14 @@ export class StoragePlugin extends Plugin {
   async getStorage() {
     let storage = null
     if ('storage' in navigator && 'estimate' in navigator.storage && (window as any).remixFileSystem.name !== 'localstorage') {
-      storage = navigator.storage.estimate()
+      storage = await navigator.storage.estimate()
     } else {
       storage ={
         usage: parseFloat(this.calculateLocalStorage()) * 1000,
         quota: 5000000,
       }
     }
-    const _paq = window._paq = window._paq || []
+    const _paq = (window as any)._paq = (window as any)._paq || []
     _paq.push(['trackEvent', 'Storage', 'used', this.formatString(storage)]);
     return storage
   }
@@ -32,8 +32,8 @@ export class StoragePlugin extends Plugin {
   }
 
   calculateLocalStorage() {
-    var _lsTotal = 0
-    var _xLen; var _x
+    let _lsTotal = 0
+    let _xLen; let _x
     for (_x in localStorage) {
       // eslint-disable-next-line no-prototype-builtins
       if (!localStorage.hasOwnProperty(_x)) {

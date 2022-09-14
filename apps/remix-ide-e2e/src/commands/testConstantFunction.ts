@@ -26,11 +26,11 @@ function testConstantFunction (browser: NightwatchBrowser, address: string, fnFu
       done()
     })
   })
-    .click('.instance button[title="' + fnFullName + '"]')
+    .click(`#instance${address} button[title="${fnFullName}"]`)
     .pause(1000)
     .waitForElementPresent('#instance' + address + ' .udapp_contractActionsContainer .udapp_value')
     .scrollInto('#instance' + address + ' .udapp_contractActionsContainer .udapp_value')
-    .assert.containsText('#instance' + address + ' .udapp_contractActionsContainer .udapp_value', expectedOutput).perform(() => {
+    .assert.containsText('#instance' + address + ' .udapp_contractActionsContainer', expectedOutput).perform(() => {
       cb()
     })
 }
