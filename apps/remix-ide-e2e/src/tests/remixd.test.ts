@@ -173,8 +173,7 @@ module.exports = {
       .createContract('')
       .testFunction('last',
         {
-          status: 'true Transaction mined and execution succeed',
-          'decoded output': { 0: 'uint256: 8' }
+          status: 'true Transaction mined and execution succeed'
         })   
    }
 }
