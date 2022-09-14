@@ -241,7 +241,7 @@ export function ContractGUI (props: ContractGUIProps) {
             <span>{buttonOptions.title}</span>
           </Tooltip>
         }>
-        <button onClick={handleActionClick} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId}>{title}</button>
+        <button onClick={handleActionClick} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId} data-title={buttonOptions.title}>{title}</button>
         </OverlayTrigger>
         <OverlayTrigger placement={'right'} overlay={
           <Tooltip className="text-nowrap" id="remixContractGuiTooltip">
@@ -252,6 +252,7 @@ export function ContractGUI (props: ContractGUIProps) {
           className="form-control"
           data-id={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : 'multiParamManagerBasicInputField'}
           placeholder={props.inputs}
+          data-title={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}
           onChange={handleBasicInput}
           ref={basicInputRef}
           style={{ visibility: !((props.funcABI.inputs && props.funcABI.inputs.length > 0) || (props.funcABI.type === 'fallback') || (props.funcABI.type === 'receive')) ? 'hidden' : 'visible' }} />
