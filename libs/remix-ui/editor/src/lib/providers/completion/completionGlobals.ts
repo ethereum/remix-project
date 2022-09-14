@@ -1,16 +1,12 @@
 import { IRange } from "monaco-editor";
 import monaco from "../../../types/monaco";
 import path from "path";
-let OZContracts;
 
-// @ts-ignore
-import('raw-loader!libs/remix-ui/editor/src/lib/providers/completion/contracts/OpenZeppelinContracts.txt').then(
-    (txt) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        OZContracts = txt.default.split('\n').filter(x => !x.includes('mock'))
-    }
-)
-
+type CodeParserImportsData = {
+    files?: string[],
+    modules?: string[],
+    packages?: string[],
+}
 
 export function getStringCompletionItems(range: IRange, monaco): monaco.languages.CompletionItem[] {
     return [
@@ -400,20 +396,87 @@ export function GeCompletionUnits(range: IRange, monaco): monaco.languages.Compl
 
     return completionItems;
 }
-export function GetImports(range: IRange, monaco): monaco.languages.CompletionItem[] {
+
+export function GetImports(range: IRange
+    , monaco, data: CodeParserImportsData
+    , word: string
+): monaco.languages.CompletionItem[] {
     let list = []
-    list.filter
-    list = OZContracts
-        .map((item) => {
-        const filename = path.basename(item)
-        return {
-            kind: monaco.languages.CompletionItemKind.Module,
-            range: range,
-            label: `OZ ${filename}: ${item}`,
-            insertText: `@openzeppelin${item}`,
-        }
-    })
-    console.log(list)
+    if (!word.startsWith('@')) {
+        word = word.replace('"', '');
+        const nextPaths = [...new Set(data.files
+            .filter((item) => item.startsWith(word))
+            .map((item) => item.replace(word, '').split('/')[0]))]
+
+        list = [...list, ...nextPaths
+            .filter((item) => !item.endsWith('.sol'))
+            .map((item) => {
+                return {
+                    kind: monaco.languages.CompletionItemKind.Folder,
+                    range: range,
+                    label: `${item}`,
+                    insertText: `${item}`,
+                }
+            })]
+
+
+        list = [...list,
+        ...data.files
+            .filter((item) => item.startsWith(word))
+            .map((item) => {
+                return {
+                    kind: monaco.languages.CompletionItemKind.File,
+                    range: range,
+                    label: `${item}`,
+                    insertText: `${item.replace(word, '')}`,
+                }
+            })]
+    }
+    if (word === '@' || word === '') {
+        list = [...list, ...data.packages.map((item) => {
+            return {
+                kind: monaco.languages.CompletionItemKind.Module,
+                range: range,
+                label: `${item}`,
+                insertText: word === '@' ? `${item.replace('@', '')}` : `${item}`,
+            }
+        })]
+    }
+    if (word.startsWith('@') && word.length > 1) {
+        const nextPaths = [...new Set(data.modules
+            .filter((item) => item.startsWith(word))
+            .map((item) => item.replace(word, '').split('/')[0]))]
+
+        list = [...list, ...nextPaths
+            .filter((item) => !item.endsWith('.sol'))
+            .map((item) => {
+            return {
+                kind: monaco.languages.CompletionItemKind.Folder,
+                range: range,
+                label: `${item}`,
+                insertText: `${item}`,
+            }
+        })]
+
+        list = [...list
+            , ...data.modules
+                .filter((item) => item.startsWith(word))
+                .map((item) => {
+                    // remove the first part if it starts with @
+                    let label = item;
+                    if (label.startsWith('@')) {
+                        label = label.substring(label.indexOf('/') + 1);
+                    }
+                    const filename = path.basename(label)
+                    return {
+                        kind: monaco.languages.CompletionItemKind.Reference,
+                        range: range,
+                        label: `${filename}: ${label}`,
+                        insertText: `${item.replace(word, '')}`,
+                    }
+                })
+        ]
+    }
     return list;
 };
 
