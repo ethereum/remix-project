@@ -863,7 +863,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </OverlayTrigger>
           </button>
           <div className='d-flex align-items-center'>            
-            <button id="compileAndRunBtn" data-id="compilerContainerCompileAndRunBtn" className="btn btn-secondary btn-block d-block w-100 text-break remixui_solidityCompileAndRunButton d-inline-block remixui_disabled mb-1 mt-3" onClick={compileAndRun} disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}>
+            <button
+              id="compileAndRunBtn"
+              data-id="compilerContainerCompileAndRunBtn"
+              className="btn btn-secondary btn-block d-block w-100 text-break remixui_solidityCompileAndRunButton d-inline-block remixui_disabled mb-1 mt-3"
+              onClick={compileAndRun}
+              disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}
+            >
               <OverlayTrigger overlay={
                 <Tooltip id="overlay-tooltip-compile-run">
                   <div className="text-left">
@@ -875,7 +881,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 <span>
                   Compile and Run script
                 </span>
-                </OverlayTrigger>
+              </OverlayTrigger>
             </button>            
             <OverlayTrigger overlay={
               <Tooltip id="overlay-tooltip-compile-run-doc">
