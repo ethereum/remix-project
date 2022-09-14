@@ -3,7 +3,8 @@
     "compilerOptions": {
       "sourceMap": false,
       "outDir": "../../dist",
-      "allowJs": true
+      "allowJs": true,
+      "resolveJsonModule": true
     },
     "include": ["**/*.ts", "**/*.js"]
 }
