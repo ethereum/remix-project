@@ -60,7 +60,7 @@ export class TruffleClient extends PluginClient {
 
   listenOnTruffleCompilation () {
     try {
-      const buildPath = utils.absolutePath('out', this.currentSharedFolder)
+      const buildPath = utils.absolutePath('build/contracts', this.currentSharedFolder)
       this.watcher = chokidar.watch(buildPath, { depth: 3, ignorePermissionErrors: true, ignoreInitial: true })
       const compilationResult = {
         input: {},
