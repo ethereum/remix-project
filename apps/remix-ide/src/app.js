@@ -372,7 +372,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await this.appManager.activatePlugin(['home'])
     await this.appManager.activatePlugin(['settings', 'config'])
-    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'codeParser', 'codeFormat', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
+    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'codeParser', 'codeFormatter', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
 
