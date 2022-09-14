@@ -132,6 +132,7 @@ export interface ContractDropdownProps {
     proxyKey: string,
     loadType: 'abi' | 'sol' | 'other',
     currentFile: string,
+    compilationSource: string
     currentContract: string,
     compilationCount: number,
     isRequesting: boolean,
