@@ -59,13 +59,17 @@ export class HardhatClient extends PluginClient {
     try {
       const buildPath = utils.absolutePath('artifacts/build-info', this.currentSharedFolder)
       this.watcher = chokidar.watch(buildPath, { depth: 0, ignorePermissionErrors: true })
-      this.watcher.on('change', async (f: string) => {
-        const content = await fs.readFile(f, { encoding: 'utf-8' })
+
+      const processArtifact = async (path: string) => {
+        const content = await fs.readFile(path, { encoding: 'utf-8' })
         const compilationResult = JSON.parse(content)
         // @ts-ignore
         this.call('terminal', 'log', 'received compilation result from hardhat')
         this.emit('compilationFinished', '', compilationResult.input, 'soljson', compilationResult.output, compilationResult.solcVersion)
-      })
+      }
+
+      this.watcher.on('change', (path: string) => processArtifact(path))
+      this.watcher.on('add', (path: string) => processArtifact(path))
     } catch (e) {
       console.log(e)
     }    
