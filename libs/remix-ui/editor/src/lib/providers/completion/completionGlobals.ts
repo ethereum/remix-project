@@ -1,5 +1,16 @@
 import { IRange } from "monaco-editor";
 import monaco from "../../../types/monaco";
+import path from "path";
+let OZContracts;
+
+// @ts-ignore
+import('raw-loader!libs/remix-ui/editor/src/lib/providers/completion/contracts/OpenZeppelinContracts.txt').then(
+    (txt) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        OZContracts = txt.default.split('\n').filter(x => !x.includes('mock'))
+    }
+)
+
 
 export function getStringCompletionItems(range: IRange, monaco): monaco.languages.CompletionItem[] {
     return [
@@ -390,262 +401,16 @@ export function GeCompletionUnits(range: IRange, monaco): monaco.languages.Compl
     return completionItems;
 }
 export function GetImports(range: IRange, monaco): monaco.languages.CompletionItem[] {
-    let list = [
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/token/ERC20/ERC20.sol',
-            label: 'OZ ERC20',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/token/ERC721/ERC721.sol',
-            label: 'OZ ERC721',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/access/Ownable.sol',
-            label: 'OZ Ownable',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/utils/Counters.sol',
-            label: 'OZ Counters',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/utils/Address.sol',
-            label: 'OZ Address',
-            range
-        },
-        {
-            detail: '@openzeppelin/contracts/utils/Context.sol',
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/utils/Context.sol',
-            label: 'OZ Context',
-            range
-        },
-        {
-            detail: '@openzeppelin/contracts/utils/EnumerableSet.sol',
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/utils/EnumerableSet.sol',
-            label: 'OZ EnumerableSet',
-            range
-        },
-        {
-            detail: '@openzeppelin/contracts/utils/EnumerableMap.sol',
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/utils/EnumerableMap.sol',
-            label: 'OZ EnumerableMap',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/utils/Strings.sol',
-            label: 'OZ Strings',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/utils/ReentrancyGuard.sol',
-            label: 'OZ ReentrancyGuard',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/utils/Pausable.sol',
-            label: 'OZ Pausable',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/utils/structs/EnumerableSet.sol',
-            label: 'OZ EnumerableSet',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/utils/structs/EnumerableMap.sol',
-            label: 'OZ EnumerableMap',
-            range
-        },{
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/utils/math/SafeMath.sol',
-            label: 'OZ SafeMath',
-            range
-        },{
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/utils/math/SafeCast.sol',
-            label: 'OZ SafeCast',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/utils/math/Math.sol',
-            label: 'OZ Math',
-            range
-        },{
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/utils/math/SignedSafeMath.sol',
-            label: 'OZ SignedSafeMath',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/utils/math/SafeMath.sol',
-            label: 'OZ SafeMath',
-            range
-        },{
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/utils/math/SafeCast.sol',
-            label: 'OZ SafeCast',
-            range
-        },{
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol',
-            label: 'OZ ERC20Burnable',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol',
-            label: 'OZ ERC20Pausable',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/token/ERC20/extensions/ERC20Snapshot.sol',
-            label: 'OZ ERC20Snapshot',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol',
-            label: 'OZ ERC20Permit',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Votes.sol',
-            label: 'OZ ERC20Votes',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/token/ERC1155/ERC1155.sol',
-            label: 'OZ ERC1155',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/token/ERC20/IERC20.sol',
-            label: 'OZ IERC20',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/token/ERC721/IERC721.sol',
-            label: 'OZ IERC721',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/token/ERC1155/IERC1155.sol',
-            label: 'OZ IERC1155',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/token/ERC20/IERC20Metadata.sol',
-            label: 'OZ IERC20Metadata',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/token/ERC721/IERC721Metadata.sol',
-            label: 'OZ IERC721Metadata',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/token/ERC1155/IERC1155MetadataURI.sol',
-            label: 'OZ IERC1155MetadataURI',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol',
-            label: 'OZ IERC1155Receiver',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol',
-            label: 'OZ IERC721Receiver',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol',
-            label: 'OZ SafeERC20',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/governance/Governor.sol',
-            label: 'OZ Governor',
-            range
-        },
-        {
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol',
-            label: 'OZ GovernorCountingSimple',
-            range
-
-        },{
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/governance/extensions/GovernorVotes.sol',
-            label: 'OZ GovernorVotes',
-            range
-        },{
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol',
-            label: 'OZ GovernorVotesQuorumFraction',
-            range
-        },{
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/governance/extensions/GovernorTimelockCompound.sol',
-            label: 'OZ GovernorTimelockCompound',
-            range
-        },{
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol',
-            label: 'OZ GovernorTimelockControl',
-            range
-        },{
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol',
-            label: 'OZ GovernorCountingSimple',
-            range
-        },{
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/governance/extensions/GovernorSettings.sol',
-            label: 'OZ GovernorSettings',
-            range
-        },{
-            kind: monaco.languages.CompletionItemKind.Module,
-            insertText: '@openzeppelin/contracts/governance/extensions/GovernorCompatibilityBravo.sol',
-            label: 'OZ GovernorCompatibilityBravo',
-            range
-        }
-    ]
-    list = list.map((item) => {
+    let list = []
+    list.filter
+    list = OZContracts
+        .map((item) => {
+        const filename = path.basename(item)
         return {
-            ...item,
-            label: `${item.label}: ${item.insertText}`,
+            kind: monaco.languages.CompletionItemKind.Module,
+            range: range,
+            label: `OZ ${filename}: ${item}`,
+            insertText: `@openzeppelin${item}`,
         }
     })
     console.log(list)
