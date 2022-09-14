@@ -71,7 +71,7 @@ export class HardhatClient extends PluginClient {
             this.call('terminal', 'log', 'receiving compilation result from hardhat')
             this.warnlog = true
           }
-          this.emit('compilationFinished', '', compilationResult.input, 'soljson', compilationResult.output, compilationResult.solcVersion)
+          this.emit('compilationFinished', '', { sources: compilationResult.input.sources }, 'soljson', compilationResult.output, compilationResult.solcVersion)
         }
       }
 

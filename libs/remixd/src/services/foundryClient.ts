@@ -81,7 +81,7 @@ export class FoundryClient extends PluginClient {
           this.call('terminal', 'log', 'receiving compilation result from foundry')
           this.warnlog = true
         }
-        this.emit('compilationFinished', '', compilationResult.input, 'soljson', compilationResult.output, compilationResult.solcVersion)      
+        this.emit('compilationFinished', '', { sources: compilationResult.input } , 'soljson', compilationResult.output, compilationResult.solcVersion)      
       }
       this.watcher.on('change', async (f: string) => processArtifact())
       this.watcher.on('add', async (f: string) => processArtifact())
@@ -123,6 +123,8 @@ export class FoundryClient extends PluginClient {
       }
       if (!compilationResultPart.output['contracts'][contentJSON.ast.absolutePath]) compilationResultPart.output['contracts'][contentJSON.ast.absolutePath] = {}
       // delete contentJSON['ast']
+      contentJSON.bytecode.object = contentJSON.bytecode.object.replace('0x', '')
+      contentJSON.deployedBytecode.object = contentJSON.deployedBytecode.object.replace('0x', '')
       compilationResultPart.output['contracts'][contentJSON.ast.absolutePath][contractName] = {
         abi: contentJSON.abi,
         evm: {
