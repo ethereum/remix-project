@@ -39,6 +39,7 @@ export default class CodeParserCompiler {
     init() {
 
         this.onAstFinished = async (success, data: CompilationResult, source: CompilationSource, input: any, version) => {
+            //console.log('onAstFinished', success, data, source, input, version)
             this.plugin.call('editor', 'clearAnnotations')
             this.errorState = true
             const result = new CompilerAbstract('soljson', data, source, input)
@@ -46,7 +47,7 @@ export default class CodeParserCompiler {
             if (data.errors) {
                 const sources = result.getSourceCode().sources
                 for (const error of data.errors) {
-
+                    //console.log(error)
                     const lineBreaks = sourceMappingDecoder.getLinebreakPositions(sources[error.sourceLocation.file].content)
                     const lineColumn = sourceMappingDecoder.convertOffsetToLineColumn({
                         start: error.sourceLocation.start,
@@ -213,6 +214,7 @@ export default class CodeParserCompiler {
 
     async clearDecorators(sources: any) {
         const decorators: fileDecoration[] = []
+        if(!sources) return
         for (const fileName of Object.keys(sources)) {
             const decorator: fileDecoration = {
                 path: fileName,

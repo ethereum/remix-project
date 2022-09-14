@@ -1,10 +1,10 @@
 import { sourceMappingDecoder } from "@remix-project/remix-debug"
 import { AstNode } from "@remix-project/remix-solidity-ts"
-import { isArray } from "lodash"
+import { isArray, last } from "lodash"
 import { editor, languages, Position } from "monaco-editor"
 import monaco from "../../types/monaco"
 import { EditorUIProps } from "../remix-ui-editor"
-import { GeCompletionUnits, GetCompletionKeywords, getCompletionSnippets, GetCompletionTypes, getContextualAutoCompleteBTypeName, getContextualAutoCompleteByGlobalVariable, GetGlobalFunctions, GetGlobalVariable, GetImports } from "./completion/completionGlobals"
+import { GeCompletionUnits, GetCompletionKeywords, getCompletionSnippets, GetCompletionTypes, getContextualAutoCompleteBTypeName, getContextualAutoCompleteByGlobalVariable, GetContractRepositories, GetGlobalFunctions, GetGlobalVariable, GetImports } from "./completion/completionGlobals"
 
 export class RemixCompletionProvider implements languages.CompletionItemProvider {
 
@@ -16,7 +16,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         this.monaco = monaco
     }
 
-    triggerCharacters = ['.', '', '"']
+    triggerCharacters = ['.', '', '"', '@', '/']
     async provideCompletionItems(model: editor.ITextModel, position: Position, context: monaco.languages.CompletionContext): Promise<monaco.languages.CompletionList | undefined> {
 
         const completionSettings = await this.props.plugin.call('config', 'getAppParameter', 'settings/auto-completion')
@@ -28,21 +28,31 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
             startColumn: word.startColumn,
             endColumn: word.endColumn
         };
-
+        console.log(word)
         const line = model.getLineContent(position.lineNumber)
         let nodes: AstNode[] = []
         let suggestions: monaco.languages.CompletionItem[] = []
+        console.log('context', context.triggerCharacter)
 
-        if (context.triggerCharacter === '"') {
+        if (context.triggerCharacter === '"' || context.triggerCharacter === '@' || context.triggerCharacter === '/') {
 
-            const ast = await this.props.plugin.call('codeParser', 'parseSolidity', line)
-            if (ast && ast.children && ast.children[0] && ast.children[0].type === "ImportDirective") {
-                suggestions = [...suggestions,
-                    ...GetImports(range, this.monaco),
-                ]
-
-            }else{
-                return
+            const lastpart = line.substring(0, position.column - 1).split(';').pop()
+            console.log('lastpart', lastpart)
+            if (lastpart.startsWith('import')) {
+                const imports = await this.props.plugin.call('codeParser', 'getImports')
+                if (context.triggerCharacter === '"' || context.triggerCharacter === '@') {
+                    suggestions = [...suggestions,
+                    ...GetImports(range, this.monaco, imports, context.triggerCharacter),
+                    ]
+                } else if (context.triggerCharacter === '/') {
+                    const word = line.split('"')[1]
+                    console.log(word)
+                    suggestions = [...suggestions,
+                    ...GetImports(range, this.monaco, imports, word),
+                    ]
+                } else {
+                    return
+                }
             }
         } else
 
