@@ -25,7 +25,7 @@ module.exports = {
       .click('[for="autoCompile"]')
       .verify.elementPresent('[data-id="compilerContainerAutoCompile"]:checked')
   },
-  'Compile Ballot with compiler version 0.4.11 #group1': function (browser: NightwatchBrowser) {
+  'Compile Ballot with compiler version 0.4.11 #group1 #group2': function (browser: NightwatchBrowser) {
     browser
       .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['Ballot'])
   },
