@@ -184,13 +184,6 @@ export function getCompletionSnippets(range: IRange, monaco): monaco.languages.C
             range
         },
         {
-            label: 'import',
-            kind: monaco.languages.CompletionItemKind.Snippet,
-            insertText: 'import "${1:library}";',
-            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-            range
-        },
-        {
             label: 'SPDX-License-Identifier',
             kind: monaco.languages.CompletionItemKind.Snippet,
             insertText: '// SPDX-License-Identifier: MIT',
