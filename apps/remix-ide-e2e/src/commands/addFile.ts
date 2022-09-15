@@ -14,8 +14,17 @@ class AddFile extends EventEmitter {
 }
 
 function addFile (browser: NightwatchBrowser, name: string, content: NightwatchContractContent, done: VoidFunction) {
-  browser.clickLaunchIcon('udapp')
-    .clickLaunchIcon('filePanel')
+  browser
+    .isVisible({
+      selector: "//*[@data-id='sidePanelSwapitTitle' and contains(.,'File explorer')]",
+      locateStrategy: 'xpath',
+      suppressNotFoundErrors: true,
+      timeout: 1000   
+    }, (okVisible) => {
+      if (!okVisible.value) {
+        browser.clickLaunchIcon('filePanel')
+      }
+    })
     .waitForElementVisible('li[data-id="treeViewLitreeViewItemREADME.txt"]')
     .click('li[data-id="treeViewLitreeViewItemREADME.txt"]').pause(1000) // focus on root directory
     .elements('css selector', `li[data-id="treeViewLitreeViewItem${name}"]`, (res) => {
