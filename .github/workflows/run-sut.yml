@@ -1,0 +1,20 @@
+
+name: Running Solidity Unit Tests
+on: [push]
+
+jobs:
+  run_sol_contracts_job:
+    runs-on: ubuntu-latest
+    name: A job to run solidity unit tests on github actions CI
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Environment Setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14.17.6
+      - name: Run SUT Action
+        uses: EthereumRemix/sol-test@v1
+        with:
+          test-path: 'apps/remix-ide/contracts/tests'
+          compiler-version: '0.8.15'
