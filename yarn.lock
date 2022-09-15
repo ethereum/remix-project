@@ -8189,10 +8189,10 @@ commander@^7.2.0:
   resolved "https://registry.yarnpkg.com/commander/-/commander-7.2.0.tgz#a36cb57d0b501ce108e4d20559a150a391d97ab7"
   integrity sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==
 
-commander@^8.3.0:
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-8.3.0.tgz#4837ea1b2da67b9c616a67afbb0fafee567bca66"
-  integrity sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==
+commander@^9.0.0:
+  version "9.4.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-9.4.0.tgz#bc4a40918fefe52e22450c111ecd6b7acce6f11c"
+  integrity sha512-sRPT+umqkz90UA8M1yqYfnHlZA7fF6nSphDtxeywPZ49ysjxDQybzk13CL+mXekDRG92skbcqCLVovuCusNmFw==
 
 commondir@^1.0.1:
   version "1.0.1"
@@ -20894,12 +20894,12 @@ select-hose@^2.0.0:
   resolved "https://registry.yarnpkg.com/select-hose/-/select-hose-2.0.0.tgz#625d8658f865af43ec962bfc376a37359a4994ca"
   integrity sha1-Yl2GWPhlr0Psliv8N2o3NZpJlMo=
 
-selenium-standalone@^8.0.4:
-  version "8.0.8"
-  resolved "https://registry.yarnpkg.com/selenium-standalone/-/selenium-standalone-8.0.8.tgz#15f8202d2fed2bcc9264c10f2a8da4f71f85b377"
-  integrity sha512-2NCHoK12dbLbtXPIdMe1ljiLAMflJDBezPhjJBwmnYz5/yGjCPv2R9ojHO6W1ctD9DOlqyi3AxoAvlT2nmB7Fw==
+selenium-standalone@^8.2.0:
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/selenium-standalone/-/selenium-standalone-8.2.0.tgz#378b9740fe84953083fa9c0b1d8dcbfc3bd8508c"
+  integrity sha512-gRFJm2A91sL0/4PavIsfTVNjyqNjk+zbdJg/zAYgTMjuoWJv+BlYJh+1UbEtyjt4YvZACYif1DFAzFjQapqiOA==
   dependencies:
-    commander "^8.3.0"
+    commander "^9.0.0"
     cross-spawn "^7.0.3"
     debug "^4.3.1"
     fs-extra "^10.0.0"
