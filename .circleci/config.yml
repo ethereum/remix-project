@@ -149,7 +149,7 @@ jobs:
       - run: yarn install
       - run: 
           name: Java
-          command: sudo apt install default-jre
+          command: sudo apt update && sudo apt install default-jre
       - run:
           name: Install Selenium
           command: yarn run selenium-install
