@@ -122,8 +122,8 @@ export default class CodeParserCompiler {
                     "language": "Solidity",
                     "settings": {
                         "optimizer": {
-                            "enabled": false,
-                            "runs": 200
+                            "enabled": state.optimize,
+                            "runs": state.runs
                         },
                         "outputSelection": {
                             "*": {
