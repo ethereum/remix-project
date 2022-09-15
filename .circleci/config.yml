@@ -176,7 +176,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 80
+    parallelism: 95
     steps:
       - node/install:
           install-yarn: true
@@ -228,7 +228,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 90
+    parallelism: 95
     steps:
       - node/install:
           install-yarn: true
@@ -280,7 +280,7 @@ jobs:
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
-    parallelism: 80
+    parallelism: 95
     steps:
       - node/install:
           install-yarn: true
