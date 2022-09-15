@@ -81,7 +81,7 @@ module.exports = {
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
       .testFunction('last',
         {
-          status: 'false Transaction mined but execution failed',
+          status: 'true Transaction mined and execution succeed',
           'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
         })
   },
