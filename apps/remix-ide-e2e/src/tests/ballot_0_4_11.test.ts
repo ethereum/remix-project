@@ -90,25 +90,18 @@ module.exports = {
     browser
       .openFile('Untitled.sol')
       .clickLaunchIcon('udapp')
-      .switchEnvironment('External Http Provider')
-      .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
-      .execute(function () {
-        const modal = document.querySelector('[data-id="basic-http-provider-modal-footer-ok-react"]') as any
-
-        modal.click()
-      })
+      .connectToExternalHttpProvider('http://localhost:8545', 'Custom')
       .clickLaunchIcon('solidity')
       .clickLaunchIcon('udapp')
       .pause(2000)
-      .clearValue('input[placeholder="uint8 _numProposals"]')
-      .setValue('input[placeholder="uint8 _numProposals"]', '2')
+      .clearValue('input[placeholder="bytes32[] proposalNames"]')
+      .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .clickInstance(0)
       .click('*[data-id="terminalClearConsole"]')
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c' })
       .journalLastChildIncludes('Ballot.delegate(address)')
       .journalLastChildIncludes('data: 0x5c1...a733c')
-      .end()
   }
 }
 
