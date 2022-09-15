@@ -139,7 +139,9 @@ export function Workspace () {
   }
 
   const updateWsName = () => {
-    setDisplayOzCustoms(true)
+    // @ts-ignore
+    if (workspaceCreateTemplateInput.current.value.startsWith('oz')) setDisplayOzCustoms(true)
+    else setDisplayOzCustoms(false)
     console.log('inside updateWsName', displayOzCustoms)
     // @ts-ignore
     workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value || 'remixDefault'}_${Date.now()}`
@@ -179,7 +181,7 @@ export function Workspace () {
         { displayOzCustoms &&
         <div id="ozcustomization">
           <label className="form-check-label">Customize template</label><br/>
-          <label id="wsName" className="form-check-label" >Upgradeability</label><br/>
+          <label id="wsName" className="form-check-label">Upgradeability</label><br/>
           <div className="d-flex ml-2 custom-control custom-radio">
               <input className="custom-control-input" type="radio" name="uups" value="uups" id="uups" />
               <label className="form-check-label custom-control-label" htmlFor="uups" data-id="upgradeTypeUups" style={{fontSize: "smaller"}} >UUPS</label>
