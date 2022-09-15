@@ -364,6 +364,9 @@ jobs:
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
     resource_class: xlarge
+    parameters:
+      parts:
+        type: string
       # - image: circleci/mongo:3.4.4
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
@@ -517,6 +520,9 @@ workflows:
       - remix-ide-chrome:
           requires:
             - build
+          matrix:
+              parameters:
+                parts: ["1-50", "50-100", "three"]
       - remix-ide-firefox:
           requires:
             - build
