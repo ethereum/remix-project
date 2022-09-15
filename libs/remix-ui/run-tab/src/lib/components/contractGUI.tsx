@@ -241,7 +241,7 @@ export function ContractGUI (props: ContractGUIProps) {
             <span>{buttonOptions.title}</span>
           </Tooltip>
         }>
-        <button onClick={handleActionClick} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId} data-title={buttonOptions.title} id={'targetButtonId'}>{title}</button>
+        <button onClick={handleActionClick} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId} data-title={buttonOptions.title}>{title}</button>
         </OverlayTrigger>
         <OverlayTrigger placement={'right'} overlay={
           <Tooltip className="text-nowrap" id="remixContractGuiTooltip">
