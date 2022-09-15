@@ -153,7 +153,9 @@ jobs:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
-
+    parameters:
+      parts:
+        type: string
     parallelism: 80
     steps:
       - browser-tools/install-chrome
@@ -364,9 +366,6 @@ jobs:
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
     resource_class: xlarge
-    parameters:
-      parts:
-        type: string
       # - image: circleci/mongo:3.4.4
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
