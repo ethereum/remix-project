@@ -127,6 +127,14 @@ export class CodeParser extends Plugin {
             await this.importService.setFileTree()
         })
 
+        this.on('fileManager', 'fileAdded', async () => {
+            await this.importService.setFileTree()
+        })
+        this.on('fileManager', 'fileRemoved', async () => {
+            await this.importService.setFileTree()
+        })
+        
+
 
         this.on('fileManager', 'currentFileChanged', async () => {
             await this.call('editor', 'discardLineTexts')
