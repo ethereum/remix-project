@@ -7,6 +7,7 @@ import Registry from '../state/registry'
 import { RemixdHandle } from '../plugins/remixd-handle'
 const { GitHandle } = require('../files/git-handle.js')
 const { HardhatHandle } = require('../files/hardhat-handle.js')
+const { FoundryHandle } = require('../files/foundry-handle.js')
 const { TruffleHandle } = require('../files/truffle-handle.js')
 const { SlitherHandle } = require('../files/slither-handle.js')
 
@@ -53,6 +54,7 @@ module.exports = class Filepanel extends ViewPlugin {
     this.remixdHandle = new RemixdHandle(this.fileProviders.localhost, appManager)
     this.gitHandle = new GitHandle()
     this.hardhatHandle = new HardhatHandle()
+    this.foundryHandle = new FoundryHandle()
     this.truffleHandle = new TruffleHandle()
     this.slitherHandle = new SlitherHandle()
     this.workspaces = []
