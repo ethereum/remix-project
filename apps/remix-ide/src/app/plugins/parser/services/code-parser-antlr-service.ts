@@ -85,7 +85,7 @@ export default class CodeParserAntlrService {
     enableWorker() {
         if (!this.workerTimer) {
             this.workerTimer = setInterval(() => {
-                this.getCurrentFileAST()
+                this.setCurrentFileAST()
             }, 5000)
         }
     }
@@ -118,7 +118,7 @@ export default class CodeParserAntlrService {
      * @param text 
      * @returns 
      */
-    async getCurrentFileAST(text: string | null = null) {
+    async setCurrentFileAST(text: string | null = null) {
         try {
             this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
             if (this.plugin.currentFile && this.plugin.currentFile.endsWith('.sol')) {
