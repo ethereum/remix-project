@@ -1,6 +1,6 @@
 import { sourceMappingDecoder } from "@remix-project/remix-debug"
 import { AstNode } from "@remix-project/remix-solidity-ts"
-import { isArray, last } from "lodash"
+import { isArray } from "lodash"
 import { editor, languages, Position } from "monaco-editor"
 import monaco from "../../types/monaco"
 import { EditorUIProps } from "../remix-ui-editor"
