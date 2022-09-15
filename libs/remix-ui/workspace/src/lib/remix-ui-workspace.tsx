@@ -16,6 +16,7 @@ export function Workspace () {
   const [selectedWorkspace, setSelectedWorkspace] = useState<{ name: string, isGitRepo: boolean}>(null)
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
   const [displayOzCustoms, setDisplayOzCustoms] = useState<boolean>(false)
+  const upgradeable = useRef()
   const global = useContext(FileSystemContext)
   const workspaceRenameInput = useRef()
   const workspaceCreateInput = useRef()
@@ -105,9 +106,13 @@ export function Workspace () {
     const workspaceName = workspaceCreateInput.current.value
     // @ts-ignore: Object is possibly 'null'.
     const workspaceTemplateName = workspaceCreateTemplateInput.current.value || 'remixDefault'
+    console.log('upgradeable.current--->', upgradeable.current)
+    const opts = {
+      upgradeable: upgradeable.current
+    }
 
     try {
-      await global.dispatchCreateWorkspace(workspaceName, workspaceTemplateName)
+      await global.dispatchCreateWorkspace(workspaceName, workspaceTemplateName, opts)
     } catch (e) {
       global.modal('Create Workspace', e.message, 'OK', () => {}, '')
       console.error(e)
@@ -161,6 +166,12 @@ export function Workspace () {
     setShowDropdown(isOpen)
   }
 
+  const handleUpgradeChange = (e) => {
+    console.log('selected option', e.target.value)
+    // @ts-ignore
+    upgradeable.current = e.target.value
+  }
+
   const createModalMessage = () => {
     return (
       <>
@@ -178,17 +189,23 @@ export function Workspace () {
             <option className="" style={{fontSize: "small"}} value='zeroxErc20'>ERC20</option>
           </optgroup>
         </select>
-        { displayOzCustoms &&
-        <div id="ozcustomization">
-          <label className="form-check-label">Customize template</label><br/>
-          <label id="wsName" className="form-check-label">Upgradeability</label><br/>
-          <div className="d-flex ml-2 custom-control custom-radio">
-              <input className="custom-control-input" type="radio" name="uups" value="uups" id="uups" />
-              <label className="form-check-label custom-control-label" htmlFor="uups" data-id="upgradeTypeUups" style={{fontSize: "smaller"}} >UUPS</label>
-          </div><br/>
-        </div>
-        }
 
+        <div id="ozcustomization">
+          <label className="form-check-label">Customize template</label><br/><br/>
+
+          <label id="wsName" className="form-check-label">Upgradeability</label><br/>
+          <div onChange={(e) => handleUpgradeChange(e)}>
+            <div className="d-flex ml-2 custom-control custom-radio">
+                <input className="custom-control-input" type="radio" name="upgradeability" value="transparent" id="transparent" />
+                <label className="form-check-label custom-control-label" htmlFor="transparent" data-id="upgradeTypeTransparent" >Transparent</label>
+            </div>
+            <div className="d-flex ml-2 custom-control custom-radio">
+                <input className="custom-control-input" type="radio" name="upgradeability" value="uups" id="uups" />
+                <label className="form-check-label custom-control-label" htmlFor="uups" data-id="upgradeTypeUups" >UUPS</label>
+            </div>
+          </div>
+        </div>
+        <br/>
         <label id="wsName" className="form-check-label">Workspace name</label>
         <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`remixDefault_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
       </>
