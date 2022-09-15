@@ -16,7 +16,7 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'Compile Ballot with compiler version 0.4.11 #group1': function (browser: NightwatchBrowser) {
+  'Set Ballot 0.4.11': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('solidity')
@@ -24,6 +24,9 @@ module.exports = {
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]')
       .verify.elementPresent('[data-id="compilerContainerAutoCompile"]:checked')
+  },
+  'Compile Ballot with compiler version 0.4.11 #group1': function (browser: NightwatchBrowser) {
+    browser
       .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['Ballot'])
   },
 
@@ -82,20 +85,16 @@ module.exports = {
           'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
         })
   },
-  'Add Ballot #group2': function (browser: NightwatchBrowser) {
-    browser
-      .addFile('Untitled.sol', sources[0]['Untitled.sol'])
-  },
   'Deploy and use Ballot using external web3 #group2': function (browser: NightwatchBrowser) {
     browser
-      .openFile('Untitled.sol')
+
       .clickLaunchIcon('udapp')
       .connectToExternalHttpProvider('http://localhost:8545', 'Custom')
       .clickLaunchIcon('solidity')
       .clickLaunchIcon('udapp')
       .pause(2000)
-      .clearValue('input[placeholder="bytes32[] proposalNames"]')
-      .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
+      .clearValue('input[placeholder="uint8 _numProposals"]')
+      .setValue('input[placeholder="uint8 _numProposals"]', '2')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .clickInstance(0)
       .click('*[data-id="terminalClearConsole"]')
