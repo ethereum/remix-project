@@ -22,46 +22,51 @@ export class CodeFormat extends Plugin {
         super(profile)
     }
 
-    async format() {
-        const file = await this.call('fileManager', 'getCurrentFile')
-        const content = await this.call('fileManager', 'readFile', file)
-        let parserName = ''
-        let options: Options = {
+    async format(file: string) {
+
+        try {
+            const content = await this.call('fileManager', 'readFile', file)
+            if (!content) return
+            let parserName = ''
+            let options: Options = {
+            }
+            switch (path.extname(file)) {
+                case '.sol':
+                    parserName = 'solidity-parse'
+                    break
+                case '.ts':
+                    parserName = 'typescript'
+                    options = {
+                        ...options,
+                        trailingComma: 'all',
+                        semi: false,
+                        singleQuote: true,
+                        quoteProps: 'as-needed',
+                        bracketSpacing: true,
+                        arrowParens: 'always',
+                    }
+                    break
+                case '.js':
+                    parserName = "espree"
+                    options = {
+                        ...options,
+                        semi: false,
+                        singleQuote: true,
+                    }
+                    break
+                case '.json':
+                    parserName = 'json'
+                    break
+            }
+            const result = prettier.format(content, {
+                plugins: [sol as any, ts, babel, espree],
+                parser: parserName,
+                ...options
+            })
+            await this.call('fileManager', 'writeFile', file, result)
+        } catch (e) {
+            // do nothing
         }
-        switch (path.extname(file)) {
-            case '.sol':
-                parserName = 'solidity-parse'
-                break
-            case '.ts':
-                parserName = 'typescript'
-                options = {
-                    ...options,
-                    trailingComma: 'all',
-                    semi: false,
-                    singleQuote: true,
-                    quoteProps: 'as-needed',
-                    bracketSpacing: true,
-                    arrowParens: 'always',
-                }
-                break
-            case '.js':
-                parserName = "espree"
-                options = {
-                    ...options,
-                    semi: false,
-                    singleQuote: true,
-                }
-                break
-            case '.json':
-                parserName = 'json'
-                break
-        }
-        const result = prettier.format(content, {
-            plugins: [sol as any, ts, babel, espree],
-            parser: parserName,
-            ...options
-        })
-        await this.call('fileManager', 'writeFile', file, result)
     }
 
 }

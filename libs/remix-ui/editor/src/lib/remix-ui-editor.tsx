@@ -122,9 +122,11 @@ export const EditorUI = (props: EditorUIProps) => {
   \t\t\t\t\t\t\t|_| \\_\\ |_____| |_|  |_| |___| /_/\\_\\  |___| |____/  |_____|\n\n
   \t\t\t\t\t\t\tKeyboard Shortcuts:\n
   \t\t\t\t\t\t\t\tCTRL + S: Compile the current contract\n
-  \t\t\t\t\t\t\t\tCtrl + Shift + F : Open the File Explorer\n
-  \t\t\t\t\t\t\t\tCtrl + Shift + A : Open the Plugin Manager\n
-  \t\t\t\t\t\t\t\tCTRL + SHIFT + S: Compile the current contract & Run an associated script\n\n
+  \t\t\t\t\t\t\t\tCTRL + Shift + F : Open the File Explorer\n
+  \t\t\t\t\t\t\t\tCTRL + Shift + A : Open the Plugin Manager\n
+  \t\t\t\t\t\t\t\tCTRL + SHIFT + S: Compile the current contract & Run an associated script\n
+  \t\t\t\t\t\t\tEditor Keyboard Shortcuts:\n
+  \t\t\t\t\t\t\t\tCTRL + Alt + F : Format the code in the current file\n
   \t\t\t\t\t\t\tImportant Links:\n
   \t\t\t\t\t\t\t\tOfficial website about the Remix Project: https://remix-project.org/\n
   \t\t\t\t\t\t\t\tOfficial documentation: https://remix-ide.readthedocs.io/en/latest/\n
@@ -578,7 +580,8 @@ export const EditorUI = (props: EditorUIProps) => {
         monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyF,
       ],
       run: async () => { 
-        await props.plugin.call('codeFormatter', 'format')
+        const file = await props.plugin.call('fileManager', 'getCurrentFile')
+        await props.plugin.call('codeFormatter', 'format', file)
       },
     }
     editor.addAction(formatAction)
