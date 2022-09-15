@@ -46,6 +46,7 @@ export class RemixdHandle extends WebsocketPlugin {
     if (this.appManager.isActive('hardhat')) this.appManager.deactivatePlugin('hardhat')
     if (this.appManager.isActive('truffle')) this.appManager.deactivatePlugin('truffle')
     if (this.appManager.isActive('slither')) this.appManager.deactivatePlugin('slither')
+    if (this.appManager.isActive('foundry')) this.appManager.deactivatePlugin('foundry')
     this.localhostProvider.close((error) => {
       if (error) console.log(error)
     })
@@ -94,6 +95,7 @@ export class RemixdHandle extends WebsocketPlugin {
         this.call('manager', 'activatePlugin', 'hardhat')
         this.call('manager', 'activatePlugin', 'truffle')
         this.call('manager', 'activatePlugin', 'slither')
+        this.call('manager', 'activatePlugin', 'foundry')
       }
     }
     if (this.localhostProvider.isConnected()) {
