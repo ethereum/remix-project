@@ -63,6 +63,16 @@ export class CompilerArtefacts extends Plugin {
       this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
       saveCompilationPerFileResult(file, source, languageVersion, data)
     })
+
+    this.on('truffle', 'compilationFinished', (file, source, languageVersion, data) => {
+      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
+      saveCompilationPerFileResult(file, source, languageVersion, data)
+    })
+
+    this.on('foundry', 'compilationFinished', (file, source, languageVersion, data) => {
+      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source)
+      saveCompilationPerFileResult(file, source, languageVersion, data)
+    })
   }
   
   /**
