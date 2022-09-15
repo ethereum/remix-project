@@ -135,7 +135,6 @@ jobs:
           command: |
             google-chrome --version
             chromedriver --version
-            java -jar /usr/local/bin/selenium.jar --version
           name: Check install
       - checkout
       - attach_workspace:
@@ -146,9 +145,11 @@ jobs:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn install
       - run:
-          name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar
-          background: true
+          name: Install Selenium
+          command: yarn run selenium-install
+      - run:
+          name: Run Selenium
+          command: yarn run selenium
       - run: ./apps/remix-ide/ci/browser_test.sh chrome
       - store_test_results:
           path: ./reports/tests
