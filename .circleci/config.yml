@@ -31,6 +31,9 @@ jobs:
       - node/install:
           install-yarn: true
           node-version: "v14.17.6"
+      - run: 
+          name: Java
+          command: sudo apt install default-jre
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
