@@ -144,6 +144,9 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn install
+      - run: 
+          name: Java
+          command: sudo apt install default-jre
       - run:
           name: Install Selenium
           command: yarn run selenium-install
