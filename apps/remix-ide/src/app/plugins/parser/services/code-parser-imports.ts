@@ -23,8 +23,6 @@ export default class CodeParserImports {
     async init() {
         // @ts-ignore
         const txt = await import('raw-loader!libs/remix-ui/editor/src/lib/providers/completion/contracts/contracts.txt')
-
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         this.data.modules = txt.default.split('\n')
             .filter(x => x !== '')
             .map(x => x.replace('./node_modules/', ''))
@@ -38,13 +36,11 @@ export default class CodeParserImports {
             
         // get unique first words of the values in the array
         this.data.packages = [...new Set(this.data.modules.map(x => x.split('/')[0]))]
-        console.log(this.data)
     }
 
     setFileTree = async () => {
         this.data.files = await this.getDirectory('/')
-        this.data.files = this.data.files.filter(x => x.endsWith('.sol') && !x.startsWith('.deps'))
-        console.log(this.data)
+        this.data.files = this.data.files.filter(x => x.endsWith('.sol') && !x.startsWith('.deps') && !x.startsWith('.git'))
     }
 
     getDirectory = async (dir: string) => {
