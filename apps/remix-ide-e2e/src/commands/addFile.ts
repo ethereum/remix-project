@@ -13,13 +13,13 @@ class AddFile extends EventEmitter {
   }
 }
 
-function addFile(browser: NightwatchBrowser, name: string, content: NightwatchContractContent, done: VoidFunction) {
+function addFile (browser: NightwatchBrowser, name: string, content: NightwatchContractContent, done: VoidFunction) {
   browser
     .isVisible({
       selector: "//*[@data-id='sidePanelSwapitTitle' and contains(.,'File explorer')]",
       locateStrategy: 'xpath',
       suppressNotFoundErrors: true,
-      timeout: 1000
+      timeout: 1000   
     }, (okVisible) => {
       if (!okVisible.value) {
         browser.clickLaunchIcon('filePanel')
