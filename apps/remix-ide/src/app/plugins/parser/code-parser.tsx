@@ -73,7 +73,7 @@ export class CodeParser extends Plugin {
     getLastNodeInLine: (ast: string) => Promise<any>
     listAstNodes: () => Promise<any>
     getANTLRBlockAtPosition: (position: any, text?: string) => Promise<any>
-    getCurrentFileAST: (text?: string) => Promise<ParseResult>
+    setCurrentFileAST: (text?: string) => Promise<ParseResult>
 
     constructor(astWalker: any) {
         super(profile)
@@ -109,7 +109,7 @@ export class CodeParser extends Plugin {
         this.getLastNodeInLine = this.antlrService.getLastNodeInLine.bind(this.antlrService)
         this.listAstNodes = this.antlrService.listAstNodes.bind(this.antlrService)
         this.getANTLRBlockAtPosition = this.antlrService.getANTLRBlockAtPosition.bind(this.antlrService)
-        this.getCurrentFileAST = this.antlrService.getCurrentFileAST.bind(this.antlrService)
+        this.setCurrentFileAST = this.antlrService.setCurrentFileAST.bind(this.antlrService)
 
 
         this.on('editor', 'didChangeFile', async (file) => {
@@ -126,7 +126,7 @@ export class CodeParser extends Plugin {
             await this.call('editor', 'discardLineTexts')
             const completionSettings = await this.call('config', 'getAppParameter', 'auto-completion')
             if (completionSettings) {
-                this.antlrService.getCurrentFileAST()
+                this.antlrService.setCurrentFileAST()
             }
             await this.handleChangeEvents()
         })
