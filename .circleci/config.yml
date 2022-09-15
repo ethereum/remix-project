@@ -31,9 +31,6 @@ jobs:
       - node/install:
           install-yarn: true
           node-version: "v14.17.6"
-      - run: 
-          name: Java
-          command: sudo apt update && sudo apt install default-jre
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
@@ -156,6 +153,7 @@ jobs:
       - run:
           name: Run Selenium
           command: yarn run selenium
+          background: true
       - run: ./apps/remix-ide/ci/browser_test.sh chrome
       - store_test_results:
           path: ./reports/tests
