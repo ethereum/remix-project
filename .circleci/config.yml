@@ -187,7 +187,6 @@ jobs:
           command: |
             google-chrome --version
             chromedriver --version
-            java -jar /usr/local/bin/selenium.jar --version
           name: Check install
       - checkout
       - attach_workspace:
@@ -197,9 +196,15 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn install
+      - run: 
+          name: Java
+          command: sudo apt update && sudo apt install default-jre
       - run:
-          name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar
+          name: Install Selenium
+          command: yarn run selenium-install
+      - run:
+          name: Run Selenium
+          command: yarn run selenium
           background: true
       - run: ./apps/remix-ide/ci/flaky.sh chrome
       - store_test_results:
@@ -234,7 +239,7 @@ jobs:
           command: |
             firefox --version
             geckodriver --version
-            java -jar /usr/local/bin/selenium.jar --version
+
           name: Check install
       - checkout
       - attach_workspace:
@@ -244,9 +249,15 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn install
+      - run: 
+          name: Java
+          command: sudo apt update && sudo apt install default-jre
       - run:
-          name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar
+          name: Install Selenium
+          command: yarn run selenium-install
+      - run:
+          name: Run Selenium
+          command: yarn run selenium
           background: true
       - run: ./apps/remix-ide/ci/browser_test.sh firefox
       - store_test_results:
@@ -280,7 +291,7 @@ jobs:
           command: |
             firefox --version
             geckodriver --version
-            java -jar /usr/local/bin/selenium.jar --version
+
           name: Check install
       - checkout
       - attach_workspace:
@@ -290,9 +301,15 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn install
+      - run: 
+          name: Java
+          command: sudo apt update && sudo apt install default-jre
       - run:
-          name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar
+          name: Install Selenium
+          command: yarn run selenium-install
+      - run:
+          name: Run Selenium
+          command: yarn run selenium
           background: true
       - run: ./apps/remix-ide/ci/flaky.sh firefox
       - store_test_results:
@@ -326,7 +343,7 @@ jobs:
           command: |
             google-chrome --version
             chromedriver --version
-            java -jar /usr/local/bin/selenium.jar --version
+
           name: Check install
       - checkout
       - attach_workspace:
@@ -336,9 +353,15 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn install
+      - run: 
+          name: Java
+          command: sudo apt update && sudo apt install default-jre
       - run:
-          name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar
+          name: Install Selenium
+          command: yarn run selenium-install
+      - run:
+          name: Run Selenium
+          command: yarn run selenium
           background: true
       - run: npx nx build vyper
       - run: ./apps/remix-ide/ci/browser_tests_vyper_plugin.sh
@@ -373,7 +396,7 @@ jobs:
           command: |
             google-chrome --version
             chromedriver --version
-            java -jar /usr/local/bin/selenium.jar --version
+
           name: Check install
       - checkout
       - attach_workspace:
@@ -383,9 +406,15 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn install
+      - run: 
+          name: Java
+          command: sudo apt update && sudo apt install default-jre
       - run:
-          name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar
+          name: Install Selenium
+          command: yarn run selenium-install
+      - run:
+          name: Run Selenium
+          command: yarn run selenium
           background: true
       - run: npx nx build etherscan
       - run: ./apps/remix-ide/ci/browser_tests_etherscan_plugin.sh
@@ -420,7 +449,7 @@ jobs:
           command: |
             google-chrome --version
             chromedriver --version
-            java -jar /usr/local/bin/selenium.jar --version
+
           name: Check install
       - checkout
       - attach_workspace:
@@ -430,9 +459,15 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn install
+      - run: 
+          name: Java
+          command: sudo apt update && sudo apt install default-jre
       - run:
-          name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar
+          name: Install Selenium
+          command: yarn run selenium-install
+      - run:
+          name: Run Selenium
+          command: yarn run selenium
           background: true
       - run: ./apps/remix-ide/ci/browser_tests_plugin_api.sh
       - store_test_results:
