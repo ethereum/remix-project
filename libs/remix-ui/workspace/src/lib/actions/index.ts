@@ -8,6 +8,7 @@ import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin,
 import { QueryParams } from '@remix-project/remix-lib'
 import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
+import isElectron  from 'is-electron'
 
 export * from './events'
 export * from './workspace'
@@ -111,6 +112,10 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
           await basicWorkspaceInit(workspaces, workspaceProvider)
         }
       } else await basicWorkspaceInit(workspaces, workspaceProvider)
+    } else if (isElectron()) {
+      plugin.call('notification', 'toast', `connecting to localhost...`)
+      await basicWorkspaceInit(workspaces, workspaceProvider)
+      await plugin.call('manager', 'activatePlugin', 'remixd')
     } else if (localStorage.getItem("currentWorkspace")) {
       const index = workspaces.findIndex(element => element.name == localStorage.getItem("currentWorkspace"))
       if (index !== -1) {

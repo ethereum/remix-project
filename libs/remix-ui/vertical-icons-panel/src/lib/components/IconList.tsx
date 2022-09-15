@@ -12,7 +12,7 @@ interface OtherIconsProps {
 
 function IconList ({ verticalIconsPlugin, itemContextAction, icons, theme }: OtherIconsProps) {
   return (
-    <div id="otherIcons">
+    <div id="otherIcons" className="position-relative">
       {
         icons
           .map(p => (
@@ -25,7 +25,8 @@ function IconList ({ verticalIconsPlugin, itemContextAction, icons, theme }: Oth
                 p.profile.name
               }
             />
-          ))}
+          ))
+      }
     </div>
   )
 }
