@@ -110,7 +110,9 @@ jobs:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
-
+    parameters:
+      parts:
+        type: string
     parallelism: 90
     steps:
       - browser-tools/install-chrome
@@ -153,9 +155,6 @@ jobs:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
-    parameters:
-      parts:
-        type: string
     parallelism: 80
     steps:
       - browser-tools/install-chrome
