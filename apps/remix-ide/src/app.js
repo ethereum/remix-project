@@ -339,6 +339,7 @@ class AppComponent {
       filePanel.remixdHandle,
       filePanel.gitHandle,
       filePanel.hardhatHandle,
+      filePanel.foundryHandle,
       filePanel.truffleHandle,
       filePanel.slitherHandle,
       linkLibraries,
