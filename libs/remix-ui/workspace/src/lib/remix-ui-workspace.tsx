@@ -179,25 +179,24 @@ export function Workspace () {
   const createModalMessage = () => {
     return (
       <>
-        <label id="selectWsTemplate" className="form-check-label">Choose a template</label>
-        <select name="wstemplate" className="mb-4 form-control custom-select" id="wstemplate" defaultValue='remixDefault' ref={workspaceCreateTemplateInput} onChange={updateWsName}>
-          <optgroup className="" style={{fontSize: "medium"}} label="General">
-            <option className="" style={{fontSize: "small"}} value='remixDefault'>Default</option>
-            <option className="" style={{fontSize: "small"}} value='blank'>Blank</option>
+        <label id="selectWsTemplate" className="form-check-label" style={{fontWeight: "bolder"}}>Choose a template</label>
+        <select name="wstemplate" className="mb-3 form-control custom-select" id="wstemplate" defaultValue='remixDefault' ref={workspaceCreateTemplateInput} onChange={updateWsName}>
+          <optgroup style={{fontSize: "medium"}} label="General">
+            <option style={{fontSize: "small"}} value='remixDefault'>Default</option>
+            <option style={{fontSize: "small"}} value='blank'>Blank</option>
           </optgroup>
-          <optgroup className="" style={{fontSize: "medium"}} label="OpenZepplin">
-            <option className="" style={{fontSize: "small"}} value='ozerc20'>ERC20</option>
-            <option className="" style={{fontSize: "small"}} value='ozerc721'>ERC721</option>
+          <optgroup style={{fontSize: "medium"}} label="OpenZepplin">
+            <option style={{fontSize: "small"}} value='ozerc20'>ERC20</option>
+            <option style={{fontSize: "small"}} value='ozerc721'>ERC721</option>
           </optgroup>
-          <optgroup className="" style={{fontSize: "medium"}} label="0xProject">
-            <option className="" style={{fontSize: "small"}} value='zeroxErc20'>ERC20</option>
+          <optgroup style={{fontSize: "medium"}} label="0xProject">
+            <option style={{fontSize: "small"}} value='zeroxErc20'>ERC20</option>
           </optgroup>
         </select>
 
-        <div id="ozcustomization" ref={displayOzCustomRef} style={{display: 'none'}}>
-          <label className="form-check-label">Customize template</label><br/><br/>
-
-          <label id="wsName" className="form-check-label">Upgradeability</label><br/>
+        <div id="ozcustomization" ref={displayOzCustomRef} style={{display: 'none'}} className="mb-2">
+          <label className="form-check-label d-block mb-2" style={{fontWeight: "bolder"}}>Customize template</label>
+          <label id="wsName" className="form-check-label d-block mb-1">Upgradeability</label>
           <div onChange={(e) => handleUpgradeability(e)}>
             <div className="d-flex ml-2 custom-control custom-radio">
                 <input className="custom-control-input" type="radio" name="upgradeability" value="transparent" id="transparent" />
@@ -209,9 +208,8 @@ export function Workspace () {
             </div>
           </div>
         </div>
-        <br/>
 
-        <label id="wsName" className="form-check-label">Workspace name</label>
+        <label id="wsName" className="form-check-label" style={{fontWeight: "bolder"}} >Workspace name</label>
         <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`remixDefault_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
 
         <div className="d-flex py-2 align-items-center custom-control custom-checkbox">
