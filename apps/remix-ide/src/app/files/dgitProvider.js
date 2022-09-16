@@ -9,7 +9,6 @@ import {
   saveAs
 } from 'file-saver'
 import http from 'isomorphic-git/http/web'
-import { IndexedDBStorage } from './filesystems/indexedDB'
 
 const JSZip = require('jszip')
 const path = require('path')
