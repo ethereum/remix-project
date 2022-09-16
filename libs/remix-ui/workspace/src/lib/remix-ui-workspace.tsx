@@ -22,6 +22,7 @@ export function Workspace () {
   const workspaceCreateInput = useRef()
   const workspaceCreateTemplateInput = useRef()
   const cloneUrlRef = useRef<HTMLInputElement>()
+  const initGitRepoRef = useRef<HTMLInputElement>()
 
   useEffect(() => {
     setCurrentWorkspace(localStorage.getItem('currentWorkspace') ? localStorage.getItem('currentWorkspace') : '')
@@ -106,13 +107,14 @@ export function Workspace () {
     const workspaceName = workspaceCreateInput.current.value
     // @ts-ignore: Object is possibly 'null'.
     const workspaceTemplateName = workspaceCreateTemplateInput.current.value || 'remixDefault'
+    const initGitRepo = initGitRepoRef.current.checked
 
     const opts = {
       upgradeable: upgradeable.current
     }
 
     try {
-      await global.dispatchCreateWorkspace(workspaceName, workspaceTemplateName, opts)
+      await global.dispatchCreateWorkspace(workspaceName, workspaceTemplateName, opts, initGitRepo)
     } catch (e) {
       global.modal('Create Workspace', e.message, 'OK', () => {}, '')
       console.error(e)
@@ -211,6 +213,26 @@ export function Workspace () {
 
         <label id="wsName" className="form-check-label">Workspace name</label>
         <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`remixDefault_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
+
+        <div className="d-flex py-2 align-items-center custom-control custom-checkbox">
+          <input
+            ref={initGitRepoRef}
+            id="initGitRepository"
+            data-id="initGitRepository"
+            className="form-check-input custom-control-input"
+            type="checkbox"
+            onChange={() => {}}
+          />
+          <label
+            htmlFor="initGitRepository"
+            data-id="initGitRepositoryLabel"
+            className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
+            title="Check option to initialize workspace as a new git repository"
+          >
+            Initialize workspace as a new git repository
+          </label>
+        </div>
+
       </>
     )
   }
