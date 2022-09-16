@@ -557,7 +557,6 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - remix-ide-firefox
             - remix-ide-plugin-api
             - remix-ide-vyper-plugin
             - remix-ide-etherscan-plugin
@@ -569,7 +568,6 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - remix-ide-firefox
             - remix-ide-plugin-api
             - remix-ide-vyper-plugin
             - remix-ide-etherscan-plugin
@@ -581,7 +579,6 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - remix-ide-firefox
             - remix-ide-plugin-api
             - remix-ide-vyper-plugin
             - remix-ide-etherscan-plugin
