@@ -239,7 +239,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const openFile = async () => {
-    api.open(configFilePath)
+    await api.open(configFilePath)
   }
 
   const createNewConfigFile = async () => {
@@ -826,7 +826,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           <div className={`pt-2 ml-4 ml-2 align-items-start justify-content-between d-flex`}>
             { (!showFilePathInput && state.useFileConfiguration) && <span
               title="Click to open the config file"
-              onClick={configFilePath === '' ? () => {} : openFile}
+              onClick={configFilePath === '' ? () => {} : async()=>{ await openFile()}}
               className="py-2 remixui_compilerConfigPath"
             >{configFilePath === '' ? 'No file selected.' : configFilePath}</span> }
             { (!showFilePathInput && !state.useFileConfiguration) && <span className="py-2 text-secondary">{configFilePath}</span> }
