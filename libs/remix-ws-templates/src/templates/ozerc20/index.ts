@@ -1,7 +1,6 @@
 import { erc20 } from '@openzeppelin/wizard';
 
 export default async (opts) => {
-    console.log('opts---->', opts)
     return {
         'contracts/MyToken.sol': erc20.print({ ...erc20.defaults, upgradeable: opts.upgradeable}),
         // @ts-ignore
