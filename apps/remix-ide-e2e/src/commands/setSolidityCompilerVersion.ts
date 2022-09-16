@@ -6,6 +6,7 @@ class SetSolidityCompilerVersion extends EventEmitter {
     this.api
       .click(`#compileTabView #versionSelector [value="${version}"]`)
       .pause(5000)
+      .saveScreenshot(`./reports/screenshots/${version}.png`)
       .perform(() => {
         this.emit('complete')
       })
