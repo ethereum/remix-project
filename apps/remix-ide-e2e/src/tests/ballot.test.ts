@@ -153,7 +153,7 @@ module.exports = {
       })
       
       .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
-      .sendKeys('*[data-id="scConfigFilePathInput"]', 'compiler_config.json')
+      .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
       .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
 
       .isVisible({
