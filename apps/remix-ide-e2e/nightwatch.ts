@@ -84,8 +84,8 @@ module.exports = {
         'moz:firefoxOptions': {
           args: [
             '-headless',
-            '-width=2560',
-            '-height=1440'
+            '--width=2560',
+            '--height=1440'
           ]
         }
       }
