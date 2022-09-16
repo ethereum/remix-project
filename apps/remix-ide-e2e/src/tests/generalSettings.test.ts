@@ -163,7 +163,7 @@ const remixIdeThemes = {
   },
   flatly: {
     primary: '#2C3E50',
-    secondary: '#95a5a6',
+    secondary: '#dadfe0',
     success: '#18BC9C',
     info: '#3498DB',
     warning: '#F39C12',
@@ -171,7 +171,7 @@ const remixIdeThemes = {
   },
   spacelab: {
     primary: '#446E9B',
-    secondary: '#999',
+    secondary: '#dadfe0',
     success: '#3CB521',
     info: '#3399F3',
     warning: '#D47500',
@@ -179,7 +179,7 @@ const remixIdeThemes = {
   },
   cyborg: {
     primary: '#2A9FD6',
-    secondary: '#555',
+    secondary: '#3c3939',
     success: '#77B300',
     info: '#93C',
     warning: '#F80',
