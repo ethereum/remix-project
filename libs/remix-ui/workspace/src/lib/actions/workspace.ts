@@ -10,6 +10,7 @@ import * as templateWithContent from '@remix-project/remix-ws-templates'
 import { ROOT_PATH } from '../utils/constants'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
+import { getUncommittedFiles } from '../utils/gitStatusFilter'
 
 declare global {
   interface Window { remixFileSystemCallback: IndexedDBStorage; }
@@ -431,7 +432,7 @@ export const getGitRepoBranches = async (workspacePath: string) => {
     fs: window.remixFileSystemCallback,
     dir: addSlash(workspacePath)
   }
-  const branches: { remote: any; name: string; }[] = await plugin.call('dGitProvider', 'branches', gitConfig)
+  const branches: { remote: any; name: string; }[] = await plugin.call('dGitProvider', 'branches', { ...gitConfig })
 
   return branches
 }
@@ -441,7 +442,7 @@ export const getGitRepoCurrentBranch = async (workspaceName: string) => {
     fs: window.remixFileSystemCallback,
     dir: addSlash(workspaceName)
   }
-  const currentBranch: string = await plugin.call('dGitProvider', 'currentbranch', gitConfig)
+  const currentBranch: string = await plugin.call('dGitProvider', 'currentbranch', { ...gitConfig })
 
   return currentBranch
 }
@@ -454,36 +455,56 @@ export const showAllBranches = async () => {
 }
 
 export const switchToBranch = async (branch: string) => {
-  const gitConfig = {
-    ref: branch
-  }
-  const promise = plugin.call('dGitProvider', 'checkout', gitConfig, false)
+  const localChanges = await hasLocalChanges()
 
-  dispatch(cloneRepositoryRequest())
-  promise.then(async () => {
-    await fetchWorkspaceDirectory(ROOT_PATH)
-    dispatch(setCurrentWorkspaceCurrentBranch(branch))
-    dispatch(cloneRepositorySuccess())
-  }).catch(() => {
-    dispatch(cloneRepositoryFailed())
-  })
-  return promise
+  if (Array.isArray(localChanges) && localChanges.length > 0) {
+    const cloneModal = {
+      id: 'switchBranch',
+      title: 'Switch Git Branch',
+      message: `Your local changes to the following files would be overwritten by checkout.\n
+      ${localChanges.join('\n')}\n
+      Do you want to continue?`,
+      modalType: 'modal',
+      okLabel: 'Force Checkout',
+      okFn: async () => {
+        dispatch(cloneRepositoryRequest())
+        plugin.call('dGitProvider', 'checkout', { ref: branch, force: true }, false).then(async () => {
+          await fetchWorkspaceDirectory(ROOT_PATH)
+          dispatch(setCurrentWorkspaceCurrentBranch(branch))
+          dispatch(cloneRepositorySuccess())
+        }).catch(() => {
+          dispatch(cloneRepositoryFailed())
+        })
+      },
+      cancelLabel: 'Cancel',
+      cancelFn: () => {},
+      hideFn: () => {}
+    }
+    plugin.call('notification', 'modal', cloneModal)
+  } else {
+    dispatch(cloneRepositoryRequest())
+    plugin.call('dGitProvider', 'checkout', { ref: branch, force: true }, false).then(async () => {
+      await fetchWorkspaceDirectory(ROOT_PATH)
+      dispatch(setCurrentWorkspaceCurrentBranch(branch))
+      dispatch(cloneRepositorySuccess())
+    }).catch(() => {
+      dispatch(cloneRepositoryFailed())
+    })
+  }
 }
 
 export const switchToNewBranch = async (branch: string) => {
-  const gitConfig = {
-    ref: branch
-  }
-  const promise = plugin.call('dGitProvider', 'branch', gitConfig, false)
+  const promise = plugin.call('dGitProvider', 'branch', { ref: branch }, false)
 
   dispatch(cloneRepositoryRequest())
   promise.then(async () => {
     await fetchWorkspaceDirectory(ROOT_PATH)
     dispatch(setCurrentWorkspaceCurrentBranch(branch))
-    // const workspacesPath = plugin.fileProviders.workspace.workspacesPath
-    // const branches = await getGitRepoBranches(workspacesPath + '/' + branch)
+    const workspacesPath = plugin.fileProviders.workspace.workspacesPath
+    const workspaceName = plugin.fileProviders.workspace.workspace
+    const branches = await getGitRepoBranches(workspacesPath + '/' + workspaceName)
 
-    // dispatch(setCurrentWorkspaceBranches(branches))
+    dispatch(setCurrentWorkspaceBranches(branches))
     dispatch(cloneRepositorySuccess())
   }).catch(() => {
     dispatch(cloneRepositoryFailed())
@@ -491,16 +512,9 @@ export const switchToNewBranch = async (branch: string) => {
   return promise
 }
 
-export const hasLocalChanges = async (branch: string) => {
-  const staged = await plugin.call('dGitProvider', 'lsfiles', { ref: branch })
-  const untracked = await plugin.call('dGitProvider', 'unstagedStatus', { ref: branch })
-  const deleted = await plugin.call('dGitProvider', 'deleteStatus', { ref: branch })
-  const modified = await plugin.call('dGitProvider', 'modifiedStatus', { ref: branch })
+export const hasLocalChanges = async () => {
+  const filesStatus = await plugin.call('dGitProvider', 'status')
+  const uncommittedFiles = getUncommittedFiles(filesStatus)
 
-  console.log('staged: ', staged)
-  console.log('untracked: ', untracked)
-  console.log('deleted: ', deleted)
-  console.log('modified: ', modified)
-
-  return deleted.length > 0 || staged.length > 0 ||  untracked.length > 0 || modified.length > 0
+  return uncommittedFiles
 }
