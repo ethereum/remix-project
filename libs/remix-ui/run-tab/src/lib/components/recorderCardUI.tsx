@@ -31,7 +31,13 @@ export function RecorderUI (props: RecorderProps) {
       <div className="udapp_recorderSection d-flex justify-content-between" onClick={toggleClass}>
         <div className="d-flex justify-content-center align-items-center">
           <label className="mt-1 udapp_recorderSectionLabel">Transactions recorded</label>
-          <div className="ml-2 badge badge-pill badge-primary text-center" title="The number of recorded transactions">{props.count}</div>
+          <OverlayTrigger placement={'right'} overlay={
+          <Tooltip className="text-nowrap" id="recordedTransactionsCounttooltip">
+            <span>{'The number of recorded transactions'}</span>
+          </Tooltip>
+        }>
+          <div className="ml-2 badge badge-pill badge-primary text-center" data-title="The number of recorded transactions">{props.count}</div>
+        </OverlayTrigger>
         <OverlayTrigger placement={'right'} overlay={
           <Tooltip className="text-nowrap" id="info-recorder">
             <span>Save transactions (deployed contracts and function executions) and replay them in another environment. <br/> e.g Transactions created in Remix VM can be replayed in the Injected Provider.
