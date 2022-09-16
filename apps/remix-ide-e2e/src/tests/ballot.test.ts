@@ -138,22 +138,89 @@ module.exports = {
       }, 10000)
       .click({
         selector: '*[data-id="scConfigChangeFilePath"]',
-        suppressNotFoundErrors: true
+        suppressNotFoundErrors: true,
+        timeout: 1000
       })
       .click({
         selector: '*[data-id="scConfigChangeFilePath"]',
-        suppressNotFoundErrors: true
+        suppressNotFoundErrors: true,
+        timeout: 1000
       })
       .click({
         selector: '*[data-id="scConfigChangeFilePath"]',
-        suppressNotFoundErrors: true
+        suppressNotFoundErrors: true,
+        timeout: 1000
       })
       
       .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
-      .updateValue('*[data-id="scConfigFilePathInput"]', 'cf.json')
-      
+      .sendKeys('*[data-id="scConfigFilePathInput"]', 'compiler_config.json')
       .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
 
+      .isVisible({
+        selector:"//*[@class='py-2 remixui_compilerConfigPath' and contains(.,'cf.json')]",
+        suppressNotFoundErrors: true,
+        locateStrategy: 'xpath'
+      }, (okVisible) => {
+        if (!okVisible.value) {
+          browser.waitForElementVisible({
+            selector: '*[data-id="scConfigChangeFilePath"]',
+            abortOnFailure: false
+          }, 10000)
+          .click({
+            selector: '*[data-id="scConfigChangeFilePath"]',
+            suppressNotFoundErrors: true,
+            timeout: 1000
+          })
+          .click({
+            selector: '*[data-id="scConfigChangeFilePath"]',
+            suppressNotFoundErrors: true,
+            timeout: 1000
+          })
+          .click({
+            selector: '*[data-id="scConfigChangeFilePath"]',
+            suppressNotFoundErrors: true,
+            timeout: 1000
+          })
+          
+          .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
+          .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
+          .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
+        }
+      })
+
+      .isVisible({
+        selector:"//*[@class='py-2 remixui_compilerConfigPath' and contains(.,'cf.json')]",
+        suppressNotFoundErrors: true,
+        locateStrategy: 'xpath'
+      }, (okVisible) => {
+        if (!okVisible.value) {
+          browser.waitForElementVisible({
+            selector: '*[data-id="scConfigChangeFilePath"]',
+            abortOnFailure: false
+          }, 10000)
+          .click({
+            selector: '*[data-id="scConfigChangeFilePath"]',
+            suppressNotFoundErrors: true,
+            timeout: 1000
+          })
+          .click({
+            selector: '*[data-id="scConfigChangeFilePath"]',
+            suppressNotFoundErrors: true,
+            timeout: 1000
+          })
+          .click({
+            selector: '*[data-id="scConfigChangeFilePath"]',
+            suppressNotFoundErrors: true,
+            timeout: 1000
+          })
+          
+          .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
+          .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
+          .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
+        }
+      })
+
+      .pause(5000)
       .openFile('Untitled.sol')
       .verifyContracts(['Ballot'], { wait: 2000, runs: '300' })
   },
