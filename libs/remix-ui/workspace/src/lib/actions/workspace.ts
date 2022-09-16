@@ -52,7 +52,10 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
     await plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
     await plugin.setWorkspaces(await getWorkspaces())
     await plugin.workspaceCreated(workspaceName)
+
+    if (isGitRepo) await plugin.call('dGitProvider', 'init')
     if (!isEmpty) await loadWorkspacePreset(workspaceTemplateName, opts)
+
     cb && cb(null, workspaceName)
   }).catch((error) => {
     dispatch(createWorkspaceError({ error }))
