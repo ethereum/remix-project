@@ -15,7 +15,7 @@ module.exports = {
   'Should launch debugger #group1 #flaky': function (browser: NightwatchBrowser) {
     browser.addFile('blah.sol', sources[0]['blah.sol'])
       .clickLaunchIcon('solidity').click('*[data-id="compilerContainerCompileBtn"]')
-      .saveScreenshot('./reports/screenshots/debugger.png')
+      .pause(4000)
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 65000)
       .click('*[title="Deploy - transact (not payable)"]')
