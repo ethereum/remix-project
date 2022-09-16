@@ -27,6 +27,7 @@ function addFile (browser: NightwatchBrowser, name: string, content: NightwatchC
         .saveScreenshot('./reports/screenshots/addFile2.png')
       }
     })
+    .scrollInto('li[data-id="treeViewLitreeViewItemREADME.txt"]')
     .saveScreenshot('./reports/screenshots/addFile3.png')
     .waitForElementVisible('li[data-id="treeViewLitreeViewItemREADME.txt"]')
     .click('li[data-id="treeViewLitreeViewItemREADME.txt"]').pause(1000) // focus on root directory
