@@ -12,12 +12,10 @@ module.exports = {
     return sources
   },
 
-  'addfiletest #group10': function (browser: NightwatchBrowser) {
-    browser.addFile('test.sol', sources[0]['blah.sol'])
-  },
-
-  'Should launch debugger #group1': function (browser: NightwatchBrowser) {
+  'Should launch debugger #group1 #flaky': function (browser: NightwatchBrowser) {
     browser.addFile('blah.sol', sources[0]['blah.sol'])
+      .clickLaunchIcon('solidity').click('*[data-id="compilerContainerCompileBtn"]')
+      .saveScreenshot('./reports/screenshots/debugger.png')
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 65000)
       .click('*[title="Deploy - transact (not payable)"]')
