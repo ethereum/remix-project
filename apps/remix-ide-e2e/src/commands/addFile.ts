@@ -13,18 +13,22 @@ class AddFile extends EventEmitter {
   }
 }
 
-function addFile(browser: NightwatchBrowser, name: string, content: NightwatchContractContent, done: VoidFunction) {
+function addFile (browser: NightwatchBrowser, name: string, content: NightwatchContractContent, done: VoidFunction) {
   browser
+    .saveScreenshot('./reports/screenshots/addFile.png')
     .isVisible({
       selector: "//*[@data-id='sidePanelSwapitTitle' and contains(.,'File explorer')]",
       locateStrategy: 'xpath',
       suppressNotFoundErrors: true,
-      timeout: 1000
+      timeout: 1000   
     }, (okVisible) => {
       if (!okVisible.value) {
         browser.clickLaunchIcon('filePanel')
+        .saveScreenshot('./reports/screenshots/addFile2.png')
       }
     })
+    .scrollInto('li[data-id="treeViewLitreeViewItemREADME.txt"]')
+    .saveScreenshot('./reports/screenshots/addFile3.png')
     .waitForElementVisible('li[data-id="treeViewLitreeViewItemREADME.txt"]')
     .click('li[data-id="treeViewLitreeViewItemREADME.txt"]').pause(1000) // focus on root directory
     .elements('css selector', `li[data-id="treeViewLitreeViewItem${name}"]`, (res) => {

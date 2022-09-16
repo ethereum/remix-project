@@ -26,8 +26,8 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
       .waitForElementVisible('[data-id="sidePanelSwapitTitle"]')
       .perform(done())
     })
-    .maximizeWindow()
-    .fullscreenWindow(() => {
+    //.maximizeWindow()
+    .perform(() => {
       if (preloadPlugins) {
         initModules(browser, () => {
           browser
