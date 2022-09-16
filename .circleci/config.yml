@@ -107,23 +107,16 @@ jobs:
       - run: cd dist/libs/remix-tests && yarn
       - run: yarn run test:libs
 
-  remix-ide-chrome:
+  remix-ide-browser:
     docker:
-      # specify the version you desire here
       - image: cimg/base:current
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
     resource_class:
       xlarge
-      # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
     parameters:
       parts:
+        type: string
+      browser:
         type: string
     parallelism: 95
     steps:
@@ -132,15 +125,12 @@ jobs:
           node-version: "v14.17.6"
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
+      - browser-tools/install-firefox
+      - browser-tools/install-geckodriver
       - run:
           name: Check out previous test metadata
           command: |
             cat "${CIRCLE_INTERNAL_TASK_DATA}/circle-test-results/results.json" | jq .
-      - run:
-          command: |
-            google-chrome --version
-            chromedriver --version
-          name: Check install
       - checkout
       - attach_workspace:
           at: .
@@ -159,7 +149,7 @@ jobs:
           name: Run Selenium
           command: yarn run selenium
           background: true
-      - run: ./apps/remix-ide/ci/browser_test.sh chrome
+      - run: ./apps/remix-ide/ci/browser_test.sh << parameters.browser >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
@@ -217,60 +207,6 @@ jobs:
       - store_artifacts:
           path: ./reports/screenshots
 
-  remix-ide-firefox:
-    docker:
-      # specify the version you desire here
-      - image: cimg/base:current
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-    resource_class:
-      xlarge
-      # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
-    working_directory: ~/remix-project
-    parameters:
-      parts:
-        type: string
-    parallelism: 95
-    steps:
-      - node/install:
-          install-yarn: true
-          node-version: "v14.17.6"
-      - browser-tools/install-firefox
-      - browser-tools/install-geckodriver
-      - run:
-          command: |
-            firefox --version
-            geckodriver --version
-
-          name: Check install
-      - checkout
-      - attach_workspace:
-          at: .
-      - run: unzip ./persist/dist.zip
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "yarn.lock" }}
-      - run: yarn
-      - run:
-          name: Java
-          command: sudo apt update && sudo apt install default-jre
-      - run:
-          name: Install Selenium
-          command: yarn run selenium-install
-      - run:
-          name: Run Selenium
-          command: yarn run selenium
-          background: true
-      - run: ./apps/remix-ide/ci/browser_test.sh firefox
-      - store_test_results:
-          path: ./reports/tests
-      - store_artifacts:
-          path: ./reports/screenshots
   flaky-firefox:
     docker:
       # specify the version you desire here
@@ -609,23 +545,18 @@ workflows:
       - remix-ide-etherscan-plugin:
           requires:
             - build
-      - remix-ide-chrome:
+      - remix-ide-browser:
           requires:
             - build
           matrix:
             parameters:
               parts: ["1", "2", "3"]
-      - remix-ide-firefox:
-          requires:
-            - build
-          matrix:
-            parameters:
-              parts: ["1", "2", "3"]
+              browser: ["chrome", "firefox"]
       - deploy-remix-live:
           requires:
             - lint
             - remix-libs
-            - remix-ide-chrome
+            - remix-ide-browser
             - remix-ide-firefox
             - remix-ide-plugin-api
             - remix-ide-vyper-plugin
@@ -637,7 +568,7 @@ workflows:
           requires:
             - lint
             - remix-libs
-            - remix-ide-chrome
+            - remix-ide-browser
             - remix-ide-firefox
             - remix-ide-plugin-api
             - remix-ide-vyper-plugin
@@ -649,7 +580,7 @@ workflows:
           requires:
             - lint
             - remix-libs
-            - remix-ide-chrome
+            - remix-ide-browser
             - remix-ide-firefox
             - remix-ide-plugin-api
             - remix-ide-vyper-plugin
