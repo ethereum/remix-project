@@ -6,6 +6,7 @@ import { CompilationResult } from '@remix-project/remix-solidity'
 import CodeParserGasService from './services/code-parser-gas-service'
 import CodeParserCompiler from './services/code-parser-compiler'
 import CodeParserAntlrService from './services/code-parser-antlr-service'
+import CodeParserImports, { CodeParserImportsData } from './services/code-parser-imports'
 import React from 'react'
 import { Profile } from '@remixproject/plugin-utils'
 import { ContractDefinitionAstNode, EventDefinitionAstNode, FunctionCallAstNode, FunctionDefinitionAstNode, IdentifierAstNode, ImportDirectiveAstNode, ModifierDefinitionAstNode, SourceUnitAstNode, StructDefinitionAstNode, VariableDeclarationAstNode } from 'dist/libs/remix-analyzer/src/types'
@@ -15,7 +16,7 @@ import { ParseResult } from './types/antlr-types'
 
 const profile: Profile = {
     name: 'codeParser',
-    methods: ['nodesAtPosition', 'getContractNodes', 'getCurrentFileNodes', 'getLineColumnOfNode', 'getLineColumnOfPosition', 'getFunctionParamaters', 'getDeclaration', 'getFunctionReturnParameters', 'getVariableDeclaration', 'getNodeDocumentation', 'getNodeLink', 'listAstNodes', 'getANTLRBlockAtPosition', 'getLastNodeInLine', 'resolveImports', 'parseSolidity', 'getNodesWithScope', 'getNodesWithName', 'getNodes', 'compile', 'getNodeById', 'getLastCompilationResult', 'positionOfDefinition', 'definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'getGasEstimates'],
+    methods: ['nodesAtPosition', 'getContractNodes', 'getCurrentFileNodes', 'getLineColumnOfNode', 'getLineColumnOfPosition', 'getFunctionParamaters', 'getDeclaration', 'getFunctionReturnParameters', 'getVariableDeclaration', 'getNodeDocumentation', 'getNodeLink', 'listAstNodes', 'getANTLRBlockAtPosition', 'getLastNodeInLine', 'resolveImports', 'parseSolidity', 'getNodesWithScope', 'getNodesWithName', 'getNodes', 'compile', 'getNodeById', 'getLastCompilationResult', 'positionOfDefinition', 'definitionAtPosition', 'jumpToDefinition', 'referrencesAtPosition', 'referencesOf', 'getActiveHighlights', 'gasEstimation', 'declarationOf', 'getGasEstimates', 'getImports'],
     events: [],
     version: '0.0.1'
 }
@@ -70,12 +71,15 @@ export class CodeParser extends Plugin {
     gasService: CodeParserGasService
     compilerService: CodeParserCompiler
     antlrService: CodeParserAntlrService
+    importService: CodeParserImports
 
     parseSolidity: (text: string) => Promise<antlr.ParseResult>
     getLastNodeInLine: (ast: string) => Promise<any>
     listAstNodes: () => Promise<any>
     getANTLRBlockAtPosition: (position: any, text?: string) => Promise<any>
     getCurrentFileAST: (text?: string) => Promise<ParseResult>
+    getImports: () => Promise<CodeParserImportsData[]>
+    
 
     constructor(astWalker: any) {
         super(profile)
@@ -94,7 +98,7 @@ export class CodeParser extends Plugin {
         }
         const showGasSettings = await this.call('config', 'getAppParameter', 'show-gas')
         const showErrorSettings = await this.call('config', 'getAppParameter', 'display-errors')
-        if(showGasSettings || showErrorSettings || completionSettings) {
+        if (showGasSettings || showErrorSettings || completionSettings) {
             await this.compilerService.compile()
         }
     }
@@ -104,13 +108,14 @@ export class CodeParser extends Plugin {
         this.gasService = new CodeParserGasService(this)
         this.compilerService = new CodeParserCompiler(this)
         this.antlrService = new CodeParserAntlrService(this)
+        this.importService = new CodeParserImports(this)
 
         this.parseSolidity = this.antlrService.parseSolidity.bind(this.antlrService)
         this.getLastNodeInLine = this.antlrService.getLastNodeInLine.bind(this.antlrService)
         this.listAstNodes = this.antlrService.listAstNodes.bind(this.antlrService)
         this.getANTLRBlockAtPosition = this.antlrService.getANTLRBlockAtPosition.bind(this.antlrService)
         this.getCurrentFileAST = this.antlrService.getCurrentFileAST.bind(this.antlrService)
-
+        this.getImports = this.importService.getImports.bind(this.importService)
 
         this.on('editor', 'didChangeFile', async (file) => {
             await this.call('editor', 'discardLineTexts')
@@ -119,7 +124,16 @@ export class CodeParser extends Plugin {
 
         this.on('filePanel', 'setWorkspace', async () => {
             await this.call('fileDecorator', 'clearFileDecorators')
+            await this.importService.setFileTree()
         })
+
+        this.on('fileManager', 'fileAdded', async () => {
+            await this.importService.setFileTree()
+        })
+        this.on('fileManager', 'fileRemoved', async () => {
+            await this.importService.setFileTree()
+        })
+        
 
 
         this.on('fileManager', 'currentFileChanged', async () => {
@@ -135,8 +149,6 @@ export class CodeParser extends Plugin {
 
     }
 
-
-
     /**
      * 
      * @returns 
@@ -144,10 +156,6 @@ export class CodeParser extends Plugin {
     async getLastCompilationResult() {
         return this.compilerAbstract
     }
-
-
-
-
 
     getSubNodes<T extends genericASTNode>(node: T): number[] {
         return node.nodeType == "ContractDefinition" && node.contractDependencies;
