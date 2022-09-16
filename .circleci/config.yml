@@ -122,7 +122,9 @@ jobs:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
-
+    parameters:
+      parts:
+        type: string
     parallelism: 95
     steps:
       - node/install:
@@ -147,7 +149,7 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
-      - run: 
+      - run:
           name: Java
           command: sudo apt update && sudo apt install default-jre
       - run:
@@ -199,7 +201,7 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
-      - run: 
+      - run:
           name: Java
           command: sudo apt update && sudo apt install default-jre
       - run:
@@ -230,7 +232,9 @@ jobs:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
-
+    parameters:
+      parts:
+        type: string
     parallelism: 95
     steps:
       - node/install:
@@ -252,7 +256,7 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
-      - run: 
+      - run:
           name: Java
           command: sudo apt update && sudo apt install default-jre
       - run:
@@ -304,7 +308,7 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
-      - run: 
+      - run:
           name: Java
           command: sudo apt update && sudo apt install default-jre
       - run:
@@ -356,7 +360,7 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
-      - run: 
+      - run:
           name: Java
           command: sudo apt update && sudo apt install default-jre
       - run:
@@ -409,7 +413,7 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
-      - run: 
+      - run:
           name: Java
           command: sudo apt update && sudo apt install default-jre
       - run:
@@ -462,7 +466,7 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
-      - run: 
+      - run:
           name: Java
           command: sudo apt update && sudo apt install default-jre
       - run:
@@ -608,9 +612,15 @@ workflows:
       - remix-ide-chrome:
           requires:
             - build
+          matrix:
+            parameters:
+              parts: ["1", "2", "3"]
       - remix-ide-firefox:
           requires:
             - build
+          matrix:
+            parameters:
+              parts: ["1", "2", "3"]
       - deploy-remix-live:
           requires:
             - lint
