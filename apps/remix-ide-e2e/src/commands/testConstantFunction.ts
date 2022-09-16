@@ -26,7 +26,7 @@ function testConstantFunction (browser: NightwatchBrowser, address: string, fnFu
       done()
     })
   })
-    .click(`#instance${address} button[title="${fnFullName}"]`)
+    .click(`#instance${address} button[data-title="${fnFullName}"]`)
     .pause(1000)
     .waitForElementPresent('#instance' + address + ' .udapp_contractActionsContainer .udapp_value')
     .scrollInto('#instance' + address + ' .udapp_contractActionsContainer .udapp_value')
