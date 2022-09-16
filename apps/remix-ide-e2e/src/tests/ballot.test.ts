@@ -131,21 +131,29 @@ module.exports = {
       .click('*[data-id="scConfigExpander"]')
       .waitForElementVisible('*[data-id="scFileConfiguration"]', 10000)
       .click('*[data-id="scFileConfiguration"]')
-      .waitForElementVisible('*[data-id="scConfigChangeFilePath"]', 10000)
-      .click('*[data-id="scConfigChangeFilePath"]')
+
+      .waitForElementVisible({
+        selector: '*[data-id="scConfigChangeFilePath"]',
+        abortOnFailure: false
+      }, 10000)
+      .click({
+        selector: '*[data-id="scConfigChangeFilePath"]',
+        suppressNotFoundErrors: true
+      })
+      .click({
+        selector: '*[data-id="scConfigChangeFilePath"]',
+        suppressNotFoundErrors: true
+      })
+      .click({
+        selector: '*[data-id="scConfigChangeFilePath"]',
+        suppressNotFoundErrors: true
+      })
+      
       .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
       .updateValue('*[data-id="scConfigFilePathInput"]', 'cf.json')
+      
       .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
-      .waitForElementVisible('*[data-id="scConfigChangeFilePath"]', 10000)
-      .click('*[data-id="scConfigChangeFilePath"]')
-      .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
-      .updateValue('*[data-id="scConfigFilePathInput"]', 'cf.json')
-      .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
-      .waitForElementVisible('*[data-id="scConfigChangeFilePath"]', 10000)
-      .click('*[data-id="scConfigChangeFilePath"]')
-      .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
-      .updateValue('*[data-id="scConfigFilePathInput"]', 'cf.json')
-      .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
+
       .openFile('Untitled.sol')
       .verifyContracts(['Ballot'], { wait: 2000, runs: '300' })
   },
