@@ -493,10 +493,10 @@ jobs:
     working_directory: ~/remix-project
 
     steps:
+      - checkout
       - node/install:
           install-yarn: true
           node-version: "v14.17.6"
-      - checkout
       - run: yarn
       - run: yarn run downloadsolc_assets
       - run: yarn run build:production
@@ -526,6 +526,9 @@ jobs:
 
     steps:
       - checkout
+      - node/install:
+          install-yarn: true
+          node-version: "v14.17.6"
       - run: yarn
       - run: yarn run downloadsolc_assets
       - run: yarn run build:production
