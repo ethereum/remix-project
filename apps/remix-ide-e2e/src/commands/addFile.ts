@@ -2,7 +2,7 @@ import { NightwatchBrowser, NightwatchContractContent } from 'nightwatch'
 import EventEmitter from 'events'
 
 class AddFile extends EventEmitter {
-  command (this: NightwatchBrowser, name: string, content: NightwatchContractContent): NightwatchBrowser {
+  command(this: NightwatchBrowser, name: string, content: NightwatchContractContent): NightwatchBrowser {
     this.api.perform((done) => {
       addFile(this.api, name, content, () => {
         done()
