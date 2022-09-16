@@ -123,7 +123,7 @@ module.exports = {
       .assert.containsText('*[data-id="treeViewDiv0"]', 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000')
   },
 
-  'Compile Ballot using config file  #group2 #flaky': function (browser: NightwatchBrowser) {
+  'Compile Ballot using config file  #group2': function (browser: NightwatchBrowser) {
     browser
       .addFile('cf.json', { content: configFile })
       .clickLaunchIcon('solidity')
