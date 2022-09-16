@@ -6,7 +6,7 @@ version: 2.1
 parameters:
   run_flaky_tests:
     type: boolean
-    default: false
+    default: flaky
 orbs:
   browser-tools: circleci/browser-tools@1.4.0
   node: circleci/node@5.0.2
