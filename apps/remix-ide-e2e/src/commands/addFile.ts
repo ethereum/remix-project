@@ -40,11 +40,15 @@ function addFile (browser: NightwatchBrowser, name: string, content: NightwatchC
       } else {
         browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
           .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
+          .saveScreenshot('./reports/screenshots/addFile4.png')
           .sendKeys('*[data-id$="/blank"] .remixui_items', name)
+          .saveScreenshot('./reports/screenshots/addFile5.png')
           .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+          .saveScreenshot('./reports/screenshots/addFile6.png')
           .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
           //.waitForElementVisible('xpath', `//*[@data-id='tab-active' and contains(.,'${name}')]`, 60000)
           .setEditorValue(content.content)
+          .saveScreenshot('./reports/screenshots/addFile7.png')
           .perform(function () {
             done()
           })
