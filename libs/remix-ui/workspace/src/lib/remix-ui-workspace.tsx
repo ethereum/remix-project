@@ -15,7 +15,7 @@ export function Workspace () {
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
   const [selectedWorkspace, setSelectedWorkspace] = useState<{ name: string, isGitRepo: boolean}>(null)
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
-  const [displayOzCustoms, setDisplayOzCustoms] = useState<boolean>(false)
+  const displayOzCustomRef = useRef<HTMLDivElement>()
   const upgradeable = useRef()
   const global = useContext(FileSystemContext)
   const workspaceRenameInput = useRef()
@@ -145,8 +145,10 @@ export function Workspace () {
 
   const updateWsName = () => {
     // @ts-ignore
-    if (workspaceCreateTemplateInput.current.value.startsWith('oz')) setDisplayOzCustoms(true)
-    else setDisplayOzCustoms(false)
+    if (workspaceCreateTemplateInput.current.value.startsWith('oz') && displayOzCustomRef && displayOzCustomRef.current)
+      displayOzCustomRef.current.style.display = 'block'
+    else displayOzCustomRef.current.style.display = 'none'
+    
     // @ts-ignore
     workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value || 'remixDefault'}_${Date.now()}`
   }
@@ -168,6 +170,8 @@ export function Workspace () {
   const handleUpgradeability = (e) => {
     // @ts-ignore
     upgradeable.current = e.target.value
+    // @ts-ignore
+    workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value + '_upgradeable'}_${Date.now()}`
   }
 
   const createModalMessage = () => {
@@ -188,8 +192,7 @@ export function Workspace () {
           </optgroup>
         </select>
 
-        { displayOzCustoms && 
-        <div id="ozcustomization">
+        <div id="ozcustomization" ref={displayOzCustomRef} style={{display: 'none'}}>
           <label className="form-check-label">Customize template</label><br/><br/>
 
           <label id="wsName" className="form-check-label">Upgradeability</label><br/>
@@ -204,7 +207,6 @@ export function Workspace () {
             </div>
           </div>
         </div>
-        }
         <br/>
 
         <label id="wsName" className="form-check-label">Workspace name</label>
