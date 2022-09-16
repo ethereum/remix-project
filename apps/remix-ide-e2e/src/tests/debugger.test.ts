@@ -12,7 +12,7 @@ module.exports = {
     return sources
   },
 
-  'Should launch debugger #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should launch debugger #group1': function (browser: NightwatchBrowser) {
     browser.addFile('blah.sol', sources[0]['blah.sol'])
       .clickLaunchIcon('solidity').click('*[data-id="compilerContainerCompileBtn"]')
       .pause(4000)
