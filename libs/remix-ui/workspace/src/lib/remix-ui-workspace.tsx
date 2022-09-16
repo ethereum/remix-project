@@ -188,6 +188,7 @@ export function Workspace () {
           </optgroup>
         </select>
 
+        { displayOzCustoms && 
         <div id="ozcustomization">
           <label className="form-check-label">Customize template</label><br/><br/>
 
@@ -203,6 +204,7 @@ export function Workspace () {
             </div>
           </div>
         </div>
+        }
         <br/>
 
         <label id="wsName" className="form-check-label">Workspace name</label>
