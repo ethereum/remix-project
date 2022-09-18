@@ -27,7 +27,7 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'Using Web Worker #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Using Web Worker #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]')

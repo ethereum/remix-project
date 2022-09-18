@@ -1,27 +1,19 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
+
 version: 2.1
 parameters:
   run_flaky_tests:
     type: boolean
-    default: true
+    default: false
 orbs:
   browser-tools: circleci/browser-tools@1.4.0
   node: circleci/node@5.0.2
 jobs:
   build:
     docker:
-      # specify the version you desire here
       - image: cimg/base:current
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
     resource_class:
       xlarge
-      # - image: circleci/mongo:3.4.4
     working_directory: ~/remix-project
     steps:
       - checkout
@@ -47,15 +39,9 @@ jobs:
             - "persist"
   lint:
     docker:
-      # specify the version you desire here
       - image: cimg/base:current
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
     resource_class:
       xlarge
-      # - image: circleci/mongo:3.4.4
     working_directory: ~/remix-project
     parallelism: 35
     steps:
@@ -72,15 +58,9 @@ jobs:
           command: ./apps/remix-ide/ci/lint.sh
   remix-libs:
     docker:
-      # specify the version you desire here
       - image: cimg/base:current
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
     resource_class:
       xlarge
-      # - image: circleci/mongo:3.4.4
     working_directory: ~/remix-project
 
     steps:
@@ -149,21 +129,15 @@ jobs:
           path: ./reports/screenshots
 
     
-  remix-ide-vyper-plugin:
+  remix-test-plugins:
     docker:
-      # specify the version you desire here
       - image: cimg/base:current
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
     resource_class:
       xlarge
-      # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
+    parameters:
+      script:
+        type: string
     parallelism: 10
     steps:
       - node/install:
@@ -196,128 +170,21 @@ jobs:
           command: yarn run selenium
           background: true
       - run: npx nx build vyper
-      - run: ./apps/remix-ide/ci/browser_tests_vyper_plugin.sh
+      - run: ./apps/remix-ide/ci/<< parameters.script >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
           path: ./reports/screenshots
 
-  remix-ide-etherscan-plugin:
-    docker:
-      # specify the version you desire here
-      - image: cimg/base:current
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-    resource_class:
-      xlarge
-      # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
-    working_directory: ~/remix-project
-    parallelism: 10
-    steps:
-      - node/install:
-          install-yarn: true
-          node-version: "v14.17.6"
-      - browser-tools/install-chrome
-      - browser-tools/install-chromedriver
-      - run:
-          command: |
-            google-chrome --version
-            chromedriver --version
 
-          name: Check install
-      - checkout
-      - attach_workspace:
-          at: .
-      - run: unzip ./persist/dist.zip
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "yarn.lock" }}
-      - run: yarn
-      - run:
-          name: Java
-          command: sudo apt update && sudo apt install default-jre
-      - run:
-          name: Install Selenium
-          command: yarn run selenium-install
-      - run:
-          name: Run Selenium
-          command: yarn run selenium
-          background: true
-      - run: npx nx build etherscan
-      - run: ./apps/remix-ide/ci/browser_tests_etherscan_plugin.sh
-      - store_test_results:
-          path: ./reports/tests
-      - store_artifacts:
-          path: ./reports/screenshots
-
-  remix-ide-plugin-api:
-    docker:
-      # specify the version you desire here
-      - image: cimg/base:current
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-    resource_class:
-      xlarge
-      # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
-    working_directory: ~/remix-project
-    parallelism: 10
-    steps:
-      - node/install:
-          install-yarn: true
-          node-version: "v14.17.6"
-      - browser-tools/install-chrome
-      - browser-tools/install-chromedriver
-      - run:
-          command: |
-            google-chrome --version
-            chromedriver --version
-
-          name: Check install
-      - checkout
-      - attach_workspace:
-          at: .
-      - run: unzip ./persist/dist.zip
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "yarn.lock" }}
-      - run: yarn
-      - run:
-          name: Java
-          command: sudo apt update && sudo apt install default-jre
-      - run:
-          name: Install Selenium
-          command: yarn run selenium-install
-      - run:
-          name: Run Selenium
-          command: yarn run selenium
-          background: true
-      - run: ./apps/remix-ide/ci/browser_tests_plugin_api.sh
-      - store_test_results:
-          path: ./reports/tests
-      - store_artifacts:
-          path: ./reports/screenshots
 
   deploy-remix-live:
     docker:
-      # specify the version you desire here
       - image: cimg/base:current
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
     resource_class:
       xlarge
-      # - image: circleci/mongo:3.4.4
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
@@ -341,15 +208,10 @@ jobs:
 
   deploy-remix-alpha:
     docker:
-      # specify the version you desire here
       - image: cimg/base:current
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
     resource_class:
       xlarge
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
@@ -373,15 +235,10 @@ jobs:
 
   deploy-remix-beta:
     docker:
-      # specify the version you desire here
       - image: cimg/base:current
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
     resource_class:
       xlarge
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "Circle CI"
@@ -427,15 +284,12 @@ workflows:
       - remix-libs:
           requires:
             - build
-      - remix-ide-plugin-api:
+      - remix-test-plugins:
           requires:
             - build
-      - remix-ide-vyper-plugin:
-          requires:
-            - build
-      - remix-ide-etherscan-plugin:
-          requires:
-            - build
+          matrix:
+            parameters:
+              script: ["browser_tests_plugin_api.sh", "browser_tests_etherscan_plugin.sh", "browser_tests_vyper_plugin.sh"]
       - remix-ide-browser:
           requires:
             - build
