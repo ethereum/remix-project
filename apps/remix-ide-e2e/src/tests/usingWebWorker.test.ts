@@ -35,6 +35,8 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .waitForElementVisible('[data-id="compilerNightliesBuild"]')
       .click('[data-id="compilerNightliesBuild"]')
+      .waitForElementVisible('[for="autoCompile"]')
+      .click('[for="autoCompile"]')
       .noWorkerErrorFor('soljson-v0.6.5+commit.f956cc89.js')
       .noWorkerErrorFor('soljson-v0.6.8-nightly.2020.5.14+commit.a6d0067b.js')
       .noWorkerErrorFor('soljson-v0.6.0-nightly.2019.12.17+commit.d13438ee.js')
