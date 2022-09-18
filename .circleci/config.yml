@@ -303,9 +303,7 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - remix-ide-plugin-api
-            - remix-ide-vyper-plugin
-            - remix-ide-etherscan-plugin
+            - remix-test-plugins
           filters:
             branches:
               only: remix_live
@@ -314,9 +312,7 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - remix-ide-plugin-api
-            - remix-ide-vyper-plugin
-            - remix-ide-etherscan-plugin
+            - remix-test-plugins
           filters:
             branches:
               only: master
@@ -325,9 +321,7 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - remix-ide-plugin-api
-            - remix-ide-vyper-plugin
-            - remix-ide-etherscan-plugin
+            - remix-test-plugins
           filters:
             branches:
               only: remix_beta
