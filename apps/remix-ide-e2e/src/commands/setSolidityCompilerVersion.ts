@@ -13,18 +13,11 @@ class SetSolidityCompilerVersion extends EventEmitter {
         locateStrategy: 'xpath'
       })
       .click(`#compileTabView #versionSelector [value="${version}"]`)
-      .saveScreenshot(`./reports/screenshots/${version}_1.png`)
-      .pause(5000)
-      .captureBrowserConsoleLogs((logs) => {
-        console.log('COMPILER LOGS', logs)
-      })
-      .isPresent({
+      .waitForElementPresent({
         selector: `//span[@data-version='${version}']`,
         locateStrategy: 'xpath',
-      }, (result) => {
-        console.log('VERSION PRESENT', result)
+        timeout: 60000
       })
-      .saveScreenshot(`./reports/screenshots/${version}.png`)
       .perform(() => {
         this.emit('complete')
       })
