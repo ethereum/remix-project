@@ -18,6 +18,7 @@ class SetSolidityCompilerVersion extends EventEmitter {
         selector: `//span[@data-version='${version}']`,
         locateStrategy: 'xpath',
         timeout: 120000,
+        suppressNotFoundErrors: true
       }, 60000, 5000, false, (result) => {
         console.log('COMPILER RESULT', result)
         browser.captureBrowserConsoleLogs((logs) => {
