@@ -14,13 +14,8 @@ class SetSolidityCompilerVersion extends EventEmitter {
       })
       .click(`#compileTabView #versionSelector [value="${version}"]`)
       .saveScreenshot(`./reports/screenshots/${version}_1.png`)
-      .waitForElementPresent({
-        selector: `//span[@data-version='${version}']`,
-        locateStrategy: 'xpath',
-        timeout: 60000,
-        suppressNotFoundErrors: true,
-        abortOnFailure: false
-      }).captureBrowserConsoleLogs((logs) => {
+      .pause(5000)
+      .captureBrowserConsoleLogs((logs) => {
         console.log('COMPILER LOGS', logs)
       })
       .isPresent({
