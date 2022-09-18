@@ -849,7 +849,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           </div>
         </div>
         <div className="px-4">
-          <div>{compilerLoadedVersion}</div>
           <span id='compilerLoadedVersion' data-version={compilerLoadedVersion}></span>
           <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block d-block w-100 text-break remixui_disabled mb-1 mt-3" onClick={compile} disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}>
             <OverlayTrigger overlay={
