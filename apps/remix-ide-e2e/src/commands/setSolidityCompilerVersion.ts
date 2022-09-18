@@ -23,6 +23,12 @@ class SetSolidityCompilerVersion extends EventEmitter {
       }).captureBrowserConsoleLogs((logs) => {
         console.log('COMPILER LOGS', logs)
       })
+      .isPresent({
+        selector: `//span[@data-version='${version}']`,
+        locateStrategy: 'xpath',
+      }, (result) => {
+        console.log('VERSION PRESENT', result)
+      })
       .saveScreenshot(`./reports/screenshots/${version}.png`)
       .perform(() => {
         this.emit('complete')
