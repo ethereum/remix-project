@@ -17,7 +17,7 @@ class SetSolidityCompilerVersion extends EventEmitter {
       .waitForElementPresent({
         selector: `//span[@data-version='${version}']`,
         locateStrategy: 'xpath',
-        timeout: 120000,
+        timeout: 60000,
         suppressNotFoundErrors: true,
         abortOnFailure: false
       }).captureBrowserConsoleLogs((logs) => {
