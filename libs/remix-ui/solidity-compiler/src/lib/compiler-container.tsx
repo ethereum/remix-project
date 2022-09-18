@@ -61,6 +61,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const [showFilePathInput, setShowFilePathInput] = useState<boolean>(false)
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
   const [disableCompileButton, setDisableCompileButton] = useState<boolean>(false)
+  const [compilerLoadedVersion, setCompilerLoadedVersion] = useState<string>('')
   const compileIcon = useRef(null)
   const promptMessageInput = useRef(null)
   const configFilePathInput = useRef(null)
@@ -186,6 +187,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           loadingCompiler()
           break
         case 'compilerLoaded':
+          setCompilerLoadedVersion(state.selectedVersion)
           compilerLoaded(compilerContainer.compiler.args[1])
           break
         case 'compilationFinished':
@@ -847,6 +849,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           </div>
         </div>
         <div className="px-4">
+          <div>{compilerLoadedVersion}</div>
+          <span id='compilerLoadedVersion' data-version={compilerLoadedVersion}></span>
           <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block d-block w-100 text-break remixui_disabled mb-1 mt-3" onClick={compile} disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}>
             <OverlayTrigger overlay={
               <Tooltip id="overlay-tooltip-compile">
