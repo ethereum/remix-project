@@ -22,9 +22,6 @@ jobs:
     resource_class:
       xlarge
       # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
     steps:
       - checkout
@@ -59,9 +56,6 @@ jobs:
     resource_class:
       xlarge
       # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
     parallelism: 35
     steps:
@@ -87,9 +81,6 @@ jobs:
     resource_class:
       xlarge
       # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
 
     steps:
@@ -117,6 +108,8 @@ jobs:
       parts:
         type: string
       browser:
+        type: string
+      script:
         type: string
     parallelism: 95
     steps:
@@ -149,117 +142,13 @@ jobs:
           name: Run Selenium
           command: yarn run selenium
           background: true
-      - run: ./apps/remix-ide/ci/browser_test.sh << parameters.browser >>
+      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
           path: ./reports/screenshots
 
-  flaky-chrome:
-    docker:
-      # specify the version you desire here
-      - image: cimg/base:current
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-    resource_class:
-      xlarge
-      # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
-    working_directory: ~/remix-project
-
-    parallelism: 95
-    steps:
-      - node/install:
-          install-yarn: true
-          node-version: "v14.17.6"
-      - browser-tools/install-chrome
-      - browser-tools/install-chromedriver
-      - run:
-          command: |
-            google-chrome --version
-            chromedriver --version
-          name: Check install
-      - checkout
-      - attach_workspace:
-          at: .
-      - run: unzip ./persist/dist.zip
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "yarn.lock" }}
-      - run: yarn
-      - run:
-          name: Java
-          command: sudo apt update && sudo apt install default-jre
-      - run:
-          name: Install Selenium
-          command: yarn run selenium-install
-      - run:
-          name: Run Selenium
-          command: yarn run selenium
-          background: true
-      - run: ./apps/remix-ide/ci/flaky.sh chrome
-      - store_test_results:
-          path: ./reports/tests
-      - store_artifacts:
-          path: ./reports/screenshots
-
-  flaky-firefox:
-    docker:
-      # specify the version you desire here
-      - image: cimg/base:current
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-    resource_class:
-      xlarge
-      # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
-    working_directory: ~/remix-project
-
-    parallelism: 95
-    steps:
-      - node/install:
-          install-yarn: true
-          node-version: "v14.17.6"
-      - browser-tools/install-firefox
-      - browser-tools/install-geckodriver
-      - run:
-          command: |
-            firefox --version
-            geckodriver --version
-
-          name: Check install
-      - checkout
-      - attach_workspace:
-          at: .
-      - run: unzip ./persist/dist.zip
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "yarn.lock" }}
-      - run: yarn
-      - run:
-          name: Java
-          command: sudo apt update && sudo apt install default-jre
-      - run:
-          name: Install Selenium
-          command: yarn run selenium-install
-      - run:
-          name: Run Selenium
-          command: yarn run selenium
-          background: true
-      - run: ./apps/remix-ide/ci/flaky.sh firefox
-      - store_test_results:
-          path: ./reports/tests
-      - store_artifacts:
-          path: ./reports/screenshots
-
+    
   remix-ide-vyper-plugin:
     docker:
       # specify the version you desire here
@@ -520,12 +409,14 @@ workflows:
     when: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - build
-      - flaky-chrome:
+      - remix-ide-browser:
           requires:
             - build
-      - flaky-firefox:
-          requires:
-            - build
+          matrix:
+            parameters:
+              parts: ["1"]
+              browser: ["chrome", "firefox"]
+              script: ["flaky.sh"]
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
@@ -552,6 +443,7 @@ workflows:
             parameters:
               parts: ["1", "2", "3"]
               browser: ["chrome", "firefox"]
+              script: ["browser_test.sh"]
       - deploy-remix-live:
           requires:
             - lint
