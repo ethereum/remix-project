@@ -16,7 +16,8 @@ class SetSolidityCompilerVersion extends EventEmitter {
       .saveScreenshot(`./reports/screenshots/${version}_1.png`)
       .waitForElementPresent({
         selector : `//span[@data-version='${version}']`,
-        locateStrategy: 'xpath'
+        locateStrategy: 'xpath',
+        timeout: 120000
       })
       .saveScreenshot(`./reports/screenshots/${version}.png`)
       .perform(() => {
