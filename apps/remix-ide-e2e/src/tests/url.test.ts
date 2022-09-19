@@ -147,8 +147,8 @@ module.exports = {
       .waitForElementVisible('[data-id="compilerContainerCompileBtn"]')
       
       .clickLaunchIcon('filePanel')
-      .currentWorkspaceIs('code-sample')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontract-eaa022e37e.yul"]', 6000)
+      .currentWorkspaceIs('code-sample')
       .openFile('contract-eaa022e37e.yul')
       .getEditorValue((content) => {
         browser.assert.ok(content && content.indexOf(
