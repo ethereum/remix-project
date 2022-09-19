@@ -606,6 +606,7 @@ export const EditorUI = (props: EditorUIProps) => {
       }
       return result
     }
+    console.log('editor mounted')
   }
 
   function handleEditorWillMount(monaco) {
