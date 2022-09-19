@@ -160,7 +160,6 @@ module.exports = {
     browser
       .url('http://127.0.0.1:8080/#optimize=false&runs=200&deployProxy=true')
       .refresh().pause(10000)
-      
       .switchWorkspace('default_workspace')
       .addFile('myTokenV1.sol', sources[1]['myTokenV1.sol'])
       .clickLaunchIcon('solidity')
@@ -178,7 +177,6 @@ module.exports = {
     browser
       .url('http://127.0.0.1:8080/#optimize=false&runs=200&upgradeProxy=true')
       .refresh().pause(10000)
-      .pause(10000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemmyTokenV1.sol"]', 60000)
       .openFile('myTokenV1.sol')
       .waitForElementVisible({
