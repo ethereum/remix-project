@@ -31,6 +31,14 @@ function addFile (browser: NightwatchBrowser, name: string, content: NightwatchC
     .saveScreenshot('./reports/screenshots/addFile3.png')
     .waitForElementVisible('li[data-id="treeViewLitreeViewItemREADME.txt"]')
     .click('li[data-id="treeViewLitreeViewItemREADME.txt"]').pause(1000) // focus on root directory
+    .isVisible({
+      selector: `//*[@data-id="treeViewLitreeViewItem${name}"]`,
+      locateStrategy: 'xpath',
+      abortOnFailure: false,
+      suppressNotFoundErrors: true,
+    },(okVisible) => {
+      console.log('okVisible', okVisible)
+    })
     .elements('css selector', `li[data-id="treeViewLitreeViewItem${name}"]`, (res) => {
       console.log(res)
       if (res.value && (res.value as any).length > 0) {
