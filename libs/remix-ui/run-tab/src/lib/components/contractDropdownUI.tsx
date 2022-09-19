@@ -335,7 +335,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
           </Tooltip>
             }>
               <span>
-                <button className="udapp_atAddress btn btn-sm btn-info" id="runAndDeployAtAdressButton" disabled={atAddressOptions.   disabled} onClick={loadFromAddress} data-title={atAddressOptions.title} style={{ pointerEvents: 'none' }}>At Address</button>
+                <button data-id="runAndDeployAtAddressButton" className="udapp_atAddress btn btn-sm btn-info" id="runAndDeployAtAdressButton" disabled={atAddressOptions.   disabled} onClick={loadFromAddress} data-title={atAddressOptions.title} style={{ pointerEvents: 'none' }}>At Address</button>
               </span>
           </OverlayTrigger>
           <input

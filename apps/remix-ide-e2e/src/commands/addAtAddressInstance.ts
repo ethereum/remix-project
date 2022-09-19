@@ -21,7 +21,7 @@ function addInstance (browser: NightwatchBrowser, address: string, isValidFormat
   .setValue('.ataddressinput', address, function () {
     if (!isValidFormat || !isValidChecksum) browser.assert.elementPresent('button[id^="runAndDeployAtAdressButton"]:disabled')
     else if (isAbi) {
-      browser.click('button[id^="runAndDeployAtAdressButton"]')
+      browser.click('button[data-id="runAndDeployAtAdressButton"]')
         .waitForElementPresent('[data-id="udappNotify-modal-footer-ok-react"]')
         .execute(function () {
           const modal = document.querySelector('[data-id="udappNotify-modal-footer-ok-react"]') as any
