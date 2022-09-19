@@ -1,8 +1,8 @@
 import { erc20 } from '@openzeppelin/wizard';
 
-export default async () => {
+export default async (opts) => {
     return {
-        'contracts/MyToken.sol': erc20.print(),
+        'contracts/MyToken.sol': erc20.print({ ...erc20.defaults, upgradeable: opts.upgradeable}),
         // @ts-ignore
         'scripts/deploy_with_ethers.ts': (await import('!!raw-loader!./scripts/deploy_with_ethers.ts')).default,
         // @ts-ignore

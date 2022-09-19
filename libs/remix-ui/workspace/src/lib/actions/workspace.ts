@@ -43,18 +43,19 @@ export const addInputField = async (type: 'file' | 'folder', path: string, cb?: 
   return promise
 }
 
-export const createWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void, isGitRepo: boolean = false) => {
+export const createWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate, opts = null, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void, isGitRepo: boolean = false) => {
   await plugin.fileManager.closeAllFiles()
   const promise = createWorkspaceTemplate(workspaceName, workspaceTemplateName)
-
   dispatch(createWorkspaceRequest(promise))
   promise.then(async () => {
     dispatch(createWorkspaceSuccess({ name: workspaceName, isGitRepo }))
     await plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
     await plugin.setWorkspaces(await getWorkspaces())
     await plugin.workspaceCreated(workspaceName)
+
     if (isGitRepo) await plugin.call('dGitProvider', 'init')
-    if (!isEmpty) await loadWorkspacePreset(workspaceTemplateName)
+    if (!isEmpty) await loadWorkspacePreset(workspaceTemplateName, opts)
+
     cb && cb(null, workspaceName)
   }).catch((error) => {
     dispatch(createWorkspaceError({ error }))
@@ -81,7 +82,7 @@ export type UrlParametersType = {
   language: string
 }
 
-export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDefault') => {
+export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDefault', opts?) => {
   const workspaceProvider = plugin.fileProviders.workspace
   const params = queryParams.get() as UrlParametersType
 
@@ -160,7 +161,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         if (!templateList.includes(template)) break
         _paq.push(['trackEvent', 'workspace', 'template', template])
         // @ts-ignore
-        const files = await templateWithContent[template]()
+        const files = await templateWithContent[template](opts)
         for (const file in files) {
           try {
             await workspaceProvider.set(file, files[file])
@@ -340,7 +341,7 @@ export const cloneRepository = async (url: string) => {
   try {
     const repoName = await getRepositoryTitle(url)
 
-    await createWorkspace(repoName, 'blank', true, null, true)
+    await createWorkspace(repoName, 'blank', null, true, null, true)
     const promise = plugin.call('dGitProvider', 'clone', repoConfig, repoName, true)
 
     dispatch(cloneRepositoryRequest())

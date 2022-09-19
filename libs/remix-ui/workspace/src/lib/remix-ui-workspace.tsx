@@ -15,6 +15,8 @@ export function Workspace () {
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
   const [selectedWorkspace, setSelectedWorkspace] = useState<{ name: string, isGitRepo: boolean}>(null)
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
+  const displayOzCustomRef = useRef<HTMLDivElement>()
+  const upgradeable = useRef()
   const global = useContext(FileSystemContext)
   const workspaceRenameInput = useRef()
   const workspaceCreateInput = useRef()
@@ -107,8 +109,12 @@ export function Workspace () {
     const workspaceTemplateName = workspaceCreateTemplateInput.current.value || 'remixDefault'
     const initGitRepo = initGitRepoRef.current.checked
 
+    const opts = {
+      upgradeable: upgradeable.current
+    }
+
     try {
-      await global.dispatchCreateWorkspace(workspaceName, workspaceTemplateName, initGitRepo)
+      await global.dispatchCreateWorkspace(workspaceName, workspaceTemplateName, opts, initGitRepo)
     } catch (e) {
       global.modal('Create Workspace', e.message, 'OK', () => {}, '')
       console.error(e)
@@ -141,6 +147,11 @@ export function Workspace () {
 
   const updateWsName = () => {
     // @ts-ignore
+    if (workspaceCreateTemplateInput.current.value.startsWith('oz') && displayOzCustomRef && displayOzCustomRef.current)
+      displayOzCustomRef.current.style.display = 'block'
+    else displayOzCustomRef.current.style.display = 'none'
+    
+    // @ts-ignore
     workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value || 'remixDefault'}_${Date.now()}`
   }
 
@@ -158,19 +169,49 @@ export function Workspace () {
     setShowDropdown(isOpen)
   }
 
+  const handleUpgradeability = (e) => {
+    // @ts-ignore
+    upgradeable.current = e.target.value
+    // @ts-ignore
+    workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value + '_upgradeable'}_${Date.now()}`
+  }
+
   const createModalMessage = () => {
     return (
       <>
-        <label id="wsName" className="form-check-label">Workspace name</label>
-        <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`remixDefault_${Date.now()}`} ref={workspaceCreateInput} className="form-control" /><br/>
-        <label id="selectWsTemplate" className="form-check-label">Choose a template</label>
-        <select name="wstemplate"  className="form-control custom-select" id="wstemplate" defaultValue='remixDefault' ref={workspaceCreateTemplateInput} onChange={updateWsName}>
-          <option value='remixDefault'>Default</option>
-          <option value='blank'>Blank</option>
-          <option value='ozerc20'>OpenZeppelin ERC20</option>
-          <option value='zeroxErc20'>0xProject ERC20</option>
-          <option value='ozerc721'>OpenZeppelin ERC721</option>
+        <label id="selectWsTemplate" className="form-check-label" style={{fontWeight: "bolder"}}>Choose a template</label>
+        <select name="wstemplate" className="mb-3 form-control custom-select" id="wstemplate" defaultValue='remixDefault' ref={workspaceCreateTemplateInput} onChange={updateWsName}>
+          <optgroup style={{fontSize: "medium"}} label="General">
+            <option style={{fontSize: "small"}} value='remixDefault'>Default</option>
+            <option style={{fontSize: "small"}} value='blank'>Blank</option>
+          </optgroup>
+          <optgroup style={{fontSize: "medium"}} label="OpenZepplin">
+            <option style={{fontSize: "small"}} value='ozerc20'>ERC20</option>
+            <option style={{fontSize: "small"}} value='ozerc721'>ERC721</option>
+          </optgroup>
+          <optgroup style={{fontSize: "medium"}} label="0xProject">
+            <option style={{fontSize: "small"}} value='zeroxErc20'>ERC20</option>
+          </optgroup>
         </select>
+
+        <div id="ozcustomization" ref={displayOzCustomRef} style={{display: 'none'}} className="mb-2">
+          <label className="form-check-label d-block mb-2" style={{fontWeight: "bolder"}}>Customize template</label>
+          <label id="wsName" className="form-check-label d-block mb-1">Upgradeability</label>
+          <div onChange={(e) => handleUpgradeability(e)}>
+            <div className="d-flex ml-2 custom-control custom-radio">
+                <input className="custom-control-input" type="radio" name="upgradeability" value="transparent" id="transparent" />
+                <label className="form-check-label custom-control-label" htmlFor="transparent" data-id="upgradeTypeTransparent" >Transparent</label>
+            </div>
+            <div className="d-flex ml-2 custom-control custom-radio">
+                <input className="custom-control-input" type="radio" name="upgradeability" value="uups" id="uups" />
+                <label className="form-check-label custom-control-label" htmlFor="uups" data-id="upgradeTypeUups" >UUPS</label>
+            </div>
+          </div>
+        </div>
+
+        <label id="wsName" className="form-check-label" style={{fontWeight: "bolder"}} >Workspace name</label>
+        <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`remixDefault_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
+
         <div className="d-flex py-2 align-items-center custom-control custom-checkbox">
           <input
             ref={initGitRepoRef}
@@ -189,6 +230,7 @@ export function Workspace () {
             Initialize workspace as a new git repository
           </label>
         </div>
+
       </>
     )
   }
@@ -299,9 +341,9 @@ export function Workspace () {
 
                 <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items">
                   <Dropdown.Item
-                      onClick={() => {
-                        createWorkspace()
-                      }}
+                    onClick={() => {
+                      createWorkspace()
+                    }}
                   >
                     { 
                       <span className="pl-3"> - create a new workspace - </span>
