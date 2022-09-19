@@ -16,6 +16,13 @@ module.exports = config => {
   const nxWebpackConfig = nxWebpack(config)
   const webpackConfig = {
     ...nxWebpackConfig,
+    resolve: {
+      ...nxWebpackConfig.resolve,
+      alias: {
+        path: require.resolve("path-browserify"),
+      }
+    },
+
     node: {
       fs: 'empty',
       tls: 'empty',
@@ -38,7 +45,7 @@ module.exports = config => {
       })
     ]
   }
-  
+
   webpackConfig.output.chunkLoadTimeout = 600000
 
   if (process.env.NODE_ENV === 'production') {
