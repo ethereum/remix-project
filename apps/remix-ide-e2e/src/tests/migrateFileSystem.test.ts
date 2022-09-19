@@ -22,7 +22,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="skipbackup-btn"]', 5000)
       .click('*[data-id="skipbackup-btn"]')
       .waitForElementVisible('[id="remixTourSkipbtn"]')
-      .click('[id="remixTourSkipbtn"]').refresh()
+      .click('[id="remixTourSkipbtn"]').refreshPage()
   },
   'should have indexedDB storage in terminal #group1 #group7': function (browser: NightwatchBrowser) {
     browser.assert.containsText('*[data-id="terminalJournal"]', 'indexedDB')

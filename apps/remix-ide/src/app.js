@@ -382,9 +382,9 @@ class AppComponent {
       'workspaceInitializationCompleted',
       async () => {
         // for e2e tests
-        const workspaceloaded = document.createElement('span')
-        workspaceloaded.setAttribute('data-id', 'workspaceloaded')
-        document.body.appendChild(workspaceloaded)
+        const loadedElement = document.createElement('span')
+        loadedElement.setAttribute('data-id', 'workspaceloaded')
+        document.body.appendChild(loadedElement)
         await this.appManager.registerContextMenuItems()
       }
     )
@@ -422,7 +422,6 @@ class AppComponent {
                 this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`)
                 // @todo(remove the timeout when activatePlugin is on 0.3.0)
                 await this.appManager.call(...callDetails).catch(console.error)
-                console.log('calls success')
               }
             }
 
@@ -442,7 +441,6 @@ class AppComponent {
                   // @todo(remove the timeout when activatePlugin is on 0.3.0)
                   try {
                     await this.appManager.call(...callDetails)
-                    console.log('calls success')
                   } catch (e) {
                     console.error(e)
                   }
@@ -450,12 +448,14 @@ class AppComponent {
               }
             }
 
-            const workspaceloaded = document.createElement('span')
-            workspaceloaded.setAttribute('data-id', 'apploaded')
-            document.body.appendChild(workspaceloaded)
+
           })
           .catch(console.error)
       }
+      const loadedElement = document.createElement('span')
+      loadedElement.setAttribute('data-id', 'apploaded')
+      document.body.appendChild(loadedElement)
+
     })
     // activate solidity plugin
     this.appManager.activatePlugin(['solidity', 'udapp', 'deploy-libraries', 'link-libraries', 'openzeppelin-proxy'])
