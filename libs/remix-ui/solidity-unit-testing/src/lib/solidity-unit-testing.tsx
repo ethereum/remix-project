@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, ReactElement } from 'react' // esli
 import * as semver from 'semver'
 import { eachOfSeries } from 'async' // eslint-disable-line
 import type Web3 from 'web3'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
 import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
@@ -304,12 +305,15 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
     </div>)
     } else {
       const className = "alert-success d-inline-block mb-1 mr-1 p-1 passed_" + runningTestFileName
-      label = (<div
+      label = (<OverlayTrigger placement={'right'} overlay={
+              <Tooltip className="text-nowrap" id="info-recorder">
+                <span>All contract tests passed</span>
+              </Tooltip>
+            }><div
       className={className}
-      title="All contract tests passed"
     >
       PASS
-    </div>)
+    </div></OverlayTrigger>)
     }
     // show contract and file name with label
     const ContractCard: ReactElement = (
