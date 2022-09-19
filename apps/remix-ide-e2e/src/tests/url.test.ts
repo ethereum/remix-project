@@ -78,7 +78,10 @@ module.exports = {
       
       .url('http://127.0.0.1:8080/#optimize=true&runs=300&evmVersion=istanbul&version=soljson-v0.7.4+commit.3f05b770.js&url=https://github.com/ethereum/remix-project/blob/master/apps/remix-ide/contracts/app/solidity/mode.sol')
       .refresh() // we do one reload for making sure we already have the default workspace
-      .waitForElementVisible(`li[data-id="treeViewDivtreeViewItemethereum/remix-project/apps/remix-ide/contracts/app/solidity/mode.sol"]`)
+      .waitForElementVisible({
+        selector: `//li[@data-id="treeViewLitreeViewItemethereum/remix-project/apps/remix-ide/contracts/app/solidity/mode.sol"]`,
+        locateStrategy: 'xpath'
+      })
       .currentWorkspaceIs('code-sample')
       .getEditorValue((content) => {
         browser.assert.ok(content && content.indexOf(
