@@ -32,6 +32,7 @@ function addFile (browser: NightwatchBrowser, name: string, content: NightwatchC
     .waitForElementVisible('li[data-id="treeViewLitreeViewItemREADME.txt"]')
     .click('li[data-id="treeViewLitreeViewItemREADME.txt"]').pause(1000) // focus on root directory
     .elements('css selector', `li[data-id="treeViewLitreeViewItem${name}"]`, (res) => {
+      console.log(res)
       if (res.value && (res.value as any).length > 0) {
         browser.openFile(name)
           .perform(function () {
@@ -45,8 +46,12 @@ function addFile (browser: NightwatchBrowser, name: string, content: NightwatchC
           .saveScreenshot('./reports/screenshots/addFile5.png')
           .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
           .saveScreenshot('./reports/screenshots/addFile6.png')
-          .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
-          //.waitForElementVisible('xpath', `//*[@data-id='tab-active' and contains(.,'${name}')]`, 60000)
+          .isVisible({
+            selector: `li[data-id="treeViewLitreeViewItem${name}"]`,
+            abortOnFailure: false,
+            suppressNotFoundErrors: true,
+          })
+          .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`)
           .setEditorValue(content.content)
           .saveScreenshot('./reports/screenshots/addFile7.png')
           .perform(function () {
