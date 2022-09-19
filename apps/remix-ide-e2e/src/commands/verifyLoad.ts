@@ -26,7 +26,7 @@ class VerifyLoad extends EventEmitter {
         .waitForElementPresent({
             selector: "//span[@data-id='compilerloaded']",
             locateStrategy: 'xpath',
-            timeout: 60000
+            timeout: 120000
         })
         .perform((done) => {
             done()
