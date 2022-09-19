@@ -202,7 +202,7 @@ module.exports = {
       
       .clickLaunchIcon('solidity')
       .click('*[data-id="scConfigExpander"]')
-      .assert.containsText('#versionSelector option[data-id="selected"]', '0.8.16+commit.07a7930e.js')
+      .assert.containsText('#versionSelector option[data-id="selected"]', '0.8.16+commit.07a7930e')
       .assert.containsText('#evmVersionSelector option[data-id="selected"]', 'istanbul')
       .assert.containsText('#compilierLanguageSelector option[data-id="selected"]', 'Yul')
       .verify.elementPresent('#optimize:checked')
