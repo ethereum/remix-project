@@ -16,6 +16,10 @@ module.exports = {
   '@sources': function () {
     return sources
   },
+  'Add Ballot #group1 #group2 #flaky': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('Untitled.sol', sources[0]['Untitled.sol'])
+  },
   'Set Ballot 0.4.14': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
@@ -25,10 +29,7 @@ module.exports = {
       .click('[for="autoCompile"]')
       .verify.elementPresent('[data-id="compilerContainerAutoCompile"]:checked')
   },
-  'Add Ballot #group1 #group2 #flaky': function (browser: NightwatchBrowser) {
-    browser
-      .addFile('Untitled.sol', sources[0]['Untitled.sol'])
-  },
+
   'Compile Ballot with compiler version 0.4.14 #flaky #group1 #group2': function (browser: NightwatchBrowser) {
     browser
       .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['Ballot'])
