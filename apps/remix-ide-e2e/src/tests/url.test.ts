@@ -73,7 +73,7 @@ module.exports = {
       })
   },
 
-  'Should load the code from URL params (url param) #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should load the code from URL params (url param) #group1': function (browser: NightwatchBrowser) {
     browser
       
       .url('http://127.0.0.1:8080/#optimize=true&runs=300&evmVersion=istanbul&version=soljson-v0.7.4+commit.3f05b770.js&url=https://github.com/ethereum/remix-project/blob/master/apps/remix-ide/contracts/app/solidity/mode.sol')
@@ -156,7 +156,7 @@ module.exports = {
       })
   },
 
-  'Should select deploy with proxy option from URL params #group2': function (browser: NightwatchBrowser) {
+  'Should select deploy with proxy option from URL params #group2 #flaky': function (browser: NightwatchBrowser) {
     browser
       .url('http://127.0.0.1:8080/#optimize=false&runs=200&deployProxy=true')
       .refresh()
