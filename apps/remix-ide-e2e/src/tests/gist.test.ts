@@ -23,7 +23,7 @@ module.exports = {
     console.log('token', process.env.gist_token)
     const gistid = '17ac9315bc065a3d95cf8dc1b28d71f8'
     browser
-      .refresh()
+      .refreshPage()
       .pause(10000)
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"]') // focus on root directory

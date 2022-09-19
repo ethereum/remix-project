@@ -109,7 +109,7 @@ module.exports = {
       .click('.network-indicator__down-arrow')
       .useXpath().click("//span[text()='Goerli Test Network']")
       .useCss().switchBrowserTab(0)
-      .refresh()
+      .refreshPage()
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .click('*[data-id="landingPageStartSolidity"]')
       .pause(5000)
@@ -165,7 +165,7 @@ module.exports = {
       .click('.network-indicator__down-arrow')
       .useXpath().click("//span[text()='Main Ethereum Network']")
       .useCss().switchBrowserTab(0)
-      .refresh()
+      .refreshPage()
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .click('*[data-id="landingPageStartSolidity"]')
       .pause(5000)
@@ -204,7 +204,7 @@ module.exports = {
       .click('.network-indicator__down-arrow')
       .useXpath().click("//span[text()='Ropsten Test Network']") // switch to Ropsten
       .useCss().switchBrowserTab(0)
-      .refresh()
+      .refreshPage()
       .clickLaunchIcon('pluginManager') // load debugger and source verification
     // .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_sourcify"] button')
     // debugger already activated .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')

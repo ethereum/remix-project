@@ -606,9 +606,9 @@ export const EditorUI = (props: EditorUIProps) => {
       }
       return result
     }
-    const workspaceloaded = document.createElement('span')
-    workspaceloaded.setAttribute('data-id', 'editorloaded')
-    document.body.appendChild(workspaceloaded)
+    const loadedElement = document.createElement('span')
+    loadedElement.setAttribute('data-id', 'editorloaded')
+    document.body.appendChild(loadedElement)
   }
 
   function handleEditorWillMount(monaco) {
