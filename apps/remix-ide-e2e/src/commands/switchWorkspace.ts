@@ -5,11 +5,10 @@ class switchWorkspace extends EventEmitter {
   command (this: NightwatchBrowser, workspaceName: string): NightwatchBrowser {
     this.api
     .waitForElementVisible('[data-id="workspacesSelect"]')
-    .waitForElementPresent(`[data-id="dropdown-item-${workspaceName}"]`)
     .click('[data-id="workspacesSelect"]')
     .waitForElementVisible(`[data-id="dropdown-item-${workspaceName}"]`)
     .click(`[data-id="dropdown-item-${workspaceName}"]`)
-    .pause(4000)
+    .pause(7000)
     .perform((done) => {
       done()
       this.emit('complete')
