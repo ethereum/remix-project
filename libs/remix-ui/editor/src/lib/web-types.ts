@@ -232,4 +232,6 @@ export const loadTypes = async (monaco) => {
     // @ts-ignore
     const mochaType = await import('raw-loader!@types/mocha/index.d.ts')
     monaco.languages.typescript.typescriptDefaults.addExtraLib(mochaType.default, `file:///node_modules/@types/mocha/index.d.ts`)
+
+    console.log('types loaded')
 }

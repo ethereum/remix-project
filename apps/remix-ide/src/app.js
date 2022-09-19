@@ -381,6 +381,7 @@ class AppComponent {
       'filePanel',
       'workspaceInitializationCompleted',
       async () => {
+        console.log('workspaceInitializationCompleted')
         await this.appManager.registerContextMenuItems()
       }
     )
@@ -417,7 +418,8 @@ class AppComponent {
               if (callDetails.length > 1) {
                 this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`)
                 // @todo(remove the timeout when activatePlugin is on 0.3.0)
-                this.appManager.call(...callDetails).catch(console.error)
+                await this.appManager.call(...callDetails).catch(console.error)
+                console.log('calls success')
               }
             }
 
@@ -437,12 +439,16 @@ class AppComponent {
                   // @todo(remove the timeout when activatePlugin is on 0.3.0)
                   try {
                     await this.appManager.call(...callDetails)
+                    console.log('calls success')
                   } catch (e) {
                     console.error(e)
                   }
                 }
               }
             }
+
+            console.log('app is done')
+
           })
           .catch(console.error)
       }
