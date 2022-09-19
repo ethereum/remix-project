@@ -174,10 +174,11 @@ module.exports = {
       .expect.element('[data-id="contractGUIDeployWithProxy"]').to.be.selected
   },
 
-  'Should select upgrade with proxy option from URL params #group2': function (browser: NightwatchBrowser) {
+  'Should select upgrade with proxy option from URL params #group2 #flaky': function (browser: NightwatchBrowser) {
     browser
       .url('http://127.0.0.1:8080/#optimize=false&runs=200&upgradeProxy=true')
       .refresh()
+      .pause(10000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemmyTokenV1.sol"]', 60000)
       .openFile('myTokenV1.sol')
       .waitForElementVisible({
