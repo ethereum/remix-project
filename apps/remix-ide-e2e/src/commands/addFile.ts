@@ -36,8 +36,7 @@ function addFile (browser: NightwatchBrowser, name: string, content: NightwatchC
       locateStrategy: 'xpath',
       abortOnFailure: false,
       suppressNotFoundErrors: true,
-    },(okVisible) => {
-      console.log('okVisible', okVisible)
+      timeout: 2000
     })
     .elements('css selector', `li[data-id="treeViewLitreeViewItem${name}"]`, (res) => {
       console.log(res)
