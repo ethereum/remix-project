@@ -1,7 +1,7 @@
 import { erc1155 } from '@openzeppelin/wizard';
 
 export default async (opts) => {
-    let filesObj = {
+    const filesObj = {
         'contracts/MyToken.sol': erc1155.print({ ...erc1155.defaults, upgradeable: opts.upgradeable}),
         // @ts-ignore
         'scripts/deploy_with_ethers.ts': (await import('!!raw-loader!./scripts/deploy_with_ethers.ts')).default,
