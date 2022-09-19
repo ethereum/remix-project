@@ -381,7 +381,10 @@ class AppComponent {
       'filePanel',
       'workspaceInitializationCompleted',
       async () => {
-        console.log('workspaceInitializationCompleted')
+        // for e2e tests
+        const workspaceloaded = document.createElement('span')
+        workspaceloaded.setAttribute('data-id', 'workspaceloaded')
+        document.body.appendChild(workspaceloaded)
         await this.appManager.registerContextMenuItems()
       }
     )
@@ -447,8 +450,9 @@ class AppComponent {
               }
             }
 
-            console.log('app is done')
-
+            const workspaceloaded = document.createElement('span')
+            workspaceloaded.setAttribute('data-id', 'apploaded')
+            document.body.appendChild(workspaceloaded)
           })
           .catch(console.error)
       }
