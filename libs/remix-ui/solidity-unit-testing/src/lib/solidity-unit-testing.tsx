@@ -297,15 +297,18 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
     let label
     if (index > -1) {
       const className = "alert-danger d-inline-block mb-1 mr-1 p-1 failed_" + runningTestFileName
-      label = (<div
+      label = (<OverlayTrigger placement={'right'} overlay={
+              <Tooltip className="text-nowrap" id="info-recorder">
+                <span>At least one contract test failed</span>
+              </Tooltip>
+            }><div
       className={className}
-      title="At least one contract test failed"
     >
       FAIL
-    </div>)
+    </div></OverlayTrigger>)
     } else {
       const className = "alert-success d-inline-block mb-1 mr-1 p-1 passed_" + runningTestFileName
-      label = (<OverlayTrigger placement={'right'} overlay={
+      label = (<OverlayTrigger placement={'top-end'} overlay={
               <Tooltip className="text-nowrap" id="info-recorder">
                 <span>All contract tests passed</span>
               </Tooltip>
@@ -339,8 +342,12 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
         if (test.debugTxHash) {
           const { web3, debugTxHash } = test
           debugBtn = (
-            <div id={test.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} title="Start debugging" onClick={() => startDebug(debugTxHash, web3)}>
-              <i className="fas fa-bug"></i>
+            <div id={test.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} onClick={() => startDebug(debugTxHash, web3)}>
+              <OverlayTrigger placement={'top-start'} overlay={
+              <Tooltip className="text-nowrap" id="info-recorder">
+                <span>Start debugging</span>
+              </Tooltip>
+            }><i className="fas fa-bug"></i></OverlayTrigger>
             </div>
           )
         }
@@ -711,14 +718,30 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
           </a>
         </div>
         <div className="d-flex p-2">
-          <button id="runTestsTabRunAction" title={runButtonTitle} data-id="testTabRunTestsTabRunAction" className="w-50 btn btn-primary" disabled={disableRunButton} onClick={runTests}>
-            <span className="fas fa-play ml-2"></span>
-            <label className="labelOnBtn btn btn-primary p-1 ml-2 m-0">Run</label>
-          </button>
-          <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} title="Stop running tests" onClick={stopTests}>
-            <span className="fas fa-stop ml-2"></span>
-            <label className="labelOnBtn btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">{stopButtonLabel}</label>
-          </button>
+          <OverlayTrigger placement={'top-start'} overlay={
+              <Tooltip className="text-nowrap" id="info-recorder">
+                <span>
+                  {runButtonTitle}
+                </span>
+              </Tooltip>
+            }>
+            <button id="runTestsTabRunAction"data-id="testTabRunTestsTabRunAction" className="w-50 btn btn-primary" disabled={disableRunButton} onClick={runTests}>
+              <span className="fas fa-play ml-2"></span>
+              <label className="labelOnBtn btn btn-primary p-1 ml-2 m-0">Run</label>
+            </button>
+          </OverlayTrigger>
+          <OverlayTrigger placement={'top-start'} overlay={
+              <Tooltip className="text-nowrap" id="info-recorder">
+                <span>
+                  Stop running tests
+                </span>
+              </Tooltip>
+            }>
+            <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} onClick={stopTests}>
+              <span className="fas fa-stop ml-2"></span>
+              <label className="labelOnBtn btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">{stopButtonLabel}</label>
+            </button>
+          </OverlayTrigger>
         </div>
         <div className="d-flex align-items-center mx-3 pb-2 mt-2 border-bottom">
           <input id="checkAllTests"
