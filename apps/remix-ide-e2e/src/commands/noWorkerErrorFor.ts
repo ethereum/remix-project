@@ -16,7 +16,6 @@ class NoWorkerErrorFor extends EventEmitter {
 function noWorkerErrorFor (browser: NightwatchBrowser, version: string, callback: VoidFunction) {
   browser
     .setSolidityCompilerVersion(version)
-    .saveScreenshot(`./reports/screenhots/${version}.png`)
     .click('*[data-id="compilerContainerCompileBtn"]')
     .waitForElementPresent('*[data-id="compilationFinishedWith_' + version + '"]', 60000)
     .notContainsText('*[data-id="compiledErrors"]', `Worker error: Uncaught NetworkError: Failed to execute 'importScripts' on 'WorkerGlobalScope': The script at 'https://binaries.soliditylang.org/wasm/${version}' failed to load.`)
