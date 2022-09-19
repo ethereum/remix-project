@@ -16,7 +16,7 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'Add Ballot #group1 #group2 #flaky': function (browser: NightwatchBrowser) {
+  'Add Ballot #group1 #group2': function (browser: NightwatchBrowser) {
     browser
       .addFile('Untitled.sol', sources[0]['Untitled.sol'])
   },
@@ -30,12 +30,12 @@ module.exports = {
       .verify.elementPresent('[data-id="compilerContainerAutoCompile"]:checked')
   },
 
-  'Compile Ballot with compiler version 0.4.14 #flaky #group1 #group2': function (browser: NightwatchBrowser) {
+  'Compile Ballot with compiler version 0.4.14 #group1 #group2': function (browser: NightwatchBrowser) {
     browser
       .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['Ballot'])
   },
 
-  'Deploy Ballot #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Deploy Ballot #group1': function (browser: NightwatchBrowser) {
     browser.pause(500)
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
