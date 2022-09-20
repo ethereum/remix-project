@@ -50,7 +50,6 @@
     "test:libs": "nx run-many --target=test --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-solidity,remix-tests,remix-url-resolver,remixd",
     "publish:libs": "yarn run build:libs && lerna publish --skip-git && yarn run bumpVersion:libs",
     "build:e2e": "node apps/remix-ide-e2e/src/buildGroupTests.js && tsc -p apps/remix-ide-e2e/tsconfig.e2e.json",
-    "serve:e2e": "NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js yarn serve:production",
     "watch:e2e": "nodemon",
     "bumpVersion:libs": "gulp & gulp syncLibVersions;",
     "browsertest": "sleep 5 && yarn run nightwatch_local",
