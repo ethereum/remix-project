@@ -81,7 +81,9 @@ jobs:
         type: string
       group:
         type: string
-    parallelism: 95
+      groupsize:
+        type: number
+    parallelism: 10
     steps:
       - browser-tools/install-browser-tools
       - run:
@@ -111,7 +113,7 @@ jobs:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
           background: true
-      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.group >>
+      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.grousize >> << parameters.group >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
@@ -245,6 +247,7 @@ workflows:
               browser: ["chrome", "firefox"]
               script: ["flaky.sh"]
               group: ["nogroup"]
+              groupsize: [1]
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
@@ -269,7 +272,8 @@ workflows:
               parts: ["1"]
               browser: ["chrome", "firefox"]
               script: ["browser_test.sh"]
-              group: ["a-c","d-f","g-m","n-r","s","t-z"]
+              group: ["0","1","2","3","4","5","6"]
+              groupsize: [7]
       - deploy-remix-live:
           requires:
             - lint
