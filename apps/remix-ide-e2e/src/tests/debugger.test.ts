@@ -12,12 +12,13 @@ module.exports = {
     return sources
   },
 
-  'Should launch debugger #group1': function (browser: NightwatchBrowser) {
+  'Should launch debugger #group1 #flaky': function (browser: NightwatchBrowser) {
     browser.addFile('blah.sol', sources[0]['blah.sol'])
+      .pause(4000)
       .clickLaunchIcon('solidity').click('*[data-id="compilerContainerCompileBtn"]')
       .pause(4000)
       .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 65000)
+      .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 180000)
       .click('*[title="Deploy - transact (not payable)"]')
       .debugTransaction(0)
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
