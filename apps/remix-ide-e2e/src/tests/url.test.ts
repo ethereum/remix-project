@@ -277,7 +277,7 @@ module.exports = {
       .openFile('@openzeppelin/contracts/access/AccessControl.sol')
       .openFile('contracts')
       .openFile('contracts/governance')
-      .openFile('contracts/governance/UnionGovernor.sol'
+      .openFile('contracts/governance/UnionGovernor.sol')
   },
 
   'Should execute function call from URL parameters #group3': function (browser: NightwatchBrowser) {
