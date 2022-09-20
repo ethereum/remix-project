@@ -12,3 +12,4 @@ wget --no-check-certificate https://binaries.soliditylang.org/bin/soljson-v0.8.1
 wget --no-check-certificate https://binaries.soliditylang.org/bin/soljson-v0.6.5+commit.f956cc89.js -O ./dist/apps/remix-ide/assets/js/soljson-v0.6.5+commit.f956cc89.js
 wget --no-check-certificate https://binaries.soliditylang.org/bin/soljson-v0.6.8-nightly.2020.5.14+commit.a6d0067b.js -O ./dist/apps/remix-ide/assets/js/soljson-v0.6.8-nightly.2020.5.14+commit.a6d0067b.js
 wget --no-check-certificate https://binaries.soliditylang.org/bin/soljson-v0.6.0-nightly.2019.12.17+commit.d13438ee.js -O ./dist/apps/remix-ide/assets/js/soljson-v0.6.0-nightly.2019.12.17+commit.d13438ee.js
+wget --no-check-certificate https://binaries.soliditylang.org/bin/soljson-v0.6.12+commit.27d51765.js -O ./dist/apps/remix-ide/assets/js/soljson-v0.6.12+commit.27d51765.js
