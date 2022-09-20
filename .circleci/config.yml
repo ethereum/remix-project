@@ -93,6 +93,7 @@ jobs:
           name: Check out previous test metadata
           command: |
             cat "${CIRCLE_INTERNAL_TASK_DATA}/circle-test-results/results.json" | jq .
+            ls -la "${CIRCLE_INTERNAL_TASK_DATA}/"
       - checkout
       - attach_workspace:
           at: .
