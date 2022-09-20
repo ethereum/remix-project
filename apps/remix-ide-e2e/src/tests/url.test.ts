@@ -119,7 +119,7 @@ module.exports = {
       })
   },
 
-  'Should load the code from URL & code params #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should load the code from URL & code params #group1': function (browser: NightwatchBrowser) {
     browser
       .url('http://127.0.0.1:8080/#optimize=true&runs=300&url=https://github.com/ethereum/remix-project/blob/master/apps/remix-ide/contracts/app/solidity/mode.sol&code=cHJhZ21hIHNvbGlkaXR5ID49MC42LjAgPDAuNy4wOwoKaW1wb3J0ICJodHRwczovL2dpdGh1Yi5jb20vT3BlblplcHBlbGluL29wZW56ZXBwZWxpbi1jb250cmFjdHMvYmxvYi9tYXN0ZXIvY29udHJhY3RzL2FjY2Vzcy9Pd25hYmxlLnNvbCI7Cgpjb250cmFjdCBHZXRQYWlkIGlzIE93bmFibGUgewogIGZ1bmN0aW9uIHdpdGhkcmF3KCkgZXh0ZXJuYWwgb25seU93bmVyIHsKICB9Cn0')
       .refreshPage() // we do one reload for making sure we already have the default workspace
@@ -195,7 +195,7 @@ module.exports = {
       .expect.element('[data-id="contractGUIDeployWithProxy"]').to.be.selected
   },
 
-  'Should select upgrade with proxy option from URL params #group2 #flaky': function (browser: NightwatchBrowser) {
+  'Should select upgrade with proxy option from URL params #group2': function (browser: NightwatchBrowser) {
     browser
       .url('http://127.0.0.1:8080/#optimize=false&runs=200&upgradeProxy=true')
       .refreshPage()
@@ -245,7 +245,7 @@ module.exports = {
       .assert.containsText('#versionSelector option[data-id="selected"]', '0.8.15+commit.e14f2714')
   },
 
-  'Should load using compiler from link passed in remix URL #flaky #group3': function (browser: NightwatchBrowser) {
+  'Should load using compiler from link passed in remix URL #group3': function (browser: NightwatchBrowser) {
     browser
       .url('http://127.0.0.1:8080/#version=https://solidity-blog.s3.eu-central-1.amazonaws.com/data/08preview/soljson.js&optimize=false')
       .refreshPage()
