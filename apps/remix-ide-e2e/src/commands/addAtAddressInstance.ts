@@ -22,10 +22,13 @@ function addInstance (browser: NightwatchBrowser, address: string, isValidFormat
     if (!isValidFormat || !isValidChecksum) browser.assert.elementPresent('button[id^="runAndDeployAtAdressButton"]:disabled')
     else if (isAbi) {
       browser
-        // .click('button[data-id="runAndDeployAtAdressButton"]')
+        .isVisible({
+          selector: '//span[@data-id="runAndDeployAtAddressButton"]',
+          locateStrategy: 'xpath'
+        })
         .click({
-          locateStrategy: 'css selector',
-          selector: 'span > button[id="runAndDeployAtAdressButton"]'
+          selector: '//button[@data-id="runAndDeployAtAdressButton"]',
+          locateStrategy: 'xpath'
         })
         .waitForElementPresent('[data-id="udappNotify-modal-footer-ok-react"]')
         .execute(function () {

@@ -302,14 +302,14 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                 savedProxyAddress={proxyKey}
               />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
-                  <input
-                    id="deployAndRunPublishToIPFS"
-                    data-id="contractDropdownIpfsCheckbox"
-                    className="form-check-input custom-control-input"
-                    type="checkbox"
-                    onChange={handleCheckedIPFS}
-                    checked={props.ipfsCheckedState}
-                  />
+                <input
+                  id="deployAndRunPublishToIPFS"
+                  data-id="contractDropdownIpfsCheckbox"
+                  className="form-check-input custom-control-input"
+                  type="checkbox"
+                  onChange={handleCheckedIPFS}
+                  checked={props.ipfsCheckedState}
+                />
                 <OverlayTrigger placement={'right'} overlay={
                   <Tooltip className="text-nowrap" id="remixIpfsUdappTooltip">
                     <span>{"Publishing the source code and metadata to IPFS facilitates source code verification using Sourcify and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"}</span>
@@ -330,13 +330,13 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
         <div className="udapp_orLabel mt-2" style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>or</div>
         <div className="udapp_button udapp_atAddressSect ">
           <OverlayTrigger placement={'bottom-end'} overlay={
-          <Tooltip className="text-wrap" id="runAndDeployAddresstooltip">
-            <span>{atAddressOptions.title}</span>
-          </Tooltip>
-            }>
-              <span>
-                <button data-id="runAndDeployAtAddressButton" className="udapp_atAddress btn btn-sm btn-info" id="runAndDeployAtAdressButton" disabled={atAddressOptions.   disabled} onClick={loadFromAddress} data-title={atAddressOptions.title} style={{ pointerEvents: 'none' }}>At Address</button>
-              </span>
+            <Tooltip className="text-wrap" id="runAndDeployAddresstooltip">
+              <span>{atAddressOptions.title}</span>
+            </Tooltip>
+          }>
+            <span data-id="runAndDeployAtAddressButton">
+              <button className="udapp_atAddress btn btn-sm btn-info" id="runAndDeployAtAdressButton" disabled={atAddressOptions.disabled} onClick={loadFromAddress} data-title={atAddressOptions.title} style={{ pointerEvents: 'none' }}>At Address</button>
+            </span>
           </OverlayTrigger>
           <input
             ref={atAddressValue}
