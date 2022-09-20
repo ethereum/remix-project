@@ -147,9 +147,10 @@ export function Workspace () {
 
   const updateWsName = () => {
     // @ts-ignore
-    if (workspaceCreateTemplateInput.current.value.startsWith('oz') && displayOzCustomRef && displayOzCustomRef.current)
+    if (workspaceCreateTemplateInput.current.value.startsWith('oz') && displayOzCustomRef && displayOzCustomRef.current) {
       displayOzCustomRef.current.style.display = 'block'
-    else displayOzCustomRef.current.style.display = 'none'
+      upgradeable.current = undefined
+    } else displayOzCustomRef.current.style.display = 'none'
     
     // @ts-ignore
     workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value || 'remixDefault'}_${Date.now()}`
@@ -188,6 +189,7 @@ export function Workspace () {
           <optgroup style={{fontSize: "medium"}} label="OpenZepplin">
             <option style={{fontSize: "small"}} value='ozerc20'>ERC20</option>
             <option style={{fontSize: "small"}} value='ozerc721'>ERC721</option>
+            <option style={{fontSize: "small"}} value='ozerc1155'>ERC1155</option>
           </optgroup>
           <optgroup style={{fontSize: "medium"}} label="0xProject">
             <option style={{fontSize: "small"}} value='zeroxErc20'>ERC20</option>
