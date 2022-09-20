@@ -7,7 +7,7 @@ echo "$BUILD_ID"
 TEST_EXITCODE=0
 
 yarn run ganache-cli &
-yarn run serve:e2e &
+yarn run serve:production &
 echo 'sharing folder: ' $PWD '/apps/remix-ide/contracts' &
 yarn run remixd &
 

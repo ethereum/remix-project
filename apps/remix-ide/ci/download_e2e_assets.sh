@@ -9,4 +9,6 @@ wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.7.
 wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.4.14+commit.c2215d46.js -O ./apps/remix-ide/src/assets/js/soljson-v0.4.14+commit.c2215d46.js
 wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.6.8+commit.0bbfe453.js -O ./apps/remix-ide/src/assets/js/soljson-v0.6.8+commit.0bbfe453.js
 wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.8.1+commit.df193b15.js -O ./apps/remix-ide/src/assets/js/soljson-v0.8.1+commit.df193b15.js
-wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.6.8+commit.0bbfe453.js -O ./apps/remix-ide/src/assets/js/soljson-v0.6.8+commit.0bbfe453.js
+wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.6.5+commit.f956cc89.js -O ./apps/remix-ide/src/assets/js/soljson-v0.6.5+commit.f956cc89.js
+wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.6.8-nightly.2020.5.14+commit.a6d0067b.js -O ./apps/remix-ide/src/assets/js/soljson-v0.6.8-nightly.2020.5.14+commit.a6d0067b.js
+wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.6.0-nightly.2019.12.17+commit.d13438ee.js -O ./apps/remix-ide/src/assets/js/soljson-v0.6.0-nightly.2019.12.17+commit.d13438ee.js
