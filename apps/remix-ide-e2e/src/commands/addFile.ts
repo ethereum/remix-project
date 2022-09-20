@@ -50,8 +50,8 @@ function addFile(browser: NightwatchBrowser, name: string, content: NightwatchCo
             selector: `li[data-id="treeViewLitreeViewItem${name}"]`,
             abortOnFailure: false,
             suppressNotFoundErrors: true,
+            timeout: 60000
           })
-          .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`)
           .setEditorValue(content.content)
           .perform(function () {
             done()
