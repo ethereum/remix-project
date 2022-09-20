@@ -15,7 +15,6 @@ class AddFile extends EventEmitter {
 
 function addFile(browser: NightwatchBrowser, name: string, content: NightwatchContractContent, done: VoidFunction) {
   browser
-    .saveScreenshot('./reports/screenshots/addFile.png')
     .isVisible({
       selector: "//*[@data-id='sidePanelSwapitTitle' and contains(.,'File explorer')]",
       locateStrategy: 'xpath',
@@ -24,11 +23,9 @@ function addFile(browser: NightwatchBrowser, name: string, content: NightwatchCo
     }, (okVisible) => {
       if (!okVisible.value) {
         browser.clickLaunchIcon('filePanel')
-          .saveScreenshot('./reports/screenshots/addFile2.png')
       }
     })
     .scrollInto('li[data-id="treeViewLitreeViewItemREADME.txt"]')
-    .saveScreenshot('./reports/screenshots/addFile3.png')
     .waitForElementVisible('li[data-id="treeViewLitreeViewItemREADME.txt"]')
     .click('li[data-id="treeViewLitreeViewItemREADME.txt"]').pause(1000) // focus on root directory
     .isVisible({
@@ -47,11 +44,8 @@ function addFile(browser: NightwatchBrowser, name: string, content: NightwatchCo
       } else {
         browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
           .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
-          .saveScreenshot('./reports/screenshots/addFile4.png')
           .sendKeys('*[data-id$="/blank"] .remixui_items', name)
-          .saveScreenshot('./reports/screenshots/addFile5.png')
           .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
-          .saveScreenshot('./reports/screenshots/addFile6.png')
           .isVisible({
             selector: `li[data-id="treeViewLitreeViewItem${name}"]`,
             abortOnFailure: false,
@@ -59,7 +53,6 @@ function addFile(browser: NightwatchBrowser, name: string, content: NightwatchCo
           })
           .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`)
           .setEditorValue(content.content)
-          .saveScreenshot('./reports/screenshots/addFile7.png')
           .perform(function () {
             done()
           })

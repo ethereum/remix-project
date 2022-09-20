@@ -125,7 +125,6 @@ module.exports = {
       .refreshPage() // we do one reload for making sure we already have the default workspace
 
       .waitForElementVisible('[data-id="compilerContainerCompileBtn"]')
-      .saveScreenshot('./reports/screenshots/should-load-the-code-from-url-code-params.png')
       .clickLaunchIcon('filePanel')
       .waitForElementVisible({
         selector: `//li[@data-id="treeViewLitreeViewItemethereum/remix-project/apps/remix-ide/contracts/app/solidity/mode.sol"]`,
