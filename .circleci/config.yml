@@ -113,7 +113,7 @@ jobs:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
           background: true
-      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.grousize >> << parameters.group >>
+      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.groupsize >> << parameters.group >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
