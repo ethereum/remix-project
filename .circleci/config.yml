@@ -98,12 +98,13 @@ jobs:
       - attach_workspace:
           at: .
       - run: unzip ./persist/dist.zip 
-      - run: yarn run downloadsolc_assets_e2e
-      - run: ls -la ./dist/apps/remix-ide/assets/js
+
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
+      - run: yarn run downloadsolc_assets_e2e
+      - run: ls -la ./dist/apps/remix-ide/assets/js
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
@@ -138,12 +139,13 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: unzip ./persist/dist.zip
-      - run: yarn run downloadsolc_assets_e2e
+
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
+      - run: unzip ./persist/dist.zip
+      - run: yarn run downloadsolc_assets_e2e
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
