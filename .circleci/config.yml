@@ -30,9 +30,7 @@ jobs:
             - node_modules
       - run: yarn run downloadsolc_assets
       - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js yarn build:production
-      - run: npx nx build remix-ide-e2e-src-local-plugin
-      - run: yarn run build:libs
-      - run: yarn run downloadsolc_assets_e2e
+      - run: npx nx build remix-ide-e2e-src-local-plugin & yarn run build:libs & yarn run downloadsolc_assets_e2e
       - run: mkdir persist && zip -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
@@ -97,10 +95,14 @@ jobs:
       - node/install:
           install-yarn: true
           node-version: "v14.17.6"
-      - browser-tools/install-chrome
-      - browser-tools/install-chromedriver
-      - browser-tools/install-firefox
-      - browser-tools/install-geckodriver
+      - browser-tools/install-browser-tools
+      - run:
+          command: |
+            google-chrome --version
+            firefox --version
+            geckodriver --version
+            chromedriver --version
+            java -jar /usr/local/bin/selenium.jar --version
       - run:
           name: Check out previous test metadata
           command: |
