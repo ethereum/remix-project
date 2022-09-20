@@ -26,7 +26,7 @@ jobs:
             - node_modules
       - run: yarn run downloadsolc_assets
       - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js yarn build:production
-      - run: npx nx build remix-ide-e2e-src-local-plugin & yarn run build:libs & yarn run downloadsolc_assets_e2e
+      - run: npx nx build remix-ide-e2e-src-local-plugin & yarn run build:libs
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
@@ -97,7 +97,8 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: unzip ./persist/dist.zip
+      - run: unzip ./persist/dist.zip 
+      - run: yarn run downloadsolc_assets_e2e
       - run: ls -la ./dist/apps/remix-ide/assets/js
       - restore_cache:
           keys:
@@ -138,6 +139,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: unzip ./persist/dist.zip
+      - run: yarn run downloadsolc_assets_e2e
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
