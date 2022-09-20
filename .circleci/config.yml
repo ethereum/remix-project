@@ -297,7 +297,7 @@ workflows:
             - build
           matrix:
             parameters:
-              parts: ["1", "2", "3"]
+              parts: ["1"]
               browser: ["chrome", "firefox"]
               script: ["browser_test.sh"]
       - deploy-remix-live:
