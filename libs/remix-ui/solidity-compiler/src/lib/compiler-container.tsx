@@ -339,11 +339,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (allVersionsWasm && allVersions) {
       allVersions.forEach((compiler, index) => {
         const wasmIndex = allVersionsWasm.findIndex(wasmCompiler => { return wasmCompiler.longVersion === compiler.longVersion })
+        const URLWasm: string = process && process.env && process.env['NX_WASM_URL'] ? process.env['NX_WASM_URL'] : baseURLWasm
+        const URLBin: string = process && process.env && process.env['NX_BIN_URL'] ? process.env['NX_BIN_URL'] : baseURLBin
         if (wasmIndex !== -1) {
           allVersions[index] = allVersionsWasm[wasmIndex]
-          pathToURL[compiler.path] = baseURLWasm
+          pathToURL[compiler.path] = URLWasm
         } else {
-          pathToURL[compiler.path] = baseURLBin
+          pathToURL[compiler.path] = URLBin
         }
       })
     }
