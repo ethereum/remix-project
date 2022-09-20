@@ -178,6 +178,15 @@ module.exports = {
       .waitForElementVisible({
         selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
         timeout: 120000,
+        abortOnFailure: false,
+        suppressNotFoundErrors: true
+      })
+      .clickLaunchIcon('solidity')
+      .click('[data-id="compilerContainerCompileBtn"]')
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible({
+        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+        timeout: 120000,
       })
       .clickLaunchIcon('solidity')
       .waitForElementPresent('select[id="compiledContracts"] option[value=MyToken]', 60000)
@@ -238,7 +247,7 @@ module.exports = {
       .assert.containsText('#versionSelector option[data-id="selected"]', '0.8.15+commit.e14f2714')
   },
 
-  'Should load using compiler from link passed in remix URL #group2': function (browser: NightwatchBrowser) {
+  'Should load using compiler from link passed in remix URL #flaky #group3': function (browser: NightwatchBrowser) {
     browser
       .url('http://127.0.0.1:8080/#version=https://solidity-blog.s3.eu-central-1.amazonaws.com/data/08preview/soljson.js&optimize=false')
       .refreshPage()
@@ -256,7 +265,7 @@ module.exports = {
       .verify.attributeEquals('#runs', 'value', '200')
   },
 
-  'Should load json files from link passed in remix URL #group2': function (browser: NightwatchBrowser) {
+  'Should load json files from link passed in remix URL #group3': function (browser: NightwatchBrowser) {
     browser
       .url('http://127.0.0.1:8080/#optimize=false&runs=200&url=https://raw.githubusercontent.com/EthVM/evm-source-verification/main/contracts/1/0x011e5846975c6463a8c6337eecf3cbf64e328884/input.json')
       .refreshPage()
@@ -268,10 +277,10 @@ module.exports = {
       .openFile('@openzeppelin/contracts/access/AccessControl.sol')
       .openFile('contracts')
       .openFile('contracts/governance')
-      .openFile('contracts/governance/UnionGovernor.sol')
+      .openFile('contracts/governance/UnionGovernor.sol'
   },
 
-  'Should execute function call from URL parameters #group2': function (browser: NightwatchBrowser) {
+  'Should execute function call from URL parameters #group3': function (browser: NightwatchBrowser) {
     browser
       .switchWorkspace('default_workspace')
       .url('http://127.0.0.1:8080?calls=fileManager//open//contracts/3_Ballot.sol///terminal//log//log')
