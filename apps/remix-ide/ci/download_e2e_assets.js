@@ -1,7 +1,7 @@
 const testFolder = './apps/remix-ide-e2e/src/tests/';
 const fs = require('fs');
 
-let url = 'https://binaries.soliditylang.org/bin/list.json'
+let url = 'https://binaries.soliditylang.org/wasm/list.json'
 let request = require('request');
 request(url, function (error, response, body) {
     if (!error && response.statusCode == 200) {
@@ -9,7 +9,7 @@ request(url, function (error, response, body) {
         info.builds = info.builds.filter(build => build.path.indexOf('nightly') === -1)
         for (let build of info.builds) {
 
-            const buildurl = `https://solc-bin.ethereum.org/bin/${build.path}`;
+            const buildurl = `https://solc-bin.ethereum.org/wasm/${build.path}`;
             console.log(buildurl)
 
             const path = `./dist/apps/remix-ide/assets/js/${build.path}`;
