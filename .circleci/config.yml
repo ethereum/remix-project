@@ -82,7 +82,7 @@ jobs:
       group:
         type: string
       groupsize:
-        type: number
+        type: string
     parallelism: 10
     steps:
       - browser-tools/install-browser-tools
@@ -247,7 +247,7 @@ workflows:
               browser: ["chrome", "firefox"]
               script: ["flaky.sh"]
               group: ["nogroup"]
-              groupsize: [1]
+              groupsize: ["1"]
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
@@ -273,7 +273,7 @@ workflows:
               browser: ["chrome", "firefox"]
               script: ["browser_test.sh"]
               group: ["0","1","2","3","4","5","6"]
-              groupsize: [7]
+              groupsize: ["7"]
       - deploy-remix-live:
           requires:
             - lint
