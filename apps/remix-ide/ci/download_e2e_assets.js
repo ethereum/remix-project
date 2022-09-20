@@ -34,7 +34,7 @@ fs.readdirSync(testFolder).forEach(file => {
         for (let i = 0; i < soljson.length; i++) {
 
             const version = soljson[i];
-            if(version) {
+            if(version && version.indexOf('nightly') > -1) {
                 const url = `https://solc-bin.ethereum.org/bin/soljson${version}.js`;
                 console.log(url)
 
