@@ -179,17 +179,20 @@ module.exports = {
       .click(
         {
           selector: '[data-id="confirmProxyDeployment-modal-footer-ok-react"]',
-          suppressNotFoundErrors: true
+          suppressNotFoundErrors: true,
+          abortOnFailure: false
         })
       .click(
         {
           selector: '[data-id="confirmProxyDeployment-modal-footer-ok-react"]',
-          suppressNotFoundErrors: true
+          suppressNotFoundErrors: true,
+          abortOnFailure: false
         })
       .click(
         {
           selector: '[data-id="confirmProxyDeployment-modal-footer-ok-react"]',
-          suppressNotFoundErrors: true
+          suppressNotFoundErrors: true,
+          abortOnFailure: false
         })
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
