@@ -6,7 +6,7 @@ BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
 
-npx nx build etherscan
+yarn build etherscan
 yarn run serve:production &
 npx nx serve etherscan &
 
