@@ -14,11 +14,6 @@ module.exports = {
     return sources
   },
 
-  'Should add testfiles #group1': !function (browser: NightwatchBrowser) {
-    Object.keys(testFiles).forEach((fileName) => {
-      browser.addFile(fileName, { content: testFiles[fileName] })
-    })
-  },
 
   'Should show deploy proxy option for UUPS upgradeable contract #group1': function (browser: NightwatchBrowser) {
     browser
@@ -239,6 +234,7 @@ module.exports = {
       .end()
   }
 }
+
 
 const sources = [
   {
