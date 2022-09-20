@@ -27,7 +27,7 @@ function addInstance (browser: NightwatchBrowser, address: string, isValidFormat
           locateStrategy: 'xpath'
         })
         .click({
-          selector: '//button[@data-id="runAndDeployAtAdressButton"]',
+          selector: '//button[@id="runAndDeployAtAdressButton"]',
           locateStrategy: 'xpath'
         })
         .waitForElementPresent('[data-id="udappNotify-modal-footer-ok-react"]')
