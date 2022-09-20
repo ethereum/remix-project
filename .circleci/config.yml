@@ -144,7 +144,6 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
-      - run: npx nx build vyper
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
