@@ -26,10 +26,7 @@ function addInstance (browser: NightwatchBrowser, address: string, isValidFormat
           selector: '//span[@data-id="runAndDeployAtAddressButton"]',
           locateStrategy: 'xpath'
         })
-        .click({
-          selector: '//button[@id="runAndDeployAtAdressButton"]',
-          locateStrategy: 'xpath'
-        })
+        .click('//button[@id="runAndDeployAtAdressButton"]')
         .waitForElementPresent('[data-id="udappNotify-modal-footer-ok-react"]')
         .execute(function () {
           const modal = document.querySelector('[data-id="udappNotify-modal-footer-ok-react"]') as any
