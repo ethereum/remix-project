@@ -20,6 +20,30 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .pause(2000)
       .click('[data-id="compilerContainerCompileBtn"]')
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible({
+        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+        timeout: 120000,
+        abortOnFailure: false,
+        suppressNotFoundErrors: true
+      })
+      .clickLaunchIcon('solidity')
+      .click('[data-id="compilerContainerCompileBtn"]')
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible({
+        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+        timeout: 120000,
+        abortOnFailure: false,
+        suppressNotFoundErrors: true
+      })
+      .clickLaunchIcon('solidity')
+      .click('[data-id="compilerContainerCompileBtn"]')
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible({
+        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+        timeout: 120000,
+      })
+      .clickLaunchIcon('solidity')
       .waitForElementPresent('select[id="compiledContracts"] option[value=MyToken]', 60000)
       .clickLaunchIcon('udapp')
       .click('select.udapp_contractNames')
