@@ -1,6 +1,12 @@
 import { erc20 } from '@openzeppelin/wizard';
 
 export default async (opts) => {
+    if (opts.features) {
+        erc20.defaults.mintable = opts.features.mintable
+        erc20.defaults.burnable = opts.features.burnable
+        erc20.defaults.pausable = opts.features.pausable
+    }
+    
     const filesObj = {
         'contracts/MyToken.sol': erc20.print({ ...erc20.defaults, upgradeable: opts.upgradeable}),
         // @ts-ignore
