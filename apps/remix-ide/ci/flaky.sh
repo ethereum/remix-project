@@ -18,7 +18,6 @@ BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
 
-yarn run downloadsolc_assets_e2e &
 yarn run ganache-cli &
 yarn run serve:e2e &
 echo 'sharing folder: ' $PWD '/apps/remix-ide/contracts' &
