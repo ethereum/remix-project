@@ -281,7 +281,7 @@ export class Compiler {
       }
       switch (data.cmd) {
         case 'versionLoaded':
-          if (data.data && data.license) this.onCompilerLoaded(data.data, data.license)
+          if (data.data) this.onCompilerLoaded(data.data, data.license)
           break
         case 'compiled':
           {
