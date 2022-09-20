@@ -204,7 +204,7 @@ export function Workspace () {
           </optgroup>
         </select>
 
-        <div id="ozcustomization" ref={displayOzCustomRef} style={{display: 'none'}} className="mb-2">
+        <div id="ozcustomization" data-id="ozCustomization" ref={displayOzCustomRef} style={{display: 'none'}} className="mb-2">
           <label className="form-check-label d-block mb-2" style={{fontWeight: "bolder"}}>Customize template</label>
 
           <label id="wsName" className="form-check-label d-block mb-1">Features</label>
