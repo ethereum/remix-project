@@ -6,20 +6,16 @@ parameters:
     default: false
 orbs:
   browser-tools: circleci/browser-tools@1.4.0
-  node: circleci/node@5.0.2
 jobs:
   build:
     docker:
-      - image: cimg/base:current
+      - image: cimg/node:14.17.6-browsers
 
     resource_class:
       xlarge
     working_directory: ~/remix-project
     steps:
       - checkout
-      - node/install:
-          install-yarn: true
-          node-version: "v14.17.6"
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
@@ -38,16 +34,13 @@ jobs:
             - "persist"
   lint:
     docker:
-      - image: cimg/base:current
+      - image: cimg/node:14.17.6-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
     parallelism: 35
     steps:
       - checkout
-      - node/install:
-          install-yarn: true
-          node-version: "v14.17.6"
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
@@ -57,16 +50,13 @@ jobs:
           command: ./apps/remix-ide/ci/lint.sh
   remix-libs:
     docker:
-      - image: cimg/base:current
+      - image: cimg/node:14.17.6-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
 
     steps:
       - checkout
-      - node/install:
-          install-yarn: true
-          node-version: "v14.17.6"
       - attach_workspace:
           at: .
       - run: unzip ./persist/dist.zip
@@ -79,7 +69,7 @@ jobs:
 
   remix-ide-browser:
     docker:
-      - image: cimg/base:current
+      - image: cimg/node:14.17.6-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
@@ -92,9 +82,6 @@ jobs:
         type: string
     parallelism: 95
     steps:
-      - node/install:
-          install-yarn: true
-          node-version: "v14.17.6"
       - browser-tools/install-browser-tools
       - run:
           command: |
@@ -117,14 +104,8 @@ jobs:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
       - run:
-          name: Java
-          command: sudo apt update && sudo apt install default-jre
-      - run:
-          name: Install Selenium
-          command: yarn run selenium-install
-      - run:
-          name: Run Selenium
-          command: yarn run selenium
+          name: Start Selenium
+          command: java -jar /usr/local/bin/selenium.jar
           background: true
       - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >>
       - store_test_results:
@@ -135,7 +116,7 @@ jobs:
     
   remix-test-plugins:
     docker:
-      - image: cimg/base:current
+      - image: cimg/node:14.17.6-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
@@ -144,16 +125,14 @@ jobs:
         type: string
     parallelism: 10
     steps:
-      - node/install:
-          install-yarn: true
-          node-version: "v14.17.6"
-      - browser-tools/install-chrome
-      - browser-tools/install-chromedriver
+      - browser-tools/install-browser-tools
       - run:
           command: |
             google-chrome --version
+            firefox --version
+            geckodriver --version
             chromedriver --version
-
+            java -jar /usr/local/bin/selenium.jar --version
           name: Check install
       - checkout
       - attach_workspace:
@@ -163,29 +142,20 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
-      - run:
-          name: Java
-          command: sudo apt update && sudo apt install default-jre
-      - run:
-          name: Install Selenium
-          command: yarn run selenium-install
-      - run:
-          name: Run Selenium
-          command: yarn run selenium
-          background: true
       - run: npx nx build vyper
+      - run:
+          name: Start Selenium
+          command: java -jar /usr/local/bin/selenium.jar
+          background: true
       - run: ./apps/remix-ide/ci/<< parameters.script >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
           path: ./reports/screenshots
 
-
-
-
   deploy-remix-live:
     docker:
-      - image: cimg/base:current
+      - image: cimg/node:14.17.6-browsers
 
     resource_class:
       xlarge
@@ -212,7 +182,7 @@ jobs:
 
   deploy-remix-alpha:
     docker:
-      - image: cimg/base:current
+      - image: cimg/node:14.17.6-browsers
 
     resource_class:
       xlarge
@@ -224,9 +194,6 @@ jobs:
 
     steps:
       - checkout
-      - node/install:
-          install-yarn: true
-          node-version: "v14.17.6"
       - run: yarn
       - run: yarn run downloadsolc_assets
       - run: yarn run build:production
@@ -239,7 +206,7 @@ jobs:
 
   deploy-remix-beta:
     docker:
-      - image: cimg/base:current
+      - image: cimg/node:14.17.6-browsers
 
     resource_class:
       xlarge
@@ -251,9 +218,6 @@ jobs:
 
     steps:
       - checkout
-      - node/install:
-          install-yarn: true
-          node-version: "v14.17.6"
       - run: yarn
       - run: yarn run build:libs
       - run: yarn run downloadsolc_assets

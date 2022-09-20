@@ -151,6 +151,7 @@ class FileProvider {
 
   // this will not add a folder as readonly but keep the original url to be able to restore it later
   async addExternal (path, content, url) {
+    console.log('addExternal', path)
     if (url) this.addNormalizedName(path, url)
     return await this.set(path, content)
   }
