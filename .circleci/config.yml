@@ -29,11 +29,10 @@ jobs:
           paths:
             - node_modules
       - run: yarn run downloadsolc_assets
-      - run: yarn run downloadsolc_assets_e2e
-      - run: ls -la ./apps/remix-ide/src/assets/js/
       - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js yarn build
       - run: npx nx build remix-ide-e2e-src-local-plugin
       - run: yarn run build:libs
+      - run: yarn run downloadsolc_assets_e2e
       - run: mkdir persist && zip -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
