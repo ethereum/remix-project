@@ -79,6 +79,8 @@ jobs:
         type: string
       script:
         type: string
+      group:
+        type: string
     parallelism: 95
     steps:
       - browser-tools/install-browser-tools
@@ -105,12 +107,11 @@ jobs:
       - run: yarn
       - run: yarn run downloadsolc_assets_e2e && yarn run downloadsolc_assets_dist
       - run: ls -la ./dist/apps/remix-ide/assets/js
-      - run: cp dist/apps/remix-ide/assets/version.json "${CIRCLE_INTERNAL_TASK_DATA}/version.json"
       - run:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
           background: true
-      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >>
+      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.group >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
@@ -243,6 +244,7 @@ workflows:
               parts: ["1"]
               browser: ["chrome", "firefox"]
               script: ["flaky.sh"]
+              group: ["nogroup"]
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
@@ -267,6 +269,7 @@ workflows:
               parts: ["1"]
               browser: ["chrome", "firefox"]
               script: ["browser_test.sh"]
+              group: ["a-c","d-f","g-m","n-r","s","t-z"]
       - deploy-remix-live:
           requires:
             - lint
