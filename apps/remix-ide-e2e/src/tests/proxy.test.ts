@@ -176,7 +176,21 @@ module.exports = {
       .click('[data-id="udappNotify-modal-footer-ok-react"]')
       .waitForElementContainsText('[data-id="confirmProxyDeploymentModalDialogModalTitle-react"]', 'Confirm Update Proxy (ERC1967)')
       .waitForElementVisible('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
-      .click('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
+      .click(
+        {
+          selector: '[data-id="confirmProxyDeployment-modal-footer-ok-react"]',
+          suppressNotFoundErrors: true
+        })
+      .click(
+        {
+          selector: '[data-id="confirmProxyDeployment-modal-footer-ok-react"]',
+          suppressNotFoundErrors: true
+        })
+      .click(
+        {
+          selector: '[data-id="confirmProxyDeployment-modal-footer-ok-react"]',
+          suppressNotFoundErrors: true
+        })
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
   },
