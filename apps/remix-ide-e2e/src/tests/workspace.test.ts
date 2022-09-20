@@ -207,6 +207,54 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests/MyToken_test.sol"]')
   },
 
+  'Should create ERC1155 workspace with files #group1': function (browser: NightwatchBrowser) {
+    browser
+      .click('*[data-id="workspaceCreate"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_erc1155' })
+      .click('select[id="wstemplate"]')
+      .click('select[id="wstemplate"] option[value=ozerc1155]')
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .pause(100)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
+      // check js and ts files are not transformed
+      .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
+      .pause(4000)
+      .getEditorValue((content) => {        
+        browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
+          'Incorrect content')
+      })
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
+      .pause(1000)
+      .getEditorValue((content) => {        
+        browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
+          'Incorrect content')
+      })
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
+      .pause(1000)
+      .getEditorValue((content) => {        
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
+          'Incorrect content')
+      })
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
+      .pause(1000)
+      .getEditorValue((content) => {        
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
+          'Incorrect content')
+      })
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests/MyToken_test.sol"]')
+  },
+
   // WORKSPACE TEMPLATES E2E END
 
   'Should create two workspace and switch to the first one #group1': function (browser: NightwatchBrowser) {
