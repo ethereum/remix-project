@@ -27,7 +27,27 @@ module.exports = {
   'Test Failed Import #group1': function (browser: NightwatchBrowser) {
     browser.addFile('Untitled3.sol', sources[2]['Untitled3.sol'])
       .clickLaunchIcon('solidity')
-      .assert.containsText('#compileTabView .error pre', 'not found Untitled11.sol')
+      .click('[data-id="compilerContainerCompileBtn"]')
+      .isVisible({
+        selector: "//span[contains(.,'not found Untitled11')]",
+        locateStrategy: 'xpath',
+        timeout: 120000,
+        suppressNotFoundErrors: true
+      })
+      .click('[data-id="compilerContainerCompileBtn"]')
+      .isVisible({
+        selector: "//span[contains(.,'not found Untitled11')]",
+        locateStrategy: 'xpath',
+        timeout: 120000,
+        suppressNotFoundErrors: true
+      })
+      .click('[data-id="compilerContainerCompileBtn"]')
+      .waitForElementVisible({
+        selector: "//span[contains(.,'not found Untitled11')]",
+        locateStrategy: 'xpath',
+        timeout: 120000,
+      })
+
   },
 
   'Test GitHub Import - from master branch #group1': function (browser: NightwatchBrowser) {
