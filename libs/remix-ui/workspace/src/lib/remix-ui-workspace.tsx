@@ -16,6 +16,7 @@ export function Workspace () {
   const [selectedWorkspace, setSelectedWorkspace] = useState<{ name: string, isGitRepo: boolean}>(null)
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
   const displayOzCustomRef = useRef<HTMLDivElement>()
+  const ozFeatures = useRef({mintable: false, burnable: false, pausable: false})
   const upgradeable = useRef()
   const global = useContext(FileSystemContext)
   const workspaceRenameInput = useRef()
@@ -108,9 +109,10 @@ export function Workspace () {
     // @ts-ignore: Object is possibly 'null'.
     const workspaceTemplateName = workspaceCreateTemplateInput.current.value || 'remixDefault'
     const initGitRepo = initGitRepoRef.current.checked
-
+    const features = ozFeatures.current
     const opts = {
-      upgradeable: upgradeable.current
+      upgradeable: upgradeable.current,
+      features
     }
 
     try {
@@ -150,6 +152,7 @@ export function Workspace () {
     if (workspaceCreateTemplateInput.current.value.startsWith('oz') && displayOzCustomRef && displayOzCustomRef.current) {
       displayOzCustomRef.current.style.display = 'block'
       upgradeable.current = undefined
+      ozFeatures.current = {mintable: false, burnable: false, pausable: false}
     } else displayOzCustomRef.current.style.display = 'none'
     
     // @ts-ignore
@@ -177,6 +180,11 @@ export function Workspace () {
     workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value + '_upgradeable'}_${Date.now()}`
   }
 
+  const handleFeatures = (e) => {
+    // @ts-ignore
+    ozFeatures.current[e.target.value] = e.target.checked
+  }
+
   const createModalMessage = () => {
     return (
       <>
@@ -198,6 +206,23 @@ export function Workspace () {
 
         <div id="ozcustomization" ref={displayOzCustomRef} style={{display: 'none'}} className="mb-2">
           <label className="form-check-label d-block mb-2" style={{fontWeight: "bolder"}}>Customize template</label>
+
+          <label id="wsName" className="form-check-label d-block mb-1">Features</label>
+          <div className="mb-2" onChange={(e) => handleFeatures(e)}>
+            <div className="d-flex ml-2 custom-control custom-checkbox">
+                <input className="custom-control-input" type="checkbox" name="feature" value="mintable" id="mintable" />
+                <label className="form-check-label custom-control-label" htmlFor="mintable" data-id="featureTypeMintable" >Mintable</label>
+            </div>
+            <div className="d-flex ml-2 custom-control custom-checkbox">
+                <input className="custom-control-input" type="checkbox" name="feature" value="burnable" id="burnable" />
+                <label className="form-check-label custom-control-label" htmlFor="burnable" data-id="featureTypeBurnable" >Burnable</label>
+            </div>
+            <div className="d-flex ml-2 custom-control custom-checkbox">
+                <input className="custom-control-input" type="checkbox" name="feature" value="pausable" id="pausable" />
+                <label className="form-check-label custom-control-label" htmlFor="pausable" data-id="featureTypePausable" >Pausable</label>
+            </div>
+          </div>
+
           <label id="wsName" className="form-check-label d-block mb-1">Upgradeability</label>
           <div onChange={(e) => handleUpgradeability(e)}>
             <div className="d-flex ml-2 custom-control custom-radio">
@@ -209,6 +234,7 @@ export function Workspace () {
                 <label className="form-check-label custom-control-label" htmlFor="uups" data-id="upgradeTypeUups" >UUPS</label>
             </div>
           </div>
+
         </div>
 
         <label id="wsName" className="form-check-label" style={{fontWeight: "bolder"}} >Workspace name</label>
