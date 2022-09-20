@@ -73,8 +73,6 @@ jobs:
       xlarge
     working_directory: ~/remix-project
     parameters:
-      parts:
-        type: string
       browser:
         type: string
       script:
@@ -248,7 +246,6 @@ workflows:
             - build
           matrix:
             parameters:
-              parts: ["1"]
               browser: ["chrome", "firefox"]
               script: ["flaky.sh"]
               group: ["nogroup"]
@@ -274,7 +271,6 @@ workflows:
             - build
           matrix:
             parameters:
-              parts: ["1"]
               browser: ["chrome", "firefox"]
               script: ["browser_test.sh"]
               group: ["0","1","2","3","4","5","6","7","8","9"]
