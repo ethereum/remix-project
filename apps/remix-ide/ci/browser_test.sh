@@ -8,7 +8,7 @@ TEST_EXITCODE=0
 
 yarn run downloadsolc_assets_e2e &
 yarn run ganache-cli &
-yarn run serve:production &
+yarn run serve:e2e &
 echo 'sharing folder: ' $PWD '/apps/remix-ide/contracts' &
 yarn run remixd &
 
