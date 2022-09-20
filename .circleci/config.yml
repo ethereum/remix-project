@@ -110,6 +110,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: unzip ./persist/dist.zip
+      - run: ls -la ./apps/remix-ide/src/assets/js/
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
