@@ -277,8 +277,8 @@ workflows:
               parts: ["1"]
               browser: ["chrome", "firefox"]
               script: ["browser_test.sh"]
-              group: ["0","1","2","3","4","5","6","7","8","9"]
-              groupsize: ["10"]
+              group: ["0","1","2","3","4","5","6","7","8","9","10", "11","12","13"]
+              groupsize: ["14"]
       - tests-passed:
           requires:
             - lint
