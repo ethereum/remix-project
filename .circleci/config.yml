@@ -30,6 +30,7 @@ jobs:
             - node_modules
       - run: yarn run downloadsolc_assets
       - run: yarn run downloadsolc_assets_e2e
+      - run: ls -la ./apps/remix-ide/src/assets/js/
       - run: yarn build
       - run: npx nx build remix-ide-e2e-src-local-plugin
       - run: yarn run build:libs
