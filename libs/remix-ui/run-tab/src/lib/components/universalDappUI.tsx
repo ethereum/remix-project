@@ -7,6 +7,7 @@ import * as remixLib from '@remix-project/remix-lib'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 import { BN } from 'ethereumjs-util'
 import { is0XPrefixed, isHexadecimal, isNumeric, shortenAddress } from '@remix-ui/helper'
 
@@ -210,19 +211,37 @@ export function UniversalDappUI (props: UdappProps) {
   }
 
   return (
-    <div className={`instance udapp_instance udapp_run-instance border-dark ${toggleExpander ? 'udapp_hidesub' : 'bg-light'}`} id={`instance${address}`} data-shared="universalDappUiInstance">
+    <div
+      className={`instance udapp_instance udapp_run-instance border-dark ${
+        toggleExpander ? "udapp_hidesub" : "bg-light"
+      }`}
+      id={`instance${address}`}
+      data-shared="universalDappUiInstance"
+    >
       <div className="udapp_title pb-0 alert alert-secondary">
-        <span data-id={`universalDappUiTitleExpander${props.index}`} className="btn udapp_titleExpander" onClick={toggleClass}>
-          <i className={`fas ${toggleExpander ? 'fa-angle-right' : 'fa-angle-down'}`} aria-hidden="true"></i>
+        <span
+          data-id={`universalDappUiTitleExpander${props.index}`}
+          className="btn udapp_titleExpander"
+          onClick={toggleClass}
+        >
+          <i
+            className={`fas ${
+              toggleExpander ? "fa-angle-right" : "fa-angle-down"
+            }`}
+            aria-hidden="true"
+          ></i>
         </span>
         <div className="input-group udapp_nameNbuts">
           <div className="udapp_titleText input-group-prepend">
             <span className="input-group-text udapp_spanTitleText">
-              {props.instance.name} at {shortenAddress(address)} ({props.context})
+              {props.instance.name} at {shortenAddress(address)} (
+              {props.context})
             </span>
           </div>
           <div className="btn-group">
-            <button className="btn p-1 btn-secondary"><CopyToClipboard content={address} direction={'top'} /></button>
+            <button className="btn p-1 btn-secondary">
+              <CopyToClipboard content={address} direction={"top"} />
+            </button>
           </div>
         </div>
         <button
@@ -234,64 +253,106 @@ export function UniversalDappUI (props: UdappProps) {
           <i className="udapp_closeIcon fas fa-times" aria-hidden="true"></i>
         </button>
       </div>
-      <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
+      <div
+        className="udapp_cActionsWrapper"
+        data-id="universalDappUiContractActionWrapper"
+      >
         <div className="udapp_contractActionsContainer">
-        <div className="d-flex" data-id="instanceContractBal">
-          <label>Balance: {instanceBalance} ETH</label>
-        </div>
-          {
-            contractABI && contractABI.map((funcABI, index) => {
-              if (funcABI.type !== 'function') return null
-              const isConstant = funcABI.constant !== undefined ? funcABI.constant : false
-              const lookupOnly = funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure' || isConstant
-              const inputs = props.getFuncABIInputs(funcABI)
+          <div className="d-flex" data-id="instanceContractBal">
+            <label>Balance: {instanceBalance} ETH</label>
+          </div>
+          {contractABI &&
+            contractABI.map((funcABI, index) => {
+              if (funcABI.type !== "function") return null;
+              const isConstant =
+                funcABI.constant !== undefined ? funcABI.constant : false;
+              const lookupOnly =
+                funcABI.stateMutability === "view" ||
+                funcABI.stateMutability === "pure" ||
+                isConstant;
+              const inputs = props.getFuncABIInputs(funcABI);
 
-              return <div key={index}>
-                <ContractGUI
-                  funcABI={funcABI}
-                  clickCallBack={(valArray: { name: string, type: string }[], inputsValues: string) => {
-                    runTransaction(lookupOnly, funcABI, valArray, inputsValues, index)
-                  }}
-                  inputs={inputs}
-                  evmBC={evmBC}
-                  lookupOnly={lookupOnly}
-                  key={index}
-                />
-                <div className="udapp_value" data-id="udapp_value">
-                  <TreeView id="treeView">
-                    {
-                      Object.keys(props.instance.decodedResponse || {}).map((key) => {
-                        const funcIndex = index.toString()
-                        const response = props.instance.decodedResponse[key]
+              return (
+                <div key={index}>
+                  <ContractGUI
+                    funcABI={funcABI}
+                    clickCallBack={(
+                      valArray: { name: string; type: string }[],
+                      inputsValues: string
+                    ) => {
+                      runTransaction(
+                        lookupOnly,
+                        funcABI,
+                        valArray,
+                        inputsValues,
+                        index
+                      );
+                    }}
+                    inputs={inputs}
+                    evmBC={evmBC}
+                    lookupOnly={lookupOnly}
+                    key={index}
+                  />
+                  <div className="udapp_value" data-id="udapp_value">
+                    <TreeView id="treeView">
+                      {Object.keys(props.instance.decodedResponse || {}).map(
+                        (key) => {
+                          const funcIndex = index.toString();
+                          const response = props.instance.decodedResponse[key];
 
-                        return key === funcIndex ? Object.keys(response || {}).map((innerkey, index) => {
-                          return renderData(props.instance.decodedResponse[key][innerkey], response, innerkey, innerkey)
-                        }) : null
-                      })
-                    }
-                  </TreeView>
+                          return key === funcIndex
+                            ? Object.keys(response || {}).map(
+                                (innerkey, index) => {
+                                  return renderData(
+                                    props.instance.decodedResponse[key][
+                                      innerkey
+                                    ],
+                                    response,
+                                    innerkey,
+                                    innerkey
+                                  );
+                                }
+                              )
+                            : null;
+                        }
+                      )}
+                    </TreeView>
+                  </div>
                 </div>
-              </div>
-            })
-          }
+              );
+            })}
         </div>
         <div className="d-flex flex-column">
           <div className="d-flex flex-row justify-content-between mt-2">
             <div className="py-2 border-top d-flex justify-content-start flex-grow-1">
               Low level interactions
             </div>
-            <a
-              href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function"
-              title="check out docs for using 'receive'/'fallback'"
-              target="_blank" rel="noreferrer"
+            <OverlayTrigger
+              placement={"bottom-end"}
+              overlay={
+                <Tooltip className="text-wrap" id="receiveEthDocstoolTip">
+                  <span>{"check out docs for using 'receive'/'fallback'"}</span>
+                </Tooltip>
+              }
             >
-              <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
-            </a>
+              <a
+                href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
+              </a>
+            </OverlayTrigger>
           </div>
           <div className="d-flex flex-column align-items-start">
             <label className="">CALLDATA</label>
             <div className="d-flex justify-content-end w-100 align-items-center">
-              <input id="deployAndRunLLTxCalldata" onChange={handleCalldataChange} className="udapp_calldataInput form-control" title="The Calldata to send to fallback function of the contract." />
+              <input
+                id="deployAndRunLLTxCalldata"
+                onChange={handleCalldataChange}
+                className="udapp_calldataInput form-control"
+                title="The Calldata to send to fallback function of the contract."
+              />
               <button
                 id="deployAndRunLLTxSendTransaction"
                 data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"
@@ -304,10 +365,12 @@ export function UniversalDappUI (props: UdappProps) {
             </div>
           </div>
           <div>
-            <label id="deployAndRunLLTxError" className="text-danger my-2">{ llIError }</label>
+            <label id="deployAndRunLLTxError" className="text-danger my-2">
+              {llIError}
+            </label>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
