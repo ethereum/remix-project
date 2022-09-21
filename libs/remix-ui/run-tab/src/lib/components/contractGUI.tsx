@@ -234,78 +234,179 @@ export function ContractGUI (props: ContractGUIProps) {
   }
 
   return (
-    <div className={`udapp_contractProperty ${(props.funcABI.inputs && props.funcABI.inputs.length > 0) || (props.funcABI.type === 'fallback') || (props.funcABI.type === 'receive') ? 'udapp_hasArgs' : ''}`}>
-      <div className="udapp_contractActionsContainerSingle pt-2" style={{ display: toggleContainer ? 'none' : 'flex' }}>
-        <OverlayTrigger placement={'right'} overlay={
-          <Tooltip className="text-nowrap" id="remixUdappInstanceButtonTooltip">
-            <span>{buttonOptions.title}</span>
-          </Tooltip>
-        }>
-        <button onClick={handleActionClick} className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`} data-id={buttonOptions.dataId} data-title={buttonOptions.title}>{title}</button>
+    <div
+      className={`udapp_contractProperty ${
+        (props.funcABI.inputs && props.funcABI.inputs.length > 0) ||
+        props.funcABI.type === "fallback" ||
+        props.funcABI.type === "receive"
+          ? "udapp_hasArgs"
+          : ""
+      }`}
+    >
+      <div
+        className="udapp_contractActionsContainerSingle pt-2"
+        style={{ display: toggleContainer ? "none" : "flex" }}
+      >
+        <OverlayTrigger
+          placement={"right"}
+          overlay={
+            <Tooltip
+              className="text-nowrap"
+              id="remixUdappInstanceButtonTooltip"
+            >
+              <span>{buttonOptions.title}</span>
+            </Tooltip>
+          }
+        >
+          <button
+            onClick={handleActionClick}
+            className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`}
+            data-id={buttonOptions.dataId}
+            data-title={buttonOptions.title}
+          >
+            {title}
+          </button>
         </OverlayTrigger>
-        <OverlayTrigger placement={'right'} overlay={
-          <Tooltip className="text-nowrap" id="remixContractGuiTooltip">
-            <span>{props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}</span>
-          </Tooltip>
-        }>
-        <input
-          className="form-control"
-          data-id={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : 'multiParamManagerBasicInputField'}
-          placeholder={props.inputs}
-          onChange={handleBasicInput}
-          data-title={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}
-          ref={basicInputRef}
-          style={{ visibility: !((props.funcABI.inputs && props.funcABI.inputs.length > 0) || (props.funcABI.type === 'fallback') || (props.funcABI.type === 'receive')) ? 'hidden' : 'visible' }} />
+        <OverlayTrigger
+          placement={"right"}
+          overlay={
+            <Tooltip className="text-nowrap" id="remixContractGuiTooltip">
+              <span>
+                {props.funcABI.type === "fallback" ||
+                props.funcABI.type === "receive"
+                  ? `'(${props.funcABI.type}')`
+                  : props.inputs}
+              </span>
+            </Tooltip>
+          }
+        >
+          <input
+            className="form-control"
+            data-id={
+              props.funcABI.type === "fallback" ||
+              props.funcABI.type === "receive"
+                ? `'(${props.funcABI.type}')`
+                : "multiParamManagerBasicInputField"
+            }
+            placeholder={props.inputs}
+            onChange={handleBasicInput}
+            data-title={
+              props.funcABI.type === "fallback" ||
+              props.funcABI.type === "receive"
+                ? `'(${props.funcABI.type}')`
+                : props.inputs
+            }
+            ref={basicInputRef}
+            style={{
+              visibility: !(
+                (props.funcABI.inputs && props.funcABI.inputs.length > 0) ||
+                props.funcABI.type === "fallback" ||
+                props.funcABI.type === "receive"
+              )
+                ? "hidden"
+                : "visible",
+            }}
+          />
         </OverlayTrigger>
         <i
           className="fas fa-angle-down udapp_methCaret"
           onClick={switchMethodViewOn}
           title={title}
-          style={{ visibility: !(props.funcABI.inputs && props.funcABI.inputs.length > 0) ? 'hidden' : 'visible' }}></i>
+          style={{
+            visibility: !(
+              props.funcABI.inputs && props.funcABI.inputs.length > 0
+            )
+              ? "hidden"
+              : "visible",
+          }}
+        ></i>
       </div>
-      <div className="udapp_contractActionsContainerMulti" style={{ display: toggleContainer ? 'flex' : 'none' }}>
+      <div
+        className="udapp_contractActionsContainerMulti"
+        style={{ display: toggleContainer ? "flex" : "none" }}
+      >
         <div className="udapp_contractActionsContainerMultiInner text-dark">
           <div onClick={switchMethodViewOff} className="udapp_multiHeader">
-            <div className="udapp_multiTitle run-instance-multi-title">{title}</div>
-            <i className='fas fa-angle-up udapp_methCaret'></i>
+            <div className="udapp_multiTitle run-instance-multi-title">
+              {title}
+            </div>
+            <i className="fas fa-angle-up udapp_methCaret"></i>
           </div>
           <div>
             {props.funcABI.inputs.map((inp, index) => {
               return (
                 <div className="udapp_multiArg" key={index}>
                   <label htmlFor={inp.name}> {inp.name}: </label>
-                  <input ref={el => { multiFields.current[index] = el }} className="form-control" placeholder={inp.type} title={inp.name} data-id={`multiParamManagerInput${inp.name}`} />
-                </div>)
+                  <input
+                    ref={(el) => {
+                      multiFields.current[index] = el;
+                    }}
+                    className="form-control"
+                    placeholder={inp.type}
+                    title={inp.name}
+                    data-id={`multiParamManagerInput${inp.name}`}
+                  />
+                </div>
+              );
             })}
           </div>
           <div className="d-flex udapp_group udapp_multiArg">
-            <CopyToClipboard tip='Copy calldata to clipboard' icon='fa-clipboard' direction={'bottom'} getContent={getEncodedCall} >
+            <CopyToClipboard
+              tip="Copy calldata to clipboard"
+              icon="fa-clipboard"
+              direction={"bottom"}
+              getContent={getEncodedCall}
+            >
               <button className="btn remixui_copyButton">
-                <i id="copyCalldata" className="m-0 remixui_copyIcon far fa-copy" aria-hidden="true"></i>
+                <i
+                  id="copyCalldata"
+                  className="m-0 remixui_copyIcon far fa-copy"
+                  aria-hidden="true"
+                ></i>
                 <label htmlFor="copyCalldata">Calldata</label>
               </button>
             </CopyToClipboard>
-            <CopyToClipboard tip='Copy encoded input parameters to clipboard' icon='fa-clipboard' direction={'bottom'} getContent={getEncodedParams} >
+            <CopyToClipboard
+              tip="Copy encoded input parameters to clipboard"
+              icon="fa-clipboard"
+              direction={"bottom"}
+              getContent={getEncodedParams}
+            >
               <button className="btn remixui_copyButton">
-                <i id="copyParameters" className="m-0 remixui_copyIcon far fa-copy" aria-hidden="true"></i>
+                <i
+                  id="copyParameters"
+                  className="m-0 remixui_copyIcon far fa-copy"
+                  aria-hidden="true"
+                ></i>
                 <label htmlFor="copyParameters">Parameters</label>
               </button>
             </CopyToClipboard>
-            <button
-              type="button"
-              onClick={handleExpandMultiClick}
-              title={buttonOptions.title}
-              data-id={buttonOptions.dataId}
-              className={`udapp_instanceButton ${buttonOptions.classList}`}
+            <OverlayTrigger
+              placement={"right"}
+              overlay={
+                <Tooltip
+                  className="text-nowrap"
+                  id="remixUdappInstanceButtonTooltip"
+                >
+                  <span>{buttonOptions.title}</span>
+                </Tooltip>
+              }
             >
-              { buttonOptions.content }
-            </button>
+              <button
+                type="button"
+                onClick={handleExpandMultiClick}
+                data-id={buttonOptions.dataId}
+                className={`udapp_instanceButton ${buttonOptions.classList}`}
+              >
+                {buttonOptions.content}
+              </button>
+            </OverlayTrigger>
           </div>
         </div>
       </div>
-      { props.deployOption && (props.deployOption || []).length > 0 ?
+      {props.deployOption && (props.deployOption || []).length > 0 ? (
         <>
-          <div className='d-flex justify-content-between'>
+          <div className="d-flex justify-content-between">
             <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
               <input
                 id="deployWithProxy"
@@ -325,30 +426,55 @@ export function ContractGUI (props: ContractGUIProps) {
               </label>
             </div>
             <div>
-              {
-                props.initializerOptions && props.initializerOptions.initializeInputs ?
+              {props.initializerOptions &&
+              props.initializerOptions.initializeInputs ? (
                 <span onClick={handleToggleDeployProxy}>
-                  <i className={!toggleDeployProxy ? 'fas fa-angle-right pt-2' : 'fas fa-angle-down'} aria-hidden="true"></i>
-                </span> : null
-              }
+                  <i
+                    className={
+                      !toggleDeployProxy
+                        ? "fas fa-angle-right pt-2"
+                        : "fas fa-angle-down"
+                    }
+                    aria-hidden="true"
+                  ></i>
+                </span>
+              ) : null}
             </div>
           </div>
-            {
-              props.initializerOptions && props.initializerOptions.initializeInputs ?
-                <div className={`pl-4 flex-column ${toggleDeployProxy ? "d-flex" : "d-none"}`}>
-                  <div className={`flex-column 'd-flex'}`}>{
-                    props.initializerOptions.inputs.inputs.map((inp, index) => {
-                      return (
-                        <div className="mb-2" key={index}>
-                          <label className='mt-2 text-left d-block' htmlFor={inp.name}> {inp.name}: </label>
-                          <input ref={el => { initializeFields.current[index] = el }} style={{ height: 32 }} className="form-control udapp_input" placeholder={inp.type} title={inp.name} />
-                        </div>
-                      )})
-                    }
-                  </div>
-                </div> : null
-            }
-          <div className='d-flex justify-content-between'>
+          {props.initializerOptions &&
+          props.initializerOptions.initializeInputs ? (
+            <div
+              className={`pl-4 flex-column ${
+                toggleDeployProxy ? "d-flex" : "d-none"
+              }`}
+            >
+              <div className={`flex-column 'd-flex'}`}>
+                {props.initializerOptions.inputs.inputs.map((inp, index) => {
+                  return (
+                    <div className="mb-2" key={index}>
+                      <label
+                        className="mt-2 text-left d-block"
+                        htmlFor={inp.name}
+                      >
+                        {" "}
+                        {inp.name}:{" "}
+                      </label>
+                      <input
+                        ref={(el) => {
+                          initializeFields.current[index] = el;
+                        }}
+                        style={{ height: 32 }}
+                        className="form-control udapp_input"
+                        placeholder={inp.type}
+                        title={inp.name}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : null}
+          <div className="d-flex justify-content-between">
             <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
               <input
                 id="upgradeImplementation"
@@ -368,10 +494,21 @@ export function ContractGUI (props: ContractGUIProps) {
               </label>
             </div>
             <span onClick={handleToggleUpgradeImp}>
-              <i className={!toggleUpgradeImp ? 'fas fa-angle-right pt-2' : 'fas fa-angle-down'} aria-hidden="true"></i>
+              <i
+                className={
+                  !toggleUpgradeImp
+                    ? "fas fa-angle-right pt-2"
+                    : "fas fa-angle-down"
+                }
+                aria-hidden="true"
+              ></i>
             </span>
           </div>
-          <div className={`pl-4 flex-column ${toggleUpgradeImp ? "d-flex" : "d-none"}`}>
+          <div
+            className={`pl-4 flex-column ${
+              toggleUpgradeImp ? "d-flex" : "d-none"
+            }`}
+          >
             <div className={`flex-column 'd-flex'}`}>
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
                 <input
@@ -392,18 +529,33 @@ export function ContractGUI (props: ContractGUIProps) {
                   Use last deployed ERC1967 contract
                 </label>
               </div>
-              {
-                !useLastProxy ?
+              {!useLastProxy ? (
                 <div className="mb-2">
-                  <label className='mt-2 text-left d-block'>Proxy Address: </label>
-                  <input style={{ height: 32 }} className="form-control udapp_input" data-id="ERC1967AddressInput" placeholder='proxy address' title='Enter previously deployed proxy address on the selected network' onChange={handleSetProxyAddress} />
-                </div> :
-                <span className='text-capitalize' data-id="lastDeployedERC1967Address" style={{ fontSize: '.8em' }}>{ proxyAddress || 'No proxy address available' }</span>
-              }
+                  <label className="mt-2 text-left d-block">
+                    Proxy Address:{" "}
+                  </label>
+                  <input
+                    style={{ height: 32 }}
+                    className="form-control udapp_input"
+                    data-id="ERC1967AddressInput"
+                    placeholder="proxy address"
+                    title="Enter previously deployed proxy address on the selected network"
+                    onChange={handleSetProxyAddress}
+                  />
+                </div>
+              ) : (
+                <span
+                  className="text-capitalize"
+                  data-id="lastDeployedERC1967Address"
+                  style={{ fontSize: ".8em" }}
+                >
+                  {proxyAddress || "No proxy address available"}
+                </span>
+              )}
             </div>
           </div>
-        </> : null
-      }
+        </>
+      ) : null}
     </div>
-  )
+  );
 }

@@ -23,7 +23,7 @@ function addInstance (browser: NightwatchBrowser, address: string, isValidFormat
     else if (isAbi) {
       browser.useXpath()
         .click('//button[@id="runAndDeployAtAdressButton"]')
-        .waitForElementPresent('[data-id="udappNotify-modal-footer-ok-react"]')
+        .waitForElementPresent('[data-id="udappNotify-modal-footer-ok-react"]', 5000)
         .execute(function () {
           const modal = document.querySelector('[data-id="udappNotify-modal-footer-ok-react"]') as any
 
