@@ -3,7 +3,7 @@ import { isArray } from "lodash"
 import { editor, languages, Position } from "monaco-editor"
 import monaco from "../../types/monaco"
 import { EditorUIProps } from "../remix-ui-editor"
-import { GeCompletionUnits, GetCompletionKeywords, getCompletionSnippets, GetCompletionTypes, getContextualAutoCompleteBTypeName, getContextualAutoCompleteByGlobalVariable, GetGlobalFunctions, GetGlobalVariable } from "./completion/completionGlobals"
+import { GeCompletionUnits, GetCompletionKeywords, getCompletionSnippets, GetCompletionTypes, getContextualAutoCompleteBTypeName, getContextualAutoCompleteByGlobalVariable, GetGlobalFunctions, GetGlobalVariable, GetImports } from "./completion/completionGlobals"
 
 export class RemixCompletionProvider implements languages.CompletionItemProvider {
 
@@ -16,7 +16,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         this.monaco = monaco
     }
 
-    triggerCharacters = ['.', '']
+    triggerCharacters = ['.', '', '"', '@', '/']
     async provideCompletionItems(model: editor.ITextModel, position: Position, context: monaco.languages.CompletionContext): Promise<monaco.languages.CompletionList | undefined> {
 
         const completionSettings = await this.props.plugin.call('config', 'getAppParameter', 'settings/auto-completion')
@@ -33,8 +33,26 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         const line = model.getLineContent(position.lineNumber)
         let nodes: AstNode[] = []
         let suggestions: monaco.languages.CompletionItem[] = []
+        if (context.triggerCharacter === '"' || context.triggerCharacter === '@' || context.triggerCharacter === '/') {
 
-        if (context.triggerCharacter === '.') {
+            const lastpart = line.substring(0, position.column - 1).split(';').pop()
+            if (lastpart.startsWith('import')) {
+                const imports = await this.props.plugin.call('codeParser', 'getImports')
+                if (context.triggerCharacter === '"' || context.triggerCharacter === '@') {
+                    suggestions = [...suggestions,
+                    ...GetImports(range, this.monaco, imports, context.triggerCharacter),
+                    ]
+                } else if (context.triggerCharacter === '/') {
+                    const word = line.split('"')[1]
+                    suggestions = [...suggestions,
+                    ...GetImports(range, this.monaco, imports, word),
+                    ]
+                } else {
+                    return
+                }
+            }
+
+        } else if (context.triggerCharacter === '.') {
             const lineTextBeforeCursor: string = line.substring(0, position.column - 1)
             const lastNodeInExpression = await this.getLastNodeInExpression(lineTextBeforeCursor)
             const expressionElements = lineTextBeforeCursor.split('.')
