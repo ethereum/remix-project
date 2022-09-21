@@ -26,7 +26,11 @@ export function Workspace () {
   const initGitRepoRef = useRef<HTMLInputElement>()
 
   useEffect(() => {
-    setCurrentWorkspace(localStorage.getItem('currentWorkspace') ? localStorage.getItem('currentWorkspace') : '')
+    let workspaceName = localStorage.getItem('currentWorkspace')
+    if (!workspaceName && global.fs.browser.workspaces.length) {
+      workspaceName = global.fs.browser.workspaces[0].name
+    }
+    setCurrentWorkspace(workspaceName)
     resetFocus()
   }, [])
 
