@@ -21,7 +21,7 @@ yarn run build:e2e
 node apps/remix-ide/ci/splice_tests.js $2 $3
 TESTFILES=$(node apps/remix-ide/ci/splice_tests.js $2 $3 | circleci tests split --split-by=timings)
 for TESTFILE in $TESTFILES; do
-    npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js ${TESTFILE}.js --env=$1  || TEST_EXITCODE=1
+    npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/${TESTFILE}.js --env=$1  || TEST_EXITCODE=1
 done
 
 echo "$TEST_EXITCODE"
