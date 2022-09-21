@@ -47,6 +47,7 @@ function addFile(browser: NightwatchBrowser, name: string, content: NightwatchCo
           .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
           .sendKeys('*[data-id$="/blank"] .remixui_items', name)
           .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+          // isvisible is protocol action called isDisplayed https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/WebElement.html#isDisplayed--
           .isVisible({
             selector: `li[data-id="treeViewLitreeViewItem${name}"]`,
             abortOnFailure: false,
