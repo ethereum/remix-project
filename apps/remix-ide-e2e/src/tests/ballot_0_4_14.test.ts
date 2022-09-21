@@ -16,7 +16,7 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'Add Ballot #group1 #group2': function (browser: NightwatchBrowser) {
+  'Add Ballot': function (browser: NightwatchBrowser) {
     browser
       .addFile('Untitled.sol', sources[0]['Untitled.sol'])
   },
@@ -30,7 +30,7 @@ module.exports = {
       .verify.elementPresent('[data-id="compilerContainerAutoCompile"]:checked')
   },
 
-  'Compile Ballot with compiler version 0.4.14 #group1 #group2': function (browser: NightwatchBrowser) {
+  'Compile Ballot with compiler version 0.4.14': function (browser: NightwatchBrowser) {
     browser
       .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['Ballot'])
   },

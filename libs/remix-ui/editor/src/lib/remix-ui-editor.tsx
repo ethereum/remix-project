@@ -606,6 +606,7 @@ export const EditorUI = (props: EditorUIProps) => {
       }
       return result
     }
+    // just for e2e testing
     const loadedElement = document.createElement('span')
     loadedElement.setAttribute('data-id', 'editorloaded')
     document.body.appendChild(loadedElement)
