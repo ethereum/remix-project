@@ -2,29 +2,36 @@ const testFolder = './apps/remix-ide-e2e/src/tests/';
 const fs = require('fs');
 
 let url = 'https://binaries.soliditylang.org/wasm/list.json'
-let request = require('request');
-request(url, function (error, response, body) {
-    if (!error && response.statusCode == 200) {
-        let info = JSON.parse(body);
-        info.builds = info.builds.filter(build => build.path.indexOf('nightly') === -1)
-        for (let build of info.builds) {
 
-            const buildurl = `https://solc-bin.ethereum.org/wasm/${build.path}`;
-            console.log(buildurl)
+const axios = require('axios')
 
-            const path = `./dist/apps/remix-ide/assets/js/${build.path}`;
-            const file = fs.createWriteStream(path);
-            try {
-                require('https').get(buildurl, function (response) {
-                    response.pipe(file);
-                });
-            } catch (e) {
-                console.log('error', buildurl)
-            }
+// use axios to download the file
+axios({
+    url: url,
+    method: 'GET',
+}).then((response) => {
 
-        }
+    let info = response.data;
+    info.builds = info.builds.filter(build => build.path.indexOf('nightly') === -1)
+    for (let build of info.builds) {
+
+        const buildurl = `https://solc-bin.ethereum.org/wasm/${build.path}`;
+        console.log(buildurl)
+
+        const path = `./dist/apps/remix-ide/assets/js/${build.path}`;
+        // use axios to get the file
+        axios({
+            method: 'get',
+            url: buildurl,
+            responseType: 'stream'
+        }).then(function (response) {
+            // pipe the result stream into a file on disc
+            response.data.pipe(fs.createWriteStream(path));
+        })
+
     }
-})
+}
+)
 
 fs.readdirSync(testFolder).forEach(file => {
     let c = fs.readFileSync(testFolder + file, 'utf8');
@@ -34,15 +41,20 @@ fs.readdirSync(testFolder).forEach(file => {
         for (let i = 0; i < soljson.length; i++) {
 
             const version = soljson[i];
-            if(version && version.indexOf('nightly') > -1) {
+            if (version && version.indexOf('nightly') > -1) {
                 const url = `https://solc-bin.ethereum.org/bin/soljson${version}.js`;
                 console.log(url)
 
                 const path = `./dist/apps/remix-ide/assets/js/soljson${version}.js`;
-                const file = fs.createWriteStream(path);
-                require('https').get(url, function (response) {
-                    response.pipe(file);
-                });
+                // use axios to get the file
+                axios({
+                    method: 'get',
+                    url: url,
+                    responseType: 'stream'
+                }).then(function (response) {
+                    // pipe the result stream into a file on disc
+                    response.data.pipe(fs.createWriteStream(path));
+                })
             }
 
         }
