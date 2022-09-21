@@ -16,16 +16,21 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'Set Ballot 0.4.11': function (browser: NightwatchBrowser) {
+  'Add Ballot': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('Untitled.sol', sources[0]['Untitled.sol'])
+  },
+  'Set Ballot 0.4.14': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('solidity')
-      .setSolidityCompilerVersion('soljson-v0.4.11+commit.68ef5810.js')
+      .setSolidityCompilerVersion('soljson-v0.4.14+commit.c2215d46.js')
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]')
       .verify.elementPresent('[data-id="compilerContainerAutoCompile"]:checked')
   },
-  'Compile Ballot with compiler version 0.4.11 #group1 #group2': function (browser: NightwatchBrowser) {
+
+  'Compile Ballot with compiler version 0.4.14': function (browser: NightwatchBrowser) {
     browser
       .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['Ballot'])
   },

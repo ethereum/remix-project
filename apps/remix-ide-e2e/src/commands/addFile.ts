@@ -13,26 +13,31 @@ class AddFile extends EventEmitter {
   }
 }
 
-function addFile (browser: NightwatchBrowser, name: string, content: NightwatchContractContent, done: VoidFunction) {
+function addFile(browser: NightwatchBrowser, name: string, content: NightwatchContractContent, done: VoidFunction) {
   browser
-    .saveScreenshot('./reports/screenshots/addFile.png')
     .isVisible({
       selector: "//*[@data-id='sidePanelSwapitTitle' and contains(.,'File explorer')]",
       locateStrategy: 'xpath',
       suppressNotFoundErrors: true,
-      timeout: 1000   
+      timeout: 1000
     }, (okVisible) => {
       if (!okVisible.value) {
         browser.clickLaunchIcon('filePanel')
-        .saveScreenshot('./reports/screenshots/addFile2.png')
       }
     })
     .scrollInto('li[data-id="treeViewLitreeViewItemREADME.txt"]')
-    .saveScreenshot('./reports/screenshots/addFile3.png')
     .waitForElementVisible('li[data-id="treeViewLitreeViewItemREADME.txt"]')
     .click('li[data-id="treeViewLitreeViewItemREADME.txt"]').pause(1000) // focus on root directory
-    .elements('css selector', `li[data-id="treeViewLitreeViewItem${name}"]`, (res) => {
-      if (res.value && (res.value as any).length > 0) {
+    .isVisible({
+      selector: `//*[@data-id="treeViewLitreeViewItem${name}"]`,
+      locateStrategy: 'xpath',
+      abortOnFailure: false,
+      suppressNotFoundErrors: true,
+      timeout: 2000
+    }, (okVisible) => {
+      // @ts-ignore
+      // status === -1 means the element is not visible, 0 means it is visible.
+      if (okVisible.status === 0) {
         browser.openFile(name)
           .perform(function () {
             done()
@@ -42,10 +47,14 @@ function addFile (browser: NightwatchBrowser, name: string, content: NightwatchC
           .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
           .sendKeys('*[data-id$="/blank"] .remixui_items', name)
           .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
-          .pause(2000)
-          .waitForElementVisible(`li[data-id="treeViewLitreeViewItem${name}"]`, 60000)
+          // isvisible is protocol action called isDisplayed https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/WebElement.html#isDisplayed--
+          .isVisible({
+            selector: `li[data-id="treeViewLitreeViewItem${name}"]`,
+            abortOnFailure: false,
+            suppressNotFoundErrors: true,
+            timeout: 60000
+          })
           .setEditorValue(content.content)
-          .pause(1000)
           .perform(function () {
             done()
           })
