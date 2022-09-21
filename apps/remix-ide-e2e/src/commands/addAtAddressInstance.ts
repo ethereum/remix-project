@@ -21,8 +21,11 @@ function addInstance (browser: NightwatchBrowser, address: string, isValidFormat
   .setValue('.ataddressinput', address, function () {
     if (!isValidFormat || !isValidChecksum) browser.assert.elementPresent('button[id^="runAndDeployAtAdressButton"]:disabled')
     else if (isAbi) {
-      browser.useXpath()
-        .click('//button[@id="runAndDeployAtAdressButton"]')
+      browser
+        .click({
+          selector:'//button[@id="runAndDeployAtAdressButton"]',
+          locateStrategy: 'xpath'
+         })
         .waitForElementPresent('[data-id="udappNotify-modal-footer-ok-react"]', 5000)
         .execute(function () {
           const modal = document.querySelector('[data-id="udappNotify-modal-footer-ok-react"]') as any
