@@ -90,7 +90,8 @@ jobs:
             firefox --version
             geckodriver --version
             chromedriver --version
-            java -jar /usr/local/bin/selenium.jar --version
+            wget https://github.com/SeleniumHQ/selenium/releases/download/selenium-4.4.0/selenium-server-4.4.0.jar
+            java -jar selenium-server-4.4.0.jar --version
       - run:
           name: Check out previous test metadata
           command: |
@@ -109,7 +110,7 @@ jobs:
       - run: ls -la ./dist/apps/remix-ide/assets/js
       - run:
           name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar
+          command: java -jar selenium-server-4.4.0.jar
           background: true
       - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
       - store_test_results:
