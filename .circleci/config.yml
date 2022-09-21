@@ -81,7 +81,7 @@ jobs:
         type: string
       jobsize:
         type: string
-    parallelism: 10
+    parallelism: 50
     steps:
       - browser-tools/install-browser-tools
       - run:

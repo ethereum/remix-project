@@ -204,6 +204,8 @@ export class Compiler {
                 input = compilerInputForConfigFile(source.sources, JSON.parse(configFileContent))
               } else {
                 input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+                console.log('load remote version compiler input')              
+                console.log(input)
               }
 
               result = JSON.parse(remoteCompiler.compile(input, { import: missingInputsCallback }))
@@ -323,7 +325,7 @@ export class Compiler {
             console.log(input)
           } else {
             input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
-            console.log('Using no file configuration')
+            console.log('Using no file configuration default compilejson')
             console.log(input)
           }
         } catch (exception) {
