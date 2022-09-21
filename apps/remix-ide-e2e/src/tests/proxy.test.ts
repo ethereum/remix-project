@@ -43,7 +43,7 @@ module.exports = {
         selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
         timeout: 120000,
       }) */
-      // .clickLaunchIcon('solidity')
+      .clickLaunchIcon('solidity')
       .waitForElementPresent('select[id="compiledContracts"] option[value=MyToken]', 60000)
       .clickLaunchIcon('udapp')
       .click('select.udapp_contractNames')
