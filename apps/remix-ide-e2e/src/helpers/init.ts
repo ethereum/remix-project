@@ -10,8 +10,7 @@ type LoadPlugin = {
 export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true, loadPlugin?: LoadPlugin): void {
   browser
     .url(url || 'http://127.0.0.1:8080')
-    //.pause(6000)
-    .switchBrowserTab(0)
+    //.switchBrowserTab(0)
     .waitForElementVisible('[id="remixTourSkipbtn"]')
     .click('[id="remixTourSkipbtn"]')
 
@@ -24,7 +23,6 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
           localStorage.setItem('test-plugin-url', loadPlugin.url)
         }, [loadPlugin])
         .refreshPage()
-        .waitForElementVisible('[data-id="sidePanelSwapitTitle"]')
         .perform(done())
     })
     .verifyLoad()

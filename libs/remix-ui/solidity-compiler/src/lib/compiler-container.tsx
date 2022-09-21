@@ -61,7 +61,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const [showFilePathInput, setShowFilePathInput] = useState<boolean>(false)
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
   const [disableCompileButton, setDisableCompileButton] = useState<boolean>(false)
-  const [compilerLoadedVersion, setCompilerLoadedVersion] = useState<string>('')
   const compileIcon = useRef(null)
   const promptMessageInput = useRef(null)
   const configFilePathInput = useRef(null)
@@ -187,7 +186,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           loadingCompiler()
           break
         case 'compilerLoaded':
-          setCompilerLoadedVersion(state.selectedVersion)
           compilerLoaded(compilerContainer.compiler.args[1])
           break
         case 'compilationFinished':
@@ -458,6 +456,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
     // just for e2e
     // eslint-disable-next-line no-case-declarations
+    const elements = document.querySelectorAll('[data-id="compilerloaded"]')
+    // remove elements
+    for (let i = 0; i < elements.length; i++) {
+      elements[i].remove()
+    }
     const loadedElement = document.createElement('span')
     loadedElement.setAttribute('data-id', 'compilerloaded')
     loadedElement.setAttribute('data-version', state.selectedVersion)
@@ -858,7 +861,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           </div>
         </div>
         <div className="px-4">
-          {compilerLoadedVersion ? <span data-id='compilerLoadedVersion' data-version={compilerLoadedVersion}></span> : ''}
           <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block d-block w-100 text-break remixui_disabled mb-1 mt-3" onClick={compile} disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}>
             <OverlayTrigger overlay={
               <Tooltip id="overlay-tooltip-compile">

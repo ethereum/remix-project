@@ -271,7 +271,6 @@ module.exports = {
 
   'Debug tests using debugger #group7': function (browser: NightwatchBrowser) {
     browser
-      //.pause()
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('tests/ballotFailedDebug_test.sol', sources[0]['tests/ballotFailedDebug_test.sol'])
       .clickLaunchIcon('solidityUnitTesting')

@@ -15,10 +15,11 @@ module.exports = {
   'Should launch debugger #group1': function (browser: NightwatchBrowser) {
     browser.addFile('blah.sol', sources[0]['blah.sol'])
       .pause(4000)
+      // on autocompile sometimes the compiler returns invalid source, so we need to recompile to make sure the source is valid
       .clickLaunchIcon('solidity').click('*[data-id="compilerContainerCompileBtn"]')
       .pause(4000)
       .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 180000)
+      .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 60000)
       .click('*[title="Deploy - transact (not payable)"]')
       .debugTransaction(0)
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
