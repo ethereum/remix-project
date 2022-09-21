@@ -212,13 +212,13 @@ describe('blocks', () => {
       let storage = await web3.eth.getStorageAt(contractInstance.options.address, 0)
       assert.deepEqual(storage, '0x64')
 
-      await contractInstance.methods.set(200).send({ from: accounts[0], gas: 400000 })
-      storage = await web3.eth.getStorageAt(contractInstance.options.address, 0)
-      assert.deepEqual(storage, '0x64')
-
-      await contractInstance.methods.set(200).send({ from: accounts[0], gas: 400000 })
+      await contractInstance.methods.set(200).send({ from: accounts[0].toLowerCase(), gas: 400000 })
       storage = await web3.eth.getStorageAt(contractInstance.options.address, 0)
       assert.deepEqual(storage, '0xc8')
+
+      await contractInstance.methods.set(1).send({ from: accounts[0].toLowerCase(), gas: 400000 })
+      storage = await web3.eth.getStorageAt(contractInstance.options.address, 0)
+      assert.deepEqual(storage, '0x01')
     })
   })
   describe('eth_call', () => {
