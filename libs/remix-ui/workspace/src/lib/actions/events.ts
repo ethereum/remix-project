@@ -13,7 +13,7 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
   plugin = filePanelPlugin
 
   plugin.on('filePanel', 'createWorkspaceReducerEvent', (name: string, workspaceTemplateName: WorkspaceTemplate, isEmpty = false, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
-    createWorkspace(name, workspaceTemplateName, isEmpty, cb)
+    createWorkspace(name, workspaceTemplateName, null, isEmpty, cb)
   })
 
   plugin.on('filePanel', 'renameWorkspaceReducerEvent', (oldName: string, workspaceName: string, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
