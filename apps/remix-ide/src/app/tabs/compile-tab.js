@@ -8,6 +8,7 @@ import { QueryParams } from '@remix-project/remix-lib'
 // import { ICompilerApi } from '@remix-project/remix-lib-ts'
 import * as packageJson from '../../../../../package.json'
 import { compilerConfigChangedToastMsg, compileToastMsg } from '@remix-ui/helper'
+import { isNative } from '../../remixAppManager'
 
 const profile = {
   name: 'solidity',
@@ -17,8 +18,9 @@ const profile = {
   kind: 'compiler',
   permission: true,
   location: 'sidePanel',
-  documentation: 'https://remix-ide.readthedocs.io/en/latest/solidity_editor.html',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/compile.html',
   version: packageJson.version,
+  maintainedBy: 'Remix',
   methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile', 'getCompilerState']
 }
 
@@ -54,6 +56,10 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   // }
 
   onSetWorkspace () {
+    this.renderComponent()
+  }
+
+  onFileRemoved () {
     this.renderComponent()
   }
 
@@ -100,7 +106,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   }
 
   compile (fileName) {
-    this.call('notification', 'toast', compileToastMsg(this.currentRequest.from, fileName))
+    if (!isNative(this.currentRequest.from)) this.call('notification', 'toast', compileToastMsg(this.currentRequest.from, fileName))
     super.compile(fileName)
   }
 

@@ -188,7 +188,7 @@ module.exports = {
       .frameParent()
       .useCss()
       .clickLaunchIcon('udapp')
-      .waitForElementContainsText('#selectExEnvOptions option:checked', 'JavaScript VM (Berlin)')
+      .waitForElementContainsText('#selectExEnvOptions button', 'Remix VM (Berlin)')
       .clickLaunchIcon('localPlugin')
       .useXpath()
       // @ts-ignore
@@ -214,7 +214,7 @@ module.exports = {
           }
         })
         .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
-        .rightClick('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]').useXpath().waitForElementVisible('//*[@id="menuitemtestcommand"]').click('//*[@id="menuitemtestcommand"]', async () => {
+        .rightClickCustom('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]').useXpath().waitForElementVisible('//*[@id="menuitemtestcommand"]').click('//*[@id="menuitemtestcommand"]', async () => {
           // @ts-ignore
           browser.click('//*[@data-id="verticalIconsKindlocalPlugin"]').frame(0, async () => {
             await clickAndCheckLog(browser, null, { id: 'localPlugin', name: 'testCommand', label: 'testCommand', type: [], extension: ['.sol'], path: ['contracts/1_Storage.sol'], pattern: [] }, null, null)
@@ -230,7 +230,12 @@ module.exports = {
   },
 
   'Should get current files #group7': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'fileManager:readdir', { contracts: { isDirectory: true }, scripts: { isDirectory: true }, tests: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null, '/')
+    await clickAndCheckLog(browser, 'fileManager:readdir', {
+      contracts: { isDirectory: true },
+      scripts: { isDirectory: true },
+      tests: { isDirectory: true },
+      'README.txt': { isDirectory: false }
+    }, null, '/')
   },
   'Should throw error on current file #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'Error from IDE : Error: No such file or directory No file selected', null, null)
@@ -285,40 +290,45 @@ module.exports = {
   'Should create workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, 'testspace')
     await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'testspace', isLocalhost: false, absolutePath: '.workspaces/testspace' }, null, null)
-    await clickAndCheckLog(browser, 'fileManager:readdir', { contracts: { isDirectory: true }, scripts: { isDirectory: true }, tests: { isDirectory: true }, 'README.txt': { isDirectory: false } }, null, null)
+    await clickAndCheckLog(browser, 'fileManager:readdir', {
+      contracts: { isDirectory: true },
+      scripts: { isDirectory: true },
+      tests: { isDirectory: true },
+      'README.txt': { isDirectory: false } 
+    }, null, '/')
   },
   'Should get all workspaces #group2': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', ['default_workspace', 'emptyworkspace', 'testspace'], null, null)
+    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{name:"default_workspace",isGitRepo:false}, {name:"emptyworkspace",isGitRepo:false}, {name:"testspace",isGitRepo:false}], null, null)
   },
   'Should have set workspace event #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, { event: 'setWorkspace', args: [{ name: 'newspace', isLocalhost: false }] }, 'newspace')
   },
   'Should have event when switching workspace #group2': async function (browser: NightwatchBrowser) {
     // @ts-ignore
-    browser.frameParent().useCss().clickLaunchIcon('filePanel').click('*[data-id="workspacesSelect"] option[value="default_workspace"]').useXpath().click('//*[@data-id="verticalIconsKindlocalPlugin"]').frame(0, async () => {
+    browser.frameParent().useCss().clickLaunchIcon('filePanel').switchWorkspace('default_workspace').useXpath().click('//*[@data-id="verticalIconsKindlocalPlugin"]').frame(0, async () => {
       await clickAndCheckLog(browser, null, null, { event: 'setWorkspace', args: [{ name: 'default_workspace', isLocalhost: false }] }, null)
     })
   },
 
   'Should rename workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:renameWorkspace', null, null, ['default_workspace', 'renamed'])
-    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', ['emptyworkspace', 'testspace', 'newspace', 'renamed'], null, null)
+    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{name:"emptyworkspace",isGitRepo:false},{name:"testspace",isGitRepo:false},{name:"newspace",isGitRepo:false},{name:"renamed",isGitRepo:false}], null, null)
   },
   'Should delete workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:deleteWorkspace', null, null, ['testspace'])
-    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', ['emptyworkspace', 'newspace', 'renamed'], null, null)
+    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{name:"emptyworkspace",isGitRepo:false},{name:"newspace",isGitRepo:false},{name:"renamed",isGitRepo:false}], null, null)
   },
   // DGIT
   'Should have changes on new workspace #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, 'dgit')
-    await clickAndCheckLog(browser, 'dGitProvider:status', [['README.txt', 0, 2, 0], ['contracts/1_Storage.sol', 0, 2, 0], ['contracts/2_Owner.sol', 0, 2, 0], ['contracts/3_Ballot.sol', 0, 2, 0], ['scripts/deploy_with_ethers.ts', 0, 2, 0], ['scripts/deploy_with_web3.ts', 0, 2, 0], ['tests/Ballot_test.sol', 0, 2, 0]], ['tests/storage.test.js', 0, 2, 0], null, null)
+    await clickAndCheckLog(browser, 'dGitProvider:status', [["README.txt",0,2,0],["contracts/1_Storage.sol",0,2,0],["contracts/2_Owner.sol",0,2,0],["contracts/3_Ballot.sol",0,2,0],["scripts/deploy_with_ethers.ts",0,2,0],["scripts/deploy_with_web3.ts",0,2,0],["scripts/ethers-lib.ts",0,2,0],["scripts/web3-lib.ts",0,2,0],["tests/Ballot_test.sol",0,2,0],["tests/storage.test.js",0,2,0]], null, null)
   },
 
   'Should stage contract #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'dGitProvider:add', null, null, {
       filepath: 'contracts/1_Storage.sol'
     })
-    await clickAndCheckLog(browser, 'dGitProvider:status', [['README.txt', 0, 2, 0], ['contracts/1_Storage.sol', 0, 2, 2], ['contracts/2_Owner.sol', 0, 2, 0], ['contracts/3_Ballot.sol', 0, 2, 0], ['scripts/deploy_with_ethers.ts', 0, 2, 0], ['scripts/deploy_with_web3.ts', 0, 2, 0], ['tests/Ballot_test.sol', 0, 2, 0]], ['tests/storage.test.js', 0, 2, 0], null, null)
+    await clickAndCheckLog(browser, 'dGitProvider:status', [["README.txt",0,2,0],["contracts/1_Storage.sol",0,2,2],["contracts/2_Owner.sol",0,2,0],["contracts/3_Ballot.sol",0,2,0],["scripts/deploy_with_ethers.ts",0,2,0],["scripts/deploy_with_web3.ts",0,2,0],["scripts/ethers-lib.ts",0,2,0],["scripts/web3-lib.ts",0,2,0],["tests/Ballot_test.sol",0,2,0],["tests/storage.test.js",0,2,0]], null, null)
   },
   'Should commit changes #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'dGitProvider:commit', null, null, { author: { name: 'Remix', email: 'Remix' }, message: 'commit-message' })
@@ -381,7 +391,7 @@ module.exports = {
       .useCss()
       .clickLaunchIcon('pluginManager')
       .clickLaunchIcon('udapp')
-      .click('*[data-id="Hardhat Provider"]')
+      .switchEnvironment('Hardhat Provider')
       .modalFooterOKClick('hardhat-provider')
       .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom') // e.g Custom (1337) network
       .clickLaunchIcon('localPlugin')
@@ -407,7 +417,7 @@ module.exports = {
       .frameParent()
       .useCss()
       .addFile('test_modal.js', { content: testModalToasterApi })
-      .executeScript('remix.execute(\'test_modal.js\')')
+      .executeScriptInTerminal('remix.execute(\'test_modal.js\')')
       .useCss()
       .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]', 60000)
       .assert.containsText('*[data-id="test_id_1_ModalDialogModalBody-react"]', 'message 1')

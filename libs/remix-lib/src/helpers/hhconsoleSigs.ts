@@ -375,5 +375,7 @@ export const ConsoleLogs = {
   3982404743: '(address,address,address,uint)',
   4161329696: '(address,address,address,string)',
   238520724: '(address,address,address,bool)',
-  1717301556: '(address,address,address,address)'
+  1717301556: '(address,address,address,address)',
+  4133908826: '(uint,uint)',
+  3054400204: '(string,uint)'
 }

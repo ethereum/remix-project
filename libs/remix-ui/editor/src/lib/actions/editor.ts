@@ -21,7 +21,12 @@ export const reducerActions = (models = initialState, action: Action) => {
       const readOnly = action.payload.readOnly
       if (models[uri]) return models // already existing
       models[uri] = { language, uri, readOnly }
-      const model = monaco.editor.createModel(value, language, monaco.Uri.parse(uri))
+      let model
+      try {
+        model = monaco.editor.createModel(value, language, monaco.Uri.parse(uri))
+      } catch (e) {
+
+      }
       models[uri].model = model
       model.onDidChangeContent(() => action.payload.events.onDidChangeContent(uri))
       return models
@@ -54,20 +59,20 @@ export const reducerActions = (models = initialState, action: Action) => {
     case 'REVEAL_RANGE': {
       if (!editor) return models
       const range: IRange = {
-        startLineNumber: action.payload.startLineNumber +1,
+        startLineNumber: action.payload.startLineNumber + 1,
         startColumn: action.payload.startColumn,
         endLineNumber: action.payload.endLineNumber + 1,
         endColumn: action.payload.endColumn
       }
       // reset to start of line
-      if(action.payload.startColumn < 100){
+      if (action.payload.startColumn < 100) {
         editor.revealRange({
           startLineNumber: range.startLineNumber,
           startColumn: 1,
           endLineNumber: range.endLineNumber,
           endColumn: 1
         })
-      }else{
+      } else {
         editor.revealRangeInCenter(range)
       }
       return models
@@ -132,12 +137,12 @@ export const reducerListener = (plugin, dispatch, monaco, editor, events) => {
   plugin.on('editor', 'revealRange', (startLineNumber, startColumn, endLineNumber, endColumn) => {
     dispatch({
       type: 'REVEAL_RANGE',
-      payload: { 
+      payload: {
         startLineNumber,
         startColumn,
         endLineNumber,
         endColumn
-       },
+      },
       monaco,
       editor
     })

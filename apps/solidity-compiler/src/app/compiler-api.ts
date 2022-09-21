@@ -18,7 +18,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
   onCurrentFileChanged: (fileName: string) => void
   // onResetResults: () => void
-  onSetWorkspace: (workspace: any) => void
+  onSetWorkspace: (isLocalhost: boolean, workspaceName: string) => void
+  onFileRemoved: (path: string) => void
   onNoFileSelected: () => void
   onCompilationFinished: (compilationDetails: { contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any> }) => void
   onSessionSwitched: () => void
@@ -218,12 +219,14 @@ export const CompilerApiMixin = (Base) => class extends Base {
       this.data.loading = true
       this.data.loadingUrl = url
       this.statusChanged({ key: 'loading', title: 'loading compiler...', type: 'info' })
+      this.emit('loadingCompiler', url)
     }
     this.compiler.event.register('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
 
-    this.data.eventHandlers.onCompilerLoaded = () => {
+    this.data.eventHandlers.onCompilerLoaded = (version, license) => {
       this.data.loading = false
       this.statusChanged({ key: 'none' })
+      this.emit('compilerLoaded', version, license)
     }
     this.compiler.event.register('compilerLoaded', this.data.eventHandlers.onCompilerLoaded)
 
@@ -237,12 +240,16 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
     this.on('filePanel', 'setWorkspace', (workspace) => {
       this.resetResults()
-      if (this.onSetWorkspace) this.onSetWorkspace(workspace.isLocalhost)
+      if (this.onSetWorkspace) this.onSetWorkspace(workspace.isLocalhost, workspace.name)
+    })
+
+    this.on('fileManager', 'fileRemoved', (path) => {
+      if (this.onFileRemoved) this.onFileRemoved(path)
     })
 
     this.on('remixd', 'rootFolderChanged', () => {
       this.resetResults()
-      if (this.onSetWorkspace) this.onSetWorkspace(true)
+      if (this.onSetWorkspace) this.onSetWorkspace(true, 'localhost')
     })
 
     this.on('editor', 'sessionSwitched', () => {
@@ -282,36 +289,34 @@ export const CompilerApiMixin = (Base) => class extends Base {
             type: 'warning'
           })
         } else this.statusChanged({ key: 'succeed', title: 'compilation successful', type: 'success' })
-        // Store the contracts
-        this.compilationDetails.contractsDetails = {}
-        this.compiler.visitContracts((contract) => {
-          this.compilationDetails.contractsDetails[contract.name] = parseContracts(
-            contract.name,
-            contract.object,
-            this.compiler.getSource(contract.file)
-          )
-        })
       } else {
         const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0 + (data.error ? 1 : 0))
         this.statusChanged({ key: count, title: `compilation failed with ${count} error${count > 1 ? 's' : ''}`, type: 'error' })
       }
-      // Update contract Selection
-      this.compilationDetails.contractMap = {}
-      if (success) this.compiler.visitContracts((contract) => { this.compilationDetails.contractMap[contract.name] = contract })
-      this.compilationDetails.target = source.target
+      // Store the contracts and Update contract Selection
+      if (success) {
+        this.compilationDetails = await this.visitsContractApi(source, data)
+      } else {
+        this.compilationDetails = {
+          contractMap: {},
+          contractsDetails: {},
+          target: source ? source.target : null
+        }
+      }
       if (this.onCompilationFinished) this.onCompilationFinished(this.compilationDetails)
       // set annotations
       if (data.errors) {
         for (const error of data.errors) {
           let pos = helper.getPositionDetails(error.formattedMessage)
-          if (pos.errFile) {
+          const file = pos.errFile
+          if (file) {
             pos = {
               row: pos.errLine,
               column: pos.errCol,
               text: error.formattedMessage,
               type: error.severity
             }
-            await this.call('editor', 'addAnnotation', pos, pos.errFile)
+            await this.call('editor', 'addAnnotation', pos, file)
           }
         }
       }     
@@ -332,11 +337,40 @@ export const CompilerApiMixin = (Base) => class extends Base {
       // ctrl+s or command+s
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.keyCode === 83 && this.currentFile !== '') {
         e.preventDefault()
-        if(await this.getAppParameter('hardhat-compilation')) this.compileTabLogic.runCompiler('hardhat')
-        else if(await this.getAppParameter('truffle-compilation')) this.compileTabLogic.runCompiler('truffle')
-        else this.compileTabLogic.runCompiler(undefined)
+        if (this.currentFile && (this.currentFile.endsWith('.sol') || this.currentFile.endsWith('.yul'))) {
+          if(await this.getAppParameter('hardhat-compilation')) this.compileTabLogic.runCompiler('hardhat')
+          else if(await this.getAppParameter('truffle-compilation')) this.compileTabLogic.runCompiler('truffle')
+          else this.compileTabLogic.runCompiler(undefined)
+        }
       }
     }
     window.document.addEventListener('keydown', this.data.eventHandlers.onKeyDown)
+  }
+
+  async visitsContractApi (source, data): Promise<{ contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any>, target?: string }> {
+    return new Promise((resolve) => {
+      if (!data.contracts || (data.contracts && Object.keys(data.contracts).length === 0)) {
+        return resolve({
+          contractMap: {}, 
+          contractsDetails: {},
+          target: source.target
+        })
+      }
+      const contractMap = {}
+      const contractsDetails = {}
+      this.compiler.visitContracts((contract) => {
+        contractMap[contract.name] = contract
+        contractsDetails[contract.name] = parseContracts(
+          contract.name,
+          contract.object,
+          this.compiler.getSource(contract.file)
+        )
+      })
+      return resolve({
+        contractMap, 
+        contractsDetails,
+        target: source.target
+      })
+    })
   }
 }

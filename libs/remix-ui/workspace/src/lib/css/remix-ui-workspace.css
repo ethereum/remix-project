@@ -6,13 +6,8 @@
     box-sizing        : border-box;
   }
   .remixui_fileexplorer       {
-    display           : flex;
-    flex-direction    : column;
     position          : relative;
-    width             : 100%;
-    padding-left      : 6px;
-    padding-right     : 6px;
-    padding-top       : 6px;
+    overflow-y        : hidden;
   }
   .remixui_fileExplorerTree   {
     cursor            : default;
@@ -60,5 +55,43 @@
   }
   .remixui_menuicon:hover {
     transform: scale(1.3);
+  }
+  .remixui_cloneContainer {
+    display: flex;
+    align-items: center;
+    height: 32px;
+  }
+  
+  .remixui_cloneContainer input {
+    height: 32px;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    width: 250px;
+    font-size: 10px !important;
+    padding: .25rem;
+  }
+
+  .remixui_menuicon .bs-popover-auto[x-placement^="bottom"] .popover-header::before, .bs-popover-bottom .popover-header::before {
+    border-bottom-color: var(--dark) !important
+  }
+
+  .remixui_menuicon .bs-popover-auto[x-placement^="bottom"] > .arrow::after, .bs-popover-bottom > .arrow::after {
+    border-bottom-color: var(--dark) !important
+  }
+  
+  .custom-dropdown-items {
+    padding: 0.25rem 0.25rem;
+    border-radius: .25rem;
+    background: var(--custom-select);
+  }
+  .custom-dropdown-items a {
+    border-radius: .25rem;
+    text-transform: none;
+    text-decoration: none;
+    font-weight: normal;
+    font-size: 0.875rem;
+    padding: 0.25rem 0.25rem;
+    width: auto;
+    color: var(--text);
   }
   

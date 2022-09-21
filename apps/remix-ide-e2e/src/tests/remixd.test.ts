@@ -1,6 +1,10 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
+import { writeFileSync } from 'fs'
 import init from '../helpers/init'
+import * as hardhatCompilation from '../helpers/hardhat_compilation_8a7ab689ec618720f53ce867a3031c03.json'
+import * as foundryCompilation from '../helpers/foundry_compilation.json'
+import * as truffle_compilation from '../helpers/truffle_compilation.json'
 
 const assetsTestContract = `import "./contract.sol";
 contract Assets {
@@ -55,6 +59,7 @@ module.exports = {
   },
   'start Remixd': function (browser) {
     startRemixd(browser)
+
   },
   'run Remixd tests #group4': function (browser) {
     runTests(browser)
@@ -102,7 +107,7 @@ module.exports = {
 
   'Run git status': '' + function (browser) {
     browser
-      .executeScript('git status')
+      .executeScriptInTerminal('git status')
       .pause(3000)
       .journalLastChildIncludes('On branch ')
   },
@@ -111,8 +116,66 @@ module.exports = {
     browser
       .clickLaunchIcon('pluginManager')
       .scrollAndClick('#pluginManager *[data-id="pluginManagerComponentDeactivateButtonremixd"]')
-      .end()
-  }
+  },
+
+  'Should listen on compilation result from hardhat #group5': function (browser: NightwatchBrowser) {
+    browser.perform((done) => {
+      console.log('working directory', process.cwd())
+      writeFileSync('./apps/remix-ide/contracts/artifacts/build-info/c7062fdd360381a85af23eeef31c98f8.json', JSON.stringify(hardhatCompilation))
+      done()
+    })
+    .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from hardhat').before(60000)
+      
+    browser.clickLaunchIcon('udapp')
+      .assert.textContains('*[data-id="udappCompiledBy"]', 'Compiled by hardhat')
+      .selectContract('Lock')
+      .createContract('1')
+      .expect.element('*[data-id="terminalJournal"]').text.to.contain('Unlock time should be in the future').before(60000)
+   },
+
+   'Should listen on compilation result from foundry #group6': function (browser: NightwatchBrowser) {
+    browser.perform((done) => {
+      console.log('working directory', process.cwd())
+      writeFileSync('./apps/remix-ide/contracts/out/Counter.sol/Counter.json', JSON.stringify(foundryCompilation))
+      done()
+    })
+    .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from foundry').before(60000)
+    
+    let contractAaddress
+    browser.clickLaunchIcon('udapp')
+      .assert.textContains('*[data-id="udappCompiledBy"]', 'Compiled by foundry')
+      .selectContract('Counter')
+      .createContract('')
+      .getAddressAtPosition(0, (address) => {
+        console.log(contractAaddress)
+        contractAaddress = address
+      })
+      .clickInstance(0)
+      .clickFunction('increment - transact (not payable)')
+      .perform((done) => {
+        browser.testConstantFunction(contractAaddress, 'number - call', null, '0:\nuint256: 1').perform(() => {
+          done()
+        })
+      })      
+   },
+
+   'Should listen on compilation result from truffle #group7': function (browser: NightwatchBrowser) {
+    browser.perform((done) => {
+      console.log('working directory', process.cwd())
+      writeFileSync('./apps/remix-ide/contracts/build/contracts/Migrations.json', JSON.stringify(truffle_compilation))
+      done()
+    })
+    .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from truffle').before(60000)
+    
+    browser.clickLaunchIcon('udapp')
+      .assert.textContains('*[data-id="udappCompiledBy"]', 'Compiled by truffle')
+      .selectContract('Migrations')
+      .createContract('')
+      .testFunction('last',
+        {
+          status: 'true Transaction mined and execution succeed'
+        })   
+   }
 }
 
 function startRemixd (browser: NightwatchBrowser) {
@@ -131,6 +194,7 @@ function startRemixd (browser: NightwatchBrowser) {
     .waitForElementVisible('*[data-id="remixdConnect-modal-footer-ok-react"]', 2000)
     .pause(2000)
     .click('*[data-id="remixdConnect-modal-footer-ok-react"]')
+    .pause(10000)
     // .click('*[data-id="workspacesModalDialog-modal-footer-ok-react"]')
 }
 

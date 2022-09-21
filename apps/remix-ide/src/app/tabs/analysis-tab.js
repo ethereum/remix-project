@@ -18,7 +18,8 @@ const profile = {
   kind: 'analysis',
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/static_analysis.html',
-  version: packageJson.version
+  version: packageJson.version,
+  maintainedBy: 'Remix'
 }
 
 class AnalysisTab extends ViewPlugin {

@@ -1,10 +1,16 @@
 import { ModalTypes } from '../types'
 
+export type ValidationResult = {
+    valid: boolean,
+    message?: string
+}
+
 export interface AppModal {
     id: string
     timestamp?: number
     hide?: boolean
     title: string
+    validationFn?: (value: string) => ValidationResult
     // eslint-disable-next-line no-undef
     message: string | JSX.Element
     okLabel: string

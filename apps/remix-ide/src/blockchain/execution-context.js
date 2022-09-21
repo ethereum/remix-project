@@ -20,7 +20,7 @@ if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
 export class ExecutionContext {
   constructor () {
     this.event = new EventManager()
-    this.executionContext = null
+    this.executionContext = 'vm'
     this.lastBlock = null
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
@@ -43,8 +43,7 @@ export class ExecutionContext {
   }
 
   askPermission () {
-    // metamask
-    if (ethereum && typeof ethereum.enable === 'function') ethereum.enable()
+    if (ethereum && typeof ethereum.request === "function") ethereum.request({ method: "eth_requestAccounts" });
   }
 
   getProvider () {
@@ -94,6 +93,7 @@ export class ExecutionContext {
         else if (id === 4) name = 'Rinkeby'
         else if (id === 5) name = 'Goerli'
         else if (id === 42) name = 'Kovan'
+        else if (id === 11155111) name = 'Sepolia'
         else name = 'Custom'
 
         if (id === '1') {
@@ -152,9 +152,12 @@ export class ExecutionContext {
 
     if (context === 'injected') {
       if (injectedProvider === undefined) {
-        infoCb('No injected Web3 provider found. Make sure your provider (e.g. MetaMask) is active and running (when recently activated you may have to reload the page).')
+        infoCb('No injected provider found. Make sure your provider (e.g. MetaMask) is active and running (when recently activated you may have to reload the page).')
         return cb()
       } else {
+        if (injectedProvider && injectedProvider._metamask && injectedProvider._metamask.isUnlocked) {
+          if (!await injectedProvider._metamask.isUnlocked()) infoCb('Please make sure the injected provider is unlocked (e.g Metamask).')
+        }
         this.askPermission()
         this.executionContext = context
         web3.setProvider(injectedProvider)
@@ -164,15 +167,22 @@ export class ExecutionContext {
       }
     }
 
-    if (context === 'web3') {
-      confirmCb(cb)
-    }
     if (this.customNetWorks[context]) {
       var network = this.customNetWorks[context]
-      this.setProviderFromEndpoint(network.provider, { context: network.name }, (error) => {
-        if (error) infoCb(error)
-        cb()
-      })
+      if (!this.customNetWorks[context].isInjected) {
+        this.setProviderFromEndpoint(network.provider, { context: network.name }, (error) => {
+          if (error) infoCb(error)
+          cb()
+        })
+      } else {
+        // injected
+        this.askPermission()
+        this.executionContext = context
+        web3.setProvider(network.provider)
+        await this._updateChainContext()
+        this.event.trigger('contextChanged', [context])
+        return cb()
+      }
     }
   }
 
@@ -241,6 +251,7 @@ export class ExecutionContext {
       Main: 'https://www.etherscan.io/tx/',
       Rinkeby: 'https://rinkeby.etherscan.io/tx/',
       Ropsten: 'https://ropsten.etherscan.io/tx/',
+      Sepolia: 'https://sepolia.etherscan.io/tx/',
       Kovan: 'https://kovan.etherscan.io/tx/',
       Goerli: 'https://goerli.etherscan.io/tx/'
     }

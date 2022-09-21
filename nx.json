@@ -15,7 +15,12 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e"
+        ]
       }
     }
   },
@@ -25,27 +30,43 @@
     },
     "remix-astwalker": {
       "tags": [],
-      "implicitDependencies": ["remix-lib"]
+      "implicitDependencies": [
+        "remix-lib"
+      ]
     },
     "remix-analyzer": {
       "tags": [],
-      "implicitDependencies": ["remix-astwalker", "remix-lib"]
+      "implicitDependencies": [
+        "remix-astwalker",
+        "remix-lib"
+      ]
     },
     "remix-debug": {
       "tags": [],
-      "implicitDependencies": ["remix-astwalker", "remix-lib"]
+      "implicitDependencies": [
+        "remix-astwalker",
+        "remix-lib"
+      ]
     },
     "remix-simulator": {
       "tags": [],
-      "implicitDependencies": ["remix-lib"]
+      "implicitDependencies": [
+        "remix-lib"
+      ]
     },
     "remix-solidity": {
       "tags": [],
-      "implicitDependencies": ["remix-lib"]
+      "implicitDependencies": [
+        "remix-lib"
+      ]
     },
     "remix-tests": {
       "tags": [],
-      "implicitDependencies": ["remix-lib", "remix-simulator", "remix-solidity"]
+      "implicitDependencies": [
+        "remix-lib",
+        "remix-simulator",
+        "remix-solidity"
+      ]
     },
     "remix-url-resolver": {
       "tags": []
@@ -69,7 +90,9 @@
     },
     "remix-ide-e2e": {
       "tags": [],
-      "implicitDependencies": ["remix-ide"]
+      "implicitDependencies": [
+        "remix-ide"
+      ]
     },
     "remixd": {
       "tags": []
@@ -161,13 +184,25 @@
     "solidity-unit-testing": {
       "tags": []
     },
-    "remix-ui-editor-context-view": {
-      "tags": []
-    },
     "remix-ui-run-tab": {
       "tags": []
     },
     "remix-ui-permission-handler": {
+      "tags": []
+    },
+    "remix-ui-file-decorators": {
+      "tags": []
+    },
+    "remix-ui-tooltip-popup": {
+      "tags": []
+    },
+    "vyper": {
+      "tags": []
+    },
+    "etherscan": {
+      "tags": []
+    },
+    "remix-ui-drag-n-drop": {
       "tags": []
     }
   },
@@ -179,4 +214,5 @@
       }
     ]
   }
+
 }

@@ -1,7 +1,7 @@
 import Web3 from 'web3'
-
+import { VMContext } from '../vm-context'
 export class Blocks {
-  vmContext
+  vmContext: VMContext
   coinbase: string
   TX_INDEX = '0x0' // currently there's always only 1 tx per block, so the transaction index will always be 0x0
   constructor (vmContext, _options) {
@@ -40,7 +40,6 @@ export class Blocks {
       return cb(new Error('block not found'))
     }
 
-    console.log(block.transactions)
     const transactions = block.transactions.map((t) => {
      const hash = '0x' + t.hash().toString('hex')
      const tx = this.vmContext.txByHash[hash]
@@ -74,7 +73,7 @@ export class Blocks {
       stateRoot: this.toHex(block.header.stateRoot),
       miner: this.coinbase,
       difficulty: this.toHex(block.header.difficulty),
-      totalDifficulty: this.toHex(block.header.totalDifficulty),
+      totalDifficulty: this.toHex((block.header as any).totalDifficulty),
       extraData: this.toHex(block.header.extraData),
       size: '0x027f07', // 163591
       gasLimit: this.toHex(block.header.gasLimit),
@@ -95,7 +94,6 @@ export class Blocks {
   eth_getBlockByHash (payload, cb) {
     const block = this.vmContext.blocks[payload.params[0]]
 
-    console.log(block.transactions)
     const transactions = block.transactions.map((t) => {
       const hash = '0x' + t.hash().toString('hex')
       const tx = this.vmContext.txByHash[hash]
@@ -129,7 +127,7 @@ export class Blocks {
       stateRoot: this.toHex(block.header.stateRoot),
       miner: this.coinbase,
       difficulty: this.toHex(block.header.difficulty),
-      totalDifficulty: this.toHex(block.header.totalDifficulty),
+      totalDifficulty: this.toHex((block.header as any).totalDifficulty),
       extraData: this.toHex(block.header.extraData),
       size: '0x027f07', // 163591
       gasLimit: this.toHex(block.header.gasLimit),
@@ -175,15 +173,10 @@ export class Blocks {
   }
 
   eth_getStorageAt (payload, cb) {
-    const [address, position, blockNumber] = payload.params
-
-    this.vmContext.web3().debug.storageRangeAt(blockNumber, 'latest', address.toLowerCase(), position, 1, (err, result) => {
-      if (err || (result.storage && Object.values(result.storage).length === 0)) {
-        return cb(err, '')
-      }
-
-      const value = Object.values(result.storage)[0]['value']
-      cb(err, value)
-    })
+    return this.vmContext.web3().eth.getStorageAt(
+      payload.params[0],
+      payload.params[1],
+      payload.params[2],
+      cb)
   }
 }

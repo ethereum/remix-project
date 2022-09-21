@@ -9,13 +9,18 @@ const sources = [
 ]
 
 module.exports = {
+  "@disabled": true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
   '@sources': function () {
     return sources
   },
-  'Deploy Ballot': function (browser: NightwatchBrowser) {
+  'Add Ballot #group2': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('Untitled.sol', sources[0]['Untitled.sol'])
+  },
+  'Deploy Ballot #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('solidity')
@@ -34,7 +39,7 @@ module.exports = {
         })
   },
 
-  'Call method from Ballot to check return value': function (browser: NightwatchBrowser) {
+  'Call method from Ballot to check return value #group1': function (browser: NightwatchBrowser) {
     browser
       .clickFunction('winnerName - call')
       // Test in terminal
@@ -47,7 +52,7 @@ module.exports = {
       .assert.containsText('*[data-id="treeViewDiv0"]', 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000')
   },
 
-  'Debug Ballot / delegate': function (browser: NightwatchBrowser) {
+  'Debug Ballot / delegate #group1': function (browser: NightwatchBrowser) {
     browser.pause(500)
       .debugTransaction(1)
       .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
@@ -60,16 +65,24 @@ module.exports = {
       .checkVariableDebug('soliditylocals', localsCheck)
   },
 
-  'Access Ballot via at address': function (browser: NightwatchBrowser) {
+  'Access Ballot via at address #group1': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('udapp')
       .click('*[data-id="universalDappUiUdappClose"]')
       .addFile('ballot.abi', { content: ballotABI })
+      .clickLaunchIcon('udapp')
+      .click({
+        selector: '*[data-id="deployAndRunClearInstances"]',
+        abortOnFailure: false,
+        suppressNotFoundErrors: true,
+      })
       // we are not changing the visibility for not checksumed contracts
       // .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3B', true, false)
       .clickLaunchIcon('filePanel')
       .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3A', true, true)
-      .pause(500)
-      .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: "//*[@id='instance0x692a70D2e424a56D2C6C27aA97D1a86395877b3A']"
+      })
       .clickInstance(0)
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
       .testFunction('last',
@@ -79,25 +92,11 @@ module.exports = {
         })
   },
 
-  'Deploy and use Ballot using external web3': function (browser: NightwatchBrowser) {
+  'Deploy and use Ballot using external web3  #group2': function (browser: NightwatchBrowser) {
     browser
       .openFile('Untitled.sol')
       .clickLaunchIcon('udapp')
-      .click('*[data-id="settingsWeb3Mode"]')
-      .waitForElementPresent('[data-id="envNotification-modal-footer-ok-react"]')
-      .execute(function () {
-        const modal = document.querySelector('[data-id="envNotification-modal-footer-ok-react"]') as any
-
-        modal.click()
-      })
-      .pause(5000)
-      .execute(function () {
-        const env: any = document.getElementById('selectExEnvOptions')
-
-        return env.value
-      }, [], function (result) {
-        browser.assert.ok(result.value === 'web3', 'Web3 Provider not selected')
-      })
+      .connectToExternalHttpProvider('http://localhost:8545', 'Custom')
       .clickLaunchIcon('solidity')
       .clickLaunchIcon('udapp')
       .pause(2000)
@@ -111,7 +110,7 @@ module.exports = {
       .journalLastChildIncludes('data: 0x5c1...a733c')
   },
 
-  'Call method from Ballot to check return value using external web3': function (browser: NightwatchBrowser) {
+  'Call method from Ballot to check return value using external web3  #group2': function (browser: NightwatchBrowser) {
     browser
       .clickFunction('winnerName - call')
       // Test in terminal
@@ -122,6 +121,127 @@ module.exports = {
         })
       // Test in Udapp UI , treeViewDiv0 shows returned value on method click
       .assert.containsText('*[data-id="treeViewDiv0"]', 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000')
+  },
+
+  'Compile Ballot using config file  #group2': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('cf.json', { content: configFile })
+      .clickLaunchIcon('solidity')
+      .waitForElementVisible('*[data-id="scConfigExpander"]')
+      .click('*[data-id="scConfigExpander"]')
+      .waitForElementVisible('*[data-id="scFileConfiguration"]', 10000)
+      .click('*[data-id="scFileConfiguration"]')
+      // the input field behaves badly, it would often not receive the value, so retrying it a few times for now is the best thing to do
+      .waitForElementVisible({
+        selector: '*[data-id="scConfigChangeFilePath"]',
+        abortOnFailure: false
+      }, 10000)
+      .click({
+        selector: '*[data-id="scConfigChangeFilePath"]',
+        suppressNotFoundErrors: true,
+        timeout: 1000
+      })
+      .click({
+        selector: '*[data-id="scConfigChangeFilePath"]',
+        suppressNotFoundErrors: true,
+        timeout: 1000
+      })
+      .click({
+        selector: '*[data-id="scConfigChangeFilePath"]',
+        suppressNotFoundErrors: true,
+        timeout: 1000
+      })
+      
+      .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
+      .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
+      .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
+
+      .isVisible({
+        selector:"//*[@class='py-2 remixui_compilerConfigPath' and contains(.,'cf.json')]",
+        suppressNotFoundErrors: true,
+        locateStrategy: 'xpath'
+      }, (okVisible) => {
+        // if it's not there yet, try again
+        if (!okVisible.value) {
+          browser.waitForElementVisible({
+            selector: '*[data-id="scConfigChangeFilePath"]',
+            abortOnFailure: false
+          }, 10000)
+          .click({
+            selector: '*[data-id="scConfigChangeFilePath"]',
+            suppressNotFoundErrors: true,
+            timeout: 1000
+          })
+          .click({
+            selector: '*[data-id="scConfigChangeFilePath"]',
+            suppressNotFoundErrors: true,
+            timeout: 1000
+          })
+          .click({
+            selector: '*[data-id="scConfigChangeFilePath"]',
+            suppressNotFoundErrors: true,
+            timeout: 1000
+          })
+          
+          .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
+          .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
+          .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
+        }
+      })
+
+      .isVisible({
+        selector:"//*[@class='py-2 remixui_compilerConfigPath' and contains(.,'cf.json')]",
+        suppressNotFoundErrors: true,
+        locateStrategy: 'xpath'
+      }, (okVisible) => {
+        if (!okVisible.value) {
+          // if it's still not there, try again
+          browser.waitForElementVisible({
+            selector: '*[data-id="scConfigChangeFilePath"]',
+            abortOnFailure: false
+          }, 10000)
+          .click({
+            selector: '*[data-id="scConfigChangeFilePath"]',
+            suppressNotFoundErrors: true,
+            timeout: 1000
+          })
+          .click({
+            selector: '*[data-id="scConfigChangeFilePath"]',
+            suppressNotFoundErrors: true,
+            timeout: 1000
+          })
+          .click({
+            selector: '*[data-id="scConfigChangeFilePath"]',
+            suppressNotFoundErrors: true,
+            timeout: 1000
+          })
+          
+          .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
+          .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
+          .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
+        }
+      })
+
+      .pause(5000)
+      .openFile('Untitled.sol')
+      .verifyContracts(['Ballot'], { wait: 2000, runs: '300' })
+  },
+
+  'Compile and deploy sample yul file  #group2': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('sample.yul', { content: yulSample })
+      .clickLaunchIcon('solidity')
+      .waitForElementVisible('*[data-id="scConfigExpander"]')
+      .click('*[data-id="scManualConfiguration"]')
+      .waitForElementVisible('select[id="compilierLanguageSelector"]', 10000)
+      .click('select[id="compilierLanguageSelector"]')
+      .click('select[id="compilierLanguageSelector"] option[value=Yul]')
+      .waitForElementContainsText('[data-id="compiledContracts"]', 'Contract', 60000)
+      .clickLaunchIcon('udapp')
+      .click('*[data-id="Deploy - transact (not payable)"]')
+      .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
+      .journalLastChildIncludes('Contract.(constructor)')
+      .journalLastChildIncludes('data: 0x602...0565b')
       .end()
   }
 }
@@ -190,6 +310,7 @@ const stateCheck = {
     immutable: false
   }
 }
+
 const ballotABI = `[
 {
   "inputs": [
@@ -356,3 +477,37 @@ const ballotABI = `[
   "type": "function"
 }
 ]`
+
+const configFile = `
+{
+	"language": "Solidity",
+	"settings": {
+		"optimizer": {
+			"enabled": true,
+			"runs": 300
+		},
+		"outputSelection": {
+			"*": {
+			"": ["ast"],
+      "*": ["abi", "metadata", "devdoc", "userdoc", "storageLayout", "evm.legacyAssembly", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "evm.gasEstimates", "evm.assembly"]
+			}
+		},
+		"evmVersion": "byzantium"
+	}
+}
+`
+
+const yulSample = `
+object "Contract" {
+  code {
+      function power(base, exponent) -> result
+      {
+          result := 1
+          for { let i := 0 } lt(i, exponent) { i := add(i, 1) }
+          {
+              result := mul(result, base)
+          }
+      }
+  }
+}
+`

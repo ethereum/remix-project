@@ -9,8 +9,7 @@
 * Copyright 2011-2020 The Bootstrap Authors
 * Copyright 2011-2020 Twitter, Inc.
 * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-*/@import url(https://fonts.googleapis.com/css2?family=Roboto:wght@400;
-700&display=swap);
+*/@import url(https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap);
 :root {
     --blue:#2a9fd6;
     --indigo:#6610f2;
@@ -26,7 +25,7 @@
     --gray:#555;
     --gray-dark:#222;
     --primary:#2a9fd6;
-    --secondary:#555;
+    --secondary:#3c3939;
     --success:#77b300;
     --info:#93c;
     --warning:#f80;
@@ -36,6 +35,7 @@
     --dark:#adafae;
     --body-bg: #060606;
     --text-bg-mark: #fcf8e3;
+    --custom-select: #fff;
     --breakpoint-xs:0;
     --breakpoint-sm:576px;
     --breakpoint-md:768px;
@@ -5595,7 +5595,7 @@ a.bg-primary:focus,a.bg-primary:hover,button.bg-primary:focus,button.bg-primary:
     background-color:#2180ac!important
 }
 .bg-secondary {
-    background-color:#555!important
+    background-color:#3c3939!important
 }
 a.bg-secondary:focus,a.bg-secondary:hover,button.bg-secondary:focus,button.bg-secondary:hover {
     background-color:#3c3c3c!important
@@ -8358,7 +8358,7 @@ a.text-warning:focus,a.text-warning:hover {
     color:#b35f00!important
 }
 .text-danger {
-    color:#c00!important
+    color:#ff4242!important
 }
 a.text-danger:focus,a.text-danger:hover {
     color:maroon!important
@@ -8594,7 +8594,7 @@ legend {
     color:#555
 }
 .nav-pills .nav-link.active,.nav-tabs .nav-link.active {
-    background-color:#2a9fd6
+    background-color:#034767
 }
 .breadcrumb a {
     color:#fff

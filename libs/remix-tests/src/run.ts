@@ -4,7 +4,7 @@ import path from 'path'
 import axios, { AxiosResponse } from 'axios'
 import { runTestFiles } from './runTestFiles'
 import fs from './fileSystem'
-import { Provider } from '@remix-project/remix-simulator'
+import { Provider, extend } from '@remix-project/remix-simulator'
 import { CompilerConfiguration } from './types'
 import Log from './logger'
 import colors from 'colors'
@@ -64,11 +64,11 @@ commander
     // If path is for a file, file name must have `_test.sol` suffix
     if (!isDirectory && !testsPath.endsWith('_test.sol')) {
       log.error('Test filename should end with "_test.sol"')
-      process.exit()
+      process.exit(1)
     }
 
     // Console message
-    console.log(colors.white('\n\t👁\t:: Running remix-tests - Unit testing for solidity ::\t👁\n'))
+    console.log(colors.bold('\n\t👁\t:: Running tests using remix-tests ::\t👁\n'))
 
     // Set logger verbosity
     if (commander.verbose) {
@@ -85,7 +85,7 @@ commander
       const compString = releases ? releases[compVersion] : null
       if (!compString) {
         log.error(`No compiler found in releases with version ${compVersion}`)
-        process.exit()
+        process.exit(1)
       } else {
         compilerConfig.currentCompilerUrl = compString.replace('soljson-', '').replace('.js', '')
         log.info(`Compiler version set to ${compVersion}. Latest version is ${latestRelease}`)
@@ -105,7 +105,7 @@ commander
     if (commander.runs) {
       if (!commander.optimize) {
         log.error('Optimization should be enabled for runs')
-        process.exit()
+        process.exit(1)
       }
       compilerConfig.runs = commander.runs
       log.info(`Runs set to ${compilerConfig.runs}`)
@@ -115,13 +115,15 @@ commander
     const provider: any = new Provider()
     await provider.init()
     web3.setProvider(provider)
-
-    runTestFiles(path.resolve(testsPath), isDirectory, web3, compilerConfig)
+    extend(web3)
+    runTestFiles(path.resolve(testsPath), isDirectory, web3, compilerConfig, (error) => {
+      if (error) process.exit(1)
+    })
   })
 
 if (!process.argv.slice(2).length) {
   log.error('Please specify a file or directory path')
-  process.exit()
+  process.exit(1)
 }
 
 commander.parse(process.argv)

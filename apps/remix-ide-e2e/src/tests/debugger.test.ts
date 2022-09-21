@@ -14,8 +14,12 @@ module.exports = {
 
   'Should launch debugger #group1': function (browser: NightwatchBrowser) {
     browser.addFile('blah.sol', sources[0]['blah.sol'])
+      .pause(4000)
+      // on autocompile sometimes the compiler returns invalid source, so we need to recompile to make sure the source is valid
+      .clickLaunchIcon('solidity').click('*[data-id="compilerContainerCompileBtn"]')
+      .pause(4000)
       .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 65000)
+      .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 60000)
       .click('*[title="Deploy - transact (not payable)"]')
       .debugTransaction(0)
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
@@ -62,10 +66,10 @@ module.exports = {
     browser.waitForElementVisible('#editorView')
       .execute(() => {
         (window as any).addRemixBreakpoint(11)
-      }, [], () => {})
+      }, [], () => { })
       .execute(() => {
         (window as any).addRemixBreakpoint(21)
-      }, [], () => {})
+      }, [], () => { })
       .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
       .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
       .pause(2000)
@@ -88,15 +92,22 @@ module.exports = {
       .selectContract('ERC20')
       .createContract('"tokenName", "symbol"')
       .debugTransaction(0)
-      .pause(2000)
       .waitForElementVisible('#stepdetail')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"545")]',
+      })
       .goToVMTraceStep(10)
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"10")]',
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`constructor (string memory name_, string memory symbol_) {
         _name = name_;
         _symbol = symbol_;
     }`) !== -1,
-        'current displayed content is not from the ERC20 source code')
+          'current displayed content is not from the ERC20 source code')
       })
   },
 
@@ -120,24 +131,25 @@ module.exports = {
       .clickInstance(0)
       .clickFunction('test1 - transact (not payable)', { types: 'bytes userData', values: '0x000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000015b38da6a701c568545dcfcb03fcb875f56beddc4' })
       .debugTransaction(0)
-      .pause(2000)
       .waitForElementVisible('#stepdetail')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"133")]',
+      })
       .goToVMTraceStep(261)
-      .pause(1000)
-    /*
-      for the test below:
-      source highlight should remain line `bytes32 idAsk = abi.decode(userData[:33], (bytes32));`
-      At this vmtrace index, the sourcemap has file = -1 because the execution is in the generated sources (ABIEncoderV2)
-      the atIndex of SourceLocationTracker was buggy and return an incorrect value, this is fixed
-      But the debugger uses now validSourcelocation, which means file is not -1.
-      In that case the source highlight at 261 should be the same as for step 262
-    */
       .waitForElementPresent('.highlightLine8')
+      /*
+        for the test below:
+        source highlight should remain line `bytes32 idAsk = abi.decode(userData[:33], (bytes32));`
+        At this vmtrace index, the sourcemap has file = -1 because the execution is in the generated sources (ABIEncoderV2)
+        the atIndex of SourceLocationTracker was buggy and return an incorrect value, this is fixed
+        But the debugger uses now validSourcelocation, which means file is not -1.
+        In that case the source highlight at 261 should be the same as for step 262
+      */
+
       .goToVMTraceStep(266)
-      .pause(1000)
       .checkVariableDebug('soliditylocals', localVariable_step266_ABIEncoder) // locals should not be initiated at this point, only idAsk should
       .goToVMTraceStep(717)
-      .pause(5000)
       .checkVariableDebug('soliditylocals', localVariable_step717_ABIEncoder) // all locals should be initiaed
       .clearTransactions()
   },
@@ -192,7 +204,7 @@ module.exports = {
   'Should call the debugger api: getTrace #group4': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsGetTrace.js', { content: jsGetTrace })
-      .executeScript('remix.exeCurrent()')
+      .executeScriptInTerminal('remix.exeCurrent()')
       .pause(3000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '{"gas":"0x575f","return":"0x0000000000000000000000000000000000000000000000000000000000000000","structLogs":', 60000)
   },
@@ -200,11 +212,12 @@ module.exports = {
   'Should call the debugger api: debug #group4': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsDebug.js', { content: jsDebug })
-      .executeScript('remix.exeCurrent()')
+      .executeScriptInTerminal('remix.exeCurrent()')
       .pause(3000)
       .clickLaunchIcon('debugger')
       .waitForElementVisible('*[data-id="slider"]')
       .goToVMTraceStep(154)
+      .scrollInto('*[data-id="stepdetail"]')
       .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n154', 60000)
   },
 
@@ -214,7 +227,7 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.8.7+commit.e28d00a7.js')
       .addFile('useDebugNodes.sol', sources[5]['useDebugNodes.sol']) // compile contract
       .clickLaunchIcon('udapp')
-      .click('*[data-id="settingsWeb3Mode"]') // select web3 provider with debug nodes URL
+      .switchEnvironment('External Http Provider') // select web3 provider with debug nodes URL
       .clearValue('*[data-id="modalDialogCustomPromptText"]')
       .setValue('*[data-id="modalDialogCustomPromptText"]', 'https://remix-rinkeby.ethdevops.io')
       .modalFooterOKClick()
@@ -227,7 +240,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="solidityLocals"]', 60000)
       .pause(10000)
       .checkVariableDebug('soliditylocals', { num: { value: '2', type: 'uint256' } })
-      .checkVariableDebug('soliditystate', { number: { value: '0', type: 'uint256', constant: false, immutable: false } })      
+      .checkVariableDebug('soliditystate', { number: { value: '0', type: 'uint256', constant: false, immutable: false } })
   },
 
   'Should debug reverted transactions #group5': function (browser: NightwatchBrowser) {
@@ -240,6 +253,7 @@ module.exports = {
       .clickInstance(0)
       .clickFunction('callA - transact (not payable)')
       .debugTransaction(1)
+      .pause(4000)
       .goToVMTraceStep(79)
       .waitForElementVisible('*[data-id="debugGoToRevert"]', 60000)
       .click('*[data-id="debugGoToRevert"]')

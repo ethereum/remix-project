@@ -22,7 +22,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="skipbackup-btn"]', 5000)
       .click('*[data-id="skipbackup-btn"]')
       .waitForElementVisible('[id="remixTourSkipbtn"]')
-      .click('[id="remixTourSkipbtn"]').refresh()
+      .click('[id="remixTourSkipbtn"]').refreshPage()
   },
   'should have indexedDB storage in terminal #group1 #group7': function (browser: NightwatchBrowser) {
     browser.assert.containsText('*[data-id="terminalJournal"]', 'indexedDB')
@@ -81,7 +81,7 @@ module.exports = {
   // these are test data entries
   'Should have a workspace_test #group1 #group3 #group5 #group7': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
-      .click('*[data-id="workspacesSelect"] option[value="workspace_test"]')
+      .switchWorkspace('workspace_test')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest_contracts"]')
   },
   'Should have a sol file with test data #group1 #group3 #group5 #group7': function (browser: NightwatchBrowser) {
@@ -103,7 +103,7 @@ module.exports = {
   },
   'Should have a empty workspace #group1 #group3 #group5 #group7': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
-      .click('*[data-id="workspacesSelect"] option[value="emptyspace"]')
+      .switchWorkspace('emptyspace')
   },
   // end of test data entries
   'Should load with all storage blocked #group4': function (browser: NightwatchBrowser) {

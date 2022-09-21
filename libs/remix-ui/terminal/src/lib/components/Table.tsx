@@ -8,7 +8,7 @@ const showTable = (opts, showTableHash) => {
   let msg = ''
   let toHash
   const data = opts.data // opts.data = data.tx
-  if (data.to) {
+  if (data.to && opts.to !== data.to) {
     toHash = opts.to + ' ' + data.to
   } else {
     toHash = opts.to

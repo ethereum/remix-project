@@ -5,7 +5,9 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
-import { initWorkspace, fetchDirectory, removeInputField, deleteWorkspace, clearPopUp, publishToGist, createNewFile, setFocusElement, createNewFolder, deletePath, renamePath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath, addInputField, createWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, handleDownloadFiles, restoreBackupZip } from '../actions'
+import { initWorkspace, fetchDirectory, removeInputField, deleteWorkspace, clearPopUp, publishToGist, createNewFile, setFocusElement, createNewFolder,
+  deletePath, renamePath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath, addInputField, createWorkspace,
+  fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, handleDownloadFiles, restoreBackupZip, cloneRepository, moveFile, moveFolder } from '../actions'
 import { Modal, WorkspaceProps, WorkspaceTemplate } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Workspace } from '../remix-ui-workspace'
@@ -43,8 +45,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await removeInputField(path)
   }
 
-  const dispatchCreateWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate) => {
-    await createWorkspace(workspaceName, workspaceTemplateName)
+  const dispatchCreateWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate, opts?, initGitRepo?: boolean) => {
+    await createWorkspace(workspaceName, workspaceTemplateName, opts, null, null, initGitRepo)
   }
 
   const dispatchFetchWorkspaceDirectory = async (path: string) => {
@@ -121,6 +123,18 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchHandleRestoreBackup = async () => {
     await restoreBackupZip()
+  }
+
+  const dispatchCloneRepository = async (url: string) => {
+    await cloneRepository(url)
+  }
+
+  const dispatchMoveFile = async (src: string, dest: string) => {
+    await moveFile(src, dest)
+  }
+
+  const dispatchMoveFolder = async (src: string, dest: string) => {
+    await moveFolder(src, dest)
   }
 
   useEffect(() => {
@@ -224,7 +238,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchHandleClickFile,
     dispatchHandleExpandPath,
     dispatchHandleDownloadFiles,
-    dispatchHandleRestoreBackup
+    dispatchHandleRestoreBackup,
+    dispatchCloneRepository,
+    dispatchMoveFile,
+    dispatchMoveFolder
   }
   return (
     <FileSystemContext.Provider value={value}>
@@ -237,3 +254,4 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 }
 
 export default FileSystemProvider
+

@@ -3,13 +3,18 @@
 # Bash Menu Script Example
 
 PS3='Select a browser: '
-BROWSERS=( "chrome" "firefox" "exit" )
+BROWSERS=( "chrome" "chrome headless" "firefox" "exit" )
 select opt in "${BROWSERS[@]}"
 do
     case $opt in
         "chrome")
             echo "Chrome selected"
             BROWSER="chromeDesktop"
+            break
+            ;;
+        "chrome headless")
+            echo "Chrome headless selected"
+            BROWSER="chrome"
             break
             ;;
         "firefox")
@@ -24,9 +29,9 @@ do
         *) echo "invalid option $REPLY";;
     esac
 done
-npm run build:e2e
+yarn run build:e2e
 PS3='Select a test or command: '
-TESTFILES=( $(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test\|plugin_api" | sort ) )
+TESTFILES=( $(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | sort ) )
 
 # declare -p TESTFILES
 TESTFILES+=("list")
@@ -42,6 +47,6 @@ do
         done
     else
         # run the selected test
-        npm run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js $opt --env=$BROWSER
+        yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js $opt --env=$BROWSER
     fi
 done

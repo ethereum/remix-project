@@ -1,4 +1,5 @@
 import { remixTypes } from './remix-plugin-types'
+import { hardhatEthersExtension } from './hardhat-ethers-extension'
 
 export const loadTypes = async (monaco) => {
     // ethers.js
@@ -169,6 +170,7 @@ export const loadTypes = async (monaco) => {
     ethers.default = ethers.default.replace(/.\/_version/g, '_version-ethers-lib')
     ethers.default = ethers.default.replace(/.\/ethers/g, 'ethers-lib')
     ethers.default = ethers.default.replace(/@ethersproject\//g, '@ethersproject_')
+    ethers.default = ethers.default + '\n' + hardhatEthersExtension
     monaco.languages.typescript.typescriptDefaults.addExtraLib(ethers.default, `file:///node_modules/@types/ethers-lib/index.d.ts`)
 
     // @ts-ignore
@@ -200,6 +202,10 @@ export const loadTypes = async (monaco) => {
     monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Personal.default, `file:///node_modules/@types/web3-eth-personal/index.d.ts`)
 
     // @ts-ignore
+    const indexWeb3Contract = await import('raw-loader!web3-eth-contract/types/index.d.ts')
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Contract.default, `file:///node_modules/@types/web3-eth-contract/index.d.ts`)
+
+    // @ts-ignore
     const indexWeb3Net = await import('raw-loader!web3-net/types/index.d.ts')
     monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Net.default, `file:///node_modules/@types/web3-net/index.d.ts`)
 
@@ -218,5 +224,16 @@ export const loadTypes = async (monaco) => {
     }
     `
     monaco.languages.typescript.typescriptDefaults.addExtraLib(indexRemixApi)
-    console.log('loaded monaco types')
+
+    // @ts-ignore
+    const chaiType = await import('raw-loader!@types/chai/index.d.ts')
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(chaiType.default, `file:///node_modules/@types/chai/index.d.ts`)
+
+    // @ts-ignore
+    const mochaType = await import('raw-loader!@types/mocha/index.d.ts')
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(mochaType.default, `file:///node_modules/@types/mocha/index.d.ts`)
+
+    const loadedElement = document.createElement('span')
+    loadedElement.setAttribute('data-id', 'typesloaded')
+    document.body.appendChild(loadedElement)
 }

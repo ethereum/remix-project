@@ -14,10 +14,11 @@ import { MainPanel } from './app/components/main-panel'
 import { PermissionHandlerPlugin } from './app/plugins/permission-handler-plugin'
 import { AstWalker } from '@remix-project/remix-astwalker'
 import { LinkLibraries, DeployLibraries, OpenZeppelinProxy } from '@remix-project/core-plugin'
+import { CodeParser } from './app/plugins/parser/code-parser'
 
 import { WalkthroughService } from './walkthroughService'
 
-import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, EditorContextListener, GistHandler } from '@remix-project/core-plugin'
+import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, GistHandler } from '@remix-project/core-plugin'
 
 import Registry from './app/state/registry'
 import { ConfigPlugin } from './app/plugins/config'
@@ -27,6 +28,12 @@ import { NotificationPlugin } from './app/plugins/notification'
 import { Blockchain } from './blockchain/blockchain.js'
 import { HardhatProvider } from './app/tabs/hardhat-provider'
 import { GanacheProvider } from './app/tabs/ganache-provider'
+import { FoundryProvider } from './app/tabs/foundry-provider'
+import { ExternalHttpProvider } from './app/tabs/external-http-provider'
+import { Injected0ptimismProvider } from './app/tabs/injected-optimism-provider'
+import { InjectedArbitrumOneProvider } from './app/tabs/injected-arbitrum-one-provider'
+import { FileDecorator } from './app/plugins/file-decorator'
+import { CodeFormat } from './app/plugins/code-format'
 
 const isElectron = require('is-electron')
 
@@ -57,7 +64,7 @@ const Terminal = require('./app/panels/terminal')
 const { TabProxy } = require('./app/panels/tab-proxy.js')
 
 class AppComponent {
-  constructor () {
+  constructor() {
     this.appManager = new RemixAppManager({})
     this.queryParams = new QueryParams()
     this._components = {}
@@ -94,7 +101,7 @@ class AppComponent {
     })
   }
 
-  async run () {
+  async run() {
     // APP_MANAGER
     const appManager = this.appManager
     const pluginLoader = this.appManager.pluginLoader
@@ -152,6 +159,12 @@ class AppComponent {
     // ----------------- Storage plugin ---------------------------------
     const storagePlugin = new StoragePlugin()
 
+    // ------- FILE DECORATOR PLUGIN ------------------
+    const fileDecorator = new FileDecorator()
+
+    // ------- CODE FORMAT PLUGIN ------------------
+    const codeFormat = new CodeFormat()
+
     //----- search
     const search = new SearchPlugin()
 
@@ -177,6 +190,10 @@ class AppComponent {
     const web3Provider = new Web3ProviderModule(blockchain)
     const hardhatProvider = new HardhatProvider(blockchain)
     const ganacheProvider = new GanacheProvider(blockchain)
+    const foundryProvider = new FoundryProvider(blockchain)
+    const externalHttpProvider = new ExternalHttpProvider(blockchain)
+    const injected0ptimismProvider = new Injected0ptimismProvider(blockchain)
+    const injectedArbitrumOneProvider = new InjectedArbitrumOneProvider(blockchain)
     // ----------------- convert offset to line/column service -----------
     const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
     Registry.getInstance().put({
@@ -200,13 +217,15 @@ class AppComponent {
         }
       }
     )
-    const contextualListener = new EditorContextListener(new AstWalker())
+
+    const codeParser = new CodeParser(new AstWalker())
+
 
     this.notification = new NotificationPlugin()
 
     const configPlugin = new ConfigPlugin()
     this.layout = new Layout()
-    
+
     const permissionHandler = new PermissionHandlerPlugin()
 
     this.engine.register([
@@ -224,7 +243,9 @@ class AppComponent {
       compilersArtefacts,
       networkModule,
       offsetToLineColumnConverter,
-      contextualListener,
+      codeParser,
+      fileDecorator,
+      codeFormat,
       terminal,
       web3Provider,
       compileAndRun,
@@ -233,6 +254,10 @@ class AppComponent {
       storagePlugin,
       hardhatProvider,
       ganacheProvider,
+      foundryProvider,
+      externalHttpProvider,
+      injected0ptimismProvider,
+      injectedArbitrumOneProvider,
       this.walkthroughService,
       search
     ])
@@ -314,11 +339,13 @@ class AppComponent {
       filePanel.remixdHandle,
       filePanel.gitHandle,
       filePanel.hardhatHandle,
+      filePanel.foundryHandle,
       filePanel.truffleHandle,
       filePanel.slitherHandle,
       linkLibraries,
       deployLibraries,
-      openZeppelinProxy
+      openZeppelinProxy,
+      run.recorder
     ])
 
     this.layout.panels = {
@@ -329,13 +356,9 @@ class AppComponent {
     }
   }
 
-  async activate () {
+  async activate() {
     const queryParams = new QueryParams()
     const params = queryParams.get()
-    
-    if (isElectron()) {
-      this.appManager.activatePlugin('remixd')
-    }
 
     try {
       this.engine.register(await this.appManager.registeredPlugins())
@@ -350,14 +373,18 @@ class AppComponent {
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await this.appManager.activatePlugin(['home'])
     await this.appManager.activatePlugin(['settings', 'config'])
-    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'contextualListener', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
+    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'codeParser', 'codeFormatter', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
-    await this.appManager.activatePlugin(['walkthrough','storage', 'search','compileAndRun'])
+    await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
 
     this.appManager.on(
       'filePanel',
       'workspaceInitializationCompleted',
       async () => {
+        // for e2e tests
+        const loadedElement = document.createElement('span')
+        loadedElement.setAttribute('data-id', 'workspaceloaded')
+        document.body.appendChild(loadedElement)
         await this.appManager.registerContextMenuItems()
       }
     )
@@ -392,14 +419,43 @@ class AppComponent {
             if (params.call) {
               const callDetails = params.call.split('//')
               if (callDetails.length > 1) {
-                this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} ...`)
+                this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`)
                 // @todo(remove the timeout when activatePlugin is on 0.3.0)
-                this.appManager.call(...callDetails).catch(console.error)
+                await this.appManager.call(...callDetails).catch(console.error)
               }
             }
+
+            if (params.calls) {
+              const calls = params.calls.split("///");
+
+              // call all functions in the list, one after the other
+              for (const call of calls) {
+                const callDetails = call.split("//");
+                if (callDetails.length > 1) {
+                  this.appManager.call(
+                    "notification",
+                    "toast",
+                    `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`
+                  );
+
+                  // @todo(remove the timeout when activatePlugin is on 0.3.0)
+                  try {
+                    await this.appManager.call(...callDetails)
+                  } catch (e) {
+                    console.error(e)
+                  }
+                }
+              }
+            }
+
+
           })
           .catch(console.error)
       }
+      const loadedElement = document.createElement('span')
+      loadedElement.setAttribute('data-id', 'apploaded')
+      document.body.appendChild(loadedElement)
+
     })
     // activate solidity plugin
     this.appManager.activatePlugin(['solidity', 'udapp', 'deploy-libraries', 'link-libraries', 'openzeppelin-proxy'])

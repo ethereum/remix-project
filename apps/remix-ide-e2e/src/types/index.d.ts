@@ -11,7 +11,7 @@ declare module 'nightwatch' {
         testContracts(fileName: string, contractCode: NightwatchContractContent, compiledContractNames: string[]): NightwatchBrowser,
         setEditorValue(value: string, callback?: () => void): NightwatchBrowser,
         addFile(name: string, content: NightwatchContractContent): NightwatchBrowser,
-        verifyContracts(compiledContractNames: string[], opts?: { wait: number, version?: string }): NightwatchBrowser,
+        verifyContracts(compiledContractNames: string[], opts?: { wait: number, version?: string, runs?: string }): NightwatchBrowser,
         selectAccount(account?: string): NightwatchBrowser,
         clickFunction(fnFullName: string, expectedInput?: NightwatchClickFunctionExpectedInput): NightwatchBrowser,
         testFunction(txHash: string, expectedInput: NightwatchTestFunctionExpectedInput): NightwatchBrowser,
@@ -21,14 +21,16 @@ declare module 'nightwatch' {
         modalFooterOKClick(id?: string): NightwatchBrowser,
         clickInstance(index: number): NightwatchBrowser,
         journalLastChildIncludes(val: string): NightwatchBrowser,
-        executeScript(script: string): NightwatchBrowser,
+        executeScriptInTerminal(script: string): NightwatchBrowser,
         clearEditableContent(cssSelector: string): NightwatchBrowser,
         journalChildIncludes(val: string, opts = { shouldHaveOnlyOneOccurence: boolean }): NightwatchBrowser,
         debugTransaction(index: number): NightwatchBrowser,
         checkElementStyle(cssSelector: string, styleProperty: string, expectedResult: string): NightwatchBrowser,
         openFile(name: string): NightwatchBrowser,
+        refreshPage(): NightwatchBrowser,
+        verifyLoad(): NightwatchBrowser,
         renamePath(path: string, newFileName: string, renamedPath: string): NightwatchBrowser,
-        rightClick(cssSelector: string): NightwatchBrowser,
+        rightClickCustom(cssSelector: string): NightwatchBrowser,
         scrollToLine(line: number): NightwatchBrowser,
         waitForElementContainsText(id: string, value: string, timeout?: number): NightwatchBrowser,
         getModalBody(callback: (value: string, cb: VoidFunction) => void): NightwatchBrowser,
@@ -62,7 +64,10 @@ declare module 'nightwatch' {
         clearConsole (this: NightwatchBrowser): NightwatchBrowser
         clearTransactions (this: NightwatchBrowser): NightwatchBrowser
         getBrowserLogs (this: NightwatchBrowser): NightwatchBrowser
-        currentSelectedFileIs (name: string): NightwatchBrowser
+        currentSelectedFileIs (name: string): NightwatchBrowser,
+        switchWorkspace: (workspaceName: string) => NightwatchBrowser
+        switchEnvironment: (provider: string) => NightwatchBrowser
+        connectToExternalHttpProvider: (url: string, identifier: string) => NightwatchBrowser
     }
 
     export interface NightwatchBrowser {

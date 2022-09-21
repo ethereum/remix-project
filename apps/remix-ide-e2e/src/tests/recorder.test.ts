@@ -3,6 +3,7 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 module.exports = {
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
@@ -11,13 +12,16 @@ module.exports = {
     return sources
   },
 
-  'Run Scenario': function (browser: NightwatchBrowser) {
+  'Run Scenario #group1': function (browser: NightwatchBrowser) {
     let addressRef
     browser.addFile('scenario.json', { content: records })
-      .pause(5000)
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: "//*[contains(@class, 'view-lines') and contains(.,'0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')]"
+      })
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('[data-id="udapp_arrow"]')
+      .click('[data-id="udappRecorderTitleExpander"]')
       .click('[data-id="runtransaction"]')
       .clickInstance(0)
       .clickInstance(1)
@@ -36,13 +40,13 @@ module.exports = {
       .click('*[data-id="deployAndRunClearInstances"]')
 
     },
-    'Save scenario': function (browser: NightwatchBrowser) {
+    'Save scenario #group1': function (browser: NightwatchBrowser) {
       browser.testContracts('testRecorder.sol', sources[0]['testRecorder.sol'], ['testRecorder'])
       .clickLaunchIcon('udapp')
       .createContract('12')
       .clickInstance(0)
       .clickFunction('set - transact (not payable)', { types: 'uint256 _p', values: '34' })
-      .click('i.savetransaction')
+      .click('.savetransaction')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
       .execute(function () {
         const modalOk = document.querySelector('[data-id="udappNotify-modal-footer-ok-react"]') as any
@@ -64,7 +68,7 @@ module.exports = {
       })
   },
 
-  'Record more than one contract': function (browser: NightwatchBrowser) {
+  'Record more than one contract #group1': function (browser: NightwatchBrowser) {
     // deploy 2 contracts (2 different ABIs), save the record, reexecute and test one of the function.
     browser
       .click('*[data-id="deployAndRunClearInstances"]')
@@ -77,13 +81,14 @@ module.exports = {
       .selectContract('t2est')
       .pause(1000)
       .createContract('')
-      .click('i.savetransaction')
+      .click('.savetransaction')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
       .execute(function () {
         const modalOk = document.querySelector('[data-id="udappNotify-modal-footer-ok-react"]') as any
 
         modalOk.click()
       })
+      .pause(1000)
       .click('*[data-id="deployAndRunClearInstances"]') // clear udapp
       .click('*[data-id="terminalClearConsole"]') // clear terminal
       .click('[data-id="runtransaction"]')
@@ -95,6 +100,50 @@ module.exports = {
           status: 'true Transaction mined and execution succeed',
           'decoded input': { 'uint256 _po': '10' }
         })
+      
+  },
+
+  'Run with live "mode" #group1': function (browser: NightwatchBrowser) {
+    let addressRef: string
+    browser.addFile('scenario_live_mode.json', { content: JSON.stringify(liveModeScenario, null, '\t') })
+      .addFile('scenario_live_mode_storage.sol', { content: testStorageForLiveMode })
+      .clickLaunchIcon('solidity')
+      .click('*[data-id="compilerContainerCompileBtn"]')
+      .openFile('scenario_live_mode.json')
+      .clickLaunchIcon('udapp')
+      .click('*[data-id="deployAndRunClearInstances"]')
+      .click('*[data-id="runtabLivemodeInput"]')
+      .click('.runtransaction')
+      .pause(1000)
+      .clickInstance(0)
+      .getAddressAtPosition(0, (address) => {
+        addressRef = address
+      })
+      .clickFunction('retrieve - call')
+      .perform((done) => {
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 350'])
+          .perform(() => done())
+      })
+      // change the init state and recompile the same contract.
+      .openFile('scenario_live_mode_storage.sol')
+      .setEditorValue(testStorageForLiveMode.replace('number = 350', 'number = 300'))
+      .pause(5000)
+      .clickLaunchIcon('solidity')
+      .click('*[data-id="compilerContainerCompileBtn"]')
+      .openFile('scenario_live_mode.json')
+      .clickLaunchIcon('udapp')
+      .click('*[data-id="deployAndRunClearInstances"]')
+      .click('.runtransaction')
+      .pause(5000)
+      .clickInstance(0)
+      .getAddressAtPosition(0, (address) => {
+        addressRef = address
+      })
+      .clickFunction('retrieve - call')
+      .perform((done) => {
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 300'])
+          .perform(() => done())
+      })
       .end()
   }
 }
@@ -364,3 +413,91 @@ const scenario = {
     ]
   }
 }
+
+const liveModeScenario = {
+  "accounts": {
+    "account{0}": "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4"
+  },
+  "linkReferences": {},
+  "transactions": [
+    {
+      "timestamp": 1656329164297,
+      "record": {
+        "value": "0",
+        "parameters": [],
+        "abi": "0x8b8c9c14c8e1442e90dd6ff82bb9889ccfe5a54d88ef30776f11047ecce5fedb",
+        "contractName": "Storage",
+        "bytecode": "608060405234801561001057600080fd5b5060c88061001f6000396000f3fe6080604052348015600f57600080fd5b5060043610604e577c010000000000000000000000000000000000000000000000000000000060003504632e64cec1811460535780636057361d146068575b600080fd5b60005460405190815260200160405180910390f35b60786073366004607a565b600055565b005b600060208284031215608b57600080fd5b503591905056fea264697066735822122091f1bc250ccda7caf2b0d9f67b0314d92233fdb5952b72cece72bd2a5d43cfc264736f6c63430008070033",
+        "linkReferences": {},
+        "name": "",
+        "inputs": "()",
+        "type": "constructor",
+        "from": "account{0}"
+      }
+    }
+  ],
+  "abis": {
+    "0x8b8c9c14c8e1442e90dd6ff82bb9889ccfe5a54d88ef30776f11047ecce5fedb": [
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "num",
+            "type": "uint256"
+          }
+        ],
+        "name": "store",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "retrieve",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ]
+  }
+}
+
+const testStorageForLiveMode = `// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >=0.7.0 <0.9.0;
+
+/**
+ * @title Storage
+ * @dev Store & retrieve value in a variable
+ * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
+ */
+contract Storage {
+
+    uint256 number;
+
+    constructor () {
+        number = 350;
+    }
+
+    /**
+     * @dev Store value in variable
+     * @param num value to store
+     */
+    function store(uint256 num) public {
+        number = num;
+    }
+
+    /**
+     * @dev Return value 
+     * @return value of 'number'
+     */
+    function retrieve() public view returns (uint256){
+        return number;
+    }
+}`

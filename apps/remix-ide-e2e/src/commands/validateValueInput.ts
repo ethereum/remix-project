@@ -7,7 +7,7 @@ class ValidateValueInput extends EventEmitter {
     browser.perform((done) => {
       browser.clearValue(selector)
         .pause(2000)
-        .setValue(selector, valueTosSet)
+        .setValue(selector, valueTosSet).pause(2000)
         .execute(function (selector) {
           const elem = document.querySelector(selector) as HTMLInputElement
           return elem.value

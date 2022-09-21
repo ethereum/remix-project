@@ -10,7 +10,7 @@
 ### Installation
 `@remix-project/remix-astwalker` is an NPM package and can be installed using NPM as:
 
-`npm install @remix-project/remix-astwalker`
+`yarn add @remix-project/remix-astwalker`
 
 ### How to use
 

@@ -4,12 +4,12 @@ import { BrowserState } from '../reducers/workspace'
 
 export const FileSystemContext = createContext<{
   fs: BrowserState,
-  modal:(title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+  modal:(title: string | JSX.Element, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   dispatchInitWorkspace:() => Promise<void>,
   dispatchFetchDirectory:(path: string) => Promise<void>,
   dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,
   dispatchRemoveInputField:(path: string) => Promise<void>,
-  dispatchCreateWorkspace: (workspaceName: string, workspaceTemplateName: string) => Promise<void>,
+  dispatchCreateWorkspace: (workspaceName: string, workspaceTemplateName: string, opts?, initGitRepo?: boolean) => Promise<void>,
   toast: (toasterMsg: string) => void,
   dispatchFetchWorkspaceDirectory: (path: string) => Promise<void>,
   dispatchSwitchToWorkspace: (name: string) => Promise<void>,
@@ -30,4 +30,8 @@ export const FileSystemContext = createContext<{
   dispatchHandleExpandPath: (paths: string[]) => Promise<void>,
   dispatchHandleDownloadFiles: () => Promise<void>,
   dispatchHandleRestoreBackup: () => Promise<void>
+  dispatchCloneRepository: (url: string) => Promise<void>,
+  dispatchMoveFile: (src: string, dest: string) => Promise<void>,
+  dispatchMoveFolder: (src: string, dest: string) => Promise<void>
     }>(null)
+    

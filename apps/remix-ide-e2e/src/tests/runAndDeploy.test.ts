@@ -32,15 +32,15 @@ module.exports = {
 
   'Should sign message using account key #group2': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="settingsRemixRunSignMsg"]')
-      .click('select[id="selectExEnvOptions"] option[value="vm-berlin"]')
+      .switchEnvironment('vm-berlin')
       .pause(2000)
       .click('*[data-id="settingsRemixRunSignMsg"]')
       .pause(2000)
       .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
       .click('*[data-id="signMessageTextarea"]')
       .setValue('*[data-id="signMessageTextarea"]', 'Remix is cool!')
-      .assert.elementNotPresent('*[data-id="settingsRemixRunSignMsgHash"]')
-      .assert.elementNotPresent('*[data-id="settingsRemixRunSignMsgSignature"]')
+      .assert.not.elementPresent('*[data-id="settingsRemixRunSignMsgHash"]')
+      .assert.not.elementPresent('*[data-id="settingsRemixRunSignMsgSignature"]')
       .pause(2000)
       .waitForElementPresent('[data-id="udappNotify-modal-footer-ok-react"]')
       .click('[data-id="udappNotify-modal-footer-ok-react"]')
@@ -65,6 +65,29 @@ module.exports = {
       })
   },
 
+  'Should show and update balance for deployed contract on JavascriptVM #group3': function (browser: NightwatchBrowser) {
+    let instanceAddress
+    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
+      .clickLaunchIcon('filePanel')
+      .addFile('checkBalance.sol', sources[0]['checkBalance.sol'])
+      .clickLaunchIcon('udapp')
+      .setValue('*[data-id="dandrValue"]', '111')
+      .waitForElementVisible('*[data-id="Deploy - transact (payable)"]', 45000)
+      .click('*[data-id="Deploy - transact (payable)"]')
+      .pause(1000)
+      .clickInstance(1)
+      .pause(1000)
+      .getAddressAtPosition(1, (address) => {
+        instanceAddress = address
+        browser
+        .waitForElementVisible(`#instance${instanceAddress} [data-id="instanceContractBal"]`)
+        .assert.containsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000111 ETH')
+        .clickFunction('sendSomeEther - transact (not payable)', { types: 'uint256 num', values: '2' })
+        .pause(1000)
+        .assert.containsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000109 ETH')
+      })
+  },
+
   'Should run low level interaction (fallback function) #group3': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .clickInstance(0)
@@ -80,13 +103,13 @@ module.exports = {
       .end()
   },
 
-  'Should connect to Goerli Test Network using MetaMask': '' + function (browser: NightwatchBrowser) {
+  'Should connect to Goerli Test Network using MetaMask': !function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .setupMetamask(passphrase, password)
       .click('.network-indicator__down-arrow')
       .useXpath().click("//span[text()='Goerli Test Network']")
       .useCss().switchBrowserTab(0)
-      .refresh()
+      .refreshPage()
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .click('*[data-id="landingPageStartSolidity"]')
       .pause(5000)
@@ -101,7 +124,7 @@ module.exports = {
       .switchBrowserTab(0)
   },
 
-  'Should deploy contract on Goerli Test Network using MetaMask': '' + function (browser: NightwatchBrowser) {
+  'Should deploy contract on Goerli Test Network using MetaMask': !function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
       .clickLaunchIcon('filePanel')
       .openFile('Greet.sol')
@@ -118,7 +141,7 @@ module.exports = {
       .switchBrowserTab(0)
   },
 
-  'Should run low level interaction (fallback function) on Goerli Test Network using MetaMask': '' + function (browser: NightwatchBrowser) {
+  'Should run low level interaction (fallback function) on Goerli Test Network using MetaMask': !function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
       .click('*[data-id="universalDappUiTitleExpander"]')
@@ -135,14 +158,14 @@ module.exports = {
       .end()
   },
 
-  'Should connect to Ethereum Main Network using MetaMask': '' + function (browser: NightwatchBrowser) {
+  'Should connect to Ethereum Main Network using MetaMask': !function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .switchBrowserTab(2)
       .waitForElementPresent('.network-indicator__down-arrow')
       .click('.network-indicator__down-arrow')
       .useXpath().click("//span[text()='Main Ethereum Network']")
       .useCss().switchBrowserTab(0)
-      .refresh()
+      .refreshPage()
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .click('*[data-id="landingPageStartSolidity"]')
       .pause(5000)
@@ -153,7 +176,7 @@ module.exports = {
       .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Main (1) network')
   },
 
-  'Should deploy contract on Ethereum Main Network using MetaMask': '' + function (browser: NightwatchBrowser) {
+  'Should deploy contract on Ethereum Main Network using MetaMask': !function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
       .clickLaunchIcon('filePanel')
       .openFile('Greet.sol')
@@ -173,7 +196,7 @@ module.exports = {
    * - Ropsten node for retrieving the trace and storage
    *
    */
-  'Should debug Ropsten transaction with source highlighting using the source verifier service and MetaMask': '' + function (browser: NightwatchBrowser) {
+  'Should debug Ropsten transaction with source highlighting using the source verifier service and MetaMask': !function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .switchBrowserTab(2)
@@ -181,7 +204,7 @@ module.exports = {
       .click('.network-indicator__down-arrow')
       .useXpath().click("//span[text()='Ropsten Test Network']") // switch to Ropsten
       .useCss().switchBrowserTab(0)
-      .refresh()
+      .refreshPage()
       .clickLaunchIcon('pluginManager') // load debugger and source verification
     // .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_sourcify"] button')
     // debugger already activated .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
@@ -198,9 +221,9 @@ module.exports = {
       .assert.containsText('*[data-id="solidityLocals"]', 'to: 0x6C3CCC7FBA111707D5A1AAF2758E9D4F4AC5E7B1')
   },
 
-  'Call web3.eth.getAccounts() using Injected web3 (Metamask)': '' + function (browser: NightwatchBrowser) {
+  'Call web3.eth.getAccounts() using Injected Provider (Metamask)': !function (browser: NightwatchBrowser) {
     browser
-      .executeScript('web3.eth.getAccounts()')
+      .executeScriptInTerminal('web3.eth.getAccounts()')
       .pause(2000)
       .journalLastChildIncludes('[ "0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f" ]')
       .end()
@@ -224,6 +247,17 @@ const sources = [
               message = _message;
           }
       }`
+    },
+    'checkBalance.sol': {
+      content: `pragma solidity ^0.8.0;
+      contract checkBalance {
+        constructor () payable {}
+
+        function sendSomeEther(uint256 num) public {
+            payable(msg.sender).transfer(num);
+        }
+    
+    }`
     }
   }
 ]

@@ -10,7 +10,7 @@ const _paq = window._paq = window._paq || []
 export const profile = {
   name: 'compileAndRun',
   displayName: 'Compile and Run',
-  description: 'after each compilation, run the script defined in Natspec.',
+  description: 'After each compilation, run the script defined in Natspec.',
   methods: ['runScriptAfterCompilation'],
   version: packageJson.version,
   kind: 'none'

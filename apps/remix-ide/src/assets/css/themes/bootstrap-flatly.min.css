@@ -24,7 +24,7 @@
 	--gray:#95a5a6;
 	--gray-dark:#343a40;
 	--primary:#2c3e50;
-	--secondary:#95a5a6;
+	--secondary:#dadfe0;
 	--success:#18bc9c;
 	--info:#3498db;
 	--warning:#f39c12;
@@ -34,6 +34,7 @@
 	--dark:#7b8a8b;
 	--body-bg: #fff;
 	--text-bg-mark: #fcf8e3;
+	--custom-select: #fff;
 	--breakpoint-xs:0;
 	--breakpoint-sm:576px;
 	--breakpoint-md:768px;
@@ -4459,7 +4460,7 @@ a.bg-primary:focus,a.bg-primary:hover,button.bg-primary:focus,button.bg-primary:
 	background-color:#1a252f!important
 }
 .bg-secondary {
-	background-color:#95a5a6!important
+	background-color:#dadfe0!important
 }
 a.bg-secondary:focus,a.bg-secondary:hover,button.bg-secondary:focus,button.bg-secondary:hover {
 	background-color:#798d8f!important
