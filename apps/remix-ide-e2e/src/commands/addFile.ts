@@ -36,6 +36,7 @@ function addFile(browser: NightwatchBrowser, name: string, content: NightwatchCo
       timeout: 2000
     }, (okVisible) => {
       // @ts-ignore
+      // status === -1 means the element is not visible, 0 means it is visible
       if (okVisible.status === 0) {
         browser.openFile(name)
           .perform(function () {
@@ -46,8 +47,10 @@ function addFile(browser: NightwatchBrowser, name: string, content: NightwatchCo
           .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
           .sendKeys('*[data-id$="/blank"] .remixui_items', name)
           .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
-          .waitForElementVisible({
+          .isVisible({
             selector: `li[data-id="treeViewLitreeViewItem${name}"]`,
+            abortOnFailure: false,
+            suppressNotFoundErrors: true,
             timeout: 60000
           })
           .setEditorValue(content.content)

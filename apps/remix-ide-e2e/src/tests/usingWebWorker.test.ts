@@ -29,6 +29,7 @@ module.exports = {
   },
   'Using Web Worker #group1': function (browser: NightwatchBrowser) {
     browser
+      // using autocompile when switching compilers quickly confuses the process and results in a wrong compiler version being used or results displayed
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]')
       .waitForElementVisible('[data-id="compilerNightliesBuild"]')

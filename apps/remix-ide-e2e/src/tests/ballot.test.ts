@@ -131,7 +131,7 @@ module.exports = {
       .click('*[data-id="scConfigExpander"]')
       .waitForElementVisible('*[data-id="scFileConfiguration"]', 10000)
       .click('*[data-id="scFileConfiguration"]')
-
+      // the input field behaves badly, it would often not receive the value, so retrying it a few times for now is the best thing to do
       .waitForElementVisible({
         selector: '*[data-id="scConfigChangeFilePath"]',
         abortOnFailure: false
