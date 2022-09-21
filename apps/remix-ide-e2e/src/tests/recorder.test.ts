@@ -15,7 +15,10 @@ module.exports = {
   'Run Scenario #group1': function (browser: NightwatchBrowser) {
     let addressRef
     browser.addFile('scenario.json', { content: records })
-      .pause(5000)
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: "//*[contains(@class, 'view-lines') and contains(.,'0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')]"
+      })
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
       .click('[data-id="udappRecorderTitleExpander"]')
