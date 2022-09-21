@@ -1,14 +1,14 @@
-import { erc721 } from '@openzeppelin/wizard';
+import { erc1155 } from '@openzeppelin/wizard';
 
 export default async (opts) => {
     if (opts.features) {
-        erc721.defaults.mintable = opts.features.mintable
-        erc721.defaults.burnable = opts.features.burnable
-        erc721.defaults.pausable = opts.features.pausable
+        erc1155.defaults.mintable = opts.features.mintable
+        erc1155.defaults.burnable = opts.features.burnable
+        erc1155.defaults.pausable = opts.features.pausable
     }
 
     const filesObj = {
-        'contracts/MyToken.sol': erc721.print({ ...erc721.defaults, upgradeable: opts.upgradeable}),
+        'contracts/MyToken.sol': erc1155.print({ ...erc1155.defaults, upgradeable: opts.upgradeable}),
         // @ts-ignore
         'scripts/deploy_with_ethers.ts': (await import('!!raw-loader!./scripts/deploy_with_ethers.ts')).default,
         // @ts-ignore
@@ -18,7 +18,6 @@ export default async (opts) => {
         // @ts-ignore
         'scripts/web3-lib.ts': (await import('!!raw-loader!./scripts/web3-lib.ts')).default
     }
-
     // If no options is selected, opts.upgradeable will be undefined
     // We do not show test file for upgradeable contract
     // @ts-ignore

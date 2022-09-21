@@ -158,6 +158,7 @@ export const EditorUI = (props: EditorUIProps) => {
     const infoColor = formatColor('--info')
     const darkColor = formatColor('--dark')
     const secondaryColor = formatColor('--secondary')
+    const primaryColor = formatColor('--primary')
     const textColor = formatColor('--text') || darkColor
     const textbackground = formatColor('--text-background') || lightColor
 
@@ -266,7 +267,8 @@ export const EditorUI = (props: EditorUIProps) => {
         'editorSuggestWidget.background': lightColor,
         'editorSuggestWidget.selectedBackground': secondaryColor,
         'editorSuggestWidget.selectedForeground': textColor,
-        'editorSuggestWidget.highlightForeground': infoColor,
+        'editorSuggestWidget.highlightForeground': primaryColor,
+        'editorSuggestWidget.focusHighlightForeground': infoColor,
         'editor.lineHighlightBorder': secondaryColor,
         'editor.lineHighlightBackground': textbackground === darkColor ? lightColor : secondaryColor,
         'editorGutter.background': lightColor,
