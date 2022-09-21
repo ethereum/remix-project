@@ -161,6 +161,7 @@ module.exports = {
         suppressNotFoundErrors: true,
         locateStrategy: 'xpath'
       }, (okVisible) => {
+        // if it's not there yet, try again
         if (!okVisible.value) {
           browser.waitForElementVisible({
             selector: '*[data-id="scConfigChangeFilePath"]',
@@ -194,6 +195,7 @@ module.exports = {
         locateStrategy: 'xpath'
       }, (okVisible) => {
         if (!okVisible.value) {
+          // if it's still not there, try again
           browser.waitForElementVisible({
             selector: '*[data-id="scConfigChangeFilePath"]',
             abortOnFailure: false
