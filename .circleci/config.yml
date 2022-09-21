@@ -77,9 +77,9 @@ jobs:
         type: string
       script:
         type: string
-      group:
+      job:
         type: string
-      groupsize:
+      jobsize:
         type: string
     parallelism: 10
     steps:
@@ -111,7 +111,7 @@ jobs:
           name: Start Selenium
           command: java -jar /usr/local/bin/selenium.jar
           background: true
-      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.groupsize >> << parameters.group >>
+      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
@@ -248,8 +248,8 @@ workflows:
             parameters:
               browser: ["chrome", "firefox"]
               script: ["flaky.sh"]
-              group: ["nogroup"]
-              groupsize: ["1"]
+              job: ["nogroup"]
+              jobsize: ["1"]
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
@@ -273,8 +273,8 @@ workflows:
             parameters:
               browser: ["chrome", "firefox"]
               script: ["browser_test.sh"]
-              group: ["0","1","2","3","4","5","6","7","8","9"]
-              groupsize: ["10"]
+              job: ["0","1","2","3","4","5","6","7","8","9"]
+              jobsize: ["10"]
       - tests-passed:
           requires:
             - lint
