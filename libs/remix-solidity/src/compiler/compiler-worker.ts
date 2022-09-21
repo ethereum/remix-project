@@ -42,6 +42,8 @@ export default function (self) { // eslint-disable-line @typescript-eslint/expli
       case 'compile':
         missingInputs.length = 0
         if (data.input && compileJSON) {
+          console.log('compiling')
+          console.log(data)
           self.postMessage({
             cmd: 'compiled',
             job: data.job,

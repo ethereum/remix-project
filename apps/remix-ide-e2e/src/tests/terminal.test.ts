@@ -90,8 +90,11 @@ module.exports = {
 
   },
 
-  'Deploy "Owner" using an ether.js script, listen to event and check event are logged in the terminal #group4': function (browser: NightwatchBrowser) {
+  'Deploy "Owner" using an ether.js script, listen to event and check event are logged in the terminal #flaky #group4': function (browser: NightwatchBrowser) {
     browser
+      .captureBrowserConsoleLogs((event) => {
+        console.log(event);
+      })
       .clickLaunchIcon('settings')
       .clickLaunchIcon('udapp')
       .switchEnvironment('vm-london')
@@ -104,7 +107,7 @@ module.exports = {
       .click('[data-id="treeViewDivtreeViewItemcontracts"]')
       .openFile('contracts/2_Owner.sol')
       .clickLaunchIcon('solidity')
-      .click('*[data-id="compilerContainerCompileBtn"]').pause(5000) // compile Owner
+      .click('*[data-id="compilerContainerCompileBtn"]') // compile Owner
       .executeScriptInTerminal('remix.execute(\'deployWithEthersJs.js\')')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Contract Address:', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
@@ -119,7 +122,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'newOwner', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
   },
-  'Run tests using Mocha script and check result logging in the terminal #group4': function (browser: NightwatchBrowser) {
+  'Run tests using Mocha script and check result logging in the terminal #group5': function (browser: NightwatchBrowser) {
     browser
       .addFile('scripts/storage.test.js', { content: storageMochaTests })
       .pause(1000)
@@ -140,7 +143,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Passed: 2')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Failed: 1')
   },
-  'Run tests using Mocha for a contract with library deployment and check result logging in the terminal #group4': function (browser: NightwatchBrowser) {
+  'Run tests using Mocha for a contract with library deployment and check result logging in the terminal #group5': function (browser: NightwatchBrowser) {
     browser
       .addFile('scripts/storageWithLib.test.js', { content: storageWithLibMochaTests })
       .pause(1000)
@@ -162,9 +165,9 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Passed: 0')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Failed: 1')
   },
-  'Should print hardhat logs #group4': function (browser: NightwatchBrowser) {
+  'Should print hardhat logs #group5': function (browser: NightwatchBrowser) {
     browser
-      .addFile('printHardhatlog.sol',  { content: hardhatLog })
+      .addFile('printHardhatlog.sol', { content: hardhatLog })
       .clickLaunchIcon('solidity')
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .waitForElementVisible('[for="autoCompile"]')
@@ -188,7 +191,7 @@ module.exports = {
       .journalChildIncludes('inside getOwner', { shouldHaveOnlyOneOccurence: true })
   },
 
-  'Should display auto-complete menu #group4': function (browser: NightwatchBrowser) {
+  'Should display auto-complete menu #group5': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="terminalCli"]')
       .click('*[data-id="terminalCli"]')
@@ -264,22 +267,22 @@ module.exports = {
           if (Array.isArray(result.value) && result.value.length > 0) {
             console.log('Found ' + result.value.length + ' transactions')
             browser
-            .click({
-              selector: '[data-id="listenNetworkCheckInput"]',
-            })
-            .click({
-              selector: '*[data-id="terminalClearConsole"]',
-            })
-            .click({
-              selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
-            })
-            .pause(10000)
-            .waitForElementNotPresent({
-              locateStrategy: 'xpath',
-              selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
-              timeout: 120000
-            })
-            .end()
+              .click({
+                selector: '[data-id="listenNetworkCheckInput"]',
+              })
+              .click({
+                selector: '*[data-id="terminalClearConsole"]',
+              })
+              .click({
+                selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
+              })
+              .pause(10000)
+              .waitForElementNotPresent({
+                locateStrategy: 'xpath',
+                selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
+                timeout: 120000
+              })
+              .end()
           } else {
             browser
               .assert.fail('No transaction found')

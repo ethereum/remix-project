@@ -317,9 +317,14 @@ export class Compiler {
 
         try {
           if (useFileConfiguration) {
+            
             input = compilerInputForConfigFile(source.sources, JSON.parse(configFileContent))
+            console.log('Using file configuration')
+            console.log(input)
           } else {
             input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+            console.log('Using no file configuration')
+            console.log(input)
           }
         } catch (exception) {
           this.onCompilationFinished({ error: { formattedMessage: exception.message } }, [], source, "", this.state.currentVersion)
