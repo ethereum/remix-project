@@ -90,7 +90,7 @@ module.exports = {
 
   },
 
-  'Deploy "Owner" using an ether.js script, listen to event and check event are logged in the terminal #flaky #group4': function (browser: NightwatchBrowser) {
+  'Deploy "Owner" using an ether.js script, listen to event and check event are logged in the terminal #group4': function (browser: NightwatchBrowser) {
     browser
       .captureBrowserConsoleLogs((event) => {
         console.log(event);
