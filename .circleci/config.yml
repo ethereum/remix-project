@@ -90,12 +90,6 @@ jobs:
             firefox --version
             geckodriver --version
             chromedriver --version
-            java -jar /usr/local/bin/selenium.jar --version
-      - run:
-          name: Check out previous test metadata
-          command: |
-            cat "${CIRCLE_INTERNAL_TASK_DATA}/circle-test-results/results.json" | jq .
-            ls -la "${CIRCLE_INTERNAL_TASK_DATA}/"
       - checkout
       - attach_workspace:
           at: .
@@ -107,9 +101,10 @@ jobs:
       - run: yarn
       - run: yarn run downloadsolc_assets_e2e && yarn run downloadsolc_assets_dist
       - run: ls -la ./dist/apps/remix-ide/assets/js
+      - run: yarn run selenium-install
       - run:
           name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar
+          command: yarn run selenium
           background: true
       - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
       - store_test_results:
@@ -141,7 +136,6 @@ jobs:
             firefox --version
             geckodriver --version
             chromedriver --version
-            java -jar /usr/local/bin/selenium.jar --version
           name: Check install
       - checkout
       - attach_workspace:
@@ -153,9 +147,10 @@ jobs:
       - run: yarn
       - run: unzip ./persist/dist.zip
       - run: yarn run downloadsolc_assets_e2e && yarn run downloadsolc_assets_dist
+      - run: yarn run selenium-install
       - run:
           name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar
+          command: yarn run selenium
           background: true
       - run: ./apps/remix-ide/ci/<< parameters.script >>
       - store_test_results:
