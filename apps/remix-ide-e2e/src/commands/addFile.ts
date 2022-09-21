@@ -46,10 +46,8 @@ function addFile(browser: NightwatchBrowser, name: string, content: NightwatchCo
           .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
           .sendKeys('*[data-id$="/blank"] .remixui_items', name)
           .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
-          .isVisible({
+          .waitForElementVisible({
             selector: `li[data-id="treeViewLitreeViewItem${name}"]`,
-            abortOnFailure: false,
-            suppressNotFoundErrors: true,
             timeout: 60000
           })
           .setEditorValue(content.content)
