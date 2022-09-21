@@ -13,8 +13,22 @@ export class RemixDefinitionProvider implements monaco.languages.DefinitionProvi
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async provideDefinition(model: monaco.editor.ITextModel, position: monaco.Position, token: monaco.CancellationToken): Promise<monaco.languages.Definition | monaco.languages.LocationLink[]> {
         const cursorPosition = this.props.editorAPI.getCursorPosition()
-        const jumpLocation = await this.jumpToDefinition(cursorPosition)
-        if(!jumpLocation || !jumpLocation.fileName) return []
+        let jumpLocation = await this.jumpToDefinition(cursorPosition)
+        if (!jumpLocation || !jumpLocation.fileName) {
+            const line = model.getLineContent(position.lineNumber)
+            const lastpart = line.substring(0, position.column - 1).split(';').pop()
+            if (lastpart.startsWith('import')) {
+                const importPath = line.substring(lastpart.indexOf('"') + 1)
+                const importPath2 = importPath.substring(0, importPath.indexOf('"'))
+                jumpLocation = {
+                    startLineNumber: 1,
+                    startColumn: 1,
+                    endColumn: 1,
+                    endLineNumber: 1,
+                    fileName: importPath2
+                }
+            }
+        }
         return [{
             uri: this.monaco.Uri.parse(jumpLocation.fileName),
             range: {

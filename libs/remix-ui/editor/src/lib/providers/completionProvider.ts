@@ -3,7 +3,7 @@ import { isArray } from "lodash"
 import { editor, languages, Position } from "monaco-editor"
 import monaco from "../../types/monaco"
 import { EditorUIProps } from "../remix-ui-editor"
-import { GeCompletionUnits, GetCompletionKeywords, getCompletionSnippets, GetCompletionTypes, getContextualAutoCompleteBTypeName, getContextualAutoCompleteByGlobalVariable, GetGlobalFunctions, GetGlobalVariable } from "./completion/completionGlobals"
+import { GeCompletionUnits, GetCompletionKeywords, getCompletionSnippets, GetCompletionTypes, getContextualAutoCompleteBTypeName, getContextualAutoCompleteByGlobalVariable, GetGlobalFunctions, GetGlobalVariable, GetImports } from "./completion/completionGlobals"
 
 export class RemixCompletionProvider implements languages.CompletionItemProvider {
 
@@ -16,12 +16,15 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         this.monaco = monaco
     }
 
-    triggerCharacters = ['.', '']
+    triggerCharacters = ['.', '', '"', '@', '/']
     async provideCompletionItems(model: editor.ITextModel, position: Position, context: monaco.languages.CompletionContext): Promise<monaco.languages.CompletionList | undefined> {
 
         const completionSettings = await this.props.plugin.call('config', 'getAppParameter', 'settings/auto-completion')
         if (!completionSettings) return
+<<<<<<< HEAD
 
+=======
+>>>>>>> a82c40d86150cabc4d774c312ed442613d04e8bc
         const word = model.getWordUntilPosition(position);
         const range = {
             startLineNumber: position.lineNumber,
@@ -34,13 +37,10 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         let nodes: AstNode[] = []
         let suggestions: monaco.languages.CompletionItem[] = []
 
-        if (context.triggerCharacter === '.') {
-            const lineTextBeforeCursor: string = line.substring(0, position.column - 1)
-            const lastNodeInExpression = await this.getLastNodeInExpression(lineTextBeforeCursor)
-            const expressionElements = lineTextBeforeCursor.split('.')
 
-            let dotCompleted = false
+        if (context.triggerCharacter === '"' || context.triggerCharacter === '@' || context.triggerCharacter === '/') {
 
+<<<<<<< HEAD
             // handles completion from for builtin types
             if (lastNodeInExpression.memberName === 'sender') { // exception for this member
                 lastNodeInExpression.name = 'sender'
@@ -62,9 +62,28 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                 const dotCompletions = await this.getDotCompletions(nameOfLastTypedExpression, range)
                 nodes = [...nodes, ...dotCompletions.nodes]
                 suggestions = [...suggestions, ...dotCompletions.suggestions]
-            }
-        } else {
+=======
+            const lastpart = line.substring(0, position.column - 1).split(';').pop()
 
+            if (lastpart.startsWith('import')) {
+                const imports = await this.props.plugin.call('codeParser', 'getImports')
+                if (context.triggerCharacter === '"' || context.triggerCharacter === '@') {
+                    suggestions = [...suggestions,
+                    ...GetImports(range, this.monaco, imports, context.triggerCharacter),
+                    ]
+                } else if (context.triggerCharacter === '/') {
+                    const word = line.split('"')[1]
+                    suggestions = [...suggestions,
+                    ...GetImports(range, this.monaco, imports, word),
+                    ]
+                } else {
+                    return
+                }
+>>>>>>> a82c40d86150cabc4d774c312ed442613d04e8bc
+            }
+        } else
+
+<<<<<<< HEAD
             // handles contract completions and other suggestions
             suggestions = [...suggestions,
             ...GetGlobalVariable(range, this.monaco),
@@ -76,18 +95,71 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
             ]
 
             let contractCompletions = await this.getContractCompletions()
+=======
+            if (context.triggerCharacter === '.') {
+                const lineTextBeforeCursor: string = line.substring(0, position.column - 1)
+                const lastNodeInExpression = await this.getLastNodeInExpression(lineTextBeforeCursor)
+                const expressionElements = lineTextBeforeCursor.split('.')
 
-            // we can't have external nodes without using this.
-            contractCompletions = contractCompletions.filter(node => {
-                if (node.visibility && node.visibility === 'external') {
-                    return false
+                let dotCompleted = false
+>>>>>>> a82c40d86150cabc4d774c312ed442613d04e8bc
+
+                // handles completion from for builtin types
+                if (lastNodeInExpression.memberName === 'sender') { // exception for this member
+                    lastNodeInExpression.name = 'sender'
                 }
+<<<<<<< HEAD
                 return true
             })
 
             nodes = [...nodes, ...contractCompletions]
+=======
+                const globalCompletion = getContextualAutoCompleteByGlobalVariable(lastNodeInExpression.name, range, this.monaco)
+                if (globalCompletion) {
+                    dotCompleted = true
+                    suggestions = [...suggestions, ...globalCompletion]
+                    setTimeout(() => {
+                        // eslint-disable-next-line no-debugger
+                        // debugger
+                    }, 2000)
+                }
+                // handle completion for global THIS.
+                if (lastNodeInExpression.name === 'this') {
+                    dotCompleted = true
+                    nodes = [...nodes, ...await this.getThisCompletions(position)]
+                }
+                // handle completion for other dot completions
+                if (expressionElements.length > 1 && !dotCompleted) {
+>>>>>>> a82c40d86150cabc4d774c312ed442613d04e8bc
 
-        }
+                    const nameOfLastTypedExpression = lastNodeInExpression.name || lastNodeInExpression.memberName
+                    const dotCompletions = await this.getDotCompletions(position, nameOfLastTypedExpression, range)
+                    nodes = [...nodes, ...dotCompletions.nodes]
+                    suggestions = [...suggestions, ...dotCompletions.suggestions]
+                }
+            } else {
+
+                // handles contract completions and other suggestions
+                suggestions = [...suggestions,
+                ...GetGlobalVariable(range, this.monaco),
+                ...getCompletionSnippets(range, this.monaco),
+                ...GetCompletionTypes(range, this.monaco),
+                ...GetCompletionKeywords(range, this.monaco),
+                ...GetGlobalFunctions(range, this.monaco),
+                ...GeCompletionUnits(range, this.monaco),
+                ]
+                let contractCompletions = await this.getContractCompletions(position)
+
+                // we can't have external nodes without using this.
+                contractCompletions = contractCompletions.filter(node => {
+                    if (node.visibility && node.visibility === 'external') {
+                        return false
+                    }
+                    return true
+                })
+                nodes = [...nodes, ...contractCompletions]
+
+            }
 
         // remove duplicates
         const nodeIds = {};

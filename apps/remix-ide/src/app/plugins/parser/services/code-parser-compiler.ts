@@ -8,22 +8,23 @@ import { fileDecoration, fileDecorationType } from '@remix-ui/file-decorators'
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
 import { CompilerRetriggerMode } from '@remix-project/remix-solidity-ts';
 import { MarkerSeverity } from 'monaco-editor';
+import { findLinesInStringWithMatch, SearchResultLine } from '@remix-ui/search'
 
 type errorMarker = {
     message: string
     severity: MarkerSeverity
     position: {
-      start: {
-        line: number
-        column: number
-      },
-      end: {
-        line: number
-        column: number
-      }
+        start: {
+            line: number
+            column: number
+        },
+        end: {
+            line: number
+            column: number
+        }
     },
     file: string
-  }
+}
 export default class CodeParserCompiler {
     plugin: CodeParser
     compiler: any // used to compile the current file seperately from the main compiler
@@ -43,36 +44,47 @@ export default class CodeParserCompiler {
             this.errorState = true
             const result = new CompilerAbstract('soljson', data, source, input)
             let allErrors: errorMarker[] = []
-            if (data.errors) {
-                const sources = result.getSourceCode().sources
-                for (const error of data.errors) {
+            if (data.errors || data.error) {
+                const file = await this.plugin.call('fileManager', 'getCurrentFile')
+                const currentFileContent = await this.plugin.call('fileManager', 'readFile', file)
+                const sources = result.getSourceCode().sources || []
+                if (data.error) {
+                    if (data.error.formattedMessage) {
+                        // mark this file as error
+                        const errorMarker = await this.createErrorMarker(data.error, file, { start: { line: 0, column: 0 }, end: { line: 0, column: 100 } })
+                        allErrors = [...allErrors, errorMarker]
+                    }
+                } else {
+                    for (const error of data.errors) {
+                        if (!error.sourceLocation) {
+                            // mark this file as error
+                            const errorMarker = await this.createErrorMarker(error, file, { start: { line: 0, column: 0 }, end: { line: 0, column: 100 } })
+                            allErrors = [...allErrors, errorMarker]
+                        } else {
+                            const lineBreaks = sourceMappingDecoder.getLinebreakPositions(sources[error.sourceLocation.file].content)
+                            const lineColumn = sourceMappingDecoder.convertOffsetToLineColumn({
+                                start: error.sourceLocation.start,
+                                length: error.sourceLocation.end - error.sourceLocation.start
+                            }, lineBreaks)
 
-                    const lineBreaks = sourceMappingDecoder.getLinebreakPositions(sources[error.sourceLocation.file].content)
-                    const lineColumn = sourceMappingDecoder.convertOffsetToLineColumn({
-                        start: error.sourceLocation.start,
-                        length: error.sourceLocation.end - error.sourceLocation.start
-                    }, lineBreaks)
 
-                    const filePath = error.sourceLocation.file
+                            const filePath = error.sourceLocation.file
+                            const fileTarget = await this.plugin.call('fileManager', 'getUrlFromPath', filePath)
 
-                    allErrors = [...allErrors, {
-                        message: error.formattedMessage,
-                        severity: error.severity === 'error' ? MarkerSeverity.Error : MarkerSeverity.Warning,
-                        position: {
-                            start: {
-                                line: ((lineColumn.start && lineColumn.start.line) || 0) + 1,
-                                column: ((lineColumn.start && lineColumn.start.column) || 0) + 1
-                            },
-                            end: {
-                                line: ((lineColumn.end && lineColumn.end.line) || 0) + 1,
-                                column: ((lineColumn.end && lineColumn.end.column) || 0) + 1
+                            const importFilePositions = await this.getPositionForImportErrors(fileTarget.file, currentFileContent)
+                            for (const importFilePosition of importFilePositions) {
+                                for (const line of importFilePosition.lines) {
+                                    allErrors = [...allErrors, await this.createErrorMarker(error, file, line.position)]
+                                }
                             }
+
+                            allErrors = [...allErrors, await this.createErrorMarker(error, filePath, lineColumn)]
                         }
-                        , file: filePath
-                     }]
+                    }
                 }
+
                 const displayErrors = await this.plugin.call('config', 'getAppParameter', 'display-errors')
-                if(displayErrors) await this.plugin.call('editor', 'addErrorMarker', allErrors)
+                if (displayErrors) await this.plugin.call('editor', 'addErrorMarker', allErrors)
                 this.addDecorators(allErrors, sources)
             } else {
                 await this.plugin.call('editor', 'clearErrorMarkers', result.getSourceCode().sources)
@@ -143,14 +155,14 @@ export default class CodeParserCompiler {
                 this.compiler.compile(sources, this.plugin.currentFile)
             }
         } catch (e) {
-           // do nothing
+            // do nothing
         }
     }
 
     async addDecorators(allErrors: errorMarker[], sources: any) {
         const displayErrors = await this.plugin.call('config', 'getAppParameter', 'display-errors')
-        if(!displayErrors) return
-        const errorsPerFiles: {[fileName: string]: errorMarker[]} = {}
+        if (!displayErrors) return
+        const errorsPerFiles: { [fileName: string]: errorMarker[] } = {}
         for (const error of allErrors) {
             if (!errorsPerFiles[error.file]) {
                 errorsPerFiles[error.file] = []
@@ -164,7 +176,7 @@ export default class CodeParserCompiler {
         }
 
         // sort errorPerFiles by error priority
-        const sortedErrorsPerFiles: {[fileName: string]: errorMarker[]} = {}
+        const sortedErrorsPerFiles: { [fileName: string]: errorMarker[] } = {}
         for (const fileName in errorsPerFiles) {
             const errors = errorsPerFiles[fileName]
             errors.sort((a, b) => {
@@ -182,7 +194,7 @@ export default class CodeParserCompiler {
             const decorator: fileDecoration = {
                 path: fileTarget.file,
                 isDirectory: false,
-                fileStateType: errors[0].severity == MarkerSeverity.Error? fileDecorationType.Error : fileDecorationType.Warning,
+                fileStateType: errors[0].severity == MarkerSeverity.Error ? fileDecorationType.Error : fileDecorationType.Warning,
                 fileStateLabelClass: errors[0].severity == MarkerSeverity.Error ? 'text-danger' : 'text-warning',
                 fileStateIconClass: '',
                 fileStateIcon: '',
@@ -213,8 +225,27 @@ export default class CodeParserCompiler {
 
     }
 
+    async createErrorMarker(error: any, filePath: string, lineColumn): Promise<errorMarker> {
+        return {
+            message: error.formattedMessage,
+            severity: error.severity === 'error' ? MarkerSeverity.Error : MarkerSeverity.Warning,
+            position: {
+                start: {
+                    line: ((lineColumn.start && lineColumn.start.line) || 0) + 1,
+                    column: ((lineColumn.start && lineColumn.start.column) || 0) + 1
+                },
+                end: {
+                    line: ((lineColumn.end && lineColumn.end.line) || 0) + 1,
+                    column: ((lineColumn.end && lineColumn.end.column) || 0) + 1
+                }
+            }
+            , file: filePath
+        }
+    }
+
     async clearDecorators(sources: any) {
         const decorators: fileDecoration[] = []
+        if (!sources) return
         for (const fileName of Object.keys(sources)) {
             const decorator: fileDecoration = {
                 path: fileName,
@@ -232,6 +263,15 @@ export default class CodeParserCompiler {
 
 
         await this.plugin.call('fileDecorator', 'setFileDecorators', decorators)
+    }
+
+    async getPositionForImportErrors(importedFileName: string, text: string) {
+        const re = new RegExp(importedFileName, 'gi')
+        const result: SearchResultLine[] = findLinesInStringWithMatch(
+            text,
+            re
+        )
+        return result
     }
 
 }
