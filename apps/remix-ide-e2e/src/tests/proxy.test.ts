@@ -5,6 +5,7 @@ import init from '../helpers/init'
 let firstProxyAddress: string
 let lastProxyAddress: string
 module.exports = {
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
@@ -13,12 +14,36 @@ module.exports = {
     return sources
   },
 
-  'Should show deploy proxy option for UUPS upgradeable contract': function (browser: NightwatchBrowser) {
+
+  'Should show deploy proxy option for UUPS upgradeable contract #group1': function (browser: NightwatchBrowser) {
     browser
       .addFile('myTokenV1.sol', sources[0]['myTokenV1.sol'])
       .clickLaunchIcon('solidity')
       .pause(2000)
+      // because the compilatiom imports are slow and sometimes stop loading (not sure why, it's bug) we need to recompile and check to see if the files are really in de FS
       .click('[data-id="compilerContainerCompileBtn"]')
+      .clickLaunchIcon('filePanel')
+      .isVisible({
+        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+        timeout: 120000,
+        suppressNotFoundErrors: true
+      })
+      .clickLaunchIcon('solidity')
+      .click('[data-id="compilerContainerCompileBtn"]')
+      .clickLaunchIcon('filePanel')
+      .isVisible({
+        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+        timeout: 120000,
+        suppressNotFoundErrors: true
+      })
+      .clickLaunchIcon('solidity')
+      .click('[data-id="compilerContainerCompileBtn"]')
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible({
+        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+        timeout: 120000,
+      })
+      .clickLaunchIcon('solidity')
       .waitForElementPresent('select[id="compiledContracts"] option[value=MyToken]', 60000)
       .clickLaunchIcon('udapp')
       .click('select.udapp_contractNames')
@@ -27,7 +52,7 @@ module.exports = {
       .waitForElementPresent('[data-id="contractGUIUpgradeImplementationLabel"]')
   },
 
-  'Should show upgrade proxy option for child contract inheriting UUPS parent contract': function (browser: NightwatchBrowser) {
+  'Should show upgrade proxy option for child contract inheriting UUPS parent contract #group1': function (browser: NightwatchBrowser) {
     browser
       .addFile('myTokenV2.sol', sources[1]['myTokenV2.sol'])
       .clickLaunchIcon('solidity')
@@ -41,7 +66,7 @@ module.exports = {
       .waitForElementPresent('[data-id="contractGUIUpgradeImplementationLabel"]')
   },
 
-  'Should deploy proxy without initialize parameters': function (browser: NightwatchBrowser) {
+  'Should deploy proxy without initialize parameters #group1': function (browser: NightwatchBrowser) {
     browser
       .openFile('myTokenV1.sol')
       .clickLaunchIcon('solidity')
@@ -64,7 +89,7 @@ module.exports = {
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
   },
 
-  'Should interact with deployed contract via ERC1967 (proxy)': function (browser: NightwatchBrowser) {
+  'Should interact with deployed contract via ERC1967 (proxy) #group1': function (browser: NightwatchBrowser) {
     browser
       .getAddressAtPosition(1, (address) => {
         firstProxyAddress = address
@@ -82,7 +107,7 @@ module.exports = {
       })
   },
 
-  'Should deploy proxy with initialize parameters': function (browser: NightwatchBrowser) {
+  'Should deploy proxy with initialize parameters #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('[data-id="deployAndRunClearInstances"]')
       .click('[data-id="deployAndRunClearInstances"]')
@@ -111,7 +136,7 @@ module.exports = {
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
   },
 
-  'Should interact with initialized contract to verify parameters': function (browser: NightwatchBrowser) {
+  'Should interact with initialized contract to verify parameters #group1': function (browser: NightwatchBrowser) {
     browser
       .getAddressAtPosition(1, (address) => {
         lastProxyAddress = address
@@ -129,7 +154,7 @@ module.exports = {
       })
   },
 
-  'Should upgrade contract using last deployed proxy address (MyTokenV1 to MyTokenV2)': function (browser: NightwatchBrowser) {
+  'Should upgrade contract using last deployed proxy address (MyTokenV1 to MyTokenV2) #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('[data-id="deployAndRunClearInstances"]')
       .click('[data-id="deployAndRunClearInstances"]')
@@ -153,12 +178,15 @@ module.exports = {
       .click('[data-id="udappNotify-modal-footer-ok-react"]')
       .waitForElementContainsText('[data-id="confirmProxyDeploymentModalDialogModalTitle-react"]', 'Confirm Update Proxy (ERC1967)')
       .waitForElementVisible('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
-      .click('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
+      .click(
+        {
+          selector: '[data-id="confirmProxyDeployment-modal-footer-ok-react"]',
+        })
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
   },
 
-  'Should interact with upgraded function in contract MyTokenV2': function (browser: NightwatchBrowser) {
+  'Should interact with upgraded function in contract MyTokenV2 #group1': function (browser: NightwatchBrowser) {
     browser
       .clickInstance(1)
       .perform((done) => {
@@ -168,7 +196,7 @@ module.exports = {
       })
   },
 
-  'Should upgrade contract by providing proxy address in input field (MyTokenV1 to MyTokenV2)': function (browser: NightwatchBrowser) {
+  'Should upgrade contract by providing proxy address in input field (MyTokenV1 to MyTokenV2) #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('[data-id="deployAndRunClearInstances"]')
       .click('[data-id="deployAndRunClearInstances"]')
@@ -196,7 +224,7 @@ module.exports = {
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
   },
 
-  'Should interact with upgraded contract through provided proxy address': function (browser: NightwatchBrowser) {
+  'Should interact with upgraded contract through provided proxy address #group1': function (browser: NightwatchBrowser) {
     browser
       .clickInstance(1)
       .perform((done) => {
@@ -207,6 +235,7 @@ module.exports = {
       .end()
   }
 }
+
 
 const sources = [
   {
