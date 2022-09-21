@@ -36,7 +36,7 @@ function addFile(browser: NightwatchBrowser, name: string, content: NightwatchCo
       timeout: 2000
     }, (okVisible) => {
       // @ts-ignore
-      // status === -1 means the element is not visible, 0 means it is visible
+      // status === -1 means the element is not visible, 0 means it is visible.
       if (okVisible.status === 0) {
         browser.openFile(name)
           .perform(function () {
