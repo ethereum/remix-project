@@ -19,22 +19,20 @@ function checkDebug(browser: NightwatchBrowser, id: string, debugValue: Nightwat
   // id is soliditylocals or soliditystate
   let resultOfElement = null
   let isEqual = false
+  // waitUntil will run with intervals of 1000ms for 10 seconds until the condition is met
   browser.waitUntil(() => {
     browser.execute(function (id: string) {
       const elem = document.querySelector('#' + id + ' .dropdownrawcontent') as HTMLElement
       if (elem && elem.innerText) {
-        console.log(elem.innerText)
         return elem.innerText
       }
     }, [id], (result) => {
       if (result.value) {
-        console.log(JSON.parse(<string>result.value))
         try {
           resultOfElement = JSON.parse(<string>result.value)
           isEqual = deepequal(debugValue, resultOfElement)
         } catch (e) {
           browser.assert.fail('cant parse solidity state', e.message, '')
-          console.log(e)
         }
       }
     })
