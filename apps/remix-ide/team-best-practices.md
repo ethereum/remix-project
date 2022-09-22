@@ -17,7 +17,7 @@ Related links:
  - Remix beta live: https://remix-beta.ethereum.org
  - Remix-ide NPM module: https://www.npmjs.com/package/remix-ide
  - Remix-lib NPM module: https://www.npmjs.com/package/remix-lib
- - Remix-tests NPM module: https://www.npmjs.com/package/remix-test
+ - Remix-tests NPM module: https://www.npmjs.com/package/remix-tests
  - Remix-solidity NPM module: https://www.npmjs.com/package/remix-solidity
  - Remix-debug NPM module: https://www.npmjs.com/package/remix-debug
  - Remix documentation: http://remix-ide.readthedocs.io/en/latest/
