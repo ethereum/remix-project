@@ -11,13 +11,13 @@ console.log(prCount, 'Prs\n')
 data = prCount + ' Prs\n\n'
 for (let card of inDone) {
     if (card.node.content.url) {
-      console.log(card.node.content.title, `- ${card.node.content.url}\n`)
       data += ` - [${card.node.content.title}](${card.node.content.url}) (@${card.node.content.author.login})\n`
       data += `       participants: ${card.node.content.participants.edges.map((p) => { return `@(${p.node.login})` })}`
       data += '\n\n'
     }
 }
 
+console.log('change-log.txt updated')
 fs.writeFileSync('./change-log.txt', data)
 
 /*
