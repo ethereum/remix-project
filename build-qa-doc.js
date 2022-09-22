@@ -3,11 +3,13 @@ const fs = require('fs')
 let value = fs.readFileSync('./done.json')
 value = JSON.parse(value)
 const inDone = value.data.search.edges[0].node.project.columns.edges[0].node.cards.edges
-let data = 
+let data = ''
 console.log(inDone.length, 'issues/Prs\n')
 data = inDone.length + ' issues/Prs\n'
 for (let card of inDone) {
+  if (card.node.content.url && card.node.content.merged !== false) {
     data += `${card.node.content.title} - ${card.node.content.url}\n`
+  }
 }
 
 console.log('done.txt updated')
@@ -58,6 +60,7 @@ fs.writeFileSync('./done.txt', data)
                             id
                             number
                             title
+                            merged
                           }
                         }
                       }
