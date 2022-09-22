@@ -358,8 +358,8 @@ class Editor extends Plugin {
   /**
    * The position of the cursor
    */
-  getCursorPosition () {
-    return this.api.getCursorPosition()
+  getCursorPosition (offset = true) {
+    return this.api.getCursorPosition(offset)
   }
 
   /**
