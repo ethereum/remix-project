@@ -2,22 +2,20 @@
 # Team best practices
 
 This document aims to address contibutors best practices of the following repositories:
- - remix-ide https://github.com/ethereum/remix-ide
- - remix https://github.com/ethereum/remix
- - remixd https://github.com/ethereum/remixd
+ - Remix Project: https://github.com/ethereum/remix-project
+ - Remix Libraries: https://github.com/ethereum/remix-project/tree/master/libs
 
 This document is not in its final version, **a team meeting which aim to address new/old best practices, feedback, workflows, all kind of issues related to how the team work together occurs every 2 weeks.**
 This document link to other specialised best practices (like coding best practices).
 
 Related links:
- - Public WebSite: https://remix-project.org
+ - Public Website: https://remix-project.org
  - Awesome Remix: https://github.com/ethereum/awesome-remix
  - Remix basic FAQ: https://hackmd.io/KVooMJhWRImCGq6zkDgW9A
  - Remix live: https://remix.ethereum.org
  - Remix alpha live: https://remix-alpha.ethereum.org
  - Remix beta live: https://remix-beta.ethereum.org
  - Remix-lib NPM module: https://www.npmjs.com/package/@remix-project/remix-lib
- - Remix-tests NPM module: https://www.npmjs.com/package/@remix-project/remix-test
  - Remix-solidity NPM module: https://www.npmjs.com/package/@remix-project/remix-solidity
  - Remix-debug NPM module: https://www.npmjs.com/package/@remix-project/remix-debug
  - Remix-tests NPM module: https://www.npmjs.com/package/@remix-project/remix-tests
