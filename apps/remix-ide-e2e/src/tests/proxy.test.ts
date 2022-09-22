@@ -17,32 +17,35 @@ module.exports = {
 
   'Should show deploy proxy option for UUPS upgradeable contract #flaky #group1': function (browser: NightwatchBrowser) {
     browser
+      .captureBrowserConsoleLogs((event) => {
+        console.log(event);
+      })
       .addFile('myTokenV1.sol', sources[0]['myTokenV1.sol'])
       .clickLaunchIcon('solidity')
       //.pause(2000)
       // because the compilatiom imports are slow and sometimes stop loading (not sure why, it's bug) we need to recompile and check to see if the files are really in de FS
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
-/*       .isVisible({
-        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
-        timeout: 120000,
-        suppressNotFoundErrors: true
-      })
-      .clickLaunchIcon('solidity')
-      .click('[data-id="compilerContainerCompileBtn"]')
-      .clickLaunchIcon('filePanel')
-      .isVisible({
-        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
-        timeout: 120000,
-        suppressNotFoundErrors: true
-      })
-      .clickLaunchIcon('solidity')
-      .click('[data-id="compilerContainerCompileBtn"]')
-      .clickLaunchIcon('filePanel')
-      .waitForElementVisible({
-        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
-        timeout: 120000,
-      }) */
+      /*       .isVisible({
+              selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+              timeout: 120000,
+              suppressNotFoundErrors: true
+            })
+            .clickLaunchIcon('solidity')
+            .click('[data-id="compilerContainerCompileBtn"]')
+            .clickLaunchIcon('filePanel')
+            .isVisible({
+              selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+              timeout: 120000,
+              suppressNotFoundErrors: true
+            })
+            .clickLaunchIcon('solidity')
+            .click('[data-id="compilerContainerCompileBtn"]')
+            .clickLaunchIcon('filePanel')
+            .waitForElementVisible({
+              selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+              timeout: 120000,
+            }) */
       .clickLaunchIcon('solidity')
       .waitForElementPresent('select[id="compiledContracts"] option[value=MyToken]', 60000)
       .clickLaunchIcon('udapp')
