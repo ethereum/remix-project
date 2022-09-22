@@ -199,7 +199,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
         if (await testTabLogic.pathExists(testDirInput)) {
           setDisableCreateButton(true)
           setDisableGenerateButton(false)
-          
+
         } else {
           // Enable Create button
           setDisableCreateButton(false)
@@ -674,28 +674,44 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
               })
             }
             </datalist>
-            <input
-              list="utPathList"
-              className="inputFolder custom-select"
-              id="utPath"
-              data-id="uiPathInput"
-              name="utPath"
-              value={inputPathValue}
-              title="Press 'Enter' to change the path for test files."
-              style={{ backgroundImage: "var(--primary)" }}
-              onKeyDown={() => { if (inputPathValue === '/') setInputPathValue('')} }
-              onChange={handleTestDirInput}
-              onClick = {() => { if (inputPathValue === '/') setInputPathValue('')} }
-            />
-            <button
-              className="btn border ml-2"
-              data-id="testTabGenerateTestFolder"
-              title="Create a test folder"
-              disabled={disableCreateButton}
-              onClick={handleCreateFolder}
+            <OverlayTrigger
+              placement="top-end"
+              overlay={
+                <Tooltip className="text-nowrap" id="uiPathInputtooltip">
+                  <span>{"Press 'Enter' to change the path for test files."}</span>
+                </Tooltip>
+              }
             >
-              Create
-            </button>
+              <input
+                list="utPathList"
+                className="inputFolder custom-select"
+                id="utPath"
+                data-id="uiPathInput"
+                name="utPath"
+                value={inputPathValue}
+                style={{ backgroundImage: "var(--primary)" }}
+                onKeyDown={() => { if (inputPathValue === '/') setInputPathValue('')} }
+                onChange={handleTestDirInput}
+                onClick = {() => { if (inputPathValue === '/') setInputPathValue('')} }
+              />
+            </OverlayTrigger>
+            <OverlayTrigger
+              placement="top-end"
+              overlay={
+                <Tooltip className="text-nowrap" id="uiPathInputButtontooltip">
+                  <span>Create a test folder</span>
+                </Tooltip>
+              }
+            >
+              <button
+                className="btn border ml-2"
+                data-id="testTabGenerateTestFolder"
+                disabled={disableCreateButton}
+                onClick={handleCreateFolder}
+              >
+                Create
+              </button>
+            </OverlayTrigger>
           </div>
         </div>
       </div>
