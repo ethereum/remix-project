@@ -164,6 +164,8 @@ module.exports = {
   },
   'Should print hardhat logs #group4': function (browser: NightwatchBrowser) {
     browser
+      .addFile('printHardhatlog.sol',  { content: hardhatLog })
+      .clickLaunchIcon('solidity')
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]')

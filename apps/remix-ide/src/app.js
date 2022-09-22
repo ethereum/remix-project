@@ -33,6 +33,7 @@ import { ExternalHttpProvider } from './app/tabs/external-http-provider'
 import { Injected0ptimismProvider } from './app/tabs/injected-optimism-provider'
 import { InjectedArbitrumOneProvider } from './app/tabs/injected-arbitrum-one-provider'
 import { FileDecorator } from './app/plugins/file-decorator'
+import { CodeFormat } from './app/plugins/code-format'
 
 const isElectron = require('is-electron')
 
@@ -63,7 +64,7 @@ const Terminal = require('./app/panels/terminal')
 const { TabProxy } = require('./app/panels/tab-proxy.js')
 
 class AppComponent {
-  constructor () {
+  constructor() {
     this.appManager = new RemixAppManager({})
     this.queryParams = new QueryParams()
     this._components = {}
@@ -100,7 +101,7 @@ class AppComponent {
     })
   }
 
-  async run () {
+  async run() {
     // APP_MANAGER
     const appManager = this.appManager
     const pluginLoader = this.appManager.pluginLoader
@@ -161,6 +162,9 @@ class AppComponent {
     // ------- FILE DECORATOR PLUGIN ------------------
     const fileDecorator = new FileDecorator()
 
+    // ------- CODE FORMAT PLUGIN ------------------
+    const codeFormat = new CodeFormat()
+
     //----- search
     const search = new SearchPlugin()
 
@@ -213,7 +217,7 @@ class AppComponent {
         }
       }
     )
-    
+
     const codeParser = new CodeParser(new AstWalker())
 
 
@@ -221,7 +225,7 @@ class AppComponent {
 
     const configPlugin = new ConfigPlugin()
     this.layout = new Layout()
-    
+
     const permissionHandler = new PermissionHandlerPlugin()
 
     this.engine.register([
@@ -241,6 +245,7 @@ class AppComponent {
       offsetToLineColumnConverter,
       codeParser,
       fileDecorator,
+      codeFormat,
       terminal,
       web3Provider,
       compileAndRun,
@@ -334,6 +339,7 @@ class AppComponent {
       filePanel.remixdHandle,
       filePanel.gitHandle,
       filePanel.hardhatHandle,
+      filePanel.foundryHandle,
       filePanel.truffleHandle,
       filePanel.slitherHandle,
       linkLibraries,
@@ -350,10 +356,10 @@ class AppComponent {
     }
   }
 
-  async activate () {
+  async activate() {
     const queryParams = new QueryParams()
     const params = queryParams.get()
-    
+
     try {
       this.engine.register(await this.appManager.registeredPlugins())
     } catch (e) {
@@ -367,14 +373,18 @@ class AppComponent {
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await this.appManager.activatePlugin(['home'])
     await this.appManager.activatePlugin(['settings', 'config'])
-    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'codeParser', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
+    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'codeParser', 'codeFormatter', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
-    await this.appManager.activatePlugin(['walkthrough','storage', 'search','compileAndRun', 'recorder'])
+    await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
 
     this.appManager.on(
       'filePanel',
       'workspaceInitializationCompleted',
       async () => {
+        // for e2e tests
+        const loadedElement = document.createElement('span')
+        loadedElement.setAttribute('data-id', 'workspaceloaded')
+        document.body.appendChild(loadedElement)
         await this.appManager.registerContextMenuItems()
       }
     )
@@ -411,7 +421,7 @@ class AppComponent {
               if (callDetails.length > 1) {
                 this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`)
                 // @todo(remove the timeout when activatePlugin is on 0.3.0)
-                this.appManager.call(...callDetails).catch(console.error)
+                await this.appManager.call(...callDetails).catch(console.error)
               }
             }
 
@@ -437,9 +447,15 @@ class AppComponent {
                 }
               }
             }
+
+
           })
           .catch(console.error)
       }
+      const loadedElement = document.createElement('span')
+      loadedElement.setAttribute('data-id', 'apploaded')
+      document.body.appendChild(loadedElement)
+
     })
     // activate solidity plugin
     this.appManager.activatePlugin(['solidity', 'udapp', 'deploy-libraries', 'link-libraries', 'openzeppelin-proxy'])

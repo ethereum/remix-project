@@ -1,8 +1,8 @@
 
 import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators'
 import { Plugin } from '@remixproject/engine'
-
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
+import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import './remix-ui-tabs.css'
 
@@ -17,26 +17,25 @@ export interface TabsUIProps {
   onReady: (api: any) => void
   themeQuality: string
 }
-
 export interface TabsUIApi {
-  activateTab: (namee: string) => void
+  activateTab: (name: string) => void
   active: () => string
 }
-
 interface ITabsState {
   selectedIndex: number,
   fileDecorations: fileDecoration[],
+  currentExt: string
 }
-
 interface ITabsAction {
   type: string,
   payload: any,
+  ext?: string,
 }
-
 
 const initialTabsState: ITabsState = {
   selectedIndex: -1,
   fileDecorations: [],
+  currentExt: ''
 }
 
 const tabsReducer = (state: ITabsState, action: ITabsAction) => {
@@ -44,6 +43,7 @@ const tabsReducer = (state: ITabsState, action: ITabsAction) => {
     case 'SELECT_INDEX':
       return {
         ...state,
+        currentExt: action.ext,
         selectedIndex: action.payload,
       }
     case 'SET_FILE_DECORATIONS':
@@ -71,8 +71,6 @@ export const TabsUI = (props: TabsUIProps) => {
     }
   }, [tabsState.selectedIndex])
 
-
-
   const getFileDecorationClasses = (tab: any) => {
     const fileDecoration = tabsState.fileDecorations.find((fileDecoration: fileDecoration) => {
       if(`${fileDecoration.workspace.name}/${fileDecoration.path}` === tab.name) return true
@@ -84,8 +82,7 @@ export const TabsUI = (props: TabsUIProps) => {
     return <FileDecorationIcons file={{path: tab.name}} fileDecorations={tabsState.fileDecorations} />
   }
 
-
-  const renderTab = (tab, index) => {
+   const renderTab = (tab, index) => {
     const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
     const classNameTab = 'nav-item nav-link d-flex justify-content-center align-items-center px-2 py-1 tab' + (index === currentIndexRef.current ? ' active' : '')
     const invert = props.themeQuality === 'dark' ? 'invert(1)' : 'invert(0)'
@@ -106,10 +103,11 @@ export const TabsUI = (props: TabsUIProps) => {
     if (currentIndexRef.current < 0) return ''
     return tabs.current[currentIndexRef.current].name
   }
+
   const activateTab = (name: string) => {
     const index = tabs.current.findIndex((tab) => tab.name === name)
     currentIndexRef.current = index
-    dispatch({ type: 'SELECT_INDEX', payload: index })
+    dispatch({ type: 'SELECT_INDEX', payload: index, ext: getExt(name)})
   }
 
   const setFileDecorations = (fileStates: fileDecoration[]) => {
@@ -135,10 +133,41 @@ export const TabsUI = (props: TabsUIProps) => {
     return () => { tabsElement.current.removeEventListener('wheel', transformScroll) }
   }, [])
 
+  const getExt = (path) => {
+    const root = path.split('#')[0].split('?')[0]
+    const ext = root.indexOf('.') !== -1 ? /[^.]+$/.exec(root) : null
+    if (ext) return ext[0].toLowerCase()
+    else return ''
+  }
+
   return (
     <div className="remix-ui-tabs d-flex justify-content-between border-0 header nav-tabs" data-id="tabs-component">
       <div className="d-flex flex-row" style={{ maxWidth: 'fit-content', width: '97%' }}>
-        <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-2">
+        <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-1">
+          <button
+            className="btn text-success py-0"
+            disabled={!(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' || tabsState.currentExt === 'sol')}
+            onClick={async () => {
+              const path = active().substr(active().indexOf('/') + 1, active().length)
+              const content = await props.plugin.call('fileManager', "readFile", path)
+              if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
+                await props.plugin.call('scriptRunner', 'execute', content)
+              } else if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul') {
+                await props.plugin.call('solidity', 'compile', path)
+              }
+            }}
+          >
+            <OverlayTrigger placement="bottom" overlay={
+              <Tooltip id="overlay-tooltip-run-script">
+                <span>
+                  {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') ? "Run script (CTRL + SHIFT + S)" :
+                    tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul'? "Compile CTRL + S" : "Select .sol or .yul file to compile or a .ts or .js file and run it"}
+                </span>
+              </Tooltip>
+            }>
+              <i className="fad fa-play"></i>
+            </OverlayTrigger>
+          </button>
           <span data-id="tabProxyZoomOut" className="btn btn-sm px-2 fas fa-search-minus text-dark" title="Zoom out" onClick={() => props.onZoomOut()}></span>
           <span data-id="tabProxyZoomIn" className="btn btn-sm px-2 fas fa-search-plus text-dark" title="Zoom in" onClick={() => props.onZoomIn()}></span>
         </div>
@@ -153,11 +182,11 @@ export const TabsUI = (props: TabsUIProps) => {
           onSelect={(index) => {
             props.onSelect(index)
             currentIndexRef.current = index
-            dispatch({ type: 'SELECT_INDEX', payload: index })
+            dispatch({ type: 'SELECT_INDEX', payload: index, ext: getExt(props.tabs[currentIndexRef.current].name)})
           }}
         >
           <TabList className="d-flex flex-row align-items-center">
-            {props.tabs.map((tab, i) => <Tab className="py-1" key={tab.name}>{renderTab(tab, i)}</Tab>)}
+            {props.tabs.map((tab, i) => <Tab className="" key={tab.name}>{renderTab(tab, i)}</Tab>)}
           </TabList>
           {props.tabs.map((tab) => <TabPanel key={tab.name} ></TabPanel>)}
         </Tabs>
