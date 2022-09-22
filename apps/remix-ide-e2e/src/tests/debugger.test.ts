@@ -20,7 +20,7 @@ module.exports = {
       .pause(4000)
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-title="Deploy - transact (not payable)"]', 60000)
-      .click('*[title="Deploy - transact (not payable)"]')
+      .click('*[data-title="Deploy - transact (not payable)"]')
       .debugTransaction(0)
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
       .clearConsole()
