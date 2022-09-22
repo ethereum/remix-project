@@ -2,9 +2,8 @@
 # Team best practices
 
 This document aims to address contibutors best practices of the following repositories:
- - remix-ide https://github.com/ethereum/remix-ide
- - remix https://github.com/ethereum/remix
- - remixd https://github.com/ethereum/remixd
+ - remix-ide https://github.com/ethereum/remix-project
+ - remix-plugin https://github.com/ethereum/remix-plugin
 
 This document is not in its final version, **a team meeting which aim to address new/old best practices, feedback, workflows, all kind of issues related to how the team work together occurs every 2 weeks.**
 This document link to other specialised best practices (like coding best practices).
@@ -15,11 +14,10 @@ Related links:
  - Remix live: https://remix.ethereum.org
  - Remix alpha live: https://remix-alpha.ethereum.org
  - Remix beta live: https://remix-beta.ethereum.org
- - Remix-ide NPM module: https://www.npmjs.com/package/remix-ide
- - Remix-lib NPM module: https://www.npmjs.com/package/remix-lib
- - Remix-tests NPM module: https://www.npmjs.com/package/remix-tests
- - Remix-solidity NPM module: https://www.npmjs.com/package/remix-solidity
- - Remix-debug NPM module: https://www.npmjs.com/package/remix-debug
+ - Remix-lib NPM module: https://www.npmjs.com/package/@remix-project/remix-lib
+ - Remix-tests NPM module: https://www.npmjs.com/package/@remix-project/remix-tests
+ - Remix-solidity NPM module: https://www.npmjs.com/package/@remix-project/remix-solidity
+ - Remix-debug NPM module: https://www.npmjs.com/package/@remix-project/remix-debug
  - Remix documentation: http://remix-ide.readthedocs.io/en/latest/
  - General gitter channel: https://gitter.im/ethereum/remix
  - Dev gitter channel: https://gitter.im/ethereum/remix-dev
