@@ -77,7 +77,7 @@ export default class CodeParserAntlrService {
                 const average = values.reduce((a, b) => a + b, 0) / values.length
                 if (average > this.parserTreshHold) {
                     this.cache[file].parsingEnabled = false
-                    this.plugin.call('notification', 'toast','Some autocomplete features will be disabled temporarily because the file takes too long to process.')
+                    this.plugin.call('notification', 'toast','Some autocomplete features will be temporarily disabled because the file takes too long to process.')
                 } else {
                     this.cache[file].parsingEnabled = true
                 }
