@@ -717,21 +717,32 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
       </div>
       <div>
         <div className="d-flex p-2">
-          <button
-            className="btn border w-50"
-            data-id="testTabGenerateTestFile"
-            title="Generate a sample test file"
-            disabled={disableGenerateButton}
-            onClick={async () => {
-              await testTabLogic.generateTestFile((err:any) => { if (err) setToasterMsg(err)}) // eslint-disable-line @typescript-eslint/no-explicit-any
-              await updateForNewCurrent()
-            }}
-          >
-            Generate
-          </button>
-          <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" title="Check out documentation." target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
+          <OverlayTrigger overlay={
+            <Tooltip id="generateTestsButtontooltip" className="text-nowrap">
+              <span>Generate a sample test file</span>
+            </Tooltip>
+          } placement={'bottom-start'}>
+            <button
+              className="btn border w-50"
+              data-id="testTabGenerateTestFile"
+              disabled={disableGenerateButton}
+              onClick={async () => {
+                await testTabLogic.generateTestFile((err:any) => { if (err) setToasterMsg(err)}) // eslint-disable-line @typescript-eslint/no-explicit-any
+                await updateForNewCurrent()
+              }}
+            >
+              Generate
+            </button>
+          </OverlayTrigger>
+          <OverlayTrigger overlay={
+            <Tooltip id="generateTestsLinktooltip" className="text-nowrap">
+              <span>Check out documentation.</span>
+            </Tooltip>
+          } placement={'bottom-start'}>
+          <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
             <label className="btn p-1 ml-2 m-0">How to use...</label>
           </a>
+        </OverlayTrigger>
         </div>
         <div className="d-flex p-2">
           <OverlayTrigger placement={'top-start'} overlay={
