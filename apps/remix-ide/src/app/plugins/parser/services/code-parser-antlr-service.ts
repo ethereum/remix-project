@@ -69,7 +69,6 @@ export default class CodeParserAntlrService {
     }
 
     setFileParsingState(file: string) {
-
         if (this.cache[file]) {
             if (this.cache[file].blockDurations && this.cache[file].blockDurations.length > 3) {
                 // calculate average of durations to determine if the parsing should be disabled
@@ -131,7 +130,8 @@ export default class CodeParserAntlrService {
                     this.cache[this.plugin.currentFile] = {
                         text: '',
                         ast: null,
-                        parsingEnabled: true
+                        parsingEnabled: true,
+                        blockDurations: []
                     }
                 }
                 if (this.cache[this.plugin.currentFile] && this.cache[this.plugin.currentFile].text !== fileContent) {
@@ -248,7 +248,10 @@ export default class CodeParserAntlrService {
             try {
                 const startTime = Date.now()
                 const blocks = (SolidityParser as any).parseBlock(fileContent, { loc: true, range: true, tolerant: true })
-                this.setFileParsingState(this.plugin.currentFile, Date.now() - startTime)
+                if(this.cache[this.plugin.currentFile] && this.cache[this.plugin.currentFile].blockDurations){
+                    this.cache[this.plugin.currentFile].blockDurations = [...this.cache[this.plugin.currentFile].blockDurations.slice(-3), Date.now() - startTime]
+                    this.setFileParsingState(this.plugin.currentFile)
+                }
                 if (blocks) this.cache[this.plugin.currentFile].blocks = blocks
                 return blocks
             } catch (e) {
