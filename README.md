@@ -22,7 +22,7 @@
 **Remix Project** is a rich toolset including Remix IDE, a comprehensive smart contract development tool. The Remix Project also includes Remix Plugin Engine and Remix Libraries which are low-level tools for wider use.  
 
 ## Remix IDE
-**Remix IDE** is used for the entire journey of contract development by users of any knowledge level. It fosters a fast development cycle and has a rich set of plugins with intuitive GUIs.  The IDE comes in 2 flavors and a VSCode extension:
+**Remix IDE** is used for the entire journey of contract development by users of any knowledge level. It fosters a fast development cycle and has a rich set of plugins with intuitive GUIs. The IDE comes in 2 flavors and a VSCode extension:
 
 **Remix Online IDE**, see: [https://remix.ethereum.org](https://remix.ethereum.org)
 
@@ -58,7 +58,7 @@ Note: It contains the latest supported version of Solidity available at the time
 ```bash
 yarn global add nx
 ```
-* Clone the github repository (`wget` need to be installed first):
+* Clone the GitHub repository (`wget` need to be installed first):
 
 ```bash
 git clone https://github.com/ethereum/remix-project.git
@@ -74,7 +74,7 @@ nx serve
 
 Open `http://127.0.0.1:8080` in your browser to load Remix IDE locally.
 
-Go to your `text editor` and start developing. Browser will automatically refresh when files are saved.
+Go to your `text editor` and start developing. The browser will automatically refresh when files are saved.
 
 ## Production Build
 To generate react production builds for remix-project.
@@ -96,14 +96,14 @@ Prerequisites:
 
 ### Run with docker
 
-If you want to run latest changes that are merged into master branch then run:
+If you want to run the latest changes that are merged into the master branch then run:
 
 ```
 docker pull remixproject/remix-ide:latest
 docker run -p 8080:80 remixproject/remix-ide:latest
 ```
 
-If you want to run latest remix-live release run.
+If you want to run the latest remix-live release run.
 ```
 docker pull remixproject/remix-ide:remix_live
 docker run -p 8080:80 remixproject/remix-ide:remix_live
@@ -120,14 +120,14 @@ docker-compose up -d
 
 Then go to http://localhost:8080 and you can use you Remix instance.
 
-To fetch docker-compose file without cloning this repo run:
+To fetch the docker-compose file without cloning this repo run:
 ```
 curl https://raw.githubusercontent.com/ethereum/remix-project/master/docker-compose.yaml > docker-compose.yaml
 ```
 
 ### Troubleshooting
 
-If you have trouble building the project, make sure that you have the correct version of `node`, `npm` and `nvm`. Also ensure [Nx CLI](https://nx.dev/using-nx/nx-cli) is installed globally.
+If you have trouble building the project, make sure that you have the correct version of `node`, `npm` and `nvm`. Also, ensure [Nx CLI](https://nx.dev/using-nx/nx-cli) is installed globally.
 
 Run:
 
@@ -137,7 +137,7 @@ npm --version
 nvm --version
 ```
 
-In Debian based OS such as Ubuntu 14.04LTS you may need to run `apt-get install build-essential`. After installing `build-essential`, run `npm rebuild`.
+In Debian-based OS such as Ubuntu 14.04LTS, you may need to run `apt-get install build-essential`. After installing `build-essential`, run `npm rebuild`.
 
 ## Unit Testing
 
@@ -149,7 +149,7 @@ For example, to run unit tests of `remix-analyzer`, use `nx test remix-analyzer`
 
 To run the Selenium tests via Nightwatch:
 
- - Install Selenium for first time: `yarn run selenium-install`
+ - Install Selenium for the first time: `yarn run selenium-install`
  - Run a selenium server: `yarn run selenium`
  - Build & Serve Remix: `nx serve`
  - Run all the end-to-end tests:
@@ -165,11 +165,11 @@ To run the Selenium tests via Nightwatch:
         
 **NOTE:**
 
-- **The `ballot` tests suite** requires to run `ganache-cli` locally.
+- **The `ballot` tests suite** requires running `ganache-cli` locally.
 
-- **The `remixd` tests suite** requires to run `remixd` locally.
+- **The `remixd` tests suite** requires running `remixd` locally.
 
-- **The `gist` tests suite** requires specifying a github access token in **.env file**. 
+- **The `gist` tests suite** requires specifying a GitHub access token in **.env file**. 
 ```
     gist_token = <token> // token should have permission to create a gist
 ```
@@ -194,9 +194,9 @@ You need to have
 
 Groups can be used to group tests in a test file together. The advantage is you can avoid running long test files when you want to focus on a specific set of tests within a test file.x
 
-These groups only apply to the test file, not across all test files. So for example group1 in the ballot is not related to group1 in another test file.
+These groups only apply to the test file, not across all test files. So for example group1 in the ballot is not related to a group1 in another test file.
 
-Running a group only runs the tests marked as belonging to the group + all the tests in the test file that do not have a group tag. This way you can have tests that run for all groups, for example to peform common actions.
+Running a group only runs the tests marked as belonging to the group + all the tests in the test file that do not have a group tag. This way you can have tests that run for all groups, for example, to perform common actions.
 
 There is no need to number the groups in a certain order. The number of the group is arbitrary.
 
@@ -206,7 +206,7 @@ You should write your tests so they can be executed in groups and not depend on 
 
 To do this you need to:
 
-- Add a group to tag to a test, they are formatted as #group followed by a number: so it becomes #group1, #group220, #group4. Any number will do. You don't have to do it in specific order. 
+- Add a group to tag to a test, they are formatted as #group followed by a number: so it becomes #group1, #group220, #group4. Any number will do. You don't have to do it in a specific order. 
 
 ```
   'Should generate test file #group1': function (browser: NightwatchBrowser) {
@@ -222,7 +222,7 @@ module.exports = {
     init(browser, done) // , 'http://localhost:8080', false)
   },
 ```
-- change package json to locally run all group tests:
+- change package JSON to locally run all group tests:
 
 ```
     "nightwatch_local_debugger": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/debugger_*.spec.js --env=chrome",
@@ -236,14 +236,14 @@ yarn run build:e2e
 
 ### Locally testing group tests
 
-You can tag any test with a groupname, for example, #group10 and easily run the test locally.
+You can tag any test with a group name, for example, #group10 and easily run the test locally.
 
 - make sure you have nx installed globally
 - group tests are run like any other test, just specify the correct group number
 
 #### method 1
 
-This script will give you an option menu, just select the test you want
+This script will give you an options menu, just select the test you want
 ```
 yarn run select_test
 ```
@@ -256,7 +256,7 @@ yarn run group_test --test=debugger --group=10 --env=chromeDesktop
 
 ### Run the same (flaky) test across all instances in CircleCI
 
-In CircleCI all tests are divided across instances to run in paralel. 
+In CircleCI all tests are divided across instances to run in parallel. 
 You can also run 1 or more tests simultaneously across all instances.
 This way the pipeline can easily be restarted to check if a test is flaky.
 
@@ -266,7 +266,7 @@ For example:
   'Static Analysis run with remixd #group3 #flaky': function (browser) {
 ```
 
-Now group3 of this test will be executed in firefox and chrome 80 times.
+Now, the group3 of this test will be executed in firefox and chrome 80 times.
 If you mark more groups in other tests they will also be executed. 
 
 **CONFIGURATION**
