@@ -30,9 +30,9 @@ export default class CodeParserAntlrService {
             text: string,
             ast: antlr.ParseResult | null,
             duration?: number,
-            blockDuration?: number,
             parsingEnabled?: boolean,
-            blocks?: BlockDefinition[]
+            blocks?: BlockDefinition[],
+            blockDurations?: number[]
         }
     } = {};
     constructor(plugin: CodeParser) {
@@ -52,15 +52,15 @@ export default class CodeParserAntlrService {
             switch (ev.data.cmd) {
                 case 'parsed':
                     if (ev.data.ast && self.parserStartTime === ev.data.timestamp) {
-                        self.setFileParsingState(ev.data.file, ev.data.blockDuration)
                         self.cache[ev.data.file] = {
                             ...self.cache[ev.data.file],
                             text: ev.data.text,
                             ast: ev.data.ast,
                             duration: ev.data.duration,
-                            blockDuration: ev.data.blockDuration,
                             blocks: ev.data.blocks,
+                            blockDurations: self.cache[ev.data.file].blockDurations? [...self.cache[ev.data.file].blockDurations.slice(-3), ev.data.blockDuration]: [ev.data.blockDuration]
                         }
+                        self.setFileParsingState(ev.data.file)
                     }
                     break;
             }
@@ -68,16 +68,20 @@ export default class CodeParserAntlrService {
         });
     }
 
-    setFileParsingState(file: string, duration: number) {
+    setFileParsingState(file: string) {
 
         if (this.cache[file]) {
-            if (this.cache[file].blockDuration) {
-                if (this.cache[file].blockDuration > this.parserTreshHold && duration > this.parserTreshHold) {
+            if (this.cache[file].blockDurations && this.cache[file].blockDurations.length > 3) {
+                // calculate average of durations to determine if the parsing should be disabled
+                const values = [...this.cache[file].blockDurations]
+                const average = values.reduce((a, b) => a + b, 0) / values.length
+                if (average > this.parserTreshHold) {
                     this.cache[file].parsingEnabled = false
-                    this.plugin.call('notification', 'toast', `This file is big so some autocomplete features will be disabled.`)
+                    this.plugin.call('notification', 'toast','Some autocomplete features will be disabled temporarily because the file takes too long to process.')
                 } else {
                     this.cache[file].parsingEnabled = true
                 }
+                
             }
         }
     }
