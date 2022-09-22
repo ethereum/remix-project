@@ -7,10 +7,10 @@ let data =
 console.log(inDone.length, 'issues/Prs\n')
 data = inDone.length + ' issues/Prs\n'
 for (let card of inDone) {
-    console.log(card.node.content.title, `- ${card.node.content.url}\n`)
     data += `${card.node.content.title} - ${card.node.content.url}\n`
 }
 
+console.log('done.txt updated')
 fs.writeFileSync('./done.txt', data)
 
 /*
