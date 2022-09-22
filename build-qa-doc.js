@@ -12,8 +12,8 @@ for (let card of inDone) {
   }
 }
 
-console.log('done.txt updated')
 fs.writeFileSync('./done.txt', data)
+console.log('done.txt updated')
 
 /*
  - go to https://docs.github.com/en/graphql/overview/explorer
