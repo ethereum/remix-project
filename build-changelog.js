@@ -27,6 +27,7 @@ fs.writeFileSync('./change-log.txt', data)
  - save the JSON content as done.json
  - run this script
  - get the result in the file done.txt
+*/
 /*
 
 {
@@ -55,9 +56,25 @@ fs.writeFileSync('./change-log.txt', data)
                         state
                         content {
                           ... on PullRequest {
-                            participants
-                            author
-                            assignees
+                            participants (last: 100) {
+                              edges {
+                                node {
+                                  id
+                                  login
+                                }
+                              }
+                            }
+                            author {
+                              login
+                            }
+                            assignees (last: 100) {
+                              edges {
+                                node {
+                                  id
+                                  login
+                                }
+                              }
+                            }
                             url
                             id
                             number
@@ -76,4 +93,5 @@ fs.writeFileSync('./change-log.txt', data)
     }
   }
 }
+
 */
