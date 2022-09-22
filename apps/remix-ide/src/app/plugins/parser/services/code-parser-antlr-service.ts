@@ -69,13 +69,13 @@ export default class CodeParserAntlrService {
     }
 
     setFileParsingState(file: string, duration: number) {
-        
+
         if (this.cache[file]) {
             if (this.cache[file].blockDuration) {
-                if(this.cache[file].blockDuration > this.parserTreshHold && duration > this.parserTreshHold) {
+                if (this.cache[file].blockDuration > this.parserTreshHold && duration > this.parserTreshHold) {
                     this.cache[file].parsingEnabled = false
                     this.plugin.call('notification', 'toast', `This file is big so some autocomplete features will be disabled.`)
-                } else{
+                } else {
                     this.cache[file].parsingEnabled = true
                 }
             }
@@ -122,7 +122,6 @@ export default class CodeParserAntlrService {
         try {
             this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
             if (this.plugin.currentFile && this.plugin.currentFile.endsWith('.sol')) {
-                if (!this.plugin.currentFile) return
                 const fileContent = text || await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile)
                 if (!this.cache[this.plugin.currentFile]) {
                     this.cache[this.plugin.currentFile] = {
@@ -137,8 +136,6 @@ export default class CodeParserAntlrService {
                     } catch (e) {
                         // do nothing
                     }
-                } else {
-                    // do nothing
                 }
             }
         } catch (e) {
@@ -243,13 +240,12 @@ export default class CodeParserAntlrService {
             }
         }
         if (this.plugin.currentFile && this.plugin.currentFile.endsWith('.sol')) {
-            if (!this.plugin.currentFile) return
             const fileContent = text || await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile)
             try {
                 const startTime = Date.now()
                 const blocks = (SolidityParser as any).parseBlock(fileContent, { loc: true, range: true, tolerant: true })
                 this.setFileParsingState(this.plugin.currentFile, Date.now() - startTime)
-                if(blocks) this.cache[this.plugin.currentFile].blocks = blocks
+                if (blocks) this.cache[this.plugin.currentFile].blocks = blocks
                 return blocks
             } catch (e) {
                 // do nothing
