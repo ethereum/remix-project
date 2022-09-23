@@ -784,7 +784,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
           const elemId = `singleTest${testFileObj.fileName}`
           return (
             <div className="d-flex align-items-center py-1" key={index}>
-              <input className="singleTest" id={elemId} onChange={(e) => toggleCheckbox(e.target.checked, index)} type="checkbox" checked={testFileObj.checked} />
+              <input data-id="singleTest" className="singleTest" id={elemId} onChange={(e) => toggleCheckbox(e.target.checked, index)} type="checkbox" checked={testFileObj.checked} />
               <label className="singleTestLabel text-nowrap pl-2 mb-0" htmlFor={elemId}>{testFileObj.fileName}</label>
             </div>
           )
