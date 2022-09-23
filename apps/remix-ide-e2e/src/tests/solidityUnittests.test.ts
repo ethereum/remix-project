@@ -152,7 +152,7 @@ module.exports = {
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('myTests/simple_storage_test.sol', sources[0]['tests/simple_storage_test.sol'])
       .clickLaunchIcon('solidityUnitTesting')
-      // .clearValue('*[data-id="uiPathInput"]')
+      .clearValue('*[data-id="uiPathInput"]')
       // .setValue('*[data-id="uiPathInput"]', 'myTests')
       .updateValue('*[data-id="uiPathInput"]','myTests')
       .click('*[data-id="testTabGenerateTestFolder"]')
