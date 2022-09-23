@@ -131,9 +131,12 @@ export class RemixURLResolver {
     // eslint-disable-next-line no-useless-catch
     try {
       const req = 'https://unpkg.com/' + url
+      console.log('fetch npm ...', url)
       const response: AxiosResponse = await axios.get(req, { transformResponse: [] })
+      console.log('fetch npm ok', response.data)
       return { content: response.data, cleanUrl: url }
     } catch (e) {
+      console.log('fetch npm throw', e)
       throw e
     }
   }

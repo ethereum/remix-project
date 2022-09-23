@@ -82,7 +82,7 @@ function analyseCallGraphInternal (callGraph: Record<string, ContractCallGraph>,
 }
 
 export function resolveCallGraphSymbol (callGraph: Record<string, ContractCallGraph>, funcName: string): FunctionCallGraph | undefined {
-  return resolveCallGraphSymbolInternal(callGraph, funcName, false)
+  return resolveCallGraphSymbolInternal(callGraph, funcName, true)
 }
 
 function resolveCallGraphSymbolInternal (callGraph: Record<string, ContractCallGraph>, funcName: string, silent: boolean): FunctionCallGraph | undefined {

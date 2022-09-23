@@ -109,7 +109,7 @@ export default class CodeParserCompiler {
             this.plugin.emit('astFinished')
         }
 
-        this.compiler = new Compiler((url, cb) => this.plugin.call('contentImport', 'resolveAndSave', url, undefined).then((result) => cb(null, result)).catch((error) => cb(error.message)))
+        this.compiler = new Compiler((url, cb) => this.plugin.call('contentImport', 'resolveAndSave', url, undefined).then((result) => cb(null, result)).catch((error) => cb(error.message || error)))
         this.compiler.event.register('compilationFinished', this.onAstFinished)
     }
 

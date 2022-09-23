@@ -44,11 +44,13 @@ export default function (self) { // eslint-disable-line @typescript-eslint/expli
         if (data.input && compileJSON) {
           console.log('compiling')
           console.log(data)
+          const result = compileJSON(data.input)
+          console.log('result', result)
           self.postMessage({
             cmd: 'compiled',
             job: data.job,
             timestamp: data.timestamp,
-            data: compileJSON(data.input),
+            data: result,
             input: data.input,
             missingInputs: missingInputs
           })

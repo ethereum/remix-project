@@ -658,10 +658,14 @@ class FileManager extends Plugin {
   */
 
   async getProviderOf(file) {
+    console.log('start getProviderOf', file)
     const cancall = await this.askUserPermission('getProviderByName')
+    console.log('in getProviderOf', cancall, file)
     if (cancall) {
-      return file ? this.fileProviderOf(file) : this.currentFileProvider()
+      const ret = file ? this.fileProviderOf(file) : this.currentFileProvider()
+      return ret
     }
+    console.log('getProviderOf return undefined')
   }
 
   /**

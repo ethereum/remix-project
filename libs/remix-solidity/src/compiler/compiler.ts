@@ -161,6 +161,7 @@ export class Compiler {
       this.event.trigger('compilationFinished', [false, data, source, input, version])
     } else if (missingInputs !== undefined && missingInputs.length > 0 && source && source.sources) {
       // try compiling again with the new set of inputs
+      console.log('missing inputs', missingInputs)
       this.internalCompile(source.sources, missingInputs)
     } else {
       data = this.updateInterface(data)
@@ -290,6 +291,7 @@ export class Compiler {
             let result: CompilationResult
             if (data.data && data.job !== undefined && data.job >= 0) {
               try {
+                console.log('result addEventListener compiled', data.data)
                 result = JSON.parse(data.data)
               } catch (exception) {
                 result = { error: { formattedMessage: 'Invalid JSON output from the compiler: ' + exception } }
@@ -307,6 +309,7 @@ export class Compiler {
     })
 
     this.state.worker.addEventListener('error', (msg: Record<'data', MessageFromWorker>) => {
+      console.log('result addEventListener error', msg)
       const formattedMessage = `Worker error: ${msg.data && msg.data !== undefined ? msg.data : msg['message']}`
       this.onCompilationFinished({ error: { formattedMessage } })
     })
@@ -378,6 +381,7 @@ export class Compiler {
 
       if (this.handleImportCall) {
         this.handleImportCall(m, (err, content: string) => {
+          console.log('handleImportCall', m, err, content)
           if (err && cb) cb(err)
           else {
             files[m] = { content }

@@ -74,12 +74,14 @@ export class CompilerImports extends Plugin {
     if (force) delete this.previouslyHandled[url]
     const imported = this.previouslyHandled[url]
     if (imported) {
+      console.log('already imported', url)
       return cb(null, imported.content, imported.cleanUrl, imported.type, url)
     }
 
     let resolved
     try {
       await this.setToken()
+      console.log('resolving urlResolver.resolve', url, resolved)
       resolved = await this.urlResolver.resolve(url)
       const { content, cleanUrl, type } = resolved
       self.previouslyHandled[url] = {
@@ -87,14 +89,17 @@ export class CompilerImports extends Plugin {
         cleanUrl,
         type
       }
+      console.log('about to return resolved', content, cleanUrl, type, url)
       cb(null, content, cleanUrl, type, url)
     } catch (e) {
+      console.log('about to throw', url, e)
       return cb(new Error('not found ' + url))
     }
   }
 
   importExternal (url, targetPath) {
     return new Promise((resolve, reject) => {
+      console.log('start importExternal')
       this.import(url,
         // TODO: handle this event
         (loadingMsg) => { this.emit('message', loadingMsg) },
@@ -123,17 +128,22 @@ export class CompilerImports extends Plugin {
     * @returns {Promise} - string content
     */
   async resolveAndSave (url, targetPath) {
+    console.log('start resolveAndSave', url, targetPath, this.currentRequest)
     try {
       if (targetPath && this.currentRequest) {
+        console.log('targetPath, currentRequest')
         const canCall = await this.askUserPermission('resolveAndSave', 'This action will update the path ' + targetPath)
         if (!canCall) throw new Error('No permission to update ' + targetPath)
-      }      
+      }
+      console.log('getProvider', url)
       const provider = await this.call('fileManager', 'getProviderOf', url)
+      console.log('provider', provider, url)
       if (provider) {
         if (provider.type === 'localhost' && !provider.isConnected()) {
           throw new Error(`file provider ${provider.type} not available while trying to resolve ${url}`)
         }
         let exist = await provider.exists(url)
+        console.log('exists', url, exist)
         /*
           if the path is absolute and the file does not exist, we can stop here
           Doesn't make sense to try to resolve "localhost/node_modules/localhost/node_modules/<path>" and we'll end in an infinite loop.
@@ -156,6 +166,7 @@ export class CompilerImports extends Plugin {
           return content
         } else {
           const localhostProvider = await this.call('fileManager', 'getProviderByName', 'localhost')
+          console.log('localhostProvider', localhostProvider.isConnected())
           if (localhostProvider.isConnected()) {
             const splitted = /([^/]+)\/(.*)$/g.exec(url)
 
@@ -181,6 +192,7 @@ export class CompilerImports extends Plugin {
         }
       }
     } catch (e) {
+      console.log('throwing resolveAndSave', e)
       throw new Error(e)
     }
   }

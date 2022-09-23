@@ -23,7 +23,7 @@ export class CompileTabLogic {
 
   constructor (public api: ICompilerApi, public contentImport) {
     this.event = new EventEmitter()
-    this.compiler = new Compiler((url, cb) => api.resolveContentAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
+    this.compiler = new Compiler((url, cb) => api.resolveContentAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message || error)))
     this.evmVersions = ['default', 'berlin', 'london', 'istanbul', 'petersburg', 'constantinople', 'byzantium', 'spuriousDragon', 'tangerineWhistle', 'homestead']
   }
 
