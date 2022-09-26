@@ -63,6 +63,10 @@ function HomeTabTitle () {
             onClick={ ()=> openLink("https://twitter.com/EthereumRemix")}
             className="h-100 pl-2 btn fab fa-twitter">
           </button>
+          <button
+            onClick={ ()=> openLink(" https://www.linkedin.com/company/ethereum-remix/")}
+            className="h-100 pl-2 btn fab fa-linkedin-in">
+          </button>
         </span>
       </div>
       <b className="pb-1 text-dark" style={{fontStyle: 'italic'}}>The Native IDE for Solidity Development.</b>
