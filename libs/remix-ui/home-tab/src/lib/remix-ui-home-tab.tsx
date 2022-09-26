@@ -8,6 +8,9 @@ import BasicLogo from 'libs/remix-ui/vertical-icons-panel/src/lib/components/Bas
 import HomeTabTitle from './components/homeTabTitle'
 import HomeTabFile from './components/homeTabFile'
 import HomeTabLearn from './components/homeTabLearn'
+import HomeTabScamAlert from './components/homeTabScamAlert'
+import HomeTabGetStarted from './components/homeTabGetStarted'
+import HomeTabFeatured from './components/homeTabFeatured'
 
 declare global {
   interface Window {
@@ -65,7 +68,6 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
       document.body.removeChild(scriptTwitter)
     }
   }, [])
-
   
   const startSolidity = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'udapp', 'solidityStaticAnalysis', 'solidityUnitTesting'])
@@ -101,23 +103,19 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   
   return (
     <div className="d-flex flex-row w-100" id="remixUIHTAll">
-      <div className="justify-content-between d-flex border-right flex-column" id="remixUIHTLeft" style={{flex: 2}}>
+      <div className="px-2 justify-content-between d-flex border-right flex-column" id="remixUIHTLeft" style={{flex: 2}}>
         <HomeTabTitle />
         <HomeTabFile plugin={plugin} />
         <ThemeContext.Provider value={ state.themeQuality }>
-          <HomeTabLearn />
+          <HomeTabLearn plugin={plugin}/>
         </ThemeContext.Provider>
       </div>
-      <div className="justify-content-between d-flex" id="remixUIHTRight" style={{flex: 4}}>
+      <div className="px-2 justify-content-between d-flex flex-column" id="remixUIHTRight" style={{flex: 4}}>
         <div className="" id="hTFeaturedeSection">
-
         </div>
-        <div className="" id="hTScamAlertSection">
-
-        </div>
-        <div className="" id="hTGetStartedSection">
-
-        </div>
+        <HomeTabFeatured></HomeTabFeatured>
+        <HomeTabGetStarted></HomeTabGetStarted>
+        <HomeTabScamAlert></HomeTabScamAlert>
       </div>
     </div>
   )
@@ -134,22 +132,7 @@ export default RemixUiHomeTab
               <div className="mx-4 my-4 pt-4 d-flex">
                 <label style={ { fontSize: 'xxx-large' } }>Remix IDE</label>
               </div>
-              <div className="pt-4 align-self-end mb-2 d-flex flex-column">
-                <span className="pl-4 text-danger mt-2">
-                  <i className="pr-2 text-danger fas fa-exclamation-triangle"></i>
-                  <b>Scam Alerts:</b>
-                </span>
-                <span className="pl-4 text-danger mt-1">
-                  The only URL Remix uses is remix.ethereum.org 
-                </span>
-                <span className="pl-4 text-danger mt-1">        
-                  Beware of online videos promoting "liquidity front runner bots":  
-                  <a className="pl-2 remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">Learn more</a>
-                </span>
-                <span className="pl-4 text-danger mt-1">
-                  Additional safety tips: &nbsp;<a className="remixui_home_text" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/security.html">here</a>
-                </span>
-              </div>
+              
             </div>
             <div className="mr-4 d-flex">
               <img className="align-self-end remixui_home_logoImg" src="assets/img/guitarRemiCroped.webp" onClick={ () => playRemi() } alt=""></img>
