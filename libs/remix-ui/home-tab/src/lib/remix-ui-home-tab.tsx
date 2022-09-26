@@ -1,11 +1,14 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 
 import './remix-ui-home-tab.css'
-import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
-import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import PluginButton from './components/pluginButton' // eslint-disable-line
 import { ThemeContext, themes } from './themeContext'
 import { RSSFeed } from './components/rssFeed'
+import BasicLogo from 'libs/remix-ui/vertical-icons-panel/src/lib/components/BasicLogo'
+import HomeTabTitle from './components/homeTabTitle'
+import HomeTabFile from './components/homeTabFile'
+import HomeTabLearn from './components/homeTabLearn'
+
 declare global {
   interface Window {
     _paq: any
@@ -18,71 +21,17 @@ export interface RemixUiHomeTabProps {
   plugin: any
 }
 
-const loadingInitialState = {
-  tooltip: '',
-  showModalDialog: false,
-  importSource: ''
-}
-
-const loadingReducer = (state = loadingInitialState, action) => {
-  return { ...state, tooltip: action.tooltip, showModalDialog: false, importSource: '' }
-}
-
 export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   const { plugin } = props
-  const fileManager = plugin.fileManager
 
   const [state, setState] = useState<{
     themeQuality: { filter: string, name: string },
-    showMediaPanel: 'none' | 'twitter' | 'medium',
-    showModalDialog: boolean,
-    modalInfo: { title: string, loadItem: string, examples: Array<string> },
-    importSource: string,
-    toasterMsg: string
+    showMediaPanel: 'none' | 'twitter' | 'medium'
   }>({
     themeQuality: themes.light,
-    showMediaPanel: 'none',
-    showModalDialog: false,
-    modalInfo: { title: '', loadItem: '', examples: [] },
-    importSource: '',
-    toasterMsg: ''
+    showMediaPanel: 'none'
   })
 
-  const processLoading = () => {
-    const contentImport = plugin.contentImport
-    const workspace = fileManager.getProvider('workspace')
-    contentImport.import(
-      state.importSource,
-      (loadingMsg) => dispatch({ tooltip: loadingMsg }),
-      async (error, content, cleanUrl, type, url) => {
-        if (error) {
-          toast(error.message || error)
-        } else {
-          try {
-            if (await workspace.exists(type + '/' + cleanUrl)) toast('File already exists in workspace')
-            else {
-              workspace.addExternal(type + '/' + cleanUrl, content, url)
-              plugin.call('menuicons', 'select', 'filePanel')
-            }   
-          } catch (e) {
-            toast(e.message)
-          }
-        }
-      }
-    )
-    setState(prevState => {
-      return { ...prevState, showModalDialog: false, importSource: '' }
-    })
-  }
-
-  const [, dispatch] = useReducer(loadingReducer, loadingInitialState)
-
-  const playRemi = async () => {
-    remiAudioEl.current.play()
-  }
-
-  const remiAudioEl = useRef(null)
-  const inputValue = useRef(null)
   const rightPanel = useRef(null)
 
   useEffect(() => {
@@ -101,7 +50,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     window.addEventListener('click', (event) => {
       const target = event.target as Element
       const id = target.id
-      if (id !== 'remixIDEHomeTwitterbtn' && id !== 'remixIDEHomeMediumbtn' && !rightPanel.current.contains(event.target)) {
+      if (id !== 'remixIDEHomeTwitterbtn' && id !== 'remixIDEHomeMediumbtn' && (rightPanel && rightPanel.current && !rightPanel.current.contains(event.target))) {
         // todo check event.target
         setState(prevState => { return { ...prevState, showMediaPanel: 'none' } })
       }
@@ -111,33 +60,13 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     scriptTwitter.src = 'https://platform.twitter.com/widgets.js'
     scriptTwitter.async = true
     document.body.appendChild(scriptTwitter)
+    
     return () => {
       document.body.removeChild(scriptTwitter)
     }
   }, [])
 
-  const toast = (message: string) => {
-    setState(prevState => {
-      return { ...prevState, toasterMsg: message }
-    })
-  }
-
-  const createNewFile = async () => {
-    plugin.verticalIcons.select('filePanel')
-    await plugin.call('filePanel', 'createNewFile')
-  }
-
-  const uploadFile = async (target) => {
-    await plugin.call('filePanel', 'uploadFile', target)
-  }
-
-  const connectToLocalhost = () => {
-    plugin.appManager.activatePlugin('remixd')
-  }
-  const importFromGist = () => {
-    plugin.call('gistHandler', 'load', '')
-    plugin.verticalIcons.select('filePanel')
-  }
+  
   const startSolidity = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'udapp', 'solidityStaticAnalysis', 'solidityUnitTesting'])
     plugin.verticalIcons.select('solidity')
@@ -167,58 +96,38 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     plugin.verticalIcons.select('pluginManager')
   }
 
-  const showFullMessage = (title: string, loadItem: string, examples: Array<string>) => {
-    setState(prevState => {
-      return { ...prevState, showModalDialog: true, modalInfo: { title: title, loadItem: loadItem, examples: examples } }
-    })
-  }
-
-  const hideFullMessage = () => { //eslint-disable-line
-    setState(prevState => {
-      return { ...prevState, showModalDialog: false, importSource: '' }
-    })
-  }
-
   const maxHeight = Math.max(window.innerHeight - 150, 250) + 'px'
-  const examples = state.modalInfo.examples.map((urlEl, key) => (<div key={key} className="p-1 user-select-auto"><a>{urlEl}</a></div>))
   const elHeight = '4000px'
+  
   return (
-    <>
-      <ModalDialog
-        id='homeTab'
-        title={ 'Import from ' + state.modalInfo.title }
-        okLabel='Import'
-        hide={ !state.showModalDialog }
-        handleHide={ () => hideFullMessage() }
-        okFn={ () => processLoading() }
-      >
-        <div className="p-2 user-select-auto">
-          { state.modalInfo.loadItem !== '' && <span>Enter the { state.modalInfo.loadItem } you would like to load.</span> }
-          { state.modalInfo.examples.length !== 0 &&
-          <>
-            <div>e.g</div>
-            <div>
-              { examples }
-            </div>
-          </> }
-          <input
-            ref={inputValue}
-            type='text'
-            name='prompt_text'
-            id='inputPrompt_text'
-            className="w-100 mt-1 form-control"
-            data-id="homeTabModalDialogCustomPromptText"
-            value={state.importSource}
-            onInput={(e) => {
-              setState(prevState => {
-                return { ...prevState, importSource: inputValue.current.value }
-              })
-            }}
-          />
+    <div className="d-flex flex-row w-100" id="remixUIHTAll">
+      <div className="justify-content-between d-flex border-right flex-column" id="remixUIHTLeft" style={{flex: 2}}>
+        <HomeTabTitle />
+        <HomeTabFile plugin={plugin} />
+        <ThemeContext.Provider value={ state.themeQuality }>
+          <HomeTabLearn />
+        </ThemeContext.Provider>
+      </div>
+      <div className="justify-content-between d-flex" id="remixUIHTRight" style={{flex: 4}}>
+        <div className="" id="hTFeaturedeSection">
+
         </div>
-      </ModalDialog>
-      <Toaster message={state.toasterMsg} />
-      <div className="d-flex flex-column ml-4" id="remixUiRightPanel">
+        <div className="" id="hTScamAlertSection">
+
+        </div>
+        <div className="" id="hTGetStartedSection">
+
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default RemixUiHomeTab
+
+
+/*
+<div className="d-flex flex-column ml-4" id="remixUiRightPanel">
         <div className="border-bottom d-flex flex-column mr-4 pb-3 mb-3">
           <div className="pt-2 d-flex justify-content-between">
             <div>
@@ -268,36 +177,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 </ThemeContext.Provider>
               </div>
             </div>
-            <div className="d-flex">
-              <div className="file">
-                <h4>File</h4>
-                <p className="mb-1">
-                  <i className="mr-2 far fa-file"></i>
-                  <label className="ml-1 mb-1 remixui_home_text" data-id="homeTabNewFile" onClick={() => createNewFile()}>New File</label>
-                </p>
-                <p className="mb-1">
-                  <i className="mr-2 far fa-file-alt"></i>
-                  <label className="ml-1 remixui_home_labelIt remixui_home_bigLabelSize remixui_home_text" htmlFor="openFileInput">
-                    Open Files
-                  </label>
-                  <input title="open file" type="file" id="openFileInput" onChange={(event) => {
-                    event.stopPropagation()
-                    plugin.verticalIcons.select('filePanel')
-                    uploadFile(event.target)
-                  }} multiple />
-                </p>
-                <p className="mb-1">
-                  <i className="mr-1 far fa-hdd"></i>
-                  <label className="ml-1 remixui_home_text" onClick={() => connectToLocalhost()}>Connect to Localhost</label>
-                </p>
-                <p className="mt-3 mb-0"><label>LOAD FROM:</label></p>
-                <div className="btn-group">
-                  <button className="btn mr-1 btn-secondary" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>Gist</button>
-                  <button className="btn mx-1 btn-secondary" data-id="landingPageImportFromGitHubButton" onClick={() => showFullMessage('GitHub', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}>GitHub</button>
-                  <button className="btn mx-1 btn-secondary" onClick={() => showFullMessage('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}>Ipfs</button>
-                  <button className="btn mx-1 btn-secondary" onClick={() => showFullMessage('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])}>https</button>
-                </div>
-              </div>
+            ------------------------
               <div className="ml-4 pl-4">
                 <h4>Resources</h4>
                 <p className="mb-1">
@@ -367,8 +247,4 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
           </div>
         </div>
       </div>
-    </>
-  )
-}
-
-export default RemixUiHomeTab
+      */
