@@ -26,20 +26,20 @@ jobs:
             - node_modules
       - restore_cache:
           keys: 
-            - build-{{ CIRCLE_BRANCH }}
+            - build-${CIRCLE_BRANCH}
       - restore_cache:
           keys: 
-            - nxcache-{{ CIRCLE_BRANCH }}
+            - nxcache-${CIRCLE_BRANCH}
       - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js yarn build
       - run: yarn build:e2e
       - save_cache:
           paths:
             - "dist"
-          key: build-{{ CIRCLE_BRANCH }}
+          key: build-${CIRCLE_BRANCH}
       - save_cache:
           paths:
             - "tmp/nxcache"
-          key: nxcache-{{ CIRCLE_BRANCH }}
+          key: nxcache-${CIRCLE_BRANCH}
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
