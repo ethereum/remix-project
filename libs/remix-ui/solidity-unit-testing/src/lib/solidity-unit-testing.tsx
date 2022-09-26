@@ -757,18 +757,20 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
               <label className="labelOnBtn btn btn-primary p-1 ml-2 m-0">Run</label>
             </button>
           </OverlayTrigger>
-          <OverlayTrigger placement={'top-start'} overlay={
-              <Tooltip className="text-nowrap" id="info-recorder">
-                <span>
-                  Stop running tests
-                </span>
-              </Tooltip>
-            }>
-            <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} onClick={stopTests}>
-              <span className="fas fa-stop ml-2"></span>
-              <label className="labelOnBtn btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">{stopButtonLabel}</label>
-            </button>
-          </OverlayTrigger>
+          <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} onClick={stopTests}>
+            <OverlayTrigger placement={'top-start'} overlay={
+                <Tooltip className="text-nowrap" id="info-recorder">
+                  <span>
+                    Stop running tests
+                  </span>
+                </Tooltip>
+              }>
+              <span>
+                <span className="fas fa-stop ml-2"></span>
+                <label className="labelOnBtn btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">{stopButtonLabel}</label>
+              </span>
+            </OverlayTrigger>
+          </button>
         </div>
         <div className="d-flex align-items-center mx-3 pb-2 mt-2 border-bottom">
           <input id="checkAllTests"
