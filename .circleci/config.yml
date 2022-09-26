@@ -41,6 +41,7 @@ jobs:
             - "tmp/nxcache"
           key: nxcache-<< pipeline.git.branch >>
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
+      - run: tar c dist | md5sum
       - persist_to_workspace:
           root: .
           paths:
