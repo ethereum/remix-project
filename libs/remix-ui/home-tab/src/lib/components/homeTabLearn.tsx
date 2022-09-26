@@ -1,14 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState, useContext } from 'react'
 import { ThemeContext } from '../themeContext'
+declare global {
+  interface Window {
+    _paq: any
+  }
+}
+const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 enum VisibleTutorial {
   Basics,
   Intermediate,
   Advanced
 }
+interface  HomeTabLearnProps {
+  plugin: any
+}
 
-function HomeTabLearn () {
+function HomeTabLearn ({plugin}: HomeTabLearnProps) {
   const [state, setState] = useState<{
     visibleTutorial: VisibleTutorial
   }>({
@@ -18,13 +27,19 @@ function HomeTabLearn () {
   const themeFilter = useContext(ThemeContext)
 
   const openLink = () => {
-      window.open("https://remix-ide.readthedocs.io/en/latest/search.html?q=learneth&check_keywords=yes&area=default", '_blank')
+      window.open("https://remix-ide.readthedocs.io/en/latest/remix_tutorials_learneth.html?highlight=learneth#learneth-tutorial-repos", '_blank')
+  }
+
+  const startLearnEth = async () => {
+    await plugin.appManager.activatePlugin(['solidity', 'LearnEth', 'solidityUnitTesting'])
+    plugin.verticalIcons.select('LearnEth')
+    _paq.push(['trackEvent', 'homeTab', 'startLearnEth'])
   }
 
   return (
     <div className="d-flex px-2 pb-2 pt-2 d-flex flex-column" id="hTLearnSection">
       <div className="d-flex justify-content-between">
-        <label className="pt-2 align-self-center m-0">Learn</label>
+        <label className="py-2 align-self-center m-0" style={{fontSize: "1.2rem"}}>Learn</label>
         <button
           onClick={ ()=> openLink()}
           className="h-100 px-2 pt-0 btn"
@@ -33,19 +48,24 @@ function HomeTabLearn () {
         </button>
       </div>
       <div className="d-flex flex-column">
-        <button className="btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Basics }})}>
-          {(state.visibleTutorial === VisibleTutorial.Basics) && <div className="text-left">
-            Introduction to Remix's interface and concepts used in Ethereum, as well as the basics of Solidity.
+        <button className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Basics }})}>
+          <label className="float-left" style={{fontSize: "1rem"}}>Remix Basics</label>
+          {(state.visibleTutorial === VisibleTutorial.Basics) && <div className="pt-2 d-flex flex-column text-left">
+            <span>Introduction to Remix's interface and concepts used in Ethereum, as well as the basics of Solidity.</span>
+            <button className="btn-sm mt-2 btn-secondary" style={{width: 'fit-content'}} onClick={() => startLearnEth()}>Get Started</button>
           </div>}
-          <label className="pb-1 float-left" style={{fontSize: "1rem"}}>Remix Basics</label>
         </button>
-        <button className="btn border " onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Intermediate }})}>
-          {(state.visibleTutorial === VisibleTutorial.Intermediate) && <div className="text-left">Using the web3.js to interact with a contract. Using Recorder tool.</div>}
-          <label className="pb-1 float-left" style={{fontSize: "1rem"}}>Remix Intermediate</label>
+        <button className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Intermediate }})}>
+          <label className="float-left" style={{fontSize: "1rem"}}>Remix Intermediate</label>
+          {(state.visibleTutorial === VisibleTutorial.Intermediate) && <div className="pt-2 d-flex flex-column text-left">Using the web3.js to interact with a contract. Using Recorder tool.
+          <button className="btn-sm mt-2 btn-secondary" style={{width: 'fit-content'}} onClick={() => startLearnEth()}>Get Started</button>
+          </div>}
         </button>
-        <button className="btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Advanced }})}>
-          {(state.visibleTutorial === VisibleTutorial.Advanced) && <div className="text-left">Learn the Proxy Pattern and working with Libraries in Remix. Learn to use the Debugger</div>}
-          <label className="pb-1 float-left" style={{fontSize: "1rem"}}>Remix Advanced</label>
+        <button className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Advanced }})}>
+          <label className="float-left" style={{fontSize: "1rem"}}>Remix Advanced</label>
+          {(state.visibleTutorial === VisibleTutorial.Advanced) && <div className="pt-2 d-flex flex-column text-left">Learn the Proxy Pattern and working with Libraries in Remix. Learn to use the Debugger.
+          <button className="btn-sm mt-2 btn-secondary" style={{width: 'fit-content'}} onClick={() => startLearnEth()}>Get Started</button>
+          </div>}
         </button>
       </div>
       <br/>
