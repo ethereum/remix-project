@@ -101,6 +101,7 @@ module.exports = {
   'Should autcomplete address types #group1': function (browser: NightwatchBrowser) {
     browser
       .perform(function () {
+        console.log({ autoCompleteLineElement })
         const actions = this.actions({ async: true });
         return actions.
           sendKeys('addre')
@@ -118,6 +119,7 @@ module.exports = {
         return actions.
           sendKeys('someaddress.')
       })
+      .pause(120000)
       .waitForElementVisible(autoCompleteLineElement('balance'))
       .waitForElementVisible(autoCompleteLineElement('send'))
       .waitForElementVisible(autoCompleteLineElement('transfer'))
@@ -216,7 +218,7 @@ module.exports = {
       .waitForElementVisible(autoCompleteLineElement('importedbook'))
       .waitForElementVisible(autoCompleteLineElement('importpublicstring'))
       .waitForElementVisible(autoCompleteLineElement('publicimport'))
-      // no private 
+      // no private
       .waitForElementNotPresent(autoCompleteLineElement('importprivatestring'))
       .waitForElementNotPresent(autoCompleteLineElement('privateimport'))
       // no internal
