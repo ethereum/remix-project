@@ -20,7 +20,8 @@
           "lint",
           "test",
           "e2e"
-        ]
+        ],
+        "cacheDirectory": "./tmp/nxcache/"
       }
     }
   },
