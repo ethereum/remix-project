@@ -47,6 +47,10 @@ export class TxRunnerWeb3 {
   }
 
   _sendTransaction (sendTx, tx, pass, callback) {
+
+    var currentDateTime = new Date();
+    const start = currentDateTime.getTime() / 1000
+    console.log('start', start)
     const cb = (err, resp) => {
       if (err) {
         return callback(err, resp)
@@ -57,6 +61,10 @@ export class TxRunnerWeb3 {
         return new Promise(async (resolve, reject) => {
           const receipt = await tryTillReceiptAvailable(resp, this.getWeb3())
           tx = await tryTillTxAvailable(resp, this.getWeb3())
+          currentDateTime = new Date();
+          const end = currentDateTime.getTime() / 1000
+          console.log('end', end)
+          console.log('stopwatch', end - start)
           resolve({
             receipt,
             tx,

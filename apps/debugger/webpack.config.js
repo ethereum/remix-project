@@ -2,6 +2,7 @@ const nxWebpack = require('@nrwl/react/plugins/webpack')
 
 module.exports = config => {
   const nxWebpackConfig = nxWebpack(config)
+
   const webpackConfig = {
     ...nxWebpackConfig,
     resolve   : {
