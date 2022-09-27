@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'  //eslint-disable-line
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import './tx-browser.css'
 
 export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, transactionNumber, debugging }) => {
@@ -67,12 +68,22 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
           <button
             className='btn btn-primary btn-sm txbutton'
             id='load'
-            title={debugging ? 'Stop debugging' : 'Start debugging'}
             onClick={handleSubmit}
             data-id='debuggerTransactionStartButton'
             disabled={!state.txNumber }
           >
-            { debugging ? 'Stop' : 'Start' } debugging
+            <OverlayTrigger
+              placement={'bottom-start'}
+              overlay={
+                <Tooltip className={'text-nowrap'} id={'debuggingButtontooltip'}>
+                  <span>
+                    {debugging ? 'Stop debugging' : 'Start debugging'}
+                  </span>
+                </Tooltip>
+              }
+            >
+              <span>{ debugging ? 'Stop' : 'Start' } debugging</span>
+            </OverlayTrigger>
           </button>
         </div>
       </div>
