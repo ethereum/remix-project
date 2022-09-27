@@ -1,5 +1,7 @@
 import Web3 from 'web3'
 import { VMContext } from '../vm-context'
+import { bigIntToHex } from '@ethereumjs/util'
+
 export class Blocks {
   vmContext: VMContext
   coinbase: string
@@ -47,14 +49,14 @@ export class Blocks {
      if (receipt) {
       return {
         blockHash: '0x' + block.hash().toString('hex'),
-        blockNumber: '0x' + block.header.number.toString('hex'),
+        blockNumber: bigIntToHex(block.header.number),
         from: receipt.from,
         gas: Web3.utils.toHex(receipt.gas),
         chainId: '0xd05',
         gasPrice: '0x4a817c800', // 20000000000
         hash: receipt.transactionHash,
         input: receipt.input,
-        nonce: '0x' + tx.nonce.toString('hex'),
+        nonce: bigIntToHex(tx.nonce),
         transactionIndex: this.TX_INDEX,
         value: receipt.value === '0x' ? '0x0' : receipt.value,
         to: receipt.to ?  receipt.to : null
@@ -101,14 +103,14 @@ export class Blocks {
       if (receipt) {
        return {
          blockHash: '0x' + block.hash().toString('hex'),
-         blockNumber: '0x' + block.header.number.toString('hex'),
+         blockNumber: bigIntToHex(block.header.number),
          from: receipt.from,
          gas: Web3.utils.toHex(receipt.gas),
          chainId: '0xd05',
          gasPrice: '0x4a817c800', // 20000000000
          hash: receipt.transactionHash,
          input: receipt.input,
-         nonce: '0x' + tx.nonce.toString('hex'),
+         nonce: bigIntToHex(tx.nonce),
          transactionIndex: this.TX_INDEX,
          value: receipt.value === '0x' ? '0x0' : receipt.value,
          to: receipt.to ?  receipt.to : null
