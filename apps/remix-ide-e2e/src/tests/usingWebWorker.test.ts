@@ -20,21 +20,22 @@ const sources = [
 ]
 
 module.exports = {
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
   '@sources': function () {
     return sources
   },
-  'Using Web Worker': function (browser: NightwatchBrowser) {
+  'Using Web Worker #group1': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .clickLaunchIcon('filePanel')
-      .addFile('basic.sol', sources[0]['basic.sol'])
-      .clickLaunchIcon('solidity')
+      // using autocompile when switching compilers quickly confuses the process and results in a wrong compiler version being used or results displayed
+      .waitForElementVisible('[for="autoCompile"]')
+      .click('[for="autoCompile"]')
       .waitForElementVisible('[data-id="compilerNightliesBuild"]')
       .click('[data-id="compilerNightliesBuild"]')
-      .noWorkerErrorFor('soljson-v0.3.4+commit.7dab8902.js')
+      .addFile('basic.sol', sources[0]['basic.sol'])      
+      .clickLaunchIcon('solidity')
       .noWorkerErrorFor('soljson-v0.6.5+commit.f956cc89.js')
       .noWorkerErrorFor('soljson-v0.6.8-nightly.2020.5.14+commit.a6d0067b.js')
       .noWorkerErrorFor('soljson-v0.6.0-nightly.2019.12.17+commit.d13438ee.js')

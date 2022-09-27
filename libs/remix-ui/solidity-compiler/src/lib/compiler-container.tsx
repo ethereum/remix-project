@@ -228,7 +228,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (state.useFileConfiguration)
       if (state.createFileOnce) {
         api.fileExists(defaultPath).then((exists) => {
-          if (!exists || state.useFileConfiguration ) createNewConfigFile()
+          if (!exists || state.useFileConfiguration) createNewConfigFile()
         })
         setState(prevState => {
           return { ...prevState, createFileOnce: false }
@@ -242,7 +242,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const openFile = async () => {
-    api.open(configFilePath)
+    await api.open(configFilePath)
   }
 
   const createNewConfigFile = async () => {
@@ -340,11 +340,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (allVersionsWasm && allVersions) {
       allVersions.forEach((compiler, index) => {
         const wasmIndex = allVersionsWasm.findIndex(wasmCompiler => { return wasmCompiler.longVersion === compiler.longVersion })
+        const URLWasm: string = process && process.env && process.env['NX_WASM_URL'] ? process.env['NX_WASM_URL'] : baseURLWasm
+        const URLBin: string = process && process.env && process.env['NX_BIN_URL'] ? process.env['NX_BIN_URL'] : baseURLBin
         if (wasmIndex !== -1) {
           allVersions[index] = allVersionsWasm[wasmIndex]
-          pathToURL[compiler.path] = baseURLWasm
+          pathToURL[compiler.path] = URLWasm
         } else {
-          pathToURL[compiler.path] = baseURLBin
+          pathToURL[compiler.path] = URLBin
         }
       })
     }
@@ -437,7 +439,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileIcon.current.setAttribute('title', 'compiler is loading, please wait a few moments.')
     compileIcon.current.classList.add('remixui_spinningIcon')
     setState(prevState => {
-      return { ...prevState, compilerLicense: 'Compiler is loading. License will be displayed once compiler is loaded'}
+      return { ...prevState, compilerLicense: 'Compiler is loading. License will be displayed once compiler is loaded' }
     })
     _updateLanguageSelector()
     setDisableCompileButton(true)
@@ -454,6 +456,18 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const isDisabled = !compiledFileName || (compiledFileName && !isSolFileSelected(compiledFileName))
 
     setDisableCompileButton(isDisabled)
+
+    // just for e2e
+    // eslint-disable-next-line no-case-declarations
+    const elements = document.querySelectorAll('[data-id="compilerloaded"]')
+    // remove elements
+    for (let i = 0; i < elements.length; i++) {
+      elements[i].remove()
+    }
+    const loadedElement = document.createElement('span')
+    loadedElement.setAttribute('data-id', 'compilerloaded')
+    loadedElement.setAttribute('data-version', state.selectedVersion)
+    document.body.appendChild(loadedElement)
   }
 
   const compilationFinished = () => {
@@ -556,7 +570,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   const _shouldBeAdded = (version) => {
     return !version.includes('nightly') ||
-           (version.includes('nightly') && state.includeNightlies)
+      (version.includes('nightly') && state.includeNightlies)
   }
 
   const promptCompiler = () => {
@@ -575,13 +589,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const showCompilerLicense = () => {
-    modal('Compiler License', state.compilerLicense ? state.compilerLicense : 'License not available', 'OK', () => {})
+    modal('Compiler License', state.compilerLicense ? state.compilerLicense : 'License not available', 'OK', () => { })
   }
 
   const promptMessage = (message) => {
     return (
       <>
-        <span>{ message }</span>
+        <span>{message}</span>
         <input type="text" data-id="modalDialogCustomPromptCompiler" className="form-control" ref={promptMessageInput} />
       </>
     )
@@ -720,7 +734,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     setToggleExpander(!toggleExpander)
   }
 
- return (
+  return (
     <section>
       <article>
         <div className='pt-0 remixui_compilerSection'>
@@ -737,11 +751,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               })}
             ></span>
             <span className="fa fa-file-text-o border-0 p-0 ml-2" onClick={() => showCompilerLicense()} title="See compiler license"></span>
-            <select value={ state.selectedVersion || state.defaultVersion } onChange={(e) => handleLoadVersion(e.target.value) } className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
-              { state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === state.defaultVersion ? 'selected' : ''}>{ state.defaultVersion }</option> }
-              { state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === 'builtin' ? 'selected' : ''}>builtin</option> }
-              { state.customVersions.map((url, i) => <option key={i} data-id={state.selectedVersion === url ? 'selected' : ''} value={url}>custom</option>)}
-              { state.allversions.map((build, i) => {
+            <select value={state.selectedVersion || state.defaultVersion} onChange={(e) => handleLoadVersion(e.target.value)} className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
+              {state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === state.defaultVersion ? 'selected' : ''}>{state.defaultVersion}</option>}
+              {state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === 'builtin' ? 'selected' : ''}>builtin</option>}
+              {state.customVersions.map((url, i) => <option key={i} data-id={state.selectedVersion === url ? 'selected' : ''} value={url}>custom</option>)}
+              {state.allversions.map((build, i) => {
                 return _shouldBeAdded(build.longVersion)
                   ? <option key={i} value={build.path} data-id={state.selectedVersion === build.path ? 'selected' : ''}>{build.longVersion}</option>
                   : null
@@ -872,12 +886,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </label>
           </div>
           <div className={`pt-2 ml-4 ml-2 align-items-start justify-content-between d-flex`}>
-            { (!showFilePathInput && state.useFileConfiguration) && <span
+            {(!showFilePathInput && state.useFileConfiguration) && <span
               title="Click to open the config file"
-              onClick={configFilePath === '' ? () => {} : openFile}
+              onClick={configFilePath === '' ? () => { } : async () => { await openFile() }}
               className="py-2 remixui_compilerConfigPath"
-            >{configFilePath === '' ? 'No file selected.' : configFilePath}</span> }
-            { (!showFilePathInput && !state.useFileConfiguration) && <span className="py-2 text-secondary">{configFilePath}</span> }
+            >{configFilePath === '' ? 'No file selected.' : configFilePath}</span>}
+            {(!showFilePathInput && !state.useFileConfiguration) && <span className="py-2 text-secondary">{configFilePath}</span>}
             <input
               ref={configFilePathInput}
               className={`py-0 my-0 form-control ${showFilePathInput ? "d-flex" : "d-none"}`}
@@ -891,9 +905,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 }
               }}
             />
-            { !showFilePathInput && <button disabled={!state.useFileConfiguration} data-id="scConfigChangeFilePath" className="btn-secondary" onClick={() => {setShowFilePathInput(true)}}>
+            {!showFilePathInput && <button disabled={!state.useFileConfiguration} data-id="scConfigChangeFilePath" className="btn-secondary" onClick={() => { setShowFilePathInput(true) }}>
               <FormattedMessage id='solidity.change' defaultMessage='Change' />
-            </button> }
+            </button>}
           </div>
         </div>
         <div className="px-4">
@@ -901,8 +915,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <OverlayTrigger overlay={
               <Tooltip id="overlay-tooltip-compile">
                 <div className="text-left">
-                  { !(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+S</b> for compiling</div> }
-                  { (configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div> }
+                  {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+S</b> for compiling</div>}
+                  {(configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div>}
                 </div>
               </Tooltip>
             }>
@@ -923,19 +937,25 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </OverlayTrigger>
           </button>
           <div className='d-flex align-items-center'>
-            <button id="compileAndRunBtn" data-id="compilerContainerCompileAndRunBtn" className="btn btn-secondary btn-block d-block w-100 text-break remixui_solidityCompileAndRunButton d-inline-block remixui_disabled mb-1 mt-3" onClick={compileAndRun} disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}>
+            <button
+              id="compileAndRunBtn"
+              data-id="compilerContainerCompileAndRunBtn"
+              className="btn btn-secondary btn-block d-block w-100 text-break remixui_solidityCompileAndRunButton d-inline-block remixui_disabled mb-1 mt-3"
+              onClick={compileAndRun}
+              disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}
+            >
               <OverlayTrigger overlay={
                 <Tooltip id="overlay-tooltip-compile-run">
                   <div className="text-left">
-                    { !(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+Shift+S</b> for compiling and script execution</div> }
-                    { (configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div> }
+                    {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+Shift+S</b> for compiling and script execution</div>}
+                    {(configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div>}
                   </div>
                 </Tooltip>
               }>
                 <span>
                   <FormattedMessage id='solidity.compileAndRunScript' defaultMessage='Compile and Run script' />
                 </span>
-                </OverlayTrigger>
+              </OverlayTrigger>
             </button>
             <OverlayTrigger overlay={
               <Tooltip id="overlay-tooltip-compile-run-doc">
@@ -944,11 +964,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   <pre>
                     <code>
                     /**<br />
-                    * @title ContractName<br />
-                    * @dev ContractDescription<br />
-                    * @custom:dev-run-script file_path<br />
-                    */<br />
-                    contract ContractName {'{}'}<br />
+                      * @title ContractName<br />
+                      * @dev ContractDescription<br />
+                      * @custom:dev-run-script file_path<br />
+                      */<br />
+                      contract ContractName {'{}'}<br />
                     </code>
                   </pre>
                   Click to know more

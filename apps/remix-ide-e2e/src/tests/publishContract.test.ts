@@ -80,7 +80,7 @@ module.exports = {
 
   'Should remember choice after page refresh': function (browser: NightwatchBrowser) {
     browser
-      .refresh()
+      .refreshPage()
       .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts"]')
       .click('[data-id="treeViewLitreeViewItemcontracts"]')
       .openFile('contracts/1_Storage.sol')

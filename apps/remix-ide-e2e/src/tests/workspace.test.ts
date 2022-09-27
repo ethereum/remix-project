@@ -19,7 +19,7 @@ module.exports = {
   'Editor should be focused on the 3_Ballot.sol #group1': function (browser: NightwatchBrowser) {
     browser
       .pause(5000)
-      .refresh()
+      .refreshPage()
       .waitForElementVisible('#editorView', 30000)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('contract Ballot {') !== -1, 'content includes Ballot contract')
@@ -66,7 +66,7 @@ module.exports = {
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .pause(2000)
+      .pause(100)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
           'Incorrect content')
@@ -124,39 +124,39 @@ module.exports = {
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(100)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/SampleERC20.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      .pause(5000)
+      .pause(100)
       .getEditorValue((content) => {        
         browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .pause(4000)
+      .pause(100)
       .getEditorValue((content) => {        
         browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .pause(4000)
+      .pause(100)
       .getEditorValue((content) => {        
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .pause(4000)
+      .pause(100)
       .getEditorValue((content) => {        
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests/SampleERC20_test.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests/MyToken_test.sol"]')
   },
 
   'Should create ERC721 workspace with files #group1': function (browser: NightwatchBrowser) {
@@ -172,39 +172,145 @@ module.exports = {
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(100)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/SampleERC721.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      .pause(4000)
+      .pause(100)
       .getEditorValue((content) => {        
         browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .pause(4000)
+      .pause(100)
       .getEditorValue((content) => {        
         browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .pause(4000)
+      .pause(100)
       .getEditorValue((content) => {        
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .pause(4000)
+      .pause(100)
       .getEditorValue((content) => {        
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests/SampleERC721_test.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests/MyToken_test.sol"]')
+  },
+
+  'Should create ERC1155 workspace with files #group1': function (browser: NightwatchBrowser) {
+    browser
+      .click('*[data-id="workspaceCreate"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_erc1155' })
+      .click('select[id="wstemplate"]')
+      .click('select[id="wstemplate"] option[value=ozerc1155]')
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .pause(100)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
+      // check js and ts files are not transformed
+      .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
+      .pause(1000)
+      .getEditorValue((content) => {        
+        browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
+          'Incorrect content')
+      })
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
+      .pause(100)
+      .getEditorValue((content) => {        
+        browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
+          'Incorrect content')
+      })
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
+      .pause(100)
+      .getEditorValue((content) => {        
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
+          'Incorrect content')
+      })
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
+      .pause(100)
+      .getEditorValue((content) => {        
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
+          'Incorrect content')
+      })
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests/MyToken_test.sol"]')
+  },
+
+  'Should create ERC1155 workspace with template customizations #group1': function (browser: NightwatchBrowser) {
+    browser
+      .click('*[data-id="workspaceCreate"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
+      .click('select[id="wstemplate"]')
+      .click('select[id="wstemplate"] option[value=ozerc1155]')
+      .waitForElementPresent('*[data-id="ozCustomization"]')
+      .click('*[data-id="featureTypeMintable"]')
+      .click('*[data-id="featureTypeBurnable"]')
+      .click('*[data-id="featureTypePausable"]')
+      .click('*[data-id="upgradeTypeUups"]')
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .pause(100)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
+      .click('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
+      .pause(1000)
+      .getEditorValue((content) => {        
+        browser.assert.ok(content.indexOf(`contract MyToken is Initializable, ERC1155Upgradeable, OwnableUpgradeable, PausableUpgradeable, ERC1155BurnableUpgradeable, UUPSUpgradeable {`) !== -1,
+          'Incorrect content')
+      })
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
+      // check js and ts files are not transformed
+      .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
+      .pause(100)
+      .getEditorValue((content) => {        
+        browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
+          'Incorrect content')
+      })
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
+      .pause(100)
+      .getEditorValue((content) => {        
+        browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
+          'Incorrect content')
+      })
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
+      .pause(100)
+      .getEditorValue((content) => {        
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
+          'Incorrect content')
+        browser.assert.ok(content.indexOf(`gas: gas || 3600000`) !== -1,
+        'Incorrect gas cost')
+      })
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
+      .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
+      .pause(100)
+      .getEditorValue((content) => {        
+        browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
+          'Incorrect content')
+      })
+      // No test file is added in upgradeable contract template
   },
 
   // WORKSPACE TEMPLATES E2E END

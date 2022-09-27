@@ -45,6 +45,7 @@ const DragBar = (props: IRemixDragBarUi) => {
   }, [props.resetTrigger])
 
   const handleResize = () => {
+    if (!props.refObject.current) return
     setOffSet(props.refObject.current.offsetLeft)
     setDragBarPosX(props.refObject.current.offsetLeft + props.refObject.current.offsetWidth)
   }

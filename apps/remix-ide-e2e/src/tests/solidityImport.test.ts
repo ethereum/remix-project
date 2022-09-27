@@ -27,7 +27,27 @@ module.exports = {
   'Test Failed Import #group1': function (browser: NightwatchBrowser) {
     browser.addFile('Untitled3.sol', sources[2]['Untitled3.sol'])
       .clickLaunchIcon('solidity')
-      .assert.containsText('#compileTabView .error pre', 'not found Untitled11.sol')
+      .click('[data-id="compilerContainerCompileBtn"]')
+      .isVisible({
+        selector: "//span[contains(.,'not found Untitled11')]",
+        locateStrategy: 'xpath',
+        timeout: 120000,
+        suppressNotFoundErrors: true
+      })
+      .click('[data-id="compilerContainerCompileBtn"]')
+      .isVisible({
+        selector: "//span[contains(.,'not found Untitled11')]",
+        locateStrategy: 'xpath',
+        timeout: 120000,
+        suppressNotFoundErrors: true
+      })
+      .click('[data-id="compilerContainerCompileBtn"]')
+      .waitForElementVisible({
+        selector: "//span[contains(.,'not found Untitled11')]",
+        locateStrategy: 'xpath',
+        timeout: 120000,
+      })
+
   },
 
   'Test GitHub Import - from master branch #group1': function (browser: NightwatchBrowser) {
@@ -84,10 +104,27 @@ module.exports = {
   'Test NPM Import (with unpkg.com) #group3': function (browser: NightwatchBrowser) {
     browser
       .setSolidityCompilerVersion('soljson-v0.8.7+commit.e28d00a7.js')
+      .waitForElementPresent({
+        selector: `//*[@data-id='compilerloaded' and @data-version='soljson-v0.8.7+commit.e28d00a7.js']`,
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
       .clickLaunchIcon('filePanel')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('Untitled9.sol', sources[8]['Untitled9.sol'])
+      // avoid invalid source issues
+      .isVisible({
+        selector: '*[data-id="treeViewLitreeViewItem.deps/npm/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol"]',
+        timeout: 120000,
+        suppressNotFoundErrors: true
+      })
+      .clickLaunchIcon('solidity')
+      .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
+      .isVisible({
+        selector: '*[data-id="treeViewLitreeViewItem.deps/npm/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol"]',
+        timeout: 120000,
+      })
       .verifyContracts(['test13', 'ERC20'], { wait: 30000 })
       .end()
   }

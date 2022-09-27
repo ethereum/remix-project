@@ -25,13 +25,16 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     title: 'Please compile *.sol file to deploy or access a contract',
     disabled: true
   })
-  const [compFails, setCompFails] = useState<'none' | 'block'>('none')
   const [loadedContractData, setLoadedContractData] = useState<ContractData>(null)
   const [constructorInterface, setConstructorInterface] = useState<FuncABI>(null)
   const [constructorInputs, setConstructorInputs] = useState(null)
   const contractsRef = useRef<HTMLSelectElement>(null)
   const atAddressValue = useRef<HTMLInputElement>(null)
-  const { contractList, loadType, currentFile, currentContract, compilationCount, deployOptions, proxyKey } = props.contracts
+  const { contractList, loadType, currentFile, compilationSource, currentContract, compilationCount, deployOptions, proxyKey } = props.contracts
+
+  useEffect(() => {
+    enableContractNames(Object.keys(props.contracts.contractList).length > 0)
+  }, [Object.keys(props.contracts.contractList).length])
 
   useEffect(() => {
     enableAtAddress(false)
@@ -73,13 +76,6 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         content: ''
       })
       if (!currentContract) enableAtAddress(false)
-    }
-    if (currentFile) {
-      enableContractNames(true)
-      setCompFails('none')
-    } else {
-      enableContractNames(false)
-      setCompFails('block')
     }
     initSelectedContract()
   }, [loadType, currentFile, compilationCount])
@@ -162,7 +158,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if ((selectedContract.name !== currentContract) && (selectedContract.name === 'ERC1967Proxy')) selectedContract.name = currentContract
     const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
     const isContractUpgrade = (deployMode || []).find(mode => mode === 'Upgrade with Proxy')
-  
+
     if (isProxyDeployment) {
       props.modal('Deploy Implementation & Proxy (ERC1967)', deployWithProxyMsg(), 'Proceed', () => {
         props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
@@ -233,11 +229,14 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   return (
     <div className="udapp_container" data-id="contractDropdownContainer">
-      <label className="udapp_settingsLabel">
-        <FormattedMessage id='udapp.contract' defaultMessage='Contract' />
-      </label>
+      <div className='d-flex justify-content-between'>
+        <label className="udapp_settingsLabel">
+          <FormattedMessage id='udapp.contract' defaultMessage='Contract' />
+        </label>
+        { Object.keys(props.contracts.contractList).length > 0 && compilationSource !== '' && <label data-id="udappCompiledBy">Compiled by {compilationSource} </label> }
+      </div>
       <div className="udapp_subcontainer">
-        <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
+       <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
           { (contractList[currentFile] || []).map((contract, index) => {
             return <option key={index} value={contract.alias}>{contract.alias} - {contract.file}</option>
           }) }

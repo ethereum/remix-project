@@ -6,6 +6,7 @@ BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
 
+yarn build vyper
 yarn run serve:production &
 npx nx serve vyper &
 
