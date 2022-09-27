@@ -1,4 +1,4 @@
 module.exports = {
     "presets": ["@babel/preset-react", "@babel/preset-typescript"],
-    "plugins": ["@babel/plugin-transform-modules-commonjs", "@babel/plugin-proposal-class-properties"]
+    "plugins": ["@babel/plugin-transform-modules-commonjs", "@babel/plugin-proposal-class-properties", "@babel/plugin-proposal-nullish-coalescing-operator"]
 }

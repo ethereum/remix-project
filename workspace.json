@@ -753,6 +753,7 @@
                 }
               ],
               "optimization": true,
+              "babel": true,
               "outputHashing": "all",
               "sourceMap": false,
               "extractCss": true,

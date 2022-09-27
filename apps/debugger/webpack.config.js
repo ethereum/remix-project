@@ -3,6 +3,8 @@ const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = config => {
   const nxWebpackConfig = nxWebpack(config)
+  console.log(nxWebpackConfig)
+
   const webpackConfig = {
     ...nxWebpackConfig,
     node: {
