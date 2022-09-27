@@ -3,18 +3,112 @@
 import { AstNode } from "@remix-project/remix-solidity-ts"
 import { CodeParser } from "../code-parser"
 import { antlr } from '../types'
+import work from 'webworkify-webpack'
 
 const SolidityParser = (window as any).SolidityParser = (window as any).SolidityParser || []
 
+interface BlockDefinition {
+    end: number
+    endColumn: number
+    endLine: number
+    name: string
+    parent: string
+    start: number
+    startColumn: number
+    startLine: number
+    type: string
+}
+
 export default class CodeParserAntlrService {
     plugin: CodeParser
+    worker: Worker
+    parserStartTime: number = 0
+    workerTimer: NodeJS.Timer
+    parserTreshHold: number = 10
+    cache: {
+        [name: string]: {
+            text: string,
+            ast: antlr.ParseResult | null,
+            duration?: number,
+            parsingEnabled?: boolean,
+            blocks?: BlockDefinition[],
+            blockDurations?: number[]
+        }
+    } = {};
     constructor(plugin: CodeParser) {
         this.plugin = plugin
+        this.createWorker()
     }
 
-    /*
-    * simple parsing is used to quickly parse the current file or a text source without using the compiler or having to resolve imports
-    */
+    createWorker() {
+        this.worker = work(require.resolve('./antlr-worker'));
+        this.worker.postMessage({
+            cmd: 'load',
+            url: document.location.protocol + '//' + document.location.host + '/assets/js/parser/antlr.js',
+        });
+        const self = this
+
+        this.worker.addEventListener('message', function (ev) {
+            switch (ev.data.cmd) {
+                case 'parsed':
+                    if (ev.data.ast && self.parserStartTime === ev.data.timestamp) {
+                        self.cache[ev.data.file] = {
+                            ...self.cache[ev.data.file],
+                            text: ev.data.text,
+                            ast: ev.data.ast,
+                            duration: ev.data.duration,
+                            blocks: ev.data.blocks,
+                            blockDurations: self.cache[ev.data.file].blockDurations? [...self.cache[ev.data.file].blockDurations.slice(-3), ev.data.blockDuration]: [ev.data.blockDuration]
+                        }
+                        self.setFileParsingState(ev.data.file)
+                    }
+                    break;
+            }
+
+        });
+    }
+
+    setFileParsingState(file: string) {
+        if (this.cache[file]) {
+            if (this.cache[file].blockDurations && this.cache[file].blockDurations.length > 3) {
+                // calculate average of durations to determine if the parsing should be disabled
+                const values = [...this.cache[file].blockDurations]
+                const average = values.reduce((a, b) => a + b, 0) / values.length
+                if (average > this.parserTreshHold) {
+                    this.cache[file].parsingEnabled = false
+                    this.plugin.call('notification', 'toast','Some autocomplete features will be temporarily disabled because the file takes too long to process.')
+                } else {
+                    this.cache[file].parsingEnabled = true
+                }
+                
+            }
+        }
+    }
+
+    enableWorker() {
+        if (!this.workerTimer) {
+            this.workerTimer = setInterval(() => {
+                this.setCurrentFileAST()
+            }, 5000)
+        }
+    }
+
+    disableWorker() {
+        clearInterval(this.workerTimer)
+    }
+
+
+    async parseWithWorker(text: string, file: string) {
+        this.parserStartTime = Date.now()
+        this.worker.postMessage({
+            cmd: 'parse',
+            text,
+            timestamp: this.parserStartTime,
+            file,
+            parsingEnabled: (this.cache[file] && this.cache[file].parsingEnabled) || true
+        });
+
+    }
 
     async parseSolidity(text: string) {
         const ast: antlr.ParseResult = (SolidityParser as any).parse(text, { loc: true, range: true, tolerant: true })
@@ -27,18 +121,29 @@ export default class CodeParserAntlrService {
      * @param text 
      * @returns 
      */
-    async getCurrentFileAST(text: string | null = null) {
-        this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
-        if (this.plugin.currentFile && this.plugin.currentFile.endsWith('.sol')) {
-            if (!this.plugin.currentFile) return
-            const fileContent = text || await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile)
-            try {
-                const ast = await this.parseSolidity(fileContent)
-                this.plugin.antlrParserResult = ast
-            } catch (e) {
-                // do nothing
+    async setCurrentFileAST(text: string | null = null) {
+        try {
+            this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
+            if (this.plugin.currentFile && this.plugin.currentFile.endsWith('.sol')) {
+                const fileContent = text || await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile)
+                if (!this.cache[this.plugin.currentFile]) {
+                    this.cache[this.plugin.currentFile] = {
+                        text: '',
+                        ast: null,
+                        parsingEnabled: true,
+                        blockDurations: []
+                    }
+                }
+                if (this.cache[this.plugin.currentFile] && this.cache[this.plugin.currentFile].text !== fileContent) {
+                    try {
+                        await this.parseWithWorker(fileContent, this.plugin.currentFile)
+                    } catch (e) {
+                        // do nothing
+                    }
+                }
             }
-            return this.plugin.antlrParserResult
+        } catch (e) {
+            // do nothing
         }
     }
 
@@ -48,9 +153,10 @@ export default class CodeParserAntlrService {
     * @returns 
     */
     async listAstNodes() {
-        await this.getCurrentFileAST();
+        this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
+        if (!this.cache[this.plugin.currentFile]) return
         const nodes: AstNode[] = [];
-        (SolidityParser as any).visit(this.plugin.antlrParserResult, {
+        (SolidityParser as any).visit(this.cache[this.plugin.currentFile].ast, {
             StateVariableDeclaration: (node: antlr.StateVariableDeclaration) => {
                 if (node.variables) {
                     for (const variable of node.variables) {
@@ -127,6 +233,32 @@ export default class CodeParserAntlrService {
         }
         return lastNode
     }
+    /*
+    * get the code blocks of the current file
+    */
+    async getCurrentFileBlocks(text: string | null = null) {
+        this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
+        if (this.cache[this.plugin.currentFile]) {
+            if (!this.cache[this.plugin.currentFile].parsingEnabled) {
+                return
+            }
+        }
+        if (this.plugin.currentFile && this.plugin.currentFile.endsWith('.sol')) {
+            const fileContent = text || await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile)
+            try {
+                const startTime = Date.now()
+                const blocks = (SolidityParser as any).parseBlock(fileContent, { loc: true, range: true, tolerant: true })
+                if(this.cache[this.plugin.currentFile] && this.cache[this.plugin.currentFile].blockDurations){
+                    this.cache[this.plugin.currentFile].blockDurations = [...this.cache[this.plugin.currentFile].blockDurations.slice(-3), Date.now() - startTime]
+                    this.setFileParsingState(this.plugin.currentFile)
+                }
+                if (blocks) this.cache[this.plugin.currentFile].blocks = blocks
+                return blocks
+            } catch (e) {
+                // do nothing
+            }
+        }
+    }
 
     /**
     * Returns the block surrounding the given position
@@ -136,23 +268,22 @@ export default class CodeParserAntlrService {
     * @return {any}
     * */
     async getANTLRBlockAtPosition(position: any, text: string = null) {
-        await this.getCurrentFileAST(text)
-        const allowedTypes = ['SourceUnit', 'ContractDefinition', 'FunctionDefinition']
-        const walkAst = (node: any) => {
-            if (node.loc.start.line <= position.lineNumber && node.loc.end.line >= position.lineNumber) {
-                const children = node.children || node.subNodes
-                if (children && allowedTypes.indexOf(node.type) !== -1) {
-                    for (const child of children) {
-                        const result = walkAst(child)
-                        if (result) return result
-                    }
+        const blocks: any[] = await this.getCurrentFileBlocks(text)
+
+        const walkAst = (blocks) => {
+            let nodeFound = null
+            for (const object of blocks) {
+                if (object.start <= position) {
+                    nodeFound = object
+                    break
                 }
-                return node
             }
-            return null
+            return nodeFound
         }
-        if (!this.plugin.antlrParserResult) return
-        return walkAst(this.plugin.antlrParserResult)
+        if (!blocks) return
+        blocks.reverse()
+        const block = walkAst(blocks)
+        return block
     }
 
 }

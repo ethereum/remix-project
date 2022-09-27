@@ -58,8 +58,6 @@ interface codeParserIndex {
 
 export class CodeParser extends Plugin {
 
-    antlrParserResult: antlr.ParseResult // contains the simple parsed AST for the current file
-
     compilerAbstract: CompilerAbstract
     currentFile: string
     nodeIndex: codeParserIndex
@@ -77,7 +75,7 @@ export class CodeParser extends Plugin {
     getLastNodeInLine: (ast: string) => Promise<any>
     listAstNodes: () => Promise<any>
     getANTLRBlockAtPosition: (position: any, text?: string) => Promise<any>
-    getCurrentFileAST: (text?: string) => Promise<ParseResult>
+    setCurrentFileAST: (text?: string) => Promise<ParseResult>
     getImports: () => Promise<CodeParserImportsData[]>
     
 
@@ -94,7 +92,9 @@ export class CodeParser extends Plugin {
     async handleChangeEvents() {
         const completionSettings = await this.call('config', 'getAppParameter', 'auto-completion')
         if (completionSettings) {
-            await this.antlrService.getCurrentFileAST()
+            this.antlrService.enableWorker()
+        } else {
+            this.antlrService.disableWorker()
         }
         const showGasSettings = await this.call('config', 'getAppParameter', 'show-gas')
         const showErrorSettings = await this.call('config', 'getAppParameter', 'display-errors')
@@ -114,7 +114,7 @@ export class CodeParser extends Plugin {
         this.getLastNodeInLine = this.antlrService.getLastNodeInLine.bind(this.antlrService)
         this.listAstNodes = this.antlrService.listAstNodes.bind(this.antlrService)
         this.getANTLRBlockAtPosition = this.antlrService.getANTLRBlockAtPosition.bind(this.antlrService)
-        this.getCurrentFileAST = this.antlrService.getCurrentFileAST.bind(this.antlrService)
+        this.setCurrentFileAST = this.antlrService.setCurrentFileAST.bind(this.antlrService)
         this.getImports = this.importService.getImports.bind(this.importService)
 
         this.on('editor', 'didChangeFile', async (file) => {
@@ -133,11 +133,13 @@ export class CodeParser extends Plugin {
         this.on('fileManager', 'fileRemoved', async () => {
             await this.importService.setFileTree()
         })
-        
-
-
+  
         this.on('fileManager', 'currentFileChanged', async () => {
             await this.call('editor', 'discardLineTexts')
+            const completionSettings = await this.call('config', 'getAppParameter', 'auto-completion')
+            if (completionSettings) {
+                this.antlrService.setCurrentFileAST()
+            }
             await this.handleChangeEvents()
         })
 
@@ -413,19 +415,21 @@ export class CodeParser extends Plugin {
             return nodeDefinition
         } else {
             const astNodes = await this.antlrService.listAstNodes()
-            for (const node of astNodes) {
-                if (node.range[0] <= position && node.range[1] >= position) {
-                    if (nodeDefinition && nodeDefinition.range[0] < node.range[0]) {
-                        nodeDefinition = node
+            if (astNodes && astNodes.length) {
+                for (const node of astNodes) {
+                    if (node.range[0] <= position && node.range[1] >= position) {
+                        if (nodeDefinition && nodeDefinition.range[0] < node.range[0]) {
+                            nodeDefinition = node
+                        }
+                        if (!nodeDefinition) nodeDefinition = node
                     }
-                    if (!nodeDefinition) nodeDefinition = node
                 }
+                if (nodeDefinition && nodeDefinition.type && nodeDefinition.type === 'Identifier') {
+                    const nodeForIdentifier = await this.findIdentifier(nodeDefinition)
+                    if (nodeForIdentifier) nodeDefinition = nodeForIdentifier
+                }
+                return nodeDefinition
             }
-            if (nodeDefinition && nodeDefinition.type && nodeDefinition.type === 'Identifier') {
-                const nodeForIdentifier = await this.findIdentifier(nodeDefinition)
-                if (nodeForIdentifier) nodeDefinition = nodeForIdentifier
-            }
-            return nodeDefinition
         }
 
     }
@@ -559,7 +563,7 @@ export class CodeParser extends Plugin {
     async getNodeLink(node: genericASTNode) {
         const lineColumn = await this.getLineColumnOfNode(node)
         const position = await this.positionOfDefinition(node)
-        if (this.compilerAbstract && this.compilerAbstract.source) {
+        if (this.compilerAbstract && this.compilerAbstract.source && position) {
             const fileName = this.compilerAbstract.getSourceName(position.file)
             return lineColumn ? `${fileName} ${lineColumn.start.line}:${lineColumn.start.column}` : null
         }
