@@ -1,5 +1,12 @@
 import { IRange } from "monaco-editor";
 import monaco from "../../../types/monaco";
+import path from "path";
+
+type CodeParserImportsData = {
+    files?: string[],
+    modules?: string[],
+    packages?: string[],
+}
 
 export function getStringCompletionItems(range: IRange, monaco): monaco.languages.CompletionItem[] {
     return [
@@ -149,16 +156,30 @@ export function getCompletionSnippets(range: IRange, monaco): monaco.languages.C
             range
         },
         {
-            label: 'pragma',
+            label: 'while loop',
             kind: monaco.languages.CompletionItemKind.Snippet,
-            insertText: '// SPDX-License-Identifier: MIT\npragma solidity ${1:version};',
+            insertText: 'while (${1:condition}) \n{\n\t${2:code}\n};',
             insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
             range
         },
         {
-            label: 'import',
+            label: 'do while loop',
             kind: monaco.languages.CompletionItemKind.Snippet,
-            insertText: 'import "${1:library}";',
+            insertText: 'do {\n\t${2:code}\n} \nwhile (${1:condition});',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            range
+        },
+        {
+            label: 'for loop',
+            kind: monaco.languages.CompletionItemKind.Snippet,
+            insertText: 'for (${1:init}; ${2:condition}; ${3:increment}) \n{\n\t${4:code}\n};',
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            range
+        },
+        {
+            label: 'pragma',
+            kind: monaco.languages.CompletionItemKind.Snippet,
+            insertText: '// SPDX-License-Identifier: MIT\npragma solidity ${1:version};',
             insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
             range
         },
@@ -309,10 +330,10 @@ function CreateCompletionItem(label: string, kind: monaco.languages.CompletionIt
 export function GetCompletionKeywords(range: IRange, monaco): monaco.languages.CompletionItem[] {
     const completionItems = [];
     const keywords = ['modifier', 'mapping', 'break', 'continue', 'delete', 'else', 'for',
-        'after', 'promise', 'alias', 'apply','auto', 'copyof', 'default', 'define', 'final', 'implements',
+        'after', 'promise', 'alias', 'apply', 'auto', 'copyof', 'default', 'define', 'final', 'implements',
         'inline', 'let', 'macro', 'match', 'mutable', 'null', 'of', 'partial', 'reference', 'relocatable',
         'sealed', 'sizeof', 'static', 'supports', 'switch', 'typedef',
-        'if', 'new', 'return', 'returns', 'while', 'using', 'emit', 'anonymous', 'indexed', 
+        'if', 'new', 'return', 'returns', 'while', 'using', 'emit', 'anonymous', 'indexed',
         'private', 'public', 'external', 'internal', 'payable', 'nonpayable', 'view', 'pure', 'case', 'do', 'else', 'finally',
         'in', 'instanceof', 'return', 'throw', 'try', 'catch', 'typeof', 'yield', 'void', 'virtual', 'override'];
     keywords.forEach(unit => {
@@ -368,6 +389,89 @@ export function GeCompletionUnits(range: IRange, monaco): monaco.languages.Compl
 
     return completionItems;
 }
+
+export function GetImports(range: IRange
+    , monaco, data: CodeParserImportsData
+    , word: string
+): monaco.languages.CompletionItem[] {
+    let list = []
+    if (!word.startsWith('@')) {
+        word = word.replace('"', '');
+        const nextPaths = [...new Set(data.files
+            .filter((item) => item.startsWith(word))
+            .map((item) => item.replace(word, '').split('/')[0]))]
+
+        list = [...list, ...nextPaths
+            .filter((item) => !item.endsWith('.sol'))
+            .map((item) => {
+                return {
+                    kind: monaco.languages.CompletionItemKind.Folder,
+                    range: range,
+                    label: `${item}`,
+                    insertText: `${item}`,
+                }
+            })]
+
+
+        list = [...list,
+        ...data.files
+            .filter((item) => item.startsWith(word))
+            .map((item) => {
+                return {
+                    kind: monaco.languages.CompletionItemKind.File,
+                    range: range,
+                    label: `${item}`,
+                    insertText: `${item.replace(word, '')}`,
+                }
+            })]
+    }
+    if (word === '@' || word === '') {
+        list = [...list, ...data.packages.map((item) => {
+            return {
+                kind: monaco.languages.CompletionItemKind.Module,
+                range: range,
+                label: `${item}`,
+                insertText: word === '@' ? `${item.replace('@', '')}` : `${item}`,
+            }
+        })]
+    }
+    if (word.startsWith('@') && word.length > 1) {
+        const nextPaths = [...new Set(data.modules
+            .filter((item) => item.startsWith(word))
+            .map((item) => item.replace(word, '').split('/')[0]))]
+
+        list = [...list, ...nextPaths
+            .filter((item) => !item.endsWith('.sol'))
+            .map((item) => {
+            return {
+                kind: monaco.languages.CompletionItemKind.Folder,
+                range: range,
+                label: `${item}`,
+                insertText: `${item}`,
+            }
+        })]
+
+        list = [...list
+            , ...data.modules
+                .filter((item) => item.startsWith(word))
+                .map((item) => {
+                    // remove the first part if it starts with @
+                    let label = item;
+                    if (label.startsWith('@')) {
+                        label = label.substring(label.indexOf('/') + 1);
+                    }
+                    const filename = path.basename(label)
+                    return {
+                        kind: monaco.languages.CompletionItemKind.Reference,
+                        range: range,
+                        label: `${filename}: ${label}`,
+                        insertText: `${item.replace(word, '')}`,
+                    }
+                })
+        ]
+    }
+    return list;
+};
 
 export function GetGlobalVariable(range: IRange, monaco): monaco.languages.CompletionItem[] {
     return [
@@ -647,7 +751,7 @@ export function getAddressCompletionItems(range: IRange, monaco): monaco.languag
     ]
 
 }
-    
+
 export function getContextualAutoCompleteBTypeName(word: string, range: IRange, monaco): monaco.languages.CompletionItem[] {
     if (word === 'ArrayTypeName') {
         return getArrayCompletionItems(range, monaco);

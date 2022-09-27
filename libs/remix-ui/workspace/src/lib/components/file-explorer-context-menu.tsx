@@ -74,15 +74,19 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
           switch (item.name) {
             case 'New File':
               createNewFile(path)
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'newFile'])
               break
             case 'New Folder':
               createNewFolder(path)
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'newFolder'])
               break
             case 'Rename':
               renamePath(path, type)
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'rename'])
               break
             case 'Delete':
               deletePath(getPath())
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'delete'])
               break
             case 'Push changes to gist':
               _paq.push(['trackEvent', 'fileExplorer', 'pushToChangesoGist'])
@@ -102,12 +106,15 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               break
             case 'Copy':
               copy(path, type)
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copy'])
               break
             case 'Paste':
               paste(path, type)
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'paste'])
               break
             case 'Delete All':
               deletePath(getPath())
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'deleteAll'])
               break
             default:
               _paq.push(['trackEvent', 'fileExplorer', 'customAction', `${item.id}/${item.name}`])

@@ -10,38 +10,42 @@ type LoadPlugin = {
 export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true, loadPlugin?: LoadPlugin): void {
   browser
     .url(url || 'http://127.0.0.1:8080')
-    .pause(6000)
-    .switchBrowserTab(0)
+    //.switchBrowserTab(0)
     .waitForElementVisible('[id="remixTourSkipbtn"]')
     .click('[id="remixTourSkipbtn"]')
+
     .perform((done) => {
       if (!loadPlugin) return done()
-      browser.execute(function (loadPlugin) { // override a plugin url for testing purpose
-        localStorage.setItem('test-plugin-name', loadPlugin.name)
-        localStorage.setItem('test-plugin-url', loadPlugin.url)
-      }, [loadPlugin])
-      .refresh()
-      .pause(6000)
-      .perform(done())
+      browser
+        .pause(5000)
+        .execute(function (loadPlugin) { // override a plugin url for testing purpose
+          localStorage.setItem('test-plugin-name', loadPlugin.name)
+          localStorage.setItem('test-plugin-url', loadPlugin.url)
+        }, [loadPlugin])
+        .refreshPage()
+        .perform(done())
     })
-    .maximizeWindow()
-    .fullscreenWindow(() => {
+    .verifyLoad()
+    .perform(() => {
       if (preloadPlugins) {
         initModules(browser, () => {
-          browser.pause(2000).clickLaunchIcon('solidity')
+          browser
+
+            .clickLaunchIcon('solidity')
             .waitForElementVisible('[for="autoCompile"]')
             .click('[for="autoCompile"]')
             .verify.elementPresent('[data-id="compilerContainerAutoCompile"]:checked')
+            .perform(() => { callback() })
         })
+
+      } else {
+        callback()
       }
-    })
-    .perform(() => {
-      callback()
     })
 }
 
-function initModules (browser: NightwatchBrowser, callback: VoidFunction) {
-  browser.pause(5000)
+function initModules(browser: NightwatchBrowser, callback: VoidFunction) {
+  browser
     .click('[data-id="verticalIconsKindpluginManager"]')
     .scrollAndClick('[data-id="pluginManagerComponentActivateButtonsolidityStaticAnalysis"]')
     .scrollAndClick('[data-id="pluginManagerComponentActivateButtondebugger"]')

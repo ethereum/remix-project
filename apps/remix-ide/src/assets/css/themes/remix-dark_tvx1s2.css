@@ -3641,7 +3641,7 @@ input[type="submit"].btn-block {
 .nav-tabs .nav-item.show .nav-link,
 .nav-tabs .nav-link.active {
   color: #fff;
-  background-color: var(--body-bg);
+  background-color: #2a2c3f;
   border-color: #3f4455;
 }
 .nav-tabs .dropdown-menu {

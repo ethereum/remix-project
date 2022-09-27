@@ -21,7 +21,8 @@ export default class WebSocket {
       65521: 'git',
       65522: 'hardhat',
       65523: 'slither',
-      65524: 'truffle'
+      65524: 'truffle',
+      65525: 'foundry'
     }
 
     this.server.on('error', (error: Error) => {
