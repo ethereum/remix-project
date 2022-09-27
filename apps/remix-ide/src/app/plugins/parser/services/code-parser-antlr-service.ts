@@ -71,7 +71,7 @@ export default class CodeParserAntlrService {
 
     setFileParsingState(file: string) {
         if (this.cache[file]) {
-            if (this.cache[file].blockDurations && this.cache[file].blockDurations.length > (this.parserTrehsholdSampleAmount-1)) {
+            if (this.cache[file].blockDurations && this.cache[file].blockDurations.length > this.parserTrehsholdSampleAmount) {
                 // calculate average of durations to determine if the parsing should be disabled
                 const values = [...this.cache[file].blockDurations]
                 const average = values.reduce((a, b) => a + b, 0) / values.length
