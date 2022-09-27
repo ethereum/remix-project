@@ -102,10 +102,7 @@ module.exports = class Filepanel extends ViewPlugin {
 
   createNewFile () {
     return new Promise((resolve, reject) => {
-      const provider = this.fileManager.currentFileProvider()
-      const dir = provider.workspace || '/'
-
-      this.emit('createNewFileInputReducerEvent', dir, (err, data) => {
+      this.emit('createNewFileInputReducerEvent', '/', (err, data) => {
         if (err) reject(err)
         else resolve(data)
       })
@@ -114,10 +111,7 @@ module.exports = class Filepanel extends ViewPlugin {
 
   uploadFile (target) {
     return new Promise((resolve, reject) => {
-      const provider = this.fileManager.currentFileProvider()
-      const dir = provider.workspace || '/'
-
-      return this.emit('uploadFileReducerEvent', dir, target, (err, data) => {
+      return this.emit('uploadFileReducerEvent', '/', target, (err, data) => {
         if (err) reject(err)
         else resolve(data)
       })
