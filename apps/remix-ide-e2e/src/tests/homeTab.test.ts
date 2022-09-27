@@ -13,4 +13,6 @@ describe('HomeTab e2e test', function () {
         .waitForElementVisible('*[data-id="homeTabNewFile"]')
         .click('*[data-id="homeTabNewFile"]')
     })
+
+    after(browser => browser.end());
 })
