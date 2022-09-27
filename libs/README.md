@@ -16,7 +16,7 @@ To start with Remix IDE, check out [official documentation](https://remix-ide.re
 Here is the brief description of Remix libraries.
 
 + [`remix-analyzer`](remix-analyzer/README.md): Perform static analysis on Solidity smart contracts to check security vulnerabilities and bad development practices
-+ [`remix-astwalker`](remix-tests/README.md): Parse solidity AST (Abstract Syntax Tree)
++ [`remix-astwalker`](remix-astwalker/README.md): Parse solidity AST (Abstract Syntax Tree)
 + [`remix-debug`](remix-debug/README.md): Debug Ethereum transactions. It provides several controls that allow stepping over the trace and seeing the current state of a selected step.
 + [`remix-simulator`](remix-simulator/README.md): Web3 wrapper for different kind of providers
 + [`remix-solidity`](remix-solidity/README.md): Load a Solidity compiler from provided URL and compile the contract using loaded compiler and return the compilation details

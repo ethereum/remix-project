@@ -8,6 +8,7 @@ import { QueryParams } from '@remix-project/remix-lib'
 // import { ICompilerApi } from '@remix-project/remix-lib-ts'
 import * as packageJson from '../../../../../package.json'
 import { compilerConfigChangedToastMsg, compileToastMsg } from '@remix-ui/helper'
+import { isNative } from '../../remixAppManager'
 
 const profile = {
   name: 'solidity',
@@ -105,7 +106,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
   }
 
   compile (fileName) {
-    this.call('notification', 'toast', compileToastMsg(this.currentRequest.from, fileName))
+    if (!isNative(this.currentRequest.from)) this.call('notification', 'toast', compileToastMsg(this.currentRequest.from, fileName))
     super.compile(fileName)
   }
 

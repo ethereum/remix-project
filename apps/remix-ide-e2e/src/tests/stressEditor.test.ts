@@ -182,7 +182,7 @@ module.exports = {
       done()
     })
     .pause(10000)
-      .refresh()
+      .refreshPage()
       .perform(done => checkContent(0, done))
       .perform(done => checkContent(1, done))
       .perform(done => checkContent(2, done))

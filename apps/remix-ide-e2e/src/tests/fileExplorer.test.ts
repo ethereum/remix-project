@@ -77,7 +77,7 @@ module.exports = {
   'Should publish all explorer files to github gist': '' + function (browser: NightwatchBrowser) {
     const runtimeBrowser = browser.options.desiredCapabilities.browserName
 
-    browser.refresh()
+    browser.refreshPage()
       .pause(10000)
       .waitForElementVisible('*[data-id="fileExplorerNewFilepublishToGist"]')
       .click('*[data-id="fileExplorerNewFilepublishToGist"]')
