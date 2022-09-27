@@ -1,11 +1,11 @@
 'use strict'
-import Common from '@ethereumjs/common'
-import { getOpcodesForHF } from '@ethereumjs/vm/dist/evm/opcodes'
+import { Common } from '@ethereumjs/common'
+import { getOpcodesForHF, OpcodeList } from '@ethereumjs/evm/dist/opcodes/codes'
 import getOpcodes from './opcodes'
 
 export function nameOpCodes (raw, hardfork) {
   const common = new Common({ chain: 'mainnet', hardfork })
-  const opcodes = getOpcodesForHF(common)
+  const opcodes = getOpcodesForHF(common).opcodes
 
   let pushData = ''
   const codeMap = {}
@@ -47,7 +47,7 @@ type Opcode = {
  */
 export function parseCode (raw) {
   const common = new Common({ chain: 'mainnet', hardfork: 'london' })
-  const opcodes = getOpcodesForHF(common)
+  const opcodes = getOpcodesForHF(common).opcodes
 
   const code = []
   for (let i = 0; i < raw.length; i++) {
