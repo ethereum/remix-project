@@ -13,10 +13,12 @@ const profile = {
 export class CompilerMetadata extends Plugin {
   networks: string[]
   innerPath: string
+  buildInfoNames: Record<string, string>
   constructor () {
     super(profile)
     this.networks = ['VM:-', 'main:1', 'ropsten:3', 'rinkeby:4', 'kovan:42', 'goerli:5', 'Custom']
     this.innerPath = 'artifacts'
+    this.buildInfoNames = {}
   }
 
   _JSONFileName (path, contractName) {
@@ -33,7 +35,7 @@ export class CompilerMetadata extends Plugin {
       if (!await this.call('settings', 'get', 'settings/generate-contract-metadata')) return
       const compiler = new CompilerAbstract(languageVersion, data, source, input)
       const path = self._extractPathOf(source.target)
-      await this.setBuildInfo(version, input, data, path)
+      await this.setBuildInfo(version, input, data, path, file)
       compiler.visitContracts((contract) => {
         if (contract.file !== source.target) return
         (async () => {
@@ -45,7 +47,7 @@ export class CompilerMetadata extends Plugin {
     })
   }
 
-  async setBuildInfo (version, input, output, path) {
+  async setBuildInfo (version, input, output, path, filePath) {
     input = JSON.parse(input)
     const solcLongVersion = version.replace('.Emscripten.clang', '')
     const solcVersion = solcLongVersion.substring(0, solcLongVersion.indexOf('+commit'))
@@ -58,8 +60,16 @@ export class CompilerMetadata extends Plugin {
     })
     const id =  createHash('md5').update(Buffer.from(json)).digest().toString('hex')
     const buildFilename = this.joinPath(path, this.innerPath, 'build-info/' +  id + '.json')
-    const buildData = {id, _format: format, solcVersion, solcLongVersion, input, output}
-    await this.call('fileManager', 'writeFile', buildFilename, JSON.stringify(buildData, null, '\t'))
+    if (!this.buildInfoNames[filePath]) {
+      this.buildInfoNames[filePath] = buildFilename
+      const buildData = {id, _format: format, solcVersion, solcLongVersion, input, output}
+      await this.call('fileManager', 'writeFile', buildFilename, JSON.stringify(buildData, null, '\t'))
+    } else if (this.buildInfoNames[filePath] && this.buildInfoNames[filePath] !== buildFilename) {
+      await this.call('fileManager', 'remove', this.buildInfoNames[filePath])
+      this.buildInfoNames[filePath] = buildFilename
+      const buildData = {id, _format: format, solcVersion, solcLongVersion, input, output}
+      await this.call('fileManager', 'writeFile', buildFilename, JSON.stringify(buildData, null, '\t'))
+    }
   }
 
   _extractPathOf (file) {
