@@ -12,10 +12,11 @@ export class HardhatClient extends PluginClient {
   currentSharedFolder: string
   watcher: chokidar.FSWatcher
   warnLog: boolean
+  buildPath: string
 
   constructor (private readOnly = false) {
     super()
-    this.methods = ['compile']
+    this.methods = ['compile', 'sync']
   }
 
   setWebSocket (websocket: WS): void {
@@ -28,6 +29,7 @@ export class HardhatClient extends PluginClient {
 
   sharedFolder (currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
+    this.buildPath = utils.absolutePath('artifacts/build-info', this.currentSharedFolder)
     this.listenOnHardhatCompilation()
   }
 
@@ -58,45 +60,51 @@ export class HardhatClient extends PluginClient {
     })
   }
 
+  private async processArtifact () {
+    const folderFiles = await fs.readdir(this.buildPath)
+    const compilationResult = {
+      input: {},
+      output: {
+        contracts: {},
+        sources: {}
+      },
+      solcVersion: null
+    }
+    // name of folders are file names
+    for (const file of folderFiles) {
+      if (file.endsWith('.json')) {
+        console.log('processing hardhat artifact', file)
+        const path = join(this.buildPath, file)
+        const content = await fs.readFile(path, { encoding: 'utf-8' })
+        await this.feedContractArtifactFile(content, compilationResult)
+      }
+    }
+    if (!this.warnLog) {
+      // @ts-ignore
+      this.call('terminal', 'log', 'receiving compilation result from hardhat')
+      this.warnLog = true
+    }
+    this.emit('compilationFinished', '', { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)      
+  }
+
   listenOnHardhatCompilation () {
     try {
-      const buildPath = utils.absolutePath('artifacts/build-info', this.currentSharedFolder)
-      this.watcher = chokidar.watch(buildPath, { depth: 0, ignorePermissionErrors: true, ignoreInitial: true })
-
-      const compilationResult = {
-        input: {},
-        output: {
-          contracts: {},
-          sources: {}
-        },
-        solcVersion: null
-      }
-      const processArtifact = async () => {
-        const folderFiles = await fs.readdir(buildPath)
-        // name of folders are file names
-        for (const file of folderFiles) {
-          if (file.endsWith('.json')) {
-            console.log('processing hardhat artifact', file)
-            const path = join(buildPath, file)
-            const content = await fs.readFile(path, { encoding: 'utf-8' })
-            await this.feedContractArtifactFile(content, compilationResult)
-          }
-        }
-        if (!this.warnLog) {
-          // @ts-ignore
-          this.call('terminal', 'log', 'receiving compilation result from hardhat')
-          this.warnLog = true
-        }
-        this.emit('compilationFinished', '', { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)      
-      }
-
-      this.watcher.on('change', () => processArtifact())
-      this.watcher.on('add', () => processArtifact())
+      this.watcher = chokidar.watch(this.buildPath, { depth: 0, ignorePermissionErrors: true, ignoreInitial: true })
+      
+      this.watcher.on('change', () => this.processArtifact())
+      this.watcher.on('add', () => this.processArtifact())
       // process the artifact on activation
-      processArtifact()
+      this.processArtifact()
     } catch (e) {
       console.log(e)
     }    
+  }
+
+  async sync () {
+    console.log('syncing from hardhat')
+    this.processArtifact()
+    // @ts-ignore
+    this.call('terminal', 'log', 'synced with hardhat')
   }
 
   async feedContractArtifactFile (artifactContent, compilationResultPart) {
