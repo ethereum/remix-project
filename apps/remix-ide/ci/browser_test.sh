@@ -8,7 +8,7 @@ echo "$BUILD_ID"
 TEST_EXITCODE=0
 
 yarn run ganache-cli &
-yarn run serve &
+yarn run serve:production &
 chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js -s ./apps/remix-ide/contracts --remix-ide http://127.0.0.1:8080
 
 # grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | xargs -I {} basename {} .test.js | grep -E "\b[${2}]"
