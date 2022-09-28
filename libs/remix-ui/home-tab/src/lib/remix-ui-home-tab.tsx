@@ -11,6 +11,7 @@ import HomeTabLearn from './components/homeTabLearn'
 import HomeTabScamAlert from './components/homeTabScamAlert'
 import HomeTabGetStarted from './components/homeTabGetStarted'
 import HomeTabFeatured from './components/homeTabFeatured'
+import HomeTabFeaturedPlugins from './components/homeTabFeaturedPlugins'
 
 declare global {
   interface Window {
@@ -69,51 +70,23 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     }
   }, [])
   
-  const startSolidity = async () => {
-    await plugin.appManager.activatePlugin(['solidity', 'udapp', 'solidityStaticAnalysis', 'solidityUnitTesting'])
-    plugin.verticalIcons.select('solidity')
-    _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'solidity'])
-  }
-  const startStarkNet = async () => {
-    await plugin.appManager.activatePlugin('starkNet_compiler')
-    plugin.verticalIcons.select('starkNet_compiler')
-    _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'starkNet_compiler'])
-  }
-  const startSolhint = async () => {
-    await plugin.appManager.activatePlugin(['solidity', 'solhint'])
-    plugin.verticalIcons.select('solhint')
-    _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'solhint'])
-  }
-  const startLearnEth = async () => {
-    await plugin.appManager.activatePlugin(['solidity', 'LearnEth', 'solidityUnitTesting'])
-    plugin.verticalIcons.select('LearnEth')
-    _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'learnEth'])
-  }
-  const startSourceVerify = async () => {
-    await plugin.appManager.activatePlugin(['solidity', 'sourcify'])
-    plugin.verticalIcons.select('sourcify')
-    _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'sourcify'])
-  }
-  const startPluginManager = async () => {
-    plugin.verticalIcons.select('pluginManager')
-  }
+  
 
   const maxHeight = Math.max(window.innerHeight - 150, 250) + 'px'
   const elHeight = '4000px'
   
   return (
     <div className="d-flex flex-row w-100" id="remixUIHTAll">
-      <div className="px-2 justify-content-between d-flex border-right flex-column" id="remixUIHTLeft" style={{flex: 2}}>
+      <div className="px-2 justify-content-between d-flex border-right flex-column" id="remixUIHTLeft" style={{flex: 2, minWidth: "30%"}}>
         <HomeTabTitle />
         <HomeTabFile plugin={plugin} />
         <ThemeContext.Provider value={ state.themeQuality }>
           <HomeTabLearn plugin={plugin}/>
         </ThemeContext.Provider>
       </div>
-      <div className="px-2 justify-content-between d-flex flex-column" id="remixUIHTRight" style={{flex: 4}}>
-        <div className="" id="hTFeaturedeSection">
-        </div>
+      <div className="pl-2 pr-3 justify-content-between d-flex flex-column" style={{width: "70%"}} id="remixUIHTRight">
         <HomeTabFeatured></HomeTabFeatured>
+        <HomeTabFeaturedPlugins plugin={plugin}></HomeTabFeaturedPlugins>
         <HomeTabGetStarted></HomeTabGetStarted>
         <HomeTabScamAlert></HomeTabScamAlert>
       </div>
