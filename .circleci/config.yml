@@ -25,7 +25,7 @@ jobs:
           paths:
             - node_modules
       - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js yarn build:production
-      - run: npx nx build remix-ide-e2e-src-local-plugin & yarn run build:libs
+      - run: npx nx build remix-ide-e2e-src-local-plugin & yarn run build:libs & yarn run build:e2e
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
