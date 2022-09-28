@@ -24,7 +24,7 @@ export default class CodeParserAntlrService {
     worker: Worker
     parserStartTime: number = 0
     workerTimer: NodeJS.Timer
-    parserTreshHold: number = 10
+    parserTreshold: number = 10
     parserTresholdSampleAmount = 3
     cache: {
         [name: string]: {
@@ -75,7 +75,7 @@ export default class CodeParserAntlrService {
                 // calculate average of durations to determine if the parsing should be disabled
                 const values = [...this.cache[file].blockDurations]
                 const average = values.reduce((a, b) => a + b, 0) / values.length
-                if (average > this.parserTreshHold) {
+                if (average > this.parserTreshold) {
                     this.cache[file].parsingEnabled = false
                 } else {
                     this.cache[file].parsingEnabled = true
