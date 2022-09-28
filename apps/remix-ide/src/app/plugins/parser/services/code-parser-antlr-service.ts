@@ -25,7 +25,7 @@ export default class CodeParserAntlrService {
     parserStartTime: number = 0
     workerTimer: NodeJS.Timer
     parserTreshHold: number = 10
-    parserTrehsholdSampleAmount = 3
+    parserTresholdSampleAmount = 3
     cache: {
         [name: string]: {
             text: string,
@@ -59,7 +59,7 @@ export default class CodeParserAntlrService {
                             ast: ev.data.ast,
                             duration: ev.data.duration,
                             blocks: ev.data.blocks,
-                            blockDurations: self.cache[ev.data.file].blockDurations? [...self.cache[ev.data.file].blockDurations.slice(-self.parserTrehsholdSampleAmount), ev.data.blockDuration]: [ev.data.blockDuration]
+                            blockDurations: self.cache[ev.data.file].blockDurations? [...self.cache[ev.data.file].blockDurations.slice(-self.parserTresholdSampleAmount), ev.data.blockDuration]: [ev.data.blockDuration]
                         }
                         self.setFileParsingState(ev.data.file)
                     }
@@ -71,7 +71,7 @@ export default class CodeParserAntlrService {
 
     setFileParsingState(file: string) {
         if (this.cache[file]) {
-            if (this.cache[file].blockDurations && this.cache[file].blockDurations.length > this.parserTrehsholdSampleAmount) {
+            if (this.cache[file].blockDurations && this.cache[file].blockDurations.length > this.parserTresholdSampleAmount) {
                 // calculate average of durations to determine if the parsing should be disabled
                 const values = [...this.cache[file].blockDurations]
                 const average = values.reduce((a, b) => a + b, 0) / values.length
@@ -248,7 +248,7 @@ export default class CodeParserAntlrService {
                 const startTime = Date.now()
                 const blocks = (SolidityParser as any).parseBlock(fileContent, { loc: true, range: true, tolerant: true })
                 if(this.cache[this.plugin.currentFile] && this.cache[this.plugin.currentFile].blockDurations){
-                    this.cache[this.plugin.currentFile].blockDurations = [...this.cache[this.plugin.currentFile].blockDurations.slice(-this.parserTrehsholdSampleAmount), Date.now() - startTime]
+                    this.cache[this.plugin.currentFile].blockDurations = [...this.cache[this.plugin.currentFile].blockDurations.slice(-this.parserTresholdSampleAmount), Date.now() - startTime]
                     this.setFileParsingState(this.plugin.currentFile)
                 }
                 if (blocks) this.cache[this.plugin.currentFile].blocks = blocks
