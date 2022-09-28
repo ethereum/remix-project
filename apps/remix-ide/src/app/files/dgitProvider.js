@@ -116,6 +116,7 @@ class DGitProvider extends Plugin {
         await this.call('fileManager', 'refresh')
       }, 1000)
     }
+    this.emit('checkout')
   }
 
   async log (cmd) {
@@ -146,6 +147,7 @@ class DGitProvider extends Plugin {
         await this.call('fileManager', 'refresh')
       }, 1000)
     }
+    this.emit('branch')
     return status
   }
 
@@ -389,6 +391,8 @@ class DGitProvider extends Plugin {
             pinata_api_key: pinataApiKey,
             pinata_secret_api_key: pinataSecretApiKey
           }
+        }).catch((e) => {
+          console.log(e)
         })
       // also commit to remix IPFS for availability after pinning to Pinata
       return await this.export(this.remixIPFS) || result.data.IpfsHash
@@ -407,6 +411,8 @@ class DGitProvider extends Plugin {
             pinata_api_key: pinataApiKey,
             pinata_secret_api_key: pinataSecretApiKey
           }
+        }).catch((e) => {
+          console.log('Pinata unreachable')
         })
       return result.data
     } catch (error) {
