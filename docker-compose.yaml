@@ -1,3 +1,5 @@
+
+
 version: "3.7"
 x-project-base:
   &project-base
@@ -13,6 +15,6 @@ services:
     <<: *project-base
     image: remixproject/remix-ide:$TAG
     container_name: remixide-${TAG}
-    ports: 
+    ports:
       - 8080:80
       - 65520:65520
