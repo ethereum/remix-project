@@ -94,7 +94,7 @@ export class HardhatClient extends PluginClient {
       this.watcher.on('change', () => this.processArtifact())
       this.watcher.on('add', () => this.processArtifact())
       // process the artifact on activation
-      this.processArtifact()
+      setTimeout(() => this.processArtifact(), 1000)
     } catch (e) {
       console.log(e)
     }    
