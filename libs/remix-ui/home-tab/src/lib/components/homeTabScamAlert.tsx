@@ -5,7 +5,7 @@ function HomeTabScamAlert () {
   return (
     <div className="" id="hTScamAlertSection">
       <label className="pl-2 text-danger" style={{fontSize: "1.2rem"}}>Scam Alert</label>
-      <div className="ml-2 align-self-end mb-2 d-flex flex-column border border-danger">
+      <div className="py-2 ml-2 align-self-end mb-2 d-flex flex-column border border-danger">
         <span className="pl-4 mt-2">
           <i className="pr-2 text-danger fas fa-exclamation-triangle"></i>
           <b>Scam Alerts:</b>
@@ -21,7 +21,6 @@ function HomeTabScamAlert () {
           Additional safety tips: &nbsp;<a className="remixui_home_text" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/security.html">here</a>
         </span>
       </div>
-      <br/>
     </div>
   )
 }

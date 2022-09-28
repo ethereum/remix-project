@@ -53,7 +53,7 @@ function HomeTabTitle () {
         ></audio>
       </div>
       <div className="d-flex justify-content-between">
-        <span className="h-80" style={ { fontSize: 'xx-large', fontFamily: "Noah" } }>Remix</span>
+        <span className="h-80" style={ { fontSize: 'x-large', fontFamily: "Noah" } }>Remix</span>
         <span>
           <button
             onClick={ ()=> openLink("https://www.youtube.com/channel/UCjTUPyFEr2xDGN6Cg8nKDaA")}
