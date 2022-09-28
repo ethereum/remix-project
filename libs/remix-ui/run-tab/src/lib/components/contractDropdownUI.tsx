@@ -5,6 +5,7 @@ import { ContractData, FuncABI } from '@remix-project/core-plugin'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
 import { deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 export function ContractDropdownUI (props: ContractDropdownProps) {
   const [abiLabel, setAbiLabel] = useState<{
@@ -229,7 +230,16 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     <div className="udapp_container" data-id="contractDropdownContainer">
       <div className='d-flex justify-content-between'>
         <label className="udapp_settingsLabel">Contract</label>
-        { Object.keys(props.contracts.contractList).length > 0 && compilationSource !== '' && <label data-id="udappCompiledBy">Compiled by {compilationSource} </label> }
+        { Object.keys(props.contracts.contractList).length > 0 && compilationSource !== '' && <label data-id="udappCompiledBy">Compiled by {compilationSource} </label>  }
+        <OverlayTrigger placement={'right'} overlay={
+              <Tooltip className="text-nowrap" id="info-sync-compiled-contract">
+                <span>Remix is currently connected to an external framework. Click here to import contract compiled from that framework.</span>
+              </Tooltip>
+            }>
+            <i className="fa fa-refresh" aria-hidden="true" onClick={() => {
+              props.syncContracts()
+            }}></i>
+        </OverlayTrigger>
       </div>
       <div className="udapp_subcontainer">
        <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
