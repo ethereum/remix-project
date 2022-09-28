@@ -12,6 +12,7 @@ export class TruffleClient extends PluginClient {
   currentSharedFolder: string
   watcher: chokidar.FSWatcher
   warnLog: boolean
+  buildPath: string
 
   constructor (private readOnly = false) {
     super()
@@ -28,6 +29,7 @@ export class TruffleClient extends PluginClient {
 
   sharedFolder (currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
+    this.buildPath = utils.absolutePath('build/contracts', this.currentSharedFolder)
     this.listenOnTruffleCompilation()
   }
 
@@ -58,38 +60,39 @@ export class TruffleClient extends PluginClient {
     })
   }
 
+  private async processArtifact () {
+    const folderFiles = await fs.readdir(this.buildPath)
+    const compilationResult = {
+      input: {},
+      output: {
+        contracts: {},
+        sources: {}
+      },
+      solcVersion: null
+    }
+    // name of folders are file names
+    for (const file of folderFiles) {
+      if (file.endsWith('.json')) {
+        const content = await fs.readFile(join(this.buildPath, file), { encoding: 'utf-8' })
+        await this.feedContractArtifactFile(file, content, compilationResult)
+      }
+    }
+    if (!this.warnLog) {
+      // @ts-ignore
+      this.call('terminal', 'log', 'receiving compilation result from truffle')
+      this.warnLog = true
+    }
+    this.emit('compilationFinished', '', { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)
+  }
+
   listenOnTruffleCompilation () {
-    try {
-      const buildPath = utils.absolutePath('build/contracts', this.currentSharedFolder)
-      this.watcher = chokidar.watch(buildPath, { depth: 3, ignorePermissionErrors: true, ignoreInitial: true })
-      const compilationResult = {
-        input: {},
-        output: {
-          contracts: {},
-          sources: {}
-        },
-        solcVersion: null
-      }
-      const processArtifact = async () => {
-        const folderFiles = await fs.readdir(buildPath)
-        // name of folders are file names
-        for (const file of folderFiles) {
-          if (file.endsWith('.json')) {
-            const content = await fs.readFile(join(buildPath, file), { encoding: 'utf-8' })
-            await this.feedContractArtifactFile(file, content, compilationResult)
-          }
-        }
-        if (!this.warnLog) {
-          // @ts-ignore
-          this.call('terminal', 'log', 'receiving compilation result from truffle')
-          this.warnLog = true
-        }
-        this.emit('compilationFinished', '', { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)      
-      }
-      this.watcher.on('change', async (f: string) => processArtifact())
-      this.watcher.on('add', async (f: string) => processArtifact())
+    try {      
+      this.watcher = chokidar.watch(this.buildPath, { depth: 3, ignorePermissionErrors: true, ignoreInitial: true })
+     
+      this.watcher.on('change', async (f: string) => this.processArtifact())
+      this.watcher.on('add', async (f: string) => this.processArtifact())
       // process the artifact on activation
-      processArtifact()
+      this.processArtifact()
     } catch (e) {
       console.log(e)
     }    
@@ -128,5 +131,12 @@ export class TruffleClient extends PluginClient {
         }
       }
     }
+  }
+
+  async sync () {
+    console.log('syncing from truffle')
+    this.processArtifact()
+    // @ts-ignore
+    this.call('terminal', 'log', 'synced with truffle')
   }
 }
