@@ -90,7 +90,7 @@ export class FoundryClient extends PluginClient {
       this.watcher.on('change', async (f: string) => this.processArtifact())
       this.watcher.on('add', async (f: string) => this.processArtifact())
       // process the artifact on activation
-      this.processArtifact()
+      setTimeout(() => this.processArtifact(), 1000)
     } catch (e) {
       console.log(e)
     }    
