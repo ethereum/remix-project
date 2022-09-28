@@ -133,6 +133,18 @@ module.exports = {
       .expect.element('*[data-id="terminalJournal"]').text.to.contain('Unlock time should be in the future').before(60000)
    },
 
+   'Should load compilation result from hardhat when remixd connects #group6': function (browser: NightwatchBrowser) {
+    // artifacts/build-info/c7062fdd360381a85af23eeef31c98f8.json has already been created
+    browser
+      .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from hardhat').before(60000)
+      
+    browser.clickLaunchIcon('udapp')
+      .assert.textContains('*[data-id="udappCompiledBy"]', 'Compiled by hardhat')
+      .selectContract('Lock')
+      .createContract('1')
+      .expect.element('*[data-id="terminalJournal"]').text.to.contain('Unlock time should be in the future').before(60000)
+   },
+
    'Should listen on compilation result from foundry #group6': function (browser: NightwatchBrowser) {
     browser.perform((done) => {
       console.log('working directory', process.cwd())
