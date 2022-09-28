@@ -68,7 +68,6 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
           </div>}
         </button>
       </div>
-      <br/>
     </div>
   )
 }

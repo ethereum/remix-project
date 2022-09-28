@@ -8,9 +8,7 @@ function HomeTabFeatured () {
     searchInput: ''
   })
   useEffect(() => {
-  
     document.addEventListener("keyup", (e) => handleSearchKeyDown(e))
-    
     return () => {
       document.removeEventListener("keyup", handleSearchKeyDown)
     }
@@ -42,7 +40,7 @@ function HomeTabFeatured () {
   }
 
   return (
-    <div className="" id="hTFeaturedeSection">
+    <div className="pt-4" id="hTFeaturedeSection">
       <label style={{fontSize: "1.2rem"}}>Featured</label>
       <div className="border"></div>
     </div>
