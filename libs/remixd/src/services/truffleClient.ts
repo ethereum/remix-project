@@ -16,7 +16,7 @@ export class TruffleClient extends PluginClient {
 
   constructor (private readOnly = false) {
     super()
-    this.methods = ['compile']
+    this.methods = ['compile', 'sync']
   }
 
   setWebSocket (websocket: WS): void {
@@ -61,20 +61,23 @@ export class TruffleClient extends PluginClient {
   }
 
   private async processArtifact () {
-    const folderFiles = await fs.readdir(this.buildPath)
-    const compilationResult = {
-      input: {},
-      output: {
-        contracts: {},
-        sources: {}
-      },
-      solcVersion: null
-    }
+    const folderFiles = await fs.readdir(this.buildPath)    
     // name of folders are file names
     for (const file of folderFiles) {
       if (file.endsWith('.json')) {
+        const compilationResult = {
+          input: {},
+          output: {
+            contracts: {},
+            sources: {}
+          },
+          solcVersion: null,
+          compilationTarget: null
+        }
         const content = await fs.readFile(join(this.buildPath, file), { encoding: 'utf-8' })
         await this.feedContractArtifactFile(file, content, compilationResult)
+        this.emit('compilationFinished', compilationResult.compilationTarget, { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)
+  
       }
     }
     if (!this.warnLog) {
@@ -82,7 +85,6 @@ export class TruffleClient extends PluginClient {
       this.call('terminal', 'log', 'receiving compilation result from truffle')
       this.warnLog = true
     }
-    this.emit('compilationFinished', '', { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)
   }
 
   listenOnTruffleCompilation () {
@@ -102,6 +104,7 @@ export class TruffleClient extends PluginClient {
     const contentJSON = JSON.parse(content)
     const contractName = basename(path).replace('.json', '')
     compilationResultPart.solcVersion = contentJSON.compiler.version
+    compilationResultPart.compilationTarget = contentJSON.ast.absolutePath
     compilationResultPart.input[path] = { content: contentJSON.source }
     // extract data
     const relPath = utils.relativePath(contentJSON.ast.absolutePath, this.currentSharedFolder)
