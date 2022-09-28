@@ -84,12 +84,14 @@ jobs:
     parallelism: 10
     steps:
       - when:
-          condition: equal[chrome, << parameters.browser >>]
+          condition: 
+            equal: [chrome, << parameters.browser >>]
           steps: 
             - browser-tools/install-chrome
             - browser-tools/install-chromedriver
       - when:
-          condition: equal[firefox, << parameters.browser >>]
+          condition: 
+            equal: [firefox, << parameters.browser >>]
           steps: 
             - browser-tools/install-firefox
             - browser-tools/install-geckodriver
