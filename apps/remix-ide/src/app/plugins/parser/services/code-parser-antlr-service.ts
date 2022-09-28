@@ -24,8 +24,8 @@ export default class CodeParserAntlrService {
     worker: Worker
     parserStartTime: number = 0
     workerTimer: NodeJS.Timer
-    parserTreshold: number = 10
-    parserTresholdSampleAmount = 3
+    parserThreshold: number = 10
+    parserThresholdSampleAmount = 3
     cache: {
         [name: string]: {
             text: string,
@@ -59,7 +59,7 @@ export default class CodeParserAntlrService {
                             ast: ev.data.ast,
                             duration: ev.data.duration,
                             blocks: ev.data.blocks,
-                            blockDurations: self.cache[ev.data.file].blockDurations? [...self.cache[ev.data.file].blockDurations.slice(-self.parserTresholdSampleAmount), ev.data.blockDuration]: [ev.data.blockDuration]
+                            blockDurations: self.cache[ev.data.file].blockDurations? [...self.cache[ev.data.file].blockDurations.slice(-self.parserThresholdSampleAmount), ev.data.blockDuration]: [ev.data.blockDuration]
                         }
                         self.setFileParsingState(ev.data.file)
                     }
@@ -71,11 +71,11 @@ export default class CodeParserAntlrService {
 
     setFileParsingState(file: string) {
         if (this.cache[file]) {
-            if (this.cache[file].blockDurations && this.cache[file].blockDurations.length > this.parserTresholdSampleAmount) {
+            if (this.cache[file].blockDurations && this.cache[file].blockDurations.length > this.parserThresholdSampleAmount) {
                 // calculate average of durations to determine if the parsing should be disabled
                 const values = [...this.cache[file].blockDurations]
                 const average = values.reduce((a, b) => a + b, 0) / values.length
-                if (average > this.parserTreshold) {
+                if (average > this.parserThreshold) {
                     this.cache[file].parsingEnabled = false
                 } else {
                     this.cache[file].parsingEnabled = true
@@ -248,7 +248,7 @@ export default class CodeParserAntlrService {
                 const startTime = Date.now()
                 const blocks = (SolidityParser as any).parseBlock(fileContent, { loc: true, range: true, tolerant: true })
                 if(this.cache[this.plugin.currentFile] && this.cache[this.plugin.currentFile].blockDurations){
-                    this.cache[this.plugin.currentFile].blockDurations = [...this.cache[this.plugin.currentFile].blockDurations.slice(-this.parserTresholdSampleAmount), Date.now() - startTime]
+                    this.cache[this.plugin.currentFile].blockDurations = [...this.cache[this.plugin.currentFile].blockDurations.slice(-this.parserThresholdSampleAmount), Date.now() - startTime]
                     this.setFileParsingState(this.plugin.currentFile)
                 }
                 if (blocks) this.cache[this.plugin.currentFile].blocks = blocks
