@@ -16,7 +16,7 @@ export class FoundryClient extends PluginClient {
 
   constructor (private readOnly = false) {
     super()
-    this.methods = ['compile']
+    this.methods = ['compile', 'sync']
   }
 
   setWebSocket (websocket: WS): void {
@@ -61,31 +61,32 @@ export class FoundryClient extends PluginClient {
   }
 
   private async processArtifact () {
-    const folderFiles = await fs.readdir(this.buildPath)
-    const compilationResult = {
-      input: {},
-      output: {
-        contracts: {},
-        sources: {}
-      },
-      solcVersion: null
-    }
+    const folderFiles = await fs.readdir(this.buildPath) // "out" folder    
     // name of folders are file names
     for (const file of folderFiles) {
-      await this.readContract(join(this.buildPath, file), compilationResult)
+      const path = join(this.buildPath, file) // out/Counter.sol/
+      const compilationResult = {
+        input: {},
+        output: {
+          contracts: {},
+          sources: {}
+        },
+        solcVersion: null,
+        compilationTarget: null
+      }
+      await this.readContract(path, compilationResult)
+      this.emit('compilationFinished', compilationResult.compilationTarget, { sources: compilationResult.input } , 'soljson', compilationResult.output, compilationResult.solcVersion)
     }
     if (!this.warnlog) {
       // @ts-ignore
       this.call('terminal', 'log', 'receiving compilation result from foundry')
       this.warnlog = true
     }
-    this.emit('compilationFinished', '', { sources: compilationResult.input } , 'soljson', compilationResult.output, compilationResult.solcVersion)
   }
 
   listenOnFoundryCompilation () {
     try {      
       this.watcher = chokidar.watch(this.buildPath, { depth: 3, ignorePermissionErrors: true, ignoreInitial: true })
-      
       
       this.watcher.on('change', async (f: string) => this.processArtifact())
       this.watcher.on('add', async (f: string) => this.processArtifact())
@@ -121,6 +122,7 @@ export class FoundryClient extends PluginClient {
       }
     } else {
       const contractName = basename(path).replace('.json', '')
+      compilationResultPart.compilationTarget = contentJSON.ast.absolutePath
       // extract data
       if (!compilationResultPart.output['sources'][contentJSON.ast.absolutePath]) compilationResultPart.output['sources'][contentJSON.ast.absolutePath] = {}
       compilationResultPart.output['sources'][contentJSON.ast.absolutePath] = {
