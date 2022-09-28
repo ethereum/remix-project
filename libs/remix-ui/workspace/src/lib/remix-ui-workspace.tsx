@@ -217,7 +217,7 @@ export function Workspace () {
     global.dispatchShowAllBranches()
   }
 
-  const switchToBranch = async (branch: { remote: any, name: string }) => {
+  const switchToBranch = async (branch: { remote: string, name: string }) => {
     try {
       if (branch.remote) {
         await global.dispatchCheckoutRemoteBranch(branch.name, branch.remote)

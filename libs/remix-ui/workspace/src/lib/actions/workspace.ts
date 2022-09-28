@@ -26,6 +26,13 @@ let plugin, dispatch: React.Dispatch<any>
 export const setPlugin = (filePanelPlugin, reducerDispatch) => {
   plugin = filePanelPlugin
   dispatch = reducerDispatch
+  plugin.on('dGitProvider', 'checkout', async () => {
+    const currentBranch = await plugin.call('dGitProvider', 'currentbranch')
+    dispatch(setCurrentWorkspaceCurrentBranch(currentBranch))
+  })
+  plugin.on('dGitProvider', 'branch', async () => {
+    await refreshBranches()
+  })
 }
 
 export const addInputField = async (type: 'file' | 'folder', path: string, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
@@ -453,7 +460,16 @@ export const showAllBranches = async () => {
   plugin.call('menuicons', 'select', 'dgit')
 }
 
+const refreshBranches = async () => {
+  const workspacesPath = plugin.fileProviders.workspace.workspacesPath
+  const workspaceName = plugin.fileProviders.workspace.workspace
+  const branches = await getGitRepoBranches(workspacesPath + '/' + workspaceName)
+
+  dispatch(setCurrentWorkspaceBranches(branches))
+}
+
 export const switchBranch = async (branch: string) => {
+  await plugin.call('fileManager', 'closeAllFiles')
   const localChanges = await hasLocalChanges()
 
   if (Array.isArray(localChanges) && localChanges.length > 0) {
