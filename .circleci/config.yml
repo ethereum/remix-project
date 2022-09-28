@@ -83,13 +83,16 @@ jobs:
         type: string
     parallelism: 10
     steps:
-      - browser-tools/install-browser-tools
-      - run:
-          command: |
-            google-chrome --version
-            firefox --version
-            geckodriver --version
-            chromedriver --version
+      - when:
+          condition: equal['chrome', << parameters.browser >>]
+          steps: 
+            - browser-tools/install-chrome
+            - browser-tools/install-chromedriver
+      - when:
+          condition: equal['firefox', << parameters.browser >>]
+          steps: 
+            - browser-tools/install-firefox
+            - browser-tools/install-geckodriver
       - checkout
       - attach_workspace:
           at: .
