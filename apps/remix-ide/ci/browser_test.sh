@@ -3,19 +3,14 @@
 set -e
 
 
-
 BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
 
 yarn run ganache-cli &
 yarn run serve:production &
-echo 'sharing folder: ' $PWD '/apps/remix-ide/contracts' &
-yarn run remixd &
+chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js -s ./apps/remix-ide/contracts --remix-ide http://127.0.0.1:8080
 
-sleep 5
-
-yarn run build:e2e
 # grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | xargs -I {} basename {} .test.js | grep -E "\b[${2}]"
 # TESTFILES=$(grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | xargs -I {} basename {} .test.js | grep -E "\b[$2]" | circleci tests split --split-by=timings )
 node apps/remix-ide/ci/splice_tests.js $2 $3
