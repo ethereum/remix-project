@@ -99,6 +99,15 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     initSelectedContract()
   }, [contractList])
 
+  useEffect(() => {
+    // if the file change the ui is already feed with another bunch of contracts.
+    // we also need to update the state
+    const contracts = contractList[currentFile]  
+    if (contracts && contracts.length > 0) {
+      props.setSelectedContract(contracts[0].alias)
+    }
+  }, [currentFile])
+
   const initSelectedContract = () => {
     const contracts = contractList[currentFile]
   
