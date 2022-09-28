@@ -5,7 +5,6 @@ import { EditorUI } from '@remix-ui/editor' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import { PluginViewWrapper } from '@remix-ui/helper'
-import { exists } from 'fs'
 
 const EventManager = require('../../lib/events')
 
@@ -199,7 +198,7 @@ class Editor extends Plugin {
     return ext && this.modes[ext] ? this.modes[ext] : this.modes.txt
   }
 
-  async handleTypeScriptDependenciesOf (path, content, readFile) {
+  async handleTypeScriptDependenciesOf (path, content, readFile, exists) {
     if (path.endsWith('.ts')) {
       // extract the import, resolve their content
       // and add the imported files to Monaco through the `addModel`
@@ -358,8 +357,8 @@ class Editor extends Plugin {
   /**
    * The position of the cursor
    */
-  getCursorPosition () {
-    return this.api.getCursorPosition()
+  getCursorPosition (offset = true) {
+    return this.api.getCursorPosition(offset)
   }
 
   /**
