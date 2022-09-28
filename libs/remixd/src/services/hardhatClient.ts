@@ -61,22 +61,40 @@ export class HardhatClient extends PluginClient {
   }
 
   private async processArtifact () {
-    const folderFiles = await fs.readdir(this.buildPath)
-    const compilationResult = {
-      input: {},
-      output: {
-        contracts: {},
-        sources: {}
-      },
-      solcVersion: null
-    }
+    // resolving the files
+    const contractsTargets = utils.absolutePath('artifacts/contracts', this.currentSharedFolder)
+    const folderFiles = await fs.readdir(contractsTargets)
     // name of folders are file names
-    for (const file of folderFiles) {
-      if (file.endsWith('.json')) {
-        console.log('processing hardhat artifact', file)
-        const path = join(this.buildPath, file)
-        const content = await fs.readFile(path, { encoding: 'utf-8' })
-        await this.feedContractArtifactFile(content, compilationResult)
+    for (const file of folderFiles) { // ["artifacts/contracts/Greeter.sol/"]
+      // const fileName = basename(file) // "Greeter.sol"
+      const contractFilePath = join(contractsTargets, file)
+      const files = await fs.readdir(contractFilePath)
+      const compilationResult = {
+        input: {},
+        output: {
+          contracts: {},
+          sources: {}
+        },
+        solcVersion: null,
+        target: null
+      }
+      for (const file of files) {
+        if (file.endsWith('.dbg.json')) { // "artifacts/contracts/Greeter.sol/Greeter.dbg.json"
+          const stdFile = file.replace('.dbg.json', '.json')
+          const contentStd = await fs.readFile(join(contractFilePath, stdFile), { encoding: 'utf-8' })
+          const contentDbg = await fs.readFile(join(contractFilePath, file), { encoding: 'utf-8' })
+          const jsonDbg = JSON.parse(contentDbg)
+          const jsonStd = JSON.parse(contentStd)
+          compilationResult.target = jsonStd.sourceName
+
+          // this is the full compilation result
+          console.log('processing hardhat artifact', file)
+          const path = join(contractFilePath, jsonDbg.buildInfo)
+          const content = await fs.readFile(path, { encoding: 'utf-8' })
+          
+          await this.feedContractArtifactFile(content, compilationResult)
+        }
+        this.emit('compilationFinished', compilationResult.target, { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)      
       }
     }
     if (!this.warnLog) {
@@ -84,7 +102,6 @@ export class HardhatClient extends PluginClient {
       this.call('terminal', 'log', 'receiving compilation result from hardhat')
       this.warnLog = true
     }
-    this.emit('compilationFinished', '', { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)      
   }
 
   listenOnHardhatCompilation () {
@@ -116,7 +133,6 @@ export class HardhatClient extends PluginClient {
       if (fs.existsSync(absPath)) { // if not that is a lib
         const contentOnDisk = await fs.readFile(absPath, { encoding: 'utf-8' })
         if (contentOnDisk === source.content) {
-          console.log('processing new hardhat artifact for', file)
           compilationResultPart.input[file] = source
           compilationResultPart.output['sources'][file] = contentJSON.output.sources[file]
           compilationResultPart.output['contracts'][file] = contentJSON.output.contracts[file]
