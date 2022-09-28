@@ -3,6 +3,7 @@ import { PluginClient } from '@remixproject/plugin'
 import * as chokidar from 'chokidar'
 import * as utils from '../utils'
 import * as fs from 'fs-extra'
+import { basename, join } from 'path'
 const { spawn } = require('child_process') // eslint-disable-line
 
 export class HardhatClient extends PluginClient {
@@ -10,7 +11,7 @@ export class HardhatClient extends PluginClient {
   websocket: WS
   currentSharedFolder: string
   watcher: chokidar.FSWatcher
-  warnlog: boolean
+  warnLog: boolean
 
   constructor (private readOnly = false) {
     super()
@@ -20,7 +21,7 @@ export class HardhatClient extends PluginClient {
   setWebSocket (websocket: WS): void {
     this.websocket = websocket
     this.websocket.addEventListener('close', () => {
-      this.warnlog = false
+      this.warnLog = false
       if (this.watcher) this.watcher.close()
     })
   }
@@ -62,23 +63,60 @@ export class HardhatClient extends PluginClient {
       const buildPath = utils.absolutePath('artifacts/build-info', this.currentSharedFolder)
       this.watcher = chokidar.watch(buildPath, { depth: 0, ignorePermissionErrors: true, ignoreInitial: true })
 
-      const processArtifact = async (path: string) => {
-        if (path.endsWith('.json')) {
-          const content = await fs.readFile(path, { encoding: 'utf-8' })
-          const compilationResult = JSON.parse(content)
-          if (!this.warnlog) {
-            // @ts-ignore
-            this.call('terminal', 'log', 'receiving compilation result from hardhat')
-            this.warnlog = true
+      const compilationResult = {
+        input: {},
+        output: {
+          contracts: {},
+          sources: {}
+        },
+        solcVersion: null
+      }
+      const processArtifact = async () => {
+        const folderFiles = await fs.readdir(buildPath)
+        // name of folders are file names
+        for (const file of folderFiles) {
+          if (file.endsWith('.json')) {
+            console.log('processing hardhat artifact', file)
+            const path = join(buildPath, file)
+            const content = await fs.readFile(path, { encoding: 'utf-8' })
+            await this.feedContractArtifactFile(content, compilationResult)
           }
-          this.emit('compilationFinished', '', { sources: compilationResult.input.sources }, 'soljson', compilationResult.output, compilationResult.solcVersion)
         }
+        if (!this.warnLog) {
+          // @ts-ignore
+          this.call('terminal', 'log', 'receiving compilation result from hardhat')
+          this.warnLog = true
+        }
+        this.emit('compilationFinished', '', { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)      
       }
 
-      this.watcher.on('change', (path: string) => processArtifact(path))
-      this.watcher.on('add', (path: string) => processArtifact(path))
+      this.watcher.on('change', () => processArtifact())
+      this.watcher.on('add', () => processArtifact())
+      // process the artifact on activation
+      processArtifact()
     } catch (e) {
       console.log(e)
+    }    
+  }
+
+  async feedContractArtifactFile (artifactContent, compilationResultPart) {
+    const contentJSON = JSON.parse(artifactContent)
+    compilationResultPart.solcVersion = contentJSON.solcVersion
+    for (const file in contentJSON.input.sources) {
+      const source = contentJSON.input.sources[file]
+      const absPath = join(this.currentSharedFolder, file)
+      if (fs.existsSync(absPath)) { // if not that is a lib
+        const contentOnDisk = await fs.readFile(absPath, { encoding: 'utf-8' })
+        if (contentOnDisk === source.content) {
+          console.log('processing new hardhat artifact for', file)
+          compilationResultPart.input[file] = source
+          compilationResultPart.output['sources'][file] = contentJSON.output.sources[file]
+          compilationResultPart.output['contracts'][file] = contentJSON.output.contracts[file]
+          if (contentJSON.output.errors && contentJSON.output.errors.length) {
+            compilationResultPart.output['errors'] = contentJSON.output.errors.filter(error => error.sourceLocation.file === file)      
+          }
+        }
+      }
     }    
   }
 }
