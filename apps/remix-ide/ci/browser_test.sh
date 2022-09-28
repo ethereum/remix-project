@@ -10,7 +10,7 @@ TEST_EXITCODE=0
 yarn run ganache-cli &
 yarn run serve:production &
 chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js -s ./apps/remix-ide/contracts --remix-ide http://127.0.0.1:8080 &
-
+sleep 5
 # grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | xargs -I {} basename {} .test.js | grep -E "\b[${2}]"
 # TESTFILES=$(grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | xargs -I {} basename {} .test.js | grep -E "\b[$2]" | circleci tests split --split-by=timings )
 node apps/remix-ide/ci/splice_tests.js $2 $3
