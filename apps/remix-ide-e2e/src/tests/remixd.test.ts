@@ -132,7 +132,6 @@ module.exports = {
     .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from hardhat').before(60000)
       
     browser.clickLaunchIcon('udapp')
-      .assert.textContains('*[data-id="udappCompiledBy"]', 'Compiled by hardhat')
       .selectContract('Lock')
       .createContract('1')
       .expect.element('*[data-id="terminalJournal"]').text.to.contain('Unlock time should be in the future').before(60000)
@@ -144,7 +143,6 @@ module.exports = {
       .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from hardhat').before(60000)
       
     browser.clickLaunchIcon('udapp')
-      .assert.textContains('*[data-id="udappCompiledBy"]', 'Compiled by hardhat')
       .selectContract('Lock')
       .createContract('1')
       .expect.element('*[data-id="terminalJournal"]').text.to.contain('Unlock time should be in the future').before(60000)
@@ -160,7 +158,6 @@ module.exports = {
     
     let contractAaddress
     browser.clickLaunchIcon('udapp')
-      .assert.textContains('*[data-id="udappCompiledBy"]', 'Compiled by foundry')
       .selectContract('Counter')
       .createContract('')
       .getAddressAtPosition(0, (address) => {
@@ -185,7 +182,6 @@ module.exports = {
     .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from truffle').before(60000)
     
     browser.clickLaunchIcon('udapp')
-      .assert.textContains('*[data-id="udappCompiledBy"]', 'Compiled by truffle')
       .selectContract('Migrations')
       .createContract('')
       .testFunction('last',
