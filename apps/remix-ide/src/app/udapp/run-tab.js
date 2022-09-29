@@ -11,7 +11,6 @@ const _paq = window._paq = window._paq || []
 const profile = {
   name: 'udapp',
   displayName: 'Deploy & run transactions',
-  intlId: 'udapp.displayName',
   icon: 'assets/img/deployAndRun.webp',
   description: 'Execute, save and replay transactions',
   kind: 'udapp',
@@ -175,7 +174,7 @@ export class RunTab extends ViewPlugin {
         }
       }
     })
-    
+
     await this.call('blockchain', 'addProvider', {
       name: 'Optimism Provider',
       isInjected: true,

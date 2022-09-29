@@ -5,7 +5,6 @@ import { SearchTab } from '@remix-ui/search'
 const profile = {
     name: 'search',
     displayName: 'Search in files',
-    intlId: 'search.displayName',
     methods: [''],
     events: [],
     icon: 'assets/img/search_icon.webp',
