@@ -30,7 +30,7 @@ const RemixUIPanelPlugin = (props: panelPLuginProps, panelRef: any) => {
       }
       ref={panelRef || localRef}
     >
-      {view}
+      <>{view}</>
     </div>
   )
 }

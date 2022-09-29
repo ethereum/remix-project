@@ -63,7 +63,7 @@ const EXEC_RESULT_ERROR = {
 
 tape('converts node transaction result to RemixTx', function (t) {
   // contract creation
-  let txResult = { ...NODE_TX_RESULT }
+  const txResult = { ...NODE_TX_RESULT }
   let remixTx = resultToRemixTx(txResult, {})
 
   t.equal(remixTx.transactionHash, TRANSACTION_HASH)
@@ -82,8 +82,8 @@ tape('converts node transaction result to RemixTx', function (t) {
 })
 
 tape('converts node call result to RemixTx', function (t) {
-  let txResult = { ...NODE_CALL_RESULT }
-  let remixTx = resultToRemixTx(txResult, {})
+  const txResult = { ...NODE_CALL_RESULT }
+  const remixTx = resultToRemixTx(txResult, {})
 
   t.equal(remixTx.transactionHash, undefined)
   t.equal(remixTx.createdAddress, undefined)
@@ -96,7 +96,7 @@ tape('converts node call result to RemixTx', function (t) {
 })
 
 tape('converts VM result to RemixTx', function (t) {
-  let txResult = { ...VM_RESULT }
+  const txResult = { ...VM_RESULT }
   let remixTx = resultToRemixTx(txResult, EXEC_RESULT)
 
   t.equal(remixTx.transactionHash,

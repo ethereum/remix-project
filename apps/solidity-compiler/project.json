@@ -1,0 +1,61 @@
+{
+  "name": "solidity-compiler",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/solidity-compiler/src",
+  "projectType": "application",
+  "implicitDependencies": [],
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "defaultConfiguration": "development",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/apps/solidity-compiler",
+        "index": "apps/solidity-compiler/src/index.html",
+        "baseHref": "/",
+        "main": "apps/solidity-compiler/src/main.tsx",
+        "polyfills": "apps/solidity-compiler/src/polyfills.ts",
+        "tsConfig": "apps/solidity-compiler/tsconfig.app.json",
+        "assets": [
+          "apps/solidity-compiler/src/favicon.ico",
+          "apps/solidity-compiler/src/assets"
+        ],
+        "styles": [
+          "apps/solidity-compiler/src/styles.css"
+        ],
+        "scripts": [],
+        "webpackConfig": "apps/solidity-compiler/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/solidity-compiler/src/environments/environment.ts",
+              "with": "apps/solidity-compiler/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "solidity-compiler:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "solidity-compiler:build:development"
+        },
+        "production": {
+          "buildTarget": "solidity-compiler:build:production"
+        }
+      }
+    }
+  },
+  "tags": []
+}

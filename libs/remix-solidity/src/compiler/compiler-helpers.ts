@@ -6,6 +6,7 @@ import { Compiler } from './compiler'
 export const compile = async (compilationTargets, settings, contentResolverCallback) => {
   const res = await (() => {
     return new Promise((resolve, reject) => {
+      console.log('compilationTargets', compilationTargets)
       const compiler = new Compiler(contentResolverCallback)
       compiler.set('evmVersion', settings.evmVersion)
       compiler.set('optimize', settings.optimize)

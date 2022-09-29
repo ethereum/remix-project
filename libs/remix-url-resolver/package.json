@@ -5,7 +5,6 @@
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "scripts": {
-    "build": "tsc",
     "test": "./../../node_modules/.bin/mocha --require ts-node/register --require tsconfig-paths/register tests/*.ts -t 300000"
   },
   "publishConfig": {
@@ -25,7 +24,7 @@
   "license": "MIT",
   "dependencies": {
     "@erebos/bzz-node": "^0.13.0",
-    "axios": ">=0.21.1",
+    "axios": "1.1.2",
     "url": "^0.11.0",
     "valid-url": "^1.0.9"
   },

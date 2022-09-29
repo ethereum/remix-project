@@ -53,6 +53,7 @@ function callSauce (requestPath, type, callback) {
       console.log('BODY: ' + chunk)
       callback(null, chunk)
     })
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     res.on('end', function onEnd () {})
   }
 

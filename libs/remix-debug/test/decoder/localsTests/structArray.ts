@@ -9,6 +9,7 @@ import { TraceManager } from '../../../src/trace/traceManager'
 import { CodeManager } from '../../../src/code/codeManager'
 
 module.exports = function (st, privateKey, contractBytecode, compilationResult) {
+  // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     const web3 = await (vmCall as any).getWeb3();
     (vmCall as any).sendTx(web3, { nonce: 0, privateKey: privateKey }, null, 0, contractBytecode, function (error, hash) {
@@ -20,13 +21,13 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult) 
           return st.fail(error)
         }
         tx.to = contractCreationToken('0')
-        var traceManager = new TraceManager({ web3 })
-        var codeManager = new CodeManager(traceManager)
+        const traceManager = new TraceManager({ web3 })
+        const codeManager = new CodeManager(traceManager)
         codeManager.clear()
-        var solidityProxy = new SolidityProxy({ getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), getCode: codeManager.getCode.bind(codeManager) })
+        const solidityProxy = new SolidityProxy({ getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), getCode: codeManager.getCode.bind(codeManager) })
         solidityProxy.reset(compilationResult)
-        var debuggerEvent = new EventManager()
-        var callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true })
+        const debuggerEvent = new EventManager()
+        const callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true })
         callTree.event.register('callTreeBuildFailed', (error) => {
           st.fail(error)
         })

@@ -1,5 +1,4 @@
 module.exports = {
-    name: 'remix-tests',
     preset: '../../jest.config.js',
     verbose: true,
     silent: false, // Silent console messages, specially the 'remix-simulator' ones

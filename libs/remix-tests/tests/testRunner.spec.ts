@@ -26,7 +26,7 @@ function deepEqualExcluding(a: any, b: any, excludedKeys: string[]) {
       return obj
     }
 
-    let newObj = []
+    const newObj = []
     for (const idx in obj) {
       newObj[idx] = removeKeysFromObject(obj[idx], excludedKeys);
     }
@@ -34,37 +34,38 @@ function deepEqualExcluding(a: any, b: any, excludedKeys: string[]) {
     return newObj
   }
 
-  let aStripped: any = removeKeysFromObject(a, excludedKeys);
-  let bStripped: any = removeKeysFromObject(b, excludedKeys);
+  const aStripped: any = removeKeysFromObject(a, excludedKeys);
+  const bStripped: any = removeKeysFromObject(b, excludedKeys);
   assert.deepEqual(aStripped, bStripped)
 }
 
 let accounts: string[]
-let provider: any = new Provider()
+const provider: any = new Provider()
 
-async function compileAndDeploy(filename: string, callback: Function) {
-  let web3: Web3 = new Web3()
-  let sourceASTs: any = {}
+async function compileAndDeploy(filename: string, callback: any) {
+  const web3: Web3 = new Web3()
+  const sourceASTs: any = {}
   await provider.init()
   web3.setProvider(provider)
   extend(web3)
   let compilationData: object
   async.waterfall([
-    function getAccountList(next: Function): void {
+    function getAccountList(next: any): void {
       web3.eth.getAccounts((_err: Error | null | undefined, _accounts: string[]) => {
         accounts = _accounts
         web3.eth.defaultAccount = accounts[0]
         next(_err)
       })
     },
-    function compile(next: Function): void {
+    function compile(next: any): void {
       compileFileOrFiles(filename, false, { accounts }, null, next)
     },
-    function deployAllContracts(compilationResult: compilationInterface, asts, next: Function): void {
+    function deployAllContracts(compilationResult: compilationInterface, asts, next: any): void {
       for(const filename in asts) {
         if(filename.endsWith('_test.sol'))
           sourceASTs[filename] = asts[filename].ast
       }
+      // eslint-disable-next-line no-useless-catch
       try {
         compilationData = compilationResult
         deployAll(compilationResult, web3, accounts, false, null, next)
@@ -93,7 +94,7 @@ describe('testRunner', () => {
       tests.push(test)
     }
 
-    const resultsCallback: Function = (done) => {
+    const resultsCallback = (done) => {
       return (err, _results) => {
         if (err) { throw err }
         results = _results
@@ -204,6 +205,7 @@ describe('testRunner', () => {
           { type: 'testPass', debugTxHash: '0x12bc9eb3a653ebe4c7ab954c144dab4848295c88d71d17cb86a41e8a004419ba', value: 'Not equal bool pass test', filename: __dirname + '/examples_0/assert_notEqual_test.sol', context: 'AssertNotEqualTest' },
           { type: 'testFailure', debugTxHash: '0x901b9cd631f8f29841243a257d1914060b9c36d88ee7d8b624de76dad4a34c85', value: 'Not equal bool fail test', filename: __dirname + '/examples_0/assert_notEqual_test.sol', errMsg: 'notEqualBoolFailTest fails', context: 'AssertNotEqualTest', assertMethod: 'notEqual', location: '760:57:0', expected: true, returned: true},
           { type: 'testPass', debugTxHash: '0xf9e48bac26d3a2871ceb92974b897cae61e60bbc4db115b7e8eff4ac0390e4a5', value: 'Not equal address pass test', filename: __dirname + '/examples_0/assert_notEqual_test.sol', context: 'AssertNotEqualTest' },
+          // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
           { type: 'testFailure', debugTxHash: '0x4e83a17426bc79b147ddd30a5434a2430a8302b3ce78b6979088ac5eceac5d3c', value: 'Not equal address fail test', filename: __dirname + '/examples_0/assert_notEqual_test.sol', errMsg: 'notEqualAddressFailTest fails', context: 'AssertNotEqualTest', assertMethod: 'notEqual', location: '1084:136:0', expected: 0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9, returned: 0x7994f14563F39875a2F934Ce42cAbF48a93FdDA9},
           { type: 'testPass', debugTxHash: '0xfb4b30bb8373eeb6b09e38ad07880b86654f72780b41d7cf7554a112a04a0f53', value: 'Not equal bytes32 pass test', filename: __dirname + '/examples_0/assert_notEqual_test.sol', context: 'AssertNotEqualTest' },
           { type: 'testFailure', debugTxHash: '0x43edf8bc68229415ee63f63f5303351a0dfecf9f3eb2ec35ffd2c10c60cf7005', value: 'Not equal bytes32 fail test', filename: __dirname + '/examples_0/assert_notEqual_test.sol', errMsg: 'notEqualBytes32FailTest fails', context: 'AssertNotEqualTest', assertMethod: 'notEqual', location: '1756:54:0', expected: '0x72656d6978000000000000000000000000000000000000000000000000000000', returned: '0x72656d6978000000000000000000000000000000000000000000000000000000'},
@@ -458,7 +460,7 @@ describe('testRunner', () => {
     // Test `runTest` method without sending contract object (should throw error)
     describe('runTest method without contract json interface', () => {
       const filename: string = __dirname + '/various_sender/sender_and_value_test.sol'
-      const errorCallback: Function = (done) => {
+      const errorCallback = (done) => {
         return (err, _results) => {
           if (err && err.message.includes('Contract interface not available')) { 
             results = _results
