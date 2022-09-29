@@ -239,7 +239,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     <div className="udapp_container" data-id="contractDropdownContainer">
       <div className='d-flex justify-content-between'>
         <label className="udapp_settingsLabel">Contract</label>
-        <div className="d-flex justify-content-between">{ Object.keys(props.contracts.contractList).length > 0 && compilationSource !== '' && <label data-id="udappCompiledBy">Compiled by {compilationSource} </label>  }
+        <div className="d-flex justify-content-between">{ Object.keys(props.contracts.contractList).length > 0 && compilationSource !== '' && <label data-id="udappCompiledBy">Compiled by {compilationSource}</label>  }
           <OverlayTrigger placement={'right'} overlay={
             <Tooltip className="text-nowrap" id="info-sync-compiled-contract">
               <div>Click here to import contracts compiled from an external framework.</div>
