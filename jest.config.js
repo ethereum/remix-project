@@ -1,7 +1,11 @@
 module.exports = {
+  preset: 'ts-jest/presets/default-esm',
   testMatch: ['**/+(*.)+(spec|test).+(ts|js)?(x)'],
   transform: {
-    '^.+\\.(ts|js|html)$': 'ts-jest'
+    '^.+\\.(ts|js|html)$': ['ts-jest',
+      {
+        useESM: true,
+      }]
   },
   resolver: '@nrwl/jest/plugins/resolver',
   moduleFileExtensions: ['ts', 'js', 'html'],

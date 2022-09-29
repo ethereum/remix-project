@@ -489,3 +489,7 @@ export interface BytecodeObject {
       }
     }
   }
+
+  export interface EsWebWorkerHandlerInterface {
+    getWorker(): Worker
+  }

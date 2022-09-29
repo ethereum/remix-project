@@ -23,7 +23,7 @@ export class Blockchain extends Plugin<any, any> {
         };
     };
     setupProviders(): void;
-    providers: {};
+    providers: any;
     getCurrentProvider(): any;
     /** Return the list of accounts */
     getAccounts(cb?: any): any;

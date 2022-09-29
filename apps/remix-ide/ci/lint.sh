@@ -6,6 +6,7 @@ BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
 
+npx nx graph --file=projects.json 
 KEYS=$(jq -r '.projects | keys' workspace.json  | tr -d '[],"')
 
 (for row in $KEYS; do

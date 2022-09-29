@@ -55,4 +55,4 @@ class Log {
     }
 }
 
-export = Log
+export default Log

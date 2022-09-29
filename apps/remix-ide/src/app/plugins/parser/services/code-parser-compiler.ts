@@ -108,7 +108,7 @@ export default class CodeParserCompiler {
             await this.plugin.gasService.showGasEstimates()
             this.plugin.emit('astFinished')
         }
-
+        
         this.compiler = new Compiler((url, cb) => this.plugin.call('contentImport', 'resolveAndSave', url, undefined).then((result) => cb(null, result)).catch((error) => cb(error.message)))
         this.compiler.event.register('compilationFinished', this.onAstFinished)
     }

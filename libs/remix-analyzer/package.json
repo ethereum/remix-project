@@ -2,7 +2,9 @@
   "name": "@remix-project/remix-analyzer",
   "version": "0.5.25",
   "description": "Tool to perform static analysis on Solidity smart contracts",
-  "main": "src/index.js",
+  "scripts": {
+    "test": "./../../node_modules/.bin/ts-node --project ../../tsconfig.base.json --require tsconfig-paths/register ./../../node_modules/.bin/tape ./test/tests.ts"
+  },
   "types": "src/index.d.ts",
   "contributors": [
     {
@@ -33,10 +35,6 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "scripts": {
-    "build": "tsc",
-    "test": "./../../node_modules/.bin/ts-node --require tsconfig-paths/register ./../../node_modules/.bin/tape ./test/tests.ts"
   },
   "author": "Remix Team",
   "license": "MIT",
