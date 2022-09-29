@@ -35,6 +35,7 @@ export const FileSystemContext = createContext<{
   dispatchMoveFolder: (src: string, dest: string) => Promise<void>,
   dispatchShowAllBranches: () => Promise<void>,
   dispatchSwitchToBranch: (branch: string) => Promise<void>,
-  dispatchSwitchToNewBranch: (branch: string) => Promise<void>
+  dispatchCreateNewBranch: (branch: string) => Promise<void>,
+  dispatchCheckoutRemoteBranch: (branch: string, remote: string) => Promise<void>
     }>(null)
     

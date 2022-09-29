@@ -220,18 +220,19 @@ export function Workspace () {
   const switchToBranch = async (branch: { remote: any, name: string }) => {
     try {
       if (branch.remote) {
-        await global.dispatchSwitchToNewBranch(branch.name)
+        await global.dispatchCheckoutRemoteBranch(branch.name, branch.remote)
       } else {
         await global.dispatchSwitchToBranch(branch.name)
       }
     } catch (e) {
+      console.error(e)
       global.modal('Checkout Git Branch', e.message, 'OK', () => {})
     }
   }
 
   const switchToNewBranch = async () => {
     try {
-      await global.dispatchSwitchToNewBranch(branchFilter)
+      await global.dispatchCreateNewBranch(branchFilter)
     } catch (e) {
       global.modal('Checkout Git Branch', e.message, 'OK', () => {})
     }

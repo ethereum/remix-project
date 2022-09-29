@@ -61,13 +61,12 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
     await plugin.workspaceCreated(workspaceName)
 
     if (isGitRepo) {
-      await plugin.call('dGitProvider', 'init')
+      await plugin.call('dGitProvider', 'init', { branch: 'main' })
       const isActive = await plugin.call('manager', 'isActive', 'dgit')
 
       if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
     }
     if (!isEmpty) await loadWorkspacePreset(workspaceTemplateName, opts)
-
     cb && cb(null, workspaceName)
   }).catch((error) => {
     dispatch(createWorkspaceError({ error }))
@@ -454,7 +453,7 @@ export const showAllBranches = async () => {
   plugin.call('menuicons', 'select', 'dgit')
 }
 
-export const switchToBranch = async (branch: string) => {
+export const switchBranch = async (branch: string) => {
   const localChanges = await hasLocalChanges()
 
   if (Array.isArray(localChanges) && localChanges.length > 0) {
@@ -493,8 +492,8 @@ export const switchToBranch = async (branch: string) => {
   }
 }
 
-export const switchToNewBranch = async (branch: string) => {
-  const promise = plugin.call('dGitProvider', 'branch', { ref: branch }, false)
+export const createNewBranch = async (branch: string) => {
+  const promise = plugin.call('dGitProvider', 'branch', { ref: branch, checkout: true }, false)
 
   dispatch(cloneRepositoryRequest())
   promise.then(async () => {
@@ -510,6 +509,55 @@ export const switchToNewBranch = async (branch: string) => {
     dispatch(cloneRepositoryFailed())
   })
   return promise
+}
+
+export const checkoutRemoteBranch = async (branch: string, remote: string) => {
+  const localChanges = await hasLocalChanges()
+
+  if (Array.isArray(localChanges) && localChanges.length > 0) {
+    const cloneModal = {
+      id: 'checkoutRemoteBranch',
+      title: 'Checkout Remote Branch',
+      message: `Your local changes to the following files would be overwritten by checkout.\n
+      ${localChanges.join('\n')}\n
+      Do you want to continue?`,
+      modalType: 'modal',
+      okLabel: 'Force Checkout',
+      okFn: async () => {
+        dispatch(cloneRepositoryRequest())
+        plugin.call('dGitProvider', 'checkout', { ref: branch, remote, force: true }, false).then(async () => {
+          await fetchWorkspaceDirectory(ROOT_PATH)
+          dispatch(setCurrentWorkspaceCurrentBranch(branch))
+          const workspacesPath = plugin.fileProviders.workspace.workspacesPath
+          const workspaceName = plugin.fileProviders.workspace.workspace
+          const branches = await getGitRepoBranches(workspacesPath + '/' + workspaceName)
+      
+          dispatch(setCurrentWorkspaceBranches(branches))
+          dispatch(cloneRepositorySuccess())
+        }).catch(() => {
+          dispatch(cloneRepositoryFailed())
+        })
+      },
+      cancelLabel: 'Cancel',
+      cancelFn: () => {},
+      hideFn: () => {}
+    }
+    plugin.call('notification', 'modal', cloneModal)
+  } else {
+    dispatch(cloneRepositoryRequest())
+    plugin.call('dGitProvider', 'checkout', { ref: branch, remote, force: true }, false).then(async () => {
+      await fetchWorkspaceDirectory(ROOT_PATH)
+      dispatch(setCurrentWorkspaceCurrentBranch(branch))
+      const workspacesPath = plugin.fileProviders.workspace.workspacesPath
+      const workspaceName = plugin.fileProviders.workspace.workspace
+      const branches = await getGitRepoBranches(workspacesPath + '/' + workspaceName)
+  
+      dispatch(setCurrentWorkspaceBranches(branches))
+      dispatch(cloneRepositorySuccess())
+    }).catch(() => {
+      dispatch(cloneRepositoryFailed())
+    })
+  }
 }
 
 export const hasLocalChanges = async () => {
