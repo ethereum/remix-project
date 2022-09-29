@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 
 import './remix-ui-home-tab.css'
-import PluginButton from './components/pluginButton' // eslint-disable-line
 import { ThemeContext, themes } from './themeContext'
 import { RSSFeed } from './components/rssFeed'
 import BasicLogo from 'libs/remix-ui/vertical-icons-panel/src/lib/components/BasicLogo'
@@ -77,14 +76,14 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   
   return (
     <div className="d-flex flex-row w-100" id="remixUIHTAll">
-      <div className="px-2 justify-content-between d-flex border-right flex-column" id="remixUIHTLeft" style={{flex: 2, minWidth: "30%"}}>
+      <div className="px-2 pl-3 justify-content-between d-flex border-right flex-column" id="remixUIHTLeft" style={{flex: 2, minWidth: "35%"}}>
         <HomeTabTitle />
         <HomeTabFile plugin={plugin} />
         <ThemeContext.Provider value={ state.themeQuality }>
           <HomeTabLearn plugin={plugin}/>
         </ThemeContext.Provider>
       </div>
-      <div className="pl-2 pr-3 justify-content-between d-flex flex-column" style={{width: "70%"}} id="remixUIHTRight">
+      <div className="pl-2 pr-3 justify-content-between d-flex flex-column" style={{width: "65%"}} id="remixUIHTRight">
         <HomeTabFeatured></HomeTabFeatured>
         <HomeTabFeaturedPlugins plugin={plugin}></HomeTabFeaturedPlugins>
         <HomeTabGetStarted></HomeTabGetStarted>
