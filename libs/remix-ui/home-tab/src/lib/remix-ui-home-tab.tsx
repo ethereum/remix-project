@@ -273,7 +273,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
                 <h4><FormattedMessage id='home.file' defaultMessage='File' /></h4>
                 <p className="mb-1">
                   <i className="mr-2 far fa-file"></i>
-                  <label className="ml-1 mb-1 remixui_home_text" onClick={() => createNewFile()}><FormattedMessage id='home.newFile' defaultMessage='New File' /></label>
+                  <label className="ml-1 mb-1 remixui_home_text" data-id="homeTabNewFile" onClick={() => createNewFile()}><FormattedMessage id='home.newFile' defaultMessage='New File' /></label>
                 </p>
                 <p className="mb-1">
                   <i className="mr-2 far fa-file-alt"></i>
