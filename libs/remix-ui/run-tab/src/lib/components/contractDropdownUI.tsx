@@ -239,16 +239,19 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     <div className="udapp_container" data-id="contractDropdownContainer">
       <div className='d-flex justify-content-between'>
         <label className="udapp_settingsLabel">Contract</label>
-        <label>{ Object.keys(props.contracts.contractList).length > 0 && compilationSource !== '' && <span data-id="udappCompiledBy">Compiled by {compilationSource} </span>  }
+        <div className="d-flex justify-content-between">{ Object.keys(props.contracts.contractList).length > 0 && compilationSource !== '' && <label data-id="udappCompiledBy">Compiled by {compilationSource} </label>  }
           <OverlayTrigger placement={'right'} overlay={
-                <Tooltip className="text-nowrap" id="info-sync-compiled-contract">
-                  <div>Click here to import contracts compiled from an external framework.</div>
-                  <div>This action is enabled when Remix is connected to an external framework (hardhat, truffle, foundry) through remixd.</div>                  
-                </Tooltip>
-              }>
-              <i role="button" style={{ cursor: 'pointer' }} className="fa fa-refresh ml-2" aria-hidden="true" onClick={_ => props.syncContracts()}></i>
+            <Tooltip className="text-nowrap" id="info-sync-compiled-contract">
+              <div>Click here to import contracts compiled from an external framework.</div>
+              <div>This action is enabled when Remix is connected to an external framework (hardhat, truffle, foundry) through remixd.</div>                  
+            </Tooltip>
+          }>
+            <button className="btn d-flex p-3" onClick={_ => props.syncContracts()}>
+              <i style={{ cursor: 'pointer' }} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
+              <label data-id="" className="mt-2">HardHat</label>
+            </button>
           </OverlayTrigger>
-        </label>
+        </div>
       </div>
       <div className="udapp_subcontainer">
        <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
