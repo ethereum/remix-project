@@ -98,7 +98,7 @@ module.exports = {
           sendKeys(this.Keys.ARROW_RIGHT)
       })
   },
-  'Should autcomplete address types #group1': function (browser: NightwatchBrowser) {
+  'Should autcomplete address types #group1 #flaky': function (browser: NightwatchBrowser) {
     browser
       .perform(function () {
         const actions = this.actions({ async: true });
