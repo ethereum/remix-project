@@ -126,7 +126,7 @@ module.exports = {
       console.log('working directory', process.cwd())
       writeFileSync('./apps/remix-ide/contracts/artifacts/contracts/Lock.dbg.json', JSON.stringify(hardhat_compilation_Lock_dbg))
       writeFileSync('./apps/remix-ide/contracts/artifacts/contracts/Lock.json', JSON.stringify(hardhat_compilation_Lock))
-      writeFileSync('./apps/remix-ide/contracts/artifacts/build-info/c7062fdd360381a85af23eeef31c98f8.json', JSON.stringify(hardhatCompilation))
+      writeFileSync('./apps/remix-ide/contracts/artifacts/build-info/14f7eb130f02e4d9abcd68528a373e96.json', JSON.stringify(hardhatCompilation))
       done()
     })
     .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from hardhat').before(60000)
