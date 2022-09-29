@@ -3,7 +3,7 @@ import React from 'react'
 import { AbstractPanel } from './panel'
 import { RemixPluginPanel } from '@remix-ui/panel'
 import packageJson from '../../../../../package.json'
-import RemixUIPanelHeader from 'libs/remix-ui/panel/src/lib/plugins/panel-header'
+import { RemixUIPanelHeader } from '@remix-ui/panel'
 import { PluginViewWrapper } from '@remix-ui/helper'
 // const csjs = require('csjs-inject')
 

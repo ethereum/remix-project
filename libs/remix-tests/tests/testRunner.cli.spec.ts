@@ -11,6 +11,10 @@ describe('testRunner: remix-tests CLI', () => {
         const dirContent = result.stdout.toString()
         // Install dependencies if 'node_modules' is not already present
         if(!dirContent.includes('node_modules')) {
+          execSync('yarn add @remix-project/remix-lib ../../libs/remix-lib', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
+          execSync('yarn add @remix-project/remix-url-resolver ../../libs/remix-url-resolver', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
+          execSync('yarn add @remix-project/remix-solidity ../../libs/remix-solidity', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
+          execSync('yarn add @remix-project/remix-simulator ../../libs/remix-simulator', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
           execSync('yarn install', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
         }
     }
@@ -19,26 +23,14 @@ describe('testRunner: remix-tests CLI', () => {
     describe('test various CLI options', () => {
       test('remix-tests version', () => {
         const res = spawnSync(executablePath, ['-V'])
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         expect(res.stdout.toString().trim()).toBe(require('../package.json').version)
       })
 
       test('remix-tests help', () => {
         const res = spawnSync(executablePath, ['-h'])
-        const expectedHelp = `Usage: remix-tests [options] [command]
-
-Options:
-  -V, --version            output the version number
-  -c, --compiler <string>  set compiler version (e.g: 0.6.1, 0.7.1 etc)
-  -e, --evm <string>       set EVM version (e.g: petersburg, istanbul etc)
-  -o, --optimize <bool>    enable/disable optimization
-  -r, --runs <number>      set runs (e.g: 150, 250 etc)
-  -v, --verbose <level>    set verbosity level (0 to 5)
-  -h, --help               output usage information
-
-Commands:
-  version                  output the version number
-  help                     output usage information`
-        expect(res.stdout.toString().trim()).toBe(expectedHelp)
+        const expectedHelp = `Usage: remix-tests [options] [command] <file_path>`
+        expect(res.stdout.toString().trim()).toContain(expectedHelp)
       })
 
     test('remix-tests running a test file', () => {

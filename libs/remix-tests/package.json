@@ -4,6 +4,9 @@
   "description": "Tool to test Solidity smart contracts",
   "main": "src/index.js",
   "types": "./src/index.d.ts",
+  "scripts": {	
+    "test": "node --expose-gc ./../../node_modules/.bin/jest --runInBand --logHeapUsage "	
+  },
   "contributors": [
     {
       "name": "Iuri Matias",
@@ -16,10 +19,6 @@
   ],
   "bin": {
     "remix-tests": "./bin/remix-tests"
-  },
-  "scripts": {
-    "build": "tsc",
-    "test": "node --expose-gc ./../../node_modules/.bin/jest --runInBand --logHeapUsage "
   },
   "publishConfig": {
     "access": "public"
@@ -46,11 +45,11 @@
     "@remix-project/remix-url-resolver": "^0.0.37",
     "ansi-gray": "^0.1.1",
     "async": "^2.6.0",
-    "axios": ">=0.21.1",
+    "axios": "1.1.2",
     "change-case": "^3.0.1",
     "color-support": "^1.1.3",
     "colors": "1.4.0",
-    "commander": "^2.13.0",
+    "commander": "^9.4.1",
     "deep-equal": "^1.0.1",
     "ethereumjs-util": "^7.0.10",
     "ethers": "^5.4.2",
