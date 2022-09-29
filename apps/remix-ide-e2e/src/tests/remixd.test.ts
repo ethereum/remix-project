@@ -2,7 +2,10 @@
 import { NightwatchBrowser } from 'nightwatch'
 import { writeFileSync } from 'fs'
 import init from '../helpers/init'
-import * as hardhatCompilation from '../helpers/hardhat_compilation_8a7ab689ec618720f53ce867a3031c03.json'
+import * as hardhatCompilation from '../helpers/hardhat_compilation_14f7eb130f02e4d9abcd68528a373e96.json'
+import * as hardhat_compilation_Lock_dbg from '../helpers/hardhat_compilation_Lock.dbg.json'
+import * as hardhat_compilation_Lock from '../helpers/hardhat_compilation_Lock.json'
+
 import * as foundryCompilation from '../helpers/foundry_compilation.json'
 import * as truffle_compilation from '../helpers/truffle_compilation.json'
 
@@ -121,6 +124,8 @@ module.exports = {
   'Should listen on compilation result from hardhat #group5': function (browser: NightwatchBrowser) {
     browser.perform((done) => {
       console.log('working directory', process.cwd())
+      writeFileSync('./apps/remix-ide/contracts/artifacts/contracts/Lock.dbg.json', JSON.stringify(hardhat_compilation_Lock_dbg))
+      writeFileSync('./apps/remix-ide/contracts/artifacts/contracts/Lock.json', JSON.stringify(hardhat_compilation_Lock))
       writeFileSync('./apps/remix-ide/contracts/artifacts/build-info/c7062fdd360381a85af23eeef31c98f8.json', JSON.stringify(hardhatCompilation))
       done()
     })
