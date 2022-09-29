@@ -38,6 +38,11 @@ const basicWorkspaceInit = async (workspaces: { name: string; isGitRepo: boolean
 
       workspaceProvider.setWorkspace(workspaceName)
       plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
+      if (workspace.isGitRepo) {
+        const isActive = await plugin.call('manager', 'isActive', 'dgit')
+  
+        if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+      }
       dispatch(setCurrentWorkspace(workspace))
     }
   }
@@ -123,7 +128,14 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         const name = localStorage.getItem("currentWorkspace")
         workspaceProvider.setWorkspace(name)
         plugin.setWorkspace({ name: name, isLocalhost: false })
-        dispatch(setCurrentWorkspace({ name: name, isGitRepo: false }))
+        const isGitRepo = await plugin.fileManager.isGitRepo()
+
+        if (isGitRepo) {
+          const isActive = await plugin.call('manager', 'isActive', 'dgit')
+    
+          if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+        }
+        dispatch(setCurrentWorkspace({ name: name, isGitRepo }))
       } 
     } else {
       await basicWorkspaceInit(workspaces, workspaceProvider)
