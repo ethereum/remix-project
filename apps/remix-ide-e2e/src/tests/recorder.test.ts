@@ -12,7 +12,7 @@ module.exports = {
     return sources
   },
 
-  'Run Scenario #group1': function (browser: NightwatchBrowser) {
+  'Run Scenario #group1 #flaky': function (browser: NightwatchBrowser) {
     let addressRef
     browser.addFile('scenario.json', { content: records })
       .waitForElementVisible({
@@ -75,25 +75,17 @@ module.exports = {
       .testContracts('multipleContracts.sol', sources[1]['multipleContracts.sol'], ['t1est', 't2est'])
       .clickLaunchIcon('udapp')
       .selectContract('t1est')
-      .pause(1000)
       .createContract('')
       .clickInstance(0)
       .selectContract('t2est')
-      .pause(1000)
       .createContract('')
       .click('.savetransaction')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
-      .execute(function () {
-        const modalOk = document.querySelector('[data-id="udappNotify-modal-footer-ok-react"]') as any
-
-        modalOk.click()
-      })
-      .pause(1000)
+      .click('[data-id="udappNotify-modal-footer-ok-react"]')
       .click('*[data-id="deployAndRunClearInstances"]') // clear udapp
       .click('*[data-id="terminalClearConsole"]') // clear terminal
       .click('[data-id="runtransaction"]')
       .clickInstance(2)
-      .pause(1000)
       .clickFunction('set2 - transact (not payable)', { types: 'uint256 _po', values: '10' })
       .testFunction('last',
         {
@@ -114,7 +106,6 @@ module.exports = {
       .click('*[data-id="deployAndRunClearInstances"]')
       .click('*[data-id="runtabLivemodeInput"]')
       .click('.runtransaction')
-      .pause(1000)
       .clickInstance(0)
       .getAddressAtPosition(0, (address) => {
         addressRef = address
@@ -127,14 +118,12 @@ module.exports = {
       // change the init state and recompile the same contract.
       .openFile('scenario_live_mode_storage.sol')
       .setEditorValue(testStorageForLiveMode.replace('number = 350', 'number = 300'))
-      .pause(5000)
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]')
       .openFile('scenario_live_mode.json')
       .clickLaunchIcon('udapp')
       .click('*[data-id="deployAndRunClearInstances"]')
       .click('.runtransaction')
-      .pause(5000)
       .clickInstance(0)
       .getAddressAtPosition(0, (address) => {
         addressRef = address
