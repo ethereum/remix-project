@@ -323,7 +323,8 @@ export class TxListener {
             contractName: contract.name,
             to: tx.to,
             fn: fn,
-            params: this._decodeInputParams(inputData.substring(8), fnabi)
+            params: this._decodeInputParams(inputData.substring(8), fnabi),
+            abi
           }
           if (tx.returnValue) {
             this._resolvedTransactions[tx.hash].decodedReturnValue = decodeResponse(tx.returnValue, fnabi)
@@ -337,7 +338,8 @@ export class TxListener {
           contractName: contract.name,
           to: tx.to,
           fn: '(receive)',
-          params: null
+          params: null,
+          abi
         }
       } else {
         // fallback function
@@ -345,7 +347,8 @@ export class TxListener {
           contractName: contract.name,
           to: tx.to,
           fn: '(fallback)',
-          params: null
+          params: null,
+          abi
         }
       }
     } else {
@@ -358,7 +361,8 @@ export class TxListener {
         contractName: contract.name,
         to: null,
         fn: '(constructor)',
-        params: params
+        params: params,
+        abi
       }
     }
     return this._resolvedTransactions[tx.hash]

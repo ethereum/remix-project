@@ -486,8 +486,12 @@ export class Blockchain extends Plugin {
   // TODO : event should be triggered by Udapp instead of TxListener
   /** Listen on New Transaction. (Cannot be done inside constructor because txlistener doesn't exist yet) */
   startListening (txlistener) {
-    txlistener.event.register('newTransaction', (tx, receipt) => {
+    txlistener.event.register('newTransaction', async (tx, receipt) => {
       this.events.emit('newTransaction', tx, receipt)
+      const resolvedTransaction = await txlistener.resolvedTransaction(tx.hash)
+      if (resolvedTransaction && !receipt.to) {
+        this.call('udapp', 'addInstance', receipt.contractAddress, resolvedTransaction.abi, resolvedTransaction.contractName)
+      }
     })
   }
 

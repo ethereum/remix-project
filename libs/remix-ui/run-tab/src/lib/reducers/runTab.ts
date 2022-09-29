@@ -591,12 +591,13 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
     case ADD_INSTANCE: {
       const payload: { contractData: ContractData, address: string, name: string, abi?: any, decodedResponse?: Record<number, any> } = action.payload
+      const exists = state.instances.instanceList.filter((instance) => instance.address === payload.address)
 
       return {
         ...state,
         instances: {
           ...state.instances,
-          instanceList: [...state.instances.instanceList, payload]
+          instanceList: exists.length ? state.instances.instanceList : [...state.instances.instanceList, payload]
         }
       }
     }
