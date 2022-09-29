@@ -19,10 +19,8 @@ interface  HomeTabFeaturedPluginsProps {
 function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
   const [state, setState] = useState<{
     themeQuality: { filter: string, name: string },
-    showMediaPanel: 'none' | 'twitter' | 'medium'
   }>({
     themeQuality: themes.light,
-    showMediaPanel: 'none'
   })
 
   const startSolidity = async () => {
@@ -53,40 +51,9 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
   const startPluginManager = async () => {
     plugin.verticalIcons.select('pluginManager')
   }
-  const responsive = {
-    desktop: {
-      breakpoint: { max: 3000, min: 1024 },
-      items: 4,
-      slidesToSlide: 3 // optional, default to 1.
-    },
-    tablet: {
-      breakpoint: { max: 1024, min: 464 },
-      items: 2,
-      slidesToSlide: 2 // optional, default to 1.
-    },
-    mobile: {
-      breakpoint: { max: 464, min: 0 },
-      items: 1,
-      slidesToSlide: 1 // optional, default to 1.
-    }
-  };
-
-  const CustomNavButtons = ({ next, previous, goToSlide, ...rest }) => {
-    const { carouselState: { currentSlide } } = rest;
-    return (
-      <div className="d-flex justify-content-end carousel-button-group">
-        <button className={currentSlide === 0 ? 'disable py-0 border btn' : 'py-0 border btn'} onClick={() => previous()}>
-          <i className="fas fa-angle-left"></i>
-        </button>
-        <button className="py-0 border btn" onClick={() => next()} >
-          <i className="fas fa-angle-right"></i>
-        </button>
-      </div>
-    );
-  };
   
   return (
-    <div className="w-100" id="hTFeaturedPlugins">
+    <div className="pl-2 w-100" id="hTFeaturedPlugins">
       <label className="pl-2" style={{fontSize: "1.2rem"}}>Featured Plugins</label>
       <div className="w-100 d-flex flex-column">
         <ThemeContext.Provider value={ state.themeQuality }>
@@ -96,8 +63,7 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
             swipeable={false}
             draggable={true}
             showDots={false}
-            responsive={responsive}
-            renderDotsOutside={false}
+            responsive={{ desktop: { breakpoint: { max: 3000, min: 1024 }, items: 4} }}
             renderButtonGroupOutside={true}
             ssr={true} // means to render carousel on server-side.
             infinite={false}
@@ -112,7 +78,6 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
             <PluginButton imgPath="assets/img/sourcifyNewLogo.webp" envID="sourcifyLogo" envText="Sourcify" description="Solidity contract and metadata verification service." callback={() => startSourceVerify()} />
             <PluginButton imgPath="assets/img/moreLogo.webp" envID="moreLogo" envText="Plugin Manager" description="Discover more plugins." callback={startPluginManager} />
           </Carousel>
-            
         </ThemeContext.Provider>
       </div>
     </div>
