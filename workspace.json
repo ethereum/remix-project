@@ -169,8 +169,9 @@
           }
         },
         "build": {
-          "builder": "@nrwl/node:package",
+          "builder": "@nrwl/node:node",
           "options": {
+            "buildTarget": "remix-analyzer:build",
             "outputPath": "dist/libs/remix-analyzer",
             "tsConfig": "libs/remix-analyzer/tsconfig.lib.json",
             "packageJson": "libs/remix-analyzer/package.json",
@@ -212,8 +213,9 @@
           }
         },
         "build": {
-          "builder": "@nrwl/node:package",
+          "builder": "@nrwl/node:node",
           "options": {
+            "buildTarget": "remix-astwalker:build",
             "outputPath": "dist/libs/remix-astwalker",
             "tsConfig": "libs/remix-astwalker/tsconfig.lib.json",
             "packageJson": "libs/remix-astwalker/package.json",
@@ -255,8 +257,9 @@
           }
         },
         "build": {
-          "builder": "@nrwl/node:package",
+          "builder": "@nrwl/node:node",
           "options": {
+            "buildTarget": "remix-debug:build",
             "outputPath": "dist/libs/remix-debug",
             "tsConfig": "libs/remix-debug/tsconfig.lib.json",
             "packageJson": "libs/remix-debug/package.json",
@@ -307,8 +310,9 @@
           }
         },
         "build": {
-          "builder": "@nrwl/node:package",
+          "builder": "@nrwl/node:node",
           "options": {
+            "buildTarget": "remix-lib:build",
             "outputPath": "dist/libs/remix-lib",
             "tsConfig": "libs/remix-lib/tsconfig.lib.json",
             "packageJson": "libs/remix-lib/package.json",
@@ -350,8 +354,9 @@
           }
         },
         "build": {
-          "builder": "@nrwl/node:package",
+          "builder": "@nrwl/node:node",
           "options": {
+            "buildTarget": "remix-simulator:build",
             "outputPath": "dist/libs/remix-simulator",
             "tsConfig": "libs/remix-simulator/tsconfig.lib.json",
             "packageJson": "libs/remix-simulator/package.json",
@@ -399,8 +404,9 @@
           }
         },
         "build": {
-          "builder": "@nrwl/node:package",
+          "builder": "@nrwl/node:node",
           "options": {
+            "buildTarget": "remix-solidity:build",
             "outputPath": "dist/libs/remix-solidity",
             "tsConfig": "libs/remix-solidity/tsconfig.lib.json",
             "packageJson": "libs/remix-solidity/package.json",
@@ -441,8 +447,9 @@
           }
         },
         "build": {
-          "builder": "@nrwl/node:package",
+          "builder": "@nrwl/node:node",
           "options": {
+            "buildTarget": "remix-tests:build",
             "outputPath": "dist/libs/remix-tests",
             "tsConfig": "libs/remix-tests/tsconfig.lib.json",
             "packageJson": "libs/remix-tests/package.json",
@@ -493,8 +500,9 @@
           }
         },
         "build": {
-          "builder": "@nrwl/node:package",
+          "builder": "@nrwl/node:node",
           "options": {
+            "buildTarget": "remix-url-resolver:build",
             "outputPath": "dist/libs/remix-url-resolver",
             "tsConfig": "libs/remix-url-resolver/tsconfig.lib.json",
             "packageJson": "libs/remix-url-resolver/package.json",
@@ -535,8 +543,9 @@
           }
         },
         "build": {
-          "builder": "@nrwl/node:package",
+          "builder": "@nrwl/node:node",
           "options": {
+            "buildTarget": "remixd:build",
             "outputPath": "dist/libs/remixd",
             "tsConfig": "libs/remixd/tsconfig.lib.json",
             "packageJson": "libs/remixd/package.json",
@@ -727,7 +736,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/web:build",
+          "builder": "@nrwl/web:webpack",
           "options": {
             "outputPath": "dist/apps/debugger",
             "index": "apps/debugger/src/index.html",
@@ -940,8 +949,9 @@
           }
         },
         "build": {
-          "builder": "@nrwl/node:package",
+          "builder": "@nrwl/node:node",
           "options": {
+            "buildTarget": "remix-core-plugin:build",
             "outputPath": "dist/libs/core-plugin",
             "tsConfig": "libs/remix-core-plugin/tsconfig.lib.json",
             "packageJson": "libs/remix-core-plugin/package.json",
@@ -1097,7 +1107,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/web:build",
+          "builder": "@nrwl/web:webpack",
           "options": {
             "outputPath": "dist/apps/remix-ide-e2e/src/local-plugin",
             "index": "apps/remix-ide-e2e/src/local-plugin/src/index.html",
@@ -1431,8 +1441,9 @@
           }
         },
         "build": {
-          "builder": "@nrwl/node:package",
+          "builder": "@nrwl/node:node",
           "options": {
+            "buildTarget": "remix-ws-templates:build",
             "outputPath": "dist/libs/remix-ws-templates",
             "tsConfig": "libs/remix-ws-templates/tsconfig.lib.json",
             "packageJson": "libs/remix-ws-templates/package.json",
