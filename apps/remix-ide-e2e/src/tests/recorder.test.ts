@@ -12,7 +12,7 @@ module.exports = {
     return sources
   },
 
-  'Run Scenario #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Run Scenario #group1': function (browser: NightwatchBrowser) {
     let addressRef
     browser.addFile('scenario.json', { content: records })
       .waitForElementVisible({
