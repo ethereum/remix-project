@@ -277,8 +277,13 @@ export const switchToWorkspace = async (name: string) => {
     if (isActive) await plugin.call('manager', 'deactivatePlugin', 'remixd')
     await plugin.fileProviders.workspace.setWorkspace(name)
     await plugin.setWorkspace({ name, isLocalhost: false })
-    const isGitRepo = await plugin.fileManager.isGitRepo(name)
+    const isGitRepo = await plugin.fileManager.isGitRepo()
 
+    if (isGitRepo) {
+      const isActive = await plugin.call('manager', 'isActive', 'dgit')
+
+      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+    }
     dispatch(setMode('browser'))
     dispatch(setCurrentWorkspace({ name, isGitRepo }))
     dispatch(setReadOnlyMode(false))
