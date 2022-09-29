@@ -66,8 +66,10 @@ export class HardhatClient extends PluginClient {
     const folderFiles = await fs.readdir(contractsTargets)
     // name of folders are file names
     for (const file of folderFiles) { // ["artifacts/contracts/Greeter.sol/"]
-      // const fileName = basename(file) // "Greeter.sol"
       const contractFilePath = join(contractsTargets, file)
+      const stat = await fs.stat(contractFilePath)
+      if (!stat.isDirectory()) continue
+
       const files = await fs.readdir(contractFilePath)
       const compilationResult = {
         input: {},
