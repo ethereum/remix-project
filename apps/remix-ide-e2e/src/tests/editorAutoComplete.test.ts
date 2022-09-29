@@ -112,11 +112,13 @@ module.exports = {
         return actions.
           sendKeys(' someaddress;')
           .sendKeys(this.Keys.ENTER)
-      }).pause(4000)
+          .sendKeys(this.Keys.ENTER)
+          .sendKeys(this.Keys.ENTER)
+      }).pause(2000)
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions.
-          sendKeys('someaddress.')
+          sendKeys('someaddress')
       })
       .waitForElementVisible(autoCompleteLineElement('balance'))
       .waitForElementVisible(autoCompleteLineElement('send'))
