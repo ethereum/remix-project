@@ -8,7 +8,6 @@ const _paq = window._paq = window._paq || []
 const profile = {
   name: 'pluginManager',
   displayName: 'Plugin manager',
-  intlId: 'pluginManager.displayName',
   methods: [],
   events: [],
   icon: 'assets/img/pluginManager.webp',
