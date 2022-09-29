@@ -8,7 +8,7 @@ import { browserReducer, browserInitialState } from '../reducers/workspace'
 import { initWorkspace, fetchDirectory, removeInputField, deleteWorkspace, clearPopUp, publishToGist, createNewFile, setFocusElement, createNewFolder,
   deletePath, renamePath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath, addInputField, createWorkspace,
   fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, handleDownloadFiles, restoreBackupZip, cloneRepository, moveFile, moveFolder,
-  showAllBranches, switchToBranch, switchToNewBranch
+  showAllBranches, switchBranch, createNewBranch, checkoutRemoteBranch
 } from '../actions'
 import { Modal, WorkspaceProps, WorkspaceTemplate } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -144,11 +144,15 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   }
 
   const dispatchSwitchToBranch = async (branch: string) => {
-    await switchToBranch(branch)
+    await switchBranch(branch)
   }
 
-  const dispatchSwitchToNewBranch = async (branch: string) => {
-    await switchToNewBranch(branch)
+  const dispatchCreateNewBranch = async (branch: string) => {
+    await createNewBranch(branch)
+  }
+
+  const dispatchCheckoutRemoteBranch = async (branch: string, remote: string) => {
+    await checkoutRemoteBranch(branch, remote)
   }
 
   useEffect(() => {
@@ -258,7 +262,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchMoveFolder,
     dispatchShowAllBranches,
     dispatchSwitchToBranch,
-    dispatchSwitchToNewBranch
+    dispatchCreateNewBranch,
+    dispatchCheckoutRemoteBranch
   }
   return (
     <FileSystemContext.Provider value={value}>
