@@ -13,7 +13,6 @@ import { isNative } from '../../remixAppManager'
 const profile = {
   name: 'solidity',
   displayName: 'Solidity compiler',
-  intlId: 'solidity.displayName',
   icon: 'assets/img/solidity.webp',
   description: 'Compile solidity contracts',
   kind: 'compiler',

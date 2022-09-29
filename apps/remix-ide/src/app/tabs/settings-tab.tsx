@@ -9,7 +9,6 @@ import { PluginViewWrapper } from '@remix-ui/helper'
 const profile = {
   name: 'settings',
   displayName: 'Settings',
-  intlId: 'settings.displayName',
   methods: ['get'],
   events: [],
   icon: 'assets/img/settings.webp',
