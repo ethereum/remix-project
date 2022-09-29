@@ -107,7 +107,7 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
       <div className="jumpButtons btn-group py-1">
         <button className='btn btn-primary btn-sm navigator jumpButton' id='jumppreviousbreakpoint' data-id="buttonNavigatorJumpPreviousBreakpoint" onClick={() => { jumpPreviousBreakpoint && jumpPreviousBreakpoint() }} disabled={state.jumpPreviousBreakpointDisabled}>
           <OverlayTrigger
-            placement="top-end"
+            placement="top-start"
             overlay={
               <Tooltip id="jumppreviousbreakpointTooltip" className="text-nowrap">
                 <span>{'Jump to the previous breakpoint'}</span>
