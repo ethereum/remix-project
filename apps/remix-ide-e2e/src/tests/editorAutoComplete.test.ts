@@ -118,7 +118,7 @@ module.exports = {
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions.
-          sendKeys('someaddress')
+          sendKeys('someaddress.')
       })
       .waitForElementVisible(autoCompleteLineElement('balance'))
       .waitForElementVisible(autoCompleteLineElement('send'))
