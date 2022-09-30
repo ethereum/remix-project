@@ -21,7 +21,6 @@ TEST_EXITCODE=0
 yarn run ganache-cli &
 yarn run serve:production &
 echo 'sharing folder: ' $PWD '/apps/remix-ide/contracts' &
-yarn run remixd -s ./apps/remix-ide/contracts &
 npx nx serve remix-ide-e2e-src-local-plugin &
 
 sleep 5
