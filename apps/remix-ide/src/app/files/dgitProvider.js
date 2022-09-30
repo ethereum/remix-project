@@ -50,6 +50,8 @@ class DGitProvider extends Plugin {
 
   async getGitConfig () {
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
+
+    if (!workspace) return
     return {
       fs: window.remixFileSystemCallback,
       dir: addSlash(workspace.absolutePath)
@@ -152,14 +154,16 @@ class DGitProvider extends Plugin {
   }
 
   async currentbranch (config) {
-    const cmd = config ? config : await this.getGitConfig()
+    const defaultConfig = await this.getGitConfig()
+    const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
     const name = await git.currentBranch(cmd)
 
     return name
   }
 
   async branches (config) {
-    const cmd = config ? config : await this.getGitConfig()
+    const defaultConfig = await this.getGitConfig()
+    const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
     const remotes = await this.remotes(config)
     let branches = []
     branches = (await git.listBranches(cmd)).map((branch) => { return { remote: undefined, name: branch } })
