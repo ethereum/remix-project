@@ -29,7 +29,7 @@ export class HardhatClient extends PluginClient {
 
   sharedFolder (currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
-    this.buildPath = utils.absolutePath('artifacts/build-info', this.currentSharedFolder)
+    this.buildPath = utils.absolutePath('artifacts/contracts', this.currentSharedFolder)
     this.listenOnHardhatCompilation()
   }
 
@@ -62,14 +62,13 @@ export class HardhatClient extends PluginClient {
 
   private async processArtifact () {
     // resolving the files
-    const contractsTargets = utils.absolutePath('artifacts/contracts', this.currentSharedFolder)
-    const folderFiles = await fs.readdir(contractsTargets)
+    const folderFiles = await fs.readdir(this.buildPath)
     // name of folders are file names
     for (const file of folderFiles) { // ["artifacts/contracts/Greeter.sol/"]
-      const contractFilePath = join(contractsTargets, file)
+      const contractFilePath = join(this.buildPath, file)
       const stat = await fs.stat(contractFilePath)
       if (!stat.isDirectory()) continue
-
+      console.log('pp ', contractFilePath)
       const files = await fs.readdir(contractFilePath)
       const compilationResult = {
         input: {},
@@ -96,7 +95,9 @@ export class HardhatClient extends PluginClient {
           
           await this.feedContractArtifactFile(content, compilationResult)
         }
-        this.emit('compilationFinished', compilationResult.target, { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)      
+        if (compilationResult.target) {
+          this.emit('compilationFinished', compilationResult.target, { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)      
+        }
       }
     }
     if (!this.warnLog) {
@@ -108,7 +109,7 @@ export class HardhatClient extends PluginClient {
 
   listenOnHardhatCompilation () {
     try {
-      this.watcher = chokidar.watch(this.buildPath, { depth: 0, ignorePermissionErrors: true, ignoreInitial: true })
+      this.watcher = chokidar.watch(this.buildPath, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
       
       this.watcher.on('change', () => this.processArtifact())
       this.watcher.on('add', () => this.processArtifact())
