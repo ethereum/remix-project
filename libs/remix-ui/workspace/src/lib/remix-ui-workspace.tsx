@@ -21,6 +21,8 @@ export function Workspace () {
   const mintableCheckboxRef = useRef()
   const burnableCheckboxRef = useRef()
   const pausableCheckboxRef = useRef()
+  const transparentRadioRef = useRef()
+  const uupsRadioRef = useRef()
   const global = useContext(FileSystemContext)
   const workspaceRenameInput = useRef()
   const workspaceCreateInput = useRef()
@@ -166,6 +168,10 @@ export function Workspace () {
       burnableCheckboxRef.current.checked = false
       // @ts-ignore
       pausableCheckboxRef.current.checked = false
+      // @ts-ignore
+      transparentRadioRef.current.checked = false
+      // @ts-ignore
+      uupsRadioRef.current.checked = false
     } else displayOzCustomRef.current.style.display = 'none'
     
     // @ts-ignore
@@ -239,11 +245,11 @@ export function Workspace () {
           <label id="wsName" className="form-check-label d-block mb-1">Upgradeability</label>
           <div onChange={(e) => handleUpgradeability(e)}>
             <div className="d-flex ml-2 custom-control custom-radio">
-                <input className="custom-control-input" type="radio" name="upgradeability" value="transparent" id="transparent" />
+                <input className="custom-control-input" type="radio" name="upgradeability" value="transparent" id="transparent" ref={transparentRadioRef} />
                 <label className="form-check-label custom-control-label" htmlFor="transparent" data-id="upgradeTypeTransparent" >Transparent</label>
             </div>
             <div className="d-flex ml-2 custom-control custom-radio">
-                <input className="custom-control-input" type="radio" name="upgradeability" value="uups" id="uups" />
+                <input className="custom-control-input" type="radio" name="upgradeability" value="uups" id="uups" ref={uupsRadioRef} />
                 <label className="form-check-label custom-control-label" htmlFor="uups" data-id="upgradeTypeUups" >UUPS</label>
             </div>
           </div>
