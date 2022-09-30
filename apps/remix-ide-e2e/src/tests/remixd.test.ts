@@ -73,8 +73,9 @@ module.exports = {
     .perform((done) => {
       runTests(browser, done)
     })
-    .perform(() => {
+    .perform((done) => {
       remixd.kill()
+      done()
     })
   },
   'Import from node_modules #group1': function (browser) {
@@ -95,8 +96,9 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js')
       .testContracts('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'], ['SafeMath'])
-      .perform(() => {
+      .perform((done) => {
         remixd.kill()
+        done()
       })
   },
   'Import from node_modules and reference a github import #group2': function (browser) {
@@ -112,8 +114,9 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0
       .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
-      .perform(() => {
+      .perform((done) => {
         remixd.kill()
+        done()
       })
   },
   'Static Analysis run with remixd #group3': '' + function (browser) {
