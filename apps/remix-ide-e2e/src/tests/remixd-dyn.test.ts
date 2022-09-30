@@ -27,7 +27,7 @@ module.exports = {
     browser.perform((done) => {
       remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
       console.log('working directory', process.cwd())
-      startRemixd(browser, done)
+      connectRemixd(browser, done)
     })
     .perform((done) => {
       console.log('generating compilation result')
@@ -61,7 +61,7 @@ module.exports = {
       .perform((done) => {
         remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
         console.log('working directory', process.cwd())
-        startRemixd(browser, done)
+        connectRemixd(browser, done)
       })
       .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from hardhat').before(60000)
       
@@ -80,7 +80,7 @@ module.exports = {
     browser.perform((done) => {
       remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/foundry'))
       console.log('working directory', process.cwd())
-      startRemixd(browser, done)
+      connectRemixd(browser, done)
     })
     .perform((done) => {
       writeFileSync('./apps/remix-ide/contracts/foundry/out/Counter.sol/Counter.json', JSON.stringify(foundryCompilation))
@@ -114,7 +114,7 @@ module.exports = {
     browser.perform((done) => {
       remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/truffle'))
       console.log('working directory', process.cwd())
-      startRemixd(browser, done)      
+      connectRemixd(browser, done)      
     })
     .perform((done) => {
       writeFileSync('./apps/remix-ide/contracts/truffle/build/contracts/Migrations.json', JSON.stringify(truffle_compilation))
@@ -147,7 +147,7 @@ function spawnRemixd (path: string) {
   return remixd
 }
 
-function startRemixd (browser: NightwatchBrowser, done: any) {
+function connectRemixd (browser: NightwatchBrowser, done: any) {
   const browserName = browser.options.desiredCapabilities.browserName
   if (browserName === 'safari' || browserName === 'internet explorer') {
     console.log('do not run remixd test for ' + browserName + ': sauce labs doesn\'t seems to handle websocket')
