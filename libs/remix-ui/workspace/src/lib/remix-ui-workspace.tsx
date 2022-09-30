@@ -16,8 +16,6 @@ export function Workspace () {
   const [selectedWorkspace, setSelectedWorkspace] = useState<{ name: string, isGitRepo: boolean}>(null)
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
   const displayOzCustomRef = useRef<HTMLDivElement>()
-  const ozFeatures = useRef({mintable: false, burnable: false, pausable: false})
-  const upgradeable = useRef()
   const mintableCheckboxRef = useRef()
   const burnableCheckboxRef = useRef()
   const pausableCheckboxRef = useRef()
@@ -118,10 +116,15 @@ export function Workspace () {
     // @ts-ignore: Object is possibly 'null'.
     const workspaceTemplateName = workspaceCreateTemplateInput.current.value || 'remixDefault'
     const initGitRepo = initGitRepoRef.current.checked
-    const features = ozFeatures.current
     const opts = {
-      upgradeable: upgradeable.current,
-      features
+      // @ts-ignore: Object is possibly 'null'.
+      mintable: mintableCheckboxRef.current.checked,
+      // @ts-ignore: Object is possibly 'null'.
+      burnable: burnableCheckboxRef.current.checked,
+      // @ts-ignore: Object is possibly 'null'.
+      pausable: pausableCheckboxRef.current.checked,
+      // @ts-ignore: Object is possibly 'null'.
+      upgradeable: transparentRadioRef.current.checked ? transparentRadioRef.current.value : ( uupsRadioRef.current.checked ? uupsRadioRef.current.value : false )
     }
 
     try {
@@ -160,8 +163,6 @@ export function Workspace () {
     // @ts-ignore
     if (workspaceCreateTemplateInput.current.value.startsWith('oz') && displayOzCustomRef && displayOzCustomRef.current) {
       displayOzCustomRef.current.style.display = 'block'
-      upgradeable.current = undefined
-      ozFeatures.current = {mintable: false, burnable: false, pausable: false}
       // @ts-ignore
       mintableCheckboxRef.current.checked = false
       // @ts-ignore
@@ -194,14 +195,7 @@ export function Workspace () {
 
   const handleUpgradeability = (e) => {
     // @ts-ignore
-    upgradeable.current = e.target.value
-    // @ts-ignore
     workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value + '_upgradeable'}_${Date.now()}`
-  }
-
-  const handleFeatures = (e) => {
-    // @ts-ignore
-    ozFeatures.current[e.target.value] = e.target.checked
   }
 
   const createModalMessage = () => {
@@ -229,15 +223,15 @@ export function Workspace () {
           <label id="wsName" className="form-check-label d-block mb-1">Features</label>
           <div className="mb-2">
             <div className="d-flex ml-2 custom-control custom-checkbox">
-                <input className="custom-control-input" type="checkbox" name="feature" value="mintable" id="mintable" onChange={(e) => handleFeatures(e)} ref={mintableCheckboxRef} />
+                <input className="custom-control-input" type="checkbox" name="feature" value="mintable" id="mintable" ref={mintableCheckboxRef} />
                 <label className="form-check-label custom-control-label" htmlFor="mintable" data-id="featureTypeMintable" >Mintable</label>
             </div>
             <div className="d-flex ml-2 custom-control custom-checkbox">
-                <input className="custom-control-input" type="checkbox" name="feature" value="burnable" id="burnable" onChange={(e) => handleFeatures(e)} ref={burnableCheckboxRef} />
+                <input className="custom-control-input" type="checkbox" name="feature" value="burnable" id="burnable" ref={burnableCheckboxRef} />
                 <label className="form-check-label custom-control-label" htmlFor="burnable" data-id="featureTypeBurnable" >Burnable</label>
             </div>
             <div className="d-flex ml-2 custom-control custom-checkbox">
-                <input className="custom-control-input" type="checkbox" name="feature" value="pausable" id="pausable" onChange={(e) => handleFeatures(e)} ref={pausableCheckboxRef} />
+                <input className="custom-control-input" type="checkbox" name="feature" value="pausable" id="pausable" ref={pausableCheckboxRef} />
                 <label className="form-check-label custom-control-label" htmlFor="pausable" data-id="featureTypePausable" >Pausable</label>
             </div>
           </div>
