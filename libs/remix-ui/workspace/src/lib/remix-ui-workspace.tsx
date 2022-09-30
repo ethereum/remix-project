@@ -193,7 +193,7 @@ export function Workspace () {
     setShowDropdown(isOpen)
   }
 
-  const handleUpgradeability = (e) => {
+  const handleUpgradeability = () => {
     // @ts-ignore
     workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value + '_upgradeable'}_${Date.now()}`
   }
@@ -237,7 +237,7 @@ export function Workspace () {
           </div>
 
           <label id="wsName" className="form-check-label d-block mb-1">Upgradeability</label>
-          <div onChange={(e) => handleUpgradeability(e)}>
+          <div onChange={handleUpgradeability}>
             <div className="d-flex ml-2 custom-control custom-radio">
                 <input className="custom-control-input" type="radio" name="upgradeability" value="transparent" id="transparent" ref={transparentRadioRef} />
                 <label className="form-check-label custom-control-label" htmlFor="transparent" data-id="upgradeTypeTransparent" >Transparent</label>
