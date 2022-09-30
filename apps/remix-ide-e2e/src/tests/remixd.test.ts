@@ -77,6 +77,7 @@ module.exports = {
       remixd.kill()
       done()
     })
+    .end()
   },
   'Import from node_modules #group1': function (browser) {
     /*
@@ -100,6 +101,7 @@ module.exports = {
         remixd.kill()
         done()
       })
+      .end()
   },
   'Import from node_modules and reference a github import #group2': function (browser) {
     let remixd
@@ -118,6 +120,7 @@ module.exports = {
         remixd.kill()
         done()
       })
+      .end()
   },
   'Static Analysis run with remixd #group3': '' + function (browser) {
     browser.testContracts('test_static_analysis_with_remixd_and_hardhat.sol', sources[5]['test_static_analysis_with_remixd_and_hardhat.sol'], ['test5']).pause(2000)
@@ -178,6 +181,7 @@ module.exports = {
     browser.perform(() => {
       remixd.kill()
     })
+    .end()
    },
 
    'Should load compilation result from hardhat when remixd connects #group6': function (browser: NightwatchBrowser) {
@@ -208,6 +212,7 @@ module.exports = {
     browser.perform(() => {
       remixd.kill()
     })
+    .end()
    },
 
    'Should listen on compilation result from foundry #group7': function (browser: NightwatchBrowser) {
@@ -244,7 +249,8 @@ module.exports = {
 
     browser.perform(() => {
       remixd.kill()
-    }) 
+    })
+    .end()
    },
 
    'Should listen on compilation result from truffle #group8': function (browser: NightwatchBrowser) {
@@ -273,7 +279,8 @@ module.exports = {
 
     browser.perform(() => {
       remixd.kill()
-    }) 
+    })
+    .end()
    }
 }
 
