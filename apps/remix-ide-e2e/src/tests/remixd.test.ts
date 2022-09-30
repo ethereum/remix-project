@@ -165,6 +165,7 @@ module.exports = {
     .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from hardhat').before(60000)
       
     browser.clickLaunchIcon('filePanel')
+      .openFile('contracts')
       .openFile('contracts/Lock.sol')
       .clickLaunchIcon('udapp')
       .selectContract('Lock')
@@ -194,6 +195,7 @@ module.exports = {
       .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from hardhat').before(60000)
       
     browser.clickLaunchIcon('filePanel')
+      .openFile('contracts')
       .openFile('contracts/Lock.sol')
       .clickLaunchIcon('udapp')
       .selectContract('Lock')
@@ -220,6 +222,7 @@ module.exports = {
     
     let contractAaddress
     browser.clickLaunchIcon('filePanel')
+      .openFile('src')
       .openFile('src/Counter.sol')
       .clickLaunchIcon('udapp')
       .selectContract('Counter')
@@ -255,6 +258,7 @@ module.exports = {
     .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from truffle').before(60000)
     
     browser.clickLaunchIcon('filePanel')
+      .openFile('contracts')
       .openFile('contracts/Migrations.sol')
       .clickLaunchIcon('udapp')
       .selectContract('Migrations')
