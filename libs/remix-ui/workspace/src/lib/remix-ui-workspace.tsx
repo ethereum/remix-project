@@ -18,6 +18,9 @@ export function Workspace () {
   const displayOzCustomRef = useRef<HTMLDivElement>()
   const ozFeatures = useRef({mintable: false, burnable: false, pausable: false})
   const upgradeable = useRef()
+  const mintableCheckboxRef = useRef()
+  const burnableCheckboxRef = useRef()
+  const pausableCheckboxRef = useRef()
   const global = useContext(FileSystemContext)
   const workspaceRenameInput = useRef()
   const workspaceCreateInput = useRef()
@@ -157,6 +160,12 @@ export function Workspace () {
       displayOzCustomRef.current.style.display = 'block'
       upgradeable.current = undefined
       ozFeatures.current = {mintable: false, burnable: false, pausable: false}
+      // @ts-ignore
+      mintableCheckboxRef.current.checked = false
+      // @ts-ignore
+      burnableCheckboxRef.current.checked = false
+      // @ts-ignore
+      pausableCheckboxRef.current.checked = false
     } else displayOzCustomRef.current.style.display = 'none'
     
     // @ts-ignore
@@ -212,17 +221,17 @@ export function Workspace () {
           <label className="form-check-label d-block mb-2" style={{fontWeight: "bolder"}}>Customize template</label>
 
           <label id="wsName" className="form-check-label d-block mb-1">Features</label>
-          <div className="mb-2" onChange={(e) => handleFeatures(e)}>
+          <div className="mb-2">
             <div className="d-flex ml-2 custom-control custom-checkbox">
-                <input className="custom-control-input" type="checkbox" name="feature" value="mintable" id="mintable" />
+                <input className="custom-control-input" type="checkbox" name="feature" value="mintable" id="mintable" onChange={(e) => handleFeatures(e)} ref={mintableCheckboxRef} />
                 <label className="form-check-label custom-control-label" htmlFor="mintable" data-id="featureTypeMintable" >Mintable</label>
             </div>
             <div className="d-flex ml-2 custom-control custom-checkbox">
-                <input className="custom-control-input" type="checkbox" name="feature" value="burnable" id="burnable" />
+                <input className="custom-control-input" type="checkbox" name="feature" value="burnable" id="burnable" onChange={(e) => handleFeatures(e)} ref={burnableCheckboxRef} />
                 <label className="form-check-label custom-control-label" htmlFor="burnable" data-id="featureTypeBurnable" >Burnable</label>
             </div>
             <div className="d-flex ml-2 custom-control custom-checkbox">
-                <input className="custom-control-input" type="checkbox" name="feature" value="pausable" id="pausable" />
+                <input className="custom-control-input" type="checkbox" name="feature" value="pausable" id="pausable" onChange={(e) => handleFeatures(e)} ref={pausableCheckboxRef} />
                 <label className="form-check-label custom-control-label" htmlFor="pausable" data-id="featureTypePausable" >Pausable</label>
             </div>
           </div>
