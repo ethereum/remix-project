@@ -102,7 +102,7 @@
     "nightwatch_local_search": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/search.test.js --env=chromeDesktop",
     "nightwatch_local_providers": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/providers.test.js --env=chromeDesktop",
     "onchange": "onchange apps/remix-ide/build/app.js -- npm-run-all lint",
-    "remixd": "nx build remixd && chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js -s ./apps/remix-ide/contracts --remix-ide http://127.0.0.1:8080",
+    "remixd": "nx build remixd && chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080",
     "selenium": "selenium-standalone start",
     "selenium-install": "selenium-standalone install",
     "sourcemap": "exorcist --root ../ apps/remix-ide/build/app.js.map > apps/remix-ide/build/app.js",
