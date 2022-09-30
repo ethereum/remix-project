@@ -174,7 +174,7 @@ export function Workspace () {
       // @ts-ignore
       uupsRadioRef.current.checked = false
     } else displayOzCustomRef.current.style.display = 'none'
-    
+
     // @ts-ignore
     workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value || 'remixDefault'}_${Date.now()}`
   }
@@ -292,12 +292,75 @@ export function Workspace () {
     )
   }
 
+  const workspaceMenuIcons = [
+    <span
+      hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+      id='workspaceRename'
+      data-id='workspaceRename'
+      onClick={(e) => {
+        e.stopPropagation()
+        renameCurrentWorkspace()
+        _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceRename'])
+      }}
+      className='far fa-edit remixui_menuicon'
+      title='Rename'>
+    </span>,
+    <span
+      hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+      id='workspaceDelete'
+      data-id='workspaceDelete'
+      onClick={(e) => {
+        e.stopPropagation()
+        deleteCurrentWorkspace()
+        _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDelete'])
+      }}
+      className='far fa-trash remixui_menuicon'
+      title='Delete'>
+    </span>,
+    <span
+      hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+      id='workspacesDownload'
+      data-id='workspacesDownload'
+      onClick={(e) => {
+        e.stopPropagation()
+        downloadWorkspaces()
+        _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesDownload'])
+      }}
+      className='far fa-download remixui_menuicon'
+      title='Download Workspaces'>
+    </span>,
+    <span
+      hidden={currentWorkspace === LOCALHOST}
+      id='workspacesRestore'
+      data-id='workspacesRestore'
+      onClick={(e) => {
+        e.stopPropagation()
+        restoreBackup()
+        _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesRestore'])
+      }}
+      className='far fa-upload remixui_menuicon'
+      title='Restore Workspaces Backup'>
+    </span>,
+    <span
+      hidden={currentWorkspace === LOCALHOST}
+      id='cloneGitRepository'
+      data-id='cloneGitRepository'
+      onClick={(e) => {
+        e.stopPropagation()
+        cloneGitRepository()
+        _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'cloneGitRepository'])
+      }}
+      className='far fa-clone remixui_menuicon'
+      title='Clone Git Repository'>
+    </span>
+  ]
+
   return (
     <div className='remixui_container'>
       <div className='d-flex flex-column w-100 remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
         <div>
           <header>
-            <div className="mx-2 mb-2">
+            <div className="mx-2 mb-2 d-flex justify-content-between">
               <label className="pl-1 form-check-label" htmlFor="workspacesSelect">
                 Workspaces
               </label>
@@ -314,67 +377,9 @@ export function Workspace () {
                   className='far fa-plus-square remixui_menuicon'
                   title='Create'>
                 </span>
-                <span
-                  hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-                  id='workspaceRename'
-                  data-id='workspaceRename'
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    renameCurrentWorkspace()
-                    _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceRename'])
-                  }}
-                  className='far fa-edit remixui_menuicon'
-                  title='Rename'>
-                </span>
-                <span
-                  hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-                  id='workspaceDelete'
-                  data-id='workspaceDelete'
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    deleteCurrentWorkspace()
-                    _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDelete'])
-                  }}
-                  className='far fa-trash remixui_menuicon'
-                  title='Delete'>
-                </span>
-                <span
-                  hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-                  id='workspacesDownload'
-                  data-id='workspacesDownload'
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    downloadWorkspaces()
-                    _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesDownload'])
-                  }}
-                  className='far fa-download remixui_menuicon'
-                  title='Download Workspaces'>
-                </span>
-                <span
-                  hidden={currentWorkspace === LOCALHOST}
-                  id='workspacesRestore'
-                  data-id='workspacesRestore'
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    restoreBackup()
-                    _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesRestore'])
-                  }}
-                  className='far fa-upload remixui_menuicon'
-                  title='Restore Workspaces Backup'>
-                </span>
-                <span
-                  hidden={currentWorkspace === LOCALHOST}
-                  id='cloneGitRepository'
-                  data-id='cloneGitRepository'
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    cloneGitRepository()
-                    _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'cloneGitRepository'])
-                  }}
-                  className='far fa-clone remixui_menuicon'
-                  title='Clone Git Repository'>
-                </span>
+                <span className="fas fa-bars remixui_menuicon"></span>
               </span>
+
               <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
                 <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}>
                   { selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? 'localhost' : NO_WORKSPACE }
@@ -386,12 +391,12 @@ export function Workspace () {
                       createWorkspace()
                     }}
                   >
-                    { 
+                    {
                       <span className="pl-3"> - create a new workspace - </span>
                     }
                   </Dropdown.Item>
                   <Dropdown.Item onClick={() => { switchWorkspace(LOCALHOST) }}>{currentWorkspace === LOCALHOST ? <span>&#10003; localhost </span> : <span className="pl-3"> { LOCALHOST } </span>}</Dropdown.Item>
-                  {                    
+                  {
                     global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
                       <Dropdown.Item
                         key={index}
@@ -414,13 +419,22 @@ export function Workspace () {
                 </Dropdown.Menu>
               </Dropdown>
             </div>
+            <Dropdown className="custom-dropdown-items">
+                {
+                  workspaceMenuIcons.map(m => (
+                    <Dropdown.Item>
+                      {m}
+                    </Dropdown.Item>
+                  ))
+                }
+              </Dropdown>
           </header>
         </div>
         <div className='h-100 remixui_fileExplorerTree' onFocus={() => { toggleDropdown(false) }}>
           <div className='h-100'>
           { (global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>}
           { !(global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) &&
-            (global.fs.mode === 'browser') && (currentWorkspace !== NO_WORKSPACE) && 
+            (global.fs.mode === 'browser') && (currentWorkspace !== NO_WORKSPACE) &&
             <div className='h-100 remixui_treeview' data-id='filePanelFileExplorerTree'>
               <FileExplorer
                 name={currentWorkspace}
