@@ -12,10 +12,11 @@ export class FoundryClient extends PluginClient {
   currentSharedFolder: string
   watcher: chokidar.FSWatcher
   warnlog: boolean
+  buildPath: string
 
   constructor (private readOnly = false) {
     super()
-    this.methods = ['compile']
+    this.methods = ['compile', 'sync']
   }
 
   setWebSocket (websocket: WS): void {
@@ -28,6 +29,7 @@ export class FoundryClient extends PluginClient {
 
   sharedFolder (currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
+    this.buildPath = utils.absolutePath('out', this.currentSharedFolder)
     this.listenOnFoundryCompilation()
   }
 
@@ -58,33 +60,38 @@ export class FoundryClient extends PluginClient {
     })
   }
 
-  listenOnFoundryCompilation () {
-    try {
-      const buildPath = utils.absolutePath('out', this.currentSharedFolder)
-      this.watcher = chokidar.watch(buildPath, { depth: 3, ignorePermissionErrors: true, ignoreInitial: true })
+  private async processArtifact () {
+    const folderFiles = await fs.readdir(this.buildPath) // "out" folder    
+    // name of folders are file names
+    for (const file of folderFiles) {
+      const path = join(this.buildPath, file) // out/Counter.sol/
       const compilationResult = {
         input: {},
         output: {
           contracts: {},
           sources: {}
         },
-        solcVersion: null
+        solcVersion: null,
+        compilationTarget: null
       }
-      const processArtifact = async () => {
-        const folderFiles = await fs.readdir(buildPath)
-        // name of folders are file names
-        for (const file of folderFiles) {
-          await this.readContract(join(buildPath, file), compilationResult)
-        }
-        if (!this.warnlog) {
-          // @ts-ignore
-          this.call('terminal', 'log', 'receiving compilation result from foundry')
-          this.warnlog = true
-        }
-        this.emit('compilationFinished', '', { sources: compilationResult.input } , 'soljson', compilationResult.output, compilationResult.solcVersion)      
-      }
-      this.watcher.on('change', async (f: string) => processArtifact())
-      this.watcher.on('add', async (f: string) => processArtifact())
+      await this.readContract(path, compilationResult)
+      this.emit('compilationFinished', compilationResult.compilationTarget, { sources: compilationResult.input } , 'soljson', compilationResult.output, compilationResult.solcVersion)
+    }
+    if (!this.warnlog) {
+      // @ts-ignore
+      this.call('terminal', 'log', 'receiving compilation result from foundry')
+      this.warnlog = true
+    }
+  }
+
+  listenOnFoundryCompilation () {
+    try {      
+      this.watcher = chokidar.watch(this.buildPath, { depth: 3, ignorePermissionErrors: true, ignoreInitial: true })
+      
+      this.watcher.on('change', async (f: string) => this.processArtifact())
+      this.watcher.on('add', async (f: string) => this.processArtifact())
+      // process the artifact on activation
+      setTimeout(() => this.processArtifact(), 1000)
     } catch (e) {
       console.log(e)
     }    
@@ -115,6 +122,7 @@ export class FoundryClient extends PluginClient {
       }
     } else {
       const contractName = basename(path).replace('.json', '')
+      compilationResultPart.compilationTarget = contentJSON.ast.absolutePath
       // extract data
       if (!compilationResultPart.output['sources'][contentJSON.ast.absolutePath]) compilationResultPart.output['sources'][contentJSON.ast.absolutePath] = {}
       compilationResultPart.output['sources'][contentJSON.ast.absolutePath] = {
@@ -134,5 +142,12 @@ export class FoundryClient extends PluginClient {
         }
       }
     }
+  }
+
+  async sync () {
+    console.log('syncing from foundry')
+    this.processArtifact()
+    // @ts-ignore
+    this.call('terminal', 'log', 'synced with foundry')
   }
 }
