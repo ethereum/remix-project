@@ -77,7 +77,7 @@ export class CodeParser extends Plugin {
     getANTLRBlockAtPosition: (position: any, text?: string) => Promise<any>
     setCurrentFileAST: (text?: string) => Promise<ParseResult>
     getImports: () => Promise<CodeParserImportsData[]>
-    
+
 
     constructor(astWalker: any) {
         super(profile)
@@ -133,7 +133,7 @@ export class CodeParser extends Plugin {
         this.on('fileManager', 'fileRemoved', async () => {
             await this.importService.setFileTree()
         })
-  
+
         this.on('fileManager', 'currentFileChanged', async () => {
             await this.call('editor', 'discardLineTexts')
             const completionSettings = await this.call('config', 'getAppParameter', 'auto-completion')
@@ -147,8 +147,25 @@ export class CodeParser extends Plugin {
             this.compilerService.compiler.loadVersion(true, `${url}?t=${Date.now()}`)
         })
 
-        await this.compilerService.init()
+        this.on('config', 'configChanged', async (config) => {
+            await this.reload()
+        })
 
+        this.on('settings', 'configChanged', async (config) => {
+            await this.reload()
+        })
+
+        await this.compilerService.init()
+        this.on('solidity', 'compilerLoaded', async () => { 
+            await this.reload()
+        })
+    }
+
+    async reload(){
+        await this.call('editor', 'discardLineTexts')
+        await this.call('fileDecorator', 'clearFileDecorators')
+        await this.call('editor', 'clearErrorMarkers', [this.currentFile])
+        await this.handleChangeEvents() 
     }
 
     /**

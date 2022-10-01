@@ -6,7 +6,8 @@ const profile = {
   name: 'config',
   displayName: 'Config',
   description: 'Config',
-  methods: ['getAppParameter', 'setAppParameter']
+  methods: ['getAppParameter', 'setAppParameter'],
+  events: ['configChanged']
 }
 
 export class ConfigPlugin extends Plugin {
