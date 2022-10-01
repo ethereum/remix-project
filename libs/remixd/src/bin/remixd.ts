@@ -100,7 +100,7 @@ function errorHandler (error: any, service: string) {
     try {
       startService('folder', (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error: any) => {
         if (error) {
-          errorHandler(error, 'hardhat')
+          errorHandler(error, 'folder')
           return false
         }
         sharedFolderClient.setWebSocket(ws)
