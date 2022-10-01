@@ -2,7 +2,7 @@
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 import { join } from 'path'
-import { spawn } from 'child_process'
+import { ChildProcess, spawn } from 'child_process'
 import { writeFileSync } from 'fs'
 import * as hardhatCompilation from '../helpers/hardhat_compilation_7839ba878952cc00ff316061405f273a.json'
 import * as hardhat_compilation_Lock_dbg from '../helpers/hardhat_compilation_Lock.dbg.json'
@@ -10,8 +10,9 @@ import * as hardhat_compilation_Lock from '../helpers/hardhat_compilation_Lock.j
 
 import * as foundryCompilation from '../helpers/foundry_compilation.json'
 import * as truffle_compilation from '../helpers/truffle_compilation.json'
+import kill from 'tree-kill'
 
-
+let remixd: ChildProcess
 const assetsTestContract = `import "./contract.sol";
 contract Assets {
     uint[] proposals;
@@ -59,12 +60,26 @@ module.exports = {
   before: function (browser, done) {
     init(browser, done)
   },
+  after: function (browser) {
+    browser.perform((done) => {
+      console.log('remixd', remixd.pid)
+      kill(remixd.pid)
+      done()
+    })
+  },
 
   '@sources': function () {
     return sources
   },
+  'run Remixd #group10': function (browser) {
+    browser.perform((done) => {
+      remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+      console.log('working directory', process.cwd())
+      connectRemixd(browser, done)
+    })
+
+  },
   'run Remixd tests #group4': function (browser) {
-    let remixd
     browser.perform((done) => {
       remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       console.log('working directory', process.cwd())
@@ -73,18 +88,12 @@ module.exports = {
       .perform((done) => {
         runTests(browser, done)
       })
-      .perform((done) => {
-        remixd.kill()
-        done()
-      })
-      .end()
   },
   'Import from node_modules #group1': function (browser) {
     /*
       when a relative import is used (i.e import "openzeppelin-solidity/contracts/math/SafeMath.sol")
       remix (as well as truffle) try to resolve it against the node_modules and installed_contracts folder.
     */
-    let remixd
     browser.perform((done) => {
       remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       console.log('working directory', process.cwd())
@@ -97,14 +106,8 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js')
       .testContracts('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'], ['SafeMath'])
-      .perform((done) => {
-        remixd.kill()
-        done()
-      })
-      .end()
   },
   'Import from node_modules and reference a github import #group2': function (browser) {
-    let remixd
     browser.perform((done) => {
       remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       console.log('working directory', process.cwd())
@@ -116,11 +119,6 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0
       .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
-      .perform((done) => {
-        remixd.kill()
-        done()
-      })
-      .end()
   },
   'Static Analysis run with remixd #group3': '' + function (browser) {
     browser.testContracts('test_static_analysis_with_remixd_and_hardhat.sol', sources[5]['test_static_analysis_with_remixd_and_hardhat.sol'], ['test5']).pause(2000)
@@ -155,7 +153,7 @@ module.exports = {
   },
 
   'Should listen on compilation result from hardhat #group5': function (browser: NightwatchBrowser) {
-    let remixd
+
     browser.perform((done) => {
       remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
       console.log('working directory', process.cwd())
@@ -178,15 +176,12 @@ module.exports = {
       .createContract('1')
       .expect.element('*[data-id="terminalJournal"]').text.to.contain('Unlock time should be in the future').before(60000)
 
-    browser.perform(() => {
-      remixd.kill()
-    })
-      .end()
+
   },
 
   'Should load compilation result from hardhat when remixd connects #group6': function (browser: NightwatchBrowser) {
     // artifacts/build-info/c7062fdd360381a85af23eeef31c98f8.json has already been created
-    let remixd
+
     browser
       .perform((done) => {
         writeFileSync('./apps/remix-ide/contracts/hardhat/artifacts/contracts/Lock.sol/Lock.dbg.json', JSON.stringify(hardhat_compilation_Lock_dbg))
@@ -209,14 +204,11 @@ module.exports = {
       .createContract('1')
       .expect.element('*[data-id="terminalJournal"]').text.to.contain('Unlock time should be in the future').before(60000)
 
-    browser.perform(() => {
-      remixd.kill()
-    })
-      .end()
+
   },
 
   'Should listen on compilation result from foundry #group7': function (browser: NightwatchBrowser) {
-    let remixd
+
     browser.perform((done) => {
       remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/foundry'))
       console.log('working directory', process.cwd())
@@ -247,14 +239,11 @@ module.exports = {
         })
       })
 
-    browser.perform(() => {
-      remixd.kill()
-    })
-      .end()
+
   },
 
   'Should listen on compilation result from truffle #group8': function (browser: NightwatchBrowser) {
-    let remixd
+
     browser.perform((done) => {
       remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/truffle'))
       console.log('working directory', process.cwd())
@@ -277,10 +266,7 @@ module.exports = {
           status: 'true Transaction mined and execution succeed'
         })
 
-    browser.perform(() => {
-      remixd.kill()
-    })
-      .end()
+
   }
 }
 
@@ -334,7 +320,7 @@ function testImportFromRemixd(browser: NightwatchBrowser, callback: VoidFunction
 }
 
 function spawnRemixd(path: string) {
-  const remixd = spawn('yarn run remixd', [`-s ${path}`], { cwd: process.cwd(), shell: true })
+  const remixd = spawn('yarn run remixd', [`-s ${path}`], { cwd: process.cwd(), shell: true, detached: true })
   remixd.stdout.on('data', function (data) {
     console.log('stdout: ' + data.toString())
   })

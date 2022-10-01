@@ -218,6 +218,7 @@
     "string-similarity": "^4.0.4",
     "swarmgw": "^0.3.1",
     "time-stamp": "^2.2.0",
+    "tree-kill": "^1.2.2",
     "ts-loader": "^9.2.6",
     "tslib": "^2.3.0",
     "web3": "^1.7.5",
