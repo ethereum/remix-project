@@ -1,10 +1,10 @@
 import { erc721 } from '@openzeppelin/wizard';
 
 export default async (opts) => {
-    if (opts.features) {
-        erc721.defaults.mintable = opts.features.mintable
-        erc721.defaults.burnable = opts.features.burnable
-        erc721.defaults.pausable = opts.features.pausable
+    if (opts) {
+        erc721.defaults.mintable = opts.mintable
+        erc721.defaults.burnable = opts.burnable
+        erc721.defaults.pausable = opts.pausable
     }
 
     const filesObj = {
