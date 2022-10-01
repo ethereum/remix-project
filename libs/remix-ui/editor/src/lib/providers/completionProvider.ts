@@ -258,6 +258,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
         // if no nodes exits at position, try to get the block of which the position is in
         const block = await this.props.plugin.call('codeParser', 'getANTLRBlockAtPosition', cursorPosition, null)
         const fileNodes = await this.props.plugin.call('codeParser', 'getCurrentFileNodes')
+
         if (!nodesAtPosition.length) {
             if (block) {
                 nodesAtPosition = await this.props.plugin.call('codeParser', 'nodesAtPosition', block.start)
@@ -274,7 +275,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                     nodes = [...Object.values(contractNodes.baseNodesWithBaseContractScope), ...nodes]
                     nodes = [...Object.values(fileNodes.imports), ...nodes]
                     // add the nodes at the block itself
-                    if (node.nodeType === 'ContractDefinition' && block && block.name) {
+                    if (block && block.name) {
                         const contractNodes = fileNodes.contracts[node.name].contractNodes
                         for (const contractNode of Object.values(contractNodes)) {
                             if (contractNode['name'] === block.name
@@ -286,6 +287,14 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
                                     nodeOfScope = await this.props.plugin.call('codeParser', 'getNodesWithScope', (contractNode['body'] as any).id)
                                     nodes = [...nodes, ...nodeOfScope]
                                 }
+                            }
+                        }
+                    } else { // we use the block info from the nodesAtPosition
+                        const contractNodes = fileNodes.contracts[node.name].contractNodes
+                        for (const contractNode of Object.values(contractNodes)) {
+                            if((contractNode as any).nodeType === 'Block'){
+                                const nodeOfScope = await this.props.plugin.call('codeParser', 'getNodesWithScope', (contractNode as any).id)
+                                nodes = [...nodes, ...nodeOfScope]
                             }
                         }
                     }
