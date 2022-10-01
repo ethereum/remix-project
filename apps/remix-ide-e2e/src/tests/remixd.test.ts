@@ -71,14 +71,6 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'run Remixd #group10': function (browser) {
-    browser.perform((done) => {
-      remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
-      console.log('working directory', process.cwd())
-      connectRemixd(browser, done)
-    })
-
-  },
   'run Remixd tests #group4': function (browser) {
     browser.perform((done) => {
       remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
