@@ -14,7 +14,7 @@ const requiredModules = [ // services + layout views + system views
   'compileAndRun', 'search', 'recorder', 'fileDecorator', 'codeParser', 'codeFormatter']
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
-const dependentModules = ['hardhat', 'truffle', 'slither'] 
+const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither'] 
 
 const sensitiveCalls = {
   'fileManager': ['writeFile', 'copyFile', 'rename', 'copyDir'],
@@ -93,7 +93,7 @@ export class RemixAppManager extends PluginManager {
   }
 
   onPluginActivated(plugin) {
-    this.pluginLoader.set(plugin, this.actives)
+    this.pluginLoader.set(plugin, this.actives.filter((plugin) => !this.isDependent(plugin)))
     this.event.emit('activate', plugin)
     this.emit('activate', plugin)
     if (!requiredModules.includes(plugin.name)) _paq.push(['trackEvent', 'pluginManager', 'activate', plugin.name])
@@ -110,7 +110,7 @@ export class RemixAppManager extends PluginManager {
   }
 
   onPluginDeactivated(plugin) {
-    this.pluginLoader.set(plugin, this.actives)
+    this.pluginLoader.set(plugin, this.actives.filter((plugin) => !this.isDependent(plugin)))
     this.event.emit('deactivate', plugin)
     _paq.push(['trackEvent', 'pluginManager', 'deactivate', plugin.name])
   }

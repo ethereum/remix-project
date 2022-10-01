@@ -5,6 +5,7 @@ import { ContractData, FuncABI } from '@remix-project/core-plugin'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
 import { deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 export function ContractDropdownUI (props: ContractDropdownProps) {
   const [abiLabel, setAbiLabel] = useState<{
@@ -97,6 +98,15 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   useEffect(() => {
     initSelectedContract()
   }, [contractList])
+
+  useEffect(() => {
+    // if the file change the ui is already feed with another bunch of contracts.
+    // we also need to update the state
+    const contracts = contractList[currentFile]  
+    if (contracts && contracts.length > 0) {
+      props.setSelectedContract(contracts[0].alias)
+    }
+  }, [currentFile])
 
   const initSelectedContract = () => {
     const contracts = contractList[currentFile]
@@ -228,8 +238,21 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   return (
     <div className="udapp_container" data-id="contractDropdownContainer">
       <div className='d-flex justify-content-between'>
-        <label className="udapp_settingsLabel">Contract</label>
-        { Object.keys(props.contracts.contractList).length > 0 && compilationSource !== '' && <label data-id="udappCompiledBy">Compiled by {compilationSource} </label> }
+        <div className="d-flex justify-content-between align-items-end">
+          <label className="udapp_settingsLabel pr-1">Contract</label>
+          <div className="d-flex">{ Object.keys(props.contracts.contractList).length > 0 && compilationSource !== '' && <label className="text-capitalize" style={{maxHeight: '0.6rem', lineHeight: '1rem'}} data-id="udappCompiledBy">(Compiled by {compilationSource})</label>}</div>
+        </div>
+        <OverlayTrigger placement={'right'} overlay={
+          <Tooltip className="text-nowrap" id="info-sync-compiled-contract">
+            <div>Click here to import contracts compiled from an external framework.</div>
+            <div>This action is enabled when Remix is connected to an external framework (hardhat, truffle, foundry) through remixd.</div>                  
+          </Tooltip>
+        }>
+          <button className="btn d-flex py-0" onClick={_ => props.syncContracts()}>
+            <i style={{ cursor: 'pointer' }} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
+            <label data-id="" className="mt-2">HardHat</label>
+          </button>
+        </OverlayTrigger>
       </div>
       <div className="udapp_subcontainer">
        <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
