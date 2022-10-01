@@ -34,19 +34,20 @@ enum State {
 export class RemixdHandle extends WebsocketPlugin {
   localhostProvider: any
   appManager: PluginManager
+  dependentPlugins: Array<string>
   constructor (localhostProvider, appManager) {
     super(profile)
     this.localhostProvider = localhostProvider
     this.appManager = appManager
+    this.dependentPlugins = ['hardhat', 'truffle', 'slither', 'foundry']
   }
 
   async deactivate () {
+    for (const plugin of this.dependentPlugins) {
+      await this.appManager.deactivatePlugin(plugin)
+    }
     if (super.socket) super.deactivate()
     // this.appManager.deactivatePlugin('git') // plugin call doesn't work.. see issue https://github.com/ethereum/remix-plugin/issues/342
-    if (this.appManager.isActive('hardhat')) this.appManager.deactivatePlugin('hardhat')
-    if (this.appManager.isActive('truffle')) this.appManager.deactivatePlugin('truffle')
-    if (this.appManager.isActive('slither')) this.appManager.deactivatePlugin('slither')
-    if (this.appManager.isActive('foundry')) this.appManager.deactivatePlugin('foundry')
     this.localhostProvider.close((error) => {
       if (error) console.log(error)
     })
@@ -58,6 +59,9 @@ export class RemixdHandle extends WebsocketPlugin {
   }
 
   async canceled () {
+    for (const plugin of this.dependentPlugins) {
+      await this.appManager.deactivatePlugin(plugin)
+    }
     await this.appManager.deactivatePlugin('remixd')
   }
 
@@ -68,7 +72,7 @@ export class RemixdHandle extends WebsocketPlugin {
     * @param {String} txHash - hash of the transaction
     */
   async connectToLocalhost () {
-    const connection = (error?:any) => {
+    const connection = async (error?:any) => {
       if (error) {
         console.log(error)
         const alert:AlertModal = {
@@ -91,11 +95,10 @@ export class RemixdHandle extends WebsocketPlugin {
         }, 3000)
         this.localhostProvider.init(() => {
           this.call('filePanel', 'setWorkspace', { name: LOCALHOST, isLocalhost: true }, true)
-        })
-        this.call('manager', 'activatePlugin', 'hardhat')
-        this.call('manager', 'activatePlugin', 'truffle')
-        this.call('manager', 'activatePlugin', 'slither')
-        this.call('manager', 'activatePlugin', 'foundry')
+        });
+        for (const plugin of this.dependentPlugins) {
+          await this.appManager.activatePlugin(plugin)
+        }
       }
     }
     if (this.localhostProvider.isConnected()) {

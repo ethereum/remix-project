@@ -5,7 +5,7 @@ const profile = {
   name: 'foundry',
   displayName: 'Foundry',
   url: 'ws://127.0.0.1:65525',
-  methods: [],
+  methods: ['sync'],
   description: 'Using Remixd daemon, allow to access foundry API',
   kind: 'other',
   version: packageJson.version
