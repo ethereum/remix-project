@@ -53,7 +53,12 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
     await plugin.setWorkspaces(await getWorkspaces())
     await plugin.workspaceCreated(workspaceName)
 
-    if (isGitRepo) await plugin.call('dGitProvider', 'init')
+    if (isGitRepo) {
+      await plugin.call('dGitProvider', 'init')
+      const isActive = await plugin.call('manager', 'isActive', 'dgit')
+
+      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+    }
     if (!isEmpty) await loadWorkspacePreset(workspaceTemplateName, opts)
 
     cb && cb(null, workspaceName)

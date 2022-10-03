@@ -5,7 +5,7 @@ const profile = {
   name: 'truffle',
   displayName: 'truffle',
   url: 'ws://127.0.0.1:65524',
-  methods: ['compile'],
+  methods: ['compile', 'sync'],
   description: 'Using Remixd daemon, allow to access truffle API',
   kind: 'other',
   version: packageJson.version

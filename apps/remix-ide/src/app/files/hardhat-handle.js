@@ -5,7 +5,7 @@ const profile = {
   name: 'hardhat',
   displayName: 'Hardhat',
   url: 'ws://127.0.0.1:65522',
-  methods: ['compile'],
+  methods: ['compile', 'sync'],
   description: 'Using Remixd daemon, allow to access hardhat API',
   kind: 'other',
   version: packageJson.version

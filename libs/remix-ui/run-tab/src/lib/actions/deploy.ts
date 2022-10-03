@@ -244,6 +244,18 @@ export const getContext = (plugin: RunTab) => {
   return plugin.blockchain.context()
 }
 
+export const syncContractsInternal = async (plugin: RunTab) => {
+  if (await plugin.call('manager', 'isActive', 'truffle')) {
+    plugin.call('truffle', 'sync')
+  }
+  if (await plugin.call('manager', 'isActive', 'hardhat')) {
+    plugin.call('hardhat', 'sync')
+  } 
+  if (await plugin.call('manager', 'isActive', 'foundry')) {
+    plugin.call('foundry', 'sync')
+  }
+}
+
 export const runTransactions = (
   plugin: RunTab,
   dispatch: React.Dispatch<any>,
