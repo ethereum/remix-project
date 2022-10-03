@@ -15,6 +15,7 @@ export function Workspace () {
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
   const [selectedWorkspace, setSelectedWorkspace] = useState<{ name: string, isGitRepo: boolean}>(null)
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
+  const [showIconsMenu, hideIconsMenu] = useState<boolean>(false)
   const displayOzCustomRef = useRef<HTMLDivElement>()
   const mintableCheckboxRef = useRef()
   const burnableCheckboxRef = useRef()
@@ -360,25 +361,27 @@ export function Workspace () {
       <div className='d-flex flex-column w-100 remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
         <div>
           <header>
-            <div className="mx-2 mb-2 d-flex justify-content-between">
-              <label className="pl-1 form-check-label" htmlFor="workspacesSelect">
+            <div className="mx-2 mb-2 d-flex flex-column">
+              <div className="justify-content-between">
+                <label className="pl-1 form-check-label" htmlFor="workspacesSelect">
                 Workspaces
-              </label>
-              <span className="remixui_menu">
-                <span
-                  hidden={currentWorkspace === LOCALHOST}
-                  id='workspaceCreate'
-                  data-id='workspaceCreate'
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    createWorkspace()
-                    _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
-                  }}
-                  className='far fa-plus-square remixui_menuicon'
-                  title='Create'>
+                </label>
+                <span className="remixui_menu d-flex justify-content-between">
+                  <span
+                    hidden={currentWorkspace === LOCALHOST}
+                    id='workspaceCreate'
+                    data-id='workspaceCreate'
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      createWorkspace()
+                      _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
+                    }}
+                    className='far fa-plus-square remixui_menuicon'
+                    title='Create'>
+                  </span>
+                  <span className="fas fa-bars remixui_menuicon"></span>
                 </span>
-                <span className="fas fa-bars remixui_menuicon"></span>
-              </span>
+              </div>
 
               <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
                 <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}>
@@ -419,7 +422,10 @@ export function Workspace () {
                 </Dropdown.Menu>
               </Dropdown>
             </div>
-            <Dropdown className="custom-dropdown-items">
+          </header>
+        </div>
+            {
+              showIconsMenu && <Dropdown className="custom-dropdown-items">
                 {
                   workspaceMenuIcons.map(m => (
                     <Dropdown.Item>
@@ -428,8 +434,7 @@ export function Workspace () {
                   ))
                 }
               </Dropdown>
-          </header>
-        </div>
+            }
         <div className='h-100 remixui_fileExplorerTree' onFocus={() => { toggleDropdown(false) }}>
           <div className='h-100'>
           { (global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>}
