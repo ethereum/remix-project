@@ -35,16 +35,18 @@ export class RemixdHandle extends WebsocketPlugin {
   localhostProvider: any
   appManager: PluginManager
   dependentPlugins: Array<string>
-  constructor (localhostProvider, appManager) {
+  constructor(localhostProvider, appManager) {
     super(profile)
     this.localhostProvider = localhostProvider
     this.appManager = appManager
     this.dependentPlugins = ['hardhat', 'truffle', 'slither', 'foundry']
   }
 
-  async deactivate () {
+  async deactivate() {
     for (const plugin of this.dependentPlugins) {
-      await this.appManager.deactivatePlugin(plugin)
+      if (await this.appManager.isActive(plugin)) {
+        await this.appManager.deactivatePlugin(plugin)
+      }
     }
     if (super.socket) super.deactivate()
     // this.appManager.deactivatePlugin('git') // plugin call doesn't work.. see issue https://github.com/ethereum/remix-plugin/issues/342
@@ -53,16 +55,20 @@ export class RemixdHandle extends WebsocketPlugin {
     })
   }
 
-  async activate () {
+  async activate() {
     this.connectToLocalhost()
     return true
   }
 
-  async canceled () {
+  async canceled() {
     for (const plugin of this.dependentPlugins) {
-      await this.appManager.deactivatePlugin(plugin)
+      if (await this.appManager.isActive(plugin)) {
+        await this.appManager.deactivatePlugin(plugin)
+      }
     }
+
     await this.appManager.deactivatePlugin('remixd')
+
   }
 
   /**
@@ -71,11 +77,11 @@ export class RemixdHandle extends WebsocketPlugin {
     *
     * @param {String} txHash - hash of the transaction
     */
-  async connectToLocalhost () {
-    const connection = async (error?:any) => {
+  async connectToLocalhost() {
+    const connection = async (error?: any) => {
       if (error) {
         console.log(error)
-        const alert:AlertModal = {
+        const alert: AlertModal = {
           id: 'connectionAlert',
           message: 'Cannot connect to the remixd daemon. Please make sure you have the remixd running in the background.'
         }
@@ -85,7 +91,7 @@ export class RemixdHandle extends WebsocketPlugin {
         const intervalId = setInterval(() => {
           if (!this.socket || (this.socket && this.socket.readyState === 3)) { // 3 means connection closed
             clearInterval(intervalId)
-            const alert:AlertModal = {
+            const alert: AlertModal = {
               id: 'connectionAlert',
               message: 'Connection to remixd terminated. Please make sure remixd is still running in the background.'
             }
@@ -105,28 +111,28 @@ export class RemixdHandle extends WebsocketPlugin {
       this.deactivate()
     } else if (!isElectron()) {
       // warn the user only if he/she is in the browser context
-      const mod:AppModal = {
+      const mod: AppModal = {
         id: 'remixdConnect',
         title: 'Connect to localhost',
         message: remixdDialog(),
         okLabel: 'Connect',
         cancelLabel: 'Cancel',
       }
-      const result =  await this.call('notification', 'modal', mod)
-      if(result) {
-          try {
-            this.localhostProvider.preInit()
-            super.activate()
-            setTimeout(() => {
-              if (!this.socket || (this.socket && this.socket.readyState === 3)) { // 3 means connection closed
-                connection(new Error('Connection with daemon failed.'))
-              } else {
-                connection()
-              }
-            }, 3000)
-          } catch (error) {
-            connection(error)
-          }
+      const result = await this.call('notification', 'modal', mod)
+      if (result) {
+        try {
+          this.localhostProvider.preInit()
+          super.activate()
+          setTimeout(() => {
+            if (!this.socket || (this.socket && this.socket.readyState === 3)) { // 3 means connection closed
+              connection(new Error('Connection with daemon failed.'))
+            } else {
+              connection()
+            }
+          }, 3000)
+        } catch (error) {
+          connection(error)
+        }
       }
       else {
         await this.canceled()
@@ -142,7 +148,7 @@ export class RemixdHandle extends WebsocketPlugin {
   }
 }
 
-function remixdDialog () {
+function remixdDialog() {
   const commandText = 'remixd'
   const fullCommandText = 'remixd -s <path-to-the-shared-folder> -u <remix-ide-instance-URL>'
   return (<>
@@ -155,13 +161,13 @@ function remixdDialog () {
       </div>
       <div className='mb-2 text-break'>
         The remixd command is:
-        <br/><b>{commandText}</b>
+        <br /><b>{commandText}</b>
       </div>
       <div className='mb-2 text-break'>
         The remixd command without options uses the terminal's current directory as the shared directory and the shared Remix domain can only be https://remix.ethereum.org, https://remix-alpha.ethereum.org, or https://remix-beta.ethereum.org
       </div>
       <div className='mb-2 text-break'>
-        Example command with flags: <br/>
+        Example command with flags: <br />
         <b>{fullCommandText}</b>
       </div>
       <div className='mb-2 text-break'>
