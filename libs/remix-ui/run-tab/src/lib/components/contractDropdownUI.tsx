@@ -249,7 +249,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
           </Tooltip>
         }>
           <button className="btn d-flex py-0" onClick={_ => props.syncContracts()}>
-            <i style={{ cursor: 'pointer' }} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
+            <i style={{ cursor: 'pointer' }} className="fa fa-refresh" aria-hidden="true"></i>
           </button>
         </OverlayTrigger>
       </div>
