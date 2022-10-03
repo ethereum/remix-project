@@ -36,7 +36,7 @@ export class FoundryClient extends PluginClient {
   compile (configPath: string) {
     return new Promise((resolve, reject) => {
       if (this.readOnly) {
-        const errMsg = '[Hardhat Compilation]: Cannot compile in read-only mode'
+        const errMsg = '[Foundry Compilation]: Cannot compile in read-only mode'
         return reject(new Error(errMsg))
       }
       const cmd = `forge build`
@@ -79,7 +79,7 @@ export class FoundryClient extends PluginClient {
     }
     if (!this.warnlog) {
       // @ts-ignore
-      this.call('terminal', 'log', 'receiving compilation result from foundry')
+      this.call('terminal', 'log', 'receiving compilation result from Foundry')
       this.warnlog = true
     }
   }
@@ -145,9 +145,9 @@ export class FoundryClient extends PluginClient {
   }
 
   async sync () {
-    console.log('syncing from foundry')
+    console.log('syncing from Foundry')
     this.processArtifact()
     // @ts-ignore
-    this.call('terminal', 'log', 'synced with foundry')
+    this.call('terminal', 'log', 'synced with Foundry')
   }
 }
