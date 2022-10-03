@@ -27,9 +27,19 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const [loadedContractData, setLoadedContractData] = useState<ContractData>(null)
   const [constructorInterface, setConstructorInterface] = useState<FuncABI>(null)
   const [constructorInputs, setConstructorInputs] = useState(null)
+  const framework = useRef<string>('')
   const contractsRef = useRef<HTMLSelectElement>(null)
   const atAddressValue = useRef<HTMLInputElement>(null)
   const { contractList, loadType, currentFile, compilationSource, currentContract, compilationCount, deployOptions, proxyKey } = props.contracts
+
+  useEffect(() => {
+    /*
+      we want here to get and keep the name of the current framework
+    */
+    if (compilationSource === 'remix') return // we want to keep track of external framework.
+    if (framework.current) return
+    framework.current = compilationSource
+  }, [compilationSource])
 
   useEffect(() => {
     enableContractNames(Object.keys(props.contracts.contractList).length > 0)
@@ -242,7 +252,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
           <label className="udapp_settingsLabel pr-1">Contract</label>
           <div className="d-flex">{ Object.keys(props.contracts.contractList).length > 0 && compilationSource !== '' && <label className="text-capitalize" style={{maxHeight: '0.6rem', lineHeight: '1rem'}} data-id="udappCompiledBy">(Compiled by {compilationSource})</label>}</div>
         </div>
-        <OverlayTrigger placement={'right'} overlay={
+        { framework.current !== '' && <OverlayTrigger placement={'right'} overlay={
           <Tooltip className="text-nowrap" id="info-sync-compiled-contract">
             <div>Click here to import contracts compiled from an external framework.</div>
             <div>This action is enabled when Remix is connected to an external framework (hardhat, truffle, foundry) through remixd.</div>                  
@@ -250,9 +260,9 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         }>
           <button className="btn d-flex py-0" onClick={_ => props.syncContracts()}>
             <i style={{ cursor: 'pointer' }} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
-            <label data-id="" className="mt-2">HardHat</label>
+            <label data-id="" className="mt-2">{framework.current}</label>
           </button>
-        </OverlayTrigger>
+        </OverlayTrigger> }
       </div>
       <div className="udapp_subcontainer">
        <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
