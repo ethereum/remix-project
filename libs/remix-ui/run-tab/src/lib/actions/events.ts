@@ -124,7 +124,6 @@ const broadcastCompilationResult = async (compilerName: string, plugin: RunTab, 
     dispatch(addDeployOption({ [file]: {} }))
   }
   dispatch(fetchContractListSuccess({ [file]: contracts }))
-  dispatch(setCurrentFile(file))
   dispatch(setCompilationSource(compilerName))
   // TODO: set current contract
 }
