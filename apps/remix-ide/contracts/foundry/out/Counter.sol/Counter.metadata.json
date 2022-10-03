@@ -1,0 +1,82 @@
+{
+  "compiler": {
+    "version": "0.8.16+commit.07a7930e"
+  },
+  "language": "Solidity",
+  "output": {
+    "abi": [
+      {
+        "inputs": [],
+        "name": "increment",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "number",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "newNumber",
+            "type": "uint256"
+          }
+        ],
+        "name": "setNumber",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    ],
+    "devdoc": {
+      "kind": "dev",
+      "methods": {},
+      "version": 1
+    },
+    "userdoc": {
+      "kind": "user",
+      "methods": {},
+      "version": 1
+    }
+  },
+  "settings": {
+    "compilationTarget": {
+      "src/Counter.sol": "Counter"
+    },
+    "evmVersion": "london",
+    "libraries": {},
+    "metadata": {
+      "bytecodeHash": "ipfs"
+    },
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "remappings": [
+      ":ds-test/=lib/forge-std/lib/ds-test/src/",
+      ":forge-std/=lib/forge-std/src/"
+    ]
+  },
+  "sources": {
+    "src/Counter.sol": {
+      "keccak256": "0x74eb20a9c3120b64f0e66b02cf476d5d1ff5e07149a4c52b8e774a6800a40b83",
+      "license": "UNLICENSED",
+      "urls": [
+        "bzz-raw://be4d1233bdd7aaf1846eb4c3b94c58914fa4a4b7a2fa4a5734d9d09c562975dc",
+        "dweb:/ipfs/QmNVGX1nn75pwmWKQjPdV8cy5u5PHuWGbL6TsztchKqmAZ"
+      ]
+    }
+  },
+  "version": 1
+}

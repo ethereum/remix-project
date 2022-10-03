@@ -139,6 +139,7 @@ export interface ContractDropdownProps {
     isSuccessful: boolean,
     error: string
   },
+  syncContracts: () => void,
   getSelectedContract: (contractName: string, compiler: CompilerAbstract) => ContractData,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   passphrase: string,
