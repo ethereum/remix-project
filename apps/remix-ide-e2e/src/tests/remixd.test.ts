@@ -158,7 +158,7 @@ module.exports = {
         writeFileSync('./apps/remix-ide/contracts/hardhat/artifacts/contracts/Lock.sol/Lock.dbg.json', JSON.stringify(hardhat_compilation_Lock_dbg))
         done()
       })
-      .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from hardhat').before(60000)
+      .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Hardhat').before(60000)
 
     browser.clickLaunchIcon('filePanel')
       .openFile('contracts')
@@ -186,7 +186,7 @@ module.exports = {
         console.log('working directory', process.cwd())
         connectRemixd(browser, done)
       })
-      .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from hardhat').before(60000)
+      .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Hardhat').before(60000)
 
     browser.clickLaunchIcon('filePanel')
       .openFile('contracts')
@@ -210,7 +210,7 @@ module.exports = {
         writeFileSync('./apps/remix-ide/contracts/foundry/out/Counter.sol/Counter.json', JSON.stringify(foundryCompilation))
         done()
       })
-      .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from foundry').before(60000)
+      .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Foundry').before(60000)
 
     let contractAaddress
     browser.clickLaunchIcon('filePanel')
@@ -245,7 +245,7 @@ module.exports = {
         writeFileSync('./apps/remix-ide/contracts/truffle/build/contracts/Migrations.json', JSON.stringify(truffle_compilation))
         done()
       })
-      .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from truffle').before(60000)
+      .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Truffle').before(60000)
 
     browser.clickLaunchIcon('filePanel')
       .openFile('contracts')
