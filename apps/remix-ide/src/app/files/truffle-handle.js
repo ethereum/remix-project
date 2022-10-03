@@ -12,7 +12,7 @@ const profile = {
 }
 
 export class TruffleHandle extends WebsocketPlugin {
-  constructor() {
+  constructor () {
     super(profile)
   }
 
