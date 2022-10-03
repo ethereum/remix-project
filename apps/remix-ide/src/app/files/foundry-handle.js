@@ -15,4 +15,12 @@ export class FoundryHandle extends WebsocketPlugin {
   constructor () {
     super(profile)
   }
+
+  callPluginMethod(key, payload = []) {
+    if (this.socket.readyState !== this.socket.OPEN) {
+      console.log(`${this.profile.name} connection is not opened.`)
+      return false
+    }
+    return super.callPluginMethod(key, payload)
+  }
 }
