@@ -33,6 +33,9 @@ module.exports = class SettingsTab extends ViewPlugin {
   constructor (config, editor) {
     super(profile)
     this.config = config
+    this.config.events.on('configChanged', (changedConfig) => {
+      this.emit('configChanged', changedConfig)
+    })
     this.editor = editor
     this._deps = {
       themeModule: Registry.getInstance().get('themeModule').api,
