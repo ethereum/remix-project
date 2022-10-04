@@ -254,7 +254,6 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         }>
           <button className="btn d-flex py-0" onClick={_ => props.syncContracts()}>
             <i style={{ cursor: 'pointer' }} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
-            <label data-id="" className="mt-2">HardHat</label>
           </button>
         </OverlayTrigger>
       </div>

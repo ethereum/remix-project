@@ -5,6 +5,7 @@ import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint
 import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import './remix-ui-tabs.css'
+const _paq = window._paq = window._paq || []
 
 /* eslint-disable-next-line */
 export interface TabsUIProps {
@@ -152,8 +153,10 @@ export const TabsUI = (props: TabsUIProps) => {
               const content = await props.plugin.call('fileManager', "readFile", path)
               if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
                 await props.plugin.call('scriptRunner', 'execute', content)
+                _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
               } else if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul') {
                 await props.plugin.call('solidity', 'compile', path)
+                _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
               }
             }}
           >
