@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useRef, useState } from 'react'
 import * as remixLib from '@remix-project/remix-lib'
+import Web3 from 'web3'
 import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
@@ -22,6 +23,7 @@ export function ContractGUI (props: ContractGUIProps) {
   const [deployState, setDeployState] = useState<{ deploy: boolean, upgrade: boolean }>({ deploy: false, upgrade: false })
   const [useLastProxy, setUseLastProxy] = useState<boolean>(false)
   const [proxyAddress, setProxyAddress] = useState<string>('')
+  const [proxyAddressError, setProxyAddressError] = useState<string>('')
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
   const initializeFields = useRef<Array<HTMLInputElement | null>>([])
   const basicInputRef = useRef<HTMLInputElement>()
@@ -174,7 +176,7 @@ export function ContractGUI (props: ContractGUIProps) {
 
       props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
     } else if (deployState.upgrade) {
-      props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
+      !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
     } else {
       props.clickCallBack(props.funcABI.inputs, basicInput)
     }
@@ -223,14 +225,34 @@ export function ContractGUI (props: ContractGUIProps) {
     const value = e.target.checked
     const address = props.savedProxyAddress
 
+    if (value) {
+      if (address) {
+        setProxyAddress(address)
+        setProxyAddressError('')
+      } else {
+        setProxyAddressError('No proxy address available')
+        setProxyAddress('')
+      }
+    }
     setUseLastProxy(value)
-    setProxyAddress(address || '')
   }
 
   const handleSetProxyAddress = (e) => {
     const value = e.target.value
-
+    
     setProxyAddress(value)
+  }
+
+  const validateProxyAddress = (address: string) => {
+    if (address === '') {
+      setProxyAddressError('proxy address cannot be empty')
+    } else {
+      if (Web3.utils.isAddress(address)) {
+        setProxyAddressError('')
+      } else {
+        setProxyAddressError('not a valid contract address')
+      }
+    }
   }
 
   return (
@@ -539,27 +561,12 @@ export function ContractGUI (props: ContractGUIProps) {
               </div>
               {!useLastProxy ? (
                 <div className="mb-2">
-                  <label className="mt-2 text-left d-block">
-                    Proxy Address:{" "}
-                  </label>
-                  <input
-                    style={{ height: 32 }}
-                    className="form-control udapp_input"
-                    data-id="ERC1967AddressInput"
-                    placeholder="proxy address"
-                    title="Enter previously deployed proxy address on the selected network"
-                    onChange={handleSetProxyAddress}
-                  />
-                </div>
-              ) : (
-                <span
-                  className="text-capitalize"
-                  data-id="lastDeployedERC1967Address"
-                  style={{ fontSize: ".8em" }}
-                >
-                  {proxyAddress || "No proxy address available"}
-                </span>
-              )}
+                  <label className='mt-2 text-left d-block'>Proxy Address: </label>
+                  <input style={{ height: 32 }} className="form-control udapp_input" data-id="ERC1967AddressInput" placeholder='proxy address' title='Enter previously deployed proxy address on the selected network' onChange={handleSetProxyAddress} onBlur={() => validateProxyAddress(proxyAddress) } />
+                  { proxyAddressError && <span className='text-lowercase' data-id="errorMsgProxyAddress" style={{ fontSize: '.8em' }}>{ proxyAddressError }</span> }
+                </div> :
+                <span className='text-capitalize' data-id="lastDeployedERC1967Address" style={{ fontSize: '.8em' }}>{ proxyAddress || proxyAddressError }</span>
+              }
             </div>
           </div>
         </>
