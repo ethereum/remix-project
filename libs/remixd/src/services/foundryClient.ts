@@ -13,6 +13,7 @@ export class FoundryClient extends PluginClient {
   watcher: chokidar.FSWatcher
   warnlog: boolean
   buildPath: string
+  cachePath: string
 
   constructor (private readOnly = false) {
     super()
@@ -30,6 +31,7 @@ export class FoundryClient extends PluginClient {
   sharedFolder (currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
     this.buildPath = utils.absolutePath('out', this.currentSharedFolder)
+    this.cachePath = utils.absolutePath('cache', this.currentSharedFolder)
     this.listenOnFoundryCompilation()
   }
 
@@ -61,7 +63,9 @@ export class FoundryClient extends PluginClient {
   }
 
   private async processArtifact () {
-    const folderFiles = await fs.readdir(this.buildPath) // "out" folder    
+    const folderFiles = await fs.readdir(this.buildPath) // "out" folder
+    const cache = JSON.parse(await fs.readFile(join(this.cachePath, 'solidity-files-cache.json'), { encoding: 'utf-8' }))
+
     // name of folders are file names
     for (const file of folderFiles) {
       const path = join(this.buildPath, file) // out/Counter.sol/
@@ -74,7 +78,7 @@ export class FoundryClient extends PluginClient {
         solcVersion: null,
         compilationTarget: null
       }
-      await this.readContract(path, compilationResult)
+      await this.readContract(path, compilationResult, cache)
       this.emit('compilationFinished', compilationResult.compilationTarget, { sources: compilationResult.input } , 'soljson', compilationResult.output, compilationResult.solcVersion)
     }
     if (!this.warnlog) {
@@ -97,17 +101,23 @@ export class FoundryClient extends PluginClient {
     }    
   }
 
-  async readContract (contractFolder, compilationResultPart) {
+  async readContract (contractFolder, compilationResultPart, cache) {
     const files = await fs.readdir(contractFolder)
     
     for (const file of files) {
-      const content = await fs.readFile(join(contractFolder, file), { encoding: 'utf-8' })
-      await this.feedContractArtifactFile(file, content, compilationResultPart)
+      const path = join(contractFolder, file)
+      const content = await fs.readFile(path, { encoding: 'utf-8' })
+      await this.feedContractArtifactFile(file, content, compilationResultPart, cache)
     }
   }
 
-  async feedContractArtifactFile (path, content, compilationResultPart) {
+  async feedContractArtifactFile (path, content, compilationResultPart, cache) {
     const contentJSON = JSON.parse(content)
+    const contractName = basename(path).replace('.json', '')
+    console.log(cache, contentJSON.ast.absolutePath)
+    
+    const currentCache = cache.files[contentJSON.ast.absolutePath]
+    if (!currentCache.artifacts[contractName]) return
     
     // extract source and version
     const metadata = contentJSON.metadata
@@ -120,30 +130,30 @@ export class FoundryClient extends PluginClient {
       } catch (e) {
         compilationResultPart.input[path] = { content: '' }
       }
+    }
         }        
-      }
     }
 
-    const contractName = basename(path).replace('.json', '')
-      compilationResultPart.compilationTarget = contentJSON.ast.absolutePath
-      // extract data
-      if (!compilationResultPart.output['sources'][contentJSON.ast.absolutePath]) compilationResultPart.output['sources'][contentJSON.ast.absolutePath] = {}
-      compilationResultPart.output['sources'][contentJSON.ast.absolutePath] = {
-        ast: contentJSON['ast'],
-        id: contentJSON['id']
+    
+    compilationResultPart.compilationTarget = contentJSON.ast.absolutePath
+    // extract data
+    if (!compilationResultPart.output['sources'][contentJSON.ast.absolutePath]) compilationResultPart.output['sources'][contentJSON.ast.absolutePath] = {}
+    compilationResultPart.output['sources'][contentJSON.ast.absolutePath] = {
+      ast: contentJSON['ast'],
+      id: contentJSON['id']
+    }
+    if (!compilationResultPart.output['contracts'][contentJSON.ast.absolutePath]) compilationResultPart.output['contracts'][contentJSON.ast.absolutePath] = {}
+    // delete contentJSON['ast']
+    contentJSON.bytecode.object = contentJSON.bytecode.object.replace('0x', '')
+    contentJSON.deployedBytecode.object = contentJSON.deployedBytecode.object.replace('0x', '')
+    compilationResultPart.output['contracts'][contentJSON.ast.absolutePath][contractName] = {
+      abi: contentJSON.abi,
+      evm: {
+        bytecode: contentJSON.bytecode,
+        deployedBytecode: contentJSON.deployedBytecode,
+        methodIdentifiers: contentJSON.methodIdentifiers
       }
-      if (!compilationResultPart.output['contracts'][contentJSON.ast.absolutePath]) compilationResultPart.output['contracts'][contentJSON.ast.absolutePath] = {}
-      // delete contentJSON['ast']
-      contentJSON.bytecode.object = contentJSON.bytecode.object.replace('0x', '')
-      contentJSON.deployedBytecode.object = contentJSON.deployedBytecode.object.replace('0x', '')
-      compilationResultPart.output['contracts'][contentJSON.ast.absolutePath][contractName] = {
-        abi: contentJSON.abi,
-        evm: {
-          bytecode: contentJSON.bytecode,
-          deployedBytecode: contentJSON.deployedBytecode,
-          methodIdentifiers: contentJSON.methodIdentifiers
-        }
-      }
+    }
   }
 
   async sync () {
