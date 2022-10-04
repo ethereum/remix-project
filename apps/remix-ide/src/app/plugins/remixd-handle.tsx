@@ -71,6 +71,14 @@ export class RemixdHandle extends WebsocketPlugin {
 
   }
 
+  async callPluginMethod(key: string, payload?: any[]) {
+    if (this.socket.readyState !== this.socket.OPEN) {
+      console.log(`${this.profile.name} connection is not opened.`)
+      return false
+    }
+    return super.callPluginMethod(key, payload)
+  }
+
   /**
     * connect to localhost if no connection and render the explorer
     * disconnect from localhost if connected and remove the explorer
