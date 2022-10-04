@@ -120,15 +120,25 @@ export class FoundryClient extends PluginClient {
     
     // extract source and version
     const metadata = contentJSON.metadata
-    compilationResultPart.solcVersion = metadata.compiler.version
-    for (const path in metadata.sources) {
-      const absPath = utils.absolutePath(path, this.currentSharedFolder)
-      try {
-        const content = await fs.readFile(absPath, { encoding: 'utf-8' })
-        compilationResultPart.input[path] = { content }
-      } catch (e) {
-        compilationResultPart.input[path] = { content: '' }
+    if (metadata.compiler && metadata.compiler.version) {
+      compilationResultPart.solcVersion = metadata.compiler.version
+    } else {
+      compilationResultPart.solcVersion = ''
+      console.log('\x1b[32m%s\x1b[0m', 'compiler version not found, please update Foundry to the latest version.')
+    }
+
+    if (metadata.sources) {
+      for (const path in metadata.sources) {
+        const absPath = utils.absolutePath(path, this.currentSharedFolder)
+        try {
+          const content = await fs.readFile(absPath, { encoding: 'utf-8' })
+          compilationResultPart.input[path] = { content }
+        } catch (e) {
+          compilationResultPart.input[path] = { content: '' }
+        }
       }
+    } else {
+      console.log('\x1b[32m%s\x1b[0m', 'sources input not found, please update Foundry to the latest version.')
     }
 
     
