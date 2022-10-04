@@ -131,8 +131,6 @@ export class FoundryClient extends PluginClient {
         compilationResultPart.input[path] = { content: '' }
       }
     }
-        }        
-    }
 
     
     compilationResultPart.compilationTarget = contentJSON.ast.absolutePath
