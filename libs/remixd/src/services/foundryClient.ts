@@ -108,20 +108,23 @@ export class FoundryClient extends PluginClient {
 
   async feedContractArtifactFile (path, content, compilationResultPart) {
     const contentJSON = JSON.parse(content)
-    if (path.endsWith('.metadata.json')) {
-      // extract source and version
-      compilationResultPart.solcVersion = contentJSON.compiler.version
-      for (const path in contentJSON.sources) {
-        const absPath = utils.absolutePath(path, this.currentSharedFolder)
-        try {
-          const content = await fs.readFile(absPath, { encoding: 'utf-8' })
-          compilationResultPart.input[path] = { content }
-        } catch (e) {
-          compilationResultPart.input[path] = { content: '' }
+    
+    // extract source and version
+    const metadata = contentJSON.metadata
+    compilationResultPart.solcVersion = metadata.compiler.version
+    for (const path in metadata.sources) {
+      const absPath = utils.absolutePath(path, this.currentSharedFolder)
+      try {
+        const content = await fs.readFile(absPath, { encoding: 'utf-8' })
+        compilationResultPart.input[path] = { content }
+      } catch (e) {
+        compilationResultPart.input[path] = { content: '' }
+      }
         }        
       }
-    } else {
-      const contractName = basename(path).replace('.json', '')
+    }
+
+    const contractName = basename(path).replace('.json', '')
       compilationResultPart.compilationTarget = contentJSON.ast.absolutePath
       // extract data
       if (!compilationResultPart.output['sources'][contentJSON.ast.absolutePath]) compilationResultPart.output['sources'][contentJSON.ast.absolutePath] = {}
@@ -141,7 +144,6 @@ export class FoundryClient extends PluginClient {
           methodIdentifiers: contentJSON.methodIdentifiers
         }
       }
-    }
   }
 
   async sync () {
