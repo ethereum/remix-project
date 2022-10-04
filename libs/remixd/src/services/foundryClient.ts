@@ -114,7 +114,6 @@ export class FoundryClient extends PluginClient {
   async feedContractArtifactFile (path, content, compilationResultPart, cache) {
     const contentJSON = JSON.parse(content)
     const contractName = basename(path).replace('.json', '')
-    console.log(cache, contentJSON.ast.absolutePath)
     
     const currentCache = cache.files[contentJSON.ast.absolutePath]
     if (!currentCache.artifacts[contractName]) return
@@ -141,7 +140,7 @@ export class FoundryClient extends PluginClient {
       id: contentJSON['id']
     }
     if (!compilationResultPart.output['contracts'][contentJSON.ast.absolutePath]) compilationResultPart.output['contracts'][contentJSON.ast.absolutePath] = {}
-    // delete contentJSON['ast']
+
     contentJSON.bytecode.object = contentJSON.bytecode.object.replace('0x', '')
     contentJSON.deployedBytecode.object = contentJSON.deployedBytecode.object.replace('0x', '')
     compilationResultPart.output['contracts'][contentJSON.ast.absolutePath][contractName] = {
