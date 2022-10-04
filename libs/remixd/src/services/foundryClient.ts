@@ -90,7 +90,7 @@ export class FoundryClient extends PluginClient {
 
   listenOnFoundryCompilation () {
     try {      
-      this.watcher = chokidar.watch(this.buildPath, { depth: 3, ignorePermissionErrors: true, ignoreInitial: true })
+      this.watcher = chokidar.watch(this.cachePath, { depth: 0, ignorePermissionErrors: true, ignoreInitial: true })
       
       this.watcher.on('change', async (f: string) => this.processArtifact())
       this.watcher.on('add', async (f: string) => this.processArtifact())
