@@ -313,6 +313,7 @@ export function Workspace () {
           hideIconsMenu(!showIconsMenu)
         }}
         className='far fa-edit w-100'>
+          {'  Rename Workspace'}
       </span>
     </OverlayTrigger>,
     <OverlayTrigger
@@ -335,13 +336,14 @@ export function Workspace () {
         }}
         className='far fa-trash w-100'
       >
+        {'  Delete Workspace'}
       </span>
     </OverlayTrigger>,
     <OverlayTrigger
       placement="right-start"
       overlay={
         <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
-          <span>Download Workspaces</span>
+          <span>Download Workspace</span>
         </Tooltip>
       }
     >
@@ -357,13 +359,14 @@ export function Workspace () {
         }}
         className='far fa-download w-100'
       >
+        {'  Download Workspace'}
       </span>
     </OverlayTrigger>,
     <OverlayTrigger
       placement="right-start"
       overlay={
         <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
-          <span>Restore Workspaces Backup</span>
+          <span>Restore Workspace Backup</span>
         </Tooltip>
       }
     >
@@ -379,6 +382,7 @@ export function Workspace () {
         }}
         className='far fa-upload w-100'
       >
+        {'  Restore Workspace'}
       </span>
     </OverlayTrigger>,
     <OverlayTrigger
@@ -401,6 +405,7 @@ export function Workspace () {
         }}
         className='far fa-clone w-100'
       >
+        {'  Clone Git Repository'}
       </span>
     </OverlayTrigger>
   ]
