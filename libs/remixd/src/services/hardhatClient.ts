@@ -68,7 +68,6 @@ export class HardhatClient extends PluginClient {
       const contractFilePath = join(this.buildPath, file)
       const stat = await fs.stat(contractFilePath)
       if (!stat.isDirectory()) continue
-      console.log('pp ', contractFilePath)
       const files = await fs.readdir(contractFilePath)
       const compilationResult = {
         input: {},
@@ -89,7 +88,7 @@ export class HardhatClient extends PluginClient {
           compilationResult.target = jsonStd.sourceName
 
           // this is the full compilation result
-          console.log('processing hardhat artifact', file)
+          console.log('Processing Hardhat artifact for file: ', file)
           const path = join(contractFilePath, jsonDbg.buildInfo)
           const content = await fs.readFile(path, { encoding: 'utf-8' })
           
@@ -102,7 +101,7 @@ export class HardhatClient extends PluginClient {
     }
     if (!this.warnLog) {
       // @ts-ignore
-      this.call('terminal', 'log', 'receiving compilation result from hardhat')
+      this.call('terminal', 'log', 'receiving compilation result from Hardhat')
       this.warnLog = true
     }
   }
@@ -121,10 +120,10 @@ export class HardhatClient extends PluginClient {
   }
 
   async sync () {
-    console.log('syncing from hardhat')
+    console.log('syncing from Hardhat')
     this.processArtifact()
     // @ts-ignore
-    this.call('terminal', 'log', 'synced with hardhat')
+    this.call('terminal', 'log', 'synced with Hardhat')
   }
 
   async feedContractArtifactFile (artifactContent, compilationResultPart) {
