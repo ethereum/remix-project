@@ -315,58 +315,94 @@ export function Workspace () {
         className='far fa-edit w-100'>
       </span>
     </OverlayTrigger>,
-    <span
-      hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-      id='workspaceDelete'
-      data-id='workspaceDelete'
-      onClick={(e) => {
-        e.stopPropagation()
-        deleteCurrentWorkspace()
-        _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDelete'])
-        hideIconsMenu(!showIconsMenu)
-      }}
-      className='far fa-trash w-100'
-      title='Delete'>
-    </span>,
-    <span
-      hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-      id='workspacesDownload'
-      data-id='workspacesDownload'
-      onClick={(e) => {
-        e.stopPropagation()
-        downloadWorkspaces()
-        _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesDownload'])
-        hideIconsMenu(!showIconsMenu)
-      }}
-      className='far fa-download w-100'
-      title='Download Workspaces'>
-    </span>,
-    <span
-      hidden={currentWorkspace === LOCALHOST}
-      id='workspacesRestore'
-      data-id='workspacesRestore'
-      onClick={(e) => {
-        e.stopPropagation()
-        restoreBackup()
-        _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesRestore'])
-        hideIconsMenu(!showIconsMenu)
-      }}
-      className='far fa-upload w-100'
-      title='Restore Workspaces Backup'>
-    </span>,
-    <span
-      hidden={currentWorkspace === LOCALHOST}
-      id='cloneGitRepository'
-      data-id='cloneGitRepository'
-      onClick={(e) => {
-        e.stopPropagation()
-        cloneGitRepository()
-        _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'cloneGitRepository'])
-        hideIconsMenu(!showIconsMenu)
-      }}
-      className='far fa-clone w-100'
-      title='Clone Git Repository'>
-    </span>
+    <OverlayTrigger
+      placement="right-start"
+      overlay={
+        <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
+          <span>Delete</span>
+        </Tooltip>
+      }
+    >
+      <span
+        hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+        id='workspaceDelete'
+        data-id='workspaceDelete'
+        onClick={(e) => {
+          e.stopPropagation()
+          deleteCurrentWorkspace()
+          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDelete'])
+          hideIconsMenu(!showIconsMenu)
+        }}
+        className='far fa-trash w-100'
+      >
+      </span>
+    </OverlayTrigger>,
+    <OverlayTrigger
+      placement="right-start"
+      overlay={
+        <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
+          <span>Download Workspaces</span>
+        </Tooltip>
+      }
+    >
+      <span
+        hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+        id='workspacesDownload'
+        data-id='workspacesDownload'
+        onClick={(e) => {
+          e.stopPropagation()
+          downloadWorkspaces()
+          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesDownload'])
+          hideIconsMenu(!showIconsMenu)
+        }}
+        className='far fa-download w-100'
+      >
+      </span>
+    </OverlayTrigger>,
+    <OverlayTrigger
+      placement="right-start"
+      overlay={
+        <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
+          <span>Restore Workspaces Backup</span>
+        </Tooltip>
+      }
+    >
+      <span
+        hidden={currentWorkspace === LOCALHOST}
+        id='workspacesRestore'
+        data-id='workspacesRestore'
+        onClick={(e) => {
+          e.stopPropagation()
+          restoreBackup()
+          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesRestore'])
+          hideIconsMenu(!showIconsMenu)
+        }}
+        className='far fa-upload w-100'
+      >
+      </span>
+    </OverlayTrigger>,
+    <OverlayTrigger
+      placement="right-start"
+      overlay={
+        <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
+          <span>Clone Git Repository</span>
+        </Tooltip>
+      }
+    >
+      <span
+        hidden={currentWorkspace === LOCALHOST}
+        id='cloneGitRepository'
+        data-id='cloneGitRepository'
+        onClick={(e) => {
+          e.stopPropagation()
+          cloneGitRepository()
+          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'cloneGitRepository'])
+          hideIconsMenu(!showIconsMenu)
+        }}
+        className='far fa-clone w-100'
+      >
+      </span>
+    </OverlayTrigger>
   ]
 
   return (
