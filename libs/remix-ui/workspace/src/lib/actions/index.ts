@@ -507,3 +507,9 @@ export const revertFileAction = (redo: boolean)=>{
     dispatch(displayPopUp('Oops! An error ocurred while performing undo operation.' + error))
   }
 }
+
+export const resetFileActions = ()=>{
+  const fileManager = plugin.fileManager
+
+  fileManager.resetFileActions()
+}

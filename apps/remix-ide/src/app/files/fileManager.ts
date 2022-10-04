@@ -957,7 +957,7 @@ class FileManager extends Plugin {
 
   async revertFileAction(redo: boolean){
     this.isFromLastAction = true
-
+    
     let lastAction = this.actions[this.actions.length - 1]
     if (redo) {
       lastAction = this.undoActions[this.undoActions.length - 1]
@@ -1013,6 +1013,11 @@ class FileManager extends Plugin {
       break;
     }
 
+  }
+
+  resetFileActions(){
+    this.actions = []
+    this.undoActions = []
   }
   
 }
