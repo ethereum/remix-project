@@ -382,7 +382,15 @@ export function Workspace () {
                   </label>
                 </span>
                 <span className="remixui_menu d-flex justify-content-between align-items-end w-75">
-                  <span
+                  <OverlayTrigger
+                    placement="top-start"
+                    overlay={
+                      <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
+                        <span>Create</span>
+                      </Tooltip>
+                    }
+                  >
+                    <span
                     hidden={currentWorkspace === LOCALHOST}
                     id='workspaceCreate'
                     data-id='workspaceCreate'
@@ -392,8 +400,9 @@ export function Workspace () {
                       _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
                     }}
                     className='far fa-plus-square remixui_menuicon'
-                    title='Create'>
+                    >
                   </span>
+                  </OverlayTrigger>
                   <Dropdown onToggle={() => hideIconsMenu(!showIconsMenu)} show={showIconsMenu}>
                     <Dropdown.Toggle
                       as={CustomIconsToggle}
