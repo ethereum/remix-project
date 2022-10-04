@@ -57,6 +57,125 @@
     "setUp()": "0a9254e4",
     "vm()": "3a768463"
   },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.16+commit.07a7930e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"IS_SCRIPT\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"run\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"setUp\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"vm\",\"outputs\":[{\"internalType\":\"contract Vm\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"script/Counter.s.sol\":\"CounterScript\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\"]},\"sources\":{\"lib/forge-std/src/Script.sol\":{\"keccak256\":\"0x4424dbcb8f5b741475445726f87408fcd89951fad973bec2ca442ee157f910e7\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://5b0b9f6dfb69245d8f888558ae82bf1d2cdeace46201444fe4b2e6a5283f944a\",\"dweb:/ipfs/QmWFSKeFEZngNcwNn7A84EF7pASo5qe6r5oK24r9Kwca7Z\"]},\"lib/forge-std/src/Vm.sol\":{\"keccak256\":\"0xa0ede8e0d3dc3246912530aed6cacbc4703e4430c4b4acd91963ccea709755ea\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://a28e7d00aab57ad5159247b0f0f268eda4c6980b29eee7f903578254a2be677f\",\"dweb:/ipfs/QmZrM8gY5BpW8o1QckmPNCYbBP5Q7k5DkcHdaVULKVntxp\"]},\"lib/forge-std/src/console.sol\":{\"keccak256\":\"0x91d5413c2434ca58fd278b6e1e79fd98d10c83931cc2596a6038eee4daeb34ba\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://91ccea707361e48b9b7a161fe81f496b9932bc471e9c4e4e1e9c283f2453cc70\",\"dweb:/ipfs/QmcB66sZhQ6Kz7MUHcLE78YXRUZxoZnnxZjN6yATsbB2ec\"]},\"lib/forge-std/src/console2.sol\":{\"keccak256\":\"0xbeb823fcdb356244a83aaccdf828ad019ecc1ffaa3dff18e624fc6d5714ea671\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://4cbe9400340e5f9ec55e2aff3bad1c15fa3afbbe37e80800e6f3fed2ad26854f\",\"dweb:/ipfs/QmdJBABsuXkvWxVzEyGXsTE3vyfBPXDdw5xvvtUz3JeoYW\"]},\"script/Counter.s.sol\":{\"keccak256\":\"0x01edaa1835b1a5bd3f4f66f73451488b8441d30642d3bf1f5fa2c5bf7c005bee\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://3c6a0f19216ceeebf4ec16f8f2662a3bebbe18d4037d1399adf2e3e4ccbb57a2\",\"dweb:/ipfs/Qmc8NknjPkSgbXLg6zZQ8uKT6kAWBvBXz5JrDvZfa88UNT\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.16+commit.07a7930e"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "IS_SCRIPT",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "run"
+        },
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "setUp"
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "vm",
+          "outputs": [
+            {
+              "internalType": "contract Vm",
+              "name": "",
+              "type": "address"
+            }
+          ]
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":ds-test/=lib/forge-std/lib/ds-test/src/",
+        ":forge-std/=lib/forge-std/src/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "script/Counter.s.sol": "CounterScript"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "lib/forge-std/src/Script.sol": {
+        "keccak256": "0x4424dbcb8f5b741475445726f87408fcd89951fad973bec2ca442ee157f910e7",
+        "urls": [
+          "bzz-raw://5b0b9f6dfb69245d8f888558ae82bf1d2cdeace46201444fe4b2e6a5283f944a",
+          "dweb:/ipfs/QmWFSKeFEZngNcwNn7A84EF7pASo5qe6r5oK24r9Kwca7Z"
+        ],
+        "license": "MIT"
+      },
+      "lib/forge-std/src/Vm.sol": {
+        "keccak256": "0xa0ede8e0d3dc3246912530aed6cacbc4703e4430c4b4acd91963ccea709755ea",
+        "urls": [
+          "bzz-raw://a28e7d00aab57ad5159247b0f0f268eda4c6980b29eee7f903578254a2be677f",
+          "dweb:/ipfs/QmZrM8gY5BpW8o1QckmPNCYbBP5Q7k5DkcHdaVULKVntxp"
+        ],
+        "license": "MIT"
+      },
+      "lib/forge-std/src/console.sol": {
+        "keccak256": "0x91d5413c2434ca58fd278b6e1e79fd98d10c83931cc2596a6038eee4daeb34ba",
+        "urls": [
+          "bzz-raw://91ccea707361e48b9b7a161fe81f496b9932bc471e9c4e4e1e9c283f2453cc70",
+          "dweb:/ipfs/QmcB66sZhQ6Kz7MUHcLE78YXRUZxoZnnxZjN6yATsbB2ec"
+        ],
+        "license": "MIT"
+      },
+      "lib/forge-std/src/console2.sol": {
+        "keccak256": "0xbeb823fcdb356244a83aaccdf828ad019ecc1ffaa3dff18e624fc6d5714ea671",
+        "urls": [
+          "bzz-raw://4cbe9400340e5f9ec55e2aff3bad1c15fa3afbbe37e80800e6f3fed2ad26854f",
+          "dweb:/ipfs/QmdJBABsuXkvWxVzEyGXsTE3vyfBPXDdw5xvvtUz3JeoYW"
+        ],
+        "license": "MIT"
+      },
+      "script/Counter.s.sol": {
+        "keccak256": "0x01edaa1835b1a5bd3f4f66f73451488b8441d30642d3bf1f5fa2c5bf7c005bee",
+        "urls": [
+          "bzz-raw://3c6a0f19216ceeebf4ec16f8f2662a3bebbe18d4037d1399adf2e3e4ccbb57a2",
+          "dweb:/ipfs/Qmc8NknjPkSgbXLg6zZQ8uKT6kAWBvBXz5JrDvZfa88UNT"
+        ],
+        "license": "UNLICENSED"
+      }
+    },
+    "version": 1
+  },
   "ast": {
     "absolutePath": "script/Counter.s.sol",
     "id": 21582,
