@@ -2,10 +2,11 @@ import { envChangeNotification } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { setExecutionContext, setFinalContext, updateAccountBalances } from "./account"
 import { addExternalProvider, addInstance, removeExternalProvider, setNetworkNameFromProvider } from "./actions"
-import { addDeployOption, clearAllInstances, clearRecorderCount, fetchContractListSuccess, resetUdapp, setCompilationSource, setCurrentContract, setCurrentFile, setLoadType, setProxyEnvAddress, setRecorderCount, setSendValue } from "./payload"
+import { addDeployOption, clearAllInstances, clearRecorderCount, fetchContractListSuccess, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setProxyEnvAddress, setRecorderCount, setRemixDActivated, setSendValue } from "./payload"
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
+import { Plugin } from "@remixproject/engine"
 const _paq = window._paq = window._paq || []
 
 export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
@@ -74,6 +75,21 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   plugin.on('filePanel', 'setWorkspace', () => {
     dispatch(resetUdapp())
     resetAndInit(plugin)
+    plugin.call('manager', 'isActive', 'remixd').then((activated) => {
+      dispatch(setRemixDActivated(activated))
+    })
+  })
+
+  plugin.on('manager', 'pluginActivated', (plugin: Plugin) => {
+    if (plugin.name === 'remixd') {
+      dispatch(setRemixDActivated(true))
+    }
+  })
+
+  plugin.on('manager', 'pluginDeactivated', (plugin: Plugin) => {
+    if (plugin.name === 'remixd') {
+      dispatch(setRemixDActivated(false))
+    }
   })
 
   plugin.fileManager.events.on('currentFileChanged', (currentFile: string) => {
@@ -107,7 +123,7 @@ const broadcastCompilationResult = async (compilerName: string, plugin: RunTab, 
   plugin.compilersArtefacts.__last = compiler
 
   const contracts = getCompiledContracts(compiler).map((contract) => {
-    return { name: languageVersion, alias: contract.name, file: contract.file, compiler }
+    return { name: languageVersion, alias: contract.name, file: contract.file, compiler, compilerName }
   })
   if ((contracts.length > 0)) {
     const contractsInCompiledFile = contracts.filter(obj => obj.file === file)
@@ -127,7 +143,6 @@ const broadcastCompilationResult = async (compilerName: string, plugin: RunTab, 
   }
   dispatch(fetchContractListSuccess({ [file]: contracts }))
   dispatch(setCurrentFile(file))
-  dispatch(setCompilationSource(compilerName))
   // TODO: set current contract
 }
 
