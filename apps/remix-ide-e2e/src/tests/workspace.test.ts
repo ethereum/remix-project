@@ -350,7 +350,7 @@ module.exports = {
         selector: '//i[@data-icon="workspaceDropdownMenuIcon"]',
         locateStrategy: 'xpath',
       })
-      .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 0)
+      .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 1)
       .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul')
       .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[1]') // rename workspace_name
       .useCss()
@@ -375,7 +375,7 @@ module.exports = {
     browser
       .switchWorkspace('workspace_name_1')
       .useXpath()
-      .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 0)
+      .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 1)
       .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[2]') // delete workspace_name_1
       .useCss()
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
