@@ -7,6 +7,7 @@ import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as ethJSUtil from 'ethereumjs-util'
 import Web3 from 'web3'
 import { Plugin } from "@remixproject/engine"
+const _paq = window._paq = window._paq || []
 
 export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   plugin.blockchain.events.on('newTransaction', (tx, receipt) => {
@@ -115,6 +116,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
 }
 
 const broadcastCompilationResult = async (compilerName: string, plugin: RunTab, dispatch: React.Dispatch<any>, file, source, languageVersion, data, input?) => {
+  _paq.push(['trackEvent', 'udapp', 'broadcastCompilationResult', compilerName])
   // TODO check whether the tab is configured
   console.log('compilation finished', compilerName, file)
   const compiler = new CompilerAbstract(languageVersion, data, source, input)
