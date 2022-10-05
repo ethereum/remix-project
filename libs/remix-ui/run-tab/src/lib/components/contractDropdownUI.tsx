@@ -217,11 +217,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
   }
 
   const updateCompilerName = () => {
-    console.log('updateCompilerName', contractsRef.current.value)
     if (contractsRef.current.value) {
-      console.log(contractsRef.current.value)
-      const compilerNames = [...new Set([...contractList[currentFile].map(contract => contract.compilerName)])]
-      console.log(compilerNames)
       contractList[currentFile].forEach(contract => {
         if (contract.alias === contractsRef.current.value) {
           setCompilerName(contract.compilerName)
