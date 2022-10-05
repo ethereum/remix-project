@@ -20,7 +20,7 @@ export const CustomToggle = React.forwardRef(({ children, onClick, icon, classNa
   </button>
 ))
 
-export const CustomIconsToggle = React.forwardRef(({ children, mouseOverAction, icon, className = '' }: { children: React.ReactNode, mouseOverAction: (e: SyntheticEvent) => void, icon: string, className: string }, ref: Ref<HTMLSpanElement>) => (
+export const CustomIconsToggle = React.forwardRef(({ mouseOverAction, icon, className = '' }: { children?: React.ReactNode, mouseOverAction: (e: SyntheticEvent) => void, icon: string, className: string }, ref: Ref<HTMLSpanElement>) => (
   <span
     ref={ref}
     onClick={(e) => {
