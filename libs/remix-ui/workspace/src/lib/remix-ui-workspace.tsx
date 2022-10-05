@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react' // eslint-disable-line
+import React, { useState, useEffect, useRef, useContext, SyntheticEvent } from 'react' // eslint-disable-line
 import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { CustomIconsToggle, CustomMenu, CustomToggle } from '@remix-ui/helper'
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
@@ -298,7 +298,7 @@ export function Workspace () {
       placement='right-start'
       overlay={
         <Tooltip id="workspaceRenametooltip">
-          <span>Rename</span>
+          <span>Rename Workspace</span>
         </Tooltip>
       }
     >
@@ -313,14 +313,14 @@ export function Workspace () {
           hideIconsMenu(!showIconsMenu)
         }}
         className='far fa-edit w-100'>
-          {'  Rename Workspace'}
+          {'  Rename'}
       </span>
     </OverlayTrigger>,
     <OverlayTrigger
       placement="right-start"
       overlay={
         <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
-          <span>Delete</span>
+          <span>Delete Workspace</span>
         </Tooltip>
       }
     >
@@ -336,7 +336,7 @@ export function Workspace () {
         }}
         className='far fa-trash w-100'
       >
-        {'  Delete Workspace'}
+        {'  Delete'}
       </span>
     </OverlayTrigger>,
     <OverlayTrigger
@@ -359,7 +359,7 @@ export function Workspace () {
         }}
         className='far fa-download w-100'
       >
-        {'  Download Workspace'}
+        {'  Download'}
       </span>
     </OverlayTrigger>,
     <OverlayTrigger
@@ -382,7 +382,7 @@ export function Workspace () {
         }}
         className='far fa-upload w-100'
       >
-        {'  Restore Workspace'}
+        {'  Restore'}
       </span>
     </OverlayTrigger>,
     <OverlayTrigger
@@ -405,7 +405,7 @@ export function Workspace () {
         }}
         className='far fa-clone w-100'
       >
-        {'  Clone Git Repository'}
+        {'  Clone'}
       </span>
     </OverlayTrigger>
   ]
@@ -444,13 +444,16 @@ export function Workspace () {
                     >
                   </span>
                   </OverlayTrigger>
-                  <Dropdown onToggle={() => hideIconsMenu(!showIconsMenu)} show={showIconsMenu}>
+                  <Dropdown id="workspacesMenuDropdown" data-id="workspacesMenuDropdown" onToggle={() => hideIconsMenu(!showIconsMenu)} show={showIconsMenu}>
                     <Dropdown.Toggle
                       as={CustomIconsToggle}
-                      mouseOverAction={() => hideIconsMenu(!showIconsMenu)}
+                      mouseOverAction={(e: SyntheticEvent) => {
+                        hideIconsMenu(!showIconsMenu)
+                        console.log({ e })
+                      }}
                       icon={'fas fa-bars'}
                     ></Dropdown.Toggle>
-                    <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' align={'right'}>
+                    <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='w-100 custom-dropdown-items' align={'right'}>
                       {
                       workspaceMenuIcons.map(m => (
                         <Dropdown.Item>
