@@ -467,7 +467,7 @@ module.exports = {
         selector: '//i[@data-icon="workspaceDropdownMenuIcon"]',
         locateStrategy: 'xpath',
       })
-      .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 10)
+      .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 1)
       .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
       .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
       .useCss()
