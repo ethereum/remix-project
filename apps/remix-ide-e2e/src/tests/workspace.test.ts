@@ -392,7 +392,6 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .useXpath()
       .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 0)
-      // .waitForElementVisible('[data-id="cloneGitRepository"]')
       .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
       .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
       .useCss()
@@ -419,10 +418,8 @@ module.exports = {
   'Should display non-clashing names for duplicate clone #group2': '' + function (browser: NightwatchBrowser) {
     browser
       .useXpath()
-      // .waitForElementVisible('[data-id="cloneGitRepository"]')
       .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 0)
       .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
-      // .click('[data-id="cloneGitRepository"]')
       .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
       .useCss()
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
@@ -465,10 +462,12 @@ module.exports = {
 
   'Should display error message in modal for failed clone #group2': function (browser: NightwatchBrowser) {
     browser
-      // .waitForElementVisible('[data-id="cloneGitRepository"]')
-      // .click('[data-id="cloneGitRepository"]')
       .useXpath()
-      .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 0)
+      .waitForElementPresent({
+        selector: '//i[@data-icon="workspaceDropdownMenuIcon"]',
+        locateStrategy: 'xpath',
+      })
+      .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 10)
       .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
       .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
       .useCss()
@@ -488,3 +487,4 @@ module.exports = {
 
   tearDown: sauce
 }
+
