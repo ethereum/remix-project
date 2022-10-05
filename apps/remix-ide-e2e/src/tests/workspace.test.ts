@@ -375,13 +375,18 @@ module.exports = {
     browser
       .switchWorkspace('workspace_name_1')
       .useXpath()
-      .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 1)
+      .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 2)
       .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[2]') // delete workspace_name_1
+      // .useCss()
+      // .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .waitForElementVisible('//*[@id="fileExplorerView"]/div[2]/div/div/div[2]')
+      // .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .click('//*[@id="fileExplorerView"]/div[2]/div/div/div[3]/button')
+      // .waitForElementVisible('[data-id="workspacesSelect"]')
+      .waitForElementVisible('//*[@id="workspacesSelect"]')
+      // .click('[data-id="workspacesSelect"]')
+      .click('//*[@id="workspacesSelect"]')
       .useCss()
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .waitForElementVisible('[data-id="workspacesSelect"]')
-      .click('[data-id="workspacesSelect"]')
       .waitForElementNotPresent(`[data-id="dropdown-item-workspace_name_1"]`)
   },
 
