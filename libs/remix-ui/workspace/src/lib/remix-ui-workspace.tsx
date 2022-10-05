@@ -19,8 +19,8 @@ export function Workspace () {
   const mintableCheckboxRef = useRef()
   const burnableCheckboxRef = useRef()
   const pausableCheckboxRef = useRef()
-  const transparentRadioRef = useRef()
-  const uupsRadioRef = useRef()
+  // const transparentRadioRef = useRef()
+  const uupsCheckRef = useRef(null)
   const global = useContext(FileSystemContext)
   const workspaceRenameInput = useRef()
   const workspaceCreateInput = useRef()
@@ -124,7 +124,7 @@ export function Workspace () {
       // @ts-ignore: Object is possibly 'null'.
       pausable: pausableCheckboxRef.current.checked,
       // @ts-ignore: Object is possibly 'null'.
-      upgradeable: transparentRadioRef.current.checked ? transparentRadioRef.current.value : ( uupsRadioRef.current.checked ? uupsRadioRef.current.value : false )
+      upgradeable: uupsCheckRef.current.checked ? uupsCheckRef.current.value : false
     }
 
     try {
@@ -170,9 +170,10 @@ export function Workspace () {
       // @ts-ignore
       pausableCheckboxRef.current.checked = false
       // @ts-ignore
-      transparentRadioRef.current.checked = false
+      // transparentRadioRef.current.checked = false
       // @ts-ignore
-      uupsRadioRef.current.checked = false
+      uupsCheckRef.current.checked = false
+      // @ts-ignore
     } else displayOzCustomRef.current.style.display = 'none'
     
     // @ts-ignore
@@ -195,7 +196,7 @@ export function Workspace () {
 
   const handleUpgradeability = () => {
     // @ts-ignore
-    workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value + '_upgradeable'}_${Date.now()}`
+    workspaceCreateInput.current.value = uupsCheckRef?.current?.checked ? `${workspaceCreateTemplateInput.current.value + '_upgradeable'}_${Date.now()}` : `${workspaceCreateTemplateInput.current.value}_${Date.now()}`
   }
 
   const createModalMessage = () => {
@@ -237,13 +238,13 @@ export function Workspace () {
           </div>
 
           <label id="wsName" className="form-check-label d-block mb-1">Upgradeability</label>
-          <div onChange={handleUpgradeability}>
-            <div className="d-flex ml-2 custom-control custom-radio">
+          <div>
+            {/* <div className="d-flex ml-2 custom-control custom-radio">
                 <input className="custom-control-input" type="radio" name="upgradeability" value="transparent" id="transparent" ref={transparentRadioRef} />
                 <label className="form-check-label custom-control-label" htmlFor="transparent" data-id="upgradeTypeTransparent" >Transparent</label>
-            </div>
-            <div className="d-flex ml-2 custom-control custom-radio">
-                <input className="custom-control-input" type="radio" name="upgradeability" value="uups" id="uups" ref={uupsRadioRef} />
+            </div> */}
+            <div onChange={handleUpgradeability} className="d-flex ml-2 custom-control custom-checkbox">
+                <input className="custom-control-input" type="checkbox" name="upgradeability" value="uups" id="uups" ref={uupsCheckRef} />
                 <label className="form-check-label custom-control-label" htmlFor="uups" data-id="upgradeTypeUups" >UUPS</label>
             </div>
           </div>
