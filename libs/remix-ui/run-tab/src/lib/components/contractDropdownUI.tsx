@@ -5,7 +5,8 @@ import { ContractData, FuncABI } from '@remix-project/core-plugin'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
 import { deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
-import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
+const _paq = window._paq = window._paq || []
 
 export function ContractDropdownUI(props: ContractDropdownProps) {
   const [abiLabel, setAbiLabel] = useState<{
@@ -269,7 +270,10 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
               <div>This action is enabled when Remix is connected to an external framework (hardhat, truffle, foundry) through remixd.</div>
             </Tooltip>
           }>
-            <button className="btn d-flex py-0" onClick={_ => props.syncContracts()}>
+            <button className="btn d-flex py-0" onClick={_ => {
+              props.syncContracts()
+              _paq.push(['trackEvent', 'udapp', 'syncContracts', compilationSource])
+            }}>
               <i style={{ cursor: 'pointer' }} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
             </button>
           </OverlayTrigger>
