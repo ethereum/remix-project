@@ -1,6 +1,6 @@
 // The forwardRef is important!!
 
-import React, { Ref } from "react"
+import React, { Ref, SyntheticEvent } from "react"
 
 // Dropdown needs access to the DOM node in order to position the Menu
 export const CustomToggle = React.forwardRef(({ children, onClick, icon, className = '' }: { children: React.ReactNode, onClick: (e) => void, icon: string, className: string }, ref: Ref<HTMLButtonElement>) => (
@@ -20,7 +20,7 @@ export const CustomToggle = React.forwardRef(({ children, onClick, icon, classNa
   </button>
 ))
 
-export const CustomIconsToggle = React.forwardRef(({ children, mouseOverAction, icon, className = '' }: { children: React.ReactNode, mouseOverAction: () => void, icon: string, className: string }, ref: Ref<HTMLSpanElement>) => (
+export const CustomIconsToggle = React.forwardRef(({ children, mouseOverAction, icon, className = '' }: { children: React.ReactNode, mouseOverAction: (e: SyntheticEvent) => void, icon: string, className: string }, ref: Ref<HTMLSpanElement>) => (
   <span
     ref={ref}
     onClick={(e) => {
@@ -28,8 +28,9 @@ export const CustomIconsToggle = React.forwardRef(({ children, mouseOverAction, 
     }}
     onMouseOver={mouseOverAction}
     className={`${className.replace('dropdown-toggle', '')} mb-0 pb-0 d-flex justify-content-end align-items-end remixuimenuicon_shadow`}
+    data-id="workspaceMenuDropdown"
   >
-    { icon && <i className={`${icon}`}></i> }
+    { icon && <i className={`${icon}`} data-icon="workspaceDropdownMenuIcon"></i> }
   </span>
 ))
 
