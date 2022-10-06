@@ -62,18 +62,18 @@ export class TruffleClient extends PluginClient {
 
   private async processArtifact () {
     const folderFiles = await fs.readdir(this.buildPath)   
-    const compilationResult = {
-      input: {},
-      output: {
-        contracts: {},
-        sources: {}
-      },
-      solcVersion: null,
-      compilationTarget: null
-    }
     // name of folders are file names
     for (const file of folderFiles) {
       if (file.endsWith('.json')) {
+        const compilationResult = {
+          input: {},
+          output: {
+            contracts: {},
+            sources: {}
+          },
+          solcVersion: null,
+          compilationTarget: null
+        }
         const content = await fs.readFile(join(this.buildPath, file), { encoding: 'utf-8' })
         await this.feedContractArtifactFile(file, content, compilationResult)
         this.emit('compilationFinished', compilationResult.compilationTarget, { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)
