@@ -255,7 +255,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             if(fileName !== currentFile) {
               const {file, provider} = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
               if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
-            } 
+            }
             const msg = message(result.name, item.warning, item.more, fileName, locationString)
             const options = {
               type: 'warning',
@@ -321,7 +321,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 if(fileName !== currentFile) {
                   const {file, provider} = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
                   if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
-                } 
+                }
                 const msg = message(item.title, item.description, item.more, fileName, locationString)
                 const options = {
                   type: 'warning',
