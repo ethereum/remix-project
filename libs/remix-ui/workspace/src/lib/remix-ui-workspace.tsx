@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext, SyntheticEvent, ChangeEvent, KeyboardEvent, MouseEvent } from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Dropdown } from 'react-bootstrap'
-import { CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip, extractParentFromKey } from '@remix-ui/helper'
+import { CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import { FileSystemContext } from './contexts'
 import './css/remix-ui-workspace.css'
@@ -9,6 +9,7 @@ import { ROOT_PATH } from './utils/constants'
 import { HamburgerMenu } from './components/workspace-hamburger'
 import { FileExplorerRootMenu } from './components/file-explorer-root-menu'
 import { CopyElementType, FileFocusContextType } from './types'
+
 const _paq = window._paq = window._paq || []
 
 const canUpload = window.File || window.FileReader || window.FileList || window.Blob
@@ -48,7 +49,7 @@ export function Workspace () {
       workspaceName = global.fs.browser.workspaces[0].name
     }
     setCurrentWorkspace(workspaceName)
-    resetFocus()    
+    resetFocus()
   }, [])
 
   useEffect(() => {
@@ -821,7 +822,6 @@ export function Workspace () {
                   contextType={contextType}
                   closeContextMenu={handleCloseContextMenu}
                   dispatchCanCopy={handleCanCopy}
-
                 />
               </div>
             }
@@ -892,7 +892,8 @@ export function Workspace () {
           changeContextType={setContextType} 
           copyElement={copyElement}
           handleCloseContextMenu={handleCloseContextMenu}
-           />}
+           />
+        }
     </div>
   )
 }
