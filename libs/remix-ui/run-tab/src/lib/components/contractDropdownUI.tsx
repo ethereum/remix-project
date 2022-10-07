@@ -7,6 +7,7 @@ import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
 import { deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
+const _paq = window._paq = window._paq || []
 
 export function ContractDropdownUI (props: ContractDropdownProps) {
   const intl = useIntl()
@@ -17,18 +18,19 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     display: '',
     content: ''
   })
-  const [atAddressOptions, setAtAddressOptions] = useState<{title: string, disabled: boolean}>({
+  const [atAddressOptions, setAtAddressOptions] = useState<{ title: string, disabled: boolean }>({
     title: 'address of contract',
     disabled: true
   })
   const [loadedAddress, setLoadedAddress] = useState<string>('')
-  const [contractOptions, setContractOptions] = useState<{title: string, disabled: boolean}>({
+  const [contractOptions, setContractOptions] = useState<{ title: string, disabled: boolean }>({
     title: 'Please compile *.sol file to deploy or access a contract',
     disabled: true
   })
   const [loadedContractData, setLoadedContractData] = useState<ContractData>(null)
   const [constructorInterface, setConstructorInterface] = useState<FuncABI>(null)
   const [constructorInputs, setConstructorInputs] = useState(null)
+  const [compilerName, setCompilerName] = useState<string>('')
   const contractsRef = useRef<HTMLSelectElement>(null)
   const atAddressValue = useRef<HTMLInputElement>(null)
   const { contractList, loadType, currentFile, compilationSource, currentContract, compilationCount, deployOptions, proxyKey } = props.contracts
@@ -99,6 +101,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   useEffect(() => {
     initSelectedContract()
+    updateCompilerName()
   }, [contractList])
 
   useEffect(() => {
@@ -108,6 +111,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if (contracts && contracts.length > 0) {
       props.setSelectedContract(contracts[0].alias)
     }
+    updateCompilerName()
   }, [currentFile])
 
   const initSelectedContract = () => {
@@ -124,9 +128,9 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   const isContractFile = (file) => {
     return /.(.sol)$/.exec(file) ||
-        /.(.vy)$/.exec(file) || // vyper
-        /.(.lex)$/.exec(file) || // lexon
-        /.(.contract)$/.exec(file)
+      /.(.vy)$/.exec(file) || // vyper
+      /.(.lex)$/.exec(file) || // lexon
+      /.(.contract)$/.exec(file)
   }
 
   const enableAtAddress = (enable: boolean) => {
@@ -163,7 +167,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   const createInstance = (selectedContract, args, deployMode?: DeployMode[]) => {
     if (selectedContract.bytecodeObject.length === 0) {
-      return props.modal('Alert', 'This contract may be abstract, it may not implement an abstract parent\'s methods completely or it may not invoke an inherited contract\'s constructor correctly.', 'OK', () => {})
+      return props.modal('Alert', 'This contract may be abstract, it may not implement an abstract parent\'s methods completely or it may not invoke an inherited contract\'s constructor correctly.', 'OK', () => { })
     }
     if ((selectedContract.name !== currentContract) && (selectedContract.name === 'ERC1967Proxy')) selectedContract.name = currentContract
     const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
@@ -172,11 +176,11 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if (isProxyDeployment) {
       props.modal('Deploy Implementation & Proxy (ERC1967)', deployWithProxyMsg(), 'Proceed', () => {
         props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
-      }, 'Cancel', () => {})
+      }, 'Cancel', () => { })
     } else if (isContractUpgrade) {
       props.modal('Deploy Implementation & Update Proxy', upgradeWithProxyMsg(), 'Proceed', () => {
         props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
-      }, 'Cancel', () => {})
+      }, 'Cancel', () => { })
     } else {
       props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
     }
@@ -213,9 +217,21 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     window.localStorage.setItem(`ipfs/${props.exEnvironment}/${props.networkName}`, checkedState.toString())
   }
 
+  const updateCompilerName = () => {
+    if (contractsRef.current.value) {
+      contractList[currentFile].forEach(contract => {
+        if (contract.alias === contractsRef.current.value) {
+          setCompilerName(contract.compilerName)
+        }
+      })
+    } else{
+      setCompilerName('')
+    }
+  }
+
   const handleContractChange = (e) => {
     const value = e.target.value
-
+    updateCompilerName()
     props.setSelectedContract(value)
   }
 
@@ -232,7 +248,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const isOverSizePrompt = () => {
     return (
       <div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br />
-      More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank" rel="noreferrer">eip-170</a>
+        More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank" rel="noreferrer">eip-170</a>
       </div>
     )
   }
@@ -244,30 +260,37 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
           <label className="udapp_settingsLabel pr-1">
             <FormattedMessage id='udapp.contract' defaultMessage='Contract' />
           </label>
-          <div className="d-flex">{ Object.keys(props.contracts.contractList).length > 0 && compilationSource !== '' && <label className="text-capitalize" style={{maxHeight: '0.6rem', lineHeight: '1rem'}} data-id="udappCompiledBy">(Compiled by {compilationSource})</label>}</div>
+          <div className="d-flex">{compilerName && compilerName !== '' && <label className="text-capitalize" style={{ maxHeight: '0.6rem', lineHeight: '1rem' }} data-id="udappCompiledBy">(Compiled by {compilerName})</label>}</div>
         </div>
-        <OverlayTrigger placement={'right'} overlay={
-          <Tooltip className="text-nowrap" id="info-sync-compiled-contract">
-            <div>Click here to import contracts compiled from an external framework.</div>
-            <div>This action is enabled when Remix is connected to an external framework (hardhat, truffle, foundry) through remixd.</div>
-          </Tooltip>
-        }>
-          <button className="btn d-flex py-0" onClick={_ => props.syncContracts()}>
-            <i style={{ cursor: 'pointer' }} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
-          </button>
-        </OverlayTrigger>
+        {props.remixdActivated ?
+          <OverlayTrigger placement={'right'} overlay={
+            <Tooltip className="text-nowrap" id="info-sync-compiled-contract">
+              <div>Click here to import contracts compiled from an external framework.</div>
+              <div>This action is enabled when Remix is connected to an external framework (hardhat, truffle, foundry) through remixd.</div>
+            </Tooltip>
+          }>
+            <button className="btn d-flex py-0" onClick={_ => {
+              props.syncContracts()
+              _paq.push(['trackEvent', 'udapp', 'syncContracts', compilationSource])
+            }}>
+              <i style={{ cursor: 'pointer' }} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
+            </button>
+          </OverlayTrigger>
+          : null}
       </div>
       <div className="udapp_subcontainer">
-       <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
-          { (contractList[currentFile] || []).map((contract, index) => {
-            return <option key={index} value={contract.alias}>{contract.alias} - {contract.file}</option>
-          }) }
+        <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
+          {(contractList[currentFile] || []).map((contract, index) => {
+            return <option key={index} value={contract.alias}>
+              {contract.alias} - {contract.file}
+            </option>
+          })}
         </select>
-        <span className="py-1" style={{ display: abiLabel.display }}>{ abiLabel.content }</span>
+        <span className="py-1" style={{ display: abiLabel.display }}>{abiLabel.content}</span>
       </div>
       <div>
         <div className="udapp_deployDropdown">
-          { ((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? intl.formatMessage({id: 'udapp.noCompiledContracts', defaultMessage: 'No compiled contracts'})
+          {((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? intl.formatMessage({id: 'udapp.noCompiledContracts', defaultMessage: 'No compiled contracts'})
             : loadedContractData ? <div>
               <ContractGUI
                 title='Deploy'
