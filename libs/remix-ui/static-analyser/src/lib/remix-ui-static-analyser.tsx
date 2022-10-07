@@ -490,6 +490,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             label="Select all"
             onClick={() => handleCheckAllModules(groupedModules)}
             onChange={() => {}}
+            tooltipPlacement={'top-start'}
           />
           <RemixUiCheckbox
             id="autorunstaticanalysis"
@@ -499,6 +500,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             checked={autoRun}
             label="Autorun"
             onChange={() => {}}
+            tooltipPlacement={'bottom-start'}
           />
           <Button
             buttonText="Run"
