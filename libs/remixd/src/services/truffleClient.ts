@@ -61,7 +61,7 @@ export class TruffleClient extends PluginClient {
   }
 
   private async processArtifact () {
-    const folderFiles = await fs.readdir(this.buildPath)    
+    const folderFiles = await fs.readdir(this.buildPath)   
     // name of folders are file names
     for (const file of folderFiles) {
       if (file.endsWith('.json')) {
@@ -77,7 +77,6 @@ export class TruffleClient extends PluginClient {
         const content = await fs.readFile(join(this.buildPath, file), { encoding: 'utf-8' })
         await this.feedContractArtifactFile(file, content, compilationResult)
         this.emit('compilationFinished', compilationResult.compilationTarget, { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)
-  
       }
     }
     if (!this.warnLog) {
@@ -104,10 +103,12 @@ export class TruffleClient extends PluginClient {
     const contentJSON = JSON.parse(content)
     const contractName = basename(path).replace('.json', '')
     compilationResultPart.solcVersion = contentJSON.compiler.version
-    compilationResultPart.compilationTarget = contentJSON.ast.absolutePath
+    // file name in artifacts starts with `project:/`
+    const filepath = contentJSON.ast.absolutePath.startsWith('project:/') ? contentJSON.ast.absolutePath.replace('project:/', '') : contentJSON.ast.absolutePath
+    compilationResultPart.compilationTarget = filepath
     compilationResultPart.input[path] = { content: contentJSON.source }
     // extract data
-    const relPath = utils.relativePath(contentJSON.ast.absolutePath, this.currentSharedFolder)
+    const relPath = utils.relativePath(filepath, this.currentSharedFolder)
     if (!compilationResultPart.output['sources'][relPath]) compilationResultPart.output['sources'][relPath] = {}
     
     const location = contentJSON.ast.src.split(':')

@@ -165,6 +165,7 @@ export interface ContractDropdownProps {
   networkName: string,
   setNetworkName: (name: string) => void,
   setSelectedContract: (contractName: string) => void
+  remixdActivated: boolean
 }
 
 export interface RecorderProps {
