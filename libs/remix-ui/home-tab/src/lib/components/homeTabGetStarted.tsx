@@ -9,8 +9,8 @@ function HomeTabGetStarted () {
   })
 
   return (
-    <div className="pl-2" id="hTGetStartedSection">
-      <label style={{fontSize: "1.2rem"}}>Get Started</label>
+    <div className="pl-2 pb-2" id="hTGetStartedSection">
+      <label style={{fontSize: "1.2rem"}}>Get Started<span className="ml-2">- Project Templatea</span></label>
       <div className="border"></div>
     </div>
   )
