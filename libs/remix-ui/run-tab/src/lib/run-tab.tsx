@@ -27,7 +27,8 @@ import {
   storeNewScenario, runScenario,
   setScenarioPath, getFuncABIValues,
   setNetworkName, updateSelectedContract,
-  syncContracts, isValidProxyAddress
+  syncContracts, isValidProxyAddress,
+  lastCompilationResults
 } from './actions'
 import './css/run-tab.css'
 import { PublishToStorage } from '@remix-ui/publish-to-storage'
@@ -223,6 +224,7 @@ export function RunTabUI (props: RunTabProps) {
           />
           <ContractDropdownUI
             syncContracts={syncContracts}
+            lastCompilationResults={lastCompilationResults}
             exEnvironment={runTab.selectExEnv}
             contracts={runTab.contracts}
             getSelectedContract={fetchSelectedContract}

@@ -140,6 +140,7 @@ export interface ContractDropdownProps {
     error: string
   },
   syncContracts: () => void,
+  lastCompilationResults: () => any
   getSelectedContract: (contractName: string, compiler: CompilerAbstract) => ContractData,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   passphrase: string,

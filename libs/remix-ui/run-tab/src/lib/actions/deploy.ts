@@ -245,6 +245,12 @@ export const getContext = (plugin: RunTab) => {
   return plugin.blockchain.context()
 }
 
+export const lastCompilationResultsInternal = async (plugin: RunTab) => {
+  const lastCompilationRes = await plugin.call('solidity', 'getCompilationResult')
+  return lastCompilationRes
+}
+
+
 export const syncContractsInternal = async (plugin: RunTab) => {
   if (await plugin.call('manager', 'isActive', 'truffle')) {
     plugin.call('truffle', 'sync')

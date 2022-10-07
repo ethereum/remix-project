@@ -30,9 +30,21 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const [constructorInterface, setConstructorInterface] = useState<FuncABI>(null)
   const [constructorInputs, setConstructorInputs] = useState(null)
   const [compilerName, setCompilerName] = useState<string>('')
+  const [currentSource, setCurrentSource] = useState("remix")
   const contractsRef = useRef<HTMLSelectElement>(null)
   const atAddressValue = useRef<HTMLInputElement>(null)
-  const { contractList, loadType, currentFile, compilationSource, currentContract, compilationCount, deployOptions, proxyKey } = props.contracts
+  let { contractList, loadType, currentFile, compilationSource, currentContract, compilationCount, deployOptions, proxyKey } = props.contracts
+
+  useEffect(() => {
+    contractList = props.contracts.contractList
+    loadType = props.contracts.loadType
+    currentFile = props.contracts.currentFile
+    compilationSource = props.contracts.compilationSource
+    currentContract = props.contracts.currentContract
+    compilationCount = props.contracts.compilationCount
+    deployOptions = props.contracts.deployOptions
+    proxyKey = props.contracts.proxyKey
+  }, [setCurrentSource])
 
   useEffect(() => {
     enableContractNames(Object.keys(props.contracts.contractList).length > 0)
@@ -101,6 +113,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   useEffect(() => {
     initSelectedContract()
     updateCompilerName()
+    console.log("contrcctList is ", contractList)
   }, [contractList])
 
   useEffect(() => {
