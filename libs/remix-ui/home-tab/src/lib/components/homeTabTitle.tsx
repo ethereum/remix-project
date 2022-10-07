@@ -8,9 +8,7 @@ function HomeTabTitle () {
     searchInput: ''
   })
   useEffect(() => {
-  
     document.addEventListener("keyup", (e) => handleSearchKeyDown(e))
-    
     return () => {
       document.removeEventListener("keyup", handleSearchKeyDown)
     }
