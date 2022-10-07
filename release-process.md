@@ -1,31 +1,36 @@
 # Release process 
 
-This document includes:
- - how to release the remixd
- - how to publish remix libs to NPM
- - how to update remix.ethereum.org
- - how to update remix-alpha.ethereum.org
- - how to update remix-beta.ethereum.org
- - how to release remix IDE
+This document includes the instructions to release for:
+ - remixd to NPM
+ - Remix libraries to NPM
+ - remix.ethereum.org
+ - remix-alpha.ethereum.org
+ - remix-beta.ethereum.org
 
-## RemixD release
- - update new version number in remixd libs/remixd/package.json
- - nx build remixd
- - cd into ./dist/libs/remixd
- - npm publish
- - create bump PR to master.
+## remixd NPM release
+ - Bump version for remixd in `./libs/remixd/package.json`
+ - Run: `nx build remixd`
+ - Move to build directory: `cd ./dist/libs/remixd`
+ - Publish to NPM: `npm publish` (Make sure you are logged in to NPM)
+ - create bump PR to master
 
-## Remix libs release
-(remove dist and login to npm)
- - git fetch origin master
- - git checkout origin/master
- - git checkout -b bumpLibsVersion
- - yarn run publish:libs (this command uses lerna)
- - commit
+## Remix libraries NPM release
+ - Make sure you are on latest `master` branch
+ - `git pull origin master`
+ - `git checkout -b bumpLibsVersion`
+ - `yarn run publish:libs `
+ 
+ This command uses `lerna` and solely responsible for publishing all the remix libraries. It will ask for a new version of each library. Make sure you are logged in to NPM.
 
-## Remix IDE release Part 1. First push master to beta. Feature Freeze
- - git co -b remix_beta origin/remix_beta
- - git reset --hard -master-commit-hash-
+ Once this command is done, versions for each remix library should be updated to latest in libs package.json file.
+ - Create bump PR to master
+
+## Feature Freeze
+Once feature freeze is done, `remix_beta` should be update latest to the master which will automatically update `remix-beta.ethereum.org` through a CI job.
+
+ - git checkout remix_beta
+ - git pull origin remix_beta
+ - git reset --hard <master-commit-hash> (`master-commit-hash` will be latest commid id from `master` branch)
  - git push -f origin remix_beta
  
 ## Testing phase
