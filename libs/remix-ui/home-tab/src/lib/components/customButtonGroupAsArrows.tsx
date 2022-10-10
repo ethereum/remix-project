@@ -14,8 +14,7 @@ function CustomButtonGroupAsArrows ({ next, previous }) {
             <button onClick={previous}>Prev</button>
             <button onClick={next}>Next</button>
         </div>
-        )
-    }
+    )
 }
 
 export default CustomButtonGroupAsArrows
