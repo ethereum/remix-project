@@ -313,7 +313,7 @@ export function Workspace () {
           hideIconsMenu(!showIconsMenu)
         }}
         className='far fa-edit w-100'>
-          {'  Rename'}
+          <span className="pl-2">{'Rename'}</span>
       </span>
     </OverlayTrigger>,
     <OverlayTrigger
@@ -336,7 +336,7 @@ export function Workspace () {
         }}
         className='far fa-trash w-100'
       >
-        {'  Delete'}
+        <span className="pl-2">{'Delete'}</span>
       </span>
     </OverlayTrigger>,
     <OverlayTrigger
@@ -359,7 +359,7 @@ export function Workspace () {
         }}
         className='far fa-download w-100'
       >
-        {'  Download'}
+        <span className="pl-2">{'Download'}</span>
       </span>
     </OverlayTrigger>,
     <OverlayTrigger
@@ -382,7 +382,7 @@ export function Workspace () {
         }}
         className='far fa-upload w-100'
       >
-        {'  Restore'}
+        <span className="pl-2">{'Restore'}</span>
       </span>
     </OverlayTrigger>,
     <OverlayTrigger
@@ -405,7 +405,7 @@ export function Workspace () {
         }}
         className='far fa-clone w-100'
       >
-        {'  Clone'}
+        <span className="pl-2">{'Clone'}</span>
       </span>
     </OverlayTrigger>
   ]
@@ -447,9 +447,8 @@ export function Workspace () {
                   <Dropdown id="workspacesMenuDropdown" data-id="workspacesMenuDropdown" onToggle={() => hideIconsMenu(!showIconsMenu)} show={showIconsMenu}>
                     <Dropdown.Toggle
                       as={CustomIconsToggle}
-                      mouseOverAction={(e: SyntheticEvent) => {
+                      onClick={() => {
                         hideIconsMenu(!showIconsMenu)
-                        console.log({ e })
                       }}
                       icon={'fas fa-bars'}
                     ></Dropdown.Toggle>
@@ -461,7 +460,7 @@ export function Workspace () {
                         </Dropdown.Item>
                       ))
                     }
-                    </Dropdown.Menu>  
+                    </Dropdown.Menu>
                   </Dropdown>
                 </span>
               </div>
