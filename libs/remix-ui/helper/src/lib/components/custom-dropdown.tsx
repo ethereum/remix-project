@@ -1,6 +1,6 @@
 // The forwardRef is important!!
 
-import React, { Ref, SyntheticEvent } from "react"
+import React, { Ref } from "react"
 
 // Dropdown needs access to the DOM node in order to position the Menu
 export const CustomToggle = React.forwardRef(({ children, onClick, icon, className = '' }: { children: React.ReactNode, onClick: (e) => void, icon: string, className: string }, ref: Ref<HTMLButtonElement>) => (
