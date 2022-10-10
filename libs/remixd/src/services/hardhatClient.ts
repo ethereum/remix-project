@@ -3,7 +3,7 @@ import { PluginClient } from '@remixproject/plugin'
 import * as chokidar from 'chokidar'
 import * as utils from '../utils'
 import * as fs from 'fs-extra'
-import { basename, join } from 'path'
+import { join } from 'path'
 const { spawn } = require('child_process') // eslint-disable-line
 
 export class HardhatClient extends PluginClient {
@@ -14,12 +14,12 @@ export class HardhatClient extends PluginClient {
   warnLog: boolean
   buildPath: string
 
-  constructor (private readOnly = false) {
+  constructor(private readOnly = false) {
     super()
     this.methods = ['compile', 'sync']
   }
 
-  setWebSocket (websocket: WS): void {
+  setWebSocket(websocket: WS): void {
     this.websocket = websocket
     this.websocket.addEventListener('close', () => {
       this.warnLog = false
@@ -27,13 +27,13 @@ export class HardhatClient extends PluginClient {
     })
   }
 
-  sharedFolder (currentSharedFolder: string): void {
+  sharedFolder(currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
     this.buildPath = utils.absolutePath('artifacts/contracts', this.currentSharedFolder)
     this.listenOnHardhatCompilation()
   }
 
-  compile (configPath: string) {
+  compile(configPath: string) {
     return new Promise((resolve, reject) => {
       if (this.readOnly) {
         const errMsg = '[Hardhat Compilation]: Cannot compile in read-only mode'
@@ -60,15 +60,15 @@ export class HardhatClient extends PluginClient {
     })
   }
 
-  private async processArtifact () {
+  private async processArtifact() {
     // resolving the files
     const folderFiles = await fs.readdir(this.buildPath)
+    const targetsSynced = []
     // name of folders are file names
     for (const file of folderFiles) { // ["artifacts/contracts/Greeter.sol/"]
       const contractFilePath = join(this.buildPath, file)
       const stat = await fs.stat(contractFilePath)
       if (!stat.isDirectory()) continue
-      console.log('pp ', contractFilePath)
       const files = await fs.readdir(contractFilePath)
       const compilationResult = {
         input: {},
@@ -88,46 +88,53 @@ export class HardhatClient extends PluginClient {
           const jsonStd = JSON.parse(contentStd)
           compilationResult.target = jsonStd.sourceName
 
-          // this is the full compilation result
-          console.log('processing hardhat artifact', file)
+          targetsSynced.push(compilationResult.target)
           const path = join(contractFilePath, jsonDbg.buildInfo)
           const content = await fs.readFile(path, { encoding: 'utf-8' })
-          
+
           await this.feedContractArtifactFile(content, compilationResult)
         }
         if (compilationResult.target) {
-          this.emit('compilationFinished', compilationResult.target, { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)      
+          // we are only interested in the contracts that are in the target of the compilation
+          compilationResult.output = {
+            ...compilationResult.output,
+            contracts: { [compilationResult.target]: compilationResult.output.contracts[compilationResult.target] }
+          }
+          this.emit('compilationFinished', compilationResult.target, { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)
         }
       }
     }
     if (!this.warnLog) {
       // @ts-ignore
-      this.call('terminal', 'log', 'receiving compilation result from hardhat')
+      this.call('terminal', 'log', 'receiving compilation result from Hardhat')
       this.warnLog = true
+    }
+    if (targetsSynced.length) {
+      console.log(`Processing artifacts for files: ${[...new Set(targetsSynced)].join(', ')}`)
+      // @ts-ignore
+      this.call('terminal', 'log', `synced with Hardhat: ${[...new Set(targetsSynced)].join(', ')}`)
     }
   }
 
-  listenOnHardhatCompilation () {
+  listenOnHardhatCompilation() {
     try {
       this.watcher = chokidar.watch(this.buildPath, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
-      
+
       this.watcher.on('change', () => this.processArtifact())
       this.watcher.on('add', () => this.processArtifact())
       // process the artifact on activation
       setTimeout(() => this.processArtifact(), 1000)
     } catch (e) {
       console.log(e)
-    }    
+    }
   }
 
-  async sync () {
-    console.log('syncing from hardhat')
+  async sync() {
+    console.log('syncing from Hardhat')
     this.processArtifact()
-    // @ts-ignore
-    this.call('terminal', 'log', 'synced with hardhat')
   }
 
-  async feedContractArtifactFile (artifactContent, compilationResultPart) {
+  async feedContractArtifactFile(artifactContent, compilationResultPart) {
     const contentJSON = JSON.parse(artifactContent)
     compilationResultPart.solcVersion = contentJSON.solcVersion
     for (const file in contentJSON.input.sources) {
@@ -140,10 +147,10 @@ export class HardhatClient extends PluginClient {
           compilationResultPart.output['sources'][file] = contentJSON.output.sources[file]
           compilationResultPart.output['contracts'][file] = contentJSON.output.contracts[file]
           if (contentJSON.output.errors && contentJSON.output.errors.length) {
-            compilationResultPart.output['errors'] = contentJSON.output.errors.filter(error => error.sourceLocation.file === file)      
+            compilationResultPart.output['errors'] = contentJSON.output.errors.filter(error => error.sourceLocation.file === file)
           }
         }
       }
-    }    
+    }
   }
 }
