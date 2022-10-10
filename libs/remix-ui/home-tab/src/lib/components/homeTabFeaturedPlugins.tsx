@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useContext } from 'react'
 import PluginButton from './pluginButton'
 import { ThemeContext, themes } from '../themeContext'
 import Carousel from 'react-multi-carousel'
@@ -17,12 +17,8 @@ interface  HomeTabFeaturedPluginsProps {
 }
 
 function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
-  const [state, setState] = useState<{
-    themeQuality: { filter: string, name: string },
-  }>({
-    themeQuality: themes.light,
-  })
 
+  const themeFilter = useContext(ThemeContext)
   const carouselRef = useRef(null)
 
   // Todo doesn't work
@@ -36,7 +32,6 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
   const handleScroll = (e) => {
     console.log("e = ", e)   
   }
-
 
   const startSolidity = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'udapp', 'solidityStaticAnalysis', 'solidityUnitTesting'])
@@ -71,9 +66,9 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
   
     return (
     <div className="pl-2 w-100" id="hTFeaturedPlugins">
-      <label className="pl-2" style={{fontSize: "1.2rem"}}>Featured Plugins</label>
+      <label className="" style={{fontSize: "1.2rem"}}>Featured Plugins</label>
       <div className="w-100 d-flex flex-column">
-        <ThemeContext.Provider value={ state.themeQuality }>
+        <ThemeContext.Provider value={ themeFilter }>
           <Carousel 
             ref={carouselRef}
             focusOnSelect
