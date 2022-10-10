@@ -31,8 +31,6 @@ const RemixUiVerticalIconsPanel = ({
   const [activateScroll, dispatchScrollAction] = useReducer(verticalScrollReducer, initialState)
   const [theme, setTheme] = useState<string>('dark')
 
-
-
   const evaluateScrollability = () => {
     dispatchScrollAction({
       type: 'resize',

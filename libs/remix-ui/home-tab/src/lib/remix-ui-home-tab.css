@@ -58,16 +58,22 @@
 .remixui_home_importFrom p {
   margin-right: 10px;
 }
-.remixui_home_logoContainer img{
+.remixui_home_logoContainer img {
   height: 150px;
   opacity: 0.7;
 }
 .remixui_home_envLogo {
   height: 2.5rem;
 }
-.remixui_home_envLogoDescription{
+.remixui_home_envLogoDescription {
   white-space: pre-wrap;
   font-size: x-small;
+  line-height: 0.8rem;
+  text-align: left;
+}
+.remixui_home_gtDescription {
+  white-space: pre-wrap;
+  font-size: small;
   line-height: 0.8rem;
   text-align: left;
 }
@@ -77,8 +83,12 @@
 }
 .remixui_home_envButton {
   width: 220px;
+  cursor: pointer;
   height: 80px;
-
+}
+.remixui_home_workspaceTemplate {
+  width: 220px;
+  height: 80px;
 }
 .remixui_home_media {
   overflow: hidden;

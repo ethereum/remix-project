@@ -15,6 +15,7 @@ interface PluginButtonProps {
 function PluginButton ({ imgPath, envID, envText, callback, l2, description, remixMaintained }: PluginButtonProps) {
   const themeFilter = useContext(ThemeContext)
 
+  console.log("themeFilter ", themeFilter)
   return (
     <div className="d-flex remixui_home_envButton">
       <button
