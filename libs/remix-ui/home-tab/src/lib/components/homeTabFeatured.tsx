@@ -13,14 +13,6 @@ function HomeTabFeatured() {
     }
   }, [])
 
-  const openLink = (url = "") => {
-    if (url === "") {
-      window.open("https://remix-ide.readthedocs.io/en/latest/search.html?q=" + state.searchInput + "&check_keywords=yes&area=default", '_blank')
-    } else {
-      window.open(url, '_blank')
-    }
-  }
-
   return (
     <div className="pt-3 pl-2" id="hTFeaturedeSection">
       <label style={{ fontSize: "1.2rem" }}>Featured</label>
