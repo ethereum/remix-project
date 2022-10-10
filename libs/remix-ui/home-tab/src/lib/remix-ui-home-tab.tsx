@@ -3,7 +3,6 @@ import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint
 import './remix-ui-home-tab.css'
 import { ThemeContext, themes } from './themeContext'
 import { RSSFeed } from './components/rssFeed'
-import BasicLogo from 'libs/remix-ui/vertical-icons-panel/src/lib/components/BasicLogo'
 import HomeTabTitle from './components/homeTabTitle'
 import HomeTabFile from './components/homeTabFile'
 import HomeTabLearn from './components/homeTabLearn'
@@ -70,10 +69,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     }
   }, [])
   
-  
 
-  const maxHeight = Math.max(window.innerHeight - 150, 250) + 'px'
-  const elHeight = '4000px'
   
   return (
     <div className="d-flex flex-row w-100" id="remixUIHTAll">
@@ -98,6 +94,10 @@ export default RemixUiHomeTab
 
 
 /*
+  
+
+  const maxHeight = Math.max(window.innerHeight - 150, 250) + 'px'
+  const elHeight = '4000px'
 <div className="d-flex flex-column ml-4" id="remixUiRightPanel">
         <div className="border-bottom d-flex flex-column mr-4 pb-3 mb-3">
           <div className="pt-2 d-flex justify-content-between">
