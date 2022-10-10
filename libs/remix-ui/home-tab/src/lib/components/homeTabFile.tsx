@@ -145,7 +145,7 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
           plugin.verticalIcons.select('filePanel')
           uploadFile(event.target)
         }} multiple />
-        <button className="btn p-2 border my-1" style={{width: 'fit-content'}} onClick={() => connectToLocalhost()}>Connect for Localhost</button>
+        <button className="btn p-2 border my-1" style={{width: 'fit-content'}} onClick={() => connectToLocalhost()}>Connect to Localhost</button>
         <label className="pt-2">Load From</label>
         <div className="d-flex">
           <button className="btn p-2 border mr-2" data-id="landingPageImportFromGitHubButton" onClick={() => showFullMessage('GitHub', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}>GitHub</button>
