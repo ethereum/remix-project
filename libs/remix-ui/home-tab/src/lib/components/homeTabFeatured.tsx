@@ -1,16 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useContext } from 'react'
 import { ThemeContext, themes } from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 import CustomNavButtons from './customNavButtons'
 
 function HomeTabFeatured() {
-  const [state, setState] = useState<{
-    themeQuality: { filter: string, name: string },
-  }>({
-    themeQuality: themes.light,
-  })
+  const themeFilter = useContext(ThemeContext)
 
   useEffect(() => {
     return () => {
@@ -26,11 +22,11 @@ function HomeTabFeatured() {
   }
 
   return (
-    <div className="pt-4 pl-2" id="hTFeaturedeSection">
+    <div className="pt-3 pl-2" id="hTFeaturedeSection">
       <label style={{ fontSize: "1.2rem" }}>Featured</label>
-      <div className="mb-4">
-        <div className="w-100 d-flex flex-column" style={{ height: "230px" }}>
-          <ThemeContext.Provider value={state.themeQuality}>
+      <div className="mb-2">
+        <div className="w-100 d-flex flex-column" style={{ height: "200px" }}>
+          <ThemeContext.Provider value={ themeFilter }>
             <Carousel
               customButtonGroup={<CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} />}
               arrows={false}
@@ -47,19 +43,19 @@ function HomeTabFeatured() {
               containerClass="border carousel-container"
               sliderClass="px-2 h-100 justify-content-between"
               deviceType={"desktop"}
-              itemClass="p-2 carousel-item-padding-10-px"
+              itemClass="px-2 carousel-item-padding-10-px"
               autoPlaySpeed={15000}
               dotListClass="position-relative mt-2"
             >
               <div className="d-flex">
-                <img src={"assets/img/bgRemi.webp"} style={{ flex: "1", height: "200px", maxWidth: "max-content"}} alt="" ></img>
+                <img src={"assets/img/bgRemi.webp"} style={{ flex: "1", height: "170px", maxWidth: "max-content"}} alt="" ></img>
                 <div className="h6 w-50 p-4" style={{ flex: "1"}}>
                   <h5>JUMP INTO WEB3</h5>
                   <span>The Remix Project is a rich toolset which can be used for the entire journey of contract development by users of any knowledge level, and as a learning lab for teaching and experimenting with Ethereum.</span>
                 </div>
               </div>
               <div className="d-flex">
-                <img src={"/assets/img/remixRewardUser.webp"} style={{ flex: "1", height: "200px", maxWidth: "max-content" }} alt="" ></img>
+                <img src={"/assets/img/remixRewardUser.webp"} style={{ flex: "1", height: "170px", maxWidth: "max-content" }} alt="" ></img>
                 <div className="h6 p-4" style={{ flex: "1"}}>
                   <h5>REMIX REWARDS</h5>
                   <p style={{fontStyle: 'italic'}}>NFTs for our users!</p>
@@ -67,7 +63,7 @@ function HomeTabFeatured() {
                 </div>
               </div>
               <div className="d-flex">
-                <img src={"/assets/img/remixRewardBetaTester.webp"} style={{ flex: "1", height: "200px", maxWidth: "max-content" }} alt="" ></img>
+                <img src={"/assets/img/remixRewardBetaTester.webp"} style={{ flex: "1", height: "170px", maxWidth: "max-content" }} alt="" ></img>
                 <div className="h6 p-4" style={{ flex: "1"}}>
                   <h5>BETA TESTING</h5>
                   <p style={{fontStyle: 'italic'}}>Our community supports us.</p>
