@@ -11,7 +11,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
         action: 'createNewFile',
         title: 'Create New File',
         icon: 'far fa-file',
-        placement: 'top-end'
+        placement: 'top-start'
       },
       {
         action: 'createNewFolder',
