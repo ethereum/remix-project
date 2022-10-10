@@ -350,7 +350,7 @@ module.exports = {
         selector: '//i[@data-icon="workspaceDropdownMenuIcon"]',
         locateStrategy: 'xpath',
       })
-      .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 1)
+      .click('//*[@id="workspacesMenuDropdown"]/span/i')
       .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul')
       .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[1]') // rename workspace_name
       .useCss()
@@ -375,7 +375,7 @@ module.exports = {
     browser
       .switchWorkspace('workspace_name_1')
       .useXpath()
-      .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 2)
+      .click('//*[@id="workspacesMenuDropdown"]/span/i')
       .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[2]') // delete workspace_name_1
       .waitForElementVisible('//*[@id="fileExplorerView"]/div[2]/div/div/div[2]')
       .click('//*[@id="fileExplorerView"]/div[2]/div/div/div[3]/button')
@@ -391,7 +391,7 @@ module.exports = {
     browser
       .clickLaunchIcon('filePanel')
       .useXpath()
-      .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 0)
+      .click('//*[@id="workspacesMenuDropdown"]/span/i')
       .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
       .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
       .useCss()
@@ -418,7 +418,7 @@ module.exports = {
   'Should display non-clashing names for duplicate clone #group2': '' + function (browser: NightwatchBrowser) {
     browser
       .useXpath()
-      .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 0)
+      .click('//*[@id="workspacesMenuDropdown"]/span/i')
       .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
       .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
       .useCss()
@@ -430,7 +430,7 @@ module.exports = {
       .pause(5000)
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix1')
       .useXpath()
-      .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 0)
+      .click('//*[@id="workspacesMenuDropdown"]/span/i')
       .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
       .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
       .useCss()
@@ -442,7 +442,7 @@ module.exports = {
       .pause(5000)
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix2')
       .useXpath()
-      .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 0)
+      .click('//*[@id="workspacesMenuDropdown"]/span/i')
       .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
       .useCss()
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
@@ -465,7 +465,7 @@ module.exports = {
         selector: '//i[@data-icon="workspaceDropdownMenuIcon"]',
         locateStrategy: 'xpath',
       })
-      .moveToElement('//*[@id="workspacesMenuDropdown"]/span/i', 0, 1)
+      .click('//*[@id="workspacesMenuDropdown"]/span/i')
       .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
       .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
       .useCss()
