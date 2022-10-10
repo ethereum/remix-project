@@ -20,13 +20,13 @@ export const CustomToggle = React.forwardRef(({ children, onClick, icon, classNa
   </button>
 ))
 
-export const CustomIconsToggle = React.forwardRef(({ mouseOverAction, icon, className = '' }: { children?: React.ReactNode, mouseOverAction: (e: SyntheticEvent) => void, icon: string, className: string }, ref: Ref<HTMLSpanElement>) => (
+export const CustomIconsToggle = React.forwardRef(({ onClick, icon, className = '' }: { children?: React.ReactNode, onClick: () => void, icon: string, className: string }, ref: Ref<HTMLSpanElement>) => (
   <span
     ref={ref}
     onClick={(e) => {
       e.preventDefault()
+      onClick()
     }}
-    onMouseOver={mouseOverAction}
     className={`${className.replace('dropdown-toggle', '')} mb-0 pb-0 d-flex justify-content-end align-items-end remixuimenuicon_shadow`}
     data-id="workspaceMenuDropdown"
   >
