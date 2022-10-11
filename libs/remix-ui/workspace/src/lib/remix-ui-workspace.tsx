@@ -295,6 +295,30 @@ export function Workspace () {
 
   const workspaceMenuIcons = [
     <OverlayTrigger
+      placement="top-start"
+      overlay={
+        <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
+          <span>Create</span>
+        </Tooltip>
+      }
+    >
+      <div>
+        <span
+          hidden={currentWorkspace === LOCALHOST}
+          id='workspaceCreate'
+          data-id='workspaceCreate'
+          onClick={(e) => {
+            e.stopPropagation()
+            createWorkspace()
+            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
+          }}
+          className='far fa-plus remixui_menuicon'
+        >
+        </span>
+        <span className="pl-3">Create</span>
+      </div>
+    </OverlayTrigger>,
+    <OverlayTrigger
       placement='right-start'
       overlay={
         <Tooltip id="workspaceRenametooltip">
@@ -422,7 +446,7 @@ export function Workspace () {
                     Workspaces
                   </label>
                 </span>
-                <span className="remixui_menu d-flex justify-content-between align-items-end w-75">
+                <span className="remixui_menu remixui_topmenu d-flex justify-content-between align-items-end w-75">
                   <OverlayTrigger
                     placement="top-start"
                     overlay={
@@ -431,18 +455,20 @@ export function Workspace () {
                       </Tooltip>
                     }
                   >
-                    <span
-                    hidden={currentWorkspace === LOCALHOST}
-                    id='workspaceCreate'
-                    data-id='workspaceCreate'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      createWorkspace()
-                      _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
-                    }}
-                    className='far fa-plus-square remixui_menuicon'
-                    >
-                  </span>
+                    <div>
+                      <span
+                        hidden={currentWorkspace === LOCALHOST}
+                        id='workspaceCreate'
+                        data-id='workspaceCreate'
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          createWorkspace()
+                          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
+                        }}
+                        className='far fa-plus remixui_menuicon'
+                        >
+                      </span>
+                    </div>
                   </OverlayTrigger>
                   <Dropdown id="workspacesMenuDropdown" data-id="workspacesMenuDropdown" onToggle={() => hideIconsMenu(!showIconsMenu)} show={showIconsMenu}>
                     <Dropdown.Toggle
@@ -452,7 +478,7 @@ export function Workspace () {
                       }}
                       icon={'fas fa-bars'}
                     ></Dropdown.Toggle>
-                    <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='w-100 custom-dropdown-items' align={'right'}>
+                    <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='custom-dropdown-items' align={'right'}>
                       {
                       workspaceMenuIcons.map(m => (
                         <Dropdown.Item>
