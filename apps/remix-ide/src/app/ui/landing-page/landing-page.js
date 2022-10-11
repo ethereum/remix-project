@@ -31,8 +31,7 @@ export class LandingPage extends ViewPlugin {
 
   render () {
     return <div id='landingPageHomeContainer' className='remixui_homeContainer justify-content-between bg-light d-flex' data-id='landingPageHomeContainer'>
-      <RemixUiHomeTab plugin={this} />
-    </div>
-  }
-
+        <RemixUiHomeTab plugin={this} />
+      </div>
+    }
 }
