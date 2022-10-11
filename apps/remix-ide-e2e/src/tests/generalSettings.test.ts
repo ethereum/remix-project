@@ -142,6 +142,9 @@ module.exports = {
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', '设置')
       .assert.containsText('*[data-id="listenNetworkCheckInput"]', '监听所有交易')
       .assert.containsText('*[data-id="settingsTabGenerateContractMetadataLabel"]', '生成合约元数据')
+      .assert.containsText('*[data-id="settingsAutoCompleteLabel"]', '在编辑器中启用代码自动补全')
+      .assert.containsText('*[data-id="settingsShowGasLabel"]', '在编辑器中展示 gas 预算')
+      .assert.containsText('*[data-id="displayErrorsLabel"]', '编辑代码时展示错误提示')
   },
 
   'Should load en-US locale ': function (browser) {
@@ -151,6 +154,9 @@ module.exports = {
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'SETTINGS')
       .assert.containsText('*[data-id="listenNetworkCheckInput"]', 'listen on all transactions')
       .assert.containsText('*[data-id="settingsTabGenerateContractMetadataLabel"]', 'Generate contract metadata')
+      .assert.containsText('*[data-id="settingsAutoCompleteLabel"]', 'Enable code completion in editor')
+      .assert.containsText('*[data-id="settingsShowGasLabel"]', 'Display gas estimates in editor')
+      .assert.containsText('*[data-id="displayErrorsLabel"]', 'Display errors in editor while typing')
   }
 }
 

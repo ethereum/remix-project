@@ -199,19 +199,19 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeUseAutoComplete} id="settingsUseAutoComplete" type="checkbox" className="custom-control-input" checked={isAutoCompleteChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/auto-completion')}`} data-id="settingsAutoCompleteLabel" htmlFor="settingsUseAutoComplete">
-              <span>{useAutoCompleteText}</span>
+              <span><FormattedMessage id='settings.useAutoCompleteText' defaultMessage={useAutoCompleteText} /></span>
             </label>
           </div>
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeShowGasInEditor} id="settingsUseShowGas" type="checkbox" className="custom-control-input" checked={isShowGasInEditorChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/show-gas')}`} data-id="settingsShowGasLabel" htmlFor="settingsUseShowGas">
-              <span>{useShowGasInEditorText}</span>
+              <span><FormattedMessage id='settings.useShowGasInEditorText' defaultMessage={useShowGasInEditorText} /></span>
             </label>
           </div>
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeDisplayErrors} id="settingsDisplayErrors" type="checkbox" className="custom-control-input" checked={displayErrorsChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/display-errors')}`}  data-id="displayErrorsLabel" htmlFor="settingsDisplayErrors">
-              <span>{displayErrorsText}</span>
+              <span><FormattedMessage id='settings.displayErrorsText' defaultMessage={displayErrorsText} /></span>
             </label>
           </div>
           <div className="custom-control custom-checkbox mb-1">
@@ -227,7 +227,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <div className="custom-control custom-checkbox mb-1">
             <input onChange={onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" className="custom-control-input" checked={isMatomoChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/matomo-analytics')}`} htmlFor="settingsMatomoAnalytics">
-              <span>{matomoAnalytics}</span>
+              <span><FormattedMessage id='settings.matomoAnalytics' defaultMessage={matomoAnalytics} /></span>
               <a href="https://medium.com/p/66ef69e14931/" target="_blank"> Analytics in Remix IDE</a> <span>&</span> <a target="_blank" href="https://matomo.org/free-software">Matomo</a>
             </label>
           </div>
