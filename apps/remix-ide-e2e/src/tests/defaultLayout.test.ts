@@ -28,7 +28,7 @@ module.exports = {
   'Loads Main View': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="mainPanelPluginsContainer"]')
       .waitForElementVisible('div[data-id="landingPageHomeContainer"]')
-      .waitForElementVisible('div[data-id="landingPageHpSections"]')
+      .waitForElementVisible('div[data-id="remixUIHTAll"]')
       .waitForElementVisible('div[data-id="terminalContainer"]')
   },
 
