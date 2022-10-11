@@ -41,7 +41,7 @@
   }
   .remixui_treeview {
     overflow-y        : auto;
-  }  
+  }
   .remixui_dialog {
     display: flex;
     flex-direction: column;
@@ -51,7 +51,7 @@
     word-break: break-word;
   }
   .remixui_menuicon {
-    padding-right   : 10px;
+    padding-right   : 30px;
   }
   .remixui_menuicon:hover {
     transform: scale(1.3);
@@ -61,7 +61,7 @@
     align-items: center;
     height: 32px;
   }
-  
+
   .remixui_cloneContainer input {
     height: 32px;
     border-top-left-radius: 0 !important;
@@ -78,7 +78,7 @@
   .remixui_menuicon .bs-popover-auto[x-placement^="bottom"] > .arrow::after, .bs-popover-bottom > .arrow::after {
     border-bottom-color: var(--dark) !important
   }
-  
+
   .custom-dropdown-items {
     padding: 0.25rem 0.25rem;
     border-radius: .25rem;
@@ -101,4 +101,7 @@
   .remixuimenuicon_shadow:hover {
     box-shadow: 0px 0px 14px -7px;
   }
-  
+
+  .remixui_topmenu {
+    padding-bottom: 0.1rem;
+  }
