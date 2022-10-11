@@ -30,13 +30,13 @@ function PluginButton ({ imgPath, envID, envText, callback, l2, description, rem
       </button>
       { l2 && <label className="bg-light mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_l2Label">L2</label> }
       { remixMaintained &&
-          <OverlayTrigger placement="bottom" overlay={
-            <Tooltip id="overlay-tooltip-run-script">
-              <span>Maintained by Remix</span>
-            </Tooltip>
-          }>
-            <i className="bg-light text-success mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel fas fa-check"></i>
-          </OverlayTrigger>
+        <OverlayTrigger placement="bottom" overlay={
+          <Tooltip id="overlay-tooltip-run-script">
+            <span>Maintained by Remix</span>
+          </Tooltip>
+        }>
+          <i className="bg-light text-success mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel fas fa-check"></i>
+        </OverlayTrigger>
       }
 
     </div>

@@ -47,11 +47,6 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
     plugin.verticalIcons.select('solhint')
     _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'solhint'])
   }
-  const startLearnEth = async () => {
-    await plugin.appManager.activatePlugin(['solidity', 'LearnEth', 'solidityUnitTesting'])
-    plugin.verticalIcons.select('learnEth')
-    _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'learnEth'])
-  }
   const startSourceVerify = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'sourcify'])
     plugin.verticalIcons.select('sourcify')
@@ -63,7 +58,7 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
     _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'solidityUnitTesting'])
   }
   
-    return (
+  return (
     <div className="pl-2 w-100" id="hTFeaturedPlugins">
       <label className="" style={{fontSize: "1.2rem"}}>Featured Plugins</label>
       <div className="w-100 d-flex flex-column">
@@ -84,11 +79,42 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
             deviceType={"desktop"}
             itemClass="w-100"
           >
-            <PluginButton imgPath="assets/img/solidityLogo.webp" envID="solidityLogo" envText="Solidity" description="Compile, test and analyse smart contract." remixMaintained={true} callback={() => startSolidity()} />
-            <PluginButton imgPath="assets/img/starkNetLogo.webp" envID="starkNetLogo" envText="StarkNet" description="Compile and deploy contracts with Cairo, a native language for StarkNet." l2={true} callback={() => startStarkNet()} />
-            <PluginButton imgPath="assets/img/solhintLogo.webp" envID="solhintLogo" envText="Solhint linter" description="Solhint is an open source project for linting Solidity code." callback={() => startSolhint()} />
-            <PluginButton imgPath="assets/img/sourcifyNewLogo.webp" envID="sourcifyLogo" envText="Sourcify" description="Solidity contract and metadata verification service." callback={() => startSourceVerify()} />
-            <PluginButton imgPath="assets/img/unitTesting.webp" envID="sUTLogo" envText="Solidity unit testing" description="Write and run unit tests for your contracts in Solidity." callback={() => startSolidityUnitTesting()} />
+            <PluginButton
+              imgPath="assets/img/solidityLogo.webp"
+              envID="solidityLogo"
+              envText="Solidity"
+              description="Compile, test and analyse smart contract."
+              remixMaintained={true}
+              callback={() => startSolidity()}
+            />
+            <PluginButton
+              imgPath="assets/img/starkNetLogo.webp"
+              envID="starkNetLogo"
+              envText="StarkNet"
+              description="Compile and deploy contracts with Cairo, a native language for StarkNet."
+              l2={true}
+              callback={() => startStarkNet()}
+            />
+            <PluginButton
+              imgPath="assets/img/solhintLogo.webp"
+              envID="solhintLogo" envText="Solhint linter"
+              description="Solhint is an open source project for linting Solidity code."
+              callback={() => startSolhint()}
+            />
+            <PluginButton
+              imgPath="assets/img/sourcifyNewLogo.webp"
+              envID="sourcifyLogo"
+              envText="Sourcify"
+              description="Solidity contract and metadata verification service."
+              callback={() => startSourceVerify()}
+            />
+            <PluginButton
+              imgPath="assets/img/unitTesting.webp"
+              envID="sUTLogo"
+              envText="Solidity unit testing"
+              description="Write and run unit tests for your contracts in Solidity."
+              callback={() => startSolidityUnitTesting()}
+            />
           </Carousel>
         </ThemeContext.Provider>
       </div>
