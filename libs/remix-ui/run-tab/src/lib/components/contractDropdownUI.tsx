@@ -293,7 +293,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
           {((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? intl.formatMessage({id: 'udapp.noCompiledContracts', defaultMessage: 'No compiled contracts'})
             : loadedContractData ? <div>
               <ContractGUI
-                title='Deploy'
+                title={intl.formatMessage({id: 'udapp.deploy', defaultMessage: "Deploy"})}
                 isDeploy={true}
                 deployOption={deployOptions[currentFile] && deployOptions[currentFile][currentContract] ? deployOptions[currentFile][currentContract].options : null}
                 initializerOptions={deployOptions[currentFile] && deployOptions[currentFile][currentContract] ? deployOptions[currentFile][currentContract].initializeOptions : null}
