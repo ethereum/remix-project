@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState, useRef } from 'react'
+import React from 'react'
 
 function HomeTabScamAlert () {
   return (

@@ -27,14 +27,14 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
   const themeFilter = useContext(ThemeContext)
 
   const openLink = () => {
-      window.open("https://remix-ide.readthedocs.io/en/latest/remix_tutorials_learneth.html?highlight=learneth#learneth-tutorial-repos", '_blank')
+    window.open("https://remix-ide.readthedocs.io/en/latest/remix_tutorials_learneth.html?highlight=learneth#learneth-tutorial-repos", '_blank')
   }
 
   const startLearnEthTutorial = async (tutorial) => {
     await plugin.appManager.activatePlugin(['solidity', 'LearnEth', 'solidityUnitTesting'])
     plugin.call('LearnEth', 'startTutorial', 'ethereum/remix-workshops', 'master', tutorial)
     plugin.verticalIcons.select('LearnEth')
-    _paq.push(['trackEvent', 'homeTab', 'startLearnEthTutorial'])
+    _paq.push(['trackEvent', 'homeTab', 'startLearnEthTutorial', tutorial])
   }
 
   return (

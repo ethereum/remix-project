@@ -53,15 +53,40 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
             deviceType={"desktop"}
             itemClass="w-100"
           >
-            <WorkspaceTemplate gsID="starkNetLogo" workspaceTitle="Blank" description="Create an empty workspace." callback={() => createWorkspace("blank")} />
-            <WorkspaceTemplate gsID="solhintLogo" workspaceTitle="Remix Default" description="Create a workspace with sample files." callback={() => createWorkspace("remixDefault")} />
-            <WorkspaceTemplate gsID="sourcifyLogo" workspaceTitle="OpenZeppelin ERC20" description="Create an ERC20 token by importing OpenZeppelin library." callback={() => createWorkspace("ozerc20")} />
-            <WorkspaceTemplate gsID="sUTLogo" workspaceTitle="OpenZeppelin ERC721" description="Create an NFT token by importing OpenZeppelin library." callback={() => createWorkspace("ozerc721")} />
-            <WorkspaceTemplate gsID="sUTLogo" workspaceTitle="0xProject ERC20" description="Create an ERC20 token by importing 0xProject contract." callback={() => createWorkspace("zeroxErc20")} />
-            <WorkspaceTemplate gsID="solidityLogo" workspaceTitle="Add a workspace" description="Create and configure a workspace manually." callback={() => createWorkspace("")} />
+            <WorkspaceTemplate
+              gsID="starkNetLogo"
+              workspaceTitle="Blank"
+              description="Create an empty workspace."
+              callback={() => createWorkspace("blank")} />
+            <WorkspaceTemplate
+              gsID="solhintLogo"
+              workspaceTitle="Remix Default"
+              description="Create a workspace with sample files."
+              callback={() => createWorkspace("remixDefault")} />
+            <WorkspaceTemplate
+              gsID="sourcifyLogo"
+              workspaceTitle="OpenZeppelin ERC20"
+              description="Create an ERC20 token by importing OpenZeppelin library."
+              callback={() => createWorkspace("ozerc20")} />
+            <WorkspaceTemplate
+              gsID="sUTLogo"
+              workspaceTitle="OpenZeppelin ERC721"
+              description="Create an NFT token by importing OpenZeppelin library."
+              callback={() => createWorkspace("ozerc721")} />
+            <WorkspaceTemplate
+              gsID="sUTLogo"
+              workspaceTitle="0xProject ERC20"
+              description="Create an ERC20 token by importing 0xProject contract."
+              callback={() => createWorkspace("zeroxErc20")} />
+            <WorkspaceTemplate
+              gsID="solidityLogo"
+              workspaceTitle="Add a workspace"
+              description="Create and configure a workspace manually."
+              callback={() => createWorkspace("")} />
           </Carousel>
         </ThemeContext.Provider>
-      </div>    </div>
+      </div>
+    </div>
   )
 }
 
