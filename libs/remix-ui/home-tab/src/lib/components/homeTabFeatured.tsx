@@ -40,14 +40,14 @@ function HomeTabFeatured() {
               dotListClass="position-relative mt-2"
             >
               <div className="d-flex">
-                <img src={"assets/img/bgRemi.webp"} style={{ flex: "1", height: "170px", maxWidth: "max-content"}} alt="" ></img>
+                <img src={"assets/img/bgRemi.webp"} style={{ flex: "1", height: "180px", maxWidth: "180px"}} alt="" ></img>
                 <div className="h6 w-50 p-4" style={{ flex: "1"}}>
                   <h5>JUMP INTO WEB3</h5>
                   <span>The Remix Project is a rich toolset which can be used for the entire journey of contract development by users of any knowledge level, and as a learning lab for teaching and experimenting with Ethereum.</span>
                 </div>
               </div>
               <div className="d-flex">
-                <img src={"/assets/img/remixRewardUser.webp"} style={{ flex: "1", height: "170px", maxWidth: "max-content" }} alt="" ></img>
+                <img src={"/assets/img/remixRewardUser.webp"} style={{ flex: "1", height: "180px", maxWidth: "180px" }} alt="" ></img>
                 <div className="h6 p-4" style={{ flex: "1"}}>
                   <h5>REMIX REWARDS</h5>
                   <p style={{fontStyle: 'italic'}}>NFTs for our users!</p>
@@ -55,7 +55,7 @@ function HomeTabFeatured() {
                 </div>
               </div>
               <div className="d-flex">
-                <img src={"/assets/img/remixRewardBetaTester.webp"} style={{ flex: "1", height: "170px", maxWidth: "max-content" }} alt="" ></img>
+                <img src={"/assets/img/remixRewardBetaTester.webp"} style={{ flex: "1", height: "180px", maxWidth: "180px" }} alt="" ></img>
                 <div className="h6 p-4" style={{ flex: "1"}}>
                   <h5>BETA TESTING</h5>
                   <p style={{fontStyle: 'italic'}}>Our community supports us.</p>
