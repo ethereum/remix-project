@@ -31,7 +31,12 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
 
   return (
     <div className="pl-2" id="hTGetStartedSection">
-      <label style={{fontSize: "1.2rem"}}>Get Started<span className="ml-2" style={{ opacity: "0.7"}}>- Project Templates</span></label>
+      <label style={{fontSize: "1.2rem"}}>
+        <span className="mr-2" style={{fontWeight: "bold"}}>
+          Get Started
+        </span>
+        - Project Templates
+      </label>
       <div className="w-100 d-flex flex-column">
         <ThemeContext.Provider value={ themeFilter }>
           <Carousel 

@@ -53,19 +53,19 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
           <label className="float-left" style={{fontSize: "1rem"}}>Remix Basics</label>
           {(state.visibleTutorial === VisibleTutorial.Basics) && <div className="pt-2 d-flex flex-column text-left">
             <span>Introduction to Remix's interface and concepts used in Ethereum, as well as the basics of Solidity.</span>
-            <button className="btn-sm mt-2 btn-secondary" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('basics')}>Get Started</button>
+            <button className="btn-sm mt-2 btn-primaryy" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('basics')}>Get Started</button>
           </div>}
         </button>
         <button className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Intermediate }})}>
           <label className="float-left" style={{fontSize: "1rem"}}>Remix Intermediate</label>
           {(state.visibleTutorial === VisibleTutorial.Intermediate) && <div className="pt-2 d-flex flex-column text-left">Using the web3.js to interact with a contract. Using Recorder tool.
-          <button className="btn-sm mt-2 btn-secondary" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('useofweb3js')}>Get Started</button>
+          <button className="btn-sm mt-2 btn-primaryy" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('useofweb3js')}>Get Started</button>
           </div>}
         </button>
         <button className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Advanced }})}>
           <label className="float-left" style={{fontSize: "1rem"}}>Remix Advanced</label>
           {(state.visibleTutorial === VisibleTutorial.Advanced) && <div className="pt-2 d-flex flex-column text-left">Learn the Proxy Pattern and working with Libraries in Remix. Learn to use the Debugger.
-          <button className="btn-sm mt-2 btn-secondary" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('deploylibraries')}>Get Started</button>
+          <button className="btn-sm mt-2 btn-primaryy" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('deploylibraries')}>Get Started</button>
           </div>}
         </button>
       </div>
