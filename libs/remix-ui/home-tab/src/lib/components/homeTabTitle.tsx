@@ -31,7 +31,6 @@ function HomeTabTitle() {
       openLink()
       searchInputRef.current.value = ""
     } else {
-      console.log("handleSearchKeyDown")
       setState(prevState => {
         return { ...prevState, searchDisable: searchInputRef.current.value === "" }
       })

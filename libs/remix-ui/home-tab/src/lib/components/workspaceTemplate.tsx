@@ -20,7 +20,7 @@ function WorkspaceTemplate ({ gsID, workspaceTitle, description, callback }: Wor
         onClick={() => callback()}
       >
         <div className="w-100 p-2 h-100 align-items-start d-flex flex-column">
-          <label className="h6 text-uppercase text-dark remixui_home_cursorStyle">{workspaceTitle}</label>
+          <label className="h6 pb-2 text-uppercase text-dark remixui_home_cursorStyle">{workspaceTitle}</label>
           <div className="remixui_home_gtDescription">{description}</div>
         </div>
       </button>
