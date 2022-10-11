@@ -67,7 +67,7 @@
 }
 .remixui_home_envLogoDescription {
   white-space: pre-wrap;
-  font-size: x-small;
+  font-size: small;
   line-height: 0.8rem;
   text-align: left;
 }
@@ -84,7 +84,7 @@
 .remixui_home_envButton {
   width: 220px;
   cursor: pointer;
-  height: 80px;
+  height: 130px;
 }
 .remixui_home_workspaceTemplate {
   width: 220px;
@@ -100,10 +100,10 @@
   width: 100px;
 }
 .remixui_home_l2Label {
-  top: 70px;
+  top: 120px;
   right: 180px;
 }
 .remixui_home_maintainedLabel {
-  top: 70px;
-  right: 288px;
+  top: 120px;
+  right: 180px;
 }

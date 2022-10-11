@@ -79,8 +79,8 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
         </div>
         <div className="pl-2 pr-3 justify-content-start d-flex flex-column" style={{width: "65%"}} id="remixUIHTRight">
           <HomeTabFeatured></HomeTabFeatured>
-          <HomeTabFeaturedPlugins plugin={plugin}></HomeTabFeaturedPlugins>
           <HomeTabGetStarted plugin={plugin}></HomeTabGetStarted>
+          <HomeTabFeaturedPlugins plugin={plugin}></HomeTabFeaturedPlugins>
           <HomeTabScamAlert></HomeTabScamAlert>
         </div>
       </ThemeContext.Provider>

@@ -24,7 +24,6 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
     const timeStamp = Date.now()
     await plugin.call('filePanel', 'createWorkspace', templateName + "_" + timeStamp, templateName)
     await plugin.call('filePanel', 'setWorkspace', templateName + "_" + timeStamp)
-    console.log("templateName ", templateName)
     plugin.verticalIcons.select('filePanel')
     _paq.push(['trackEvent', 'homeGetStarted', templateName])
   }
