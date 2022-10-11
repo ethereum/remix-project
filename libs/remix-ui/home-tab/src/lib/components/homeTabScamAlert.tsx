@@ -5,7 +5,7 @@ function HomeTabScamAlert () {
   return (
     <div className="" id="hTScamAlertSection">
       <label className="pl-2 text-danger" style={{fontSize: "1.2rem"}}>Scam Alert</label>
-      <div className="py-2 ml-2 align-self-end mb-2 d-flex flex-column border border-danger">
+      <div className="py-2 ml-2 mb-1 align-self-end mb-2 d-flex flex-column border border-danger">
         <span className="pl-4 mt-2">
           <i className="pr-2 text-danger fas fa-exclamation-triangle"></i>
           <b>Scam Alerts:</b>
