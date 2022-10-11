@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext } from 'react'
-import { ThemeContext } from '../themeContext'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 interface WorkspaceTemplateProps {
   gsID: string,
   workspaceTitle: string,
@@ -10,7 +8,6 @@ interface WorkspaceTemplateProps {
 }
 
 function WorkspaceTemplate ({ gsID, workspaceTitle, description, callback }: WorkspaceTemplateProps) {
-  const themeFilter = useContext(ThemeContext)
 
   return (
     <div className="d-flex remixui_home_workspaceTemplate">
