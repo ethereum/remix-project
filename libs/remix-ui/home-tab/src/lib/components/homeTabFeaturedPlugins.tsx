@@ -30,7 +30,6 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
   }, [])
 
   const handleScroll = (e) => {
-    console.log("e = ", e)   
   }
 
   const startSolidity = async () => {
