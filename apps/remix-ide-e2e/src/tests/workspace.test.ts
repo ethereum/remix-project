@@ -352,7 +352,7 @@ module.exports = {
       })
       .click('//*[@id="workspacesMenuDropdown"]/span/i')
       .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul')
-      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[4]') // rename workspace_name
+      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[3]') // rename workspace_name
       .useCss()
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextRename"]')
@@ -393,7 +393,7 @@ module.exports = {
       .useXpath()
       .click('//*[@id="workspacesMenuDropdown"]/span/i')
       .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[3]')
-      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[3]')
+      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[4]')
       .useCss()
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
       .click('[data-id="fileSystemModalDialogModalBody-react"]')
@@ -466,8 +466,8 @@ module.exports = {
         locateStrategy: 'xpath',
       })
       .click('//*[@id="workspacesMenuDropdown"]/span/i')
-      .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[3]')
-      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[3]')
+      .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[4]')
+      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[4]')
       .useCss()
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
       .click('[data-id="fileSystemModalDialogModalBody-react"]')
