@@ -209,6 +209,7 @@
     "react-dom": "^17.0.2",
     "react-draggable": "^4.4.4",
     "react-json-view": "^1.21.3",
+    "react-multi-carousel": "^2.8.2",
     "react-router-dom": "^6.3.0",
     "react-tabs": "^3.2.2",
     "regenerator-runtime": "0.13.7",
