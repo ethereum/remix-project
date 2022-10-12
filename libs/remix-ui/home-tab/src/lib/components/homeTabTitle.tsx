@@ -68,7 +68,7 @@ function HomeTabTitle() {
           }>
             <button
               onClick={() => openLink("https://www.youtube.com/channel/UCjTUPyFEr2xDGN6Cg8nKDaA")}
-              className="h-100 btn fab fa-youtube">
+              className="border-0 h-100 btn fab fa-youtube">
             </button>
           </OverlayTrigger>
 
@@ -79,7 +79,7 @@ function HomeTabTitle() {
           }>
             <button
               onClick={() => openLink("https://twitter.com/EthereumRemix")}
-              className="h-100 pl-2 btn fab fa-twitter">
+              className="border-0 h-100 pl-2 btn fab fa-twitter">
             </button>
           </OverlayTrigger>
 
@@ -90,7 +90,7 @@ function HomeTabTitle() {
           }>
             <button
               onClick={() => openLink("https://www.linkedin.com/company/ethereum-remix/")}
-              className="h-100 pl-2 btn fa fa-linkedin">
+              className="border-0 h-100 pl-2 btn fa fa-linkedin">
             </button>
           </OverlayTrigger>
 
@@ -101,7 +101,7 @@ function HomeTabTitle() {
           }>
             <button
               onClick={() => openLink("https://medium.com/remix-ide")}
-              className="h-100 pl-2 btn fab fa-medium">
+              className="border-0 h-100 pl-2 btn fab fa-medium">
             </button>
           </OverlayTrigger>
 
@@ -112,7 +112,7 @@ function HomeTabTitle() {
           }>
             <button
               onClick={() => openLink("https://gitter.im/ethereum/remix")}
-              className="h-100 pl-2 btn fab fa-gitter">
+              className="border-0 h-100 pl-2 btn fab fa-gitter">
             </button>
           </OverlayTrigger>
         </span>
