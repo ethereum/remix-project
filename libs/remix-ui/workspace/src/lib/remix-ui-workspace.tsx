@@ -319,7 +319,7 @@ export function Workspace () {
             createWorkspace()
             _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
           }}
-          className='far fa-plus'
+          className='far fa-plus pl-2'
         >
         </span>
         <span className="pl-3">Create</span>
@@ -352,7 +352,7 @@ export function Workspace () {
             _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDelete'])
             hideIconsMenu(!showIconsMenu)
           }}
-          className='far fa-trash'
+          className='far fa-trash pl-2'
         >
         </span>
         <span className="pl-3">{'Delete'}</span>
@@ -385,7 +385,7 @@ export function Workspace () {
             _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'cloneGitRepository'])
             hideIconsMenu(!showIconsMenu)
           }}
-          className='far fa-clone'
+          className='far fa-clone pl-2'
         >
         </span>
         <span className="pl-3">{'Clone'}</span>
@@ -417,7 +417,7 @@ export function Workspace () {
             _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceRename'])
             hideIconsMenu(!showIconsMenu)
           }}
-          className='far fa-edit'>
+          className='far fa-edit pl-2'>
         </span>
         <span className="pl-3">{'Rename'}</span>
       </div>
@@ -449,7 +449,7 @@ export function Workspace () {
             _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesDownload'])
             hideIconsMenu(!showIconsMenu)
           }}
-          className='far fa-download'
+          className='far fa-download pl-2 '
         >
         </span>
         <span className="pl-3">{'Download'}</span>
@@ -482,7 +482,7 @@ export function Workspace () {
             _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesRestore'])
             hideIconsMenu(!showIconsMenu)
           }}
-          className='far fa-upload'
+          className='far fa-upload pl-2'
         >
         </span>
         <span className="pl-3">{'Restore'}</span>
