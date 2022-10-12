@@ -113,7 +113,7 @@ module.exports = class TestTab extends ViewPlugin {
       const runningTest = {}
       runningTest[path] = { content }
       const { currentVersion, evmVersion, optimize, runs } = this.compileTab.getCurrentCompilerConfig()
-      const currentCompilerUrl = urlFromVersion(currentVersion)
+      const currentCompilerUrl =  urlFromVersion('builtin')
       const compilerConfig = {
         currentCompilerUrl,
         evmVersion,
