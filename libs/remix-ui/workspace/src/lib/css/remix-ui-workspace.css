@@ -51,7 +51,7 @@
     word-break: break-word;
   }
   .remixui_menuicon {
-    padding-right   : 30px;
+    padding-right   : 0px;
   }
   .remixui_menuicon:hover {
     transform: scale(1.3);
@@ -108,6 +108,17 @@
 
   .remixui_menuwidth {
     width: 8rem;
+  }
+
+  .remixui_menuhr {
+
+  }
+
+  .remixui_menuhr:focus,
+  .remixui_menuhr:hover {
+    color: var(--custom-select) !important;
+    text-decoration: none;
+    background-color: var(--custom-select) !important;
   }
 
   #workspacesMenuDropdown > div.custom-dropdown-items {

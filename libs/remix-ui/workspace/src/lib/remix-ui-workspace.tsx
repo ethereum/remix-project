@@ -318,6 +318,7 @@ export function Workspace () {
             e.stopPropagation()
             createWorkspace()
             _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
+            hideIconsMenu(!showIconsMenu)
           }}
           className='far fa-plus pl-2'
         >
@@ -359,6 +360,37 @@ export function Workspace () {
       </div>
     </OverlayTrigger>,
     <OverlayTrigger
+      placement='right-start'
+      overlay={
+        <Tooltip id="workspaceRenametooltip">
+          <span>Rename Workspace</span>
+        </Tooltip>
+      }
+    >
+      <div onClick={(e) => {
+            e.stopPropagation()
+            renameCurrentWorkspace()
+            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceRename'])
+            hideIconsMenu(!showIconsMenu)
+          }}
+          data-id='workspaceRename'
+        >
+        <span
+          hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
+          id='workspaceRename'
+          data-id='workspaceRename'
+          onClick={(e) => {
+            e.stopPropagation()
+            renameCurrentWorkspace()
+            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceRename'])
+            hideIconsMenu(!showIconsMenu)
+          }}
+          className='far fa-edit pl-2'>
+        </span>
+        <span className="pl-3">{'Rename'}</span>
+      </div>
+    </OverlayTrigger>,
+    <OverlayTrigger
       placement="right-start"
       overlay={
         <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
@@ -391,37 +423,7 @@ export function Workspace () {
         <span className="pl-3">{'Clone'}</span>
       </div>
     </OverlayTrigger>,
-    <OverlayTrigger
-      placement='right-start'
-      overlay={
-        <Tooltip id="workspaceRenametooltip">
-          <span>Rename Workspace</span>
-        </Tooltip>
-      }
-    >
-      <div onClick={(e) => {
-            e.stopPropagation()
-            renameCurrentWorkspace()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceRename'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          data-id='workspaceRename'
-        >
-        <span
-          hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-          id='workspaceRename'
-          data-id='workspaceRename'
-          onClick={(e) => {
-            e.stopPropagation()
-            renameCurrentWorkspace()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceRename'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          className='far fa-edit pl-2'>
-        </span>
-        <span className="pl-3">{'Rename'}</span>
-      </div>
-    </OverlayTrigger>,
+    <hr className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/>,
     <OverlayTrigger
       placement="right-start"
       overlay={
@@ -504,14 +506,13 @@ export function Workspace () {
                 </span>
                 <span className="remixui_menu remixui_topmenu d-flex justify-content-between align-items-end w-75">
                   <OverlayTrigger
-                    placement="top-start"
+                    placement="top-end"
                     overlay={
                       <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
                         <span>Create</span>
                       </Tooltip>
                     }
                   >
-                    <div>
                       <span
                         hidden={currentWorkspace === LOCALHOST}
                         id='workspaceCreate'
@@ -524,7 +525,6 @@ export function Workspace () {
                         className='far fa-plus remixui_menuicon d-flex align-self-end'
                         >
                       </span>
-                    </div>
                   </OverlayTrigger>
                   <Dropdown id="workspacesMenuDropdown" data-id="workspacesMenuDropdown" onToggle={() => hideIconsMenu(!showIconsMenu)} show={showIconsMenu}>
                     <Dropdown.Toggle
@@ -536,11 +536,13 @@ export function Workspace () {
                     ></Dropdown.Toggle>
                     <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='custom-dropdown-items remixui_menuwidth' align={'right'}>
                       {
-                      workspaceMenuIcons.map(m => (
-                        <Dropdown.Item>
-                          {m}
-                        </Dropdown.Item>
-                      ))
+                      workspaceMenuIcons.map(m => {
+                        return (
+                          <Dropdown.Item>
+                            {m}
+                          </Dropdown.Item>
+                        )
+                      })
                     }
                     </Dropdown.Menu>
                   </Dropdown>
