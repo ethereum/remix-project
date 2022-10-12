@@ -1,4 +1,4 @@
-AAimport { ViewPlugin } from '@remixproject/engine-web'
+import { ViewPlugin } from '@remixproject/engine-web'
 
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
