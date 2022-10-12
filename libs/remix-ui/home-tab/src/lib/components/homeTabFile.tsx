@@ -49,7 +49,7 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
           try {
             if (await workspace.exists(type + '/' + cleanUrl)) toast('File already exists in workspace')
             else {
-              workspace.addExternal(cleanUrl, content, url)
+              workspace.addExternal(type + '/' + cleanUrl, content, url)
               plugin.call('menuicons', 'select', 'filePanel')
             }   
           } catch (e) {
