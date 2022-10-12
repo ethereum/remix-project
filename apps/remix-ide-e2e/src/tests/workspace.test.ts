@@ -466,8 +466,8 @@ module.exports = {
         locateStrategy: 'xpath',
       })
       .click('//*[@id="workspacesMenuDropdown"]/span/i')
-      .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
-      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
+      .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[3]')
+      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[3]')
       .useCss()
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
       .click('[data-id="fileSystemModalDialogModalBody-react"]')
