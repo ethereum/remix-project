@@ -559,9 +559,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
     // resort to non-worker version in that case.
     if (selectedVersion === 'builtin') {
-      compileTabLogic.compiler.loadVersion(false, url)
-    }
-    else if (selectedVersion !== 'builtin' && canUseWorker(selectedVersion)) {
+      compileTabLogic.compiler.loadVersion(true, url)
+    } else if (selectedVersion !== 'builtin' && canUseWorker(selectedVersion)) {
       compileTabLogic.compiler.loadVersion(true, url)
     } else {
       compileTabLogic.compiler.loadVersion(false, url)
