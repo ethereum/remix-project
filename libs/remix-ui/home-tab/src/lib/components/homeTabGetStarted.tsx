@@ -78,11 +78,6 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
               workspaceTitle="0xProject ERC20"
               description="Create an ERC20 token by importing 0xProject contract."
               callback={() => createWorkspace("zeroxErc20")} />
-            <WorkspaceTemplate
-              gsID="solidityLogo"
-              workspaceTitle="Add a workspace"
-              description="Create and configure a workspace manually."
-              callback={() => createWorkspace("")} />
           </Carousel>
         </ThemeContext.Provider>
       </div>
