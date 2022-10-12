@@ -1,4 +1,4 @@
-import { ViewPlugin } from '@remixproject/engine-web'
+AAimport { ViewPlugin } from '@remixproject/engine-web'
 
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
@@ -119,7 +119,6 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   createWorkspace (workspaceName, workspaceTemplateName, isEmpty) {
-    console.log("in createWorkspace")
     return new Promise((resolve, reject) => {
       this.emit('createWorkspaceReducerEvent', workspaceName, workspaceTemplateName, isEmpty, (err, data) => {
         if (err) reject(err)
