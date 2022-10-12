@@ -521,7 +521,7 @@ export function Workspace () {
                           createWorkspace()
                           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
                         }}
-                        className='far fa-plus remixui_menuicon'
+                        className='far fa-plus remixui_menuicon d-flex align-self-end'
                         >
                       </span>
                     </div>
