@@ -295,7 +295,7 @@ export function Workspace () {
 
   const workspaceMenuIcons = [
     <OverlayTrigger
-      placement="top-start"
+      placement="right"
       overlay={
         <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
           <span>Create</span>
