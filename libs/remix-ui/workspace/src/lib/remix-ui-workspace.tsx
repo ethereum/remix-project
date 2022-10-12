@@ -308,6 +308,7 @@ export function Workspace () {
           e.stopPropagation()
           createWorkspace()
           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
+          hideIconsMenu(!showIconsMenu)
         }}
       >
         <span
