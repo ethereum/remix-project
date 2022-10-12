@@ -68,18 +68,18 @@
 .remixui_home_envLogoDescription {
   white-space: pre-wrap;
   font-size: small;
-  line-height: 0.8rem;
+  line-height: 0.9rem;
   text-align: left;
 }
 .remixui_home_gtDescription {
   white-space: pre-wrap;
   font-size: small;
-  line-height: 0.8rem;
+  line-height: 1.1rem;
   text-align: left;
 }
 .remixui_home_cursorStyle {
   cursor: pointer;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
 }
 .remixui_home_envButton {
   width: 220px;
