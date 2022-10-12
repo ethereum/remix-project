@@ -352,7 +352,7 @@ module.exports = {
       })
       .click('//*[@id="workspacesMenuDropdown"]/span/i')
       .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul')
-      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[1]') // rename workspace_name
+      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[4]') // rename workspace_name
       .useCss()
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextRename"]')
@@ -373,7 +373,7 @@ module.exports = {
 
   'Should delete a workspace #group1': function (browser: NightwatchBrowser) {
     browser
-      .switchWorkspace('workspace_name_1')
+      .switchWorkspace('workspace_name_1')//*[@id="workspacesMenuDropdown"]/span
       .useXpath()
       .click('//*[@id="workspacesMenuDropdown"]/span/i')
       .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[2]') // delete workspace_name_1
@@ -392,8 +392,8 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .useXpath()
       .click('//*[@id="workspacesMenuDropdown"]/span/i')
-      .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
-      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]')
+      .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[3]')
+      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[3]')
       .useCss()
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
       .click('[data-id="fileSystemModalDialogModalBody-react"]')
