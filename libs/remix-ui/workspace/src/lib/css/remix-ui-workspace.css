@@ -105,3 +105,7 @@
   .remixui_topmenu {
     padding-bottom: 0.1rem;
   }
+
+  .remixui_menuwidth {
+    width: 8rem;
+  }
