@@ -59,7 +59,7 @@ function HomeTabTitle() {
         ></audio>
       </div>
       <div className="d-flex justify-content-between">
-        <span className="h-80" style={{ fontSize: 'xx-large', fontFamily: "Noah" }}>Remix</span>
+        <span className="h-80 text-uppercase" style={{ fontSize: 'xx-large', fontFamily: "Noah" }}>Remix</span>
         <span>
           <OverlayTrigger placement={'top'} overlay={
             <Tooltip className="text-nowrap" id="overlay-tooltip">
