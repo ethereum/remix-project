@@ -394,7 +394,7 @@ export function Workspace () {
     <OverlayTrigger
       placement="right-start"
       overlay={
-        <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
+        <Tooltip id="cloneWorkspaceTooltip" className="text-nowrap">
           <span>Clone Git Repository</span>
         </Tooltip>
       }
@@ -418,7 +418,7 @@ export function Workspace () {
             _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'cloneGitRepository'])
             hideIconsMenu(!showIconsMenu)
           }}
-          className='far fa-clone pl-2'
+          className='fab fa-github pl-2'
         >
         </span>
         <span className="pl-3">{'Clone'}</span>
@@ -523,6 +523,7 @@ export function Workspace () {
                           createWorkspace()
                           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
                         }}
+                        style={{ fontSize: 'large' }}
                         className='far fa-plus remixui_menuicon d-flex align-self-end'
                         >
                       </span>
