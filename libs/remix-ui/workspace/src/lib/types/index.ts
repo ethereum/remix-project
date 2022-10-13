@@ -77,6 +77,8 @@ export interface FileExplorerProps {
     fileState: fileDecoration[],
     expandPath: string[],
     focusEdit: string,
+    hideIconsMenu: React.Dispatch<React.SetStateAction<boolean>>,
+    showIconsMenu: boolean,
     focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[],
     dispatchCreateNewFile: (path: string, rootDir: string) => Promise<void>,
     // eslint-disable-next-line no-undef
