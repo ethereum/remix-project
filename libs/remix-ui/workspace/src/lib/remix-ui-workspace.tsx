@@ -391,6 +391,7 @@ export function Workspace () {
         <span className="pl-3">{'Rename'}</span>
       </div>
     </OverlayTrigger>,
+    <Dropdown.Divider className="border dro pdown-hr" />,
     <OverlayTrigger
       placement="right-start"
       overlay={
@@ -424,7 +425,7 @@ export function Workspace () {
         <span className="pl-3">{'Clone'}</span>
       </div>
     </OverlayTrigger>,
-    <hr className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/>,
+    <Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/>,
     <OverlayTrigger
       placement="right-start"
       overlay={
@@ -536,7 +537,7 @@ export function Workspace () {
                       }}
                       icon={'fas fa-bars'}
                     ></Dropdown.Toggle>
-                    <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='custom-dropdown-items remixui_menuwidth' align={'right'}>
+                    <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='custom-dropdown-items remixui_menuwidth' rootCloseEvent="click">
                       {
                       workspaceMenuIcons.map(m => {
                         return (
@@ -608,6 +609,8 @@ export function Workspace () {
                 expandPath={global.fs.browser.expandPath}
                 focusEdit={global.fs.focusEdit}
                 focusElement={global.fs.focusElement}
+                hideIconsMenu={hideIconsMenu}
+                showIconsMenu={showIconsMenu}
                 dispatchCreateNewFile={global.dispatchCreateNewFile}
                 modal={global.modal}
                 dispatchCreateNewFolder={global.dispatchCreateNewFolder}
@@ -645,6 +648,8 @@ export function Workspace () {
                 expandPath={global.fs.localhost.expandPath}
                 focusEdit={global.fs.focusEdit}
                 focusElement={global.fs.focusElement}
+                hideIconsMenu={hideIconsMenu}
+                showIconsMenu={showIconsMenu}
                 dispatchCreateNewFile={global.dispatchCreateNewFile}
                 modal={global.modal}
                 dispatchCreateNewFolder={global.dispatchCreateNewFolder}

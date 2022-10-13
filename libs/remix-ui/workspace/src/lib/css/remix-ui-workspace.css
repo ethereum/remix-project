@@ -110,17 +110,6 @@
     width: 8rem;
   }
 
-  .remixui_menuhr {
-
-  }
-
-  .remixui_menuhr:focus,
-  .remixui_menuhr:hover {
-    color: var(--custom-select) !important;
-    text-decoration: none;
-    background-color: var(--custom-select) !important;
-  }
-
   #workspacesMenuDropdown > div.custom-dropdown-items {
     min-width: 8rem;
   }
