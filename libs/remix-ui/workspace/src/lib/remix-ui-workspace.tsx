@@ -391,7 +391,7 @@ export function Workspace () {
         <span className="pl-3">{'Rename'}</span>
       </div>
     </OverlayTrigger>,
-    <Dropdown.Divider className="border dro pdown-hr" />,
+    <Dropdown.Divider className="border mb-0 mt-0" />,
     <OverlayTrigger
       placement="right-start"
       overlay={
@@ -503,7 +503,7 @@ export function Workspace () {
               <div className="d-flex justify-content-between">
                 <span className="d-flex align-items-end">
                   <label className="pl-1 form-check-label" htmlFor="workspacesSelect">
-                    Workspaces
+                    WORKSPACES
                   </label>
                 </span>
                 <span className="remixui_menu remixui_topmenu d-flex justify-content-between align-items-end w-75">

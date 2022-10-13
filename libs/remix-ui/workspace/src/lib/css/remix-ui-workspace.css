@@ -113,3 +113,16 @@
   #workspacesMenuDropdown > div.custom-dropdown-items {
     min-width: 8rem;
   }
+
+  .remixui_menuhr{
+
+  }
+
+  #workspacesMenuDropdown>div>ul>a:nth-child(6):hover {
+    background-color: rgba(0,0,0,0)
+  }
+
+  #workspacesMenuDropdown>div>ul>a:nth-child(4):hover {
+    background-color: rgba(0, 0, 0, 0)
+  }
+
