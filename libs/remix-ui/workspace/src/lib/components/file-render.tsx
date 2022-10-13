@@ -54,13 +54,13 @@ export const FileRender = (props: RenderFileProps) => {
   const handleFolderClick = (event: SyntheticEvent) => {
     event.stopPropagation()
     if (props.focusEdit.element !== file.path) props.handleClickFolder(file.path, file.type)
-    props.hideIconsMenu(!props.showIconsMenu)
+    if (props.showIconsMenu === true) props.hideIconsMenu(!props.showIconsMenu)
   }
 
   const handleFileClick = (event: SyntheticEvent) => {
     event.stopPropagation()
     if (props.focusEdit.element !== file.path) props.handleClickFile(file.path, file.type)
-    props.hideIconsMenu(!props.showIconsMenu)
+    if (props.showIconsMenu === true) props.hideIconsMenu(!props.showIconsMenu)
   }
 
   const handleContextMenu = (event: PointerEvent) => {
