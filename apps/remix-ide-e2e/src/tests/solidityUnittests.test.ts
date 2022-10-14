@@ -154,10 +154,7 @@ module.exports = {
       .clickLaunchIcon('solidityUnitTesting')
       .execute(() => {
         const myQuery: any = document.getElementById('utPath')
-        console.log({ myQuery })
-
         myQuery.value = 'myTests'
-        console.log('reset input')
       })
       .click('*[data-id="testTabGenerateTestFolder"]')
       .saveScreenshot('./reports/screenshots/changeCurrentPathg3.png')
