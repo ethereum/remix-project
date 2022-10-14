@@ -119,9 +119,9 @@ function HomeTabTitle() {
       </div>
       <b className="pb-1 text-dark" style={{ fontStyle: 'italic' }}>The Native IDE for Web3 Development.</b>
       <div className="pb-1" id="hTGeneralLinks">
-        <a className="remixui_home_text" target="__blank" href="https://remix-project.org">Project Website</a>
+        <a className="remixui_home_text" target="__blank" href="https://remix-project.org">Website</a>
         <a className="pl-2 remixui_home_text" target="__blank" href="https://remix-ide.readthedocs.io/en/latest">Documentation</a>
-        <a className="pl-2 remixui_home_text" target="__blank" href="https://remix-plugin-docs.readthedocs.io/en/latest/">Remix Plugins</a>
+        <a className="pl-2 remixui_home_text" target="__blank" href="https://remix-plugin-docs.readthedocs.io/en/latest/">Remix Plugin</a>
         <a className="pl-2 remixui_home_text" target="__blank" href="https://github.com/ethereum/remix-desktop/releases">Remix Desktop</a>
       </div>
       <div className="d-flex pb-1 align-items-center">
