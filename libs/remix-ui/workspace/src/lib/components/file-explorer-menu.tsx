@@ -29,7 +29,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
         action: 'uploadFile',
         title: 'Load a local file into current workspace',
         icon: 'fa fa-upload',
-        placement: 'bottom-start'
+        placement: 'right'
       },
       {
         action: 'updateGist',
@@ -53,24 +53,42 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
 
   return (
     <>
-      <span className='remixui_label' title={props.title} data-path={props.title} style={{ fontWeight: 'bold' }}>{ props.title }</span>
+      <OverlayTrigger
+        placement="top-start"
+        overlay={
+          <Tooltip id="remixuilabelTooltip" className="text-nowrap">
+            <span>{props.title}</span>
+          </Tooltip>
+        }
+      >
+        <span className='remixui_label' data-path={props.title} style={{ fontWeight: 'bold' }}>{ props.title }</span>
+      </OverlayTrigger>
       <span className="pl-2">{
         state.menuItems.map(({ action, title, icon, placement }, index) => {
           if (action === 'uploadFile') {
             return (
-              <label
-                id={action}
-                data-id={'fileExplorerUploadFile' + action }
-                className={icon + ' mb-0 remixui_newFile'}
-                key={index}
+              <OverlayTrigger
+                placement="right"
+                overlay={
+                  <Tooltip id="uploadFileTooltip" className="text-nowrap">
+                    <span>{title}</span>
+                  </Tooltip>
+                }
               >
-                <input id="fileUpload" data-id="fileExplorerFileUpload" type="file" onChange={(e) => {
-                  e.stopPropagation()
-                  props.uploadFile(e.target)
-                  e.target.value = null
-                }}
-                multiple />
-              </label>
+                <label
+                  id={action}
+                  data-id={'fileExplorerUploadFile' + action }
+                  className={icon + ' mb-0 remixui_newFile'}
+                  key={index}
+                >
+                    <input id="fileUpload" data-id="fileExplorerFileUpload" type="file" onChange={(e) => {
+                      e.stopPropagation()
+                      props.uploadFile(e.target)
+                      e.target.value = null
+                    }}
+                    multiple />
+                </label>
+              </OverlayTrigger>
             )
           } else {
             return (
@@ -81,7 +99,6 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                     <span>{title}</span>
                   </Tooltip>
                 }
-                key={`${action}-${title}-${index}`}
               >
                 <span
                   id={action}
@@ -100,7 +117,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                     }
                   }}
                   className={'newFile ' + icon + ' remixui_newFile'}
-                  key={index}
+                  key={`${action}-${title}-${index}`}
                 >
                 </span>
               </OverlayTrigger>
