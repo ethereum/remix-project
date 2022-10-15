@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState, useRef, useContext } from 'react'
+import { FormattedMessage } from 'react-intl'
 import PluginButton from './pluginButton'
 import { ThemeContext, themes } from '../themeContext'
 import Carousel from 'react-multi-carousel'
@@ -51,19 +52,19 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
     await plugin.appManager.activatePlugin(['solidity', 'sourcify'])
     plugin.verticalIcons.select('sourcify')
     _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'sourcify'])
-  }  
+  }
   const startSolidityUnitTesting = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'solidityUnitTesting'])
     plugin.verticalIcons.select('solidityUnitTesting')
     _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'solidityUnitTesting'])
   }
-  
+
   return (
     <div className="pl-2 w-100" id="hTFeaturedPlugins">
-      <label className="" style={{fontSize: "1.2rem"}}>Featured Plugins</label>
+      <label className="" style={{fontSize: "1.2rem"}}><FormattedMessage id='home.featuredPlugins' defaultMessage='Featured Plugins' /></label>
       <div className="w-100 d-flex flex-column">
         <ThemeContext.Provider value={ themeFilter }>
-          <Carousel 
+          <Carousel
             ref={carouselRef}
             focusOnSelect
             customButtonGroup={<CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} />}
