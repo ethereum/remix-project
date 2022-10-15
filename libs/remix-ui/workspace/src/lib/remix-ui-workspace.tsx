@@ -318,7 +318,7 @@ export function Workspace () {
       placement="right"
       overlay={
         <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
-          <span>Create</span>
+          <span><FormattedMessage id='filePanel.workspace.create' defaultMessage='Create Workspace' /></span>
         </Tooltip>
       }
     >
@@ -344,14 +344,14 @@ export function Workspace () {
           className='far fa-plus pl-2'
         >
         </span>
-        <span className="pl-3">Create</span>
+        <span className="pl-3"><FormattedMessage id='filePanel.create' defaultMessage='Create' /></span>
       </div>
     </OverlayTrigger>,
     <OverlayTrigger
       placement="right-start"
       overlay={
         <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
-          <span>Delete Workspace</span>
+          <span><FormattedMessage id='filePanel.workspace.delete' defaultMessage='Delete Workspace' /></span>
         </Tooltip>
       }
     >
@@ -377,14 +377,14 @@ export function Workspace () {
           className='far fa-trash pl-2'
         >
         </span>
-        <span className="pl-3">{'Delete'}</span>
+        <span className="pl-3"><FormattedMessage id='filePanel.delete' defaultMessage='Delete' /></span>
       </div>
     </OverlayTrigger>,
     <OverlayTrigger
       placement='right-start'
       overlay={
         <Tooltip id="workspaceRenametooltip">
-          <span>Rename Workspace</span>
+          <span><FormattedMessage id='filePanel.workspace.rename' defaultMessage='Rename Workspace' /></span>
         </Tooltip>
       }
     >
@@ -408,7 +408,7 @@ export function Workspace () {
           }}
           className='far fa-edit pl-2'>
         </span>
-        <span className="pl-3">{'Rename'}</span>
+        <span className="pl-3"><FormattedMessage id='filePanel.rename' defaultMessage='Rename' /></span>
       </div>
     </OverlayTrigger>,
     <Dropdown.Divider className="border mb-0 mt-0" />,
@@ -416,7 +416,7 @@ export function Workspace () {
       placement="right-start"
       overlay={
         <Tooltip id="cloneWorkspaceTooltip" className="text-nowrap">
-          <span>Clone Git Repository</span>
+          <span><FormattedMessage id='filePanel.workspace.clone' defaultMessage='Clone Git Repository' /></span>
         </Tooltip>
       }
     >
@@ -442,7 +442,7 @@ export function Workspace () {
           className='fab fa-github pl-2'
         >
         </span>
-        <span className="pl-3">{'Clone'}</span>
+        <span className="pl-3"><FormattedMessage id='filePanel.clone' defaultMessage='Clone' /></span>
       </div>
     </OverlayTrigger>,
     <Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/>,
@@ -450,7 +450,7 @@ export function Workspace () {
       placement="right-start"
       overlay={
         <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
-          <span>Download Workspace</span>
+          <span><FormattedMessage id='filePanel.workspace.download' defaultMessage='Download Workspace' /></span>
         </Tooltip>
       }
     >
@@ -476,14 +476,14 @@ export function Workspace () {
           className='far fa-download pl-2 '
         >
         </span>
-        <span className="pl-3">{'Download'}</span>
+        <span className="pl-3"><FormattedMessage id='filePanel.download' defaultMessage='Download' /></span>
       </div>
     </OverlayTrigger>,
     <OverlayTrigger
       placement="right-start"
       overlay={
         <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
-          <span>Restore Workspace Backup</span>
+          <span><FormattedMessage id='filePanel.workspace.restore' defaultMessage='Restore Workspace Backup' /></span>
         </Tooltip>
       }
     >
@@ -509,7 +509,7 @@ export function Workspace () {
           className='far fa-upload pl-2'
         >
         </span>
-        <span className="pl-3">{'Restore'}</span>
+        <span className="pl-3"><FormattedMessage id='filePanel.restore' defaultMessage='Restore' /></span>
       </div>
     </OverlayTrigger>,
   ]
@@ -522,8 +522,8 @@ export function Workspace () {
             <div className="mx-2 mb-2 d-flex flex-column">
               <div className="d-flex justify-content-between">
                 <span className="d-flex align-items-end">
-                  <label className="pl-1 form-check-label" htmlFor="workspacesSelect">
-                    WORKSPACES
+                  <label className="pl-1 form-check-label" htmlFor="workspacesSelect" style={{wordBreak: 'keep-all'}}>
+                    <FormattedMessage id='filePanel.workspace' defaultMessage='WORKSPACES' />
                   </label>
                 </span>
                 <span className="remixui_menu remixui_topmenu d-flex justify-content-between align-items-end w-75">
@@ -531,7 +531,7 @@ export function Workspace () {
                     placement="top-end"
                     overlay={
                       <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
-                        <span>Create</span>
+                        <span><FormattedMessage id='filePanel.create' defaultMessage='create' /></span>
                       </Tooltip>
                     }
                   >
