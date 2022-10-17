@@ -323,8 +323,8 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                   checked={props.ipfsCheckedState}
                 />
                 <OverlayTrigger placement={'right'} overlay={
-                  <Tooltip className="text-nowrap" id="remixIpfsUdappTooltip">
-                    <span>{"Publishing the source code and metadata to IPFS facilitates source code verification using Sourcify and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"}</span>
+                  <Tooltip className="text-wrap" id="remixIpfsUdappTooltip">
+                    <span>Publishing the source code and metadata to IPFS facilitates source code verification <br />using Sourcify and will greatly foster contract adoption (auditing, debugging, calling it, etc...)</span>
                   </Tooltip>
                 }>
                   <label
