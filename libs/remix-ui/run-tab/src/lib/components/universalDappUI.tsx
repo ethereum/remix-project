@@ -347,21 +347,37 @@ export function UniversalDappUI (props: UdappProps) {
           <div className="d-flex flex-column align-items-start">
             <label className="">CALLDATA</label>
             <div className="d-flex justify-content-end w-100 align-items-center">
-              <input
-                id="deployAndRunLLTxCalldata"
-                onChange={handleCalldataChange}
-                className="udapp_calldataInput form-control"
-                title="The Calldata to send to fallback function of the contract."
-              />
-              <button
-                id="deployAndRunLLTxSendTransaction"
-                data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"
-                className="btn udapp_instanceButton p-0 w-50 border-warning text-warning"
-                title="Send data to contract."
-                onClick={sendData}
+              <OverlayTrigger
+                placement="bottom"
+                overlay={
+                  <Tooltip className="text-nowrap" id="deployAndRunLLTxCalldataInputTooltip">
+                    <span>{"The Calldata to send to fallback function of the contract."}</span>
+                  </Tooltip>
+                }
               >
-                Transact
-              </button>
+                <input
+                  id="deployAndRunLLTxCalldata"
+                  onChange={handleCalldataChange}
+                  className="udapp_calldataInput form-control"
+                />
+              </OverlayTrigger>
+              <OverlayTrigger
+                placement="right"
+                overlay={
+                  <Tooltip className="text-nowrap" id="deployAndRunLLTxCalldataTooltip">
+                    <span>Send data to contract.</span>
+                  </Tooltip>
+                }
+              >
+                <button
+                  id="deployAndRunLLTxSendTransaction"
+                  data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"
+                  className="btn udapp_instanceButton p-0 w-50 border-warning text-warning"
+                  onClick={sendData}
+                >
+                  Transact
+                </button>
+              </OverlayTrigger>
             </div>
           </div>
           <div>
