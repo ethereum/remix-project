@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, ReactElement } from 'react' // esli
 import * as semver from 'semver'
 import { eachOfSeries } from 'async' // eslint-disable-line
 import type Web3 from 'web3'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
 import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
@@ -198,7 +199,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
         if (await testTabLogic.pathExists(testDirInput)) {
           setDisableCreateButton(true)
           setDisableGenerateButton(false)
-          
+
         } else {
           // Enable Create button
           setDisableCreateButton(false)
@@ -296,20 +297,26 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
     let label
     if (index > -1) {
       const className = "alert-danger d-inline-block mb-1 mr-1 p-1 failed_" + runningTestFileName
-      label = (<div
+      label = (<OverlayTrigger placement={'right'} overlay={
+              <Tooltip className="text-nowrap" id="info-recorder">
+                <span>At least one contract test failed</span>
+              </Tooltip>
+            }><div
       className={className}
-      title="At least one contract test failed"
     >
       FAIL
-    </div>)
+    </div></OverlayTrigger>)
     } else {
       const className = "alert-success d-inline-block mb-1 mr-1 p-1 passed_" + runningTestFileName
-      label = (<div
+      label = (<OverlayTrigger placement={'top-end'} overlay={
+              <Tooltip className="text-nowrap" id="info-recorder">
+                <span>All contract tests passed</span>
+              </Tooltip>
+            }><div
       className={className}
-      title="All contract tests passed"
     >
       PASS
-    </div>)
+    </div></OverlayTrigger>)
     }
     // show contract and file name with label
     const ContractCard: ReactElement = (
@@ -335,8 +342,12 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
         if (test.debugTxHash) {
           const { web3, debugTxHash } = test
           debugBtn = (
-            <div id={test.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} title="Start debugging" onClick={() => startDebug(debugTxHash, web3)}>
-              <i className="fas fa-bug"></i>
+            <div id={test.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} onClick={() => startDebug(debugTxHash, web3)}>
+              <OverlayTrigger placement={'top-start'} overlay={
+              <Tooltip className="text-nowrap" id="info-recorder">
+                <span>Start debugging</span>
+              </Tooltip>
+            }><i className="fas fa-bug"></i></OverlayTrigger>
             </div>
           )
         }
@@ -663,57 +674,102 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
               })
             }
             </datalist>
-            <input
-              list="utPathList"
-              className="inputFolder custom-select"
-              id="utPath"
-              data-id="uiPathInput"
-              name="utPath"
-              value={inputPathValue}
-              title="Press 'Enter' to change the path for test files."
-              style={{ backgroundImage: "var(--primary)" }}
-              onKeyDown={() => { if (inputPathValue === '/') setInputPathValue('')} }
-              onChange={handleTestDirInput}
-              onClick = {() => { if (inputPathValue === '/') setInputPathValue('')} }
-            />
-            <button
-              className="btn border ml-2"
-              data-id="testTabGenerateTestFolder"
-              title="Create a test folder"
-              disabled={disableCreateButton}
-              onClick={handleCreateFolder}
+            <OverlayTrigger
+              placement="top-end"
+              overlay={
+                <Tooltip className="text-nowrap" id="uiPathInputtooltip">
+                  <span>{"Press 'Enter' to change the path for test files."}</span>
+                </Tooltip>
+              }
             >
-              Create
-            </button>
+              <input
+                list="utPathList"
+                className="inputFolder custom-select"
+                id="utPath"
+                data-id="uiPathInput"
+                name="utPath"
+                value={inputPathValue}
+                style={{ backgroundImage: "var(--primary)" }}
+                onKeyDown={() => { if (inputPathValue === '/') setInputPathValue('')} }
+                onChange={handleTestDirInput}
+                onClick = {() => { if (inputPathValue === '/') setInputPathValue('')} }
+              />
+            </OverlayTrigger>
+            <OverlayTrigger
+              placement="top-end"
+              overlay={
+                <Tooltip className="text-nowrap" id="uiPathInputButtontooltip">
+                  <span>Create a test folder</span>
+                </Tooltip>
+              }
+            >
+              <button
+                className="btn border ml-2"
+                data-id="testTabGenerateTestFolder"
+                disabled={disableCreateButton}
+                onClick={handleCreateFolder}
+              >
+                Create
+              </button>
+            </OverlayTrigger>
           </div>
         </div>
       </div>
       <div>
         <div className="d-flex p-2">
-          <button
-            className="btn border w-50"
-            data-id="testTabGenerateTestFile"
-            title="Generate a sample test file"
-            disabled={disableGenerateButton}
-            onClick={async () => {
-              await testTabLogic.generateTestFile((err:any) => { if (err) setToasterMsg(err)}) // eslint-disable-line @typescript-eslint/no-explicit-any
-              await updateForNewCurrent()
-            }}
-          >
-            Generate
-          </button>
-          <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" title="Check out documentation." target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
+          <OverlayTrigger overlay={
+            <Tooltip id="generateTestsButtontooltip" className="text-nowrap">
+              <span>Generate a sample test file</span>
+            </Tooltip>
+          } placement={'bottom-start'}>
+            <button
+              className="btn border w-50"
+              data-id="testTabGenerateTestFile"
+              disabled={disableGenerateButton}
+              onClick={async () => {
+                await testTabLogic.generateTestFile((err:any) => { if (err) setToasterMsg(err)}) // eslint-disable-line @typescript-eslint/no-explicit-any
+                await updateForNewCurrent()
+              }}
+            >
+              Generate
+            </button>
+          </OverlayTrigger>
+          <OverlayTrigger overlay={
+            <Tooltip id="generateTestsLinktooltip" className="text-nowrap">
+              <span>Check out documentation.</span>
+            </Tooltip>
+          } placement={'bottom-start'}>
+          <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
             <label className="btn p-1 ml-2 m-0">How to use...</label>
           </a>
+        </OverlayTrigger>
         </div>
         <div className="d-flex p-2">
-          <button id="runTestsTabRunAction" title={runButtonTitle} data-id="testTabRunTestsTabRunAction" className="w-50 btn btn-primary" disabled={disableRunButton} onClick={runTests}>
-            <span className="fas fa-play ml-2"></span>
-            <label className="labelOnBtn btn btn-primary p-1 ml-2 m-0">Run</label>
-          </button>
-          <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} title="Stop running tests" onClick={stopTests}>
-            <span className="fas fa-stop ml-2"></span>
-            <label className="labelOnBtn btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">{stopButtonLabel}</label>
+          <OverlayTrigger placement={'top-start'} overlay={
+              <Tooltip className="text-nowrap" id="info-recorder">
+                <span>
+                  {runButtonTitle}
+                </span>
+              </Tooltip>
+            }>
+            <button id="runTestsTabRunAction"data-id="testTabRunTestsTabRunAction" className="w-50 btn btn-primary" disabled={disableRunButton} onClick={runTests}>
+              <span className="fas fa-play ml-2"></span>
+              <label className="labelOnBtn btn btn-primary p-1 ml-2 m-0">Run</label>
+            </button>
+          </OverlayTrigger>
+          <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} onClick={stopTests}>
+            <OverlayTrigger placement={'top-start'} overlay={
+                <Tooltip className="text-nowrap" id="info-recorder">
+                  <span>
+                    Stop running tests
+                  </span>
+                </Tooltip>
+              }>
+              <span>
+                <span className="fas fa-stop ml-2"></span>
+                <label className="labelOnBtn btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">{stopButtonLabel}</label>
+              </span>
+            </OverlayTrigger>
           </button>
         </div>
         <div className="d-flex align-items-center mx-3 pb-2 mt-2 border-bottom">
@@ -730,7 +786,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
           const elemId = `singleTest${testFileObj.fileName}`
           return (
             <div className="d-flex align-items-center py-1" key={index}>
-              <input className="singleTest" id={elemId} onChange={(e) => toggleCheckbox(e.target.checked, index)} type="checkbox" checked={testFileObj.checked} />
+              <input data-id="singleTest" className="singleTest" id={elemId} onChange={(e) => toggleCheckbox(e.target.checked, index)} type="checkbox" checked={testFileObj.checked} />
               <label className="singleTestLabel text-nowrap pl-2 mb-0" htmlFor={elemId}>{testFileObj.fileName}</label>
             </div>
           )
