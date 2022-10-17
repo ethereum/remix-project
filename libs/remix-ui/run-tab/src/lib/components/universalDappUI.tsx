@@ -244,14 +244,22 @@ export function UniversalDappUI (props: UdappProps) {
             </button>
           </div>
         </div>
-        <button
-          className="udapp_udappClose mr-1 p-1 btn btn-secondary align-items-center"
-          data-id="universalDappUiUdappClose"
-          onClick={remove}
-          title="Remove from the list"
+        <OverlayTrigger
+          placement="right"
+          overlay={
+            <Tooltip className="text-nowrap" id="udapp_udappCloseTooltip">
+              <span>{'Remove from the list'}</span>
+            </Tooltip>
+          }
         >
-          <i className="udapp_closeIcon fas fa-times" aria-hidden="true"></i>
-        </button>
+          <button
+            className="udapp_udappClose mr-1 p-1 btn btn-secondary align-items-center"
+            data-id="universalDappUiUdappClose"
+            onClick={remove}
+          >
+            <i className="udapp_closeIcon fas fa-times" aria-hidden="true"></i>
+          </button>
+        </OverlayTrigger>
       </div>
       <div
         className="udapp_cActionsWrapper"

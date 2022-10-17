@@ -248,10 +248,10 @@ export function ContractGUI (props: ContractGUIProps) {
         style={{ display: toggleContainer ? "none" : "flex" }}
       >
         <OverlayTrigger
-          placement={"right"}
+          placement={"right-start"}
           overlay={
             <Tooltip
-              className="text-nowrap"
+              className="text-wrap"
               id="remixUdappInstanceButtonTooltip"
             >
               <span>{buttonOptions.title}</span>
@@ -337,15 +337,23 @@ export function ContractGUI (props: ContractGUIProps) {
               return (
                 <div className="udapp_multiArg" key={index}>
                   <label htmlFor={inp.name}> {inp.name}: </label>
-                  <input
-                    ref={(el) => {
-                      multiFields.current[index] = el;
-                    }}
-                    className="form-control"
-                    placeholder={inp.type}
-                    title={inp.name}
-                    data-id={`multiParamManagerInput${inp.name}`}
-                  />
+                  <OverlayTrigger
+                    placement="left-end"
+                    overlay={
+                      <Tooltip id="udappContractActionsTooltip" className="text-nowrap">
+                        <span>{inp.name}</span>
+                      </Tooltip>
+                    }
+                  >
+                    <input
+                      ref={(el) => {
+                        multiFields.current[index] = el;
+                      }}
+                      className="form-control"
+                      placeholder={inp.type}
+                      data-id={`multiParamManagerInput${inp.name}`}
+                    />
+                  </OverlayTrigger>
                 </div>
               );
             })}
