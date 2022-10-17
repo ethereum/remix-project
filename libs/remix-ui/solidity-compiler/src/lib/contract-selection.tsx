@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react' // eslint-disable-line
+import React, { useState, useEffect, Fragment } from 'react' // eslint-disable-line
 import { ContractSelectionProps } from './types'
 import { PublishToStorage } from '@remix-ui/publish-to-storage' // eslint-disable-line
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 
 import './css/style.css'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 export const ContractSelection = (props: ContractSelectionProps) => {
   const { api, compiledFileName, contractsDetails, contractList, modal } = props
@@ -195,16 +196,56 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </select>
           </div>
           <article className="mt-2 pb-0">
-            <button id="publishOnIpfs" className="btn btn-secondary btn-block" title="Publish on Ipfs" onClick={() => { handlePublishToStorage('ipfs') }}>
-              <span>Publish on Ipfs</span>
-              <img id="ipfsLogo" className="remixui_storageLogo ml-2" src="assets/img/ipfs.webp" />
+            <button id="publishOnIpfs" className="btn btn-secondary btn-block" onClick={() => { handlePublishToStorage('ipfs') }}>
+              <OverlayTrigger
+                placement="right-start"
+                overlay={
+                  <Tooltip
+                    id="publishOnIpfsTooltip"
+                    className="text-nowrap"
+                  >
+                    <span>Publish on Ipfs</span>
+                  </Tooltip>
+                }
+              >
+                <span>
+                  <span>Publish on Ipfs</span>
+                  <img id="ipfsLogo" className="remixui_storageLogo ml-2" src="assets/img/ipfs.webp" />
+                </span>
+              </OverlayTrigger>
             </button>
-            <button id="publishOnSwarm" className="btn btn-secondary btn-block" title="Publish on Swarm" onClick={() => { handlePublishToStorage('swarm') }}>
-              <span>Publish on Swarm</span>
-              <img id="swarmLogo" className="remixui_storageLogo ml-2" src="assets/img/swarm.webp" />
+            <button id="publishOnSwarm" className="btn btn-secondary btn-block" onClick={() => { handlePublishToStorage('swarm') }}>
+              <OverlayTrigger
+                placement="right-start"
+                overlay={
+                  <Tooltip
+                    id="publishOnSwarmTooltip"
+                    className="text-nowrap"
+                  >
+                    <span>Publish on Swarm</span>
+                  </Tooltip>
+                }
+              >
+                <span>
+                  <span>Publish on Swarm</span>
+                  <img id="swarmLogo" className="remixui_storageLogo ml-2" src="assets/img/swarm.webp" />
+                </span>
+              </OverlayTrigger>
             </button>
-            <button data-id="compilation-details" className="btn btn-secondary btn-block" title="Display Contract Details" onClick={() => { details() }}>
-              Compilation Details
+            <button data-id="compilation-details" className="btn btn-secondary btn-block" onClick={() => { details() }}>
+              <OverlayTrigger
+                placement="right-start"
+                overlay={
+                  <Tooltip
+                    id="CompilationDetailsTooltip"
+                    className="text-nowrap"
+                  >
+                    <span>Display Contract Details</span>
+                  </Tooltip>
+                }
+              >
+                <span>Compilation Details</span>
+              </OverlayTrigger>
             </button>
             {/* Copy to Clipboard */}
             <div className="remixui_contractHelperButtons">
