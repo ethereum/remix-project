@@ -275,13 +275,25 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
           : null}
       </div>
       <div className="udapp_subcontainer">
-        <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
+        <OverlayTrigger
+              placement={"right"}
+              overlay={
+                <Tooltip
+                  className="text-nowrap"
+                  id="remixUdappContractNamesTooltip"
+                >
+                  <span>{contractOptions.title}</span>
+                </Tooltip>
+              }
+            >
+        <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
           {(contractList[currentFile] || []).map((contract, index) => {
             return <option key={index} value={contract.alias}>
               {contract.alias} - {contract.file}
             </option>
           })}
         </select>
+        </OverlayTrigger>
         <span className="py-1" style={{ display: abiLabel.display }}>{abiLabel.content}</span>
       </div>
       <div>
@@ -329,20 +341,28 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
         </div>
         <div className="udapp_orLabel mt-2" style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>or</div>
         <div className="udapp_button udapp_atAddressSect ">
-          <OverlayTrigger placement={'bottom-end'} overlay={
+          <OverlayTrigger placement={'top-end'} overlay={
             <Tooltip className="text-wrap" id="runAndDeployAddresstooltip">
               <span>{atAddressOptions.title}</span>
             </Tooltip>
           }>
-              <button className="udapp_atAddress btn btn-sm btn-info" id="runAndDeployAtAdressButton" disabled={atAddressOptions.disabled} onClick={loadFromAddress} data-title={atAddressOptions.title}>At Address</button>
+              <div onClick={loadFromAddress}>
+                <button className="udapp_atAddress btn btn-sm btn-info" id="runAndDeployAtAdressButton" disabled={atAddressOptions.disabled} style={{ pointerEvents: 'none' }} onClick={loadFromAddress} data-title={atAddressOptions.title}
+                >At Address</button>
+              </div>
           </OverlayTrigger>
-          <input
-            ref={atAddressValue}
-            className="udapp_input udapp_ataddressinput ataddressinput form-control"
-            placeholder="Load contract from Address"
-            title="address of contract"
-            onChange={atAddressChanged}
-          />
+          <OverlayTrigger placement={'top-end'} overlay={
+            <Tooltip className="text-wrap" id="runAndDeployAddressInputtooltip">
+              <span>{"address of contract"}</span>
+            </Tooltip>
+          }>
+            <input
+              ref={atAddressValue}
+              className="udapp_input udapp_ataddressinput ataddressinput form-control"
+              placeholder="Load contract from Address"
+              onChange={atAddressChanged}
+            />
+          </OverlayTrigger>
         </div>
       </div>
     </div>
