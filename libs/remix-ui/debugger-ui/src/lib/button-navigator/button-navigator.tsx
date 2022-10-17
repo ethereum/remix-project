@@ -54,58 +54,67 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
   return (
     <div className="buttons">
       <div className="stepButtons btn-group py-1">
-        <button id='overback' className='btn btn-primary btn-sm navigator stepButton' title='Step over back' onClick={() => { stepOverBack && stepOverBack() }} disabled={state.overBackDisabled} >
-          <OverlayTrigger
-            placement="top-start"
-            overlay={
-              <Tooltip className="text-nowrap" id="overbackTooltip">
-                <span>Step over back</span>
-              </Tooltip>
-            }
-          >
-            <span className="fas fa-reply"></span>
-          </OverlayTrigger>
-        </button>
-        <button id='intoback' data-id="buttonNavigatorIntoBack" className='btn btn-primary btn-sm navigator stepButton' title='Step back' onClick={() => { stepIntoBack && stepIntoBack() }} disabled={state.intoBackDisabled}>
-          <OverlayTrigger
-            placement="top-start"
-            overlay={
-              <Tooltip className="text-nowrap" id="intobackTooltip">
-                <span>Step back</span>
-              </Tooltip>
-            }
-          >
-            <span className="fas fa-level-up-alt"></span>
-          </OverlayTrigger>
-        </button>
-        <button id='intoforward' data-id="buttonNavigatorIntoForward" className='btn btn-primary btn-sm navigator stepButton' title='Step into' onClick={() => { stepIntoForward && stepIntoForward() }} disabled={state.intoForwardDisabled}>
-          <OverlayTrigger
-            placement="top-start"
-            overlay={
-              <Tooltip className="text-nowrap" id="intoforwardTooltip">
-                <span>Step into</span>
-              </Tooltip>
-            }
-          >
-            <span className="fas fa-level-down-alt"></span>
-          </OverlayTrigger>
-        </button>
-        <button id='overforward' className='btn btn-primary btn-sm navigator stepButton' title='Step over forward' onClick={() => { stepOverForward && stepOverForward() }} disabled={state.overForwardDisabled}>
-          <OverlayTrigger
-            placement="top-end"
-            overlay={
-              <Tooltip className="text-nowrap" id="overforwardTooltip">
-                <span>Step into</span>
-              </Tooltip>
-            }
-          >
-            <span className="fas fa-share"></span>
-          </OverlayTrigger>
-        </button>
+        <OverlayTrigger
+          placement="top-start"
+          overlay={
+            <Tooltip className="text-nowrap" id="overbackTooltip">
+              <span>Step over back</span>
+            </Tooltip>
+          }
+        >
+          <div onClick={() => { stepOverBack && stepOverBack() }}>
+            <button id='overback' className='btn btn-primary btn-sm navigator stepButton' onClick={() => { stepOverBack && stepOverBack() }} disabled={state.overBackDisabled} style={{ pointerEvents: 'none' }}>
+                <span className="fas fa-reply"></span>
+            </button>
+          </div>
+        </OverlayTrigger>
+        <OverlayTrigger
+          placement="top-start"
+          overlay={
+            <Tooltip className="text-nowrap" id="intobackTooltip">
+              <span>Step back</span>
+            </Tooltip>
+          }
+        >
+          <div onClick={() => { stepIntoBack && stepIntoBack() }}>
+            <button id='intoback' data-id="buttonNavigatorIntoBack" className='btn btn-primary btn-sm navigator stepButton' onClick={() => { stepIntoBack && stepIntoBack() }} disabled={state.intoBackDisabled} style={{ pointerEvents: 'none' }}>
+                <span className="fas fa-level-up-alt"></span>
+            </button>
+          </div>
+        </OverlayTrigger>
+        <OverlayTrigger
+          placement="top-start"
+          overlay={
+            <Tooltip className="text-nowrap" id="intoforwardTooltip">
+              <span>Step into</span>
+            </Tooltip>
+          }
+        >
+          <div onClick={() => { stepIntoForward && stepIntoForward() }}>
+            <button id='intoforward' data-id="buttonNavigatorIntoForward" className='btn btn-primary btn-sm navigator stepButton' onClick={() => { stepIntoForward && stepIntoForward() }} disabled={state.intoForwardDisabled}
+            style={{ pointerEvents: 'none' }}
+            >
+                <span className="fas fa-level-down-alt"></span>
+            </button>
+          </div>
+        </OverlayTrigger>
+        <OverlayTrigger
+          placement="top-end"
+          overlay={
+            <Tooltip className="text-nowrap" id="overforwardTooltip">
+              <span>Step into</span>
+            </Tooltip>
+          }
+        >
+          <div onClick={() => { stepOverForward && stepOverForward() }}>
+            <button id='overforward' className='btn btn-primary btn-sm navigator stepButton' onClick={() => { stepOverForward && stepOverForward() }} disabled={state.overForwardDisabled} style={{ pointerEvents: 'none' }}>
+                <span className="fas fa-share"></span>
+            </button>
+          </div>
+        </OverlayTrigger>
       </div>
 
       <div className="jumpButtons btn-group py-1">
-        <button className='btn btn-primary btn-sm navigator jumpButton' id='jumppreviousbreakpoint' data-id="buttonNavigatorJumpPreviousBreakpoint" onClick={() => { jumpPreviousBreakpoint && jumpPreviousBreakpoint() }} disabled={state.jumpPreviousBreakpointDisabled}>
           <OverlayTrigger
             placement="top-start"
             overlay={
@@ -114,10 +123,12 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
               </Tooltip>
             }
           >
-            <span className="fas fa-step-backward"></span>
+            <div onClick={() => { jumpPreviousBreakpoint && jumpPreviousBreakpoint() }}>
+              <button className='btn btn-primary btn-sm navigator jumpButton' id='jumppreviousbreakpoint' data-id="buttonNavigatorJumpPreviousBreakpoint" onClick={() => { jumpPreviousBreakpoint && jumpPreviousBreakpoint() }} disabled={state.jumpPreviousBreakpointDisabled} style={{ pointerEvents: 'none' }}>
+                  <span className="fas fa-step-backward"></span>
+              </button>
+            </div>
           </OverlayTrigger>
-        </button>
-        <button className='btn btn-primary btn-sm navigator jumpButton' id='jumpout' onClick={() => { jumpOut && jumpOut() }} disabled={state.jumpOutDisabled}>
           <OverlayTrigger
             placement="top-end"
             overlay={
@@ -126,10 +137,12 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
               </Tooltip>
             }
           >
-            <span className="fas fa-eject"></span>
+            <div onClick={() => { jumpOut && jumpOut() }}>
+              <button className='btn btn-primary btn-sm navigator jumpButton' id='jumpout' onClick={() => { jumpOut && jumpOut() }} disabled={state.jumpOutDisabled} style={{ pointerEvents: 'none' }}>
+                  <span className="fas fa-eject"></span>
+              </button>
+            </div>
           </OverlayTrigger>
-        </button>
-        <button className='btn btn-primary btn-sm navigator jumpButton' id='jumpnextbreakpoint' data-id="buttonNavigatorJumpNextBreakpoint" onClick={() => { jumpNextBreakpoint && jumpNextBreakpoint() }} disabled={state.jumpNextBreakpointDisabled}>
           <OverlayTrigger
             placement="top-end"
             overlay={
@@ -138,9 +151,12 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
               </Tooltip>
             }
           >
-            <span className="fas fa-step-forward"></span>
+            <div onClick={() => { jumpNextBreakpoint && jumpNextBreakpoint() }}>
+              <button className='btn btn-primary btn-sm navigator jumpButton' id='jumpnextbreakpoint' data-id="buttonNavigatorJumpNextBreakpoint" onClick={() => { jumpNextBreakpoint && jumpNextBreakpoint() }} disabled={state.jumpNextBreakpointDisabled} style={{ pointerEvents: 'none' }}>
+                  <span className="fas fa-step-forward"></span>
+              </button>
+            </div>
           </OverlayTrigger>
-        </button>
       </div>
       <div id='reverted' style={{ display: revertedReason === '' ? 'none' : 'block' }}>
         <span className='text-warning'>This call has reverted, state changes made during the call will be reverted.</span>
