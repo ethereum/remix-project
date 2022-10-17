@@ -103,7 +103,7 @@ export interface FileExplorerProps {
     dispatchMoveFile: (src: string, dest: string) => Promise<void>,
     dispatchMoveFolder: (src: string, dest: string) => Promise<void>
 }
-
+type Placement = import('react-overlays/usePopper').Placement
 export interface FileExplorerMenuProps {
     title: string,
     menuItems: string[],
@@ -111,6 +111,7 @@ export interface FileExplorerMenuProps {
     createNewFolder: (parentFolder?: string) => void,
     publishToGist: (path?: string) => void,
     uploadFile: (target: EventTarget & HTMLInputElement) => void
+    tooltipPlacement?: Placement
 }
 export interface FileExplorerContextMenuProps {
     actions: action[],
