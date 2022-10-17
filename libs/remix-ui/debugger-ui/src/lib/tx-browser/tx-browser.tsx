@@ -65,26 +65,29 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
           />
         </div>
         <div className='d-flex justify-content-center w-100 btn-group py-1'>
-          <button
-            className='btn btn-primary btn-sm txbutton'
-            id='load'
-            onClick={handleSubmit}
-            data-id='debuggerTransactionStartButton'
-            disabled={!state.txNumber }
+          <OverlayTrigger
+            placement={'bottom-start'}
+            overlay={
+              <Tooltip className={'text-nowrap'} id={'debuggingButtontooltip'}>
+                <span>
+                  {debugging ? 'Stop debugging' : 'Start debugging'}
+                </span>
+              </Tooltip>
+            }
           >
-            <OverlayTrigger
-              placement={'bottom-start'}
-              overlay={
-                <Tooltip className={'text-nowrap'} id={'debuggingButtontooltip'}>
-                  <span>
-                    {debugging ? 'Stop debugging' : 'Start debugging'}
-                  </span>
-                </Tooltip>
-              }
-            >
-              <span>{ debugging ? 'Stop' : 'Start' } debugging</span>
-            </OverlayTrigger>
-          </button>
+            <div onClick={handleSubmit}>
+              <button
+                className='btn btn-primary btn-sm txbutton'
+                id='load'
+                onClick={handleSubmit}
+                data-id='debuggerTransactionStartButton'
+                disabled={!state.txNumber }
+                style={{ pointerEvents: 'none' }}
+              >
+                  <span>{ debugging ? 'Stop' : 'Start' } debugging</span>
+              </button>
+            </div>
+          </OverlayTrigger>
         </div>
       </div>
       <span id='error' />
