@@ -23,7 +23,7 @@ function addInstance (browser: NightwatchBrowser, address: string, isValidFormat
     else if (isAbi) {
       browser
         .click({
-          selector:'//button[@id="runAndDeployAtAdressButton"]',
+          selector: '//*[@id="runAndDeployAtAdressButtonContaner"]',
           locateStrategy: 'xpath'
          })
         .waitForElementPresent('[data-id="udappNotify-modal-footer-ok-react"]', 5000)
