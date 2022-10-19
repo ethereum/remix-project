@@ -76,7 +76,7 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
             </Tooltip>
           }
         >
-          <div onClick={() => { stepIntoBack && stepIntoBack() }}>
+          <div onClick={() => { stepIntoBack && stepIntoBack() }} data-id="buttonNavigatorIntoBack" id="buttonNavigatorIntoBackContainer">
             <button id='intoback' data-id="buttonNavigatorIntoBack" className='btn btn-primary btn-sm navigator stepButton' onClick={() => { stepIntoBack && stepIntoBack() }} disabled={state.intoBackDisabled} style={{ pointerEvents: 'none' }}>
                 <span className="fas fa-level-up-alt"></span>
             </button>
@@ -90,7 +90,7 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
             </Tooltip>
           }
         >
-          <div onClick={() => { stepIntoForward && stepIntoForward() }}>
+          <div onClick={() => { stepIntoForward && stepIntoForward() }} data-id="buttonNavigatorIntoForward" id="buttonNavigatorIntoFowardContainer">
             <button id='intoforward' data-id="buttonNavigatorIntoForward" className='btn btn-primary btn-sm navigator stepButton' onClick={() => { stepIntoForward && stepIntoForward() }} disabled={state.intoForwardDisabled}
             style={{ pointerEvents: 'none' }}
             >
@@ -106,7 +106,7 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
             </Tooltip>
           }
         >
-          <div onClick={() => { stepOverForward && stepOverForward() }}>
+          <div onClick={() => { stepOverForward && stepOverForward() }} data-id="buttonNavigatorOverForward" id="buttonNavigatorOverForwardContainer">
             <button id='overforward' className='btn btn-primary btn-sm navigator stepButton' onClick={() => { stepOverForward && stepOverForward() }} disabled={state.overForwardDisabled} style={{ pointerEvents: 'none' }}>
                 <span className="fas fa-share"></span>
             </button>
@@ -137,8 +137,8 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
               </Tooltip>
             }
           >
-            <div onClick={() => { jumpOut && jumpOut() }}>
-              <button className='btn btn-primary btn-sm navigator jumpButton' id='jumpout' onClick={() => { jumpOut && jumpOut() }} disabled={state.jumpOutDisabled} style={{ pointerEvents: 'none' }}>
+            <div onClick={() => { jumpOut && jumpOut() }} data-id="buttonNavigatorJumpOut" id="buttonNavigatorJumpOutContainer">
+              <button className='btn btn-primary btn-sm navigator jumpButton' id='jumpout' onClick={() => { jumpOut && jumpOut() }} disabled={state.jumpOutDisabled} style={{ pointerEvents: 'none' }} data-id="buttonNavigatorJumpOut">
                   <span className="fas fa-eject"></span>
               </button>
             </div>
@@ -151,7 +151,7 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
               </Tooltip>
             }
           >
-            <div onClick={() => { jumpNextBreakpoint && jumpNextBreakpoint() }}>
+            <div onClick={() => { jumpNextBreakpoint && jumpNextBreakpoint() }} data-id="buttonNavigatorJumpNextBreakpoint" id="buttonNavigatorJumpNextBreakpointContainer">
               <button className='btn btn-primary btn-sm navigator jumpButton' id='jumpnextbreakpoint' data-id="buttonNavigatorJumpNextBreakpoint" onClick={() => { jumpNextBreakpoint && jumpNextBreakpoint() }} disabled={state.jumpNextBreakpointDisabled} style={{ pointerEvents: 'none' }}>
                   <span className="fas fa-step-forward"></span>
               </button>
