@@ -2,10 +2,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { ContractDropdownProps, DeployMode } from '../types'
 import { ContractData, FuncABI } from '@remix-project/core-plugin'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
 import { deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 const _paq = window._paq = window._paq || []
 
 export function ContractDropdownUI(props: ContractDropdownProps) {
@@ -114,7 +114,6 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
 
   const initSelectedContract = () => {
     const contracts = contractList[currentFile]
-
 
     if (contracts && contracts.length > 0) {
       const contract = contracts.find(contract => contract.alias === currentContract)
@@ -276,13 +275,25 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
           : null}
       </div>
       <div className="udapp_subcontainer">
-        <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
+        <OverlayTrigger
+              placement={"right"}
+              overlay={
+                <Tooltip
+                  className="text-nowrap"
+                  id="remixUdappContractNamesTooltip"
+                >
+                  <span>{contractOptions.title}</span>
+                </Tooltip>
+              }
+            >
+        <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
           {(contractList[currentFile] || []).map((contract, index) => {
             return <option key={index} value={contract.alias}>
               {contract.alias} - {contract.file}
             </option>
           })}
         </select>
+        </OverlayTrigger>
         <span className="py-1" style={{ display: abiLabel.display }}>{abiLabel.content}</span>
       </div>
       <div>
@@ -311,28 +322,47 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                   onChange={handleCheckedIPFS}
                   checked={props.ipfsCheckedState}
                 />
-                <label
-                  htmlFor="deployAndRunPublishToIPFS"
-                  data-id="contractDropdownIpfsCheckboxLabel"
-                  className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
-                  title="Publishing the source code and metadata to IPFS facilitates source code verification using Sourcify and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"
-                >
-                  Publish to IPFS
-                </label>
+                <OverlayTrigger placement={'right'} overlay={
+                  <Tooltip className="text-wrap" id="remixIpfsUdappTooltip">
+                    <span>Publishing the source code and metadata to IPFS facilitates source code verification <br />using Sourcify and will greatly foster contract adoption (auditing, debugging, calling it, etc...)</span>
+                  </Tooltip>
+                }>
+                  <label
+                    htmlFor="deployAndRunPublishToIPFS"
+                    data-id="contractDropdownIpfsCheckboxLabel"
+                    className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
+                  >
+                    Publish to IPFS
+                  </label>
+                </OverlayTrigger>
               </div>
             </div> : ''
           }
         </div>
         <div className="udapp_orLabel mt-2" style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>or</div>
-        <div className="udapp_button udapp_atAddressSect">
-          <button className="udapp_atAddress btn btn-sm btn-info" id="runAndDeployAtAdressButton" disabled={atAddressOptions.disabled} title={atAddressOptions.title} onClick={loadFromAddress}>At Address</button>
-          <input
-            ref={atAddressValue}
-            className="udapp_input udapp_ataddressinput ataddressinput form-control"
-            placeholder="Load contract from Address"
-            title="address of contract"
-            onChange={atAddressChanged}
-          />
+        <div className="udapp_button udapp_atAddressSect ">
+          <OverlayTrigger placement={'top-end'} overlay={
+            <Tooltip className="text-wrap" id="runAndDeployAddresstooltip">
+              <span>{atAddressOptions.title}</span>
+            </Tooltip>
+          }>
+              <div id="runAndDeployAtAdressButtonContainer" onClick={loadFromAddress} data-title={atAddressOptions.title}>
+                <button className="udapp_atAddress btn btn-sm btn-info" id="runAndDeployAtAdressButton" disabled={atAddressOptions.disabled} style={{ pointerEvents: 'none' }} onClick={loadFromAddress} data-title={atAddressOptions.title}
+                >At Address</button>
+              </div>
+          </OverlayTrigger>
+          <OverlayTrigger placement={'top-end'} overlay={
+            <Tooltip className="text-wrap" id="runAndDeployAddressInputtooltip">
+              <span>{"address of contract"}</span>
+            </Tooltip>
+          }>
+            <input
+              ref={atAddressValue}
+              className="udapp_input udapp_ataddressinput ataddressinput form-control"
+              placeholder="Load contract from Address"
+              onChange={atAddressChanged}
+            />
+          </OverlayTrigger>
         </div>
       </div>
     </div>

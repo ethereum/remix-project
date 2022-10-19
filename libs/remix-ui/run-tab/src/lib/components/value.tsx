@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { BN } from 'ethereumjs-util'
 import { isNumeric } from '@remix-ui/helper'
 import { ValueProps } from '../types'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 export function ValueUI (props: ValueProps) {
   const [sendValue, setSendValue] = useState<string>(props.sendValue)
@@ -49,6 +50,11 @@ export function ValueUI (props: ValueProps) {
     <div className="udapp_crow">
       <label className="udapp_settingsLabel" data-id="remixDRValueLabel">Value</label>
       <div className="udapp_gasValueContainer">
+        <OverlayTrigger placement={'top-start'} overlay={
+          <Tooltip className="text-nowrap" id="remixValueTooltip">
+            <span>{"Enter an amount and choose its unit"}</span>
+          </Tooltip>
+        }>
         <input
           ref={inputValue}
           type="number"
@@ -58,11 +64,11 @@ export function ValueUI (props: ValueProps) {
           className="form-control udapp_gasNval udapp_col2"
           id="value"
           data-id="dandrValue"
-          title="Enter an amount and choose its unit"
           onKeyPress={validateInputKey}
           onChange={validateValue}
           value={props.sendValue}
         />
+      </OverlayTrigger>
         <select name="unit" value={props.sendUnit} className="form-control p-1 udapp_gasNvalUnit udapp_col2_2 custom-select" id="unit" onChange={(e) => { props.setUnit((e.target.value) as 'ether' | 'finney' | 'gwei' | 'wei') }}>
           <option data-unit="wei" value='wei'>Wei</option>
           <option data-unit="gwei" value="gwei">Gwei</option>

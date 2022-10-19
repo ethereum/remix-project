@@ -15,18 +15,18 @@ class TestConstantFunction extends EventEmitter {
 }
 
 function testConstantFunction (browser: NightwatchBrowser, address: string, fnFullName: string, expectedInput: NightwatchTestConstantFunctionExpectedInput, expectedOutput: string, cb: VoidFunction) {
-  browser.waitForElementPresent('.instance button[title="' + fnFullName + '"]').perform(function (client, done) {
+  browser.waitForElementPresent('.instance button[data-title="' + fnFullName + '"]').perform(function (client, done) {
     client.execute(function () {
       document.querySelector('#runTabView').scrollTop = document.querySelector('#runTabView').scrollHeight
     }, [], function () {
       if (expectedInput) {
-        client.waitForElementPresent('#runTabView input[title="' + expectedInput.types + '"]')
-          .setValue('#runTabView input[title="' + expectedInput.types + '"]', expectedInput.values)
+        client.waitForElementPresent('#runTabView input[data-title="' + expectedInput.types + '"]')
+          .setValue('#runTabView input[data-title="' + expectedInput.types + '"]', expectedInput.values)
       }
       done()
     })
   })
-    .click(`#instance${address} button[title="${fnFullName}"]`)
+    .click(`#instance${address} button[data-title="${fnFullName}"]`)
     .pause(1000)
     .waitForElementPresent('#instance' + address + ' .udapp_contractActionsContainer .udapp_value')
     .scrollInto('#instance' + address + ' .udapp_contractActionsContainer .udapp_value')

@@ -31,7 +31,13 @@ export function RecorderUI (props: RecorderProps) {
       <div className="udapp_recorderSection d-flex justify-content-between" onClick={toggleClass}>
         <div className="d-flex justify-content-center align-items-center">
           <label className="mt-1 udapp_recorderSectionLabel">Transactions recorded</label>
-          <div className="ml-2 badge badge-pill badge-primary text-center" title="The number of recorded transactions">{props.count}</div>
+          <OverlayTrigger placement={'right'} overlay={
+          <Tooltip className="text-nowrap" id="recordedTransactionsCounttooltip">
+            <span>{'The number of recorded transactions'}</span>
+          </Tooltip>
+        }>
+          <div className="ml-2 badge badge-pill badge-primary text-center" data-title="The number of recorded transactions">{props.count}</div>
+        </OverlayTrigger>
         <OverlayTrigger placement={'right'} overlay={
           <Tooltip className="text-nowrap" id="info-recorder">
             <span>Save transactions (deployed contracts and function executions) and replay them in another environment. <br/> e.g Transactions created in Remix VM can be replayed in the Injected Provider.
@@ -59,19 +65,33 @@ export function RecorderUI (props: RecorderProps) {
           </OverlayTrigger>
         </div>
         <div className="mb-1 mt-1 udapp_transactionActions">
-        <OverlayTrigger placement={'right'} overlay={
-          <Tooltip className="text-nowrap" id="tooltip-save-recorder">
-            <span>Save {props.count} transaction{props.count === 1 ? '' : 's'} as scenario file</span>
+        <OverlayTrigger placement={'bottom-start'} overlay={
+          <Tooltip className="text-nowrap" id="remixUdappTransactionSavetooltip">
+            <span>
+              {
+                props.count === 0 ? 'No transactions to save'
+                :  props.count === 1 ? `Save ${props.count} transaction as scenario file`
+                : `Save ${props.count} transactions as scenario file`
+              }
+            </span>
           </Tooltip>
         }>
-          <button className="btn btn-sm btn-info savetransaction udapp_recorder" title={props.count === 0 ? 'No transactions to save' : ''} disabled={props.count === 0 ? true: false} onClick={triggerRecordButton}>Save</button>
+          <span>
+            <button className="btn btn-sm btn-info savetransaction udapp_recorder" disabled={props.count === 0 ? true: false} onClick={triggerRecordButton} style={{ pointerEvents: props.count === 0 ? 'none' : 'auto' }}>
+              Save
+            </button>
+          </span>
         </OverlayTrigger>
         <OverlayTrigger placement={'right'} overlay={
           <Tooltip className="text-nowrap" id="tooltip-run-recorder">
             <span>Run transaction(s) from the current scenario file</span>
           </Tooltip>
         }>
-          <button className="btn btn-sm btn-info runtransaction udapp_runTxs" data-id="runtransaction" title={enableRunButton ? 'No scenario file selected' : ''} disabled={enableRunButton} onClick={handleClickRunButton}>Run</button>
+          <span>
+            <button className="btn btn-sm btn-info runtransaction udapp_runTxs" data-id="runtransaction" disabled={enableRunButton} onClick={handleClickRunButton} style={{ pointerEvents: enableRunButton ? 'none' : 'auto' }}>
+              Run
+            </button>
+          </span>
         </OverlayTrigger>
         </div>
       </div>
