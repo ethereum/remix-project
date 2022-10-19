@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState, useRef, useContext } from 'react'
-import { ThemeContext, themes } from '../themeContext'
+import React, { useEffect, useRef, useContext } from 'react'
+import { ThemeContext} from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import WorkspaceTemplate from './workspaceTemplate'
 import 'react-multi-carousel/lib/styles.css'
@@ -11,13 +11,48 @@ declare global {
   }
 }
 const _paq = window._paq = window._paq || [] //eslint-disable-line
-
 interface  HomeTabGetStartedProps {
   plugin: any
 }
 
 function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
   const themeFilter = useContext(ThemeContext)
+  const carouselRef = useRef(null)
+  const carouselRefDiv = useRef(null)
+
+  useEffect(() => {
+    document.addEventListener("wheel", handleScroll)
+    return () => {
+      document.removeEventListener("wheel", handleScroll)
+    }
+  }, [])
+
+  function isDescendant(parent, child) {
+    let node = child.parentNode;
+    while (node != null) {
+      if (node === parent) {
+        return true;
+      }
+      node = node.parentNode;
+    }
+    return false;
+  }
+  
+  const handleScroll = (e) => {
+    if (isDescendant(carouselRefDiv.current, e.target)) {
+      e.stopPropagation()
+      let nextSlide = 0
+      if (e.wheelDelta < 0) {
+        nextSlide = carouselRef.current.state.currentSlide + 1;
+        if ((carouselRef.current.state.totalItems - carouselRef.current.state.currentSlide) * carouselRef.current.state.itemWidth + 5 < carouselRef.current.state.containerWidth) return // 5 is approx margins
+        carouselRef.current.goToSlide(nextSlide)
+      } else {
+        nextSlide = carouselRef.current.state.currentSlide - 1;
+        if (nextSlide < 0) nextSlide = 0
+        carouselRef.current.goToSlide(nextSlide)
+      }
+    }
+  }
 
   const createWorkspace = async (templateName) => {
     await plugin.appManager.activatePlugin('filePanel')
@@ -36,16 +71,31 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
         </span>
         - Project Templates
       </label>
-      <div className="w-100 d-flex flex-column">
+      <div ref={carouselRefDiv} className="w-100 d-flex flex-column">
         <ThemeContext.Provider value={ themeFilter }>
-          <Carousel 
-            focusOnSelect
-            customButtonGroup={<CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} />}
+          <Carousel
+            ref={carouselRef}
+            focusOnSelect={true}
+            customButtonGroup={
+              <CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} />
+            }
             arrows={false}
             swipeable={false}
             draggable={true}
             showDots={false}
-            responsive={{ desktop: { breakpoint: { max: 3000, min: 1024 }, items: 5} }}
+            responsive={
+              { 
+                superLargeDesktop: {
+                  breakpoint: { max: 4000, min: 3000 },
+                  items: 5
+                },
+                desktop: {
+                  breakpoint: { max: 3000, min: 1024 },
+                  items: 5,
+                  partialVisibilityGutter: 0
+                }
+              }
+            }
             renderButtonGroupOutside={true}
             ssr={true} // means to render carousel on server-side.
             keyBoardControl={true}

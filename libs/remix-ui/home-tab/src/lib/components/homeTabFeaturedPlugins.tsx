@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState, useRef, useContext } from 'react'
+import React, { useEffect, useRef, useContext } from 'react'
 import PluginButton from './pluginButton'
-import { ThemeContext, themes } from '../themeContext'
+import { ThemeContext } from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 import CustomNavButtons from './customNavButtons'
+const itemsToShow = 5
 declare global {
   interface Window {
     _paq: any
   }
 }
 const _paq = window._paq = window._paq || [] //eslint-disable-line
-
 interface  HomeTabFeaturedPluginsProps {
   plugin: any
 }
@@ -20,16 +20,40 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
 
   const themeFilter = useContext(ThemeContext)
   const carouselRef = useRef(null)
+  const carouselRefDiv = useRef(null)
 
-  // Todo doesn't work
   useEffect(() => {
-      window.addEventListener("scroll", handleScroll)
+    document.addEventListener("wheel", handleScroll)
     return () => {
-      window.removeEventListener("scroll", handleScroll)
+      document.removeEventListener("wheel", handleScroll)
     }
   }, [])
 
+  function isDescendant(parent, child) {
+    let node = child.parentNode;
+    while (node != null) {
+      if (node === parent) {
+        return true;
+      }
+      node = node.parentNode;
+    }
+    return false;
+  }
+  
   const handleScroll = (e) => {
+    if (isDescendant(carouselRefDiv.current, e.target)) {
+      e.stopPropagation()
+      let nextSlide = 0
+      if (e.wheelDelta < 0) {
+        nextSlide = carouselRef.current.state.currentSlide + 1;
+        if ((carouselRef.current.state.totalItems - carouselRef.current.state.currentSlide) * carouselRef.current.state.itemWidth + 5 < carouselRef.current.state.containerWidth) return // 5 is approx margins
+        carouselRef.current.goToSlide(nextSlide)
+      } else {
+        nextSlide = carouselRef.current.state.currentSlide - 1;
+        if (nextSlide < 0) nextSlide = 0
+        carouselRef.current.goToSlide(nextSlide)
+      }
+    }
   }
 
   const startSolidity = async () => {
@@ -61,17 +85,30 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
   return (
     <div className="pl-2 w-100" id="hTFeaturedPlugins">
       <label className="" style={{fontSize: "1.2rem"}}>Featured Plugins</label>
-      <div className="w-100 d-flex flex-column">
+      <div ref={carouselRefDiv} className="w-100 d-flex flex-column">
         <ThemeContext.Provider value={ themeFilter }>
           <Carousel 
             ref={carouselRef}
-            focusOnSelect
-            customButtonGroup={<CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} />}
+            focusOnSelect={true}
+            customButtonGroup={
+              <CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} />
+            }
             arrows={false}
             swipeable={false}
             draggable={true}
             showDots={false}
-            responsive={{ desktop: { breakpoint: { max: 3000, min: 1024 }, items: 5} }}
+            responsive={
+              { 
+                superLargeDesktop: {
+                  breakpoint: { max: 4000, min: 3000 },
+                  items: itemsToShow
+                },
+                desktop: {
+                  breakpoint: { max: 3000, min: 1024 },
+                  items: itemsToShow
+                }
+              }
+            }
             renderButtonGroupOutside={true}
             ssr={true} // means to render carousel on server-side.
             keyBoardControl={true}
