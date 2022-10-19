@@ -18,7 +18,7 @@ function HomeTabFeatured() {
       <label style={{ fontSize: "1.2rem" }}>Featured</label>
       <div className="mb-2">
         <div className="w-100 d-flex flex-column" style={{ height: "200px" }}>
-          <ThemeContext.Provider value={ themeFilter }>
+          <ThemeContext.Provider value={themeFilter}>
             <Carousel
               customButtonGroup={<CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} />}
               arrows={false}
@@ -40,26 +40,31 @@ function HomeTabFeatured() {
               dotListClass="position-relative mt-2"
             >
               <div className="d-flex">
-                <img src={"assets/img/bgRemi.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px"}} alt="" ></img>
-                <div className="h6 w-50 p-4" style={{ flex: "1"}}>
+                <img src={"assets/img/bgRemi.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
+                <div className="h6 w-50 p-4" style={{ flex: "1" }}>
                   <h5>JUMP INTO WEB3</h5>
-                  <span>The Remix Project is a rich toolset which can be used for the entire journey of contract development by users of any knowledge level, and as a learning lab for teaching and experimenting with Ethereum.</span>
+                  <p>The Remix Project is a rich toolset which can be used for the entire journey of contract development by users of any knowledge level, and as a learning lab for teaching and experimenting with Ethereum.</p>
+                  <a className="remixui_home_text" target="__blank" href="https://remix-project.org">More</a>
                 </div>
               </div>
               <div className="d-flex">
                 <img src={"/assets/img/remixRewardUser.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
-                <div className="h6 p-4" style={{ flex: "1"}}>
+                <div className="h6 p-4" style={{ flex: "1" }}>
                   <h5>REMIX REWARDS</h5>
-                  <p style={{fontStyle: 'italic'}}>NFTs for our users!</p>
-                  <span>Remix Project rewards contributors, beta testers, and UX research participants with NFTs deployed on Optimism. Remix Reward holders are able to mint a second “Remixer” user NFT badge to give to any other user of their choice</span>
+                  <p style={{ fontStyle: 'italic' }}>NFTs for our users!</p>
+                  <p>
+                    Remix Project rewards contributors, beta testers, and UX research participants with NFTs deployed on Optimism. Remix Reward holders are able to mint a second “Remixer” user NFT badge to give to any other user of their choice.
+                  </p>
+                  <a className="remixui_home_text" target="__blank" href="https://rewards.remix.ethereum.eth.limo">More</a>
                 </div>
               </div>
               <div className="d-flex">
                 <img src={"/assets/img/remixRewardBetaTester.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
-                <div className="h6 p-4" style={{ flex: "1"}}>
+                <div className="h6 p-4" style={{ flex: "1" }}>
                   <h5>BETA TESTING</h5>
-                  <p style={{fontStyle: 'italic'}}>Our community supports us.</p>
-                  <span>You can join Beta Testing before each release of Remix IDE. Help us test now and get a handle on new features!</span>
+                  <p style={{ fontStyle: 'italic' }}>Our community supports us.</p>
+                  <p>You can join Beta Testing before each release of Remix IDE. Help us test now and get a handle on new features!</p>
+                  <a className="remixui_home_text" target="__blank" href="https://rewards.remix.ethereum.eth.limo">More</a>
                 </div>
               </div>
             </Carousel>

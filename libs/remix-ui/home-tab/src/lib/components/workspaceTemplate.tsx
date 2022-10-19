@@ -16,7 +16,7 @@ function WorkspaceTemplate ({ gsID, workspaceTitle, description, callback }: Wor
         data-id={'landingPageStart' + gsID}
         onClick={() => callback()}
       >
-        <div className="w-100 p-2 h-100 align-items-start d-flex flex-column">
+        <div className="mb-2 w-100 p-2 h-100 align-items-start d-flex flex-column">
           <label className="h6 pb-1 text-uppercase text-dark remixui_home_cursorStyle">{workspaceTitle}</label>
           <div className="remixui_home_gtDescription">{description}</div>
         </div>
