@@ -138,7 +138,11 @@ export const runTabInitialState: RunTabState = {
       dataId: 'settingsInjectedMode',
       title: 'Execution environment has been provided by Metamask or similar provider.',
       value: 'injected',
-      content: `Injected Provider${(window && window.ethereum && window.ethereum.isMetaMask) ? ' - Metamask' : ''}`
+      content: `${(window && window.ethereum && !(window.ethereum.providers && !window.ethereum.selectedProvider)) ?
+        window.ethereum.isCoinbaseWallet || window.ethereum.selectedProvider?.isCoinbaseWallet ? 'Coinbase Wallet' :
+        window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet ? 'Brave Wallet' :
+        window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask ? 'MetaMask' :
+        'Injected Provider' : 'Injected Provider'}`
     }],
     isRequesting: false,
     isSuccessful: false,
