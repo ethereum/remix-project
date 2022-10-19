@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState, useRef, useContext } from 'react'
+import React, { useEffect, useRef, useContext } from 'react'
 import PluginButton from './pluginButton'
-import { ThemeContext, themes } from '../themeContext'
+import { ThemeContext } from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 import CustomNavButtons from './customNavButtons'
@@ -12,7 +12,6 @@ declare global {
   }
 }
 const _paq = window._paq = window._paq || [] //eslint-disable-line
-
 interface  HomeTabFeaturedPluginsProps {
   plugin: any
 }
