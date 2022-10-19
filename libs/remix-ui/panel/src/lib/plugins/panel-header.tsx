@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react' // eslint-disable-lin
 import { FormattedMessage } from 'react-intl'
 import { PluginRecord } from '../types'
 import './panel.css'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 export interface RemixPanelProps {
   plugins: Record<string, PluginRecord>;
@@ -35,9 +36,15 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
           <div className="d-flex flex-row">
             {plugin?.profile?.maintainedBy?.toLowerCase() === "remix" && (<i aria-hidden="true" className="text-success mt-1 px-1 fas fa-check" title="Maintained by Remix"></i>)}
           </div>
-          <div className="swapitHeaderInfoSection d-flex justify-content-between" data-id='swapitHeaderInfoSectionId' onClick={toggleClass} title="Plugin info">
-            <i className={`px-2 ml-2 pt-1 pb-4 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
-          </div>
+          <OverlayTrigger overlay={
+            <Tooltip className="text-nowrap" id="pluginInfoTooltip">
+              <span>Plugin info</span>
+            </Tooltip>
+          } placement={'right-end'}>
+            <div className="swapitHeaderInfoSection d-flex justify-content-between" data-id='swapitHeaderInfoSectionId' onClick={toggleClass}>
+              <i className={`px-2 ml-2 pt-1 pb-4 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
+            </div>
+          </OverlayTrigger>
         </div>
       </div>
       <div className={`bg-light mx-3 mb-2 p-3 pt-1 border-bottom flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
