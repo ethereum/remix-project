@@ -123,7 +123,7 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
               </Tooltip>
             }
           >
-            <div onClick={() => { jumpPreviousBreakpoint && jumpPreviousBreakpoint() }}>
+            <div id="buttonNavigatorJumpPreviousBreakpointContainer" onClick={() => { jumpPreviousBreakpoint && jumpPreviousBreakpoint() }} data-id="buttonNavigatorJumpPreviousBreakpoint">
               <button className='btn btn-primary btn-sm navigator jumpButton' id='jumppreviousbreakpoint' data-id="buttonNavigatorJumpPreviousBreakpoint" onClick={() => { jumpPreviousBreakpoint && jumpPreviousBreakpoint() }} disabled={state.jumpPreviousBreakpointDisabled} style={{ pointerEvents: 'none' }}>
                   <span className="fas fa-step-backward"></span>
               </button>

@@ -191,14 +191,14 @@ module.exports = {
       .clickFunction('f - transact (not payable)', { types: 'uint256[] ', values: '[]' })
       .debugTransaction(0)
       .pause(2000)
-      .click('*[data-id="debuggerTransactionStartButton"]') // stop debugging
+      .click('*[id="debuggerTransactionStartButtonContainer"]') // stop debugging
       .click('*[data-id="debugGeneratedSourcesLabel"]') // select debug with generated sources
-      .click('*[data-id="debuggerTransactionStartButton"]') // start debugging
+      .click('*[id="debuggerTransactionStartButtonContainer"]') // start debugging
       .pause(2000)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('if slt(sub(dataEnd, headStart), 32)') !== -1, 'current displayed content is not a generated source')
       })
-      .click('*[data-id="debuggerTransactionStartButton"]')
+      .click('*[id="debuggerTransactionStartButtonContainer"]')
   },
   // depends on Should debug using generated sources
   'Should call the debugger api: getTrace #group4': function (browser: NightwatchBrowser) {

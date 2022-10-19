@@ -75,7 +75,7 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
               </Tooltip>
             }
           >
-            <div onClick={handleSubmit}>
+            <div id="debuggerTransactionStartButtonContainer" data-id="debuggerTransactionStartButton" onClick={handleSubmit}>
               <button
                 className='btn btn-primary btn-sm txbutton'
                 id='load'
