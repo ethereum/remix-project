@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState, useRef, useContext } from 'react'
-import { ThemeContext, themes } from '../themeContext'
+import React, { useEffect, useRef, useContext } from 'react'
+import { ThemeContext} from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import WorkspaceTemplate from './workspaceTemplate'
 import 'react-multi-carousel/lib/styles.css'
@@ -11,7 +11,6 @@ declare global {
   }
 }
 const _paq = window._paq = window._paq || [] //eslint-disable-line
-
 interface  HomeTabGetStartedProps {
   plugin: any
 }
