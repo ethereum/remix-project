@@ -30,13 +30,14 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
   function isDescendant(parent, child) {
     let node = child.parentNode;
     while (node != null) {
-        if (node === parent) {
-            return true;
-        }
-        node = node.parentNode;
+      if (node === parent) {
+        return true;
+      }
+      node = node.parentNode;
     }
     return false;
-}
+  }
+  
   const handleScroll = (e) => {
     if (isDescendant(carouselRefDiv.current, e.target)) {
       e.stopPropagation()
