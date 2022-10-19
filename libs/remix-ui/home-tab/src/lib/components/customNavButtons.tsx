@@ -16,7 +16,7 @@ const CustomNavButtons = ({ next, previous, goToSlide, ...rest }) => {
         className={ 
           ((totalItems - currentSlide) * itemWidth + 5) < containerWidth ? 'disable py-1 border btn' : 'py-1 border btn'}
         onClick={() => {
-            if (currentSlide + 1 < totalItems) goToSlide(currentSlide + 1)
+          if (currentSlide + 1 < totalItems) goToSlide(currentSlide + 1)
         }}
         disabled ={((totalItems - currentSlide) * itemWidth + 5) < containerWidth}
       >
