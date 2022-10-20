@@ -51,6 +51,11 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
     })
   }
 
+  const stepBtnStyle = 'd-flex align-items-center justify-content-center btn btn-primary btn-sm stepButton h-75 m-0 p-1'
+  const disableStepBtnStyle = 'stepButtonDisabled'
+  const jumpBtnStyle = 'd-flex align-items-center justify-content-center btn btn-primary btn-sm jumpButton h-75 m-0 p-1'
+  const disableJumpBtnStyle = 'jumpButtonDisabled'
+
   return (
     <div className="buttons">
       <div className="stepButtons btn-group py-1">
@@ -62,10 +67,8 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
             </Tooltip>
           }
         >
-          <div className="d-flex align-items-center justify-content-center btn btn-primary btn-sm stepButton h-75 m-0 p-1" onClick={() => { stepOverBack && stepOverBack() }}
-            style={{ backgroundColor: state.overBackDisabled ? '#005e80' : '#007aa6', borderColor: state.overBackDisabled ? '#005e80' : '#007aa6', opacity: state.overBackDisabled && 0.65 }}
-          >
-            <button id='overback' className='btn btn-primary btn-sm stepButton m-0 p-0' onClick={() => { stepOverBack && stepOverBack() }} disabled={state.overBackDisabled} style={{ pointerEvents: 'none' }}>
+          <div className={state.overBackDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}`: `${stepBtnStyle}`} onClick={() => { stepOverBack && stepOverBack() }}>
+            <button id='overback' className='btn btn-link btn-sm stepButton m-0 p-0' onClick={() => { stepOverBack && stepOverBack() }} disabled={state.overBackDisabled} style={{ pointerEvents: 'none', color: 'white' }}>
                 <span className="fas fa-reply"></span>
             </button>
           </div>
@@ -78,8 +81,8 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
             </Tooltip>
           }
         >
-          <div className="d-flex align-items-center justify-content-center btn btn-primary btn-sm stepButton h-75 m-0 p-1" onClick={() => { stepIntoBack && stepIntoBack() }} data-id="buttonNavigatorIntoBack" id="buttonNavigatorIntoBackContainer" style={{ backgroundColor: state.intoBackDisabled ? '#005e80' : '#007aa6', borderColor: state.intoBackDisabled ? '#005e80' : '#007aa6', opacity: state.intoBackDisabled && 0.65 }}>
-            <button id='intoback' data-id="buttonNavigatorIntoBack" className='btn btn-primary btn-sm stepButton m-0 p-0' onClick={() => { stepIntoBack && stepIntoBack() }} disabled={state.intoBackDisabled} style={{ pointerEvents: 'none' }}>
+          <div className={state.intoBackDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}`: `${stepBtnStyle}`} onClick={() => { stepIntoBack && stepIntoBack() }} data-id="buttonNavigatorIntoBack" id="buttonNavigatorIntoBackContainer">
+            <button id='intoback' data-id="buttonNavigatorIntoBack" className='btn btn-link btn-sm stepButton m-0 p-0' onClick={() => { stepIntoBack && stepIntoBack() }} disabled={state.intoBackDisabled} style={{ pointerEvents: 'none', color: 'white' }}>
                 <span className="fas fa-level-up-alt"></span>
             </button>
           </div>
@@ -92,9 +95,9 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
             </Tooltip>
           }
         >
-          <div className="d-flex align-items-center justify-content-center btn btn-primary btn-sm stepButton h-75 m-0 p-1" onClick={() => { stepIntoForward && stepIntoForward() }} data-id="buttonNavigatorIntoForward" id="buttonNavigatorIntoFowardContainer" style={{ backgroundColor: state.intoForwardDisabled ? '#005e80' : '#007aa6', borderColor: state.intoForwardDisabled ? '#005e80' : '#007aa6', opacity: state.intoForwardDisabled && 0.65}}>
-            <button id='intoforward' data-id="buttonNavigatorIntoForward" className='btn btn-primary btn-sm stepButton m-0 p-0' onClick={() => { stepIntoForward && stepIntoForward() }} disabled={state.intoForwardDisabled}
-            style={{ pointerEvents: 'none' }}
+          <div className={state.intoForwardDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}`: `${stepBtnStyle}`} onClick={() => { stepIntoForward && stepIntoForward() }} data-id="buttonNavigatorIntoForward" id="buttonNavigatorIntoFowardContainer">
+            <button id='intoforward' data-id="buttonNavigatorIntoForward" className='btn btn-link btn-sm stepButton m-0 p-0' onClick={() => { stepIntoForward && stepIntoForward() }} disabled={state.intoForwardDisabled}
+            style={{ pointerEvents: 'none', color: 'white' }}
             >
                 <span className="fas fa-level-down-alt"></span>
             </button>
@@ -108,8 +111,8 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
             </Tooltip>
           }
         >
-          <div className="d-flex align-items-center justify-content-center btn btn-primary btn-sm stepButton h-75 m-0 p-1" onClick={() => { stepOverForward && stepOverForward() }} data-id="buttonNavigatorOverForward" id="buttonNavigatorOverForwardContainer" style={{ backgroundColor: state.overForwardDisabled ? '#005e80' : '#007aa6', borderColor: state.overForwardDisabled ? '#005e80' : '#007aa6', opacity: state.overForwardDisabled && 0.65}}>
-            <button id='overforward' className='btn btn-primary btn-sm stepButton m-0 p-0' onClick={() => { stepOverForward && stepOverForward() }} disabled={state.overForwardDisabled} style={{ pointerEvents: 'none' }}>
+          <div className={state.overForwardDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}`: `${stepBtnStyle}`} onClick={() => { stepOverForward && stepOverForward() }} data-id="buttonNavigatorOverForward" id="buttonNavigatorOverForwardContainer">
+            <button id='overforward' className='btn btn-link btn-sm stepButton m-0 p-0' onClick={() => { stepOverForward && stepOverForward() }} disabled={state.overForwardDisabled} style={{ pointerEvents: 'none', color: 'white' }}>
                 <span className="fas fa-share"></span>
             </button>
           </div>
@@ -125,8 +128,8 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
               </Tooltip>
             }
           >
-            <div className="d-flex align-items-center justify-content-center btn btn-primary btn-sm jumpButton h-75 m-0 p-1" id="buttonNavigatorJumpPreviousBreakpointContainer" onClick={() => { jumpPreviousBreakpoint && jumpPreviousBreakpoint() }} data-id="buttonNavigatorJumpPreviousBreakpoint" style={{ backgroundColor: state.jumpPreviousBreakpointDisabled ? '#005e80' : '#007aa6', borderColor: state.jumpPreviousBreakpointDisabled ? '#005e80' : '#007aa6', opacity: state.jumpPreviousBreakpointDisabled && 0.65}}>
-              <button className='btn btn-primary btn-sm jumpButton m-0 p-0' id='jumppreviousbreakpoint' data-id="buttonNavigatorJumpPreviousBreakpoint" onClick={() => { jumpPreviousBreakpoint && jumpPreviousBreakpoint() }} disabled={state.jumpPreviousBreakpointDisabled} style={{ pointerEvents: 'none' }}>
+            <div className={state.jumpPreviousBreakpointDisabled ? `${stepBtnStyle} ${disableJumpBtnStyle}`: `${stepBtnStyle}`} id="buttonNavigatorJumpPreviousBreakpointContainer" onClick={() => { jumpPreviousBreakpoint && jumpPreviousBreakpoint() }} data-id="buttonNavigatorJumpPreviousBreakpoint">
+              <button className='btn btn-link btn-sm jumpButton m-0 p-0' id='jumppreviousbreakpoint' data-id="buttonNavigatorJumpPreviousBreakpoint" onClick={() => { jumpPreviousBreakpoint && jumpPreviousBreakpoint() }} disabled={state.jumpPreviousBreakpointDisabled} style={{ pointerEvents: 'none', backgroundColor: 'inherit', color: 'white' }}>
                   <span className="fas fa-step-backward"></span>
               </button>
             </div>
@@ -139,9 +142,8 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
               </Tooltip>
             }
           >
-            <div className="d-flex align-items-center justify-content-center btn btn-primary btn-sm jumpButton h-75 m-0 p-1" onClick={() => { jumpOut && jumpOut() }} data-id="buttonNavigatorJumpOut" id="buttonNavigatorJumpOutContainer" style={{ backgroundColor: state.jumpOutDisabled ? '#005e80' : '#007aa6', borderColor: state.jumpOutDisabled ? '#005e80' : '#007aa6', opacity: state.jumpOutDisabled && 0.65
-            }}>
-              <button className='btn btn-primary btn-sm jumpButton m-0 p-0' id='jumpout' onClick={() => { jumpOut && jumpOut() }} disabled={state.jumpOutDisabled} style={{ pointerEvents: 'none' }} data-id="buttonNavigatorJumpOut">
+            <div className={state.jumpOutDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}`: `${stepBtnStyle}`} onClick={() => { jumpOut && jumpOut() }} data-id="buttonNavigatorJumpOut" id="buttonNavigatorJumpOutContainer">
+              <button className='btn btn-link btn-sm jumpButton m-0 p-0' id='jumpout' onClick={() => { jumpOut && jumpOut() }} disabled={state.jumpOutDisabled} style={{ pointerEvents: 'none', backgroundColor: 'inherit', color: 'white' }} data-id="buttonNavigatorJumpOut">
                   <span className="fas fa-eject"></span>
               </button>
             </div>
@@ -154,8 +156,8 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
               </Tooltip>
             }
           >
-            <div className="d-flex align-items-center justify-content-center btn btn-primary btn-sm jumpButton h-75 m-0 p-1" onClick={() => { jumpNextBreakpoint && jumpNextBreakpoint() }} data-id="buttonNavigatorJumpNextBreakpoint" id="buttonNavigatorJumpNextBreakpointContainer" style={{ backgroundColor: state.jumpNextBreakpointDisabled ? '#005e80' : '#007aa6', borderColor: state.jumpNextBreakpointDisabled ? '#005e80' : '#007aa6', opacity: state.jumpNextBreakpointDisabled && 0.65}}>
-              <button className='btn btn-primary btn-sm jumpButton m-0 p-0' id='jumpnextbreakpoint' data-id="buttonNavigatorJumpNextBreakpoint" onClick={() => { jumpNextBreakpoint && jumpNextBreakpoint() }} disabled={state.jumpNextBreakpointDisabled} style={{ pointerEvents: 'none' }}>
+            <div className={state.jumpNextBreakpointDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}`: `${stepBtnStyle}`} onClick={() => { jumpNextBreakpoint && jumpNextBreakpoint() }} data-id="buttonNavigatorJumpNextBreakpoint" id="buttonNavigatorJumpNextBreakpointContainer">
+              <button className='btn btn-link btn-sm jumpButton m-0 p-0' id='jumpnextbreakpoint' data-id="buttonNavigatorJumpNextBreakpoint" onClick={() => { jumpNextBreakpoint && jumpNextBreakpoint() }} disabled={state.jumpNextBreakpointDisabled} style={{ pointerEvents: 'none', color: 'white' }}>
                   <span className="fas fa-step-forward"></span>
               </button>
             </div>
