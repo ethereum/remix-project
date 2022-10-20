@@ -50,14 +50,17 @@ export class CompilerMetadata extends Plugin {
   // Access each file in build-info, check the input sources
   // If they are all same as in current compiled file and sources includes the path of compiled file, remove old build file
   async removeStoredBuildInfo (currentInput, path, filePath) {
-    const allBuildFiles = await this.call('fileManager', 'fileList', this.joinPath(path, this.innerPath, 'build-info/'))
-    const currentInputFileNames = Object.keys(currentInput.sources)
-    for (const fileName of allBuildFiles) {
-      let fileContent = await this.call('fileManager', 'readFile', fileName)
-      fileContent = JSON.parse(fileContent)
-      const inputFiles = Object.keys(fileContent.input.sources)
-      const inputIntersection = currentInputFileNames.filter(element => !inputFiles.includes(element))
-      if (inputIntersection.length === 0 && inputFiles.includes(filePath)) await this.call('fileManager', 'remove', fileName)
+    const buildDir = this.joinPath(path, this.innerPath, 'build-info/')
+    if (await this.call('fileManager', 'exists', buildDir)) {
+      const allBuildFiles = await this.call('fileManager', 'fileList', buildDir)
+      const currentInputFileNames = Object.keys(currentInput.sources)
+      for (const fileName of allBuildFiles) {
+        let fileContent = await this.call('fileManager', 'readFile', fileName)
+        fileContent = JSON.parse(fileContent)
+        const inputFiles = Object.keys(fileContent.input.sources)
+        const inputIntersection = currentInputFileNames.filter(element => !inputFiles.includes(element))
+        if (inputIntersection.length === 0 && inputFiles.includes(filePath)) await this.call('fileManager', 'remove', fileName)
+      }
     }
   }
 
