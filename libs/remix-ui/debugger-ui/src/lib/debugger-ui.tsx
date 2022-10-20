@@ -377,7 +377,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           <span>
             When Debugging with a transaction hash, 
             if the contract is verified, Remix will try to fetch the source code from Sourcify or Etherscan. Put in your Etherscan API key in the Remix settings.
-            For supported networks, please see: <a href="https://sourcify.dev" target="__blank" >https://sourcify.dev</a> & <a href="https://sourcify.dev" target="__blank">https://etherscan.io/contractsVerified</a>
+            For supported networks, please see: <a href="https://sourcify.dev" target="__blank" >https://sourcify.dev</a> & <a href="https://etherscan.io/contractsVerified" target="__blank">https://etherscan.io/contractsVerified</a>
           </span>
         </div> }
         { state.debugging && <StepManager stepManager={ stepManager } /> }
