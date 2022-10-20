@@ -1,12 +1,13 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { FormattedMessage } from 'react-intl'
 import { EnvironmentProps } from '../types'
 import { Dropdown } from 'react-bootstrap'
 import { CustomMenu, CustomToggle } from '@remix-ui/helper'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 
 export function EnvironmentUI (props: EnvironmentProps) {
+
   const handleChangeExEnv = (env: string) => {
     const provider = props.providers.providerList.find(exEnv => exEnv.value === env)
     const fork = provider.fork // can be undefined if connected to an external source (External Http Provider / injected)
@@ -16,8 +17,6 @@ export function EnvironmentUI (props: EnvironmentProps) {
 
     props.setExecutionContext({ context, fork })
   }
-
-  const intl = useIntl()
 
   const currentProvider = props.providers.providerList.find(exEnv => exEnv.value === props.selectedEnv)
   const bridges = {
@@ -68,12 +67,13 @@ export function EnvironmentUI (props: EnvironmentProps) {
             }
           </Dropdown.Menu>
         </Dropdown>
-        <a href="https://remix-ide.readthedocs.io/en/latest/run.html#environment" target="_blank" rel="noreferrer">
-          <i
-            className="udapp_infoDeployAction ml-2 fas fa-info"
-            title={intl.formatMessage({id: 'udapp.environmentDocs', defaultMessage: "Click for docs about Environment"})}
-          ></i>
-        </a>
+        <OverlayTrigger placement={'bottom-start'} overlay={
+          <Tooltip className="text-wrap" id="runAndDeployAddresstooltip">
+            <span><FormattedMessage id='udapp.environmentDocs' defaultMessage='Click for docs about Environment' /></span>
+          </Tooltip>
+        }>
+          <a href="https://remix-ide.readthedocs.io/en/latest/run.html#environment" target="_blank" rel="noreferrer"><i className="udapp_infoDeployAction ml-2 fas fa-info"></i></a>
+        </OverlayTrigger>
       </div>
     </div>
   )
