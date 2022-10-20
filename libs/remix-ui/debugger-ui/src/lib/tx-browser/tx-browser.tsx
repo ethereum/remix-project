@@ -66,7 +66,7 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
         </div>
         <div className='d-flex justify-content-center w-100 btn-group py-1'>
           <OverlayTrigger
-            placement={'bottom-start'}
+            placement={'bottom'}
             overlay={
               <Tooltip className={'text-nowrap'} id={'debuggingButtontooltip'}>
                 <span>
@@ -75,14 +75,14 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
               </Tooltip>
             }
           >
-            <div id="debuggerTransactionStartButtonContainer" data-id="debuggerTransactionStartButton" onClick={handleSubmit}>
+            <div id="debuggerTransactionStartButtonContainer" data-id="debuggerTransactionStartButton" onClick={handleSubmit} className="btn btn-primary btn-sm btn-block text-decoration-none">
               <button
-                className='btn btn-primary btn-sm txbutton'
+                className='btn btn-link btn-sm btn-block h-75 p-0 m-0 text-decoration-none'
                 id='load'
                 onClick={handleSubmit}
                 data-id='debuggerTransactionStartButton'
                 disabled={!state.txNumber }
-                style={{ pointerEvents: 'none' }}
+                style={{ pointerEvents: 'none', color: 'white' }}
               >
                   <span>{ debugging ? 'Stop' : 'Start' } debugging</span>
               </button>
