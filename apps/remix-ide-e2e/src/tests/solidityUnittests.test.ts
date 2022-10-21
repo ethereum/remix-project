@@ -152,9 +152,12 @@ module.exports = {
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('myTests/simple_storage_test.sol', sources[0]['tests/simple_storage_test.sol'])
       .clickLaunchIcon('solidityUnitTesting')
-      .clearValue('*[data-id="uiPathInput"]')
-      .setValue('*[data-id="uiPathInput"]', 'myTests')
+      .execute(() => {
+        const myQuery: any = document.getElementById('utPath')
+        myQuery.value = 'myTests'
+      })
       .click('*[data-id="testTabGenerateTestFolder"]')
+      .saveScreenshot('./reports/screenshots/changeCurrentPathg3.png')
       .clickElementAtPosition('.singleTest', 0, { forceSelectIfUnselected: true })
       .scrollAndClick('*[data-id="testTabRunTestsTabRunAction"]')
       .waitForElementPresent('*[data-id="testTabSolidityUnitTestsOutputheader"]', 60000)
@@ -359,15 +362,15 @@ const sources = [
 
       contract SimpleStorage {
         uint public storedData;
-      
+
         constructor() {
           storedData = 100;
         }
-      
+
         function set(uint x) public {
           storedData = x;
         }
-      
+
         function get() public view returns (uint retVal) {
           return storedData;
         }
@@ -408,7 +411,7 @@ const sources = [
       pragma solidity >=0.4.22 <0.9.0;
       contract Kickstarter {
           enum State { Started, Completed }
-      
+
           struct Project {
               address owner;
               string name;
@@ -420,10 +423,10 @@ const sources = [
           }
           uint numProjects;
           Project[] public projects;
-      
+
           constructor() {
           }
-      
+
           function createProject(string memory name, uint goal) public {
               projects.push(); // new line
               Project storage project = projects[projects.length - 1];
@@ -432,28 +435,28 @@ const sources = [
               project.owner = msg.sender;
               project.state = State.Started;
           }
-          
+
           function fundProject(uint projectId) payable public {
           Project storage project = projects[projectId];
               // require project exists
               // PLEASE CHECK / or erase
               // not this: require(projects[projectId].exists, "the project must exist to be funded");
-      
+
               // require for... underflow/overflow protection
               project.funders[msg.sender] += msg.value;
               project.amountContributed += msg.value;
               project.fundsAvailable += msg.value;
-      
+
               if (project.amountContributed >= project.goal) {
                   project.state = State.Completed;
               }
           }
-          
+
           // this function is here because we can't use web3 when using the VM
           function getContractBalance() public view returns(uint balance) {
               return address(this).balance;
           }
-            
+
       }
         `
     },
@@ -470,13 +473,13 @@ const sources = [
           enum State { Started, Completed }
 
           Kickstarter kickstarter;
-          
+
           function beforeAll () public {
             kickstarter = new Kickstarter();
             kickstarter.createProject("ProjectA", 123000);
             kickstarter.createProject("ProjectB", 100);
           }
-      
+
           /// #sender: account-1
           /// #value: 10000000
           function checkProjectExists () public payable {
@@ -512,14 +515,14 @@ const sources = [
               (address owner, string memory name, uint goal, uint fundsAvailable, uint amountContributed, Kickstarter.State state) = kickstarter.projects(0);
               Assert.equal(amountContributed, 120000, "contributed amount is incorrect");
           }
-          
+
       }
         `
     },
     'compilationError_test.sol': {
       content: `
       pragma solidity ^0.8.0;
-      
+
       contract failOnCompilation {
         fallback() {
 
@@ -547,7 +550,7 @@ const sources = [
            uint c = a+b;
            Assert.equal(a+b, c, "wrong value");
         }
-      } 
+      }
         `
     },
     'tests/ballotFailedDebug_test.sol': {
@@ -556,31 +559,31 @@ const sources = [
       pragma solidity >=0.7.0 <0.9.0;
       import "remix_tests.sol"; // this import is automatically injected by Remix.
       import "../contracts/3_Ballot.sol";
-      
+
       contract BallotTest {
-         
+
           bytes32[] proposalNames;
-         
+
           Ballot ballotToTest;
           function beforeAll () public {
               proposalNames.push(bytes32("candidate1"));
               ballotToTest = new Ballot(proposalNames);
           }
-          
+
           function checkWinningProposalFailed () public {
               ballotToTest.vote(1);
               Assert.equal(ballotToTest.winningProposal(), uint(0), "proposal at index 0 should be the winning proposal");
           }
-          
+
           function checkWinningProposalPassed () public {
               ballotToTest.vote(0);
               Assert.equal(ballotToTest.winningProposal(), uint(0), "proposal at index 0 should be the winning proposal");
           }
-          
+
           function checkWinningProposalAgain () public {
               Assert.equal(ballotToTest.winningProposal(), uint(1), "proposal at index 0 should be the winning proposal");
           }
-          
+
           function checkWinninProposalWithReturnValue () public view returns (bool) {
               return ballotToTest.winningProposal() == 0;
           }
@@ -594,17 +597,17 @@ const sources = [
       import "../contracts/3_Ballot.sol";
 
       import "hardhat/console.sol";
-      
+
       contract BallotTest {
-         
+
           bytes32[] proposalNames;
-         
+
           Ballot ballotToTest;
           function beforeAll () public {
               proposalNames.push(bytes32("candidate1"));
               ballotToTest = new Ballot(proposalNames);
           }
-          
+
           function checkWinningProposal () public {
               console.log("Inside checkWinningProposal");
               ballotToTest.vote(1); // This will revert the transaction
@@ -617,13 +620,13 @@ const sources = [
       pragma solidity >=0.7.0 <0.9.0;
       import "remix_tests.sol"; // this import is automatically injected by Remix.
       import "hardhat/console.sol";
-      
+
       contract hhLogs {
-        
+
           function beforeAll () public {
               console.log('Inside beforeAll');
           }
-          
+
           function checkSender () public {
               console.log('msg.sender is %s', msg.sender);
               Assert.ok(true, "should be true");

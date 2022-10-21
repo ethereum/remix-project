@@ -6,7 +6,7 @@ import { CustomMenu, CustomToggle } from '@remix-ui/helper'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 
 export function EnvironmentUI (props: EnvironmentProps) {
- 
+
 
   const handleChangeExEnv = (env: string) => {
     const provider = props.providers.providerList.find(exEnv => exEnv.value === env)
@@ -49,7 +49,7 @@ export function EnvironmentUI (props: EnvironmentProps) {
               </Tooltip>
             }>
             <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-plug'} aria-hidden="true" onClick={() => { window.open(bridges[currentProvider.value], '_blank') }}></i>
-        </OverlayTrigger>}           
+        </OverlayTrigger>}
           </Dropdown.Toggle>
           <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items" >
             {
@@ -67,7 +67,13 @@ export function EnvironmentUI (props: EnvironmentProps) {
             }
           </Dropdown.Menu>
         </Dropdown>
-        <a href="https://remix-ide.readthedocs.io/en/latest/run.html#environment" target="_blank" rel="noreferrer"><i className="udapp_infoDeployAction ml-2 fas fa-info" title="Click for docs about Environment"></i></a>
+        <OverlayTrigger placement={'bottom-start'} overlay={
+          <Tooltip className="text-wrap" id="runAndDeployAddresstooltip">
+            <span>{"Click for docs about Environment"}</span>
+          </Tooltip>
+        }>
+          <a href="https://remix-ide.readthedocs.io/en/latest/run.html#environment" target="_blank" rel="noreferrer"><i className="udapp_infoDeployAction ml-2 fas fa-info"></i></a>
+        </OverlayTrigger>
       </div>
     </div>
   )

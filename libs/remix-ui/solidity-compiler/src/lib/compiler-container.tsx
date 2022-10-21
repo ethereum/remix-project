@@ -727,8 +727,26 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         <div className='pt-0 remixui_compilerSection'>
           <div className="mb-1">
             <label className="remixui_compilerLabel form-check-label" htmlFor="versionSelector">Compiler</label>
-            <span className="far fa-plus border-0 p-0 ml-3" onClick={() => promptCompiler()} title="Add a custom compiler with URL"></span>
-            <span className="fa fa-file-text-o border-0 p-0 ml-2" onClick={() => showCompilerLicense()} title="See compiler license"></span>
+            <OverlayTrigger
+              placement="top"
+              overlay={
+                <Tooltip id="promptCompilerTooltip" className="text-nowrap">
+                  <span>{"Add a custom compiler with URL"}</span>
+                </Tooltip>
+              }
+            >
+              <span className="far fa-plus border-0 p-0 ml-3" onClick={() => promptCompiler()}></span>
+            </OverlayTrigger>
+            <OverlayTrigger
+              placement="top"
+              overlay={
+                <Tooltip id="showCompilerTooltip" className="text-nowrap">
+                  <span>{"See compiler license"}</span>
+                </Tooltip>
+              }
+            >
+              <span className="fa fa-file-text-o border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
+            </OverlayTrigger>
             <select value={state.selectedVersion || state.defaultVersion} onChange={(e) => handleLoadVersion(e.target.value)} className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
               {state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === state.defaultVersion ? 'selected' : ''}>{state.defaultVersion}</option>}
               {state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === 'builtin' ? 'selected' : ''}>builtin</option>}
@@ -804,10 +822,19 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           <div className={`flex-column 'd-flex'}`}>
             <div className="mb-2 ml-4">
               <label className="remixui_compilerLabel form-check-label" htmlFor="compilierLanguageSelector">Language</label>
-              <select onChange={(e) => handleLanguageChange(e.target.value)} disabled={state.useFileConfiguration} value={state.language} className="custom-select" id="compilierLanguageSelector" title="Language specification available from Compiler >= v0.5.7">
-                <option data-id={state.language === 'Solidity' ? 'selected' : ''} value='Solidity'>Solidity</option>
-                <option data-id={state.language === 'Yul' ? 'selected' : ''} value='Yul'>Yul</option>
-              </select>
+              <OverlayTrigger
+                placement="right-start"
+                overlay={
+                  <Tooltip id="compilerLabelTooltip" className="text-nowrap">
+                    <span>{'Language specification available from   Compiler >= v0.5.7'}</span>
+                  </Tooltip>
+                }
+              >
+                <select onChange={(e) => handleLanguageChange(e.target.value)} disabled={state.useFileConfiguration} value={state.language} className="custom-select" id="compilierLanguageSelector">
+                  <option data-id={state.language === 'Solidity' ? 'selected' : ''} value='Solidity'>Solidity</option>
+                  <option data-id={state.language === 'Yul' ? 'selected' : ''} value='Yul'>Yul</option>
+                </select>
+              </OverlayTrigger>
             </div>
             <div className="mb-2 ml-4">
               <label className="remixui_compilerLabel form-check-label" htmlFor="evmVersionSelector">EVM Version</label>
@@ -838,11 +865,21 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <label className="form-check-label custom-control-label" htmlFor="scFileConfig" data-id="scFileConfiguration">Use configuration file</label>
           </div>
           <div className={`pt-2 ml-4 ml-2 align-items-start justify-content-between d-flex`}>
-            {(!showFilePathInput && state.useFileConfiguration) && <span
-              title="Click to open the config file"
-              onClick={configFilePath === '' ? () => { } : async () => { await openFile() }}
-              className="py-2 remixui_compilerConfigPath"
-            >{configFilePath === '' ? 'No file selected.' : configFilePath}</span>}
+            {(!showFilePathInput && state.useFileConfiguration) && <OverlayTrigger
+                placement="bottom"
+                overlay={
+                  <Tooltip id="configfileTooltip" className="text-nowrap">
+                    <span>
+                      Click to open the config file
+                    </span>
+                  </Tooltip>
+                }
+              >
+                <span
+                  onClick={configFilePath === '' ? () => { } : async () => { await openFile() }}
+                  className="py-2 remixui_compilerConfigPath"
+                >{configFilePath === '' ? 'No file selected.' : configFilePath}</span>
+              </OverlayTrigger>}
             {(!showFilePathInput && !state.useFileConfiguration) && <span className="py-2 text-secondary">{configFilePath}</span>}
             <input
               ref={configFilePathInput}
