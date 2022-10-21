@@ -27,9 +27,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
   }
 
   const tooltipChild = (
-    <div className="swapitHeaderInfoSection d-flex justify-content-between" data-id='swapitHeaderInfoSectionId' onClick={toggleClass}>
-              <i className={`px-2 ml-2 pt-1 pb-4 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
-            </div>
+    <i className={`px-2 ml-2 pt-1 pb-4 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
   )
 
   return (
@@ -51,14 +49,16 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
               </OverlayTrigger>
             )}
           </div>
-          <CustomTooltip
-            placement="right-end"
-            tooltipText="Plugin info"
-            tooltipId="pluginInfoTooltip"
-            tooltipClasses="text-nowrap"
-          >
-            {tooltipChild}
-          </CustomTooltip>
+          <div className="swapitHeaderInfoSection d-flex justify-content-between" data-id='swapitHeaderInfoSectionId' onClick={toggleClass}>
+            <CustomTooltip
+              placement="right-end"
+              tooltipText="Plugin info"
+              tooltipId="pluginInfoTooltip"
+              tooltipClasses="text-nowrap"
+            >
+              {tooltipChild}
+            </CustomTooltip>
+          </div>
         </div>
       </div>
       <div className={`bg-light mx-3 mb-2 p-3 pt-1 border-bottom flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
