@@ -91,7 +91,7 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
           placement="top-start"
           overlay={
             <Tooltip className="text-nowrap" id="intoforwardTooltip">
-              <span>Step over forward</span>
+              <span>Step into</span>
             </Tooltip>
           }
         >
@@ -107,7 +107,7 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
           placement="top-end"
           overlay={
             <Tooltip className="text-nowrap" id="overforwardTooltip">
-              <span>Step into</span>
+              <span>Step over forward</span>
             </Tooltip>
           }
         >
