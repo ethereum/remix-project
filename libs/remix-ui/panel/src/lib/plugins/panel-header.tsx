@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react' // eslint-disable-lin
 import { PluginRecord } from '../types'
 import './panel.css'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { CustomTooltip } from '@remix-ui/helper'
 
 export interface RemixPanelProps {
   plugins: Record<string, PluginRecord>;
@@ -25,6 +26,12 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
     setToggleExpander(!toggleExpander)
   }
 
+  const tooltipChild = (
+    <div className="swapitHeaderInfoSection d-flex justify-content-between" data-id='swapitHeaderInfoSectionId' onClick={toggleClass}>
+              <i className={`px-2 ml-2 pt-1 pb-4 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
+            </div>
+  )
+
   return (
     <header className='d-flex flex-column'>
       <div className="swapitHeader px-3 pt-2 pb-0 d-flex flex-row">
@@ -44,15 +51,14 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
               </OverlayTrigger>
             )}
           </div>
-          <OverlayTrigger overlay={
-            <Tooltip className="text-nowrap" id="pluginInfoTooltip">
-              <span>Plugin info</span>
-            </Tooltip>
-          } placement={'right-end'}>
-            <div className="swapitHeaderInfoSection d-flex justify-content-between" data-id='swapitHeaderInfoSectionId' onClick={toggleClass}>
-              <i className={`px-2 ml-2 pt-1 pb-4 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
-            </div>
-          </OverlayTrigger>
+          <CustomTooltip
+            placement="right-end"
+            tooltipText="Plugin info"
+            tooltipId="pluginInfoTooltip"
+            tooltipClasses="text-nowrap"
+          >
+            {tooltipChild}
+          </CustomTooltip>
         </div>
       </div>
       <div className={`bg-light mx-3 mb-2 p-3 pt-1 border-bottom flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
