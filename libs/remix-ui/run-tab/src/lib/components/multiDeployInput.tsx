@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { MultiDeployInputProps } from '../types'
 import { DeployButton } from './deployButton'
 
@@ -16,7 +17,16 @@ export function MultiDeployInput(props: MultiDeployInputProps) {
             return (
               <div className="udapp_multiArg" key={index}>
                 <label htmlFor={inp.name}> {inp.name}: </label>
-                <input ref={el => { multiFields.current[index] = el }} className="form-control" placeholder={inp.type} title={inp.name} data-id={`multiParamManagerInput${inp.name}`} />
+                <OverlayTrigger
+                  placement="left-end"
+                  overlay={
+                    <Tooltip id="udappMultiArgTooltip" className="text-nowrap">
+                      <span>{inp.name}</span>
+                    </Tooltip>
+                  }
+                >
+                  <input ref={el => { multiFields.current[index] = el }} className="form-control" placeholder={inp.type} data-id={`multiParamManagerInput${inp.name}`} />
+                </OverlayTrigger>
               </div>)
           })}
         </div>
