@@ -13,6 +13,7 @@
     }
   ],
   "main": "src/index.js",
+  "type": "module",
   "dependencies": {
     "@ethereumjs/block": "^3.5.1",
     "@ethereumjs/common": "^2.5.0",
@@ -45,9 +46,6 @@
     "babel-eslint": "^7.1.1",
     "babelify": "^10.0.0",
     "mocha": "^5.2.0"
-  },
-  "scripts": {
-    "test": "./../../node_modules/.bin/ts-node --require tsconfig-paths/register ./../../node_modules/.bin/mocha test/*.ts"
   },
   "publishConfig": {
     "access": "public"

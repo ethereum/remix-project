@@ -17,6 +17,7 @@
     }
   ],
   "main": "src/index.js",
+  "type": "module",
   "dependencies": {
     "@ethereumjs/block": "^3.5.1",
     "@ethereumjs/common": "^2.5.0",
@@ -50,9 +51,6 @@
     "babelify": "^10.0.0",
     "solc": "^0.7.4",
     "tape": "^4.6.0"
-  },
-  "scripts": {
-    "test": "./../../node_modules/.bin/ts-node --require tsconfig-paths/register ./../../node_modules/.bin/tape ./test/tests.ts"
   },
   "publishConfig": {
     "access": "public"

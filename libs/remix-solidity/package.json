@@ -3,6 +3,7 @@
   "version": "0.5.2",
   "description": "Tool to load and run Solidity compiler",
   "main": "src/index.js",
+  "type": "module",
   "types": "src/index.d.ts",
   "contributors": [
     {
@@ -42,10 +43,6 @@
     "babel-eslint": "^10.0.0",
     "babelify": "^10.0.0",
     "typescript": "^3.7.4"
-  },
-  "scripts": {
-    "build": "tsc",
-    "test": "./../../node_modules/.bin/tape ./test/tests.js"
   },
   "publishConfig": {
     "access": "public"

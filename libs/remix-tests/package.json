@@ -4,6 +4,7 @@
   "description": "Tool to test Solidity smart contracts",
   "main": "src/index.js",
   "types": "./src/index.d.ts",
+  "type": "module",
   "contributors": [
     {
       "name": "Iuri Matias",
@@ -16,10 +17,6 @@
   ],
   "bin": {
     "remix-tests": "./bin/remix-tests"
-  },
-  "scripts": {
-    "build": "tsc",
-    "test": "node --expose-gc ./../../node_modules/.bin/jest --runInBand --logHeapUsage "
   },
   "publishConfig": {
     "access": "public"

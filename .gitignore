@@ -56,3 +56,5 @@ testem.log
 .DS_Store
 .vscode/settings.json
 .vscode/launch.json
+libs/remix-node/
+libs/remix-niks/

@@ -13,6 +13,7 @@
     }
   ],
   "main": "src/index.js",
+  "type": "module",
   "dependencies": {
     "@ethereumjs/block": "^3.5.1",
     "@ethereumjs/tx": "^3.3.2",
@@ -36,9 +37,6 @@
     "babel-eslint": "^7.1.1",
     "babelify": "^10.0.0",
     "tape": "^4.6.0"
-  },
-  "scripts": {
-    "test": "./../../node_modules/.bin/ts-node --require tsconfig-paths/register ./../../node_modules/.bin/tape ./test/tests.ts"
   },
   "publishConfig": {
     "access": "public"
