@@ -1,3 +1,4 @@
+import { CustomTooltip } from '@remix-ui/helper';
 import React, { CSSProperties } from 'react'  //eslint-disable-line
 import { OverlayProps, OverlayTrigger, OverlayTriggerProps, Tooltip } from 'react-bootstrap'// eslint-disable-line
 import './remix-ui-checkbox.css'
@@ -36,15 +37,8 @@ export const RemixUiCheckbox = ({
   display = 'flex',
   tooltipPlacement = 'right-start'
 }: RemixUiCheckboxProps) => {
-  return (
-    <OverlayTrigger
-      placement={tooltipPlacement}
-      overlay={
-        <Tooltip id={`${name}Tooltip`}>
-          <span>{title}</span>
-        </Tooltip>
-      }
-    >
+
+  const childJSX = (
       <div className="listenOnNetwork_2A0YE0 custom-control custom-checkbox" style={{ display: display, alignItems: 'center', visibility: visibility } as CSSProperties } onClick={onClick}>
         <input
           id={id}
@@ -60,7 +54,16 @@ export const RemixUiCheckbox = ({
           {label}
         </label>
       </div>
-    </OverlayTrigger>
+    )
+  return (
+    <CustomTooltip
+      tooltipText={title}
+      tooltipId={`${name}Tooltip`}
+      placement={tooltipPlacement}
+      
+    >
+      {childJSX}
+    </CustomTooltip>
   )
 }
 
