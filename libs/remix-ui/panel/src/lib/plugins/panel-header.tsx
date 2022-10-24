@@ -34,7 +34,18 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
         </h6>
         <div className="d-flex flex-row">
           <div className="d-flex flex-row">
-            {plugin?.profile?.maintainedBy?.toLowerCase() === "remix" && (<i aria-hidden="true" className="text-success mt-1 px-1 fas fa-check" title="Maintained by Remix"></i>)}
+            {plugin?.profile?.maintainedBy?.toLowerCase() === "remix" && (
+              <OverlayTrigger
+                placement="right"
+                overlay={
+                  <Tooltip id="maintainedByTooltip" className="text-nowrap">
+                    <span>{"Maintained by Remix"}</span>
+                  </Tooltip>
+                }
+              >
+                <i aria-hidden="true" className="text-success mt-1 px-1 fas fa-check"></i>
+              </OverlayTrigger>
+            )}
           </div>
           <OverlayTrigger overlay={
             <Tooltip className="text-nowrap" id="pluginInfoTooltip">

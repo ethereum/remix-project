@@ -10,6 +10,7 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { isValidHash } from '@remix-ui/helper'
 /* eslint-disable-next-line */
 import './debugger-ui.css'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 const _paq = (window as any)._paq = (window as any)._paq || []
 
 export const DebuggerUI = (props: DebuggerUIProps) => {
@@ -352,12 +353,21 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       <div className="px-2" ref={debuggerTopRef}>
         <div>
           <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
-            <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={({ target: { checked } }) => {
+          <OverlayTrigger overlay={
+            <Tooltip id="debuggerGenSourceCheckbox">
+              <span>{"Debug with generated sources"}</span>
+            </Tooltip>
+          } placement="top-start"
+          >
+            <span className="p-0 m-0">
+              <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={({ target: { checked } }) => {
               setState(prevState => {
                 return { ...prevState, opt: { ...prevState.opt, debugWithGeneratedSources: checked } }
               })
-            }} type="checkbox" title="Debug with generated sources" />
+            }} type="checkbox" />
             <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Use generated sources (Solidity {'>='} v0.7.2)</label>
+            </span>
+          </OverlayTrigger>
           </div>
           { state.isLocalNodeUsed && <div className="mb-2 debuggerConfig custom-control custom-checkbox">
             <input className="custom-control-input" id="debugWithLocalNodeInput" onChange={({ target: { checked } }) => {
@@ -378,7 +388,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           <span>
             <FormattedMessage id='debugger.introduction' defaultMessage='When Debugging with a transaction hash,
               if the contract is verified, Remix will try to fetch the source code from Sourcify or Etherscan. Put in your Etherscan API key in the Remix settings.
-              For supported networks, please see' />: <a href="https://sourcify.dev" target="__blank" >https://sourcify.dev</a> & <a href="https://sourcify.dev" target="__blank">https://etherscan.io/contractsVerified</a>
+              For supported networks, please see' />: <a href="https://sourcify.dev" target="__blank" >https://sourcify.dev</a> & <a href="https://etherscan.io/contractsVerified" target="__blank">https://etherscan.io/contractsVerified</a>
           </span>
         </div> }
         { state.debugging && <StepManager stepManager={ stepManager } /> }
