@@ -136,6 +136,7 @@ export const EditorUI = (props: EditorUIProps) => {
   \t\t\t\t\t\t\t\tMedium: https://medium.com/remix-ide\n
   \t\t\t\t\t\t\t\tTwitter: https://twitter.com/ethereumremix\n
   `
+  const pasteCodeRef = useRef(false)
   const editorRef = useRef(null)
   const monacoRef = useRef<Monaco>(null)
   const currentFileRef = useRef('')
@@ -543,7 +544,7 @@ export const EditorUI = (props: EditorUIProps) => {
     })
 
     editor.onDidPaste((e) => {
-      if (e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
+       if (!pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
         const modalContent: AlertModal = {
           id: 'newCodePasted',
           title: 'New pasted code detected!',
@@ -553,17 +554,18 @@ export const EditorUI = (props: EditorUIProps) => {
               <div>
                 Please make sure you fully understand this new code before executing <b>any</b> transaction that uses it. 
                 <div>
-                Your wallet might be exposed and at risk if you run untrusted code. In a worst-case scenario you could loose all your money.
+                Your wallet might be exposed and <span className='text-warning'> at risk </span> if you run untrusted code. In a worst-case scenario you could <span className='text-warning'>loose all your money</span>.
                 </div>
-                If you don't fully understand it, please don't run this code.
+                <span className='text-warning'>If you don't fully understand it, please don't run this code.</span>
                 <div>
-                If you are not a smart contract developer, please ask assistance to someone you trust and has the skills to determine whether this code is safe to use.
+                If you are not a smart contract developer, please ask assistance to someone you trust and has the appropirate skills to determine whether this code is safe to use.
                 </div>
               </div>
             </div>
           ),
         }
         props.plugin.call('notification', 'alert', modalContent)
+        pasteCodeRef.current = true
       }
     })
 
