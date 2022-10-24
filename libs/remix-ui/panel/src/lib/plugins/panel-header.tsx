@@ -27,13 +27,13 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
   }
 
   const tooltipChild = (
-    <i className={`px-2 ml-2 pt-1 pb-4 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
+    <i className={`px-1 ml-2 pt-1 pb-2 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
   )
 
   return (
     <header className='d-flex flex-column'>
       <div className="swapitHeader px-3 pt-2 pb-0 d-flex flex-row">
-        <h6 className="mb-3" data-id='sidePanelSwapitTitle'>{plugin?.profile.displayName || plugin?.profile.name}</h6>
+        <h6 className="pt-0 mb-1" data-id='sidePanelSwapitTitle'>{plugin?.profile.displayName || plugin?.profile.name}</h6>
         <div className="d-flex flex-row">
           <div className="d-flex flex-row">
             {plugin?.profile?.maintainedBy?.toLowerCase() === "remix" && (
@@ -61,6 +61,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
           </div>
         </div>
       </div>
+      <div className="d-flex w-100 flex-row py-2"></div>
       <div className={`bg-light mx-3 mb-2 p-3 pt-1 border-bottom flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
         {plugin?.profile?.author && <span className="d-flex flex-row align-items-center">
           <label className="mb-0 pr-2">Author:</label>
