@@ -535,7 +535,7 @@ export function Workspace () {
 
   return (
     <div className='d-flex flex-column justify-content-between h-100'>
-      <div className='remixui_container'>
+      <div className='remixui_container overflow-auto' style={{ maxHeight: selectedWorkspace && selectedWorkspace.isGitRepo ? '95%' : '100%' }}>
         <div className='d-flex flex-column w-100 remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
           <div>
             <header>
