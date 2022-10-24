@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 
 import Editor, { loader, Monaco } from '@monaco-editor/react'
+import { AlertModal } from '@remix-ui/app'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solidity'
 import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
@@ -538,6 +539,31 @@ export const EditorUI = (props: EditorUIProps) => {
     editor.onMouseUp((e) => {
       if (e && e.target && e.target.toString().startsWith('GUTTER')) {
         (window as any).addRemixBreakpoint(e.target.position)
+      }
+    })
+
+    editor.onDidPaste((e) => {
+      if (e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
+        const modalContent: AlertModal = {
+          id: 'newCodePasted',
+          title: 'New pasted code detected!',
+          message: (
+            <div> <i className="fas fa-exclamation-triangle text-danger mr-1"></i>
+              Remix detected you have just pasted a consequent code snippet or contract in the editor.
+              <div>
+                Please make sure you fully understand this new code before executing <b>any</b> transaction that uses it. 
+                <div>
+                Your wallet might be exposed and at risk if you run untrusted code. In a worst-case scenario you could loose all your money.
+                </div>
+                If you don't fully understand it, please don't run this code.
+                <div>
+                If you are not a smart contract developer, please ask assistance to someone you trust and has the skills to determine whether this code is safe to use.
+                </div>
+              </div>
+            </div>
+          ),
+        }
+        props.plugin.call('notification', 'alert', modalContent)
       }
     })
 
