@@ -547,19 +547,20 @@ export const EditorUI = (props: EditorUIProps) => {
        if (!pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
         const modalContent: AlertModal = {
           id: 'newCodePasted',
-          title: 'New pasted code detected!',
+          title: 'Pasted Code Alert',
           message: (
             <div> <i className="fas fa-exclamation-triangle text-danger mr-1"></i>
-              Remix detected you have just pasted a consequent code snippet or contract in the editor.
+              You have just pasted a code snippet or contract in the editor.
               <div>
-                Please make sure you fully understand this new code before executing <b>any</b> transaction that uses it. 
-                <div>
-                Your wallet might be exposed and <span className='text-warning'> at risk </span> if you run untrusted code. In a worst-case scenario you could <span className='text-warning'>loose all your money</span>.
+                Make sure you fully understand this code before deploying or interacting with it. Don't get scammed!
+                <div className='mt-2'>
+                Running untrusted code can put your wallet <span className='text-warning'> at risk </span>. In a worst-case scenario, you could <span className='text-warning'>loose all your money</span>.
                 </div>
-                <span className='text-warning'>If you don't fully understand it, please don't run this code.</span>
-                <div>
-                If you are not a smart contract developer, please ask assistance to someone you trust and has the appropirate skills to determine whether this code is safe to use.
+                <div className='text-warning  mt-2'>If you don't fully understand it, please don't run this code.</div>
+                <div className='mt-2'>
+                If you are not a smart contract developer, ask someone you trust who has the skills to determine if this code is safe to use.
                 </div>
+                <div className='mt-2'>See <a target="_blank" href='https://remix-ide.readthedocs.io/en/latest/security.html'> these recommendations </a> for more information.</div>
               </div>
             </div>
           ),
