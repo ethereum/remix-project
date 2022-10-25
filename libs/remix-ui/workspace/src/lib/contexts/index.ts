@@ -32,6 +32,10 @@ export const FileSystemContext = createContext<{
   dispatchHandleRestoreBackup: () => Promise<void>
   dispatchCloneRepository: (url: string) => Promise<void>,
   dispatchMoveFile: (src: string, dest: string) => Promise<void>,
-  dispatchMoveFolder: (src: string, dest: string) => Promise<void>
+  dispatchMoveFolder: (src: string, dest: string) => Promise<void>,
+  dispatchShowAllBranches: () => Promise<void>,
+  dispatchSwitchToBranch: (branch: string) => Promise<void>,
+  dispatchCreateNewBranch: (branch: string) => Promise<void>,
+  dispatchCheckoutRemoteBranch: (branch: string, remote: string) => Promise<void>
     }>(null)
     
