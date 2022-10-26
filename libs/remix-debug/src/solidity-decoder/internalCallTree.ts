@@ -6,6 +6,17 @@ import { EventManager } from '../eventManager'
 import { parseType } from './decodeInfo'
 import { isContractCreation, isCallInstruction, isCreateInstruction, isJumpDestInstruction } from '../trace/traceHelper'
 import { extractLocationFromAstVariable } from './types/util'
+import { Uint } from './types/Uint'
+
+export type StepDetail = {
+  depth: number,
+  gas: number,
+  gasCost: number,
+  memory: number[],
+  op: string,
+  pc: number,
+  stack: number[],
+}
 
 /**
  * Tree representing internal jump into function.
@@ -27,6 +38,9 @@ export class InternalCallTree {
   functionDefinitionByFile
   astWalker
   reducedTrace
+  locationAndOpcodePerVMTraceIndex: {
+    [Key: number]: any
+  }
 
   /**
     * constructor
@@ -89,6 +103,7 @@ export class InternalCallTree {
     this.functionDefinitionByFile = {}
     this.astWalker = new AstWalker()
     this.reducedTrace = []
+    this.locationAndOpcodePerVMTraceIndex = {}
   }
 
   /**
@@ -145,6 +160,7 @@ export class InternalCallTree {
     try {
       const address = this.traceManager.getCurrentCalledAddressAt(step)
       const location = await this.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, step, this.solidityProxy.contracts)
+      
       return location
     } catch (error) {
       throw new Error('InternalCallTree - Cannot retrieve sourcelocation for step ' + step + ' ' + error)
@@ -159,6 +175,10 @@ export class InternalCallTree {
     } catch (error) {
       throw new Error('InternalCallTree - Cannot retrieve valid sourcelocation for step ' + step + ' ' + error)
     }
+  }
+
+  async getValidSourceLocationFromVMTraceIndexFromCache (address: string, step: number, contracts: any) {
+    return await this.sourceLocationTracker.getValidSourceLocationFromVMTraceIndexFromCache(address, step, contracts, this.locationAndOpcodePerVMTraceIndex)
   }
 }
 
@@ -201,8 +221,11 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
     if (!sourceLocation) {
       return { outStep: step, error: 'InternalCallTree - No source Location. ' + step }
     }
-    const isCallInstrn = isCallInstruction(tree.traceManager.trace[step])
-    const isCreateInstrn = isCreateInstruction(tree.traceManager.trace[step])
+    const stepDetail: StepDetail = tree.traceManager.trace[step]
+    tree.locationAndOpcodePerVMTraceIndex[step] = { ...sourceLocation, ...stepDetail }
+    console.log('locationAndOpcodePerVMTraceIndex', stepDetail)
+    const isCallInstrn = isCallInstruction(stepDetail)
+    const isCreateInstrn = isCreateInstruction(stepDetail)
     // we are checking if we are jumping in a new CALL or in an internal function
     if (isCallInstrn || sourceLocation.jump === 'i') {
       try {

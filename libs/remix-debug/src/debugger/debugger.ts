@@ -76,7 +76,7 @@ export class Debugger {
         return
       }
 
-      this.debugger.callTree.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, index, compilationResultForAddress.data.contracts).then(async (rawLocation) => {
+      this.debugger.callTree.getValidSourceLocationFromVMTraceIndexFromCache(address, index, compilationResultForAddress.data.contracts).then(async (rawLocation) => {
         if (compilationResultForAddress && compilationResultForAddress.data) {
           const generatedSources = this.debugger.callTree.sourceLocationTracker.getGeneratedSourcesFromAddress(address)
           const astSources = Object.assign({}, compilationResultForAddress.data.sources)
