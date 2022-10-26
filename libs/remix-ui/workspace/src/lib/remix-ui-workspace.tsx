@@ -221,8 +221,10 @@ export function Workspace () {
     try {
       if (branch.remote) {
         await global.dispatchCheckoutRemoteBranch(branch.name, branch.remote)
+        _paq.push(['trackEvent', 'Workspace', 'GIT', 'checkout_remote_branch'])
       } else {
         await global.dispatchSwitchToBranch(branch.name)
+        _paq.push(['trackEvent', 'Workspace', 'GIT', 'switch_to_exisiting_branch'])
       }
     } catch (e) {
       console.error(e)
@@ -233,6 +235,7 @@ export function Workspace () {
   const switchToNewBranch = async () => {
     try {
       await global.dispatchCreateNewBranch(branchFilter)
+      _paq.push(['trackEvent', 'Workspace', 'GIT', 'switch_to_new_branch'])
     } catch (e) {
       global.modal('Checkout Git Branch', e.message, 'OK', () => {})
     }
@@ -721,52 +724,57 @@ export function Workspace () {
         </div>
         {
           selectedWorkspace &&
-          <div className={`bg-light border-top ${selectedWorkspace.isGitRepo ? 'd-block' : 'd-none'}`}>
+          <div className={`bg-light border-top ${selectedWorkspace.isGitRepo ? 'd-block' : 'd-none'}`} data-id="workspaceGitPanel">
             <div className='d-flex justify-space-between p-1'>
               <div className="mr-auto text-uppercase text-dark pt-2 pl-2">GIT</div>
-              <div className="pt-1 mr-1">
+              <div className="pt-1 mr-1" data-id="workspaceGitBranchesDropdown">
                 <Dropdown style={{ height: 30, minWidth: 80 }} onToggle={toggleBranches} show={showBranches} drop={'up'}>
                   <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control h-100 p-0 pl-2 pr-2 text-dark" icon={null}>
                     { global.fs.browser.isRequestingCloning ? <i className="fad fa-spinner fa-spin"></i> : currentBranch || '-none-' }
                   </Dropdown.Toggle>
 
-                  <Dropdown.Menu as={CustomMenu} className='custom-dropdown-items branches-dropdown' data-id="custom-dropdown-items">
-                    <div className='d-flex text-dark' style={{ fontSize: 14, fontWeight: 'bold' }}>
-                      <span className='mt-2 ml-2 mr-auto'>Switch branches</span>
-                      <div className='pt-2 pr-2' onClick={() => { toggleBranches(false) }}><i className='fa fa-close'></i>
+                  <Dropdown.Menu as={CustomMenu} className='custom-dropdown-items branches-dropdown'>
+                    <div data-id="custom-dropdown-menu">
+                      <div className='d-flex text-dark' style={{ fontSize: 14, fontWeight: 'bold' }}>
+                        <span className='mt-2 ml-2 mr-auto'>Switch branches</span>
+                        <div className='pt-2 pr-2' onClick={() => { toggleBranches(false) }}><i className='fa fa-close'></i>
+                        </div>
                       </div>
-                    </div>
-                    <div className='border-top py-2'>
-                      <input
-                        className='form-control border checkout-input bg-light'
-                        placeholder='Find or create a branch.'
-                        style={{ minWidth: 225 }}
-                        onChange={handleBranchFilterChange}
-                      />
-                    </div>
-                    <div className='border-top' style={{ maxHeight: 120, overflowY: 'scroll' }}>
+                      <div className='border-top py-2'>
+                        <input
+                          className='form-control border checkout-input bg-light'
+                          placeholder='Find or create a branch.'
+                          style={{ minWidth: 225 }}
+                          onChange={handleBranchFilterChange}
+                          data-id='workspaceGitInput'
+                        />
+                      </div>
+                      <div className='border-top' style={{ maxHeight: 120, overflowY: 'scroll' }} data-id="custom-dropdown-items">
+                        {
+                          filteredBranches.length > 0 ? filteredBranches.map((branch, index) => {
+                            return (
+                              <Dropdown.Item key={index} onClick={() => { switchToBranch(branch) }} title={branch.remote ? 'Checkout new branch from remote branch' : 'Checkout to local branch'}>
+                                <div data-id={`workspaceGit-${ branch.remote ? `${branch.remote}/${branch.name}` : branch.name }`}>
+                                  {
+                                    (currentBranch === branch.name) && !branch.remote ?
+                                    <span>&#10003; <i className='far fa-code-branch'></i><span className='pl-1'>{ branch.name }</span></span> :
+                                    <span className='pl-3'><i className={`far ${ branch.remote ? 'fa-cloud' : 'fa-code-branch'}`}></i><span className='pl-1'>{ branch.remote ? `${branch.remote}/${branch.name}` : branch.name }</span></span>
+                                  }
+                                </div>
+                              </Dropdown.Item>
+                            )
+                          }) : 
+                          <Dropdown.Item onClick={switchToNewBranch}>
+                            <div className="pl-1 pr-1" data-id="workspaceGitCreateNewBranch">
+                              <i className="fas fa-code-branch pr-2"></i><span>Create branch: { branchFilter } from '{currentBranch}'</span>
+                            </div>
+                          </Dropdown.Item>
+                        }
+                      </div>
                       {
-                        filteredBranches.length > 0 ? filteredBranches.map((branch, index) => {
-                          return (
-                            <Dropdown.Item key={index} onClick={() => { switchToBranch(branch) }} title={branch.remote ? 'Checkout new branch from remote branch' : 'Checkout to local branch'}>
-                              { 
-                                (currentBranch === branch.name) && !branch.remote ?
-                                <span>&#10003; <i className='far fa-code-branch'></i><span className='pl-1'>{ branch.name }</span></span> :
-                                <span className='pl-3'><i className={`far ${ branch.remote ? 'fa-cloud' : 'fa-code-branch'}`}></i><span className='pl-1'>{ branch.remote ? `${branch.remote}/${branch.name}` : branch.name }</span></span>
-                              }
-                            </Dropdown.Item>
-                          )
-                        }) : 
-                        <Dropdown.Item onClick={switchToNewBranch}>
-                          <div className="pl-1 pr-1">
-                            <i className="fas fa-code-branch pr-2"></i><span>Create branch: { branchFilter } from '{currentBranch}'</span>
-                          </div>
-                        </Dropdown.Item>
+                        (selectedWorkspace.branches || []).length > 4 && <div className='text-center border-top pt-2'><a href='#' style={{ fontSize: 12 }} onClick={showAllBranches}>view all branches</a></div>
                       }
                     </div>
-                    {
-                      (selectedWorkspace.branches || []).length > 4 && <div className='text-center border-top pt-2'><a href='#' style={{ fontSize: 12 }} onClick={showAllBranches}>view all branches</a></div>
-                    }
                   </Dropdown.Menu>
                 </Dropdown>
               </div>
