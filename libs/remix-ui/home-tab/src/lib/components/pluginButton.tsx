@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext } from 'react'
 import { ThemeContext } from '../themeContext'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 import { CustomTooltip } from '@remix-ui/helper'
 interface PluginButtonProps {
   imgPath: string,

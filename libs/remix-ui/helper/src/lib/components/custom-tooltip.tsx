@@ -12,7 +12,7 @@ export function CustomTooltip({ children, placement, tooltipId, tooltipClasses, 
         placement={placement}
         overlay={
           <Tooltip id={!tooltipId ? `${tooltipText}Tooltip` : tooltipId} className={tooltipClasses}>
-            {typeof tooltipText === 'string' ? (<span className={tooltipTextClasses}>{tooltipText}</span>) : (tooltipText)}
+            <span className={tooltipTextClasses}>{tooltipText}</span>
           </Tooltip>
         }
         delay={delay}
