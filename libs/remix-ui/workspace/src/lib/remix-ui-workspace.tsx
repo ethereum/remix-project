@@ -99,6 +99,10 @@ export function Workspace () {
     )
   }
 
+  const addGithubAction = () => {
+    global.dispatchCreateSolidityGithubAction()
+  }
+
   const downloadWorkspaces = async () => {
     try {
       await global.dispatchHandleDownloadFiles()
@@ -549,6 +553,38 @@ export function Workspace () {
         <span className="pl-3"><FormattedMessage id='filePanel.restore' defaultMessage='Restore' /></span>
       </div>
     </CustomTooltip>,
+    <Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/>,
+    <CustomTooltip
+      placement="right-start"
+      tooltipId="createSolGHActionTooltip"
+      tooltipClasses="text-nowrap"
+      tooltipText={<FormattedMessage id='filePanel.workspace.solghaction' defaultMessage='Add the solidity GitHub action file. Push to a repository to start running it in the GitHub CI.' />}
+    >
+    <div
+      data-id='soliditygithubaction'
+      onClick={(e) => {
+        e.stopPropagation()
+        addGithubAction()
+        _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSolidityTesting'])
+        hideIconsMenu(!showIconsMenu)
+      }}
+    >
+      <span
+        hidden={currentWorkspace === LOCALHOST}
+        id='soliditygithubaction'
+        data-id='soliditygithubaction'
+        onClick={(e) => {
+          e.stopPropagation()
+          addGithubAction()
+          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSolidityTesting'])
+          hideIconsMenu(!showIconsMenu)
+        }}
+        className='fab fa-github pl-2'
+      >
+      </span>
+      <span className="pl-3">{'Add Solidity GitHub action'}</span>
+    </div>
+  </CustomTooltip>
   ]
   const menuLength = workspaceMenuIcons.length
   let count = 0
