@@ -1,6 +1,5 @@
 import { CustomTooltip } from '@remix-ui/helper'
 import React, { useState, useEffect, useRef } from 'react'  //eslint-disable-line
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import './tx-browser.css'
 
 export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, transactionNumber, debugging }) => {
