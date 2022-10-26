@@ -105,14 +105,12 @@ export class HardhatClient extends PluginClient {
       }
     }
     if (!this.warnLog) {
-      // @ts-ignore
-      this.call('terminal', 'log', 'receiving compilation result from Hardhat')
+      this.call('terminal', 'log', { value: 'receiving compilation result from Hardhat', type: 'info'} )
       this.warnLog = true
     }
     if (targetsSynced.length) {
       console.log(`Processing artifacts for files: ${[...new Set(targetsSynced)].join(', ')}`)
-      // @ts-ignore
-      this.call('terminal', 'log', `synced with Hardhat: ${[...new Set(targetsSynced)].join(', ')}`)
+      this.call('terminal', 'log', { type: 'info', value: `synced with Hardhat: ${[...new Set(targetsSynced)].join(', ')}` })
     }
   }
 
