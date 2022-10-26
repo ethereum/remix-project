@@ -1,6 +1,5 @@
 import { CustomTooltip } from '@remix-ui/helper'
 import React, { useState, useEffect } from 'react' // eslint-disable-line
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import './button-navigator.css'
 
 export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, stepOverForward, jumpOut, jumpPreviousBreakpoint, jumpNextBreakpoint, jumpToException, revertedReason, stepState, jumpOutDisabled }) => {
