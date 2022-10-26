@@ -559,7 +559,8 @@ export function ContractGUI (props: ContractGUIProps) {
                   Use last deployed ERC1967 contract
                 </label>
               </div>
-              {!useLastProxy ? (
+              {
+                !useLastProxy ?
                 <div className="mb-2">
                   <label className='mt-2 text-left d-block'>Proxy Address: </label>
                   <input style={{ height: 32 }} className="form-control udapp_input" data-id="ERC1967AddressInput" placeholder='proxy address' title='Enter previously deployed proxy address on the selected network' onChange={handleSetProxyAddress} onBlur={() => validateProxyAddress(proxyAddress) } />
