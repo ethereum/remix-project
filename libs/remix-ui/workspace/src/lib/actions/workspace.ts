@@ -611,6 +611,29 @@ export const createNewBranch = async (branch: string) => {
   return promise
 }
 
+export const createSolidityGithubAction = async () => {
+  const actionYml = `
+  name: Running Solidity Unit Tests
+  on: [push]
+
+  jobs:
+    run_sol_contracts_job:
+      runs-on: ubuntu-latest
+      name: A job to run solidity unit tests on github actions CI
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+        - name: Run SUT Action
+          uses: EthereumRemix/sol-test@v1
+          with:
+            test-path: 'tests'
+            compiler-version: '0.8.15'
+    `
+  const path = '.github/workflows/run-solidity-unittesting.yml'
+  await plugin.call('fileManager', 'writeFile', path , actionYml)
+  plugin.call('fileManager', 'open', path)
+}
+
 export const checkoutRemoteBranch = async (branch: string, remote: string) => {
   const localChanges = await hasLocalChanges()
 

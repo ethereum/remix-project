@@ -8,7 +8,7 @@ import { browserReducer, browserInitialState } from '../reducers/workspace'
 import { initWorkspace, fetchDirectory, removeInputField, deleteWorkspace, clearPopUp, publishToGist, createNewFile, setFocusElement, createNewFolder,
   deletePath, renamePath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath, addInputField, createWorkspace,
   fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, handleDownloadFiles, restoreBackupZip, cloneRepository, moveFile, moveFolder,
-  showAllBranches, switchBranch, createNewBranch, checkoutRemoteBranch
+  showAllBranches, switchBranch, createNewBranch, checkoutRemoteBranch, createSolidityGithubAction
 } from '../actions'
 import { Modal, WorkspaceProps, WorkspaceTemplate } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -155,6 +155,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await checkoutRemoteBranch(branch, remote)
   }
 
+  const dispatchCreateSolidityGithubAction = async () => {
+    await createSolidityGithubAction()
+  }
+
   useEffect(() => {
     dispatchInitWorkspace()
   }, [])
@@ -263,7 +267,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchShowAllBranches,
     dispatchSwitchToBranch,
     dispatchCreateNewBranch,
-    dispatchCheckoutRemoteBranch
+    dispatchCheckoutRemoteBranch,
+    dispatchCreateSolidityGithubAction
   }
   return (
     <FileSystemContext.Provider value={value}>
