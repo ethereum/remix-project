@@ -41,8 +41,9 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     await this.call('editor', 'discardHighlight')
   }
 
-  async highlight (lineColumnPos, path) {
+  async highlight (lineColumnPos, path, rawLocation) {
     await this.call('editor', 'highlight', lineColumnPos, path, '', { focus: true })
+    this.call('')
   }
 
   async getFile (path) {

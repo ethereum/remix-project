@@ -158,7 +158,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
             return { ...prevState, sourceLocationStatus: '' }
           })
           await debuggerModule.discardHighlight()
-          await debuggerModule.highlight(lineColumnPos, path)
+          await debuggerModule.highlight(lineColumnPos, path, rawLocation)
         }
       }
     })
