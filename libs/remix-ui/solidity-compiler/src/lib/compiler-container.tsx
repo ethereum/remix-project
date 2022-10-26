@@ -894,7 +894,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 }
               }}
             />
-            {!showFilePathInput && <button disabled={!state.useFileConfiguration} data-id="scConfigChangeFilePath" className="btn-secondary" onClick={() => { setShowFilePathInput(true) }}>Change</button>}
+            {!showFilePathInput && <button disabled={!state.useFileConfiguration} data-id="scConfigChangeFilePath" className="btn btn-sm btn-secondary" onClick={() => { setShowFilePathInput(true) }}>Change</button>}
           </div>
         </div>
         <div className="px-4">
