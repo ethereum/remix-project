@@ -256,7 +256,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
       <div className='d-flex justify-content-between'>
         <div className="d-flex justify-content-between align-items-end">
           <label className="udapp_settingsLabel pr-1">Contract</label>
-          <div className="d-flex">{compilerName && compilerName !== '' && <label className="text-capitalize" style={{ maxHeight: '0.6rem', lineHeight: '1rem' }} data-id="udappCompiledBy">(Compiled by {compilerName})</label>}</div>
+          <div className="d-flex">{compilerName && compilerName !== '' && <label style={{ maxHeight: '0.6rem', lineHeight: '1rem' }} data-id="udappCompiledBy">(Compiled by <span className="text-capitalize"> {compilerName}</span>)</label>}</div>
         </div>
         {props.remixdActivated ?
           <OverlayTrigger placement={'right'} overlay={
