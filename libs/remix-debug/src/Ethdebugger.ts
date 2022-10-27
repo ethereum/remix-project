@@ -96,6 +96,17 @@ export class Ethdebugger {
     return this.callTree.findScope(step)
   }
 
+  async decodeLocalVariableByIdAtCurrentStep (step: number, id: number) {
+    const variable = this.callTree.getLocalVariableById(id)
+    if (!variable) return null
+    const stack = this.traceManager.getStackAt(step)
+    const memory = this.traceManager.getMemoryAt(step)
+    const address = this.traceManager.getCurrentCalledAddressAt(step)
+    const calldata = this.traceManager.getCallDataAt(step)
+    const storageViewer = new StorageViewer({ stepIndex: step, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
+    return await variable.type.decodeFromStack(variable.stackDepth, stack, memory, storageViewer, calldata, null, variable)
+  }
+
   async decodeLocalsAt (step, sourceLocation, callback) {
     try {
       const stack = this.traceManager.getStackAt(step)

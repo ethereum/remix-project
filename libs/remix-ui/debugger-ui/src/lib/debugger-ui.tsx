@@ -63,7 +63,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
   }, [])
 
   debuggerModule.onDebugRequested((hash, web3?) => {
-    if (hash) debug(hash, web3)
+    if (hash) return debug(hash, web3)
   })
 
   debuggerModule.onRemoveHighlights(async () => {
@@ -313,6 +313,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       }
     }, 300)
     handleResize()
+
+    return debuggerInstance
   }
 
   const debug = (txHash, web3?) => {
@@ -324,7 +326,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         sourceLocationStatus: ''
       }
     })
-    startDebugging(null, txHash, null, web3)
+    return startDebugging(null, txHash, null, web3)
   }
 
   const stepManager = {

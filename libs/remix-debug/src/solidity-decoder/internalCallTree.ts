@@ -6,7 +6,6 @@ import { EventManager } from '../eventManager'
 import { parseType } from './decodeInfo'
 import { isContractCreation, isCallInstruction, isCreateInstruction, isJumpDestInstruction } from '../trace/traceHelper'
 import { extractLocationFromAstVariable } from './types/util'
-import { Uint } from './types/Uint'
 
 export type StepDetail = {
   depth: number,
@@ -39,6 +38,9 @@ export class InternalCallTree {
   astWalker
   reducedTrace
   locationAndOpcodePerVMTraceIndex: {
+    [Key: number]: any
+  }
+  variables: {
     [Key: number]: any
   }
 
@@ -104,6 +106,7 @@ export class InternalCallTree {
     this.astWalker = new AstWalker()
     this.reducedTrace = []
     this.locationAndOpcodePerVMTraceIndex = {}
+    this.variables = {}
   }
 
   /**
@@ -180,6 +183,10 @@ export class InternalCallTree {
 
   async getValidSourceLocationFromVMTraceIndexFromCache (address: string, step: number, contracts: any) {
     return await this.sourceLocationTracker.getValidSourceLocationFromVMTraceIndexFromCache(address, step, contracts, this.locationAndOpcodePerVMTraceIndex)
+  }
+
+  getLocalVariableById (id: number) {
+    return this.variables[id]
   }
 }
 
@@ -295,12 +302,14 @@ async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, 
             let location = extractLocationFromAstVariable(variableDeclaration)
             location = location === 'default' ? 'storage' : location
             // we push the new local variable in our tree
-            tree.scopes[scopeId].locals[variableDeclaration.name] = {
+            const newVar = {
               name: variableDeclaration.name,
               type: parseType(variableDeclaration.typeDescriptions.typeString, states, contractObj.name, location),
               stackDepth: stack.length,
               sourceLocation: sourceLocation
             }
+            tree.scopes[scopeId].locals[variableDeclaration.name] = newVar
+            tree.variables[variableDeclaration.id] = newVar
           }
         } catch (error) {
           console.log(error)
