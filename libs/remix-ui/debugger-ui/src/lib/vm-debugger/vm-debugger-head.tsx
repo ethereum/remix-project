@@ -31,7 +31,7 @@ export const VmDebuggerHead = ({ vmDebugger: { registerEvent, triggerEvent } }) 
       const functions = []
 
       for (const func of stack) {
-        functions.push(func.functionDefinition.name + '(' + func.inputs.join(', ') + ')')
+        functions.push(func.functionDefinition.name + '(' + func.inputs.join(', ') + ')' + ' - ' + func.gasCost + ' gas')
       }
       setFunctionPanel(() => functions)
     })
