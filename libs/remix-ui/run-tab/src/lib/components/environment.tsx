@@ -2,8 +2,7 @@
 import React from 'react'
 import { EnvironmentProps } from '../types'
 import { Dropdown } from 'react-bootstrap'
-import { CustomMenu, CustomToggle } from '@remix-ui/helper'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
+import { CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
 
 export function EnvironmentUI (props: EnvironmentProps) {
 
@@ -29,13 +28,10 @@ export function EnvironmentUI (props: EnvironmentProps) {
   return (
     <div className="udapp_crow">
       <label id="selectExEnv" className="udapp_settingsLabel">
-        Environment <OverlayTrigger placement={'right'} overlay={
-              <Tooltip className="text-nowrap" id="info-recorder">
-                <span>Open chainlist and add a new provider for the chain you want to interact to.</span>
-              </Tooltip>
-            }>
-            <a href='https://chainlist.org/' target='_blank'><i style={{ fontSize: 'medium' }} className={'ml-2 fad fa-plug'} aria-hidden="true"></i></a>
-        </OverlayTrigger>
+        Environment <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="info-recorder"
+                tooltipText="Open chainlist and add a new provider for the chain you want to interact to.">
+              <a href='https://chainlist.org/' target='_blank'><i style={{ fontSize: 'medium' }} className={'ml-2 fad fa-plug'} aria-hidden="true"></i></a>
+        </CustomTooltip>
       </label>
       <div className="udapp_environment">
 
@@ -43,13 +39,9 @@ export function EnvironmentUI (props: EnvironmentProps) {
           <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={null}>
             { isL2(currentProvider) && 'L2 - '}
             { currentProvider && currentProvider.content }
-            { currentProvider && bridges[currentProvider.value] && <OverlayTrigger placement={'right'} overlay={
-              <Tooltip className="text-nowrap" id="info-recorder">
-                <span>Click to open a bridge for converting L1 mainnet ETH to the selected network currency.</span>
-              </Tooltip>
-            }>
+            { currentProvider && bridges[currentProvider.value] && <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText="Click to open a bridge for converting L1 mainnet ETH to the selected network currency.">
             <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-plug'} aria-hidden="true" onClick={() => { window.open(bridges[currentProvider.value], '_blank') }}></i>
-        </OverlayTrigger>}
+        </CustomTooltip>}
           </Dropdown.Toggle>
           <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items" >
             {
@@ -67,13 +59,10 @@ export function EnvironmentUI (props: EnvironmentProps) {
             }
           </Dropdown.Menu>
         </Dropdown>
-        <OverlayTrigger placement={'bottom-start'} overlay={
-          <Tooltip className="text-wrap" id="runAndDeployAddresstooltip">
-            <span>{"Click for docs about Environment"}</span>
-          </Tooltip>
-        }>
+        <CustomTooltip placement={'bottom-start'} tooltipClasses="text-wrap" tooltipId="runAndDeployAddresstooltip"
+            tooltipText={"Click for docs about Environment"}>
           <a href="https://remix-ide.readthedocs.io/en/latest/run.html#environment" target="_blank" rel="noreferrer"><i className="udapp_infoDeployAction ml-2 fas fa-info"></i></a>
-        </OverlayTrigger>
+        </CustomTooltip>
       </div>
     </div>
   )
