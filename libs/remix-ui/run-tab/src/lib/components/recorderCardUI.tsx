@@ -2,6 +2,7 @@
 import React, {useRef, useState, useEffect} from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { RecorderProps } from '../types'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 import { CustomTooltip } from '@remix-ui/helper'
 
 export function RecorderUI (props: RecorderProps) {
