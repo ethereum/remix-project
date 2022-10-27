@@ -145,6 +145,15 @@ export class RemixHoverProvider implements languages.HoverProvider {
             getLinks(nodeAtPosition)
             getDocs(nodeAtPosition)
             // getScope(nodeAtPosition)
+
+            try {
+                const decodedVar = await this.props.plugin.call('debugger', 'decodeVariable', nodeAtPosition.id)
+                if (decodedVar !== null) {
+                    contents.push({
+                        value: JSON.stringify(decodedVar.value, null, '\t')
+                    })
+                }
+            } catch (e) {}
         }
 
         setTimeout(() => {
