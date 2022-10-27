@@ -1,7 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, {useRef, useState, useEffect} from 'react'
 import { RecorderProps } from '../types'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 import { CustomTooltip } from '@remix-ui/helper'
 
 export function RecorderUI (props: RecorderProps) {

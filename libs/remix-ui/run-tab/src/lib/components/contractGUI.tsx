@@ -4,7 +4,6 @@ import * as remixLib from '@remix-project/remix-lib'
 import Web3 from 'web3'
 import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { CustomTooltip } from '@remix-ui/helper'
 
 const txFormat = remixLib.execution.txFormat
