@@ -215,7 +215,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         const warningErrors = []
 
         // Remix Analysis
-        _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyzeWithRemixAnalyzer'])
+        _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'remixAnalyzer'])
         const results = runner.run(lastCompilationResult, categoryIndex)
         for (const result of results) {
           let moduleName
@@ -281,7 +281,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             const compilerState = await props.analysisModule.call('solidity', 'getCompilerState')
             const { currentVersion, optimize, evmVersion } = compilerState
             await props.analysisModule.call('terminal', 'log', { type: 'info', value: '[Slither Analysis]: Running...' })
-            _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyzeWithSlither'])
+            _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'slitherAnalyzer'])
             const result = await props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion })
             if (result.status) {
               props.analysisModule.call('terminal', 'log', { type: 'info', value: `[Slither Analysis]: Analysis Completed!! ${result.count} warnings found.` })

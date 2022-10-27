@@ -267,7 +267,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
           }>
             <button className="btn d-flex py-0" onClick={_ => {
               props.syncContracts()
-              _paq.push(['trackEvent', 'udapp', 'syncContracts', compilationSource])
+              _paq.push(['trackEvent', 'udapp', 'syncContracts', compilationSource ? compilationSource : 'compilationSourceNotYetSet'])
             }}>
               <i style={{ cursor: 'pointer' }} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
             </button>

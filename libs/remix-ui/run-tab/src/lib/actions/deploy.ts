@@ -26,11 +26,11 @@ const loadContractFromAddress = (plugin: RunTab, address, confirmCb, cb) => {
       } catch (e) {
         return cb('Failed to parse the current file as JSON ABI.')
       }
-      _paq.push(['trackEvent', 'udapp', 'AtAddressLoadWithABI'])
+      _paq.push(['trackEvent', 'udapp', 'useAtAddress' , 'AtAddressLoadWithABI'])
       cb(null, 'abi', abi)
     })
   } else {
-    _paq.push(['trackEvent', 'udapp', 'AtAddressLoadWithArtifacts'])
+    _paq.push(['trackEvent', 'udapp', 'useAtAddress', 'AtAddressLoadWithArtifacts'])
     cb(null, 'instance')
   }
 }

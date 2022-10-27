@@ -155,7 +155,7 @@ export class CompileTabLogic {
             `
             const configFilePath = 'remix-compiler.config.js'
             this.api.writeFile(configFilePath, fileContent)
-            _paq.push(['trackEvent', 'compiler', 'compileWithHardhat'])
+            _paq.push(['trackEvent', 'compiler', 'runCompile', 'compileWithHardhat'])
             this.api.compileWithHardhat(configFilePath).then((result) => {
               this.api.logToTerminal({ type: 'info', value: result })
             }).catch((error) => {
@@ -181,7 +181,7 @@ export class CompileTabLogic {
             }`
             const configFilePath = 'remix-compiler.config.js'
             this.api.writeFile(configFilePath, fileContent)
-            _paq.push(['trackEvent', 'compiler', 'compileWithTruffle'])
+            _paq.push(['trackEvent', 'compiler', 'runCompile', 'compileWithTruffle'])
             this.api.compileWithTruffle(configFilePath).then((result) => {
               this.api.logToTerminal({ type: 'info', value: result })
             }).catch((error) => {
