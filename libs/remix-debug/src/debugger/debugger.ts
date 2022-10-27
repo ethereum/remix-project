@@ -76,8 +76,10 @@ export class Debugger {
         return
       }
 
-      this.debugger.callTree.getValidSourceLocationFromVMTraceIndexFromCache(address, index, compilationResultForAddress.data.contracts).then(async (rawLocation) => {
+      this.debugger.callTree.getValidSourceLocationFromVMTraceIndexFromCache(address, index, compilationResultForAddress.data.contracts).then(async (rawLocationAndOpcode) => {
         if (compilationResultForAddress && compilationResultForAddress.data) {
+          const rawLocation = rawLocationAndOpcode.sourceLocation
+          const stepDetail = rawLocationAndOpcode.stepDetail
           const generatedSources = this.debugger.callTree.sourceLocationTracker.getGeneratedSourcesFromAddress(address)
           const astSources = Object.assign({}, compilationResultForAddress.data.sources)
           const sources = Object.assign({}, compilationResultForAddress.source.sources)
@@ -88,7 +90,7 @@ export class Debugger {
             }
           }
           const lineColumnPos = await this.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, sources, astSources)
-          this.event.trigger('newSourceLocation', [lineColumnPos, rawLocation, generatedSources, address])
+          this.event.trigger('newSourceLocation', [lineColumnPos, rawLocation, generatedSources, address, stepDetail])
           this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [rawLocation])
         } else {
           this.event.trigger('newSourceLocation', [null])
