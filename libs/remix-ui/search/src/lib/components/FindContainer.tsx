@@ -1,3 +1,4 @@
+import { CustomTooltip } from '@remix-ui/helper'
 import React, { useContext, useEffect, useState } from 'react'
 import { SearchContext } from '../context/context'
 import { Find } from './Find'
@@ -13,18 +14,24 @@ export const FindContainer = props => {
   }, [expanded])
   return (
     <div className="search_plugin_find_container">
-      <div
-        title="Toggle Replace"
-        data-id="toggle_replace"
-        className={`codicon codicon-find-${
-          expanded ? 'expanded' : 'collapsed'
-        } search_plugin_find_container_arrow`}
-        role="button"
-        onClick={toggleExpand}
-        aria-label="Toggle Replace"
-        aria-expanded="true"
-        aria-disabled="false"
-      ></div>
+      <CustomTooltip
+        tooltipText="Toggle Replace"
+        tooltipClasses="text-nowrap"
+        tooltipId="toggleReplaceTooltip"
+        placement="left-start"
+      >
+        <div
+          data-id="toggle_replace"
+          className={`codicon codicon-find-${
+            expanded ? 'expanded' : 'collapsed'
+          } search_plugin_find_container_arrow`}
+          role="button"
+          onClick={toggleExpand}
+          aria-label="Toggle Replace"
+          aria-expanded="true"
+          aria-disabled="false"
+        ></div>
+      </CustomTooltip>
       <div className="search_plugin_find_container_internal">
         <Find></Find>
         {expanded ? 
