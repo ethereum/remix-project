@@ -46,6 +46,9 @@ export class InternalCallTree {
   pendingConstructorId: number
   pendingConstructor
   constructorsStartExecution
+  variables: {
+    [Key: number]: any
+  }
 
   /**
     * constructor
@@ -122,6 +125,7 @@ export class InternalCallTree {
     this.pendingConstructorId = -1
     this.constructorsStartExecution = {}
     this.pendingConstructor = null
+    this.variables = {}
   }
 
   /**
@@ -202,6 +206,10 @@ export class InternalCallTree {
       return this.gasCostPerLine[file][line]
     }
     throw new Error('Could not find gas cost per line')
+  }
+  
+  getLocalVariableById (id: number) {
+    return this.variables[id]
   }
 }
 
@@ -407,12 +415,14 @@ async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, 
             let location = extractLocationFromAstVariable(variableDeclaration)
             location = location === 'default' ? 'storage' : location
             // we push the new local variable in our tree
-            tree.scopes[scopeId].locals[variableDeclaration.name] = {
+            const newVar = {
               name: variableDeclaration.name,
               type: parseType(variableDeclaration.typeDescriptions.typeString, states, contractObj.name, location),
               stackDepth: stack.length,
               sourceLocation: sourceLocation
             }
+            tree.scopes[scopeId].locals[variableDeclaration.name] = newVar
+            tree.variables[variableDeclaration.id] = newVar
           }
         } catch (error) {
           console.log(error)
