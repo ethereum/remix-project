@@ -1,5 +1,5 @@
+import { CustomTooltip } from '@remix-ui/helper'
 import React from 'react'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { DeployInputProps } from '../types'
 import { DeployButton } from './deployButton'
 
@@ -7,13 +7,11 @@ export function DeployInput (props: DeployInputProps) {
   return (
     <div className="udapp_contractActionsContainerSingle pt-2" style={{ display: 'flex' }}>
       <DeployButton buttonOptions={props.buttonOptions} selectedIndex={props.selectedIndex} setSelectedIndex={props.setSelectedIndex} handleActionClick={props.handleActionClick} deployOptions={props.deployOptions} />
-      <OverlayTrigger
+      <CustomTooltip
         placement="right-start"
-        overlay={
-          <Tooltip id="deployInputTooltip" className="text-nowrap">
-            <span>{props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}</span>
-          </Tooltip>
-        }
+        tooltipId="deployInputTooltip"
+        tooltipClasses="text-nowrap"
+        tooltipText={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}
       >
         <input
           className="form-control"
@@ -24,7 +22,7 @@ export function DeployInput (props: DeployInputProps) {
           ref={props.basicInputRef}
           style={{ visibility: !props.inputs ? 'hidden' : 'visible' }}
         />
-      </OverlayTrigger>
+      </CustomTooltip>
     </div>
   )
 }
