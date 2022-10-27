@@ -10,7 +10,7 @@ import { Uint } from './types/Uint'
 
 export type StepDetail = {
   depth: number,
-  gas: number,
+  gas: number | string,
   gasCost: number,
   memory: number[],
   op: string,
@@ -138,6 +138,7 @@ export class InternalCallTree {
     const scope = this.findScope(vmtraceIndex)
     if (!scope) return []
     let scopeId = this.scopeStarts[scope.firstStep]
+    const scopeDetail = this.scopes[scopeId]
     const functions = []
     if (!scopeId) return functions
     let i = 0
@@ -147,7 +148,7 @@ export class InternalCallTree {
       if (i > 1000) throw new Error('retrieFunctionStack: recursion too deep')
       const functionDefinition = this.functionDefinitionsByScope[scopeId]
       if (functionDefinition !== undefined) {
-        functions.push(functionDefinition)
+        functions.push({ ...functionDefinition, ...scopeDetail })
       }
       const parent = this.parentScope(scopeId)
       if (!parent) break
@@ -185,7 +186,7 @@ export class InternalCallTree {
 async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
   let subScope = 1
   tree.scopeStarts[step] = scopeId
-  tree.scopes[scopeId] = { firstStep: step, locals: {}, isCreation }
+  tree.scopes[scopeId] = { firstStep: step, locals: {}, isCreation, gasCost: 0 }
 
   function callDepthChange (step, trace) {
     if (step + 1 < trace.length) {
@@ -222,8 +223,14 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
       return { outStep: step, error: 'InternalCallTree - No source Location. ' + step }
     }
     const stepDetail: StepDetail = tree.traceManager.trace[step]
+    const nextStepDetail: StepDetail = tree.traceManager.trace[step + 1]
+    if (stepDetail && nextStepDetail) {
+      stepDetail.gasCost = parseInt(stepDetail.gas as string) - parseInt(nextStepDetail.gas as string)
+    }
     tree.locationAndOpcodePerVMTraceIndex[step] = { sourceLocation, stepDetail }
-    console.log('locationAndOpcodePerVMTraceIndex', stepDetail)
+    tree.scopes[scopeId].gasCost += stepDetail.gasCost
+    console.log(step, stepDetail.op, stepDetail.gas, nextStepDetail.gas)
+
     const isCallInstrn = isCallInstruction(stepDetail)
     const isCreateInstrn = isCreateInstruction(stepDetail)
     // we are checking if we are jumping in a new CALL or in an internal function

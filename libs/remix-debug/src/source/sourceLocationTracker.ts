@@ -103,10 +103,6 @@ export class SourceLocationTracker {
                                               this happens when generated sources should not be considered.
     */
     const originStep = cache[vmtraceStepIndex]
-    const nextStep = cache[vmtraceStepIndex + 1]
-    if (nextStep && originStep) {
-      originStep.stepDetail.gasCost = originStep.stepDetail.gas - nextStep.stepDetail.gas
-    }
     while (vmtraceStepIndex >= 0 && (map.file === -1 || map.file > amountOfSources - 1)) {
       map = cache[vmtraceStepIndex].sourceLocation
       vmtraceStepIndex = vmtraceStepIndex - 1
