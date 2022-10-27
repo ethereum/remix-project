@@ -4,6 +4,7 @@ import { FormattedMessage } from 'react-intl'
 import { PluginRecord } from '../types'
 import './panel.css'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { CustomTooltip } from '@remix-ui/helper'
 
 export interface RemixPanelProps {
   plugins: Record<string, PluginRecord>;
@@ -26,10 +27,14 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
     setToggleExpander(!toggleExpander)
   }
 
+  const tooltipChild = (
+    <i className={`px-1 ml-2 pt-1 pb-2 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
+  )
+
   return (
     <header className='d-flex flex-column'>
       <div className="swapitHeader px-3 pt-2 pb-0 d-flex flex-row">
-        <h6 className="mb-3" data-id='sidePanelSwapitTitle'>
+        <h6 className="pt-0 mb-1" data-id='sidePanelSwapitTitle'>
           <FormattedMessage id={plugin?.profile.name + '.displayName'} defaultMessage={plugin?.profile.displayName || plugin?.profile.name} />
         </h6>
         <div className="d-flex flex-row">
@@ -47,17 +52,19 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
               </OverlayTrigger>
             )}
           </div>
-          <OverlayTrigger overlay={
-            <Tooltip className="text-nowrap" id="pluginInfoTooltip">
-              <span>Plugin info</span>
-            </Tooltip>
-          } placement={'right-end'}>
-            <div className="swapitHeaderInfoSection d-flex justify-content-between" data-id='swapitHeaderInfoSectionId' onClick={toggleClass}>
-              <i className={`px-2 ml-2 pt-1 pb-4 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
-            </div>
-          </OverlayTrigger>
+          <div className="swapitHeaderInfoSection d-flex justify-content-between" data-id='swapitHeaderInfoSectionId' onClick={toggleClass}>
+            <CustomTooltip
+              placement="right-end"
+              tooltipText="Plugin info"
+              tooltipId="pluginInfoTooltip"
+              tooltipClasses="text-nowrap"
+            >
+              {tooltipChild}
+            </CustomTooltip>
+          </div>
         </div>
       </div>
+      <div className="d-flex w-100 flex-row py-2"></div>
       <div className={`bg-light mx-3 mb-2 p-3 pt-1 border-bottom flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
         {plugin?.profile?.author && <span className="d-flex flex-row align-items-center">
           <label className="mb-0 pr-2"><FormattedMessage id='panel.author' defaultMessage='Author' />:</label>
