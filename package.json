@@ -112,42 +112,8 @@
     "ganache-cli": "npx ganache-cli",
     "build-contracts": "find ./node_modules/@openzeppelin/contracts | grep -i '.sol' > libs/remix-ui/editor/src/lib/providers/completion/contracts/contracts.txt && find ./node_modules/@uniswap/v3-core/contracts | grep -i '.sol' >> libs/remix-ui/editor/src/lib/providers/completion/contracts/contracts.txt"
   },
-  "browserify": {
-    "transform": [
-      [
-        "babelify",
-        {
-          "sourceMapsAbsolute": false,
-          "sourceMaps": true,
-          "plugins": [
-            [
-              "module:fast-async",
-              {
-                "runtimePattern": null,
-                "compiler": {
-                  "es7": true,
-                  "noRuntime": true,
-                  "promises": true,
-                  "wrapAwait": true
-                }
-              }
-            ],
-            [
-              "module:babel-plugin-yo-yoify"
-            ],
-            [
-              "module:@babel/plugin-transform-object-assign"
-            ]
-          ],
-          "presets": [
-            "@babel/preset-env"
-          ]
-        }
-      ]
-    ]
-  },
   "dependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.16.0",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@erebos/bzz-node": "^0.13.0",
     "@ethereumjs/block": "^3.5.1",
     "@ethereumjs/common": "^2.5.0",
@@ -220,23 +186,23 @@
     "time-stamp": "^2.2.0",
     "ts-loader": "^9.2.6",
     "tslib": "^2.3.0",
-    "web3": "^1.7.5",
+    "web3": "^1.8.0",
     "winston": "^3.3.3",
     "ws": "^7.3.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.19.3",
+    "@babel/core": "^7.19.6",
     "@babel/plugin-transform-modules-amd": "^7.10.4",
-    "@babel/plugin-transform-modules-commonjs": "^7.10.4",
+    "@babel/plugin-transform-modules-commonjs": "^7.19.6",
     "@babel/plugin-transform-object-assign": "^7.2.0",
     "@babel/plugin-transform-runtime": "^7.10.4",
     "@babel/polyfill": "^7.4.4",
-    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-env": "^7.19.4",
     "@babel/preset-es2015": "^7.0.0-beta.53",
     "@babel/preset-es2017": "latest",
-    "@babel/preset-react": "7.9.4",
+    "@babel/preset-react": "^7.18.6",
     "@babel/preset-stage-0": "^7.0.0",
-    "@babel/preset-typescript": "7.9.0",
+    "@babel/preset-typescript": "^7.18.6",
     "@babel/register": "^7.4.4",
     "@fortawesome/fontawesome-free": "^5.8.1",
     "@nrwl/cli": "^15.0.0",
@@ -286,7 +252,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-typescript": "^7.0.0-alpha.19",
     "babelify": "^10.0.0",
-    "browserify": "^16.2.3",
+    "browserify": "^17.0.0",
     "browserify-reload": "^1.0.3",
     "component-type": "^1.2.1",
     "copy-to-clipboard": "^3.3.1",

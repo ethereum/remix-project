@@ -5,14 +5,6 @@ module.exports = config => {
   const nxWebpackConfig = nxWebpack(config)
   const webpackConfig = {
     ...nxWebpackConfig,
-    node: {
-      fs: 'empty',
-      tls: 'empty',
-      readline: 'empty',
-      net: 'empty',
-      module: 'empty',
-      child_process: 'empty'
-    }
   }
 
   if (process.env.NODE_ENV === 'production') {
