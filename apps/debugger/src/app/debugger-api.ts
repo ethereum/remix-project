@@ -45,7 +45,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
 
   async highlight (lineColumnPos, path, rawLocation, stepDetail) {
     await this.call('editor', 'highlight', lineColumnPos, path, '', { focus: true })
-    const label = `${stepDetail.op} - ${stepDetail.gasCost} gas - ${stepDetail.gas} gas left`
+    const label = `${stepDetail.op} costs ${stepDetail.gasCost} gas - ${stepDetail.gas} gas left`
     const linetext: lineText = {
         content: label,
         position: lineColumnPos,
