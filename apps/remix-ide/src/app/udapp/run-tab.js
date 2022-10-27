@@ -78,7 +78,7 @@ export class RunTab extends ViewPlugin {
   }
 
   sendTransaction (tx) {
-    _paq.push(['trackEvent', 'udapp', 'sendTx'])
+    _paq.push(['trackEvent', 'udapp', 'send', 'transaction'])
     return this.blockchain.sendTransaction(tx)
   }
 
