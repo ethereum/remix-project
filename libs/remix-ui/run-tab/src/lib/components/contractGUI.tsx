@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import * as remixLib from '@remix-project/remix-lib'
 import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { CustomTooltip } from '@remix-ui/helper'
 
 const txFormat = remixLib.execution.txFormat
