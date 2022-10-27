@@ -4,6 +4,7 @@ import * as remixLib from '@remix-project/remix-lib'
 import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { CustomTooltip } from '@remix-ui/helper'
 
 const txFormat = remixLib.execution.txFormat
 const txHelper = remixLib.execution.txHelper
@@ -247,16 +248,11 @@ export function ContractGUI (props: ContractGUIProps) {
         className="udapp_contractActionsContainerSingle pt-2"
         style={{ display: toggleContainer ? "none" : "flex" }}
       >
-        <OverlayTrigger
+        <CustomTooltip
           placement={"right-start"}
-          overlay={
-            <Tooltip
-              className="text-wrap"
-              id="remixUdappInstanceButtonTooltip"
-            >
-              <span>{buttonOptions.title}</span>
-            </Tooltip>
-          }
+          tooltipClasses="text-wrap"
+          tooltipId="remixUdappInstanceButtonTooltip"
+          tooltipText={buttonOptions.title}
         >
           <button
             onClick={handleActionClick}
@@ -266,19 +262,13 @@ export function ContractGUI (props: ContractGUIProps) {
           >
             {title}
           </button>
-        </OverlayTrigger>
-        <OverlayTrigger
+        </CustomTooltip>
+        <CustomTooltip
           placement={"right"}
-          overlay={
-            <Tooltip className="text-nowrap" id="remixContractGuiTooltip">
-              <span>
-                {props.funcABI.type === "fallback" ||
-                props.funcABI.type === "receive"
-                  ? `'(${props.funcABI.type}')`
-                  : props.inputs}
-              </span>
-            </Tooltip>
-          }
+          tooltipClasses="text-nowrap"
+          tooltipId="remixContractGuiTooltip"
+          tooltipText={props.funcABI.type === "fallback" ||props.funcABI.type === "receive" ? `'(${props.funcABI.type}')`
+          : props.inputs}
         >
           <input
             className="form-control"
@@ -307,19 +297,26 @@ export function ContractGUI (props: ContractGUIProps) {
                 : "visible",
             }}
           />
-        </OverlayTrigger>
-        <i
-          className="fas fa-angle-down udapp_methCaret"
-          onClick={switchMethodViewOn}
-          title={title}
-          style={{
-            visibility: !(
-              props.funcABI.inputs && props.funcABI.inputs.length > 0
-            )
-              ? "hidden"
-              : "visible",
-          }}
-        ></i>
+        </CustomTooltip>
+        <CustomTooltip
+          tooltipText={title}
+          tooltipClasses="text-nowrap"
+          placement="bottom"
+          tooltipId="switchMethodViewOnTooltip"
+        >
+          <i
+            className="fas fa-angle-down udapp_methCaret"
+            onClick={switchMethodViewOn}
+            title={title}
+            style={{
+              visibility: !(
+                props.funcABI.inputs && props.funcABI.inputs.length > 0
+              )
+                ? "hidden"
+                : "visible",
+            }}
+          ></i>
+        </CustomTooltip>
       </div>
       <div
         className="udapp_contractActionsContainerMulti"
@@ -337,13 +334,11 @@ export function ContractGUI (props: ContractGUIProps) {
               return (
                 <div className="udapp_multiArg" key={index}>
                   <label htmlFor={inp.name}> {inp.name}: </label>
-                  <OverlayTrigger
+                  <CustomTooltip
                     placement="left-end"
-                    overlay={
-                      <Tooltip id="udappContractActionsTooltip" className="text-nowrap">
-                        <span>{inp.name}</span>
-                      </Tooltip>
-                    }
+                    tooltipId="udappContractActionsTooltip"
+                    tooltipClasses="text-nowrap"
+                    tooltipText={inp.name}
                   >
                     <input
                       ref={(el) => {
@@ -353,7 +348,7 @@ export function ContractGUI (props: ContractGUIProps) {
                       placeholder={inp.type}
                       data-id={`multiParamManagerInput${inp.name}`}
                     />
-                  </OverlayTrigger>
+                  </CustomTooltip>
                 </div>
               );
             })}
@@ -389,16 +384,11 @@ export function ContractGUI (props: ContractGUIProps) {
                 <label htmlFor="copyParameters">Parameters</label>
               </button>
             </CopyToClipboard>
-            <OverlayTrigger
+            <CustomTooltip
               placement={"right"}
-              overlay={
-                <Tooltip
-                  className="text-nowrap"
-                  id="remixUdappInstanceButtonTooltip"
-                >
-                  <span>{buttonOptions.title}</span>
-                </Tooltip>
-              }
+              tooltipClasses="text-nowrap"
+              tooltipId="remixUdappInstanceButtonTooltip"
+              tooltipText={buttonOptions.title}
             >
               <button
                 type="button"
@@ -408,7 +398,7 @@ export function ContractGUI (props: ContractGUIProps) {
               >
                 {buttonOptions.content}
               </button>
-            </OverlayTrigger>
+            </CustomTooltip>
           </div>
         </div>
       </div>
@@ -424,14 +414,20 @@ export function ContractGUI (props: ContractGUIProps) {
                 onChange={(e) => handleDeployProxySelect(e.target.checked)}
                 checked={deployState.deploy}
               />
-              <label
-                htmlFor="deployWithProxy"
-                data-id="contractGUIDeployWithProxyLabel"
-                className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
-                title="An ERC1967 proxy contract will be deployed along with the selected implementation contract."
+              <CustomTooltip
+                tooltipText="An ERC1967 proxy contract will be deployed along with the selected implementation contract."
+                placement={"right"}
+                tooltipClasses="text-nowrap"
+                tooltipId="deployWithProxyTooltip"
               >
-                Deploy with Proxy
-              </label>
+                <label
+                  htmlFor="deployWithProxy"
+                  data-id="contractGUIDeployWithProxyLabel"
+                  className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
+                >
+                  Deploy with Proxy
+                </label>
+              </CustomTooltip>
             </div>
             <div>
               {props.initializerOptions &&
@@ -467,15 +463,21 @@ export function ContractGUI (props: ContractGUIProps) {
                         {" "}
                         {inp.name}:{" "}
                       </label>
-                      <input
-                        ref={(el) => {
-                          initializeFields.current[index] = el;
-                        }}
-                        style={{ height: 32 }}
-                        className="form-control udapp_input"
-                        placeholder={inp.type}
-                        title={inp.name}
-                      />
+                      <CustomTooltip
+                        tooltipText={inp.name}
+                        tooltipClasses="text-wrap"
+                        tooltipId="initializeFieldsTooltip"
+                        placement="right"
+                      >
+                        <input
+                          ref={(el) => {
+                            initializeFields.current[index] = el;
+                          }}
+                          style={{ height: 32 }}
+                          className="form-control udapp_input"
+                          placeholder={inp.type}
+                        />
+                      </CustomTooltip>
                     </div>
                   );
                 })}
@@ -492,14 +494,20 @@ export function ContractGUI (props: ContractGUIProps) {
                 onChange={(e) => handleUpgradeImpSelect(e.target.checked)}
                 checked={deployState.upgrade}
               />
-              <label
-                htmlFor="upgradeImplementation"
-                data-id="contractGUIUpgradeImplementationLabel"
-                className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
-                title="The implementation contract will be deployed and then the proxy contract will be updated with new implementation's address."
+              <CustomTooltip
+                tooltipText="The implementation contract will be deployed and then the proxy contract will be updated with new implementation's address."
+                tooltipClasses="text-wrap"
+                tooltipId="upgradeImplementationTooltip"
+                placement="right"
               >
-                Upgrade with Proxy
-              </label>
+                <label
+                  htmlFor="upgradeImplementation"
+                  data-id="contractGUIUpgradeImplementationLabel"
+                  className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
+                >
+                  Upgrade with Proxy
+                </label>
+              </CustomTooltip>
             </div>
             <span onClick={handleToggleUpgradeImp}>
               <i
@@ -527,29 +535,41 @@ export function ContractGUI (props: ContractGUIProps) {
                   onChange={handleUseLastProxySelect}
                   checked={useLastProxy}
                 />
-                <label
-                  htmlFor="proxyAddress"
-                  data-id="contractGUIProxyAddressLabel"
-                  className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
-                  title="Select this option to use the last deployed ERC1967 contract on the current network."
-                  style={{ fontSize: 12 }}
+                <CustomTooltip
+                  tooltipText="Select this option to use the last deployed ERC1967 contract on the current network."
+                  tooltipId="proxyAddressTooltip"
+                  placement="auto"
+                  tooltipClasses="text-wrap"
                 >
-                  Use last deployed ERC1967 contract
-                </label>
+                  <label
+                    htmlFor="proxyAddress"
+                    data-id="contractGUIProxyAddressLabel"
+                    className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
+                    style={{ fontSize: 12 }}
+                  >
+                    Use last deployed ERC1967 contract
+                  </label>
+                </CustomTooltip>
               </div>
               {!useLastProxy ? (
                 <div className="mb-2">
                   <label className="mt-2 text-left d-block">
                     Proxy Address:{" "}
                   </label>
-                  <input
-                    style={{ height: 32 }}
-                    className="form-control udapp_input"
-                    data-id="ERC1967AddressInput"
-                    placeholder="proxy address"
-                    title="Enter previously deployed proxy address on the selected network"
-                    onChange={handleSetProxyAddress}
-                  />
+                  <CustomTooltip
+                    tooltipText="Enter previously deployed proxy address on the selected network"
+                    placement="left"
+                    tooltipId="ERC1967AddressInputTooltip"
+                    tooltipClasses="text-nowrap"
+                  >
+                    <input
+                      style={{ height: 32 }}
+                      className="form-control udapp_input"
+                      data-id="ERC1967AddressInput"
+                      placeholder="proxy address"
+                      onChange={handleSetProxyAddress}
+                    />
+                  </CustomTooltip>
                 </div>
               ) : (
                 <span
