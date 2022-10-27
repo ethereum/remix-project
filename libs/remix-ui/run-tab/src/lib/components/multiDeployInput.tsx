@@ -1,3 +1,4 @@
+import { CustomTooltip } from '@remix-ui/helper'
 import React, { useRef, useState } from 'react'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { MultiDeployInputProps } from '../types'
@@ -17,16 +18,14 @@ export function MultiDeployInput(props: MultiDeployInputProps) {
             return (
               <div className="udapp_multiArg" key={index}>
                 <label htmlFor={inp.name}> {inp.name}: </label>
-                <OverlayTrigger
+                <CustomTooltip
                   placement="left-end"
-                  overlay={
-                    <Tooltip id="udappMultiArgTooltip" className="text-nowrap">
-                      <span>{inp.name}</span>
-                    </Tooltip>
-                  }
+                  tooltipId="udappMultiArgTooltip"
+                  tooltipClasses="text-nowrap"
+                  tooltipText={inp.name}
                 >
                   <input ref={el => { multiFields.current[index] = el }} className="form-control" placeholder={inp.type} data-id={`multiParamManagerInput${inp.name}`} />
-                </OverlayTrigger>
+                </CustomTooltip>
               </div>)
           })}
         </div>
