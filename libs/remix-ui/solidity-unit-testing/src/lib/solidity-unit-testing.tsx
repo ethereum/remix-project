@@ -588,7 +588,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
     const tests: string[] = selectedTests.current
     if (!tests || !tests.length) return
     else setProgressBarHidden(false)
-    _paq.push(['trackEvent', 'solidityUnitTesting', 'runTests'])
+    _paq.push(['trackEvent', 'solidityUnitTesting', 'runTests', 'nbTestsRunning' + tests.length])
     eachOfSeries(tests, (value: string, key: string, callback: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
       if (hasBeenStopped.current) return
       runTest(value, callback)
