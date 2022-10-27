@@ -195,8 +195,8 @@ module.exports = {
       browser
         .waitForElementVisible('[data-id="custom-dropdown-menu"]')
         .waitForElementPresent('[data-id="workspaceGitInput"]')
-        .doubleClick('[data-id="workspaceGitInput"]')
-        .sendKeys('[data-id="workspaceGitInput"]', browser.Keys.BACK_SPACE)
+        .clearValue('[data-id="workspaceGitInput"]')
+        .sendKeys('[data-id="workspaceGitInput"]', [browser.Keys.SPACE, browser.Keys.BACK_SPACE])
         .waitForElementPresent('[data-id="workspaceGit-main"]')
         .click('[data-id="workspaceGit-main"]')
         .pause(2000)
