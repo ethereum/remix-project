@@ -222,7 +222,7 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
       return { outStep: step, error: 'InternalCallTree - No source Location. ' + step }
     }
     const stepDetail: StepDetail = tree.traceManager.trace[step]
-    tree.locationAndOpcodePerVMTraceIndex[step] = { ...sourceLocation, ...stepDetail }
+    tree.locationAndOpcodePerVMTraceIndex[step] = { sourceLocation, stepDetail }
     console.log('locationAndOpcodePerVMTraceIndex', stepDetail)
     const isCallInstrn = isCallInstruction(stepDetail)
     const isCreateInstrn = isCreateInstruction(stepDetail)

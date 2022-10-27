@@ -1,6 +1,7 @@
 import Web3 from 'web3'
 import remixDebug, { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
 import { CompilationOutput, Sources } from '@remix-ui/debugger-ui'
+import { lineText } from '@remix-ui/editor'
 import type { CompilationResult } from '@remix-project/remix-solidity-ts'
 
 export const DebuggerApiMixin = (Base) => class extends Base {
@@ -39,11 +40,25 @@ export const DebuggerApiMixin = (Base) => class extends Base {
 
   async discardHighlight () {
     await this.call('editor', 'discardHighlight')
+    await this.call('editor', 'discardLineTexts' as any)
   }
 
-  async highlight (lineColumnPos, path, rawLocation) {
+  async highlight (lineColumnPos, path, rawLocation, stepDetail) {
     await this.call('editor', 'highlight', lineColumnPos, path, '', { focus: true })
-    this.call('')
+    const label = `${stepDetail.op} - ${stepDetail.gasCost} gas - ${stepDetail.gas} gas left`
+    const linetext: lineText = {
+        content: label,
+        position: lineColumnPos,
+        hide: false,
+        className: 'text-muted small',
+        afterContentClassName: 'text-muted small fas fa-gas-pump pl-4',
+        from: 'debugger',
+        hoverMessage: [{
+            value: label,
+        },
+        ],
+    }
+    await this.call('editor', 'addLineText' as any, linetext, path)
   }
 
   async getFile (path) {

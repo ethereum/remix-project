@@ -121,7 +121,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       })
     })
 
-    debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation, generatedSources, address) => {
+    debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation, generatedSources, address, stepDetail) => {
       if (!lineColumnPos) {
         await debuggerModule.discardHighlight()
         setState(prevState => {
@@ -158,7 +158,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
             return { ...prevState, sourceLocationStatus: '' }
           })
           await debuggerModule.discardHighlight()
-          await debuggerModule.highlight(lineColumnPos, path, rawLocation)
+          await debuggerModule.highlight(lineColumnPos, path, rawLocation, stepDetail)
         }
       }
     })
