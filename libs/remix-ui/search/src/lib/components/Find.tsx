@@ -1,5 +1,5 @@
 import { CustomTooltip } from '@remix-ui/helper'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { SearchContext } from '../context/context'
 
 export const Find = () => {
