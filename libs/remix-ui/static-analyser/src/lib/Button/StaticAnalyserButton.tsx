@@ -1,5 +1,5 @@
+import { CustomTooltip } from '@remix-ui/helper'
 import React from 'react'  //eslint-disable-line
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 interface StaticAnalyserButtonProps {
   onClick: (event) => void
@@ -16,21 +16,30 @@ const StaticAnalyserButton = ({
 }: StaticAnalyserButtonProps) => {
   let classList = "btn btn-sm w-25 btn-primary"
   classList += disabled ? " disabled" : ""
+  const colorDisabled = "#007aa6"
+  const alternateColor = "#005e80"
+  const run = (e) => {
+    e.preventDefault() 
+    e.stopPropagation()
+  }
   return (
-    <button className={classList} disabled={disabled} onClick={onClick}>
-      <OverlayTrigger
+      <CustomTooltip
         placement="bottom-start"
-        overlay={
-          <Tooltip id="ssaRunButtonTooltip" className="text-nowrap">
-            <span>{title}</span>
-          </Tooltip>
-        }
+        tooltipId="ssaRunButtonTooltip"
+        tooltipClasses="text-nowrap"
+        tooltipText={title}
       >
-        <span>
-          {buttonText}
-        </span>
-      </OverlayTrigger>
-    </button>
+        <div data-id="staticAnalyserButton" className={classList} onClick={(e) => {
+          disabled ? run(e) : onClick(e)
+          }} style={{ backgroundColor: disabled ? alternateColor : colorDisabled, borderColor: disabled ? alternateColor : colorDisabled,
+           }}>
+          <button className="btn btn-link text-decoration-none" disabled={disabled} onClick={onClick} style={{ pointerEvents: "none"}} id="staticAnalyserButton" data-id="staticAnalyserButton">
+              <span>
+                {buttonText}
+              </span>
+          </button>
+        </div>
+      </CustomTooltip>
   )
 }
 
