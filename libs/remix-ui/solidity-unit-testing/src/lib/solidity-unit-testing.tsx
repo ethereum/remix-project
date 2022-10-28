@@ -2,12 +2,12 @@ import React, { useState, useRef, useEffect, ReactElement } from 'react' // esli
 import * as semver from 'semver'
 import { eachOfSeries } from 'async' // eslint-disable-line
 import type Web3 from 'web3'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { canUseWorker, urlFromVersion } from '@remix-project/remix-solidity'
 import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { format } from 'util'
 import './css/style.css'
+import { CustomTooltip } from '@remix-ui/helper'
 
 const _paq = (window as any)._paq = (window as any)._paq || [] // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -297,26 +297,21 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
     let label
     if (index > -1) {
       const className = "alert-danger d-inline-block mb-1 mr-1 p-1 failed_" + runningTestFileName
-      label = (<OverlayTrigger placement={'right'} overlay={
-              <Tooltip className="text-nowrap" id="info-recorder">
-                <span>At least one contract test failed</span>
-              </Tooltip>
-            }><div
-      className={className}
-    >
-      FAIL
-    </div></OverlayTrigger>)
+      label = (<CustomTooltip
+                placement={'right'}
+                tooltipClasses="text-nowrap"
+                tooltipId="info-recorder"
+                tooltipText="At least one contract test failed"
+              >
+                <div className={className}>FAIL</div>
+              </CustomTooltip>)
     } else {
       const className = "alert-success d-inline-block mb-1 mr-1 p-1 passed_" + runningTestFileName
-      label = (<OverlayTrigger placement={'top-end'} overlay={
-              <Tooltip className="text-nowrap" id="info-recorder">
-                <span>All contract tests passed</span>
-              </Tooltip>
-            }><div
-      className={className}
-    >
-      PASS
-    </div></OverlayTrigger>)
+      label = (<CustomTooltip placement={'top-end'} tooltipClasses="text-nowrap" tooltipId="info-recorder"
+                tooltipText="All contract tests passed"
+              >
+                <div className={className}>PASS</div>
+              </CustomTooltip>)
     }
     // show contract and file name with label
     const ContractCard: ReactElement = (
@@ -343,11 +338,14 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
           const { web3, debugTxHash } = test
           debugBtn = (
             <div id={test.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} onClick={() => startDebug(debugTxHash, web3)}>
-              <OverlayTrigger placement={'top-start'} overlay={
-              <Tooltip className="text-nowrap" id="info-recorder">
-                <span>Start debugging</span>
-              </Tooltip>
-            }><i className="fas fa-bug"></i></OverlayTrigger>
+              <CustomTooltip
+                placement={'top-start'}
+                tooltipClasses="text-nowrap"
+                tooltipId="info-recorder"
+                tooltipText="Start debugging"
+              >
+                <i className="fas fa-bug"></i>
+              </CustomTooltip>
             </div>
           )
         }
@@ -674,13 +672,11 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
               })
             }
             </datalist>
-            <OverlayTrigger
+            <CustomTooltip
               placement="top-end"
-              overlay={
-                <Tooltip className="text-nowrap" id="uiPathInputtooltip">
-                  <span>{"Press 'Enter' to change the path for test files."}</span>
-                </Tooltip>
-              }
+              tooltipClasses="text-nowrap"
+              tooltipId="uiPathInputtooltip"
+              tooltipText={"Press 'Enter' to change the path for test files."}
             >
               <input
                 list="utPathList"
@@ -694,14 +690,12 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
                 onChange={handleTestDirInput}
                 onClick = {() => { if (inputPathValue === '/') setInputPathValue('')} }
               />
-            </OverlayTrigger>
-            <OverlayTrigger
+            </CustomTooltip>
+            <CustomTooltip
               placement="top-end"
-              overlay={
-                <Tooltip className="text-nowrap" id="uiPathInputButtontooltip">
-                  <span>Create a test folder</span>
-                </Tooltip>
-              }
+              tooltipClasses="text-nowrap"
+              tooltipId="uiPathInputButtontooltip"
+              tooltipText="Create a test folder"
             >
               <button
                 className="btn border ml-2"
@@ -711,17 +705,18 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
               >
                 Create
               </button>
-            </OverlayTrigger>
+            </CustomTooltip>
           </div>
         </div>
       </div>
       <div>
         <div className="d-flex p-2">
-          <OverlayTrigger overlay={
-            <Tooltip id="generateTestsButtontooltip" className="text-nowrap">
-              <span>Generate a sample test file</span>
-            </Tooltip>
-          } placement={'bottom-start'}>
+          <CustomTooltip
+            tooltipId="generateTestsButtontooltip"
+            tooltipClasses="text-nowrap"
+            tooltipText="Generate a sample test file"
+            placement={'bottom-start'}
+          >
             <button
               className="btn border w-50"
               data-id="testTabGenerateTestFile"
@@ -733,43 +728,42 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
             >
               Generate
             </button>
-          </OverlayTrigger>
-          <OverlayTrigger overlay={
-            <Tooltip id="generateTestsLinktooltip" className="text-nowrap">
-              <span>Check out documentation.</span>
-            </Tooltip>
-          } placement={'bottom-start'}>
-          <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
+          </CustomTooltip>
+          <CustomTooltip
+            tooltipId="generateTestsLinktooltip"
+            tooltipClasses="text-nowrap"
+            tooltipText="Check out documentation."
+            placement={'bottom-start'}
+          >
+            <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" target="__blank" href="https://remix-ide.readthedocs.io/ en/latest/unittesting.html#test-directory">
             <label className="btn p-1 ml-2 m-0">How to use...</label>
-          </a>
-        </OverlayTrigger>
+            </a>
+        </CustomTooltip>
         </div>
         <div className="d-flex p-2">
-          <OverlayTrigger placement={'top-start'} overlay={
-              <Tooltip className="text-nowrap" id="info-recorder">
-                <span>
-                  {runButtonTitle}
-                </span>
-              </Tooltip>
-            }>
+          <CustomTooltip
+            placement={'top-start'}
+              tooltipClasses="text-nowrap"
+              tooltipId="info-recorder"
+              tooltipText={runButtonTitle}
+              >
             <button id="runTestsTabRunAction"data-id="testTabRunTestsTabRunAction" className="w-50 btn btn-primary" disabled={disableRunButton} onClick={runTests}>
               <span className="fas fa-play ml-2"></span>
               <label className="labelOnBtn btn btn-primary p-1 ml-2 m-0">Run</label>
             </button>
-          </OverlayTrigger>
+          </CustomTooltip>
           <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} onClick={stopTests}>
-            <OverlayTrigger placement={'top-start'} overlay={
-                <Tooltip className="text-nowrap" id="info-recorder">
-                  <span>
-                    Stop running tests
-                  </span>
-                </Tooltip>
-              }>
+            <CustomTooltip
+              placement={'top-start'}
+              tooltipClasses="text-nowrap"
+              tooltipId="info-recorder"
+              tooltipText="Stop running tests"
+            >
               <span>
                 <span className="fas fa-stop ml-2"></span>
                 <label className="labelOnBtn btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">{stopButtonLabel}</label>
               </span>
-            </OverlayTrigger>
+            </CustomTooltip>
           </button>
         </div>
         <div className="d-flex align-items-center mx-3 pb-2 mt-2 border-bottom">
