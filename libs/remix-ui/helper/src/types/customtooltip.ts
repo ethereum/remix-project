@@ -6,7 +6,7 @@ export type CustomTooltipType = {
   placement?: Placement,
   tooltipId?: string,
   tooltipClasses?:string,
-  tooltipText: string,
+  tooltipText: string | JSX.Element,
   tooltipTextClasses?: string
   delay?: OverlayDelay
 }
