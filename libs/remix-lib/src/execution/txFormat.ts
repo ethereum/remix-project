@@ -265,6 +265,7 @@ export function linkBytecodeStandard (contract, contracts, callback, callbackSte
           cbLibDeployed()
         }, callbackStep, callbackDeployLibrary)
       } else {
+        //@ts-ignore
         cbLibDeployed('Cannot find compilation data of library ' + libName)
       }
     }, (error) => {

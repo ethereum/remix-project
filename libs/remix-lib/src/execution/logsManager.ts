@@ -17,7 +17,7 @@ export class LogsManager {
   }
 
   checkBlock (blockNumber, block, web3) {
-    eachOf(block.transactions, (tx, i, next) => {
+    eachOf(block.transactions, (tx: any, i, next) => {
       const txHash = '0x' + tx.hash().toString('hex')
 
       web3.eth.getTransactionReceipt(txHash, (_error, receipt) => {
