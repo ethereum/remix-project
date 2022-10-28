@@ -10,7 +10,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "importHelpers": true,
-    "target": "es2015",
+    "target": "ES2015",
     "module": "commonjs",
     "typeRoots": ["node_modules/@types", "libs/**/*.d.ts"],
     "lib": ["es2017", "es2019", "dom"],

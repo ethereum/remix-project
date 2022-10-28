@@ -58,3 +58,5 @@ testem.log
 .vscode/launch.json
 libs/remix-node/
 libs/remix-niks/
+
+apps/remix-react

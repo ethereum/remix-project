@@ -1,4 +1,5 @@
 import * as ReactDOM from "react-dom/client";
+import {  TransactionDebugger } from '@remix-project/remix-debug'
 
 import App from "./app/app";
 

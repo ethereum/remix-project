@@ -1,7 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "jsx": "react",
+    "jsx": "react-jsx",
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
@@ -9,7 +9,8 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
+    "target": "ES6",
+    "esModuleInterop": true,
     "module": "commonjs",
     "lib": [
       "es2017",

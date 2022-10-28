@@ -18,9 +18,10 @@ import {
 export class Compiler {
   event
   state: CompilerState
-
-  constructor(public handleImportCall?: (fileurl: string, cb) => void) {
+  handleImportCall
+  constructor(handleImportCall?: (fileurl: string, cb) => void) {
     this.event = new EventManager()
+    this.handleImportCall = handleImportCall
     this.state = {
       compileJSON: null,
       worker: null,

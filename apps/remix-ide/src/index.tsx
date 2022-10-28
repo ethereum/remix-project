@@ -7,6 +7,7 @@ import { Preload } from './app/components/preload'
 import Config from './config'
 import Registry from './app/state/registry'
 import { Storage } from '@remix-project/remix-lib'
+import {  TransactionDebugger } from '@remix-project/remix-debug'
 
 (async function () {
   try {

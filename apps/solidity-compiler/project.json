@@ -1,10 +1,9 @@
 {
-  "name": "debugger",
+  "name": "solidity-compiler",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/debugger/src",
+  "sourceRoot": "apps/solidity-compiler/src",
   "projectType": "application",
   "implicitDependencies": [
-    "remix-debug"
   ],
   "targets": {
     "build": {
@@ -13,19 +12,19 @@
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
-        "outputPath": "dist/apps/debugger",
-        "index": "apps/debugger/src/index.html",
+        "outputPath": "dist/apps/solidity-compiler",
+        "index": "apps/solidity-compiler/src/index.html",
         "baseHref": "/",
-        "main": "apps/debugger/src/main.tsx",
-        "polyfills": "apps/debugger/src/polyfills.ts",
-        "tsConfig": "apps/debugger/tsconfig.app.json",
+        "main": "apps/solidity-compiler/src/main.tsx",
+        "polyfills": "apps/solidity-compiler/src/polyfills.ts",
+        "tsConfig": "apps/solidity-compiler/tsconfig.app.json",
         "assets": [
-          "apps/debugger/src/favicon.ico",
-          "apps/debugger/src/assets"
+          "apps/solidity-compiler/src/favicon.ico",
+          "apps/solidity-compiler/src/assets"
         ],
-        "styles": ["apps/debugger/src/styles.css"],
+        "styles": ["apps/solidity-compiler/src/styles.css"],
         "scripts": [],
-        "webpackConfig": "apps/debugger/webpack.config.js"
+        "webpackConfig": "apps/solidity-compiler/webpack.config.js"
       },
       "configurations": {
         "development": {
@@ -37,8 +36,8 @@
         "production": {
           "fileReplacements": [
             {
-              "replace": "apps/debugger/src/environments/environment.ts",
-              "with": "apps/debugger/src/environments/environment.prod.ts"
+              "replace": "apps/solidity-compiler/src/environments/environment.ts",
+              "with": "apps/solidity-compiler/src/environments/environment.prod.ts"
             }
           ],
           "optimization": true,
@@ -54,15 +53,15 @@
       "executor": "@nrwl/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "debugger:build",
+        "buildTarget": "solidity-compiler:build",
         "hmr": true
       },
       "configurations": {
         "development": {
-          "buildTarget": "debugger:build:development"
+          "buildTarget": "solidity-compiler:build:development"
         },
         "production": {
-          "buildTarget": "debugger:build:production",
+          "buildTarget": "solidity-compiler:build:production",
           "hmr": false
         }
       }
@@ -71,7 +70,7 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/debugger/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["apps/solidity-compiler/**/*.{ts,tsx,js,jsx}"]
       }
     }
   },
