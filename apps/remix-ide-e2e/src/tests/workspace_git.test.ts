@@ -209,7 +209,6 @@ module.exports = {
     'Should prevent checkout to a branch if local changes exists #group3': function (browser: NightwatchBrowser) {
       browser
         .renamePath('README.md', 'README.txt', 'README.txt')
-        .clickLaunchIcon('filePanel')
         .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
         .click('[data-id="workspaceGitBranchesDropdown"]')
         .waitForElementVisible('[data-id="workspaceGit-dev"]')
@@ -235,6 +234,8 @@ module.exports = {
         .click('[data-id="workspaceGitBranchesDropdown"]')
         .expect.element('[data-id="workspaceGit-dev"]').text.to.contain('✓ ')
     },
+
+    // GIT BRANCHES E2E END
 
     tearDown: sauce
 }
