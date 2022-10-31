@@ -1,5 +1,5 @@
+import { CustomTooltip } from '@remix-ui/helper'
 import React, { useState, useEffect } from 'react' //eslint-disable-line
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { Placement } from 'react-bootstrap/esm/Overlay'
 import { FileExplorerMenuProps } from '../types'
 const _paq = window._paq = window._paq || []
@@ -53,27 +53,23 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
 
   return (
     <>
-      <OverlayTrigger
+      <CustomTooltip
         placement="top-start"
-        overlay={
-          <Tooltip id="remixuilabelTooltip" className="text-nowrap">
-            <span>{props.title}</span>
-          </Tooltip>
-        }
+        tooltipId="remixuilabelTooltip"
+        tooltipClasses="text-nowrap"
+        tooltipText={props.title}
       >
         <span className='remixui_label' data-path={props.title} style={{ fontWeight: 'bold' }}>{ props.title }</span>
-      </OverlayTrigger>
+      </CustomTooltip>
       <span className="pl-2">{
         state.menuItems.map(({ action, title, icon, placement }, index) => {
           if (action === 'uploadFile') {
             return (
-              <OverlayTrigger
+              <CustomTooltip
                 placement="right"
-                overlay={
-                  <Tooltip id="uploadFileTooltip" className="text-nowrap">
-                    <span>{title}</span>
-                  </Tooltip>
-                }
+                tooltipId="uploadFileTooltip"
+                tooltipClasses="text-nowrap"
+                tooltipText={title}
               >
                 <label
                   id={action}
@@ -88,17 +84,15 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                     }}
                     multiple />
                 </label>
-              </OverlayTrigger>
+              </CustomTooltip>
             )
           } else {
             return (
-              <OverlayTrigger
+              <CustomTooltip
                 placement={placement as Placement}
-                overlay={
-                  <Tooltip id={`${action}-${title}-${icon}-${index}`} className="text-nowrap">
-                    <span>{title}</span>
-                  </Tooltip>
-                }
+                tooltipId={`${action}-${title}-${icon}-${index}`}
+                tooltipClasses="text-nowrap"
+                tooltipText={title}
               >
                 <span
                   id={action}
@@ -120,7 +114,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                   key={`${action}-${title}-${index}`}
                 >
                 </span>
-              </OverlayTrigger>
+              </CustomTooltip>
             )
           }
         })}
