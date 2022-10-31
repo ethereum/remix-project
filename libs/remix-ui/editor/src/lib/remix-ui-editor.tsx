@@ -6,6 +6,7 @@ import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solidity'
 import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
 import { zokratesTokensProvider, zokratesLanguageConfig } from './syntaxes/zokrates'
+import { moveTokenProvider, moveLanguageConfig } from './syntaxes/move'
 
 import './remix-ui-editor.css'
 import { loadTypes } from './web-types'
@@ -303,6 +304,8 @@ export const EditorUI = (props: EditorUIProps) => {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-cairo')
     } else if (file.language === 'zokrates') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-zokrates')
+    } else if (file.language === 'move') {
+      monacoRef.current.editor.setModelLanguage(file.model, 'remix-move')
     }
   }, [props.currentFile])
 
@@ -647,6 +650,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.register({ id: 'remix-solidity' })
     monacoRef.current.languages.register({ id: 'remix-cairo' })
     monacoRef.current.languages.register({ id: 'remix-zokrates' })
+    monacoRef.current.languages.register({ id: 'remix-move' })
 
     // Register a tokens provider for the language
     monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider as any)
@@ -657,6 +661,9 @@ export const EditorUI = (props: EditorUIProps) => {
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-zokrates', zokratesTokensProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-zokrates', zokratesLanguageConfig as any)
+
+    monacoRef.current.languages.setMonarchTokensProvider('remix-move', moveTokenProvider as any)
+    monacoRef.current.languages.setLanguageConfiguration('remix-move', moveLanguageConfig as any)
 
     monacoRef.current.languages.registerDefinitionProvider('remix-solidity', new RemixDefinitionProvider(props, monaco))
     monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', new RemixHighLightProvider(props, monaco))
