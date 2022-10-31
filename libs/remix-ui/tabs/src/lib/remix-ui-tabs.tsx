@@ -1,8 +1,8 @@
 
 import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators'
+import { CustomTooltip } from '@remix-ui/helper'
 import { Plugin } from '@remixproject/engine'
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
-import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import './remix-ui-tabs.css'
 const _paq = window._paq = window._paq || []
@@ -160,16 +160,16 @@ export const TabsUI = (props: TabsUIProps) => {
               }
             }}
           >
-            <OverlayTrigger placement="bottom" overlay={
-              <Tooltip id="overlay-tooltip-run-script">
-                <span>
+            <CustomTooltip
+              placement="bottom"
+              tooltipId="overlay-tooltip-run-script"
+              tooltipText={<span>
                   {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') ? "Run script (CTRL + SHIFT + S)" :
                     tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul'? "Compile CTRL + S" : "Select .sol or .yul file to compile or a .ts or .js file and run it"}
-                </span>
-              </Tooltip>
-            }>
+                </span>}
+            >
               <i className="fad fa-play"></i>
-            </OverlayTrigger>
+            </CustomTooltip>
           </button>
           <span data-id="tabProxyZoomOut" className="btn btn-sm px-2 fas fa-search-minus text-dark" title="Zoom out" onClick={() => props.onZoomOut()}></span>
           <span data-id="tabProxyZoomIn" className="btn btn-sm px-2 fas fa-search-plus text-dark" title="Zoom in" onClick={() => props.onZoomIn()}></span>
