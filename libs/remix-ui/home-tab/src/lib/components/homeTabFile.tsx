@@ -137,21 +137,34 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
       </ModalDialog>
       <Toaster message={state.toasterMsg} />
       <div className="justify-content-start mt-1 p-2 border-bottom d-flex flex-column" id="hTFileSection">
-        <label style={{fontSize: "1rem"}}>Files</label>
-        <button className="btn btn-primary p-2 border my-1" data-id="homeTabNewFile" style={{width: 'fit-content'}} onClick={() => createNewFile()}>New File</button>
-        <label className="btn p-2 border my-1" style={{width: 'fit-content'}} htmlFor="openFileInput">Open File</label>
+        <label className="h5" style={{fontSize: "1rem"}}>Create</label>
+        <div className="d-flex align-items-center mb-2" style={{ gap: 6 }}>
+          <button className="btn btn-primary p-2 border my-1 remixui_home_createbuttons" data-id="homeTabNewFile" onClick={() => createNewFile()}>NFT</button>
+          <button className="btn btn-primary ml-2 p-2 border my-1 remixui_home_createbuttons" data-id="homeTabNewFile" onClick={() =>  createNewFile()}>ERC20</button>
+        </div>
+        {/* <label className="btn p-2 border my-1" style={{width: 'fit-content'}} htmlFor="openFileInput">Open File</label>
         <input title="open file" type="file" id="openFileInput" onChange={(event) => {
           event.stopPropagation()
           plugin.verticalIcons.select('filePanel')
           uploadFile(event.target)
         }} multiple />
-        <button className="btn p-2 border my-1" style={{width: 'fit-content'}} onClick={() => connectToLocalhost()}>Connect to Localhost</button>
-        <label className="pt-2">Load From</label>
-        <div className="d-flex">
+        <button className="btn p-2 border my-1" style={{width: 'fit-content', backgroundColor: 'pink'}} onClick={() => connectToLocalhost()}>Connect to Localhost</button> */}
+        <label className="h5 pt-2 border-top">Load From</label>
+        <div className="d-flex mb-3 py-2">
+          <button className="btn p-2 border mr-2" onClick={() => showFullMessage('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}>Clone</button>
           <button className="btn p-2 border mr-2" data-id="landingPageImportFromGitHubButton" onClick={() => showFullMessage('GitHub', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}>GitHub</button>
           <button className="btn p-2 border mr-2" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>Gist</button>
           <button className="btn p-2 border mr-2" onClick={() => showFullMessage('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}>IPFS</button> 
           <button className="btn p-2 border" onClick={() => showFullMessage('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])}>HTTPS</button>
+        </div>
+        <label className="h5 pt-2 border-top">Save to</label>
+        <div className="d-flex align-items-center gap-3 mb-3" style={{ gap: 15 }}>
+          <button className="btn p-2 border" onClick={() => showFullMessage('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}>
+            <label htmlFor="browseipfsbutton" style={{ fontSize: '1rem' }}>Browser</label>
+          </button>
+          <button className="btn p-2 border" onClick={() => showFullMessage('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}>
+            <label htmlFor="harddriveipfsbutton" style={{ fontSize: '1rem' }}>Hard Drive</label>
+          </button>
         </div>
       </div>
     </>

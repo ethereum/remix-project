@@ -48,9 +48,9 @@ function HomeTabTitle() {
   return (
     <div className="px-2 pb-2 pt-2 d-flex flex-column border-bottom" id="hTTitleSection">
       <div className="mr-4 d-flex">
-        <div onClick={() => playRemi()} style={{ filter: themeFilter.filter}} >
+        {/* <div onClick={() => playRemi()} style={{ filter: themeFilter.filter}} >
           <BasicLogo classList="align-self-end remixui_home_logoImg" solid={false} />
-        </div>
+        </div> */}
         <audio
           id="remiAudio"
           muted={false}
@@ -117,12 +117,12 @@ function HomeTabTitle() {
           </OverlayTrigger>
         </span>
       </div>
-      <b className="pb-1 text-dark" style={{ fontStyle: 'italic' }}>The Native IDE for Web3 Development.</b>
+      <b className="pb-1 text-dark" style={{ fontStyle: 'italic' }}>The Web3 Development Environment.</b>
       <div className="pb-1" id="hTGeneralLinks">
-        <a className="remixui_home_text" target="__blank" href="https://remix-project.org">Website</a>
+        <a className="remixui_home_text text-primary fw-bold text-decoration-none" target="__blank" href="https://remix-project.org">About</a>
         <a className="pl-2 remixui_home_text" target="__blank" href="https://remix-ide.readthedocs.io/en/latest">Documentation</a>
-        <a className="pl-2 remixui_home_text" target="__blank" href="https://remix-plugin-docs.readthedocs.io/en/latest/">Remix Plugin</a>
-        <a className="pl-2 remixui_home_text" target="__blank" href="https://github.com/ethereum/remix-desktop/releases">Remix Desktop</a>
+        {/* <a className="pl-2 remixui_home_text" target="__blank" href="https://remix-plugin-docs.readthedocs.io/en/latest/">Remix Plugin</a>
+        <a className="pl-2 remixui_home_text" target="__blank" href="https://github.com/ethereum/remix-desktop/releases">Remix Desktop</a> */}
       </div>
       <div className="d-flex pb-1 align-items-center">
         <input
