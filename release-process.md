@@ -1,13 +1,29 @@
 # Release process 
 
-This document includes the instructions to release for:
- - remixd to NPM
- - Remix libraries to NPM
- - remix.ethereum.org
- - remix-alpha.ethereum.org
- - remix-beta.ethereum.org
+This document includes the release instructions for:
+ - Feature freeze phase
+ - Publishing `remixd` to NPM
+ - Publishing remix libraries to NPM
+ - Updating Remix's live version on remix.ethereum.org
+ - Updating Remix's alpha version on remix-alpha.ethereum.org
+ - Updating Remix's beta version on remix-beta.ethereum.org
+
+## Feature Freeze
+Once feature freeze is done, `remix_beta` should be updated latest to the master which will automatically update `remix-beta.ethereum.org` through a CI job.
+
+ - `git checkout remix_beta`
+ - `git pull origin remix_beta`
+ - `git reset --hard <master-commit-hash>` (`master-commit-hash` will be latest commid id from `master` branch)
+ - `git push -f origin remix_beta`
+ 
+## Testing
+Testing is performed after the Feature Freeze on `remix-beta.ethereum.org`. `build-qa-doc.js` script can be used to generate the list of QA tasks. Instructions to use the file are given in the file itself : https://github.com/ethereum/remix-project/blob/master/build-qa-doc.js#L18 . 
+
+Once ready to run, it can be run using the Node.js: `node build-qa-doc.js`
 
 ## remixd NPM release
+Once testing is completed, release will start by publishing `remixd`.if required, `remixd` can be also released individually
+
  - Bump version for remixd in `./libs/remixd/package.json`
  - Run: `nx build remixd`
  - Move to build directory: `cd ./dist/libs/remixd`
@@ -20,21 +36,10 @@ This document includes the instructions to release for:
  - `git checkout -b bumpLibsVersion`
  - `yarn run publish:libs `
  
- This command uses `lerna` and solely responsible for publishing all the remix libraries. It will ask for a new version of each library. Make sure you are logged in to NPM.
+This command uses `lerna` and is solely responsible for publishing all the remix libraries. It will ask for a new version of each library. Make sure you are logged in to NPM.
 
- Once this command is done, versions for each remix library should be updated to latest in libs package.json file.
- - Create bump PR to master
-
-## Feature Freeze
-Once feature freeze is done, `remix_beta` should be updated latest to the master which will automatically update `remix-beta.ethereum.org` through a CI job.
-
- - `git checkout remix_beta`
- - `git pull origin remix_beta`
- - `git reset --hard <master-commit-hash>` (`master-commit-hash` will be latest commid id from `master` branch)
- - `git push -f origin remix_beta`
- 
-## Testing Phase
-Testing is performed after the Feature Freeze. `build-qa-doc.js` script can be used to generate the list of QA tasks as described in the script itself.
+Once this command has been run, the versions for each remix library will be updated to latest in the libs' package.json file.
+ - Create and merge bump PR to master
  
 ## Remix IDE Release 
 ### Part 1. Bump the version and update Beta
@@ -53,7 +58,7 @@ Testing is performed after the Feature Freeze. `build-qa-doc.js` script can be u
  - Create a PR with base branch as `remix_beta`
  - Merge PR to **origin/remix_beta**
 
-#### Create git tag from beta:
+#### Create git tag from beta branch:
 
  - `git checkout remix_beta`
  - `git pull origin remix_beta`
@@ -64,19 +69,19 @@ Testing is performed after the Feature Freeze. `build-qa-doc.js` script can be u
 
 ### Part 2. Update the Remix Live
 
-This is not strictly speaking a release. Updating the `remix_live` branch latest to the `remix_beta` runs the CircleCI build which updates `remix.ethereum.org`
+Updating the `remix_live` branch latest to the `remix_beta` runs the CircleCI build which updates liver version of Remix IDE on `remix.ethereum.org`
 
  - `git checkout remix_live`
  - `git pull origin remix_live`
  - `git reset --hard <remix_beta-commit-hash>` or `<master-commit-hash>` sometimes
  - `git push -f origin remix_live`
 
- CircleCI will build automaticaly and remix.ethereum.org will be released.
+ CircleCI will build automaticaly and remix.ethereum.org will be updated to the latest.
 
- ### Part 3. Update zip file in GitHub release
- - Once `remix_live` is updated, Go to https://github.com/ethereum/remix-live
+ ### Part 3. Upload zip file in GitHub release
+ - Once CI is successful for `remix_live` branch, Go to https://github.com/ethereum/remix-live
  - Download the zip file with the name starting with `remix-`
- - Upload the zip file GitHub assets by editing the release for this version
+ - Upload the zip file in GitHub assets by editing the release for this version
  
 ## Bump master branch 
 
