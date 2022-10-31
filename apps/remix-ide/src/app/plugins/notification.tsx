@@ -1,8 +1,8 @@
 import { Plugin } from '@remixproject/engine'
 import { LibraryProfile, MethodApi, StatusEvents } from '@remixproject/plugin-utils'
 import { AppModal } from '@remix-ui/app'
-import { AlertModal } from 'libs/remix-ui/app/src/lib/remix-app/interface'
-import { dispatchModalInterface } from 'libs/remix-ui/app/src/lib/remix-app/context/context'
+import { AlertModal } from '@remix-ui/app'
+import { dispatchModalInterface } from '@remix-ui/app'
 
 interface INotificationApi {
   events: StatusEvents,
