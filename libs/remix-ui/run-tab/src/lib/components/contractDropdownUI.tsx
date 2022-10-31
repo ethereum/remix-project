@@ -312,6 +312,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                 evmBC={loadedContractData.bytecodeObject}
                 lookupOnly={false}
                 savedProxyAddress={proxyKey}
+                isValidProxyAddress={props.isValidProxyAddress}
               />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
                 <input

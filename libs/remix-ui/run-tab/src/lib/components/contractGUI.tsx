@@ -243,11 +243,11 @@ export function ContractGUI (props: ContractGUIProps) {
     setProxyAddress(value)
   }
 
-  const validateProxyAddress = (address: string) => {
+  const validateProxyAddress = async (address: string) => {
     if (address === '') {
       setProxyAddressError('proxy address cannot be empty')
     } else {
-      if (Web3.utils.isAddress(address)) {
+      if (await props.isValidProxyAddress(address)) {
         setProxyAddressError('')
       } else {
         setProxyAddressError('not a valid contract address')

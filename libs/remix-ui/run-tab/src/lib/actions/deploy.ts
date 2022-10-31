@@ -6,6 +6,7 @@ import { DeployMode, MainnetPrompt } from "../types"
 import { displayNotification, displayPopUp, setDecodedResponse } from "./payload"
 import { addInstance } from "./actions"
 import { addressToString, logBuilder } from "@remix-ui/helper"
+import Web3 from "web3"
 
 declare global {
   interface Window {
@@ -320,6 +321,18 @@ export const updateInstanceBalance = (plugin: RunTab) => {
       plugin.blockchain.getBalanceInEther(instance.address, (err, balInEth) => {
         if (!err) instance.balance = balInEth
       })
+    }
+  }
+}
+
+export const isValidContractAddress = async (plugin: RunTab, address: string) => {
+  if (!address) {
+    return false
+  } else {
+    if (Web3.utils.isAddress(address)) {
+      return await plugin.blockchain.web3().eth.getCode(address) !== '0x'
+    } else {
+      return false
     }
   }
 }
