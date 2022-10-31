@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 
 import Editor, { loader, Monaco } from '@monaco-editor/react'
+import { AlertModal } from '@remix-ui/app'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solidity'
 import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
@@ -135,6 +136,7 @@ export const EditorUI = (props: EditorUIProps) => {
   \t\t\t\t\t\t\t\tMedium: https://medium.com/remix-ide\n
   \t\t\t\t\t\t\t\tTwitter: https://twitter.com/ethereumremix\n
   `
+  const pasteCodeRef = useRef(false)
   const editorRef = useRef(null)
   const monacoRef = useRef<Monaco>(null)
   const currentFileRef = useRef('')
@@ -538,6 +540,33 @@ export const EditorUI = (props: EditorUIProps) => {
     editor.onMouseUp((e) => {
       if (e && e.target && e.target.toString().startsWith('GUTTER')) {
         (window as any).addRemixBreakpoint(e.target.position)
+      }
+    })
+
+    editor.onDidPaste((e) => {
+       if (!pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
+        const modalContent: AlertModal = {
+          id: 'newCodePasted',
+          title: 'Pasted Code Alert',
+          message: (
+            <div> <i className="fas fa-exclamation-triangle text-danger mr-1"></i>
+              You have just pasted a code snippet or contract in the editor.
+              <div>
+                Make sure you fully understand this code before deploying or interacting with it. Don't get scammed!
+                <div className='mt-2'>
+                Running untrusted code can put your wallet <span className='text-warning'> at risk </span>. In a worst-case scenario, you could <span className='text-warning'>loose all your money</span>.
+                </div>
+                <div className='text-warning  mt-2'>If you don't fully understand it, please don't run this code.</div>
+                <div className='mt-2'>
+                If you are not a smart contract developer, ask someone you trust who has the skills to determine if this code is safe to use.
+                </div>
+                <div className='mt-2'>See <a target="_blank" href='https://remix-ide.readthedocs.io/en/latest/security.html'> these recommendations </a> for more information.</div>
+              </div>
+            </div>
+          ),
+        }
+        props.plugin.call('notification', 'alert', modalContent)
+        pasteCodeRef.current = true
       }
     })
 
