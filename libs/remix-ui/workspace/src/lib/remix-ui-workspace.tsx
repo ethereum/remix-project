@@ -535,10 +535,6 @@ export function Workspace () {
       </div>
     </OverlayTrigger>,
   ]
-const workspaces = global.fs.browser.workspaces
-const fs = global.fs
-console.log({workspaces})
-console.log({fs})
 
   return (
     <div className='d-flex flex-column justify-content-between h-100'>
