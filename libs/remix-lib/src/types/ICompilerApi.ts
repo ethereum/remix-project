@@ -49,7 +49,7 @@ export interface ICompilerApi {
 }
 
 export type terminalLog = {
-    type: 'info' | 'error' | 'warning'
+    type: 'info' | 'error' | 'warning' | 'log'
     value: string
 }
 
