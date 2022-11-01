@@ -280,11 +280,11 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           try {
             const compilerState = await props.analysisModule.call('solidity', 'getCompilerState')
             const { currentVersion, optimize, evmVersion } = compilerState
-            await props.analysisModule.call('terminal', 'log', { type: 'info', value: '[Slither Analysis]: Running...' })
+            await props.analysisModule.call('terminal', 'log', { type: 'log', value: '[Slither Analysis]: Running...' })
             _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'slitherAnalyzer'])
             const result = await props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion })
             if (result.status) {
-              props.analysisModule.call('terminal', 'log', { type: 'info', value: `[Slither Analysis]: Analysis Completed!! ${result.count} warnings found.` })
+              props.analysisModule.call('terminal', 'log', { type: 'log', value: `[Slither Analysis]: Analysis Completed!! ${result.count} warnings found.` })
               const report = result.data
               for (const item of report) {
                 let location: any = {}
