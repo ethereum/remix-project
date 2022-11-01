@@ -346,8 +346,7 @@ export function Workspace () {
     >
       <div
         data-id='workspaceCreate'
-        onClick={(e) => {
-          e.stopPropagation()
+        onClick={() => {
           createWorkspace()
           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
           hideIconsMenu(!showIconsMenu)
@@ -357,8 +356,7 @@ export function Workspace () {
           hidden={currentWorkspace === LOCALHOST}
           id='workspaceCreate'
           data-id='workspaceCreate'
-          onClick={(e) => {
-            e.stopPropagation()
+          onClick={() => {
             createWorkspace()
             _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
             hideIconsMenu(!showIconsMenu)
@@ -379,8 +377,7 @@ export function Workspace () {
     >
       <div
         data-id='workspaceDelete'
-        onClick={(e) => {
-          e.stopPropagation()
+        onClick={() => {
           deleteCurrentWorkspace()
           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDelete'])
           hideIconsMenu(!showIconsMenu)
@@ -390,8 +387,7 @@ export function Workspace () {
           hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
           id='workspaceDelete'
           data-id='workspaceDelete'
-          onClick={(e) => {
-            e.stopPropagation()
+          onClick={() => {
             deleteCurrentWorkspace()
             _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDelete'])
             hideIconsMenu(!showIconsMenu)
@@ -410,8 +406,7 @@ export function Workspace () {
         </Tooltip>
       }
     >
-      <div onClick={(e) => {
-            e.stopPropagation()
+      <div onClick={() => {
             renameCurrentWorkspace()
             _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceRename'])
             hideIconsMenu(!showIconsMenu)
@@ -422,8 +417,7 @@ export function Workspace () {
           hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
           id='workspaceRename'
           data-id='workspaceRename'
-          onClick={(e) => {
-            e.stopPropagation()
+          onClick={() => {
             renameCurrentWorkspace()
             _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceRename'])
             hideIconsMenu(!showIconsMenu)
@@ -444,8 +438,7 @@ export function Workspace () {
     >
       <div
         data-id='cloneGitRepository'
-        onClick={(e) => {
-          e.stopPropagation()
+        onClick={() => {
           cloneGitRepository()
           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'cloneGitRepository'])
           hideIconsMenu(!showIconsMenu)
@@ -455,8 +448,7 @@ export function Workspace () {
           hidden={currentWorkspace === LOCALHOST}
           id='cloneGitRepository'
           data-id='cloneGitRepository'
-          onClick={(e) => {
-            e.stopPropagation()
+          onClick={() => {
             cloneGitRepository()
             _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'cloneGitRepository'])
             hideIconsMenu(!showIconsMenu)
@@ -478,8 +470,7 @@ export function Workspace () {
     >
       <div
         data-id='workspacesDownload'
-        onClick={(e) => {
-          e.stopPropagation()
+        onClick={() => {
           downloadWorkspaces()
           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesDownload'])
           hideIconsMenu(!showIconsMenu)
@@ -489,8 +480,7 @@ export function Workspace () {
           hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
           id='workspacesDownload'
           data-id='workspacesDownload'
-          onClick={(e) => {
-            e.stopPropagation()
+          onClick={() => {
             downloadWorkspaces()
             _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesDownload'])
             hideIconsMenu(!showIconsMenu)
@@ -511,8 +501,7 @@ export function Workspace () {
     >
       <div
         data-id='workspacesRestore'
-        onClick={(e) => {
-          e.stopPropagation()
+        onClick={() => {
           restoreBackup()
           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesRestore'])
           hideIconsMenu(!showIconsMenu)
@@ -522,8 +511,7 @@ export function Workspace () {
           hidden={currentWorkspace === LOCALHOST}
           id='workspacesRestore'
           data-id='workspacesRestore'
-          onClick={(e) => {
-            e.stopPropagation()
+          onClick={() => {
             restoreBackup()
             _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesRestore'])
             hideIconsMenu(!showIconsMenu)
