@@ -535,6 +535,10 @@ export function Workspace () {
       </div>
     </OverlayTrigger>,
   ]
+const workspaces = global.fs.browser.workspaces
+const fs = global.fs
+console.log({workspaces})
+console.log({fs})
 
   return (
     <div className='d-flex flex-column justify-content-between h-100'>
@@ -629,8 +633,7 @@ export function Workspace () {
                           }
                           </Dropdown.Item>
                         ))
-                      }
-                      <Dropdown.Item onClick={() => { switchWorkspace(LOCALHOST) }}>{currentWorkspace === LOCALHOST ? <span>&#10003; localhost </span> : <span className="pl-3"> { LOCALHOST } </span>}</Dropdown.Item>
+                      }                      
                       { ((global.fs.browser.workspaces.length <= 0) || currentWorkspace === NO_WORKSPACE) && <Dropdown.Item onClick={() => { switchWorkspace(NO_WORKSPACE) }}>{ <span className="pl-3">NO_WORKSPACE</span> }</Dropdown.Item> }
                     </Dropdown.Menu>
                   </Dropdown>
