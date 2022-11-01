@@ -22,7 +22,7 @@ module.exports = {
       .refreshPage()
       .waitForElementVisible('#editorView', 30000)
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf('contract Callot {') !== -1, 'content includes Ballot contract')
+        browser.assert.ok(content.indexOf('contract Ballot {') !== -1, 'content includes Ballot contract')
       })
   },
 
