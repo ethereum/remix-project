@@ -14,5 +14,5 @@ export const ModalInitialState: ModalState = {
     cancelLabel: '',
     cancelFn: () => { }
   },
-  focusToaster: { message: '', uid: 0 }
+  focusToaster: { message: '', timestamp: 0 }
 }

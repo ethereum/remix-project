@@ -36,10 +36,10 @@ export const ModalProvider = ({ children = [], reducer = modalReducer, initialSt
     })
   }
 
-  const toast = (message: string | JSX.Element, uid?: string | number) => {
+  const toast = (message: string | JSX.Element) => {
     dispatch({
       type: modalActionTypes.setToast,
-      payload: { message, uid }
+      payload: { message, timestamp: Date.now() }
     })
   }
 

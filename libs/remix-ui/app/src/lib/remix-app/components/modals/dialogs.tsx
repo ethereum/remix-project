@@ -10,7 +10,7 @@ const AppDialogs = () => {
   return (
     <>
       <ModalWrapper {...focusModal} handleHide={handleHideModal}></ModalWrapper>
-      <Toaster message={focusToaster.message} uid={focusToaster.uid} handleHide={handleToaster} />
+      <Toaster message={focusToaster.message} timestamp={focusToaster.timestamp} handleHide={handleToaster} />
     </>)
 }
 export default AppDialogs
