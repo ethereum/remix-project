@@ -549,7 +549,7 @@ export function Workspace () {
                       WORKSPACES
                     </label>
                   </span>
-                  <span className="remixui_menu remixui_topmenu d-flex justify-content-between align-items-end w-75">
+                  {currentWorkspace !== LOCALHOST ? (<span className="remixui_menu remixui_topmenu d-flex justify-content-between align-items-end w-75">
                     <OverlayTrigger
                       placement="top-end"
                       overlay={
@@ -592,7 +592,7 @@ export function Workspace () {
                       }
                       </Dropdown.Menu>
                     </Dropdown>
-                  </span>
+                  </span>) : null}
                 </div>
 
                 <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
