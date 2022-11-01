@@ -38,7 +38,7 @@ export class NotificationPlugin extends Plugin implements MethodApi<INotificatio
     return this.dispatcher.alert(args)
   }
 
-  async toast (message: string | JSX.Element, uid?: string | number) {
-    this.dispatcher.toast(message, uid)
+  async toast (message: string | JSX.Element) {
+    this.dispatcher.toast(message)
   }
 }

@@ -8,7 +8,7 @@ export interface ToasterProps {
   message: string | JSX.Element
   timeOut?: number,
   handleHide?: () => void,
-  uid?: string | number
+  timestamp?: number
 }
 
 export const Toaster = (props: ToasterProps) => {
@@ -50,7 +50,7 @@ export const Toaster = (props: ToasterProps) => {
         }
       })
     }
-  }, [props.message, props.uid])
+  }, [props.message, props.timestamp])
 
   useEffect(() => {
     if (state.hiding) {
