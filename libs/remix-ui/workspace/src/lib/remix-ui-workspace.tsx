@@ -526,7 +526,7 @@ export function Workspace () {
                     </label>
                   </span>
                   {currentWorkspace !== LOCALHOST ? (<span className="remixui_menu remixui_topmenu d-flex justify-content-between align-items-end w-75">
-                    <OverlayTrigger
+                    <CustomTooltip
                       placement="top-end"
                       tooltipId="createWorkspaceTooltip"
                       tooltipClasses="text-nowrap"
