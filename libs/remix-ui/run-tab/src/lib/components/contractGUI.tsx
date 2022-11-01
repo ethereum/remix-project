@@ -425,7 +425,7 @@ export function ContractGUI (props: ContractGUIProps) {
       </div>
       {props.deployOption && (props.deployOption || []).length > 0 ? (
         <>
-          <div className="d-flex justify-content-between">
+          <div className="d-flex justify-content-between mt-3">
             <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
               <input
                 id="deployWithProxy"
@@ -436,9 +436,9 @@ export function ContractGUI (props: ContractGUIProps) {
                 checked={deployState.deploy}
               />
               <CustomTooltip
-                tooltipText="An ERC1967 proxy contract will be deployed along with the selected implementation contract."
-                placement={"right"}
-                tooltipClasses="text-nowrap"
+                tooltipText={<span>An ERC1967 proxy and the selected contract will be deployed.</span>}
+                placement={"right-end"}
+                tooltipClasses="text-wrap"
                 tooltipId="deployWithProxyTooltip"
               >
                 <label
@@ -488,7 +488,7 @@ export function ContractGUI (props: ContractGUIProps) {
                         tooltipText={inp.name}
                         tooltipClasses="text-wrap"
                         tooltipId="initializeFieldsTooltip"
-                        placement="right"
+                        placement="top-start"
                       >
                         <input
                           ref={(el) => {
@@ -519,7 +519,7 @@ export function ContractGUI (props: ContractGUIProps) {
                 tooltipText="The implementation contract will be deployed and then the proxy contract will be updated with new implementation's address."
                 tooltipClasses="text-wrap"
                 tooltipId="upgradeImplementationTooltip"
-                placement="right"
+                placement="top-start"
               >
                 <label
                   htmlFor="upgradeImplementation"
