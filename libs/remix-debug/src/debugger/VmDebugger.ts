@@ -119,7 +119,6 @@ export class VmDebuggerLogic {
           } catch (error) {
             this.event.trigger('traceManagerMemoryUpdate', [{}])
           }
-
           try {
             const address = this._traceManager.getCurrentCalledAddressAt(index)
             if (!this.storageResolver) return
