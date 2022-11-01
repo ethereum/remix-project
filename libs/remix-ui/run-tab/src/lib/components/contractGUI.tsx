@@ -436,15 +436,15 @@ export function ContractGUI (props: ContractGUIProps) {
                 checked={deployState.deploy}
               />
               <CustomTooltip
-                tooltipText={<span>An ERC1967 proxy and the selected contract will be deployed.</span>}
-                placement={"right-end"}
+                tooltipText={<span>An ERC1967 proxy contract<br/> will be deployed along<br/> with the selected <br/>implementation contract.</span>}
+                placement={"bottom-start"}
                 tooltipClasses="text-wrap"
                 tooltipId="deployWithProxyTooltip"
               >
                 <label
                   htmlFor="deployWithProxy"
                   data-id="contractGUIDeployWithProxyLabel"
-                  className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
+                  className="m-0 form-check-label w-100 custom-control-label udapp_checkboxAlign"
                 >
                   Deploy with Proxy
                 </label>
