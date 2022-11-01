@@ -259,7 +259,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
       finalLogs = finalLogs + '&emsp;' + formattedLog + '\n'
     }
     _paq.push(['trackEvent', 'solidityUnitTesting', 'hardhat', 'console.log'])
-    testTab.call('terminal', 'log', { type: 'info', value: finalLogs })
+    testTab.call('terminal', 'log', { type: 'log', value: finalLogs })
   }
 
   const discardHighlight = async () => {
