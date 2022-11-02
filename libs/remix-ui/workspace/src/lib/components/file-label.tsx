@@ -1,6 +1,5 @@
 // eslint-disable-next-line no-use-before-define
 import { fileDecoration } from '@remix-ui/file-decorators'
-import { CustomTooltip } from '@remix-ui/helper'
 import React, { useEffect, useRef, useState } from 'react'
 import { FileType } from '../types'
 
@@ -71,19 +70,12 @@ export const FileLabel = (props: FileLabelProps) => {
       onKeyDown={handleEditInput}
       onBlur={handleEditBlur}
     >
-      <CustomTooltip
-        placement="right-start"
-        tooltipText={file.path}
-        tooltipClasses="text-nowrap"
-        tooltipId="fileLabelTooltip"
-      >
         <span
           className={`text-nowrap remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder' : 'remixui_leaf')}
-          data-path={file.path}
+          data-path={file.path} title={file.path}
         >
           {file.name}
         </span>
-      </CustomTooltip>
     </div>
   )
 }
