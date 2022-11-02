@@ -1,16 +1,17 @@
 'use strict'
 import helper from './helper'
+import { CompilationResult, CompilerInput, CompilationSourceCode } from './types'
 
 export class CompilerAbstract {
-  languageversion: any
-    data: any
-    source: any
-    input: any
-    constructor (languageversion, data, source, input?) {
+    languageversion: string
+    data: CompilationResult
+    source: CompilationSourceCode
+    input: CompilerInput
+    constructor (languageversion: string, data: CompilationResult, source: CompilationSourceCode, input?: CompilerInput) {
       this.languageversion = languageversion
       this.data = data
       this.source = source // source code
-      this.input = input // source code
+      this.input = input
     }
 
     getContracts () {
