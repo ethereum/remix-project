@@ -1,7 +1,7 @@
 import Web3 from 'web3'
 import remixDebug, { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
-import { CompilationOutput, Sources } from '@remix-ui/debugger-ui'
-import type { CompilationResult } from '@remix-project/remix-solidity-ts'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
+
 
 export const DebuggerApiMixin = (Base) => class extends Base {
 
@@ -159,28 +159,5 @@ export const DebuggerApiMixin = (Base) => class extends Base {
   onStopDebugging () {
     this.call('layout', 'resetSidePanel')
   }
-}
-
-export class CompilerAbstract implements CompilationOutput { // this is a subset of /remix-ide/src/app/compiler/compiler-abstract.js
-  languageversion
-  data
-  source
-
-  constructor (languageversion: string, data: CompilationResult, source: { sources: Sources, target: string }) {
-    this.languageversion = languageversion
-    this.data = data
-    this.source = source // source code
-  }
-
-  getSourceName (fileIndex) {
-    if (this.data && this.data.sources) {
-      return Object.keys(this.data.sources)[fileIndex]
-    } else if (Object.keys(this.source.sources).length === 1) {
-      // if we don't have ast, we return the only one filename present.
-      const sourcesArray = Object.keys(this.source.sources)
-      return sourcesArray[0]
-    }
-    return null
-  }  
 }
 
