@@ -128,6 +128,7 @@ const receiptStatusScript = `
   receiptStatus()
 `
 
+/* eslint-disable */
 const verifyScript = `
   const verify = async () => {
     try {
