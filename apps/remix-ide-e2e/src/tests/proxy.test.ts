@@ -70,12 +70,13 @@ module.exports = {
     browser
       .openFile('myTokenV1.sol')
       .clickLaunchIcon('solidity')
-      .pause(2000)
+      .pause(5000)
       .click('[data-id="compilerContainerCompileBtn"]')
       .waitForElementPresent('select[id="compiledContracts"] option[value=MyToken]', 60000)
       .clickLaunchIcon('udapp')
       .click('select.udapp_contractNames')
       .click('select.udapp_contractNames option[value=MyToken]')
+      .pause(5000)
       .waitForElementPresent('[data-id="contractGUIDeployWithProxyLabel"]')
       .click('[data-id="contractGUIDeployWithProxyLabel"]')
       .createContract('')
@@ -105,7 +106,8 @@ module.exports = {
           done()
         })
       })
-  },
+  },//*[@id="runTabView"]/div/div[2]/div[3]/div[1]/div/div[1]/div[4]/div/div[1]/input
+  // #runTabView > div > div.udapp_container > div:nth-child(3) > div.udapp_deployDropdown > div > div.udapp_contractProperty > div.pl-4.flex-column.d-flex > div > div:nth-child(1) > input
 
   'Should deploy proxy with initialize parameters #group1': function (browser: NightwatchBrowser) {
     browser
@@ -121,10 +123,12 @@ module.exports = {
       .click('select.udapp_contractNames option[value=MyInitializedToken]')
       .waitForElementPresent('[data-id="contractGUIDeployWithProxyLabel"]')
       .click('[data-id="contractGUIDeployWithProxyLabel"]')
-      .waitForElementPresent('input[title="tokenName"]')
-      .waitForElementPresent('input[title="tokenSymbol"]')
-      .setValue('input[title="tokenName"]', 'Remix')
-      .setValue('input[title="tokenSymbol"]', "R")
+      .useXpath()
+      .waitForElementPresent('//*[@id="runTabView"]/div/div[2]/div[3]/div[1]/div/div[1]/div[4]/div/div[1]/input')
+      .waitForElementPresent('//*[@id="runTabView"]/div/div[2]/div[3]/div[1]/div/div[1]/div[4]/div/div[2]/input')
+      .setValue('//*[@id="runTabView"]/div/div[2]/div[3]/div[1]/div/div[1]/div[4]/div/div[1]/input', 'Remix')
+      .setValue('//*[@id="runTabView"]/div/div[2]/div[3]/div[1]/div/div[1]/div[4]/div/div[2]/input', "R")
+      .useCss()
       .createContract('')
       .waitForElementContainsText('[data-id="udappNotifyModalDialogModalTitle-react"]', 'Deploy Implementation & Proxy (ERC1967)')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')

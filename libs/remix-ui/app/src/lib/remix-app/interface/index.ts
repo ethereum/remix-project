@@ -33,7 +33,7 @@ export interface AlertModal {
 
 export interface ModalState {
     modals: AppModal[],
-    toasters: (string | JSX.Element)[],
+    toasters: {message: (string | JSX.Element), timestamp: number }[],
     focusModal: AppModal,
-    focusToaster: string | JSX.Element
+    focusToaster:  {message: (string | JSX.Element), timestamp: number }
 }
