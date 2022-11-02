@@ -472,10 +472,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileIcon.current.classList.remove('remixui_spinningIcon')
     compileIcon.current.classList.remove('remixui_bouncingIcon')
     if (!state.autoCompile || (state.autoCompile && state.matomoAutocompileOnce)) {
-      if (state.useFileConfiguration)
-        _paq.push(['trackEvent', 'compiler', 'compiled_with_config_file'])
-
-      _paq.push(['trackEvent', 'compiler', 'compiled_with_version', _retrieveVersion()])
+      _paq.push(['trackEvent', 'compiler', 'compiled', 'with_config_file_' + state.useFileConfiguration])
+      _paq.push(['trackEvent', 'compiler', 'compiled', 'with_version_' + _retrieveVersion()])
       if (state.autoCompile && state.matomoAutocompileOnce) {
         setState(prevState => {
           return { ...prevState, matomoAutocompileOnce: false }
@@ -887,7 +885,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 }
               }}
             />
-            {!showFilePathInput && <button disabled={!state.useFileConfiguration} data-id="scConfigChangeFilePath" className="btn-secondary" onClick={() => { setShowFilePathInput(true) }}>Change</button>}
+            {!showFilePathInput && <button disabled={!state.useFileConfiguration} data-id="scConfigChangeFilePath" className="btn btn-sm btn-secondary" onClick={() => { setShowFilePathInput(true) }}>Change</button>}
           </div>
         </div>
         <div className="px-4">
