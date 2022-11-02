@@ -36,7 +36,8 @@ export const verify = async (
 
     try {
       const contractMetadata = getContractMetadata(
-        compilationResultParam.data,
+        // cast from the remix-plugin interface to the solidity one. Should be fixed when remix-plugin move to the remix-project repository
+        compilationResultParam.data as unknown as CompilationResult,
         contractName
       )
 
@@ -50,7 +51,8 @@ export const verify = async (
       const contractMetadataParsed = JSON.parse(contractMetadata)
 
       const fileName = getContractFileName(
-        compilationResultParam.data,
+        // cast from the remix-plugin interface to the solidity one. Should be fixed when remix-plugin move to the remix-project repository
+        compilationResultParam.data as unknown as CompilationResult,
         contractName
       )
 
