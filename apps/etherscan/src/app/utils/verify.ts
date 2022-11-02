@@ -114,8 +114,7 @@ export const verify = async (
           title: result,
         })
         const returnValue = {
-            status: result,
-            message: `Contract not verified`,
+            message: result,
             succeed: false
         }
         resetAfter10Seconds(client, setResults)
