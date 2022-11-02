@@ -1,5 +1,6 @@
 import { getNetworkName, getEtherScanApi, getReceiptStatus } from "../utils"
 import { CompilationResult } from "@remixproject/plugin-api"
+import { CompilerAbstract } from '@remix-project/remix-solidity'
 import axios from 'axios'
 import { PluginClient } from "@remixproject/plugin"
 
@@ -19,7 +20,7 @@ export const verify = async (
     contractAddress: string,
     contractArgumentsParam: string,
     contractName: string,
-    compilationResultParam: any,
+    compilationResultParam: CompilerAbstract, 
     client: PluginClient,
     onVerifiedContract: (value: EtherScanReturn) => void,
     setResults: (value: string) => void
