@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useRef, useState } from 'react'
 import * as remixLib from '@remix-project/remix-lib'
+import Web3 from 'web3'
 import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { CustomTooltip } from '@remix-ui/helper'
@@ -22,6 +23,7 @@ export function ContractGUI (props: ContractGUIProps) {
   const [deployState, setDeployState] = useState<{ deploy: boolean, upgrade: boolean }>({ deploy: false, upgrade: false })
   const [useLastProxy, setUseLastProxy] = useState<boolean>(false)
   const [proxyAddress, setProxyAddress] = useState<string>('')
+  const [proxyAddressError, setProxyAddressError] = useState<string>('')
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
   const initializeFields = useRef<Array<HTMLInputElement | null>>([])
   const basicInputRef = useRef<HTMLInputElement>()
@@ -174,7 +176,7 @@ export function ContractGUI (props: ContractGUIProps) {
 
       props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
     } else if (deployState.upgrade) {
-      props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
+      !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
     } else {
       props.clickCallBack(props.funcABI.inputs, basicInput)
     }
@@ -223,14 +225,34 @@ export function ContractGUI (props: ContractGUIProps) {
     const value = e.target.checked
     const address = props.savedProxyAddress
 
+    if (value) {
+      if (address) {
+        setProxyAddress(address)
+        setProxyAddressError('')
+      } else {
+        setProxyAddressError('No proxy address available')
+        setProxyAddress('')
+      }
+    }
     setUseLastProxy(value)
-    setProxyAddress(address || '')
   }
 
   const handleSetProxyAddress = (e) => {
     const value = e.target.value
-
+    
     setProxyAddress(value)
+  }
+
+  const validateProxyAddress = async (address: string) => {
+    if (address === '') {
+      setProxyAddressError('proxy address cannot be empty')
+    } else {
+      if (await props.isValidProxyAddress(address)) {
+        setProxyAddressError('')
+      } else {
+        setProxyAddressError('not a valid contract address')
+      }
+    }
   }
 
   return (
@@ -403,7 +425,7 @@ export function ContractGUI (props: ContractGUIProps) {
       </div>
       {props.deployOption && (props.deployOption || []).length > 0 ? (
         <>
-          <div className="d-flex justify-content-between">
+          <div className="d-flex justify-content-between mt-3">
             <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
               <input
                 id="deployWithProxy"
@@ -413,20 +435,21 @@ export function ContractGUI (props: ContractGUIProps) {
                 onChange={(e) => handleDeployProxySelect(e.target.checked)}
                 checked={deployState.deploy}
               />
-              <CustomTooltip
-                tooltipText="An ERC1967 proxy contract will be deployed along with the selected implementation contract."
-                placement={"right"}
-                tooltipClasses="text-nowrap"
+              {/* <CustomTooltip
+                tooltipText={<span>An ERC1967 proxy contract<br/> will be deployed along<br/> with the selected <br/>implementation contract.</span>}
+                placement={"bottom-start"}
+                tooltipClasses="text-wrap"
                 tooltipId="deployWithProxyTooltip"
-              >
+              > */}
                 <label
+                  // title="An ERC1967 proxy contract will be deployed along with the selected implementation contract"
                   htmlFor="deployWithProxy"
                   data-id="contractGUIDeployWithProxyLabel"
-                  className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
+                  className="m-0 form-check-label w-100 custom-control-label udapp_checkboxAlign"
                 >
                   Deploy with Proxy
                 </label>
-              </CustomTooltip>
+              {/* </CustomTooltip> */}
             </div>
             <div>
               {props.initializerOptions &&
@@ -462,12 +485,12 @@ export function ContractGUI (props: ContractGUIProps) {
                         {" "}
                         {inp.name}:{" "}
                       </label>
-                      <CustomTooltip
+                      {/* <CustomTooltip
                         tooltipText={inp.name}
                         tooltipClasses="text-wrap"
                         tooltipId="initializeFieldsTooltip"
-                        placement="right"
-                      >
+                        placement="top-start"
+                      > */}
                         <input
                           ref={(el) => {
                             initializeFields.current[index] = el;
@@ -476,7 +499,7 @@ export function ContractGUI (props: ContractGUIProps) {
                           className="form-control udapp_input"
                           placeholder={inp.type}
                         />
-                      </CustomTooltip>
+                      {/* </CustomTooltip> */}
                     </div>
                   );
                 })}
@@ -493,12 +516,12 @@ export function ContractGUI (props: ContractGUIProps) {
                 onChange={(e) => handleUpgradeImpSelect(e.target.checked)}
                 checked={deployState.upgrade}
               />
-              <CustomTooltip
+              {/* <CustomTooltip
                 tooltipText="The implementation contract will be deployed and then the proxy contract will be updated with new implementation's address."
                 tooltipClasses="text-wrap"
                 tooltipId="upgradeImplementationTooltip"
-                placement="right"
-              >
+                placement="top-start"
+              > */}
                 <label
                   htmlFor="upgradeImplementation"
                   data-id="contractGUIUpgradeImplementationLabel"
@@ -506,7 +529,7 @@ export function ContractGUI (props: ContractGUIProps) {
                 >
                   Upgrade with Proxy
                 </label>
-              </CustomTooltip>
+              {/* </CustomTooltip> */}
             </div>
             <span onClick={handleToggleUpgradeImp}>
               <i
@@ -550,7 +573,8 @@ export function ContractGUI (props: ContractGUIProps) {
                   </label>
                 </CustomTooltip>
               </div>
-              {!useLastProxy ? (
+              {
+                !useLastProxy ?
                 <div className="mb-2">
                   <label className="mt-2 text-left d-block">
                     Proxy Address:{" "}
@@ -570,7 +594,7 @@ export function ContractGUI (props: ContractGUIProps) {
                     />
                   </CustomTooltip>
                 </div>
-              ) : (
+               : (
                 <span
                   className="text-capitalize"
                   data-id="lastDeployedERC1967Address"

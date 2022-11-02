@@ -114,7 +114,7 @@ export class VmDebuggerLogic {
           try {
             const memory = this._traceManager.getMemoryAt(index)
             if (this.stepManager.currentStepIndex === index) {
-              this.event.trigger('traceManagerMemoryUpdate', [ui.formatMemory(memory, 16)])
+              this.event.trigger('traceManagerMemoryUpdate', [ui.formatMemory(memory, 32)])
             }
           } catch (error) {
             this.event.trigger('traceManagerMemoryUpdate', [{}])
