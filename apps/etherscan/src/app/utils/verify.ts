@@ -101,7 +101,7 @@ export const verify = async (
         const returnValue = {
             guid: result,
             status: receiptStatus,
-            message: `Contract verified correctly. Receipt GUID ${result}`,
+            message: `Verification process started correctly. Receipt GUID ${result}`,
             succeed: true
         }
         onVerifiedContract(returnValue)
