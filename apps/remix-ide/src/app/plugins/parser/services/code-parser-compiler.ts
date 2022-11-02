@@ -105,6 +105,7 @@ export default class CodeParserCompiler {
 
 
             this.plugin._buildIndex(data, source)
+            // cast from the remix-plugin interface to the solidity one. Should be fixed when remix-plugin move to the remix-project repository
             this.plugin.nodeIndex.nodesPerFile[this.plugin.currentFile] = this.plugin._extractFileNodes(this.plugin.currentFile, this.plugin.compilerAbstract as unknown as lastCompilationResult)
             await this.plugin.gasService.showGasEstimates()
             this.plugin.emit('astFinished')
