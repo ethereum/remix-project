@@ -120,10 +120,17 @@ export const verify = async (
         resetAfter10Seconds(client, setResults)
         return returnValue
       }
-      return result
-    } catch (error) {
+      return  {
+        message: 'unknown reason ' + result,
+        succeed: false
+      }
+    } catch (error: any) {
       console.error(error)
       setResults("Something wrong happened, try again")
+      return  {
+        message: error.message,
+        succeed: false
+      }
     }
   }
 
