@@ -3,9 +3,8 @@
 import BasicLogo from 'libs/remix-ui/vertical-icons-panel/src/lib/components/BasicLogo'
 import { ThemeContext } from '../themeContext'
 import React, { useEffect, useState, useRef, useContext } from 'react'
-import { CustomTooltip } from '@remix-ui/helper'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'// eslint-disable-line
 const _paq = window._paq = window._paq || [] // eslint-disable-line
-
 
 function HomeTabTitle() {
   useEffect(() => {
