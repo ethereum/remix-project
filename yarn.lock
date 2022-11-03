@@ -20904,10 +20904,10 @@ select-hose@^2.0.0:
   resolved "https://registry.yarnpkg.com/select-hose/-/select-hose-2.0.0.tgz#625d8658f865af43ec962bfc376a37359a4994ca"
   integrity sha1-Yl2GWPhlr0Psliv8N2o3NZpJlMo=
 
-selenium-standalone@^8.2.0:
-  version "8.2.0"
-  resolved "https://registry.yarnpkg.com/selenium-standalone/-/selenium-standalone-8.2.0.tgz#378b9740fe84953083fa9c0b1d8dcbfc3bd8508c"
-  integrity sha512-gRFJm2A91sL0/4PavIsfTVNjyqNjk+zbdJg/zAYgTMjuoWJv+BlYJh+1UbEtyjt4YvZACYif1DFAzFjQapqiOA==
+selenium-standalone@^8.2.3:
+  version "8.2.3"
+  resolved "https://registry.yarnpkg.com/selenium-standalone/-/selenium-standalone-8.2.3.tgz#4e9b1dac116fa3d7d85443050c0231c5dca2183d"
+  integrity sha512-WNiVh6uNwgXjM04NzsDgm5hWJGSmAI7fU5vCMWmb9AslQaoFDhvFgLE8wfp+nhdizqCW1bDTCZl3BnNHdaZG8g==
   dependencies:
     commander "^9.0.0"
     cross-spawn "^7.0.3"
@@ -20932,11 +20932,6 @@ selenium-webdriver@^4.3.1:
     jszip "^3.10.0"
     tmp "^0.2.1"
     ws ">=8.7.0"
-
-selenium@^2.20.0:
-  version "2.20.0"
-  resolved "https://registry.yarnpkg.com/selenium/-/selenium-2.20.0.tgz#f515b1a162de93c2ccef2fc0ca33f3b5543e38c8"
-  integrity sha1-9RWxoWLek8LM7y/AyjPztVQ+OMg=
 
 selfsigned@^1.10.8:
   version "1.10.11"
