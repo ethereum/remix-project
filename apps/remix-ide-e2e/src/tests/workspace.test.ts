@@ -378,7 +378,7 @@ module.exports = {
 
   // WORKSPACE TEMPLATES E2E END
 
-  'Should create two workspace and switch to the first one #flaky #group2': function (browser: NightwatchBrowser) {
+  'Should create two workspace and switch to the first one #flaky #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspaceCreate"]')
@@ -407,7 +407,7 @@ module.exports = {
       .currentWorkspaceIs('workspace_name')
   },
 
-  'Should rename a workspace #group2': function (browser: NightwatchBrowser) {
+  'Should rename a workspace #group1': function (browser: NightwatchBrowser) {
     browser
       .useXpath()
       .waitForElementPresent({
