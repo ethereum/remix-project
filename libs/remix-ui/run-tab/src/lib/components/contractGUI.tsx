@@ -435,21 +435,13 @@ export function ContractGUI (props: ContractGUIProps) {
                 onChange={(e) => handleDeployProxySelect(e.target.checked)}
                 checked={deployState.deploy}
               />
-              {/* <CustomTooltip
-                tooltipText={<span>An ERC1967 proxy contract<br/> will be deployed along<br/> with the selected <br/>implementation contract.</span>}
-                placement={"bottom-start"}
-                tooltipClasses="text-wrap"
-                tooltipId="deployWithProxyTooltip"
-              > */}
                 <label
-                  // title="An ERC1967 proxy contract will be deployed along with the selected implementation contract"
                   htmlFor="deployWithProxy"
                   data-id="contractGUIDeployWithProxyLabel"
                   className="m-0 form-check-label w-100 custom-control-label udapp_checkboxAlign"
                 >
                   Deploy with Proxy
                 </label>
-              {/* </CustomTooltip> */}
             </div>
             <div>
               {props.initializerOptions &&
@@ -485,12 +477,6 @@ export function ContractGUI (props: ContractGUIProps) {
                         {" "}
                         {inp.name}:{" "}
                       </label>
-                      {/* <CustomTooltip
-                        tooltipText={inp.name}
-                        tooltipClasses="text-wrap"
-                        tooltipId="initializeFieldsTooltip"
-                        placement="top-start"
-                      > */}
                         <input
                           ref={(el) => {
                             initializeFields.current[index] = el;
@@ -499,7 +485,6 @@ export function ContractGUI (props: ContractGUIProps) {
                           className="form-control udapp_input"
                           placeholder={inp.type}
                         />
-                      {/* </CustomTooltip> */}
                     </div>
                   );
                 })}
@@ -516,12 +501,6 @@ export function ContractGUI (props: ContractGUIProps) {
                 onChange={(e) => handleUpgradeImpSelect(e.target.checked)}
                 checked={deployState.upgrade}
               />
-              {/* <CustomTooltip
-                tooltipText="The implementation contract will be deployed and then the proxy contract will be updated with new implementation's address."
-                tooltipClasses="text-wrap"
-                tooltipId="upgradeImplementationTooltip"
-                placement="top-start"
-              > */}
                 <label
                   htmlFor="upgradeImplementation"
                   data-id="contractGUIUpgradeImplementationLabel"
@@ -529,7 +508,6 @@ export function ContractGUI (props: ContractGUIProps) {
                 >
                   Upgrade with Proxy
                 </label>
-              {/* </CustomTooltip> */}
             </div>
             <span onClick={handleToggleUpgradeImp}>
               <i
@@ -577,7 +555,7 @@ export function ContractGUI (props: ContractGUIProps) {
                 !useLastProxy ?
                 <div className="mb-2">
                   <label className="mt-2 text-left d-block">
-                    Proxy Address:{" "}
+                    Proxy Address :
                   </label>
                   <CustomTooltip
                     tooltipText="Enter previously deployed proxy address on the selected network"
