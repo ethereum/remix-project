@@ -4,6 +4,7 @@ import { ThemeContext, themes } from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 import CustomNavButtons from './customNavButtons'
+const _paq = window._paq = window._paq || [] // eslint-disable-line
 
 function HomeTabFeatured() {
   const themeFilter = useContext(ThemeContext)
@@ -44,7 +45,7 @@ function HomeTabFeatured() {
                 <div className="h6 w-50 p-4" style={{ flex: "1" }}>
                   <h5>JUMP INTO WEB3</h5>
                   <p>The Remix Project is a rich toolset which can be used for the entire journey of contract development by users of any knowledge level, and as a learning lab for teaching and experimenting with Ethereum.</p>
-                  <a className="remixui_home_text" target="__blank" href="https://remix-project.org">More</a>
+                  <a className="remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'jumpIntoWeb3'])} target="__blank" href="https://remix-project.org">More</a>
                 </div>
               </div>
               <div className="d-flex">
@@ -55,7 +56,7 @@ function HomeTabFeatured() {
                   <p>
                     Remix Project rewards contributors, beta testers, and UX research participants with NFTs deployed on Optimism. Remix Reward holders are able to mint a second “Remixer” user NFT badge to give to any other user of their choice.
                   </p>
-                  <a className="remixui_home_text" target="__blank" href="https://rewards.remix.ethereum.eth.limo">More</a>
+                  <a className="remixui_home_text" target="__blank" onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'remixRewards'])} href="https://rewards.remix.ethereum.eth.limo">More</a>
                 </div>
               </div>
               <div className="d-flex">
@@ -64,7 +65,7 @@ function HomeTabFeatured() {
                   <h5>BETA TESTING</h5>
                   <p style={{ fontStyle: 'italic' }}>Our community supports us.</p>
                   <p>You can join Beta Testing before each release of Remix IDE. Help us test now and get a handle on new features!</p>
-                  <a className="remixui_home_text" target="__blank" href="https://rewards.remix.ethereum.eth.limo">More</a>
+                  <a className="remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'betatesting'])} target="__blank" href="https://rewards.remix.ethereum.eth.limo">More</a>
                 </div>
               </div>
             </Carousel>
