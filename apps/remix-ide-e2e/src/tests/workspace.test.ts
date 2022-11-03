@@ -52,28 +52,40 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './web3-lib')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './ethers-lib')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'web3.eth.getAccounts')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'ethers.providers')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
           'Incorrect content')
@@ -81,7 +93,10 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests/storage.test.js"]')
       .click('*[data-id="treeViewLitreeViewItemtests/storage.test.js"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'chai')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`const { expect } = require("chai");`) !== -1,
           'Incorrect content')
@@ -129,28 +144,40 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './web3-lib')]",
+        locateStrategy: 'xpath',
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './ethers-lib')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'web3.eth.getAccounts')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'ethers.providers')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
           'Incorrect content')
@@ -177,28 +204,40 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './web3-lib')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './ethers-lib')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'web3.eth.getAccounts')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'ethers.providers')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
           'Incorrect content')
@@ -225,28 +264,40 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      .pause(1000)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './web3-lib')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './ethers-lib')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'web3.eth.getAccounts')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'ethers.providers')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
           'Incorrect content')
@@ -282,21 +333,30 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './web3-lib')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './ethers-lib')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'web3.eth.getAccounts')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
           'Incorrect content')
@@ -305,7 +365,10 @@ module.exports = {
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'ethers.providers')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
           'Incorrect content')
@@ -324,20 +387,20 @@ module.exports = {
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
-      .pause(1000)
       .addFile('test.sol', { content: 'test' })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'test')]",
+        locateStrategy: 'xpath'
+      })
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .click('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]')
       .setValue('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_name_1')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .pause(2000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
-      .pause(2000)
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
-      .pause(2000)
       .switchWorkspace('workspace_name')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .currentWorkspaceIs('workspace_name')
@@ -361,6 +424,7 @@ module.exports = {
       .setValue('*[data-id="modalDialogCustomPromptTextRename"]', 'workspace_name_renamed')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .pause(2000)
       .switchWorkspace('workspace_name_1')
       .pause(2000)
       .currentWorkspaceIs('workspace_name_1')
