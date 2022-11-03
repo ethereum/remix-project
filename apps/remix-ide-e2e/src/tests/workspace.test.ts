@@ -52,7 +52,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, './web3-lib')]",
         locateStrategy: 'xpath'
       })
@@ -62,7 +62,7 @@ module.exports = {
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, './ethers-lib')]",
         locateStrategy: 'xpath'
       })
@@ -72,7 +72,7 @@ module.exports = {
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, 'web3.eth.getAccounts')]",
         locateStrategy: 'xpath'
       })
@@ -82,7 +82,7 @@ module.exports = {
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, 'ethers.providers')]",
         locateStrategy: 'xpath'
       })
@@ -93,7 +93,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests/storage.test.js"]')
       .click('*[data-id="treeViewLitreeViewItemtests/storage.test.js"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, 'chai')]",
         locateStrategy: 'xpath'
       })
@@ -144,9 +144,9 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, './web3-lib')]",
-        locateStrategy: 'xpath'
+        locateStrategy: 'xpath',
       })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
@@ -154,7 +154,7 @@ module.exports = {
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, './ethers-lib')]",
         locateStrategy: 'xpath'
       })
@@ -164,7 +164,7 @@ module.exports = {
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, 'web3.eth.getAccounts')]",
         locateStrategy: 'xpath'
       })
@@ -174,7 +174,7 @@ module.exports = {
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, 'ethers.providers')]",
         locateStrategy: 'xpath'
       })
@@ -204,7 +204,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, './web3-lib')]",
         locateStrategy: 'xpath'
       })
@@ -214,7 +214,7 @@ module.exports = {
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, './ethers-lib')]",
         locateStrategy: 'xpath'
       })
@@ -224,7 +224,7 @@ module.exports = {
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, 'web3.eth.getAccounts')]",
         locateStrategy: 'xpath'
       })
@@ -234,7 +234,7 @@ module.exports = {
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, 'ethers.providers')]",
         locateStrategy: 'xpath'
       })
@@ -264,7 +264,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, './web3-lib')]",
         locateStrategy: 'xpath'
       })
@@ -274,7 +274,7 @@ module.exports = {
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, './ethers-lib')]",
         locateStrategy: 'xpath'
       })
@@ -284,7 +284,7 @@ module.exports = {
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, 'web3.eth.getAccounts')]",
         locateStrategy: 'xpath'
       })
@@ -294,7 +294,7 @@ module.exports = {
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, 'ethers.providers')]",
         locateStrategy: 'xpath'
       })
@@ -333,7 +333,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, './web3-lib')]",
         locateStrategy: 'xpath'
       })
@@ -343,7 +343,7 @@ module.exports = {
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, './ethers-lib')]",
         locateStrategy: 'xpath'
       })
@@ -353,7 +353,7 @@ module.exports = {
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, 'web3.eth.getAccounts')]",
         locateStrategy: 'xpath'
       })
@@ -365,7 +365,7 @@ module.exports = {
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .waitForElementVisible({
+      .waitForElementPresent({
         selector: "//div[contains(@class, 'view-line') and contains(.//span, 'ethers.providers')]",
         locateStrategy: 'xpath'
       })
