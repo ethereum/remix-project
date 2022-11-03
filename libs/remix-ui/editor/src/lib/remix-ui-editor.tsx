@@ -557,7 +557,7 @@ export const EditorUI = (props: EditorUIProps) => {
               <div>
                 Make sure you fully understand this code before deploying or interacting with it. Don't get scammed!
                 <div className='mt-2'>
-                Running untrusted code can put your wallet <span className='text-warning'> at risk </span>. In a worst-case scenario, you could <span className='text-warning'>loose all your money</span>.
+                Running untrusted code can put your wallet <span className='text-warning'> at risk </span>. In a worst-case scenario, you could <span className='text-warning'>lose all your money</span>.
                 </div>
                 <div className='text-warning  mt-2'>If you don't fully understand it, please don't run this code.</div>
                 <div className='mt-2'>
