@@ -425,6 +425,7 @@ module.exports = {
       .setValue('*[data-id="modalDialogCustomPromptTextRename"]', 'workspace_name_renamed')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .pause(2000)
       .switchWorkspace('workspace_name_1')
       .pause(2000)
       .currentWorkspaceIs('workspace_name_1')
