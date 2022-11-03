@@ -29,6 +29,7 @@ function HomeTabTitle() {
   const handleSearchKeyDown = (e: KeyboardEvent) => {
     if (e.target !== searchInputRef.current) return
     if (e.key === "Enter") {
+      _paq.push(['trackEvent', 'hometab', 'header', 'searchDocumentation'])
       openLink()
       searchInputRef.current.value = ""
     } else {
@@ -68,7 +69,10 @@ function HomeTabTitle() {
             </Tooltip>
           }>
             <button
-              onClick={() => openLink("https://www.youtube.com/channel/UCjTUPyFEr2xDGN6Cg8nKDaA")}
+              onClick={() => {
+                openLink("https://www.youtube.com/channel/UCjTUPyFEr2xDGN6Cg8nKDaA")
+                _paq.push(['trackEvent', 'hometab', 'socialMedia', 'youtube'])
+              }}
               className="border-0 h-100 btn fab fa-youtube">
             </button>
           </OverlayTrigger>
@@ -79,7 +83,10 @@ function HomeTabTitle() {
             </Tooltip>
           }>
             <button
-              onClick={() => openLink("https://twitter.com/EthereumRemix")}
+              onClick={() => { 
+                openLink("https://twitter.com/EthereumRemix")
+                _paq.push(['trackEvent', 'hometab', 'socialMedia', 'twitter'])
+              }}
               className="border-0 h-100 pl-2 btn fab fa-twitter">
             </button>
           </OverlayTrigger>
@@ -90,7 +97,10 @@ function HomeTabTitle() {
             </Tooltip>
           }>
             <button
-              onClick={() => openLink("https://www.linkedin.com/company/ethereum-remix/")}
+              onClick={() => { 
+                openLink("https://www.linkedin.com/company/ethereum-remix/")
+                _paq.push(['trackEvent', 'hometab', 'socialmedia', 'linkedin'])
+              }}
               className="border-0 h-100 pl-2 btn fa fa-linkedin">
             </button>
           </OverlayTrigger>
@@ -101,7 +111,10 @@ function HomeTabTitle() {
             </Tooltip>
           }>
             <button
-              onClick={() => openLink("https://medium.com/remix-ide")}
+              onClick={() => {
+                openLink("https://medium.com/remix-ide")
+                _paq.push(['trackEvent', 'hometab', 'socialmedia', 'medium'])
+              }}
               className="border-0 h-100 pl-2 btn fab fa-medium">
             </button>
           </OverlayTrigger>
@@ -112,7 +125,10 @@ function HomeTabTitle() {
             </Tooltip>
           }>
             <button
-              onClick={() => openLink("https://gitter.im/ethereum/remix")}
+              onClick={() => {
+                openLink("https://gitter.im/ethereum/remix")
+                _paq.push(['trackEvent', 'hometab', 'socialmedia', 'gitter'])
+              }}
               className="border-0 h-100 pl-2 btn fab fa-gitter">
             </button>
           </OverlayTrigger>
