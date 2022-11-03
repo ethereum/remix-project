@@ -380,7 +380,7 @@ module.exports = {
 
   'Should create two workspace and switch to the first one #flaky #group1': function (browser: NightwatchBrowser) {
     browser
-      .clickLaunchIcon('filePanel')
+      //.clickLaunchIcon('filePanel')
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .click('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]')
