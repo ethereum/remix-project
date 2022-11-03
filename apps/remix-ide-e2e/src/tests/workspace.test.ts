@@ -378,7 +378,7 @@ module.exports = {
 
   // WORKSPACE TEMPLATES E2E END
 
-  'Should create two workspace and switch to the first one #flaky #group1': function (browser: NightwatchBrowser) {
+  'Should create two workspace and switch to the first one #group1': function (browser: NightwatchBrowser) {
     browser
       //.clickLaunchIcon('filePanel')
       .click('*[data-id="workspaceCreate"]')
