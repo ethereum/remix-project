@@ -56,7 +56,7 @@ module.exports = {
     browser
       .addFile('myTokenV2.sol', sources[1]['myTokenV2.sol'])
       .clickLaunchIcon('solidity')
-      .pause(2000)
+      .assert.visible('[data-id="compilerContainerCompileBtn"]')
       .click('[data-id="compilerContainerCompileBtn"]')
       .waitForElementPresent('select[id="compiledContracts"] option[value=MyTokenV2]', 60000)
       .clickLaunchIcon('udapp')
@@ -106,8 +106,7 @@ module.exports = {
           done()
         })
       })
-  },//*[@id="runTabView"]/div/div[2]/div[3]/div[1]/div/div[1]/div[4]/div/div[1]/input
-  // #runTabView > div > div.udapp_container > div:nth-child(3) > div.udapp_deployDropdown > div > div.udapp_contractProperty > div.pl-4.flex-column.d-flex > div > div:nth-child(1) > input
+  },
 
   'Should deploy proxy with initialize parameters #group1': function (browser: NightwatchBrowser) {
     browser
@@ -115,7 +114,7 @@ module.exports = {
       .click('[data-id="deployAndRunClearInstances"]')
       .addFile('initializeProxy.sol', sources[2]['initializeProxy.sol'])
       .clickLaunchIcon('solidity')
-      .pause(2000)
+      .assert.visible('[data-id="compilerContainerCompileBtn"]')
       .click('[data-id="compilerContainerCompileBtn"]')
       .waitForElementPresent('select[id="compiledContracts"] option[value=MyInitializedToken]', 60000)
       .clickLaunchIcon('udapp')
@@ -164,7 +163,7 @@ module.exports = {
       .click('[data-id="deployAndRunClearInstances"]')
       .openFile('myTokenV2.sol')
       .clickLaunchIcon('solidity')
-      .pause(2000)
+      .assert.visible('[data-id="compilerContainerCompileBtn"]')
       .click('[data-id="compilerContainerCompileBtn"]')
       .waitForElementPresent('select[id="compiledContracts"] option[value=MyTokenV2]', 60000)
       .clickLaunchIcon('udapp')
@@ -206,7 +205,7 @@ module.exports = {
       .click('[data-id="deployAndRunClearInstances"]')
       .openFile('myTokenV2.sol')
       .clickLaunchIcon('solidity')
-      .pause(2000)
+      .assert.visible('[data-id="compilerContainerCompileBtn"]')
       .click('[data-id="compilerContainerCompileBtn"]')
       .waitForElementPresent('select[id="compiledContracts"] option[value=MyTokenV2]', 60000)
       .clickLaunchIcon('udapp')
