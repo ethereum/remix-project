@@ -8,8 +8,8 @@ import { RemixUiCheckbox } from '@remix-ui/checkbox' // eslint-disable-line
 import ErrorRenderer from './ErrorRenderer' // eslint-disable-line
 import { compilation } from './actions/staticAnalysisActions'
 import { initialState, analysisReducer } from './reducers/staticAnalysisReducer'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'// eslint-disable-line
 import { CodeAnalysis } from '@remix-project/remix-analyzer'
+import { CustomTooltip } from '@remix-ui/helper'
 
 declare global {
   interface Window {
@@ -521,13 +521,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             />
 
             <a className="mt-1 text-nowrap" href='https://remix-ide.readthedocs.io/en/latest/slither.html#enable-slither-analysis' target={'_blank'}>
-              <OverlayTrigger placement={'right'} overlay={
-                <Tooltip className="text-nowrap" id="overlay-tooltip">
-                  <span className="border bg-light text-dark p-1 pr-3" style={{minWidth: '230px' }}>Learn how to use Slither Analysis</span>
-                </Tooltip>
-              }>
+              <CustomTooltip
+                placement={'right'}
+                tooltipClasses="text-nowrap"
+                tooltipId="overlay-tooltip"
+                tooltipText={<span className="border bg-light text-dark p-1 pr-3" style={{minWidth: '230px' }}>Learn how to use Slither Analysis</span>}
+              >
                 <i style={{ fontSize: 'medium' }} className={'fal fa-info-circle ml-3'} aria-hidden="true"></i>
-              </OverlayTrigger>
+              </CustomTooltip>
             </a>
           </div>
         }

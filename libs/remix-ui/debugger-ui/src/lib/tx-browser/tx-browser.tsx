@@ -1,5 +1,5 @@
+import { CustomTooltip } from '@remix-ui/helper'
 import React, { useState, useEffect, useRef } from 'react'  //eslint-disable-line
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import './tx-browser.css'
 
 export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, transactionNumber, debugging }) => {
@@ -46,7 +46,20 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
   const txInputOnInput = () => {
     updateTxNumberFlag(!inputValue.current.value)
   }
-
+  const customJSX = (
+    <div id="debuggerTransactionStartButtonContainer" data-id="debuggerTransactionStartButton" onClick={handleSubmit} className="btn btn-primary btn-sm btn-block text-decoration-none">
+              <button
+                className='btn btn-link btn-sm btn-block h-75 p-0 m-0 text-decoration-none'
+                id='load'
+                onClick={handleSubmit}
+                data-id='debuggerTransactionStartButton'
+                disabled={!state.txNumber }
+                style={{ pointerEvents: 'none', color: 'white' }}
+              >
+                  <span>{ debugging ? 'Stop' : 'Start' } debugging</span>
+              </button>
+            </div>
+  )
   return (
     <div className='pb-2 container px-0'>
       <div className='txContainer'>
@@ -65,29 +78,14 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
           />
         </div>
         <div className='d-flex justify-content-center w-100 btn-group py-1'>
-          <OverlayTrigger
-            placement={'bottom'}
-            overlay={
-              <Tooltip className={'text-nowrap'} id={'debuggingButtontooltip'}>
-                <span>
-                  {debugging ? 'Stop debugging' : 'Start debugging'}
-                </span>
-              </Tooltip>
-            }
+          <CustomTooltip
+            placement="bottom"
+            tooltipText={debugging ? 'Stop debugging' : 'Start debugging'}
+            tooltipId={'debuggingButtontooltip'}
+            tooltipClasses="text-nowrap"
           >
-            <div id="debuggerTransactionStartButtonContainer" data-id="debuggerTransactionStartButton" onClick={handleSubmit} className="btn btn-primary btn-sm btn-block text-decoration-none">
-              <button
-                className='btn btn-link btn-sm btn-block h-75 p-0 m-0 text-decoration-none'
-                id='load'
-                onClick={handleSubmit}
-                data-id='debuggerTransactionStartButton'
-                disabled={!state.txNumber }
-                style={{ pointerEvents: 'none', color: 'white' }}
-              >
-                  <span>{ debugging ? 'Stop' : 'Start' } debugging</span>
-              </button>
-            </div>
-          </OverlayTrigger>
+            {customJSX}
+          </CustomTooltip>
         </div>
       </div>
       <span id='error' />

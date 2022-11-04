@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext, SyntheticEvent, ChangeEvent, KeyboardEvent } from 'react' // eslint-disable-line
-import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap'
-import { CustomIconsToggle, CustomMenu, CustomToggle } from '@remix-ui/helper'
+import { Dropdown } from 'react-bootstrap'
+import { CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import { FileSystemContext } from './contexts'
 import './css/remix-ui-workspace.css'
@@ -336,13 +336,11 @@ export function Workspace () {
   }
 
   const workspaceMenuIcons = [
-    <OverlayTrigger
+    <CustomTooltip
       placement="right"
-      overlay={
-        <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
-          <span>Create</span>
-        </Tooltip>
-      }
+      tooltipId="createWorkspaceTooltip"
+      tooltipClasses="text-nowrap"
+      tooltipText="Create"
     >
       <div
         data-id='workspaceCreate'
@@ -366,14 +364,12 @@ export function Workspace () {
         </span>
         <span className="pl-3">Create</span>
       </div>
-    </OverlayTrigger>,
-    <OverlayTrigger
+    </CustomTooltip>,
+    <CustomTooltip
       placement="right-start"
-      overlay={
-        <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
-          <span>Delete Workspace</span>
-        </Tooltip>
-      }
+      tooltipId="createWorkspaceTooltip"
+      tooltipClasses="text-nowrap"
+      tooltipText="Delete Workspace"
     >
       <div
         data-id='workspaceDelete'
@@ -397,14 +393,12 @@ export function Workspace () {
         </span>
         <span className="pl-3">{'Delete'}</span>
       </div>
-    </OverlayTrigger>,
-    <OverlayTrigger
+    </CustomTooltip>,
+    <CustomTooltip
       placement='right-start'
-      overlay={
-        <Tooltip id="workspaceRenametooltip">
-          <span>Rename Workspace</span>
-        </Tooltip>
-      }
+      tooltipClasses="text-nowrap"
+      tooltipId="workspaceRenametooltip"
+      tooltipText="Rename Workspace"
     >
       <div onClick={() => {
             renameCurrentWorkspace()
@@ -426,15 +420,13 @@ export function Workspace () {
         </span>
         <span className="pl-3">{'Rename'}</span>
       </div>
-    </OverlayTrigger>,
+    </CustomTooltip>,
     <Dropdown.Divider className="border mb-0 mt-0" />,
-    <OverlayTrigger
+    <CustomTooltip
       placement="right-start"
-      overlay={
-        <Tooltip id="cloneWorkspaceTooltip" className="text-nowrap">
-          <span>Clone Git Repository</span>
-        </Tooltip>
-      }
+      tooltipId="cloneWorkspaceTooltip"
+      tooltipClasses="text-nowrap"
+      tooltipText="Clone Git Repository"
     >
       <div
         data-id='cloneGitRepository'
@@ -458,15 +450,13 @@ export function Workspace () {
         </span>
         <span className="pl-3">{'Clone'}</span>
       </div>
-    </OverlayTrigger>,
+    </CustomTooltip>,
     <Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/>,
-    <OverlayTrigger
+    <CustomTooltip
       placement="right-start"
-      overlay={
-        <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
-          <span>Download Workspace</span>
-        </Tooltip>
-      }
+      tooltipId="createWorkspaceTooltip"
+      tooltipClasses="text-nowrap"
+      tooltipText="Download Workspace"
     >
       <div
         data-id='workspacesDownload'
@@ -490,14 +480,12 @@ export function Workspace () {
         </span>
         <span className="pl-3">{'Download'}</span>
       </div>
-    </OverlayTrigger>,
-    <OverlayTrigger
+    </CustomTooltip>,
+    <CustomTooltip
       placement="right-start"
-      overlay={
-        <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
-          <span>Restore Workspace Backup</span>
-        </Tooltip>
-      }
+      tooltipId="createWorkspaceTooltip"
+      tooltipClasses="text-nowrap"
+      tooltipText="Restore Workspace Backup"
     >
       <div
         data-id='workspacesRestore'
@@ -521,7 +509,7 @@ export function Workspace () {
         </span>
         <span className="pl-3">{'Restore'}</span>
       </div>
-    </OverlayTrigger>,
+    </CustomTooltip>,
   ]
 
   return (
@@ -538,13 +526,11 @@ export function Workspace () {
                     </label>
                   </span>
                   {currentWorkspace !== LOCALHOST ? (<span className="remixui_menu remixui_topmenu d-flex justify-content-between align-items-end w-75">
-                    <OverlayTrigger
+                    <CustomTooltip
                       placement="top-end"
-                      overlay={
-                        <Tooltip id="createWorkspaceTooltip" className="text-nowrap">
-                          <span>Create</span>
-                        </Tooltip>
-                      }
+                      tooltipId="createWorkspaceTooltip"
+                      tooltipClasses="text-nowrap"
+                      tooltipText="Create"
                     >
                         <span
                           hidden={currentWorkspace === LOCALHOST}
@@ -559,7 +545,7 @@ export function Workspace () {
                           className='far fa-plus remixui_menuicon d-flex align-self-end'
                           >
                         </span>
-                    </OverlayTrigger>
+                    </CustomTooltip>
                     <Dropdown id="workspacesMenuDropdown" data-id="workspacesMenuDropdown" onToggle={() => hideIconsMenu(!showIconsMenu)} show={showIconsMenu}>
                       <Dropdown.Toggle
                         as={CustomIconsToggle}
