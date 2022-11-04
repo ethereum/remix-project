@@ -6,10 +6,9 @@ import VmDebuggerHead from './vm-debugger/vm-debugger-head' // eslint-disable-li
 import { TransactionDebugger as Debugger } from '@remix-project/remix-debug' // eslint-disable-line
 import { DebuggerUIProps } from './idebugger-api' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
-import { isValidHash } from '@remix-ui/helper'
+import { CustomTooltip, isValidHash } from '@remix-ui/helper'
 /* eslint-disable-next-line */
 import './debugger-ui.css'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 const _paq = (window as any)._paq = (window as any)._paq || []
 
 export const DebuggerUI = (props: DebuggerUIProps) => {
@@ -346,19 +345,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     triggerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.trigger.bind(state.debugger.vmDebuggerLogic.event) : null
   }
 
-  return (
-    <div>
-      <Toaster message={state.toastMessage} />
-      <div className="px-2" ref={debuggerTopRef}>
-        <div>
-          <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
-          <OverlayTrigger overlay={
-            <Tooltip id="debuggerGenSourceCheckbox">
-              <span>{"Debug with generated sources"}</span>
-            </Tooltip>
-          } placement="top-start"
-          >
-            <span className="p-0 m-0">
+  const customJSX = (
+    <span className="p-0 m-0">
               <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={({ target: { checked } }) => {
               setState(prevState => {
                 return { ...prevState, opt: { ...prevState.opt, debugWithGeneratedSources: checked } }
@@ -366,7 +354,20 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
             }} type="checkbox" />
             <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Use generated sources (Solidity {'>='} v0.7.2)</label>
             </span>
-          </OverlayTrigger>
+  )
+  return (
+    <div>
+      <Toaster message={state.toastMessage} />
+      <div className="px-2" ref={debuggerTopRef}>
+        <div>
+          <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
+          <CustomTooltip
+            tooltipId="debuggerGenSourceCheckbox"
+            tooltipText={"Debug with generated sources"}
+            placement="top-start"
+          >
+            {customJSX}
+          </CustomTooltip>
           </div>
           { state.isLocalNodeUsed && <div className="mb-2 debuggerConfig custom-control custom-checkbox">
             <input className="custom-control-input" id="debugWithLocalNodeInput" onChange={({ target: { checked } }) => {

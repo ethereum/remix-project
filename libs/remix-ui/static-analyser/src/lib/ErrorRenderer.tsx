@@ -1,3 +1,4 @@
+import { CustomTooltip } from '@remix-ui/helper';
 import React from 'react' //eslint-disable-line
 
 interface ErrorRendererProps {
@@ -53,7 +54,14 @@ const ErrorRenderer = ({ message, opt, editor, name }: ErrorRendererProps) => {
             ? <span><a href={opt.item.more} target='_blank'>more</a></span>
             : <span> </span>
           }
-          <span title={`Position in ${opt.errFile}`}>Pos: {opt.locationString}</span>
+          <CustomTooltip
+            placement="right"
+            tooltipId="errorTooltip"
+            tooltipText={`Position in ${opt.errFile}`}
+            tooltipClasses="text-nowrap"
+          >
+            <span>Pos: {opt.locationString}</span>
+          </CustomTooltip>
         </span>
       </div>
     </div>

@@ -4,7 +4,7 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { CustomTooltipType } from '../../types/customtooltip'
 
 
-export function CustomTooltip({ children, placement, tooltipId, tooltipClasses, tooltipText }: CustomTooltipType) {
+export function CustomTooltip({ children, placement, tooltipId, tooltipClasses, tooltipText, tooltipTextClasses }: CustomTooltipType) {
 
   return (
     <Fragment>
@@ -12,7 +12,7 @@ export function CustomTooltip({ children, placement, tooltipId, tooltipClasses, 
         placement={placement}
         overlay={
           <Tooltip id={!tooltipId ? `${tooltipText}Tooltip` : tooltipId} className={tooltipClasses}>
-            <span>{tooltipText}</span>
+            {typeof tooltipText === 'string' ? (<span className={tooltipTextClasses}>{tooltipText}</span>) : (tooltipText)}
           </Tooltip>
         }
       >
