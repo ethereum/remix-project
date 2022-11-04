@@ -370,7 +370,7 @@ export const handleDownloadFiles = async () => {
 export const restoreBackupZip = async () => {
   await plugin.appManager.activatePlugin(['restorebackupzip'])
   await plugin.call('mainPanel', 'showContent', 'restorebackupzip')
-  _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'restorebackupzip'])
+  _paq.push(['trackEvent', 'Backup', 'userActivate', 'restorebackupzip'])
 }
 
 const packageGistFiles = async (directory) => {
