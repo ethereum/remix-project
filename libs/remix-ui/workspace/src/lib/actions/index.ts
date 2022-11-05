@@ -53,6 +53,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     const params = queryParams.get() as UrlParametersType
     const workspaces = await getWorkspaces() || []
     dispatch(setWorkspaces(workspaces))
+    // console.log('workspaces: ', workspaces)
     if (params.gist) {
       await createWorkspaceTemplate('gist-sample', 'gist-template')
       plugin.setWorkspace({ name: 'gist-sample', isLocalhost: false })
@@ -369,7 +370,7 @@ export const handleDownloadFiles = async () => {
 export const restoreBackupZip = async () => {
   await plugin.appManager.activatePlugin(['restorebackupzip'])
   await plugin.call('mainPanel', 'showContent', 'restorebackupzip')
-  _paq.push(['trackEvent', 'pluginManager', 'userActivate', 'restorebackupzip'])
+  _paq.push(['trackEvent', 'Backup', 'userActivate', 'restorebackupzip'])
 }
 
 const packageGistFiles = async (directory) => {

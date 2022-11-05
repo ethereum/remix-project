@@ -3,7 +3,9 @@
 import BasicLogo from 'libs/remix-ui/vertical-icons-panel/src/lib/components/BasicLogo'
 import { ThemeContext } from '../themeContext'
 import React, { useEffect, useState, useRef, useContext } from 'react'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'// eslint-disable-line
+import { CustomTooltip } from '@remix-ui/helper'
+const _paq = window._paq = window._paq || [] // eslint-disable-line
+
 
 function HomeTabTitle() {
   useEffect(() => {
@@ -28,6 +30,7 @@ function HomeTabTitle() {
   const handleSearchKeyDown = (e: KeyboardEvent) => {
     if (e.target !== searchInputRef.current) return
     if (e.key === "Enter") {
+      _paq.push(['trackEvent', 'hometab', 'header', 'searchDocumentation'])
       openLink()
       searchInputRef.current.value = ""
     } else {
@@ -61,68 +64,93 @@ function HomeTabTitle() {
       <div className="d-flex justify-content-between">
         <span className="h-80 text-uppercase" style={{ fontSize: 'xx-large', fontFamily: "Noah, sans-serif" }}>Remix</span>
         <span>
-          <OverlayTrigger placement={'top'} overlay={
-            <Tooltip className="text-nowrap" id="overlay-tooltip">
-              <span className="border bg-light text-dark p-1 pr-3">Remix Youtube Playlist</span>
-            </Tooltip>
-          }>
+          <CustomTooltip
+            placement={'top'}
+            tooltipId="overlay-tooltip"
+            tooltipClasses="text-nowrap"
+            tooltipText="Remix Youtube Playlist"
+            tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+          >
             <button
-              onClick={() => openLink("https://www.youtube.com/channel/UCjTUPyFEr2xDGN6Cg8nKDaA")}
+              onClick={() => {
+                openLink("https://www.youtube.com/channel/UCjTUPyFEr2xDGN6Cg8nKDaA")
+                _paq.push(['trackEvent', 'hometab', 'socialMedia', 'youtube'])
+              }}
               className="border-0 h-100 btn fab fa-youtube">
             </button>
-          </OverlayTrigger>
+          </CustomTooltip>
 
-          <OverlayTrigger placement={'top'} overlay={
-            <Tooltip className="text-nowrap" id="overlay-tooltip">
-              <span className="border bg-light text-dark p-1 pr-3">Remix Twitter Profile</span>
-            </Tooltip>
-          }>
+          <CustomTooltip
+            placement={'top'}
+            tooltipId="overlay-tooltip"
+            tooltipClasses="text-nowrap"
+            tooltipText="Remix Twitter Profile"
+            tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+          >
             <button
-              onClick={() => openLink("https://twitter.com/EthereumRemix")}
+              onClick={() => { 
+                openLink("https://twitter.com/EthereumRemix")
+                _paq.push(['trackEvent', 'hometab', 'socialMedia', 'twitter'])
+              }}
               className="border-0 h-100 pl-2 btn fab fa-twitter">
             </button>
-          </OverlayTrigger>
+          </CustomTooltip>
 
-          <OverlayTrigger placement={'top'} overlay={
-            <Tooltip className="text-nowrap" id="overlay-tooltip">
-              <span className="border bg-light text-dark p-1 pr-3">Remix Linkedin Profile</span>
-            </Tooltip>
-          }>
+          <CustomTooltip
+            placement={'top'}
+            tooltipId="overlay-tooltip"
+            tooltipClasses="text-nowrap"
+            tooltipText="Remix Linkedin Profile"
+            tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+          >
             <button
-              onClick={() => openLink("https://www.linkedin.com/company/ethereum-remix/")}
+              onClick={() => { 
+                openLink("https://www.linkedin.com/company/ethereum-remix/")
+                _paq.push(['trackEvent', 'hometab', 'socialmedia', 'linkedin'])
+              }}
               className="border-0 h-100 pl-2 btn fa fa-linkedin">
             </button>
-          </OverlayTrigger>
+          </CustomTooltip>
 
-          <OverlayTrigger placement={'top'} overlay={
-            <Tooltip className="text-nowrap" id="overlay-tooltip">
-              <span className="border bg-light text-dark p-1 pr-3">Remix Medium Posts</span>
-            </Tooltip>
-          }>
+          <CustomTooltip
+            placement={'top'}
+            tooltipId="overlay-tooltip"
+            tooltipClasses="text-nowrap"
+            tooltipText="Remix Medium Posts"
+            tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+          >
             <button
-              onClick={() => openLink("https://medium.com/remix-ide")}
+              onClick={() => {
+                openLink("https://medium.com/remix-ide")
+                _paq.push(['trackEvent', 'hometab', 'socialmedia', 'medium'])
+              }}
               className="border-0 h-100 pl-2 btn fab fa-medium">
             </button>
-          </OverlayTrigger>
+          </CustomTooltip>
 
-          <OverlayTrigger placement={'top'} overlay={
-            <Tooltip className="text-nowrap" id="overlay-tooltip">
-              <span className="border bg-light text-dark p-1 pr-3">Remix Gitter channel</span>
-            </Tooltip>
-          }>
+          <CustomTooltip
+            placement={'top'}
+            tooltipId="overlay-tooltip"
+            tooltipClasses="text-nowrap"
+            tooltipText="Remix Gitter Channel"
+            tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+          >
             <button
-              onClick={() => openLink("https://gitter.im/ethereum/remix")}
+              onClick={() => {
+                openLink("https://gitter.im/ethereum/remix")
+                _paq.push(['trackEvent', 'hometab', 'socialmedia', 'gitter'])
+              }}
               className="border-0 h-100 pl-2 btn fab fa-gitter">
             </button>
-          </OverlayTrigger>
+          </CustomTooltip>
         </span>
       </div>
       <b className="pb-1 text-dark" style={{ fontStyle: 'italic' }}>The Native IDE for Web3 Development.</b>
       <div className="pb-1" id="hTGeneralLinks">
-        <a className="remixui_home_text" target="__blank" href="https://remix-project.org">Website</a>
-        <a className="pl-2 remixui_home_text" target="__blank" href="https://remix-ide.readthedocs.io/en/latest">Documentation</a>
-        <a className="pl-2 remixui_home_text" target="__blank" href="https://remix-plugin-docs.readthedocs.io/en/latest/">Remix Plugin</a>
-        <a className="pl-2 remixui_home_text" target="__blank" href="https://github.com/ethereum/remix-desktop/releases">Remix Desktop</a>
+        <a className="remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'webSite'])} target="__blank" href="https://remix-project.org">Website</a>
+        <a className="pl-2 remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'documentation'])} target="__blank" href="https://remix-ide.readthedocs.io/en/latest">Documentation</a>
+        <a className="pl-2 remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'remixPlugin'])} target="__blank" href="https://remix-plugin-docs.readthedocs.io/en/latest/">Remix Plugin</a>
+        <a className="pl-2 remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'remixDesktop'])} target="__blank" href="https://github.com/ethereum/remix-desktop/releases">Remix Desktop</a>
       </div>
       <div className="d-flex pb-1 align-items-center">
         <input
@@ -135,7 +163,10 @@ function HomeTabTitle() {
         />
         <button
           className="form-control border d-flex align-items-center p-2 justify-content-center fas fa-search bg-light"
-          onClick={(e) => openLink()}
+          onClick={(e) => {
+            _paq.push(['trackEvent', 'hometab', 'header', 'searchDocumentation'])
+            openLink()
+          }}
           disabled={state.searchDisable}
           style={{ width: "3rem" }}
         >

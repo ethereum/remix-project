@@ -81,7 +81,7 @@ export class TruffleClient extends PluginClient {
     }
     if (!this.warnLog) {
       // @ts-ignore
-      this.call('terminal', 'log', 'receiving compilation result from Truffle')
+      this.call('terminal', 'log', { type: 'log', value: 'receiving compilation result from Truffle' })
       this.warnLog = true
     }
   }
@@ -141,6 +141,6 @@ export class TruffleClient extends PluginClient {
     console.log('syncing from Truffle')
     this.processArtifact()
     // @ts-ignore
-    this.call('terminal', 'log', 'synced with Truffle')
+    this.call('terminal', 'log', { type: 'log', value: 'synced with Truffle' })
   }
 }

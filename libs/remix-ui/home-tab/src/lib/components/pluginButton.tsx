@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext } from 'react'
 import { ThemeContext } from '../themeContext'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
+import { CustomTooltip } from '@remix-ui/helper'
 interface PluginButtonProps {
   imgPath: string,
   envID: string,
@@ -30,13 +30,13 @@ function PluginButton ({ imgPath, envID, envText, callback, l2, description, rem
       </button>
       { l2 && <label className="bg-light mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_l2Label">L2</label> }
       { remixMaintained &&
-        <OverlayTrigger placement="bottom" overlay={
-          <Tooltip id="overlay-tooltip-run-script">
-            <span>Maintained by Remix</span>
-          </Tooltip>
-        }>
+        <CustomTooltip
+          placement="bottom"
+          tooltipId="overlay-tooltip-run-script"
+          tooltipText={'Maintained by Remix'}
+        >
           <i className="bg-light text-success mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel fas fa-check"></i>
-        </OverlayTrigger>
+        </CustomTooltip>
       }
 
     </div>
