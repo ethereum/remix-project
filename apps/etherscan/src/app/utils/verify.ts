@@ -76,7 +76,7 @@ export const verify = async (
         sourceCode: JSON.stringify(jsonInput),
         contractname: fileName + ':' + contractName,
         compilerversion: `v${contractMetadataParsed.compiler.version}`, // see http://etherscan.io/solcversions for list of support versions
-        constructorArguements: contractArgumentsParam, // if applicable
+        constructorArguements: contractArgumentsParam ? contractArgumentsParam.replace('0x', '') : '', // if applicable
       }
 
       const body = new FormData()
