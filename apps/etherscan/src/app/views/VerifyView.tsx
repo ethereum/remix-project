@@ -92,9 +92,19 @@ export const VerifyView: React.FC<Props> = ({
               className="btn btn-primary"
               title="Generate the necessary helpers to start the verification from a TypeScript script"
               onClick={async () => {
-                await client.call('fileManager', 'writeFile', 'scripts/etherscan/receiptStatus.ts', receiptGuidScript)
-                await client.call('fileManager', 'writeFile', 'scripts/etherscan/verify.ts', verifyScript)
-                client.call('fileManager', 'open', 'scripts/etherscan/verify.ts')
+                if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/receiptStatus.ts')) {
+                  await client.call('fileManager', 'writeFile', 'scripts/etherscan/receiptStatus.ts', receiptGuidScript)
+                  await client.call('fileManager', 'open', 'scripts/etherscan/receiptStatus.ts')
+                } else {
+                  client.call('notification' as any, 'toast', 'file receiptStatus.ts already present..')
+                }
+                
+                if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/verify.ts')) {
+                  await client.call('fileManager', 'writeFile', 'scripts/etherscan/verify.ts', verifyScript)
+                  await client.call('fileManager', 'open', 'scripts/etherscan/verify.ts')
+                } else {
+                  client.call('notification' as any, 'toast', 'file verify.ts already present..')
+                }
               }}
               >
                 Generate Etherscan helper scripts
