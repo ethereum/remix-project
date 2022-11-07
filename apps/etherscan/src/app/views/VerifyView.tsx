@@ -8,6 +8,7 @@ import { Formik, ErrorMessage, Field } from "formik"
 import { SubmitButton } from "../components"
 import { Receipt } from "../types"
 import { verify } from "../utils/verify"
+import { receiptGuidScript, verifyScript } from "../utils/scripts"
 
 interface Props {
   client: PluginClient
@@ -86,6 +87,18 @@ export const VerifyView: React.FC<Props> = ({
             <div className="form-group">
               <h6>Verify your smart contracts</h6>
               <label htmlFor="contractName">Contract</label>
+              <button
+              style={{ padding: "0.25rem 0.4rem", marginRight: "0.5em" }}
+              className="btn btn-primary"
+              title="Generate the necessary helpers to start the verification from a TypeScript script"
+              onClick={async () => {
+                await client.call('fileManager', 'writeFile', 'scripts/etherscan/receiptStatus.ts', receiptGuidScript)
+                await client.call('fileManager', 'writeFile', 'scripts/etherscan/verify.ts', verifyScript)
+                client.call('fileManager', 'open', 'scripts/etherscan/verify.ts')
+              }}
+              >
+                Generate Etherscan helper scripts
+              </button>
               <Field
                 as="select"
                 className={
