@@ -93,7 +93,7 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
         await plugin.call('notification', 'toast', 'Please provide GitHub details in the settings section to start committing and branching.')
       } else {
         // commit the template as first commit
-        await plugin.call('notification', 'toast', 'Creating initial git commit ...')
+        plugin.call('notification', 'toast', 'Creating initial git commit ...')
         const status = await plugin.call('dGitProvider', 'status', { ref: 'HEAD' })
         Promise.all(
           status.map(([filepath, , worktreeStatus]) =>
