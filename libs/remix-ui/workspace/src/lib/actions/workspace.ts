@@ -90,9 +90,10 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
       const token = await plugin.call('settings', 'get', 'settings/gist-access-token')
       
       if (!name || !email || !token) {
-        await plugin.call('settings', 'notification', 'Please provide in the remix settings the github access token (along side with the other configuration options) in order to start committing and branching.')
+        await plugin.call('notification', 'toast', 'Please provide GitHub details in the settings section to start committing and branching.')
       } else {
         // commit the template as first commit
+        await plugin.call('notification', 'toast', 'Creating initial git commit ...')
         const status = await plugin.call('dGitProvider', 'status', { ref: 'HEAD' })
         Promise.all(
           status.map(([filepath, , worktreeStatus]) =>
@@ -110,7 +111,7 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
               name,
               email
             },
-            message: `first commit: remix template ${workspaceTemplateName}`,
+            message: `Initial commit: remix template ${workspaceTemplateName}`,
           }).then(console.log).catch(console.error)
         })
       }
