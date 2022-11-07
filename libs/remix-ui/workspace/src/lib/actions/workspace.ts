@@ -106,13 +106,13 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
               }, false)
           )
         ).then(async () => {
-          plugin.call('dGitProvider', 'commit', {
+          await plugin.call('dGitProvider', 'commit', {
             author: {
               name,
               email
             },
             message: `Initial commit: remix template ${workspaceTemplateName}`,
-          }).then(console.log).catch(console.error)
+          })
         })
       }
     }
