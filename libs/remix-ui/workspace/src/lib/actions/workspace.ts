@@ -468,6 +468,7 @@ export const showAllBranches = async () => {
 
   if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
   plugin.call('menuicons', 'select', 'dgit')
+  plugin.call('dgit', 'open', 'branches')
 }
 
 const refreshBranches = async () => {
