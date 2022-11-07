@@ -71,7 +71,7 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
       const allBranches = await getGitRepoBranches(workspacesPath + '/' + workspaceName)
       // selected branch will be 'master' or 'main'
-      const selectedBranch = allBranches[0].name
+      const selectedBranch = allBranches?.length ? allBranches[0].name : 'main'
       await plugin.call('dGitProvider', 'init', { branch: selectedBranch })
       dispatch(setCurrentWorkspaceCurrentBranch(selectedBranch))
       const isActive = await plugin.call('manager', 'isActive', 'dgit')
