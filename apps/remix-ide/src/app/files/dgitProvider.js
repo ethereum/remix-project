@@ -88,24 +88,28 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async add (cmd) {
+  async add (cmd, refresh = true) {
     await git.add({
       ...await this.getGitConfig(),
       ...cmd
     })
-    setTimeout(async () => {
-      await this.call('fileManager', 'refresh')
-    }, 1000)
+    if (refresh) {
+      setTimeout(async () => {
+        await this.call('fileManager', 'refresh')
+      }, 1000)
+    }
   }
 
-  async rm (cmd) {
+  async rm (cmd, refresh = true) {
     await git.remove({
       ...await this.getGitConfig(),
       ...cmd
     })
-    setTimeout(async () => {
-      await this.call('fileManager', 'refresh')
-    }, 1000)
+    if (refresh) {
+      setTimeout(async () => {
+        await this.call('fileManager', 'refresh')
+      }, 1000)
+    }
   }
 
   async checkout (cmd, refresh = true) {
