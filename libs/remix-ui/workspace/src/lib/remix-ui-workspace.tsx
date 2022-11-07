@@ -745,7 +745,7 @@ export function Workspace () {
                         }
                       </div>
                       {
-                        (selectedWorkspace.branches || []).length > 4 && <div className='text-center border-top pt-2'><a href='#' style={{ fontSize: 12 }} onClick={showAllBranches}>view all branches</a></div>
+                        (selectedWorkspace.branches || []).length > 4 && <div className='text-center border-top pt-2'><label style={{ fontSize: 12, cursor: 'pointer' }} onClick={showAllBranches}>View all branches</label></div>
                       }
                     </div>
                   </Dropdown.Menu>
