@@ -57,6 +57,10 @@ export const addInputField = async (type: 'file' | 'folder', path: string, cb?: 
   return promise
 }
 
+const removeSlash = (s: string) => {
+  return s.replace(/^\/+/, "")
+}
+
 export const createWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate, opts = null, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void, isGitRepo: boolean = false) => {
   await plugin.fileManager.closeAllFiles()
   const promise = createWorkspaceTemplate(workspaceName, workspaceTemplateName)
@@ -79,6 +83,38 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
       if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
     }
     if (!isEmpty) await loadWorkspacePreset(workspaceTemplateName, opts)
+
+    if (isGitRepo) {
+      const name = await plugin.call('settings', 'get', 'settings/github-user-name')
+      const email = await plugin.call('settings', 'get', 'settings/github-email')
+      const token = await plugin.call('settings', 'get', 'settings/gist-access-token')
+      
+      if (!name || !email || !token) {
+        await plugin.call('settings', 'notification', 'Please provide in the remix settings the github access token (along side with the other configuration options) in order to start committing and branching.')
+      } else {
+        // commit the template as first commit
+        const status = await plugin.call('dGitProvider', 'status', { ref: 'HEAD' })
+        Promise.all(
+          status.map(([filepath, , worktreeStatus]) =>
+            worktreeStatus
+              ? plugin.call('dGitProvider', 'add', {
+                filepath: removeSlash(filepath),
+              }, false)
+              : plugin.call('dGitProvider', 'rm', {
+                filepath: removeSlash(filepath),
+              }, false)
+          )
+        ).then(async () => {
+          plugin.call('dGitProvider', 'commit', {
+            author: {
+              name,
+              email
+            },
+            message: `first commit: remix template ${workspaceTemplateName}`,
+          }).then(console.log).catch(console.error)
+        })
+      }
+    }
     cb && cb(null, workspaceName)
   }).catch((error) => {
     dispatch(createWorkspaceError({ error }))
