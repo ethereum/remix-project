@@ -106,8 +106,7 @@ export const verify = async (
         }
         onVerifiedContract(returnValue)
         return returnValue
-      }
-      if (message === "NOTOK") {
+      } else if (message === "NOTOK") {
         client.emit("statusChanged", {
           key: "failed",
           type: "error",
