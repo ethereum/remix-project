@@ -46,6 +46,8 @@ class FileManager extends Plugin {
   getFolder: (path: any) => Promise<unknown>
   setFile: (path: any, data: any) => Promise<unknown>
   switchFile: (path: any) => Promise<void>
+  changedFiles: string[]
+
   constructor(editor, appManager) {
     super(profile)
     this.mode = 'browser'
@@ -55,6 +57,8 @@ class FileManager extends Plugin {
     this._components = {}
     this._components.registry = Registry.getInstance()
     this.appManager = appManager
+    this.changedFiles = []
+
     this.init()
   }
 
@@ -438,6 +442,10 @@ class FileManager extends Plugin {
   }
 
   fileChangedEvent(path) {
+    if(!this.changedFiles.includes(path)){
+      this.changedFiles.push(path)
+    }
+
     this.emit('fileChanged', path)
   }
 
@@ -488,8 +496,13 @@ class FileManager extends Plugin {
     }
   }
 
-  async closeFile(name) {
+  async closeFile(name: string) {
     delete this.openedFiles[name]
+    if( this.changedFiles.includes(name) ){
+      const files = this.changedFiles
+      this.changedFiles.splice(files.indexOf(name), 1)
+    }
+
     if (!Object.keys(this.openedFiles).length) {
       this._deps.config.set('currentFile', '')
       // TODO: Only keep `this.emit` (issue#2210)
@@ -612,6 +625,13 @@ class FileManager extends Plugin {
   }
 
   async openFile(file?: string) {
+    const lastOpenedFiles = Object.keys(this.openedFiles)
+    const lastFile = lastOpenedFiles[lastOpenedFiles.length - 1]
+   
+    if(!this.changedFiles.includes(file) && !this.changedFiles.includes(lastFile)){
+      await this.closeFile(lastFile).catch(()=>{})
+    }
+
     if (!file) {
       this.emit('noFileSelected')
       this.events.emit('noFileSelected')
