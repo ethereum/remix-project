@@ -697,7 +697,7 @@ export function Workspace () {
         </div>
         {
           selectedWorkspace &&
-          <div className={`bg-light border-top ${selectedWorkspace.isGitRepo ? 'd-block' : 'd-none'}`} data-id="workspaceGitPanel">
+          <div className={`bg-light border-top ${selectedWorkspace.isGitRepo && currentBranch ? 'd-block' : 'd-none'}`} data-id="workspaceGitPanel">
             <div className='d-flex justify-space-between p-1'>
               <div className="mr-auto text-uppercase text-dark pt-2 pl-2">GIT</div>
               <div className="pt-1 mr-1" data-id="workspaceGitBranchesDropdown">

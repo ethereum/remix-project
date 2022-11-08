@@ -1,7 +1,7 @@
 import React from 'react'
 import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import axios, { AxiosResponse } from 'axios'
-import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setCurrentWorkspaceBranches, setCurrentWorkspaceCurrentBranch, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace } from './payload'
+import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setCurrentWorkspaceBranches, setCurrentWorkspaceCurrentBranch, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace, setCurrentWorkspaceIsRepo } from './payload'
 import { addSlash, checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
 import { JSONStandardInput, WorkspaceTemplate } from '../types'
@@ -27,11 +27,19 @@ export const setPlugin = (filePanelPlugin, reducerDispatch) => {
   plugin = filePanelPlugin
   dispatch = reducerDispatch
   plugin.on('dGitProvider', 'checkout', async () => {
-    const currentBranch = await plugin.call('dGitProvider', 'currentbranch')
-    dispatch(setCurrentWorkspaceCurrentBranch(currentBranch))
+    await checkGit()
+  })
+  plugin.on('dGitProvider', 'init', async () => {
+    await checkGit()
+  })
+  plugin.on('dGitProvider', 'add', async () => {
+    await checkGit()
+  })
+  plugin.on('dGitProvider', 'commit', async () => {
+    await checkGit()
   })
   plugin.on('dGitProvider', 'branch', async () => {
-    await refreshBranches()
+    await checkGit()
   })
 }
 
@@ -100,10 +108,10 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
             worktreeStatus
               ? plugin.call('dGitProvider', 'add', {
                 filepath: removeSlash(filepath),
-              }, false)
+              })
               : plugin.call('dGitProvider', 'rm', {
                 filepath: removeSlash(filepath),
-              }, false)
+              })
           )
         ).then(async () => {
           await plugin.call('dGitProvider', 'commit', {
@@ -461,6 +469,16 @@ export const cloneRepository = async (url: string) => {
   }
 }
 
+
+export const checkGit = async () => {
+  const isGitRepo = await plugin.fileManager.isGitRepo()
+  dispatch(setCurrentWorkspaceIsRepo(isGitRepo))
+  await refreshBranches()
+  const currentBranch = await plugin.call('dGitProvider', 'currentbranch')
+  dispatch(setCurrentWorkspaceCurrentBranch(currentBranch))
+}
+
+
 export const getRepositoryTitle = async (url: string) => {
   const urlArray = url.split('/')
   let name = urlArray.length > 0 ? urlArray[urlArray.length - 1] : ''
@@ -486,7 +504,6 @@ export const getGitRepoBranches = async (workspacePath: string) => {
     dir: addSlash(workspacePath)
   }
   const branches: { remote: any; name: string; }[] = await plugin.call('dGitProvider', 'branches', { ...gitConfig })
-
   return branches
 }
 
@@ -496,7 +513,6 @@ export const getGitRepoCurrentBranch = async (workspaceName: string) => {
     dir: addSlash(workspaceName)
   }
   const currentBranch: string = await plugin.call('dGitProvider', 'currentbranch', { ...gitConfig })
-
   return currentBranch
 }
 
