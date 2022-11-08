@@ -278,3 +278,10 @@ export const setCurrentWorkspaceCurrentBranch = (currentBranch?: string) => {
     payload: currentBranch
   }
 }
+
+export const setCurrentWorkspaceIsRepo = (isRepo: boolean) => {
+  return {
+    type: 'SET_CURRENT_WORKSPACE_IS_REPO',
+    payload: isRepo
+  }
+}

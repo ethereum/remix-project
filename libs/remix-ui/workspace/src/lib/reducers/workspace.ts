@@ -703,6 +703,21 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       }
     }
 
+    case 'SET_CURRENT_WORKSPACE_IS_REPO': {
+      const payload: boolean = action.payload
+
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          workspaces: state.browser.workspaces.map((workspace) => {
+            if (workspace.name === state.browser.currentWorkspace) workspace.isGitRepo = payload
+            return workspace
+          })
+        }
+      }
+    }
+
     default:
       throw new Error()
   }
