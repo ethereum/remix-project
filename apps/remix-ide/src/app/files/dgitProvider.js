@@ -78,6 +78,7 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       defaultBranch: (input && input.branch) || 'main'
     })
+    this.emit('init')
   }
 
   async status (cmd) {
@@ -88,28 +89,19 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async add (cmd, refresh = true) {
+  async add (cmd) {
     await git.add({
       ...await this.getGitConfig(),
       ...cmd
     })
-    if (refresh) {
-      setTimeout(async () => {
-        await this.call('fileManager', 'refresh')
-      }, 1000)
-    }
+    this.emit('add')
   }
 
-  async rm (cmd, refresh = true) {
+  async rm (cmd) {
     await git.remove({
       ...await this.getGitConfig(),
       ...cmd
     })
-    if (refresh) {
-      setTimeout(async () => {
-        await this.call('fileManager', 'refresh')
-      }, 1000)
-    }
   }
 
   async checkout (cmd, refresh = true) {
@@ -194,6 +186,7 @@ class DGitProvider extends Plugin {
         ...await this.getGitConfig(),
         ...cmd
       })
+      this.emit('commit')
       return sha
     } catch (e) {
       throw new Error(e)
