@@ -303,6 +303,7 @@ export function Workspace () {
             data-id="initGitRepository"
             className="form-check-input custom-control-input"
             type="checkbox"
+            disabled={!global.fs.gitConfig.username || !global.fs.gitConfig.email}
             onChange={() => {}}
           />
           <label
@@ -314,6 +315,12 @@ export function Workspace () {
             Initialize workspace as a new git repository
           </label>
         </div>
+        {!global.fs.gitConfig.username || !global.fs.gitConfig.email ? 
+          (
+          <div className='text-warning'>You need to set a username and email to be able to use git features.<br>
+          </br>Please update these fields in the settings of Remix</div>)
+          :<></>
+        }
 
       </>
     )
