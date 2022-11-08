@@ -703,7 +703,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       }
     }
 
-    case 'SET_CURRENT_WORKSPACE_IS_REPO': {
+    case 'SET_CURRENT_WORKSPACE_IS_GITREPO': {
       const payload: boolean = action.payload
 
       return {
