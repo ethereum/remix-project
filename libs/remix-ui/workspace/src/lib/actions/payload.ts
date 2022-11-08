@@ -285,3 +285,10 @@ export const setCurrentWorkspaceIsGitRepo = (isRepo: boolean) => {
     payload: isRepo
   }
 }
+
+export const setGitConfig = (config: {username: string, token: string, email: string}) => {
+  return {
+    type: 'SET_GIT_CONFIG',
+    payload: config
+  }
+}
