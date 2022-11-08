@@ -1,7 +1,7 @@
 import React from 'react'
 import { bufferToHex, keccakFromString } from 'ethereumjs-util'
 import axios, { AxiosResponse } from 'axios'
-import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setCurrentWorkspaceBranches, setCurrentWorkspaceCurrentBranch, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace, setCurrentWorkspaceIsGitRepo } from './payload'
+import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setCurrentWorkspaceBranches, setCurrentWorkspaceCurrentBranch, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace, setCurrentWorkspaceIsGitRepo, setGitConfig } from './payload'
 import { addSlash, checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
 import { JSONStandardInput, WorkspaceTemplate } from '../types'
@@ -41,6 +41,13 @@ export const setPlugin = (filePanelPlugin, reducerDispatch) => {
   plugin.on('dGitProvider', 'branch', async () => {
     await checkGit()
   })
+  plugin.on('config', 'configChanged', async () => {
+    await getGitConfig()
+  })
+  plugin.on('settings', 'configChanged', async () => {
+    await getGitConfig()
+  })
+  getGitConfig()
 }
 
 export const addInputField = async (type: 'file' | 'folder', path: string, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
@@ -80,12 +87,7 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
     await plugin.workspaceCreated(workspaceName)
 
     if (isGitRepo) {
-      const workspacesPath = plugin.fileProviders.workspace.workspacesPath
-      const allBranches = await getGitRepoBranches(workspacesPath + '/' + workspaceName)
-      // selected branch will be 'master' or 'main'
-      const selectedBranch = allBranches?.length ? allBranches[0].name : 'main'
-      await plugin.call('dGitProvider', 'init', { branch: selectedBranch })
-      dispatch(setCurrentWorkspaceCurrentBranch(selectedBranch))
+      await checkGit()
       const isActive = await plugin.call('manager', 'isActive', 'dgit')
 
       if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
@@ -95,9 +97,8 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
     if (isGitRepo) {
       const name = await plugin.call('settings', 'get', 'settings/github-user-name')
       const email = await plugin.call('settings', 'get', 'settings/github-email')
-      const token = await plugin.call('settings', 'get', 'settings/gist-access-token')
-      
-      if (!name || !email || !token) {
+
+      if (!name || !email ) {
         await plugin.call('notification', 'toast', 'Please provide GitHub details in the settings section to start committing and branching.')
       } else {
         // commit the template as first commit
@@ -156,44 +157,44 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
 
   switch (template) {
     case 'code-template':
-    // creates a new workspace code-sample and loads code from url params.
-    try {
-      let path = ''; let content
-      
-      if (params.code) {
-        const hash = bufferToHex(keccakFromString(params.code))
+      // creates a new workspace code-sample and loads code from url params.
+      try {
+        let path = ''; let content
 
-        path = 'contract-' + hash.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul': '.sol')
-        content = atob(params.code)
-        await workspaceProvider.set(path, content)
-      }
-      if (params.url) {
-        const data = await plugin.call('contentImport', 'resolve', params.url)
+        if (params.code) {
+          const hash = bufferToHex(keccakFromString(params.code))
 
-        path = data.cleanUrl
-        content = data.content
-
-        try {
-          content = JSON.parse(content) as any
-          if (content.language && content.language === "Solidity" && content.sources) {
-            const standardInput: JSONStandardInput = content as JSONStandardInput
-            for (const [fname, source] of Object.entries(standardInput.sources)) {
-              await workspaceProvider.set(fname, source.content)
-            }
-            return Object.keys(standardInput.sources)[0]
-          } else {
-            await workspaceProvider.set(path, JSON.stringify(content))
-          }
-        } catch (e) {
-          console.log(e)
+          path = 'contract-' + hash.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
+          content = atob(params.code)
           await workspaceProvider.set(path, content)
         }
+        if (params.url) {
+          const data = await plugin.call('contentImport', 'resolve', params.url)
+
+          path = data.cleanUrl
+          content = data.content
+
+          try {
+            content = JSON.parse(content) as any
+            if (content.language && content.language === "Solidity" && content.sources) {
+              const standardInput: JSONStandardInput = content as JSONStandardInput
+              for (const [fname, source] of Object.entries(standardInput.sources)) {
+                await workspaceProvider.set(fname, source.content)
+              }
+              return Object.keys(standardInput.sources)[0]
+            } else {
+              await workspaceProvider.set(path, JSON.stringify(content))
+            }
+          } catch (e) {
+            console.log(e)
+            await workspaceProvider.set(path, content)
+          }
+        }
+        return path
+      } catch (e) {
+        console.error(e)
       }
-      return path
-    } catch (e) {
-      console.error(e)
-    }
-    break
+      break
 
     case 'gist-template':
       // creates a new workspace gist-sample and get the file from gist
@@ -214,7 +215,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         })
         plugin.fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
           if (errorLoadingFile) {
-            dispatch(displayNotification('', errorLoadingFile.message || errorLoadingFile, 'OK', null, () => {}, null))
+            dispatch(displayNotification('', errorLoadingFile.message || errorLoadingFile, 'OK', null, () => { }, null))
           }
         })
       } catch (e) {
@@ -351,12 +352,12 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
 
       fileReader.onload = async function (event) {
         if (checkSpecialChars(file.name)) {
-          return dispatch(displayNotification('File Upload Failed', 'Special characters are not allowed', 'Close', null, async () => {}))
+          return dispatch(displayNotification('File Upload Failed', 'Special characters are not allowed', 'Close', null, async () => { }))
         }
         try {
           await workspaceProvider.set(name, event.target.result)
         } catch (error) {
-          return dispatch(displayNotification('File Upload Failed', 'Failed to create file ' + name, 'Close', null, async () => {}))
+          return dispatch(displayNotification('File Upload Failed', 'Failed to create file ' + name, 'Close', null, async () => { }))
         }
 
         const config = plugin.registry.get('config').api
@@ -376,14 +377,14 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
     } else {
       dispatch(displayNotification('Confirm overwrite', `The file ${name} already exists! Would you like to overwrite it?`, 'OK', null, () => {
         loadFile(name)
-      }, () => {}))
+      }, () => { }))
     }
   })
 }
 
-export const getWorkspaces = async (): Promise<{name: string, isGitRepo: boolean, branches?: { remote: any; name: string; }[], currentBranch?: string }[]> | undefined => {
+export const getWorkspaces = async (): Promise<{ name: string, isGitRepo: boolean, branches?: { remote: any; name: string; }[], currentBranch?: string }[]> | undefined => {
   try {
-    const workspaces: {name: string, isGitRepo: boolean, branches?: { remote: any; name: string; }[], currentBranch?: string}[] = await new Promise((resolve, reject) => {
+    const workspaces: { name: string, isGitRepo: boolean, branches?: { remote: any; name: string; }[], currentBranch?: string }[] = await new Promise((resolve, reject) => {
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
 
       plugin.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
@@ -418,7 +419,7 @@ export const getWorkspaces = async (): Promise<{name: string, isGitRepo: boolean
     })
     await plugin.setWorkspaces(workspaces)
     return workspaces
- } catch (e) {}
+  } catch (e) { }
 }
 
 export const cloneRepository = async (url: string) => {
@@ -518,10 +519,18 @@ export const getGitRepoCurrentBranch = async (workspaceName: string) => {
 
 export const showAllBranches = async () => {
   const isActive = await plugin.call('manager', 'isActive', 'dgit')
-
   if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
   plugin.call('menuicons', 'select', 'dgit')
   plugin.call('dgit', 'open', 'branches')
+}
+
+export const getGitConfig = async () => {
+  const username = await plugin.call('settings', 'get', 'settings/github-user-name')
+  const email = await plugin.call('settings', 'get', 'settings/github-email')
+  const token = await plugin.call('settings', 'get', 'settings/gist-access-token')
+  const config = { username, email, token }
+  dispatch(setGitConfig(config))
+  return config
 }
 
 const refreshBranches = async () => {
@@ -556,8 +565,8 @@ export const switchBranch = async (branch: string) => {
         })
       },
       cancelLabel: 'Cancel',
-      cancelFn: () => {},
-      hideFn: () => {}
+      cancelFn: () => { },
+      hideFn: () => { }
     }
     plugin.call('notification', 'modal', cloneModal)
   } else {
@@ -611,7 +620,7 @@ export const checkoutRemoteBranch = async (branch: string, remote: string) => {
           const workspacesPath = plugin.fileProviders.workspace.workspacesPath
           const workspaceName = plugin.fileProviders.workspace.workspace
           const branches = await getGitRepoBranches(workspacesPath + '/' + workspaceName)
-      
+
           dispatch(setCurrentWorkspaceBranches(branches))
           dispatch(cloneRepositorySuccess())
         }).catch(() => {
@@ -619,8 +628,8 @@ export const checkoutRemoteBranch = async (branch: string, remote: string) => {
         })
       },
       cancelLabel: 'Cancel',
-      cancelFn: () => {},
-      hideFn: () => {}
+      cancelFn: () => { },
+      hideFn: () => { }
     }
     plugin.call('notification', 'modal', cloneModal)
   } else {
@@ -631,7 +640,7 @@ export const checkoutRemoteBranch = async (branch: string, remote: string) => {
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
       const workspaceName = plugin.fileProviders.workspace.workspace
       const branches = await getGitRepoBranches(workspacesPath + '/' + workspaceName)
-  
+
       dispatch(setCurrentWorkspaceBranches(branches))
       dispatch(cloneRepositorySuccess())
     }).catch(() => {

@@ -64,7 +64,8 @@ export interface BrowserState {
   popup: string,
   focusEdit: string,
   focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[],
-  initializingFS: boolean
+  initializingFS: boolean,
+  gitConfig: { username: string, email: string, token: string },
 }
 
 export const browserInitialState: BrowserState = {
@@ -116,7 +117,8 @@ export const browserInitialState: BrowserState = {
   popup: '',
   focusEdit: '',
   focusElement: [],
-  initializingFS: true
+  initializingFS: true,
+  gitConfig: { username: '', email: '', token: '' }
 }
 
 export const browserReducer = (state = browserInitialState, action: Action) => {
@@ -717,6 +719,15 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         }
       }
     }
+
+    case 'SET_GIT_CONFIG' : {
+      const payload: { username: string, token: string, email: string } = action.payload
+      return {
+        ...state,
+        gitConfig: payload
+      }
+    }
+        
 
     default:
       throw new Error()
