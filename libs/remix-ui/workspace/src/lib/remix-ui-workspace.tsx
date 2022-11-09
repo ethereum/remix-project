@@ -570,7 +570,7 @@ export function Workspace () {
                         {
                         workspaceMenuIcons.map(m => {
                           return (
-                            <Dropdown.Item>
+                            <Dropdown.Item key={`wsdropdownMenu-${new Date().getMilliseconds()}`}>
                               {m}
                             </Dropdown.Item>
                           )
