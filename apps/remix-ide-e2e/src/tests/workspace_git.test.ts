@@ -8,6 +8,12 @@ module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
+    'Should add credentials': function (browser: NightwatchBrowser) {
+      browser
+      .clickLaunchIcon('settings')
+      .setValue('[data-id="settingsTabGithubUsername"]', 'circleci')
+      .setValue('[data-id="settingsTabGithubEmail"]', 'remix@circleci.com')
+    },
 
     'Should create and initialize a GIT repository #group1': function (browser: NightwatchBrowser) {
       browser
