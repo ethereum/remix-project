@@ -23,12 +23,11 @@ module.exports = {
         locateStrategy: 'xpath'
       })
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank' })
-      .click('select[id="wstemplate"]')
-      .click('select[id="wstemplate"] option[value=blank]')
       .click('[data-id="initGitRepositoryLabel"]')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(100)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItem.git"]')
       .waitForElementNotVisible('[data-id="workspaceGitPanel"]')
   },
