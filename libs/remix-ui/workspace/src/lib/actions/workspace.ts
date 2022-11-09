@@ -86,7 +86,6 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
   promise.then(async () => {
     dispatch(createWorkspaceSuccess({ name: workspaceName, isGitRepo }))
     await plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
-    await plugin.setWorkspaces(await getWorkspaces())
     await plugin.workspaceCreated(workspaceName)
 
     if (isGitRepo) {
@@ -450,6 +449,7 @@ export const cloneRepository = async (url: string) => {
       if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
       await fetchWorkspaceDirectory(ROOT_PATH)
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
+      console.log('go in to promise')
       const branches = await getGitRepoBranches(workspacesPath + '/' + repoName)
 
       dispatch(setCurrentWorkspaceBranches(branches))
@@ -528,6 +528,7 @@ export const getGitRepoCurrentBranch = async (workspaceName: string) => {
 }
 
 export const showAllBranches = async () => {
+  console.log('showAllBranches')
   const isActive = await plugin.call('manager', 'isActive', 'dgit')
   if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
   plugin.call('menuicons', 'select', 'dgit')
