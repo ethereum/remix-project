@@ -4018,6 +4018,7 @@ input[type="submit"].btn-block {
 .card-body {
   flex: 1 1 auto;
   padding: 1.25rem;
+  color: #b2b8cd;
 }
 .card-title {
   color: #DFE1EA;
