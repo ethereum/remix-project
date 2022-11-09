@@ -355,6 +355,7 @@ export function Workspace () {
           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
           hideIconsMenu(!showIconsMenu)
         }}
+        key={`workspacesCreate-fe-ws`}
       >
         <span
           hidden={currentWorkspace === LOCALHOST}
@@ -384,6 +385,7 @@ export function Workspace () {
           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDelete'])
           hideIconsMenu(!showIconsMenu)
         }}
+        key={`workspacesDelete-fe-ws`}
       >
         <span
           hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
@@ -412,6 +414,7 @@ export function Workspace () {
             hideIconsMenu(!showIconsMenu)
           }}
           data-id='workspaceRename'
+          key={`workspacesRename-fe-ws`}
         >
         <span
           hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
@@ -441,6 +444,7 @@ export function Workspace () {
           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'cloneGitRepository'])
           hideIconsMenu(!showIconsMenu)
         }}
+        key={`cloneGitRepository-fe-ws`}
       >
         <span
           hidden={currentWorkspace === LOCALHOST}
@@ -471,6 +475,7 @@ export function Workspace () {
           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesDownload'])
           hideIconsMenu(!showIconsMenu)
         }}
+        key={`workspacesDownload-fe-ws`}
       >
         <span
           hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
@@ -500,6 +505,7 @@ export function Workspace () {
           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesRestore'])
           hideIconsMenu(!showIconsMenu)
         }}
+        key={`workspacesRestore-fe-ws`}
       >
         <span
           hidden={currentWorkspace === LOCALHOST}
