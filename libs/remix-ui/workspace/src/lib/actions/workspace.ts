@@ -41,6 +41,9 @@ export const setPlugin = (filePanelPlugin, reducerDispatch) => {
   plugin.on('dGitProvider', 'branch', async () => {
     await checkGit()
   })
+  plugin.on('dGitProvider', 'clone', async () => {
+    await checkGit()
+  })
   plugin.on('config', 'configChanged', async () => {
     await getGitConfig()
   })
