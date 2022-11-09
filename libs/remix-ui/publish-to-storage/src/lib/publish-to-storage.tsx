@@ -40,17 +40,17 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
               We won’t be providing a public endpoint anymore for publishing your contracts to IPFS.<br></br>Instead of that, 4 options are now available:<br></br>
               <br></br>
               <ul className='pl-3'>
-                <li>
+                <li key="ipfs-default" >
                   DEFAULT OPTION:
                   Use the public INFURA node. This will not guarantee your data will persist.
                 </li>
-                <li>
+                <li key="infura-options">
                   Use your own INFURA IPFS node. This requires a subscription. <a href='https://infura.io/product/ipfs' target={'_blank'}>Learn more</a>
                 </li>
-                <li>
+                <li key="ipfs-external">
                   Use any external IPFS which doesn’t require any authentification.
                 </li>
-                <li>
+                <li key="ipfs-local">
                   Use your own local ipfs node (which usually runs under http://localhost:5001)
                 </li>
               </ul>
