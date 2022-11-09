@@ -15,7 +15,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       .waitForElementVisible({
-        selector: "//*[@class='text-warning' and contains(.,'You need to set a username')]",
+        selector: "//*[@class='text-warning' and contains(.,'Please add username and email')]",
         locateStrategy: 'xpath'
       })
       .waitForElementPresent({
