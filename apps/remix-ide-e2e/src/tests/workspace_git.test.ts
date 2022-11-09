@@ -13,6 +13,7 @@ module.exports = {
       .clickLaunchIcon('settings')
       .setValue('[data-id="settingsTabGithubUsername"]', 'circleci')
       .setValue('[data-id="settingsTabGithubEmail"]', 'remix@circleci.com')
+      .click('[data-id="settingsTabSaveGistToken"]')
     },
 
     'Should create and initialize a GIT repository #group1': function (browser: NightwatchBrowser) {
