@@ -523,7 +523,7 @@ export function Workspace () {
       </div>
     </CustomTooltip>,
   ]
-  let menuLength = workspaceMenuIcons.length
+  const menuLength = workspaceMenuIcons.length
   let count = 0
   return (
     <div className='d-flex flex-column justify-content-between h-100'>
