@@ -76,7 +76,7 @@ const removeSlash = (s: string) => {
   return s.replace(/^\/+/, "")
 }
 
-export const createWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate, opts = null, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void, isGitRepo: boolean = false) => {
+export const createWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate, opts = null, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void, isGitRepo: boolean = false, createCommit: boolean = true) => {
   await plugin.fileManager.closeAllFiles()
   const promise = createWorkspaceTemplate(workspaceName, workspaceTemplateName)
   dispatch(createWorkspaceRequest(promise))
@@ -94,35 +94,42 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
     }
     if (!isEmpty) await loadWorkspacePreset(workspaceTemplateName, opts)
 
-    if (isGitRepo) {
+    if (isGitRepo && createCommit) {
       const name = await plugin.call('settings', 'get', 'settings/github-user-name')
       const email = await plugin.call('settings', 'get', 'settings/github-email')
+      const currentBranch = await plugin.call('dGitProvider', 'currentbranch')
 
-      if (!name || !email ) {
-        await plugin.call('notification', 'toast', 'Please provide GitHub details in the settings section to start committing and branching.')
-      } else {
-        // commit the template as first commit
-        plugin.call('notification', 'toast', 'Creating initial git commit ...')
-        const status = await plugin.call('dGitProvider', 'status', { ref: 'HEAD' })
-        Promise.all(
-          status.map(([filepath, , worktreeStatus]) =>
-            worktreeStatus
-              ? plugin.call('dGitProvider', 'add', {
-                filepath: removeSlash(filepath),
-              })
-              : plugin.call('dGitProvider', 'rm', {
-                filepath: removeSlash(filepath),
-              })
-          )
-        ).then(async () => {
-          await plugin.call('dGitProvider', 'commit', {
-            author: {
-              name,
-              email
-            },
-            message: `Initial commit: remix template ${workspaceTemplateName}`,
+      if (!currentBranch) {
+        if (!name || !email) {
+          await plugin.call('notification', 'toast', 'Please provide GitHub details in the settings section to start committing.')
+        } else {
+          // commit the template as first commit
+          plugin.call('notification', 'toast', 'Creating initial git commit ...')
+          const status = await plugin.call('dGitProvider', 'status', { ref: 'HEAD' })
+
+          Promise.all(
+            status.map(([filepath, , worktreeStatus]) =>
+              worktreeStatus
+                ? plugin.call('dGitProvider', 'add', {
+                  filepath: removeSlash(filepath),
+                })
+                : plugin.call('dGitProvider', 'rm', {
+                  filepath: removeSlash(filepath),
+                })
+            )
+          ).then(async () => {
+            await plugin.call('dGitProvider', 'commit', {
+              author: {
+                name,
+                email
+              },
+              message: `Initial commit: remix template ${workspaceTemplateName}`,
+            })
+            setTimeout(async () => {
+              await plugin.call('fileManager', 'refresh')
+            }, 1000)
           })
-        })
+        }
       }
     }
     cb && cb(null, workspaceName)
@@ -430,7 +437,7 @@ export const cloneRepository = async (url: string) => {
   try {
     const repoName = await getRepositoryTitle(url)
 
-    await createWorkspace(repoName, 'blank', null, true, null, true)
+    await createWorkspace(repoName, 'blank', null, true, null, true, false)
     const promise = plugin.call('dGitProvider', 'clone', repoConfig, repoName, true)
 
     dispatch(cloneRepositoryRequest())
