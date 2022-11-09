@@ -1,4 +1,5 @@
 import { CopyToClipboard } from '@remix-ui/clipboard'
+import { CustomTooltip } from '@remix-ui/helper'
 import React, { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { GithubSettingsProps } from '../types'
@@ -75,9 +76,16 @@ export function GithubSettings (props: GithubSettingsProps) {
             <input id="githubemail" data-id="settingsTabGithubEmail" type="text" className="form-control" onChange={(e) => handleChangeEmailState(e)} value={ githubEmail } />
             <div className="d-flex justify-content-end pt-2">
               <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={saveGithubToken} value={intl.formatMessage({id: 'settings.save', defaultMessage: 'Save'})} type="button" disabled={githubToken === ''}></input>
-              <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" title="Delete GitHub Credentials" onClick={removeToken}>
-                <FormattedMessage id='settings.remove' defaultMessage='Remove' />
-              </button>
+              <CustomTooltip
+                tooltipText="Delete Github Credentials"
+                tooltipClasses="text-nowrap"
+                tooltipId="removegisttokenTooltip"
+                placement="top-start"
+              >
+                <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" onClick={removeToken}>
+                  <FormattedMessage id='settings.remove' defaultMessage='Remove' />
+                </button>
+              </CustomTooltip>
             </div>
           </div>
         </div>

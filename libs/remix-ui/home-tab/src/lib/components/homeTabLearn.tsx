@@ -34,7 +34,7 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
     await plugin.appManager.activatePlugin(['solidity', 'LearnEth', 'solidityUnitTesting'])
     plugin.call('LearnEth', 'startTutorial', 'ethereum/remix-workshops', 'master', tutorial)
     plugin.verticalIcons.select('LearnEth')
-    _paq.push(['trackEvent', 'homeTab', 'startLearnEthTutorial', tutorial])
+    _paq.push(['trackEvent', 'hometab', 'startLearnEthTutorial', tutorial])
   }
 
   return (

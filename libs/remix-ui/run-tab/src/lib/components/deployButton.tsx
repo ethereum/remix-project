@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { DeployButtonProps } from '../types'
-import { ButtonGroup, Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { ButtonGroup, Dropdown } from 'react-bootstrap'
+import { CustomTooltip } from '@remix-ui/helper'
 
 export function DeployButton (props: DeployButtonProps) {
   const [showOptions, setShowOptions] = useState<boolean>(false)
@@ -25,18 +26,16 @@ export function DeployButton (props: DeployButtonProps) {
           }
         </Dropdown.Menu>
       </Dropdown> :
-      <OverlayTrigger
+      <CustomTooltip
         placement="right-start"
-        overlay={
-          <Tooltip id="deployButtonTooltip" className="text-nowrap">
-            <span>{props.buttonOptions.title}</span>
-          </Tooltip>
-        }
+        tooltipId="deployButtonTooltip"
+        tooltipClasses="text-nowrap"
+        tooltipText={props.buttonOptions.title}
       >
         <button onClick={props.handleActionClick} className={`udapp_instanceButton ${props.buttonOptions.widthClass} btn btn-sm ${props.buttonOptions.classList}`} data-id={props.buttonOptions.dataId}>
           <FormattedMessage id='udapp.deploy' defaultMessage='Deploy' />
         </button>
-      </OverlayTrigger>
+      </CustomTooltip>
     }
     </>
   )

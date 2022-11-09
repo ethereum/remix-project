@@ -1,4 +1,5 @@
 import { CopyToClipboard } from '@remix-ui/clipboard'
+import { CustomTooltip } from '@remix-ui/helper'
 import React, { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { EtherscanSettingsProps } from '../types'
@@ -50,9 +51,15 @@ export function EtherscanSettings (props: EtherscanSettingsProps) {
           <div className="text-secondary mb-0 h6">
             <div className="d-flex justify-content-end pt-2">
               <input className="btn btn-sm btn-primary ml-2" id="saveetherscantoken" data-id="settingsTabSaveEtherscanToken" onClick={saveEtherscanToken} value={intl.formatMessage({id: 'settings.save', defaultMessage: 'Save'})} type="button" disabled={etherscanToken === ''}></input>
-              <button className="btn btn-sm btn-secondary ml-2" id="removeetherscantoken" data-id="settingsTabRemoveEtherscanToken" title="Delete Etherscan token" onClick={removeToken}>
+              <CustomTooltip
+                tooltipText="Delete Etherscan token"
+                tooltipClasses="text-nowrap"
+                tooltipId="removeetherscantokenTooltip"
+                placement="left-start"
+              >
+                <button className="btn btn-sm btn-secondary ml-2" id="removeetherscantoken" data-id="settingsTabRemoveEtherscanToken" title="Delete Etherscan token" onClick={removeToken}>
                 <FormattedMessage id='settings.remove' defaultMessage='Remove' />
-              </button>
+              </button></CustomTooltip>
             </div>
           </div>
         </div>

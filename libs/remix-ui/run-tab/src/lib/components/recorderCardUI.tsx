@@ -2,7 +2,7 @@
 import React, {useRef, useState, useEffect} from 'react'
 import { FormattedMessage } from 'react-intl'
 import { RecorderProps } from '../types'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
+import { CustomTooltip } from '@remix-ui/helper'
 
 export function RecorderUI (props: RecorderProps) {
   const inputLive = useRef<HTMLInputElement>()
@@ -34,21 +34,22 @@ export function RecorderUI (props: RecorderProps) {
           <label className="mt-1 udapp_recorderSectionLabel">
             <FormattedMessage id='udapp.transactionsRecorded' defaultMessage='Transactions recorded' />
           </label>
-          <OverlayTrigger placement={'right'} overlay={
-          <Tooltip className="text-nowrap" id="recordedTransactionsCounttooltip">
-            <span>{'The number of recorded transactions'}</span>
-          </Tooltip>
-        }>
+          <CustomTooltip
+            placement={'right'}
+            tooltipClasses="text-nowrap"
+            tooltipId="recordedTransactionsCounttooltip"
+            tooltipText={'The number of recorded transactions'}
+          >
           <div className="ml-2 badge badge-pill badge-primary text-center" data-title="The number of recorded transactions">{props.count}</div>
-        </OverlayTrigger>
-        <OverlayTrigger placement={'right'} overlay={
-          <Tooltip className="text-nowrap" id="info-recorder">
-            <span>Save transactions (deployed contracts and function executions) and replay them in another environment. <br/> e.g Transactions created in Remix VM can be replayed in the Injected Provider.
-          </span>
-          </Tooltip>
-        }>
+        </CustomTooltip>
+        <CustomTooltip
+          placement={'right'}
+          tooltipClasses="text-wrap"
+          tooltipId="info-recorder"
+          tooltipText="Save transactions (deployed contracts and function executions) and replay them in another environment e.g Transactions created in Remix VM can be replayed in the Injected Provider."
+          >
           <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
-        </OverlayTrigger>
+        </CustomTooltip>
         </div>
         <div className="p-3">
           <span data-id='udappRecorderTitleExpander' onClick={toggleClass}>
@@ -59,43 +60,44 @@ export function RecorderUI (props: RecorderProps) {
       <div className={`flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
         <div className="mb-1 mt-1 fmt-2 custom-control custom-checkbox mb-1">
           <input ref={inputLive} type="checkbox" id="livemode-recorder" className="custom-control-input custom-select" name="input-livemode"/>
-          <OverlayTrigger placement={'right'} overlay={
-            <Tooltip className="text-nowrap" id="tooltip-livemode-recorder">
-              <span>If contracts are updated after recording transactions, checking this box<br/>will run recorded transactions with the latest copy of the compiled contracts</span>
-            </Tooltip>
-          }>
-          <label className="form-check-label custom-control-label" data-id="runtabLivemodeInput" htmlFor="livemode-recorder">Run transactions using the latest compilation result</label>
-          </OverlayTrigger>
+          <CustomTooltip
+            placement={'right'}
+            tooltipClasses="text-wrap"
+            tooltipId="tooltip-livemode-recorder"
+            tooltipText="If contracts are updated after recording transactions, checking this box will run recorded transactions with the latest copy of the compiled contracts"
+          >
+            <label className="form-check-label custom-control-label" data-id="runtabLivemodeInput" htmlFor="livemode-recorder">Run transactions using the latest compilation result</label>
+          </CustomTooltip>
         </div>
         <div className="mb-1 mt-1 udapp_transactionActions">
-        <OverlayTrigger placement={'bottom-start'} overlay={
-          <Tooltip className="text-nowrap" id="remixUdappTransactionSavetooltip">
-            <span>
-              {
+        <CustomTooltip
+          placement={'bottom-start'}
+          tooltipClasses="text-nowrap"
+          tooltipId="remixUdappTransactionSavetooltip"
+          tooltipText={
                 props.count === 0 ? 'No transactions to save'
                 :  props.count === 1 ? `Save ${props.count} transaction as scenario file`
                 : `Save ${props.count} transactions as scenario file`
               }
-            </span>
-          </Tooltip>
-        }>
+        >
           <span>
             <button className="btn btn-sm btn-info savetransaction udapp_recorder" disabled={props.count === 0 ? true: false} onClick={triggerRecordButton} style={{ pointerEvents: props.count === 0 ? 'none' : 'auto' }}>
               Save
             </button>
           </span>
-        </OverlayTrigger>
-        <OverlayTrigger placement={'right'} overlay={
-          <Tooltip className="text-nowrap" id="tooltip-run-recorder">
-            <span>Run transaction(s) from the current scenario file</span>
-          </Tooltip>
-        }>
+        </CustomTooltip>
+        <CustomTooltip
+          placement={'right'}
+          tooltipClasses="text-nowrap"
+          tooltipId="tooltip-run-recorder"
+          tooltipText="Run transaction(s) from the current scenario file"
+        >
           <span>
             <button className="btn btn-sm btn-info runtransaction udapp_runTxs" data-id="runtransaction" disabled={enableRunButton} onClick={handleClickRunButton} style={{ pointerEvents: enableRunButton ? 'none' : 'auto' }}>
               Run
             </button>
           </span>
-        </OverlayTrigger>
+        </CustomTooltip>
         </div>
       </div>
     </div>

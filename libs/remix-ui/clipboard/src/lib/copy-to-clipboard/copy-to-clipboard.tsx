@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import copy from 'copy-to-clipboard'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { Placement } from 'react-bootstrap/esm/Overlay'
 
 import './copy-to-clipboard.css'
+import { CustomTooltip } from '@remix-ui/helper'
 
 interface ICopyToClipboard {
   content?: any,
@@ -50,20 +50,22 @@ export const CopyToClipboard = (props: ICopyToClipboard) => {
     setTimeout(() => setMessage(tip), 500)
   }
 
+  const childJSX = (
+    children || (<i className={`far ${icon} ml-1 p-2`} aria-hidden="true"
+            {...otherProps}
+          ></i>)
+  )
+
   return (
     // eslint-disable-next-line jsx-a11y/anchor-is-valid
     <a href='#' onClick={handleClick} onMouseLeave={reset}>
-      <OverlayTrigger placement={direction} overlay={
-        <Tooltip id="overlay-tooltip">
-          { message }
-        </Tooltip>
-      }>
-        {
-          children || (<i className={`far ${icon} ml-1 p-2`} aria-hidden="true"
-            {...otherProps}
-          ></i>)
-        }
-      </OverlayTrigger>
+      <CustomTooltip
+        tooltipText={message}
+        tooltipId="overlay-tooltip"
+        placement={direction}
+      >
+        {childJSX}
+      </CustomTooltip>
     </a>
   )
 }
