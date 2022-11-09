@@ -1,5 +1,5 @@
+import { CustomTooltip } from '@remix-ui/helper'
 import React from 'react'  //eslint-disable-line
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 interface StaticAnalyserButtonProps {
   onClick: (event) => void
@@ -18,18 +18,16 @@ const StaticAnalyserButton = ({
   classList += disabled ? " disabled" : ""
   return (
     <button className={classList} disabled={disabled} onClick={onClick}>
-      <OverlayTrigger
+      <CustomTooltip
         placement="bottom-start"
-        overlay={
-          <Tooltip id="ssaRunButtonTooltip" className="text-nowrap">
-            <span>{title}</span>
-          </Tooltip>
-        }
+        tooltipId="ssaRunButtonTooltip"
+        tooltipClasses="text-nowrap"
+        tooltipText={title}
       >
         <span>
           {buttonText}
         </span>
-      </OverlayTrigger>
+      </CustomTooltip>
     </button>
   )
 }

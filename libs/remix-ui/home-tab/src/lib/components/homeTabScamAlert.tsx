@@ -2,6 +2,8 @@
 import React from 'react'
 import { FormattedMessage } from 'react-intl'
 
+const _paq = window._paq = window._paq || [] // eslint-disable-line
+
 function HomeTabScamAlert () {
   return (
     <div className="" id="hTScamAlertSection">
@@ -16,14 +18,14 @@ function HomeTabScamAlert () {
         </span>
         <span className="pl-4 mt-1">
           <FormattedMessage id='home.scamAlertText2' defaultMessage='Beware of online videos promoting "liquidity front runner bots"' />:
-          <a className="pl-2 remixui_home_text" target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">
+          <a className="pl-2 remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'scamAlert', 'learnMore'])}  target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">
             <FormattedMessage id='home.learnMore' defaultMessage='Learn more' />
           </a>
         </span>
         <span className="pl-4 mt-1">
           <FormattedMessage id='home.scamAlertText3' defaultMessage='Additional safety tips' />
           : &nbsp;
-          <a className="remixui_home_text" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/security.html">
+          <a className="remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'scamAlert', 'safetyTips'])} target="__blank" href="https://remix-ide.readthedocs.io/en/latest/security.html">
             <FormattedMessage id='home.here' defaultMessage='here' />
           </a>
         </span>

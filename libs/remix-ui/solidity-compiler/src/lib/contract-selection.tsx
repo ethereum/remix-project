@@ -6,7 +6,7 @@ import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-l
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 
 import './css/style.css'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { CustomTooltip } from '@remix-ui/helper'
 
 export const ContractSelection = (props: ContractSelectionProps) => {
   const { api, compiledFileName, contractsDetails, contractList, modal } = props
@@ -200,55 +200,40 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           </div>
           <article className="mt-2 pb-0">
             <button id="publishOnIpfs" className="btn btn-secondary btn-block" onClick={() => { handlePublishToStorage('ipfs') }}>
-              <OverlayTrigger
+              <CustomTooltip
                 placement="right-start"
-                overlay={
-                  <Tooltip
-                    id="publishOnIpfsTooltip"
-                    className="text-nowrap"
-                  >
-                    <span><FormattedMessage id='solidity.publishOn' defaultMessage='Publish on' /> Ipfs</span>
-                  </Tooltip>
-                }
+                tooltipId="publishOnIpfsTooltip"
+                tooltipClasses="text-nowrap"
+                tooltipText={`${intl.formatMessage({id: 'solidity.publishOn', defaultMessage: 'Publish on'})} Ipfs`}
               >
                 <span>
                   <span><FormattedMessage id='solidity.publishOn' defaultMessage='Publish on' /> Ipfs</span>
                   <img id="ipfsLogo" className="remixui_storageLogo ml-2" src="assets/img/ipfs.webp" />
                 </span>
-              </OverlayTrigger>
+              </CustomTooltip>
             </button>
             <button id="publishOnSwarm" className="btn btn-secondary btn-block" onClick={() => { handlePublishToStorage('swarm') }}>
-              <OverlayTrigger
+              <CustomTooltip
                 placement="right-start"
-                overlay={
-                  <Tooltip
-                    id="publishOnSwarmTooltip"
-                    className="text-nowrap"
-                  >
-                    <span><FormattedMessage id='solidity.publishOn' defaultMessage='Publish on' /> Swarm</span>
-                  </Tooltip>
-                }
+                tooltipId="publishOnSwarmTooltip"
+                tooltipClasses="text-nowrap"
+                tooltipText={`${intl.formatMessage({id: 'solidity.publishOn', defaultMessage: 'Publish on'})} Swarm`}
               >
                 <span>
                   <span><FormattedMessage id='solidity.publishOn' defaultMessage='Publish on' /> Swarm</span>
                   <img id="swarmLogo" className="remixui_storageLogo ml-2" src="assets/img/swarm.webp" />
                 </span>
-              </OverlayTrigger>
+              </CustomTooltip>
             </button>
             <button data-id="compilation-details" className="btn btn-secondary btn-block" onClick={() => { details() }}>
-              <OverlayTrigger
+              <CustomTooltip
                 placement="right-start"
-                overlay={
-                  <Tooltip
-                    id="CompilationDetailsTooltip"
-                    className="text-nowrap"
-                  >
-                    <span>Display Contract Details</span>
-                  </Tooltip>
-                }
+                tooltipId="CompilationDetailsTooltip"
+                tooltipClasses="text-nowrap"
+                tooltipText="Display Contract Details"
               >
                 <span><FormattedMessage id='solidity.compilationDetails' defaultMessage='Compilation Details' /></span>
-              </OverlayTrigger>
+              </CustomTooltip>
             </button>
             {/* Copy to Clipboard */}
             <div className="remixui_contractHelperButtons">

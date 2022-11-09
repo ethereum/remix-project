@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-use-before-define
+import { CustomTooltip } from '@remix-ui/helper'
 import React from 'react'
 import { FormattedMessage } from 'react-intl'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { GasPriceProps } from '../types'
 
 export function GasPriceUI (props: GasPriceProps) {
@@ -12,13 +12,14 @@ export function GasPriceUI (props: GasPriceProps) {
   return (
     <div className="udapp_crow">
       <label className="udapp_settingsLabel"><FormattedMessage id='udapp.gasLimit' defaultMessage='Gas limit' /></label>
-      <OverlayTrigger placement={'right-end'} overlay={
-          <Tooltip className="text-nowrap" id="remixGasPriceTooltip">
-            <span>{"The default gas limit is 3M. Adjust as needed."}</span>
-          </Tooltip>
-      }>
+      <CustomTooltip
+        placement={'right-end'}
+        tooltipClasses="text-nowrap"
+        tooltipId="remixGasPriceTooltip"
+        tooltipText={"The default gas limit is 3M. Adjust as needed."}
+      >
         <input type="number" className="form-control udapp_gasNval udapp_col2" id="gasLimit" value={props.gasLimit} onChange={handleGasLimit} />
-      </OverlayTrigger>
+      </CustomTooltip>
     </div>
   )
 }

@@ -70,13 +70,12 @@ export const FileLabel = (props: FileLabelProps) => {
       onKeyDown={handleEditInput}
       onBlur={handleEditBlur}
     >
-      <span
-        title={file.path}
-        className={`text-nowrap remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder' : 'remixui_leaf')}
-        data-path={file.path}
-      >
-        {file.name}
-      </span>
+        <span
+          className={`text-nowrap remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder' : 'remixui_leaf')}
+          data-path={file.path} title={file.path}
+        >
+          {file.name}
+        </span>
     </div>
   )
 }

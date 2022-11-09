@@ -57,6 +57,10 @@ export const addInputField = async (type: 'file' | 'folder', path: string, cb?: 
   return promise
 }
 
+const removeSlash = (s: string) => {
+  return s.replace(/^\/+/, "")
+}
+
 export const createWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate, opts = null, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void, isGitRepo: boolean = false) => {
   await plugin.fileManager.closeAllFiles()
   const promise = createWorkspaceTemplate(workspaceName, workspaceTemplateName)
@@ -68,13 +72,50 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
     await plugin.workspaceCreated(workspaceName)
 
     if (isGitRepo) {
-      await plugin.call('dGitProvider', 'init', { branch: 'main' })
-      dispatch(setCurrentWorkspaceCurrentBranch('main'))
+      const workspacesPath = plugin.fileProviders.workspace.workspacesPath
+      const allBranches = await getGitRepoBranches(workspacesPath + '/' + workspaceName)
+      // selected branch will be 'master' or 'main'
+      const selectedBranch = allBranches?.length ? allBranches[0].name : 'main'
+      await plugin.call('dGitProvider', 'init', { branch: selectedBranch })
+      dispatch(setCurrentWorkspaceCurrentBranch(selectedBranch))
       const isActive = await plugin.call('manager', 'isActive', 'dgit')
 
       if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
     }
     if (!isEmpty) await loadWorkspacePreset(workspaceTemplateName, opts)
+
+    if (isGitRepo) {
+      const name = await plugin.call('settings', 'get', 'settings/github-user-name')
+      const email = await plugin.call('settings', 'get', 'settings/github-email')
+      const token = await plugin.call('settings', 'get', 'settings/gist-access-token')
+      
+      if (!name || !email || !token) {
+        await plugin.call('notification', 'toast', 'Please provide GitHub details in the settings section to start committing and branching.')
+      } else {
+        // commit the template as first commit
+        plugin.call('notification', 'toast', 'Creating initial git commit ...')
+        const status = await plugin.call('dGitProvider', 'status', { ref: 'HEAD' })
+        Promise.all(
+          status.map(([filepath, , worktreeStatus]) =>
+            worktreeStatus
+              ? plugin.call('dGitProvider', 'add', {
+                filepath: removeSlash(filepath),
+              }, false)
+              : plugin.call('dGitProvider', 'rm', {
+                filepath: removeSlash(filepath),
+              }, false)
+          )
+        ).then(async () => {
+          await plugin.call('dGitProvider', 'commit', {
+            author: {
+              name,
+              email
+            },
+            message: `Initial commit: remix template ${workspaceTemplateName}`,
+          })
+        })
+      }
+    }
     cb && cb(null, workspaceName)
   }).catch((error) => {
     dispatch(createWorkspaceError({ error }))
@@ -464,6 +505,7 @@ export const showAllBranches = async () => {
 
   if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
   plugin.call('menuicons', 'select', 'dgit')
+  plugin.call('dgit', 'open', 'branches')
 }
 
 const refreshBranches = async () => {
