@@ -7,8 +7,8 @@ const TerminalWelcomeMessage = ({ packageJson, storage }) => {
       <div className="">Your files are stored in {(window as any).remixFileSystem.name}, {storage} used</div><br />
       <div>You can use this terminal to: </div>
       <ul className='ml-0 mr-4'>
-        <li>Check transactions details and start debugging.</li>
-        <li>Execute JavaScript scripts:
+        <li key="details-and-debug" >Check transactions details and start debugging.</li>
+        <li key="run-javascript">Execute JavaScript scripts:
           <br />
           <i> - Input a script directly in the command line interface </i>
           <br />
@@ -20,9 +20,9 @@ const TerminalWelcomeMessage = ({ packageJson, storage }) => {
 
       <div>The following libraries are accessible:</div>
       <ul className='ml-0 mr-4'>
-        <li><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.5.2</a></li>
-        <li><a target="_blank" href="https://docs.ethers.io">ethers.js</a> </li>
-        <li>remix</li>
+        <li key="web3-152"><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.5.2</a></li>
+        <li key="ethers-console"><a target="_blank" href="https://docs.ethers.io">ethers.js</a> </li>
+        <li key="remix-console">remix</li>
       </ul>
       <div>Type the library name to see available commands.</div>
     </div>
