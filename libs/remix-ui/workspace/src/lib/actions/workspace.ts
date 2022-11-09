@@ -135,6 +135,7 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
       }
     }
     cb && cb(null, workspaceName)
+    // this call needs to be here after the callback because it calls dGitProvider which also calls this function and that would cause an infinite loop
     await plugin.setWorkspaces(await getWorkspaces())
   }).catch((error) => {
     dispatch(createWorkspaceError({ error }))
