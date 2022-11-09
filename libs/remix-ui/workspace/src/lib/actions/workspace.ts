@@ -135,6 +135,7 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
       }
     }
     cb && cb(null, workspaceName)
+    await plugin.setWorkspaces(await getWorkspaces())
   }).catch((error) => {
     dispatch(createWorkspaceError({ error }))
     cb && cb(error)
