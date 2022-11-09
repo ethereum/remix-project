@@ -180,7 +180,7 @@ class FileProvider {
       const stat = await window.remixFileSystem.stat(path)
       try {
         if (!stat.isDirectory()) {
-          return (this.removeFile(path))
+          return await this.removeFile(path)
         } else {
           const items = await window.remixFileSystem.readdir(path)
           if (items.length !== 0) {
@@ -196,8 +196,7 @@ class FileProvider {
           } else {
             // folder is empty
             await window.remixFileSystem.rmdir(path)
-          }
-          this.event.emit('fileRemoved', this._normalizePath(path))
+          }          
         }
       } catch (e) {
         console.log(e)
