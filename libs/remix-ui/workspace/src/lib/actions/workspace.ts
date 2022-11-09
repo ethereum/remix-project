@@ -88,14 +88,6 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
     await plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
     await plugin.workspaceCreated(workspaceName)
 
-    if (isGitRepo) {
-      await checkGit()
-      const isActive = await plugin.call('manager', 'isActive', 'dgit')
-
-      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
-    }
-    if (!isEmpty) await loadWorkspacePreset(workspaceTemplateName, opts)
-
     if (isGitRepo && createCommit) {
       const name = await plugin.call('settings', 'get', 'settings/github-user-name')
       const email = await plugin.call('settings', 'get', 'settings/github-email')
@@ -107,6 +99,9 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
         } else {
           // commit the template as first commit
           plugin.call('notification', 'toast', 'Creating initial git commit ...')
+
+          await plugin.call('dGitProvider', 'init')
+          if (!isEmpty) await loadWorkspacePreset(workspaceTemplateName, opts)
           const status = await plugin.call('dGitProvider', 'status', { ref: 'HEAD' })
 
           Promise.all(
@@ -127,14 +122,17 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
               },
               message: `Initial commit: remix template ${workspaceTemplateName}`,
             })
-            setTimeout(async () => {
-              await plugin.call('fileManager', 'refresh')
-            }, 1000)
           })
         }
       }
     }
+    if (!isEmpty && !(isGitRepo && createCommit)) await loadWorkspacePreset(workspaceTemplateName, opts)
     cb && cb(null, workspaceName)
+    if (isGitRepo) {
+      await checkGit()
+      const isActive = await plugin.call('manager', 'isActive', 'dgit')
+      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+    }
     // this call needs to be here after the callback because it calls dGitProvider which also calls this function and that would cause an infinite loop
     await plugin.setWorkspaces(await getWorkspaces())
   }).catch((error) => {
