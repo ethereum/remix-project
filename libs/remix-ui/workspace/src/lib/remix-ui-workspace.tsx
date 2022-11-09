@@ -523,7 +523,8 @@ export function Workspace () {
       </div>
     </CustomTooltip>,
   ]
-
+  let menuLength = workspaceMenuIcons.length
+  let count = 0
   return (
     <div className='d-flex flex-column justify-content-between h-100'>
       <div className='remixui_container overflow-auto' style={{ maxHeight: selectedWorkspace && selectedWorkspace.isGitRepo ? '95%' : '100%' }}>
@@ -567,10 +568,10 @@ export function Workspace () {
                         icon={'fas fa-bars'}
                       ></Dropdown.Toggle>
                       <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='custom-dropdown-items remixui_menuwidth' rootCloseEvent="click">
-                        {
+                      {
                         workspaceMenuIcons.map(m => {
                           return (
-                            <Dropdown.Item key={`wsdropdownMenu-${new Date().getMilliseconds()}`}>
+                            <Dropdown.Item key={`wsdropdownMenu-${count !== menuLength ? count++ : count }`}>
                               {m}
                             </Dropdown.Item>
                           )
