@@ -266,6 +266,7 @@ class DGitProvider extends Plugin {
         await this.call('fileManager', 'refresh')
       }, 1000)
     }
+    this.emit('clone')
     return result
   }
 
