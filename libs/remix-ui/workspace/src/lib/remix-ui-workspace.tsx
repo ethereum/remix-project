@@ -317,8 +317,7 @@ export function Workspace () {
         </div>
         {!global.fs.gitConfig.username || !global.fs.gitConfig.email ? 
           (
-          <div className='text-warning'>You need to set a username and email to be able to use git features.<br>
-          </br>Please update these fields in the settings of Remix</div>)
+          <div className='text-warning'>Please add username and email to Remix GitHub Settings to use git features.</div>)
           :<></>
         }
 
