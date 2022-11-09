@@ -7,9 +7,8 @@ import * as remixLib from '@remix-project/remix-lib'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 import { BN } from 'ethereumjs-util'
-import { is0XPrefixed, isHexadecimal, isNumeric, shortenAddress } from '@remix-ui/helper'
+import { CustomTooltip, is0XPrefixed, isHexadecimal, isNumeric, shortenAddress } from '@remix-ui/helper'
 
 const txHelper = remixLib.execution.txHelper
 
@@ -244,13 +243,11 @@ export function UniversalDappUI (props: UdappProps) {
             </button>
           </div>
         </div>
-        <OverlayTrigger
+        <CustomTooltip
           placement="right"
-          overlay={
-            <Tooltip className="text-nowrap" id="udapp_udappCloseTooltip">
-              <span>{'Remove from the list'}</span>
-            </Tooltip>
-          }
+          tooltipClasses="text-nowrap"
+          tooltipId="udapp_udappCloseTooltip"
+          tooltipText="Remove from the list"
         >
           <button
             className="udapp_udappClose mr-1 p-1 btn btn-secondary align-items-center"
@@ -259,7 +256,7 @@ export function UniversalDappUI (props: UdappProps) {
           >
             <i className="udapp_closeIcon fas fa-times" aria-hidden="true"></i>
           </button>
-        </OverlayTrigger>
+        </CustomTooltip>
       </div>
       <div
         className="udapp_cActionsWrapper"
@@ -335,13 +332,11 @@ export function UniversalDappUI (props: UdappProps) {
             <div className="py-2 border-top d-flex justify-content-start flex-grow-1">
               Low level interactions
             </div>
-            <OverlayTrigger
+            <CustomTooltip
               placement={"bottom-end"}
-              overlay={
-                <Tooltip className="text-wrap" id="receiveEthDocstoolTip">
-                  <span>{"check out docs for using 'receive'/'fallback'"}</span>
-                </Tooltip>
-              }
+              tooltipClasses="text-wrap"
+              tooltipId="receiveEthDocstoolTip"
+              tooltipText={"check out docs for using 'receive'/'fallback'"}
             >
               <a
                 href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function"
@@ -350,32 +345,28 @@ export function UniversalDappUI (props: UdappProps) {
               >
                 <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
               </a>
-            </OverlayTrigger>
+            </CustomTooltip>
           </div>
           <div className="d-flex flex-column align-items-start">
             <label className="">CALLDATA</label>
             <div className="d-flex justify-content-end w-100 align-items-center">
-              <OverlayTrigger
+              <CustomTooltip
                 placement="bottom"
-                overlay={
-                  <Tooltip className="text-nowrap" id="deployAndRunLLTxCalldataInputTooltip">
-                    <span>{"The Calldata to send to fallback function of the contract."}</span>
-                  </Tooltip>
-                }
+                tooltipClasses="text-nowrap"
+                tooltipId="deployAndRunLLTxCalldataInputTooltip"
+                tooltipText="The Calldata to send to fallback function of the contract."
               >
                 <input
                   id="deployAndRunLLTxCalldata"
                   onChange={handleCalldataChange}
                   className="udapp_calldataInput form-control"
                 />
-              </OverlayTrigger>
-              <OverlayTrigger
+              </CustomTooltip>
+              <CustomTooltip
                 placement="right"
-                overlay={
-                  <Tooltip className="text-nowrap" id="deployAndRunLLTxCalldataTooltip">
-                    <span>Send data to contract.</span>
-                  </Tooltip>
-                }
+                tooltipClasses="text-nowrap"
+                tooltipId="deployAndRunLLTxCalldataTooltip"
+                tooltipText="Send data to contract."
               >
                 <button
                   id="deployAndRunLLTxSendTransaction"
@@ -385,7 +376,7 @@ export function UniversalDappUI (props: UdappProps) {
                 >
                   Transact
                 </button>
-              </OverlayTrigger>
+              </CustomTooltip>
             </div>
           </div>
           <div>

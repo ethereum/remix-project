@@ -11,6 +11,7 @@ import { RemixUiLocaleModule, LocaleModule} from '@remix-ui/locale-module'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { GithubSettings } from './github-settings'
 import { EtherscanSettings } from './etherscan-settings'
+import { CustomTooltip } from '@remix-ui/helper'
 
 /* eslint-disable-next-line */
 export interface RemixUiSettingsProps {
@@ -157,25 +158,32 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const displayErrorsChecked = props.config.get('settings/display-errors') || false
     return (
       <div className="$border-top">
-        <div title="Reset to Default settings." className='d-flex justify-content-end pr-4'>
-          <button className="btn btn-sm btn-secondary ml-2" onClick={() => {
-            try {
-              if ((window as any).remixFileSystem.name === 'indexedDB') {
-                props.config.clear()
-                try {
-                  localStorage.clear() // remove the whole storage
-                } catch (e) {
-                  console.log(e)
+        <CustomTooltip
+          tooltipText="Reset to Default settings"
+          tooltipId="resetDefaultTooltip"
+          tooltipClasses="text-nowrap"
+          placement="top-start"
+        >
+          <div className='d-flex justify-content-end pr-4'>
+            <button className="btn btn-sm btn-secondary ml-2" onClick={() => {
+              try {
+                if ((window as any).remixFileSystem.name === 'indexedDB') {
+                  props.config.clear()
+                  try {
+                    localStorage.clear() // remove the whole storage
+                  } catch (e) {
+                    console.log(e)
+                  }
+                } else {
+                  props.config.clear() // remove only the remix settings
                 }
-              } else {
-                props.config.clear() // remove only the remix settings
+                refresh(resetState + 1)
+              } catch (e) {
+                console.log(e)
               }
-              refresh(resetState + 1)
-            } catch (e) {
-              console.log(e)
-            }
-          }}><FormattedMessage id='settings.reset' defaultMessage='Reset to Default settings' /></button>
-        </div>
+            }}><FormattedMessage id='settings.reset' defaultMessage='Reset to Default settings' /></button>
+          </div>
+        </CustomTooltip>
         <div className="card-body pt-3 pb-2">
           <h6 className="card-title"><FormattedMessage id='settings.general' defaultMessage='General settings' /></h6>
           <div className="mt-2 custom-control custom-checkbox mb-1">

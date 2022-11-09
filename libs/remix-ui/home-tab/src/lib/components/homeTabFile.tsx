@@ -3,6 +3,7 @@ import React, { useState, useRef, useReducer } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
+const _paq = window._paq = window._paq || [] // eslint-disable-line
 
 interface  HomeTabFileProps {
   plugin: any
@@ -37,7 +38,8 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
 
   const inputValue = useRef(null)
 
-  const processLoading = () => {
+  const processLoading = (type: string) => {
+    _paq.push(['trackEvent', 'hometab', 'filesSection', 'importFrom' + type])
     const contentImport = plugin.contentImport
     const workspace = plugin.fileManager.getProvider('workspace')
     contentImport.import(
@@ -71,18 +73,22 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
   }
 
   const createNewFile = async () => {
+    _paq.push(['trackEvent', 'hometab', 'filesSection', 'createNewFile'])
     plugin.verticalIcons.select('filePanel')
     await plugin.call('filePanel', 'createNewFile')
   }
 
   const uploadFile = async (target) => {
+    _paq.push(['trackEvent', 'hometab', 'filesSection', 'uploadFile'])
     await plugin.call('filePanel', 'uploadFile', target)
   }
 
   const connectToLocalhost = () => {
+    _paq.push(['trackEvent', 'hometab', 'filesSection', 'connectToLocalhost'])
     plugin.appManager.activatePlugin('remixd')
   }
   const importFromGist = () => {
+    _paq.push(['trackEvent', 'hometab', 'filesSection', 'importFromGist'])
     plugin.call('gistHandler', 'load', '')
     plugin.verticalIcons.select('filePanel')
   }
@@ -109,7 +115,7 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
         okLabel='Import'
         hide={ !state.showModalDialog }
         handleHide={ () => hideFullMessage() }
-        okFn={ () => processLoading() }
+        okFn={ () => processLoading(state.modalInfo.title) }
       >
         <div className="p-2 user-select-auto">
           { state.modalInfo.loadItem !== '' && <span>Enter the { state.modalInfo.loadItem } you would like to load.</span> }
