@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef, useContext } from 'react'
 import { ThemeContext, themes } from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
-import CustomNavButtons from './customNavButtons'
+import CustomButtonGroupDots from './customButtonGroupDots'
 const _paq = window._paq = window._paq || [] // eslint-disable-line
 
 function HomeTabFeatured() {
@@ -14,6 +14,16 @@ function HomeTabFeatured() {
     }
   }, [])
 
+  const ButtonGroup = () => {
+    return (
+      <>
+        <button>One</button>
+        <button>Two</button>
+        <button>Three</button>
+      </>
+    );
+  };
+
   return (
     <div className="pt-3 pl-2" id="hTFeaturedeSection">
       <label style={{ fontSize: "1.2rem" }}>Featured</label>
@@ -21,7 +31,7 @@ function HomeTabFeatured() {
         <div className="w-100 d-flex flex-column" style={{ height: "200px" }}>
           <ThemeContext.Provider value={themeFilter}>
             <Carousel
-              customButtonGroup={<CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} />}
+              customButtonGroup={<CustomButtonGroupDots next={undefined} previous={undefined} goToSlide={undefined} />}
               arrows={false}
               swipeable={false}
               draggable={true}
@@ -31,6 +41,7 @@ function HomeTabFeatured() {
               ssr={true} // means to render carousel on server-side.
               infinite={true}
               centerMode={false}
+              partialVisible={false}
               autoPlay={true}
               keyBoardControl={true}
               containerClass="border carousel-container"
