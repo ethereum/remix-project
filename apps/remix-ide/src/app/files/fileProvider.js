@@ -193,9 +193,11 @@ class FileProvider {
               }
             }
             await window.remixFileSystem.rmdir(path)
+            this.event.emit('fileRemoved', this._normalizePath(path))
           } else {
             // folder is empty
             await window.remixFileSystem.rmdir(path)
+            this.event.emit('fileRemoved', this._normalizePath(path))
           }          
         }
       } catch (e) {
