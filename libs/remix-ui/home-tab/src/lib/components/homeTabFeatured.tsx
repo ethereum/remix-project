@@ -14,16 +14,6 @@ function HomeTabFeatured() {
     }
   }, [])
 
-  const ButtonGroup = () => {
-    return (
-      <>
-        <button>One</button>
-        <button>Two</button>
-        <button>Three</button>
-      </>
-    );
-  };
-
   return (
     <div className="pt-3 pl-2" id="hTFeaturedeSection">
       <label style={{ fontSize: "1.2rem" }}>Featured</label>
@@ -41,7 +31,6 @@ function HomeTabFeatured() {
               ssr={true} // means to render carousel on server-side.
               infinite={true}
               centerMode={false}
-              partialVisible={false}
               autoPlay={true}
               keyBoardControl={true}
               containerClass="border carousel-container"
