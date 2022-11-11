@@ -1,5 +1,6 @@
 import { CodeParser, genericASTNode } from "../code-parser";
 import { lineText } from '@remix-ui/editor'
+import { lastCompilationResult } from '@remixproject/plugin-api';
 
 export default class CodeParserGasService {
     plugin: CodeParser
@@ -40,7 +41,8 @@ export default class CodeParserGasService {
             return
         }
         this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
-        this.plugin.nodeIndex.nodesPerFile[this.plugin.currentFile] = await this.plugin._extractFileNodes(this.plugin.currentFile, this.plugin.compilerAbstract)
+        // cast from the remix-plugin interface to the solidity one. Should be fixed when remix-plugin move to the remix-project repository
+        this.plugin.nodeIndex.nodesPerFile[this.plugin.currentFile] = await this.plugin._extractFileNodes(this.plugin.currentFile, this.plugin.compilerAbstract as unknown as lastCompilationResult)
 
         const gasEstimates = await this.getGasEstimates(this.plugin.currentFile)
 
