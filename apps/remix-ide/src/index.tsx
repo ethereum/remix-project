@@ -18,6 +18,15 @@ import {  TransactionDebugger } from '@remix-project/remix-debug'
   const theme = new ThemeModule()
   theme.initTheme()
 
+  const worker = new Worker(new URL('./deepthought', import.meta.url), { type: 'module' });
+  worker.postMessage({
+    question:
+      'The Answer to the Ultimate Question of Life, The Universe, and Everything.',
+  });
+  worker.onmessage = ({ data: { answer } }) => {
+    console.log(answer);
+  };
+
   render(
     <React.StrictMode>
       <Preload></Preload>

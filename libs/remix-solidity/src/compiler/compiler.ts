@@ -1,7 +1,6 @@
 'use strict'
 
 import { update } from 'solc/abi'
-import * as webworkify from 'webworkify-webpack'
 import compilerInput, { compilerInputForConfigFile } from './compiler-input'
 import EventManager from '../lib/eventManager'
 import txHelper from './helper'
@@ -272,7 +271,8 @@ export class Compiler {
    */
 
   loadWorker(url: string): void {
-    this.state.worker = webworkify(require.resolve('./compiler-worker'))
+    this.state.worker = new Worker(new URL('./compiler-worker.ts', import.meta.url))
+    console.log(new URL('./compiler-worker.ts', import.meta.url))
     const jobs: Record<'sources', SourceWithTarget>[] = []
 
     this.state.worker.addEventListener('message', (msg: Record<'data', MessageFromWorker>) => {

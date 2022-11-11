@@ -11,7 +11,7 @@
     "esModuleInterop": true,
     "importHelpers": true,
     "target": "ES2015",
-    "module": "commonjs",
+    "module": "ES2020",
     "typeRoots": ["node_modules/@types", "libs/**/*.d.ts"],
     "lib": ["es2017", "es2019", "dom"],
     "skipLibCheck": true,

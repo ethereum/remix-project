@@ -44,11 +44,11 @@ export default class WebSocket {
         done(true)
       }
     })
-    this.wsServer.on('connection', (ws) => {
+    this.wsServer.on('connection', (ws, socket) => {
       const client = this.getclient()
 
       createClient(ws, client as any)
-      if (callback) callback(ws, client)
+      //if (callback) callback(so, client)
     })
   }
 

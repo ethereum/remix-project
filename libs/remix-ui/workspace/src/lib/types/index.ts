@@ -17,12 +17,12 @@ export type MenuItems = action[]
 export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721'
 export interface WorkspaceProps {
   plugin: {
-    setWorkspace: ({ name: string, isLocalhost: boolean }, setEvent: boolean) => void,
+    setWorkspace: ({ name, isLocalhost }, setEvent: boolean) => void,
     createWorkspace: (name: string, workspaceTemplateName: string) => void,
     renameWorkspace: (oldName: string, newName: string) => void
-    workspaceRenamed: ({ name: string }) => void,
-    workspaceCreated: ({ name: string }) => void,
-    workspaceDeleted: ({ name: string }) => void,
+    workspaceRenamed: ({ name }) => void,
+    workspaceCreated: ({ name }) => void,
+    workspaceDeleted: ({ name }) => void,
     workspace: any // workspace provider,
     browser: any // browser provider
     localhost: any // localhost provider

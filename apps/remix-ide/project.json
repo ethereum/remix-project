@@ -1,7 +1,7 @@
 {
-  "name": "solidity-compiler",
+  "name": "remix-ide",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/solidity-compiler/src",
+  "sourceRoot": "apps/remix-ide/src",
   "projectType": "application",
   "implicitDependencies": [
   ],
@@ -12,39 +12,37 @@
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
-        "outputPath": "dist/apps/solidity-compiler",
-        "index": "apps/solidity-compiler/src/index.html",
+        "outputPath": "dist/apps/remix-ide",
+        "index": "apps/remix-ide/src/index.html",
         "baseHref": "/",
-        "main": "apps/solidity-compiler/src/main.tsx",
-        "polyfills": "apps/solidity-compiler/src/polyfills.ts",
-        "tsConfig": "apps/solidity-compiler/tsconfig.app.json",
+        "main": "apps/remix-ide/src/index.tsx",
+        "polyfills": "apps/remix-ide/src/polyfills.ts",
+        "tsConfig": "apps/remix-ide/tsconfig.app.json",
         "assets": [
-          "apps/solidity-compiler/src/favicon.ico",
-          "apps/solidity-compiler/src/assets"
+          "apps/remix-ide/src/assets",
+          "apps/remix-ide/src/index.html",
+          "apps/remix-ide/src/404.html",
+          "apps/remix-ide/src/favicon.ico"
         ],
-        "styles": ["apps/solidity-compiler/src/styles.css"],
+        "styles": [],
         "scripts": [],
-        "webpackConfig": "apps/solidity-compiler/webpack.config.js"
+        "webpackConfig": "apps/remix-ide/webpack.config.js"
       },
       "configurations": {
         "development": {
-          "extractLicenses": false,
-          "optimization": false,
-          "sourceMap": true,
-          "vendorChunk": true
         },
         "production": {
           "fileReplacements": [
             {
-              "replace": "apps/solidity-compiler/src/environments/environment.ts",
-              "with": "apps/solidity-compiler/src/environments/environment.prod.ts"
+              "replace": "apps/remix-ide/src/environments/environment.ts",
+              "with": "apps/remix-ide/src/environments/environment.prod.ts"
             }
           ],
           "optimization": true,
           "outputHashing": "all",
           "sourceMap": false,
           "namedChunks": false,
-          "extractLicenses": true,
+          "extractLicenses": false,
           "vendorChunk": false
         }
       }
@@ -53,14 +51,18 @@
       "executor": "@nrwl/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "solidity-compiler:build"
+        "buildTarget": "remix-ide:build",
+        "watch": true,
+        "liveReload": true,
+        "hmr": false
       },
       "configurations": {
         "development": {
-          "buildTarget": "solidity-compiler:build:development"
+          "buildTarget": "remix-ide:build:development",
+          "port": 8080
         },
         "production": {
-          "buildTarget": "solidity-compiler:build:production",
+          "buildTarget": "remix-ide:build:production",
           "hmr": false
         }
       }
@@ -69,7 +71,7 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/solidity-compiler/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["apps/remix-ide/**/*.{ts,tsx,js,jsx}"]
       }
     }
   },
