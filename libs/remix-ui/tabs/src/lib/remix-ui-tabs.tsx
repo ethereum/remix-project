@@ -146,6 +146,7 @@ export const TabsUI = (props: TabsUIProps) => {
       <div className="d-flex flex-row" style={{ maxWidth: 'fit-content', width: '97%' }}>
         <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-1">
           <button
+            data-id='play-editor'
             className="btn text-success py-0"
             disabled={!(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' || tabsState.currentExt === 'sol')}
             onClick={async () => {

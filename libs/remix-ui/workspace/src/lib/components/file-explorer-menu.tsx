@@ -71,12 +71,13 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 tooltipId="uploadFileTooltip"
                 tooltipClasses="text-nowrap"
                 tooltipText={<FormattedMessage id={`filePanel.${action}`} defaultMessage={title} />}
+                key={`index-${action}-${placement}-${icon}`}
               >
                 <label
                   id={action}
                   data-id={'fileExplorerUploadFile' + action }
                   className={icon + ' mb-0 remixui_newFile'}
-                  key={index}
+                  key={`index-${action}-${placement}-${icon}`}
                 >
                     <input id="fileUpload" data-id="fileExplorerFileUpload" type="file" onChange={(e) => {
                       e.stopPropagation()
@@ -94,6 +95,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 tooltipId={`${action}-${title}-${icon}-${index}`}
                 tooltipClasses="text-nowrap"
                 tooltipText={<FormattedMessage id={`filePanel.${action}`} defaultMessage={title} />}
+                key={`${action}-${title}-${index}`}
               >
                 <span
                   id={action}

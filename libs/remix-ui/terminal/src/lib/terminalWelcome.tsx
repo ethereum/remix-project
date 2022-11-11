@@ -8,8 +8,8 @@ const TerminalWelcomeMessage = ({ packageJson, storage }) => {
       <div className=""><FormattedMessage id='terminal.welcomeText2' defaultMessage='Your files are stored in' /> {(window as any).remixFileSystem.name}, {storage} <FormattedMessage id='terminal.used' defaultMessage='used' /></div><br />
       <div><FormattedMessage id='terminal.welcomeText3' defaultMessage='You can use this terminal to' />: </div>
       <ul className='ml-0 mr-4'>
-        <li><FormattedMessage id='terminal.welcomeText4' defaultMessage='Check transactions details and start debugging' />.</li>
-        <li><FormattedMessage id='terminal.welcomeText5' defaultMessage='Execute JavaScript scripts' />:
+        <li key="details-and-debug" ><FormattedMessage id='terminal.welcomeText4' defaultMessage='Check transactions details and start debugging' />.</li>
+        <li key="run-javascript"><FormattedMessage id='terminal.welcomeText5' defaultMessage='Execute JavaScript scripts' />:
           <br />
           <i> - <FormattedMessage id='terminal.welcomeText6' defaultMessage='Input a script directly in the command line interface' /> </i>
           <br />
@@ -21,9 +21,9 @@ const TerminalWelcomeMessage = ({ packageJson, storage }) => {
 
       <div><FormattedMessage id='terminal.welcomeText9' defaultMessage='The following libraries are accessible' />:</div>
       <ul className='ml-0 mr-4'>
-        <li><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.5.2</a></li>
-        <li><a target="_blank" href="https://docs.ethers.io">ethers.js</a> </li>
-        <li>remix</li>
+        <li key="web3-152"><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.5.2</a></li>
+        <li key="ethers-console"><a target="_blank" href="https://docs.ethers.io">ethers.js</a> </li>
+        <li key="remix-console">remix</li>
       </ul>
       <div><FormattedMessage id='terminal.welcomeText10' defaultMessage='Type the library name to see available commands' />.</div>
     </div>

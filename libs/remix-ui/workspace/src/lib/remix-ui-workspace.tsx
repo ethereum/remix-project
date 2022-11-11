@@ -317,6 +317,7 @@ export function Workspace () {
             data-id="initGitRepository"
             className="form-check-input custom-control-input"
             type="checkbox"
+            disabled={!global.fs.gitConfig.username || !global.fs.gitConfig.email}
             onChange={() => {}}
           />
           <label
@@ -328,6 +329,11 @@ export function Workspace () {
             Initialize workspace as a new git repository
           </label>
         </div>
+        {!global.fs.gitConfig.username || !global.fs.gitConfig.email ? 
+          (
+          <div className='text-warning'>Please add username and email to Remix GitHub Settings to use git features.</div>)
+          :<></>
+        }
 
       </>
     )
@@ -369,6 +375,7 @@ export function Workspace () {
           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
           hideIconsMenu(!showIconsMenu)
         }}
+        key={`workspacesCreate-fe-ws`}
       >
         <span
           hidden={currentWorkspace === LOCALHOST}
@@ -398,6 +405,7 @@ export function Workspace () {
           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDelete'])
           hideIconsMenu(!showIconsMenu)
         }}
+        key={`workspacesDelete-fe-ws`}
       >
         <span
           hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
@@ -426,6 +434,7 @@ export function Workspace () {
             hideIconsMenu(!showIconsMenu)
           }}
           data-id='workspaceRename'
+          key={`workspacesRename-fe-ws`}
         >
         <span
           hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
@@ -455,6 +464,7 @@ export function Workspace () {
           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'cloneGitRepository'])
           hideIconsMenu(!showIconsMenu)
         }}
+        key={`cloneGitRepository-fe-ws`}
       >
         <span
           hidden={currentWorkspace === LOCALHOST}
@@ -485,6 +495,7 @@ export function Workspace () {
           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesDownload'])
           hideIconsMenu(!showIconsMenu)
         }}
+        key={`workspacesDownload-fe-ws`}
       >
         <span
           hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
@@ -514,6 +525,7 @@ export function Workspace () {
           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesRestore'])
           hideIconsMenu(!showIconsMenu)
         }}
+        key={`workspacesRestore-fe-ws`}
       >
         <span
           hidden={currentWorkspace === LOCALHOST}
@@ -531,7 +543,8 @@ export function Workspace () {
       </div>
     </CustomTooltip>,
   ]
-
+  const menuLength = workspaceMenuIcons.length
+  let count = 0
   return (
     <div className='d-flex flex-column justify-content-between h-100'>
       <div className='remixui_container overflow-auto' style={{ maxHeight: selectedWorkspace && selectedWorkspace.isGitRepo ? '95%' : '100%' }}>
@@ -575,10 +588,10 @@ export function Workspace () {
                         icon={'fas fa-bars'}
                       ></Dropdown.Toggle>
                       <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='custom-dropdown-items remixui_menuwidth' rootCloseEvent="click">
-                        {
+                      {
                         workspaceMenuIcons.map(m => {
                           return (
-                            <Dropdown.Item>
+                            <Dropdown.Item key={`wsdropdownMenu-${count !== menuLength ? count++ : count }`}>
                               {m}
                             </Dropdown.Item>
                           )
@@ -717,7 +730,7 @@ export function Workspace () {
         </div>
         {
           selectedWorkspace &&
-          <div className={`bg-light border-top ${selectedWorkspace.isGitRepo ? 'd-block' : 'd-none'}`} data-id="workspaceGitPanel">
+          <div className={`bg-light border-top ${selectedWorkspace.isGitRepo && currentBranch ? 'd-block' : 'd-none'}`} data-id="workspaceGitPanel">
             <div className='d-flex justify-space-between p-1'>
               <div className="mr-auto text-uppercase text-dark pt-2 pl-2">GIT</div>
               <div className="pt-1 mr-1" data-id="workspaceGitBranchesDropdown">

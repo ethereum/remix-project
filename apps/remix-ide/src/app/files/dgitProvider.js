@@ -78,6 +78,7 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       defaultBranch: (input && input.branch) || 'main'
     })
+    this.emit('init')
   }
 
   async status (cmd) {
@@ -88,28 +89,19 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async add (cmd, refresh = true) {
+  async add (cmd) {
     await git.add({
       ...await this.getGitConfig(),
       ...cmd
     })
-    if (refresh) {
-      setTimeout(async () => {
-        await this.call('fileManager', 'refresh')
-      }, 1000)
-    }
+    this.emit('add')
   }
 
-  async rm (cmd, refresh = true) {
+  async rm (cmd) {
     await git.remove({
       ...await this.getGitConfig(),
       ...cmd
     })
-    if (refresh) {
-      setTimeout(async () => {
-        await this.call('fileManager', 'refresh')
-      }, 1000)
-    }
   }
 
   async checkout (cmd, refresh = true) {
@@ -158,25 +150,33 @@ class DGitProvider extends Plugin {
   }
 
   async currentbranch (config) {
-    const defaultConfig = await this.getGitConfig()
-    const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
-    const name = await git.currentBranch(cmd)
+    try{
+      const defaultConfig = await this.getGitConfig()
+      const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
+      const name = await git.currentBranch(cmd)
 
-    return name
+      return name
+    }catch(e){
+      return ''
+    }
   }
 
   async branches (config) {
-    const defaultConfig = await this.getGitConfig()
-    const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
-    const remotes = await this.remotes(config)
-    let branches = []
-    branches = (await git.listBranches(cmd)).map((branch) => { return { remote: undefined, name: branch } })
-    for (const remote of remotes) {
-      cmd.remote = remote.remote
-      const remotebranches = (await git.listBranches(cmd)).map((branch) => { return { remote: remote.remote, name: branch } })
-      branches = [...branches, ...remotebranches]
+    try{
+      const defaultConfig = await this.getGitConfig()
+      const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
+      const remotes = await this.remotes(config)
+      let branches = []
+      branches = (await git.listBranches(cmd)).map((branch) => { return { remote: undefined, name: branch } })
+      for (const remote of remotes) {
+        cmd.remote = remote.remote
+        const remotebranches = (await git.listBranches(cmd)).map((branch) => { return { remote: remote.remote, name: branch } })
+        branches = [...branches, ...remotebranches]
+      }
+      return branches
+    }catch(e){
+      return []
     }
-    return branches
   }
 
   async commit (cmd) {
@@ -186,6 +186,7 @@ class DGitProvider extends Plugin {
         ...await this.getGitConfig(),
         ...cmd
       })
+      this.emit('commit')
       return sha
     } catch (e) {
       throw new Error(e)
@@ -265,6 +266,7 @@ class DGitProvider extends Plugin {
         await this.call('fileManager', 'refresh')
       }, 1000)
     }
+    this.emit('clone')
     return result
   }
 

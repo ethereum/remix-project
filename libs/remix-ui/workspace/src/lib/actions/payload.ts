@@ -278,3 +278,17 @@ export const setCurrentWorkspaceCurrentBranch = (currentBranch?: string) => {
     payload: currentBranch
   }
 }
+
+export const setCurrentWorkspaceIsGitRepo = (isRepo: boolean) => {
+  return {
+    type: 'SET_CURRENT_WORKSPACE_IS_GITREPO',
+    payload: isRepo
+  }
+}
+
+export const setGitConfig = (config: {username: string, token: string, email: string}) => {
+  return {
+    type: 'SET_GIT_CONFIG',
+    payload: config
+  }
+}
