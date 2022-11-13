@@ -41,6 +41,8 @@ export class InternalCallTree {
   locationAndOpcodePerVMTraceIndex: {
     [Key: number]: any
   }
+  gasCostPerLine
+  offsetToLineColumnConverter
 
   /**
     * constructor
@@ -51,12 +53,13 @@ export class InternalCallTree {
     * @param {Object} codeManager  - code manager
     * @param {Object} opts  - { includeLocalVariables, debugWithGeneratedSources }
     */
-  constructor (debuggerEvent, traceManager, solidityProxy, codeManager, opts) {
+  constructor (debuggerEvent, traceManager, solidityProxy, codeManager, opts, offsetToLineColumnConverter?) {
     this.includeLocalVariables = opts.includeLocalVariables
     this.debugWithGeneratedSources = opts.debugWithGeneratedSources
     this.event = new EventManager()
     this.solidityProxy = solidityProxy
     this.traceManager = traceManager
+    this.offsetToLineColumnConverter = offsetToLineColumnConverter
     this.sourceLocationTracker = new SourceLocationTracker(codeManager, { debugWithGeneratedSources: opts.debugWithGeneratedSources })
     debuggerEvent.register('newTraceLoaded', (trace) => {
       this.reset()
@@ -99,6 +102,7 @@ export class InternalCallTree {
     this.functionCallStack = []
     this.functionDefinitionsByScope = {}
     this.scopeStarts = {}
+    this.gasCostPerLine = {}
     this.variableDeclarationByFile = {}
     this.functionDefinitionByFile = {}
     this.astWalker = new AstWalker()
@@ -181,6 +185,13 @@ export class InternalCallTree {
   async getValidSourceLocationFromVMTraceIndexFromCache (address: string, step: number, contracts: any) {
     return await this.sourceLocationTracker.getValidSourceLocationFromVMTraceIndexFromCache(address, step, contracts, this.locationAndOpcodePerVMTraceIndex)
   }
+
+  async getGasCostPerLine(file: number, line: number) {
+    if (this.gasCostPerLine[file] && this.gasCostPerLine[file][line]) {
+      return this.gasCostPerLine[file][line]
+    }
+    throw new Error('Could not find gas cost per line')
+  }
 }
 
 async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
@@ -211,6 +222,7 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
     let newLocation = false
     try {
       sourceLocation = await tree.extractSourceLocation(step)
+          
       if (!includedSource(sourceLocation, currentSourceLocation)) {
         tree.reducedTrace.push(step)
         currentSourceLocation = sourceLocation
@@ -229,7 +241,16 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
     }
     tree.locationAndOpcodePerVMTraceIndex[step] = { sourceLocation, stepDetail }
     tree.scopes[scopeId].gasCost += stepDetail.gasCost
-    console.log(step, stepDetail.op, stepDetail.gas, nextStepDetail.gas)
+    
+    // gas per line
+    if (tree.offsetToLineColumnConverter) {
+      try {
+        const lineColumnPos = await tree.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, tree.solidityProxy.sourcesCode, tree.solidityProxy.sources)
+        if (!tree.gasCostPerLine[sourceLocation.file]) tree.gasCostPerLine[sourceLocation.file] = {}
+        if (!tree.gasCostPerLine[sourceLocation.file][lineColumnPos.start.line]) tree.gasCostPerLine[sourceLocation.file][lineColumnPos.start.line] = 0
+        tree.gasCostPerLine[sourceLocation.file][lineColumnPos.start.line] += stepDetail.gasCost
+      } catch (e) {}      
+    }
 
     const isCallInstrn = isCallInstruction(stepDetail)
     const isCreateInstrn = isCreateInstruction(stepDetail)
