@@ -1,13 +1,7 @@
 import Web3 from 'web3'
 import remixDebug, { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
-<<<<<<< HEAD
 import { CompilerAbstract } from '@remix-project/remix-solidity'
-
-=======
-import { CompilationOutput, Sources } from '@remix-ui/debugger-ui'
 import { lineText } from '@remix-ui/editor'
-import type { CompilationResult } from '@remix-project/remix-solidity-ts'
->>>>>>> show inline gas cost
 
 export const DebuggerApiMixin = (Base) => class extends Base {
 
@@ -48,9 +42,9 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     await this.call('editor', 'discardLineTexts' as any)
   }
 
-  async highlight (lineColumnPos, path, rawLocation, stepDetail) {
+  async highlight (lineColumnPos, path, rawLocation, stepDetail, lineGasCost) {
     await this.call('editor', 'highlight', lineColumnPos, path, '', { focus: true })
-    const label = `${stepDetail.op} costs ${stepDetail.gasCost} gas - ${stepDetail.gas} gas left`
+    const label = `${stepDetail.op} costs ${stepDetail.gasCost} gas - this line costs ${lineGasCost} gas - ${stepDetail.gas} total gas left`
     const linetext: lineText = {
         content: label,
         position: lineColumnPos,

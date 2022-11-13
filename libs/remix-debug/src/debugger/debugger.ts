@@ -26,7 +26,8 @@ export class Debugger {
     this.debugger = new Ethdebugger({
       web3: options.web3,
       debugWithGeneratedSources: options.debugWithGeneratedSources,
-      compilationResult: this.compilationResult
+      compilationResult: this.compilationResult,
+      offsetToLineColumnConverter: this.offsetToLineColumnConverter
     })
 
     const { traceManager, callTree, solidityProxy } = this.debugger
@@ -90,7 +91,14 @@ export class Debugger {
             }
           }
           const lineColumnPos = await this.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, sources, astSources)
-          this.event.trigger('newSourceLocation', [lineColumnPos, rawLocation, generatedSources, address, stepDetail])
+          
+          let lineGasCost = -1
+          try {
+            lineGasCost = await this.debugger.callTree.getGasCostPerLine(rawLocation.file, lineColumnPos.start.line)          
+          } catch (e) {
+            console.log(e)
+          }
+          this.event.trigger('newSourceLocation', [lineColumnPos, rawLocation, generatedSources, address, stepDetail, lineGasCost])
           this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [rawLocation])
         } else {
           this.event.trigger('newSourceLocation', [null])

@@ -10,6 +10,8 @@ export class SolidityProxy {
   getCode
   sources
   contracts
+  compilationResult
+  sourcesCode
 
   constructor ({ getCurrentCalledAddressAt, getCode }) {
     this.cache = new Cache()
@@ -23,9 +25,10 @@ export class SolidityProxy {
     *
     * @param {Object} compilationResult  - result os a compilatiion (diectly returned by the compiler)
     */
-  reset (compilationResult) {
-    this.sources = compilationResult.sources
+  reset (compilationResult, sources?) {
+    this.sources = compilationResult.sources // ast
     this.contracts = compilationResult.contracts
+    if (sources) this.sourcesCode = sources
     this.cache.reset()
   }
 
