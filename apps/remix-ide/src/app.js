@@ -16,6 +16,7 @@ import { PermissionHandlerPlugin } from './app/plugins/permission-handler-plugin
 import { AstWalker } from '@remix-project/remix-astwalker'
 import { LinkLibraries, DeployLibraries, OpenZeppelinProxy } from '@remix-project/core-plugin'
 import { CodeParser } from './app/plugins/parser/code-parser'
+import { SolidityScript } from './app/plugins/solidity-script'
 
 import { WalkthroughService } from './walkthroughService'
 
@@ -246,7 +247,7 @@ class AppComponent {
     )
 
     const codeParser = new CodeParser(new AstWalker())
-
+    const solidityScript = new SolidityScript()
 
     this.notification = new NotificationPlugin()
 
@@ -298,7 +299,8 @@ class AppComponent {
       this.walkthroughService,
       search,
       solidityumlgen,
-      contractFlattener
+      contractFlattener,
+      solidityScript
     ])
 
     // LAYOUT & SYSTEM VIEWS
@@ -414,6 +416,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'codeParser', 'codeFormatter', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
+    await this.appManager.activatePlugin(['solidity-script'])
 
     this.appManager.on(
       'filePanel',
