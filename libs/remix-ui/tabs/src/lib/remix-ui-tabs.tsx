@@ -167,10 +167,13 @@ export const TabsUI = (props: TabsUIProps) => {
               if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
                 await props.plugin.call('scriptRunner', 'execute', content, path)
                 _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
+              } else if (path.endsWith('.script.sol')) {
+                await props.plugin.call('solidity-script', 'execute', path)
+                _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
               } else if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul') {
                 await props.plugin.call('solidity', 'compile', path)
                 _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
-              }
+              } 
             }}
           >
             <CustomTooltip
