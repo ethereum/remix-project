@@ -3,8 +3,6 @@ import React from 'react'
 
 const CustomNavButtons = ({ parent, next, previous, goToSlide, ...rest }) => {
   const { carouselState: { currentSlide, totalItems, containerWidth, transform } } = rest
-  console.log("REST ", rest)
-  console.log("parent ", parent)
   return (
     <div className="mt-1 d-flex justify-content-end carousel-button-group">
       <button
