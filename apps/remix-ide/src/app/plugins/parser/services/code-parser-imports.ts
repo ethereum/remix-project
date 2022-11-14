@@ -45,7 +45,13 @@ export default class CodeParserImports {
 
     getDirectory = async (dir: string) => {
         let result = []
-        const files = await this.plugin.call('fileManager', 'readdir', dir)
+        let files = {}
+        try {
+            if (await this.plugin.call('fileManager', 'exists', dir)) {
+                files = await this.plugin.call('fileManager', 'readdir', dir)
+            }
+        } catch (e) {}
+        
         const fileArray = this.normalize(files)
         for (const fi of fileArray) {
             if (fi) {

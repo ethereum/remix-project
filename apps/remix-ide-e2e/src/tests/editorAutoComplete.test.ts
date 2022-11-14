@@ -216,7 +216,7 @@ module.exports = {
       .waitForElementVisible(autoCompleteLineElement('importedbook'))
       .waitForElementVisible(autoCompleteLineElement('importpublicstring'))
       .waitForElementVisible(autoCompleteLineElement('publicimport'))
-      // no private 
+      // no private
       .waitForElementNotPresent(autoCompleteLineElement('importprivatestring'))
       .waitForElementNotPresent(autoCompleteLineElement('privateimport'))
       // no internal

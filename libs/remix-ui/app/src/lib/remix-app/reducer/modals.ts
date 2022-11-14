@@ -62,8 +62,7 @@ export const modalReducer = (state: ModalState = ModalInitialState, action: Moda
     }
     case modalActionTypes.setToast: {
       const toasterList = state.toasters.slice()
-      const message = action.payload
-      toasterList.push(message)
+      toasterList.push(action.payload)
       if (toasterList.length === 1) {
         return { ...state, toasters: toasterList, focusToaster: action.payload }
       } else {

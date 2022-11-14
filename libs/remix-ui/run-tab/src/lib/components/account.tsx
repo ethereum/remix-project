@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { AccountProps } from '../types'
 import { PassphrasePrompt } from './passphrase'
+import { CustomTooltip } from '@remix-ui/helper'
 
 export function AccountUI (props: AccountProps) {
   const { selectedAccount, loadedAccounts } = props.accounts
@@ -150,9 +151,16 @@ export function AccountUI (props: AccountProps) {
     <div className="udapp_crow">
       <label className="udapp_settingsLabel">
         Account
-        <span id="remixRunPlusWraper" title={plusOpt.title}>
-          <i id="remixRunPlus" className={`fas fa-plus-circle udapp_icon ${plusOpt.classList}`} aria-hidden="true" onClick={newAccount}></i>
-        </span>
+        <CustomTooltip
+          placement={'top-start'}
+          tooltipClasses="text-wrap"
+          tooltipId="remixPlusWrapperTooltip"
+          tooltipText={plusOpt.title}
+        >
+            <span id="remixRunPlusWraper">
+              <i id="remixRunPlus" className={`fas fa-plus-circle udapp_icon ${plusOpt.classList}`} aria-hidden="true" onClick={newAccount}></i>
+            </span>
+        </CustomTooltip>
       </label>
       <div className="udapp_account">
         <select id="txorigin" data-id="runTabSelectAccount" name="txorigin" className="form-control udapp_select custom-select pr-4" value={selectedAccount} onChange={(e) => { props.setAccount(e.target.value) }}>
@@ -161,7 +169,14 @@ export function AccountUI (props: AccountProps) {
           }
         </select>
         <div style={{ marginLeft: -5 }}><CopyToClipboard tip='Copy account to clipboard' content={selectedAccount} direction='top' /></div>
-        <i id="remixRunSignMsg" data-id="settingsRemixRunSignMsg" className="mx-1 fas fa-edit udapp_icon" aria-hidden="true" onClick={signMessage} title="Sign a message using this account"></i>
+        <CustomTooltip
+          placement={'top-start'}
+          tooltipClasses="text-nowrap"
+          tooltipId="remixSignMsgTooltip"
+          tooltipText={"Sign a message using this account"}
+        >
+          <i id="remixRunSignMsg" data-id="settingsRemixRunSignMsg" className="mx-1 fas fa-edit udapp_icon" aria-hidden="true" onClick={signMessage}></i>
+        </CustomTooltip>
       </div>
     </div>
   )

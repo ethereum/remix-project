@@ -2,11 +2,10 @@ import React, { useEffect, useState, useRef, useReducer } from 'react' // eslint
 import semver from 'semver'
 import { CompilerContainerProps } from './types'
 import { ConfigurationSettings } from '@remix-project/remix-lib-ts'
-import { checkSpecialChars, extractNameFromKey } from '@remix-ui/helper'
+import { checkSpecialChars, CustomTooltip, extractNameFromKey } from '@remix-ui/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '@remix-project/remix-solidity'
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
 import { resetEditorMode, listenToEvents } from './actions/compiler'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap' // eslint-disable-line
 import { getValidLanguage } from '@remix-project/remix-solidity'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { configFileContent } from './compilerConfiguration'
@@ -473,10 +472,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileIcon.current.classList.remove('remixui_spinningIcon')
     compileIcon.current.classList.remove('remixui_bouncingIcon')
     if (!state.autoCompile || (state.autoCompile && state.matomoAutocompileOnce)) {
-      if (state.useFileConfiguration)
-        _paq.push(['trackEvent', 'compiler', 'compiled_with_config_file'])
-
-      _paq.push(['trackEvent', 'compiler', 'compiled_with_version', _retrieveVersion()])
+      _paq.push(['trackEvent', 'compiler', 'compiled', 'with_config_file_' + state.useFileConfiguration])
+      _paq.push(['trackEvent', 'compiler', 'compiled', 'with_version_' + _retrieveVersion()])
       if (state.autoCompile && state.matomoAutocompileOnce) {
         setState(prevState => {
           return { ...prevState, matomoAutocompileOnce: false }
@@ -727,8 +724,22 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         <div className='pt-0 remixui_compilerSection'>
           <div className="mb-1">
             <label className="remixui_compilerLabel form-check-label" htmlFor="versionSelector">Compiler</label>
-            <span className="far fa-plus border-0 p-0 ml-3" onClick={() => promptCompiler()} title="Add a custom compiler with URL"></span>
-            <span className="fa fa-file-text-o border-0 p-0 ml-2" onClick={() => showCompilerLicense()} title="See compiler license"></span>
+            <CustomTooltip
+              placement="top"
+              tooltipId="promptCompilerTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={"Add a custom compiler with URL"}
+            >
+              <span className="far fa-plus border-0 p-0 ml-3" onClick={() => promptCompiler()}></span>
+            </CustomTooltip>
+            <CustomTooltip
+              placement="top"
+              tooltipId="showCompilerTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={"See compiler license"}
+            >
+              <span className="fa fa-file-text-o border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
+            </CustomTooltip>
             <select value={state.selectedVersion || state.defaultVersion} onChange={(e) => handleLoadVersion(e.target.value)} className="custom-select" id="versionSelector" disabled={state.allversions.length <= 0}>
               {state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === state.defaultVersion ? 'selected' : ''}>{state.defaultVersion}</option>}
               {state.allversions.length <= 0 && <option disabled data-id={state.selectedVersion === 'builtin' ? 'selected' : ''}>builtin</option>}
@@ -759,13 +770,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <input className="remixui_autocompile custom-control-input" onChange={updatehhCompilation} id="enableHardhat" type="checkbox" title="Enable Hardhat Compilation" checked={hhCompilation} />
               <label className="form-check-label custom-control-label" htmlFor="enableHardhat">Enable Hardhat Compilation</label>
               <a className="mt-1 text-nowrap" href='https://remix-ide.readthedocs.io/en/latest/hardhat.html#enable-hardhat-compilation' target={'_blank'}>
-                <OverlayTrigger placement={'right'} overlay={
-                  <Tooltip className="text-nowrap" id="overlay-tooltip-hardhat">
-                    <span className="border bg-light text-dark p-1 pr-3" style={{ minWidth: '230px' }}>Learn how to use Hardhat Compilation</span>
-                  </Tooltip>
-                }>
+                <CustomTooltip
+                  placement={'right'}
+                  tooltipClasses="text-nowrap"
+                  tooltipId="overlay-tooltip-hardhat"
+                  tooltipText={<span className="border bg-light text-dark p-1 pr-3" style={{ minWidth: '230px' }}>Learn how to use Hardhat Compilation</span>}
+                >
                   <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
-                </OverlayTrigger>
+                </CustomTooltip>
               </a>
             </div>
           }
@@ -775,13 +787,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <input className="remixui_autocompile custom-control-input" onChange={updateTruffleCompilation} id="enableTruffle" type="checkbox" title="Enable Truffle Compilation" checked={truffleCompilation} />
               <label className="form-check-label custom-control-label" htmlFor="enableTruffle">Enable Truffle Compilation</label>
               <a className="mt-1 text-nowrap" href='https://remix-ide.readthedocs.io/en/latest/truffle.html#enable-truffle-compilation' target={'_blank'}>
-                <OverlayTrigger placement={'right'} overlay={
-                  <Tooltip className="text-nowrap" id="overlay-tooltip-truffle">
-                    <span className="border bg-light text-dark p-1 pr-3" style={{ minWidth: '230px' }}>Learn how to use Truffle Compilation</span>
-                  </Tooltip>
-                }>
+                <CustomTooltip
+                  placement={'right'}
+                  tooltipClasses="text-nowrap"
+                  tooltipId="overlay-tooltip-truffle"
+                  tooltipText={<span className="border bg-light text-dark p-1 pr-3" style={{ minWidth: '230px' }}>Learn how to use Truffle Compilation</span>}
+                >
                   <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
-                </OverlayTrigger>
+                </CustomTooltip>
               </a>
             </div>
           }
@@ -804,10 +817,17 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           <div className={`flex-column 'd-flex'}`}>
             <div className="mb-2 ml-4">
               <label className="remixui_compilerLabel form-check-label" htmlFor="compilierLanguageSelector">Language</label>
-              <select onChange={(e) => handleLanguageChange(e.target.value)} disabled={state.useFileConfiguration} value={state.language} className="custom-select" id="compilierLanguageSelector" title="Language specification available from Compiler >= v0.5.7">
-                <option data-id={state.language === 'Solidity' ? 'selected' : ''} value='Solidity'>Solidity</option>
-                <option data-id={state.language === 'Yul' ? 'selected' : ''} value='Yul'>Yul</option>
-              </select>
+              <CustomTooltip
+                placement="right-start"
+                tooltipId="compilerLabelTooltip"
+                tooltipClasses="text-nowrap"
+                tooltipText={<span>{'Language specification available from   Compiler >= v0.5.7'}</span>}
+              >
+                <select onChange={(e) => handleLanguageChange(e.target.value)} disabled={state.useFileConfiguration} value={state.language} className="custom-select" id="compilierLanguageSelector">
+                  <option data-id={state.language === 'Solidity' ? 'selected' : ''} value='Solidity'>Solidity</option>
+                  <option data-id={state.language === 'Yul' ? 'selected' : ''} value='Yul'>Yul</option>
+                </select>
+              </CustomTooltip>
             </div>
             <div className="mb-2 ml-4">
               <label className="remixui_compilerLabel form-check-label" htmlFor="evmVersionSelector">EVM Version</label>
@@ -838,11 +858,19 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <label className="form-check-label custom-control-label" htmlFor="scFileConfig" data-id="scFileConfiguration">Use configuration file</label>
           </div>
           <div className={`pt-2 ml-4 ml-2 align-items-start justify-content-between d-flex`}>
-            {(!showFilePathInput && state.useFileConfiguration) && <span
-              title="Click to open the config file"
-              onClick={configFilePath === '' ? () => { } : async () => { await openFile() }}
-              className="py-2 remixui_compilerConfigPath"
-            >{configFilePath === '' ? 'No file selected.' : configFilePath}</span>}
+            {(!showFilePathInput && state.useFileConfiguration) && <CustomTooltip
+                placement="bottom"
+                tooltipId="configfileTooltip"
+                tooltipClasses="text-nowrap"
+                tooltipText={<span>
+                      Click to open the config file
+                    </span>}
+              >
+                <span
+                  onClick={configFilePath === '' ? () => { } : async () => { await openFile() }}
+                  className="py-2 remixui_compilerConfigPath"
+                >{configFilePath === '' ? 'No file selected.' : configFilePath}</span>
+              </CustomTooltip>}
             {(!showFilePathInput && !state.useFileConfiguration) && <span className="py-2 text-secondary">{configFilePath}</span>}
             <input
               ref={configFilePathInput}
@@ -857,24 +885,24 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 }
               }}
             />
-            {!showFilePathInput && <button disabled={!state.useFileConfiguration} data-id="scConfigChangeFilePath" className="btn-secondary" onClick={() => { setShowFilePathInput(true) }}>Change</button>}
+            {!showFilePathInput && <button disabled={!state.useFileConfiguration} data-id="scConfigChangeFilePath" className="btn btn-sm btn-secondary" onClick={() => { setShowFilePathInput(true) }}>Change</button>}
           </div>
         </div>
         <div className="px-4">
           <button id="compileBtn" data-id="compilerContainerCompileBtn" className="btn btn-primary btn-block d-block w-100 text-break remixui_disabled mb-1 mt-3" onClick={compile} disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}>
-            <OverlayTrigger overlay={
-              <Tooltip id="overlay-tooltip-compile">
-                <div className="text-left">
+            <CustomTooltip
+              placement="auto"
+              tooltipId="overlay-tooltip-compile"
+              tooltipText={<div className="text-left">
                   {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+S</b> for compiling</div>}
                   {(configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div>}
-                </div>
-              </Tooltip>
-            }>
+                </div>}
+            >
               <span>
                 {<i ref={compileIcon} className="fas fa-sync remixui_iconbtn" aria-hidden="true"></i>}
                 Compile {typeof state.compiledFileName === 'string' ? extractNameFromKey(state.compiledFileName) || '<no file selected>' : '<no file selected>'}
               </span>
-            </OverlayTrigger>
+            </CustomTooltip>
           </button>
           <div className='d-flex align-items-center'>
             <button
@@ -884,22 +912,23 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               onClick={compileAndRun}
               disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}
             >
-              <OverlayTrigger overlay={
-                <Tooltip id="overlay-tooltip-compile-run">
-                  <div className="text-left">
+              <CustomTooltip
+                placement="auto"
+                tooltipId="overlay-tooltip-compile-run"
+                tooltipText={<div className="text-left">
                     {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+Shift+S</b> for compiling and script execution</div>}
                     {(configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div>}
-                  </div>
-                </Tooltip>
-              }>
+                  </div>}
+              >
                 <span>
                   Compile and Run script
                 </span>
-              </OverlayTrigger>
+              </CustomTooltip>
             </button>
-            <OverlayTrigger overlay={
-              <Tooltip id="overlay-tooltip-compile-run-doc">
-                <div className="text-left p-2">
+            <CustomTooltip
+              placement="auto"
+              tooltipId="overlay-tooltip-compile-run-doc"
+              tooltipText={<div className="text-left p-2">
                   <div>Choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
                   <pre>
                     <code>
@@ -912,11 +941,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                     </code>
                   </pre>
                   Click to know more
-                </div>
-              </Tooltip>
-            }>
+                </div>}
+            >
               <a href="https://remix-ide.readthedocs.io/en/latest/running_js_scripts.html#compile-a-contract-and-run-a-script-on-the-fly" target="_blank" ><i className="pl-2 ml-2 mt-3 mb-1 fas fa-info text-dark"></i></a>
-            </OverlayTrigger>
+            </CustomTooltip>
             <CopyToClipboard tip="Click to copy the custom NatSpec tag" getContent={() => '@custom:dev-run-script file_path'} direction='top'>
               <button className="btn remixui_copyButton  ml-2 mt-3 mb-1 text-dark">
                 <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>

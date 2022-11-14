@@ -818,8 +818,8 @@ class FileManager extends Plugin {
     }
   }
 
-  async isGitRepo (directory: string): Promise<boolean> {
-    const path = directory + '/.git'
+  async isGitRepo (): Promise<boolean> {
+    const path = '.git'
     const exists = await this.exists(path)
 
     return exists
