@@ -1,6 +1,7 @@
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { CustomTooltip } from '@remix-ui/helper'
 import React, { useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { GithubSettingsProps } from '../types'
 import { gitAccessTokenTitle, gitAccessTokenText, gitAccessTokenText2, gitAccessTokenLink } from './constants'
 
@@ -9,13 +10,14 @@ export function GithubSettings (props: GithubSettingsProps) {
   const [githubToken, setGithubToken] = useState<string>("")
   const [githubUserName, setGithubUsername] = useState<string>("")
   const [githubEmail, setGithubEmail] = useState<string>("")
+  const intl = useIntl()
 
   useEffect(() => {
     if (props.config) {
       const githubToken = props.config.get('settings/gist-access-token') || ''
       const githubUserName = props.config.get('settings/github-user-name') || ''
       const githubEmail = props.config.get('settings/github-email') || ''
-  
+
       setGithubToken(githubToken)
       setGithubUsername(githubUserName)
       setGithubEmail(githubEmail)
@@ -45,13 +47,13 @@ export function GithubSettings (props: GithubSettingsProps) {
     setGithubEmail('')
     props.removeToken()
   }
-  
+
   return (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
-        <h6 className="card-title">{gitAccessTokenTitle}</h6>
-        <p className="mb-1">{gitAccessTokenText}</p>
-        <p className="">{gitAccessTokenText2}</p>
+        <h6 className="card-title"><FormattedMessage id='settings.gitAccessTokenTitle' defaultMessage={gitAccessTokenTitle} /></h6>
+        <p className="mb-1"><FormattedMessage id='settings.gitAccessTokenText' defaultMessage={gitAccessTokenText} /></p>
+        <p className=""><FormattedMessage id='settings.gitAccessTokenText2' defaultMessage={gitAccessTokenText2} /></p>
         <p className="mb-1"><a className="text-primary" target="_blank" href={gitAccessTokenLink}>{gitAccessTokenLink}</a></p>
         <div>
           <label className="mb-0 pb-0">TOKEN:</label>
@@ -73,14 +75,16 @@ export function GithubSettings (props: GithubSettingsProps) {
           <div className="text-secondary mb-0 h6">
             <input id="githubemail" data-id="settingsTabGithubEmail" type="text" className="form-control" onChange={(e) => handleChangeEmailState(e)} value={ githubEmail } />
             <div className="d-flex justify-content-end pt-2">
-              <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={saveGithubToken} value="Save" type="button"></input>
+              <input className="btn btn-sm btn-primary ml-2" id="savegisttoken" data-id="settingsTabSaveGistToken" onClick={saveGithubToken} value={intl.formatMessage({id: 'settings.save', defaultMessage: 'Save'})} type="button"></input>
               <CustomTooltip
                 tooltipText="Delete Github Credentials"
                 tooltipClasses="text-nowrap"
                 tooltipId="removegisttokenTooltip"
                 placement="top-start"
               >
-                <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" onClick={removeToken}>Remove</button>
+                <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" onClick={removeToken}>
+                  <FormattedMessage id='settings.remove' defaultMessage='Remove' />
+                </button>
               </CustomTooltip>
             </div>
           </div>

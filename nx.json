@@ -193,6 +193,9 @@
     "remix-ui-file-decorators": {
       "tags": []
     },
+    "remix-ui-locale-module": {
+      "tags": []
+    },
     "remix-ui-tooltip-popup": {
       "tags": []
     },

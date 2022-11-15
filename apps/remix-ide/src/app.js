@@ -3,6 +3,7 @@ import { RunTab, makeUdapp } from './app/udapp'
 import { RemixEngine } from './remixEngine'
 import { RemixAppManager } from './remixAppManager'
 import { ThemeModule } from './app/tabs/theme-module'
+import { LocaleModule } from './app/tabs/locale-module'
 import { NetworkModule } from './app/tabs/network-module'
 import { Web3ProviderModule } from './app/tabs/web3-provider'
 import { CompileAndRun } from './app/tabs/compile-and-run'
@@ -142,7 +143,10 @@ class AppComponent {
     this.gistHandler = new GistHandler()
     // ----------------- theme service ---------------------------------
     this.themeModule = new ThemeModule()
+    // ----------------- locale service ---------------------------------
+    this.localeModule = new LocaleModule()
     Registry.getInstance().put({ api: this.themeModule, name: 'themeModule' })
+    Registry.getInstance().put({ api: this.localeModule, name: 'localeModule' })
 
     // ----------------- editor service ----------------------------
     const editor = new Editor() // wrapper around ace editor
@@ -238,6 +242,7 @@ class AppComponent {
       blockchain,
       contentImport,
       this.themeModule,
+      this.localeModule,
       editor,
       fileManager,
       compilerMetadataGenerator,
@@ -369,7 +374,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['layout'])
     await this.appManager.activatePlugin(['notification'])
     await this.appManager.activatePlugin(['editor'])
-    await this.appManager.activatePlugin(['permissionhandler', 'theme', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
+    await this.appManager.activatePlugin(['permissionhandler', 'theme', 'locale', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
     await this.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await this.appManager.activatePlugin(['home'])

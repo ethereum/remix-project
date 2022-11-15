@@ -3,7 +3,7 @@ import React, { useEffect, useReducer, useState } from 'react' // eslint-disable
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import { Toaster } from '@remix-ui/toaster'
 import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
-
+import { FormattedMessage, useIntl } from 'react-intl'
 import { localPluginReducerActionType, localPluginToastReducer } from '../reducers/pluginManagerReducer'
 import { canActivate, FormStateProps, PluginManagerComponent } from '../../types'
 
@@ -93,12 +93,14 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
     }
   }
 
+  const intl = useIntl()
+
   return (
     <><ModalDialog
       handleHide={closeModal}
       id="pluginManagerLocalPluginModalDialog"
       hide={visible}
-      title="Local Plugin"
+      title={intl.formatMessage({ id: 'pluginManager.localForm.title', defaultMessage: 'Local Plugin' })}
       okLabel="OK"
       okFn={ handleModalOkClick }
       cancelLabel="Cancel"
@@ -106,27 +108,36 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
     >
       <form id="local-plugin-form">
         <div className="form-group">
-          <label htmlFor="plugin-name">Plugin Name <small>(required)</small></label>
+          <label htmlFor="plugin-name">
+            <FormattedMessage id='pluginManager.localForm.pluginName' defaultMessage='Plugin Name' />
+            &nbsp;
+            <small>(<FormattedMessage id='pluginManager.localForm.required' defaultMessage='required' />)</small>
+          </label>
           <input
             className="form-control"
             onChange={e => setName(e.target.value)}
             value={ name || '' }
             id="plugin-name"
             data-id="localPluginName"
-            placeholder="Should be camelCase" />
+            placeholder={intl.formatMessage({ id: 'pluginManager.localForm.shouldBeCamelCase', defaultMessage: 'Should be camelCase' })} />
         </div>
         <div className="form-group">
-          <label htmlFor="plugin-displayname">Display Name</label>
+          <label htmlFor="plugin-displayname">
+            <FormattedMessage id='pluginManager.localForm.displayName' defaultMessage='Display Name' />
+          </label>
           <input
             className="form-control"
             onChange={e => setDisplayName(e.target.value)}
             value={ displayName || '' }
             id="plugin-displayname"
             data-id="localPluginDisplayName"
-            placeholder="Name in the header" />
+            placeholder={intl.formatMessage({ id: 'pluginManager.localForm.nameInTheHeader', defaultMessage: 'Name in the header' })} />
         </div>
         <div className="form-group">
-          <label htmlFor="plugin-methods">Api (comma separated list of method names)</label>
+          <label htmlFor="plugin-methods">
+            Api&nbsp;
+            (<FormattedMessage id='pluginManager.localForm.commaSeparatedMethod' defaultMessage='comma separated list of method names' />)
+          </label>
           <input
             className="form-control"
             onChange={e => setMethods(e.target.value)}
@@ -136,7 +147,11 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
             placeholder="Methods" />
         </div>
         <div className="form-group">
-          <label htmlFor="plugin-methods">Plugins it can activate (comma separated list of plugin names)</label>
+          <label htmlFor="plugin-methods">
+            <FormattedMessage id='pluginManager.localForm.pluginsItCanActivate' defaultMessage='Plugins it can activate' />
+            &nbsp;
+            (<FormattedMessage id='pluginManager.localForm.commaSeparatedPlugin' defaultMessage='comma separated list of plugin names' />)
+          </label>
           <input
             className="form-control"
             onChange={e => setCanactivate(e.target.value)}
@@ -147,7 +162,11 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
         </div>
 
         <div className="form-group">
-          <label htmlFor="plugin-url">Url <small>(required)</small></label>
+          <label htmlFor="plugin-url">Url&nbsp;
+            <small>
+              (<FormattedMessage id='pluginManager.localForm.required' defaultMessage='required' />)
+            </small>
+          </label>
           <input
             className="form-control"
             onChange={e => setUrl(e.target.value)}
@@ -156,7 +175,13 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
             data-id="localPluginUrl"
             placeholder="ex: https://localhost:8000" />
         </div>
-        <h6>Type of connection <small>(required)</small></h6>
+        <h6>
+          <FormattedMessage id='pluginManager.localForm.typeOfConnection' defaultMessage='Type of connection' />
+          &nbsp;
+          <small>
+            (<FormattedMessage id='pluginManager.localForm.required' defaultMessage='required' />)
+          </small>
+        </h6>
         <div className="form-check form-group">
           <div className="radio">
             <input
@@ -183,7 +208,13 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
             <label className="form-check-label" htmlFor="ws">Websocket</label>
           </div>
         </div>
-        <h6>Location in remix <small>(required)</small></h6>
+        <h6>
+          <FormattedMessage id='pluginManager.localForm.locationInRemix' defaultMessage='Location in remix' />
+          &nbsp;
+          <small>
+            (<FormattedMessage id='pluginManager.localForm.required' defaultMessage='required' />)
+          </small>
+        </h6>
         <div className="form-check form-group">
           <div className="radio">
             <input
@@ -195,7 +226,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
               data-id='localPluginRadioButtonsidePanel'
               checked={location === 'sidePanel'}
               onChange={(e) => setLocation(e.target.value as 'sidePanel' | 'mainPanel' | 'none')} />
-            <label className="form-check-label" htmlFor="sidePanel">Side Panel</label>
+            <label className="form-check-label" htmlFor="sidePanel"><FormattedMessage id='pluginManager.localForm.sidePanel' defaultMessage='Side Panel' /></label>
           </div>
           <div className="radio">
             <input
@@ -207,7 +238,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
               data-id='localPluginRadioButtonmainPanel'
               checked={location === 'mainPanel'}
               onChange={(e) => setLocation(e.target.value as 'sidePanel' | 'mainPanel' | 'none')} />
-            <label className="form-check-label" htmlFor="mainPanel">Main Panel</label>
+            <label className="form-check-label" htmlFor="mainPanel"><FormattedMessage id='pluginManager.localForm.mainPanel' defaultMessage='Main Panel' /></label>
           </div>
           <div className="radio">
             <input
@@ -219,7 +250,7 @@ function LocalPluginForm ({ closeModal, visible, pluginManager }: LocalPluginFor
               data-id='localPluginRadioButtonnone'
               checked={location === 'none'}
               onChange={(e) => setLocation(e.target.value as 'sidePanel' | 'mainPanel' | 'none')} />
-            <label className="form-check-label" htmlFor="none">None</label>
+            <label className="form-check-label" htmlFor="none"><FormattedMessage id='pluginManager.localForm.none' defaultMessage='None' /></label>
           </div>
         </div>
       </form>

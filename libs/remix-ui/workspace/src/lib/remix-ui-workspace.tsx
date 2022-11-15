@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useContext, SyntheticEvent, ChangeEvent, KeyboardEvent } from 'react' // eslint-disable-line
+import { FormattedMessage, useIntl } from 'react-intl'
 import { Dropdown } from 'react-bootstrap'
 import { CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
@@ -28,6 +29,7 @@ export function Workspace () {
   const workspaceRenameInput = useRef()
   const workspaceCreateInput = useRef()
   const workspaceCreateTemplateInput = useRef()
+  const intl = useIntl()
   const cloneUrlRef = useRef<HTMLInputElement>()
   const initGitRepoRef = useRef<HTMLInputElement>()
   const filteredBranches = selectedWorkspace ? (selectedWorkspace.branches || []).filter(branch => branch.name.includes(branchFilter) && branch.name !== 'HEAD').slice(0, 20) : []
@@ -70,19 +72,31 @@ export function Workspace () {
   }, [currentWorkspace])
 
   const renameCurrentWorkspace = () => {
-    global.modal('Rename Current Workspace', renameModalMessage(), 'OK', onFinishRenameWorkspace, '')
+    global.modal(intl.formatMessage({id: 'filePanel.workspace.rename', defaultMessage: 'Rename Current Workspace'}), renameModalMessage(), 'OK', onFinishRenameWorkspace, '')
   }
 
   const createWorkspace = () => {
-    global.modal('Create Workspace', createModalMessage(), 'OK', onFinishCreateWorkspace, '')
+    global.modal(intl.formatMessage({id: 'filePanel.workspace.create', defaultMessage: 'Create Workspace'}), createModalMessage(), 'OK', onFinishCreateWorkspace, '')
   }
 
   const deleteCurrentWorkspace = () => {
-    global.modal('Delete Current Workspace', 'Are you sure to delete the current workspace?', 'OK', onFinishDeleteWorkspace, '')
+    global.modal(
+      intl.formatMessage({id: 'filePanel.workspace.delete', defaultMessage: 'Delete Current Workspace'}),
+      intl.formatMessage({id: 'filePanel.workspace.deleteConfirm', defaultMessage: 'Are you sure to delete the current workspace?'}),
+      'OK',
+      onFinishDeleteWorkspace,
+      ''
+    )
   }
 
   const cloneGitRepository = () => {
-    global.modal('Clone Git Repository', cloneModalMessage(), 'OK', handleTypingUrl, '')
+    global.modal(
+      intl.formatMessage({id: 'filePanel.workspace.clone', defaultMessage: 'Clone Git Repository'}),
+      cloneModalMessage(),
+      'OK',
+      handleTypingUrl,
+      ''
+    )
   }
 
   const downloadWorkspaces = async () => {
@@ -202,7 +216,7 @@ export function Workspace () {
     // @ts-ignore
     workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value + '_upgradeable'}_${Date.now()}`
   }
-  
+
   const toggleBranches = (isOpen: boolean) => {
     setShowBranches(isOpen)
   }
@@ -244,7 +258,7 @@ export function Workspace () {
   const createModalMessage = () => {
     return (
       <>
-        <label id="selectWsTemplate" className="form-check-label" style={{fontWeight: "bolder"}}>Choose a template</label>
+        <label id="selectWsTemplate" className="form-check-label" style={{fontWeight: "bolder"}}><FormattedMessage id='filePanel.workspace.chooseTemplate' defaultMessage='Choose a template' /></label>
         <select name="wstemplate" className="mb-3 form-control custom-select" id="wstemplate" defaultValue='remixDefault' ref={workspaceCreateTemplateInput} onChange={updateWsName}>
           <optgroup style={{fontSize: "medium"}} label="General">
             <option style={{fontSize: "small"}} value='remixDefault'>Default</option>
@@ -336,7 +350,13 @@ export function Workspace () {
   const cloneModalMessage = () => {
     return (
       <>
-        <input type="text" data-id="modalDialogCustomPromptTextClone" placeholder='Enter git repository url' ref={cloneUrlRef} className="form-control" />
+        <input
+          type="text"
+          data-id="modalDialogCustomPromptTextClone"
+          placeholder={intl.formatMessage({id: 'filePanel.workspace.enterGitUrl', defaultMessage: 'Enter git repository url'})}
+          ref={cloneUrlRef}
+          className="form-control"
+        />
       </>
     )
   }
@@ -346,7 +366,7 @@ export function Workspace () {
       placement="right"
       tooltipId="createWorkspaceTooltip"
       tooltipClasses="text-nowrap"
-      tooltipText="Create"
+      tooltipText={<FormattedMessage id='filePanel.workspace.create' defaultMessage='Create Workspace' />}
     >
       <div
         data-id='workspaceCreate'
@@ -369,14 +389,14 @@ export function Workspace () {
           className='far fa-plus pl-2'
         >
         </span>
-        <span className="pl-3">Create</span>
+        <span className="pl-3"><FormattedMessage id='filePanel.create' defaultMessage='Create' /></span>
       </div>
     </CustomTooltip>,
     <CustomTooltip
       placement="right-start"
       tooltipId="createWorkspaceTooltip"
       tooltipClasses="text-nowrap"
-      tooltipText="Delete Workspace"
+      tooltipText={<FormattedMessage id='filePanel.workspace.delete' defaultMessage='Delete Workspace' />}
     >
       <div
         data-id='workspaceDelete'
@@ -399,14 +419,14 @@ export function Workspace () {
           className='far fa-trash pl-2'
         >
         </span>
-        <span className="pl-3">{'Delete'}</span>
+        <span className="pl-3"><FormattedMessage id='filePanel.delete' defaultMessage='Delete' /></span>
       </div>
     </CustomTooltip>,
     <CustomTooltip
       placement='right-start'
       tooltipClasses="text-nowrap"
       tooltipId="workspaceRenametooltip"
-      tooltipText="Rename Workspace"
+      tooltipText={<FormattedMessage id='filePanel.workspace.rename' defaultMessage='Rename Workspace' />}
     >
       <div onClick={() => {
             renameCurrentWorkspace()
@@ -427,7 +447,7 @@ export function Workspace () {
           }}
           className='far fa-edit pl-2'>
         </span>
-        <span className="pl-3">{'Rename'}</span>
+        <span className="pl-3"><FormattedMessage id='filePanel.rename' defaultMessage='Rename' /></span>
       </div>
     </CustomTooltip>,
     <Dropdown.Divider className="border mb-0 mt-0" />,
@@ -435,7 +455,7 @@ export function Workspace () {
       placement="right-start"
       tooltipId="cloneWorkspaceTooltip"
       tooltipClasses="text-nowrap"
-      tooltipText="Clone Git Repository"
+      tooltipText={<FormattedMessage id='filePanel.workspace.clone' defaultMessage='Clone Git Repository' />}
     >
       <div
         data-id='cloneGitRepository'
@@ -458,7 +478,7 @@ export function Workspace () {
           className='fab fa-github pl-2'
         >
         </span>
-        <span className="pl-3">{'Clone'}</span>
+        <span className="pl-3"><FormattedMessage id='filePanel.clone' defaultMessage='Clone' /></span>
       </div>
     </CustomTooltip>,
     <Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/>,
@@ -466,7 +486,7 @@ export function Workspace () {
       placement="right-start"
       tooltipId="createWorkspaceTooltip"
       tooltipClasses="text-nowrap"
-      tooltipText="Download Workspace"
+      tooltipText={<FormattedMessage id='filePanel.workspace.download' defaultMessage='Download Workspace' />}
     >
       <div
         data-id='workspacesDownload'
@@ -489,14 +509,14 @@ export function Workspace () {
           className='far fa-download pl-2 '
         >
         </span>
-        <span className="pl-3">{'Download'}</span>
+        <span className="pl-3"><FormattedMessage id='filePanel.download' defaultMessage='Download' /></span>
       </div>
     </CustomTooltip>,
     <CustomTooltip
       placement="right-start"
       tooltipId="createWorkspaceTooltip"
       tooltipClasses="text-nowrap"
-      tooltipText="Restore Workspace Backup"
+      tooltipText={<FormattedMessage id='filePanel.workspace.restore' defaultMessage='Restore Workspace Backup' />}
     >
       <div
         data-id='workspacesRestore'
@@ -519,7 +539,7 @@ export function Workspace () {
           className='far fa-upload pl-2'
         >
         </span>
-        <span className="pl-3">{'Restore'}</span>
+        <span className="pl-3"><FormattedMessage id='filePanel.restore' defaultMessage='Restore' /></span>
       </div>
     </CustomTooltip>,
   ]
@@ -534,8 +554,8 @@ export function Workspace () {
               <div className="mx-2 mb-2 d-flex flex-column">
                 <div className="d-flex justify-content-between">
                   <span className="d-flex align-items-end">
-                    <label className="pl-1 form-check-label" htmlFor="workspacesSelect">
-                      WORKSPACES
+                    <label className="pl-1 form-check-label" htmlFor="workspacesSelect" style={{wordBreak: 'keep-all'}}>
+                      <FormattedMessage id='filePanel.workspace' defaultMessage='WORKSPACES' />
                     </label>
                   </span>
                   {currentWorkspace !== LOCALHOST ? (<span className="remixui_menu remixui_topmenu d-flex justify-content-between align-items-end w-75">
@@ -543,7 +563,7 @@ export function Workspace () {
                       placement="top-end"
                       tooltipId="createWorkspaceTooltip"
                       tooltipClasses="text-nowrap"
-                      tooltipText="Create"
+                      tooltipText={<FormattedMessage id='filePanel.create' defaultMessage='Create' />}
                     >
                         <span
                           hidden={currentWorkspace === LOCALHOST}
@@ -616,7 +636,7 @@ export function Workspace () {
                           }
                           </Dropdown.Item>
                         ))
-                      }                      
+                      }
                       { ((global.fs.browser.workspaces.length <= 0) || currentWorkspace === NO_WORKSPACE) && <Dropdown.Item onClick={() => { switchWorkspace(NO_WORKSPACE) }}>{ <span className="pl-3">NO_WORKSPACE</span> }</Dropdown.Item> }
                     </Dropdown.Menu>
                   </Dropdown>
@@ -749,7 +769,7 @@ export function Workspace () {
                                 </div>
                               </Dropdown.Item>
                             )
-                          }) : 
+                          }) :
                           <Dropdown.Item onClick={switchToNewBranch}>
                             <div className="pl-1 pr-1" data-id="workspaceGitCreateNewBranch">
                               <i className="fas fa-code-branch pr-2"></i><span>Create branch: { branchFilter } from '{currentBranch}'</span>

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useRef, useContext } from 'react'
+import { FormattedMessage } from 'react-intl'
 import PluginButton from './pluginButton'
 import { ThemeContext } from '../themeContext'
 import Carousel from 'react-multi-carousel'
@@ -39,7 +40,7 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
     }
     return false;
   }
-  
+
   const handleScroll = (e) => {
     if (isDescendant(carouselRefDiv.current, e.target)) {
       e.stopPropagation()
@@ -75,19 +76,19 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
     await plugin.appManager.activatePlugin(['solidity', 'sourcify'])
     plugin.verticalIcons.select('sourcify')
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'sourcify'])
-  }  
+  }
   const startSolidityUnitTesting = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'solidityUnitTesting'])
     plugin.verticalIcons.select('solidityUnitTesting')
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solidityUnitTesting'])
   }
-  
+
   return (
     <div className="pl-2 w-100" id="hTFeaturedPlugins">
-      <label className="" style={{fontSize: "1.2rem"}}>Featured Plugins</label>
+      <label className="" style={{fontSize: "1.2rem"}}><FormattedMessage id='home.featuredPlugins' defaultMessage='Featured Plugins' /></label>
       <div ref={carouselRefDiv} className="w-100 d-flex flex-column">
         <ThemeContext.Provider value={ themeFilter }>
-          <Carousel 
+          <Carousel
             ref={carouselRef}
             focusOnSelect={true}
             customButtonGroup={
@@ -98,7 +99,7 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
             draggable={true}
             showDots={false}
             responsive={
-              { 
+              {
                 superLargeDesktop: {
                   breakpoint: { max: 4000, min: 3000 },
                   items: itemsToShow
