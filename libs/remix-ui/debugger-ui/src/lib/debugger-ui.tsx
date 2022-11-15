@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react' // eslint-disable-line
+import { FormattedMessage } from 'react-intl'
 import TxBrowser from './tx-browser/tx-browser' // eslint-disable-line
 import StepManager from './step-manager/step-manager' // eslint-disable-line
 import VmDebugger from './vm-debugger/vm-debugger' // eslint-disable-line
@@ -386,9 +387,9 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         <div>
           <i className="fas fa-info-triangle" aria-hidden="true"></i>
           <span>
-            When Debugging with a transaction hash,
-            if the contract is verified, Remix will try to fetch the source code from Sourcify or Etherscan. Put in your Etherscan API key in the Remix settings.
-            For supported networks, please see: <a href="https://sourcify.dev" target="__blank" >https://sourcify.dev</a> & <a href="https://etherscan.io/contractsVerified" target="__blank">https://etherscan.io/contractsVerified</a>
+            <FormattedMessage id='debugger.introduction' defaultMessage='When Debugging with a transaction hash,
+              if the contract is verified, Remix will try to fetch the source code from Sourcify or Etherscan. Put in your Etherscan API key in the Remix settings.
+              For supported networks, please see' />: <a href="https://sourcify.dev" target="__blank" >https://sourcify.dev</a> & <a href="https://etherscan.io/contractsVerified" target="__blank">https://etherscan.io/contractsVerified</a>
           </span>
         </div> }
         { state.debugging && <StepManager stepManager={ stepManager } /> }

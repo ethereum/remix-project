@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, {useRef, useState, useEffect} from 'react'
+import { FormattedMessage } from 'react-intl'
 import { RecorderProps } from '../types'
 import { CustomTooltip } from '@remix-ui/helper'
 
@@ -30,7 +31,9 @@ export function RecorderUI (props: RecorderProps) {
     <div className="udapp_cardContainer list-group-item border border-bottom">
       <div className="udapp_recorderSection d-flex justify-content-between" onClick={toggleClass}>
         <div className="d-flex justify-content-center align-items-center">
-          <label className="mt-1 udapp_recorderSectionLabel">Transactions recorded</label>
+          <label className="mt-1 udapp_recorderSectionLabel">
+            <FormattedMessage id='udapp.transactionsRecorded' defaultMessage='Transactions recorded' />
+          </label>
           <CustomTooltip
             placement={'right'}
             tooltipClasses="text-nowrap"

@@ -1,5 +1,6 @@
 import { CustomTooltip } from '@remix-ui/helper'
 import React, { useState, useEffect } from 'react' //eslint-disable-line
+import { FormattedMessage } from 'react-intl'
 import { Placement } from 'react-bootstrap/esm/Overlay'
 import { FileExplorerMenuProps } from '../types'
 const _paq = window._paq = window._paq || []
@@ -69,7 +70,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 placement="right"
                 tooltipId="uploadFileTooltip"
                 tooltipClasses="text-nowrap"
-                tooltipText={title}
+                tooltipText={<FormattedMessage id={`filePanel.${action}`} defaultMessage={title} />}
                 key={`index-${action}-${placement}-${icon}`}
               >
                 <label
@@ -93,7 +94,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 placement={placement as Placement}
                 tooltipId={`${action}-${title}-${icon}-${index}`}
                 tooltipClasses="text-nowrap"
-                tooltipText={title}
+                tooltipText={<FormattedMessage id={`filePanel.${action}`} defaultMessage={title} />}
                 key={`${action}-${title}-${index}`}
               >
                 <span
