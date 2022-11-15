@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { DeployButtonProps } from '../types'
 import { ButtonGroup, Dropdown } from 'react-bootstrap'
 import { CustomTooltip } from '@remix-ui/helper'
@@ -9,7 +10,7 @@ export function DeployButton (props: DeployButtonProps) {
   const toggleOptions = () => {
     setShowOptions(!showOptions)
   }
-  
+
   return (
     <>
     { props.deployOptions && (props.deployOptions || []).length > 0 ?
@@ -24,7 +25,7 @@ export function DeployButton (props: DeployButtonProps) {
             }} key={index}> { props.selectedIndex === index ? <span>&#10003; {title} </span> : <span className="pl-3">{title}</span> }</Dropdown.Item>)
           }
         </Dropdown.Menu>
-      </Dropdown> : 
+      </Dropdown> :
       <CustomTooltip
         placement="right-start"
         tooltipId="deployButtonTooltip"
@@ -32,7 +33,7 @@ export function DeployButton (props: DeployButtonProps) {
         tooltipText={props.buttonOptions.title}
       >
         <button onClick={props.handleActionClick} className={`udapp_instanceButton ${props.buttonOptions.widthClass} btn btn-sm ${props.buttonOptions.classList}`} data-id={props.buttonOptions.dataId}>
-          Deploy
+          <FormattedMessage id='udapp.deploy' defaultMessage='Deploy' />
         </button>
       </CustomTooltip>
     }

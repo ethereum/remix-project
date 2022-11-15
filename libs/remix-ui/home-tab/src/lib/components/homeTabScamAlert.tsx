@@ -1,25 +1,33 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react'
+import { FormattedMessage } from 'react-intl'
+
 const _paq = window._paq = window._paq || [] // eslint-disable-line
 
 function HomeTabScamAlert () {
   return (
     <div className="" id="hTScamAlertSection">
-      <label className="pl-2 text-danger" style={{fontSize: "1.2rem"}}>Scam Alert</label>
+      <label className="pl-2 text-danger" style={{fontSize: "1.2rem"}}><FormattedMessage id='home.scamAlert' defaultMessage='Scam Alerts' /></label>
       <div className="py-2 ml-2 mb-1 align-self-end mb-2 d-flex flex-column border border-danger">
         <span className="pl-4 mt-2">
           <i className="pr-2 text-danger fas fa-exclamation-triangle"></i>
-          <b>Scam Alerts:</b>
+          <b><FormattedMessage id='home.scamAlert' defaultMessage='Scam Alerts' />:</b>
         </span>
         <span className="pl-4 mt-1">
-          The only URL Remix uses is remix.ethereum.org 
-        </span>
-        <span className="pl-4 mt-1">        
-          Beware of online videos promoting "liquidity front runner bots":  
-          <a className="pl-2 remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'scamAlert', 'learnMore'])}  target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">Learn more</a>
+          <FormattedMessage id='home.scamAlertText' defaultMessage='The only URL Remix uses is remix.ethereum.org' />
         </span>
         <span className="pl-4 mt-1">
-          Additional safety tips: &nbsp;<a className="remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'scamAlert', 'safetyTips'])} target="__blank" href="https://remix-ide.readthedocs.io/en/latest/security.html">here</a>
+          <FormattedMessage id='home.scamAlertText2' defaultMessage='Beware of online videos promoting "liquidity front runner bots"' />:
+          <a className="pl-2 remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'scamAlert', 'learnMore'])}  target="__blank" href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d">
+            <FormattedMessage id='home.learnMore' defaultMessage='Learn more' />
+          </a>
+        </span>
+        <span className="pl-4 mt-1">
+          <FormattedMessage id='home.scamAlertText3' defaultMessage='Additional safety tips' />
+          : &nbsp;
+          <a className="remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'scamAlert', 'safetyTips'])} target="__blank" href="https://remix-ide.readthedocs.io/en/latest/security.html">
+            <FormattedMessage id='home.here' defaultMessage='here' />
+          </a>
         </span>
       </div>
     </div>

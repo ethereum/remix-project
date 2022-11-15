@@ -1456,6 +1456,21 @@
         }
       }
     },
+    "remix-ui-locale-module": {
+      "root": "libs/remix-ui/locale-module",
+      "sourceRoot": "libs/remix-ui/locale-module/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["libs/remix-ui/editor/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/remix-ui/editor/**/*"]
+          }
+        }
+      }
+    },
     "remix-ui-tooltip-popup": {
       "root": "libs/remix-ui/tooltip-popup",
       "sourceRoot": "libs/remix-ui/tooltip-popup/src",

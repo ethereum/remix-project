@@ -1,5 +1,6 @@
 import { CustomTooltip } from '@remix-ui/helper'
 import React, { useState, useEffect, useRef } from 'react'  //eslint-disable-line
+import { useIntl, FormattedMessage } from 'react-intl'
 import './tx-browser.css'
 
 export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, transactionNumber, debugging }) => {
@@ -8,6 +9,9 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
   })
 
   const inputValue = useRef(null)
+
+  const intl = useIntl()
+
   useEffect(() => {
     setState(prevState => {
       return {
@@ -56,7 +60,7 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
                 disabled={!state.txNumber }
                 style={{ pointerEvents: 'none', color: 'white' }}
               >
-                  <span>{ debugging ? 'Stop' : 'Start' } debugging</span>
+                  <span><FormattedMessage id={`debugger.${debugging ? 'stopDebugging' : 'startDebugging'}`} defaultMessage={debugging ? 'Stop debugging' : 'Start debugging'} /></span>
               </button>
             </div>
   )
@@ -72,7 +76,7 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
             type='text'
             onChange={({ target: { value } }) => txInputChanged(value)}
             onInput={txInputOnInput}
-            placeholder={'Transaction hash, should start with 0x'}
+            placeholder={intl.formatMessage({id: 'debugger.placeholder', defaultMessage: 'Transaction hash, should start with 0x'})}
             data-id='debuggerTransactionInput'
             disabled={debugging}
           />
@@ -80,7 +84,7 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
         <div className='d-flex justify-content-center w-100 btn-group py-1'>
           <CustomTooltip
             placement="bottom"
-            tooltipText={debugging ? 'Stop debugging' : 'Start debugging'}
+            tooltipText={<FormattedMessage id={`debugger.${debugging ? 'stopDebugging' : 'startDebugging'}`} defaultMessage={debugging ? 'Stop debugging' : 'Start debugging'} />}
             tooltipId={'debuggingButtontooltip'}
             tooltipClasses="text-nowrap"
           >
