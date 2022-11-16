@@ -46,7 +46,6 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
       e.stopPropagation()
       let nextSlide = 0
       if (e.wheelDelta < 0) {
-        console.log("scroll")
         nextSlide = carouselRef.current.state.currentSlide + 1;
         if (Math.abs(carouselRef.current.state.transform) >= carouselRef.current.containerRef.current.scrollWidth - carouselRef.current.state.containerWidth) return
         carouselRef.current.goToSlide(nextSlide)
