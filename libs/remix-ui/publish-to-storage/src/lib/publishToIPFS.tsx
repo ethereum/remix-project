@@ -1,7 +1,5 @@
 import IpfsHttpClient from 'ipfs-http-client'
 
-
-
 let ipfsNodes = []
 
 export const publishToIPFS = async (contract, api) => {
@@ -93,7 +91,6 @@ export const publishToIPFS = async (contract, api) => {
 
   try {
     const result = await ipfsVerifiedPublish(metadataContent, '', api)
-
     try {
       contract.metadataHash = result.url.match('dweb:/ipfs/(.+)')[1]
     } catch (e) {

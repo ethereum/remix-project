@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './style/remix-app.css'
 import { RemixUIMainPanel } from '@remix-ui/panel'
 import MatomoDialog from './components/modals/matomo'
@@ -8,7 +8,6 @@ import { AppProvider } from './context/provider'
 import AppDialogs from './components/modals/dialogs'
 import DialogViewPlugin from './components/modals/dialogViewPlugin'
 import { AppContext } from './context/context'
-import { RemixUiVerticalIconsPanel } from '@remix-ui/vertical-icons-panel'
 import { IntlProvider } from 'react-intl'
 
 interface IRemixAppUi {
@@ -83,11 +82,10 @@ const RemixApp = (props: IRemixAppUi) => {
       <AppProvider value={value}>
         <OriginWarning></OriginWarning>
         <MatomoDialog hide={!appReady}></MatomoDialog>
-
         <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
           <div id="icon-panel" data-id="remixIdeIconPanel" className="iconpanel bg-light">{props.app.menuicons.render()}</div>
           <div ref={sidePanelRef} id="side-panel" data-id="remixIdeSidePanel" className={`sidepanel border-right border-left ${hideSidePanel ? 'd-none' : ''}`}>{props.app.sidePanel.render()}</div>
-          <DragBar resetTrigger={resetTrigger} maximiseTrigger={maximiseTrigger} minWidth={250} refObject={sidePanelRef} hidden={hideSidePanel} setHideStatus={setHideSidePanel}></DragBar>
+          <DragBar resetTrigger={resetTrigger} maximiseTrigger={maximiseTrigger} minWidth={290} refObject={sidePanelRef} hidden={hideSidePanel} setHideStatus={setHideSidePanel}></DragBar>
           <div id="main-panel" data-id="remixIdeMainPanel" className='mainpanel'>
             <RemixUIMainPanel Context={AppContext}></RemixUIMainPanel>
           </div>
