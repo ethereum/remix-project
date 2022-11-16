@@ -75,6 +75,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
     try {
       const result = await publishToIPFS(contract, api)
       modal(`Published ${contract.name}'s Metadata and Sources`, publishMessage(result.uploaded))
+      console.log("ptot")
     } catch (err) {
       modal('IPFS Publish Failed', publishMessageFailed(storage, err.message))
     }
