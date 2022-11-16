@@ -858,10 +858,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 tooltipClasses="text-nowrap"
                 tooltipText={<span>{'Language specification available from   Compiler >= v0.5.7'}</span>}
               >
-                <select onChange={(e) => handleLanguageChange(e.target.value)} disabled={state.useFileConfiguration} value={state.language} className="custom-select" id="compilierLanguageSelector">
-                  <option data-id={state.language === 'Solidity' ? 'selected' : ''} value='Solidity'>Solidity</option>
-                  <option data-id={state.language === 'Yul' ? 'selected' : ''} value='Yul'>Yul</option>
-                </select>
+                <div id="compilerLanguageSelectorWrapper">
+                  <select onChange={(e) => handleLanguageChange(e.target.value)} disabled={state.useFileConfiguration} value={state.language} className="custom-select" id="compilierLanguageSelector">
+                    <option data-id={state.language === 'Solidity' ? 'selected' : ''} value='Solidity'>Solidity</option>
+                    <option data-id={state.language === 'Yul' ? 'selected' : ''} value='Yul'>Yul</option>
+                  </select>
+                </div>
               </CustomTooltip>
             </div>
             <div className="mb-2 ml-4">
