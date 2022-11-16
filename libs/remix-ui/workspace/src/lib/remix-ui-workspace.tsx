@@ -272,8 +272,8 @@ export function Workspace () {
           <optgroup style={{fontSize: "medium"}} label="0xProject">
             <option style={{fontSize: "small"}} value='zeroxErc20'>ERC20</option>
           </optgroup>
-          <optgroup style={{fontSize: "medium"}} label="Gnosis">
-            <option style={{fontSize: "small"}} value='gnosisSafeMultisig'>Gnosis Safe MultiSig Wallet</option>
+          <optgroup style={{fontSize: "medium"}} label="GnosisSafe">
+            <option style={{fontSize: "small"}} value='gnosisSafeMultisig'>MultiSig Wallet</option>
           </optgroup>
         </select>
 
