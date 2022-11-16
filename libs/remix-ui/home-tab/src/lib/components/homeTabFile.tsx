@@ -23,13 +23,13 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
   const [state, setState] = useState<{
     searchInput: string,
     showModalDialog: boolean,
-    modalInfo: { title: string, loadItem: string, examples: Array<string> },
+    modalInfo: { title: string, loadItem: string, examples: Array<string>, prefix?: string },
     importSource: string,
     toasterMsg: string
   }>({
     searchInput: '',
     showModalDialog: false,
-    modalInfo: { title: '', loadItem: '', examples: [] },
+    modalInfo: { title: '', loadItem: '', examples: [], prefix: '' },
     importSource: '',
     toasterMsg: ''
   })
@@ -42,8 +42,15 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
     _paq.push(['trackEvent', 'hometab', 'filesSection', 'importFrom' + type])
     const contentImport = plugin.contentImport
     const workspace = plugin.fileManager.getProvider('workspace')
+    const startsWith = state.importSource.substring(0, 4)
+
+    if ((type === 'ipfs' || type === 'IPFS') && (startsWith !== 'ipfs' && startsWith !== "IPFS")) {
+      setState(prevState => {
+        return { ...prevState, importSource: startsWith + state.importSource}
+      })
+    }
     contentImport.import(
-      state.importSource,
+      state.modalInfo.prefix + state.importSource,
       (loadingMsg) => dispatch({ tooltip: loadingMsg }),
       async (error, content, cleanUrl, type, url) => {
         if (error) {
@@ -93,9 +100,9 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
     plugin.verticalIcons.select('filePanel')
   }
 
-  const showFullMessage = (title: string, loadItem: string, examples: Array<string>) => {
+  const showFullMessage = (title: string, loadItem: string, examples: Array<string>, prefix = '') => {
     setState(prevState => {
-      return { ...prevState, showModalDialog: true, modalInfo: { title: title, loadItem: loadItem, examples: examples } }
+      return { ...prevState, showModalDialog: true, modalInfo: { title: title, loadItem: loadItem, examples: examples, prefix } }
     })
   }
 
@@ -126,7 +133,9 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
               { examples }
             </div>
           </> }
-          <input
+          <div className="d-flex flex-row">
+            { state.modalInfo.prefix && <span className='text-nowrap align-self-center mr-2'>ipfs://</span> }
+            <input
             ref={inputValue}
             type='text'
             name='prompt_text'
@@ -140,6 +149,7 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
               })
             }}
           />
+          </div>
         </div>
       </ModalDialog>
       <Toaster message={state.toasterMsg} />
@@ -155,9 +165,15 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
         <button className="btn p-2 border my-1" style={{width: 'fit-content'}} onClick={() => connectToLocalhost()}><FormattedMessage id='home.connectToLocalhost' defaultMessage='Connect to Localhost' /></button>
         <label className="pt-2"><FormattedMessage id='home.loadFrom' defaultMessage='Load From' /></label>
         <div className="d-flex">
-          <button className="btn p-2 border mr-2" data-id="landingPageImportFromGitHubButton" onClick={() => showFullMessage('GitHub', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}>GitHub</button>
+          <button
+            className="btn p-2 border mr-2"
+            data-id="landingPageImportFromGitHubButton"
+            onClick={() => showFullMessage('GitHub', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}
+          >
+            GitHub
+          </button>
           <button className="btn p-2 border mr-2" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>Gist</button>
-          <button className="btn p-2 border mr-2" onClick={() => showFullMessage('Ipfs', 'ipfs URL', ['ipfs://<ipfs-hash>'])}>IPFS</button>
+          <button className="btn p-2 border mr-2" onClick={() => showFullMessage('Ipfs', 'ipfs hash', ['ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH'], "ipfs://")}>IPFS</button> 
           <button className="btn p-2 border" onClick={() => showFullMessage('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])}>HTTPS</button>
         </div>
       </div>

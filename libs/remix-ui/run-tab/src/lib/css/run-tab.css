@@ -45,8 +45,6 @@
   width: 164px;
   min-width: 164px;
 }
-.udapp_col2_2 {
-}
 .udapp_select {
   font-weight: normal;
   width: 100%;
@@ -314,7 +312,7 @@
 .udapp_cActionsWrapper {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0.25rem;
-  border-top-rightt-radius: 0;
+  border-top-right-radius: 0;
   border-bottom-right-radius: 0.25rem;
   padding: 8px 10px 7px;
 }
