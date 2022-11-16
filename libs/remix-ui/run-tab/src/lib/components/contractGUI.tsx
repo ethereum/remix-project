@@ -345,7 +345,7 @@ export function ContractGUI (props: ContractGUIProps) {
       >
         <div className="udapp_contractActionsContainerMultiInner text-dark">
           <div onClick={switchMethodViewOff} className="udapp_multiHeader">
-            <div className="udapp_multiTitle run-instance-multi-title">
+            <div className="udapp_multiTitle run-instance-multi-title pt-3">
               {title}
             </div>
             <i className="fas fa-angle-up udapp_methCaret"></i>
