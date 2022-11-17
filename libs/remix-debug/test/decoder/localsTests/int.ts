@@ -7,9 +7,10 @@ import { contractCreationToken } from '../../../src/trace/traceHelper'
 import { SolidityProxy } from '../../../src/solidity-decoder/solidityProxy'
 import { InternalCallTree } from '../../../src/solidity-decoder/internalCallTree'
 import { EventManager } from '../../../src/eventManager'
+import * as sourceMappingDecoder from '../../../src/source/sourceMappingDecoder'
 import * as helper from './helper'
 
-module.exports = function (st, privateKey, contractBytecode, compilationResult) {
+module.exports = function (st, privateKey, contractBytecode, compilationResult, contractCode) {
   return new Promise(async (resolve) => {    
     let web3 = await (vmCall as any).getWeb3();
     (vmCall as any).sendTx(web3, { nonce: 0, privateKey: privateKey }, null, 0, contractBytecode, function (error, hash) {      
@@ -27,22 +28,37 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult) 
         var solidityProxy = new SolidityProxy({ getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), getCode: codeManager.getCode.bind(codeManager) })
         solidityProxy.reset(compilationResult)
         var debuggerEvent = new EventManager()
-        var callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true })
+        const offsetToLineColumnConverter = {
+          offsetToLineColumn: (rawLocation) => {
+            return new Promise((resolve) => {
+              const lineBreaks = sourceMappingDecoder.getLinebreakPositions(contractCode)
+              resolve(sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, lineBreaks))
+            })
+          }
+        }
+        var callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true }, offsetToLineColumnConverter)
         callTree.event.register('callTreeBuildFailed', (error) => {
           st.fail(error)
         })
         callTree.event.register('callTreeNotReady', (reason) => {
           st.fail(reason)
         })
-        callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
+        callTree.event.register('callTreeReady', async (scopes, scopeStarts) => {
           try {
+
+            // test gas cost per line
+            st.equals(await callTree.getGasCostPerLine(0, 16), 11)
+            st.equals(await callTree.getGasCostPerLine(0, 32), 60)
+            
             let functions1 = callTree.retrieveFunctionsStack(102)
             let functions2 = callTree.retrieveFunctionsStack(115)
             let functions3 = callTree.retrieveFunctionsStack(13)
-  
+
             st.equals(functions1.length, 1)
             st.equals(functions2.length, 2)
             st.equals(functions3.length, 0)
+
+            st.equal(functions1[0].gasCost, 54)
   
             st.equals(Object.keys(functions1[0])[0], 'functionDefinition')
             st.equals(Object.keys(functions1[0])[1], 'inputs')
