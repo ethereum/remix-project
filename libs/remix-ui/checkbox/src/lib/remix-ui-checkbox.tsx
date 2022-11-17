@@ -59,7 +59,6 @@ export const RemixUiCheckbox = ({
       tooltipText={title}
       tooltipId={`${name}Tooltip`}
       placement={tooltipPlacement}
-      
     >
       {childJSX}
     </CustomTooltip>

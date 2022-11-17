@@ -977,7 +977,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}
             >
               <CustomTooltip
-                placement="auto"
+                placement="right"
                 tooltipId="overlay-tooltip-compile-run"
                 tooltipText={<div className="text-left">
                     {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+Shift+S</b> for compiling and script execution</div>}
@@ -990,7 +990,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </CustomTooltip>
             </button>
             <CustomTooltip
-              placement="auto"
+              placement="right"
               tooltipId="overlay-tooltip-compile-run-doc"
               tooltipText={<div className="text-left p-2">
                   <div>Choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
