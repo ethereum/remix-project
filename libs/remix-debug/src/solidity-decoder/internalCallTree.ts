@@ -6,7 +6,6 @@ import { EventManager } from '../eventManager'
 import { parseType } from './decodeInfo'
 import { isContractCreation, isCallInstruction, isCreateInstruction, isJumpDestInstruction } from '../trace/traceHelper'
 import { extractLocationFromAstVariable } from './types/util'
-import { Uint } from './types/Uint'
 
 export type StepDetail = {
   depth: number,
@@ -161,16 +160,18 @@ export class InternalCallTree {
     return functions
   }
 
-  async extractSourceLocation (step: number, address: string) {
+  async extractSourceLocation (step: number, address?: string) {
     try {
+      if (!address) address = this.traceManager.getCurrentCalledAddressAt(step)
       return await this.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, step, this.solidityProxy.contracts)
     } catch (error) {
       throw new Error('InternalCallTree - Cannot retrieve sourcelocation for step ' + step + ' ' + error)
     }
   }
 
-  async extractValidSourceLocation (step: number, address: string) {
+  async extractValidSourceLocation (step: number, address?: string) {
     try {
+      if (!address) address = this.traceManager.getCurrentCalledAddressAt(step)
       return await this.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, step, this.solidityProxy.contracts)
     } catch (error) {
       throw new Error('InternalCallTree - Cannot retrieve valid sourcelocation for step ' + step + ' ' + error)
@@ -217,7 +218,7 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
     let validSourceLocation
     let newLocation = false
     try {
-      const address = this.traceManager.getCurrentCalledAddressAt(step)
+      const address = tree.traceManager.getCurrentCalledAddressAt(step)
       sourceLocation = await tree.extractSourceLocation(step, address)
       validSourceLocation = await tree.extractValidSourceLocation(step, address)
 
