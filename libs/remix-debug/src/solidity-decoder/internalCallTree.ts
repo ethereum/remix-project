@@ -161,22 +161,17 @@ export class InternalCallTree {
     return functions
   }
 
-  async extractSourceLocation (step) {
+  async extractSourceLocation (step: number, address: string) {
     try {
-      const address = this.traceManager.getCurrentCalledAddressAt(step)
-      const location = await this.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, step, this.solidityProxy.contracts)
-      
-      return location
+      return await this.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, step, this.solidityProxy.contracts)
     } catch (error) {
       throw new Error('InternalCallTree - Cannot retrieve sourcelocation for step ' + step + ' ' + error)
     }
   }
 
-  async extractValidSourceLocation (step) {
+  async extractValidSourceLocation (step: number, address: string) {
     try {
-      const address = this.traceManager.getCurrentCalledAddressAt(step)
-      const location = await this.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, step, this.solidityProxy.contracts)
-      return location
+      return await this.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, step, this.solidityProxy.contracts)
     } catch (error) {
       throw new Error('InternalCallTree - Cannot retrieve valid sourcelocation for step ' + step + ' ' + error)
     }
@@ -219,10 +214,13 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
   let previousSourceLocation = currentSourceLocation
   while (step < tree.traceManager.trace.length) {
     let sourceLocation
+    let validSourceLocation
     let newLocation = false
     try {
-      sourceLocation = await tree.extractSourceLocation(step)
-          
+      const address = this.traceManager.getCurrentCalledAddressAt(step)
+      sourceLocation = await tree.extractSourceLocation(step, address)
+      validSourceLocation = await tree.extractValidSourceLocation(step, address)
+
       if (!includedSource(sourceLocation, currentSourceLocation)) {
         tree.reducedTrace.push(step)
         currentSourceLocation = sourceLocation
@@ -245,11 +243,15 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation) {
     // gas per line
     if (tree.offsetToLineColumnConverter) {
       try {
-        const lineColumnPos = await tree.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, tree.solidityProxy.sourcesCode, tree.solidityProxy.sources)
-        if (!tree.gasCostPerLine[sourceLocation.file]) tree.gasCostPerLine[sourceLocation.file] = {}
-        if (!tree.gasCostPerLine[sourceLocation.file][lineColumnPos.start.line]) tree.gasCostPerLine[sourceLocation.file][lineColumnPos.start.line] = 0
-        tree.gasCostPerLine[sourceLocation.file][lineColumnPos.start.line] += stepDetail.gasCost
-      } catch (e) {}      
+        const lineColumnPos = await tree.offsetToLineColumnConverter.offsetToLineColumn(validSourceLocation, validSourceLocation.file, tree.solidityProxy.sourcesCode, tree.solidityProxy.sources)
+        if (!tree.gasCostPerLine[validSourceLocation.file]) tree.gasCostPerLine[validSourceLocation.file] = {}
+        if (!tree.gasCostPerLine[validSourceLocation.file][lineColumnPos.start.line]) {
+          tree.gasCostPerLine[validSourceLocation.file][lineColumnPos.start.line] = 0
+        }
+        tree.gasCostPerLine[validSourceLocation.file][lineColumnPos.start.line] += stepDetail.gasCost
+      } catch (e) {
+        console.log(e)
+      }
     }
 
     const isCallInstrn = isCallInstruction(stepDetail)
