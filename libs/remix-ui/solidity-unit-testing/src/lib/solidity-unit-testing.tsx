@@ -735,7 +735,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
             tooltipText="Check out documentation."
             placement={'bottom-start'}
           >
-            <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" target="__blank" href="https://remix-ide.readthedocs.io/ en/latest/unittesting.html#test-directory">
+            <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
             <label className="btn p-1 ml-2 m-0">How to use...</label>
             </a>
         </CustomTooltip>
