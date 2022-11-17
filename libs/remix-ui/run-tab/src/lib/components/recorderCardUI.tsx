@@ -46,7 +46,7 @@ export function RecorderUI (props: RecorderProps) {
           placement={'right'}
           tooltipClasses="text-wrap"
           tooltipId="info-recorder"
-          tooltipText="Save transactions (deployed contracts and function executions) and replay them in another environment e.g Transactions created in Remix VM can be replayed in the Injected Provider."
+          tooltipText={<span>Save transactions (deployed contracts and function executions) <br />and replay them in another environment e.g Transactions created <br />in Remix VM can be replayed in the Injected Provider.</span>}
           >
           <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
         </CustomTooltip>
