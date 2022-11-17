@@ -64,7 +64,7 @@ export function RecorderUI (props: RecorderProps) {
             placement={'right'}
             tooltipClasses="text-wrap"
             tooltipId="tooltip-livemode-recorder"
-            tooltipText="If contracts are updated after recording transactions, checking this box will run recorded transactions with the latest copy of the compiled contracts"
+            tooltipText={<span>If contracts are updated after recording transactions,<br/> checking this box will run recorded transactions <br/>with the latest copy of the compiled contracts</span>}
           >
             <label className="form-check-label custom-control-label" data-id="runtabLivemodeInput" htmlFor="livemode-recorder">Run transactions using the latest compilation result</label>
           </CustomTooltip>
