@@ -13,7 +13,9 @@
     }
   ],
   "main": "src/index.js",
-  "type": "module",
+  "scripts": {
+    "test": "./../../node_modules/.bin/ts-node --require tsconfig-paths/register ./../../node_modules/.bin/mocha test/*.ts"
+  },
   "dependencies": {
     "@ethereumjs/block": "^3.5.1",
     "@ethereumjs/common": "^2.5.0",

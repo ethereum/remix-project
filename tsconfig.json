@@ -9,9 +9,9 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "ES6",
+    "target": "ES2015",
     "esModuleInterop": true,
-    "module": "ES2020",
+    "module": "NodeNext",
     "lib": [
       "es2017",
       "dom"

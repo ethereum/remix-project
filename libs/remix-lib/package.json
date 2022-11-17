@@ -13,7 +13,9 @@
     }
   ],
   "main": "src/index.js",
-  "type": "module",
+  "scripts": {
+    "test": "./../../node_modules/.bin/ts-node --require tsconfig-paths/register ./../../node_modules/.bin/tape ./test/tests.ts"
+  },
   "dependencies": {
     "@ethereumjs/block": "^3.5.1",
     "@ethereumjs/tx": "^3.3.2",
