@@ -1,5 +1,10 @@
 {
   "compileOnSave": false,
+  "ts-node": {
+    "compilerOptions": {
+      "module": "NodeNext"
+    }
+  },
   "compilerOptions": {
     "rootDir": ".",
     "sourceMap": true,

@@ -19,7 +19,9 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {},
+    "paths": {
+      "@remix-project/remix-lib": ["libs/remix-lib/src/index.ts"],
+    },
     "allowSyntheticDefaultImports": true
   },
   "exclude": [

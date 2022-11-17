@@ -23,6 +23,12 @@
         "options": {
           "lintFilePatterns": ["libs/remix-solidity/**/*.ts"]
         }
+      },
+      "test": {
+        "executor": "@nrwl/jest:jest",
+        "options": {
+          "jestConfig": "libs/remix-solidity/jest.config.js"
+        }
       }
     },
     "tags": []
