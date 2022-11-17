@@ -6,8 +6,15 @@ import { createClient } from '@remixproject/plugin-ws'
 export default class WebSocket {
   server: http.Server
   wsServer: WS.Server
+  port: number
+  opt: WebsocketOpt
+  getclient: () => ServiceClient
 
-  constructor (public port: number, public opt: WebsocketOpt, public getclient: () => ServiceClient) {} //eslint-disable-line
+  constructor (port: number, opt: WebsocketOpt, getclient: () => ServiceClient) {
+    this.port = port
+    this.opt = opt
+    this.getclient = getclient
+  } //eslint-disable-line
 
   start (callback?: (ws: WS, client: ServiceClient, error?: Error) => void): void {
     this.server = http.createServer((request, response) => {
