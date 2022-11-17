@@ -17,12 +17,12 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     display: '',
     content: ''
   })
-  const [atAddressOptions, setAtAddressOptions] = useState<{ title: string, disabled: boolean }>({
+  const [atAddressOptions, setAtAddressOptions] = useState<{ title: string | JSX.Element, disabled: boolean }>({
     title: 'address of contract',
     disabled: true
   })
   const [loadedAddress, setLoadedAddress] = useState<string>('')
-  const [contractOptions, setContractOptions] = useState<{ title: string, disabled: boolean }>({
+  const [contractOptions, setContractOptions] = useState<{ title: string | JSX.Element, disabled: boolean }>({
     title: 'Please compile *.sol file to deploy or access a contract',
     disabled: true
   })
@@ -136,12 +136,12 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if (enable) {
       setAtAddressOptions({
         disabled: false,
-        title: 'Interact with the deployed contract - requires the .abi file or compiled .sol file to be selected in the editor (with the same compiler configuration)'
+        title: <span>Interact with the deployed contract - requires the .abi file or <br /> compiled .sol file to be selected in the editor <br />(with the same compiler configuration)</span>
       })
     } else {
       setAtAddressOptions({
         disabled: true,
-        title: loadedAddress ? 'Compile a *.sol file or select a *.abi file.' : 'To interact with a deployed contract, enter its address and compile its source *.sol file (with the same compiler settings) or select its .abi file in the editor. '
+        title: loadedAddress ? 'Compile a *.sol file or select a *.abi file.' : <span>To interact with a deployed contract,<br /> enter its address and compile its source *.sol file <br />(with the same compiler settings) or select its .abi file in the editor. </span>
       })
     }
   }
@@ -155,7 +155,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     } else {
       setContractOptions({
         disabled: true,
-        title: loadType === 'sol' ? 'Select and compile *.sol file to deploy or access a contract.' : 'When there is a compiled .sol file, the choice of contracts to deploy or to use with AtAddress is made here.'
+        title: loadType === 'sol' ? 'Select and compile *.sol file to deploy or access a contract.' : <span>When there is a compiled .sol file,<br /> choose the contract to deploy or to use with AtAddress.'</span>
       })
     }
   }
@@ -266,8 +266,8 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
             placement={'right'}
             tooltipClasses="text-wrap"
             tooltipId="info-sync-compiled-contract"
-            tooltipText="Click here to import contracts compiled from an external framework.
-              This action is enabled when Remix is connected to an external framework (hardhat, truffle, foundry) through remixd."
+            tooltipText={<span>Click here to import contracts compiled from an external framework.<br />
+              This action is enabled when Remix is connected to an external framework (hardhat, truffle, foundry) through remixd.</span>}
           >
             <button className="btn d-flex py-0" onClick={_ => {
               props.syncContracts()
@@ -326,7 +326,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
                   placement={'right'}
                   tooltipClasses="text-wrap"
                   tooltipId="remixIpfsUdappTooltip"
-                  tooltipText="Publishing the source code and metadata to IPFS facilitates source code verification using Sourcify and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"
+                  tooltipText={<span>Publishing the source code and metadata to IPFS <br />facilitates source code verification using Sourcify and<br /> will greatly foster contract adoption<br /> (auditing, debugging, calling it, etc...)</span>}
                 >
                   <label
                     htmlFor="deployAndRunPublishToIPFS"
