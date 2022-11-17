@@ -24,21 +24,14 @@ const StaticAnalyserButton = ({
   }
   return (
       <CustomTooltip
-        placement="right"
+        placement="right-start"
         tooltipId="ssaRunButtonTooltip"
         tooltipClasses="text-nowrap"
         tooltipText={title}
       >
-        <div data-id="staticAnalyserButton" className={classList} onClick={(e) => {
-          disabled ? run(e) : onClick(e)
-          }} style={{ backgroundColor: disabled ? alternateColor : colorDisabled, borderColor: disabled ? alternateColor : colorDisabled,
-           }}>
-          <button className="btn btn-link text-decoration-none" disabled={disabled} onClick={onClick} style={{ pointerEvents: "none"}} id="staticAnalyserButton" data-id="staticAnalyserButton">
-              <span>
-                {buttonText}
-              </span>
-          </button>
-        </div>
+        <span className="pl-3 pr-4">
+          {buttonText}
+        </span>
       </CustomTooltip>
   )
 }
