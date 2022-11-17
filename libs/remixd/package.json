@@ -7,15 +7,6 @@
   "bin": {
     "remixd": "./src/bin/remixd.js"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\"",
-    "start": "./src/bin/remixd.js",
-    "npip": "npip",
-    "lint": "eslint ./src --ext .ts",
-    "build": "tsc -p ./ && chmod +x ./src/bin/remixd.js",
-    "dev": "nodemon",
-    "postinstall": "node src/scripts/installSlither.js"
-  },
   "publishConfig": {
     "access": "public"
   },
@@ -42,7 +33,7 @@
     "@remixproject/plugin-ws": "^0.3.11",
     "axios": ">=0.21.1",
     "chokidar": "^2.1.8",
-    "commander": "^2.20.3",
+    "commander": "^9.4.1",
     "fs-extra": "^3.0.1",
     "isbinaryfile": "^3.0.2",
     "ws": "^7.3.0",

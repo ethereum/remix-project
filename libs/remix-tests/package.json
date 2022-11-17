@@ -4,7 +4,9 @@
   "description": "Tool to test Solidity smart contracts",
   "main": "src/index.js",
   "types": "./src/index.d.ts",
-  "type": "module",
+  "scripts": {	
+    "test": "node --expose-gc ./../../node_modules/.bin/jest --runInBand --logHeapUsage "	
+  },
   "contributors": [
     {
       "name": "Iuri Matias",
