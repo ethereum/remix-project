@@ -40,6 +40,10 @@ module.exports = config => {
         "buffer": require.resolve("buffer/"),
       },
     },
+    externals: {
+      ...nxWebpackConfig.externals,
+      solc: 'solc',
+    },
 
     output: {
       ...nxWebpackConfig.output,

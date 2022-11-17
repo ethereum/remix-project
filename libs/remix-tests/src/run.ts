@@ -1,4 +1,4 @@
-import commander from 'commander'
+import { Command } from 'commander';
 import Web3 from 'web3'
 import path from 'path'
 import axios, { AxiosResponse } from 'axios'
@@ -11,15 +11,16 @@ import colors from 'colors'
 const logger = new Log()
 const log = logger.logger
 
+const commander = new Command();
 // parse verbosity
-function mapVerbosity (v: number) {
+function mapVerbosity (v: string) {
   const levels = {
-    0: 'error',
-    1: 'warn',
-    2: 'info',
-    3: 'verbose',
-    4: 'debug',
-    5: 'silly'
+    '0': 'error',
+    '1': 'warn',
+    '2': 'info',
+    '3': 'verbose',
+    '4': 'debug',
+    '5': 'silly'
   }
   return levels[v]
 }
@@ -52,6 +53,8 @@ commander
   .option('-r, --runs <number>', 'set runs (e.g: 150, 250 etc)')
   .option('-v, --verbose <level>', 'set verbosity level (0 to 5)', mapVerbosity)
   .action(async (testsPath) => {
+
+    const options = commander.opts();
     // Check if path exists
     if (!fs.existsSync(testsPath)) {
       log.error(testsPath + ' not found')
@@ -71,14 +74,14 @@ commander
     console.log(colors.bold('\n\t👁\t:: Running tests using remix-tests ::\t👁\n'))
 
     // Set logger verbosity
-    if (commander.verbose) {
-      logger.setVerbosity(commander.verbose)
-      log.info('verbosity level set to ' + commander.verbose.blue)
+    if (options.verbose) {
+      logger.setVerbosity(options.verbose)
+      log.info('verbosity level set to ' + options.verbose.blue)
     }
 
     const compilerConfig = {} as CompilerConfiguration
-    if (commander.compiler) {
-      const compVersion = commander.compiler
+    if (options.compiler) {
+      const compVersion = options.compiler
       const baseURL = 'https://binaries.soliditylang.org/wasm/'
       const response: AxiosResponse = await axios.get(baseURL + 'list.json')
       const { releases, latestRelease } = response.data as { releases: string[], latestRelease: string }
@@ -92,22 +95,22 @@ commander
       }
     }
 
-    if (commander.evm) {
-      compilerConfig.evmVersion = commander.evm
+    if (options.evm) {
+      compilerConfig.evmVersion = options.evm
       log.info(`EVM set to ${compilerConfig.evmVersion}`)
     }
 
-    if (commander.optimize) {
-      compilerConfig.optimize = commander.optimize
+    if (options.optimize) {
+      compilerConfig.optimize = options.optimize
       log.info(`Optimization is ${compilerConfig.optimize ? 'enabled' : 'disabled'}`)
     }
 
-    if (commander.runs) {
-      if (!commander.optimize) {
+    if (options.runs) {
+      if (!options.optimize) {
         log.error('Optimization should be enabled for runs')
         process.exit(1)
       }
-      compilerConfig.runs = commander.runs
+      compilerConfig.runs = options.runs
       log.info(`Runs set to ${compilerConfig.runs}`)
     }
 
