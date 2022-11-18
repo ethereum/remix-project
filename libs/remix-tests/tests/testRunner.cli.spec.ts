@@ -33,7 +33,7 @@ Options:
   -o, --optimize <bool>    enable/disable optimization
   -r, --runs <number>      set runs (e.g: 150, 250 etc)
   -v, --verbose <level>    set verbosity level (0 to 5)
-  -h, --help               output usage information
+  -h, --help               display help for command
 
 Commands:
   version                  output the version number
@@ -43,6 +43,7 @@ Commands:
 
     test('remix-tests running a test file', () => {
       const res = spawnSync(executablePath, [resolve(__dirname + '/examples_0/assert_ok_test.sol')])
+      console.log(resolve(__dirname + '/examples_0/assert_ok_test.sol'))
       // match initial lines
       expect(res.stdout.toString().trim()).toMatch(/:: Running tests using remix-tests ::/)
       expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)

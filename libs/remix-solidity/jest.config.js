@@ -9,7 +9,7 @@ module.exports = {
         useESM: true,
       }]
   },
-  transformIgnorePatterns: ["/node_modules/", "/dist/", "\\.pnp\\.[^\\\/]+$"],
+  transformIgnorePatterns: ["/node_modules/", "/dist/", "\\.pnp\\.[^\\/]+$"],
   rootDir: "./",
   testTimeout: 40000,
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html', 'json'],
