@@ -86,7 +86,7 @@ const Icon = ({
   return (
     <>
       <CustomTooltip
-        placement="top"
+        placement={name === 'settings' ? 'right' : name === 'search' ? 'bottom' : "top"}
         tooltipText={title}
       >
         <div
