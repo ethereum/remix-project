@@ -86,7 +86,7 @@ const Icon = ({
   return (
     <>
       <CustomTooltip
-        placement="right-start"
+        placement="top"
         tooltipText={title}
       >
         <div
