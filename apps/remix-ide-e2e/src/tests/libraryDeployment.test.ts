@@ -21,6 +21,7 @@ module.exports = {
     let addressRef: string
     browser.verifyContracts(['test'])
       .clickLaunchIcon('udapp')
+      .click('#selectExEnv')
       .selectContract('test')
       .createContract('')
       .getAddressAtPosition(0, (address) => {
