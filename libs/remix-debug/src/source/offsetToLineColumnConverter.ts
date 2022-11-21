@@ -4,9 +4,11 @@ import { getLinebreakPositions, convertOffsetToLineColumn } from './sourceMappin
 export class OffsetToColumnConverter {
   lineBreakPositionsByContent
   sourceMappingDecoder
+  offsetConvertion
 
   constructor (compilerEvent) {
     this.lineBreakPositionsByContent = {}
+    this.offsetConvertion = {}
     if (compilerEvent) {
       compilerEvent.register('compilationFinished', (success, data, source, input, version) => {
         this.clear()
@@ -26,10 +28,18 @@ export class OffsetToColumnConverter {
         }
       }
     }
-    return convertOffsetToLineColumn(rawLocation, this.lineBreakPositionsByContent[file])
+    const token = `${rawLocation.start}:${rawLocation.length}:${file}`
+    if (this.offsetConvertion[token]) {
+      return this.offsetConvertion[token]
+    } else {
+      const convertion = convertOffsetToLineColumn(rawLocation, this.lineBreakPositionsByContent[file])
+      this.offsetConvertion[token] = convertion
+      return convertion
+    }
   }
 
   clear () {
     this.lineBreakPositionsByContent = {}
+    this.offsetConvertion = {}
   }
 }
