@@ -328,7 +328,6 @@ export function ContractGUI (props: ContractGUIProps) {
           <i
             className="fas fa-angle-down udapp_methCaret"
             onClick={switchMethodViewOn}
-            title={title}
             style={{
               visibility: !(
                 props.funcABI.inputs && props.funcABI.inputs.length > 0

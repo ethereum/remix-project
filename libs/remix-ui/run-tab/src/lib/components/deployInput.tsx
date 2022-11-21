@@ -17,7 +17,6 @@ export function DeployInput (props: DeployInputProps) {
           className="form-control"
           data-id={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : 'multiParamManagerBasicInputField'}
           placeholder={props.inputs}
-          title={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}
           onChange={props.handleBasicInput}
           ref={props.basicInputRef}
           style={{ visibility: !props.inputs ? 'hidden' : 'visible' }}
