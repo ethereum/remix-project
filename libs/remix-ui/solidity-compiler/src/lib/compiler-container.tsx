@@ -951,7 +951,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   <span>
                     <FormattedMessage id='solidity.compile' defaultMessage='Compile' />
                   </span>
-                  <span className="ml-1">
+                  <span className="ml-2">
                     {typeof state.compiledFileName === 'string'
                       ? extractNameFromKey(state.compiledFileName) ||
                         `<${intl.formatMessage({
