@@ -37,13 +37,7 @@
               "replace": "apps/remix-ide/src/environments/environment.ts",
               "with": "apps/remix-ide/src/environments/environment.prod.ts"
             }
-          ],
-          "optimization": true,
-          "outputHashing": "all",
-          "sourceMap": false,
-          "namedChunks": false,
-          "extractLicenses": false,
-          "vendorChunk": false
+          ]
         }
       }
     },
@@ -54,8 +48,7 @@
         "buildTarget": "remix-ide:build",
         "watch": true,
         "liveReload": true,
-        "hmr": false,
-        "open": true
+        "hmr": false
       },
       "configurations": {
         "development": {
@@ -64,7 +57,7 @@
         },
         "production": {
           "buildTarget": "remix-ide:build:production",
-          "hmr": false
+          "port": 8080
         }
       }
     },

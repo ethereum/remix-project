@@ -1,4 +1,5 @@
 {
+  "extends": "./tsconfig.paths.json",
   "compileOnSave": false,
   "compilerOptions": {
     "jsx": "react-jsx",
