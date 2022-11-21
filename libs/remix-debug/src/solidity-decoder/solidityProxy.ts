@@ -47,8 +47,18 @@ export class SolidityProxy {
     * @param {Int} vmTraceIndex  - index in the vm trave where to resolve the executed contract name
     * @param {Function} cb  - callback returns (error, contractName)
     */
-  async contractObjectAt (vmTraceIndex) {
+  async contractObjectAt (vmTraceIndex: number) {
     const address = this.getCurrentCalledAddressAt(vmTraceIndex)
+    return this.contractObjectAtAddress(address)
+  }
+
+  /**
+    * retrieve the compiled contract name at the @arg vmTraceIndex (cached)
+    *
+    * @param {Int} vmTraceIndex  - index in the vm trave where to resolve the executed contract name
+    * @param {Function} cb  - callback returns (error, contractName)
+    */
+  async contractObjectAtAddress (address: string) {
     if (this.cache.contractObjectByAddress[address]) {
       return this.cache.contractObjectByAddress[address]
     }

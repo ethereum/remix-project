@@ -219,20 +219,26 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation, funct
 
   let currentSourceLocation = { start: -1, length: -1, file: -1, jump: '-' }
   let previousSourceLocation = currentSourceLocation
+  let previousValidSourceLocation = currentSourceLocation
   while (step < tree.traceManager.trace.length) {
     let sourceLocation
     let validSourceLocation
-    let newLocation = false
+    let address
     try {
-      const address = tree.traceManager.getCurrentCalledAddressAt(step)
+      address = tree.traceManager.getCurrentCalledAddressAt(step)
       sourceLocation = await tree.extractSourceLocation(step, address)
-      validSourceLocation = await tree.extractValidSourceLocation(step, address)
-
+      
       if (!includedSource(sourceLocation, currentSourceLocation)) {
         tree.reducedTrace.push(step)
         currentSourceLocation = sourceLocation
-        newLocation = true
       }
+
+      const amountOfSources = tree.sourceLocationTracker.getTotalAmountOfSources(address, tree.solidityProxy.contracts)
+      if (tree.sourceLocationTracker.isInvalidSourceLocation(currentSourceLocation, amountOfSources)) { // file is -1 or greater than amount of sources
+        validSourceLocation = previousValidSourceLocation
+      } else
+        validSourceLocation = currentSourceLocation
+    
     } catch (e) {
       return { outStep: step, error: 'InternalCallTree - Error resolving source location. ' + step + ' ' + e }
     }
@@ -261,7 +267,7 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation, funct
       }
     }
 
-    const contractObj = await tree.solidityProxy.contractObjectAt(step)
+    const contractObj = await tree.solidityProxy.contractObjectAtAddress(address)
     const generatedSources = getGeneratedSources(tree, scopeId, contractObj)
     const functionDefinition = resolveFunctionDefinition(tree, sourceLocation, generatedSources)
 
@@ -292,6 +298,7 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation, funct
         await includeVariableDeclaration(tree, step, sourceLocation, scopeId, contractObj, generatedSources)
       }
       previousSourceLocation = sourceLocation
+      previousValidSourceLocation = validSourceLocation
       step++
     }
   }
