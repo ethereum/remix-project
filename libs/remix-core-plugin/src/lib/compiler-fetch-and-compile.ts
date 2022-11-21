@@ -105,6 +105,7 @@ export class FetchAndCompile extends Plugin {
    
     try {
       setTimeout(_ => this.emit('compiling', settings), 0)
+      const worker = new Worker(new URL('./compiler-worker', import.meta.url))
       const compData = await compile(
         compilationTargets,
         settings,
@@ -116,7 +117,7 @@ export class FetchAndCompile extends Plugin {
           } else {
             await this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message))
           }
-        })
+        }, worker)
       await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compData)
       return compData
     } catch (e) {
