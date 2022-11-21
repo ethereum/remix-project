@@ -263,13 +263,13 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation, funct
     const generatedSources = getGeneratedSources(tree, scopeId, contractObj)
     const functionDefinition = resolveFunctionDefinition(tree, sourceLocation, generatedSources)
 
-    const isCallInstrn = isCallInstruction(stepDetail)
+    const isInternalTxInstrn = isCallInstruction(stepDetail)
     const isCreateInstrn = isCreateInstruction(stepDetail)
     // we are checking if we are jumping in a new CALL or in an internal function
-    if (isCallInstrn || (previousSourceLocation.jump === 'i' && functionDefinition)) {
+    if (isInternalTxInstrn || (previousSourceLocation.jump === 'i' && functionDefinition)) {
       try {
         const newScopeId = scopeId === '' ? subScope.toString() : scopeId + '.' + subScope
-        const externalCallResult = await buildTree(tree, step, newScopeId , isCallInstrn, isCreateInstrn, functionDefinition, contractObj, sourceLocation)
+        const externalCallResult = await buildTree(tree, step, newScopeId, isInternalTxInstrn, isCreateInstrn, functionDefinition, contractObj, sourceLocation)
         if (externalCallResult.error) {
           return { outStep: step, error: 'InternalCallTree - ' + externalCallResult.error }
         } else {
