@@ -29,7 +29,6 @@ module.exports = config => {
         "constants": require.resolve("constants-browserify"),
         "os": false, //require.resolve("os-browserify/browser"),
         "timers": false, // require.resolve("timers-browserify"),
-        "vm": false, // require.resolve("vm-browserify"),
         "zlib": require.resolve("browserify-zlib"),
         "fs": false,
         "module": false,
@@ -38,6 +37,7 @@ module.exports = config => {
         "readline": false,
         "child_process": false,
         "buffer": require.resolve("buffer/"),
+        "vm": require.resolve('vm-browserify'),
       },
     },
     externals: {
