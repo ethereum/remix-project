@@ -13,9 +13,11 @@ const profile = {
 export class OffsetToLineColumnConverter extends Plugin {
   lineBreakPositionsByContent: Record<number, Array<number>>
   sourceMappingDecoder: any
+  offsetConvertion: any
   constructor () {
     super(profile)
     this.lineBreakPositionsByContent = {}
+    this.offsetConvertion = {}
     this.sourceMappingDecoder = sourceMappingDecoder
   }
 
@@ -45,7 +47,15 @@ export class OffsetToLineColumnConverter extends Plugin {
         }
       }
     }
-    return this.sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, this.lineBreakPositionsByContent[file])
+
+    const token = `${rawLocation.start}:${rawLocation.length}:${file}`
+    if (this.offsetConvertion[token]) {
+      return this.offsetConvertion[token]
+    } else {
+      const convertion = this.sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, this.lineBreakPositionsByContent[file])
+      this.offsetConvertion[token] = convertion
+      return convertion
+    }
   }
 
   /**
@@ -64,6 +74,7 @@ export class OffsetToLineColumnConverter extends Plugin {
    */
   clear () {
     this.lineBreakPositionsByContent = {}
+    this.offsetConvertion = {}
   }
 
   /**
