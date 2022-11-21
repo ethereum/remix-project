@@ -54,7 +54,8 @@
         "buildTarget": "remix-ide:build",
         "watch": true,
         "liveReload": true,
-        "hmr": false
+        "hmr": false,
+        "open": true
       },
       "configurations": {
         "development": {

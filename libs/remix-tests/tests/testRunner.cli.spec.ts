@@ -24,26 +24,12 @@ describe('testRunner: remix-tests CLI', () => {
 
       test('remix-tests help', () => {
         const res = spawnSync(executablePath, ['-h'])
-        const expectedHelp = `Usage: remix-tests [options] [command]
-
-Options:
-  -V, --version            output the version number
-  -c, --compiler <string>  set compiler version (e.g: 0.6.1, 0.7.1 etc)
-  -e, --evm <string>       set EVM version (e.g: petersburg, istanbul etc)
-  -o, --optimize <bool>    enable/disable optimization
-  -r, --runs <number>      set runs (e.g: 150, 250 etc)
-  -v, --verbose <level>    set verbosity level (0 to 5)
-  -h, --help               display help for command
-
-Commands:
-  version                  output the version number
-  help                     output usage information`
-        expect(res.stdout.toString().trim()).toBe(expectedHelp)
+        const expectedHelp = `Usage: remix-tests [options] [command] <file_path>`
+        expect(res.stdout.toString().trim()).toContain(expectedHelp)
       })
 
     test('remix-tests running a test file', () => {
       const res = spawnSync(executablePath, [resolve(__dirname + '/examples_0/assert_ok_test.sol')])
-      console.log(resolve(__dirname + '/examples_0/assert_ok_test.sol'))
       // match initial lines
       expect(res.stdout.toString().trim()).toMatch(/:: Running tests using remix-tests ::/)
       expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)

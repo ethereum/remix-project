@@ -1,9 +1,9 @@
 'use strict'
 
-import { CompilerInput, Source, CompilerInputOptions, Language } from './types'
+import { CompilerInputType, Source, CompilerInputOptions, Language } from './types'
 
 export default (sources: Source, opts: CompilerInputOptions): string => {
-  const o: CompilerInput = {
+  const o: CompilerInputType = {
     language: 'Solidity',
     sources: sources,
     settings: {

@@ -4,6 +4,7 @@ import { update } from 'solc/abi'
 import compilerInput, { compilerInputForConfigFile } from './compiler-input'
 import EventManager from '../lib/eventManager'
 import txHelper from './helper'
+import { pathToFileURL } from 'url'
 import {
   Source, SourceWithTarget, MessageFromWorker, CompilerState, CompilationResult,
   visitContractsCallbackParam, visitContractsCallbackInterface, CompilationError,
@@ -225,7 +226,7 @@ export class Compiler {
    * @param url URL to load compiler from
    */
 
-  loadVersion(usingWorker: boolean, url: string): void {
+  loadVersion(usingWorker: boolean, url: string, worker?: Worker): void {
     console.log('Loading ' + url + ' ' + (usingWorker ? 'with worker' : 'without worker'))
     this.event.trigger('loadingCompiler', [url, usingWorker])
     if (this.state.worker) {
@@ -233,6 +234,7 @@ export class Compiler {
       this.state.worker = null
     }
     if (usingWorker) {
+      this.state.worker = worker
       this.loadWorker(url)
     } else {
       this.loadInternal(url)
@@ -271,8 +273,8 @@ export class Compiler {
    */
 
   loadWorker(url: string): void {
-    this.state.worker = new Worker(new URL('./compiler-worker.ts', import.meta.url))
-    console.log(new URL('./compiler-worker.ts', import.meta.url))
+    console.log(this)
+    
     const jobs: Record<'sources', SourceWithTarget>[] = []
 
     this.state.worker.addEventListener('message', (msg: Record<'data', MessageFromWorker>) => {

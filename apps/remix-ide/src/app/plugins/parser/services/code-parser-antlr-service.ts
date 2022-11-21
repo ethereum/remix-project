@@ -3,6 +3,7 @@
 import { AstNode } from "@remix-project/remix-solidity-ts"
 import { CodeParser } from "../code-parser"
 import { antlr } from '../types'
+import { pathToFileURL } from 'url'
 
 const SolidityParser = (window as any).SolidityParser = (window as any).SolidityParser || []
 

@@ -144,7 +144,8 @@ export class CodeParser extends Plugin {
         })
 
         this.on('solidity', 'loadingCompiler', async (url) => {
-            this.compilerService.compiler.loadVersion(true, `${url}?t=${Date.now()}`)
+            const worker = new Worker(new URL('./services/compiler-worker', import.meta.url))
+            this.compilerService.compiler.loadVersion(true, `${url}?t=${Date.now()}`, worker)
         })
 
         this.on('config', 'configChanged', async (config) => {

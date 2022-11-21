@@ -1,5 +1,5 @@
 import setupMethods from 'solc/wrapper'
-import { CompilerInputType, MessageToWorker } from './types'
+import { CompilerInputType, MessageToWorker } from '@remix-project/remix-solidity'
 let compileJSON: ((input: CompilerInputType) => string) | null = (input) => { return '' }
 const missingInputs: string[] = []
 

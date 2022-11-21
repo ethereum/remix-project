@@ -7,7 +7,6 @@ import { Preload } from './app/components/preload'
 import Config from './config'
 import Registry from './app/state/registry'
 import { Storage } from '@remix-project/remix-lib'
-import {  TransactionDebugger } from '@remix-project/remix-debug'
 
 (async function () {
   try {
@@ -17,15 +16,6 @@ import {  TransactionDebugger } from '@remix-project/remix-debug'
   } catch (e) { }
   const theme = new ThemeModule()
   theme.initTheme()
-
-  const worker = new Worker(new URL('./deepthought', import.meta.url), { type: 'module' });
-  worker.postMessage({
-    question:
-      'The Answer to the Ultimate Question of Life, The Universe, and Everything.',
-  });
-  worker.onmessage = ({ data: { answer } }) => {
-    console.log(answer);
-  };
 
   render(
     <React.StrictMode>

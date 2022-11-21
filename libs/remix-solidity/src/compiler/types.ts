@@ -1,4 +1,4 @@
-export interface CompilerInput {
+export interface CompilerInputType {
     // Required: Source code language. Currently supported are "Solidity" and "Yul".
   language: Language,
   // Required
@@ -187,7 +187,7 @@ export interface SourceWithTarget {
 export interface MessageToWorker {
   cmd: string,
   job?: number,
-  input?: CompilerInput,
+  input?: CompilerInputType,
   data?: string
   timestamp?: number
 }

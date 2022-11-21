@@ -52,9 +52,9 @@ module.exports = config => {
     },
     plugins: [
       ...nxWebpackConfig.plugins,
-      new BundleAnalyzerPlugin({
-        analyzerMode: 'static'
-      }),
+      //new BundleAnalyzerPlugin({
+      //  analyzerMode: 'static'
+      //}),
       new CopyPlugin({
         patterns: [
           { from: '../../node_modules/monaco-editor/dev/vs', to: 'assets/js/monaco-editor/dev/vs' }
@@ -62,6 +62,8 @@ module.exports = config => {
       }),
       new webpack.ProvidePlugin({
         Buffer: ['buffer', 'Buffer'],
+        url: ['url', 'URL'],
+        process: 'process/browser',
       }),
     ]
   }

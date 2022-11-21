@@ -26,7 +26,7 @@ function deepEqualExcluding(a: any, b: any, excludedKeys: string[]) {
       return obj
     }
 
-    let newObj = []
+    const newObj = []
     for (const idx in obj) {
       newObj[idx] = removeKeysFromObject(obj[idx], excludedKeys);
     }
@@ -34,33 +34,33 @@ function deepEqualExcluding(a: any, b: any, excludedKeys: string[]) {
     return newObj
   }
 
-  let aStripped: any = removeKeysFromObject(a, excludedKeys);
-  let bStripped: any = removeKeysFromObject(b, excludedKeys);
+  const aStripped: any = removeKeysFromObject(a, excludedKeys);
+  const bStripped: any = removeKeysFromObject(b, excludedKeys);
   assert.deepEqual(aStripped, bStripped)
 }
 
 let accounts: string[]
-let provider: any = new Provider()
+const provider: any = new Provider()
 
-async function compileAndDeploy(filename: string, callback: Function) {
-  let web3: Web3 = new Web3()
-  let sourceASTs: any = {}
+async function compileAndDeploy(filename: string, callback: any) {
+  const web3: Web3 = new Web3()
+  const sourceASTs: any = {}
   await provider.init()
   web3.setProvider(provider)
   extend(web3)
   let compilationData: object
   async.waterfall([
-    function getAccountList(next: Function): void {
+    function getAccountList(next: any): void {
       web3.eth.getAccounts((_err: Error | null | undefined, _accounts: string[]) => {
         accounts = _accounts
         web3.eth.defaultAccount = accounts[0]
         next(_err)
       })
     },
-    function compile(next: Function): void {
+    function compile(next: any): void {
       compileFileOrFiles(filename, false, { accounts }, null, next)
     },
-    function deployAllContracts(compilationResult: compilationInterface, asts, next: Function): void {
+    function deployAllContracts(compilationResult: compilationInterface, asts, next: any): void {
       for(const filename in asts) {
         if(filename.endsWith('_test.sol'))
           sourceASTs[filename] = asts[filename].ast
@@ -93,7 +93,7 @@ describe('testRunner', () => {
       tests.push(test)
     }
 
-    const resultsCallback: Function = (done) => {
+    const resultsCallback = (done) => {
       return (err, _results) => {
         if (err) { throw err }
         results = _results

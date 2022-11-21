@@ -52,20 +52,20 @@ commander
   .option('-o, --optimize <bool>', 'enable/disable optimization', mapOptimize)
   .option('-r, --runs <number>', 'set runs (e.g: 150, 250 etc)')
   .option('-v, --verbose <level>', 'set verbosity level (0 to 5)', mapVerbosity)
-  .action(async (testsPath) => {
-
+  .argument('file_path', 'path to test file or directory')
+  .action(async (file_path) => {
     const options = commander.opts();
     // Check if path exists
-    if (!fs.existsSync(testsPath)) {
-      log.error(testsPath + ' not found')
+    if (!fs.existsSync(file_path)) {
+      log.error(file_path + ' not found')
       process.exit(1)
     }
 
     // Check if path is for a directory
-    const isDirectory = fs.lstatSync(testsPath).isDirectory()
+    const isDirectory = fs.lstatSync(file_path).isDirectory()
 
     // If path is for a file, file name must have `_test.sol` suffix
-    if (!isDirectory && !testsPath.endsWith('_test.sol')) {
+    if (!isDirectory && !file_path.endsWith('_test.sol')) {
       log.error('Test filename should end with "_test.sol"')
       process.exit(1)
     }
@@ -119,7 +119,7 @@ commander
     await provider.init()
     web3.setProvider(provider)
     extend(web3)
-    runTestFiles(path.resolve(testsPath), isDirectory, web3, compilerConfig, (error) => {
+    runTestFiles(path.resolve(file_path), isDirectory, web3, compilerConfig, (error) => {
       if (error) process.exit(1)
     })
   })
