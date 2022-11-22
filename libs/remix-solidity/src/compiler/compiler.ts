@@ -1,10 +1,10 @@
 'use strict'
 
 import { update } from 'solc/abi'
+import * as webworkify from 'webworkify-webpack'
 import compilerInput, { compilerInputForConfigFile } from './compiler-input'
 import EventManager from '../lib/eventManager'
 import txHelper from './helper'
-import { pathToFileURL } from 'url'
 import {
   Source, SourceWithTarget, MessageFromWorker, CompilerState, CompilationResult,
   visitContractsCallbackParam, visitContractsCallbackInterface, CompilationError,
@@ -18,10 +18,9 @@ import {
 export class Compiler {
   event
   state: CompilerState
-  handleImportCall
-  constructor(handleImportCall?: (fileurl: string, cb) => void) {
+
+  constructor(public handleImportCall?: (fileurl: string, cb) => void) {
     this.event = new EventManager()
-    this.handleImportCall = handleImportCall
     this.state = {
       compileJSON: null,
       worker: null,
@@ -226,15 +225,14 @@ export class Compiler {
    * @param url URL to load compiler from
    */
 
-  loadVersion(usingWorker: boolean, url: string, worker?: Worker): void {
+  loadVersion(usingWorker: boolean, url: string): void {
     console.log('Loading ' + url + ' ' + (usingWorker ? 'with worker' : 'without worker'))
     this.event.trigger('loadingCompiler', [url, usingWorker])
     if (this.state.worker) {
       this.state.worker.terminate()
       this.state.worker = null
     }
-    if (usingWorker && ( worker || ( typeof (window) !== 'undefined' && window['Worker'] ))) {
-      this.state.worker = worker || window['worker']
+    if (usingWorker) {
       this.loadWorker(url)
     } else {
       this.loadInternal(url)
@@ -273,8 +271,7 @@ export class Compiler {
    */
 
   loadWorker(url: string): void {
-    console.log(this)
-    
+    this.state.worker = webworkify(require.resolve('./compiler-worker'))
     const jobs: Record<'sources', SourceWithTarget>[] = []
 
     this.state.worker.addEventListener('message', (msg: Record<'data', MessageFromWorker>) => {
