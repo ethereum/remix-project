@@ -250,13 +250,12 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation, funct
     if (stepDetail && nextStepDetail) {
       stepDetail.gasCost = parseInt(stepDetail.gas as string) - parseInt(nextStepDetail.gas as string)
     }
-    tree.locationAndOpcodePerVMTraceIndex[step] = { sourceLocation, stepDetail }
-    tree.scopes[scopeId].gasCost += stepDetail.gasCost
-    
+        
     // gas per line
+    let lineColumnPos
     if (tree.offsetToLineColumnConverter) {
       try {
-        const lineColumnPos = await tree.offsetToLineColumnConverter.offsetToLineColumn(validSourceLocation, validSourceLocation.file, tree.solidityProxy.sourcesCode, tree.solidityProxy.sources)
+        lineColumnPos = await tree.offsetToLineColumnConverter.offsetToLineColumn(validSourceLocation, validSourceLocation.file, tree.solidityProxy.sourcesCode, tree.solidityProxy.sources)
         if (!tree.gasCostPerLine[validSourceLocation.file]) tree.gasCostPerLine[validSourceLocation.file] = {}
         if (!tree.gasCostPerLine[validSourceLocation.file][lineColumnPos.start.line]) {
           tree.gasCostPerLine[validSourceLocation.file][lineColumnPos.start.line] = {
@@ -270,6 +269,9 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation, funct
         console.log(e)
       }
     }
+
+    tree.locationAndOpcodePerVMTraceIndex[step] = { sourceLocation, stepDetail, lineColumnPos }
+    tree.scopes[scopeId].gasCost += stepDetail.gasCost
 
     const contractObj = await tree.solidityProxy.contractObjectAtAddress(address)
     const generatedSources = getGeneratedSources(tree, scopeId, contractObj)
