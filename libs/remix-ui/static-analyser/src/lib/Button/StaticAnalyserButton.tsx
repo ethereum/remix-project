@@ -24,7 +24,7 @@ const StaticAnalyserButton = ({
   }
   return (
       <CustomTooltip
-        placement="right-start"
+        placement="right"
         tooltipId="ssaRunButtonTooltip"
         tooltipClasses="text-nowrap"
         tooltipText={title}
