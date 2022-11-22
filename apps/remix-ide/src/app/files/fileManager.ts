@@ -50,9 +50,9 @@ class FileManager extends Plugin {
   getFolder: (path: any) => Promise<unknown>
   setFile: (path: any, data: any) => Promise<unknown>
   switchFile: (path: any) => Promise<void>
-  actions: FileActionType[]
-  undoActions: FileActionType[]
-  isFromLastAction: boolean
+  private actions: FileActionType[]
+  private undoActions: FileActionType[]
+  private isFromLastAction: boolean
 
   constructor(editor, appManager) {
     super(profile)
