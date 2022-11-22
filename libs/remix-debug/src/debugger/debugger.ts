@@ -95,7 +95,7 @@ export class Debugger {
               sources[genSource.name] = { content: genSource.contents }
             }
           }
-          const lineColumnPos = await this.offsetToLineColumnConverter.offsetToLineColumn(rawLocation, rawLocation.file, sources, astSources)
+          const lineColumnPos = rawLocationAndOpcode.lineColumnPos
           
           let lineGasCostObj = null
           try {
