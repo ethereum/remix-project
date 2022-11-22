@@ -55,7 +55,7 @@ export default class WebSocket {
       const client = this.getclient()
 
       createClient(ws, client as any)
-      //if (callback) callback(so, client)
+      if (callback) callback(ws as any, client)
     })
   }
 
