@@ -34,7 +34,7 @@ export const RemixUiCheckbox = ({
   title,
   visibility,
   display = 'flex',
-  tooltipPlacement = 'right-start'
+  tooltipPlacement = 'right'
 }: RemixUiCheckboxProps) => {
 
   const childJSX = (

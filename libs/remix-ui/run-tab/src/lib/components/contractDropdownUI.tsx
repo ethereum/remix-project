@@ -136,12 +136,12 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if (enable) {
       setAtAddressOptions({
         disabled: false,
-        title: <span>Interact with the deployed contract - requires the .abi file or <br /> compiled .sol file to be selected in the editor <br />(with the same compiler configuration)</span>
+        title: <span className="text-start">Interact with the deployed contract - requires the .abi file or <br /> compiled .sol file to be selected in the editor <br />(with the same compiler configuration)</span>
       })
     } else {
       setAtAddressOptions({
         disabled: true,
-        title: loadedAddress ? 'Compile a *.sol file or select a *.abi file.' : <span>To interact with a deployed contract,<br /> enter its address and compile its source *.sol file <br />(with the same compiler settings) or select its .abi file in the editor. </span>
+        title: loadedAddress ? 'Compile a *.sol file or select a *.abi file.' : <span className="text-start">To interact with a deployed contract either,<br /> enter its address and compile its source *.sol file <br />(with the same compiler settings) or select its .abi file in the editor. </span>
       })
     }
   }
@@ -155,7 +155,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     } else {
       setContractOptions({
         disabled: true,
-        title: loadType === 'sol' ? 'Select and compile *.sol file to deploy or access a contract.' : <span>When there is a compiled .sol file, choose the <br /> contract to deploy or to use with AtAddress.'</span>
+        title: loadType === 'sol' ? 'Select and compile *.sol file to deploy or access a contract.' : <span className="text-start">When there is a compiled .sol file, choose the <br /> contract to deploy or to use with AtAddress.'</span>
       })
     }
   }
@@ -236,7 +236,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   const checkSumWarning = () => {
     return (
-      <span>
+      <span className="text-start">
         It seems you are not using a checksumed address.
         <br />A checksummed address is an address that contains uppercase letters, as specified in <a href="https://eips.ethereum.org/EIPS/eip-55" target="_blank" rel="noreferrer">EIP-55</a>.
         <br />Checksummed addresses are meant to help prevent users from sending transactions to the wrong address.
@@ -264,10 +264,12 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         {props.remixdActivated ?
           (<CustomTooltip
             placement={'right'}
-            tooltipClasses="text-wrap"
+            tooltipClasses="text-wrap text-left"
             tooltipId="info-sync-compiled-contract"
-            tooltipText={<span className="text-left">Click here to import contracts compiled from an external framework.<br />
-              This action is enabled when Remix is connected to an external framework (hardhat, truffle, foundry) through remixd.</span>}
+            tooltipText={<span className="text-left">
+              Click here to import contracts compiled from an external framework.<br/>
+              This action is enabled when Remix is connected to an external<br/> framework (hardhat, truffle, foundry) through remixd.
+            </span>}
           >
             <button className="btn d-flex py-0" onClick={_ => {
               props.syncContracts()
@@ -277,23 +279,33 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
             </button>
           </CustomTooltip>)
           : null}
-        <CustomTooltip
+      </div>
+      <div className="udapp_subcontainer">
+        {contractOptions.disabled ? (
+          <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
+            {(contractList[currentFile] || []).map((contract, index) => {
+              return <option key={index} value={contract.alias}>
+                {contract.alias} - {contract.file}
+              </option>
+            })}
+          </select>
+        ) : (<CustomTooltip
           placement={"right"}
-          tooltipClasses="text-nowrap"
+          tooltipClasses="text-nowrap text-left"
           tooltipId="remixUdappContractNamesTooltip"
           tooltipText={contractOptions.title}
         >
-          <div className="udapp_subcontainer">
-              <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
-                {(contractList[currentFile] || []).map((contract, index) => {
-                  return <option key={index} value={contract.alias}>
-                    {contract.alias} - {contract.file}
-                  </option>
-                })}
-              </select>
-            <span className="py-1" style={{ display: abiLabel.display }}>{abiLabel.content}</span>
-          </div>
-        </CustomTooltip>
+          <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
+            {(contractList[currentFile] || []).map((contract, index) => {
+              return <option key={index} value={contract.alias}>
+                {contract.alias} - {contract.file}
+              </option>
+            })}
+          </select>
+        </CustomTooltip>)}
+        <span className="py-1" style={{ display: abiLabel.display }}>{abiLabel.content}</span>
+      </div>
+      <div>
         <div className="udapp_deployDropdown">
           {((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? intl.formatMessage({id: 'udapp.noCompiledContracts', defaultMessage: 'No compiled contracts'})
             : loadedContractData ? <div>
@@ -322,9 +334,9 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
                 />
                 <CustomTooltip
                   placement={'right'}
-                  tooltipClasses="text-wrap"
+                  tooltipClasses="text-wrap text-left"
                   tooltipId="remixIpfsUdappTooltip"
-                  tooltipText={<span>Publishing the source code and metadata to IPFS <br />facilitates source code verification using Sourcify and<br /> will greatly foster contract adoption<br /> (auditing, debugging, calling it, etc...)</span>}
+                  tooltipText={<span className="text-start">Publishing the source code and metadata to IPFS facilitates<br/> source code verification using Sourcify and will greatly foster<br/> contract adoption (auditing, debugging, calling it, etc...)</span>}
                 >
                   <label
                     htmlFor="deployAndRunPublishToIPFS"
@@ -341,10 +353,10 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         <div className="udapp_orLabel mt-2" style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
           <FormattedMessage id='udapp.or' defaultMessage='or' />
         </div>
-        <div className="udapp_button udapp_atAddressSect d-flex justify-content-center">
+        <div className="udapp_button udapp_atAddressSect ">
           <CustomTooltip
             placement={'top-end'}
-            tooltipClasses="text-wrap"
+            tooltipClasses="text-wrap text-left"
             tooltipId="runAndDeployAddresstooltip"
             tooltipText={atAddressOptions.title}
             >
@@ -356,9 +368,9 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
           </CustomTooltip>
           <CustomTooltip
             placement={'top-end'}
-            tooltipClasses="text-wrap"
+            tooltipClasses="text-wrap text-left"
             tooltipId="runAndDeployAddressInputtooltip"
-            tooltipText={"address of contract"}
+            tooltipText={"Address of contract"}
           >
             <input
               ref={atAddressValue}
