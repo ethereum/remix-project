@@ -259,9 +259,13 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation, funct
         const lineColumnPos = await tree.offsetToLineColumnConverter.offsetToLineColumn(validSourceLocation, validSourceLocation.file, tree.solidityProxy.sourcesCode, tree.solidityProxy.sources)
         if (!tree.gasCostPerLine[validSourceLocation.file]) tree.gasCostPerLine[validSourceLocation.file] = {}
         if (!tree.gasCostPerLine[validSourceLocation.file][lineColumnPos.start.line]) {
-          tree.gasCostPerLine[validSourceLocation.file][lineColumnPos.start.line] = 0
+          tree.gasCostPerLine[validSourceLocation.file][lineColumnPos.start.line] = {
+            gasCost: 0,
+            indexes: []
+          }
         }
-        tree.gasCostPerLine[validSourceLocation.file][lineColumnPos.start.line] += stepDetail.gasCost
+        tree.gasCostPerLine[validSourceLocation.file][lineColumnPos.start.line].gasCost += stepDetail.gasCost
+        tree.gasCostPerLine[validSourceLocation.file][lineColumnPos.start.line].indexes.push(step)
       } catch (e) {
         console.log(e)
       }
