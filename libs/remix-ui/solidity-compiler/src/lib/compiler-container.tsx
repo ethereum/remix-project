@@ -22,6 +22,15 @@ declare global {
 
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
+function reorderEvms (evmVersions: string[], newEvms: string[]): string[] {
+  evmVersions.forEach(evm => {
+    if (evm === 'london') newEvms[1] = evm
+    else if (evm === 'berlin') newEvms[2] = evm
+    else newEvms.push(evm)
+  })
+  return newEvms
+}
+
 export const CompilerContainer = (props: CompilerContainerProps) => {
   const {
     api,
@@ -67,6 +76,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const [hhCompilation, sethhCompilation] = useState(false)
   const [truffleCompilation, setTruffleCompilation] = useState(false)
   const [compilerContainer, dispatch] = useReducer(compilerReducer, compilerInitialState)
+  const [evmVersions] = useState<Array<string>>(reorderEvms(compileTabLogic.evmVersions, []))
 
   const intl = useIntl()
 
@@ -871,7 +881,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 <FormattedMessage id='solidity.evmVersion' defaultMessage='EVM Version' />
               </label>
               <select value={state.evmVersion} onChange={(e) => handleEvmVersionChange(e.target.value)} disabled={state.useFileConfiguration} className="custom-select" id="evmVersionSelector">
-                {compileTabLogic.evmVersions.map((version, index) => (<option key={index} data-id={state.evmVersion === version ? 'selected' : ''} value={version}>{version}</option>))}
+                {evmVersions.map((version, index) => (<option key={index} data-id={state.evmVersion === version ? 'selected' : ''} value={version}>{version}</option>))}
               </select>
             </div>
             <div className="mt-1 mt-3 border-dark pb-3 ml-4 remixui_compilerConfig custom-control custom-checkbox">
