@@ -37,6 +37,11 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
      * for example : 'downloadAsZip' with type ['file','folder'] will work on files and folders when multiple are selected
     **/
     const nonRootFocus = focus.filter((el) => { return !(el.key === '' && el.type === 'folder') })
+    
+    if(focus[0].key === "contextMenu"){
+      return true
+    }
+
     if (nonRootFocus.length > 1) {
       for (const element of nonRootFocus) {
         if (!itemMatchesCondition(item, element.type, element.key)) return false
@@ -137,7 +142,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
         }}>{intl.formatMessage({id: `filePanel.${item.id}`, defaultMessage: item.label || item.name})}</li>
     })
   }
-
+  
   return (
     <div
       id="menuItemsContainer"

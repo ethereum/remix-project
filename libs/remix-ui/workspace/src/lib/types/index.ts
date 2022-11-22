@@ -110,7 +110,10 @@ export interface FileExplorerProps {
     dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,
     dispatchHandleExpandPath: (paths: string[]) => Promise<void>,
     dispatchMoveFile: (src: string, dest: string) => Promise<void>,
-    dispatchMoveFolder: (src: string, dest: string) => Promise<void>
+    dispatchMoveFolder: (src: string, dest: string) => Promise<void>,
+    contextType?: 'file' | 'folder',
+    closeContextMenu?: () => void,
+    dispatchCanCopy?: (path: string, type: 'folder' | 'gist' | 'file') => void
 }
 type Placement = import('react-overlays/usePopper').Placement
 export interface FileExplorerMenuProps {

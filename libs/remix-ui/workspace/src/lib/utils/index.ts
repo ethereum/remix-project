@@ -1,4 +1,4 @@
-import { MenuItems } from '../types'
+import { FileExplorerState, MenuItems } from '../types'
 
 export const contextMenuActions: MenuItems = [{
   id: 'newFile',
@@ -79,3 +79,42 @@ export const contextMenuActions: MenuItems = [{
   multiselect: true,
   label: ''
 }]
+
+export const getFileMenuActions = (root: string, actions?: MenuItems):FileExplorerState => {
+  return {
+    ctrlKey: false,
+    newFileName: '',
+    actions: actions ?? contextMenuActions,
+    focusContext: {
+      element: null,
+      x: null,
+      y: null,
+      type: ''
+    },
+    focusEdit: {
+      element: null,
+      type: '',
+      isNew: false,
+      lastEdit: ''
+    },
+    mouseOverElement: null,
+    showContextMenu: false,
+    reservedKeywords: [root, 'gist-'],
+    copyElement: []
+  }
+}
+
+export const contextMenuDefaultActions: MenuItems = [{
+  id: 'newFile',
+  name: 'New File',
+  type: ['folder', 'gist'],
+  multiselect: false,
+  label: ''
+}, {
+  id: 'newFolder',
+  name: 'New Folder',
+  type: ['folder', 'gist'],
+  multiselect: false,
+  label: ''
+}
+]

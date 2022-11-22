@@ -4,7 +4,7 @@ import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
 import { FileExplorerProps, MenuItems, FileExplorerState } from '../types'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
-import { contextMenuActions } from '../utils'
+import { contextMenuActions, getFileMenuActions } from '../utils'
 
 import '../css/file-explorer.css'
 import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath } from '@remix-ui/helper'
@@ -14,28 +14,8 @@ import { Drag } from "@remix-ui/drag-n-drop"
 import { ROOT_PATH } from '../utils/constants'
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { name, contextMenuItems, removedContextMenuItems, files, fileState } = props
-  const [state, setState] = useState<FileExplorerState>({
-    ctrlKey: false,
-    newFileName: '',
-    actions: contextMenuActions,
-    focusContext: {
-      element: null,
-      x: null,
-      y: null,
-      type: ''
-    },
-    focusEdit: {
-      element: null,
-      type: '',
-      isNew: false,
-      lastEdit: ''
-    },
-    mouseOverElement: null,
-    showContextMenu: false,
-    reservedKeywords: [ROOT_PATH, 'gist-'],
-    copyElement: []
-  })
+  const { name, contextMenuItems, removedContextMenuItems, files, fileState, contextType: contextType, closeContextMenu, dispatchCanCopy } = props
+  const [state, setState] = useState<FileExplorerState>( getFileMenuActions(ROOT_PATH))
   const [canPaste, setCanPaste] = useState(false)
   const treeRef = useRef<HTMLDivElement>(null)
   
@@ -54,10 +34,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
   useEffect(() => {
     if (props.focusEdit) {
       setState(prevState => {
-        return { ...prevState, focusEdit: { element: props.focusEdit, type: 'file', isNew: true, lastEdit: null } }
+        return { ...prevState, focusEdit: { element: props.focusEdit, type: contextType || 'file', isNew: true, lastEdit: null } }
       })
     }
-  }, [props.focusEdit])
+  }, [props.focusEdit, contextType])
 
   useEffect(() => {
     if (treeRef.current) {
@@ -337,6 +317,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           } else {
             state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
             props.dispatchRemoveInputField(parentFolder)
+            closeContextMenu()
           }
         } else {
           if (hasReservedKeyword(content)) {
@@ -382,6 +363,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       return { ...prevState, copyElement: [{ key: path, type }] }
     })
     setCanPaste(true)
+    dispatchCanCopy(path, type)
     props.toast(`Copied to clipboard ${path}`)
   }
 

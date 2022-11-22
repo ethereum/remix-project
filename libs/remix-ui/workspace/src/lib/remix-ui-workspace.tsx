@@ -78,6 +78,32 @@ export function Workspace () {
     setSelectedWorkspace(workspace)
   }, [currentWorkspace])
 
+  useEffect(() => {
+    if (canPaste) {
+      addMenuItems([{
+        id: 'paste',
+        name: 'Paste',
+        type: ['folder', 'file'],
+        path: [],
+        extension: [],
+        pattern: [],
+        multiselect: false,
+        label: ''
+      }])
+    } else {
+      removeMenuItems([{
+        id: 'paste',
+        name: 'Paste',
+        type: ['folder', 'file'],
+        path: [],
+        extension: [],
+        pattern: [],
+        multiselect: false,
+        label: ''
+      }])
+    }
+  }, [canPaste])
+
   const renameCurrentWorkspace = () => {
     global.modal(intl.formatMessage({ id: 'filePanel.workspace.rename' }), renameModalMessage(), intl.formatMessage({ id: 'filePanel.ok' }), onFinishRenameWorkspace, '')
   }
@@ -818,6 +844,10 @@ export function Workspace () {
                   dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                   dispatchMoveFile={global.dispatchMoveFile}
                   dispatchMoveFolder={global.dispatchMoveFolder}
+                  contextType={contextType}
+                  closeContextMenu={handleCloseContextMenu}
+                  dispatchCanCopy={handleCanCopy}
+
                 />
               </div>
             }
