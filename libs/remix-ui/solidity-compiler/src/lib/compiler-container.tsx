@@ -1004,7 +1004,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                       contract ContractName {'{}'}<br />
                     </code>
                   </pre>
-                  Click to know more
+                  Click the i icon to learn more
                 </div>}
             >
               <a href="https://remix-ide.readthedocs.io/en/latest/running_js_scripts.html#compile-a-contract-and-run-a-script-on-the-fly" target="_blank" ><i className="pl-2 ml-2 mt-3 mb-1 fas fa-info text-dark"></i></a>
