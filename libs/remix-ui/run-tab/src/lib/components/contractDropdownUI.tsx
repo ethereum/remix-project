@@ -155,7 +155,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     } else {
       setContractOptions({
         disabled: true,
-        title: loadType === 'sol' ? 'Select and compile *.sol file to deploy or access a contract.' : <span>When there is a compiled .sol file,<br /> choose the contract to deploy or to use with AtAddress.'</span>
+        title: loadType === 'sol' ? 'Select and compile *.sol file to deploy or access a contract.' : <span>When there is a compiled .sol file, choose the <br /> contract to deploy or to use with AtAddress.'</span>
       })
     }
   }
@@ -266,7 +266,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
             placement={'right'}
             tooltipClasses="text-wrap"
             tooltipId="info-sync-compiled-contract"
-            tooltipText={<span>Click here to import contracts compiled from an external framework.<br />
+            tooltipText={<span className="text-left">Click here to import contracts compiled from an external framework.<br />
               This action is enabled when Remix is connected to an external framework (hardhat, truffle, foundry) through remixd.</span>}
           >
             <button className="btn d-flex py-0" onClick={_ => {
@@ -277,25 +277,23 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
             </button>
           </CustomTooltip>)
           : null}
-      </div>
-      <div className="udapp_subcontainer">
         <CustomTooltip
           placement={"right"}
           tooltipClasses="text-nowrap"
           tooltipId="remixUdappContractNamesTooltip"
           tooltipText={contractOptions.title}
         >
-          <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
-            {(contractList[currentFile] || []).map((contract, index) => {
-              return <option key={index} value={contract.alias}>
-                {contract.alias} - {contract.file}
-              </option>
-            })}
-          </select>
+          <div className="udapp_subcontainer">
+              <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
+                {(contractList[currentFile] || []).map((contract, index) => {
+                  return <option key={index} value={contract.alias}>
+                    {contract.alias} - {contract.file}
+                  </option>
+                })}
+              </select>
+            <span className="py-1" style={{ display: abiLabel.display }}>{abiLabel.content}</span>
+          </div>
         </CustomTooltip>
-        <span className="py-1" style={{ display: abiLabel.display }}>{abiLabel.content}</span>
-      </div>
-      <div>
         <div className="udapp_deployDropdown">
           {((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? intl.formatMessage({id: 'udapp.noCompiledContracts', defaultMessage: 'No compiled contracts'})
             : loadedContractData ? <div>
@@ -343,7 +341,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         <div className="udapp_orLabel mt-2" style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
           <FormattedMessage id='udapp.or' defaultMessage='or' />
         </div>
-        <div className="udapp_button udapp_atAddressSect ">
+        <div className="udapp_button udapp_atAddressSect d-flex justify-content-center">
           <CustomTooltip
             placement={'top-end'}
             tooltipClasses="text-wrap"
