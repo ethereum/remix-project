@@ -19,7 +19,7 @@ const StaticAnalyserButton = ({
   return (
     <button className={classList} disabled={disabled} onClick={onClick}>
       <CustomTooltip
-        placement="right-start"
+        placement="right"
         tooltipId="ssaRunButtonTooltip"
         tooltipClasses="text-nowrap"
         tooltipText={title}
