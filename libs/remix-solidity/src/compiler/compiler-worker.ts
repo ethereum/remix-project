@@ -1,4 +1,4 @@
-import setupMethods from 'solc/wrapper'
+import setupMethods from './wrapper'
 import { CompilerInputType, MessageToWorker } from '@remix-project/remix-solidity'
 let compileJSON: ((input: CompilerInputType) => string) | null = (input) => { return '' }
 const missingInputs: string[] = []
@@ -6,12 +6,14 @@ const missingInputs: string[] = []
 self.onmessage = (e: MessageEvent) => {
   const data: MessageToWorker = e.data
   console.log('worker received message', data)
+  
   switch (data.cmd) {
     case 'loadVersion':
       {
-        console.log(self);
+
         (self as any).importScripts(data.data)
         const compiler = setupMethods(self)
+        
         compileJSON = (input) => {
           try {
             const missingInputsCallback = (path) => {
@@ -45,5 +47,6 @@ self.onmessage = (e: MessageEvent) => {
       }
       break
   }
+  
 }
 
