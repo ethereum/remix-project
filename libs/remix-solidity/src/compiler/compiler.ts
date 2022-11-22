@@ -233,8 +233,8 @@ export class Compiler {
       this.state.worker.terminate()
       this.state.worker = null
     }
-    if (usingWorker) {
-      this.state.worker = worker
+    if (usingWorker && ( worker || ( typeof (window) !== 'undefined' && window['Worker'] ))) {
+      this.state.worker = worker || window['worker']
       this.loadWorker(url)
     } else {
       this.loadInternal(url)
