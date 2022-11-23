@@ -7,10 +7,9 @@ import { indexedDBFileSystem } from '../files/filesystems/indexedDB'
 import { localStorageFS } from '../files/filesystems/localStorage'
 import { fileSystemUtility, migrationTestData } from '../files/filesystems/fileSystemUtility'
 import './styles/preload.css'
-import { createRoot } from 'react-dom/client'
 const _paq = window._paq = window._paq || []
 
-export const Preload = (props: any) => {
+export const Preload = () => {
 
     const [supported, setSupported] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
@@ -27,10 +26,11 @@ export const Preload = (props: any) => {
         import('../../app').then((AppComponent) => {
             const appComponent = new AppComponent.default()
             appComponent.run().then(() => {
-                props.root.render(
+                render(
                     <>
                         <RemixApp app={appComponent} />
-                    </>
+                    </>,
+                    document.getElementById('root')
                 )
             })
         }).catch(err => {
