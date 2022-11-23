@@ -8,6 +8,7 @@ import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from 
 import helper from '../../lib/helper.js'
 import { RemixAppManager } from '../../remixAppManager'
 import { FileAction, FileActionType } from './types'
+import FileActions from './fileActions'
 
 /*
   attach to files event (removed renamed)
@@ -50,9 +51,8 @@ class FileManager extends Plugin {
   getFolder: (path: any) => Promise<unknown>
   setFile: (path: any, data: any) => Promise<unknown>
   switchFile: (path: any) => Promise<void>
-  private actions: FileActionType[]
-  private undoActions: FileActionType[]
-  private isFromLastAction: boolean
+  fileActions: FileActions
+  revertFileAction: (redo: boolean) => void
 
   constructor(editor, appManager) {
     super(profile)
@@ -63,9 +63,10 @@ class FileManager extends Plugin {
     this._components = {}
     this._components.registry = Registry.getInstance()
     this.appManager = appManager
+    this.fileActions = new FileActions(this.moveFile, this.moveDir, this.writeFile, this.remove, this.rename)
+    this.revertFileAction = this.fileActions.revertFileAction
+  
     this.init()
-    this.actions = []
-    this.undoActions = []
   }
   getOpenedFiles() {
     return this.openedFiles
@@ -205,7 +206,7 @@ class FileManager extends Plugin {
    * @param {string} data content to write on the file
    * @returns {void}
    */
-  async writeFile(path, data) {
+   writeFile = async (path, data) => {
     try {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
@@ -215,8 +216,8 @@ class FileManager extends Plugin {
       } else {
         const ret = await this.setFileContent(path, data)
         this.emit('fileAdded', path)
-        if(!this.isFromLastAction){
-          this.recordFileAction("writefile", {path: path})
+        if(!this.fileActions.isFromLastAction){
+          this.fileActions.recordFileAction("writefile", {path: path})
         }
         return ret
       }
@@ -230,7 +231,7 @@ class FileManager extends Plugin {
    * @param {string} path path of the file
    * @returns {string} content of the file
    */
-  async readFile(path) {
+   readFile = async (path) => {
     try {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
@@ -248,7 +249,7 @@ class FileManager extends Plugin {
    * @param {string} dest path of the destrination file
    * @returns {void}
    */
-  async copyFile(src: string, dest: string, customName?: string) {
+   copyFile = async (src: string, dest: string, customName?: string) => {
     try {
       src = this.normalize(src)
       dest = this.normalize(dest)
@@ -261,7 +262,7 @@ class FileManager extends Plugin {
       const content = await this.readFile(src)
       let copiedFilePath = dest + (customName ? '/' + customName : '/' + `Copy_${helper.extractNameFromKey(src)}`)
       copiedFilePath = await helper.createNonClashingNameAsync(copiedFilePath, this)
-      this.recordFileAction("copy",{src: src})
+      this.fileActions.recordFileAction("copy",{src: src})
       await this.writeFile(copiedFilePath, content)
     } catch (e) {
       throw new Error(e)
@@ -274,7 +275,7 @@ class FileManager extends Plugin {
    * @param {string} dest path of the destination dir
    * @returns {void}
    */
-  async copyDir(src: string, dest: string, customName?: string) {
+   copyDir = async (src: string, dest: string, customName?: string) => {
     try {
       src = this.normalize(src)
       dest = this.normalize(dest)
@@ -291,7 +292,7 @@ class FileManager extends Plugin {
       } else {
         await this.inDepthCopy(src, dest, customName)
       }
-      this.recordFileAction("create", {dest: dest})
+      this.fileActions.recordFileAction("create", {dest: dest})
 
     } catch (e) {
       throw new Error(e)
@@ -320,7 +321,8 @@ class FileManager extends Plugin {
    * @param {string} newPath new path of the file/directory
    * @returns {void}
    */
-  async rename(oldPath, newPath) {
+   rename = async (oldPath, newPath) => {
+    
     try {
       oldPath = this.normalize(oldPath)
       newPath = this.normalize(newPath)
@@ -340,9 +342,9 @@ class FileManager extends Plugin {
           return
         }
 
-        if(!this.isFromLastAction){
-          this.recordFileAction("rename", {oldPath: oldPath, newPath: newPath})
-          this.isFromLastAction = false
+        if(!this.fileActions.isFromLastAction){
+          this.fileActions.recordFileAction("rename", {oldPath: oldPath, newPath: newPath})
+          this.fileActions.isFromLastAction = false
         }
         return provider.rename(oldPath, newPath, false)
       } else {
@@ -353,10 +355,10 @@ class FileManager extends Plugin {
           })
           return
         }
-        if(!this.isFromLastAction){
-          this.recordFileAction("rename", {oldPath: oldPath, newPath: newPath})
+        if(!this.fileActions.isFromLastAction){
+          this.fileActions.recordFileAction("rename", {oldPath: oldPath, newPath: newPath})
         } else {
-          this.isFromLastAction = false
+          this.fileActions.isFromLastAction = false
         }
         return provider.rename(oldPath, newPath, true)
       }
@@ -383,7 +385,7 @@ class FileManager extends Plugin {
    * @param {string} path path of the new directory
    * @returns {void}
    */
-  async mkdir(path) {
+   mkdir = async (path) => {
     try {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
@@ -391,7 +393,7 @@ class FileManager extends Plugin {
         throw createError({ code: 'EEXIST', message: `Cannot create directory ${path}` })
       }
       const provider = this.fileProviderOf(path)
-      this.recordFileAction("create", {path: path})
+      this.fileActions.recordFileAction("create", {path: path})
       return await provider.createDir(path)
     } catch (e) {
       throw new Error(e)
@@ -428,7 +430,7 @@ class FileManager extends Plugin {
    * @param {string} path path of the directory/file to remove
    * @returns {void}
    */
-  async remove(path) {
+   remove = async (path) => {
     try {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
@@ -436,9 +438,9 @@ class FileManager extends Plugin {
       const provider = this.fileProviderOf(path)
 
       if (await this.isDirectory(path)) {
-        this.recordFileAction("remove", {path: path})
+        this.fileActions.recordFileAction("remove", {path: path})
       } else {
-        this.recordFileAction("remove", {path: path, content: await this.getFile(path)})
+        this.fileActions.recordFileAction("remove", {path: path, content: await this.getFile(path)})
       }
       
       return await provider.remove(path)
@@ -879,7 +881,7 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   
-   async moveFile(src: string, dest: string) {
+   moveFile = async (src: string, dest: string) => {
     try {
       src = this.normalize(src)
       dest = this.normalize(dest)
@@ -896,7 +898,7 @@ class FileManager extends Plugin {
       }
       await this.copyFile(src, dest, fileName)
       await this.remove(src)
-      this.recordFileAction("move", {src: src, dest: dest})
+      this.fileActions.recordFileAction("move", {src: src, dest: dest})
 
     } catch (e) {
       throw new Error(e)
@@ -909,7 +911,7 @@ class FileManager extends Plugin {
    * @param {string} dest path of the destination folder
    * @returns {void}
    */
-   async moveDir(src: string, dest: string) {
+   moveDir = async (src: string, dest: string) => {
     try {
       src = this.normalize(src)
       dest = this.normalize(dest)
@@ -926,98 +928,13 @@ class FileManager extends Plugin {
       await this.copyDir(src, dest, dirName)
       await this.remove(src)
       
-      if(!this.isFromLastAction){
-        this.recordFileAction("movedir", {src: src, dest: dest, dirName: dirName})
+      if(!this.fileActions.isFromLastAction){
+        this.fileActions.recordFileAction("movedir", {src: src, dest: dest, dirName: dirName})
       }
       
     } catch (e) {
       throw new Error(e)
     }
-  }
-
-  /**
-   * Undos the last action on the Filesystem
-   * @param {string} action the action that was taken
-   * @param {string} args the command that was used
-   * @returns {void}
-   */
-  
-   recordFileAction(action: FileAction, args: any) {
-    if(!this.isFromLastAction){
-      this.actions.push({action: action, args: args})
-
-    }
-    this.isFromLastAction = false
-  }
-  
-  /**
-   * Reverts the last action that was performed by the user
-   * @returns {void}
-  */
-
-  async revertFileAction(redo: boolean){
-    this.isFromLastAction = true
-    
-    let lastAction = this.actions[this.actions.length - 1]
-    if (redo) {
-      lastAction = this.undoActions[this.undoActions.length - 1]
-      this.undoActions.pop()
-    } else {
-      const popped = this.actions.pop()
-
-      if(popped){
-        this.undoActions.push(popped)
-      }
-    }
-    
-    if(!lastAction){
-      return
-    }
-    switch(lastAction.action){
-      case "move":
-        let file = lastAction.args.src.substring(lastAction.args.src.lastIndexOf("/")+1),
-          folder = lastAction.args.src.substring(0, lastAction.args.src.lastIndexOf("/")+1)
-
-        await this.moveFile(`${lastAction.args.dest}/${file}`, folder)
-      break;
-      case "movedir":
-        let dir = lastAction.args.src,
-          src = dir.substring(0,dir.lastIndexOf("/"))
-          
-        this.moveDir(`${lastAction.args.dest}/${lastAction.args.dirName}`, src )
-      break;
-      case "writefile":
-        if(redo){
-          this.writeFile(lastAction.args.path, "")
-          return
-        }
-        this.remove(lastAction.args.path)
-      break;
-      case "rename":
-        if(redo){
-          this.rename( lastAction.args.oldPath, lastAction.args.newPath)
-          return
-        }
-        this.rename(lastAction.args.newPath, lastAction.args.oldPath)
-
-      break;
-      case "copy":
-        this.remove(lastAction.args.path)
-      break;
-      case "remove":
-        if(redo){
-          this.remove(lastAction.args.path)
-          return
-        }
-        this.writeFile(lastAction.args.path, lastAction.args.content)
-      break;
-    }
-
-  }
-
-  resetFileActions(){
-    this.actions = []
-    this.undoActions = []
   }
   
 }
