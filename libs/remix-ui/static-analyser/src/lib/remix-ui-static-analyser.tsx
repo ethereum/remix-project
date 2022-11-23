@@ -431,7 +431,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           onClick={event => handleCheckSingle(event, item._index)}
           checked={categoryIndex.includes(item._index.toString())}
           onChange={() => {}}
-          title={item.description}
         />
       </div>
     )
