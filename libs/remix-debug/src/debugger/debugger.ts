@@ -115,7 +115,6 @@ export class Debugger {
           }
         } else {
           this.event.trigger('newSourceLocation', [null])
-          this.vmDebuggerLogic.event.trigger('lineGasCostChanged', [null])
           this.currentFile = -1
           this.currentLine = -1
           this.vmDebuggerLogic.event.trigger('lineGasCostChanged', [null])
