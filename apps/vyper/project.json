@@ -1,7 +1,7 @@
 {
-  "name": "etherscan",
+  "name": "vyper",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/etherscan/src",
+  "sourceRoot": "apps/vyper/src",
   "projectType": "application",
   "implicitDependencies": [
     "remix-debug"
@@ -13,19 +13,19 @@
       "defaultConfiguration": "development",
       "options": {
         "compiler": "babel",
-        "outputPath": "dist/apps/etherscan",
-        "index": "apps/etherscan/src/index.html",
+        "outputPath": "dist/apps/vyper",
+        "index": "apps/vyper/src/index.html",
         "baseHref": "/",
-        "main": "apps/etherscan/src/main.tsx",
-        "polyfills": "apps/etherscan/src/polyfills.ts",
-        "tsConfig": "apps/etherscan/tsconfig.app.json",
+        "main": "apps/vyper/src/main.tsx",
+        "polyfills": "apps/vyper/src/polyfills.ts",
+        "tsConfig": "apps/vyper/tsconfig.app.json",
         "assets": [
-          "apps/etherscan/src/favicon.ico",
-          "apps/etherscan/src/assets"
+          "apps/vyper/src/favicon.ico",
+          "apps/vyper/src/assets"
         ],
-        "styles": ["apps/etherscan/src/styles.css"],
+        "styles": ["apps/vyper/src/styles.css"],
         "scripts": [],
-        "webpackConfig": "apps/etherscan/webpack.config.js"
+        "webpackConfig": "@nrwl/react/plugins/webpack"
       },
       "configurations": {
         "development": {
@@ -33,8 +33,8 @@
         "production": {
           "fileReplacements": [
             {
-              "replace": "apps/etherscan/src/environments/environment.ts",
-              "with": "apps/etherscan/src/environments/environment.prod.ts"
+              "replace": "apps/vyper/src/environments/environment.ts",
+              "with": "apps/vyper/src/environments/environment.prod.ts"
             }
           ]
         }
@@ -44,16 +44,16 @@
       "executor": "@nrwl/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "etherscan:build",
+        "buildTarget": "vyper:build",
         "hmr": true
       },
       "configurations": {
         "development": {
-          "buildTarget": "etherscan:build:development",
-          "port": 2020
+          "buildTarget": "vyper:build:development",
+          "port": 5002
         },
         "production": {
-          "buildTarget": "etherscan:build:production"
+          "buildTarget": "vyper:build:production"
         }
       }
     },
@@ -61,7 +61,7 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/etherscan/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["apps/vyper/**/*.{ts,tsx,js,jsx}"]
       }
     }
   },
