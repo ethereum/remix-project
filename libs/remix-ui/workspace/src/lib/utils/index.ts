@@ -116,5 +116,17 @@ export const contextMenuDefaultActions: MenuItems = [{
   type: ['folder', 'gist'],
   multiselect: false,
   label: ''
+}, {
+  id: 'publishToGist',
+  name: 'Push changes to gist',
+  type: ['folder', 'gist'],
+  multiselect: false,
+  label: 'Publish all to Gist'
+}, {
+  id: 'uploadFile',
+  name: 'Load a Local File',
+  type: ['folder', 'gist'],
+  multiselect: false,
+  label: 'Load a Local File'
 }
 ]

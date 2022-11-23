@@ -150,6 +150,7 @@ export interface FileExplorerContextMenuProps {
     copyFileName?: (path: string, type: string) => void
     copyPath?: (path: string, type: string) => void
     generateUml?: (path: string) => Promise<void>
+    uploadFile?: (target: EventTarget & HTMLInputElement) => void
 }
 
 export interface FileExplorerState {
@@ -165,12 +166,7 @@ export interface FileExplorerState {
       multiselect: boolean
       label: string
     }[]
-    focusContext: {
-      element: string
-      x: number
-      y: number
-      type: string
-    }
+    focusContext: FileFocusContextType
     focusEdit: {
       element: string
       type: string
@@ -180,8 +176,17 @@ export interface FileExplorerState {
     mouseOverElement: string
     showContextMenu: boolean
     reservedKeywords: string[]
-    copyElement: {
-      key: string
-      type: 'folder' | 'gist' | 'file'
-    }[]
+    copyElement: CopyElementType[]
   }
+
+export type  FileFocusContextType = {
+  element: string
+  x: number
+  y: number
+  type: string
+}
+
+export type CopyElementType = {
+  key: string
+  type: 'folder' | 'gist' | 'file'
+}
