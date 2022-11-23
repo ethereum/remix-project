@@ -14,6 +14,7 @@ soljson.js
 *~
 *_group*.*.ts
 *_group*.ts
+stats.json
 
 
 # compiled output
