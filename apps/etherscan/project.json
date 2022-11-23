@@ -50,7 +50,7 @@
       "configurations": {
         "development": {
           "buildTarget": "etherscan:build:development",
-          "port": 2020
+          "port": 5003
         },
         "production": {
           "buildTarget": "etherscan:build:production"
