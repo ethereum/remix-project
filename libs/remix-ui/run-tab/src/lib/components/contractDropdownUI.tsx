@@ -141,7 +141,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     } else {
       setAtAddressOptions({
         disabled: true,
-        title: loadedAddress ? 'Compile a *.sol file or select a *.abi file.' : <span className="text-start">To interact with a deployed contract either,<br /> enter its address and compile its source *.sol file <br />(with the same compiler settings) or select its .abi file in the editor. </span>
+        title: loadedAddress ? 'Compile a *.sol file or select a *.abi file.' : <span className="text-start">To interact with a deployed contract, either<br /> enter its address and compile its source *.sol file <br />(with the same compiler settings) or select its .abi file in the editor. </span>
       })
     }
   }
@@ -281,28 +281,22 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
           : null}
       </div>
       <div className="udapp_subcontainer">
-        {contractOptions.disabled ? (
-          <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
-            {(contractList[currentFile] || []).map((contract, index) => {
-              return <option key={index} value={contract.alias}>
-                {contract.alias} - {contract.file}
-              </option>
-            })}
-          </select>
-        ) : (<CustomTooltip
+        <CustomTooltip
           placement={"right"}
           tooltipClasses="text-nowrap text-left"
           tooltipId="remixUdappContractNamesTooltip"
           tooltipText={contractOptions.title}
         >
-          <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
-            {(contractList[currentFile] || []).map((contract, index) => {
-              return <option key={index} value={contract.alias}>
-                {contract.alias} - {contract.file}
-              </option>
-            })}
-          </select>
-        </CustomTooltip>)}
+          <div id="udappcontractNamesWrapper" className="w-100">
+            <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block', pointerEvents: 'none' }}>
+              {(contractList[currentFile] || []).map((contract, index) => {
+                return <option key={index} value={contract.alias}>
+                  {contract.alias} - {contract.file}
+                </option>
+              })}
+            </select>
+          </div>
+        </CustomTooltip>
         <span className="py-1" style={{ display: abiLabel.display }}>{abiLabel.content}</span>
       </div>
       <div>
