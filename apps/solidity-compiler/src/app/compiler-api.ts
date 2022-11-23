@@ -150,8 +150,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   async compileWithParameters (compilationTargets, settings) {
     const compilerState = this.getCompilerState()
     settings.version = settings.version || compilerState.currentVersion
-    const worker = new Worker(new URL('./compiler-worker', import.meta.url))
-    const res = await compile(compilationTargets, settings, (url, cb) => this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)), worker)
+    const res = await compile(compilationTargets, settings, (url, cb) => this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
     return res
   }
 

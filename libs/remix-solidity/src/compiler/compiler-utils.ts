@@ -50,7 +50,7 @@ export function canUseWorker (selectedVersion) {
   )
 }
 
-function browserSupportWorker () {
+export function browserSupportWorker () {
   return document.location.protocol !== 'file:' && Worker !== undefined
 }
 

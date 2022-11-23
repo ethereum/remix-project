@@ -9,8 +9,9 @@ import {
   Source, SourceWithTarget, MessageFromWorker, CompilerState, CompilationResult,
   visitContractsCallbackParam, visitContractsCallbackInterface, CompilationError,
   gatherImportsCallbackInterface,
-  isFunctionDescription, CompilerRetriggerMode
+  isFunctionDescription, CompilerRetriggerMode, EsWebWorkerHandlerInterface
 } from './types'
+import { browserSupportWorker } from './compiler-utils'
 
 /*
   trigger compilationFinished, compilerLoaded, compilationStarted, compilationDuration
@@ -19,6 +20,7 @@ export class Compiler {
   event
   state: CompilerState
   handleImportCall
+  wokerHandler: EsWebWorkerHandlerInterface
   constructor(handleImportCall?: (fileurl: string, cb) => void) {
     this.event = new EventManager()
     this.handleImportCall = handleImportCall
@@ -40,6 +42,12 @@ export class Compiler {
         data: null,
         source: null
       }
+    }
+    if (browserSupportWorker()) {
+      import('../lib/es-web-worker/es-web-worker-handler').then((ESWebWorker) => {
+        this.wokerHandler = new ESWebWorker.default()
+        console.log('worker handler loaded', this.wokerHandler)
+      })
     }
 
     this.event.register('compilationFinished', (success: boolean, data: CompilationResult, source: SourceWithTarget, input: string, version: string) => {
@@ -97,7 +105,7 @@ export class Compiler {
    * @param version compiler version
    */
 
-  onCompilerLoaded (version: string, license: string): void {
+  onCompilerLoaded(version: string, license: string): void {
     this.state.currentVersion = version
     this.state.compilerLicense = license
     this.event.trigger('compilerLoaded', [version, license])
@@ -226,15 +234,14 @@ export class Compiler {
    * @param url URL to load compiler from
    */
 
-  loadVersion(usingWorker: boolean, url: string, worker?: Worker): void {
+  loadVersion(usingWorker: boolean, url: string): void {
     console.log('Loading ' + url + ' ' + (usingWorker ? 'with worker' : 'without worker'))
     this.event.trigger('loadingCompiler', [url, usingWorker])
     if (this.state.worker) {
       this.state.worker.terminate()
       this.state.worker = null
     }
-    if (usingWorker && ( worker || ( typeof (window) !== 'undefined' && window['Worker'] ))) {
-      this.state.worker = worker || window['worker']
+    if (usingWorker) {
       this.loadWorker(url)
     } else {
       this.loadInternal(url)
@@ -274,7 +281,8 @@ export class Compiler {
 
   loadWorker(url: string): void {
     console.log(this)
-    
+
+    this.state.worker = this.wokerHandler.getWorker()
     const jobs: Record<'sources', SourceWithTarget>[] = []
 
     this.state.worker.addEventListener('message', (msg: Record<'data', MessageFromWorker>) => {
