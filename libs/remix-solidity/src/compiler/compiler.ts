@@ -42,12 +42,8 @@ export class Compiler {
         source: null
       }
     }
-    if (typeof (window) !== 'undefined' && Worker) {
-      import('../lib/es-web-worker/es-web-worker-handler').then((ESWebWorker) => {
-        this.wokerHandler = new ESWebWorker.default()
-        console.log('worker handler loaded', this.wokerHandler)
-      })
-    }
+
+    this.loadWorkerHandler()
 
     this.event.register('compilationFinished', (success: boolean, data: CompilationResult, source: SourceWithTarget, input: string, version: string) => {
       if (success && this.state.compilationStartTime) {
@@ -69,6 +65,15 @@ export class Compiler {
   set<K extends keyof CompilerState>(key: K, value: CompilerState[K]): void {
     this.state[key] = value
     if (key === 'runs') this.state['runs'] = parseInt(value)
+  }
+
+  async loadWorkerHandler() {
+    if (this.wokerHandler) return
+    if (typeof (window) !== 'undefined' && Worker) {
+      const ESWebWorker = await import('../lib/es-web-worker/es-web-worker-handler')
+      this.wokerHandler = new ESWebWorker.default()
+      console.log('worker handler loaded', this.wokerHandler)
+    }
   }
 
   /**
@@ -241,7 +246,9 @@ export class Compiler {
       this.state.worker = null
     }
     if (usingWorker) {
-      this.loadWorker(url)
+      this.loadWorkerHandler().then(() => {
+        this.loadWorker(url)
+      })
     } else {
       this.loadInternal(url)
     }
@@ -312,6 +319,7 @@ export class Compiler {
             break
           }
       }
+
     })
 
     this.state.worker.addEventListener('error', (msg: Record<'data', MessageFromWorker>) => {
