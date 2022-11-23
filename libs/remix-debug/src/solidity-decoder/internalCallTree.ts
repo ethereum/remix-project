@@ -69,7 +69,7 @@ export class InternalCallTree {
         // each recursive call to buildTree represent a new context (either call, delegatecall, internal function)
         const calledAddress = traceManager.getCurrentCalledAddressAt(0)
         const isCreation = isContractCreation(calledAddress)
-        buildTree(this, 0, '', true, isCreation).then((result) => {
+        buildTree(this, 0, '', isCreation).then((result) => {
           if (result.error) {
             this.event.trigger('callTreeBuildFailed', [result.error])
           } else {
@@ -192,7 +192,7 @@ export class InternalCallTree {
   }
 }
 
-async function buildTree (tree, step, scopeId, isExternalCall, isCreation, functionDefinition?, contractObj?, sourceLocation?) {
+async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, contractObj?, sourceLocation?) {
   let subScope = 1
   tree.scopeStarts[step] = scopeId
   tree.scopes[scopeId] = { firstStep: step, locals: {}, isCreation, gasCost: 0 }
@@ -283,7 +283,7 @@ async function buildTree (tree, step, scopeId, isExternalCall, isCreation, funct
     if (isInternalTxInstrn || (previousSourceLocation.jump === 'i' && functionDefinition)) {
       try {
         const newScopeId = scopeId === '' ? subScope.toString() : scopeId + '.' + subScope
-        const externalCallResult = await buildTree(tree, step, newScopeId, isInternalTxInstrn, isCreateInstrn, functionDefinition, contractObj, sourceLocation)
+        const externalCallResult = await buildTree(tree, step, newScopeId, isCreateInstrn, functionDefinition, contractObj, sourceLocation)
         if (externalCallResult.error) {
           return { outStep: step, error: 'InternalCallTree - ' + externalCallResult.error }
         } else {
