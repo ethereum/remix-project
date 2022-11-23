@@ -47,6 +47,7 @@ module.exports = config => {
 
     output: {
       ...nxWebpackConfig.output,
+      publicPath: '/',
       filename: `[name].${versionData.version}.${versionData.timestamp}.js`,
       chunkFilename: `[name].${versionData.version}.${versionData.timestamp}.js`,
     },

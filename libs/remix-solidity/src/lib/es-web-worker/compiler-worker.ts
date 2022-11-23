@@ -5,7 +5,6 @@ const missingInputs: string[] = []
 
 self.onmessage = (e: MessageEvent) => {
   const data: MessageToWorker = e.data
-  console.log('worker received message', data)
   switch (data.cmd) {
     case 'loadVersion':
       {
