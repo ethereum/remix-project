@@ -19,7 +19,7 @@ export class Compiler {
   event
   state: CompilerState
   handleImportCall
-  wokerHandler: EsWebWorkerHandlerInterface
+  workerHandler: EsWebWorkerHandlerInterface
   constructor(handleImportCall?: (fileurl: string, cb) => void) {
     this.event = new EventManager()
     this.handleImportCall = handleImportCall
@@ -68,11 +68,11 @@ export class Compiler {
   }
 
   async loadWorkerHandler() {
-    if (this.wokerHandler) return
+    if (this.workerHandler) return
     if (typeof (window) !== 'undefined' && Worker) {
       const ESWebWorker = await import('../lib/es-web-worker/es-web-worker-handler')
-      this.wokerHandler = new ESWebWorker.default()
-      console.log('worker handler loaded', this.wokerHandler)
+      this.workerHandler = new ESWebWorker.default()
+      console.log('worker handler loaded', this.workerHandler)
     }
   }
 
@@ -288,7 +288,7 @@ export class Compiler {
   loadWorker(url: string): void {
     console.log(this)
 
-    this.state.worker = this.wokerHandler.getWorker()
+    this.state.worker = this.workerHandler.getWorker()
     const jobs: Record<'sources', SourceWithTarget>[] = []
 
     this.state.worker.addEventListener('message', (msg: Record<'data', MessageFromWorker>) => {
