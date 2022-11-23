@@ -5,6 +5,7 @@ import { CompilerContainerProps } from './types'
 import { ConfigurationSettings } from '@remix-project/remix-lib-ts'
 import { checkSpecialChars, CustomTooltip, extractNameFromKey } from '@remix-ui/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '@remix-project/remix-solidity'
+
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
 import { resetEditorMode, listenToEvents } from './actions/compiler'
 import { getValidLanguage } from '@remix-project/remix-solidity'
