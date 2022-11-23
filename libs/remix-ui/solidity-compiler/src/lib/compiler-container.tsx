@@ -945,13 +945,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   {(configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div>}
                 </div>}
             >
-              <div className="d-flex align-items-center">
+              <div className="d-flex align-items-center justify-content-center">
                 { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn ml-4" aria-hidden="true"></i> }
                 <div className="d-flex justify-content-between align-items-center">
                   <span>
                     <FormattedMessage id='solidity.compile' defaultMessage='Compile' />
                   </span>
-                  <span className="ml-2">
+                  <span className="ml-1">
                     {typeof state.compiledFileName === 'string'
                       ? extractNameFromKey(state.compiledFileName) ||
                         `<${intl.formatMessage({
