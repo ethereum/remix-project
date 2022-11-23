@@ -11,7 +11,6 @@ import {
   gatherImportsCallbackInterface,
   isFunctionDescription, CompilerRetriggerMode, EsWebWorkerHandlerInterface
 } from './types'
-import { browserSupportWorker } from './compiler-utils'
 
 /*
   trigger compilationFinished, compilerLoaded, compilationStarted, compilationDuration
@@ -43,7 +42,7 @@ export class Compiler {
         source: null
       }
     }
-    if (browserSupportWorker()) {
+    if (typeof (window) !== 'undefined' && Worker) {
       import('../lib/es-web-worker/es-web-worker-handler').then((ESWebWorker) => {
         this.wokerHandler = new ESWebWorker.default()
         console.log('worker handler loaded', this.wokerHandler)
