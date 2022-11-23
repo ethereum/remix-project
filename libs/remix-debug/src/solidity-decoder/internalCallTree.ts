@@ -335,15 +335,6 @@ async function registerFunctionParameters (tree, functionDefinition, step, scope
     if (functionDefinition.parameters) {
       const inputs = functionDefinition.parameters
       const outputs = functionDefinition.returnParameters
-      // for (const element of functionDefinition.parameters) {
-      //   if (element.nodeType === 'ParameterList') {
-      //     if (!inputs) inputs = element
-      //     else {
-      //       outputs = element
-      //       break
-      //     }
-      //   }
-      // }
       // input params
       if (inputs && inputs.parameters) {
         functionDefinitionAndInputs.inputs = addParams(inputs, tree, scopeId, states, contractObj, sourceLocation, stack.length, inputs.parameters.length, -1)
