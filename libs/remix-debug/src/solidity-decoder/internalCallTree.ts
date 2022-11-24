@@ -42,6 +42,10 @@ export class InternalCallTree {
   }
   gasCostPerLine
   offsetToLineColumnConverter
+  pendingConstructorExecutionAt: number
+  pendingConstructorId: number
+  pendingConstructor
+  constructorsStartExecution
 
   /**
     * constructor
@@ -109,6 +113,10 @@ export class InternalCallTree {
     this.astWalker = new AstWalker()
     this.reducedTrace = []
     this.locationAndOpcodePerVMTraceIndex = {}
+    this.pendingConstructorExecutionAt = -1
+    this.pendingConstructorId = -1
+    this.constructorsStartExecution = {}
+    this.pendingConstructor = null
   }
 
   /**
@@ -192,7 +200,7 @@ export class InternalCallTree {
   }
 }
 
-async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, contractObj?, sourceLocation?) {
+async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, contractObj?, sourceLocation?, validSourceLocation?) {
   let subScope = 1
   tree.scopeStarts[step] = scopeId
   tree.scopes[scopeId] = { firstStep: step, locals: {}, isCreation, gasCost: 0 }
@@ -217,9 +225,9 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
       included.file === source.file)
   }
 
-  let currentSourceLocation = { start: -1, length: -1, file: -1, jump: '-' }
+  let currentSourceLocation = sourceLocation || { start: -1, length: -1, file: -1, jump: '-' }
   let previousSourceLocation = currentSourceLocation
-  let previousValidSourceLocation = currentSourceLocation
+  let previousValidSourceLocation = validSourceLocation || currentSourceLocation
   while (step < tree.traceManager.trace.length) {
     let sourceLocation
     let validSourceLocation
@@ -275,15 +283,31 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
 
     const contractObj = await tree.solidityProxy.contractObjectAtAddress(address)
     const generatedSources = getGeneratedSources(tree, scopeId, contractObj)
-    const functionDefinition = resolveFunctionDefinition(tree, sourceLocation, generatedSources)
+    let functionDefinition = resolveFunctionDefinition(tree, sourceLocation, generatedSources)
 
     const isInternalTxInstrn = isCallInstruction(stepDetail)
     const isCreateInstrn = isCreateInstruction(stepDetail)
     // we are checking if we are jumping in a new CALL or in an internal function
-    if (isInternalTxInstrn || (previousSourceLocation.jump === 'i' && functionDefinition)) {
+
+    const constructorExecutionStarts = tree.pendingConstructorExecutionAt > -1 && tree.pendingConstructorExecutionAt < validSourceLocation.start
+    if (functionDefinition && functionDefinition.kind === 'constructor' && tree.pendingConstructorExecutionAt === -1 && !tree.constructorsStartExecution[functionDefinition.id]) {
+      tree.pendingConstructorExecutionAt = validSourceLocation.start
+      tree.pendingConstructorId = functionDefinition.id
+      tree.pendingConstructor = functionDefinition
+      // from now on we'll be waiting for a change in the source location which will mark the beginning of the constructor execution.
+      // constructorsStartExecution allows to keep track on which constructor has already been executed.
+    }
+    if (constructorExecutionStarts || isInternalTxInstrn || (functionDefinition && previousSourceLocation.jump === 'i')) {
       try {
+        if (constructorExecutionStarts) {
+          tree.constructorsStartExecution[tree.pendingConstructorId] = tree.pendingConstructorExecutionAt
+          functionDefinition = tree.pendingConstructor
+          tree.pendingConstructorExecutionAt = -1
+          tree.pendingConstructorId = -1
+          tree.pendingConstructor = null
+        }
         const newScopeId = scopeId === '' ? subScope.toString() : scopeId + '.' + subScope
-        const externalCallResult = await buildTree(tree, step, newScopeId, isCreateInstrn, functionDefinition, contractObj, sourceLocation)
+        const externalCallResult = await buildTree(tree, step, newScopeId, isCreateInstrn, functionDefinition, contractObj, sourceLocation, validSourceLocation)
         if (externalCallResult.error) {
           return { outStep: step, error: 'InternalCallTree - ' + externalCallResult.error }
         } else {
@@ -328,7 +352,6 @@ async function registerFunctionParameters (tree, functionDefinition, step, scope
   const functionDefinitionAndInputs = { functionDefinition, inputs: [] }
   // means: the previous location was a function definition && JUMPDEST
   // => we are at the beginning of the function and input/output are setup
-
   try {
     const stack = tree.traceManager.getStackAt(step)
     const states = tree.solidityProxy.extractStatesDefinitions()
