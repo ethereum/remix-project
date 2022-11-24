@@ -74,7 +74,7 @@ export class InternalCallTree {
         const calledAddress = traceManager.getCurrentCalledAddressAt(0)
         const isCreation = isContractCreation(calledAddress)
 
-        const scopeId = 1
+        const scopeId = '1'
         this.scopeStarts[0] = scopeId
         this.scopes[scopeId] = { firstStep: 0, locals: {}, isCreation, gasCost: 0 }
 
