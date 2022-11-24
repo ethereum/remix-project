@@ -73,7 +73,12 @@ export class InternalCallTree {
         // each recursive call to buildTree represent a new context (either call, delegatecall, internal function)
         const calledAddress = traceManager.getCurrentCalledAddressAt(0)
         const isCreation = isContractCreation(calledAddress)
-        buildTree(this, 0, '', isCreation).then((result) => {
+
+        const scopeId = 1
+        this.scopeStarts[0] = scopeId
+        this.scopes[scopeId] = { firstStep: 0, locals: {}, isCreation, gasCost: 0 }
+
+        buildTree(this, 0, scopeId, isCreation).then((result) => {
           if (result.error) {
             this.event.trigger('callTreeBuildFailed', [result.error])
           } else {
@@ -202,9 +207,6 @@ export class InternalCallTree {
 
 async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, contractObj?, sourceLocation?, validSourceLocation?) {
   let subScope = 1
-  tree.scopeStarts[step] = scopeId
-  tree.scopes[scopeId] = { firstStep: step, locals: {}, isCreation, gasCost: 0 }
-
   if (functionDefinition) {
     await registerFunctionParameters(tree, functionDefinition, step, scopeId, contractObj, validSourceLocation)
   }
@@ -299,15 +301,18 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
     }
     if (constructorExecutionStarts || isInternalTxInstrn || (functionDefinition && previousSourceLocation.jump === 'i')) {
       try {
+        const newScopeId = scopeId === '' ? subScope.toString() : scopeId + '.' + subScope
+        tree.scopeStarts[step + 1] = newScopeId
+        tree.scopes[newScopeId] = { firstStep: step + 1, locals: {}, isCreation, gasCost: 0 }
         if (constructorExecutionStarts) {
           tree.constructorsStartExecution[tree.pendingConstructorId] = tree.pendingConstructorExecutionAt
           functionDefinition = tree.pendingConstructor
           tree.pendingConstructorExecutionAt = -1
           tree.pendingConstructorId = -1
           tree.pendingConstructor = null
-        }
-        const newScopeId = scopeId === '' ? subScope.toString() : scopeId + '.' + subScope
-        const externalCallResult = await buildTree(tree, step, newScopeId, isCreateInstrn, functionDefinition, contractObj, sourceLocation, validSourceLocation)
+          await registerFunctionParameters(tree, functionDefinition, step + 1, newScopeId, contractObj, validSourceLocation)
+        }        
+        const externalCallResult = await buildTree(tree, step + 1, newScopeId, isCreateInstrn, functionDefinition, contractObj, sourceLocation, validSourceLocation)
         if (externalCallResult.error) {
           return { outStep: step, error: 'InternalCallTree - ' + externalCallResult.error }
         } else {
