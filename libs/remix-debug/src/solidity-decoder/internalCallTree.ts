@@ -285,7 +285,7 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
 
     const contractObj = await tree.solidityProxy.contractObjectAtAddress(address)
     const generatedSources = getGeneratedSources(tree, scopeId, contractObj)
-    let functionDefinition = resolveFunctionDefinition(tree, sourceLocation, generatedSources)
+    const functionDefinition = resolveFunctionDefinition(tree, sourceLocation, generatedSources)
 
     const isInternalTxInstrn = isCallInstruction(stepDetail)
     const isCreateInstrn = isCreateInstruction(stepDetail)
