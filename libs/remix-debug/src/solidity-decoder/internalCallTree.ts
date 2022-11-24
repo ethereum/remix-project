@@ -309,19 +309,22 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
       // from now on we'll be waiting for a change in the source location which will mark the beginning of the constructor execution.
       // constructorsStartExecution allows to keep track on which constructor has already been executed.
     }
-    if (constructorExecutionStarts || isInternalTxInstrn || (functionDefinition && previousSourceLocation.jump === 'i')) {
+    const internalfunctionCall = functionDefinition && previousSourceLocation.jump === 'i'
+    if (constructorExecutionStarts || isInternalTxInstrn || internalfunctionCall) {
       try {
         const newScopeId = scopeId === '' ? subScope.toString() : scopeId + '.' + subScope
-        tree.scopeStarts[step + 1] = newScopeId
-        tree.scopes[newScopeId] = { firstStep: step + 1, locals: {}, isCreation, gasCost: 0 }
+        tree.scopeStarts[step] = newScopeId
+        tree.scopes[newScopeId] = { firstStep: step, locals: {}, isCreation, gasCost: 0 }
+        // for the ctor we we are at the start of its trace, we have to replay this step in order to catch all the locals:
+        let nextStep = constructorExecutionStarts ? step : step + 1
         if (constructorExecutionStarts) {
           tree.constructorsStartExecution[tree.pendingConstructorId] = tree.pendingConstructorExecutionAt
           tree.pendingConstructorExecutionAt = -1
-          tree.pendingConstructorId = -1          
+          tree.pendingConstructorId = -1
           await registerFunctionParameters(tree, tree.pendingConstructor, step, newScopeId, contractObj, previousValidSourceLocation)
           tree.pendingConstructor = null
-        }        
-        const externalCallResult = await buildTree(tree, step + 1, newScopeId, isCreateInstrn, functionDefinition, contractObj, sourceLocation, validSourceLocation)
+        }
+        const externalCallResult = await buildTree(tree, nextStep, newScopeId, isCreateInstrn, functionDefinition, contractObj, sourceLocation, validSourceLocation)
         if (externalCallResult.error) {
           return { outStep: step, error: 'InternalCallTree - ' + externalCallResult.error }
         } else {
