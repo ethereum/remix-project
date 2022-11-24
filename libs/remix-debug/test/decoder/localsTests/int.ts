@@ -54,9 +54,9 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
             let functions2 = callTree.retrieveFunctionsStack(115)
             let functions3 = callTree.retrieveFunctionsStack(13)
 
-            st.equals(functions1.length, 1)
-            st.equals(functions2.length, 2)
-            st.equals(functions3.length, 0)
+            st.equals(functions1.length, 2)
+            st.equals(functions2.length, 3)
+            st.equals(functions3.length, 1)
 
             st.equal(functions1[0].gasCost, 55)
   
