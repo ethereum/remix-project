@@ -306,11 +306,10 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
         tree.scopes[newScopeId] = { firstStep: step + 1, locals: {}, isCreation, gasCost: 0 }
         if (constructorExecutionStarts) {
           tree.constructorsStartExecution[tree.pendingConstructorId] = tree.pendingConstructorExecutionAt
-          functionDefinition = tree.pendingConstructor
           tree.pendingConstructorExecutionAt = -1
-          tree.pendingConstructorId = -1
+          tree.pendingConstructorId = -1          
+          await registerFunctionParameters(tree, tree.pendingConstructor, step, newScopeId, contractObj, previousValidSourceLocation)
           tree.pendingConstructor = null
-          await registerFunctionParameters(tree, functionDefinition, step + 1, newScopeId, contractObj, validSourceLocation)
         }        
         const externalCallResult = await buildTree(tree, step + 1, newScopeId, isCreateInstrn, functionDefinition, contractObj, sourceLocation, validSourceLocation)
         if (externalCallResult.error) {
