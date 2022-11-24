@@ -87,14 +87,7 @@ export class Debugger {
           const rawLocation = rawLocationAndOpcode.sourceLocation
           const stepDetail = rawLocationAndOpcode.stepDetail
           const generatedSources = this.debugger.callTree.sourceLocationTracker.getGeneratedSourcesFromAddress(address)
-          const astSources = Object.assign({}, compilationResultForAddress.data.sources)
-          const sources = Object.assign({}, compilationResultForAddress.source.sources)
-          if (generatedSources) {
-            for (const genSource of generatedSources) {
-              astSources[genSource.name] = { id: genSource.id, ast: genSource.ast }
-              sources[genSource.name] = { content: genSource.contents }
-            }
-          }
+
           const lineColumnPos = rawLocationAndOpcode.lineColumnPos
           
           let lineGasCostObj = null

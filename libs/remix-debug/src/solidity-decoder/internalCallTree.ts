@@ -265,7 +265,17 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
     let lineColumnPos
     if (tree.offsetToLineColumnConverter) {
       try {
-        lineColumnPos = await tree.offsetToLineColumnConverter.offsetToLineColumn(validSourceLocation, validSourceLocation.file, tree.solidityProxy.sourcesCode, tree.solidityProxy.sources)
+        const generatedSources = tree.sourceLocationTracker.getGeneratedSourcesFromAddress(address)
+        const astSources = Object.assign({}, tree.solidityProxy.sources)
+        const sources = Object.assign({}, tree.solidityProxy.sourcesCode)
+        if (generatedSources) {
+          for (const genSource of generatedSources) {
+            astSources[genSource.name] = { id: genSource.id, ast: genSource.ast }
+            sources[genSource.name] = { content: genSource.contents }
+          }
+        }
+        
+        lineColumnPos = await tree.offsetToLineColumnConverter.offsetToLineColumn(validSourceLocation, validSourceLocation.file, sources, astSources)
         if (!tree.gasCostPerLine[validSourceLocation.file]) tree.gasCostPerLine[validSourceLocation.file] = {}
         if (!tree.gasCostPerLine[validSourceLocation.file][lineColumnPos.start.line]) {
           tree.gasCostPerLine[validSourceLocation.file][lineColumnPos.start.line] = {
