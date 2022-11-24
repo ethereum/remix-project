@@ -65,7 +65,7 @@ export class InternalCallTree {
     this.offsetToLineColumnConverter = offsetToLineColumnConverter
     this.sourceLocationTracker = new SourceLocationTracker(codeManager, { debugWithGeneratedSources: opts.debugWithGeneratedSources })
     debuggerEvent.register('newTraceLoaded', (trace) => {
-      let time = Date.now()
+      const time = Date.now()
       this.reset()
       if (!this.solidityProxy.loaded()) {
         this.event.trigger('callTreeBuildFailed', ['compilation result not loaded. Cannot build internal call tree'])
