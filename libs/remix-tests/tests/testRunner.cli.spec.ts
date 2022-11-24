@@ -11,6 +11,10 @@ describe('testRunner: remix-tests CLI', () => {
         const dirContent = result.stdout.toString()
         // Install dependencies if 'node_modules' is not already present
         if(!dirContent.includes('node_modules')) {
+          execSync('yarn add @remix-project/remix-lib ../../libs/remix-lib', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
+          execSync('yarn add @remix-project/remix-url-resolver ../../libs/remix-url-resolver', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
+          execSync('yarn add @remix-project/remix-solidity ../../libs/remix-solidity', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
+          execSync('yarn add @remix-project/remix-simulator ../../libs/remix-simulator', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
           execSync('yarn install', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
         }
     }
