@@ -63,7 +63,7 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
-      - run: cd dist/libs/remix-tests
+      - run: cd dist/libs/remix-tests && yarn
       - run: yarn run test:libs
 
   remix-ide-browser:
