@@ -97,17 +97,17 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"545")]',
       })
-      .goToVMTraceStep(10)
-      .waitForElementVisible({
-        locateStrategy: 'xpath',
-        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"10")]',
-      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`constructor (string memory name_, string memory symbol_) {
         _name = name_;
         _symbol = symbol_;
     }`) !== -1,
           'current displayed content is not from the ERC20 source code')
+      })
+      .goToVMTraceStep(10)
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"10")]',
       })
   },
 
