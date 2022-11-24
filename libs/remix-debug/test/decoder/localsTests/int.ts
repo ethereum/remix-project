@@ -50,8 +50,8 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
             st.equals((await callTree.getGasCostPerLine(0, 16)).gasCost, 11)
             st.equals((await callTree.getGasCostPerLine(0, 32)).gasCost, 84)
             
-            let functions1 = callTree.retrieveFunctionsStack(102)
-            let functions2 = callTree.retrieveFunctionsStack(115)
+            let functions1 = callTree.retrieveFunctionsStack(103)
+            let functions2 = callTree.retrieveFunctionsStack(116)
             let functions3 = callTree.retrieveFunctionsStack(13)
 
             st.equals(functions1.length, 2)
