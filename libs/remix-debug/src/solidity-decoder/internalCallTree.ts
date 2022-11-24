@@ -206,7 +206,7 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
   tree.scopes[scopeId] = { firstStep: step, locals: {}, isCreation, gasCost: 0 }
 
   if (functionDefinition) {
-    await registerFunctionParameters(tree, functionDefinition, step, scopeId, contractObj, sourceLocation)
+    await registerFunctionParameters(tree, functionDefinition, step, scopeId, contractObj, validSourceLocation)
   }
   
   function callDepthChange (step, trace) {
@@ -470,7 +470,8 @@ function addParams (parameterList, tree, scopeId, states, contractObj, sourceLoc
         type: parseType(param.typeDescriptions.typeString, states, contractName, location),
         stackDepth: stackDepth,
         sourceLocation: sourceLocation,
-        abi: contractObj.contract.abi
+        abi: contractObj.contract.abi,
+        isParameter: true
       }
       params.push(attributesName)
     }
