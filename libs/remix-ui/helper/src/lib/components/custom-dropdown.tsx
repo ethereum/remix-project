@@ -20,6 +20,20 @@ export const CustomToggle = React.forwardRef(({ children, onClick, icon, classNa
   </button>
 ))
 
+export const CustomIconsToggle = React.forwardRef(({ onClick, icon, className = '' }: { children?: React.ReactNode, onClick: () => void, icon: string, className: string }, ref: Ref<HTMLSpanElement>) => (
+  <span
+    ref={ref}
+    onClick={(e) => {
+      e.preventDefault()
+      onClick()
+    }}
+    className={`${className.replace('dropdown-toggle', '')} mb-0 pb-0 d-flex justify-content-end align-items-end remixuimenuicon_shadow fs-3`}
+    data-id="workspaceMenuDropdown"
+  >
+    { icon && <i style={{ fontSize: 'large' }} className={`${icon}`} data-icon="workspaceDropdownMenuIcon"></i> }
+  </span>
+))
+
 // forwardRef again here!
 // Dropdown needs access to the DOM of the Menu to measure it
 export const CustomMenu = React.forwardRef(

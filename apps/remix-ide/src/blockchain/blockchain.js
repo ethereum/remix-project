@@ -674,22 +674,24 @@ export class Blockchain extends Plugin {
         const hhlogs = await this.web3().eth.getHHLogsForTx(txResult.transactionHash)
 
         if (hhlogs && hhlogs.length) {
-          let finalLogs = '<b>console.log:</b>\n'
-          for (const log of hhlogs) {
-            let formattedLog
-            // Hardhat implements the same formatting options that can be found in Node.js' console.log,
-            // which in turn uses util.format: https://nodejs.org/dist/latest-v12.x/docs/api/util.html#util_util_format_format_args
-            // For example: console.log("Name: %s, Age: %d", remix, 6) will log 'Name: remix, Age: 6'
-            // We check first arg to determine if 'util.format' is needed
-            if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
-              formattedLog = format(log[0], ...log.slice(1))
-            } else {
-              formattedLog = log.join(' ')
-            }
-            finalLogs = finalLogs + '&emsp;' + formattedLog + '\n'
-          }
+          let finalLogs = <div><div><b>console.log:</b></div>
+          {
+            hhlogs.map((log) => {
+              let formattedLog
+              // Hardhat implements the same formatting options that can be found in Node.js' console.log,
+              // which in turn uses util.format: https://nodejs.org/dist/latest-v12.x/docs/api/util.html#util_util_format_format_args
+              // For example: console.log("Name: %s, Age: %d", remix, 6) will log 'Name: remix, Age: 6'
+              // We check first arg to determine if 'util.format' is needed
+              if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
+                formattedLog = format(log[0], ...log.slice(1))
+              } else {
+                formattedLog = log.join(' ')
+              }
+              return <div>{formattedLog}</div>
+          })}
+          </div>          
           _paq.push(['trackEvent', 'udapp', 'hardhat', 'console.log'])
-          this.call('terminal', 'log', { type: 'info', value: finalLogs })
+          this.call('terminal', 'logHtml', finalLogs)
         }
         execResult = await this.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
         if (execResult) {

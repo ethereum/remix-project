@@ -1,14 +1,14 @@
 import { erc1155 } from '@openzeppelin/wizard';
 
 export default async (opts) => {
-    if (opts.features) {
-        erc1155.defaults.mintable = opts.features.mintable
-        erc1155.defaults.burnable = opts.features.burnable
-        erc1155.defaults.pausable = opts.features.pausable
+    if (opts) {
+        erc1155.defaults.mintable = opts.mintable
+        erc1155.defaults.burnable = opts.burnable
+        erc1155.defaults.pausable = opts.pausable
     }
 
     const filesObj = {
-        'contracts/MyToken.sol': erc1155.print({ ...erc1155.defaults, upgradeable: opts.upgradeable}),
+        'contracts/MyToken.sol': erc1155.print({ ...erc1155.defaults, upgradeable: opts && opts.upgradeable ? opts.upgradeable : false}),
         // @ts-ignore
         'scripts/deploy_with_ethers.ts': (await import('!!raw-loader!./scripts/deploy_with_ethers.ts')).default,
         // @ts-ignore
@@ -21,6 +21,6 @@ export default async (opts) => {
     // If no options is selected, opts.upgradeable will be undefined
     // We do not show test file for upgradeable contract
     // @ts-ignore
-    if (opts.upgradeable === undefined || !opts.upgradeable) filesObj['tests/MyToken_test.sol'] = (await import('raw-loader!./tests/MyToken_test.sol')).default
+    if (!opts || opts.upgradeable === undefined || !opts.upgradeable) filesObj['tests/MyToken_test.sol'] = (await import('raw-loader!./tests/MyToken_test.sol')).default
     return filesObj
 }

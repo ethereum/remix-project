@@ -82,6 +82,7 @@ const MenuForLinks = ({
             hide()
           }}
           className="remixui_liitem"
+          key="menuitemdeactivate"
         >
           Deactivate
         </li>
@@ -91,6 +92,7 @@ const MenuForLinks = ({
             <li
               id="menuitemdocumentation"
               className="remixui_liitem"
+              key="menuitemdocumentation"
             >
               <a
                 onClick={hide}

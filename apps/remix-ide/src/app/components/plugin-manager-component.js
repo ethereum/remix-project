@@ -99,7 +99,7 @@ class PluginManagerComponent extends ViewPlugin {
     return (
       <div id='pluginManager'><PluginViewWrapper plugin={this} /></div>
     );
-    
+
   }
 
   getAndFilterPlugins = (filter) => {
