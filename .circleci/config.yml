@@ -47,9 +47,10 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
+      - run: yarn nx graph --file=./projects.json 
       - run:
           name: Remix Libs Linting
-          command: ./apps/remix-ide/ci/lint.sh
+          command: node ./apps/remix-ide/ci/lint-targets.js
   remix-libs:
     docker:
       - image: cimg/node:14.17.6-browsers

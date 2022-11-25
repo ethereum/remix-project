@@ -3,12 +3,13 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/solidity-compiler/src",
   "projectType": "application",
-  "implicitDependencies": [
-  ],
+  "implicitDependencies": [],
   "targets": {
     "build": {
       "executor": "@nrwl/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "development",
       "options": {
         "compiler": "babel",
@@ -22,13 +23,14 @@
           "apps/solidity-compiler/src/favicon.ico",
           "apps/solidity-compiler/src/assets"
         ],
-        "styles": ["apps/solidity-compiler/src/styles.css"],
+        "styles": [
+          "apps/solidity-compiler/src/styles.css"
+        ],
         "scripts": [],
         "webpackConfig": "apps/solidity-compiler/webpack.config.js"
       },
       "configurations": {
-        "development": {
-        },
+        "development": {},
         "production": {
           "fileReplacements": [
             {
@@ -52,13 +54,6 @@
         "production": {
           "buildTarget": "solidity-compiler:build:production"
         }
-      }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/solidity-compiler/**/*.{ts,tsx,js,jsx}"]
       }
     }
   },

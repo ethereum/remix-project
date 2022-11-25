@@ -55,13 +55,6 @@
           "buildTarget": "debugger:build:production"
         }
       }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/debugger/**/*.{ts,tsx,js,jsx}"]
-      }
     }
   },
   "tags": []

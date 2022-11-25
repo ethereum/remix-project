@@ -56,13 +56,6 @@
           "buildTarget": "remix-ide-e2e-src-local-plugin:build:production"
         }
       }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/remix-ide-e2e-src-local-plugin/**/*.{ts,tsx,js,jsx}"]
-      }
     }
   },
   "tags": []

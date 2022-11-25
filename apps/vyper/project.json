@@ -56,13 +56,6 @@
           "buildTarget": "vyper:build:production"
         }
       }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/vyper/**/*.{ts,tsx,js,jsx}"]
-      }
     }
   },
   "tags": []
