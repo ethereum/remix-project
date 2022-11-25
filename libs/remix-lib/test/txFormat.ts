@@ -125,7 +125,7 @@ function testWithNestedArrayInput (st, params, expected) {
 }
 
 tape('abiEncoderV2InvalidTuple - (TxFormat.buildData) - should throw error for invalid tuple value', function (t) {
-  var output = compiler.compile(compilerInput(abiEncoderV2InvalidTuple))
+  let output = compiler.compile(compilerInput(abiEncoderV2InvalidTuple))
   output = JSON.parse(output)
   const contract = output.contracts['test.sol']['test']
   context = { output, contract }
