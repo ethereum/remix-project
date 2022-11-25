@@ -3,7 +3,7 @@ import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
 import { EventEmitter } from 'events'
-import { RemixAppManager } from '../../../../../libs/remix-ui/plugin-manager/src/types'
+import { RemixAppManager } from '@remix-ui/plugin-manager'
 import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from '@remix-ui/helper'
 import helper from '../../lib/helper.js'
 

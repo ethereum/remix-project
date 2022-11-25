@@ -65,7 +65,8 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/remix-ide/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["apps/remix-ide/**/*.{ts,tsx,js,jsx}"],
+        "eslintConfig": "apps/remix-ide/.eslintrc"
       }
     }
   },

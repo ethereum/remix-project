@@ -8,9 +8,9 @@ import { StorageViewer } from '../../../src/storage/storageViewer'
 import {  Address, bufferToHex } from 'ethereumjs-util'
 
 module.exports = async function testMappingStorage (st, cb) {
-  var mappingStorage = require('../contracts/mappingStorage')
-  var privateKey = Buffer.from('503f38a9c967ed597e47fe25643985f032b072db8075426a92110f82df48dfcb', 'hex')
-  var output = compile(compilerInput(mappingStorage.contract))
+  const mappingStorage = require('../contracts/mappingStorage')
+  const privateKey = Buffer.from('503f38a9c967ed597e47fe25643985f032b072db8075426a92110f82df48dfcb', 'hex')
+  let output = compile(compilerInput(mappingStorage.contract))
   output = JSON.parse(output);
   const web3 = await (vmCall as any).getWeb3();
   (vmCall as any).sendTx(web3, {nonce: 0, privateKey: privateKey}, null, 0, output.contracts['test.sol']['SimpleMappingState'].evm.bytecode.object, function (error, hash) {
@@ -46,14 +46,14 @@ function testMapping (st, privateKey, contractAddress, output, web3, cb) {
                 console.log(error)
                 st.end(error)
               } else {
-                var traceManager = new TraceManager({web3})
+                const traceManager = new TraceManager({web3})
                 traceManager.resolveTrace(tx).then(() => {
-                  var storageViewer = new StorageViewer({
+                  const storageViewer = new StorageViewer({
                     stepIndex: 268,
                     tx: tx,
                     address: contractAddress
                   }, new StorageResolver({web3}), traceManager)
-                  var stateVars = stateDecoder.extractStateVariables('SimpleMappingState', output.sources)
+                  const stateVars = stateDecoder.extractStateVariables('SimpleMappingState', output.sources)
                   stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
                     st.equal(result['_num'].value, '1')
                     st.equal(result['_num'].type, 'uint256')
