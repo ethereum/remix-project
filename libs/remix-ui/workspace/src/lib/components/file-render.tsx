@@ -20,6 +20,8 @@ export interface RenderFileProps {
   focusContext: { element: string, x: number, y: number, type: string },
   ctrlKey: boolean,
   expandPath: string[],
+  hideIconsMenu?: React.Dispatch<React.SetStateAction<boolean>>,
+  showIconsMenu?: boolean,
   editModeOff: (content: string) => void,
   handleClickFolder: (path: string, type: string) => void,
   handleClickFile: (path: string, type: string) => void,
@@ -52,11 +54,13 @@ export const FileRender = (props: RenderFileProps) => {
   const handleFolderClick = (event: SyntheticEvent) => {
     event.stopPropagation()
     if (props.focusEdit.element !== file.path) props.handleClickFolder(file.path, file.type)
+    if (props.showIconsMenu === true) props.hideIconsMenu(!props.showIconsMenu)
   }
 
   const handleFileClick = (event: SyntheticEvent) => {
     event.stopPropagation()
     if (props.focusEdit.element !== file.path) props.handleClickFile(file.path, file.type)
+    if (props.showIconsMenu === true) props.hideIconsMenu(!props.showIconsMenu)
   }
 
   const handleContextMenu = (event: PointerEvent) => {

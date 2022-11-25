@@ -1,6 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../../context/context'
 import { useDialogDispatchers } from '../../context/provider'
+declare global {
+  interface Window {
+    _paq: any
+  }
+}
 const _paq = window._paq = window._paq || []
 
 const MatomoDialog = (props) => {

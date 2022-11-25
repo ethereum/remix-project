@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { Fragment, ReactNode, useEffect, useState } from 'react' // eslint-disable-line no-use-before-define
+import { FormattedMessage } from 'react-intl'
 import { PluginManagerComponent, PluginManagerSettings } from '../../types'
 import PermisssionsSettings from './permissionsSettings'
 import { Profile } from '@remixproject/plugin-utils'
@@ -47,7 +48,7 @@ function RootView ({ pluginComponent, children }: RootViewProps) {
             data-id="pluginManagerComponentSearchInput"
           />
           <button onClick={openModal} className="remixui_pluginSearchButton btn bg-transparent text-dark border-0 mt-2 text-underline" data-id="pluginManagerComponentPluginSearchButton">
-            Connect to a Local Plugin
+            <FormattedMessage id='pluginManager.connectLocal' defaultMessage='Connect to a Local Plugin' />
           </button>
         </header>
         {children}

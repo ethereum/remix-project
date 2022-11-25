@@ -1,3 +1,4 @@
+import { CustomTooltip } from '@remix-ui/helper'
 import React from 'react'  //eslint-disable-line
 
 interface StaticAnalyserButtonProps {
@@ -14,10 +15,19 @@ const StaticAnalyserButton = ({
   title
 }: StaticAnalyserButtonProps) => {
   let classList = "btn btn-sm w-25 btn-primary"
-  classList += disabled ? " disabled" : "" 
+  classList += disabled ? " disabled" : ""
   return (
-    <button className={classList} disabled={disabled} title={title} onClick={onClick}>
-      {buttonText}
+    <button className={classList} disabled={disabled} onClick={onClick}>
+      <CustomTooltip
+        placement="bottom-start"
+        tooltipId="ssaRunButtonTooltip"
+        tooltipClasses="text-nowrap"
+        tooltipText={title}
+      >
+        <span>
+          {buttonText}
+        </span>
+      </CustomTooltip>
     </button>
   )
 }

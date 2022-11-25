@@ -21,8 +21,8 @@ export class SearchPlugin extends ViewPlugin {
     constructor () {
       super(profile)
     }
-    
-    render() {      
+
+    render() {
         return (
           <div id='searchTab'>
             <SearchTab plugin={this}></SearchTab>

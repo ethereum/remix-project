@@ -24,7 +24,7 @@ module.exports = {
   'Should clone the Vyper repo #group1': function (browser: NightwatchBrowser) {
     browser.click('button[data-id="add-repository"]')
       .frameParent()
-      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'Vyper repository cloned', 30000)
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'Vyper repository cloned', 60000)
       .openFile('examples')
       .openFile('examples/auctions')
       .openFile('examples/auctions/blind_auction.vy')

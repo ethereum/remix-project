@@ -12,10 +12,11 @@ export class TruffleClient extends PluginClient {
   currentSharedFolder: string
   watcher: chokidar.FSWatcher
   warnLog: boolean
+  buildPath: string
 
   constructor (private readOnly = false) {
     super()
-    this.methods = ['compile']
+    this.methods = ['compile', 'sync']
   }
 
   setWebSocket (websocket: WS): void {
@@ -28,6 +29,7 @@ export class TruffleClient extends PluginClient {
 
   sharedFolder (currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
+    this.buildPath = utils.absolutePath('build/contracts', this.currentSharedFolder)
     this.listenOnTruffleCompilation()
   }
 
@@ -58,36 +60,40 @@ export class TruffleClient extends PluginClient {
     })
   }
 
+  private async processArtifact () {
+    const folderFiles = await fs.readdir(this.buildPath)   
+    // name of folders are file names
+    for (const file of folderFiles) {
+      if (file.endsWith('.json')) {
+        const compilationResult = {
+          input: {},
+          output: {
+            contracts: {},
+            sources: {}
+          },
+          solcVersion: null,
+          compilationTarget: null
+        }
+        const content = await fs.readFile(join(this.buildPath, file), { encoding: 'utf-8' })
+        await this.feedContractArtifactFile(file, content, compilationResult)
+        this.emit('compilationFinished', compilationResult.compilationTarget, { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)
+      }
+    }
+    if (!this.warnLog) {
+      // @ts-ignore
+      this.call('terminal', 'log', { type: 'log', value: 'receiving compilation result from Truffle' })
+      this.warnLog = true
+    }
+  }
+
   listenOnTruffleCompilation () {
-    try {
-      const buildPath = utils.absolutePath('build/contracts', this.currentSharedFolder)
-      this.watcher = chokidar.watch(buildPath, { depth: 3, ignorePermissionErrors: true, ignoreInitial: true })
-      const compilationResult = {
-        input: {},
-        output: {
-          contracts: {},
-          sources: {}
-        },
-        solcVersion: null
-      }
-      const processArtifact = async () => {
-        const folderFiles = await fs.readdir(buildPath)
-        // name of folders are file names
-        for (const file of folderFiles) {
-          if (file.endsWith('.json')) {
-            const content = await fs.readFile(join(buildPath, file), { encoding: 'utf-8' })
-            await this.feedContractArtifactFile(file, content, compilationResult)
-          }
-        }
-        if (!this.warnLog) {
-          // @ts-ignore
-          this.call('terminal', 'log', 'receiving compilation result from truffle')
-          this.warnLog = true
-        }
-        this.emit('compilationFinished', '', { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)      
-      }
-      this.watcher.on('change', async (f: string) => processArtifact())
-      this.watcher.on('add', async (f: string) => processArtifact())
+    try {      
+      this.watcher = chokidar.watch(this.buildPath, { depth: 3, ignorePermissionErrors: true, ignoreInitial: true })
+     
+      this.watcher.on('change', async (f: string) => this.processArtifact())
+      this.watcher.on('add', async (f: string) => this.processArtifact())
+      // process the artifact on activation
+      setTimeout(() => this.processArtifact(), 1000)
     } catch (e) {
       console.log(e)
     }    
@@ -97,9 +103,12 @@ export class TruffleClient extends PluginClient {
     const contentJSON = JSON.parse(content)
     const contractName = basename(path).replace('.json', '')
     compilationResultPart.solcVersion = contentJSON.compiler.version
+    // file name in artifacts starts with `project:/`
+    const filepath = contentJSON.ast.absolutePath.startsWith('project:/') ? contentJSON.ast.absolutePath.replace('project:/', '') : contentJSON.ast.absolutePath
+    compilationResultPart.compilationTarget = filepath
     compilationResultPart.input[path] = { content: contentJSON.source }
     // extract data
-    const relPath = utils.relativePath(contentJSON.ast.absolutePath, this.currentSharedFolder)
+    const relPath = utils.relativePath(filepath, this.currentSharedFolder)
     if (!compilationResultPart.output['sources'][relPath]) compilationResultPart.output['sources'][relPath] = {}
     
     const location = contentJSON.ast.src.split(':')
@@ -126,5 +135,12 @@ export class TruffleClient extends PluginClient {
         }
       }
     }
+  }
+
+  async sync () {
+    console.log('syncing from Truffle')
+    this.processArtifact()
+    // @ts-ignore
+    this.call('terminal', 'log', { type: 'log', value: 'synced with Truffle' })
   }
 }

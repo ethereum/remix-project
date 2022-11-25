@@ -5,7 +5,7 @@ import {
   CompilationResult,
 } from "@remixproject/plugin-api"
 
-import { PluginClient } from "@remixproject/plugin";
+import { RemixClient } from "./RemixPlugin";
 import { createClient } from "@remixproject/plugin-webview";
 
 import { AppContext } from "./AppContext"
@@ -43,7 +43,7 @@ const App = () => {
   contractsRef.current = contracts
 
   useEffect(() => {
-    const client = new PluginClient()
+    const client = new RemixClient()
     createClient(client)
     const loadClient = async () => {
       await client.onload()
