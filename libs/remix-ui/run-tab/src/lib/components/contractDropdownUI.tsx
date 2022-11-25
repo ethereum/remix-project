@@ -1,12 +1,15 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useRef, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { ContractDropdownProps, DeployMode } from '../types'
 import { ContractData, FuncABI } from '@remix-project/core-plugin'
 import * as ethJSUtil from 'ethereumjs-util'
 import { ContractGUI } from './contractGUI'
-import { deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
+import { CustomTooltip, deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
+const _paq = window._paq = window._paq || []
 
 export function ContractDropdownUI (props: ContractDropdownProps) {
+  const intl = useIntl()
   const [abiLabel, setAbiLabel] = useState<{
     display: string,
     content: string
@@ -14,18 +17,19 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     display: '',
     content: ''
   })
-  const [atAddressOptions, setAtAddressOptions] = useState<{title: string, disabled: boolean}>({
+  const [atAddressOptions, setAtAddressOptions] = useState<{ title: string, disabled: boolean }>({
     title: 'address of contract',
     disabled: true
   })
   const [loadedAddress, setLoadedAddress] = useState<string>('')
-  const [contractOptions, setContractOptions] = useState<{title: string, disabled: boolean}>({
+  const [contractOptions, setContractOptions] = useState<{ title: string, disabled: boolean }>({
     title: 'Please compile *.sol file to deploy or access a contract',
     disabled: true
   })
   const [loadedContractData, setLoadedContractData] = useState<ContractData>(null)
   const [constructorInterface, setConstructorInterface] = useState<FuncABI>(null)
   const [constructorInputs, setConstructorInputs] = useState(null)
+  const [compilerName, setCompilerName] = useState<string>('')
   const contractsRef = useRef<HTMLSelectElement>(null)
   const atAddressValue = useRef<HTMLInputElement>(null)
   const { contractList, loadType, currentFile, compilationSource, currentContract, compilationCount, deployOptions, proxyKey } = props.contracts
@@ -96,11 +100,22 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   useEffect(() => {
     initSelectedContract()
+    updateCompilerName()
   }, [contractList])
+
+  useEffect(() => {
+    // if the file change the ui is already feed with another bunch of contracts.
+    // we also need to update the state
+    const contracts = contractList[currentFile]
+    if (contracts && contracts.length > 0) {
+      props.setSelectedContract(contracts[0].alias)
+    }
+    updateCompilerName()
+  }, [currentFile])
 
   const initSelectedContract = () => {
     const contracts = contractList[currentFile]
-  
+
     if (contracts && contracts.length > 0) {
       const contract = contracts.find(contract => contract.alias === currentContract)
 
@@ -112,9 +127,9 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   const isContractFile = (file) => {
     return /.(.sol)$/.exec(file) ||
-        /.(.vy)$/.exec(file) || // vyper
-        /.(.lex)$/.exec(file) || // lexon
-        /.(.contract)$/.exec(file)
+      /.(.vy)$/.exec(file) || // vyper
+      /.(.lex)$/.exec(file) || // lexon
+      /.(.contract)$/.exec(file)
   }
 
   const enableAtAddress = (enable: boolean) => {
@@ -151,20 +166,20 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   const createInstance = (selectedContract, args, deployMode?: DeployMode[]) => {
     if (selectedContract.bytecodeObject.length === 0) {
-      return props.modal('Alert', 'This contract may be abstract, it may not implement an abstract parent\'s methods completely or it may not invoke an inherited contract\'s constructor correctly.', 'OK', () => {})
+      return props.modal('Alert', 'This contract may be abstract, it may not implement an abstract parent\'s methods completely or it may not invoke an inherited contract\'s constructor correctly.', 'OK', () => { })
     }
     if ((selectedContract.name !== currentContract) && (selectedContract.name === 'ERC1967Proxy')) selectedContract.name = currentContract
     const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
     const isContractUpgrade = (deployMode || []).find(mode => mode === 'Upgrade with Proxy')
-  
+
     if (isProxyDeployment) {
       props.modal('Deploy Implementation & Proxy (ERC1967)', deployWithProxyMsg(), 'Proceed', () => {
         props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
-      }, 'Cancel', () => {})
+      }, 'Cancel', () => { })
     } else if (isContractUpgrade) {
       props.modal('Deploy Implementation & Update Proxy', upgradeWithProxyMsg(), 'Proceed', () => {
         props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
-      }, 'Cancel', () => {})
+      }, 'Cancel', () => { })
     } else {
       props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
     }
@@ -201,9 +216,21 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     window.localStorage.setItem(`ipfs/${props.exEnvironment}/${props.networkName}`, checkedState.toString())
   }
 
+  const updateCompilerName = () => {
+    if (contractsRef.current.value) {
+      contractList[currentFile].forEach(contract => {
+        if (contract.alias === contractsRef.current.value) {
+          setCompilerName(contract.compilerName)
+        }
+      })
+    } else{
+      setCompilerName('')
+    }
+  }
+
   const handleContractChange = (e) => {
     const value = e.target.value
-
+    updateCompilerName()
     props.setSelectedContract(value)
   }
 
@@ -220,7 +247,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const isOverSizePrompt = () => {
     return (
       <div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br />
-      More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank" rel="noreferrer">eip-170</a>
+        More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank" rel="noreferrer">eip-170</a>
       </div>
     )
   }
@@ -228,23 +255,52 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   return (
     <div className="udapp_container" data-id="contractDropdownContainer">
       <div className='d-flex justify-content-between'>
-        <label className="udapp_settingsLabel">Contract</label>
-        { Object.keys(props.contracts.contractList).length > 0 && compilationSource !== '' && <label data-id="udappCompiledBy">Compiled by {compilationSource} </label> }
+        <div className="d-flex justify-content-between align-items-end">
+          <label className="udapp_settingsLabel pr-1">
+            <FormattedMessage id='udapp.contract' defaultMessage='Contract' />
+          </label>
+          <div className="d-flex">{compilerName && compilerName !== '' && <label style={{ maxHeight: '0.6rem', lineHeight: '1rem' }} data-id="udappCompiledBy">(Compiled by <span className="text-capitalize"> {compilerName}</span>)</label>}</div>
+        </div>
+        {props.remixdActivated ?
+          (<CustomTooltip
+            placement={'right'}
+            tooltipClasses="text-wrap"
+            tooltipId="info-sync-compiled-contract"
+            tooltipText="Click here to import contracts compiled from an external framework.
+              This action is enabled when Remix is connected to an external framework (hardhat, truffle, foundry) through remixd."
+          >
+            <button className="btn d-flex py-0" onClick={_ => {
+              props.syncContracts()
+              _paq.push(['trackEvent', 'udapp', 'syncContracts', compilationSource ? compilationSource : 'compilationSourceNotYetSet'])
+            }}>
+              <i style={{ cursor: 'pointer' }} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
+            </button>
+          </CustomTooltip>)
+          : null}
       </div>
       <div className="udapp_subcontainer">
-       <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} title={contractOptions.title} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
-          { (contractList[currentFile] || []).map((contract, index) => {
-            return <option key={index} value={contract.alias}>{contract.alias} - {contract.file}</option>
-          }) }
-        </select>
-        <span className="py-1" style={{ display: abiLabel.display }}>{ abiLabel.content }</span>
+        <CustomTooltip
+          placement={"right"}
+          tooltipClasses="text-nowrap"
+          tooltipId="remixUdappContractNamesTooltip"
+          tooltipText={contractOptions.title}
+        >
+          <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
+            {(contractList[currentFile] || []).map((contract, index) => {
+              return <option key={index} value={contract.alias}>
+                {contract.alias} - {contract.file}
+              </option>
+            })}
+          </select>
+        </CustomTooltip>
+        <span className="py-1" style={{ display: abiLabel.display }}>{abiLabel.content}</span>
       </div>
       <div>
         <div className="udapp_deployDropdown">
-          { ((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? 'No compiled contracts'
+          {((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? intl.formatMessage({id: 'udapp.noCompiledContracts', defaultMessage: 'No compiled contracts'})
             : loadedContractData ? <div>
               <ContractGUI
-                title='Deploy'
+                title={intl.formatMessage({id: 'udapp.deploy', defaultMessage: "Deploy"})}
                 isDeploy={true}
                 deployOption={deployOptions[currentFile] && deployOptions[currentFile][currentContract] ? deployOptions[currentFile][currentContract].options : null}
                 initializerOptions={deployOptions[currentFile] && deployOptions[currentFile][currentContract] ? deployOptions[currentFile][currentContract].initializeOptions : null}
@@ -255,6 +311,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
                 evmBC={loadedContractData.bytecodeObject}
                 lookupOnly={false}
                 savedProxyAddress={proxyKey}
+                isValidProxyAddress={props.isValidProxyAddress}
               />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
                 <input
@@ -265,28 +322,53 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
                   onChange={handleCheckedIPFS}
                   checked={props.ipfsCheckedState}
                 />
-                <label
-                  htmlFor="deployAndRunPublishToIPFS"
-                  data-id="contractDropdownIpfsCheckboxLabel"
-                  className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
-                  title="Publishing the source code and metadata to IPFS facilitates source code verification using Sourcify and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"
+                <CustomTooltip
+                  placement={'right'}
+                  tooltipClasses="text-wrap"
+                  tooltipId="remixIpfsUdappTooltip"
+                  tooltipText="Publishing the source code and metadata to IPFS facilitates source code verification using Sourcify and will greatly foster contract adoption (auditing, debugging, calling it, etc...)"
                 >
-                  Publish to IPFS
-                </label>
+                  <label
+                    htmlFor="deployAndRunPublishToIPFS"
+                    data-id="contractDropdownIpfsCheckboxLabel"
+                    className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
+                  >
+                    <FormattedMessage id='udapp.publishTo' defaultMessage='Publish to' /> IPFS
+                  </label>
+                </CustomTooltip>
               </div>
             </div> : ''
           }
         </div>
-        <div className="udapp_orLabel mt-2" style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>or</div>
-        <div className="udapp_button udapp_atAddressSect">
-          <button className="udapp_atAddress btn btn-sm btn-info" id="runAndDeployAtAdressButton" disabled={atAddressOptions.disabled} title={atAddressOptions.title} onClick={loadFromAddress}>At Address</button>
-          <input
-            ref={atAddressValue}
-            className="udapp_input udapp_ataddressinput ataddressinput form-control"
-            placeholder="Load contract from Address"
-            title="address of contract"
-            onChange={atAddressChanged}
-          />
+        <div className="udapp_orLabel mt-2" style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
+          <FormattedMessage id='udapp.or' defaultMessage='or' />
+        </div>
+        <div className="udapp_button udapp_atAddressSect ">
+          <CustomTooltip
+            placement={'top-end'}
+            tooltipClasses="text-wrap"
+            tooltipId="runAndDeployAddresstooltip"
+            tooltipText={atAddressOptions.title}
+            >
+              <div id="runAndDeployAtAdressButtonContainer" onClick={loadFromAddress} data-title={atAddressOptions.title}>
+                <button className="udapp_atAddress btn btn-sm btn-info" id="runAndDeployAtAdressButton" disabled={atAddressOptions.disabled} style={{ pointerEvents: 'none' }} onClick={loadFromAddress} data-title={atAddressOptions.title}>
+                  <FormattedMessage id='udapp.atAddress' defaultMessage='At Address' />
+                </button>
+              </div>
+          </CustomTooltip>
+          <CustomTooltip
+            placement={'top-end'}
+            tooltipClasses="text-wrap"
+            tooltipId="runAndDeployAddressInputtooltip"
+            tooltipText={"address of contract"}
+          >
+            <input
+              ref={atAddressValue}
+              className="udapp_input udapp_ataddressinput ataddressinput form-control"
+              placeholder={intl.formatMessage({id: 'udapp.loadContractFromAddress', defaultMessage: "Load contract from Address"})}
+              onChange={atAddressChanged}
+            />
+          </CustomTooltip>
         </div>
       </div>
     </div>

@@ -6,15 +6,41 @@
     width: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
+    color: #fff;
 }
 .stepButton {
+}
+
+.stepButtonDisabled {
+    background-color: #005573;
+    border-color: #005573;
+}
+
+.stepButton:hover {
+    color: #fff;
+    background-color: #005573;
+    border-color: #005573;
 }
 .jumpButtons {
     width: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
+    color: #fff;
 }
 .jumpButton {
+}
+
+.jumpButtonDisabled {
+    background-color: #005573;
+    border-color: #005573;
+}
+
+.jumButton:hover {
+    color: #fff;
+    background-color: #005573;
+    border-color: #005573;
 }
 .navigator {
 }

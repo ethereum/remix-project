@@ -5,7 +5,7 @@ import StepDetail from './step-detail' // eslint-disable-line
 import SolidityState from './solidity-state' // eslint-disable-line
 import SolidityLocals from './solidity-locals' // eslint-disable-line
 
-export const VmDebuggerHead = ({ vmDebugger: { registerEvent, triggerEvent } }) => {
+export const VmDebuggerHead = ({ vmDebugger: { registerEvent, triggerEvent }, debugging }) => {
   const [functionPanel, setFunctionPanel] = useState(null)
   const [stepDetail, setStepDetail] = useState({
     'vm trace step': '-',
@@ -31,7 +31,7 @@ export const VmDebuggerHead = ({ vmDebugger: { registerEvent, triggerEvent } }) 
       const functions = []
 
       for (const func of stack) {
-        functions.push(func.functionDefinition.name + '(' + func.inputs.join(', ') + ')')
+        functions.push((func.functionDefinition.name || func.functionDefinition.kind) + '(' + func.inputs.join(', ') + ')' + ' - ' + func.gasCost + ' gas')
       }
       setFunctionPanel(() => functions)
     })
@@ -95,7 +95,7 @@ export const VmDebuggerHead = ({ vmDebugger: { registerEvent, triggerEvent } }) 
         return { ...solidityLocals, message }
       })
     })
-  }, [registerEvent])
+  }, [debugging])
 
   return (
     <div id='vmheadView' className="mt-1 px-2 d-flex">

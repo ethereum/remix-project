@@ -36,6 +36,7 @@ export class RunTab extends ViewPlugin {
     onReady(api: any): void;
     onInitDone(): void;
     recorder: Recorder;
+    // syncContracts(): void
 }
 import { ViewPlugin } from "@remixproject/engine-web/lib/view";
 import { Blockchain } from "./blockchain";

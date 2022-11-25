@@ -32,9 +32,11 @@ export class Ethdebugger {
   storageResolver
   callTree
   breakpointManager
+  offsetToLineColumnConverter
 
   constructor (opts) {
     this.compilationResult = opts.compilationResult || function (contractAddress) { return null }
+    this.offsetToLineColumnConverter = opts.offsetToLineColumnConverter
     this.web3 = opts.web3
     this.opts = opts
 
@@ -49,7 +51,8 @@ export class Ethdebugger {
       this.traceManager,
       this.solidityProxy,
       this.codeManager,
-      { ...opts, includeLocalVariables })
+      { ...opts, includeLocalVariables },
+      this.offsetToLineColumnConverter)
   }
 
   setManagers () {
@@ -63,7 +66,8 @@ export class Ethdebugger {
       this.traceManager,
       this.solidityProxy,
       this.codeManager,
-      { ...this.opts, includeLocalVariables })
+      { ...this.opts, includeLocalVariables },
+      this.offsetToLineColumnConverter)
   }
 
   resolveStep (index) {
@@ -71,7 +75,7 @@ export class Ethdebugger {
   }
 
   setCompilationResult (compilationResult) {
-    this.solidityProxy.reset((compilationResult && compilationResult.data) || {})
+    this.solidityProxy.reset((compilationResult && compilationResult.data) || {}, (compilationResult && compilationResult.source && compilationResult.source.sources) || {})
   }
 
   async sourceLocationFromVMTraceIndex (address, stepIndex) {

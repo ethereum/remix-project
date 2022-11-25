@@ -28,7 +28,7 @@ export class CompileTabLogic {
     this.contentImport = contentImport
     this.event = new EventEmitter()
     this.compiler = new Compiler((url, cb) => api.resolveContentAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
-    this.evmVersions = ['default', 'berlin', 'london', 'istanbul', 'petersburg', 'constantinople', 'byzantium', 'spuriousDragon', 'tangerineWhistle', 'homestead']
+    this.evmVersions = ['default', 'london', 'berlin', 'istanbul', 'petersburg', 'constantinople', 'byzantium', 'spuriousDragon', 'tangerineWhistle', 'homestead']
   }
 
   init () {
@@ -159,9 +159,9 @@ export class CompileTabLogic {
             `
             const configFilePath = 'remix-compiler.config.js'
             this.api.writeFile(configFilePath, fileContent)
-            _paq.push(['trackEvent', 'compiler', 'compileWithHardhat'])
+            _paq.push(['trackEvent', 'compiler', 'runCompile', 'compileWithHardhat'])
             this.api.compileWithHardhat(configFilePath).then((result) => {
-              this.api.logToTerminal({ type: 'info', value: result })
+              this.api.logToTerminal({ type: 'log', value: result })
             }).catch((error) => {
               this.api.logToTerminal({ type: 'error', value: error })
             })
@@ -185,9 +185,9 @@ export class CompileTabLogic {
             }`
             const configFilePath = 'remix-compiler.config.js'
             this.api.writeFile(configFilePath, fileContent)
-            _paq.push(['trackEvent', 'compiler', 'compileWithTruffle'])
+            _paq.push(['trackEvent', 'compiler', 'runCompile', 'compileWithTruffle'])
             this.api.compileWithTruffle(configFilePath).then((result) => {
-              this.api.logToTerminal({ type: 'info', value: result })
+              this.api.logToTerminal({ type: 'log', value: result })
             }).catch((error) => {
               this.api.logToTerminal({ type: 'error', value: error })
             })

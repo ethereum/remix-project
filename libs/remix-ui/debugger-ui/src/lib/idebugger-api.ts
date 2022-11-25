@@ -1,5 +1,5 @@
 
-import type { CompilationResult, CompilationSource } from '@remix-project/remix-solidity-ts' // eslint-disable-line
+import type { CompilationSource, CompilerAbstract, SourcesCode } from '@remix-project/remix-solidity-ts' // eslint-disable-line
 
 export interface LineColumnLocation {
     start: {
@@ -12,16 +12,6 @@ export interface LineColumnLocation {
 
 export interface RawLocation {
     start: number, length: number
-}
-
-export interface Sources {
-    [fileName: string] : {content: string}
-}
-
-export interface CompilationOutput {
-    source: { sources: Sources, target: string }
-    data: CompilationResult
-    getSourceName: (id: number) => string
 }
 
 export interface Asts {
@@ -45,7 +35,7 @@ export type onDebugRequested = (hash: string, web3?: any) => void
 export type onEnvChangedListener = (provider: string) => void
 
 export interface IDebuggerApi {
-    offsetToLineColumnConverter: { offsetToLineColumn: (sourceLocation: RawLocation, file: number, contents: Sources, asts: Asts) => Promise<LineColumnLocation> }
+    offsetToLineColumnConverter: { offsetToLineColumn: (sourceLocation: RawLocation, file: number, contents: SourcesCode, asts: Asts) => Promise<LineColumnLocation> }
     removeHighlights: boolean
     onRemoveHighlights: (listener: VoidFunction) => void
     onDebugRequested: (listener: onDebugRequested) => void
@@ -54,8 +44,8 @@ export interface IDebuggerApi {
     onEditorContentChanged: (listener: onEditorContentChanged) => void
     onEnvChanged: (listener: onEnvChangedListener) => void
     discardHighlight: () => Promise<void>
-    highlight: (lineColumnPos: LineColumnLocation, path: string) => Promise<void>
-    fetchContractAndCompile: (address: string, currentReceipt: TransactionReceipt) => Promise<CompilationOutput>
+    highlight: (lineColumnPos: LineColumnLocation, path: string, rawLocation: any, stepDetail: any, highlight: any) => Promise<void>
+    fetchContractAndCompile: (address: string, currentReceipt: TransactionReceipt) => Promise<CompilerAbstract>
     getFile: (path: string) => Promise<string>
     setFile: (path: string, content: string) => Promise<void>
     getDebugWeb3: () => any // returns an instance of web3.js, if applicable (mainet, goerli, ...) it returns a reference to a node from devops (so we are sure debug endpoint is available)
