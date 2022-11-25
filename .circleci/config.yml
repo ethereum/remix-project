@@ -40,7 +40,7 @@ jobs:
     resource_class:
       xlarge
     working_directory: ~/remix-project
-    parallelism: 35
+    parallelism: 1
     steps:
       - checkout
       - restore_cache:
