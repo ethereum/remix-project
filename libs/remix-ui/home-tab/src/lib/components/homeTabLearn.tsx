@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState, useContext } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { ThemeContext } from '../themeContext'
 declare global {
   interface Window {
@@ -40,7 +41,9 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
   return (
     <div className="d-flex px-2 pb-2 pt-2 d-flex flex-column" id="hTLearnSection">
       <div className="d-flex justify-content-between">
-        <label className="py-2 align-self-center m-0" style={{fontSize: "1.2rem"}}>Learn</label>
+        <label className="py-2 align-self-center m-0" style={{fontSize: "1.2rem"}}>
+          <FormattedMessage id="home.learn" defaultMessage="Learn" />
+        </label>
         <button
           onClick={ ()=> openLink()}
           className="h-100 px-2 pt-0 btn"
@@ -50,24 +53,40 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
       </div>
       <div className="d-flex flex-column">
         <label className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Basics }})}>
-          <label className="card-title align-self-start m-0 float-left" style={{fontSize: "1rem"}}>Remix Basics</label>
+          <label className="card-title align-self-start m-0 float-left" style={{fontSize: "1rem"}}>
+            <FormattedMessage id="home.remixBasics" defaultMessage="Remix Basics" />
+          </label>
           {(state.visibleTutorial === VisibleTutorial.Basics) && <div className="pt-2 d-flex flex-column text-left">
-            <span>Introduction to Remix's interface and concepts used in Ethereum, as well as the basics of Solidity.</span>
-            <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('basics')}>Get Started</button>
+            <span>
+              <FormattedMessage id="home.remixBasicsDesc" defaultMessage="Introduction to Remix's interface and concepts used in Ethereum, as well as the basics of Solidity." />
+            </span>
+            <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('basics')}>
+              <FormattedMessage id="home.getStarted" defaultMessage="Get Started" />
+            </button>
           </div>}
         </label>
         <label className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Intermediate }})}>
-          <label className="card-title align-self-start m-0 float-left" style={{fontSize: "1rem"}}>Remix Intermediate</label>
+          <label className="card-title align-self-start m-0 float-left" style={{fontSize: "1rem"}}>
+            <FormattedMessage id="home.remixIntermediate" defaultMessage="Remix Intermediate" />
+          </label>
           {(state.visibleTutorial === VisibleTutorial.Intermediate) && <div className="pt-2 d-flex flex-column text-left">
-            <span>Using the web3.js to interact with a contract. Using Recorder tool.</span>
-            <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('useofweb3js')}>Get Started</button>
+            <span>
+            <FormattedMessage id="home.remixIntermediateDesc" defaultMessage="Using the web3.js to interact with a contract. Using Recorder tool." /></span>
+            <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('useofweb3js')}>
+            <FormattedMessage id="home.getStarted" defaultMessage="Get Started" />
+          </button>
           </div>}
         </label>
         <label className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Advanced }})}>
-          <label className="card-title align-self-start m-0 float-left" style={{fontSize: "1rem"}}>Remix Advanced</label>
+          <label className="card-title align-self-start m-0 float-left" style={{fontSize: "1rem"}}>
+            <FormattedMessage id="home.remixAdvanced" defaultMessage="Remix Advanced" />
+          </label>
           {(state.visibleTutorial === VisibleTutorial.Advanced) && <div className="pt-2 d-flex flex-column text-left">
-            <span>Learn the Proxy Pattern and working with Libraries in Remix. Learn to use the Debugger.</span>
-            <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('deploylibraries')}>Get Started</button>
+            <span>
+            <FormattedMessage id="home.remixAdvancedDesc" defaultMessage="Learn the Proxy Pattern and working with Libraries in Remix. Learn to use the Debugger." /></span>
+            <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('deploylibraries')}>
+            <FormattedMessage id="home.getStarted" defaultMessage="Get Started" />
+          </button>
           </div>}
         </label>
       </div>

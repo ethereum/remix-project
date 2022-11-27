@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useRef, useContext } from 'react'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import PluginButton from './pluginButton'
 import { ThemeContext } from '../themeContext'
 import Carousel from 'react-multi-carousel'
@@ -22,6 +22,7 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
   const themeFilter = useContext(ThemeContext)
   const carouselRef = useRef<any>({})
   const carouselRefDiv = useRef(null)
+  const intl = useIntl()
 
   useEffect(() => {
     document.addEventListener("wheel", handleScroll)
@@ -121,7 +122,7 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
               imgPath="assets/img/solidityLogo.webp"
               envID="solidityLogo"
               envText="Solidity"
-              description="Compile, test and analyse smart contract."
+              description={intl.formatMessage({ id: 'home.solidityPluginDesc', defaultMessage: "Compile, test and analyse smart contract." })}
               remixMaintained={true}
               callback={() => startSolidity()}
             />
@@ -129,28 +130,28 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
               imgPath="assets/img/starkNetLogo.webp"
               envID="starkNetLogo"
               envText="StarkNet"
-              description="Compile and deploy contracts with Cairo, a native language for StarkNet."
+              description={intl.formatMessage({ id: 'home.starkNetPluginDesc', defaultMessage: "Compile and deploy contracts with Cairo, a native language for StarkNet." })}
               l2={true}
               callback={() => startStarkNet()}
             />
             <PluginButton
               imgPath="assets/img/solhintLogo.webp"
               envID="solhintLogo" envText="Solhint linter"
-              description="Solhint is an open source project for linting Solidity code."
+              description={intl.formatMessage({ id: 'home.solhintPluginDesc', defaultMessage: "Solhint is an open source project for linting Solidity code." })}
               callback={() => startSolhint()}
             />
             <PluginButton
               imgPath="assets/img/sourcifyNewLogo.webp"
               envID="sourcifyLogo"
               envText="Sourcify"
-              description="Solidity contract and metadata verification service."
+              description={intl.formatMessage({ id: 'home.sourcifyPluginDesc', defaultMessage: "Solidity contract and metadata verification service." })}
               callback={() => startSourceVerify()}
             />
             <PluginButton
               imgPath="assets/img/unitTesting.webp"
               envID="sUTLogo"
               envText="Solidity unit testing"
-              description="Write and run unit tests for your contracts in Solidity."
+              description={intl.formatMessage({ id: 'home.unitTestPluginDesc', defaultMessage: "Write and run unit tests for your contracts in Solidity." })}
               callback={() => startSolidityUnitTesting()}
             />
           </Carousel>
