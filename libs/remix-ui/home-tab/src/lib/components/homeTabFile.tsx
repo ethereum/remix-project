@@ -154,7 +154,7 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
       </ModalDialog>
       <Toaster message={state.toasterMsg} />
       <div className="justify-content-start mt-1 p-2 border-bottom d-flex flex-column" id="hTFileSection">
-        <label style={{fontSize: "1rem"}}><FormattedMessage id='home.file' defaultMessage='Files' /></label>
+        <label style={{fontSize: "1rem"}}><FormattedMessage id='home.files' defaultMessage='Files' /></label>
         <button className="btn btn-primary p-2 border my-1" data-id="homeTabNewFile" style={{width: 'fit-content'}} onClick={() => createNewFile()}><FormattedMessage id='home.newFile' defaultMessage='New File' /></button>
         <label className="btn p-2 border my-1" style={{width: 'fit-content'}} htmlFor="openFileInput"><FormattedMessage id='home.openFile' defaultMessage='Open File' /></label>
         <input title="open file" type="file" id="openFileInput" onChange={(event) => {
