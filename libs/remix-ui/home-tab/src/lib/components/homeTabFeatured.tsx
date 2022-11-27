@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState, useRef, useContext } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { ThemeContext, themes } from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
@@ -10,7 +11,7 @@ function HomeTabFeatured() {
 
   return (
     <div className="pt-3 pl-2" id="hTFeaturedeSection">
-      <label style={{ fontSize: "1.2rem" }}>Featured</label>
+      <label style={{ fontSize: "1.2rem" }}><FormattedMessage id='home.featured' defaultMessage='Featured' /></label>
       <div className="mb-2">
         <div className="w-100 d-flex flex-column" style={{ height: "200px" }}>
           <ThemeContext.Provider value={themeFilter}>
@@ -37,29 +38,37 @@ function HomeTabFeatured() {
               <div className="mx-1 px-1 d-flex">
                 <img src={"assets/img/bgRemi.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
                 <div className="h6 w-50 p-4" style={{ flex: "1" }}>
-                  <h5>JUMP INTO WEB3</h5>
-                  <p>The Remix Project is a rich toolset which can be used for the entire journey of contract development by users of any knowledge level, and as a learning lab for teaching and experimenting with Ethereum.</p>
-                  <a className="remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'jumpIntoWeb3'])} target="__blank" href="https://remix-project.org">More</a>
+                  <h5><FormattedMessage id='home.jumpIntoWeb3' defaultMessage='JUMP INTO WEB3' /></h5>
+                  <p>
+                    <FormattedMessage
+                      id='home.jumpIntoWeb3Text'
+                      defaultMessage='The Remix Project is a rich toolset which can be used for the entire journey of contract development by users of any knowledge level, and as a learning lab for teaching and experimenting with Ethereum.'
+                    />
+                  </p>
+                  <a className="remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'jumpIntoWeb3'])} target="__blank" href="https://remix-project.org"><FormattedMessage id='home.more' defaultMessage='More' /></a>
                 </div>
               </div>
               <div className="mx-1 px-1 d-flex">
                 <img src={"/assets/img/remixRewardUser.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
                 <div className="h6 p-4" style={{ flex: "1" }}>
-                  <h5>REMIX REWARDS</h5>
-                  <p style={{ fontStyle: 'italic' }}>NFTs for our users!</p>
+                  <h5><FormattedMessage id='home.remixRewards' defaultMessage='REMIX REWARDS' /></h5>
+                  <p style={{ fontStyle: 'italic' }}><FormattedMessage id='home.remixRewardsText1' defaultMessage='NFTs for our users!' /></p>
                   <p>
-                    Remix Project rewards contributors, beta testers, and UX research participants with NFTs deployed on Optimism. Remix Reward holders are able to mint a second “Remixer” user NFT badge to give to any other user of their choice.
+                    <FormattedMessage
+                      id='home.remixRewardsText2'
+                      defaultMessage='Remix Project rewards contributors, beta testers, and UX research participants with NFTs deployed on Optimism. Remix Reward holders are able to mint a second “Remixer” user NFT badge to give to any other user of their choice.'
+                    />
                   </p>
-                  <a className="remixui_home_text" target="__blank" onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'remixRewards'])} href="https://rewards.remix.ethereum.eth.limo">More</a>
+                  <a className="remixui_home_text" target="__blank" onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'remixRewards'])} href="https://rewards.remix.ethereum.eth.limo"><FormattedMessage id='home.more' defaultMessage='More' /></a>
                 </div>
               </div>
               <div className="mx-1 px-1 d-flex">
                 <img src={"/assets/img/remixRewardBetaTester.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
                 <div className="h6 p-4" style={{ flex: "1" }}>
-                  <h5>BETA TESTING</h5>
-                  <p style={{ fontStyle: 'italic' }}>Our community supports us.</p>
-                  <p>You can join Beta Testing before each release of Remix IDE. Help us test now and get a handle on new features!</p>
-                  <a className="remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'betatesting'])} target="__blank" href="https://rewards.remix.ethereum.eth.limo">More</a>
+                  <h5><FormattedMessage id='home.betaTesting' defaultMessage='BETA TESTING' /></h5>
+                  <p style={{ fontStyle: 'italic' }}><FormattedMessage id='home.betaTestingText1' defaultMessage='Our community supports us.' /></p>
+                  <p><FormattedMessage id='home.betaTestingText2' defaultMessage='You can join Beta Testing before each release of Remix IDE. Help us test now and get a handle on new features!' /></p>
+                  <a className="remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'betatesting'])} target="__blank" href="https://rewards.remix.ethereum.eth.limo"><FormattedMessage id='home.more' defaultMessage='More' /></a>
                 </div>
               </div>
             </Carousel>
