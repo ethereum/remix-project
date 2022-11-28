@@ -52,7 +52,7 @@ export function canUseWorker (selectedVersion) {
 }
 
 function browserSupportWorker () {
-  return document.location.protocol !== 'file:' && Worker !== undefined
+  return document ? document.location.protocol !== 'file:' && Worker !== undefined : false
 }
 
 // returns a promise for minixhr
