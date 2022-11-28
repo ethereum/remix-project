@@ -4,6 +4,7 @@
     "types": ["node", "mocha", "chai"],
     "module": "commonjs",
     "esModuleInterop": true,
+    "allowJs": true
   },
   "include": ["**/*.ts"]
 }
