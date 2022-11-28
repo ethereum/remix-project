@@ -19,7 +19,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "./../../node_modules/.bin/mocha -r tsconfig-paths/register -r ts-node/register 'tests/**/*.test.ts'"
+    "test": "./../../node_modules/.bin/mocha -r tsconfig-paths/register -r ts-node/register 'tests/**/*.spec.ts'"
   },
   "publishConfig": {
     "access": "public"
