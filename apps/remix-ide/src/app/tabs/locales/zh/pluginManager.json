@@ -1,0 +1,22 @@
+{
+  "pluginManager.displayName": "插件管理",
+  "pluginManager.activate": "启用",
+  "pluginManager.deactivate": "停用",
+  "pluginManager.activeModules": "启用的模块",
+  "pluginManager.inactiveModules": "停用的模块",
+  "pluginManager.connectLocal": "连接本地插件",
+  "pluginManager.localForm.title": "本地插件",
+  "pluginManager.localForm.pluginName": "插件名称",
+  "pluginManager.localForm.shouldBeCamelCase": "应当采用驼峰命名法",
+  "pluginManager.localForm.displayName": "展示名称",
+  "pluginManager.localForm.nameInTheHeader": "标题中展示的名称",
+  "pluginManager.localForm.required": "必填",
+  "pluginManager.localForm.commaSeparatedMethod": "英文逗号分隔方法名称",
+  "pluginManager.localForm.commaSeparatedPlugin": "英文逗号分隔插件名称",
+  "pluginManager.localForm.pluginsItCanActivate": "能激活该插件的插件",
+  "pluginManager.localForm.typeOfConnection": "连接类型",
+  "pluginManager.localForm.locationInRemix": "在Remix中的位置",
+  "pluginManager.localForm.sidePanel": "侧面板",
+  "pluginManager.localForm.mainPanel": "主面板",
+  "pluginManager.localForm.none": "无"
+}
