@@ -434,10 +434,12 @@
           }
         },
         "test": {
-          "builder": "@nrwl/jest:jest",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "jestConfig": "libs/remix-tests/jest.config.js",
-            "tsConfig": "libs/remix-tests/tsconfig.spec.json"
+            "commands": [
+              "yarn test"
+            ],
+            "cwd": "libs/remix-tests"
           }
         },
         "build": {

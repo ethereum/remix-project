@@ -67,6 +67,7 @@ async function compileAndDeploy(filename: string, callback: any) {
                 if (filename.endsWith('_test.sol'))
                     sourceASTs[filename] = asts[filename].ast
             }
+            // eslint-disable-next-line no-useless-catch
             try {
                 compilationData = compilationResult
                 deployAll(compilationResult, web3, accounts, false, null, next)
