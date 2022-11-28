@@ -19,7 +19,7 @@ const RemixApp = (props: IRemixAppUi) => {
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
   const [maximiseTrigger, setMaximiseTrigger] = useState<number>(0)
   const [resetTrigger, setResetTrigger] = useState<number>(0)
-  const [locale, setLocale] = useState<{ name:string; messages:any }>({ name:'', messages:{} });
+  const [locale, setLocale] = useState<{ code:string; messages:any }>({ code:'', messages:{} });
   const sidePanelRef = useRef(null)
 
   useEffect(() => {
@@ -78,7 +78,7 @@ const RemixApp = (props: IRemixAppUi) => {
   }
 
   return (
-    <IntlProvider locale={locale.name} messages={locale.messages}>
+    <IntlProvider locale={locale.code} messages={locale.messages}>
       <AppProvider value={value}>
         <OriginWarning></OriginWarning>
         <MatomoDialog hide={!appReady}></MatomoDialog>

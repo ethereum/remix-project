@@ -1,0 +1,15 @@
+{
+  "terminal.listen": "listen on all transactions",
+  "terminal.search": "Search with transaction hash or address",
+  "terminal.used": "used",
+  "terminal.welcomeText1": "Welcome to",
+  "terminal.welcomeText2": "Your files are stored in",
+  "terminal.welcomeText3": "You can use this terminal to",
+  "terminal.welcomeText4": "Check transactions details and start debugging",
+  "terminal.welcomeText5": "Execute JavaScript scripts",
+  "terminal.welcomeText6": "Input a script directly in the command line interface",
+  "terminal.welcomeText7": "Select a Javascript file in the file explorer and then run `remix.execute()` or `remix.exeCurrent()`  in the command line interface",
+  "terminal.welcomeText8": "Right click on a JavaScript file in the file explorer and then click `Run`",
+  "terminal.welcomeText9": "The following libraries are accessible",
+  "terminal.welcomeText10": "Type the library name to see available commands"
+}
