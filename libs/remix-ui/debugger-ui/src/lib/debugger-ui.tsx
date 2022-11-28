@@ -121,7 +121,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       })
     })
 
-    debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation, generatedSources, address) => {
+    debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation, generatedSources, address, stepDetail, lineGasCost) => {
       if (!lineColumnPos) {
         await debuggerModule.discardHighlight()
         setState(prevState => {
@@ -158,7 +158,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
             return { ...prevState, sourceLocationStatus: '' }
           })
           await debuggerModule.discardHighlight()
-          await debuggerModule.highlight(lineColumnPos, path)
+          await debuggerModule.highlight(lineColumnPos, path, rawLocation, stepDetail, lineGasCost)
         }
       }
     })
@@ -266,13 +266,14 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       console.log(e.message)
     }
 
+    const localCache = {}
     const debuggerInstance = new Debugger({
       web3,
       offsetToLineColumnConverter: debuggerModule.offsetToLineColumnConverter,
       compilationResult: async (address) => {
         try {
-          const ret = await debuggerModule.fetchContractAndCompile(address, currentReceipt)
-          return ret
+          if (!localCache[address]) localCache[address] = await debuggerModule.fetchContractAndCompile(address, currentReceipt)
+          return localCache[address]
         } catch (e) {
           // debuggerModule.showMessage('Debugging error', 'Unable to fetch a transaction.')
           console.error(e)
@@ -395,8 +396,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         { state.debugging && <StepManager stepManager={ stepManager } /> }
       </div>
       <div className="debuggerPanels" ref={panelsRef}>
-        { state.debugging && <VmDebuggerHead vmDebugger={ vmDebugger } /> }
-        { state.debugging && <VmDebugger vmDebugger={ vmDebugger } currentBlock={ state.currentBlock } currentReceipt={ state.currentReceipt } currentTransaction={ state.currentTransaction } /> }
+        { state.debugging && <VmDebuggerHead debugging={state.debugging} vmDebugger={ vmDebugger } /> }
+        { state.debugging && <VmDebugger debugging={state.debugging} vmDebugger={ vmDebugger } currentBlock={ state.currentBlock } currentReceipt={ state.currentReceipt } currentTransaction={ state.currentTransaction } /> }
       </div>
     </div>
   )
