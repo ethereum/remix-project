@@ -87,11 +87,32 @@ export class SourceLocationTracker {
       (map.file > amountOfSources - 1) this indicates the current file index exceed the total number of files.
                                               this happens when generated sources should not be considered.
     */
-    while (vmtraceStepIndex >= 0 && (map.file === -1 || map.file > amountOfSources - 1)) {
+    while (vmtraceStepIndex >= 0 && this.isInvalidSourceLocation(map, amountOfSources)) {
       map = await this.getSourceLocationFromVMTraceIndex(address, vmtraceStepIndex, contracts)
       vmtraceStepIndex = vmtraceStepIndex - 1
     }
     return map
+  }
+
+  isInvalidSourceLocation (sourceLocation, amountOfSources) {
+    return sourceLocation.file === -1 || sourceLocation.file > amountOfSources - 1
+  }
+
+  async getValidSourceLocationFromVMTraceIndexFromCache (address: string, vmtraceStepIndex: number, contracts: any, cache: Map<number, any>) {
+    const amountOfSources = this.getTotalAmountOfSources(address, contracts)
+    let map: any = { file: -1 }
+    /*
+      (map.file === -1) this indicates that it isn't associated with a known source code
+      (map.file > amountOfSources - 1) this indicates the current file index exceed the total number of files.
+                                              this happens when generated sources should not be considered.
+    */
+    const originStep = cache[vmtraceStepIndex]
+    while (vmtraceStepIndex >= 0 && (map.file === -1 || map.file > amountOfSources - 1)) {
+      map = cache[vmtraceStepIndex].sourceLocation
+      vmtraceStepIndex = vmtraceStepIndex - 1
+      originStep.sourceLocation = map
+    }
+    return originStep
   }
 
   clearCache () {

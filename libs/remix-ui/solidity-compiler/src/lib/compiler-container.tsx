@@ -5,6 +5,7 @@ import { CompilerContainerProps } from './types'
 import { ConfigurationSettings } from '@remix-project/remix-lib-ts'
 import { checkSpecialChars, CustomTooltip, extractNameFromKey } from '@remix-ui/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '@remix-project/remix-solidity'
+
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
 import { resetEditorMode, listenToEvents } from './actions/compiler'
 import { getValidLanguage } from '@remix-project/remix-solidity'
@@ -732,6 +733,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     setToggleExpander(!toggleExpander)
   }
 
+
   return (
     <section>
       <article>
@@ -944,20 +946,26 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   {(configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div>}
                 </div>}
             >
-              <span>
-                { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn" aria-hidden="true"></i> }
-                <FormattedMessage id='solidity.compile' defaultMessage='Compile' />
-                {typeof state.compiledFileName === 'string'
-                  ? extractNameFromKey(state.compiledFileName) ||
-                    `<${intl.formatMessage({
-                      id: 'solidity.noFileSelected',
-                      defaultMessage: 'no file selected',
-                    })}>`
-                  : `<${intl.formatMessage({
-                      id: 'solidity.noFileSelected',
-                      defaultMessage: 'no file selected',
-                    })}>`}
-              </span>
+              <div className="d-flex align-items-center justify-content-center">
+                { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn ml-4" aria-hidden="true"></i> }
+                <div className="d-flex justify-content-between align-items-center">
+                  <span>
+                    <FormattedMessage id='solidity.compile' defaultMessage='Compile' />
+                  </span>
+                  <span className="ml-1">
+                    {typeof state.compiledFileName === 'string'
+                      ? extractNameFromKey(state.compiledFileName) ||
+                        `<${intl.formatMessage({
+                          id: 'solidity.noFileSelected',
+                          defaultMessage: 'no file selected',
+                        })}>`
+                      : `<${intl.formatMessage({
+                          id: 'solidity.noFileSelected',
+                          defaultMessage: 'no file selected',
+                        })}>`}
+                  </span>
+                </div>
+              </div>
             </CustomTooltip>
           </button>
           <div className='d-flex align-items-center'>
