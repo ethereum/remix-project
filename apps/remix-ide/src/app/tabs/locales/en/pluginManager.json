@@ -1,0 +1,22 @@
+{
+  "pluginManager.displayName": "Plugin manager",
+  "pluginManager.activate": "Activate",
+  "pluginManager.deactivate": "Deactivate",
+  "pluginManager.activeModules": "Active Modules",
+  "pluginManager.inactiveModules": "Inactive Modules",
+  "pluginManager.connectLocal": "Connect to a Local Plugin",
+  "pluginManager.localForm.title": "Local Plugin",
+  "pluginManager.localForm.pluginName": "Plugin Name",
+  "pluginManager.localForm.shouldBeCamelCase": "Should be camelCase",
+  "pluginManager.localForm.displayName": "Display Name",
+  "pluginManager.localForm.nameInTheHeader": "Name in the header",
+  "pluginManager.localForm.required": "required",
+  "pluginManager.localForm.commaSeparatedMethod": "comma separated list of method names",
+  "pluginManager.localForm.commaSeparatedPlugin": "comma separated list of plugin names",
+  "pluginManager.localForm.pluginsItCanActivate": "Plugins it can activate",
+  "pluginManager.localForm.typeOfConnection": "Type of connection",
+  "pluginManager.localForm.locationInRemix": "Location in remix",
+  "pluginManager.localForm.sidePanel": "Side Panel",
+  "pluginManager.localForm.mainPanel": "Main Panel",
+  "pluginManager.localForm.none": "None"
+}

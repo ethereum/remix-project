@@ -8,11 +8,11 @@ export interface RemixUiLocaleModuleProps {
 }
 
 export function RemixUiLocaleModule({ localeModule }: RemixUiLocaleModuleProps) {
-  const [localeName, setLocaleName] = useState('')
+  const [localeCode, setLocaleCode] = useState('')
 
   useEffect(() => {
       localeModule.switchLocale()
-  }, [localeName, localeModule])
+  }, [localeCode, localeModule])
 
   return (
     <div className="border-top mb-4">
@@ -30,21 +30,21 @@ export function RemixUiLocaleModule({ localeModule }: RemixUiLocaleModuleProps) 
                   <input
                     type="radio"
                     onChange={event => {
-                      localeModule.switchLocale(locale.name);
-                      setLocaleName(locale.name);
+                      localeModule.switchLocale(locale.code);
+                      setLocaleCode(locale.code);
                     }}
                     className="align-middle custom-control-input"
                     name="locale"
-                    id={locale.name}
-                    data-id={`settingsTabLocale${locale.name}`}
-                    checked={localeModule.active === locale.name.toLocaleLowerCase()}
+                    id={locale.code}
+                    data-id={`settingsTabLocale${locale.code}`}
+                    checked={localeModule.active === locale.code.toLocaleLowerCase()}
                   />
                   <label
                     className="form-check-label custom-control-label"
-                    data-id={`settingsTabLocaleLabel${locale.name}`}
-                    htmlFor={locale.name}
+                    data-id={`settingsTabLocaleLabel${locale.code}`}
+                    htmlFor={locale.code}
                   >
-                    {locale.name}
+                    {locale.name.toLocaleUpperCase()}-{locale.localeName}
                   </label>
                 </div>
               ))
