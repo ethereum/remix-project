@@ -25,6 +25,7 @@ describe('testRunner: remix-tests CLI', function(){
     describe('test various CLI options', function() {
       it('remix-tests version', () => {
         const res = spawnSync(executablePath, ['-V'])
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         expect(res.stdout.toString().trim()).to.equal(require('../package.json').version)
       })
 
