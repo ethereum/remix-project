@@ -239,6 +239,10 @@ export function compareByteCode (code1, code2) {
     code2 = replaceLibReference(code2, pos)
     code1 = replaceLibReference(code1, pos)
   }
+
+  code1 = removeImmutableReference(code1)
+  code2 = removeImmutableReference(code2)
+
   code1 = extractinputParameters(code1)  
   code1 = extractSwarmHash(code1)
   code1 = extractcborMetadata(code1)
@@ -274,6 +278,10 @@ export function escapeRegExp (str) {
 
 function replaceLibReference (code, pos) {
   return code.substring(0, pos) + '0000000000000000000000000000000000000000' + code.substring(pos + 40)
+}
+
+function removeImmutableReference (code) {  
+  return code.replace(/7f([0-9a-f]{64})73/g, '')
 }
 
 function findCallInternal (index, rootCall, callsPath) {
