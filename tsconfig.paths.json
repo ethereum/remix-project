@@ -16,9 +16,6 @@
             "@remix-project/remix-lib": [
                 "libs/remix-lib/src/index.ts"
             ],
-            "@remix-project/remix-lib-ts": [
-                "libs/remix-lib/src/index.ts"
-            ],
             "@remix-project/remix-niks": [
                 "libs/remix-niks/src/index.ts"
             ],
@@ -30,9 +27,6 @@
             ],
             "@remix-project/remix-solidity": [
                 "libs/remix-solidity/src/index"
-            ],
-            "@remix-project/remix-solidity-ts": [
-                "libs/remix-solidity/src/index.ts"
             ],
             "@remix-project/remix-tests": [
                 "libs/remix-tests/src/index.ts"

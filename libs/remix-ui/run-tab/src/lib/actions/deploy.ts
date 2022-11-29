@@ -1,6 +1,6 @@
 import { ContractData, FuncABI } from "@remix-project/core-plugin"
 import { RunTab } from "../types/run-tab"
-import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity-ts'
+import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
 import { DeployMode, MainnetPrompt } from "../types"
 import { displayNotification, displayPopUp, setDecodedResponse } from "./payload"
