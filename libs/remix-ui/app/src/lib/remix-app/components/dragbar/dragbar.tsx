@@ -58,9 +58,10 @@ const DragBar = (props: IRemixDragBarUi) => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  function stopDrag(e: MouseEvent, data: any) {
+  function stopDrag(data: any) {
     setDragState(false)
-    if (data.x < props.minWidth) {
+    console.log("drag")
+    if (data.x < props.minWidth + offset) {
       setDragBarPosX(offset)
       props.setHideStatus(true)
     } else {
@@ -70,7 +71,6 @@ const DragBar = (props: IRemixDragBarUi) => {
         setDragBarPosX(offset + props.refObject.current.offsetWidth)
       }, 300)
     }
-
   }
 
   function startDrag() {

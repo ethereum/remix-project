@@ -157,7 +157,7 @@ function HomeTabTitle() {
           ref={searchInputRef}
           type="text"
           className="border form-control border-right-0"
-          id="searchInput"
+          id="homeTabSearchInput"
           placeholder="Search Documentation"
           data-id="terminalInputSearch"
         />
