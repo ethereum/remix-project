@@ -288,7 +288,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
           tooltipText={contractOptions.title}
         >
           <div id="udappcontractNamesWrapper" className="w-100">
-            <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block', pointerEvents: 'none' }}>
+            <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block', pointerEvents: contractOptions.disabled ? 'none' : 'auto' }}>
               {(contractList[currentFile] || []).map((contract, index) => {
                 return <option key={index} value={contract.alias}>
                   {contract.alias} - {contract.file}
