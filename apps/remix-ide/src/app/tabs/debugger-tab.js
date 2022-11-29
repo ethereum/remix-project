@@ -10,7 +10,7 @@ const css = require('./styles/debugger-tab-styles')
 const profile = {
   name: 'debugger',
   displayName: 'Debugger',
-  methods: ['debug', 'getTrace', 'decodeVariable'],
+  methods: ['debug', 'getTrace', 'decodeLocalVariable', 'decodeStateVariable'],
   events: [],
   icon: 'assets/img/debuggerLogo.webp',
   description: 'Debug transactions',
@@ -66,8 +66,13 @@ export class DebuggerTab extends DebuggerApiMixin(ViewPlugin) {
     }
   }
 
-  async decodeVariable (variableId) {
+  async decodeLocalVariable (variableId) {
     if (!this.debuggerBackend) return null
     return await this.debuggerBackend.debugger.decodeLocalVariableByIdAtCurrentStep(this.debuggerBackend.step_manager.currentStepIndex, variableId)
+  }
+
+  async decodeStateVariable (variableId) {
+    if (!this.debuggerBackend) return null
+    return await this.debuggerBackend.debugger.decodeStateVariableByIdAtCurrentStep(this.debuggerBackend.step_manager.currentStepIndex, variableId)
   }
 }
