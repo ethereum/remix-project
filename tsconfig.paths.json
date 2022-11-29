@@ -147,7 +147,10 @@
             ],
             "remix-node": [
                 "libs/remix-node/src/index.ts"
-            ]
+            ],
+            "@remix-ui/locale-module": [
+                "libs/remix-ui/locale-module/src/index.ts"
+            ],
         }
     }
 }

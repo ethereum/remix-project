@@ -46,7 +46,16 @@ module.exports = {
       .click('[data-id="verify-contract"]')
       .waitForElementVisible('[data-id="verify-result"]')
       .waitForElementContainsText('[data-id="verify-result"]', 'Contract source code already verified')
-    }
+    },
+
+    'Should call the etherscan plugin api #group1': function (browser: NightwatchBrowser) {
+      browser
+        .frameParent()
+        .clickLaunchIcon('filePanel')
+        .addFile('receiptStatusScript.ts', { content: receiptStatusScript })
+        .click('*[data-id="play-editor"]') // run the script
+        .waitForElementContainsText('*[data-id="terminalJournal"]', 'Pass - Verified', 60000)
+      }
 }
 
 const verifiedContract = `
@@ -105,3 +114,36 @@ contract Owner {
         return owner;
     }
 }`
+
+const receiptStatusScript = `
+  const receiptStatus = async () => {
+    try {
+        const apikey = '2HKUX5ZVASZIKWJM8MIQVCRUVZ6JAWT531'
+        const ret = await remix.call('etherscan' as any,  'receiptStatus', 'n1qtqfn8jggwqv9uvni5zzectnztqbxqqvizznvl4vg1pndb9v', apikey)
+        console.log(ret)
+    } catch (e) {
+        console.log(e.message)
+    }
+  }
+  receiptStatus()
+`
+
+/* eslint-disable */
+const verifyScript = `
+  const verify = async () => {
+    try {
+        const apikey = '2HKUX5ZVASZIKWJM8MIQVCRUVZ6JAWT531'
+        const contractAddress = '0x900d15ce8fc2115c4a870107e5ea855e4243900e'
+        const contractArguments = '' // hex value without 0x
+        const contractName = 'Owner'
+        const contractFile = 'contracts/2_Owner.sol'
+        const compilationResultParam = await remix.call('compilerArtefacts' as any, 'getCompilerAbstract', contractFile)
+        console.log('verifying..')
+        const ret = await remix.call('etherscan' as any,  'verify', apikey, contractAddress, contractArguments, contractName, compilationResultParam)
+        console.log(ret)
+    } catch (e) {
+        console.log(e.message)
+    }
+  }
+  verify()
+`

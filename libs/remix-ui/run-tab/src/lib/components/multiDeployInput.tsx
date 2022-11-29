@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react'
+import { CustomTooltip } from '@remix-ui/helper'
+import React, { useRef } from 'react'
 import { MultiDeployInputProps } from '../types'
 import { DeployButton } from './deployButton'
 
@@ -16,7 +17,14 @@ export function MultiDeployInput(props: MultiDeployInputProps) {
             return (
               <div className="udapp_multiArg" key={index}>
                 <label htmlFor={inp.name}> {inp.name}: </label>
-                <input ref={el => { multiFields.current[index] = el }} className="form-control" placeholder={inp.type} title={inp.name} data-id={`multiParamManagerInput${inp.name}`} />
+                <CustomTooltip
+                  placement="left-end"
+                  tooltipId="udappMultiArgTooltip"
+                  tooltipClasses="text-nowrap"
+                  tooltipText={inp.name}
+                >
+                  <input ref={el => { multiFields.current[index] = el }} className="form-control" placeholder={inp.type} data-id={`multiParamManagerInput${inp.name}`} />
+                </CustomTooltip>
               </div>)
           })}
         </div>

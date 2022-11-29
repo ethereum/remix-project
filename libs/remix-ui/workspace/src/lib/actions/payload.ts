@@ -126,7 +126,7 @@ export const createWorkspaceRequest = (promise: Promise<any>) => {
   }
 }
 
-export const createWorkspaceSuccess = (workspaceName: { name: string; isGitRepo: boolean; }) => {
+export const createWorkspaceSuccess = (workspaceName: { name: string; isGitRepo: boolean; branches?: { remote: any; name: string; }[], currentBranch?: string }) => {
   return {
     type: 'CREATE_WORKSPACE_SUCCESS',
     payload: workspaceName
@@ -262,5 +262,33 @@ export const cloneRepositorySuccess = () => {
 export const cloneRepositoryFailed = () => {
   return {
     type: 'CLONE_REPOSITORY_FAILED'
+  }
+}
+
+export const setCurrentWorkspaceBranches = (branches?: { remote: any, name: string }[]) => {
+  return {
+    type: 'SET_CURRENT_WORKSPACE_BRANCHES',
+    payload: branches
+  }
+}
+
+export const setCurrentWorkspaceCurrentBranch = (currentBranch?: string) => {
+  return {
+    type: 'SET_CURRENT_WORKSPACE_CURRENT_BRANCH',
+    payload: currentBranch
+  }
+}
+
+export const setCurrentWorkspaceIsGitRepo = (isRepo: boolean) => {
+  return {
+    type: 'SET_CURRENT_WORKSPACE_IS_GITREPO',
+    payload: isRepo
+  }
+}
+
+export const setGitConfig = (config: {username: string, token: string, email: string}) => {
+  return {
+    type: 'SET_GIT_CONFIG',
+    payload: config
   }
 }
