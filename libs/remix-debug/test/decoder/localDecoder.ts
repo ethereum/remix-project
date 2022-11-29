@@ -23,7 +23,7 @@ tape('solidity', function (t) {
 async function test (st, privateKey) {
   let output = compiler.compile(compilerInput(intLocal.contract))
   output = JSON.parse(output)
-  await intLocalTest(st, privateKey, output.contracts['test.sol']['intLocal'].evm.bytecode.object, output)
+  await intLocalTest(st, privateKey, output.contracts['test.sol']['intLocal'].evm.bytecode.object, output, intLocal.contract)
   output = compiler.compile(compilerInput(miscLocal.contract))
   output = JSON.parse(output)
   await miscLocalTest(st, privateKey, output.contracts['test.sol']['miscLocal'].evm.bytecode.object, output)

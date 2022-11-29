@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react' // eslint-disable-line
+import { useIntl } from 'react-intl'
 import { action, FileExplorerContextMenuProps } from '../types'
 
 import '../css/file-explorer-context-menu.css'
@@ -14,6 +15,7 @@ const _paq = window._paq = window._paq || []  //eslint-disable-line
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
   const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, paste, runScript, emit, pageX, pageY, path, type, focus, ...otherProps } = props
   const contextMenuRef = useRef(null)
+  const intl = useIntl()
   useEffect(() => {
     contextMenuRef.current.focus()
   }, [])
@@ -87,19 +89,19 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'delete'])
               break
             case 'Push changes to gist':
-              _paq.push(['trackEvent', 'fileExplorer', 'pushToChangesoGist'])
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'pushToChangesoGist'])
               pushChangesToGist(path, type)
               break
             case 'Publish folder to gist':
-              _paq.push(['trackEvent', 'fileExplorer', 'publishFolderToGist'])
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishFolderToGist'])
               publishFolderToGist(path, type)
               break
             case 'Publish file to gist':
-              _paq.push(['trackEvent', 'fileExplorer', 'publishFileToGist'])
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishFileToGist'])
               publishFileToGist(path, type)
               break
             case 'Run':
-              _paq.push(['trackEvent', 'fileExplorer', 'runScript'])
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'runScript'])
               runScript(path)
               break
             case 'Copy':
@@ -120,7 +122,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               break
           }
           hideContextMenu()
-        }}>{item.label || item.name}</li>
+        }}>{intl.formatMessage({id: `filePanel.${item.id}`, defaultMessage: item.label || item.name})}</li>
     })
   }
 

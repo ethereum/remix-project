@@ -77,6 +77,8 @@ export interface FileExplorerProps {
     fileState: fileDecoration[],
     expandPath: string[],
     focusEdit: string,
+    hideIconsMenu: React.Dispatch<React.SetStateAction<boolean>>,
+    showIconsMenu: boolean,
     focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[],
     dispatchCreateNewFile: (path: string, rootDir: string) => Promise<void>,
     // eslint-disable-next-line no-undef
@@ -101,7 +103,7 @@ export interface FileExplorerProps {
     dispatchMoveFile: (src: string, dest: string) => Promise<void>,
     dispatchMoveFolder: (src: string, dest: string) => Promise<void>
 }
-
+type Placement = import('react-overlays/usePopper').Placement
 export interface FileExplorerMenuProps {
     title: string,
     menuItems: string[],
@@ -109,6 +111,7 @@ export interface FileExplorerMenuProps {
     createNewFolder: (parentFolder?: string) => void,
     publishToGist: (path?: string) => void,
     uploadFile: (target: EventTarget & HTMLInputElement) => void
+    tooltipPlacement?: Placement
 }
 export interface FileExplorerContextMenuProps {
     actions: action[],

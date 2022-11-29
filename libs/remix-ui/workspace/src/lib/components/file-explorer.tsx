@@ -460,6 +460,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
                   handleClickFolder={handleClickFolder}
                   handleContextMenu={handleContextMenu}
                   key={index}
+                  showIconsMenu={props.showIconsMenu}
+                  hideIconsMenu={props.hideIconsMenu}
                   
                 />)
               }

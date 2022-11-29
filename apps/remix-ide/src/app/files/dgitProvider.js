@@ -50,6 +50,8 @@ class DGitProvider extends Plugin {
 
   async getGitConfig () {
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
+
+    if (!workspace) return
     return {
       fs: window.remixFileSystemCallback,
       dir: addSlash(workspace.absolutePath)
@@ -76,6 +78,7 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       defaultBranch: (input && input.branch) || 'main'
     })
+    this.emit('init')
   }
 
   async status (cmd) {
@@ -91,9 +94,7 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
-    setTimeout(async () => {
-      await this.call('fileManager', 'refresh')
-    }, 1000)
+    this.emit('add')
   }
 
   async rm (cmd) {
@@ -101,19 +102,19 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
-    setTimeout(async () => {
-      await this.call('fileManager', 'refresh')
-    }, 1000)
   }
 
-  async checkout (cmd) {
+  async checkout (cmd, refresh = true) {
     await git.checkout({
       ...await this.getGitConfig(),
       ...cmd
     })
-    setTimeout(async () => {
-      await this.call('fileManager', 'refresh')
-    }, 1000)
+    if (refresh) {
+        setTimeout(async () => {
+        await this.call('fileManager', 'refresh')
+      }, 1000)
+    }
+    this.emit('checkout')
   }
 
   async log (cmd) {
@@ -124,47 +125,58 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async remotes () {
+  async remotes (config) {
     let remotes = []
     try {
-      remotes = await git.listRemotes({ ...await this.getGitConfig() })
+      remotes = await git.listRemotes({ ...config ? config : await this.getGitConfig() })
     } catch (e) {
       // do nothing
     }
     return remotes
   }
 
-  async branch (cmd) {
+  async branch (cmd, refresh = true) {
     const status = await git.branch({
       ...await this.getGitConfig(),
       ...cmd
     })
-    setTimeout(async () => {
-      await this.call('fileManager', 'refresh')
-    }, 1000)
+    if (refresh) {
+        setTimeout(async () => {
+        await this.call('fileManager', 'refresh')
+      }, 1000)
+    }
+    this.emit('branch')
     return status
   }
 
-  async currentbranch () {
-    const name = await git.currentBranch({
-      ...await this.getGitConfig()
-    })
-    return name
+  async currentbranch (config) {
+    try{
+      const defaultConfig = await this.getGitConfig()
+      const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
+      const name = await git.currentBranch(cmd)
+
+      return name
+    }catch(e){
+      return ''
+    }
   }
 
-  async branches () {
-    const cmd = {
-      ...await this.getGitConfig()
+  async branches (config) {
+    try{
+      const defaultConfig = await this.getGitConfig()
+      const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
+      const remotes = await this.remotes(config)
+      let branches = []
+      branches = (await git.listBranches(cmd)).map((branch) => { return { remote: undefined, name: branch } })
+      for (const remote of remotes) {
+        cmd.remote = remote.remote
+        const remotebranches = (await git.listBranches(cmd)).map((branch) => { return { remote: remote.remote, name: branch } })
+        branches = [...branches, ...remotebranches]
+      }
+      return branches
+    }catch(e){
+      return []
     }
-    const remotes = await this.remotes()
-    let branches = []
-    branches = (await git.listBranches(cmd)).map((branch) => { return { remote: undefined, name: branch } })
-    for (const remote of remotes) {
-      cmd.remote = remote.remote
-      const remotebranches = (await git.listBranches(cmd)).map((branch) => { return { remote: remote.remote, name: branch } })
-      branches = [...branches, ...remotebranches]
-    }
-    return branches
   }
 
   async commit (cmd) {
@@ -174,6 +186,7 @@ class DGitProvider extends Plugin {
         ...await this.getGitConfig(),
         ...cmd
       })
+      this.emit('commit')
       return sha
     } catch (e) {
       throw new Error(e)
@@ -253,6 +266,7 @@ class DGitProvider extends Plugin {
         await this.call('fileManager', 'refresh')
       }, 1000)
     }
+    this.emit('clone')
     return result
   }
 
@@ -387,6 +401,8 @@ class DGitProvider extends Plugin {
             pinata_api_key: pinataApiKey,
             pinata_secret_api_key: pinataSecretApiKey
           }
+        }).catch((e) => {
+          console.log(e)
         })
       // also commit to remix IPFS for availability after pinning to Pinata
       return await this.export(this.remixIPFS) || result.data.IpfsHash
@@ -405,6 +421,8 @@ class DGitProvider extends Plugin {
             pinata_api_key: pinataApiKey,
             pinata_secret_api_key: pinataSecretApiKey
           }
+        }).catch((e) => {
+          console.log('Pinata unreachable')
         })
       return result.data
     } catch (error) {

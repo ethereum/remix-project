@@ -69,7 +69,7 @@ export class RunTab extends ViewPlugin {
     this.emit('clearAllInstancesReducer')
   }
 
-  addInstance (address, abi, name) {    
+  addInstance (address, abi, name) {
     this.emit('addInstanceReducer', address, abi, name)
   }
 
@@ -78,7 +78,7 @@ export class RunTab extends ViewPlugin {
   }
 
   sendTransaction (tx) {
-    _paq.push(['trackEvent', 'udapp', 'sendTx'])
+    _paq.push(['trackEvent', 'udapp', 'sendTx', 'udappTransaction'])
     return this.blockchain.sendTransaction(tx)
   }
 
@@ -95,7 +95,7 @@ export class RunTab extends ViewPlugin {
   }
 
   onReady (api) {
-    this.REACT_API = api    
+    this.REACT_API = api
   }
 
   async onInitDone () {
@@ -174,7 +174,7 @@ export class RunTab extends ViewPlugin {
         }
       }
     })
-    
+
     await this.call('blockchain', 'addProvider', {
       name: 'Optimism Provider',
       isInjected: true,

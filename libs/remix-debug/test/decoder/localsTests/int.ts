@@ -7,9 +7,10 @@ import { contractCreationToken } from '../../../src/trace/traceHelper'
 import { SolidityProxy } from '../../../src/solidity-decoder/solidityProxy'
 import { InternalCallTree } from '../../../src/solidity-decoder/internalCallTree'
 import { EventManager } from '../../../src/eventManager'
+import * as sourceMappingDecoder from '../../../src/source/sourceMappingDecoder'
 import * as helper from './helper'
 
-module.exports = function (st, privateKey, contractBytecode, compilationResult) {
+module.exports = function (st, privateKey, contractBytecode, compilationResult, contractCode) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {    
     const web3 = await (vmCall as any).getWeb3();
@@ -28,22 +29,37 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult) 
         const solidityProxy = new SolidityProxy({ getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), getCode: codeManager.getCode.bind(codeManager) })
         solidityProxy.reset(compilationResult)
         const debuggerEvent = new EventManager()
-        const callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true })
+        const offsetToLineColumnConverter = {
+          offsetToLineColumn: (rawLocation) => {
+            return new Promise((resolve) => {
+              const lineBreaks = sourceMappingDecoder.getLinebreakPositions(contractCode)
+              resolve(sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, lineBreaks))
+            })
+          }
+        }
+        const callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true }, offsetToLineColumnConverter)
         callTree.event.register('callTreeBuildFailed', (error) => {
           st.fail(error)
         })
         callTree.event.register('callTreeNotReady', (reason) => {
           st.fail(reason)
         })
-        callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
+        callTree.event.register('callTreeReady', async (scopes, scopeStarts) => {
           try {
-            const functions1 = callTree.retrieveFunctionsStack(102)
-            const functions2 = callTree.retrieveFunctionsStack(115)
+
+            // test gas cost per line
+            st.equals((await callTree.getGasCostPerLine(0, 16)).gasCost, 11)
+            st.equals((await callTree.getGasCostPerLine(0, 32)).gasCost, 84)
+            
+            const functions1 = callTree.retrieveFunctionsStack(103)
+            const functions2 = callTree.retrieveFunctionsStack(116)
             const functions3 = callTree.retrieveFunctionsStack(13)
-  
-            st.equals(functions1.length, 1)
-            st.equals(functions2.length, 2)
-            st.equals(functions3.length, 0)
+
+            st.equals(functions1.length, 2)
+            st.equals(functions2.length, 3)
+            st.equals(functions3.length, 1)
+
+            st.equal(functions1[0].gasCost, 54)
   
             st.equals(Object.keys(functions1[0])[0], 'functionDefinition')
             st.equals(Object.keys(functions1[0])[1], 'inputs')
@@ -58,34 +74,34 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult) 
             st.equals(functions1[0].functionDefinition.name, 'level11')
             st.equals(functions2[0].functionDefinition.name, 'level12')
             st.equals(functions2[1].functionDefinition.name, 'level11')
-  
-            st.equals(scopeStarts[0], '')
-            st.equals(scopeStarts[13], '1')
-            st.equals(scopeStarts[102], '2')
-            st.equals(scopeStarts[115], '2.1')
-            st.equals(scopeStarts[136], '3')
-            st.equals(scopeStarts[153], '4')
-            st.equals(scopeStarts[166], '4.1')
-            st.equals(scopes[''].locals['ui8'].type.typeName, 'uint8')
-            st.equals(scopes[''].locals['ui16'].type.typeName, 'uint16')
-            st.equals(scopes[''].locals['ui32'].type.typeName, 'uint32')
-            st.equals(scopes[''].locals['ui64'].type.typeName, 'uint64')
-            st.equals(scopes[''].locals['ui128'].type.typeName, 'uint128')
-            st.equals(scopes[''].locals['ui256'].type.typeName, 'uint256')
-            st.equals(scopes[''].locals['ui'].type.typeName, 'uint256')
-            st.equals(scopes[''].locals['i8'].type.typeName, 'int8')
-            st.equals(scopes[''].locals['i16'].type.typeName, 'int16')
-            st.equals(scopes[''].locals['i32'].type.typeName, 'int32')
-            st.equals(scopes[''].locals['i64'].type.typeName, 'int64')
-            st.equals(scopes[''].locals['i128'].type.typeName, 'int128')
-            st.equals(scopes[''].locals['i256'].type.typeName, 'int256')
-            st.equals(scopes[''].locals['i'].type.typeName, 'int256')
-            st.equals(scopes[''].locals['ishrink'].type.typeName, 'int32')
-            st.equals(scopes['2'].locals['ui8'].type.typeName, 'uint8')
-            st.equals(scopes['2.1'].locals['ui81'].type.typeName, 'uint8')
-            st.equals(scopes['3'].locals['ui81'].type.typeName, 'uint8')
-            st.equals(scopes['4'].locals['ui8'].type.typeName, 'uint8')
-            st.equals(scopes['4.1'].locals['ui81'].type.typeName, 'uint8')
+            
+            st.equals(scopeStarts[0], '1')
+            st.equals(scopeStarts[10], '1.1')
+            st.equals(scopeStarts[102], '1.1.1')
+            st.equals(scopeStarts[115], '1.1.1.1')
+            st.equals(scopeStarts[136], '1.1.2')
+            st.equals(scopeStarts[153], '1.1.3')
+            st.equals(scopeStarts[166], '1.1.3.1')
+            st.equals(scopes['1.1'].locals['ui8'].type.typeName, 'uint8')
+            st.equals(scopes['1.1'].locals['ui16'].type.typeName, 'uint16')
+            st.equals(scopes['1.1'].locals['ui32'].type.typeName, 'uint32')
+            st.equals(scopes['1.1'].locals['ui64'].type.typeName, 'uint64')
+            st.equals(scopes['1.1'].locals['ui128'].type.typeName, 'uint128')
+            st.equals(scopes['1.1'].locals['ui256'].type.typeName, 'uint256')
+            st.equals(scopes['1.1'].locals['ui'].type.typeName, 'uint256')
+            st.equals(scopes['1.1'].locals['i8'].type.typeName, 'int8')
+            st.equals(scopes['1.1'].locals['i16'].type.typeName, 'int16')
+            st.equals(scopes['1.1'].locals['i32'].type.typeName, 'int32')
+            st.equals(scopes['1.1'].locals['i64'].type.typeName, 'int64')
+            st.equals(scopes['1.1'].locals['i128'].type.typeName, 'int128')
+            st.equals(scopes['1.1'].locals['i256'].type.typeName, 'int256')
+            st.equals(scopes['1.1'].locals['i'].type.typeName, 'int256')
+            st.equals(scopes['1.1'].locals['ishrink'].type.typeName, 'int32')
+            st.equals(scopes['1.1.1'].locals['ui8'].type.typeName, 'uint8')
+            st.equals(scopes['1.1.1.1'].locals['ui81'].type.typeName, 'uint8')
+            st.equals(scopes['1.1.2'].locals['ui81'].type.typeName, 'uint8')
+            st.equals(scopes['1.1.3'].locals['ui8'].type.typeName, 'uint8')
+            st.equals(scopes['1.1.3.1'].locals['ui81'].type.typeName, 'uint8')
           } catch (e) {
             st.fail(e.message)
           }
