@@ -70,7 +70,7 @@ function HomeTabTitle() {
             placement={'top'}
             tooltipId="overlay-tooltip"
             tooltipClasses="text-nowrap"
-            tooltipText={<FormattedMessage id="home.remixYoutubePlaylist" defaultMessage="Remix Youtube Playlist" />}
+            tooltipText={<FormattedMessage id="home.remixYoutubePlaylist" />}
             tooltipTextClasses="border bg-light text-dark p-1 pr-3"
           >
             <button
@@ -86,7 +86,7 @@ function HomeTabTitle() {
             placement={'top'}
             tooltipId="overlay-tooltip"
             tooltipClasses="text-nowrap"
-            tooltipText={<FormattedMessage id="home.remixTwitterProfile" defaultMessage="Remix Twitter Profile" />}
+            tooltipText={<FormattedMessage id="home.remixTwitterProfile" />}
             tooltipTextClasses="border bg-light text-dark p-1 pr-3"
           >
             <button
@@ -102,7 +102,7 @@ function HomeTabTitle() {
             placement={'top'}
             tooltipId="overlay-tooltip"
             tooltipClasses="text-nowrap"
-            tooltipText={<FormattedMessage id="home.remixLinkedinProfile" defaultMessage="Remix Linkedin Profile" />}
+            tooltipText={<FormattedMessage id="home.remixLinkedinProfile" />}
             tooltipTextClasses="border bg-light text-dark p-1 pr-3"
           >
             <button
@@ -118,7 +118,7 @@ function HomeTabTitle() {
             placement={'top'}
             tooltipId="overlay-tooltip"
             tooltipClasses="text-nowrap"
-            tooltipText={<FormattedMessage id="home.remixMediumPosts" defaultMessage="Remix Medium Posts" />}
+            tooltipText={<FormattedMessage id="home.remixMediumPosts" />}
             tooltipTextClasses="border bg-light text-dark p-1 pr-3"
           >
             <button
@@ -134,7 +134,7 @@ function HomeTabTitle() {
             placement={'top'}
             tooltipId="overlay-tooltip"
             tooltipClasses="text-nowrap"
-            tooltipText={<FormattedMessage id="home.remixGitterChannel" defaultMessage="Remix Gitter Channel" />}
+            tooltipText={<FormattedMessage id="home.remixGitterChannel" />}
             tooltipTextClasses="border bg-light text-dark p-1 pr-3"
           >
             <button
@@ -148,20 +148,20 @@ function HomeTabTitle() {
         </span>
       </div>
       <b className="pb-1 text-dark" style={{ fontStyle: 'italic' }}>
-        <FormattedMessage id="home.nativeIDE" defaultMessage="The Native IDE for Web3 Development." />
+        <FormattedMessage id="home.nativeIDE" />
       </b>
       <div className="pb-1" id="hTGeneralLinks">
         <a className="remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'webSite'])} target="__blank" href="https://remix-project.org">
-          <FormattedMessage id="home.website" defaultMessage="Website" />
+          <FormattedMessage id="home.website" />
         </a>
         <a className="pl-2 remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'documentation'])} target="__blank" href="https://remix-ide.readthedocs.io/en/latest">
-          <FormattedMessage id="home.documentation" defaultMessage="Documentation" />
+          <FormattedMessage id="home.documentation" />
         </a>
         <a className="pl-2 remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'remixPlugin'])} target="__blank" href="https://remix-plugin-docs.readthedocs.io/en/latest/">
-          <FormattedMessage id="home.remixPlugin" defaultMessage="Remix Plugin" />
+          <FormattedMessage id="home.remixPlugin" />
         </a>
         <a className="pl-2 remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'remixDesktop'])} target="__blank" href="https://github.com/ethereum/remix-desktop/releases">
-          <FormattedMessage id="home.remixDesktop" defaultMessage="Remix Desktop" />
+          <FormattedMessage id="home.remixDesktop" />
         </a>
       </div>
       <div className="d-flex pb-1 align-items-center">
@@ -170,7 +170,7 @@ function HomeTabTitle() {
           type="text"
           className="border form-control border-right-0"
           id="homeTabSearchInput"
-          placeholder={intl.formatMessage({id: "home.searchDocumentation", defaultMessage: "Search Documentation" })}
+          placeholder={intl.formatMessage({ id: "home.searchDocumentation" })}
           data-id="terminalInputSearch"
         />
         <button

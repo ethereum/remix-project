@@ -32,7 +32,7 @@ export function RecorderUI (props: RecorderProps) {
       <div className="udapp_recorderSection d-flex justify-content-between" onClick={toggleClass}>
         <div className="d-flex justify-content-center align-items-center">
           <label className="mt-1 udapp_recorderSectionLabel">
-            <FormattedMessage id='udapp.transactionsRecorded' defaultMessage='Transactions recorded' />
+            <FormattedMessage id='udapp.transactionsRecorded' />
           </label>
           <CustomTooltip
             placement={'right'}
