@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react'
 
-const CustomNavButtons = ({ next, previous, goToSlide, ...rest }) => {
-  const { carouselState: { currentSlide, totalItems, itemWidth, containerWidth } } = rest
+const CustomNavButtons = ({ parent, next, previous, goToSlide, ...rest }) => {
+  const { carouselState: { currentSlide, totalItems, containerWidth, transform } } = rest
   return (
     <div className="mt-1 d-flex justify-content-end carousel-button-group">
       <button
@@ -14,11 +14,11 @@ const CustomNavButtons = ({ next, previous, goToSlide, ...rest }) => {
       </button>
       <button
         className={ 
-          ((totalItems - currentSlide) * itemWidth + 5) < containerWidth ? 'disable py-1 border btn' : 'py-1 border btn'}
+          (Math.abs(transform) >= parent?.current?.containerRef?.current?.scrollWidth - containerWidth) ? 'disable py-1 border btn' : 'py-1 border btn'}
         onClick={() => {
           if (currentSlide + 1 < totalItems) goToSlide(currentSlide + 1)
         }}
-        disabled ={((totalItems - currentSlide) * itemWidth + 5) < containerWidth}
+        disabled ={Math.abs(transform) >= parent?.current?.containerRef?.current?.scrollWidth - containerWidth}
       >
         <i className="fas fa-angle-right"></i>
       </button>

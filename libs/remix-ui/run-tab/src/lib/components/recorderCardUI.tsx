@@ -28,7 +28,7 @@ export function RecorderUI (props: RecorderProps) {
 
 
   return (
-    <div className="udapp_cardContainer list-group-item border border-bottom">
+    <div className="udapp_cardContainer list-group-item border-top border-bottom">
       <div className="udapp_recorderSection d-flex justify-content-between" onClick={toggleClass}>
         <div className="d-flex justify-content-center align-items-center">
           <label className="mt-1 udapp_recorderSectionLabel">
