@@ -18,5 +18,14 @@
   "pluginManager.localForm.locationInRemix": "在Remix中的位置",
   "pluginManager.localForm.sidePanel": "侧面板",
   "pluginManager.localForm.mainPanel": "主面板",
-  "pluginManager.localForm.none": "无"
+  "pluginManager.localForm.none": "无",
+  "pluginManager.Permissions": "权限",
+  "pluginManager.permissions": "权限",
+  "pluginManager.pluginManagerPermissions": "插件管理权限",
+  "pluginManager.currentPermissionSettings": "当前权限设置",
+  "pluginManager.noPermissionRequestedYet": "目前还没有权限请求。",
+  "pluginManager.allow": "允许",
+  "pluginManager.toCall": "调用",
+  "pluginManager.ok": "确认",
+  "pluginManager.cancel": "取消"
 }
