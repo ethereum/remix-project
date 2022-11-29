@@ -1,6 +1,6 @@
 'use strict'
 
-import { AstNode } from "@remix-project/remix-solidity-ts"
+import { AstNode } from "@remix-project/remix-solidity"
 import { CodeParser } from "../code-parser"
 import { antlr } from '../types'
 import { pathToFileURL } from 'url'
