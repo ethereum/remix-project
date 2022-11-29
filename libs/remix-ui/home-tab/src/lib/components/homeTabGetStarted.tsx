@@ -69,9 +69,9 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
     <div className="pl-2" id="hTGetStartedSection">
       <label style={{fontSize: "1.2rem"}}>
         <span className="mr-2" style={{fontWeight: "bold"}}>
-          <FormattedMessage id="home.getStarted" defaultMessage="Get Started" />
+          <FormattedMessage id="home.getStarted" />
         </span>
-        - <FormattedMessage id="home.projectTemplates" defaultMessage="Project Templates" />
+        - <FormattedMessage id="home.projectTemplates" />
       </label>
       <div ref={carouselRefDiv} className="w-100 d-flex flex-column">
         <ThemeContext.Provider value={ themeFilter }>
@@ -108,27 +108,27 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
             <WorkspaceTemplate
               gsID="starkNetLogo"
               workspaceTitle="Blank"
-              description={intl.formatMessage({ id: 'home.blankTemplateDesc', defaultMessage: "Create an empty workspace." })}
+              description={intl.formatMessage({ id: 'home.blankTemplateDesc' })}
               callback={() => createWorkspace("blank")} />
             <WorkspaceTemplate
               gsID="solhintLogo"
               workspaceTitle="Remix Default"
-              description={intl.formatMessage({ id: 'home.remixDefaultTemplateDesc', defaultMessage: "Create a workspace with sample files." })}
+              description={intl.formatMessage({ id: 'home.remixDefaultTemplateDesc' })}
               callback={() => createWorkspace("remixDefault")} />
             <WorkspaceTemplate
               gsID="sourcifyLogo"
               workspaceTitle="OpenZeppelin ERC20"
-              description={intl.formatMessage({ id: 'home.ozerc20TemplateDesc', defaultMessage: "Create an ERC20 token by importing OpenZeppelin library." })}
+              description={intl.formatMessage({ id: 'home.ozerc20TemplateDesc' })}
               callback={() => createWorkspace("ozerc20")} />
             <WorkspaceTemplate
               gsID="sUTLogo"
               workspaceTitle="OpenZeppelin ERC721"
-              description={intl.formatMessage({ id: 'home.ozerc721TemplateDesc', defaultMessage: "Create an NFT token by importing OpenZeppelin library." })}
+              description={intl.formatMessage({ id: 'home.ozerc721TemplateDesc' })}
               callback={() => createWorkspace("ozerc721")} />
             <WorkspaceTemplate
               gsID="sUTLogo"
               workspaceTitle="0xProject ERC20"
-              description={intl.formatMessage({ id: 'home.zeroxErc20TemplateDesc', defaultMessage: "Create an ERC20 token by importing 0xProject contract." })}
+              description={intl.formatMessage({ id: 'home.zeroxErc20TemplateDesc' })}
               callback={() => createWorkspace("zeroxErc20")} />
           </Carousel>
         </ThemeContext.Provider>

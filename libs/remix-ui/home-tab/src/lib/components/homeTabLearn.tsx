@@ -42,7 +42,7 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
     <div className="d-flex px-2 pb-2 pt-2 d-flex flex-column" id="hTLearnSection">
       <div className="d-flex justify-content-between">
         <label className="py-2 align-self-center m-0" style={{fontSize: "1.2rem"}}>
-          <FormattedMessage id="home.learn" defaultMessage="Learn" />
+          <FormattedMessage id="home.learn" />
         </label>
         <button
           onClick={ ()=> openLink()}
@@ -54,38 +54,38 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
       <div className="d-flex flex-column">
         <label className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Basics }})}>
           <label className="card-title align-self-start m-0 float-left" style={{fontSize: "1rem"}}>
-            <FormattedMessage id="home.remixBasics" defaultMessage="Remix Basics" />
+            <FormattedMessage id="home.remixBasics" />
           </label>
           {(state.visibleTutorial === VisibleTutorial.Basics) && <div className="pt-2 d-flex flex-column text-left">
             <span>
-              <FormattedMessage id="home.remixBasicsDesc" defaultMessage="Introduction to Remix's interface and concepts used in Ethereum, as well as the basics of Solidity." />
+              <FormattedMessage id="home.remixBasicsDesc" />
             </span>
             <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('basics')}>
-              <FormattedMessage id="home.getStarted" defaultMessage="Get Started" />
+              <FormattedMessage id="home.getStarted" />
             </button>
           </div>}
         </label>
         <label className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Intermediate }})}>
           <label className="card-title align-self-start m-0 float-left" style={{fontSize: "1rem"}}>
-            <FormattedMessage id="home.remixIntermediate" defaultMessage="Remix Intermediate" />
+            <FormattedMessage id="home.remixIntermediate" />
           </label>
           {(state.visibleTutorial === VisibleTutorial.Intermediate) && <div className="pt-2 d-flex flex-column text-left">
             <span>
-            <FormattedMessage id="home.remixIntermediateDesc" defaultMessage="Using the web3.js to interact with a contract. Using Recorder tool." /></span>
+            <FormattedMessage id="home.remixIntermediateDesc" /></span>
             <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('useofweb3js')}>
-            <FormattedMessage id="home.getStarted" defaultMessage="Get Started" />
+            <FormattedMessage id="home.getStarted" />
           </button>
           </div>}
         </label>
         <label className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Advanced }})}>
           <label className="card-title align-self-start m-0 float-left" style={{fontSize: "1rem"}}>
-            <FormattedMessage id="home.remixAdvanced" defaultMessage="Remix Advanced" />
+            <FormattedMessage id="home.remixAdvanced" />
           </label>
           {(state.visibleTutorial === VisibleTutorial.Advanced) && <div className="pt-2 d-flex flex-column text-left">
             <span>
-            <FormattedMessage id="home.remixAdvancedDesc" defaultMessage="Learn the Proxy Pattern and working with Libraries in Remix. Learn to use the Debugger." /></span>
+            <FormattedMessage id="home.remixAdvancedDesc" /></span>
             <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('deploylibraries')}>
-            <FormattedMessage id="home.getStarted" defaultMessage="Get Started" />
+            <FormattedMessage id="home.getStarted" />
           </button>
           </div>}
         </label>
