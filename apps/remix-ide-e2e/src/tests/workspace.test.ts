@@ -52,28 +52,40 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './web3-lib')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './ethers-lib')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'web3.eth.getAccounts')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'ethers.providers')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
           'Incorrect content')
@@ -81,7 +93,10 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests/storage.test.js"]')
       .click('*[data-id="treeViewLitreeViewItemtests/storage.test.js"]')
-      .pause(100)
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'chai')]",
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`const { expect } = require("chai");`) !== -1,
           'Incorrect content')
@@ -129,29 +144,41 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {        
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './web3-lib')]",
+        locateStrategy: 'xpath',
+      })
+      .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {        
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './ethers-lib')]",
+        locateStrategy: 'xpath'
+      })
+      .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {        
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'web3.eth.getAccounts')]",
+        locateStrategy: 'xpath'
+      })
+      .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {        
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'ethers.providers')]",
+        locateStrategy: 'xpath'
+      })
+      .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
           'Incorrect content')
       })
@@ -177,29 +204,41 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {        
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './web3-lib')]",
+        locateStrategy: 'xpath'
+      })
+      .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {        
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './ethers-lib')]",
+        locateStrategy: 'xpath'
+      })
+      .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {        
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'web3.eth.getAccounts')]",
+        locateStrategy: 'xpath'
+      })
+      .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {        
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'ethers.providers')]",
+        locateStrategy: 'xpath'
+      })
+      .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
           'Incorrect content')
       })
@@ -225,29 +264,41 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      .pause(1000)
-      .getEditorValue((content) => {        
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './web3-lib')]",
+        locateStrategy: 'xpath'
+      })
+      .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {        
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './ethers-lib')]",
+        locateStrategy: 'xpath'
+      })
+      .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {        
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'web3.eth.getAccounts')]",
+        locateStrategy: 'xpath'
+      })
+      .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {        
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'ethers.providers')]",
+        locateStrategy: 'xpath'
+      })
+      .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
           'Incorrect content')
       })
@@ -274,7 +325,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
       .click('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
       .pause(1000)
-      .getEditorValue((content) => {        
+      .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`contract MyToken is Initializable, ERC1155Upgradeable, OwnableUpgradeable, PausableUpgradeable, ERC1155BurnableUpgradeable, UUPSUpgradeable {`) !== -1,
           'Incorrect content')
       })
@@ -282,22 +333,31 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
       // check js and ts files are not transformed
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_web3.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {        
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './web3-lib')]",
+        locateStrategy: 'xpath'
+      })
+      .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './web3-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/deploy_with_ethers.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {        
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, './ethers-lib')]",
+        locateStrategy: 'xpath'
+      })
+      .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`import { deploy } from './ethers-lib'`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/web3-lib.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {        
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'web3.eth.getAccounts')]",
+        locateStrategy: 'xpath'
+      })
+      .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
           'Incorrect content')
         browser.assert.ok(content.indexOf(`gas: gas || 3600000`) !== -1,
@@ -305,8 +365,11 @@ module.exports = {
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
-      .pause(100)
-      .getEditorValue((content) => {        
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'ethers.providers')]",
+        locateStrategy: 'xpath'
+      })
+      .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
           'Incorrect content')
       })
@@ -324,20 +387,20 @@ module.exports = {
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
-      .pause(1000)
       .addFile('test.sol', { content: 'test' })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'test')]",
+        locateStrategy: 'xpath'
+      })
       .click('*[data-id="workspaceCreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .click('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]')
       .setValue('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_name_1')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .pause(2000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
-      .pause(2000)
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
-      .pause(2000)
       .switchWorkspace('workspace_name')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .currentWorkspaceIs('workspace_name')
@@ -345,7 +408,15 @@ module.exports = {
 
   'Should rename a workspace #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspaceRename"]') // rename workspace_name
+      .useXpath()
+      .waitForElementPresent({
+        selector: '//i[@data-icon="workspaceDropdownMenuIcon"]',
+        locateStrategy: 'xpath',
+      })
+      .click('//*[@id="workspacesMenuDropdown"]/span/i')
+      .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul')
+      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[3]') // rename workspace_name
+      .useCss()
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextRename"]')
       .click('*[data-id="modalDialogCustomPromptTextRename"]')
@@ -353,6 +424,7 @@ module.exports = {
       .setValue('*[data-id="modalDialogCustomPromptTextRename"]', 'workspace_name_renamed')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .pause(2000)
       .switchWorkspace('workspace_name_1')
       .pause(2000)
       .currentWorkspaceIs('workspace_name_1')
@@ -365,94 +437,19 @@ module.exports = {
 
   'Should delete a workspace #group1': function (browser: NightwatchBrowser) {
     browser
-      .switchWorkspace('workspace_name_1')
-      .click('*[data-id="workspaceDelete"]') // delete workspace_name_1
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .waitForElementVisible('[data-id="workspacesSelect"]')
-      .click('[data-id="workspacesSelect"]')
+      .switchWorkspace('workspace_name_1')//*[@id="workspacesMenuDropdown"]/span
+      .useXpath()
+      .click('//*[@id="workspacesMenuDropdown"]/span/i')
+      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[2]') // delete workspace_name_1
+      .waitForElementVisible('//*[@id="fileExplorerView"]/div[2]/div/div/div[2]')
+      .click('//*[@id="fileExplorerView"]/div[2]/div/div/div[3]/button')
+      .waitForElementVisible('//*[@id="workspacesSelect"]')
+      .click('//*[@id="workspacesSelect"]')
+      .useCss()
       .waitForElementNotPresent(`[data-id="dropdown-item-workspace_name_1"]`)
-  },
-
-  // CLONE REPOSITORY E2E START
-
-  'Should clone a repository #group2': function (browser: NightwatchBrowser) {
-    browser
-      .clickLaunchIcon('filePanel')
-      .waitForElementVisible('[data-id="cloneGitRepository"]')
-      .click('[data-id="cloneGitRepository"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
-      .click('[data-id="fileSystemModalDialogModalBody-react"]')
-      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
-      .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
-      .click('[data-id="fileSystem-modal-footer-ok-react"]')
-      .waitForElementPresent('.fa-spinner')
-      .pause(5000)
-      .waitForElementNotPresent('.fa-spinner')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
-      .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix')
-  },
-
-  'Should display dgit icon for cloned workspace #group2': function (browser: NightwatchBrowser) {
-    browser
-      .switchWorkspace('default_workspace')
-      .waitForElementNotVisible('[data-id="workspacesSelect"] .fa-code-branch')
-      .switchWorkspace('awesome-remix')
-      .waitForElementVisible('[data-id="workspacesSelect"] .fa-code-branch')
-  },
-
-  'Should display non-clashing names for duplicate clone #group2': '' + function (browser: NightwatchBrowser) {
-    browser
-      .waitForElementVisible('[data-id="cloneGitRepository"]')
-      .click('[data-id="cloneGitRepository"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
-      .click('[data-id="fileSystemModalDialogModalBody-react"]')
-      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
-      .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
-      .click('[data-id="fileSystem-modal-footer-ok-react"]')
-      .pause(5000)
-      .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix1')
-      .waitForElementVisible('[data-id="cloneGitRepository"]')
-      .click('[data-id="cloneGitRepository"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
-      .click('[data-id="fileSystemModalDialogModalBody-react"]')
-      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
-      .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
-      .click('[data-id="fileSystem-modal-footer-ok-react"]')
-      .pause(5000)
-      .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix2')
-      .waitForElementVisible('[data-id="cloneGitRepository"]')
-      .click('[data-id="cloneGitRepository"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
-      .click('[data-id="fileSystemModalDialogModalBody-react"]')
-      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
-      .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
-      .click('[data-id="fileSystem-modal-footer-ok-react"]')
-      .pause(5000)
-      .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix3')
-      .switchWorkspace('awesome-remix')
-      .switchWorkspace('awesome-remix1')
-      .switchWorkspace('awesome-remix2')
-      .switchWorkspace('awesome-remix3')
-  },
-
-  'Should display error message in modal for failed clone #group2': function (browser: NightwatchBrowser) {
-    browser
-      .waitForElementVisible('[data-id="cloneGitRepository"]')
-      .click('[data-id="cloneGitRepository"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
-      .click('[data-id="fileSystemModalDialogModalBody-react"]')
-      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
-      .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/non-existent-repo')
-      .click('[data-id="fileSystem-modal-footer-ok-react"]')
-      .pause(5000)
-      .waitForElementVisible('[data-id="cloneGitRepositoryModalDialogModalBody-react"]')
-      .waitForElementContainsText('[data-id="cloneGitRepositoryModalDialogModalBody-react"]', 'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in Settings plugin')
-      .click('[data-id="cloneGitRepository-modal-footer-ok-react"]')
       .end()
   },
 
-  // CLONE REPOSITORY E2E END
-
   tearDown: sauce
 }
+

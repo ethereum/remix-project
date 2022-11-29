@@ -13,10 +13,12 @@ const profile = {
 export class CompilerMetadata extends Plugin {
   networks: string[]
   innerPath: string
+  buildInfoNames: Record<string, string>
   constructor () {
     super(profile)
     this.networks = ['VM:-', 'main:1', 'ropsten:3', 'rinkeby:4', 'kovan:42', 'goerli:5', 'Custom']
     this.innerPath = 'artifacts'
+    this.buildInfoNames = {}
   }
 
   _JSONFileName (path, contractName) {
@@ -33,7 +35,7 @@ export class CompilerMetadata extends Plugin {
       if (!await this.call('settings', 'get', 'settings/generate-contract-metadata')) return
       const compiler = new CompilerAbstract(languageVersion, data, source, input)
       const path = self._extractPathOf(source.target)
-      await this.setBuildInfo(version, input, data, path)
+      await this.setBuildInfo(version, input, data, path, file)
       compiler.visitContracts((contract) => {
         if (contract.file !== source.target) return
         (async () => {
@@ -45,7 +47,24 @@ export class CompilerMetadata extends Plugin {
     })
   }
 
-  async setBuildInfo (version, input, output, path) {
+  // Access each file in build-info, check the input sources
+  // If they are all same as in current compiled file and sources includes the path of compiled file, remove old build file
+  async removeStoredBuildInfo (currentInput, path, filePath) {
+    const buildDir = this.joinPath(path, this.innerPath, 'build-info/')
+    if (await this.call('fileManager', 'exists', buildDir)) {
+      const allBuildFiles = await this.call('fileManager', 'fileList', buildDir)
+      const currentInputFileNames = Object.keys(currentInput.sources)
+      for (const fileName of allBuildFiles) {
+        let fileContent = await this.call('fileManager', 'readFile', fileName)
+        fileContent = JSON.parse(fileContent)
+        const inputFiles = Object.keys(fileContent.input.sources)
+        const inputIntersection = currentInputFileNames.filter(element => !inputFiles.includes(element))
+        if (inputIntersection.length === 0 && inputFiles.includes(filePath)) await this.call('fileManager', 'remove', fileName)
+      }
+    }
+  }
+
+  async setBuildInfo (version, input, output, path, filePath) {
     input = JSON.parse(input)
     const solcLongVersion = version.replace('.Emscripten.clang', '')
     const solcVersion = solcLongVersion.substring(0, solcLongVersion.indexOf('+commit'))
@@ -58,8 +77,19 @@ export class CompilerMetadata extends Plugin {
     })
     const id =  createHash('md5').update(Buffer.from(json)).digest().toString('hex')
     const buildFilename = this.joinPath(path, this.innerPath, 'build-info/' +  id + '.json')
-    const buildData = {id, _format: format, solcVersion, solcLongVersion, input, output}
-    await this.call('fileManager', 'writeFile', buildFilename, JSON.stringify(buildData, null, '\t'))
+    // If there are no file in buildInfoNames,it means compilation is running first time after loading Remix
+    if (!this.buildInfoNames[filePath]) {
+      // Check the existing build-info and delete all the previous build files for compiled file
+      await this.removeStoredBuildInfo(input, path, filePath)
+      this.buildInfoNames[filePath] = buildFilename
+      const buildData = {id, _format: format, solcVersion, solcLongVersion, input, output}
+      await this.call('fileManager', 'writeFile', buildFilename, JSON.stringify(buildData, null, '\t'))
+    } else if (this.buildInfoNames[filePath] && this.buildInfoNames[filePath] !== buildFilename) {
+        await this.call('fileManager', 'remove', this.buildInfoNames[filePath])
+        this.buildInfoNames[filePath] = buildFilename
+        const buildData = {id, _format: format, solcVersion, solcLongVersion, input, output}
+        await this.call('fileManager', 'writeFile', buildFilename, JSON.stringify(buildData, null, '\t'))
+    }
   }
 
   _extractPathOf (file) {

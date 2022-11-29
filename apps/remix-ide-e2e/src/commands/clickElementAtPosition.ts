@@ -14,7 +14,7 @@ class ClickElement extends EventEmitter {
 }
 
 function _clickElement (browser: NightwatchBrowser, cssSelector: string, index: number, forceSelectIfUnselected: boolean, cb: VoidFunction) {
-  browser.waitForElementPresent(cssSelector)
+  browser.waitForElementPresent(cssSelector, 5000)
     .execute(function (cssSelector: string, index: number, forceSelectIfUnselected: boolean) {
       const elem = document.querySelectorAll(cssSelector)[index] as HTMLElement
       if (forceSelectIfUnselected) {

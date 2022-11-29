@@ -111,7 +111,7 @@ jobs:
       - run: yarn
       - run: yarn run downloadsolc_assets_e2e && yarn run downloadsolc_assets_dist
       - run: ls -la ./dist/apps/remix-ide/assets/js
-      - run: yarn run selenium-install
+      - run: yarn run selenium-install || yarn run selenium-install
       - run:
           name: Start Selenium
           command: yarn run selenium
@@ -157,7 +157,7 @@ jobs:
       - run: yarn
       - run: unzip ./persist/dist.zip
       - run: yarn run downloadsolc_assets_e2e && yarn run downloadsolc_assets_dist
-      - run: yarn run selenium-install
+      - run: yarn run selenium-install || yarn run selenium-install
       - run:
           name: Start Selenium
           command: yarn run selenium

@@ -139,6 +139,7 @@ export interface ContractDropdownProps {
     isSuccessful: boolean,
     error: string
   },
+  syncContracts: () => void,
   getSelectedContract: (contractName: string, compiler: CompilerAbstract) => ContractData,
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   passphrase: string,
@@ -164,6 +165,8 @@ export interface ContractDropdownProps {
   networkName: string,
   setNetworkName: (name: string) => void,
   setSelectedContract: (contractName: string) => void
+  remixdActivated: boolean,
+  isValidProxyAddress?: (address: string) => Promise<boolean>
 }
 
 export interface RecorderProps {
@@ -258,7 +261,8 @@ export interface ContractGUIProps {
   isDeploy?: boolean,
   deployOption?: { title: DeployMode, active: boolean }[],
   initializerOptions?: DeployOption,
-  savedProxyAddress?: string
+  savedProxyAddress?: string,
+  isValidProxyAddress?: (address: string) => Promise<boolean>
 }
 export interface MainnetProps {
   network: Network,

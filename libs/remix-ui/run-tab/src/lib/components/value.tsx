@@ -1,7 +1,8 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useRef, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { BN } from 'ethereumjs-util'
-import { isNumeric } from '@remix-ui/helper'
+import { CustomTooltip, isNumeric } from '@remix-ui/helper'
 import { ValueProps } from '../types'
 
 export function ValueUI (props: ValueProps) {
@@ -47,8 +48,14 @@ export function ValueUI (props: ValueProps) {
 
   return (
     <div className="udapp_crow">
-      <label className="udapp_settingsLabel" data-id="remixDRValueLabel">Value</label>
+      <label className="udapp_settingsLabel" data-id="remixDRValueLabel"><FormattedMessage id='udapp.value' defaultMessage='Value' /></label>
       <div className="udapp_gasValueContainer">
+        <CustomTooltip
+          placement={'top-start'}
+          tooltipClasses="text-nowrap"
+          tooltipId="remixValueTooltip"
+          tooltipText="Enter an amount and choose its unit"
+        >
         <input
           ref={inputValue}
           type="number"
@@ -58,12 +65,14 @@ export function ValueUI (props: ValueProps) {
           className="form-control udapp_gasNval udapp_col2"
           id="value"
           data-id="dandrValue"
-          title="Enter an amount and choose its unit"
           onKeyPress={validateInputKey}
           onChange={validateValue}
           value={props.sendValue}
         />
-        <select name="unit" value={props.sendUnit} className="form-control p-1 udapp_gasNvalUnit udapp_col2_2 custom-select" id="unit" onChange={(e) => { props.setUnit((e.target.value) as 'ether' | 'finney' | 'gwei' | 'wei') }}>
+      </CustomTooltip>
+        
+        <select name="unit"
+        value={props.sendUnit} className="form-control p-1 udapp_gasNvalUnit udapp_col2_2 custom-select" id="unit" onChange={(e) => { props.setUnit((e.target.value) as 'ether' | 'finney' | 'gwei' | 'wei') }}>
           <option data-unit="wei" value='wei'>Wei</option>
           <option data-unit="gwei" value="gwei">Gwei</option>
           <option data-unit="finney" value="finney">Finney</option>

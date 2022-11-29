@@ -1,5 +1,6 @@
 
 import { useDialogDispatchers } from '@remix-ui/app'
+import { CustomTooltip } from '@remix-ui/helper'
 import React, { useContext } from 'react'
 import { SearchContext } from '../../context/context'
 import { SearchResult, SearchResultLine, SearchResultLineLine } from '../../types'
@@ -53,9 +54,16 @@ export const ResultSummary = (props: ResultSummaryProps) => {
         </div>
         {state.replaceEnabled?
         <div className='search_plugin_search_control'>
-        <div title="Replace" data-id={`replace-${props.searchResult.filename}-${lineItem.position.start.line}-${lineItem.position.start.column}`} onClick={async () => {
-            replace(lineItem)
-          }} className="codicon codicon-find-replace" role="button" aria-label="Replace" aria-disabled="false"></div>
+        <CustomTooltip
+          tooltipText="Replace"
+          tooltipClasses="text-nowrap"
+          tooltipId="replaceTooltip"
+          placement="top-start"
+        >
+          <div data-id={`replace-${props.searchResult.filename}-${lineItem.position.start.line}-${lineItem.position.start.column}`} onClick={async () => {
+              replace(lineItem)
+            }} className="codicon codicon-find-replace" role="button" aria-label="Replace" aria-disabled="false"></div>
+        </CustomTooltip>
         </div>:null}
         </div>
       ))}

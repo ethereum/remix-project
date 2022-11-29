@@ -19,8 +19,8 @@ module.exports = {
       .clickLaunchIcon('solidity').click('*[data-id="compilerContainerCompileBtn"]')
       .pause(4000)
       .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 60000)
-      .click('*[title="Deploy - transact (not payable)"]')
+      .waitForElementPresent('*[data-title="Deploy - transact (not payable)"]', 60000)
+      .click('*[data-title="Deploy - transact (not payable)"]')
       .debugTransaction(0)
       .waitForElementContainsText('*[data-id="sidePanelSwapitTitle"]', 'DEBUGGER', 60000)
       .clearConsole()
@@ -30,8 +30,8 @@ module.exports = {
     browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .clickLaunchIcon('udapp')
       .clickInstance(0)
-      .scrollAndClick('*[title="string name, uint256 goal"]')
-      .setValue('*[title="string name, uint256 goal"]', '"toast", 999')
+      .scrollAndClick('*[data-title="string name, uint256 goal"]')
+      .setValue('*[data-title="string name, uint256 goal"]', '"toast", 999')
       .click('*[data-id="createProject - transact (not payable)"]')
       .debugTransaction(0)
       .pause(2000)
@@ -88,7 +88,7 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .testContracts('externalImport.sol', sources[1]['externalImport.sol'], ['ERC20'])
       .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 35000)
+      .waitForElementPresent('*[data-title="Deploy - transact (not payable)"]', 35000)
       .selectContract('ERC20')
       .createContract('"tokenName", "symbol"')
       .debugTransaction(0)
@@ -97,17 +97,17 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"545")]',
       })
-      .goToVMTraceStep(10)
-      .waitForElementVisible({
-        locateStrategy: 'xpath',
-        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"10")]',
-      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`constructor (string memory name_, string memory symbol_) {
         _name = name_;
         _symbol = symbol_;
     }`) !== -1,
           'current displayed content is not from the ERC20 source code')
+      })
+      .goToVMTraceStep(10)
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"10")]',
       })
   },
 
@@ -159,7 +159,7 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .testContracts('locals.sol', sources[3]['locals.sol'], ['testLocals'])
       .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 40000)
+      .waitForElementPresent('*[data-title="Deploy - transact (not payable)"]', 40000)
       .createContract('')
       .pause(2000)
       .clearConsole()
@@ -191,14 +191,14 @@ module.exports = {
       .clickFunction('f - transact (not payable)', { types: 'uint256[] ', values: '[]' })
       .debugTransaction(0)
       .pause(2000)
-      .click('*[data-id="debuggerTransactionStartButton"]') // stop debugging
+      .click('*[id="debuggerTransactionStartButtonContainer"]') // stop debugging
       .click('*[data-id="debugGeneratedSourcesLabel"]') // select debug with generated sources
-      .click('*[data-id="debuggerTransactionStartButton"]') // start debugging
+      .click('*[id="debuggerTransactionStartButtonContainer"]') // start debugging
       .pause(2000)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('if slt(sub(dataEnd, headStart), 32)') !== -1, 'current displayed content is not a generated source')
       })
-      .click('*[data-id="debuggerTransactionStartButton"]')
+      .click('*[id="debuggerTransactionStartButtonContainer"]')
   },
   // depends on Should debug using generated sources
   'Should call the debugger api: getTrace #group4': function (browser: NightwatchBrowser) {
@@ -266,7 +266,7 @@ const sources = [
     'blah.sol': {
       content: `
     pragma solidity >=0.7.0 <0.9.0;
- 
+
     contract Kickstarter {
 
         enum State { Started, Completed }
@@ -276,9 +276,9 @@ const sources = [
             string name;
             uint goal;
             State state;
-        }    
+        }
 
-        Project[] public projects;    
+        Project[] public projects;
 
         constructor() {
 
@@ -291,7 +291,7 @@ const sources = [
             project.state = State.Started;
             project.goal = goal;
         }
-    } 
+    }
         `
     }
   },
@@ -309,12 +309,12 @@ const sources = [
     function test1 (bytes calldata userData) external returns (bytes memory, bytes32, bytes32, uint) {
         bytes32 idAsk = abi.decode(userData[:33], (bytes32));
         bytes32 idOffer = abi.decode(userData[32:64], (bytes32));
-              
+
         bytes memory ro  = abi.encodePacked(msg.sender, msg.sender, idAsk, idOffer);
         return (ro, idAsk, idOffer, userData.length);
     }
-    
-    
+
+
     function testgp (bytes calldata userData) external returns (bytes4) {
         return  abi.decode(userData[:4], (bytes4));
     }
@@ -341,9 +341,9 @@ const sources = [
     'withGeneratedSources.sol': {
       content: `
       // SPDX-License-Identifier: GPL-3.0
-      pragma experimental ABIEncoderV2; 
-      contract A { 
-        function f(uint[] memory) public returns (uint256) { } 
+      pragma experimental ABIEncoderV2;
+      contract A {
+        function f(uint[] memory) public returns (uint256) { }
       }
       `
     }
@@ -372,7 +372,7 @@ const sources = [
           }
 
           /**
-           * @dev Return value 
+           * @dev Return value
            * @return value of 'number'
            */
           function retrieve() public view returns (uint256){
@@ -393,14 +393,14 @@ const sources = [
         function callA() public {
             p = 123;
             try b.callB() {
-                
+
             }
             catch (bytes memory reason) {
-    
+
             }
         }
     }
-    
+
     contract B {
         C c;
         uint p;
@@ -413,7 +413,7 @@ const sources = [
             c.callC();
         }
     }
-    
+
     contract C {
         uint p;
         function callC() public {
@@ -498,7 +498,7 @@ const jsGetTrace = `(async () => {
   }
 })()`
 
-const jsDebug = `(async () => {    
+const jsDebug = `(async () => {
   try {
       const result = await remix.call('debugger', 'debug', '0x65f0813753462414f9a91f0aabea946188327995f54b893b63a8d7ff186cfca3')
       console.log('result ', result)

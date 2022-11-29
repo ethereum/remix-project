@@ -26,14 +26,15 @@ import {
   executeTransactions, loadFromAddress,
   storeNewScenario, runScenario,
   setScenarioPath, getFuncABIValues,
-  setNetworkName, updateSelectedContract
+  setNetworkName, updateSelectedContract,
+  syncContracts, isValidProxyAddress
 } from './actions'
 import './css/run-tab.css'
 import { PublishToStorage } from '@remix-ui/publish-to-storage'
 import { PassphrasePrompt } from './components/passphrase'
 import { MainnetPrompt } from './components/mainnet'
 import { ScenarioPrompt } from './components/scenario'
-import { setIpfsCheckedState } from './actions/payload'
+import { setIpfsCheckedState, setRemixDActivated } from './actions/payload'
 
 export function RunTabUI (props: RunTabProps) {
   const { plugin } = props
@@ -221,6 +222,7 @@ export function RunTabUI (props: RunTabProps) {
             passphrase={runTab.passphrase}
           />
           <ContractDropdownUI
+            syncContracts={syncContracts}
             exEnvironment={runTab.selectExEnv}
             contracts={runTab.contracts}
             getSelectedContract={fetchSelectedContract}
@@ -239,6 +241,8 @@ export function RunTabUI (props: RunTabProps) {
             networkName={runTab.networkName}
             setNetworkName={setNetworkName}
             setSelectedContract={updateSelectedContract}
+            remixdActivated={runTab.remixdActivated}
+            isValidProxyAddress={isValidProxyAddress}
           />
           <RecorderUI
             gasEstimationPrompt={gasEstimationPrompt}

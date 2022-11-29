@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { SearchContext } from '../context/context'
 
 export const OverWriteCheck = props => {
@@ -24,7 +25,7 @@ export const OverWriteCheck = props => {
               data-id="confirm_replace_label"
               className="form-check-label custom-control-label"
             >
-              replace without confirmation
+              <FormattedMessage id='search.replaceWithoutConfirmation' defaultMessage='replace without confirmation' />
             </label>
           </div>
         </div>
