@@ -11,7 +11,7 @@ export function GasPriceUI (props: GasPriceProps) {
 
   return (
     <div className="udapp_crow">
-      <label className="udapp_settingsLabel"><FormattedMessage id='udapp.gasLimit' defaultMessage='Gas limit' /></label>
+      <label className="udapp_settingsLabel"><FormattedMessage id='udapp.gasLimit' /></label>
       <CustomTooltip
         placement={'right'}
         tooltipClasses="text-nowrap"

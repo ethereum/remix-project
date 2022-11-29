@@ -204,10 +204,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 placement="right-start"
                 tooltipId="publishOnIpfsTooltip"
                 tooltipClasses="text-nowrap"
-                tooltipText={`${intl.formatMessage({id: 'solidity.publishOn', defaultMessage: 'Publish on'})} Ipfs`}
+                tooltipText={`${intl.formatMessage({ id: 'solidity.publishOn' })} Ipfs`}
               >
                 <span>
-                  <span><FormattedMessage id='solidity.publishOn' defaultMessage='Publish on' /> Ipfs</span>
+                  <span><FormattedMessage id='solidity.publishOn' /> Ipfs</span>
                   <img id="ipfsLogo" className="remixui_storageLogo ml-2" src="assets/img/ipfs.webp" />
                 </span>
               </CustomTooltip>
@@ -217,10 +217,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 placement="right-start"
                 tooltipId="publishOnSwarmTooltip"
                 tooltipClasses="text-nowrap"
-                tooltipText={`${intl.formatMessage({id: 'solidity.publishOn', defaultMessage: 'Publish on'})} Swarm`}
+                tooltipText={`${intl.formatMessage({ id: 'solidity.publishOn' })} Swarm`}
               >
                 <span>
-                  <span><FormattedMessage id='solidity.publishOn' defaultMessage='Publish on' /> Swarm</span>
+                  <span><FormattedMessage id='solidity.publishOn' /> Swarm</span>
                   <img id="swarmLogo" className="remixui_storageLogo ml-2" src="assets/img/swarm.webp" />
                 </span>
               </CustomTooltip>
@@ -232,7 +232,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 tooltipClasses="text-nowrap"
                 tooltipText="Display Contract Details"
               >
-                <span><FormattedMessage id='solidity.compilationDetails' defaultMessage='Compilation Details' /></span>
+                <span><FormattedMessage id='solidity.compilationDetails' /></span>
               </CustomTooltip>
             </button>
             {/* Copy to Clipboard */}

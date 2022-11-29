@@ -67,21 +67,21 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
       <div className="d-flex w-100 flex-row py-2"></div>
       <div className={`bg-light mx-3 mb-2 p-3 pt-1 border-bottom flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
         {plugin?.profile?.author && <span className="d-flex flex-row align-items-center">
-          <label className="mb-0 pr-2"><FormattedMessage id='panel.author' defaultMessage='Author' />:</label>
+          <label className="mb-0 pr-2"><FormattedMessage id='panel.author' />:</label>
           <span> { plugin?.profile.author } </span>
         </span>}
         {plugin?.profile?.maintainedBy && <span className="d-flex flex-row align-items-center">
-          <label className="mb-0 pr-2"><FormattedMessage id='panel.maintainedBy' defaultMessage='Maintained by' />:</label>
+          <label className="mb-0 pr-2"><FormattedMessage id='panel.maintainedBy' />:</label>
           <span> { plugin?.profile.maintainedBy } </span>
         </span>}
         {plugin?.profile?.documentation && <span className="d-flex flex-row align-items-center">
-          <label className="mb-0 pr-2"><FormattedMessage id='panel.documentation' defaultMessage='Documentation' />:</label>
+          <label className="mb-0 pr-2"><FormattedMessage id='panel.documentation' />:</label>
           <span>
             <a href={plugin?.profile?.documentation} className="titleInfo p-0 mb-2" title="link to documentation" target="_blank" rel="noreferrer"><i aria-hidden="true" className="fas fa-book"></i></a>
           </span>
         </span>}
         {plugin?.profile?.description && <span className="d-flex flex-row align-items-baseline">
-          <label className="mb-0 pr-2"><FormattedMessage id='panel.description' defaultMessage='Description' />:</label>
+          <label className="mb-0 pr-2"><FormattedMessage id='panel.description' />:</label>
           <span> { plugin?.profile.description } </span>
         </span>}
         {plugin?.profile?.repo && <span className="d-flex flex-row align-items-center">
