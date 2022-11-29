@@ -7,6 +7,7 @@ import { CodeManager } from './code/codeManager'
 import { contractCreationToken } from './trace/traceHelper'
 import { EventManager } from './eventManager'
 import { SolidityProxy, stateDecoder, localDecoder, InternalCallTree } from './solidity-decoder'
+import { extractStateVariables } from './solidity-decoder/stateDecoder'
 
 /**
   * Ethdebugger is a wrapper around a few classes that helps debugging a transaction
@@ -111,6 +112,16 @@ export class Ethdebugger {
     return await variable.type.decodeFromStack(variable.stackDepth, stack, memory, storageViewer, calldata, null, variable)
   }
 
+  async decodeStateVariableByIdAtCurrentStep (step: number, id: number) {
+    const stateVars = await this.solidityProxy.extractStateVariablesAt(step)
+    const variable = stateVars.filter((el) => el.variable.id === id)
+    if (variable && variable.length) {
+      const state = await this.decodeStateAt(step, variable)
+      return state[variable[0].name]
+    }
+    return { value: '' }
+  }
+
   async decodeLocalsAt (step, sourceLocation, callback) {
     try {
       const stack = this.traceManager.getStackAt(step)
@@ -137,11 +148,13 @@ export class Ethdebugger {
     return this.solidityProxy.extractStateVariablesAt(step)
   }
 
-  async decodeStateAt (step, stateVars, callback) {
+  async decodeStateAt (step, stateVars, callback?) {
     try {
+      callback = callback || (() => {})
       const address = this.traceManager.getCurrentCalledAddressAt(step)
       const storageViewer = new StorageViewer({ stepIndex: step, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
       const result = await stateDecoder.decodeState(stateVars, storageViewer)
+      callback(result)
       return result
     } catch (error) {
       callback(error)
