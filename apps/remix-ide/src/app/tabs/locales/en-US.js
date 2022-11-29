@@ -60,7 +60,7 @@ export default {
   'filePanel.compileForNahmii': 'Compile for Nahmii',
   'filePanel.createNewFile': 'Create New File',
   'filePanel.createNewFolder': 'Create New Folder',
-  'filePanel.publishToGist': 'Publish all the current workspace files (only root) to a github gist',
+  'filePanel.publishToGist': 'Publish all the current workspace files to a github gist',
   'filePanel.uploadFile': 'Load a local file into current workspace',
   'filePanel.updateGist': 'Update the current [gist] explorer',
 
