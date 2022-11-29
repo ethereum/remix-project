@@ -18,5 +18,14 @@
   "pluginManager.localForm.locationInRemix": "Location in remix",
   "pluginManager.localForm.sidePanel": "Side Panel",
   "pluginManager.localForm.mainPanel": "Main Panel",
-  "pluginManager.localForm.none": "None"
+  "pluginManager.localForm.none": "None",
+  "pluginManager.Permissions": "Permissions",
+  "pluginManager.permissions": "permissions",
+  "pluginManager.pluginManagerPermissions": "Plugin Manager Permissions",
+  "pluginManager.currentPermissionSettings": "Current Permission Settings",
+  "pluginManager.noPermissionRequestedYet": "No Permission requested yet.",
+  "pluginManager.allow": "Allow",
+  "pluginManager.toCall": "to call",
+  "pluginManager.ok": "OK",
+  "pluginManager.cancel": "Cancel"
 }
