@@ -223,7 +223,7 @@ export class Blockchain extends Plugin {
         return this.call('terminal', 'logHtml', log)
       }
       _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'Upgrade Successful'])
-      this.call('udapp', 'addInstance', addressToString(address), newImplementationContractObject.abi, newImplementationContractObject.name)
+      this.call('udapp', 'addInstance', addressToString(proxyAddress), newImplementationContractObject.abi, newImplementationContractObject.name)
     }
     this.runTx(args, confirmationCb, continueCb, promptCb, finalCb)
   }
