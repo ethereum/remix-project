@@ -4,7 +4,7 @@ import { NetworkProps } from '../types'
 
 export function NetworkUI (props: NetworkProps) {
   return (
-    <div className="udapp_crow">
+    <div className="">
       <div className="udapp_settingsLabel">
       </div>
       <div className="udapp_environment" data-id="settingsNetworkEnv">
