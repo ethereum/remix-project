@@ -13,7 +13,7 @@
   "pluginManager.localForm.required": "必填",
   "pluginManager.localForm.commaSeparatedMethod": "英文逗号分隔方法名称",
   "pluginManager.localForm.commaSeparatedPlugin": "英文逗号分隔插件名称",
-  "pluginManager.localForm.pluginsItCanActivate": "能激活该插件的插件",
+  "pluginManager.localForm.pluginsItCanActivate": "它能激活的插件",
   "pluginManager.localForm.typeOfConnection": "连接类型",
   "pluginManager.localForm.locationInRemix": "在Remix中的位置",
   "pluginManager.localForm.sidePanel": "侧面板",
