@@ -5,6 +5,7 @@ import Badge from './Badge'
 import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeReducer'
 import { Plugin } from '@remixproject/engine'
 import { IconRecord } from '../types'
+import { CustomTooltip } from '@remix-ui/helper'
 
 export interface IconStatus {
     key: string
@@ -84,27 +85,33 @@ const Icon = ({
 
   return (
     <>
-      <div
-        className={`remixui_icon m-2  pt-1`}
-        onClick={() => {
-          (verticalIconPlugin as any).toggle(name)
-        }}
-        {...{plugin: name}}
-        title={title}
-        onContextMenu={(e: any) => {
-          e.preventDefault()
-          e.stopPropagation()
-          handleContextMenu(e)
-        }}
-        data-id={`verticalIconsKind${name}`}
-        id={`verticalIconsKind${name}`}
-        ref={iconRef}
+      <CustomTooltip
+        placement={name === 'settings' ? 'right' : name === 'search' ? 'bottom' :
+          name === 'udapp' ? 'bottom' : "top"}
+        tooltipText={title}
+        delay={{ show: 1000, hide: 0 }}
       >
-        <img data-id={iconRecord.active ? `selected`: ''} className={`${theme === 'dark' ? 'invert' : ''} ${theme} remixui_image ${iconRecord.active ? `selected-${theme}`:''}`} src={icon} alt={name} />
-          <Badge
-            badgeStatus={badgeStatus}
-          />
-      </div>
+        <div
+          className={`remixui_icon m-2  pt-1`}
+          onClick={() => {
+            (verticalIconPlugin as any).toggle(name)
+          }}
+          {...{plugin: name}}
+          onContextMenu={(e: any) => {
+            e.preventDefault()
+            e.stopPropagation()
+            handleContextMenu(e)
+          }}
+          data-id={`verticalIconsKind${name}`}
+          id={`verticalIconsKind${name}`}
+          ref={iconRef}
+        >
+          <img data-id={iconRecord.active ? `selected`: ''} className={`${theme === 'dark' ? 'invert' : ''} ${theme} remixui_image ${iconRecord.active ? `selected-${theme}`:''}`} src={icon} alt={name} />
+            <Badge
+              badgeStatus={badgeStatus}
+            />
+        </div>
+      </CustomTooltip>
       {showContext ? (
         <VerticalIconsContextMenu
           pageX={pageX}

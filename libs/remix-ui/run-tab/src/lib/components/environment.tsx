@@ -28,14 +28,12 @@ export function EnvironmentUI (props: EnvironmentProps) {
     <div className="udapp_crow">
       <label id="selectExEnv" className="udapp_settingsLabel">
         <FormattedMessage id='udapp.environment' defaultMessage='Environment' />
-        <CustomTooltip
-          placement={'right'}
-          tooltipClasses="text-nowrap"
-          tooltipId="info-recorder"
-          tooltipText="Open chainlist and add a new provider for the chain you want to interact to."
-        >
-          <a href='https://chainlist.org/' target='_blank'><i style={{ fontSize: 'medium' }} className={'ml-2 fad fa-plug'} aria-hidden="true"></i></a>
-          </CustomTooltip>
+
+        <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="info-recorder"
+                tooltipText="Open chainlist.org and get the connection specs of the chain you want to interact with.">
+              <a href='https://chainlist.org/' target='_blank'><i style={{ fontSize: 'medium' }} className={'ml-2 fad fa-plug'} aria-hidden="true"></i></a>
+        </CustomTooltip>
+
       </label>
       <div className="udapp_environment">
         <Dropdown id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className='udapp_selectExEnvOptions'>
@@ -67,14 +65,10 @@ export function EnvironmentUI (props: EnvironmentProps) {
             }
           </Dropdown.Menu>
         </Dropdown>
-        <CustomTooltip
-          placement={'bottom-start'}
-          tooltipClasses="text-wrap"
-          tooltipId="runAndDeployAddresstooltip"
-          tooltipText={<FormattedMessage
-          id='udapp.environmentDocs'
-          defaultMessage='Click for docs about Environment' />}
-        >
+
+        <CustomTooltip placement={'right-start'} tooltipClasses="text-wrap" tooltipId="runAndDeployAddresstooltip"
+            tooltipText={<FormattedMessage id='udapp.environmentDocs' defaultMessage='Click for docs about Environment' />}>
+
           <a href="https://remix-ide.readthedocs.io/en/latest/run.html#environment" target="_blank" rel="noreferrer"><i className="udapp_infoDeployAction ml-2 fas fa-info"></i></a>
         </CustomTooltip>
       </div>

@@ -110,6 +110,7 @@ function App () {
         placeholder="Enter payload here..."
         value={payload}
         onChange={handleChange}
+        data-id="payload-input"
       />
       {profiles.map((profile: Profile) => {
         const methods = profile.methods.map((method: string) => {
