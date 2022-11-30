@@ -15,11 +15,11 @@ Please conform to [standard](https://standardjs.com/) for code styles.
 Please follow GitHub's standard model of making changes & submitting pull request which is very well explained [here](https://guides.github.com/activities/forking/). Make sure your code works fine locally before submitting a pull request.
 
 ## Internationalization
-Remix is now support Internationalization. Everyone is very welcome to contribute on this feature.
+Remix now supports Internationalization. Everyone is welcome to contribute to this feature.
 
 ### How to make a string support intl?
 First, put the string in the locale file located under `apps/remix-ide/src/app/tabs/locales/en`.
-Each json file is corresponding to a module. If the module not exist, create a new json and import it in the `index.js`.
+Each json file corresponds to a module. If the module does not exist, then create a new json and import it in the `index.js`.
 Then you can replace the string with a intl component. The `id` prop will be the key of this string.
 ```jsx
 <label className="py-2 align-self-center m-0" style={{fontSize: "1.2rem"}}>
@@ -41,7 +41,7 @@ In some cases, jsx maybe not acceptable, you can use `intl.formatMessage` .
 ```
 
 ### How to add another language support?
-Let's say you want French.
+Let's say you want to add French.
 
 First, create a folder named by the language code which is `fr`.
 Then, create a json file, let's say `panel.json`,
