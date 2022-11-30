@@ -1,3 +1,4 @@
+import { CustomTooltip } from '@remix-ui/helper'
 import React from 'react'
 import BasicLogo from './BasicLogo'
 interface HomeProps {
@@ -6,16 +7,20 @@ interface HomeProps {
 
 function Home ({ verticalIconPlugin }: HomeProps) {
   return (
-    <div
-      className="mt-2 my-1 remixui_homeIcon"
-      onClick={async () => await verticalIconPlugin.activateHome()}
-      {...{ plugin: 'home'}}
-      title="Home"
-      data-id="verticalIconsHomeIcon"
-      id="verticalIconsHomeIcon"
+    <CustomTooltip
+      placement="right"
+      tooltipText={"Home"}
     >
-      <BasicLogo />
-    </div>
+      <div
+        className="mt-2 my-1 remixui_homeIcon"
+        onClick={async () => await verticalIconPlugin.activateHome()}
+        {...{ plugin: 'home'}}
+        data-id="verticalIconsHomeIcon"
+        id="verticalIconsHomeIcon"
+      >
+        <BasicLogo />
+      </div>
+    </CustomTooltip>
   )
 }
 
