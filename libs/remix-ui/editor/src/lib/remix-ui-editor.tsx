@@ -685,7 +685,11 @@ export const EditorUI = (props: EditorUIProps) => {
         options={{ glyphMargin: true, readOnly: ((!editorRef.current || !props.currentFile) && editorModelsState[props.currentFile]?.readOnly) }}
         defaultValue={defaultEditorValue}
       />
-
+      {editorModelsState[props.currentFile]?.readOnly && <span className='pl-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0'>
+        <i className="fas fa-lock-alt p-2"></i>
+          The file is opened in <b>read-only</b> mode.
+        </span>
+      }
     </div>
   )
 }
