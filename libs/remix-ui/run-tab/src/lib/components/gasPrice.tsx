@@ -13,7 +13,7 @@ export function GasPriceUI (props: GasPriceProps) {
     <div className="udapp_crow">
       <label className="udapp_settingsLabel"><FormattedMessage id='udapp.gasLimit' defaultMessage='Gas limit' /></label>
       <CustomTooltip
-        placement={'right-end'}
+        placement={'right'}
         tooltipClasses="text-nowrap"
         tooltipId="remixGasPriceTooltip"
         tooltipText={"The default gas limit is 3M. Adjust as needed."}
