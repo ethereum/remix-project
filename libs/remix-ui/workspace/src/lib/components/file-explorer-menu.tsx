@@ -22,9 +22,9 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
       },
       {
         action: 'publishToGist',
-        title: 'Publish all the current workspace files (only root) to a github gist',
+        title: 'Publish all the current workspace files to a github gist',
         icon: 'fab fa-github',
-        placement: 'top-start'
+        placement: 'bottom-start'
       },
       {
         action: 'uploadFile',
@@ -36,7 +36,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
         action: 'updateGist',
         title: 'Update the current [gist] explorer',
         icon: 'fab fa-github',
-        placement: 'right-start'
+        placement: 'bottom-start'
       }
     ].filter(item => props.menuItems && props.menuItems.find((name) => { return name === item.action })),
     actions: {}
