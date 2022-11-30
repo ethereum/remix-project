@@ -28,6 +28,10 @@ export class CodeFormat extends Plugin {
             const content = await this.call('fileManager', 'readFile', file)
             if (!content) return
             let parserName = ''
+	    // parse TOML file
+	    // parse YAML file
+	    // parse JSON file
+	    
             let options: Options = {
             }
             switch (path.extname(file)) {
@@ -58,6 +62,24 @@ export class CodeFormat extends Plugin {
                     parserName = 'json'
                     break
             }
+	    const possibleFileNames = [
+		'.prettierrc',
+		'.prettierrc.json',
+		'.prettierrc.yaml',
+		'.prettierrc.yml',
+		'.prettierrc.toml',
+		'prettier.js',
+		'prettier.cjs',
+		'prettier.config.js',
+		'prettier.config.cjs',
+		'prettier.config.mjs',
+		'prettier.config.ts',
+	    ]
+	    // find first file that exists
+	    const prettierConfigFile = possibleFileNames.find(async fileName => await this.call('fileManager', 'exists', fileName))
+
+	    console.log(prettierConfigFile)
+
             const result = prettier.format(content, {
                 plugins: [sol as any, ts, babel, espree],
                 parser: parserName,
