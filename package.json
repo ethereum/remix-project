@@ -194,6 +194,7 @@
     "isbinaryfile": "^3.0.2",
     "isomorphic-git": "^1.8.2",
     "jquery": "^3.3.1",
+    "js-yaml": "^4.1.0",
     "jszip": "^3.6.0",
     "latest-version": "^5.1.0",
     "merge": "^2.1.1",
