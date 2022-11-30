@@ -351,7 +351,7 @@ export function Workspace () {
   }
 
   const formatNameForReadonly = (name: string) => {
-    return global.fs.readonly ? name + " (Read-only)" : name
+    return global.fs.readonly ? name + " (read-only)" : name
   }
 
   const cloneModalMessage = () => {
