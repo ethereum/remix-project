@@ -1,5 +1,5 @@
 import { Ref } from 'react'
-import { CompilerAbstract } from '@remix-project/remix-solidity-ts'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { ContractData, FuncABI } from '@remix-project/core-plugin'
 import { ContractList } from '../reducers/runTab'
 import { RunTab } from './run-tab'

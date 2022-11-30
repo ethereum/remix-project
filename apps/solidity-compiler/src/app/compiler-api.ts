@@ -1,7 +1,7 @@
 import React from 'react';
 import { compile, helper } from '@remix-project/remix-solidity'
 import { CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
-import type { ConfigurationSettings } from '@remix-project/remix-lib-ts'
+import type { ConfigurationSettings } from '@remix-project/remix-lib'
 
 export const CompilerApiMixin = (Base) => class extends Base {
   currentFile: string

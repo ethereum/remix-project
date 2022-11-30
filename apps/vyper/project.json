@@ -25,7 +25,7 @@
         ],
         "styles": ["apps/vyper/src/styles.css"],
         "scripts": [],
-        "webpackConfig": "@nrwl/react/plugins/webpack"
+        "webpackConfig": "apps/vyper/webpack.config.js"
       },
       "configurations": {
         "development": {

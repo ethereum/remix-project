@@ -49,25 +49,27 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
         </button>
       </div>
       <div className="d-flex flex-column">
-        <button className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Basics }})}>
-          <label className="m-0 float-left" style={{fontSize: "1rem"}}>Remix Basics</label>
+        <label className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Basics }})}>
+          <label className="card-title align-self-start m-0 float-left" style={{fontSize: "1rem"}}>Remix Basics</label>
           {(state.visibleTutorial === VisibleTutorial.Basics) && <div className="pt-2 d-flex flex-column text-left">
             <span>Introduction to Remix's interface and concepts used in Ethereum, as well as the basics of Solidity.</span>
             <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('basics')}>Get Started</button>
           </div>}
-        </button>
-        <button className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Intermediate }})}>
-          <label className="m-0 float-left" style={{fontSize: "1rem"}}>Remix Intermediate</label>
-          {(state.visibleTutorial === VisibleTutorial.Intermediate) && <div className="pt-2 d-flex flex-column text-left">Using the web3.js to interact with a contract. Using Recorder tool.
-          <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('useofweb3js')}>Get Started</button>
+        </label>
+        <label className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Intermediate }})}>
+          <label className="card-title align-self-start m-0 float-left" style={{fontSize: "1rem"}}>Remix Intermediate</label>
+          {(state.visibleTutorial === VisibleTutorial.Intermediate) && <div className="pt-2 d-flex flex-column text-left">
+            <span>Using the web3.js to interact with a contract. Using Recorder tool.</span>
+            <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('useofweb3js')}>Get Started</button>
           </div>}
-        </button>
-        <button className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Advanced }})}>
-          <label className="m-0 float-left" style={{fontSize: "1rem"}}>Remix Advanced</label>
-          {(state.visibleTutorial === VisibleTutorial.Advanced) && <div className="pt-2 d-flex flex-column text-left">Learn the Proxy Pattern and working with Libraries in Remix. Learn to use the Debugger.
-          <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('deploylibraries')}>Get Started</button>
+        </label>
+        <label className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Advanced }})}>
+          <label className="card-title align-self-start m-0 float-left" style={{fontSize: "1rem"}}>Remix Advanced</label>
+          {(state.visibleTutorial === VisibleTutorial.Advanced) && <div className="pt-2 d-flex flex-column text-left">
+            <span>Learn the Proxy Pattern and working with Libraries in Remix. Learn to use the Debugger.</span>
+            <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('deploylibraries')}>Get Started</button>
           </div>}
-        </button>
+        </label>
       </div>
     </div>
   )
