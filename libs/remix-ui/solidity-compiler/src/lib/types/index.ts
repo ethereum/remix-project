@@ -1,4 +1,4 @@
-import { ICompilerApi, ConfigurationSettings } from '@remix-project/remix-lib-ts'
+import { ICompilerApi, ConfigurationSettings } from '@remix-project/remix-lib'
 import { CompileTabLogic } from '../logic/compileTabLogic'
 export type onCurrentFileChanged = (fileName: string) => void
 

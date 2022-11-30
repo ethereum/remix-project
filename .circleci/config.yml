@@ -137,7 +137,7 @@ jobs:
     parameters:
       script:
         type: string
-    parallelism: 10
+    parallelism: 4
     steps:
       - browser-tools/install-browser-tools
       - run:
