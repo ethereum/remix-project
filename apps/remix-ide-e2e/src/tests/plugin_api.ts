@@ -50,7 +50,7 @@ const debugValues = async function (browser: NightwatchBrowser, field: string, e
 const setPayload = async (browser: NightwatchBrowser, payload: any) => {
   return new Promise((resolve) => {
     if (typeof payload !== 'string') payload = JSON.stringify(payload)
-    browser.clearValue('//*[@id="payload"]').setValue('//*[@id="payload"]', payload, (result) => {
+    browser.clearValue('//*[@id="payload"]').pause(500).setValue('//*[@id="payload"]', payload, (result) => {
       resolve(result)
     })
   })
@@ -419,7 +419,7 @@ module.exports = {
       .addFile('test_modal.js', { content: testModalToasterApi })
       .executeScriptInTerminal('remix.execute(\'test_modal.js\')')
       .useCss()
-      .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]', 60000)
+      .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]', 65000)
       .assert.containsText('*[data-id="test_id_1_ModalDialogModalBody-react"]', 'message 1')
       .modalFooterOKClick('test_id_1_')
       // check the script runner notifications

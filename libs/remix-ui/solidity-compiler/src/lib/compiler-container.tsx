@@ -862,7 +862,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 tooltipText={<span>{'Language specification available from   Compiler >= v0.5.7'}</span>}
               >
                 <div id="compilerLanguageSelectorWrapper">
-                  <select onChange={(e) => handleLanguageChange(e.target.value)} disabled={state.useFileConfiguration} value={state.language} className="custom-select" id="compilierLanguageSelector">
+                  <select onChange={(e) => handleLanguageChange(e.target.value)} disabled={state.useFileConfiguration} value={state.language} className="custom-select" id="compilierLanguageSelector" style={{ pointerEvents: state.useFileConfiguration ? 'none' : 'auto' }}>
                     <option data-id={state.language === 'Solidity' ? 'selected' : ''} value='Solidity'>Solidity</option>
                     <option data-id={state.language === 'Yul' ? 'selected' : ''} value='Yul'>Yul</option>
                   </select>
@@ -977,7 +977,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}
             >
               <CustomTooltip
-                placement="auto"
+                placement="right"
                 tooltipId="overlay-tooltip-compile-run"
                 tooltipText={<div className="text-left">
                     {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+Shift+S</b> for compiling and script execution</div>}
@@ -990,7 +990,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </CustomTooltip>
             </button>
             <CustomTooltip
-              placement="auto"
+              placement="right"
               tooltipId="overlay-tooltip-compile-run-doc"
               tooltipText={<div className="text-left p-2">
                   <div>Choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
@@ -1004,7 +1004,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                       contract ContractName {'{}'}<br />
                     </code>
                   </pre>
-                  Click to know more
+                  Click the i icon to learn more
                 </div>}
             >
               <a href="https://remix-ide.readthedocs.io/en/latest/running_js_scripts.html#compile-a-contract-and-run-a-script-on-the-fly" target="_blank" ><i className="pl-2 ml-2 mt-3 mb-1 fas fa-info text-dark"></i></a>
