@@ -350,6 +350,10 @@ export function Workspace () {
     )
   }
 
+  const formatNameForReadonly = (name: string) => {
+    return global.fs.readonly ? name + " (Read-only)" : name
+  }
+
   const cloneModalMessage = () => {
     return (
       <>
@@ -607,7 +611,7 @@ export function Workspace () {
 
                 <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
                   <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control mt-1" icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}>
-                    { selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? 'localhost' : NO_WORKSPACE }
+                    { selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly("localhost") : NO_WORKSPACE }
                   </Dropdown.Toggle>
 
                   <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items">
