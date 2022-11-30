@@ -8,7 +8,7 @@ import ReturnValuesPanel from './dropdown-panel' // eslint-disable-line
 import FullStoragesChangesPanel from './full-storages-changes' // eslint-disable-line
 import GlobalVariables from './global-variables' // eslint-disable-line
 
-export const VmDebugger = ({ vmDebugger: { registerEvent }, currentBlock, currentReceipt, currentTransaction }) => {
+export const VmDebugger = ({ vmDebugger: { registerEvent }, currentBlock, currentReceipt, currentTransaction, debugging }) => {
   const [calldataPanel, setCalldataPanel] = useState(null)
   const [memoryPanel, setMemoryPanel] = useState(null)
   const [callStackPanel, setCallStackPanel] = useState(null)
@@ -49,7 +49,7 @@ export const VmDebugger = ({ vmDebugger: { registerEvent }, currentBlock, curren
     registerEvent && registerEvent('traceStorageUpdate', (calldata) => {
       setFullStoragesChangesPanel(() => calldata)
     })
-  }, [registerEvent])
+  }, [debugging])
 
   return (
     <div id='vmdebugger' className="d-flex">

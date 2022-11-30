@@ -239,6 +239,8 @@ export function compareByteCode (code1, code2) {
     code2 = replaceLibReference(code2, pos)
     code1 = replaceLibReference(code1, pos)
   }
+
+  code1 = removeImmutableReference(code1, code2)
   code1 = extractinputParameters(code1)  
   code1 = extractSwarmHash(code1)
   code1 = extractcborMetadata(code1)
@@ -274,6 +276,27 @@ export function escapeRegExp (str) {
 
 function replaceLibReference (code, pos) {
   return code.substring(0, pos) + '0000000000000000000000000000000000000000' + code.substring(pos + 40)
+}
+
+function removeByIndex (code, index, length, emptyRef) {
+  if (!code) return code
+  return code.slice(0, index) + emptyRef + code.slice(index + length)
+}
+
+function removeImmutableReference (code1, code2) {
+  try {
+    const refOccurence = code2.match(/7f000000000000000000000000000000000000000000000000000000000000000073/g)
+    if (!refOccurence) return code1
+    let offset = 0
+    refOccurence.map((value) => {
+      offset = code2.indexOf(value, offset)
+      code1 = removeByIndex(code1, offset, value.length, '7f000000000000000000000000000000000000000000000000000000000000000073')
+      offset = offset + 1
+    })
+  } catch (e) {
+    console.log('error removeImmutableReference', e)
+  }
+  return code1
 }
 
 function findCallInternal (index, rootCall, callsPath) {

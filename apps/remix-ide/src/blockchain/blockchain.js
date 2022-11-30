@@ -11,7 +11,7 @@ import InjectedProvider from './providers/injected.js'
 import NodeProvider from './providers/node.js'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
 import { etherScanLink } from './helper'
-import { logBuilder, cancelUpgradeMsg, cancelProxyMsg } from "@remix-ui/helper"
+import { logBuilder, cancelUpgradeMsg, cancelProxyMsg, addressToString } from "@remix-ui/helper"
 const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
 const { txResultHelper: resultToRemixTx } = helpers
 const packageJson = require('../../../../package.json')
@@ -180,7 +180,7 @@ export class Blockchain extends Plugin {
       if (networkInfo.name === 'VM') this.config.set('vm/proxy', address)
       else this.config.set(`${networkInfo.name}/${networkInfo.currentFork}/${networkInfo.id}/proxy`, address)
       _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment successful'])
-      return this.call('udapp', 'resolveContractAndAddInstance', implementationContractObject, address)
+      this.call('udapp', 'addInstance', addressToString(address), implementationContractObject.abi, implementationContractObject.name)
     }
 
     this.runTx(args, confirmationCb, continueCb, promptCb, finalCb)
@@ -223,7 +223,7 @@ export class Blockchain extends Plugin {
         return this.call('terminal', 'logHtml', log)
       }
       _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'Upgrade Successful'])
-      return this.call('udapp', 'resolveContractAndAddInstance', newImplementationContractObject, proxyAddress)
+      this.call('udapp', 'addInstance', addressToString(proxyAddress), newImplementationContractObject.abi, newImplementationContractObject.name)
     }
     this.runTx(args, confirmationCb, continueCb, promptCb, finalCb)
   }
