@@ -241,9 +241,7 @@ function getStructMembers (type, stateDefinitions, contractName, location) {
   if (type.indexOf('.') === -1) {
     type = contractName + '.' + type
   }
-  if (!contractName) {
-    contractName = type.split('.')[0]
-  }
+  contractName = type.split('.')[0]
   const state = stateDefinitions[contractName]
   if (state) {
     for (const dec of state.stateDefinitions) {

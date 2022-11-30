@@ -13,7 +13,7 @@ export const CustomToggle = React.forwardRef(({ children, onClick, icon, classNa
     className={className.replace('dropdown-toggle', '')}
   >
     <div className="d-flex">
-      <div className="mr-auto">{ children }</div>
+      <div className="mr-auto text-nowrap">{ children }</div>
       { icon && <div className="pr-1"><i className={`${icon} pr-1`}></i></div> }
       <div><i className="fad fa-sort-circle"></i></div>
     </div>

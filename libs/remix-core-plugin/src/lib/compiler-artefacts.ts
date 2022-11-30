@@ -198,8 +198,7 @@ export class CompilerArtefacts extends Plugin {
     return this.compilersArtefactsPerFile[file]
   }
 
-  // compilerData is a CompilerAbstract object
-  addResolvedContract (address, compilerData) {
+  addResolvedContract (address: string, compilerData: CompilerAbstract) {
     this.compilersArtefacts[address] = compilerData
   }
 
