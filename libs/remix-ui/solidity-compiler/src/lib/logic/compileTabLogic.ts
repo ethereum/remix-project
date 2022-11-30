@@ -1,4 +1,4 @@
-import { ICompilerApi } from '@remix-project/remix-lib-ts'
+import { ICompilerApi } from '@remix-project/remix-lib'
 import { getValidLanguage, Compiler} from '@remix-project/remix-solidity'
 import { EventEmitter } from 'events'
 

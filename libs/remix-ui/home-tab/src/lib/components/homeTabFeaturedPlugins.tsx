@@ -20,7 +20,7 @@ interface  HomeTabFeaturedPluginsProps {
 function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
 
   const themeFilter = useContext(ThemeContext)
-  const carouselRef = useRef(null)
+  const carouselRef = useRef<any>({})
   const carouselRefDiv = useRef(null)
 
   useEffect(() => {
@@ -47,7 +47,7 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
       let nextSlide = 0
       if (e.wheelDelta < 0) {
         nextSlide = carouselRef.current.state.currentSlide + 1;
-        if ((carouselRef.current.state.totalItems - carouselRef.current.state.currentSlide) * carouselRef.current.state.itemWidth + 5 < carouselRef.current.state.containerWidth) return // 5 is approx margins
+        if (Math.abs(carouselRef.current.state.transform) >= carouselRef.current.containerRef.current.scrollWidth - carouselRef.current.state.containerWidth) return
         carouselRef.current.goToSlide(nextSlide)
       } else {
         nextSlide = carouselRef.current.state.currentSlide - 1;
@@ -92,7 +92,7 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
             ref={carouselRef}
             focusOnSelect={true}
             customButtonGroup={
-              <CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} />
+              <CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} parent={carouselRef} />
             }
             arrows={false}
             swipeable={false}

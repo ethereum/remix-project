@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useReducer } from 'react' // eslint
 import { FormattedMessage, useIntl } from 'react-intl'
 import semver from 'semver'
 import { CompilerContainerProps } from './types'
-import { ConfigurationSettings } from '@remix-project/remix-lib-ts'
+import { ConfigurationSettings } from '@remix-project/remix-lib'
 import { checkSpecialChars, CustomTooltip, extractNameFromKey } from '@remix-ui/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL } from '@remix-project/remix-solidity'
 
