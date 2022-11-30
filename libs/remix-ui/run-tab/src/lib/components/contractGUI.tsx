@@ -556,7 +556,9 @@ export function ContractGUI (props: ContractGUIProps) {
                   <label className="mt-2 text-left d-block">
                     Proxy Address :
                   </label>
-                  <input style={{ height: 32 }} className="form-control udapp_input" data-id="ERC1967AddressInput" placeholder='proxy address' title='Enter previously deployed proxy address on the selected network' onChange={handleSetProxyAddress} onBlur={() => validateProxyAddress(proxyAddress) } />
+                  <CustomTooltip placement="right" tooltipText={'Enter previously deployed proxy address on the selected network'}>
+                    <input style={{ height: 32 }} className="form-control udapp_input" data-id="ERC1967AddressInput" placeholder='proxy address' onChange={handleSetProxyAddress} onBlur={() => validateProxyAddress(proxyAddress) } />
+                  </CustomTooltip>
                   { proxyAddressError && <span className='text-lowercase' data-id="errorMsgProxyAddress" style={{ fontSize: '.8em' }}>{ proxyAddressError }</span> }
                 </div> :
                 <span className='text-capitalize' data-id="lastDeployedERC1967Address" style={{ fontSize: '.8em' }}>{ proxyAddress || proxyAddressError }</span>
