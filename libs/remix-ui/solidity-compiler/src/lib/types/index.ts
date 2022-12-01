@@ -29,18 +29,6 @@ export interface ContractSelectionProps {
   contractsDetails: Record<string, any>
 }
 
-interface CompileError {
-  mode?: string,
-  severity?: string,
-  formattedMessage?: string,
-  type?: string
-}
-
-export interface CompileErrors {
-  error: CompileError,
-  errors: CompileError[]
-}
-
 export interface CompilationDetails {
   contractList: { file: string, name: string }[],
   contractsDetails: Record<string, any>,
@@ -48,5 +36,5 @@ export interface CompilationDetails {
 }
 
 export interface ContractsFile {
- [currentFile: string]: CompilationDetails
+  [currentFile: string]: CompilationDetails
 }

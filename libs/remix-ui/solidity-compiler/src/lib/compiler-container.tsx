@@ -63,6 +63,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const [showFilePathInput, setShowFilePathInput] = useState<boolean>(false)
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
   const [disableCompileButton, setDisableCompileButton] = useState<boolean>(false)
+  const [disableLinterButton, setDisableLinterButton] = useState<boolean>(true)
   const compileIcon = useRef(null)
   const promptMessageInput = useRef(null)
   const configFilePathInput = useRef(null)
@@ -444,6 +445,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     })
     _updateLanguageSelector()
     setDisableCompileButton(true)
+    setDisableLinterButton(true)
   }
 
   const compilerLoaded = (license) => {
@@ -473,6 +475,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   const compilationFinished = () => {
     if (!compileIcon.current) return
+    setDisableLinterButton(false)
     compileIcon.current.setAttribute('title', 'idle')
     compileIcon.current.classList.remove('remixui_spinningIcon')
     compileIcon.current.classList.remove('remixui_bouncingIcon')
@@ -508,6 +511,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     let externalCompType
     if (hhCompilation) externalCompType = 'hardhat'
     else if (truffleCompilation) externalCompType = 'truffle'
+    setDisableLinterButton(true)
     compileTabLogic.runCompiler(externalCompType)
   }
 
@@ -521,7 +525,15 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (hhCompilation) externalCompType = 'hardhat'
     else if (truffleCompilation) externalCompType = 'truffle'
     api.runScriptAfterCompilation(currentFile)
+    setDisableLinterButton(true)
     compileTabLogic.runCompiler(externalCompType)
+  }
+
+  const lint = () => {
+    const currentFile = api.currentFile
+
+    if (!isSolFileSelected()) return
+    api.runLinter(currentFile)
   }
 
   const _updateVersionSelector = (version, customUrl = '') => {
@@ -1015,6 +1027,37 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </button>
             </CopyToClipboard>
           </div>
+          <div className='d-flex align-items-center'>
+            <button
+              id="lintButton"
+              data-id="compilerContainerLinter"
+              className="btn btn-secondary btn-block d-block w-100 text-break remixui_solidityLinterButton d-inline-block remixui_disabled mb-1 mt-3"
+              onClick={lint}
+              disabled={(configFilePath === '' && state.useFileConfiguration) || disableLinterButton}
+            >
+              <CustomTooltip
+                placement="right"
+                tooltipId="overlay-tooltip-compile-run"
+                tooltipText={<div className="text-left">Lint the current file</div>}
+              >
+                <span>
+                  <FormattedMessage id='solidity.lint' defaultMessage='Lint' />
+                  <span className="ml-1">
+                    {typeof state.compiledFileName === 'string'
+                      ? extractNameFromKey(state.compiledFileName) ||
+                        `<${intl.formatMessage({
+                          id: 'solidity.noFileSelected',
+                          defaultMessage: 'no file selected',
+                        })}>`
+                      : `<${intl.formatMessage({
+                          id: 'solidity.noFileSelected',
+                          defaultMessage: 'no file selected',
+                        })}>`}
+                  </span>
+                </span>
+              </CustomTooltip>
+            </button>
+            </div>
         </div>
       </article>
     </section>

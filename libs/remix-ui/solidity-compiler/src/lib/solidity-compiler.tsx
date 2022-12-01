@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react' // eslint-disable-line
-import { CompileErrors, ContractsFile, SolidityCompilerProps } from './types'
+import { ContractsFile, SolidityCompilerProps } from './types'
+import type { CompileErrors, CompileError } from '@remix-project/remix-lib-ts'
 import { CompilerContainer } from './compiler-container' // eslint-disable-line
 import { ContractSelection } from './contract-selection' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
@@ -35,6 +36,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   const [currentVersion, setCurrentVersion] = useState('')
   const [hideWarnings, setHideWarnings] = useState<boolean>(false)
   const [compileErrors, setCompileErrors] = useState<Record<string, CompileErrors>>({ [currentFile]: api.compileErrors })
+  const [linterErrors, setLinterErrors] = useState<Record<string, Array<CompileError>>>({ [currentFile]: api.linterErrors })
   const [badgeStatus, setBadgeStatus] = useState<Record<string, { key: string, title?: string, type?: string }>>({})
   const [contractsFile, setContractsFile] = useState<ContractsFile>({})
 
@@ -87,6 +89,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       return { ...prevState, currentFile: '' }
     })
     setCompileErrors({} as Record<string, CompileErrors>)
+    setLinterErrors({} as Record<string, Array<CompileError>>)
   }
 
   api.onCompilationFinished = (compilationDetails: { contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any>, target?: string }) => {
@@ -100,11 +103,18 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
 
     setContractsFile({ ...contractsFile, [target]: { contractList, contractsDetails } })
     setCompileErrors({ ...compileErrors, [currentFile]: api.compileErrors })
+    setLinterErrors({ [currentFile]: api.linterErrors })
+  }
+
+  api.onLintingFinished = () => {
+    setCompileErrors({} as Record<string, CompileErrors>)
+    setLinterErrors({ [currentFile]: api.linterErrors })
   }
 
   api.onFileClosed = (name) => {
     if (name === currentFile) {
       setCompileErrors({ ...compileErrors, [currentFile]: {} as CompileErrors })
+      setLinterErrors({ ...linterErrors, [currentFile]: [] as CompileError[] })
       setBadgeStatus({ ...badgeStatus, [currentFile]: { key: 'none' } })
     }
   }
@@ -198,6 +208,14 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
                 return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{ type: err.severity, errorType: err.type }} />
               }
             }) }
+          </div>
+        }
+        {
+          linterErrors[currentFile] &&
+          <div className="remixui_errorBlobs p-4" data-id="linterErrors">
+            {
+              linterErrors[currentFile].map((err, index) => <Renderer key={index} message={err.formattedMessage} plugin={api} errColumn={err.column} errLine={err.line} errFile={currentFile} opt={{ close: false, useSpan: true, type: err.severity, errorType: err.type }}></Renderer>)
+            }
           </div>
         }
       </div>

@@ -35,6 +35,7 @@ import { Injected0ptimismProvider } from './app/tabs/injected-optimism-provider'
 import { InjectedArbitrumOneProvider } from './app/tabs/injected-arbitrum-one-provider'
 import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
+import { Solhint } from './app/plugins/solhint'
 
 const isElectron = require('is-electron')
 
@@ -225,6 +226,7 @@ class AppComponent {
 
     const codeParser = new CodeParser(new AstWalker())
 
+    const solhint = new Solhint()
 
     this.notification = new NotificationPlugin()
 
@@ -265,7 +267,8 @@ class AppComponent {
       injected0ptimismProvider,
       injectedArbitrumOneProvider,
       this.walkthroughService,
-      search
+      search,
+      solhint
     ])
 
     // LAYOUT & SYSTEM VIEWS

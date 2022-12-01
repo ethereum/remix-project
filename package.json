@@ -216,6 +216,7 @@
     "regenerator-runtime": "0.13.7",
     "rss-parser": "^3.12.0",
     "signale": "^1.4.0",
+    "solhint": "^3.3.7",
     "string-similarity": "^4.0.4",
     "swarmgw": "^0.3.1",
     "time-stamp": "^2.2.0",

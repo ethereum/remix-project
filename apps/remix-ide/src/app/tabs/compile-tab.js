@@ -66,6 +66,10 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
     this.renderComponent()
   }
 
+  onLintingFinished () {
+    this.renderComponent()
+  }
+
   onFileClosed () {
     this.renderComponent()
   }

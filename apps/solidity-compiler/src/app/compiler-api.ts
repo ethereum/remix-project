@@ -1,7 +1,7 @@
 import React from 'react';
 import { compile, helper } from '@remix-project/remix-solidity'
 import { CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
-import type { ConfigurationSettings } from '@remix-project/remix-lib-ts'
+import type { ConfigurationSettings, CompileErrors, CompileError } from '@remix-project/remix-lib-ts'
 
 export const CompilerApiMixin = (Base) => class extends Base {
   currentFile: string
@@ -12,7 +12,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
     contractsDetails: Record<string, any>,
     target?: string
   }
-  compileErrors: any
+  compileErrors: CompileErrors
+  linterErrors: CompileError[]
   compileTabLogic: CompileTabLogic
   configurationSettings: ConfigurationSettings
 
@@ -21,6 +22,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   onSetWorkspace: (isLocalhost: boolean, workspaceName: string) => void
   onFileRemoved: (path: string) => void
   onNoFileSelected: () => void
+  onLintingFinished: () => void
   onCompilationFinished: (compilationDetails: { contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any> }) => void
   onSessionSwitched: () => void
   onContentChanged: () => void
@@ -45,7 +47,11 @@ export const CompilerApiMixin = (Base) => class extends Base {
       loading: false
     }
 
-    this.compileErrors = {}
+    this.compileErrors = {
+      error: {},
+      errors: []
+    }
+    this.linterErrors = []
     this.compiledFileName = ''
     this.currentFile = ''
   }
@@ -100,6 +106,11 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
   runScriptAfterCompilation (fileName: string) {
     this.call('compileAndRun', 'runScriptAfterCompilation', fileName)
+  }
+
+  async runLinter (fileName: string) {
+    this.linterErrors = await this.call('solhint', 'lint', fileName)
+    this.onLintingFinished()
   }
 
   compileWithHardhat (configFile) {
@@ -279,6 +290,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
     this.data.eventHandlers.onCompilationFinished = async (success, data, source, input, version) => {
       this.compileErrors = data
+      this.linterErrors = []
       if (success) {
         // forwarding the event to the appManager infra
         this.emit('compilationFinished', source.target, source, 'soljson', data, input, version)

@@ -7,7 +7,8 @@ export interface ICompilerApi {
         contractsDetails: Record<string, any>,
         target?: string
     }
-    compileErrors: any
+    compileErrors: CompileErrors
+    linterErrors: CompileError[]
     compileTabLogic: any
     configurationSettings: ConfigurationSettings
 
@@ -27,6 +28,7 @@ export interface ICompilerApi {
     onSetWorkspace: (isLocalhost: boolean, workspaceName: string) => void
     onFileRemoved: (path: string) => void
     onNoFileSelected: () => void
+    onLintingFinished: () => void
     onCompilationFinished: (contractsDetails: any, contractMap: any) => void
     onSessionSwitched: () => void
     onContentChanged: () => void
@@ -39,6 +41,7 @@ export interface ICompilerApi {
     open: (file: string) => void
     saveCurrentFile: () => void
     runScriptAfterCompilation: (fileName: string) => void,
+    runLinter: (fileName: string) => void,
 
     logToTerminal: (log: terminalLog) => void
 
@@ -59,4 +62,19 @@ export interface ConfigurationSettings {
     language: string,
     optimize: boolean,
     runs: string
+}
+
+export interface CompileError {
+    mode?: string,
+    severity?: string,
+    formattedMessage?: string,
+    type?: string
+    column?: number,
+    line?: number
+    file?: string
+  }
+  
+export interface CompileErrors {
+    error: CompileError,
+    errors: CompileError[]
 }

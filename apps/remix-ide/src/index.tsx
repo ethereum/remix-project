@@ -10,6 +10,7 @@ import { Storage } from '@remix-project/remix-lib'
 
 (async function () {
   try {
+    (window as any).BROWSER = true // needed for the solidity parser to use browser compatible build
     const configStorage = new Storage('config-v0.8:')
     const config = new Config(configStorage);
     Registry.getInstance().put({ api: config, name: 'config' })

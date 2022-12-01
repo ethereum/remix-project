@@ -5,9 +5,12 @@ interface RendererProps {
   message: any;
   opt?: any,
   plugin: any,
+  errLine?: number,
+  errColumn?: number,
+  errFile?: string
 }
 
-export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
+export const Renderer = ({ message, opt = {}, plugin, errColumn, errLine, errFile }: RendererProps) => {
   const [messageText, setMessageText] = useState(null)
   const [editorOptions, setEditorOptions] = useState({
     useSpan: false,
@@ -27,18 +30,24 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
       text = message.innerText
     }
 
+    if (!text) return
     // ^ e.g:
     // browser/gm.sol: Warning: Source file does not specify required compiler version! Consider adding "pragma solidity ^0.6.12
     // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.2.0/contracts/introspection/IERC1820Registry.sol:3:1: ParserError: Source file requires different compiler version (current compiler is 0.7.4+commit.3f05b770.Emscripten.clang) - note that nightly builds are considered to be strictly less than the released version
-    const positionDetails = helper.getPositionDetails(text)
-
-    opt.errLine = positionDetails.errLine
-    opt.errCol = positionDetails.errCol
-    opt.errFile = positionDetails.errFile ? (positionDetails.errFile as string).trim() : ''
+    if (errColumn !== undefined && errLine !== undefined && errFile !== undefined) {
+      opt.errLine = errLine
+      opt.errCol = errColumn
+      opt.errFile = errFile
+    } else {
+      const positionDetails = helper.getPositionDetails(text)
+      opt.errLine = positionDetails.errLine
+      opt.errCol = positionDetails.errCol
+      opt.errFile = positionDetails.errFile ? (positionDetails.errFile as string).trim() : ''
+    }
 
     setMessageText(text)
     setEditorOptions(opt)
-    setClose(false)
+    setClose(close !== undefined ? close : false)
     setClassList(opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning')
   }, [message, opt])
 
@@ -74,9 +83,9 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
         messageText && !close && (
           <div className={`remixui_sol ${editorOptions.type} ${classList}`} data-id={editorOptions.errFile} onClick={() => handleErrorClick(editorOptions)}>
             { editorOptions.useSpan ? <span> { messageText } </span> : <pre><span>{ messageText }</span></pre> }
-            <div className="close" data-id="renderer" onClick={handleClose}>
+            { close && <div className="close" data-id="renderer" onClick={handleClose}>
               <i className="fas fa-times"></i>
-            </div>
+            </div> }
           </div>)
       }
     </>
