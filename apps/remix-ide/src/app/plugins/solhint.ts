@@ -1,5 +1,12 @@
 import { Plugin } from '@remixproject/engine';
 import { processStr } from 'solhint'
+import { applyExtends } from 'solhint/lib/config/config-file'
+import bestPractises from 'solhint/lib/rules/best-practises'
+import naming from 'solhint/lib/rules/naming'
+import order from 'solhint/lib/rules/order'
+import security from 'solhint/lib/rules/security'
+import deprecations from 'solhint/lib/rules/deprecations'
+import miscellaneous from 'solhint/lib/rules/miscellaneous'
 
 const profile = {
   name: 'solhint',
@@ -17,6 +24,15 @@ type Report = {
   fix: string
 }
 
+const config = `{
+  "extends": "solhint:recommended",
+  "plugins": [],
+  "rules": {
+    "avoid-suicide": "error",
+    "avoid-sha3": "warn"
+  }
+}`
+
 export class Solhint extends Plugin {
   constructor() {
     super(profile);
@@ -28,11 +44,17 @@ export class Solhint extends Plugin {
 
   async lint(fileName: string) {
     const content = await this.call('fileManager', 'readFile', fileName)
-    const reporters = processStr(content, {
-      rules: {
-        ...recommendedRules
-      }
-    })
+    let configContent = config
+    if (await this.call('fileManager', 'exists', '.solhint.json')) {
+      configContent = await this.call('fileManager', 'readFile', '.solhint.json')
+    }
+    const configContentObj = JSON.parse(configContent)
+    // apply the extend property
+    const rulesObj = applyExtends(configContentObj, (path) => rules[path]())
+    configContentObj.rules = { ...rulesObj, ...configContentObj.rules }
+    configContentObj.extends = []
+
+    const reporters = processStr(content, configContentObj)
 
     const reports: Array<Report> = reporters.reports
 
@@ -53,35 +75,43 @@ const severity = {
   3: 'warning'
 }
 
-const recommendedRules = {
-  "const-name-snakecase": "error",
-  "use-forbidden-name": "error",
-  "imports-on-top": "error",
-  "contract-name-camelcase": "error",
-  "func-name-mixedcase": "error",
-  "event-name-camelcase": "error",
-  "var-name-mixedcase": "error",
-  "not-rely-on-time": "error",
-  "quotes": "error",
-  "func-visibility": "error",
-  "avoid-suicide": "error",
-  "reentrancy": "error",
-  "no-inline-assembly": "error",
-  "compiler-version": "error",
-  "not-rely-on-block-hash": "error",
-  "avoid-throw": "error",
-  "avoid-sha3": "error",
-  "multiple-sends": "error",
-  "state-visibility": "error",
-  "avoid-tx-origin": "error",
-  "avoid-low-level-calls": "error",
-  "check-send-result": "error",
-  "avoid-call-value": "error",
-  "max-states-count": "error",
-  "mark-callable-contracts": "off",
-  "no-empty-blocks": "error",
-  "no-unused-vars": "error",
-  "payable-fallback": "error",
-  "no-complex-fallback": "error",
-  "visibility-modifier-order": "error"
+const rules = {
+  'solhint:recommended': () => {
+    const enabledRules = {}
+    coreRules().forEach(rule => {
+      if (!rule.meta.deprecated && rule.meta.recommended) {
+        enabledRules[rule.ruleId] = rule.meta.defaultSetup
+      }
+    })
+    return enabledRules
+  },
+  'solhint:all': () => {
+    const enabledRules = {}
+    coreRules().forEach(rule => {
+      if (!rule.meta.deprecated) {
+        enabledRules[rule.ruleId] = rule.meta.defaultSetup
+      }
+    })
+    return enabledRules
+  },
+  'solhint:default': () => {
+    const enabledRules = {}
+    coreRules().forEach(rule => {
+      if (!rule.meta.deprecated && rule.meta.isDefault) {
+        enabledRules[rule.ruleId] = rule.meta.defaultSetup
+      }
+    })
+    return enabledRules
+  }
+}
+
+function coreRules() {
+  return [
+    ...bestPractises(),
+    ...deprecations(),
+    ...miscellaneous(),
+    ...naming(),
+    ...order(),
+    ...security()
+  ]
 }
