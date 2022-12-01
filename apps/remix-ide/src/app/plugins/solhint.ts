@@ -5,7 +5,7 @@ const profile = {
   name: 'solhint',
   displayName: 'solhint',
   description: 'lint solidity files',
-  methods: ['lint']
+  methods: ['lint', 'createConfigFile']
 };
 
 type Report = { 
@@ -20,6 +20,10 @@ type Report = {
 export class Solhint extends Plugin {
   constructor() {
     super(profile);
+  }
+
+  async createConfigFile () {
+    await this.call('fileManager', 'writeFile', '.solhint.json', config)
   }
 
   async lint(fileName: string) {

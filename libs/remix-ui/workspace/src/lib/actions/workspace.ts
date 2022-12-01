@@ -88,6 +88,9 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
     await plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
     await plugin.workspaceCreated(workspaceName)
 
+    // add the solhint config file
+    await plugin.call('solhint', 'createConfigFile')
+
     if (isGitRepo && createCommit) {
       const name = await plugin.call('settings', 'get', 'settings/github-user-name')
       const email = await plugin.call('settings', 'get', 'settings/github-email')
