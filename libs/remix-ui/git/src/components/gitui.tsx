@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react'
 import { add, addall, checkoutfile, commit, rm } from '../lib/gitactions'
-import { setCallBacks } from '../lib/listeners'
+import { loadFiles, setCallBacks } from '../lib/listeners'
 import { setPlugin, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
 import { gitReducer } from '../state/reducer'
@@ -34,7 +34,8 @@ export const GitUI = (props) => {
     }
 
     const pluginActionsProviderValue = {
-        statusChanged
+        statusChanged,
+        loadFiles
     }
 
     return (
