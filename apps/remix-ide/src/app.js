@@ -16,6 +16,7 @@ import { PermissionHandlerPlugin } from './app/plugins/permission-handler-plugin
 import { AstWalker } from '@remix-project/remix-astwalker'
 import { LinkLibraries, DeployLibraries, OpenZeppelinProxy } from '@remix-project/core-plugin'
 import { CodeParser } from './app/plugins/parser/code-parser'
+import { GitPlugin } from './app/plugins/git'
 
 import { WalkthroughService } from './walkthroughService'
 
@@ -173,6 +174,9 @@ class AppComponent {
     //----- search
     const search = new SearchPlugin()
 
+    //---- git
+    const git = new GitPlugin()
+
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
 
@@ -265,7 +269,8 @@ class AppComponent {
       injected0ptimismProvider,
       injectedArbitrumOneProvider,
       this.walkthroughService,
-      search
+      search,
+      git
     ])
 
     // LAYOUT & SYSTEM VIEWS
@@ -381,7 +386,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['settings', 'config'])
     await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'codeParser', 'codeFormatter', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
-    await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
+    await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder', 'rgit'])
 
     this.appManager.on(
       'filePanel',
