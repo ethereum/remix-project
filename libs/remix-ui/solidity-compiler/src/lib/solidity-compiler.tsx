@@ -37,6 +37,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   const [hideWarnings, setHideWarnings] = useState<boolean>(false)
   const [compileErrors, setCompileErrors] = useState<Record<string, CompileErrors>>({ [currentFile]: api.compileErrors })
   const [linterErrors, setLinterErrors] = useState<Record<string, Array<CompileError>>>({ [currentFile]: api.linterErrors })
+  const [slitherErrors, setSlitherErrors] = useState<Record<string, Array<CompileError>>>({ [currentFile]: api.slitherErrors })
   const [badgeStatus, setBadgeStatus] = useState<Record<string, { key: string, title?: string, type?: string }>>({})
   const [contractsFile, setContractsFile] = useState<ContractsFile>({})
 
@@ -104,6 +105,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     setContractsFile({ ...contractsFile, [target]: { contractList, contractsDetails } })
     setCompileErrors({ ...compileErrors, [currentFile]: api.compileErrors })
     setLinterErrors({ [currentFile]: api.linterErrors })
+    setSlitherErrors({ [currentFile]: api.slitherErrors })
   }
 
   api.onLintingFinished = () => {
@@ -111,10 +113,16 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     setLinterErrors({ [currentFile]: api.linterErrors })
   }
 
+  api.onSlitherFinished = () => {
+    setCompileErrors({} as Record<string, CompileErrors>)
+    setSlitherErrors({ [currentFile]: api.slitherErrors })
+  }
+
   api.onFileClosed = (name) => {
     if (name === currentFile) {
       setCompileErrors({ ...compileErrors, [currentFile]: {} as CompileErrors })
       setLinterErrors({ ...linterErrors, [currentFile]: [] as CompileError[] })
+      setSlitherErrors({ ...slitherErrors, [currentFile]: [] as CompileError[] })
       setBadgeStatus({ ...badgeStatus, [currentFile]: { key: 'none' } })
     }
   }
@@ -214,7 +222,15 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
           linterErrors[currentFile] &&
           <div className="remixui_errorBlobs p-4" data-id="linterErrors">
             {
-              linterErrors[currentFile].map((err, index) => <Renderer key={index} message={err.formattedMessage} plugin={api} errColumn={err.column} errLine={err.line} errFile={currentFile} opt={{ close: false, useSpan: true, type: err.severity, errorType: err.type }}></Renderer>)
+              linterErrors[currentFile].map((err, index) => <Renderer key={index} message={err.formattedMessage} plugin={api} errColumn={err.column} errLine={err.line} errFile={currentFile} opt={{ close: false, useSpan: true, type: err.type }}></Renderer>)
+            }
+          </div>
+        }
+        {
+          slitherErrors[currentFile] &&
+          <div className="remixui_errorBlobs p-4" data-id="slitherErrors">
+            {
+              slitherErrors[currentFile].map((err, index) => <Renderer key={index} message={err.formattedMessage} plugin={api} errColumn={err.column} errLine={err.line} errFile={currentFile} opt={{ close: false, useSpan: true, type: err.type }}></Renderer>)
             }
           </div>
         }

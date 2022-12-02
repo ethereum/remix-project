@@ -536,6 +536,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     api.runLinter(currentFile)
   }
 
+  const slither = () => {
+    const currentFile = api.currentFile
+
+    if (!isSolFileSelected()) return
+    api.runSlither()
+  }
+
   const _updateVersionSelector = (version, customUrl = '') => {
     // update selectedversion of previous one got filtered out
     let selectedVersion = version
@@ -1038,26 +1045,42 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <CustomTooltip
                 placement="right"
                 tooltipId="overlay-tooltip-compile-run"
-                tooltipText={<div className="text-left">Lint the current file</div>}
+                tooltipText={<div className="text-left">Analyze with Solhint</div>}
               >
                 <span>
                   <FormattedMessage id='solidity.lint' defaultMessage='Lint' />
                   <span className="ml-1">
-                    {typeof state.compiledFileName === 'string'
-                      ? extractNameFromKey(state.compiledFileName) ||
-                        `<${intl.formatMessage({
-                          id: 'solidity.noFileSelected',
-                          defaultMessage: 'no file selected',
-                        })}>`
-                      : `<${intl.formatMessage({
-                          id: 'solidity.noFileSelected',
-                          defaultMessage: 'no file selected',
-                        })}>`}
+                    Analyze with Solhint
                   </span>
                 </span>
               </CustomTooltip>
             </button>
-            </div>
+          </div>
+
+          <div className='d-flex align-items-center'>
+            <button
+              id="slitherButton"
+              data-id="compilerContainerLinter"
+              className="btn btn-secondary btn-block d-block w-100 text-break remixui_soliditySlitherButton d-inline-block remixui_disabled mb-1 mt-3"
+              onClick={slither}
+              disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}
+            >
+              <CustomTooltip
+                placement="right"
+                tooltipId="overlay-tooltip-compile-run"
+                tooltipText={<div className="text-left">Analyze with Slither</div>}
+              >
+                <span>
+                  <FormattedMessage id='solidity.lint' defaultMessage='Lint' />
+                  <span className="ml-1">
+                    Analyze with Slither
+                  </span>
+                </span>
+              </CustomTooltip>
+            </button>
+          </div>
+
+
         </div>
       </article>
     </section>

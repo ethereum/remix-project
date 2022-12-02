@@ -60,9 +60,8 @@ export class Solhint extends Plugin {
 
     return reports.map((report: Report) => {
       return {
-        severity: severity[report.severity] || 'error',
         formattedMessage: `${report.message}\n${report.fix ? report.fix : ''}`,
-        type: report.ruleId,
+        type: severity[report.severity] || 'error',
         column: report.column,
         line: report.line - 1
       }

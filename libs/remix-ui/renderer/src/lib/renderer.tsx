@@ -10,6 +10,12 @@ interface RendererProps {
   errFile?: string
 }
 
+const classType = {
+  'error': 'alert alert-danger',
+  'warning': 'alert alert-warning',
+  'info': 'alert alert-info'
+}
+
 export const Renderer = ({ message, opt = {}, plugin, errColumn, errLine, errFile }: RendererProps) => {
   const [messageText, setMessageText] = useState(null)
   const [editorOptions, setEditorOptions] = useState({
@@ -17,7 +23,7 @@ export const Renderer = ({ message, opt = {}, plugin, errColumn, errLine, errFil
     type: '',
     errFile: ''
   })
-  const [classList, setClassList] = useState(opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning')
+  const [classList, setClassList] = useState('alert alert-warning')
   const [close, setClose] = useState(false)
 
   useEffect(() => {
@@ -48,7 +54,7 @@ export const Renderer = ({ message, opt = {}, plugin, errColumn, errLine, errFil
     setMessageText(text)
     setEditorOptions(opt)
     setClose(close !== undefined ? close : false)
-    setClassList(opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning')
+    setClassList(classType[opt.type] ? classType[opt.type] : 'alert alert-warning')
   }, [message, opt])
 
   

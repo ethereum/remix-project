@@ -9,6 +9,7 @@ export interface ICompilerApi {
     }
     compileErrors: CompileErrors
     linterErrors: CompileError[]
+    slitherErrors: CompileError[]
     compileTabLogic: any
     configurationSettings: ConfigurationSettings
 
@@ -29,6 +30,7 @@ export interface ICompilerApi {
     onFileRemoved: (path: string) => void
     onNoFileSelected: () => void
     onLintingFinished: () => void
+    onSlitherFinished: () => void
     onCompilationFinished: (contractsDetails: any, contractMap: any) => void
     onSessionSwitched: () => void
     onContentChanged: () => void
@@ -42,6 +44,7 @@ export interface ICompilerApi {
     saveCurrentFile: () => void
     runScriptAfterCompilation: (fileName: string) => void,
     runLinter: (fileName: string) => void,
+    runSlither: () => void,
 
     logToTerminal: (log: terminalLog) => void
 

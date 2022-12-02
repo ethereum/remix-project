@@ -1,5 +1,5 @@
 import React from 'react';
-import { compile, helper } from '@remix-project/remix-solidity'
+import { compile, helper, CompilerAbstract } from '@remix-project/remix-solidity'
 import { CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import type { ConfigurationSettings, CompileErrors, CompileError } from '@remix-project/remix-lib-ts'
 
@@ -14,6 +14,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   }
   compileErrors: CompileErrors
   linterErrors: CompileError[]
+  slitherErrors: CompileError[]
   compileTabLogic: CompileTabLogic
   configurationSettings: ConfigurationSettings
 
@@ -23,6 +24,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   onFileRemoved: (path: string) => void
   onNoFileSelected: () => void
   onLintingFinished: () => void
+  onSlitherFinished: () => void
   onCompilationFinished: (compilationDetails: { contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any> }) => void
   onSessionSwitched: () => void
   onContentChanged: () => void
@@ -52,6 +54,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
       errors: []
     }
     this.linterErrors = []
+    this.slitherErrors = []
     this.compiledFileName = ''
     this.currentFile = ''
   }
@@ -111,6 +114,80 @@ export const CompilerApiMixin = (Base) => class extends Base {
   async runLinter (fileName: string) {
     this.linterErrors = await this.call('solhint', 'lint', fileName)
     this.onLintingFinished()
+  }
+
+  async runSlither () {
+    this.slitherErrors = []
+    
+    const conf = { 
+      currentVersion: this.compiler.state.currentVersion, 
+      optimize: this.compiler.state.optimize, 
+      evmVersion: this.compiler.state.evmVersion 
+    }
+    const result = await this.call('slither', 'analyse', this.currentFile, conf)
+    if (!result.status) {
+      this.call('notification', 'toast', 'slither analysis failed.')
+      return
+    }
+    const lastCompilationResult: CompilerAbstract = await this.call('compilerArtefacts', 'get', '__last')
+    const data = lastCompilationResult.getData()
+    const sourceCode = lastCompilationResult.getSourceCode()
+    const report = result.data
+
+    const mapType = {
+      'informational': 'info',
+      'low': 'warning',
+      'medium': 'error',
+      'high': 'error',
+      'optimization': 'info'  
+    }
+    
+    for (const item of report) {
+      console.log(item)
+      const type = mapType[item.severity.toLowerCase()] ? mapType[item.severity.toLowerCase()] : 'error'
+      if (item.sourceMap.length > 0) {        
+        let location: any = {}    
+        let path = item.sourceMap[0].source_mapping.filename_relative
+
+        let fileIndex = Object.keys(data.sources).indexOf(path)
+        if (fileIndex === -1) {
+          path = await this.call('fileManager', 'getUrlFromPath', path)
+          fileIndex = Object.keys(data.sources).indexOf(path.file)
+        }
+        if (fileIndex >= 0) {
+          location = {
+            start: item.sourceMap[0].source_mapping.start,
+            length: item.sourceMap[0].source_mapping.length
+          }
+          location = await this.call('offsetToLineColumnConverter', 'offsetToLineColumn',
+            location,
+            fileIndex,
+            sourceCode.sources,
+            data.sources
+          )
+          const msg = `${item.title} : ${path} - ${item.description} - ${item.more ? item.more : ''}`
+          const fileName = Object.keys(data.sources)[fileIndex]
+          this.slitherErrors.push({
+            column: location.start.column,
+            line: location.start.line,
+            file: fileName,
+            formattedMessage: msg,
+            type: type
+          })
+        } else {
+          const msg = `${item.title} : ${item.description} - ${item.more}`
+          this.slitherErrors.push({
+            column: -1,
+            line: -1,
+            file: null,
+            formattedMessage: msg,
+            type: type
+          })
+        }
+      }
+    }
+
+    this.onSlitherFinished()
   }
 
   compileWithHardhat (configFile) {
@@ -291,6 +368,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
     this.data.eventHandlers.onCompilationFinished = async (success, data, source, input, version) => {
       this.compileErrors = data
       this.linterErrors = []
+      this.slitherErrors = []
       if (success) {
         // forwarding the event to the appManager infra
         this.emit('compilationFinished', source.target, source, 'soljson', data, input, version)
