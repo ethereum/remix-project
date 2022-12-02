@@ -16,63 +16,65 @@ export const setCallBacks = (viewPlugin: ViewPlugin, dispatcher: React.Dispatch<
     setPlugin(viewPlugin, dispatcher)
 
     plugin.on("fileManager", "fileSaved", async (e) => {
-        if (callBackEnabled) {
-            await synTimerStart();
-        }
+        await synTimerStart();
     });
 
     plugin.on('dGitProvider', 'checkout' as any, async () => {
-        if (callBackEnabled) {
-            await synTimerStart();
-        }
+        await synTimerStart();
     })
     plugin.on('dGitProvider', 'branch' as any, async () => {
-        if (callBackEnabled) {
-            await synTimerStart();
-        }
+        await synTimerStart();
     })
 
     plugin.on("fileManager", "fileAdded", async (e) => {
-        if (callBackEnabled) {
-            await synTimerStart();
-        }
+        await synTimerStart();
     });
 
     plugin.on("fileManager", "fileRemoved", async (e) => {
-        if (callBackEnabled) {
-            await synTimerStart();
-        }
+        await synTimerStart();
     });
 
     plugin.on("fileManager", "currentFileChanged", async (e) => {
-        if (callBackEnabled) {
-            await synTimerStart();
-        }
+        await synTimerStart();
     });
 
     plugin.on("fileManager", "fileRenamed", async (oldfile, newfile) => {
-        if (callBackEnabled) {
-            await synTimerStart();
-        }
+        await synTimerStart();
     });
 
     plugin.on("filePanel", "setWorkspace", async (x: any) => {
-        if (callBackEnabled) {
-            await synTimerStart();
-        }
+        await synTimerStart();
     });
 
     plugin.on("filePanel", "deleteWorkspace" as any, async (x: any) => {
-        if (callBackEnabled) {
-            await synTimerStart();
-        }
+        await synTimerStart();
     });
 
     plugin.on("filePanel", "renameWorkspace" as any, async (x: any) => {
-        if (callBackEnabled) {
-            await synTimerStart();
-        }
+        await synTimerStart();
     });
+
+    plugin.on('dGitProvider', 'checkout', async () => {
+        await loadFiles();
+    })
+    plugin.on('dGitProvider', 'init', async () => {
+        await loadFiles();
+    })
+    plugin.on('dGitProvider', 'add', async () => {
+        await loadFiles();
+    })
+    plugin.on('dGitProvider', 'rm', async () => {
+        await loadFiles();
+    })
+    plugin.on('dGitProvider', 'commit', async () => {
+        await loadFiles();
+    })
+    plugin.on('dGitProvider', 'branch', async () => {
+        await loadFiles();
+    })
+    plugin.on('dGitProvider', 'clone', async () => {
+        await loadFiles();
+    })
 
 
     callBackEnabled = true;
@@ -104,12 +106,12 @@ const syncFromWorkspace = async (isLocalhost = false) => {
     } catch (e) {
         dispatch(setCanUseApp(false));
     }
-    await showFiles();
+    await loadFiles();
     await enableCallBacks();
 }
 
-const showFiles = async () => {
-    console.log("showFiles")
+export const loadFiles = async () => {
+    console.log("loadFiles")
     dispatch(setLoading(true));
 
     try {
@@ -158,6 +160,7 @@ export const enableCallBacks = async () => {
 }
 
 const synTimerStart = async () => {
+    if(!callBackEnabled) return
     console.log('synTimerStart')
     clearTimeout(syncTimer)
     syncTimer = setTimeout(async () => {

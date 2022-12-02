@@ -102,6 +102,7 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig(),
       ...cmd
     })
+    this.emit('rm')
   }
 
   async checkout (cmd, refresh = true) {

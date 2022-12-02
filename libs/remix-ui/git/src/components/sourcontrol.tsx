@@ -147,12 +147,12 @@ export const SourceControl = () => {
                 <>
                     <div>
                         <button data-id='stageAll' onClick={async () => await actions.addall()} className='btn btn-sm btn-primary'>Stage all</button>
-                        <button onClick={async () => { }} className='btn btn-sm btn-primary ml-2'><FontAwesomeIcon icon={faSync} className="" /></button>
+                        <button onClick={async () => { await pluginactions.loadFiles() }} className='btn btn-sm btn-primary ml-2'><FontAwesomeIcon icon={faSync} className="" /></button>
                         <hr></hr>
                         <RenderGroups></RenderGroups>
                     </div></>
                 : <>Nothing to commit
-                    <button onClick={async () => { }} className='btn btn-sm btn-primary ml-2'><FontAwesomeIcon icon={faSync} className="" /></button>
+                    <button onClick={async () => { await pluginactions.loadFiles() }} className='btn btn-sm btn-primary ml-2'><FontAwesomeIcon icon={faSync} className="" /></button>
                 </>}
         </>
     );

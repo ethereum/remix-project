@@ -18,6 +18,7 @@ export const gitActionsContext = React.createContext<gitActions>(null)
 
 export interface pluginActions {
     statusChanged(data: any): void
+    loadFiles(): void
 }
 
 export const pluginActionsContext = React.createContext<pluginActions>(null)
