@@ -6,9 +6,11 @@ import sol from './code-format/index'
 import * as ts from 'prettier/parser-typescript'
 import * as babel from 'prettier/parser-babel'
 import * as espree from 'prettier/parser-espree'
+import * as yml from 'prettier/parser-yaml'
 import path from 'path'
 import yaml from 'js-yaml'
 import toml from 'toml'
+import { filePathFilter, AnyFilter } from '@jsdevtools/file-path-filter'
 
 const profile = {
     name: 'codeFormatter',
@@ -59,7 +61,18 @@ export class CodeFormat extends Plugin {
                 case '.json':
                     parserName = 'json'
                     break
+                case '.yml':
+                    parserName = 'yaml'
+                    break
+                case '.yaml':
+                    parserName = 'yaml'
+                    break
             }
+
+            if(file === '.prettierrc') {
+                parserName = 'json'
+            }
+
             const possibleFileNames = [
                 '.prettierrc',
                 '.prettierrc.json',
@@ -120,9 +133,12 @@ export class CodeFormat extends Plugin {
                     }
                 }
             }
-            if(!parsed && prettierConfigFile) {
+            if (!parsed && prettierConfigFile) {
                 this.call('notification', 'toast', `Error parsing prettier config file: ${prettierConfigFile}`)
             }
+
+
+
             // merge options
             if (parsed) {
                 options = {
@@ -130,8 +146,41 @@ export class CodeFormat extends Plugin {
                     ...parsed,
                 }
             }
+
+            // search for overrides
+            if (parsed && parsed.overrides) {
+                const override = parsed.overrides.find((override) => {
+                    if (override.files) {
+                        const pathFilter: AnyFilter = {}
+                        pathFilter.include = setGlobalExpression(override.files)
+                        const filteredFiles = [file]
+                            .filter(filePathFilter(pathFilter))
+                        if(filteredFiles.length) {
+                            return true
+                        }
+                    }
+                })
+                const validParsers = ['typescript', 'babel', 'espree', 'solidity-parse', 'json', 'yaml', 'solidity-parse']
+                if (override && override.options && override.options.parser) {
+                    if(validParsers.includes(override.options.parser)) {
+                        parserName = override.options.parser
+                    }else{
+                        this.call('notification', 'toast', `Invalid parser: ${override.options.parser}! Valid options are ${validParsers.join(', ')}`)
+                    }
+                    delete override.options.parser
+                }
+     
+                if (override) {
+                    options = {
+                        ...options,
+                        ...override.options,
+                    }
+                }
+            }
+
+
             const result = prettier.format(content, {
-                plugins: [sol as any, ts, babel, espree],
+                plugins: [sol as any, ts, babel, espree, yml],
                 parser: parserName,
                 ...options
             })
@@ -141,6 +190,19 @@ export class CodeFormat extends Plugin {
         }
     }
 
+}
+
+//*.sol, **/*.txt, contracts/*
+const setGlobalExpression = (paths: string) => {
+    const results = []
+    paths.split(',').forEach(path => {
+        path = path.trim()
+        if (path.startsWith('*.')) path = path.replace(/(\*\.)/g, '**/*.')
+        if (path.endsWith('/*') && !path.endsWith('/**/*'))
+            path = path.replace(/(\*)/g, '**/*.*')
+        results.push(path)
+    })
+    return results
 }
 
 async function findAsync(arr, asyncCallback) {
