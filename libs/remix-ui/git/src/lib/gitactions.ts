@@ -1,7 +1,7 @@
 import { ViewPlugin } from "@remixproject/engine-web";
 import { ReadCommitResult } from "isomorphic-git";
 import React from "react";
-import { fileStatus, setLoading } from "../state/payload";
+import { fileStatus, setBranches, setCommits, setLoading } from "../state/payload";
 import { gitActionDispatch, statusMatrixType } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
@@ -38,7 +38,8 @@ export const setPlugin = (p: ViewPlugin, dispatcher: React.Dispatch<gitActionDis
 }
 
 export const getBranches = async () => {
-    await plugin.call("dGitProvider", "branches");
+    const branches = await plugin.call("dGitProvider", "branches");
+    dispatch(setBranches(branches));
 }
 export const getRemotes = async () => {
     await plugin.call("dGitProvider", "remotes" as any);
@@ -80,7 +81,7 @@ export const gitlog = async () => {
         commits = await getCommits();
     } catch (e) {
     }
-
+    dispatch(setCommits(commits));
     await showCurrentBranch();
 }
 
@@ -110,6 +111,13 @@ export const currentBranch = async () => {
         return branch;
     } catch (e) {
         throw e;
+    }
+}
+
+export const createBranch = async (name: string = "") => {
+    if (name) {
+        await plugin.call("dGitProvider", "branch", { ref: name });
+        await plugin.call("dGitProvider", "checkout", { ref: name });
     }
 }
 
@@ -254,6 +262,19 @@ export const checkoutfile = async (filename: string) => {
             plugin.call('notification', 'toast', `No such file`)
         }
 }
+
+export const checkout = async (cmd: any) => {
+    await disableCallBacks();
+    await plugin.call('fileManager', 'closeAllFiles')
+    try {
+        await plugin.call("dGitProvider", "checkout", cmd);
+        gitlog();
+    } catch (e) {
+        plugin.call('notification', 'toast', `${e}`)
+    }
+    await enableCallBacks();
+}
+
 
 export const statusMatrix = async () => {
     const matrix = await plugin.call("dGitProvider", "status", { ref: "HEAD" });

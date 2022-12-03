@@ -23,7 +23,7 @@ export const defaultGitState: gitState = {
     currentBranch: "",
     commits: [],
     branch: "",
-    canCommit: false,
+    canCommit: true,
     branches: [],
     remotes: [],
     fileStatusResult: [],
@@ -53,6 +53,16 @@ export interface fileStatusAction  {
     payload: fileStatusResult[]
 }
 
+export interface setCommitsAction {
+    type: string,
+    payload: ReadCommitResult[]
+}
+
+export interface setBranchesAction {
+    type: string,
+    payload: any[]
+}
+
 export interface setLoadingAction {
     type: string,
     payload: boolean
@@ -68,4 +78,4 @@ export interface setRepoNameAction {
     payload: string
 }
 
-export type gitActionDispatch = fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction
+export type gitActionDispatch = fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction
