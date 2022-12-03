@@ -21,6 +21,19 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action) =>
                 allchangesnotstaged: allChangedButNotStagedFiles(action.payload)
             }
 
+        case 'SET_COMMITS':
+            return {
+                ...state,
+                commits: action.payload
+            }
+
+        case 'SET_BRANCHES':
+            return {
+                ...state,
+                branches: action.payload
+            }
+            
+            
         case 'SET_CAN_USE_APP':
             return {
                 ...state,

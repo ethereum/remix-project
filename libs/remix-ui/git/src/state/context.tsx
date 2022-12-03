@@ -10,8 +10,8 @@ export interface gitActions  {
     //pull(): Promise<void>
     //fetch(): Promise<void>
     checkoutfile(file: string): Promise<void>
-    //checkout(branch: string): Promise<void>
-    //createBranch(branch: string): Promise<void>
+    checkout(cmd: any): Promise<void>
+    createBranch(branch: string): Promise<void>
 }
 
 export const gitActionsContext = React.createContext<gitActions>(null)

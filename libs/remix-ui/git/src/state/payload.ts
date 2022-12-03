@@ -1,3 +1,4 @@
+import { ReadCommitResult } from "isomorphic-git"
 import { fileStatusResult } from "../types"
 
 export const fileStatus = (files: fileStatusResult[]) => {
@@ -6,6 +7,21 @@ export const fileStatus = (files: fileStatusResult[]) => {
         payload: files
     }
 }
+
+export const setCommits = (commits: ReadCommitResult[]) => {
+    return {
+        type: 'SET_COMMITS',
+        payload: commits
+    }
+}
+
+export const setBranches = (branches: any[]) => {
+    return {
+        type: 'SET_BRANCHES',
+        payload: branches
+    }
+}
+
 
 export const setLoading = (loading: boolean) => {
     return {

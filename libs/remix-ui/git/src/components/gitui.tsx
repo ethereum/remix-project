@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useReducer, useRef, useState } from 'react'
-import { add, addall, checkoutfile, commit, rm } from '../lib/gitactions'
+import { add, addall, checkout, checkoutfile, commit, createBranch, rm } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
 import { setPlugin, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
@@ -9,6 +9,9 @@ import { SourceControl } from './sourcontrol'
 import { Container, ProgressBar, Accordion, AccordionContext, Button, useAccordionToggle, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
+import { CommitMessage } from './commitmessage'
+import { Commits } from './commits'
+import { Branches } from './branches'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 
@@ -34,7 +37,9 @@ export const GitUI = (props) => {
         addall,
         add,
         checkoutfile,
-        rm
+        rm,
+        checkout,
+        createBranch
     }
 
     const pluginActionsProviderValue = {
@@ -82,20 +87,35 @@ export const GitUI = (props) => {
 
 
     return (
-        <gitPluginContext.Provider value={gitState}>
-            <gitActionsContext.Provider value={gitActionsProviderValue}>
-                <pluginActionsContext.Provider value={pluginActionsProviderValue}>
-                    <Accordion defaultActiveKey="0">
-                        <CustomToggle eventKey="0">SOURCE CONTROL</CustomToggle>
+        <div className="m-1">
+            <gitPluginContext.Provider value={gitState}>
+                <gitActionsContext.Provider value={gitActionsProviderValue}>
+                    <pluginActionsContext.Provider value={pluginActionsProviderValue}>
+                        <Accordion defaultActiveKey="0">
+                            <CustomToggle eventKey="0">SOURCE CONTROL</CustomToggle>
 
-                        <Accordion.Collapse eventKey="0">
-                            <SourceControl />
-                        </Accordion.Collapse>
+                            <Accordion.Collapse eventKey="0">
+                                <>
+                                    <CommitMessage />
+                                    <SourceControl />
+                                </>
+                            </Accordion.Collapse>
+                            <CustomToggle eventKey="3">COMMITS</CustomToggle>
+                            <Accordion.Collapse eventKey="3">
+                                <>
+                                    <Commits /><hr></hr>
+                                </>
+                            </Accordion.Collapse>
+                            <CustomToggle eventKey="2">BRANCHES</CustomToggle>
+                            <Accordion.Collapse eventKey="2">
+                                <>
+                                    <Branches /><hr></hr></>
+                            </Accordion.Collapse>
 
-
-                    </Accordion>
-                </pluginActionsContext.Provider>
-            </gitActionsContext.Provider>
-        </gitPluginContext.Provider>
+                        </Accordion>
+                    </pluginActionsContext.Provider>
+                </gitActionsContext.Provider>
+            </gitPluginContext.Provider>
+        </div>
     )
 }
