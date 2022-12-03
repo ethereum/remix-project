@@ -91,28 +91,30 @@ export const GitUI = (props) => {
             <gitPluginContext.Provider value={gitState}>
                 <gitActionsContext.Provider value={gitActionsProviderValue}>
                     <pluginActionsContext.Provider value={pluginActionsProviderValue}>
-                        <Accordion defaultActiveKey="0">
-                            <CustomToggle eventKey="0">SOURCE CONTROL</CustomToggle>
+                        {gitState.loading && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>}
+                        {!gitState.loading &&
+                            <Accordion defaultActiveKey="0">
+                                <CustomToggle eventKey="0">SOURCE CONTROL</CustomToggle>
 
-                            <Accordion.Collapse eventKey="0">
-                                <>
-                                    <CommitMessage />
-                                    <SourceControl />
-                                </>
-                            </Accordion.Collapse>
-                            <CustomToggle eventKey="3">COMMITS</CustomToggle>
-                            <Accordion.Collapse eventKey="3">
-                                <>
-                                    <Commits /><hr></hr>
-                                </>
-                            </Accordion.Collapse>
-                            <CustomToggle eventKey="2">BRANCHES</CustomToggle>
-                            <Accordion.Collapse eventKey="2">
-                                <>
-                                    <Branches /><hr></hr></>
-                            </Accordion.Collapse>
+                                <Accordion.Collapse eventKey="0">
+                                    <>
+                                        <CommitMessage />
+                                        <SourceControl />
+                                    </>
+                                </Accordion.Collapse>
+                                <CustomToggle eventKey="3">COMMITS</CustomToggle>
+                                <Accordion.Collapse eventKey="3">
+                                    <>
+                                        <Commits /><hr></hr>
+                                    </>
+                                </Accordion.Collapse>
+                                <CustomToggle eventKey="2">BRANCHES</CustomToggle>
+                                <Accordion.Collapse eventKey="2">
+                                    <>
+                                        <Branches /><hr></hr></>
+                                </Accordion.Collapse>
 
-                        </Accordion>
+                            </Accordion>}
                     </pluginActionsContext.Provider>
                 </gitActionsContext.Provider>
             </gitPluginContext.Provider>
