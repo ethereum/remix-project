@@ -122,7 +122,7 @@ module.exports = {
         const fileList = document.querySelector('*[data-id="treeViewUltreeViewMenu"]')
         return fileList.getElementsByTagName('li').length;
       }, [], function (result) {
-        browser.assert.equal(result.value, 0, 'Incorrect number of files');
+        browser.assert.equal(result.value, 1, 'Incorrect number of files');
       });
   },
 
