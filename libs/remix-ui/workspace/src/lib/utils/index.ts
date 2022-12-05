@@ -55,6 +55,18 @@ export const contextMenuActions: MenuItems = [{
   multiselect: false,
   label: ''
 }, {
+  id: 'copyFileName',
+  name: 'Copy file name',
+  type: ['file'],
+  multiselect: false,
+  label: ''
+}, {
+  id: 'copyFilePath',
+  name: 'Copy file path',
+  type: ['folder', 'file'],
+  multiselect: false,
+  label: ''
+}, {
   id: 'deleteAll',
   name: 'Delete All',
   type: ['folder', 'file'],
