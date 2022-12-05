@@ -108,7 +108,7 @@
   }
 
   .remixui_menuwidth {
-    width: 8rem;
+    /* width: 8rem; */
   }
 
   #workspacesMenuDropdown > div.custom-dropdown-items {

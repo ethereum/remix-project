@@ -36,6 +36,8 @@ export const FileSystemContext = createContext<{
   dispatchShowAllBranches: () => Promise<void>,
   dispatchSwitchToBranch: (branch: string) => Promise<void>,
   dispatchCreateNewBranch: (branch: string) => Promise<void>,
-  dispatchCheckoutRemoteBranch: (branch: string, remote: string) => Promise<void>
-    }>(null)
+  dispatchCheckoutRemoteBranch: (branch: string, remote: string) => Promise<void>,
+  dispatchCreateSolidityGithubAction: () => Promise<void>
+}>(null)
+  
     
