@@ -1452,6 +1452,11 @@
                 "glob": "*.md",
                 "input": "libs/remix-ws-templates/",
                 "output": "/"
+              },
+              {
+                "glob": "templates/**/.prettierrc",
+                "input": "libs/remix-ws-templates/src/",
+                "output": "src/"
               }
             ]
           }
