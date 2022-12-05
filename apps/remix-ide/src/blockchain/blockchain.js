@@ -161,7 +161,6 @@ export class Blockchain extends Plugin {
   }
 
   async runProxyTx (proxyData, implementationContractObject) {
-
     const args = { useCall: false, data: proxyData }
     let networkInfo
     const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
