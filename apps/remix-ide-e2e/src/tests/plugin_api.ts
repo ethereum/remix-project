@@ -234,7 +234,8 @@ module.exports = {
       contracts: { isDirectory: true },
       scripts: { isDirectory: true },
       tests: { isDirectory: true },
-      'README.txt': { isDirectory: false }
+      'README.txt': { isDirectory: false },
+      '.prettierrc.json': { isDirectory: false },
     }, null, '/')
   },
   'Should throw error on current file #group7': async function (browser: NightwatchBrowser) {
@@ -294,6 +295,7 @@ module.exports = {
       contracts: { isDirectory: true },
       scripts: { isDirectory: true },
       tests: { isDirectory: true },
+      '.prettierrc.json': { isDirectory: false },
       'README.txt': { isDirectory: false } 
     }, null, '/')
   },
@@ -328,7 +330,7 @@ module.exports = {
     await clickAndCheckLog(browser, 'dGitProvider:add', null, null, {
       filepath: 'contracts/1_Storage.sol'
     })
-    await clickAndCheckLog(browser, 'dGitProvider:status', [["README.txt",0,2,0],["contracts/1_Storage.sol",0,2,2],["contracts/2_Owner.sol",0,2,0],["contracts/3_Ballot.sol",0,2,0],["scripts/deploy_with_ethers.ts",0,2,0],["scripts/deploy_with_web3.ts",0,2,0],["scripts/ethers-lib.ts",0,2,0],["scripts/web3-lib.ts",0,2,0],["tests/Ballot_test.sol",0,2,0],["tests/storage.test.js",0,2,0]], null, null)
+    await clickAndCheckLog(browser, 'dGitProvider:status', [[".prettierrc.json",0,2,0],["README.txt",0,2,0],["contracts/1_Storage.sol",0,2,2],["contracts/2_Owner.sol",0,2,0],["contracts/3_Ballot.sol",0,2,0],["scripts/deploy_with_ethers.ts",0,2,0],["scripts/deploy_with_web3.ts",0,2,0],["scripts/ethers-lib.ts",0,2,0],["scripts/web3-lib.ts",0,2,0],["tests/Ballot_test.sol",0,2,0],["tests/storage.test.js",0,2,0]], null, null)
   },
   'Should commit changes #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'dGitProvider:commit', null, null, { author: { name: 'Remix', email: 'Remix' }, message: 'commit-message' })
