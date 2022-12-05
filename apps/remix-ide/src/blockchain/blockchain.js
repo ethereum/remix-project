@@ -177,32 +177,37 @@ export class Blockchain extends Plugin {
         _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment failed: ' + error])
         return this.call('terminal', 'logHtml', log)
       }
+      const { contractName, implementationAddress } = implementationContractObject
       const hasPreviousDeploys = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`)
       
-      // make deploys folder read only.
+      // TODO: make deploys folder read only.
       if (hasPreviousDeploys) {
         const deployments = await this.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`)
         const parsedDeployments = JSON.parse(deployments)
 
-        parsedDeployments.deployments.push({
+        parsedDeployments.deployments[address] = {
+          date: new Date().toISOString(),
+          contractName: contractName,
           fork: networkInfo.currentFork,
           proxyAddress: address,
-          implementationAddress: implementationContractObject.implementationAddress,
-          layout: implementationContractObject.contract.object.storageLayout,
-          date: new Date().toISOString()
-        })
+          implementationAddress: implementationAddress,
+          layout: implementationContractObject.contract.object.storageLayout
+        }
         await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`, JSON.stringify(parsedDeployments, null, 2))
       } else {
         await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`, JSON.stringify({
           id: networkInfo.id,
           network: networkInfo.name,
-          deployments: [{
-            fork: networkInfo.currentFork,
-            proxyAddress: address,
-            implementationAddress: implementationContractObject.implementationAddress,
-            layout: implementationContractObject.contract.object.storageLayout,
-            date: new Date().toISOString()
-          }]
+          deployments: {
+            [address]: {
+              date: new Date().toISOString(),
+              contractName: contractName,
+              fork: networkInfo.currentFork,
+              proxyAddress: address,
+              implementationAddress: implementationAddress,
+              layout: implementationContractObject.contract.object.storageLayout
+            }
+          }
         }, null, 2))
       }
       _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment successful'])
@@ -235,18 +240,50 @@ export class Blockchain extends Plugin {
 
   async runUpgradeTx (proxyAddress, data, newImplementationContractObject) {
     const args = { useCall: false, data, to: proxyAddress }
+    let networkInfo
     const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       // continue using original authorization given by user
+      networkInfo = network
       continueTxExecution(null)
     }
     const continueCb = (error, continueTxExecution, cancelCb) => { continueTxExecution() }
     const promptCb = (okCb, cancelCb) => { okCb() }
-    const finalCb = (error, txResult, address, returnValue) => {
+    const finalCb = async (error, txResult, address, returnValue) => {
       if (error) {
         const log = logBuilder(error)
 
         _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'Upgrade failed'])
         return this.call('terminal', 'logHtml', log)
+      }
+      const { contractName, implementationAddress } = newImplementationContractObject
+      const hasPreviousDeploys = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkInfo.name}/$UUPS.json`)
+      
+      if (hasPreviousDeploys) {
+        const deployments = await this.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`)
+        const parsedDeployments = JSON.parse(deployments)
+
+        parsedDeployments.deployments[proxyAddress] = {
+          lastUpdated: new Date().toISOString(),
+          ...parsedDeployments.deployments[proxyAddress],
+          implementationAddress: implementationAddress,
+          layout: newImplementationContractObject.contract.object.storageLayout
+        }
+        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`, JSON.stringify(parsedDeployments, null, 2))
+      } else {
+        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`, JSON.stringify({
+          id: networkInfo.id,
+          network: networkInfo.name,
+          deployments: {
+            [proxyAddress]: {
+              date: new Date().toISOString(),
+              contractName: contractName,
+              fork: networkInfo.currentFork,
+              proxyAddress,
+              implementationAddress: implementationAddress,
+              layout: newImplementationContractObject.contract.object.storageLayout
+            }
+          }
+        }, null, 2))
       }
       _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'Upgrade Successful'])
       this.call('udapp', 'addInstance', addressToString(proxyAddress), newImplementationContractObject.abi, newImplementationContractObject.name)
