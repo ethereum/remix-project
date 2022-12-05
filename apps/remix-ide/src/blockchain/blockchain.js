@@ -177,11 +177,11 @@ export class Blockchain extends Plugin {
         _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment failed: ' + error])
         return this.call('terminal', 'logHtml', log)
       }
-      const hasPreviousDeploys = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkInfo.name}.json`)
+      const hasPreviousDeploys = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`)
       
       // make deploys folder read only.
       if (hasPreviousDeploys) {
-        const deployments = await this.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${networkInfo.name}.json`)
+        const deployments = await this.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`)
         const parsedDeployments = JSON.parse(deployments)
 
         parsedDeployments.deployments.push({
@@ -190,9 +190,9 @@ export class Blockchain extends Plugin {
           layout: implementationContractObject.contract.object.storageLayout,
           date: new Date().toISOString()
         })
-        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}.json`, JSON.stringify(parsedDeployments, null, 2))
+        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`, JSON.stringify(parsedDeployments, null, 2))
       } else {
-        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}.json`, JSON.stringify({
+        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`, JSON.stringify({
           id: networkInfo.id,
           network: networkInfo.name,
           deployments: [{
