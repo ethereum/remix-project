@@ -45,6 +45,7 @@ export default {
   'filePanel.workspace.restore': 'Restore Workspace Backup',
   'filePanel.workspace.clone': 'Clone Git Repository',
   'filePanel.workspace.enterGitUrl': 'Enter git repository url',
+  'filePanel.workspace.solghaction': 'Add the solidity GitHub action file. Push to a repository to start running it in the GitHub CI.',
   'filePanel.newFile': 'New File',
   'filePanel.newFolder': 'New Folder',
   'filePanel.rename': 'Rename',
