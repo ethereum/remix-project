@@ -256,7 +256,7 @@ export class Blockchain extends Plugin {
         return this.call('terminal', 'logHtml', log)
       }
       const { contractName, implementationAddress } = newImplementationContractObject
-      const hasPreviousDeploys = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkInfo.name}/$UUPS.json`)
+      const hasPreviousDeploys = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`)
       
       if (hasPreviousDeploys) {
         const deployments = await this.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`)
