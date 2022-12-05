@@ -20,6 +20,51 @@ const profile = {
     version: '0.0.1'
 }
 
+const defaultOptions = {
+    "overrides": [
+        {
+            "files": "*.sol",
+            "options": {
+                "printWidth": 80,
+                "tabWidth": 4,
+                "useTabs": false,
+                "singleQuote": false,
+                "bracketSpacing": false,
+            }
+        },
+        {
+            "files": "*.yml",
+            "options": {
+            }
+        },
+        {
+            "files": "*.yaml",
+            "options": {
+            }
+        },
+        {
+            "files": "*.toml",
+            "options": {
+            }
+        },
+        {
+            "files": "*.json",
+            "options": {
+            }
+        },
+        {
+            "files": "*.js",
+            "options": {
+            }
+        },
+        {
+            "files": "*.ts",
+            "options": {
+            }
+        }
+    ]
+}
+
 export class CodeFormat extends Plugin {
 
     constructor() {
@@ -69,7 +114,7 @@ export class CodeFormat extends Plugin {
                     break
             }
 
-            if(file === '.prettierrc') {
+            if (file === '.prettierrc') {
                 parserName = 'json'
             }
 
@@ -132,7 +177,11 @@ export class CodeFormat extends Plugin {
                         }
                     }
                 }
+            }else{
+                parsed = defaultOptions
+                await this.call('fileManager', 'writeFile', '.prettierrc.json', JSON.stringify(parsed, null, 2))
             }
+
             if (!parsed && prettierConfigFile) {
                 this.call('notification', 'toast', `Error parsing prettier config file: ${prettierConfigFile}`)
             }
@@ -155,21 +204,21 @@ export class CodeFormat extends Plugin {
                         pathFilter.include = setGlobalExpression(override.files)
                         const filteredFiles = [file]
                             .filter(filePathFilter(pathFilter))
-                        if(filteredFiles.length) {
+                        if (filteredFiles.length) {
                             return true
                         }
                     }
                 })
                 const validParsers = ['typescript', 'babel', 'espree', 'solidity-parse', 'json', 'yaml', 'solidity-parse']
                 if (override && override.options && override.options.parser) {
-                    if(validParsers.includes(override.options.parser)) {
+                    if (validParsers.includes(override.options.parser)) {
                         parserName = override.options.parser
-                    }else{
+                    } else {
                         this.call('notification', 'toast', `Invalid parser: ${override.options.parser}! Valid options are ${validParsers.join(', ')}`)
                     }
                     delete override.options.parser
                 }
-     
+
                 if (override) {
                     options = {
                         ...options,
