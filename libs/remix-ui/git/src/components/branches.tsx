@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Alert } from "react-bootstrap";
 import { gitActionsContext } from "../state/context";
 import { gitPluginContext } from "./gitui";
 
@@ -23,11 +24,13 @@ export const Branches = () => {
             <hr></hr>
             <div className={context.branches && context.branches.length ? "" : "d-none"}>
                 <h4>Branches</h4>
-                {context.currentBranch}
+                <Alert className="w-md-50 w-100 text-break" variant="success">
+                    {context.currentBranch}
+                </Alert>
                 {context.branches && context.branches.map((branch, index) => {
                     return (
                         <div key={index} className="row p-1">
-                            <div className="col-md-2 col-6">{branch.name} on {branch.remote || 'local'}</div>
+                            <div className="col-6">{branch.name} on {branch.remote || 'local'}</div>
                             <div className="col">
                                 <span className="float-right">
                                     <div
@@ -44,8 +47,9 @@ export const Branches = () => {
                 <hr />
                 <h4>Create branch</h4>
                 <div className="form-group">
-                    <label>Branch name</label>
+                    
                     <input
+                        placeholder="branch name"
                         onChange={handleChange}
                         className="form-control w-md-25 w-100"
                         type="text"
@@ -57,7 +61,7 @@ export const Branches = () => {
                     className="btn w-md-25 w-100 btn-primary"
                     id="createbranch-btn"
                 >
-                    git branch
+                    create new branch
                 </button>
             </div>
         </>
