@@ -9,7 +9,7 @@ export default (sources: Source, opts: CompilerInputOptions): string => {
     settings: {
       optimizer: {
         enabled: opts.optimize === true || opts.optimize === 1,
-        runs: opts.runs || 200
+        runs: opts.runs > -1 ? opts.runs : 200
       },
       libraries: opts.libraries,
       outputSelection: {
