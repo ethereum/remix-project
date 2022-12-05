@@ -56,14 +56,14 @@ export const contextMenuActions: MenuItems = [{
   label: ''
 }, {
   id: 'copyFileName',
-  name: 'Copy file name',
+  name: 'Copy name',
   type: ['file'],
   multiselect: false,
   label: ''
 }, {
   id: 'copyFilePath',
-  name: 'Copy file path',
-  type: ['folder', 'file'],
+  name: 'Copy path',
+  type: ['file'],
   multiselect: false,
   label: ''
 }, {
