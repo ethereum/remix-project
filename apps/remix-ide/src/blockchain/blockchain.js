@@ -187,6 +187,7 @@ export class Blockchain extends Plugin {
         parsedDeployments.deployments.push({
           fork: networkInfo.currentFork,
           proxyAddress: address,
+          implementationAddress: implementationContractObject.implementationAddress,
           layout: implementationContractObject.contract.object.storageLayout,
           date: new Date().toISOString()
         })
@@ -198,6 +199,7 @@ export class Blockchain extends Plugin {
           deployments: [{
             fork: networkInfo.currentFork,
             proxyAddress: address,
+            implementationAddress: implementationContractObject.implementationAddress,
             layout: implementationContractObject.contract.object.storageLayout,
             date: new Date().toISOString()
           }]
