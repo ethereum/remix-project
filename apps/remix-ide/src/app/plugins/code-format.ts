@@ -141,11 +141,23 @@ export class CodeFormat extends Plugin {
                 let prettierConfig = await this.call('fileManager', 'readFile', prettierConfigFile)
                 if (prettierConfig) {
                     if (prettierConfigFile.endsWith('.yaml') || prettierConfigFile.endsWith('.yml')) {
-                        parsed = yaml.load(prettierConfig)
+                        try {
+                            parsed = yaml.load(prettierConfig)
+                        } catch (e) {
+                            // do nothing
+                        }
                     } else if (prettierConfigFile.endsWith('.toml')) {
-                        parsed = toml.parse(prettierConfig)
+                        try {
+                            parsed = toml.parse(prettierConfig)
+                        } catch (e) {
+                            // do nothing
+                        }
                     } else if (prettierConfigFile.endsWith('.json') || prettierConfigFile.endsWith('.json5')) {
-                        parsed = JSON.parse(prettierConfig)
+                        try {
+                            parsed = JSON.parse(prettierConfig)
+                        } catch (e) {
+                            // do nothing
+                        }
                     } else if (prettierConfigFile === '.prettierrc') {
                         try {
                             parsed = JSON.parse(prettierConfig)
@@ -177,7 +189,7 @@ export class CodeFormat extends Plugin {
                         }
                     }
                 }
-            }else{
+            } else {
                 parsed = defaultOptions
                 await this.call('fileManager', 'writeFile', '.prettierrc.json', JSON.stringify(parsed, null, 2))
             }
