@@ -409,6 +409,17 @@ export const FileExplorer = (props: FileExplorerProps) => {
     props.dispatchHandleExpandPath(expandPath)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleCopyFileNameClick = (path: string, _type: string) => {
+    const fileName = extractNameFromKey(path)
+    navigator.clipboard.writeText(fileName)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleCopyFilePathClick = (path: string, _type: string) => {
+    navigator.clipboard.writeText(path)
+  }
+
   const handleFileMove = (dest: string, src: string) => {
     try {
       props.dispatchMoveFile(src, dest)
@@ -480,6 +491,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
           runScript={runScript}
           copy={handleCopyClick}
           paste={handlePasteClick}
+          copyFileName={handleCopyFileNameClick}
+          copyPath={handleCopyFilePathClick}
           emit={emitContextMenuEvent}
           pageX={state.focusContext.x}
           pageY={state.focusContext.y}
