@@ -671,7 +671,6 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
     monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
 
-    
     loadTypes(monacoRef.current)
   }
 
@@ -683,10 +682,14 @@ export const EditorUI = (props: EditorUIProps) => {
         language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
         onMount={handleEditorDidMount}
         beforeMount={handleEditorWillMount}
-        options={{ glyphMargin: true, readOnly: (!editorRef.current || !props.currentFile) }}
+        options={{ glyphMargin: true, readOnly: ((!editorRef.current || !props.currentFile) && editorModelsState[props.currentFile]?.readOnly) }}
         defaultValue={defaultEditorValue}
       />
-
+      {editorModelsState[props.currentFile]?.readOnly && <span className='pl-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0'>
+        <i className="fas fa-lock-alt p-2"></i>
+          The file is opened in <b>read-only</b> mode.
+        </span>
+      }
     </div>
   )
 }

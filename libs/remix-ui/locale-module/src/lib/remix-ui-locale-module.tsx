@@ -15,9 +15,11 @@ export function RemixUiLocaleModule({ localeModule }: RemixUiLocaleModuleProps) 
   }, [localeName, localeModule])
 
   return (
-    <div className="border-top">
+    <div className="border-top mb-4">
       <div className="card-body pt-3 pb-2">
-        <h6 className="card-title"><FormattedMessage id='settings.locales' defaultMessage='Lanaguage' /></h6>
+        <h6 className="card-title">
+          <FormattedMessage id='settings.locales' defaultMessage='Lanaguage' />
+        </h6>
         <div className="card-text locales-container">
           {localeModule.getLocales()
             ? localeModule.getLocales().map((locale, idx) => (
