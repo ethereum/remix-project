@@ -1,11 +1,10 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "types": ["node", "jest"],
+    "types": ["node", "mocha", "chai"],
     "module": "commonjs",
     "esModuleInterop": true,
-    "allowJs": true,
-    "rootDir": "./",
+    "allowJs": true
   },
   "include": ["**/*.ts"]
 }

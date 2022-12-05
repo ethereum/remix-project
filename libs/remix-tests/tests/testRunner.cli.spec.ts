@@ -1,7 +1,9 @@
 import { spawnSync, execSync } from 'child_process'
 import { resolve } from 'path'
+import { expect } from 'chai';
 
-describe('testRunner: remix-tests CLI', () => {
+describe('testRunner: remix-tests CLI', function(){
+    this.timeout(120000)
     // remix-tests binary, after build, is used as executable 
     
     const executablePath = resolve(__dirname + '/../../../dist/libs/remix-tests/bin/remix-tests')
@@ -20,13 +22,14 @@ describe('testRunner: remix-tests CLI', () => {
     }
     
 
-    describe('test various CLI options', () => {
-      test('remix-tests version', () => {
+    describe('test various CLI options', function() {
+      it('remix-tests version', () => {
         const res = spawnSync(executablePath, ['-V'])
-        expect(res.stdout.toString().trim()).toBe(require('../package.json').version)
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        expect(res.stdout.toString().trim()).to.equal(require('../package.json').version)
       })
 
-      test('remix-tests help', () => {
+      it('remix-tests help', () => {
         const res = spawnSync(executablePath, ['-h'])
         const expectedHelp = `Usage: remix-tests [options] [command]
 
@@ -42,107 +45,112 @@ Options:
 Commands:
   version                  output the version number
   help                     output usage information`
-        expect(res.stdout.toString().trim()).toBe(expectedHelp)
+        expect(res.stdout.toString().trim()).to.equal(expectedHelp)
       })
 
-    test('remix-tests running a test file', () => {
+    it('remix-tests running a test file', function() {
       const res = spawnSync(executablePath, [resolve(__dirname + '/examples_0/assert_ok_test.sol')])
+      //console.log(res.stdout.toString())
       // match initial lines
-      expect(res.stdout.toString().trim()).toMatch(/:: Running tests using remix-tests ::/)
-      expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)
+      expect(res.stdout.toString().trim()).to.match(/:: Running tests using remix-tests ::/)
+      expect(res.stdout.toString().trim()).to.match(/creation of library remix_tests.sol:Assert pending.../)
       // match test result
-      expect(res.stdout.toString().trim()).toMatch(/AssertOkTest/)
-      expect(res.stdout.toString().trim()).toMatch(/AssertOkTest okPassTest/) // check if console.log is printed
-      expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
-      expect(res.stdout.toString().trim()).toMatch(/AssertOkTest okFailTest/) // check if console.log is printed
-      expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
+      expect(res.stdout.toString().trim()).to.match(/AssertOkTest/)
+      expect(res.stdout.toString().trim()).to.match(/AssertOkTest okPassTest/) // check if console.log is printed
+      expect(res.stdout.toString().trim()).to.match(/Ok pass test/)
+      expect(res.stdout.toString().trim()).to.match(/AssertOkTest okFailTest/) // check if console.log is printed
+      expect(res.stdout.toString().trim()).to.match(/Ok fail test/)
       // match fail test details
-      expect(res.stdout.toString().trim()).toMatch(/Expected value should be ok to: true/)
-      expect(res.stdout.toString().trim()).toMatch(/Received: false/)
-      expect(res.stdout.toString().trim()).toMatch(/Message: okFailTest fails/)
+      expect(res.stdout.toString().trim()).to.match(/Expected value should be ok to: true/)
+      expect(res.stdout.toString().trim()).to.match(/Received: false/)
+      expect(res.stdout.toString().trim()).to.match(/Message: okFailTest fails/)
+      
     })
 
-    test('remix-tests running a test file with custom compiler version', () => {
+    
+
+    it('remix-tests running a test file with custom compiler version', () => {
       const res = spawnSync(executablePath, ['--compiler', '0.7.4', resolve(__dirname + '/examples_0/assert_ok_test.sol')])
       // match initial lines
-      expect(res.stdout.toString().trim().includes('Compiler version set to 0.7.4. Latest version is')).toBeTruthy()
-      expect(res.stdout.toString().trim().includes('Loading remote solc version v0.7.4+commit.3f05b770 ...')).toBeTruthy()
-      expect(res.stdout.toString().trim()).toMatch(/:: Running tests using remix-tests ::/)
-      expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)
+      expect(res.stdout.toString().trim()).to.contain('Compiler version set to 0.7.4. Latest version is')
+      expect(res.stdout.toString().trim()).to.contain('Loading remote solc version v0.7.4+commit.3f05b770 ...')
+      expect(res.stdout.toString().trim()).to.match(/:: Running tests using remix-tests ::/)
+      expect(res.stdout.toString().trim()).to.match(/creation of library remix_tests.sol:Assert pending.../)
       // match test result
-      expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
-      expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
+      expect(res.stdout.toString().trim()).to.match(/Ok pass test/)
+      expect(res.stdout.toString().trim()).to.match(/Ok fail test/)
       // match fail test details
-      expect(res.stdout.toString().trim()).toMatch(/Message: okFailTest fails/)
+      expect(res.stdout.toString().trim()).to.match(/Message: okFailTest fails/)
     })
-
-    test('remix-tests running a test file with unavailable custom compiler version (should fail)', () => {
+    
+    it('remix-tests running a test file with unavailable custom compiler version (should fail)', () => {
       const res = spawnSync(executablePath, ['--compiler', '1.10.4', resolve(__dirname + '/examples_0/assert_ok_test.sol')])
       // match initial lines
-      expect(res.stdout.toString().trim().includes('No compiler found in releases with version 1.10.4')).toBeTruthy()
+      expect(res.stdout.toString().trim()).to.contain('No compiler found in releases with version 1.10.4')
     })
-
-    test('remix-tests running a test file with custom EVM', () => {
+    
+    it('remix-tests running a test file with custom EVM', () => {
       const res = spawnSync(executablePath, ['--evm', 'petersburg', resolve(__dirname + '/examples_0/assert_ok_test.sol')])
       // match initial lines
-      expect(res.stdout.toString().trim().includes('EVM set to petersburg')).toBeTruthy()
-      expect(res.stdout.toString().trim()).toMatch(/:: Running tests using remix-tests ::/)
-      expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)
+      expect(res.stdout.toString().trim()).to.contain('EVM set to petersburg')
+      expect(res.stdout.toString().trim()).to.match(/:: Running tests using remix-tests ::/)
+      expect(res.stdout.toString().trim()).to.match(/creation of library remix_tests.sol:Assert pending.../)
       // match test result
-      expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
-      expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
+      expect(res.stdout.toString().trim()).to.match(/Ok pass test/)
+      expect(res.stdout.toString().trim()).to.match(/Ok fail test/)
       // match fail test details
-      expect(res.stdout.toString().trim()).toMatch(/Message: okFailTest fails/)
+      expect(res.stdout.toString().trim()).to.match(/Message: okFailTest fails/)
     })
-
-    test('remix-tests running a test file by enabling optimization', () => {
+    
+    it('remix-tests running a test file by enabling optimization', () => {
       const res = spawnSync(executablePath, ['--optimize', 'true', resolve(__dirname + '/examples_0/assert_ok_test.sol')])
       // match initial lines
-      expect(res.stdout.toString().trim().includes('Optimization is enabled')).toBeTruthy()
-      expect(res.stdout.toString().trim()).toMatch(/:: Running tests using remix-tests ::/)
-      expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)
+      expect(res.stdout.toString().trim().includes('Optimization is enabled'))
+      expect(res.stdout.toString().trim()).to.match(/:: Running tests using remix-tests ::/)
+      expect(res.stdout.toString().trim()).to.match(/creation of library remix_tests.sol:Assert pending.../)
       // match test result
-      expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
-      expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
+      expect(res.stdout.toString().trim()).to.match(/Ok pass test/)
+      expect(res.stdout.toString().trim()).to.match(/Ok fail test/)
       // match fail test details
-      expect(res.stdout.toString().trim()).toMatch(/Message: okFailTest fails/)
+      expect(res.stdout.toString().trim()).to.match(/Message: okFailTest fails/)
     })
-
-    test('remix-tests running a test file by enabling optimization and setting runs', () => {
+    
+    it('remix-tests running a test file by enabling optimization and setting runs', () => {
       const res = spawnSync(executablePath, ['--optimize', 'true', '--runs', '300', resolve(__dirname + '/examples_0/assert_ok_test.sol')])
       // match initial lines
-      expect(res.stdout.toString().trim().includes('Optimization is enabled')).toBeTruthy()
-      expect(res.stdout.toString().trim().includes('Runs set to 300')).toBeTruthy()
-      expect(res.stdout.toString().trim()).toMatch(/:: Running tests using remix-tests ::/)
-      expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)
+      expect(res.stdout.toString().trim()).to.contain('Optimization is enabled')
+      expect(res.stdout.toString().trim()).to.contain('Runs set to 300')
+      expect(res.stdout.toString().trim()).to.match(/:: Running tests using remix-tests ::/)
+      expect(res.stdout.toString().trim()).to.match(/creation of library remix_tests.sol:Assert pending.../)
       // match test result
-      expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
-      expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
+      expect(res.stdout.toString().trim()).to.match(/Ok pass test/)
+      expect(res.stdout.toString().trim()).to.match(/Ok fail test/)
       // match fail test details
-      expect(res.stdout.toString().trim()).toMatch(/Message: okFailTest fails/)
+      expect(res.stdout.toString().trim()).to.match(/Message: okFailTest fails/)
     })
 
-    test('remix-tests running a test file without enabling optimization and setting runs (should fail)', () => {
+    it('remix-tests running a test file without enabling optimization and setting runs (should fail)', () => {
       const res = spawnSync(executablePath, ['--runs', '300', resolve(__dirname + '/examples_0/assert_ok_test.sol')])
       // match initial lines
-      expect(res.stdout.toString().trim().includes('Optimization should be enabled for runs')).toBeTruthy()
+      expect(res.stdout.toString().trim()).to.contain('Optimization should be enabled for runs')
     })
 
-    test('remix-tests running a test file with all options', () => {
+    it('remix-tests running a test file with all options', () => {
       const res = spawnSync(executablePath, ['--compiler', '0.7.5', '--evm', 'istanbul', '--optimize', 'true', '--runs', '250', resolve(__dirname + '/examples_0/assert_ok_test.sol')])
       // match initial lines
-      expect(res.stdout.toString().trim().includes('Compiler version set to 0.7.5. Latest version is')).toBeTruthy()
-      expect(res.stdout.toString().trim().includes('Loading remote solc version v0.7.5+commit.eb77ed08 ...')).toBeTruthy()
-      expect(res.stdout.toString().trim().includes('EVM set to istanbul')).toBeTruthy()
-      expect(res.stdout.toString().trim().includes('Optimization is enabled')).toBeTruthy()
-      expect(res.stdout.toString().trim().includes('Runs set to 250')).toBeTruthy()
-      expect(res.stdout.toString().trim()).toMatch(/:: Running tests using remix-tests ::/)
-      expect(res.stdout.toString().trim()).toMatch(/creation of library remix_tests.sol:Assert pending.../)
+      expect(res.stdout.toString().trim()).to.contain('Compiler version set to 0.7.5. Latest version is')
+      expect(res.stdout.toString().trim()).to.contain('Loading remote solc version v0.7.5+commit.eb77ed08 ...')
+      expect(res.stdout.toString().trim()).to.contain('EVM set to istanbul')
+      expect(res.stdout.toString().trim()).to.contain('Optimization is enabled')
+      expect(res.stdout.toString().trim()).to.contain('Runs set to 250')
+      expect(res.stdout.toString().trim()).to.match(/:: Running tests using remix-tests ::/)
+      expect(res.stdout.toString().trim()).to.match(/creation of library remix_tests.sol:Assert pending.../)
       // match test result
-      expect(res.stdout.toString().trim()).toMatch(/Ok pass test/)
-      expect(res.stdout.toString().trim()).toMatch(/Ok fail test/)
+      expect(res.stdout.toString().trim()).to.match(/Ok pass test/)
+      expect(res.stdout.toString().trim()).to.match(/Ok fail test/)
       // match fail test details
-      expect(res.stdout.toString().trim()).toMatch(/Message: okFailTest fails/)
+      expect(res.stdout.toString().trim()).to.match(/Message: okFailTest fails/)
     })
+    
   })
 })
