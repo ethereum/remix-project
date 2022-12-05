@@ -264,7 +264,7 @@ export function Workspace () {
             <option style={{fontSize: "small"}} value='remixDefault'>Default</option>
             <option style={{fontSize: "small"}} value='blank'>Blank</option>
           </optgroup>
-          <optgroup style={{fontSize: "medium"}} label="OpenZepplin">
+          <optgroup style={{fontSize: "medium"}} label="OpenZeppelin">
             <option style={{fontSize: "small"}} value='ozerc20'>ERC20</option>
             <option style={{fontSize: "small"}} value='ozerc721'>ERC721</option>
             <option style={{fontSize: "small"}} value='ozerc1155'>ERC1155</option>
@@ -348,6 +348,10 @@ export function Workspace () {
         <input type="text" data-id="modalDialogCustomPromptTextRename" defaultValue={ currentWorkspace } ref={workspaceRenameInput} className="form-control" />
       </>
     )
+  }
+
+  const formatNameForReadonly = (name: string) => {
+    return global.fs.readonly ? name + " (read-only)" : name
   }
 
   const cloneModalMessage = () => {
@@ -607,7 +611,7 @@ export function Workspace () {
 
                 <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
                   <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control mt-1" icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}>
-                    { selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? 'localhost' : NO_WORKSPACE }
+                    { selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly("localhost") : NO_WORKSPACE }
                   </Dropdown.Toggle>
 
                   <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items">

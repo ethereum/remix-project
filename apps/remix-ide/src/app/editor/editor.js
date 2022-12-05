@@ -220,7 +220,7 @@ class Editor extends Plugin {
           if (pathExists) {
             contentDep = await readFile(pathDep)
             if (contentDep !== '') {
-              this.emit('addModel', contentDep, 'typescript', pathDep, false)
+              this.emit('addModel', contentDep, 'typescript', pathDep, this.readOnlySessions[path])
             }
           } else {
             console.log("The file ", pathDep, " can't be found.")
@@ -241,7 +241,7 @@ class Editor extends Plugin {
   async _createSession (path, content, mode) {
     if (!this.activated) return
     
-    this.emit('addModel', content, mode, path, false)
+    this.emit('addModel', content, mode, path, this.readOnlySessions[path])
     return {
       path,
       language: mode,
@@ -266,7 +266,7 @@ class Editor extends Plugin {
   }
 
   addModel(path, content) {
-    this.emit('addModel', content, this._getMode(path), path, false)
+    this.emit('addModel', content, this._getMode(path), path, this.readOnlySessions[path])
   }
 
   /**
@@ -301,9 +301,9 @@ class Editor extends Plugin {
        - URL not prepended with the file explorer. We assume (as it is in the whole app, that this is a "browser" URL
     */
     if (!this.sessions[path]) {
+      this.readOnlySessions[path] = false
       const session = await this._createSession(path, content, this._getMode(path))
       this.sessions[path] = session
-      this.readOnlySessions[path] = false
     } else if (this.sessions[path].getValue() !== content) {
       this.sessions[path].setValue(content)
     }
@@ -317,9 +317,9 @@ class Editor extends Plugin {
    */
   async openReadOnly (path, content) {
     if (!this.sessions[path]) {
+      this.readOnlySessions[path] = true
       const session = await this._createSession(path, content, this._getMode(path))
       this.sessions[path] = session
-      this.readOnlySessions[path] = true
     }
     this._switchSession(path)
   }

@@ -3,16 +3,10 @@ import React, { useEffect, useState, useRef, useContext } from 'react'
 import { ThemeContext, themes } from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
-import CustomNavButtons from './customNavButtons'
 const _paq = window._paq = window._paq || [] // eslint-disable-line
 
 function HomeTabFeatured() {
   const themeFilter = useContext(ThemeContext)
-
-  useEffect(() => {
-    return () => {
-    }
-  }, [])
 
   return (
     <div className="pt-3 pl-2" id="hTFeaturedeSection">
@@ -21,7 +15,6 @@ function HomeTabFeatured() {
         <div className="w-100 d-flex flex-column" style={{ height: "200px" }}>
           <ThemeContext.Provider value={themeFilter}>
             <Carousel
-              customButtonGroup={<CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} />}
               arrows={false}
               swipeable={false}
               draggable={true}
@@ -30,17 +23,18 @@ function HomeTabFeatured() {
               renderDotsOutside={true}
               ssr={true} // means to render carousel on server-side.
               infinite={true}
+              partialVisible={false}
               centerMode={false}
               autoPlay={true}
               keyBoardControl={true}
-              containerClass="border carousel-container"
-              sliderClass="px-2 h-100 justify-content-between"
+              containerClass="border w-full carousel-container"
+              sliderClass="h-100 justify-content-between"
               deviceType={"desktop"}
-              itemClass="px-2 carousel-item-padding-10-px"
+              itemClass=""
               autoPlaySpeed={15000}
               dotListClass="position-relative mt-2"
             >
-              <div className="d-flex">
+              <div className="mx-1 px-1 d-flex">
                 <img src={"assets/img/bgRemi.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
                 <div className="h6 w-50 p-4" style={{ flex: "1" }}>
                   <h5>JUMP INTO WEB3</h5>
@@ -48,7 +42,7 @@ function HomeTabFeatured() {
                   <a className="remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'jumpIntoWeb3'])} target="__blank" href="https://remix-project.org">More</a>
                 </div>
               </div>
-              <div className="d-flex">
+              <div className="mx-1 px-1 d-flex">
                 <img src={"/assets/img/remixRewardUser.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
                 <div className="h6 p-4" style={{ flex: "1" }}>
                   <h5>REMIX REWARDS</h5>
@@ -59,7 +53,7 @@ function HomeTabFeatured() {
                   <a className="remixui_home_text" target="__blank" onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'remixRewards'])} href="https://rewards.remix.ethereum.eth.limo">More</a>
                 </div>
               </div>
-              <div className="d-flex">
+              <div className="mx-1 px-1 d-flex">
                 <img src={"/assets/img/remixRewardBetaTester.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
                 <div className="h6 p-4" style={{ flex: "1" }}>
                   <h5>BETA TESTING</h5>

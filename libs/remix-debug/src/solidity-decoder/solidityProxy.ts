@@ -10,6 +10,8 @@ export class SolidityProxy {
   getCode
   sources
   contracts
+  compilationResult
+  sourcesCode
 
   constructor ({ getCurrentCalledAddressAt, getCode }) {
     this.cache = new Cache()
@@ -23,9 +25,10 @@ export class SolidityProxy {
     *
     * @param {Object} compilationResult  - result os a compilatiion (diectly returned by the compiler)
     */
-  reset (compilationResult) {
-    this.sources = compilationResult.sources
+  reset (compilationResult, sources?) {
+    this.sources = compilationResult.sources // ast
     this.contracts = compilationResult.contracts
+    if (sources) this.sourcesCode = sources
     this.cache.reset()
   }
 
@@ -44,8 +47,18 @@ export class SolidityProxy {
     * @param {Int} vmTraceIndex  - index in the vm trave where to resolve the executed contract name
     * @param {Function} cb  - callback returns (error, contractName)
     */
-  async contractObjectAt (vmTraceIndex) {
+  async contractObjectAt (vmTraceIndex: number) {
     const address = this.getCurrentCalledAddressAt(vmTraceIndex)
+    return this.contractObjectAtAddress(address)
+  }
+
+  /**
+    * retrieve the compiled contract name at the @arg vmTraceIndex (cached)
+    *
+    * @param {Int} vmTraceIndex  - index in the vm trave where to resolve the executed contract name
+    * @param {Function} cb  - callback returns (error, contractName)
+    */
+  async contractObjectAtAddress (address: string) {
     if (this.cache.contractObjectByAddress[address]) {
       return this.cache.contractObjectByAddress[address]
     }

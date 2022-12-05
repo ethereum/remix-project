@@ -44,7 +44,7 @@ export interface IDebuggerApi {
     onEditorContentChanged: (listener: onEditorContentChanged) => void
     onEnvChanged: (listener: onEnvChangedListener) => void
     discardHighlight: () => Promise<void>
-    highlight: (lineColumnPos: LineColumnLocation, path: string) => Promise<void>
+    highlight: (lineColumnPos: LineColumnLocation, path: string, rawLocation: any, stepDetail: any, highlight: any) => Promise<void>
     fetchContractAndCompile: (address: string, currentReceipt: TransactionReceipt) => Promise<CompilerAbstract>
     getFile: (path: string) => Promise<string>
     setFile: (path: string, content: string) => Promise<void>

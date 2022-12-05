@@ -5,6 +5,7 @@ import { CompilerContainerProps } from './types'
 import { ConfigurationSettings } from '@remix-project/remix-lib-ts'
 import { checkSpecialChars, CustomTooltip, extractNameFromKey } from '@remix-ui/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '@remix-project/remix-solidity'
+
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
 import { resetEditorMode, listenToEvents } from './actions/compiler'
 import { getValidLanguage } from '@remix-project/remix-solidity'
@@ -732,6 +733,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     setToggleExpander(!toggleExpander)
   }
 
+
   return (
     <section>
       <article>
@@ -860,7 +862,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 tooltipText={<span>{'Language specification available from   Compiler >= v0.5.7'}</span>}
               >
                 <div id="compilerLanguageSelectorWrapper">
-                  <select onChange={(e) => handleLanguageChange(e.target.value)} disabled={state.useFileConfiguration} value={state.language} className="custom-select" id="compilierLanguageSelector">
+                  <select onChange={(e) => handleLanguageChange(e.target.value)} disabled={state.useFileConfiguration} value={state.language} className="custom-select" id="compilierLanguageSelector" style={{ pointerEvents: state.useFileConfiguration ? 'none' : 'auto' }}>
                     <option data-id={state.language === 'Solidity' ? 'selected' : ''} value='Solidity'>Solidity</option>
                     <option data-id={state.language === 'Yul' ? 'selected' : ''} value='Yul'>Yul</option>
                   </select>
@@ -944,20 +946,26 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   {(configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div>}
                 </div>}
             >
-              <span>
-                { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn" aria-hidden="true"></i> }
-                <FormattedMessage id='solidity.compile' defaultMessage='Compile' />
-                {typeof state.compiledFileName === 'string'
-                  ? extractNameFromKey(state.compiledFileName) ||
-                    `<${intl.formatMessage({
-                      id: 'solidity.noFileSelected',
-                      defaultMessage: 'no file selected',
-                    })}>`
-                  : `<${intl.formatMessage({
-                      id: 'solidity.noFileSelected',
-                      defaultMessage: 'no file selected',
-                    })}>`}
-              </span>
+              <div className="d-flex align-items-center justify-content-center">
+                { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn ml-4" aria-hidden="true"></i> }
+                <div className="d-flex justify-content-between align-items-center">
+                  <span>
+                    <FormattedMessage id='solidity.compile' defaultMessage='Compile' />
+                  </span>
+                  <span className="ml-1">
+                    {typeof state.compiledFileName === 'string'
+                      ? extractNameFromKey(state.compiledFileName) ||
+                        `<${intl.formatMessage({
+                          id: 'solidity.noFileSelected',
+                          defaultMessage: 'no file selected',
+                        })}>`
+                      : `<${intl.formatMessage({
+                          id: 'solidity.noFileSelected',
+                          defaultMessage: 'no file selected',
+                        })}>`}
+                  </span>
+                </div>
+              </div>
             </CustomTooltip>
           </button>
           <div className='d-flex align-items-center'>
@@ -969,7 +977,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}
             >
               <CustomTooltip
-                placement="auto"
+                placement="right"
                 tooltipId="overlay-tooltip-compile-run"
                 tooltipText={<div className="text-left">
                     {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+Shift+S</b> for compiling and script execution</div>}
@@ -982,7 +990,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </CustomTooltip>
             </button>
             <CustomTooltip
-              placement="auto"
+              placement="right"
               tooltipId="overlay-tooltip-compile-run-doc"
               tooltipText={<div className="text-left p-2">
                   <div>Choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
@@ -996,7 +1004,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                       contract ContractName {'{}'}<br />
                     </code>
                   </pre>
-                  Click to know more
+                  Click the i icon to learn more
                 </div>}
             >
               <a href="https://remix-ide.readthedocs.io/en/latest/running_js_scripts.html#compile-a-contract-and-run-a-script-on-the-fly" target="_blank" ><i className="pl-2 ml-2 mt-3 mb-1 fas fa-info text-dark"></i></a>
