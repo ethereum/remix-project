@@ -20,5 +20,7 @@ export default async () => {
         'tests/storage.test.js': (await import('!!raw-loader!./tests/storage.test.js')).default,
         // @ts-ignore
         'README.txt': (await import('raw-loader!./README.txt')).default,
+        // @ts-ignore
+        '.prettierrc.json': (await import('raw-loader!./.prettierrc')).default,
     }
 }
