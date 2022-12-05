@@ -947,12 +947,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 </div>}
             >
               <div className="d-flex align-items-center justify-content-center">
-                { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn ml-4" aria-hidden="true"></i> }
+                { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn ml-2" aria-hidden="true"></i> }
                 <div className="d-flex justify-content-between align-items-center">
                   <span>
                     <FormattedMessage id='solidity.compile' defaultMessage='Compile' />
                   </span>
-                  <span className="ml-1">
+                  <span className="ml-1 text-nowrap">
                     {typeof state.compiledFileName === 'string'
                       ? extractNameFromKey(state.compiledFileName) ||
                         `<${intl.formatMessage({
