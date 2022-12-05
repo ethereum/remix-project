@@ -8,10 +8,11 @@ import { defaultGitState, gitState } from '../types'
 import { SourceControl } from './sourcontrol'
 import { Container, ProgressBar, Accordion, AccordionContext, Button, useAccordionToggle, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
+import { faCaretDown, faCaretUp, faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons'
 import { CommitMessage } from './commitmessage'
 import { Commits } from './commits'
 import { Branches } from './branches'
+import { SourceControlMenuButton } from './accordionbutton/sourcecontrolmenubutton'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 
@@ -47,45 +48,6 @@ export const GitUI = (props) => {
         loadFiles
     }
 
-    function CustomToggle(ob: any) {
-
-        const currentEventKey = useContext(AccordionContext);
-        const isCurrentEventKey = currentEventKey === ob.eventKey
-        const decoratedOnClick = useAccordionToggle(
-            ob.eventKey,
-            () => {
-                if (activePanel === ob.eventKey) {
-                    //client.open('none')
-                } else {
-                    //client.open(panels[ob.eventKey])
-                }
-
-                ob.callback && ob.callback(ob.eventKey)
-            },
-        );
-
-
-        return (
-            <>
-                <div onClick={decoratedOnClick} className='w-100 list-group-item p-0 pointer mb-1'>
-                    <Accordion.Toggle eventKey={ob.eventKey}
-                        as={Button}
-                        variant="link"
-                        className={`navbutton ${isCurrentEventKey ? highlightColor : ""}`}
-                    >
-
-                        {ob.children}
-
-                    </Accordion.Toggle>
-                    {
-                        isCurrentEventKey ? <FontAwesomeIcon className='ml-2 mr-2 mt-2 float-right' icon={faCaretUp}></FontAwesomeIcon> : <FontAwesomeIcon className='ml-2 mr-2 mt-2 float-right' icon={faCaretDown}></FontAwesomeIcon>
-                    }
-                </div>
-            </>
-        );
-    }
-
-
     return (
         <div className="m-1">
             <gitPluginContext.Provider value={gitState}>
@@ -93,8 +55,8 @@ export const GitUI = (props) => {
                     <pluginActionsContext.Provider value={pluginActionsProviderValue}>
                         {gitState.loading && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>}
                         {!gitState.loading &&
-                            <Accordion defaultActiveKey="0">
-                                <CustomToggle eventKey="0">SOURCE CONTROL</CustomToggle>
+                            <Accordion activeKey={activePanel} defaultActiveKey="0">
+                                <SourceControlMenuButton eventKey="0" activePanel={activePanel} callback={setActivePanel}/>
 
                                 <Accordion.Collapse eventKey="0">
                                     <>
@@ -102,13 +64,15 @@ export const GitUI = (props) => {
                                         <SourceControl />
                                     </>
                                 </Accordion.Collapse>
-                                <CustomToggle eventKey="3">COMMITS</CustomToggle>
+                                <hr></hr>
+                                <SourceControlMenuButton eventKey="3" activePanel={activePanel} callback={setActivePanel}/>
                                 <Accordion.Collapse eventKey="3">
                                     <>
                                         <Commits /><hr></hr>
                                     </>
                                 </Accordion.Collapse>
-                                <CustomToggle eventKey="2">BRANCHES</CustomToggle>
+                                <hr></hr>
+                                <SourceControlMenuButton eventKey="2" activePanel={activePanel} callback={setActivePanel}/>
                                 <Accordion.Collapse eventKey="2">
                                     <>
                                         <Branches /><hr></hr></>
