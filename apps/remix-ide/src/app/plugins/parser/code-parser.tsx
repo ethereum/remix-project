@@ -78,6 +78,8 @@ export class CodeParser extends Plugin {
     setCurrentFileAST: (text?: string) => Promise<ParseResult>
     getImports: () => Promise<CodeParserImportsData[]>
 
+    debuggerIsOn: boolean = false
+
 
     constructor(astWalker: any) {
         super(profile)
@@ -98,7 +100,7 @@ export class CodeParser extends Plugin {
         }
         const showGasSettings = await this.call('config', 'getAppParameter', 'show-gas')
         const showErrorSettings = await this.call('config', 'getAppParameter', 'display-errors')
-        if (showGasSettings || showErrorSettings || completionSettings) {
+        if (showGasSettings || showErrorSettings || completionSettings || this.debuggerIsOn) {
             await this.compilerService.compile()
         }
     }
@@ -157,6 +159,16 @@ export class CodeParser extends Plugin {
 
         await this.compilerService.init()
         this.on('solidity', 'compilerLoaded', async () => { 
+            await this.reload()
+        })
+
+        this.on('debugger', 'startDebugging', async () => { 
+            this.debuggerIsOn = true
+            await this.reload()
+        })
+
+        this.on('debugger', 'stopDebugging', async () => { 
+            this.debuggerIsOn = false
             await this.reload()
         })
     }
@@ -338,7 +350,11 @@ export class CodeParser extends Plugin {
      * @returns 
      */
     async nodesAtPosition(position: number, type = ''): Promise<genericASTNode[]> {
-        const lastCompilationResult = this.compilerAbstract
+        let lastCompilationResult = this.compilerAbstract
+        if(this.debuggerIsOn) {
+            lastCompilationResult = await this.call('compilerArtefacts', 'get', '__last')
+            this.currentFile = await this.call('fileManager', 'file')
+        }
         if (!lastCompilationResult) return []
         const urlFromPath = await this.call('fileManager', 'getUrlFromPath', this.currentFile)
         if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data && lastCompilationResult.data.sources && lastCompilationResult.data.sources[this.currentFile]) {
