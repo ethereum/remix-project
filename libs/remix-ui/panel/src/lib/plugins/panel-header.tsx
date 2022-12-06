@@ -35,7 +35,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
     <header className='d-flex flex-column'>
       <div className="swapitHeader px-3 pt-2 pb-0 d-flex flex-row">
         <h6 className="pt-0 mb-1" data-id='sidePanelSwapitTitle'>
-          <FormattedMessage id={plugin?.profile.name + '.displayName'} defaultMessage={plugin?.profile.displayName || plugin?.profile.name} />
+          <FormattedMessage id={`${plugin?.profile.name || 'filePanel'}.displayName`} defaultMessage={plugin?.profile.displayName || plugin?.profile.name} />
         </h6>
         <div className="d-flex flex-row">
           <div className="d-flex flex-row">
