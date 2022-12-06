@@ -174,10 +174,12 @@ export const DebuggerApiMixin = (Base) => class extends Base {
 
   onStartDebugging () {
     this.call('layout', 'maximiseSidePanel')
+    this.emit('startDebugging')
   }
 
   onStopDebugging () {
     this.call('layout', 'resetSidePanel')
+    this.emit('stopDebugging')
   }
 }
 
