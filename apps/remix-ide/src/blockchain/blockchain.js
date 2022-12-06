@@ -185,28 +185,26 @@ export class Blockchain extends Plugin {
         const deployments = await this.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`)
         const parsedDeployments = JSON.parse(deployments)
 
-        parsedDeployments.deployments[address] = {
+        parsedDeployments.deployments[address] = [{
           date: new Date().toISOString(),
           contractName: contractName,
           fork: networkInfo.currentFork,
-          proxyAddress: address,
           implementationAddress: implementationAddress,
           layout: implementationContractObject.contract.object.storageLayout
-        }
+        }]
         await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`, JSON.stringify(parsedDeployments, null, 2))
       } else {
         await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`, JSON.stringify({
           id: networkInfo.id,
           network: networkInfo.name,
           deployments: {
-            [address]: {
+            [address]: [{
               date: new Date().toISOString(),
               contractName: contractName,
               fork: networkInfo.currentFork,
-              proxyAddress: address,
               implementationAddress: implementationAddress,
               layout: implementationContractObject.contract.object.storageLayout
-            }
+            }]
           }
         }, null, 2))
       }
@@ -262,26 +260,27 @@ export class Blockchain extends Plugin {
         const deployments = await this.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`)
         const parsedDeployments = JSON.parse(deployments)
 
-        parsedDeployments.deployments[proxyAddress] = {
-          lastUpdated: new Date().toISOString(),
-          ...parsedDeployments.deployments[proxyAddress],
+        if (!parsedDeployments.deployments[proxyAddress]) parsedDeployments.deployments[proxyAddress] = []
+        parsedDeployments.deployments[proxyAddress].push({
+          date: new Date().toISOString(),
+          contractName: contractName,
+          fork: networkInfo.currentFork,
           implementationAddress: implementationAddress,
           layout: newImplementationContractObject.contract.object.storageLayout
-        }
+        })
         await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`, JSON.stringify(parsedDeployments, null, 2))
       } else {
         await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`, JSON.stringify({
           id: networkInfo.id,
           network: networkInfo.name,
           deployments: {
-            [proxyAddress]: {
+            [address]: [{
               date: new Date().toISOString(),
               contractName: contractName,
               fork: networkInfo.currentFork,
-              proxyAddress,
               implementationAddress: implementationAddress,
               layout: newImplementationContractObject.contract.object.storageLayout
-            }
+            }]
           }
         }, null, 2))
       }
