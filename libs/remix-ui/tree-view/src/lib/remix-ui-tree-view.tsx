@@ -7,9 +7,11 @@ export const TreeView = (props: TreeViewProps) => {
   const { children, id, ...otherProps } = props
 
   return (
-    <ul data-id={`treeViewUl${id}`} className="ul_tv ml-0 pl-2" { ...otherProps }>
-      { children }
-    </ul>
+    <div className='pb-4 mb-4'>
+      <ul data-id={`treeViewUl${id}`} className="ul_tv ml-0 pl-2 mb-2" { ...otherProps }>
+        { children }
+      </ul>
+    </div>
   )
 }
 

@@ -608,19 +608,19 @@ export function Workspace () {
                       tooltipClasses="text-nowrap"
                       tooltipText={<FormattedMessage id='filePanel.create' />}
                     >
-                        <span
-                          hidden={currentWorkspace === LOCALHOST}
-                          id='workspaceCreate'
-                          data-id='workspaceCreate'
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            createWorkspace()
-                            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
-                          }}
-                          style={{ fontSize: 'large' }}
-                          className='far fa-plus remixui_menuicon d-flex align-self-end'
-                          >
-                        </span>
+                      <span
+                        hidden={currentWorkspace === LOCALHOST}
+                        id='workspaceCreate'
+                        data-id='workspaceCreate'
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          createWorkspace()
+                          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
+                        }}
+                        style={{ fontSize: 'large' }}
+                        className='far fa-plus remixui_menuicon d-flex align-self-end'
+                        >
+                      </span>
                     </CustomTooltip>
                     <Dropdown id="workspacesMenuDropdown" data-id="workspacesMenuDropdown" onToggle={() => hideIconsMenu(!showIconsMenu)} show={showIconsMenu}>
                       <Dropdown.Toggle
