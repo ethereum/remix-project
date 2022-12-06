@@ -134,6 +134,8 @@ export interface FileExplorerContextMenuProps {
     onMouseOver?: (...args) => void,
     copy?: (path: string, type: string) => void,
     paste?: (destination: string, type: string) => void
+    copyFileName?: (path: string, type: string) => void
+    copyPath?: (path: string, type: string) => void
 }
 
 export interface FileExplorerState {

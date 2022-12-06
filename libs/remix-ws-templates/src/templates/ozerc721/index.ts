@@ -16,7 +16,9 @@ export default async (opts) => {
         // @ts-ignore
         'scripts/ethers-lib.ts': (await import('!!raw-loader!./scripts/ethers-lib.ts')).default,
         // @ts-ignore
-        'scripts/web3-lib.ts': (await import('!!raw-loader!./scripts/web3-lib.ts')).default
+        'scripts/web3-lib.ts': (await import('!!raw-loader!./scripts/web3-lib.ts')).default,
+        // @ts-ignore
+        '.prettierrc.json': (await import('raw-loader!./.prettierrc')).default
     }
 
     // If no options is selected, opts.upgradeable will be undefined

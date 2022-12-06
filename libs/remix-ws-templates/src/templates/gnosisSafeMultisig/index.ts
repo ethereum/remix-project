@@ -9,6 +9,8 @@ export default async () => {
         // @ts-ignore
         'scripts/ethers-lib.ts': (await import('!!raw-loader!./scripts/ethers-lib.ts')).default,
         // @ts-ignore
-        'scripts/web3-lib.ts': (await import('!!raw-loader!./scripts/web3-lib.ts')).default
+        'scripts/web3-lib.ts': (await import('!!raw-loader!./scripts/web3-lib.ts')).default,
+        // @ts-ignore
+        '.prettierrc.json': (await import('raw-loader!./.prettierrc')).default
     }
 }
