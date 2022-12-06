@@ -558,7 +558,7 @@ export function Workspace () {
       placement="right-start"
       tooltipId="createSolGHActionTooltip"
       tooltipClasses="text-nowrap"
-      tooltipText={<FormattedMessage id='filePanel.workspace.solghaction' defaultMessage='Add the solidity GitHub action file. Push to a repository to start running it in the GitHub CI.' />}
+      tooltipText={<FormattedMessage id='filePanel.workspace.solghaction' />}
     >
     <div
       data-id='soliditygithubaction'
@@ -582,7 +582,7 @@ export function Workspace () {
         className='fab fa-github pl-2'
       >
       </span>
-      <span className="pl-3">{'Add Solidity GitHub action'}</span>
+      <span className="pl-3">{<FormattedMessage id='filePanel.solghaction' />}</span>
     </div>
   </CustomTooltip>
   ]
