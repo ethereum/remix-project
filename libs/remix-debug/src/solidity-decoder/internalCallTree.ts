@@ -492,7 +492,7 @@ function addParams (parameterList, tree, scopeId, states, contractObj, sourceLoc
       let location = extractLocationFromAstVariable(param)
       location = location === 'default' ? 'memory' : location
       const attributesName = param.name === '' ? `$${inputParam}` : param.name
-      tree.scopes[scopeId].locals[attributesName] = {
+      const newParam = {
         name: attributesName,
         type: parseType(param.typeDescriptions.typeString, states, contractName, location),
         stackDepth: stackDepth,
@@ -500,7 +500,9 @@ function addParams (parameterList, tree, scopeId, states, contractObj, sourceLoc
         abi: contractObj.contract.abi,
         isParameter: true
       }
+      tree.scopes[scopeId].locals[attributesName] = newParam
       params.push(attributesName)
+      if (!tree.variables[param.id]) tree.variables[param.id] = newParam
     }
     stackPosition += dir
   }
