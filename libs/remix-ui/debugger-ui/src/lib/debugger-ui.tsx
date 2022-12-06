@@ -37,6 +37,18 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     sourceLocationStatus: ''
   })
 
+  if (props.onReady) {
+    props.onReady({
+      globalContext: () => {
+        return {
+          block: state.currentBlock, 
+          tx: state.currentTransaction, 
+          receipt: state.currentReceipt
+        }
+      }
+    })
+  }
+
   const panelsRef = useRef<HTMLDivElement>(null)
   const debuggerTopRef = useRef(null)
 
