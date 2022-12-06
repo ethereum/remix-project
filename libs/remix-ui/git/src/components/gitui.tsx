@@ -1,18 +1,23 @@
 import React, { useContext, useEffect, useReducer, useRef, useState } from 'react'
-import { add, addall, checkout, checkoutfile, commit, createBranch, rm } from '../lib/gitactions'
+import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
 import { setPlugin, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
 import { gitReducer } from '../state/reducer'
 import { defaultGitState, gitState } from '../types'
-import { SourceControl } from './sourcontrol'
+import { SourceControl } from './panels/sourcontrol'
 import { Container, ProgressBar, Accordion, AccordionContext, Button, useAccordionToggle, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCaretUp, faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons'
-import { CommitMessage } from './commitmessage'
-import { Commits } from './commits'
-import { Branches } from './branches'
-import { SourceControlMenuButton } from './accordionbutton/sourcecontrolmenubutton'
+import { CommitMessage } from './panels/commitmessage'
+import { Commits } from './panels/commits'
+import { Branches } from './panels/branches'
+import { SourceControlNavigation } from './navigation/sourcecontrol'
+import { BranchesNavigation } from './navigation/branches'
+import { CommitslNavigation } from './navigation/commits'
+import '../style/index.css'
+import { CloneNavigation } from './navigation/clone'
+import { Clone } from './panels/clone'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 
@@ -40,7 +45,10 @@ export const GitUI = (props) => {
         checkoutfile,
         rm,
         checkout,
-        createBranch
+        createBranch,
+        clone,
+        repositories,
+        remoteBranches
     }
 
     const pluginActionsProviderValue = {
@@ -56,7 +64,7 @@ export const GitUI = (props) => {
                         {gitState.loading && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>}
                         {!gitState.loading &&
                             <Accordion activeKey={activePanel} defaultActiveKey="0">
-                                <SourceControlMenuButton eventKey="0" activePanel={activePanel} callback={setActivePanel}/>
+                                <SourceControlNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
 
                                 <Accordion.Collapse eventKey="0">
                                     <>
@@ -65,18 +73,26 @@ export const GitUI = (props) => {
                                     </>
                                 </Accordion.Collapse>
                                 <hr></hr>
-                                <SourceControlMenuButton eventKey="3" activePanel={activePanel} callback={setActivePanel}/>
+
+                                <CommitslNavigation eventKey="3" activePanel={activePanel} callback={setActivePanel} />
                                 <Accordion.Collapse eventKey="3">
                                     <>
-                                        <Commits /><hr></hr>
+                                        <Commits />
                                     </>
                                 </Accordion.Collapse>
                                 <hr></hr>
-                                <SourceControlMenuButton eventKey="2" activePanel={activePanel} callback={setActivePanel}/>
+                                <BranchesNavigation eventKey="2" activePanel={activePanel} callback={setActivePanel} />
                                 <Accordion.Collapse eventKey="2">
                                     <>
-                                        <Branches /><hr></hr></>
+                                        <Branches /></>
                                 </Accordion.Collapse>
+                                <hr></hr>
+                                <CloneNavigation eventKey="4" activePanel={activePanel} callback={setActivePanel} />
+                                <Accordion.Collapse eventKey="4">
+                                    <>
+                                        <Clone /></>
+                                </Accordion.Collapse>
+                                <hr></hr>
 
                             </Accordion>}
                     </pluginActionsContext.Provider>

@@ -22,6 +22,20 @@ export const setBranches = (branches: any[]) => {
     }
 }
 
+export const setRepos = (repos: any[]) => {
+    return {
+        type: 'SET_REPOS',
+        payload: repos
+    }
+}
+
+export const setRemoteBranches = (branches: any[]) => {
+    return {
+        type: 'SET_REMOTE_BRANCHES',
+        payload: branches
+    }
+}
+
 
 export const setLoading = (loading: boolean) => {
     return {

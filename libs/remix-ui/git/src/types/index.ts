@@ -16,7 +16,24 @@ export type gitState = {
     untracked: any[]
     deleted: any[]
     modified: any[]
-    allchangesnotstaged: any[]
+    allchangesnotstaged: any[],
+    repositories: repository[]
+    remoteBranches: remoteBranch[]
+}
+
+export type repository = {
+    name: string
+    html_url: string
+    owner: {
+        login: string
+    },
+    full_name: string
+    default_branch: string
+    id: number
+}
+
+export type remoteBranch = {
+    name: string
 }
 
 export const defaultGitState: gitState = {
@@ -35,7 +52,9 @@ export const defaultGitState: gitState = {
     canUseApp: false,
     loading: false,
     storageUsed: {},
-    reponame: ""
+    reponame: "",
+    repositories: [],
+    remoteBranches: []
 }
 
 export type fileStatusResult = {
@@ -63,6 +82,16 @@ export interface setBranchesAction {
     payload: any[]
 }
 
+export interface setReposAction {
+    type: string,
+    payload: any[]
+}
+
+export interface setRemoteBranchesAction {
+    type: string,
+    payload: any[]
+}
+
 export interface setLoadingAction {
     type: string,
     payload: boolean
@@ -78,4 +107,4 @@ export interface setRepoNameAction {
     payload: string
 }
 
-export type gitActionDispatch = fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction
+export type gitActionDispatch = fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction

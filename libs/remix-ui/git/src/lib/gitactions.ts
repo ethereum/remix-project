@@ -1,7 +1,7 @@
 import { ViewPlugin } from "@remixproject/engine-web";
 import { ReadCommitResult } from "isomorphic-git";
 import React from "react";
-import { fileStatus, setBranches, setCommits, setLoading } from "../state/payload";
+import { fileStatus, setBranches, setCommits, setLoading, setRemoteBranches, setRepos } from "../state/payload";
 import { gitActionDispatch, statusMatrixType } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
@@ -273,6 +273,68 @@ export const checkout = async (cmd: any) => {
         plugin.call('notification', 'toast', `${e}`)
     }
     await enableCallBacks();
+}
+
+export const clone = async (url: string, branch: string, depth: number, singleBranch: boolean) => {
+    dispatch(setLoading(true))
+    try {
+        await disableCallBacks()
+        // get last part of url
+        const urlParts = url.split("/");
+        const lastPart = urlParts[urlParts.length - 1];
+        const repoName = lastPart.split(".")[0];
+        // add timestamp to repo name
+        const timestamp = new Date().getTime();
+        const repoNameWithTimestamp = `${repoName}-${timestamp}`;
+        const token = await tokenWarning();
+        if (!token) {
+            dispatch(setLoading(false))
+            return
+        } else {
+            await plugin.call('dGitProvider' as any, 'clone', { url, branch, token: token, depth, singleBranch }, repoNameWithTimestamp);
+            await enableCallBacks()
+            plugin.call('notification', 'toast', `Cloned ${url} to ${repoNameWithTimestamp}`)
+        }
+    } catch (e: any) {
+        plugin.call('notification', 'alert', `${e}`)
+    }
+    dispatch(setLoading(false))
+}
+
+export const repositories = async () => {
+    try {
+        const token = await tokenWarning();
+        if (token) {
+            const repos = await plugin.call('dGitProvider' as any, 'repositories', { token });
+            dispatch(setRepos(repos))
+        }
+    } catch (e) {
+        console.log(e)
+        plugin.call('notification', 'alert', `${e}`)
+    }
+}
+
+export const remoteBranches = async (owner: string, repo: string) => {
+    try {
+        const token = await tokenWarning();
+        if (token) {
+            const branches = await plugin.call('dGitProvider' as any, 'remotebranches', { token, owner, repo });
+            dispatch(setRemoteBranches(branches))
+        }
+    } catch (e) {
+        console.log(e)
+        plugin.call('notification', 'alert', `${e}`)
+    }
+}
+
+const tokenWarning = async () => {
+    const token = await plugin.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
+    if (!token) {
+        plugin.call('notification', 'alert', 'Please set a token first in the GitHub settings of REMIX')
+        return false;
+    } else {
+        return token;
+    }
 }
 
 
