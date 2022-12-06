@@ -50,5 +50,18 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action) =>
                 loading: action.payload
             }
 
+        case 'SET_REPOS':
+            return {
+                ...state,
+                repositories: action.payload
+            }
+
+        case 'SET_REMOTE_BRANCHES':
+            return {
+                ...state,
+                remoteBranches: action.payload
+            }   
+            
+
     }
 }

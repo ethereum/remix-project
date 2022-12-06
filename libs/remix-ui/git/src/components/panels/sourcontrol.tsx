@@ -1,8 +1,8 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react'
 import { Col, Row } from 'react-bootstrap'
-import { getFilesByStatus, getFileStatusForFile, getFilesWithNotModifiedStatus } from '../lib/fileHelpers'
-import { gitActionsContext, pluginActionsContext } from '../state/context'
-import { gitPluginContext } from './gitui'
+import { getFilesByStatus, getFileStatusForFile, getFilesWithNotModifiedStatus } from '../../lib/fileHelpers'
+import { gitActionsContext, pluginActionsContext } from '../../state/context'
+import { gitPluginContext } from '../gitui'
 import { faUndo, faPlus, faMinus, faSync, faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -147,12 +147,11 @@ export const SourceControl = () => {
                 <>
                     <div>
                         <button data-id='stageAll' onClick={async () => await actions.addall()} className='btn btn-sm btn-primary'>Stage all</button>
-                        <button onClick={async () => { await pluginactions.loadFiles() }} className='btn btn-sm btn-primary ml-2'><FontAwesomeIcon icon={faRefresh} className="" /></button>
                         <hr></hr>
                         <RenderGroups></RenderGroups>
                     </div></>
                 : <>Nothing to commit
-                    <button onClick={async () => { await pluginactions.loadFiles() }} className='btn btn-sm btn-primary ml-2'><FontAwesomeIcon icon={faRefresh} className="" /></button>
+
                 </>}
         </>
     );

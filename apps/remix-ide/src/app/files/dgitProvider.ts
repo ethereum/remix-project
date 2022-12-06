@@ -9,11 +9,15 @@ import {
   saveAs
 } from 'file-saver'
 import http from 'isomorphic-git/http/web'
+import { Octokit } from "@octokit/core";
 
-const JSZip = require('jszip')
-const path = require('path')
-const FormData = require('form-data')
-const axios = require('axios')
+import JSZip from 'jszip'
+import path from 'path'
+import { IndexedDBStorage } from './filesystems/indexedDB'
+
+declare global {
+  interface Window { remixFileSystemCallback: IndexedDBStorage; remixFileSystem: IndexedDBStorage['extended'];}
+}
 
 const profile = {
   name: 'dGitProvider',
@@ -21,10 +25,16 @@ const profile = {
   description: 'Decentralized git provider',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
-  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem'],
+  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'repositories', 'remotebranches'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
+  ipfsconfig: { host: string; port: number; protocol: string; ipfsurl: string }
+  globalIPFSConfig: { host: string; port: number; protocol: string; ipfsurl: string }
+  remixIPFS: { host: string; port: number; protocol: string; ipfsurl: string }
+  ipfsSources: { host: string; port: number; protocol: string; ipfsurl: string }[]
+  ipfs: any
+  filesToSend: any[]
   constructor () {
     super(profile)
     this.ipfsconfig = {
@@ -73,7 +83,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async init (input) {
+  async init (input?) {
     await git.init({
       ...await this.getGitConfig(),
       defaultBranch: (input && input.branch) || 'main'
@@ -225,7 +235,7 @@ class DGitProvider extends Plugin {
     })
   }
 
-  async checkIpfsConfig (config) {
+  async checkIpfsConfig (config?) {
     this.ipfs = IpfsHttpClient(config || this.ipfsconfig)
     try {
       await this.ipfs.config.getAll()
@@ -250,7 +260,7 @@ class DGitProvider extends Plugin {
   async clone (input, workspaceName, workspaceExists = false) {
     const permission = await this.askUserPermission('clone', 'Import multiple files into your workspaces.')
     if (!permission) return false
-    if (this.calculateLocalStorage() > 10000) throw new Error('The local storage of the browser is full.')
+    if (parseFloat(this.calculateLocalStorage()) > 10000) throw new Error('The local storage of the browser is full.')
     if (!workspaceExists) await this.call('filePanel', 'createWorkspace', workspaceName || `workspace_${Date.now()}`, true)
     const cmd = {
       url: input.url,
@@ -325,13 +335,40 @@ class DGitProvider extends Plugin {
     return result
   }
 
+  async repositories(input: { token: string }) {
+    const octokit = new Octokit({
+      auth: input.token
+    })
+    
+    const data = await octokit.request('GET /user/repos{?visibility,affiliation,type,sort,direction,per_page,page,since,before}', {
+      sort:"pushed",
+      direction:"desc",
+      per_page: 100,
+      affiliation: "owner,collaborator"
+    })
+    return data.data
+  }
+
+  async remotebranches (input: { owner: string, repo: string, token: string }) {
+    const octokit = new Octokit({
+      auth: input.token
+    })
+    
+    const data = await octokit.request('GET /repos/{owner}/{repo}/branches{?protected,per_page,page}', {
+      owner: input.owner,
+      repo: input.repo,
+    })
+    return data.data
+  }
+
+
   async export (config) {
     if (!this.checkIpfsConfig(config)) return false
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     const files = await this.getDirectory('/')
     this.filesToSend = []
     for (const file of files) {
-      const c = await window.remixFileSystem.readFile(`${workspace.absolutePath}/${file}`)
+      const c = await window.remixFileSystem.readFile(`${workspace.absolutePath}/${file}`, null)
       const ob = {
         path: file,
         content: c
@@ -345,107 +382,6 @@ class DGitProvider extends Plugin {
     return r.cid.string
   }
 
-  async pin (pinataApiKey, pinataSecretApiKey) {
-    const workspace = await this.call('filePanel', 'getCurrentWorkspace')
-    const files = await this.getDirectory('/')
-    this.filesToSend = []
-
-    const data = new FormData()
-    for (const file of files) {
-      const c = await window.remixFileSystem.readFile(`${workspace.absolutePath}/${file}`)
-      data.append('file', new Blob([c]), `base/${file}`)
-    }
-    // get last commit data
-    let ob
-    try {
-      const commits = await this.log({ ref: 'HEAD' })
-      ob = {
-        ref: commits[0].oid,
-        message: commits[0].commit.message,
-        commits: JSON.stringify(commits.map((commit) => {
-          return {
-            oid: commit.oid,
-            commit: {
-              parent: commit.commit?.parent,
-              tree: commit.commit?.tree,
-              message: commit.commit?.message,
-              committer: {
-                timestamp: commit.commit?.committer?.timestamp
-              }
-            }
-          }
-        }))
-      }
-    } catch (e) {
-      ob = {
-        ref: 'no commits',
-        message: 'no commits'
-      }
-    }
-    const today = new Date()
-    const metadata = JSON.stringify({
-      name: `remix - ${workspace.name} - ${today.toLocaleString()}`,
-      keyvalues: ob
-    })
-    const pinataOptions = JSON.stringify({
-      wrapWithDirectory: false
-    })
-    data.append('pinataOptions', pinataOptions)
-    data.append('pinataMetadata', metadata)
-    const url = 'https://api.pinata.cloud/pinning/pinFileToIPFS'
-    try {
-      const result = await axios
-        .post(url, data, {
-          maxBodyLength: 'Infinity',
-          headers: {
-            'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
-            pinata_api_key: pinataApiKey,
-            pinata_secret_api_key: pinataSecretApiKey
-          }
-        }).catch((e) => {
-          console.log(e)
-        })
-      // also commit to remix IPFS for availability after pinning to Pinata
-      return await this.export(this.remixIPFS) || result.data.IpfsHash
-    } catch (error) {
-      throw new Error(error)
-    }
-  }
-
-  async pinList (pinataApiKey, pinataSecretApiKey) {
-    const url = 'https://api.pinata.cloud/data/pinList?status=pinned'
-    try {
-      const result = await axios
-        .get(url, {
-          maxBodyLength: 'Infinity',
-          headers: {
-            pinata_api_key: pinataApiKey,
-            pinata_secret_api_key: pinataSecretApiKey
-          }
-        }).catch((e) => {
-          console.log('Pinata unreachable')
-        })
-      return result.data
-    } catch (error) {
-      throw new Error(error)
-    }
-  }
-
-  async unPin (pinataApiKey, pinataSecretApiKey, hashToUnpin) {
-    const url = `https://api.pinata.cloud/pinning/unpin/${hashToUnpin}`
-    try {
-      await axios
-        .delete(url, {
-          headers: {
-            pinata_api_key: pinataApiKey,
-            pinata_secret_api_key: pinataSecretApiKey
-          }
-        })
-      return true
-    } catch (error) {
-      throw new Error(error)
-    }
-  }
 
   async importIPFSFiles (config, cid, workspace) {
     const ipfs = IpfsHttpClient(config)
@@ -467,7 +403,7 @@ class DGitProvider extends Plugin {
           await this.createDirectories(`${workspace.absolutePath}/${dir}`)
         } catch (e) { throw new Error(e) }
         try {
-          await window.remixFileSystem.writeFile(`${workspace.absolutePath}/${file.path}`, Buffer.concat(content) || new Uint8Array())
+          await window.remixFileSystem.writeFile(`${workspace.absolutePath}/${file.path}`, Buffer.concat(content) || new Uint8Array(), null)
         } catch (e) { throw new Error(e) }
       }
     } catch (e) {
@@ -477,8 +413,8 @@ class DGitProvider extends Plugin {
   }
 
   calculateLocalStorage () {
-    var _lsTotal = 0
-    var _xLen; var _x
+    let _lsTotal = 0
+    let _xLen; let _x
     for (_x in localStorage) {
       // eslint-disable-next-line no-prototype-builtins
       if (!localStorage.hasOwnProperty(_x)) {
@@ -493,7 +429,7 @@ class DGitProvider extends Plugin {
   async import (cmd) {
     const permission = await this.askUserPermission('import', 'Import multiple files into your workspaces.')
     if (!permission) return false
-    if (this.calculateLocalStorage() > 10000) throw new Error('The local storage of the browser is full.')
+    if (parseFloat(this.calculateLocalStorage()) > 10000) throw new Error('The local storage of the browser is full.')
     const cid = cmd.cid
     await this.call('filePanel', 'createWorkspace', `workspace_${Date.now()}`, true)
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
@@ -533,7 +469,7 @@ class DGitProvider extends Plugin {
     const files = await this.getDirectory('/')
     this.filesToSend = []
     for (const file of files) {
-      const c = await window.remixFileSystem.readFile(`${workspace.absolutePath}/${file}`)
+      const c = await window.remixFileSystem.readFile(`${workspace.absolutePath}/${file}`, null)
       zip.file(file, c)
     }
     await zip.generateAsync({
