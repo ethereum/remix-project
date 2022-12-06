@@ -150,7 +150,7 @@ export class RemixHoverProvider implements languages.HoverProvider {
                 const decodedVar = await this.props.plugin.call('debugger', 'decodeLocalVariable', nodeAtPosition.id)
                 if (decodedVar !== null && decodedVar.type) {
                     contents.push({
-                        value: `LOCAL VARIABLE ${nodeAtPosition.name}:  ${JSON.stringify(decodedVar.value, null, '\t')}`
+                        value: `LOCAL VARIABLE ${nodeAtPosition.name}:  ${typeof(decodedVar.value) === 'string' ? decodedVar.value : JSON.stringify(decodedVar.value, null, '\t')}`
                     })
                 }
             } catch (e) {}
@@ -159,7 +159,7 @@ export class RemixHoverProvider implements languages.HoverProvider {
                 const decodedVar = await this.props.plugin.call('debugger', 'decodeStateVariable', nodeAtPosition.id)
                 if (decodedVar !== null  && decodedVar.type) {
                     contents.push({
-                        value: `STATE VARIABLE ${nodeAtPosition.name}:  ${JSON.stringify(decodedVar.value, null, '\t')}`
+                        value: `STATE VARIABLE ${nodeAtPosition.name}:  ${typeof(decodedVar.value) === 'string' ? decodedVar.value : JSON.stringify(decodedVar.value, null, '\t')}`
                     })
                 }
             } catch (e) {}
