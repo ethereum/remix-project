@@ -454,7 +454,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             </div>
           }
           expand={true}>
-          <div className='pb-2'>
+          <div className='pb-4 mb-4'>
             <TreeView id='treeViewMenu'>
               {
                 files[ROOT_PATH] && Object.keys(files[ROOT_PATH]).map((key, index) => <FileRender

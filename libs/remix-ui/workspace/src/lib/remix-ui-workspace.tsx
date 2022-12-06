@@ -591,7 +591,7 @@ export function Workspace () {
   return (
     <div className='d-flex flex-column justify-content-between h-100'>
       <div className='remixui_container overflow-auto' style={{ maxHeight: selectedWorkspace && selectedWorkspace.isGitRepo ? '95%' : '100%' }}>
-        <div className='d-flex flex-column w-100 remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
+        <div className='d-flex flex-column w-100 mb-1 remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
           <div>
             <header>
               <div className="mx-2 mb-2 d-flex flex-column">
@@ -686,7 +686,7 @@ export function Workspace () {
                 </div>
               </header>
             </div>
-            <div className='h-100 remixui_fileExplorerTree' onFocus={() => { toggleDropdown(false) }}>
+            <div className='h-100 mb-4 pb-4 remixui_fileExplorerTree' onFocus={() => { toggleDropdown(false) }}>
             <div className='h-100'>
             { (global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>}
             { !(global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) &&
@@ -730,7 +730,7 @@ export function Workspace () {
             }
             { global.fs.localhost.isRequestingLocalhost && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div> }
             { (global.fs.mode === 'localhost' && global.fs.localhost.isSuccessfulLocalhost) &&
-              <div className='h-100 filesystemexplorer remixui_treeview'>
+              <div className='h-100 filesystemexplorer pb-4 mb-4  remixui_treeview'>
                 <FileExplorer
                   name='localhost'
                   menuItems={['createNewFile', 'createNewFolder']}
