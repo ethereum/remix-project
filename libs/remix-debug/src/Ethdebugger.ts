@@ -119,7 +119,7 @@ export class Ethdebugger {
       const state = await this.decodeStateAt(step, variable)
       return state[variable[0].name]
     }
-    return { value: '' }
+    return null
   }
 
   async decodeLocalsAt (step, sourceLocation, callback) {

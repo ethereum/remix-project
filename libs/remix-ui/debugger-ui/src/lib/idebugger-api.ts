@@ -55,6 +55,11 @@ export interface IDebuggerApi {
     onStopDebugging (): void // called when debug stops
 }
 
+type globalContextFunction = () => { block, tx, receipt }
+type onReadyParams = {
+    globalContext: globalContextFunction
+}
 export interface DebuggerUIProps {
-    debuggerAPI: IDebuggerApi
+    debuggerAPI: IDebuggerApi,
+    onReady?: (functions: onReadyParams) => void
 }
