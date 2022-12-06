@@ -23,6 +23,7 @@ export default class CodeParserGasService {
                 range: await this.plugin.getLineColumnOfNode(node)
               })
             }
+            return estimates
           }
         }
       }
@@ -54,14 +55,13 @@ export default class CodeParserGasService {
           content: Object.entries(estimate.node.gasEstimate).map(([, value]) => `${value} gas`).join(' '),
           position: estimate.range,
           hide: false,
-          className: 'text-muted small',
+          className: 'text-muted small m-1 p-1',
           afterContentClassName: 'text-muted small fas fa-gas-pump pl-4',
           from: 'codeParser',
           hoverMessage: [{
             value: `${Object.entries(estimate.node.gasEstimate).map(([key, value]) => `${friendlyNames[key]}: ${value} gas`).join(' ')}`,
           },],
         }
-
         this.plugin.call('editor', 'addLineText', linetext, estimate.range.fileName)
       }
     }
