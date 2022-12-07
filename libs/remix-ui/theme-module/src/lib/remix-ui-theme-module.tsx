@@ -19,7 +19,7 @@ export function RemixUiThemeModule({ themeModule }: RemixUiThemeModuleProps) {
   return (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
-        <h6 className="card-title"><FormattedMessage id='settings.themes' defaultMessage='Themes' /></h6>
+        <h6 className="card-title"><FormattedMessage id='settings.themes' /></h6>
         <div className="card-text themes-container">
           {themeModule.getThemes()
             ? themeModule.getThemes().map((theme, idx) => (

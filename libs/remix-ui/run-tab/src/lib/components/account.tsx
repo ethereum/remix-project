@@ -82,7 +82,7 @@ export function AccountUI (props: AccountProps) {
           message='Enter your passphrase for this account to sign the message'
           setPassphrase={props.setPassphrase}
         />, 'OK', () => {
-          props.modal(intl.formatMessage({id: 'udapp.signAMessage', defaultMessage: 'Sign a message'}), signMessagePrompt(), 'OK', () => {
+          props.modal(intl.formatMessage({ id: 'udapp.signAMessage' }), signMessagePrompt(), 'OK', () => {
             props.signMessageWithAddress(selectedAccount, messageRef.current, signedMessagePrompt, props.passphrase)
             props.setPassphrase('')
           }, 'Cancel', null)
@@ -91,7 +91,7 @@ export function AccountUI (props: AccountProps) {
         })
     }
 
-    props.modal(intl.formatMessage({id: 'udapp.signAMessage', defaultMessage: 'Sign a message'}), signMessagePrompt(), 'OK', () => {
+    props.modal(intl.formatMessage({ id: 'udapp.signAMessage' }), signMessagePrompt(), 'OK', () => {
       props.signMessageWithAddress(selectedAccount, messageRef.current, signedMessagePrompt)
     }, 'Cancel', null)
   }
@@ -123,7 +123,7 @@ export function AccountUI (props: AccountProps) {
 
   const signMessagePrompt = () => {
     return (
-      <div> <FormattedMessage id='udapp.enterAMessageToSign' defaultMessage='Enter a message to sign' />
+      <div> <FormattedMessage id='udapp.enterAMessageToSign' />
         <div>
           <textarea
             id="prompt_text"
@@ -142,9 +142,9 @@ export function AccountUI (props: AccountProps) {
   const signedMessagePrompt = (msgHash: string, signedData: string) => {
     return (
       <div>
-        <b><FormattedMessage id='udapp.hash' defaultMessage='hash' />:</b><br />
+        <b><FormattedMessage id='udapp.hash' />:</b><br />
         <span id="remixRunSignMsgHash" data-id="settingsRemixRunSignMsgHash">{msgHash}</span>
-        <br /><b><FormattedMessage id='udapp.signature' defaultMessage='signature' />:</b><br />
+        <br /><b><FormattedMessage id='udapp.signature' />:</b><br />
         <span id="remixRunSignMsgSignature" data-id="settingsRemixRunSignMsgSignature">{signedData}</span>
       </div>
     )
@@ -153,7 +153,7 @@ export function AccountUI (props: AccountProps) {
   return (
     <div className="udapp_crow">
       <label className="udapp_settingsLabel">
-        <FormattedMessage id='udapp.account' defaultMessage='Account' />
+        <FormattedMessage id='udapp.account' />
         <CustomTooltip
           placement={'top-start'}
           tooltipClasses="text-wrap"
