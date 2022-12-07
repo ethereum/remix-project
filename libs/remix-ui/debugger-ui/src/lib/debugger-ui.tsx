@@ -296,7 +296,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     })
 
     setTimeout(async() => {
-      debuggerModule.onStartDebugging()
+      debuggerModule.onStartDebugging(debuggerInstance)
       try {
         await debuggerInstance.debug(blockNumber, txNumber, tx, () => {
           listenToEvents(debuggerInstance, currentReceipt)
