@@ -6,6 +6,7 @@ import { EventManager } from '../eventManager'
 import { parseType } from './decodeInfo'
 import { isContractCreation, isCallInstruction, isCreateInstruction, isJumpDestInstruction } from '../trace/traceHelper'
 import { extractLocationFromAstVariable } from './types/util'
+import { CompilerAbstract } from '@remix-project/remix-solidity-ts'
 
 export type StepDetail = {
   depth: number,
@@ -17,6 +18,7 @@ export type StepDetail = {
   stack: number[],
 }
 
+type StepInfoCache = { sourceLocation, stepDetail, lineColumnPos }
 /**
  * Tree representing internal jump into function.
  * Triggers `callTreeReady` event when tree is ready
@@ -38,7 +40,7 @@ export class InternalCallTree {
   astWalker
   reducedTrace
   locationAndOpcodePerVMTraceIndex: {
-    [Key: number]: any
+    [Key: number]: StepInfoCache
   }
   gasCostPerLine
   offsetToLineColumnConverter
@@ -193,7 +195,7 @@ export class InternalCallTree {
     }
   }
 
-  async getValidSourceLocationFromVMTraceIndexFromCache (address: string, step: number, contracts: any) {
+  async getValidSourceLocationFromVMTraceIndexFromCache (address: string, step: number, contracts: CompilerAbstract): Promise<StepInfoCache> {
     return await this.sourceLocationTracker.getValidSourceLocationFromVMTraceIndexFromCache(address, step, contracts, this.locationAndOpcodePerVMTraceIndex)
   }
 

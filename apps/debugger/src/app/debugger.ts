@@ -1,7 +1,7 @@
 import { PluginClient } from "@remixproject/plugin";
 import { createClient } from "@remixproject/plugin-webview";
 import { IDebuggerApi, LineColumnLocation, 
-  onBreakpointClearedListener, onBreakpointAddedListener, onEditorContentChanged, onEnvChangedListener, TransactionReceipt } from '@remix-ui/debugger-ui'
+  onBreakpointClearedListener, onBreakpointAddedListener, onEditorContentChanged, onEnvChangedListener, TransactionReceipt } from '@remix-project/remix-debug'
 import { DebuggerApiMixin } from './debugger-api'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
  

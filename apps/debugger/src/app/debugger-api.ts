@@ -126,7 +126,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     const debug = new Debugger({
       web3,
       offsetToLineColumnConverter: this.offsetToLineColumnConverter,
-      compilationResult: async (address) => {
+      compilationResult: async (address: string) => {
         try {
           return await this.fetchContractAndCompile(address, currentReceipt)
         } catch (e) {

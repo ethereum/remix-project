@@ -34,8 +34,10 @@ export type onEditorContentChanged = () => void
 export type onDebugRequested = (hash: string, web3?: any) => void
 export type onEnvChangedListener = (provider: string) => void
 
+export type OffsetToLineColumnConverter = { offsetToLineColumn: (sourceLocation: RawLocation, file: number, contents: SourcesCode, asts: Asts) => Promise<LineColumnLocation> }
+
 export interface IDebuggerApi {
-    offsetToLineColumnConverter: { offsetToLineColumn: (sourceLocation: RawLocation, file: number, contents: SourcesCode, asts: Asts) => Promise<LineColumnLocation> }
+    offsetToLineColumnConverter: OffsetToLineColumnConverter
     removeHighlights: boolean
     onRemoveHighlights: (listener: VoidFunction) => void
     onDebugRequested: (listener: onDebugRequested) => void
@@ -58,3 +60,5 @@ export interface IDebuggerApi {
 export interface DebuggerUIProps {
     debuggerAPI: IDebuggerApi
 }
+
+export type RetrieveCompilationResultFunc = (address: string) => Promise<CompilerAbstract>

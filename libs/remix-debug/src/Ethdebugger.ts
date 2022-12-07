@@ -1,5 +1,5 @@
 'use strict'
-
+import Web3 from 'web3'
 import { StorageViewer } from './storage/storageViewer'
 import { StorageResolver } from './storage/storageResolver'
 import { TraceManager } from './trace/traceManager'
@@ -7,7 +7,15 @@ import { CodeManager } from './code/codeManager'
 import { contractCreationToken } from './trace/traceHelper'
 import { EventManager } from './eventManager'
 import { SolidityProxy, stateDecoder, localDecoder, InternalCallTree } from './solidity-decoder'
+import { BreakpointManager } from './code/breakpointManager'
+import { OffsetToLineColumnConverter, RetrieveCompilationResultFunc } from './idebugger-api'
 
+
+export type EthDebuggerOptions = {
+  offsetToLineColumnConverter: OffsetToLineColumnConverter
+  compilationResult: RetrieveCompilationResultFunc
+  web3: Web3
+}
 /**
   * Ethdebugger is a wrapper around a few classes that helps debugging a transaction
   *
@@ -22,19 +30,19 @@ import { SolidityProxy, stateDecoder, localDecoder, InternalCallTree } from './s
   */
 export class Ethdebugger {
   compilationResult
-  web3
+  web3: Web3
   opts
-  event
+  event: EventManager
   tx
-  traceManager
-  codeManager
-  solidityProxy
+  traceManager: TraceManager
+  codeManager: CodeManager 
+  solidityProxy: SolidityProxy
   storageResolver
-  callTree
-  breakpointManager
-  offsetToLineColumnConverter
+  callTree: InternalCallTree
+  breakpointManager: BreakpointManager
+  offsetToLineColumnConverter: OffsetToLineColumnConverter
 
-  constructor (opts) {
+  constructor (opts: EthDebuggerOptions) {
     this.compilationResult = opts.compilationResult || function (contractAddress) { return null }
     this.offsetToLineColumnConverter = opts.offsetToLineColumnConverter
     this.web3 = opts.web3
@@ -149,7 +157,7 @@ export class Ethdebugger {
   unLoad () {
     this.traceManager.init()
     this.codeManager.clear()
-    this.event.trigger('traceUnloaded')
+    this.event.trigger('traceUnloaded', [])
   }
 
   async debug (tx) {

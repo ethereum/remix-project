@@ -2,6 +2,22 @@
 
 import { EventManager } from '../eventManager'
 import { isJumpDestInstruction } from '../trace/traceHelper'
+import { TraceManager } from '../trace/traceManager'
+import { InternalCallTree } from '../solidity-decoder/internalCallTree'
+import { SolidityProxy } from '../solidity-decoder/solidityProxy'
+import { RetrieveCompilationResultFunc } from '../idebugger-api'
+
+export type BreakpointSourceLocation = {
+  fileName: string
+  row: number
+}
+
+export type BreakpointManagerOptions = {
+  traceManager: TraceManager
+  callTree: InternalCallTree
+  solidityProxy: SolidityProxy
+  compilationResult: RetrieveCompilationResultFunc
+}
 
 /**
   * allow to manage breakpoint
@@ -9,26 +25,28 @@ import { isJumpDestInstruction } from '../trace/traceHelper'
   * Trigger events: breakpointHit, breakpointAdded, breakpointRemoved
   */
 export class BreakpointManager {
-  event
-  traceManager
-  callTree
-  solidityProxy
-  breakpoints
-  locationToRowConverter
+  event: EventManager
+  traceManager: TraceManager
+  callTree: InternalCallTree
+  solidityProxy: SolidityProxy
+  compilationResult: RetrieveCompilationResultFunc
+  breakpoints: {
+    [Key: string]: Array<BreakpointSourceLocation>
+  }
+  
 
   /**
     * constructor
     *
     * @param {Object} _debugger - type of EthDebugger
-    * @return {Function} _locationToRowConverter - function implemented by editor which return a column/line position for a char source location
     */
-  constructor ({ traceManager, callTree, solidityProxy, locationToRowConverter }) {
+  constructor ({ traceManager, callTree, solidityProxy, compilationResult }) {
     this.event = new EventManager()
     this.traceManager = traceManager
     this.callTree = callTree
     this.solidityProxy = solidityProxy
+    this.compilationResult = compilationResult
     this.breakpoints = {}
-    this.locationToRowConverter = locationToRowConverter
   }
 
   setManagers ({ traceManager, callTree, solidityProxy }) {
@@ -42,8 +60,8 @@ export class BreakpointManager {
     * @param {Bool} defaultToLimit - if true jump to the end of the trace if no more breakpoint found
     *
     */
-  async jumpNextBreakpoint (fromStep, defaultToLimit) {
-    if (!this.locationToRowConverter) {
+  async jumpNextBreakpoint (fromStep, defaultToLimit = true) {
+    if (!this.compilationResult) {
       return console.log('row converter not provided')
     }
     this.jump(fromStep || 0, 1, defaultToLimit, this.traceManager.trace)
@@ -55,7 +73,7 @@ export class BreakpointManager {
     *
     */
   async jumpPreviousBreakpoint (fromStep, defaultToLimit) {
-    if (!this.locationToRowConverter) {
+    if (!this.compilationResult) {
       return console.log('row converter not provided')
     }
     this.jump(fromStep || 0, -1, defaultToLimit, this.traceManager.trace)
@@ -94,15 +112,19 @@ export class BreakpointManager {
     let lineHadBreakpoint = false
     let initialLine
     while (currentStep > 0 && currentStep < trace.length) {
+      let stepInfo
       try {
         previousSourceLocation = sourceLocation
-        sourceLocation = await this.callTree.extractValidSourceLocation(currentStep)
+        const address = this.traceManager.getCurrentCalledAddressAt(currentStep)
+        const contracts = await this.compilationResult(address)
+        stepInfo = await this.callTree.getValidSourceLocationFromVMTraceIndexFromCache(address, currentStep, contracts)
+        sourceLocation = stepInfo.sourceLocation
       } catch (e) {
         console.log('cannot jump to breakpoint ' + e)
         currentStep += direction
         continue
       }
-      const lineColumn = await this.locationToRowConverter(sourceLocation)
+      const lineColumn = stepInfo.lineColumnPos
       if (!initialLine) initialLine = lineColumn
 
       if (initialLine.start.line !== lineColumn.start.line) {
@@ -172,7 +194,7 @@ export class BreakpointManager {
     *
     * @param {Object} sourceLocation - position of the breakpoint { file: '<file index>', row: '<line number' }
     */
-  add (sourceLocation) {
+  add (sourceLocation: BreakpointSourceLocation) {
     sourceLocation.row -= 1
     if (!this.breakpoints[sourceLocation.fileName]) {
       this.breakpoints[sourceLocation.fileName] = []
@@ -186,19 +208,17 @@ export class BreakpointManager {
     *
     * @param {Object} sourceLocation - position of the breakpoint { file: '<file index>', row: '<line number' }
     */
-  remove (sourceLocation) {
+  remove (sourceLocation: BreakpointSourceLocation) {
     sourceLocation.row -= 1
     const sources = this.breakpoints[sourceLocation.fileName]
     if (!sources) {
       return
     }
-    for (const k in sources) {
-      const source = sources[k]
+    sources.map((source, index: number) => {
       if (sourceLocation.row === source.row) {
-        sources.splice(k, 1)
+        sources.splice(index, 1)
         this.event.trigger('breakpointRemoved', [sourceLocation])
-        break
       }
-    }
+    })
   }
 }

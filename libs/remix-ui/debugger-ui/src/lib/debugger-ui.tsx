@@ -4,8 +4,7 @@ import TxBrowser from './tx-browser/tx-browser' // eslint-disable-line
 import StepManager from './step-manager/step-manager' // eslint-disable-line
 import VmDebugger from './vm-debugger/vm-debugger' // eslint-disable-line
 import VmDebuggerHead from './vm-debugger/vm-debugger-head' // eslint-disable-line
-import { TransactionDebugger as Debugger } from '@remix-project/remix-debug' // eslint-disable-line
-import { DebuggerUIProps } from './idebugger-api' // eslint-disable-line
+import { TransactionDebugger as Debugger, DebuggerUIProps  } from '@remix-project/remix-debug' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { CustomTooltip, isValidHash } from '@remix-ui/helper'
 /* eslint-disable-next-line */
@@ -270,7 +269,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     const debuggerInstance = new Debugger({
       web3,
       offsetToLineColumnConverter: debuggerModule.offsetToLineColumnConverter,
-      compilationResult: async (address) => {
+      compilationResult: async (address: string) => {
         try {
           if (!localCache[address]) localCache[address] = await debuggerModule.fetchContractAndCompile(address, currentReceipt)
           return localCache[address]

@@ -1,14 +1,15 @@
 'use strict'
-import * as init from './init'
-import { Ethdebugger as EthDebugger } from './Ethdebugger'
-import { Debugger as TransactionDebugger } from './debugger/debugger'
-import { CmdLine } from './cmdline'
-import { StorageViewer } from './storage/storageViewer'
-import { StorageResolver } from './storage/storageResolver'
-import * as SolidityDecoder from './solidity-decoder'
-import { BreakpointManager } from './code/breakpointManager'
-import * as sourceMappingDecoder from './source/sourceMappingDecoder'
-import * as traceHelper from './trace/traceHelper'
+export * as init from './init'
+export { Ethdebugger as EthDebugger } from './Ethdebugger'
+export { Debugger as TransactionDebugger } from './debugger/debugger'
+export { CmdLine } from './cmdline'
+export { StorageViewer } from './storage/storageViewer'
+export { StorageResolver } from './storage/storageResolver'
+export * as SolidityDecoder from './solidity-decoder'
+export { BreakpointManager } from './code/breakpointManager'
+export * as sourceMappingDecoder from './source/sourceMappingDecoder'
+export * as traceHelper from './trace/traceHelper'
+export { DebuggerUIProps } from './idebugger-api'
 
 /*
   Use of breakPointManager :
@@ -18,23 +19,3 @@ import * as traceHelper from './trace/traceHelper'
   })
   this.debugger.setBreakpointManager(breakPointManager)
 */
-export = {
-  init,
-  traceHelper,
-  sourceMappingDecoder,
-  EthDebugger,
-  TransactionDebugger,
-  /**
-   * constructor
-   *
-   * @param {Object} _debugger - type of EthDebugger
-   * @return {Function} _locationToRowConverter - function implemented by editor which return a column/line position for a char source location
-   */
-  BreakpointManager,
-  SolidityDecoder,
-  storage: {
-    StorageViewer: StorageViewer,
-    StorageResolver: StorageResolver
-  },
-  CmdLine
-}

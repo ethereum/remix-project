@@ -40,7 +40,8 @@ export class CmdLine {
   initDebugger (cb) {
     this.debugger = new Debugger({
       web3: this.web3,
-      compilationResult: () => { return this.compilation.compilationResult }
+      compilationResult: () => { return this.compilation.compilationResult },
+      debugWithGeneratedSources: false
     })
   }
 

@@ -17,7 +17,7 @@ export class EventManager {
     * @param {Object or Func} obj - object that will listen on this event
     * @param {Func} func         - function of the listeners that will be executed
   */
-  unregister (eventName, obj, func) {
+  unregister (eventName, obj, func?) {
     if (!this.registered[eventName]) {
       return
     }
@@ -40,7 +40,7 @@ export class EventManager {
     * @param {Object or Func} obj - object that will listen on this event
     * @param {Func} func         - function of the listeners that will be executed
   */
-  register (eventName, obj, func) {
+  register (eventName, obj, func?) {
     if (!this.registered[eventName]) {
       this.registered[eventName] = []
     }

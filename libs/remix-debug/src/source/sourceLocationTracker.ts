@@ -3,6 +3,7 @@ import { EventManager } from '../eventManager'
 import { isContractCreation } from '../trace/traceHelper'
 import { atIndex } from './sourceMappingDecoder'
 import { util } from '@remix-project/remix-lib'
+import { CompilerAbstract } from '@remix-project/remix-solidity-ts'
 
 /**
  * Process the source code location for the current executing bytecode
@@ -98,8 +99,8 @@ export class SourceLocationTracker {
     return sourceLocation.file === -1 || sourceLocation.file > amountOfSources - 1
   }
 
-  async getValidSourceLocationFromVMTraceIndexFromCache (address: string, vmtraceStepIndex: number, contracts: any, cache: Map<number, any>) {
-    const amountOfSources = this.getTotalAmountOfSources(address, contracts)
+  async getValidSourceLocationFromVMTraceIndexFromCache (address: string, vmtraceStepIndex: number, contracts: CompilerAbstract, cache: Map<number, any>) {
+    const amountOfSources = this.getTotalAmountOfSources(address, contracts.data.contracts)
     let map: any = { file: -1 }
     /*
       (map.file === -1) this indicates that it isn't associated with a known source code

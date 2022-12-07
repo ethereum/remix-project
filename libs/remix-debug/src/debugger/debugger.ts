@@ -1,23 +1,32 @@
 'use strict'
+import Web3 from 'web3'
 import { Ethdebugger } from '../Ethdebugger'
 import { EventManager } from '../eventManager'
 import { contractCreationToken } from '../trace/traceHelper'
 import { BreakpointManager } from '../code/breakpointManager'
 import { DebuggerStepManager } from './stepManager'
 import { VmDebuggerLogic } from './VmDebugger'
+import { OffsetToLineColumnConverter, RetrieveCompilationResultFunc } from '../idebugger-api'
+
+type DebuggerOptions = {
+  web3: Web3,
+  offsetToLineColumnConverter?: OffsetToLineColumnConverter
+  compilationResult: RetrieveCompilationResultFunc,
+  debugWithGeneratedSources: boolean
+}
 
 export class Debugger {
-  event
-  offsetToLineColumnConverter
-  compilationResult
-  debugger
-  breakPointManager
-  step_manager // eslint-disable-line camelcase
-  vmDebuggerLogic
-  currentFile = -1
-  currentLine = -1
+  event: EventManager
+  offsetToLineColumnConverter: OffsetToLineColumnConverter
+  compilationResult: RetrieveCompilationResultFunc
+  debugger: Ethdebugger
+  breakPointManager: BreakpointManager
+  step_manager: DebuggerStepManager // eslint-disable-line camelcase
+  vmDebuggerLogic: VmDebuggerLogic
+  currentFile: number = -1
+  currentLine: number = -1
 
-  constructor (options) {
+  constructor (options: DebuggerOptions) {
     this.event = new EventManager()
     this.offsetToLineColumnConverter = options.offsetToLineColumnConverter
     /*
@@ -27,7 +36,6 @@ export class Debugger {
 
     this.debugger = new Ethdebugger({
       web3: options.web3,
-      debugWithGeneratedSources: options.debugWithGeneratedSources,
       compilationResult: this.compilationResult,
       offsetToLineColumnConverter: this.offsetToLineColumnConverter
     })
@@ -37,11 +45,7 @@ export class Debugger {
       traceManager,
       callTree,
       solidityProxy,
-      locationToRowConverter: async (sourceLocation) => {
-        const compilationResult = await this.compilationResult()
-        if (!compilationResult) return { start: null, end: null }
-        return await this.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, compilationResult.source.sources, compilationResult.data.sources)
-      }
+      compilationResult: this.compilationResult
     })
 
     this.breakPointManager.event.register('breakpointStep', (step) => {
@@ -82,7 +86,7 @@ export class Debugger {
         return
       }
 
-      this.debugger.callTree.getValidSourceLocationFromVMTraceIndexFromCache(address, index, compilationResultForAddress.data.contracts).then(async (rawLocationAndOpcode) => {
+      this.debugger.callTree.getValidSourceLocationFromVMTraceIndexFromCache(address, index, compilationResultForAddress).then(async (rawLocationAndOpcode) => {
         if (compilationResultForAddress && compilationResultForAddress.data) {
           const rawLocation = rawLocationAndOpcode.sourceLocation
           const stepDetail = rawLocationAndOpcode.stepDetail
@@ -166,7 +170,7 @@ export class Debugger {
 
     this.step_manager.event.register('stepChanged', this, (stepIndex) => {
       if (typeof stepIndex !== 'number' || stepIndex >= this.step_manager.traceLength) {
-        return this.event.trigger('endDebug')
+        return this.event.trigger('endDebug', [])
       }
 
       this.debugger.codeManager.resolveStep(stepIndex, tx)
@@ -182,6 +186,6 @@ export class Debugger {
 
   unload () {
     this.debugger.unLoad()
-    this.event.trigger('debuggerUnloaded')
+    this.event.trigger('debuggerUnloaded', [])
   }
 }
