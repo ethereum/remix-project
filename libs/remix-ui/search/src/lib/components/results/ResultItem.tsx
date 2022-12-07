@@ -127,7 +127,7 @@ export const ResultItem = (props: ResultItemProps) => {
               {state.replaceEnabled?
                 <div className="search_plugin_wrap_summary_replace">
                   <div data-id={`replace-all-${props.file.filename}`} onClick={async() => replace()} className='btn btn-secondary mb-2 btn-sm'>
-                  <FormattedMessage id='search.replaceAll' defaultMessage='Replace all' />
+                  <FormattedMessage id='search.replaceAll' />
                   </div>
                 </div>
               :null}

@@ -135,9 +135,9 @@ module.exports = {
       .checkElementStyle(':root', '--danger', remixIdeThemes.cyborg.danger)
   },
 
-  'Should load zh-CN locale ': function (browser) {
+  'Should load zh locale ': function (browser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-      .scrollAndClick('*[data-id="settingsTabLocaleLabelzh-CN"]')
+      .scrollAndClick('*[data-id="settingsTabLocaleLabelzh"]')
       .pause(2000)
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', '设置')
       .assert.containsText('*[data-id="listenNetworkCheckInput"]', '监听所有交易')
@@ -147,9 +147,9 @@ module.exports = {
       .assert.containsText('*[data-id="displayErrorsLabel"]', '编辑代码时展示错误提示')
   },
 
-  'Should load en-US locale ': function (browser) {
+  'Should load en locale ': function (browser) {
     browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]', 5000)
-      .scrollAndClick('*[data-id="settingsTabLocaleLabelen-US"]')
+      .scrollAndClick('*[data-id="settingsTabLocaleLabelen"]')
       .pause(2000)
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'SETTINGS')
       .assert.containsText('*[data-id="listenNetworkCheckInput"]', 'listen on all transactions')

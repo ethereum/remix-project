@@ -27,7 +27,7 @@ export function EnvironmentUI (props: EnvironmentProps) {
   return (
     <div className="udapp_crow">
       <label id="selectExEnv" className="udapp_settingsLabel">
-        <FormattedMessage id='udapp.environment' defaultMessage='Environment' />
+        <FormattedMessage id='udapp.environment' />
 
         <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="info-recorder"
                 tooltipText="Open chainlist.org and get the connection specs of the chain you want to interact with.">
@@ -67,7 +67,7 @@ export function EnvironmentUI (props: EnvironmentProps) {
         </Dropdown>
 
         <CustomTooltip placement={'right-start'} tooltipClasses="text-wrap" tooltipId="runAndDeployAddresstooltip"
-            tooltipText={<FormattedMessage id='udapp.environmentDocs' defaultMessage='Click for docs about Environment' />}>
+            tooltipText={<FormattedMessage id='udapp.environmentDocs' />}>
 
           <a href="https://remix-ide.readthedocs.io/en/latest/run.html#environment" target="_blank" rel="noreferrer"><i className="udapp_infoDeployAction ml-2 fas fa-info"></i></a>
         </CustomTooltip>
