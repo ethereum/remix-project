@@ -169,6 +169,7 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
                 placement={jumpMarkupStructure[x].placement}
                 tooltipText={jumpMarkupStructure[x].tooltipMsg}
                 tooltipId={jumpMarkupStructure[x].tooltipId}
+                key={`${jumpMarkupStructure[x].placement}-${jumpMarkupStructure[x].tooltipMsg}-${jumpMarkupStructure[x].tagId}`}
               >
                 {jumpMarkupStructure[x].markup}
             </CustomTooltip>
