@@ -89,6 +89,7 @@ export class BreakpointManager {
   async jump (fromStep, direction, defaultToLimit, trace) {
     this.event.trigger('locatingBreakpoint', [])
     let sourceLocation
+    let lineColumn
     let previousSourceLocation
     let currentStep = fromStep + direction
     let lineHadBreakpoint = false
@@ -96,13 +97,14 @@ export class BreakpointManager {
     while (currentStep > 0 && currentStep < trace.length) {
       try {
         previousSourceLocation = sourceLocation
-        sourceLocation = await this.callTree.extractValidSourceLocation(currentStep)
+        const stepInfo = await this.callTree.locationAndOpcodePerVMTraceIndex[currentStep]
+        sourceLocation = stepInfo.sourceLocation
+        lineColumn = stepInfo.lineColumnPos
       } catch (e) {
         console.log('cannot jump to breakpoint ' + e)
         currentStep += direction
         continue
       }
-      const lineColumn = await this.locationToRowConverter(sourceLocation)
       if (!initialLine) initialLine = lineColumn
 
       if (initialLine.start.line !== lineColumn.start.line) {
