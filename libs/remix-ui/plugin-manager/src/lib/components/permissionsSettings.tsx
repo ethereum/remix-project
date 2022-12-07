@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { Fragment, useState } from 'react' // eslint-disable-line no-use-before-define
+import { FormattedMessage, useIntl } from 'react-intl'
 /* eslint-disable-line */
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import useLocalStorage from '../custom-hooks/useLocalStorage'
@@ -9,6 +10,7 @@ function PermisssionsSettings () {
   const [modalVisibility, setModalVisibility] = useState<boolean>(true)
   const [permissions, setPermissions] = useLocalStorage<PluginPermissions>('plugins/permissions', {} as PluginPermissions)
   const [permissionCache, setpermissionCache] = useState<PluginPermissions>()
+  const intl = useIntl()
   const closeModal = () => setModalVisibility(true)
   const openModal = () => {
     const currentValue = JSON.parse(window.localStorage.getItem('plugins/permissions') || '{}')
@@ -51,7 +53,7 @@ function PermisssionsSettings () {
   function RenderPluginHeader ({ headingName }) {
     return (
       <div className="pb-2 remixui_permissionKey">
-        <h3>{headingName} permissions:</h3>
+        <h3>{headingName} <FormattedMessage id="pluginManager.permissions" />:</h3>
         <i
           onClick={() => {
             clearTargetPermission(headingName)
@@ -83,7 +85,7 @@ function PermisssionsSettings () {
                     htmlFor={`permission-checkbox-${targetPlugin}-${funcName}-${targetPlugin}`}
                     data-id={`permission-label-${targetPlugin}-${funcName}-${targetPlugin}`}
                   >
-                    Allow <u>{pluginName}</u> to call <u>{funcName}</u>
+                    <FormattedMessage id="pluginManager.allow" /> <u>{pluginName}</u> <FormattedMessage id="pluginManager.toCall" /> <u>{funcName}</u>
                   </label>
                 </span>
               </div><i
@@ -106,13 +108,13 @@ function PermisssionsSettings () {
         handleHide={closeModal}
         cancelFn={cancel}
         hide={modalVisibility}
-        title="Plugin Manager Permissions"
-        okLabel="OK"
-        cancelLabel="Cancel"
+        title={intl.formatMessage({ id: 'pluginManager.pluginManagerPermissions' })}
+        okLabel={intl.formatMessage({ id: 'pluginManager.ok' })}
+        cancelLabel={intl.formatMessage({ id: 'pluginManager.cancel' })}
       >
         {permissions && Object.keys(permissions).length > 0
-          ? (<h4 className="text-center">Current Permission Settings</h4>)
-          : (<h4 className="text-center">No Permission requested yet.</h4>)
+          ? (<h4 className="text-center"><FormattedMessage id="pluginManager.currentPermissionSettings" /></h4>)
+          : (<h4 className="text-center"><FormattedMessage id="pluginManager.noPermissionRequestedYet" /></h4>)
         }
         <form className="remixui_permissionForm" data-id="pluginManagerSettingsPermissionForm">
           <div className="p-2">
@@ -132,7 +134,7 @@ function PermisssionsSettings () {
           onClick={openModal}
           className="btn btn-primary settings-button"
           data-id="pluginManagerPermissionsButton">
-          Permissions
+          <FormattedMessage id="pluginManager.Permissions" />
         </button>
       </footer>
     </Fragment>

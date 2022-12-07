@@ -21,9 +21,9 @@ export interface LocaleModule extends Plugin<any, any> {
     getLocales(): Locale[];
     /**
      * Change the current locale
-     * @param {string} [localeName] - The name of the locale
+     * @param {string} [localeCode] - The code of the locale
      */
-    switchLocale(localeName?: string): void;
+    switchLocale(localeCode?: string): void;
 }
 
-interface Locale { name: string, messages: any }
+interface Locale { code: string, name: string; localeName: string; messages: any }

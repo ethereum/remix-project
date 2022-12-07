@@ -48,7 +48,7 @@ function RootView ({ pluginComponent, children }: RootViewProps) {
             data-id="pluginManagerComponentSearchInput"
           />
           <button onClick={openModal} className="remixui_pluginSearchButton btn bg-transparent text-dark border-0 mt-2 text-underline" data-id="pluginManagerComponentPluginSearchButton">
-            <FormattedMessage id='pluginManager.connectLocal' defaultMessage='Connect to a Local Plugin' />
+            <FormattedMessage id='pluginManager.connectLocal' />
           </button>
         </header>
         {children}
