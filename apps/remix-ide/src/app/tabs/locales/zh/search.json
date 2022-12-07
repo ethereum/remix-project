@@ -1,0 +1,14 @@
+{
+  "search.displayName": "全文搜索",
+  "search.replace": "替换",
+  "search.replaceAll": "替换所有",
+  "search.placeholder1": "搜索 ( 回车搜索 )",
+  "search.placeholder2": "包含 ie *.sol ( 回车包含 )",
+  "search.placeholder3": "排除 ie .git/**/* ( 回车排除 )",
+  "search.matchCase": "大小写匹配",
+  "search.matchWholeWord": "全字匹配",
+  "search.useRegularExpression": "使用正则表达式",
+  "search.replaceWithoutConfirmation": "替换无需确认",
+  "search.filesToInclude": "文件包含",
+  "search.filesToExclude": "文件排除"
+}
