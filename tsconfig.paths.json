@@ -145,6 +145,9 @@
             "@remix-ui/locale-module": [
                 "libs/remix-ui/locale-module/src/index.ts"
             ],
+            "@remixproject/ghaction-helper": [
+                "libs/ghaction-helper/src/index.ts"
+            ]
         }
     }
 }
