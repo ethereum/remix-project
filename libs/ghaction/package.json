@@ -1,0 +1,40 @@
+{
+  "name": "@remix-project/ghaction",
+  "version": "0.1.0",
+  "description": "Tools to help with github actions for running solidity tests",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "contributors": [
+    {
+      "name": "David Disu",
+      "email": "daviddisu8@gmail.com"
+    }
+  ],
+  "dependencies": {
+    "ethers": "^5.7.2",
+    "ganache": "^7.5.0",
+    "chai": "^4.3.7",
+    "@remix-project/remix-solidity": "^0.5.5",
+    "@ethereum-waffle/chai": "^3.4.4"
+  },
+  "devDependencies": {
+    "typescript": "^3.7.4"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethereum/remix-project.git"
+  },
+  "author": "Remix Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethereum/remix-project/issues"
+  },
+  "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/ghaction#readme",
+  "typings": "src/index.d.ts"
+}
