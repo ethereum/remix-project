@@ -151,7 +151,7 @@ export class RemixHoverProvider implements languages.HoverProvider {
                     const global = await this.props.plugin.call('debugger', 'globalContext')
                     if (global !== null && global[nodeAtPosition?.name]) {
                         contents.push({
-                            value: `${nodeAtPosition.name} = ${JSON.stringify(global[nodeAtPosition?.name], null, '\t')}`
+                            value: `GLOBAL VARIABLE ${nodeAtPosition.name}: ${JSON.stringify(global[nodeAtPosition?.name], null, '\t')}`
                         })
                     }
                 }
@@ -162,7 +162,7 @@ export class RemixHoverProvider implements languages.HoverProvider {
                     const global = await this.props.plugin.call('debugger', 'globalContext')
                     if (global !== null && global[nodeAtPosition?.expression?.name][nodeAtPosition.memberName] && global[nodeAtPosition?.expression?.name][nodeAtPosition.memberName]) {
                         contents.push({
-                            value: `${nodeAtPosition.memberName} = ${global[nodeAtPosition?.expression?.name][nodeAtPosition.memberName]}`
+                            value: `GLOBAL VARIABLE msg.${nodeAtPosition.memberName}: ${global[nodeAtPosition?.expression?.name][nodeAtPosition.memberName]}`
                         })
                     }
                 }
