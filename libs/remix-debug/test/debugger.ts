@@ -168,7 +168,12 @@ contract Ballot {
             compilationResult: function () {
               return { data: output }
             },
-            web3: web3
+            web3: web3,
+            offsetToLineColumnConverter: {
+              offsetToLineColumn: async (rawLocation) => {
+                return sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, sourceMappingDecoder.getLinebreakPositions(ballot))
+              }
+            }
           })
   
           debugManager.callTree.event.register('callTreeReady', () => {
@@ -273,9 +278,7 @@ function testDebugging (debugManager) {
   tape('breakPointManager', (t) => {
     t.plan(2)
     const {traceManager, callTree, solidityProxy} = debugManager
-    var breakPointManager = new BreakpointManager({traceManager, callTree, solidityProxy, locationToRowConverter: async (rawLocation) => {
-      return sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, sourceMappingDecoder.getLinebreakPositions(ballot))
-    }})
+    var breakPointManager = new BreakpointManager({traceManager, callTree, solidityProxy})
 
     breakPointManager.add({fileName: 'test.sol', row: 39})
 
