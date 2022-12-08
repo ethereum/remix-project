@@ -46,10 +46,12 @@ function HomeTabFeatured() {
               <div className="mx-1 px-1 d-flex">
                 <img src={"/assets/img/remixRewardUser.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
                 <div className="h6 p-4" style={{ flex: "1" }}>
-                  <h5><FormattedMessage id='home.remixRewards' /></h5>
-                  <p style={{ fontStyle: 'italic' }}><FormattedMessage id='home.remixRewardsText1' /></p>
-                  <p><FormattedMessage id='home.remixRewardsText2' /></p>
-                  <a className="remixui_home_text" target="__blank" onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'remixRewards'])} href="https://blog.soliditylang.org/2022/12/07/solidity-developer-survey-2022-announcement/"><FormattedMessage id='home.more' /></a>
+                  <h5><FormattedMessage id='home.solidityDevSurveyHeader' /></h5>
+                  <p style={{ fontStyle: 'italic' }}><FormattedMessage id='home.solidityDevSurvey' /></p>
+                  <p>
+                    {/* <FormattedMessage id='' /> */}
+                  </p>
+                  <a className="remixui_home_text" target="__blank" onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'soliditySurvey'])} href="https://blog.soliditylang.org/2022/12/07/solidity-developer-survey-2022-announcement/"><FormattedMessage id='home.solidityDevSurvey1' /></a>
                 </div>
               </div>
               <div className="mx-1 px-1 d-flex">
