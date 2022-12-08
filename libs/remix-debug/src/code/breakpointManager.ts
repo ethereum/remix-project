@@ -14,7 +14,6 @@ export class BreakpointManager {
   callTree
   solidityProxy
   breakpoints
-  locationToRowConverter
 
   /**
     * constructor
