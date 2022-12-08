@@ -22,13 +22,12 @@ export class BreakpointManager {
     * @param {Object} _debugger - type of EthDebugger
     * @return {Function} _locationToRowConverter - function implemented by editor which return a column/line position for a char source location
     */
-  constructor ({ traceManager, callTree, solidityProxy, locationToRowConverter }) {
+  constructor ({ traceManager, callTree, solidityProxy }) {
     this.event = new EventManager()
     this.traceManager = traceManager
     this.callTree = callTree
     this.solidityProxy = solidityProxy
     this.breakpoints = {}
-    this.locationToRowConverter = locationToRowConverter
   }
 
   setManagers ({ traceManager, callTree, solidityProxy }) {
@@ -43,7 +42,7 @@ export class BreakpointManager {
     *
     */
   async jumpNextBreakpoint (fromStep, defaultToLimit) {
-    if (!this.locationToRowConverter) {
+    if (!this.callTree.locationAndOpcodePerVMTraceIndex[fromStep]) {
       return console.log('row converter not provided')
     }
     this.jump(fromStep || 0, 1, defaultToLimit, this.traceManager.trace)
@@ -55,7 +54,7 @@ export class BreakpointManager {
     *
     */
   async jumpPreviousBreakpoint (fromStep, defaultToLimit) {
-    if (!this.locationToRowConverter) {
+    if (!this.callTree.locationAndOpcodePerVMTraceIndex[fromStep]) {
       return console.log('row converter not provided')
     }
     this.jump(fromStep || 0, -1, defaultToLimit, this.traceManager.trace)
@@ -97,7 +96,7 @@ export class BreakpointManager {
     while (currentStep > 0 && currentStep < trace.length) {
       try {
         previousSourceLocation = sourceLocation
-        const stepInfo = await this.callTree.locationAndOpcodePerVMTraceIndex[currentStep]
+        const stepInfo = this.callTree.locationAndOpcodePerVMTraceIndex[currentStep]
         sourceLocation = stepInfo.sourceLocation
         lineColumn = stepInfo.lineColumnPos
       } catch (e) {
