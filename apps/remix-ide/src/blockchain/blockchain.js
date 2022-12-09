@@ -7,7 +7,7 @@ import { EventEmitter } from 'events'
 import { format } from 'util'
 import { ExecutionContext } from './execution-context'
 import VMProvider from './providers/vm.js'
-import InjectedProvider from './providers/injected.js'
+import HashConnect from './providers/hashconnect'
 import NodeProvider from './providers/node.js'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
 import { etherScanLink } from './helper'
@@ -83,7 +83,7 @@ export class Blockchain extends Plugin {
   setupProviders () {
     this.providers = {}
     this.providers.vm = new VMProvider(this.executionContext)
-    this.providers.injected = new InjectedProvider(this.executionContext)
+    this.providers.injected = new HashConnect(this.executionContext)
     this.providers.web3 = new NodeProvider(this.executionContext, this.config)
   }
 
@@ -142,7 +142,7 @@ export class Blockchain extends Plugin {
     const proxyModal = {
       id: 'confirmProxyDeployment',
       title: 'Confirm Deploy Proxy (ERC1967)',
-      message: `Confirm you want to deploy an ERC1967 proxy contract that is connected to your implementation.           
+      message: `Confirm you want to deploy an ERC1967 proxy contract that is connected to your implementation.
       For more info on ERC1967, see: https://docs.openzeppelin.com/contracts/4.x/api/proxy#ERC1967Proxy`,
       modalType: 'modal',
       okLabel: 'OK',
@@ -173,7 +173,7 @@ export class Blockchain extends Plugin {
     const finalCb = (error, txResult, address, returnValue) => {
       if (error) {
         const log = logBuilder(error)
-  
+
         _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment failed: ' + error])
         return this.call('terminal', 'logHtml', log)
       }
@@ -462,7 +462,7 @@ export class Blockchain extends Plugin {
         return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
       }
     }, _ => this.executionContext.web3(), _ => this.executionContext.currentblockGasLimit())
-    
+
     web3Runner.event.register('transactionBroadcasted', (txhash) => {
       this.executionContext.detectNetwork((error, network) => {
         if (error || !network) return
@@ -473,7 +473,7 @@ export class Blockchain extends Plugin {
           this.call('terminal', 'logHtml',
           (<a href={etherScanLink(network.name, txhash)} target="_blank">
             view on etherscan
-          </a>))        
+          </a>))
         }
       })
     })
@@ -546,6 +546,13 @@ export class Blockchain extends Plugin {
   }
 
   async runTx (args, confirmationCb, continueCb, promptCb, cb) {
+    if (args.data) {
+      const hashconnectProvider = new HashConnect()
+      await hashconnectProvider.init();
+      await hashconnectProvider.createFile(args);
+      await hashconnectProvider.deployContract();
+      return
+    }
     const getGasLimit = () => {
       return new Promise((resolve, reject) => {
         if (this.transactionContextAPI.getGasLimit) {
@@ -629,7 +636,7 @@ export class Blockchain extends Plugin {
                 }
                 return reject(error)
               }
-  
+
               const isVM = this.executionContext.isVM()
               if (isVM && tx.useCall) {
                 try {
@@ -689,7 +696,7 @@ export class Blockchain extends Plugin {
               }
               return <div>{formattedLog}</div>
           })}
-          </div>          
+          </div>
           _paq.push(['trackEvent', 'udapp', 'hardhat', 'console.log'])
           this.call('terminal', 'logHtml', finalLogs)
         }
@@ -704,16 +711,16 @@ export class Blockchain extends Plugin {
           }
         }
       }
-  
+
       if (!isVM && tx && tx.useCall) {
         returnValue = toBuffer(addHexPrefix(txResult.result))
       }
-  
+
       let address = null
       if (txResult && txResult.receipt) {
         address = txResult.receipt.contractAddress
       }
-  
+
       cb(null, txResult, address, returnValue)
     } catch (error) {
       cb(error)
