@@ -31,30 +31,33 @@ class HashconnectProvider {
       //do something with metadata
       console.log('walletMetadata', walletMetadata);
       if (this.initData.savedPairings.length === 0) {
+        this.hashconnect.connectToLocalWallet();
+      } else {
         this.hashconnect.connectToLocalWallet(pairingString);
       }
     })
     this.hashconnect.pairingEvent.once((pairingData) => {
       console.log('pairingData', pairingData)
+
+      const { savedPairings } = this.initData;
+      const pairing = savedPairings[0];
+      const { topic, accountIds: [accountId] } = pairing;
+      //do something with metadata
+      this.provider = this.hashconnect.getProvider(this.network, topic, accountId)
+      this.signer = this.hashconnect.getSigner(this.provider);;
     })
 
     this.hashconnect.connectionStatusChangeEvent.once((connectionStatus) => {
       console.log('connectionStatus', connectionStatus)
     })
-    const { savedPairings } = this.initData;
-    const pairing = savedPairings[0];
-    const { topic, accountIds: [accountId] } = pairing;
-    //do something with metadata
-    this.provider =  this.hashconnect.getProvider(this.network, topic, accountId)
-    this.signer = this.hashconnect.getSigner(this.provider);;
   }
 
 
-  async createFile(args) {
+  async createFile(contractBytecode) {
     //Create a file on Hedera and store the hex-encoded bytecode
     const fileCreateTx = await new FileCreateTransaction()
       //Set the bytecode of the contract
-      .setContents(args.data.contractBytecode).freezeWithSigner(this.signer);
+      .setContents(contractBytecode).freezeWithSigner(this.signer);
     //Submit the file to the Hedera test signing with the transaction fee payer key specified with the client
     const submitTx = await fileCreateTx.executeWithSigner(this.signer);
     if (!submitTx) {
@@ -81,6 +84,7 @@ class HashconnectProvider {
     const contractResponse = await contractTx.executeWithSigner(this.signer);
     const receipt = await this.provider.getTransactionReceipt(contractResponse.transactionId)
     this.contractReceipt = receipt;
+    return receipt;
   }
 
   // copied methods

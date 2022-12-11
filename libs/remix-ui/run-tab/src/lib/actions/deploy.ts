@@ -144,6 +144,7 @@ export const createInstance = async (
   }
 
   const finalCb = (error, contractObject, address) => {
+    debugger;
     if (error) {
       const log = logBuilder(error)
 
@@ -152,7 +153,8 @@ export const createInstance = async (
     addInstance(dispatch, { contractData: contractObject, address, name: contractObject.name })
     const data = plugin.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
 
-    plugin.compilersArtefacts.addResolvedContract(addressToString(address), data)
+    // plugin.compilersArtefacts.addResolvedContract(addressToString(address), data)
+    plugin.compilersArtefacts.addResolvedContract((address), data)
     if (plugin.REACT_API.ipfsChecked) {
       _paq.push(['trackEvent', 'udapp', 'DeployAndPublish', plugin.REACT_API.networkName])
       publishToStorage('ipfs', selectedContract)
@@ -162,9 +164,11 @@ export const createInstance = async (
     if (isProxyDeployment) {
       const initABI = contractObject.abi.find(abi => abi.name === 'initialize')
 
-      plugin.call('openzeppelin-proxy', 'executeUUPSProxy', addressToString(address), args, initABI, contractObject)
+      // plugin.call('openzeppelin-proxy', 'executeUUPSProxy', addressToString(address), args, initABI, contractObject)
+      plugin.call('openzeppelin-proxy', 'executeUUPSProxy', (address), args, initABI, contractObject)
     } else if (isContractUpgrade) {
-      plugin.call('openzeppelin-proxy', 'executeUUPSContractUpgrade', args, addressToString(address), contractObject)
+      // plugin.call('openzeppelin-proxy', 'executeUUPSContractUpgrade', args, addressToString(address), contractObject)
+      plugin.call('openzeppelin-proxy', 'executeUUPSContractUpgrade', args, (address), contractObject)
     }
   }
 
@@ -251,7 +255,7 @@ export const syncContractsInternal = async (plugin: RunTab) => {
   }
   if (await plugin.call('manager', 'isActive', 'hardhat')) {
     plugin.call('hardhat', 'sync')
-  } 
+  }
   if (await plugin.call('manager', 'isActive', 'foundry')) {
     plugin.call('foundry', 'sync')
   }

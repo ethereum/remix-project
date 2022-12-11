@@ -13,8 +13,8 @@ import { LogsManager } from './execution/logsManager'
 import { forkAt } from './execution/forkAt'
 import * as typeConversion from './execution/typeConversion'
 import { TxRunnerVM } from './execution/txRunnerVM'
-import { TxRunnerWeb3 } from './execution/txRunnerWeb3'
 import * as txResultHelper from './helpers/txResultHelper'
+import { TxRunnerHashConnect } from './execution/txRunnerHashConnect'
 export { ConsoleLogs } from './helpers/hhconsoleSigs'
 export { ICompilerApi, ConfigurationSettings } from './types/ICompilerApi'
 export { QueryParams } from './query-params'
@@ -31,7 +31,7 @@ const execution = {
   txFormat: txFormat,
   txListener: TxListener,
   TxRunner: TxRunner,
-  TxRunnerWeb3: TxRunnerWeb3,
+  TxRunnerHashConnect: TxRunnerHashConnect,
   TxRunnerVM: TxRunnerVM,
   typeConversion: typeConversion,
   LogsManager,

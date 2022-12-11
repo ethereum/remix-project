@@ -12,7 +12,7 @@ import NodeProvider from './providers/node.js'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
 import { etherScanLink } from './helper'
 import { logBuilder, cancelUpgradeMsg, cancelProxyMsg, addressToString } from "@remix-ui/helper"
-const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
+const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerHashConnect, txHelper } = execution
 const { txResultHelper: resultToRemixTx } = helpers
 const packageJson = require('../../../../package.json')
 
@@ -28,14 +28,14 @@ const profile = {
 
 export class Blockchain extends Plugin {
   // NOTE: the config object will need to be refactored out in remix-lib
-  constructor (config) {
+  constructor(config) {
     super(profile)
     this.event = new EventManager()
     this.executionContext = new ExecutionContext()
 
     this.events = new EventEmitter()
     this.config = config
-    const web3Runner = new TxRunnerWeb3({
+    const hashConnectRunner = new TxRunnerHashConnect({
       config: this.config,
       detectNetwork: (cb) => {
         this.executionContext.detectNetwork(cb)
@@ -45,7 +45,7 @@ export class Blockchain extends Plugin {
         return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
       }
     }, _ => this.executionContext.web3(), _ => this.executionContext.currentblockGasLimit())
-    this.txRunner = new TxRunner(web3Runner, { runAsync: true })
+    this.txRunner = new TxRunner(hashConnectRunner, { runAsync: true })
 
     this.executionContext.event.register('contextChanged', this.resetEnvironment.bind(this))
 
@@ -55,7 +55,7 @@ export class Blockchain extends Plugin {
     this.setupProviders()
   }
 
-  setupEvents () {
+  setupEvents() {
     this.executionContext.event.register('contextChanged', (context, silent) => {
       this.event.trigger('contextChanged', [context, silent])
     })
@@ -76,18 +76,18 @@ export class Blockchain extends Plugin {
     }, 1000)
   }
 
-  getCurrentNetworkStatus () {
+  getCurrentNetworkStatus() {
     return this.networkStatus
   }
 
-  setupProviders () {
+  setupProviders() {
     this.providers = {}
     this.providers.vm = new VMProvider(this.executionContext)
     this.providers.injected = new HashConnect(this.executionContext)
     this.providers.web3 = new NodeProvider(this.executionContext, this.config)
   }
 
-  getCurrentProvider () {
+  getCurrentProvider() {
     const provider = this.getProvider()
     if (this.providers[provider]) return this.providers[provider]
     return this.providers.web3 // default to the common type of provider
@@ -95,7 +95,7 @@ export class Blockchain extends Plugin {
 
   /** Return the list of accounts */
   // note: the dual promise/callback is kept for now as it was before
-  getAccounts (cb) {
+  getAccounts(cb) {
     return new Promise((resolve, reject) => {
       this.getCurrentProvider().getAccounts((error, accounts) => {
         if (cb) {
@@ -109,7 +109,7 @@ export class Blockchain extends Plugin {
     })
   }
 
-  deployContractAndLibraries (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
+  deployContractAndLibraries(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
     const { continueCb, promptCb, statusCb, finalCb } = callbacks
     const constructor = selectedContract.getConstructorInterface()
     txFormat.buildData(selectedContract.name, selectedContract.object, compilerContracts, true, constructor, args, (error, data) => {
@@ -125,7 +125,7 @@ export class Blockchain extends Plugin {
     })
   }
 
-  deployContractWithLibrary (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
+  deployContractWithLibrary(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
     const { continueCb, promptCb, statusCb, finalCb } = callbacks
     const constructor = selectedContract.getConstructorInterface()
     txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.object, args, constructor, contractMetadata.linkReferences, selectedContract.bytecodeLinkReferences, (error, data) => {
@@ -138,7 +138,7 @@ export class Blockchain extends Plugin {
     })
   }
 
-  async deployProxy (proxyData, implementationContractObject) {
+  async deployProxy(proxyData, implementationContractObject) {
     const proxyModal = {
       id: 'confirmProxyDeployment',
       title: 'Confirm Deploy Proxy (ERC1967)',
@@ -160,7 +160,7 @@ export class Blockchain extends Plugin {
     this.call('notification', 'modal', proxyModal)
   }
 
-  async runProxyTx (proxyData, implementationContractObject) {
+  async runProxyTx(proxyData, implementationContractObject) {
     const args = { useCall: false, data: proxyData }
     let networkInfo
     const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
@@ -207,7 +207,7 @@ export class Blockchain extends Plugin {
     this.call('notification', 'modal', upgradeModal)
   }
 
-  async runUpgradeTx (proxyAddress, data, newImplementationContractObject) {
+  async runUpgradeTx(proxyAddress, data, newImplementationContractObject) {
     const args = { useCall: false, data, to: proxyAddress }
     const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       // continue using original authorization given by user
@@ -228,7 +228,7 @@ export class Blockchain extends Plugin {
     this.runTx(args, confirmationCb, continueCb, promptCb, finalCb)
   }
 
-  async getEncodedFunctionHex (args, funABI) {
+  async getEncodedFunctionHex(args, funABI) {
     return new Promise((resolve, reject) => {
       txFormat.encodeFunctionCall(args, funABI, (error, data) => {
         if (error) return reject(error)
@@ -237,7 +237,7 @@ export class Blockchain extends Plugin {
     })
   }
 
-  async getEncodedParams (args, funABI) {
+  async getEncodedParams(args, funABI) {
     return new Promise((resolve, reject) => {
       txFormat.encodeParams(args, funABI, (error, encodedParams) => {
         if (error) return reject(error)
@@ -246,7 +246,7 @@ export class Blockchain extends Plugin {
     })
   }
 
-  createContract (selectedContract, data, continueCb, promptCb, confirmationCb, finalCb) {
+  createContract(selectedContract, data, continueCb, promptCb, confirmationCb, finalCb) {
     if (data) {
       data.contractName = selectedContract.name
       data.linkReferences = selectedContract.bytecodeLinkReferences
@@ -266,7 +266,7 @@ export class Blockchain extends Plugin {
     )
   }
 
-  determineGasPrice (cb) {
+  determineGasPrice(cb) {
     this.getCurrentProvider().getGasPrice((error, gasPrice) => {
       const warnMessage = ' Please fix this issue before sending any transaction. '
       if (error) {
@@ -281,29 +281,29 @@ export class Blockchain extends Plugin {
     })
   }
 
-  getInputs (funABI) {
+  getInputs(funABI) {
     if (!funABI.inputs) {
       return ''
     }
     return txHelper.inputParametersDeclarationToString(funABI.inputs)
   }
 
-  fromWei (value, doTypeConversion, unit) {
+  fromWei(value, doTypeConversion, unit) {
     if (doTypeConversion) {
       return Web3.utils.fromWei(typeConversion.toInt(value), unit || 'ether')
     }
     return Web3.utils.fromWei(value.toString(10), unit || 'ether')
   }
 
-  toWei (value, unit) {
+  toWei(value, unit) {
     return Web3.utils.toWei(value, unit || 'gwei')
   }
 
-  calculateFee (gas, gasPrice, unit) {
+  calculateFee(gas, gasPrice, unit) {
     return Web3.utils.toBN(gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10), unit || 'gwei')))
   }
 
-  determineGasFees (tx) {
+  determineGasFees(tx) {
     const determineGasFeesCb = (gasPrice, cb) => {
       let txFeeText, priceStatus
       // TODO: this try catch feels like an anti pattern, can/should be
@@ -322,23 +322,23 @@ export class Blockchain extends Plugin {
     return determineGasFeesCb
   }
 
-  changeExecutionContext (context, confirmCb, infoCb, cb) {
+  changeExecutionContext(context, confirmCb, infoCb, cb) {
     return this.executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
   }
 
-  setProviderFromEndpoint (target, context, cb) {
+  setProviderFromEndpoint(target, context, cb) {
     return this.executionContext.setProviderFromEndpoint(target, context, cb)
   }
 
-  detectNetwork (cb) {
+  detectNetwork(cb) {
     return this.executionContext.detectNetwork(cb)
   }
 
-  getProvider () {
+  getProvider() {
     return this.executionContext.getProvider()
   }
 
-  getInjectedWeb3Address () {
+  getInjectedWeb3Address() {
     return this.executionContext.getSelectedAddress()
   }
 
@@ -346,25 +346,25 @@ export class Blockchain extends Plugin {
    * return the fork name applied to the current envionment
    * @return {String} - fork name
    */
-  getCurrentFork () {
+  getCurrentFork() {
     return this.executionContext.getCurrentFork()
   }
 
-  isWeb3Provider () {
+  isWeb3Provider() {
     const isVM = this.getProvider() === 'vm'
     const isInjected = this.getProvider() === 'injected'
     return (!isVM && !isInjected)
   }
 
-  isInjectedWeb3 () {
+  isInjectedWeb3() {
     return this.getProvider() === 'injected'
   }
 
-  signMessage (message, account, passphrase, cb) {
+  signMessage(message, account, passphrase, cb) {
     this.getCurrentProvider().signMessage(message, account, passphrase, cb)
   }
 
-  web3 () {
+  web3() {
     // @todo(https://github.com/ethereum/remix-project/issues/431)
     const isVM = this.getProvider() === 'vm'
     if (isVM) {
@@ -373,7 +373,7 @@ export class Blockchain extends Plugin {
     return this.executionContext.web3()
   }
 
-  getTxListener (opts) {
+  getTxListener(opts) {
     opts.event = {
       // udapp: this.udapp.event
       udapp: this.event
@@ -382,7 +382,7 @@ export class Blockchain extends Plugin {
     return txlistener
   }
 
-  runOrCallContractMethod (contractName, contractAbi, funABI, contract, value, address, callType, lookupOnly, logMsg, logCallback, outputCb, confirmationCb, continueCb, promptCb) {
+  runOrCallContractMethod(contractName, contractAbi, funABI, contract, value, address, callType, lookupOnly, logMsg, logCallback, outputCb, confirmationCb, continueCb, promptCb) {
     // contractsDetails is used to resolve libraries
     txFormat.buildData(contractName, contractAbi, {}, false, funABI, callType, (error, data) => {
       if (error) {
@@ -410,22 +410,22 @@ export class Blockchain extends Plugin {
         }
       })
     },
-    (msg) => {
-      logCallback(msg)
-    },
-    (data, runTxCallback) => {
-      // called for libraries deployment
-      this.runTx(data, confirmationCb, runTxCallback, promptCb, () => { /* Do nothing. */ })
-    })
+      (msg) => {
+        logCallback(msg)
+      },
+      (data, runTxCallback) => {
+        // called for libraries deployment
+        this.runTx(data, confirmationCb, runTxCallback, promptCb, () => { /* Do nothing. */ })
+      })
   }
 
-  context () {
+  context() {
     return (this.executionContext.isVM() ? 'memory' : 'blockchain')
   }
 
   // NOTE: the config is only needed because exectuionContext.init does
   // if config.get('settings/always-use-vm'), we can simplify this later
-  resetAndInit (config, transactionContextAPI) {
+  resetAndInit(config, transactionContextAPI) {
     this.transactionContextAPI = transactionContextAPI
     this.executionContext.init(config)
     this.executionContext.stopListenOnLastBlock()
@@ -433,37 +433,30 @@ export class Blockchain extends Plugin {
     this.resetEnvironment()
   }
 
-  addProvider (provider) {
+  addProvider(provider) {
     this.executionContext.addProvider(provider)
   }
 
-  removeProvider (name) {
+  removeProvider(name) {
     this.executionContext.removeProvider(name)
   }
 
   // TODO : event should be triggered by Udapp instead of TxListener
   /** Listen on New Transaction. (Cannot be done inside constructor because txlistener doesn't exist yet) */
-  startListening (txlistener) {
+  startListening(txlistener) {
     txlistener.event.register('newTransaction', (tx, receipt) => {
       this.events.emit('newTransaction', tx, receipt)
     })
   }
 
-  resetEnvironment () {
+  async resetEnvironment() {
+    const hashconnect = new HashConnect()
+    await hashconnect.init();
     this.getCurrentProvider().resetEnvironment()
     // TODO: most params here can be refactored away in txRunner
-    const web3Runner = new TxRunnerWeb3({
-      config: this.config,
-      detectNetwork: (cb) => {
-        this.executionContext.detectNetwork(cb)
-      },
-      isVM: () => { return this.executionContext.isVM() },
-      personalMode: () => {
-        return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
-      }
-    }, _ => this.executionContext.web3(), _ => this.executionContext.currentblockGasLimit())
+    const hashConnectRunner = new TxRunnerHashConnect(hashconnect, _ => this.executionContext.web3(), _ => this.executionContext.currentblockGasLimit())
 
-    web3Runner.event.register('transactionBroadcasted', (txhash) => {
+    hashConnectRunner.event.register('transactionBroadcasted', (txhash) => {
       this.executionContext.detectNetwork((error, network) => {
         if (error || !network) return
         if (network.name === 'VM') return
@@ -471,36 +464,36 @@ export class Blockchain extends Plugin {
 
         if (viewEtherScanLink) {
           this.call('terminal', 'logHtml',
-          (<a href={etherScanLink(network.name, txhash)} target="_blank">
-            view on etherscan
-          </a>))
+            (<a href={etherScanLink(network.name, txhash)} target="_blank">
+              view on etherscan
+            </a>))
         }
       })
     })
-    this.txRunner = new TxRunner(web3Runner, { runAsync: true })
+    this.txRunner = new TxRunner(hashConnectRunner, { runAsync: true })
   }
 
   /**
    * Create a VM Account
    * @param {{privateKey: string, balance: string}} newAccount The new account to create
    */
-  createVMAccount (newAccount) {
+  createVMAccount(newAccount) {
     if (this.getProvider() !== 'vm') {
       throw new Error('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
     }
     return this.providers.vm.createVMAccount(newAccount)
   }
 
-  newAccount (_password, passwordPromptCb, cb) {
+  newAccount(_password, passwordPromptCb, cb) {
     return this.getCurrentProvider().newAccount(passwordPromptCb, cb)
   }
 
   /** Get the balance of an address, and convert wei to ether */
-  getBalanceInEther (address, cb) {
-    this.getCurrentProvider().getBalanceInEther(address, cb)
+  getBalanceInEther(address, cb) {
+    // this.getCurrentProvider().getBalanceInEther(address, cb)
   }
 
-  pendingTransactionsCount () {
+  pendingTransactionsCount() {
     return Object.keys(this.txRunner.pendingTxs).length
   }
 
@@ -508,7 +501,7 @@ export class Blockchain extends Plugin {
     return await this.web3().eth.getCode(address)
   }
 
-  async getTransactionReceipt (hash) {
+  async getTransactionReceipt(hash) {
     return await this.web3().eth.getTransactionReceipt(hash)
   }
 
@@ -518,7 +511,7 @@ export class Blockchain extends Plugin {
    *
    * @param {Object} tx    - transaction.
    */
-  sendTransaction (tx) {
+  sendTransaction(tx) {
     return new Promise((resolve, reject) => {
       this.executionContext.detectNetwork((error, network) => {
         if (error) return reject(error)
@@ -545,80 +538,13 @@ export class Blockchain extends Plugin {
     })
   }
 
-  async runTx (args, confirmationCb, continueCb, promptCb, cb) {
-    if (args.data) {
-      const hashconnectProvider = new HashConnect()
-      await hashconnectProvider.init();
-      await hashconnectProvider.createFile(args);
-      await hashconnectProvider.deployContract();
-      return
-    }
-    const getGasLimit = () => {
-      return new Promise((resolve, reject) => {
-        if (this.transactionContextAPI.getGasLimit) {
-          return this.transactionContextAPI.getGasLimit((err, value) => {
-            if (err) return reject(err)
-            return resolve(value)
-          })
-        }
-        return resolve(3000000)
-      })
-    }
-    const queryValue = () => {
-      return new Promise((resolve, reject) => {
-        if (args.value) {
-          return resolve(args.value)
-        }
-        if (args.useCall || !this.transactionContextAPI.getValue) {
-          return resolve(0)
-        }
-        this.transactionContextAPI.getValue((err, value) => {
-          if (err) return reject(err)
-          return resolve(value)
-        })
-      })
-    }
-    const getAccount = () => {
-      return new Promise((resolve, reject) => {
-        if (args.from) {
-          return resolve(args.from)
-        }
-        if (this.transactionContextAPI.getAddress) {
-          return this.transactionContextAPI.getAddress(function (err, address) {
-            if (err) return reject(err)
-            if (!address) return reject('"from" is not defined. Please make sure an account is selected. If you are using a public node, it is likely that no account will be provided. In that case, add the public node to your injected provider (type Metamask) and use injected provider in Remix.')
-            return resolve(address)
-          })
-        }
-        this.getAccounts(function (err, accounts) {
-          if (err) return reject(err)
-          const address = accounts[0]
-
-          if (!address) return reject('No accounts available')
-          if (this.executionContext.isVM() && !this.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
-            return reject('Invalid account selected')
-          }
-          return resolve(address)
-        })
-      })
-    }
+  async runTx(args, confirmationCb, continueCb, promptCb, cb) {
+    console.log({args})
     const runTransaction = async () => {
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve, reject) => {
-        let fromAddress
-        let value
-        let gasLimit
-        try {
-          fromAddress = await getAccount()
-          value = await queryValue()
-          gasLimit = await getGasLimit()
-        } catch (e) {
-          reject(e)
-          return
-        }
-
-        const tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, gasLimit: gasLimit, timestamp: args.data.timestamp }
         const payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
+        const tx = { ...payLoad, to: args.to, data: args.data.dataHex, useCall: args.useCall, timestamp: args.data.timestamp }
 
         if (!tx.timestamp) tx.timestamp = Date.now()
         const timestamp = tx.timestamp
@@ -636,15 +562,7 @@ export class Blockchain extends Plugin {
                 }
                 return reject(error)
               }
-
-              const isVM = this.executionContext.isVM()
-              if (isVM && tx.useCall) {
-                try {
-                  result.transactionHash = await this.web3().eth.getHashFromTagBySimulator(timestamp)
-                } catch (e) {
-                  console.log('unable to retrieve back the "call" hash', e)
-                }
-              }
+              console.log(result)
               const eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
 
               this.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
@@ -666,6 +584,7 @@ export class Blockchain extends Plugin {
     try {
       const transaction = await runTransaction()
       const txResult = transaction.result
+      console.log({txResult})
       const tx = transaction.tx
       /*
       value of txResult is inconsistent:
@@ -674,51 +593,16 @@ export class Blockchain extends Plugin {
           - call to contract:
             {"result":"0x0000000000000000000000000000000000000000000000000000000000000000","transactionHash":"0x5236a76152054a8aad0c7135bcc151f03bccb773be88fbf4823184e47fc76247"}
       */
-      const isVM = this.executionContext.isVM()
-      let execResult
       let returnValue = null
-      if (isVM) {
-        const hhlogs = await this.web3().eth.getHHLogsForTx(txResult.transactionHash)
 
-        if (hhlogs && hhlogs.length) {
-          let finalLogs = <div><div><b>console.log:</b></div>
-          {
-            hhlogs.map((log) => {
-              let formattedLog
-              // Hardhat implements the same formatting options that can be found in Node.js' console.log,
-              // which in turn uses util.format: https://nodejs.org/dist/latest-v12.x/docs/api/util.html#util_util_format_format_args
-              // For example: console.log("Name: %s, Age: %d", remix, 6) will log 'Name: remix, Age: 6'
-              // We check first arg to determine if 'util.format' is needed
-              if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
-                formattedLog = format(log[0], ...log.slice(1))
-              } else {
-                formattedLog = log.join(' ')
-              }
-              return <div>{formattedLog}</div>
-          })}
-          </div>
-          _paq.push(['trackEvent', 'udapp', 'hardhat', 'console.log'])
-          this.call('terminal', 'logHtml', finalLogs)
-        }
-        execResult = await this.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
-        if (execResult) {
-          // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
-          returnValue = execResult ? execResult.returnValue : toBuffer(addHexPrefix(txResult.result) || '0x0000000000000000000000000000000000000000000000000000000000000000')
-          const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
-          const vmError = txExecution.checkVMError(execResult, compiledContracts)
-          if (vmError.error) {
-            return cb(vmError.message)
-          }
-        }
-      }
-
-      if (!isVM && tx && tx.useCall) {
+      if (tx && tx.useCall) {
         returnValue = toBuffer(addHexPrefix(txResult.result))
       }
 
       let address = null
       if (txResult && txResult.receipt) {
-        address = txResult.receipt.contractAddress
+        // address = txResult.receipt.contractAddress
+        address = txResult.receipt.contractId
       }
 
       cb(null, txResult, address, returnValue)

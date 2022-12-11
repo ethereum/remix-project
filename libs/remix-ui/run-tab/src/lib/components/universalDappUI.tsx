@@ -34,11 +34,7 @@ export function UniversalDappUI (props: UdappProps) {
 
   useEffect(() => {
     if (props.instance.address) {
-      // @ts-ignore
-      let address = (props.instance.address.slice(0, 2) === '0x' ? '' : '0x') + props.instance.address.toString('hex')
-
-      address = ethJSUtil.toChecksumAddress(address)
-      setAddress(address)
+      setAddress(props.instance.address)
     }
   }, [props.instance.address])
 

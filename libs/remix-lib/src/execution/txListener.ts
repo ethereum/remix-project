@@ -33,7 +33,7 @@ export class TxListener {
   _listenOnNetwork:boolean
   _loopId
   blocks
-  
+
   constructor (opt, executionContext) {
     this.event = new EventManager()
     // has a default for now for backwards compatability
@@ -72,7 +72,7 @@ export class TxListener {
         from: from,
         to: to,
         input: data,
-        hash: txResult.transactionHash ? txResult.transactionHash : 'call' + (from || '') + to + data,
+        hash: txResult?.transactionHash ? txResult.transactionHash : 'call' + (from || '') + to + data,
         isCall: true,
         returnValue,
         envMode: this.executionContext.getProvider()
@@ -204,7 +204,7 @@ export class TxListener {
   async _manageBlock (blockNumber) {
     try {
       const result = await this.executionContext.web3().eth.getBlock(blockNumber, true)
-      return await this._newBlock(Object.assign({ type: 'web3' }, result))  
+      return await this._newBlock(Object.assign({ type: 'web3' }, result))
     } catch (e) {}
   }
 

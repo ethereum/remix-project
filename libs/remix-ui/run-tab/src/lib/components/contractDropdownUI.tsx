@@ -200,13 +200,13 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   }
 
   const loadFromAddress = () => {
-    let address = loadedAddress
+    // let address = loadedAddress
 
-    if (!ethJSUtil.isValidChecksumAddress(address)) {
-      props.tooltip(checkSumWarning())
-      address = ethJSUtil.toChecksumAddress(address)
-    }
-    props.loadAddress(loadedContractData, address)
+    // if (!ethJSUtil.isValidChecksumAddress(address)) {
+    //   props.tooltip(checkSumWarning())
+    //   address = ethJSUtil.toChecksumAddress(address)
+    // }
+    props.loadAddress(loadedContractData, loadedAddress)
   }
 
   const handleCheckedIPFS = () => {
