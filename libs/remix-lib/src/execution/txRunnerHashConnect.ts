@@ -20,6 +20,10 @@ export class TxRunnerHashConnect {
   // await hashconnectProvider.init();
 
   async execute(args, confirmationCb, gasEstimationForceSend, promptCb, callback) {
+    const signer = this.hashconnect.signer;
+    if (!signer) {
+      return callback('wallet not connected')
+    }
     console.log('Execute')
     if (args.contractBytecode) {
       console.log('Deploy')
@@ -42,65 +46,57 @@ export class TxRunnerHashConnect {
     console.log({ args });
     if (args.to) {
       const fnName = args.funAbi.name;
-      const parameters = new ContractFunctionParameters();
-      for (let index = 0; index < args.funArgs.length; index++) {
-        switch (args.funAbi.inputs[index]) {
+      const parameters = args.funAbi.inputs.length > 0 ? new ContractFunctionParameters() : null;
+      for (let index = 0; index < args.funAbi.inputs.length; index++) {
+        switch (args.funAbi.inputs[index].type) {
           case "uint256":
+            console.log('uint256', args.funArgs[index])
             parameters.addUint256(args.funArgs[index])
             break;
           default:
+            console.log('string', args.funArgs[index])
             parameters.addString(args.funArgs[index])
             break;
         }
       }
       //Create the transaction
       try {
-        console.log({
-          contractId: args.to,
-          function: {
-            name: fnName,
-            parameters
-          }
-        });
-        let transaction: ContractCallQuery | ContractExecuteTransaction;
+        const gas = 100_000;
         if (args.useCall) {
-          transaction = new ContractCallQuery()
+          const contractCallQuery = new ContractCallQuery()
             .setContractId(args.to)
-            .setMaxQueryPayment(new Hbar(10))
-            .setFunction(fnName, parameters)
-        } else {
-          const gas = 1_000_000;
-          transaction = new ContractExecuteTransaction()
-            .setContractId(args.to)
-            .setFunction(fnName, parameters)
-            .setMaxTransactionFee(new Hbar(10))
             .setGas(gas)
-          await transaction.freezeWithSigner(this.hashconnect.signer)
+            .setFunction(fnName, parameters)
+            .setQueryPayment(new Hbar(10))
+          const contractQuerySubmit = await contractCallQuery.execute(signer);
+          // TODO
+          // Change method to
+          // https://github.com/Hashpack/hashconnect/blob/main/example/dapp/src/app/components/smartcontract-call/smartcontract-call.component.ts
+          const result = {};
+
+          for (let index = 0; index < args.funAbi.outputs.length; index++) {
+            switch (args.funAbi.outputs[index].type) {
+              case "uint256":
+                result[args.funAbi.outputs[index].name] = await contractQuerySubmit?.getUint256(index)
+                break;
+              default:
+                result[args.funAbi.outputs[index].name] = await contractQuerySubmit?.getString(index)
+                break;
+            }
+          }
+          return callback(null, result);
         }
-
-
-        //Sign with the client operator private key to pay for the transaction and submit the query to a Hedera network
-        return transaction
-          .executeWithSigner(this.hashconnect.signer)
-          .then((res) => {
-            console.log({ res });
-            callback(null, res);
-          }).catch((err) => {
-            callback({ err });
-            console.log(err)
-          });
+        const transaction = await new ContractExecuteTransaction()
+          .setContractId(args.to)
+          .setFunction(fnName, parameters)
+          .setMaxTransactionFee(new Hbar(20))
+          .setGas(gas).freezeWithSigner(signer)
+        const submitTx = await transaction
+          .executeWithSigner(signer);
+        callback(null, submitTx);
       } catch (error) {
         return callback(error.message);
       }
-      //Request the receipt of the transaction
-      // const receipt = this.hashconnect.provider.getTransactionReceipt();
-
-      //Get the transaction consensus status
-      // const transactionStatus = receipt.status;
-
-      // console.log("The transaction consensus status is " + transactionStatus);
-
-      // return this.runInNode(args.from, args.to, data, args.value, args.gasLimit, args.useCall, args.timestamp, confirmationCb, gasEstimationForceSend, promptCb, callback)
     }
     return callback('Skipped contract deploy and execution')
   }

@@ -553,6 +553,7 @@ export class Blockchain extends Plugin {
         try {
           this.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
             async (error, result) => {
+              console.log('result',result)
               if (error) {
                 if (typeof (error) !== 'string') {
                   if (error.message) error = error.message
@@ -562,7 +563,6 @@ export class Blockchain extends Plugin {
                 }
                 return reject(error)
               }
-              console.log(result)
               const eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
 
               this.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
