@@ -596,7 +596,7 @@ export class Blockchain extends Plugin {
       let returnValue = null
 
       if (tx && tx.useCall) {
-        returnValue = toBuffer(addHexPrefix(txResult.result))
+        returnValue = toBuffer(addHexPrefix(txResult.receipt))
       }
 
       let address = null

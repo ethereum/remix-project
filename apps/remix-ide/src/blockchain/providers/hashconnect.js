@@ -32,11 +32,12 @@ class HashconnectProvider {
       console.log('walletMetadata', walletMetadata);
       if (this.initData.savedPairings.length === 0) {
         this.hashconnect.connectToLocalWallet();
+      } else {
+        this.hashconnect.connectToLocalWallet(pairingString);
       }
     })
     this.hashconnect.pairingEvent.once((pairingData) => {
       console.log('pairingData', pairingData)
-
       const { savedPairings } = this.initData;
       const pairing = savedPairings[0];
       const { topic, accountIds: [accountId] } = pairing;

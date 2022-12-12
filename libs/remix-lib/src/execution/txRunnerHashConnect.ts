@@ -68,23 +68,19 @@ export class TxRunnerHashConnect {
             .setGas(gas)
             .setFunction(fnName, parameters)
             .setQueryPayment(new Hbar(10))
-          const contractQuerySubmit = await contractCallQuery.executeWithSigner(signer);
-          // TODO
-          // Change method to
-          // https://github.com/Hashpack/hashconnect/blob/main/example/dapp/src/app/components/smartcontract-call/smartcontract-call.component.ts
-          const result = {};
-
-          for (let index = 0; index < args.funAbi.outputs.length; index++) {
-            switch (args.funAbi.outputs[index].type) {
-              case "uint256":
-                result[args.funAbi.outputs[index].name] = await contractQuerySubmit?.getUint256(index)
-                break;
-              default:
-                result[args.funAbi.outputs[index].name] = await contractQuerySubmit?.getString(index)
-                break;
+          const transactionQuery = {
+            topic: this.hashconnect.initData.topic,
+            byteArray: contractCallQuery.toBytes(),
+            metadata: {
+              accountToSign: this.hashconnect.initData.savedPairings[0].accountIds[0],
+              getRecord: false,
+              returnTransaction: false,
+              hideNft: false
             }
           }
-          return callback(null, result);
+          const response = await this.hashconnect.hashconnect.sendTransaction(this.hashconnect.initData.topic, transactionQuery)
+          console.log(response)
+          return callback(null, response);
         }
         const transaction = await new ContractExecuteTransaction()
           .setContractId(args.to)
