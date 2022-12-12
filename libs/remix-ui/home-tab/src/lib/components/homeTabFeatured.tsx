@@ -37,10 +37,10 @@ function HomeTabFeatured() {
               dotListClass="position-relative mt-2"
             >
               <div className="mx-1 px-1 d-flex">
-                <img className="mt-1 pb-1" src={"/assets/img/solidity.webp"} style={{ flex: "1", height: "160px", maxWidth: "170px", paddingTop: 2, paddingBottom: 2, filter: themeFilter.filter }} alt="" ></img>
-                <div className="h6 pt-2" style={{ flex: "1" }}>
+                <img className="mt-2 pb-1" src={"/assets/img/solidity.webp"} style={{ flex: "1", height: "150px", maxWidth: "150px", paddingTop: 2, paddingBottom: 2, filter: themeFilter.filter }} alt="" ></img>
+                <div className="h6 w-50 pt-2" style={{ flex: "1" }}>
                   <h5><FormattedMessage id='home.solidityDevSurveyHeader' /></h5>
-                  <p>
+                  <p className="remixui_home_carouselText">
                     <FormattedMessage id='home.solidityDevSurvey' />
                   </p>
                   <a className="remixui_home_text btn btn-primary text-decoration-none mb-3" target="__blank" onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'soliditySurvey'])} href="https://blog.soliditylang.org/2022/12/07/solidity-developer-survey-2022-announcement/"><FormattedMessage id='home.surveyLink' /></a>
