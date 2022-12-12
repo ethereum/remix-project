@@ -192,6 +192,7 @@ export class CodeFormat extends Plugin {
             } else {
                 parsed = defaultOptions
                 await this.call('fileManager', 'writeFile', '.prettierrc.json', JSON.stringify(parsed, null, 2))
+                await this.call('notification', 'toast', 'A prettier config file has been created in the workspace.')
             }
 
             if (!parsed && prettierConfigFile) {
