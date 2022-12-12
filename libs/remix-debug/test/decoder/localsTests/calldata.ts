@@ -31,8 +31,11 @@ module.exports = async function (st, privateKey, contractBytecode, compilationRe
       var traceManager = new TraceManager({ web3 })
       var codeManager = new CodeManager(traceManager)
       codeManager.clear()
-      var solidityProxy = new SolidityProxy({ getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), getCode: codeManager.getCode.bind(codeManager) })
-      solidityProxy.reset(compilationResult)
+      var solidityProxy = new SolidityProxy({ 
+        getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), 
+        getCode: codeManager.getCode.bind(codeManager),
+        compilationResult: () => compilationResult 
+      })
       var debuggerEvent = new EventManager()
       var callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true })
       callTree.event.register('callTreeBuildFailed', (error) => {
