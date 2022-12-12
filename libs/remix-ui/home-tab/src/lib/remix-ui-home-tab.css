@@ -105,3 +105,7 @@
   top: 120px;
   right: 180px;
 }
+
+.remixui_home_carouselText {
+  font-size: rfs-fluid-value(1rem);
+}
