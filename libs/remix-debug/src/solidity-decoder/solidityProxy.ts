@@ -21,14 +21,6 @@ export class SolidityProxy {
   }
 
   /**
-    * reset the cache and apply a new @arg compilationResult
-    *
-    */
-  reset () {
-    this.cache.reset()
-  }
-
-  /**
     * retrieve the compiled contract name at the @arg vmTraceIndex (cached)
     *
     * @param {Int} vmTraceIndex  - index in the vm trave where to resolve the executed contract name
@@ -68,7 +60,7 @@ export class SolidityProxy {
       this.cache.contractDeclarations[address] = extractContractDefinitions(compilationResult.data.sources)
     }
     if (!this.cache.statesDefinitions[address]) {
-      this.cache.statesDefinitions[address] = extractStatesDefinitions(compilationResult.data.sources, this.cache.contractDeclarations[address])
+      this.cache.statesDefinitions[address] = extractStatesDefinitions(compilationResult.data.sources, this.cache.contractDeclarations)
     }
     return this.cache.statesDefinitions[address]
   }
