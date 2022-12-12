@@ -88,6 +88,7 @@ export class BreakpointManager {
     this.event.trigger('locatingBreakpoint', [])
     let sourceLocation
     let lineColumn
+    let contractAddress
     let previousSourceLocation
     let currentStep = fromStep + direction
     let lineHadBreakpoint = false
@@ -98,6 +99,7 @@ export class BreakpointManager {
         const stepInfo = this.callTree.locationAndOpcodePerVMTraceIndex[currentStep]
         sourceLocation = stepInfo.sourceLocation
         lineColumn = stepInfo.lineColumnPos
+        contractAddress = stepInfo.contractAddress
       } catch (e) {
         console.log('cannot jump to breakpoint ' + e)
         currentStep += direction
@@ -112,7 +114,7 @@ export class BreakpointManager {
             return
           }
         }
-        if (this.hasBreakpointAtLine(sourceLocation.file, lineColumn.start.line)) {
+        if (await this.hasBreakpointAtLine(sourceLocation.file, lineColumn.start.line, contractAddress)) {
           lineHadBreakpoint = true
           if (this.hitLine(currentStep, sourceLocation, previousSourceLocation, trace)) {
             return
@@ -139,8 +141,9 @@ export class BreakpointManager {
     * @param {Int} line - line number where looking for breakpoint
     * @return {Bool} return true if the given @arg fileIndex @arg line refers to a breakpoint
     */
-  hasBreakpointAtLine (fileIndex, line) {
-    const filename = this.solidityProxy.fileNameFromIndex(fileIndex)
+  async hasBreakpointAtLine (fileIndex, line, contractAddress) {
+    const compResult = await this.solidityProxy.compilationResult(contractAddress)
+    const filename = Object.keys(compResult.data.contracts)[fileIndex]
     if (!(filename && this.breakpoints[filename])) {
       return false
     }

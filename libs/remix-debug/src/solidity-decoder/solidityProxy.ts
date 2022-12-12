@@ -13,32 +13,11 @@ export class SolidityProxy {
   compilationResult
   sourcesCode
 
-  constructor ({ getCurrentCalledAddressAt, getCode }) {
+  constructor ({ getCurrentCalledAddressAt, getCode, compilationResult }) {
     this.cache = new Cache()
-    this.reset({})
     this.getCurrentCalledAddressAt = getCurrentCalledAddressAt
     this.getCode = getCode
-  }
-
-  /**
-    * reset the cache and apply a new @arg compilationResult
-    *
-    * @param {Object} compilationResult  - result os a compilatiion (diectly returned by the compiler)
-    */
-  reset (compilationResult, sources?) {
-    this.sources = compilationResult.sources // ast
-    this.contracts = compilationResult.contracts
-    if (sources) this.sourcesCode = sources
-    this.cache.reset()
-  }
-
-  /**
-    * check if the object has been properly loaded
-    *
-    * @return {Bool} - returns true if a compilation result has been applied
-    */
-  loaded () {
-    return this.contracts !== undefined
+    this.compilationResult = compilationResult
   }
 
   /**
@@ -63,7 +42,8 @@ export class SolidityProxy {
       return this.cache.contractObjectByAddress[address]
     }
     const code = await this.getCode(address)
-    const contract = contractObjectFromCode(this.contracts, code.bytecode, address)
+    const compilationResult = await this.compilationResult(address)
+    const contract = contractObjectFromCode(compilationResult.data.contracts, code.bytecode, address)
     this.cache.contractObjectByAddress[address] = contract
     return contract
   }
@@ -74,14 +54,15 @@ export class SolidityProxy {
     * @param {String} contractName  - name of the contract to retrieve state variables from
     * @return {Object} - returns state variables of @args contractName
     */
-  extractStatesDefinitions () {
-    if (!this.cache.contractDeclarations) {
-      this.cache.contractDeclarations = extractContractDefinitions(this.sources)
+  async extractStatesDefinitions (address: string) {
+    const compilationResult = await this.compilationResult(address)
+    if (!this.cache.contractDeclarations[address]) {      
+      this.cache.contractDeclarations[address] = extractContractDefinitions(compilationResult.data.sources)
     }
-    if (!this.cache.statesDefinitions) {
-      this.cache.statesDefinitions = extractStatesDefinitions(this.sources, this.cache.contractDeclarations)
+    if (!this.cache.statesDefinitions[address]) {
+      this.cache.statesDefinitions[address] = extractStatesDefinitions(compilationResult.data.sources, this.cache.contractDeclarations)
     }
-    return this.cache.statesDefinitions
+    return this.cache.statesDefinitions[address]
   }
 
   /**
@@ -90,9 +71,10 @@ export class SolidityProxy {
     * @param {String} contractName  - name of the contract to retrieve state variables from
     * @return {Object} - returns state variables of @args contractName
     */
-  extractStateVariables (contractName) {
+  async extractStateVariables (contractName, address) {
     if (!this.cache.stateVariablesByContractName[contractName]) {
-      this.cache.stateVariablesByContractName[contractName] = extractStateVariables(contractName, this.sources)
+      const compilationResult = await this.compilationResult(address)
+      this.cache.stateVariablesByContractName[contractName] = extractStateVariables(contractName, compilationResult.data.sources)
     }
     return this.cache.stateVariablesByContractName[contractName]
   }
@@ -103,9 +85,9 @@ export class SolidityProxy {
     * @param {Int} vmTraceIndex  - index in the vm trave where to resolve the state variables
     * @return {Object} - returns state variables of @args vmTraceIndex
     */
-  async extractStateVariablesAt (vmtraceIndex) {
+  async extractStateVariablesAt (vmtraceIndex, address) {
     const contract = await this.contractObjectAt(vmtraceIndex)
-    return this.extractStateVariables(contract.name)
+    return await this.extractStateVariables(contract.name, address)
   }
 
   /**
@@ -114,14 +96,15 @@ export class SolidityProxy {
     * @param {Object} sourceLocation  - source location containing the 'file' to retrieve the AST from
     * @return {Object} - AST of the current file
     */
-  ast (sourceLocation, generatedSources) {
-    const file = this.fileNameFromIndex(sourceLocation.file)
+  async ast (sourceLocation, generatedSources, address) {
+    const compilationResult = await this.compilationResult(address)
+    const file = this.fileNameFromIndex(sourceLocation.file, compilationResult.data)
     if (!file && generatedSources && generatedSources.length) {
       for (const source of generatedSources) {
         if (source.id === sourceLocation.file) return source.ast
       }
-    } else if (this.sources[file]) {
-      return this.sources[file].ast
+    } else if (compilationResult.data.sources[file]) {
+      return compilationResult.data.sources[file].ast
     }
     return null
   }
@@ -132,8 +115,8 @@ export class SolidityProxy {
    * @param {Int} index  - index of the filename
    * @return {String} - filename
    */
-  fileNameFromIndex (index) {
-    return Object.keys(this.contracts)[index]
+  fileNameFromIndex (index, compilationResult) {
+    return Object.keys(compilationResult.contracts)[index]
   }
 }
 
@@ -163,7 +146,7 @@ class Cache {
   reset () {
     this.contractObjectByAddress = {}
     this.stateVariablesByContractName = {}
-    this.contractDeclarations = null
-    this.statesDefinitions = null
+    this.contractDeclarations = {}
+    this.statesDefinitions = {}
   }
 }

@@ -57,8 +57,9 @@ export class FetchAndCompile extends Plugin {
         optimize: UUPSOptimize,
         runs: UUPSRuns
       }
+      const proxyUrl = 'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.8.0/contracts/proxy/ERC1967/ERC1967Proxy.sol'
       const compilationTargets = {
-        'proxy.sol': { content: 'import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.8.0/contracts/proxy/ERC1967/ERC1967Proxy.sol";' }
+        'proxy.sol': { content: `import "${proxyUrl}";` }
       }
       const compData = await compile(
         compilationTargets,
