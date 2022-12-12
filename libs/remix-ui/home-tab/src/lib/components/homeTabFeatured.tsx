@@ -33,7 +33,7 @@ function HomeTabFeatured() {
               sliderClass="h-100 justify-content-between"
               deviceType={"desktop"}
               itemClass=""
-              autoPlaySpeed={150000}
+              autoPlaySpeed={15000}
               dotListClass="position-relative mt-2"
             >
               <div className="mx-1 px-1 d-flex">
