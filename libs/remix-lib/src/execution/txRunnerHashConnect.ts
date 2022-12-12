@@ -68,7 +68,7 @@ export class TxRunnerHashConnect {
             .setGas(gas)
             .setFunction(fnName, parameters)
             .setQueryPayment(new Hbar(10))
-          const contractQuerySubmit = await contractCallQuery.execute(signer);
+          const contractQuerySubmit = await contractCallQuery.executeWithSigner(signer);
           // TODO
           // Change method to
           // https://github.com/Hashpack/hashconnect/blob/main/example/dapp/src/app/components/smartcontract-call/smartcontract-call.component.ts
