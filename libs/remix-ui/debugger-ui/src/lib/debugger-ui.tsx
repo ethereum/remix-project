@@ -226,7 +226,10 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     })
   }
   const startDebugging = async (blockNumber, txNumber, tx, optWeb3?) => {
-    if (state.debugger) unLoad()
+    if (state.debugger) {
+      unLoad()
+      await (new Promise((resolve) => setTimeout(() => resolve({}), 1000)))    
+    }
     if (!txNumber) return
     setState(prevState => {
       return {
