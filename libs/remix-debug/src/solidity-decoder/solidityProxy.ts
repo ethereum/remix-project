@@ -60,7 +60,7 @@ export class SolidityProxy {
       this.cache.contractDeclarations[address] = extractContractDefinitions(compilationResult.data.sources)
     }
     if (!this.cache.statesDefinitions[address]) {
-      this.cache.statesDefinitions[address] = extractStatesDefinitions(compilationResult.data.sources, this.cache.contractDeclarations)
+      this.cache.statesDefinitions[address] = extractStatesDefinitions(compilationResult.data.sources, this.cache.contractDeclarations[address])
     }
     return this.cache.statesDefinitions[address]
   }
