@@ -12,7 +12,7 @@ import NodeProvider from './providers/node.js'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
 import { etherScanLink } from './helper'
 import { logBuilder, cancelUpgradeMsg, cancelProxyMsg, addressToString } from "@remix-ui/helper"
-const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerHashConnect, txHelper } = execution
+const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerHedera, txHelper } = execution
 const { txResultHelper: resultToRemixTx } = helpers
 const packageJson = require('../../../../package.json')
 
@@ -35,17 +35,8 @@ export class Blockchain extends Plugin {
 
     this.events = new EventEmitter()
     this.config = config
-    const hashConnectRunner = new TxRunnerHashConnect({
-      config: this.config,
-      detectNetwork: (cb) => {
-        this.executionContext.detectNetwork(cb)
-      },
-      isVM: () => { return this.executionContext.isVM() },
-      personalMode: () => {
-        return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
-      }
-    }, _ => this.executionContext.web3(), _ => this.executionContext.currentblockGasLimit())
-    this.txRunner = new TxRunner(hashConnectRunner, { runAsync: true })
+    const txRunnerHedera = new TxRunnerHedera()
+    this.txRunner = new TxRunner(txRunnerHedera, { runAsync: true })
 
     this.executionContext.event.register('contextChanged', this.resetEnvironment.bind(this))
 
@@ -450,26 +441,9 @@ export class Blockchain extends Plugin {
   }
 
   async resetEnvironment() {
-    const hashconnect = new HashConnect()
-    await hashconnect.init();
     this.getCurrentProvider().resetEnvironment()
     // TODO: most params here can be refactored away in txRunner
-    const hashConnectRunner = new TxRunnerHashConnect(hashconnect, _ => this.executionContext.web3(), _ => this.executionContext.currentblockGasLimit())
-
-    hashConnectRunner.event.register('transactionBroadcasted', (txhash) => {
-      this.executionContext.detectNetwork((error, network) => {
-        if (error || !network) return
-        if (network.name === 'VM') return
-        const viewEtherScanLink = etherScanLink(network.name, txhash)
-
-        if (viewEtherScanLink) {
-          this.call('terminal', 'logHtml',
-            (<a href={etherScanLink(network.name, txhash)} target="_blank">
-              view on etherscan
-            </a>))
-        }
-      })
-    })
+    const hashConnectRunner = new TxRunnerHedera()
     this.txRunner = new TxRunner(hashConnectRunner, { runAsync: true })
   }
 

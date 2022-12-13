@@ -14,7 +14,7 @@ import { forkAt } from './execution/forkAt'
 import * as typeConversion from './execution/typeConversion'
 import { TxRunnerVM } from './execution/txRunnerVM'
 import * as txResultHelper from './helpers/txResultHelper'
-import { TxRunnerHashConnect } from './execution/txRunnerHashConnect'
+import { TxRunnerHedera } from './execution/txRunnerHedera'
 export { ConsoleLogs } from './helpers/hhconsoleSigs'
 export { ICompilerApi, ConfigurationSettings } from './types/ICompilerApi'
 export { QueryParams } from './query-params'
@@ -31,7 +31,7 @@ const execution = {
   txFormat: txFormat,
   txListener: TxListener,
   TxRunner: TxRunner,
-  TxRunnerHashConnect: TxRunnerHashConnect,
+  TxRunnerHedera: TxRunnerHedera,
   TxRunnerVM: TxRunnerVM,
   typeConversion: typeConversion,
   LogsManager,
