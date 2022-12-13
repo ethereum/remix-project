@@ -35,7 +35,7 @@ module.exports = async function (st, privateKey, contractBytecode, compilationRe
       const solidityProxy = new SolidityProxy({ 
         getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), 
         getCode: codeManager.getCode.bind(codeManager),
-        compilationResult: () => compilationResult 
+        compilationResult: () => compilationResult
       })
       const debuggerEvent = new EventManager()
       const offsetToLineColumnConverter = {
