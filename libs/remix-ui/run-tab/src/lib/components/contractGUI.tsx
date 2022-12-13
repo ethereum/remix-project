@@ -318,12 +318,6 @@ export function ContractGUI (props: ContractGUIProps) {
             }}
           />
         </CustomTooltip>
-        <CustomTooltip
-          tooltipText={title}
-          tooltipClasses="text-nowrap"
-          placement="bottom"
-          tooltipId="switchMethodViewOnTooltip"
-        >
           <i
             className="fas fa-angle-down udapp_methCaret"
             onClick={switchMethodViewOn}
@@ -335,7 +329,6 @@ export function ContractGUI (props: ContractGUIProps) {
                 : "visible",
             }}
           ></i>
-        </CustomTooltip>
       </div>
       <div
         className="udapp_contractActionsContainerMulti"
