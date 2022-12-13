@@ -8,9 +8,13 @@ var testMappingStorage = require('./stateTests/mapping')
 
 tape('solidity', function (t) {
   t.test('storage decoder', function (st) {
+    console.log('test int storage')
     testIntStorage(st, function () {
+      console.log('test byte storage')
       testByteStorage(st, function () {
+        console.log('test struct storage')
         testStructArrayStorage(st, function () {
+          console.log('test mapping storage')
           testMappingStorage(st, function () {
             st.end()
           })
