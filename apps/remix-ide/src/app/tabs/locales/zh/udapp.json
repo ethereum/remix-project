@@ -20,5 +20,15 @@
   "udapp.deployedContracts": "已部署的合约",
   "udapp.deployAndRunClearInstances": "清空合约实例并重置交易记录",
   "udapp.deployAndRunNoInstanceText": "当前您没有可交互的合约实例.",
-  "udapp.transactionsRecorded": "已记录的交易"
+  "udapp.transactionsRecorded": "已记录的交易",
+  "udapp.transactionsCountTooltip": "已记录的交易数",
+  "udapp.transactionSaveTooltip1": "没有可保存的交易",
+  "udapp.transactionSaveTooltip2": "将 {count} 笔交易保存到一个场景文件",
+  "udapp.transactionSaveTooltip3": "将 {count} 笔交易保存到一个场景文件",
+  "udapp.infoRecorderTooltip": "保存交易 (合约部署和方法执行) {br}然后在另一个环境中回放，比如在 Remix VM {br}创建的交易可以在 Injected Provider 中回放。",
+  "udapp.livemodeRecorderTooltip": "如果记录交易后合约有更新，{br}选中这个复选框就会以最新的{br}合约编译结果执行已记录的交易",
+  "udapp.livemodeRecorderLabel": "用最新的编译结果执行交易",
+  "udapp.runRecorderTooltip": "从当前场景文件中执行交易",
+  "udapp.save": "保存",
+  "udapp.run": "执行"
 }
