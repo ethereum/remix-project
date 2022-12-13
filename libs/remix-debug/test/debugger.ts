@@ -1,4 +1,5 @@
 import tape from 'tape'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
 import deepequal from 'deep-equal'
 import { compilerInput } from './helpers/compilerHelper'
 import * as sourceMappingDecoder from '../src/source/sourceMappingDecoder'
@@ -164,10 +165,13 @@ contract Ballot {
         if (error) {
           throw error
         } else {
+          const sources = {
+            target: 'test.sol',
+            sources: { 'test.sol': { content: ballot } }
+          }
+          const compilationResults = new CompilerAbstract('json', output, sources)
           var debugManager = new Debugger({
-            compilationResult: function () {
-              return { data: output }
-            },
+            compilationResult: () => compilationResults,
             web3: web3,
             offsetToLineColumnConverter: {
               offsetToLineColumn: async (rawLocation) => {
