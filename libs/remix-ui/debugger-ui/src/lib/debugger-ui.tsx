@@ -41,8 +41,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     props.onReady({
       globalContext: () => {
         return {
-          block: state.currentBlock, 
-          tx: state.currentTransaction, 
+          block: state.currentBlock,
+          tx: state.currentTransaction,
           receipt: state.currentReceipt
         }
       }
@@ -375,7 +375,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
                 return { ...prevState, opt: { ...prevState.opt, debugWithGeneratedSources: checked } }
               })
             }} type="checkbox" />
-            <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Use generated sources (Solidity {'>='} v0.7.2)</label>
+            <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput"><FormattedMessage id='debugger.useGeneratedSources' /> (Solidity {'>='} v0.7.2)</label>
             </span>
   )
   return (
@@ -386,7 +386,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
           <CustomTooltip
             tooltipId="debuggerGenSourceCheckbox"
-            tooltipText={"Debug with generated sources"}
+            tooltipText={<FormattedMessage id='debugger.debugWithGeneratedSources' />}
             placement="top-start"
           >
             {customJSX}
@@ -398,7 +398,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
                 return { ...prevState, opt: { ...prevState.opt, debugWithLocalNode: checked } }
               })
             }} type="checkbox" title="Force the debugger to use the current local node" />
-            <label data-id="debugLocaNodeLabel" className="form-check-label custom-control-label" htmlFor="debugWithLocalNodeInput">Force using local node</label>
+            <label data-id="debugLocaNodeLabel" className="form-check-label custom-control-label" htmlFor="debugWithLocalNodeInput"><FormattedMessage id='debugger.debugLocaNodeLabel' /></label>
           </div>
           }
           { state.validationError && <span className="w-100 py-1 text-danger validationError">{state.validationError}</span> }
