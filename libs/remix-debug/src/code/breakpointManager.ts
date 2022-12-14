@@ -139,6 +139,7 @@ export class BreakpointManager {
     *
     * @param {Int} fileIndex - index of the file content (from the compilation result)
     * @param {Int} line - line number where looking for breakpoint
+    * @param {String} contractAddress - address of the contract being executed
     * @return {Bool} return true if the given @arg fileIndex @arg line refers to a breakpoint
     */
   async hasBreakpointAtLine (fileIndex, line, contractAddress) {
