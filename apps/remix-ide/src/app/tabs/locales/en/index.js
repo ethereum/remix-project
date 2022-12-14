@@ -8,6 +8,7 @@ import settingsJson from './settings.json';
 import solidityJson from './solidity.json';
 import terminalJson from './terminal.json';
 import udappJson from './udapp.json';
+import solidityUnitTestingJson from './solidityUnitTesting.json';
 
 export default {
   ...debuggerJson,
@@ -20,4 +21,5 @@ export default {
   ...solidityJson,
   ...terminalJson,
   ...udappJson,
+  ...solidityUnitTestingJson,
 }
