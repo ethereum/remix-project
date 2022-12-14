@@ -4,5 +4,8 @@
   "debugger.stopDebugging": "停止调试",
   "debugger.startDebugging": "开始调试",
   "debugger.placeholder": "交易哈希, 应该以 0x 开头",
+  "debugger.debugLocaNodeLabel": "强制使用本地节点",
+  "debugger.useGeneratedSources": "使用生成的源",
+  "debugger.debugWithGeneratedSources": "使用生成的源进行调试",
   "debugger.introduction": "当使用交易哈希调试时, 如果该合约已被验证, Remix 会试图从 Sourcify 或 Etherscan 获取源码. 在 Remix 中设置您的 Etherscan API key. 有关受支持的网络，请参阅"
 }
