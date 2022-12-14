@@ -1,4 +1,5 @@
 import React, { ChangeEventHandler, useContext, useEffect, useRef, useState } from 'react' // eslint-disable-line
+import { FormattedMessage, useIntl } from 'react-intl'
 import { PermissionHandlerProps } from '../interface'
 import './permission-dialog.css'
 
@@ -6,6 +7,7 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
   const { from, to, remember, method, message, sensitiveCall } = props.value
   const [feedback, setFeedback] = useState<string>('')
   const theme = props.theme
+  const intl = useIntl()
 
   const switchMode = (e: any) => {
     props.plugin.switchMode(from, to, method, e.target.checked)
@@ -16,7 +18,7 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
   }
   const reset = () => {
     props.plugin.clear()
-    setFeedback('All permisssions have been reset.')
+    setFeedback(intl.formatMessage({ id: 'permissionHandler.allPermissionsReset' }))
   }
 
   const imgFrom = () => { return <img className={`${theme === 'dark' ? 'invert' : ''}`} alt='' id='permissionModalImagesFrom' src={from.icon} /> }
@@ -32,13 +34,13 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
   }
 
   const text = () => {
-    return <>"{from.displayName}" {(remember ? 'has changed and' : '')} would like to access to "{method}" of "{to.displayName}"`</>
+    return <FormattedMessage id='permissionHandler.permissionHandlerMessage' values={{ from: from.displayName, to: to.displayName, method, rememberText: remember ? intl.formatMessage({ id: 'permissionHandler.rememberText' }) : '' }} />
   }
 
   const pluginMessage = () => {
     return message
       ? <div>
-        <h6>Description</h6>
+        <h6><FormattedMessage id='permissionHandler.description' /></h6>
         <p>{message}</p>
       </div> : null
   }
@@ -48,19 +50,19 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
     <article>
       <h4 data-id="permissionHandlerMessage">{text()} :</h4>
       <h6>{from.displayName}</h6>
-      <p> {from.description || <i>No description Provided</i>}</p>
+      <p> {from.description || <i><FormattedMessage id='permissionHandler.noDescriptionProvided' /></i>}</p>
       <h6>{to.displayName} :</h6>
-      <p> {to.description || <i>No description Provided</i>}</p>
+      <p> {to.description || <i><FormattedMessage id='permissionHandler.noDescriptionProvided' /></i>}</p>
       {pluginMessage()}
-      { sensitiveCall ? <p className='text-warning'><i className="fas fa-exclamation-triangle mr-2" aria-hidden="true"></i>Make sure you trust this plugin before processing this call.</p> : '' }
+      { sensitiveCall ? <p className='text-warning'><i className="fas fa-exclamation-triangle mr-2" aria-hidden="true"></i><FormattedMessage id='permissionHandler.makeSureYouTrustThisPlugin' /></p> : '' }
     </article>
     <article className='remember'>
       { !sensitiveCall && <div className='form-check'>
         {rememberSwitch()}
-        <label htmlFor='remember' className="form-check-label" data-id="permissionHandlerRememberChoice">Remember this choice</label>
+        <label htmlFor='remember' className="form-check-label" data-id="permissionHandlerRememberChoice"><FormattedMessage id='permissionHandler.rememberThisChoice' /></label>
         </div>
       }
-      <button className="btn btn-sm" onClick={reset}>Reset all Permissions</button>
+      <button className="btn btn-sm" onClick={reset}><FormattedMessage id='permissionHandler.resetAllPermissions' /></button>
     </article>
     <div>{feedback}</div>
   </section>)
