@@ -180,6 +180,7 @@ export class Ethdebugger {
   unLoad () {
     this.traceManager.init()
     this.codeManager.clear()
+    this.solidityProxy.reset()
     this.event.trigger('traceUnloaded')
   }
 
