@@ -464,11 +464,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
               id="listenNetworkCheck"
               onChange={listenOnNetwork}
               type="checkbox"
-              title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you"
+              title={intl.formatMessage({ id: 'terminal.listenTitle' })}
             />
             <label
               className="pt-1 form-check-label custom-control-label text-nowrap"
-              title="If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you"
+              title={intl.formatMessage({ id: 'terminal.listenTitle' })}
               htmlFor="listenNetworkCheck"
               data-id="listenNetworkCheckInput"
             >
