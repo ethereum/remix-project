@@ -49,5 +49,15 @@
   "udapp.ok": "确认",
   "udapp.alert": "警告",
   "udapp.proceed": "继续",
-  "udapp.cancel": "取消"
+  "udapp.cancel": "取消",
+  "udapp.parameters": "参数",
+  "udapp.copyParameters": "复制已编码的输入参数到粘贴板",
+  "udapp.copyCalldata": "复制 calldata 到粘贴板",
+  "udapp.deployWithProxy": "使用代理部署",
+  "udapp.upgradeWithProxy": "使用代理升级",
+  "udapp.useLastDeployedERC1967Contract": "使用最新的已部署的 ERC1967 合约",
+  "udapp.proxyAddressLabel": "代理地址",
+  "udapp.proxyAddressPlaceholder": "代理地址",
+  "udapp.proxyAddressInputTooltip": "输入先前在所选网络上部署的代理地址",
+  "udapp.proxyAddressTooltip": "选择此选项可使用当前网络上最后部署的 ERC1967 合约。"
 }

@@ -49,5 +49,15 @@
   "udapp.ok": "OK",
   "udapp.alert": "Alert",
   "udapp.proceed": "Proceed",
-  "udapp.cancel": "Cancel"
+  "udapp.cancel": "Cancel",
+  "udapp.parameters": "Parameters",
+  "udapp.copyParameters": "Copy encoded input parameters to clipboard",
+  "udapp.copyCalldata": "Copy calldata to clipboard",
+  "udapp.deployWithProxy": "Deploy with Proxy",
+  "udapp.upgradeWithProxy": "Upgrade with Proxy",
+  "udapp.useLastDeployedERC1967Contract": "Use last deployed ERC1967 contract",
+  "udapp.proxyAddressLabel": "Proxy Address",
+  "udapp.proxyAddressPlaceholder": "proxy address",
+  "udapp.proxyAddressInputTooltip": "Enter previously deployed proxy address on the selected network",
+  "udapp.proxyAddressTooltip": "Select this option to use the last deployed ERC1967 contract on the current network."
 }
