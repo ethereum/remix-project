@@ -206,7 +206,7 @@ class FileManager extends Plugin {
    * @param {string} data content to write on the file
    * @returns {void}
    */
-   writeFile = async (path, data) => {
+   async writeFile (path, data) {
     try {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
@@ -231,7 +231,7 @@ class FileManager extends Plugin {
    * @param {string} path path of the file
    * @returns {string} content of the file
    */
-   readFile = async (path) => {
+    async readFile (path) {
     try {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
@@ -249,7 +249,7 @@ class FileManager extends Plugin {
    * @param {string} dest path of the destrination file
    * @returns {void}
    */
-   copyFile = async (src: string, dest: string, customName?: string) => {
+   async copyFile (src: string, dest: string, customName?: string) {
     try {
       src = this.normalize(src)
       dest = this.normalize(dest)
@@ -275,7 +275,7 @@ class FileManager extends Plugin {
    * @param {string} dest path of the destination dir
    * @returns {void}
    */
-   copyDir = async (src: string, dest: string, customName?: string) => {
+   async copyDir (src: string, dest: string, customName?: string) {
     try {
       src = this.normalize(src)
       dest = this.normalize(dest)
@@ -321,7 +321,7 @@ class FileManager extends Plugin {
    * @param {string} newPath new path of the file/directory
    * @returns {void}
    */
-   rename = async (oldPath, newPath) => {
+   async rename (oldPath, newPath) {
     
     try {
       oldPath = this.normalize(oldPath)
@@ -385,7 +385,7 @@ class FileManager extends Plugin {
    * @param {string} path path of the new directory
    * @returns {void}
    */
-   mkdir = async (path) => {
+   async mkdir (path) {
     try {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
@@ -430,7 +430,7 @@ class FileManager extends Plugin {
    * @param {string} path path of the directory/file to remove
    * @returns {void}
    */
-   remove = async (path) => {
+   async remove (path) {
     try {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
@@ -881,7 +881,7 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   
-   moveFile = async (src: string, dest: string) => {
+  async moveFile (src: string, dest: string) {
     try {
       src = this.normalize(src)
       dest = this.normalize(dest)
@@ -911,7 +911,7 @@ class FileManager extends Plugin {
    * @param {string} dest path of the destination folder
    * @returns {void}
    */
-   moveDir = async (src: string, dest: string) => {
+   async moveDir (src: string, dest: string) {
     try {
       src = this.normalize(src)
       dest = this.normalize(dest)
