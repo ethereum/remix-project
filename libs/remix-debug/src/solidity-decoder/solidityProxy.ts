@@ -21,6 +21,14 @@ export class SolidityProxy {
   }
 
   /**
+    * reset the cache and apply a new @arg compilationResult
+    *
+    */
+  reset () {
+    this.cache.reset()
+  }
+
+  /**
     * retrieve the compiled contract name at the @arg vmTraceIndex (cached)
     *
     * @param {Int} vmTraceIndex  - index in the vm trave where to resolve the executed contract name
