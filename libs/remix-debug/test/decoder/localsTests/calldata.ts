@@ -1,6 +1,7 @@
 'use strict'
 
 import deepequal from 'deep-equal'
+import * as sourceMappingDecoder from '../../../src/source/sourceMappingDecoder'
 import * as vmCall from '../../vmCall'
 import { TraceManager } from '../../../src/trace/traceManager'
 import { CodeManager } from '../../../src/code/codeManager'
@@ -9,7 +10,7 @@ import { InternalCallTree } from '../../../src/solidity-decoder/internalCallTree
 import { EventManager } from '../../../src/eventManager'
 import * as helper from './helper'
 
-module.exports = async function (st, privateKey, contractBytecode, compilationResult) {
+module.exports = async function (st, privateKey, contractBytecode, compilationResult, contractCode) {
   let txHash
   let web3
   try {
@@ -31,10 +32,21 @@ module.exports = async function (st, privateKey, contractBytecode, compilationRe
       var traceManager = new TraceManager({ web3 })
       var codeManager = new CodeManager(traceManager)
       codeManager.clear()
-      var solidityProxy = new SolidityProxy({ getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), getCode: codeManager.getCode.bind(codeManager) })
-      solidityProxy.reset(compilationResult)
+      var solidityProxy = new SolidityProxy({ 
+        getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), 
+        getCode: codeManager.getCode.bind(codeManager),
+        compilationResult: () => compilationResult
+      })
       var debuggerEvent = new EventManager()
-      var callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true })
+      const offsetToLineColumnConverter = {
+        offsetToLineColumn: (rawLocation) => {
+          return new Promise((resolve) => {
+            const lineBreaks = sourceMappingDecoder.getLinebreakPositions(contractCode)
+            resolve(sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, lineBreaks))
+          })
+        }
+      }
+      var callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true }, offsetToLineColumnConverter)
       callTree.event.register('callTreeBuildFailed', (error) => {
         st.fail(error)
       })
