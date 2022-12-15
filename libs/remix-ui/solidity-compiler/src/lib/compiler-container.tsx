@@ -947,8 +947,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             >
               <div className="d-flex align-items-center justify-content-center">
                 { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn ml-2" aria-hidden="true"></i> }
-                <div className=""
-                  style={{ whiteSpace: 'nowrap', fontSize: 'calc(1em + (0.8vw - 0.5em) * 0.2)', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                <div className="text-truncate overflow-hidden text-nowrap"
                 >
                   <span>
                     <FormattedMessage id='solidity.compile' />
