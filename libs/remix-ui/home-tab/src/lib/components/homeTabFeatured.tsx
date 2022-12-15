@@ -48,7 +48,7 @@ function HomeTabFeatured() {
                 </div>
               </div>
               <div className="mx-1 px-1 d-flex">
-                <img src={"assets/img/bgRemi.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
+                <img src={"assets/img/bgRemi_small.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
                 <div className="h6 w-50 p-4" style={{ flex: "1" }}>
                   <h5><FormattedMessage id='home.jumpIntoWeb3' /></h5>
                   
@@ -57,7 +57,7 @@ function HomeTabFeatured() {
                 </div>
               </div>
               <div className="mx-1 px-1 d-flex">
-                <img src={"/assets/img/remixRewardUser.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
+                <img src={"/assets/img/remixRewardUser_small.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
                 <div className="h6 w-50 p-4" style={{ flex: "1" }}>
                   <h5><FormattedMessage id='home.remixRewards' /></h5>
                   <p style={{ fontStyle: 'italic' }}><FormattedMessage id='home.remixRewardsText1' /></p>
@@ -66,7 +66,7 @@ function HomeTabFeatured() {
                 </div>
               </div>
               <div className="mx-1 px-1 d-flex">
-                <img src={"/assets/img/remixRewardBetaTester.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
+                <img src={"/assets/img/remixRewardBetaTester_small.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
                 <div className="h6 w-50 p-4" style={{ flex: "1" }}>
                   <h5><FormattedMessage id='home.betaTesting' /></h5>
                   <p style={{ fontStyle: 'italic' }}><FormattedMessage id='home.betaTestingText1' /></p>
