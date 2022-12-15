@@ -6,5 +6,8 @@
   "permissionHandler.noDescriptionProvided": "No description Provided",
   "permissionHandler.makeSureYouTrustThisPlugin": "Make sure you trust this plugin before processing this call.",
   "permissionHandler.rememberThisChoice": "Remember this choice",
-  "permissionHandler.resetAllPermissions": "Reset all Permissions"
+  "permissionHandler.resetAllPermissions": "Reset all Permissions",
+  "permissionHandler.permissionNeededFor": "Permission needed for {to}",
+  "permissionHandler.accept": "Accept",
+  "permissionHandler.decline": "Decline"
 }
