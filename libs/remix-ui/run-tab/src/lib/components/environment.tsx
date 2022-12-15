@@ -62,7 +62,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
           <Button onClick={handleChangeExEnv}>
               { "Connect"}
           </Button>
-         ): <a href="https://www.hashpack.app/download">Install Hashpack Wallet</a>}
+         ): <a target="_blank" rel="noreferrer" href="https://www.hashpack.app/download">Install Hashpack Wallet</a>}
 
       </div>
     </div>
