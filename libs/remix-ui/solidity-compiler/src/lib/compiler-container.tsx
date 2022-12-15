@@ -941,13 +941,15 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               placement="auto"
               tooltipId="overlay-tooltip-compile"
               tooltipText={<div className="text-left">
-                  {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+S</b> for compiling</div>}
+                  {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+S</b> to compile {state.compiledFileName} </div>}
                   {(configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div>}
                 </div>}
             >
               <div className="d-flex align-items-center justify-content-center">
                 { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn ml-2" aria-hidden="true"></i> }
-                <div className="d-flex justify-content-between align-items-center">
+                <div className=""
+                  style={{ whiteSpace: 'nowrap', fontSize: 'calc(1em + (0.8vw - 0.5em) * 0.2)', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                >
                   <span>
                     <FormattedMessage id='solidity.compile' />
                   </span>
