@@ -941,7 +941,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               placement="auto"
               tooltipId="overlay-tooltip-compile"
               tooltipText={<div className="text-left">
-                  {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+S</b> to compile {state.compiledFileName.includes('.sol') ? state.compiledFileName : null} </div>}
+                  {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+S</b> to compile {state.compiledFileName.endsWith('.sol') ? state.compiledFileName : null} </div>}
                   {(configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div>}
                 </div>}
             >
