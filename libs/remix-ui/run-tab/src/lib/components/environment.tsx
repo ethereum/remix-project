@@ -55,12 +55,12 @@ export function EnvironmentUI(props: EnvironmentProps) {
   return (
     <div className="udapp_crow">
       <label id="selectExEnv" className="udapp_settingsLabel">
-        <FormattedMessage id="udapp.environment" />
+        {accountId ? "Connected Account" : "Hashpack Wallet"}
       </label>
       <div className="udapp_environment">
         {accountId ? <a>{accountId}</a> : hasExtension && (
           <Button onClick={handleChangeExEnv}>
-              { "Connect Hashpack Wallet"}
+              { "Connect"}
           </Button>
          )}
 
