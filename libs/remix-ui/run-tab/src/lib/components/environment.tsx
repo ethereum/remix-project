@@ -58,11 +58,11 @@ export function EnvironmentUI(props: EnvironmentProps) {
         {accountId ? "Connected Account" : "Hashpack Wallet"}
       </label>
       <div className="udapp_environment">
-        {accountId ? <a>{accountId}</a> : hasExtension && (
+        {accountId ? <a>{accountId}</a> : hasExtension ? (
           <Button onClick={handleChangeExEnv}>
               { "Connect"}
           </Button>
-         )}
+         ): <a href="https://www.hashpack.app/download">Install Hashpack Wallet</a>}
 
       </div>
     </div>
