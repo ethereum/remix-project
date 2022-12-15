@@ -7,13 +7,13 @@ export type ValidationResult = {
 export interface ModalDialogProps {
   id: string
   timestamp?: number,
-  title?: string,
+  title?: string | JSX.Element,
   validation?: ValidationResult
   validationFn?: (value: string) => ValidationResult
   message?: string | JSX.Element,
-  okLabel?: string,
+  okLabel?: string | JSX.Element,
   okFn?: (value?:any) => void,
-  cancelLabel?: string,
+  cancelLabel?: string | JSX.Element,
   cancelFn?: () => void,
   modalClass?: string,
   showCancelIcon?: boolean,
