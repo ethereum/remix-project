@@ -111,7 +111,6 @@ export interface FileExplorerProps {
     dispatchHandleExpandPath: (paths: string[]) => Promise<void>,
     dispatchMoveFile: (src: string, dest: string) => Promise<void>,
     dispatchMoveFolder: (src: string, dest: string) => Promise<void>
-    dispatchRevertFileAction:(redo: boolean) => void
 }
 type Placement = import('react-overlays/usePopper').Placement
 export interface FileExplorerMenuProps {

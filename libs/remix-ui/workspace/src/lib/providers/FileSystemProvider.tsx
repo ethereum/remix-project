@@ -162,10 +162,6 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   const dispatchCreateSolidityGithubAction = async () => {
     await createSolidityGithubAction()
   }
-  
-  const dispatchRevertFileAction = (redo: boolean)=>{
-    revertFileAction(redo)
-  }
 
   const dispatchCreateTsSolGithubAction = async () => {
     await createTsSolGithubAction()
@@ -287,8 +283,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchCheckoutRemoteBranch,
     dispatchCreateSolidityGithubAction,
     dispatchCreateTsSolGithubAction,
-    dispatchCreateSlitherGithubAction
-    dispatchRevertFileAction
+    dispatchCreateSlitherGithubAction,
+    dispatchRevertFileAction,
   }
   return (
     <FileSystemContext.Provider value={value}>

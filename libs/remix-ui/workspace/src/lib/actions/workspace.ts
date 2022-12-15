@@ -16,7 +16,6 @@ import { getUncommittedFiles } from '../utils/gitStatusFilter'
 declare global {
   interface Window { remixFileSystemCallback: IndexedDBStorage; }
 }
-import { resetFileActions } from '.'
 
 
 const LOCALHOST = ' - connect to localhost - '
@@ -348,7 +347,6 @@ export const switchToWorkspace = async (name: string) => {
     dispatch(setMode('browser'))
     dispatch(setCurrentWorkspace({ name, isGitRepo }))
     dispatch(setReadOnlyMode(false))
-    resetFileActions()
   }
 }
 
