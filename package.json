@@ -110,7 +110,7 @@
     "watch": "watchify apps/remix-ide/src/index.js -dv -p browserify-reload -o apps/remix-ide/build/app.js --exclude solc",
     "reinstall": "rm ./node-modules/ -rf && rm yarn.lock && rm ./build/ -rf && yarn install & yarn run build",
     "ganache-cli": "npx ganache-cli",
-    "build-contracts": "find ./node_modules/@openzeppelin/contracts | grep -i '.sol' > libs/remix-ui/editor/src/lib/providers/completion/contracts/contracts.txt && find ./node_modules/@uniswap/v3-core/contracts | grep -i '.sol' >> libs/remix-ui/editor/src/lib/providers/completion/contracts/contracts.txt"
+    "build-contracts": "find ./node_modules/@openzeppelin/contracts-upgradeable | grep -i '.sol' > libs/remix-ui/editor/src/lib/providers/completion/contracts/contracts.txt && find ./node_modules/@openzeppelin/contracts | grep -i '.sol' >> libs/remix-ui/editor/src/lib/providers/completion/contracts/contracts.txt && find ./node_modules/@uniswap/v3-core/contracts | grep -i '.sol' >> libs/remix-ui/editor/src/lib/providers/completion/contracts/contracts.txt"
   },
   "browserify": {
     "transform": [
@@ -156,7 +156,8 @@
     "@ethersphere/bee-js": "^3.2.0",
     "@isomorphic-git/lightning-fs": "^4.4.1",
     "@monaco-editor/react": "4.4.5",
-    "@openzeppelin/contracts": "^4.7.3",
+    "@openzeppelin/contracts": "^4.8.0",
+    "@openzeppelin/contracts-upgradeable": "^4.8.0",
     "@openzeppelin/wizard": "^0.1.1",
     "@remixproject/engine": "^0.3.31",
     "@remixproject/engine-web": "^0.3.31",
@@ -229,6 +230,7 @@
     "ws": "^7.3.0"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "^3.231.0",
     "@babel/core": "^7.4.5",
     "@babel/plugin-transform-modules-amd": "^7.10.4",
     "@babel/plugin-transform-modules-commonjs": "^7.10.4",

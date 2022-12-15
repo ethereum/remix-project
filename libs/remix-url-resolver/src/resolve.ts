@@ -130,7 +130,7 @@ export class RemixURLResolver {
   async handleNpmImport (url: string): Promise<HandlerResponse> {
     // eslint-disable-next-line no-useless-catch
     try {
-      const req = 'https://unpkg.com/' + url
+      const req = 'https://pub-65ba281fcdae458183a5a48ccd4dff97.r2.dev/' + url
       const response: AxiosResponse = await axios.get(req, { transformResponse: [] })
       return { content: response.data, cleanUrl: url }
     } catch (e) {

@@ -56,3 +56,5 @@ testem.log
 .DS_Store
 .vscode/settings.json
 .vscode/launch.json
+s3.ts
+wrangler.toml

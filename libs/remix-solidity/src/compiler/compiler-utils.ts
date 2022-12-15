@@ -2,8 +2,8 @@ import * as semver from 'semver'
 import * as minixhr from 'minixhr'
 /* global Worker */
 
-export const baseURLBin = 'https://binaries.soliditylang.org/bin'
-export const baseURLWasm = 'https://binaries.soliditylang.org/wasm'
+export const baseURLBin = 'https://pub-65ba281fcdae458183a5a48ccd4dff97.r2.dev'
+export const baseURLWasm = 'https://pub-65ba281fcdae458183a5a48ccd4dff97.r2.dev'
 
 export const pathToURL = {}
 
