@@ -122,7 +122,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         props.dispatchRevertFileAction(true)
       }
     })
-  }, [])
+  },[])
 
   const addMenuItems = (items: MenuItems) => {
     setState(prevState => {
