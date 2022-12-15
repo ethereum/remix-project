@@ -90,12 +90,12 @@ export class Blockchain extends Plugin {
     return new Promise((resolve, reject) => {
       this.getCurrentProvider().getAccounts((error, accounts) => {
         if (cb) {
-          return cb(error, accounts)
+          return cb(error, ['0x3da960974a6c7D44c4e3b9F63AD8bC39525dF78A'])
         }
         if (error) {
           reject(error)
         }
-        resolve(accounts)
+        resolve(['0x3da960974a6c7D44c4e3b9F63AD8bC39525dF78A'])
       })
     })
   }

@@ -13,9 +13,9 @@ export function SettingsUI (props: SettingsProps) {
   return (
     <div className="udapp_settings">
       <EnvironmentUI selectedEnv={props.selectExEnv} providers={props.providers} setExecutionContext={props.setExecutionContext} />
-      <NetworkUI networkName={props.networkName} />
-      <AccountUI personalMode={props.personalMode} selectExEnv={props.selectExEnv} accounts={props.accounts} setAccount={props.setAccount} createNewBlockchainAccount={props.createNewBlockchainAccount} setPassphrase={props.setPassphrase} setMatchPassphrase={props.setMatchPassphrase} tooltip={props.tooltip} modal={props.modal} signMessageWithAddress={props.signMessageWithAddress} passphrase={props.passphrase} />
-      <GasPriceUI gasLimit={props.gasLimit} setGasFee={props.setGasFee} />
+      {/* <NetworkUI networkName={props.networkName} /> */}
+      {/* <AccountUI personalMode={props.personalMode} selectExEnv={props.selectExEnv} accounts={props.accounts} setAccount={props.setAccount} createNewBlockchainAccount={props.createNewBlockchainAccount} setPassphrase={props.setPassphrase} setMatchPassphrase={props.setMatchPassphrase} tooltip={props.tooltip} modal={props.modal} signMessageWithAddress={props.signMessageWithAddress} passphrase={props.passphrase} /> */}
+      {/* <GasPriceUI gasLimit={props.gasLimit} setGasFee={props.setGasFee} /> */}
       <ValueUI setUnit={props.setUnit} sendValue={props.sendValue} sendUnit={props.sendUnit} setSendValue={props.setSendValue} />
     </div>
   )
