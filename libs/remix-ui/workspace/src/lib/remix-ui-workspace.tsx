@@ -531,6 +531,7 @@ export function Workspace () {
                   dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                   dispatchMoveFile={global.dispatchMoveFile}
                   dispatchMoveFolder={global.dispatchMoveFolder}
+                  dispatchRevertFileAction={global.dispatchRevertFileAction}
                   />
               </div>
             }
@@ -571,6 +572,7 @@ export function Workspace () {
                   dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                   dispatchMoveFile={global.dispatchMoveFile}
                   dispatchMoveFolder={global.dispatchMoveFolder}
+                  dispatchRevertFileAction={global.dispatchRevertFileAction}
                 />
               </div>
             }

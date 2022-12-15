@@ -171,6 +171,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await createSlitherGithubAction()
   }
 
+  const dispatchRevertFileAction = (redo: boolean)=>{
+    revertFileAction(redo)
+  }
+  
   useEffect(() => {
     dispatchInitWorkspace()
   }, [])
