@@ -1,0 +1,15 @@
+{
+  "terminal.listen": "监听所有交易",
+  "terminal.search": "按交易哈希或地址搜索",
+  "terminal.used": "已使用",
+  "terminal.welcomeText1": "欢迎使用",
+  "terminal.welcomeText2": "您的文件储存在",
+  "terminal.welcomeText3": "您可使用此终端",
+  "terminal.welcomeText4": "查看交易详情并启动调试",
+  "terminal.welcomeText5": "执行 JavaScript 脚本",
+  "terminal.welcomeText6": "直接在命令行界面输入脚本",
+  "terminal.welcomeText7": "在文件浏览器中选择一个 Javascript 文件，然后在命令行界面运行 `remix.execute()` 或 `remix.exeCurrent()` ",
+  "terminal.welcomeText8": "在文件浏览器中右键点击一个 JavaScript 文件，然后点击 `Run`",
+  "terminal.welcomeText9": "可以访问以下库",
+  "terminal.welcomeText10": "输入库名查看可用的指令"
+}

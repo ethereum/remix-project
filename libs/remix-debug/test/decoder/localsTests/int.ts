@@ -26,8 +26,11 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
         const traceManager = new TraceManager({ web3 })
         const codeManager = new CodeManager(traceManager)
         codeManager.clear()
-        const solidityProxy = new SolidityProxy({ getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), getCode: codeManager.getCode.bind(codeManager) })
-        solidityProxy.reset(compilationResult)
+        const solidityProxy = new SolidityProxy({ 
+          getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), 
+          getCode: codeManager.getCode.bind(codeManager),
+          compilationResult: () => compilationResult 
+        })
         const debuggerEvent = new EventManager()
         const offsetToLineColumnConverter = {
           offsetToLineColumn: (rawLocation) => {

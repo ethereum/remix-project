@@ -354,7 +354,8 @@ function computeOffsets (types, stateDefinitions, contractName, location) {
       storagelocation: {
         offset: !hasStorageSlots ? 0 : storagelocation.offset,
         slot: !hasStorageSlots ? 0 : storagelocation.slot
-      }
+      },
+      variable
     })
     if (hasStorageSlots) {
       if (type.storageSlots === 1 && storagelocation.offset + type.storageBytes <= 32) {

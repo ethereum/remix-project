@@ -41,7 +41,6 @@ export const Find = () => {
             id="search_input"
             placeholder={intl.formatMessage({
               id: 'search.placeholder1',
-              defaultMessage: 'Search ( Enter to search )',
             })}
             className="form-control"
             value={inputValue}
@@ -52,7 +51,6 @@ export const Find = () => {
             <CustomTooltip
               tooltipText={intl.formatMessage({
                 id: 'search.matchCase',
-                defaultMessage: 'Match Case',
               })}
               tooltipClasses="text-nowrap"
               tooltipId="searchCaseSensitiveTooltip"
@@ -75,7 +73,6 @@ export const Find = () => {
             <CustomTooltip
               tooltipText={intl.formatMessage({
                 id: 'search.matchWholeWord',
-                defaultMessage: 'Match Whole Word',
               })}
               tooltipClasses="text-nowrap"
               tooltipId="searchWholeWordTooltip"
@@ -98,7 +95,6 @@ export const Find = () => {
             <CustomTooltip
               tooltipText={intl.formatMessage({
                 id: 'search.useRegularExpression',
-                defaultMessage: 'Use Regular Expression',
               })}
               tooltipClasses="text-nowrap"
               tooltipId="useRegularExpressionTooltip"

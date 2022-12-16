@@ -21,11 +21,11 @@ function InactivePluginCardContainer ({ pluginComponent }: InactivePluginCardCon
 
   return (
     <React.Fragment>
-      {(pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length) ? <ModuleHeading headingLabel={intl.formatMessage({id: 'pluginManager.inactiveModules' , defaultMessage: 'Inactive Modules'})} count={pluginComponent.inactivePlugins.length} /> : null}
+      {(pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length) ? <ModuleHeading headingLabel={intl.formatMessage({ id: 'pluginManager.inactiveModules' })} count={pluginComponent.inactivePlugins.length} /> : null}
       {pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.map((profile, idx) => {
         return (
           <InactivePluginCard
-            buttonText={intl.formatMessage({id: 'pluginManager.activate' , defaultMessage: 'Activate'})}
+            buttonText={intl.formatMessage({ id: 'pluginManager.activate' })}
             profile={profile}
             key={idx}
             activatePlugin={activatePlugin}

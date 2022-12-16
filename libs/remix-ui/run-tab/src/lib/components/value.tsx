@@ -48,7 +48,7 @@ export function ValueUI (props: ValueProps) {
 
   return (
     <div className="udapp_crow">
-      <label className="udapp_settingsLabel" data-id="remixDRValueLabel"><FormattedMessage id='udapp.value' defaultMessage='Value' /></label>
+      <label className="udapp_settingsLabel" data-id="remixDRValueLabel"><FormattedMessage id='udapp.value' /></label>
       <div className="udapp_gasValueContainer">
         <CustomTooltip
           placement={'top-start'}
@@ -70,7 +70,7 @@ export function ValueUI (props: ValueProps) {
           value={props.sendValue}
         />
       </CustomTooltip>
-        
+
         <select name="unit"
         value={props.sendUnit} className="form-control p-1 udapp_gasNvalUnit udapp_col2_2 custom-select" id="unit" onChange={(e) => { props.setUnit((e.target.value) as 'ether' | 'finney' | 'gwei' | 'wei') }}>
           <option data-unit="wei" value='wei'>Wei</option>
