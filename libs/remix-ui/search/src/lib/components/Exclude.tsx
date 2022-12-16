@@ -27,10 +27,10 @@ export const Exclude = props => {
   return (
     <>
       <div className="search_plugin_find-part pl-3">
-        <label className='mt-2'><FormattedMessage id='search.filesToExclude' defaultMessage='Files to exclude' /></label>
+        <label className='mt-2'><FormattedMessage id='search.filesToExclude' /></label>
         <input
           id='search_exclude'
-          placeholder={intl.formatMessage({id: 'search.placeholder3', defaultMessage: "Exclude ie .git/**/* ( Enter to exclude )"})}
+          placeholder={intl.formatMessage({ id: 'search.placeholder3' })}
           className="form-control"
           onKeyUp={handleKeypress}
           onChange={async (e) => change(e)}

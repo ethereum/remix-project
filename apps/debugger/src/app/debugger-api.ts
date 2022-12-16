@@ -6,6 +6,7 @@ import { lineText } from '@remix-ui/editor'
 export const DebuggerApiMixin = (Base) => class extends Base {
 
   initialWeb3
+  debuggerBackend
 
   initDebuggerApi () {
     const self = this
@@ -148,7 +149,11 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     if (web3) this._web3 = web3
     else this._web3 = this.initialWeb3
     init.extendWeb3(this._web3)
-    if (this.onDebugRequestedListener) this.onDebugRequestedListener(hash, web3)
+    if (this.onDebugRequestedListener) {
+      this.onDebugRequestedListener(hash, web3).then((debuggerBackend) => {
+        this.debuggerBackend = debuggerBackend
+      })
+    }
   }
 
   onActivation () {
@@ -167,12 +172,16 @@ export const DebuggerApiMixin = (Base) => class extends Base {
 
   showMessage (title: string, message: string) {}
 
-  onStartDebugging () {
+  onStartDebugging (debuggerBackend: any) {
     this.call('layout', 'maximiseSidePanel')
+    this.emit('startDebugging')
+    this.debuggerBackend = debuggerBackend
   }
 
   onStopDebugging () {
     this.call('layout', 'resetSidePanel')
+    this.emit('stopDebugging')
+    this.debuggerBackend = null
   }
 }
 

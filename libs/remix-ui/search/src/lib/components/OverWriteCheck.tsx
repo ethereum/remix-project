@@ -25,7 +25,7 @@ export const OverWriteCheck = props => {
               data-id="confirm_replace_label"
               className="form-check-label custom-control-label"
             >
-              <FormattedMessage id='search.replaceWithoutConfirmation' defaultMessage='replace without confirmation' />
+              <FormattedMessage id='search.replaceWithoutConfirmation' />
             </label>
           </div>
         </div>

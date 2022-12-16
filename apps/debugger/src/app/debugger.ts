@@ -4,7 +4,7 @@ import { IDebuggerApi, LineColumnLocation,
   onBreakpointClearedListener, onBreakpointAddedListener, onEditorContentChanged, onEnvChangedListener, TransactionReceipt } from '@remix-ui/debugger-ui'
 import { DebuggerApiMixin } from './debugger-api'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
- 
+
 export class DebuggerClientApi extends DebuggerApiMixin(PluginClient) {  
   constructor () {
     super()    
@@ -25,7 +25,7 @@ export class DebuggerClientApi extends DebuggerApiMixin(PluginClient) {
   setFile: (path: string, content: string) => Promise<void>
   getDebugWeb3: () => any // returns an instance of web3.js, if applicable (mainet, goerli, ...) it returns a reference to a node from devops (so we are sure debug endpoint is available)
   web3: () => any // returns an instance of web3.js
-  onStartDebugging: () => void // called when debug starts
+  onStartDebugging: (debuggerBackend: any) => void // called when debug starts
   onStopDebugging: () => void // called when debug stops
 }
 

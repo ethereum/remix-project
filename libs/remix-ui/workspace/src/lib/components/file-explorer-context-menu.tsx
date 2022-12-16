@@ -13,7 +13,7 @@ declare global {
 const _paq = window._paq = window._paq || []  //eslint-disable-line
 
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
-  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, paste, runScript, emit, pageX, pageY, path, type, focus, ...otherProps } = props
+  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, copyFileName, copyPath, paste, runScript, emit, pageX, pageY, path, type, focus, ...otherProps } = props
   const contextMenuRef = useRef(null)
   const intl = useIntl()
   useEffect(() => {
@@ -106,6 +106,14 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               break
             case 'Copy':
               copy(path, type)
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copy'])
+              break
+            case 'Copy name':
+              copyFileName(path, type)
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copy'])
+              break
+            case 'Copy path':
+              copyPath(path, type)
               _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copy'])
               break
             case 'Paste':

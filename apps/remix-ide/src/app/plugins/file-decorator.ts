@@ -12,7 +12,6 @@ const profile = {
     events: ['fileDecoratorsChanged'],
     version: '0.0.1'
 }
-
 export class FileDecorator extends Plugin {
     private _fileStates: fileDecoration[] = []
     constructor() {
@@ -26,7 +25,6 @@ export class FileDecorator extends Plugin {
     }
 
     /**
-     * 
      * @param fileStates Array of file states
      */
     async setFileDecorators(fileStates: fileDecoration[] | fileDecoration) {

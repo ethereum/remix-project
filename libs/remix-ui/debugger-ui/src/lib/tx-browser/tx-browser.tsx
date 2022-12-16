@@ -60,7 +60,7 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
                 disabled={!state.txNumber }
                 style={{ pointerEvents: 'none', color: 'white' }}
               >
-                  <span><FormattedMessage id={`debugger.${debugging ? 'stopDebugging' : 'startDebugging'}`} defaultMessage={debugging ? 'Stop debugging' : 'Start debugging'} /></span>
+                  <span><FormattedMessage id={`debugger.${debugging ? 'stopDebugging' : 'startDebugging'}`} /></span>
               </button>
             </div>
   )
@@ -76,7 +76,7 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
             type='text'
             onChange={({ target: { value } }) => txInputChanged(value)}
             onInput={txInputOnInput}
-            placeholder={intl.formatMessage({id: 'debugger.placeholder', defaultMessage: 'Transaction hash, should start with 0x'})}
+            placeholder={intl.formatMessage({id: 'debugger.placeholder'})}
             data-id='debuggerTransactionInput'
             disabled={debugging}
           />
@@ -84,7 +84,7 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
         <div className='d-flex justify-content-center w-100 btn-group py-1'>
           <CustomTooltip
             placement="bottom"
-            tooltipText={<FormattedMessage id={`debugger.${debugging ? 'stopDebugging' : 'startDebugging'}`} defaultMessage={debugging ? 'Stop debugging' : 'Start debugging'} />}
+            tooltipText={<FormattedMessage id={`debugger.${debugging ? 'stopDebugging' : 'startDebugging'}`} />}
             tooltipId={'debuggingButtontooltip'}
             tooltipClasses="text-nowrap"
           >

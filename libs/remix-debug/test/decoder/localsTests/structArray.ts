@@ -7,9 +7,9 @@ import { EventManager } from '../../../src/eventManager'
 import * as helper from './helper'
 import { TraceManager } from '../../../src/trace/traceManager'
 import { CodeManager } from '../../../src/code/codeManager'
+import * as sourceMappingDecoder from '../../../src/source/sourceMappingDecoder'
 
-module.exports = function (st, privateKey, contractBytecode, compilationResult) {
-  // eslint-disable-next-line no-async-promise-executor
+module.exports = function (st, privateKey, contractBytecode, compilationResult,contractCode) {
   return new Promise(async (resolve) => {
     const web3 = await (vmCall as any).getWeb3();
     (vmCall as any).sendTx(web3, { nonce: 0, privateKey: privateKey }, null, 0, contractBytecode, function (error, hash) {
@@ -24,16 +24,28 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult) 
         const traceManager = new TraceManager({ web3 })
         const codeManager = new CodeManager(traceManager)
         codeManager.clear()
-        const solidityProxy = new SolidityProxy({ getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), getCode: codeManager.getCode.bind(codeManager) })
-        solidityProxy.reset(compilationResult)
+        const solidityProxy = new SolidityProxy({ 
+          getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), 
+          getCode: codeManager.getCode.bind(codeManager),
+          compilationResult: () => compilationResult 
+        })
         const debuggerEvent = new EventManager()
-        const callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true })
+        const offsetToLineColumnConverter = {
+          offsetToLineColumn: (rawLocation) => {
+            return new Promise((resolve) => {
+              const lineBreaks = sourceMappingDecoder.getLinebreakPositions(contractCode)
+              resolve(sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, lineBreaks))
+            })
+          }
+        }
+        const callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true }, offsetToLineColumnConverter)
         callTree.event.register('callTreeBuildFailed', (error) => {
           st.fail(error)
         })
         callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
           helper.decodeLocals(st, 1622, traceManager, callTree, function (locals) {
             try {
+              console.log('at 1622', locals)
               st.equals(locals['bytesSimple'].length, '0x14')
               st.equals(locals['bytesSimple'].value, '0x746573745f7375706572')
               st.equals(locals['e'].value['a'].value, 'test')
@@ -99,9 +111,10 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult) 
               st.fail(e.message)
             }
           })
-  
+
           helper.decodeLocals(st, 7, traceManager, callTree, function (locals) {
             try {
+              console.log('at 7', locals)
               st.equals(0, 0)
               // st.equals(Object.keys(locals).length, 0)
             } catch (e) {
