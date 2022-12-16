@@ -4,9 +4,6 @@ import { ethers } from "ethers"
 import * as ganache from "ganache"
 import { getArtifactsByContractName } from './artifacts-helper'
 import { SignerWithAddress } from './signer'
-declare global {
-  const ganacheProvider: any
-}
 
 const initializeProvider = () => {
   //@ts-ignore
