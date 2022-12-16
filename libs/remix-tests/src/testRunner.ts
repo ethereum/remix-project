@@ -218,6 +218,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
   if (!isJSONInterfaceAvailable) { return resultsCallback(new Error('Contract interface not available'), { passingNum, failureNum, timePassed }) }
   const runList: RunListInterface[] = createRunList(testObject.options.jsonInterface, fileAST, testName)
   const web3 = opts.web3 || new Web3()
+  web3.eth.handleRevert = true // enables returning error reason on revert
   const accts: TestResultInterface = {
     type: 'accountList',
     value: opts.accounts
@@ -375,14 +376,16 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
           console.error(err)
           return next(err)
         }
-      }).on('error', async (err: Error) => {
+      }).on('error', async (err) => {
         const time: number = (Date.now() - startTime) / 1000.0
+        let errMsg = err.message
+        if (err.reason) errMsg = `transaction reverted with the reason: ${err.reason}` 
         const resp: TestResultInterface = {
           type: 'testFailure',
           value: changeCase.sentenceCase(func.name),
           filename: testObject.filename,
           time: time,
-          errMsg: err.message,
+          errMsg,
           context: testName,
           web3
         }
