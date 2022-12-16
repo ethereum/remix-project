@@ -165,19 +165,12 @@ contract Ballot {
         if (error) {
           throw error
         } else {
-<<<<<<< HEAD
-          const debugManager = new Debugger({
-            compilationResult: function () {
-              return { data: output }
-            },
-            web3: web3
-=======
           const sources = {
             target: 'test.sol',
             sources: { 'test.sol': { content: ballot } }
           }
           const compilationResults = new CompilerAbstract('json', output, sources)
-          var debugManager = new Debugger({
+          const debugManager = new Debugger({
             compilationResult: () => compilationResults,
             web3: web3,
             offsetToLineColumnConverter: {
@@ -185,7 +178,6 @@ contract Ballot {
                 return sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, sourceMappingDecoder.getLinebreakPositions(ballot))
               }
             }
->>>>>>> 840f59824e8e6710503b2ed7eb8869e390562207
           })
   
           debugManager.callTree.event.register('callTreeReady', () => {
@@ -290,13 +282,7 @@ function testDebugging (debugManager) {
   tape('breakPointManager', (t) => {
     t.plan(2)
     const {traceManager, callTree, solidityProxy} = debugManager
-<<<<<<< HEAD
-    const breakPointManager = new BreakpointManager({traceManager, callTree, solidityProxy, locationToRowConverter: async (rawLocation) => {
-      return sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, sourceMappingDecoder.getLinebreakPositions(ballot))
-    }})
-=======
-    var breakPointManager = new BreakpointManager({traceManager, callTree, solidityProxy})
->>>>>>> 840f59824e8e6710503b2ed7eb8869e390562207
+    const breakPointManager = new BreakpointManager({traceManager, callTree, solidityProxy})
 
     breakPointManager.add({fileName: 'test.sol', row: 39})
 
