@@ -51,10 +51,15 @@ export interface IDebuggerApi {
     getDebugWeb3: () => any // returns an instance of web3.js, if applicable (mainet, goerli, ...) it returns a reference to a node from devops (so we are sure debug endpoint is available)
     web3: () => any // returns an instance of web3.js
     showMessage (title: string, message: string): void
-    onStartDebugging (): void // called when debug starts
+    onStartDebugging (debuggerBackend: any): void // called when debug starts
     onStopDebugging (): void // called when debug stops
 }
 
+type globalContextFunction = () => { block, tx, receipt }
+type onReadyParams = {
+    globalContext: globalContextFunction
+}
 export interface DebuggerUIProps {
-    debuggerAPI: IDebuggerApi
+    debuggerAPI: IDebuggerApi,
+    onReady?: (functions: onReadyParams) => void
 }

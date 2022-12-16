@@ -1,6 +1,6 @@
 {
   "name": "remix-project",
-  "version": "0.29.0-dev",
+  "version": "0.30.0-dev",
   "license": "MIT",
   "description": "Ethereum Remix Monorepo",
   "keywords": [
@@ -162,6 +162,7 @@
     "isbinaryfile": "^3.0.2",
     "isomorphic-git": "^1.8.2",
     "jquery": "^3.3.1",
+    "js-yaml": "^4.1.0",
     "jszip": "^3.6.0",
     "latest-version": "^5.1.0",
     "merge": "^2.1.1",
@@ -187,6 +188,7 @@
     "string-similarity": "^4.0.4",
     "swarmgw": "^0.3.1",
     "time-stamp": "^2.2.0",
+    "toml": "^3.0.0",
     "tree-kill": "^1.2.2",
     "ts-loader": "^9.2.6",
     "tslib": "^2.3.0",
@@ -265,6 +267,7 @@
     "child_process": "^1.0.2",
     "colors": "^1.4.0",
     "colors-browserify": "^0.1.1",
+    "chai": "^4.3.7",
     "component-type": "^1.2.1",
     "constants-browserify": "^1.0.0",
     "copy-to-clipboard": "^3.3.1",

@@ -4,7 +4,7 @@ import { util } from '@remix-project/remix-lib'
 import { toChecksumAddress } from 'ethereumjs-util'
 import { fetchContractFromEtherscan } from './helpers/fetch-etherscan'
 import { fetchContractFromSourcify } from './helpers/fetch-sourcify'
-import { UUPSDeployedByteCode, UUPSCompilerVersion } from './constants/uups'
+import { UUPSDeployedByteCode, UUPSCompilerVersion, UUPSOptimize, UUPSRuns, UUPSEvmVersion, UUPSLanguage } from './constants/uups'
 
 const profile = {
   name: 'fetchAndCompile',
@@ -52,13 +52,14 @@ export class FetchAndCompile extends Plugin {
     if (codeAtAddress === '0x' + UUPSDeployedByteCode) { // proxy
       const settings = {
         version: UUPSCompilerVersion,
-        language: 'Solidity',
-        evmVersion: null,
-        optimize: false,
-        runs: 0
+        language: UUPSLanguage,
+        evmVersion: UUPSEvmVersion,
+        optimize: UUPSOptimize,
+        runs: UUPSRuns
       }
+      const proxyUrl = 'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.8.0/contracts/proxy/ERC1967/ERC1967Proxy.sol'
       const compilationTargets = {
-        'proxy.sol': { content: 'import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.8.0/contracts/proxy/ERC1967/ERC1967Proxy.sol";' }
+        'proxy.sol': { content: `import "${proxyUrl}";` }
       }
       const compData = await compile(
         compilationTargets,

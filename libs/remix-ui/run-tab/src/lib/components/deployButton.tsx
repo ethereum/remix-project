@@ -33,7 +33,7 @@ export function DeployButton (props: DeployButtonProps) {
         tooltipText={props.buttonOptions.title}
       >
         <button onClick={props.handleActionClick} className={`udapp_instanceButton ${props.buttonOptions.widthClass} btn btn-sm ${props.buttonOptions.classList}`} data-id={props.buttonOptions.dataId}>
-          <FormattedMessage id='udapp.deploy' defaultMessage='Deploy' />
+          <FormattedMessage id='udapp.deploy' />
         </button>
       </CustomTooltip>
     }

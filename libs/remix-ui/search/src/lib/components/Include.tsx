@@ -26,10 +26,10 @@ export const Include = props => {
   return (
     <>
       <div className="search_plugin_find-part pl-3">
-        <label className='mt-2'><FormattedMessage id='search.filesToInclude' defaultMessage='Files to include' /></label>
+        <label className='mt-2'><FormattedMessage id='search.filesToInclude' /></label>
         <input
           id='search_include'
-          placeholder={intl.formatMessage({id: 'search.placeholder2', defaultMessage: "Include ie *.sol ( Enter to include )"})}
+          placeholder={intl.formatMessage({ id: 'search.placeholder2' })}
           className="form-control"
           onChange={async(e) => change(e)}
           onKeyUp={handleKeypress}

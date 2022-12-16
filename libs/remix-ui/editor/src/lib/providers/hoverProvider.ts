@@ -145,6 +145,46 @@ export class RemixHoverProvider implements languages.HoverProvider {
             getLinks(nodeAtPosition)
             getDocs(nodeAtPosition)
             // getScope(nodeAtPosition)
+
+            try {
+                if (nodeAtPosition?.name === 'msg') {
+                    const global = await this.props.plugin.call('debugger', 'globalContext')
+                    if (global !== null && global[nodeAtPosition?.name]) {
+                        contents.push({
+                            value: `GLOBAL VARIABLE ${nodeAtPosition.name}: ${JSON.stringify(global[nodeAtPosition?.name], null, '\t')}`
+                        })
+                    }
+                }
+            } catch (e) {}
+
+            try {
+                if (nodeAtPosition?.expression?.name === 'msg' && nodeAtPosition?.memberName) {
+                    const global = await this.props.plugin.call('debugger', 'globalContext')
+                    if (global !== null && global[nodeAtPosition?.expression?.name][nodeAtPosition.memberName] && global[nodeAtPosition?.expression?.name][nodeAtPosition.memberName]) {
+                        contents.push({
+                            value: `GLOBAL VARIABLE msg.${nodeAtPosition.memberName}: ${global[nodeAtPosition?.expression?.name][nodeAtPosition.memberName]}`
+                        })
+                    }
+                }
+            } catch (e) {}
+
+            try {
+                const decodedVar = await this.props.plugin.call('debugger', 'decodeLocalVariable', nodeAtPosition.id)
+                if (decodedVar !== null && decodedVar.type) {
+                    contents.push({
+                        value: `LOCAL VARIABLE ${nodeAtPosition.name}:  ${typeof(decodedVar.value) === 'string' ? decodedVar.value : JSON.stringify(decodedVar.value, null, '\t')}`
+                    })
+                }
+            } catch (e) {}
+
+            try {
+                const decodedVar = await this.props.plugin.call('debugger', 'decodeStateVariable', nodeAtPosition.id)
+                if (decodedVar !== null  && decodedVar.type) {
+                    contents.push({
+                        value: `STATE VARIABLE ${nodeAtPosition.name}:  ${typeof(decodedVar.value) === 'string' ? decodedVar.value : JSON.stringify(decodedVar.value, null, '\t')}`
+                    })
+                }
+            } catch (e) {}
         }
 
         setTimeout(() => {

@@ -3,13 +3,13 @@ import { EventEmitter } from 'events'
 import { QueryParams } from '@remix-project/remix-lib'
 import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
-import enUS from './locales/en-US'
-import zhCN from './locales/zh-CN'
+import enJson from './locales/en'
+import zhJson from './locales/zh'
 const _paq = window._paq = window._paq || []
 
 const locales = [
-  { name: 'en-US', messages: enUS },
-  { name: 'zh-CN', messages: zhCN },
+  { code: 'en', name: 'English', localeName: 'English', messages: enJson },
+  { code: 'zh', name: 'Chinese Simplified', localeName: '简体中文', messages: zhJson },
 ]
 
 const profile = {
@@ -29,7 +29,7 @@ export class LocaleModule extends Plugin {
     }
     this.locales = {}
     locales.map((locale) => {
-      this.locales[locale.name.toLocaleLowerCase()] = locale
+      this.locales[locale.code.toLocaleLowerCase()] = locale
     })
     this._paq = _paq
     let queryLocale = (new QueryParams()).get().locale
@@ -39,7 +39,7 @@ export class LocaleModule extends Plugin {
     currentLocale = currentLocale && currentLocale.toLocaleLowerCase()
     currentLocale = this.locales[currentLocale] ? currentLocale : null
     this.currentLocaleState = { queryLocale, currentLocale }
-    this.active = queryLocale || currentLocale || 'en-us'
+    this.active = queryLocale || currentLocale || 'en'
     this.forced = !!queryLocale
   }
 
@@ -55,20 +55,20 @@ export class LocaleModule extends Plugin {
 
   /**
    * Change the current locale
-   * @param {string} [localeName] - The name of the locale
+   * @param {string} [localeCode] - The code of the locale
    */
-  switchLocale (localeName) {
-    localeName = localeName && localeName.toLocaleLowerCase()
-    if (localeName && !Object.keys(this.locales).includes(localeName)) {
-      throw new Error(`Locale ${localeName} doesn't exist`)
+  switchLocale (localeCode) {
+    localeCode = localeCode && localeCode.toLocaleLowerCase()
+    if (localeCode && !Object.keys(this.locales).includes(localeCode)) {
+      throw new Error(`Locale ${localeCode} doesn't exist`)
     }
-    const next = localeName || this.active // Name
+    const next = localeCode || this.active // Name
     if (next === this.active) return // --> exit out of this method
     _paq.push(['trackEvent', 'localeModule', 'switchTo', next])
     const nextLocale = this.locales[next] // Locale
     if (!this.forced) this._deps.config.set('settings/locale', next)
 
-    if (localeName) this.active = localeName
+    if (localeCode) this.active = localeCode
     this.emit('localeChanged', nextLocale)
     this.events.emit('localeChanged', nextLocale)
   }

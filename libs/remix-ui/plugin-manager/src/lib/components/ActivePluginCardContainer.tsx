@@ -20,11 +20,11 @@ function ActivePluginCardContainer ({ pluginComponent }: ActivePluginCardContain
 
   return (
     <React.Fragment>
-      {(pluginComponent.activePlugins && pluginComponent.activePlugins.length) ? <ModuleHeading headingLabel={intl.formatMessage({id: 'pluginManager.activeModules' , defaultMessage: 'Active Modules'})} count={pluginComponent.activePlugins.length} /> : null}
+      {(pluginComponent.activePlugins && pluginComponent.activePlugins.length) ? <ModuleHeading headingLabel={intl.formatMessage({ id: 'pluginManager.activeModules' })} count={pluginComponent.activePlugins.length} /> : null}
       {pluginComponent.activePlugins && pluginComponent.activePlugins.map((profile, idx) => {
         return (
           <ActivePluginCard
-            buttonText={intl.formatMessage({id: 'pluginManager.deactivate' , defaultMessage: 'Deactivate'})}
+            buttonText={intl.formatMessage({ id: 'pluginManager.deactivate' })}
             profile={profile}
             deactivatePlugin={deactivatePlugin}
             key={idx}

@@ -11,6 +11,8 @@ export default async () => {
         // @ts-ignore
         'scripts/web3-lib.ts': (await import('!!raw-loader!./scripts/web3-lib.ts')).default,
         // @ts-ignore
-        'tests/SampleERC20_test.sol': (await import('raw-loader!./tests/SampleERC20_test.sol')).default
+        'tests/SampleERC20_test.sol': (await import('raw-loader!./tests/SampleERC20_test.sol')).default,
+        // @ts-ignore
+        '.prettierrc.json': (await import('raw-loader!./.prettierrc')).default
     }
 }
