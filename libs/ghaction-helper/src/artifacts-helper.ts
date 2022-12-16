@@ -3,10 +3,6 @@ import { CompilationResult } from '@remix-project/remix-solidity'
 import * as fs from 'fs/promises'
 import * as path from 'path'
 
-declare global {
-    const remixContractArtifactsPath: string
-}
-
 export async function getArtifactsByContractName (contractIdentifier: string) {
   //@ts-ignore
   const contractArtifacts = await fs.readdir(global.remixContractArtifactsPath)
