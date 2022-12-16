@@ -32,8 +32,10 @@ describe('testRunner: remix-tests CLI', function(){
       it('remix-tests help', () => {
         const res = spawnSync(executablePath, ['-h'])
         const expectedHelp = `Usage: remix-tests [options] [command] <file_path>
+
 Arguments:
   file_path                path to test file or directory
+  
 Options:
   -V, --version            output the version number
   -c, --compiler <string>  set compiler version (e.g: 0.6.1, 0.7.1 etc)
