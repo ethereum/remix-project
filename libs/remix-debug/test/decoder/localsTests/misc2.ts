@@ -10,6 +10,7 @@ import { CodeManager } from '../../../src/code/codeManager'
 import * as sourceMappingDecoder from '../../../src/source/sourceMappingDecoder'
 
 module.exports = function (st, privateKey, contractBytecode, compilationResult, contractCode) {
+  // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     const web3 = await (vmCall as any).getWeb3();
     (vmCall as any).sendTx(web3, { nonce: 0, privateKey: privateKey }, null, 0, contractBytecode, function (error, hash) {
