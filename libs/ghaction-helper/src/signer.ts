@@ -1,11 +1,22 @@
+// @ts-ignore
 import { ethers } from "ethers"
 
 export class SignerWithAddress extends ethers.Signer {
-    static async create(signer) {
+    address: string
+    _signer: {
+        provider: any
+        signTransaction: (transaction: any) => any,
+        signMessage: (message: string) => any,
+        sendTransaction: (transaction: any) => any,
+        connect: (provider: any) => any,
+        _signTypedData: (...params: any) => any
+    }
+    provider: any
+    static async create(signer: any) {
         return new SignerWithAddress(await signer.getAddress(), signer)
     }
 
-    constructor(address, _signer) {
+    constructor(address: string, _signer: any) {
         super()
         this.address = address
         this._signer = _signer
@@ -16,23 +27,23 @@ export class SignerWithAddress extends ethers.Signer {
         return this.address
     }
 
-    signMessage(message){
+    signMessage(message: string){
         return this._signer.signMessage(message)
     }
 
-    signTransaction(transaction) {
+    signTransaction(transaction: any) {
         return this._signer.signTransaction(transaction)
     }
 
-    sendTransaction(transaction) {
+    sendTransaction(transaction: any) {
         return this._signer.sendTransaction(transaction)
     }
 
-    connect(provider) {
+    connect(provider: any) {
         return new SignerWithAddress(this.address, this._signer.connect(provider))
     }
 
-    _signTypedData(...params) {
+    _signTypedData(...params: any) {
         return this._signer._signTypedData(...params)
     }
 
