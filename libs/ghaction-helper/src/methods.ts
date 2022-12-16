@@ -1,16 +1,24 @@
+// @ts-ignore
 import { ethers } from "ethers"
-import { getArtefactsByContractName } from './artefacts-helper'
+//@ts-ignore
+import * as ganache from "ganache"
+import { getArtifactsByContractName } from './artifacts-helper'
 import { SignerWithAddress } from './signer'
 declare global {
   const ganacheProvider: any
 }
 
-const isFactoryOptions = (signerOrOptions) => {
+const initializeProvider = () => {
+  //@ts-ignore
+  global.ganacheProvider = ganache.provider({ logging: { quiet: true } })
+}
+
+const isFactoryOptions = (signerOrOptions: any) => {
   if (!signerOrOptions || signerOrOptions === undefined || signerOrOptions instanceof ethers.Signer) return false
   return true
 }
 
-const isArtifact = (artifact) => {
+const isArtifact = (artifact: any) => {
   const {
     contractName,
     sourceName,
@@ -32,11 +40,12 @@ const isArtifact = (artifact) => {
   )
 }
 
-function linkBytecode(artifact, libraries) {
+function linkBytecode(artifact: any, libraries: any) {
   let bytecode = artifact.bytecode
 
   for (const { sourceName, libraryName, address } of libraries) {
     const linkReferences = artifact.linkReferences[sourceName][libraryName]
+
     for (const { start, length } of linkReferences) {
       bytecode =
         bytecode.substr(0, 2 + start * 2) +
@@ -48,9 +57,10 @@ function linkBytecode(artifact, libraries) {
   return bytecode
 }
 
-const collectLibrariesAndLink = async (artifact, libraries) => {
+const collectLibrariesAndLink = async (artifact: any, libraries: any) => {
   const neededLibraries = []
   for (const [sourceName, sourceLibraries] of Object.entries(artifact.linkReferences)) {
+    // @ts-ignore
     for (const libName of Object.keys(sourceLibraries)) {
       neededLibraries.push({ sourceName, libName })
     }
@@ -58,6 +68,7 @@ const collectLibrariesAndLink = async (artifact, libraries) => {
 
   const linksToApply = new Map()
   for (const [linkedLibraryName, linkedLibraryAddress] of Object.entries(libraries)) {
+    // @ts-ignore
     if (!ethers.utils.isAddress(linkedLibraryAddress)) {
       throw new Error(
         `You tried to link the contract ${artifact.contractName} with the library ${linkedLibraryName}, but provided this invalid address: ${linkedLibraryAddress}`
@@ -136,11 +147,12 @@ const collectLibrariesAndLink = async (artifact, libraries) => {
     )
   }
 
+  // @ts-ignore
   return linkBytecode(artifact, [...linksToApply.values()])
 }
 
 // Convert output.contracts.<filename>.<contractName> in Artifact object compatible form
-const resultToArtifact = (result) => {
+const resultToArtifact = (result: any) => {
   const { fullyQualifiedName, artefact } = result
   return {
     contractName: fullyQualifiedName.split(':')[1],
@@ -154,15 +166,17 @@ const resultToArtifact = (result) => {
 }
 
 const getContractFactory = async (contractNameOrABI: ethers.ContractInterface, bytecode?: string, signerOrOptions = null) => {
+  //@ts-ignore
+  if (!global.ganacheProvider) initializeProvider()
   if (bytecode && contractNameOrABI) {
     return new ethers.ContractFactory(contractNameOrABI, bytecode, signerOrOptions || (new ethers.providers.Web3Provider(ganacheProvider)).getSigner())
   } else if (typeof contractNameOrABI === 'string') {
-    const contract = await getArtefactsByContractName(contractNameOrABI)
+    const contract = await getArtifactsByContractName(contractNameOrABI)
 
     if (contract) {
       return new ethers.ContractFactory(contract.abi, contract.evm.bytecode.object, signerOrOptions || (new ethers.providers.Web3Provider(ganacheProvider)).getSigner())
     } else {
-      throw new Error('Contract artefacts not found')
+      throw new Error('Contract artifacts not found')
     }
   } else {
     throw new Error('Invalid contract name or ABI provided')
@@ -170,24 +184,26 @@ const getContractFactory = async (contractNameOrABI: ethers.ContractInterface, b
 }
 
 const getContractAt = async (contractNameOrABI: ethers.ContractInterface, address: string, signer = null) => {
+  //@ts-ignore
+  if (!global.ganacheProvider) initializeProvider()
   const provider = new ethers.providers.Web3Provider(ganacheProvider)
 
   if(typeof contractNameOrABI === 'string') {
-    try {
-      const result = await getArtefactsByContractName(contractNameOrABI)
-      
-      if (result) {
-        return new ethers.Contract(address, result.abi, signer || provider.getSigner())
-      } else {
-              throw new Error('Contract artefacts not found')
-      }
-    } catch(e) { throw e }
+    const result = await getArtifactsByContractName(contractNameOrABI)
+    
+    if (result) {
+      return new ethers.Contract(address, result.abi, signer || provider.getSigner())
+    } else {
+            throw new Error('Contract artifacts not found')
+    }
   } else {
     return new ethers.Contract(address, contractNameOrABI, signer || provider.getSigner())
   }
 }
 
 const getSigner = async (address: string) => {
+  //@ts-ignore
+  if (!global.ganacheProvider) initializeProvider()
   const provider = new ethers.providers.Web3Provider(ganacheProvider)
   const signer = provider.getSigner(address)
 
@@ -195,15 +211,17 @@ const getSigner = async (address: string) => {
 }
 
 const getSigners = async () => {
-  try {
-    const provider = new ethers.providers.Web3Provider(ganacheProvider)
-    const accounts = await provider.listAccounts()
+  //@ts-ignore
+  if (!global.ganacheProvider) initializeProvider()
+  const provider = new ethers.providers.Web3Provider(ganacheProvider)
+  const accounts = await provider.listAccounts()
 
-    return await Promise.all( accounts.map((account) => getSigner(account)))
-  } catch(err) { throw err }
+  return await Promise.all( accounts.map((account: any) => getSigner(account)))
 }
 
-const getContractFactoryFromArtifact = async (artifact, signerOrOptions = null) => {
+const getContractFactoryFromArtifact = async (artifact: any, signerOrOptions: { signer: any, libraries: any }) => {
+  //@ts-ignore
+  if (!global.ganacheProvider) initializeProvider()
   let libraries = {}
   let signer
 
@@ -228,10 +246,10 @@ If you want to call a contract using ${artifact.contractName} as its interface u
   }
 
   const linkedBytecode = await collectLibrariesAndLink(artifact, libraries)
-  return new ethers.ContractFactory(artifact.abi, linkedBytecode || artifact.bytecode, signer || (new ethers.providers.Web3Provider(web3Provider)).getSigner())
+  return new ethers.ContractFactory(artifact.abi, linkedBytecode || artifact.bytecode, signer || (new ethers.providers.Web3Provider(ganacheProvider)).getSigner())
 }
 
-const getContractAtFromArtifact = async (artifact, address, signerOrOptions = null) => {
+const getContractAtFromArtifact = async (artifact: any, address: string, signerOrOptions = null) => {
   if (!isArtifact(artifact)) {
     throw new Error(
       `You are trying to create a contract factory from an artifact, but you have not passed a valid artifact parameter.`
