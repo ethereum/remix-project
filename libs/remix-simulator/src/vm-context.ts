@@ -1,6 +1,5 @@
 /* global ethereum */
 'use strict'
-import Web3 from 'web3'
 import { rlp, keccak, bufferToHex } from 'ethereumjs-util'
 import { execution } from '@remix-project/remix-lib'
 const { LogsManager } = execution
@@ -109,13 +108,17 @@ export class VMContext {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
     this.currentFork = fork || 'london'
-    this.createVm(this.currentFork).then((vm) => this.currentVm = vm )
+    
     this.blocks = {}
     this.latestBlockNumber = "0x0"
     this.blockByTxHash = {}
     this.txByHash = {}
     this.exeResults = {}
     this.logsManager = new LogsManager()
+  }
+
+  async init () {
+    this.currentVm = await this.createVm(this.currentFork)
   }
 
   async createVm (hardfork) {
@@ -141,10 +144,6 @@ export class VMContext {
 
   web3 () {
     return this.currentVm.web3vm
-  }
-
-  blankWeb3 () {
-    return new Web3()
   }
 
   vm () {

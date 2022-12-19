@@ -1,4 +1,4 @@
-import Web3 from 'web3'
+import { toHex } from 'web3-utils'
 import { VMContext } from '../vm-context'
 import { bigIntToHex } from '@ethereumjs/util'
 
@@ -51,7 +51,7 @@ export class Blocks {
         blockHash: '0x' + block.hash().toString('hex'),
         blockNumber: bigIntToHex(block.header.number),
         from: receipt.from,
-        gas: Web3.utils.toHex(receipt.gas),
+        gas: toHex(receipt.gas),
         chainId: '0xd05',
         gasPrice: '0x4a817c800', // 20000000000
         hash: receipt.transactionHash,
@@ -105,7 +105,7 @@ export class Blocks {
          blockHash: '0x' + block.hash().toString('hex'),
          blockNumber: bigIntToHex(block.header.number),
          from: receipt.from,
-         gas: Web3.utils.toHex(receipt.gas),
+         gas: toHex(receipt.gas),
          chainId: '0xd05',
          gasPrice: '0x4a817c800', // 20000000000
          hash: receipt.transactionHash,
