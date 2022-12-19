@@ -2,15 +2,16 @@ import React, { useEffect, useState, useRef, useReducer } from 'react' // eslint
 import { FormattedMessage, useIntl } from 'react-intl'
 import semver from 'semver'
 import { CompilerContainerProps } from './types'
-import { ConfigurationSettings } from '@remix-project/remix-lib-ts'
+import { ConfigurationSettings } from '@remix-project/remix-lib'
 import { checkSpecialChars, CustomTooltip, extractNameFromKey } from '@remix-ui/helper'
-import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '@remix-project/remix-solidity'
+import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL } from '@remix-project/remix-solidity'
 
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
 import { resetEditorMode, listenToEvents } from './actions/compiler'
 import { getValidLanguage } from '@remix-project/remix-solidity'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { configFileContent } from './compilerConfiguration'
+import axios, { AxiosResponse } from 'axios'
 
 import './css/style.css'
 const defaultPath = "compiler_config.json"
@@ -302,15 +303,15 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     let selectedVersion, allVersionsWasm, isURL
     let allVersions = [{ path: 'builtin', longVersion: 'latest local version - ' + state.defaultVersion }]
     // fetch normal builds
-    const binRes: any = await promisedMiniXhr(`${baseURLBin}/list.json`)
+    const binRes: AxiosResponse = await axios(`${baseURLBin}/list.json`)
     // fetch wasm builds
-    const wasmRes: any = await promisedMiniXhr(`${baseURLWasm}/list.json`)
-    if (binRes.event.type === 'error' && wasmRes.event.type === 'error') {
+    const wasmRes: AxiosResponse = await axios(`${baseURLWasm}/list.json`)
+    if (binRes.status !== 200 && wasmRes.status !== 200) {
       selectedVersion = 'builtin'
       return callback(allVersions, selectedVersion)
     }
     try {
-      const versions = JSON.parse(binRes.json).builds.slice().reverse()
+      const versions = binRes.data.builds.slice().reverse()
 
       allVersions = [...allVersions, ...versions]
       selectedVersion = state.defaultVersion
@@ -331,8 +332,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           if (selectedVersionArr.length) selectedVersion = selectedVersionArr[0].path
         }
       }
-      if (wasmRes.event.type !== 'error') {
-        allVersionsWasm = JSON.parse(wasmRes.json).builds.slice().reverse()
+      if (wasmRes.status === 200) {
+        allVersionsWasm = wasmRes.data.builds.slice().reverse()
       }
     } catch (e) {
       tooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload. Error: ' + e)

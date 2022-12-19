@@ -6,10 +6,10 @@ import * as sourceMappingDecoder from '../src/source/sourceMappingDecoder'
 import { Ethdebugger as Debugger } from '../src/Ethdebugger'
 import { BreakpointManager } from '../src/code/breakpointManager'
 
-var compiler = require('solc')
-var vmCall = require('./vmCall')
+const compiler = require('solc')
+const vmCall = require('./vmCall')
 
-var ballot = `pragma solidity >=0.4.22 <0.8.0;
+const ballot = `pragma solidity >=0.4.22 <0.8.0;
 
 /** 
  * @title Ballot
@@ -151,8 +151,8 @@ contract Ballot {
 `;
 
 (async () => {
-  var privateKey = Buffer.from('503f38a9c967ed597e47fe25643985f032b072db8075426a92110f82df48dfcb', 'hex')
-  var output = compiler.compile(compilerInput(ballot))
+  const privateKey = Buffer.from('503f38a9c967ed597e47fe25643985f032b072db8075426a92110f82df48dfcb', 'hex')
+  let output = compiler.compile(compilerInput(ballot))
   output = JSON.parse(output)
   const param = '0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000148656c6c6f20576f726c64210000000000000000000000000000000000000000'
   const web3 = await vmCall.getWeb3()
@@ -170,7 +170,7 @@ contract Ballot {
             sources: { 'test.sol': { content: ballot } }
           }
           const compilationResults = new CompilerAbstract('json', output, sources)
-          var debugManager = new Debugger({
+          const debugManager = new Debugger({
             compilationResult: () => compilationResults,
             web3: web3,
             offsetToLineColumnConverter: {
@@ -233,7 +233,7 @@ function testDebugging (debugManager) {
     try {
       const address = debugManager.traceManager.getCurrentCalledAddressAt(38)
       console.log(address)
-      var storageView = debugManager.storageViewAt(196, address)
+      const storageView = debugManager.storageViewAt(196, address)
 
       storageView.storageRange().then((storage) => {
         t.equal(JSON.stringify(storage), JSON.stringify({ '0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563': { key: '0x0000000000000000000000000000000000000000000000000000000000000000', value: '0x0000000000000000000000005b38da6a701c568545dcfcb03fcb875f56beddc4' } }))
@@ -282,7 +282,7 @@ function testDebugging (debugManager) {
   tape('breakPointManager', (t) => {
     t.plan(2)
     const {traceManager, callTree, solidityProxy} = debugManager
-    var breakPointManager = new BreakpointManager({traceManager, callTree, solidityProxy})
+    const breakPointManager = new BreakpointManager({traceManager, callTree, solidityProxy})
 
     breakPointManager.add({fileName: 'test.sol', row: 39})
 

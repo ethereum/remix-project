@@ -1,15 +1,15 @@
 'use strict'
 import tape from 'tape'
-var compiler = require('solc')
-var stateDecoder = require('../../src/solidity-decoder/stateDecoder')
-var contracts = require('./contracts/miscContracts')
-var compilerInput = require('../helpers/compilerHelper').compilerInput
+const compiler = require('solc')
+const stateDecoder = require('../../src/solidity-decoder/stateDecoder')
+const contracts = require('./contracts/miscContracts')
+const compilerInput = require('../helpers/compilerHelper').compilerInput
 
 tape('solidity', function (t) {
   t.test('storage location', function (st) {
-    var output = compiler.compile(compilerInput(contracts))
+    let output = compiler.compile(compilerInput(contracts))
     output = JSON.parse(output)
-    var stateDec = stateDecoder.extractStateVariables('contractUint', output.sources)
+    let stateDec = stateDecoder.extractStateVariables('contractUint', output.sources)
     checkLocation(st, stateDec[0].storagelocation, 0, 0)
     checkLocation(st, stateDec[1].storagelocation, 1, 0)
     checkLocation(st, stateDec[2].storagelocation, 2, 0)
