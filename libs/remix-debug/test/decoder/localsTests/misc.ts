@@ -10,6 +10,7 @@ import { CodeManager } from '../../../src/code/codeManager'
 import * as sourceMappingDecoder from '../../../src/source/sourceMappingDecoder'
 
 module.exports = function (st, privateKey, contractBytecode, compilationResult, contractCode) {
+  // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     const web3 = await (vmCall as any).getWeb3();
     (vmCall as any).sendTx(web3, { nonce: 0, privateKey: privateKey }, null, 0, contractBytecode, function (error, hash) {      
@@ -21,15 +22,15 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
           return st.fail(error)
         }
         tx.to = contractCreationToken('0')
-        var traceManager = new TraceManager({ web3 })
-        var codeManager = new CodeManager(traceManager)
+        const traceManager = new TraceManager({ web3 })
+        const codeManager = new CodeManager(traceManager)
         codeManager.clear()
-        var solidityProxy = new SolidityProxy({ 
+        const solidityProxy = new SolidityProxy({ 
           getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), 
           getCode: codeManager.getCode.bind(codeManager),
           compilationResult: () => compilationResult 
         })
-        var debuggerEvent = new EventManager()
+        const debuggerEvent = new EventManager()
         const offsetToLineColumnConverter = {
           offsetToLineColumn: (rawLocation) => {
             return new Promise((resolve) => {
@@ -38,7 +39,7 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
             })
           }
         }
-        var callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true }, offsetToLineColumnConverter)
+        const callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true }, offsetToLineColumnConverter)
         callTree.event.register('callTreeBuildFailed', (error) => {
           st.fail(error)
         })

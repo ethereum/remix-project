@@ -1,8 +1,9 @@
 const nxWebpack = require('@nrwl/react/plugins/webpack')
-const TerserPlugin = require('terser-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const CopyPlugin = require("copy-webpack-plugin");
+const webpack = require('webpack')
 const version = require('../../package.json').version
 const fs = require('fs')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const versionData = {
   version: version,
@@ -18,31 +19,53 @@ module.exports = config => {
     ...nxWebpackConfig,
     resolve: {
       ...nxWebpackConfig.resolve,
-      alias: {
-        path: require.resolve("path-browserify"),
-      }
+      fallback: {
+        ...nxWebpackConfig.resolve.fallback,
+        "crypto": require.resolve("crypto-browserify"),
+        "stream": require.resolve("stream-browserify"),
+        "path": require.resolve("path-browserify"),
+        "http": require.resolve("stream-http"),
+        "https": require.resolve("https-browserify"),
+        "constants": require.resolve("constants-browserify"),
+        "os": false, //require.resolve("os-browserify/browser"),
+        "timers": false, // require.resolve("timers-browserify"),
+        "zlib": require.resolve("browserify-zlib"),
+        "fs": false,
+        "module": false,
+        "tls": false,
+        "net": false,
+        "readline": false,
+        "child_process": false,
+        "buffer": require.resolve("buffer/"),
+        "vm": require.resolve('vm-browserify'),
+      },
+    },
+    externals: {
+      ...nxWebpackConfig.externals,
+      solc: 'solc',
     },
 
-    node: {
-      fs: 'empty',
-      tls: 'empty',
-      readline: 'empty',
-      net: 'empty',
-      module: 'empty',
-      child_process: 'empty'
-    },
     output: {
       ...nxWebpackConfig.output,
+      publicPath: '/',
       filename: `[name].${versionData.version}.${versionData.timestamp}.js`,
       chunkFilename: `[name].${versionData.version}.${versionData.timestamp}.js`,
     },
     plugins: [
       ...nxWebpackConfig.plugins,
-      new CopyWebpackPlugin({
+      //new BundleAnalyzerPlugin({
+      //  analyzerMode: 'static'
+      //}),
+      new CopyPlugin({
         patterns: [
-          { from: '../../../node_modules/monaco-editor/dev/vs/', to: 'assets/js/monaco-editor/dev/vs' }
+          { from: '../../node_modules/monaco-editor/dev/vs', to: 'assets/js/monaco-editor/dev/vs' }
         ].filter(Boolean)
-      })
+      }),
+      new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+        url: ['url', 'URL'],
+        process: 'process/browser',
+      }),
     ]
   }
 
@@ -53,10 +76,6 @@ module.exports = config => {
       ...webpackConfig,
       mode: 'production',
       devtool: 'source-map',
-      optimization: {
-        minimize: false,
-        minimizer: [new TerserPlugin()]
-      }
     }
   } else {
     return webpackConfig

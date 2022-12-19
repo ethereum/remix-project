@@ -1,0 +1,62 @@
+{
+  "name": "remix-ide-e2e-src-local-plugin",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/remix-ide-e2e/src/local-plugin/src/",
+  "projectType": "application",
+  "implicitDependencies": [
+    "remix-debug"
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/apps/remix-ide-e2e-src-local-plugin",
+        "index": "apps/remix-ide-e2e/src/local-plugin/src/index.html",
+        "baseHref": "/",
+        "main": "apps/remix-ide-e2e/src/local-plugin/src/main.tsx",
+        "polyfills": "apps/remix-ide-e2e/src/local-plugin/src/polyfills.ts",
+        "tsConfig": "apps/remix-ide-e2e/src/local-plugin/tsconfig.app.json",
+        "assets": [
+        ],
+        "styles": [
+          "apps/remix-ide-e2e/src/local-plugin/src/styles.css"
+        ],
+        "scripts": [],
+        "webpackConfig": "@nrwl/react/plugins/webpack"
+      },
+      "configurations": {
+        "development": {
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/remix-ide-e2e/src/local-plugin/src/environments/environment.ts",
+              "with": "apps/remix-ide-e2e/src/local-plugin/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "remix-ide-e2e-src-local-plugin:build",
+        "hmr": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "remix-ide-e2e-src-local-plugin:build:development",
+          "port": 2020
+        },
+        "production": {
+          "buildTarget": "remix-ide-e2e-src-local-plugin:build:production"
+        }
+      }
+    }
+  },
+  "tags": []
+}

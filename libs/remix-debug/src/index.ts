@@ -10,6 +10,10 @@ import { BreakpointManager } from './code/breakpointManager'
 import * as sourceMappingDecoder from './source/sourceMappingDecoder'
 import * as traceHelper from './trace/traceHelper'
 
+const storage = {
+  StorageViewer: StorageViewer,
+  StorageResolver: StorageResolver
+}
 /*
   Use of breakPointManager :
 
@@ -18,7 +22,7 @@ import * as traceHelper from './trace/traceHelper'
   })
   this.debugger.setBreakpointManager(breakPointManager)
 */
-export = {
+export {
   init,
   traceHelper,
   sourceMappingDecoder,
@@ -32,9 +36,6 @@ export = {
    */
   BreakpointManager,
   SolidityDecoder,
-  storage: {
-    StorageViewer: StorageViewer,
-    StorageResolver: StorageResolver
-  },
+  storage,
   CmdLine
 }

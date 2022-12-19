@@ -43,6 +43,7 @@ export abstract class AbstractProvider extends Plugin {
   }
 
   sendAsync (data: JsonDataRequest): Promise<any> {
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
       if (this.blocked) return reject(new Error('provider unable to connect'))
       // If provider is not set, allow to open modal only when provider is trying to connect

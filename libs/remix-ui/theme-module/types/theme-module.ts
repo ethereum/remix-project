@@ -3,7 +3,6 @@ import { EventEmitter } from "events";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface ThemeModule extends Plugin<any, any> {
     currentThemeState: Record<string, unknown>;
-    constructor(registry: any): any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     events: EventEmitter;
     _deps: {

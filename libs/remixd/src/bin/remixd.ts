@@ -8,7 +8,9 @@ import { getDomain, absolutePath } from '../utils'
 import Axios from 'axios'
 import { writeJSON, existsSync } from 'fs-extra'
 import * as path from 'path'
-import * as program from 'commander'
+import { Command } from 'commander';
+
+const program = new Command();
 
 async function warnLatestVersion () {
   const latest = await latestVersion('@remix-project/remixd')
@@ -43,7 +45,8 @@ const ports = {
 
 const killCallBack: Array<any> = [] // any is function
 function startService<S extends 'git' | 'hardhat' | 'truffle' | 'slither' | 'folder' | 'foundry'> (service: S, callback: (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error?:Error) => void) {
-  const socket = new WebSocket(ports[service], { remixIdeUrl: program.remixIde }, () => services[service](program.readOnly || false))
+  const options = program.opts();
+  const socket = new WebSocket(ports[service], { remixIdeUrl: options.remixIde }, () => services[service](options.readOnly || false))
   socket.start(callback)
   killCallBack.push(socket.close.bind(socket))
 }
@@ -71,30 +74,30 @@ function errorHandler (error: any, service: string) {
       console.log('\nExample:\n\n    remixd -s ./shared_project -u http://localhost:8080')
     }).parse(process.argv)
   // eslint-disable-next-line
-
+  const options = program.opts();
   await warnLatestVersion()
 
-  if(program.install && !program.readOnly) {
-    if (program.install.toLowerCase() === 'slither') require('./../scripts/installSlither')
+  if(options.install && !options.readOnly) {
+    if (options.install.toLowerCase() === 'slither') require('./../scripts/installSlither')
     process.exit(0)
   }
 
-  if (!program.remixIde) {
+  if (!options.remixIde) {
     console.log('\x1b[33m%s\x1b[0m', '[WARN] You can only connect to remixd from one of the supported origins.')
   } else {
-    const isValid = await isValidOrigin(program.remixIde)
+    const isValid = await isValidOrigin(options.remixIde)
     /* Allow unsupported origins and display warning. */
     if (!isValid) {
       console.log('\x1b[33m%s\x1b[0m', '[WARN] You are using IDE from an unsupported origin.')
       console.log('\x1b[33m%s\x1b[0m', 'Check https://gist.github.com/EthereumRemix/091ccc57986452bbb33f57abfb13d173 for list of all supported origins.\n')
       // return
     }
-    console.log('\x1b[33m%s\x1b[0m', '[WARN] You may now only use IDE at ' + program.remixIde + ' to connect to that instance')
+    console.log('\x1b[33m%s\x1b[0m', '[WARN] You may now only use IDE at ' + options.remixIde + ' to connect to that instance')
   }
 
-  if (!program.sharedFolder) program.sharedFolder = process.cwd() // if no specified, use the current folder
+  if (!options.sharedFolder) options.sharedFolder = process.cwd() // if no specified, use the current folder
 
-  if (program.sharedFolder && existsSync(absolutePath('./', program.sharedFolder))) {
+  if (options.sharedFolder && existsSync(absolutePath('./', options.sharedFolder))) {
     console.log('\x1b[33m%s\x1b[0m', '[WARN] Any application that runs on your computer can potentially read from and write to all files in the directory.')
     console.log('\x1b[33m%s\x1b[0m', '[WARN] Symbolic links are not forwarded to Remix IDE\n')
     try {
@@ -104,15 +107,15 @@ function errorHandler (error: any, service: string) {
           return false
         }
         sharedFolderClient.setWebSocket(ws)
-        sharedFolderClient.setupNotifications(program.sharedFolder)
-        sharedFolderClient.sharedFolder(program.sharedFolder)
+        sharedFolderClient.setupNotifications(options.sharedFolder)
+        sharedFolderClient.sharedFolder(options.sharedFolder)
       })
       startService('slither', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
         sharedFolderClient.setWebSocket(ws)
-        sharedFolderClient.sharedFolder(program.sharedFolder)
+        sharedFolderClient.sharedFolder(options.sharedFolder)
       })
       // Run truffle service if a truffle project is shared as folder
-      const truffleConfigFilePath = absolutePath('./', program.sharedFolder) + '/truffle-config.js'
+      const truffleConfigFilePath = absolutePath('./', options.sharedFolder) + '/truffle-config.js'
       if (existsSync(truffleConfigFilePath)) {
         startService('truffle', (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error: any) => {
           if (error) {
@@ -120,11 +123,11 @@ function errorHandler (error: any, service: string) {
             return false
           }
           sharedFolderClient.setWebSocket(ws)
-          sharedFolderClient.sharedFolder(program.sharedFolder)
+          sharedFolderClient.sharedFolder(options.sharedFolder)
         })
       }
       // Run hardhat service if a hardhat project is shared as folder
-      const hardhatConfigFilePath = absolutePath('./', program.sharedFolder)
+      const hardhatConfigFilePath = absolutePath('./', options.sharedFolder)
       const isHardhatProject = existsSync(hardhatConfigFilePath  + '/hardhat.config.js') || existsSync(hardhatConfigFilePath  + '/hardhat.config.ts')
       if (isHardhatProject) {
         startService('hardhat', (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error: Error) => {
@@ -133,11 +136,11 @@ function errorHandler (error: any, service: string) {
             return false
           }
           sharedFolderClient.setWebSocket(ws)
-          sharedFolderClient.sharedFolder(program.sharedFolder)
+          sharedFolderClient.sharedFolder(options.sharedFolder)
         })
       }
       // Run foundry service if a founndry project is shared as folder
-      const foundryConfigFilePath = absolutePath('./', program.sharedFolder)
+      const foundryConfigFilePath = absolutePath('./', options.sharedFolder)
       const isFoundryProject = existsSync(foundryConfigFilePath  + '/foundry.toml')
       if (isFoundryProject) {
         startService('foundry', (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error: Error) => {
@@ -146,13 +149,13 @@ function errorHandler (error: any, service: string) {
             return false
           }
           sharedFolderClient.setWebSocket(ws)
-          sharedFolderClient.sharedFolder(program.sharedFolder)
+          sharedFolderClient.sharedFolder(options.sharedFolder)
         })
       }
       /*
       startService('git', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
         sharedFolderClient.setWebSocket(ws)
-        sharedFolderClient.sharedFolder(program.sharedFolder)
+        sharedFolderClient.sharedFolder(options.sharedFolder)
       })
       */
     } catch (error) {

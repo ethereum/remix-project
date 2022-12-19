@@ -13,9 +13,9 @@ import { StorageViewer } from '../../../src/storage/storageViewer'
 import {  Address, bufferToHex } from 'ethereumjs-util'
 
 module.exports = async function testMappingStorage (st, cb) {
-  var mappingStorage = require('../contracts/mappingStorage')
-  var privateKey = Buffer.from('503f38a9c967ed597e47fe25643985f032b072db8075426a92110f82df48dfcb', 'hex')
-  var output = compile(compilerInput(mappingStorage.contract))
+  const mappingStorage = require('../contracts/mappingStorage')
+  const privateKey = Buffer.from('503f38a9c967ed597e47fe25643985f032b072db8075426a92110f82df48dfcb', 'hex')
+  let output = compile(compilerInput(mappingStorage.contract))
   output = JSON.parse(output);
   const sources = {
     target: 'test.sol',
@@ -56,17 +56,17 @@ function testMapping (st, privateKey, contractAddress, output, compilationResult
                 console.log(error)
                 st.end(error)
               } else {
-                var traceManager = new TraceManager({ web3 })
-                var codeManager = new CodeManager(traceManager)
+                const traceManager = new TraceManager({ web3 })
+                const codeManager = new CodeManager(traceManager)
                 codeManager.clear()
                 console.log(compilationResults)
-                var solidityProxy = new SolidityProxy({ 
+                const solidityProxy = new SolidityProxy({ 
                   getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), 
                   getCode: codeManager.getCode.bind(codeManager),
                   compilationResult: () => compilationResults
                 })
-                var debuggerEvent = new EventManager()
-                var callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true })
+                const debuggerEvent = new EventManager()
+                const callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true })
                 callTree.event.register('callTreeBuildFailed', (error) => {
                   st.fail(error)
                 })
@@ -74,12 +74,12 @@ function testMapping (st, privateKey, contractAddress, output, compilationResult
                   st.fail(reason)
                 })
                 callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
-                  var storageViewer = new StorageViewer({
+                  const storageViewer = new StorageViewer({
                     stepIndex: 268,
                     tx: tx,
                     address: contractAddress
                   }, new StorageResolver({web3}), traceManager)
-                  var stateVars = stateDecoder.extractStateVariables('SimpleMappingState', output.sources)
+                  const stateVars = stateDecoder.extractStateVariables('SimpleMappingState', output.sources)
                   stateDecoder.decodeState(stateVars, storageViewer).then((result) => {
                     st.equal(result['_num'].value, '1')
                     st.equal(result['_num'].type, 'uint256')

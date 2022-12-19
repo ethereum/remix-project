@@ -1,0 +1,31 @@
+{
+    "name": "remix-debug",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/remix-debug/src",
+    "projectType": "library",
+    "implicitDependencies": [
+      "remix-lib",
+      "remix-astwalker"
+    ],
+    "targets": {
+      "build": {
+        "executor": "@nrwl/js:tsc",
+        "outputs": ["{options.outputPath}"],
+        "options": {
+          "outputPath": "dist/libs/remix-debug",
+          "main": "libs/remix-debug/src/index.ts",
+          "tsConfig": "libs/remix-debug/tsconfig.lib.json",
+          "assets": []
+        }
+      },
+      "lint": {
+        "executor": "@nrwl/linter:eslint",
+        "outputs": ["{options.outputFile}"],
+        "options": {
+          "lintFilePatterns": ["libs/remix-debug/**/*.ts"]
+        }
+      }
+    },
+    "tags": []
+  }
+  
