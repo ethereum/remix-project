@@ -50,7 +50,7 @@ Note: It contains the latest supported version of Solidity available at the time
 *Supported versions:*
 ```bash
 "engines": {
-    "node": "^14.17.6",
+    "node": "^16.19.0",
     "npm": "^6.14.15"
   }
 ```
