@@ -10,7 +10,7 @@ function addExecutionCosts (txResult, tx, execResult) {
   if (txResult) {
     if (execResult) {
       tx.returnValue = execResult.returnValue
-      if (execResult.gasUsed) tx.executionCost = execResult.gasUsed.toString(10)
+      if (execResult.executionGasUsed) tx.executionCost = execResult.executionGasUsed.toString(10)
     }
     if (txResult.receipt && txResult.receipt.gasUsed) tx.transactionCost = txResult.receipt.gasUsed.toString(10)
   }
