@@ -1,4 +1,5 @@
 import { Provider } from '@remix-project/remix-simulator'
+import { bigIntToHex } from '@ethereumjs/util'
 
 let provider: Provider = null
 self.onmessage = (e: MessageEvent) => {
@@ -14,7 +15,10 @@ self.onmessage = (e: MessageEvent) => {
     {
       if (provider) {
         provider.sendAsync(data.query, (error, result) => {
-          result = JSON.parse(JSON.stringify(result))
+          result = JSON.parse(JSON.stringify(result, (key, value) => {
+            if (typeof value === 'bigint') return bigIntToHex(value)
+            return value
+          }))
           self.postMessage({
               cmd: 'sendAsyncResult',
               error,

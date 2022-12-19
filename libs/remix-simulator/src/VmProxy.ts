@@ -8,6 +8,8 @@ import utils from 'web3-utils'
 import { ethers } from 'ethers'
 import { VMContext } from './vm-context'
 import type { InterpreterStep } from '@ethereumjs/evm/dist/interpreter'
+import type { AfterTxEvent } from '@ethereumjs/vm'
+import type { TypedTransaction } from '@ethereumjs/tx'
 
 export class VmProxy {
   vmContext: VMContext
@@ -90,10 +92,10 @@ export class VmProxy {
     this.vm.evm.events.on('step', async (data: InterpreterStep) => {
       await this.pushTrace(data)
     })
-    this.vm.events.on('afterTx', async (data: any) => {
+    this.vm.events.on('afterTx', async (data: AfterTxEvent) => {
       await this.txProcessed(data)
     })
-    this.vm.events.on('beforeTx', async (data: any) => {
+    this.vm.events.on('beforeTx', async (data: TypedTransaction) => {
       await this.txWillProcess(data)
     })
   }
@@ -104,7 +106,7 @@ export class VmProxy {
     return ret
   }
 
-  async txWillProcess (data) {
+  async txWillProcess (data: TypedTransaction) {
     this.incr++
     this.processingHash = bufferToHex(data.hash())
     this.vmTraces[this.processingHash] = {
@@ -140,12 +142,12 @@ export class VmProxy {
     this.processingIndex = 0
   }
 
-  async txProcessed (data) {
+  async txProcessed (data: AfterTxEvent) {
     const lastOp = this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]
     if (lastOp) {
       lastOp.error = lastOp.op !== 'RETURN' && lastOp.op !== 'STOP' && lastOp.op !== 'DESTRUCT'
     }
-    const gasUsed = '0x' + data.gasUsed.toString(16)
+    const gasUsed = '0x' + data.totalGasSpent.toString(16)
     this.vmTraces[this.processingHash].gas = gasUsed
     this.txsReceipt[this.processingHash].gasUsed = gasUsed
     const logs = []
