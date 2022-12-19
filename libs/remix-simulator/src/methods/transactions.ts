@@ -1,4 +1,4 @@
-import Web3 from 'web3'
+import { toHex, toDecimal } from 'web3-utils'
 import { toChecksumAddress, BN, Address } from 'ethereumjs-util'
 import { processTx } from './txProcess'
 import { execution } from '@remix-project/remix-lib'
@@ -224,7 +224,7 @@ export class Transactions {
         blockHash: '0x' + txBlock.hash().toString('hex'),
         blockNumber: '0x' + txBlock.header.number.toString('hex'),
         from: receipt.from,
-        gas: Web3.utils.toHex(receipt.gas),
+        gas: toHex(receipt.gas),
         chainId: '0xd05',
         // 'gasPrice': '2000000000000', // 0x123
         gasPrice: '0x4a817c800', // 20000000000
@@ -259,7 +259,7 @@ export class Transactions {
     const txIndex = payload.params[1]
 
     const txBlock = this.vmContext.blocks[payload.params[0]]
-    const txHash = '0x' + txBlock.transactions[Web3.utils.toDecimal(txIndex)].hash().toString('hex')
+    const txHash = '0x' + txBlock.transactions[toDecimal(txIndex)].hash().toString('hex')
 
     this.vmContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
       if (error) {
@@ -273,7 +273,7 @@ export class Transactions {
         blockHash: '0x' + txBlock.hash().toString('hex'),
         blockNumber: '0x' + txBlock.header.number.toString('hex'),
         from: receipt.from,
-        gas: Web3.utils.toHex(receipt.gas),
+        gas: toHex(receipt.gas),
         chainId: '0xd05',
         // 'gasPrice': '2000000000000', // 0x123
         gasPrice: '0x4a817c800', // 20000000000
@@ -304,7 +304,7 @@ export class Transactions {
     const txIndex = payload.params[1]
 
     const txBlock = this.vmContext.blocks[payload.params[0]]
-    const txHash = '0x' + txBlock.transactions[Web3.utils.toDecimal(txIndex)].hash().toString('hex')
+    const txHash = '0x' + txBlock.transactions[toDecimal(txIndex)].hash().toString('hex')
 
     this.vmContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
       if (error) {
@@ -318,7 +318,7 @@ export class Transactions {
         blockHash: '0x' + txBlock.hash().toString('hex'),
         blockNumber: '0x' + txBlock.header.number.toString('hex'),
         from: receipt.from,
-        gas: Web3.utils.toHex(receipt.gas),
+        gas: toHex(receipt.gas),
         // 'gasPrice': '2000000000000', // 0x123
         chainId: '0xd05',
         gasPrice: '0x4a817c800', // 20000000000

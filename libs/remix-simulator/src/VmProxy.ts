@@ -4,13 +4,13 @@ import { helpers } from '@remix-project/remix-lib'
 const  { normalizeHexAddress } = helpers.ui
 import { ConsoleLogs } from '@remix-project/remix-lib'
 import { toChecksumAddress, BN, keccak, bufferToHex, Address, toBuffer } from 'ethereumjs-util'
-import Web3 from 'web3'
+import utils from 'web3-utils'
 import { ethers } from 'ethers'
 import { VMContext } from './vm-context'
+import type { InterpreterStep } from '@ethereumjs/evm/dist/interpreter'
 
 export class VmProxy {
   vmContext: VMContext
-  web3: Web3
   vm
   vmTraces
   txs
@@ -43,7 +43,6 @@ export class VmProxy {
 
   constructor (vmContext: VMContext) {
     this.vmContext = vmContext
-    this.web3 = new Web3()
     this.vm = null
     this.vmTraces = {}
     this.txs = {}
@@ -71,16 +70,16 @@ export class VmProxy {
     this.lastProcessedStorageTxHash = {}
     this.sha3Preimages = {}
     // util
-    this.sha3 = (...args) => this.web3.utils.sha3.apply(this, args)
-    this.toHex = (...args) => this.web3.utils.toHex.apply(this, args)
-    this.toAscii = (...args) => this.web3.utils.toAscii.apply(this, args)
-    this.fromAscii = (...args) => this.web3.utils.fromAscii.apply(this, args)
-    this.fromDecimal = (...args) => this.web3.utils.fromDecimal.apply(this, args)
-    this.fromWei = (...args) => this.web3.utils.fromWei.apply(this, args)
-    this.toWei = (...args) => this.web3.utils.toWei.apply(this, args)
-    this.toBigNumber = (...args) => this.web3.utils.toBN.apply(this, args)
-    this.isAddress = (...args) => this.web3.utils.isAddress.apply(this, args)
-    this.utils = Web3.utils || []
+    this.sha3 = (...args) => utils.sha3.apply(this, args)
+    this.toHex = (...args) => utils.toHex.apply(this, args)
+    this.toAscii = (...args) => utils.toAscii.apply(this, args)
+    this.fromAscii = (...args) => utils.fromAscii.apply(this, args)
+    this.fromDecimal = (...args) => utils.fromDecimal.apply(this, args)
+    this.fromWei = (...args) => utils.fromWei.apply(this, args)
+    this.toWei = (...args) => utils.toWei.apply(this, args)
+    this.toBigNumber = (...args) => utils.toBN.apply(this, args)
+    this.isAddress = (...args) => utils.isAddress.apply(this, args)
+    this.utils = utils
     this.txsMapBlock = {}
     this.blocks = {}
   }
@@ -88,17 +87,14 @@ export class VmProxy {
   setVM (vm) {
     if (this.vm === vm) return
     this.vm = vm
-    this.vm.on('step', async (data, next) => {
+    this.vm.evm.events.on('step', async (data: InterpreterStep) => {
       await this.pushTrace(data)
-      next()
     })
-    this.vm.on('afterTx', async (data, next) => {
+    this.vm.events.on('afterTx', async (data: any) => {
       await this.txProcessed(data)
-      next()
     })
-    this.vm.on('beforeTx', async (data, next) => {
+    this.vm.events.on('beforeTx', async (data: any) => {
       await this.txWillProcess(data)
-      next()
     })
   }
 
@@ -200,7 +196,7 @@ export class VmProxy {
     this.previousDepth = 0
   }
 
-  async pushTrace (data) {
+  async pushTrace (data: InterpreterStep) {
     const depth = data.depth + 1 // geth starts the depth from 1
     if (!this.processingHash) {
       console.log('no tx processing')
@@ -218,13 +214,12 @@ export class VmProxy {
     const step = {
       stack: hexListFromBNs(data.stack),
       memory: formatMemory(data.memory),
-      storage: data.storage,
+      storage: {},
       op: data.opcode.name,
       pc: data.pc,
       gasCost: data.opcode.fee.toString(),
       gas: data.gasLeft.toString(),
-      depth: depth,
-      error: data.error === false ? undefined : data.error
+      depth: depth
     }
     this.vmTraces[this.processingHash].structLogs.push(step)
     // Track hardhat console.log call
