@@ -166,11 +166,13 @@ const getContractFactory = async (contractNameOrABI: ethers.ContractInterface, b
   //@ts-ignore
   if (!global.ganacheProvider) initializeProvider()
   if (bytecode && contractNameOrABI) {
+    //@ts-ignore
     return new ethers.ContractFactory(contractNameOrABI, bytecode, signerOrOptions || (new ethers.providers.Web3Provider(ganacheProvider)).getSigner())
   } else if (typeof contractNameOrABI === 'string') {
     const contract = await getArtifactsByContractName(contractNameOrABI)
 
     if (contract) {
+      //@ts-ignore
       return new ethers.ContractFactory(contract.abi, contract.evm.bytecode.object, signerOrOptions || (new ethers.providers.Web3Provider(ganacheProvider)).getSigner())
     } else {
       throw new Error('Contract artifacts not found')
@@ -183,6 +185,7 @@ const getContractFactory = async (contractNameOrABI: ethers.ContractInterface, b
 const getContractAt = async (contractNameOrABI: ethers.ContractInterface, address: string, signer = null) => {
   //@ts-ignore
   if (!global.ganacheProvider) initializeProvider()
+  //@ts-ignore
   const provider = new ethers.providers.Web3Provider(ganacheProvider)
 
   if(typeof contractNameOrABI === 'string') {
@@ -201,6 +204,7 @@ const getContractAt = async (contractNameOrABI: ethers.ContractInterface, addres
 const getSigner = async (address: string) => {
   //@ts-ignore
   if (!global.ganacheProvider) initializeProvider()
+  //@ts-ignore
   const provider = new ethers.providers.Web3Provider(ganacheProvider)
   const signer = provider.getSigner(address)
 
@@ -210,6 +214,7 @@ const getSigner = async (address: string) => {
 const getSigners = async () => {
   //@ts-ignore
   if (!global.ganacheProvider) initializeProvider()
+  //@ts-ignore
   const provider = new ethers.providers.Web3Provider(ganacheProvider)
   const accounts = await provider.listAccounts()
 
@@ -243,6 +248,7 @@ If you want to call a contract using ${artifact.contractName} as its interface u
   }
 
   const linkedBytecode = await collectLibrariesAndLink(artifact, libraries)
+  //@ts-ignore
   return new ethers.ContractFactory(artifact.abi, linkedBytecode || artifact.bytecode, signer || (new ethers.providers.Web3Provider(ganacheProvider)).getSigner())
 }
 
