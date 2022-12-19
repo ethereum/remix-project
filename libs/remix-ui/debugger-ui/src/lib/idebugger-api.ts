@@ -1,5 +1,5 @@
 
-import type { CompilationSource, CompilerAbstract, SourcesCode } from '@remix-project/remix-solidity-ts' // eslint-disable-line
+import type { CompilationSource, CompilerAbstract, SourcesCode } from '@remix-project/remix-solidity' // eslint-disable-line
 
 export interface LineColumnLocation {
     start: {

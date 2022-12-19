@@ -5,7 +5,6 @@
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "scripts": {
-    "build": "tsc",
     "test": "./../../node_modules/.bin/mocha --require ts-node/register --require tsconfig-paths/register tests/*.ts -t 300000"
   },
   "publishConfig": {

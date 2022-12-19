@@ -8,11 +8,11 @@ export class ExecutionContext {
     blockGasLimit: number;
     currentFork: string;
     mainNetGenesisHash: string;
-    customNetWorks: {};
-    blocks: {};
+    customNetWorks: any;
+    blocks: any;
     latestBlockNumber: number;
-    txs: {};
-    customWeb3: {};
+    txs: any;
+    customWeb3: any;
     init(config: any): void;
     askPermission(): void;
     getProvider(): any;

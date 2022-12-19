@@ -23,7 +23,7 @@ tape('sourceMappingDecoder', function (t) {
   t.test('sourceMappingDecoder', function (st) {
     st.plan(36)
     console.log('test decompressAll')
-    let result = sourceMappingDecoder.decompressAll(sourceMapping.mapping)
+    const result = sourceMappingDecoder.decompressAll(sourceMapping.mapping)
     st.equal(result[0].start, 0)
     st.equal(result[0].length, 205)
     st.equal(result[0].file, 4)

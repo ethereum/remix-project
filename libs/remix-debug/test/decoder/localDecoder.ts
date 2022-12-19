@@ -1,28 +1,28 @@
 'use strict'
 import tape from 'tape'
-var compiler = require('solc')
 import { CompilerAbstract } from '@remix-project/remix-solidity'
-var intLocal = require('./contracts/intLocal')
-var miscLocal = require('./contracts/miscLocal')
-var structArrayLocal = require('./contracts/structArrayLocal')
-var calldataLocal = require('./contracts/calldata')
-var vmCall = require('../vmCall')
-var intLocalTest = require('./localsTests/int')
-var miscLocalTest = require('./localsTests/misc')
-var misc2LocalTest = require('./localsTests/misc2')
-var structArrayLocalTest = require('./localsTests/structArray')
-var calldataLocalTest = require('./localsTests/calldata')
-var compilerInput = require('../helpers/compilerHelper').compilerInput
+const compiler = require('solc')
+const intLocal = require('./contracts/intLocal')
+const miscLocal = require('./contracts/miscLocal')
+const structArrayLocal = require('./contracts/structArrayLocal')
+const calldataLocal = require('./contracts/calldata')
+const vmCall = require('../vmCall')
+const intLocalTest = require('./localsTests/int')
+const miscLocalTest = require('./localsTests/misc')
+const misc2LocalTest = require('./localsTests/misc2')
+const structArrayLocalTest = require('./localsTests/structArray')
+const calldataLocalTest = require('./localsTests/calldata')
+const compilerInput = require('../helpers/compilerHelper').compilerInput
 
 tape('solidity', function (t) {
   t.test('local decoder', async function (st) {
-    var privateKey = Buffer.from('503f38a9c967ed597e47fe25643985f032b072db8075426a92110f82df48dfcb', 'hex')
+    const privateKey = Buffer.from('503f38a9c967ed597e47fe25643985f032b072db8075426a92110f82df48dfcb', 'hex')
     await test(st, privateKey)
   })
 })
 
 async function test (st, privateKey) {
-  var output = compiler.compile(compilerInput(intLocal.contract))
+  let output = compiler.compile(compilerInput(intLocal.contract))
   output = JSON.parse(output)
   let sources = {
     target: 'test.sol',

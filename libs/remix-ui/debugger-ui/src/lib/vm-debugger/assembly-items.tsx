@@ -1,4 +1,3 @@
-import { stateDecoder } from 'dist/libs/remix-debug/src/solidity-decoder'
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 import { initialState, reducer } from '../../reducers/assembly-items'
 import './styles/assembly-items.css'

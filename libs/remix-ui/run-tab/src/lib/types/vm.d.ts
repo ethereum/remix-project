@@ -4,7 +4,7 @@ declare class VMProvider {
     executionContext: any;
     getAccounts(cb: any): void;
     resetEnvironment(): void;
-    accounts: {};
+    accounts: any;
     RemixSimulatorProvider: any;
     web3: any;
     createVMAccount(newAccount: any): string;

@@ -6,7 +6,7 @@ const web3Test = require('./resources/testWeb3.ts')
 
 tape('CodeManager', function (t) {
   const traceManager = new TraceManager({web3: web3Test})
-  let codeManager = new CodeManager(traceManager)
+  const codeManager = new CodeManager(traceManager)
   const contractCode = web3Test.eth.getCode('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5')
   codeManager.codeResolver.cacheExecutingCode('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', contractCode) // so a call to web3 is not necessary
   const tx = web3Test.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd51')

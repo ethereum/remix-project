@@ -6,8 +6,15 @@ import { createClient } from '@remixproject/plugin-ws'
 export default class WebSocket {
   server: http.Server
   wsServer: WS.Server
+  port: number
+  opt: WebsocketOpt
+  getclient: () => ServiceClient
 
-  constructor (public port: number, public opt: WebsocketOpt, public getclient: () => ServiceClient) {} //eslint-disable-line
+  constructor (port: number, opt: WebsocketOpt, getclient: () => ServiceClient) {
+    this.port = port
+    this.opt = opt
+    this.getclient = getclient
+  } //eslint-disable-line
 
   start (callback?: (ws: WS, client: ServiceClient, error?: Error) => void): void {
     this.server = http.createServer((request, response) => {
@@ -44,11 +51,11 @@ export default class WebSocket {
         done(true)
       }
     })
-    this.wsServer.on('connection', (ws) => {
+    this.wsServer.on('connection', (ws, socket) => {
       const client = this.getclient()
 
       createClient(ws, client as any)
-      if (callback) callback(ws, client)
+      if (callback) callback(ws as any, client)
     })
   }
 
