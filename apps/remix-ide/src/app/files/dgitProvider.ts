@@ -271,6 +271,8 @@ class DGitProvider extends Plugin {
       ...await this.getGitConfig()
     }
 
+    console.log(cmd)
+
     const result = await git.clone(cmd)
     if (!workspaceExists) {
       setTimeout(async () => {

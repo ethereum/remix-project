@@ -18,6 +18,10 @@ import { CommitslNavigation } from './navigation/commits'
 import '../style/index.css'
 import { CloneNavigation } from './navigation/clone'
 import { Clone } from './panels/clone'
+import { Commands } from './panels/commands'
+import { CommandsNavigation } from './navigation/commands'
+import { RemotesNavigation } from './navigation/remotes'
+import { Remotes } from './panels/remotes'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 
@@ -73,7 +77,13 @@ export const GitUI = (props) => {
                                     </>
                                 </Accordion.Collapse>
                                 <hr></hr>
-
+                                <CommandsNavigation eventKey="1" activePanel={activePanel} callback={setActivePanel} />
+                                <Accordion.Collapse eventKey="1">
+                                    <>
+                                        <Commands></Commands>
+                                    </>
+                                </Accordion.Collapse>
+                                <hr></hr>
                                 <CommitslNavigation eventKey="3" activePanel={activePanel} callback={setActivePanel} />
                                 <Accordion.Collapse eventKey="3">
                                     <>
@@ -93,6 +103,13 @@ export const GitUI = (props) => {
                                         <Clone /></>
                                 </Accordion.Collapse>
                                 <hr></hr>
+                                <RemotesNavigation eventKey="5" activePanel={activePanel} callback={setActivePanel} />
+                                <Accordion.Collapse eventKey="5">
+                                    <>
+                                    <Remotes></Remotes>
+                                    </>
+                                </Accordion.Collapse>
+                                
 
                             </Accordion>}
                     </pluginActionsContext.Provider>

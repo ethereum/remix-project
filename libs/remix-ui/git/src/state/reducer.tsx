@@ -32,7 +32,12 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action) =>
                 ...state,
                 branches: action.payload
             }
-            
+        
+        case 'SET_CURRENT_BRANCH':
+            return {
+                ...state,
+                currentBranch: action.payload
+            }
             
         case 'SET_CAN_USE_APP':
             return {
@@ -61,7 +66,18 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action) =>
                 ...state,
                 remoteBranches: action.payload
             }   
-            
+        
+        case 'SET_CAN_COMMIT':
+            return {
+                ...state,
+                canCommit: action.payload
+            }
+
+        case 'SET_REMOTES':
+            return {
+                ...state,
+                remotes: action.payload
+            }
 
     }
 }

@@ -43,7 +43,7 @@ export const Commits = () => {
                                     <div className="text-truncate text-muted small">{commit.oid}</div>
                                     <div
                                         onClick={async () => await checkout(commit.oid)}
-                                        className="btn btn-primary btn-sm checkout-btn ml-0 ml-md-0"
+                                        className="btn btn-primary btn-sm checkout-btn ml-0 ml-md-0 w-100"
                                     >
                                         git checkout
                                     </div>

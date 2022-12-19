@@ -6,7 +6,7 @@ export type gitState = {
     branch: string
     canCommit: boolean
     branches: any[]
-    remotes: any[]
+    remotes: remote[]
     fileStatusResult: fileStatusResult[]
     canUseApp: boolean
     loading: boolean
@@ -30,6 +30,11 @@ export type repository = {
     full_name: string
     default_branch: string
     id: number
+}
+
+export type remote = {
+    remote: string
+    url: string
 }
 
 export type remoteBranch = {
@@ -107,4 +112,14 @@ export interface setRepoNameAction {
     payload: string
 }
 
-export type gitActionDispatch = fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction
+export interface setCurrentBranchAction {
+    type: string,
+    payload: string
+}
+
+export interface setRemotesAction {
+    type: string,
+    payload: remote[]
+}
+
+export type gitActionDispatch = setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction

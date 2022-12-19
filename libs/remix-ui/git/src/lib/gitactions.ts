@@ -1,7 +1,7 @@
 import { ViewPlugin } from "@remixproject/engine-web";
 import { ReadCommitResult } from "isomorphic-git";
 import React from "react";
-import { fileStatus, setBranches, setCommits, setLoading, setRemoteBranches, setRepos } from "../state/payload";
+import { fileStatus, setBranches, setCanCommit, setCommits, setCurrentBranch, setLoading, setRemoteBranches, setRemotes, setRepos } from "../state/payload";
 import { gitActionDispatch, statusMatrixType } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
@@ -42,7 +42,9 @@ export const getBranches = async () => {
     dispatch(setBranches(branches));
 }
 export const getRemotes = async () => {
-    await plugin.call("dGitProvider", "remotes" as any);
+    const remotes = await plugin.call("dGitProvider", "remotes" as any);
+    console.log('remotes :>>', remotes)
+    dispatch(setRemotes(remotes));
 }
 
 export const getFileStatusMatrix = async () => {
@@ -93,10 +95,17 @@ export const showCurrentBranch = async () => {
 
         if (typeof branch === "undefined" || branch === "") {
             //toast.warn(`You are in a detached state`);
+            plugin.call('notification', 'alert', {
+                type: 'warning',
+                title: 'You are in a detached state',
+            })
             branch = `HEAD detached at ${currentcommitoid}`;
             //canCommit = false;
+            dispatch(setCanCommit(false));
         } else {
             //canCommit = true;
+            dispatch(setCanCommit(true));
+            dispatch(setCurrentBranch(branch));
         }
     } catch (e) {
         // show empty branch
@@ -296,7 +305,10 @@ export const clone = async (url: string, branch: string, depth: number, singleBr
             plugin.call('notification', 'toast', `Cloned ${url} to ${repoNameWithTimestamp}`)
         }
     } catch (e: any) {
-        plugin.call('notification', 'alert', `${e}`)
+        plugin.call('notification', 'alert', {
+            title: 'Error',
+            message: e.message
+        })
     }
     dispatch(setLoading(false))
 }
@@ -310,7 +322,10 @@ export const repositories = async () => {
         }
     } catch (e) {
         console.log(e)
-        plugin.call('notification', 'alert', `${e}`)
+        plugin.call('notification', 'alert', {
+            title: 'Error getting repositories',
+            message: `${e.message}: Please check your GitHub token in the GitHub settings.`
+        })
     }
 }
 
@@ -323,7 +338,10 @@ export const remoteBranches = async (owner: string, repo: string) => {
         }
     } catch (e) {
         console.log(e)
-        plugin.call('notification', 'alert', `${e}`)
+        plugin.call('notification', 'alert', {
+            title: 'Error',
+            message: e.message
+        })
     }
 }
 
