@@ -52,7 +52,7 @@ export class TxRunnerVM {
     this.nextNonceForCall = 0
   }
 
-  execute (args, confirmationCb, gasEstimationForceSend, promptCb, callback) {
+  execute (args, confirmationCb, gasEstimationForceSend, promptCb, callback: VMExecutionCallBack) {
     let data = args.data
     if (data.slice(0, 2) !== '0x') {
       data = '0x' + data
@@ -136,7 +136,7 @@ export class TxRunnerVM {
 
   runBlockInVm (tx, block, callback) {
     this.getVMObject().vm.runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false, skipNonce: true }).then((results: RunBlockResult) => {
-      const result = results.results[0]
+      const result: RunTxResult = results.results[0]
       /*if (result) {
         const status = result.execResult.exceptionError ? 0 : 1
         result.receipt.status
