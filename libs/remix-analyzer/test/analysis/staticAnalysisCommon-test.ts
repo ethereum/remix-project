@@ -3,9 +3,11 @@ import * as common from '../../src/solidity-analyzer/modules/staticAnalysisCommo
 const { localCall, thisLocalCall, libCall, externalDirect, superLocal, assignment, abiNamespaceCallNodes,
     inlineAssembly, unaryOperation, nowAst, blockTimestamp, stateVariableContractNode,
     functionDefinition, requireCall, selfdestruct, storageVariableNodes, dynamicDeleteUnaryOp,
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     lowlevelCall, parameterFunction, parameterFunctionCall, inheritance, blockHashAccess, contractDefinition, funcDefForComplexParams } = require('./astBlocks')
 
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const compiledContractObj = require('./compilationDetails/CompiledContractObj.json')
 function escapeRegExp (str) {
   return str.replace(/[-[\]/{}()+?.\\^$|]/g, '\\$&')
@@ -237,7 +239,7 @@ test('staticAnalysisCommon.getInheritsFromName', function (t) {
 test('staticAnalysisCommon.getDeclaredVariableName', function (t) {
   t.plan(2)
   t.ok(common.getDeclaredVariableName(storageVariableNodes.node1) === 'c', 'extract right variable name')
-  let node1 = JSON.parse(JSON.stringify(storageVariableNodes))
+  const node1 = JSON.parse(JSON.stringify(storageVariableNodes))
   node1.node1.nodeType = 'FunctionCall'
   t.throws(() => common.getDeclaredVariableName(node1) === 'x', new RegExp('staticAnalysisCommon.js: not a VariableDeclaration Node'), 'throw if wrong node')
 })

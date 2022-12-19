@@ -408,7 +408,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 {getKeyOf(item)}
               </div>
               <div>
-                {getValueOf(item)}
+                <>{getValueOf(item)}</>
               </div>
             </div>
           )
@@ -472,7 +472,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
               htmlFor="listenNetworkCheck"
               data-id="listenNetworkCheckInput"
             >
-              <FormattedMessage id='terminal.listen' defaultMessage='listen on all transactions' />
+              <FormattedMessage id='terminal.listen' />
             </label>
           </div>
           <div className="remix_ui_terminal_search d-flex align-items-center h-100">
@@ -485,7 +485,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
               type="text"
               className="remix_ui_terminal_filter border form-control"
               id="searchInput"
-              placeholder={intl.formatMessage({id: 'terminal.search', defaultMessage: "Search with transaction hash or address"})}
+              placeholder={intl.formatMessage({ id: 'terminal.search' })}
               data-id="terminalInputSearch" />
           </div>
         </div>

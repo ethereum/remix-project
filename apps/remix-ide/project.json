@@ -1,0 +1,74 @@
+{
+  "name": "remix-ide",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/remix-ide/src",
+  "projectType": "application",
+  "implicitDependencies": [
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/apps/remix-ide",
+        "index": "apps/remix-ide/src/index.html",
+        "baseHref": "/",
+        "main": "apps/remix-ide/src/index.tsx",
+        "polyfills": "apps/remix-ide/src/polyfills.ts",
+        "tsConfig": "apps/remix-ide/tsconfig.app.json",
+        "assets": [
+          "apps/remix-ide/src/assets",
+          "apps/remix-ide/src/index.html",
+          "apps/remix-ide/src/404.html",
+          "apps/remix-ide/src/favicon.ico"
+        ],
+        "styles": [],
+        "scripts": [],
+        "webpackConfig": "apps/remix-ide/webpack.config.js"
+      },
+      "configurations": {
+        "development": {
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/remix-ide/src/environments/environment.ts",
+              "with": "apps/remix-ide/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "remix-ide:build",
+        "watch": true,
+        "liveReload": true,
+        "hmr": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "remix-ide:build:development",
+          "port": 8080
+        },
+        "production": {
+          "buildTarget": "remix-ide:build:production",
+          "port": 8080
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/remix-ide/**/*.{ts,tsx,js,jsx}"],
+        "eslintConfig": "apps/remix-ide/.eslintrc"
+      }
+    }
+  },
+  "tags": []
+}

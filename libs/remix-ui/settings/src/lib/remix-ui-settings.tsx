@@ -1,6 +1,6 @@
 import React, { useState, useReducer, useEffect, useCallback } from 'react' // eslint-disable-line
 
-import { enablePersonalModeText, ethereunVMText, labels, generateContractMetadataText, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText, swarmSettingsTitle, ipfsSettingsText, useAutoCompleteText, useShowGasInEditorText, displayErrorsText } from './constants'
+import { labels, textDark, textSecondary } from './constants'
 
 import './remix-ui-settings.css'
 import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast, saveIpfsSettingsToast, useAutoCompletion, useShowGasInEditor, useDisplayErrors } from './settingsAction'
@@ -181,45 +181,45 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               } catch (e) {
                 console.log(e)
               }
-            }}><FormattedMessage id='settings.reset' defaultMessage='Reset to Default settings' /></button>
+            }}><FormattedMessage id='settings.reset' /></button>
           </div>
         </CustomTooltip>
         <div className="card-body pt-3 pb-2">
-          <h6 className="card-title"><FormattedMessage id='settings.general' defaultMessage='General settings' /></h6>
+          <h6 className="card-title"><FormattedMessage id='settings.general' /></h6>
           <div className="mt-2 custom-control custom-checkbox mb-1">
             <input onChange={onchangeGenerateContractMetadata} id="generatecontractmetadata" data-id="settingsTabGenerateContractMetadata" type="checkbox" className="custom-control-input" name="contractMetadata" checked={isMetadataChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/generate-contract-metadata')}`} data-id="settingsTabGenerateContractMetadataLabel" htmlFor="generatecontractmetadata">
-              <FormattedMessage id='settings.generateContractMetadataText' defaultMessage={generateContractMetadataText} />
+              <FormattedMessage id='settings.generateContractMetadataText' />
             </label>
           </div>
           <div className="fmt-2 custom-control custom-checkbox mb-1">
             <input onChange={onchangeOption} className="custom-control-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox" name="ethereumVM" checked={isEthereumVMChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/always-use-vm')}`} htmlFor="alwaysUseVM">
-              <FormattedMessage id='settings.ethereunVMText' defaultMessage={ethereunVMText} />
+              <FormattedMessage id='settings.ethereunVMText' />
             </label>
           </div>
           <div className="mt-2 custom-control custom-checkbox mb-1">
             <input id="editorWrap" className="custom-control-input" type="checkbox" onChange={textWrapEvent} checked={isEditorWrapChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">
-              <FormattedMessage id='settings.wordWrapText' defaultMessage={wordWrapText} />
+              <FormattedMessage id='settings.wordWrapText' />
             </label>
           </div>
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeUseAutoComplete} id="settingsUseAutoComplete" type="checkbox" className="custom-control-input" checked={isAutoCompleteChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/auto-completion')}`} data-id="settingsAutoCompleteLabel" htmlFor="settingsUseAutoComplete">
-              <span><FormattedMessage id='settings.useAutoCompleteText' defaultMessage={useAutoCompleteText} /></span>
+              <span><FormattedMessage id='settings.useAutoCompleteText' /></span>
             </label>
           </div>
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeShowGasInEditor} id="settingsUseShowGas" type="checkbox" className="custom-control-input" checked={isShowGasInEditorChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/show-gas')}`} data-id="settingsShowGasLabel" htmlFor="settingsUseShowGas">
-              <span><FormattedMessage id='settings.useShowGasInEditorText' defaultMessage={useShowGasInEditorText} /></span>
+              <span><FormattedMessage id='settings.useShowGasInEditorText' /></span>
             </label>
           </div>
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeDisplayErrors} id="settingsDisplayErrors" type="checkbox" className="custom-control-input" checked={displayErrorsChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/display-errors')}`}  data-id="displayErrorsLabel" htmlFor="settingsDisplayErrors">
-              <span><FormattedMessage id='settings.displayErrorsText' defaultMessage={displayErrorsText} /></span>
+              <span><FormattedMessage id='settings.displayErrorsText' /></span>
             </label>
           </div>
           <div className="custom-control custom-checkbox mb-1">
@@ -227,15 +227,15 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
               <i className="fas fa-exclamation-triangle text-warning" aria-hidden="true"></i> <span>   </span>
               <span>   </span>
-              <FormattedMessage id='settings.enablePersonalModeText' defaultMessage={enablePersonalModeText} />
+              <FormattedMessage id='settings.enablePersonalModeText' />
               &nbsp;
-              <FormattedMessage id='settings.warnText' defaultMessage={warnText} />
+              <FormattedMessage id='settings.warnText' />
             </label>
           </div>
           <div className="custom-control custom-checkbox mb-1">
             <input onChange={onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" className="custom-control-input" checked={isMatomoChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/matomo-analytics')}`} htmlFor="settingsMatomoAnalytics">
-              <span><FormattedMessage id='settings.matomoAnalytics' defaultMessage={matomoAnalytics} /></span>
+              <span><FormattedMessage id='settings.matomoAnalytics' /></span>
               <a href="https://medium.com/p/66ef69e14931/" target="_blank"> Analytics in Remix IDE</a> <span>&</span> <a target="_blank" href="https://matomo.org/free-software">Matomo</a>
             </label>
           </div>
@@ -266,7 +266,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const swarmSettings = () => (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
-        <h6 className="card-title"><FormattedMessage id='settings.swarm' defaultMessage={ swarmSettingsTitle } /></h6>
+        <h6 className="card-title"><FormattedMessage id='settings.swarm' /></h6>
         <div className="pt-2 pt-2 mb-0 pb-0"><label className="m-0">PRIVATE BEE ADDRESS:</label>
           <div className="text-secondary mb-0 h6">
             <input id="swarmprivatebeeaddress" data-id="settingsPrivateBeeAddress" className="form-control" onChange={handleSavePrivateBeeAddress} value={privateBeeAddress} />
@@ -280,7 +280,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           </div>
         </div>
         <div className="d-flex justify-content-end pt-2">
-          <input className="btn btn-sm btn-primary ml-2" id="saveswarmsettings" data-id="settingsTabSaveSwarmSettings" onClick={() => saveSwarmSettings()} value={intl.formatMessage({id: 'settings.save', defaultMessage: 'Save'})} type="button" disabled={privateBeeAddress === ''}></input>
+          <input className="btn btn-sm btn-primary ml-2" id="saveswarmsettings" data-id="settingsTabSaveSwarmSettings" onClick={() => saveSwarmSettings()} value={intl.formatMessage({ id: 'settings.save' })} type="button" disabled={privateBeeAddress === ''}></input>
         </div>
       </div>
     </div>
@@ -330,7 +330,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const ipfsSettings = () => (
     <div className="border-top">
     <div className="card-body pt-3 pb-2">
-      <h6 className="card-title"><FormattedMessage id='settings.ipfs' defaultMessage={ ipfsSettingsText } /></h6>
+      <h6 className="card-title"><FormattedMessage id='settings.ipfs' /></h6>
       <div className="pt-2 mb-0"><label className="m-0">IPFS HOST:</label>
         <div className="text-secondary mb-0 h6">
           <input placeholder='e.g. ipfs.infura.io' id="settingsIpfsUrl" data-id="settingsIpfsUrl" className="form-control" onChange={handleSaveIpfsUrl} value={ ipfsUrl } />
@@ -357,7 +357,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         </div>
       </div>
       <div className="d-flex justify-content-end pt-2">
-        <input className="btn btn-sm btn-primary ml-2" id="saveIpfssettings" data-id="settingsTabSaveIpfsSettings" onClick={() => saveIpfsSettings()} value={intl.formatMessage({id: 'settings.save', defaultMessage: 'Save'})} type="button"></input>
+        <input className="btn btn-sm btn-primary ml-2" id="saveIpfssettings" data-id="settingsTabSaveIpfsSettings" onClick={() => saveIpfsSettings()} value={intl.formatMessage({ id: 'settings.save' })} type="button"></input>
     </div>
     </div>
   </div>)

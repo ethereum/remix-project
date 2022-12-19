@@ -1,7 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useRef, useState } from 'react'
 import * as remixLib from '@remix-project/remix-lib'
-import Web3 from 'web3'
 import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { CustomTooltip } from '@remix-ui/helper'
@@ -319,12 +318,6 @@ export function ContractGUI (props: ContractGUIProps) {
             }}
           />
         </CustomTooltip>
-        <CustomTooltip
-          tooltipText={title}
-          tooltipClasses="text-nowrap"
-          placement="bottom"
-          tooltipId="switchMethodViewOnTooltip"
-        >
           <i
             className="fas fa-angle-down udapp_methCaret"
             onClick={switchMethodViewOn}
@@ -336,7 +329,6 @@ export function ContractGUI (props: ContractGUIProps) {
                 : "visible",
             }}
           ></i>
-        </CustomTooltip>
       </div>
       <div
         className="udapp_contractActionsContainerMulti"

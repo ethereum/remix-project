@@ -101,7 +101,7 @@ function testWithArrayInput (st, params, expected) {
 tape('ContractNestedArrayParameters - (TxFormat.buildData) - format nested array input parameters', function (t) {
   let output = compiler.compile(compilerInput(nestedArrayContract))
   output = JSON.parse(output)
-  let contract = output.contracts['test.sol']['nestedArrayContractTest']
+  const contract = output.contracts['test.sol']['nestedArrayContractTest']
   context = { output, contract }
   t.test('(TxFormat.buildData)', function (st) {
     st.plan(2)
@@ -127,7 +127,7 @@ function testWithNestedArrayInput (st, params, expected) {
 tape('abiEncoderV2InvalidTuple - (TxFormat.buildData) - should throw error for invalid tuple value', function (t) {
   let output = compiler.compile(compilerInput(abiEncoderV2InvalidTuple))
   output = JSON.parse(output)
-  let contract = output.contracts['test.sol']['test']
+  const contract = output.contracts['test.sol']['test']
   context = { output, contract }
   t.test('(TxFormat.buildData)', function (st) {
     st.plan(4)
@@ -286,12 +286,12 @@ tape('test abiEncoderV2', function (t) {
     st.plan(2)
     let output = compiler.compile(compilerInput(abiEncoderV2))
     output = JSON.parse(output)
-    let contract = output.contracts['test.sol']['test']
+    const contract = output.contracts['test.sol']['test']
     txFormat.encodeFunctionCall(decodedData, contract.abi[0], (error, encoded) => {
       console.log(error)
       st.equal(encoded.dataHex, functionId + encodedData.replace('0x', ''))
     })
-    let decoded = txFormat.decodeResponse(hexToIntArray(encodedData), contract.abi[0])
+    const decoded = txFormat.decodeResponse(hexToIntArray(encodedData), contract.abi[0])
     console.log(decoded)
     st.equal(decoded[0], `tuple(uint256,uint256,string): ${value1},${value2},${value3}`)
   })

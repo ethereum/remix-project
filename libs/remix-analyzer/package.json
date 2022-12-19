@@ -1,8 +1,10 @@
 {
   "name": "@remix-project/remix-analyzer",
-  "version": "0.5.29",
+  "version": "0.5.30",
   "description": "Tool to perform static analysis on Solidity smart contracts",
-  "main": "src/index.js",
+  "scripts": {
+    "test": "./../../node_modules/.bin/ts-node --project ../../tsconfig.base.json --require tsconfig-paths/register ./../../node_modules/.bin/tape ./test/tests.ts"
+  },
   "types": "src/index.d.ts",
   "contributors": [
     {
@@ -22,8 +24,8 @@
     "@ethereumjs/block": "^3.5.1",
     "@ethereumjs/tx": "^3.3.2",
     "@ethereumjs/vm": "^5.5.3",
-    "@remix-project/remix-astwalker": "^0.0.50",
-    "@remix-project/remix-lib": "^0.5.20",
+    "@remix-project/remix-astwalker": "^0.0.51",
+    "@remix-project/remix-lib": "^0.5.21",
     "async": "^2.6.2",
     "ethereumjs-util": "^7.0.10",
     "ethers": "^5.4.2",
@@ -33,10 +35,6 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "scripts": {
-    "build": "tsc",
-    "test": "./../../node_modules/.bin/ts-node --require tsconfig-paths/register ./../../node_modules/.bin/tape ./test/tests.ts"
   },
   "author": "Remix Team",
   "license": "MIT",
@@ -52,5 +50,5 @@
     "typescript": "^3.7.5"
   },
   "typings": "src/index.d.ts",
-  "gitHead": "569f7d53f6f218d99aa8281929b541ab7e00058f"
+  "gitHead": "b9f8241a57d3083c94d6499efa8e2ea2ac8ef2d1"
 }

@@ -36,12 +36,7 @@ export class Debugger {
     this.breakPointManager = new BreakpointManager({
       traceManager,
       callTree,
-      solidityProxy,
-      locationToRowConverter: async (sourceLocation) => {
-        const compilationResult = await this.compilationResult()
-        if (!compilationResult) return { start: null, end: null }
-        return await this.offsetToLineColumnConverter.offsetToLineColumn(sourceLocation, sourceLocation.file, compilationResult.source.sources, compilationResult.data.sources)
-      }
+      solidityProxy
     })
 
     this.breakPointManager.event.register('breakpointStep', (step) => {

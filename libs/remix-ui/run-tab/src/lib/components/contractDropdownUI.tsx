@@ -257,7 +257,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       <div className='d-flex justify-content-between'>
         <div className="d-flex justify-content-between align-items-end">
           <label className="udapp_settingsLabel pr-1">
-            <FormattedMessage id='udapp.contract' defaultMessage='Contract' />
+            <FormattedMessage id='udapp.contract' />
           </label>
           <div className="d-flex">{compilerName && compilerName !== '' && <label style={{ maxHeight: '0.6rem', lineHeight: '1rem' }} data-id="udappCompiledBy">(Compiled by <span className="text-capitalize"> {compilerName}</span>)</label>}</div>
         </div>
@@ -301,10 +301,10 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       </div>
       <div>
         <div className="udapp_deployDropdown">
-          {((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? intl.formatMessage({id: 'udapp.noCompiledContracts', defaultMessage: 'No compiled contracts'})
+          {((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? intl.formatMessage({ id: 'udapp.noCompiledContracts' })
             : loadedContractData ? <div>
               <ContractGUI
-                title={intl.formatMessage({id: 'udapp.deploy', defaultMessage: "Deploy"})}
+                title={intl.formatMessage({ id: 'udapp.deploy' })}
                 isDeploy={true}
                 deployOption={deployOptions[currentFile] && deployOptions[currentFile][currentContract] ? deployOptions[currentFile][currentContract].options : null}
                 initializerOptions={deployOptions[currentFile] && deployOptions[currentFile][currentContract] ? deployOptions[currentFile][currentContract].initializeOptions : null}
@@ -337,7 +337,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
                     data-id="contractDropdownIpfsCheckboxLabel"
                     className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
                   >
-                    <FormattedMessage id='udapp.publishTo' defaultMessage='Publish to' /> IPFS
+                    <FormattedMessage id='udapp.publishTo' /> IPFS
                   </label>
                 </CustomTooltip>
               </div>
@@ -345,7 +345,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
           }
         </div>
         <div className="udapp_orLabel mt-2" style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
-          <FormattedMessage id='udapp.or' defaultMessage='or' />
+          <FormattedMessage id='udapp.or' />
         </div>
         <div className="udapp_button udapp_atAddressSect ">
           <CustomTooltip
@@ -356,7 +356,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
             >
               <div id="runAndDeployAtAdressButtonContainer" onClick={loadFromAddress} data-title={atAddressOptions.title}>
                 <button className="udapp_atAddress btn btn-sm btn-info" id="runAndDeployAtAdressButton" disabled={atAddressOptions.disabled} style={{ pointerEvents: 'none' }} onClick={loadFromAddress} data-title={atAddressOptions.title}>
-                  <FormattedMessage id='udapp.atAddress' defaultMessage='At Address' />
+                  <FormattedMessage id='udapp.atAddress' />
                 </button>
               </div>
           </CustomTooltip>
@@ -369,7 +369,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
             <input
               ref={atAddressValue}
               className="udapp_input udapp_ataddressinput ataddressinput form-control"
-              placeholder={intl.formatMessage({id: 'udapp.loadContractFromAddress', defaultMessage: "Load contract from Address"})}
+              placeholder={intl.formatMessage({ id: 'udapp.loadContractFromAddress' })}
               onChange={atAddressChanged}
             />
           </CustomTooltip>

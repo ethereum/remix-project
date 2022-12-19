@@ -9,6 +9,7 @@ export const Slider = ({ jumpTo, sliderValue, traceLength }) => {
   }, [sliderValue])
 
   const setValue = (value) => {
+    if (value < 0) return 
     if (value === slider.current.value) return
     slider.current.value = value
     if (onChangeId.current) {

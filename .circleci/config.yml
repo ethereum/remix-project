@@ -25,7 +25,10 @@ jobs:
           paths:
             - node_modules
       - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js yarn build:production
-      - run: npx nx build remix-ide-e2e-src-local-plugin & yarn run build:libs
+      - run: yarn nx build remix-ide-e2e-src-local-plugin & yarn run build:libs
+      - run: yarn nx run debugger:build:production
+      - run: yarn nx run solidity-compiler:build:production
+      - run: yarn nx run remixd:build
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
@@ -37,16 +40,17 @@ jobs:
     resource_class:
       xlarge
     working_directory: ~/remix-project
-    parallelism: 35
+    parallelism: 1
     steps:
       - checkout
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
+      - run: yarn nx graph --file=./projects.json 
       - run:
           name: Remix Libs Linting
-          command: ./apps/remix-ide/ci/lint.sh
+          command: node ./apps/remix-ide/ci/lint-targets.js
   remix-libs:
     docker:
       - image: cimg/node:14.17.6-browsers
@@ -133,7 +137,7 @@ jobs:
     parameters:
       script:
         type: string
-    parallelism: 10
+    parallelism: 4
     steps:
       - browser-tools/install-browser-tools
       - run:

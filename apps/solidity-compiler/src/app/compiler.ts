@@ -3,7 +3,7 @@
 import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
 import { CompilerApiMixin } from './compiler-api'
-import { ICompilerApi } from '@remix-project/remix-lib-ts'
+import { ICompilerApi } from '@remix-project/remix-lib'
 import { CompileTabLogic } from '@remix-ui/solidity-compiler'
 
 const defaultCompilerParameters = {

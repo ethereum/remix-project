@@ -136,7 +136,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
 
   useEffect(() => {
     if (initialPath) setCurrentPath(initialPath)
-  }, [initialPath]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [initialPath])
 
   useEffect(() => {
     testTab.on('filePanel', 'newTestFileCreated', async (file: string) => {
