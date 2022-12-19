@@ -1,5 +1,5 @@
 import { checkout, ReadCommitResult } from "isomorphic-git";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { gitActionsContext } from "../../state/context";
 import { gitPluginContext } from "../gitui";
 
@@ -8,6 +8,10 @@ export const Commands = () => {
   const actions = React.useContext(gitActionsContext)
   const [remoteBranch, setRemoteBranch] = useState('')
   const [force, setForce] = useState(false)
+
+  useEffect(() => {
+    setRemoteBranch(context.currentBranch)
+  }, [context.currentBranch])
 
   const onRemoteBranchChange = (value: string) => {
     setRemoteBranch(value)
@@ -34,7 +38,16 @@ export const Commands = () => {
 
   return (
     <>
-      <div className='row'>
+
+
+
+      <div className="btn-group w-100" role="group" aria-label="Basic example">
+        <button type="button" onClick={async () => push()} className="btn btn-primary mr-1">PUSH</button>
+        <button type="button" onClick={async () => pull()} className="btn btn-primary mr-1">PULL</button>
+        <button type="button" onClick={async () => fetch()} className="btn btn-primary">FETCH</button>
+      </div>
+
+      <div className='row mt-2'>
         <div className='col col-md-6 col-12'>
           <label>LOCAL BRANCH</label>
           <input name='localbranch' readOnly value={context.currentBranch} className="form-control" type="text" id="localbranch" />
@@ -43,19 +56,12 @@ export const Commands = () => {
           <label>REMOTE BRANCH</label>
           <input name='remotebranch' onChange={e => onRemoteBranchChange(e.target.value)} value={remoteBranch} className="form-control" type="text" id="remotebranch" />
         </div></div>
-      <button className='btn btn-primary m-1' onClick={async () => {
-        //await gitservice.init()
-      }}>init</button>
-      <button className='btn btn-primary m-1' onClick={async () => {
-        push()
-      }}>push</button>
-      <button className='btn btn-primary m-1' onClick={async () => {
-        pull()
-      }}>pull</button>
-      <button className='btn btn-primary m-1' onClick={async () => {
-        fetch()
-      }}>fetch</button><br></br>
-      <label>FORCE PUSH</label>
-      <input name='force' className='ml-2' checked={force} onChange={e => onForceChange(e)} type="checkbox" id="forecepush" />
+
+      <hr></hr>
+      <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
+        <input checked={force} onChange={e => onForceChange(e)} className="remixui_autocompile custom-control-input" type="checkbox" data-id="compilerContainerAutoCompile" id="forcepush" title="Force Push" />
+        <label className="form-check-label custom-control-label" htmlFor="forcepush">Force push</label>
+      </div>
+
     </>)
 }

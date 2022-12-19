@@ -30,7 +30,7 @@ export const Branches = () => {
                     {context.branches && context.branches.map((branch, index) => {
                         return (
                             <div key={index} className="row p-1">
-                                <div className="col-6">{branch.name} on {branch.remote || 'local'}</div>
+                                <div className="col-6"><i className="fa fa-code-branch"></i> {branch.name} on {branch.remote || 'local'}</div>
                                 <div className="col">
                                     <span className="float-right">
                                         <div

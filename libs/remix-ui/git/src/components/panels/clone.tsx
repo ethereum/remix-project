@@ -85,9 +85,12 @@ export const Clone = () => {
                 <FormControl id="clonedepth" type="number" value={cloneDepth} onChange={e => onDepthChange(parseInt(e.target.value))} aria-describedby="clonedepthprepend" />
             </InputGroup>
 
-            <Form.Check type="checkbox" id="cloneallbranches" label="clone all branches" checked={cloneAllBranches} onChange={onAllBranchChange} />
 
 
+            <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
+                <input checked={cloneAllBranches} onChange={e => onAllBranchChange(e)} className="remixui_autocompile custom-control-input" type="checkbox" data-id="compilerContainerAutoCompile" id="forcepush" title="Force Push" />
+                <label className="form-check-label custom-control-label" htmlFor="forcepush">Clone all branches</label>
+            </div>
 
 
             <hr></hr>
