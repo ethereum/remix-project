@@ -3,7 +3,7 @@ import { Blocks } from './methods/blocks'
 import { info } from './utils/logs'
 import merge from 'merge'
 
-import { Accounts } from './methods/accounts'
+import { Web3Accounts } from './methods/accounts'
 import { Filters } from './methods/filters'
 import { methods as miscMethods } from './methods/misc'
 import { methods as netMethods } from './methods/net'
@@ -25,7 +25,7 @@ export class Provider {
     this.connected = true
     this.vmContext = new VMContext(options['fork'])
 
-    this.Accounts = new Accounts(this.vmContext)
+    this.Accounts = new Web3Accounts(this.vmContext)
     this.Transactions = new Transactions(this.vmContext)
 
     this.methods = {}
@@ -39,6 +39,7 @@ export class Provider {
   }
 
   async init () {
+    await this.vmContext.init()
     await generateBlock(this.vmContext)
     await this.Accounts.resetAccounts()
     this.Transactions.init(this.Accounts.accounts)

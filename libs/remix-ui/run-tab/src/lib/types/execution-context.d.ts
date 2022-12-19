@@ -24,7 +24,6 @@ export class ExecutionContext {
     removeProvider(name: any): void;
     addProvider(network: any): void;
     internalWeb3(): any;
-    blankWeb3(): Web3;
     setContext(context: any, endPointUrl: any, confirmCb: any, infoCb: any): void;
     executionContextChange(value: any, endPointUrl: any, confirmCb: any, infoCb: any, cb: any): Promise<any>;
     currentblockGasLimit(): number;
