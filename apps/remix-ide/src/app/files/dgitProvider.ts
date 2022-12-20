@@ -14,9 +14,10 @@ import { Octokit } from "@octokit/core";
 import JSZip from 'jszip'
 import path from 'path'
 import { IndexedDBStorage } from './filesystems/indexedDB'
+import { commitChange } from '@remix-ui/git'
 
 declare global {
-  interface Window { remixFileSystemCallback: IndexedDBStorage; remixFileSystem: IndexedDBStorage['extended'];}
+  interface Window { remixFileSystemCallback: IndexedDBStorage; remixFileSystem: IndexedDBStorage['extended']; }
 }
 
 const profile = {
@@ -25,7 +26,7 @@ const profile = {
   description: 'Decentralized git provider',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
-  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'repositories', 'remotebranches'],
+  methods: ['init', 'localStorageUsed', 'getFileStateChanges', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'repositories', 'remotebranches'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
@@ -35,7 +36,7 @@ class DGitProvider extends Plugin {
   ipfsSources: { host: string; port: number; protocol: string; ipfsurl: string }[]
   ipfs: any
   filesToSend: any[]
-  constructor () {
+  constructor() {
     super(profile)
     this.ipfsconfig = {
       host: 'jqgt.remixproject.org',
@@ -58,7 +59,7 @@ class DGitProvider extends Plugin {
     this.ipfsSources = [this.remixIPFS, this.globalIPFSConfig, this.ipfsconfig]
   }
 
-  async getGitConfig () {
+  async getGitConfig() {
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
 
     if (!workspace) return
@@ -68,7 +69,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async parseInput (input) {
+  async parseInput(input) {
     return {
       corsProxy: 'https://corsproxy.remixproject.org/',
       http,
@@ -83,7 +84,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async init (input?) {
+  async init(input?) {
     await git.init({
       ...await this.getGitConfig(),
       defaultBranch: (input && input.branch) || 'main'
@@ -91,7 +92,7 @@ class DGitProvider extends Plugin {
     this.emit('init')
   }
 
-  async status (cmd) {
+  async status(cmd) {
     const status = await git.statusMatrix({
       ...await this.getGitConfig(),
       ...cmd
@@ -99,7 +100,7 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async add (cmd) {
+  async add(cmd) {
     await git.add({
       ...await this.getGitConfig(),
       ...cmd
@@ -107,7 +108,7 @@ class DGitProvider extends Plugin {
     this.emit('add')
   }
 
-  async rm (cmd) {
+  async rm(cmd) {
     await git.remove({
       ...await this.getGitConfig(),
       ...cmd
@@ -115,28 +116,85 @@ class DGitProvider extends Plugin {
     this.emit('rm')
   }
 
-  async checkout (cmd, refresh = true) {
+  async checkout(cmd, refresh = true) {
     await git.checkout({
       ...await this.getGitConfig(),
       ...cmd
     })
     if (refresh) {
-        setTimeout(async () => {
+      setTimeout(async () => {
         await this.call('fileManager', 'refresh')
       }, 1000)
     }
     this.emit('checkout')
   }
 
-  async log (cmd) {
+  async log(cmd) {
     const status = await git.log({
       ...await this.getGitConfig(),
       ...cmd
     })
+    console.log(status)
+    const tree = await git.readTree({
+      ...await this.getGitConfig(),
+      oid: status[0].oid
+    })
+    console.log('tree', tree)
+    this.getFileStateChanges(status[0].oid, status[1].oid)
     return status
   }
 
-  async remotes (config) {
+  async getFileStateChanges(commitHash1, commitHash2) {
+    console.log([git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })])
+    const result = await git.walk({
+      ...await this.getGitConfig(),
+      trees: [git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })],
+      map: async function (filepath, [A, B]) {
+        // ignore directories
+
+        if (filepath === '.') {
+          return
+        }
+        try {
+          if ((A && await A.type()) === 'tree' || B && (await B.type()) === 'tree') {
+            return
+          }
+        } catch (e) {
+          // ignore
+        }
+
+        // generate ids
+        const Aoid = A && await A.oid() || undefined
+        const Boid = B && await B.oid() || undefined
+
+        const commitChange: Partial<commitChange> = {
+          hash1: commitHash1,
+          hash2: commitHash2,
+          path: filepath,
+        }
+
+        // determine modification type
+        if (Aoid !== Boid) {
+          commitChange.type = "modified"
+        }
+        if (Aoid === undefined) {
+          commitChange.type = "deleted"
+        }
+        if (Boid === undefined) {
+          commitChange.type = "added"
+        }
+        if (Aoid === undefined && Boid === undefined) {
+          commitChange.type = "unknown"
+        }
+
+        return commitChange
+      },
+    })
+    console.log(result)
+    return result
+  }
+
+  async remotes(config) {
     let remotes = []
     try {
       remotes = await git.listRemotes({ ...config ? config : await this.getGitConfig() })
@@ -146,13 +204,13 @@ class DGitProvider extends Plugin {
     return remotes
   }
 
-  async branch (cmd, refresh = true) {
+  async branch(cmd, refresh = true) {
     const status = await git.branch({
       ...await this.getGitConfig(),
       ...cmd
     })
     if (refresh) {
-        setTimeout(async () => {
+      setTimeout(async () => {
         await this.call('fileManager', 'refresh')
       }, 1000)
     }
@@ -160,20 +218,20 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async currentbranch (config) {
-    try{
+  async currentbranch(config) {
+    try {
       const defaultConfig = await this.getGitConfig()
       const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
       const name = await git.currentBranch(cmd)
 
       return name
-    }catch(e){
+    } catch (e) {
       return ''
     }
   }
 
-  async branches (config) {
-    try{
+  async branches(config) {
+    try {
       const defaultConfig = await this.getGitConfig()
       const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
       const remotes = await this.remotes(config)
@@ -185,12 +243,12 @@ class DGitProvider extends Plugin {
         branches = [...branches, ...remotebranches]
       }
       return branches
-    }catch(e){
+    } catch (e) {
       return []
     }
   }
 
-  async commit (cmd) {
+  async commit(cmd) {
     await this.init()
     try {
       const sha = await git.commit({
@@ -204,7 +262,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async lsfiles (cmd) {
+  async lsfiles(cmd) {
     const filesInStaging = await git.listFiles({
       ...await this.getGitConfig(),
       ...cmd
@@ -212,7 +270,7 @@ class DGitProvider extends Plugin {
     return filesInStaging
   }
 
-  async resolveref (cmd) {
+  async resolveref(cmd) {
     const oid = await git.resolveRef({
       ...await this.getGitConfig(),
       ...cmd
@@ -220,7 +278,7 @@ class DGitProvider extends Plugin {
     return oid
   }
 
-  async readblob (cmd) {
+  async readblob(cmd) {
     const readBlobResult = await git.readBlob({
       ...await this.getGitConfig(),
       ...cmd
@@ -228,14 +286,14 @@ class DGitProvider extends Plugin {
     return readBlobResult
   }
 
-  async setIpfsConfig (config) {
+  async setIpfsConfig(config) {
     this.ipfsconfig = config
     return new Promise((resolve) => {
       resolve(this.checkIpfsConfig())
     })
   }
 
-  async checkIpfsConfig (config?) {
+  async checkIpfsConfig(config?) {
     this.ipfs = IpfsHttpClient(config || this.ipfsconfig)
     try {
       await this.ipfs.config.getAll()
@@ -245,19 +303,19 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async addremote (input) {
+  async addremote(input) {
     await git.addRemote({ ...await this.getGitConfig(), url: input.url, remote: input.remote })
   }
 
-  async delremote (input) {
+  async delremote(input) {
     await git.deleteRemote({ ...await this.getGitConfig(), remote: input.remote })
   }
 
-  async localStorageUsed () {
+  async localStorageUsed() {
     return this.calculateLocalStorage()
   }
 
-  async clone (input, workspaceName, workspaceExists = false) {
+  async clone(input, workspaceName, workspaceExists = false) {
     const permission = await this.askUserPermission('clone', 'Import multiple files into your workspaces.')
     if (!permission) return false
     if (parseFloat(this.calculateLocalStorage()) > 10000) throw new Error('The local storage of the browser is full.')
@@ -283,7 +341,7 @@ class DGitProvider extends Plugin {
     return result
   }
 
-  async push (input) {
+  async push(input) {
     const cmd = {
       force: input.force,
       ref: input.ref,
@@ -299,7 +357,7 @@ class DGitProvider extends Plugin {
     return await git.push(cmd)
   }
 
-  async pull (input) {
+  async pull(input) {
     const cmd = {
       ref: input.ref,
       remoteRef: input.remoteRef,
@@ -318,7 +376,7 @@ class DGitProvider extends Plugin {
     return result
   }
 
-  async fetch (input) {
+  async fetch(input) {
     const cmd = {
       ref: input.ref,
       remoteRef: input.remoteRef,
@@ -341,21 +399,21 @@ class DGitProvider extends Plugin {
     const octokit = new Octokit({
       auth: input.token
     })
-    
+
     const data = await octokit.request('GET /user/repos{?visibility,affiliation,type,sort,direction,per_page,page,since,before}', {
-      sort:"pushed",
-      direction:"desc",
+      sort: "pushed",
+      direction: "desc",
       per_page: 100,
       affiliation: "owner,collaborator"
     })
     return data.data
   }
 
-  async remotebranches (input: { owner: string, repo: string, token: string }) {
+  async remotebranches(input: { owner: string, repo: string, token: string }) {
     const octokit = new Octokit({
       auth: input.token
     })
-    
+
     const data = await octokit.request('GET /repos/{owner}/{repo}/branches{?protected,per_page,page}', {
       owner: input.owner,
       repo: input.repo,
@@ -364,7 +422,7 @@ class DGitProvider extends Plugin {
   }
 
 
-  async export (config) {
+  async export(config) {
     if (!this.checkIpfsConfig(config)) return false
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     const files = await this.getDirectory('/')
@@ -385,7 +443,7 @@ class DGitProvider extends Plugin {
   }
 
 
-  async importIPFSFiles (config, cid, workspace) {
+  async importIPFSFiles(config, cid, workspace) {
     const ipfs = IpfsHttpClient(config)
     let result = false
     try {
@@ -414,7 +472,7 @@ class DGitProvider extends Plugin {
     return result
   }
 
-  calculateLocalStorage () {
+  calculateLocalStorage() {
     let _lsTotal = 0
     let _xLen; let _x
     for (_x in localStorage) {
@@ -428,7 +486,7 @@ class DGitProvider extends Plugin {
     return (_lsTotal / 1024).toFixed(2)
   }
 
-  async import (cmd) {
+  async import(cmd) {
     const permission = await this.askUserPermission('import', 'Import multiple files into your workspaces.')
     if (!permission) return false
     if (parseFloat(this.calculateLocalStorage()) > 10000) throw new Error('The local storage of the browser is full.')
@@ -447,13 +505,13 @@ class DGitProvider extends Plugin {
     if (!result) throw new Error(`Cannot pull files from IPFS at ${cid}`)
   }
 
-  async getItem (name) {
+  async getItem(name) {
     if (typeof window !== 'undefined') {
       return window.localStorage.getItem(name)
     }
   }
 
-  async setItem (name, content) {
+  async setItem(name, content) {
     try {
       if (typeof window !== 'undefined') {
         window.localStorage.setItem(name, content)
@@ -465,7 +523,7 @@ class DGitProvider extends Plugin {
     return true
   }
 
-  async zip () {
+  async zip() {
     const zip = new JSZip()
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     const files = await this.getDirectory('/')
@@ -482,7 +540,7 @@ class DGitProvider extends Plugin {
       })
   }
 
-  async createDirectories (strdirectories) {
+  async createDirectories(strdirectories) {
     const ignore = ['.', '/.', '']
     if (ignore.indexOf(strdirectories) > -1) return false
     const directories = strdirectories.split('/')
@@ -500,7 +558,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async getDirectory (dir) {
+  async getDirectory(dir) {
     let result = []
     const files = await this.call('fileManager', 'readdir', dir)
     const fileArray = normalize(files)
@@ -524,7 +582,7 @@ class DGitProvider extends Plugin {
 }
 
 const addSlash = (file) => {
-  if (!file.startsWith('/'))file = '/' + file
+  if (!file.startsWith('/')) file = '/' + file
   return file
 }
 

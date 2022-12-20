@@ -71,6 +71,7 @@ export const getCommits = async () => {
             "log",
             { ref: "HEAD" }
         );
+        console.log('commits :>>', commits)
         return commits;
     } catch (e) {
         return [];

@@ -7,7 +7,7 @@ interface Action {
 }
 
 export const gitReducer = (state: gitState = defaultGitState, action: Action) => {
-    console.log(action, state)
+    ///console.log(action, state)
     switch (action.type) {
        
         case 'FILE_STATUS':

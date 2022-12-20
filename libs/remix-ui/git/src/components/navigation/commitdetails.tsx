@@ -1,8 +1,8 @@
-import { faCaretUp, faCaretDown, faArrowUp, faArrowDown, faArrowRotateRight, faCaretRight } from "@fortawesome/free-solid-svg-icons";
+import { faCaretUp, faCaretDown, faCaretRight, faArrowUp, faArrowDown, faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useContext, useEffect } from "react";
 
-export const CloneNavigation = ({ eventKey, activePanel, callback  }) => {
+export const CommitDetailsNavigation = ({ eventKey, activePanel, callback  }) => {
 
     const handleClick = () => {
         if (!callback) return
@@ -19,7 +19,7 @@ export const CloneNavigation = ({ eventKey, activePanel, callback  }) => {
                     {
                         activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
                     }
-                    <label className="pl-1 nav form-check-label">CLONE</label>
+                    <label className="pl-1 nav form-check-label">details</label>
                 </span>
             </div>
         </>

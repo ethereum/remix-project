@@ -1,4 +1,4 @@
-import { ReadCommitResult } from "isomorphic-git"
+import { CommitObject, ReadCommitResult } from "isomorphic-git"
 
 export type gitState = {
     currentBranch: string
@@ -19,6 +19,23 @@ export type gitState = {
     allchangesnotstaged: any[],
     repositories: repository[]
     remoteBranches: remoteBranch[]
+    changes: commitChange[]
+}
+
+export type commitChangeTypes = {  
+    "deleted": "D"
+    "modified": "M"
+    "added": "A",
+    "unknown": "?"
+}
+
+export type commitChangeType = keyof commitChangeTypes
+
+export type commitChange = {
+    type: commitChangeType
+    path: string,
+    hash1 : string,
+    hash2 : string,
 }
 
 export type repository = {
@@ -59,7 +76,8 @@ export const defaultGitState: gitState = {
     storageUsed: {},
     reponame: "",
     repositories: [],
-    remoteBranches: []
+    remoteBranches: [],
+    changes: []
 }
 
 export type fileStatusResult = {
