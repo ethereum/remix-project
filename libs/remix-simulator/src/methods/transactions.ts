@@ -16,7 +16,7 @@ export type VMExecResult = {
   gas: bigint
   gasRefund: bigint
   logs: Log[]
-  returnValue: Buffer
+  returnValue: string
 }
 
 export class Transactions {
@@ -87,13 +87,14 @@ export class Transactions {
         this.vmContext.addBlock(result.block)
         const hash = '0x' + result.tx.hash().toString('hex')
         this.vmContext.trackTx(hash, result.block, result.tx)
+        const returnValue = `0x${result.result.execResult.returnValue.toString('hex') || '0'}`
         const execResult: VMExecResult = {
           exceptionError: result.result.execResult.exceptionError,
           executionGasUsed: result.result.execResult.executionGasUsed,
           gas: result.result.execResult.gas,
           gasRefund: result.result.execResult.gasRefund,
           logs: result.result.execResult.logs,
-          returnValue: result.result.execResult.returnValue
+          returnValue
         }
         this.vmContext.trackExecResult(hash, execResult)
         return cb(null, result.transactionHash)
@@ -159,9 +160,9 @@ export class Transactions {
       if (error) return cb(error)
       if ((result as any).receipt === '0x0') {
         try {
-          const msg = result.execResult.returnValue
+          const msg = `0x${result.execResult.returnValue.toString('hex') || '0'}`
           const abiCoder = new ethers.utils.AbiCoder()
-          const reason = abiCoder.decode(['string'], msg.slice(4))[0]
+          const reason = abiCoder.decode(['string'], '0x' + msg.slice(10))[0]
           return cb('revert ' + reason)
         } catch (e) {
           return cb(e.message)
@@ -200,23 +201,23 @@ export class Transactions {
 
     const tag = payload.params[0].timestamp // e2e reference
 
-    processTx(this.txRunnerInstance, payload, true, (error, result) => {
+    processTx(this.txRunnerInstance, payload, true, (error, result: VMxecutionResult) => {
       if (!error && result) {
         this.vmContext.addBlock(result.block)
         const hash = '0x' + result.tx.hash().toString('hex')
         this.vmContext.trackTx(hash, result.block, result.tx)
+        const returnValue = `0x${result.result.execResult.returnValue.toString('hex') || '0'}`
         const execResult: VMExecResult = {
           exceptionError: result.result.execResult.exceptionError,
           executionGasUsed: result.result.execResult.executionGasUsed,
           gas: result.result.execResult.gas,
           gasRefund: result.result.execResult.gasRefund,
           logs: result.result.execResult.logs,
-          returnValue: result.result.execResult.returnValue
+          returnValue: returnValue
         }
         this.vmContext.trackExecResult(hash, execResult)
         this.tags[tag] = result.transactionHash
         // calls are not supposed to return a transaction hash. we do this for keeping track of it and allowing debugging calls.
-        const returnValue = `0x${result.result.execResult.returnValue.toString('hex') || '0'}`
         return cb(null, returnValue)
       }
       cb(error)

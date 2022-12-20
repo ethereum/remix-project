@@ -733,7 +733,7 @@ export class Blockchain extends Plugin {
         execResult = await this.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
-          returnValue = execResult ? execResult.returnValue : toBuffer(addHexPrefix(txResult.result) || '0x0000000000000000000000000000000000000000000000000000000000000000')
+          returnValue = execResult ? toBuffer(execResult.returnValue) : toBuffer(addHexPrefix(txResult.result) || '0x0000000000000000000000000000000000000000000000000000000000000000')
           const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
           const vmError = txExecution.checkVMError(execResult, compiledContracts)
           if (vmError.error) {
