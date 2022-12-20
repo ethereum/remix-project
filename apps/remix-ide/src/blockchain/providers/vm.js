@@ -1,6 +1,6 @@
 const Web3 = require('web3')
 const { BN, privateToAddress, hashPersonalMessage } = require('ethereumjs-util')
-const { extend } = require('@remix-project/remix-simulator')
+const { extend, Provider } = require('@remix-project/remix-simulator')
 class VMProvider {
   constructor (executionContext) {
     this.executionContext = executionContext
@@ -19,24 +19,8 @@ class VMProvider {
   resetEnvironment () {
     if (this.worker) this.worker.terminate()
     this.accounts = {}
-    this.worker = new Worker(new URL('./worker-vm', import.meta.url))
-    this.worker.postMessage({ cmd: 'init', fork: this.executionContext.getCurrentFork() })
-    
-    let incr = 0
-    const stamps = {}
-    this.worker.addEventListener('message', (msg) => {
-      if (stamps[msg.data.stamp]) {
-        stamps[msg.data.stamp](msg.data.error, msg.data.result)
-      }
-    })
-    const provider = {
-      sendAsync: (query, callback) => {
-        const stamp = Date.now() + incr
-        incr++
-        stamps[stamp] = callback
-        this.worker.postMessage({ cmd: 'sendAsync', query, stamp })
-      }
-    }
+    provider = new Provider({ fork: this.executionContext.getCurrentFork() })
+    provider.init()
     this.web3 = new Web3(provider)
     extend(this.web3)
     this.accounts = {}
