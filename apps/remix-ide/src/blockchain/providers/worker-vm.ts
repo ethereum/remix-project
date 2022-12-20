@@ -15,10 +15,6 @@ self.onmessage = (e: MessageEvent) => {
     {
       if (provider) {
         provider.sendAsync(data.query, (error, result) => {
-          result = JSON.parse(JSON.stringify(result, (key, value) => {
-            if (typeof value === 'bigint') return bigIntToHex(value)
-            return value
-          }))
           self.postMessage({
               cmd: 'sendAsyncResult',
               error,

@@ -64,7 +64,7 @@ export class TxListener {
       let execResult
       if (this.executionContext.isVM()) {
         execResult = await this.executionContext.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
-        returnValue = execResult.returnValue
+        returnValue = toBuffer(execResult.returnValue)
       } else {
         returnValue = toBuffer(addHexPrefix(txResult.result))
       }
