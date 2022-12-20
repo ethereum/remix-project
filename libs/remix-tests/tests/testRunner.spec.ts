@@ -366,8 +366,8 @@ describe('testRunner', function () {
                 deepEqualExcluding(tests, [
                     { type: 'accountList', value: accounts },
                     { type: 'contract', value: 'StringTest', filename: __dirname + '/examples_3/simple_string_test.sol' },
-                    { type: 'testPass', debugTxHash: '0x4e160dbc81f88d3d87b39d81651c42b0ea8e3aaa10c1a57394467e073bbcb2a4', value: 'Initial value should be hello world', filename: __dirname + '/examples_3/simple_string_test.sol', context: 'StringTest' },
-                    { type: 'testPass', debugTxHash: '0x47030578c5bcb990d837356430697d061a02813e3322fa3323f6b5f78176eea6', value: 'Value should not be hello wordl', filename: __dirname + '/examples_3/simple_string_test.sol', context: 'StringTest' }
+                    { type: 'testPass', debugTxHash: '0x3567da76ffbec37e3b43a41987a7ff3e61b41b4c544f35c010d2d4b39568d6d4', value: 'Initial value should be hello world', filename: __dirname + '/examples_3/simple_string_test.sol', context: 'StringTest' },
+                    { type: 'testPass', debugTxHash: '0x8619b743ccc99be7d5347a064732474b2d1b69844be65b0e7754c6ac1340d275', value: 'Value should not be hello wordl', filename: __dirname + '/examples_3/simple_string_test.sol', context: 'StringTest' }
                 ], ['time', 'web3'])
             })
         })
@@ -392,9 +392,9 @@ describe('testRunner', function () {
                 deepEqualExcluding(tests, [
                     { type: 'accountList', value: accounts },
                     { type: 'contract', value: 'StorageResolveTest', filename: __dirname + '/examples_5/test/simple_storage_test.sol' },
-                    { type: 'testPass', debugTxHash: '0x85e901e9160c4a17725d020f030c7cbb020d36da1fda8422d990391df3cbfcbb', value: 'Initial value should be100', filename: __dirname + '/examples_5/test/simple_storage_test.sol', context: 'StorageResolveTest' },
-                    { type: 'testPass', debugTxHash: '0x1abb2456746b416cddcaf2f3fe960103e740e9772c47a0f1d65d48394facb21a', value: 'Check if even', filename: __dirname + '/examples_5/test/simple_storage_test.sol', context: 'StorageResolveTest' },
-                    { type: 'testPass', debugTxHash: '0xfcc2332a24d2780390e85a06343fab81c4dc20c12cf5455d746641a9c3e8db03', value: 'Check if odd', filename: __dirname + '/examples_5/test/simple_storage_test.sol', context: 'StorageResolveTest' }
+                    { type: 'testPass', debugTxHash: '0xa700d29204f1ddb40ef66f151c44387f905d405b6da10380111a751451af2fe1', value: 'Initial value should be100', filename: __dirname + '/examples_5/test/simple_storage_test.sol', context: 'StorageResolveTest' },
+                    { type: 'testPass', debugTxHash: '0x6893fe4f5a83cc51f03c9237ab93b93ffd826236167d58e20666be4c1b3128a4', value: 'Check if even', filename: __dirname + '/examples_5/test/simple_storage_test.sol', context: 'StorageResolveTest' },
+                    { type: 'testPass', debugTxHash: '0x64e600b32be681b68926660042ddd96f22d07949b424959811b8acb56e72f719', value: 'Check if odd', filename: __dirname + '/examples_5/test/simple_storage_test.sol', context: 'StorageResolveTest' }
                 ], ['time', 'web3'])
             })
         })
