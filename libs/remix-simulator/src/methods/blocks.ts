@@ -66,7 +66,7 @@ export class Blocks {
     const b = {
       baseFeePerGas: '0x01',
       number: bigIntToHex(block.header.number),
-      hash: block.hash(),
+      hash: this.toHex(block.hash()),
       parentHash: this.toHex(block.header.parentHash),
       nonce: this.toHex(block.header.nonce),
       sha3Uncles: '0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347',
