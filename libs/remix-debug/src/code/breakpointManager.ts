@@ -14,7 +14,6 @@ export class BreakpointManager {
   callTree
   solidityProxy
   breakpoints
-  locationToRowConverter
 
   /**
     * constructor
@@ -22,13 +21,12 @@ export class BreakpointManager {
     * @param {Object} _debugger - type of EthDebugger
     * @return {Function} _locationToRowConverter - function implemented by editor which return a column/line position for a char source location
     */
-  constructor ({ traceManager, callTree, solidityProxy, locationToRowConverter }) {
+  constructor ({ traceManager, callTree, solidityProxy }) {
     this.event = new EventManager()
     this.traceManager = traceManager
     this.callTree = callTree
     this.solidityProxy = solidityProxy
     this.breakpoints = {}
-    this.locationToRowConverter = locationToRowConverter
   }
 
   setManagers ({ traceManager, callTree, solidityProxy }) {
@@ -43,7 +41,7 @@ export class BreakpointManager {
     *
     */
   async jumpNextBreakpoint (fromStep, defaultToLimit) {
-    if (!this.locationToRowConverter) {
+    if (!this.callTree.locationAndOpcodePerVMTraceIndex[fromStep]) {
       return console.log('row converter not provided')
     }
     this.jump(fromStep || 0, 1, defaultToLimit, this.traceManager.trace)
@@ -55,7 +53,7 @@ export class BreakpointManager {
     *
     */
   async jumpPreviousBreakpoint (fromStep, defaultToLimit) {
-    if (!this.locationToRowConverter) {
+    if (!this.callTree.locationAndOpcodePerVMTraceIndex[fromStep]) {
       return console.log('row converter not provided')
     }
     this.jump(fromStep || 0, -1, defaultToLimit, this.traceManager.trace)
@@ -89,6 +87,8 @@ export class BreakpointManager {
   async jump (fromStep, direction, defaultToLimit, trace) {
     this.event.trigger('locatingBreakpoint', [])
     let sourceLocation
+    let lineColumn
+    let contractAddress
     let previousSourceLocation
     let currentStep = fromStep + direction
     let lineHadBreakpoint = false
@@ -96,13 +96,15 @@ export class BreakpointManager {
     while (currentStep > 0 && currentStep < trace.length) {
       try {
         previousSourceLocation = sourceLocation
-        sourceLocation = await this.callTree.extractValidSourceLocation(currentStep)
+        const stepInfo = this.callTree.locationAndOpcodePerVMTraceIndex[currentStep]
+        sourceLocation = stepInfo.sourceLocation
+        lineColumn = stepInfo.lineColumnPos
+        contractAddress = stepInfo.contractAddress
       } catch (e) {
         console.log('cannot jump to breakpoint ' + e)
         currentStep += direction
         continue
       }
-      const lineColumn = await this.locationToRowConverter(sourceLocation)
       if (!initialLine) initialLine = lineColumn
 
       if (initialLine.start.line !== lineColumn.start.line) {
@@ -112,7 +114,7 @@ export class BreakpointManager {
             return
           }
         }
-        if (this.hasBreakpointAtLine(sourceLocation.file, lineColumn.start.line)) {
+        if (await this.hasBreakpointAtLine(sourceLocation.file, lineColumn.start.line, contractAddress)) {
           lineHadBreakpoint = true
           if (this.hitLine(currentStep, sourceLocation, previousSourceLocation, trace)) {
             return
@@ -137,10 +139,12 @@ export class BreakpointManager {
     *
     * @param {Int} fileIndex - index of the file content (from the compilation result)
     * @param {Int} line - line number where looking for breakpoint
+    * @param {String} contractAddress - address of the contract being executed
     * @return {Bool} return true if the given @arg fileIndex @arg line refers to a breakpoint
     */
-  hasBreakpointAtLine (fileIndex, line) {
-    const filename = this.solidityProxy.fileNameFromIndex(fileIndex)
+  async hasBreakpointAtLine (fileIndex, line, contractAddress) {
+    const compResult = await this.solidityProxy.compilationResult(contractAddress)
+    const filename = Object.keys(compResult.data.contracts)[fileIndex]
     if (!(filename && this.breakpoints[filename])) {
       return false
     }

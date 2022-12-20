@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react' // eslint-disable-line
+import { FormattedMessage, useIntl } from 'react-intl'
 import { ContractSelectionProps } from './types'
 import { PublishToStorage } from '@remix-ui/publish-to-storage' // eslint-disable-line
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
@@ -11,6 +12,8 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   const { api, compiledFileName, contractsDetails, contractList, modal } = props
   const [selectedContract, setSelectedContract] = useState('')
   const [storage, setStorage] = useState(null)
+
+  const intl = useIntl()
 
   useEffect(() => {
     if (contractList.length) {
@@ -159,7 +162,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
         {
           Object.keys(contractProperties).map((propertyName, index) => {
             const copyDetails = <span className="remixui_copyDetails"><CopyToClipboard content={contractProperties[propertyName]} direction='top' /></span>
-            const questionMark = <span className="remixui_questionMark"><i title={ help[propertyName] } className="fas fa-question-circle" aria-hidden="true"></i></span>
+            const questionMark = <span className="remixui_questionMark"><i title={ intl.formatMessage({id: `solidity.${propertyName}`, defaultMessage: help[propertyName]}) } className="fas fa-question-circle" aria-hidden="true"></i></span>
 
             return (
               <div className="remixui_log" key={index}>
@@ -201,10 +204,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 placement="right-start"
                 tooltipId="publishOnIpfsTooltip"
                 tooltipClasses="text-nowrap"
-                tooltipText="Publish on Ipfs"
+                tooltipText={`${intl.formatMessage({ id: 'solidity.publishOn' })} Ipfs`}
               >
                 <span>
-                  <span>Publish on Ipfs</span>
+                  <span><FormattedMessage id='solidity.publishOn' /> Ipfs</span>
                   <img id="ipfsLogo" className="remixui_storageLogo ml-2" src="assets/img/ipfs.webp" />
                 </span>
               </CustomTooltip>
@@ -214,10 +217,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 placement="right-start"
                 tooltipId="publishOnSwarmTooltip"
                 tooltipClasses="text-nowrap"
-                tooltipText="Publish on Swarm"
+                tooltipText={`${intl.formatMessage({ id: 'solidity.publishOn' })} Swarm`}
               >
                 <span>
-                  <span>Publish on Swarm</span>
+                  <span><FormattedMessage id='solidity.publishOn' /> Swarm</span>
                   <img id="swarmLogo" className="remixui_storageLogo ml-2" src="assets/img/swarm.webp" />
                 </span>
               </CustomTooltip>
@@ -229,7 +232,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 tooltipClasses="text-nowrap"
                 tooltipText="Display Contract Details"
               >
-                <span>Compilation Details</span>
+                <span><FormattedMessage id='solidity.compilationDetails' /></span>
               </CustomTooltip>
             </button>
             {/* Copy to Clipboard */}

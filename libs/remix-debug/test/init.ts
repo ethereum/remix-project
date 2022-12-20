@@ -9,7 +9,7 @@ export const init = {
   },
 
   readFile: function (filename, callback) {
-    var fs = require('fs')
+    const fs = require('fs')
     try {
       console.log('reading ' + filename)
       if (callback) {

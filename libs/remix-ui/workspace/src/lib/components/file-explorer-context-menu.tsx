@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react' // eslint-disable-line
+import { useIntl } from 'react-intl'
 import { action, FileExplorerContextMenuProps } from '../types'
 
 import '../css/file-explorer-context-menu.css'
@@ -12,8 +13,9 @@ declare global {
 const _paq = window._paq = window._paq || []  //eslint-disable-line
 
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
-  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, paste, runScript, emit, pageX, pageY, path, type, focus, ...otherProps } = props
+  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, copyFileName, copyPath, paste, runScript, emit, pageX, pageY, path, type, focus, ...otherProps } = props
   const contextMenuRef = useRef(null)
+  const intl = useIntl()
   useEffect(() => {
     contextMenuRef.current.focus()
   }, [])
@@ -106,6 +108,14 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               copy(path, type)
               _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copy'])
               break
+            case 'Copy name':
+              copyFileName(path, type)
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copy'])
+              break
+            case 'Copy path':
+              copyPath(path, type)
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copy'])
+              break
             case 'Paste':
               paste(path, type)
               _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'paste'])
@@ -120,7 +130,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               break
           }
           hideContextMenu()
-        }}>{item.label || item.name}</li>
+        }}>{intl.formatMessage({id: `filePanel.${item.id}`, defaultMessage: item.label || item.name})}</li>
     })
   }
 

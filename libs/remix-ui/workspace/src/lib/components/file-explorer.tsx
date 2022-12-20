@@ -409,6 +409,17 @@ export const FileExplorer = (props: FileExplorerProps) => {
     props.dispatchHandleExpandPath(expandPath)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleCopyFileNameClick = (path: string, _type: string) => {
+    const fileName = extractNameFromKey(path)
+    navigator.clipboard.writeText(fileName)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleCopyFilePathClick = (path: string, _type: string) => {
+    navigator.clipboard.writeText(path)
+  }
+
   const handleFileMove = (dest: string, src: string) => {
     try {
       props.dispatchMoveFile(src, dest)
@@ -443,7 +454,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             </div>
           }
           expand={true}>
-          <div className='pb-2'>
+          <div className='pb-4 mb-4'>
             <TreeView id='treeViewMenu'>
               {
                 files[ROOT_PATH] && Object.keys(files[ROOT_PATH]).map((key, index) => <FileRender
@@ -480,6 +491,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
           runScript={runScript}
           copy={handleCopyClick}
           paste={handlePasteClick}
+          copyFileName={handleCopyFileNameClick}
+          copyPath={handleCopyFilePathClick}
           emit={emitContextMenuEvent}
           pageX={state.focusContext.x}
           pageY={state.focusContext.y}

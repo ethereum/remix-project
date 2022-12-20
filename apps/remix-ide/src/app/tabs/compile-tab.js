@@ -5,7 +5,7 @@ import { CompileTabLogic } from '@remix-ui/solidity-compiler' // eslint-disable-
 import { CompilerApiMixin } from '@remixproject/solidity-compiler-plugin' // eslint-disable-line
 import { ViewPlugin } from '@remixproject/engine-web'
 import { QueryParams } from '@remix-project/remix-lib'
-// import { ICompilerApi } from '@remix-project/remix-lib-ts'
+// import { ICompilerApi } from '@remix-project/remix-lib'
 import * as packageJson from '../../../../../package.json'
 import { compilerConfigChangedToastMsg, compileToastMsg } from '@remix-ui/helper'
 import { isNative } from '../../remixAppManager'
@@ -100,7 +100,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
     this.renderComponent()
     // @todo(#2875) should use loading compiler return value to check whether the compiler is loaded instead of "setInterval"
     const value = JSON.stringify(settings, null, '\t')
-  
+
     this.call('notification', 'toast', compilerConfigChangedToastMsg(this.currentRequest.from, value))
   }
 

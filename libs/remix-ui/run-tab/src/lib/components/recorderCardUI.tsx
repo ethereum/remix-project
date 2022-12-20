@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, {useRef, useState, useEffect} from 'react'
+import { FormattedMessage } from 'react-intl'
 import { RecorderProps } from '../types'
 import { CustomTooltip } from '@remix-ui/helper'
 
@@ -27,10 +28,12 @@ export function RecorderUI (props: RecorderProps) {
 
 
   return (
-    <div className="udapp_cardContainer list-group-item border border-bottom">
+    <div className="udapp_cardContainer list-group-item border-top border-bottom">
       <div className="udapp_recorderSection d-flex justify-content-between" onClick={toggleClass}>
         <div className="d-flex justify-content-center align-items-center">
-          <label className="mt-1 udapp_recorderSectionLabel">Transactions recorded</label>
+          <label className="mt-1 udapp_recorderSectionLabel">
+            <FormattedMessage id='udapp.transactionsRecorded' />
+          </label>
           <CustomTooltip
             placement={'right'}
             tooltipClasses="text-nowrap"
@@ -43,7 +46,7 @@ export function RecorderUI (props: RecorderProps) {
           placement={'right'}
           tooltipClasses="text-wrap"
           tooltipId="info-recorder"
-          tooltipText="Save transactions (deployed contracts and function executions) and replay them in another environment e.g Transactions created in Remix VM can be replayed in the Injected Provider."
+          tooltipText={<span>Save transactions (deployed contracts and function executions) <br />and replay them in another environment e.g Transactions created <br />in Remix VM can be replayed in the Injected Provider.</span>}
           >
           <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
         </CustomTooltip>
@@ -61,7 +64,7 @@ export function RecorderUI (props: RecorderProps) {
             placement={'right'}
             tooltipClasses="text-wrap"
             tooltipId="tooltip-livemode-recorder"
-            tooltipText="If contracts are updated after recording transactions, checking this box will run recorded transactions with the latest copy of the compiled contracts"
+            tooltipText={<span>If contracts are updated after recording transactions,<br/> checking this box will run recorded transactions <br/>with the latest copy of the compiled contracts</span>}
           >
             <label className="form-check-label custom-control-label" data-id="runtabLivemodeInput" htmlFor="livemode-recorder">Run transactions using the latest compilation result</label>
           </CustomTooltip>

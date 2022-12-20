@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useRef, useContext } from 'react'
+import { useIntl, FormattedMessage } from 'react-intl'
 import { ThemeContext} from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import WorkspaceTemplate from './workspaceTemplate'
@@ -17,8 +18,9 @@ interface  HomeTabGetStartedProps {
 
 function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
   const themeFilter = useContext(ThemeContext)
-  const carouselRef = useRef(null)
+  const carouselRef = useRef<any>({})
   const carouselRefDiv = useRef(null)
+  const intl = useIntl()
 
   useEffect(() => {
     document.addEventListener("wheel", handleScroll)
@@ -37,14 +39,14 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
     }
     return false;
   }
-  
+
   const handleScroll = (e) => {
     if (isDescendant(carouselRefDiv.current, e.target)) {
       e.stopPropagation()
       let nextSlide = 0
       if (e.wheelDelta < 0) {
         nextSlide = carouselRef.current.state.currentSlide + 1;
-        if ((carouselRef.current.state.totalItems - carouselRef.current.state.currentSlide) * carouselRef.current.state.itemWidth + 5 < carouselRef.current.state.containerWidth) return // 5 is approx margins
+        if (Math.abs(carouselRef.current.state.transform) >= carouselRef.current.containerRef.current.scrollWidth - carouselRef.current.state.containerWidth) return
         carouselRef.current.goToSlide(nextSlide)
       } else {
         nextSlide = carouselRef.current.state.currentSlide - 1;
@@ -67,9 +69,9 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
     <div className="pl-2" id="hTGetStartedSection">
       <label style={{fontSize: "1.2rem"}}>
         <span className="mr-2" style={{fontWeight: "bold"}}>
-          Get Started
+          <FormattedMessage id="home.getStarted" />
         </span>
-        - Project Templates
+        - <FormattedMessage id="home.projectTemplates" />
       </label>
       <div ref={carouselRefDiv} className="w-100 d-flex flex-column">
         <ThemeContext.Provider value={ themeFilter }>
@@ -77,14 +79,14 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
             ref={carouselRef}
             focusOnSelect={true}
             customButtonGroup={
-              <CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} />
+              <CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} parent={carouselRef} />
             }
             arrows={false}
             swipeable={false}
             draggable={true}
             showDots={false}
             responsive={
-              { 
+              {
                 superLargeDesktop: {
                   breakpoint: { max: 4000, min: 3000 },
                   items: 5
@@ -106,27 +108,27 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
             <WorkspaceTemplate
               gsID="starkNetLogo"
               workspaceTitle="Blank"
-              description="Create an empty workspace."
+              description={intl.formatMessage({ id: 'home.blankTemplateDesc' })}
               callback={() => createWorkspace("blank")} />
             <WorkspaceTemplate
               gsID="solhintLogo"
               workspaceTitle="Remix Default"
-              description="Create a workspace with sample files."
+              description={intl.formatMessage({ id: 'home.remixDefaultTemplateDesc' })}
               callback={() => createWorkspace("remixDefault")} />
             <WorkspaceTemplate
               gsID="sourcifyLogo"
               workspaceTitle="OpenZeppelin ERC20"
-              description="Create an ERC20 token by importing OpenZeppelin library."
+              description={intl.formatMessage({ id: 'home.ozerc20TemplateDesc' })}
               callback={() => createWorkspace("ozerc20")} />
             <WorkspaceTemplate
               gsID="sUTLogo"
               workspaceTitle="OpenZeppelin ERC721"
-              description="Create an NFT token by importing OpenZeppelin library."
+              description={intl.formatMessage({ id: 'home.ozerc721TemplateDesc' })}
               callback={() => createWorkspace("ozerc721")} />
             <WorkspaceTemplate
               gsID="sUTLogo"
               workspaceTitle="0xProject ERC20"
-              description="Create an ERC20 token by importing 0xProject contract."
+              description={intl.formatMessage({ id: 'home.zeroxErc20TemplateDesc' })}
               callback={() => createWorkspace("zeroxErc20")} />
           </Carousel>
         </ThemeContext.Provider>

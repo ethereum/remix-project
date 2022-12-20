@@ -336,7 +336,7 @@ export function UniversalDappUI (props: UdappProps) {
               placement={"bottom-end"}
               tooltipClasses="text-wrap"
               tooltipId="receiveEthDocstoolTip"
-              tooltipText={"check out docs for using 'receive'/'fallback'"}
+              tooltipText={"Click for docs about using 'receive'/'fallback'"}
             >
               <a
                 href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function"

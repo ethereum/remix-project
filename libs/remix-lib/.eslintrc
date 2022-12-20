@@ -4,7 +4,8 @@
         "standard/no-callback-literal": "off",
         "no-unused-vars": "off",
         "dot-notation": "off",
-        "no-use-before-define": "off"
+        "no-use-before-define": "off",
+        "@typescript-eslint/no-var-requires": "off"
     }, 
     "env": {
         "browser": true,

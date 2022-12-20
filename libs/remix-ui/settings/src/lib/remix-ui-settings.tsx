@@ -1,12 +1,14 @@
 import React, { useState, useReducer, useEffect, useCallback } from 'react' // eslint-disable-line
 
-import { enablePersonalModeText, ethereunVMText, labels, generateContractMetadataText, matomoAnalytics, textDark, textSecondary, warnText, wordWrapText, swarmSettingsTitle, ipfsSettingsText, useAutoCompleteText, useShowGasInEditorText, displayErrorsText } from './constants'
+import { labels, textDark, textSecondary } from './constants'
 
 import './remix-ui-settings.css'
 import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast, saveIpfsSettingsToast, useAutoCompletion, useShowGasInEditor, useDisplayErrors } from './settingsAction'
 import { initialState, toastInitialState, toastReducer, settingReducer } from './settingsReducer'
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 import { RemixUiThemeModule, ThemeModule} from '@remix-ui/theme-module'
+import { RemixUiLocaleModule, LocaleModule} from '@remix-ui/locale-module'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { GithubSettings } from './github-settings'
 import { EtherscanSettings } from './etherscan-settings'
 import { CustomTooltip } from '@remix-ui/helper'
@@ -18,6 +20,7 @@ export interface RemixUiSettingsProps {
   _deps: any,
   useMatomoAnalytics: boolean
   themeModule: ThemeModule
+  localeModule: LocaleModule
 }
 
 export const RemixUiSettings = (props: RemixUiSettingsProps) => {
@@ -33,7 +36,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [ipfsProtocol, setipfsProtocol] = useState('')
   const [ipfsProjectId, setipfsProjectId] = useState('')
   const [ipfsProjectSecret, setipfsProjectSecret] = useState('')
-
+  const intl = useIntl()
   const initValue = () => {
     const metadataConfig = props.config.get('settings/generate-contract-metadata')
     if (metadataConfig === undefined || metadataConfig === null) generateContractMetadat(props.config, true, dispatch)
@@ -46,7 +49,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
     const displayErrors = props.config.get('settings/display-errors')
     if (displayErrors === null || displayErrors === undefined) useDisplayErrors(props.config, false, dispatch)
-  
+
     const useShowGas = props.config.get('settings/show-gas')
     if (useShowGas === null || useShowGas === undefined) useShowGasInEditor(props.config, false, dispatch)
   }
@@ -178,52 +181,61 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               } catch (e) {
                 console.log(e)
               }
-            }}>Reset to Default settings</button>
+            }}><FormattedMessage id='settings.reset' /></button>
           </div>
         </CustomTooltip>
         <div className="card-body pt-3 pb-2">
-          <h6 className="card-title">General settings</h6>
+          <h6 className="card-title"><FormattedMessage id='settings.general' /></h6>
           <div className="mt-2 custom-control custom-checkbox mb-1">
             <input onChange={onchangeGenerateContractMetadata} id="generatecontractmetadata" data-id="settingsTabGenerateContractMetadata" type="checkbox" className="custom-control-input" name="contractMetadata" checked={isMetadataChecked} />
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/generate-contract-metadata')}`} data-id="settingsTabGenerateContractMetadataLabel" htmlFor="generatecontractmetadata">{generateContractMetadataText}</label>
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/generate-contract-metadata')}`} data-id="settingsTabGenerateContractMetadataLabel" htmlFor="generatecontractmetadata">
+              <FormattedMessage id='settings.generateContractMetadataText' />
+            </label>
           </div>
           <div className="fmt-2 custom-control custom-checkbox mb-1">
             <input onChange={onchangeOption} className="custom-control-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox" name="ethereumVM" checked={isEthereumVMChecked} />
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/always-use-vm')}`} htmlFor="alwaysUseVM">{ethereunVMText}</label>
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/always-use-vm')}`} htmlFor="alwaysUseVM">
+              <FormattedMessage id='settings.ethereunVMText' />
+            </label>
           </div>
           <div className="mt-2 custom-control custom-checkbox mb-1">
             <input id="editorWrap" className="custom-control-input" type="checkbox" onChange={textWrapEvent} checked={isEditorWrapChecked} />
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">{wordWrapText}</label>
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/text-wrap')}`} htmlFor="editorWrap">
+              <FormattedMessage id='settings.wordWrapText' />
+            </label>
           </div>
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeUseAutoComplete} id="settingsUseAutoComplete" type="checkbox" className="custom-control-input" checked={isAutoCompleteChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/auto-completion')}`} data-id="settingsAutoCompleteLabel" htmlFor="settingsUseAutoComplete">
-              <span>{useAutoCompleteText}</span>
+              <span><FormattedMessage id='settings.useAutoCompleteText' /></span>
             </label>
           </div>
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeShowGasInEditor} id="settingsUseShowGas" type="checkbox" className="custom-control-input" checked={isShowGasInEditorChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/show-gas')}`} data-id="settingsShowGasLabel" htmlFor="settingsUseShowGas">
-              <span>{useShowGasInEditorText}</span>
+              <span><FormattedMessage id='settings.useShowGasInEditorText' /></span>
             </label>
           </div>
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeDisplayErrors} id="settingsDisplayErrors" type="checkbox" className="custom-control-input" checked={displayErrorsChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/display-errors')}`}  data-id="displayErrorsLabel" htmlFor="settingsDisplayErrors">
-              <span>{displayErrorsText}</span>
+              <span><FormattedMessage id='settings.displayErrorsText' /></span>
             </label>
           </div>
           <div className="custom-control custom-checkbox mb-1">
             <input onChange={onchangePersonal} id="personal" type="checkbox" className="custom-control-input" checked={isPersonalChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
               <i className="fas fa-exclamation-triangle text-warning" aria-hidden="true"></i> <span>   </span>
-              <span>   </span>{enablePersonalModeText} {warnText}
+              <span>   </span>
+              <FormattedMessage id='settings.enablePersonalModeText' />
+              &nbsp;
+              <FormattedMessage id='settings.warnText' />
             </label>
           </div>
           <div className="custom-control custom-checkbox mb-1">
             <input onChange={onchangeMatomoAnalytics} id="settingsMatomoAnalytics" type="checkbox" className="custom-control-input" checked={isMatomoChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/matomo-analytics')}`} htmlFor="settingsMatomoAnalytics">
-              <span>{matomoAnalytics}</span>
+              <span><FormattedMessage id='settings.matomoAnalytics' /></span>
               <a href="https://medium.com/p/66ef69e14931/" target="_blank"> Analytics in Remix IDE</a> <span>&</span> <a target="_blank" href="https://matomo.org/free-software">Matomo</a>
             </label>
           </div>
@@ -254,7 +266,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const swarmSettings = () => (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
-        <h6 className="card-title">{ swarmSettingsTitle }</h6>
+        <h6 className="card-title"><FormattedMessage id='settings.swarm' /></h6>
         <div className="pt-2 pt-2 mb-0 pb-0"><label className="m-0">PRIVATE BEE ADDRESS:</label>
           <div className="text-secondary mb-0 h6">
             <input id="swarmprivatebeeaddress" data-id="settingsPrivateBeeAddress" className="form-control" onChange={handleSavePrivateBeeAddress} value={privateBeeAddress} />
@@ -268,7 +280,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           </div>
         </div>
         <div className="d-flex justify-content-end pt-2">
-          <input className="btn btn-sm btn-primary ml-2" id="saveswarmsettings" data-id="settingsTabSaveSwarmSettings" onClick={() => saveSwarmSettings()} value="Save" type="button" disabled={privateBeeAddress === ''}></input>
+          <input className="btn btn-sm btn-primary ml-2" id="saveswarmsettings" data-id="settingsTabSaveSwarmSettings" onClick={() => saveSwarmSettings()} value={intl.formatMessage({ id: 'settings.save' })} type="button" disabled={privateBeeAddress === ''}></input>
         </div>
       </div>
     </div>
@@ -318,7 +330,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const ipfsSettings = () => (
     <div className="border-top">
     <div className="card-body pt-3 pb-2">
-      <h6 className="card-title">{ ipfsSettingsText }</h6>
+      <h6 className="card-title"><FormattedMessage id='settings.ipfs' /></h6>
       <div className="pt-2 mb-0"><label className="m-0">IPFS HOST:</label>
         <div className="text-secondary mb-0 h6">
           <input placeholder='e.g. ipfs.infura.io' id="settingsIpfsUrl" data-id="settingsIpfsUrl" className="form-control" onChange={handleSaveIpfsUrl} value={ ipfsUrl } />
@@ -345,7 +357,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         </div>
       </div>
       <div className="d-flex justify-content-end pt-2">
-        <input className="btn btn-sm btn-primary ml-2" id="saveIpfssettings" data-id="settingsTabSaveIpfsSettings" onClick={() => saveIpfsSettings()} value="Save" type="button"></input>
+        <input className="btn btn-sm btn-primary ml-2" id="saveIpfssettings" data-id="settingsTabSaveIpfsSettings" onClick={() => saveIpfsSettings()} value={intl.formatMessage({ id: 'settings.save' })} type="button"></input>
     </div>
     </div>
   </div>)
@@ -354,14 +366,14 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   return (
     <div>
       {state.message ? <Toaster message= {state.message}/> : null}
-      {generalConfig()}     
+      {generalConfig()}
       <GithubSettings
         saveToken={(githubToken: string, githubUserName: string, githubEmail: string) => {
           saveTokenToast(props.config, dispatchToast, githubToken, "gist-access-token")
           saveTokenToast(props.config, dispatchToast, githubUserName, "github-user-name")
           saveTokenToast(props.config, dispatchToast, githubEmail, "github-email")
         }}
-        removeToken={() => { 
+        removeToken={() => {
           removeTokenToast(props.config, dispatchToast, "gist-access-token")
           removeTokenToast(props.config, dispatchToast, "github-user-name")
           removeTokenToast(props.config, dispatchToast, "github-email")
@@ -372,7 +384,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         saveToken={(etherscanToken: string) => {
           saveTokenToast(props.config, dispatchToast, etherscanToken, "etherscan-access-token")
         }}
-        removeToken={() => { 
+        removeToken={() => {
           removeTokenToast(props.config, dispatchToast, "etherscan-access-token")
         }}
         config={props.config}
@@ -380,6 +392,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       {swarmSettings()}
       {ipfsSettings()}
       <RemixUiThemeModule themeModule={props._deps.themeModule} />
+      <RemixUiLocaleModule localeModule={props._deps.localeModule} />
     </div>
   )
 }

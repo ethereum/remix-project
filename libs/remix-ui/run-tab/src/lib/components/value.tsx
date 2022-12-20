@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useRef, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { BN } from 'ethereumjs-util'
 import { CustomTooltip, isNumeric } from '@remix-ui/helper'
 import { ValueProps } from '../types'
@@ -47,7 +48,7 @@ export function ValueUI (props: ValueProps) {
 
   return (
     <div className="udapp_crow">
-      <label className="udapp_settingsLabel" data-id="remixDRValueLabel">Value</label>
+      <label className="udapp_settingsLabel" data-id="remixDRValueLabel"><FormattedMessage id='udapp.value' /></label>
       <div className="udapp_gasValueContainer">
         <CustomTooltip
           placement={'top-start'}
@@ -69,7 +70,7 @@ export function ValueUI (props: ValueProps) {
           value={props.sendValue}
         />
       </CustomTooltip>
-        
+
         <select name="unit"
         value={props.sendUnit} className="form-control p-1 udapp_gasNvalUnit udapp_col2_2 custom-select" id="unit" onChange={(e) => { props.setUnit((e.target.value) as 'ether' | 'finney' | 'gwei' | 'wei') }}>
           <option data-unit="wei" value='wei'>Wei</option>

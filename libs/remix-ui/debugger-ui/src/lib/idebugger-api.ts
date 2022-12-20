@@ -1,5 +1,5 @@
 
-import type { CompilationSource, CompilerAbstract, SourcesCode } from '@remix-project/remix-solidity-ts' // eslint-disable-line
+import type { CompilationSource, CompilerAbstract, SourcesCode } from '@remix-project/remix-solidity' // eslint-disable-line
 
 export interface LineColumnLocation {
     start: {
@@ -44,17 +44,22 @@ export interface IDebuggerApi {
     onEditorContentChanged: (listener: onEditorContentChanged) => void
     onEnvChanged: (listener: onEnvChangedListener) => void
     discardHighlight: () => Promise<void>
-    highlight: (lineColumnPos: LineColumnLocation, path: string) => Promise<void>
+    highlight: (lineColumnPos: LineColumnLocation, path: string, rawLocation: any, stepDetail: any, highlight: any) => Promise<void>
     fetchContractAndCompile: (address: string, currentReceipt: TransactionReceipt) => Promise<CompilerAbstract>
     getFile: (path: string) => Promise<string>
     setFile: (path: string, content: string) => Promise<void>
     getDebugWeb3: () => any // returns an instance of web3.js, if applicable (mainet, goerli, ...) it returns a reference to a node from devops (so we are sure debug endpoint is available)
     web3: () => any // returns an instance of web3.js
     showMessage (title: string, message: string): void
-    onStartDebugging (): void // called when debug starts
+    onStartDebugging (debuggerBackend: any): void // called when debug starts
     onStopDebugging (): void // called when debug stops
 }
 
+type globalContextFunction = () => { block, tx, receipt }
+type onReadyParams = {
+    globalContext: globalContextFunction
+}
 export interface DebuggerUIProps {
-    debuggerAPI: IDebuggerApi
+    debuggerAPI: IDebuggerApi,
+    onReady?: (functions: onReadyParams) => void
 }

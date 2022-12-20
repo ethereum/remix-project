@@ -1,11 +1,12 @@
 import Web3 from 'web3'
-import remixDebug, { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
+import {init , traceHelper, TransactionDebugger as Debugger } from '@remix-project/remix-debug'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
-
+import { lineText } from '@remix-ui/editor'
 
 export const DebuggerApiMixin = (Base) => class extends Base {
 
   initialWeb3
+  debuggerBackend
 
   initDebuggerApi () {
     const self = this
@@ -19,7 +20,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     this._web3 = new Web3(this.web3Provider)
     // this._web3 can be overwritten and reset to initial value in 'debug' method
     this.initialWeb3 = this._web3
-    remixDebug.init.extendWeb3(this._web3)
+    init.extendWeb3(this._web3)
 
     this.offsetToLineColumnConverter = {
       async offsetToLineColumn (rawLocation, file, sources, asts) {
@@ -39,10 +40,25 @@ export const DebuggerApiMixin = (Base) => class extends Base {
 
   async discardHighlight () {
     await this.call('editor', 'discardHighlight')
+    await this.call('editor', 'discardLineTexts' as any)
   }
 
-  async highlight (lineColumnPos, path) {
+  async highlight (lineColumnPos, path, rawLocation, stepDetail, lineGasCost) {
     await this.call('editor', 'highlight', lineColumnPos, path, '', { focus: true })
+    const label = `${stepDetail.op} costs ${stepDetail.gasCost} gas - this line costs ${lineGasCost} gas - ${stepDetail.gas} gas left`
+    const linetext: lineText = {
+        content: label,
+        position: lineColumnPos,
+        hide: false,
+        className: 'text-muted small',
+        afterContentClassName: 'text-muted small fas fa-gas-pump pl-4',
+        from: 'debugger',
+        hoverMessage: [{
+            value: label,
+        },
+        ],
+    }
+    await this.call('editor', 'addLineText' as any, linetext, path)
   }
 
   async getFile (path) {
@@ -78,7 +94,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
   }
 
   async fetchContractAndCompile (address, receipt) {
-    const target = (address && remixDebug.traceHelper.isContractCreation(address)) ? receipt.contractAddress : address
+    const target = (address && traceHelper.isContractCreation(address)) ? receipt.contractAddress : address
     const targetAddress = target || receipt.contractAddress || receipt.to
     const codeAtAddress = await this._web3.eth.getCode(targetAddress)
     const output = await this.call('fetchAndCompile', 'resolve', targetAddress, codeAtAddress, '.debug')
@@ -97,10 +113,10 @@ export const DebuggerApiMixin = (Base) => class extends Base {
       web3 = this.web3()
     }
     if (!web3) {
-      const webDebugNode = remixDebug.init.web3DebugNode(network.name)
+      const webDebugNode = init.web3DebugNode(network.name)
       web3 = !webDebugNode ? this.web3() : webDebugNode
     }
-    remixDebug.init.extendWeb3(web3)
+    init.extendWeb3(web3)
     return web3
   }
 
@@ -132,8 +148,12 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     }
     if (web3) this._web3 = web3
     else this._web3 = this.initialWeb3
-    remixDebug.init.extendWeb3(this._web3)
-    if (this.onDebugRequestedListener) this.onDebugRequestedListener(hash, web3)
+    init.extendWeb3(this._web3)
+    if (this.onDebugRequestedListener) {
+      this.onDebugRequestedListener(hash, web3).then((debuggerBackend) => {
+        this.debuggerBackend = debuggerBackend
+      })
+    }
   }
 
   onActivation () {
@@ -152,12 +172,16 @@ export const DebuggerApiMixin = (Base) => class extends Base {
 
   showMessage (title: string, message: string) {}
 
-  onStartDebugging () {
+  onStartDebugging (debuggerBackend: any) {
     this.call('layout', 'maximiseSidePanel')
+    this.emit('startDebugging')
+    this.debuggerBackend = debuggerBackend
   }
 
   onStopDebugging () {
     this.call('layout', 'resetSidePanel')
+    this.emit('stopDebugging')
+    this.debuggerBackend = null
   }
 }
 

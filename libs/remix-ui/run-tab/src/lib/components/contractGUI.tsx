@@ -1,7 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useRef, useState } from 'react'
 import * as remixLib from '@remix-project/remix-lib'
-import Web3 from 'web3'
 import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { CustomTooltip } from '@remix-ui/helper'
@@ -319,16 +318,9 @@ export function ContractGUI (props: ContractGUIProps) {
             }}
           />
         </CustomTooltip>
-        <CustomTooltip
-          tooltipText={title}
-          tooltipClasses="text-nowrap"
-          placement="bottom"
-          tooltipId="switchMethodViewOnTooltip"
-        >
           <i
             className="fas fa-angle-down udapp_methCaret"
             onClick={switchMethodViewOn}
-            title={title}
             style={{
               visibility: !(
                 props.funcABI.inputs && props.funcABI.inputs.length > 0
@@ -337,7 +329,6 @@ export function ContractGUI (props: ContractGUIProps) {
                 : "visible",
             }}
           ></i>
-        </CustomTooltip>
       </div>
       <div
         className="udapp_contractActionsContainerMulti"
@@ -345,7 +336,7 @@ export function ContractGUI (props: ContractGUIProps) {
       >
         <div className="udapp_contractActionsContainerMultiInner text-dark">
           <div onClick={switchMethodViewOff} className="udapp_multiHeader">
-            <div className="udapp_multiTitle run-instance-multi-title">
+            <div className="udapp_multiTitle run-instance-multi-title pt-3">
               {title}
             </div>
             <i className="fas fa-angle-up udapp_methCaret"></i>
@@ -557,7 +548,9 @@ export function ContractGUI (props: ContractGUIProps) {
                   <label className="mt-2 text-left d-block">
                     Proxy Address :
                   </label>
-                  <input style={{ height: 32 }} className="form-control udapp_input" data-id="ERC1967AddressInput" placeholder='proxy address' title='Enter previously deployed proxy address on the selected network' onChange={handleSetProxyAddress} onBlur={() => validateProxyAddress(proxyAddress) } />
+                  <CustomTooltip placement="right" tooltipText={'Enter previously deployed proxy address on the selected network'}>
+                    <input style={{ height: 32 }} className="form-control udapp_input" data-id="ERC1967AddressInput" placeholder='proxy address' onChange={handleSetProxyAddress} onBlur={() => validateProxyAddress(proxyAddress) } />
+                  </CustomTooltip>
                   { proxyAddressError && <span className='text-lowercase' data-id="errorMsgProxyAddress" style={{ fontSize: '.8em' }}>{ proxyAddressError }</span> }
                 </div> :
                 <span className='text-capitalize' data-id="lastDeployedERC1967Address" style={{ fontSize: '.8em' }}>{ proxyAddress || proxyAddressError }</span>

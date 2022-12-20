@@ -136,7 +136,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
 
   useEffect(() => {
     if (initialPath) setCurrentPath(initialPath)
-  }, [initialPath]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [initialPath])
 
   useEffect(() => {
     testTab.on('filePanel', 'newTestFileCreated', async (file: string) => {
@@ -259,7 +259,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
       finalLogs = finalLogs + '&emsp;' + formattedLog + '\n'
     }
     _paq.push(['trackEvent', 'solidityUnitTesting', 'hardhat', 'console.log'])
-    testTab.call('terminal', 'log', { type: 'log', value: finalLogs })
+    testTab.call('terminal', 'logHtml', { type: 'log', value: finalLogs })
   }
 
   const discardHighlight = async () => {
@@ -735,7 +735,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
             tooltipText="Check out documentation."
             placement={'bottom-start'}
           >
-            <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" target="__blank" href="https://remix-ide.readthedocs.io/ en/latest/unittesting.html#test-directory">
+            <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
             <label className="btn p-1 ml-2 m-0">How to use...</label>
             </a>
         </CustomTooltip>
