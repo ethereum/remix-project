@@ -171,7 +171,7 @@ export class Transactions {
       if (result.execResult.gasRefund) {
         gasUsed += result.execResult.gasRefund
       }
-      cb(null, Math.ceil(Number(gasUsed) + (15 * Number(gasUsed)) / 100))
+      cb(null, Math.ceil(Number(gasUsed) + (30 * Number(gasUsed)) / 100))
     })
   }
 
