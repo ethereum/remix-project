@@ -47,8 +47,7 @@ export class TxRunnerWeb3 {
   }
 
   _sendTransaction (sendTx, tx, pass, callback) {
-
-    var currentDateTime = new Date();
+    let currentDateTime = new Date();
     const start = currentDateTime.getTime() / 1000
     console.log('start', start)
     const cb = (err, resp) => {

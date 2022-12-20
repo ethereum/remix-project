@@ -92,11 +92,13 @@ export class VmProxy {
     this.vm.evm.events.on('step', async (data: InterpreterStep) => {
       await this.pushTrace(data)
     })
-    this.vm.events.on('afterTx', async (data: AfterTxEvent) => {
+    this.vm.events.on('afterTx', async (data: AfterTxEvent, resolve: (result?: any) => void) => {
       await this.txProcessed(data)
+      resolve()
     })
-    this.vm.events.on('beforeTx', async (data: TypedTransaction) => {
+    this.vm.events.on('beforeTx', async (data: TypedTransaction, resolve: (result?: any) => void) => {
       await this.txWillProcess(data)
+      resolve()
     })
   }
 
@@ -318,7 +320,7 @@ export class VmProxy {
     }
     // Before https://github.com/ethereum/remix-project/pull/1703, it used to throw error as
     // 'unable to retrieve storage ' + txIndex + ' ' + address
-    cb(null, { storage: {} })
+    cb(null, '0x0')
   }
 
   storageRangeAt (blockNumber, txIndex, address, start, maxLength, cb) {
