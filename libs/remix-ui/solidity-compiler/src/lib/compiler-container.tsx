@@ -1014,6 +1014,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </button>
             </CopyToClipboard>
           </div>
+          <button onClick={() => console.log('clicked!')} className="btn btn-primary btn-block mt-2"> Generate UML Diagram</button>
         </div>
       </article>
     </section>
