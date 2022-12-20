@@ -509,7 +509,6 @@ class FileManager extends Plugin {
     if (path) {
       return this.fileProviderOf(path)
     }
-    console.log("Called")
     return null
   }
 
