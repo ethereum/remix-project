@@ -191,7 +191,7 @@ export class VmProxy {
       this.vmTraces[this.processingHash].return = toChecksumAddress(address)
       this.txsReceipt[this.processingHash].contractAddress = toChecksumAddress(address)
     } else if (data.execResult.returnValue) {
-      this.vmTraces[this.processingHash].return = data.execResult.returnValue
+      this.vmTraces[this.processingHash].return = '0x' + data.execResult.returnValue.toString('hex')
     } else {
       this.vmTraces[this.processingHash].return = '0x'
     }
