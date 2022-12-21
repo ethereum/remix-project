@@ -7,13 +7,14 @@ import { toChecksumAddress, BN, keccak, bufferToHex, Address, toBuffer } from 'e
 import utils from 'web3-utils'
 import { ethers } from 'ethers'
 import { VMContext } from './vm-context'
+import type { StateManager } from '@ethereumjs/statemanager'
 import type { InterpreterStep } from '@ethereumjs/evm/dist/interpreter'
-import type { AfterTxEvent } from '@ethereumjs/vm'
+import type { AfterTxEvent, VM } from '@ethereumjs/vm'
 import type { TypedTransaction } from '@ethereumjs/tx'
 
 export class VmProxy {
   vmContext: VMContext
-  vm
+  vm: VM
   vmTraces
   txs
   txsReceipt
@@ -41,9 +42,11 @@ export class VmProxy {
   utils
   txsMapBlock
   blocks
+  stateCopy: StateManager
 
   constructor (vmContext: VMContext) {
     this.vmContext = vmContext
+    this.stateCopy
     this.vm = null
     this.vmTraces = {}
     this.txs = {}
@@ -107,6 +110,7 @@ export class VmProxy {
   }
 
   async txWillProcess (data: TypedTransaction) {
+    this.stateCopy = await this.vm.stateManager.copy()
     this.incr++
     this.processingHash = bufferToHex(data.hash())
     this.vmTraces[this.processingHash] = {
@@ -132,7 +136,7 @@ export class VmProxy {
     this.storageCache['after_' + this.processingHash] = {}
     if (data.to) {
       try {
-        const storage = await this.vm.stateManager.dumpStorage(data.to)
+        const storage = await this.stateCopy.dumpStorage(data.to)
         this.storageCache[this.processingHash][tx['to']] = storage
       } catch (e) {
         console.log(e)
@@ -195,6 +199,7 @@ export class VmProxy {
     this.processingIndex = null
     this.processingAddress = null
     this.previousDepth = 0
+    this.stateCopy = null
   }
 
   async pushTrace (data: InterpreterStep) {
@@ -257,7 +262,7 @@ export class VmProxy {
           if (!this.storageCache[this.processingHash][this.processingAddress]) {
             ((processingHash, processingAddress, self) => {
                 const account = Address.fromString(processingAddress)
-                self.vm.stateManager.dumpStorage(account).then((storage) => {
+                self.stateCopy.dumpStorage(account).then((storage) => {
                 self.storageCache[processingHash][processingAddress] = storage
               }).catch(console.log) 
             })(this.processingHash, this.processingAddress, this)       
