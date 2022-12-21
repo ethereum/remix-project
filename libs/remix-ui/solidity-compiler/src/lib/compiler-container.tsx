@@ -6,7 +6,7 @@ import { ConfigurationSettings } from '@remix-project/remix-lib'
 import { checkSpecialChars, CustomTooltip, extractNameFromKey } from '@remix-ui/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL } from '@remix-project/remix-solidity'
 import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
-import parser from '@solidity-parser/parser'
+const parser = (window as any).SolidityParser
 
 
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
