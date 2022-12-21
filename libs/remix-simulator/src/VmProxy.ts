@@ -3,6 +3,7 @@ const { hexListFromBNs, formatMemory } = util
 import { helpers } from '@remix-project/remix-lib'
 const  { normalizeHexAddress } = helpers.ui
 import { ConsoleLogs } from '@remix-project/remix-lib'
+import { isBigNumber } from 'web3-utils'
 import { toChecksumAddress, BN, keccak, bufferToHex, Address, toBuffer } from 'ethereumjs-util'
 import utils from 'web3-utils'
 import { ethers } from 'ethers'
@@ -246,7 +247,13 @@ export class VmProxy {
         } else {
           payload = '0x' + payload
         }
-        const consoleArgs = iface.decodeFunctionData(functionDesc, payload)
+        let consoleArgs = iface.decodeFunctionData(functionDesc, payload)
+        consoleArgs = consoleArgs.map((value) => {
+          if (isBigNumber(value)) {
+            return value.toString()
+          }
+          return value
+        })
         this.hhLogs[this.processingHash] = this.hhLogs[this.processingHash] ? this.hhLogs[this.processingHash] : []
         this.hhLogs[this.processingHash].push(consoleArgs)
       }
