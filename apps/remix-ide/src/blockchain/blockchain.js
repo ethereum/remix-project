@@ -295,7 +295,7 @@ export class Blockchain extends Plugin {
         if (error) {
           return finalCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
         }
-        if (txResult.receipt.status === false || txResult.receipt.status === '0x0') {
+        if (txResult.receipt.status === false || txResult.receipt.status === '0x0' || txResult.receipt.status === 0) {
           return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
         }
         finalCb(null, selectedContract, address)
