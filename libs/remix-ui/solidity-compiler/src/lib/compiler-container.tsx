@@ -7,6 +7,7 @@ import { checkSpecialChars, CustomTooltip, extractNameFromKey } from '@remix-ui/
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL } from '@remix-project/remix-solidity'
 import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
 const parser = (window as any).SolidityParser
+import { writeOutputFiles } from 'sol2uml/lib/writerFiles'
 
 
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
@@ -745,8 +746,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const ast = parser.parse(sourceCode)
     console.log({ ast })
     try {
-      // const result = await convertAST2UmlClasses(ast, currentFile)
-      // console.log({ result })
+      const result = await convertAST2UmlClasses(ast, currentFile)
+      const diagram = await writeOutputFiles('',currentFile, '', 'png', `${currentFile}Diagram`)
+      console.log({ result })
+      console.log({ diagram })
     } catch (error) {
       console.log({ error })
       console.log({ payload })
