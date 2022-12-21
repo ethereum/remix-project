@@ -206,7 +206,7 @@ module.exports = {
       .addFile('test_jsGetTrace.js', { content: jsGetTrace })
       .executeScriptInTerminal('remix.exeCurrent()')
       .pause(3000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '{"gas":"0x575f","return":"0x","structLogs":', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '{"gas":"0x575f","return":"0x0000000000000000000000000000000000000000000000000000000000000000","structLogs":', 60000)
   },
   // depends on Should debug using generated sources
   'Should call the debugger api: debug #group4': function (browser: NightwatchBrowser) {
