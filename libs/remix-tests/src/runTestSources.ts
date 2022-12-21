@@ -30,10 +30,7 @@ export class UnitTestRunner {
   }
 
   async createWeb3Provider (optWeb3) {
-    const web3 = optWeb3 || new Web3()
-    const provider: any = new Provider()
-    await provider.init()
-    web3.setProvider(provider)
+    const web3 = optWeb3
     extend(web3)
     return web3
   }
