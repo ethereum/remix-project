@@ -135,12 +135,11 @@ export class VmProxy {
     this.storageCache[this.processingHash] = {}
     this.storageCache['after_' + this.processingHash] = {}
     if (data.to) {
-      try {
-        const storage = await this.stateCopy.dumpStorage(data.to)
-        this.storageCache[this.processingHash][tx['to']] = storage
-      } catch (e) {
-        console.log(e)
-      }
+      ((processingHash, processingAccount, processingAddress, self) => {
+        self.stateCopy.dumpStorage(processingAccount).then((storage) => {
+          self.storageCache[processingHash][processingAddress] = storage
+        }).catch(console.log) 
+      })(this.processingHash, data.to, tx['to'], this)      
     }
     this.processingIndex = 0
   }
@@ -265,7 +264,7 @@ export class VmProxy {
                 self.stateCopy.dumpStorage(account).then((storage) => {
                 self.storageCache[processingHash][processingAddress] = storage
               }).catch(console.log) 
-            })(this.processingHash, this.processingAddress, this)       
+            })(this.processingHash, this.processingAddress, this)
           }
         }
       }
