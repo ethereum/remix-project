@@ -742,11 +742,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const payload = api.getCompilationResult()
     const currentFile = api.currentFile
     const sourceCode = payload.source.sources[currentFile].content
-    const ast = payload.data.sources[currentFile].ast
+    const ast = parser.parse(sourceCode)
     console.log({ ast })
     try {
-      const result = await convertAST2UmlClasses(ast, ast.absolutePath)
-      console.log({ result })
+      // const result = await convertAST2UmlClasses(ast, currentFile)
+      // console.log({ result })
     } catch (error) {
       console.log({ error })
       console.log({ payload })
