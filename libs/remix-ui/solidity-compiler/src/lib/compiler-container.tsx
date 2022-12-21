@@ -23,6 +23,7 @@ declare global {
   }
 }
 
+
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
@@ -733,6 +734,21 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     setToggleExpander(!toggleExpander)
   }
 
+  const generateUML = async () => {
+    const payload = api.getCompilationResult()
+    const currentFile = api.currentFile
+    const sourceCode = payload.source.sources[currentFile].content
+    const ast = payload.data.sources[currentFile].ast
+    console.log({ ast })
+    try {
+      const result = await convertAST2UmlClasses(ast, ast.absolutePath)
+      console.log({ result })
+    } catch (error) {
+      console.log({ error })
+      console.log({ payload })
+    }
+  }
+
 
   return (
     <section>
@@ -1014,7 +1030,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </button>
             </CopyToClipboard>
           </div>
-          <button onClick={() => console.log('clicked!')} className="btn btn-primary btn-block mt-2"> Generate UML Diagram</button>
+          <button onClick={generateUML} className="btn btn-primary btn-block mt-2"> Generate UML Diagram</button>
         </div>
       </article>
     </section>
