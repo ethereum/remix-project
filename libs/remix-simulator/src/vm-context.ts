@@ -46,9 +46,11 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
   }
 
   copy(): StateManagerCommonStorageDump {
-    return new StateManagerCommonStorageDump({
+    const copyState =  new StateManagerCommonStorageDump({
       trie: this._trie.copy(false),
     })
+    copyState.keyHashes = this.keyHashes
+    return copyState
   }
 
   async dumpStorage (address): Promise<StorageDump> {
