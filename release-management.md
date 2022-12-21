@@ -4,6 +4,7 @@ Release managers are responsible for the release management lifecycle, focusing 
 
 # Steps of Release Management
 
+
 ## Pre release planning:
 In this stage, release manager and the team lead will elaborate a plan for the coming release. 
 This should take in account:
