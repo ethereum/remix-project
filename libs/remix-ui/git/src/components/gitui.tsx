@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useReducer, useRef, useState } from 'react'
-import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm } from '../lib/gitactions'
+import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
 import { setPlugin, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
@@ -52,7 +52,8 @@ export const GitUI = (props) => {
         createBranch,
         clone,
         repositories,
-        remoteBranches
+        remoteBranches,
+        getCommitChanges
     }
 
     const pluginActionsProviderValue = {

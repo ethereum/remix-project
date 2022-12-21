@@ -1,5 +1,5 @@
 import { allChangedButNotStagedFiles, getFilesByStatus, getFilesWithNotModifiedStatus } from "../lib/fileHelpers"
-import { defaultGitState, gitState } from "../types"
+import { commitChange, defaultGitState, gitState } from "../types"
 
 interface Action {
     type: string
@@ -79,5 +79,15 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action) =>
                 remotes: action.payload
             }
 
+        case 'SET_COMMIT_CHANGES':
+
+            action.payload.forEach((change: commitChange) => {
+                state.commitChanges.find((c) => c.hash1 === change.hash1 && c.hash2 === change.hash2 && c.path === change.path) ? null : state.commitChanges.push(change)
+            })
+
+            return {
+                ...state,
+                commitChanges: [...state.commitChanges]
+            }
     }
 }

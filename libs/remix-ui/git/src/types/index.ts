@@ -19,7 +19,7 @@ export type gitState = {
     allchangesnotstaged: any[],
     repositories: repository[]
     remoteBranches: remoteBranch[]
-    changes: commitChange[]
+    commitChanges: commitChange[]
 }
 
 export type commitChangeTypes = {  
@@ -77,7 +77,7 @@ export const defaultGitState: gitState = {
     reponame: "",
     repositories: [],
     remoteBranches: [],
-    changes: []
+    commitChanges: []
 }
 
 export type fileStatusResult = {

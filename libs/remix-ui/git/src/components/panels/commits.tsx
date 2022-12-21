@@ -3,7 +3,7 @@ import React from "react";
 import { gitActionsContext } from "../../state/context";
 import { gitPluginContext } from "../gitui";
 import { CommitDetails } from "./commits/commitdetails";
-import { CommitSummary } from "./commits/summary";
+import { CommitSummary } from "./commits/commitsummary";
 
 
 export const Commits = () => {
@@ -30,9 +30,7 @@ export const Commits = () => {
                         {context.commits && context.commits.map((commit) => {
                             return (
                                 <>
-                                    <CommitSummary commit={commit} checkout={checkout}></CommitSummary>
-                                    <CommitDetails commit={commit}></CommitDetails>
-                                    <hr></hr>
+                                    <CommitDetails checkout={checkout} commit={commit}></CommitDetails>
                                 </>
                             );
                         })}

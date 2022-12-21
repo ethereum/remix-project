@@ -1,4 +1,5 @@
 import React from "react"
+import { commitChange } from "../types"
 
 export interface gitActions  {
     clone(url: string, path: string, depth: number, cloneAllBranches: boolean): Promise<void>
@@ -14,6 +15,7 @@ export interface gitActions  {
     checkout(cmd: any): Promise<void>
     createBranch(branch: string): Promise<void>
     remoteBranches(owner: string, repo: string): Promise<any>
+    getCommitChanges(oid1: string, oid2: string): Promise<commitChange[]>
 }
 
 export const gitActionsContext = React.createContext<gitActions>(null)

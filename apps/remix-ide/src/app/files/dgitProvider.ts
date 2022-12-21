@@ -26,7 +26,7 @@ const profile = {
   description: 'Decentralized git provider',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
-  methods: ['init', 'localStorageUsed', 'getFileStateChanges', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'repositories', 'remotebranches'],
+  methods: ['init', 'localStorageUsed', 'getCommitChanges', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'repositories', 'remotebranches'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
@@ -140,13 +140,13 @@ class DGitProvider extends Plugin {
       oid: status[0].oid
     })
     console.log('tree', tree)
-    this.getFileStateChanges(status[0].oid, status[1].oid)
+    //this.getCommitChanges(status[0].oid, status[1].oid)
     return status
   }
 
-  async getFileStateChanges(commitHash1, commitHash2) {
+  async getCommitChanges(commitHash1, commitHash2): Promise<commitChange[]> {
     console.log([git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })])
-    const result = await git.walk({
+    const result: commitChange[] = await git.walk({
       ...await this.getGitConfig(),
       trees: [git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })],
       map: async function (filepath, [A, B]) {
@@ -186,8 +186,10 @@ class DGitProvider extends Plugin {
         if (Aoid === undefined && Boid === undefined) {
           commitChange.type = "unknown"
         }
-
-        return commitChange
+        if (commitChange.type)
+          return commitChange
+        else
+          return undefined
       },
     })
     console.log(result)
