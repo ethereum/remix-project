@@ -5,6 +5,8 @@ import { CompilerContainerProps } from './types'
 import { ConfigurationSettings } from '@remix-project/remix-lib'
 import { checkSpecialChars, CustomTooltip, extractNameFromKey } from '@remix-ui/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL } from '@remix-project/remix-solidity'
+import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
+
 
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
 import { resetEditorMode, listenToEvents } from './actions/compiler'
@@ -14,6 +16,7 @@ import { configFileContent } from './compilerConfiguration'
 import axios, { AxiosResponse } from 'axios'
 
 import './css/style.css'
+
 const defaultPath = "compiler_config.json"
 
 declare global {
@@ -22,6 +25,7 @@ declare global {
     _paq: any
   }
 }
+
 
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
@@ -733,6 +737,21 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     setToggleExpander(!toggleExpander)
   }
 
+  const generateUML = async () => {
+    const payload = api.getCompilationResult()
+    const currentFile = api.currentFile
+    const sourceCode = payload.source.sources[currentFile].content
+    const ast = payload.data.sources[currentFile].ast
+    console.log({ ast })
+    try {
+      const result = await convertAST2UmlClasses(ast, ast.absolutePath)
+      console.log({ result })
+    } catch (error) {
+      console.log({ error })
+      console.log({ payload })
+    }
+  }
+
 
   return (
     <section>
@@ -1014,7 +1033,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </button>
             </CopyToClipboard>
           </div>
-          <button onClick={() => console.log('clicked!')} className="btn btn-primary btn-block mt-2"> Generate UML Diagram</button>
+          <button onClick={generateUML} className="btn btn-primary btn-block mt-2"> Generate UML Diagram</button>
         </div>
       </article>
     </section>
