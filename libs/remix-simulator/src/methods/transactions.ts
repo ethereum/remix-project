@@ -172,7 +172,8 @@ export class Transactions {
       if (result.execResult.gasRefund) {
         gasUsed += result.execResult.gasRefund
       }
-      cb(null, Math.ceil(Number(gasUsed) + (15 * Number(gasUsed)) / 100) + Number(value.tx.getBaseFee()))
+      gasUsed = gasUsed + value.tx.getBaseFee()
+      cb(null, Math.ceil(Number(gasUsed) + (15 * Number(gasUsed)) / 100))
     })
   }
 
