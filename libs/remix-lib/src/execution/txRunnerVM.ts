@@ -137,11 +137,6 @@ export class TxRunnerVM {
   runBlockInVm (tx, block, callback) {
     this.getVMObject().vm.runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false, skipNonce: true }).then((results: RunBlockResult) => {
       const result: RunTxResult = results.results[0]
-      /*if (result) {
-        const status = result.execResult.exceptionError ? 0 : 1
-        result.receipt.status
-        result.status = `0x${status}`
-      }*/
       callback(null, {
         result,
         transactionHash: bufferToHex(Buffer.from(tx.hash())),

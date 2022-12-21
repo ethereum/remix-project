@@ -158,7 +158,7 @@ export class Transactions {
     processTx(this.txRunnerInstance, payload, true, (error, value: VMxecutionResult) => {
       const result: RunTxResult = value.result
       if (error) return cb(error)
-      if ((result as any).receipt === '0x0') {
+      if ((result as any).receipt?.status === '0x0' || (result as any).receipt?.status === 0) {
         try {
           const msg = `0x${result.execResult.returnValue.toString('hex') || '0'}`
           const abiCoder = new ethers.utils.AbiCoder()
