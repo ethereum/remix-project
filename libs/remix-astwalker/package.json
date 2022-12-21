@@ -33,9 +33,9 @@
     ]
   },
   "dependencies": {
-    "@ethereumjs/block": "^3.5.1",
-    "@ethereumjs/tx": "^3.3.2",
-    "@ethereumjs/vm": "^5.5.3",
+    "@ethereumjs/block": "^4.0.0",
+    "@ethereumjs/tx": "^4.0.0",
+    "@ethereumjs/vm": "^6.0.0",
     "@remix-project/remix-lib": "^0.5.21",
     "@types/tape": "^4.2.33",
     "async": "^2.6.2",
