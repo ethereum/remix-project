@@ -6,26 +6,49 @@ const { LogsManager } = execution
 import { VmProxy } from './VmProxy'
 import { VM } from '@ethereumjs/vm'
 import { Common } from '@ethereumjs/common'
+import { Trie } from '@ethereumjs/trie'
 import { DefaultStateManager } from '@ethereumjs/statemanager'
 import { StorageDump } from '@ethereumjs/statemanager/dist/interface'
 import { Block } from '@ethereumjs/block'
 import { Transaction } from '@ethereumjs/tx'
 import { bigIntToHex } from '@ethereumjs/util'
 
+/**
+ * Options for constructing a {@link StateManager}.
+ */
+export interface DefaultStateManagerOpts {
+  /**
+   * A {@link Trie} instance
+   */
+  trie?: Trie
+  /**
+   * Option to prefix codehashes in the database. This defaults to `true`.
+   * If this is disabled, note that it is possible to corrupt the trie, by deploying code
+   * which code is equal to the preimage of a trie-node.
+   * E.g. by putting the code `0x80` into the empty trie, will lead to a corrupted trie.
+   */
+  prefixCodeHashes?: boolean
+}
+
 /*
   extend vm state manager and instanciate VM
 */
-
 class StateManagerCommonStorageDump extends DefaultStateManager {
   keyHashes: { [key: string]: string }
-  constructor () {
-    super()
+  constructor (opts: DefaultStateManagerOpts = {}) {
+    super(opts)
     this.keyHashes = {}
   }
 
   putContractStorage (address, key, value) {
     this.keyHashes[keccak(key).toString('hex')] = bufferToHex(key)
     return super.putContractStorage(address, key, value)
+  }
+
+  copy(): StateManagerCommonStorageDump {
+    return new StateManagerCommonStorageDump({
+      trie: this._trie.copy(false),
+    })
   }
 
   async dumpStorage (address): Promise<StorageDump> {
