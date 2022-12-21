@@ -255,10 +255,12 @@ export class VmProxy {
           this.processingAddress = normalizeHexAddress(step.stack[step.stack.length - 2])
           this.processingAddress = toChecksumAddress(this.processingAddress)
           if (!this.storageCache[this.processingHash][this.processingAddress]) {
-            const account = Address.fromString(this.processingAddress)
-            this.vm.stateManager.dumpStorage(account).then((storage) => {
-              this.storageCache[this.processingHash][this.processingAddress] = storage
-            }).catch(console.log)            
+            ((processingHash, processingAddress, self) => {
+                const account = Address.fromString(processingAddress)
+                self.vm.stateManager.dumpStorage(account).then((storage) => {
+                self.storageCache[processingHash][processingAddress] = storage
+              }).catch(console.log) 
+            })(this.processingHash, this.processingAddress, this)       
           }
         }
       }
