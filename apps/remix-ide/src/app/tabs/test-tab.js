@@ -108,8 +108,9 @@ module.exports = class TestTab extends ViewPlugin {
   /*
     Test is not associated with the UI
   */
-  testFromSource (content, path = 'browser/unit_test.sol') {
-    return new Promise(async (resolve, reject) => {
+  async testFromSource (content, path = 'browser/unit_test.sol') {
+    const web3 = await this.call('blockchain', 'web3VM')
+    return new Promise((resolve, reject) => {
       const runningTest = {}
       runningTest[path] = { content }
       const { currentVersion, evmVersion, optimize, runs } = this.compileTab.getCurrentCompilerConfig()
@@ -127,7 +128,7 @@ module.exports = class TestTab extends ViewPlugin {
       }, (url, cb) => {
         return this.contentImport.resolveAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message))
       }, {
-        web3: await this.call('blockchain', 'web3VM')
+        web3
       })
     })
   }
