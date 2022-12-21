@@ -31,7 +31,7 @@ export class UnitTestRunner {
 
   async createWeb3Provider (optWeb3) {
     const web3 = optWeb3
-    extend(web3)
+    if (web3) extend(web3)
     return web3
   }
 
