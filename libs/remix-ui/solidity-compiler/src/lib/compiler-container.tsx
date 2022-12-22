@@ -735,19 +735,17 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const generateUML = async () => {
-    const payload = api.getCompilationResult()
-    const currentFile = api.currentFile
-    const sourceCode = payload.source.sources[currentFile].content
-    const ast = parser.parse(sourceCode)
-    console.log({ ast })
     try {
-      const result = await convertAST2UmlClasses(ast, currentFile)
-      const diagram = await writeOutputFiles('',currentFile, '', 'png', `${currentFile}Diagram`)
+      const currentFile = api.currentFile
+      const ast = parser.parse(api.getCompilationResult().source.sources[currentFile].content)
+      const result = convertAST2UmlClasses(ast, currentFile)
+      const converted = convertUmlClasses2Dot(result)
+      const svgResult = vizRenderStringSync(converted)
       console.log({ result })
-      console.log({ diagram })
+      console.log({ converted })
+      console.log({ svgResult })
     } catch (error) {
       console.log({ error })
-      console.log({ payload })
     }
   }
 
