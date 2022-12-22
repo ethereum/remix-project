@@ -199,7 +199,7 @@ module.exports = {
 
   },
 
-  'Should listen on compilation result from foundry #group7 #flaky': function (browser: NightwatchBrowser) {
+  'Should listen on compilation result from foundry #group7': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/foundry'))
