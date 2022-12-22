@@ -7,14 +7,14 @@ import type { Account } from '@ethereumjs/util'
 import { EventManager } from '../eventManager'
 import { LogsManager } from './logsManager'
 
-export type VMxecutionResult = {
+export type VMexecutionResult = {
   result: RunTxResult,
   transactionHash: string
   block: Block,
   tx: Transaction
 }
 
-export type VMExecutionCallBack = (error: string | Error, result?: VMxecutionResult) => void
+export type VMExecutionCallBack = (error: string | Error, result?: VMexecutionResult) => void
 
 export class TxRunnerVM {
   event
