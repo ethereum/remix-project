@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext, SyntheticEvent, ChangeEvent, KeyboardEvent } from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Dropdown } from 'react-bootstrap'
+import { ButtonGroup, Dropdown, DropdownButton } from 'react-bootstrap'
 import { CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import { FileSystemContext } from './contexts'
@@ -640,6 +640,22 @@ export function Workspace () {
                           )
                         })
                       }
+                      <Dropdown.Item>
+                        <DropdownButton
+                          as={ButtonGroup}
+                          key={'end'}
+                          id={'dropdown-button-drop-end'}
+                          drop={'right'}
+                          variant="secondary"
+                          title={'Drop end'}
+                        >
+                          <Dropdown.Item eventKey="1">Action</Dropdown.Item>
+                          <Dropdown.Item eventKey="2">Another action</Dropdown.Item>
+                          <Dropdown.Item eventKey="3">Something else here</Dropdown.Item>
+                          <Dropdown.Divider />
+                          <Dropdown.Item eventKey="4">Separated link</Dropdown.Item>
+                        </DropdownButton>
+                      </Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown>
                   </span>) : null}
