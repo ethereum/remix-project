@@ -317,7 +317,7 @@ async function spawnRemixd(path: string): Promise<ChildProcess> {
     remixd.stdout.on('data', function (data) {
       console.log('stdout: ' + data.toString())
       if(
-        data.toString().includes('foundry is listening') 
+        data.toString().includes('is listening') 
         || data.toString().includes('There is already a client running')
         ) {
         
