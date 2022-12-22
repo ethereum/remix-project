@@ -205,7 +205,6 @@ export class VmProxy {
     try {
       const depth = data.depth + 1 // geth starts the depth from 1
       if (!this.processingHash) {
-        console.log('no tx processing')
         return
       }
       let previousopcode
