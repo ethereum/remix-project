@@ -1,6 +1,6 @@
 import { toHex, toDecimal } from 'web3-utils'
-import { bigIntToHex } from '@ethereumjs/util'
-import { toChecksumAddress, BN, Address } from 'ethereumjs-util'
+import BN from 'bn.js'
+import { toChecksumAddress, Address, bigIntToHex } from '@ethereumjs/util'
 import { processTx } from './txProcess'
 import { execution } from '@remix-project/remix-lib'
 import { ethers } from 'ethers'

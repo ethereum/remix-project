@@ -1,6 +1,8 @@
 /* global ethereum */
 'use strict'
-import { rlp, keccak, bufferToHex } from 'ethereumjs-util'
+import { hash } from '@remix-project/remix-lib'
+import { bufferToHex } from '@ethereumjs/util'
+import rlp from 'rlp'
 import { execution } from '@remix-project/remix-lib'
 const { LogsManager } = execution
 import { VmProxy } from './VmProxy'
@@ -44,7 +46,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
   }
 
   putContractStorage (address, key, value) {
-    this.keyHashes[keccak(key).toString('hex')] = bufferToHex(key)
+    this.keyHashes[hash.keccak(key).toString('hex')] = bufferToHex(key)
     return super.putContractStorage(address, key, value)
   }
 

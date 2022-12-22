@@ -142,6 +142,7 @@
     "ansi-gray": "^0.1.1",
     "async": "^2.6.2",
     "axios": "1.1.2",
+    "bn.js": "^5.1.2",
     "bootstrap": "^5.2.2",
     "brace": "^0.8.0",
     "change-case": "^4.1.1",

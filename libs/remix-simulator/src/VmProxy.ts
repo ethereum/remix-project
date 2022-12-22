@@ -2,8 +2,10 @@ import {  util } from '@remix-project/remix-lib'
 const { toHexPaddedString, formatMemory } = util
 import { helpers } from '@remix-project/remix-lib'
 const  { normalizeHexAddress } = helpers.ui
-import { ConsoleLogs } from '@remix-project/remix-lib'
-import { toChecksumAddress, BN, keccak, bufferToHex, Address, toBuffer } from 'ethereumjs-util'
+import { ConsoleLogs, hash } from '@remix-project/remix-lib'
+import BN from 'bn.js'
+import { isBigNumber } from 'web3-utils'
+import { toChecksumAddress, bufferToHex, Address, toBuffer } from '@ethereumjs/util'
 import utils from 'web3-utils'
 import { ethers } from 'ethers'
 import { VMContext } from './vm-context'
@@ -276,7 +278,7 @@ export class VmProxy {
         }
         let consoleArgs = iface.decodeFunctionData(functionDesc, payload)
         consoleArgs = consoleArgs.map((value) => {
-          if (utils.isBigNumber(value)) {
+          if (isBigNumber(value)) {
             return value.toString()
           }
           return value
@@ -352,7 +354,7 @@ export class VmProxy {
     const txHash = '0x' + block.transactions[block.transactions.length - 1].hash().toString('hex')
 
     if (this.storageCache['after_' + txHash] && this.storageCache['after_' + txHash][address]) {
-      const slot = '0x' + keccak(toBuffer(ethers.utils.hexZeroPad(position, 32))).toString('hex')
+      const slot = '0x' + hash.keccak(toBuffer(ethers.utils.hexZeroPad(position, 32))).toString('hex')
       const storage = this.storageCache['after_' + txHash][address]
       return cb(null, storage[slot].value)
     }

@@ -1,7 +1,7 @@
 import { Plugin } from '@remixproject/engine'
 import { compile } from '@remix-project/remix-solidity'
 import { util } from '@remix-project/remix-lib'
-import { toChecksumAddress } from 'ethereumjs-util'
+import { toChecksumAddress } from '@ethereumjs/util'
 import { fetchContractFromEtherscan } from './helpers/fetch-etherscan'
 import { fetchContractFromSourcify } from './helpers/fetch-sourcify'
 import { UUPSDeployedByteCode, UUPSCompilerVersion, UUPSOptimize, UUPSRuns, UUPSEvmVersion, UUPSLanguage } from './constants/uups'

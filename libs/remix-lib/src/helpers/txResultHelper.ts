@@ -1,5 +1,5 @@
 'use strict'
-import { bufferToHex } from 'ethereumjs-util'
+import { bufferToHex } from '@ethereumjs/util'
 import { isHexString } from 'ethjs-util'
 
 function convertToPrefixedHex (input) {
