@@ -18,7 +18,7 @@ import * as txResultHelper from './helpers/txResultHelper'
 export { ConsoleLogs } from './helpers/hhconsoleSigs'
 export { ICompilerApi, ConfigurationSettings } from './types/ICompilerApi'
 export { QueryParams } from './query-params'
-export { VMxecutionResult } from './execution/txRunnerVM'
+export { VMexecutionResult } from './execution/txRunnerVM'
 
 const helpers = {
   ui: uiHelper,
