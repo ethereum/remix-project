@@ -19,7 +19,7 @@ class VMProvider {
   resetEnvironment () {
     if (this.worker) this.worker.terminate()
     this.accounts = {}
-    provider = new Provider({ fork: this.executionContext.getCurrentFork() })
+    const provider = new Provider({ fork: this.executionContext.getCurrentFork() })
     provider.init()
     this.web3 = new Web3(provider)
     extend(this.web3)
