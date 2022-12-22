@@ -1,6 +1,6 @@
 'use strict'
-import { bufferToHex, keccak, setLengthLeft, toBuffer, addHexPrefix } from 'ethereumjs-util'
-import { bigIntToHex } from '@ethereumjs/util'
+import { hash } from '@remix-project/remix-lib'
+import { bufferToHex, setLengthLeft, toBuffer, addHexPrefix } from '@ethereumjs/util'
 import stringSimilarity from 'string-similarity'
 
 /*
@@ -153,7 +153,7 @@ export function buildCallPath (index, rootCall) {
 // eslint-disable-next-line camelcase
 export function sha3_256 (value) {
   value = toBuffer(addHexPrefix(value))
-  const retInBuffer: Buffer = keccak(setLengthLeft(value, 32))
+  const retInBuffer: Buffer = hash.keccak(setLengthLeft(value, 32))
   return bufferToHex(retInBuffer)
 }
 
