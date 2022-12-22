@@ -4,7 +4,7 @@ import { toChecksumAddress, BN, Address } from 'ethereumjs-util'
 import { processTx } from './txProcess'
 import { execution } from '@remix-project/remix-lib'
 import { ethers } from 'ethers'
-import { VMxecutionResult } from '@remix-project/remix-lib'
+import { VMexecutionResult } from '@remix-project/remix-lib'
 import { RunTxResult } from '@ethereumjs/vm'
 import { Log, EvmError } from '@ethereumjs/evm'
 const TxRunnerVM = execution.TxRunnerVM
@@ -82,7 +82,7 @@ export class Transactions {
     if (payload.params && payload.params.length > 0 && payload.params[0].from) {
       payload.params[0].from = toChecksumAddress(payload.params[0].from)
     }
-    processTx(this.txRunnerInstance, payload, false, (error, result: VMxecutionResult) => {
+    processTx(this.txRunnerInstance, payload, false, (error, result: VMexecutionResult) => {
       if (!error && result) {
         this.vmContext.addBlock(result.block)
         const hash = '0x' + result.tx.hash().toString('hex')
@@ -155,7 +155,7 @@ export class Transactions {
 
     payload.params[0].gas = 10000000 * 10
 
-    processTx(this.txRunnerInstance, payload, true, (error, value: VMxecutionResult) => {
+    processTx(this.txRunnerInstance, payload, true, (error, value: VMexecutionResult) => {
       const result: RunTxResult = value.result
       if (error) return cb(error)
       if ((result as any).receipt?.status === '0x0' || (result as any).receipt?.status === 0) {
@@ -202,7 +202,7 @@ export class Transactions {
 
     const tag = payload.params[0].timestamp // e2e reference
 
-    processTx(this.txRunnerInstance, payload, true, (error, result: VMxecutionResult) => {
+    processTx(this.txRunnerInstance, payload, true, (error, result: VMexecutionResult) => {
       if (!error && result) {
         this.vmContext.addBlock(result.block)
         const hash = '0x' + result.tx.hash().toString('hex')
