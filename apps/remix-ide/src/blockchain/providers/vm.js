@@ -20,7 +20,7 @@ class VMProvider {
     if (this.worker) this.worker.terminate()
     this.accounts = {}
     const provider = new Provider({ fork: this.executionContext.getCurrentFork() })
-    provider.init()
+    await provider.init()
     this.web3 = new Web3(provider)
     extend(this.web3)
     this.accounts = {}
