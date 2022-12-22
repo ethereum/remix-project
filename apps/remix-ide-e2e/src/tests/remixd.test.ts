@@ -81,7 +81,7 @@ module.exports = {
         runTests(browser, done)
       })
   },
-  'Import from node_modules #group1 #flaky': function (browser) {
+  'Import from node_modules #group1': function (browser) {
     /*
       when a relative import is used (i.e import "openzeppelin-solidity/contracts/math/SafeMath.sol")
       remix (as well as truffle) try to resolve it against the node_modules and installed_contracts folder.
@@ -199,7 +199,7 @@ module.exports = {
 
   },
 
-  'Should listen on compilation result from foundry #group7': function (browser: NightwatchBrowser) {
+  'Should listen on compilation result from foundry #group7 #flaky': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
       await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/foundry'))
