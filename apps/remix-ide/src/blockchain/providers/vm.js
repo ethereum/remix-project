@@ -16,7 +16,7 @@ class VMProvider {
     })
   }
 
-  resetEnvironment () {
+  async resetEnvironment () {
     if (this.worker) this.worker.terminate()
     this.accounts = {}
     const provider = new Provider({ fork: this.executionContext.getCurrentFork() })
