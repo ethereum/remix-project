@@ -1,6 +1,7 @@
 var async = require('async')
-var ethutil = require('ethereumjs-util')
 var remixLib = require('@remix-project/remix-lib')
+import { bufferToHex } from '@ethereumjs/util'
+import { hash } from '@remix-project/remix-lib'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../.././../../package.json'
 var EventManager = remixLib.EventManager
@@ -42,7 +43,7 @@ class Recorder extends Plugin {
         }
         if (!to) {
           var abi = payLoad.contractABI
-          var keccak = ethutil.bufferToHex(ethutil.keccakFromString(JSON.stringify(abi)))
+          var keccak = bufferToHex(hash.keccakFromString(JSON.stringify(abi)))
           record.abi = keccak
           record.contractName = payLoad.contractName
           record.bytecode = payLoad.contractBytecode
@@ -207,7 +208,7 @@ class Recorder extends Plugin {
         // resolve the bytecode and ABI using the contract name, this ensure getting the last compiled one.
         const data = await this.call('compilerArtefacts', 'getArtefactsByContractName', tx.record.contractName)
         tx.record.bytecode = data.artefact.evm.bytecode.object
-        const updatedABIKeccak = ethutil.bufferToHex(ethutil.keccakFromString(JSON.stringify(data.artefact.abi)))
+        const updatedABIKeccak = bufferToHex(hash.keccakFromString(JSON.stringify(data.artefact.abi)))
         abis[updatedABIKeccak] = data.artefact.abi
         tx.record.abi = updatedABIKeccak
       }

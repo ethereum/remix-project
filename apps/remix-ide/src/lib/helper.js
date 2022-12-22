@@ -1,5 +1,5 @@
 var async = require('async')
-const ethJSUtil = require('ethereumjs-util')
+const ethJSUtil = require('@ethereumjs/util')
 
 module.exports = {
   shortenAddress: function (address, etherBalance) {

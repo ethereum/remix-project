@@ -1,5 +1,5 @@
 const Web3 = require('web3')
-const { hashPersonalMessage } = require('ethereumjs-util')
+const { hashPersonalMessage } = require('@ethereumjs/util')
 
 class InjectedProvider {
   constructor (executionContext) {
