@@ -167,7 +167,11 @@ module.exports = {
       .clickFunction('t - transact (not payable)')
       .pause(2000)
       .debugTransaction(0)
-      .waitForElementVisible('*[data-id="slider"]').pause(2000)
+      .waitForElementVisible('*[data-id="slider"]')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"29")]',
+      })
       .goToVMTraceStep(7453)
       .waitForElementPresent('*[data-id="treeViewDivtreeViewItemarray"]')
       .click('*[data-id="treeViewDivtreeViewItemarray"]')
