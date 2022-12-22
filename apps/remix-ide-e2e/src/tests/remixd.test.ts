@@ -73,7 +73,7 @@ module.exports = {
   },
   'run Remixd tests #group4': function (browser) {
     browser.perform(async (done) => {
-      await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -87,7 +87,7 @@ module.exports = {
       remix (as well as truffle) try to resolve it against the node_modules and installed_contracts folder.
     */
     browser.perform(async (done) => {
-      await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -101,7 +101,7 @@ module.exports = {
   },
   'Import from node_modules and reference a github import #group2': function (browser) {
     browser.perform(async (done) => {
-      await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -147,7 +147,7 @@ module.exports = {
   'Should listen on compilation result from hardhat #group5': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
-      await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
+      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -182,7 +182,7 @@ module.exports = {
         done()
       })
       .perform(async (done) => {
-        await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
+        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
         console.log('working directory', process.cwd())
         connectRemixd(browser, done)
       })
@@ -202,7 +202,7 @@ module.exports = {
   'Should listen on compilation result from foundry #group7 #flaky': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
-      await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/foundry'))
+      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/foundry'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -237,7 +237,7 @@ module.exports = {
   'Should listen on compilation result from truffle #group8': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
-      await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/truffle'))
+      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/truffle'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -311,7 +311,7 @@ function testImportFromRemixd(browser: NightwatchBrowser, callback: VoidFunction
     .perform(() => { callback() })
 }
 
-async function spawnRemixd(path: string) {
+async function spawnRemixd(path: string): Promise<ChildProcess> {
   const remixd = spawn('yarn run remixd', [`-s ${path}`], { cwd: process.cwd(), shell: true, detached: true })
   return new Promise((resolve) => {
     remixd.stdout.on('data', function (data) {
@@ -320,7 +320,8 @@ async function spawnRemixd(path: string) {
         data.toString().includes('foundry is listening') 
         || data.toString().includes('There is already a client running')
         ) {
-        resolve(true)
+        
+        resolve(remixd)
       }
     })
     remixd.stderr.on('err', function (data) {
