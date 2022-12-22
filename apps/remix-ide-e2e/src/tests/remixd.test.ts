@@ -316,13 +316,16 @@ async function spawnRemixd(path: string) {
   return new Promise((resolve) => {
     remixd.stdout.on('data', function (data) {
       console.log('stdout: ' + data.toString())
+      if(
+        data.toString().includes('foundry is listening') 
+        || data.toString().includes('There is already a client running')
+        ) {
+        resolve(true)
+      }
     })
     remixd.stderr.on('err', function (data) {
       console.log('err: ' + data.toString())
     })
-    remixd.on("exit", (code) => {
-      resolve(code);
-    });
   })
 }
 
