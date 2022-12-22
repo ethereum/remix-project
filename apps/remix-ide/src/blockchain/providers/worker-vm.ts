@@ -1,5 +1,4 @@
 import { Provider } from '@remix-project/remix-simulator'
-import { bigIntToHex } from '@ethereumjs/util'
 
 let provider: Provider = null
 self.onmessage = (e: MessageEvent) => {
