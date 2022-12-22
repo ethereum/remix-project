@@ -81,7 +81,7 @@ module.exports = {
         runTests(browser, done)
       })
   },
-  'Import from node_modules #group1': function (browser) {
+  'Import from node_modules #group1 #flaky': function (browser) {
     /*
       when a relative import is used (i.e import "openzeppelin-solidity/contracts/math/SafeMath.sol")
       remix (as well as truffle) try to resolve it against the node_modules and installed_contracts folder.
