@@ -77,20 +77,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
     })
   }
 
-  /*
-  async getStateRoot (force = false) {
-    await this._cache.flush()
-
-    const stateRoot = this._trie.root
-    return stateRoot
-  }
-  */
-
   async setStateRoot (stateRoot) {
-    /*if (this._checkpointCount !== 0) {
-      throw new Error('Cannot set state root with uncommitted checkpoints')
-    }*/
-
     await this._cache.flush()
 
     if (!stateRoot.equals(this._trie.EMPTY_TRIE_ROOT)) {
