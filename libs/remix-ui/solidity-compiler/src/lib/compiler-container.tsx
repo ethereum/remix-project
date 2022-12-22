@@ -745,11 +745,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     try {
       const currentFile = api.currentFile
       const ast = parser.parse(api.getCompilationResult().source.sources[currentFile].content)
-      const result = convertAST2UmlClasses(ast, currentFile)
-      const converted = convertUmlClasses2Dot(result)
-      const svgResult = vizRenderStringSync(converted)
-      console.log({ result })
-      console.log({ converted })
+      const svgResult = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
       console.log({ svgResult })
     } catch (error) {
       console.log({ error })
