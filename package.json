@@ -334,7 +334,6 @@
     "style-loader": "^3.3.1",
     "tap-spec": "^5.0.0",
     "tape": "^4.13.3",
-    "terser-webpack-plugin": "^5.3.6",
     "timers-browserify": "^2.0.12",
     "ts-jest": "^29.0.3",
     "ts-node": "10.9.1",
