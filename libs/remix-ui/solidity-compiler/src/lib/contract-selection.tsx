@@ -11,6 +11,7 @@ import vizRenderStringSync from '@aduh95/viz.js/sync'
 
 import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
+import { concatSourceFiles, getDependencyGraph } from './logic/flattenerUtilities'
 
 export const ContractSelection = (props: ContractSelectionProps) => {
   const { api, compiledFileName, contractsDetails, contractList, compilerInput, modal } = props
@@ -194,15 +195,27 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     return copyContractProperty('bytecode')
   }
 
-  const generateUML = async () => {
+  let content4AST: string
+  const generateUML = () => {
     try {
       const currentFile = api.currentFile
-      const ast = parser.parse(api.getCompilationResult().source.sources[currentFile].content)
+      const ast = content4AST.length > 1 ? parser.parse(content4AST) : parser.parse(api.getCompilationResult().source.sources[currentFile].content)
       const svgResult = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
       console.log({ svgResult })
     } catch (error) {
       console.log({ error })
     }
+  }
+
+  const flattenContract = () => {
+    const filePath = api.getCompilationResult().source.target
+    const ast = api.getCompilationResult().data.sources
+    const dependencyGraph = getDependencyGraph(ast, filePath)
+    const sorted = dependencyGraph.isEmpty()
+        ? [filePath]
+        : dependencyGraph.sort().reverse()
+    const sources = api.getCompilationResult().source.sources
+    content4AST = concatSourceFiles(sorted, sources)
   }
 
   return (
@@ -218,8 +231,26 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </select>
           </div>
           <article className="mt-2 pb-0">
-            <button onClick={generateUML} className="btn btn-primary btn-block mt-2"> Flatten {api.currentFile}</button>
-            <button onClick={generateUML} className="btn btn-primary btn-block mt-2"> Generate UML Diagram</button>
+            <CustomTooltip
+              placement="right-start"
+              tooltipId="flattenContractTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={`${intl.formatMessage({ id: 'solidity.flattenLabel' })}`}
+            >
+              <button id="contractFlattener" onClick={flattenContract} className="btn btn-secondary btn-block mt-2">
+                <FormattedMessage id='solidity.flattenLabel' />{api.currentFile}
+              </button>
+            </CustomTooltip>
+            <CustomTooltip
+              placement="right-start"
+              tooltipId="generateUMLTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={`${intl.formatMessage({ id: 'solidity.generateUML' })}`}
+            >
+              <button id="generateUML" onClick={generateUML} className="btn btn-secondary btn-block mt-2">
+                <FormattedMessage id='solidity.generateUMLLabel' />
+              </button>
+            </CustomTooltip>
             <button id="publishOnIpfs" className="btn btn-secondary btn-block" onClick={() => { handlePublishToStorage('ipfs') }}>
               <CustomTooltip
                 placement="right-start"
