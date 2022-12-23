@@ -195,7 +195,15 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     return copyContractProperty('bytecode')
   }
 
+  /**
+   * Local property to hold flattend contract result
+   */
   let content4AST: string
+
+  /**
+   * Take AST and generates a UML diagram of compiled contract as svg
+   * @returns void
+   */
   const generateUML = () => {
     try {
       const currentFile = api.currentFile
@@ -207,6 +215,12 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     }
   }
 
+  /**
+   * Takes currently compiled contract that has a bunch of imports at the top
+   * and flattens them ready for UML creation. Takes the flattened result
+   * and assigns to a local property
+   * @returns void
+   */
   const flattenContract = () => {
     const filePath = api.getCompilationResult().source.target
     const ast = api.getCompilationResult().data.sources
