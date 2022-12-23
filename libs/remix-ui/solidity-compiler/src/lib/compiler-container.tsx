@@ -734,17 +734,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     setToggleExpander(!toggleExpander)
   }
 
-  const generateUML = async () => {
-    try {
-      const currentFile = api.currentFile
-      const ast = parser.parse(api.getCompilationResult().source.sources[currentFile].content)
-      const svgResult = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
-      console.log({ svgResult })
-    } catch (error) {
-      console.log({ error })
-    }
-  }
-
 
   return (
     <section>
@@ -1026,7 +1015,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </button>
             </CopyToClipboard>
           </div>
-          <button onClick={generateUML} className="btn btn-primary btn-block mt-2"> Generate UML Diagram</button>
         </div>
       </article>
     </section>
