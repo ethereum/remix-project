@@ -5,10 +5,6 @@ import { CompilerContainerProps } from './types'
 import { ConfigurationSettings } from '@remix-project/remix-lib'
 import { checkSpecialChars, CustomTooltip, extractNameFromKey } from '@remix-ui/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL } from '@remix-project/remix-solidity'
-import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
-const parser = (window as any).SolidityParser
-import { convertUmlClasses2Dot } from 'sol2uml/lib/converterClasses2Dot'
-import vizRenderStringSync from '@aduh95/viz.js/sync'
 
 
 
@@ -741,17 +737,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     setToggleExpander(!toggleExpander)
   }
 
-  const generateUML = async () => {
-    try {
-      const currentFile = api.currentFile
-      const ast = parser.parse(api.getCompilationResult().source.sources[currentFile].content)
-      const svgResult = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
-      console.log({ svgResult })
-    } catch (error) {
-      console.log({ error })
-    }
-  }
-
 
   return (
     <section>
@@ -1033,7 +1018,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </button>
             </CopyToClipboard>
           </div>
-          <button onClick={generateUML} className="btn btn-primary btn-block mt-2"> Generate UML Diagram</button>
         </div>
       </article>
     </section>
