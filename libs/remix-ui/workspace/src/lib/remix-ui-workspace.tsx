@@ -103,6 +103,14 @@ export function Workspace () {
     global.dispatchCreateSolidityGithubAction()
   }
 
+  const addTsSolTestGithubAction = () => {
+    global.dispatchCreateTsSolGithubAction()
+  }
+
+  const addSlitherGithubAction = () => {
+    global.dispatchCreateSlitherGithubAction()
+  }
+
   const downloadWorkspaces = async () => {
     try {
       await global.dispatchHandleDownloadFiles()
@@ -560,18 +568,7 @@ export function Workspace () {
       tooltipClasses="text-nowrap"
       tooltipText={<FormattedMessage id='filePanel.workspace.solghaction' />}
     >
-    <div
-      data-id='soliditygithubaction'
-      onClick={(e) => {
-        e.stopPropagation()
-        addGithubAction()
-        _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSolidityTesting'])
-        hideIconsMenu(!showIconsMenu)
-      }}
-    >
-      <span
-        hidden={currentWorkspace === LOCALHOST}
-        id='soliditygithubaction'
+      <div
         data-id='soliditygithubaction'
         onClick={(e) => {
           e.stopPropagation()
@@ -579,12 +576,85 @@ export function Workspace () {
           _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSolidityTesting'])
           hideIconsMenu(!showIconsMenu)
         }}
-        className='fab fa-github pl-2'
       >
-      </span>
-      <span className="pl-3">{<FormattedMessage id='filePanel.solghaction' />}</span>
-    </div>
-  </CustomTooltip>
+        <span
+          hidden={currentWorkspace === LOCALHOST}
+          id='soliditygithubaction'
+          data-id='soliditygithubaction'
+          onClick={(e) => {
+            e.stopPropagation()
+            addGithubAction()
+            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSolidityTesting'])
+            hideIconsMenu(!showIconsMenu)
+          }}
+          className='fab fa-github pl-2'
+        >
+        </span>
+        <span className="pl-3">{<FormattedMessage id='filePanel.solghaction' />}</span>
+      </div>
+    </CustomTooltip>,
+    <CustomTooltip
+      placement="right-start"
+      tooltipId="createTsSolTestGHActionTooltip"
+      tooltipClasses="text-nowrap"
+      tooltipText={<FormattedMessage id='filePanel.workspace.tssoltestghaction' />}
+    >
+      <div
+        data-id='typescriptsoliditygithubtestaction'
+        onClick={(e) => {
+          e.stopPropagation()
+          addTsSolTestGithubAction()
+          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addTsSolTestingAction'])
+          hideIconsMenu(!showIconsMenu)
+        }}
+      >
+        <span
+          hidden={currentWorkspace === LOCALHOST}
+          id='tssoliditygithubaction'
+          data-id='tssoliditygithubaction'
+          onClick={(e) => {
+            e.stopPropagation()
+            addTsSolTestGithubAction()
+            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addTsSolTestingAction'])
+            hideIconsMenu(!showIconsMenu)
+          }}
+          className='fab fa-github pl-2'
+        >
+        </span>
+        <span className="pl-3">{<FormattedMessage id='filePanel.tssoltestghaction' />}</span>
+      </div>
+    </CustomTooltip>,
+    <CustomTooltip
+      placement="right-start"
+      tooltipId="createSlitherGHActionTooltip"
+      tooltipClasses="text-nowrap"
+      tooltipText={<FormattedMessage id='filePanel.workspace.slitherghaction' />}
+    >
+      <div
+        data-id='slithergithubtestaction'
+        onClick={(e) => {
+          e.stopPropagation()
+          addSlitherGithubAction()
+          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSlitherAction'])
+          hideIconsMenu(!showIconsMenu)
+        }}
+      >
+        <span
+          hidden={currentWorkspace === LOCALHOST}
+          id='slithergithubaction'
+          data-id='slithergithubaction'
+          onClick={(e) => {
+            e.stopPropagation()
+            addSlitherGithubAction()
+            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSlitherAction'])
+            hideIconsMenu(!showIconsMenu)
+          }}
+          className='fab fa-github pl-2'
+        >
+        </span>
+        <span className="pl-3">{<FormattedMessage id='filePanel.slitherghaction' />}</span>
+      </div>
+    </CustomTooltip>
   ]
   const menuLength = workspaceMenuIcons.length
   let count = 0
@@ -640,22 +710,6 @@ export function Workspace () {
                           )
                         })
                       }
-                      <Dropdown.Item>
-                        <DropdownButton
-                          as={ButtonGroup}
-                          key={'end'}
-                          id={'dropdown-button-drop-end'}
-                          drop={'right'}
-                          variant="secondary"
-                          title={'Drop end'}
-                        >
-                          <Dropdown.Item eventKey="1">Action</Dropdown.Item>
-                          <Dropdown.Item eventKey="2">Another action</Dropdown.Item>
-                          <Dropdown.Item eventKey="3">Something else here</Dropdown.Item>
-                          <Dropdown.Divider />
-                          <Dropdown.Item eventKey="4">Separated link</Dropdown.Item>
-                        </DropdownButton>
-                      </Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown>
                   </span>) : null}
