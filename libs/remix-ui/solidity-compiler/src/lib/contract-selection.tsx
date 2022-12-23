@@ -4,6 +4,10 @@ import { ContractSelectionProps } from './types'
 import { PublishToStorage } from '@remix-ui/publish-to-storage' // eslint-disable-line
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
+import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
+const parser = (window as any).SolidityParser
+import { convertUmlClasses2Dot } from 'sol2uml/lib/converterClasses2Dot'
+import vizRenderStringSync from '@aduh95/viz.js/sync'
 
 import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
@@ -190,6 +194,17 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     return copyContractProperty('bytecode')
   }
 
+  const generateUML = async () => {
+    try {
+      const currentFile = api.currentFile
+      const ast = parser.parse(api.getCompilationResult().source.sources[currentFile].content)
+      const svgResult = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
+      console.log({ svgResult })
+    } catch (error) {
+      console.log({ error })
+    }
+  }
+
   return (
     // define swarm logo
     <>
@@ -203,6 +218,8 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </select>
           </div>
           <article className="mt-2 pb-0">
+            <button onClick={generateUML} className="btn btn-primary btn-block mt-2"> Flatten {api.currentFile}</button>
+            <button onClick={generateUML} className="btn btn-primary btn-block mt-2"> Generate UML Diagram</button>
             <button id="publishOnIpfs" className="btn btn-secondary btn-block" onClick={() => { handlePublishToStorage('ipfs') }}>
               <CustomTooltip
                 placement="right-start"
