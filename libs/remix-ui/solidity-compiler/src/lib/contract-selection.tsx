@@ -12,11 +12,15 @@ import vizRenderStringSync from '@aduh95/viz.js/sync'
 import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
 import { concatSourceFiles, getDependencyGraph } from './logic/flattenerUtilities'
+import Viewer from 'react-viewer'
 
 export const ContractSelection = (props: ContractSelectionProps) => {
   const { api, compiledFileName, contractsDetails, contractList, compilerInput, modal } = props
   const [selectedContract, setSelectedContract] = useState('')
   const [storage, setStorage] = useState(null)
+  const [svgPayload, setSVGPayload] = useState('')
+  const [showViewer, setShowViewer] = useState(false)
+  const [content4AST, setContent4AST] = useState('')
 
   const intl = useIntl()
 
@@ -198,7 +202,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   /**
    * Local property to hold flattend contract result
    */
-  let content4AST: string
+  // let content4AST: string
 
   /**
    * Take AST and generates a UML diagram of compiled contract as svg
@@ -208,8 +212,8 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     try {
       const currentFile = api.currentFile
       const ast = content4AST.length > 1 ? parser.parse(content4AST) : parser.parse(api.getCompilationResult().source.sources[currentFile].content)
-      const svgResult = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
-      console.log({ svgResult })
+      setSVGPayload(vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile))))
+      setShowViewer(!showViewer)
     } catch (error) {
       console.log({ error })
     }
@@ -229,8 +233,9 @@ export const ContractSelection = (props: ContractSelectionProps) => {
         ? [filePath]
         : dependencyGraph.sort().reverse()
     const sources = api.getCompilationResult().source.sources
-    content4AST = concatSourceFiles(sorted, sources)
+    setContent4AST(concatSourceFiles(sorted, sources))
   }
+
 
   return (
     // define swarm logo
@@ -326,6 +331,19 @@ export const ContractSelection = (props: ContractSelectionProps) => {
         </article></section>
       }
       <PublishToStorage api={api} storage={storage} contract={contractsDetails[selectedContract]} resetStorage={resetStorage} />
+        <Viewer
+          visible={showViewer}
+          rotatable={false}
+          loop={false}
+          noClose={false}
+          onClose={() => setShowViewer(false)}
+          noFooter={true}
+          showTotal={false}
+          changeable={false}
+          zoomSpeed={0.2}
+          minScale={1}
+          images={[{src: `data:image/svg+xml;base64,${btoa(svgPayload)}`}]}
+        />
     </>
   )
 }
