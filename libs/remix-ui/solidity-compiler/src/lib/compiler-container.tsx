@@ -14,6 +14,7 @@ import axios, { AxiosResponse } from 'axios'
 
 import './css/style.css'
 
+
 const defaultPath = "compiler_config.json"
 
 declare global {
@@ -22,6 +23,8 @@ declare global {
     _paq: any
   }
 }
+
+type AstNode = { id: number, literals: string[], nodeType: string, src: string }
 
 
 const _paq = window._paq = window._paq || [] //eslint-disable-line
