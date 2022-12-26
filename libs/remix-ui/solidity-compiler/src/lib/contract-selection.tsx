@@ -233,12 +233,13 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   }
   
   const showFlattener = () => {
-    const confirmNodeType = api.getCompilationResult().data.sources[api.currentFile].ast.nodes.some(x => x.nodeType === 'ImportDirective')
+    const confirmNodeType = api.getCompilationResult().data.sources[api.currentFile]
+      .ast.nodes.some(x => x.nodeType === 'ImportDirective')
     const currentFile = api.currentFile.split('/')[1]
     const contractListConfirm = contractList.some(x => x.file === currentFile)
     return confirmNodeType && contractListConfirm
   }
-  
+
   return (
     // define swarm logo
     <>
