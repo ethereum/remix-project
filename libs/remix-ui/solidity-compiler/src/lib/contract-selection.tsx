@@ -241,6 +241,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     const contractListConfirm = contractList.some(x => x.file === currentFile)
     return confirmNodeType && contractListConfirm
   }
+  
   return (
     // define swarm logo
     <>
