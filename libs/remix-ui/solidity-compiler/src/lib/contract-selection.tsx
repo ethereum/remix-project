@@ -34,6 +34,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     }
   }, [contractList])
 
+
   const resetStorage = () => {
     setStorage('')
   }
@@ -200,11 +201,6 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   }
 
   /**
-   * Local property to hold flattend contract result
-   */
-  // let content4AST: string
-
-  /**
    * Take AST and generates a UML diagram of compiled contract as svg
    * @returns void
    */
@@ -235,8 +231,13 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     const sources = api.getCompilationResult().source.sources
     setContent4AST(concatSourceFiles(sorted, sources))
   }
-
-
+  
+  const showFlattener = () => {
+    const confirmNodeType = api.getCompilationResult().data.sources[api.currentFile].ast.nodes.some(x => x.nodeType === 'ImportDirective')
+    const currentFile = api.currentFile.split('/')[1]
+    const contractListConfirm = contractList.some(x => x.file === currentFile)
+    return confirmNodeType && contractListConfirm
+  }
   return (
     // define swarm logo
     <>
@@ -250,16 +251,17 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </select>
           </div>
           <article className="mt-2 pb-0">
-            <CustomTooltip
+            {showFlattener() && <CustomTooltip
               placement="right-start"
               tooltipId="flattenContractTooltip"
               tooltipClasses="text-nowrap"
               tooltipText={`${intl.formatMessage({ id: 'solidity.flattenLabel' })}`}
             >
               <button id="contractFlattener" onClick={flattenContract} className="btn btn-secondary btn-block mt-2">
-                <FormattedMessage id='solidity.flattenLabel' />{api.currentFile}
+                <FormattedMessage id='solidity.flattenLabel' /> {api.currentFile}
               </button>
             </CustomTooltip>
+            }
             <CustomTooltip
               placement="right-start"
               tooltipId="generateUMLTooltip"
