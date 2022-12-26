@@ -236,7 +236,7 @@ module.exports = {
       .waitForElementVisible('select[id="compilierLanguageSelector"]', 10000)
       .click('select[id="compilierLanguageSelector"]')
       .click('select[id="compilierLanguageSelector"] option[value=Yul]')
-      .waitForElementContainsText('[data-id="compiledContracts"]', 'Contract', 60000)
+      .waitForElementContainsText('[data-id="compiledContracts"]', 'Contract', 65000)
       .clickLaunchIcon('udapp')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
