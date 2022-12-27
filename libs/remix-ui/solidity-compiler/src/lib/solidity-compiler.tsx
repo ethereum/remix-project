@@ -89,8 +89,8 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     setCompileErrors({} as Record<string, CompileErrors>)
   }
 
-  api.onCompilationFinished = (compilationDetails: { contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any>, target?: string }) => {
-    const { contractMap, contractsDetails, target } = compilationDetails
+  api.onCompilationFinished = (compilationDetails: { contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any>, target?: string, input?: Record<string, any>}) => {
+    const { contractMap, contractsDetails, target, input } = compilationDetails
     const contractList = contractMap ? Object.keys(contractMap).map((key) => {
       return {
         name: key,
@@ -98,7 +98,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       }
     }) : []
 
-    setContractsFile({ ...contractsFile, [target]: { contractList, contractsDetails } })
+    setContractsFile({ ...contractsFile, [target]: { contractList, contractsDetails, input } })
     setCompileErrors({ ...compileErrors, [currentFile]: api.compileErrors })
   }
 
@@ -184,7 +184,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
           setConfigFilePath={setConfigFilePath}
         />
 
-        {contractsFile[currentFile] && contractsFile[currentFile].contractsDetails && <ContractSelection api={api} compiledFileName={currentFile} contractsDetails={contractsFile[currentFile].contractsDetails} contractList={contractsFile[currentFile].contractList} modal={modal} />}
+        {contractsFile[currentFile] && contractsFile[currentFile].contractsDetails && <ContractSelection api={api} compiledFileName={currentFile} contractsDetails={contractsFile[currentFile].contractsDetails} contractList={contractsFile[currentFile].contractList} compilerInput={contractsFile[currentFile].input} modal={modal} />}
         {compileErrors[currentFile] &&
           <div className="remixui_errorBlobs p-4" data-id="compiledErrors">
             <>
