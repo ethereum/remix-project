@@ -257,9 +257,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </select>
           </div>
           <article className="mt-2 pb-0">
-            {api.getCompilationResult().data.sources[api.currentFile]
-              .ast && api.getCompilationResult().data.sources[api.currentFile]
-              .ast.nodes.some(x => x.nodeType === 'ImportDirective') ? <CustomTooltip
+            <CustomTooltip
               placement="right-start"
               tooltipId="flattenContractTooltip"
               tooltipClasses="text-nowrap"
@@ -268,8 +266,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               <button id="contractFlattener" onClick={flattenContract} className="btn btn-secondary btn-block mt-2">
                 <FormattedMessage id='solidity.flattenLabel' /> {api.currentFile}
               </button>
-            </CustomTooltip> : null
-            }
+            </CustomTooltip>
             <CustomTooltip
               placement="right-start"
               tooltipId="generateUMLTooltip"
