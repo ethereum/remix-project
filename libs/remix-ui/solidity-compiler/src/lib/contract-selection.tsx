@@ -234,6 +234,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   
   const showFlattener = () => {
     const confirmNodeType = api.getCompilationResult().data.sources[api.currentFile]
+      .ast && api.getCompilationResult().data.sources[api.currentFile]
       .ast.nodes.some(x => x.nodeType === 'ImportDirective')
     const currentFile = api.currentFile.split('/')[1]
     const contractListConfirm = contractList.some(x => x.file === currentFile)
@@ -253,7 +254,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </select>
           </div>
           <article className="mt-2 pb-0">
-            {showFlattener() && <CustomTooltip
+            {showFlattener && <CustomTooltip
               placement="right-start"
               tooltipId="flattenContractTooltip"
               tooltipClasses="text-nowrap"
