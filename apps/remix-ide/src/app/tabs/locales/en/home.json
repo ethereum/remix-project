@@ -21,6 +21,7 @@
   "home.solhintPluginDesc": "Solhint is an open source project for linting Solidity code.",
   "home.sourcifyPluginDesc": "Solidity contract and metadata verification service.",
   "home.unitTestPluginDesc": "Write and run unit tests for your contracts in Solidity.",
+  "home.dgitPluginDesc": "Add source control to your projects.",
   "home.getStarted": "Get Started",
   "home.projectTemplates": "Project Templates",
   "home.blankTemplateDesc": "Create an empty workspace.",

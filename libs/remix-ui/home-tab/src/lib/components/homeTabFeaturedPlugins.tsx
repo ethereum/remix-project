@@ -84,6 +84,12 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solidityUnitTesting'])
   }
 
+  const startDgit = async () => {
+    await plugin.appManager.activatePlugin('dgit')
+    plugin.verticalIcons.select('dgit')
+    _paq.push(['tracEvent', 'hometabActivate', 'userActivate', 'dgit'])
+  }
+
   return (
     <div className="pl-2 w-100" id="hTFeaturedPlugins">
       <label className="" style={{fontSize: "1.2rem"}}><FormattedMessage id='home.featuredPlugins' /></label>
@@ -127,18 +133,17 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
               callback={() => startSolidity()}
             />
             <PluginButton
-              imgPath="assets/img/starkNetLogo.webp"
-              envID="starkNetLogo"
-              envText="StarkNet"
-              description={intl.formatMessage({ id: 'home.starkNetPluginDesc' })}
-              l2={true}
-              callback={() => startStarkNet()}
-            />
-            <PluginButton
               imgPath="assets/img/solhintLogo.webp"
               envID="solhintLogo" envText="Solhint linter"
               description={intl.formatMessage({ id: 'home.solhintPluginDesc' })}
               callback={() => startSolhint()}
+            />
+            <PluginButton
+              imgPath="assets/img/git.webp"
+              envID="dgitLogo"
+              envText="Dgit"
+              description={intl.formatMessage({ id: 'home.dgitPluginDesc' })}
+              callback={() => startDgit()}
             />
             <PluginButton
               imgPath="assets/img/sourcifyNewLogo.webp"
@@ -146,6 +151,14 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
               envText="Sourcify"
               description={intl.formatMessage({ id: 'home.sourcifyPluginDesc' })}
               callback={() => startSourceVerify()}
+            />
+            <PluginButton
+              imgPath="assets/img/starkNetLogo.webp"
+              envID="starkNetLogo"
+              envText="StarkNet"
+              description={intl.formatMessage({ id: 'home.starkNetPluginDesc' })}
+              l2={true}
+              callback={() => startStarkNet()}
             />
             <PluginButton
               imgPath="assets/img/unitTesting.webp"
