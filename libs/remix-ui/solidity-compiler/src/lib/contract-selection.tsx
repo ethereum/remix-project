@@ -9,7 +9,7 @@ import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
 
 export const ContractSelection = (props: ContractSelectionProps) => {
-  const { api, compiledFileName, contractsDetails, contractList, modal } = props
+  const { api, compiledFileName, contractsDetails, contractList, compilerInput, modal } = props
   const [selectedContract, setSelectedContract] = useState('')
   const [storage, setStorage] = useState(null)
 
@@ -111,7 +111,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     let node
     if (propertyName === 'web3Deploy' || propertyName === 'name' || propertyName === 'Assembly') {
       node = <pre>{ details[propertyName] }</pre>
-    } else if (details[propertyName] && (propertyName === 'abi' || propertyName === 'metadata')) {
+    } else if (details[propertyName] && (propertyName === 'abi' || propertyName === 'metadata' || propertyName === 'compilerInput')) {
       if (details[propertyName] !== '') {
         try {
           node = <div>
@@ -147,6 +147,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       Opcodes: 'Assembly opcodes describing the contract',
       'Runtime Bytecode': 'Bytecode storing the state and being executed during normal contract call',
       bytecode: 'Bytecode being executed during contract creation',
+      compilerInput: 'Input to the Solidity compiler',
       functionHashes: 'List of declared function and their corresponding hash',
       gasEstimates: 'Gas estimation for each function call',
       metadata: 'Contains all informations related to the compilation',
@@ -156,7 +157,8 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       swarmLocation: 'Swarm url where all metadata information can be found (contract needs to be published first)',
       web3Deploy: 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
     }
-    const contractProperties = contractsDetails[selectedContract] || {}
+    let contractProperties = contractsDetails[selectedContract] || {}
+    contractProperties.compilerInput = compilerInput
     const log = <div className="remixui_detailsJSON">
       <TreeView>
         {
