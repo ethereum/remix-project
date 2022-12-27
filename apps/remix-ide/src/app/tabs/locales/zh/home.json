@@ -21,6 +21,7 @@
   "home.solhintPluginDesc": "Solhint 是一个用于检查 Solidity 代码的开源项目",
   "home.sourcifyPluginDesc": "Solidity 合约和元数据验证服务。",
   "home.unitTestPluginDesc": "在 Solidity 中为你的合约编写和运行单元测试。",
+  "home.dgitPluginDesc": "",
   "home.getStarted": "开始使用",
   "home.projectTemplates": "项目模板",
   "home.blankTemplateDesc": "创建一个空的工作空间。",

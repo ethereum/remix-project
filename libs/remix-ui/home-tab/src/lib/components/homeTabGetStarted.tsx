@@ -107,7 +107,7 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
           >
             <WorkspaceTemplate
               gsID="sUTLogo"
-              workspaceTitle="Gnosis MultiSig"
+              workspaceTitle="Gnosis Safe MultiSig"
               description={intl.formatMessage({ id: 'home.gnosisSafeMultisigTemplateDesc' })}
               callback={() => createWorkspace("gnosisSafeMultisig")} />
             <WorkspaceTemplate
