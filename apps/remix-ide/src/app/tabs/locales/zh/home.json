@@ -27,6 +27,8 @@
   "home.remixDefaultTemplateDesc": "创建一个带有样本文件的工作空间",
   "home.ozerc20TemplateDesc": "通过引入 OpenZeppelin 库来创建一个 ERC20 代币。",
   "home.ozerc721TemplateDesc": "通过引入 OpenZeppelin 库来创建一个 NFT 代币。",
+  "home.ozerc1155TemplateDesc": "",
+  "home.gnosisSafeMultisigTemplateDesc": "",
   "home.zeroxErc20TemplateDesc": "通过引入 0xProject 合约来创建一个 ERC20 代币。",
   "home.learn": "学习",
   "home.remixBasics": "Remix 基础",

@@ -27,6 +27,8 @@
   "home.remixDefaultTemplateDesc": "Create a workspace with sample files.",
   "home.ozerc20TemplateDesc": "Create an ERC20 token by importing OpenZeppelin library.",
   "home.ozerc721TemplateDesc": "Create an NFT token by importing OpenZeppelin library.",
+  "home.ozerc1155TemplateDesc": "Create an ERC1155 token by importing OpenZeppelin library.",
+  "home.gnosisSafeMultisigTemplateDesc": "Create Multi-Signature wallets using this template.",
   "home.zeroxErc20TemplateDesc": "Create an ERC20 token by importing 0xProject contract.",
   "home.learn": "Learn",
   "home.remixBasics": "Remix Basics",
