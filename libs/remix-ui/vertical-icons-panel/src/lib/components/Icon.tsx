@@ -85,12 +85,12 @@ const Icon = ({
 
   return (
     <>
-      {/* <CustomTooltip
+      <CustomTooltip
         placement={name === 'settings' ? 'right' : name === 'search' ? 'top' :
           name === 'udapp' ? 'bottom' : "top"}
         tooltipText={title}
         delay={{ show: 1000, hide: 0 }}
-      > */}
+      >
         <div
           className={`remixui_icon m-2  pt-1`}
           onClick={() => {
@@ -111,7 +111,7 @@ const Icon = ({
               badgeStatus={badgeStatus}
             />
         </div>
-      {/* </CustomTooltip> */}
+      </CustomTooltip>
       {showContext ? (
         <VerticalIconsContextMenu
           pageX={pageX}
