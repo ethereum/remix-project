@@ -10,7 +10,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
       file: string
     } | Record<string, any>,
     contractsDetails: Record<string, any>,
-    target?: string
+    target?: string,
+    input?: Record<string, any>,
   }
   compileErrors: any
   compileTabLogic: CompileTabLogic
@@ -296,6 +297,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
       // Store the contracts and Update contract Selection
       if (success) {
         this.compilationDetails = await this.visitsContractApi(source, data)
+        this.compilationDetails.input = input
       } else {
         this.compilationDetails = {
           contractMap: {},
