@@ -157,7 +157,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       swarmLocation: 'Swarm url where all metadata information can be found (contract needs to be published first)',
       web3Deploy: 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
     }
-    let contractProperties = contractsDetails[selectedContract] || {}
+    const contractProperties = contractsDetails[selectedContract] || {}
     contractProperties.compilerInput = compilerInput
     const log = <div className="remixui_detailsJSON">
       <TreeView>
