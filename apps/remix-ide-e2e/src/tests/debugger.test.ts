@@ -95,7 +95,7 @@ module.exports = {
       .waitForElementVisible('#stepdetail')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"545")]',
+        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"531")]',
       })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`constructor (string memory name_, string memory symbol_) {
