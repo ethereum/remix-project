@@ -63,10 +63,10 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
     plugin.verticalIcons.select('solidity')
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solidity'])
   }
-  const startStarkNet = async () => {
-    await plugin.appManager.activatePlugin('starkNet_compiler')
-    plugin.verticalIcons.select('starkNet_compiler')
-    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'starkNet_compiler'])
+  const startOneClickDapp = async () => {
+    await plugin.appManager.activatePlugin('oneClickDapp')
+    plugin.verticalIcons.select('oneClickDapp')
+    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'oneClickDapp'])
   }
   const startSolhint = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'solhint'])
@@ -139,13 +139,6 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
               callback={() => startSolhint()}
             />
             <PluginButton
-              imgPath="assets/img/git.webp"
-              envID="dgitLogo"
-              envText="Dgit"
-              description={intl.formatMessage({ id: 'home.dgitPluginDesc' })}
-              callback={() => startDgit()}
-            />
-            <PluginButton
               imgPath="assets/img/sourcifyNewLogo.webp"
               envID="sourcifyLogo"
               envText="Sourcify"
@@ -153,12 +146,19 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
               callback={() => startSourceVerify()}
             />
             <PluginButton
-              imgPath="assets/img/starkNetLogo.webp"
-              envID="starkNetLogo"
-              envText="StarkNet"
-              description={intl.formatMessage({ id: 'home.starkNetPluginDesc' })}
-              l2={true}
-              callback={() => startStarkNet()}
+              imgPath="assets/img/dgit.webp"
+              envID="dgitLogo"
+              envText="Dgit"
+              description={intl.formatMessage({ id: 'home.dgitPluginDesc' })}
+              remixMaintained={true}
+              callback={() => startDgit()}
+            />
+            <PluginButton
+              imgPath="assets/img/oneclickdapp.webp"
+              envID="oneClickDappLogo"
+              envText="OneClickDapp"
+              description={intl.formatMessage({ id: 'home.oneClickDappDesc' })}
+              callback={() => startOneClickDapp()}
             />
             <PluginButton
               imgPath="assets/img/unitTesting.webp"
