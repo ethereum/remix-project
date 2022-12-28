@@ -60,7 +60,8 @@ class Editor extends Plugin {
       onBreakPointAdded: (file, line) => this.triggerEvent('breakpointAdded', [file, line]),
       onBreakPointCleared: (file, line) => this.triggerEvent('breakpointCleared', [file, line]),
       onDidChangeContent: (file) => this._onChange(file),
-      onEditorMounted: () => this.triggerEvent('editorMounted', [])
+      onEditorMounted: () => this.triggerEvent('editorMounted', []),
+      onDiffEditorMounted: () => this.triggerEvent('diffEditorMounted', [])
     }
 
     // to be implemented by the react component

@@ -14,6 +14,7 @@ export const reducerActions = (models = initialState, action: Action) => {
   const editor = action.editor
   switch (action.type) {
     case 'ADD_MODEL': {
+      console.log("ADD MODEL", editor)
       if (!editor) return models
       const uri = action.payload.uri
       const value = action.payload.value
