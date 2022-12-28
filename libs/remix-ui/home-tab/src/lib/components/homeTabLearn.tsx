@@ -31,10 +31,10 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
     window.open("https://remix-ide.readthedocs.io/en/latest/remix_tutorials_learneth.html?highlight=learneth#learneth-tutorial-repos", '_blank')
   }
 
-  const startLearnEthTutorial = async (tutorial) => {
+  const startLearnEthTutorial = async (tutorial: 'basics' | 'useofweb3js' | 'deploylibraries') => {
     await plugin.appManager.activatePlugin(['solidity', 'LearnEth', 'solidityUnitTesting'])
-    plugin.call('LearnEth', 'startTutorial', 'ethereum/remix-workshops', 'master', tutorial)
     plugin.verticalIcons.select('LearnEth')
+    plugin.call('LearnEth', 'startTutorial', 'ethereum/remix-workshops', 'master', tutorial)
     _paq.push(['trackEvent', 'hometab', 'startLearnEthTutorial', tutorial])
   }
 
@@ -45,7 +45,9 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
           <FormattedMessage id="home.learn" />
         </label>
         <button
-          onClick={ ()=> openLink()}
+          onClick={ async () => {
+            await startLearnEthTutorial('basics')
+          }}
           className="h-100 px-2 pt-0 btn"
         >
           <img className="align-self-center" src="assets/img/learnEthLogo.webp" alt="" style={ { filter: themeFilter.filter, width: "1rem", height: "1ren" } } />
