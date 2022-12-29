@@ -16,7 +16,7 @@ module.exports = {
       .clickLaunchIcon('udapp')
   },
 
-  'Editor should be focused on the 3_Ballot.sol #group1': function (browser: NightwatchBrowser) {
+  'Editor should be focused on the 3_Ballot.sol #group1 #flaky': function (browser: NightwatchBrowser) {
     browser
       .pause(5000)
       .refreshPage()
