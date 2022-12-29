@@ -1,7 +1,7 @@
 
 import { Monaco } from '@monaco-editor/react'
 import { editor, languages, Position } from 'monaco-editor'
-import { EditorUIProps } from '../remix-ui-editor'
+import { EditorUIProps } from '../types'
 export class RemixHoverProvider implements languages.HoverProvider {
 
     props: EditorUIProps

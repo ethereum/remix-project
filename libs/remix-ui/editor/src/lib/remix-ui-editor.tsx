@@ -19,74 +19,23 @@ import { RemixCompletionProvider } from './providers/completionProvider'
 import { RemixHighLightProvider } from './providers/highlightProvider'
 import { RemixDefinitionProvider } from './providers/definitionProvider'
 import { convertToMonacoDecoration, defineAndSetTheme } from './utils'
-import { errorMarker, sourceAnnotation, sourceMarker } from './types'
+import { defaultEditorValue, EditorUIProps, errorMarker, sourceAnnotation, sourceMarker } from './types'
 
 
 
 loader.config({ paths: { vs: 'assets/js/monaco-editor/dev/vs' } })
 
-export type DecorationsReturn = {
-  currentDecorations: Array<string>
-  registeredDecorations?: Array<any>
-}
+
 
 /* eslint-disable-next-line */
-export interface EditorUIProps {
-  contextualListener: any
-  activated: boolean
-  themeType: string
-  currentFile: string
-  events: {
-    onBreakPointAdded: (file: string, line: number) => void
-    onBreakPointCleared: (file: string, line: number) => void
-    onDidChangeContent: (file: string) => void
-    onEditorMounted: () => void
-    onDiffEditorMounted: () => void
-  }
-  plugin: {
-    on: (plugin: string, event: string, listener: any) => void
-    call: (plugin: string, method: string, arg1?: any, arg2?: any, arg3?: any, arg4?: any) => any
-  }
-  editorAPI: {
-    findMatches: (uri: string, value: string) => any
-    getFontSize: () => number,
-    getValue: (uri: string) => string
-    getCursorPosition: (offset?: boolean) => number | IPosition
-    getHoverPosition: (position: IPosition) => number
-    addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
-    clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
-    keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
-    addErrorMarker: (errors: errorMarker[], from: string) => void
-    clearErrorMarkers: (sources: string[] | {[fileName: string]: any}, from: string) => void
-  }
-}
+
 export const EditorUI = (props: EditorUIProps) => {
   const [, setCurrentBreakpoints] = useState({})
-  const defaultEditorValue = `
-  \t\t\t\t\t\t\t ____    _____   __  __   ___  __  __   ___   ____    _____ 
-  \t\t\t\t\t\t\t|  _ \\  | ____| |  \\/  | |_ _| \\ \\/ /  |_ _| |  _ \\  | ____|
-  \t\t\t\t\t\t\t| |_) | |  _|   | |\\/| |  | |   \\  /    | |  | | | | |  _|  
-  \t\t\t\t\t\t\t|  _ <  | |___  | |  | |  | |   /  \\    | |  | |_| | | |___ 
-  \t\t\t\t\t\t\t|_| \\_\\ |_____| |_|  |_| |___| /_/\\_\\  |___| |____/  |_____|\n\n
-  \t\t\t\t\t\t\tKeyboard Shortcuts:\n
-  \t\t\t\t\t\t\t\tCTRL + S: Compile the current contract\n
-  \t\t\t\t\t\t\t\tCTRL + Shift + F : Open the File Explorer\n
-  \t\t\t\t\t\t\t\tCTRL + Shift + A : Open the Plugin Manager\n
-  \t\t\t\t\t\t\t\tCTRL + SHIFT + S: Compile the current contract & Run an associated script\n
-  \t\t\t\t\t\t\tEditor Keyboard Shortcuts:\n
-  \t\t\t\t\t\t\t\tCTRL + Alt + F : Format the code in the current file\n
-  \t\t\t\t\t\t\tImportant Links:\n
-  \t\t\t\t\t\t\t\tOfficial website about the Remix Project: https://remix-project.org/\n
-  \t\t\t\t\t\t\t\tOfficial documentation: https://remix-ide.readthedocs.io/en/latest/\n
-  \t\t\t\t\t\t\t\tGithub: https://github.com/ethereum/remix-project\n
-  \t\t\t\t\t\t\t\tGitter: https://gitter.im/ethereum/remix\n
-  \t\t\t\t\t\t\t\tMedium: https://medium.com/remix-ide\n
-  \t\t\t\t\t\t\t\tTwitter: https://twitter.com/ethereumremix\n
-  `
+
   const pasteCodeRef = useRef(false)
-  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>(null)
-  const diffEditorRef = useRef<monaco.editor.IStandaloneDiffEditor>(null)
-  const monacoRef = useRef<Monaco>(null)
+  props.editorAPI.editorRef = useRef<monaco.editor.IStandaloneCodeEditor>(null)
+  props.editorAPI.diffEditorRef = useRef<monaco.editor.IStandaloneDiffEditor>(null)
+  props.editorAPI.monacoRef = useRef<Monaco>(null)
   const currentFileRef = useRef('')
   const currentUrlRef = useRef('')
   // const currentDecorations = useRef({ sourceAnnotationsPerFile: {}, markerPerFile: {} }) // decorations that are currently in use by the editor
@@ -94,41 +43,39 @@ export const EditorUI = (props: EditorUIProps) => {
 
   const [editorModelsState, dispatch] = useReducer(reducerActions, initialState)
 
-
-
   useEffect(() => {
-    if (!monacoRef.current) return
-    defineAndSetTheme(monacoRef, props.themeType)
+    if (!props.editorAPI.monacoRef.current) return
+    defineAndSetTheme(props.editorAPI.monacoRef, props.themeType)
   })
 
   useEffect(() => {
-    if (!(editorRef.current || diffEditorRef.current)  || !props.currentFile) return
+    if (!( props.editorAPI.editorRef.current ||  props.editorAPI.diffEditorRef.current)  || !props.currentFile) return
     currentFileRef.current = props.currentFile
     props.plugin.call('fileManager', 'getUrlFromPath', currentFileRef.current).then((url) => currentUrlRef.current = url.file)
 
     const file = editorModelsState[props.currentFile]
     console.log('file', file)
-    editorRef && editorRef.current && editorRef.current.setModel(file.model)
-    diffEditorRef && diffEditorRef.current && diffEditorRef.current.setModel({
+    props.editorAPI.editorRef &&  props.editorAPI.editorRef.current &&  props.editorAPI.editorRef.current.setModel(file.model)
+    props.editorAPI.diffEditorRef &&  props.editorAPI.diffEditorRef.current &&  props.editorAPI.diffEditorRef.current.setModel({
       original: file.model,
       modified: file.model
     })
     getEditor().updateOptions({ readOnly: editorModelsState[props.currentFile].readOnly })
     
     if (file.language === 'sol') {
-      monacoRef.current.editor.setModelLanguage(file.model, 'remix-solidity')
+      props.editorAPI.monacoRef.current.editor.setModelLanguage(file.model, 'remix-solidity')
     } else if (file.language === 'cairo') {
-      monacoRef.current.editor.setModelLanguage(file.model, 'remix-cairo')
+      props.editorAPI.monacoRef.current.editor.setModelLanguage(file.model, 'remix-cairo')
     } else if (file.language === 'zokrates') {
-      monacoRef.current.editor.setModelLanguage(file.model, 'remix-zokrates')
+      props.editorAPI.monacoRef.current.editor.setModelLanguage(file.model, 'remix-zokrates')
     } else if (file.language === 'move') {
-      monacoRef.current.editor.setModelLanguage(file.model, 'remix-move')
+      props.editorAPI.monacoRef.current.editor.setModelLanguage(file.model, 'remix-move')
     }
   }, [props.currentFile])
 
   const getEditor = () => {
-    if(editorRef.current) return editorRef.current
-    if(diffEditorRef.current) return diffEditorRef.current.getModifiedEditor()
+    if(props.editorAPI.editorRef.current) return  props.editorAPI.editorRef.current
+    if(props.editorAPI.diffEditorRef.current) return  props.editorAPI.diffEditorRef.current.getModifiedEditor()
   }
 
   props.editorAPI.clearDecorationsByPlugin = (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => {
@@ -142,7 +89,7 @@ export const EditorUI = (props: EditorUIProps) => {
     if (registeredDecorations) {
       for (const decoration of registeredDecorations) {
         if (decoration.type === typeOfDecoration && decoration.value.from !== plugin) {
-          decorations.push(convertToMonacoDecoration(decoration.value, typeOfDecoration, monacoRef))
+          decorations.push(convertToMonacoDecoration(decoration.value, typeOfDecoration, props.editorAPI.monacoRef))
           newRegisteredDecorations.push(decoration)
         }
       }
@@ -162,7 +109,7 @@ export const EditorUI = (props: EditorUIProps) => {
     if (registeredDecorations) {
       for (const decoration of registeredDecorations) {
         if (decoration.value.from === plugin) {
-          decorations.push(convertToMonacoDecoration(decoration.value, typeOfDecoration, monacoRef))
+          decorations.push(convertToMonacoDecoration(decoration.value, typeOfDecoration, props.editorAPI.monacoRef))
         }
       }
     }
@@ -174,7 +121,7 @@ export const EditorUI = (props: EditorUIProps) => {
   const addDecoration = (decoration: sourceAnnotation | sourceMarker, filePath: string, typeOfDecoration: string) => {
     const model = editorModelsState[filePath]?.model
     if (!model) return { currentDecorations: [] }
-    const monacoDecoration = convertToMonacoDecoration(decoration, typeOfDecoration, monacoRef)
+    const monacoDecoration = convertToMonacoDecoration(decoration, typeOfDecoration, props.editorAPI.monacoRef)
     return {
       currentDecorations: model.deltaDecorations([], [monacoDecoration]),
       registeredDecorations: [{ value: decoration, type: typeOfDecoration }]
@@ -219,7 +166,7 @@ export const EditorUI = (props: EditorUIProps) => {
     for (const filePath in allMarkersPerfile) {
       const model = editorModelsState[filePath]?.model
       if (model) {
-        monacoRef.current.editor.setModelMarkers(model, from, allMarkersPerfile[filePath])
+        props.editorAPI.monacoRef.current.editor.setModelMarkers(model, from, allMarkersPerfile[filePath])
       }
     }
   }
@@ -230,20 +177,20 @@ export const EditorUI = (props: EditorUIProps) => {
         const filePath = source
         const model = editorModelsState[filePath]?.model
         if (model) {
-          monacoRef.current.editor.setModelMarkers(model, from, [])
+          props.editorAPI.monacoRef.current.editor.setModelMarkers(model, from, [])
         }
       }
     }
   }
 
   props.editorAPI.findMatches = (uri: string, value: string) => {
-    if (!editorRef.current) return
+    if (! props.editorAPI.editorRef.current) return
     const model = editorModelsState[uri]?.model
     if (model) return model.findMatches(value)
   }
 
   props.editorAPI.getValue = (uri: string) => {
-    if (!editorRef.current) return
+    if (! props.editorAPI.editorRef.current) return
     const model = editorModelsState[uri]?.model
     if (model) {
       return model.getValue()
@@ -251,7 +198,8 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   props.editorAPI.getCursorPosition = (offset:boolean = true) => {
-    if (!monacoRef.current) return
+    console.log(this)
+    if (!props.editorAPI.monacoRef.current) return
     const model = editorModelsState[currentFileRef.current]?.model
     if (model) {
       return offset? model.getOffsetAt(getEditor().getPosition()): getEditor().getPosition()
@@ -259,7 +207,7 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   props.editorAPI.getHoverPosition = (position: monaco.Position) => {
-    if (!monacoRef.current) return
+    if (!props.editorAPI.monacoRef.current) return
     const model = editorModelsState[currentFileRef.current]?.model
     if (model) {
       return model.getOffsetAt(position)
@@ -269,7 +217,7 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   props.editorAPI.getFontSize = () => {
-    if (!editorRef.current) return
+    if (! props.editorAPI.editorRef.current) return
     return getEditor().getOption(43).fontSize
   }
 
@@ -287,7 +235,7 @@ export const EditorUI = (props: EditorUIProps) => {
         } else {
           props.events.onBreakPointAdded(currentFile, position.lineNumber)
           const decorationIds = model.deltaDecorations([], [{
-            range: new monacoRef.current.Range(position.lineNumber, 1, position.lineNumber, 1),
+            range: new props.editorAPI.monacoRef.current.Range(position.lineNumber, 1, position.lineNumber, 1),
             options: {
               isWholeLine: false,
               glyphMarginClassName: 'fas fa-circle text-info'
@@ -302,17 +250,17 @@ export const EditorUI = (props: EditorUIProps) => {
 
   function handleDiffEditorDidMount(editor: monaco.editor.IStandaloneDiffEditor) {
     console.log('diff editor mounted', editor)
-    diffEditorRef.current = editor
-    defineAndSetTheme(monacoRef, props.themeType)
-    reducerListener(props.plugin, dispatch, monacoRef.current, diffEditorRef.current.getModifiedEditor(), props.events)
+    props.editorAPI.diffEditorRef.current= editor
+    defineAndSetTheme(props.editorAPI.monacoRef, props.themeType)
+    reducerListener(props.plugin, dispatch, props.editorAPI.monacoRef.current,  props.editorAPI.diffEditorRef.current.getModifiedEditor(), props.events)
     props.events.onEditorMounted()
   }
 
   function handleEditorDidMount(editor: monaco.editor.IStandaloneCodeEditor) {
     console.log('editor mounted', editor)
-    editorRef.current = editor
-    defineAndSetTheme(monacoRef, props.themeType)
-    reducerListener(props.plugin, dispatch, monacoRef.current, editorRef.current, props.events)
+    props.editorAPI.editorRef.current = editor
+    defineAndSetTheme(props.editorAPI.monacoRef, props.themeType)
+    reducerListener(props.plugin, dispatch, props.editorAPI.monacoRef.current,  props.editorAPI.editorRef.current, props.events)
     props.events.onEditorMounted()
     
     
@@ -353,10 +301,10 @@ export const EditorUI = (props: EditorUIProps) => {
     
 
     // zoomin zoomout
-    editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | (monacoRef.current.KeyCode as any).US_EQUAL, () => {
+    editor.addCommand(props.editorAPI.monacoRef.current.KeyMod.CtrlCmd | (props.editorAPI.monacoRef.current.KeyCode as any).US_EQUAL, () => {
       editor.updateOptions({ fontSize: editor.getOption(43).fontSize + 1 })
     })
-    editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | (monacoRef.current.KeyCode as any).US_MINUS, () => {
+    editor.addCommand(props.editorAPI.monacoRef.current.KeyMod.CtrlCmd | (props.editorAPI.monacoRef.current.KeyCode as any).US_MINUS, () => {
       editor.updateOptions({ fontSize: editor.getOption(43).fontSize - 1 })
     })
 
@@ -368,7 +316,7 @@ export const EditorUI = (props: EditorUIProps) => {
       contextMenuGroupId: "zooming", // create a new grouping
       keybindings: [
         // eslint-disable-next-line no-bitwise
-        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Equal,
+        props.editorAPI.monacoRef.current.KeyMod.CtrlCmd | props.editorAPI.monacoRef.current.KeyCode.Equal,
       ],
       run: () => { editor.updateOptions({ fontSize: editor.getOption(43).fontSize + 1 }) },
     }
@@ -379,7 +327,7 @@ export const EditorUI = (props: EditorUIProps) => {
       contextMenuGroupId: "zooming", // create a new grouping
       keybindings: [
         // eslint-disable-next-line no-bitwise
-        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Minus,
+        props.editorAPI.monacoRef.current.KeyMod.CtrlCmd | props.editorAPI.monacoRef.current.KeyCode.Minus,
       ],
       run: () => { editor.updateOptions({ fontSize: editor.getOption(43).fontSize - 1 }) },
     }
@@ -390,7 +338,7 @@ export const EditorUI = (props: EditorUIProps) => {
       contextMenuGroupId: "formatting", // create a new grouping
       keybindings: [
         // eslint-disable-next-line no-bitwise
-        monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyF,
+        props.editorAPI.monacoRef.current.KeyMod.Shift | props.editorAPI.monacoRef.current.KeyMod.Alt | props.editorAPI.monacoRef.current.KeyCode.KeyF,
       ],
       run: async () => { 
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
@@ -425,33 +373,33 @@ export const EditorUI = (props: EditorUIProps) => {
 
   function handleEditorWillMount(monaco) {
     console.log('handleEditorWillMount', monaco)
-    monacoRef.current = monaco
+    props.editorAPI.monacoRef.current = monaco
     // Register a new language
-    monacoRef.current.languages.register({ id: 'remix-solidity' })
-    monacoRef.current.languages.register({ id: 'remix-cairo' })
-    monacoRef.current.languages.register({ id: 'remix-zokrates' })
-    monacoRef.current.languages.register({ id: 'remix-move' })
+    props.editorAPI.monacoRef.current.languages.register({ id: 'remix-solidity' })
+    props.editorAPI.monacoRef.current.languages.register({ id: 'remix-cairo' })
+    props.editorAPI.monacoRef.current.languages.register({ id: 'remix-zokrates' })
+    props.editorAPI.monacoRef.current.languages.register({ id: 'remix-move' })
 
     // Register a tokens provider for the language
-    monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider as any)
-    monacoRef.current.languages.setLanguageConfiguration('remix-solidity', solidityLanguageConfig as any )
+    props.editorAPI.monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider as any)
+    props.editorAPI.monacoRef.current.languages.setLanguageConfiguration('remix-solidity', solidityLanguageConfig as any )
 
-    monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoTokensProvider as any)
-    monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoLanguageConfig as any)
+    props.editorAPI.monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoTokensProvider as any)
+    props.editorAPI.monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoLanguageConfig as any)
 
-    monacoRef.current.languages.setMonarchTokensProvider('remix-zokrates', zokratesTokensProvider as any)
-    monacoRef.current.languages.setLanguageConfiguration('remix-zokrates', zokratesLanguageConfig as any)
+    props.editorAPI.monacoRef.current.languages.setMonarchTokensProvider('remix-zokrates', zokratesTokensProvider as any)
+    props.editorAPI.monacoRef.current.languages.setLanguageConfiguration('remix-zokrates', zokratesLanguageConfig as any)
 
-    monacoRef.current.languages.setMonarchTokensProvider('remix-move', moveTokenProvider as any)
-    monacoRef.current.languages.setLanguageConfiguration('remix-move', moveLanguageConfig as any)
+    props.editorAPI.monacoRef.current.languages.setMonarchTokensProvider('remix-move', moveTokenProvider as any)
+    props.editorAPI.monacoRef.current.languages.setLanguageConfiguration('remix-move', moveLanguageConfig as any)
 
-    monacoRef.current.languages.registerDefinitionProvider('remix-solidity', new RemixDefinitionProvider(props, monaco))
-    monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', new RemixHighLightProvider(props, monaco))
-    monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
-    monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
-    monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
+    props.editorAPI.monacoRef.current.languages.registerDefinitionProvider('remix-solidity', new RemixDefinitionProvider(props, monaco))
+    props.editorAPI.monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', new RemixHighLightProvider(props, monaco))
+    props.editorAPI.monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
+    props.editorAPI.monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
+    props.editorAPI.monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
 
-    loadTypes(monacoRef.current)
+    loadTypes(props.editorAPI.monacoRef.current)
   }
 
 
@@ -472,7 +420,15 @@ export const EditorUI = (props: EditorUIProps) => {
         height='100%'
       />
 
-
+<Editor
+        width="100%"
+        path={props.currentFile}
+        language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
+        onMount={handleEditorDidMount}
+        beforeMount={handleEditorWillMount}
+        options={{ glyphMargin: true, readOnly: ((! props.editorAPI.editorRef.current || !props.currentFile) && editorModelsState[props.currentFile]?.readOnly) }}
+        defaultValue={defaultEditorValue}
+      />
 
       {editorModelsState[props.currentFile]?.readOnly && <span className='pl-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0'>
         <i className="fas fa-lock-alt p-2"></i>
@@ -487,14 +443,6 @@ export default EditorUI
 
 /*
 
-<Editor
-        width="100%"
-        path={props.currentFile}
-        language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
-        onMount={handleEditorDidMount}
-        beforeMount={handleEditorWillMount}
-        options={{ glyphMargin: true, readOnly: ((!editorRef.current || !props.currentFile) && editorModelsState[props.currentFile]?.readOnly) }}
-        defaultValue={defaultEditorValue}
-      />
+
 
       */

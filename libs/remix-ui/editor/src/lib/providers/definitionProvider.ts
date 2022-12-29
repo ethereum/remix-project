@@ -1,6 +1,6 @@
 import { Monaco } from "@monaco-editor/react"
-import monaco from "../../types/monaco"
-import { EditorUIProps } from "../remix-ui-editor"
+import monaco from "monaco-editor"
+import { EditorUIProps } from "../types"
 
 export class RemixDefinitionProvider implements monaco.languages.DefinitionProvider {
     props: EditorUIProps

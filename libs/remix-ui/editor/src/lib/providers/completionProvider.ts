@@ -1,8 +1,8 @@
 import { AstNode } from "@remix-project/remix-solidity"
 import { isArray } from "lodash"
 import { editor, languages, Position } from "monaco-editor"
-import monaco from "../../types/monaco"
-import { EditorUIProps } from "../remix-ui-editor"
+import monaco from "monaco-editor"
+import { EditorUIProps } from "../types"
 import { GeCompletionUnits, GetCompletionKeywords, getCompletionSnippets, GetCompletionTypes, getContextualAutoCompleteBTypeName, getContextualAutoCompleteByGlobalVariable, GetGlobalFunctions, GetGlobalVariable, GetImports } from "./completion/completionGlobals"
 
 export class RemixCompletionProvider implements languages.CompletionItemProvider {

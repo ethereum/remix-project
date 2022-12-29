@@ -1,7 +1,7 @@
 import { Monaco } from "@monaco-editor/react"
 import { sourceMappingDecoder } from "@remix-project/remix-debug"
-import monaco from "../../types/monaco"
-import { EditorUIProps } from "../remix-ui-editor"
+import monaco from "monaco-editor"
+import { EditorUIProps } from "../types"
 
 export class RemixReferenceProvider implements monaco.languages.ReferenceProvider {
     props: EditorUIProps

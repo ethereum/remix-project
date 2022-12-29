@@ -1,5 +1,5 @@
 import { IRange } from "monaco-editor";
-import monaco from "../../../types/monaco";
+import monaco from "monaco-editor"
 import path from "path";
 
 type CodeParserImportsData = {
