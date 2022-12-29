@@ -184,13 +184,13 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   props.editorAPI.findMatches = (uri: string, value: string) => {
-    if (! props.editorAPI.editorRef.current) return
+    if (! getEditor()) return
     const model = editorModelsState[uri]?.model
     if (model) return model.findMatches(value)
   }
 
   props.editorAPI.getValue = (uri: string) => {
-    if (! props.editorAPI.editorRef.current) return
+    if (! getEditor()) return
     const model = editorModelsState[uri]?.model
     if (model) {
       return model.getValue()
@@ -198,7 +198,7 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   props.editorAPI.getCursorPosition = (offset:boolean = true) => {
-    console.log(this)
+
     if (!props.editorAPI.monacoRef.current) return
     const model = editorModelsState[currentFileRef.current]?.model
     if (model) {
@@ -217,7 +217,7 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   props.editorAPI.getFontSize = () => {
-    if (! props.editorAPI.editorRef.current) return
+    if (! getEditor()) return
     return getEditor().getOption(43).fontSize
   }
 
@@ -420,15 +420,7 @@ export const EditorUI = (props: EditorUIProps) => {
         height='100%'
       />
 
-<Editor
-        width="100%"
-        path={props.currentFile}
-        language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
-        onMount={handleEditorDidMount}
-        beforeMount={handleEditorWillMount}
-        options={{ glyphMargin: true, readOnly: ((! props.editorAPI.editorRef.current || !props.currentFile) && editorModelsState[props.currentFile]?.readOnly) }}
-        defaultValue={defaultEditorValue}
-      />
+
 
       {editorModelsState[props.currentFile]?.readOnly && <span className='pl-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0'>
         <i className="fas fa-lock-alt p-2"></i>
@@ -442,7 +434,15 @@ export const EditorUI = (props: EditorUIProps) => {
 export default EditorUI
 
 /*
-
+<Editor
+        width="100%"
+        path={props.currentFile}
+        language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
+        onMount={handleEditorDidMount}
+        beforeMount={handleEditorWillMount}
+        options={{ glyphMargin: true, readOnly: ((! props.editorAPI.editorRef.current || !props.currentFile) && editorModelsState[props.currentFile]?.readOnly) }}
+        defaultValue={defaultEditorValue}
+      />
 
 
       */
