@@ -121,7 +121,6 @@ class Terminal extends Plugin {
 
   renderComponent () {
     const onReady = (api) => { this.terminalApi = api }
-    console.log(this)
     this.dispatch({
       plugin: this,
       onReady: onReady

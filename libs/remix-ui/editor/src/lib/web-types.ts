@@ -6,7 +6,6 @@ export const loadTypes = async (monaco) => {
 
     // @ts-ignore
     const ethersAbi = await import('raw-loader!@ethersproject/abi/lib/index.d.ts')
-    console.log(ethersAbi)
     const ethersAbiDefault = ethersAbi.default.replace(/@ethersproject\//g, '@ethersproject_')
     monaco.languages.typescript.typescriptDefaults.addExtraLib(ethersAbiDefault, `file:///node_modules/@types/@ethersproject_abi/index.d.ts`)
 
