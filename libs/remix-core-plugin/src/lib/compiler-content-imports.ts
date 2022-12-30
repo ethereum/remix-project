@@ -123,7 +123,6 @@ export class CompilerImports extends Plugin {
     * @returns {Promise} - string content
     */
   async resolveAndSave (url, targetPath) {
-    console.log('resolveAndSave', url, targetPath)
     try {
       if (targetPath && this.currentRequest) {
         const canCall = await this.askUserPermission('resolveAndSave', 'This action will update the path ' + targetPath)
