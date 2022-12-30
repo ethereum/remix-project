@@ -72,7 +72,6 @@ export class Compiler {
     if (typeof (window) !== 'undefined' && Worker) {
       const ESWebWorker = await import('../lib/es-web-worker/es-web-worker-handler')
       this.workerHandler = new ESWebWorker.default()
-      console.log('worker handler loaded', this.workerHandler)
     }
   }
 
@@ -286,7 +285,6 @@ export class Compiler {
    */
 
   loadWorker(url: string): void {
-    console.log(this)
 
     this.state.worker = this.workerHandler.getWorker()
     const jobs: Record<'sources', SourceWithTarget>[] = []
@@ -388,7 +386,6 @@ export class Compiler {
       if (m && m in files) continue
 
       if (this.handleImportCall) {
-        console.log('calling handleImportCall', this.handleImportCall)
         this.handleImportCall(m, (err, content: string) => {
           if (err && cb) cb(err)
           else {
