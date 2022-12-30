@@ -4,15 +4,12 @@ pragma solidity >=0.7.0 <0.9.0;
 import "remix_tests.sol";
 import "../contracts/MyToken.sol";
 
-contract MyTokenTest {
+contract MyTokenTest is MyToken {
 
-    MyToken s;
-    function beforeAll () public {
-        s = new MyToken();
-    }
-
-    function testTokenNameAndSymbol () public {
-        Assert.equal(s.name(), "MyToken", "token name did not match");
-        Assert.equal(s.symbol(), "MTK", "token symbol did not match");
+    function testTokenInitialValues() public {
+        Assert.equal(name(), "MyToken", "token name did not match");
+        Assert.equal(symbol(), "MTK", "token symbol did not match");
+        Assert.equal(decimals(), 18, "token decimals did not match");
+        Assert.equal(totalSupply(), 0, "token supply should be zero");
     }
 }
