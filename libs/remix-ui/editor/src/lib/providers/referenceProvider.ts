@@ -28,7 +28,7 @@ export class RemixReferenceProvider implements monaco.languages.ReferenceProvide
               fileTarget = fileTarget.file
               const fileContent = await this.props.plugin.call('fileManager', 'readFile', fileInNode)
               const lineColumn = await this.props.plugin.call('codeParser', 'getLineColumnOfPosition', position)
-              console.log(position, fileTarget, lineColumn)
+
               try {
                 this.props.plugin.call('editor', 'addModel', fileTarget, fileContent)
               } catch (e) {
