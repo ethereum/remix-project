@@ -29,6 +29,9 @@ export class RemixDefinitionProvider implements monaco.languages.DefinitionProvi
                 }
             }
         }
+        if (!jumpLocation || !jumpLocation.fileName) {
+            return []
+        }
         return [{
             uri: this.monaco.Uri.parse(jumpLocation.fileName),
             range: {
