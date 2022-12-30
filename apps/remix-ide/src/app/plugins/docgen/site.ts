@@ -59,6 +59,7 @@ export function buildSite(builds: Build[], siteConfig: SiteConfig, properties: P
   const items: DocItemWithContext[] = [];
   const pages: Record<string, DocItemWithContext[]> = {};
 
+  // eslint-disable-next-line prefer-const
   for (let { input, output } of builds) {
     // Clone because we will mutate in order to add item context.
     output = { ...output, sources: clone(output.sources) };
