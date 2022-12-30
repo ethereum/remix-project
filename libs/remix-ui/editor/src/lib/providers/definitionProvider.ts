@@ -29,15 +29,18 @@ export class RemixDefinitionProvider implements monaco.languages.DefinitionProvi
                 }
             }
         }
-        return [{
-            uri: this.monaco.Uri.parse(jumpLocation.fileName),
-            range: {
-                startLineNumber: jumpLocation.startLineNumber,
-                startColumn: jumpLocation.startColumn,
-                endLineNumber: jumpLocation.endLineNumber,
-                endColumn: jumpLocation.endColumn
-            }
-        }]
+        if (jumpLocation && jumpLocation.fileName) {
+            return [{
+                uri: this.monaco.Uri.parse(jumpLocation.fileName),
+                range: {
+                    startLineNumber: jumpLocation.startLineNumber,
+                    startColumn: jumpLocation.startColumn,
+                    endLineNumber: jumpLocation.endLineNumber,
+                    endColumn: jumpLocation.endColumn
+                }
+            }]
+        }
+        return []
     }
 
     async jumpToDefinition(position: any) {
