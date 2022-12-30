@@ -386,7 +386,6 @@ export class Compiler {
       if (m && m in files) continue
 
       if (this.handleImportCall) {
-        console.log('calling handleImportCall', this.handleImportCall)
         this.handleImportCall(m, (err, content: string) => {
           if (err && cb) cb(err)
           else {
