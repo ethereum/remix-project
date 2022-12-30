@@ -16,7 +16,7 @@ export function joinLines(text?: string) {
  * Format a variable as its type followed by its name, if available.
  */
 export function formatVariable(v: VariableDeclaration): string {
-  return [v.typeName?.typeDescriptions.typeString!].concat(v.name || []).join(' ');
+  return [v.typeName?.typeDescriptions.typeString].concat(v.name || []).join(' ');
 }
 
 export const eq = (a: unknown, b: unknown) => a === b;

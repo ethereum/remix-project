@@ -44,7 +44,7 @@ export function signature({ item }: DocItemContext): string | undefined {
       const params = item.parameters.parameters;
       const returns = item.returnParameters.parameters;
       const head = (kind === 'function' || kind === 'freeFunction') ? [kind, name].join(' ') : kind;
-      let res = [
+      const res = [
         `${head}(${params.map(formatVariable).join(', ')})`,
         item.visibility,
       ];
