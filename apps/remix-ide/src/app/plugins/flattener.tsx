@@ -131,10 +131,10 @@ export class Flattener extends ViewPlugin implements FlattenerAPI {
       async function (target, source, version, data) {
         plugin.emit('statusChanged', { key: 'none' })
 
-        this.flatFileName = ''
-        this.fileName = target
+        plugin.flatFileName = ''
+        plugin.fileName = target
 
-        //this.renderComponent()
+        plugin.renderComponent()
 
 
         plugin.compilationTarget = target
