@@ -216,10 +216,11 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       const domParser = new DOMParser()
       const element = domParser.parseFromString(payload, 'image/svg+xml').querySelector('svg')
       const fileName = `${api.currentFile.split('/')[0]}/resources/${api.currentFile.split('/')[1]}.pdf`
-      // domToPdf(element, { filename: fileName}, function(pdf) {
-      //   console.log({ pdf })
-      // });
-      pdfBuilder
+
+      pdfBuilder.addSvgAsImage(payload, 1.6, 1.6, 300, 300)
+      const result = pdfBuilder.output('datauristring', { filename: fileName })
+      api.writeFile(fileName, result)
+      console.log({ result })
       setSVGPayload(payload)
       setShowViewer(!showViewer)
     } catch (error) {
