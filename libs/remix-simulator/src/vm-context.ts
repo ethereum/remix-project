@@ -9,6 +9,9 @@ import { Common } from '@ethereumjs/common'
 import { Trie } from '@ethereumjs/trie'
 import { DefaultStateManager } from '@ethereumjs/statemanager'
 import { StorageDump } from '@ethereumjs/statemanager/dist/interface'
+import { EVM } from '@ethereumjs/evm'
+import { EEI } from '@ethereumjs/vm'
+import { Blockchain } from '@ethereumjs/blockchain'
 import { Block } from '@ethereumjs/block'
 import { Transaction } from '@ethereumjs/tx'
 import { bigIntToHex } from '@ethereumjs/util'
@@ -136,11 +139,17 @@ export class VMContext {
   async createVm (hardfork) {
     const stateManager = new StateManagerCommonStorageDump()
     const common = new Common({ chain: 'mainnet', hardfork })
+    const blockchain = new (Blockchain as any)({ common })
+    const eei = new EEI(stateManager, common, blockchain)
+    const evm = new EVM({ common, eei, allowUnlimitedContractSize: true })
+    
     const vm = await VM.create({
       common,
       activatePrecompiles: true,
-      stateManager
-      // allowUnlimitedContractSize: true
+      stateManager,
+      blockchain,
+      eei,
+      evm
     })
 
     // VmProxy and VMContext are very intricated.
