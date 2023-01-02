@@ -231,21 +231,25 @@ export class VmProxy {
       }
       const step = {
         stack: hexListFromBNs(data.stack),
-        memory: formatMemory(data.memory),
         storage: {},
+        memory: null,
         op: data.opcode.name,
         pc: data.pc,
         gasCost: data.opcode.fee.toString(),
         gas: data.gasLeft.toString(),
         depth: depth
       }
+      if (data.opcode.name === 'CALLDATACOPY' || data.opcode.name === 'CODECOPY' || data.opcode.name === 'EXTCODECOPY' || data.opcode.name === 'RETURNDATACOPY' || data.opcode.name === 'MSTORE' || data.opcode.name === 'MSTORE8') {
+        step.memory = formatMemory(data.memory)
+      }
       this.vmTraces[this.processingHash].structLogs.push(step)
       // Track hardhat console.log call
       if (step.op === 'STATICCALL' && step.stack[step.stack.length - 2] === '0x000000000000000000000000000000000000000000636f6e736f6c652e6c6f67') {
         const stackLength = step.stack.length
         const payloadStart = parseInt(step.stack[stackLength - 3], 16)
-        const memory = step.memory.join('')
-        let payload = memory.substring(payloadStart * 2, memory.length)
+        const memory = formatMemory(data.memory)
+        const memoryStr = memory.join('')
+        let payload = memoryStr.substring(payloadStart * 2, memory.length)
         const fnselectorStr = payload.substring(0, 8)
         const fnselectorStrInHex = '0x' + fnselectorStr
         const fnselector = parseInt(fnselectorStrInHex)
