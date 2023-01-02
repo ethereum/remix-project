@@ -157,8 +157,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       swarmLocation: 'Swarm url where all metadata information can be found (contract needs to be published first)',
       web3Deploy: 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
     }
-    const contractProperties = contractsDetails[selectedContract] || {}
+    let contractProperties = contractsDetails[selectedContract] || {}
     contractProperties.compilerInput = compilerInput
+    // Make 'compilerInput' first field to display it as first item in 'Compilation Details' modal
+    contractProperties = JSON.parse(JSON.stringify(contractProperties, ["compilerInput", ...Object.keys(contractProperties)], 4))
     const log = <div className="remixui_detailsJSON">
       <TreeView>
         {
