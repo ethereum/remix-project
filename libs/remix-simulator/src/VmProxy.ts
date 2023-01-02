@@ -254,7 +254,7 @@ export class VmProxy {
       if (step.op === 'STATICCALL' && step.stack[step.stack.length - 2] === '0x000000000000000000000000000000000000000000636f6e736f6c652e6c6f67') {
         const stackLength = step.stack.length
         const payloadStart = parseInt(step.stack[stackLength - 3], 16)
-        const memory = formatMemory(data.memory)
+        const memory = step.memory || formatMemory(data.memory)
         const memoryStr = memory.join('')
         let payload = memoryStr.substring(payloadStart * 2, memory.length)
         const fnselectorStr = payload.substring(0, 8)
