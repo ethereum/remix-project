@@ -249,8 +249,9 @@ export class VmProxy {
         gas: data.gasLeft.toString(),
         depth: depth
       }
-      if (data.opcode.name === 'CALLDATACOPY' || data.opcode.name === 'CODECOPY' || data.opcode.name === 'EXTCODECOPY' || data.opcode.name === 'RETURNDATACOPY' || data.opcode.name === 'MSTORE' || data.opcode.name === 'MSTORE8') {
-        step.memory = formatMemory(data.memory)
+
+      if (previousOpcode.op === 'CALLDATACOPY' || previousOpcode.op === 'CODECOPY' || previousOpcode.op === 'EXTCODECOPY' || previousOpcode.op === 'RETURNDATACOPY' || previousOpcode.op === 'MSTORE' || previousOpcode.op === 'MSTORE8') {
+        step.memory = data.memory
         this.lastMemoryUpdate = step.memory
       }
       this.vmTraces[this.processingHash].structLogs.push(step)
@@ -258,7 +259,7 @@ export class VmProxy {
       if (step.op === 'STATICCALL' && step.stack[step.stack.length - 2] === '0x000000000000000000000000000000000000000000636f6e736f6c652e6c6f67') {
         const stackLength = step.stack.length
         const payloadStart = parseInt(step.stack[stackLength - 3], 16)
-        const memory = step.memory || formatMemory(data.memory)
+        const memory = formatMemory(data.memory)
         const memoryStr = memory.join('')
         let payload = memoryStr.substring(payloadStart * 2, memory.length)
         const fnselectorStr = payload.substring(0, 8)
