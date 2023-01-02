@@ -43,7 +43,8 @@ export class VmProxy {
   txsMapBlock
   blocks
   stateCopy: StateManager
-
+  flagDoNotRecordEVMSteps: boolean
+  
   constructor (vmContext: VMContext) {
     this.vmContext = vmContext
     this.stateCopy
@@ -109,7 +110,12 @@ export class VmProxy {
     return ret
   }
 
+  flagNextAsDoNotRecordEvmSteps () {
+    this.flagDoNotRecordEVMSteps = true
+  }
+
   async txWillProcess (data: TypedTransaction) {
+    if (this.flagDoNotRecordEVMSteps) return
     this.stateCopy = await this.vm.stateManager.copy()
     this.incr++
     this.processingHash = bufferToHex(data.hash())
@@ -148,6 +154,10 @@ export class VmProxy {
   }
 
   async txProcessed (data: AfterTxEvent) {
+    if (this.flagDoNotRecordEVMSteps) {
+      this.flagDoNotRecordEVMSteps = false
+      return
+    }
     const lastOp = this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]
     if (lastOp) {
       lastOp.error = lastOp.op !== 'RETURN' && lastOp.op !== 'STOP' && lastOp.op !== 'DESTRUCT'
@@ -205,6 +215,7 @@ export class VmProxy {
   }
 
   async pushTrace (data: InterpreterStep) {
+    if (this.flagDoNotRecordEVMSteps) return
     try {
       const depth = data.depth + 1 // geth starts the depth from 1
       if (!this.processingHash) {
