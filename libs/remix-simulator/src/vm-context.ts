@@ -148,7 +148,6 @@ export class VMContext {
       activatePrecompiles: true,
       stateManager,
       blockchain,
-      eei,
       evm
     })
 
