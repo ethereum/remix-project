@@ -214,7 +214,6 @@ export class VmProxy {
       if (this.vmTraces[this.processingHash] && this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]) {
         previousOpcode = this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]
       }
-
       if (this.previousDepth > depth && previousOpcode) {
         // returning from context, set error it is not STOP, RETURN
         previousOpcode.invalidDepthChange = previousOpcode.op !== 'RETURN' && previousOpcode.op !== 'STOP'
