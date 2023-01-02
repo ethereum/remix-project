@@ -87,7 +87,7 @@ contract MyTokenTest is MyToken {
     function testTokenTransferfrom() public {
         Assert.equal(allowance(acc0, acc3), 500, "token allowance did not match");
         transferFrom(acc0, acc4, 400);
-        Assert.equal(balanceOf(acc4), 500, "acc4 token balance did not match");
+        Assert.equal(balanceOf(acc4), 400, "acc4 token balance did not match");
         Assert.equal(allowance(acc0, acc3), 100, "token allowance did not match");
     }
 
