@@ -196,7 +196,12 @@ export class TraceManager {
     if (lastChanges === null) {
       throw new Error('no memory found')
     }
-    return this.trace[lastChanges].memory
+    if (this.traceCache.formattedMemory[lastChanges]) {
+      return this.traceCache.formattedMemory[lastChanges]
+    }
+    const memory = util.formatMemory(this.trace[lastChanges].memory)
+    this.traceCache.setFormattedMemory(lastChanges, memory)
+    return memory
   }
 
   getCurrentPC (stepIndex) {
