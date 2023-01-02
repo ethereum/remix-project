@@ -1,5 +1,5 @@
 import { BN, privateToAddress, toChecksumAddress, isValidPrivate, Address } from 'ethereumjs-util'
-const Web3EthAccounts = require('web3-eth-accounts');
+const Web3EthAccounts = require('web3-eth-accounts')
 import * as crypto from 'crypto'
 
 export class Web3Accounts {

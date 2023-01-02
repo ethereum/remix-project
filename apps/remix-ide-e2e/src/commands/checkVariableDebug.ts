@@ -29,7 +29,6 @@ function checkDebug(browser: NightwatchBrowser, id: string, debugValue: Nightwat
     }, [id], (result) => {
       if (result.value) {
         try {
-          console.log('checkDebug', result.value)
           resultOfElement = JSON.parse(<string>result.value)
           isEqual = deepequal(debugValue, resultOfElement)
         } catch (e) {
