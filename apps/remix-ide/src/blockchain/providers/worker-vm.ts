@@ -24,7 +24,7 @@ self.onmessage = (e: MessageEvent) => {
       } else {
         self.postMessage({
           cmd: 'sendAsyncResult',
-          error: 'Provider not instanciated',
+          error: 'Provider not instantiated',
           result: null,
           stamp: data.stamp
         })
