@@ -8,12 +8,15 @@ import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
 const parser = (window as any).SolidityParser
 import { convertUmlClasses2Dot } from 'sol2uml/lib/converterClasses2Dot'
 import vizRenderStringSync from '@aduh95/viz.js/sync'
+import domToPdf from 'dom-to-pdf'
 
 import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
 import { concatSourceFiles, getDependencyGraph } from './logic/flattenerUtilities'
 import Viewer from 'react-viewer'
+import { jsPDF } from 'jspdf'
 
+const pdfBuilder = new jsPDF('portrait')
 export const ContractSelection = (props: ContractSelectionProps) => {
   const { api, compiledFileName, contractsDetails, contractList, compilerInput, modal } = props
   const [selectedContract, setSelectedContract] = useState('')
@@ -209,6 +212,14 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       const currentFile = api.currentFile
       const ast = content4AST.length > 1 ? parser.parse(content4AST) : parser.parse(api.getCompilationResult().source.sources[currentFile].content)
       const payload = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
+
+      const domParser = new DOMParser()
+      const element = domParser.parseFromString(payload, 'image/svg+xml').querySelector('svg')
+      const fileName = `${api.currentFile.split('/')[0]}/resources/${api.currentFile.split('/')[1]}.pdf`
+      // domToPdf(element, { filename: fileName}, function(pdf) {
+      //   console.log({ pdf })
+      // });
+      pdfBuilder
       setSVGPayload(payload)
       setShowViewer(!showViewer)
     } catch (error) {
@@ -230,16 +241,9 @@ export const ContractSelection = (props: ContractSelectionProps) => {
         ? [filePath]
         : dependencyGraph.sort().reverse()
     const sources = api.getCompilationResult().source.sources
-    setContent4AST(concatSourceFiles(sorted, sources))
-  }
-  
-  const showFlattener = () => {
-    const confirmNodeType = api.getCompilationResult().data.sources[api.currentFile]
-      .ast && api.getCompilationResult().data.sources[api.currentFile]
-      .ast.nodes.some(x => x.nodeType === 'ImportDirective')
-    const currentFile = api.currentFile.split('/')[1]
-    const contractListConfirm = contractList.some(x => x.file === currentFile)
-    return confirmNodeType && contractListConfirm
+    const result = concatSourceFiles(sorted, sources)
+    api.writeFile(`${api.currentFile}_flattened.sol`, result)
+    setContent4AST(result)
   }
 
   return (
