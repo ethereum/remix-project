@@ -35,6 +35,7 @@ import { Injected0ptimismProvider } from './app/tabs/injected-optimism-provider'
 import { InjectedArbitrumOneProvider } from './app/tabs/injected-arbitrum-one-provider'
 import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
+import { Flattener } from './app/plugins/flattener'
 
 const isElectron = require('is-electron')
 
@@ -170,6 +171,9 @@ class AppComponent {
     // ------- CODE FORMAT PLUGIN ------------------
     const codeFormat = new CodeFormat()
 
+    // ------- FLATTENER PLUGIN ------------------
+    const flattener = new Flattener()
+
     //----- search
     const search = new SearchPlugin()
 
@@ -265,7 +269,8 @@ class AppComponent {
       injected0ptimismProvider,
       injectedArbitrumOneProvider,
       this.walkthroughService,
-      search
+      search,
+      flattener
     ])
 
     // LAYOUT & SYSTEM VIEWS

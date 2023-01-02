@@ -26,7 +26,7 @@ export function isNative(name) {
   // nativePlugin allows to bypass the permission request
   const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'solidity-logic', 'solidityStaticAnalysis', 'solidityUnitTesting', 
     'layout', 'notification', 'hardhat-provider', 'ganache-provider', 'foundry-provider', 'basic-http-provider', 'injected-optimism-provider',
-    'tabs', 'injected-arbitrum-one-provider']
+    'tabs', 'injected-arbitrum-one-provider', 'flattener']
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
@@ -133,6 +133,7 @@ export class RemixAppManager extends PluginManager {
         if (plugin.targets && Array.isArray(plugin.targets) && plugin.targets.length > 0) {
           return (plugin.targets.includes('remix'))
         }
+        if(plugin.name === 'flattener') return false
         return true
       })
       localStorage.setItem('plugins-directory', JSON.stringify(plugins))

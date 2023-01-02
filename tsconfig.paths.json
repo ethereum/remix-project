@@ -145,6 +145,9 @@
             "@remix-ui/locale-module": [
                 "libs/remix-ui/locale-module/src/index.ts"
             ],
+            "@remix-ui/flattener": [
+                "libs/remix-ui/flattener/src/index.ts"
+            ],
         }
     }
 }
