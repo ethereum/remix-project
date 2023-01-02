@@ -208,7 +208,8 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     try {
       const currentFile = api.currentFile
       const ast = content4AST.length > 1 ? parser.parse(content4AST) : parser.parse(api.getCompilationResult().source.sources[currentFile].content)
-      setSVGPayload(vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile))))
+      const payload = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
+      setSVGPayload(payload)
       setShowViewer(!showViewer)
     } catch (error) {
       console.log({ error })
