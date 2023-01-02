@@ -13,7 +13,7 @@ const profile = {
   description: 'Flattens compiled smart contracts',
   methods: ["flattenFileCustomAction"],
   location: 'sidePanel',
-  documentation: 'https://remix-ide.readthedocs.io/en/latest/flattener.html',
+  documentation: '',
   version: '0.0.1',
   icon: 'assets/img/flattener-logo.webp',
   events: [],
@@ -97,7 +97,7 @@ export class Flattener extends ViewPlugin implements FlattenerAPI {
     const fileNameWithExtension = filePathTokens[filePathTokens.length - 1];
     const path = filePathTokens.slice(0, filePathTokens.length - 1).join('/');
     const fileNameTokens = fileNameWithExtension.split('.');
-    const flattenedFilePath = `${path}/${fileNameTokens[0]}_flat.sol`;
+    const flattenedFilePath = `${fileNameTokens[0]}_flat.sol`;
     return flattenedFilePath
   }
 
@@ -135,7 +135,6 @@ export class Flattener extends ViewPlugin implements FlattenerAPI {
         plugin.fileName = target
 
         plugin.renderComponent()
-
 
         plugin.compilationTarget = target
         plugin.flattenedSources = ''
