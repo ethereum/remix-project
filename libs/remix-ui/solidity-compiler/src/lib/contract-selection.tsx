@@ -212,15 +212,14 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       const currentFile = api.currentFile
       const ast = content4AST.length > 1 ? parser.parse(content4AST) : parser.parse(api.getCompilationResult().source.sources[currentFile].content)
       const payload = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
-
-      const domParser = new DOMParser()
-      const element = domParser.parseFromString(payload, 'image/svg+xml').querySelector('svg')
-      const fileName = `${api.currentFile.split('/')[0]}/resources/${api.currentFile.split('/')[1]}.pdf`
-
-      pdfBuilder.addSvgAsImage(payload, 1.6, 1.6, 300, 300)
-      const result = pdfBuilder.output('datauristring', { filename: fileName })
-      api.writeFile(fileName, result)
-      console.log({ result })
+      const fileName = `${api.currentFile.split('/')[0]}/resources/${api.currentFile.split('/')[1].split('.')[0]}.pdf`
+      
+      const element = new DOMParser().parseFromString(payload, 'image/svg+xml')
+      .querySelector('svg')
+      domToPdf(element, { filename: `${api.currentFile.split('/')[1].split('.')[0]}.pdf`, scale: 1.2 }, (pdf: jsPDF) => {
+        
+        api.writeFile(fileName, pdf.output())
+      })
       setSVGPayload(payload)
       setShowViewer(!showViewer)
     } catch (error) {
