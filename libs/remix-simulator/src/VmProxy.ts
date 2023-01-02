@@ -44,6 +44,7 @@ export class VmProxy {
   blocks
   stateCopy: StateManager
   flagDoNotRecordEVMSteps: boolean
+  lastMemoryUpdate: Array<string>
   
   constructor (vmContext: VMContext) {
     this.vmContext = vmContext
@@ -86,6 +87,7 @@ export class VmProxy {
     this.utils = utils
     this.txsMapBlock = {}
     this.blocks = {}
+    this.lastMemoryUpdate = []
   }
 
   setVM (vm) {
@@ -116,6 +118,7 @@ export class VmProxy {
 
   async txWillProcess (data: TypedTransaction) {
     if (this.flagDoNotRecordEVMSteps) return
+    this.lastMemoryUpdate = []
     this.stateCopy = await this.vm.stateManager.copy()
     this.incr++
     this.processingHash = bufferToHex(data.hash())
@@ -248,6 +251,7 @@ export class VmProxy {
       }
       if (data.opcode.name === 'CALLDATACOPY' || data.opcode.name === 'CODECOPY' || data.opcode.name === 'EXTCODECOPY' || data.opcode.name === 'RETURNDATACOPY' || data.opcode.name === 'MSTORE' || data.opcode.name === 'MSTORE8') {
         step.memory = formatMemory(data.memory)
+        this.lastMemoryUpdate = step.memory
       }
       this.vmTraces[this.processingHash].structLogs.push(step)
       // Track hardhat console.log call
@@ -301,7 +305,7 @@ export class VmProxy {
         }
       }
       if (previousOpcode && previousOpcode.op === 'SHA3') {
-        const preimage = this.getSha3Input(previousOpcode.stack, previousOpcode.memory)
+        const preimage = this.getSha3Input(previousOpcode.stack, this.lastMemoryUpdate)
         const imageHash = step.stack[step.stack.length - 1].replace('0x', '')
         this.sha3Preimages[imageHash] = {
           preimage: preimage
