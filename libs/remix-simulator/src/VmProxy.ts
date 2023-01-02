@@ -135,10 +135,13 @@ export class VmProxy {
     this.storageCache[this.processingHash] = {}
     this.storageCache['after_' + this.processingHash] = {}
     if (data.to) {
-      ((processingHash, processingAccount, processingAddress, self) => {
-        self.stateCopy.dumpStorage(processingAccount).then((storage) => {
+      (async (processingHash, processingAccount, processingAddress, self) => {
+        try {
+          const storage = await self.stateCopy.dumpStorage(processingAccount)
           self.storageCache[processingHash][processingAddress] = storage
-        }).catch(console.log) 
+        } catch (e) {
+          console.log(e)
+        }
       })(this.processingHash, data.to, tx['to'], this)      
     }
     this.processingIndex = 0
@@ -207,14 +210,14 @@ export class VmProxy {
       if (!this.processingHash) {
         return
       }
-      let previousopcode
+      let previousOpcode
       if (this.vmTraces[this.processingHash] && this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]) {
-        previousopcode = this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]
+        previousOpcode = this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]
       }
 
-      if (this.previousDepth > depth && previousopcode) {
+      if (this.previousDepth > depth && previousOpcode) {
         // returning from context, set error it is not STOP, RETURN
-        previousopcode.invalidDepthChange = previousopcode.op !== 'RETURN' && previousopcode.op !== 'STOP'
+        previousOpcode.invalidDepthChange = previousOpcode.op !== 'RETURN' && previousOpcode.op !== 'STOP'
       }
       const step = {
         stack: hexListFromBNs(data.stack),
@@ -264,17 +267,20 @@ export class VmProxy {
           this.processingAddress = normalizeHexAddress(step.stack[step.stack.length - 2])
           this.processingAddress = toChecksumAddress(this.processingAddress)
           if (!this.storageCache[this.processingHash][this.processingAddress]) {
-            ((processingHash, processingAddress, self) => {
+            (async (processingHash, processingAddress, self) => {
+              try {
                 const account = Address.fromString(processingAddress)
-                self.stateCopy.dumpStorage(account).then((storage) => {
+                const storage = await self.stateCopy.dumpStorage(account)
                 self.storageCache[processingHash][processingAddress] = storage
-              }).catch(console.log) 
+              } catch (e) {
+                console.log(e)
+              }
             })(this.processingHash, this.processingAddress, this)
           }
         }
       }
-      if (previousopcode && previousopcode.op === 'SHA3') {
-        const preimage = this.getSha3Input(previousopcode.stack, previousopcode.memory)
+      if (previousOpcode && previousOpcode.op === 'SHA3') {
+        const preimage = this.getSha3Input(previousOpcode.stack, previousOpcode.memory)
         const imageHash = step.stack[step.stack.length - 1].replace('0x', '')
         this.sha3Preimages[imageHash] = {
           preimage: preimage
