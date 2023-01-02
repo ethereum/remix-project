@@ -148,7 +148,7 @@ export class VmProxy {
         } catch (e) {
           console.log(e)
         }
-      })(this.processingHash, data.to, tx['to'], this)      
+      })(this.processingHash, data.to, tx['to'], this)
     }
     this.processingIndex = 0
   }
@@ -191,9 +191,15 @@ export class VmProxy {
     const to = this.txs[this.processingHash].to
     if (to) {
       try {
-        const account = Address.fromString(to)
-        const storage = await this.vm.stateManager.dumpStorage(account)
-        this.storageCache['after_' + this.processingHash][to] = storage
+        (async (processingHash, processingAddress, self) => {
+          try {
+            const account = Address.fromString(processingAddress)
+            const storage = await self.stateCopy.dumpStorage(account)
+            self.storageCache[processingHash][processingAddress] = storage
+          } catch (e) {
+            console.log(e)
+          }
+        })(this.processingHash, to, this)
       } catch (e) {
         console.log(e)
       }
@@ -201,8 +207,9 @@ export class VmProxy {
 
     if (data.createdAddress) {
       const address = data.createdAddress.toString()
-      this.vmTraces[this.processingHash].return = toChecksumAddress(address)
-      this.txsReceipt[this.processingHash].contractAddress = toChecksumAddress(address)
+      const checksumedAddress = toChecksumAddress(address)
+      this.vmTraces[this.processingHash].return = checksumedAddress
+      this.txsReceipt[this.processingHash].contractAddress = checksumedAddress
     } else if (data.execResult.returnValue) {
       this.vmTraces[this.processingHash].return = '0x' + data.execResult.returnValue.toString('hex')
     } else {
