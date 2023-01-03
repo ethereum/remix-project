@@ -8,7 +8,6 @@ self.onmessage = (e: MessageEvent) => {
   switch (data.cmd) {
     case 'loadVersion':
       {
-        console.log(self);
         (self as any).importScripts(data.data)
         const compiler = setupMethods(self)
         compileJSON = (input) => {
