@@ -4,14 +4,17 @@ import { helpers } from '@remix-project/remix-lib'
 const  { normalizeHexAddress } = helpers.ui
 import { ConsoleLogs } from '@remix-project/remix-lib'
 import { toChecksumAddress, BN, keccak, bufferToHex, Address, toBuffer } from 'ethereumjs-util'
-import Web3 from 'web3'
+import utils from 'web3-utils'
 import { ethers } from 'ethers'
 import { VMContext } from './vm-context'
+import type { StateManager } from '@ethereumjs/statemanager'
+import type { InterpreterStep } from '@ethereumjs/evm/dist/interpreter'
+import type { AfterTxEvent, VM } from '@ethereumjs/vm'
+import type { TypedTransaction } from '@ethereumjs/tx'
 
 export class VmProxy {
   vmContext: VMContext
-  web3: Web3
-  vm
+  vm: VM
   vmTraces
   txs
   txsReceipt
@@ -26,7 +29,6 @@ export class VmProxy {
   providers
   currentProvider
   storageCache
-  lastProcessedStorageTxHash
   sha3Preimages
   sha3
   toHex
@@ -40,10 +42,11 @@ export class VmProxy {
   utils
   txsMapBlock
   blocks
+  stateCopy: StateManager
 
   constructor (vmContext: VMContext) {
     this.vmContext = vmContext
-    this.web3 = new Web3()
+    this.stateCopy
     this.vm = null
     this.vmTraces = {}
     this.txs = {}
@@ -68,19 +71,18 @@ export class VmProxy {
     this.providers = { HttpProvider: function (url) {} }
     this.currentProvider = { host: 'vm provider' }
     this.storageCache = {}
-    this.lastProcessedStorageTxHash = {}
     this.sha3Preimages = {}
     // util
-    this.sha3 = (...args) => this.web3.utils.sha3.apply(this, args)
-    this.toHex = (...args) => this.web3.utils.toHex.apply(this, args)
-    this.toAscii = (...args) => this.web3.utils.toAscii.apply(this, args)
-    this.fromAscii = (...args) => this.web3.utils.fromAscii.apply(this, args)
-    this.fromDecimal = (...args) => this.web3.utils.fromDecimal.apply(this, args)
-    this.fromWei = (...args) => this.web3.utils.fromWei.apply(this, args)
-    this.toWei = (...args) => this.web3.utils.toWei.apply(this, args)
-    this.toBigNumber = (...args) => this.web3.utils.toBN.apply(this, args)
-    this.isAddress = (...args) => this.web3.utils.isAddress.apply(this, args)
-    this.utils = Web3.utils || []
+    this.sha3 = (...args) => utils.sha3.apply(this, args)
+    this.toHex = (...args) => utils.toHex.apply(this, args)
+    this.toAscii = (...args) => utils.toAscii.apply(this, args)
+    this.fromAscii = (...args) => utils.fromAscii.apply(this, args)
+    this.fromDecimal = (...args) => utils.fromDecimal.apply(this, args)
+    this.fromWei = (...args) => utils.fromWei.apply(this, args)
+    this.toWei = (...args) => utils.toWei.apply(this, args)
+    this.toBigNumber = (...args) => utils.toBN.apply(this, args)
+    this.isAddress = (...args) => utils.isAddress.apply(this, args)
+    this.utils = utils
     this.txsMapBlock = {}
     this.blocks = {}
   }
@@ -88,17 +90,16 @@ export class VmProxy {
   setVM (vm) {
     if (this.vm === vm) return
     this.vm = vm
-    this.vm.on('step', async (data, next) => {
+    this.vm.evm.events.on('step', async (data: InterpreterStep) => {
       await this.pushTrace(data)
-      next()
     })
-    this.vm.on('afterTx', async (data, next) => {
+    this.vm.events.on('afterTx', async (data: AfterTxEvent, resolve: (result?: any) => void) => {
       await this.txProcessed(data)
-      next()
+      resolve()
     })
-    this.vm.on('beforeTx', async (data, next) => {
+    this.vm.events.on('beforeTx', async (data: TypedTransaction, resolve: (result?: any) => void) => {
       await this.txWillProcess(data)
-      next()
+      resolve()
     })
   }
 
@@ -108,7 +109,8 @@ export class VmProxy {
     return ret
   }
 
-  async txWillProcess (data) {
+  async txWillProcess (data: TypedTransaction) {
+    this.stateCopy = await this.vm.stateManager.copy()
     this.incr++
     this.processingHash = bufferToHex(data.hash())
     this.vmTraces[this.processingHash] = {
@@ -133,23 +135,24 @@ export class VmProxy {
     this.storageCache[this.processingHash] = {}
     this.storageCache['after_' + this.processingHash] = {}
     if (data.to) {
-      try {
-        const storage = await this.vm.stateManager.dumpStorage(data.to)
-        this.storageCache[this.processingHash][tx['to']] = storage
-        this.lastProcessedStorageTxHash[tx['to']] = this.processingHash
-      } catch (e) {
-        console.log(e)
-      }
+      (async (processingHash, processingAccount, processingAddress, self) => {
+        try {
+          const storage = await self.stateCopy.dumpStorage(processingAccount)
+          self.storageCache[processingHash][processingAddress] = storage
+        } catch (e) {
+          console.log(e)
+        }
+      })(this.processingHash, data.to, tx['to'], this)      
     }
     this.processingIndex = 0
   }
 
-  async txProcessed (data) {
+  async txProcessed (data: AfterTxEvent) {
     const lastOp = this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]
     if (lastOp) {
       lastOp.error = lastOp.op !== 'RETURN' && lastOp.op !== 'STOP' && lastOp.op !== 'DESTRUCT'
     }
-    const gasUsed = '0x' + data.gasUsed.toString(16)
+    const gasUsed = '0x' + data.totalGasSpent.toString(16)
     this.vmTraces[this.processingHash].gas = gasUsed
     this.txsReceipt[this.processingHash].gasUsed = gasUsed
     const logs = []
@@ -191,95 +194,102 @@ export class VmProxy {
       this.vmTraces[this.processingHash].return = toChecksumAddress(address)
       this.txsReceipt[this.processingHash].contractAddress = toChecksumAddress(address)
     } else if (data.execResult.returnValue) {
-      this.vmTraces[this.processingHash].return = bufferToHex(data.execResult.returnValue)
+      this.vmTraces[this.processingHash].return = '0x' + data.execResult.returnValue.toString('hex')
     } else {
       this.vmTraces[this.processingHash].return = '0x'
     }
     this.processingIndex = null
     this.processingAddress = null
     this.previousDepth = 0
+    this.stateCopy = null
   }
 
-  async pushTrace (data) {
-    const depth = data.depth + 1 // geth starts the depth from 1
-    if (!this.processingHash) {
-      console.log('no tx processing')
-      return
-    }
-    let previousopcode
-    if (this.vmTraces[this.processingHash] && this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]) {
-      previousopcode = this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]
-    }
-
-    if (this.previousDepth > depth && previousopcode) {
-      // returning from context, set error it is not STOP, RETURN
-      previousopcode.invalidDepthChange = previousopcode.op !== 'RETURN' && previousopcode.op !== 'STOP'
-    }
-    const step = {
-      stack: hexListFromBNs(data.stack),
-      memory: formatMemory(data.memory),
-      storage: data.storage,
-      op: data.opcode.name,
-      pc: data.pc,
-      gasCost: data.opcode.fee.toString(),
-      gas: data.gasLeft.toString(),
-      depth: depth,
-      error: data.error === false ? undefined : data.error
-    }
-    this.vmTraces[this.processingHash].structLogs.push(step)
-    // Track hardhat console.log call
-    if (step.op === 'STATICCALL' && step.stack[step.stack.length - 2] === '0x000000000000000000000000000000000000000000636f6e736f6c652e6c6f67') {
-      const stackLength = step.stack.length
-      const payloadStart = parseInt(step.stack[stackLength - 3], 16)
-      const memory = step.memory.join('')
-      let payload = memory.substring(payloadStart * 2, memory.length)
-      const fnselectorStr = payload.substring(0, 8)
-      const fnselectorStrInHex = '0x' + fnselectorStr
-      const fnselector = parseInt(fnselectorStrInHex)
-      const fnArgs = ConsoleLogs[fnselector]
-      const iface = new ethers.utils.Interface([`function log${fnArgs} view`])
-      const functionDesc = iface.getFunction(`log${fnArgs}`)
-      const sigHash = iface.getSighash(`log${fnArgs}`)
-      if (fnArgs.includes('uint') && sigHash !== fnselectorStrInHex) {
-        payload = payload.replace(fnselectorStr, sigHash)
-      } else {
-        payload = '0x' + payload
+  async pushTrace (data: InterpreterStep) {
+    try {
+      const depth = data.depth + 1 // geth starts the depth from 1
+      if (!this.processingHash) {
+        return
       }
-      const consoleArgs = iface.decodeFunctionData(functionDesc, payload)
-      this.hhLogs[this.processingHash] = this.hhLogs[this.processingHash] ? this.hhLogs[this.processingHash] : []
-      this.hhLogs[this.processingHash].push(consoleArgs)
-    }
+      let previousOpcode
+      if (this.vmTraces[this.processingHash] && this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]) {
+        previousOpcode = this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]
+      }
+      if (this.previousDepth > depth && previousOpcode) {
+        // returning from context, set error it is not STOP, RETURN
+        previousOpcode.invalidDepthChange = previousOpcode.op !== 'RETURN' && previousOpcode.op !== 'STOP'
+      }
+      const step = {
+        stack: hexListFromBNs(data.stack),
+        memory: formatMemory(data.memory),
+        storage: {},
+        op: data.opcode.name,
+        pc: data.pc,
+        gasCost: data.opcode.fee.toString(),
+        gas: data.gasLeft.toString(),
+        depth: depth
+      }
+      this.vmTraces[this.processingHash].structLogs.push(step)
+      // Track hardhat console.log call
+      if (step.op === 'STATICCALL' && step.stack[step.stack.length - 2] === '0x000000000000000000000000000000000000000000636f6e736f6c652e6c6f67') {
+        const stackLength = step.stack.length
+        const payloadStart = parseInt(step.stack[stackLength - 3], 16)
+        const memory = step.memory.join('')
+        let payload = memory.substring(payloadStart * 2, memory.length)
+        const fnselectorStr = payload.substring(0, 8)
+        const fnselectorStrInHex = '0x' + fnselectorStr
+        const fnselector = parseInt(fnselectorStrInHex)
+        const fnArgs = ConsoleLogs[fnselector]
+        const iface = new ethers.utils.Interface([`function log${fnArgs} view`])
+        const functionDesc = iface.getFunction(`log${fnArgs}`)
+        const sigHash = iface.getSighash(`log${fnArgs}`)
+        if (fnArgs.includes('uint') && sigHash !== fnselectorStrInHex) {
+          payload = payload.replace(fnselectorStr, sigHash)
+        } else {
+          payload = '0x' + payload
+        }
+        let consoleArgs = iface.decodeFunctionData(functionDesc, payload)
+        consoleArgs = consoleArgs.map((value) => {
+          if (utils.isBigNumber(value)) {
+            return value.toString()
+          }
+          return value
+        })
+        this.hhLogs[this.processingHash] = this.hhLogs[this.processingHash] ? this.hhLogs[this.processingHash] : []
+        this.hhLogs[this.processingHash].push(consoleArgs)
+      }
 
-    if (step.op === 'CREATE' || step.op === 'CALL') {
-      if (step.op === 'CREATE') {
-        this.processingAddress = '(Contract Creation - Step ' + this.processingIndex + ')'
-        this.storageCache[this.processingHash][this.processingAddress] = {}
-        this.lastProcessedStorageTxHash[this.processingAddress] = this.processingHash
-      } else {
-        this.processingAddress = normalizeHexAddress(step.stack[step.stack.length - 2])
-        this.processingAddress = toChecksumAddress(this.processingAddress)
-        if (!this.storageCache[this.processingHash][this.processingAddress]) {
-          const account = Address.fromString(this.processingAddress)
-          try {
-            const storage = await this.vm.stateManager.dumpStorage(account)
-            this.storageCache[this.processingHash][this.processingAddress] = storage
-            this.lastProcessedStorageTxHash[this.processingAddress] = this.processingHash
-          } catch (e) {
-            console.log(e)
+      if (step.op === 'CREATE' || step.op === 'CALL') {
+        if (step.op === 'CREATE') {
+          this.processingAddress = '(Contract Creation - Step ' + this.processingIndex + ')'
+          this.storageCache[this.processingHash][this.processingAddress] = {}
+        } else {
+          this.processingAddress = normalizeHexAddress(step.stack[step.stack.length - 2])
+          this.processingAddress = toChecksumAddress(this.processingAddress)
+          if (!this.storageCache[this.processingHash][this.processingAddress]) {
+            (async (processingHash, processingAddress, self) => {
+              try {
+                const account = Address.fromString(processingAddress)
+                const storage = await self.stateCopy.dumpStorage(account)
+                self.storageCache[processingHash][processingAddress] = storage
+              } catch (e) {
+                console.log(e)
+              }
+            })(this.processingHash, this.processingAddress, this)
           }
         }
       }
-    }
-    if (previousopcode && previousopcode.op === 'SHA3') {
-      const preimage = this.getSha3Input(previousopcode.stack, previousopcode.memory)
-      const imageHash = step.stack[step.stack.length - 1].replace('0x', '')
-      this.sha3Preimages[imageHash] = {
-        preimage: preimage
+      if (previousOpcode && previousOpcode.op === 'SHA3') {
+        const preimage = this.getSha3Input(previousOpcode.stack, previousOpcode.memory)
+        const imageHash = step.stack[step.stack.length - 1].replace('0x', '')
+        this.sha3Preimages[imageHash] = {
+          preimage: preimage
+        }
       }
+      this.processingIndex++
+      this.previousDepth = depth
+    } catch (e) {
+      console.log(e)
     }
-
-    this.processingIndex++
-    this.previousDepth = depth
   }
 
   getCode (address, cb) {
@@ -321,7 +331,7 @@ export class VmProxy {
     }
     // Before https://github.com/ethereum/remix-project/pull/1703, it used to throw error as
     // 'unable to retrieve storage ' + txIndex + ' ' + address
-    cb(null, { storage: {} })
+    cb(null, '0x0')
   }
 
   storageRangeAt (blockNumber, txIndex, address, start, maxLength, cb) {
