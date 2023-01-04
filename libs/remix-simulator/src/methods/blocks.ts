@@ -1,5 +1,7 @@
-import Web3 from 'web3'
+import { toHex } from 'web3-utils'
 import { VMContext } from '../vm-context'
+import { bigIntToHex } from '@ethereumjs/util'
+
 export class Blocks {
   vmContext: VMContext
   coinbase: string
@@ -47,23 +49,23 @@ export class Blocks {
      if (receipt) {
       return {
         blockHash: '0x' + block.hash().toString('hex'),
-        blockNumber: '0x' + block.header.number.toString('hex'),
+        blockNumber: bigIntToHex(block.header.number),
         from: receipt.from,
-        gas: Web3.utils.toHex(receipt.gas),
+        gas: bigIntToHex(receipt.gas),
         chainId: '0xd05',
         gasPrice: '0x4a817c800', // 20000000000
         hash: receipt.transactionHash,
         input: receipt.input,
-        nonce: '0x' + tx.nonce.toString('hex'),
+        nonce: bigIntToHex(tx.nonce),
         transactionIndex: this.TX_INDEX,
-        value: receipt.value === '0x' ? '0x0' : receipt.value,
+        value: bigIntToHex(tx.value),
         to: receipt.to ?  receipt.to : null
       }
      }
     })
     const b = {
       baseFeePerGas: '0x01',
-      number: this.toHex(block.header.number),
+      number: bigIntToHex(block.header.number),
       hash: this.toHex(block.hash()),
       parentHash: this.toHex(block.header.parentHash),
       nonce: this.toHex(block.header.nonce),
@@ -72,13 +74,13 @@ export class Blocks {
       transactionsRoot: '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
       stateRoot: this.toHex(block.header.stateRoot),
       miner: this.coinbase,
-      difficulty: this.toHex(block.header.difficulty),
-      totalDifficulty: this.toHex((block.header as any).totalDifficulty),
+      difficulty: bigIntToHex(block.header.difficulty),
+      totalDifficulty: bigIntToHex((block.header as any).totalDifficulty || 0),
       extraData: this.toHex(block.header.extraData),
       size: '0x027f07', // 163591
-      gasLimit: this.toHex(block.header.gasLimit),
-      gasUsed: this.toHex(block.header.gasUsed),
-      timestamp: this.toHex(block.header.timestamp),
+      gasLimit: bigIntToHex(block.header.gasLimit),
+      gasUsed: bigIntToHex(block.header.gasUsed),
+      timestamp: bigIntToHex(block.header.timestamp),
       transactions,
       uncles: []
     }
@@ -101,23 +103,23 @@ export class Blocks {
       if (receipt) {
        return {
          blockHash: '0x' + block.hash().toString('hex'),
-         blockNumber: '0x' + block.header.number.toString('hex'),
+         blockNumber: bigIntToHex(block.header.number),
          from: receipt.from,
-         gas: Web3.utils.toHex(receipt.gas),
+         gas: toHex(receipt.gas),
          chainId: '0xd05',
          gasPrice: '0x4a817c800', // 20000000000
          hash: receipt.transactionHash,
          input: receipt.input,
-         nonce: '0x' + tx.nonce.toString('hex'),
+         nonce: bigIntToHex(tx.nonce),
          transactionIndex: this.TX_INDEX,
-         value: receipt.value === '0x' ? '0x0' : receipt.value,
+         value: bigIntToHex(tx.value),
          to: receipt.to ?  receipt.to : null
        }
       }
      })
     const b = {
       baseFeePerGas: '0x01',
-      number: this.toHex(block.header.number),
+      number: bigIntToHex(block.header.number),
       hash: this.toHex(block.hash()),
       parentHash: this.toHex(block.header.parentHash),
       nonce: this.toHex(block.header.nonce),
@@ -126,13 +128,13 @@ export class Blocks {
       transactionsRoot: '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
       stateRoot: this.toHex(block.header.stateRoot),
       miner: this.coinbase,
-      difficulty: this.toHex(block.header.difficulty),
-      totalDifficulty: this.toHex((block.header as any).totalDifficulty),
+      difficulty: bigIntToHex(block.header.difficulty),
+      totalDifficulty: bigIntToHex((block.header as any).totalDifficulty || 0),
       extraData: this.toHex(block.header.extraData),
       size: '0x027f07', // 163591
-      gasLimit: this.toHex(block.header.gasLimit),
-      gasUsed: this.toHex(block.header.gasUsed),
-      timestamp: this.toHex(block.header.timestamp),
+      gasLimit: bigIntToHex(block.header.gasLimit),
+      gasUsed: bigIntToHex(block.header.gasUsed),
+      timestamp: bigIntToHex(block.header.timestamp),
       transactions,
       uncles: []
     }
