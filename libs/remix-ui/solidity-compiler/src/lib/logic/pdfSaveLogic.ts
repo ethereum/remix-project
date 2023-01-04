@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import domToImage from 'dom-to-image';
 import { jsPDF } from 'jspdf';
 
@@ -82,7 +83,7 @@ const downloadPdf = (dom, options, cb) => {
   let scaleObj;
   let style;
   const transformOrigin = 'top left';
-  const pdfOptions = {
+  const pdfOptions: any = {
     orientation: 'l',
     unit: 'pt',
     format: 'a4'
@@ -114,11 +115,16 @@ const downloadPdf = (dom, options, cb) => {
     backgroundColor: 'white'
   };
   overlay = _createElement('div', {
-    style: overlayCSS
+    style: overlayCSS,
+    className: '',
+    innerHTML: ''
   });
   container = _createElement('div', {
-    style: containerCSS
+    style: containerCSS,
+    className: '',
+    innerHTML: ''
   });
+  //@ts-ignore
   container.appendChild(_cloneNode(dom));
   overlay.appendChild(container);
   document.body.appendChild(overlay);
@@ -170,6 +176,8 @@ const downloadPdf = (dom, options, cb) => {
       // Before: Create a padding div to push the element to the next page.
       if (rules.before) {
         pad = _createElement('div', {
+          className: '',
+          innerHTML: '',
           style: {
             display: 'block',
             height: `${pageHeightPx - clientRect.top % pageHeightPx}px`
