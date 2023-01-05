@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 
 import Editor, { loader, Monaco } from '@monaco-editor/react'
+import { AlertModal } from '@remix-ui/app'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solidity'
 import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
 import { zokratesTokensProvider, zokratesLanguageConfig } from './syntaxes/zokrates'
+import { moveTokenProvider, moveLanguageConfig } from './syntaxes/move'
 
 import './remix-ui-editor.css'
 import { loadTypes } from './web-types'
@@ -135,9 +137,11 @@ export const EditorUI = (props: EditorUIProps) => {
   \t\t\t\t\t\t\t\tMedium: https://medium.com/remix-ide\n
   \t\t\t\t\t\t\t\tTwitter: https://twitter.com/ethereumremix\n
   `
+  const pasteCodeRef = useRef(false)
   const editorRef = useRef(null)
   const monacoRef = useRef<Monaco>(null)
   const currentFileRef = useRef('')
+  const currentUrlRef = useRef('')
   // const currentDecorations = useRef({ sourceAnnotationsPerFile: {}, markerPerFile: {} }) // decorations that are currently in use by the editor
   // const registeredDecorations = useRef({}) // registered decorations
 
@@ -292,6 +296,8 @@ export const EditorUI = (props: EditorUIProps) => {
   useEffect(() => {
     if (!editorRef.current || !props.currentFile) return
     currentFileRef.current = props.currentFile
+    props.plugin.call('fileManager', 'getUrlFromPath', currentFileRef.current).then((url) => currentUrlRef.current = url.file)
+
     const file = editorModelsState[props.currentFile]
     editorRef.current.setModel(file.model)
     editorRef.current.updateOptions({ readOnly: editorModelsState[props.currentFile].readOnly })
@@ -301,6 +307,8 @@ export const EditorUI = (props: EditorUIProps) => {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-cairo')
     } else if (file.language === 'zokrates') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-zokrates')
+    } else if (file.language === 'move') {
+      monacoRef.current.editor.setModelLanguage(file.model, 'remix-move')
     }
   }, [props.currentFile])
 
@@ -507,7 +515,7 @@ export const EditorUI = (props: EditorUIProps) => {
     const model = editorRef.current.getModel()
     if (model) {
       setCurrentBreakpoints(prevState => {
-        const currentFile = currentFileRef.current
+        const currentFile = currentUrlRef.current
         if (!prevState[currentFile]) prevState[currentFile] = {}
         const decoration = Object.keys(prevState[currentFile]).filter((line) => parseInt(line) === position.lineNumber)
         if (decoration.length) {
@@ -538,6 +546,33 @@ export const EditorUI = (props: EditorUIProps) => {
     editor.onMouseUp((e) => {
       if (e && e.target && e.target.toString().startsWith('GUTTER')) {
         (window as any).addRemixBreakpoint(e.target.position)
+      }
+    })
+
+    editor.onDidPaste((e) => {
+       if (!pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
+        const modalContent: AlertModal = {
+          id: 'newCodePasted',
+          title: 'Pasted Code Alert',
+          message: (
+            <div> <i className="fas fa-exclamation-triangle text-danger mr-1"></i>
+              You have just pasted a code snippet or contract in the editor.
+              <div>
+                Make sure you fully understand this code before deploying or interacting with it. Don't get scammed!
+                <div className='mt-2'>
+                Running untrusted code can put your wallet <span className='text-warning'> at risk </span>. In a worst-case scenario, you could <span className='text-warning'>lose all your money</span>.
+                </div>
+                <div className='text-warning  mt-2'>If you don't fully understand it, please don't run this code.</div>
+                <div className='mt-2'>
+                If you are not a smart contract developer, ask someone you trust who has the skills to determine if this code is safe to use.
+                </div>
+                <div className='mt-2'>See <a target="_blank" href='https://remix-ide.readthedocs.io/en/latest/security.html'> these recommendations </a> for more information.</div>
+              </div>
+            </div>
+          ),
+        }
+        props.plugin.call('notification', 'alert', modalContent)
+        pasteCodeRef.current = true
       }
     })
 
@@ -618,6 +653,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.register({ id: 'remix-solidity' })
     monacoRef.current.languages.register({ id: 'remix-cairo' })
     monacoRef.current.languages.register({ id: 'remix-zokrates' })
+    monacoRef.current.languages.register({ id: 'remix-move' })
 
     // Register a tokens provider for the language
     monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider as any)
@@ -629,13 +665,15 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.setMonarchTokensProvider('remix-zokrates', zokratesTokensProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-zokrates', zokratesLanguageConfig as any)
 
+    monacoRef.current.languages.setMonarchTokensProvider('remix-move', moveTokenProvider as any)
+    monacoRef.current.languages.setLanguageConfiguration('remix-move', moveLanguageConfig as any)
+
     monacoRef.current.languages.registerDefinitionProvider('remix-solidity', new RemixDefinitionProvider(props, monaco))
     monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', new RemixHighLightProvider(props, monaco))
     monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
     monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
     monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
 
-    
     loadTypes(monacoRef.current)
   }
 
@@ -647,10 +685,14 @@ export const EditorUI = (props: EditorUIProps) => {
         language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
         onMount={handleEditorDidMount}
         beforeMount={handleEditorWillMount}
-        options={{ glyphMargin: true, readOnly: (!editorRef.current || !props.currentFile) }}
+        options={{ glyphMargin: true, readOnly: ((!editorRef.current || !props.currentFile) && editorModelsState[props.currentFile]?.readOnly) }}
         defaultValue={defaultEditorValue}
       />
-
+      {editorModelsState[props.currentFile]?.readOnly && <span className='pl-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0'>
+        <i className="fas fa-lock-alt p-2"></i>
+          The file is opened in <b>read-only</b> mode.
+        </span>
+      }
     </div>
   )
 }

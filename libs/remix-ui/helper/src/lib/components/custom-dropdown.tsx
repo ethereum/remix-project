@@ -13,11 +13,25 @@ export const CustomToggle = React.forwardRef(({ children, onClick, icon, classNa
     className={className.replace('dropdown-toggle', '')}
   >
     <div className="d-flex">
-      <div className="mr-auto">{ children }</div>
+      <div className="mr-auto text-nowrap">{ children }</div>
       { icon && <div className="pr-1"><i className={`${icon} pr-1`}></i></div> }
       <div><i className="fad fa-sort-circle"></i></div>
     </div>
   </button>
+))
+
+export const CustomIconsToggle = React.forwardRef(({ onClick, icon, className = '' }: { children?: React.ReactNode, onClick: () => void, icon: string, className: string }, ref: Ref<HTMLSpanElement>) => (
+  <span
+    ref={ref}
+    onClick={(e) => {
+      e.preventDefault()
+      onClick()
+    }}
+    className={`${className.replace('dropdown-toggle', '')} mb-0 pb-0 d-flex justify-content-end align-items-end remixuimenuicon_shadow fs-3`}
+    data-id="workspaceMenuDropdown"
+  >
+    { icon && <i style={{ fontSize: 'large' }} className={`${icon}`} data-icon="workspaceDropdownMenuIcon"></i> }
+  </span>
 ))
 
 // forwardRef again here!

@@ -1,9 +1,13 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { SearchContext } from '../context/context'
 
 export const Include = props => {
   const { setInclude, cancelSearch, startSearch } = useContext(SearchContext)
   const [includeInput, setIncludeInput] = useState<string>('*.sol, *.js')
+
+  const intl = useIntl()
+
   const change = async e => {
     setIncludeInput(e.target.value)
     await cancelSearch()
@@ -22,10 +26,10 @@ export const Include = props => {
   return (
     <>
       <div className="search_plugin_find-part pl-3">
-        <label className='mt-2'>Files to include</label>
+        <label className='mt-2'><FormattedMessage id='search.filesToInclude' /></label>
         <input
           id='search_include'
-          placeholder="Include ie *.sol ( Enter to include )"
+          placeholder={intl.formatMessage({ id: 'search.placeholder2' })}
           className="form-control"
           onChange={async(e) => change(e)}
           onKeyUp={handleKeypress}

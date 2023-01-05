@@ -1,5 +1,5 @@
 import { Ref } from 'react'
-import { CompilerAbstract } from '@remix-project/remix-solidity-ts'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { ContractData, FuncABI } from '@remix-project/core-plugin'
 import { ContractList } from '../reducers/runTab'
 import { RunTab } from './run-tab'
@@ -165,7 +165,8 @@ export interface ContractDropdownProps {
   networkName: string,
   setNetworkName: (name: string) => void,
   setSelectedContract: (contractName: string) => void
-  remixdActivated: boolean
+  remixdActivated: boolean,
+  isValidProxyAddress?: (address: string) => Promise<boolean>
 }
 
 export interface RecorderProps {
@@ -260,7 +261,8 @@ export interface ContractGUIProps {
   isDeploy?: boolean,
   deployOption?: { title: DeployMode, active: boolean }[],
   initializerOptions?: DeployOption,
-  savedProxyAddress?: string
+  savedProxyAddress?: string,
+  isValidProxyAddress?: (address: string) => Promise<boolean>
 }
 export interface MainnetProps {
   network: Network,

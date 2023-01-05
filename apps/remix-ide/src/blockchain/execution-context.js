@@ -14,6 +14,8 @@ if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
 }
 
+const noInjectedProviderMsg = 'No injected provider found. Make sure your provider (e.g. MetaMask) is active and running (when recently activated you may have to reload the page).'
+
 /*
   trigger contextChanged, web3EndpointChanged
 */
@@ -38,12 +40,16 @@ export class ExecutionContext {
       this.executionContext = 'vm'
     } else {
       this.executionContext = injectedProvider ? 'injected' : 'vm'
-      if (this.executionContext === 'injected') this.askPermission()
+      if (this.executionContext === 'injected') this.askPermission(false)
     }
   }
 
-  askPermission () {
-    if (ethereum && typeof ethereum.request === "function") ethereum.request({ method: "eth_requestAccounts" });
+  askPermission (throwIfNoInjectedProvider) {
+    if (typeof ethereum !== "undefined" && typeof ethereum.request === "function") {
+      ethereum.request({ method: "eth_requestAccounts" })
+    } else if (throwIfNoInjectedProvider) {
+      throw new Error(noInjectedProviderMsg)
+    }
   }
 
   getProvider () {
@@ -80,7 +86,7 @@ export class ExecutionContext {
       }
       if (web3.currentProvider.isConnected && !web3.currentProvider.isConnected()) {
         if (web3.currentProvider.isMetaMask) {
-          this.askPermission()
+          this.askPermission(false)
         }
         return callback('Provider not connected')
       }
@@ -127,11 +133,7 @@ export class ExecutionContext {
   internalWeb3 () {
     return web3
   }
-
-  blankWeb3 () {
-    return new Web3()
-  }
-
+  
   setContext (context, endPointUrl, confirmCb, infoCb) {
     this.executionContext = context
     this.executionContextChange(context, endPointUrl, confirmCb, infoCb, null)
@@ -152,13 +154,18 @@ export class ExecutionContext {
 
     if (context === 'injected') {
       if (injectedProvider === undefined) {
-        infoCb('No injected provider found. Make sure your provider (e.g. MetaMask) is active and running (when recently activated you may have to reload the page).')
+        infoCb(noInjectedProviderMsg)
         return cb()
       } else {
         if (injectedProvider && injectedProvider._metamask && injectedProvider._metamask.isUnlocked) {
           if (!await injectedProvider._metamask.isUnlocked()) infoCb('Please make sure the injected provider is unlocked (e.g Metamask).')
         }
-        this.askPermission()
+        try {
+          this.askPermission(true)
+        } catch (e) {
+          infoCb(e.message)
+          return cb()
+        }
         this.executionContext = context
         web3.setProvider(injectedProvider)
         await this._updateChainContext()
@@ -176,7 +183,12 @@ export class ExecutionContext {
         })
       } else {
         // injected
-        this.askPermission()
+        try {
+          this.askPermission(true)
+        } catch (e) {
+          infoCb(e.message)
+          return cb()
+        }        
         this.executionContext = context
         web3.setProvider(network.provider)
         await this._updateChainContext()

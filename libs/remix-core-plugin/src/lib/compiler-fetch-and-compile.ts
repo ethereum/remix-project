@@ -4,6 +4,7 @@ import { util } from '@remix-project/remix-lib'
 import { toChecksumAddress } from 'ethereumjs-util'
 import { fetchContractFromEtherscan } from './helpers/fetch-etherscan'
 import { fetchContractFromSourcify } from './helpers/fetch-sourcify'
+import { UUPSDeployedByteCode, UUPSCompilerVersion, UUPSOptimize, UUPSRuns, UUPSEvmVersion, UUPSLanguage } from './constants/uups'
 
 const profile = {
   name: 'fetchAndCompile',
@@ -47,6 +48,34 @@ export class FetchAndCompile extends Plugin {
     const resolved = await this.call('compilerArtefacts', 'get', contractAddress)
     if (resolved) return resolved
     if (this.unresolvedAddresses.includes(contractAddress)) return localCompilation()
+
+    if (codeAtAddress === '0x' + UUPSDeployedByteCode) { // proxy
+      const settings = {
+        version: UUPSCompilerVersion,
+        language: UUPSLanguage,
+        evmVersion: UUPSEvmVersion,
+        optimize: UUPSOptimize,
+        runs: UUPSRuns
+      }
+      const proxyUrl = 'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.8.0/contracts/proxy/ERC1967/ERC1967Proxy.sol'
+      const compilationTargets = {
+        'proxy.sol': { content: `import "${proxyUrl}";` }
+      }
+      const compData = await compile(
+        compilationTargets,
+        settings,
+        async (url, cb) => {
+          // we first try to resolve the content from the compilation target using a more appropiate path
+          const path = `${targetPath}/${url}`
+          if (compilationTargets[path] && compilationTargets[path].content) {
+            return cb(null, compilationTargets[path].content)
+          } else {
+            await this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message))
+          }
+        })
+      await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compData)
+      return compData
+    }
 
     // sometimes when doing an internal call, the only available artifact is the Solidity interface.
     // resolving addresses of internal call would allow to step over the source code, even if the declaration was made using an Interface.

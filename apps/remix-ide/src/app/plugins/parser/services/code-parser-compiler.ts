@@ -6,9 +6,10 @@ import { CompilationResult, CompilationSource } from '@remix-project/remix-solid
 import { CodeParser } from "../code-parser";
 import { fileDecoration, fileDecorationType } from '@remix-ui/file-decorators'
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
-import { CompilerRetriggerMode } from '@remix-project/remix-solidity-ts';
+import { CompilerRetriggerMode, CompilationSourceCode } from '@remix-project/remix-solidity';
 import { MarkerSeverity } from 'monaco-editor';
 import { findLinesInStringWithMatch, SearchResultLine } from '@remix-ui/search'
+import { lastCompilationResult } from '@remixproject/plugin-api';
 
 type errorMarker = {
     message: string
@@ -28,7 +29,7 @@ type errorMarker = {
 export default class CodeParserCompiler {
     plugin: CodeParser
     compiler: any // used to compile the current file seperately from the main compiler
-    onAstFinished: (success: any, data: CompilationResult, source: CompilationSource, input: any, version: any) => Promise<void>;
+    onAstFinished: (success: any, data: CompilationResult, source: CompilationSourceCode, input: any, version: any) => Promise<void>;
     errorState: boolean;
     gastEstimateTimeOut: any
     constructor(
@@ -39,7 +40,7 @@ export default class CodeParserCompiler {
 
     init() {
 
-        this.onAstFinished = async (success, data: CompilationResult, source: CompilationSource, input: any, version) => {
+        this.onAstFinished = async (success, data: CompilationResult, source: CompilationSourceCode, input: any, version) => {
             this.plugin.call('editor', 'clearAnnotations')
             this.errorState = true
             const result = new CompilerAbstract('soljson', data, source, input)
@@ -104,11 +105,12 @@ export default class CodeParserCompiler {
 
 
             this.plugin._buildIndex(data, source)
-            this.plugin.nodeIndex.nodesPerFile[this.plugin.currentFile] = this.plugin._extractFileNodes(this.plugin.currentFile, this.plugin.compilerAbstract)
+            // cast from the remix-plugin interface to the solidity one. Should be fixed when remix-plugin move to the remix-project repository
+            this.plugin.nodeIndex.nodesPerFile[this.plugin.currentFile] = this.plugin._extractFileNodes(this.plugin.currentFile, this.plugin.compilerAbstract as unknown as lastCompilationResult)
             await this.plugin.gasService.showGasEstimates()
             this.plugin.emit('astFinished')
         }
-
+        
         this.compiler = new Compiler((url, cb) => this.plugin.call('contentImport', 'resolveAndSave', url, undefined).then((result) => cb(null, result)).catch((error) => cb(error.message)))
         this.compiler.event.register('compilationFinished', this.onAstFinished)
     }

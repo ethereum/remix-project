@@ -7,6 +7,7 @@ import { CodeManager } from './code/codeManager'
 import { contractCreationToken } from './trace/traceHelper'
 import { EventManager } from './eventManager'
 import { SolidityProxy, stateDecoder, localDecoder, InternalCallTree } from './solidity-decoder'
+import { extractStateVariables } from './solidity-decoder/stateDecoder'
 
 /**
   * Ethdebugger is a wrapper around a few classes that helps debugging a transaction
@@ -32,16 +33,22 @@ export class Ethdebugger {
   storageResolver
   callTree
   breakpointManager
+  offsetToLineColumnConverter
 
   constructor (opts) {
     this.compilationResult = opts.compilationResult || function (contractAddress) { return null }
+    this.offsetToLineColumnConverter = opts.offsetToLineColumnConverter
     this.web3 = opts.web3
     this.opts = opts
 
     this.event = new EventManager()
     this.traceManager = new TraceManager({ web3: this.web3 })
     this.codeManager = new CodeManager(this.traceManager)
-    this.solidityProxy = new SolidityProxy({ getCurrentCalledAddressAt: this.traceManager.getCurrentCalledAddressAt.bind(this.traceManager), getCode: this.codeManager.getCode.bind(this.codeManager) })
+    this.solidityProxy = new SolidityProxy({ 
+      getCurrentCalledAddressAt: this.traceManager.getCurrentCalledAddressAt.bind(this.traceManager), 
+      getCode: this.codeManager.getCode.bind(this.codeManager),
+      compilationResult: this.compilationResult 
+    })
     this.storageResolver = null
 
     const includeLocalVariables = true
@@ -49,13 +56,18 @@ export class Ethdebugger {
       this.traceManager,
       this.solidityProxy,
       this.codeManager,
-      { ...opts, includeLocalVariables })
+      { ...opts, includeLocalVariables },
+      this.offsetToLineColumnConverter)
   }
 
   setManagers () {
     this.traceManager = new TraceManager({ web3: this.web3 })
     this.codeManager = new CodeManager(this.traceManager)
-    this.solidityProxy = new SolidityProxy({ getCurrentCalledAddressAt: this.traceManager.getCurrentCalledAddressAt.bind(this.traceManager), getCode: this.codeManager.getCode.bind(this.codeManager) })
+    this.solidityProxy = new SolidityProxy({ 
+      getCurrentCalledAddressAt: this.traceManager.getCurrentCalledAddressAt.bind(this.traceManager), 
+      getCode: this.codeManager.getCode.bind(this.codeManager),
+      compilationResult: this.compilationResult
+    })
     this.storageResolver = null
     const includeLocalVariables = true
 
@@ -63,27 +75,27 @@ export class Ethdebugger {
       this.traceManager,
       this.solidityProxy,
       this.codeManager,
-      { ...this.opts, includeLocalVariables })
+      { ...this.opts, includeLocalVariables },
+      this.offsetToLineColumnConverter)
   }
 
   resolveStep (index) {
     this.codeManager.resolveStep(index, this.tx)
   }
 
-  setCompilationResult (compilationResult) {
-    this.solidityProxy.reset((compilationResult && compilationResult.data) || {})
-  }
-
   async sourceLocationFromVMTraceIndex (address, stepIndex) {
-    return this.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, stepIndex, this.solidityProxy.contracts)
+    const compilationResult = await this.compilationResult(address)
+    return this.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, stepIndex, compilationResult.data.contracts)
   }
 
   async getValidSourceLocationFromVMTraceIndex (address, stepIndex) {
-    return this.callTree.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, stepIndex, this.solidityProxy.contracts)
+    const compilationResult = await this.compilationResult(address)
+    return this.callTree.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, stepIndex, compilationResult.data.contracts)
   }
 
   async sourceLocationFromInstructionIndex (address, instIndex, callback) {
-    return this.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, instIndex, this.solidityProxy.contracts)
+    const compilationResult = await this.compilationResult(address)
+    return this.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, instIndex, compilationResult.data.contracts)
   }
 
   /* breakpoint */
@@ -94,6 +106,27 @@ export class Ethdebugger {
   /* decode locals */
   extractLocalsAt (step) {
     return this.callTree.findScope(step)
+  }
+
+  async decodeLocalVariableByIdAtCurrentStep (step: number, id: number) {
+    const variable = this.callTree.getLocalVariableById(id)
+    if (!variable) return null
+    const stack = this.traceManager.getStackAt(step)
+    const memory = this.traceManager.getMemoryAt(step)
+    const address = this.traceManager.getCurrentCalledAddressAt(step)
+    const calldata = this.traceManager.getCallDataAt(step)
+    const storageViewer = new StorageViewer({ stepIndex: step, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
+    return await variable.type.decodeFromStack(variable.stackDepth, stack, memory, storageViewer, calldata, null, variable)
+  }
+
+  async decodeStateVariableByIdAtCurrentStep (step: number, id: number) {
+    const stateVars = await this.solidityProxy.extractStateVariablesAt(step)
+    const variable = stateVars.filter((el) => el.variable.id === id)
+    if (variable && variable.length) {
+      const state = await this.decodeStateAt(step, variable)
+      return state[variable[0].name]
+    }
+    return null
   }
 
   async decodeLocalsAt (step, sourceLocation, callback) {
@@ -119,14 +152,16 @@ export class Ethdebugger {
 
   /* decode state */
   async extractStateAt (step) {
-    return this.solidityProxy.extractStateVariablesAt(step)
+    return await this.solidityProxy.extractStateVariablesAt(step)
   }
 
-  async decodeStateAt (step, stateVars, callback) {
+  async decodeStateAt (step, stateVars, callback?) {
     try {
+      callback = callback || (() => {})
       const address = this.traceManager.getCurrentCalledAddressAt(step)
       const storageViewer = new StorageViewer({ stepIndex: step, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
       const result = await stateDecoder.decodeState(stateVars, storageViewer)
+      callback(result)
       return result
     } catch (error) {
       callback(error)
@@ -145,6 +180,7 @@ export class Ethdebugger {
   unLoad () {
     this.traceManager.init()
     this.codeManager.clear()
+    this.solidityProxy.reset()
     this.event.trigger('traceUnloaded')
   }
 
@@ -156,7 +192,6 @@ export class Ethdebugger {
     this.tx = tx
 
     await this.traceManager.resolveTrace(tx)
-    this.setCompilationResult(await this.compilationResult(tx.to))
     this.event.trigger('newTraceLoaded', [this.traceManager.trace])
     if (this.breakpointManager && this.breakpointManager.hasBreakpoint()) {
       this.breakpointManager.jumpNextBreakpoint(false)

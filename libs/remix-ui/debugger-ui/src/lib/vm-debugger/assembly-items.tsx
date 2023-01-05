@@ -9,12 +9,17 @@ export const AssemblyItems = ({ registerEvent }) => {
   const [nextSelectedItems, setNextSelectedItems] = useState([1])
   const [returnInstructionIndexes, setReturnInstructionIndexes] = useState([])
   const [outOfGasInstructionIndexes, setOutOfGasInstructionIndexes] = useState([])
+  const [opcodeTooltipText, setOpcodeTooltipText] = useState('')
   const refs = useRef({})
   const asmItemsRef = useRef(null)
 
   useEffect(() => {
     registerEvent && registerEvent('codeManagerChanged', (code, address, index, nextIndexes, returnInstructionIndexes, outOfGasInstructionIndexes) => {
       dispatch({ type: 'FETCH_OPCODES_SUCCESS', payload: { code, address, index, nextIndexes, returnInstructionIndexes, outOfGasInstructionIndexes } })
+    })
+
+    registerEvent && registerEvent('lineGasCostChanged', (instructionsIndexes: number[], line: []) => {
+      dispatch({ type: 'FETCH_INDEXES_FOR_NEW_LINE', payload: { currentLineIndexes: instructionsIndexes || [], line } })
     })
   }, [])
 
@@ -129,7 +134,9 @@ export const AssemblyItems = ({ registerEvent }) => {
           <div className="pl-2 my-1 small instructions" data-id="asmitems" id='asmitems' ref={asmItemsRef}>
             {
               assemblyItems.display.map((item, i) => {
-                return <div className="px-1" key={i} ref={ref => { refs.current[i] = ref }}><span>{item}</span></div>
+                return <div className="px-1" key={i} ref={ref => { refs.current[i] = ref }}>
+                  <span>{item}</span>{assemblyItems.currentLineIndexes.includes(i) ? <span><i><b> - LINE {assemblyItems.line + 1}</b></i></span> : ' - '}
+                </div>
               })
             }
           </div>

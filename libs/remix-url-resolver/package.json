@@ -1,11 +1,10 @@
 {
   "name": "@remix-project/remix-url-resolver",
-  "version": "0.0.38",
+  "version": "0.0.43",
   "description": "Solidity import url resolver engine",
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "scripts": {
-    "build": "tsc",
     "test": "./../../node_modules/.bin/mocha --require ts-node/register --require tsconfig-paths/register tests/*.ts -t 300000"
   },
   "publishConfig": {
@@ -25,7 +24,7 @@
   "license": "MIT",
   "dependencies": {
     "@erebos/bzz-node": "^0.13.0",
-    "axios": ">=0.21.1",
+    "axios": "1.2.2",
     "url": "^0.11.0",
     "valid-url": "^1.0.9"
   },
@@ -41,5 +40,5 @@
     "typescript": "^3.1.6"
   },
   "typings": "src/index.d.ts",
-  "gitHead": "628e2877999825f34c030344ab6026bff2c2ce2f"
+  "gitHead": "b9f8241a57d3083c94d6499efa8e2ea2ac8ef2d1"
 }

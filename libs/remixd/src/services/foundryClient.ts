@@ -83,7 +83,7 @@ export class FoundryClient extends PluginClient {
     }
     if (!this.warnlog) {
       // @ts-ignore
-      this.call('terminal', 'log', 'receiving compilation result from Foundry')
+      this.call('terminal', 'log', { type: 'log', value: 'receiving compilation result from Foundry' })
       this.warnlog = true
     }
   }
@@ -167,6 +167,6 @@ export class FoundryClient extends PluginClient {
     console.log('syncing from Foundry')
     this.processArtifact()
     // @ts-ignore
-    this.call('terminal', 'log', 'synced with Foundry')
+    this.call('terminal', 'log', { type: 'log', value: 'synced with Foundry'})
   }
 }

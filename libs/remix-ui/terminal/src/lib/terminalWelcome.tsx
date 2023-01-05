@@ -1,30 +1,31 @@
 import React, { useEffect } from 'react' // eslint-disable-line
+import { FormattedMessage } from 'react-intl'
 
 const TerminalWelcomeMessage = ({ packageJson, storage }) => {
   return (
     <div className="remix_ui_terminal_block px-4 " data-id="block_null">
-      <div className="remix_ui_terminal_welcome"> Welcome to Remix {packageJson} </div><br />
-      <div className="">Your files are stored in {(window as any).remixFileSystem.name}, {storage} used</div><br />
-      <div>You can use this terminal to: </div>
+      <div className="remix_ui_terminal_welcome"> <FormattedMessage id='terminal.welcomeText1' /> Remix {packageJson} </div><br />
+      <div className=""><FormattedMessage id='terminal.welcomeText2' /> {(window as any).remixFileSystem.name}, {storage} <FormattedMessage id='terminal.used' /></div><br />
+      <div><FormattedMessage id='terminal.welcomeText3' />: </div>
       <ul className='ml-0 mr-4'>
-        <li>Check transactions details and start debugging.</li>
-        <li>Execute JavaScript scripts:
+        <li key="details-and-debug" ><FormattedMessage id='terminal.welcomeText4' />.</li>
+        <li key="run-javascript"><FormattedMessage id='terminal.welcomeText5' />:
           <br />
-          <i> - Input a script directly in the command line interface </i>
+          <i> - <FormattedMessage id='terminal.welcomeText6' /> </i>
           <br />
-          <i> - Select a Javascript file in the file explorer and then run \`remix.execute()\` or \`remix.exeCurrent()\`  in the command line interface  </i>
+          <i> - <FormattedMessage id='terminal.welcomeText7' />  </i>
           <br />
-          <i> - Right click on a JavaScript file in the file explorer and then click \`Run\` </i>
+          <i> - <FormattedMessage id='terminal.welcomeText8' /> </i>
         </li>
       </ul>
 
-      <div>The following libraries are accessible:</div>
+      <div><FormattedMessage id='terminal.welcomeText9' />:</div>
       <ul className='ml-0 mr-4'>
-        <li><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.5.2</a></li>
-        <li><a target="_blank" href="https://docs.ethers.io">ethers.js</a> </li>
-        <li>remix</li>
+        <li key="web3-152"><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.5.2</a></li>
+        <li key="ethers-console"><a target="_blank" href="https://docs.ethers.io">ethers.js</a> </li>
+        <li key="remix-console">remix</li>
       </ul>
-      <div>Type the library name to see available commands.</div>
+      <div><FormattedMessage id='terminal.welcomeText10' />.</div>
     </div>
   )
 }

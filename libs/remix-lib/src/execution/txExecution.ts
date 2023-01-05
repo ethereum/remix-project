@@ -89,7 +89,7 @@ export function checkVMError (execResult, compiledContracts) {
     ret.error = true
   } else if (exceptionError === errorCode.REVERT) {
     const returnData = execResult.returnValue
-    const returnDataHex = returnData.slice(0, 4).toString('hex')
+    const returnDataHex = returnData.slice(2, 10)
     let customError
     if (compiledContracts) {
       let decodedCustomErrorInputsClean
@@ -159,7 +159,7 @@ export function checkVMError (execResult, compiledContracts) {
       // It is the hash of Error(string)
       if (returnData && (returnDataHex === '08c379a0')) {
         const abiCoder = new ethers.utils.AbiCoder()
-        const reason = abiCoder.decode(['string'], returnData.slice(4))[0]
+        const reason = abiCoder.decode(['string'], '0x' + returnData.slice(10))[0]
         msg = `\tThe transaction has been reverted to the initial state.\nReason provided by the contract: "${reason}".`
       } else {
         msg = '\tThe transaction has been reverted to the initial state.\nNote: The called function should be payable if you send value and the value you send should be less than your current balance.'

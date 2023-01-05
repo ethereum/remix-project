@@ -270,9 +270,21 @@ export interface CompilationError {
     | 'FatalError'
     | 'Warning'
 
-/// /////////
-// SOURCE //
-/// /////////
+/// //////////
+// SOURCE CODE //
+/// //////////
+export interface SourcesCode {
+  [fileName: string] : {content: string}
+}
+
+export type CompilationSourceCode = {
+  sources: SourcesCode;
+  target: string;
+}
+
+/// //////////
+// SOURCE AST //
+/// //////////
 export interface CompilationSource {
     /** Identifier of the source (used in source maps) */
     id: number
@@ -488,4 +500,8 @@ export interface BytecodeObject {
         [library: string]: { start: number; length: number }[]
       }
     }
+  }
+
+  export interface EsWebWorkerHandlerInterface {
+    getWorker(): Worker
   }

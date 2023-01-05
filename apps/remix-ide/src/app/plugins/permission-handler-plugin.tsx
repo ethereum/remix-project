@@ -1,7 +1,7 @@
 import React from 'react' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
-import { AppModal } from 'libs/remix-ui/app/src'
-import { PermissionHandlerDialog, PermissionHandlerValue } from 'libs/remix-ui/permission-handler/src'
+import { AppModal } from '@remix-ui/app'
+import { PermissionHandlerDialog, PermissionHandlerValue } from '@remix-ui/permission-handler'
 import { Profile } from '@remixproject/plugin-utils'
 
 const profile = {

@@ -41,7 +41,7 @@
   }
   .remixui_treeview {
     overflow-y        : auto;
-  }  
+  }
   .remixui_dialog {
     display: flex;
     flex-direction: column;
@@ -51,7 +51,7 @@
     word-break: break-word;
   }
   .remixui_menuicon {
-    padding-right   : 10px;
+    padding-right   : 0px;
   }
   .remixui_menuicon:hover {
     transform: scale(1.3);
@@ -61,7 +61,7 @@
     align-items: center;
     height: 32px;
   }
-  
+
   .remixui_cloneContainer input {
     height: 32px;
     border-top-left-radius: 0 !important;
@@ -78,12 +78,13 @@
   .remixui_menuicon .bs-popover-auto[x-placement^="bottom"] > .arrow::after, .bs-popover-bottom > .arrow::after {
     border-bottom-color: var(--dark) !important
   }
-  
+
   .custom-dropdown-items {
     padding: 0.25rem 0.25rem;
     border-radius: .25rem;
     background: var(--custom-select);
   }
+
   .custom-dropdown-items a {
     border-radius: .25rem;
     text-transform: none;
@@ -93,5 +94,47 @@
     padding: 0.25rem 0.25rem;
     width: auto;
     color: var(--text);
+  }
+
+  .remixuimenuicon_shadow {
+  }
+
+  .remixuimenuicon_shadow:hover {
+    box-shadow: 0px 0px 14px -7px;
+  }
+
+  .remixui_topmenu {
+    padding-bottom: 0.1rem;
+  }
+
+  .remixui_menuwidth {
+    /* width: 8rem; */
+  }
+
+  #workspacesMenuDropdown > div.custom-dropdown-items {
+    min-width: 8rem;
+  }
+
+  .remixui_menuhr{
+
+  }
+
+  #workspacesMenuDropdown>div>ul>a:nth-child(6):hover {
+    background-color: rgba(0,0,0,0)
+  }
+
+  #workspacesMenuDropdown>div>ul>a:nth-child(4):hover {
+    background-color: rgba(0, 0, 0, 0)
+  }
+
+  #workspacesMenuDropdown > div > ul > a:hover {
+    background-color: var(--secondary);
+    /* border: 1px solid var(--secondary); */
+    border-radius: 2px;
+    color: var(--text)
+  }
+
+  .checkout-input {
+    font-size: 10px !important;
   }
   

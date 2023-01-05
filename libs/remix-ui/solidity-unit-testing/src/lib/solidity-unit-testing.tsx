@@ -7,6 +7,7 @@ import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { format } from 'util'
 import './css/style.css'
+import { CustomTooltip } from '@remix-ui/helper'
 
 const _paq = (window as any)._paq = (window as any)._paq || [] // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -135,7 +136,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
 
   useEffect(() => {
     if (initialPath) setCurrentPath(initialPath)
-  }, [initialPath]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [initialPath])
 
   useEffect(() => {
     testTab.on('filePanel', 'newTestFileCreated', async (file: string) => {
@@ -198,7 +199,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
         if (await testTabLogic.pathExists(testDirInput)) {
           setDisableCreateButton(true)
           setDisableGenerateButton(false)
-          
+
         } else {
           // Enable Create button
           setDisableCreateButton(false)
@@ -258,7 +259,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
       finalLogs = finalLogs + '&emsp;' + formattedLog + '\n'
     }
     _paq.push(['trackEvent', 'solidityUnitTesting', 'hardhat', 'console.log'])
-    testTab.call('terminal', 'log', { type: 'info', value: finalLogs })
+    testTab.call('terminal', 'logHtml', { type: 'log', value: finalLogs })
   }
 
   const discardHighlight = async () => {
@@ -296,20 +297,21 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
     let label
     if (index > -1) {
       const className = "alert-danger d-inline-block mb-1 mr-1 p-1 failed_" + runningTestFileName
-      label = (<div
-      className={className}
-      title="At least one contract test failed"
-    >
-      FAIL
-    </div>)
+      label = (<CustomTooltip
+                placement={'right'}
+                tooltipClasses="text-nowrap"
+                tooltipId="info-recorder"
+                tooltipText="At least one contract test failed"
+              >
+                <div className={className}>FAIL</div>
+              </CustomTooltip>)
     } else {
       const className = "alert-success d-inline-block mb-1 mr-1 p-1 passed_" + runningTestFileName
-      label = (<div
-      className={className}
-      title="All contract tests passed"
-    >
-      PASS
-    </div>)
+      label = (<CustomTooltip placement={'top-end'} tooltipClasses="text-nowrap" tooltipId="info-recorder"
+                tooltipText="All contract tests passed"
+              >
+                <div className={className}>PASS</div>
+              </CustomTooltip>)
     }
     // show contract and file name with label
     const ContractCard: ReactElement = (
@@ -335,8 +337,15 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
         if (test.debugTxHash) {
           const { web3, debugTxHash } = test
           debugBtn = (
-            <div id={test.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} title="Start debugging" onClick={() => startDebug(debugTxHash, web3)}>
-              <i className="fas fa-bug"></i>
+            <div id={test.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} onClick={() => startDebug(debugTxHash, web3)}>
+              <CustomTooltip
+                placement={'top-start'}
+                tooltipClasses="text-nowrap"
+                tooltipId="info-recorder"
+                tooltipText="Start debugging"
+              >
+                <i className="fas fa-bug"></i>
+              </CustomTooltip>
             </div>
           )
         }
@@ -528,7 +537,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
       updateFinalResult(null, null, testFilePath)
       return
     }
-    testTab.fileManager.readFile(testFilePath).then((content: string) => {
+    testTab.fileManager.readFile(testFilePath).then(async (content: string) => {
       const runningTests: Record<string, Record<string, string>> = {}
       runningTests[testFilePath] = { content }
       filesContent[testFilePath] = { content }
@@ -556,7 +565,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
           callback(error)
         }, (url: string, cb: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
           return testTab.contentImport.resolveAndSave(url).then((result: any) => cb(null, result)).catch((error: Error) => cb(error.message)) // eslint-disable-line @typescript-eslint/no-explicit-any
-        }, { testFilePath }
+        }, { testFilePath: testFilePath, web3: await testTab.call('blockchain', 'web3VM') }
       )
     }).catch((error: Error) => {
       console.log(error)
@@ -577,7 +586,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
     const tests: string[] = selectedTests.current
     if (!tests || !tests.length) return
     else setProgressBarHidden(false)
-    _paq.push(['trackEvent', 'solidityUnitTesting', 'runTests'])
+    _paq.push(['trackEvent', 'solidityUnitTesting', 'runTests', 'nbTestsRunning' + tests.length])
     eachOfSeries(tests, (value: string, key: string, callback: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
       if (hasBeenStopped.current) return
       runTest(value, callback)
@@ -663,57 +672,98 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
               })
             }
             </datalist>
-            <input
-              list="utPathList"
-              className="inputFolder custom-select"
-              id="utPath"
-              data-id="uiPathInput"
-              name="utPath"
-              value={inputPathValue}
-              title="Press 'Enter' to change the path for test files."
-              style={{ backgroundImage: "var(--primary)" }}
-              onKeyDown={() => { if (inputPathValue === '/') setInputPathValue('')} }
-              onChange={handleTestDirInput}
-              onClick = {() => { if (inputPathValue === '/') setInputPathValue('')} }
-            />
-            <button
-              className="btn border ml-2"
-              data-id="testTabGenerateTestFolder"
-              title="Create a test folder"
-              disabled={disableCreateButton}
-              onClick={handleCreateFolder}
+            <CustomTooltip
+              placement="top-end"
+              tooltipClasses="text-nowrap"
+              tooltipId="uiPathInputtooltip"
+              tooltipText={"Press 'Enter' to change the path for test files."}
             >
-              Create
-            </button>
+              <input
+                list="utPathList"
+                className="inputFolder custom-select"
+                id="utPath"
+                data-id="uiPathInput"
+                name="utPath"
+                value={inputPathValue}
+                style={{ backgroundImage: "var(--primary)" }}
+                onKeyDown={() => { if (inputPathValue === '/') setInputPathValue('')} }
+                onChange={handleTestDirInput}
+                onClick = {() => { if (inputPathValue === '/') setInputPathValue('')} }
+              />
+            </CustomTooltip>
+            <CustomTooltip
+              placement="top-end"
+              tooltipClasses="text-nowrap"
+              tooltipId="uiPathInputButtontooltip"
+              tooltipText="Create a test folder"
+            >
+              <button
+                className="btn border ml-2"
+                data-id="testTabGenerateTestFolder"
+                disabled={disableCreateButton}
+                onClick={handleCreateFolder}
+              >
+                Create
+              </button>
+            </CustomTooltip>
           </div>
         </div>
       </div>
       <div>
         <div className="d-flex p-2">
-          <button
-            className="btn border w-50"
-            data-id="testTabGenerateTestFile"
-            title="Generate a sample test file"
-            disabled={disableGenerateButton}
-            onClick={async () => {
-              await testTabLogic.generateTestFile((err:any) => { if (err) setToasterMsg(err)}) // eslint-disable-line @typescript-eslint/no-explicit-any
-              await updateForNewCurrent()
-            }}
+          <CustomTooltip
+            tooltipId="generateTestsButtontooltip"
+            tooltipClasses="text-nowrap"
+            tooltipText="Generate a sample test file"
+            placement={'bottom-start'}
           >
-            Generate
-          </button>
-          <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" title="Check out documentation." target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
+            <button
+              className="btn border w-50"
+              data-id="testTabGenerateTestFile"
+              disabled={disableGenerateButton}
+              onClick={async () => {
+                await testTabLogic.generateTestFile((err:any) => { if (err) setToasterMsg(err)}) // eslint-disable-line @typescript-eslint/no-explicit-any
+                await updateForNewCurrent()
+              }}
+            >
+              Generate
+            </button>
+          </CustomTooltip>
+          <CustomTooltip
+            tooltipId="generateTestsLinktooltip"
+            tooltipClasses="text-nowrap"
+            tooltipText="Check out documentation."
+            placement={'bottom-start'}
+          >
+            <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
             <label className="btn p-1 ml-2 m-0">How to use...</label>
-          </a>
+            </a>
+        </CustomTooltip>
         </div>
         <div className="d-flex p-2">
-          <button id="runTestsTabRunAction" title={runButtonTitle} data-id="testTabRunTestsTabRunAction" className="w-50 btn btn-primary" disabled={disableRunButton} onClick={runTests}>
-            <span className="fas fa-play ml-2"></span>
-            <label className="labelOnBtn btn btn-primary p-1 ml-2 m-0">Run</label>
-          </button>
-          <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} title="Stop running tests" onClick={stopTests}>
-            <span className="fas fa-stop ml-2"></span>
-            <label className="labelOnBtn btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">{stopButtonLabel}</label>
+          <CustomTooltip
+            placement={'top-start'}
+              tooltipClasses="text-nowrap"
+              tooltipId="info-recorder"
+              tooltipText={runButtonTitle}
+              >
+            <button id="runTestsTabRunAction"data-id="testTabRunTestsTabRunAction" className="w-50 btn btn-primary" disabled={disableRunButton} onClick={runTests}>
+              <span className="fas fa-play ml-2"></span>
+              <label className="labelOnBtn btn btn-primary p-1 ml-2 m-0">Run</label>
+            </button>
+          </CustomTooltip>
+          <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} onClick={stopTests}>
+            <CustomTooltip
+              placement={'top-start'}
+              tooltipClasses="text-nowrap"
+              tooltipId="info-recorder"
+              tooltipText="Stop running tests"
+            >
+              <span>
+                <span className="fas fa-stop ml-2"></span>
+                <label className="labelOnBtn btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">{stopButtonLabel}</label>
+              </span>
+            </CustomTooltip>
           </button>
         </div>
         <div className="d-flex align-items-center mx-3 pb-2 mt-2 border-bottom">
@@ -730,7 +780,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
           const elemId = `singleTest${testFileObj.fileName}`
           return (
             <div className="d-flex align-items-center py-1" key={index}>
-              <input className="singleTest" id={elemId} onChange={(e) => toggleCheckbox(e.target.checked, index)} type="checkbox" checked={testFileObj.checked} />
+              <input data-id="singleTest" className="singleTest" id={elemId} onChange={(e) => toggleCheckbox(e.target.checked, index)} type="checkbox" checked={testFileObj.checked} />
               <label className="singleTestLabel text-nowrap pl-2 mb-0" htmlFor={elemId}>{testFileObj.fileName}</label>
             </div>
           )

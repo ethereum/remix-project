@@ -4,20 +4,20 @@ import { compile } from 'solc'
 import * as astHelper from '../../src/solidity-decoder/astHelper'
 import * as decodeInfo from '../../src/solidity-decoder/decodeInfo'
 import * as stateDecoder from '../../src/solidity-decoder/stateDecoder'
-var contracts = require('./contracts/miscContracts')
-var simplecontracts = require('./contracts/simpleContract')
+const contracts = require('./contracts/miscContracts')
+const simplecontracts = require('./contracts/simpleContract')
 import { compilerInput } from '../helpers/compilerHelper'
 import * as util from '../../src/solidity-decoder/types/util'
 
 tape('solidity', function (t) {
   t.test('astHelper, decodeInfo', function (st) {
-    var output = compile(compilerInput(contracts))
+    let output = compile(compilerInput(contracts))
     output = JSON.parse(output)
 
-    var state: any = astHelper.extractStateDefinitions('test.sol:contractUint', output.sources, null)
-    var states = astHelper.extractStatesDefinitions(output.sources, null)
-    var stateDef = state.stateDefinitions
-    var parsedType = decodeInfo.parseType(stateDef[0].typeDescriptions.typeString, states, 'contractUint', util.extractLocationFromAstVariable(stateDef[0]))
+    let state: any = astHelper.extractStateDefinitions('test.sol:contractUint', output.sources, null)
+    let states = astHelper.extractStatesDefinitions(output.sources, null)
+    let stateDef = state.stateDefinitions
+    let parsedType = decodeInfo.parseType(stateDef[0].typeDescriptions.typeString, states, 'contractUint', util.extractLocationFromAstVariable(stateDef[0]))
     checkDecodeInfo(st, parsedType, 1, 1, 'uint8')
     parsedType = decodeInfo.parseType(stateDef[1].typeDescriptions.typeString, states, 'contractUint', util.extractLocationFromAstVariable(stateDef[1]))
     checkDecodeInfo(st, parsedType, 1, 32, 'uint256')

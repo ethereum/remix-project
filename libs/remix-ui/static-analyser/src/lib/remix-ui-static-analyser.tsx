@@ -8,8 +8,8 @@ import { RemixUiCheckbox } from '@remix-ui/checkbox' // eslint-disable-line
 import ErrorRenderer from './ErrorRenderer' // eslint-disable-line
 import { compilation } from './actions/staticAnalysisActions'
 import { initialState, analysisReducer } from './reducers/staticAnalysisReducer'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'// eslint-disable-line
 import { CodeAnalysis } from '@remix-project/remix-analyzer'
+import { CustomTooltip } from '@remix-ui/helper'
 
 declare global {
   interface Window {
@@ -215,7 +215,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         const warningErrors = []
 
         // Remix Analysis
-        _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyzeWithRemixAnalyzer'])
+        _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'remixAnalyzer'])
         const results = runner.run(lastCompilationResult, categoryIndex)
         for (const result of results) {
           let moduleName
@@ -255,7 +255,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             if(fileName !== currentFile) {
               const {file, provider} = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
               if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
-            } 
+            }
             const msg = message(result.name, item.warning, item.more, fileName, locationString)
             const options = {
               type: 'warning',
@@ -280,11 +280,11 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           try {
             const compilerState = await props.analysisModule.call('solidity', 'getCompilerState')
             const { currentVersion, optimize, evmVersion } = compilerState
-            await props.analysisModule.call('terminal', 'log', { type: 'info', value: '[Slither Analysis]: Running...' })
-            _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyzeWithSlither'])
+            await props.analysisModule.call('terminal', 'log', { type: 'log', value: '[Slither Analysis]: Running...' })
+            _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'slitherAnalyzer'])
             const result = await props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion })
             if (result.status) {
-              props.analysisModule.call('terminal', 'log', { type: 'info', value: `[Slither Analysis]: Analysis Completed!! ${result.count} warnings found.` })
+              props.analysisModule.call('terminal', 'log', { type: 'log', value: `[Slither Analysis]: Analysis Completed!! ${result.count} warnings found.` })
               const report = result.data
               for (const item of report) {
                 let location: any = {}
@@ -321,7 +321,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 if(fileName !== currentFile) {
                   const {file, provider} = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
                   if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
-                } 
+                }
                 const msg = message(item.title, item.description, item.more, fileName, locationString)
                 const options = {
                   type: 'warning',
@@ -458,7 +458,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               expand={false}
             >
               <div>
-                <RemixUiCheckbox onClick={() => handleCheckOrUncheckCategory(category)} id={categoryId} inputType="checkbox" label={`Select ${category[0].categoryDisplayName}`} name='checkCategoryEntry' checked={category.map(x => x._index.toString()).every(el => categoryIndex.includes(el))} onChange={() => {}}/>
+                <RemixUiCheckbox onClick={() => handleCheckOrUncheckCategory(category)} id={categoryId} inputType="checkbox" label={`Select ${category[0].categoryDisplayName}`} name='checkCategoryEntry' checked={category.map(x => x._index.toString()).every(el => categoryIndex.includes(el))} onChange={() => {}} title={category[0].categoryDisplayName} tooltipPlacement="right"/>
               </div>
               <div className="w-100 d-block px-2 my-1 entries collapse multi-collapse" id={`heading${categoryId}`}>
                 {category.map((item, i) => {
@@ -490,6 +490,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             label="Select all"
             onClick={() => handleCheckAllModules(groupedModules)}
             onChange={() => {}}
+            tooltipPlacement={'top-start'}
           />
           <RemixUiCheckbox
             id="autorunstaticanalysis"
@@ -499,6 +500,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             checked={autoRun}
             label="Autorun"
             onChange={() => {}}
+            tooltipPlacement={'bottom-start'}
           />
           <Button
             buttonText="Run"
@@ -519,13 +521,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             />
 
             <a className="mt-1 text-nowrap" href='https://remix-ide.readthedocs.io/en/latest/slither.html#enable-slither-analysis' target={'_blank'}>
-              <OverlayTrigger placement={'right'} overlay={
-                <Tooltip className="text-nowrap" id="overlay-tooltip">
-                  <span className="border bg-light text-dark p-1 pr-3" style={{minWidth: '230px' }}>Learn how to use Slither Analysis</span>
-                </Tooltip>
-              }>
+              <CustomTooltip
+                placement={'right'}
+                tooltipClasses="text-nowrap"
+                tooltipId="overlay-tooltip"
+                tooltipText={<span className="border bg-light text-dark p-1 pr-3" style={{minWidth: '230px' }}>Learn how to use Slither Analysis</span>}
+              >
                 <i style={{ fontSize: 'medium' }} className={'fal fa-info-circle ml-3'} aria-hidden="true"></i>
-              </OverlayTrigger>
+              </CustomTooltip>
             </a>
           </div>
         }

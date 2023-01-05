@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useReducer, useRef, SyntheticEvent, MouseEvent } from 'react' // eslint-disable-line
+import { FormattedMessage, useIntl } from 'react-intl'
 import { registerCommandAction, registerLogScriptRunnerAction, registerInfoScriptRunnerAction, registerErrorScriptRunnerAction, registerWarnScriptRunnerAction, listenOnNetworkAction, initListeningOnNetwork } from './actions/terminalAction'
 import { initialState, registerCommandReducer, addCommandHistoryReducer, registerScriptRunnerReducer } from './reducers/terminalReducer'
 import { getKeyOf, getValueOf, Objectfilter, matched } from './utils/utils'
@@ -76,6 +77,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const panelRef = useRef(null)
   const terminalMenu = useRef(null)
 
+  const intl = useIntl ()
+
   const scrollToBottom = () => {
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
   }
@@ -87,7 +90,13 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       },
 
       log: (message) => {
-        scriptRunnerDispatch({ type: 'log', payload: { message: [message] } })
+        if (typeof message === 'string') {
+          message = {
+            value: message,
+            type: 'log'
+          }
+        }
+        scriptRunnerDispatch({ type: message.type ? message.type : 'log', payload: { message: [message.value] } })
       }
     })
   }, [])
@@ -399,7 +408,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 {getKeyOf(item)}
               </div>
               <div>
-                {getValueOf(item)}
+                <>{getValueOf(item)}</>
               </div>
             </div>
           )
@@ -430,7 +439,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       setIsOpen(!panels.terminal.minimized)
     })
 
-    
+
 
     return () => {
       props.plugin.off('layout', 'change')
@@ -463,7 +472,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
               htmlFor="listenNetworkCheck"
               data-id="listenNetworkCheckInput"
             >
-              listen on all transactions
+              <FormattedMessage id='terminal.listen' />
             </label>
           </div>
           <div className="remix_ui_terminal_search d-flex align-items-center h-100">
@@ -476,7 +485,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
               type="text"
               className="remix_ui_terminal_filter border form-control"
               id="searchInput"
-              placeholder="Search with transaction hash or address"
+              placeholder={intl.formatMessage({ id: 'terminal.search' })}
               data-id="terminalInputSearch" />
           </div>
         </div>

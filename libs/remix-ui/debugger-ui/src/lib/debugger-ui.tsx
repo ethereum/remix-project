@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react' // eslint-disable-line
+import { FormattedMessage } from 'react-intl'
 import TxBrowser from './tx-browser/tx-browser' // eslint-disable-line
 import StepManager from './step-manager/step-manager' // eslint-disable-line
 import VmDebugger from './vm-debugger/vm-debugger' // eslint-disable-line
@@ -6,7 +7,7 @@ import VmDebuggerHead from './vm-debugger/vm-debugger-head' // eslint-disable-li
 import { TransactionDebugger as Debugger } from '@remix-project/remix-debug' // eslint-disable-line
 import { DebuggerUIProps } from './idebugger-api' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
-import { isValidHash } from '@remix-ui/helper'
+import { CustomTooltip, isValidHash } from '@remix-ui/helper'
 /* eslint-disable-next-line */
 import './debugger-ui.css'
 const _paq = (window as any)._paq = (window as any)._paq || []
@@ -36,6 +37,18 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     sourceLocationStatus: ''
   })
 
+  if (props.onReady) {
+    props.onReady({
+      globalContext: () => {
+        return {
+          block: state.currentBlock, 
+          tx: state.currentTransaction, 
+          receipt: state.currentReceipt
+        }
+      }
+    })
+  }
+
   const panelsRef = useRef<HTMLDivElement>(null)
   const debuggerTopRef = useRef(null)
 
@@ -62,7 +75,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
   }, [])
 
   debuggerModule.onDebugRequested((hash, web3?) => {
-    if (hash) debug(hash, web3)
+    if (hash) return debug(hash, web3)
   })
 
   debuggerModule.onRemoveHighlights(async () => {
@@ -120,8 +133,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       })
     })
 
-    debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation, generatedSources, address) => {
-      if (!lineColumnPos) {        
+    debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation, generatedSources, address, stepDetail, lineGasCost) => {
+      if (!lineColumnPos) {
         await debuggerModule.discardHighlight()
         setState(prevState => {
           return { ...prevState, sourceLocationStatus: 'Source location not available, neither in Sourcify nor in Etherscan. Please make sure the Etherscan api key is provided in the settings.' }
@@ -157,7 +170,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
             return { ...prevState, sourceLocationStatus: '' }
           })
           await debuggerModule.discardHighlight()
-          await debuggerModule.highlight(lineColumnPos, path)
+          await debuggerModule.highlight(lineColumnPos, path, rawLocation, stepDetail, lineGasCost)
         }
       }
     })
@@ -213,7 +226,10 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     })
   }
   const startDebugging = async (blockNumber, txNumber, tx, optWeb3?) => {
-    if (state.debugger) unLoad()
+    if (state.debugger) {
+      unLoad()
+      await (new Promise((resolve) => setTimeout(() => resolve({}), 1000)))    
+    }
     if (!txNumber) return
     setState(prevState => {
       return {
@@ -265,13 +281,14 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       console.log(e.message)
     }
 
+    const localCache = {}
     const debuggerInstance = new Debugger({
       web3,
       offsetToLineColumnConverter: debuggerModule.offsetToLineColumnConverter,
       compilationResult: async (address) => {
         try {
-          const ret = await debuggerModule.fetchContractAndCompile(address, currentReceipt)
-          return ret
+          if (!localCache[address]) localCache[address] = await debuggerModule.fetchContractAndCompile(address, currentReceipt)
+          return localCache[address]
         } catch (e) {
           // debuggerModule.showMessage('Debugging error', 'Unable to fetch a transaction.')
           console.error(e)
@@ -282,7 +299,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     })
 
     setTimeout(async() => {
-      debuggerModule.onStartDebugging()
+      debuggerModule.onStartDebugging(debuggerInstance)
       try {
         await debuggerInstance.debug(blockNumber, txNumber, tx, () => {
           listenToEvents(debuggerInstance, currentReceipt)
@@ -312,6 +329,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       }
     }, 300)
     handleResize()
+
+    return debuggerInstance
   }
 
   const debug = (txHash, web3?) => {
@@ -323,7 +342,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         sourceLocationStatus: ''
       }
     })
-    startDebugging(null, txHash, null, web3)
+    return startDebugging(null, txHash, null, web3)
   }
 
   const stepManager = {
@@ -345,18 +364,29 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     triggerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.trigger.bind(state.debugger.vmDebuggerLogic.event) : null
   }
 
+  const customJSX = (
+    <span className="p-0 m-0">
+              <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={({ target: { checked } }) => {
+              setState(prevState => {
+                return { ...prevState, opt: { ...prevState.opt, debugWithGeneratedSources: checked } }
+              })
+            }} type="checkbox" />
+            <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Use generated sources (Solidity {'>='} v0.7.2)</label>
+            </span>
+  )
   return (
     <div>
       <Toaster message={state.toastMessage} />
       <div className="px-2" ref={debuggerTopRef}>
         <div>
           <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
-            <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={({ target: { checked } }) => {
-              setState(prevState => {
-                return { ...prevState, opt: { ...prevState.opt, debugWithGeneratedSources: checked } }
-              })
-            }} type="checkbox" title="Debug with generated sources" />
-            <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Use generated sources (Solidity {'>='} v0.7.2)</label>
+          <CustomTooltip
+            tooltipId="debuggerGenSourceCheckbox"
+            tooltipText={"Debug with generated sources"}
+            placement="top-start"
+          >
+            {customJSX}
+          </CustomTooltip>
           </div>
           { state.isLocalNodeUsed && <div className="mb-2 debuggerConfig custom-control custom-checkbox">
             <input className="custom-control-input" id="debugWithLocalNodeInput" onChange={({ target: { checked } }) => {
@@ -371,20 +401,18 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         </div>
         <TxBrowser requestDebug={ requestDebug } unloadRequested={ unloadRequested } updateTxNumberFlag={ updateTxNumberFlag } transactionNumber={ state.txNumber } debugging={ state.debugging } />
         { state.debugging && state.sourceLocationStatus && <div className="text-warning"><i className="fas fa-exclamation-triangle" aria-hidden="true"></i> {state.sourceLocationStatus}</div> }
-        { !state.debugging && 
+        { !state.debugging &&
         <div>
           <i className="fas fa-info-triangle" aria-hidden="true"></i>
           <span>
-            When Debugging with a transaction hash, 
-            if the contract is verified, Remix will try to fetch the source code from Sourcify or Etherscan. Put in your Etherscan API key in the Remix settings.
-            For supported networks, please see: <a href="https://sourcify.dev" target="__blank" >https://sourcify.dev</a> & <a href="https://sourcify.dev" target="__blank">https://etherscan.io/contractsVerified</a>
+            <FormattedMessage id='debugger.introduction' />: <a href="https://sourcify.dev" target="__blank" >https://sourcify.dev</a> & <a href="https://etherscan.io/contractsVerified" target="__blank">https://etherscan.io/contractsVerified</a>
           </span>
         </div> }
         { state.debugging && <StepManager stepManager={ stepManager } /> }
       </div>
       <div className="debuggerPanels" ref={panelsRef}>
-        { state.debugging && <VmDebuggerHead vmDebugger={ vmDebugger } /> }
-        { state.debugging && <VmDebugger vmDebugger={ vmDebugger } currentBlock={ state.currentBlock } currentReceipt={ state.currentReceipt } currentTransaction={ state.currentTransaction } /> }
+        { state.debugging && <VmDebuggerHead debugging={state.debugging} vmDebugger={ vmDebugger } /> }
+        { state.debugging && <VmDebugger debugging={state.debugging} vmDebugger={ vmDebugger } currentBlock={ state.currentBlock } currentReceipt={ state.currentReceipt } currentTransaction={ state.currentTransaction } /> }
       </div>
     </div>
   )

@@ -17,12 +17,12 @@ export type MenuItems = action[]
 export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721'
 export interface WorkspaceProps {
   plugin: {
-    setWorkspace: ({ name: string, isLocalhost: boolean }, setEvent: boolean) => void,
+    setWorkspace: ({ name, isLocalhost }, setEvent: boolean) => void,
     createWorkspace: (name: string, workspaceTemplateName: string) => void,
     renameWorkspace: (oldName: string, newName: string) => void
-    workspaceRenamed: ({ name: string }) => void,
-    workspaceCreated: ({ name: string }) => void,
-    workspaceDeleted: ({ name: string }) => void,
+    workspaceRenamed: ({ name }) => void,
+    workspaceCreated: ({ name }) => void,
+    workspaceDeleted: ({ name }) => void,
     workspace: any // workspace provider,
     browser: any // browser provider
     localhost: any // localhost provider
@@ -77,6 +77,8 @@ export interface FileExplorerProps {
     fileState: fileDecoration[],
     expandPath: string[],
     focusEdit: string,
+    hideIconsMenu: React.Dispatch<React.SetStateAction<boolean>>,
+    showIconsMenu: boolean,
     focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[],
     dispatchCreateNewFile: (path: string, rootDir: string) => Promise<void>,
     // eslint-disable-next-line no-undef
@@ -101,7 +103,7 @@ export interface FileExplorerProps {
     dispatchMoveFile: (src: string, dest: string) => Promise<void>,
     dispatchMoveFolder: (src: string, dest: string) => Promise<void>
 }
-
+type Placement = import('react-overlays/usePopper').Placement
 export interface FileExplorerMenuProps {
     title: string,
     menuItems: string[],
@@ -109,6 +111,7 @@ export interface FileExplorerMenuProps {
     createNewFolder: (parentFolder?: string) => void,
     publishToGist: (path?: string) => void,
     uploadFile: (target: EventTarget & HTMLInputElement) => void
+    tooltipPlacement?: Placement
 }
 export interface FileExplorerContextMenuProps {
     actions: action[],
@@ -131,6 +134,8 @@ export interface FileExplorerContextMenuProps {
     onMouseOver?: (...args) => void,
     copy?: (path: string, type: string) => void,
     paste?: (destination: string, type: string) => void
+    copyFileName?: (path: string, type: string) => void
+    copyPath?: (path: string, type: string) => void
 }
 
 export interface FileExplorerState {

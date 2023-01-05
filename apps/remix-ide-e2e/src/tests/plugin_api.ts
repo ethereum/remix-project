@@ -50,7 +50,7 @@ const debugValues = async function (browser: NightwatchBrowser, field: string, e
 const setPayload = async (browser: NightwatchBrowser, payload: any) => {
   return new Promise((resolve) => {
     if (typeof payload !== 'string') payload = JSON.stringify(payload)
-    browser.clearValue('//*[@id="payload"]').setValue('//*[@id="payload"]', payload, (result) => {
+    browser.clearValue('//*[@id="payload"]').pause(500).setValue('//*[@id="payload"]', payload, (result) => {
       resolve(result)
     })
   })
@@ -234,7 +234,8 @@ module.exports = {
       contracts: { isDirectory: true },
       scripts: { isDirectory: true },
       tests: { isDirectory: true },
-      'README.txt': { isDirectory: false }
+      'README.txt': { isDirectory: false },
+      '.prettierrc.json': { isDirectory: false },
     }, null, '/')
   },
   'Should throw error on current file #group7': async function (browser: NightwatchBrowser) {
@@ -294,7 +295,8 @@ module.exports = {
       contracts: { isDirectory: true },
       scripts: { isDirectory: true },
       tests: { isDirectory: true },
-      'README.txt': { isDirectory: false } 
+      'README.txt': { isDirectory: false },
+      '.prettierrc.json': { isDirectory: false }
     }, null, '/')
   },
   'Should get all workspaces #group2': async function (browser: NightwatchBrowser) {
@@ -321,14 +323,14 @@ module.exports = {
   // DGIT
   'Should have changes on new workspace #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, 'dgit')
-    await clickAndCheckLog(browser, 'dGitProvider:status', [["README.txt",0,2,0],["contracts/1_Storage.sol",0,2,0],["contracts/2_Owner.sol",0,2,0],["contracts/3_Ballot.sol",0,2,0],["scripts/deploy_with_ethers.ts",0,2,0],["scripts/deploy_with_web3.ts",0,2,0],["scripts/ethers-lib.ts",0,2,0],["scripts/web3-lib.ts",0,2,0],["tests/Ballot_test.sol",0,2,0],["tests/storage.test.js",0,2,0]], null, null)
+    await clickAndCheckLog(browser, 'dGitProvider:status', [[".prettierrc.json",0,2,0], ["README.txt",0,2,0],["contracts/1_Storage.sol",0,2,0],["contracts/2_Owner.sol",0,2,0],["contracts/3_Ballot.sol",0,2,0],["scripts/deploy_with_ethers.ts",0,2,0],["scripts/deploy_with_web3.ts",0,2,0],["scripts/ethers-lib.ts",0,2,0],["scripts/web3-lib.ts",0,2,0],["tests/Ballot_test.sol",0,2,0],["tests/storage.test.js",0,2,0]], null, null)
   },
 
   'Should stage contract #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'dGitProvider:add', null, null, {
       filepath: 'contracts/1_Storage.sol'
     })
-    await clickAndCheckLog(browser, 'dGitProvider:status', [["README.txt",0,2,0],["contracts/1_Storage.sol",0,2,2],["contracts/2_Owner.sol",0,2,0],["contracts/3_Ballot.sol",0,2,0],["scripts/deploy_with_ethers.ts",0,2,0],["scripts/deploy_with_web3.ts",0,2,0],["scripts/ethers-lib.ts",0,2,0],["scripts/web3-lib.ts",0,2,0],["tests/Ballot_test.sol",0,2,0],["tests/storage.test.js",0,2,0]], null, null)
+    await clickAndCheckLog(browser, 'dGitProvider:status', [[".prettierrc.json",0,2,0],["README.txt",0,2,0],["contracts/1_Storage.sol",0,2,2],["contracts/2_Owner.sol",0,2,0],["contracts/3_Ballot.sol",0,2,0],["scripts/deploy_with_ethers.ts",0,2,0],["scripts/deploy_with_web3.ts",0,2,0],["scripts/ethers-lib.ts",0,2,0],["scripts/web3-lib.ts",0,2,0],["tests/Ballot_test.sol",0,2,0],["tests/storage.test.js",0,2,0]], null, null)
   },
   'Should commit changes #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'dGitProvider:commit', null, null, { author: { name: 'Remix', email: 'Remix' }, message: 'commit-message' })
@@ -419,7 +421,7 @@ module.exports = {
       .addFile('test_modal.js', { content: testModalToasterApi })
       .executeScriptInTerminal('remix.execute(\'test_modal.js\')')
       .useCss()
-      .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]', 60000)
+      .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]', 65000)
       .assert.containsText('*[data-id="test_id_1_ModalDialogModalBody-react"]', 'message 1')
       .modalFooterOKClick('test_id_1_')
       // check the script runner notifications

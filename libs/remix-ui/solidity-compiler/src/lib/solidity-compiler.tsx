@@ -26,9 +26,9 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       title: '',
       message: null,
       okLabel: '',
-      okFn: () => {},
+      okFn: () => { },
       cancelLabel: '',
-      cancelFn: () => {},
+      cancelFn: () => { },
       handleHide: null
     }
   })
@@ -71,10 +71,10 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     const isTruffle = isLocalhost && await compileTabLogic.isTruffleProject()
     const isFoundry = isLocalhost && await compileTabLogic.isFoundryProject()
     setState(prevState => {
-      return { ...prevState, currentFile, isHardhatProject: isHardhat, workspaceName: workspaceName, isTruffleProject:  isTruffle, isFoundryProject: isFoundry }
+      return { ...prevState, currentFile, isHardhatProject: isHardhat, workspaceName: workspaceName, isTruffleProject: isTruffle, isFoundryProject: isFoundry }
     })
   }
-  
+
   api.onFileRemoved = (path: string) => {
     if (path === state.configFilePath)
       setState(prevState => {
@@ -89,16 +89,16 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     setCompileErrors({} as Record<string, CompileErrors>)
   }
 
-  api.onCompilationFinished = (compilationDetails: { contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any>, target?: string }) => {
-    const { contractMap, contractsDetails, target } = compilationDetails
+  api.onCompilationFinished = (compilationDetails: { contractMap: { file: string } | Record<string, any>, contractsDetails: Record<string, any>, target?: string, input?: Record<string, any>}) => {
+    const { contractMap, contractsDetails, target, input } = compilationDetails
     const contractList = contractMap ? Object.keys(contractMap).map((key) => {
       return {
         name: key,
         file: getFileName(contractMap[key].file)
-        }
+      }
     }) : []
 
-    setContractsFile({ ...contractsFile, [target]: { contractList, contractsDetails } })
+    setContractsFile({ ...contractsFile, [target]: { contractList, contractsDetails, input } })
     setCompileErrors({ ...compileErrors, [currentFile]: api.compileErrors })
   }
 
@@ -159,8 +159,8 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     <div>
       <i className="fas fa-exclamation-circle remixui_panicError" aria-hidden="true"></i>
       The compiler returned with the following internal error: <br /> <b>{message}.<br />
-      The compiler might be in a non-sane state, please be careful and do not use further compilation data to deploy to mainnet.
-      It is heavily recommended to use another browser not affected by this issue (Firefox is known to not be affected).</b><br />
+        The compiler might be in a non-sane state, please be careful and do not use further compilation data to deploy to mainnet.
+        It is heavily recommended to use another browser not affected by this issue (Firefox is known to not be affected).</b><br />
       Please join <a href="https://gitter.im/ethereum/remix" target="blank" >remix gitter channel</a> for more information.
     </div>
   )
@@ -183,36 +183,39 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
           configFilePath={state.configFilePath}
           setConfigFilePath={setConfigFilePath}
         />
-        { contractsFile[currentFile] && contractsFile[currentFile].contractsDetails && <ContractSelection api={api} compiledFileName={currentFile} contractsDetails={contractsFile[currentFile].contractsDetails} contractList={contractsFile[currentFile].contractList} modal={modal} /> }
-        { compileErrors[currentFile] &&
+
+        {contractsFile[currentFile] && contractsFile[currentFile].contractsDetails && <ContractSelection api={api} compiledFileName={currentFile} contractsDetails={contractsFile[currentFile].contractsDetails} contractList={contractsFile[currentFile].contractList} compilerInput={contractsFile[currentFile].input} modal={modal} />}
+        {compileErrors[currentFile] &&
           <div className="remixui_errorBlobs p-4" data-id="compiledErrors">
-            <span data-id={`compilationFinishedWith_${currentVersion}`}></span>
-            { compileErrors[currentFile].error && <Renderer message={compileErrors[currentFile].error.formattedMessage || compileErrors[currentFile].error} plugin={api} opt={{ type: compileErrors[currentFile].error.severity || 'error', errorType: compileErrors[currentFile].error.type }} /> }
-            { compileErrors[currentFile].error && (compileErrors[currentFile].error.mode === 'panic') && modal('Error', panicMessage(compileErrors[currentFile].error.formattedMessage), 'Close', null) }
-            { compileErrors[currentFile].errors && compileErrors[currentFile].errors.length && compileErrors[currentFile].errors.map((err, index) => {
-              if (hideWarnings) {
-                if (err.severity !== 'warning') {
+            <>
+              <span data-id={`compilationFinishedWith_${currentVersion}`}></span>
+              {compileErrors[currentFile].error && <Renderer message={compileErrors[currentFile].error.formattedMessage || compileErrors[currentFile].error} plugin={api} opt={{ type: compileErrors[currentFile].error.severity || 'error', errorType: compileErrors[currentFile].error.type }} />}
+              {compileErrors[currentFile].error && (compileErrors[currentFile].error.mode === 'panic') && modal('Error', panicMessage(compileErrors[currentFile].error.formattedMessage), 'Close', null)}
+              {compileErrors[currentFile].errors && compileErrors[currentFile].errors.length && compileErrors[currentFile].errors.map((err, index) => {
+                if (hideWarnings) {
+                  if (err.severity !== 'warning') {
+                    return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{ type: err.severity, errorType: err.type }} />
+                  }
+                } else {
                   return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{ type: err.severity, errorType: err.type }} />
                 }
-              } else {
-                return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{ type: err.severity, errorType: err.type }} />
-              }
-            }) }
+              })}
+            </>
           </div>
         }
       </div>
       <Toaster message={state.toasterMsg} />
       <ModalDialog
         id='workspacesModalDialog'
-        title={ state.modal.title }
-        message={ state.modal.message }
-        hide={ state.modal.hide }
-        okLabel={ state.modal.okLabel }
-        okFn={ state.modal.okFn }
-        cancelLabel={ state.modal.cancelLabel }
-        cancelFn={ state.modal.cancelFn }
-        handleHide={ handleHideModal }>
-        { (typeof state.modal.message !== 'string') && state.modal.message }
+        title={state.modal.title}
+        message={state.modal.message}
+        hide={state.modal.hide}
+        okLabel={state.modal.okLabel}
+        okFn={state.modal.okFn}
+        cancelLabel={state.modal.cancelLabel}
+        cancelFn={state.modal.cancelFn}
+        handleHide={handleHideModal}>
+        {(typeof state.modal.message !== 'string') && state.modal.message}
       </ModalDialog>
     </>
   )

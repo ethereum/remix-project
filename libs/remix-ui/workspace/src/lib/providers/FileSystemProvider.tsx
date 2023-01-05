@@ -7,7 +7,9 @@ import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
 import { initWorkspace, fetchDirectory, removeInputField, deleteWorkspace, clearPopUp, publishToGist, createNewFile, setFocusElement, createNewFolder,
   deletePath, renamePath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath, addInputField, createWorkspace,
-  fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, handleDownloadFiles, restoreBackupZip, cloneRepository, moveFile, moveFolder } from '../actions'
+  fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, handleDownloadFiles, restoreBackupZip, cloneRepository, moveFile, moveFolder,
+  showAllBranches, switchBranch, createNewBranch, checkoutRemoteBranch, createSolidityGithubAction
+} from '../actions'
 import { Modal, WorkspaceProps, WorkspaceTemplate } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Workspace } from '../remix-ui-workspace'
@@ -136,6 +138,26 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   const dispatchMoveFolder = async (src: string, dest: string) => {
     await moveFolder(src, dest)
   }
+  
+  const dispatchShowAllBranches = async () => {
+    await showAllBranches()
+  }
+
+  const dispatchSwitchToBranch = async (branch: string) => {
+    await switchBranch(branch)
+  }
+
+  const dispatchCreateNewBranch = async (branch: string) => {
+    await createNewBranch(branch)
+  }
+
+  const dispatchCheckoutRemoteBranch = async (branch: string, remote: string) => {
+    await checkoutRemoteBranch(branch, remote)
+  }
+
+  const dispatchCreateSolidityGithubAction = async () => {
+    await createSolidityGithubAction()
+  }
 
   useEffect(() => {
     dispatchInitWorkspace()
@@ -241,7 +263,12 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchHandleRestoreBackup,
     dispatchCloneRepository,
     dispatchMoveFile,
-    dispatchMoveFolder
+    dispatchMoveFolder,
+    dispatchShowAllBranches,
+    dispatchSwitchToBranch,
+    dispatchCreateNewBranch,
+    dispatchCheckoutRemoteBranch,
+    dispatchCreateSolidityGithubAction
   }
   return (
     <FileSystemContext.Provider value={value}>

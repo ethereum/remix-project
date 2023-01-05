@@ -11,7 +11,7 @@ import InjectedProvider from './providers/injected.js'
 import NodeProvider from './providers/node.js'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
 import { etherScanLink } from './helper'
-import { logBuilder, cancelUpgradeMsg, cancelProxyMsg } from "@remix-ui/helper"
+import { logBuilder, cancelUpgradeMsg, cancelProxyMsg, addressToString } from "@remix-ui/helper"
 const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
 const { txResultHelper: resultToRemixTx } = helpers
 const packageJson = require('../../../../package.json')
@@ -22,7 +22,7 @@ const profile = {
   name: 'blockchain',
   displayName: 'Blockchain',
   description: 'Blockchain - Logic',
-  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider'],
+  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'web3VM'],
   version: packageJson.version
 }
 
@@ -170,7 +170,7 @@ export class Blockchain extends Plugin {
     }
     const continueCb = (error, continueTxExecution, cancelCb) => { continueTxExecution() }
     const promptCb = (okCb, cancelCb) => { okCb() }
-    const finalCb = (error, txResult, address, returnValue) => {
+    const finalCb = async (error, txResult, address, returnValue) => {
       if (error) {
         const log = logBuilder(error)
   
@@ -179,8 +179,9 @@ export class Blockchain extends Plugin {
       }
       if (networkInfo.name === 'VM') this.config.set('vm/proxy', address)
       else this.config.set(`${networkInfo.name}/${networkInfo.currentFork}/${networkInfo.id}/proxy`, address)
+      await this.saveDeployedContractStorageLayout(implementationContractObject, address, networkInfo)
       _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment successful'])
-      return this.call('udapp', 'resolveContractAndAddInstance', implementationContractObject, address)
+      this.call('udapp', 'addInstance', addressToString(address), implementationContractObject.abi, implementationContractObject.name)
     }
 
     this.runTx(args, confirmationCb, continueCb, promptCb, finalCb)
@@ -209,23 +210,59 @@ export class Blockchain extends Plugin {
 
   async runUpgradeTx (proxyAddress, data, newImplementationContractObject) {
     const args = { useCall: false, data, to: proxyAddress }
+    let networkInfo
     const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       // continue using original authorization given by user
+      networkInfo = network
       continueTxExecution(null)
     }
     const continueCb = (error, continueTxExecution, cancelCb) => { continueTxExecution() }
     const promptCb = (okCb, cancelCb) => { okCb() }
-    const finalCb = (error, txResult, address, returnValue) => {
+    const finalCb = async (error, txResult, address, returnValue) => {
       if (error) {
         const log = logBuilder(error)
 
         _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'Upgrade failed'])
         return this.call('terminal', 'logHtml', log)
       }
+      await this.saveDeployedContractStorageLayout(newImplementationContractObject, proxyAddress, networkInfo)
       _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'Upgrade Successful'])
-      return this.call('udapp', 'resolveContractAndAddInstance', newImplementationContractObject, proxyAddress)
+      this.call('udapp', 'addInstance', addressToString(proxyAddress), newImplementationContractObject.abi, newImplementationContractObject.name)
     }
     this.runTx(args, confirmationCb, continueCb, promptCb, finalCb)
+  }
+
+  async saveDeployedContractStorageLayout (contractObject, proxyAddress, networkInfo) {
+      const { contractName, implementationAddress, contract } = contractObject
+      const hasPreviousDeploys = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`)
+      // TODO: make deploys folder read only.
+      if (hasPreviousDeploys) {
+        const deployments = await this.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`)
+        const parsedDeployments = JSON.parse(deployments)
+
+        parsedDeployments.deployments[proxyAddress] = {
+          date: new Date().toISOString(),
+          contractName: contractName,
+          fork: networkInfo.currentFork,
+          implementationAddress: implementationAddress,
+          layout: contract.object.storageLayout
+        }
+        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`, JSON.stringify(parsedDeployments, null, 2))
+      } else {
+        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`, JSON.stringify({
+          id: networkInfo.id,
+          network: networkInfo.name,
+          deployments: {
+            [proxyAddress]: {
+              date: new Date().toISOString(),
+              contractName: contractName,
+              fork: networkInfo.currentFork,
+              implementationAddress: implementationAddress,
+              layout: contract.object.storageLayout
+            }
+          }
+        }, null, 2))
+      }
   }
 
   async getEncodedFunctionHex (args, funABI) {
@@ -258,7 +295,7 @@ export class Blockchain extends Plugin {
         if (error) {
           return finalCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
         }
-        if (txResult.receipt.status === false || txResult.receipt.status === '0x0') {
+        if (txResult.receipt.status === false || txResult.receipt.status === '0x0' || txResult.receipt.status === 0) {
           return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
         }
         finalCb(null, selectedContract, address)
@@ -362,6 +399,10 @@ export class Blockchain extends Plugin {
 
   signMessage (message, account, passphrase, cb) {
     this.getCurrentProvider().signMessage(message, account, passphrase, cb)
+  }
+
+  web3VM () {
+    return this.providers.vm.web3
   }
 
   web3 () {
@@ -674,27 +715,29 @@ export class Blockchain extends Plugin {
         const hhlogs = await this.web3().eth.getHHLogsForTx(txResult.transactionHash)
 
         if (hhlogs && hhlogs.length) {
-          let finalLogs = '<b>console.log:</b>\n'
-          for (const log of hhlogs) {
-            let formattedLog
-            // Hardhat implements the same formatting options that can be found in Node.js' console.log,
-            // which in turn uses util.format: https://nodejs.org/dist/latest-v12.x/docs/api/util.html#util_util_format_format_args
-            // For example: console.log("Name: %s, Age: %d", remix, 6) will log 'Name: remix, Age: 6'
-            // We check first arg to determine if 'util.format' is needed
-            if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
-              formattedLog = format(log[0], ...log.slice(1))
-            } else {
-              formattedLog = log.join(' ')
-            }
-            finalLogs = finalLogs + '&emsp;' + formattedLog + '\n'
-          }
+          let finalLogs = <div><div><b>console.log:</b></div>
+          {
+            hhlogs.map((log) => {
+              let formattedLog
+              // Hardhat implements the same formatting options that can be found in Node.js' console.log,
+              // which in turn uses util.format: https://nodejs.org/dist/latest-v12.x/docs/api/util.html#util_util_format_format_args
+              // For example: console.log("Name: %s, Age: %d", remix, 6) will log 'Name: remix, Age: 6'
+              // We check first arg to determine if 'util.format' is needed
+              if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
+                formattedLog = format(log[0], ...log.slice(1))
+              } else {
+                formattedLog = log.join(' ')
+              }
+              return <div>{formattedLog}</div>
+          })}
+          </div>          
           _paq.push(['trackEvent', 'udapp', 'hardhat', 'console.log'])
-          this.call('terminal', 'log', { type: 'info', value: finalLogs })
+          this.call('terminal', 'logHtml', finalLogs)
         }
         execResult = await this.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
-          returnValue = execResult ? execResult.returnValue : toBuffer(addHexPrefix(txResult.result) || '0x0000000000000000000000000000000000000000000000000000000000000000')
+          returnValue = execResult ? toBuffer(execResult.returnValue) : toBuffer(addHexPrefix(txResult.result) || '0x0000000000000000000000000000000000000000000000000000000000000000')
           const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
           const vmError = txExecution.checkVMError(execResult, compiledContracts)
           if (vmError.error) {

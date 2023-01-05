@@ -241,9 +241,7 @@ function getStructMembers (type, stateDefinitions, contractName, location) {
   if (type.indexOf('.') === -1) {
     type = contractName + '.' + type
   }
-  if (!contractName) {
-    contractName = type.split('.')[0]
-  }
+  contractName = type.split('.')[0]
   const state = stateDefinitions[contractName]
   if (state) {
     for (const dec of state.stateDefinitions) {
@@ -356,7 +354,8 @@ function computeOffsets (types, stateDefinitions, contractName, location) {
       storagelocation: {
         offset: !hasStorageSlots ? 0 : storagelocation.offset,
         slot: !hasStorageSlots ? 0 : storagelocation.slot
-      }
+      },
+      variable
     })
     if (hasStorageSlots) {
       if (type.storageSlots === 1 && storagelocation.offset + type.storageBytes <= 32) {

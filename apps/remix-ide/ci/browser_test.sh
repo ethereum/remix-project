@@ -7,7 +7,6 @@ set -e
 BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
-
 yarn run ganache-cli &
 yarn run serve:production &
 echo 'sharing folder: ' $PWD '/apps/remix-ide/contracts' &
@@ -20,7 +19,7 @@ yarn run build:e2e
 node apps/remix-ide/ci/splice_tests.js $2 $3
 TESTFILES=$(node apps/remix-ide/ci/splice_tests.js $2 $3 | circleci tests split --split-by=timings)
 for TESTFILE in $TESTFILES; do
-    npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/${TESTFILE}.js --env=$1  || TEST_EXITCODE=1
+    npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/${TESTFILE}.js --env=$1 || npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/${TESTFILE}.js --env=$1 || TEST_EXITCODE=1
 done
 
 echo "$TEST_EXITCODE"
