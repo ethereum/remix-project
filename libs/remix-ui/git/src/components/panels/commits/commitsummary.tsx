@@ -1,7 +1,6 @@
 import { ReadCommitResult } from "isomorphic-git"
 import { default as dateFormat } from "dateformat";
 import React from "react";
-import { Col, Row } from "react-bootstrap";
 
 export interface CommitSummaryProps {
   commit: ReadCommitResult;
@@ -41,16 +40,14 @@ export const CommitSummary = (props: CommitSummaryProps) => {
 
   return (
     <>
-      {commit.commit.message}
-      <br></br>
-      <div>
-        <span className="text-muted pl-1">
-          {commit.commit.author.name || ""}
-        </span>
-        <span className="text-muted pl-1">
-          {getDate(commit)}
-        </span>
+      <div className="long-and-truncated ml-2">
+        {commit.commit.message}
       </div>
+      {commit.commit.author.name || ""}
+      <span className="ml-1">{getDate(commit)}</span>
+
+
+
     </>
   )
 }

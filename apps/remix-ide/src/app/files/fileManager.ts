@@ -4,7 +4,9 @@ import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
 import { EventEmitter } from 'events'
 import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from '@remix-ui/helper'
+import { commitChange } from '@remix-ui/git'
 import helper from '../../lib/helper.js'
+import { Editor } from '../editor/editor'
 
 /*
   attach to files event (removed renamed)
@@ -20,7 +22,7 @@ const profile = {
   version: packageJson.version,
   methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir',
     'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh',
-    'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles', 'isGitRepo'],
+    'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'diff'],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -38,7 +40,7 @@ class FileManager extends Plugin {
   mode: string
   openedFiles: any
   events: EventEmitter
-  editor: any
+  editor: Editor
   _components: any
   appManager: any
   _deps: any
@@ -610,6 +612,17 @@ class FileManager extends Plugin {
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('noFileSelected')
     this.events.emit('noFileSelected')
+  }
+
+  async diff(change: commitChange) {
+    if(change.readonly){
+      console.log('diff readonly', change)
+      await this.saveCurrentFile()
+      const file = `${this.normalize(change.path)}${change.hashModified}`
+      await this.editor.openReadOnly(file, change.modified)
+      this.emit('currentFileChanged', file)
+      this.events.emit('currentFileChanged', file)
+    }
   }
 
   async openFile(file?: string) {

@@ -67,6 +67,7 @@ export interface EditorUIProps {
   activated: boolean
   themeType: string
   currentFile: string
+  isDiff: boolean
   events: {
     onBreakPointAdded: (file: string, line: number) => void
     onBreakPointCleared: (file: string, line: number) => void

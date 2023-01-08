@@ -1,7 +1,6 @@
 import { ReadCommitResult } from "isomorphic-git"
-import { default as dateFormat } from "dateformat";
 import React, { useEffect, useState } from "react";
-import { Accordion, Button, Card } from "react-bootstrap";
+import { Accordion } from "react-bootstrap";
 import { CommitDetailsNavigation } from "../../navigation/commitdetails";
 import { gitActionsContext } from "../../../state/context";
 import { gitPluginContext } from "../../gitui";
@@ -36,7 +35,7 @@ export const CommitDetails = (props: CommitDetailsProps) => {
     <Accordion.Collapse eventKey="0">
       <>
         {context.commitChanges && context.commitChanges.filter(
-          (change) => change.hash1 === commit.oid && change.hash2 === commit.commit.parent[0]
+          (change) => change.hashModified === commit.oid && change.hashOriginal === commit.commit.parent[0]
         ).map((change, index) => {
           return(<CommitDetailsItems commitChange={change}></CommitDetailsItems>)
         })}

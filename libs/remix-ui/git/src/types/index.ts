@@ -16,7 +16,7 @@ export type gitState = {
     untracked: any[]
     deleted: any[]
     modified: any[]
-    allchangesnotstaged: any[],
+    allchangesnotstaged: fileStatusResult[],
     repositories: repository[]
     remoteBranches: remoteBranch[]
     commitChanges: commitChange[]
@@ -34,8 +34,11 @@ export type commitChangeType = keyof commitChangeTypes
 export type commitChange = {
     type: commitChangeType
     path: string,
-    hash1 : string,
-    hash2 : string,
+    hashModified : string,
+    hashOriginal : string,
+    original?: string,
+    modified?: string,
+    readonly?: boolean
 }
 
 export type repository = {

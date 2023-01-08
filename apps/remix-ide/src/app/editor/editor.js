@@ -13,10 +13,10 @@ const profile = {
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel','addErrorMarker', 'clearErrorMarkers'],
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'openReadOnly', 'addModel','addErrorMarker', 'clearErrorMarkers'],
 }
 
-class Editor extends Plugin {
+export class Editor extends Plugin {
   constructor () {
     super(profile)
 
@@ -239,7 +239,8 @@ class Editor extends Plugin {
    * @param {string} content Content of the file to open
    * @param {string} mode Mode for this file [Default is `text`]
    */
-  async _createSession (path, content, mode) {
+  async _createSession (path, content, mode, diff) {
+    console.log('createSession', path, content, mode, diff)
     if (!this.activated) return
     
     this.emit('addModel', content, mode, path, this.readOnlySessions[path])
@@ -294,7 +295,7 @@ class Editor extends Plugin {
    * @param {string} path Path of the session to open.
    * @param {string} content Content of the document or update.
    */
-  async open (path, content) {
+  async open (path, content, diff = null) {
     /*
       we have the following cases:
        - URL prepended with "localhost"
@@ -303,7 +304,7 @@ class Editor extends Plugin {
     */
     if (!this.sessions[path]) {
       this.readOnlySessions[path] = false
-      const session = await this._createSession(path, content, this._getMode(path))
+      const session = await this._createSession(path, content, this._getMode(path), diff)
       this.sessions[path] = session
     } else if (this.sessions[path].getValue() !== content) {
       this.sessions[path].setValue(content)
@@ -317,6 +318,7 @@ class Editor extends Plugin {
    * @param {string} content Content of the document or update.
    */
   async openReadOnly (path, content) {
+    console.log('openReadOnly', path, content)
     if (!this.sessions[path]) {
       this.readOnlySessions[path] = true
       const session = await this._createSession(path, content, this._getMode(path))

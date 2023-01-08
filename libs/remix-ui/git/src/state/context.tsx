@@ -16,6 +16,8 @@ export interface gitActions  {
     createBranch(branch: string): Promise<void>
     remoteBranches(owner: string, repo: string): Promise<any>
     getCommitChanges(oid1: string, oid2: string): Promise<commitChange[]>
+    diff(commitChange: commitChange): Promise<void>
+    resolveRef(ref: string): Promise<string>
 }
 
 export const gitActionsContext = React.createContext<gitActions>(null)
@@ -23,6 +25,8 @@ export const gitActionsContext = React.createContext<gitActions>(null)
 export interface pluginActions {
     statusChanged(data: any): void
     loadFiles(): void
+    openFile(path: string): Promise<void>
+    openDiff(change: commitChange): Promise<void>
 }
 
 export const pluginActionsContext = React.createContext<pluginActions>(null)

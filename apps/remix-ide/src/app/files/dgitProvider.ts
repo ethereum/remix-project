@@ -3,7 +3,7 @@
 import {
   Plugin
 } from '@remixproject/engine'
-import git from 'isomorphic-git'
+import git, { ReadBlobResult } from 'isomorphic-git'
 import IpfsHttpClient from 'ipfs-http-client'
 import {
   saveAs
@@ -168,8 +168,8 @@ class DGitProvider extends Plugin {
         const Boid = B && await B.oid() || undefined
 
         const commitChange: Partial<commitChange> = {
-          hash1: commitHash1,
-          hash2: commitHash2,
+          hashModified: commitHash1,
+          hashOriginal: commitHash2,
           path: filepath,
         }
 
@@ -281,7 +281,7 @@ class DGitProvider extends Plugin {
   }
 
   async readblob(cmd) {
-    const readBlobResult = await git.readBlob({
+    const readBlobResult: ReadBlobResult = await git.readBlob({
       ...await this.getGitConfig(),
       ...cmd
     })

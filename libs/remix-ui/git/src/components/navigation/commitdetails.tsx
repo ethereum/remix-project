@@ -15,14 +15,12 @@ export const CommitDetailsNavigation = ({ eventKey, activePanel, callback, commi
     }
     return (
         <>
-            <div className='d-flex justify-content-between'>
-                <span onClick={() => handleClick()} role={'button'} className='nav d-flex justify-content-start align-items-center w-75'>
-                    {
-                        activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
-                    }
+            <div onClick={() => handleClick()} role={'button'} className='pointer mb-2 mt-2 w-100 d-flex flex-row commit-navigation'>
+                {
+                    activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
+                }
 
-                    <CommitSummary commit={commit} checkout={checkout}></CommitSummary>
-                </span>
+                <CommitSummary commit={commit} checkout={checkout}></CommitSummary>
             </div>
         </>
     );

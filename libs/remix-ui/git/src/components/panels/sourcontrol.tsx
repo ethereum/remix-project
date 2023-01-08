@@ -7,6 +7,7 @@ import { faUndo, faPlus, faMinus, faSync, faRefresh } from "@fortawesome/free-so
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import path from 'path'
+import { commitChange, fileStatusResult } from '../../types'
 
 export const SourceControl = () => {
     const context = React.useContext(gitPluginContext)
@@ -44,15 +45,25 @@ export const SourceControl = () => {
         </>)
     }
 
-    async function fileClick(file: any) {
+    async function fileClick(file: fileStatusResult) {
+        console.log(file)
         //let status = fileservice.getFileStatusForFile(file.filename || "");
-        //if (status && status.indexOf("modified") !== -1) {
-        //await client.call('manager', 'activatePlugin', 'gitdiff')
-        //await client.call('gitdiff' as any, 'diff', file.filename)
-        //await client.call('tabs' as any, 'focus', 'gitdiff')
-        //} else {
-        //await client.call('fileManager', 'open', file.filename)
-        // }
+        if (file.statusNames && file.statusNames.indexOf("modified") !== -1) {
+            const headHash = await actions.resolveRef("HEAD")
+            const change: commitChange = {
+                path: file.filename,
+                type: "modified",
+                hashOriginal: headHash,
+                hashModified: ''
+            }
+
+            await actions.diff(change)
+            console.log("diff", change)
+
+        } else {
+            await pluginactions.openFile(file.filename)
+            //await client.call('fileManager', 'open', file.filename)
+        }
     }
 
     function RenderFiles(ob: any) {
@@ -64,7 +75,7 @@ export const SourceControl = () => {
                         <div key={`h${index}`}>
                             <Row className='mb-1'>
                                 <Col className='col-8'>
-                                    <div className='pointer text-truncate' onClick={async () => fileClick(file)}>
+                                    <div className='pointer text-truncate' onClick={async () => await fileClick(file)}>
                                         <span data-id={`file${ob.Type}${path.basename(file.filename)}`} className='font-weight-bold'>{path.basename(file.filename)}</span>
                                         <div className='text-secondary'> {file.filename}</div>
                                     </div>

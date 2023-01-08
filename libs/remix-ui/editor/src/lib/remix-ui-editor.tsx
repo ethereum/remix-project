@@ -20,6 +20,7 @@ import { RemixHighLightProvider } from './providers/highlightProvider'
 import { RemixDefinitionProvider } from './providers/definitionProvider'
 import { convertToMonacoDecoration, defineAndSetTheme } from './utils'
 import { defaultEditorValue, EditorUIProps, errorMarker, sourceAnnotation, sourceMarker } from './types'
+import { EditorToolBar } from './components/editorToolBar'
 
 
 
@@ -31,6 +32,8 @@ loader.config({ paths: { vs: 'assets/js/monaco-editor/dev/vs' } })
 
 export const EditorUI = (props: EditorUIProps) => {
   const [, setCurrentBreakpoints] = useState({})
+  const [isDiff, setIsDiff] = useState(false)
+  const [isSplit, setIsSplit] = useState(true)
 
   const pasteCodeRef = useRef(false)
   props.editorAPI.editorRef = useRef<monaco.editor.IStandaloneCodeEditor>(null)
@@ -49,19 +52,19 @@ export const EditorUI = (props: EditorUIProps) => {
   })
 
   useEffect(() => {
-    if (!( props.editorAPI.editorRef.current ||  props.editorAPI.diffEditorRef.current)  || !props.currentFile) return
+    if (!(props.editorAPI.editorRef.current || props.editorAPI.diffEditorRef.current) || !props.currentFile) return
     currentFileRef.current = props.currentFile
     props.plugin.call('fileManager', 'getUrlFromPath', currentFileRef.current).then((url) => currentUrlRef.current = url.file)
 
     const file = editorModelsState[props.currentFile]
     console.log('file', file)
-    props.editorAPI.editorRef &&  props.editorAPI.editorRef.current &&  props.editorAPI.editorRef.current.setModel(file.model)
-    props.editorAPI.diffEditorRef &&  props.editorAPI.diffEditorRef.current &&  props.editorAPI.diffEditorRef.current.setModel({
+    props.editorAPI.editorRef && props.editorAPI.editorRef.current && props.editorAPI.editorRef.current.setModel(file.model)
+    props.editorAPI.diffEditorRef && props.editorAPI.diffEditorRef.current && props.editorAPI.diffEditorRef.current.setModel({
       original: file.model,
       modified: file.model
     })
     getEditor().updateOptions({ readOnly: editorModelsState[props.currentFile].readOnly })
-    
+
     if (file.language === 'sol') {
       props.editorAPI.monacoRef.current.editor.setModelLanguage(file.model, 'remix-solidity')
     } else if (file.language === 'cairo') {
@@ -74,8 +77,8 @@ export const EditorUI = (props: EditorUIProps) => {
   }, [props.currentFile])
 
   const getEditor = () => {
-    if(props.editorAPI.editorRef.current) return  props.editorAPI.editorRef.current
-    if(props.editorAPI.diffEditorRef.current) return  props.editorAPI.diffEditorRef.current.getModifiedEditor()
+    if (props.editorAPI.editorRef.current) return props.editorAPI.editorRef.current
+    if (props.editorAPI.diffEditorRef.current) return props.editorAPI.diffEditorRef.current.getModifiedEditor()
   }
 
   props.editorAPI.clearDecorationsByPlugin = (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => {
@@ -171,7 +174,7 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
-  props.editorAPI.clearErrorMarkers = async (sources: string[] | {[fileName: string]: any}, from: string) => {
+  props.editorAPI.clearErrorMarkers = async (sources: string[] | { [fileName: string]: any }, from: string) => {
     if (sources) {
       for (const source of (Array.isArray(sources) ? sources : Object.keys(sources))) {
         const filePath = source
@@ -184,25 +187,26 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   props.editorAPI.findMatches = (uri: string, value: string) => {
-    if (! getEditor()) return
+    if (!getEditor()) return
     const model = editorModelsState[uri]?.model
     if (model) return model.findMatches(value)
   }
 
   props.editorAPI.getValue = (uri: string) => {
-    if (! getEditor()) return
+    if (!getEditor()) return
+    console.log(editorModelsState)
     const model = editorModelsState[uri]?.model
     if (model) {
       return model.getValue()
     }
   }
 
-  props.editorAPI.getCursorPosition = (offset:boolean = true) => {
+  props.editorAPI.getCursorPosition = (offset: boolean = true) => {
 
     if (!props.editorAPI.monacoRef.current) return
     const model = editorModelsState[currentFileRef.current]?.model
     if (model) {
-      return offset? model.getOffsetAt(getEditor().getPosition()): getEditor().getPosition()
+      return offset ? model.getOffsetAt(getEditor().getPosition()) : getEditor().getPosition()
     }
   }
 
@@ -217,7 +221,7 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   props.editorAPI.getFontSize = () => {
-    if (! getEditor()) return
+    if (!getEditor()) return
     return getEditor().getOption(43).fontSize
   }
 
@@ -250,9 +254,9 @@ export const EditorUI = (props: EditorUIProps) => {
 
   function handleDiffEditorDidMount(editor: monaco.editor.IStandaloneDiffEditor) {
     console.log('diff editor mounted', editor)
-    props.editorAPI.diffEditorRef.current= editor
+    props.editorAPI.diffEditorRef.current = editor
     defineAndSetTheme(props.editorAPI.monacoRef, props.themeType)
-    reducerListener(props.plugin, dispatch, props.editorAPI.monacoRef.current,  props.editorAPI.diffEditorRef.current.getModifiedEditor(), props.events)
+    reducerListener(props.plugin, dispatch, props.editorAPI.monacoRef.current, props.editorAPI.diffEditorRef.current.getModifiedEditor(), props.events)
     props.events.onEditorMounted()
   }
 
@@ -260,19 +264,19 @@ export const EditorUI = (props: EditorUIProps) => {
     console.log('editor mounted', editor)
     props.editorAPI.editorRef.current = editor
     defineAndSetTheme(props.editorAPI.monacoRef, props.themeType)
-    reducerListener(props.plugin, dispatch, props.editorAPI.monacoRef.current,  props.editorAPI.editorRef.current, props.events)
+    reducerListener(props.plugin, dispatch, props.editorAPI.monacoRef.current, props.editorAPI.editorRef.current, props.events)
     props.events.onEditorMounted()
-    
-    
+
+
     editor.onMouseUp((e) => {
       if (e && e.target && e.target.toString().startsWith('GUTTER')) {
         (window as any).addRemixBreakpoint(e.target.position)
       }
     })
-    
-    
+
+
     editor.onDidPaste((e) => {
-       if (!pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
+      if (!pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
         const modalContent: AlertModal = {
           id: 'newCodePasted',
           title: 'Pasted Code Alert',
@@ -282,11 +286,11 @@ export const EditorUI = (props: EditorUIProps) => {
               <div>
                 Make sure you fully understand this code before deploying or interacting with it. Don't get scammed!
                 <div className='mt-2'>
-                Running untrusted code can put your wallet <span className='text-warning'> at risk </span>. In a worst-case scenario, you could <span className='text-warning'>lose all your money</span>.
+                  Running untrusted code can put your wallet <span className='text-warning'> at risk </span>. In a worst-case scenario, you could <span className='text-warning'>lose all your money</span>.
                 </div>
                 <div className='text-warning  mt-2'>If you don't fully understand it, please don't run this code.</div>
                 <div className='mt-2'>
-                If you are not a smart contract developer, ask someone you trust who has the skills to determine if this code is safe to use.
+                  If you are not a smart contract developer, ask someone you trust who has the skills to determine if this code is safe to use.
                 </div>
                 <div className='mt-2'>See <a target="_blank" href='https://remix-ide.readthedocs.io/en/latest/security.html'> these recommendations </a> for more information.</div>
               </div>
@@ -297,8 +301,8 @@ export const EditorUI = (props: EditorUIProps) => {
         pasteCodeRef.current = true
       }
     })
-    
-    
+
+
 
     // zoomin zoomout
     editor.addCommand(props.editorAPI.monacoRef.current.KeyMod.CtrlCmd | (props.editorAPI.monacoRef.current.KeyCode as any).US_EQUAL, () => {
@@ -340,7 +344,7 @@ export const EditorUI = (props: EditorUIProps) => {
         // eslint-disable-next-line no-bitwise
         props.editorAPI.monacoRef.current.KeyMod.Shift | props.editorAPI.monacoRef.current.KeyMod.Alt | props.editorAPI.monacoRef.current.KeyCode.KeyF,
       ],
-      run: async () => { 
+      run: async () => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         await props.plugin.call('codeFormatter', 'format', file)
       },
@@ -350,7 +354,7 @@ export const EditorUI = (props: EditorUIProps) => {
     editor.addAction(zoominAction)
     const editorService = (editor as any)._codeEditorService;
     const openEditorBase = editorService.openCodeEditor.bind(editorService);
-    editorService.openCodeEditor = async (input , source) => {
+    editorService.openCodeEditor = async (input, source) => {
       const result = await openEditorBase(input, source)
       if (input && input.resource && input.resource.path) {
         try {
@@ -382,7 +386,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
     // Register a tokens provider for the language
     props.editorAPI.monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider as any)
-    props.editorAPI.monacoRef.current.languages.setLanguageConfiguration('remix-solidity', solidityLanguageConfig as any )
+    props.editorAPI.monacoRef.current.languages.setLanguageConfiguration('remix-solidity', solidityLanguageConfig as any)
 
     props.editorAPI.monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoTokensProvider as any)
     props.editorAPI.monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoLanguageConfig as any)
@@ -402,30 +406,47 @@ export const EditorUI = (props: EditorUIProps) => {
     loadTypes(props.editorAPI.monacoRef.current)
   }
 
+  const unifiedToggle = (isSplit: boolean) => {
+    setIsSplit(isSplit)
+    console.log('isSplit', isSplit)
+  }
 
 
   return (
     <div className="w-100 h-100 d-flex flex-column-reverse">
+      <button className="btn btn-sm btn-primary" onClick={() => setIsDiff(!isDiff)}>Toggle Diff</button>
+      <EditorToolBar isDiff={isDiff} isSplit={isSplit} plugin={props.plugin} unifiedToggle={unifiedToggle}></EditorToolBar>
 
-
-<DiffEditor
+      <DiffEditor
         originalLanguage={'remix-solidity'}
         modifiedLanguage={'remix-solidity'}
         original={''}
         modified={''}
         onMount={handleDiffEditorDidMount}
         beforeMount={handleEditorWillMount}
-        options={{ readOnly: false, renderSideBySide: true }}
+        options={{ readOnly: false, renderSideBySide: isSplit }}
         width='100%'
-        height='100%'
+        height={isDiff ? '100%' : '0%'}
+        className={isDiff ? "d-block" : "d-none"}
       />
 
+      <Editor
+        width="100%"
+        height={isDiff ? '0%' : '100%'}
+        path={props.currentFile}
+        language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
+        onMount={handleEditorDidMount}
+        beforeMount={handleEditorWillMount}
+        options={{ glyphMargin: true, readOnly: ((!props.editorAPI.editorRef.current || !props.currentFile) && editorModelsState[props.currentFile]?.readOnly) }}
+        defaultValue={defaultEditorValue}
+        className={isDiff ? "d-none" : "d-block"}
+      />
 
 
       {editorModelsState[props.currentFile]?.readOnly && <span className='pl-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0'>
         <i className="fas fa-lock-alt p-2"></i>
-          The file is opened in <b>read-only</b> mode.
-        </span>
+        The file is opened in <b>read-only</b> mode.
+      </span>
       }
     </div>
   )
@@ -434,15 +455,7 @@ export const EditorUI = (props: EditorUIProps) => {
 export default EditorUI
 
 /*
-<Editor
-        width="100%"
-        path={props.currentFile}
-        language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
-        onMount={handleEditorDidMount}
-        beforeMount={handleEditorWillMount}
-        options={{ glyphMargin: true, readOnly: ((! props.editorAPI.editorRef.current || !props.currentFile) && editorModelsState[props.currentFile]?.readOnly) }}
-        defaultValue={defaultEditorValue}
-      />
+
 
 
       */

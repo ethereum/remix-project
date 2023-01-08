@@ -1,5 +1,5 @@
 import { ViewPlugin } from "@remixproject/engine-web"
-import { gitActionDispatch } from "../types"
+import { commitChange, gitActionDispatch } from "../types"
 
 let plugin: ViewPlugin, dispatch: React.Dispatch<gitActionDispatch>
 
@@ -15,4 +15,14 @@ export const statusChanged = (badges: number) => {
         type: badges === 0 ? '' : 'success',
         title: 'Git changes'
     })
+}
+
+export const openFile = async (path: string) => {
+    if(!plugin) return
+    await plugin.call('fileManager', 'open', path)
+}
+
+export const openDiff = async (change: commitChange) => {
+    if(!plugin) return
+    plugin.call('fileManager', 'diff', change)
 }

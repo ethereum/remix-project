@@ -1,4 +1,3 @@
-import { checkout, ReadCommitResult } from "isomorphic-git";
 import React, { useEffect, useState } from "react";
 import { gitActionsContext } from "../../state/context";
 import { gitPluginContext } from "../gitui";
@@ -42,18 +41,18 @@ export const Commands = () => {
 
 
       <div className="btn-group w-100" role="group" aria-label="Basic example">
-        <button type="button" onClick={async () => push()} className="btn btn-primary mr-1">PUSH</button>
-        <button type="button" onClick={async () => pull()} className="btn btn-primary mr-1">PULL</button>
-        <button type="button" onClick={async () => fetch()} className="btn btn-primary">FETCH</button>
+        <button type="button" onClick={async () => push()} className="btn btn-primary mr-1">Push</button>
+        <button type="button" onClick={async () => pull()} className="btn btn-primary mr-1">Pull</button>
+        <button type="button" onClick={async () => fetch()} className="btn btn-primary">Fetch</button>
       </div>
 
       <div className='row mt-2'>
         <div className='col col-md-6 col-12'>
-          <label>LOCAL BRANCH</label>
+          <label>Local Branch</label>
           <input name='localbranch' readOnly value={context.currentBranch} className="form-control" type="text" id="localbranch" />
         </div>
         <div className='col col-md-6 col-12'>
-          <label>REMOTE BRANCH</label>
+          <label>Remote Branch</label>
           <input name='remotebranch' onChange={e => onRemoteBranchChange(e.target.value)} value={remoteBranch} className="form-control" type="text" id="remotebranch" />
         </div></div>
 

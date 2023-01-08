@@ -82,7 +82,7 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action) =>
         case 'SET_COMMIT_CHANGES':
 
             action.payload.forEach((change: commitChange) => {
-                state.commitChanges.find((c) => c.hash1 === change.hash1 && c.hash2 === change.hash2 && c.path === change.path) ? null : state.commitChanges.push(change)
+                state.commitChanges.find((c) => c.hashModified === change.hashModified && c.hashOriginal === change.hashOriginal && c.path === change.path) ? null : state.commitChanges.push(change)
             })
 
             return {

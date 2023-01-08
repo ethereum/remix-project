@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useReducer, useRef, useState } from 'react'
-import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges } from '../lib/gitactions'
+import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
-import { setPlugin, statusChanged } from '../lib/pluginActions'
+import { openDiff, openFile, setPlugin, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
 import { gitReducer } from '../state/reducer'
 import { defaultGitState, gitState } from '../types'
@@ -29,7 +29,6 @@ export const GitUI = (props) => {
     const plugin = props.plugin
     const [gitState, gitDispatch] = useReducer(gitReducer, defaultGitState)
     const [activePanel, setActivePanel] = useState<string>("0");
-    const [highlightColor, setHighlightColor] = useState("text-white")
 
     useEffect(() => {
         setCallBacks(plugin, gitDispatch)
@@ -53,12 +52,16 @@ export const GitUI = (props) => {
         clone,
         repositories,
         remoteBranches,
-        getCommitChanges
+        getCommitChanges,
+        diff,
+        resolveRef
     }
 
     const pluginActionsProviderValue = {
         statusChanged,
-        loadFiles
+        loadFiles,
+        openFile,
+        openDiff
     }
 
     return (

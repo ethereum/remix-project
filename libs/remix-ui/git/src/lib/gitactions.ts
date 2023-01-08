@@ -1,5 +1,5 @@
 import { ViewPlugin } from "@remixproject/engine-web";
-import { ReadCommitResult } from "isomorphic-git";
+import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
 import { fileStatus, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setLoading, setRemoteBranches, setRemotes, setRepos } from "../state/payload";
 import { commitChange, gitActionDispatch, statusMatrixType } from '../types';
@@ -372,8 +372,106 @@ export const diffFiles = async (filename: string | undefined) => {
 
 }
 
+export const resolveRef = async (ref: string) => {
+    const oid = await plugin.call("dGitProvider", "resolveref", {
+        ref,
+    });
+    return oid;
+}
+
+export const diff = async (commitChange: commitChange) => {
+
+    if (!commitChange.hashModified) {
+        const newcontent = await plugin.call(
+            "fileManager",
+            "readFile",//
+            removeSlash(commitChange.path)
+        );
+        commitChange.modified = newcontent;
+        commitChange.readonly = false;
+
+    } else {
+
+        try {
+            const modifiedContentReadBlobResult: ReadBlobResult = await plugin.call("dGitProvider", "readblob", {
+                oid: commitChange.hashModified,
+                filepath: removeSlash(commitChange.path),
+            });
+
+            const modifiedContent = Buffer.from(modifiedContentReadBlobResult.blob).toString("utf8");
+            console.log(modifiedContent)
+            commitChange.modified = modifiedContent;
+            commitChange.readonly = true;
+        } catch (e) {
+            commitChange.modified = "";
+        }
+    }
+
+    try {
+        const originalContentReadBlobResult: ReadBlobResult = await plugin.call("dGitProvider", "readblob", {
+            oid: commitChange.hashOriginal,
+            filepath: removeSlash(commitChange.path),
+        });
+
+        const originalContent = Buffer.from(originalContentReadBlobResult.blob).toString("utf8");
+        console.log(originalContent)
+        commitChange.original = originalContent;
+    } catch (e) {
+        commitChange.original = "";
+    }
+
+
+
+
+    /*
+    const fullfilename = args; // $(args[0].currentTarget).data('file')
+    try {
+      const commitOid = await client.call(
+        "dGitProvider",
+        "resolveref",
+        { ref: "HEAD" }
+      );
+      
+      const { blob } = await client.call("dGitProvider", "readblob", {
+        oid: commitOid,
+        filepath: removeSlash(fullfilename),
+      });
+
+      const newcontent = await client.call(
+        "fileManager",
+        "readFile",//
+        removeSlash(fullfilename)
+      );
+      
+
+      // Utils.log(original);
+      //Utils.log(newcontent);
+      //const filediff = createPatch(filename, original, newcontent); // diffLines(original,newcontent)
+      ////Utils.log(filediff)
+      const filediff: diffObject = {
+        originalFileName: fullfilename,
+        updatedFileName: fullfilename,
+        current: newcontent,
+        past: original,
+      };
+
+      return filediff;
+    } catch (e) {
+      
+
+      const filediff: diffObject = {
+        originalFileName: "",
+        updatedFileName: "",
+        current: "",
+        past: "",
+      };
+      return filediff;
+    }
+    */
+}
+
 export const getCommitChanges = async (oid1: string, oid2: string) => {
-   const result: commitChange[]  = await plugin.call('dGitProvider', 'getCommitChanges', oid1, oid2 )
-   dispatch(setCommitChanges(result))
-   return result
+    const result: commitChange[] = await plugin.call('dGitProvider', 'getCommitChanges', oid1, oid2)
+    dispatch(setCommitChanges(result))
+    return result
 }
