@@ -2,6 +2,7 @@ import { Monaco } from "@monaco-editor/react"
 import { IMarkdownString, IPosition, MarkerSeverity } from "monaco-editor"
 import React from "react"
 import monaco from 'monaco-editor/esm/vs/editor/editor.api'
+import { commitChange } from "@remix-ui/git"
 
 export type sourceAnnotation = {
   row: number,
@@ -62,38 +63,51 @@ export type errorMarker = {
   file: string
 }
 
+
+export interface IEditorFile {
+  name: string,
+  path: string,
+  type: 'diff' | 'file',
+  commit?: commitChange,
+  readonly?: boolean
+}
+
+export interface IEditorAPI {
+  findMatches: (uri: string, value: string) => any
+  getFontSize: () => number,
+  getValue: (uri: string) => string
+  getCursorPosition: (offset?: boolean) => number | IPosition
+  getHoverPosition: (position: IPosition) => number
+  addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
+  clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
+  keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
+  addErrorMarker: (errors: errorMarker[], from: string) => void
+  clearErrorMarkers: (sources: string[] | { [fileName: string]: any }, from: string) => void
+  monacoRef: React.MutableRefObject<Monaco>
+  editorRef: React.MutableRefObject<monaco.editor.IStandaloneCodeEditor>
+  diffEditorRef: React.MutableRefObject<monaco.editor.IStandaloneDiffEditor>
+}
+
+export interface IEditorApiEvents {
+  onBreakPointAdded: (file: string, line: number) => void
+  onBreakPointCleared: (file: string, line: number) => void
+  onDidChangeContent: (file: string) => void
+  onEditorMounted: () => void
+  onDiffEditorMounted: () => void
+}
+
 export interface EditorUIProps {
   contextualListener: any
   activated: boolean
   themeType: string
   currentFile: string
   isDiff: boolean
-  events: {
-    onBreakPointAdded: (file: string, line: number) => void
-    onBreakPointCleared: (file: string, line: number) => void
-    onDidChangeContent: (file: string) => void
-    onEditorMounted: () => void
-    onDiffEditorMounted: () => void
-  }
+  events: IEditorApiEvents,
   plugin: {
     on: (plugin: string, event: string, listener: any) => void
     call: (plugin: string, method: string, arg1?: any, arg2?: any, arg3?: any, arg4?: any) => any
   }
-  editorAPI: {
-    findMatches: (uri: string, value: string) => any
-    getFontSize: () => number,
-    getValue: (uri: string) => string
-    getCursorPosition: (offset?: boolean) => number | IPosition
-    getHoverPosition: (position: IPosition) => number
-    addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
-    clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
-    keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
-    addErrorMarker: (errors: errorMarker[], from: string) => void
-    clearErrorMarkers: (sources: string[] | {[fileName: string]: any}, from: string) => void
-    monacoRef: React.MutableRefObject<Monaco>
-    editorRef: React.MutableRefObject<monaco.editor.IStandaloneCodeEditor>
-    diffEditorRef: React.MutableRefObject<monaco.editor.IStandaloneDiffEditor>
-  }
+  editorAPI: IEditorAPI
 }
 
 export type DecorationsReturn = {
@@ -101,7 +115,7 @@ export type DecorationsReturn = {
   registeredDecorations?: Array<any>
 }
 
-export  const defaultEditorValue = `
+export const defaultEditorValue = `
 \t\t\t\t\t\t\t ____    _____   __  __   ___  __  __   ___   ____    _____ 
 \t\t\t\t\t\t\t|  _ \\  | ____| |  \\/  | |_ _| \\ \\/ /  |_ _| |  _ \\  | ____|
 \t\t\t\t\t\t\t| |_) | |  _|   | |\\/| |  | |   \\  /    | |  | | | | |  _|  

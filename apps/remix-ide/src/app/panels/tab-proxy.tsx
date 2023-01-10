@@ -2,7 +2,8 @@ import React from 'react' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import { TabsUI } from '@remix-ui/tabs'
 import { PluginViewWrapper, getPathIcon } from '@remix-ui/helper'
-const EventEmitter = require('events')
+import EventEmitter from 'events'
+
 
 const profile = {
   name: 'tabs',
@@ -11,6 +12,18 @@ const profile = {
 }
 
 export class TabProxy extends Plugin {
+  event: any
+  fileManager: any
+  editor: any
+  data: any
+  _view: any
+  _handlers: any
+  loadedTabs: any[]
+  dispatch: any
+  themeQuality: string
+  tabsApi: any
+  handlers: any
+
   constructor (fileManager, editor) {
     super(profile)
     this.event = new EventEmitter()
@@ -223,10 +236,10 @@ export class TabProxy extends Plugin {
     this.removeTab(oldName)
   }
 
-  addTab (name, title, switchTo, close, icon) {
+  addTab (name, title, switchTo, close, icon?) {
     if (this._handlers[name]) return this.renderComponent()
 
-    var slash = name.split('/')
+    const slash = name.split('/')
     const tabPath = slash.reverse()
     const tempTitle = []
 
@@ -283,7 +296,7 @@ export class TabProxy extends Plugin {
     this._handlers[name] = { switchTo, close }
   }
 
-  removeTab (name, currentFileTab) {
+  removeTab (name, currentFileTab?) {
     delete this._handlers[name]
     let previous = currentFileTab
     this.loadedTabs = this.loadedTabs.filter((tab, index) => {

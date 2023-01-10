@@ -1,12 +1,11 @@
 'use strict'
 import React from 'react' // eslint-disable-line
 import { resolve } from 'path'
-import { EditorUI } from '@remix-ui/editor' // eslint-disable-line
+import { IEditorAPI, EditorUI, IEditorApiEvents } from '@remix-ui/editor' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import { PluginViewWrapper } from '@remix-ui/helper'
-
-const EventManager = require('../../lib/events')
+import { EventManager } from '@remix-project/remix-lib'
 
 const profile = {
   displayName: 'Editor',
@@ -17,6 +16,25 @@ const profile = {
 }
 
 export class Editor extends Plugin {
+
+  _themes: { light: string; dark: string; remixDark: string }
+  registeredDecorations: { sourceAnnotationsPerFile: {}; markerPerFile: {}; lineTextPerFile: {} }
+  currentDecorations: { sourceAnnotationsPerFile: {}; markerPerFile: {}; lineTextPerFile: {} }
+  event: EventManager
+  sessions: {}
+  readOnlySessions: {}
+  previousInput: string
+  saveTimeout: any
+  emptySession: any
+  modes: { sol: string; yul: string; mvir: string; js: string; py: string; vy: string; zok: string; lex: string; txt: string; json: string; abi: string; rs: string; cairo: string; ts: string; move: string }
+  activated: boolean
+  events: IEditorApiEvents
+  api: Partial<IEditorAPI>
+  dispatch: any
+  ref: any
+  currentFile: any
+  currentThemeType: any
+
   constructor () {
     super(profile)
 
@@ -80,8 +98,7 @@ export class Editor extends Plugin {
       themeType={state.currentThemeType}
       currentFile={state.currentFile}
       events={state.events}
-      plugin={state.plugin}
-    />
+      plugin={state.plugin} contextualListener={undefined} activated={false} isDiff={false}    />
   }
 
   render () {
@@ -194,10 +211,11 @@ export class Editor extends Plugin {
   _getMode (path) {
     if (!path) return this.modes.txt
     const root = path.split('#')[0].split('?')[0]
-    let ext = root.indexOf('.') !== -1 ? /[^.]+$/.exec(root) : null
-    if (ext) ext = ext[0]
-    else ext = 'txt'
-    return ext && this.modes[ext] ? this.modes[ext] : this.modes.txt
+    const ext = root.indexOf('.') !== -1 ? /[^.]+$/.exec(root) : null
+    let result: string
+    if (ext) result = ext[0]
+    else result = 'txt'
+    return ext && this.modes[result] ? this.modes[result] : this.modes.txt
   }
 
   async handleTypeScriptDependenciesOf (path, content, readFile, exists) {
@@ -251,7 +269,7 @@ export class Editor extends Plugin {
         this.emit('setValue', path, content)
       },
       getValue: () => {
-        return this.api.getValue(path, content)
+        return this.api.getValue(path)
       },
       dispose: () => {
         this.emit('disposeModel', path)
@@ -321,7 +339,7 @@ export class Editor extends Plugin {
     console.log('openReadOnly', path, content)
     if (!this.sessions[path]) {
       this.readOnlySessions[path] = true
-      const session = await this._createSession(path, content, this._getMode(path))
+      const session = await this._createSession(path, content, this._getMode(path), null)
       this.sessions[path] = session
     }
     this._switchSession(path)
@@ -555,7 +573,7 @@ export class Editor extends Plugin {
   discardHighlight () {
     const { from } = this.currentRequest
     for (const session in this.sessions) {
-      this.clearDecorationsByPlugin(session, from, 'markerPerFile', this.registeredDecorations, this.currentDecorations)
+      this.clearDecorationsByPlugin(session, from, 'markerPerFile')
     }
   }
 
@@ -567,7 +585,7 @@ export class Editor extends Plugin {
   discardLineTexts() {
     const { from } = this.currentRequest
     for (const session in this.sessions) {
-      this.clearDecorationsByPlugin(session, from, 'lineTextPerFile', this.registeredDecorations, this.currentDecorations)
+      this.clearDecorationsByPlugin(session, from, 'lineTextPerFile')
     }
   }
 }
