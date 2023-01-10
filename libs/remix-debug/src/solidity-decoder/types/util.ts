@@ -59,6 +59,7 @@ export function toBN (value) {
     return value
   } else if (value.match && value.match(/^(0x)?([a-f0-9]*)$/)) {
     value = unpadHexString(value)
+    value = value.replace('0x', '')
     value = new BN(value === '' ? '0' : value, 16)
   } else if (!isNaN(value)) {
     value = new BN(value)
