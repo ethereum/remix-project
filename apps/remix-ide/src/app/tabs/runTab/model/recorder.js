@@ -7,7 +7,7 @@ import * as packageJson from '../../../../.././../../package.json'
 var EventManager = remixLib.EventManager
 var format = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
-const helper = require('../../../../lib/helper')
+import { addressToString } from '@remix-ui/helper'
 
 const _paq = window._paq = window._paq || []  //eslint-disable-line
 
@@ -83,7 +83,7 @@ class Recorder extends Plugin {
       if (call) return
       const rawAddress = txResult.receipt.contractAddress
       if (!rawAddress) return // not a contract creation
-      const address = helper.addressToString(rawAddress)
+      const address = addressToString(rawAddress)
       // save back created addresses for the convertion from tokens to real adresses
       this.data._createdContracts[address] = timestamp
       this.data._createdContractsReverse[timestamp] = address
@@ -278,7 +278,7 @@ class Recorder extends Plugin {
             return logCallBack(err + '. Execution failed at ' + index)
           }
           if (rawAddress) {
-            const address = helper.addressToString(rawAddress)
+            const address = addressToString(rawAddress)
             // save back created addresses for the convertion from tokens to real adresses
             this.data._createdContracts[address] = tx.timestamp
             this.data._createdContractsReverse[tx.timestamp] = address
