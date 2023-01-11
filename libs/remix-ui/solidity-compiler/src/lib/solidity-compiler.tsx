@@ -43,7 +43,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       const hide = await api.getAppParameter('hideWarnings') as boolean || false
       setHideWarnings(hide)
     })()
-  }, [])
+  })
 
   useEffect(() => {
     if (badgeStatus[currentFile]) {
