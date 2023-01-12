@@ -100,8 +100,7 @@ jobs:
             firefox --version
             geckodriver --version
             chromedriver --version
-            ls -la /home/circleci/remix-project
-            ls -la .
+            rm LICENSE.chromedriver
       - checkout
       - attach_workspace:
           at: .
@@ -148,6 +147,7 @@ jobs:
             firefox --version
             geckodriver --version
             chromedriver --version
+            rm LICENSE.chromedriver
           name: Check install
       - checkout
       - attach_workspace:
