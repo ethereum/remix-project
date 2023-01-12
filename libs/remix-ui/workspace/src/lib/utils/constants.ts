@@ -44,5 +44,5 @@ export const slitherYml = `
         - uses: actions/checkout@v3
         - uses: crytic/slither-action@v0.2.0
             with:
-            target: 'src/'
+            target: 'contracts/'
     `
