@@ -100,6 +100,8 @@ jobs:
             firefox --version
             geckodriver --version
             chromedriver --version
+            ls -la /home/circleci/remix-project
+            ls -la .
       - checkout
       - attach_workspace:
           at: .
