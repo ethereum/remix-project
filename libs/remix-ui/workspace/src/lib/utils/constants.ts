@@ -28,7 +28,7 @@ export const tsSolTestYml = `
         - name: Checkout
             uses: actions/checkout@v2
         - name: Run SUT Action
-            uses: EthereumRemix/ts-sol-test@v0.1.4-dev
+            uses: EthereumRemix/ts-sol-test@v1
             with:
             test-path: 'tests'
             contract-path: 'contracts'

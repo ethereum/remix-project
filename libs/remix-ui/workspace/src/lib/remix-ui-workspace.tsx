@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef, useContext, SyntheticEvent, ChangeEvent, KeyboardEvent } from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
-import { ButtonGroup, Dropdown, DropdownButton } from 'react-bootstrap'
+import { Dropdown } from 'react-bootstrap'
 import { CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import { FileSystemContext } from './contexts'
 import './css/remix-ui-workspace.css'
 import { ROOT_PATH } from './utils/constants'
+import { HamburgerMenu } from './components/workspace-hamburger'
 const _paq = window._paq = window._paq || []
 
 const canUpload = window.File || window.FileReader || window.FileList || window.Blob
@@ -380,284 +381,6 @@ export function Workspace () {
     )
   }
 
-  const workspaceMenuIcons = [
-    <CustomTooltip
-      placement="right"
-      tooltipId="createWorkspaceTooltip"
-      tooltipClasses="text-nowrap"
-      tooltipText={<FormattedMessage id='filePanel.workspace.create' />}
-    >
-      <div
-        data-id='workspaceCreate'
-        onClick={() => {
-          createWorkspace()
-          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
-          hideIconsMenu(!showIconsMenu)
-        }}
-        key={`workspacesCreate-fe-ws`}
-      >
-        <span
-          hidden={currentWorkspace === LOCALHOST}
-          id='workspaceCreate'
-          data-id='workspaceCreate'
-          onClick={() => {
-            createWorkspace()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          className='far fa-plus pl-2'
-        >
-        </span>
-        <span className="pl-3"><FormattedMessage id='filePanel.create' /></span>
-      </div>
-    </CustomTooltip>,
-    <CustomTooltip
-      placement="right-start"
-      tooltipId="createWorkspaceTooltip"
-      tooltipClasses="text-nowrap"
-      tooltipText={<FormattedMessage id='filePanel.workspace.delete' />}
-    >
-      <div
-        data-id='workspaceDelete'
-        onClick={() => {
-          deleteCurrentWorkspace()
-          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDelete'])
-          hideIconsMenu(!showIconsMenu)
-        }}
-        key={`workspacesDelete-fe-ws`}
-      >
-        <span
-          hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-          id='workspaceDelete'
-          data-id='workspaceDelete'
-          onClick={() => {
-            deleteCurrentWorkspace()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDelete'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          className='far fa-trash pl-2'
-        >
-        </span>
-        <span className="pl-3"><FormattedMessage id='filePanel.delete' /></span>
-      </div>
-    </CustomTooltip>,
-    <CustomTooltip
-      placement='right-start'
-      tooltipClasses="text-nowrap"
-      tooltipId="workspaceRenametooltip"
-      tooltipText={<FormattedMessage id='filePanel.workspace.rename' />}
-    >
-      <div onClick={() => {
-            renameCurrentWorkspace()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceRename'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          data-id='workspaceRename'
-          key={`workspacesRename-fe-ws`}
-        >
-        <span
-          hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-          id='workspaceRename'
-          data-id='workspaceRename'
-          onClick={() => {
-            renameCurrentWorkspace()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceRename'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          className='far fa-edit pl-2'>
-        </span>
-        <span className="pl-3"><FormattedMessage id='filePanel.rename' /></span>
-      </div>
-    </CustomTooltip>,
-    <Dropdown.Divider className="border mb-0 mt-0" />,
-    <CustomTooltip
-      placement="right-start"
-      tooltipId="cloneWorkspaceTooltip"
-      tooltipClasses="text-nowrap"
-      tooltipText={<FormattedMessage id='filePanel.workspace.clone' />}
-    >
-      <div
-        data-id='cloneGitRepository'
-        onClick={() => {
-          cloneGitRepository()
-          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'cloneGitRepository'])
-          hideIconsMenu(!showIconsMenu)
-        }}
-        key={`cloneGitRepository-fe-ws`}
-      >
-        <span
-          hidden={currentWorkspace === LOCALHOST}
-          id='cloneGitRepository'
-          data-id='cloneGitRepository'
-          onClick={() => {
-            cloneGitRepository()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'cloneGitRepository'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          className='fab fa-github pl-2'
-        >
-        </span>
-        <span className="pl-3"><FormattedMessage id='filePanel.clone' /></span>
-      </div>
-    </CustomTooltip>,
-    <Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/>,
-    <CustomTooltip
-      placement="right-start"
-      tooltipId="createWorkspaceTooltip"
-      tooltipClasses="text-nowrap"
-      tooltipText={<FormattedMessage id='filePanel.workspace.download' />}
-    >
-      <div
-        data-id='workspacesDownload'
-        onClick={() => {
-          downloadWorkspaces()
-          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesDownload'])
-          hideIconsMenu(!showIconsMenu)
-        }}
-        key={`workspacesDownload-fe-ws`}
-      >
-        <span
-          hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-          id='workspacesDownload'
-          data-id='workspacesDownload'
-          onClick={() => {
-            downloadWorkspaces()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesDownload'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          className='far fa-download pl-2 '
-        >
-        </span>
-        <span className="pl-3"><FormattedMessage id='filePanel.download' /></span>
-      </div>
-    </CustomTooltip>,
-    <CustomTooltip
-      placement="right-start"
-      tooltipId="createWorkspaceTooltip"
-      tooltipClasses="text-nowrap"
-      tooltipText={<FormattedMessage id='filePanel.workspace.restore' />}
-    >
-      <div
-        data-id='workspacesRestore'
-        onClick={() => {
-          restoreBackup()
-          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesRestore'])
-          hideIconsMenu(!showIconsMenu)
-        }}
-        key={`workspacesRestore-fe-ws`}
-      >
-        <span
-          hidden={currentWorkspace === LOCALHOST}
-          id='workspacesRestore'
-          data-id='workspacesRestore'
-          onClick={() => {
-            restoreBackup()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesRestore'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          className='far fa-upload pl-2'
-        >
-        </span>
-        <span className="pl-3"><FormattedMessage id='filePanel.restore' /></span>
-      </div>
-    </CustomTooltip>,
-    <Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/>,
-    <CustomTooltip
-      placement="right-start"
-      tooltipId="createSolGHActionTooltip"
-      tooltipClasses="text-nowrap"
-      tooltipText={<FormattedMessage id='filePanel.workspace.solghaction' />}
-    >
-      <div
-        data-id='soliditygithubaction'
-        onClick={(e) => {
-          e.stopPropagation()
-          addGithubAction()
-          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSolidityTesting'])
-          hideIconsMenu(!showIconsMenu)
-        }}
-      >
-        <span
-          hidden={currentWorkspace === LOCALHOST}
-          id='soliditygithubaction'
-          data-id='soliditygithubaction'
-          onClick={(e) => {
-            e.stopPropagation()
-            addGithubAction()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSolidityTesting'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          className='fab fa-github pl-2'
-        >
-        </span>
-        <span className="pl-3">{<FormattedMessage id='filePanel.solghaction' />}</span>
-      </div>
-    </CustomTooltip>,
-    <CustomTooltip
-      placement="right-start"
-      tooltipId="createTsSolTestGHActionTooltip"
-      tooltipClasses="text-nowrap"
-      tooltipText={<FormattedMessage id='filePanel.workspace.tssoltestghaction' />}
-    >
-      <div
-        data-id='typescriptsoliditygithubtestaction'
-        onClick={(e) => {
-          e.stopPropagation()
-          addTsSolTestGithubAction()
-          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addTsSolTestingAction'])
-          hideIconsMenu(!showIconsMenu)
-        }}
-      >
-        <span
-          hidden={currentWorkspace === LOCALHOST}
-          id='tssoliditygithubaction'
-          data-id='tssoliditygithubaction'
-          onClick={(e) => {
-            e.stopPropagation()
-            addTsSolTestGithubAction()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addTsSolTestingAction'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          className='fab fa-github pl-2'
-        >
-        </span>
-        <span className="pl-3">{<FormattedMessage id='filePanel.tssoltestghaction' />}</span>
-      </div>
-    </CustomTooltip>,
-    <CustomTooltip
-      placement="right-start"
-      tooltipId="createSlitherGHActionTooltip"
-      tooltipClasses="text-nowrap"
-      tooltipText={<FormattedMessage id='filePanel.workspace.slitherghaction' />}
-    >
-      <div
-        data-id='slithergithubtestaction'
-        onClick={(e) => {
-          e.stopPropagation()
-          addSlitherGithubAction()
-          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSlitherAction'])
-          hideIconsMenu(!showIconsMenu)
-        }}
-      >
-        <span
-          hidden={currentWorkspace === LOCALHOST}
-          id='slithergithubaction'
-          data-id='slithergithubaction'
-          onClick={(e) => {
-            e.stopPropagation()
-            addSlitherGithubAction()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSlitherAction'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          className='fab fa-github pl-2'
-        >
-        </span>
-        <span className="pl-3">{<FormattedMessage id='filePanel.slitherghaction' />}</span>
-      </div>
-    </CustomTooltip>
-  ]
-  const menuLength = workspaceMenuIcons.length
-  let count = 0
   return (
     <div className='d-flex flex-column justify-content-between h-100'>
       <div className='remixui_container overflow-auto' style={{ maxHeight: selectedWorkspace && selectedWorkspace.isGitRepo ? '95%' : '100%' }}>
@@ -701,15 +424,21 @@ export function Workspace () {
                         icon={'fas fa-bars'}
                       ></Dropdown.Toggle>
                       <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='custom-dropdown-items remixui_menuwidth' rootCloseEvent="click">
-                      {
-                        workspaceMenuIcons.map(m => {
-                          return (
-                            <Dropdown.Item key={`wsdropdownMenu-${count !== menuLength ? count++ : count }`}>
-                              {m}
-                            </Dropdown.Item>
-                          )
-                        })
-                      }
+                        <HamburgerMenu
+                          createWorkspace={createWorkspace}
+                          deleteCurrentWorkspace={deleteCurrentWorkspace}
+                          renameCurrentWorkspace={renameCurrentWorkspace}
+                          cloneGitRepository={cloneGitRepository}
+                          downloadWorkspaces={downloadWorkspaces}
+                          restoreBackup={restoreBackup}
+                          hideIconsMenu={hideIconsMenu}
+                          addGithubAction={addGithubAction}
+                          addSlitherGithubAction={addSlitherGithubAction}
+                          addTsSolTestGithubAction={addTsSolTestGithubAction}
+                          showIconsMenu={showIconsMenu}
+                          hideWorkspaceOptions={ currentWorkspace === LOCALHOST }
+                          hideLocalhostOptions={ currentWorkspace === NO_WORKSPACE }
+                          />
                       </Dropdown.Menu>
                     </Dropdown>
                   </span>) : null}
