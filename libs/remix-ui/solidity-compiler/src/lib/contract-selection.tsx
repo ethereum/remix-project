@@ -25,7 +25,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   const [storage, setStorage] = useState(null)
   const [svgPayload, setSVGPayload] = useState('')
   const [showViewer, setShowViewer] = useState(false)
-  const [content4AST, setContent4AST] = useState('')
+  const [contentForAST, setContentForAST] = useState('')
 
   const intl = useIntl()
 
@@ -212,7 +212,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   const generateUML = () => {
     try {
       const currentFile = api.currentFile
-      const ast = content4AST.length > 1 ? parser.parse(content4AST) : parser.parse(api.getCompilationResult().source.sources[currentFile].content)
+      const ast = contentForAST.length > 1 ? parser.parse(contentForAST) : parser.parse(api.getCompilationResult().source.sources[currentFile].content)
       const payload = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
       const fileName = `${api.currentFile.split('/')[0]}/resources/${api.currentFile.split('/')[1].split('.')[0]}.pdf`
       
@@ -245,7 +245,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     const sources = api.getCompilationResult().source.sources
     const result = concatSourceFiles(sorted, sources)
     api.writeFile(`${api.currentFile}_flattened.sol`, result)
-    setContent4AST(result)
+    setContentForAST(result)
   }
 
   return (
