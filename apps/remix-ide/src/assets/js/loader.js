@@ -1,6 +1,6 @@
 const domains = {
   'remix-alpha.ethereum.org': 27,
-  'remix-beta.ethereum.org': 25,
+  'remix-beta.ethereum.org': 1,
   'remix.ethereum.org': 23,
   '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
 }
@@ -12,7 +12,7 @@ if (domains[window.location.hostname]) {
   _paq.push(['trackPageView']);
   _paq.push(['enableLinkTracking']);
   (function () {
-    var u = "https://matomo.ethereum.org/";
+    var u = "https://remix-ethereum.matomo.cloud/matomo.php";
     _paq.push(['setTrackerUrl', u + 'matomo.php'])
     _paq.push(['setSiteId', domains[window.location.hostname]])
     var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0]
