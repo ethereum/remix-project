@@ -110,6 +110,7 @@ export class SolidityProxy {
     */
   async ast (sourceLocation, generatedSources, address) {
     const compilationResult = await this.compilationResult(address)
+    console.log('compilationResult', compilationResult)
     const file = this.fileNameFromIndex(sourceLocation.file, compilationResult.data)
     if (!file && generatedSources && generatedSources.length) {
       for (const source of generatedSources) {

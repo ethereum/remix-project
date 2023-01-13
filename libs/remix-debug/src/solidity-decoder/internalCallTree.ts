@@ -90,10 +90,10 @@ export class InternalCallTree {
             console.log('call tree build lasts ', (Date.now() - time) / 1000)
             this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
           }
-        }, (reason) => {
+        }/* , (reason) => {
           console.log('analyzing trace falls ' + reason)
           this.event.trigger('callTreeNotReady', [reason])
-        })
+        }*/)
       }
     })
   }
