@@ -84,7 +84,7 @@ If you search `FormattedMessage` or `intl.formatMessage` in this project, you wi
 
 **Why?**
 
-Each non-english language will be filled in the gaps with english. Even there maybe some un-translated content, it will always use english as defaultMessage. That why we don't need to provide a `defaultMessage` prop each time we render a `FormattedMessage` component.
+Each non-english language will be filled in the gaps with english. Even though there may be some un-translated content, it will always use english as defaultMessage. That's why we don't need to provide a `defaultMessage` prop each time we render a `FormattedMessage` component.
 
 But in some cases, the `id` prop may not be static. For example,
 ```jsx
