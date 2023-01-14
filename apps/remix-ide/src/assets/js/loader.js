@@ -15,11 +15,10 @@ if (domains[window.location.hostname]) {
     var u = "https://matomo.ethereum.org/";
     _paq.push(['setTrackerUrl', u + 'matomo.php'])
     _paq.push(['setSiteId', domains[window.location.hostname]])
-    if (window.location.hostname === 'remix-beta.ethereum.org') {
+    // Send all of the Remix live tracking data to the secondary Matomo server
+    if (window.location.hostname === 'remix.ethereum.org') {
       var secondaryTracker = 'https://remix-ethereum.matomo.cloud/matomo.php';
       var secondaryWebsiteId = 1;
-
-      // Send all of the tracking data to the secondary Matomo server
       _paq.push(['addTracker', secondaryTracker, secondaryWebsiteId]);
     }
     var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0]
