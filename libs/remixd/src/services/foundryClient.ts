@@ -45,9 +45,8 @@ export class FoundryClient extends PluginClient {
     try {
       this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
       // watch for new folders
-      this.watcher.on('addDir', (path) => {
+      this.watcher.on('addDir', () => {
         if (fs.existsSync(this.buildPath) && fs.existsSync(this.cachePath)) {
-          this.buildPath = path
           this.listenOnFoundryCompilation()
         }
       })
