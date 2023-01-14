@@ -13,11 +13,11 @@ Once feature freeze is done, `remix_beta` should be updated latest to the master
 
  - `git checkout remix_beta`
  - `git pull origin remix_beta`
- - `git reset --hard <master-commit-hash>` (`master-commit-hash` will be latest commid id from `master` branch)
+ - `git reset --hard <master-commit-hash>` (`master-commit-hash` will be latest commit id from `master` branch)
  - `git push -f origin remix_beta`
  
 ## Testing
-Testing is performed after the Feature Freeze on `remix-beta.ethereum.org`. `build-qa-doc.js` script can be used to generate the list of QA tasks. Instructions to use the file are given in the file itself : https://github.com/ethereum/remix-project/blob/master/build-qa-doc.js#L18 . 
+Testing is performed after the Feature Freeze on `remix-beta.ethereum.org`. `build-qa-doc.js` script can be used to generate the list of QA tasks. Instructions to use the file are given in the file itself: https://github.com/ethereum/remix-project/blob/master/build-qa-doc.js#L18 . 
 
 Once ready to run, it can be run using the Node.js: `node build-qa-doc.js`
 
@@ -76,7 +76,7 @@ Updating the `remix_live` branch latest to the `remix_beta` runs the CircleCI bu
  - `git reset --hard <remix_beta-commit-hash>` or `<master-commit-hash>` sometimes
  - `git push -f origin remix_live`
 
- CircleCI will build automaticaly and remix.ethereum.org will be updated to the latest.
+ CircleCI will build automatically and remix.ethereum.org will be updated to the latest.
 
  ### Part 3. Upload zip file in GitHub release
  - Once CI is successful for `remix_live` branch, Go to https://github.com/ethereum/remix-live
@@ -108,4 +108,4 @@ Updating the `remix_live` branch latest to the `remix_beta` runs the CircleCI bu
  
 ## Remix IDE Alpha Release
 
-remix-alpha.ethereum.org is automaticaly updated every time a commit is pushed to `master` branch
+remix-alpha.ethereum.org is automatically updated every time a commit is pushed to `master` branch
