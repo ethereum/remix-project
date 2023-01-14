@@ -20,7 +20,7 @@ export class FoundryClient extends PluginClient {
     this.methods = ['compile', 'sync']
   }
 
-  setWebSocket(websocket: WS): void {
+  setWebSocket (websocket: WS): void {
     this.websocket = websocket
     this.websocket.addEventListener('close', () => {
       this.warnlog = false
@@ -28,7 +28,7 @@ export class FoundryClient extends PluginClient {
     })
   }
 
-  sharedFolder(currentSharedFolder: string): void {
+  sharedFolder (currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
     this.buildPath = utils.absolutePath('out', this.currentSharedFolder)
     this.cachePath = utils.absolutePath('cache', this.currentSharedFolder)
@@ -55,7 +55,7 @@ export class FoundryClient extends PluginClient {
     }
   }
 
-  compile(configPath: string) {
+  compile (configPath: string) {
     return new Promise((resolve, reject) => {
       if (this.readOnly) {
         const errMsg = '[Foundry Compilation]: Cannot compile in read-only mode'
@@ -82,7 +82,7 @@ export class FoundryClient extends PluginClient {
     })
   }
 
-  private async processArtifact() {
+  private async processArtifact () {
     const folderFiles = await fs.readdir(this.buildPath) // "out" folder
     if (!fs.existsSync(join(this.cachePath, 'solidity-files-cache.json'))) return
     try {
@@ -113,7 +113,7 @@ export class FoundryClient extends PluginClient {
     }
   }
 
-  listenOnFoundryCompilation() {
+  listenOnFoundryCompilation () {
     try {
       this.watcher = chokidar.watch(this.cachePath, { depth: 0, ignorePermissionErrors: true, ignoreInitial: true })
 
@@ -126,7 +126,7 @@ export class FoundryClient extends PluginClient {
     }
   }
 
-  async readContract(contractFolder, compilationResultPart, cache) {
+  async readContract (contractFolder, compilationResultPart, cache) {
     const files = await fs.readdir(contractFolder)
 
     for (const file of files) {
@@ -136,7 +136,7 @@ export class FoundryClient extends PluginClient {
     }
   }
 
-  async feedContractArtifactFile(path, content, compilationResultPart, cache) {
+  async feedContractArtifactFile (path, content, compilationResultPart, cache) {
     const contentJSON = JSON.parse(content)
     const contractName = basename(path).replace('.json', '')
 
@@ -188,7 +188,7 @@ export class FoundryClient extends PluginClient {
     }
   }
 
-  async sync() {
+  async sync () {
     console.log('syncing from Foundry')
     this.processArtifact()
     // @ts-ignore
