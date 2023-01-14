@@ -125,9 +125,8 @@ export class HardhatClient extends PluginClient {
     try {
       this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
       // watch for new folders
-      this.watcher.on('addDir', (path) => {
-        if (path.endsWith('artifacts/contracts')) {
-          this.buildPath = path
+      this.watcher.on('addDir', () => {
+        if (fs.existsSync(this.buildPath)) {
           this.listenOnHardhatCompilation()
         }
       })
