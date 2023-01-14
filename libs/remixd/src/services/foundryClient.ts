@@ -15,7 +15,7 @@ export class FoundryClient extends PluginClient {
   buildPath: string
   cachePath: string
 
-  constructor(private readOnly = false) {
+  constructor (private readOnly = false) {
     super()
     this.methods = ['compile', 'sync']
   }
