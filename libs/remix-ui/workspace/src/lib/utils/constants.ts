@@ -17,7 +17,7 @@ jobs:
         compiler-version: '0.8.15'
 `
 export const tsSolTestYml = `
-name: ts-sol-test
+name: Running Mocha Chai Solidity Unit Tests
 on: [push]
 
 jobs:
@@ -27,8 +27,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Run SUT Action
-      uses: EthereumRemix/ts-sol-test@v1
+    - name: Run Mocha Chai Unit Test Action
+      uses: EthereumRemix/ts-sol-test@v1.1
       with:
         test-path: 'tests'
         contract-path: 'contracts'
