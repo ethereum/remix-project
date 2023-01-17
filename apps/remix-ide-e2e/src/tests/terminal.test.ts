@@ -584,7 +584,7 @@ contract OwnerTest {
 const scriptAutoExec = {
   contract: `// SPDX-License-Identifier: GPL-3.0
 
-  pragma solidity >=0.7.0 <0.9.0;
+  pragma solidity >=0.8.2 <0.9.0;
   
   library lib {
       function test () public view returns (uint) {
