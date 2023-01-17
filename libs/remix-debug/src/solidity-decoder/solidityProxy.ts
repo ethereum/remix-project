@@ -115,7 +115,7 @@ export class SolidityProxy {
       for (const source of generatedSources) {
         if (source.id === sourceLocation.file) return source.ast
       }
-    } else if (compilationResult.data.sources[file]) {
+    } else if (compilationResult.data.sources && compilationResult.data.sources[file]) {
       return compilationResult.data.sources[file].ast
     }
     return null
