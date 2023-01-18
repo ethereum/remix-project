@@ -194,10 +194,10 @@ export class VmProxy {
     const to = this.txs[this.processingHash].to
     if (to) {
       try {
-        (async (processingHash, processingAddress, self) => {
+        await (async (processingHash, processingAddress, self) => {
           try {
             const account = Address.fromString(processingAddress)
-            const storage = await self.stateCopy.dumpStorage(account)
+            const storage = await self.vm.stateManager.dumpStorage(account)
             self.storageCache['after_' + processingHash][processingAddress] = storage
           } catch (e) {
             console.log(e)
