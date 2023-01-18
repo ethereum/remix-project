@@ -43,7 +43,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - run: npm install
     - uses: crytic/slither-action@v0.2.0
       with:
-        target: 'contracts/'
+        target: 'contracts'
+        slither-args: '--solc-remaps "@openzeppelin/contracts=./node_modules/@openzeppelin/contracts hardhat=./node_modules/hardhat"'
+        fail-on: 'low'
+        solc-version: '0.8.2'
 `
