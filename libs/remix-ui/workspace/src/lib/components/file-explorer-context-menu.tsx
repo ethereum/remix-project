@@ -13,7 +13,7 @@ declare global {
 const _paq = window._paq = window._paq || []  //eslint-disable-line
 
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
-  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, copyFileName, copyPath, paste, runScript, emit, pageX, pageY, path, type, focus, ...otherProps } = props
+  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, copyFileName, copyPath, paste, runScript, emit, pageX, pageY, path, type, focus, generateUml, ...otherProps } = props
   const contextMenuRef = useRef(null)
   const intl = useIntl()
   useEffect(() => {
@@ -64,7 +64,9 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
   }
 
   const menu = () => {
-    return actions.filter(item => filterItem(item)).map((item, index) => {
+    return actions.filter(item => filterItem(item)).sort((a, b) => {
+      return a.name > b.name ? -1 : a.name < b.name ? 1 : 0
+    }).reverse().map((item, index) => {
       return <li
         id={`menuitem${item.name.toLowerCase()}`}
         key={index}
@@ -123,6 +125,9 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
             case 'Delete All':
               deletePath(getPath())
               _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'deleteAll'])
+              break
+            case 'Generate uml diagram':
+              generateUml(path)
               break
             default:
               _paq.push(['trackEvent', 'fileExplorer', 'customAction', `${item.id}/${item.name}`])

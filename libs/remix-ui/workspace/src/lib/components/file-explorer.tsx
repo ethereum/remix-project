@@ -5,6 +5,14 @@ import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint
 import { FileExplorerProps, MenuItems, FileExplorerState } from '../types'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 import { contextMenuActions } from '../utils'
+const parser = (window as any).SolidityParser
+import { convertUmlClasses2Dot } from 'sol2uml/lib/converterClasses2Dot'
+import vizRenderStringSync from '@aduh95/viz.js/sync'
+import domToPdf from 'dom-to-pdf'
+import { jsPDF } from 'jspdf'
+import { convertAST2UmlClasses } from 'sol2uml'
+import { createClient } from '@remixproject/plugin-webview'
+import { PluginClient } from '@remixproject/plugin'
 
 import '../css/file-explorer.css'
 import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath } from '@remix-ui/helper'
@@ -12,9 +20,11 @@ import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath }
 import { FileRender } from './file-render'
 import { Drag } from "@remix-ui/drag-n-drop"
 import { ROOT_PATH } from '../utils/constants'
+import { IRemixApi } from '@remixproject/plugin-api'
+
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { name, contextMenuItems, removedContextMenuItems, files, fileState } = props
+  const { name, contextMenuItems, removedContextMenuItems, files, fileState, plugin } = props
   const [state, setState] = useState<FileExplorerState>({
     ctrlKey: false,
     newFileName: '',
@@ -38,7 +48,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
   })
   const [canPaste, setCanPaste] = useState(false)
   const treeRef = useRef<HTMLDivElement>(null)
+  const [client, setClient] = useState(null)
+  const [isClientLoaded, setIsClientLoaded] = useState(false);
+  const [svgPayload, setSVGPayload] = useState('')
+  const [showViewer, setShowViewer] = useState(false)
+  const [contentForAST, setContentForAST] = useState('')
 
+  
   useEffect(() => {
     if (contextMenuItems) {
       addMenuItems(contextMenuItems)
@@ -435,6 +451,59 @@ export const FileExplorer = (props: FileExplorerProps) => {
       props.modal('Moving Folder Failed', 'Unexpected error while moving folder: ' + src, 'Close', async () => {})
     }   
   }
+
+  /**
+   * Take AST and generates a UML diagram of compiled contract as svg
+   * @returns void
+   */
+  const generateUml = (path: string) => {
+    try {
+      const currentFile = path
+      let ast: any
+      plugin.compileContractForUml(path)
+      const client: PluginClient<any, Readonly<IRemixApi>> = new PluginClient()
+      client.call('solidity', '')
+      plugin.call('solidity', '')
+      // client.call('solidity', 'compile', path)
+      // client.on('solidity', 'compilationFinished', async (target, compileSource) => {
+      //   ast = parser.parse(compileSource.sources[currentFile].content)
+      //   console.log({ ast })
+      // })
+      // contentForAST.length > 1 ? parser.parse(contentForAST) : 
+      // const payload = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
+      // const fileName = `${currentFile.split('/')[0]}/resources/${currentFile.split('/')[1].split('.')[0]}.pdf`
+      
+      // const element = new DOMParser().parseFromString(payload, 'image/svg+xml')
+      // .querySelector('svg')
+      // domToPdf(element, { filename: `${currentFile.split('/')[1].split('.')[0]}.pdf`, scale: 1.2 }, (pdf: jsPDF) => {
+        
+      //   // api.writeFile(fileName, pdf.output())
+      // })
+      // setSVGPayload(payload)
+      // setShowViewer(!showViewer)
+    } catch (error) {
+      console.log({ error })
+    }
+  }
+
+  /**
+   * Takes currently compiled contract that has a bunch of imports at the top
+   * and flattens them ready for UML creation. Takes the flattened result
+   * and assigns to a local property
+   * @returns void
+   */
+  // const flattenContract = () => {
+  //   const filePath = api.getCompilationResult().source.target
+  //   const ast = api.getCompilationResult().data.sources
+  //   const dependencyGraph = getDependencyGraph(ast, filePath)
+  //   const sorted = dependencyGraph.isEmpty()
+  //       ? [filePath]
+  //       : dependencyGraph.sort().reverse()
+  //   const sources = api.getCompilationResult().source.sources
+  //   const result = concatSourceFiles(sorted, sources)
+  //   api.writeFile(`${api.currentFile}_flattened.sol`, result)
+  //   setContentForAST(result)
+  // }
   return (
     <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
     <div ref={treeRef} tabIndex={0} style={{ outline: "none" }}>
@@ -502,6 +571,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           pushChangesToGist={pushChangesToGist}
           publishFolderToGist={publishFolderToGist}
           publishFileToGist={publishFileToGist}
+          generateUml={generateUml}
         />
       }
     </div>
