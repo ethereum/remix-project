@@ -64,6 +64,16 @@ module.exports = class Filepanel extends ViewPlugin {
     return <div id='fileExplorerView'><FileSystemProvider plugin={this} /></div>
   }
 
+  compileContractForUml (path) {
+    console.log({ path })
+    this.call('solidity', 'compile', async (target, source) => {
+      console.log({
+        target,
+        source
+      })
+    })
+  }
+
   /**
    * @param item { id: string, name: string, type?: string[], path?: string[], extension?: string[], pattern?: string[] }
    * @param callback (...args) => void
