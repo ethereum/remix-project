@@ -1,10 +1,13 @@
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel/type'
 import { createContext, SyntheticEvent } from 'react'
 import { BrowserState } from '../reducers/workspace'
+import { FilePanelType } from '../types'
+
 
 export const FileSystemContext = createContext<{
   fs: BrowserState,
   modal:(title: string | JSX.Element, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+  plugin: FilePanelType
   dispatchInitWorkspace:() => Promise<void>,
   dispatchFetchDirectory:(path: string) => Promise<void>,
   dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,

@@ -30,6 +30,13 @@ export const contextMenuActions: MenuItems = [{
   extension: ['.js', '.ts'],
   multiselect: false,
   label: ''
+},
+{
+  id: 'generate',
+  name: 'Generate uml diagram',
+  extension: ['.sol'],
+  multiselect: false,
+  label: ''
 }, {
   id: 'pushChangesToGist',
   name: 'Push changes to gist',

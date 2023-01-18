@@ -245,6 +245,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     fs,
     modal,
     toast,
+    plugin,
     dispatchInitWorkspace,
     dispatchFetchDirectory,
     dispatchAddInputField,
