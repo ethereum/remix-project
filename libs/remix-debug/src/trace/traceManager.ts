@@ -190,11 +190,14 @@ export class TraceManager {
     return this.traceCache.contractCreation[token]
   }
 
-  getMemoryAt (stepIndex) {
+  getMemoryAt (stepIndex, format = true) {
     this.checkRequestedStep(stepIndex)
     const lastChanges = util.findLowerBoundValue(stepIndex, this.traceCache.memoryChanges)
     if (lastChanges === null) {
       throw new Error('no memory found')
+    }
+    if (!format) {
+      return this.trace[lastChanges].memory
     }
     if (this.traceCache.formattedMemory[lastChanges]) {
       return this.traceCache.formattedMemory[lastChanges]
