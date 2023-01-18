@@ -33,7 +33,7 @@
   "home.gnosisSafeMultisigTemplateDesc": "Create Multi-Signature wallets using this template.",
   "home.zeroxErc20TemplateDesc": "Create an ERC20 token by importing 0xProject contract.",
   "home.learn": "Learn",
-  "home.learnEth1": "Intro to Solidity",
+  "home.learnEth1": "Remix Basics",
   "home.learnEth1Desc":"An introduction to Remix's interface and basic operations.",
   "home.learnEth2": "Intro to Solidity",
   "home.learnEth2Desc": "Interactively learn the Solidity beginner concepts.",
