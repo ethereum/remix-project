@@ -25,6 +25,7 @@ export interface ContractSelectionProps {
   api: ICompilerApi,
   compiledFileName: string,
   contractList: { file: string, name: string }[],
+  compilerInput: Record<string, any>
   modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   contractsDetails: Record<string, any>
 }
@@ -44,7 +45,8 @@ export interface CompileErrors {
 export interface CompilationDetails {
   contractList: { file: string, name: string }[],
   contractsDetails: Record<string, any>,
-  target?: string
+  target?: string,
+  input?: Record<string, any>
 }
 
 export interface ContractsFile {

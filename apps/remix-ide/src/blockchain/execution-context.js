@@ -133,11 +133,7 @@ export class ExecutionContext {
   internalWeb3 () {
     return web3
   }
-
-  blankWeb3 () {
-    return new Web3()
-  }
-
+  
   setContext (context, endPointUrl, confirmCb, infoCb) {
     this.executionContext = context
     this.executionContextChange(context, endPointUrl, confirmCb, infoCb, null)

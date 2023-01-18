@@ -1,10 +1,23 @@
-import Web3 from 'web3'
+import { toHex, toDecimal } from 'web3-utils'
+import { bigIntToHex } from '@ethereumjs/util'
 import { toChecksumAddress, BN, Address } from 'ethereumjs-util'
 import { processTx } from './txProcess'
 import { execution } from '@remix-project/remix-lib'
 import { ethers } from 'ethers'
+import { VMexecutionResult } from '@remix-project/remix-lib'
+import { RunTxResult } from '@ethereumjs/vm'
+import { Log, EvmError } from '@ethereumjs/evm'
 const TxRunnerVM = execution.TxRunnerVM
 const TxRunner = execution.TxRunner
+
+export type VMExecResult = {
+  exceptionError: EvmError
+  executionGasUsed: bigint
+  gas: bigint
+  gasRefund: bigint
+  logs: Log[]
+  returnValue: string
+}
 
 export class Transactions {
   vmContext
@@ -69,12 +82,21 @@ export class Transactions {
     if (payload.params && payload.params.length > 0 && payload.params[0].from) {
       payload.params[0].from = toChecksumAddress(payload.params[0].from)
     }
-    processTx(this.txRunnerInstance, payload, false, (error, result) => {
+    processTx(this.txRunnerInstance, payload, false, (error, result: VMexecutionResult) => {
       if (!error && result) {
         this.vmContext.addBlock(result.block)
         const hash = '0x' + result.tx.hash().toString('hex')
         this.vmContext.trackTx(hash, result.block, result.tx)
-        this.vmContext.trackExecResult(hash, result.result.execResult)
+        const returnValue = `0x${result.result.execResult.returnValue.toString('hex') || '0'}`
+        const execResult: VMExecResult = {
+          exceptionError: result.result.execResult.exceptionError,
+          executionGasUsed: result.result.execResult.executionGasUsed,
+          gas: result.result.execResult.gas,
+          gasRefund: result.result.execResult.gasRefund,
+          logs: result.result.execResult.logs,
+          returnValue
+        }
+        this.vmContext.trackExecResult(hash, execResult)
         return cb(null, result.transactionHash)
       }
       cb(error)
@@ -105,7 +127,7 @@ export class Transactions {
         transactionHash: receipt.hash,
         transactionIndex: this.TX_INDEX,
         blockHash: '0x' + txBlock.hash().toString('hex'),
-        blockNumber: '0x' + txBlock.header.number.toString('hex'),
+        blockNumber: bigIntToHex(txBlock.header.number),
         gasUsed: receipt.gasUsed,
         cumulativeGasUsed: receipt.gasUsed, // only 1 tx per block
         contractAddress: receipt.contractAddress,
@@ -133,23 +155,25 @@ export class Transactions {
 
     payload.params[0].gas = 10000000 * 10
 
-    processTx(this.txRunnerInstance, payload, true, (error, { result }) => {
+    processTx(this.txRunnerInstance, payload, true, (error, value: VMexecutionResult) => {
+      const result: RunTxResult = value.result
       if (error) return cb(error)
-      if (result.status === '0x0') {
+      if ((result as any).receipt?.status === '0x0' || (result as any).receipt?.status === 0) {
         try {
-          const msg = result.execResult.returnValue
+          const msg = `0x${result.execResult.returnValue.toString('hex') || '0'}`
           const abiCoder = new ethers.utils.AbiCoder()
-          const reason = abiCoder.decode(['string'], msg.slice(4))[0]
+          const reason = abiCoder.decode(['string'], '0x' + msg.slice(10))[0]
           return cb('revert ' + reason)
         } catch (e) {
           return cb(e.message)
         }
       }
-      let gasUsed = result.execResult.gasUsed.toNumber()
+      let gasUsed = result.execResult.executionGasUsed
       if (result.execResult.gasRefund) {
-        gasUsed += result.execResult.gasRefund.toNumber()
+        gasUsed += result.execResult.gasRefund
       }
-      cb(null, Math.ceil(gasUsed + (15 * gasUsed) / 100))
+      gasUsed = gasUsed + value.tx.getBaseFee()
+      cb(null, Math.ceil(Number(gasUsed) + (15 * Number(gasUsed)) / 100))
     })
   }
 
@@ -178,15 +202,23 @@ export class Transactions {
 
     const tag = payload.params[0].timestamp // e2e reference
 
-    processTx(this.txRunnerInstance, payload, true, (error, result) => {
+    processTx(this.txRunnerInstance, payload, true, (error, result: VMexecutionResult) => {
       if (!error && result) {
         this.vmContext.addBlock(result.block)
         const hash = '0x' + result.tx.hash().toString('hex')
         this.vmContext.trackTx(hash, result.block, result.tx)
-        this.vmContext.trackExecResult(hash, result.result.execResult)
+        const returnValue = `0x${result.result.execResult.returnValue.toString('hex') || '0'}`
+        const execResult: VMExecResult = {
+          exceptionError: result.result.execResult.exceptionError,
+          executionGasUsed: result.result.execResult.executionGasUsed,
+          gas: result.result.execResult.gas,
+          gasRefund: result.result.execResult.gasRefund,
+          logs: result.result.execResult.logs,
+          returnValue: returnValue
+        }
+        this.vmContext.trackExecResult(hash, execResult)
         this.tags[tag] = result.transactionHash
         // calls are not supposed to return a transaction hash. we do this for keeping track of it and allowing debugging calls.
-        const returnValue = `0x${result.result.execResult.returnValue.toString('hex') || '0'}`
         return cb(null, returnValue)
       }
       cb(error)
@@ -222,17 +254,17 @@ export class Transactions {
       // TODO: params to add later
       const r: Record<string, unknown> = {
         blockHash: '0x' + txBlock.hash().toString('hex'),
-        blockNumber: '0x' + txBlock.header.number.toString('hex'),
+        blockNumber: bigIntToHex(txBlock.header.number),
         from: receipt.from,
-        gas: Web3.utils.toHex(receipt.gas),
+        gas: toHex(receipt.gas),
         chainId: '0xd05',
         // 'gasPrice': '2000000000000', // 0x123
         gasPrice: '0x4a817c800', // 20000000000
         hash: receipt.transactionHash,
         input: receipt.input,
-        nonce: '0x' + tx.nonce.toString('hex'),
+        nonce: bigIntToHex(tx.nonce),
         transactionIndex: this.TX_INDEX,
-        value: receipt.value
+        value: bigIntToHex(tx.value)
         // "value":"0xf3dbb76162000" // 4290000000000000
         // "v": "0x25", // 37
         // "r": "0x1b5e176d927f8e9ab405058b2d2457392da3e20f328b16ddabcebc33eaac5fea",
@@ -259,7 +291,7 @@ export class Transactions {
     const txIndex = payload.params[1]
 
     const txBlock = this.vmContext.blocks[payload.params[0]]
-    const txHash = '0x' + txBlock.transactions[Web3.utils.toDecimal(txIndex)].hash().toString('hex')
+    const txHash = '0x' + txBlock.transactions[toDecimal(txIndex)].hash().toString('hex')
 
     this.vmContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
       if (error) {
@@ -271,15 +303,15 @@ export class Transactions {
       // TODO: params to add later
       const r: Record<string, unknown> = {
         blockHash: '0x' + txBlock.hash().toString('hex'),
-        blockNumber: '0x' + txBlock.header.number.toString('hex'),
+        blockNumber: bigIntToHex(txBlock.header.number),
         from: receipt.from,
-        gas: Web3.utils.toHex(receipt.gas),
+        gas: toHex(receipt.gas),
         chainId: '0xd05',
         // 'gasPrice': '2000000000000', // 0x123
         gasPrice: '0x4a817c800', // 20000000000
         hash: receipt.transactionHash,
         input: receipt.input,
-        nonce: '0x' + tx.nonce.toString('hex'),
+        nonce: bigIntToHex(tx.nonce),
         transactionIndex: this.TX_INDEX,
         value: receipt.value
         // "value":"0xf3dbb76162000" // 4290000000000000
@@ -304,7 +336,7 @@ export class Transactions {
     const txIndex = payload.params[1]
 
     const txBlock = this.vmContext.blocks[payload.params[0]]
-    const txHash = '0x' + txBlock.transactions[Web3.utils.toDecimal(txIndex)].hash().toString('hex')
+    const txHash = '0x' + txBlock.transactions[toDecimal(txIndex)].hash().toString('hex')
 
     this.vmContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
       if (error) {
@@ -316,15 +348,15 @@ export class Transactions {
       // TODO: params to add later
       const r: Record<string, unknown> = {
         blockHash: '0x' + txBlock.hash().toString('hex'),
-        blockNumber: '0x' + txBlock.header.number.toString('hex'),
+        blockNumber: bigIntToHex(txBlock.header.number),
         from: receipt.from,
-        gas: Web3.utils.toHex(receipt.gas),
+        gas: toHex(receipt.gas),
         // 'gasPrice': '2000000000000', // 0x123
         chainId: '0xd05',
         gasPrice: '0x4a817c800', // 20000000000
         hash: receipt.transactionHash,
         input: receipt.input,
-        nonce: '0x' + tx.nonce.toString('hex'),
+        nonce: bigIntToHex(tx.nonce),
         transactionIndex: this.TX_INDEX,
         value: receipt.value
         // "value":"0xf3dbb76162000" // 4290000000000000

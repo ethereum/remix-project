@@ -537,7 +537,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
       updateFinalResult(null, null, testFilePath)
       return
     }
-    testTab.fileManager.readFile(testFilePath).then((content: string) => {
+    testTab.fileManager.readFile(testFilePath).then(async (content: string) => {
       const runningTests: Record<string, Record<string, string>> = {}
       runningTests[testFilePath] = { content }
       filesContent[testFilePath] = { content }
@@ -565,7 +565,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
           callback(error)
         }, (url: string, cb: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
           return testTab.contentImport.resolveAndSave(url).then((result: any) => cb(null, result)).catch((error: Error) => cb(error.message)) // eslint-disable-line @typescript-eslint/no-explicit-any
-        }, { testFilePath }
+        }, { testFilePath: testFilePath, web3: await testTab.call('blockchain', 'web3VM') }
       )
     }).catch((error: Error) => {
       console.log(error)

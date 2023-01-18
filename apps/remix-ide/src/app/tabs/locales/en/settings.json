@@ -20,7 +20,7 @@
   "settings.save": "Save",
   "settings.remove": "Remove",
   "settings.themes": "Themes",
-  "settings.locales": "Lanaguage",
+  "settings.locales": "Language",
   "settings.swarm": "Swarm Settings",
   "settings.ipfs": "IPFS Settings"
 }

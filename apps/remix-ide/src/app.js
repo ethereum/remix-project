@@ -348,7 +348,6 @@ class AppComponent {
       analysis,
       test,
       filePanel.remixdHandle,
-      filePanel.gitHandle,
       filePanel.hardhatHandle,
       filePanel.foundryHandle,
       filePanel.truffleHandle,

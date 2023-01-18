@@ -100,6 +100,7 @@ jobs:
             firefox --version
             geckodriver --version
             chromedriver --version
+            rm LICENSE.chromedriver 2> /dev/null
       - checkout
       - attach_workspace:
           at: .
@@ -146,6 +147,7 @@ jobs:
             firefox --version
             geckodriver --version
             chromedriver --version
+            rm LICENSE.chromedriver 2> /dev/null
           name: Check install
       - checkout
       - attach_workspace:
@@ -313,3 +315,5 @@ workflows:
           filters:
             branches:
               only: remix_beta
+
+# VS Code Extension Version: 1.5.0

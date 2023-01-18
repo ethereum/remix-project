@@ -22,7 +22,7 @@ const profile = {
   name: 'blockchain',
   displayName: 'Blockchain',
   description: 'Blockchain - Logic',
-  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider'],
+  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'web3VM'],
   version: packageJson.version
 }
 
@@ -295,7 +295,7 @@ export class Blockchain extends Plugin {
         if (error) {
           return finalCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
         }
-        if (txResult.receipt.status === false || txResult.receipt.status === '0x0') {
+        if (txResult.receipt.status === false || txResult.receipt.status === '0x0' || txResult.receipt.status === 0) {
           return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
         }
         finalCb(null, selectedContract, address)
@@ -399,6 +399,10 @@ export class Blockchain extends Plugin {
 
   signMessage (message, account, passphrase, cb) {
     this.getCurrentProvider().signMessage(message, account, passphrase, cb)
+  }
+
+  web3VM () {
+    return this.providers.vm.web3
   }
 
   web3 () {
@@ -733,7 +737,7 @@ export class Blockchain extends Plugin {
         execResult = await this.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
-          returnValue = execResult ? execResult.returnValue : toBuffer(addHexPrefix(txResult.result) || '0x0000000000000000000000000000000000000000000000000000000000000000')
+          returnValue = execResult ? toBuffer(execResult.returnValue) : toBuffer(addHexPrefix(txResult.result) || '0x0000000000000000000000000000000000000000000000000000000000000000')
           const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
           const vmError = txExecution.checkVMError(execResult, compiledContracts)
           if (vmError.error) {
