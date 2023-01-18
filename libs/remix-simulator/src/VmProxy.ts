@@ -306,7 +306,7 @@ export class VmProxy {
         }
       }
       if (previousOpcode && previousOpcode.op === 'SHA3') {
-        const preimage = this.getSha3Input(previousOpcode.stack, this.lastMemoryUpdate)
+        const preimage = this.getSha3Input(previousOpcode.stack, formatMemory(this.lastMemoryUpdate))
         const imageHash = step.stack[step.stack.length - 1].replace('0x', '')
         this.sha3Preimages[imageHash] = {
           preimage: preimage
