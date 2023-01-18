@@ -23,6 +23,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   const [svgPayload, setSVGPayload] = useState('')
   const [showViewer, setShowViewer] = useState(false)
   const [contentForAST, setContentForAST] = useState('')
+  console.log({ props })
 
   const intl = useIntl()
 
