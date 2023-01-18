@@ -35,6 +35,7 @@ export function Workspace () {
   const initGitRepoRef = useRef<HTMLInputElement>()
   const filteredBranches = selectedWorkspace ? (selectedWorkspace.branches || []).filter(branch => branch.name.includes(branchFilter) && branch.name !== 'HEAD').slice(0, 20) : []
   const currentBranch = selectedWorkspace ? selectedWorkspace.currentBranch : null
+  const plugin = global.plugin
 
   useEffect(() => {
     let workspaceName = localStorage.getItem('currentWorkspace')
@@ -498,6 +499,7 @@ export function Workspace () {
                   removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
                   files={global.fs.browser.files}
                   fileState={global.fs.browser.fileState}
+                  plugin={plugin}
                   expandPath={global.fs.browser.expandPath}
                   focusEdit={global.fs.focusEdit}
                   focusElement={global.fs.focusElement}
@@ -537,6 +539,7 @@ export function Workspace () {
                   removedContextMenuItems={global.fs.localhost.contextMenu.removedMenuItems}
                   files={global.fs.localhost.files}
                   fileState={[]}
+                  plugin={plugin}
                   expandPath={global.fs.localhost.expandPath}
                   focusEdit={global.fs.focusEdit}
                   focusElement={global.fs.focusElement}
