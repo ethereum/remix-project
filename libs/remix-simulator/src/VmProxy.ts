@@ -261,7 +261,7 @@ export class VmProxy {
         const payloadStart = parseInt(step.stack[stackLength - 3], 16)
         const memory = formatMemory(data.memory)
         const memoryStr = memory.join('')
-        let payload = memoryStr.substring(payloadStart * 2, memory.length)
+        let payload = memoryStr.substring(payloadStart * 2, memoryStr.length)
         const fnselectorStr = payload.substring(0, 8)
         const fnselectorStrInHex = '0x' + fnselectorStr
         const fnselector = parseInt(fnselectorStrInHex)
