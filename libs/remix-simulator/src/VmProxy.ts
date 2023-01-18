@@ -198,7 +198,7 @@ export class VmProxy {
           try {
             const account = Address.fromString(processingAddress)
             const storage = await self.stateCopy.dumpStorage(account)
-            self.storageCache[processingHash][processingAddress] = storage
+            self.storageCache['after_' + processingHash][processingAddress] = storage
           } catch (e) {
             console.log(e)
           }
@@ -350,6 +350,7 @@ export class VmProxy {
 
     const block = this.vmContext.blocks[blockNumber]
     const txHash = '0x' + block.transactions[block.transactions.length - 1].hash().toString('hex')
+    console.log(this.storageCache, txHash, address)
 
     if (this.storageCache['after_' + txHash] && this.storageCache['after_' + txHash][address]) {
       const slot = '0x' + keccak(toBuffer(ethers.utils.hexZeroPad(position, 32))).toString('hex')
