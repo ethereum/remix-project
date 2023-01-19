@@ -87,7 +87,6 @@ export class FoundryClient extends PluginClient {
     if (!fs.existsSync(join(this.cachePath, 'solidity-files-cache.json'))) return
     try {
       const cache = JSON.parse(await fs.readFile(join(this.cachePath, 'solidity-files-cache.json'), { encoding: 'utf-8' }))
-
       // name of folders are file names
       for (const file of folderFiles) {
         const path = join(this.buildPath, file) // out/Counter.sol/

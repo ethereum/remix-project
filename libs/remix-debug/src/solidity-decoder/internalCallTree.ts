@@ -82,18 +82,22 @@ export class InternalCallTree {
       if (!compResult) {
         this.event.trigger('noCallTreeAvailable', [])
       } else {
-        buildTree(this, 0, scopeId, isCreation).then((result) => {
-          if (result.error) {
-            this.event.trigger('callTreeBuildFailed', [result.error])
-          } else {
-            createReducedTrace(this, traceManager.trace.length - 1)
-            console.log('call tree build lasts ', (Date.now() - time) / 1000)
-            this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
-          }
-        }, (reason) => {
-          console.log('analyzing trace falls ' + reason)
-          this.event.trigger('callTreeNotReady', [reason])
-        })
+        try {
+          buildTree(this, 0, scopeId, isCreation).then((result) => {
+            if (result.error) {
+              this.event.trigger('callTreeBuildFailed', [result.error])
+            } else {
+              createReducedTrace(this, traceManager.trace.length - 1)
+              console.log('call tree build lasts ', (Date.now() - time) / 1000)
+              this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
+            }
+          }, (reason) => {
+            console.log('analyzing trace falls ' + reason)
+            this.event.trigger('callTreeNotReady', [reason])
+          })
+        } catch (e) {
+          console.log(e)
+        }        
       }
     })
   }
