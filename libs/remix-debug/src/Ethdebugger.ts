@@ -196,6 +196,6 @@ export class Ethdebugger {
     if (this.breakpointManager && this.breakpointManager.hasBreakpoint()) {
       this.breakpointManager.jumpNextBreakpoint(false)
     }
-    this.storageResolver = new StorageResolver({ web3: this.traceManager.web3 })
+    this.storageResolver = new StorageResolver({ web3: this.traceManager.web3 })  
   }
 }
