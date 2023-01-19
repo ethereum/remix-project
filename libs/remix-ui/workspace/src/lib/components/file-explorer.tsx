@@ -460,15 +460,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       const currentFile = path
       let ast: any
-      plugin.compileContractForUml(path)
-      const client: PluginClient<any, Readonly<IRemixApi>> = new PluginClient()
-      client.call('solidity', '')
-      plugin.call('solidity', '')
-      // client.call('solidity', 'compile', path)
-      // client.on('solidity', 'compilationFinished', async (target, compileSource) => {
+      plugin.call('solidity', 'compile', path)
+      plugin.on('solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => {
+      console.log({
+          file, source, languageVersion, data, input, version
+        })
+      })
       //   ast = parser.parse(compileSource.sources[currentFile].content)
-      //   console.log({ ast })
-      // })
       // contentForAST.length > 1 ? parser.parse(contentForAST) : 
       // const payload = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
       // const fileName = `${currentFile.split('/')[0]}/resources/${currentFile.split('/')[1].split('.')[0]}.pdf`
