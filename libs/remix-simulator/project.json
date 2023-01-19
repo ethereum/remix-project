@@ -14,7 +14,18 @@
           "outputPath": "dist/libs/remix-simulator",
           "main": "libs/remix-simulator/src/index.ts",
           "tsConfig": "libs/remix-simulator/tsconfig.lib.json",
-          "assets": []
+          "assets": [
+            {
+              "glob": "ethsim",
+              "input": "libs/remix-simulator/bin/",
+              "output": "bin/"
+            },
+            {
+              "glob": "*.md",
+              "input": "libs/remix-simulator/",
+              "output": "/"
+            }
+          ]
         }
       },
       "lint": {
