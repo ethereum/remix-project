@@ -1,7 +1,7 @@
 
 # Team best practices
 
-This document aims to address contibutors best practices of the following repositories:
+This document aims to address contributors best practices of the following repositories:
  - Remix Project: https://github.com/ethereum/remix-project
  - Remix Libraries: https://github.com/ethereum/remix-project/tree/master/libs
 
@@ -48,7 +48,7 @@ Related links:
  
  ### 2) Group meetings:
  
- - When a story / bug fix is divided in parts, there should be a kickstart meeting with all the developers involved, so that all the devs have an good overview / understanding on:
+ - When a story / bug fix is divided in parts, there should be a kickstart meeting with all the developers involved, so that all the devs have a good overview / understanding on:
      - How the story fits into the Ethereum tech.
      - How the backend (if any) works / will work (could be a smart contract).
      - How the frontend works / will work.
@@ -73,7 +73,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
 
 - Prioritised list of PRs / issues are tracked in a GitHub Project, Remix IDE issues are managed by a prioritized backlog.
 - Every story can be executed by a single developer or a group of 2 or more developers (depending on the size and complexity)
-- Each dev should take the part he/she feels the most confortable with.
+- Each dev should take the part he/she feels the most comfortable with.
 - Later progress and discussion is updated directly on the issue or pull request (github).
 - When a developer or team decides on the story they want to work on (at the start of milestone for instance), they assign themselves to the issue. 
 - Documentation update should be done together with the story, or an issue with the label "documentation" has to be created.
@@ -122,7 +122,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
 # Milestone
 
  - A milestone should **only** contain items we are sure to finish.
- - The end of a milestone trigger a new release.
+ - The end of a milestone triggers a new release.
  - Milestone items and duration should take in account time spent in bugs fixing and support.
  - The team should commit to the milestone duration.
  - If a dev finish early he/she can help other to push remaining tasks.
@@ -133,7 +133,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
 
 # Milestone - Refinement meeting
 
- - A meeting is organized 3 weeks after the beggining of a round. This aims to :
+ - A meeting is organized 3 weeks after the beginning of a round. This aims to :
    - list what is left to do.
    - identify any blocker.
    - agree on a release date (which can be earlier 1 week after the meeting and not later than 4 weeks after the meeting.
@@ -170,7 +170,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
 ### 1) Bugs:
 - A critical bug should get the label `Blocker`, and every effort should be put to fix it.
 - Addressing a non critical and non planned bug can be done:
-  - After having notified in the `remix-dev` channel if the bug does not involves UX or public API changes.
+  - After having notified in the `remix-dev` channel if the bug does not involve UX or public API changes.
   - After a dev meeting (e.g the regular standup) if the bug involves any UX or public API changes.
 
 ### 2) Support:

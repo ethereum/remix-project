@@ -6,7 +6,6 @@ import * as packageJson from '../../../../../package.json'
 import { version as remixdVersion } from '../../../../../libs/remixd/package.json'
 import { PluginManager } from '@remixproject/engine'
 import { AppModal, AlertModal } from '@remix-ui/app'
-import { CopyToClipboard } from '@remix-ui/clipboard'
 
 const LOCALHOST = ' - connect to localhost - '
 
@@ -23,12 +22,6 @@ const profile = {
   maintainedBy: "Remix",
   documentation: "https://remix-ide.readthedocs.io/en/latest/remixd.html",
   authorContact: ""
-}
-
-enum State {
-  ok,
-  cancel,
-  new
 }
 
 export class RemixdHandle extends WebsocketPlugin {
