@@ -45,7 +45,6 @@ export interface FileType {
 }
 
 export type FilePanelType = {
-    <Name extends Extract<keyof App, string>, Key extends MethodKey<App[Name]>>(name: Name, key: Key, ...payload: MethodParams<App[Name], Key>)
     setWorkspace: ({ name, isLocalhost }, setEvent: boolean) => void,
     createWorkspace: (name: string, workspaceTemplateName: string) => void,
     renameWorkspace: (oldName: string, newName: string) => void
@@ -78,7 +77,7 @@ export type FilePanelType = {
 export interface FileExplorerProps {
     name: string,
     menuItems?: string[],
-    plugin: FilePanelType
+    plugin: any
     contextMenuItems: MenuItems,
     removedContextMenuItems: MenuItems,
     files: { [x: string]: Record<string, FileType> },
