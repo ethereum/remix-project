@@ -319,13 +319,21 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           })
         })
       } catch (error) {
-        unLoad()
-        setState(prevState => {
-          return {
-            ...prevState,
-            validationError: error.message || error
-          }
-        })
+        try {
+          unLoad()
+          setState(prevState => {
+            let errorMsg = error.message || error
+            if (typeof errorMsg !== 'string') {
+              errorMsg = JSON.stringify(errorMsg) + '. Possible error: the current endpoint does not support retrieving the trace of a transaction.'
+            }
+            return {
+              ...prevState,
+              validationError: errorMsg
+            }
+          })
+        } catch (e) {
+          console.error(e)
+        }
       }
     }, 300)
     handleResize()
