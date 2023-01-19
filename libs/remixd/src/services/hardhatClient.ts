@@ -151,7 +151,14 @@ export class HardhatClient extends PluginClient {
 
   async sync() {
     console.log('syncing from Hardhat')
-    this.processArtifact()
+    if(fs.existsSync(this.buildPath)) {
+      this.processArtifact()
+    }else{
+      console.log('No compilation result found')
+      this.listenOnHardHatFolder()
+      // ts-ignore
+      this.call('terminal', 'log', { type: 'log', value: 'No compilation result found' })
+    }
   }
 
   async feedContractArtifactFile(artifactContent, compilationResultPart) {

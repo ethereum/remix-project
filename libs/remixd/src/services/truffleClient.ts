@@ -157,9 +157,16 @@ export class TruffleClient extends PluginClient {
   }
 
   async sync () {
-    console.log('syncing from Truffle')
-    this.processArtifact()
-    // @ts-ignore
-    this.call('terminal', 'log', { type: 'log', value: 'synced with Truffle' })
+    if (fs.existsSync(this.buildPath)) {
+      console.log('syncing from Truffle')
+      this.processArtifact()
+      // @ts-ignore
+      this.call('terminal', 'log', { type: 'log', value: 'synced with Truffle' })
+    }else{
+      console.log('Truffle build folder doesn\'t exist... waiting for the first compilation.')
+      this.listenOnTruffleFolder()
+      // @ts-ignore
+      this.call('terminal', 'log', { type: 'log', value: 'Truffle build folder doesn\'t exist... waiting for the first compilation.' })
+    }
   }
 }
