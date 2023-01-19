@@ -15,7 +15,18 @@
           "outputPath": "dist/libs/remix-debug",
           "main": "libs/remix-debug/src/index.ts",
           "tsConfig": "libs/remix-debug/tsconfig.lib.json",
-          "assets": []
+          "assets": [
+            {
+              "glob": "rdb",
+              "input": "libs/remix-debug/bin/",
+              "output": "bin/"
+            },
+            {
+              "glob": "*.md",
+              "input": "libs/remix-debug/",
+              "output": "/"
+            }
+          ]
         }
       },
       "lint": {
