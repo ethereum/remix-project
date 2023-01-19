@@ -190,7 +190,7 @@ class PluginLoader {
 
   constructor() {
     const queryParams = new QueryParams()
-    this.donotAutoReload = ['remixd', 'git'] // that would be a bad practice to force loading some plugins at page load.
+    this.donotAutoReload = ['remixd'] // that would be a bad practice to force loading some plugins at page load.
     this.loaders = {}
     this.loaders.localStorage = {
       set: (plugin, actives) => {

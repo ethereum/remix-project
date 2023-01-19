@@ -16,10 +16,10 @@ During this phase the github project has to be filled with the issues that are g
 
 ## Release planning: 
 Together with the team, the release manager will refine the list of issues and PRs that should be addressed during the release.
-More generally and a non negligeable part of the planning is to properly ensure that bugs, issues that weren't totally identified in the roadmap, and the roadmap issues are still being processed as they should.
+More generally and a non-negligible part of the planning is to properly ensure that bugs, issues that weren't totally identified in the roadmap, and the roadmap issues are still being processed as they should.
 During this phase, **all the current project issues have to be assigned.**
 
-After the release planning each one of us have to specify the effort need for each issue (1 - 2 - 3 - 5 - 8 - 13)
+After the release planning each one of us has to specify the effort need for each issue (1 - 2 - 3 - 5 - 8 - 13)
 
 ## Release planning - refinement meeting:
 This meeting happens a few days after the release planning meeting.
@@ -37,7 +37,7 @@ Release managers will oversee the various aspects of a project before it is due 
 The quality of the release needs to be reviewed before a project is officially launched.
 The release manager is in charge of ensuring manual testing is properly planned and done.
 During the feature freeze time, only the release manager has permission to merge pull requests. As staging should at this point be already deployed, this is to ensure that the release manager has enough visibility on the changes being applied.
-Also that unit testing and e2e for new feaures have been included.
+Also that unit testing and e2e for new features have been included.
 
 ## Deployment: 
 After being quality checked, the project is ready to be deployed. 
@@ -57,14 +57,14 @@ The release manager is still responsible for ensuring a project is rolled out sm
 
  - Lead the daily standup meeting.
  - 10 minutes or more are reserved at the end of the daily standup meeting where the release manager update the team on the opened PRs (PRs which aim to be delivered in the planned release). 
- - Regular check for new filed issues, identify those that requires to be published (included in the release)
- - In some really specific situation, it could be required to deploy intermediate releases (e.g critical bug fixes).
+ - Regular check for new filed issues, identify those that require to be published (included in the release)
+ - In some really specific situations, it could be required to deploy intermediate releases (e.g critical bug fixes).
  - Planning, refinement, retrospective meetings have to be organized by the release manager and any other required meetings.
- - Release manager should feel free to implement new techniques and put their own finger print to their release, this could potentially benefit upcoming releases.
+ - Release manager should feel free to implement new techniques and put their own fingerprint to their release, this could potentially benefit upcoming releases.
  - During feature freeze, remix-beta should be updated every morning.
  - A meeting with Andy and Rob should be organized for ensuring the beta test results are properly handled.
 
-## check list:
+## checklist:
 
 
 ### pre release planning
@@ -74,7 +74,7 @@ The release manager is still responsible for ensuring a project is rolled out sm
 - [ ] a release kickoff meeting with the team aiming to get input from everyone and modify the project accordingly.
 - [ ] 2-3 days span where team members estimate their issues.
 - [ ] a release planning meeting where we agree on the release scope (intermediate and/or classic release).
-- [ ] after this meeting: all the issues / PR should have been qualified in term of effort and scope.
+- [ ] after this meeting: all the issues / PR should have been qualified in terms of effort and scope.
 - [ ] after this meeting: date for feature freeze, QA period, and release date should be set in the project title.
 
 
