@@ -12,7 +12,7 @@ import domToPdf from 'dom-to-pdf'
 import { jsPDF } from 'jspdf'
 import { convertAST2UmlClasses } from 'sol2uml'
 import { createClient } from '@remixproject/plugin-webview'
-import { PluginClient } from '@remixproject/plugin'
+
 
 import '../css/file-explorer.css'
 import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath } from '@remix-ui/helper'
@@ -48,7 +48,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   })
   const [canPaste, setCanPaste] = useState(false)
   const treeRef = useRef<HTMLDivElement>(null)
-  const [client, setClient] = useState(null)
   const [isClientLoaded, setIsClientLoaded] = useState(false);
   const [svgPayload, setSVGPayload] = useState('')
   const [showViewer, setShowViewer] = useState(false)
