@@ -17,7 +17,7 @@ export const GlobalVariables = ({ block, receipt, tx, className }) => {
     'msg.value': tx && (tx.value + ' Wei'),
     'tx.origin': tx && tx.from
   }
-  if (block.baseFeePerGas) {
+  if (block && block.baseFeePerGas) {
     globals['block.basefee'] = block && (Web3.utils.toBN(block.baseFeePerGas).toString(10) + ` Wei (${block.baseFeePerGas})`)
   }
 
