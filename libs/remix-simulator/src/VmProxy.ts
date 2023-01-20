@@ -350,7 +350,6 @@ export class VmProxy {
 
     const block = this.vmContext.blocks[blockNumber]
     const txHash = '0x' + block.transactions[block.transactions.length - 1].hash().toString('hex')
-    console.log(this.storageCache, txHash, address)
 
     if (this.storageCache['after_' + txHash] && this.storageCache['after_' + txHash][address]) {
       const slot = '0x' + keccak(toBuffer(ethers.utils.hexZeroPad(position, 32))).toString('hex')
