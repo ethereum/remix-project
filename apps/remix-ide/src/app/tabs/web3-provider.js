@@ -35,9 +35,9 @@ export class Web3ProviderModule extends Plugin {
                   this.call('terminal', 'log', { value: error.message, type: 'error' } )
                   return reject(error.message)
                 } else {
-                  const errorData = error.data ? error.data : error.message ? error.message : error
+                  const errorData = error.data || error.message || error
                   // See: https://github.com/ethers-io/ethers.js/issues/901
-                  if (!(typeof errorData === 'string' && errorData.includes("unknown method eth_chainId"))) this.call('terminal', 'log', { value: error.data ? error.data : error.message, type: 'error' } )
+                  if (!(typeof errorData === 'string' && errorData.includes("unknown method eth_chainId"))) this.call('terminal', 'log', { value: error.data || error.message, type: 'error' } )
                   return reject(errorData)
                 }
               }
