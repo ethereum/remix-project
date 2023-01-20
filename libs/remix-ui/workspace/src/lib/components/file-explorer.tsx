@@ -10,7 +10,7 @@ import { convertUmlClasses2Dot } from 'sol2uml/lib/converterClasses2Dot'
 import vizRenderStringSync from '@aduh95/viz.js/sync'
 import domToPdf from 'dom-to-pdf'
 import { jsPDF } from 'jspdf'
-import { convertAST2UmlClasses } from 'sol2uml'
+import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
 import { createClient } from '@remixproject/plugin-webview'
 
 
@@ -21,6 +21,7 @@ import { FileRender } from './file-render'
 import { Drag } from "@remix-ui/drag-n-drop"
 import { ROOT_PATH } from '../utils/constants'
 import { IRemixApi } from '@remixproject/plugin-api'
+import { concatSourceFiles, getDependencyGraph } from '@remix-ui/solidity-compiler'
 
 
 export const FileExplorer = (props: FileExplorerProps) => {
@@ -464,11 +465,17 @@ export const FileExplorer = (props: FileExplorerProps) => {
       console.log({
           file, source, languageVersion, data, input, version
         })
+        if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
+          flattenContract(source, currentFile, data)
+        }
+        ast = contentForAST.length > 1 ? parser.parse(contentForAST) : parser.parse(source.sources[currentFile].content)
+        const payload = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
+        console.log({ payload })
+        const fileName = `${currentFile.split('/')[0]}/resources/${currentFile.split('/')[1].split('.')[0]}.svg`
+        plugin.call('fileManager', 'writeFile', fileName, payload)
+        plugin.call('fileManager', 'open', fileName)
+        setSVGPayload(payload)
       })
-      //   ast = parser.parse(compileSource.sources[currentFile].content)
-      // contentForAST.length > 1 ? parser.parse(contentForAST) : 
-      // const payload = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
-      // const fileName = `${currentFile.split('/')[0]}/resources/${currentFile.split('/')[1].split('.')[0]}.pdf`
       
       // const element = new DOMParser().parseFromString(payload, 'image/svg+xml')
       // .querySelector('svg')
@@ -476,7 +483,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
         
       //   // api.writeFile(fileName, pdf.output())
       // })
-      // setSVGPayload(payload)
       // setShowViewer(!showViewer)
     } catch (error) {
       console.log({ error })
@@ -489,18 +495,17 @@ export const FileExplorer = (props: FileExplorerProps) => {
    * and assigns to a local property
    * @returns void
    */
-  // const flattenContract = () => {
-  //   const filePath = api.getCompilationResult().source.target
-  //   const ast = api.getCompilationResult().data.sources
-  //   const dependencyGraph = getDependencyGraph(ast, filePath)
-  //   const sorted = dependencyGraph.isEmpty()
-  //       ? [filePath]
-  //       : dependencyGraph.sort().reverse()
-  //   const sources = api.getCompilationResult().source.sources
-  //   const result = concatSourceFiles(sorted, sources)
-  //   api.writeFile(`${api.currentFile}_flattened.sol`, result)
-  //   setContentForAST(result)
-  // }
+  const flattenContract = (source: any, filePath: string, data: any) => {
+    const ast = data.sources
+    const dependencyGraph = getDependencyGraph(ast, filePath)
+    const sorted = dependencyGraph.isEmpty()
+        ? [filePath]
+        : dependencyGraph.sort().reverse()
+    const sources = source.sources
+    const result = concatSourceFiles(sorted, sources)
+    plugin.call('fileManager', 'writeFile', `${filePath}_flattened.sol`, result)
+    setContentForAST(result)
+  }
   return (
     <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
     <div ref={treeRef} tabIndex={0} style={{ outline: "none" }}>

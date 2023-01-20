@@ -236,11 +236,13 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   const flattenContract = () => {
     const filePath = api.getCompilationResult().source.target
     const ast = api.getCompilationResult().data.sources
+    console.log({ ast })
     const dependencyGraph = getDependencyGraph(ast, filePath)
     const sorted = dependencyGraph.isEmpty()
         ? [filePath]
         : dependencyGraph.sort().reverse()
     const sources = api.getCompilationResult().source.sources
+    console.log({ sources })
     const result = concatSourceFiles(sorted, sources)
     api.writeFile(`${api.currentFile}_flattened.sol`, result)
     setContentForAST(result)
