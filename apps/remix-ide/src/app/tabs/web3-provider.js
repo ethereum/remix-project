@@ -31,7 +31,7 @@ export class Web3ProviderModule extends Plugin {
             provider[provider.sendAsync ? 'sendAsync' : 'send'](payload, async (error, message) => {
               if (error) {
                 // Handle 'The method "debug_traceTransaction" does not exist / is not available.' error
-                if(error.code && error.code === -32601) {
+                if(error.message && error.code && error.code === -32601) {
                   this.call('terminal', 'log', { value: error.message, type: 'error' } )
                   return reject(error.message)
                 } else {
