@@ -9,7 +9,7 @@ TEST_EXITCODE=0
 echo $SHELL
 
 # install foundry
-curl -L https://foundry.paradigm.xyz | bash || true
+{ curl -L https://foundry.paradigm.xyz | bash  } || true
 # export /home/circleci/.foundry/bin to PATH
 export PATH=$PATH:/home/circleci/.foundry/bin
 foundryup
