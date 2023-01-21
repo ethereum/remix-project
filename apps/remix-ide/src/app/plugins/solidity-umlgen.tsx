@@ -3,6 +3,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import React from 'react'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { RemixUiSolidityUmlGen } from '@remix-ui/solidity-uml-gen' 
+import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
 
 const profile = {
     name: 'solidityumlgen',
