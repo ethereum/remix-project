@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 set -e
 
@@ -9,7 +9,7 @@ TEST_EXITCODE=0
 echo $SHELL
 
 # install foundry
-curl -L https://foundry.paradigm.xyz | zsh
+curl -L https://foundry.paradigm.xyz | bash
 # export /home/circleci/.foundry/bin to PATH
 export PATH=$PATH:/home/circleci/.foundry/bin
 foundryup

@@ -108,7 +108,7 @@ jobs:
           name: Start Selenium
           command: yarn run selenium
           background: true
-      - run: zsh ./apps/remix-ide/ci/remixd_test.sh
+      - run: bash ./apps/remix-ide/ci/remixd_test.sh
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
