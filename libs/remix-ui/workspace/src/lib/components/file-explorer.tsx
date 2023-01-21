@@ -11,7 +11,6 @@ import vizRenderStringSync from '@aduh95/viz.js/sync'
 import domToPdf from 'dom-to-pdf'
 import { jsPDF } from 'jspdf'
 import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
-import { createClient } from '@remixproject/plugin-webview'
 
 
 import '../css/file-explorer.css'
@@ -461,7 +460,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       let ast: any
       // const canActivateUmlGen = plugin.can
       plugin.call('solidity', 'compile', path)
-      plugin.on('solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => {
+      plugin.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
       console.log({
           file, source, languageVersion, data, input, version
         })
@@ -475,6 +474,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
         plugin.call('fileManager', 'writeFile', fileName, payload)
         plugin.call('fileManager', 'open', fileName)
         setSVGPayload(payload)
+        const isItActive = await plugin.appManager.isActive('solidityumlgen')
+        console.log('is solidityumlgen active?', { isItActive })
       })
       
       // const element = new DOMParser().parseFromString(payload, 'image/svg+xml')
