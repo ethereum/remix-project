@@ -6,6 +6,9 @@ BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
 
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+
 cd ..
 echo $SHELL
 ls -la .
