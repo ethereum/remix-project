@@ -18,6 +18,7 @@ yarn global add truffle
 mkdir MetaCoin
 cd MetaCoin
 truffle unbox metacoin
+cd ..
 
 # install hardhat
 yarn global add hardhat
