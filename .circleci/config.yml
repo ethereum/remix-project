@@ -76,43 +76,6 @@ jobs:
       - run: node dist/libs/remix-tests/bin/remix-tests ./libs/remix-tests/tests/examples_0/assert_ok_test.sol
       - run: yarn run test:libs
 
-  remixd:
-    docker:
-      - image: cimg/node:14.17.6-browsers
-    resource_class:
-      xlarge
-    working_directory: ~/remix-project
-    steps:
-      - browser-tools/install-browser-tools
-      - run:
-          command: |
-            google-chrome --version
-            firefox --version
-            geckodriver --version
-            chromedriver --version
-            rm LICENSE.chromedriver 2> /dev/null
-      - checkout
-      - attach_workspace:
-          at: .
-      - run: unzip ./persist/dist.zip 
-
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "yarn.lock" }}
-      - run: yarn
-      - run: yarn run downloadsolc_assets_e2e && yarn run downloadsolc_assets_dist
-      - run: ls -la ./dist/apps/remix-ide/assets/js
-      - run: yarn run selenium-install || yarn run selenium-install
-      - run:
-          name: Start Selenium
-          command: yarn run selenium
-          background: true
-      - run: ./apps/remix-ide/ci/remixd_test.zsh
-      - store_test_results:
-          path: ./reports/tests
-      - store_artifacts:
-          path: ./reports/screenshots
-
   remix-ide-browser:
     docker:
       - image: cimg/node:14.17.6-browsers
@@ -310,9 +273,6 @@ workflows:
           matrix:
             parameters:
               script: ["browser_tests_plugin_api.sh", "browser_tests_etherscan_plugin.sh", "browser_tests_vyper_plugin.sh"]
-      - remixd:
-          requires:
-            - build
       - remix-ide-browser:
           requires:
             - build
