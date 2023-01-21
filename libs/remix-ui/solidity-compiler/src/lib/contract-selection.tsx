@@ -1,29 +1,20 @@
-import React, { useState, useEffect, Fragment } from 'react' // eslint-disable-line
+import { useState, useEffect } from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
 import { ContractSelectionProps } from './types'
 import { PublishToStorage } from '@remix-ui/publish-to-storage' // eslint-disable-line
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
-import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
-const parser = (window as any).SolidityParser
-import { convertUmlClasses2Dot } from 'sol2uml/lib/converterClasses2Dot'
-import vizRenderStringSync from '@aduh95/viz.js/sync'
-import domToPdf from 'dom-to-pdf'
 
 import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
-import { concatSourceFiles, getDependencyGraph } from './logic/flattenerUtilities'
-import Viewer from 'react-viewer'
-import { jsPDF } from 'jspdf'
+
+
+
 
 export const ContractSelection = (props: ContractSelectionProps) => {
   const { api, compiledFileName, contractsDetails, contractList, compilerInput, modal } = props
   const [selectedContract, setSelectedContract] = useState('')
   const [storage, setStorage] = useState(null)
-  const [svgPayload, setSVGPayload] = useState('')
-  const [showViewer, setShowViewer] = useState(false)
-  const [contentForAST, setContentForAST] = useState('')
-
 
   const intl = useIntl()
 
@@ -277,19 +268,6 @@ export const ContractSelection = (props: ContractSelectionProps) => {
         </article></section>
       }
       <PublishToStorage api={api} storage={storage} contract={contractsDetails[selectedContract]} resetStorage={resetStorage} />
-        <Viewer
-          visible={showViewer}
-          rotatable={false}
-          loop={false}
-          noClose={false}
-          onClose={() => setShowViewer(false)}
-          noFooter={true}
-          showTotal={false}
-          changeable={false}
-          zoomSpeed={0.2}
-          minScale={1}
-          images={[{src: `data:image/svg+xml;base64,${btoa(svgPayload)}`}]}
-        />
     </>
   )
 }
