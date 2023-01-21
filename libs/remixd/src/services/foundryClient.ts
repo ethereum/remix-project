@@ -14,6 +14,8 @@ export class FoundryClient extends PluginClient {
   warnlog: boolean
   buildPath: string
   cachePath: string
+  logTimeout: NodeJS.Timeout
+  processingTimeout: NodeJS.Timeout
 
   constructor(private readOnly = false) {
     super()
@@ -36,12 +38,13 @@ export class FoundryClient extends PluginClient {
       this.listenOnFoundryCompilation()
     } else {
       console.log('Foundry out folder doesn\'t exist... waiting for the first compilation.')
-      this.listenOFoundryFolder()
+      this.listenOnFoundryFolder()
     }
-
   }
 
-  listenOFoundryFolder() {
+
+
+  listenOnFoundryFolder() {
     try {
       this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
       // watch for new folders
@@ -55,7 +58,7 @@ export class FoundryClient extends PluginClient {
     }
   }
 
-  compile(configPath: string) {
+  compile() {
     return new Promise((resolve, reject) => {
       if (this.readOnly) {
         const errMsg = '[Foundry Compilation]: Cannot compile in read-only mode'
@@ -82,9 +85,19 @@ export class FoundryClient extends PluginClient {
     })
   }
 
+  checkPath() {
+    console.log('checkPath', fs.existsSync(this.buildPath), fs.existsSync(this.cachePath), fs.existsSync(join(this.cachePath, 'solidity-files-cache.json')))
+    if (!fs.existsSync(this.buildPath) || !fs.existsSync(this.cachePath)) {
+      this.listenOnFoundryFolder()
+      return false
+    }
+    if (!fs.existsSync(join(this.cachePath, 'solidity-files-cache.json'))) return false
+    return true
+  }
+
   private async processArtifact() {
+    if (!this.checkPath()) return
     const folderFiles = await fs.readdir(this.buildPath) // "out" folder
-    if (!fs.existsSync(join(this.cachePath, 'solidity-files-cache.json'))) return
     try {
       const cache = JSON.parse(await fs.readFile(join(this.cachePath, 'solidity-files-cache.json'), { encoding: 'utf-8' }))
       // name of folders are file names
@@ -102,24 +115,32 @@ export class FoundryClient extends PluginClient {
         await this.readContract(path, compilationResult, cache)
         this.emit('compilationFinished', compilationResult.compilationTarget, { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)
       }
-      if (!this.warnlog) {
+
+      clearTimeout(this.logTimeout)
+      this.logTimeout = setTimeout(() => {
         // @ts-ignore
-        this.call('terminal', 'log', { type: 'log', value: 'receiving compilation result from Foundry' })
-        this.warnlog = true
-      }
+        this.call('terminal', 'log', { type: 'log', value: 'receiving compilation result from Foundry' }), 1000
+      })
+
     } catch (e) {
       console.log(e)
     }
+  }
+
+  async triggerProcessArtifact() {
+    // prevent multiple calls
+    clearTimeout(this.processingTimeout)
+    this.processingTimeout = setTimeout(async () => await this.processArtifact(), 1000)
   }
 
   listenOnFoundryCompilation() {
     try {
       this.watcher = chokidar.watch(this.cachePath, { depth: 0, ignorePermissionErrors: true, ignoreInitial: true })
 
-      this.watcher.on('change', async (f: string) => this.processArtifact())
-      this.watcher.on('add', async (f: string) => this.processArtifact())
+      this.watcher.on('change', async () => await this.triggerProcessArtifact())
+      this.watcher.on('add', async () => await this.triggerProcessArtifact())
       // process the artifact on activation
-      setTimeout(() => this.processArtifact(), 1000)
+      this.triggerProcessArtifact()
     } catch (e) {
       console.log(e)
     }
@@ -188,19 +209,7 @@ export class FoundryClient extends PluginClient {
   }
 
   async sync() {
-    console.log('syncing from Foundry')
-    if (fs.existsSync(this.buildPath) && fs.existsSync(this.cachePath)) {
-      if (!fs.existsSync(join(this.cachePath, 'solidity-files-cache.json'))) {
-        console.log('No compilation data found')
-        // @ts-ignore
-        this.call('terminal', 'log', { type: 'log', value: 'No compilation data found' })
-      } else{
-        this.processArtifact()
-        // @ts-ignore
-        this.call('terminal', 'log', { type: 'log', value: 'synced with Foundry' })
-      }
-    } else {
-      this.listenOFoundryFolder()
-    }
+    console.log('syncing Foundry with Remix...')
+    this.processArtifact()
   }
 }
