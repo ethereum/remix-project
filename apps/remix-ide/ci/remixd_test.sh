@@ -12,6 +12,15 @@ foundryup
 forge init foundry
 ls -la foundry
 
+# install truffle with yarn
+yarn global add truffle
+# install truffle metacoin box
+mkdir MetaCoin
+cd MetaCoin
+truffle unbox metacoin
+
+
+
 sleep 5
 
 yarn run build:e2e
