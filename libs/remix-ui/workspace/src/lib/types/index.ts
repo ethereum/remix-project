@@ -79,7 +79,7 @@ export interface FilePanelType extends ViewPlugin {
 export interface FileExplorerProps {
     name: string,
     menuItems?: string[],
-    plugin: any
+    plugin: FilePanelType
     contextMenuItems: MenuItems,
     removedContextMenuItems: MenuItems,
     files: { [x: string]: Record<string, FileType> },
