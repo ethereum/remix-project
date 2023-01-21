@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 set -e
 
@@ -9,11 +9,7 @@ TEST_EXITCODE=0
 echo $SHELL
 
 # install foundry
-# undo set -e because this script won't find the correct shell
-# set +e
-curl -L https://foundry.paradigm.xyz | zsh
-# redo set -e
-# set -e
+curl -L https://foundry.paradigm.xyz | bash || true
 # export /home/circleci/.foundry/bin to PATH
 export PATH=$PATH:/home/circleci/.foundry/bin
 foundryup
