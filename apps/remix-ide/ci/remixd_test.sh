@@ -19,6 +19,8 @@ mkdir MetaCoin
 cd MetaCoin
 truffle unbox metacoin
 
+# install hardhat
+yarn global add hardhat
 
 
 sleep 5
