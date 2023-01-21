@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react' // eslint-disable-line
+import React, { useState, useEffect } from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
 import { ContractSelectionProps } from './types'
 import { PublishToStorage } from '@remix-ui/publish-to-storage' // eslint-disable-line
