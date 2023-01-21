@@ -1,8 +1,9 @@
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import React from 'react'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
-import { fileDecoration } from '@remix-ui/file-decorators';
-import { IRemixApi } from '@remixproject/plugin-api';
-import { MethodParams } from '@remixproject/plugin-utils';
+import { fileDecoration } from '@remix-ui/file-decorators'
+import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
+import { ViewPlugin } from '@remixproject/engine-web'
 
 export type action = { name: string, type?: Array<'folder' | 'gist' | 'file'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean }
 export interface JSONStandardInput {
@@ -44,7 +45,7 @@ export interface FileType {
   child?: File[]
 }
 
-export type FilePanelType = {
+export interface FilePanelType extends ViewPlugin {
     setWorkspace: ({ name, isLocalhost }, setEvent: boolean) => void,
     createWorkspace: (name: string, workspaceTemplateName: string) => void,
     renameWorkspace: (oldName: string, newName: string) => void
@@ -56,6 +57,7 @@ export type FilePanelType = {
     browser?: any // browser provider
     localhost?: any // localhost provider
     fileManager? : any
+    appManager: RemixAppManager
     registry?: any // registry
     pluginApi?: any
     request: {
@@ -77,7 +79,7 @@ export type FilePanelType = {
 export interface FileExplorerProps {
     name: string,
     menuItems?: string[],
-    plugin: any
+    plugin: FilePanelType
     contextMenuItems: MenuItems,
     removedContextMenuItems: MenuItems,
     files: { [x: string]: Record<string, FileType> },

@@ -20,7 +20,6 @@ import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath }
 import { FileRender } from './file-render'
 import { Drag } from "@remix-ui/drag-n-drop"
 import { ROOT_PATH } from '../utils/constants'
-import { IRemixApi } from '@remixproject/plugin-api'
 import { concatSourceFiles, getDependencyGraph } from '@remix-ui/solidity-compiler'
 
 
@@ -460,6 +459,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       const currentFile = path
       let ast: any
+      // const canActivateUmlGen = plugin.can
       plugin.call('solidity', 'compile', path)
       plugin.on('solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => {
       console.log({
