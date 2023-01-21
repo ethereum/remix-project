@@ -8,6 +8,8 @@ TEST_EXITCODE=0
 
 # install foundry
 curl -L https://foundry.paradigm.xyz | bash
+# export /home/circleci/.foundry/bin to PATH
+export PATH=$PATH:/home/circleci/.foundry/bin
 foundryup
 forge init foundry
 ls -la foundry
