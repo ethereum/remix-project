@@ -203,51 +203,6 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     return copyContractProperty('bytecode')
   }
 
-  /**
-   * Take AST and generates a UML diagram of compiled contract as svg
-   * @returns void
-   */
-  const generateUML = () => {
-    try {
-      const currentFile = api.currentFile
-      const ast = contentForAST.length > 1 ? parser.parse(contentForAST) : parser.parse(api.getCompilationResult().source.sources[currentFile].content)
-      const payload = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
-      const fileName = `${api.currentFile.split('/')[0]}/resources/${api.currentFile.split('/')[1].split('.')[0]}.pdf`
-      
-      const element = new DOMParser().parseFromString(payload, 'image/svg+xml')
-      .querySelector('svg')
-      domToPdf(element, { filename: `${api.currentFile.split('/')[1].split('.')[0]}.pdf`, scale: 1.2 }, (pdf: jsPDF) => {
-        
-        api.writeFile(fileName, pdf.output())
-      })
-      setSVGPayload(payload)
-      setShowViewer(!showViewer)
-    } catch (error) {
-      console.log({ error })
-    }
-  }
-
-  /**
-   * Takes currently compiled contract that has a bunch of imports at the top
-   * and flattens them ready for UML creation. Takes the flattened result
-   * and assigns to a local property
-   * @returns void
-   */
-  const flattenContract = () => {
-    const filePath = api.getCompilationResult().source.target
-    const ast = api.getCompilationResult().data.sources
-    console.log({ ast })
-    const dependencyGraph = getDependencyGraph(ast, filePath)
-    const sorted = dependencyGraph.isEmpty()
-        ? [filePath]
-        : dependencyGraph.sort().reverse()
-    const sources = api.getCompilationResult().source.sources
-    console.log({ sources })
-    const result = concatSourceFiles(sorted, sources)
-    api.writeFile(`${api.currentFile}_flattened.sol`, result)
-    setContentForAST(result)
-  }
-
   return (
     // define swarm logo
     <>
@@ -261,26 +216,6 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </select>
           </div>
           <article className="mt-2 pb-0">
-            {/* <CustomTooltip
-              placement="right-start"
-              tooltipId="flattenContractTooltip"
-              tooltipClasses="text-nowrap"
-              tooltipText={`${intl.formatMessage({ id: 'solidity.flattenLabel' })}`}
-            >
-              <button id="contractFlattener" onClick={flattenContract} className="btn btn-secondary btn-block mt-2">
-                <FormattedMessage id='solidity.flattenLabel' /> {api.currentFile}
-              </button>
-            </CustomTooltip>
-            <CustomTooltip
-              placement="right-start"
-              tooltipId="generateUMLTooltip"
-              tooltipClasses="text-nowrap"
-              tooltipText={`${intl.formatMessage({ id: 'solidity.generateUML' })}`}
-            >
-              <button id="generateUML" onClick={generateUML} className="btn btn-secondary btn-block mt-2">
-                <FormattedMessage id='solidity.generateUMLLabel' />
-              </button>
-            </CustomTooltip> */}
             <button id="publishOnIpfs" className="btn btn-secondary btn-block" onClick={() => { handlePublishToStorage('ipfs') }}>
               <CustomTooltip
                 placement="right-start"
