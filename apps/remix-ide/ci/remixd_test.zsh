@@ -7,7 +7,8 @@ echo "$BUILD_ID"
 TEST_EXITCODE=0
 
 echo $SHELL
-
+ls -la .
+pwd
 # install foundry
 curl -L https://foundry.paradigm.xyz | bash || true
 # export /home/circleci/.foundry/bin to PATH
@@ -15,6 +16,7 @@ export PATH=$PATH:/home/circleci/.foundry/bin
 foundryup
 mkdir foundry
 cd foundry
+ls -la .
 forge init hello_foundry
 ls -la hello_foundry
 cd ..
