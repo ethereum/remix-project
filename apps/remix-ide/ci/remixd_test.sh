@@ -6,6 +6,8 @@ BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
 
+echo $SHELL
+
 # install foundry
 curl -L https://foundry.paradigm.xyz | bash
 # export /home/circleci/.foundry/bin to PATH
