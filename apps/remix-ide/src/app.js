@@ -35,6 +35,7 @@ import { Injected0ptimismProvider } from './app/tabs/injected-optimism-provider'
 import { InjectedArbitrumOneProvider } from './app/tabs/injected-arbitrum-one-provider'
 import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
+import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
 
 const isElectron = require('is-electron')
 
@@ -173,6 +174,9 @@ class AppComponent {
     //----- search
     const search = new SearchPlugin()
 
+    //---------------- Solidity UML Generator -------------------------
+    const solidityumlgen = new SolidityUmlGen()
+
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
 
@@ -265,7 +269,8 @@ class AppComponent {
       injected0ptimismProvider,
       injectedArbitrumOneProvider,
       this.walkthroughService,
-      search
+      search,
+      solidityumlgen
     ])
 
     // LAYOUT & SYSTEM VIEWS
@@ -378,9 +383,10 @@ class AppComponent {
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await this.appManager.activatePlugin(['home'])
     await this.appManager.activatePlugin(['settings', 'config'])
-    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'codeParser', 'codeFormatter', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
+    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'codeParser', 'codeFormatter', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler', 'solidityumlgen'])
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
+    // await this.appManager.activatePlugin(['solidityumlgen'])
 
     this.appManager.on(
       'filePanel',

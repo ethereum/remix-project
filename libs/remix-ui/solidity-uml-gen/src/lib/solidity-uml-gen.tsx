@@ -1,9 +1,9 @@
-
+import React from 'react'
 export interface RemixUiSolidityUmlGenProps {
   plugin: any
 }
 
-function RemixUiSolidityUmlGen ({ plugin }: RemixUiSolidityUmlGenProps) {
+export function RemixUiSolidityUmlGen ({ plugin }: RemixUiSolidityUmlGenProps) {
 
   return (
     <div>
