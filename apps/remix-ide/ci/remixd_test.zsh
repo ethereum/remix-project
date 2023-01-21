@@ -13,8 +13,11 @@ curl -L https://foundry.paradigm.xyz | bash || true
 # export /home/circleci/.foundry/bin to PATH
 export PATH=$PATH:/home/circleci/.foundry/bin
 foundryup
-forge init foundry
-ls -la foundry
+mkdir foundry
+cd foundry
+forge init hello_foundry
+ls -la hello_foundry
+cd ..
 
 # install truffle with yarn
 yarn global add truffle
