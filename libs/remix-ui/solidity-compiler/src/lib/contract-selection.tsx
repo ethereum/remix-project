@@ -261,7 +261,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </select>
           </div>
           <article className="mt-2 pb-0">
-            <CustomTooltip
+            {/* <CustomTooltip
               placement="right-start"
               tooltipId="flattenContractTooltip"
               tooltipClasses="text-nowrap"
@@ -280,7 +280,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               <button id="generateUML" onClick={generateUML} className="btn btn-secondary btn-block mt-2">
                 <FormattedMessage id='solidity.generateUMLLabel' />
               </button>
-            </CustomTooltip>
+            </CustomTooltip> */}
             <button id="publishOnIpfs" className="btn btn-secondary btn-block" onClick={() => { handlePublishToStorage('ipfs') }}>
               <CustomTooltip
                 placement="right-start"
