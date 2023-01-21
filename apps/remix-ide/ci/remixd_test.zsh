@@ -6,6 +6,7 @@ BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
 
+cd ..
 echo $SHELL
 ls -la .
 pwd
@@ -35,6 +36,7 @@ yarn global add hardhat
 
 sleep 5
 
+cd remix-project
 yarn run build:e2e
 
 echo "$TEST_EXITCODE"
