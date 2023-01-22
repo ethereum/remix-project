@@ -14,7 +14,9 @@
           "outputPath": "dist/libs/remix-solidity",
           "main": "libs/remix-solidity/src/index.ts",
           "tsConfig": "libs/remix-solidity/tsconfig.lib.json",
-          "assets": []
+          "assets": [
+            "libs/remix-solidity/*.md"
+          ]
         }
       },
       "lint": {
