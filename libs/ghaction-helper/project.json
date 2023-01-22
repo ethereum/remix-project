@@ -1,26 +1,27 @@
 {
-    "name": "remix-lib",
+    "name": "ghaction-helper",
     "$schema": "../../node_modules/nx/schemas/project-schema.json",
-    "sourceRoot": "libs/remix-lib/src",
+    "sourceRoot": "libs/ghaction-helper/src",
     "projectType": "library",
+    "implicitDependencies": [
+      "remix-solidity"
+    ],
     "targets": {
       "build": {
         "executor": "@nrwl/js:tsc",
         "outputs": ["{options.outputPath}"],
         "options": {
-          "outputPath": "dist/libs/remix-lib",
-          "main": "libs/remix-lib/src/index.ts",
-          "tsConfig": "libs/remix-lib/tsconfig.lib.json",
-          "assets": [
-            "libs/remix-lib/*.md"
-          ]
+          "outputPath": "dist/libs/ghaction-helper",
+          "main": "libs/ghaction-helper/src/index.ts",
+          "tsConfig": "libs/ghaction-helper/tsconfig.lib.json",
+          "assets": []
         }
       },
       "lint": {
         "executor": "@nrwl/linter:eslint",
         "outputs": ["{options.outputFile}"],
         "options": {
-          "lintFilePatterns": ["libs/remix-lib/**/*.ts"]
+          "lintFilePatterns": ["libs/ghaction-helper/**/*.ts"]
         }
       }
     },
