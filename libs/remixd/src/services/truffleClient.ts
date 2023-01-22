@@ -21,6 +21,7 @@ export class TruffleClient extends PluginClient {
     this.methods = ['compile', 'sync']
     this.onActivation = () => {
       console.log('Truffle plugin activated')
+      this.call('terminal', 'log', { type: 'log', value: 'Truffle plugin activated' })
       this.startListening()
     }
   }
@@ -51,6 +52,7 @@ export class TruffleClient extends PluginClient {
   listenOnTruffleFolder() {
     console.log('Truffle build folder doesn\'t exist... waiting for the compilation.')
     try {
+      if (this.watcher) this.watcher.close()
       this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
       // watch for new folders
       this.watcher.on('addDir', () => {
@@ -141,8 +143,8 @@ export class TruffleClient extends PluginClient {
 
   listenOnTruffleCompilation() {
     try {
+      if (this.watcher) this.watcher.close()
       this.watcher = chokidar.watch(this.buildPath, { depth: 3, ignorePermissionErrors: true, ignoreInitial: true })
-
       this.watcher.on('change', async () => await this.triggerProcessArtifact())
       this.watcher.on('add', async () => await this.triggerProcessArtifact())
       // process the artifact on activation
