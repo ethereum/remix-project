@@ -19,6 +19,10 @@ export class HardhatClient extends PluginClient {
   constructor(private readOnly = false) {
     super()
     this.methods = ['compile', 'sync']
+    this.onActivation = () => {
+      console.log('Hardhat plugin activated')
+      this.startListening()
+    }
   }
 
   setWebSocket(websocket: WS): void {
@@ -32,14 +36,15 @@ export class HardhatClient extends PluginClient {
   sharedFolder(currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
     this.buildPath = utils.absolutePath('artifacts/contracts', this.currentSharedFolder)
+  }
+
+  startListening() {
     if (fs.existsSync(this.buildPath)) {
       this.listenOnHardhatCompilation()
     } else {
-      console.log('Hardhat artifacts folder doesn\'t exist... waiting for the first compilation.')
       console.log('If you are using Hardhat, run `npx hardhat compile` or run the compilation with `Enable Hardhat Compilation` checked from the Remix IDE.')
       this.listenOnHardHatFolder()
     }
-
   }
 
   compile(configPath: string) {
@@ -141,8 +146,8 @@ export class HardhatClient extends PluginClient {
   }
 
   listenOnHardHatFolder() {
+    console.log('Hardhat artifacts folder doesn\'t exist... waiting for the compilation.')
     try {
-
       this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
       // watch for new folders
       this.watcher.on('addDir', () => {

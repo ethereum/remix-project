@@ -20,6 +20,10 @@ export class FoundryClient extends PluginClient {
   constructor(private readOnly = false) {
     super()
     this.methods = ['compile', 'sync']
+    this.onActivation = () => {
+      console.log('Foundry plugin activated')
+      this.startListening()
+    }
   }
 
   setWebSocket(websocket: WS): void {
@@ -34,17 +38,18 @@ export class FoundryClient extends PluginClient {
     this.currentSharedFolder = currentSharedFolder
     this.buildPath = utils.absolutePath('out', this.currentSharedFolder)
     this.cachePath = utils.absolutePath('cache', this.currentSharedFolder)
+  }
+
+  startListening() {
     if (fs.existsSync(this.buildPath) && fs.existsSync(this.cachePath)) {
       this.listenOnFoundryCompilation()
     } else {
-      console.log('Foundry out folder doesn\'t exist... waiting for the first compilation.')
       this.listenOnFoundryFolder()
     }
   }
 
-
-
   listenOnFoundryFolder() {
+    console.log('Foundry out folder doesn\'t exist... waiting for the compilation.')
     try {
       if(this.watcher) this.watcher.close()
       this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
@@ -119,7 +124,7 @@ export class FoundryClient extends PluginClient {
       clearTimeout(this.logTimeout)
       this.logTimeout = setTimeout(() => {
         // @ts-ignore
-        this.call('terminal', 'log', { type: 'log', value: 'receiving compilation result from Foundry' })
+        this.call('terminal', 'log', { type: 'log', value: `receiving compilation result from Foundry` })
         console.log('Syncing compilation result from Foundry')  
       }, 1000)
 

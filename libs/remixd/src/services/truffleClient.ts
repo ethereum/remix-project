@@ -19,6 +19,10 @@ export class TruffleClient extends PluginClient {
   constructor(private readOnly = false) {
     super()
     this.methods = ['compile', 'sync']
+    this.onActivation = () => {
+      console.log('Truffle plugin activated')
+      this.startListening()
+    }
   }
 
   setWebSocket(websocket: WS): void {
@@ -32,16 +36,20 @@ export class TruffleClient extends PluginClient {
   sharedFolder(currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
     this.buildPath = utils.absolutePath('build/contracts', this.currentSharedFolder)
+
+  }
+
+  startListening() {
     if (fs.existsSync(this.buildPath)) {
       this.listenOnTruffleCompilation()
     }
     else {
-      console.log('Truffle build folder doesn\'t exist... waiting for the first compilation.')
       this.listenOnTruffleFolder()
     }
   }
 
   listenOnTruffleFolder() {
+    console.log('Truffle build folder doesn\'t exist... waiting for the compilation.')
     try {
       this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
       // watch for new folders
@@ -120,6 +128,7 @@ export class TruffleClient extends PluginClient {
       } else {
         // @ts-ignore
         this.call('terminal', 'log', { value: 'receiving compilation result from Truffle', type: 'log' })
+        console.log('Syncing compilation result from Truffle')
       }
     }, 1000)
   }
