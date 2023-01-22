@@ -22,6 +22,7 @@ export class FoundryClient extends PluginClient {
     this.methods = ['compile', 'sync']
     this.onActivation = () => {
       console.log('Foundry plugin activated')
+      this.call('terminal', 'log', { type: 'log', value: 'Foundry plugin activated' })
       this.startListening()
     }
   }
@@ -141,8 +142,8 @@ export class FoundryClient extends PluginClient {
 
   listenOnFoundryCompilation() {
     try {
+      if(this.watcher) this.watcher.close()
       this.watcher = chokidar.watch(this.cachePath, { depth: 0, ignorePermissionErrors: true, ignoreInitial: true })
-
       this.watcher.on('change', async () => await this.triggerProcessArtifact())
       this.watcher.on('add', async () => await this.triggerProcessArtifact())
       // process the artifact on activation
