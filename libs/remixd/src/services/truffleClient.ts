@@ -13,13 +13,15 @@ export class TruffleClient extends PluginClient {
   watcher: chokidar.FSWatcher
   warnLog: boolean
   buildPath: string
+  logTimeout: NodeJS.Timeout
+  processingTimeout: NodeJS.Timeout
 
-  constructor (private readOnly = false) {
+  constructor(private readOnly = false) {
     super()
     this.methods = ['compile', 'sync']
   }
 
-  setWebSocket (websocket: WS): void {
+  setWebSocket(websocket: WS): void {
     this.websocket = websocket
     this.websocket.addEventListener('close', () => {
       this.warnLog = false
@@ -27,18 +29,19 @@ export class TruffleClient extends PluginClient {
     })
   }
 
-  sharedFolder (currentSharedFolder: string): void {
+  sharedFolder(currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
     this.buildPath = utils.absolutePath('build/contracts', this.currentSharedFolder)
     if (fs.existsSync(this.buildPath)) {
-      this.listenOnTruffleCompilation()}
+      this.listenOnTruffleCompilation()
+    }
     else {
       console.log('Truffle build folder doesn\'t exist... waiting for the first compilation.')
       this.listenOnTruffleFolder()
     }
   }
 
-  listenOnTruffleFolder () {
+  listenOnTruffleFolder() {
     try {
       this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
       // watch for new folders
@@ -52,7 +55,7 @@ export class TruffleClient extends PluginClient {
     }
   }
 
-  compile (configPath: string) {
+  compile(configPath: string) {
     return new Promise((resolve, reject) => {
       if (this.readOnly) {
         const errMsg = '[Truffle Compilation]: Cannot compile in read-only mode'
@@ -79,8 +82,19 @@ export class TruffleClient extends PluginClient {
     })
   }
 
-  private async processArtifact () {
-    const folderFiles = await fs.readdir(this.buildPath)   
+  checkPath() {
+    if (!fs.existsSync(this.buildPath)) {
+      this.listenOnTruffleFolder()
+      return false
+    }
+    return true
+  }
+
+
+  private async processArtifact() {
+    if (!this.checkPath()) return
+    const folderFiles = await fs.readdir(this.buildPath)
+    const filesFound = folderFiles.filter(file => file.endsWith('.json'))
     // name of folders are file names
     for (const file of folderFiles) {
       if (file.endsWith('.json')) {
@@ -98,27 +112,38 @@ export class TruffleClient extends PluginClient {
         this.emit('compilationFinished', compilationResult.compilationTarget, { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)
       }
     }
-    if (!this.warnLog) {
-      // @ts-ignore
-      this.call('terminal', 'log', { type: 'log', value: 'receiving compilation result from Truffle' })
-      this.warnLog = true
+    clearTimeout(this.logTimeout)
+    this.logTimeout = setTimeout(() => {
+      if (filesFound.length === 0) {
+        // @ts-ignore
+        this.call('terminal', 'log', { value: 'No contract found in the Truffle build folder', type: 'log' })
+      } else {
+        // @ts-ignore
+        this.call('terminal', 'log', { value: 'receiving compilation result from Truffle', type: 'log' })
+      }
+    }, 1000)
+  }
+
+  async triggerProcessArtifact() {
+    // prevent multiple calls
+    clearTimeout(this.processingTimeout)
+    this.processingTimeout = setTimeout(async () => await this.processArtifact(), 1000)
+  }
+
+  listenOnTruffleCompilation() {
+    try {
+      this.watcher = chokidar.watch(this.buildPath, { depth: 3, ignorePermissionErrors: true, ignoreInitial: true })
+
+      this.watcher.on('change', async () => await this.triggerProcessArtifact())
+      this.watcher.on('add', async () => await this.triggerProcessArtifact())
+      // process the artifact on activation
+      this.triggerProcessArtifact()
+    } catch (e) {
+      console.log(e)
     }
   }
 
-  listenOnTruffleCompilation () {
-    try {      
-      this.watcher = chokidar.watch(this.buildPath, { depth: 3, ignorePermissionErrors: true, ignoreInitial: true })
-     
-      this.watcher.on('change', async (f: string) => this.processArtifact())
-      this.watcher.on('add', async (f: string) => this.processArtifact())
-      // process the artifact on activation
-      setTimeout(() => this.processArtifact(), 1000)
-    } catch (e) {
-      console.log(e)
-    }    
-  }
-
-  async feedContractArtifactFile (path, content, compilationResultPart) {
+  async feedContractArtifactFile(path, content, compilationResultPart) {
     const contentJSON = JSON.parse(content)
     const contractName = basename(path).replace('.json', '')
     compilationResultPart.solcVersion = contentJSON.compiler.version
@@ -129,10 +154,10 @@ export class TruffleClient extends PluginClient {
     // extract data
     const relPath = utils.relativePath(filepath, this.currentSharedFolder)
     if (!compilationResultPart.output['sources'][relPath]) compilationResultPart.output['sources'][relPath] = {}
-    
+
     const location = contentJSON.ast.src.split(':')
     const id = parseInt(location[location.length - 1])
-    
+
     compilationResultPart.output['sources'][relPath] = {
       ast: contentJSON.ast,
       id
@@ -156,17 +181,7 @@ export class TruffleClient extends PluginClient {
     }
   }
 
-  async sync () {
-    if (fs.existsSync(this.buildPath)) {
-      console.log('syncing from Truffle')
-      this.processArtifact()
-      // @ts-ignore
-      this.call('terminal', 'log', { type: 'log', value: 'synced with Truffle' })
-    }else{
-      console.log('Truffle build folder doesn\'t exist... waiting for the first compilation.')
-      this.listenOnTruffleFolder()
-      // @ts-ignore
-      this.call('terminal', 'log', { type: 'log', value: 'Truffle build folder doesn\'t exist... waiting for the first compilation.' })
-    }
+  async sync() {
+    this.processArtifact()
   }
 }

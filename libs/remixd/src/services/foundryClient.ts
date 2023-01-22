@@ -46,6 +46,7 @@ export class FoundryClient extends PluginClient {
 
   listenOnFoundryFolder() {
     try {
+      if(this.watcher) this.watcher.close()
       this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
       // watch for new folders
       this.watcher.on('addDir', () => {
@@ -86,7 +87,6 @@ export class FoundryClient extends PluginClient {
   }
 
   checkPath() {
-    console.log('checkPath', fs.existsSync(this.buildPath), fs.existsSync(this.cachePath), fs.existsSync(join(this.cachePath, 'solidity-files-cache.json')))
     if (!fs.existsSync(this.buildPath) || !fs.existsSync(this.cachePath)) {
       this.listenOnFoundryFolder()
       return false
@@ -119,8 +119,9 @@ export class FoundryClient extends PluginClient {
       clearTimeout(this.logTimeout)
       this.logTimeout = setTimeout(() => {
         // @ts-ignore
-        this.call('terminal', 'log', { type: 'log', value: 'receiving compilation result from Foundry' }), 1000
-      })
+        this.call('terminal', 'log', { type: 'log', value: 'receiving compilation result from Foundry' })
+        console.log('Syncing compilation result from Foundry')  
+      }, 1000)
 
     } catch (e) {
       console.log(e)
