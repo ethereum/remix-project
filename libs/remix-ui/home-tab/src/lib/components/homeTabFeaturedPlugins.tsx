@@ -63,10 +63,10 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
     plugin.verticalIcons.select('solidity')
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solidity'])
   }
-  const startStarkNet = async () => {
-    await plugin.appManager.activatePlugin('starkNet_compiler')
-    plugin.verticalIcons.select('starkNet_compiler')
-    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'starkNet_compiler'])
+  const startOneClickDapp = async () => {
+    await plugin.appManager.activatePlugin('oneClickDapp')
+    plugin.verticalIcons.select('oneClickDapp')
+    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'oneClickDapp'])
   }
   const startSolhint = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'solhint'])
@@ -82,6 +82,12 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
     await plugin.appManager.activatePlugin(['solidity', 'solidityUnitTesting'])
     plugin.verticalIcons.select('solidityUnitTesting')
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solidityUnitTesting'])
+  }
+
+  const startDgit = async () => {
+    await plugin.appManager.activatePlugin('dgit')
+    plugin.verticalIcons.select('dgit')
+    _paq.push(['tracEvent', 'hometabActivate', 'userActivate', 'dgit'])
   }
 
   return (
@@ -127,14 +133,6 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
               callback={() => startSolidity()}
             />
             <PluginButton
-              imgPath="assets/img/starkNetLogo.webp"
-              envID="starkNetLogo"
-              envText="StarkNet"
-              description={intl.formatMessage({ id: 'home.starkNetPluginDesc' })}
-              l2={true}
-              callback={() => startStarkNet()}
-            />
-            <PluginButton
               imgPath="assets/img/solhintLogo.webp"
               envID="solhintLogo" envText="Solhint linter"
               description={intl.formatMessage({ id: 'home.solhintPluginDesc' })}
@@ -146,6 +144,21 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
               envText="Sourcify"
               description={intl.formatMessage({ id: 'home.sourcifyPluginDesc' })}
               callback={() => startSourceVerify()}
+            />
+            <PluginButton
+              imgPath="assets/img/dgit.webp"
+              envID="dgitLogo"
+              envText="Dgit"
+              description={intl.formatMessage({ id: 'home.dgitPluginDesc' })}
+              remixMaintained={true}
+              callback={() => startDgit()}
+            />
+            <PluginButton
+              imgPath="assets/img/oneclickdapp.webp"
+              envID="oneClickDappLogo"
+              envText="OneClickDapp"
+              description={intl.formatMessage({ id: 'home.oneClickDappDesc' })}
+              callback={() => startOneClickDapp()}
             />
             <PluginButton
               imgPath="assets/img/unitTesting.webp"
