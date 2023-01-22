@@ -53,7 +53,7 @@ export class TruffleClient extends PluginClient {
     console.log('Truffle build folder doesn\'t exist... waiting for the compilation.')
     try {
       if (this.watcher) this.watcher.close()
-      this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
+      this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 2, ignorePermissionErrors: true, ignoreInitial: true })
       // watch for new folders
       this.watcher.on('addDir', () => {
         if (fs.existsSync(this.buildPath)) {
