@@ -47,9 +47,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   })
   const [canPaste, setCanPaste] = useState(false)
   const treeRef = useRef<HTMLDivElement>(null)
-  const [isClientLoaded, setIsClientLoaded] = useState(false);
-  const [svgPayload, setSVGPayload] = useState('')
-  const [showViewer, setShowViewer] = useState(false)
   const [contentForAST, setContentForAST] = useState('')
 
   
@@ -458,33 +455,18 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       const currentFile = path
       let ast: any
-      // const canActivateUmlGen = plugin.can
       plugin.call('solidity', 'compile', path)
       plugin.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
-      console.log({
-          file, source, languageVersion, data, input, version
-        })
         if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
           flattenContract(source, currentFile, data)
         }
         ast = contentForAST.length > 1 ? parser.parse(contentForAST) : parser.parse(source.sources[currentFile].content)
         const payload = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
-        console.log({ payload })
         const fileName = `${currentFile.split('/')[0]}/resources/${currentFile.split('/')[1].split('.')[0]}.svg`
         plugin.call('fileManager', 'writeFile', fileName, payload)
-        plugin.call('fileManager', 'open', fileName)
-        setSVGPayload(payload)
-        const isItActive = await plugin.appManager.isActive('solidityumlgen')
-        console.log('is solidityumlgen active?', { isItActive })
+        if (!await plugin.appManager.isActive('solidityumlgen')) await plugin.appManager.activatePlugin('solidityumlgen')
+        plugin.call('solidityumlgen', 'showUmlDiagram', fileName, payload)
       })
-      
-      // const element = new DOMParser().parseFromString(payload, 'image/svg+xml')
-      // .querySelector('svg')
-      // domToPdf(element, { filename: `${currentFile.split('/')[1].split('.')[0]}.pdf`, scale: 1.2 }, (pdf: jsPDF) => {
-        
-      //   // api.writeFile(fileName, pdf.output())
-      // })
-      // setShowViewer(!showViewer)
     } catch (error) {
       console.log({ error })
     }
