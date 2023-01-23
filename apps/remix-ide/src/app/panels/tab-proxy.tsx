@@ -11,6 +11,15 @@ const profile = {
   kind: 'other'
 }
 
+interface tab {
+  id: string
+  name: string
+  title: string
+  icon: string
+  tooltip: string
+  iconClass: string
+}
+
 export class TabProxy extends Plugin {
   event: any
   fileManager: any
@@ -18,7 +27,7 @@ export class TabProxy extends Plugin {
   data: any
   _view: any
   _handlers: any
-  loadedTabs: any[]
+  loadedTabs: tab[]
   dispatch: any
   themeQuality: string
   tabsApi: any
@@ -136,7 +145,7 @@ export class TabProxy extends Plugin {
         if (isFolder) {
           for (const tab of this.loadedTabs) {
             if (tab.name.indexOf(workspace + '/' + oldName + '/') === 0) {
-              const newTabName = workspace + '/' + newName + tab.name.slice(workspace + '/' + oldName.length, tab.name.length)
+              const newTabName = workspace + '/' + newName + tab.name.slice((workspace + '/' + oldName).length, tab.name.length)
               this.renameTab(tab.name, newTabName)
             }
           }
@@ -148,7 +157,7 @@ export class TabProxy extends Plugin {
         if (isFolder) {
           for (const tab of this.loadedTabs) {
             if (tab.name.indexOf(this.fileManager.mode + '/' + oldName + '/') === 0) {
-              const newTabName = this.fileManager.mode + '/' + newName + tab.name.slice(this.fileManager.mode + '/' + oldName.length, tab.name.length)
+              const newTabName = this.fileManager.mode + '/' + newName + tab.name.slice((this.fileManager.mode + '/' + oldName).length, tab.name.length)
               this.renameTab(tab.name, newTabName)
             }
           }
@@ -335,7 +344,10 @@ export class TabProxy extends Plugin {
   }
 
   renderComponent () {
+
     const onSelect = (index) => {
+      console.log(this._handlers)
+      console.log(this.loadedTabs)
       if (this.loadedTabs[index]) {
         const name = this.loadedTabs[index].name
         if (this._handlers[name]) this._handlers[name].switchTo()

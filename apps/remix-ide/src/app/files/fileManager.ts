@@ -645,7 +645,9 @@ class FileManager extends Plugin {
       if (this.currentFile() === file) return
       const provider = resolved.provider
       this._deps.config.set('currentFile', file)
-      this.openedFiles[file] = file
+      if(typeof file === 'string') {
+        this.openedFiles[file] = file
+      }
 
       let content = ''
       try {

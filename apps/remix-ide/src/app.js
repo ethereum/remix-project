@@ -63,7 +63,7 @@ const TestTab = require('./app/tabs/test-tab')
 const FilePanel = require('./app/panels/file-panel')
 const Editor = require('./app/editor/editor')
 const Terminal = require('./app/panels/terminal')
-const { TabProxy } = require('./app/panels/tab-proxy.js')
+const { TabProxy } = require('./app/panels/tab-proxy')
 
 class AppComponent {
   constructor() {
