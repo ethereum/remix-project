@@ -14,13 +14,20 @@ export class FoundryClient extends PluginClient {
   warnlog: boolean
   buildPath: string
   cachePath: string
+  logTimeout: NodeJS.Timeout
+  processingTimeout: NodeJS.Timeout
 
-  constructor (private readOnly = false) {
+  constructor(private readOnly = false) {
     super()
     this.methods = ['compile', 'sync']
+    this.onActivation = () => {
+      console.log('Foundry plugin activated')
+      this.call('terminal', 'log', { type: 'log', value: 'Foundry plugin activated' })
+      this.startListening()
+    }
   }
 
-  setWebSocket (websocket: WS): void {
+  setWebSocket(websocket: WS): void {
     this.websocket = websocket
     this.websocket.addEventListener('close', () => {
       this.warnlog = false
@@ -28,14 +35,37 @@ export class FoundryClient extends PluginClient {
     })
   }
 
-  sharedFolder (currentSharedFolder: string): void {
+  sharedFolder(currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
     this.buildPath = utils.absolutePath('out', this.currentSharedFolder)
     this.cachePath = utils.absolutePath('cache', this.currentSharedFolder)
-    this.listenOnFoundryCompilation()
   }
 
-  compile (configPath: string) {
+  startListening() {
+    if (fs.existsSync(this.buildPath) && fs.existsSync(this.cachePath)) {
+      this.listenOnFoundryCompilation()
+    } else {
+      this.listenOnFoundryFolder()
+    }
+  }
+
+  listenOnFoundryFolder() {
+    console.log('Foundry out folder doesn\'t exist... waiting for the compilation.')
+    try {
+      if(this.watcher) this.watcher.close()
+      this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
+      // watch for new folders
+      this.watcher.on('addDir', () => {
+        if (fs.existsSync(this.buildPath) && fs.existsSync(this.cachePath)) {
+          this.listenOnFoundryCompilation()
+        }
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  compile() {
     return new Promise((resolve, reject) => {
       if (this.readOnly) {
         const errMsg = '[Foundry Compilation]: Cannot compile in read-only mode'
@@ -62,48 +92,70 @@ export class FoundryClient extends PluginClient {
     })
   }
 
-  private async processArtifact () {
-    const folderFiles = await fs.readdir(this.buildPath) // "out" folder
-    const cache = JSON.parse(await fs.readFile(join(this.cachePath, 'solidity-files-cache.json'), { encoding: 'utf-8' }))
-
-    // name of folders are file names
-    for (const file of folderFiles) {
-      const path = join(this.buildPath, file) // out/Counter.sol/
-      const compilationResult = {
-        input: {},
-        output: {
-          contracts: {},
-          sources: {}
-        },
-        solcVersion: null,
-        compilationTarget: null
-      }
-      await this.readContract(path, compilationResult, cache)
-      this.emit('compilationFinished', compilationResult.compilationTarget, { sources: compilationResult.input } , 'soljson', compilationResult.output, compilationResult.solcVersion)
+  checkPath() {
+    if (!fs.existsSync(this.buildPath) || !fs.existsSync(this.cachePath)) {
+      this.listenOnFoundryFolder()
+      return false
     }
-    if (!this.warnlog) {
-      // @ts-ignore
-      this.call('terminal', 'log', { type: 'log', value: 'receiving compilation result from Foundry' })
-      this.warnlog = true
-    }
+    if (!fs.existsSync(join(this.cachePath, 'solidity-files-cache.json'))) return false
+    return true
   }
 
-  listenOnFoundryCompilation () {
-    try {      
-      this.watcher = chokidar.watch(this.cachePath, { depth: 0, ignorePermissionErrors: true, ignoreInitial: true })
-      
-      this.watcher.on('change', async (f: string) => this.processArtifact())
-      this.watcher.on('add', async (f: string) => this.processArtifact())
-      // process the artifact on activation
-      setTimeout(() => this.processArtifact(), 1000)
+  private async processArtifact() {
+    if (!this.checkPath()) return
+    const folderFiles = await fs.readdir(this.buildPath) // "out" folder
+    try {
+      const cache = JSON.parse(await fs.readFile(join(this.cachePath, 'solidity-files-cache.json'), { encoding: 'utf-8' }))
+      // name of folders are file names
+      for (const file of folderFiles) {
+        const path = join(this.buildPath, file) // out/Counter.sol/
+        const compilationResult = {
+          input: {},
+          output: {
+            contracts: {},
+            sources: {}
+          },
+          solcVersion: null,
+          compilationTarget: null
+        }
+        await this.readContract(path, compilationResult, cache)
+        this.emit('compilationFinished', compilationResult.compilationTarget, { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)
+      }
+
+      clearTimeout(this.logTimeout)
+      this.logTimeout = setTimeout(() => {
+        // @ts-ignore
+        this.call('terminal', 'log', { type: 'log', value: `receiving compilation result from Foundry` })
+        console.log('Syncing compilation result from Foundry')  
+      }, 1000)
+
     } catch (e) {
       console.log(e)
-    }    
+    }
   }
 
-  async readContract (contractFolder, compilationResultPart, cache) {
+  async triggerProcessArtifact() {
+    // prevent multiple calls
+    clearTimeout(this.processingTimeout)
+    this.processingTimeout = setTimeout(async () => await this.processArtifact(), 1000)
+  }
+
+  listenOnFoundryCompilation() {
+    try {
+      if(this.watcher) this.watcher.close()
+      this.watcher = chokidar.watch(this.cachePath, { depth: 0, ignorePermissionErrors: true, ignoreInitial: true })
+      this.watcher.on('change', async () => await this.triggerProcessArtifact())
+      this.watcher.on('add', async () => await this.triggerProcessArtifact())
+      // process the artifact on activation
+      this.triggerProcessArtifact()
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async readContract(contractFolder, compilationResultPart, cache) {
     const files = await fs.readdir(contractFolder)
-    
+
     for (const file of files) {
       const path = join(contractFolder, file)
       const content = await fs.readFile(path, { encoding: 'utf-8' })
@@ -111,13 +163,13 @@ export class FoundryClient extends PluginClient {
     }
   }
 
-  async feedContractArtifactFile (path, content, compilationResultPart, cache) {
+  async feedContractArtifactFile(path, content, compilationResultPart, cache) {
     const contentJSON = JSON.parse(content)
     const contractName = basename(path).replace('.json', '')
-    
+
     const currentCache = cache.files[contentJSON.ast.absolutePath]
     if (!currentCache.artifacts[contractName]) return
-    
+
     // extract source and version
     const metadata = contentJSON.metadata
     if (metadata.compiler && metadata.compiler.version) {
@@ -141,7 +193,7 @@ export class FoundryClient extends PluginClient {
       console.log('\x1b[32m%s\x1b[0m', 'sources input not found, please update Foundry to the latest version.')
     }
 
-    
+
     compilationResultPart.compilationTarget = contentJSON.ast.absolutePath
     // extract data
     if (!compilationResultPart.output['sources'][contentJSON.ast.absolutePath]) compilationResultPart.output['sources'][contentJSON.ast.absolutePath] = {}
@@ -163,10 +215,8 @@ export class FoundryClient extends PluginClient {
     }
   }
 
-  async sync () {
-    console.log('syncing from Foundry')
+  async sync() {
+    console.log('syncing Foundry with Remix...')
     this.processArtifact()
-    // @ts-ignore
-    this.call('terminal', 'log', { type: 'log', value: 'synced with Foundry'})
   }
 }
