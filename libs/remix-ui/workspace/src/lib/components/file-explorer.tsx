@@ -6,10 +6,10 @@ import { FileExplorerProps, MenuItems, FileExplorerState } from '../types'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 import { contextMenuActions } from '../utils'
 const parser = (window as any).SolidityParser
-import { convertUmlClasses2Dot } from 'sol2uml/lib/converterClasses2Dot'
-import vizRenderStringSync from '@aduh95/viz.js/sync'
 import domToPdf from 'dom-to-pdf'
 import { jsPDF } from 'jspdf'
+import vizRenderStringSync from '@aduh95/viz.js/sync'
+import { convertUmlClasses2Dot } from 'sol2uml/lib/converterClasses2Dot'
 import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
 
 
@@ -451,44 +451,29 @@ export const FileExplorer = (props: FileExplorerProps) => {
    * Take AST and generates a UML diagram of compiled contract as svg
    * @returns void
    */
-  const generateUml = (path: string) => {
-    try {
-      const currentFile = path
-      let ast: any
-      plugin.call('solidity', 'compile', path)
-      plugin.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
-        if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
-          flattenContract(source, currentFile, data)
-        }
-        ast = contentForAST.length > 1 ? parser.parse(contentForAST) : parser.parse(source.sources[currentFile].content)
-        const payload = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
-        const fileName = `${currentFile.split('/')[0]}/resources/${currentFile.split('/')[1].split('.')[0]}.svg`
-        plugin.call('fileManager', 'writeFile', fileName, payload)
-        if (!await plugin.appManager.isActive('solidityumlgen')) await plugin.appManager.activatePlugin('solidityumlgen')
-        plugin.call('solidityumlgen', 'showUmlDiagram', fileName, payload)
-      })
-    } catch (error) {
-      console.log({ error })
-    }
+  const generateUml = async (path: string) => {
+    // try {
+    //   const currentFile = path
+    //   let ast: any
+    //   plugin.call('solidity', 'compile', path)
+    //   plugin.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
+    //     if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
+    //       flattenContract(source, currentFile, data)
+    //     }
+    //     ast = contentForAST.length > 1 ? parser.parse(contentForAST) : parser.parse(source.sources[currentFile].content)
+    //     const payload = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
+    //     const fileName = `${currentFile.split('/')[0]}/resources/${currentFile.split('/')[1].split('.')[0]}.svg`
+    //     plugin.call('fileManager', 'writeFile', fileName, payload)
+    //     if (!await plugin.appManager.isActive('solidityumlgen')) await plugin.appManager.activatePlugin('solidityumlgen')
+    //     plugin.call('solidityumlgen', 'showUmlDiagram', fileName, payload)
+    //   })
+    // } catch (error) {
+    //   console.log({ error })
+    // }
+    if (!await plugin.appManager.isActive('solidityumlgen')) await plugin.appManager.activatePlugin('solidityumlgen')
+    await plugin.call('solidityumlgen', 'generateUml', path)
   }
 
-  /**
-   * Takes currently compiled contract that has a bunch of imports at the top
-   * and flattens them ready for UML creation. Takes the flattened result
-   * and assigns to a local property
-   * @returns void
-   */
-  const flattenContract = (source: any, filePath: string, data: any) => {
-    const ast = data.sources
-    const dependencyGraph = getDependencyGraph(ast, filePath)
-    const sorted = dependencyGraph.isEmpty()
-        ? [filePath]
-        : dependencyGraph.sort().reverse()
-    const sources = source.sources
-    const result = concatSourceFiles(sorted, sources)
-    plugin.call('fileManager', 'writeFile', `${filePath}_flattened.sol`, result)
-    setContentForAST(result)
-  }
   return (
     <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
     <div ref={treeRef} tabIndex={0} style={{ outline: "none" }}>
