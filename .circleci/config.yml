@@ -316,4 +316,4 @@ workflows:
             branches:
               only: remix_beta
 
-# VS Code Extension Version: 1.5.0
+# VS Code Extension Version: 1.5.1
