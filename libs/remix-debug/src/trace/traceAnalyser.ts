@@ -1,4 +1,6 @@
 'use strict'
+import {  util } from '@remix-project/remix-lib'
+const { toHexPaddedString } = util
 import * as traceHelper from './traceHelper'
 
 export class TraceAnalyser {
@@ -36,8 +38,8 @@ export class TraceAnalyser {
 
   buildReturnValues (index, step) {
     if (traceHelper.isReturnInstruction(step)) {
-      let offset = 2 * parseInt(step.stack[step.stack.length - 1], 16)
-      const size = 2 * parseInt(step.stack[step.stack.length - 2], 16)
+      let offset = 2 * parseInt(toHexPaddedString(step.stack[step.stack.length - 1]), 16)
+      const size = 2 * parseInt(toHexPaddedString(step.stack[step.stack.length - 2]), 16)
       const memory = this.trace[this.traceCache.memoryChanges[this.traceCache.memoryChanges.length - 1]].memory
       const noOfReturnParams = size / 64
       const memoryInString = memory.join('')
@@ -77,11 +79,11 @@ export class TraceAnalyser {
       let offset = 0
       let size = 0
       if (callStep.op === 'DELEGATECALL') {
-        offset = 2 * parseInt(stack[stack.length - 3], 16)
-        size = 2 * parseInt(stack[stack.length - 4], 16)
+        offset = 2 * parseInt(toHexPaddedString(stack[stack.length - 3]), 16)
+        size = 2 * parseInt(toHexPaddedString(stack[stack.length - 4]), 16)
       } else {
-        offset = 2 * parseInt(stack[stack.length - 4], 16)
-        size = 2 * parseInt(stack[stack.length - 5], 16)
+        offset = 2 * parseInt(toHexPaddedString(stack[stack.length - 4]), 16)
+        size = 2 * parseInt(toHexPaddedString(stack[stack.length - 5]), 16)
       }
       calldata = '0x' + memory.join('').substr(offset, size)
       this.traceCache.pushCallDataChanges(index + 1, calldata)
@@ -104,7 +106,7 @@ export class TraceAnalyser {
       }
       this.traceCache.pushStoreChanges(index + 1, context.storageContext[context.storageContext.length - 1])
     } else if (traceHelper.isSSTOREInstruction(step)) {
-      this.traceCache.pushStoreChanges(index + 1, context.storageContext[context.storageContext.length - 1], step.stack[step.stack.length - 1], step.stack[step.stack.length - 2])
+      this.traceCache.pushStoreChanges(index + 1, context.storageContext[context.storageContext.length - 1], toHexPaddedString(step.stack[step.stack.length - 1]), toHexPaddedString(step.stack[step.stack.length - 2]))
     } else if (traceHelper.isReturnInstruction(step) || traceHelper.isStopInstruction(step)) {
       context.storageContext.pop()
       this.traceCache.pushStoreChanges(index + 1, context.storageContext[context.storageContext.length - 1])
