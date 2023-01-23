@@ -19,7 +19,14 @@ interface ActionButtonsProps {
 const ActionButtons = ({ buttons }: ActionButtonsProps) => (
   <>
     {buttons.map(btn => (
-      <button key={btn.buttonText} className="btn btn-primary btn-lg ml-4 mt-4" disabled={!btn.action}>{btn.buttonText}</button>
+      <button
+        key={btn.buttonText}
+        className="btn btn-primary btn-lg ml-4 mt-4"
+        disabled={!btn.svgValid}
+        onClick={btn.action}
+      >
+        {btn.buttonText}
+      </button>
     ))}
   </>
 )
@@ -29,14 +36,12 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg }: RemixUiSolidityUm
   const [svgPayload, setSVGPayload] = useState<string>('')
 
   const validSvg = () => {
-    return updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg')
-  }
-  useEffect(() => {
-    if (validSvg()) {
-      setSVGPayload(updatedSvg)
-      console.log({ svgPayload })
+    if (updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg')) {
+      return true
     }
-  })
+    return false
+  }
+
   const buttons: ButtonAction[] = [
     { 
       buttonText: 'Download as PDF',
@@ -49,7 +54,7 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg }: RemixUiSolidityUm
       action: () => console.log('generated!!')
     }
   ]
-  return (
+  const Display = () => (
     <div className="d-flex flex-column">
       <div className="d-flex justify-center align-content-center">
         <ActionButtons buttons={buttons}/>
@@ -66,10 +71,14 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg }: RemixUiSolidityUm
           changeable={false}
           zoomSpeed={0.2}
           minScale={1}
-          images={[{src: `data:image/svg+xml;base64,${btoa(updatedSvg ?? svgPayload)}`}]}
+          images={[{src: `data:image/svg+xml;base64,${btoa(plugin.updatedSvg ?? svgPayload)}`}]}
         />
       </div>
     </div>
+  )
+  return (<>
+    { validSvg() ? <Display /> : null }
+    </>
   )
 }
 
