@@ -10,6 +10,7 @@ import { convertUmlClasses2Dot } from 'sol2uml/lib/converterClasses2Dot'
 import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
 import vizRenderStringSync from '@aduh95/viz.js/sync'
 import { PluginViewWrapper } from '@remix-ui/helper'
+const parser = (window as any).SolidityParser
 
 const profile = {
     name: 'solidityumlgen',
@@ -27,7 +28,6 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   updatedSvg: string
   amIActivated: boolean
   appManager: RemixAppManager
-  result: any
   dispatch: React.Dispatch<any> = () => {}
   constructor(appManager: RemixAppManager) {
     super(profile)
@@ -48,17 +48,20 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   }
 
   generateUml(currentFile: string) {
-    this.updatedSvg = currentFile
+    this.call('solidity', 'compile', currentFile)
     this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
-      console.log({ file, languageVersion, input, version })
-        if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
-          this.flattenContract(source, currentFile, data)
+      let result = ''  
+      if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
+          result = await this.flattenContract(source, currentFile, data)
         }
-        const ast = this.result.length > 1 ? parser.parse(this.result) : parser.parse(source.sources[currentFile].content)
+        const ast = result.length > 1 ? parser.parse(result) : parser.parse(source.sources[currentFile].content)
         const payload = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
         const fileName = `${currentFile.split('/')[0]}/resources/${currentFile.split('/')[1].split('.')[0]}.svg`
         await this.call('fileManager', 'writeFile', fileName, payload)
-        this.showUmlDiagram(fileName, payload)
+        this.updatedSvg = payload //test
+        console.log({ payload })
+        this.updateComponent({ ...this, updateSvg: payload })
+        // await this.showUmlDiagram(fileName, payload)
       })
   }
 
@@ -66,9 +69,9 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
    * Takes currently compiled contract that has a bunch of imports at the top
    * and flattens them ready for UML creation. Takes the flattened result
    * and assigns to a local property
-   * @returns void
+   * @returns {Promise<string>}
    */
-  flattenContract (source: any, filePath: string, data: any) {
+  async flattenContract (source: any, filePath: string, data: any) {
     const ast = data.sources
     const dependencyGraph = getDependencyGraph(ast, filePath)
     const sorted = dependencyGraph.isEmpty()
@@ -76,15 +79,14 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         : dependencyGraph.sort().reverse()
     const sources = source.sources
     const result = concatSourceFiles(sorted, sources)
-    this.call('fileManager', 'writeFile', `${filePath}_flattened.sol`, result)
-    this.result = result
+    await this.call('fileManager', 'writeFile', `${filePath}_flattened.sol`, result)
+    return result
   }
 
-  showUmlDiagram(path: string, svgPayload: string) {
+  async showUmlDiagram(path: string, svgPayload: string) {
     if (!this.amIActivated) return
-    console.log({ path, svgPayload })
     if((!path && path.length < 1) || (svgPayload.length < 1 || !svgPayload.startsWith('<?xml'))) {
-      this.call('notification', 'alert', {
+      await this.call('notification', 'alert', {
         id: 'solidityumlgenAlert',
         message: 'Both file path and svg payload are required!'
       })
@@ -108,11 +110,11 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   }
 
   renderComponent () {
-    this.dispatch(this)
+    this.dispatch({...this, updatedSvg: this.updatedSvg })
   }
 
   updateComponent(state: any) {
-    return <div id="sol-uml-gen"><RemixUiSolidityUmlGen plugin={state} updatedSvg={this.updatedSvg} /></div>
+    return <div id="sol-uml-gen"><RemixUiSolidityUmlGen plugin={state} updatedSvg={state.updatedSvg} /></div>
   }
 }
 
