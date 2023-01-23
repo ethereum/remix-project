@@ -137,7 +137,12 @@ export const DebuggerApiMixin = (Base) => class extends Base {
       },
       debugWithGeneratedSources: false
     })
-    return await debug.debugger.traceManager.getTrace(hash)
+    const trace = await debug.debugger.traceManager.getTrace(hash)
+    trace.structLogs = trace.structLogs.map((step) => {
+      step.stack = []
+      return step
+    })
+    return trace
   }
 
   debug (hash, web3?) {
