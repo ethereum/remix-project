@@ -175,7 +175,7 @@ class AppComponent {
     const search = new SearchPlugin()
 
     //---------------- Solidity UML Generator -------------------------
-    const solidityumlgen = new SolidityUmlGen()
+    const solidityumlgen = new SolidityUmlGen(appManager)
 
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
