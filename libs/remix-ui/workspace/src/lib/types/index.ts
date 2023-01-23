@@ -145,7 +145,7 @@ export interface FileExplorerContextMenuProps {
     paste?: (destination: string, type: string) => void
     copyFileName?: (path: string, type: string) => void
     copyPath?: (path: string, type: string) => void
-    generateUml?: (path: string) => void
+    generateUml?: (path: string) => Promise<void>
 }
 
 export interface FileExplorerState {
