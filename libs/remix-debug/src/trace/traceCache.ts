@@ -1,5 +1,6 @@
 'use strict'
 import { util } from '@remix-project/remix-lib'
+const { toHexPaddedString } = util
 // eslint-disable-next-line camelcase
 const { sha3_256 } = util
 
@@ -103,8 +104,8 @@ export class TraceCache {
   pushContractCreationFromMemory (index, token, trace, lastMemoryChange) {
     const memory = trace[lastMemoryChange].memory
     const stack = trace[index].stack
-    const offset = 2 * parseInt(stack[stack.length - 2], 16)
-    const size = 2 * parseInt(stack[stack.length - 3], 16)
+    const offset = 2 * parseInt(toHexPaddedString(stack[stack.length - 2]), 16)
+    const size = 2 * parseInt(toHexPaddedString(stack[stack.length - 3]), 16)
     this.contractCreation[token] = '0x' + memory.join('').substr(offset, size)
   }
 
