@@ -43,7 +43,9 @@ export class VmProxy {
   txsMapBlock
   blocks
   stateCopy: StateManager
-
+  flagDoNotRecordEVMSteps: boolean
+  lastMemoryUpdate: Array<string>
+  
   constructor (vmContext: VMContext) {
     this.vmContext = vmContext
     this.stateCopy
@@ -85,6 +87,7 @@ export class VmProxy {
     this.utils = utils
     this.txsMapBlock = {}
     this.blocks = {}
+    this.lastMemoryUpdate = []
   }
 
   setVM (vm) {
@@ -109,7 +112,13 @@ export class VmProxy {
     return ret
   }
 
+  flagNextAsDoNotRecordEvmSteps () {
+    this.flagDoNotRecordEVMSteps = true
+  }
+
   async txWillProcess (data: TypedTransaction) {
+    if (this.flagDoNotRecordEVMSteps) return
+    this.lastMemoryUpdate = []
     this.stateCopy = await this.vm.stateManager.copy()
     this.incr++
     this.processingHash = bufferToHex(data.hash())
@@ -142,12 +151,16 @@ export class VmProxy {
         } catch (e) {
           console.log(e)
         }
-      })(this.processingHash, data.to, tx['to'], this)      
+      })(this.processingHash, data.to, tx['to'], this)
     }
     this.processingIndex = 0
   }
 
   async txProcessed (data: AfterTxEvent) {
+    if (this.flagDoNotRecordEVMSteps) {
+      this.flagDoNotRecordEVMSteps = false
+      return
+    }
     const lastOp = this.vmTraces[this.processingHash].structLogs[this.processingIndex - 1]
     if (lastOp) {
       lastOp.error = lastOp.op !== 'RETURN' && lastOp.op !== 'STOP' && lastOp.op !== 'DESTRUCT'
@@ -181,9 +194,15 @@ export class VmProxy {
     const to = this.txs[this.processingHash].to
     if (to) {
       try {
-        const account = Address.fromString(to)
-        const storage = await this.vm.stateManager.dumpStorage(account)
-        this.storageCache['after_' + this.processingHash][to] = storage
+        await (async (processingHash, processingAddress, self) => {
+          try {
+            const account = Address.fromString(processingAddress)
+            const storage = await self.vm.stateManager.dumpStorage(account)
+            self.storageCache['after_' + processingHash][processingAddress] = storage
+          } catch (e) {
+            console.log(e)
+          }
+        })(this.processingHash, to, this)
       } catch (e) {
         console.log(e)
       }
@@ -191,8 +210,9 @@ export class VmProxy {
 
     if (data.createdAddress) {
       const address = data.createdAddress.toString()
-      this.vmTraces[this.processingHash].return = toChecksumAddress(address)
-      this.txsReceipt[this.processingHash].contractAddress = toChecksumAddress(address)
+      const checksumedAddress = toChecksumAddress(address)
+      this.vmTraces[this.processingHash].return = checksumedAddress
+      this.txsReceipt[this.processingHash].contractAddress = checksumedAddress
     } else if (data.execResult.returnValue) {
       this.vmTraces[this.processingHash].return = '0x' + data.execResult.returnValue.toString('hex')
     } else {
@@ -205,6 +225,7 @@ export class VmProxy {
   }
 
   async pushTrace (data: InterpreterStep) {
+    if (this.flagDoNotRecordEVMSteps) return
     try {
       const depth = data.depth + 1 // geth starts the depth from 1
       if (!this.processingHash) {
@@ -220,21 +241,27 @@ export class VmProxy {
       }
       const step = {
         stack: hexListFromBNs(data.stack),
-        memory: formatMemory(data.memory),
         storage: {},
+        memory: null,
         op: data.opcode.name,
         pc: data.pc,
         gasCost: data.opcode.fee.toString(),
         gas: data.gasLeft.toString(),
         depth: depth
       }
+
+      if (previousOpcode && (previousOpcode.op === 'CALLDATACOPY' || previousOpcode.op === 'CODECOPY' || previousOpcode.op === 'EXTCODECOPY' || previousOpcode.op === 'RETURNDATACOPY' || previousOpcode.op === 'MSTORE' || previousOpcode.op === 'MSTORE8')) {
+        step.memory = data.memory
+        this.lastMemoryUpdate = step.memory
+      }
       this.vmTraces[this.processingHash].structLogs.push(step)
       // Track hardhat console.log call
       if (step.op === 'STATICCALL' && step.stack[step.stack.length - 2] === '0x000000000000000000000000000000000000000000636f6e736f6c652e6c6f67') {
         const stackLength = step.stack.length
         const payloadStart = parseInt(step.stack[stackLength - 3], 16)
-        const memory = step.memory.join('')
-        let payload = memory.substring(payloadStart * 2, memory.length)
+        const memory = formatMemory(data.memory)
+        const memoryStr = memory.join('')
+        let payload = memoryStr.substring(payloadStart * 2, memoryStr.length)
         const fnselectorStr = payload.substring(0, 8)
         const fnselectorStrInHex = '0x' + fnselectorStr
         const fnselector = parseInt(fnselectorStrInHex)
@@ -279,7 +306,7 @@ export class VmProxy {
         }
       }
       if (previousOpcode && previousOpcode.op === 'SHA3') {
-        const preimage = this.getSha3Input(previousOpcode.stack, previousOpcode.memory)
+        const preimage = this.getSha3Input(previousOpcode.stack, formatMemory(this.lastMemoryUpdate))
         const imageHash = step.stack[step.stack.length - 1].replace('0x', '')
         this.sha3Preimages[imageHash] = {
           preimage: preimage

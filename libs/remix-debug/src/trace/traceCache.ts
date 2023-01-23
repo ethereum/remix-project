@@ -17,6 +17,7 @@ export class TraceCache {
   memoryChanges
   storageChanges
   sstore
+  formattedMemory
 
   constructor () {
     this.init()
@@ -36,6 +37,7 @@ export class TraceCache {
     this.addresses = []
     this.callDataChanges = []
     this.memoryChanges = []
+    this.formattedMemory = {}
     this.storageChanges = []
     this.sstore = {} // all sstore occurence in the trace
   }
@@ -51,6 +53,10 @@ export class TraceCache {
 
   pushMemoryChanges (value) {
     this.memoryChanges.push(value)
+  }
+
+  setFormattedMemory (stepIndex, memory) {
+    this.formattedMemory[stepIndex] = memory
   }
 
   // outOfGas has been removed because gas left logging is apparently made differently
