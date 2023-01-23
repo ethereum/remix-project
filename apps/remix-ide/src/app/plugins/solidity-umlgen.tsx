@@ -18,9 +18,13 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   element: HTMLDivElement
   currentFile: string
   svgPayload: string
+  updatedSvg: string
   amIActivated: boolean
   constructor() {
     super(profile)
+    this.currentFile = ''
+    this.svgPayload = ''
+    this.updatedSvg = ''
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'sol-uml-gen')
   }
@@ -37,7 +41,8 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
 
   showUmlDiagram(path: string, svgPayload: string) {
     if (!this.amIActivated) return
-    if(path.length < 1 || (svgPayload.length < 1 || !svgPayload.startsWith('<svg'))) {
+    console.log({ path, svgPayload })
+    if((!path && path.length < 1) || (svgPayload.length < 1 || !svgPayload.startsWith('<?xml'))) {
       this.call('notification', 'alert', {
         id: 'solidityumlgenAlert',
         message: 'Both file path and svg payload are required!'
@@ -45,7 +50,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       return
     } else {
       this.currentFile = path
-      this.svgPayload = svgPayload
+      this.updatedSvg = svgPayload
     }
 
   }

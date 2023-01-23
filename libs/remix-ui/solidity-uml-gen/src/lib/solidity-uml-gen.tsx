@@ -7,12 +7,14 @@ export interface RemixUiSolidityUmlGenProps {
 
 export function RemixUiSolidityUmlGen ({ plugin }: RemixUiSolidityUmlGenProps) {
   const [showViewer, setShowViewer] = useState(false)
-  const [svgPayload, setSVGPayload] = useState('')
+  const [svgPayload, setSVGPayload] = useState<string>(plugin.svgPayload)
 
   useEffect(() => {
-    if (plugin.svgPayload.length > 1 
-      && plugin.svgPayload.startsWith('<svg')) setSVGPayload(plugin.svgPayload)
-  }, [plugin.svgPayload])
+    if (plugin.updatedSvg.startsWith('<?xml') && plugin.updatedSvg.includes('<svg')) {
+      setSVGPayload(plugin.updatedSvg)
+      console.log({ svgPayload })
+    }
+  })
 
   return (
     <div>
