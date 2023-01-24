@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
 import { ISolidityUmlGen } from '../types'
 export interface RemixUiSolidityUmlGenProps {
   plugin?: ISolidityUmlGen
@@ -20,7 +21,7 @@ const ActionButtons = ({ buttons }: ActionButtonsProps) => (
     {buttons.map(btn => (
       <button
         key={btn.buttonText}
-        className="btn btn-primary btn-lg ml-4 mt-4"
+        className="btn btn-primary btn-sm ml-4 mt-4"
         disabled={!btn.svgValid}
         onClick={btn.action}
       >
@@ -57,16 +58,22 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg }: RemixUiSolidityUm
     }
   ]
   const Display = () => (
-    <div className="d-flex flex-column">
+    <div className="d-flex flex-column justify-center">
       <div className="d-flex justify-center align-content-center">
-        <ActionButtons buttons={buttons}/>
+        {/* <ActionButtons buttons={buttons}/> */}
       </div>
-      <div>
-        <img 
-          src={`data:image/svg+xml;base64,${btoa(plugin.updatedSvg ?? svgPayload)}`}
-          width={800}
-          height={600}
-        />
+      <div id="umlImageHolder" className="mx-2 my-3 ml-5">
+        { validSvg && showViewer ? (
+          <TransformWrapper>
+          <TransformComponent>
+            <img 
+              src={`data:image/svg+xml;base64,${btoa(plugin.updatedSvg ?? svgPayload)}`}
+              width={900}
+              height={600}
+            />
+          </TransformComponent>
+        </TransformWrapper>
+        ) : null}
       </div>
     </div>
   )
