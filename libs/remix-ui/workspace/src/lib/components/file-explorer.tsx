@@ -447,33 +447,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }   
   }
 
-  /**
-   * Take AST and generates a UML diagram of compiled contract as svg
-   * @returns void
-   */
-  const generateUml = async (path: string) => {
-    // try {
-    //   const currentFile = path
-    //   let ast: any
-    //   plugin.call('solidity', 'compile', path)
-    //   plugin.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
-    //     if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
-    //       flattenContract(source, currentFile, data)
-    //     }
-    //     ast = contentForAST.length > 1 ? parser.parse(contentForAST) : parser.parse(source.sources[currentFile].content)
-    //     const payload = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
-    //     const fileName = `${currentFile.split('/')[0]}/resources/${currentFile.split('/')[1].split('.')[0]}.svg`
-    //     plugin.call('fileManager', 'writeFile', fileName, payload)
-    //     if (!await plugin.appManager.isActive('solidityumlgen')) await plugin.appManager.activatePlugin('solidityumlgen')
-    //     plugin.call('solidityumlgen', 'showUmlDiagram', fileName, payload)
-    //   })
-    // } catch (error) {
-    //   console.log({ error })
-    // }
-    if (!await plugin.appManager.isActive('solidityumlgen')) await plugin.appManager.activatePlugin('solidityumlgen')
-    await plugin.call('solidityumlgen', 'generateUml', path)
-  }
-
   return (
     <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
     <div ref={treeRef} tabIndex={0} style={{ outline: "none" }}>
@@ -541,7 +514,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
           pushChangesToGist={pushChangesToGist}
           publishFolderToGist={publishFolderToGist}
           publishFileToGist={publishFileToGist}
-          generateUml={generateUml}
         />
       }
     </div>

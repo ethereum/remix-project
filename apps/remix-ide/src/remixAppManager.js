@@ -176,6 +176,16 @@ export class RemixAppManager extends PluginManager {
       pattern: [],
       sticky: true
     })
+    await this.call('filePanel', 'registerContextMenuItem', {
+      id: 'solidityumlgen',
+      name: 'generateCustomAction',
+      label: 'generate UML',
+      type: [],
+      extension: ['.sol'],
+      path: [],
+      pattern: [],
+      sticky: true
+    })
   }
 }
 

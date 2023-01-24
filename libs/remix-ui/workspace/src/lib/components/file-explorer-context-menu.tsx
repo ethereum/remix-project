@@ -126,9 +126,6 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               deletePath(getPath())
               _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'deleteAll'])
               break
-            case 'Generate uml diagram':
-              generateUml(path)
-              break
             default:
               _paq.push(['trackEvent', 'fileExplorer', 'customAction', `${item.id}/${item.name}`])
               emit && emit({ ...item, path: [path] } as customAction)
