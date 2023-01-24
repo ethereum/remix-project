@@ -227,8 +227,7 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
             >
               <div
                 data-id='soliditygithubaction'
-                onClick={(e) => {
-                  e.stopPropagation()
+                onClick={() => {
                   props.addGithubAction()
                   _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSolidityTesting'])
                   props.hideIconsMenu(!showIconsMenu)
@@ -238,8 +237,7 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
                   hidden={ hideWorkspaceOptions }
                   id='soliditygithubaction'
                   data-id='soliditygithubaction'
-                  onClick={(e) => {
-                    e.stopPropagation()
+                  onClick={() => {
                     props.addGithubAction()
                     _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSolidityTesting'])
                     props.hideIconsMenu(!showIconsMenu)
@@ -260,8 +258,7 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
             >
               <div
                 data-id='typescriptsoliditygithubtestaction'
-                onClick={(e) => {
-                  e.stopPropagation()
+                onClick={() => {
                   props.addTsSolTestGithubAction()
                   _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addTsSolTestingAction'])
                   props.hideIconsMenu(!showIconsMenu)
@@ -271,8 +268,7 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
                     hidden={ hideWorkspaceOptions }
                     id='tssoliditygithubaction'
                     data-id='tssoliditygithubaction'
-                    onClick={(e) => {
-                      e.stopPropagation()
+                    onClick={() => {
                       props.addTsSolTestGithubAction()
                       _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addTsSolTestingAction'])
                       props.hideIconsMenu(!showIconsMenu)
@@ -293,8 +289,7 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
               >
                 <div
                   data-id='slithergithubtestaction'
-                  onClick={(e) => {
-                    e.stopPropagation()
+                  onClick={() => {
                     props.addSlitherGithubAction()
                     _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSlitherAction'])
                     props.hideIconsMenu(!showIconsMenu)
@@ -304,8 +299,7 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
                     hidden={ hideWorkspaceOptions }
                     id='slithergithubaction'
                     data-id='slithergithubaction'
-                    onClick={(e) => {
-                      e.stopPropagation()
+                    onClick={() => {
                       props.addSlitherGithubAction()
                       _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSlitherAction'])
                       props.hideIconsMenu(!showIconsMenu)
