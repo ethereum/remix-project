@@ -733,7 +733,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     setToggleExpander(!toggleExpander)
   }
 
-
   return (
     <section>
       <article>
