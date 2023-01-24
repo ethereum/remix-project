@@ -60,7 +60,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         await this.call('fileManager', 'writeFile', fileName, payload)
         this.updatedSvg = payload //test
         console.log({ payload })
-        this.updateComponent({ ...this, updateSvg: payload })
+        this.renderComponent()
         // await this.showUmlDiagram(fileName, payload)
       })
   }
@@ -95,7 +95,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       this.currentFile = path
       this.updatedSvg = svgPayload
     }
-
+    this.renderComponent()
   }
 
   setDispatch (dispatch: React.Dispatch<any>) {
