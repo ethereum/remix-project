@@ -5,6 +5,7 @@ import Registry from '../state/registry'
 import { EventEmitter } from 'events'
 import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from '@remix-ui/helper'
 import helper from '../../lib/helper.js'
+import { RemixAppManager } from '../../remixAppManager'
 
 /*
   attach to files event (removed renamed)
@@ -40,7 +41,7 @@ class FileManager extends Plugin {
   events: EventEmitter
   editor: any
   _components: any
-  appManager: any
+  appManager: RemixAppManager
   _deps: any
   getCurrentFile: () => any
   getFile: (path: any) => Promise<unknown>
@@ -622,13 +623,20 @@ class FileManager extends Plugin {
       file = resolved.file
       await this.saveCurrentFile()
       if (this.currentFile() === file) return
+      
       const provider = resolved.provider
       this._deps.config.set('currentFile', file)
       this.openedFiles[file] = file
 
       let content = ''
       try {
-        content = await provider.get(file)   
+        content = await provider.get(file)
+        if (file.split('.')[1].includes('svg')) {
+          if (!await this.appManager.isActive('solidityumlgen')) await this.appManager.activatePlugin('solidityumlgen')
+          provider.isReadOnly(file)
+          this.call('solidityumlgen', 'showUmlDiagram', content)
+          return
+        } 
       } catch (error) {
         console.log(error)
         throw error
