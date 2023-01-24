@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import Viewer from 'react-viewer'
 import { ISolidityUmlGen } from '../types'
 export interface RemixUiSolidityUmlGenProps {
   plugin?: ISolidityUmlGen
@@ -63,19 +62,10 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg }: RemixUiSolidityUm
         <ActionButtons buttons={buttons}/>
       </div>
       <div>
-        VIEWEERR
-        <Viewer
-          visible={showViewer}
-          rotatable={false}
-          loop={false}
-          noClose={false}
-          onClose={() => setShowViewer(false)}
-          noFooter={true}
-          showTotal={false}
-          changeable={false}
-          zoomSpeed={0.2}
-          minScale={1}
-          images={[{src: `data:image/svg+xml;base64,${btoa(plugin.updatedSvg ?? svgPayload)}`}]}
+        <img 
+          src={`data:image/svg+xml;base64,${btoa(plugin.updatedSvg ?? svgPayload)}`}
+          width={800}
+          height={600}
         />
       </div>
     </div>

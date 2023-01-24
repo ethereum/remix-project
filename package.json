@@ -188,6 +188,7 @@
     "react-multi-carousel": "^2.8.2",
     "react-router-dom": "^6.3.0",
     "react-tabs": "^3.2.2",
+    "react-zoom-pan-pinch": "^2.2.0",
     "regenerator-runtime": "0.13.7",
     "rss-parser": "^3.12.0",
     "signale": "^1.4.0",
