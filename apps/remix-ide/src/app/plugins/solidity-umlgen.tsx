@@ -10,6 +10,7 @@ import { convertUmlClasses2Dot } from 'sol2uml/lib/converterClasses2Dot'
 import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
 import vizRenderStringSync from '@aduh95/viz.js/sync'
 import { PluginViewWrapper } from '@remix-ui/helper'
+import { customAction, customActionType } from '@remixproject/plugin-api'
 const parser = (window as any).SolidityParser
 
 const profile = {
@@ -17,7 +18,7 @@ const profile = {
     displayName: 'Solidity UML Generator',
     description: 'Generate UML diagram in svg format from last compiled contract',
     location: 'mainPanel',
-    methods: ['showUmlDiagram', 'generateUml'],
+    methods: ['showUmlDiagram', 'generateUml', 'generateCustomAction'],
     events: [],
 }
 
@@ -45,6 +46,10 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
 
   onDeactivation(): void {
       this.amIActivated = false
+  }
+
+  generateCustomAction = async (action: customAction) => {
+    this.generateUml(action.path[0])
   }
 
   generateUml(currentFile: string) {
