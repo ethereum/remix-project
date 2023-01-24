@@ -10,7 +10,7 @@ import { convertUmlClasses2Dot } from 'sol2uml/lib/converterClasses2Dot'
 import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
 import vizRenderStringSync from '@aduh95/viz.js/sync'
 import { PluginViewWrapper } from '@remix-ui/helper'
-import { customAction, customActionType } from '@remixproject/plugin-api'
+import { customAction } from '@remixproject/plugin-api'
 const parser = (window as any).SolidityParser
 
 const profile = {
@@ -41,7 +41,23 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   }
 
   onActivation(): void {
-      this.amIActivated = true
+    if (this.currentFile.length < 1) 
+    this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
+      let result = ''
+      try {
+        if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
+          result = await this.flattenContract(source, this.currentFile, data)
+        }
+        const ast = result.length > 1 ? parser.parse(result) : parser.parse(source.sources[this.currentFile].content)
+        const payload = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, this.currentFile)))
+        const fileName = `${this.currentFile.split('/')[0]}/resources/${this.currentFile.split('/')[1].split('.')[0]}.svg`
+        await this.call('fileManager', 'writeFile', fileName, payload)
+        this.updatedSvg = payload
+        this.renderComponent()
+      } catch (error) {
+        console.log({ error })
+      }
+    })
   }
 
   onDeactivation(): void {
@@ -49,25 +65,13 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   }
 
   generateCustomAction = async (action: customAction) => {
+    this.currentFile = action.path[0]
     this.generateUml(action.path[0])
   }
 
   generateUml(currentFile: string) {
     this.call('solidity', 'compile', currentFile)
-    this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
-      let result = ''  
-      if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
-          result = await this.flattenContract(source, currentFile, data)
-        }
-        const ast = result.length > 1 ? parser.parse(result) : parser.parse(source.sources[currentFile].content)
-        const payload = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, currentFile)))
-        const fileName = `${currentFile.split('/')[0]}/resources/${currentFile.split('/')[1].split('.')[0]}.svg`
-        await this.call('fileManager', 'writeFile', fileName, payload)
-        this.updatedSvg = payload //test
-        console.log({ payload })
-        this.renderComponent()
-        // await this.showUmlDiagram(fileName, payload)
-      })
+    this.renderComponent()
   }
 
   /**
@@ -88,18 +92,8 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     return result
   }
 
-  async showUmlDiagram(path: string, svgPayload: string) {
-    if (!this.amIActivated) return
-    if((!path && path.length < 1) || (svgPayload.length < 1 || !svgPayload.startsWith('<?xml'))) {
-      await this.call('notification', 'alert', {
-        id: 'solidityumlgenAlert',
-        message: 'Both file path and svg payload are required!'
-      })
-      return
-    } else {
-      this.currentFile = path
-      this.updatedSvg = svgPayload
-    }
+  async showUmlDiagram(svgPayload: string) {
+    this.updatedSvg = svgPayload
     this.renderComponent()
   }
 
