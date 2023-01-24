@@ -32,12 +32,6 @@ export const contextMenuActions: MenuItems = [{
   label: ''
 },
 {
-  id: 'generate',
-  name: 'Generate uml diagram',
-  extension: ['.sol'],
-  multiselect: false,
-  label: ''
-}, {
   id: 'pushChangesToGist',
   name: 'Push changes to gist',
   type: ['gist'],
