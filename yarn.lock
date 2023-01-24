@@ -10072,11 +10072,6 @@ classic-level@^1.2.0:
     napi-macros "~2.0.0"
     node-gyp-build "^4.3.0"
 
-classnames@^2.2.5:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.2.tgz#351d813bf0137fcc6a76a16b88208d2560a0d924"
-  integrity sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==
-
 classnames@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
@@ -22968,13 +22963,6 @@ react-transition-group@^4.4.1:
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
-
-react-viewer@^3.2.2:
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/react-viewer/-/react-viewer-3.2.2.tgz#38626a7fa862ec84dfa373c2ef5843f4100c465b"
-  integrity sha512-DHOq1x6cXsAViY43204ILRzLVR5ovP1MgzsC+LzZCWlInRuHjzAgpQZ8GzWm1CkiNYuHGwCxH36X0JUHl2xDSg==
-  dependencies:
-    classnames "^2.2.5"
 
 react@^17.0.2:
   version "17.0.2"
