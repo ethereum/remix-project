@@ -183,6 +183,7 @@ export class TabProxy extends Plugin {
   }
 
   focus (name) {
+    console.log('what switched tabs', name)
     this.emit('switchApp', name)
     this.tabsApi.activateTab(name)
   }

@@ -39,7 +39,6 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg }: RemixUiSolidityUm
 
 
   useEffect(() => {
-    console.log('updatedSvg updated') 
     setValidSvg (updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg')) 
     setShowViewer(updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg'))
   }
@@ -62,7 +61,7 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg }: RemixUiSolidityUm
       <div className="d-flex justify-center align-content-center">
         {/* <ActionButtons buttons={buttons}/> */}
       </div>
-      <div id="umlImageHolder" className="mx-2 my-3 ml-5">
+      <div id="umlImageHolder" className="mx-2 my-3 ml-5 w-100">
         { validSvg && showViewer ? (
           <TransformWrapper>
           <TransformComponent>
