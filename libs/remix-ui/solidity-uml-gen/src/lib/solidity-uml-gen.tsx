@@ -34,23 +34,26 @@ const ActionButtons = ({ buttons }: ActionButtonsProps) => (
 export function RemixUiSolidityUmlGen ({ plugin, updatedSvg }: RemixUiSolidityUmlGenProps) {
   const [showViewer, setShowViewer] = useState(false)
   const [svgPayload, setSVGPayload] = useState<string>('')
+  const [validSvg, setValidSvg] = useState(false)
 
-  const validSvg = () => {
-    if (updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg')) {
-      return true
-    }
-    return false
+
+
+  useEffect(() => {
+    console.log('updatedSvg updated') 
+    setValidSvg (updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg')) 
+    setShowViewer(updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg'))
   }
+  , [updatedSvg])
 
   const buttons: ButtonAction[] = [
     { 
       buttonText: 'Download as PDF',
-      svgValid: validSvg,
+      svgValid: () => validSvg,
       action: () => console.log('generated!!')
     },
     { 
       buttonText: 'Download as PNG',
-      svgValid: validSvg,
+      svgValid: () => validSvg,
       action: () => console.log('generated!!')
     }
   ]
@@ -60,6 +63,7 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg }: RemixUiSolidityUm
         <ActionButtons buttons={buttons}/>
       </div>
       <div>
+        VIEWEERR
         <Viewer
           visible={showViewer}
           rotatable={false}
@@ -77,7 +81,7 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg }: RemixUiSolidityUm
     </div>
   )
   return (<>
-    { validSvg() ? <Display /> : null }
+    { <Display /> }
     </>
   )
 }
