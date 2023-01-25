@@ -71,6 +71,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
 
   generateUml(currentFile: string) {
     this.call('solidity', 'compile', currentFile)
+    this.call('tabs', 'focus', 'solidityumlgen')
     this.renderComponent()
   }
 
