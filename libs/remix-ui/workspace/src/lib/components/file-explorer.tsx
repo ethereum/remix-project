@@ -14,7 +14,7 @@ import { Drag } from "@remix-ui/drag-n-drop"
 import { ROOT_PATH } from '../utils/constants'
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { name, contextMenuItems, removedContextMenuItems, files, fileState, plugin } = props
+  const { name, contextMenuItems, removedContextMenuItems, files, fileState } = props
   const [state, setState] = useState<FileExplorerState>({
     ctrlKey: false,
     newFileName: '',
@@ -38,8 +38,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   })
   const [canPaste, setCanPaste] = useState(false)
   const treeRef = useRef<HTMLDivElement>(null)
-  const [contentForAST, setContentForAST] = useState('')
-
   
   useEffect(() => {
     if (contextMenuItems) {
