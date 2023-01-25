@@ -631,12 +631,12 @@ class FileManager extends Plugin {
       let content = ''
       try {
         content = await provider.get(file)
-        if (file.split('.')[1].includes('svg')) {
-          if (!await this.appManager.isActive('solidityumlgen')) await this.appManager.activatePlugin('solidityumlgen')
-          provider.isReadOnly(file)
-          this.call('solidityumlgen', 'showUmlDiagram', content)
-          return
-        } 
+        // if (file.split('.')[1].includes('svg')) {
+        //   if (!await this.appManager.isActive('solidityumlgen')) await this.appManager.activatePlugin('solidityumlgen')
+        //   provider.isReadOnly(file)
+        //   this.call('solidityumlgen', 'showUmlDiagram', content)
+        //   return
+        // } 
       } catch (error) {
         console.log(error)
         throw error
