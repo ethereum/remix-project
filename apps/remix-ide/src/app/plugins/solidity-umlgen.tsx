@@ -50,8 +50,8 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         }
         const ast = result.length > 1 ? parser.parse(result) : parser.parse(source.sources[this.currentFile].content)
         const payload = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, this.currentFile)))
-        const fileName = `${this.currentFile.split('/')[0]}/resources/${this.currentFile.split('/')[1].split('.')[0]}.svg`
-        await this.call('fileManager', 'writeFile', fileName, payload)
+        // const fileName = `${this.currentFile.split('/')[0]}/resources/${this.currentFile.split('/')[1].split('.')[0]}.svg`
+        // await this.call('fileManager', 'writeFile', fileName, payload)
         this.updatedSvg = payload
         this.renderComponent()
       } catch (error) {
