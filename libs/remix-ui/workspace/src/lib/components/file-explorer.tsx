@@ -5,13 +5,6 @@ import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint
 import { FileExplorerProps, MenuItems, FileExplorerState } from '../types'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
 import { contextMenuActions } from '../utils'
-const parser = (window as any).SolidityParser
-import domToPdf from 'dom-to-pdf'
-import { jsPDF } from 'jspdf'
-import vizRenderStringSync from '@aduh95/viz.js/sync'
-import { convertUmlClasses2Dot } from 'sol2uml/lib/converterClasses2Dot'
-import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
-
 
 import '../css/file-explorer.css'
 import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath } from '@remix-ui/helper'
@@ -19,8 +12,6 @@ import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath }
 import { FileRender } from './file-render'
 import { Drag } from "@remix-ui/drag-n-drop"
 import { ROOT_PATH } from '../utils/constants'
-import { concatSourceFiles, getDependencyGraph } from '@remix-ui/solidity-compiler'
-
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const { name, contextMenuItems, removedContextMenuItems, files, fileState, plugin } = props
