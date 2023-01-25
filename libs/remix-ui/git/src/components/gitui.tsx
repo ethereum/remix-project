@@ -4,7 +4,7 @@ import { loadFiles, setCallBacks } from '../lib/listeners'
 import { openDiff, openFile, setPlugin, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
 import { gitReducer } from '../state/reducer'
-import { defaultGitState, gitState } from '../types'
+import { defaultGitState, fileStatusResult, gitState } from '../types'
 import { SourceControl } from './panels/sourcontrol'
 import { Container, ProgressBar, Accordion, AccordionContext, Button, useAccordionToggle, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -22,10 +22,18 @@ import { Commands } from './panels/commands'
 import { CommandsNavigation } from './navigation/commands'
 import { RemotesNavigation } from './navigation/remotes'
 import { Remotes } from './panels/remotes'
+import { Plugin } from '@remixproject/engine'
+import { ViewPlugin } from '@remixproject/engine-web'
+import { fileDecoration, fileDecorationType } from '@remix-ui/file-decorators'
+import { removeSlash } from '../utils'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 
-export const GitUI = (props) => {
+interface IGitUi {
+    plugin: ViewPlugin
+}
+
+export const GitUI = (props: IGitUi) => {
     const plugin = props.plugin
     const [gitState, gitDispatch] = useReducer(gitReducer, defaultGitState)
     const [activePanel, setActivePanel] = useState<string>("0");
@@ -38,6 +46,54 @@ export const GitUI = (props) => {
 
     useEffect(() => {
         console.log(gitState.fileStatusResult)
+        const decorators: fileDecoration[] = []
+        for(const file of gitState.modified){
+            const decorator: fileDecoration = {
+                path: removeSlash(file.filename),
+                isDirectory: false,
+                fileStateType: fileDecorationType.Warning,
+                fileStateLabelClass: 'text-warning',
+                fileStateIconClass: '',
+                fileStateIcon: '',
+                text: 'M',
+                owner: 'git',
+                bubble: true
+            }
+            decorators.push(decorator)
+        }
+
+        for(const file of gitState.untracked){
+            const decorator: fileDecoration = {
+                path: removeSlash(file.filename),
+                isDirectory: false,
+                fileStateType: fileDecorationType.Warning,
+                fileStateLabelClass: 'text-warning',
+                fileStateIconClass: '',
+                fileStateIcon: '',
+                text: 'U',
+                owner: 'git',
+                bubble: true
+            }
+            decorators.push(decorator)
+        }
+
+        for(const file of gitState.deleted){
+            const decorator: fileDecoration = {
+                path: removeSlash(file.filename),
+                isDirectory: false,
+                fileStateType: fileDecorationType.Warning,
+                fileStateLabelClass: 'text-warning',
+                fileStateIconClass: '',
+                fileStateIcon: '',
+                text: 'D',
+                owner: 'git',
+                bubble: true
+            }
+            decorators.push(decorator)
+        }
+
+        plugin.call('fileDecorator', 'setFileDecorators', decorators)
+
     }, [gitState.fileStatusResult])
 
 
