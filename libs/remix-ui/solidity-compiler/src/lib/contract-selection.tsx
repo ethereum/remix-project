@@ -8,12 +8,6 @@ import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
 import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
 
-
-
-
-
-
-
 export const ContractSelection = (props: ContractSelectionProps) => {
   const { api, compiledFileName, contractsDetails, contractList, compilerInput, modal } = props
   const [selectedContract, setSelectedContract] = useState('')
