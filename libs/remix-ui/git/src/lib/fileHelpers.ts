@@ -14,7 +14,7 @@ export const getFilesCountByStatus = (status: string, files: fileStatusResult[])
 }
 
 export const getFilesByStatus = (status: string, files: fileStatusResult[]) => {
-    const result: any[] = []
+    const result: fileStatusResult[] = []
     files.map((m) => {
         if (m.statusNames !== undefined) {
             if (m.statusNames && m.statusNames.indexOf(status) > -1) {

@@ -61,8 +61,6 @@ export const getFileStatusMatrix = async () => {
     dispatch(fileStatus(fileStatusResult));
 }
 
-
-
 export const getCommits = async () => {
     //Utils.log("get commits");
     try {
