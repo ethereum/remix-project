@@ -69,7 +69,7 @@ export class TraceManager {
         fullStorage: false
       }
       this.web3.debug.traceTransaction(txHash, options, function (error, result) {
-        if (error) return reject(error)     
+        if (error) return reject(error)
         resolve(result)
       })
     })
