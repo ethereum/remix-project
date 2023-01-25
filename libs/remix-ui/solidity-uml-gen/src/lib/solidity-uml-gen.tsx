@@ -61,9 +61,9 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading }: RemixUiS
 
   const DefaultInfo = () => (
     <div className="d-flex flex-column justify-content-center align-items-center mt-5">
-      <h2 className="h2"><p>To view your contract as a Uml Diragram</p></h2>
-      <h3 className="h3"><p>Right Click on your contract file (Usually ends with .sol)</p></h3>
-      <h3 className="h3 text-left"><p>Click on Generate UML</p></h3>
+      <h2 className="h2 align-self-start"><p>To view your contract as a Uml Diragram</p></h2>
+      <h3 className="h4 align-self-start"><p>Right Click on your contract file (Usually ends with .sol)</p></h3>
+      <h3 className="h4 align-self-start"><p>Click on Generate UML</p></h3>
     </div>
   )
   const Display = () => (
@@ -82,7 +82,7 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading }: RemixUiS
               />
             </TransformComponent>
           </TransformWrapper>
-        ) : loading ? <div className="justify-content-center align-items-center d-flex mx-auto my-auto">
+        ) : loading ? <div className="justify-content-center align-items-center d-flex  mx-auto my-auto">
             <i className="fas fa-spinner fa-spin fa-4x"></i>
           </div> : <DefaultInfo />}
       </div>
