@@ -27,7 +27,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   currentFile: string
   svgPayload: string
   updatedSvg: string
-  amIActivated: boolean
+  loading: boolean
   appManager: RemixAppManager
   dispatch: React.Dispatch<any> = () => {}
   constructor(appManager: RemixAppManager) {
@@ -35,6 +35,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     this.currentFile = ''
     this.svgPayload = ''
     this.updatedSvg = ''
+    this.loading = false
     this.appManager = appManager
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'sol-uml-gen')
@@ -61,7 +62,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   }
 
   onDeactivation(): void {
-      this.amIActivated = false
+    
   }
 
   generateCustomAction = async (action: customAction) => {
@@ -72,6 +73,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   generateUml(currentFile: string) {
     this.call('solidity', 'compile', currentFile)
     this.call('tabs', 'focus', 'solidityumlgen')
+    this.loading = true
     this.renderComponent()
   }
 
@@ -98,6 +100,11 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     this.renderComponent()
   }
 
+  hideSpinner() {
+    this.loading = false
+    this.renderComponent()
+  }
+
   setDispatch (dispatch: React.Dispatch<any>) {
     this.dispatch = dispatch
     this.renderComponent()
@@ -110,11 +117,11 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   }
 
   renderComponent () {
-    this.dispatch({...this, updatedSvg: this.updatedSvg })
+    this.dispatch({...this, updatedSvg: this.updatedSvg, loading: this.loading })
   }
 
   updateComponent(state: any) {
-    return <div id="sol-uml-gen"><RemixUiSolidityUmlGen plugin={state} updatedSvg={state.updatedSvg} /></div>
+    return <RemixUiSolidityUmlGen plugin={state} updatedSvg={state.updatedSvg} loading={state.loading} />
   }
 }
 
