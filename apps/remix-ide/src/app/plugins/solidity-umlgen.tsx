@@ -62,7 +62,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   }
 
   onDeactivation(): void {
-    
+    this.off('solidity', 'compilationFinished')
   }
 
   generateCustomAction = async (action: customAction) => {
