@@ -49,6 +49,7 @@
     "build:libs": "nx run-many --target=build --parallel=false --with-deps=true --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-solidity,remix-tests,remix-url-resolver,remix-ws-templates,remixd,ghaction-helper",
     "test:libs": "nx run-many --target=test --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-tests,remix-url-resolver,remixd",
     "publish:libs": "yarn run build:libs && lerna publish --skip-git && yarn run bumpVersion:libs",
+    "publishDev:libs": "yarn run build:libs && lerna publish --npm-tag alpha --skip-git && yarn run bumpVersion:libs",
     "build:e2e": "node apps/remix-ide-e2e/src/buildGroupTests.js && tsc -p apps/remix-ide-e2e/tsconfig.e2e.json",
     "babel": "babel",
     "watch:e2e": "nodemon",
