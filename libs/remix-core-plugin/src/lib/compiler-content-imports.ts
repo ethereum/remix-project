@@ -20,7 +20,31 @@ export class CompilerImports extends Plugin {
   urlResolver: any
   constructor () {
     super(profile)
-    this.urlResolver = new RemixURLResolver()
+    this.urlResolver = new RemixURLResolver(async () => {
+      try {
+        let yarnLock
+        if (await this.call('fileManager', 'exists', './yarn.lock')) {
+          yarnLock = await this.call('fileManager', 'readFile', './yarn.lock')
+        }
+
+        let packageLock
+        if (await this.call('fileManager', 'exists', './package-lock.json')) {
+          packageLock = await this.call('fileManager', 'readFile', './package-lock.json')
+          packageLock = JSON.parse(packageLock)
+        }
+
+        if (await this.call('fileManager', 'exists', './package.json')) {
+          const content = await this.call('fileManager', 'readFile', './package.json')
+          const pkg = JSON.parse(content)
+          return { deps: { ...pkg['dependencies'], ...pkg['devDependencies'] }, yarnLock, packageLock }
+        } else {
+          return {}
+        }
+      } catch (e) {
+        console.error(e)
+        return {}
+      }
+    })
     this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
   }
 

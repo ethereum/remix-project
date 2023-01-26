@@ -23,13 +23,17 @@ interface HandlerResponse {
   cleanUrl: string
 }
 
+export type getPackages = () => Promise<{ [name: string]: string }>
+
 export class RemixURLResolver {
   private previouslyHandled: PreviouslyHandledImports
   gistAccessToken: string
   protocol: string
+  getDependencies: getPackages
 
-  constructor (gistToken?: string, protocol = 'http:') {
+  constructor (getDependencies?: getPackages, gistToken?: string, protocol = 'http:') {
     this.previouslyHandled = {}
+    this.getDependencies = getDependencies
     this.setGistToken(gistToken, protocol)
   }
 
@@ -130,6 +134,36 @@ export class RemixURLResolver {
   async handleNpmImport (url: string): Promise<HandlerResponse> {
     // eslint-disable-next-line no-useless-catch
     try {
+      if (this.getDependencies) {
+        try {
+          const { deps, yarnLock, packageLock }  = await this.getDependencies()
+          for (const pkg of Object.keys(deps)) {
+            if (url.startsWith(pkg)) {
+              let version
+              if (yarnLock) {
+                // yarn.lock
+                const regex = new RegExp(`"${pkg}@(.*)"`, 'g')
+                const yarnVersion = regex.exec(yarnLock)
+                if (yarnVersion && yarnVersion.length > 1) {
+                  version = yarnVersion[1]
+                }
+              }
+              if (!version && packageLock['dependencies'] && packageLock['dependencies'][pkg] && packageLock['dependencies'][pkg]['version']) {
+                // package-lock.json
+                version = packageLock['dependencies'][pkg]['version']
+              }
+              if (!version) {
+                // package.json
+                version = deps[pkg]
+              }
+              if (version) url = url.replace(pkg, `${pkg}@${version}`)
+              break
+            }
+          }
+        } catch (e) {
+          console.log(e)
+        }
+      }
       const req = 'https://unpkg.com/' + url
       const response: AxiosResponse = await axios.get(req, { transformResponse: [] })
       return { content: response.data, cleanUrl: url }
