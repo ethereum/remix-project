@@ -623,14 +623,10 @@ class FileManager extends Plugin {
   }
 
   async diff(change: commitChange) {
-    if (change.readonly) {
-      console.log('diff readonly', change)
-      await this.saveCurrentFile()
-      const file = `${this.normalize(change.path)}`
-      await this.editor.openReadOnly(file, change.modified, change.original)
-      this.emit('openDiff', change)
-      this.events.emit('openDiff', change)
-    }
+    await this.saveCurrentFile()
+    await this.editor.openDiff(change)
+    this.emit('openDiff', change)
+    this.events.emit('openDiff', change)
   }
 
   async openFile(file?: string) {

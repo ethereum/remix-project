@@ -57,10 +57,10 @@ export const EditorUI = (props: EditorUIProps) => {
     props.plugin.call('fileManager', 'getUrlFromPath', currentFileRef.current).then((url) => currentUrlRef.current = url.file)
 
     const file = editorModelsState[props.currentFile]
-    console.log('file', file)
+    console.log('file', file, props.isDiff, props.currentDiffFile)
     props.editorAPI.editorRef && props.editorAPI.editorRef.current && props.editorAPI.editorRef.current.setModel(file.model)
-    props.editorAPI.diffEditorRef && props.editorAPI.diffEditorRef.current && props.editorAPI.diffEditorRef.current.setModel({
-      original: file.model,
+    props.isDiff && props.editorAPI.diffEditorRef && props.editorAPI.diffEditorRef.current && props.editorAPI.diffEditorRef.current.setModel({
+      original: editorModelsState[props.currentDiffFile].model,
       modified: file.model
     })
     getEditor().updateOptions({ readOnly: editorModelsState[props.currentFile].readOnly })
@@ -415,7 +415,7 @@ export const EditorUI = (props: EditorUIProps) => {
   return (
     <div className="w-100 h-100 d-flex flex-column-reverse">
       <button className="btn btn-sm btn-primary" onClick={() => setIsDiff(!isDiff)}>Toggle Diff</button>
-      <EditorToolBar isDiff={isDiff} isSplit={isSplit} plugin={props.plugin} unifiedToggle={unifiedToggle}></EditorToolBar>
+      <EditorToolBar isDiff={props.isDiff} isSplit={isSplit} plugin={props.plugin} unifiedToggle={unifiedToggle}></EditorToolBar>
 
       <DiffEditor
         originalLanguage={'remix-solidity'}
@@ -426,20 +426,20 @@ export const EditorUI = (props: EditorUIProps) => {
         beforeMount={handleEditorWillMount}
         options={{ readOnly: false, renderSideBySide: isSplit }}
         width='100%'
-        height={isDiff ? '100%' : '0%'}
-        className={isDiff ? "d-block" : "d-none"}
+        height={props.isDiff ? '100%' : '0%'}
+        className={props.isDiff ? "d-block" : "d-none"}
       />
 
       <Editor
         width="100%"
-        height={isDiff ? '0%' : '100%'}
+        height={props.isDiff ? '0%' : '100%'}
         path={props.currentFile}
         language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
         onMount={handleEditorDidMount}
         beforeMount={handleEditorWillMount}
         options={{ glyphMargin: true, readOnly: ((!props.editorAPI.editorRef.current || !props.currentFile) && editorModelsState[props.currentFile]?.readOnly) }}
         defaultValue={defaultEditorValue}
-        className={isDiff ? "d-none" : "d-block"}
+        className={props.isDiff ? "d-none" : "d-block"}
       />
 
 

@@ -101,6 +101,7 @@ export interface EditorUIProps {
   activated: boolean
   themeType: string
   currentFile: string
+  currentDiffFile: string
   isDiff: boolean
   events: IEditorApiEvents,
   plugin: {

@@ -1,9 +1,11 @@
-import { IRange } from "monaco-editor";
+import { Monaco } from "@monaco-editor/react";
+import { commitChange } from "@remix-ui/git";
+import { editor, IRange } from "monaco-editor";
 
 export interface Action {
   type: string;
   payload: Record<string, any>
-  monaco: any,
+  monaco: Monaco,
   editor: any
 }
 
@@ -14,7 +16,7 @@ export const reducerActions = (models = initialState, action: Action) => {
   const editor = action.editor
   switch (action.type) {
     case 'ADD_MODEL': {
-      console.log("ADD MODEL", editor)
+      console.log("ADD MODEL", action)
       if (!editor) return models
       const uri = action.payload.uri
       const value = action.payload.value
@@ -22,7 +24,7 @@ export const reducerActions = (models = initialState, action: Action) => {
       const readOnly = action.payload.readOnly
       if (models[uri]) return models // already existing
       models[uri] = { language, uri, readOnly }
-      let model
+      let model: editor.ITextModel
       try {
         model = monaco.editor.createModel(value, language, monaco.Uri.parse(uri))
       } catch (e) {
@@ -114,7 +116,7 @@ export const reducerListener = (plugin, dispatch, monaco, editor, events) => {
     })
   })
 
-  plugin.on('editor', 'addDiff', (value) => {
+  plugin.on('editor', 'addDiff', (value: commitChange) => {
     dispatch({
       type: 'ADD_DIFF',
       payload: { value },

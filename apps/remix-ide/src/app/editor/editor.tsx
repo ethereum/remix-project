@@ -6,6 +6,7 @@ import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { EventManager } from '@remix-project/remix-lib'
+import { commitChange } from '@remix-ui/git'
 
 const profile = {
   displayName: 'Editor',
@@ -33,6 +34,8 @@ export class Editor extends Plugin {
   dispatch: any
   ref: any
   currentFile: any
+  currentDiffFile: string
+  isDiff: boolean
   currentThemeType: any
 
   constructor () {
@@ -97,8 +100,9 @@ export class Editor extends Plugin {
       editorAPI={state.api}
       themeType={state.currentThemeType}
       currentFile={state.currentFile}
+      currentDiffFile={state.currentDiffFile}
       events={state.events}
-      plugin={state.plugin} contextualListener={undefined} activated={false} isDiff={false}    />
+      plugin={state.plugin} contextualListener={undefined} activated={false} isDiff={state.isDiff}    />
   }
 
   render () {
@@ -126,6 +130,8 @@ export class Editor extends Plugin {
       api: this.api,
       currentThemeType: this.currentThemeType,
       currentFile: this.currentFile,
+      currentDiffFile: this.currentDiffFile,
+      isDiff: this.isDiff,
       events: this.events,
       plugin: this
     })
@@ -257,11 +263,11 @@ export class Editor extends Plugin {
    * @param {string} content Content of the file to open
    * @param {string} mode Mode for this file [Default is `text`]
    */
-  async _createSession (path: string, content: string, mode: string, diff: string) {
-    console.log('createSession', path, content, mode, diff)
+  async _createSession (path: string, content: string, mode: string, readOnly?: boolean) {
+    console.log('createSession', path, content, mode, readOnly)
     if (!this.activated) return
     
-    this.emit('addModel', content, mode, path, this.readOnlySessions[path])
+    this.emit('addModel', content, mode, path, readOnly || this.readOnlySessions[path])
     return {
       path,
       language: mode,
@@ -313,16 +319,17 @@ export class Editor extends Plugin {
    * @param {string} path Path of the session to open.
    * @param {string} content Content of the document or update.
    */
-  async open (path, content, diff = null) {
+  async open (path, content) {
     /*
       we have the following cases:
        - URL prepended with "localhost"
        - URL prepended with "browser"
        - URL not prepended with the file explorer. We assume (as it is in the whole app, that this is a "browser" URL
     */
+    this.isDiff = false
     if (!this.sessions[path]) {
       this.readOnlySessions[path] = false
-      const session = await this._createSession(path, content, this._getMode(path), diff)
+      const session = await this._createSession(path, content, this._getMode(path))
       this.sessions[path] = session
     } else if (this.sessions[path].getValue() !== content) {
       this.sessions[path].setValue(content)
@@ -335,14 +342,28 @@ export class Editor extends Plugin {
    * @param {string} path Path of the session to open.
    * @param {string} content Content of the document or update.
    */
-  async openReadOnly (path: string, content: string, diff?: string) {
-    console.log('openReadOnly', path, content)
+  async openReadOnly (path: string, content: string) {
     if (!this.sessions[path]) {
       this.readOnlySessions[path] = true
-      const session = await this._createSession(path, content, this._getMode(path), diff)
+      const session = await this._createSession(path, content, this._getMode(path))
       this.sessions[path] = session
     }
+    this.isDiff = false
     this._switchSession(path)
+  }
+
+  async openDiff(change: commitChange){
+    let hashedPathModified: string 
+    const hashedPathOrinal: string = change.path + change.hashOriginal
+    if(change.readonly){
+      hashedPathModified = change.path + change.hashModified
+    }
+    const session = await this._createSession(hashedPathModified, change.modified, this._getMode(change.path), change.readonly)
+    await this._createSession(hashedPathOrinal, change.original, this._getMode(change.path), change.readonly)
+    this.sessions[hashedPathModified] = session
+    this.currentDiffFile = hashedPathOrinal
+    this.isDiff = true
+    this._switchSession(hashedPathModified)
   }
 
   /**
