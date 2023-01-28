@@ -21,49 +21,50 @@ export const Branches = () => {
     };
     return (
         <>
-            <hr></hr>
-            {context.branches && context.branches.length ?
-                <div>
-                    <Alert className="w-md-50 w-100 text-break" variant="success">
-                        {context.currentBranch}
-                    </Alert>
-                    {context.branches && context.branches.map((branch, index) => {
-                        return (
-                            <div key={index} className="row p-1">
-                                <div className="col-6"><i className="fa fa-code-branch"></i> {branch.name} on {branch.remote || 'local'}</div>
-                                <div className="col">
-                                    <span className="float-right">
-                                        <div
-                                            onClick={async () => await checkout(branch.name, branch.remote)}
-                                            className="btn btn-primary btn-sm checkout-btn"
-                                        >
-                                            checkout
-                                        </div>
-                                    </span>
+            <div className="pt-1">
+                {context.branches && context.branches.length ?
+                    <div>
+                        <Alert className="w-md-50 w-100 text-break" variant="success">
+                            {context.currentBranch}
+                        </Alert>
+                        {context.branches && context.branches.map((branch, index) => {
+                            return (
+                                <div key={index} className="row p-1">
+                                    <div className="col-6"><i className="fa fa-code-branch"></i> {branch.name} on {branch.remote || 'local'}</div>
+                                    <div className="col">
+                                        <span className="float-right">
+                                            <div
+                                                onClick={async () => await checkout(branch.name, branch.remote)}
+                                                className="btn btn-primary btn-sm checkout-btn"
+                                            >
+                                                checkout
+                                            </div>
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                        );
-                    })}
-                    <hr />
-                    <label>create branch</label>
-                    <div className="form-group">
+                            );
+                        })}
+                        <hr />
+                        <label>create branch</label>
+                        <div className="form-group">
 
-                        <input
-                            placeholder="branch name"
-                            onChange={handleChange}
-                            className="form-control w-md-25 w-100"
-                            type="text"
-                            id="newbranchname"
-                        />
-                    </div>
-                    <button
-                        onClick={async () => actions.createBranch(newBranch.value)}
-                        className="btn w-md-25 w-100 btn-primary"
-                        id="createbranch-btn"
-                    >
-                        create new branch
-                    </button>
-                </div> : <div className="text-muted">No branches</div>}
+                            <input
+                                placeholder="branch name"
+                                onChange={handleChange}
+                                className="form-control w-md-25 w-100"
+                                type="text"
+                                id="newbranchname"
+                            />
+                        </div>
+                        <button
+                            onClick={async () => actions.createBranch(newBranch.value)}
+                            className="btn w-md-25 w-100 btn-primary"
+                            id="createbranch-btn"
+                        >
+                            create new branch
+                        </button>
+                    </div> : <div className="text-muted">No branches</div>}
+            </div>
         </>
     );
 }

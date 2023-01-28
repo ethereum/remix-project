@@ -1,14 +1,12 @@
-import React, { useContext, useEffect, useReducer, useRef, useState } from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
 import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
 import { openDiff, openFile, setPlugin, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
 import { gitReducer } from '../state/reducer'
-import { defaultGitState, fileStatusResult, gitState } from '../types'
+import { defaultGitState, gitState } from '../types'
 import { SourceControl } from './panels/sourcontrol'
-import { Container, ProgressBar, Accordion, AccordionContext, Button, useAccordionToggle, Card } from "react-bootstrap";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCaretDown, faCaretUp, faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons'
+import { Accordion } from "react-bootstrap";
 import { CommitMessage } from './panels/commitmessage'
 import { Commits } from './panels/commits'
 import { Branches } from './panels/branches'
@@ -22,7 +20,6 @@ import { Commands } from './panels/commands'
 import { CommandsNavigation } from './navigation/commands'
 import { RemotesNavigation } from './navigation/remotes'
 import { Remotes } from './panels/remotes'
-import { Plugin } from '@remixproject/engine'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { fileDecoration, fileDecorationType } from '@remix-ui/file-decorators'
 import { removeSlash } from '../utils'
@@ -45,54 +42,44 @@ export const GitUI = (props: IGitUi) => {
     }, [])
 
     useEffect(() => {
-        console.log(gitState.fileStatusResult)
-        const decorators: fileDecoration[] = []
-        for(const file of gitState.modified){
-            const decorator: fileDecoration = {
-                path: removeSlash(file.filename),
-                isDirectory: false,
-                fileStateType: fileDecorationType.Warning,
-                fileStateLabelClass: 'text-warning',
-                fileStateIconClass: '',
-                fileStateIcon: '',
-                text: 'M',
-                owner: 'git',
-                bubble: true
+        async function setDecorators() {
+            console.log(gitState.fileStatusResult)
+            const decorators: fileDecoration[] = []
+            for (const file of gitState.modified) {
+                const decorator: fileDecoration = {
+                    path: removeSlash(file.filename),
+                    isDirectory: false,
+                    fileStateType: fileDecorationType.Custom,
+                    fileStateLabelClass: 'text-warning',
+                    fileStateIconClass: 'text-warning',
+                    fileStateIcon: '',
+                    text: 'M',
+                    owner: 'git',
+                    bubble: true,
+                    comment: 'Modified'
+                }
+                decorators.push(decorator)
             }
-            decorators.push(decorator)
-        }
 
-        for(const file of gitState.untracked){
-            const decorator: fileDecoration = {
-                path: removeSlash(file.filename),
-                isDirectory: false,
-                fileStateType: fileDecorationType.Warning,
-                fileStateLabelClass: 'text-warning',
-                fileStateIconClass: '',
-                fileStateIcon: '',
-                text: 'U',
-                owner: 'git',
-                bubble: true
+            for (const file of gitState.untracked) {
+                const decorator: fileDecoration = {
+                    path: removeSlash(file.filename),
+                    isDirectory: false,
+                    fileStateType: fileDecorationType.Custom,
+                    fileStateLabelClass: 'text-success',
+                    fileStateIconClass: 'text-success',
+                    fileStateIcon: '',
+                    text: 'U',
+                    owner: 'git',
+                    bubble: true,
+                    comment: 'Untracked'
+                }
+                decorators.push(decorator)
             }
-            decorators.push(decorator)
+            await plugin.call('fileDecorator', 'clearFileDecorators')
+            await plugin.call('fileDecorator', 'setFileDecorators', decorators)
         }
-
-        for(const file of gitState.deleted){
-            const decorator: fileDecoration = {
-                path: removeSlash(file.filename),
-                isDirectory: false,
-                fileStateType: fileDecorationType.Warning,
-                fileStateLabelClass: 'text-warning',
-                fileStateIconClass: '',
-                fileStateIcon: '',
-                text: 'D',
-                owner: 'git',
-                bubble: true
-            }
-            decorators.push(decorator)
-        }
-
-        plugin.call('fileDecorator', 'setFileDecorators', decorators)
+        setDecorators()
 
     }, [gitState.fileStatusResult])
 
@@ -130,7 +117,7 @@ export const GitUI = (props: IGitUi) => {
                             <Accordion activeKey={activePanel} defaultActiveKey="0">
                                 <SourceControlNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
 
-                                <Accordion.Collapse eventKey="0">
+                                <Accordion.Collapse className='bg-light' eventKey="0">
                                     <>
                                         <CommitMessage />
                                         <SourceControl />
@@ -138,38 +125,38 @@ export const GitUI = (props: IGitUi) => {
                                 </Accordion.Collapse>
                                 <hr></hr>
                                 <CommandsNavigation eventKey="1" activePanel={activePanel} callback={setActivePanel} />
-                                <Accordion.Collapse eventKey="1">
+                                <Accordion.Collapse className='bg-light' eventKey="1">
                                     <>
                                         <Commands></Commands>
                                     </>
                                 </Accordion.Collapse>
                                 <hr></hr>
                                 <CommitslNavigation eventKey="3" activePanel={activePanel} callback={setActivePanel} />
-                                <Accordion.Collapse eventKey="3">
+                                <Accordion.Collapse className='bg-light' eventKey="3">
                                     <>
                                         <Commits />
                                     </>
                                 </Accordion.Collapse>
                                 <hr></hr>
                                 <BranchesNavigation eventKey="2" activePanel={activePanel} callback={setActivePanel} />
-                                <Accordion.Collapse eventKey="2">
+                                <Accordion.Collapse className='bg-light' eventKey="2">
                                     <>
                                         <Branches /></>
                                 </Accordion.Collapse>
                                 <hr></hr>
                                 <CloneNavigation eventKey="4" activePanel={activePanel} callback={setActivePanel} />
-                                <Accordion.Collapse eventKey="4">
+                                <Accordion.Collapse className='bg-light' eventKey="4">
                                     <>
                                         <Clone /></>
                                 </Accordion.Collapse>
                                 <hr></hr>
                                 <RemotesNavigation eventKey="5" activePanel={activePanel} callback={setActivePanel} />
-                                <Accordion.Collapse eventKey="5">
+                                <Accordion.Collapse className='bg-light' eventKey="5">
                                     <>
-                                    <Remotes></Remotes>
+                                        <Remotes></Remotes>
                                     </>
                                 </Accordion.Collapse>
-                                
+
 
                             </Accordion>}
                     </pluginActionsContext.Provider>

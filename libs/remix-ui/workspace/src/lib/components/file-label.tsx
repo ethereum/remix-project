@@ -28,15 +28,17 @@ export const FileLabel = (props: FileLabelProps) => {
   }, [file.path, focusEdit])
 
   useEffect(() => {
-    const state = props.fileDecorations.find((state: fileDecoration) => {
-      if(state.path === props.file.path) return true
-      if(state.bubble && props.file.isDirectory && state.path.startsWith(props.file.path)) return true
+    const states = props.fileDecorations.filter((state: fileDecoration) => {
+      if (state.path === props.file.path) return true
+      if (state.bubble && props.file.isDirectory && state.path.startsWith(props.file.path)) return true
     })
-    if (state && state.fileStateLabelClass) {
-      setFileStateClasses(state.fileStateLabelClass)
-    } else{
-      setFileStateClasses('')
+    let fileStateClass = ''
+    for (const state of states) {
+      if (state && state.fileStateLabelClass) {
+        fileStateClass += state.fileStateLabelClass + ' '
+      }
     }
+    setFileStateClasses(fileStateClass)
   }, [fileDecorations])
 
   useEffect(() => {
@@ -70,12 +72,12 @@ export const FileLabel = (props: FileLabelProps) => {
       onKeyDown={handleEditInput}
       onBlur={handleEditBlur}
     >
-        <span
-          className={`text-nowrap remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder' : 'remixui_leaf')}
-          data-path={file.path} title={file.path}
-        >
-          {file.name}
-        </span>
+      <span
+        className={`text-nowrap remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder' : 'remixui_leaf')}
+        data-path={file.path} title={file.path}
+      >
+        {file.name}
+      </span>
     </div>
   )
 }

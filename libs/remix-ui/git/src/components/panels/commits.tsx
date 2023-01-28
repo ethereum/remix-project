@@ -22,11 +22,10 @@ export const Commits = () => {
 
     return (
         <>
-            <hr />
             {context.commits && context.commits.length ?
                 <div>
 
-                    <div className="container-fluid p-0">
+                    <div className="pt-1">
                         {context.commits && context.commits.map((commit) => {
                             return (
                                 <>

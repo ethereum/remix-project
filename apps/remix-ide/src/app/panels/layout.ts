@@ -43,7 +43,18 @@ export class Layout extends Plugin {
       this.panels.main.active = false
       this.event.emit('change', null)
     })
+    this.on('fileManager', 'openDiff', () => {
+      this.panels.editor.active = true
+      this.panels.main.active = false
+      this.event.emit('change', null)
+    })
     this.on('tabs', 'openFile', () => {
+      this.panels.editor.active = true
+      this.panels.main.active = false
+      this.event.emit('change', null)
+    })
+    this.on('tabs', 'openDiff', () => {
+      console.log('openDiff')
       this.panels.editor.active = true
       this.panels.main.active = false
       this.event.emit('change', null)

@@ -44,6 +44,8 @@ export class FileDecorator extends Plugin {
         })
         const newState = [...filteredState, ...fileStatesPayload].sort(sortByPath)
 
+        console.log('newState', newState)
+
         if (!deepequal(newState, this._fileStates)) {
             this._fileStates = newState
             this.emit('fileDecoratorsChanged', this._fileStates)

@@ -73,10 +73,14 @@ export const TabsUI = (props: TabsUIProps) => {
   }, [tabsState.selectedIndex])
 
   const getFileDecorationClasses = (tab: any) => {
-    const fileDecoration = tabsState.fileDecorations.find((fileDecoration: fileDecoration) => {
+    const fileDecorations = tabsState.fileDecorations.filter((fileDecoration: fileDecoration) => {
       if(`${fileDecoration.workspace.name}/${fileDecoration.path}` === tab.name) return true
     })
-    return fileDecoration && fileDecoration.fileStateLabelClass
+    let classes = ''
+    for(const fileDecoration of fileDecorations) {
+      fileDecoration && fileDecoration.fileStateLabelClass && (classes += fileDecoration.fileStateLabelClass + ' ')
+    }
+    return classes
   }
 
   const getFileDecorationIcons = (tab: any) => {
@@ -106,8 +110,10 @@ export const TabsUI = (props: TabsUIProps) => {
   }
 
   const activateTab = (name: string) => {
+    console.log('TABS', tabs.current)
     const index = tabs.current.findIndex((tab) => tab.name === name)
     currentIndexRef.current = index
+    console.log('TABS', index, name)
     dispatch({ type: 'SELECT_INDEX', payload: index, ext: getExt(name)})
   }
 

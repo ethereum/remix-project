@@ -626,14 +626,14 @@ class FileManager extends Plugin {
     if (change.readonly) {
       console.log('diff readonly', change)
       await this.saveCurrentFile()
-      const file = `${this.normalize(change.path)}${change.hashModified}`
-      await this.editor.openReadOnly(file, change.modified)
-      this.emit('currentFileChanged', file)
-      this.events.emit('currentFileChanged', file)
+      const file = `${this.normalize(change.path)}`
+      await this.editor.openReadOnly(file, change.modified, change.original)
+      this.emit('openDiff', change)
+      this.events.emit('openDiff', change)
     }
   }
 
-  async openFile(file?: string | IEditorFile) {
+  async openFile(file?: string) {
     if (!file) {
       this.emit('noFileSelected')
       this.events.emit('noFileSelected')
@@ -645,9 +645,9 @@ class FileManager extends Plugin {
       if (this.currentFile() === file) return
       const provider = resolved.provider
       this._deps.config.set('currentFile', file)
-      if(typeof file === 'string') {
-        this.openedFiles[file] = file
-      }
+
+      this.openedFiles[file] = file
+
 
       let content = ''
       try {

@@ -4,7 +4,7 @@ import React from 'react' // eslint-disable-line
 import { gitState, GitUI } from '@remix-ui/git';
 
 const profile = {
-    name: 'rgit',
+    name: 'dgit',
     desciption: 'Git plugin for Remix',
     methods: ['pull', 'track', 'diff', 'clone', 'open'],
     events: [''],
@@ -19,6 +19,10 @@ export class GitPlugin extends ViewPlugin {
     constructor() {
 
         super(profile)
+    }
+
+    onDeactivation(): void {
+        this.call('fileDecorator', 'clearFileDecorators')
     }
 
     render() {

@@ -39,6 +39,12 @@ export const reducerActions = (models = initialState, action: Action) => {
       delete models[uri]
       return models
     }
+
+    case 'ADD_DIFF': {
+      if (!editor) return models
+      return models
+    }
+
     case 'SET_VALUE': {
       if (!editor) return models
       const uri = action.payload.uri
@@ -103,6 +109,15 @@ export const reducerListener = (plugin, dispatch, monaco, editor, events) => {
     dispatch({
       type: 'ADD_MODEL',
       payload: { uri, value, language, readOnly, events },
+      monaco,
+      editor
+    })
+  })
+
+  plugin.on('editor', 'addDiff', (value) => {
+    dispatch({
+      type: 'ADD_DIFF',
+      payload: { value },
       monaco,
       editor
     })

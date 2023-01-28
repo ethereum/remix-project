@@ -257,7 +257,7 @@ export class Editor extends Plugin {
    * @param {string} content Content of the file to open
    * @param {string} mode Mode for this file [Default is `text`]
    */
-  async _createSession (path, content, mode, diff) {
+  async _createSession (path: string, content: string, mode: string, diff: string) {
     console.log('createSession', path, content, mode, diff)
     if (!this.activated) return
     
@@ -335,11 +335,11 @@ export class Editor extends Plugin {
    * @param {string} path Path of the session to open.
    * @param {string} content Content of the document or update.
    */
-  async openReadOnly (path, content) {
+  async openReadOnly (path: string, content: string, diff?: string) {
     console.log('openReadOnly', path, content)
     if (!this.sessions[path]) {
       this.readOnlySessions[path] = true
-      const session = await this._createSession(path, content, this._getMode(path), null)
+      const session = await this._createSession(path, content, this._getMode(path), diff)
       this.sessions[path] = session
     }
     this._switchSession(path)

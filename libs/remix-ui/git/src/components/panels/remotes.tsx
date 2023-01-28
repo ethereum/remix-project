@@ -25,7 +25,7 @@ export const Remotes = () => {
   }
 
   return (
-    <><div className='row mt-1'>
+    <><div className='row pt-1'>
       <div className='col col-md-6 col-12'>
         <input placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control" type="text" id="remotename" />
       </div>

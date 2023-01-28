@@ -3,6 +3,7 @@ import { Plugin } from '@remixproject/engine'
 import { TabsUI } from '@remix-ui/tabs'
 import { PluginViewWrapper, getPathIcon } from '@remix-ui/helper'
 import EventEmitter from 'events'
+import { commitChange } from '@remix-ui/git'
 
 
 const profile = {
@@ -136,6 +137,22 @@ export class TabProxy extends Plugin {
         })
         this.tabsApi.activateTab(path)
       }
+    })
+
+    this.on('fileManager', 'openDiff', (commit: commitChange) => {
+      const name = commit.path + '(' + commit.hashModified.substring(0,6) + ')'
+      this.addTab(name, name, async () => {
+        await this.fileManager.diff(commit)
+        console.log('openDiff emit')
+        this.event.emit('openDiff', commit)
+        this.emit('openDiff', commit)
+      },
+      async () => {
+        //await this.fileManager.closeFile(file)
+        //this.event.emit('closeFile', file)
+        //this.emit('closeFile', file)
+      })
+      this.tabsApi.activateTab(name)
     })
 
     this.on('fileManager', 'fileRenamed', (oldName, newName, isFolder) => {

@@ -29,3 +29,6 @@
     background-color             : var(--custom-select);
 }
   
+hr {
+    background-color: var(--custom-select);
+}
