@@ -63,6 +63,9 @@ export const EditorUI = (props: EditorUIProps) => {
       original: editorModelsState[props.currentDiffFile].model,
       modified: file.model
     })
+
+    props.isDiff && props.editorAPI.diffEditorRef.current.getModifiedEditor().updateOptions({ readOnly: editorModelsState[props.currentFile].readOnly })
+
     getEditor().updateOptions({ readOnly: editorModelsState[props.currentFile].readOnly })
 
     if (file.language === 'sol') {
