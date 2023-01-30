@@ -97,12 +97,12 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
 
   generateCustomAction = async (action: customAction) => {
     this.currentFile = action.path[0]
-    this.generateUml(action.path[0])
+    await this.generateUml(action.path[0])
   }
 
-  generateUml(currentFile: string) {
-    this.call('solidity', 'compile', currentFile)
-    this.call('tabs', 'focus', 'solidityumlgen')
+  async generateUml(currentFile: string) {
+    await this.call('solidity', 'compile', currentFile)
+    await this.call('tabs', 'focus', 'solidityumlgen')
     this.loading = true
     this.renderComponent()
   }
