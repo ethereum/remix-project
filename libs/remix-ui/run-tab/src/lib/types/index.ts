@@ -1,10 +1,108 @@
 import { Ref } from 'react'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { ContractData, FuncABI } from '@remix-project/core-plugin'
-import { ContractList } from '../reducers/runTab'
 import { RunTab } from './run-tab'
 export interface RunTabProps {
   plugin: RunTab
+}
+
+export interface Contract {
+  name: string,
+  alias: string,
+  file: string,
+  compiler: CompilerAbstract,
+  compilerName: string
+}
+
+export interface ContractList {
+  [file: string]: Contract[]
+}
+export interface RunTabState {
+  accounts: {
+    loadedAccounts: Record<string, string>,
+    isRequesting: boolean,
+    isSuccessful: boolean,
+    error: string,
+    selectedAccount: string
+  },
+  sendValue: string,
+  sendUnit: 'ether' | 'finney' | 'gwei' | 'wei',
+  gasLimit: number,
+  selectExEnv: string,
+  personalMode: boolean,
+  networkName: string,
+  providers: {
+    providerList: {
+      id?: string,
+      dataId?: string,
+      title?: string,
+      value: string,
+      fork?: string
+      content: string
+    }[],
+    isRequesting: boolean,
+    isSuccessful: boolean,
+    error: string
+  },
+  notification: {
+    title: string,
+    message: string,
+    actionOk: () => void,
+    actionCancel: (() => void) | null,
+    labelOk: string,
+    labelCancel: string
+  },
+  externalEndpoint: string,
+  popup: string,
+  passphrase: string,
+  matchPassphrase: string,
+  contracts: {
+    contractList: {
+      [file: string]: {
+        name: string,
+        alias: string,
+        file: string,
+        compiler: CompilerAbstract
+        compilerName: string
+      }[]
+    },
+    deployOptions: { [file: string]: { [name: string]: DeployOptions } },
+    proxyKey: string,
+    loadType: 'abi' | 'sol' | 'other'
+    currentFile: string,
+    compilationSource: string,
+    currentContract: string,
+    compilationCount: number,
+    isRequesting: boolean,
+    isSuccessful: boolean,
+    error: string
+  },
+  ipfsChecked: boolean,
+  gasPriceStatus: boolean,
+  confirmSettings: boolean,
+  maxFee: string,
+  maxPriorityFee: string,
+  baseFeePerGas: string,
+  gasPrice: string,
+  instances: {
+    instanceList: {
+      contractData?: ContractData,
+      address: string,
+      balance?: number,
+      name: string,
+      decodedResponse?: Record<number, any>,
+      abi?: any
+    }[],
+    error: string
+  },
+  recorder: {
+    pathToScenario: string,
+    transactionCount: number
+  }
+  remixdActivated: boolean,
+  proxy: {
+    deployments: { address: string, date: Date }[]
+  }
 }
 
 export interface SettingsProps {

@@ -23,6 +23,7 @@ export function ContractGUI (props: ContractGUIProps) {
   const [deployState, setDeployState] = useState<{ deploy: boolean, upgrade: boolean }>({ deploy: false, upgrade: false })
   const [useLastProxy, setUseLastProxy] = useState<boolean>(false)
   const [proxyAddress, setProxyAddress] = useState<string>('')
+  const [selectedProxyAddress, setSelectedProxyAddress] = useState<string>('')
   const [proxyAddressError, setProxyAddressError] = useState<string>('')
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
   const initializeFields = useRef<Array<HTMLInputElement | null>>([])
@@ -555,7 +556,11 @@ export function ContractGUI (props: ContractGUIProps) {
                   </CustomTooltip>
                   { proxyAddressError && <span className='text-lowercase' data-id="errorMsgProxyAddress" style={{ fontSize: '.8em' }}>{ proxyAddressError }</span> }
                 </div> :
-                <span className='text-capitalize' data-id="lastDeployedERC1967Address" style={{ fontSize: '.8em' }}>{ proxyAddress || proxyAddressError }</span>
+                <select data-id="udappSelectProxyAddress" name="selectproxy" className="form-control udapp_select custom-select pr-4" value={selectedProxyAddress} onChange={(e) => { }}>
+                  {
+                    // accounts.map((value, index) => <option value={value} key={index}>{ loadedAccounts[value] }</option>)
+                  }
+                </select>
               }
             </div>
           </div>
