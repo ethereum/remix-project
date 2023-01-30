@@ -41,11 +41,11 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
 
   const goToLearnEthHome = async () => {
     console.log({ plugin })
-    if(plugin.appManager.isActive('LearnEth')) {
+    if(await plugin.appManager.isActive('LearnEth')) {
       plugin.verticalIcons.select('LearnEth')
       await plugin.call('LearnEth', 'home')
     } else {
-      await plugin.appManager.activatePlugin(['learnEth', 'solidity', 'solidityUnitTesting'])
+      await plugin.appManager.activatePlugin(['LearnEth', 'solidity', 'solidityUnitTesting'])
       plugin.verticalIcons.select('LearnEth')
       await plugin.call('LearnEth', 'home')
     }
