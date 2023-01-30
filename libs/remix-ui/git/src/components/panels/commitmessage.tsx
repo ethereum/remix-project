@@ -22,7 +22,7 @@ export const CommitMessage = () => {
     return (
         <>
             <div className="form-group">
-                <input placeholder="message" data-id='commitMessage' className="form-control" type="text" onChange={handleChange} value={message.value} />
+                <input placeholder={`message ( commit on ${context.currentBranch} )`} data-id='commitMessage' className="form-control" type="text" onChange={handleChange} value={message.value} />
             </div>
             {context.canCommit ? <></> : <div className='alert alert-warning'>Cannot commit in detached state! Create a new branch and check it out first or checkout main.<br></br></div>}
             <button data-id='commitButton' className="btn btn-primary w-100" disabled={commitAllowed()} onClick={async () => actions.commit(message.value)} >

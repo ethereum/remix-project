@@ -24,9 +24,9 @@ export const Branches = () => {
             <div className="pt-1">
                 {context.branches && context.branches.length ?
                     <div>
-                        <Alert className="w-md-50 w-100 text-break" variant="success">
+                        <h5>
                             {context.currentBranch}
-                        </Alert>
+                        </h5>
                         {context.branches && context.branches.map((branch, index) => {
                             return (
                                 <div key={index} className="row p-1">

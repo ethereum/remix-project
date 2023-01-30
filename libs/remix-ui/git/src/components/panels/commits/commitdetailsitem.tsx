@@ -2,6 +2,8 @@ import { commitChange } from "../../../types";
 import React from "react";
 import path from "path";
 import { gitActionsContext, pluginActionsContext } from "../../../state/context";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 
 export interface CCommitDetailsItemsProps {
   commitChange: commitChange;
@@ -26,9 +28,9 @@ export const CommitDetailsItems = (props: CCommitDetailsItemsProps) => {
     const status = commitChange.type
     return (<>
       <div className=''>
-        {status && status.indexOf("modified") === -1 ? <></> : <button className='btn btn-sm mr-1'>M</button>}
-        {status && status.indexOf("deleted") === -1 ? <></> : <button className='btn btn-sm  mr-1'>D</button>}
-        {status && status.indexOf("added") === -1 ? <></> : <button className='btn btn-sm  mr-1'>A</button>}
+        {status && status.indexOf("modified") === -1 ? <></> : <span>M</span>}
+        {status && status.indexOf("deleted") === -1 ? <></> : <span>D</span>}
+        {status && status.indexOf("added") === -1 ? <></> : <span>A</span>}
       </div>
     </>)
   }
@@ -38,6 +40,7 @@ export const CommitDetailsItems = (props: CCommitDetailsItemsProps) => {
         <span className='font-weight-bold long-and-truncated'>{path.basename(commitChange.path)}</span>
         <div className='text-secondary long-and-truncated'> {commitChange.path}</div>
       </div>
+      <FontAwesomeIcon icon={faGlobe} className="mr-1" />
       <FunctionStatusIcons></FunctionStatusIcons>
     </div>
   </>)
