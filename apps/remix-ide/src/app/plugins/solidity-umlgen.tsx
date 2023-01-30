@@ -27,7 +27,9 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   currentFile: string
   svgPayload: string
   updatedSvg: string
+  currentlySelectedTheme: string
   loading: boolean
+
   appManager: RemixAppManager
   dispatch: React.Dispatch<any> = () => {}
   constructor(appManager: RemixAppManager) {
@@ -36,6 +38,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     this.svgPayload = ''
     this.updatedSvg = ''
     this.loading = false
+    this.currentlySelectedTheme = 'dark'
     this.appManager = appManager
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'sol-uml-gen')
@@ -50,13 +53,42 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
           result = await this.flattenContract(source, this.currentFile, data)
         }
         const ast = result.length > 1 ? parser.parse(result) : parser.parse(source.sources[this.currentFile].content)
-        const payload = vizRenderStringSync(convertUmlClasses2Dot(convertAST2UmlClasses(ast, this.currentFile)))
+        const umlClasses = convertAST2UmlClasses(ast, this.currentFile)
+        const umlDot = convertUmlClasses2Dot(umlClasses)
+        const payload = vizRenderStringSync(umlDot)
+        // const splitArtifact = payload.split('<!-- Title: UmlClassDiagram Pages: 1 -->\n')
+        // const modified = splitArtifact[1].replace(/<svg/g, '<svg style="background-color: pink;" ')
+        // splitArtifact[1] = modified
+        // const newsvg = splitArtifact[0].concat(splitArtifact[1])
+        // console.log({ newsvg })
+        console.log({ umlClasses, umlDot, payload })
+        this.call('fileManager', 'writeFile', `${this.currentFile}.svg`, payload)
         this.updatedSvg = payload
         this.renderComponent()
       } catch (error) {
         console.log({ error })
       }
     })
+    this.on('theme', 'themeChanged', (theme) => {
+      console.log('theme changed', {theme})
+      this.currentlySelectedTheme = theme.quality
+      this.renderComponent()
+    })
+  }
+
+  async mangleSvgPayload(svgPayload: string) : Promise<string> {
+    const parser = new DOMParser()
+    const themeQuality = await this.call('theme', 'currentTheme')
+    const parsedDocument = parser.parseFromString(svgPayload, 'image/svg+xml')
+    // const svgElement = parsedDocument.getElementsByTagName('polygon')[0]
+    // svgElement.style.filter = themeQuality.quality === 'dark' ? 'invert(1)' : 'invert(0)'
+    const res = parsedDocument.documentElement
+    parsedDocument.bgColor = '#cccabc'
+    res.style.filter = themeQuality.quality === 'dark' ? 'invert(1)' : 'invert(0)'
+    const stringifiedSvg = new XMLSerializer().serializeToString(parsedDocument)
+    // themeQuality.quality === 'dark' ? svgElement.style.background = '#cccabc' : 'invert(0)'
+    console.log({ parsedDocument, themeQuality, stringifiedSvg })
+    return stringifiedSvg
   }
 
   onDeactivation(): void {
@@ -115,7 +147,12 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   }
 
   renderComponent () {
-    this.dispatch({...this, updatedSvg: this.updatedSvg, loading: this.loading })
+    this.dispatch({
+      ...this,
+      updatedSvg: this.updatedSvg,
+      loading: this.loading,
+      themeSelected: this.currentlySelectedTheme
+    })
   }
 
   updateComponent(state: any) {
