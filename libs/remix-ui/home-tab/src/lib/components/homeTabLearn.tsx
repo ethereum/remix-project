@@ -31,11 +31,10 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
     window.open("https://remix-ide.readthedocs.io/en/latest/remix_tutorials_learneth.html?highlight=learneth#learneth-tutorial-repos", '_blank')
   }
 
-  const startLearnEthTutorial = async (tutorial: 'home' | 'basics' | 'soliditybeginner' | 'deploylibraries') => {
+  const startLearnEthTutorial = async (tutorial: 'basics' | 'soliditybeginner' | 'deploylibraries') => {
     await plugin.appManager.activatePlugin(['solidity', 'LearnEth', 'solidityUnitTesting'])
     plugin.verticalIcons.select('LearnEth')
-    tutorial === 'home' ? plugin.call('LearnEth', 'home') :
-      plugin.call('LearnEth', 'startTutorial', 'ethereum/remix-workshops', 'master', tutorial)
+    plugin.call('LearnEth', 'startTutorial', 'ethereum/remix-workshops', 'master', tutorial)
     _paq.push(['trackEvent', 'hometab', 'startLearnEthTutorial', tutorial])
   }
 
