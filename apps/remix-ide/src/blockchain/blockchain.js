@@ -180,9 +180,7 @@ export class Blockchain extends Plugin {
         _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment failed: ' + error])
         return this.call('terminal', 'logHtml', log)
       }
-      if (networkInfo.name === 'VM') this.config.set('vm/proxy', address)
-      else this.config.set(`${networkInfo.name}/${networkInfo.currentFork}/${networkInfo.id}/proxy`, address)
-      await this.saveDeployedContractStorageLayout(implementationContractObject, address, networkInfo)
+      if (networkInfo.name !== 'VM') await this.saveDeployedContractStorageLayout(implementationContractObject, address, networkInfo)
       _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment successful'])
       this.call('udapp', 'addInstance', addressToString(address), implementationContractObject.abi, implementationContractObject.name)
     }
@@ -228,7 +226,7 @@ export class Blockchain extends Plugin {
         _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'Upgrade failed'])
         return this.call('terminal', 'logHtml', log)
       }
-      await this.saveDeployedContractStorageLayout(newImplementationContractObject, proxyAddress, networkInfo)
+      if (networkInfo.name !== 'VM') await this.saveDeployedContractStorageLayout(newImplementationContractObject, proxyAddress, networkInfo)
       _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'Upgrade Successful'])
       this.call('udapp', 'addInstance', addressToString(proxyAddress), newImplementationContractObject.abi, newImplementationContractObject.name)
     }
