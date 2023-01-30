@@ -34,9 +34,21 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
   const startLearnEthTutorial = async (tutorial: 'home' | 'basics' | 'soliditybeginner' | 'deploylibraries') => {
     await plugin.appManager.activatePlugin(['solidity', 'LearnEth', 'solidityUnitTesting'])
     plugin.verticalIcons.select('LearnEth')
-    tutorial === 'home' ? plugin.call('LearnEth') :
+    tutorial === 'home' ? plugin.call('LearnEth', 'home') :
       plugin.call('LearnEth', 'startTutorial', 'ethereum/remix-workshops', 'master', tutorial)
     _paq.push(['trackEvent', 'hometab', 'startLearnEthTutorial', tutorial])
+  }
+
+  const goToLearnEthHome = async () => {
+    console.log({ plugin })
+    if(plugin.appManager.isActive('LearnEth')) {
+      plugin.verticalIcons.select('LearnEth')
+      await plugin.call('LearnEth', 'home')
+    } else {
+      await plugin.appManager.activatePlugin(['learnEth', 'solidity', 'solidityUnitTesting'])
+      plugin.verticalIcons.select('LearnEth')
+      await plugin.call('LearnEth', 'home')
+    }
   }
 
   return (
@@ -47,7 +59,7 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
         </label>
         <button
           onClick={ async () => {
-            await startLearnEthTutorial('home')
+            await goToLearnEthHome()
           }}
           className="h-100 px-2 pt-0 btn"
         >
