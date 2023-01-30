@@ -43,4 +43,4 @@ export interface ThemeModule extends Plugin<any, any> {
     fixInvert(image?: any): void;
 }
 
-interface Theme { name: string, quality: string, url: string }
+export interface Theme { name: string, quality: string, url: string }
