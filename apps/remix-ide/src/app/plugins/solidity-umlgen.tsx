@@ -18,7 +18,7 @@ const profile = {
     displayName: 'Solidity UML Generator',
     description: 'Generate UML diagram in svg format from last compiled contract',
     location: 'mainPanel',
-    methods: ['showUmlDiagram', 'generateUml', 'generateCustomAction', 'flattenAContract'],
+    methods: ['showUmlDiagram', 'generateUml', 'generateCustomAction'],
     events: [],
 }
 
@@ -56,7 +56,6 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         const umlClasses = convertAST2UmlClasses(ast, this.currentFile)
         const umlDot = convertUmlClasses2Dot(umlClasses)
         const payload = vizRenderStringSync(umlDot)
-        console.log({ umlClasses, umlDot, payload })
         this.updatedSvg = payload
         this.renderComponent()
       } catch (error) {
@@ -98,15 +97,6 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     this.renderComponent()
   }
 
-  async flattenAContract(action: customAction) {
-    const fileName = action.path[0]
-    this.call('solidity', 'compile', fileName)
-    this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
-      await this.flattenContract(source, fileName, data)
-    })
-    this.off('solidity', 'compilationFinished')
-  }
-
   /**
    * Takes currently compiled contract that has a bunch of imports at the top
    * and flattens them ready for UML creation. Takes the flattened result
@@ -114,6 +104,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
    * @returns {Promise<string>}
    */
   async flattenContract (source: any, filePath: string, data: any) {
+    const hold = { data, source, filePath }
     const ast = data.sources
     const dependencyGraph = getDependencyGraph(ast, filePath)
     const sorted = dependencyGraph.isEmpty()

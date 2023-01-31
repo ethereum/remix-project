@@ -83,7 +83,7 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
     const invert = themeSelected === 'dark' ? 'invert(1)' : 'invert(0)'
     return (
     <div className="d-flex flex-column justify-content-center align-items-center">
-      <div id="umlImageHolder">
+      <div id="umlImageHolder" className="w-100 px-2 py-2">
         { validSvg && showViewer ? (
           <TransformWrapper
             initialScale={1}
@@ -91,16 +91,10 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
             {
               ({ zoomIn, zoomOut, resetTransform }) => (
                 <Fragment>
-                  {/* <div className="position-relative">
-                    <button className="btn position-absolute top-0 end-100 translate-middle btn-sm mr-1 rounded-circle btn-success" onClick={() => zoomIn()}>+</button>
-                    <button className="btn position-absolute top-0 end-100 translate-middle btn-sm mr-1 rounded-circle btn-warning" onClick={() => zoomOut()}>-</button>
-                    <button className="btn position-absolute top-0 end-100 translate-middle btn-sm mr-1 rounded-circle btn-danger" onClick={() => resetTransform()}>X</button>
-                    <ActionButtons buttons={buttons}/>
-                  </div> */}
                   <TransformComponent>
                     <img 
                       src={`data:image/svg+xml;base64,${btoa(plugin.updatedSvg ?? svgPayload)}`}
-                      width={950}
+                      width={'100%'}
                       height={'auto'}
                       style={{ filter: invert }}
                     />
