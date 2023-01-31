@@ -20,18 +20,21 @@ program
   })
 
 program
-  .option('-p, --port [port]', 'specify port')
-  .option('-b, --ip [host]', 'specify host')
-  .option('-c, --coinbase [coinbase]', 'specify host')
-  .option('--rpc', 'run rpc server only')
-  .option('--details', 'display payloads for every requests and their responses')
-  .parse(process.argv)
+  .command('start')
+  .option('-p, --port [port]', 'specify port', 8545)
+  .option('-b, --ip [host]', 'specify host', '127.0.0.1')
+  .option('-c, --coinbase [coinbase]', 'specify coinbase', '0x0000000000000000000000000000000000000000')
+  .option('--rpc', 'run rpc server only', true)
+  .option('--details', 'display payloads for every requests and their responses', false)
+  .action(() => {
+    const Server = require('../src/server')
+    const server = new Server({
+      coinbase: program.coinbase,
+      rpc: program.rpc,
+      logDetails: program.details
+    })
+    server.start(program.host, program.port)
+  })
 
-const Server = require('../src/server')
-const server = new Server({
-  coinbase: program.coinbase || "0x0000000000000000000000000000000000000000",
-  rpc: program.rpc,
-  logDetails: program.details
-})
-server.start(program.host || '127.0.0.1', program.port || 8545)
+program.parse(process.argv)
 
