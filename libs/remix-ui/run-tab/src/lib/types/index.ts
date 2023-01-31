@@ -67,7 +67,6 @@ export interface RunTabState {
       }[]
     },
     deployOptions: { [file: string]: { [name: string]: DeployOptions } },
-    proxyKey: string,
     loadType: 'abi' | 'sol' | 'other'
     currentFile: string,
     compilationSource: string,
@@ -227,7 +226,6 @@ export interface ContractDropdownProps {
   contracts: {
     contractList: ContractList,
     deployOptions: { [file: string]: { [name: string]: DeployOptions } },
-    proxyKey: string,
     loadType: 'abi' | 'sol' | 'other',
     currentFile: string,
     compilationSource: string
@@ -264,7 +262,8 @@ export interface ContractDropdownProps {
   setNetworkName: (name: string) => void,
   setSelectedContract: (contractName: string) => void
   remixdActivated: boolean,
-  isValidProxyAddress?: (address: string) => Promise<boolean>
+  isValidProxyAddress?: (address: string) => Promise<boolean>,
+  proxy: { deployments: { address: string, date: Date }[] }
 }
 
 export interface RecorderProps {
@@ -359,7 +358,7 @@ export interface ContractGUIProps {
   isDeploy?: boolean,
   deployOption?: { title: DeployMode, active: boolean }[],
   initializerOptions?: DeployOption,
-  savedProxyAddress?: string,
+  proxy?: { deployments: { address: string, date: Date }[] },
   isValidProxyAddress?: (address: string) => Promise<boolean>
 }
 export interface MainnetProps {
