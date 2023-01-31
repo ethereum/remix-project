@@ -39,7 +39,6 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
   }
 
   const goToLearnEthHome = async () => {
-    console.log({ plugin })
     if(await plugin.appManager.isActive('LearnEth')) {
       plugin.verticalIcons.select('LearnEth')
       await plugin.call('LearnEth', 'home')
