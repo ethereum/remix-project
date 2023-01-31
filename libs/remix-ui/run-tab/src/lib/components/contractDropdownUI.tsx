@@ -32,7 +32,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const [compilerName, setCompilerName] = useState<string>('')
   const contractsRef = useRef<HTMLSelectElement>(null)
   const atAddressValue = useRef<HTMLInputElement>(null)
-  const { contractList, loadType, currentFile, compilationSource, currentContract, compilationCount, deployOptions, proxyKey } = props.contracts
+  const { contractList, loadType, currentFile, compilationSource, currentContract, compilationCount, deployOptions } = props.contracts
 
   useEffect(() => {
     enableContractNames(Object.keys(props.contracts.contractList).length > 0)
@@ -311,7 +311,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
                 widthClass='w-50'
                 evmBC={loadedContractData.bytecodeObject}
                 lookupOnly={false}
-                savedProxyAddress={proxyKey}
+                proxy={props.proxy}
                 isValidProxyAddress={props.isValidProxyAddress}
               />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">

@@ -242,6 +242,7 @@ export function RunTabUI (props: RunTabProps) {
             setSelectedContract={updateSelectedContract}
             remixdActivated={runTab.remixdActivated}
             isValidProxyAddress={isValidProxyAddress}
+            proxy={runTab.proxy}
           />
           <RecorderUI
             gasEstimationPrompt={gasEstimationPrompt}
