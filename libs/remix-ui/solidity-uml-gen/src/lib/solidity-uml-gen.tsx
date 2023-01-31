@@ -91,12 +91,12 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
             {
               ({ zoomIn, zoomOut, resetTransform }) => (
                 <Fragment>
-                  <div className="position-relative">
+                  {/* <div className="position-relative">
                     <button className="btn position-absolute top-0 end-100 translate-middle btn-sm mr-1 rounded-circle btn-success" onClick={() => zoomIn()}>+</button>
                     <button className="btn position-absolute top-0 end-100 translate-middle btn-sm mr-1 rounded-circle btn-warning" onClick={() => zoomOut()}>-</button>
                     <button className="btn position-absolute top-0 end-100 translate-middle btn-sm mr-1 rounded-circle btn-danger" onClick={() => resetTransform()}>X</button>
                     <ActionButtons buttons={buttons}/>
-                  </div>
+                  </div> */}
                   <TransformComponent>
                     <img 
                       src={`data:image/svg+xml;base64,${btoa(plugin.updatedSvg ?? svgPayload)}`}
