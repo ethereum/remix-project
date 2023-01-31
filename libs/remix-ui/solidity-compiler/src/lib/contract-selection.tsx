@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react' // eslint-disable-line
+import React, { useState, useEffect } from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
 import { ContractSelectionProps } from './types'
 import { PublishToStorage } from '@remix-ui/publish-to-storage' // eslint-disable-line
@@ -24,6 +24,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       else setSelectedContract(contractList[0].name)
     }
   }, [contractList])
+
 
   const resetStorage = () => {
     setStorage('')

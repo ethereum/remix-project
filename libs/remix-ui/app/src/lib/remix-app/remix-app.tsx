@@ -78,6 +78,7 @@ const RemixApp = (props: IRemixAppUi) => {
   }
 
   return (
+    //@ts-ignore
     <IntlProvider locale={locale.code} messages={locale.messages}>
       <AppProvider value={value}>
         <OriginWarning></OriginWarning>

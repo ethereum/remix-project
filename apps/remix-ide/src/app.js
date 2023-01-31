@@ -35,6 +35,8 @@ import { Injected0ptimismProvider } from './app/tabs/injected-optimism-provider'
 import { InjectedArbitrumOneProvider } from './app/tabs/injected-arbitrum-one-provider'
 import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
+import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
+import { ContractFlattener } from './app/plugins/contractFlattener'
 
 const isElectron = require('is-electron')
 
@@ -173,6 +175,12 @@ class AppComponent {
     //----- search
     const search = new SearchPlugin()
 
+    //---------------- Solidity UML Generator -------------------------
+    const solidityumlgen = new SolidityUmlGen(appManager)
+
+    // ----------------- ContractFlattener ----------------------------
+    const contractFlattener = new ContractFlattener()
+
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
 
@@ -265,7 +273,9 @@ class AppComponent {
       injected0ptimismProvider,
       injectedArbitrumOneProvider,
       this.walkthroughService,
-      search
+      search,
+      solidityumlgen,
+      contractFlattener
     ])
 
     // LAYOUT & SYSTEM VIEWS
