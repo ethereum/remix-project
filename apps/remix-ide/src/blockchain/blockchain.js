@@ -387,6 +387,14 @@ export class Blockchain extends Plugin {
     return this.executionContext.getCurrentFork()
   }
 
+  /**
+   * return the fork name applied to the current envionment
+   * @return {String} - fork name
+   */
+  getCurrentRawContext () {
+    return this.executionContext.getCurrentRawContext()
+  }
+
   isWeb3Provider () {
     const isVM = this.getProvider() === 'vm'
     const isInjected = this.getProvider() === 'injected'

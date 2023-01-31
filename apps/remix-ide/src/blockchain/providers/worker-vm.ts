@@ -6,7 +6,7 @@ self.onmessage = (e: MessageEvent) => {
   switch (data.cmd) {
     case 'init': 
     {
-      provider = new Provider({ fork: data.fork })
+      provider = new Provider({ fork: data.fork, rawContext: data.rawContext })
       if (provider) provider.init()
       break
     }

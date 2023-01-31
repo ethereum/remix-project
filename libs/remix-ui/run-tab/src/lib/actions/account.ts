@@ -2,6 +2,7 @@ import { shortenAddress } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { clearInstances, setAccount, setExecEnv } from "./actions"
 import { displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setExternalEndpoint, setMatchPassphrase, setPassphrase } from "./payload"
+import { ExecutionContextType } from '../../lib/types/index'
 
 export const updateAccountBalances = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const accounts = plugin.REACT_API.accounts.loadedAccounts
@@ -67,13 +68,10 @@ export const setFinalContext = (plugin: RunTab, dispatch: React.Dispatch<any>) =
 }
 
 const _getProviderDropdownValue = (plugin: RunTab): string => {
-  const provider = plugin.blockchain.getProvider()
-  const fork = plugin.blockchain.getCurrentFork()
-
-  return provider === 'vm' ? provider + '-' + fork : provider
+  return plugin.blockchain.getCurrentRawContext()
 }
 
-export const setExecutionContext = (plugin: RunTab, dispatch: React.Dispatch<any>, executionContext: { context: string, fork: string }) => {
+export const setExecutionContext = (plugin: RunTab, dispatch: React.Dispatch<any>, executionContext: ExecutionContextType) => {
   plugin.blockchain.changeExecutionContext(executionContext, null, (alertMsg) => {
     plugin.call('notification', 'toast', alertMsg)
   }, () => { setFinalContext(plugin, dispatch) })

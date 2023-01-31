@@ -20,7 +20,7 @@ class VMProvider {
     if (this.worker) this.worker.terminate()
     this.accounts = {}
     this.worker = new Worker(new URL('./worker-vm', import.meta.url))
-    this.worker.postMessage({ cmd: 'init', fork: this.executionContext.getCurrentFork() })
+    this.worker.postMessage({ cmd: 'init', fork: this.executionContext.getCurrentFork(), rawContext: this.executionContext.getCurrentRawContext() })
     
     let incr = 0
     const stamps = {}

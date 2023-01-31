@@ -134,6 +134,13 @@ export const runTabInitialState: RunTabState = {
       fork: 'berlin',
       content: 'Remix VM (Berlin)'
     }, {
+      id: 'vm-mode-fork-main',
+      dataId: 'settingsVMForkMode',
+      title: 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.',
+      value: 'vm-fork-main',
+      fork: 'london',
+      content: 'Remix VM Main (London)'
+    }, {
       id: 'injected-mode',
       dataId: 'settingsInjectedMode',
       title: 'Execution environment has been provided by Metamask or similar provider.',

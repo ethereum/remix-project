@@ -7,6 +7,8 @@ export interface RunTabProps {
   plugin: RunTab
 }
 
+export type ExecutionContextType = { context: string , fork: string, rawContext?: string}
+
 export interface SettingsProps {
   selectExEnv: string,
   accounts: {
@@ -63,7 +65,7 @@ export interface EnvironmentProps {
     isSuccessful: boolean,
     error: string
   },
-  setExecutionContext: (executionContext: { context: string, fork: string }) => void
+  setExecutionContext: (executionContext: ExecutionContextType) => void
 }
 
 export interface NetworkProps {

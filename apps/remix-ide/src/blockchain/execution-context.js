@@ -33,6 +33,7 @@ export class ExecutionContext {
     this.latestBlockNumber = 0
     this.txs = {}
     this.customWeb3 = {} // mapping between a context name and a web3.js instance
+    this.rawContext = ''
   }
 
   init (config) {
@@ -62,6 +63,10 @@ export class ExecutionContext {
 
   getCurrentFork () {
     return this.currentFork
+  }
+
+  getCurrentRawContext () {
+    return this.rawContext
   }
 
   isVM () {
@@ -142,6 +147,7 @@ export class ExecutionContext {
   async executionContextChange (value, endPointUrl, confirmCb, infoCb, cb) {
     _paq.push(['trackEvent', 'udapp', 'providerChanged', value.context])
     const context = value.context
+    this.rawContext = value.rawContext
     if (!cb) cb = () => { /* Do nothing. */ }
     if (!confirmCb) confirmCb = () => { /* Do nothing. */ }
     if (!infoCb) infoCb = () => { /* Do nothing. */ }
