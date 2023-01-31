@@ -18,7 +18,7 @@ const profile = {
     displayName: 'Solidity UML Generator',
     description: 'Generate UML diagram in svg format from last compiled contract',
     location: 'mainPanel',
-    methods: ['showUmlDiagram', 'generateUml', 'generateCustomAction'],
+    methods: ['showUmlDiagram', 'generateUml', 'generateCustomAction', 'flattenAContract'],
     events: [],
 }
 
@@ -56,13 +56,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         const umlClasses = convertAST2UmlClasses(ast, this.currentFile)
         const umlDot = convertUmlClasses2Dot(umlClasses)
         const payload = vizRenderStringSync(umlDot)
-        // const splitArtifact = payload.split('<!-- Title: UmlClassDiagram Pages: 1 -->\n')
-        // const modified = splitArtifact[1].replace(/<svg/g, '<svg style="background-color: pink;" ')
-        // splitArtifact[1] = modified
-        // const newsvg = splitArtifact[0].concat(splitArtifact[1])
-        // console.log({ newsvg })
         console.log({ umlClasses, umlDot, payload })
-        this.call('fileManager', 'writeFile', `${this.currentFile}.svg`, payload)
         this.updatedSvg = payload
         this.renderComponent()
       } catch (error) {
@@ -80,13 +74,10 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     const parser = new DOMParser()
     const themeQuality = await this.call('theme', 'currentTheme')
     const parsedDocument = parser.parseFromString(svgPayload, 'image/svg+xml')
-    // const svgElement = parsedDocument.getElementsByTagName('polygon')[0]
-    // svgElement.style.filter = themeQuality.quality === 'dark' ? 'invert(1)' : 'invert(0)'
     const res = parsedDocument.documentElement
     parsedDocument.bgColor = '#cccabc'
     res.style.filter = themeQuality.quality === 'dark' ? 'invert(1)' : 'invert(0)'
     const stringifiedSvg = new XMLSerializer().serializeToString(parsedDocument)
-    // themeQuality.quality === 'dark' ? svgElement.style.background = '#cccabc' : 'invert(0)'
     console.log({ parsedDocument, themeQuality, stringifiedSvg })
     return stringifiedSvg
   }
@@ -105,6 +96,15 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     await this.call('tabs', 'focus', 'solidityumlgen')
     this.loading = true
     this.renderComponent()
+  }
+
+  async flattenAContract(action: customAction) {
+    const fileName = action.path[0]
+    this.call('solidity', 'compile', fileName)
+    this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
+      await this.flattenContract(source, fileName, data)
+    })
+    this.off('solidity', 'compilationFinished')
   }
 
   /**
