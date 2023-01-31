@@ -27,11 +27,11 @@ export const CommitDetailsItems = (props: CCommitDetailsItemsProps) => {
   function FunctionStatusIcons() {
     const status = commitChange.type
     return (<>
-      <div className=''>
+
         {status && status.indexOf("modified") === -1 ? <></> : <span>M</span>}
         {status && status.indexOf("deleted") === -1 ? <></> : <span>D</span>}
         {status && status.indexOf("added") === -1 ? <></> : <span>A</span>}
-      </div>
+
     </>)
   }
   return (<>
@@ -40,8 +40,10 @@ export const CommitDetailsItems = (props: CCommitDetailsItemsProps) => {
         <span className='font-weight-bold long-and-truncated'>{path.basename(commitChange.path)}</span>
         <div className='text-secondary long-and-truncated'> {commitChange.path}</div>
       </div>
-      <FontAwesomeIcon icon={faGlobe} className="mr-1" />
-      <FunctionStatusIcons></FunctionStatusIcons>
+      <div className="d-flex align-items-end">
+        <FontAwesomeIcon icon={faGlobe} className="mr-1 align-self-center" />
+        <FunctionStatusIcons></FunctionStatusIcons>
+      </div>
     </div>
   </>)
 }

@@ -1,5 +1,5 @@
 import { ReadCommitResult } from "isomorphic-git"
-import { commitChange, fileStatusResult, remote } from "../types"
+import { branch, commitChange, fileStatusResult, remote } from "../types"
 
 export const fileStatus = (files: fileStatusResult[]) => {
     return {
@@ -83,5 +83,12 @@ export const setCommitChanges = (commitChanges: commitChange[]) => {
     return {
         type: 'SET_COMMIT_CHANGES',
         payload: commitChanges
+    }
+}
+
+export const setBranchCommits =({branch, commits}) => {
+    return {
+        type: 'SET_BRANCH_COMMITS',
+        payload: { branch, commits }
     }
 }

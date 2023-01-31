@@ -54,10 +54,11 @@ export const SourceControl = () => {
                 path: file.filename,
                 type: "modified",
                 hashOriginal: headHash,
-                hashModified: ''
+                hashModified: '',
+                readonly: false
             }
-
             await actions.diff(change)
+            await pluginactions.openDiff(change)
             console.log("diff", change)
 
         } else {

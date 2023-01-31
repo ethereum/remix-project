@@ -1,5 +1,6 @@
+import { ReadCommitResult } from "isomorphic-git"
 import React from "react"
-import { commitChange } from "../types"
+import { branch, commitChange } from "../types"
 
 export interface gitActions  {
     clone(url: string, path: string, depth: number, cloneAllBranches: boolean): Promise<void>
@@ -16,6 +17,7 @@ export interface gitActions  {
     createBranch(branch: string): Promise<void>
     remoteBranches(owner: string, repo: string): Promise<any>
     getCommitChanges(oid1: string, oid2: string): Promise<commitChange[]>
+    getBranchCommits(branch: branch): Promise<ReadCommitResult[]>
     diff(commitChange: commitChange): Promise<void>
     resolveRef(ref: string): Promise<string>
 }

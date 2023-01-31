@@ -14,7 +14,7 @@ import { Octokit } from "@octokit/core";
 import JSZip from 'jszip'
 import path from 'path'
 import { IndexedDBStorage } from './filesystems/indexedDB'
-import { commitChange } from '@remix-ui/git'
+import { commitChange, remote } from '@remix-ui/git'
 
 declare global {
   interface Window { remixFileSystemCallback: IndexedDBStorage; remixFileSystem: IndexedDBStorage['extended']; }
@@ -130,9 +130,10 @@ class DGitProvider extends Plugin {
   }
 
   async log(cmd) {
+    console.log(cmd)
     const status = await git.log({
       ...await this.getGitConfig(),
-      ...cmd
+      ...cmd,
     })
     console.log(status)
     const tree = await git.readTree({
@@ -197,7 +198,7 @@ class DGitProvider extends Plugin {
   }
 
   async remotes(config) {
-    let remotes = []
+    let remotes:remote[] = []
     try {
       remotes = await git.listRemotes({ ...config ? config : await this.getGitConfig() })
     } catch (e) {
@@ -241,9 +242,10 @@ class DGitProvider extends Plugin {
       branches = (await git.listBranches(cmd)).map((branch) => { return { remote: undefined, name: branch } })
       for (const remote of remotes) {
         cmd.remote = remote.remote
-        const remotebranches = (await git.listBranches(cmd)).map((branch) => { return { remote: remote.remote, name: branch } })
+        const remotebranches = (await git.listBranches(cmd)).map((branch) => { return { remote: remote, name: branch } })
         branches = [...branches, ...remotebranches]
       }
+      console.log(branches)
       return branches
     } catch (e) {
       return []

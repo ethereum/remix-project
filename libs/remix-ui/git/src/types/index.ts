@@ -5,7 +5,7 @@ export type gitState = {
     commits: ReadCommitResult[]
     branch: string
     canCommit: boolean
-    branches: any[]
+    branches: branch[]
     remotes: remote[]
     fileStatusResult: fileStatusResult[]
     canUseApp: boolean
@@ -20,6 +20,7 @@ export type gitState = {
     repositories: repository[]
     remoteBranches: remoteBranch[]
     commitChanges: commitChange[]
+    branchCommits:  Record<string, ReadCommitResult[]>
 }
 
 export type commitChangeTypes = {  
@@ -52,6 +53,11 @@ export type repository = {
     id: number
 }
 
+export type branch = {
+    name: string
+    remote: remote
+}
+
 export type remote = {
     remote: string
     url: string
@@ -80,7 +86,8 @@ export const defaultGitState: gitState = {
     reponame: "",
     repositories: [],
     remoteBranches: [],
-    commitChanges: []
+    commitChanges: [],
+    branchCommits: {}
 }
 
 export type fileStatusResult = {
@@ -143,4 +150,12 @@ export interface setRemotesAction {
     payload: remote[]
 }
 
-export type gitActionDispatch = setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction
+export interface setBranchCommitsAction {
+    type: string,
+    payload: {
+        branch: branch,
+        commits: ReadCommitResult[]
+    }
+}
+
+export type gitActionDispatch = setBranchCommitsAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction

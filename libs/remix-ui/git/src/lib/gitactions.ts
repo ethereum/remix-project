@@ -1,8 +1,8 @@
 import { ViewPlugin } from "@remixproject/engine-web";
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
-import { fileStatus, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setLoading, setRemoteBranches, setRemotes, setRepos } from "../state/payload";
-import { commitChange, gitActionDispatch, statusMatrixType } from '../types';
+import { fileStatus, setBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setLoading, setRemoteBranches, setRemotes, setRepos } from "../state/payload";
+import { branch, commitChange, gitActionDispatch, statusMatrixType } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
 
@@ -472,4 +472,13 @@ export const getCommitChanges = async (oid1: string, oid2: string) => {
     const result: commitChange[] = await plugin.call('dGitProvider', 'getCommitChanges', oid1, oid2)
     dispatch(setCommitChanges(result))
     return result
+}
+
+export const getBranchCommits = async (branch: branch) => {
+    const commits: ReadCommitResult[]= await plugin.call('dGitProvider', 'log', {
+        ref: branch.name,
+    })
+    console.log(commits)
+    dispatch(setBranchCommits({branch, commits}))
+    return commits
 }

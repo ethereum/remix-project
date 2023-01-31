@@ -1,12 +1,13 @@
+import { ReadCommitResult } from "isomorphic-git"
 import { allChangedButNotStagedFiles, getFilesByStatus, getFilesWithNotModifiedStatus } from "../lib/fileHelpers"
-import { commitChange, defaultGitState, gitState } from "../types"
+import { branch, commitChange, defaultGitState, gitState, setBranchCommitsAction } from "../types"
 
 interface Action {
     type: string
     payload: any
 }
 
-export const gitReducer = (state: gitState = defaultGitState, action: Action) => {
+export const gitReducer = (state: gitState = defaultGitState, action: Action): gitState => {
     ///console.log(action, state)
     switch (action.type) {
        
@@ -47,7 +48,7 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action) =>
         case 'SET_REPO_NAME':
             return {
                 ...state,
-                repoName: action.payload
+                reponame: action.payload
             }
         case 'SET_LOADING':
             return {
@@ -88,6 +89,13 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action) =>
             return {
                 ...state,
                 commitChanges: [...state.commitChanges]
+            }
+
+        case 'SET_BRANCH_COMMITS':
+            state.branchCommits[(action as setBranchCommitsAction).payload.branch.name] = (action  as setBranchCommitsAction).payload.commits
+            return {
+                ...state,
+                branchCommits: {...state.branchCommits}
             }
     }
 }
