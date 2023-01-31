@@ -207,9 +207,9 @@ export class RemixURLResolver {
     ]
   }
 
-  public async resolve (filePath: string, customHandlers?: Handler[]): Promise<Imported> {
+  public async resolve (filePath: string, customHandlers?: Handler[], force?: boolean): Promise<Imported> {
     let imported: Imported = this.previouslyHandled[filePath]
-    if (imported) {
+    if (!force && imported) {
       return imported
     }
     const builtinHandlers: Handler[] = this.getHandlers()
