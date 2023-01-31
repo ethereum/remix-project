@@ -142,6 +142,12 @@ export const runTabInitialState: RunTabState = {
         window.ethereum.isCoinbaseWallet || window.ethereum.selectedProvider?.isCoinbaseWallet ? ' - Coinbase' :
         window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet ? ' - Brave' :
         window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask ? ' - MetaMask' : '' : ''}`
+    }, {
+      id: 'injected-mode-tw',
+      dataId: 'settingsInjectedTWMode',
+      title: 'Execution environment has been provided by Trust Wallet extension.',
+      value: 'injected-trustwallet',
+      content: 'Trust Wallet Provider'
     }],
     isRequesting: false,
     isSuccessful: false,
@@ -525,7 +531,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         }
       }
     }
-    
+
     case SET_IPFS_CHECKED_STATE: {
       const payload: boolean = action.payload
 

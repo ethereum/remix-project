@@ -15,6 +15,7 @@ if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
 }
 
 const noInjectedProviderMsg = 'No injected provider found. Make sure your provider (e.g. MetaMask) is active and running (when recently activated you may have to reload the page).'
+const noInjectedTrustWalletProviderMsg = 'Could not find Trust Wallet provider. Please make sure the Trust Wallet extension is active. Download the latest version from https://trustwallet.com/browser-extension'
 
 /*
   trigger contextChanged, web3EndpointChanged
@@ -133,14 +134,14 @@ export class ExecutionContext {
   internalWeb3 () {
     return web3
   }
-  
+
   setContext (context, endPointUrl, confirmCb, infoCb) {
     this.executionContext = context
     this.executionContextChange(context, endPointUrl, confirmCb, infoCb, null)
   }
 
   async executionContextChange (value, endPointUrl, confirmCb, infoCb, cb) {
-    _paq.push(['trackEvent', 'udapp', 'providerChanged', value.context])
+    _paq.push(['trackEvent', 'udapp', 'providerChanged', value.context === 'injected' || value.context === 'injected-trustwallet' ? 'injected' : 'vm'])
     const context = value.context
     if (!cb) cb = () => { /* Do nothing. */ }
     if (!confirmCb) confirmCb = () => { /* Do nothing. */ }
@@ -174,6 +175,31 @@ export class ExecutionContext {
       }
     }
 
+    if (context === 'injected-trustwallet') {
+      const injectedTrustWalletProvider = window?.trustwallet;
+      if (!injectedTrustWalletProvider) {
+        infoCb(noInjectedTrustWalletProviderMsg)
+        return cb()
+      }
+
+      try {
+        if (injectedTrustWalletProvider && typeof injectedTrustWalletProvider.request === "function") {
+          injectedTrustWalletProvider.request({ method: "eth_requestAccounts" })
+        } else {
+          throw new Error(noInjectedTrustWalletProviderMsg)
+        }
+      } catch (e) {
+        infoCb(e.message)
+        return cb()
+      }
+
+      this.executionContext = 'injected-trustwallet'
+      web3.setProvider(injectedTrustWalletProvider)
+      await this._updateChainContext()
+      this.event.trigger('contextChanged', ['injected-trustwallet'])
+      return cb()
+    }
+
     if (this.customNetWorks[context]) {
       var network = this.customNetWorks[context]
       if (!this.customNetWorks[context].isInjected) {
@@ -188,7 +214,7 @@ export class ExecutionContext {
         } catch (e) {
           infoCb(e.message)
           return cb()
-        }        
+        }
         this.executionContext = context
         web3.setProvider(network.provider)
         await this._updateChainContext()
