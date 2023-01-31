@@ -21,10 +21,10 @@
     "test": "./../../node_modules/.bin/ts-node --project ../../tsconfig.base.json --require tsconfig-paths/register ./../../node_modules/.bin/tape ./test/tests.ts"
   },
   "dependencies": {
-    "@ethereumjs/block": "^4.0.0",
-    "@ethereumjs/common": "^3.0.0",
-    "@ethereumjs/tx": "^4.0.0",
-    "@ethereumjs/vm": "^6.0.0",
+    "@ethereumjs/block": "^4.1.0",
+    "@ethereumjs/common": "^3.0.2",
+    "@ethereumjs/tx": "^4.0.2",
+    "@ethereumjs/vm": "^6.3.0",
     "@remix-project/remix-astwalker": "^0.0.51",
     "@remix-project/remix-lib": "^0.5.21",
     "@remix-project/remix-simulator": "^0.2.21",
