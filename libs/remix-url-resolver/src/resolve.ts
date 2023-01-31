@@ -42,6 +42,10 @@ export class RemixURLResolver {
     this.protocol = protocol
   }
 
+  clearCache () {
+    this.previouslyHandled = {}
+  }
+
   /**
   * Handle an import statement based on github
   * @param root The root of the github import statement

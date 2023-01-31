@@ -44,6 +44,7 @@ export class CompilerImports extends Plugin {
         return {}
       }
     })
+    this.on('filePanel', 'setWorkspace', () => this.urlResolver.clearCache())
   }
 
   async setToken () {
