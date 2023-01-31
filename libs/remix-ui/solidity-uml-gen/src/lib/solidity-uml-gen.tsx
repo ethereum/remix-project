@@ -80,7 +80,7 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
     </div>
   )
   const Display = () => {
-    const invert = themeSelected === 'dark' ? 'invert(1)' : 'invert(0)'
+    const invert = themeSelected === 'dark' ? 'invert(0.8)' : 'invert(0)'
     return (
     <div className="d-flex flex-column justify-content-center align-items-center">
       <div id="umlImageHolder" className="w-100 px-2 py-2">
