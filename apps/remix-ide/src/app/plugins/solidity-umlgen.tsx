@@ -38,7 +38,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     this.svgPayload = ''
     this.updatedSvg = ''
     this.loading = false
-    this.currentlySelectedTheme = 'dark'
+    this.currentlySelectedTheme = ''
     this.appManager = appManager
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'sol-uml-gen')
@@ -63,7 +63,6 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       }
     })
     this.on('theme', 'themeChanged', (theme) => {
-      console.log('theme changed', {theme})
       this.currentlySelectedTheme = theme.quality
       this.renderComponent()
     })
@@ -147,7 +146,12 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   }
 
   updateComponent(state: any) {
-    return <RemixUiSolidityUmlGen plugin={state} updatedSvg={state.updatedSvg} loading={state.loading} />
+    return <RemixUiSolidityUmlGen
+      plugin={state}
+      updatedSvg={state.updatedSvg}
+      loading={state.loading}
+      themeSelected={state.currentlySelectedTheme}
+    />
   }
 }
 
