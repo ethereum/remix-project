@@ -33,7 +33,7 @@ export class TabProxy extends Plugin {
 
     this.on('fileManager', 'filesAllClosed', () => {
       this.call('manager', 'activatePlugin', 'home')
-      this.tabsApi.activateTab('home')
+      this.focus('home')
     })
 
     this.on('fileManager', 'fileRemoved', (name) => {
