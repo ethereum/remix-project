@@ -1,5 +1,5 @@
 import {  util } from '@remix-project/remix-lib'
-const { hexListFromBNs, formatMemory } = util
+const { toHexPaddedString, formatMemory } = util
 import { helpers } from '@remix-project/remix-lib'
 const  { normalizeHexAddress } = helpers.ui
 import { ConsoleLogs } from '@remix-project/remix-lib'
@@ -240,7 +240,7 @@ export class VmProxy {
         previousOpcode.invalidDepthChange = previousOpcode.op !== 'RETURN' && previousOpcode.op !== 'STOP'
       }
       const step = {
-        stack: hexListFromBNs(data.stack),
+        stack: { ...data.stack },
         storage: {},
         memory: null,
         op: data.opcode.name,
@@ -249,6 +249,7 @@ export class VmProxy {
         gas: data.gasLeft.toString(),
         depth: depth
       }
+      step.stack.length = Object.keys(data.stack).length
 
       if (previousOpcode && (previousOpcode.op === 'CALLDATACOPY' || previousOpcode.op === 'CODECOPY' || previousOpcode.op === 'EXTCODECOPY' || previousOpcode.op === 'RETURNDATACOPY' || previousOpcode.op === 'MSTORE' || previousOpcode.op === 'MSTORE8')) {
         step.memory = data.memory
@@ -256,9 +257,8 @@ export class VmProxy {
       }
       this.vmTraces[this.processingHash].structLogs.push(step)
       // Track hardhat console.log call
-      if (step.op === 'STATICCALL' && step.stack[step.stack.length - 2] === '0x000000000000000000000000000000000000000000636f6e736f6c652e6c6f67') {
-        const stackLength = step.stack.length
-        const payloadStart = parseInt(step.stack[stackLength - 3], 16)
+      if (step.op === 'STATICCALL' && toHexPaddedString(step.stack[step.stack.length - 2]) === '0x000000000000000000000000000000000000000000636f6e736f6c652e6c6f67') {
+        const payloadStart = parseInt(toHexPaddedString(step.stack[step.stack.length - 3]), 16)
         const memory = formatMemory(data.memory)
         const memoryStr = memory.join('')
         let payload = memoryStr.substring(payloadStart * 2, memoryStr.length)
@@ -290,7 +290,7 @@ export class VmProxy {
           this.processingAddress = '(Contract Creation - Step ' + this.processingIndex + ')'
           this.storageCache[this.processingHash][this.processingAddress] = {}
         } else {
-          this.processingAddress = normalizeHexAddress(step.stack[step.stack.length - 2])
+          this.processingAddress = normalizeHexAddress(toHexPaddedString(step.stack[step.stack.length - 2]))
           this.processingAddress = toChecksumAddress(this.processingAddress)
           if (!this.storageCache[this.processingHash][this.processingAddress]) {
             (async (processingHash, processingAddress, self) => {
@@ -307,7 +307,7 @@ export class VmProxy {
       }
       if (previousOpcode && previousOpcode.op === 'SHA3') {
         const preimage = this.getSha3Input(previousOpcode.stack, formatMemory(this.lastMemoryUpdate))
-        const imageHash = step.stack[step.stack.length - 1].replace('0x', '')
+        const imageHash = toHexPaddedString(step.stack[step.stack.length - 1]).replace('0x', '')
         this.sha3Preimages[imageHash] = {
           preimage: preimage
         }
@@ -421,26 +421,26 @@ export class VmProxy {
   }
 
   getSha3Input (stack, memory) {
-    let memoryStart = stack[stack.length - 1]
-    let memoryLength = stack[stack.length - 2]
+    const memoryStart = toHexPaddedString(stack[stack.length - 1])
+    const memoryLength = toHexPaddedString(stack[stack.length - 2])
     const memStartDec = (new BN(memoryStart.replace('0x', ''), 16)).toString(10)
-    memoryStart = parseInt(memStartDec) * 2
+    const memoryStartInt = parseInt(memStartDec) * 2
     const memLengthDec = (new BN(memoryLength.replace('0x', ''), 16).toString(10))
-    memoryLength = parseInt(memLengthDec) * 2
+    const memoryLengthInt = parseInt(memLengthDec) * 2
 
-    let i = Math.floor(memoryStart / 32)
-    const maxIndex = Math.floor(memoryLength / 32) + i
+    let i = Math.floor(memoryStartInt / 32)
+    const maxIndex = Math.floor(memoryLengthInt / 32) + i
     if (!memory[i]) {
       return this.emptyFill(memoryLength)
     }
-    let sha3Input = memory[i].slice(memoryStart - 32 * i)
+    let sha3Input = memory[i].slice(memoryStartInt - 32 * i)
     i++
     while (i < maxIndex) {
       sha3Input += memory[i] ? memory[i] : this.emptyFill(32)
       i++
     }
     if (sha3Input.length < memoryLength) {
-      const leftSize = memoryLength - sha3Input.length
+      const leftSize = memoryLengthInt - sha3Input.length
       sha3Input += memory[i] ? memory[i].slice(0, leftSize) : this.emptyFill(leftSize)
     }
     return sha3Input

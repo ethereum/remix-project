@@ -1,7 +1,9 @@
 import Web3 from 'web3'
-import {init , traceHelper, TransactionDebugger as Debugger } from '@remix-project/remix-debug'
+import { init , traceHelper, TransactionDebugger as Debugger } from '@remix-project/remix-debug'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { lineText } from '@remix-ui/editor'
+import { util } from '@remix-project/remix-lib'
+const { toHexPaddedString } = util
 
 export const DebuggerApiMixin = (Base) => class extends Base {
 
@@ -137,7 +139,18 @@ export const DebuggerApiMixin = (Base) => class extends Base {
       },
       debugWithGeneratedSources: false
     })
-    return await debug.debugger.traceManager.getTrace(hash)
+    const trace = await debug.debugger.traceManager.getTrace(hash)
+    trace.structLogs = trace.structLogs.map((step) => {
+      const stack = []
+      for (const prop in step.stack) {
+        if (prop !== 'length') {
+          stack.push(toHexPaddedString(step.stack[prop]))
+        }
+      }
+      step.stack = stack
+      return step
+    })
+    return trace
   }
 
   debug (hash, web3?) {

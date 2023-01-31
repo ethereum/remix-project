@@ -31,11 +31,22 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
     window.open("https://remix-ide.readthedocs.io/en/latest/remix_tutorials_learneth.html?highlight=learneth#learneth-tutorial-repos", '_blank')
   }
 
-  const startLearnEthTutorial = async (tutorial: 'basics' | 'useofweb3js' | 'deploylibraries') => {
+  const startLearnEthTutorial = async (tutorial: 'basics' | 'soliditybeginner' | 'deploylibraries') => {
     await plugin.appManager.activatePlugin(['solidity', 'LearnEth', 'solidityUnitTesting'])
     plugin.verticalIcons.select('LearnEth')
     plugin.call('LearnEth', 'startTutorial', 'ethereum/remix-workshops', 'master', tutorial)
     _paq.push(['trackEvent', 'hometab', 'startLearnEthTutorial', tutorial])
+  }
+
+  const goToLearnEthHome = async () => {
+    if(await plugin.appManager.isActive('LearnEth')) {
+      plugin.verticalIcons.select('LearnEth')
+      await plugin.call('LearnEth', 'home')
+    } else {
+      await plugin.appManager.activatePlugin(['LearnEth', 'solidity', 'solidityUnitTesting'])
+      plugin.verticalIcons.select('LearnEth')
+      await plugin.call('LearnEth', 'home')
+    }
   }
 
   return (
@@ -46,7 +57,7 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
         </label>
         <button
           onClick={ async () => {
-            await startLearnEthTutorial('basics')
+            await goToLearnEthHome()
           }}
           className="h-100 px-2 pt-0 btn"
         >
@@ -74,7 +85,7 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
           {(state.visibleTutorial === VisibleTutorial.Intermediate) && <div className="pt-2 d-flex flex-column text-left">
             <span>
             <FormattedMessage id="home.learnEth2Desc" /></span>
-            <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('useofweb3js')}>
+            <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('soliditybeginner')}>
             <FormattedMessage id="home.getStarted" />
           </button>
           </div>}
