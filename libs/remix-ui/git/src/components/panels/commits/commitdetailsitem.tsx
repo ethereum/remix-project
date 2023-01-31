@@ -9,9 +9,6 @@ export interface CCommitDetailsItemsProps {
   commitChange: commitChange;
 }
 
-
-
-
 export const CommitDetailsItems = (props: CCommitDetailsItemsProps) => {
   const { commitChange } = props;
   const actions = React.useContext(gitActionsContext)
@@ -31,6 +28,7 @@ export const CommitDetailsItems = (props: CCommitDetailsItemsProps) => {
         {status && status.indexOf("modified") === -1 ? <></> : <span>M</span>}
         {status && status.indexOf("deleted") === -1 ? <></> : <span>D</span>}
         {status && status.indexOf("added") === -1 ? <></> : <span>A</span>}
+
 
     </>)
   }

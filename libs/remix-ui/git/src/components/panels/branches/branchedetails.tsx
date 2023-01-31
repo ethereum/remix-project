@@ -37,7 +37,7 @@ export const BranchDetails = (props: BrancheDetailsProps) => {
 
   return (<Accordion activeKey={activePanel} defaultActiveKey="">
     <BrancheDetailsNavigation checkout={checkout} branch={branch} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
-    <Accordion.Collapse className="pl-2 border-left" eventKey="0">
+    <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
       <div className="ml-1">
         {context.branchCommits && Object.entries(context.branchCommits).map(([key, value]) => {
           if(key == branch.name){

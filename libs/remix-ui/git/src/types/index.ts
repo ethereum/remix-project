@@ -12,10 +12,10 @@ export type gitState = {
     loading: boolean
     storageUsed: any
     reponame: string
-    staged: any[]
-    untracked: any[]
-    deleted: any[]
-    modified: any[]
+    staged: fileStatusResult[]
+    untracked: fileStatusResult[]
+    deleted: fileStatusResult[]
+    modified: fileStatusResult[]
     allchangesnotstaged: fileStatusResult[],
     repositories: repository[]
     remoteBranches: remoteBranch[]
@@ -99,6 +99,11 @@ export type fileStatusResult = {
 export type fileStatus =[string, 0 | 1, 0 | 1 | 2, 0 | 1 | 2 | 3]
 
 export type statusMatrixType = { matrix: string[] | undefined; status: string[] }
+
+export type sourceControlGroup = {
+    group: fileStatusResult[],
+    name: string
+}
 
 export interface fileStatusAction  {
     type: string,

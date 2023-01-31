@@ -64,7 +64,7 @@ export const Clone = () => {
     return (
         <>
             <InputGroup className="mb-1">
-                <FormControl id="cloneulr" name='cloneurl' value={cloneUrl} onChange={e => onGitHubCloneUrlChange(e.target.value)} aria-describedby="urlprepend" />
+                <FormControl id="cloneulr" placeholder="url" name='cloneurl' value={cloneUrl} onChange={e => onGitHubCloneUrlChange(e.target.value)} aria-describedby="urlprepend" />
             </InputGroup>
 
 
