@@ -56,6 +56,8 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         const umlClasses = convertAST2UmlClasses(ast, this.currentFile)
         const umlDot = convertUmlClasses2Dot(umlClasses)
         const payload = vizRenderStringSync(umlDot)
+        const currentTheme = await this.call('theme', 'currentTheme')
+        this.currentlySelectedTheme = currentTheme.quality
         this.updatedSvg = payload
         this.renderComponent()
       } catch (error) {
