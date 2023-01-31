@@ -1,5 +1,6 @@
 'use strict'
 import { util, execution } from '@remix-project/remix-lib'
+const { toHexPaddedString } = util
 import { TraceAnalyser } from './traceAnalyser'
 import { TraceCache } from './traceCache'
 import { TraceStepManager } from './traceStepManager'
@@ -148,9 +149,24 @@ export class TraceManager {
   getStackAt (stepIndex) {
     this.checkRequestedStep(stepIndex)
     if (this.trace[stepIndex] && this.trace[stepIndex].stack) { // there's always a stack
-      const stack = this.trace[stepIndex].stack.slice(0)
-      stack.reverse()
-      return stack.map(el => el.startsWith('0x') ? el : '0x' + el)
+      if (Array.isArray(this.trace[stepIndex].stack)) {
+        const stack = this.trace[stepIndex].stack.slice(0)
+        stack.reverse()
+        return stack.map(el => toHexPaddedString(el))
+      } else {
+        // it's an object coming from the VM.
+        // for performance reasons, 
+        // we don't turn the stack coming from the VM into an array when the tx is executed
+        // but now when the app needs it.
+        const stack = []
+        for (const prop in this.trace[stepIndex].stack) {
+          if (prop !== 'length') {
+            stack.push(toHexPaddedString(this.trace[stepIndex].stack[prop]))
+          }
+        }
+        stack.reverse()
+        return stack
+      }
     } else {
       throw new Error('no stack found')
     }
