@@ -3,7 +3,7 @@ import { RunTab } from "../types/run-tab"
 import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
 import { DeployMode, MainnetPrompt } from "../types"
-import { displayNotification, displayPopUp, fetchProxyDeploymentsSuccess, setDecodedResponse } from "./payload"
+import { displayNotification, displayPopUp, setDecodedResponse } from "./payload"
 import { addInstance } from "./actions"
 import { addressToString, logBuilder } from "@remix-ui/helper"
 import Web3 from "web3"
@@ -335,25 +335,4 @@ export const isValidContractAddress = async (plugin: RunTab, address: string) =>
       return false
     }
   }
-}
-
-export const getNetworkProxyAddresses = async (plugin: RunTab) => {
-  const identifier = plugin.blockchain.networkStatus.name === 'custom' ? plugin.blockchain.networkStatus.name + '-' + plugin.blockchain.networkStatus.id : plugin.REACT_API.networkName
-  const networkFile: {
-    id: string,
-    network: string,
-    deployments: {
-      [proxyAddress: string]: {
-        date: Date,
-        contractName: string,
-        fork: string,
-        implementationAddress: string,
-        layout: any
-      }
-    }[]} = await plugin.call('fileManager', 'readdir', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
-    const deployments = Object.keys(networkFile.deployments).map(proxyAddress => {
-      return { address: proxyAddress, date: networkFile.deployments[proxyAddress].date }
-    })
-
-    fetchProxyDeploymentsSuccess(deployments)
 }

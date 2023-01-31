@@ -4,7 +4,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import * as remixLib from '@remix-project/remix-lib'
 import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
-import { CustomTooltip } from '@remix-ui/helper'
+import { CustomTooltip, shortenDeploymentAddresses } from '@remix-ui/helper'
 
 const txFormat = remixLib.execution.txFormat
 const txHelper = remixLib.execution.txHelper
@@ -218,14 +218,14 @@ export function ContractGUI (props: ContractGUIProps) {
     setToggleUpgradeImp(value)
     if (value) {
       setToggleDeployProxy(false)
-      if (useLastProxy) setProxyAddress(props.savedProxyAddress)
+      // if (useLastProxy) setProxyAddress(props.savedProxyAddress)
     }
     setDeployState({ deploy: false, upgrade: value })
   }
 
   const handleUseLastProxySelect = (e) => {
     const value = e.target.checked
-    const address = props.savedProxyAddress
+    const address = '' /* props.savedProxyAddress */
 
     if (value) {
       if (address) {
@@ -558,7 +558,7 @@ export function ContractGUI (props: ContractGUIProps) {
                 </div> :
                 <select data-id="udappSelectProxyAddress" name="selectproxy" className="form-control udapp_select custom-select pr-4" value={selectedProxyAddress} onChange={(e) => { }}>
                   {
-                    // accounts.map((value, index) => <option value={value} key={index}>{ loadedAccounts[value] }</option>)
+                    props.proxy.deployments.map((deployment, index) => <option value={deployment.address} key={index}>{ shortenDeploymentAddresses(deployment.address, deployment.date) }</option>)
                   }
                 </select>
               }

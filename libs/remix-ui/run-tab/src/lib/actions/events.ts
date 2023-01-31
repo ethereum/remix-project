@@ -1,8 +1,8 @@
 import { envChangeNotification } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { setExecutionContext, setFinalContext, updateAccountBalances } from "./account"
-import { addExternalProvider, addInstance, removeExternalProvider, setNetworkNameFromProvider } from "./actions"
-import { addDeployOption, clearAllInstances, clearRecorderCount, fetchContractListSuccess, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setProxyEnvAddress, setRecorderCount, setRemixDActivated, setSendValue } from "./payload"
+import { addExternalProvider, addInstance, addNewProxyDeployment, removeExternalProvider, setNetworkNameFromProvider } from "./actions"
+import { addDeployOption, clearAllInstances, clearRecorderCount, fetchContractListSuccess, fetchProxyDeploymentsSuccess, resetProxyDeployments, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setRecorderCount, setRemixDActivated, setSendValue } from "./payload"
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import BN from 'bn.js'
 import Web3 from 'web3'
@@ -21,6 +21,8 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   })
 
   plugin.blockchain.event.register('contextChanged', (context, silent) => {
+    dispatch(resetProxyDeployments())
+    if (context !== 'vm') getNetworkProxyAddresses(plugin, dispatch)
     setFinalContext(plugin, dispatch)
   })
 
@@ -35,13 +37,13 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     const netUI = !networkProvider().startsWith('vm') ? `${network.name} (${network.id || '-'}) network` : 'VM'
 
     setNetworkNameFromProvider(dispatch, netUI)
-    if (network.name === 'VM') dispatch(setProxyEnvAddress(plugin.config.get('vm/proxy')))
-    else dispatch(setProxyEnvAddress(plugin.config.get(`${network.name}/${network.currentFork}/${network.id}/proxy`)))
   })
 
   plugin.blockchain.event.register('addProvider', provider => addExternalProvider(dispatch, provider))
 
   plugin.blockchain.event.register('removeProvider', name => removeExternalProvider(dispatch, name))
+
+  plugin.blockchain.events.on('newProxyDeployment', (address, date) => addNewProxyDeployment(dispatch, address, date))
 
   plugin.on('solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => broadcastCompilationResult('remix', plugin, dispatch, file, source, languageVersion, data, input))
 
@@ -180,4 +182,33 @@ export const resetAndInit = (plugin: RunTab) => {
       }
     }
   })
+}
+
+const getNetworkProxyAddresses = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
+  const network = plugin.blockchain.networkStatus.network
+  const identifier = network.name === 'custom' ? network.name + '-' + network.id : network.name
+  const networkDeploymentsExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
+
+  if (networkDeploymentsExists) {
+    const networkFile: string = await plugin.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
+    const parsedNetworkFile: {
+      id: string,
+      network: string,
+      deployments: {
+        [proxyAddress: string]: {
+          date: Date,
+          contractName: string,
+          fork: string,
+          implementationAddress: string,
+          layout: any
+        }
+      }[]} = JSON.parse(networkFile)
+    const deployments = Object.keys(parsedNetworkFile.deployments).map(proxyAddress => {
+      return { address: proxyAddress, date: parsedNetworkFile.deployments[proxyAddress].date }
+    })
+
+    dispatch(fetchProxyDeploymentsSuccess(deployments))
+  } else {
+    dispatch(fetchProxyDeploymentsSuccess([]))
+  }
 }
