@@ -169,9 +169,7 @@ module.exports = {
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]')
-      .clickLaunchIcon('udapp')
       .verifyContracts(['OwnerTest'])
-      //.testContracts('printHardhatlog.sol', { content: hardhatLog }, ['OwnerTest'])
       .clickLaunchIcon('udapp')
       .click('*[data-id="deployAndRunClearInstances"]')
       .selectContract('OwnerTest')
