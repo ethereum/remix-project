@@ -86,7 +86,7 @@ const Icon = ({
   return (
     <>
       <CustomTooltip
-        placement={name === 'settings' ? 'right' : name === 'search' ? 'bottom' :
+        placement={name === 'settings' ? 'right' : name === 'search' ? 'top' :
           name === 'udapp' ? 'bottom' : "top"}
         tooltipText={title}
         delay={{ show: 1000, hide: 0 }}
