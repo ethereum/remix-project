@@ -11,6 +11,7 @@
           "outputPath": "dist/libs/remix-lib",
           "main": "libs/remix-lib/src/index.ts",
           "tsConfig": "libs/remix-lib/tsconfig.lib.json",
+          "updateBuildableProjectDepsInPackageJson": false,
           "assets": [
             "libs/remix-lib/*.md"
           ]

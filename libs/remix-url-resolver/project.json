@@ -13,6 +13,7 @@
           "outputPath": "dist/libs/remix-url-resolver",
           "main": "libs/remix-url-resolver/src/index.ts",
           "tsConfig": "libs/remix-url-resolver/tsconfig.lib.json",
+          "updateBuildableProjectDepsInPackageJson": false,
           "assets": [
             "libs/remix-url-resolver/*.md"
           ]
