@@ -17,7 +17,8 @@
           "tsConfig": "libs/remix-analyzer/tsconfig.lib.json",
           "assets": [
             "libs/remix-analyzer/*.md"
-          ]
+          ],
+          "updateBuildableProjectDepsInPackageJson": false
         }
       },
       "lint": {

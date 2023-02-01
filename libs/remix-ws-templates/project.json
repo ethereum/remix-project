@@ -13,6 +13,7 @@
           "outputPath": "dist/libs/remix-ws-templates",
           "main": "libs/remix-ws-templates/src/index.ts",
           "tsConfig": "libs/remix-ws-templates/tsconfig.lib.json",
+          "updateBuildableProjectDepsInPackageJson": false,
           "assets": [
             {
               "glob": "templates/**/*",
