@@ -38,7 +38,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   })
   const [canPaste, setCanPaste] = useState(false)
   const treeRef = useRef<HTMLDivElement>(null)
-
+  
   useEffect(() => {
     if (contextMenuItems) {
       addMenuItems(contextMenuItems)
@@ -435,6 +435,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       props.modal('Moving Folder Failed', 'Unexpected error while moving folder: ' + src, 'Close', async () => {})
     }   
   }
+
   return (
     <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
     <div ref={treeRef} tabIndex={0} style={{ outline: "none" }}>
