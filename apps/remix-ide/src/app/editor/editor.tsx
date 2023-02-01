@@ -264,7 +264,7 @@ export class Editor extends Plugin {
    * @param {string} mode Mode for this file [Default is `text`]
    */
   async _createSession (path: string, content: string, mode: string, readOnly?: boolean) {
-    console.log('createSession', path, content, mode, readOnly)
+    console.log('createSession', path, readOnly)
     if (!this.activated) return
     
     this.emit('addModel', content, mode, path, readOnly || this.readOnlySessions[path])

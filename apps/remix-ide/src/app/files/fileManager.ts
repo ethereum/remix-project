@@ -624,6 +624,19 @@ class FileManager extends Plugin {
 
   async diff(change: commitChange) {
     await this.saveCurrentFile()
+    this._deps.config.set('currentFile', '')
+    // TODO: Only keep `this.emit` (issue#2210)
+    this.emit('noFileSelected')
+    this.events.emit('noFileSelected')
+
+    if(!change.readonly){
+      let file = this.normalize(change.path)
+      const resolved = this.getPathFromUrl(file)
+      file = resolved.file
+      this._deps.config.set('currentFile', file)
+      this.openedFiles[file] = file
+    }
+
     await this.editor.openDiff(change)
     this.emit('openDiff', change)
     this.events.emit('openDiff', change)
@@ -744,6 +757,7 @@ class FileManager extends Plugin {
 
   async saveCurrentFile() {
     const currentFile = this._deps.config.get('currentFile')
+    console.log('saveCurrentFile', currentFile)
     if (currentFile && this.editor.current()) {
       const input = this.editor.get(currentFile)
       if ((input !== null) && (input !== undefined)) {
