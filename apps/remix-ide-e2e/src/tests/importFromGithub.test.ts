@@ -14,7 +14,7 @@ module.exports = {
     init(browser, done)
   },
 
-  'Import from GitHub Modal #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Import from GitHub Modal #group1': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('home')
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
