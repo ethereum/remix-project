@@ -18,6 +18,7 @@
         "outputPath": "dist/libs/remix-tests",
         "main": "libs/remix-tests/src/index.ts",
         "tsConfig": "libs/remix-tests/tsconfig.lib.json",
+        "updateBuildableProjectDepsInPackageJson": false,
         "assets": [
           {
             "glob": "remix-tests",

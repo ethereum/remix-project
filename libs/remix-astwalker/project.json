@@ -16,7 +16,8 @@
           "tsConfig": "libs/remix-astwalker/tsconfig.lib.json",
           "assets": [
             "libs/remix-astwalker/*.md"
-          ]
+          ],
+          "updateBuildableProjectDepsInPackageJson": false
         }
       },
       "lint": {
