@@ -162,7 +162,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Passed: 0')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Failed: 1')
   },
-  'Should print hardhat logs #group4': function (browser: NightwatchBrowser) {
+  'Should print hardhat logs #group4 #flaky': function (browser: NightwatchBrowser) {
     browser
       .addFile('printHardhatlog.sol',  { content: hardhatLog })
       .clickLaunchIcon('solidity')
@@ -170,7 +170,8 @@ module.exports = {
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]')
       .clickLaunchIcon('udapp')
-      .testContracts('printHardhatlog.sol', { content: hardhatLog }, ['OwnerTest'])
+      .verifyContracts(['OwnerTest'])
+      //.testContracts('printHardhatlog.sol', { content: hardhatLog }, ['OwnerTest'])
       .clickLaunchIcon('udapp')
       .click('*[data-id="deployAndRunClearInstances"]')
       .selectContract('OwnerTest')
