@@ -57,7 +57,7 @@ export const getFileStatusMatrix = async () => {
             }
         });
     });
-    console.log(fileStatusResult);
+    //console.log(fileStatusResult);
     dispatch(fileStatus(fileStatusResult));
 }
 

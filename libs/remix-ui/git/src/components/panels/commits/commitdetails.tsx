@@ -24,15 +24,6 @@ export const CommitDetails = (props: CommitDetailsProps) => {
     }
   }, [activePanel])
 
-  useEffect(() => {
-    console.log("commit details", props.commit)
-  }, [])
-
-  useEffect(() => {
-    console.log("commit details", context.commitChanges)
-  }, [context.commitChanges])
-
-
   return (<Accordion activeKey={activePanel} defaultActiveKey="">
     <CommitDetailsNavigation commit={commit} checkout={checkout} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
     <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">

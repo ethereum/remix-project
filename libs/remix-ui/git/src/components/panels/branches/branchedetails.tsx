@@ -26,11 +26,6 @@ export const BranchDetails = (props: BrancheDetailsProps) => {
     }
   }, [activePanel])
 
-  useEffect(() => {
-    console.log("branch details", context.branchCommits)
-
-  }, [context.branchCommits])
-
   const checkout = (branch: string) => {
 
   }

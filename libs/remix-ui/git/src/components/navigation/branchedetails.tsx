@@ -25,7 +25,6 @@ export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) =
   }
 
   const openRemote = () => {
-    console.log('branch.remote.url', branch)
     window.open(`${branch.remote.url}/tree/${branch.name}`, '_blank');
   }
 

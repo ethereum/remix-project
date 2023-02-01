@@ -5,6 +5,7 @@ import { gitActionsContext, pluginActionsContext } from "../../../state/context"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 import { SourceControlItemButtons } from "./sourcontrolitembuttons";
+import { removeSlash } from "../../../utils";
 
 export interface SourceControlItemProps {
   file: fileStatusResult;
@@ -22,11 +23,11 @@ export const SourceControlItem = (props: SourceControlItemProps) => {
     if (file.statusNames && file.statusNames.indexOf("modified") !== -1) {
       const headHash = await actions.resolveRef("HEAD")
       const change: commitChange = {
-        path: file.filename,
+        path: removeSlash(file.filename),
         type: "modified",
         hashOriginal: headHash,
         hashModified: '',
-        readonly: false
+        readonly: false,
       }
       await actions.diff(change)
       await pluginActions.openDiff(change)

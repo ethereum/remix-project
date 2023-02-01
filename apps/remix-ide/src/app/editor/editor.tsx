@@ -353,11 +353,8 @@ export class Editor extends Plugin {
   }
 
   async openDiff(change: commitChange){
-    let hashedPathModified: string 
+    const hashedPathModified: string = change.readonly ? change.path + change.hashModified : change.path
     const hashedPathOrinal: string = change.path + change.hashOriginal
-    if(change.readonly){
-      hashedPathModified = change.path + change.hashModified
-    }
     const session = await this._createSession(hashedPathModified, change.modified, this._getMode(change.path), change.readonly)
     await this._createSession(hashedPathOrinal, change.original, this._getMode(change.path), change.readonly)
     this.sessions[hashedPathModified] = session
