@@ -13,6 +13,7 @@
         "outputPath": "dist/libs/remixd",
         "main": "libs/remixd/src/index.ts",
         "tsConfig": "libs/remixd/tsconfig.lib.json",
+        "updateBuildableProjectDepsInPackageJson": false,
         "assets": [
           "libs/remixd/*.md",
           "libs/remixd/origins.json"
