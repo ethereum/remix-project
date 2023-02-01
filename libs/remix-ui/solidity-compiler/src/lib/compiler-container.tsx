@@ -5,7 +5,6 @@ import { CompilerContainerProps } from './types'
 import { ConfigurationSettings } from '@remix-project/remix-lib'
 import { checkSpecialChars, CustomTooltip, extractNameFromKey } from '@remix-ui/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL } from '@remix-project/remix-solidity'
-
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
 import { resetEditorMode, listenToEvents } from './actions/compiler'
 import { getValidLanguage } from '@remix-project/remix-solidity'
@@ -22,7 +21,6 @@ declare global {
     _paq: any
   }
 }
-
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
@@ -732,7 +730,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const toggleConfigurations = () => {
     setToggleExpander(!toggleExpander)
   }
-
 
   return (
     <section>

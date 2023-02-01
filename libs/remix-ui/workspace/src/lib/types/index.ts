@@ -1,6 +1,9 @@
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import React from 'react'
 import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
-import { fileDecoration } from '@remix-ui/file-decorators';
+import { fileDecoration } from '@remix-ui/file-decorators'
+import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
+import { ViewPlugin } from '@remixproject/engine-web'
 
 export type action = { name: string, type?: Array<'folder' | 'gist' | 'file'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean }
 export interface JSONStandardInput {
@@ -16,32 +19,7 @@ export interface JSONStandardInput {
 export type MenuItems = action[]
 export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721'
 export interface WorkspaceProps {
-  plugin: {
-    setWorkspace: ({ name, isLocalhost }, setEvent: boolean) => void,
-    createWorkspace: (name: string, workspaceTemplateName: string) => void,
-    renameWorkspace: (oldName: string, newName: string) => void
-    workspaceRenamed: ({ name }) => void,
-    workspaceCreated: ({ name }) => void,
-    workspaceDeleted: ({ name }) => void,
-    workspace: any // workspace provider,
-    browser: any // browser provider
-    localhost: any // localhost provider
-    fileManager : any
-    registry: any // registry
-    request: {
-      createWorkspace: () => void,
-      setWorkspace: (workspaceName: string) => void,
-      createNewFile: () => void,
-      uploadFile: (target: EventTarget & HTMLInputElement) => void,
-      getCurrentWorkspace: () => void
-    } // api request,
-    workspaces: any,
-    registeredMenuItems: MenuItems // menu items
-    removedMenuItems: MenuItems
-    initialWorkspace: string,
-    resetNewFile: () => void,
-    getWorkspaces: () => string[]
-  }
+  plugin: FilePanelType
 }
 export interface WorkspaceState {
   hideRemixdExplorer: boolean
@@ -66,6 +44,36 @@ export interface FileType {
   type: 'folder' | 'file' | 'gist',
   child?: File[]
 }
+
+export interface FilePanelType extends ViewPlugin {
+    setWorkspace: ({ name, isLocalhost }, setEvent: boolean) => void,
+    createWorkspace: (name: string, workspaceTemplateName: string) => void,
+    renameWorkspace: (oldName: string, newName: string) => void
+    compileContractForUml: (path: string) => void
+    workspaceRenamed: ({ name }) => void,
+    workspaceCreated: ({ name }) => void,
+    workspaceDeleted: ({ name }) => void,
+    workspace?: any // workspace provider,
+    browser?: any // browser provider
+    localhost?: any // localhost provider
+    fileManager? : any
+    appManager: RemixAppManager
+    registry?: any // registry
+    pluginApi?: any
+    request: {
+      createWorkspace: () => void,
+      setWorkspace: (workspaceName: string) => void,
+      createNewFile: () => void,
+      uploadFile: (target: EventTarget & HTMLInputElement) => void,
+      getCurrentWorkspace: () => void
+    } // api request,
+    workspaces: any,
+    registeredMenuItems: MenuItems // menu items
+    removedMenuItems: MenuItems
+    initialWorkspace: string,
+    resetNewFile: () => void,
+    getWorkspaces: () => string[]
+  }
 
 /* eslint-disable-next-line */
 export interface FileExplorerProps {
@@ -136,6 +144,7 @@ export interface FileExplorerContextMenuProps {
     paste?: (destination: string, type: string) => void
     copyFileName?: (path: string, type: string) => void
     copyPath?: (path: string, type: string) => void
+    generateUml?: (path: string) => Promise<void>
 }
 
 export interface FileExplorerState {

@@ -30,7 +30,7 @@ export const contextMenuActions: MenuItems = [{
   extension: ['.js', '.ts'],
   multiselect: false,
   label: ''
-}, {
+},{
   id: 'pushChangesToGist',
   name: 'Push changes to gist',
   type: ['gist'],
