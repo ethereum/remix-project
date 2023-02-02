@@ -11,6 +11,7 @@ if (domains[window.location.hostname]) {
   _paq.push(['enableJSErrorTracking']);
   _paq.push(['trackPageView']);
   _paq.push(['enableLinkTracking']);
+  _paq.push(['enableHeartBeatTimer']);
   (function () {
     var u = "https://matomo.ethereum.org/";
     _paq.push(['setTrackerUrl', u + 'matomo.php'])
