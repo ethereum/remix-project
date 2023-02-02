@@ -139,7 +139,7 @@ export const runTabInitialState: RunTabState = {
       title: 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.',
       value: 'vm-fork-main',
       fork: 'london',
-      content: 'Remix VM Main (London)'
+      content: 'Mainnet fork - Remix VM (London)'
     }, {
       id: 'injected-mode',
       dataId: 'settingsInjectedMode',
