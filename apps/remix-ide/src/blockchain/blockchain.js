@@ -13,7 +13,8 @@ import { execution, EventManager, helpers } from '@remix-project/remix-lib'
 import { etherScanLink } from './helper'
 import { logBuilder, cancelUpgradeMsg, cancelProxyMsg, addressToString } from "@remix-ui/helper"
 const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
-const { resultToRemixTx } = helpers
+const { txResultHelper } = helpers
+const { resultToRemixTx } = txResultHelper
 const packageJson = require('../../../../package.json')
 
 const _paq = window._paq = window._paq || []  //eslint-disable-line
@@ -385,6 +386,14 @@ export class Blockchain extends Plugin {
    */
   getCurrentFork () {
     return this.executionContext.getCurrentFork()
+  }
+
+  /**
+   * return the fork name applied to the current envionment
+   * @return {String} - fork name
+   */
+  getCurrentRawContext () {
+    return this.executionContext.getCurrentRawContext()
   }
 
   isWeb3Provider () {
