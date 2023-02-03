@@ -1,6 +1,16 @@
 'use strict'
 import { EventManager } from '../eventManager'
 
+export type Transaction = {
+  from: string,
+  to: string,
+  value: string,
+  data: string,
+  gasLimit: number,
+  useCall: boolean,
+  timestamp?: number
+}
+
 export class TxRunner {
   event
   runAsync
@@ -19,11 +29,11 @@ export class TxRunner {
     this.queusTxs = []
   }
 
-  rawRun (args, confirmationCb, gasEstimationForceSend, promptCb, cb) {
+  rawRun (args: Transaction, confirmationCb, gasEstimationForceSend, promptCb, cb) {
     run(this, args, args.timestamp || Date.now(), confirmationCb, gasEstimationForceSend, promptCb, cb)
   }
 
-  execute (args, confirmationCb, gasEstimationForceSend, promptCb, callback) {
+  execute (args: Transaction, confirmationCb, gasEstimationForceSend, promptCb, callback) {
     let data = args.data
     if (data.slice(0, 2) !== '0x') {
       data = '0x' + data
@@ -32,7 +42,7 @@ export class TxRunner {
   }
 }
 
-function run (self, tx, stamp, confirmationCb, gasEstimationForceSend = null, promptCb = null, callback = null) {
+function run (self, tx: Transaction, stamp, confirmationCb, gasEstimationForceSend = null, promptCb = null, callback = null) {
   if (!self.runAsync && Object.keys(self.pendingTxs).length) {
     return self.queusTxs.push({ tx, stamp, callback })
   }
