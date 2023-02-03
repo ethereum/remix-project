@@ -32,7 +32,8 @@ export class LocaleModule extends Plugin {
       this.locales[locale.code.toLocaleLowerCase()] = locale
     })
     this._paq = _paq
-    let queryLocale = (new QueryParams()).get().locale
+    this.queryParams = new QueryParams()
+    let queryLocale = this.queryParams.get().lang
     queryLocale = queryLocale && queryLocale.toLocaleLowerCase()
     queryLocale = this.locales[queryLocale] ? queryLocale : null
     let currentLocale = (this._deps.config && this._deps.config.get('settings/locale')) || null
@@ -41,6 +42,7 @@ export class LocaleModule extends Plugin {
     this.currentLocaleState = { queryLocale, currentLocale }
     this.active = queryLocale || currentLocale || 'en'
     this.forced = !!queryLocale
+    this.queryParams.update({ lang: this.active })
   }
 
   /** Return the active locale */
@@ -69,6 +71,7 @@ export class LocaleModule extends Plugin {
     if (!this.forced) this._deps.config.set('settings/locale', next)
 
     if (localeCode) this.active = localeCode
+    this.queryParams.update({ lang: localeCode })
     this.emit('localeChanged', nextLocale)
     this.events.emit('localeChanged', nextLocale)
   }
