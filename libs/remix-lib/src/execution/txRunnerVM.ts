@@ -6,6 +6,7 @@ import { BN, bufferToHex, Address } from 'ethereumjs-util'
 import type { Account } from '@ethereumjs/util'
 import { EventManager } from '../eventManager'
 import { LogsManager } from './logsManager'
+import type { Transaction as InternalTransaction } from './txRunner'
 
 export type VMexecutionResult = {
   result: RunTxResult,
@@ -52,7 +53,7 @@ export class TxRunnerVM {
     this.nextNonceForCall = 0
   }
 
-  execute (args, confirmationCb, gasEstimationForceSend, promptCb, callback: VMExecutionCallBack) {
+  execute (args: InternalTransaction, confirmationCb, gasEstimationForceSend, promptCb, callback: VMExecutionCallBack) {
     let data = args.data
     if (data.slice(0, 2) !== '0x') {
       data = '0x' + data
