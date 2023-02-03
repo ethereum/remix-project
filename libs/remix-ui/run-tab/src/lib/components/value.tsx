@@ -17,7 +17,7 @@ export function ValueUI (props: ValueProps) {
     // preventing not numeric keys
     // preventing 000 case
     if (!isNumeric(e.key) ||
-      (e.key === '0' && !parseInt(inputValue.current.value) && inputValue.current.value.length > 0)) {
+      (e.key === '0' && !parseFloat(inputValue.current.value) && inputValue.current.value.length > 0)) {
       e.preventDefault()
     }
   }
