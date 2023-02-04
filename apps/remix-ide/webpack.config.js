@@ -42,6 +42,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     "buffer": require.resolve("buffer/"),
     "vm": require.resolve('vm-browserify'),
   }
+  
 
   // add externals
   config.externals = {
@@ -70,6 +71,16 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       process: 'process/browser',
     })
   )
+
+  // souce-map loader
+  config.module.rules.push({
+    test: /\.js$/,
+    use: ["source-map-loader"],
+    enforce: "pre"
+  })
+
+  config.ignoreWarnings = [/Failed to parse source map/] // ignore source-map-loader warnings
+
 
   // set minimizer
   config.optimization.minimizer = [
