@@ -30,14 +30,18 @@
       },
       "configurations": {
         "development": {
+          "extractLicenses": false,
+          "sourceMap": false,
+          "vendorChunk": true,
+          "optimization": false
         },
         "production": {
-          "fileReplacements": [
-            {
-              "replace": "apps/remix-ide/src/environments/environment.ts",
-              "with": "apps/remix-ide/src/environments/environment.prod.ts"
-            }
-          ]
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": false,
+          "vendorChunk": false
         }
       }
     },
