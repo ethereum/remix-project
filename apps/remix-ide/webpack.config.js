@@ -75,18 +75,15 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   config.optimization.minimizer = [
     new TerserPlugin({
       parallel: true,
-      minify: TerserPlugin.swcMinify,
+      //minify: TerserPlugin.swcMinify,
       terserOptions: {
-        compress: true,
-        /*
         ecma: 2015,
         compress: true,
         format: {
           comments: false,
         },
-        */
       },
-      //extractComments: false,
+      extractComments: false,
     }),
     new CssMinimizerPlugin(),
   ];
