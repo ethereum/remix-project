@@ -5,6 +5,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 const version = require('../../package.json').version
 const fs = require('fs')
 const TerserPlugin = require("terser-webpack-plugin");
+const CompressionPlugin = require("compression-webpack-plugin");
 
 const versionData = {
   version: version,
@@ -74,17 +75,21 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     new TerserPlugin({
       parallel: true,
       terserOptions: {
-        ecma: 6,
-        compress: {
-          drop_console: true,
-        },
-        output: {
-          comments: false,
-        },
+        ecma: 2015,
+        compress: true,
       },
       extractComments: false,
     }),
   ];
+
+  // add compression plugin
+  config.plugins.push(
+     new CompressionPlugin({
+       test: /\.js(\?.*)?$/i,
+       filename: '[path][base].gz',
+     })
+ )
+
 
   console.log(config)
 
