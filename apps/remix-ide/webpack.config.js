@@ -6,6 +6,7 @@ const version = require('../../package.json').version
 const fs = require('fs')
 const TerserPlugin = require("terser-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 const versionData = {
   version: version,
@@ -74,21 +75,30 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   config.optimization.minimizer = [
     new TerserPlugin({
       parallel: true,
+      minify: TerserPlugin.swcMinify,
       terserOptions: {
+        compress: true,
+        /*
         ecma: 2015,
         compress: true,
+        format: {
+          comments: false,
+        },
+        */
       },
-      extractComments: false,
+      //extractComments: false,
     }),
+    new CssMinimizerPlugin(),
   ];
 
   // add compression plugin
+  /*
   config.plugins.push(
      new CompressionPlugin({
        test: /\.js(\?.*)?$/i,
        filename: '[path][base].gz',
      })
- )
+ )*/
 
 
   console.log(config)
