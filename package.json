@@ -278,6 +278,7 @@
     "colors": "^1.4.0",
     "colors-browserify": "^0.1.1",
     "component-type": "^1.2.1",
+    "compression-webpack-plugin": "^10.0.0",
     "constants-browserify": "^1.0.0",
     "copy-to-clipboard": "^3.3.1",
     "copy-webpack-plugin": "^11.0.0",
