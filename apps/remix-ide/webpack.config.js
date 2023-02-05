@@ -86,11 +86,12 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   config.optimization.minimizer = [
     new TerserPlugin({
       parallel: true,
-      //minify: TerserPlugin.swcMinify,
       terserOptions: {
         ecma: 2015,
         compress: true,
-        mangle: false,
+        mangle: {
+          keep_fnames: true,
+        },
         format: {
           comments: false,
         },
