@@ -5,7 +5,6 @@ const CopyPlugin = require("copy-webpack-plugin");
 const version = require('../../package.json').version
 const fs = require('fs')
 const TerserPlugin = require("terser-webpack-plugin");
-const CompressionPlugin = require("compression-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 const versionData = {
@@ -57,8 +56,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   config.output.filename = `[name].${versionData.version}.${versionData.timestamp}.js`
   config.output.chunkFilename = `[name].${versionData.version}.${versionData.timestamp}.js`
 
-  // add plugin
-  // add copy plugin
+  // add copy & provide plugin
   config.plugins.push(
     new CopyPlugin({
       patterns: [
@@ -100,19 +98,6 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     }),
     new CssMinimizerPlugin(),
   ];
-
-  // add compression plugin
-  /*
-  config.plugins.push(
-     new CompressionPlugin({
-       test: /\.js(\?.*)?$/i,
-       filename: '[path][base].gz',
-     })
- )*/
-
-
-  console.log(config)
-
-
+  
   return config;
 });
