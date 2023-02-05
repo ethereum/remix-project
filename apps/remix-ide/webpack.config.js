@@ -1,11 +1,11 @@
-const { composePlugins, withNx } = require('@nrwl/webpack');
-const { withReact } = require('@nrwl/react');
+const { composePlugins, withNx } = require('@nrwl/webpack')
+const { withReact } = require('@nrwl/react')
 const webpack = require('webpack')
-const CopyPlugin = require("copy-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin")
 const version = require('../../package.json').version
 const fs = require('fs')
-const TerserPlugin = require("terser-webpack-plugin");
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin")
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 
 const versionData = {
   version: version,
