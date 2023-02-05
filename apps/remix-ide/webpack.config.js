@@ -87,9 +87,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       terserOptions: {
         ecma: 2015,
         compress: true,
-        mangle: {
-          keep_fnames: true,
-        },
+        mangle: false,
         format: {
           comments: false,
         },
@@ -98,6 +96,6 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     }),
     new CssMinimizerPlugin(),
   ];
-  
+
   return config;
 });
