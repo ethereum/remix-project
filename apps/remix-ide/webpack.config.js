@@ -90,6 +90,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       terserOptions: {
         ecma: 2015,
         compress: true,
+        mangle: false,
         format: {
           comments: false,
         },
