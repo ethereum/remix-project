@@ -97,19 +97,21 @@ jobs:
           condition:
               equal: [ "chrome", << parameters.browser >> ]
           steps:
-            - browser-tools/install-chrome
-            - browser-tools/install-chromedriver
-            - google-chrome --version
-            - chromedriver --version
-            - rm LICENSE.chromedriver 2> /dev/null
+            - browser-tools/install-browser-tools:
+                install-firefox: false
+                install-chrome: true
+            - run: google-chrome --version
+            - run: chromedriver --version
+            - run: rm LICENSE.chromedriver 2> /dev/null
       - when:
           condition:
               equal: [ "firefox", << parameters.browser >> ]
           steps:
-            - browser-tools/install-firefox
-            - browser-tools/install-geckodriver
-            - firefox --version
-            - geckodriver --version
+            - browser-tools/install-browser-tools:
+                install-firefox: true
+                install-chrome: false
+            - run: firefox --version
+            - run: geckodriver --version
       - checkout
       - attach_workspace:
           at: .
