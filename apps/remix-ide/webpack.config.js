@@ -86,7 +86,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       parallel: true,
       terserOptions: {
         ecma: 2015,
-        compress: true,
+        compress: false,
         mangle: false,
         format: {
           comments: false,
