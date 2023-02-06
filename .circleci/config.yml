@@ -94,17 +94,17 @@ jobs:
     parallelism: 10
     steps:
       - when:
-        condition:
-            equal: [ "chrome", << parameters.browser >> ]
-        steps:
-          - browser-tools/install-chrome
-          - browser-tools/install-chromedriver
+          condition:
+              equal: [ "chrome", << parameters.browser >> ]
+          steps:
+            - browser-tools/install-chrome
+            - browser-tools/install-chromedriver
       - when:
-        condition:
-            equal: [ "firefox", << parameters.browser >> ]
-        steps:
-          - browser-tools/install-firefox
-          - browser-tools/install-geckodriver
+          condition:
+              equal: [ "firefox", << parameters.browser >> ]
+          steps:
+            - browser-tools/install-firefox
+            - browser-tools/install-geckodriver
       - run: google-chrome --version
       - run: firefox --version
       - run: geckodriver --version
