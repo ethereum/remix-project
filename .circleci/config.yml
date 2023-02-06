@@ -100,6 +100,8 @@ jobs:
             - browser-tools/install-browser-tools:
                 install-firefox: false
                 install-chrome: true
+                install-geckodriver: false
+                install-chromedriver: true
             - run: google-chrome --version
             - run: chromedriver --version
             - run: rm LICENSE.chromedriver 2> /dev/null
@@ -110,6 +112,8 @@ jobs:
             - browser-tools/install-browser-tools:
                 install-firefox: true
                 install-chrome: false
+                install-geckodriver: true
+                install-chromedriver: false
             - run: firefox --version
             - run: geckodriver --version
       - checkout
@@ -154,6 +158,8 @@ jobs:
       - browser-tools/install-browser-tools:
           install-firefox: false
           install-chrome: true
+          install-geckodriver: false
+          install-chromedriver: true
       - run: google-chrome --version
       - run: chromedriver --version
       - run: rm LICENSE.chromedriver 2> /dev/null
