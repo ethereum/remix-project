@@ -24,7 +24,7 @@ jobs:
           key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-      - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js yarn build:production
+      - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js yarn build
       - run: yarn nx build remix-ide-e2e-src-local-plugin & yarn run build:libs
       - run: yarn nx run debugger:build:production
       - run: yarn nx run solidity-compiler:build:production
@@ -93,13 +93,23 @@ jobs:
         type: string
     parallelism: 10
     steps:
-      - browser-tools/install-browser-tools
-      - run:
-          command: |
-            google-chrome --version
-            firefox --version
-            geckodriver --version
-            chromedriver --version
+      when:
+        condition:
+            equal: [ "chrome", << parameters.browser >> ]
+        steps:
+          - browser-tools/install-chrome
+          - browser-tools/install-chromedriver
+      when:
+        condition:
+            equal: [ "firefox", << parameters.browser >> ]
+        steps:
+          - browser-tools/install-firefox
+          - browser-tools/install-geckodriver
+      - run: google-chrome --version
+      - run: firefox --version
+      - run: geckodriver --version
+      - run: chromedriver --version
+      - run: rm LICENSE.chromedriver 2> /dev/null
       - checkout
       - attach_workspace:
           at: .
@@ -139,14 +149,13 @@ jobs:
         type: string
     parallelism: 4
     steps:
-      - browser-tools/install-browser-tools
-      - run:
-          command: |
-            google-chrome --version
-            firefox --version
-            geckodriver --version
-            chromedriver --version
-          name: Check install
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
+      - run: google-chrome --version
+      - run: firefox --version
+      - run: geckodriver --version
+      - run: chromedriver --version
+      - run: rm LICENSE.chromedriver 2> /dev/null
       - checkout
       - attach_workspace:
           at: .
