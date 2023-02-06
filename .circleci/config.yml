@@ -104,7 +104,7 @@ jobs:
                 install-chromedriver: true
             - run: google-chrome --version
             - run: chromedriver --version
-            - run: rm LICENSE.chromedriver 2> /dev/null
+            - run: rm LICENSE.chromedriver 2> /dev/null || true
       - when:
           condition:
               equal: [ "firefox", << parameters.browser >> ]
@@ -162,7 +162,7 @@ jobs:
           install-chromedriver: true
       - run: google-chrome --version
       - run: chromedriver --version
-      - run: rm LICENSE.chromedriver 2> /dev/null
+      - run: rm LICENSE.chromedriver 2> /dev/null || true
       - checkout
       - attach_workspace:
           at: .
