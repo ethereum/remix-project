@@ -105,10 +105,10 @@ jobs:
           steps:
             - browser-tools/install-firefox
             - browser-tools/install-geckodriver
-      - run: google-chrome --version
-      - run: firefox --version
-      - run: geckodriver --version
-      - run: chromedriver --version
+      - run: google-chrome --version 2> /dev/null
+      - run: firefox --version 2> /dev/null
+      - run: geckodriver --version 2> /dev/null
+      - run: chromedriver --version 2> /dev/null
       - run: rm LICENSE.chromedriver 2> /dev/null
       - checkout
       - attach_workspace:
@@ -151,10 +151,10 @@ jobs:
     steps:
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
-      - run: google-chrome --version
-      - run: firefox --version
-      - run: geckodriver --version
-      - run: chromedriver --version
+      - run: google-chrome --version 2> /dev/null
+      - run: firefox --version 2> /dev/null
+      - run: geckodriver --version 2> /dev/null
+      - run: chromedriver --version 2> /dev/null
       - run: rm LICENSE.chromedriver 2> /dev/null
       - checkout
       - attach_workspace:
