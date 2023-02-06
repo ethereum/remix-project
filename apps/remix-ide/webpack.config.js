@@ -87,7 +87,10 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       terserOptions: {
         ecma: 2015,
         compress: true,
-        mangle: false,
+        mangle: {
+          keep_classnames: true,
+          keep_fnames: true,
+        },
         format: {
           comments: false,
         },
