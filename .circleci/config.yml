@@ -93,7 +93,9 @@ jobs:
         type: string
     parallelism: 10
     steps:
-      - browser-tools/install-browser-tools
+      - browser-tools/install-browser-tools:
+          chrome-version: latest
+          firefox-version: 108.0.1
       - run:
           command: |
             google-chrome --version
