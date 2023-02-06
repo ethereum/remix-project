@@ -235,7 +235,7 @@ export class Blockchain extends Plugin {
   }
 
   async saveDeployedContractStorageLayout (contractObject, proxyAddress, networkInfo) {
-      const { contractName, implementationAddress, contract } = contractObject
+      const { contractName, implementationAddress } = contractObject
       const networkName = networkInfo.name === 'custom' ? networkInfo.name + '-' + networkInfo.id : networkInfo.name
       const hasPreviousDeploys = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`)
       // TODO: make deploys folder read only.
@@ -248,7 +248,8 @@ export class Blockchain extends Plugin {
           contractName: contractName,
           fork: networkInfo.currentFork,
           implementationAddress: implementationAddress,
-          layout: contract.object.storageLayout
+          solcOutput: contractObject.compiler.data,
+          solcInput: contractObject.compiler.source
         }
         await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`, JSON.stringify(parsedDeployments, null, 2))
       } else {
@@ -261,7 +262,8 @@ export class Blockchain extends Plugin {
               contractName: contractName,
               fork: networkInfo.currentFork,
               implementationAddress: implementationAddress,
-              layout: contract.object.storageLayout
+              solcInput: contractObject.compiler.source,
+              solcOutput: contractObject.compiler.data
             }
           }
         }, null, 2))

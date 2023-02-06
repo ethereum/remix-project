@@ -1,9 +1,10 @@
-import { ContractData, FuncABI } from "@remix-project/core-plugin"
+import { ContractData, FuncABI, NetworkDeploymentFile } from "@remix-project/core-plugin"
 import { RunTab } from "../types/run-tab"
 import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
+import { UpgradeableContract } from '@openzeppelin/upgrades-core'
 import { DeployMode, MainnetPrompt } from "../types"
-import { displayNotification, displayPopUp, setDecodedResponse } from "./payload"
+import { displayNotification, displayPopUp, fetchProxyDeploymentsSuccess, setDecodedResponse } from "./payload"
 import { addInstance } from "./actions"
 import { addressToString, logBuilder } from "@remix-ui/helper"
 import Web3 from "web3"
@@ -334,5 +335,46 @@ export const isValidContractAddress = async (plugin: RunTab, address: string) =>
     } else {
       return false
     }
+  }
+}
+
+export const getNetworkProxyAddresses = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
+  const network = plugin.blockchain.networkStatus.network
+  const identifier = network.name === 'custom' ? network.name + '-' + network.id : network.name
+  const networkDeploymentsExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
+
+  if (networkDeploymentsExists) {
+    const networkFile: string = await plugin.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
+    const parsedNetworkFile: NetworkDeploymentFile = JSON.parse(networkFile)
+    const deployments = []
+
+    for (const proxyAddress in Object.keys(parsedNetworkFile.deployments)) {
+      if (parsedNetworkFile.deployments[proxyAddress].solcInput && parsedNetworkFile.deployments[proxyAddress].solcOutput) deployments.push({ address: proxyAddress, date: parsedNetworkFile.deployments[proxyAddress].date })
+    }
+    dispatch(fetchProxyDeploymentsSuccess(deployments))
+  } else {
+    dispatch(fetchProxyDeploymentsSuccess([]))
+  }
+}
+
+export const isValidContractUpgrade = async (plugin: RunTab, dispatch: React.Dispatch<any>, proxyAddress: string) => {
+  // build current contract first to get artefacts.
+  const network = plugin.blockchain.networkStatus.network
+  const identifier = network.name === 'custom' ? network.name + '-' + network.id : network.name
+  const networkDeploymentsExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
+
+  if (networkDeploymentsExists) {
+    const networkFile: string = await plugin.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
+    const parsedNetworkFile: NetworkDeploymentFile = JSON.parse(networkFile)
+
+      if (parsedNetworkFile.deployments[proxyAddress] && parsedNetworkFile.deployments[proxyAddress].solcInput) {
+        const oldImpl = new UpgradeableContract(parsedNetworkFile.deployments[proxyAddress].contractName, parsedNetworkFile.deployments[proxyAddress].solcInput, parsedNetworkFile.deployments[proxyAddress].solcOutput)
+        
+        console.log('oldImpl: ', oldImpl)
+      } else {
+        return { success: false, error: 'Previous contract implementation not available for upgrade comparison.' }
+      }
+  } else {
+    return { success: false, error: 'Previous contract implementation not available for upgrade comparison.' }
   }
 }
