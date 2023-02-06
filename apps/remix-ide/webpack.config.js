@@ -1,12 +1,11 @@
-const { composePlugins, withNx } = require('@nrwl/webpack');
-const { withReact } = require('@nrwl/react');
+const { composePlugins, withNx } = require('@nrwl/webpack')
+const { withReact } = require('@nrwl/react')
 const webpack = require('webpack')
-const CopyPlugin = require("copy-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin")
 const version = require('../../package.json').version
 const fs = require('fs')
-const TerserPlugin = require("terser-webpack-plugin");
-const CompressionPlugin = require("compression-webpack-plugin");
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin")
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 
 const versionData = {
   version: version,
@@ -42,6 +41,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     "buffer": require.resolve("buffer/"),
     "vm": require.resolve('vm-browserify'),
   }
+  
 
   // add externals
   config.externals = {
@@ -56,8 +56,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   config.output.filename = `[name].${versionData.version}.${versionData.timestamp}.js`
   config.output.chunkFilename = `[name].${versionData.version}.${versionData.timestamp}.js`
 
-  // add plugin
-  // add copy plugin
+  // add copy & provide plugin
   config.plugins.push(
     new CopyPlugin({
       patterns: [
@@ -71,38 +70,32 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     })
   )
 
+  // souce-map loader
+  config.module.rules.push({
+    test: /\.js$/,
+    use: ["source-map-loader"],
+    enforce: "pre"
+  })
+
+  config.ignoreWarnings = [/Failed to parse source map/] // ignore source-map-loader warnings
+
+
   // set minimizer
   config.optimization.minimizer = [
     new TerserPlugin({
       parallel: true,
-      minify: TerserPlugin.swcMinify,
       terserOptions: {
-        compress: true,
-        /*
         ecma: 2015,
         compress: true,
+        mangle: false,
         format: {
           comments: false,
         },
-        */
       },
-      //extractComments: false,
+      extractComments: false,
     }),
     new CssMinimizerPlugin(),
   ];
-
-  // add compression plugin
-  /*
-  config.plugins.push(
-     new CompressionPlugin({
-       test: /\.js(\?.*)?$/i,
-       filename: '[path][base].gz',
-     })
- )*/
-
-
-  console.log(config)
-
 
   return config;
 });
