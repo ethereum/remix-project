@@ -5,7 +5,7 @@ parameters:
     type: boolean
     default: false
 orbs:
-  browser-tools: circleci/browser-tools@1.4.0
+  browser-tools: circleci/browser-tools@1.4.1
 jobs:
   build:
     docker:
@@ -24,7 +24,7 @@ jobs:
           key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-      - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js yarn build:production
+      - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js yarn build
       - run: yarn nx build remix-ide-e2e-src-local-plugin & yarn run build:libs
       - run: yarn nx run debugger:build:production
       - run: yarn nx run solidity-compiler:build:production
@@ -74,7 +74,7 @@ jobs:
       - run: cd dist/libs/remix-tests && yarn add @remix-project/remix-simulator ../../libs/remix-simulator
       - run: cd dist/libs/remix-tests && ./bin/remix-tests ./../../../libs/remix-tests/tests/examples_0/assert_ok_test.sol
       - run: node dist/libs/remix-tests/bin/remix-tests ./libs/remix-tests/tests/examples_0/assert_ok_test.sol
-      - run: yarn run test:libs
+      - run: yarn run test:libs 
 
   remix-ide-browser:
     docker:
@@ -93,14 +93,29 @@ jobs:
         type: string
     parallelism: 10
     steps:
-      - browser-tools/install-browser-tools
-      - run:
-          command: |
-            google-chrome --version
-            firefox --version
-            geckodriver --version
-            chromedriver --version
-            rm LICENSE.chromedriver 2> /dev/null
+      - when:
+          condition:
+              equal: [ "chrome", << parameters.browser >> ]
+          steps:
+            - browser-tools/install-browser-tools:
+                install-firefox: false
+                install-chrome: true
+                install-geckodriver: false
+                install-chromedriver: true
+            - run: google-chrome --version
+            - run: chromedriver --version
+            - run: rm LICENSE.chromedriver 2> /dev/null
+      - when:
+          condition:
+              equal: [ "firefox", << parameters.browser >> ]
+          steps:
+            - browser-tools/install-browser-tools:
+                install-firefox: true
+                install-chrome: false
+                install-geckodriver: true
+                install-chromedriver: false
+            - run: firefox --version
+            - run: geckodriver --version
       - checkout
       - attach_workspace:
           at: .
@@ -140,15 +155,14 @@ jobs:
         type: string
     parallelism: 4
     steps:
-      - browser-tools/install-browser-tools
-      - run:
-          command: |
-            google-chrome --version
-            firefox --version
-            geckodriver --version
-            chromedriver --version
-            rm LICENSE.chromedriver 2> /dev/null
-          name: Check install
+      - browser-tools/install-browser-tools:
+          install-firefox: false
+          install-chrome: true
+          install-geckodriver: false
+          install-chromedriver: true
+      - run: google-chrome --version
+      - run: chromedriver --version
+      - run: rm LICENSE.chromedriver 2> /dev/null
       - checkout
       - attach_workspace:
           at: .
