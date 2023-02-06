@@ -151,8 +151,9 @@ jobs:
         type: string
     parallelism: 4
     steps:
-      - browser-tools/install-chrome
-      - browser-tools/install-chromedriver
+      - browser-tools/install-browser-tools:
+          install-firefox: false
+          install-chrome: true
       - run: google-chrome --version
       - run: chromedriver --version
       - run: rm LICENSE.chromedriver 2> /dev/null
