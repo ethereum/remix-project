@@ -183,3 +183,26 @@ export interface ContractSources {
       }
     }
   }
+
+  export interface ContractSourcesContent {
+    sources: {
+      [source in string]: {
+        content?: string
+      }
+    }
+  }
+
+  export interface NetworkDeploymentFile {
+        id: string,
+        network: string,
+        deployments: {
+            [proxyAddress: string]: {
+                date: Date,
+                contractName: string,
+                fork: string,
+                implementationAddress: string,
+                solcInput: ContractSourcesContent,
+                solcOutput: ContractSources
+            }
+        }[]
+  }

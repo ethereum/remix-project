@@ -2,11 +2,13 @@ import { envChangeNotification } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { setExecutionContext, setFinalContext, updateAccountBalances } from "./account"
 import { addExternalProvider, addInstance, addNewProxyDeployment, removeExternalProvider, setNetworkNameFromProvider } from "./actions"
-import { addDeployOption, clearAllInstances, clearRecorderCount, fetchContractListSuccess, fetchProxyDeploymentsSuccess, resetProxyDeployments, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setRecorderCount, setRemixDActivated, setSendValue } from "./payload"
+import { addDeployOption, clearAllInstances, clearRecorderCount, fetchContractListSuccess, resetProxyDeployments, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setRecorderCount, setRemixDActivated, setSendValue } from "./payload"
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import BN from 'bn.js'
 import Web3 from 'web3'
 import { Plugin } from "@remixproject/engine"
+import { getNetworkProxyAddresses } from "./deploy"
+
 const _paq = window._paq = window._paq || []
 
 export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
@@ -182,33 +184,4 @@ export const resetAndInit = (plugin: RunTab) => {
       }
     }
   })
-}
-
-const getNetworkProxyAddresses = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
-  const network = plugin.blockchain.networkStatus.network
-  const identifier = network.name === 'custom' ? network.name + '-' + network.id : network.name
-  const networkDeploymentsExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
-
-  if (networkDeploymentsExists) {
-    const networkFile: string = await plugin.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
-    const parsedNetworkFile: {
-      id: string,
-      network: string,
-      deployments: {
-        [proxyAddress: string]: {
-          date: Date,
-          contractName: string,
-          fork: string,
-          implementationAddress: string,
-          layout: any
-        }
-      }[]} = JSON.parse(networkFile)
-    const deployments = Object.keys(parsedNetworkFile.deployments).map(proxyAddress => {
-      return { address: proxyAddress, date: parsedNetworkFile.deployments[proxyAddress].date }
-    })
-
-    dispatch(fetchProxyDeploymentsSuccess(deployments))
-  } else {
-    dispatch(fetchProxyDeploymentsSuccess([]))
-  }
 }
