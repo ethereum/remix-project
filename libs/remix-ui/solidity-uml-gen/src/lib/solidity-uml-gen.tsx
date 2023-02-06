@@ -67,7 +67,7 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
     { 
       buttonText: 'Download as PNG',
       svgValid: () => validSvg,
-      action: () => console.log('generated!!'),
+      action: () => console.log('generated!!!'),
       icon: 'fa fa-picture-o'
     }
   ]
