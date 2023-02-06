@@ -93,13 +93,13 @@ jobs:
         type: string
     parallelism: 10
     steps:
-      when:
+      - when:
         condition:
             equal: [ "chrome", << parameters.browser >> ]
         steps:
           - browser-tools/install-chrome
           - browser-tools/install-chromedriver
-      when:
+      - when:
         condition:
             equal: [ "firefox", << parameters.browser >> ]
         steps:
