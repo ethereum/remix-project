@@ -4,6 +4,7 @@ const domains = {
   'remix.ethereum.org': 23,
   '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
 }
+
 if (domains[window.location.hostname]) {
   var _paq = window._paq = window._paq || []
   /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
@@ -12,6 +13,10 @@ if (domains[window.location.hostname]) {
   _paq.push(['trackPageView']);
   _paq.push(['enableLinkTracking']);
   _paq.push(['enableHeartBeatTimer']);
+  if (!window.localStorage.getItem('config-v0.8:.remix.config') ||
+    (window.localStorage.getItem('config-v0.8:.remix.config') && !window.localStorage.getItem('config-v0.8:.remix.config').includes('settings/matomo-analytics'))) {
+    _paq.push(['optUserOut'])
+  }
   (function () {
     var u = "https://matomo.ethereum.org/";
     _paq.push(['setTrackerUrl', u + 'matomo.php'])
