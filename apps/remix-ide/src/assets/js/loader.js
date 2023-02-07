@@ -12,7 +12,7 @@ if (domains[window.location.hostname]) {
   _paq.push(['enableJSErrorTracking']);
   _paq.push(['trackPageView']);
   _paq.push(['enableLinkTracking']);
-
+  _paq.push(['enableHeartBeatTimer']);
   if (!(window.localStorage.getItem('config-v0.8:.remix.config')) ||
     ((window.localStorage.getItem('config-v0.8:.remix.config')) && !(window.localStorage.getItem('config-v0.8:.remix.config')).includes('settings/matomo-analytics'))) {
     _paq.push(['optUserOut'])
