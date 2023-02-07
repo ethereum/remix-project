@@ -3,6 +3,7 @@ import React, { useRef, useState, useEffect } from 'react' // eslint-disable-lin
 import isElectron from 'is-electron'
 import { WebsocketPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { version as remixdVersion } from '../../../../../libs/remixd/package.json'
 import { PluginManager } from '@remixproject/engine'
 import { AppModal, AlertModal } from '@remix-ui/app'
