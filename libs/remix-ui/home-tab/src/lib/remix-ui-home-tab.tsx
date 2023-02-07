@@ -45,19 +45,21 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   }, [])
 
   return (
-    <div className="d-flex flex-row w-100" data-id="remixUIHTAll">
+    <div className="d-flex flex-column w-100" data-id="remixUIHTAll">
       <ThemeContext.Provider value={ state.themeQuality }>
-        <div className="px-2 pl-3 justify-content-start d-flex border-right flex-column" id="remixUIHTLeft" style={{ width: 'inherit' }}>
-          <HomeTabTitle />
-          <HomeTabFile plugin={plugin} />
-          <HomeTabLearn plugin={plugin} />
+        <div className='d-flex flex-row w-100'>
+          <div className="px-2 pl-3 justify-content-start d-flex border-right flex-column" id="remixUIHTLeft" style={{ width: 'inherit' }}>
+            <HomeTabTitle />
+            <HomeTabFile plugin={plugin} />
+            <HomeTabLearn plugin={plugin} />
+          </div>
+          <div className="pl-2 pr-3 justify-content-start d-flex flex-column" style={{width: "65%"}} id="remixUIHTRight">
+            <HomeTabFeatured></HomeTabFeatured>
+            <HomeTabGetStarted plugin={plugin}></HomeTabGetStarted>
+            <HomeTabFeaturedPlugins plugin={plugin}></HomeTabFeaturedPlugins>
+          </div>
         </div>
-        <div className="pl-2 pr-3 justify-content-start d-flex flex-column" style={{width: "65%"}} id="remixUIHTRight">
-          <HomeTabFeatured></HomeTabFeatured>
-          <HomeTabGetStarted plugin={plugin}></HomeTabGetStarted>
-          <HomeTabFeaturedPlugins plugin={plugin}></HomeTabFeaturedPlugins>
-          <HomeTabScamAlert></HomeTabScamAlert>
-        </div>
+        <HomeTabScamAlert></HomeTabScamAlert>
       </ThemeContext.Provider>
     </div>
   )
