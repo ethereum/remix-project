@@ -70,7 +70,7 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
             <FormattedMessage id="home.learnEth1" />
           </label>
           {(state.visibleTutorial === VisibleTutorial.Basics) && <div className="pt-2 d-flex flex-column text-left">
-            <span>
+            <span style={{fontSize: "0.8rem"}}>
               <FormattedMessage id="home.learnEth1Desc" />
             </span>
             <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('basics')}>
@@ -83,11 +83,12 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
             <FormattedMessage id="home.learnEth2" />
           </label>
           {(state.visibleTutorial === VisibleTutorial.Intermediate) && <div className="pt-2 d-flex flex-column text-left">
-            <span>
-            <FormattedMessage id="home.learnEth2Desc" /></span>
+            <span style={{fontSize: "0.8rem"}}>
+              <FormattedMessage id="home.learnEth2Desc" />
+            </span>
             <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('soliditybeginner')}>
-            <FormattedMessage id="home.getStarted" />
-          </button>
+              <FormattedMessage id="home.getStarted" />
+            </button>
           </div>}
         </label>
         <label className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Advanced }})}>
@@ -95,11 +96,12 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
             <FormattedMessage id="home.remixAdvanced" />
           </label>
           {(state.visibleTutorial === VisibleTutorial.Advanced) && <div className="pt-2 d-flex flex-column text-left">
-            <span>
-            <FormattedMessage id="home.remixAdvancedDesc" /></span>
+            <span style={{fontSize: "0.8rem"}}>
+              <FormattedMessage id="home.remixAdvancedDesc" />
+            </span>
             <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('deploylibraries')}>
-            <FormattedMessage id="home.getStarted" />
-          </button>
+              <FormattedMessage id="home.getStarted" />
+            </button>
           </div>}
         </label>
       </div>
