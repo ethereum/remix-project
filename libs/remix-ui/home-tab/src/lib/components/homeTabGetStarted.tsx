@@ -67,7 +67,7 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
 
   return (
     <div className="pl-2" id="hTGetStartedSection">
-      <label style={{fontSize: "1.2rem"}}>
+      <label style={{fontSize: "1.5rem"}}>
         <span className="mr-2" style={{fontWeight: "bold"}}>
           <FormattedMessage id="home.getStarted" />
         </span>
