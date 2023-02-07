@@ -83,19 +83,21 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   // set minimizer
   config.optimization.minimizer = [
     new TerserPlugin({
-      parallel: true,
+      minify: TerserPlugin.esbuildMinify,
+      // `terserOptions` options will be passed to `esbuild`
+      // Link to options - https://esbuild.github.io/api/#minify
+      // Note: the `minify` options is true by default (and override other `minify*` options), so if you want to disable the `minifyIdentifiers` option (or other `minify*` options) please use:
+      // terserOptions: {
+      //   minify: false,
+      //   minifyWhitespace: true,
+      //   minifyIdentifiers: false,
+      //   minifySyntax: true,
+      // },
       terserOptions: {
-        ecma: 2015,
-        compress: true,
-        mangle: {
-          keep_classnames: true,
-          keep_fnames: true,
-        },
-        format: {
-          comments: false,
-        },
+          minifyWhitespace: true,
+          minifyIdentifiers: false,
+          minifySyntax: false,
       },
-      extractComments: false,
     }),
     new CssMinimizerPlugin(),
   ];
