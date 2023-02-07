@@ -91,6 +91,7 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
             {
               ({ zoomIn, zoomOut, resetTransform }) => (
                 <Fragment>
+                  <ActionButtons buttons={buttons} />
                   <TransformComponent>
                     <img 
                       src={`data:image/svg+xml;base64,${btoa(plugin.updatedSvg ?? svgPayload)}`}
@@ -98,7 +99,7 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
                       height={'auto'}
                       style={{ filter: invert }}
                     />
-                </TransformComponent>
+                  </TransformComponent>
                 </Fragment>
               )
             }
