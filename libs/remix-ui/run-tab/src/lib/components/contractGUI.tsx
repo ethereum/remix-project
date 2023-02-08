@@ -21,9 +21,7 @@ export function ContractGUI (props: ContractGUIProps) {
   const [toggleDeployProxy, setToggleDeployProxy] = useState<boolean>(false)
   const [toggleUpgradeImp, setToggleUpgradeImp] = useState<boolean>(false)
   const [deployState, setDeployState] = useState<{ deploy: boolean, upgrade: boolean }>({ deploy: false, upgrade: false })
-  const [useLastProxy, setUseLastProxy] = useState<boolean>(false)
   const [proxyAddress, setProxyAddress] = useState<string>('')
-  const [selectedProxyAddress, setSelectedProxyAddress] = useState<string>('')
   const [proxyAddressError, setProxyAddressError] = useState<string>('')
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
   const initializeFields = useRef<Array<HTMLInputElement | null>>([])
@@ -36,6 +34,12 @@ export function ContractGUI (props: ContractGUIProps) {
       else if (props.deployOption[1] && props.deployOption[1].title === 'Upgrade with Proxy' && props.deployOption[1].active)  handleUpgradeImpSelect(true)
     }
   }, [props.deployOption])
+
+  useEffect(() => {
+    if (!proxyAddress && props.proxy && props.proxy.deployments.length > 0) {
+      setProxyAddress(props.proxy.deployments[0].address)
+    }
+  }, [proxyAddress, props.proxy])
 
   useEffect(() => {
     if (props.title) {
@@ -178,6 +182,7 @@ export function ContractGUI (props: ContractGUIProps) {
 
       props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
     } else if (deployState.upgrade) {
+      props.isValidProxyUpgrade(proxyAddress)
       !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
     } else {
       props.clickCallBack(props.funcABI.inputs, basicInput)
@@ -223,25 +228,8 @@ export function ContractGUI (props: ContractGUIProps) {
     setDeployState({ deploy: false, upgrade: value })
   }
 
-  const handleUseLastProxySelect = (e) => {
-    const value = e.target.checked
-    const address = '' /* props.savedProxyAddress */
-
-    if (value) {
-      if (address) {
-        setProxyAddress(address)
-        setProxyAddressError('')
-      } else {
-        setProxyAddressError('No proxy address available')
-        setProxyAddress('')
-      }
-    }
-    setUseLastProxy(value)
-  }
-
-  const handleSetProxyAddress = (e) => {
+  const handleSelectProxyAddress = (e) => {
     const value = e.target.value
-
     setProxyAddress(value)
   }
 
@@ -520,51 +508,17 @@ export function ContractGUI (props: ContractGUIProps) {
             }`}
           >
             <div className={`flex-column 'd-flex'}`}>
-              <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
-                <input
-                  id="proxyAddress"
-                  data-id="contractGUIProxyAddress"
-                  className="form-check-input custom-control-input"
-                  type="checkbox"
-                  onChange={handleUseLastProxySelect}
-                  checked={useLastProxy}
-                />
-                <CustomTooltip
-                  tooltipText={<FormattedMessage id='udapp.proxyAddressTooltip' />}
-                  tooltipId="proxyAddressTooltip"
-                  placement="auto"
-                  tooltipClasses="text-wrap"
-                >
-                  <label
-                    htmlFor="proxyAddress"
-                    data-id="contractGUIProxyAddressLabel"
-                    className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
-                    style={{ fontSize: 12 }}
-                  >
-                    <FormattedMessage id='udapp.useLastDeployedERC1967Contract' />
-                  </label>
-                </CustomTooltip>
-              </div>
-              {
-                !useLastProxy ?
                 <div className="mb-2">
-                  <label className="mt-2 text-left d-block">
-                    <FormattedMessage id='udapp.proxyAddressLabel' /> :
-                  </label>
-                  <CustomTooltip placement="right" tooltipText={<FormattedMessage id='udapp.proxyAddressInputTooltip' />}>
-                    <input style={{ height: 32 }} className="form-control udapp_input" data-id="ERC1967AddressInput" placeholder={intl.formatMessage({ id: 'udapp.proxyAddressPlaceholder' })} onChange={handleSetProxyAddress} onBlur={() => validateProxyAddress(proxyAddress) } />
-                  </CustomTooltip>
+                  <select data-id="udappSelectProxyAddress" name="selectproxy" className="form-control udapp_select custom-select pr-4" value={proxyAddress} onChange={handleSelectProxyAddress}>
+                    {
+                      props.proxy.deployments.map((deployment, index) => <option value={deployment.address} key={index}>{ shortenDeploymentAddresses(deployment.address, deployment.date) }</option>)
+                    }
+                  </select>
                   { proxyAddressError && <span className='text-lowercase' data-id="errorMsgProxyAddress" style={{ fontSize: '.8em' }}>{ proxyAddressError }</span> }
-                </div> :
-                <select data-id="udappSelectProxyAddress" name="selectproxy" className="form-control udapp_select custom-select pr-4" value={selectedProxyAddress} onChange={(e) => { }}>
-                  {
-                    props.proxy.deployments.map((deployment, index) => <option value={deployment.address} key={index}>{ shortenDeploymentAddresses(deployment.address, deployment.date) }</option>)
-                  }
-                </select>
-              }
+                </div>
             </div>
           </div>
-        </>
+        </> 
       ) : null}
     </div>
   );
