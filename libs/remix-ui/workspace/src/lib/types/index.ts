@@ -96,6 +96,7 @@ export interface FileExplorerProps {
     toast: (toasterMsg: string) => void,
     dispatchDeletePath: (path: string[]) => Promise<void>,
     dispatchRenamePath: (oldPath: string, newPath: string) => Promise<void>,
+    dispatchDownloadPath: (path: string) => Promise<void>,
     dispatchUploadFile: (target?: React.SyntheticEvent, targetFolder?: string) => Promise<void>,
     dispatchCopyFile: (src: string, dest: string) => Promise<void>,
     dispatchCopyFolder: (src: string, dest: string) => Promise<void>,
