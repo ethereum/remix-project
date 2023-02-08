@@ -9,8 +9,7 @@ export function EnvironmentUI (props: EnvironmentProps) {
 
   const handleChangeExEnv = (env: string) => {
     const provider = props.providers.providerList.find(exEnv => exEnv.value === env)
-    let context = provider.value
-
+    const context = provider.value
     props.setExecutionContext({ context })
   }
 
