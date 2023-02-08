@@ -35,7 +35,7 @@ export const Preload = () => {
             })
         }).catch(err => {
             _paq.push(['trackEvent', 'Preload', 'error', err && err.message])
-            console.log('Error loading Remix:', err)
+            console.error('Error loading Remix:', err)
             setError(true)
         })
     }
