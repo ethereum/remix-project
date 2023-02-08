@@ -183,7 +183,7 @@ module.exports = {
   },
 
   'Should select another provider #group1': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'udapp:setEnvironmentMode', null, null, { context: 'vm', fork: 'berlin' })
+    await clickAndCheckLog(browser, 'udapp:setEnvironmentMode', null, null, { context: 'vm-berlin' })
     await browser
       .frameParent()
       .useCss()

@@ -9,12 +9,9 @@ export function EnvironmentUI (props: EnvironmentProps) {
 
   const handleChangeExEnv = (env: string) => {
     const provider = props.providers.providerList.find(exEnv => exEnv.value === env)
-    const fork = provider.fork // can be undefined if connected to an external source (External Http Provider / injected)
     let context = provider.value
 
-    context = context.startsWith('vm') ? 'vm' : context
-
-    props.setExecutionContext({ context, fork })
+    props.setExecutionContext({ context })
   }
 
   const currentProvider = props.providers.providerList.find(exEnv => exEnv.value === props.selectedEnv)
