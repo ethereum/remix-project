@@ -393,7 +393,7 @@ module.exports = {
       .useCss()
       .clickLaunchIcon('pluginManager')
       .clickLaunchIcon('udapp')
-      .switchEnvironment('Hardhat Provider')
+      .switchEnvironment('hardhat-provider')
       .modalFooterOKClick('hardhat-provider')
       .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom') // e.g Custom (1337) network
       .clickLaunchIcon('localPlugin')
