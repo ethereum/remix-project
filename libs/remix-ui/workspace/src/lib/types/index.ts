@@ -127,6 +127,7 @@ export interface FileExplorerContextMenuProps {
     createNewFolder: (parentFolder?: string) => void,
     deletePath: (path: string | string[]) => void,
     renamePath: (path: string, type: string) => void,
+    downloadPath: (path: string) => void,
     hideContextMenu: () => void,
     publishToGist?: (path?: string, type?: string) => void,
     pushChangesToGist?: (path?: string, type?: string) => void,
