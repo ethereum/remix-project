@@ -101,109 +101,31 @@ export class RunTab extends ViewPlugin {
   async onInitDone () {
     const udapp = this // eslint-disable-line
 
-    await this.call('blockchain', 'addProvider', {
-      name: 'Hardhat Provider',
-      isInjected: false,
-      provider: {
-        async sendAsync (payload, callback) {
-          try {
-            const result = await udapp.call('hardhat-provider', 'sendAsync', payload)
-            callback(null, result)
-          } catch (e) {
-            callback(e)
+    const addProvider = async (name, displayName, isInjected) => {
+      await this.call('blockchain', 'addProvider', {
+        name: displayName,
+        isInjected,
+        init: () => { return this.call(name, 'init') },
+        provider: {
+          async sendAsync (payload, callback) {
+            try {
+              const result = await udapp.call(name, 'sendAsync', payload)
+              callback(null, result)
+            } catch (e) {
+              callback(e)
+            }
           }
         }
-      }
-    })
+      })
+    }
 
-    await this.call('blockchain', 'addProvider', {
-      name: 'Ganache Provider',
-      isInjected: false,
-      provider: {
-        async sendAsync (payload, callback) {
-          try {
-            const result = await udapp.call('ganache-provider', 'sendAsync', payload)
-            callback(null, result)
-          } catch (e) {
-            callback(e)
-          }
-        }
-      }
-    })
-
-    await this.call('blockchain', 'addProvider', {
-      name: 'Foundry Provider',
-      isInjected: false,
-      provider: {
-        async sendAsync (payload, callback) {
-          try {
-            const result = await udapp.call('foundry-provider', 'sendAsync', payload)
-            callback(null, result)
-          } catch (e) {
-            callback(e)
-          }
-        }
-      }
-    })
-
-    await this.call('blockchain', 'addProvider', {
-      name: 'Wallet Connect',
-      isInjected: false,
-      provider: {
-        async sendAsync (payload, callback) {
-          try {
-            const result = await udapp.call('walletconnect', 'sendAsync', payload)
-            callback(null, result)
-          } catch (e) {
-            callback(e)
-          }
-        }
-      }
-    })
-
-    await this.call('blockchain', 'addProvider', {
-      name: 'External Http Provider',
-      provider: {
-        async sendAsync (payload, callback) {
-          try {
-            const result = await udapp.call('basic-http-provider', 'sendAsync', payload)
-            callback(null, result)
-          } catch (e) {
-            callback(e)
-          }
-        }
-      }
-    })
-
-    await this.call('blockchain', 'addProvider', {
-      name: 'Optimism Provider',
-      isInjected: true,
-      provider: {
-        async sendAsync (payload, callback) {
-          try {
-            const result = await udapp.call('injected-optimism-provider', 'sendAsync', payload)
-            callback(null, result)
-          } catch (e) {
-            callback(e)
-          }
-        }
-      }
-    })
-
-    await this.call('blockchain', 'addProvider', {
-      name: 'Arbitrum One Provider',
-      isInjected: true,
-      provider: {
-        async sendAsync (payload, callback) {
-          try {
-            const result = await udapp.call('injected-arbitrum-one-provider', 'sendAsync', payload)
-            callback(null, result)
-          } catch (e) {
-            callback(e)
-          }
-        }
-      }
-    })
+    await addProvider('hardhat-provider', 'Hardhat Provider', false)
+    await addProvider('ganache-provider', 'Ganache Provider', false)
+    await addProvider('foundry-provider', 'Foundry Provider', false)
+    await addProvider('walletconnect', 'Wallet Connect', false)
+    await addProvider('basic-http-provider', 'External Http Provider', false)
+    await addProvider('injected-optimism-provider', 'Optimism Provider', true)
+    await addProvider('injected-arbitrum-one-provider', 'Arbitrum One Provider', true)    
   }
 
   writeFile (fileName, content) {
