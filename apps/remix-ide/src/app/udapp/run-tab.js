@@ -124,6 +124,12 @@ export class RunTab extends ViewPlugin {
     await addProvider('foundry-provider', 'Foundry Provider', false)
     await addProvider('walletconnect', 'Wallet Connect', false)
     await addProvider('basic-http-provider', 'External Http Provider', false)
+    
+    const displayNameInjected = `Injected Provider${(window && window.ethereum && !(window.ethereum.providers && !window.ethereum.selectedProvider)) ?
+      window.ethereum.isCoinbaseWallet || window.ethereum.selectedProvider?.isCoinbaseWallet ? ' - Coinbase' :
+      window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet ? ' - Brave' :
+      window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask ? ' - MetaMask' : '' : ''}`
+    await addProvider('injected', displayNameInjected, true)
     await addProvider('injected-optimism-provider', 'Optimism Provider', true)
     await addProvider('injected-arbitrum-one-provider', 'Arbitrum One Provider', true)    
   }

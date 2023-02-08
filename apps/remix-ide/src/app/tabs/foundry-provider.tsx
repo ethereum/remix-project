@@ -7,7 +7,7 @@ const profile = {
   displayName: 'Foundry Provider',
   kind: 'provider',
   description: 'Foundry Anvil provider',
-  methods: ['sendAsync'],
+  methods: ['sendAsync', 'init'],
   version: packageJson.version
 }
 
