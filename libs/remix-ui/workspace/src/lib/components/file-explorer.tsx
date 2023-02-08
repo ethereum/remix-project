@@ -12,6 +12,7 @@ import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath }
 import { FileRender } from './file-render'
 import { Drag } from "@remix-ui/drag-n-drop"
 import { ROOT_PATH } from '../utils/constants'
+import { saveAs } from 'file-saver'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const { name, contextMenuItems, removedContextMenuItems, files, fileState } = props
@@ -172,6 +173,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
     } catch (error) {
       props.modal('Rename File Failed', 'Unexpected error while renaming: ' + typeof error === 'string' ? error : error.message, 'Close', async () => {})
     }
+  }
+
+  const downloadPath = (path: string) => {
+    console.log('downloadPath', path)
   }
 
   const uploadFile = (target) => {
@@ -488,6 +493,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           createNewFile={handleNewFileInput}
           createNewFolder={handleNewFolderInput}
           deletePath={deletePath}
+          downloadPath={downloadPath}
           renamePath={editModeOn}
           runScript={runScript}
           copy={handleCopyClick}
