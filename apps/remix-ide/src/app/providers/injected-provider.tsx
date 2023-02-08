@@ -1,6 +1,6 @@
 /* global ethereum */
 import { Plugin } from '@remixproject/engine'
-import { JsonDataRequest, RejectRequest, SuccessRequest } from './abstract-provider'
+import { JsonDataRequest, RejectRequest, SuccessRequest } from '../providers/abstract-provider'
 import Web3 from 'web3'
 
 const noInjectedProviderMsg = 'No injected provider found. Make sure your provider (e.g. MetaMask) is active and running (when recently activated you may have to reload the page).'
