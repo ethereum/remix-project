@@ -19,12 +19,20 @@ export type JsonDataResult = {
 export type RejectRequest = (error: Error) => void
 export type SuccessRequest = (data: JsonDataResult) => void
 
-export abstract class AbstractProvider extends Plugin {
+export interface IProvider {
+  options: { [id: string] : any }
+  init(): Promise<{ [id: string] : any }>
+  body(): JSX.Element
+  sendAsync (data: JsonDataRequest): Promise<JsonDataResult>
+}
+
+export abstract class AbstractProvider extends Plugin implements IProvider {
   provider: ethers.providers.JsonRpcProvider
   blockchain: Blockchain
   defaultUrl: string
   connected: boolean
   nodeUrl: string
+  options: { [id: string] : any } = {}
 
   constructor (profile, blockchain, defaultUrl) {
     super(profile)
@@ -41,7 +49,7 @@ export abstract class AbstractProvider extends Plugin {
     this.provider = null
   }
 
-  async init () {    
+  async init () {
     this.nodeUrl = await ((): Promise<string> => {
       return new Promise((resolve, reject) => {
         const modalContent: AppModal = {
@@ -80,9 +88,12 @@ export abstract class AbstractProvider extends Plugin {
       })
     })()
     this.provider = new ethers.providers.JsonRpcProvider(this.nodeUrl)
+    return {
+      nodeUrl: this.nodeUrl
+    }
   }
 
-  sendAsync (data: JsonDataRequest): Promise<any> {
+  sendAsync (data: JsonDataRequest): Promise<JsonDataResult> {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
       if (!this.provider) return reject(new Error('provider node set'))

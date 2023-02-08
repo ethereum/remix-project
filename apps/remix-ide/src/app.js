@@ -28,6 +28,7 @@ import { Layout } from './app/panels/layout'
 import { NotificationPlugin } from './app/plugins/notification'
 import { Blockchain } from './blockchain/blockchain.js'
 import { BerlinVMProvider, LondonVMProvider } from './app/providers/vm-provider'
+import { MainnetForkVMProvider } from './app/providers/vm-fork-provider'
 import { HardhatProvider } from './app/providers/hardhat-provider'
 import { GanacheProvider } from './app/providers/ganache-provider'
 import { FoundryProvider } from './app/providers/foundry-provider'
@@ -203,6 +204,7 @@ class AppComponent {
     const networkModule = new NetworkModule(blockchain)
     // ----------------- represent the current selected web3 provider ----
     const web3Provider = new Web3ProviderModule(blockchain)
+    const vmProviderMainnetFork = new MainnetForkVMProvider(blockchain)
     const vmProviderBerlin = new BerlinVMProvider(blockchain)
     const vmProviderLondon = new LondonVMProvider(blockchain)
     const hardhatProvider = new HardhatProvider(blockchain)
@@ -273,6 +275,7 @@ class AppComponent {
       storagePlugin,
       vmProviderBerlin,
       vmProviderLondon,
+      vmProviderMainnetFork,
       hardhatProvider,
       ganacheProvider,
       foundryProvider,
