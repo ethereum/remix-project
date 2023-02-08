@@ -12,7 +12,6 @@ import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath }
 import { FileRender } from './file-render'
 import { Drag } from "@remix-ui/drag-n-drop"
 import { ROOT_PATH } from '../utils/constants'
-import { saveAs } from 'file-saver'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const { name, contextMenuItems, removedContextMenuItems, files, fileState } = props
@@ -175,8 +174,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const downloadPath = (path: string) => {
-    console.log('downloadPath', path)
+  const downloadPath = async (path: string) => {
+    try {
+      props.dispatchDownloadPath(path)
+    } catch (error) {
+      props.modal('Download Failed', 'Unexpected error while downloading: ' + typeof error === 'string' ? error : error.message, 'Close', async () => {})
+    }
   }
 
   const uploadFile = (target) => {
