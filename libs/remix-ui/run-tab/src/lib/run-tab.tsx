@@ -27,7 +27,7 @@ import {
   storeNewScenario, runScenario,
   setScenarioPath, getFuncABIValues,
   setNetworkName, updateSelectedContract,
-  syncContracts, isValidProxyAddress
+  syncContracts, isValidProxyAddress, isValidProxyUpgrade
 } from './actions'
 import './css/run-tab.css'
 import { PublishToStorage } from '@remix-ui/publish-to-storage'
@@ -242,6 +242,7 @@ export function RunTabUI (props: RunTabProps) {
             setSelectedContract={updateSelectedContract}
             remixdActivated={runTab.remixdActivated}
             isValidProxyAddress={isValidProxyAddress}
+            isValidProxyUpgrade={isValidProxyUpgrade}
             proxy={runTab.proxy}
           />
           <RecorderUI

@@ -2,7 +2,9 @@ import { ContractData, FuncABI, NetworkDeploymentFile } from "@remix-project/cor
 import { RunTab } from "../types/run-tab"
 import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
-import { UpgradeableContract } from '@openzeppelin/upgrades-core'
+import { SolcInput, SolcOutput } from "@openzeppelin/upgrades-core"
+// Used direct path to UpgradeableContract class to fix cyclic dependency error from @openzeppelin/upgrades-core library
+import { UpgradeableContract } from '../../../../../../node_modules/@openzeppelin/upgrades-core/dist/standalone'
 import { DeployMode, MainnetPrompt } from "../types"
 import { displayNotification, displayPopUp, fetchProxyDeploymentsSuccess, setDecodedResponse } from "./payload"
 import { addInstance } from "./actions"
@@ -357,7 +359,7 @@ export const getNetworkProxyAddresses = async (plugin: RunTab, dispatch: React.D
   }
 }
 
-export const isValidContractUpgrade = async (plugin: RunTab, dispatch: React.Dispatch<any>, proxyAddress: string) => {
+export const isValidContractUpgrade = async (plugin: RunTab, dispatch: React.Dispatch<any>, proxyAddress: string, newContractName: string, solcInput: SolcInput, solcOutput: SolcOutput) => {
   // build current contract first to get artefacts.
   const network = plugin.blockchain.networkStatus.network
   const identifier = network.name === 'custom' ? network.name + '-' + network.id : network.name
@@ -368,9 +370,18 @@ export const isValidContractUpgrade = async (plugin: RunTab, dispatch: React.Dis
     const parsedNetworkFile: NetworkDeploymentFile = JSON.parse(networkFile)
 
       if (parsedNetworkFile.deployments[proxyAddress] && parsedNetworkFile.deployments[proxyAddress].solcInput) {
-        const oldImpl = new UpgradeableContract(parsedNetworkFile.deployments[proxyAddress].contractName, parsedNetworkFile.deployments[proxyAddress].solcInput, parsedNetworkFile.deployments[proxyAddress].solcOutput)
+        try {
+          const oldImpl = new UpgradeableContract(parsedNetworkFile.deployments[proxyAddress].contractName, parsedNetworkFile.deployments[proxyAddress].solcInput, parsedNetworkFile.deployments[proxyAddress].solcOutput, { kind: 'uups' })
+          const newImpl = new UpgradeableContract(newContractName, solcInput, solcOutput, { kind: 'uups' })
+          const report = oldImpl.getStorageUpgradeReport(newImpl, { kind: 'uups' })
+
+
+          console.log('report: ', report)
+        } catch (e) {
+          console.log('e: ', e)
+          return { success: false, error: 'Previous contract implementation not available for upgrade comparison.' }
+        }
         
-        console.log('oldImpl: ', oldImpl)
       } else {
         return { success: false, error: 'Previous contract implementation not available for upgrade comparison.' }
       }

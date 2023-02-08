@@ -92,6 +92,5 @@ export const setSendTransactionValue = (dispatch: React.Dispatch<any>, value: st
 }
 
 export const addNewProxyDeployment = (dispatch: React.Dispatch<any>, address: string, date: Date) => {
-  console.log('called deployement: ', address, date)
   dispatch(newProxyDeployment({ address, date }))
 }
