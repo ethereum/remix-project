@@ -20,7 +20,7 @@ if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
 export class ExecutionContext {
   constructor () {
     this.event = new EventManager()
-    this.executionContext = 'vm'
+    this.executionContext = 'vm-london'
     this.lastBlock = null
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
@@ -35,7 +35,7 @@ export class ExecutionContext {
 
   init (config) {
     if (config.get('settings/always-use-vm')) {
-      this.executionContext = 'vm'
+      this.executionContext = 'vm-london'
     }
   }  
 
@@ -52,7 +52,7 @@ export class ExecutionContext {
   }
 
   isVM () {
-    return this.executionContext === 'vm'
+    return this.executionContext.startsWith('vm')
   }
 
   setWeb3 (context, web3) {
@@ -98,7 +98,7 @@ export class ExecutionContext {
 
   removeProvider (name) {
     if (name && this.customNetWorks[name]) {
-      if (this.executionContext === name) this.setContext('vm', null, null, null)
+      if (this.executionContext === name) this.setContext('vm-london', null, null, null)
       delete this.customNetWorks[name]
       this.event.trigger('removeProvider', [name])
     }
@@ -125,29 +125,17 @@ export class ExecutionContext {
     const context = value.context
     if (!cb) cb = () => { /* Do nothing. */ }
     if (!confirmCb) confirmCb = () => { /* Do nothing. */ }
-    if (!infoCb) infoCb = () => { /* Do nothing. */ }
-    if (context === 'vm') {
-      this.executionContext = context
-      this.currentFork = value.fork
-      this.event.trigger('contextChanged', ['vm'])
-      return cb()
-    }
-
+    if (!infoCb) infoCb = () => { /* Do nothing. */ }    
     if (this.customNetWorks[context]) {
       var network = this.customNetWorks[context]
-      if (!this.customNetWorks[context].isInjected) {
-        this.setProviderFromEndpoint(network.provider, { context: network.name }, (error) => {
-          if (error) infoCb(error)
-          cb()
-        })
-      } else {
-        // injected        
-        this.executionContext = context
-        web3.setProvider(network.provider)
-        await this._updateChainContext()
-        this.event.trigger('contextChanged', [context])
-        return cb()
-      }
+      this.currentFork = network.fork
+      this.executionContext = context
+      await network.init()
+      // injected
+      web3.setProvider(network.provider)
+      await this._updateChainContext()
+      this.event.trigger('contextChanged', [context])
+      cb()
     }
   }
 
@@ -161,7 +149,7 @@ export class ExecutionContext {
   }
 
   async _updateChainContext () {
-    if (this.getProvider() !== 'vm') {
+    if (!this.isVM()) {
       try {
         const block = await web3.eth.getBlock('latest')
         // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
@@ -185,30 +173,6 @@ export class ExecutionContext {
     this.listenOnLastBlockId = setInterval(() => {
       this._updateChainContext()
     }, 15000)
-  }
-
-  // TODO: remove this when this function is moved
-
-  setProviderFromEndpoint (endpoint, value, cb) {
-    const oldProvider = web3.currentProvider
-    const context = value.context
-
-    web3.setProvider(endpoint)
-    web3.eth.net.isListening((err, isConnected) => {
-      if (!err && isConnected === true) {
-        this.executionContext = context
-        this._updateChainContext()
-        this.event.trigger('contextChanged', [context])
-        this.event.trigger('web3EndpointChanged')
-        cb()
-      } else if (isConnected === 'canceled') {
-        web3.setProvider(oldProvider)
-        cb()
-      } else {
-        web3.setProvider(oldProvider)
-        cb(`Not possible to connect to ${context}. Make sure the provider is running, a connection is open (via IPC or RPC) or that the provider plugin is properly configured.`)
-      }
-    })
   }
 
   txDetailsLink (network, hash) {

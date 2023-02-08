@@ -129,7 +129,7 @@ export abstract class AbstractProvider extends Plugin {
       }
       this.call('notification', 'alert', modalContent)
     }
-    await this.call('udapp', 'setEnvironmentMode', { context: 'vm', fork: 'london' })
+    await this.call('udapp', 'setEnvironmentMode', { context: 'vm-london'})
     setTimeout(_ => { this.blocked = false }, 1000) // we wait 1 second for letting remix to switch to vm        
     return
   }
