@@ -14,7 +14,8 @@
           "outputPath": "dist/libs/ghaction-helper",
           "main": "libs/ghaction-helper/src/index.ts",
           "tsConfig": "libs/ghaction-helper/tsconfig.lib.json",
-          "assets": []
+          "assets": [],
+          "updateBuildableProjectDepsInPackageJson": false
         }
       },
       "lint": {
