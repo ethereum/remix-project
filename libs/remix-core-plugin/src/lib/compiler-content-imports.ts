@@ -16,7 +16,6 @@ export type ResolvedImport = {
 }
 
 export class CompilerImports extends Plugin {
-  previouslyHandled: Record<string, ResolvedImport>
   urlResolver: any
   constructor () {
     super(profile)
@@ -45,7 +44,7 @@ export class CompilerImports extends Plugin {
         return {}
       }
     })
-    this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
+    this.on('filePanel', 'setWorkspace', () => this.urlResolver.clearCache())
   }
 
   async setToken () {
@@ -95,22 +94,12 @@ export class CompilerImports extends Plugin {
     if (!cb) cb = () => {}
 
     const self = this
-    if (force) delete this.previouslyHandled[url]
-    const imported = this.previouslyHandled[url]
-    if (imported) {
-      return cb(null, imported.content, imported.cleanUrl, imported.type, url)
-    }
 
     let resolved
     try {
       await this.setToken()
-      resolved = await this.urlResolver.resolve(url)
+      resolved = await this.urlResolver.resolve(url, [], force)
       const { content, cleanUrl, type } = resolved
-      self.previouslyHandled[url] = {
-        content,
-        cleanUrl,
-        type
-      }
       cb(null, content, cleanUrl, type, url)
     } catch (e) {
       return cb(new Error('not found ' + url))
