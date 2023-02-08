@@ -141,7 +141,6 @@ export class RemixURLResolver {
       if (this.getDependencies) {
         try {
           const { deps, yarnLock, packageLock } = await this.getDependencies()
-          console.log('deps', deps, yarnLock, packageLock)
           let matchLength = 0
           let pkg
           if (deps) {
