@@ -516,6 +516,7 @@ export function Workspace () {
                   toast={global.toast}
                   dispatchDeletePath={global.dispatchDeletePath}
                   dispatchRenamePath={global.dispatchRenamePath}
+                  dispatchDownloadPath={global.dispatchDownloadPath}
                   dispatchUploadFile={global.dispatchUploadFile}
                   dispatchCopyFile={global.dispatchCopyFile}
                   dispatchCopyFolder={global.dispatchCopyFolder}
@@ -555,6 +556,7 @@ export function Workspace () {
                   toast={global.toast}
                   dispatchDeletePath={global.dispatchDeletePath}
                   dispatchRenamePath={global.dispatchRenamePath}
+                  dispatchDownloadPath={global.dispatchDownloadPath}
                   dispatchUploadFile={global.dispatchUploadFile}
                   dispatchCopyFile={global.dispatchCopyFile}
                   dispatchCopyFolder={global.dispatchCopyFolder}
