@@ -16,8 +16,8 @@ export class InjectedProvider extends Plugin {
   }
 
   askPermission (throwIfNoInjectedProvider) {
-    if (typeof (window as any).ethereum !== "undefined" && typeof (window as any).request === "function") {
-      (window as any).request({ method: "eth_requestAccounts" })
+    if ((typeof (window as any).ethereum) !== "undefined" && (typeof (window as any).ethereum.request) === "function") {
+      (window as any).ethereum.request({ method: "eth_requestAccounts" })
     } else if (throwIfNoInjectedProvider) {
       throw new Error(noInjectedProviderMsg)
     }
