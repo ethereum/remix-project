@@ -27,10 +27,11 @@ import { StoragePlugin } from './app/plugins/storage'
 import { Layout } from './app/panels/layout'
 import { NotificationPlugin } from './app/plugins/notification'
 import { Blockchain } from './blockchain/blockchain.js'
+import { ExecutionContext } from './blockchain/execution-context'
 import { HardhatProvider } from './app/tabs/hardhat-provider'
 import { GanacheProvider } from './app/tabs/ganache-provider'
 import { FoundryProvider } from './app/tabs/foundry-provider'
-import { ExternalHttpProvider } from './app/tabs/external-http-provider'
+import { BasicHttpProvider } from './app/tabs/basic-http-provider'
 import { Injected0ptimismProvider } from './app/tabs/injected-optimism-provider'
 import { InjectedArbitrumOneProvider } from './app/tabs/injected-arbitrum-one-provider'
 import { FileDecorator } from './app/plugins/file-decorator'
@@ -176,7 +177,8 @@ class AppComponent {
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
 
-    const blockchain = new Blockchain(Registry.getInstance().get('config').api)
+    const executionContext = new ExecutionContext()
+    const blockchain = new Blockchain(Registry.getInstance().get('config').api, executionContext)
 
     // ----------------- compilation metadata generation service ---------
     const compilerMetadataGenerator = new CompilerMetadata()
@@ -196,7 +198,7 @@ class AppComponent {
     const hardhatProvider = new HardhatProvider(blockchain)
     const ganacheProvider = new GanacheProvider(blockchain)
     const foundryProvider = new FoundryProvider(blockchain)
-    const externalHttpProvider = new ExternalHttpProvider(blockchain)
+    const externalHttpProvider = new BasicHttpProvider(blockchain)
     const injected0ptimismProvider = new Injected0ptimismProvider(blockchain)
     const injectedArbitrumOneProvider = new InjectedArbitrumOneProvider(blockchain)
     // ----------------- convert offset to line/column service -----------
@@ -240,6 +242,7 @@ class AppComponent {
       this.gistHandler,
       configPlugin,
       blockchain,
+      executionContext,
       contentImport,
       this.themeModule,
       this.localeModule,
@@ -378,7 +381,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await this.appManager.activatePlugin(['home'])
     await this.appManager.activatePlugin(['settings', 'config'])
-    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'codeParser', 'codeFormatter', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
+    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'codeParser', 'codeFormatter', 'fileDecorator', 'terminal', 'executionContext', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
 

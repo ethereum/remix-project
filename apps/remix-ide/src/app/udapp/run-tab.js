@@ -102,7 +102,6 @@ export class RunTab extends ViewPlugin {
     const udapp = this // eslint-disable-line
 
     await this.call('blockchain', 'addProvider', {
-      name: 'Hardhat Provider',
       isInjected: false,
       provider: {
         async sendAsync (payload, callback) {
@@ -117,7 +116,6 @@ export class RunTab extends ViewPlugin {
     })
 
     await this.call('blockchain', 'addProvider', {
-      name: 'Ganache Provider',
       isInjected: false,
       provider: {
         async sendAsync (payload, callback) {
@@ -132,7 +130,6 @@ export class RunTab extends ViewPlugin {
     })
 
     await this.call('blockchain', 'addProvider', {
-      name: 'Foundry Provider',
       isInjected: false,
       provider: {
         async sendAsync (payload, callback) {
@@ -147,7 +144,6 @@ export class RunTab extends ViewPlugin {
     })
 
     await this.call('blockchain', 'addProvider', {
-      name: 'Wallet Connect',
       isInjected: false,
       provider: {
         async sendAsync (payload, callback) {
@@ -162,7 +158,6 @@ export class RunTab extends ViewPlugin {
     })
 
     await this.call('blockchain', 'addProvider', {
-      name: 'External Http Provider',
       provider: {
         async sendAsync (payload, callback) {
           try {
@@ -176,7 +171,6 @@ export class RunTab extends ViewPlugin {
     })
 
     await this.call('blockchain', 'addProvider', {
-      name: 'Optimism Provider',
       isInjected: true,
       provider: {
         async sendAsync (payload, callback) {
@@ -191,7 +185,6 @@ export class RunTab extends ViewPlugin {
     })
 
     await this.call('blockchain', 'addProvider', {
-      name: 'Arbitrum One Provider',
       isInjected: true,
       provider: {
         async sendAsync (payload, callback) {
@@ -204,6 +197,22 @@ export class RunTab extends ViewPlugin {
         }
       }
     })
+    /*
+    await this.call('blockchain', 'addProvider', {
+      name: 'Mainnet fork - Remix VM (London)',
+      isInjected: false,
+      provider: {
+        async sendAsync (payload, callback) {
+          try {
+            const result = await udapp.call('injected-arbitrum-one-provider', 'sendAsync', payload)
+            callback(null, result)
+          } catch (e) {
+            callback(e)
+          }
+        }
+      }
+    })
+    */
   }
 
   writeFile (fileName, content) {

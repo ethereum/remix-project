@@ -104,13 +104,15 @@ export class VMContext {
   web3vm: VmProxy
   logsManager: any // LogsManager 
   exeResults: Record<string, Transaction>
-  rawContext: string
+  nodeUrl: string
+  blockNumber: number | 'latest'
 
-  constructor (fork?: string, rawContext?: string) {
+  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest') {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
     this.currentFork = fork || 'london'
-    this.rawContext = rawContext
+    this.nodeUrl = nodeUrl
+    this.blockNumber = blockNumber || 'latest'
 
     this.blocks = {}
     this.latestBlockNumber = "0x0"
@@ -127,14 +129,15 @@ export class VMContext {
   async createVm (hardfork) {
     let stateManager: StateManager
     
-    if (this.rawContext && this.rawContext === 'vm-fork-main') {
-      console.log('set state manager')
-      const url = 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym'
-      const provider = new ethers.providers.StaticJsonRpcProvider(url)
-      const blockNumber = await provider.getBlockNumber()
+    if (this.nodeUrl && this.nodeUrl === 'vm-fork-main') {
+      let block = this.blockNumber
+      if (this.blockNumber === 'latest') {
+        const provider = new ethers.providers.StaticJsonRpcProvider(this.nodeUrl)
+        block = await provider.getBlockNumber()
+      }      
       stateManager = new EthersStateManager({
-        provider: url,
-        blockTag: BigInt(blockNumber)
+        provider: this.nodeUrl,
+        blockTag: BigInt(block)
       })
     } else
       stateManager = new StateManagerCommonStorageDump()

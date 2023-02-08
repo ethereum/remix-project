@@ -1,5 +1,4 @@
 import { Plugin } from '@remixproject/engine'
-import { AppModal, AlertModal, ModalTypes } from '@remix-ui/app'
 import { Blockchain } from '../../blockchain/blockchain'
 import { ethers } from 'ethers'
 
@@ -21,117 +20,29 @@ export type SuccessRequest = (data: JsonDataResult) => void
 
 export abstract class AbstractProvider extends Plugin {
   provider: ethers.providers.JsonRpcProvider
-  blocked: boolean
   blockchain: Blockchain
-  defaultUrl: string
-  connected: boolean
 
-  constructor (profile, blockchain, defaultUrl) {
+  constructor (profile, blockchain) {
     super(profile)
-    this.defaultUrl = defaultUrl
     this.provider = null
-    this.blocked = false // used to block any call when trying to recover after a failed connection.
-    this.connected = false
     this.blockchain = blockchain
   }
 
   abstract body(): JSX.Element
+  abstract instanciateProvider(value: string): any
+  abstract init()
+  abstract displayName()
 
   onDeactivation () {
     this.provider = null
-    this.blocked = false
-  }
+  }  
 
   sendAsync (data: JsonDataRequest): Promise<any> {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
-      if (this.blocked) return reject(new Error('provider unable to connect'))
-      // If provider is not set, allow to open modal only when provider is trying to connect
-      if (!this.provider) {
-        let value: string
-        try {
-          value = await ((): Promise<string> => {
-            return new Promise((resolve, reject) => {
-              const modalContent: AppModal = {
-                id: this.profile.name,
-                title: this.profile.displayName,
-                message: this.body(),
-                modalType: ModalTypes.prompt,
-                okLabel: 'OK',
-                cancelLabel: 'Cancel',
-                validationFn: (value) => {
-                  if (!value) return { valid: false, message: "value is empty" }
-                  if (value.startsWith('https://') || value.startsWith('http://')) {
-                    return { 
-                      valid: true, 
-                      message: ''
-                    }
-                  } else {
-                    return {
-                      valid: false, 
-                      message: 'the provided value should contain the protocol ( e.g starts with http:// or https:// )'
-                    }
-                  }
-                },
-                okFn: (value: string) => {
-                  setTimeout(() => resolve(value), 0)
-                },
-                cancelFn: () => {
-                  setTimeout(() => reject(new Error('Canceled')), 0)
-                },
-                hideFn: () => {
-                  setTimeout(() => reject(new Error('Hide')), 0)
-                },
-                defaultValue: this.defaultUrl
-              }
-              this.call('notification', 'modal', modalContent)
-            })
-          })()
-        } catch (e) {
-          // the modal has been canceled/hide
-          const result = data.method === 'net_listening' ? 'canceled' : []
-          resolve({ jsonrpc: '2.0', result: result, id: data.id })
-          this.switchAway(false)
-          return
-        }
-        this.provider = new ethers.providers.JsonRpcProvider(value)
-        try {
-          setTimeout(() => {
-            if (!this.connected) {
-              this.switchAway(true)
-              reject('Unable to connect')
-            }
-          }, 2000)
-          await this.provider.detectNetwork() // this throws if the network cannot be detected
-          this.connected = true
-        } catch (e) {
-          this.switchAway(true)
-          reject('Unable to connect')
-          return
-        }
-        this.sendAsyncInternal(data, resolve, reject)       
-      } else {
-        this.sendAsyncInternal(data, resolve, reject)
-      }
+      if (!this.provider) return reject(new Error('provider not set'))
+      this.sendAsyncInternal(data, resolve, reject)
     })
-  }
-
-  private async switchAway (showError) {
-    if (!this.provider) return
-    this.provider = null
-    this.blocked = true
-    this.connected = false
-    if (showError) {
-      const modalContent: AlertModal = {
-        id: this.profile.name,
-        title: this.profile.displayName,
-        message: `Error while connecting to the provider, provider not connected`,
-      }
-      this.call('notification', 'alert', modalContent)
-    }
-    await this.call('udapp', 'setEnvironmentMode', { context: 'vm', fork: 'london' })
-    setTimeout(_ => { this.blocked = false }, 1000) // we wait 1 second for letting remix to switch to vm        
-    return
   }
 
   private async sendAsyncInternal (data: JsonDataRequest, resolve: SuccessRequest, reject: RejectRequest): Promise<void> {
@@ -144,9 +55,6 @@ export abstract class AbstractProvider extends Plugin {
         const result = await this.provider.send(data.method, data.params)
         resolve({ jsonrpc: '2.0', result, id: data.id })
       } catch (error) {
-        if (error && error.message && error.message.includes('net_version') && error.message.includes('SERVER_ERROR')) {
-          this.switchAway(true)
-        }
         reject(error)
       }
     } else {

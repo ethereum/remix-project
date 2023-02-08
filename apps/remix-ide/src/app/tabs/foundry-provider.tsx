@@ -1,20 +1,23 @@
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
-import { AbstractProvider } from './abstract-provider'
+import { ExternalHttpProvider } from './external-http-provider'
+import { ethers } from 'ethers'
 
 const profile = {
   name: 'foundry-provider',
   displayName: 'Foundry Provider',
   kind: 'provider',
   description: 'Foundry Anvil provider',
-  methods: ['sendAsync'],
+  methods: ['sendAsync', 'displayName'],
   version: packageJson.version
 }
 
-export class FoundryProvider extends AbstractProvider {
+export class FoundryProvider extends ExternalHttpProvider {
   constructor (blockchain) {
-    super(profile, blockchain, 'http://127.0.0.1:8545')
+    super(profile, blockchain)
   }
+
+  displayName () { return profile.displayName }
 
   body (): JSX.Element {
     return (
@@ -27,5 +30,9 @@ export class FoundryProvider extends AbstractProvider {
         <div>Anvil JSON-RPC Endpoint:</div>
       </div>
     )
+  }
+
+  instanciateProvider (value): any {
+    return new ethers.providers.JsonRpcProvider(value)
   }
 }

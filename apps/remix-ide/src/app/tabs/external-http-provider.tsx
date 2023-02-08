@@ -1,19 +1,62 @@
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
+import { AppModal, AlertModal, ModalTypes } from '@remix-ui/app'
 import { AbstractProvider } from './abstract-provider'
-
-const profile = {
-  name: 'basic-http-provider',
-  displayName: 'External Http Provider',
-  kind: 'provider',
-  description: 'External Http Provider',
-  methods: ['sendAsync'],
-  version: packageJson.version
-}
+import { ethers } from 'ethers'
 
 export class ExternalHttpProvider extends AbstractProvider {
-  constructor (blockchain) {
-    super(profile, blockchain, 'http://127.0.0.1:8545')
+  constructor (profile, blockchain) {
+    super(profile, blockchain)
+  }
+  
+  displayName () { return '' }
+
+  instanciateProvider (value): any {
+    return new ethers.providers.JsonRpcProvider(value)
+  }
+
+  async init() {
+    let value = await ((): Promise<string> => {
+      return new Promise((resolve, reject) => {
+        const modalContent: AppModal = {
+          id: this.profile.name,
+          title: this.profile.displayName,
+          message: this.body(),
+          modalType: ModalTypes.prompt,
+          okLabel: 'OK',
+          cancelLabel: 'Cancel',
+          validationFn: (value) => {
+            if (!value) return { valid: false, message: "value is empty" }
+            if (value.startsWith('https://') || value.startsWith('http://')) {
+              return { 
+                valid: true, 
+                message: ''
+              }
+            } else {
+              return {
+                valid: false, 
+                message: 'the provided value should contain the protocol ( e.g starts with http:// or https:// )'
+              }
+            }
+          },
+          okFn: (value: string) => {
+            setTimeout(() => resolve(value), 0)
+          },
+          cancelFn: () => {
+            setTimeout(() => reject(new Error('Canceled')), 0)
+          },
+          hideFn: () => {
+            setTimeout(() => reject(new Error('Hide')), 0)
+          },
+          defaultValue: 'http://127.0.0.1:8545'
+        }
+        this.call('notification', 'modal', modalContent)
+      })
+    })()
+    if (value) {
+      this.provider = this.instanciateProvider(value)
+    } else
+      throw new Error('value cannot be empty')
   }
 
   body (): JSX.Element {
@@ -37,5 +80,5 @@ export class ExternalHttpProvider extends AbstractProvider {
         </div>
       </>
     )
-  }
+  } 
 }

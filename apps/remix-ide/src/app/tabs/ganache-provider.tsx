@@ -1,24 +1,23 @@
 import * as packageJson from '../../../../../package.json'
-import { Plugin } from '@remixproject/engine'
-import { AppModal, AlertModal, ModalTypes } from '@remix-ui/app'
 import React from 'react' // eslint-disable-line
-import { Blockchain } from '../../blockchain/blockchain'
 import { ethers } from 'ethers'
-import { AbstractProvider } from './abstract-provider'
+import { ExternalHttpProvider } from './external-http-provider'
 
 const profile = {
   name: 'ganache-provider',
   displayName: 'Ganache Provider',
   kind: 'provider',
   description: 'Truffle Ganache provider',
-  methods: ['sendAsync'],
+  methods: ['sendAsync', 'displayName'],
   version: packageJson.version
 }
 
-export class GanacheProvider extends AbstractProvider {
+export class GanacheProvider extends ExternalHttpProvider {
   constructor (blockchain) {
-    super(profile, blockchain, 'http://127.0.0.1:8545')
+    super(profile, blockchain)
   }
+
+  displayName () { return profile.displayName }
 
   body (): JSX.Element {
     return (
@@ -31,5 +30,9 @@ export class GanacheProvider extends AbstractProvider {
         <div>Ganache JSON-RPC Endpoint:</div>
       </div>
     )
+  }
+
+  instanciateProvider (value): any {
+    return new ethers.providers.JsonRpcProvider(value)
   }
 }

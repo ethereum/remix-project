@@ -5,7 +5,6 @@ import { Plugin } from '@remixproject/engine'
 import { toBuffer, addHexPrefix } from 'ethereumjs-util'
 import { EventEmitter } from 'events'
 import { format } from 'util'
-import { ExecutionContext } from './execution-context'
 import VMProvider from './providers/vm.js'
 import InjectedProvider from './providers/injected.js'
 import NodeProvider from './providers/node.js'
@@ -28,10 +27,10 @@ const profile = {
 
 export class Blockchain extends Plugin {
   // NOTE: the config object will need to be refactored out in remix-lib
-  constructor (config) {
+  constructor (config, executionContext) {
     super(profile)
     this.event = new EventManager()
-    this.executionContext = new ExecutionContext()
+    this.executionContext = executionContext
 
     this.events = new EventEmitter()
     this.config = config

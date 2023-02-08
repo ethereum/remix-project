@@ -1,8 +1,10 @@
 /* global ethereum */
 'use strict'
 import Web3 from 'web3'
+import { Plugin } from '@remixproject/engine'
 import { execution } from '@remix-project/remix-lib'
 import EventManager from '../lib/events'
+const packageJson = require('../../../../package.json')
 const _paq = window._paq = window._paq || []
 
 let web3
@@ -16,11 +18,20 @@ if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
 
 const noInjectedProviderMsg = 'No injected provider found. Make sure your provider (e.g. MetaMask) is active and running (when recently activated you may have to reload the page).'
 
+const profile = {
+  name: 'executionContext',
+  displayName: 'executionContext',
+  description: 'executionContext - Logic',
+  methods: [],
+  version: packageJson.version
+}
+
 /*
   trigger contextChanged, web3EndpointChanged
 */
-export class ExecutionContext {
+export class ExecutionContext extends Plugin {
   constructor () {
+    super(profile)
     this.event = new EventManager()
     this.executionContext = 'vm'
     this.lastBlock = null
@@ -120,6 +131,10 @@ export class ExecutionContext {
     }
   }
 
+  getCustomNetWorks () {
+    return this.customNetWorks[this.executionContext]
+  }
+
   removeProvider (name) {
     if (name && this.customNetWorks[name]) {
       if (this.executionContext === name) this.setContext('vm', null, null, null)
@@ -182,8 +197,10 @@ export class ExecutionContext {
 
     if (this.customNetWorks[context]) {
       var network = this.customNetWorks[context]
+      await this.call(network.name, 'init')
+      const displayName = await this.call(network.name, 'displayName')
       if (!this.customNetWorks[context].isInjected) {
-        this.setProviderFromEndpoint(network.provider, { context: network.name }, (error) => {
+        this.setProviderFromEndpoint(network.provider, { context: displayName }, (error) => {
           if (error) infoCb(error)
           cb()
         })

@@ -5,6 +5,7 @@ class VMProvider {
   constructor (executionContext) {
     this.executionContext = executionContext
     this.worker = null
+    this.provider = null
   }
 
   getAccounts (cb) {
@@ -20,7 +21,8 @@ class VMProvider {
     if (this.worker) this.worker.terminate()
     this.accounts = {}
     this.worker = new Worker(new URL('./worker-vm', import.meta.url))
-    this.worker.postMessage({ cmd: 'init', fork: this.executionContext.getCurrentFork(), rawContext: this.executionContext.getCurrentRawContext() })
+    const customNetWork = this.executionContext.getCustomNetWorks()
+    this.worker.postMessage({ cmd: 'init', fork: this.executionContext.getCurrentFork(), nodeUrl: customNetWork?.nodeUrl(), blockNumber: customNetWork?.blockNumber() })
     
     let incr = 0
     const stamps = {}
@@ -29,7 +31,7 @@ class VMProvider {
         stamps[msg.data.stamp](msg.data.error, msg.data.result)
       }
     })
-    const provider = {
+    this.provider = {
       sendAsync: (query, callback) => {
         const stamp = Date.now() + incr
         incr++
@@ -37,7 +39,7 @@ class VMProvider {
         this.worker.postMessage({ cmd: 'sendAsync', query, stamp })
       }
     }
-    this.web3 = new Web3(provider)
+    this.web3 = new Web3(this.provider)
     extend(this.web3)
     this.accounts = {}
     this.executionContext.setWeb3('vm', this.web3)

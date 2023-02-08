@@ -1,18 +1,18 @@
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
-import { ethers } from 'ethers'
 import { ExternalHttpProvider } from './external-http-provider'
+import { ethers } from 'ethers'
 
 const profile = {
-  name: 'hardhat-provider',
-  displayName: 'Hardhat Provider',
+  name: 'basic-http-provider',
+  displayName: 'External Http Provider',
   kind: 'provider',
-  description: 'Hardhat provider',
+  description: 'External Http Provider',
   methods: ['sendAsync', 'displayName'],
   version: packageJson.version
 }
 
-export class HardhatProvider extends ExternalHttpProvider {
+export class BasicHttpProvider extends ExternalHttpProvider {
   constructor (blockchain) {
     super(profile, blockchain)
   }
@@ -21,12 +21,13 @@ export class HardhatProvider extends ExternalHttpProvider {
 
   body (): JSX.Element {
     return (
-      <div> Note: To run Hardhat network node on your system, go to hardhat project folder and run command:
-        <div className="p-1 pl-3"><b>npx hardhat node</b></div>       
+      <div> Note: To run Anvil on your system, run:
+        <div className="p-1 pl-3"><b>curl -L https://foundry.paradigm.xyz | bash</b></div>
+        <div className="p-1 pl-3"><b>anvil</b></div>
         <div className="pt-2 pb-4">
-          For more info, visit: <a href="https://hardhat.org/getting-started/#connecting-a-wallet-or-dapp-to-hardhat-network" target="_blank">Hardhat Documentation</a>
+          For more info, visit: <a href="https://github.com/foundry-rs/foundry" target="_blank">Foundry Documentation</a>
         </div>
-        <div>Hardhat JSON-RPC Endpoint:</div>
+        <div>Anvil JSON-RPC Endpoint:</div>
       </div>
     )
   }
