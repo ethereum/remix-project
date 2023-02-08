@@ -135,48 +135,52 @@ export class RemixURLResolver {
   * Handle an import statement based on NPM
   * @param url The url of the NPM import statement
   */
-  async handleNpmImport (url: string): Promise<HandlerResponse> {
+  async handleNpmImport(url: string): Promise<HandlerResponse> {
     // eslint-disable-next-line no-useless-catch
     try {
       if (this.getDependencies) {
         try {
-          const { deps, yarnLock, packageLock }  = await this.getDependencies()
+          const { deps, yarnLock, packageLock } = await this.getDependencies()
+          console.log('deps', deps, yarnLock, packageLock)
           let matchLength = 0
           let pkg
-          Object.keys(deps).map((dep) => {
-            const reg = new RegExp(dep, 'g')
-            const match = url.match(reg)
-            if (match && match.length > 0 && matchLength < match[0].length) {
-              matchLength = match[0].length
-              pkg = dep
-            }
-          })
-          if (pkg) {
-            let version
-            if (yarnLock) {
-              // yarn.lock
-              const regex = new RegExp(`"${pkg}@(.*)"`, 'g')
-              const yarnVersion = regex.exec(yarnLock)
-              if (yarnVersion && yarnVersion.length > 1) {
-                version = yarnVersion[1]
+          if (deps) {
+            Object.keys(deps).map((dep) => {
+              const reg = new RegExp(dep, 'g')
+              const match = url.match(reg)
+              if (match && match.length > 0 && matchLength < match[0].length) {
+                matchLength = match[0].length
+                pkg = dep
               }
+            })
+            if (pkg) {
+              let version
+              if (yarnLock) {
+                // yarn.lock
+                const regex = new RegExp(`"${pkg}@(.*)"`, 'g')
+                const yarnVersion = regex.exec(yarnLock)
+                if (yarnVersion && yarnVersion.length > 1) {
+                  version = yarnVersion[1]
+                }
+              }
+              if (!version && packageLock['dependencies'] && packageLock['dependencies'][pkg] && packageLock['dependencies'][pkg]['version']) {
+                // package-lock.json
+                version = packageLock['dependencies'][pkg]['version']
+              }
+              if (!version) {
+                // package.json
+                version = deps[pkg]
+              }
+              if (version) url = url.replace(pkg, `${pkg}@${version}`)
             }
-            if (!version && packageLock['dependencies'] && packageLock['dependencies'][pkg] && packageLock['dependencies'][pkg]['version']) {
-              // package-lock.json
-              version = packageLock['dependencies'][pkg]['version']
-            }
-            if (!version) {
-              // package.json
-              version = deps[pkg]
-            }
-            if (version) url = url.replace(pkg, `${pkg}@${version}`)
-          }          
+          }
         } catch (e) {
           console.log(e)
         }
       }
       const req = 'https://unpkg.com/' + url
       const response: AxiosResponse = await axios.get(req, { transformResponse: [] })
+      console.log('handleNpmImport', url, response.data, req)
       return { content: response.data, cleanUrl: url }
     } catch (e) {
       throw e
