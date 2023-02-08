@@ -8,7 +8,8 @@
     "dist/libs/remix-solidity",
     "dist/libs/remix-tests",
     "dist/libs/remix-url-resolver",
-    "dist/libs/remix-ws-templates"
+    "dist/libs/remix-ws-templates",
+    "dist/libs/ghaction-helper"
   ],
   "version": "independent",
   "command": {
