@@ -14,8 +14,6 @@ if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
 }
 
-const noInjectedProviderMsg = 'No injected provider found. Make sure your provider (e.g. MetaMask) is active and running (when recently activated you may have to reload the page).'
-
 /*
   trigger contextChanged, web3EndpointChanged
 */
@@ -38,19 +36,8 @@ export class ExecutionContext {
   init (config) {
     if (config.get('settings/always-use-vm')) {
       this.executionContext = 'vm'
-    } else {
-      this.executionContext = injectedProvider ? 'injected' : 'vm'
-      if (this.executionContext === 'injected') this.askPermission(false)
     }
-  }
-
-  askPermission (throwIfNoInjectedProvider) {
-    if (typeof ethereum !== "undefined" && typeof ethereum.request === "function") {
-      ethereum.request({ method: "eth_requestAccounts" })
-    } else if (throwIfNoInjectedProvider) {
-      throw new Error(noInjectedProviderMsg)
-    }
-  }
+  }  
 
   getProvider () {
     return this.executionContext
@@ -83,12 +70,6 @@ export class ExecutionContext {
     } else {
       if (!web3.currentProvider) {
         return callback('No provider set')
-      }
-      if (web3.currentProvider.isConnected && !web3.currentProvider.isConnected()) {
-        if (web3.currentProvider.isMetaMask) {
-          this.askPermission(false)
-        }
-        return callback('Provider not connected')
       }
       web3.eth.net.getId((err, id) => {
         let name = null
@@ -152,28 +133,6 @@ export class ExecutionContext {
       return cb()
     }
 
-    if (context === 'injected') {
-      if (injectedProvider === undefined) {
-        infoCb(noInjectedProviderMsg)
-        return cb()
-      } else {
-        if (injectedProvider && injectedProvider._metamask && injectedProvider._metamask.isUnlocked) {
-          if (!await injectedProvider._metamask.isUnlocked()) infoCb('Please make sure the injected provider is unlocked (e.g Metamask).')
-        }
-        try {
-          this.askPermission(true)
-        } catch (e) {
-          infoCb(e.message)
-          return cb()
-        }
-        this.executionContext = context
-        web3.setProvider(injectedProvider)
-        await this._updateChainContext()
-        this.event.trigger('contextChanged', ['injected'])
-        return cb()
-      }
-    }
-
     if (this.customNetWorks[context]) {
       var network = this.customNetWorks[context]
       if (!this.customNetWorks[context].isInjected) {
@@ -182,13 +141,7 @@ export class ExecutionContext {
           cb()
         })
       } else {
-        // injected
-        try {
-          this.askPermission(true)
-        } catch (e) {
-          infoCb(e.message)
-          return cb()
-        }        
+        // injected        
         this.executionContext = context
         web3.setProvider(network.provider)
         await this._updateChainContext()

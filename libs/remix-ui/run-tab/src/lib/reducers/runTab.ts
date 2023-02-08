@@ -133,15 +133,6 @@ export const runTabInitialState: RunTabState = {
       value: 'vm-berlin',
       fork: 'berlin',
       content: 'Remix VM (Berlin)'
-    }, {
-      id: 'injected-mode',
-      dataId: 'settingsInjectedMode',
-      title: 'Execution environment has been provided by Metamask or similar provider.',
-      value: 'injected',
-      content: `Injected Provider${(window && window.ethereum && !(window.ethereum.providers && !window.ethereum.selectedProvider)) ?
-        window.ethereum.isCoinbaseWallet || window.ethereum.selectedProvider?.isCoinbaseWallet ? ' - Coinbase' :
-        window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet ? ' - Brave' :
-        window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask ? ' - MetaMask' : '' : ''}`
     }],
     isRequesting: false,
     isSuccessful: false,
