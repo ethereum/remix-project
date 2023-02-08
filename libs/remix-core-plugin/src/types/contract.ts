@@ -9,6 +9,7 @@ export interface FuncABI {
 
 export interface ContractData {
     name: string,
+    contractName?: string,
     contract: any,
     compiler: any,
     abi: FuncABI[],

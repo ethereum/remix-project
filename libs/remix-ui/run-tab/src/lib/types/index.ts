@@ -2,6 +2,7 @@ import { Ref } from 'react'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { ContractData, FuncABI } from '@remix-project/core-plugin'
 import { RunTab } from './run-tab'
+import { SolcInput, SolcOutput } from '@openzeppelin/upgrades-core'
 export interface RunTabProps {
   plugin: RunTab
 }
@@ -263,6 +264,7 @@ export interface ContractDropdownProps {
   setSelectedContract: (contractName: string) => void
   remixdActivated: boolean,
   isValidProxyAddress?: (address: string) => Promise<boolean>,
+  isValidProxyUpgrade?: (proxyAddress: string, contractName: string, solcInput: SolcInput, solcOuput: SolcOutput) => void,
   proxy: { deployments: { address: string, date: Date }[] }
 }
 
@@ -359,7 +361,8 @@ export interface ContractGUIProps {
   deployOption?: { title: DeployMode, active: boolean }[],
   initializerOptions?: DeployOption,
   proxy?: { deployments: { address: string, date: Date }[] },
-  isValidProxyAddress?: (address: string) => Promise<boolean>
+  isValidProxyAddress?: (address: string) => Promise<boolean>,
+  isValidProxyUpgrade?: (proxyAddress: string) => void
 }
 export interface MainnetProps {
   network: Network,
