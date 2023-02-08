@@ -3,13 +3,14 @@
 import { hash } from '@remix-project/remix-lib'
 import { bufferToHex } from '@ethereumjs/util'
 import { decode } from 'rlp'
+import { ethers } from 'ethers'
 import { execution } from '@remix-project/remix-lib'
 const { LogsManager } = execution
 import { VmProxy } from './VmProxy'
 import { VM } from '@ethereumjs/vm'
 import { Common } from '@ethereumjs/common'
 import { Trie } from '@ethereumjs/trie'
-import { DefaultStateManager } from '@ethereumjs/statemanager'
+import { DefaultStateManager, StateManager, EthersStateManager } from '@ethereumjs/statemanager'
 import { StorageDump } from '@ethereumjs/statemanager/dist/interface'
 import { EVM } from '@ethereumjs/evm'
 import { EEI } from '@ethereumjs/vm'
@@ -86,7 +87,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
 export type CurrentVm = {
   vm: VM,
   web3vm: VmProxy,
-  stateManager: StateManagerCommonStorageDump,
+  stateManager: StateManager,
   common: Common
 }
 
@@ -105,12 +106,15 @@ export class VMContext {
   web3vm: VmProxy
   logsManager: any // LogsManager 
   exeResults: Record<string, Transaction>
+  nodeUrl: string
+  blockNumber: number | 'latest'
 
-  constructor (fork?) {
+  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest') {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
     this.currentFork = fork || 'london'
-    
+    this.nodeUrl = nodeUrl
+    this.blockNumber = blockNumber
     this.blocks = {}
     this.latestBlockNumber = "0x0"
     this.blockByTxHash = {}
@@ -124,7 +128,21 @@ export class VMContext {
   }
 
   async createVm (hardfork) {
-    const stateManager = new StateManagerCommonStorageDump()
+    let stateManager: StateManager
+
+    if (this.nodeUrl) {
+      let block = this.blockNumber
+      if (this.blockNumber === 'latest') {
+        const provider = new ethers.providers.StaticJsonRpcProvider(this.nodeUrl)
+        block = await provider.getBlockNumber()
+      }      
+      stateManager = new EthersStateManager({
+        provider: this.nodeUrl,
+        blockTag: BigInt(block)
+      })
+    } else
+      stateManager = new StateManagerCommonStorageDump()
+
     const common = new Common({ chain: 'mainnet', hardfork })
     const blockchain = new (Blockchain as any)({ common })
     const eei = new EEI(stateManager, common, blockchain)

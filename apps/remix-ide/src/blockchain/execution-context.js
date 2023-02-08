@@ -43,6 +43,10 @@ export class ExecutionContext {
     return this.executionContext
   }
 
+  getProviderObject () {
+    return this.customNetWorks[this.executionContext]
+  }
+
   getSelectedAddress () {
     return injectedProvider ? injectedProvider.selectedAddress : null
   }
