@@ -44,6 +44,10 @@ export class CompilerImports extends Plugin {
         return {}
       }
     })
+    
+  }
+
+  onActivation(): void {
     this.on('filePanel', 'setWorkspace', () => this.urlResolver.clearCache())
   }
 
