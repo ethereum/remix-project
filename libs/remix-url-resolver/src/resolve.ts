@@ -42,6 +42,10 @@ export class RemixURLResolver {
     this.protocol = protocol
   }
 
+  clearCache () {
+    this.previouslyHandled = {}
+  }
+
   /**
   * Handle an import statement based on github
   * @param root The root of the github import statement
@@ -137,29 +141,36 @@ export class RemixURLResolver {
       if (this.getDependencies) {
         try {
           const { deps, yarnLock, packageLock }  = await this.getDependencies()
-          for (const pkg of Object.keys(deps)) {
-            if (url.startsWith(pkg)) {
-              let version
-              if (yarnLock) {
-                // yarn.lock
-                const regex = new RegExp(`"${pkg}@(.*)"`, 'g')
-                const yarnVersion = regex.exec(yarnLock)
-                if (yarnVersion && yarnVersion.length > 1) {
-                  version = yarnVersion[1]
-                }
-              }
-              if (!version && packageLock['dependencies'] && packageLock['dependencies'][pkg] && packageLock['dependencies'][pkg]['version']) {
-                // package-lock.json
-                version = packageLock['dependencies'][pkg]['version']
-              }
-              if (!version) {
-                // package.json
-                version = deps[pkg]
-              }
-              if (version) url = url.replace(pkg, `${pkg}@${version}`)
-              break
+          let matchLength = 0
+          let pkg
+          Object.keys(deps).map((dep) => {
+            const reg = new RegExp(dep, 'g')
+            const match = url.match(reg)
+            if (match && match.length > 0 && matchLength < match[0].length) {
+              matchLength = match[0].length
+              pkg = dep
             }
-          }
+          })
+          if (pkg) {
+            let version
+            if (yarnLock) {
+              // yarn.lock
+              const regex = new RegExp(`"${pkg}@(.*)"`, 'g')
+              const yarnVersion = regex.exec(yarnLock)
+              if (yarnVersion && yarnVersion.length > 1) {
+                version = yarnVersion[1]
+              }
+            }
+            if (!version && packageLock['dependencies'] && packageLock['dependencies'][pkg] && packageLock['dependencies'][pkg]['version']) {
+              // package-lock.json
+              version = packageLock['dependencies'][pkg]['version']
+            }
+            if (!version) {
+              // package.json
+              version = deps[pkg]
+            }
+            if (version) url = url.replace(pkg, `${pkg}@${version}`)
+          }          
         } catch (e) {
           console.log(e)
         }
@@ -207,9 +218,9 @@ export class RemixURLResolver {
     ]
   }
 
-  public async resolve (filePath: string, customHandlers?: Handler[]): Promise<Imported> {
+  public async resolve (filePath: string, customHandlers?: Handler[], force?: boolean): Promise<Imported> {
     let imported: Imported = this.previouslyHandled[filePath]
-    if (imported) {
+    if (!force && imported) {
       return imported
     }
     const builtinHandlers: Handler[] = this.getHandlers()
