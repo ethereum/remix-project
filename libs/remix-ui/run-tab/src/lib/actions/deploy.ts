@@ -1,4 +1,4 @@
-import { ContractData, FuncABI, NetworkDeploymentFile } from "@remix-project/core-plugin"
+import { ContractData, FuncABI, NetworkDeploymentFile, SolcBuildFile } from "@remix-project/core-plugin"
 import { RunTab } from "../types/run-tab"
 import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
@@ -351,7 +351,9 @@ export const getNetworkProxyAddresses = async (plugin: RunTab, dispatch: React.D
     const deployments = []
 
     for (const proxyAddress in Object.keys(parsedNetworkFile.deployments)) {
-      if (parsedNetworkFile.deployments[proxyAddress].solcInput && parsedNetworkFile.deployments[proxyAddress].solcOutput) deployments.push({ address: proxyAddress, date: parsedNetworkFile.deployments[proxyAddress].date })
+      const solcBuildExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
+
+      if (solcBuildExists) deployments.push({ address: proxyAddress, date: parsedNetworkFile.deployments[proxyAddress].date })
     }
     dispatch(fetchProxyDeploymentsSuccess(deployments))
   } else {
@@ -369,19 +371,21 @@ export const isValidContractUpgrade = async (plugin: RunTab, dispatch: React.Dis
     const networkFile: string = await plugin.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
     const parsedNetworkFile: NetworkDeploymentFile = JSON.parse(networkFile)
 
-      if (parsedNetworkFile.deployments[proxyAddress] && parsedNetworkFile.deployments[proxyAddress].solcInput) {
-        try {
-          const oldImpl = new UpgradeableContract(parsedNetworkFile.deployments[proxyAddress].contractName, parsedNetworkFile.deployments[proxyAddress].solcInput, parsedNetworkFile.deployments[proxyAddress].solcOutput, { kind: 'uups' })
+      if (parsedNetworkFile.deployments[proxyAddress]) {
+        const solcBuildExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
+        
+        if (solcBuildExists) {
+          const solcFile: string = await plugin.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
+          const parsedSolcFile: SolcBuildFile = JSON.parse(solcFile)
+          const oldImpl = new UpgradeableContract(parsedNetworkFile.deployments[proxyAddress].contractName, parsedSolcFile.solcInput, parsedSolcFile.solcOutput, { kind: 'uups' })
           const newImpl = new UpgradeableContract(newContractName, solcInput, solcOutput, { kind: 'uups' })
           const report = oldImpl.getStorageUpgradeReport(newImpl, { kind: 'uups' })
 
-
           console.log('report: ', report)
-        } catch (e) {
-          console.log('e: ', e)
+          return report
+        } else {
           return { success: false, error: 'Previous contract implementation not available for upgrade comparison.' }
         }
-        
       } else {
         return { success: false, error: 'Previous contract implementation not available for upgrade comparison.' }
       }
