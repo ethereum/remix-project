@@ -242,7 +242,10 @@ export class Blockchain extends Plugin {
       if (hasPreviousDeploys) {
         const deployments = await this.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`)
         const parsedDeployments = JSON.parse(deployments)
+        const oldImplementationAddress = parsedDeployments.deployments[proxyAddress].implementationAddress
+        const hasPreviousBuild = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkName}/solc-${oldImplementationAddress}.json`)
 
+        if (hasPreviousBuild) await this.call('fileManager', 'remove', `.deploys/upgradeable-contracts/${networkName}/solc-${oldImplementationAddress}.json`)
         parsedDeployments.deployments[proxyAddress] = {
           date: new Date().toISOString(),
           contractName: contractName,
@@ -251,8 +254,16 @@ export class Blockchain extends Plugin {
           solcOutput: contractObject.compiler.data,
           solcInput: contractObject.compiler.source
         }
+        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/solc-${implementationAddress}.json`, JSON.stringify({
+          solcInput: contractObject.compiler.source,
+          solcOutput: contractObject.compiler.data
+        }, null, 2))
         await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`, JSON.stringify(parsedDeployments, null, 2))
       } else {
+        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/solc-${implementationAddress}.json`, JSON.stringify({
+          solcInput: contractObject.compiler.source,
+          solcOutput: contractObject.compiler.data
+        }, null, 2))
         await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`, JSON.stringify({
           id: networkInfo.id,
           network: networkInfo.name,
@@ -261,9 +272,7 @@ export class Blockchain extends Plugin {
               date: new Date().toISOString(),
               contractName: contractName,
               fork: networkInfo.currentFork,
-              implementationAddress: implementationAddress,
-              solcInput: contractObject.compiler.source,
-              solcOutput: contractObject.compiler.data
+              implementationAddress: implementationAddress
             }
           }
         }, null, 2))

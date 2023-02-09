@@ -1,3 +1,4 @@
+import { SolcInput, SolcOutput } from "@openzeppelin/upgrades-core"
 export interface FuncABI {
     name: string,
     type: string,
@@ -185,14 +186,6 @@ export interface ContractSources {
     }
   }
 
-  export interface ContractSourcesContent {
-    sources: {
-      [source in string]: {
-        content?: string
-      }
-    }
-  }
-
   export interface NetworkDeploymentFile {
         id: string,
         network: string,
@@ -201,9 +194,12 @@ export interface ContractSources {
                 date: Date,
                 contractName: string,
                 fork: string,
-                implementationAddress: string,
-                solcInput: ContractSourcesContent,
-                solcOutput: ContractSources
+                implementationAddress: string
             }
         }[]
+  }
+
+  export interface SolcBuildFile {
+    solcInput: SolcInput,
+    solcOutput: SolcOutput
   }
