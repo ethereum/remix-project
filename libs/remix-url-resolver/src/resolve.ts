@@ -162,7 +162,7 @@ export class RemixURLResolver {
                   version = yarnVersion[1]
                 }
               }
-              if (!version && packageLock['dependencies'] && packageLock['dependencies'][pkg] && packageLock['dependencies'][pkg]['version']) {
+              if (!version && packageLock && packageLock['dependencies'] && packageLock['dependencies'][pkg] && packageLock['dependencies'][pkg]['version']) {
                 // package-lock.json
                 version = packageLock['dependencies'][pkg]['version']
               }
@@ -179,7 +179,7 @@ export class RemixURLResolver {
       }
       const req = 'https://unpkg.com/' + url
       const response: AxiosResponse = await axios.get(req, { transformResponse: [] })
-      console.log('handleNpmImport', url, response.data, req)
+      console.log('handleNpmImport', req)
       return { content: response.data, cleanUrl: url }
     } catch (e) {
       throw e
