@@ -111,14 +111,17 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
                   <div className="position-absolute bg-transparent rounded p-2" id="buttons"
                     style={{ zIndex: 3,  top: '10', right: '2em' }}
                   >
-                    <button className="btn btn-outline-success btn-sm rounded-circle mr-1" onClick={() => zoomIn()}>
-                      <i className="fa fa-plus"></i>
+                    <button className="btn btn-outline-info btn-sm rounded-circle mr-1" onClick={() => resetTransform()}>
+                      <i className="far fa-arrow-to-bottom"></i>
                     </button>
-                    <button className="btn btn-outline-warning btn-sm rounded-circle mr-1" onClick={() => zoomOut()}>
-                      <i className="fa fa-minus"></i>
+                    <button className="btn btn-outline-info btn-sm rounded-circle mr-1" onClick={() => zoomIn()}>
+                      <i className="far fa-plus"></i>
                     </button>
-                    <button className="btn btn-outline-danger btn-sm rounded-circle mr-1" onClick={() => resetTransform()}>
-                      <i className="fa fa-arrow-circle-left"></i>
+                    <button className="btn btn-outline-info btn-sm rounded-circle mr-1" onClick={() => zoomOut()}>
+                      <i className="far fa-minus"></i>
+                    </button>
+                    <button className="btn btn-outline-info btn-sm rounded-circle mr-1" onClick={() => resetTransform()}>
+                      <i className="far fa-arrow-circle-left"></i>
                     </button>
                   </div>
                   <TransformComponent contentStyle={{ zIndex: 2 }}>

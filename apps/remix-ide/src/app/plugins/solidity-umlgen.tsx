@@ -37,6 +37,11 @@ const themeCollection = [
 
 type ThemeQualityType = { name: string, quality: 'light' | 'dark', url: string }
 
+/**
+ * add context menu which will offer download as pdf and download png.
+ * add menu under the first download button to download
+ */
+
 export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   element: HTMLDivElement
   currentFile: string
