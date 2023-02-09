@@ -155,7 +155,7 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
       </ModalDialog>
       <Toaster message={state.toasterMsg} />
       <div className="justify-content-start mt-1 p-2 d-flex flex-column" id="hTFileSection">
-        <label className="h5"><FormattedMessage id='home.files' /></label>
+        <label style={{fontSize: "1.2rem"}}><FormattedMessage id='home.files' /></label>
         <div className="dflex">
           <button className="btn btn-primary p-2 mr-2 border my-1" data-id="homeTabNewFile" style={{width: 'fit-content'}} onClick={() => createNewFile()}><FormattedMessage id='home.newFile' /></button>
           <label className="btn p-2 mr-2 border my-1" style={{width: 'fit-content', cursor: 'pointer'}} htmlFor="openFileInput"><FormattedMessage id='home.openFile' /></label>
