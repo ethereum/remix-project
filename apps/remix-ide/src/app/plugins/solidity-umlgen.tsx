@@ -22,12 +22,28 @@ const profile = {
     events: [],
 }
 
+const themeCollection = [
+  { themeName: 'HackerOwl', backgroundColor: '--body-bg', actualHex: '#011628'},
+  { themeName: 'Cerulean', backgroundColor: '--body-bg', actualHex: '#fff'},
+  { themeName: 'Cyborg', backgroundColor: '--body-bg', actualHex: '#060606'},
+  { themeName: 'Dark', backgroundColor: '--body-bg', actualHex: '#222336'},
+  { themeName: 'Flatly', backgroundColor: '--body-bg', actualHex: '#fff'},
+  { themeName: 'Black', backgroundColor: '--body-bg', actualHex: '#1a1a1a'},
+  { themeName: 'Light', backgroundColor: '--body-bg', actualHex: '#eef1f6'},
+  { themeName: 'Midcentuary', backgroundColor: '--body-bg', actualHex: '#DBE2E0'},
+  { themeName: 'Spacelab', backgroundColor: '--body-bg', actualHex: '#fff'},
+  { themeName: 'Candy', backgroundColor: '--body-bg', actualHex: '#d5efff'},
+]
+
+type ThemeQualityType = { name: string, quality: 'light' | 'dark', url: string }
+
 export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   element: HTMLDivElement
   currentFile: string
   svgPayload: string
   updatedSvg: string
   currentlySelectedTheme: string
+  themeName: string
   loading: boolean
 
   appManager: RemixAppManager
@@ -39,6 +55,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     this.updatedSvg = ''
     this.loading = false
     this.currentlySelectedTheme = ''
+    this.themeName = ''
     this.appManager = appManager
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'sol-uml-gen')
@@ -47,6 +64,9 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   onActivation(): void {
     if (this.currentFile.length < 1) 
     this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
+      const currentTheme: ThemeQualityType = await this.call('theme', 'currentTheme')
+      this.currentlySelectedTheme = currentTheme.quality
+      this.themeName = currentTheme.name
       let result = ''
       try {
         if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
@@ -56,9 +76,8 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         const umlClasses = convertAST2UmlClasses(ast, this.currentFile)
         const umlDot = convertUmlClasses2Dot(umlClasses)
         const payload = vizRenderStringSync(umlDot)
-        const currentTheme = await this.call('theme', 'currentTheme')
-        this.currentlySelectedTheme = currentTheme.quality
-        this.updatedSvg = payload
+        const mangled = await this.mangleSvgPayload(payload)
+        this.updatedSvg = mangled
         this.renderComponent()
       } catch (error) {
         console.log({ error })
@@ -72,13 +91,18 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
 
   async mangleSvgPayload(svgPayload: string) : Promise<string> {
     const parser = new DOMParser()
-    const themeQuality = await this.call('theme', 'currentTheme')
+    const themeQuality: ThemeQualityType = await this.call('theme', 'currentTheme')
     const parsedDocument = parser.parseFromString(svgPayload, 'image/svg+xml')
-    const res = parsedDocument.documentElement
-    parsedDocument.bgColor = '#cccabc'
-    res.style.filter = themeQuality.quality === 'dark' ? 'invert(1)' : 'invert(0)'
+    const element = parsedDocument.getElementsByTagName('svg')
+    console.log({ element })
+    themeCollection.forEach((theme) => {
+      if (theme.themeName === themeQuality.name) {
+        parsedDocument.documentElement.setAttribute('style', `background-color: var(${themeQuality.name === theme.themeName ? theme.backgroundColor : '--body-bg'})`)
+        console.log('found theme')
+        element[0].setAttribute('fill', theme.actualHex)
+      }
+    })
     const stringifiedSvg = new XMLSerializer().serializeToString(parsedDocument)
-    console.log({ parsedDocument, themeQuality, stringifiedSvg })
     return stringifiedSvg
   }
 
@@ -143,7 +167,8 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       ...this,
       updatedSvg: this.updatedSvg,
       loading: this.loading,
-      themeSelected: this.currentlySelectedTheme
+      themeSelected: this.currentlySelectedTheme,
+      themeName: this.themeName
     })
   }
 
@@ -153,6 +178,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       updatedSvg={state.updatedSvg}
       loading={state.loading}
       themeSelected={state.currentlySelectedTheme}
+      themeName={state.themeName}
     />
   }
 }

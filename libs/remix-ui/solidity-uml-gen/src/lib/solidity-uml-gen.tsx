@@ -8,7 +8,21 @@ export interface RemixUiSolidityUmlGenProps {
   updatedSvg?: string
   loading?: boolean
   themeSelected?: string
+  themeName: string
 }
+
+const themeCollection = [
+  { themeName: 'HackerOwl', backgroundColor: '--body-bg', actualHex: '#011628'},
+  { themeName: 'Cerulean', backgroundColor: '--body-bg', actualHex: '#fff'},
+  { themeName: 'Cyborg', backgroundColor: '--body-bg', actualHex: '#060606'},
+  { themeName: 'Dark', backgroundColor: '--body-bg', actualHex: '#222336'},
+  { themeName: 'Flatly', backgroundColor: '--body-bg', actualHex: '#fff'},
+  { themeName: 'Black', backgroundColor: '--body-bg', actualHex: '#1a1a1a'},
+  { themeName: 'Light', backgroundColor: '--body-bg', actualHex: '#eef1f6'},
+  { themeName: 'Midcentuary', backgroundColor: '--body-bg', actualHex: '#DBE2E0'},
+  { themeName: 'Spacelab', backgroundColor: '--body-bg', actualHex: '#fff'},
+  { themeName: 'Candy', backgroundColor: '--body-bg', actualHex: '#d5efff'},
+]
 
 type ButtonAction = {
   svgValid: () => boolean
@@ -44,32 +58,16 @@ const ActionButtons = ({ buttons }: ActionButtonsProps) => (
   </>
 )
 
-export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelected }: RemixUiSolidityUmlGenProps) {
+export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelected, themeName }: RemixUiSolidityUmlGenProps) {
   const [showViewer, setShowViewer] = useState(false)
   const [svgPayload, setSVGPayload] = useState<string>('')
   const [validSvg, setValidSvg] = useState(false)
-  const svgRef = useRef<HTMLImageElement>(null)
-  const buttonsRef = useRef<HTMLDivElement>(null)
-
-
 
   useEffect(() => {
     setValidSvg (updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg')) 
     setShowViewer(updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg'))
   }
   , [updatedSvg])
-
-  useEffect(() => {
-    svgRef?.current?.addEventListener('mouseover', () => console.log('move over the image'))//buttonsRef?.current?.classList.remove('d-none'))
-    svgRef?.current?.addEventListener('mouseout', () => console.log('mouse out of the image')) //buttonsRef?.current?.classList.add('d-none'))
-    const svgimg = document.querySelector('#umlImage') as HTMLImageElement
-    svgimg?.addEventListener('mouseover', () => console.log('mouse over the image'))
-    svgimg?.addEventListener('mouseout', () => console.log('mouse out of the image'))
-    return () => {
-      svgRef?.current?.removeEventListener('mouseover', () => buttonsRef?.current?.classList.remove('d-none'))
-      svgRef?.current?.removeEventListener('mouseout', () => buttonsRef?.current?.classList.add('d-none'))
-    }
-  },[])
 
   const buttons: ButtonAction[] = [
     { 
@@ -86,6 +84,12 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
     }
   ]
 
+  const encoder = new TextEncoder()
+  const data = encoder.encode(updatedSvg)
+  const final = btoa(String.fromCharCode.apply(null, data))
+  const selected = themeCollection.find(theme => theme.themeName === themeName)
+  console.log({selected})
+
   const DefaultInfo = () => (
     <div className="d-flex flex-column justify-content-center align-items-center mt-5">
       <h2 className="h2 align-self-start"><p>To view your contract as a Uml Diragram</p></h2>
@@ -94,7 +98,7 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
     </div>
   )
   const Display = () => {
-    const invert = themeSelected === 'dark' ? 'invert(0.8)' : 'invert(0)'
+    const invert = themeSelected === 'dark' ? 'invert(0.9)' : 'invert(0)'
     return (
       <div id="umlImageHolder" className="w-100 px-2 py-2 d-flex">
         { validSvg && showViewer ? (
@@ -104,7 +108,7 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
             {
               ({ zoomIn, zoomOut, resetTransform }) => (
                 <Fragment>
-                  <div ref={buttonsRef} className="position-absolute bg-transparent rounded p-2" id="buttons"
+                  <div className="position-absolute bg-transparent rounded p-2" id="buttons"
                     style={{ zIndex: 3,  top: '10', right: '2em' }}
                   >
                     <button className="btn btn-outline-success btn-sm rounded-circle mr-1" onClick={() => zoomIn()}>
@@ -120,11 +124,10 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
                   <TransformComponent contentStyle={{ zIndex: 2 }}>
                     <img
                       id="umlImage"
-                      src={`data:image/svg+xml;base64,${btoa(plugin.updatedSvg ?? svgPayload)}`}
+                      src={`data:image/svg+xml;base64,${final}`}
                       width={'100%'}
                       height={'auto'}
-                      ref={svgRef}
-                      style={{ filter: invert }}
+                      style={{ backgroundColor: selected?.actualHex }}
                       className="position-relative"
                     />
                   </TransformComponent>
