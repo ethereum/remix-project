@@ -55,3 +55,38 @@ export const CustomMenu = React.forwardRef(
     )
   },
 )
+
+export const ProxyAddressToggle = React.forwardRef(({ children, onClick, className = '' }: { children: React.ReactNode, onClick: (e) => void, className: string }, ref: Ref<HTMLButtonElement>) => (
+  <button
+    ref={ref}
+    onClick={(e) => {
+      e.preventDefault()
+      onClick(e)
+    }}
+    className={className.replace('dropdown-toggle', '')}
+  >
+    <div className="d-flex">
+      <div className="mr-auto text-nowrap">{ children }</div>
+      <div><i className="fad fa-sort-circle"></i></div>
+    </div>
+  </button>
+))
+
+export const ProxyDropdownMenu = React.forwardRef(
+  ({ children, style, className, 'aria-labelledby': labeledBy }: { children: React.ReactNode, style?: React.CSSProperties, className: string, 'aria-labelledby'?: string }, ref: Ref<HTMLDivElement>) => {
+    return (
+      <div
+        ref={ref}
+        style={style}
+        className={className}
+        aria-labelledby={labeledBy}
+      >
+        <ul className="list-unstyled mb-0">
+          {
+           children
+          }
+        </ul>
+      </div>
+    )
+  },
+)
