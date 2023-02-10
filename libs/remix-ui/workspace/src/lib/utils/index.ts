@@ -27,7 +27,7 @@ export const contextMenuActions: MenuItems = [{
 },{
   id: 'download',
   name: 'Download',
-  type: ['file'],
+  type: ['file', 'folder'],
   multiselect: false,
   label: ''
 }, {
