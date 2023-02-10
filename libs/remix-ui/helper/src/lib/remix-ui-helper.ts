@@ -1,4 +1,4 @@
-import * as ethJSUtil from 'ethereumjs-util'
+import * as ethJSUtil from '@ethereumjs/util'
 
 export const extractNameFromKey = (key: string): string => {
   if (!key) return

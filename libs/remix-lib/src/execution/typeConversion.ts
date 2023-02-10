@@ -1,5 +1,6 @@
 'use strict'
-import { BN, bufferToHex } from 'ethereumjs-util'
+import { BN } from 'bn.js'
+import { bufferToHex } from '@ethereumjs/util'
 
 export function toInt (h) {
   if (h.indexOf && h.indexOf('0x') === 0) {

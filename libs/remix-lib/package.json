@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "async": "^2.1.2",
-    "ethereumjs-util": "^7.0.10",
+    "@ethereumjs/util": "^8.0.3",
     "ethers": "^4.0.40",
     "ethjs-util": "^0.1.6",
     "events": "^3.0.0",

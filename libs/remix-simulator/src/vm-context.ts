@@ -1,6 +1,8 @@
 /* global ethereum */
 'use strict'
-import { rlp, keccak, bufferToHex } from 'ethereumjs-util'
+import { hash } from '@remix-project/remix-lib'
+import { bufferToHex } from '@ethereumjs/util'
+import { decode } from 'rlp'
 import { execution } from '@remix-project/remix-lib'
 const { LogsManager } = execution
 import { VmProxy } from './VmProxy'
@@ -44,7 +46,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
   }
 
   putContractStorage (address, key, value) {
-    this.keyHashes[keccak(key).toString('hex')] = bufferToHex(key)
+    this.keyHashes[hash.keccak(key).toString('hex')] = bufferToHex(key)
     return super.putContractStorage(address, key, value)
   }
 
@@ -64,7 +66,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
           const stream = trie.createReadStream()
 
           stream.on('data', (val) => {
-            const value = rlp.decode(val.value)
+            const value = decode(val.value)
             storage['0x' + val.key.toString('hex')] = {
               key: this.keyHashes[val.key.toString('hex')],
               value: '0x' + value.toString('hex')

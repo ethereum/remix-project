@@ -1,7 +1,7 @@
 var async = require('async')
-const ethJSUtil = require('ethereumjs-util')
+import { toChecksumAddress } from '@ethereumjs/util'
 
-module.exports = {
+export default  {
   shortenAddress: function (address, etherBalance) {
     var len = address.length
     return address.slice(0, 5) + '...' + address.slice(len - 5, len) + (etherBalance ? ' (' + etherBalance.toString() + ' ether)' : '')
@@ -14,7 +14,7 @@ module.exports = {
     if (address.indexOf('0x') === -1) {
       address = '0x' + address
     }
-    return ethJSUtil.toChecksumAddress(address)
+    return toChecksumAddress(address)
   },
   shortenHexData: function (data) {
     if (!data) return ''
