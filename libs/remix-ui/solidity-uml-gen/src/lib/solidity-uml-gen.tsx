@@ -71,7 +71,7 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading }: RemixUiSolidityU
                       <i className="far fa-minus"></i>
                     </button>
                     <button className="btn btn-outline-info btn-sm rounded-circle mr-1" onClick={() => resetTransform()}>
-                      <i className="far fa-arrow-circle-left"></i>
+                      <i className="far fa-undo"></i>
                     </button>
                   </div>
                   <TransformComponent contentStyle={{ zIndex: 2 }}>
