@@ -37,6 +37,8 @@ const themeCollection = [
 
 type ThemeQualityType = { name: string, quality: 'light' | 'dark', url: string }
 
+type ThemeSummary = { themeName: string, backgroundColor: string, actualHex: string }
+
 /**
  * add context menu which will offer download as pdf and download png.
  * add menu under the first download button to download
@@ -50,6 +52,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   currentlySelectedTheme: string
   themeName: string
   loading: boolean
+  themeCollection: ThemeSummary[]
 
   appManager: RemixAppManager
   dispatch: React.Dispatch<any> = () => {}
@@ -61,6 +64,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     this.loading = false
     this.currentlySelectedTheme = ''
     this.themeName = ''
+    this.themeCollection = themeCollection
     this.appManager = appManager
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'sol-uml-gen')
@@ -173,7 +177,8 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       updatedSvg: this.updatedSvg,
       loading: this.loading,
       themeSelected: this.currentlySelectedTheme,
-      themeName: this.themeName
+      themeName: this.themeName,
+      themeCollection: this.themeCollection
     })
   }
 
