@@ -3,7 +3,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import React from 'react'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { RemixUiSolidityUmlGen } from '@remix-ui/solidity-uml-gen' 
-import { ISolidityUmlGen } from 'libs/remix-ui/solidity-uml-gen/src/types'
+import { ISolidityUmlGen, ThemeQualityType, ThemeSummary } from 'libs/remix-ui/solidity-uml-gen/src/types'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
 import { concatSourceFiles, getDependencyGraph } from 'libs/remix-ui/solidity-compiler/src/lib/logic/flattenerUtilities'
 import { convertUmlClasses2Dot } from 'sol2uml/lib/converterClasses2Dot'
@@ -34,10 +34,6 @@ const themeCollection = [
   { themeName: 'Spacelab', backgroundColor: '--body-bg', actualHex: '#fff'},
   { themeName: 'Candy', backgroundColor: '--body-bg', actualHex: '#d5efff'},
 ]
-
-type ThemeQualityType = { name: string, quality: 'light' | 'dark', url: string }
-
-type ThemeSummary = { themeName: string, backgroundColor: string, actualHex: string }
 
 /**
  * add context menu which will offer download as pdf and download png.
@@ -189,6 +185,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       loading={state.loading}
       themeSelected={state.currentlySelectedTheme}
       themeName={state.themeName}
+      themeCollection={state.themeCollection}
     />
   }
 }

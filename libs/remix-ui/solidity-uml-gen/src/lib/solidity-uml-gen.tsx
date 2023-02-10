@@ -1,7 +1,7 @@
 import { CustomTooltip } from '@remix-ui/helper'
 import React, { Fragment, useEffect, useRef, useState } from 'react'
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
-import { ISolidityUmlGen } from '../types'
+import { ISolidityUmlGen, ThemeSummary } from '../types'
 import './css/solidity-uml-gen.css'
 export interface RemixUiSolidityUmlGenProps {
   plugin?: ISolidityUmlGen
@@ -9,6 +9,7 @@ export interface RemixUiSolidityUmlGenProps {
   loading?: boolean
   themeSelected?: string
   themeName: string
+  themeCollection: ThemeSummary[]
 }
 
 type ButtonAction = {
@@ -23,29 +24,8 @@ interface ActionButtonsProps {
   buttons: ButtonAction[]
 }
 
-const ActionButtons = ({ buttons }: ActionButtonsProps) => (
-  <>
-    {buttons.map(btn => (
-      <CustomTooltip
-        key={btn.buttonText}
-        placement="top"
-        tooltipText={btn.buttonText}
-        tooltipId={btn.buttonText}
-      >
-        <button
-          key={btn.buttonText}
-          className={`btn btn-primary btn-sm rounded-circle ${btn.customcss}`}
-          disabled={!btn.svgValid}
-          onClick={btn.action}
-        >
-          <i className={`${btn.icon}`}></i>
-        </button>
-      </CustomTooltip>
-    ))}
-  </>
-)
 
-export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelected, themeName }: RemixUiSolidityUmlGenProps) {
+export function RemixUiSolidityUmlGen ({ updatedSvg, loading }: RemixUiSolidityUmlGenProps) {
   const [showViewer, setShowViewer] = useState(false)
   const [svgPayload, setSVGPayload] = useState<string>('')
   const [validSvg, setValidSvg] = useState(false)
@@ -56,20 +36,6 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
   }
   , [updatedSvg])
 
-  const buttons: ButtonAction[] = [
-    { 
-      buttonText: 'Download as PDF',
-      svgValid: () => validSvg,
-      action: () => console.log('generated!!'),
-      icon: 'fa fa-file'
-    },
-    { 
-      buttonText: 'Download as PNG',
-      svgValid: () => validSvg,
-      action: () => console.log('generated!!!'),
-      icon: 'fa fa-picture-o'
-    }
-  ]
 
   const encoder = new TextEncoder()
   const data = encoder.encode(updatedSvg)
@@ -83,7 +49,6 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
     </div>
   )
   const Display = () => {
-    const invert = themeSelected === 'dark' ? 'invert(0.9)' : 'invert(0)'
     return (
       <div id="umlImageHolder" className="w-100 px-2 py-2 d-flex">
         { validSvg && showViewer ? (
@@ -96,7 +61,7 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
                   <div className="position-absolute bg-transparent rounded p-2" id="buttons"
                     style={{ zIndex: 3,  top: '10', right: '2em' }}
                   >
-                    <button className="btn btn-outline-info btn-sm rounded-circle mr-1" onClick={() => resetTransform()}>
+                    <button className="btn btn-outline-info d-none btn-sm rounded-circle mr-1" onClick={() => resetTransform()}>
                       <i className="far fa-arrow-to-bottom"></i>
                     </button>
                     <button className="btn btn-outline-info btn-sm rounded-circle mr-1" onClick={() => zoomIn()}>
