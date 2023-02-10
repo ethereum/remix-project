@@ -1,7 +1,9 @@
 'use strict'
+import { hash } from '@remix-project/remix-lib'
 import { RefType } from './RefType'
 import { normalizeHex } from './util'
-import { toBuffer, setLengthLeft, keccak, BN, bufferToHex, addHexPrefix } from 'ethereumjs-util'
+import { toBuffer, setLengthLeft, bufferToHex, addHexPrefix } from '@ethereumjs/util'
+import BN from 'bn.js'
 
 export class Mapping extends RefType {
   keyType
@@ -68,7 +70,7 @@ function getMappingLocation (key, position) {
   let mappingP = toBuffer(addHexPrefix(position))
   mappingP = setLengthLeft(mappingP, 32)
   const mappingKeyBuf = concatTypedArrays(mappingK, mappingP)
-  const mappingStorageLocation: Buffer = keccak(mappingKeyBuf)
+  const mappingStorageLocation: Buffer = hash.keccak(mappingKeyBuf)
   const mappingStorageLocationinBn: BN = new BN(mappingStorageLocation, 16)
   return mappingStorageLocationinBn
 }

@@ -1,7 +1,8 @@
 'use strict'
 
 import tape from 'tape'
-import { BN, toBuffer } from 'ethereumjs-util'
+import { BN } from 'bn.js'
+import { toBuffer } from '@ethereumjs/util'
 import { resultToRemixTx } from '../src/helpers/txResultHelper'
 
 const TRANSACTION_HASH = '0x538ad944d09c2df403f064c1e4556fae877fe3f1b600c567622e330c2bdbbe2e'

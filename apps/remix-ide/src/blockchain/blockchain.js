@@ -2,7 +2,7 @@
 import React from 'react' // eslint-disable-line
 import Web3 from 'web3'
 import { Plugin } from '@remixproject/engine'
-import { toBuffer, addHexPrefix } from 'ethereumjs-util'
+import { toBuffer, addHexPrefix } from '@ethereumjs/util'
 import { EventEmitter } from 'events'
 import { format } from 'util'
 import { ExecutionContext } from './execution-context'
