@@ -2,7 +2,7 @@
 
 import { parseCode } from './codeUtils'
 import { util } from '@remix-project/remix-lib'
-import { bufferToHex } from 'ethereumjs-util'
+import { bufferToHex } from '@ethereumjs/util'
 
 function createExpressions (instructions) {
   const expressions = []

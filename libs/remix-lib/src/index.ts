@@ -2,6 +2,7 @@ import { EventManager } from './eventManager'
 import * as uiHelper from './helpers/uiHelper'
 import * as compilerHelper from './helpers/compilerHelper'
 import * as util from './util'
+import * as hash from './hash'
 import { Storage } from './storage'
 import { EventsDecoder } from './execution/eventsDecoder'
 import * as txExecution from './execution/txExecution'
@@ -38,4 +39,4 @@ const execution = {
   LogsManager,
   forkAt
 }
-export { EventManager, helpers, Storage, util, execution }
+export { EventManager, helpers, Storage, util, execution, hash }

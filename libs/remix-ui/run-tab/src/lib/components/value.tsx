@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useRef, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
-import { BN } from 'ethereumjs-util'
+import { BN } from 'bn.js'
 import { CustomTooltip, isNumeric } from '@remix-ui/helper'
 import { ValueProps } from '../types'
 

@@ -1,6 +1,6 @@
 'use strict'
 import { ethers } from 'ethers'
-import { toBuffer, addHexPrefix } from 'ethereumjs-util'
+import { toBuffer, addHexPrefix } from '@ethereumjs/util'
 import { EventManager } from '../eventManager'
 import { compareByteCode, getinputParameters } from '../util'
 import { decodeResponse } from './txFormat'
