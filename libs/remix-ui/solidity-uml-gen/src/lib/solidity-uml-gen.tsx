@@ -61,16 +61,16 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading }: RemixUiSolidityU
                   <div className="position-absolute bg-transparent rounded p-2" id="buttons"
                     style={{ zIndex: 3,  top: '10', right: '2em' }}
                   >
-                    <button className="btn btn-outline-info d-none btn-sm rounded-circle mr-2" onClick={() => resetTransform()}>
+                    <button className="btn btn-outline-info d-none btn-lg rounded-circle mr-2" onClick={() => resetTransform()}>
                       <i className="far fa-arrow-to-bottom"></i>
                     </button>
-                    <button className="btn btn-outline-info btn-sm rounded-circle mr-2" onClick={() => zoomIn()}>
+                    <button className="btn btn-outline-info btn-lg rounded-circle mr-2" onClick={() => zoomIn()}>
                       <i className="far fa-plus"></i>
                     </button>
-                    <button className="btn btn-outline-info btn-sm rounded-circle mr-2" onClick={() => zoomOut()}>
+                    <button className="btn btn-outline-info btn-lg rounded-circle mr-2" onClick={() => zoomOut()}>
                       <i className="far fa-minus"></i>
                     </button>
-                    <button className="btn btn-outline-info btn-sm rounded-circle mr-2" onClick={() => resetTransform()}>
+                    <button className="btn btn-outline-info btn-lg rounded-circle mr-2" onClick={() => resetTransform()}>
                       <i className="far fa-undo"></i>
                     </button>
                   </div>
