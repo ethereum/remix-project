@@ -11,19 +11,6 @@ export interface RemixUiSolidityUmlGenProps {
   themeName: string
 }
 
-const themeCollection = [
-  { themeName: 'HackerOwl', backgroundColor: '--body-bg', actualHex: '#011628'},
-  { themeName: 'Cerulean', backgroundColor: '--body-bg', actualHex: '#fff'},
-  { themeName: 'Cyborg', backgroundColor: '--body-bg', actualHex: '#060606'},
-  { themeName: 'Dark', backgroundColor: '--body-bg', actualHex: '#222336'},
-  { themeName: 'Flatly', backgroundColor: '--body-bg', actualHex: '#fff'},
-  { themeName: 'Black', backgroundColor: '--body-bg', actualHex: '#1a1a1a'},
-  { themeName: 'Light', backgroundColor: '--body-bg', actualHex: '#eef1f6'},
-  { themeName: 'Midcentuary', backgroundColor: '--body-bg', actualHex: '#DBE2E0'},
-  { themeName: 'Spacelab', backgroundColor: '--body-bg', actualHex: '#fff'},
-  { themeName: 'Candy', backgroundColor: '--body-bg', actualHex: '#d5efff'},
-]
-
 type ButtonAction = {
   svgValid: () => boolean
   action: () => void
@@ -87,8 +74,6 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
   const encoder = new TextEncoder()
   const data = encoder.encode(updatedSvg)
   const final = btoa(String.fromCharCode.apply(null, data))
-  const selected = themeCollection.find(theme => theme.themeName === themeName)
-  console.log({selected})
 
   const DefaultInfo = () => (
     <div className="d-flex flex-column justify-content-center align-items-center mt-5">
@@ -130,7 +115,6 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
                       src={`data:image/svg+xml;base64,${final}`}
                       width={'100%'}
                       height={'auto'}
-                      style={{ backgroundColor: selected?.actualHex }}
                       className="position-relative"
                     />
                   </TransformComponent>
