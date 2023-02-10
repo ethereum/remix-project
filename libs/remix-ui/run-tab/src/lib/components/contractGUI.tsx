@@ -4,7 +4,8 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import * as remixLib from '@remix-project/remix-lib'
 import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
-import { CustomTooltip, shortenDeploymentAddresses } from '@remix-ui/helper'
+import { CustomTooltip, ProxyAddressToggle, ProxyDropdownMenu, shortenAddressAndDate } from '@remix-ui/helper'
+import { Dropdown } from 'react-bootstrap'
 
 const txFormat = remixLib.execution.txFormat
 const txHelper = remixLib.execution.txHelper
@@ -23,6 +24,7 @@ export function ContractGUI (props: ContractGUIProps) {
   const [deployState, setDeployState] = useState<{ deploy: boolean, upgrade: boolean }>({ deploy: false, upgrade: false })
   const [proxyAddress, setProxyAddress] = useState<string>('')
   const [proxyAddressError, setProxyAddressError] = useState<string>('')
+  const [showDropdown, setShowDropdown] = useState<boolean>(false)
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
   const initializeFields = useRef<Array<HTMLInputElement | null>>([])
   const basicInputRef = useRef<HTMLInputElement>()
@@ -228,9 +230,8 @@ export function ContractGUI (props: ContractGUIProps) {
     setDeployState({ deploy: false, upgrade: value })
   }
 
-  const handleSelectProxyAddress = (e) => {
-    const value = e.target.value
-    setProxyAddress(value)
+  const switchProxyAddress = (address: string) => {
+    setProxyAddress(address)
   }
 
   const validateProxyAddress = async (address: string) => {
@@ -243,6 +244,10 @@ export function ContractGUI (props: ContractGUIProps) {
         setProxyAddressError('not a valid contract address')
       }
     }
+  }
+
+  const toggleDropdown = (isOpen: boolean) => {
+    setShowDropdown(isOpen)
   }
 
   return (
@@ -507,13 +512,31 @@ export function ContractGUI (props: ContractGUIProps) {
               toggleUpgradeImp ? "d-flex" : "d-none"
             }`}
           >
+            <Dropdown onToggle={toggleDropdown} show={showDropdown}>
+              <Dropdown.Toggle as={ProxyAddressToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control mt-1">
+                { proxyAddress }
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu as={ProxyDropdownMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items">
+                {
+                  props.proxy.deployments.map((deployment, index) => (
+                    <Dropdown.Item
+                      key={index}
+                      onClick={() => {
+                        switchProxyAddress(deployment.address)
+                      }}
+                    >
+                        <div className='d-flex justify-content-between'>
+                          <span>{ proxyAddress === deployment.address ? <span>&#10003; { shortenAddressAndDate(deployment.address, deployment.date) } </span> : <span className="pl-3">{ shortenAddressAndDate(deployment.address, deployment.date) }</span> }</span>
+                          <i className='fas fa-code-branch pt-1'></i>
+                        </div> 
+                      </Dropdown.Item>
+                    ))
+                  }
+                </Dropdown.Menu>
+              </Dropdown>
             <div className={`flex-column 'd-flex'}`}>
                 <div className="mb-2">
-                  <select data-id="udappSelectProxyAddress" name="selectproxy" className="form-control udapp_select custom-select pr-4" value={proxyAddress} onChange={handleSelectProxyAddress}>
-                    {
-                      props.proxy.deployments.map((deployment, index) => <option value={deployment.address} key={index}>{ shortenDeploymentAddresses(deployment.address, deployment.date) }</option>)
-                    }
-                  </select>
                   { proxyAddressError && <span className='text-lowercase' data-id="errorMsgProxyAddress" style={{ fontSize: '.8em' }}>{ proxyAddressError }</span> }
                 </div>
             </div>
