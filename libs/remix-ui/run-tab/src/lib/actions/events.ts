@@ -45,7 +45,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
 
   plugin.blockchain.event.register('removeProvider', name => removeExternalProvider(dispatch, name))
 
-  plugin.blockchain.events.on('newProxyDeployment', (address, date) => addNewProxyDeployment(dispatch, address, date))
+  plugin.blockchain.events.on('newProxyDeployment', (address, date, contractName) => addNewProxyDeployment(dispatch, address, date, contractName))
 
   plugin.on('solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => broadcastCompilationResult('remix', plugin, dispatch, file, source, languageVersion, data, input))
 
