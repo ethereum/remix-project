@@ -1,0 +1,120 @@
+* {
+  color: var(--vscode-foreground);
+  font-size: 13px;
+  line-height: 1.4em;
+}
+
+*:focus {
+  border-color: var(--vscode-focusBorder);
+}
+
+/** Text colors: https://code.visualstudio.com/api/references/theme-color#text-colors */
+q {
+  background-color: var(--vscode-textBlockQuote-background);
+  border-color: var(--vscode-textBlockQuote-border);
+}
+
+code {
+  background-color: var(--vscode-textCodeBlock-background);
+}
+
+a {
+  color: var(--vscode-textLink-foreground);
+}
+a:active {
+  color: var(--vscode-textLink-activeForeground);
+}
+
+pre {
+  color: var(--vscode-textPreformat-foreground);
+}
+
+hr {
+  color: var(--vscode-textSeparator-foreground);
+}
+
+
+/** Button control: https://code.visualstudio.com/api/references/theme-color#button-control */
+/** Code from : https://github.com/microsoft/vscode/blob/master/src/vs/base/browser/ui/button/button.css */
+button {
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  box-sizing: border-box;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+	align-items: center;
+}
+
+button:hover {
+  background-color: var(--vscode-button-hoverBackground);
+}
+
+button:disabled {
+  opacity: 0.4;
+	cursor: default;
+}
+
+input[type=checkbox] {
+  background-color: var(--vscode-checkbox-background);
+  border-color: var(--vscode-checkbox-border);
+  color: var(--vscode-checkbox-foreground);
+}
+
+/** Dropdown control: https://code.visualstudio.com/api/references/theme-color#dropdown-control */
+select, datalist  {
+  background: var(--vscode-dropdown-background);
+  border-color: var(--vscode-dropdown-border);
+  color: var(--vscode-dropdown-foreground);
+}
+select option, datalist option {
+  background: var(--vscode-dropdown-listBackground);
+}
+
+/** Input control: https://code.visualstudio.com/api/references/theme-color#input-control */
+/** TODO: inputOption & inputValidation (warn / info) */
+input, textarea {
+  background: var(--vscode-input-background);
+  border-color: var(--vscode-input-border);
+  color: var(--vscode-input-foreground);
+}
+::placeholder {
+  color: var(--vscode-placeholderForeground-foreground);
+}
+
+input:invalid, textarea:invalid {
+  background: var(--vscode-inputValidation-errorBackground);
+  border-color: var(--vscode-inputValidation-errorBorder);
+  color: var(--vscode-inputValidation-errorForeground);
+}
+
+
+/** Scrollbar control: https://code.visualstudio.com/api/references/theme-color#scrollbar-control */
+/** TODO: scrollbar.shadow */
+::-webkit-scrollbar-track {
+  background-color: var(--vscode-scrollbarSlider-background);
+}
+::-webkit-scrollbar-track:hover {
+  background-color: var(--vscode-scrollbarSlider-hoverBackground);
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--vscode-scrollbarSlider-activeBackground);
+}
+
+/** Progress bar: https://code.visualstudio.com/api/references/theme-color#progress-bar */
+progress {
+  background-color: var(--vscode-progressBar-background);
+}
+
+/** Lists & Trees: https://code.visualstudio.com/api/references/theme-color#lists-and-trees */
+/** TODO: drop / focus / highlight / ... */
+li:hover {
+  background: var(--vscode-list-hoverBackground);
+  color: var(--vscode-list-hoverForeground);
+}
+li.active {
+  background: var(--vscode-list-activeSelectionBackground);
+  color: var(--vscode-list-activeSelectionForeground);
+}
