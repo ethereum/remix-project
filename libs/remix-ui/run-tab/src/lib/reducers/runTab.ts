@@ -612,7 +612,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
     }
 
     case FETCH_PROXY_DEPLOYMENTS: {
-      const payload: { address: string, date: string }[] = action.payload
+      const payload: { address: string, date: string, contractName: string }[] = action.payload
 
       return {
         ...state,
@@ -624,7 +624,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
     }
 
     case NEW_PROXY_DEPLOYMENT: {
-      const payload: { address: string, date: string } = action.payload
+      const payload: { address: string, date: string, contractName: string } = action.payload
 
       return {
         ...state,

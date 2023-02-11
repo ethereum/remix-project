@@ -129,8 +129,21 @@ export const addSlash = (file: string) => {
   return file
 }
 
-export const shortenAddressAndDate = (address: string, date: string) => {
+export const shortenProxyAddress = (address: string) => {
   const len = address.length
 
-  return address.slice(0, 5) + '...' + address.slice(len - 5, len) + ' (' + new Date(date).toISOString().split('T')[0] + ')'
+  return address.slice(0, 5) + '...' + address.slice(len - 5, len)
+}
+
+export const shortenDate = (dateString: string) => {
+  const date = new Date(dateString)
+  const now = new Date()
+  const diff = now.getTime() - date.getTime()
+  const oneDay = 24 * 60 * 60 * 1000
+  
+  if (diff < oneDay) {
+    return date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+  } else {
+    return date.toLocaleDateString(undefined, { month: "short", day: "numeric" }) + ', ' + date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+  }
 }

@@ -181,7 +181,7 @@ export class Blockchain extends Plugin {
         return this.call('terminal', 'logHtml', log)
       }
       await this.saveDeployedContractStorageLayout(implementationContractObject, address, networkInfo)
-      this.events.emit('newProxyDeployment', address, new Date().toISOString())
+      this.events.emit('newProxyDeployment', address, new Date().toISOString(), implementationContractObject.contractName)
       _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment successful'])
       this.call('udapp', 'addInstance', addressToString(address), implementationContractObject.abi, implementationContractObject.name)
     }
