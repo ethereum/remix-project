@@ -129,8 +129,8 @@ export const addSlash = (file: string) => {
   return file
 }
 
-export const shortenAddressAndDate = (address: string, date: Date) => {
+export const shortenAddressAndDate = (address: string, date: string) => {
   const len = address.length
 
-  return address.slice(0, 5) + '...' + address.slice(len - 5, len) + ' (' + date.toString() + ')'
+  return address.slice(0, 5) + '...' + address.slice(len - 5, len) + ' (' + new Date(date).toISOString().split('T')[0] + ')'
 }

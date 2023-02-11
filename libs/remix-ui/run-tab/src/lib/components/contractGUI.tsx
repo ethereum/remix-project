@@ -41,7 +41,7 @@ export function ContractGUI (props: ContractGUIProps) {
     if (!proxyAddress && props.proxy && props.proxy.deployments.length > 0) {
       setProxyAddress(props.proxy.deployments[0].address)
     }
-  }, [proxyAddress, props.proxy])
+  }, [props.proxy])
 
   useEffect(() => {
     if (props.title) {
@@ -225,7 +225,6 @@ export function ContractGUI (props: ContractGUIProps) {
     setToggleUpgradeImp(value)
     if (value) {
       setToggleDeployProxy(false)
-      // if (useLastProxy) setProxyAddress(props.savedProxyAddress)
     }
     setDeployState({ deploy: false, upgrade: value })
   }
@@ -248,6 +247,12 @@ export function ContractGUI (props: ContractGUIProps) {
 
   const toggleDropdown = (isOpen: boolean) => {
     setShowDropdown(isOpen)
+  }
+
+  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const address = e.target.value
+
+    setProxyAddress(address)
   }
 
   return (
@@ -513,27 +518,24 @@ export function ContractGUI (props: ContractGUIProps) {
             }`}
           >
             <Dropdown onToggle={toggleDropdown} show={showDropdown}>
-              <Dropdown.Toggle as={ProxyAddressToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control mt-1">
-                { proxyAddress }
-              </Dropdown.Toggle>
+              <Dropdown.Toggle id="dropdown-custom-components" as={ProxyAddressToggle} address={proxyAddress} onChange={handleAddressChange} className="d-inline-block border border-dark bg-dark" />
 
-              <Dropdown.Menu as={ProxyDropdownMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items">
-                {
-                  props.proxy.deployments.map((deployment, index) => (
-                    <Dropdown.Item
-                      key={index}
-                      onClick={() => {
-                        switchProxyAddress(deployment.address)
-                      }}
-                    >
-                        <div className='d-flex justify-content-between'>
+              { props.proxy.deployments.length > 0 &&
+                <Dropdown.Menu as={ProxyDropdownMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items">
+                  {
+                    props.proxy.deployments.map((deployment, index) => (
+                      <Dropdown.Item
+                        key={index}
+                        onClick={() => {
+                          switchProxyAddress(deployment.address)
+                        }}
+                      >
                           <span>{ proxyAddress === deployment.address ? <span>&#10003; { shortenAddressAndDate(deployment.address, deployment.date) } </span> : <span className="pl-3">{ shortenAddressAndDate(deployment.address, deployment.date) }</span> }</span>
-                          <i className='fas fa-code-branch pt-1'></i>
-                        </div> 
-                      </Dropdown.Item>
-                    ))
-                  }
-                </Dropdown.Menu>
+                        </Dropdown.Item>
+                      ))
+                    }
+                  </Dropdown.Menu>
+                }
               </Dropdown>
             <div className={`flex-column 'd-flex'}`}>
                 <div className="mb-2">
