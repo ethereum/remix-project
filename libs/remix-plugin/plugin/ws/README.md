@@ -1,11 +1,24 @@
-# remix-plugin-plugin-ws
+# Plugin ws
+This library is a connector that connects a node server to using the `ws` library to the engine.
 
-This library was generated with [Nx](https://nx.dev).
+If you do not expose any API you can create an instance like this :
+```typescript
+const wss = new WebSocket.Server({ port: 8080 });
+wss.on('connection', (ws) => {
+  const client = createClient(ws)
+})
+```
 
-## Building
-
-Run `nx build remix-plugin-plugin-ws` to build the library.
-
-## Running unit tests
-
-Run `nx test remix-plugin-plugin-ws` to execute the unit tests via [Jest](https://jestjs.io).
+If you need to expose an API to other plugin you need to extends the class: 
+```typescript
+class MyPlugin extends PluginClient {
+ methods = ['hello']
+ hello() {
+  console.log('Hello World')
+ }
+}
+const wss = new WebSocket.Server({ port: 8080 });
+wss.on('connection', (ws) => {
+ const client = createClient(ws, new MyPlugin())
+})
+```
