@@ -22,46 +22,7 @@
     "lib": ["es2017", "es2019", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "api": ["libs/api/src/index.ts"],
-      "remix-plugin/core/engine": [
-        "libs/remix-plugin/core/engine/src/index.ts"
-      ],
-      "remix-plugin/engine/core": [
-        "libs/remix-plugin/engine/core/src/index.ts"
-      ],
-      "remix-plugin/engine/node": [
-        "libs/remix-plugin/engine/node/src/index.ts"
-      ],
-      "remix-plugin/engine/theia": [
-        "libs/remix-plugin/engine/theia/src/index.ts"
-      ],
-      "remix-plugin/engine/vscode": [
-        "libs/remix-plugin/engine/vscode/src/index.ts"
-      ],
-      "remix-plugin/engine/web": ["libs/remix-plugin/engine/web/src/index.ts"],
-      "remix-plugin/plugin/child-process": [
-        "libs/remix-plugin/plugin/child-process/src/index.ts"
-      ],
-      "remix-plugin/plugin/core": [
-        "libs/remix-plugin/plugin/core/src/index.ts"
-      ],
-      "remix-plugin/plugin/iframe": [
-        "libs/remix-plugin/plugin/iframe/src/index.ts"
-      ],
-      "remix-plugin/plugin/vscode": [
-        "libs/remix-plugin/plugin/vscode/src/index.ts"
-      ],
-      "remix-plugin/plugin/webview": [
-        "libs/remix-plugin/plugin/webview/src/index.ts"
-      ],
-      "remix-plugin/plugin/webworker": [
-        "libs/remix-plugin/plugin/webworker/src/index.ts"
-      ],
-      "remix-plugin/plugin/ws": ["libs/remix-plugin/plugin/ws/src/index.ts"],
-      "remix-plugin/utils": ["libs/remix-plugin/utils/src/index.ts"]
-    }
+    "baseUrl": "."
   },
   "exclude": ["node_modules", "tmp"]
 }
