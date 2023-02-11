@@ -1,0 +1,40 @@
+{
+  "name": "remix-plugin-engine-vscode",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/remix-plugin/engine/vscode/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/remix-plugin/engine/vscode",
+        "main": "libs/remix-plugin/engine/vscode/src/index.ts",
+        "tsConfig": "libs/remix-plugin/engine/vscode/tsconfig.lib.json",
+        "assets": ["libs/remix-plugin/engine/vscode/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/remix-plugin/engine/vscode/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/remix-plugin/engine/vscode/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    }
+  },
+  "tags": []
+}

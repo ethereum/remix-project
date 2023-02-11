@@ -1,0 +1,40 @@
+{
+  "name": "remix-plugin-plugin-iframe",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/remix-plugin/plugin/iframe/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/remix-plugin/plugin/iframe",
+        "main": "libs/remix-plugin/plugin/iframe/src/index.ts",
+        "tsConfig": "libs/remix-plugin/plugin/iframe/tsconfig.lib.json",
+        "assets": ["libs/remix-plugin/plugin/iframe/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/remix-plugin/plugin/iframe/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/remix-plugin/plugin/iframe/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    }
+  },
+  "tags": []
+}
