@@ -1,5 +1,24 @@
 {
-  "name": "remix-plugin/engine/node",
-  "version": "0.0.1",
-  "type": "commonjs"
+  "name": "@remixproject/engine-node",
+  "version": "0.3.29",
+  "homepage": "https://github.com/ethereum/remix-plugin/tree/master/packages/engine/node#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethereum/remix-plugin.git"
+  },
+  "author": {
+    "name": "GrandSchtroumpf",
+    "email": "francois.guezengar@hotmail.fr"
+  },
+  "contributors": [
+    {
+      "name": "Yann Levreau",
+      "email": "yann@ethdev.com"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/ethereum/remix-plugin/issues"
+  },
+  "license": "MIT",
+  "gitHead": "ca5c69be64ec4eaf7fe5d1d362726e75cb3b5726"
 }

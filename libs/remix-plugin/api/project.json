@@ -1,7 +1,7 @@
 {
-  "name": "api",
+  "name": "remix-plugin-api",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/api/src",
+  "sourceRoot": "libs/remix-plugin/api/src",
   "projectType": "library",
   "targets": {
     "build": {
