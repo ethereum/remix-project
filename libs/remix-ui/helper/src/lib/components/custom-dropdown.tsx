@@ -56,20 +56,25 @@ export const CustomMenu = React.forwardRef(
   },
 )
 
-export const ProxyAddressToggle = React.forwardRef(({ children, onClick, className = '' }: { children: React.ReactNode, onClick: (e) => void, className: string }, ref: Ref<HTMLButtonElement>) => (
-  <button
+export const ProxyAddressToggle = React.forwardRef(({ address, onClick, className = '', onChange }: { address: string, onClick: (e) => void, className: string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }, ref: Ref<HTMLDivElement>) => (
+  <div
     ref={ref}
     onClick={(e) => {
       e.preventDefault()
       onClick(e)
     }}
-    className={className.replace('dropdown-toggle', '')}
-  >
-    <div className="d-flex">
-      <div className="mr-auto text-nowrap">{ children }</div>
-      <div><i className="fad fa-sort-circle"></i></div>
-    </div>
-  </button>
+  className={'d-flex '+ className.replace('dropdown-toggle', '')}>
+    <input
+      onChange={(e) => {
+        e.preventDefault()
+        onChange(e)
+      }}
+      className="udapp_input udapp_ataddressinput form-control"
+      value={address}
+      placeholder="Enter Proxy Address"
+      style={{ width: '100%' }}
+    />
+  </div>
 ))
 
 export const ProxyDropdownMenu = React.forwardRef(

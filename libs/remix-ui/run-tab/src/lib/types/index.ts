@@ -101,7 +101,7 @@ export interface RunTabState {
   }
   remixdActivated: boolean,
   proxy: {
-    deployments: { address: string, date: Date }[]
+    deployments: { address: string, date: string }[]
   }
 }
 
@@ -265,7 +265,7 @@ export interface ContractDropdownProps {
   remixdActivated: boolean,
   isValidProxyAddress?: (address: string) => Promise<boolean>,
   isValidProxyUpgrade?: (proxyAddress: string, contractName: string, solcInput: SolcInput, solcOuput: SolcOutput) => void,
-  proxy: { deployments: { address: string, date: Date }[] }
+  proxy: { deployments: { address: string, date: string }[] }
 }
 
 export interface RecorderProps {
@@ -360,7 +360,7 @@ export interface ContractGUIProps {
   isDeploy?: boolean,
   deployOption?: { title: DeployMode, active: boolean }[],
   initializerOptions?: DeployOption,
-  proxy?: { deployments: { address: string, date: Date }[] },
+  proxy?: { deployments: { address: string, date: string }[] },
   isValidProxyAddress?: (address: string) => Promise<boolean>,
   isValidProxyUpgrade?: (proxyAddress: string) => void
 }
