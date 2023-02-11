@@ -1,11 +1,37 @@
-# remix-plugin-plugin-vscode
+# Plugin vscode
+This library provides connectors to run plugin in a vscode environment. Use this connector if you have a web based plugin that needs to run inside vscode.
 
-This library was generated with [Nx](https://nx.dev).
+**Except if you want your plugin to ONLY work on vscode, prefer [@remixproject/plugin-webview](../webview/readme.md)**
 
-## Building
+```
+npm install @remixproject/plugin-vscode
+```
 
-Run `nx build remix-plugin-plugin-vscode` to build the library.
+## Webview
+Similar to `@remixproject/plugin-iframe`, the webview connector will connect to an engine running inside vscode.
 
-## Running unit tests
+If you do not expose any API you can create an instance like this :
+```html
+<script>
+  const client = createClient(ws)
+  client.onload(async () => {
+    const data = client.call('filemanager', 'readFile', 'ballot.sol')
+  })
+</script>
+```
 
-Run `nx test remix-plugin-plugin-vscode` to execute the unit tests via [Jest](https://jestjs.io).
+If you need to expose an API to other plugin you need to extends the class: 
+```html
+<script>
+  class MyPlugin extends PluginClient {
+    methods = ['hello']
+    hello() {
+      console.log('Hello World')
+    }
+  }
+  const client = createClient(ws)
+  client.onload(async () => {
+    const data = client.call('filemanager', 'readFile', 'ballot.sol')
+  })
+</script>
+```
