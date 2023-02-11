@@ -150,7 +150,19 @@
             ],
             "@remix-project/ghaction-helper": [
                 "libs/ghaction-helper/src/index.ts"
-            ]
+            ],
+            "@remixproject/plugin-utils": ["libs/remix-plugin/utils/src/index.ts"],
+            "@remixproject/plugin-api": ["libs/remix-plugin/api/src/index.ts"],
+            "@remixproject/engine": ["libs/remix-plugin/engine/core/src/index.ts"],
+            "@remixproject/engine-web": ["libs/remix-plugin/engine/web/src/index.ts"],
+            "@remixproject/plugin": ["libs/remix-plugin/plugin/core/src/index.ts"],
+            "@remixproject/plugin/ws": ["libs/remix-plugin/plugin/ws/src/index.ts"],
+            "@remixproject/plugin-webview": ["libs/remix-plugin/plugin/webview/src/index.ts"],
+            "@remixproject/plugin-webworker": [
+              "libs/remix-plugin/plugin/webworker/src/index.ts"
+            ],
+            "@remixproject/plugin-theia": ["libs/remix-plugin/plugin/theia/src/index.ts"],
+            "@remixproject/engine-theia": ["libs/remix-plugin/engine/theia/src/index.ts"]
         }
     }
 }
