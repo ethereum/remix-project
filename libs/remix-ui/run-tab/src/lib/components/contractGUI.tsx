@@ -4,7 +4,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import * as remixLib from '@remix-project/remix-lib'
 import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
-import { CustomTooltip, ProxyAddressToggle, ProxyDropdownMenu, shortenAddressAndDate } from '@remix-ui/helper'
+import { CustomTooltip, ProxyAddressToggle, ProxyDropdownMenu, shortenDate, shortenProxyAddress } from '@remix-ui/helper'
 import { Dropdown } from 'react-bootstrap'
 
 const txFormat = remixLib.execution.txFormat
@@ -521,7 +521,7 @@ export function ContractGUI (props: ContractGUIProps) {
               <Dropdown.Toggle id="dropdown-custom-components" as={ProxyAddressToggle} address={proxyAddress} onChange={handleAddressChange} className="d-inline-block border border-dark bg-dark" />
 
               { props.proxy.deployments.length > 0 &&
-                <Dropdown.Menu as={ProxyDropdownMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items">
+                <Dropdown.Menu as={ProxyDropdownMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items" style={{ overflow: 'hidden' }}>
                   {
                     props.proxy.deployments.map((deployment, index) => (
                       <Dropdown.Item
@@ -530,7 +530,7 @@ export function ContractGUI (props: ContractGUIProps) {
                           switchProxyAddress(deployment.address)
                         }}
                       >
-                          <span>{ proxyAddress === deployment.address ? <span>&#10003; { shortenAddressAndDate(deployment.address, deployment.date) } </span> : <span className="pl-3">{ shortenAddressAndDate(deployment.address, deployment.date) }</span> }</span>
+                          <span>{ proxyAddress === deployment.address ? <span>&#10003; { deployment.contractName + ' ' + shortenProxyAddress(deployment.address) + ' (' + shortenDate(deployment.date) + ')' } </span> : <span className="pl-3">{ deployment.contractName + ' ' + shortenProxyAddress(deployment.address) + ' (' + shortenDate(deployment.date) + ')' }</span> }</span>
                         </Dropdown.Item>
                       ))
                     }

@@ -308,14 +308,14 @@ export const setRemixDActivated = (activated: boolean) => {
   }
 }
 
-export const fetchProxyDeploymentsSuccess = (deployments: { address: string, date: Date }[]) => {
+export const fetchProxyDeploymentsSuccess = (deployments: { address: string, date: string, contractName: string }[]) => {
   return {
     type: FETCH_PROXY_DEPLOYMENTS,
     payload: deployments
   }
 }
 
-export const newProxyDeployment = (deployment: { address: string, date: Date }) => {
+export const newProxyDeployment = (deployment: { address: string, date: string, contractName: string }) => {
   return {
     type: NEW_PROXY_DEPLOYMENT,
     payload: deployment
