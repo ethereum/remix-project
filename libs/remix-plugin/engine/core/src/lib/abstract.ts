@@ -40,8 +40,11 @@ export class Plugin<T extends Api = any, App extends ApiMap = any> implements Pl
   onRegistration?(): void
   onActivation?(): void
   onDeactivation?(): void
+  profile: Profile<T>
 
-  constructor(public profile: Profile<T>) {}
+  constructor(profile: Profile<T>) {
+    this.profile = profile
+  }
 
   get name() {
     return this.profile.name

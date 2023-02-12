@@ -6,9 +6,11 @@ type WebworkerOptions = WorkerOptions & PluginOptions
 export class WebWorkerPlugin extends PluginConnector {
   private worker: Worker
   protected options: WebworkerOptions
+  public profile: Profile & ExternalProfile
 
-  constructor(public profile: Profile & ExternalProfile, options?: WebworkerOptions) {
+  constructor(profile: Profile & ExternalProfile, options?: WebworkerOptions) {
     super(profile)
+    this.profile = profile
     this.setOptions(options)
   }
 
