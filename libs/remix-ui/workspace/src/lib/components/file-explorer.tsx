@@ -3,7 +3,7 @@ import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-l
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
 import { FileExplorerProps, MenuItems, FileExplorerState } from '../types'
-import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
+import { customAction } from '@remixproject/plugin-api'
 import { contextMenuActions } from '../utils'
 
 import '../css/file-explorer.css'

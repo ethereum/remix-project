@@ -509,7 +509,7 @@ export const getRepositoryTitle = async (url: string) => {
 }
 
 export const getGitRepoBranches = async (workspacePath: string) => {
-  const gitConfig: { fs: IndexedDBStorage, dir: string } = {
+  const gitConfig: { fs: any, dir: string } = {
     fs: window.remixFileSystemCallback,
     dir: addSlash(workspacePath)
   }
@@ -518,7 +518,7 @@ export const getGitRepoBranches = async (workspacePath: string) => {
 }
 
 export const getGitRepoCurrentBranch = async (workspaceName: string) => {
-  const gitConfig: { fs: IndexedDBStorage, dir: string } = {
+  const gitConfig: { fs: any, dir: string } = {
     fs: window.remixFileSystemCallback,
     dir: addSlash(workspaceName)
   }
