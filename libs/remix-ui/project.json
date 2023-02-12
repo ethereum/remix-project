@@ -2,7 +2,7 @@
     "name": "remix-ui",
     "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "libs/remix-ui/src",
-    "projectType": "application",
+    "projectType": "library",
     "implicitDependencies": [
     ],
     "targets": {
