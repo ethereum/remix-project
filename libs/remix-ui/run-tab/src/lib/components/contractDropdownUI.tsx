@@ -235,7 +235,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   }
 
   const isValidProxyUpgrade = (proxyAddress: string) => {
-    props.isValidProxyUpgrade(proxyAddress, loadedContractData.contractName, loadedContractData.compiler.source, loadedContractData.compiler.data)
+    return props.isValidProxyUpgrade(proxyAddress, loadedContractData.name, loadedContractData.compiler.source, loadedContractData.compiler.data)
   }
 
   const checkSumWarning = () => {
@@ -318,6 +318,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
                 proxy={props.proxy}
                 isValidProxyAddress={props.isValidProxyAddress}
                 isValidProxyUpgrade={isValidProxyUpgrade}
+                modal={props.modal}
               />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
                 <input
