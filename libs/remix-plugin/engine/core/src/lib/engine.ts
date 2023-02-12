@@ -44,7 +44,7 @@ export class Engine {
    * @param event The name of the event
    * @param cb Callback function to trigger when the event is trigger
    */
-  private addListener(listener: string, emitter: string, event: string, cb: Function) {
+  private addListener(listener: string, emitter: string, event: string, cb: any) {
     const eventName = listenEvent(emitter, event)
     // If not already listening
     if (!this.events[listener][eventName]) {
@@ -83,7 +83,7 @@ export class Engine {
    * @param event The name of the event
    * @param cb Callback function to trigger when event is triggered
    */
-  private listenOnce(listener: string, emitter: string, event: string, cb: Function) {
+  private listenOnce(listener: string, emitter: string, event: string, cb: any) {
     this.addListener(listener, emitter, event, (...args: any[]) => {
       cb(...args)
       this.removeListener(listener, emitter, event)
