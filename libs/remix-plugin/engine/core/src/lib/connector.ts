@@ -26,8 +26,7 @@ export abstract class PluginConnector extends Plugin {
   protected id = 0
   protected pendingRequest: Record<number, (result: any, error: Error | string) => void> = {}
   protected options: PluginConnectorOptions
-  profile: Profile & ExternalProfile
-  constructor(profile: Profile & ExternalProfile) {
+  constructor(public profile: Profile & ExternalProfile) {
     super(profile)
   }
 

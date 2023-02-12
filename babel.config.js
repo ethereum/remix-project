@@ -1,6 +1,7 @@
 module.exports = {
-    "presets": ["@babel/preset-typescript", "@babel/preset-env", "@babel/preset-react"],
+    "presets": ["@babel/preset-env", "@babel/preset-typescript", "@babel/preset-react"],
     "plugins": [
+        "@babel/plugin-transform-reserved-words",
         "babel-plugin-replace-ts-export-assignment", 
         "@babel/plugin-transform-modules-commonjs", 
         "@babel/plugin-proposal-class-properties",
