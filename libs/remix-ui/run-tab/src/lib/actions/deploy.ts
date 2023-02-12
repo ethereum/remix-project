@@ -381,15 +381,14 @@ export const isValidContractUpgrade = async (plugin: RunTab, dispatch: React.Dis
           const newImpl = new UpgradeableContract(newContractName, solcInput, solcOutput, { kind: 'uups' })
           const report = oldImpl.getStorageUpgradeReport(newImpl, { kind: 'uups' })
 
-          console.log('report: ', report)
           return report
         } else {
-          return { success: false, error: 'Previous contract implementation not available for upgrade comparison.' }
+          return { ok: false, pass: false, warning: 'Previous contract implementation not available for upgrade comparison.' }
         }
       } else {
-        return { success: false, error: 'Previous contract implementation not available for upgrade comparison.' }
+        return { ok: false, pass: false, warning: 'Previous contract implementation not available for upgrade comparison.' }
       }
   } else {
-    return { success: false, error: 'Previous contract implementation not available for upgrade comparison.' }
+    return { ok: false, pass: false, warning: 'Previous contract implementation not available for upgrade comparison.' }
   }
 }
