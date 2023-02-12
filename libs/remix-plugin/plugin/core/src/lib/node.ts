@@ -6,11 +6,16 @@ import { getRootPath } from '@remixproject/plugin-utils'
  */
 export class PluginNode {
 
+  path: string
+  client: PluginClient
   /**
    * @param path Path to external plugin
    * @param client The main client used in this plugin
    */
-  constructor(private path: string, private client: PluginClient) {}
+  constructor(path: string,  client: PluginClient) {
+    this.path = path
+    this.client = client
+  }
 
   get(name: string) {
     return new PluginNode(`${this.path}.${name}`, this.client)

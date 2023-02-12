@@ -30,8 +30,10 @@ export class WebviewConnector implements ClientConnector {
   source: { postMessage: (message: any, origin?: string) => void }
   origin: string
   isVscode: boolean
+  options: PluginOptions<any>
 
-  constructor(private options: PluginOptions<any>) {
+  constructor(options: PluginOptions<any>) {
+    this.options = options
     // @todo(#295) check if we can merge this statement in `this.isVscode = acquireVsCodeApi !== undefined`
     try {
       this.isVscode = acquireTheiaApi !== undefined
