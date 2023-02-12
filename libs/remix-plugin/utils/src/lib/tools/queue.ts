@@ -4,7 +4,7 @@ import type {
 } from '../types/message'
 import { Profile } from '../types/profile'
 import { Api } from '../types/api'
-import { PluginOptions } from '@remixproject/plugin-utils'
+import { PluginOptions } from '../types/options'
 
 export class PluginQueueItem<T extends Api = any> implements PluginQueueInterface {
     private resolve: (value:unknown) => void

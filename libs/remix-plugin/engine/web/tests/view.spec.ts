@@ -1,4 +1,4 @@
-import { Engine, PluginManager } from '../../core/src'
+import { Engine, PluginManager } from '@remixproject/engine'
 import { HostPlugin, ViewPlugin } from '../src'
 import { pluginManagerProfile } from '@remixproject/plugin-api'
 
