@@ -22,13 +22,9 @@ export class LibraryPlugin<
 > extends Plugin {
 
   private isView: boolean
-  protected library: LibraryApi<T, P>
-  public profile: P
-  constructor(library: LibraryApi<T, P>, profile: P) 
-  {
+
+  constructor(protected library: LibraryApi<T, P>, public profile: P) {
     super(profile)
-    this.library = library
-    this.profile = profile
     profile.methods.forEach(method => {
       if (!library[method]) {
         throw new Error(`Method ${method} is exposed by LibraryPlugin ${profile.name}. But library doesn't expose this method`)

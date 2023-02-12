@@ -2,9 +2,8 @@
 /* eslint-disable no-unused-vars */
 import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
-import { CompilerApiMixin } from './compiler-api'
 import { ICompilerApi } from '@remix-project/remix-lib'
-import { CompileTabLogic } from '@remix-ui/solidity-compiler'
+import { CompileTabLogic, CompilerApiMixin } from '@remix-ui/solidity-compiler'
 
 const defaultCompilerParameters = {
   runs: '200',

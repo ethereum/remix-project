@@ -14,11 +14,9 @@ export class IframePlugin extends PluginConnector {
   private origin: string
   private source: Window
   private url: string
-  public profile: IframeProfile
 
-  constructor(profile: IframeProfile) {
+  constructor(public profile: IframeProfile) {
     super(profile)
-    this.profile = profile
   }
 
   /** Implement "activate" of the ViewPlugin */

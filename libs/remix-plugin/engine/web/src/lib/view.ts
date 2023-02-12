@@ -10,11 +10,9 @@ export type ViewProfile = Profile & LocationProfile
 
 export abstract class ViewPlugin extends Plugin {
   abstract render(): any
-  public profile: ViewProfile
 
-  constructor(profile: ViewProfile) {
+  constructor(public profile: ViewProfile) {
     super(profile)
-    this.profile = profile
   }
 
   async activate() {
