@@ -33,7 +33,8 @@
           "extractLicenses": false,
           "sourceMap": true,
           "vendorChunk": true,
-          "optimization": false
+          "optimization": false,
+          "runtimeChunk": true
         },
         "production": {
           "optimization": true,
@@ -41,7 +42,8 @@
           "sourceMap": false,
           "namedChunks": false,
           "extractLicenses": false,
-          "vendorChunk": false
+          "vendorChunk": false,
+          "buildOptimizer": true
         }
       }
     },

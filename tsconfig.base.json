@@ -192,6 +192,9 @@
       "@remixproject/plugin-webview": [
         "libs/remix-plugin/plugin/webview/src/index.ts"
       ],
+      "@remixproject/plugin-ws":[
+        "libs/remix-plugin/plugin/ws/src/index.ts"
+      ],
       "@remixproject/plugin-webworker": [
         "libs/remix-plugin/plugin/webworker/src/index.ts"
       ],
