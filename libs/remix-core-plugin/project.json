@@ -11,8 +11,7 @@
           "outputPath": "dist/libs/remix-core-plugin",
           "main": "libs/remix-core-plugin/src/index.ts",
           "tsConfig": "libs/remix-core-plugin/tsconfig.lib.json",
-          "assets": [],
-          "updateBuildableProjectDepsInPackageJson": false
+          "assets": []
         }
       },
       "lint": {

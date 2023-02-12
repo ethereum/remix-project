@@ -11,7 +11,6 @@
         "outputPath": "dist/libs/remix-plugin/engine/node",
         "main": "libs/remix-plugin/engine/node/src/index.ts",
         "tsConfig": "libs/remix-plugin/engine/node/tsconfig.lib.json",
-        "assets": ["libs/remix-plugin/engine/node/*.md"]
       }
     },
     "lint": {
