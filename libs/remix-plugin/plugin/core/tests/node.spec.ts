@@ -1,4 +1,4 @@
-import { PluginClient } from '@remixproject/plugin'
+import { PluginClient } from '../src'
 import { PluginNode } from '../src'
 
 class MockClient extends PluginClient {
