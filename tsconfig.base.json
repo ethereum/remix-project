@@ -49,7 +49,7 @@
         "libs/remix-simulator/src/index.ts"
       ],
       "@remix-project/remix-solidity": [
-        "libs/remix-solidity/src/index"
+        "libs/remix-solidity/src/index.ts"
       ],
       "@remix-project/remix-tests": [
         "libs/remix-tests/src/index.ts"

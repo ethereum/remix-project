@@ -25,7 +25,7 @@ export class PluginNode {
    * Listen to an event from the plugin
    * @note Event are trigger at the root level yet, not on a specific node
    */
-  on(method: string, cb: Function) {
+  on(method: string, cb: any) {
     // Events are triggered at the root level for now
     this.client.on(getRootPath(this.path) as any, method, cb)
   }
