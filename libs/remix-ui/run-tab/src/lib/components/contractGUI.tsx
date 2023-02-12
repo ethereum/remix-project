@@ -178,14 +178,41 @@ export function ContractGUI (props: ContractGUIProps) {
     }
   }
 
-  const handleActionClick = () => {
+  const handleActionClick = async () => {
     if (deployState.deploy) {
       const proxyInitializeString = getMultiValsString(initializeFields.current)
 
       props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
     } else if (deployState.upgrade) {
-      props.isValidProxyUpgrade(proxyAddress)
-      !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
+      if (proxyAddress === '') {
+        setProxyAddressError('proxy address cannot be empty')
+      } else {
+        const isValidProxyAddress = await props.isValidProxyAddress(proxyAddress)
+
+        if (isValidProxyAddress) {
+          setProxyAddressError('')
+          const upgradeReport: any = await props.isValidProxyUpgrade(proxyAddress)
+
+          if (upgradeReport.ok) {
+            !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
+          } else {
+            if (upgradeReport.warning) {
+              props.modal('Warning', upgradeReport.warning, 'Proceed', () => {
+                !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
+              }, 'Cancel', () => {})
+            } else {
+              props.modal('Proxy Upgrade Error', `New deployment storage layout is incompactible with previous deployment.\n
+              ${upgradeReport.ops.map((failedCase) => `"${failedCase.kind}": ${failedCase.original.label}`).join('\n')}\n
+              Do you want to continue?`, 'Proceed', () => {
+                !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
+              }, 'Cancel', () => {})
+            }
+          // console.log('upgradeReport: ', upgradeReport)
+        }
+      } else {
+          setProxyAddressError('not a valid contract address')
+        }
+      }
     } else {
       props.clickCallBack(props.funcABI.inputs, basicInput)
     }
@@ -231,18 +258,6 @@ export function ContractGUI (props: ContractGUIProps) {
 
   const switchProxyAddress = (address: string) => {
     setProxyAddress(address)
-  }
-
-  const validateProxyAddress = async (address: string) => {
-    if (address === '') {
-      setProxyAddressError('proxy address cannot be empty')
-    } else {
-      if (await props.isValidProxyAddress(address)) {
-        setProxyAddressError('')
-      } else {
-        setProxyAddressError('not a valid contract address')
-      }
-    }
   }
 
   const toggleDropdown = (isOpen: boolean) => {

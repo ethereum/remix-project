@@ -3,6 +3,7 @@ import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { ContractData, FuncABI } from '@remix-project/core-plugin'
 import { RunTab } from './run-tab'
 import { SolcInput, SolcOutput } from '@openzeppelin/upgrades-core'
+import { LayoutCompatibilityReport } from '@openzeppelin/upgrades-core/dist/storage/report'
 export interface RunTabProps {
   plugin: RunTab
 }
@@ -264,7 +265,7 @@ export interface ContractDropdownProps {
   setSelectedContract: (contractName: string) => void
   remixdActivated: boolean,
   isValidProxyAddress?: (address: string) => Promise<boolean>,
-  isValidProxyUpgrade?: (proxyAddress: string, contractName: string, solcInput: SolcInput, solcOuput: SolcOutput) => void,
+  isValidProxyUpgrade?: (proxyAddress: string, contractName: string, solcInput: SolcInput, solcOuput: SolcOutput) => Promise<LayoutCompatibilityReport | { ok: boolean, pass: boolean, warning: string }>,
   proxy: { deployments: { address: string, date: string, contractName: string }[] }
 }
 
@@ -362,7 +363,8 @@ export interface ContractGUIProps {
   initializerOptions?: DeployOption,
   proxy?: { deployments: { address: string, date: string, contractName: string }[] },
   isValidProxyAddress?: (address: string) => Promise<boolean>,
-  isValidProxyUpgrade?: (proxyAddress: string) => void
+  isValidProxyUpgrade?: (proxyAddress: string) => Promise<LayoutCompatibilityReport | { ok: boolean, pass: boolean, warning: string }>,
+  modal?: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void
 }
 export interface MainnetProps {
   network: Network,
