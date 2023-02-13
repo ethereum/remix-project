@@ -1,9 +1,5 @@
 import * as packageJson from '../../../../../package.json'
-import { Plugin } from '@remixproject/engine'
-import { AppModal, AlertModal, ModalTypes } from '@remix-ui/app'
 import React from 'react' // eslint-disable-line
-import { Blockchain } from '../../blockchain/blockchain'
-import { ethers } from 'ethers'
 import { AbstractProvider } from './abstract-provider'
 
 const profile = {
@@ -11,7 +7,7 @@ const profile = {
   displayName: 'Ganache Provider',
   kind: 'provider',
   description: 'Truffle Ganache provider',
-  methods: ['sendAsync'],
+  methods: ['sendAsync', 'init'],
   version: packageJson.version
 }
 

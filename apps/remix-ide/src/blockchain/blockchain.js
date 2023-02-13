@@ -82,14 +82,18 @@ export class Blockchain extends Plugin {
   }
 
   setupProviders () {
+    const vmProvider = new VMProvider(this.executionContext)
     this.providers = {}
-    this.providers.vm = new VMProvider(this.executionContext)
+    this.providers['vm-berlin'] = vmProvider
+    this.providers['vm-london'] = vmProvider
+    this.providers['vm'] = vmProvider
     this.providers.injected = new InjectedProvider(this.executionContext)
     this.providers.web3 = new NodeProvider(this.executionContext, this.config)
   }
 
   getCurrentProvider () {
     const provider = this.getProvider()
+    
     if (this.providers[provider]) return this.providers[provider]
     return this.providers.web3 // default to the common type of provider
   }
@@ -364,10 +368,6 @@ export class Blockchain extends Plugin {
     return this.executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
   }
 
-  setProviderFromEndpoint (target, context, cb) {
-    return this.executionContext.setProviderFromEndpoint(target, context, cb)
-  }
-
   detectNetwork (cb) {
     return this.executionContext.detectNetwork(cb)
   }
@@ -389,7 +389,7 @@ export class Blockchain extends Plugin {
   }
 
   isWeb3Provider () {
-    const isVM = this.getProvider() === 'vm'
+    const isVM = this.executionContext.isVM()
     const isInjected = this.getProvider() === 'injected'
     return (!isVM && !isInjected)
   }
@@ -408,7 +408,7 @@ export class Blockchain extends Plugin {
 
   web3 () {
     // @todo(https://github.com/ethereum/remix-project/issues/431)
-    const isVM = this.getProvider() === 'vm'
+    const isVM = this.executionContext.isVM()
     if (isVM) {
       return this.providers.vm.web3
     }
@@ -527,7 +527,7 @@ export class Blockchain extends Plugin {
    * @param {{privateKey: string, balance: string}} newAccount The new account to create
    */
   createVMAccount (newAccount) {
-    if (this.getProvider() !== 'vm') {
+    if (!this.executionContext.isVM()) {
       throw new Error('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
     }
     return this.providers.vm.createVMAccount(newAccount)

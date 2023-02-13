@@ -16,7 +16,7 @@ const Context = ({ opts, provider }: { opts, provider: string }) => {
   const i = data.receipt ? data.transactionIndex : data.transactionIndex
   const value = val ? typeConversion.toInt(val) : 0
 
-  if (provider === 'vm') {
+  if (provider.startsWith('vm')) {
     return (
       <div>
         <span>
@@ -29,7 +29,7 @@ const Context = ({ opts, provider }: { opts, provider: string }) => {
           <div className='remix_ui_terminal_txItem'><span className='remix_ui_terminal_txItemTitle'>hash:</span> {hash}</div>
         </span>
       </div>)
-  } else if (provider !== 'vm' && data.resolvedData) {
+  } else if (data.resolvedData) {
     return (
       <div>
         <span>

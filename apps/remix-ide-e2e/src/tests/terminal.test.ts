@@ -49,7 +49,7 @@ module.exports = {
     browser
       .click('*[data-id="terminalClearConsole"]') // clear  the terminal
       .clickLaunchIcon('udapp')
-      .switchEnvironment('External Http Provider')
+      .switchEnvironment('basic-http-provider')
       .modalFooterOKClick('basic-http-provider')
       .executeScriptInTerminal('web3.eth.getAccounts()')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '["', 60000) // we check if an array is present, don't need to check for the content
@@ -209,7 +209,7 @@ module.exports = {
   'Should run a script which log transaction and block using web3.js and ethers #group7': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('udapp')
-      .switchEnvironment('External Http Provider')
+      .switchEnvironment('basic-http-provider')
       .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
       .execute(() => {
         (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
