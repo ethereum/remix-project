@@ -973,6 +973,7 @@ class FileManager extends Plugin {
     if(!lastAction){
       return
     }
+    
     switch(lastAction.action){
       case "move":
         // eslint-disable-next-line no-case-declarations
