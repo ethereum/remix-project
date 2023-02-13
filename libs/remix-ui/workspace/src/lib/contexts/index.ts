@@ -45,6 +45,7 @@ export const FileSystemContext = createContext<{
   dispatchCreateSolidityGithubAction: () => Promise<void>,
   dispatchCreateTsSolGithubAction: () => Promise<void>,
   dispatchCreateSlitherGithubAction: () => Promise<void>
+  dispatchRestoreTabs: () => void
 }>(null)
   
     

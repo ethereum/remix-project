@@ -50,6 +50,8 @@ class FileManager extends Plugin {
   getFolder: (path: any) => Promise<unknown>
   setFile: (path: any, data: any) => Promise<unknown>
   switchFile: (path: any) => Promise<void>
+  tabsRestored: boolean
+
   constructor(editor, appManager) {
     super(profile)
     this.mode = 'browser'
@@ -119,9 +121,6 @@ class FileManager extends Plugin {
 
   /** The current opened file */
   file() { 
-    // [TODO] Please suggest a better place to call this method  
-    this.restoreSession()
-
     try {
       const file = this.currentFile()
 
@@ -468,6 +467,7 @@ class FileManager extends Plugin {
     this.getFolder = this.readdir
     this.setFile = this.writeFile
     this.switchFile = this.open
+
   }
 
   fileAddedEvent(path) {
@@ -669,7 +669,6 @@ class FileManager extends Plugin {
       let content = ''
 
       window.localStorage.setItem("openedTabs", JSON.stringify(this.openedFiles))
-
       try {
         content = await provider.get(file)
         
@@ -937,7 +936,7 @@ class FileManager extends Plugin {
           this.openFile(tab)
         }
       }
-
+      this.tabsRestored = true
     } catch (error) {
       
     }

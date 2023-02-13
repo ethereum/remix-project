@@ -514,3 +514,13 @@ export const moveFolder = async (src: string, dest: string) => {
     dispatch(displayPopUp('Oops! An error ocurred while performing moveDir operation.' + error))
   }
 }
+
+export const restoreTabs = () => {
+  const fileManager = plugin.fileManager
+
+  try {
+    fileManager.restoreSession()
+  } catch (error) {
+    dispatch(displayPopUp('Oops! An error ocurred while trying to restore tabs.' + error))
+  }
+}
