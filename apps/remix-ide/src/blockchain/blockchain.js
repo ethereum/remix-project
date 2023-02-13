@@ -194,7 +194,7 @@ export class Blockchain extends Plugin {
       id: 'confirmProxyDeployment',
       title: 'Confirm Update Proxy (ERC1967)',
       message: `Confirm you want to update your proxy contract with the new implementation contract's address:  ${newImplAddress}.`,
-      modalType: 'modal',         
+      modalType: 'modal',
       okLabel: 'OK',
       cancelLabel: 'Cancel',
       okFn: () => {
