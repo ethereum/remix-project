@@ -207,7 +207,6 @@ export function ContractGUI (props: ContractGUIProps) {
                 !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
               }, 'Cancel', () => {})
             }
-          // console.log('upgradeReport: ', upgradeReport)
         }
       } else {
           setProxyAddressError('not a valid contract address')
