@@ -50,7 +50,6 @@ class FileManager extends Plugin {
   getFolder: (path: any) => Promise<unknown>
   setFile: (path: any, data: any) => Promise<unknown>
   switchFile: (path: any) => Promise<void>
-  tabsRestored: boolean
 
   constructor(editor, appManager) {
     super(profile)
@@ -936,7 +935,6 @@ class FileManager extends Plugin {
           this.openFile(tab)
         }
       }
-      this.tabsRestored = true
     } catch (error) {
       
     }
