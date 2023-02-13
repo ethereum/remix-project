@@ -119,30 +119,7 @@ export const runTabInitialState: RunTabState = {
   personalMode: false,
   networkName: 'VM',
   providers: {
-    providerList: [{
-      id: 'vm-mode-london',
-      dataId: 'settingsVMLondonMode',
-      title: 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.',
-      value: 'vm-london',
-      fork: 'london',
-      content: 'Remix VM (London)'
-    }, {
-      id: 'vm-mode-berlin',
-      dataId: 'settingsVMBerlinMode',
-      title: 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.',
-      value: 'vm-berlin',
-      fork: 'berlin',
-      content: 'Remix VM (Berlin)'
-    }, {
-      id: 'injected-mode',
-      dataId: 'settingsInjectedMode',
-      title: 'Execution environment has been provided by Metamask or similar provider.',
-      value: 'injected',
-      content: `Injected Provider${(window && window.ethereum && !(window.ethereum.providers && !window.ethereum.selectedProvider)) ?
-        window.ethereum.isCoinbaseWallet || window.ethereum.selectedProvider?.isCoinbaseWallet ? ' - Coinbase' :
-        window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet ? ' - Brave' :
-        window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask ? ' - MetaMask' : '' : ''}`
-    }],
+    providerList: [],
     isRequesting: false,
     isSuccessful: false,
     error: null
@@ -192,7 +169,10 @@ export const runTabInitialState: RunTabState = {
 
 type AddProvider = {
   name: string,
-  provider: any
+  displayName: string,
+  provider: any,
+  title?: string,
+  dataId?: string
 }
 
 export const runTabReducer = (state: RunTabState = runTabInitialState, action: Action) => {
@@ -355,10 +335,10 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       const payload: AddProvider = action.payload
       const id = action.payload.name
       state.providers.providerList.push({
-        content: payload.name,
-        dataId: id,
+        content: payload.displayName,
+        dataId: payload.dataId,
         id,
-        title: payload.name,
+        title: payload.title,
         value: id
       })
       return {
