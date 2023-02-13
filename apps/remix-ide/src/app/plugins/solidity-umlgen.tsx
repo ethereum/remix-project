@@ -99,11 +99,9 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     const themeQuality: ThemeQualityType = await this.call('theme', 'currentTheme')
     const parsedDocument = parser.parseFromString(svgPayload, 'image/svg+xml')
     const element = parsedDocument.getElementsByTagName('svg')
-    console.log({ element })
     themeCollection.forEach((theme) => {
       if (theme.themeName === themeQuality.name) {
         parsedDocument.documentElement.setAttribute('style', `background-color: var(${themeQuality.name === theme.themeName ? theme.backgroundColor : '--body-bg'})`)
-        console.log('found theme')
         element[0].setAttribute('fill', theme.actualHex)
       }
     })
