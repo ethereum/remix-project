@@ -183,6 +183,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await createSlitherGithubAction()
   }
 
+  const dispatchRestoreTabs = () =>{
+    restoreTabs()
+  }
+
   useEffect(() => {
     dispatchInitWorkspace()
   }, [])
@@ -299,7 +303,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchCheckoutRemoteBranch,
     dispatchCreateSolidityGithubAction,
     dispatchCreateTsSolGithubAction,
-    dispatchCreateSlitherGithubAction
+    dispatchCreateSlitherGithubAction,
+    dispatchRestoreTabs
   }
   return (
     <FileSystemContext.Provider value={value}>
