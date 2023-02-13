@@ -11,7 +11,7 @@ export class BasicVMProvider extends Plugin implements IProvider {
   constructor (profile, blockchain) {
     super(profile)
     this.blockchain = blockchain
-    this.fork = null
+    this.fork = ''
   }
 
   async init (): Promise<{ [id: string] : any }> { return {} }
