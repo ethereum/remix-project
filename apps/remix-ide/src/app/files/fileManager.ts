@@ -937,7 +937,7 @@ class FileManager extends Plugin {
       }
     } catch (error) {
       
-    }
+    } 
   }
 }
 
