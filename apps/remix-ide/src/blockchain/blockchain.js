@@ -194,7 +194,7 @@ export class Blockchain extends Plugin {
       id: 'confirmProxyDeployment',
       title: 'Confirm Update Proxy (ERC1967)',
       message: `Confirm you want to update your proxy contract with the new implementation contract's address:  ${newImplAddress}.`,
-      modalType: 'modal',
+      modalType: 'modal',         
       okLabel: 'OK',
       cancelLabel: 'Cancel',
       okFn: () => {
@@ -242,10 +242,14 @@ export class Blockchain extends Plugin {
       if (hasPreviousDeploys) {
         const deployments = await this.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`)
         const parsedDeployments = JSON.parse(deployments)
-        const oldImplementationAddress = parsedDeployments.deployments[proxyAddress].implementationAddress
-        const hasPreviousBuild = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkName}/solc-${oldImplementationAddress}.json`)
+        const proxyDeployment = parsedDeployments.deployments[proxyAddress]
 
-        if (hasPreviousBuild) await this.call('fileManager', 'remove', `.deploys/upgradeable-contracts/${networkName}/solc-${oldImplementationAddress}.json`)
+        if (proxyDeployment) {
+          const oldImplementationAddress = proxyDeployment.implementationAddress
+          const hasPreviousBuild = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkName}/solc-${oldImplementationAddress}.json`)
+
+          if (hasPreviousBuild) await this.call('fileManager', 'remove', `.deploys/upgradeable-contracts/${networkName}/solc-${oldImplementationAddress}.json`)
+        }
         parsedDeployments.deployments[proxyAddress] = {
           date: new Date().toISOString(),
           contractName: contractName,
