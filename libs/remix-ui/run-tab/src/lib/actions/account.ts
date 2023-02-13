@@ -67,10 +67,7 @@ export const setFinalContext = (plugin: RunTab, dispatch: React.Dispatch<any>) =
 }
 
 const _getProviderDropdownValue = (plugin: RunTab): string => {
-  const provider = plugin.blockchain.getProvider()
-  const fork = plugin.blockchain.getCurrentFork()
-
-  return provider === 'vm' ? provider + '-' + fork : provider
+  return plugin.blockchain.getProvider()
 }
 
 export const setExecutionContext = (plugin: RunTab, dispatch: React.Dispatch<any>, executionContext: { context: string, fork: string }) => {
