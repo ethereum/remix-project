@@ -118,7 +118,7 @@ class FileManager extends Plugin {
   }
 
   /** The current opened file */
-  file() {
+  file() { 
     // [TODO] Please suggest a better place to call this method  
     this.restoreSession()
 
