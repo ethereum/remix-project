@@ -933,7 +933,7 @@ class FileManager extends Plugin {
         const tabs = Object.keys(JSON.parse(prevSession))
         for(const tab of tabs){
           this.openFile(tab)
-        }
+        } 
       }
     } catch (error) {
       
