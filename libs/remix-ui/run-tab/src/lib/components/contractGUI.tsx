@@ -538,14 +538,21 @@ export function ContractGUI (props: ContractGUIProps) {
                 <Dropdown.Menu as={ProxyDropdownMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items" style={{ overflow: 'hidden' }}>
                   {
                     props.proxy.deployments.map((deployment, index) => (
-                      <Dropdown.Item
-                        key={index}
-                        onClick={() => {
-                          switchProxyAddress(deployment.address)
-                        }}
+                      <CustomTooltip
+                        placement={"right"}
+                        tooltipClasses="text-nowrap"
+                        tooltipId={`proxyAddressTooltip${index}`}
+                        tooltipText={'Deployed ' + shortenDate(deployment.date)}
                       >
-                          <span>{ proxyAddress === deployment.address ? <span>&#10003; { deployment.contractName + ' ' + shortenProxyAddress(deployment.address) + ' (' + shortenDate(deployment.date) + ')' } </span> : <span className="pl-3">{ deployment.contractName + ' ' + shortenProxyAddress(deployment.address) + ' (' + shortenDate(deployment.date) + ')' }</span> }</span>
-                        </Dropdown.Item>
+                          <Dropdown.Item
+                            key={index}
+                            onClick={() => {
+                              switchProxyAddress(deployment.address)
+                            }}
+                          >
+                            <span>{ proxyAddress === deployment.address ? <span>&#10003; { deployment.contractName + ' ' + shortenProxyAddress(deployment.address) } </span> : <span className="pl-3">{ deployment.contractName + ' ' + shortenProxyAddress(deployment.address) }</span> }</span>
+                          </Dropdown.Item>
+                        </CustomTooltip>
                       ))
                     }
                   </Dropdown.Menu>
