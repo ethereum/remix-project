@@ -27,12 +27,14 @@ import { StoragePlugin } from './app/plugins/storage'
 import { Layout } from './app/panels/layout'
 import { NotificationPlugin } from './app/plugins/notification'
 import { Blockchain } from './blockchain/blockchain.js'
-import { HardhatProvider } from './app/tabs/hardhat-provider'
-import { GanacheProvider } from './app/tabs/ganache-provider'
-import { FoundryProvider } from './app/tabs/foundry-provider'
-import { ExternalHttpProvider } from './app/tabs/external-http-provider'
-import { Injected0ptimismProvider } from './app/tabs/injected-optimism-provider'
-import { InjectedArbitrumOneProvider } from './app/tabs/injected-arbitrum-one-provider'
+import { BerlinVMProvider, LondonVMProvider } from './app/providers/vm-provider'
+import { HardhatProvider } from './app/providers/hardhat-provider'
+import { GanacheProvider } from './app/providers/ganache-provider'
+import { FoundryProvider } from './app/providers/foundry-provider'
+import { ExternalHttpProvider } from './app/providers/external-http-provider'
+import { BasicInjectedProvider } from './app/providers/basic-injected-provider'
+import { Injected0ptimismProvider } from './app/providers/injected-optimism-provider'
+import { InjectedArbitrumOneProvider } from './app/providers/injected-arbitrum-one-provider'
 import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
 import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
@@ -201,12 +203,15 @@ class AppComponent {
     const networkModule = new NetworkModule(blockchain)
     // ----------------- represent the current selected web3 provider ----
     const web3Provider = new Web3ProviderModule(blockchain)
+    const vmProviderBerlin = new BerlinVMProvider(blockchain)
+    const vmProviderLondon = new LondonVMProvider(blockchain)
     const hardhatProvider = new HardhatProvider(blockchain)
     const ganacheProvider = new GanacheProvider(blockchain)
     const foundryProvider = new FoundryProvider(blockchain)
     const externalHttpProvider = new ExternalHttpProvider(blockchain)
-    const injected0ptimismProvider = new Injected0ptimismProvider(blockchain)
-    const injectedArbitrumOneProvider = new InjectedArbitrumOneProvider(blockchain)
+    const basicInjectedProvider = new BasicInjectedProvider()
+    const injected0ptimismProvider = new Injected0ptimismProvider()
+    const injectedArbitrumOneProvider = new InjectedArbitrumOneProvider()
     // ----------------- convert offset to line/column service -----------
     const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
     Registry.getInstance().put({
@@ -266,10 +271,13 @@ class AppComponent {
       fetchAndCompile,
       dGitProvider,
       storagePlugin,
+      vmProviderBerlin,
+      vmProviderLondon,
       hardhatProvider,
       ganacheProvider,
       foundryProvider,
       externalHttpProvider,
+      basicInjectedProvider,
       injected0ptimismProvider,
       injectedArbitrumOneProvider,
       this.walkthroughService,

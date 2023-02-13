@@ -7,7 +7,7 @@ import showTable from './Table'
 const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, txDetails, modal, provider }) => {
   const debug = (event, tx) => {
     event.stopPropagation()
-    if (tx.isCall && tx.envMode !== 'vm') {
+    if (tx.isCall && !tx.envMode.startsWith('vm')) {
       modal('VM mode', 'Cannot debug this call. Debugging calls is only possible in Remix VM mode.', 'Ok', true, () => {}, 'Cancel', () => {})
     } else {
       plugin.event.trigger('debuggingRequested', [tx.hash])

@@ -32,7 +32,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
       return
     }
     const networkProvider = plugin.networkModule.getNetworkProvider.bind(plugin.networkModule)
-    const netUI = (networkProvider() !== 'vm') ? `${network.name} (${network.id || '-'}) network` : 'VM'
+    const netUI = !networkProvider().startsWith('vm') ? `${network.name} (${network.id || '-'}) network` : 'VM'
 
     setNetworkNameFromProvider(dispatch, netUI)
     if (network.name === 'VM') dispatch(setProxyEnvAddress(plugin.config.get('vm/proxy')))

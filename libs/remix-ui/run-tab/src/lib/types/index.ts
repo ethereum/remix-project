@@ -63,7 +63,7 @@ export interface EnvironmentProps {
     isSuccessful: boolean,
     error: string
   },
-  setExecutionContext: (executionContext: { context: string, fork: string }) => void
+  setExecutionContext: (executionContext: { context: string }) => void
 }
 
 export interface NetworkProps {

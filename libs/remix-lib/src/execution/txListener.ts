@@ -139,7 +139,7 @@ export class TxListener {
   startListening () {
     this.init()
     this._isListening = true
-    if (this._listenOnNetwork && this.executionContext.getProvider() !== 'vm') {
+    if (this._listenOnNetwork && !this.executionContext.isVM()) {
       this._startListenOnNetwork()
     }
   }

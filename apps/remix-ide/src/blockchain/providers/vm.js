@@ -6,6 +6,7 @@ class VMProvider {
   constructor (executionContext) {
     this.executionContext = executionContext
     this.worker = null
+    this.provider = null
   }
 
   getAccounts (cb) {
@@ -30,7 +31,7 @@ class VMProvider {
         stamps[msg.data.stamp](msg.data.error, msg.data.result)
       }
     })
-    const provider = {
+    this.provider = {
       sendAsync: (query, callback) => {
         const stamp = Date.now() + incr
         incr++
@@ -38,10 +39,10 @@ class VMProvider {
         this.worker.postMessage({ cmd: 'sendAsync', query, stamp })
       }
     }
-    this.web3 = new Web3(provider)
+    this.web3 = new Web3(this.provider)
     extend(this.web3)
     this.accounts = {}
-    this.executionContext.setWeb3('vm', this.web3)
+    this.executionContext.setWeb3(this.executionContext.getProvider(), this.web3)
   }
 
   // TODO: is still here because of the plugin API
@@ -81,7 +82,7 @@ class VMProvider {
   }
 
   getProvider () {
-    return 'vm'
+    return this.executionContext.getProvider()
   }
 }
 

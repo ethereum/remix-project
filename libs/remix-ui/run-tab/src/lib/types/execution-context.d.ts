@@ -32,6 +32,5 @@ export class ExecutionContext {
     listenOnLastBlockId: NodeJS.Timer;
     _updateChainContext(): Promise<void>;
     listenOnLastBlock(): void;
-    setProviderFromEndpoint(endpoint: any, value: any, cb: any): void;
     txDetailsLink(network: any, hash: any): any;
 }
