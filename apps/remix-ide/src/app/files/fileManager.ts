@@ -975,13 +975,15 @@ class FileManager extends Plugin {
     }
     switch(lastAction.action){
       case "move":
-        let file = lastAction.args.src.substring(lastAction.args.src.lastIndexOf("/")+1),
+        // eslint-disable-next-line no-case-declarations
+        const file = lastAction.args.src.substring(lastAction.args.src.lastIndexOf("/")+1),
           folder = lastAction.args.src.substring(0, lastAction.args.src.lastIndexOf("/")+1)
 
         await this.moveFile(`${lastAction.args.dest}/${file}`, folder)
       break;
       case "movedir":
-        let dir = lastAction.args.src,
+        // eslint-disable-next-line no-case-declarations
+        const dir = lastAction.args.src,
           src = dir.substring(0,dir.lastIndexOf("/"))
           
         this.moveDir(`${lastAction.args.dest}/${lastAction.args.dirName}`, src )
