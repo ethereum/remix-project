@@ -58,7 +58,7 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading }: RemixUiSolidityU
             {
               ({ zoomIn, zoomOut, resetTransform }) => (
                 <Fragment>
-                  <div className="position-absolute bg-transparent rounded p-2" id="buttons"
+                  <div className="position-absolute bg-transparent rounded mt-2" id="buttons"
                     style={{ zIndex: 3,  top: '10', right: '2em' }}
                   >
                     <button className="btn btn-outline-info d-none rounded-circle mr-2" onClick={() => resetTransform()}>
