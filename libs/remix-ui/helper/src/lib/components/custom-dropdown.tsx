@@ -63,16 +63,19 @@ export const ProxyAddressToggle = React.forwardRef(({ address, onClick, classNam
       e.preventDefault()
       onClick(e)
     }}
-  className={'d-flex '+ className.replace('dropdown-toggle', '')}>
+    className={'d-flex '+ className.replace('dropdown-toggle', '')}
+    data-id="toggleProxyAddressDropdown"
+  >
     <input
       onChange={(e) => {
         e.preventDefault()
         onChange(e)
       }}
-      className="udapp_input udapp_ataddressinput form-control"
+      className="udapp_input form-control"
       value={address}
       placeholder="Enter Proxy Address"
       style={{ width: '100%' }}
+      data-id="ERC1967AddressInput"
     />
   </div>
 ))
