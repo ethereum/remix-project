@@ -38,12 +38,6 @@ export function ContractGUI (props: ContractGUIProps) {
   }, [props.deployOption])
 
   useEffect(() => {
-    if (!proxyAddress && props.proxy && props.proxy.deployments.length > 0) {
-      setProxyAddress(props.proxy.deployments[0].address)
-    }
-  }, [props.proxy])
-
-  useEffect(() => {
     if (props.title) {
       setTitle(props.title)
     } else if (props.funcABI.name) {
@@ -531,33 +525,36 @@ export function ContractGUI (props: ContractGUIProps) {
               toggleUpgradeImp ? "d-flex" : "d-none"
             }`}
           >
-            <Dropdown onToggle={toggleDropdown} show={showDropdown}>
-              <Dropdown.Toggle id="dropdown-custom-components" as={ProxyAddressToggle} address={proxyAddress} onChange={handleAddressChange} className="d-inline-block border border-dark bg-dark" />
+            <div data-id="proxy-dropdown-items">
+              <Dropdown onToggle={toggleDropdown} show={showDropdown}>
+                <Dropdown.Toggle id="dropdown-custom-components" as={ProxyAddressToggle} address={proxyAddress} onChange={handleAddressChange} className="d-inline-block border border-dark bg-dark" />
 
-              { props.proxy.deployments.length > 0 &&
-                <Dropdown.Menu as={ProxyDropdownMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items" style={{ overflow: 'hidden' }}>
-                  {
-                    props.proxy.deployments.map((deployment, index) => (
-                      <CustomTooltip
-                        placement={"right"}
-                        tooltipClasses="text-nowrap"
-                        tooltipId={`proxyAddressTooltip${index}`}
-                        tooltipText={'Deployed ' + shortenDate(deployment.date)}
-                      >
-                          <Dropdown.Item
-                            key={index}
-                            onClick={() => {
-                              switchProxyAddress(deployment.address)
-                            }}
-                          >
-                            <span>{ proxyAddress === deployment.address ? <span>&#10003; { deployment.contractName + ' ' + shortenProxyAddress(deployment.address) } </span> : <span className="pl-3">{ deployment.contractName + ' ' + shortenProxyAddress(deployment.address) }</span> }</span>
-                          </Dropdown.Item>
-                        </CustomTooltip>
-                      ))
-                    }
-                  </Dropdown.Menu>
-                }
-              </Dropdown>
+                { props.proxy.deployments.length > 0 &&
+                  <Dropdown.Menu as={ProxyDropdownMenu} className='w-100 custom-dropdown-items' style={{ overflow: 'hidden' }}>
+                    {
+                      props.proxy.deployments.map((deployment, index) => (
+                        <CustomTooltip
+                          placement={"right"}
+                          tooltipClasses="text-nowrap"
+                          tooltipId={`proxyAddressTooltip${index}`}
+                          tooltipText={'Deployed ' + shortenDate(deployment.date)}
+                        >
+                            <Dropdown.Item
+                              key={index}
+                              onClick={() => {
+                                switchProxyAddress(deployment.address)
+                              }}
+                              data-id={`proxyAddress${index}`}
+                            >
+                              <span>{ proxyAddress === deployment.address ? <span>&#10003; { deployment.contractName + ' ' + shortenProxyAddress(deployment.address) } </span> : <span className="pl-3">{ deployment.contractName + ' ' + shortenProxyAddress(deployment.address) }</span> }</span>
+                            </Dropdown.Item>
+                          </CustomTooltip>
+                        ))
+                      }
+                    </Dropdown.Menu>
+                  }
+                </Dropdown>
+            </div>
             <div className={`flex-column 'd-flex'}`}>
                 <div className="mb-2">
                   { proxyAddressError && <span className='text-lowercase' data-id="errorMsgProxyAddress" style={{ fontSize: '.8em' }}>{ proxyAddressError }</span> }
