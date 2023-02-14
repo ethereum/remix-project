@@ -86,7 +86,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         this.renderComponent()
         await this.call('tabs', 'focus', 'solidityumlgen')
       } catch (error) {
-        console.log({ error })
+        const logError = { error }
       }
     })
     this.on('theme', 'themeChanged', (theme) => {
@@ -169,7 +169,6 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   renderComponent () {
     this.dispatch({
       ...this,
-      plugin: this,
       updatedSvg: this.updatedSvg,
       loading: this.loading,
       themeSelected: this.currentlySelectedTheme,
@@ -180,7 +179,6 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
 
   updateComponent(state: any) {
     return <RemixUiSolidityUmlGen
-      plugin={state}
       updatedSvg={state.updatedSvg}
       loading={state.loading}
       themeSelected={state.currentlySelectedTheme}
