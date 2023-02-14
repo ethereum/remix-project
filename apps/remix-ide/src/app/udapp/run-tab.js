@@ -113,7 +113,10 @@ export class RunTab extends ViewPlugin {
         title,
         init: async function () {
           const options = await udapp.call(name, 'init')
-          if (options) { this.options = options }
+          if (options) { 
+            this.options = options
+            if (options['fork']) this.fork = options['fork']
+          }
         },
         provider: {
           async sendAsync (payload, callback) {
