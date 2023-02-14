@@ -2,18 +2,17 @@
 import React, { useEffect, useState } from 'react'
 import { RemixPlugin } from './Client'
 import { Logger } from './logger'
-import { filePanelProfile } from '@remixproject/plugin-api/lib/file-system/file-panel/profile'
-import { filSystemProfile } from '@remixproject/plugin-api/lib/file-system/file-manager/profile'
-import { dGitProfile } from '@remixproject/plugin-api/lib/dgit/profile'
-import { editorProfile } from '@remixproject/plugin-api/lib/editor/profile'
-import { settingsProfile } from '@remixproject/plugin-api/lib/settings/profile'
-import { networkProfile } from '@remixproject/plugin-api/lib/network/profile'
-import { terminalProfile } from '@remixproject/plugin-api/lib/terminal/profile'
-import { udappProfile } from '@remixproject/plugin-api/lib/udapp'
-import { compilerProfile } from '@remixproject/plugin-api/lib/compiler'
-import { contentImportProfile } from '@remixproject/plugin-api/lib/content-import'
-import { windowProfile } from '@remixproject/plugin-api/lib/window'
-import { pluginManagerProfile } from '@remixproject/plugin-api/lib/plugin-manager'
+import { filePanelProfile } from '@remixproject/plugin-api'
+import { filSystemProfile } from '@remixproject/plugin-api'
+import { dGitProfile } from '@remixproject/plugin-api'
+import { editorProfile } from '@remixproject/plugin-api'
+import { settingsProfile } from '@remixproject/plugin-api'
+import { networkProfile } from '@remixproject/plugin-api'
+import { udappProfile } from '@remixproject/plugin-api'
+import { compilerProfile } from '@remixproject/plugin-api'
+import { contentImportProfile } from '@remixproject/plugin-api'
+import { windowProfile } from '@remixproject/plugin-api'
+import { pluginManagerProfile } from '@remixproject/plugin-api'
 import { Profile } from '@remixproject/plugin-utils'
 
 import './app.css'
@@ -25,7 +24,7 @@ function App () {
   const [log, setLog] = useState<any>()
   const [started, setStarted] = useState<boolean>(false)
   const [events, setEvents] = useState<any>()
-  const [profiles, setProfiles] = useState<Profile[]>([pluginManagerProfile, filePanelProfile, filSystemProfile, dGitProfile, networkProfile, settingsProfile, editorProfile, terminalProfile, compilerProfile, udappProfile, contentImportProfile, windowProfile])
+  const [profiles, setProfiles] = useState<Profile[]>([pluginManagerProfile, filePanelProfile, filSystemProfile, dGitProfile, networkProfile, settingsProfile, editorProfile, compilerProfile, udappProfile, contentImportProfile, windowProfile])
 
   const handleChange = ({ target }: any) => {
     setPayload(target.value)
