@@ -1,31 +1,61 @@
 /* global ethereum */
 'use strict'
-import Web3 from 'web3'
-import { rlp, keccak, bufferToHex } from 'ethereumjs-util'
+import { hash } from '@remix-project/remix-lib'
+import { bufferToHex } from '@ethereumjs/util'
+import { decode } from 'rlp'
 import { execution } from '@remix-project/remix-lib'
 const { LogsManager } = execution
 import { VmProxy } from './VmProxy'
-import VM from '@ethereumjs/vm'
-import Common from '@ethereumjs/common'
-import StateManager from '@ethereumjs/vm/dist/state/stateManager'
-import { StorageDump } from '@ethereumjs/vm/dist/state/interface'
+import { VM } from '@ethereumjs/vm'
+import { Common } from '@ethereumjs/common'
+import { Trie } from '@ethereumjs/trie'
+import { DefaultStateManager } from '@ethereumjs/statemanager'
+import { StorageDump } from '@ethereumjs/statemanager/dist/interface'
+import { EVM } from '@ethereumjs/evm'
+import { EEI } from '@ethereumjs/vm'
+import { Blockchain } from '@ethereumjs/blockchain'
 import { Block } from '@ethereumjs/block'
 import { Transaction } from '@ethereumjs/tx'
+import { bigIntToHex } from '@ethereumjs/util'
+
+/**
+ * Options for constructing a {@link StateManager}.
+ */
+export interface DefaultStateManagerOpts {
+  /**
+   * A {@link Trie} instance
+   */
+  trie?: Trie
+  /**
+   * Option to prefix codehashes in the database. This defaults to `true`.
+   * If this is disabled, note that it is possible to corrupt the trie, by deploying code
+   * which code is equal to the preimage of a trie-node.
+   * E.g. by putting the code `0x80` into the empty trie, will lead to a corrupted trie.
+   */
+  prefixCodeHashes?: boolean
+}
 
 /*
   extend vm state manager and instanciate VM
 */
-
-class StateManagerCommonStorageDump extends StateManager {
+class StateManagerCommonStorageDump extends DefaultStateManager {
   keyHashes: { [key: string]: string }
-  constructor () {
-    super()
+  constructor (opts: DefaultStateManagerOpts = {}) {
+    super(opts)
     this.keyHashes = {}
   }
 
   putContractStorage (address, key, value) {
-    this.keyHashes[keccak(key).toString('hex')] = bufferToHex(key)
+    this.keyHashes[hash.keccak(key).toString('hex')] = bufferToHex(key)
     return super.putContractStorage(address, key, value)
+  }
+
+  copy(): StateManagerCommonStorageDump {
+    const copyState =  new StateManagerCommonStorageDump({
+      trie: this._trie.copy(false),
+    })
+    copyState.keyHashes = this.keyHashes
+    return copyState
   }
 
   async dumpStorage (address): Promise<StorageDump> {
@@ -36,7 +66,7 @@ class StateManagerCommonStorageDump extends StateManager {
           const stream = trie.createReadStream()
 
           stream.on('data', (val) => {
-            const value = rlp.decode(val.value)
+            const value = decode(val.value)
             storage['0x' + val.key.toString('hex')] = {
               key: this.keyHashes[val.key.toString('hex')],
               value: '0x' + value.toString('hex')
@@ -50,32 +80,6 @@ class StateManagerCommonStorageDump extends StateManager {
           reject(e)
         })
     })
-  }
-
-  async getStateRoot (force = false) {
-    await this._cache.flush()
-
-    const stateRoot = this._trie.root
-    return stateRoot
-  }
-
-  async setStateRoot (stateRoot) {
-    if (this._checkpointCount !== 0) {
-      throw new Error('Cannot set state root with uncommitted checkpoints')
-    }
-
-    await this._cache.flush()
-
-    if (!stateRoot.equals(this._trie.EMPTY_TRIE_ROOT)) {
-      const hasRoot = await this._trie.checkRoot(stateRoot)
-      if (!hasRoot) {
-        throw new Error('State trie does not contain state root')
-      }
-    }
-
-    this._trie.root = stateRoot
-    this._cache.clear()
-    this._storageTries = {}
   }
 }
 
@@ -106,7 +110,7 @@ export class VMContext {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
     this.currentFork = fork || 'london'
-    this.currentVm = this.createVm(this.currentFork)
+    
     this.blocks = {}
     this.latestBlockNumber = "0x0"
     this.blockByTxHash = {}
@@ -115,14 +119,23 @@ export class VMContext {
     this.logsManager = new LogsManager()
   }
 
-  createVm (hardfork) {
+  async init () {
+    this.currentVm = await this.createVm(this.currentFork)
+  }
+
+  async createVm (hardfork) {
     const stateManager = new StateManagerCommonStorageDump()
     const common = new Common({ chain: 'mainnet', hardfork })
-    const vm = new VM({
+    const blockchain = new (Blockchain as any)({ common })
+    const eei = new EEI(stateManager, common, blockchain)
+    const evm = new EVM({ common, eei, allowUnlimitedContractSize: true })
+    
+    const vm = await VM.create({
       common,
       activatePrecompiles: true,
       stateManager,
-      allowUnlimitedContractSize: true
+      blockchain,
+      evm
     })
 
     // VmProxy and VMContext are very intricated.
@@ -140,10 +153,6 @@ export class VMContext {
     return this.currentVm.web3vm
   }
 
-  blankWeb3 () {
-    return new Web3()
-  }
-
   vm () {
     return this.currentVm.vm
   }
@@ -153,7 +162,7 @@ export class VMContext {
   }
 
   addBlock (block: Block) {
-    let blockNumber = '0x' + block.header.number.toString('hex')
+    let blockNumber = bigIntToHex(block.header.number)
     if (blockNumber === '0x') {
       blockNumber = '0x0'
     }

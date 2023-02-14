@@ -7,7 +7,7 @@ import { clearInstances, clearPopUp, removeInstance, setAccount, setGasFee, setM
   setNetworkNameFromProvider, setPassphrasePrompt, setSelectedContract, setSendTransactionValue, setUnit, 
   updateBaseFeePerGas, updateConfirmSettings, updateGasPrice, updateGasPriceStatus, updateMaxFee, updateMaxPriorityFee, updateScenarioPath } from './actions'
 import { createInstance, getContext, getFuncABIInputs, getSelectedContract, loadAddress, runTransactions, updateInstanceBalance, syncContractsInternal, isValidContractAddress } from './deploy'
-import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity-ts'
+import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity'
 import { ContractData, FuncABI } from "@remix-project/core-plugin"
 import { DeployMode, MainnetPrompt } from '../types'
 import { runCurrentScenario, storeScenario } from './recorder'

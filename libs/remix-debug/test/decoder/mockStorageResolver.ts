@@ -7,8 +7,8 @@ export class MockStorageResolver {
 
   constructor (_storage) {
     this.storage = {}
-    for (var k in _storage) {
-      var hashed = util.sha3_256(k)
+    for (const k in _storage) {
+      const hashed = util.sha3_256(k)
       this.storage[hashed] = {
         hashed: hashed,
         key: k,
@@ -22,7 +22,7 @@ export class MockStorageResolver {
   }
 
   storageSlot (slot, callback) {
-    var hashed = util.sha3_256(slot)
+    const hashed = util.sha3_256(slot)
     callback(null, this.storage[hashed])
   }
 

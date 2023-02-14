@@ -1,7 +1,7 @@
 import React from 'react';
 import { compile, helper } from '@remix-project/remix-solidity'
 import { CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
-import type { ConfigurationSettings } from '@remix-project/remix-lib-ts'
+import type { ConfigurationSettings } from '@remix-project/remix-lib'
 
 export const CompilerApiMixin = (Base) => class extends Base {
   currentFile: string
@@ -10,7 +10,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
       file: string
     } | Record<string, any>,
     contractsDetails: Record<string, any>,
-    target?: string
+    target?: string,
+    input?: Record<string, any>,
   }
   compileErrors: any
   compileTabLogic: CompileTabLogic
@@ -282,10 +283,12 @@ export const CompilerApiMixin = (Base) => class extends Base {
       if (success) {
         // forwarding the event to the appManager infra
         this.emit('compilationFinished', source.target, source, 'soljson', data, input, version)
-        if (data.errors && data.errors.length > 0) {
+        const hideWarnings = await this.getAppParameter('hideWarnings')
+        if (data.errors && data.errors.length > 0 && !hideWarnings) {
+          const warningsCount = data.errors.length
           this.statusChanged({
-            key: data.errors.length,
-            title: `compilation finished successful with warning${data.errors.length > 1 ? 's' : ''}`,
+            key: warningsCount,
+            title: `compilation successful with ${warningsCount} warning${warningsCount > 1 ? 's' : ''}`,
             type: 'warning'
           })
         } else this.statusChanged({ key: 'succeed', title: 'compilation successful', type: 'success' })
@@ -296,6 +299,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
       // Store the contracts and Update contract Selection
       if (success) {
         this.compilationDetails = await this.visitsContractApi(source, data)
+        this.compilationDetails.input = input
       } else {
         this.compilationDetails = {
           contractMap: {},

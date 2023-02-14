@@ -1,5 +1,4 @@
 import * as semver from 'semver'
-import * as minixhr from 'minixhr'
 /* global Worker */
 
 export const baseURLBin = 'https://binaries.soliditylang.org/bin'
@@ -55,11 +54,3 @@ function browserSupportWorker () {
   return document ? document.location.protocol !== 'file:' && Worker !== undefined : false
 }
 
-// returns a promise for minixhr
-export function promisedMiniXhr (url) {
-  return new Promise((resolve, reject) => {
-    minixhr(url, (json, event) => {
-      resolve({ json, event })
-    })
-  })
-}

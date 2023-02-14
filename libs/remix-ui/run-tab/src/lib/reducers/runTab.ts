@@ -1,4 +1,4 @@
-import { CompilerAbstract } from '@remix-project/remix-solidity-ts'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { ContractData } from '@remix-project/core-plugin'
 import { DeployOptions } from '../types'
 import { ADD_INSTANCE, ADD_PROVIDER, CLEAR_INSTANCES, CLEAR_RECORDER_COUNT, DISPLAY_NOTIFICATION, DISPLAY_POPUP_MESSAGE, FETCH_ACCOUNTS_LIST_FAILED, FETCH_ACCOUNTS_LIST_REQUEST, FETCH_ACCOUNTS_LIST_SUCCESS, FETCH_CONTRACT_LIST_FAILED, FETCH_CONTRACT_LIST_REQUEST, FETCH_CONTRACT_LIST_SUCCESS, FETCH_PROVIDER_LIST_FAILED, FETCH_PROVIDER_LIST_REQUEST, FETCH_PROVIDER_LIST_SUCCESS, HIDE_NOTIFICATION, HIDE_POPUP_MESSAGE, REMOVE_INSTANCE, REMOVE_PROVIDER, RESET_STATE, SET_BASE_FEE_PER_GAS, SET_CONFIRM_SETTINGS, SET_CURRENT_CONTRACT, SET_CURRENT_FILE, SET_DECODED_RESPONSE, SET_DEPLOY_OPTIONS, SET_EXECUTION_ENVIRONMENT, SET_EXTERNAL_WEB3_ENDPOINT, SET_GAS_LIMIT, SET_GAS_PRICE, SET_GAS_PRICE_STATUS, SET_IPFS_CHECKED_STATE, SET_LOAD_TYPE, SET_MATCH_PASSPHRASE, SET_MAX_FEE, SET_MAX_PRIORITY_FEE, SET_NETWORK_NAME, SET_PASSPHRASE, SET_PATH_TO_SCENARIO, SET_PERSONAL_MODE, SET_RECORDER_COUNT, SET_SELECTED_ACCOUNT, SET_SEND_UNIT, SET_SEND_VALUE, SET_PROXY_ENV_ADDRESS, ADD_DEPLOY_OPTION, REMOVE_DEPLOY_OPTION, SET_REMIXD_ACTIVATED } from '../constants'
@@ -119,30 +119,7 @@ export const runTabInitialState: RunTabState = {
   personalMode: false,
   networkName: 'VM',
   providers: {
-    providerList: [{
-      id: 'vm-mode-london',
-      dataId: 'settingsVMLondonMode',
-      title: 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.',
-      value: 'vm-london',
-      fork: 'london',
-      content: 'Remix VM (London)'
-    }, {
-      id: 'vm-mode-berlin',
-      dataId: 'settingsVMBerlinMode',
-      title: 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.',
-      value: 'vm-berlin',
-      fork: 'berlin',
-      content: 'Remix VM (Berlin)'
-    }, {
-      id: 'injected-mode',
-      dataId: 'settingsInjectedMode',
-      title: 'Execution environment has been provided by Metamask or similar provider.',
-      value: 'injected',
-      content: `Injected Provider${(window && window.ethereum && !(window.ethereum.providers && !window.ethereum.selectedProvider)) ?
-        window.ethereum.isCoinbaseWallet || window.ethereum.selectedProvider?.isCoinbaseWallet ? ' - Coinbase' :
-        window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet ? ' - Brave' :
-        window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask ? ' - MetaMask' : '' : ''}`
-    }],
+    providerList: [],
     isRequesting: false,
     isSuccessful: false,
     error: null
@@ -192,7 +169,10 @@ export const runTabInitialState: RunTabState = {
 
 type AddProvider = {
   name: string,
-  provider: any
+  displayName: string,
+  provider: any,
+  title?: string,
+  dataId?: string
 }
 
 export const runTabReducer = (state: RunTabState = runTabInitialState, action: Action) => {
@@ -355,10 +335,10 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       const payload: AddProvider = action.payload
       const id = action.payload.name
       state.providers.providerList.push({
-        content: payload.name,
-        dataId: id,
+        content: payload.displayName,
+        dataId: payload.dataId,
         id,
-        title: payload.name,
+        title: payload.title,
         value: id
       })
       return {

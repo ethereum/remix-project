@@ -62,7 +62,7 @@ export class RemixdClient extends PluginClient {
           return reject(new Error('File not found ' + path))
         }
         if (!isRealPath(path)) return
-        isbinaryfile(path, (error: Error, isBinary: boolean) => {
+        isbinaryfile.default(path, (error: Error, isBinary: boolean) => {
           if (error) console.log(error)
           if (isBinary) {
             resolve({ content: '<binary content not displayed>', readonly: true })

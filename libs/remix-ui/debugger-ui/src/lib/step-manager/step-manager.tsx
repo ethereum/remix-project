@@ -4,7 +4,7 @@ import ButtonNavigator from '../button-navigator/button-navigator' // eslint-dis
 
 export const StepManager = ({ stepManager: { jumpTo, traceLength, stepIntoBack, stepIntoForward, stepOverBack, stepOverForward, jumpOut, jumpNextBreakpoint, jumpPreviousBreakpoint, jumpToException, registerEvent } }) => {
   const [state, setState] = useState({
-    sliderValue: 0,
+    sliderValue: -1,
     revertWarning: '',
     stepState: '',
     jumpOutDisabled: true

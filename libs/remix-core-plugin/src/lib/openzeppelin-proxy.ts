@@ -100,6 +100,8 @@ export class OpenZeppelinProxy extends Plugin {
     }
 
     // re-use implementation contract's ABI for UI display in udapp and change name to proxy name.
+    implementationContractObject.contractName = implementationContractObject.name
+    implementationContractObject.implementationAddress = implAddress
     implementationContractObject.name = proxyName
     this.blockchain.deployProxy(data, implementationContractObject)
   }
@@ -116,6 +118,8 @@ export class OpenZeppelinProxy extends Plugin {
       dataHex: fnData.replace('0x', '')
     }
     // re-use implementation contract's ABI for UI display in udapp and change name to proxy name.
+    newImplementationContractObject.contractName = newImplementationContractObject.name
+    newImplementationContractObject.implementationAddress = newImplAddress
     newImplementationContractObject.name = proxyName
     this.blockchain.upgradeProxy(proxyAddress, newImplAddress, data, newImplementationContractObject)
   }

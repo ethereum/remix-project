@@ -1,5 +1,6 @@
 import React from 'react'
-import { bufferToHex, keccakFromString } from 'ethereumjs-util'
+import { bufferToHex } from '@ethereumjs/util'
+import { hash } from '@remix-project/remix-lib'
 import axios, { AxiosResponse } from 'axios'
 import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setCurrentWorkspaceBranches, setCurrentWorkspaceCurrentBranch, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace, setCurrentWorkspaceIsGitRepo, setGitConfig } from './payload'
 import { addSlash, checkSlash, checkSpecialChars } from '@remix-ui/helper'
@@ -7,7 +8,7 @@ import { addSlash, checkSlash, checkSpecialChars } from '@remix-ui/helper'
 import { JSONStandardInput, WorkspaceTemplate } from '../types'
 import { QueryParams } from '@remix-project/remix-lib'
 import * as templateWithContent from '@remix-project/remix-ws-templates'
-import { ROOT_PATH } from '../utils/constants'
+import { ROOT_PATH, slitherYml, solTestYml, tsSolTestYml } from '../utils/constants'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
@@ -171,9 +172,9 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         let path = ''; let content
 
         if (params.code) {
-          const hash = bufferToHex(keccakFromString(params.code))
+          const hashed = bufferToHex(hash.keccakFromString(params.code))
 
-          path = 'contract-' + hash.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
+          path = 'contract-' + hashed.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
           content = atob(params.code)
           await workspaceProvider.set(path, content)
         }
@@ -612,25 +613,23 @@ export const createNewBranch = async (branch: string) => {
 }
 
 export const createSolidityGithubAction = async () => {
-  const actionYml = `
-  name: Running Solidity Unit Tests
-  on: [push]
-
-  jobs:
-    run_sol_contracts_job:
-      runs-on: ubuntu-latest
-      name: A job to run solidity unit tests on github actions CI
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v2
-        - name: Run SUT Action
-          uses: EthereumRemix/sol-test@v1
-          with:
-            test-path: 'tests'
-            compiler-version: '0.8.15'
-    `
   const path = '.github/workflows/run-solidity-unittesting.yml'
-  await plugin.call('fileManager', 'writeFile', path , actionYml)
+
+  await plugin.call('fileManager', 'writeFile', path , solTestYml)
+  plugin.call('fileManager', 'open', path)
+}
+
+export const createTsSolGithubAction = async () => {
+  const path = '.github/workflows/run-js-test.yml'
+
+  await plugin.call('fileManager', 'writeFile', path , tsSolTestYml)
+  plugin.call('fileManager', 'open', path)
+}
+
+export const createSlitherGithubAction = async () => {
+  const path = '.github/workflows/run-slither-action.yml'
+
+  await plugin.call('fileManager', 'writeFile', path , slitherYml)
   plugin.call('fileManager', 'open', path)
 }
 

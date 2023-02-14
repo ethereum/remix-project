@@ -1,11 +1,12 @@
 'use strict'
+import { saveAs } from 'file-saver'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
 import { EventEmitter } from 'events'
-import { RemixAppManager } from '../../../../../libs/remix-ui/plugin-manager/src/types'
 import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from '@remix-ui/helper'
 import helper from '../../lib/helper.js'
+import { RemixAppManager } from '../../remixAppManager'
 
 /*
   attach to files event (removed renamed)
@@ -343,6 +344,17 @@ class FileManager extends Plugin {
     }
   }
 
+  async download(path) {
+    try {
+      const fileName = helper.extractNameFromKey(path)
+      path = this.normalize(path)
+      const content: any = await this.readFile(path)
+      saveAs(new Blob([content]), fileName)
+    } catch (e) {
+      throw new Error(e)
+    }
+  }
+
   /**
    * Create a directory
    * @param {string} path path of the new directory
@@ -623,13 +635,15 @@ class FileManager extends Plugin {
       file = resolved.file
       await this.saveCurrentFile()
       if (this.currentFile() === file) return
+      
       const provider = resolved.provider
       this._deps.config.set('currentFile', file)
       this.openedFiles[file] = file
 
       let content = ''
       try {
-        content = await provider.get(file)   
+        content = await provider.get(file)
+        
       } catch (error) {
         console.log(error)
         throw error

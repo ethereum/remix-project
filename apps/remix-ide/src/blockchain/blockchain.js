@@ -2,7 +2,7 @@
 import React from 'react' // eslint-disable-line
 import Web3 from 'web3'
 import { Plugin } from '@remixproject/engine'
-import { toBuffer, addHexPrefix } from 'ethereumjs-util'
+import { toBuffer, addHexPrefix } from '@ethereumjs/util'
 import { EventEmitter } from 'events'
 import { format } from 'util'
 import { ExecutionContext } from './execution-context'
@@ -13,7 +13,8 @@ import { execution, EventManager, helpers } from '@remix-project/remix-lib'
 import { etherScanLink } from './helper'
 import { logBuilder, cancelUpgradeMsg, cancelProxyMsg, addressToString } from "@remix-ui/helper"
 const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
-const { txResultHelper: resultToRemixTx } = helpers
+const { txResultHelper } = helpers
+const { resultToRemixTx } = txResultHelper
 const packageJson = require('../../../../package.json')
 
 const _paq = window._paq = window._paq || []  //eslint-disable-line
@@ -22,7 +23,7 @@ const profile = {
   name: 'blockchain',
   displayName: 'Blockchain',
   description: 'Blockchain - Logic',
-  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider'],
+  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'web3VM'],
   version: packageJson.version
 }
 
@@ -81,14 +82,18 @@ export class Blockchain extends Plugin {
   }
 
   setupProviders () {
+    const vmProvider = new VMProvider(this.executionContext)
     this.providers = {}
-    this.providers.vm = new VMProvider(this.executionContext)
+    this.providers['vm-berlin'] = vmProvider
+    this.providers['vm-london'] = vmProvider
+    this.providers['vm'] = vmProvider
     this.providers.injected = new InjectedProvider(this.executionContext)
     this.providers.web3 = new NodeProvider(this.executionContext, this.config)
   }
 
   getCurrentProvider () {
     const provider = this.getProvider()
+    
     if (this.providers[provider]) return this.providers[provider]
     return this.providers.web3 // default to the common type of provider
   }
@@ -170,7 +175,7 @@ export class Blockchain extends Plugin {
     }
     const continueCb = (error, continueTxExecution, cancelCb) => { continueTxExecution() }
     const promptCb = (okCb, cancelCb) => { okCb() }
-    const finalCb = (error, txResult, address, returnValue) => {
+    const finalCb = async (error, txResult, address, returnValue) => {
       if (error) {
         const log = logBuilder(error)
   
@@ -179,6 +184,7 @@ export class Blockchain extends Plugin {
       }
       if (networkInfo.name === 'VM') this.config.set('vm/proxy', address)
       else this.config.set(`${networkInfo.name}/${networkInfo.currentFork}/${networkInfo.id}/proxy`, address)
+      await this.saveDeployedContractStorageLayout(implementationContractObject, address, networkInfo)
       _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment successful'])
       this.call('udapp', 'addInstance', addressToString(address), implementationContractObject.abi, implementationContractObject.name)
     }
@@ -209,23 +215,59 @@ export class Blockchain extends Plugin {
 
   async runUpgradeTx (proxyAddress, data, newImplementationContractObject) {
     const args = { useCall: false, data, to: proxyAddress }
+    let networkInfo
     const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       // continue using original authorization given by user
+      networkInfo = network
       continueTxExecution(null)
     }
     const continueCb = (error, continueTxExecution, cancelCb) => { continueTxExecution() }
     const promptCb = (okCb, cancelCb) => { okCb() }
-    const finalCb = (error, txResult, address, returnValue) => {
+    const finalCb = async (error, txResult, address, returnValue) => {
       if (error) {
         const log = logBuilder(error)
 
         _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'Upgrade failed'])
         return this.call('terminal', 'logHtml', log)
       }
+      await this.saveDeployedContractStorageLayout(newImplementationContractObject, proxyAddress, networkInfo)
       _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'Upgrade Successful'])
       this.call('udapp', 'addInstance', addressToString(proxyAddress), newImplementationContractObject.abi, newImplementationContractObject.name)
     }
     this.runTx(args, confirmationCb, continueCb, promptCb, finalCb)
+  }
+
+  async saveDeployedContractStorageLayout (contractObject, proxyAddress, networkInfo) {
+      const { contractName, implementationAddress, contract } = contractObject
+      const hasPreviousDeploys = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`)
+      // TODO: make deploys folder read only.
+      if (hasPreviousDeploys) {
+        const deployments = await this.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`)
+        const parsedDeployments = JSON.parse(deployments)
+
+        parsedDeployments.deployments[proxyAddress] = {
+          date: new Date().toISOString(),
+          contractName: contractName,
+          fork: networkInfo.currentFork,
+          implementationAddress: implementationAddress,
+          layout: contract.object.storageLayout
+        }
+        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`, JSON.stringify(parsedDeployments, null, 2))
+      } else {
+        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`, JSON.stringify({
+          id: networkInfo.id,
+          network: networkInfo.name,
+          deployments: {
+            [proxyAddress]: {
+              date: new Date().toISOString(),
+              contractName: contractName,
+              fork: networkInfo.currentFork,
+              implementationAddress: implementationAddress,
+              layout: contract.object.storageLayout
+            }
+          }
+        }, null, 2))
+      }
   }
 
   async getEncodedFunctionHex (args, funABI) {
@@ -258,7 +300,7 @@ export class Blockchain extends Plugin {
         if (error) {
           return finalCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
         }
-        if (txResult.receipt.status === false || txResult.receipt.status === '0x0') {
+        if (txResult.receipt.status === false || txResult.receipt.status === '0x0' || txResult.receipt.status === 0) {
           return finalCb(`creation of ${selectedContract.name} errored: transaction execution failed`)
         }
         finalCb(null, selectedContract, address)
@@ -326,10 +368,6 @@ export class Blockchain extends Plugin {
     return this.executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
   }
 
-  setProviderFromEndpoint (target, context, cb) {
-    return this.executionContext.setProviderFromEndpoint(target, context, cb)
-  }
-
   detectNetwork (cb) {
     return this.executionContext.detectNetwork(cb)
   }
@@ -351,7 +389,7 @@ export class Blockchain extends Plugin {
   }
 
   isWeb3Provider () {
-    const isVM = this.getProvider() === 'vm'
+    const isVM = this.executionContext.isVM()
     const isInjected = this.getProvider() === 'injected'
     return (!isVM && !isInjected)
   }
@@ -364,9 +402,13 @@ export class Blockchain extends Plugin {
     this.getCurrentProvider().signMessage(message, account, passphrase, cb)
   }
 
+  web3VM () {
+    return this.providers.vm.web3
+  }
+
   web3 () {
     // @todo(https://github.com/ethereum/remix-project/issues/431)
-    const isVM = this.getProvider() === 'vm'
+    const isVM = this.executionContext.isVM()
     if (isVM) {
       return this.providers.vm.web3
     }
@@ -485,7 +527,7 @@ export class Blockchain extends Plugin {
    * @param {{privateKey: string, balance: string}} newAccount The new account to create
    */
   createVMAccount (newAccount) {
-    if (this.getProvider() !== 'vm') {
+    if (!this.executionContext.isVM()) {
       throw new Error('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
     }
     return this.providers.vm.createVMAccount(newAccount)
@@ -534,8 +576,11 @@ export class Blockchain extends Plugin {
           async (error, result) => {
             if (error) return reject(error)
             try {
-              const execResult = await this.web3().eth.getExecutionResultFromSimulator(result.transactionHash)
-              resolve(resultToRemixTx(result, execResult))
+              if (this.executionContext.isVM()) {
+                const execResult = await this.web3().eth.getExecutionResultFromSimulator(result.transactionHash)
+                resolve(resultToRemixTx(result, execResult))
+              } else
+                resolve(resultToRemixTx(result))              
             } catch (e) {
               reject(e)
             }
@@ -696,7 +741,7 @@ export class Blockchain extends Plugin {
         execResult = await this.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
-          returnValue = execResult ? execResult.returnValue : toBuffer(addHexPrefix(txResult.result) || '0x0000000000000000000000000000000000000000000000000000000000000000')
+          returnValue = execResult ? toBuffer(execResult.returnValue) : toBuffer(addHexPrefix(txResult.result) || '0x0000000000000000000000000000000000000000000000000000000000000000')
           const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
           const vmError = txExecution.checkVMError(execResult, compiledContracts)
           if (vmError.error) {

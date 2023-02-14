@@ -24,13 +24,19 @@ export const contextMenuActions: MenuItems = [{
   type: ['file', 'folder', 'gist'],
   multiselect: false,
   label: ''
+},{
+  id: 'download',
+  name: 'Download',
+  type: ['file'],
+  multiselect: false,
+  label: ''
 }, {
   id: 'run',
   name: 'Run',
   extension: ['.js', '.ts'],
   multiselect: false,
   label: ''
-}, {
+},{
   id: 'pushChangesToGist',
   name: 'Push changes to gist',
   type: ['gist'],

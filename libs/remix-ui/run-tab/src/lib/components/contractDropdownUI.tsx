@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { ContractDropdownProps, DeployMode } from '../types'
 import { ContractData, FuncABI } from '@remix-project/core-plugin'
-import * as ethJSUtil from 'ethereumjs-util'
+import * as ethJSUtil from '@ethereumjs/util'
 import { ContractGUI } from './contractGUI'
 import { CustomTooltip, deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
 const _paq = window._paq = window._paq || []
@@ -18,12 +18,12 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     content: ''
   })
   const [atAddressOptions, setAtAddressOptions] = useState<{ title: string | JSX.Element, disabled: boolean }>({
-    title: 'address of contract',
+    title: <FormattedMessage id='udapp.atAddressOptionsTitle1' />,
     disabled: true
   })
   const [loadedAddress, setLoadedAddress] = useState<string>('')
   const [contractOptions, setContractOptions] = useState<{ title: string | JSX.Element, disabled: boolean }>({
-    title: 'Please compile *.sol file to deploy or access a contract',
+    title: <FormattedMessage id='udapp.contractOptionsTitle1' />,
     disabled: true
   })
   const [loadedContractData, setLoadedContractData] = useState<ContractData>(null)
@@ -136,12 +136,12 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if (enable) {
       setAtAddressOptions({
         disabled: false,
-        title: <span className="text-start">Interact with the deployed contract - requires the .abi file or <br /> compiled .sol file to be selected in the editor <br />(with the same compiler configuration)</span>
+        title: <span className="text-start"><FormattedMessage id='udapp.atAddressOptionsTitle2' values={{ br: <br /> }} /></span>
       })
     } else {
       setAtAddressOptions({
         disabled: true,
-        title: loadedAddress ? 'Compile a *.sol file or select a *.abi file.' : <span className="text-start">To interact with a deployed contract, either<br /> enter its address and compile its source *.sol file <br />(with the same compiler settings) or select its .abi file in the editor. </span>
+        title: loadedAddress ? <FormattedMessage id='udapp.atAddressOptionsTitle3' /> : <span className="text-start"><FormattedMessage id='udapp.atAddressOptionsTitle4' values={{ br: <br /> }} /></span>
       })
     }
   }
@@ -150,12 +150,12 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if (enable) {
       setContractOptions({
         disabled: false,
-        title: 'Select a compiled contract to deploy or to use with At Address.'
+        title: <FormattedMessage id='udapp.contractOptionsTitle2' />
       })
     } else {
       setContractOptions({
         disabled: true,
-        title: loadType === 'sol' ? 'Select and compile *.sol file to deploy or access a contract.' : <span className="text-start">When there is a compiled .sol file, choose the <br /> contract to deploy or to use with AtAddress.'</span>
+        title: loadType === 'sol' ? <FormattedMessage id='udapp.contractOptionsTitle3' /> : <span className="text-start"><FormattedMessage id='udapp.contractOptionsTitle4' values={{ br: <br /> }} /></span>
       })
     }
   }
@@ -166,20 +166,20 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   const createInstance = (selectedContract, args, deployMode?: DeployMode[]) => {
     if (selectedContract.bytecodeObject.length === 0) {
-      return props.modal('Alert', 'This contract may be abstract, it may not implement an abstract parent\'s methods completely or it may not invoke an inherited contract\'s constructor correctly.', 'OK', () => { })
+      return props.modal(intl.formatMessage({ id: 'udapp.alert' }), intl.formatMessage({ id: 'udapp.thisContractMayBeAbstract' }), intl.formatMessage({ id: 'udapp.ok' }), () => { })
     }
     if ((selectedContract.name !== currentContract) && (selectedContract.name === 'ERC1967Proxy')) selectedContract.name = currentContract
     const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
     const isContractUpgrade = (deployMode || []).find(mode => mode === 'Upgrade with Proxy')
 
     if (isProxyDeployment) {
-      props.modal('Deploy Implementation & Proxy (ERC1967)', deployWithProxyMsg(), 'Proceed', () => {
+      props.modal('Deploy Implementation & Proxy (ERC1967)', deployWithProxyMsg(), intl.formatMessage({ id: 'udapp.proceed' }), () => {
         props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
-      }, 'Cancel', () => { })
+      }, intl.formatMessage({ id: 'udapp.cancel' }), () => { })
     } else if (isContractUpgrade) {
-      props.modal('Deploy Implementation & Update Proxy', upgradeWithProxyMsg(), 'Proceed', () => {
+      props.modal('Deploy Implementation & Update Proxy', upgradeWithProxyMsg(), intl.formatMessage({ id: 'udapp.proceed' }), () => {
         props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
-      }, 'Cancel', () => { })
+      }, intl.formatMessage({ id: 'udapp.cancel' }), () => { })
     } else {
       props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
     }
@@ -237,17 +237,15 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const checkSumWarning = () => {
     return (
       <span className="text-start">
-        It seems you are not using a checksumed address.
-        <br />A checksummed address is an address that contains uppercase letters, as specified in <a href="https://eips.ethereum.org/EIPS/eip-55" target="_blank" rel="noreferrer">EIP-55</a>.
-        <br />Checksummed addresses are meant to help prevent users from sending transactions to the wrong address.
+        <FormattedMessage id='udapp.checkSumWarning' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-55" target="_blank" rel="noreferrer">EIP-55</a> }} />
       </span>
     )
   }
 
   const isOverSizePrompt = () => {
     return (
-      <div>Contract creation initialization returns data with length of more than 24576 bytes. The deployment will likely fails. <br />
-        More info: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank" rel="noreferrer">eip-170</a>
+      <div>
+        <FormattedMessage id='udapp.isOverSizePrompt' values={{ br: <br />, a: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank" rel="noreferrer">eip-170</a> }} />
       </div>
     )
   }
@@ -259,7 +257,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
           <label className="udapp_settingsLabel pr-1">
             <FormattedMessage id='udapp.contract' />
           </label>
-          <div className="d-flex">{compilerName && compilerName !== '' && <label style={{ maxHeight: '0.6rem', lineHeight: '1rem' }} data-id="udappCompiledBy">(Compiled by <span className="text-capitalize"> {compilerName}</span>)</label>}</div>
+          <div className="d-flex">{compilerName && compilerName !== '' && <label style={{ maxHeight: '0.6rem', lineHeight: '1rem' }} data-id="udappCompiledBy">(<FormattedMessage id='udapp.compiledBy' values={{ compilerName: <span className="text-capitalize"> {compilerName}</span> }} />)</label>}</div>
         </div>
         {props.remixdActivated ?
           (<CustomTooltip
@@ -267,8 +265,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
             tooltipClasses="text-wrap text-left"
             tooltipId="info-sync-compiled-contract"
             tooltipText={<span className="text-left">
-              Click here to import contracts compiled from an external framework.<br/>
-              This action is enabled when Remix is connected to an external<br/> framework (hardhat, truffle, foundry) through remixd.
+              <FormattedMessage id='udapp.infoSyncCompiledContractTooltip' values={{ br: <br /> }} />
             </span>}
           >
             <button className="btn d-flex py-0" onClick={_ => {
@@ -330,7 +327,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
                   placement={'right'}
                   tooltipClasses="text-wrap text-left"
                   tooltipId="remixIpfsUdappTooltip"
-                  tooltipText={<span className="text-start">Publishing the source code and metadata to IPFS facilitates<br/> source code verification using Sourcify and will greatly foster<br/> contract adoption (auditing, debugging, calling it, etc...)</span>}
+                  tooltipText={<span className="text-start"><FormattedMessage id='udapp.remixIpfsUdappTooltip' values={{ br: <br /> }} /></span>}
                 >
                   <label
                     htmlFor="deployAndRunPublishToIPFS"
@@ -364,7 +361,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
             placement={'top-end'}
             tooltipClasses="text-wrap text-left"
             tooltipId="runAndDeployAddressInputtooltip"
-            tooltipText={"Address of contract"}
+            tooltipText={<FormattedMessage id='udapp.addressOfContract' />}
           >
             <input
               ref={atAddressValue}

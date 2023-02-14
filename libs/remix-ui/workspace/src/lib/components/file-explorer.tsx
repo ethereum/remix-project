@@ -38,7 +38,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   })
   const [canPaste, setCanPaste] = useState(false)
   const treeRef = useRef<HTMLDivElement>(null)
-
+  
   useEffect(() => {
     if (contextMenuItems) {
       addMenuItems(contextMenuItems)
@@ -171,6 +171,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
       props.dispatchRenamePath(oldPath, newPath)
     } catch (error) {
       props.modal('Rename File Failed', 'Unexpected error while renaming: ' + typeof error === 'string' ? error : error.message, 'Close', async () => {})
+    }
+  }
+
+  const downloadPath = async (path: string) => {
+    try {
+      props.dispatchDownloadPath(path)
+    } catch (error) {
+      props.modal('Download Failed', 'Unexpected error while downloading: ' + typeof error === 'string' ? error : error.message, 'Close', async () => {})
     }
   }
 
@@ -435,6 +443,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       props.modal('Moving Folder Failed', 'Unexpected error while moving folder: ' + src, 'Close', async () => {})
     }   
   }
+
   return (
     <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
     <div ref={treeRef} tabIndex={0} style={{ outline: "none" }}>
@@ -454,7 +463,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             </div>
           }
           expand={true}>
-          <div className='pb-2'>
+          <div className='pb-4 mb-4'>
             <TreeView id='treeViewMenu'>
               {
                 files[ROOT_PATH] && Object.keys(files[ROOT_PATH]).map((key, index) => <FileRender
@@ -487,6 +496,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           createNewFile={handleNewFileInput}
           createNewFolder={handleNewFolderInput}
           deletePath={deletePath}
+          downloadPath={downloadPath}
           renamePath={editModeOn}
           runScript={runScript}
           copy={handleCopyClick}

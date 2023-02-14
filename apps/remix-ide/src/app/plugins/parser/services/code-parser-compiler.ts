@@ -6,7 +6,7 @@ import { CompilationResult, CompilationSource } from '@remix-project/remix-solid
 import { CodeParser } from "../code-parser";
 import { fileDecoration, fileDecorationType } from '@remix-ui/file-decorators'
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
-import { CompilerRetriggerMode, CompilationSourceCode } from '@remix-project/remix-solidity-ts';
+import { CompilerRetriggerMode, CompilationSourceCode } from '@remix-project/remix-solidity';
 import { MarkerSeverity } from 'monaco-editor';
 import { findLinesInStringWithMatch, SearchResultLine } from '@remix-ui/search'
 import { lastCompilationResult } from '@remixproject/plugin-api';
@@ -110,7 +110,7 @@ export default class CodeParserCompiler {
             await this.plugin.gasService.showGasEstimates()
             this.plugin.emit('astFinished')
         }
-
+        
         this.compiler = new Compiler((url, cb) => this.plugin.call('contentImport', 'resolveAndSave', url, undefined).then((result) => cb(null, result)).catch((error) => cb(error.message)))
         this.compiler.event.register('compilationFinished', this.onAstFinished)
     }

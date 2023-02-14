@@ -6,9 +6,9 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
 import { initWorkspace, fetchDirectory, removeInputField, deleteWorkspace, clearPopUp, publishToGist, createNewFile, setFocusElement, createNewFolder,
-  deletePath, renamePath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath, addInputField, createWorkspace,
+  deletePath, renamePath, downloadPath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath, addInputField, createWorkspace,
   fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, handleDownloadFiles, restoreBackupZip, cloneRepository, moveFile, moveFolder,
-  showAllBranches, switchBranch, createNewBranch, checkoutRemoteBranch, createSolidityGithubAction
+  showAllBranches, switchBranch, createNewBranch, checkoutRemoteBranch, createSolidityGithubAction, createTsSolGithubAction, createSlitherGithubAction
 } from '../actions'
 import { Modal, WorkspaceProps, WorkspaceTemplate } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -95,6 +95,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await renamePath(oldPath, newPath)
   }
 
+  const dispatchDownloadPath = async (path: string) => {
+    await downloadPath(path)
+  }
+
   const dispatchCopyFile = async (src: string, dest: string) => {
     await copyFile(src, dest)
   }
@@ -157,6 +161,14 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchCreateSolidityGithubAction = async () => {
     await createSolidityGithubAction()
+  }
+
+  const dispatchCreateTsSolGithubAction = async () => {
+    await createTsSolGithubAction()
+  }
+
+  const dispatchCreateSlitherGithubAction = async () => {
+    await createSlitherGithubAction()
   }
 
   useEffect(() => {
@@ -253,6 +265,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchCreateNewFolder,
     dispatchDeletePath,
     dispatchRenamePath,
+    dispatchDownloadPath,
     dispatchCopyFile,
     dispatchCopyFolder,
     dispatchRunScript,
@@ -268,7 +281,9 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchSwitchToBranch,
     dispatchCreateNewBranch,
     dispatchCheckoutRemoteBranch,
-    dispatchCreateSolidityGithubAction
+    dispatchCreateSolidityGithubAction,
+    dispatchCreateTsSolGithubAction,
+    dispatchCreateSlitherGithubAction
   }
   return (
     <FileSystemContext.Provider value={value}>

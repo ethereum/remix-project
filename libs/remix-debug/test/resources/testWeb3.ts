@@ -1,12 +1,12 @@
 'use strict'
 import { init } from '../init'
-var web3Override: Record<string, Record<string, unknown>> = {}
+const web3Override: Record<string, Record<string, unknown>> = {}
 web3Override.eth = {}
 web3Override.debug = {}
-var data = init.readFile(require('path').resolve(__dirname, 'testWeb3.json'), null)
+let data = init.readFile(require('path').resolve(__dirname, 'testWeb3.json'), null)
 data = JSON.parse(data)
 
-var traceWithABIEncoder = init.readFile(require('path').resolve(__dirname, 'traceWithABIEncoder.json'), null)
+let traceWithABIEncoder = init.readFile(require('path').resolve(__dirname, 'traceWithABIEncoder.json'), null)
 traceWithABIEncoder = 
 
 data.testTraces['0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd53'] = JSON.parse(traceWithABIEncoder)

@@ -33,7 +33,7 @@ tape("New ASTWalker", (t: tape.Test) => {
     });
 
     // Callback Object
-    var callback: any = {};
+    const callback: any = {};
     callback.FunctionDefinition = function(node: AstNode): boolean {
       st.equal(node.name, "FunctionDefinition");
 
@@ -60,7 +60,7 @@ tape("New ASTWalker", (t: tape.Test) => {
     st.plan(26);
     st.equal(latestAST.nodeType, 'SourceUnit')
 
-    let subNodes1 = astWalker.getASTNodeChildren(latestAST)
+    const subNodes1 = astWalker.getASTNodeChildren(latestAST)
 
     st.equal(subNodes1.length, 3)
     st.equal(subNodes1[0].nodeType, 'PragmaDirective')
@@ -95,11 +95,11 @@ tape("New ASTWalker", (t: tape.Test) => {
     st.equal(subNodes4.length, 1)
     st.equal(subNodes4[0].nodeType, 'ExpressionStatement')
 
-    let subNodes5 = astWalker.getASTNodeChildren(subNodes4[0])
+    const subNodes5 = astWalker.getASTNodeChildren(subNodes4[0])
     st.equal(subNodes5.length, 1)
     st.equal(subNodes5[0].nodeType, 'Assignment')
 
-    let subNodes6 = astWalker.getASTNodeChildren(subNodes5[0])
+    const subNodes6 = astWalker.getASTNodeChildren(subNodes5[0])
 
     st.equal(subNodes6.length, 2)
     st.equal(subNodes6[0].nodeType, 'Identifier')
@@ -125,7 +125,7 @@ tape("New ASTWalker", (t: tape.Test) => {
     });
     st.equal(count, astNodeCount, "traverses all AST nodes");
     count = 0;
-    let badCall = function() {
+    const badCall = function() {
       /* Typescript will keep us from calling walkFull with a legacyAST.
 	 However, for non-typescript uses, we add this test which casts
 	 to an AST to check that there is a run-time check in walkFull.

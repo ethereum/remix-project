@@ -67,32 +67,37 @@ export class InternalCallTree {
     this.traceManager = traceManager
     this.offsetToLineColumnConverter = offsetToLineColumnConverter
     this.sourceLocationTracker = new SourceLocationTracker(codeManager, { debugWithGeneratedSources: opts.debugWithGeneratedSources })
-    debuggerEvent.register('newTraceLoaded', (trace) => {
+    debuggerEvent.register('newTraceLoaded', async (trace) => {
       const time = Date.now()
       this.reset()
-      if (!this.solidityProxy.loaded()) {
-        this.event.trigger('callTreeBuildFailed', ['compilation result not loaded. Cannot build internal call tree'])
+      // each recursive call to buildTree represent a new context (either call, delegatecall, internal function)
+      const calledAddress = traceManager.getCurrentCalledAddressAt(0)
+      const isCreation = isContractCreation(calledAddress)
+
+      const scopeId = '1'
+      this.scopeStarts[0] = scopeId
+      this.scopes[scopeId] = { firstStep: 0, locals: {}, isCreation, gasCost: 0 }
+
+      const compResult = await this.solidityProxy.compilationResult(calledAddress)
+      if (!compResult) {
+        this.event.trigger('noCallTreeAvailable', [])
       } else {
-        // each recursive call to buildTree represent a new context (either call, delegatecall, internal function)
-        const calledAddress = traceManager.getCurrentCalledAddressAt(0)
-        const isCreation = isContractCreation(calledAddress)
-
-        const scopeId = '1'
-        this.scopeStarts[0] = scopeId
-        this.scopes[scopeId] = { firstStep: 0, locals: {}, isCreation, gasCost: 0 }
-
-        buildTree(this, 0, scopeId, isCreation).then((result) => {
-          if (result.error) {
-            this.event.trigger('callTreeBuildFailed', [result.error])
-          } else {
-            createReducedTrace(this, traceManager.trace.length - 1)
-            console.log('call tree build lasts ', (Date.now() - time) / 1000)
-            this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
-          }
-        }, (reason) => {
-          console.log('analyzing trace falls ' + reason)
-          this.event.trigger('callTreeNotReady', [reason])
-        })
+        try {
+          buildTree(this, 0, scopeId, isCreation).then((result) => {
+            if (result.error) {
+              this.event.trigger('callTreeBuildFailed', [result.error])
+            } else {
+              createReducedTrace(this, traceManager.trace.length - 1)
+              console.log('call tree build lasts ', (Date.now() - time) / 1000)
+              this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
+            }
+          }, (reason) => {
+            console.log('analyzing trace falls ' + reason)
+            this.event.trigger('callTreeNotReady', [reason])
+          })
+        } catch (e) {
+          console.log(e)
+        }        
       }
     })
   }
@@ -182,7 +187,8 @@ export class InternalCallTree {
   async extractSourceLocation (step: number, address?: string) {
     try {
       if (!address) address = this.traceManager.getCurrentCalledAddressAt(step)
-      return await this.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, step, this.solidityProxy.contracts)
+      const compilationResult = await this.solidityProxy.compilationResult(address)
+      return await this.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, step, compilationResult.data.contracts)
     } catch (error) {
       throw new Error('InternalCallTree - Cannot retrieve sourcelocation for step ' + step + ' ' + error)
     }
@@ -191,7 +197,8 @@ export class InternalCallTree {
   async extractValidSourceLocation (step: number, address?: string) {
     try {
       if (!address) address = this.traceManager.getCurrentCalledAddressAt(step)
-      return await this.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, step, this.solidityProxy.contracts)
+      const compilationResult = await this.solidityProxy.compilationResult(address)
+      return await this.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, step, compilationResult.data.contracts)
     } catch (error) {
       throw new Error('InternalCallTree - Cannot retrieve valid sourcelocation for step ' + step + ' ' + error)
     }
@@ -216,7 +223,8 @@ export class InternalCallTree {
 async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, contractObj?, sourceLocation?, validSourceLocation?) {
   let subScope = 1
   if (functionDefinition) {
-    await registerFunctionParameters(tree, functionDefinition, step, scopeId, contractObj, validSourceLocation)
+    const address = tree.traceManager.getCurrentCalledAddressAt(step)
+    await registerFunctionParameters(tree, functionDefinition, step, scopeId, contractObj, validSourceLocation, address)
   }
   
   function callDepthChange (step, trace) {
@@ -238,10 +246,13 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
   let currentSourceLocation = sourceLocation || { start: -1, length: -1, file: -1, jump: '-' }
   let previousSourceLocation = currentSourceLocation
   let previousValidSourceLocation = validSourceLocation || currentSourceLocation
+  let compilationResult
+  let currentAddress = ''
   while (step < tree.traceManager.trace.length) {
     let sourceLocation
     let validSourceLocation
     let address
+    
     try {
       address = tree.traceManager.getCurrentCalledAddressAt(step)
       sourceLocation = await tree.extractSourceLocation(step, address)
@@ -250,8 +261,11 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
         tree.reducedTrace.push(step)
         currentSourceLocation = sourceLocation
       }
-
-      const amountOfSources = tree.sourceLocationTracker.getTotalAmountOfSources(address, tree.solidityProxy.contracts)
+      if (currentAddress !== address) {
+        compilationResult = await tree.solidityProxy.compilationResult(address)
+        currentAddress = address
+      }
+      const amountOfSources = tree.sourceLocationTracker.getTotalAmountOfSources(address, compilationResult.data.contracts)
       if (tree.sourceLocationTracker.isInvalidSourceLocation(currentSourceLocation, amountOfSources)) { // file is -1 or greater than amount of sources
         validSourceLocation = previousValidSourceLocation
       } else
@@ -274,8 +288,8 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
     if (tree.offsetToLineColumnConverter) {
       try {
         const generatedSources = tree.sourceLocationTracker.getGeneratedSourcesFromAddress(address)
-        const astSources = Object.assign({}, tree.solidityProxy.sources)
-        const sources = Object.assign({}, tree.solidityProxy.sourcesCode)
+        const astSources = Object.assign({}, compilationResult.data.sources)
+        const sources = Object.assign({}, compilationResult.source.sources)
         if (generatedSources) {
           for (const genSource of generatedSources) {
             astSources[genSource.name] = { id: genSource.id, ast: genSource.ast }
@@ -298,12 +312,12 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
       }
     }
 
-    tree.locationAndOpcodePerVMTraceIndex[step] = { sourceLocation, stepDetail, lineColumnPos }
+    tree.locationAndOpcodePerVMTraceIndex[step] = { sourceLocation, stepDetail, lineColumnPos, contractAddress: address }
     tree.scopes[scopeId].gasCost += stepDetail.gasCost
 
     const contractObj = await tree.solidityProxy.contractObjectAtAddress(address)
     const generatedSources = getGeneratedSources(tree, scopeId, contractObj)
-    const functionDefinition = resolveFunctionDefinition(tree, sourceLocation, generatedSources)
+    const functionDefinition = await resolveFunctionDefinition(tree, sourceLocation, generatedSources, address)
 
     const isInternalTxInstrn = isCallInstruction(stepDetail)
     const isCreateInstrn = isCreateInstruction(stepDetail)
@@ -329,7 +343,7 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
           tree.constructorsStartExecution[tree.pendingConstructorId] = tree.pendingConstructorExecutionAt
           tree.pendingConstructorExecutionAt = -1
           tree.pendingConstructorId = -1
-          await registerFunctionParameters(tree, tree.pendingConstructor, step, newScopeId, contractObj, previousValidSourceLocation)
+          await registerFunctionParameters(tree, tree.pendingConstructor, step, newScopeId, contractObj, previousValidSourceLocation, address)
           tree.pendingConstructor = null
         }
         const externalCallResult = await buildTree(tree, nextStep, newScopeId, isCreateInstrn, functionDefinition, contractObj, sourceLocation, validSourceLocation)
@@ -350,7 +364,7 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
       // if not, we are in the current scope.
       // We check in `includeVariableDeclaration` if there is a new local variable in scope for this specific `step`
       if (tree.includeLocalVariables) {
-        await includeVariableDeclaration(tree, step, sourceLocation, scopeId, contractObj, generatedSources)
+        await includeVariableDeclaration(tree, step, sourceLocation, scopeId, contractObj, generatedSources, address)
       }
       previousSourceLocation = sourceLocation
       previousValidSourceLocation = validSourceLocation
@@ -372,14 +386,14 @@ function getGeneratedSources (tree, scopeId, contractObj) {
   return null
 }
 
-async function registerFunctionParameters (tree, functionDefinition, step, scopeId, contractObj, sourceLocation) {
+async function registerFunctionParameters (tree, functionDefinition, step, scopeId, contractObj, sourceLocation, address) {
   tree.functionCallStack.push(step)
   const functionDefinitionAndInputs = { functionDefinition, inputs: [] }
   // means: the previous location was a function definition && JUMPDEST
   // => we are at the beginning of the function and input/output are setup
   try {
     const stack = tree.traceManager.getStackAt(step)
-    const states = tree.solidityProxy.extractStatesDefinitions()
+    const states = await tree.solidityProxy.extractStatesDefinitions(address)
     if (functionDefinition.parameters) {
       const inputs = functionDefinition.parameters
       const outputs = functionDefinition.returnParameters
@@ -397,9 +411,9 @@ async function registerFunctionParameters (tree, functionDefinition, step, scope
   tree.functionDefinitionsByScope[scopeId] = functionDefinitionAndInputs
 }
 
-async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, contractObj, generatedSources) {
+async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, contractObj, generatedSources, address) {
   let states = null
-  const variableDeclarations = resolveVariableDeclaration(tree, sourceLocation, generatedSources)
+  const variableDeclarations = await resolveVariableDeclaration(tree, sourceLocation, generatedSources, address)
   // using the vm trace step, the current source location and the ast,
   // we check if the current vm trace step target a new ast node of type VariableDeclaration
   // that way we know that there is a new local variable from here.
@@ -411,7 +425,7 @@ async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, 
           // the stack length at this point is where the value of the new local variable will be stored.
           // so, either this is the direct value, or the offset in memory. That depends on the type.
           if (variableDeclaration.name !== '') {
-            states = tree.solidityProxy.extractStatesDefinitions()
+            states = await tree.solidityProxy.extractStatesDefinitions(address)
             let location = extractLocationFromAstVariable(variableDeclaration)
             location = location === 'default' ? 'storage' : location
             // we push the new local variable in our tree
@@ -434,9 +448,9 @@ async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, 
 
 // this extract all the variable declaration for a given ast and file
 // and keep this in a cache
-function resolveVariableDeclaration (tree, sourceLocation, generatedSources) {
+async function resolveVariableDeclaration (tree, sourceLocation, generatedSources, address) {
   if (!tree.variableDeclarationByFile[sourceLocation.file]) {
-    const ast = tree.solidityProxy.ast(sourceLocation, generatedSources)
+    const ast = await tree.solidityProxy.ast(sourceLocation, generatedSources, address)
     if (ast) {
       tree.variableDeclarationByFile[sourceLocation.file] = extractVariableDeclarations(ast, tree.astWalker)
     } else {
@@ -448,9 +462,9 @@ function resolveVariableDeclaration (tree, sourceLocation, generatedSources) {
 
 // this extract all the function definition for a given ast and file
 // and keep this in a cache
-function resolveFunctionDefinition (tree, sourceLocation, generatedSources) {
+async function resolveFunctionDefinition (tree, sourceLocation, generatedSources, address) {
   if (!tree.functionDefinitionByFile[sourceLocation.file]) {
-    const ast = tree.solidityProxy.ast(sourceLocation, generatedSources)
+    const ast = await tree.solidityProxy.ast(sourceLocation, generatedSources, address)
     if (ast) {
       tree.functionDefinitionByFile[sourceLocation.file] = extractFunctionDefinitions(ast, tree.astWalker)
     } else {

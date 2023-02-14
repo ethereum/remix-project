@@ -3,7 +3,9 @@
     "compilerOptions": {
       "types": ["node", "nightwatch"],
       "esModuleInterop": true,
-      "resolveJsonModule": true
+      "resolveJsonModule": true,
+      "target": "es2015",
+      "module": "commonjs",
     },
     "include": ["**/*.ts", "**/*.js"]
 }

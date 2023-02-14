@@ -1,7 +1,9 @@
 import Web3 from 'web3'
-import remixDebug, { TransactionDebugger as Debugger } from '@remix-project/remix-debug'
+import { init , traceHelper, TransactionDebugger as Debugger } from '@remix-project/remix-debug'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { lineText } from '@remix-ui/editor'
+import { util } from '@remix-project/remix-lib'
+const { toHexPaddedString } = util
 
 export const DebuggerApiMixin = (Base) => class extends Base {
 
@@ -20,7 +22,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     this._web3 = new Web3(this.web3Provider)
     // this._web3 can be overwritten and reset to initial value in 'debug' method
     this.initialWeb3 = this._web3
-    remixDebug.init.extendWeb3(this._web3)
+    init.extendWeb3(this._web3)
 
     this.offsetToLineColumnConverter = {
       async offsetToLineColumn (rawLocation, file, sources, asts) {
@@ -94,7 +96,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
   }
 
   async fetchContractAndCompile (address, receipt) {
-    const target = (address && remixDebug.traceHelper.isContractCreation(address)) ? receipt.contractAddress : address
+    const target = (address && traceHelper.isContractCreation(address)) ? receipt.contractAddress : address
     const targetAddress = target || receipt.contractAddress || receipt.to
     const codeAtAddress = await this._web3.eth.getCode(targetAddress)
     const output = await this.call('fetchAndCompile', 'resolve', targetAddress, codeAtAddress, '.debug')
@@ -113,10 +115,10 @@ export const DebuggerApiMixin = (Base) => class extends Base {
       web3 = this.web3()
     }
     if (!web3) {
-      const webDebugNode = remixDebug.init.web3DebugNode(network.name)
+      const webDebugNode = init.web3DebugNode(network.name)
       web3 = !webDebugNode ? this.web3() : webDebugNode
     }
-    remixDebug.init.extendWeb3(web3)
+    init.extendWeb3(web3)
     return web3
   }
 
@@ -137,7 +139,18 @@ export const DebuggerApiMixin = (Base) => class extends Base {
       },
       debugWithGeneratedSources: false
     })
-    return await debug.debugger.traceManager.getTrace(hash)
+    const trace = await debug.debugger.traceManager.getTrace(hash)
+    trace.structLogs = trace.structLogs.map((step) => {
+      const stack = []
+      for (const prop in step.stack) {
+        if (prop !== 'length') {
+          stack.push(toHexPaddedString(step.stack[prop]))
+        }
+      }
+      step.stack = stack
+      return step
+    })
+    return trace
   }
 
   debug (hash, web3?) {
@@ -148,7 +161,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     }
     if (web3) this._web3 = web3
     else this._web3 = this.initialWeb3
-    remixDebug.init.extendWeb3(this._web3)
+    init.extendWeb3(this._web3)
     if (this.onDebugRequestedListener) {
       this.onDebugRequestedListener(hash, web3).then((debuggerBackend) => {
         this.debuggerBackend = debuggerBackend

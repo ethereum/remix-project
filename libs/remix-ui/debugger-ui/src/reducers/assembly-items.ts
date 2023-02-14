@@ -34,7 +34,7 @@ const reducedOpcode = (opCodes, payload) => {
   const top = bottom + length
   return {
     index: opCodes.index - bottom,
-    nextIndexes: opCodes.nextIndexes.map(index => index - bottom),
+    nextIndexes: opCodes.nextIndexes ? opCodes.nextIndexes.map(index => index - bottom) : [],
     currentLineIndexes: (opCodes.absoluteCurrentLineIndexes && opCodes.absoluteCurrentLineIndexes.map(index => index - bottom)) || [],
     display: opCodes.code.slice(bottom, top),
     returnInstructionIndexes: payload.returnInstructionIndexes.map((index) => index.instructionIndex - bottom),

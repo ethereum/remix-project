@@ -8,11 +8,11 @@ export class ExecutionContext {
     blockGasLimit: number;
     currentFork: string;
     mainNetGenesisHash: string;
-    customNetWorks: {};
-    blocks: {};
+    customNetWorks: any;
+    blocks: any;
     latestBlockNumber: number;
-    txs: {};
-    customWeb3: {};
+    txs: any;
+    customWeb3: any;
     init(config: any): void;
     askPermission(): void;
     getProvider(): any;
@@ -24,7 +24,6 @@ export class ExecutionContext {
     removeProvider(name: any): void;
     addProvider(network: any): void;
     internalWeb3(): any;
-    blankWeb3(): Web3;
     setContext(context: any, endPointUrl: any, confirmCb: any, infoCb: any): void;
     executionContextChange(value: any, endPointUrl: any, confirmCb: any, infoCb: any, cb: any): Promise<any>;
     currentblockGasLimit(): number;
@@ -33,6 +32,5 @@ export class ExecutionContext {
     listenOnLastBlockId: NodeJS.Timer;
     _updateChainContext(): Promise<void>;
     listenOnLastBlock(): void;
-    setProviderFromEndpoint(endpoint: any, value: any, cb: any): void;
     txDetailsLink(network: any, hash: any): any;
 }

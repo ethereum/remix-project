@@ -14,5 +14,10 @@
     },
     "rules": {
         "standard/no-callback-literal": "off"
-    }
+    },
+    "ignorePatterns": [
+        "**/node_modules/**",
+        "apps/remix-ide/src/assets/js/**/*.js"
+    ]
+    
 } 

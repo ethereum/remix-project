@@ -1,4 +1,4 @@
-import { ICompilerApi } from '@remix-project/remix-lib-ts'
+import { ICompilerApi } from '@remix-project/remix-lib'
 import { getValidLanguage, Compiler} from '@remix-project/remix-solidity'
 import { EventEmitter } from 'events'
 
@@ -11,6 +11,8 @@ const _paq = window._paq = window._paq || []  //eslint-disable-line
 
 export class CompileTabLogic {
   public compiler
+  public api
+  public contentImport
   public optimize
   public runs
   public evmVersion: string
@@ -21,10 +23,12 @@ export class CompileTabLogic {
   public useFileConfiguration: boolean
   public configFilePath: string
 
-  constructor (public api: ICompilerApi, public contentImport) {
+  constructor (api: ICompilerApi, contentImport) {
+    this.api = api
+    this.contentImport = contentImport
     this.event = new EventEmitter()
     this.compiler = new Compiler((url, cb) => api.resolveContentAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message)))
-    this.evmVersions = ['default', 'london', 'berlin', 'istanbul', 'petersburg', 'constantinople', 'byzantium', 'spuriousDragon', 'tangerineWhistle', 'homestead']
+    this.evmVersions = ['default', 'paris', 'london', 'berlin', 'istanbul', 'petersburg', 'constantinople', 'byzantium', 'spuriousDragon', 'tangerineWhistle', 'homestead']
   }
 
   init () {

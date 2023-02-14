@@ -218,6 +218,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
   if (!isJSONInterfaceAvailable) { return resultsCallback(new Error('Contract interface not available'), { passingNum, failureNum, timePassed }) }
   const runList: RunListInterface[] = createRunList(testObject.options.jsonInterface, fileAST, testName)
   const web3 = opts.web3 || new Web3()
+  web3.eth.handleRevert = true // enables returning error reason on revert
   const accts: TestResultInterface = {
     type: 'accountList',
     value: opts.accounts
@@ -375,23 +376,27 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
           console.error(err)
           return next(err)
         }
-      }).on('error', async (err: Error) => {
+      }).on('error', async (err) => {
         const time: number = (Date.now() - startTime) / 1000.0
+        let errMsg = err.message
+        let txHash
+        if (err.reason) errMsg = `transaction reverted with the reason: ${err.reason}` 
         const resp: TestResultInterface = {
           type: 'testFailure',
           value: changeCase.sentenceCase(func.name),
           filename: testObject.filename,
           time: time,
-          errMsg: err.message,
+          errMsg,
           context: testName,
           web3
         }
-        if (err.message.includes('Transaction has been reverted by the EVM')) {
-          const txHash = JSON.parse(err.message.replace('Transaction has been reverted by the EVM:', '')).transactionHash
-          if (web3.eth && web3.eth.getHHLogsForTx) hhLogs = await web3.eth.getHHLogsForTx(txHash)
-          if (hhLogs && hhLogs.length) resp.hhLogs = hhLogs
-          resp.debugTxHash = txHash
+        if (err.receipt) txHash = err.receipt.transactionHash
+        else if (err.message.includes('Transaction has been reverted by the EVM')) {
+          txHash = JSON.parse(err.message.replace('Transaction has been reverted by the EVM:', '')).transactionHash
         }
+        if (web3.eth && web3.eth.getHHLogsForTx && txHash) hhLogs = await web3.eth.getHHLogsForTx(txHash)
+        if (hhLogs && hhLogs.length) resp.hhLogs = hhLogs
+        resp.debugTxHash = txHash
         testCallback(undefined, resp)
         failureNum += 1
         timePassed += time

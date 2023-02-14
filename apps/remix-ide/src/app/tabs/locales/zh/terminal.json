@@ -1,7 +1,9 @@
 {
   "terminal.listen": "监听所有交易",
+  "terminal.listenTitle": "如果选中，Remix 将监听在当前环境中挖掘到的所有交易，而不仅仅是您创建的交易",
   "terminal.search": "按交易哈希或地址搜索",
   "terminal.used": "已使用",
+  "terminal.debug": "调试",
   "terminal.welcomeText1": "欢迎使用",
   "terminal.welcomeText2": "您的文件储存在",
   "terminal.welcomeText3": "您可使用此终端",

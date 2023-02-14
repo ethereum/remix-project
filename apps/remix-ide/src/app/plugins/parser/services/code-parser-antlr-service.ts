@@ -1,9 +1,9 @@
 'use strict'
 
-import { AstNode } from "@remix-project/remix-solidity-ts"
+import { AstNode } from "@remix-project/remix-solidity"
 import { CodeParser } from "../code-parser"
 import { antlr } from '../types'
-import work from 'webworkify-webpack'
+import { pathToFileURL } from 'url'
 
 const SolidityParser = (window as any).SolidityParser = (window as any).SolidityParser || []
 
@@ -42,7 +42,7 @@ export default class CodeParserAntlrService {
     }
 
     createWorker() {
-        this.worker = work(require.resolve('./antlr-worker'));
+        this.worker = new Worker(new URL('./antlr-worker', import.meta.url))
         this.worker.postMessage({
             cmd: 'load',
             url: document.location.protocol + '//' + document.location.host + '/assets/js/parser/antlr.js',

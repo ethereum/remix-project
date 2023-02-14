@@ -1,15 +1,15 @@
 'use strict'
 
 import { update } from 'solc/abi'
-import * as webworkify from 'webworkify-webpack'
 import compilerInput, { compilerInputForConfigFile } from './compiler-input'
 import EventManager from '../lib/eventManager'
 import txHelper from './helper'
+
 import {
   Source, SourceWithTarget, MessageFromWorker, CompilerState, CompilationResult,
   visitContractsCallbackParam, visitContractsCallbackInterface, CompilationError,
   gatherImportsCallbackInterface,
-  isFunctionDescription, CompilerRetriggerMode
+  isFunctionDescription, CompilerRetriggerMode, EsWebWorkerHandlerInterface
 } from './types'
 
 /*
@@ -18,9 +18,11 @@ import {
 export class Compiler {
   event
   state: CompilerState
-
-  constructor(public handleImportCall?: (fileurl: string, cb) => void) {
+  handleImportCall
+  workerHandler: EsWebWorkerHandlerInterface
+  constructor(handleImportCall?: (fileurl: string, cb) => void) {
     this.event = new EventManager()
+    this.handleImportCall = handleImportCall
     this.state = {
       compileJSON: null,
       worker: null,
@@ -40,6 +42,8 @@ export class Compiler {
         source: null
       }
     }
+
+    this.loadWorkerHandler()
 
     this.event.register('compilationFinished', (success: boolean, data: CompilationResult, source: SourceWithTarget, input: string, version: string) => {
       if (success && this.state.compilationStartTime) {
@@ -61,6 +65,14 @@ export class Compiler {
   set<K extends keyof CompilerState>(key: K, value: CompilerState[K]): void {
     this.state[key] = value
     if (key === 'runs') this.state['runs'] = parseInt(value)
+  }
+
+  async loadWorkerHandler() {
+    if (this.workerHandler) return
+    if (typeof (window) !== 'undefined' && Worker) {
+      const ESWebWorker = await import('../lib/es-web-worker/es-web-worker-handler')
+      this.workerHandler = new ESWebWorker.default()
+    }
   }
 
   /**
@@ -96,7 +108,7 @@ export class Compiler {
    * @param version compiler version
    */
 
-  onCompilerLoaded (version: string, license: string): void {
+  onCompilerLoaded(version: string, license: string): void {
     this.state.currentVersion = version
     this.state.compilerLicense = license
     this.event.trigger('compilerLoaded', [version, license])
@@ -233,7 +245,9 @@ export class Compiler {
       this.state.worker = null
     }
     if (usingWorker) {
-      this.loadWorker(url)
+      this.loadWorkerHandler().then(() => {
+        this.loadWorker(url)
+      })
     } else {
       this.loadInternal(url)
     }
@@ -271,7 +285,8 @@ export class Compiler {
    */
 
   loadWorker(url: string): void {
-    this.state.worker = webworkify(require.resolve('./compiler-worker'))
+
+    this.state.worker = this.workerHandler.getWorker()
     const jobs: Record<'sources', SourceWithTarget>[] = []
 
     this.state.worker.addEventListener('message', (msg: Record<'data', MessageFromWorker>) => {
@@ -302,6 +317,7 @@ export class Compiler {
             break
           }
       }
+
     })
 
     this.state.worker.addEventListener('error', (msg: Record<'data', MessageFromWorker>) => {

@@ -164,7 +164,7 @@ tape('TraceManager', function (t) {
   t.test('TraceManager.getMemoryAt', function (st) {
     st.plan(3)
     try {
-      const result = traceManager.getMemoryAt(0)
+      const result = traceManager.getMemoryAt(0, false)
       console.log(result)
       st.ok(result.length === 0)
     } catch (error) {
@@ -172,7 +172,7 @@ tape('TraceManager', function (t) {
     }
 
     try {
-      const result = traceManager.getMemoryAt(34)
+      const result = traceManager.getMemoryAt(34, false)
       console.log(result)
       st.ok(result.length === 3)
       st.ok(result[2] === '0000000000000000000000000000000000000000000000000000000000000060')

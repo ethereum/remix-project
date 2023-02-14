@@ -4,6 +4,7 @@ import { FormattedMessage } from 'react-intl'
 import { ThemeContext, themes } from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
+
 const _paq = window._paq = window._paq || [] // eslint-disable-line
 
 function HomeTabFeatured() {
@@ -36,29 +37,50 @@ function HomeTabFeatured() {
               dotListClass="position-relative mt-2"
             >
               <div className="mx-1 px-1 d-flex">
-                <img src={"assets/img/bgRemi.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
+                <img src={"assets/img/bgRemi_small.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
                 <div className="h6 w-50 p-4" style={{ flex: "1" }}>
                   <h5><FormattedMessage id='home.jumpIntoWeb3' /></h5>
-                  <p><FormattedMessage id='home.jumpIntoWeb3Text'/></p>
-                  <a className="remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'jumpIntoWeb3'])} target="__blank" href="https://remix-project.org"><FormattedMessage id='home.more' /></a>
+                  
+                  <div><FormattedMessage id='home.jumpIntoWeb3Text'/></div>
+                  <a
+                    className="remixui_home_text btn btn-secondary mt-2 text-decoration-none mb-3"
+                    onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'jumpIntoWeb3'])}
+                    target="__blank"
+                    href="https://remix-project.org"><FormattedMessage
+                    id='home.jumpIntoWeb3More'
+                  /></a>
                 </div>
               </div>
               <div className="mx-1 px-1 d-flex">
-                <img src={"/assets/img/remixRewardUser.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
-                <div className="h6 p-4" style={{ flex: "1" }}>
-                  <h5><FormattedMessage id='home.remixRewards' /></h5>
-                  <p style={{ fontStyle: 'italic' }}><FormattedMessage id='home.remixRewardsText1' /></p>
-                  <p><FormattedMessage id='home.remixRewardsText2' /></p>
-                  <a className="remixui_home_text" target="__blank" onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'remixRewards'])} href="https://rewards.remix.ethereum.eth.limo"><FormattedMessage id='home.more' /></a>
+                <a href="https://www.youtube.com/@EthereumRemix/videos"  target="__blank">
+                  <img src={"/assets/img/YouTubeLogo.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
+                </a>
+                <div className="h6 w-50 p-4" style={{ flex: "1" }}>
+                  <h5><FormattedMessage id='home.remixYouTube' /></h5>
+                  <p style={{ fontStyle: 'italic' }}><FormattedMessage id='home.remixYouTubeText1' /></p>
+                  <div><FormattedMessage id='home.remixYouTubeText2' /></div>
+                  <a
+                    className="remixui_home_text btn btn-secondary mt-2 text-decoration-none mb-3"
+                    onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'youTubeMore'])}
+                    target="__blank"
+                    href="https://www.youtube.com/@EthereumRemix/videos"><FormattedMessage
+                    id='home.remixYouTubeMore'
+                  /></a>
                 </div>
               </div>
               <div className="mx-1 px-1 d-flex">
-                <img src={"/assets/img/remixRewardBetaTester.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
-                <div className="h6 p-4" style={{ flex: "1" }}>
+                <img src={"/assets/img/remixRewardBetaTester_small.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
+                <div className="h6 w-50 p-4" style={{ flex: "1" }}>
                   <h5><FormattedMessage id='home.betaTesting' /></h5>
                   <p style={{ fontStyle: 'italic' }}><FormattedMessage id='home.betaTestingText1' /></p>
-                  <p><FormattedMessage id='home.betaTestingText2' /></p>
-                  <a className="remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'betatesting'])} target="__blank" href="https://rewards.remix.ethereum.eth.limo"><FormattedMessage id='home.more' /></a>
+                  <div><FormattedMessage id='home.betaTestingText2' /></div>
+                  <a
+                    className="remixui_home_text btn btn-secondary mt-2 text-decoration-none mb-3"
+                    onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'betatesting'])}
+                    target="__blank"
+                    href="https://docs.google.com/forms/d/e/1FAIpQLSd0WsJnKbeJo-BGrnf7WijxAdmE4PnC_Z4M0IApbBfHLHZdsQ/viewform"><FormattedMessage
+                    id='home.betaTestingMore'
+                  /></a>
                 </div>
               </div>
             </Carousel>

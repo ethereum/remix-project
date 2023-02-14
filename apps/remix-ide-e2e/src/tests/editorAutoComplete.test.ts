@@ -112,7 +112,7 @@ module.exports = {
         return actions.
           sendKeys(' someaddress;')
           .sendKeys(this.Keys.ENTER)
-      }).pause(4000)
+      }).pause(5000)
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions.

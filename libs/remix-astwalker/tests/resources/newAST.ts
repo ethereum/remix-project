@@ -1,7 +1,5 @@
 import { Node } from '../../src/'
-let node: Node;
-
-node = {
+const node: Node = {
   "ast":
   {
     "absolutePath": "greeter.sol",

@@ -32,10 +32,7 @@ export class DebuggerSolidityState {
     }
 
     if (this.stepManager.currentStepIndex !== index) return
-    if (!this.solidityProxy.loaded()) {
-      return this.event.trigger('solidityStateMessage', ['invalid step index'])
-    }
-
+    
     if (!this.storageResolver) {
       return
     }

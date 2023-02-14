@@ -141,6 +141,7 @@ export const EditorUI = (props: EditorUIProps) => {
   const editorRef = useRef(null)
   const monacoRef = useRef<Monaco>(null)
   const currentFileRef = useRef('')
+  const currentUrlRef = useRef('')
   // const currentDecorations = useRef({ sourceAnnotationsPerFile: {}, markerPerFile: {} }) // decorations that are currently in use by the editor
   // const registeredDecorations = useRef({}) // registered decorations
 
@@ -295,6 +296,8 @@ export const EditorUI = (props: EditorUIProps) => {
   useEffect(() => {
     if (!editorRef.current || !props.currentFile) return
     currentFileRef.current = props.currentFile
+    props.plugin.call('fileManager', 'getUrlFromPath', currentFileRef.current).then((url) => currentUrlRef.current = url.file)
+
     const file = editorModelsState[props.currentFile]
     editorRef.current.setModel(file.model)
     editorRef.current.updateOptions({ readOnly: editorModelsState[props.currentFile].readOnly })
@@ -512,7 +515,7 @@ export const EditorUI = (props: EditorUIProps) => {
     const model = editorRef.current.getModel()
     if (model) {
       setCurrentBreakpoints(prevState => {
-        const currentFile = currentFileRef.current
+        const currentFile = currentUrlRef.current
         if (!prevState[currentFile]) prevState[currentFile] = {}
         const decoration = Object.keys(prevState[currentFile]).filter((line) => parseInt(line) === position.lineNumber)
         if (decoration.length) {

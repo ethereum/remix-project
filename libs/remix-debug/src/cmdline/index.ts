@@ -1,5 +1,5 @@
 import Web3 from 'web3'
-import { Debugger } from '../debugger/debugger.js'
+import { Debugger } from '../debugger/debugger'
 import { EventEmitter } from 'events'
 
 export class CmdLine {

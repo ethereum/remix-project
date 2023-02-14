@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useRef, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import * as remixLib from '@remix-project/remix-lib'
-import Web3 from 'web3'
 import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { CustomTooltip } from '@remix-ui/helper'
@@ -27,6 +27,7 @@ export function ContractGUI (props: ContractGUIProps) {
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
   const initializeFields = useRef<Array<HTMLInputElement | null>>([])
   const basicInputRef = useRef<HTMLInputElement>()
+  const intl = useIntl()
 
   useEffect(() => {
     if (props.deployOption && Array.isArray(props.deployOption)) {
@@ -239,7 +240,7 @@ export function ContractGUI (props: ContractGUIProps) {
 
   const handleSetProxyAddress = (e) => {
     const value = e.target.value
-    
+
     setProxyAddress(value)
   }
 
@@ -319,12 +320,6 @@ export function ContractGUI (props: ContractGUIProps) {
             }}
           />
         </CustomTooltip>
-        <CustomTooltip
-          tooltipText={title}
-          tooltipClasses="text-nowrap"
-          placement="bottom"
-          tooltipId="switchMethodViewOnTooltip"
-        >
           <i
             className="fas fa-angle-down udapp_methCaret"
             onClick={switchMethodViewOn}
@@ -336,7 +331,6 @@ export function ContractGUI (props: ContractGUIProps) {
                 : "visible",
             }}
           ></i>
-        </CustomTooltip>
       </div>
       <div
         className="udapp_contractActionsContainerMulti"
@@ -375,7 +369,7 @@ export function ContractGUI (props: ContractGUIProps) {
           </div>
           <div className="d-flex udapp_group udapp_multiArg">
             <CopyToClipboard
-              tip="Copy calldata to clipboard"
+              tip={intl.formatMessage({ id: 'udapp.copyCalldata' })}
               icon="fa-clipboard"
               direction={"bottom"}
               getContent={getEncodedCall}
@@ -390,7 +384,7 @@ export function ContractGUI (props: ContractGUIProps) {
               </button>
             </CopyToClipboard>
             <CopyToClipboard
-              tip="Copy encoded input parameters to clipboard"
+              tip={intl.formatMessage({ id: 'udapp.copyParameters' })}
               icon="fa-clipboard"
               direction={"bottom"}
               getContent={getEncodedParams}
@@ -401,7 +395,7 @@ export function ContractGUI (props: ContractGUIProps) {
                   className="m-0 remixui_copyIcon far fa-copy"
                   aria-hidden="true"
                 ></i>
-                <label htmlFor="copyParameters">Parameters</label>
+                <label htmlFor="copyParameters"><FormattedMessage id='udapp.parameters' /></label>
               </button>
             </CopyToClipboard>
             <CustomTooltip
@@ -439,7 +433,7 @@ export function ContractGUI (props: ContractGUIProps) {
                   data-id="contractGUIDeployWithProxyLabel"
                   className="m-0 form-check-label w-100 custom-control-label udapp_checkboxAlign"
                 >
-                  Deploy with Proxy
+                  <FormattedMessage id='udapp.deployWithProxy' />
                 </label>
             </div>
             <div>
@@ -505,7 +499,7 @@ export function ContractGUI (props: ContractGUIProps) {
                   data-id="contractGUIUpgradeImplementationLabel"
                   className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
                 >
-                  Upgrade with Proxy
+                  <FormattedMessage id='udapp.upgradeWithProxy' />
                 </label>
             </div>
             <span onClick={handleToggleUpgradeImp}>
@@ -535,7 +529,7 @@ export function ContractGUI (props: ContractGUIProps) {
                   checked={useLastProxy}
                 />
                 <CustomTooltip
-                  tooltipText="Select this option to use the last deployed ERC1967 contract on the current network."
+                  tooltipText={<FormattedMessage id='udapp.proxyAddressTooltip' />}
                   tooltipId="proxyAddressTooltip"
                   placement="auto"
                   tooltipClasses="text-wrap"
@@ -546,7 +540,7 @@ export function ContractGUI (props: ContractGUIProps) {
                     className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
                     style={{ fontSize: 12 }}
                   >
-                    Use last deployed ERC1967 contract
+                    <FormattedMessage id='udapp.useLastDeployedERC1967Contract' />
                   </label>
                 </CustomTooltip>
               </div>
@@ -554,10 +548,10 @@ export function ContractGUI (props: ContractGUIProps) {
                 !useLastProxy ?
                 <div className="mb-2">
                   <label className="mt-2 text-left d-block">
-                    Proxy Address :
+                    <FormattedMessage id='udapp.proxyAddressLabel' /> :
                   </label>
-                  <CustomTooltip placement="right" tooltipText={'Enter previously deployed proxy address on the selected network'}>
-                    <input style={{ height: 32 }} className="form-control udapp_input" data-id="ERC1967AddressInput" placeholder='proxy address' onChange={handleSetProxyAddress} onBlur={() => validateProxyAddress(proxyAddress) } />
+                  <CustomTooltip placement="right" tooltipText={<FormattedMessage id='udapp.proxyAddressInputTooltip' />}>
+                    <input style={{ height: 32 }} className="form-control udapp_input" data-id="ERC1967AddressInput" placeholder={intl.formatMessage({ id: 'udapp.proxyAddressPlaceholder' })} onChange={handleSetProxyAddress} onBlur={() => validateProxyAddress(proxyAddress) } />
                   </CustomTooltip>
                   { proxyAddressError && <span className='text-lowercase' data-id="errorMsgProxyAddress" style={{ fontSize: '.8em' }}>{ proxyAddressError }</span> }
                 </div> :

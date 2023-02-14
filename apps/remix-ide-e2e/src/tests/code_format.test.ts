@@ -115,33 +115,27 @@ const defaultPrettierOptions = {
         },
         {
             "files": "*.yml",
-            "options": {
-            }
+            "options": {}
         },
         {
             "files": "*.yaml",
-            "options": {
-            }
+            "options": {}
         },
         {
             "files": "*.toml",
-            "options": {
-            }
+            "options": {}
         },
         {
             "files": "*.json",
-            "options": {
-            }
+            "options": {}
         },
         {
             "files": "*.js",
-            "options": {
-            }
+            "options": {}
         },
         {
             "files": "*.ts",
-            "options": {
-            }
+            "options": {}
         }
     ]
 }

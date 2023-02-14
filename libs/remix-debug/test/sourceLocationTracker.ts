@@ -12,7 +12,7 @@ tape('SourceLocationTracker', function (t) {
   t.test('SourceLocationTracker.getSourceLocationFromVMTraceIndex - simple contract', async function (st) {
 
     const traceManager = new TraceManager({web3: web3Test})
-    let codeManager = new CodeManager(traceManager)     
+    const codeManager = new CodeManager(traceManager)     
 
     let output = compiler.compile(compilerInput(contracts))
     output = JSON.parse(output)
@@ -43,7 +43,7 @@ tape('SourceLocationTracker', function (t) {
   t.test('SourceLocationTracker.getSourceLocationFromVMTraceIndex - ABIEncoder V2 contract', async function (st) {
 
     const traceManager = new TraceManager({web3: web3Test})
-    let codeManager = new CodeManager(traceManager)     
+    const codeManager = new CodeManager(traceManager)     
 
     let output = compiler.compile(compilerInput(ABIEncoderV2))
     output = JSON.parse(output)

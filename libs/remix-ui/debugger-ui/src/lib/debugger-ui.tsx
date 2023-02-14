@@ -41,8 +41,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     props.onReady({
       globalContext: () => {
         return {
-          block: state.currentBlock, 
-          tx: state.currentTransaction, 
+          block: state.currentBlock,
+          tx: state.currentTransaction,
           receipt: state.currentReceipt
         }
       }
@@ -102,7 +102,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     const providerChanged = () => {
       debuggerModule.onEnvChanged((provider) => {
         setState(prevState => {
-          const isLocalNodeUsed = provider !== 'vm' && provider !== 'injected'
+          const isLocalNodeUsed = !provider.startsWith('vm') && provider !== 'injected'
           return { ...prevState, isLocalNodeUsed: isLocalNodeUsed }
         })
       })
@@ -226,7 +226,10 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     })
   }
   const startDebugging = async (blockNumber, txNumber, tx, optWeb3?) => {
-    if (state.debugger) unLoad()
+    if (state.debugger) {
+      unLoad()
+      await (new Promise((resolve) => setTimeout(() => resolve({}), 1000)))    
+    }
     if (!txNumber) return
     setState(prevState => {
       return {
@@ -318,9 +321,13 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       } catch (error) {
         unLoad()
         setState(prevState => {
+          let errorMsg = error.message || error
+          if (typeof errorMsg !== 'string') {
+            errorMsg = JSON.stringify(errorMsg) + '. Possible error: the current endpoint does not support retrieving the trace of a transaction.'
+          }
           return {
             ...prevState,
-            validationError: error.message || error
+            validationError: errorMsg
           }
         })
       }
@@ -368,7 +375,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
                 return { ...prevState, opt: { ...prevState.opt, debugWithGeneratedSources: checked } }
               })
             }} type="checkbox" />
-            <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Use generated sources (Solidity {'>='} v0.7.2)</label>
+            <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput"><FormattedMessage id='debugger.useGeneratedSources' /> (Solidity {'>='} v0.7.2)</label>
             </span>
   )
   return (
@@ -379,7 +386,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
           <CustomTooltip
             tooltipId="debuggerGenSourceCheckbox"
-            tooltipText={"Debug with generated sources"}
+            tooltipText={<FormattedMessage id='debugger.debugWithGeneratedSources' />}
             placement="top-start"
           >
             {customJSX}
@@ -391,7 +398,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
                 return { ...prevState, opt: { ...prevState.opt, debugWithLocalNode: checked } }
               })
             }} type="checkbox" title="Force the debugger to use the current local node" />
-            <label data-id="debugLocaNodeLabel" className="form-check-label custom-control-label" htmlFor="debugWithLocalNodeInput">Force using local node</label>
+            <label data-id="debugLocaNodeLabel" className="form-check-label custom-control-label" htmlFor="debugWithLocalNodeInput"><FormattedMessage id='debugger.debugLocaNodeLabel' /></label>
           </div>
           }
           { state.validationError && <span className="w-100 py-1 text-danger validationError">{state.validationError}</span> }

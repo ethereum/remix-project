@@ -150,7 +150,7 @@ export interface CompilerInputOptions {
     language?: Language
 }
 
-export type EVMVersion = 'homestead' | 'tangerineWhistle' | 'spuriousDragon' | 'byzantium' | 'constantinople' | 'petersburg' | 'istanbul' | 'berlin' | 'london' | null
+export type EVMVersion = 'homestead' | 'tangerineWhistle' | 'spuriousDragon' | 'byzantium' | 'constantinople' | 'petersburg' | 'istanbul' | 'berlin' | 'london' | 'paris' | null
 
 export type Language = 'Solidity' | 'Yul'
 
@@ -500,4 +500,8 @@ export interface BytecodeObject {
         [library: string]: { start: number; length: number }[]
       }
     }
+  }
+
+  export interface EsWebWorkerHandlerInterface {
+    getWorker(): Worker
   }

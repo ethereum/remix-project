@@ -118,7 +118,7 @@ docker-compose pull
 docker-compose up -d
 ```
 
-Then go to http://localhost:8080 and you can use you Remix instance.
+Then go to http://localhost:8080 and you can use your Remix instance.
 
 To fetch the docker-compose file without cloning this repo run:
 ```

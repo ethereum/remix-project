@@ -1,4 +1,4 @@
-import { AstNode } from "@remix-project/remix-solidity-ts"
+import { AstNode } from "@remix-project/remix-solidity"
 import { isArray } from "lodash"
 import { editor, languages, Position } from "monaco-editor"
 import monaco from "../../types/monaco"

@@ -22,6 +22,7 @@ export const FileSystemContext = createContext<{
   dispatchCreateNewFolder: (path: string, rootDir: string) => Promise<void>,
   dispatchDeletePath: (path: string[]) => Promise<void>,
   dispatchRenamePath: (oldPath: string, newPath: string) => Promise<void>,
+  dispatchDownloadPath: (path:string) => Promise<void>,
   dispatchCopyFile: (src: string, dest: string) => Promise<void>,
   dispatchCopyFolder: (src: string, dest: string) => Promise<void>,
   dispatchRunScript: (path: string) => Promise<void>,
@@ -37,7 +38,9 @@ export const FileSystemContext = createContext<{
   dispatchSwitchToBranch: (branch: string) => Promise<void>,
   dispatchCreateNewBranch: (branch: string) => Promise<void>,
   dispatchCheckoutRemoteBranch: (branch: string, remote: string) => Promise<void>,
-  dispatchCreateSolidityGithubAction: () => Promise<void>
+  dispatchCreateSolidityGithubAction: () => Promise<void>,
+  dispatchCreateTsSolGithubAction: () => Promise<void>,
+  dispatchCreateSlitherGithubAction: () => Promise<void>
 }>(null)
   
     

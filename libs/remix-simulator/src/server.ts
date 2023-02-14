@@ -21,8 +21,8 @@ class Server {
   }
 
   start (host, port) {
-    expressWs(app)
-
+    const wsApp = expressWs(app)
+    
     app.use(cors())
     app.use(bodyParser.urlencoded({ extended: true }))
     app.use(bodyParser.json())
@@ -41,9 +41,9 @@ class Server {
         })
       })
     } else {
-      app.ws('/', (ws, req) => {
+      wsApp.app.ws('/', (ws, req) => {
         ws.on('message', (msg) => {
-          this.provider.sendAsync(JSON.parse(msg), (err, jsonResponse) => {
+          this.provider.sendAsync(JSON.parse(msg.toString()), (err, jsonResponse) => {
             if (err) {
               return ws.send(JSON.stringify({ error: err }))
             }

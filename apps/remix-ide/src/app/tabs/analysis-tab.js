@@ -40,11 +40,12 @@ class AnalysisTab extends ViewPlugin {
   }
 
   async onActivation () {
+    this.renderComponent()
     const isSolidityActive = await this.call('manager', 'isActive', 'solidity')
     if (!isSolidityActive) {
       await this.call('manager', 'activatePlugin', 'solidity')
     }
-    this.renderComponent()
+
     this.event.register('staticAnaysisWarning', (count) => {
       if (count > 0) {
         this.emit('statusChanged', { key: count, title: `${count} warning${count === 1 ? '' : 's'}`, type: 'warning' })
@@ -59,6 +60,7 @@ class AnalysisTab extends ViewPlugin {
   
   setDispatch (dispatch) {
     this.dispatch = dispatch
+    this.renderComponent()
   }
 
   render () {
@@ -74,7 +76,7 @@ class AnalysisTab extends ViewPlugin {
   }
 
   renderComponent () {
-    this.dispatch({
+    this.dispatch && this.dispatch({
       registry: this.registry,
       analysisModule: this,
       event: this.event

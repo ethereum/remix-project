@@ -31,11 +31,22 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
     window.open("https://remix-ide.readthedocs.io/en/latest/remix_tutorials_learneth.html?highlight=learneth#learneth-tutorial-repos", '_blank')
   }
 
-  const startLearnEthTutorial = async (tutorial) => {
+  const startLearnEthTutorial = async (tutorial: 'basics' | 'soliditybeginner' | 'deploylibraries') => {
     await plugin.appManager.activatePlugin(['solidity', 'LearnEth', 'solidityUnitTesting'])
-    plugin.call('LearnEth', 'startTutorial', 'ethereum/remix-workshops', 'master', tutorial)
     plugin.verticalIcons.select('LearnEth')
+    plugin.call('LearnEth', 'startTutorial', 'ethereum/remix-workshops', 'master', tutorial)
     _paq.push(['trackEvent', 'hometab', 'startLearnEthTutorial', tutorial])
+  }
+
+  const goToLearnEthHome = async () => {
+    if(await plugin.appManager.isActive('LearnEth')) {
+      plugin.verticalIcons.select('LearnEth')
+      await plugin.call('LearnEth', 'home')
+    } else {
+      await plugin.appManager.activatePlugin(['LearnEth', 'solidity', 'solidityUnitTesting'])
+      plugin.verticalIcons.select('LearnEth')
+      await plugin.call('LearnEth', 'home')
+    }
   }
 
   return (
@@ -45,7 +56,9 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
           <FormattedMessage id="home.learn" />
         </label>
         <button
-          onClick={ ()=> openLink()}
+          onClick={ async () => {
+            await goToLearnEthHome()
+          }}
           className="h-100 px-2 pt-0 btn"
         >
           <img className="align-self-center" src="assets/img/learnEthLogo.webp" alt="" style={ { filter: themeFilter.filter, width: "1rem", height: "1ren" } } />
@@ -54,11 +67,11 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
       <div className="d-flex flex-column">
         <label className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Basics }})}>
           <label className="card-title align-self-start m-0 float-left" style={{fontSize: "1rem"}}>
-            <FormattedMessage id="home.remixBasics" />
+            <FormattedMessage id="home.learnEth1" />
           </label>
           {(state.visibleTutorial === VisibleTutorial.Basics) && <div className="pt-2 d-flex flex-column text-left">
             <span>
-              <FormattedMessage id="home.remixBasicsDesc" />
+              <FormattedMessage id="home.learnEth1Desc" />
             </span>
             <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('basics')}>
               <FormattedMessage id="home.getStarted" />
@@ -67,12 +80,12 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
         </label>
         <label className="d-flex flex-column btn border" onClick={() => setState((prevState) => {return { ...prevState, visibleTutorial: VisibleTutorial.Intermediate }})}>
           <label className="card-title align-self-start m-0 float-left" style={{fontSize: "1rem"}}>
-            <FormattedMessage id="home.remixIntermediate" />
+            <FormattedMessage id="home.learnEth2" />
           </label>
           {(state.visibleTutorial === VisibleTutorial.Intermediate) && <div className="pt-2 d-flex flex-column text-left">
             <span>
-            <FormattedMessage id="home.remixIntermediateDesc" /></span>
-            <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('useofweb3js')}>
+            <FormattedMessage id="home.learnEth2Desc" /></span>
+            <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('soliditybeginner')}>
             <FormattedMessage id="home.getStarted" />
           </button>
           </div>}

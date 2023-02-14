@@ -1,5 +1,6 @@
 'use strict'
-import { BN, bufferToHex, keccak, setLengthLeft, toBuffer, addHexPrefix } from 'ethereumjs-util'
+import { hash } from '@remix-project/remix-lib'
+import { bufferToHex, setLengthLeft, toBuffer, addHexPrefix } from '@ethereumjs/util'
 import stringSimilarity from 'string-similarity'
 
 /*
@@ -35,14 +36,22 @@ export function hexToIntArray (hexString) {
 export function hexListFromBNs (bnList) {
   const ret = []
   for (const k in bnList) {
-    const v = bnList[k]
-    if (BN.isBN(v)) {
-      ret.push('0x' + v.toString('hex', 64))
-    } else {
-      ret.push('0x' + (new BN(v)).toString('hex', 64)) // TEMP FIX TO REMOVE ONCE https://github.com/ethereumjs/ethereumjs-vm/pull/293 is released
-    }
+    const v = bnList[k].toString(16)
+    ret.push('0x' + v.padStart(64, '0'))
   }
   return ret
+}
+
+export function toHexPaddedString(v: bigint | string): string {
+  if (v) {
+    if (typeof v === 'string') {
+      return v.startsWith('0x') ? v : '0x' + v
+    } else {
+      return '0x' + v.toString(16).padStart(64, '0')
+    }
+  }
+  else
+    return '0x' + '0'.padStart(64, '0')
 }
 
 /*
@@ -144,7 +153,7 @@ export function buildCallPath (index, rootCall) {
 // eslint-disable-next-line camelcase
 export function sha3_256 (value) {
   value = toBuffer(addHexPrefix(value))
-  const retInBuffer: Buffer = keccak(setLengthLeft(value, 32))
+  const retInBuffer: Buffer = hash.keccak(setLengthLeft(value, 32))
   return bufferToHex(retInBuffer)
 }
 

@@ -10,8 +10,8 @@ const requiredModules = [ // services + layout views + system views
   'fileManager', 'contentImport', 'blockchain', 'web3Provider', 'scriptRunner', 'fetchAndCompile', 'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons',
   'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity', 'solidity-logic', 'gistHandler', 'layout',
   'notification', 'permissionhandler', 'walkthrough', 'storage', 'restorebackupzip', 'link-libraries', 'deploy-libraries', 'openzeppelin-proxy', 
-  'hardhat-provider', 'ganache-provider', 'foundry-provider', 'basic-http-provider', 'injected-optimism-provider', 'injected-arbitrum-one-provider',
-  'compileAndRun', 'search', 'recorder', 'fileDecorator', 'codeParser', 'codeFormatter']
+  'hardhat-provider', 'ganache-provider', 'foundry-provider', 'basic-http-provider', 'injected', 'injected-optimism-provider', 'injected-arbitrum-one-provider',
+  'compileAndRun', 'search', 'recorder', 'fileDecorator', 'codeParser', 'codeFormatter', 'solidityumlgen', 'contractflattener']
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
 const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither'] 
@@ -26,7 +26,7 @@ export function isNative(name) {
   // nativePlugin allows to bypass the permission request
   const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'solidity-logic', 'solidityStaticAnalysis', 'solidityUnitTesting', 
     'layout', 'notification', 'hardhat-provider', 'ganache-provider', 'foundry-provider', 'basic-http-provider', 'injected-optimism-provider',
-    'tabs', 'injected-arbitrum-one-provider']
+    'tabs', 'injected-arbitrum-one-provider', 'injected']
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
@@ -157,8 +157,8 @@ export class RemixAppManager extends PluginManager {
 
   async registerContextMenuItems() {
     await this.call('filePanel', 'registerContextMenuItem', {
-      id: 'flattener',
-      name: 'flattenFileCustomAction',
+      id: 'contractflattener',
+      name: 'flattenAContract',
       label: 'Flatten',
       type: [],
       extension: ['.sol'],
@@ -170,6 +170,16 @@ export class RemixAppManager extends PluginManager {
       id: 'nahmii-compiler',
       name: 'compileCustomAction',
       label: 'Compile for Nahmii',
+      type: [],
+      extension: ['.sol'],
+      path: [],
+      pattern: [],
+      sticky: true
+    })
+    await this.call('filePanel', 'registerContextMenuItem', {
+      id: 'solidityumlgen',
+      name: 'generateCustomAction',
+      label: 'Generate UML',
       type: [],
       extension: ['.sol'],
       path: [],
@@ -190,7 +200,7 @@ class PluginLoader {
 
   constructor() {
     const queryParams = new QueryParams()
-    this.donotAutoReload = ['remixd', 'git'] // that would be a bad practice to force loading some plugins at page load.
+    this.donotAutoReload = ['remixd'] // that would be a bad practice to force loading some plugins at page load.
     this.loaders = {}
     this.loaders.localStorage = {
       set: (plugin, actives) => {

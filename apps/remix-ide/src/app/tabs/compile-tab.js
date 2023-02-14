@@ -5,7 +5,7 @@ import { CompileTabLogic } from '@remix-ui/solidity-compiler' // eslint-disable-
 import { CompilerApiMixin } from '@remixproject/solidity-compiler-plugin' // eslint-disable-line
 import { ViewPlugin } from '@remixproject/engine-web'
 import { QueryParams } from '@remix-project/remix-lib'
-// import { ICompilerApi } from '@remix-project/remix-lib-ts'
+// import { ICompilerApi } from '@remix-project/remix-lib'
 import * as packageJson from '../../../../../package.json'
 import { compilerConfigChangedToastMsg, compileToastMsg } from '@remix-ui/helper'
 import { isNative } from '../../remixAppManager'

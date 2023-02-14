@@ -8910,7 +8910,7 @@ div[data-id="remixIdeSidePanel"] {
 }
 
 .custom-dropdown-items {
-  background: #011627!important; // override --custom-select
+  background: #011627!important;
 }
 
 .remix-ui-tabs {

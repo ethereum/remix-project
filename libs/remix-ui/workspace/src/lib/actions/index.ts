@@ -296,6 +296,15 @@ export const renamePath = async (oldPath: string, newPath: string) => {
   }
 }
 
+export const downloadPath = async (path: string) => {
+  const fileManager = plugin.fileManager
+  try {
+    await fileManager.download(path)
+  } catch (error) {
+    dispatch(displayPopUp('Oops! An error ocurred while downloading.' + error))
+  }
+}
+
 export const copyFile = async (src: string, dest: string) => {
   const fileManager = plugin.fileManager
 

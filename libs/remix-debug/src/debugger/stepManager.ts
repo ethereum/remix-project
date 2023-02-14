@@ -34,17 +34,35 @@ export class DebuggerStepManager {
           this.traceLength = newLength
           this.codeTraceLength = this.calculateCodeLength()
         }
-        setTimeout(() => {
-          this.jumpTo(0) // wait for the ui to render
-        }, 500)
-        
       })
+    })
+
+    this.debugger.callTree.event.register('callTreeBuildFailed', () => {
+      setTimeout(() => {
+        this.jumpTo(0)
+      }, 500)
+    })
+
+    this.debugger.callTree.event.register('callTreeNotReady', () => {
+      setTimeout(() => {
+        this.jumpTo(0)
+      }, 500)
+    })
+
+    this.debugger.callTree.event.register('noCallTreeAvailable', () => {
+      setTimeout(() => {
+        this.jumpTo(0)
+      }, 500)
     })
 
     this.debugger.callTree.event.register('callTreeReady', () => {
       if (this.debugger.callTree.functionCallStack.length) {
         setTimeout(() => {
-          this.jumpTo(this.debugger.callTree.functionCallStack[0]) // wait for the ui to be render
+          this.jumpTo(this.debugger.callTree.functionCallStack[0])
+        }, 500)
+      } else {
+        setTimeout(() => {
+          this.jumpTo(0)
         }, 500)
       }
     })

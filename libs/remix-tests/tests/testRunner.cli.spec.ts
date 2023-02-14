@@ -31,7 +31,10 @@ describe('testRunner: remix-tests CLI', function(){
 
       it('remix-tests help', () => {
         const res = spawnSync(executablePath, ['-h'])
-        const expectedHelp = `Usage: remix-tests [options] [command]
+        const expectedHelp = `Usage: remix-tests [options] [command] <file_path>
+
+Arguments:
+  file_path                path to test file or directory
 
 Options:
   -V, --version            output the version number
@@ -40,7 +43,7 @@ Options:
   -o, --optimize <bool>    enable/disable optimization
   -r, --runs <number>      set runs (e.g: 150, 250 etc)
   -v, --verbose <level>    set verbosity level (0 to 5)
-  -h, --help               output usage information
+  -h, --help               display help for command
 
 Commands:
   version                  output the version number

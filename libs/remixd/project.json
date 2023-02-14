@@ -1,0 +1,32 @@
+{
+  "name": "remixd",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/remixd/src",
+  "projectType": "library",
+  "implicitDependencies": [
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/remixd",
+        "main": "libs/remixd/src/index.ts",
+        "tsConfig": "libs/remixd/tsconfig.lib.json",
+        "updateBuildableProjectDepsInPackageJson": false,
+        "assets": [
+          "libs/remixd/*.md",
+          "libs/remixd/origins.json"
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/remixd/**/*.ts"]
+      }
+    }
+  },
+  "tags": []
+}

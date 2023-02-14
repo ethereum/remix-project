@@ -6,6 +6,8 @@
         "no-unused-vars": "off",
         "dot-notation": "off",
         "no-use-before-define": "off"
-    }, 
-    "ignorePatterns": ["!**/*"] 
+    },
+    "ignorePatterns": [
+        "**/node_modules/**"
+    ]
 }

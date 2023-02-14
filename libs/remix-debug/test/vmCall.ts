@@ -1,14 +1,7 @@
 'use strict'
-import { Block } from '@ethereumjs/block'
-import { Transaction } from '@ethereumjs/tx'
-import VM from '@ethereumjs/vm'
-import { rlp, keccak, bufferToHex } from 'ethereumjs-util'
 import { extendWeb3 } from '../src/init' 
-var utileth = require('ethereumjs-util')
-var Tx = require('@ethereumjs/tx').Transaction
-var BN = require('ethereumjs-util').BN
-var remixLib = require('@remix-project/remix-lib')
-const { Provider, extend } = require('@remix-project/remix-simulator')
+import { Address } from '@ethereumjs/util'
+const { Provider } = require('@remix-project/remix-simulator')
 const Web3 = require('web3')
 
 
@@ -25,7 +18,7 @@ async function sendTx (web3, from, to, value, data, cb) {
   try {
     cb = cb || (() => {})
     const receipt = await web3.eth.sendTransaction({
-      from: utileth.Address.fromPrivateKey(from.privateKey).toString('hex'),
+      from: Address.fromPrivateKey(from.privateKey).toString(),
       to,
       value,
       data,

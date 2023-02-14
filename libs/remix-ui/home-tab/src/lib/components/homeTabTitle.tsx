@@ -59,7 +59,7 @@ function HomeTabTitle() {
         <audio
           id="remiAudio"
           muted={false}
-          src="assets/audio/remiGuitar-single-power-chord-A-minor.wav"
+          src="assets/audio/remiGuitar-single-power-chord-A-minor.mp3"
           ref={remiAudioEl}
         ></audio>
       </div>

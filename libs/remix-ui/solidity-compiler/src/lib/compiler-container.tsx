@@ -2,15 +2,15 @@ import React, { useEffect, useState, useRef, useReducer } from 'react' // eslint
 import { FormattedMessage, useIntl } from 'react-intl'
 import semver from 'semver'
 import { CompilerContainerProps } from './types'
-import { ConfigurationSettings } from '@remix-project/remix-lib-ts'
+import { ConfigurationSettings } from '@remix-project/remix-lib'
 import { checkSpecialChars, CustomTooltip, extractNameFromKey } from '@remix-ui/helper'
-import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL, promisedMiniXhr } from '@remix-project/remix-solidity'
-
+import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL } from '@remix-project/remix-solidity'
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
 import { resetEditorMode, listenToEvents } from './actions/compiler'
 import { getValidLanguage } from '@remix-project/remix-solidity'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { configFileContent } from './compilerConfiguration'
+import axios, { AxiosResponse } from 'axios'
 
 import './css/style.css'
 const defaultPath = "compiler_config.json"
@@ -21,7 +21,6 @@ declare global {
     _paq: any
   }
 }
-
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
@@ -52,7 +51,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     customVersions: [],
     compilerLicense: null,
     selectedVersion: null,
-    defaultVersion: 'soljson-v0.8.7+commit.e28d00a7.js', // this default version is defined: in makeMockCompiler (for browser test)
+    defaultVersion: 'soljson-v0.8.18+commit.87f61d96.js', // this default version is defined: in makeMockCompiler (for browser test)
     runs: '',
     compiledFileName: '',
     includeNightlies: false,
@@ -302,15 +301,15 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     let selectedVersion, allVersionsWasm, isURL
     let allVersions = [{ path: 'builtin', longVersion: 'latest local version - ' + state.defaultVersion }]
     // fetch normal builds
-    const binRes: any = await promisedMiniXhr(`${baseURLBin}/list.json`)
+    const binRes: AxiosResponse = await axios(`${baseURLBin}/list.json`)
     // fetch wasm builds
-    const wasmRes: any = await promisedMiniXhr(`${baseURLWasm}/list.json`)
-    if (binRes.event.type === 'error' && wasmRes.event.type === 'error') {
+    const wasmRes: AxiosResponse = await axios(`${baseURLWasm}/list.json`)
+    if (binRes.status !== 200 && wasmRes.status !== 200) {
       selectedVersion = 'builtin'
       return callback(allVersions, selectedVersion)
     }
     try {
-      const versions = JSON.parse(binRes.json).builds.slice().reverse()
+      const versions = binRes.data.builds.slice().reverse()
 
       allVersions = [...allVersions, ...versions]
       selectedVersion = state.defaultVersion
@@ -331,8 +330,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           if (selectedVersionArr.length) selectedVersion = selectedVersionArr[0].path
         }
       }
-      if (wasmRes.event.type !== 'error') {
-        allVersionsWasm = JSON.parse(wasmRes.json).builds.slice().reverse()
+      if (wasmRes.status === 200) {
+        allVersionsWasm = wasmRes.data.builds.slice().reverse()
       }
     } catch (e) {
       tooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload. Error: ' + e)
@@ -732,7 +731,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     setToggleExpander(!toggleExpander)
   }
 
-
   return (
     <section>
       <article>
@@ -941,13 +939,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               placement="auto"
               tooltipId="overlay-tooltip-compile"
               tooltipText={<div className="text-left">
-                  {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+S</b> for compiling</div>}
+                  {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+S</b> to compile {state.compiledFileName.endsWith('.sol') ? state.compiledFileName : null} </div>}
                   {(configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div>}
                 </div>}
             >
               <div className="d-flex align-items-center justify-content-center">
                 { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn ml-2" aria-hidden="true"></i> }
-                <div className="d-flex justify-content-between align-items-center">
+                <div className="text-truncate overflow-hidden text-nowrap"
+                >
                   <span>
                     <FormattedMessage id='solidity.compile' />
                   </span>

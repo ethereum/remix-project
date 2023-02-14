@@ -1,5 +1,6 @@
 'use strict'
 import { EventManager } from '../eventManager'
+import type { Transaction as InternalTransaction } from './txRunner'
 import Web3 from 'web3'
 
 export class TxRunnerWeb3 {
@@ -47,6 +48,8 @@ export class TxRunnerWeb3 {
   }
 
   _sendTransaction (sendTx, tx, pass, callback) {
+    let currentDateTime = new Date();
+    const start = currentDateTime.getTime() / 1000
     const cb = (err, resp) => {
       if (err) {
         return callback(err, resp)
@@ -57,6 +60,9 @@ export class TxRunnerWeb3 {
         return new Promise(async (resolve, reject) => {
           const receipt = await tryTillReceiptAvailable(resp, this.getWeb3())
           tx = await tryTillTxAvailable(resp, this.getWeb3())
+          currentDateTime = new Date();
+          const end = currentDateTime.getTime() / 1000
+          console.log('tx duration', end - start)
           resolve({
             receipt,
             tx,
@@ -74,7 +80,7 @@ export class TxRunnerWeb3 {
     }
   }
 
-  execute (args, confirmationCb, gasEstimationForceSend, promptCb, callback) {
+  execute (args: InternalTransaction, confirmationCb, gasEstimationForceSend, promptCb, callback) {
     let data = args.data
     if (data.slice(0, 2) !== '0x') {
       data = '0x' + data

@@ -38,7 +38,7 @@ const testFiles: string[] = [
   'forLoopIteratesOverDynamicArray.sol'
 ]
 
-let compilationResults: Record<string, CompilationResult> = {}
+const compilationResults: Record<string, CompilationResult> = {}
 
 test('setup', function (t) {
   solc.loadRemoteVersion('v0.5.0+commit.1d4f565a', (error, compiler) => {
@@ -817,7 +817,7 @@ function runModuleOnFiles (Module: any, t: test.Test, cb: ((fname: string, repor
   const statRunner: StatRunner = new StatRunner()
   testFiles.forEach((fileName: string) => {
   const reports = statRunner.runWithModuleList(compilationResults[fileName], [{ name: new Module().name, mod: new Module() }])
-  let report: AnalysisReportObj[] = reports[0].report
+  const report: AnalysisReportObj[] = reports[0].report
   if (report.some((x: AnalysisReportObj) => x['warning'].includes('INTERNAL ERROR'))) {
     t.comment('Error while executing Module: ' + JSON.stringify(report))
   }
