@@ -28,7 +28,7 @@ function _traverse(graph, visited, ast, name) {
 	for (const dependency of dependencies) {
 		const path = resolve(name, dependency);
 		if (path in visited) {
-			continue;
+			//continue; //fix wrong ordering of source code in flattened file.
 		}
 		visited[path] = 1;
 		graph.add(name, path);
