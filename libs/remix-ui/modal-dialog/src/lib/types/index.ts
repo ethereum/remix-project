@@ -9,7 +9,7 @@ export interface ModalDialogProps {
   timestamp?: number,
   title?: string | JSX.Element,
   validation?: ValidationResult
-  validationFn?: (value: string) => ValidationResult
+  validationFn?: (value: any) => ValidationResult
   message?: string | JSX.Element,
   okLabel?: string | JSX.Element,
   okFn?: (value?:any) => void,
