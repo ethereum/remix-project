@@ -40,19 +40,6 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading, plugin }: RemixUiS
   const final = btoa(String.fromCharCode.apply(null, data))
 
   function ActionButtons({ actions: { zoomIn, zoomOut, resetTransform }}: ActionButtonsProps) {
-    const [reloadButton, setReloadButton] = useState(false)
-
-    useEffect(() => {
-      plugin.on('theme', 'themeChanged', (themeName) => {
-        console.log('theme changed', themeName)
-        setReloadButton(true)
-      })
-
-      return () => {
-        plugin.off('theme', 'themeChanged')
-        console.log('unmounted')
-      }
-    }, [])
   
     return (
       <>
@@ -69,19 +56,19 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading, plugin }: RemixUiS
               <i className="far fa-arrow-to-bottom align-item-center d-flex justify-content-center"></i>
             </button>
             <button
-              className="btn btn-outline-info align-item-center d-flex justify-content-center rounded-circle mr-2"
+              className="badge badge-info p-2 align-item-center d-flex justify-content-center rounded-circle mr-2"
               onClick={() => zoomIn()}
             >
               <i className="far fa-plus "></i>
             </button>
             <button
-              className="btn btn-outline-info rounded-circle mr-2"
+              className="badge badge-info p-2 rounded-circle mr-2"
               onClick={() => zoomOut()}
             >
               <i className="far fa-minus align-item-center d-flex justify-content-center"></i>
             </button>
             <button
-              className="btn btn-outline-info rounded-circle mr-2"
+              className="badge badge-info p-2 rounded-circle mr-2"
               onClick={() => resetTransform()}
             >
               <i className="far fa-undo align-item-center d-flex justify-content-center"></i>
