@@ -26,7 +26,7 @@ export class ContractFlattener extends Plugin {
 
   async flattenAContract(action: customAction) {
     this.fileName = action.path[0]
-    this.call('solidity', 'compile', this.fileName)
+    await this.call('solidity', 'compile', this.fileName)
   }
 
   /**
