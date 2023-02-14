@@ -55,7 +55,7 @@
   "home.files": "Files",
   "home.newFile": "New File",
   "home.openFile": "Open File",
-  "home.connectToLocalhost": "Connect to Localhost",
-  "home.loadFrom": "LOAD FROM",
+  "home.connectToLocalhost": "Access File System",
+  "home.loadFrom": "Load from",
   "home.resources": "Resources"
 }

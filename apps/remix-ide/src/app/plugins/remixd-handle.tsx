@@ -115,7 +115,7 @@ export class RemixdHandle extends WebsocketPlugin {
       // warn the user only if he/she is in the browser context
       const mod: AppModal = {
         id: 'remixdConnect',
-        title: 'Connect to localhost',
+        title: 'Access file system using remixd',
         message: remixdDialog(),
         okLabel: 'Connect',
         cancelLabel: 'Cancel',
