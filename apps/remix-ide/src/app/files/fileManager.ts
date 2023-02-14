@@ -934,7 +934,7 @@ class FileManager extends Plugin {
         for(const tab of tabs){
           this.openFile(tab)
         } 
-      }
+      } 
     } catch (error) {
       
     } 
