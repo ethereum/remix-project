@@ -2,6 +2,7 @@
 'use strict'
 import { hash } from '@remix-project/remix-lib'
 import { bufferToHex } from '@ethereumjs/util'
+import type { Address } from '@ethereumjs/util'
 import { decode } from 'rlp'
 import { ethers } from 'ethers'
 import { execution } from '@remix-project/remix-lib'
@@ -10,7 +11,7 @@ import { VmProxy } from './VmProxy'
 import { VM } from '@ethereumjs/vm'
 import { Common } from '@ethereumjs/common'
 import { Trie } from '@ethereumjs/trie'
-import { DefaultStateManager, StateManager, EthersStateManager } from '@ethereumjs/statemanager'
+import { DefaultStateManager, StateManager, EthersStateManager, EthersStateManagerOpts } from '@ethereumjs/statemanager'
 import { StorageDump } from '@ethereumjs/statemanager/dist/interface'
 import { EVM } from '@ethereumjs/evm'
 import { EEI } from '@ethereumjs/vm'
@@ -36,6 +37,38 @@ export interface DefaultStateManagerOpts {
   prefixCodeHashes?: boolean
 }
 
+class CustomEthersStateManager extends EthersStateManager {
+  keyHashes: { [key: string]: string }
+  constructor (opts: EthersStateManagerOpts) {
+    super(opts)
+    this.keyHashes = {}
+  }
+
+  putContractStorage (address, key, value) {
+    this.keyHashes[bufferToHex(key).replace('0x', '')] = hash.keccak(key).toString('hex')
+    return super.putContractStorage(address, key, value)
+  }
+
+  copy(): CustomEthersStateManager {
+    const newState = super.copy() as CustomEthersStateManager
+    newState.keyHashes = this.keyHashes
+    return newState
+  }
+
+  async dumpStorage(address: Address): Promise<StorageDump> {
+    const storageDump = {}
+    const storage = await super.dumpStorage(address)
+    for (const key of Object.keys(storage)) {
+      const value = storage[key]
+      storageDump['0x' + this.keyHashes[key]] = {
+        key: '0x' + key,
+        value: value
+      }
+    }
+    return storageDump
+  }
+}
+
 /*
   extend vm state manager and instanciate VM
 */
@@ -52,11 +85,9 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
   }
 
   copy(): StateManagerCommonStorageDump {
-    const copyState =  new StateManagerCommonStorageDump({
-      trie: this._trie.copy(false),
-    })
-    copyState.keyHashes = this.keyHashes
-    return copyState
+    const newState = super.copy() as StateManagerCommonStorageDump
+    newState.keyHashes = this.keyHashes
+    return newState
   }
 
   async dumpStorage (address): Promise<StorageDump> {
@@ -136,7 +167,7 @@ export class VMContext {
         const provider = new ethers.providers.StaticJsonRpcProvider(this.nodeUrl)
         block = await provider.getBlockNumber()
       }      
-      stateManager = new EthersStateManager({
+      stateManager = new CustomEthersStateManager({
         provider: this.nodeUrl,
         blockTag: BigInt(block)
       })
