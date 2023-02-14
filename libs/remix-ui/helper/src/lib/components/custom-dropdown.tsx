@@ -46,7 +46,7 @@ export const CustomMenu = React.forwardRef(
         className={className}
         aria-labelledby={labeledBy}
       >
-        <ul className="overflow-auto list-unstyled mb-0" style={{height: height+'px'}}>
+        <ul className="overflow-auto list-unstyled mb-0" style={{ maxHeight: height+'px' }}>
           {
            children
           }
