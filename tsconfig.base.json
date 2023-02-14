@@ -19,7 +19,7 @@
     "target": "ES2015",
     "module": "ES2020",
     "typeRoots": ["node_modules/@types", "libs/**/*.d.ts"],
-    "lib": ["es2017", "es2019", "dom"],
+    "lib": ["es2017", "es2019", "dom", "dom.iterable"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": "."

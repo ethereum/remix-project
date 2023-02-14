@@ -1,12 +1,15 @@
 /* global ethereum */
+import React from 'react' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import { JsonDataRequest, RejectRequest, SuccessRequest } from '../providers/abstract-provider'
 import Web3 from 'web3'
+import { IProvider } from './abstract-provider'
 
 const noInjectedProviderMsg = 'No injected provider found. Make sure your provider (e.g. MetaMask) is active and running (when recently activated you may have to reload the page).'
 
-export class InjectedProvider extends Plugin {
+export class InjectedProvider extends Plugin implements IProvider {
   provider: any
+  options: { [id: string] : any } = {}
 
   constructor (profile) {
     super(profile)
@@ -23,6 +26,12 @@ export class InjectedProvider extends Plugin {
     }
   }
 
+  body (): JSX.Element {
+    return (
+      <div></div>
+    )
+  }
+
   async init () {
     const injectedProvider = (window as any).ethereum
     if (injectedProvider === undefined) {
@@ -33,6 +42,7 @@ export class InjectedProvider extends Plugin {
       }
       this.askPermission(true)
     }
+    return {}
   }
 
   sendAsync (data: JsonDataRequest): Promise<any> {
