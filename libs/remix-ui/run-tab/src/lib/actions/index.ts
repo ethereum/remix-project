@@ -64,4 +64,4 @@ export const setNetworkName = (networkName: string) => setNetworkNameFromProvide
 export const updateSelectedContract = (contractName) => setSelectedContract(dispatch, contractName)
 export const syncContracts = () => syncContractsInternal(plugin)
 export const isValidProxyAddress = (address: string) => isValidContractAddress(plugin, address)
-export const isValidProxyUpgrade = (proxyAddress: string, contractName: string, solcInput: SolcInput, solcOuput: SolcOutput) => isValidContractUpgrade(plugin, dispatch, proxyAddress, contractName, solcInput, solcOuput)
+export const isValidProxyUpgrade = (proxyAddress: string, contractName: string, solcInput: SolcInput, solcOuput: SolcOutput) => isValidContractUpgrade(plugin, proxyAddress, contractName, solcInput, solcOuput)
