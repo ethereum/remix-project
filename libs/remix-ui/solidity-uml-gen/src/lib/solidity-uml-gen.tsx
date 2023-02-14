@@ -4,7 +4,6 @@ import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
 import { ISolidityUmlGen, ThemeSummary } from '../types'
 import './css/solidity-uml-gen.css'
 export interface RemixUiSolidityUmlGenProps {
-  plugin?: ISolidityUmlGen
   updatedSvg?: string
   loading?: boolean
   themeSelected?: string
@@ -23,9 +22,8 @@ interface ActionButtonsProps {
 
 
 
-export function RemixUiSolidityUmlGen ({ updatedSvg, loading, plugin }: RemixUiSolidityUmlGenProps) {
+export function RemixUiSolidityUmlGen ({ updatedSvg, loading }: RemixUiSolidityUmlGenProps) {
   const [showViewer, setShowViewer] = useState(false)
-  const [svgPayload, setSVGPayload] = useState<string>('')
   const [validSvg, setValidSvg] = useState(false)
 
   useEffect(() => {
