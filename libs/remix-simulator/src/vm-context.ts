@@ -50,8 +50,14 @@ class CustomEthersStateManager extends EthersStateManager {
   }
 
   copy(): CustomEthersStateManager {
-    const newState = super.copy() as CustomEthersStateManager
-    newState.keyHashes = this.keyHashes
+    const newState = new CustomEthersStateManager({
+      provider: (this as any).provider,
+      blockTag: BigInt((this as any).blockTag),
+    })
+    ;(newState as any).contractCache = new Map((this as any).contractCache)
+    ;(newState as any).storageCache = new Map((this as any).storageCache)
+    ;(newState as any)._cache = this._cache
+    ;(newState as any).keyHashes = this.keyHashes
     return newState
   }
 
@@ -85,9 +91,11 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
   }
 
   copy(): StateManagerCommonStorageDump {
-    const newState = super.copy() as StateManagerCommonStorageDump
-    newState.keyHashes = this.keyHashes
-    return newState
+    const copyState =  new StateManagerCommonStorageDump({
+      trie: this._trie.copy(false),
+    })
+    copyState.keyHashes = this.keyHashes
+    return copyState
   }
 
   async dumpStorage (address): Promise<StorageDump> {
