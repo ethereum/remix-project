@@ -26,7 +26,7 @@ export class ContractFlattener extends Plugin {
 
   async flattenAContract(action: customAction) {
     this.fileName = action.path[0]
-    this.call('solidity', 'compile', this.fileName)
+    await this.call('solidity', 'compile', this.fileName)
   }
 
   /**
@@ -39,8 +39,8 @@ export class ContractFlattener extends Plugin {
     const ast = data.sources
     const dependencyGraph = getDependencyGraph(ast, filePath)
     const sorted = dependencyGraph.isEmpty()
-        ? [filePath]
-        : dependencyGraph.sort().reverse()
+    ? [filePath]
+    : dependencyGraph.sort().reverse()
     const sources = source.sources
     const result = concatSourceFiles(sorted, sources)
     await this.call('fileManager', 'writeFile', `${filePath}_flattened.sol`, result)
