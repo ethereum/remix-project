@@ -4,7 +4,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import * as remixLib from '@remix-project/remix-lib'
 import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
-import { CustomTooltip, ProxyAddressToggle, ProxyDropdownMenu, shortenDate, shortenProxyAddress } from '@remix-ui/helper'
+import { CustomTooltip, ProxyAddressToggle, ProxyDropdownMenu, shortenDate, shortenProxyAddress, unavailableProxyLayoutMsg, upgradeReportMsg } from '@remix-ui/helper'
 import { Dropdown } from 'react-bootstrap'
 
 const txFormat = remixLib.execution.txFormat
@@ -191,15 +191,13 @@ export function ContractGUI (props: ContractGUIProps) {
             !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
           } else {
             if (upgradeReport.warning) {
-              props.modal('Warning', upgradeReport.warning, 'Proceed', () => {
+              props.modal('Proxy Upgrade Warning', unavailableProxyLayoutMsg(), 'Proceed', () => {
                 !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
-              }, 'Cancel', () => {})
+              }, 'Cancel', () => {}, 'btn-warning', 'btn-secondary')
             } else {
-              props.modal('Proxy Upgrade Error', `New deployment storage layout is incompactible with previous deployment.\n
-              ${upgradeReport.ops.map((failedCase) => `"${failedCase.kind}": ${failedCase.original.label}`).join('\n')}\n
-              Do you want to continue?`, 'Proceed', () => {
+              props.modal('Proxy Upgrade Error', upgradeReportMsg(upgradeReport), 'Continue anyway ', () => {
                 !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
-              }, 'Cancel', () => {})
+              }, 'Cancel', () => {}, 'btn-warning', 'btn-secondary')
             }
         }
       } else {

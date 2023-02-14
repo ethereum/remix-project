@@ -361,7 +361,7 @@ export const getNetworkProxyAddresses = async (plugin: RunTab, dispatch: React.D
   }
 }
 
-export const isValidContractUpgrade = async (plugin: RunTab, dispatch: React.Dispatch<any>, proxyAddress: string, newContractName: string, solcInput: SolcInput, solcOutput: SolcOutput) => {
+export const isValidContractUpgrade = async (plugin: RunTab, proxyAddress: string, newContractName: string, solcInput: SolcInput, solcOutput: SolcOutput) => {
   // build current contract first to get artefacts.
   const network = plugin.blockchain.networkStatus.network
   const identifier = network.name === 'custom' ? network.name + '-' + network.id : network.name
@@ -383,12 +383,12 @@ export const isValidContractUpgrade = async (plugin: RunTab, dispatch: React.Dis
 
           return report
         } else {
-          return { ok: false, pass: false, warning: 'Previous contract implementation not available for upgrade comparison.' }
+          return { ok: false, pass: false, warning: true }
         }
       } else {
-        return { ok: false, pass: false, warning: 'Previous contract implementation not available for upgrade comparison.' }
+        return { ok: false, pass: false, warning: true }
       }
   } else {
-    return { ok: false, pass: false, warning: 'Previous contract implementation not available for upgrade comparison.' }
+    return { ok: false, pass: false, warning: true }
   }
 }
