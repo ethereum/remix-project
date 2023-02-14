@@ -4,4 +4,5 @@ export const enum ModalTypes {
     prompt = 'prompt',
     password = 'password',
     default = 'default',
+    form = 'form',
 }
