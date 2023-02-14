@@ -168,6 +168,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   renderComponent () {
     this.dispatch({
       ...this,
+      plugin: this,
       updatedSvg: this.updatedSvg,
       loading: this.loading,
       themeSelected: this.currentlySelectedTheme,
