@@ -140,7 +140,7 @@ export interface SettingsProps {
   createNewBlockchainAccount: (cbMessage: JSX.Element) => void,
   setPassphrase: (passphrase: string) => void,
   setMatchPassphrase: (passphrase: string) => void,
-  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, okBtnClass?: string, cancelBtnClass?: string) => void,
   tooltip: (toasterMsg: string) => void,
   signMessageWithAddress: (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => void,
   passphrase: string,
@@ -184,7 +184,7 @@ export interface AccountProps {
   setPassphrase: (passphrase: string) => void,
   setMatchPassphrase: (passphrase: string) => void,
   tooltip: (toasterMsg: string) => void,
-  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, okBtnClass?: string, cancelBtnClass?: string) => void,
   signMessageWithAddress: (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => void,
   passphrase: string
 }
@@ -239,7 +239,7 @@ export interface ContractDropdownProps {
   },
   syncContracts: () => void,
   getSelectedContract: (contractName: string, compiler: CompilerAbstract) => ContractData,
-  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, okBtnClass?: string, cancelBtnClass?: string) => void,
   passphrase: string,
   setPassphrase: (passphrase: string) => void,
   createInstance: (
@@ -265,7 +265,7 @@ export interface ContractDropdownProps {
   setSelectedContract: (contractName: string) => void
   remixdActivated: boolean,
   isValidProxyAddress?: (address: string) => Promise<boolean>,
-  isValidProxyUpgrade?: (proxyAddress: string, contractName: string, solcInput: SolcInput, solcOuput: SolcOutput) => Promise<LayoutCompatibilityReport | { ok: boolean, pass: boolean, warning: string }>,
+  isValidProxyUpgrade?: (proxyAddress: string, contractName: string, solcInput: SolcInput, solcOuput: SolcOutput) => Promise<LayoutCompatibilityReport | { ok: boolean, pass: boolean, warning: boolean }>,
   proxy: { deployments: { address: string, date: string, contractName: string }[] }
 }
 
@@ -323,7 +323,9 @@ export interface Modal {
   okLabel: string
   okFn: () => void
   cancelLabel: string
-  cancelFn: () => void
+  cancelFn: () => void,
+  okBtnClass?: string,
+  cancelBtnClass?: string
 }
 
 export type DeployMode = 'Deploy with Proxy' | 'Upgrade with Proxy'
@@ -363,8 +365,8 @@ export interface ContractGUIProps {
   initializerOptions?: DeployOption,
   proxy?: { deployments: { address: string, date: string, contractName: string }[] },
   isValidProxyAddress?: (address: string) => Promise<boolean>,
-  isValidProxyUpgrade?: (proxyAddress: string) => Promise<LayoutCompatibilityReport | { ok: boolean, pass: boolean, warning: string }>,
-  modal?: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void
+  isValidProxyUpgrade?: (proxyAddress: string) => Promise<LayoutCompatibilityReport | { ok: boolean, pass: boolean, warning: boolean }>,
+  modal?: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, okBtnClass?: string, cancelBtnClass?: string) => void
 }
 export interface MainnetProps {
   network: Network,
