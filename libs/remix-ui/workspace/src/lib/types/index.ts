@@ -1,6 +1,6 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import React from 'react'
-import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
+import { customAction } from '@remixproject/plugin-api'
 import { fileDecoration } from '@remix-ui/file-decorators'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
 import { ViewPlugin } from '@remixproject/engine-web'
