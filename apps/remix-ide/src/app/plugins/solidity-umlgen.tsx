@@ -84,6 +84,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         const mangled = await this.mangleSvgPayload(payload)
         this.updatedSvg = mangled
         this.renderComponent()
+        await this.call('tabs', 'focus', 'solidityumlgen')
       } catch (error) {
         console.log({ error })
       }
