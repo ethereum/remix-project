@@ -12,20 +12,18 @@ export interface RemixUiSolidityUmlGenProps {
   themeCollection: ThemeSummary[]
 }
 
-type ButtonAction = {
-  svgValid: () => boolean
-  action: () => void
-  buttonText: string
-  icon?: string
-  customcss?: string
-}
-
 interface ActionButtonsProps {
-  buttons: ButtonAction[]
+  actions: {
+    zoomIn: () => void,
+    zoomOut: () => void,
+    resetTransform: () => void
+  }
 }
 
 
-export function RemixUiSolidityUmlGen ({ updatedSvg, loading }: RemixUiSolidityUmlGenProps) {
+
+
+export function RemixUiSolidityUmlGen ({ updatedSvg, loading, plugin }: RemixUiSolidityUmlGenProps) {
   const [showViewer, setShowViewer] = useState(false)
   const [svgPayload, setSVGPayload] = useState<string>('')
   const [validSvg, setValidSvg] = useState(false)
@@ -40,6 +38,59 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading }: RemixUiSolidityU
   const encoder = new TextEncoder()
   const data = encoder.encode(updatedSvg)
   const final = btoa(String.fromCharCode.apply(null, data))
+
+  function ActionButtons({ actions: { zoomIn, zoomOut, resetTransform }}: ActionButtonsProps) {
+    const [reloadButton, setReloadButton] = useState(false)
+
+    useEffect(() => {
+      plugin.on('theme', 'themeChanged', (themeName) => {
+        console.log('theme changed', themeName)
+        setReloadButton(true)
+      })
+
+      return () => {
+        plugin.off('theme', 'themeChanged')
+        console.log('unmounted')
+      }
+    }, [])
+  
+    return (
+      <>
+        <div
+          className="position-absolute bg-transparent mt-2"
+          id="buttons"
+          style={{ zIndex: 3, top: "10", right: "2em" }}
+        >
+          <div className="py-2 px-2 d-flex justify-content-center align-items-center">
+            <button
+              className="btn btn-outline-info d-none rounded-circle mr-2"
+              onClick={() => resetTransform()}
+            >
+              <i className="far fa-arrow-to-bottom align-item-center d-flex justify-content-center"></i>
+            </button>
+            <button
+              className="btn btn-outline-info align-item-center d-flex justify-content-center rounded-circle mr-2"
+              onClick={() => zoomIn()}
+            >
+              <i className="far fa-plus "></i>
+            </button>
+            <button
+              className="btn btn-outline-info rounded-circle mr-2"
+              onClick={() => zoomOut()}
+            >
+              <i className="far fa-minus align-item-center d-flex justify-content-center"></i>
+            </button>
+            <button
+              className="btn btn-outline-info rounded-circle mr-2"
+              onClick={() => resetTransform()}
+            >
+              <i className="far fa-undo align-item-center d-flex justify-content-center"></i>
+            </button>
+          </div>
+        </div>
+      </>
+    )
+  }
 
   const DefaultInfo = () => (
     <div className="d-flex flex-column justify-content-center align-items-center mt-5">
@@ -58,22 +109,7 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading }: RemixUiSolidityU
             {
               ({ zoomIn, zoomOut, resetTransform }) => (
                 <Fragment>
-                  <div className="position-absolute bg-transparent rounded mt-2" id="buttons"
-                    style={{ zIndex: 3,  top: '10', right: '2em' }}
-                  >
-                    <button className="btn btn-outline-info d-none rounded-circle mr-2" onClick={() => resetTransform()}>
-                      <i className="far fa-arrow-to-bottom"></i>
-                    </button>
-                    <button className="btn btn-outline-info rounded-circle mr-2" onClick={() => zoomIn()}>
-                      <i className="far fa-plus"></i>
-                    </button>
-                    <button className="btn btn-outline-info rounded-circle mr-2" onClick={() => zoomOut()}>
-                      <i className="far fa-minus"></i>
-                    </button>
-                    <button className="btn btn-outline-info rounded-circle mr-2" onClick={() => resetTransform()}>
-                      <i className="far fa-undo"></i>
-                    </button>
-                  </div>
+                  <ActionButtons actions={{ zoomIn, zoomOut, resetTransform }} />
                   <TransformComponent contentStyle={{ zIndex: 2 }}>
                     <img
                       id="umlImage"
