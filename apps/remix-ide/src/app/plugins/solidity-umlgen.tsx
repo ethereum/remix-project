@@ -72,7 +72,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       const currentTheme: ThemeQualityType = await this.call('theme', 'currentTheme')
       this.currentlySelectedTheme = currentTheme.quality
       this.themeName = currentTheme.name
-      let result = ''
+      let result
       try {
         if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
           result = await this.flattenContract(source, this.currentFile, data)
@@ -134,12 +134,12 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
    */
   async flattenContract (source: any, filePath: string, data: any) {
     const hold = { data, source, filePath }
-    const ast = data.sources
-    const dependencyGraph = getDependencyGraph(ast, filePath)
+    const ast = hold.data.sources
+    const dependencyGraph = getDependencyGraph(ast, hold.filePath)
     const sorted = dependencyGraph.isEmpty()
         ? [filePath]
         : dependencyGraph.sort().reverse()
-    const sources = source.sources
+    const sources = hold.source.sources
     const result = concatSourceFiles(sorted, sources)
     await this.call('fileManager', 'writeFile', `${filePath}_flattened.sol`, result)
     return result
