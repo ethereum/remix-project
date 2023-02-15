@@ -90,6 +90,16 @@ export function Workspace () {
     )
   }
 
+  const deleteAllWorkspaces = () => {
+    global.modal(
+      intl.formatMessage({ id: 'filePanel.workspace.deleteAll' }),
+      intl.formatMessage({ id: 'filePanel.workspace.deleteAllConfirm' }),
+      intl.formatMessage({ id: 'filePanel.ok' }),
+      onFinishDeleteAllWorkspaces,
+      ''
+    )
+  }
+
   const cloneGitRepository = () => {
     global.modal(
       intl.formatMessage({ id: 'filePanel.workspace.clone' }),
@@ -175,7 +185,15 @@ export function Workspace () {
       console.error(e)
     }
   }
-  /** ** ****/
+
+  const onFinishDeleteAllWorkspaces = async () => {
+    try {
+      await global.dispatchDeleteAllWorkspaces()
+    } catch (e) {
+      global.modal(intl.formatMessage({ id: 'filePanel.workspace.deleteAll' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, '')
+      console.error(e)
+    }
+  }
 
   const resetFocus = () => {
     global.dispatchSetFocusElement([{ key: '', type: 'folder' }])
@@ -433,6 +451,7 @@ export function Workspace () {
                         <HamburgerMenu
                           createWorkspace={createWorkspace}
                           deleteCurrentWorkspace={deleteCurrentWorkspace}
+                          deleteAllWorkspaces={deleteAllWorkspaces}
                           renameCurrentWorkspace={renameCurrentWorkspace}
                           cloneGitRepository={cloneGitRepository}
                           downloadWorkspaces={downloadWorkspaces}

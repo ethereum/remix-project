@@ -15,6 +15,7 @@ export const FileSystemContext = createContext<{
   dispatchSwitchToWorkspace: (name: string) => Promise<void>,
   dispatchRenameWorkspace: (oldName: string, workspaceName: string) => Promise<void>,
   dispatchDeleteWorkspace: (workspaceName: string) => Promise<void>,
+  dispatchDeleteAllWorkspaces: () => Promise<void>,
   dispatchPublishToGist: (path?: string, type?: string) => Promise<void>,
   dispatchUploadFile: (target?: SyntheticEvent, targetFolder?: string) => Promise<void>,
   dispatchCreateNewFile: (path: string, rootDir: string) => Promise<void>,
