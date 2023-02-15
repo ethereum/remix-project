@@ -38,6 +38,7 @@ export const CustomIconsToggle = React.forwardRef(({ onClick, icon, className = 
 // Dropdown needs access to the DOM of the Menu to measure it
 export const CustomMenu = React.forwardRef(
   ({ children, style, className, 'aria-labelledby': labeledBy }: { children: React.ReactNode, style?: React.CSSProperties, className: string, 'aria-labelledby'?: string }, ref: Ref<HTMLDivElement>) => {
+    const height = window.innerHeight * 0.6
     return (
       <div
         ref={ref}
@@ -45,7 +46,7 @@ export const CustomMenu = React.forwardRef(
         className={className}
         aria-labelledby={labeledBy}
       >
-        <ul className="list-unstyled mb-0">
+        <ul className="overflow-auto list-unstyled mb-0" style={{ maxHeight: height+'px' }}>
           {
            children
           }
