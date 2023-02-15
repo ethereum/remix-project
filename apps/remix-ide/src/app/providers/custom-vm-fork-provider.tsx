@@ -28,7 +28,7 @@ export class CustomForkVMProvider extends BasicVMProvider {
   async init () {
     const body = () => {
       return <div>
-        <span>Please provide information about the custom fork:</span>
+        <span>Please provide information about the custom fork. If the node URL is not provided, the VM will start with an empty state.</span>
       <div>
         <label className="mt-3 mb-1">Node URL</label>
         <input name="nodeUrl" type="text" className="border form-control border-right-0"></input>
@@ -54,7 +54,7 @@ export class CustomForkVMProvider extends BasicVMProvider {
           title: this.profile.displayName,
           message: body(),
           validationFn: (data: any) => {
-            if(!data.nodeUrl.startsWith("http")) {
+            if(data.nodeUrl !== '' && !data.nodeUrl.startsWith("http")) {
               return {
                 valid: false,
                 message: 'node URL should be a valid URL'
@@ -89,8 +89,14 @@ export class CustomForkVMProvider extends BasicVMProvider {
     })()
     this.fork = result.evmType
     this.nodeUrl = result.nodeUrl
-    const block = result.blockNumber
-    this.blockNumber = block === 'latest' ? 'latest' : parseInt(block)
+    if (this.nodeUrl) {
+      const block = result.blockNumber
+      this.blockNumber = block === 'latest' ? 'latest' : parseInt(block)
+    } else {
+      this.nodeUrl = undefined
+      this.blockNumber = undefined
+    }
+    
     return {
       'fork': this.fork,
       'nodeUrl': this.nodeUrl,
