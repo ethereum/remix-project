@@ -115,7 +115,7 @@ export const runTabInitialState: RunTabState = {
   sendValue: '0',
   sendUnit: 'wei',
   gasLimit: 3000000,
-  selectExEnv: 'vm-london',
+  selectExEnv: 'vm-merge',
   personalMode: false,
   networkName: 'VM',
   providers: {
@@ -263,7 +263,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       return {
         ...state,
         selectExEnv: payload,
-        networkName: state.selectExEnv === 'vm-london' || state.selectExEnv === 'vm-berlin' ? 'VM' : state.networkName,
+        networkName: state.selectExEnv === 'vm-merge' ? 'VM' : state.networkName,
         accounts: {
           ...state.accounts,
           selectedAccount: '',
