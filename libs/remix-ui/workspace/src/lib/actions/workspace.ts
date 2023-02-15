@@ -311,6 +311,14 @@ export const deleteWorkspace = async (workspaceName: string, cb?: (err: Error, r
   cb && cb(null, workspaceName)
 }
 
+export const deleteAllWorkspaces = async () => {
+  await (await getWorkspaces()).map(async workspace => {
+    await deleteWorkspaceFromProvider(workspace.name)
+    await dispatch(setDeleteWorkspace(workspace.name))
+    plugin.workspaceDeleted(workspace.name)
+  })
+}
+
 const deleteWorkspaceFromProvider = async (workspaceName: string) => {
   const workspacesPath = plugin.fileProviders.workspace.workspacesPath
 
@@ -450,7 +458,6 @@ export const cloneRepository = async (url: string) => {
       if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
       await fetchWorkspaceDirectory(ROOT_PATH)
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
-      console.log('go in to promise')
       const branches = await getGitRepoBranches(workspacesPath + '/' + repoName)
 
       dispatch(setCurrentWorkspaceBranches(branches))
