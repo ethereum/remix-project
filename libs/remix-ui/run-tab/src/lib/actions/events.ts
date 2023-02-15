@@ -24,7 +24,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
 
   plugin.blockchain.event.register('contextChanged', (context, silent) => {
     dispatch(resetProxyDeployments())
-    if (context !== 'vm') getNetworkProxyAddresses(plugin, dispatch)
+    if (!context.startsWith('vm')) getNetworkProxyAddresses(plugin, dispatch)
     setFinalContext(plugin, dispatch)
   })
 
