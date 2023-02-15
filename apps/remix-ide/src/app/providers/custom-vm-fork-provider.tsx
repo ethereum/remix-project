@@ -2,6 +2,7 @@ import React, { useRef } from 'react' // eslint-disable-line
 import * as packageJson from '../../../../../package.json'
 import { AppModal, ModalTypes } from '@remix-ui/app'
 import { BasicVMProvider } from './vm-provider'
+import { Hardfork } from '@ethereumjs/common'
 
 export class CustomForkVMProvider extends BasicVMProvider {
   nodeUrl: string
@@ -11,9 +12,9 @@ export class CustomForkVMProvider extends BasicVMProvider {
   constructor (blockchain) {
     super({
       name: 'vm-custom-fork',
-      displayName: 'Custom fork - Remix VM (London)',
+      displayName: 'Custom fork - Remix VM',
       kind: 'provider',
-      description: 'Remix VM (London)',
+      description: 'Custom fork - Remix VM',
       methods: ['sendAsync', 'init'],
       version: packageJson.version
     }, blockchain)
@@ -25,33 +26,52 @@ export class CustomForkVMProvider extends BasicVMProvider {
   }
 
   async init () {
-    this.inputs = {nodeUrl: '', evm: '', blockNumber: '' }
     const body = () => {
       return <div>
+        <span>Please provide information about the custom fork:</span>
       <div>
-        <label>Node URL</label>
-        <input type="text" value={this.inputs.nodeUrl} ></input>
+        <label className="mt-3 mb-1">Node URL</label>
+        <input name="nodeUrl" type="text" className="border form-control border-right-0"></input>
       </div>
       <div>
-        <label>Block number (or "latest")</label>
-        <input type="text" placeholder='block number or "latest"' value={this.inputs.blockNumber} ></input>
+        <label className="mt-3 mb-1">Block number (or "latest")</label>
+        <input name="blockNumber" type="text" defaultValue="latest" placeholder='block number or "latest"' className="border form-control border-right-0" ></input>
       </div>
       <div>
-        <label>EVM</label>
-        <select value={this.inputs.evm}>
-                      <option value="berlin" key="berlin">Berlin</option>
-                      <option value="london" key="london" >London</option>
-                    </select>
+        <label className="mt-3 mb-1">EVM</label>
+        <select name="evmType" className="border form-control border-right-0">
+          {Object.keys(Hardfork).map((value, index) => {
+            return <option value={Hardfork[value]} key={index}>{value}</option>
+          })}     
+        </select>
       </div>
     </div>
     } 
-    await ((): Promise<string> => {
+    const result = await ((): Promise<any> => {
       return new Promise((resolve, reject) => {
         const modalContent: AppModal = {
           id: this.profile.name,
           title: this.profile.displayName,
           message: body(),
-          modalType: ModalTypes.default,
+          validationFn: (data: any) => {
+            if(!data.nodeUrl.startsWith("http")) {
+              return {
+                valid: false,
+                message: 'node URL should be a valid URL'
+              }
+            }
+            if (data.blockNumber !== 'latest' && isNaN(data.blockNumber)) {
+              return {
+                valid: false,
+                message: 'blockNumber should be a number or "latest"'
+              }
+            }
+            return {
+              valid: true,
+              message: ''
+            }
+          },
+          modalType: ModalTypes.form,
           okLabel: 'Connect',
           cancelLabel: 'Cancel',
           okFn: (value: string) => {
@@ -64,12 +84,12 @@ export class CustomForkVMProvider extends BasicVMProvider {
             setTimeout(() => reject(new Error('Hide')), 0)
           }
         }
-        this.call('notification', 'modal', modalContent)
+        return this.call('notification', 'modal', modalContent)
       })
     })()
-    this.fork = this.inputs.evm
-    this.nodeUrl = this.inputs.nodeUrl
-    const block = this.inputs.blockNumber
+    this.fork = result.evmType
+    this.nodeUrl = result.nodeUrl
+    const block = result.blockNumber
     this.blockNumber = block === 'latest' ? 'latest' : parseInt(block)
     return {
       'fork': this.fork,
