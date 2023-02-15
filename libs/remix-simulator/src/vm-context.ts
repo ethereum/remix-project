@@ -168,13 +168,13 @@ export class VMContext {
 
   async createVm (hardfork) {
     let stateManager: StateManager
-
+    console.log('creating a new VM', hardfork, this.nodeUrl, this.blockNumber)
     if (this.nodeUrl) {
       let block = this.blockNumber
       if (this.blockNumber === 'latest') {
         const provider = new ethers.providers.StaticJsonRpcProvider(this.nodeUrl)
         block = await provider.getBlockNumber()
-      }      
+      }
       stateManager = new CustomEthersStateManager({
         provider: this.nodeUrl,
         blockTag: BigInt(block)
