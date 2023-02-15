@@ -98,24 +98,24 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
               tooltipText={<FormattedMessage id='filePanel.workspace.deleteAll' />}
             >
               <div
-                data-id='workspaceDelete'
+                data-id='workspaceDeleteAll'
                 onClick={() => {
                   props.deleteAllWorkspaces()
                   _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDeleteAll'])
                   props.hideIconsMenu(!showIconsMenu)
                 }}
-                key={`workspacesDelete-fe-ws`}
+                key={`workspacesDeleteAll-fe-ws`}
               >
                 <span
                   hidden={ hideWorkspaceOptions || hideLocalhostOptions }
-                  id='workspaceDelete'
-                  data-id='workspaceDelete'
+                  id='workspaceDeleteAll'
+                  data-id='workspaceDeleteAll'
                   onClick={() => {
                     props.deleteAllWorkspaces()
                     _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDeleteAll'])
                     props.hideIconsMenu(!showIconsMenu)
                   }}
-                  className='far fa-trash pl-2'
+                  className='far fa-trash-alt pl-2'
                 >
                 </span>
                 <span className="pl-3"><FormattedMessage id='filePanel.deleteAll' /></span>
@@ -152,7 +152,7 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
               </div>
             </CustomTooltip>
           </Dropdown.Item>
-          <Dropdown.Item><Dropdown.Divider className="border mb-0 mt-0" /></Dropdown.Item>
+          <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{ pointerEvents: 'none' }} />
           <Dropdown.Item>
             <CustomTooltip
               placement="right-start"
@@ -185,7 +185,7 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
               </div>
             </CustomTooltip>
           </Dropdown.Item>
-          <Dropdown.Item><Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/></Dropdown.Item>
+          <Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/>
           <Dropdown.Item>
             <CustomTooltip
               placement="right-start"
@@ -250,7 +250,7 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
               </div>
             </CustomTooltip>
           </Dropdown.Item>
-          <Dropdown.Item><Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/></Dropdown.Item>
+          <Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/>
           <Dropdown.Item>
             <CustomTooltip
               placement="right-start"
