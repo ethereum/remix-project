@@ -8,6 +8,7 @@ const _paq = window._paq = window._paq || []
 export interface HamburgerMenuProps {
   createWorkspace: () => void,
   deleteCurrentWorkspace: () => void,
+  deleteAllWorkspaces: () => void,
   renameCurrentWorkspace: () => void,
   cloneGitRepository: () => void,
   downloadWorkspaces: () => void,
@@ -86,6 +87,38 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
                 >
                 </span>
                 <span className="pl-3"><FormattedMessage id='filePanel.delete' /></span>
+              </div>
+            </CustomTooltip>
+          </Dropdown.Item>
+          <Dropdown.Item>
+            <CustomTooltip
+              placement="right-start"
+              tooltipId="createWorkspaceTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={<FormattedMessage id='filePanel.workspace.deleteAll' />}
+            >
+              <div
+                data-id='workspaceDelete'
+                onClick={() => {
+                  props.deleteAllWorkspaces()
+                  _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDeleteAll'])
+                  props.hideIconsMenu(!showIconsMenu)
+                }}
+                key={`workspacesDelete-fe-ws`}
+              >
+                <span
+                  hidden={ hideWorkspaceOptions || hideLocalhostOptions }
+                  id='workspaceDelete'
+                  data-id='workspaceDelete'
+                  onClick={() => {
+                    props.deleteAllWorkspaces()
+                    _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDeleteAll'])
+                    props.hideIconsMenu(!showIconsMenu)
+                  }}
+                  className='far fa-trash pl-2'
+                >
+                </span>
+                <span className="pl-3"><FormattedMessage id='filePanel.deleteAll' /></span>
               </div>
             </CustomTooltip>
           </Dropdown.Item>
