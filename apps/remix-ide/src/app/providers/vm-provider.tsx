@@ -42,32 +42,17 @@ export class BasicVMProvider extends Plugin implements IProvider {
   }
 }
 
-export class BerlinVMProvider extends BasicVMProvider {
+export class MergeVMProvider extends BasicVMProvider {
   constructor (blockchain) {
     super({
-      name: 'vm-berlin',
-      displayName: 'Remix VM (Berlin)',
+      name: 'vm-merge',
+      displayName: 'Remix VM (Merge)',
       kind: 'provider',
-      description: 'Remix VM (Berlin)',
+      description: 'Remix VM (Merge)',
       methods: ['sendAsync', 'init'],
       version: packageJson.version
     }, blockchain)
     this.blockchain = blockchain
-    this.fork = 'berlin'
-  }
-}
-
-export class LondonVMProvider extends BasicVMProvider {
-  constructor (blockchain) {
-    super({
-      name: 'vm-london',
-      displayName: 'Remix VM (London)',
-      kind: 'provider',
-      description: 'Remix VM (London)',
-      methods: ['sendAsync', 'init'],
-      version: packageJson.version
-    }, blockchain)
-    this.blockchain = blockchain
-    this.fork = 'london'
+    this.fork = 'merge'
   }
 }
