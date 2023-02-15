@@ -56,3 +56,33 @@ export class MergeVMProvider extends BasicVMProvider {
     this.fork = 'merge'
   }
 }
+
+export class LondonVMProvider extends BasicVMProvider {
+  constructor (blockchain) {
+    super({
+      name: 'vm-london',
+      displayName: 'Remix VM (London)',
+      kind: 'provider',
+      description: 'Remix VM (London)',
+      methods: ['sendAsync', 'init'],
+      version: packageJson.version
+    }, blockchain)
+    this.blockchain = blockchain
+    this.fork = 'london'
+  }
+}
+
+export class BerlinVMProvider extends BasicVMProvider {
+  constructor (blockchain) {
+    super({
+      name: 'vm-berlin',
+      displayName: 'Remix VM (Berlin)',
+      kind: 'provider',
+      description: 'Remix VM (Berlin)',
+      methods: ['sendAsync', 'init'],
+      version: packageJson.version
+    }, blockchain)
+    this.blockchain = blockchain
+    this.fork = 'berlin'
+  }
+}
