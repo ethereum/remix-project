@@ -43,6 +43,10 @@ export class ExecutionContext {
     return this.executionContext
   }
 
+  getProviderObject () {
+    return this.customNetWorks[this.executionContext]
+  }
+
   getSelectedAddress () {
     return injectedProvider ? injectedProvider.selectedAddress : null
   }
@@ -127,10 +131,10 @@ export class ExecutionContext {
     if (!confirmCb) confirmCb = () => { /* Do nothing. */ }
     if (!infoCb) infoCb = () => { /* Do nothing. */ }    
     if (this.customNetWorks[context]) {
-      var network = this.customNetWorks[context]
+      var network = this.customNetWorks[context]      
+      await network.init()
       this.currentFork = network.fork
       this.executionContext = context
-      await network.init()
       // injected
       web3.setProvider(network.provider)
       await this._updateChainContext()
