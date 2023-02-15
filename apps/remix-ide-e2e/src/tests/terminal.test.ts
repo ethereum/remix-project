@@ -288,7 +288,7 @@ module.exports = {
         })
   },
 
-  'Should connect to a custom fork, set it to sepolia and run web3.eth.getCode in the terminal #group9': function (browser: NightwatchBrowser) {
+  'Should connect to mainnet fork and run web3.eth.getCode in the terminal #group9': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('udapp')
       .switchEnvironment('vm-mainnet-fork')
@@ -296,15 +296,26 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0x608060405260043610601f5760003560e01c80635c60da1b14603157602b565b36602b576029605f565b005b6029605f565b348015603c57600080fd5b5060436097565b6040516001600160a01b03909116815260200160405180910390f35b609560917f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc546001600160a01b031690565b60d1565b565b600060c97f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc546001600160a01b031690565b905090565b90565b3660008037600080366000845af43d6000803e80801560ef573d6000f35b3d6000fdfea2646970667358221220969dbb4b1d8aec2bb348e26488dc1a33b6bcf0190f567d161312ab7ca9193d8d64736f6c63430008110033', 120000)
   },
 
-  'Should connect to the mainnet fork and run web3.eth.getCode in the terminal #group9': function (browser: NightwatchBrowser) {
-    const bytecode = ``
+  'Should connect to the sepolia fork and run web3.eth.getCode in the terminal #group9': function (browser: NightwatchBrowser) {
     browser
-      .clickLaunchIcon('udapp')
       .switchEnvironment('vm-custom-fork')
-      .setValue('*[data-id="CustomForkNodeUrl"]', 'https://remix-sepolia.ethdevops.io')
-      .setValue('*[data-id="CustomForkBlockNumber"]', 'latest')
-      .setValue('*[data-id="CustomForkEvmType"]', 'merge')
-      .executeScriptInTerminal(`web3.eth.getCode('0x75F509A4eDA030470272DfBAf99A47D587E76709')`) // mainnet contract
+      .waitForElementPresent('[data-id="vm-custom-fork-modal-footer-ok-react"]')
+      .execute(() => {
+          (document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkNodeUrl"]') as any).focus()
+      }, [], () => { })
+      .clearValue('*[data-id="CustomForkNodeUrl"]').pause(1000).setValue('*[data-id="CustomForkNodeUrl"]', 'https://remix-sepolia.ethdevops.io')
+      .execute(() => {
+        (document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkBlockNumber"]') as any).focus()
+      }, [], () => { })
+      .clearValue('*[data-id="CustomForkBlockNumber"]').setValue('*[data-id="CustomForkBlockNumber"]', 'latest')
+      .execute(() => {
+        (document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkEvmType"]') as any).focus()
+      }, [], () => { })
+      .click('*[data-id="CustomForkEvmType"] [value="merge"]')
+      .pause(5000)
+      .modalFooterOKClick('vm-custom-fork')
+      .pause(5000)
+      .executeScriptInTerminal(`web3.eth.getCode('0x75F509A4eDA030470272DfBAf99A47D587E76709')`) // sepolia contract
       .waitForElementContainsText('*[data-id="terminalJournal"]', byteCodeInSepolia, 120000)
   },
 }
