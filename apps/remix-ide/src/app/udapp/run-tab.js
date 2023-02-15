@@ -136,6 +136,8 @@ export class RunTab extends ViewPlugin {
     await addProvider('vm-london', 'Remix VM (London)', false, true, 'london', 'settingsVMLondonMode', titleVM)
     await addProvider('vm-berlin', 'Remix VM (Berlin)', false, true, 'berlin', 'settingsVMBerlinMode', titleVM)
     await addProvider('vm-mainnet-fork', 'Remix VM - Mainnet fork', false, true, 'london', 'settingsVMMainnetMode', titleVM)
+    await addProvider('vm-sepolia-fork', 'Remix VM - Sepolia fork', false, true, '', 'settingsVMSepoliaMode', titleVM)
+    await addProvider('vm-goerli-fork', 'Remix VM - Goerli fork', false, true, '', 'settingsVMGoerliMode', titleVM)
     await addProvider('vm-custom-fork', 'Remix VM - Custom fork', false, true, '', 'settingsVMCustomMode', titleVM)
 
     // external provider
