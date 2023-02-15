@@ -31,11 +31,11 @@ export class CustomForkVMProvider extends BasicVMProvider {
         <span>Please provide information about the custom fork. If the node URL is not provided, the VM will start with an empty state.</span>
       <div>
         <label className="mt-3 mb-1">Node URL</label>
-        <input data-id="CustomForkNodeUrl" name="nodeUrl" type="text" className="border form-control border-right-0"></input>
+        <input data-id="CustomForkNodeUrl" name="nodeUrl" type="text" className="border form-control border-right-0" />
       </div>
       <div>
         <label className="mt-3 mb-1">Block number (or "latest")</label>
-        <input data-id="CustomForkBlockNumber" name="blockNumber" type="text" defaultValue="latest" placeholder='block number or "latest"' className="border form-control border-right-0" ></input>
+        <input data-id="CustomForkBlockNumber" name="blockNumber" type="text" defaultValue="latest" placeholder='block number or "latest"' className="border form-control border-right-0" />
       </div>
       <div>
         <label className="mt-3 mb-1">EVM</label>
