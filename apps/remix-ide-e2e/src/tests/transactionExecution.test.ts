@@ -159,7 +159,7 @@ module.exports = {
     browser
       .clickLaunchIcon('udapp')
       .clearTransactions()
-      .switchEnvironment('vm-london') // switch to London fork
+      .switchEnvironment('vm-merge') // switch to London fork
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
       .click('.udapp_contractActionsContainerSingle > button')
       .clickInstance(0)
