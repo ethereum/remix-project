@@ -94,7 +94,7 @@ module.exports = {
     browser
       .clickLaunchIcon('settings')
       .clickLaunchIcon('udapp')
-      .switchEnvironment('vm-merge')
+      .switchEnvironment('vm-london')
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .clickLaunchIcon('filePanel')
       .click('*[data-id="treeViewDivtreeViewItem"]') // make sure we create the file at the root folder
