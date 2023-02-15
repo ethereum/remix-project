@@ -30,14 +30,14 @@
       },
       "configurations": {
         "development": {
+          "optimization": false,
+          "generateIndexHtml": false,
+          "extractCss": false
         },
         "production": {
-          "fileReplacements": [
-            {
-              "replace": "apps/remix-ide/src/environments/environment.ts",
-              "with": "apps/remix-ide/src/environments/environment.prod.ts"
-            }
-          ]
+          "optimization": true,
+          "generateIndexHtml": false,
+          "extractCss": false
         }
       }
     },

@@ -229,8 +229,7 @@
     "@nrwl/node": "15.0.0",
     "@nrwl/react": "15.0.0",
     "@nrwl/tao": "^15.0.0",
-    "@nrwl/web": "15.0.0",
-    "@nrwl/webpack": "15.0.0",
+    "@nrwl/webpack": "15.7.0",
     "@nrwl/workspace": "^15.0.0",
     "@testing-library/react": "13.4.0",
     "@types/axios": "^0.14.0",
@@ -323,7 +322,7 @@
     "npm-link-local": "^1.1.0",
     "npm-merge-driver": "^2.3.5",
     "npm-run-all": "^4.0.2",
-    "nx": "15.0.0",
+    "nx": "15.7.0",
     "nyc": "^13.3.0",
     "onchange": "^3.2.1",
     "os-browserify": "^0.3.0",
@@ -339,6 +338,7 @@
     "style-loader": "^3.3.1",
     "tap-spec": "^5.0.0",
     "tape": "^4.13.3",
+    "terser-webpack-plugin": "^5.3.6",
     "timers-browserify": "^2.0.12",
     "ts-jest": "^29.0.3",
     "ts-node": "10.9.1",
@@ -350,7 +350,7 @@
     "watchify": "^3.9.0",
     "webpack": "^5.75.0",
     "webpack-bundle-analyzer": "^4.7.0",
-    "webpack-cli": "^4.10.0"
+    "webpack-cli": "^5.0.1"
   },
   "resolutions": {
     "@types/react": "^17.0.24"
