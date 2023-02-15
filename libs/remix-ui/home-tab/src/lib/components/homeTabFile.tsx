@@ -4,6 +4,7 @@ import { FormattedMessage } from 'react-intl'
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 const _paq = window._paq = window._paq || [] // eslint-disable-line
+import { CustomTooltip } from '@remix-ui/helper';
 
 interface  HomeTabFileProps {
   plugin: any
@@ -153,17 +154,27 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
         </div>
       </ModalDialog>
       <Toaster message={state.toasterMsg} />
-      <div className="justify-content-start mt-1 p-2 border-bottom d-flex flex-column" id="hTFileSection">
-        <label style={{fontSize: "1rem"}}><FormattedMessage id='home.files' /></label>
-        <button className="btn btn-primary p-2 border my-1" data-id="homeTabNewFile" style={{width: 'fit-content'}} onClick={() => createNewFile()}><FormattedMessage id='home.newFile' /></button>
-        <label className="btn p-2 border my-1" style={{width: 'fit-content'}} htmlFor="openFileInput"><FormattedMessage id='home.openFile' /></label>
-        <input title="open file" type="file" id="openFileInput" onChange={(event) => {
-          event.stopPropagation()
-          plugin.verticalIcons.select('filePanel')
-          uploadFile(event.target)
-        }} multiple />
-        <button className="btn p-2 border my-1" style={{width: 'fit-content'}} onClick={() => connectToLocalhost()}><FormattedMessage id='home.connectToLocalhost' /></button>
-        <label className="pt-2"><FormattedMessage id='home.loadFrom' /></label>
+      <div className="justify-content-start mt-1 p-2 d-flex flex-column" id="hTFileSection">
+        <label style={{fontSize: "1.2rem"}}><FormattedMessage id='home.files' /></label>
+        <div className="dflex">
+          <button className="btn btn-primary p-2 mr-2 border my-1" data-id="homeTabNewFile" style={{width: 'fit-content'}} onClick={() => createNewFile()}><FormattedMessage id='home.newFile' /></button>
+          <label className="btn p-2 mr-2 border my-1" style={{width: 'fit-content', cursor: 'pointer'}} htmlFor="openFileInput"><FormattedMessage id='home.openFile' /></label>
+          <input title="open file" type="file" id="openFileInput" onChange={(event) => {
+            event.stopPropagation()
+            plugin.verticalIcons.select('filePanel')
+            uploadFile(event.target)
+          }} multiple />
+          <CustomTooltip
+            placement={'top'}
+            tooltipId="overlay-tooltip"
+            tooltipClasses="text-nowrap"
+            tooltipText={"Connect to Localhost"}
+            tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+          >
+            <button className="btn p-2 border my-1" style={{width: 'fit-content'}} onClick={() => connectToLocalhost()}><FormattedMessage id='home.connectToLocalhost' /></button>
+          </CustomTooltip>
+        </div>
+        <label style={{fontSize: "0.8rem"}} className="pt-2"><FormattedMessage id='home.loadFrom' /></label>
         <div className="d-flex">
           <button
             className="btn p-2 border mr-2"
