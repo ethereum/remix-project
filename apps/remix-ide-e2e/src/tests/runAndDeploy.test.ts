@@ -32,7 +32,7 @@ module.exports = {
 
   'Should sign message using account key #group2': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="settingsRemixRunSignMsg"]')
-      .switchEnvironment('vm-berlin')
+      .switchEnvironment('vm-merge')
       .pause(2000)
       .click('*[data-id="settingsRemixRunSignMsg"]')
       .pause(2000)

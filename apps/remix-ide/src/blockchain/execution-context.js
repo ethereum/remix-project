@@ -20,7 +20,7 @@ if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
 export class ExecutionContext {
   constructor () {
     this.event = new EventManager()
-    this.executionContext = 'vm-london'
+    this.executionContext = 'vm-merge'
     this.lastBlock = null
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
@@ -35,7 +35,7 @@ export class ExecutionContext {
 
   init (config) {
     if (config.get('settings/always-use-vm')) {
-      this.executionContext = 'vm-london'
+      this.executionContext = 'vm-merge'
     }
   }  
 
@@ -102,7 +102,7 @@ export class ExecutionContext {
 
   removeProvider (name) {
     if (name && this.customNetWorks[name]) {
-      if (this.executionContext === name) this.setContext('vm-london', null, null, null)
+      if (this.executionContext === name) this.setContext('vm-merge', null, null, null)
       delete this.customNetWorks[name]
       this.event.trigger('removeProvider', [name])
     }
