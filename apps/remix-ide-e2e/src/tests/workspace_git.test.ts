@@ -58,18 +58,16 @@ module.exports = {
       .waitForElementContainsText('[data-id="workspaceGitBranchesDropdown"]', 'main')
   },
 
-
-
-
   // CLONE REPOSITORY E2E START
 
   'Should clone a repository #group2': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .useXpath()
-      .click('//*[@id="workspacesMenuDropdown"]/span/i')
-      .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[6]')
-      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[6]')
+      .waitForElementVisible('[data-id="workspaceDropdownMenuIcon"]')
+      .click('[data-id="workspaceDropdownMenuIcon"]')
+      .waitForElementVisible('[data-id="initGitRepositoryLabel"]')
+      .click('[data-id="workspaceclone]"')
       .useCss()
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
       .click('[data-id="fileSystemModalDialogModalBody-react"]')
@@ -94,9 +92,9 @@ module.exports = {
   'Should display non-clashing names for duplicate clone #group2': '' + function (browser: NightwatchBrowser) {
     browser
       .useXpath()
-      .click('//*[@id="workspacesMenuDropdown"]/span/i')
-      .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[6]')
-      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[6]')
+      .click('[data-id="workspaceDropdownMenuIcon"]')
+      .waitForElementVisible('[data-id="workspaceclone]"')
+      .click('[data-id="workspaceclone]"')
       .useCss()
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
       .click('[data-id="fileSystemModalDialogModalBody-react"]')
@@ -106,9 +104,9 @@ module.exports = {
       .pause(5000)
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix1')
       .useXpath()
-      .click('//*[@id="workspacesMenuDropdown"]/span/i')
-      .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[6]')
-      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[6]')
+      .click('[data-id="workspaceDropdownMenuIcon"]')
+      .waitForElementVisible('[data-id="workspaceclone]"')
+      .click('[data-id="workspaceclone]"')
       .useCss()
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
       .click('[data-id="fileSystemModalDialogModalBody-react"]')
@@ -118,8 +116,8 @@ module.exports = {
       .pause(5000)
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix2')
       .useXpath()
-      .click('//*[@id="workspacesMenuDropdown"]/span/i')
-      .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[6]')
+      .click('[data-id="workspaceDropdownMenuIcon"]')
+      .waitForElementVisible('[data-id="workspaceclone]"')
       .useCss()
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
       .click('[data-id="fileSystemModalDialogModalBody-react"]')
@@ -138,12 +136,12 @@ module.exports = {
     browser
       .useXpath()
       .waitForElementPresent({
-        selector: '//i[@data-icon="workspaceDropdownMenuIcon"]',
+        selector: '[data-id="workspaceDropdownMenuIcon"]',
         locateStrategy: 'xpath',
       })
-      .click('//*[@id="workspacesMenuDropdown"]/span/i')
-      .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[6]')
-      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[6]')
+      .click('[data-id="workspaceDropdownMenuIcon"]')
+      .waitForElementVisible('[data-id="workspaceclone]"')
+      .click('[data-id="workspaceclone]"')
       .useCss()
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
       .click('[data-id="fileSystemModalDialogModalBody-react"]')
@@ -164,9 +162,9 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .waitForElementNotVisible('[data-id="workspaceGitPanel"]')
       .useXpath()
-      .click('//*[@id="workspacesMenuDropdown"]/span/i')
-      .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul/a[6]')
-      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[6]')
+      .click('[data-id="workspaceDropdownMenuIcon"]')
+      .waitForElementVisible('[data-id="workspaceclone]"')
+      .click('[data-id="workspaceclone]"')
       .useCss()
       .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
       .click('[data-id="fileSystemModalDialogModalBody-react"]')
