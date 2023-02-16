@@ -67,12 +67,13 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   }
 
   onActivation(): void {
-    if (this.currentFile.length < 1) 
+    // if (this.currentFile.length < 1) 
+    console.log('activated!!')
     this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
       const currentTheme: ThemeQualityType = await this.call('theme', 'currentTheme')
       this.currentlySelectedTheme = currentTheme.quality
       this.themeName = currentTheme.name
-      let result
+      let result = ''
       try {
         if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
           result = await this.flattenContract(source, this.currentFile, data)
@@ -86,7 +87,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         this.renderComponent()
         await this.call('tabs', 'focus', 'solidityumlgen')
       } catch (error) {
-        const logError = { error }
+        console.log('error', error)
       }
     })
     this.on('theme', 'themeChanged', (theme) => {
@@ -115,6 +116,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   }
 
   generateCustomAction = async (action: customAction) => {
+    console.log('calling activation')
     this.currentFile = action.path[0]
     await this.generateUml(action.path[0])
   }
@@ -133,14 +135,11 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
    * @returns {Promise<string>}
    */
   async flattenContract (source: any, filePath: string, data: any) {
-    const hold = { data, source, filePath }
-    const ast = hold.data.sources
-    const dependencyGraph = getDependencyGraph(ast, hold.filePath)
+    const dependencyGraph = getDependencyGraph(data.sources, filePath)
     const sorted = dependencyGraph.isEmpty()
         ? [filePath]
         : dependencyGraph.sort().reverse()
-    const sources = hold.source.sources
-    const result = concatSourceFiles(sorted, sources)
+    const result = concatSourceFiles(sorted, source.sources)
     await this.call('fileManager', 'writeFile', `${filePath}_flattened.sol`, result)
     return result
   }
