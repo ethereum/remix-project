@@ -30,18 +30,15 @@
       },
       "configurations": {
         "development": {
-          "extractLicenses": false,
-          "sourceMap": true,
-          "vendorChunk": true,
-          "optimization": false
+          "optimization": false,
+          "generateIndexHtml": true,
+          "extractCss": false
+
         },
         "production": {
           "optimization": true,
-          "outputHashing": "all",
-          "sourceMap": false,
-          "namedChunks": false,
-          "extractLicenses": false,
-          "vendorChunk": false
+          "generateIndexHtml": true,
+          "extractCss": false
         }
       }
     },
