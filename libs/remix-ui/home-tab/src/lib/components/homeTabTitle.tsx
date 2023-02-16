@@ -142,10 +142,10 @@ function HomeTabTitle() {
           >
             <button
               onClick={() => {
-                openLink("https://gitter.im/ethereum/remix")
-                _paq.push(['trackEvent', 'hometab', 'socialmedia', 'gitter'])
+                openLink("https://discord.gg/mh9hFCKkEq")
+                _paq.push(['trackEvent', 'hometab', 'socialmedia', 'discord'])
               }}
-              className="border-0 h-100 p-2 btn fab fa-gitter">
+              className="border-0 h-100 p-2 btn fab fa-discord">
             </button>
           </CustomTooltip>
         </span>
