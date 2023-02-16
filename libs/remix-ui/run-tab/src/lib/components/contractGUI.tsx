@@ -275,21 +275,22 @@ export function ContractGUI (props: ContractGUIProps) {
         className="udapp_contractActionsContainerSingle pt-2"
         style={{ display: toggleContainer ? "none" : "flex" }}
       >
-        <CustomTooltip
-          placement={"right-start"}
-          tooltipClasses="text-wrap"
-          tooltipId="remixUdappInstanceButtonTooltip"
-          tooltipText={buttonOptions.title}
-        >
           <button
             onClick={handleActionClick}
             className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`}
             data-id={buttonOptions.dataId}
             data-title={buttonOptions.title}
+            disabled={toggleUpgradeImp && !proxyAddress}
           >
-            {title}
+            <CustomTooltip
+              placement={"right-start"}
+              tooltipClasses="text-wrap"
+              tooltipId="remixUdappInstanceButtonTooltip"
+              tooltipText={toggleUpgradeImp && !proxyAddress ? 'Proxy address cannot be empty' : buttonOptions.title}
+            >
+              <div>{title}</div>
+            </CustomTooltip>
           </button>
-        </CustomTooltip>
         <CustomTooltip
           placement={"right"}
           tooltipClasses="text-nowrap"
@@ -553,9 +554,9 @@ export function ContractGUI (props: ContractGUIProps) {
                   }
                 </Dropdown>
             </div>
-            <div className={`flex-column 'd-flex'}`}>
+            <div className='d-flex'>
                 <div className="mb-2">
-                  { proxyAddressError && <span className='text-lowercase' data-id="errorMsgProxyAddress" style={{ fontSize: '.8em' }}>{ proxyAddressError }</span> }
+                  { proxyAddressError && <span className='text-lowercase text-danger' data-id="errorMsgProxyAddress" style={{ fontSize: '.8em' }}>{ proxyAddressError }</span> }
                 </div>
             </div>
           </div>
