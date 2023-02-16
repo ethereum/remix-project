@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
-import { CompilerApiMixin } from './compiler-api'
+import { CompilerApiMixin } from '@remix-project/remix-solidity'
 import { ICompilerApi } from '@remix-project/remix-lib'
 import { CompileTabLogic } from '@remix-ui/solidity-compiler'
 
