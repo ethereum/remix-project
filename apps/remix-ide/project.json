@@ -38,7 +38,8 @@
         "production": {
           "optimization": true,
           "generateIndexHtml": true,
-          "extractCss": false
+          "extractCss": false,
+          "vendorChunk": false
         }
       }
     },
