@@ -67,8 +67,6 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   }
 
   onActivation(): void {
-    // if (this.currentFile.length < 1) 
-    console.log('activated!!')
     this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
       const currentTheme: ThemeQualityType = await this.call('theme', 'currentTheme')
       this.currentlySelectedTheme = currentTheme.quality
@@ -82,8 +80,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         const umlClasses = convertAST2UmlClasses(ast, this.currentFile)
         const umlDot = convertUmlClasses2Dot(umlClasses)
         const payload = vizRenderStringSync(umlDot)
-        const mangled = await this.mangleSvgPayload(payload)
-        this.updatedSvg = mangled
+        this.updatedSvg = payload
         this.renderComponent()
         await this.call('tabs', 'focus', 'solidityumlgen')
       } catch (error) {
@@ -116,7 +113,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   }
 
   generateCustomAction = async (action: customAction) => {
-    console.log('calling activation')
+    this.updatedSvg = this.updatedSvg.startsWith('<?xml') ? '' : this.updatedSvg
     this.currentFile = action.path[0]
     await this.generateUml(action.path[0])
   }
