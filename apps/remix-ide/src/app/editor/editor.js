@@ -291,8 +291,7 @@ class Editor extends Plugin {
 
   /**
    * Get the text in the current session, if any.
-   * @param {string} url Address of the text to replace.
-   * @param {string} text New text to be place.
+   * @param {string} url Address of the content to retrieve.
    */
    getText (url) {
     if (this.sessions[url]) {
