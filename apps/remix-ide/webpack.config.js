@@ -3,9 +3,6 @@ const webpack = require('webpack')
 const CopyPlugin = require("copy-webpack-plugin")
 const version = require('../../package.json').version
 const fs = require('fs')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const TerserPlugin = require("terser-webpack-plugin")
-
 
 const versionData = {
   version: version,
@@ -16,7 +13,7 @@ const versionData = {
 fs.writeFileSync('./apps/remix-ide/src/assets/version.json', JSON.stringify(versionData))
 
 module.exports = config => {
-  console.log("GET WEBPACK CONFIG")
+
   const nxWebpackConfig = nxWebpack(config)
   // remove mini-css-extract-plugin injected by nx
   nxWebpackConfig.plugins = nxWebpackConfig.plugins.filter(plugin => {
@@ -35,8 +32,8 @@ module.exports = config => {
         "http": require.resolve("stream-http"),
         "https": require.resolve("https-browserify"),
         "constants": require.resolve("constants-browserify"),
-        "os": false, //require.resolve("os-browserify/browser"),
-        "timers": false, // require.resolve("timers-browserify"),
+        "os": false, 
+        "timers": false,
         "zlib": require.resolve("browserify-zlib"),
         "fs": false,
         "module": false,
@@ -61,9 +58,6 @@ module.exports = config => {
     },
     plugins: [
       ...nxWebpackConfig.plugins,
-      //new BundleAnalyzerPlugin({
-      //  analyzerMode: 'static'
-      //}),
       new CopyPlugin({
         patterns: [
           { from: '../../node_modules/monaco-editor/dev/vs', to: 'assets/js/monaco-editor/dev/vs' },
@@ -74,21 +68,11 @@ module.exports = config => {
         url: ['url', 'URL'],
         process: 'process/browser',
       }),
-      // new HtmlWebpackPlugin({
-      //   template: 'src/index.html',
-      //   filename: 'index.html',
-      //   minify: false,
-      // }),
-      // new HtmlWebpackSkipAssetsPlugin({
-      //   // exclude all javascript files
-      //   skipAssets: [/.*\.js/],
-      // })
     ]
   }
   webpackConfig.ignoreWarnings = [/Failed to parse source map/] // ignore source-map-loader warnings
   webpackConfig.output.chunkLoadTimeout = 600000
 
-  console.log('process.env.NODE_ENV', process.env.NODE_ENV)
   if (process.env.NODE_ENV === 'production') {
 
     const config = {
@@ -96,11 +80,10 @@ module.exports = config => {
       mode: 'production',
       devtool: 'source-map',
       optimization: {
-        minimize: false,
+        minimize: true,
         mangleExports: false,
       },
     }
-    console.log('config', config.plugins)
     return config
   } else {
     console.log('config dev')
