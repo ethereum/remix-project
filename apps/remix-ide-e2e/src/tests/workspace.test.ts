@@ -410,7 +410,7 @@ module.exports = {
     browser
       .useXpath()
       .waitForElementPresent({
-        selector: '//i[@data-icon="workspaceDropdownMenuIcon"]',
+        selector: '//i[@data-id="workspaceDropdownMenuIcon"]',
         locateStrategy: 'xpath',
       })
       .click('//*[@id="workspacesMenuDropdown"]/span/i')
