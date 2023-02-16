@@ -86,7 +86,6 @@ module.exports = config => {
     }
     return config
   } else {
-    console.log('config dev')
     return webpackConfig
   }
 }
