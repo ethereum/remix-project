@@ -36,7 +36,7 @@
 
         },
         "production": {
-          "optimization": false,
+          "optimization": true,
           "generateIndexHtml": true,
           "extractCss": false,
           "vendorChunk": false
