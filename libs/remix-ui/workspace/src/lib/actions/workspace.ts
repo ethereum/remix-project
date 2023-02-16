@@ -488,7 +488,6 @@ export const cloneRepository = async (url: string) => {
   }
 }
 
-
 export const checkGit = async () => {
   const isGitRepo = await plugin.fileManager.isGitRepo()
   dispatch(setCurrentWorkspaceIsGitRepo(isGitRepo))
