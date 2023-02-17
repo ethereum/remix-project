@@ -247,7 +247,6 @@ class AppComponent {
 
     const codeParser = new CodeParser(new AstWalker())
 
-
     this.notification = new NotificationPlugin()
 
     const configPlugin = new ConfigPlugin()
