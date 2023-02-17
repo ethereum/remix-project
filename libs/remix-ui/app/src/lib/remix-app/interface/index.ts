@@ -9,13 +9,13 @@ export interface AppModal {
     id: string
     timestamp?: number
     hide?: boolean
-    title: string
+    title: string | JSX.Element
     validationFn?: (value: string) => ValidationResult
     // eslint-disable-next-line no-undef
     message: string | JSX.Element
-    okLabel: string
+    okLabel: string | JSX.Element
     okFn?: (value?:any) => void
-    cancelLabel: string
+    cancelLabel: string | JSX.Element
     cancelFn?: () => void,
     modalType?: ModalTypes,
     defaultValue?: string
