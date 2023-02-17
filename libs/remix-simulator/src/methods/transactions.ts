@@ -156,9 +156,9 @@ export class Transactions {
     payload.params[0].gas = 10000000 * 10
 
     this.vmContext.web3().flagNextAsDoNotRecordEvmSteps()
-    processTx(this.txRunnerInstance, payload, true, (error, value: VMexecutionResult) => {
-      const result: RunTxResult = value.result
+    processTx(this.txRunnerInstance, payload, true, (error, value: VMexecutionResult) => {      
       if (error) return cb(error)
+      const result: RunTxResult = value.result
       if ((result as any).receipt?.status === '0x0' || (result as any).receipt?.status === 0) {
         try {
           const msg = `0x${result.execResult.returnValue.toString('hex') || '0'}`
