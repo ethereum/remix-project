@@ -1,15 +1,15 @@
-import { FileExplorerState, MenuItems } from '../types'
+import { WorkspaceProps, MenuItems } from '../types'
 
 export const contextMenuActions: MenuItems = [{
   id: 'newFile',
   name: 'New File',
-  type: ['folder', 'gist'],
+  type: ['folder', 'gist', 'workspace'],
   multiselect: false,
   label: ''
 }, {
   id: 'newFolder',
   name: 'New Folder',
-  type: ['folder', 'gist'],
+  type: ['folder', 'gist', 'workspace'],
   multiselect: false,
   label: ''
 }, {
@@ -80,30 +80,6 @@ export const contextMenuActions: MenuItems = [{
   label: ''
 }]
 
-export const getFileMenuActions = (root: string, actions?: MenuItems):FileExplorerState => {
-  return {
-    ctrlKey: false,
-    newFileName: '',
-    actions: actions ?? contextMenuActions,
-    focusContext: {
-      element: null,
-      x: null,
-      y: null,
-      type: ''
-    },
-    focusEdit: {
-      element: null,
-      type: '',
-      isNew: false,
-      lastEdit: ''
-    },
-    mouseOverElement: null,
-    showContextMenu: false,
-    reservedKeywords: [root, 'gist-'],
-    copyElement: []
-  }
-}
-
 export const contextMenuDefaultActions: MenuItems = [{
   id: 'newFile',
   name: 'New File',
@@ -128,5 +104,17 @@ export const contextMenuDefaultActions: MenuItems = [{
   type: ['folder', 'gist'],
   multiselect: false,
   label: 'Load a Local File'
+}, {
+  id: 'publishWorkspace',
+  name: 'Publish Workspace to Gist',
+  type: ['workspace'],
+  multiselect: false,
+  label: ''
+}, {
+  id: 'uploadFile',
+  name: 'Upload File',
+  type: ['workspace'],
+  multiselect: false,
+  label: ''
 }
 ]

@@ -14,7 +14,7 @@ declare global {
 const _paq = window._paq = window._paq || []  //eslint-disable-line
 
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
-  const { actions, createNewFile, createNewFolder, deletePath, renamePath, downloadPath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, copyFileName, copyPath, paste, runScript, emit, pageX, pageY, path, type, focus, downloadPath, ...otherProps } = props
+  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, copyFileName, copyPath, paste, runScript, emit, pageX, pageY, path, type, focus, downloadPath, uploadFile,...otherProps } = props
   const contextMenuRef = useRef(null)
   const intl = useIntl()
   const [showFileExplorer, setShowFileExplorer] = useState(false)
@@ -73,6 +73,18 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
 
   const menu = () => {
     return actions.filter(item => filterItem(item)).map((item, index) => {
+      if(item.name === "Upload File"){
+        return <li
+        id={`menuitem${item.name.toLowerCase()}`}
+        key={index}
+        className='remixui_liitem'
+        onClick={()=>{
+          _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'uploadFile'])
+          setShowFileExplorer(true)
+        }}
+        >{intl.formatMessage({id: `filePanel.${item.id}`, defaultMessage: item.label || item.name})}</li>
+      }
+
       if(item.name === "Load a Local File"){
         return <li
         id={`menuitem${item.name.toLowerCase()}`}
@@ -147,6 +159,10 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               deletePath(getPath())
               _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'deleteAll'])
               break
+            case 'Publish Workspace to Gist':
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishWorkspace'])
+              publishFolderToGist(path, type)
+            break
             default:
               _paq.push(['trackEvent', 'fileExplorer', 'customAction', `${item.id}/${item.name}`])
               emit && emit({ ...item, path: [path] } as customAction)
