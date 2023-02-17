@@ -1,4 +1,5 @@
 import React from 'react' // eslint-disable-line
+import { FormattedMessage } from 'react-intl'
 import { Plugin } from '@remixproject/engine'
 import { AppModal } from '@remix-ui/app'
 import { PermissionHandlerDialog, PermissionHandlerValue } from '@remix-ui/permission-handler'
@@ -103,10 +104,10 @@ export class PermissionHandlerPlugin extends Plugin {
         }
         const modal: AppModal = {
             id: 'PermissionHandler',
-            title: `Permission needed for ${to.displayName || to.name}`,
+            title: <FormattedMessage id='permissionHandler.permissionNeededFor' values={{ to: to.displayName || to.name }} />,
             message: <PermissionHandlerDialog plugin={this} theme={await this.getTheme()} value={value}></PermissionHandlerDialog>,
-            okLabel: 'Accept',
-            cancelLabel: 'Decline'
+            okLabel: <FormattedMessage id='permissionHandler.accept' />,
+            cancelLabel: <FormattedMessage id='permissionHandler.decline' />
         }
 
         const result = await this.call('notification', 'modal', modal)

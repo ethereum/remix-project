@@ -4,5 +4,8 @@
   "debugger.stopDebugging": "Stop debugging",
   "debugger.startDebugging": "Start debugging",
   "debugger.placeholder": "Transaction hash, should start with 0x",
+  "debugger.debugLocaNodeLabel": "Force using local node",
+  "debugger.useGeneratedSources": "Use generated sources",
+  "debugger.debugWithGeneratedSources": "Debug with generated sources",
   "debugger.introduction": "When Debugging with a transaction hash, if the contract is verified, Remix will try to fetch the source code from Sourcify or Etherscan. Put in your Etherscan API key in the Remix settings. For supported networks, please see"
 }

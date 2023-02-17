@@ -1,4 +1,5 @@
 'use strict'
+import { saveAs } from 'file-saver'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
@@ -338,6 +339,17 @@ class FileManager extends Plugin {
         }
         return provider.rename(oldPath, newPath, true)
       }
+    } catch (e) {
+      throw new Error(e)
+    }
+  }
+
+  async download(path) {
+    try {
+      const fileName = helper.extractNameFromKey(path)
+      path = this.normalize(path)
+      const content: any = await this.readFile(path)
+      saveAs(new Blob([content]), fileName)
     } catch (e) {
       throw new Error(e)
     }

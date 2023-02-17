@@ -1,5 +1,6 @@
 'use strict'
 import { EventManager } from '../eventManager'
+import type { Transaction as InternalTransaction } from './txRunner'
 import Web3 from 'web3'
 
 export class TxRunnerWeb3 {
@@ -79,7 +80,7 @@ export class TxRunnerWeb3 {
     }
   }
 
-  execute (args, confirmationCb, gasEstimationForceSend, promptCb, callback) {
+  execute (args: InternalTransaction, confirmationCb, gasEstimationForceSend, promptCb, callback) {
     let data = args.data
     if (data.slice(0, 2) !== '0x') {
       data = '0x' + data

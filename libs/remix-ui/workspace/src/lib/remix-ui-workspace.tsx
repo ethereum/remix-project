@@ -73,18 +73,18 @@ export function Workspace () {
   }, [currentWorkspace])
 
   const renameCurrentWorkspace = () => {
-    global.modal(intl.formatMessage({ id: 'filePanel.workspace.rename' }), renameModalMessage(), 'OK', onFinishRenameWorkspace, '')
+    global.modal(intl.formatMessage({ id: 'filePanel.workspace.rename' }), renameModalMessage(), intl.formatMessage({ id: 'filePanel.ok' }), onFinishRenameWorkspace, '')
   }
 
   const createWorkspace = () => {
-    global.modal(intl.formatMessage({ id: 'filePanel.workspace.create' }), createModalMessage(), 'OK', onFinishCreateWorkspace, '')
+    global.modal(intl.formatMessage({ id: 'filePanel.workspace.create' }), createModalMessage(), intl.formatMessage({ id: 'filePanel.ok' }), onFinishCreateWorkspace, '')
   }
 
   const deleteCurrentWorkspace = () => {
     global.modal(
       intl.formatMessage({ id: 'filePanel.workspace.delete' }),
       intl.formatMessage({ id: 'filePanel.workspace.deleteConfirm' }),
-      'OK',
+      intl.formatMessage({ id: 'filePanel.ok' }),
       onFinishDeleteWorkspace,
       ''
     )
@@ -94,7 +94,7 @@ export function Workspace () {
     global.modal(
       intl.formatMessage({ id: 'filePanel.workspace.clone' }),
       cloneModalMessage(),
-      'OK',
+      intl.formatMessage({ id: 'filePanel.ok' }),
       handleTypingUrl,
       ''
     )
@@ -136,7 +136,7 @@ export function Workspace () {
     try {
       await global.dispatchRenameWorkspace(currentWorkspace, workspaceName)
     } catch (e) {
-      global.modal('Rename Workspace', e.message, 'OK', () => {}, '')
+      global.modal(intl.formatMessage({ id: 'filePanel.workspace.rename' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, '')
       console.error(e)
     }
   }
@@ -162,7 +162,7 @@ export function Workspace () {
     try {
       await global.dispatchCreateWorkspace(workspaceName, workspaceTemplateName, opts, initGitRepo)
     } catch (e) {
-      global.modal('Create Workspace', e.message, 'OK', () => {}, '')
+      global.modal(intl.formatMessage({ id: 'filePanel.workspace.create' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, '')
       console.error(e)
     }
   }
@@ -171,7 +171,7 @@ export function Workspace () {
     try {
       await global.dispatchDeleteWorkspace(global.fs.browser.currentWorkspace)
     } catch (e) {
-      global.modal('Delete Workspace', e.message, 'OK', () => {}, '')
+      global.modal(intl.formatMessage({ id: 'filePanel.workspace.delete' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, '')
       console.error(e)
     }
   }
@@ -186,7 +186,7 @@ export function Workspace () {
       await global.dispatchSwitchToWorkspace(name)
       global.dispatchHandleExpandPath([])
     } catch (e) {
-      global.modal('Switch To Workspace', e.message, 'OK', () => {}, '')
+      global.modal(intl.formatMessage({ id: 'filePanel.workspace.switch' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, '')
       console.error(e)
     }
   }
@@ -217,7 +217,13 @@ export function Workspace () {
     if (url) {
       global.dispatchCloneRepository(url)
     } else {
-      global.modal('Clone Git Repository', 'Please provide a valid git repository url.', 'OK', () => {}, '')
+      global.modal(
+        intl.formatMessage({ id: 'filePanel.workspace.clone' }),
+        intl.formatMessage({ id: 'filePanel.workspace.cloneMessage' }),
+        intl.formatMessage({ id: 'filePanel.ok' }),
+        () => {},
+        ''
+      )
     }
   }
 
@@ -255,7 +261,7 @@ export function Workspace () {
       }
     } catch (e) {
       console.error(e)
-      global.modal('Checkout Git Branch', e.message, 'OK', () => {})
+      global.modal(intl.formatMessage({ id: 'filePanel.checkoutGitBranch' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {})
     }
   }
 
@@ -264,7 +270,7 @@ export function Workspace () {
       await global.dispatchCreateNewBranch(branchFilter)
       _paq.push(['trackEvent', 'Workspace', 'GIT', 'switch_to_new_branch'])
     } catch (e) {
-      global.modal('Checkout Git Branch', e.message, 'OK', () => {})
+      global.modal(intl.formatMessage({ id: 'filePanel.checkoutGitBranch' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {})
     }
   }
 
@@ -291,9 +297,9 @@ export function Workspace () {
         </select>
 
         <div id="ozcustomization" data-id="ozCustomization" ref={displayOzCustomRef} style={{display: 'none'}} className="mb-2">
-          <label className="form-check-label d-block mb-2" style={{fontWeight: "bolder"}}>Customize template</label>
+          <label className="form-check-label d-block mb-2" style={{fontWeight: "bolder"}}><FormattedMessage id='filePanel.customizeTemplate' /></label>
 
-          <label id="wsName" className="form-check-label d-block mb-1">Features</label>
+          <label id="wsName" className="form-check-label d-block mb-1"><FormattedMessage id='filePanel.features' /></label>
           <div className="mb-2">
             <div className="d-flex ml-2 custom-control custom-checkbox">
                 <input className="custom-control-input" type="checkbox" name="feature" value="mintable" id="mintable" ref={mintableCheckboxRef} />
@@ -309,7 +315,7 @@ export function Workspace () {
             </div>
           </div>
 
-          <label id="wsName" className="form-check-label d-block mb-1">Upgradeability</label>
+          <label id="wsName" className="form-check-label d-block mb-1"><FormattedMessage id='filePanel.upgradeability' /></label>
           <div onChange={handleUpgradeability}>
             <div className="d-flex ml-2 custom-control custom-radio">
                 <input className="custom-control-input" type="radio" name="upgradeability" value="transparent" id="transparent" ref={transparentRadioRef} />
@@ -323,7 +329,7 @@ export function Workspace () {
 
         </div>
 
-        <label id="wsName" className="form-check-label" style={{fontWeight: "bolder"}} >Workspace name</label>
+        <label id="wsName" className="form-check-label" style={{fontWeight: "bolder"}} ><FormattedMessage id='filePanel.workspaceName' /></label>
         <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`remixDefault_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
 
         <div className="d-flex py-2 align-items-center custom-control custom-checkbox">
@@ -342,12 +348,12 @@ export function Workspace () {
             className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
             title="Check option to initialize workspace as a new git repository"
           >
-            Initialize workspace as a new git repository
+            <FormattedMessage id='filePanel.initGitRepositoryLabel' />
           </label>
         </div>
         {!global.fs.gitConfig.username || !global.fs.gitConfig.email ?
           (
-          <div className='text-warning'>Please add username and email to Remix GitHub Settings to use git features.</div>)
+          <div className='text-warning'><FormattedMessage id='filePanel.initGitRepositoryWarning' /></div>)
           :<></>
         }
 
@@ -510,6 +516,7 @@ export function Workspace () {
                   toast={global.toast}
                   dispatchDeletePath={global.dispatchDeletePath}
                   dispatchRenamePath={global.dispatchRenamePath}
+                  dispatchDownloadPath={global.dispatchDownloadPath}
                   dispatchUploadFile={global.dispatchUploadFile}
                   dispatchCopyFile={global.dispatchCopyFile}
                   dispatchCopyFolder={global.dispatchCopyFolder}
@@ -549,6 +556,7 @@ export function Workspace () {
                   toast={global.toast}
                   dispatchDeletePath={global.dispatchDeletePath}
                   dispatchRenamePath={global.dispatchRenamePath}
+                  dispatchDownloadPath={global.dispatchDownloadPath}
                   dispatchUploadFile={global.dispatchUploadFile}
                   dispatchCopyFile={global.dispatchCopyFile}
                   dispatchCopyFolder={global.dispatchCopyFolder}
@@ -584,14 +592,14 @@ export function Workspace () {
                   <Dropdown.Menu as={CustomMenu} className='custom-dropdown-items branches-dropdown'>
                     <div data-id="custom-dropdown-menu">
                       <div className='d-flex text-dark' style={{ fontSize: 14, fontWeight: 'bold' }}>
-                        <span className='mt-2 ml-2 mr-auto'>Switch branches</span>
+                        <span className='mt-2 ml-2 mr-auto'><FormattedMessage id='filePanel.switchBranches' /></span>
                         <div className='pt-2 pr-2' onClick={() => { toggleBranches(false) }}><i className='fa fa-close'></i>
                         </div>
                       </div>
                       <div className='border-top py-2'>
                         <input
                           className='form-control border checkout-input bg-light'
-                          placeholder='Find or create a branch.'
+                          placeholder={intl.formatMessage({ id: 'filePanel.findOrCreateABranch' })}
                           style={{ minWidth: 225 }}
                           onChange={handleBranchFilterChange}
                           data-id='workspaceGitInput'
@@ -614,13 +622,13 @@ export function Workspace () {
                           }) :
                           <Dropdown.Item onClick={switchToNewBranch}>
                             <div className="pl-1 pr-1" data-id="workspaceGitCreateNewBranch">
-                              <i className="fas fa-code-branch pr-2"></i><span>Create branch: { branchFilter } from '{currentBranch}'</span>
+                              <i className="fas fa-code-branch pr-2"></i><span><FormattedMessage id='filePanel.createBranch' />: { branchFilter } from '{currentBranch}'</span>
                             </div>
                           </Dropdown.Item>
                         }
                       </div>
                       {
-                        (selectedWorkspace.branches || []).length > 4 && <div className='text-center border-top pt-2'><label style={{ fontSize: 12, cursor: 'pointer' }} onClick={showAllBranches}>View all branches</label></div>
+                        (selectedWorkspace.branches || []).length > 4 && <div className='text-center border-top pt-2'><label style={{ fontSize: 12, cursor: 'pointer' }} onClick={showAllBranches}><FormattedMessage id='filePanel.viewAllBranches' /></label></div>
                       }
                     </div>
                   </Dropdown.Menu>
