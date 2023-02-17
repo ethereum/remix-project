@@ -36,7 +36,7 @@ export class ContractFlattener extends Plugin {
    * Takes currently compiled contract that has a bunch of imports at the top
    * and flattens them ready for UML creation. Takes the flattened result
    * and assigns to a local property
-   * @returns {Promise<string>}
+   * @returns {Promise<void>}
    */
   async flattenContract (source: any, filePath: string, data: any) {
     const ast = data.sources
@@ -48,6 +48,5 @@ export class ContractFlattener extends Plugin {
     const result = concatSourceFiles(sorted, sources)
     await this.call('fileManager', 'writeFile', `${filePath}_flattened.sol`, result)
     _paq.push(['trackEvent', 'plugin', 'contractFlattener', 'flattenAContract'])
-    return result
   }
 }
