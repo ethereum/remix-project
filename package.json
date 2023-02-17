@@ -234,6 +234,7 @@
     "@nrwl/web": "15.6.3",
     "@nrwl/webpack": "15.6.3",
     "@nrwl/workspace": "^15.6.3",
+    "@openzeppelin/contracts-upgradeable": "^4.8.1",
     "@svgr/webpack": "^6.5.1",
     "@testing-library/react": "13.4.0",
     "@types/axios": "^0.14.0",
