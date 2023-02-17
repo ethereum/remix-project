@@ -13,7 +13,7 @@ const profile = {
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel','addErrorMarker', 'clearErrorMarkers'],
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel','addErrorMarker', 'clearErrorMarkers', 'getText'],
 }
 
 class Editor extends Plugin {
@@ -280,11 +280,22 @@ class Editor extends Plugin {
 
   /**
    * Set the text in the current session, if any.
+   * @param {string} url Address of the text to replace.
    * @param {string} text New text to be place.
    */
-  setText (text) {
-    if (this.currentFile && this.sessions[this.currentFile]) {
-      this.sessions[this.currentFile].setValue(text)
+  setText (url, text) {
+    if (this.sessions[url]) {
+      this.sessions[url].setValue(text)
+    }
+  }
+
+  /**
+   * Get the text in the current session, if any.
+   * @param {string} url Address of the content to retrieve.
+   */
+   getText (url) {
+    if (this.sessions[url]) {
+      return this.sessions[url].getValue()
     }
   }
 
