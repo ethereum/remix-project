@@ -74,7 +74,7 @@ jobs:
       - run: cd dist/libs/remix-tests && yarn add @remix-project/remix-simulator ../../libs/remix-simulator
       - run: cd dist/libs/remix-tests && ./bin/remix-tests ./../../../libs/remix-tests/tests/examples_0/assert_ok_test.sol
       - run: node dist/libs/remix-tests/bin/remix-tests ./libs/remix-tests/tests/examples_0/assert_ok_test.sol
-      - run: npx http-server -p 9090 --cors='*' ./node_modules
+      - run: npx http-server -p 9090 --cors='*' ./node_modules > http.log 2>&1 &
       - run: yarn run test:libs
 
   remix-ide-browser:
@@ -133,7 +133,7 @@ jobs:
           name: Start Selenium
           command: yarn run selenium
           background: true
-      - run: npx http-server -p 9090 --cors='*' ./node_modules
+      - run: npx http-server -p 9090 --cors='*' ./node_modules > http.log 2>&1 &
       - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
       - store_test_results:
           path: ./reports/tests
@@ -180,7 +180,7 @@ jobs:
           name: Start Selenium
           command: yarn run selenium
           background: true
-      - run: npx http-server -p 9090 --cors='*' ./node_modules
+      - run: npx http-server -p 9090 --cors='*' ./node_modules > http.log 2>&1 &
       - run: ./apps/remix-ide/ci/<< parameters.script >>
       - store_test_results:
           path: ./reports/tests
