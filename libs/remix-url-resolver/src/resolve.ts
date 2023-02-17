@@ -128,9 +128,10 @@ export class RemixURLResolver {
   * @param url The url of the NPM import statement
   */
   async handleNpmImport (url: string): Promise<HandlerResponse> {
+    const NX_NPM_URL: string = process && process.env && process.env['NX_NPM_URL'] ? process.env['NX_NPM_URL'] : 'https://unpkg.com/'
     // eslint-disable-next-line no-useless-catch
     try {
-      const req = 'https://unpkg.com/' + url
+      const req = NX_NPM_URL + url
       const response: AxiosResponse = await axios.get(req, { transformResponse: [] })
       return { content: response.data, cleanUrl: url }
     } catch (e) {
