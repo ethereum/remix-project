@@ -128,3 +128,15 @@ export const addSlash = (file: string) => {
   if (!file.startsWith('/'))file = '/' + file
   return file
 }
+
+export const shortenProxyAddress = (address: string) => {
+  const len = address.length
+
+  return address.slice(0, 5) + '...' + address.slice(len - 5, len)
+}
+
+export const shortenDate = (dateString: string) => {
+  const date = new Date(dateString)
+  
+  return date.toLocaleDateString(undefined, { month: "short", day: "numeric" }) + ', ' + date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+}

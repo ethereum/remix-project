@@ -1,55 +1,29 @@
-import { CustomTooltip } from '@remix-ui/helper'
 import React, { Fragment, useEffect, useState } from 'react'
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
-import { ISolidityUmlGen } from '../types'
+import { ThemeSummary } from '../types'
 import './css/solidity-uml-gen.css'
 export interface RemixUiSolidityUmlGenProps {
-  plugin?: ISolidityUmlGen
   updatedSvg?: string
   loading?: boolean
   themeSelected?: string
-}
-
-type ButtonAction = {
-  svgValid: () => boolean
-  action: () => void
-  buttonText: string
-  icon?: string
-  customcss?: string
+  themeName: string
+  themeCollection: ThemeSummary[]
 }
 
 interface ActionButtonsProps {
-  buttons: ButtonAction[]
+  actions: {
+    zoomIn: () => void,
+    zoomOut: () => void,
+    resetTransform: () => void
+  }
 }
 
-const ActionButtons = ({ buttons }: ActionButtonsProps) => (
-  <>
-    {buttons.map(btn => (
-      <CustomTooltip
-        key={btn.buttonText}
-        placement="top"
-        tooltipText={btn.buttonText}
-        tooltipId={btn.buttonText}
-      >
-        <button
-          key={btn.buttonText}
-          className={`btn btn-primary btn-sm rounded-circle ${btn.customcss}`}
-          disabled={!btn.svgValid}
-          onClick={btn.action}
-        >
-          <i className={btn.icon}></i>
-        </button>
-      </CustomTooltip>
-    ))}
-  </>
-)
 
-export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelected }: RemixUiSolidityUmlGenProps) {
+
+
+export function RemixUiSolidityUmlGen ({ updatedSvg, loading }: RemixUiSolidityUmlGenProps) {
   const [showViewer, setShowViewer] = useState(false)
-  const [svgPayload, setSVGPayload] = useState<string>('')
   const [validSvg, setValidSvg] = useState(false)
-
-
 
   useEffect(() => {
     setValidSvg (updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg')) 
@@ -57,20 +31,50 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
   }
   , [updatedSvg])
 
-  const buttons: ButtonAction[] = [
-    { 
-      buttonText: 'Download as PDF',
-      svgValid: () => validSvg,
-      action: () => console.log('generated!!'),
-      icon: 'fa mr-1 pt-1 pb-1 fa-file'
-    },
-    { 
-      buttonText: 'Download as PNG',
-      svgValid: () => validSvg,
-      action: () => console.log('generated!!'),
-      icon: 'fa fa-picture-o'
-    }
-  ]
+
+  const encoder = new TextEncoder()
+  const data = encoder.encode(updatedSvg)
+  const final = btoa(String.fromCharCode.apply(null, data))
+
+  function ActionButtons({ actions: { zoomIn, zoomOut, resetTransform }}: ActionButtonsProps) {
+  
+    return (
+      <>
+        <div
+          className="position-absolute bg-transparent mt-2"
+          id="buttons"
+          style={{ zIndex: 3, top: "10", right: "2em" }}
+        >
+          <div className="py-2 px-2 d-flex justify-content-center align-items-center">
+            <button
+              className="btn btn-outline-info d-none rounded-circle mr-2"
+              onClick={() => resetTransform()}
+            >
+              <i className="far fa-arrow-to-bottom align-item-center d-flex justify-content-center"></i>
+            </button>
+            <button
+              className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2"
+              onClick={() => zoomIn()}
+            >
+              <i className="far fa-plus "></i>
+            </button>
+            <button
+              className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2"
+              onClick={() => zoomOut()}
+            >
+              <i className="far fa-minus align-item-center d-flex justify-content-center"></i>
+            </button>
+            <button
+              className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2"
+              onClick={() => resetTransform()}
+            >
+              <i className="far fa-undo align-item-center d-flex justify-content-center"></i>
+            </button>
+          </div>
+        </div>
+      </>
+    )
+  }
 
   const DefaultInfo = () => (
     <div className="d-flex flex-column justify-content-center align-items-center mt-5">
@@ -80,10 +84,8 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
     </div>
   )
   const Display = () => {
-    const invert = themeSelected === 'dark' ? 'invert(0.8)' : 'invert(0)'
     return (
-    <div className="d-flex flex-column justify-content-center align-items-center">
-      <div id="umlImageHolder" className="w-100 px-2 py-2">
+      <div id="umlImageHolder" className="w-100 px-2 py-2 d-flex">
         { validSvg && showViewer ? (
           <TransformWrapper
             initialScale={1}
@@ -91,14 +93,16 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
             {
               ({ zoomIn, zoomOut, resetTransform }) => (
                 <Fragment>
-                  <TransformComponent>
-                    <img 
-                      src={`data:image/svg+xml;base64,${btoa(plugin.updatedSvg ?? svgPayload)}`}
+                  <ActionButtons actions={{ zoomIn, zoomOut, resetTransform }} />
+                  <TransformComponent contentStyle={{ zIndex: 2 }}>
+                    <img
+                      id="umlImage"
+                      src={`data:image/svg+xml;base64,${final}`}
                       width={'100%'}
                       height={'auto'}
-                      style={{ filter: invert }}
+                      className="position-relative"
                     />
-                </TransformComponent>
+                  </TransformComponent>
                 </Fragment>
               )
             }
@@ -107,7 +111,6 @@ export function RemixUiSolidityUmlGen ({ plugin, updatedSvg, loading, themeSelec
             <i className="fas fa-spinner fa-spin fa-4x"></i>
           </div> : <DefaultInfo />}
       </div>
-    </div>
   )}
   return (<>
     { <Display /> }

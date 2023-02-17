@@ -1,9 +1,12 @@
-import { ContractData, FuncABI } from "@remix-project/core-plugin"
+import { ContractData, FuncABI, NetworkDeploymentFile, SolcBuildFile } from "@remix-project/core-plugin"
 import { RunTab } from "../types/run-tab"
 import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
+import { SolcInput, SolcOutput } from "@openzeppelin/upgrades-core"
+// Used direct path to UpgradeableContract class to fix cyclic dependency error from @openzeppelin/upgrades-core library
+import { UpgradeableContract } from '../../../../../../node_modules/@openzeppelin/upgrades-core/dist/standalone'
 import { DeployMode, MainnetPrompt } from "../types"
-import { displayNotification, displayPopUp, setDecodedResponse } from "./payload"
+import { displayNotification, displayPopUp, fetchProxyDeploymentsSuccess, setDecodedResponse } from "./payload"
 import { addInstance } from "./actions"
 import { addressToString, logBuilder } from "@remix-ui/helper"
 import Web3 from "web3"
@@ -334,5 +337,58 @@ export const isValidContractAddress = async (plugin: RunTab, address: string) =>
     } else {
       return false
     }
+  }
+}
+
+export const getNetworkProxyAddresses = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
+  const network = plugin.blockchain.networkStatus.network
+  const identifier = network.name === 'custom' ? network.name + '-' + network.id : network.name
+  const networkDeploymentsExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
+
+  if (networkDeploymentsExists) {
+    const networkFile: string = await plugin.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
+    const parsedNetworkFile: NetworkDeploymentFile = JSON.parse(networkFile)
+    const deployments = []
+
+    for (const proxyAddress in Object.keys(parsedNetworkFile.deployments)) {
+      const solcBuildExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
+
+      if (solcBuildExists) deployments.push({ address: proxyAddress, date: parsedNetworkFile.deployments[proxyAddress].date, contractName: parsedNetworkFile.deployments[proxyAddress].contractName })
+    }
+    dispatch(fetchProxyDeploymentsSuccess(deployments))
+  } else {
+    dispatch(fetchProxyDeploymentsSuccess([]))
+  }
+}
+
+export const isValidContractUpgrade = async (plugin: RunTab, proxyAddress: string, newContractName: string, solcInput: SolcInput, solcOutput: SolcOutput) => {
+  // build current contract first to get artefacts.
+  const network = plugin.blockchain.networkStatus.network
+  const identifier = network.name === 'custom' ? network.name + '-' + network.id : network.name
+  const networkDeploymentsExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
+
+  if (networkDeploymentsExists) {
+    const networkFile: string = await plugin.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
+    const parsedNetworkFile: NetworkDeploymentFile = JSON.parse(networkFile)
+
+      if (parsedNetworkFile.deployments[proxyAddress]) {
+        const solcBuildExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
+        
+        if (solcBuildExists) {
+          const solcFile: string = await plugin.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
+          const parsedSolcFile: SolcBuildFile = JSON.parse(solcFile)
+          const oldImpl = new UpgradeableContract(parsedNetworkFile.deployments[proxyAddress].contractName, parsedSolcFile.solcInput, parsedSolcFile.solcOutput, { kind: 'uups' })
+          const newImpl = new UpgradeableContract(newContractName, solcInput, solcOutput, { kind: 'uups' })
+          const report = oldImpl.getStorageUpgradeReport(newImpl, { kind: 'uups' })
+
+          return report
+        } else {
+          return { ok: false, pass: false, warning: true }
+        }
+      } else {
+        return { ok: false, pass: false, warning: true }
+      }
+  } else {
+    return { ok: false, pass: false, warning: true }
   }
 }
