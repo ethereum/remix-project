@@ -366,6 +366,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
 
     case 'ADD_INPUT_FIELD': {
       const payload = action.payload as { path: string, fileTree, type: 'file' | 'folder' }
+
       return {
         ...state,
         browser: {

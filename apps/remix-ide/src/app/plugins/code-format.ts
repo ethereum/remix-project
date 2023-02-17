@@ -113,6 +113,11 @@ export class CodeFormat extends Plugin {
                     parserName = 'yaml'
                     break
             }
+
+            if (file === '.prettierrc') {
+                parserName = 'json'
+            }
+
             const possibleFileNames = [
                 '.prettierrc',
                 '.prettierrc.json',
@@ -136,11 +141,23 @@ export class CodeFormat extends Plugin {
                 let prettierConfig = await this.call('fileManager', 'readFile', prettierConfigFile)
                 if (prettierConfig) {
                     if (prettierConfigFile.endsWith('.yaml') || prettierConfigFile.endsWith('.yml')) {
-                        parsed = yaml.load(prettierConfig)
+                        try {
+                            parsed = yaml.load(prettierConfig)
+                        } catch (e) {
+                            // do nothing
+                        }
                     } else if (prettierConfigFile.endsWith('.toml')) {
-                        parsed = toml.parse(prettierConfig)
+                        try {
+                            parsed = toml.parse(prettierConfig)
+                        } catch (e) {
+                            // do nothing
+                        }
                     } else if (prettierConfigFile.endsWith('.json') || prettierConfigFile.endsWith('.json5')) {
-                        parsed = JSON.parse(prettierConfig)
+                        try {
+                            parsed = JSON.parse(prettierConfig)
+                        } catch (e) {
+                            // do nothing
+                        }
                     } else if (prettierConfigFile === '.prettierrc') {
                         try {
                             parsed = JSON.parse(prettierConfig)
@@ -172,10 +189,18 @@ export class CodeFormat extends Plugin {
                         }
                     }
                 }
+            } else {
+                parsed = defaultOptions
+                await this.call('fileManager', 'writeFile', '.prettierrc.json', JSON.stringify(parsed, null, 2))
+                await this.call('notification', 'toast', 'A prettier config file has been created in the workspace.')
             }
-            if(!parsed && prettierConfigFile) {
+
+            if (!parsed && prettierConfigFile) {
                 this.call('notification', 'toast', `Error parsing prettier config file: ${prettierConfigFile}`)
             }
+
+
+
             // merge options
             if (parsed) {
                 options = {
@@ -183,6 +208,39 @@ export class CodeFormat extends Plugin {
                     ...parsed,
                 }
             }
+
+            // search for overrides
+            if (parsed && parsed.overrides) {
+                const override = parsed.overrides.find((override) => {
+                    if (override.files) {
+                        const pathFilter: AnyFilter = {}
+                        pathFilter.include = setGlobalExpression(override.files)
+                        const filteredFiles = [file]
+                            .filter(filePathFilter(pathFilter))
+                        if (filteredFiles.length) {
+                            return true
+                        }
+                    }
+                })
+                const validParsers = ['typescript', 'babel', 'espree', 'solidity-parse', 'json', 'yaml', 'solidity-parse']
+                if (override && override.options && override.options.parser) {
+                    if (validParsers.includes(override.options.parser)) {
+                        parserName = override.options.parser
+                    } else {
+                        this.call('notification', 'toast', `Invalid parser: ${override.options.parser}! Valid options are ${validParsers.join(', ')}`)
+                    }
+                    delete override.options.parser
+                }
+
+                if (override) {
+                    options = {
+                        ...options,
+                        ...override.options,
+                    }
+                }
+            }
+
+
             const result = prettier.format(content, {
                 plugins: [sol as any, ts, babel, espree, yml],
                 parser: parserName,

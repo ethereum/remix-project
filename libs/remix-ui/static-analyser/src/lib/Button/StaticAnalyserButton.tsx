@@ -16,13 +16,8 @@ const StaticAnalyserButton = ({
 }: StaticAnalyserButtonProps) => {
   let classList = "btn btn-sm w-25 btn-primary"
   classList += disabled ? " disabled" : ""
-  const colorDisabled = "#007aa6"
-  const alternateColor = "#005e80"
-  const run = (e) => {
-    e.preventDefault() 
-    e.stopPropagation()
-  }
   return (
+    <button className={classList} disabled={disabled} onClick={onClick}>
       <CustomTooltip
         placement="right"
         tooltipId="ssaRunButtonTooltip"
@@ -33,6 +28,7 @@ const StaticAnalyserButton = ({
           {buttonText}
         </span>
       </CustomTooltip>
+    </button>
   )
 }
 
