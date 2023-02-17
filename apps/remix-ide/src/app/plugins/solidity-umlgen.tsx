@@ -13,6 +13,8 @@ import { PluginViewWrapper } from '@remix-ui/helper'
 import { customAction } from '@remixproject/plugin-api'
 const parser = (window as any).SolidityParser
 
+const _paq = window._paq = window._paq || []
+
 const profile = {
     name: 'solidityumlgen',
     displayName: 'Solidity UML Generator',
