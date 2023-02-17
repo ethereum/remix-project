@@ -7,6 +7,7 @@ echo "$BUILD_ID"
 TEST_EXITCODE=0
 
 yarn run ganache-cli &
+npx http-server -p 9090 --cors='*' ./node_modules &
 yarn run serve:production &
 npx nx serve remix-ide-e2e-src-local-plugin &
 
