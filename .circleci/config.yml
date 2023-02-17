@@ -24,7 +24,7 @@ jobs:
           key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-      - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js yarn build:production
+      - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NX_NPM_URL=http://localhost:9090/ yarn build:production
       - run: yarn nx build remix-ide-e2e-src-local-plugin & yarn run build:libs
       - run: yarn nx run debugger:build:production
       - run: yarn nx run solidity-compiler:build:production
@@ -74,6 +74,7 @@ jobs:
       - run: cd dist/libs/remix-tests && yarn add @remix-project/remix-simulator ../../libs/remix-simulator
       - run: cd dist/libs/remix-tests && ./bin/remix-tests ./../../../libs/remix-tests/tests/examples_0/assert_ok_test.sol
       - run: node dist/libs/remix-tests/bin/remix-tests ./libs/remix-tests/tests/examples_0/assert_ok_test.sol
+      - run: http-server -p 9090 --cors='*' ./node_modules
       - run: yarn run test:libs
 
   remix-ide-browser:
@@ -132,6 +133,7 @@ jobs:
           name: Start Selenium
           command: yarn run selenium
           background: true
+      - run: http-server -p 9090 --cors='*' ./node_modules
       - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
       - store_test_results:
           path: ./reports/tests
@@ -178,6 +180,7 @@ jobs:
           name: Start Selenium
           command: yarn run selenium
           background: true
+      - run: http-server -p 9090 --cors='*' ./node_modules
       - run: ./apps/remix-ide/ci/<< parameters.script >>
       - store_test_results:
           path: ./reports/tests
