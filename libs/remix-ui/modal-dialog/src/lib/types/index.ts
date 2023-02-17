@@ -22,5 +22,7 @@ export interface ModalDialogProps {
   children?: React.ReactNode,
   resolve?: (value?:any) => void,
   next?: () => void,
-  data?: any
+  data?: any,
+  okBtnClass?: string,
+  cancelBtnClass?: string
 }
