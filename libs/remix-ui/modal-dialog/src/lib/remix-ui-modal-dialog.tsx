@@ -98,7 +98,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
             {/* todo add autofocus ^^ */}
             { props.okLabel && <button
               data-id={`${props.id}-modal-footer-ok-react`}
-              className={'modal-ok btn btn-sm ' + (state.toggleBtn ? 'btn-dark' : 'btn-light')}
+              className={'modal-ok btn btn-sm ' + (props.okBtnClass ? props.okBtnClass : state.toggleBtn ? 'btn-dark' : 'btn-light')}
               disabled={props.validation && !props.validation.valid}
               onClick={() => {
                 if (props.validation && !props.validation.valid) return
@@ -111,7 +111,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
             }
             { props.cancelLabel && <button
               data-id={`${props.id}-modal-footer-cancel-react`}
-              className={'modal-cancel btn btn-sm ' + (state.toggleBtn ? 'btn-light' : 'btn-dark')}
+              className={'modal-cancel btn btn-sm ' + (props.cancelBtnClass ? props.cancelBtnClass : state.toggleBtn ? 'btn-light' : 'btn-dark')}
               data-dismiss="modal"
               onClick={() => {
                 if (props.cancelFn) props.cancelFn()
