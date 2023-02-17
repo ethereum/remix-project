@@ -13,7 +13,8 @@ import { execution, EventManager, helpers } from '@remix-project/remix-lib'
 import { etherScanLink } from './helper'
 import { logBuilder, cancelUpgradeMsg, cancelProxyMsg, addressToString } from "@remix-ui/helper"
 const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
-const { txResultHelper: resultToRemixTx } = helpers
+const { txResultHelper } = helpers
+const { resultToRemixTx } = txResultHelper
 const packageJson = require('../../../../package.json')
 
 const _paq = window._paq = window._paq || []  //eslint-disable-line
@@ -575,8 +576,11 @@ export class Blockchain extends Plugin {
           async (error, result) => {
             if (error) return reject(error)
             try {
-              const execResult = await this.web3().eth.getExecutionResultFromSimulator(result.transactionHash)
-              resolve(resultToRemixTx(result, execResult))
+              if (this.executionContext.isVM()) {
+                const execResult = await this.web3().eth.getExecutionResultFromSimulator(result.transactionHash)
+                resolve(resultToRemixTx(result, execResult))
+              } else
+                resolve(resultToRemixTx(result))              
             } catch (e) {
               reject(e)
             }

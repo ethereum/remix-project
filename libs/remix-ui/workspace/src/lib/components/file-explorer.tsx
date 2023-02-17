@@ -174,6 +174,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
+  const downloadPath = async (path: string) => {
+    try {
+      props.dispatchDownloadPath(path)
+    } catch (error) {
+      props.modal('Download Failed', 'Unexpected error while downloading: ' + typeof error === 'string' ? error : error.message, 'Close', async () => {})
+    }
+  }
+
   const uploadFile = (target) => {
     const parentFolder = getFocusedFolder()
     const expandPath = [...new Set([...props.expandPath, parentFolder])]
@@ -488,6 +496,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           createNewFile={handleNewFileInput}
           createNewFolder={handleNewFolderInput}
           deletePath={deletePath}
+          downloadPath={downloadPath}
           renamePath={editModeOn}
           runScript={runScript}
           copy={handleCopyClick}

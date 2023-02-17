@@ -1,5 +1,6 @@
 
 import React from 'react' // eslint-disable-line
+import { FormattedMessage } from 'react-intl'
 import CheckTxStatus from './ChechTxStatus' // eslint-disable-line
 import Context from './Context' // eslint-disable-line
 import showTable from './Table'
@@ -31,7 +32,7 @@ const RenderKnownTransactions = ({ tx, receipt, resolvedData, logs, index, plugi
             data-shared='txLoggerDebugButton'
             data-id={`txLoggerDebugButton${tx.hash}`}
             onClick={(event) => debug(event, tx)}
-          >Debug</div>
+          ><FormattedMessage id='terminal.debug' /></div>
         </div>
         <i className={`remix_ui_terminal_arrow fas ${(showTableHash.includes(tx.hash)) ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
       </div>
