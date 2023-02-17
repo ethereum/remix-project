@@ -10,8 +10,10 @@ export class Blockchain extends Plugin<any, any> {
     txRunner: any;
     networkcallid: number;
     networkStatus: {
-        name: string;
-        id: string;
+        network: {
+            name: string;
+            id: string;
+        };
     };
     setupEvents(): void;
     getCurrentNetworkStatus(): {

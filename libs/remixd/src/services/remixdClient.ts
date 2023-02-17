@@ -1,5 +1,5 @@
 import { PluginClient } from '@remixproject/plugin'
-import { SharedFolderArgs, TrackDownStreamUpdate, Filelist, ResolveDirectory, FileContent } from '../types' // eslint-disable-line
+import { SharedFolderArgs, Filelist, ResolveDirectory, FileContent } from '../types' // eslint-disable-line
 import * as WS from 'ws' // eslint-disable-line
 import * as utils from '../utils'
 import * as chokidar from 'chokidar'
@@ -8,7 +8,6 @@ import * as isbinaryfile from 'isbinaryfile'
 
 export class RemixdClient extends PluginClient {
   methods: Array<string>
-  trackDownStreamUpdate: TrackDownStreamUpdate = {}
   websocket: WS
   currentSharedFolder: string
   watcher: chokidar.FSWatcher
@@ -101,7 +100,6 @@ export class RemixdClient extends PluginClient {
           console.log('trying to write "undefined" ! stopping.')
           return reject(new Error('trying to write "undefined" ! stopping.'))
         }
-        this.trackDownStreamUpdate[path] = path
         if (!exists && args.path.indexOf('/') !== -1) {
           // the last element is the filename and we should remove it
           this.createDir({ path: args.path.substr(0, args.path.lastIndexOf('/')) })
@@ -250,7 +248,7 @@ export class RemixdClient extends PluginClient {
     const absPath = utils.absolutePath('./', path)
 
     if (!isRealPath(absPath)) return
-    this.watcher = chokidar.watch(path, { depth: 0, ignorePermissionErrors: true })
+    this.watcher = chokidar.watch(path, { depth: 2, ignorePermissionErrors: true })
     console.log('setup notifications for ' + path)
     /* we can't listen on created file / folder
     watcher.on('add', (f, stat) => {
@@ -265,11 +263,9 @@ export class RemixdClient extends PluginClient {
     })
     */
     this.watcher.on('change', async (f: string) => {
-      if (this.trackDownStreamUpdate[f]) {
-        delete this.trackDownStreamUpdate[f]
-        return
-      }
-      if (this.isLoaded) {
+      const currentContent = await this.call('editor', 'getText' as any, f)
+      const newContent = fs.readFileSync(f)
+      if (currentContent !== newContent && this.isLoaded) {
         this.emit('changed', utils.relativePath(f, this.currentSharedFolder))
       }
     })
