@@ -52,6 +52,7 @@ function HomeTabTitle() {
 
   return (
     <div className="px-2 pb-2 pt-2 d-flex flex-column border-bottom" id="hTTitleSection">
+      
       <div className="d-flex py-2 justify-content-between">
         <div className='d-flex justify-content-start'>
         <span className="h-80 text-uppercase" style={{ fontSize: 'xx-large', fontFamily: "Noah, sans-serif" }}>Remix</span>
