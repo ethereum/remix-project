@@ -3,6 +3,7 @@
 import BasicLogo from 'libs/remix-ui/vertical-icons-panel/src/lib/components/BasicLogo'
 import { ThemeContext } from '../themeContext'
 import React, { useEffect, useState, useRef, useContext } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { CustomTooltip } from '@remix-ui/helper'
 const _paq = window._paq = window._paq || [] // eslint-disable-line
 
