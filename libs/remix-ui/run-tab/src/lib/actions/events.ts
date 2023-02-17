@@ -1,12 +1,14 @@
 import { envChangeNotification } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { setExecutionContext, setFinalContext, updateAccountBalances } from "./account"
-import { addExternalProvider, addInstance, removeExternalProvider, setNetworkNameFromProvider } from "./actions"
-import { addDeployOption, clearAllInstances, clearRecorderCount, fetchContractListSuccess, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setProxyEnvAddress, setRecorderCount, setRemixDActivated, setSendValue } from "./payload"
+import { addExternalProvider, addInstance, addNewProxyDeployment, removeExternalProvider, setNetworkNameFromProvider } from "./actions"
+import { addDeployOption, clearAllInstances, clearRecorderCount, fetchContractListSuccess, resetProxyDeployments, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setRecorderCount, setRemixDActivated, setSendValue } from "./payload"
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import BN from 'bn.js'
 import Web3 from 'web3'
 import { Plugin } from "@remixproject/engine"
+import { getNetworkProxyAddresses } from "./deploy"
+
 const _paq = window._paq = window._paq || []
 
 export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
@@ -21,6 +23,8 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   })
 
   plugin.blockchain.event.register('contextChanged', (context, silent) => {
+    dispatch(resetProxyDeployments())
+    if (!context.startsWith('vm')) getNetworkProxyAddresses(plugin, dispatch)
     setFinalContext(plugin, dispatch)
   })
 
@@ -35,13 +39,13 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     const netUI = !networkProvider().startsWith('vm') ? `${network.name} (${network.id || '-'}) network` : 'VM'
 
     setNetworkNameFromProvider(dispatch, netUI)
-    if (network.name === 'VM') dispatch(setProxyEnvAddress(plugin.config.get('vm/proxy')))
-    else dispatch(setProxyEnvAddress(plugin.config.get(`${network.name}/${network.currentFork}/${network.id}/proxy`)))
   })
 
   plugin.blockchain.event.register('addProvider', provider => addExternalProvider(dispatch, provider))
 
   plugin.blockchain.event.register('removeProvider', name => removeExternalProvider(dispatch, name))
+
+  plugin.blockchain.events.on('newProxyDeployment', (address, date, contractName) => addNewProxyDeployment(dispatch, address, date, contractName))
 
   plugin.on('solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => broadcastCompilationResult('remix', plugin, dispatch, file, source, languageVersion, data, input))
 
