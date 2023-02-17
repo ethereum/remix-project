@@ -841,7 +841,6 @@ export function Workspace () {
     </div>
   </CustomTooltip>
   ]
-  const menuLength = workspaceMenuIcons.length
 
   return (
     <div className='d-flex flex-column justify-content-between h-100'>
@@ -1132,7 +1131,7 @@ export function Workspace () {
             </div>
           </div>
         }
-        {showContextMenu && <FileExplorerContextMenu
+        {state.showContextMenu && <FileExplorerContextMenu
           actions={global.fs.focusElement.length > 1 ? state.actions.filter(item => item.multiselect) : state.actions.filter(item => !item.multiselect)}
           hideContextMenu={hideContextMenu}
           createNewFile={handleNewFileInput}
