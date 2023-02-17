@@ -3,6 +3,8 @@ import { Plugin } from '@remixproject/engine'
 import { customAction } from '@remixproject/plugin-api'
 import { concatSourceFiles, getDependencyGraph } from '@remix-ui/solidity-compiler'
 
+const _paq = window._paq = window._paq || []
+
 const profile = {
   name: 'contractflattener',
   displayName: 'Contract Flattener',
@@ -22,6 +24,7 @@ export class ContractFlattener extends Plugin {
     this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
       await this.flattenContract(source, this.fileName, data)
     })  
+    _paq.push(['trackEvent', 'plugin', 'activated', 'contractFlattener'])
   }
 
   async flattenAContract(action: customAction) {
@@ -44,6 +47,7 @@ export class ContractFlattener extends Plugin {
     const sources = source.sources
     const result = concatSourceFiles(sorted, sources)
     await this.call('fileManager', 'writeFile', `${filePath}_flattened.sol`, result)
+    _paq.push(['trackEvent', 'plugin', 'contractFlattener', 'flattenAContract'])
     return result
   }
 }
