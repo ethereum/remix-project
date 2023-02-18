@@ -129,7 +129,7 @@ export class RemixURLResolver {
   */
   async handleNpmImport (url: string): Promise<HandlerResponse> {
     const urls = ["https://cdn.jsdelivr.net/npm/", "https://unpkg.com/"]
-    process && process.env && process.env['NX_NPM_URL'] && urls.unshift(process.env['NX_NPM_URL'])
+    process && process.env && process.env['NPM_URL'] && urls.unshift(process.env['NPM_URL'])
     let content = null
     // get response from all urls
     for (let i = 0; i < urls.length; i++) {
