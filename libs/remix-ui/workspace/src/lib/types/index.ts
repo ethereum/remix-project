@@ -183,4 +183,3 @@ export interface FileExplorerState {
       type: 'folder' | 'gist' | 'file'
     }[]
   }
-  
