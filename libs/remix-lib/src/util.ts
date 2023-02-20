@@ -258,6 +258,12 @@ export function compareByteCode (code1, code2) {
   code2 = extractcborMetadata(code2)
 
   if (code1 && code2) {
+    if (code1.length !== code2.length) {
+      // if the length isn't the same, we have an issue with extracting the metadata hash.
+      const minLength = code1.length > code2.length ? code2.length: code1.length
+      code1 = code1.substr(0, minLength - 10)
+      code2 = code2.substr(0, minLength - 10) 
+    }
     const compare = stringSimilarity.compareTwoStrings(code1, code2)
     return compare == 1
   }
