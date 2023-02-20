@@ -1,5 +1,6 @@
 'use strict'
 import { saveAs } from 'file-saver'
+import JSZip from 'jszip'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
@@ -367,12 +368,31 @@ class FileManager extends Plugin {
     }
   }
 
+  async zipDir(dirPath, zip) {
+    const filesAndFolders = await this.readdir(dirPath)
+    for(let path in filesAndFolders) {
+      if (filesAndFolders[path].isDirectory) await this.zipDir(path, zip)
+      else {
+        path = this.normalize(path)
+        const content: any = await this.readFile(path)
+        zip.file(path, content)
+      }
+    }
+  }
+
   async download(path) {
     try {
-      const fileName = helper.extractNameFromKey(path)
-      path = this.normalize(path)
-      const content: any = await this.readFile(path)
-      saveAs(new Blob([content]), fileName)
+      const downloadFileName = helper.extractNameFromKey(path)
+      if (await this.isDirectory(path)) {
+          const zip = new JSZip()
+          await this.zipDir(path, zip)
+          const content = await zip.generateAsync({type: 'blob'})
+          saveAs(content, `${downloadFileName}.zip`)
+        } else {
+          path = this.normalize(path)
+          const content: any = await this.readFile(path)
+          saveAs(new Blob([content]), downloadFileName)
+        }
     } catch (e) {
       throw new Error(e)
     }
@@ -401,9 +421,9 @@ class FileManager extends Plugin {
   /**
    * Get the list of files in the directory
    * @param {string} path path of the directory
-   * @returns {string[]} list of the file/directory name in this directory
+   * @returns {Object} list of the file/directory name in this directory e.g; {contracts/1_Storage.sol:{isDirectory: false}}
    */
-  async readdir(path) {
+  async readdir(path): Promise<Record<string, Record<string, boolean>>> {
     try {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
@@ -806,7 +826,7 @@ class FileManager extends Plugin {
     if (provider) {
       try{
         const content = await provider.get(currentFile)
-        if(content) this.editor.setText(content)
+        if(content) this.editor.setText(currentFile, content)
       }catch(error){
         console.log(error)
       }

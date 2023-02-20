@@ -376,7 +376,7 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
         const editor = plugin.registry.get('editor').api
 
         if ((config.get('currentFile') === name) && (editor.currentContent() !== event.target.result)) {
-          editor.setText(event.target.result)
+          editor.setText(name, event.target.result)
         }
       }
       fileReader.readAsText(file)
