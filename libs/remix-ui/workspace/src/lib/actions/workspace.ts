@@ -17,6 +17,7 @@ declare global {
   interface Window { remixFileSystemCallback: IndexedDBStorage; }
 }
 
+import { resetFileActions } from '.'
 
 const LOCALHOST = ' - connect to localhost - '
 const NO_WORKSPACE = ' - none - '
@@ -347,6 +348,7 @@ export const switchToWorkspace = async (name: string) => {
     dispatch(setMode('browser'))
     dispatch(setCurrentWorkspace({ name, isGitRepo }))
     dispatch(setReadOnlyMode(false))
+    resetFileActions()
   }
 }
 
@@ -374,7 +376,7 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
         const editor = plugin.registry.get('editor').api
 
         if ((config.get('currentFile') === name) && (editor.currentContent() !== event.target.result)) {
-          editor.setText(name, event.target.result)
+          editor.setText(event.target.result)
         }
       }
       fileReader.readAsText(file)

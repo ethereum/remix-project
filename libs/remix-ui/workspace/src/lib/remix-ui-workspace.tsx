@@ -451,12 +451,7 @@ export function Workspace () {
                 </div>
 
                 <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
-                  <Dropdown.Toggle
-                    as={CustomToggle}
-                    id="dropdown-custom-components"
-                    className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control mt-1"
-                    icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}
-                  >
+                  <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control mt-1" icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}>
                     { selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly("localhost") : NO_WORKSPACE }
                   </Dropdown.Toggle>
 
@@ -536,6 +531,7 @@ export function Workspace () {
                   dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                   dispatchMoveFile={global.dispatchMoveFile}
                   dispatchMoveFolder={global.dispatchMoveFolder}
+                  dispatchRevertFileAction={global.dispatchRevertFileAction}
                   />
               </div>
             }
@@ -576,6 +572,7 @@ export function Workspace () {
                   dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                   dispatchMoveFile={global.dispatchMoveFile}
                   dispatchMoveFolder={global.dispatchMoveFolder}
+                  dispatchRevertFileAction={global.dispatchRevertFileAction}
                 />
               </div>
             }

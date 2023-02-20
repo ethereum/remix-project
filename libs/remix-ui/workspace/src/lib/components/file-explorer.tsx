@@ -113,6 +113,17 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }, [canPaste])
 
+  useEffect(()=>{
+    treeRef.current.addEventListener("keypress", (e)=>{
+      if(e.ctrlKey && e.key === "z"){
+        props.dispatchRevertFileAction(false)
+      }
+      if(e.ctrlKey && e.key === "Z"){
+        props.dispatchRevertFileAction(true)
+      }
+    })
+  },[])
+
   const addMenuItems = (items: MenuItems) => {
     setState(prevState => {
       // filter duplicate items
