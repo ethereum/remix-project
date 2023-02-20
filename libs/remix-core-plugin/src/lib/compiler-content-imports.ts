@@ -48,7 +48,18 @@ export class CompilerImports extends Plugin {
   }
 
   onActivation(): void {
+    const packageFiles = ['package.json', 'package-lock.json', 'yarn.lock']
     this.on('filePanel', 'setWorkspace', () => this.urlResolver.clearCache())
+    this.on('fileManager', 'fileRemoved', (file: string) => {
+      if (packageFiles.includes(file)) {
+        this.urlResolver.clearCache()
+      }
+    })
+    this.on('fileManager', 'fileChanged', (file: string) => {
+      if (packageFiles.includes(file)) {
+        this.urlResolver.clearCache()
+      }
+    })
   }
 
   async setToken () {

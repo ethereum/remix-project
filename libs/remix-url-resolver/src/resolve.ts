@@ -179,7 +179,6 @@ export class RemixURLResolver {
       }
       const req = 'https://unpkg.com/' + url
       const response: AxiosResponse = await axios.get(req, { transformResponse: [] })
-      console.log('handleNpmImport', req)
       return { content: response.data, cleanUrl: url }
     } catch (e) {
       throw e
