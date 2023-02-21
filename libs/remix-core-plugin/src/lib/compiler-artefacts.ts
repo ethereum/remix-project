@@ -194,8 +194,9 @@ export class CompilerArtefacts extends Plugin {
     }
   }
 
-  getCompilerAbstract (file) {
-    return this.compilersArtefactsPerFile[file]
+  async getCompilerAbstract (file) {
+    const path = await this.call('fileManager', 'getPathFromUrl', file)
+    return this.compilersArtefactsPerFile[path.file]
   }
 
   addResolvedContract (address: string, compilerData: CompilerAbstract) {
