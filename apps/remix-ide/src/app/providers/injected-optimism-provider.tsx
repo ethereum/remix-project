@@ -1,21 +1,18 @@
 import * as packageJson from '../../../../../package.json'
-import { InjectedProvider } from './injected-provider'
+import { InjectedL2Provider } from './injected-L2-provider'
 
 const profile = {
   name: 'injected-optimism-provider',
   displayName: 'Injected Optimism Provider',
   kind: 'provider',
   description: 'injected Optimism Provider',
-  methods: ['sendAsync'],
+  methods: ['sendAsync', 'init'],
   version: packageJson.version
 }
 
-export class Injected0ptimismProvider extends InjectedProvider {
+export class Injected0ptimismProvider extends InjectedL2Provider {
     
   constructor () {
-    super(profile)
-    this.chainName = 'Optimism'
-    this.chainId = '0xa'
-    this.rpcUrls = ['https://mainnet.optimism.io']
+    super(profile, 'Optimism', '0xa', ['https://mainnet.optimism.io'])
   }
 }

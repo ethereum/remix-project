@@ -1,107 +1,11 @@
-import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { ContractData } from '@remix-project/core-plugin'
-import { DeployOptions } from '../types'
-import { ADD_INSTANCE, ADD_PROVIDER, CLEAR_INSTANCES, CLEAR_RECORDER_COUNT, DISPLAY_NOTIFICATION, DISPLAY_POPUP_MESSAGE, FETCH_ACCOUNTS_LIST_FAILED, FETCH_ACCOUNTS_LIST_REQUEST, FETCH_ACCOUNTS_LIST_SUCCESS, FETCH_CONTRACT_LIST_FAILED, FETCH_CONTRACT_LIST_REQUEST, FETCH_CONTRACT_LIST_SUCCESS, FETCH_PROVIDER_LIST_FAILED, FETCH_PROVIDER_LIST_REQUEST, FETCH_PROVIDER_LIST_SUCCESS, HIDE_NOTIFICATION, HIDE_POPUP_MESSAGE, REMOVE_INSTANCE, REMOVE_PROVIDER, RESET_STATE, SET_BASE_FEE_PER_GAS, SET_CONFIRM_SETTINGS, SET_CURRENT_CONTRACT, SET_CURRENT_FILE, SET_DECODED_RESPONSE, SET_DEPLOY_OPTIONS, SET_EXECUTION_ENVIRONMENT, SET_EXTERNAL_WEB3_ENDPOINT, SET_GAS_LIMIT, SET_GAS_PRICE, SET_GAS_PRICE_STATUS, SET_IPFS_CHECKED_STATE, SET_LOAD_TYPE, SET_MATCH_PASSPHRASE, SET_MAX_FEE, SET_MAX_PRIORITY_FEE, SET_NETWORK_NAME, SET_PASSPHRASE, SET_PATH_TO_SCENARIO, SET_PERSONAL_MODE, SET_RECORDER_COUNT, SET_SELECTED_ACCOUNT, SET_SEND_UNIT, SET_SEND_VALUE, SET_PROXY_ENV_ADDRESS, ADD_DEPLOY_OPTION, REMOVE_DEPLOY_OPTION, SET_REMIXD_ACTIVATED } from '../constants'
+import { ContractList, DeployOptions, RunTabState } from '../types'
+import { ADD_INSTANCE, ADD_PROVIDER, CLEAR_INSTANCES, CLEAR_RECORDER_COUNT, DISPLAY_NOTIFICATION, DISPLAY_POPUP_MESSAGE, FETCH_ACCOUNTS_LIST_FAILED, FETCH_ACCOUNTS_LIST_REQUEST, FETCH_ACCOUNTS_LIST_SUCCESS, FETCH_CONTRACT_LIST_FAILED, FETCH_CONTRACT_LIST_REQUEST, FETCH_CONTRACT_LIST_SUCCESS, FETCH_PROVIDER_LIST_FAILED, FETCH_PROVIDER_LIST_REQUEST, FETCH_PROVIDER_LIST_SUCCESS, HIDE_NOTIFICATION, HIDE_POPUP_MESSAGE, REMOVE_INSTANCE, REMOVE_PROVIDER, RESET_STATE, SET_BASE_FEE_PER_GAS, SET_CONFIRM_SETTINGS, SET_CURRENT_CONTRACT, SET_CURRENT_FILE, SET_DECODED_RESPONSE, SET_DEPLOY_OPTIONS, SET_EXECUTION_ENVIRONMENT, SET_EXTERNAL_WEB3_ENDPOINT, SET_GAS_LIMIT, SET_GAS_PRICE, SET_GAS_PRICE_STATUS, SET_IPFS_CHECKED_STATE, SET_LOAD_TYPE, SET_MATCH_PASSPHRASE, SET_MAX_FEE, SET_MAX_PRIORITY_FEE, SET_NETWORK_NAME, SET_PASSPHRASE, SET_PATH_TO_SCENARIO, SET_PERSONAL_MODE, SET_RECORDER_COUNT, SET_SELECTED_ACCOUNT, SET_SEND_UNIT, SET_SEND_VALUE, ADD_DEPLOY_OPTION, REMOVE_DEPLOY_OPTION, SET_REMIXD_ACTIVATED, FETCH_PROXY_DEPLOYMENTS, NEW_PROXY_DEPLOYMENT, RESET_PROXY_DEPLOYMENTS } from '../constants'
 
 declare const window: any
 interface Action {
   type: string
   payload: any
-}
-export interface Contract {
-  name: string,
-  alias: string,
-  file: string,
-  compiler: CompilerAbstract,
-  compilerName: string
-}
-
-export interface ContractList {
-  [file: string]: Contract[]
-}
-export interface RunTabState {
-  accounts: {
-    loadedAccounts: Record<string, string>,
-    isRequesting: boolean,
-    isSuccessful: boolean,
-    error: string,
-    selectedAccount: string
-  },
-  sendValue: string,
-  sendUnit: 'ether' | 'finney' | 'gwei' | 'wei',
-  gasLimit: number,
-  selectExEnv: string,
-  personalMode: boolean,
-  networkName: string,
-  providers: {
-    providerList: {
-      id?: string,
-      dataId?: string,
-      title?: string,
-      value: string,
-      fork?: string
-      content: string
-    }[],
-    isRequesting: boolean,
-    isSuccessful: boolean,
-    error: string
-  },
-  notification: {
-    title: string,
-    message: string,
-    actionOk: () => void,
-    actionCancel: (() => void) | null,
-    labelOk: string,
-    labelCancel: string
-  },
-  externalEndpoint: string,
-  popup: string,
-  passphrase: string,
-  matchPassphrase: string,
-  contracts: {
-    contractList: {
-      [file: string]: {
-        name: string,
-        alias: string,
-        file: string,
-        compiler: CompilerAbstract
-        compilerName: string
-      }[]
-    },
-    deployOptions: { [file: string]: { [name: string]: DeployOptions } },
-    proxyKey: string,
-    loadType: 'abi' | 'sol' | 'other'
-    currentFile: string,
-    compilationSource: string,
-    currentContract: string,
-    compilationCount: number,
-    isRequesting: boolean,
-    isSuccessful: boolean,
-    error: string
-  },
-  ipfsChecked: boolean,
-  gasPriceStatus: boolean,
-  confirmSettings: boolean,
-  maxFee: string,
-  maxPriorityFee: string,
-  baseFeePerGas: string,
-  gasPrice: string,
-  instances: {
-    instanceList: {
-      contractData?: ContractData,
-      address: string,
-      balance?: number,
-      name: string,
-      decodedResponse?: Record<number, any>,
-      abi?: any
-    }[],
-    error: string
-  },
-  recorder: {
-    pathToScenario: string,
-    transactionCount: number
-  }
-  remixdActivated: boolean
 }
 
 export const runTabInitialState: RunTabState = {
@@ -115,34 +19,11 @@ export const runTabInitialState: RunTabState = {
   sendValue: '0',
   sendUnit: 'wei',
   gasLimit: 3000000,
-  selectExEnv: 'vm-london',
+  selectExEnv: 'vm-merge',
   personalMode: false,
   networkName: 'VM',
   providers: {
-    providerList: [{
-      id: 'vm-mode-london',
-      dataId: 'settingsVMLondonMode',
-      title: 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.',
-      value: 'vm-london',
-      fork: 'london',
-      content: 'Remix VM (London)'
-    }, {
-      id: 'vm-mode-berlin',
-      dataId: 'settingsVMBerlinMode',
-      title: 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.',
-      value: 'vm-berlin',
-      fork: 'berlin',
-      content: 'Remix VM (Berlin)'
-    }, {
-      id: 'injected-mode',
-      dataId: 'settingsInjectedMode',
-      title: 'Execution environment has been provided by Metamask or similar provider.',
-      value: 'injected',
-      content: `Injected Provider${(window && window.ethereum && !(window.ethereum.providers && !window.ethereum.selectedProvider)) ?
-        window.ethereum.isCoinbaseWallet || window.ethereum.selectedProvider?.isCoinbaseWallet ? ' - Coinbase' :
-        window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet ? ' - Brave' :
-        window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask ? ' - MetaMask' : '' : ''}`
-    }],
+    providerList: [],
     isRequesting: false,
     isSuccessful: false,
     error: null
@@ -162,7 +43,6 @@ export const runTabInitialState: RunTabState = {
   contracts: {
     contractList: {},
     deployOptions: {} as any,
-    proxyKey: '',
     compilationSource: '',
     loadType: 'other',
     currentFile: '',
@@ -187,12 +67,18 @@ export const runTabInitialState: RunTabState = {
     pathToScenario: 'scenario.json',
     transactionCount: 0
   },
-  remixdActivated: false
+  remixdActivated: false,
+  proxy: {
+    deployments: []
+  }
 }
 
 type AddProvider = {
   name: string,
-  provider: any
+  displayName: string,
+  provider: any,
+  title?: string,
+  dataId?: string
 }
 
 export const runTabReducer = (state: RunTabState = runTabInitialState, action: Action) => {
@@ -283,7 +169,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       return {
         ...state,
         selectExEnv: payload,
-        networkName: state.selectExEnv === 'vm-london' || state.selectExEnv === 'vm-berlin' ? 'VM' : state.networkName,
+        networkName: state.selectExEnv === 'vm-merge' ? 'VM' : state.networkName,
         accounts: {
           ...state.accounts,
           selectedAccount: '',
@@ -355,10 +241,10 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       const payload: AddProvider = action.payload
       const id = action.payload.name
       state.providers.providerList.push({
-        content: payload.name,
-        dataId: id,
+        content: payload.displayName,
+        dataId: payload.dataId,
         id,
-        title: payload.name,
+        title: payload.title,
         value: id
       })
       return {
@@ -717,23 +603,45 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
 
-    case SET_PROXY_ENV_ADDRESS: {
-      const payload: string = action.payload
-
-      return {
-        ...state,
-        contracts: {
-          ...state.contracts,
-            proxyKey: payload
-        }
-      }
-    }
-
     case SET_REMIXD_ACTIVATED: {
       const payload: boolean = action.payload
       return {
         ...state,
         remixdActivated: payload
+      }
+    }
+
+    case FETCH_PROXY_DEPLOYMENTS: {
+      const payload: { address: string, date: string, contractName: string }[] = action.payload
+
+      return {
+        ...state,
+        proxy: {
+          ...state.proxy,
+          deployments: payload
+        }
+      }
+    }
+
+    case NEW_PROXY_DEPLOYMENT: {
+      const payload: { address: string, date: string, contractName: string } = action.payload
+
+      return {
+        ...state,
+        proxy: {
+          ...state.proxy,
+          deployments: [...state.proxy.deployments, payload]
+        }
+      }
+    }
+
+    case RESET_PROXY_DEPLOYMENTS: {
+      return {
+        ...state,
+        proxy: {
+          ...state.proxy,
+          deployments: []
+        }
       }
     }
 

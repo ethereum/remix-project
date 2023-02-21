@@ -42,8 +42,6 @@ export type FileContent = {
     readonly: boolean
 }
 
-export type TrackDownStreamUpdate = KeyPairString
-
 export type SharedFolderArgs = FolderArgs & KeyPairString
 
 export type WS = typeof Websocket

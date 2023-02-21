@@ -38,6 +38,50 @@ export const CustomIconsToggle = React.forwardRef(({ onClick, icon, className = 
 // Dropdown needs access to the DOM of the Menu to measure it
 export const CustomMenu = React.forwardRef(
   ({ children, style, className, 'aria-labelledby': labeledBy }: { children: React.ReactNode, style?: React.CSSProperties, className: string, 'aria-labelledby'?: string }, ref: Ref<HTMLDivElement>) => {
+    const height = window.innerHeight * 0.6
+    return (
+      <div
+        ref={ref}
+        style={style}
+        className={className}
+        aria-labelledby={labeledBy}
+      >
+        <ul className="overflow-auto list-unstyled mb-0" style={{ maxHeight: height+'px' }}>
+          {
+           children
+          }
+        </ul>
+      </div>
+    )
+  },
+)
+
+export const ProxyAddressToggle = React.forwardRef(({ address, onClick, className = '', onChange }: { address: string, onClick: (e) => void, className: string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }, ref: Ref<HTMLDivElement>) => (
+  <div
+    ref={ref}
+    onClick={(e) => {
+      e.preventDefault()
+      onClick(e)
+    }}
+    className={'d-flex '+ className.replace('dropdown-toggle', '')}
+    data-id="toggleProxyAddressDropdown"
+  >
+    <input
+      onChange={(e) => {
+        e.preventDefault()
+        onChange(e)
+      }}
+      className="udapp_input form-control"
+      value={address}
+      placeholder="Enter Proxy Address"
+      style={{ width: '100%' }}
+      data-id="ERC1967AddressInput"
+    />
+  </div>
+))
+
+export const ProxyDropdownMenu = React.forwardRef(
+  ({ children, style, className, 'aria-labelledby': labeledBy }: { children: React.ReactNode, style?: React.CSSProperties, className: string, 'aria-labelledby'?: string }, ref: Ref<HTMLDivElement>) => {
     return (
       <div
         ref={ref}

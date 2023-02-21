@@ -33,13 +33,13 @@
     ]
   },
   "dependencies": {
-    "@ethereumjs/block": "^4.0.0",
-    "@ethereumjs/tx": "^4.0.0",
-    "@ethereumjs/vm": "^6.0.0",
+    "@ethereumjs/block": "^4.1.0",
+    "@ethereumjs/tx": "^4.0.2",
+    "@ethereumjs/util": "^8.0.3",
+    "@ethereumjs/vm": "^6.3.0",
     "@remix-project/remix-lib": "^0.5.23",
     "@types/tape": "^4.2.33",
     "async": "^2.6.2",
-    "ethereumjs-util": "^7.0.10",
     "ethers": "^5.4.2",
     "ethjs-util": "^0.1.6",
     "nyc": "^13.3.0",

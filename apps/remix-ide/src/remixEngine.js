@@ -15,10 +15,11 @@ export class RemixEngine extends Engine {
     if (name === 'hardhat') return { queueTimeout: 60000 * 4 }
     if (name === 'truffle') return { queueTimeout: 60000 * 4 }
     if (name === 'localPlugin') return { queueTimeout: 60000 * 4 }
-    if (name === 'notification') return { queueTimeout: 60000 * 4 }
+    if (name === 'notification') return { queueTimeout: 60000 * 10 }
     if (name === 'sourcify') return { queueTimeout: 60000 * 4 }
     if (name === 'fetchAndCompile') return { queueTimeout: 60000 * 4 }
     if (name === 'walletconnect') return { queueTimeout: 60000 * 4 }
+    if (name === 'udapp') return { queueTimeout: 60000 * 4 }
     return { queueTimeout: 10000 }
   }
 

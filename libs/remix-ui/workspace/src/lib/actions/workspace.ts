@@ -1,5 +1,6 @@
 import React from 'react'
-import { bufferToHex, keccakFromString } from 'ethereumjs-util'
+import { bufferToHex } from '@ethereumjs/util'
+import { hash } from '@remix-project/remix-lib'
 import axios, { AxiosResponse } from 'axios'
 import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setCurrentWorkspaceBranches, setCurrentWorkspaceCurrentBranch, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace, setCurrentWorkspaceIsGitRepo, setGitConfig } from './payload'
 import { addSlash, checkSlash, checkSpecialChars } from '@remix-ui/helper'
@@ -171,9 +172,9 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         let path = ''; let content
 
         if (params.code) {
-          const hash = bufferToHex(keccakFromString(params.code))
+          const hashed = bufferToHex(hash.keccakFromString(params.code))
 
-          path = 'contract-' + hash.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
+          path = 'contract-' + hashed.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
           content = atob(params.code)
           await workspaceProvider.set(path, content)
         }
@@ -373,7 +374,7 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
         const editor = plugin.registry.get('editor').api
 
         if ((config.get('currentFile') === name) && (editor.currentContent() !== event.target.result)) {
-          editor.setText(event.target.result)
+          editor.setText(name, event.target.result)
         }
       }
       fileReader.readAsText(file)

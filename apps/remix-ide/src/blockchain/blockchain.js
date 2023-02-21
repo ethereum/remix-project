@@ -2,7 +2,7 @@
 import React from 'react' // eslint-disable-line
 import Web3 from 'web3'
 import { Plugin } from '@remixproject/engine'
-import { toBuffer, addHexPrefix } from 'ethereumjs-util'
+import { toBuffer, addHexPrefix } from '@ethereumjs/util'
 import { EventEmitter } from 'events'
 import { format } from 'util'
 import { ExecutionContext } from './execution-context'
@@ -82,14 +82,16 @@ export class Blockchain extends Plugin {
   }
 
   setupProviders () {
+    const vmProvider = new VMProvider(this.executionContext)
     this.providers = {}
-    this.providers.vm = new VMProvider(this.executionContext)
+    this.providers['vm'] = vmProvider
     this.providers.injected = new InjectedProvider(this.executionContext)
     this.providers.web3 = new NodeProvider(this.executionContext, this.config)
   }
 
   getCurrentProvider () {
     const provider = this.getProvider()
+    if (provider && provider.startsWith('vm')) return this.providers['vm']
     if (this.providers[provider]) return this.providers[provider]
     return this.providers.web3 // default to the common type of provider
   }
@@ -178,9 +180,8 @@ export class Blockchain extends Plugin {
         _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment failed: ' + error])
         return this.call('terminal', 'logHtml', log)
       }
-      if (networkInfo.name === 'VM') this.config.set('vm/proxy', address)
-      else this.config.set(`${networkInfo.name}/${networkInfo.currentFork}/${networkInfo.id}/proxy`, address)
       await this.saveDeployedContractStorageLayout(implementationContractObject, address, networkInfo)
+      this.events.emit('newProxyDeployment', address, new Date().toISOString(), implementationContractObject.contractName)
       _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment successful'])
       this.call('udapp', 'addInstance', addressToString(address), implementationContractObject.abi, implementationContractObject.name)
     }
@@ -234,23 +235,40 @@ export class Blockchain extends Plugin {
   }
 
   async saveDeployedContractStorageLayout (contractObject, proxyAddress, networkInfo) {
-      const { contractName, implementationAddress, contract } = contractObject
-      const hasPreviousDeploys = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`)
+      const { contractName, implementationAddress } = contractObject
+      const networkName = networkInfo.name === 'custom' ? networkInfo.name + '-' + networkInfo.id : networkInfo.name
+      const hasPreviousDeploys = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`)
       // TODO: make deploys folder read only.
       if (hasPreviousDeploys) {
-        const deployments = await this.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`)
+        const deployments = await this.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`)
         const parsedDeployments = JSON.parse(deployments)
+        const proxyDeployment = parsedDeployments.deployments[proxyAddress]
 
+        if (proxyDeployment) {
+          const oldImplementationAddress = proxyDeployment.implementationAddress
+          const hasPreviousBuild = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkName}/solc-${oldImplementationAddress}.json`)
+
+          if (hasPreviousBuild) await this.call('fileManager', 'remove', `.deploys/upgradeable-contracts/${networkName}/solc-${oldImplementationAddress}.json`)
+        }
         parsedDeployments.deployments[proxyAddress] = {
           date: new Date().toISOString(),
           contractName: contractName,
           fork: networkInfo.currentFork,
           implementationAddress: implementationAddress,
-          layout: contract.object.storageLayout
+          solcOutput: contractObject.compiler.data,
+          solcInput: contractObject.compiler.source
         }
-        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`, JSON.stringify(parsedDeployments, null, 2))
+        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/solc-${implementationAddress}.json`, JSON.stringify({
+          solcInput: contractObject.compiler.source,
+          solcOutput: contractObject.compiler.data
+        }, null, 2))
+        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`, JSON.stringify(parsedDeployments, null, 2))
       } else {
-        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`, JSON.stringify({
+        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/solc-${implementationAddress}.json`, JSON.stringify({
+          solcInput: contractObject.compiler.source,
+          solcOutput: contractObject.compiler.data
+        }, null, 2))
+        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`, JSON.stringify({
           id: networkInfo.id,
           network: networkInfo.name,
           deployments: {
@@ -258,8 +276,7 @@ export class Blockchain extends Plugin {
               date: new Date().toISOString(),
               contractName: contractName,
               fork: networkInfo.currentFork,
-              implementationAddress: implementationAddress,
-              layout: contract.object.storageLayout
+              implementationAddress: implementationAddress
             }
           }
         }, null, 2))
@@ -364,10 +381,6 @@ export class Blockchain extends Plugin {
     return this.executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
   }
 
-  setProviderFromEndpoint (target, context, cb) {
-    return this.executionContext.setProviderFromEndpoint(target, context, cb)
-  }
-
   detectNetwork (cb) {
     return this.executionContext.detectNetwork(cb)
   }
@@ -389,7 +402,7 @@ export class Blockchain extends Plugin {
   }
 
   isWeb3Provider () {
-    const isVM = this.getProvider() === 'vm'
+    const isVM = this.executionContext.isVM()
     const isInjected = this.getProvider() === 'injected'
     return (!isVM && !isInjected)
   }
@@ -408,7 +421,7 @@ export class Blockchain extends Plugin {
 
   web3 () {
     // @todo(https://github.com/ethereum/remix-project/issues/431)
-    const isVM = this.getProvider() === 'vm'
+    const isVM = this.executionContext.isVM()
     if (isVM) {
       return this.providers.vm.web3
     }
@@ -527,7 +540,7 @@ export class Blockchain extends Plugin {
    * @param {{privateKey: string, balance: string}} newAccount The new account to create
    */
   createVMAccount (newAccount) {
-    if (this.getProvider() !== 'vm') {
+    if (!this.executionContext.isVM()) {
       throw new Error('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
     }
     return this.providers.vm.createVMAccount(newAccount)

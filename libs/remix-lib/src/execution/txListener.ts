@@ -1,6 +1,6 @@
 'use strict'
 import { ethers } from 'ethers'
-import { toBuffer, addHexPrefix } from 'ethereumjs-util'
+import { toBuffer, addHexPrefix } from '@ethereumjs/util'
 import { EventManager } from '../eventManager'
 import { compareByteCode, getinputParameters } from '../util'
 import { decodeResponse } from './txFormat'
@@ -139,7 +139,7 @@ export class TxListener {
   startListening () {
     this.init()
     this._isListening = true
-    if (this._listenOnNetwork && this.executionContext.getProvider() !== 'vm') {
+    if (this._listenOnNetwork && !this.executionContext.isVM()) {
       this._startListenOnNetwork()
     }
   }

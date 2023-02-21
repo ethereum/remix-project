@@ -7,7 +7,7 @@ const profile = {
   displayName: 'External Http Provider',
   kind: 'provider',
   description: 'External Http Provider',
-  methods: ['sendAsync'],
+  methods: ['sendAsync', 'init'],
   version: packageJson.version
 }
 
