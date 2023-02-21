@@ -1,13 +1,17 @@
 /* global ethereum */
 'use strict'
-import { rlp, keccak, bufferToHex } from 'ethereumjs-util'
+import { hash } from '@remix-project/remix-lib'
+import { bufferToHex } from '@ethereumjs/util'
+import type { Address } from '@ethereumjs/util'
+import { decode } from 'rlp'
+import { ethers } from 'ethers'
 import { execution } from '@remix-project/remix-lib'
 const { LogsManager } = execution
 import { VmProxy } from './VmProxy'
 import { VM } from '@ethereumjs/vm'
 import { Common } from '@ethereumjs/common'
 import { Trie } from '@ethereumjs/trie'
-import { DefaultStateManager } from '@ethereumjs/statemanager'
+import { DefaultStateManager, StateManager, EthersStateManager, EthersStateManagerOpts } from '@ethereumjs/statemanager'
 import { StorageDump } from '@ethereumjs/statemanager/dist/interface'
 import { EVM } from '@ethereumjs/evm'
 import { EEI } from '@ethereumjs/vm'
@@ -33,6 +37,44 @@ export interface DefaultStateManagerOpts {
   prefixCodeHashes?: boolean
 }
 
+class CustomEthersStateManager extends EthersStateManager {
+  keyHashes: { [key: string]: string }
+  constructor (opts: EthersStateManagerOpts) {
+    super(opts)
+    this.keyHashes = {}
+  }
+
+  putContractStorage (address, key, value) {
+    this.keyHashes[bufferToHex(key).replace('0x', '')] = hash.keccak(key).toString('hex')
+    return super.putContractStorage(address, key, value)
+  }
+
+  copy(): CustomEthersStateManager {
+    const newState = new CustomEthersStateManager({
+      provider: (this as any).provider,
+      blockTag: BigInt((this as any).blockTag),
+    })
+    ;(newState as any).contractCache = new Map((this as any).contractCache)
+    ;(newState as any).storageCache = new Map((this as any).storageCache)
+    ;(newState as any)._cache = this._cache
+    ;(newState as any).keyHashes = this.keyHashes
+    return newState
+  }
+
+  async dumpStorage(address: Address): Promise<StorageDump> {
+    const storageDump = {}
+    const storage = await super.dumpStorage(address)
+    for (const key of Object.keys(storage)) {
+      const value = storage[key]
+      storageDump['0x' + this.keyHashes[key]] = {
+        key: '0x' + key,
+        value: value
+      }
+    }
+    return storageDump
+  }
+}
+
 /*
   extend vm state manager and instanciate VM
 */
@@ -44,7 +86,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
   }
 
   putContractStorage (address, key, value) {
-    this.keyHashes[keccak(key).toString('hex')] = bufferToHex(key)
+    this.keyHashes[hash.keccak(key).toString('hex')] = bufferToHex(key)
     return super.putContractStorage(address, key, value)
   }
 
@@ -64,7 +106,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
           const stream = trie.createReadStream()
 
           stream.on('data', (val) => {
-            const value = rlp.decode(val.value)
+            const value = decode(val.value)
             storage['0x' + val.key.toString('hex')] = {
               key: this.keyHashes[val.key.toString('hex')],
               value: '0x' + value.toString('hex')
@@ -84,7 +126,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
 export type CurrentVm = {
   vm: VM,
   web3vm: VmProxy,
-  stateManager: StateManagerCommonStorageDump,
+  stateManager: StateManager,
   common: Common
 }
 
@@ -103,12 +145,15 @@ export class VMContext {
   web3vm: VmProxy
   logsManager: any // LogsManager 
   exeResults: Record<string, Transaction>
+  nodeUrl: string
+  blockNumber: number | 'latest'
 
-  constructor (fork?) {
+  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest') {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
     this.currentFork = fork || 'london'
-    
+    this.nodeUrl = nodeUrl
+    this.blockNumber = blockNumber
     this.blocks = {}
     this.latestBlockNumber = "0x0"
     this.blockByTxHash = {}
@@ -122,7 +167,21 @@ export class VMContext {
   }
 
   async createVm (hardfork) {
-    const stateManager = new StateManagerCommonStorageDump()
+    let stateManager: StateManager
+    console.log('creating a new VM', hardfork, this.nodeUrl, this.blockNumber)
+    if (this.nodeUrl) {
+      let block = this.blockNumber
+      if (this.blockNumber === 'latest') {
+        const provider = new ethers.providers.StaticJsonRpcProvider(this.nodeUrl)
+        block = await provider.getBlockNumber()
+      }
+      stateManager = new CustomEthersStateManager({
+        provider: this.nodeUrl,
+        blockTag: BigInt(block)
+      })
+    } else
+      stateManager = new StateManagerCommonStorageDump()
+
     const common = new Common({ chain: 'mainnet', hardfork })
     const blockchain = new (Blockchain as any)({ common })
     const eei = new EEI(stateManager, common, blockchain)

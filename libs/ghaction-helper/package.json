@@ -27,8 +27,6 @@
     "@ethereum-waffle/chai": "^3.4.4",
     "chai": "^4.3.7",
     "ethers": "^5.7.2",
-    "ganache": "^7.5.0"
-  },
-  "types": "./src/index.d.ts",
-  "gitHead": "69af4eddd1ba47f76a71c78077d453deb572b1a0"
+    "@remix-project/remix-simulator": "^0.2.21"
+  }
 }

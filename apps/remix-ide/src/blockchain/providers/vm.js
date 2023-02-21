@@ -1,10 +1,12 @@
 const Web3 = require('web3')
-const { BN, privateToAddress, hashPersonalMessage } = require('ethereumjs-util')
+import { privateToAddress, hashPersonalMessage } from '@ethereumjs/util'
+import BN from 'bn.js'
 const { extend } = require('@remix-project/remix-simulator')
 class VMProvider {
   constructor (executionContext) {
     this.executionContext = executionContext
     this.worker = null
+    this.provider = null
   }
 
   getAccounts (cb) {
@@ -20,7 +22,9 @@ class VMProvider {
     if (this.worker) this.worker.terminate()
     this.accounts = {}
     this.worker = new Worker(new URL('./worker-vm', import.meta.url))
-    this.worker.postMessage({ cmd: 'init', fork: this.executionContext.getCurrentFork() })
+    const provider = this.executionContext.getProviderObject()
+
+    this.worker.postMessage({ cmd: 'init', fork: this.executionContext.getCurrentFork(), nodeUrl: provider?.options['nodeUrl'], blockNumber: provider?.options['blockNumber']})
     
     let incr = 0
     const stamps = {}
@@ -29,7 +33,7 @@ class VMProvider {
         stamps[msg.data.stamp](msg.data.error, msg.data.result)
       }
     })
-    const provider = {
+    this.provider = {
       sendAsync: (query, callback) => {
         const stamp = Date.now() + incr
         incr++
@@ -37,10 +41,10 @@ class VMProvider {
         this.worker.postMessage({ cmd: 'sendAsync', query, stamp })
       }
     }
-    this.web3 = new Web3(provider)
+    this.web3 = new Web3(this.provider)
     extend(this.web3)
     this.accounts = {}
-    this.executionContext.setWeb3('vm', this.web3)
+    this.executionContext.setWeb3(this.executionContext.getProvider(), this.web3)
   }
 
   // TODO: is still here because of the plugin API
@@ -80,7 +84,7 @@ class VMProvider {
   }
 
   getProvider () {
-    return 'vm'
+    return this.executionContext.getProvider()
   }
 }
 

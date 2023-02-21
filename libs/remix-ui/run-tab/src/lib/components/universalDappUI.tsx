@@ -4,10 +4,10 @@ import { UdappProps } from '../types'
 import { FuncABI } from '@remix-project/core-plugin'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import * as remixLib from '@remix-project/remix-lib'
-import * as ethJSUtil from 'ethereumjs-util'
+import * as ethJSUtil from '@ethereumjs/util'
 import { ContractGUI } from './contractGUI'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
-import { BN } from 'ethereumjs-util'
+import { BN } from 'bn.js'
 import { CustomTooltip, is0XPrefixed, isHexadecimal, isNumeric, shortenAddress } from '@remix-ui/helper'
 
 const txHelper = remixLib.execution.txHelper

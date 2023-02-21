@@ -28,7 +28,7 @@ module.exports = {
     browser
       .frameParent()
       .clickLaunchIcon('udapp') // switch to Goerli
-      .switchEnvironment('External Http Provider')
+      .switchEnvironment('basic-http-provider')
       .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
       .execute(() => {
         (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
