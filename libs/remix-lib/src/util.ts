@@ -300,12 +300,12 @@ function removeByIndex (code, index, length, emptyRef) {
 
 function removeImmutableReference (code1, code2) {
   try {
-    const refOccurence = code2.match(/7f000000000000000000000000000000000000000000000000000000000000000073/g)
+    const refOccurence = code2.match(/7f0000000000000000000000000000000000000000000000000000000000000000/g)
     if (!refOccurence) return code1
     let offset = 0
     refOccurence.map((value) => {
       offset = code2.indexOf(value, offset)
-      code1 = removeByIndex(code1, offset, value.length, '7f000000000000000000000000000000000000000000000000000000000000000073')
+      code1 = removeByIndex(code1, offset, value.length, '7f0000000000000000000000000000000000000000000000000000000000000000')
       offset = offset + 1
     })
   } catch (e) {
