@@ -30,14 +30,7 @@ export function AccountUI (props: AccountProps) {
         })
         break
 
-      case 'vm-london':
-        setPlusOpt({
-          classList: '',
-          title: 'Create a new account'
-        })
-        break
-
-      case 'vm-berlin':
+      case 'vm-merge':
         setPlusOpt({
           classList: '',
           title: 'Create a new account'
@@ -76,7 +69,7 @@ export function AccountUI (props: AccountProps) {
       return props.tooltip('Account list is empty, please make sure the current provider is properly connected to remix')
     }
 
-    if (props.selectExEnv !== 'vm-london' && props.selectExEnv !== 'vm-berlin' && props.selectExEnv !== 'injected') {
+    if (props.selectExEnv !== 'vm-merge' && props.selectExEnv !== 'injected') {
       return props.modal('Passphrase to sign a message',
         <PassphrasePrompt
           message='Enter your passphrase for this account to sign the message'

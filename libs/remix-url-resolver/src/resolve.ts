@@ -51,7 +51,7 @@ export class RemixURLResolver {
   * @param root The root of the github import statement
   * @param filePath path of the file in github
   */
-  async handleGithubCall (root: string, filePath: string): Promise<HandlerResponse> {
+  async handleGithubCall(root: string, filePath: string): Promise<HandlerResponse> {
     const regex = filePath.match(/blob\/([^/]+)\/(.*)/)
     let reference = 'master'
     if (regex) {
@@ -75,7 +75,7 @@ export class RemixURLResolver {
   * @param url The url of the import statement
   * @param cleanUrl
   */
-  async handleHttp (url: string, cleanUrl: string): Promise<HandlerResponse> {
+  async handleHttp(url: string, cleanUrl: string): Promise<HandlerResponse> {
     // eslint-disable-next-line no-useless-catch
     try {
       const response: AxiosResponse = await axios.get(url, { transformResponse: [] })
@@ -90,7 +90,7 @@ export class RemixURLResolver {
   * @param url The url of the import statement
   * @param cleanUrl
   */
-  async handleHttps (url: string, cleanUrl: string): Promise<HandlerResponse> {
+  async handleHttps(url: string, cleanUrl: string): Promise<HandlerResponse> {
     // eslint-disable-next-line no-useless-catch
     try {
       const response: AxiosResponse = await axios.get(url, { transformResponse: [] })
@@ -100,7 +100,7 @@ export class RemixURLResolver {
     }
   }
 
-  async handleSwarm (url: string, cleanUrl: string): Promise<HandlerResponse> {
+  async handleSwarm(url: string, cleanUrl: string): Promise<HandlerResponse> {
     // eslint-disable-next-line no-useless-catch
     try {
       const bzz = new Bzz({ url: this.protocol + '//swarm-gateways.net' })
@@ -116,7 +116,7 @@ export class RemixURLResolver {
   * Handle an import statement based on IPFS
   * @param url The url of the IPFS import statement
   */
-  async handleIPFS (url: string): Promise<HandlerResponse> {
+  async handleIPFS(url: string): Promise<HandlerResponse> {
     // replace ipfs:// with /ipfs/
     url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
     // eslint-disable-next-line no-useless-catch
@@ -135,9 +135,8 @@ export class RemixURLResolver {
   * Handle an import statement based on NPM
   * @param url The url of the NPM import statement
   */
+
   async handleNpmImport(url: string): Promise<HandlerResponse> {
-    // eslint-disable-next-line no-useless-catch
-    try {
       if (this.getDependencies) {
         try {
           const { deps, yarnLock, packageLock } = await this.getDependencies()
@@ -177,13 +176,27 @@ export class RemixURLResolver {
           console.log(e)
         }
       }
-      const req = 'https://unpkg.com/' + url
-      const response: AxiosResponse = await axios.get(req, { transformResponse: [] })
-      return { content: response.data, cleanUrl: url }
-    } catch (e) {
-      throw e
-    }
+
+
+      const npm_urls = ["https://cdn.jsdelivr.net/npm/", "https://unpkg.com/"]
+      process && process.env && process.env['NPM_URL'] && npm_urls.unshift(process.env['NPM_URL'])
+      let content = null
+      // get response from all urls
+      for (let i = 0; i < npm_urls.length; i++) {
+        try {
+          const req = npm_urls[i] + url
+          const response: AxiosResponse = await axios.get(req, { transformResponse: [] })
+          content = response.data
+          break
+        } catch (e) {
+          // try next url
+        }
+
+      }
+      if (!content) throw new Error('Unable to load ' + url)
+      return { content, cleanUrl: url }
   }
+  
 
   getHandlers (): Handler[] {
     return [

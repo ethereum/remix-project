@@ -10,8 +10,10 @@ export class Blockchain extends Plugin<any, any> {
     txRunner: any;
     networkcallid: number;
     networkStatus: {
-        name: string;
-        id: string;
+        network: {
+            name: string;
+            id: string;
+        };
     };
     setupEvents(): void;
     getCurrentNetworkStatus(): {
@@ -37,7 +39,6 @@ export class Blockchain extends Plugin<any, any> {
     calculateFee(gas: any, gasPrice: any, unit: any): import("bn.js");
     determineGasFees(tx: any): (gasPrice: any, cb: any) => void;
     changeExecutionContext(context: any, confirmCb: any, infoCb: any, cb: any): Promise<any>;
-    setProviderFromEndpoint(target: any, context: any, cb: any): void;
     detectNetwork(cb: any): void;
     getProvider(): any;
     getInjectedWeb3Address(): any;
