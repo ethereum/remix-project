@@ -100,6 +100,7 @@ export default function UmlDownload() {
                   data-id='umlPdfDownload'
                   onClick={() => {
                     _paq.push(['trackEvent', 'solUmlgen', 'download', 'downloadAsPdf'])
+                    downloadAsPdf()
                   }}
                 >
                   <span
