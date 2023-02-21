@@ -400,6 +400,10 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
   })
 }
 
+export const uploadFolder = async (target, targetFolder: string, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+  console.log('inside uploadFolder--target-->', target)
+}
+
 export const getWorkspaces = async (): Promise<{ name: string, isGitRepo: boolean, branches?: { remote: any; name: string; }[], currentBranch?: string }[]> | undefined => {
   try {
     const workspaces: { name: string, isGitRepo: boolean, branches?: { remote: any; name: string; }[], currentBranch?: string }[] = await new Promise((resolve, reject) => {
