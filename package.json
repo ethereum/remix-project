@@ -28,7 +28,7 @@
     "nx": "nx",
     "start": "nx start",
     "serve": "nx serve remix-ide --configuration=development",
-    "hot": "nx serve remix-ide --configuration=hot",
+    "serve:hot": "nx serve remix-ide --configuration=hot",
     "build": "nx build",
     "test": "nx test",
     "lint": "nx lint",
