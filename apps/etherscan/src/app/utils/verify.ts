@@ -90,8 +90,6 @@ export const verify = async (
       const response = await axios.post(etherscanApi, body)
       const { message, result, status } = await response.data
 
-      console.log("response", response.data)
-
       if (message === "OK" && status === "1") {
         resetAfter10Seconds(client, setResults)
         const receiptStatus = await getReceiptStatus(
