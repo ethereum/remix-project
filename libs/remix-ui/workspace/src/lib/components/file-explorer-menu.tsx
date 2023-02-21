@@ -12,24 +12,30 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
         action: 'createNewFile',
         title: 'Create New File',
         icon: 'far fa-file',
-        placement: 'top-start'
+        placement: 'top'
       },
       {
         action: 'createNewFolder',
         title: 'Create New Folder',
         icon: 'far fa-folder',
-        placement: 'top-end'
+        placement: 'top'
       },
       {
         action: 'publishToGist',
         title: 'Publish all the current workspace files to a github gist',
         icon: 'fab fa-github',
-        placement: 'bottom-start'
+        placement: 'top'
       },
       {
         action: 'uploadFile',
         title: 'Load a local file into current workspace',
         icon: 'fa fa-upload',
+        placement: 'top'
+      },
+      {
+        action: 'uploadFolder',
+        title: 'Load a local folder into current workspace',
+        icon: 'fa fa-arrow-circle-up',
         placement: 'right'
       },
       {
@@ -41,6 +47,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
     ].filter(item => props.menuItems && props.menuItems.find((name) => { return name === item.action })),
     actions: {}
   })
+  const enableDirUpload = { directory: "", webkitdirectory: "" }
 
   useEffect(() => {
     const actions = {
@@ -67,7 +74,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
           if (action === 'uploadFile') {
             return (
               <CustomTooltip
-                placement="right"
+                placement={placement as Placement}
                 tooltipId="uploadFileTooltip"
                 tooltipClasses="text-nowrap"
                 tooltipText={<FormattedMessage id={`filePanel.${action}`} defaultMessage={title} />}
@@ -85,6 +92,30 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                       e.target.value = null
                     }}
                     multiple />
+                </label>
+              </CustomTooltip>
+            )
+          } else if (action === 'uploadFolder') {
+            return (
+              <CustomTooltip
+                placement={placement as Placement}
+                tooltipId="uploadFolderTooltip"
+                tooltipClasses="text-nowrap"
+                tooltipText={<FormattedMessage id={`filePanel.${action}`} defaultMessage={title} />}
+                key={`index-${action}-${placement}-${icon}`}
+              >
+                <label
+                  id={action}
+                  data-id={'fileExplorerUploadFolder' + action }
+                  className={icon + ' mb-0 remixui_newFile'}
+                  key={`index-${action}-${placement}-${icon}`}
+                >
+                    <input id="folderUpload" data-id="fileExplorerFolderUpload" type="file" onChange={(e) => {
+                      e.stopPropagation()
+                      props.uploadFolder(e.target)
+                      e.target.value = null
+                    }}
+                    {...enableDirUpload} multiple />
                 </label>
               </CustomTooltip>
             )

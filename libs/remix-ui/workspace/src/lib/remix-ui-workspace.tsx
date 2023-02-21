@@ -528,7 +528,7 @@ export function Workspace () {
               <div className='h-100 remixui_treeview' data-id='filePanelFileExplorerTree'>
                 <FileExplorer
                   name={currentWorkspace}
-                  menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
+                  menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '', canUpload ? 'uploadFolder' : '']}
                   contextMenuItems={global.fs.browser.contextMenu.registeredMenuItems}
                   removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
                   files={global.fs.browser.files}
@@ -547,6 +547,7 @@ export function Workspace () {
                   dispatchRenamePath={global.dispatchRenamePath}
                   dispatchDownloadPath={global.dispatchDownloadPath}
                   dispatchUploadFile={global.dispatchUploadFile}
+                  dispatchUploadFolder={global.dispatchUploadFolder}
                   dispatchCopyFile={global.dispatchCopyFile}
                   dispatchCopyFolder={global.dispatchCopyFolder}
                   dispatchPublishToGist={global.dispatchPublishToGist}
@@ -587,6 +588,7 @@ export function Workspace () {
                   dispatchRenamePath={global.dispatchRenamePath}
                   dispatchDownloadPath={global.dispatchDownloadPath}
                   dispatchUploadFile={global.dispatchUploadFile}
+                  dispatchUploadFolder={global.dispatchUploadFolder}
                   dispatchCopyFile={global.dispatchCopyFile}
                   dispatchCopyFolder={global.dispatchCopyFolder}
                   dispatchPublishToGist={global.dispatchPublishToGist}
