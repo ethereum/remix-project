@@ -19,6 +19,7 @@ export class RemixEngine extends Engine {
     if (name === 'sourcify') return { queueTimeout: 60000 * 4 }
     if (name === 'fetchAndCompile') return { queueTimeout: 60000 * 4 }
     if (name === 'walletconnect') return { queueTimeout: 60000 * 4 }
+    if (name === 'udapp') return { queueTimeout: 60000 * 4 }
     return { queueTimeout: 10000 }
   }
 
