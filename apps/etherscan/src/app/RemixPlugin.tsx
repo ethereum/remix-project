@@ -23,9 +23,10 @@ export class RemixClient extends PluginClient {
         const etherscanApi = getEtherScanApi(network)
         const receiptStatus = await getReceiptStatus(receiptGuid, apiKey, etherscanApi)
         return {
-          status: receiptStatus,
-          message: receiptStatus,
-          succeed: true
+          status: receiptStatus.status,
+          message: receiptStatus.message,
+          result: receiptStatus.result,
+          succeed: receiptStatus.status === '0'  ? false : true
         }
       } catch (e: any){
         return {
