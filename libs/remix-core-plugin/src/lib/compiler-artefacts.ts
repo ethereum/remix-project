@@ -5,7 +5,7 @@ import { CompilerAbstract } from '@remix-project/remix-solidity'
 
 const profile = {
   name: 'compilerArtefacts',
-  methods: ['get', 'addResolvedContract', 'getCompilerAbstract', 'getAllContractDatas', 'getLastCompilationResult', 'getArtefactsByContractName', 'getContractDataFromAddress'],
+  methods: ['get', 'addResolvedContract', 'getCompilerAbstract', 'getAllContractDatas', 'getLastCompilationResult', 'getArtefactsByContractName', 'getContractDataFromAddress', 'getContractDataFromByteCode'],
   events: [],
   version: '0.0.1'
 }
@@ -212,12 +212,16 @@ export class CompilerArtefacts extends Plugin {
 
   async getContractDataFromAddress (address) {
     const code = await this.call('blockchain', 'getCode', address)
+    return this.getContractDataFromByteCode(code)
+  }
+
+  async getContractDataFromByteCode (code) {
     let found
     this.filterAllContractDatas((file, contractsData) => {
       for (const name of Object.keys(contractsData)) {
         const contract = contractsData[name]
         if (util.compareByteCode(code, '0x' + contract.evm.deployedBytecode.object)) {
-          found = { name, contract }
+          found = { name, contract, file }
           return true
         }
       }
