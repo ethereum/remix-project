@@ -2,6 +2,11 @@ import { PluginClient } from "@remixproject/plugin"
 import axios from 'axios'
 type RemixClient = PluginClient
 
+/*
+  status: 0=Error, 1=Pass 
+  message: OK, NOTOK
+  result: explanation
+*/
 export type receiptStatus = {
   result: string
   message: string
