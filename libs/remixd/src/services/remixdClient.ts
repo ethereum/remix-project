@@ -5,12 +5,14 @@ import * as utils from '../utils'
 import * as chokidar from 'chokidar'
 import * as fs from 'fs-extra'
 import * as isbinaryfile from 'isbinaryfile'
+import * as pathModule from 'path'
 
 export class RemixdClient extends PluginClient {
   methods: Array<string>
   websocket: WS
   currentSharedFolder: string
   watcher: chokidar.FSWatcher
+  trackDownStreamUpdate: Record<string, string> = {}
 
   constructor (private readOnly = false) {
     super()
@@ -105,6 +107,7 @@ export class RemixdClient extends PluginClient {
           this.createDir({ path: args.path.substr(0, args.path.lastIndexOf('/')) })
         }
         try {
+          this.trackDownStreamUpdate[path] = args.content
           fs.writeFile(path, args.content, 'utf8', (error: Error) => {
             if (error) {
               console.log(error)
@@ -263,8 +266,9 @@ export class RemixdClient extends PluginClient {
     })
     */
     this.watcher.on('change', async (f: string) => {
-      const currentContent = await this.call('editor', 'getText' as any, f)
-      const newContent = fs.readFileSync(f)
+      const path = pathModule.resolve(f)
+      const currentContent = this.trackDownStreamUpdate[path]
+      const newContent = fs.readFileSync(f, 'utf-8')
       if (currentContent !== newContent && this.isLoaded) {
         this.emit('changed', utils.relativePath(f, this.currentSharedFolder))
       }
