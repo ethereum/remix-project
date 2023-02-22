@@ -1,3 +1,4 @@
+import { LayoutCompatibilityReport } from '@openzeppelin/upgrades-core/dist/storage/report'
 import React from 'react'
 
 export const fileChangedToastMsg = (from: string, path: string) => (
@@ -113,5 +114,29 @@ export const upgradeWithProxyMsg = () => (
       <li key="new-impl-contract">Deploying the new implementation contract</li>
       <li key="update-proxy-contract">Updating the proxy contract with the address of the new implementation contract</li>
     </ol>
+  </div>
+)
+
+export const unavailableProxyLayoutMsg = () => (
+  <div>
+    <p>The previous contract implementation is NOT available for an upgrade comparison<br /> A new storage layout will be saved for future upgrades.</p>
+  </div>
+)
+
+export const upgradeReportMsg = (report: LayoutCompatibilityReport) => (
+  <div>
+    <div className="py-2 ml-2 mb-1 align-self-end mb-2 d-flex">
+      <span className="align-self-center pl-4 mt-1">
+        <i className="pr-2 text-warning far fa-exclamation-triangle" aria-hidden="true" style={{ fontSize: 'xxx-large', fontWeight: 'lighter' }}></i>
+        </span>
+      <div className="d-flex flex-column">
+        <span className="pl-4 mt-1">The storage layout of new implementation is NOT</span>
+        <span className="pl-4 mt-1">compatible with the previous implementation.</span>
+        <span className="pl-4 mt-1">Your contract's storage may be partially or fully erased!</span>
+      </div>
+    </div>
+    <div className='pl-4 text-danger'>
+      { report.explain() }
+    </div>
   </div>
 )

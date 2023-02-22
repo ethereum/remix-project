@@ -17,6 +17,7 @@ export class InjectedL2Provider extends InjectedProvider {
     if (this.chainName && this.rpcUrls && this.rpcUrls.length > 0) await addL2Network(this.chainName, this.chainId, this.rpcUrls)
     else
       throw new Error('Cannot add the L2 network to main injected provider')
+    return {}
   }
 }
 

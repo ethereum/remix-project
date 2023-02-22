@@ -311,6 +311,14 @@ export const deleteWorkspace = async (workspaceName: string, cb?: (err: Error, r
   cb && cb(null, workspaceName)
 }
 
+export const deleteAllWorkspaces = async () => {
+  await (await getWorkspaces()).map(async workspace => {
+    await deleteWorkspaceFromProvider(workspace.name)
+    await dispatch(setDeleteWorkspace(workspace.name))
+    plugin.workspaceDeleted(workspace.name)
+  })
+}
+
 const deleteWorkspaceFromProvider = async (workspaceName: string) => {
   const workspacesPath = plugin.fileProviders.workspace.workspacesPath
 
@@ -374,7 +382,7 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
         const editor = plugin.registry.get('editor').api
 
         if ((config.get('currentFile') === name) && (editor.currentContent() !== event.target.result)) {
-          editor.setText(event.target.result)
+          editor.setText(name, event.target.result)
         }
       }
       fileReader.readAsText(file)
@@ -450,7 +458,6 @@ export const cloneRepository = async (url: string) => {
       if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
       await fetchWorkspaceDirectory(ROOT_PATH)
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
-      console.log('go in to promise')
       const branches = await getGitRepoBranches(workspacesPath + '/' + repoName)
 
       dispatch(setCurrentWorkspaceBranches(branches))
@@ -480,7 +487,6 @@ export const cloneRepository = async (url: string) => {
     dispatch(displayPopUp('An error occured: ' + e))
   }
 }
-
 
 export const checkGit = async () => {
   const isGitRepo = await plugin.fileManager.isGitRepo()

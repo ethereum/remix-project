@@ -27,7 +27,11 @@ import { StoragePlugin } from './app/plugins/storage'
 import { Layout } from './app/panels/layout'
 import { NotificationPlugin } from './app/plugins/notification'
 import { Blockchain } from './blockchain/blockchain.js'
-import { BerlinVMProvider, LondonVMProvider } from './app/providers/vm-provider'
+import { MergeVMProvider, LondonVMProvider, BerlinVMProvider} from './app/providers/vm-provider'
+import { MainnetForkVMProvider } from './app/providers/mainnet-vm-fork-provider'
+import { SepoliaForkVMProvider } from './app/providers/sepolia-vm-fork-provider'
+import { GoerliForkVMProvider } from './app/providers/goerli-vm-fork-provider'
+import { CustomForkVMProvider } from './app/providers/custom-vm-fork-provider'
 import { HardhatProvider } from './app/providers/hardhat-provider'
 import { GanacheProvider } from './app/providers/ganache-provider'
 import { FoundryProvider } from './app/providers/foundry-provider'
@@ -203,6 +207,11 @@ class AppComponent {
     const networkModule = new NetworkModule(blockchain)
     // ----------------- represent the current selected web3 provider ----
     const web3Provider = new Web3ProviderModule(blockchain)
+    const vmProviderCustomFork = new CustomForkVMProvider(blockchain)
+    const vmProviderMainnetFork = new MainnetForkVMProvider(blockchain)
+    const vmProviderSepoliaFork = new SepoliaForkVMProvider(blockchain)
+    const vmProviderGoerliFork = new GoerliForkVMProvider(blockchain)
+    const vmProviderMerge = new MergeVMProvider(blockchain)
     const vmProviderBerlin = new BerlinVMProvider(blockchain)
     const vmProviderLondon = new LondonVMProvider(blockchain)
     const hardhatProvider = new HardhatProvider(blockchain)
@@ -271,8 +280,13 @@ class AppComponent {
       fetchAndCompile,
       dGitProvider,
       storagePlugin,
+      vmProviderMerge,
       vmProviderBerlin,
       vmProviderLondon,
+      vmProviderSepoliaFork,
+      vmProviderGoerliFork,
+      vmProviderMainnetFork,
+      vmProviderCustomFork,
       hardhatProvider,
       ganacheProvider,
       foundryProvider,
