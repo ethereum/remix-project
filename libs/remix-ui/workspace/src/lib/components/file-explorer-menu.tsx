@@ -22,21 +22,21 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
       },
       {
         action: 'publishToGist',
-        title: 'Publish all the current workspace files to a github gist',
+        title: 'Publish current workspace to GitHub gist',
         icon: 'fab fa-github',
         placement: 'top'
       },
       {
         action: 'uploadFile',
-        title: 'Load a local file into current workspace',
+        title: 'Upload files into current workspace',
         icon: 'fa fa-upload',
         placement: 'top'
       },
       {
         action: 'uploadFolder',
-        title: 'Load a local folder into current workspace',
-        icon: 'fa fa-arrow-circle-up',
-        placement: 'right'
+        title: 'Upload folder into current workspace',
+        icon: 'fas fa-folder-upload',
+        placement: 'top'
       },
       {
         action: 'updateGist',
