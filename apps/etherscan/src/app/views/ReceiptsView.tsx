@@ -30,7 +30,7 @@ export const ReceiptsView: React.FC = () => {
         apiKey,
         etherscanApi
       )
-      setResults(result)
+      setResults(result.result)
     } catch (error: any) {
       setResults(error.message)
     }

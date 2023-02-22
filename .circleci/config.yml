@@ -24,7 +24,7 @@ jobs:
           key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-      - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js yarn build:production
+      - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build:production
       - run: yarn nx build remix-ide-e2e-src-local-plugin & yarn run build:libs
       - run: yarn nx run remixd:build
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
