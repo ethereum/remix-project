@@ -3,7 +3,7 @@
   "filePanel.workspace": "WORKSPACES",
   "filePanel.create": "Create",
   "filePanel.clone": "Clone",
-  "filePanel.download": "Download",
+  "filePanel.download": "Backup",
   "filePanel.restore": "Restore",
   "filePanel.workspace.create": "Create Workspace",
   "filePanel.workspace.rename": "Rename Workspace",
