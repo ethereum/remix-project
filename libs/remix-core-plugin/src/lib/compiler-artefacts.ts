@@ -98,16 +98,17 @@ export class CompilerArtefacts extends Plugin {
    filterAllContractDatas (filter) {
     const contractsData = {}
     Object.keys(this.compilersArtefactsPerFile).map((targetFile) => {
-      const contracts = this.compilersArtefactsPerFile[targetFile].getContracts()
+      const artefact = this.compilersArtefactsPerFile[targetFile]
+      const contracts = artefact.getContracts()
       Object.keys(contracts).map((file) => {
-        if (filter(file, contracts[file])) contractsData[file] = contracts[file]
+        if (filter(file, contracts[file], artefact)) contractsData[file] = contracts[file]
       })
     })
     // making sure we save last compilation result in there
     if (this.compilersArtefacts.__last) {
       const contracts = this.compilersArtefacts.__last.getContracts()
       Object.keys(contracts).map((file) => {
-        if (filter(file, contracts[file])) contractsData[file] = contracts[file]
+        if (filter(file, contracts[file], this.compilersArtefacts.__last)) contractsData[file] = contracts[file]
       })
     }
     return contractsData
@@ -195,8 +196,19 @@ export class CompilerArtefacts extends Plugin {
   }
 
   async getCompilerAbstract (file) {
+    if (!file) return null
+    if (this.compilersArtefactsPerFile[file]) return this.compilersArtefactsPerFile[file]
     const path = await this.call('fileManager', 'getPathFromUrl', file)
-    return this.compilersArtefactsPerFile[path.file]
+
+    if (path && path.file && this.compilersArtefactsPerFile[path.file])return this.compilersArtefactsPerFile[path.file]
+
+    let artefact = null
+    this.filterAllContractDatas((localFile, data, parentArtefact) => {
+      if (localFile === file || (path && path.file && localFile === path.file)) {
+        artefact = parentArtefact
+      }
+    })
+    return artefact
   }
 
   addResolvedContract (address: string, compilerData: CompilerAbstract) {
