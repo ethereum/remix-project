@@ -16,12 +16,50 @@ export type ResolvedImport = {
 }
 
 export class CompilerImports extends Plugin {
-  previouslyHandled: Record<string, ResolvedImport>
   urlResolver: any
   constructor () {
     super(profile)
-    this.urlResolver = new RemixURLResolver()
-    this.previouslyHandled = {} // cache import so we don't make the request at each compilation.
+    this.urlResolver = new RemixURLResolver(async () => {
+      try {
+        let yarnLock
+        if (await this.call('fileManager', 'exists', './yarn.lock')) {
+          yarnLock = await this.call('fileManager', 'readFile', './yarn.lock')
+        }
+
+        let packageLock
+        if (await this.call('fileManager', 'exists', './package-lock.json')) {
+          packageLock = await this.call('fileManager', 'readFile', './package-lock.json')
+          packageLock = JSON.parse(packageLock)
+        }
+
+        if (await this.call('fileManager', 'exists', './package.json')) {
+          const content = await this.call('fileManager', 'readFile', './package.json')
+          const pkg = JSON.parse(content)
+          return { deps: { ...pkg['dependencies'], ...pkg['devDependencies'] }, yarnLock, packageLock }
+        } else {
+          return {}
+        }
+      } catch (e) {
+        console.error(e)
+        return {}
+      }
+    })
+    
+  }
+
+  onActivation(): void {
+    const packageFiles = ['package.json', 'package-lock.json', 'yarn.lock']
+    this.on('filePanel', 'setWorkspace', () => this.urlResolver.clearCache())
+    this.on('fileManager', 'fileRemoved', (file: string) => {
+      if (packageFiles.includes(file)) {
+        this.urlResolver.clearCache()
+      }
+    })
+    this.on('fileManager', 'fileChanged', (file: string) => {
+      if (packageFiles.includes(file)) {
+        this.urlResolver.clearCache()
+      }
+    })
   }
 
   async setToken () {
@@ -71,22 +109,12 @@ export class CompilerImports extends Plugin {
     if (!cb) cb = () => {}
 
     const self = this
-    if (force) delete this.previouslyHandled[url]
-    const imported = this.previouslyHandled[url]
-    if (imported) {
-      return cb(null, imported.content, imported.cleanUrl, imported.type, url)
-    }
 
     let resolved
     try {
       await this.setToken()
-      resolved = await this.urlResolver.resolve(url)
+      resolved = await this.urlResolver.resolve(url, [], force)
       const { content, cleanUrl, type } = resolved
-      self.previouslyHandled[url] = {
-        content,
-        cleanUrl,
-        type
-      }
       cb(null, content, cleanUrl, type, url)
     } catch (e) {
       return cb(new Error('not found ' + url))
