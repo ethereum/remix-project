@@ -1,13 +1,15 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useCallback, useEffect, useState } from 'react'
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
 import { ThemeSummary } from '../types'
 import UmlDownload from './components/UmlDownload'
 import './css/solidity-uml-gen.css'
+import { UmlDownloadContext, UmlFileType } from './utilities/UmlDownloadStrategy'
 export interface RemixUiSolidityUmlGenProps {
   updatedSvg?: string
   loading?: boolean
   themeSelected?: string
   themeName: string
+  fileName: string
   themeCollection: ThemeSummary[]
 }
 
@@ -23,29 +25,33 @@ const _paq = window._paq = window._paq || []
 
 
 
-export function RemixUiSolidityUmlGen ({ updatedSvg, loading }: RemixUiSolidityUmlGenProps) {
+let umlCopy = ''
+export function RemixUiSolidityUmlGen ({ updatedSvg, loading, fileName }: RemixUiSolidityUmlGenProps) {
   const [showViewer, setShowViewer] = useState(false)
   const [validSvg, setValidSvg] = useState(false)
+  const umlDownloader = new UmlDownloadContext()
 
   useEffect(() => {
+    if (updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg')) {
+      umlCopy = updatedSvg
+    }
     setValidSvg (updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg')) 
     setShowViewer(updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg'))
-  }
-  , [updatedSvg])
+  }, [updatedSvg])
 
 
   const encoder = new TextEncoder()
   const data = encoder.encode(updatedSvg)
   const final = btoa(String.fromCharCode.apply(null, data))
 
-  const downloadAsPng = () => {
-    // convert serialized svg to png and download
-
-  }
-
-  const downloadAsPdf = () => {
-    // convert serialized svg to pdf and download
-  }
+  const download = useCallback((fileType: UmlFileType) => {
+    console.log({ umlCopy, validSvg })
+    if (umlCopy.length === 0) {
+      console.log('svg not valid yet!')
+      return
+    }
+    umlDownloader.download(umlCopy, fileName, fileType)
+  }, [updatedSvg, fileName])
 
   function ActionButtons({ actions: { zoomIn, zoomOut, resetTransform }}: ActionButtonsProps) {
   
@@ -57,7 +63,7 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading }: RemixUiSolidityU
           style={{ zIndex: 3, top: "10", right: "2em" }}
         >
           <div className="py-2 px-2 d-flex justify-content-center align-items-center">
-            <UmlDownload downloadAsPdf={downloadAsPdf} downloadAsPng={downloadAsPng} />
+            <UmlDownload download={download} />
             <button
               className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2"
               onClick={() => zoomIn()}
