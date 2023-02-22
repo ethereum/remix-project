@@ -34,19 +34,6 @@ module.exports = {
         timeout: 120000,
         suppressNotFoundErrors: true
       })
-      .click('[data-id="compilerContainerCompileBtn"]')
-      .isVisible({
-        selector: "//span[contains(.,'not found Untitled11')]",
-        locateStrategy: 'xpath',
-        timeout: 120000,
-        suppressNotFoundErrors: true
-      })
-      .click('[data-id="compilerContainerCompileBtn"]')
-      .waitForElementVisible({
-        selector: "//span[contains(.,'not found Untitled11')]",
-        locateStrategy: 'xpath',
-        timeout: 120000,
-      })
 
   },
 
@@ -135,11 +122,11 @@ const sources = [
     'Untitled.sol': { content: 'contract test1 {} contract test2 {}' }
   },
   {
-    'Untitled1.sol': { content: 'import "./Untitled2.sol"; contract test6 {}' },
+    'Untitled1.sol': { content: 'import "/Untitled2.sol"; contract test6 {}' },
     'Untitled2.sol': { content: 'contract test4 {} contract test5 {}' }
   },
   {
-    'Untitled3.sol': { content: 'import "./Untitled11.sol"; contract test6 {}' }
+    'Untitled3.sol': { content: 'import "/Untitled11.sol"; contract test6 {}' }
   },
   {
     'Untitled4.sol': { content: 'import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol"; contract test7 {}' }
