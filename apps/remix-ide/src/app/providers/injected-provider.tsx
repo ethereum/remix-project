@@ -38,7 +38,7 @@ export class InjectedProvider extends Plugin implements IProvider {
       throw new Error(noInjectedProviderMsg)
     } else {
       if (injectedProvider && injectedProvider._metamask && injectedProvider._metamask.isUnlocked) {
-        if (!await injectedProvider._metamask.isUnlocked()) throw new Error('Please make sure the injected provider is unlocked (e.g Metamask).')
+        if (!await injectedProvider._metamask.isUnlocked()) this.call('notification', 'toast', 'Please make sure the injected provider is unlocked (e.g Metamask).')
       }
       this.askPermission(true)
     }
