@@ -1,6 +1,7 @@
 import { CustomTooltip } from '@remix-ui/helper'
 import React, { Fragment, Ref } from 'react'
 import { Dropdown } from 'react-bootstrap'
+import { UmlFileType } from '../utilities/UmlDownloadStrategy'
 
 const _paq = window._paq = window._paq || []
 
@@ -39,8 +40,7 @@ export const UmlCustomMenu = React.forwardRef(
 )
 
 interface UmlDownloadProps {
-  downloadAsPng: () => void
-  downloadAsPdf: () => void
+  download: (fileType: UmlFileType) => void
 }
 
 export default function UmlDownload(props: UmlDownloadProps) {
@@ -55,7 +55,7 @@ export default function UmlDownload(props: UmlDownloadProps) {
         >
         </Dropdown.Toggle>
         <Dropdown.Menu as={UmlCustomMenu} className="custom-dropdown-items">
-          <Dropdown.Item onClick={props.downloadAsPng}>
+          <Dropdown.Item onClick={() => props.download('png')}>
             <CustomTooltip
                 placement="left-start"
                 tooltipId="solUmlgenDownloadAsPngTooltip"
@@ -66,7 +66,7 @@ export default function UmlDownload(props: UmlDownloadProps) {
                   data-id='umlPngDownload'
                   onClick={() => {
                     _paq.push(['trackEvent', 'solUmlgen', 'download', 'downloadAsPng'])
-                    props.downloadAsPng()
+                    props.download('png')
                   }}
                 >
                   <span
@@ -74,7 +74,7 @@ export default function UmlDownload(props: UmlDownloadProps) {
                     data-id='umlPngDownload'
                     onClick={() => {
                       _paq.push(['trackEvent', 'solUmlgen', 'download', 'downloadAsPng'])
-                      props.downloadAsPng()
+                      props.download('png')
                     }}
                     className='far fa-image pl-2'
                   >
@@ -86,7 +86,7 @@ export default function UmlDownload(props: UmlDownloadProps) {
               </CustomTooltip>
             </Dropdown.Item>
             <Dropdown.Divider />
-            <Dropdown.Item onClick={props.downloadAsPdf}>
+            <Dropdown.Item onClick={() => props.download('pdf')}>
               <CustomTooltip
                   placement="left-start"
                   tooltipId="solUmlgenDownloadAsPdfTooltip"
@@ -97,7 +97,7 @@ export default function UmlDownload(props: UmlDownloadProps) {
                   data-id='umlPdfDownload'
                   onClick={() => {
                     _paq.push(['trackEvent', 'solUmlgen', 'download', 'downloadAsPdf'])
-                    props.downloadAsPdf()
+                    props.download('pdf')
                   }}
                 >
                   <span
@@ -105,7 +105,7 @@ export default function UmlDownload(props: UmlDownloadProps) {
                     data-id='umlPdfDownload'
                     onClick={() => {
                       _paq.push(['trackEvent', 'solUmlgen', 'download', 'downloadAsPdf'])
-                      props.downloadAsPdf()
+                      props.download('pdf')
                     }}
                     className='far fa-file-pdf pl-2'
                   >
