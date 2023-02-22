@@ -1,3 +1,4 @@
+import { SolcInput, SolcOutput } from "@openzeppelin/upgrades-core"
 export interface FuncABI {
     name: string,
     type: string,
@@ -19,7 +20,8 @@ export interface ContractData {
     getConstructorInterface: () => any,
     getConstructorInputs: () => any,
     isOverSizeLimit: () => boolean,
-    metadata: any
+    metadata: any,
+    contractName?: string
 }
 
 export interface ContractAST {
@@ -182,4 +184,22 @@ export interface ContractSources {
         id: number
       }
     }
+  }
+
+  export interface NetworkDeploymentFile {
+        id: string,
+        network: string,
+        deployments: {
+            [proxyAddress: string]: {
+                date: Date,
+                contractName: string,
+                fork: string,
+                implementationAddress: string
+            }
+        }[]
+  }
+
+  export interface SolcBuildFile {
+    solcInput: SolcInput,
+    solcOutput: SolcOutput
   }

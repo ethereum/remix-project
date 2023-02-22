@@ -362,8 +362,6 @@
 }
 .udapp_contractProperty button:disabled {
   cursor: not-allowed;
-  background-color: white;
-  border-color: lightgray;
 }
 .udapp_contractProperty.udapp_constant button {
   min-width: 100px;

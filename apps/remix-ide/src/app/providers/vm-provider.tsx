@@ -1,17 +1,26 @@
+import React from 'react' // eslint-disable-line
 import * as packageJson from '../../../../../package.json'
 import { JsonDataRequest, RejectRequest, SuccessRequest } from '../providers/abstract-provider'
 import { Plugin } from '@remixproject/engine'
+import { IProvider } from './abstract-provider'
 
-export class BasicVMProvider extends Plugin {
+export class BasicVMProvider extends Plugin implements IProvider {
   blockchain
   fork: string
+  options: { [id: string] : any } = {}
   constructor (profile, blockchain) {
     super(profile)
     this.blockchain = blockchain
-    this.fork = null
+    this.fork = ''
   }
 
-  init () {}
+  async init (): Promise<{ [id: string] : any }> { return {} }
+
+  body (): JSX.Element {
+    return (
+      <div></div>
+    )
+  }
 
   sendAsync (data: JsonDataRequest): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -33,18 +42,18 @@ export class BasicVMProvider extends Plugin {
   }
 }
 
-export class BerlinVMProvider extends BasicVMProvider {
+export class MergeVMProvider extends BasicVMProvider {
   constructor (blockchain) {
     super({
-      name: 'vm-berlin',
-      displayName: 'Remix VM (Berlin)',
+      name: 'vm-merge',
+      displayName: 'Remix VM (Merge)',
       kind: 'provider',
-      description: 'Remix VM (Berlin)',
+      description: 'Remix VM (Merge)',
       methods: ['sendAsync', 'init'],
       version: packageJson.version
     }, blockchain)
     this.blockchain = blockchain
-    this.fork = 'berlin'
+    this.fork = 'merge'
   }
 }
 
@@ -60,5 +69,20 @@ export class LondonVMProvider extends BasicVMProvider {
     }, blockchain)
     this.blockchain = blockchain
     this.fork = 'london'
+  }
+}
+
+export class BerlinVMProvider extends BasicVMProvider {
+  constructor (blockchain) {
+    super({
+      name: 'vm-berlin',
+      displayName: 'Remix VM (Berlin)',
+      kind: 'provider',
+      description: 'Remix VM (Berlin)',
+      methods: ['sendAsync', 'init'],
+      version: packageJson.version
+    }, blockchain)
+    this.blockchain = blockchain
+    this.fork = 'berlin'
   }
 }

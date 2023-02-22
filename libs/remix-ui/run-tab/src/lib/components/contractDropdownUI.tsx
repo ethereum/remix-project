@@ -32,7 +32,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const [compilerName, setCompilerName] = useState<string>('')
   const contractsRef = useRef<HTMLSelectElement>(null)
   const atAddressValue = useRef<HTMLInputElement>(null)
-  const { contractList, loadType, currentFile, compilationSource, currentContract, compilationCount, deployOptions, proxyKey } = props.contracts
+  const { contractList, loadType, currentFile, compilationSource, currentContract, compilationCount, deployOptions } = props.contracts
 
   useEffect(() => {
     enableContractNames(Object.keys(props.contracts.contractList).length > 0)
@@ -234,6 +234,10 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     props.setSelectedContract(value)
   }
 
+  const isValidProxyUpgrade = (proxyAddress: string) => {
+    return props.isValidProxyUpgrade(proxyAddress, loadedContractData.contractName || loadedContractData.name, loadedContractData.compiler.source, loadedContractData.compiler.data)
+  }
+
   const checkSumWarning = () => {
     return (
       <span className="text-start">
@@ -311,8 +315,10 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
                 widthClass='w-50'
                 evmBC={loadedContractData.bytecodeObject}
                 lookupOnly={false}
-                savedProxyAddress={proxyKey}
+                proxy={props.proxy}
                 isValidProxyAddress={props.isValidProxyAddress}
+                isValidProxyUpgrade={isValidProxyUpgrade}
+                modal={props.modal}
               />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
                 <input

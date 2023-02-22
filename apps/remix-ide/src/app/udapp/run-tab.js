@@ -103,6 +103,7 @@ export class RunTab extends ViewPlugin {
 
     const addProvider = async (name, displayName, isInjected, isVM, fork = '', dataId = '', title = '') => {
       await this.call('blockchain', 'addProvider', {
+        options: {},
         dataId,
         name,
         displayName,
@@ -110,7 +111,13 @@ export class RunTab extends ViewPlugin {
         isInjected,
         isVM,
         title,
-        init: () => { return this.call(name, 'init') },
+        init: async function () {
+          const options = await udapp.call(name, 'init')
+          if (options) { 
+            this.options = options
+            if (options['fork']) this.fork = options['fork']
+          }
+        },
         provider: {
           async sendAsync (payload, callback) {
             try {
@@ -126,8 +133,13 @@ export class RunTab extends ViewPlugin {
 
     // VM
     const titleVM = 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.'
+    await addProvider('vm-merge', 'Remix VM (Merge)', false, true, 'merge', 'settingsVMMergeMode', titleVM)
     await addProvider('vm-london', 'Remix VM (London)', false, true, 'london', 'settingsVMLondonMode', titleVM)
     await addProvider('vm-berlin', 'Remix VM (Berlin)', false, true, 'berlin', 'settingsVMBerlinMode', titleVM)
+    await addProvider('vm-mainnet-fork', 'Remix VM - Mainnet fork', false, true, 'merge', 'settingsVMMainnetMode', titleVM)
+    await addProvider('vm-sepolia-fork', 'Remix VM - Sepolia fork', false, true, 'merge', 'settingsVMSepoliaMode', titleVM)
+    await addProvider('vm-goerli-fork', 'Remix VM - Goerli fork', false, true, 'merge', 'settingsVMGoerliMode', titleVM)
+    await addProvider('vm-custom-fork', 'Remix VM - Custom fork', false, true, '', 'settingsVMCustomMode', titleVM)
 
     // external provider
     await addProvider('hardhat-provider', 'Hardhat Provider', false, false)
