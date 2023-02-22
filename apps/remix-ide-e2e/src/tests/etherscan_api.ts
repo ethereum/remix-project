@@ -54,7 +54,7 @@ module.exports = {
         .clickLaunchIcon('filePanel')
         .addFile('receiptStatusScript.ts', { content: receiptStatusScript })
         .click('*[data-id="play-editor"]') // run the script
-        .waitForElementContainsText('*[data-id="terminalJournal"]', 'Pass - Verified', 60000)
+        .waitForElementContainsText('*[data-id="terminalJournal"]', 'Already Verified', 60000)
       }
 }
 
@@ -119,7 +119,7 @@ const receiptStatusScript = `
   const receiptStatus = async () => {
     try {
         const apikey = '2HKUX5ZVASZIKWJM8MIQVCRUVZ6JAWT531'
-        const ret = await remix.call('etherscan' as any,  'receiptStatus', 'n1qtqfn8jggwqv9uvni5zzectnztqbxqqvizznvl4vg1pndb9v', apikey)
+        const ret = await remix.call('etherscan' as any,  'receiptStatus', 'tsrrzmayenrslvixnvhdv7fbbp6kk1xuqkg667aqlesblpkimt', apikey)
         console.log(ret)
     } catch (e) {
         console.log(e.message)
