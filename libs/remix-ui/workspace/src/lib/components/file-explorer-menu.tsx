@@ -10,13 +10,13 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
     menuItems: [
       {
         action: 'createNewFile',
-        title: 'Create New File',
+        title: 'Create new file',
         icon: 'far fa-file',
         placement: 'top'
       },
       {
         action: 'createNewFolder',
-        title: 'Create New Folder',
+        title: 'Create new folder',
         icon: 'far fa-folder',
         placement: 'top'
       },
