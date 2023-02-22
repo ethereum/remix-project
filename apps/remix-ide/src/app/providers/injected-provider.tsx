@@ -35,6 +35,7 @@ export class InjectedProvider extends Plugin implements IProvider {
   async init () {
     const injectedProvider = (window as any).ethereum
     if (injectedProvider === undefined) {
+    this.call('notification', 'toast', noInjectedProviderMsg)
       throw new Error(noInjectedProviderMsg)
     } else {
       if (injectedProvider && injectedProvider._metamask && injectedProvider._metamask.isUnlocked) {
