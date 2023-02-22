@@ -38,6 +38,15 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading }: RemixUiSolidityU
   const data = encoder.encode(updatedSvg)
   const final = btoa(String.fromCharCode.apply(null, data))
 
+  const downloadAsPng = () => {
+    // convert serialized svg to png and download
+
+  }
+
+  const downloadAsPdf = () => {
+    // convert serialized svg to pdf and download
+  }
+
   function ActionButtons({ actions: { zoomIn, zoomOut, resetTransform }}: ActionButtonsProps) {
   
     return (
@@ -48,7 +57,7 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading }: RemixUiSolidityU
           style={{ zIndex: 3, top: "10", right: "2em" }}
         >
           <div className="py-2 px-2 d-flex justify-content-center align-items-center">
-            <UmlDownload />
+            <UmlDownload downloadAsPdf={downloadAsPdf} downloadAsPng={downloadAsPng} />
             <button
               className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2"
               onClick={() => zoomIn()}
