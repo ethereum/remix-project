@@ -537,6 +537,7 @@ export function ContractGUI (props: ContractGUIProps) {
                           tooltipClasses="text-nowrap"
                           tooltipId={`proxyAddressTooltip${index}`}
                           tooltipText={'Deployed ' + shortenDate(deployment.date)}
+                          key={index}
                         >
                             <Dropdown.Item
                               key={index}

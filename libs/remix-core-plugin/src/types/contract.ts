@@ -20,7 +20,8 @@ export interface ContractData {
     getConstructorInterface: () => any,
     getConstructorInputs: () => any,
     isOverSizeLimit: () => boolean,
-    metadata: any
+    metadata: any,
+    contractName?: string
 }
 
 export interface ContractAST {
