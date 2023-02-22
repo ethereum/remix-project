@@ -171,6 +171,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       loading: this.loading,
       themeSelected: this.currentlySelectedTheme,
       themeName: this.themeName,
+      fileName: this.currentFile,
       themeCollection: this.themeCollection
     })
   }
@@ -181,6 +182,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       loading={state.loading}
       themeSelected={state.currentlySelectedTheme}
       themeName={state.themeName}
+      fileName={state.fileName}
       themeCollection={state.themeCollection}
     />
   }
