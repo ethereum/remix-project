@@ -12,6 +12,7 @@ import { ROOT_PATH, slitherYml, solTestYml, tsSolTestYml } from '../utils/consta
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
+import { AppModal, ModalTypes } from '@remix-ui/app'
 
 declare global {
   interface Window { remixFileSystemCallback: IndexedDBStorage; }
@@ -394,9 +395,20 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
     if (!await workspaceProvider.exists(name)) {
       loadFile(name, file, workspaceProvider, cb)
     } else {
-      dispatch(displayNotification('Confirm overwrite', `The file ${name} already exists! Would you like to overwrite it?`, 'OK', null, () => {
-        loadFile(name, file, workspaceProvider, cb)
-      }, () => { }))
+      const modalContent: AppModal = {
+        id: 'overwriteUploadFile',
+        title: 'Confirm overwrite',
+        message: `The file ${name} already exists! Would you like to overwrite it?`,
+        modalType: ModalTypes.confirm,
+        okLabel: 'OK',
+        cancelLabel: 'Cancel',
+        okFn: () => {
+          loadFile(name, file, workspaceProvider, cb)
+        },
+        cancelFn: () => {},
+        hideFn: () => {}
+      }
+      plugin.call('notification', 'modal', modalContent)
     }
   })
 }
@@ -408,9 +420,20 @@ export const uploadFolder = async (target, targetFolder: string, cb?: (err: Erro
     if (!await workspaceProvider.exists(name)) {
       loadFile(name, file, workspaceProvider, cb)
     } else {
-      dispatch(displayNotification('Confirm overwrite', `The file ${name} already exists! Would you like to overwrite it?`, 'OK', null, () => {
-        loadFile(name, file, workspaceProvider, cb)
-      }, () => { }))
+      const modalContent: AppModal = {
+        id: 'overwriteUploadFolderFile',
+        title: 'Confirm overwrite',
+        message: `The file ${name} already exists! Would you like to overwrite it?`,
+        modalType: ModalTypes.confirm,
+        okLabel: 'OK',
+        cancelLabel: 'Cancel',
+        okFn: () => {
+          loadFile(name, file, workspaceProvider, cb)
+        },
+        cancelFn: () => {},
+        hideFn: () => {}
+      }
+      plugin.call('notification', 'modal', modalContent)
     }
   }
 }
