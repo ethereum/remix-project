@@ -200,7 +200,7 @@ export class CompilerArtefacts extends Plugin {
     if (this.compilersArtefactsPerFile[file]) return this.compilersArtefactsPerFile[file]
     const path = await this.call('fileManager', 'getPathFromUrl', file)
 
-    if (path && path.file && this.compilersArtefactsPerFile[path.file])return this.compilersArtefactsPerFile[path.file]
+    if (path && path.file && this.compilersArtefactsPerFile[path.file]) return this.compilersArtefactsPerFile[path.file]
 
     let artefact = null
     this.filterAllContractDatas((localFile, data, parentArtefact) => {
