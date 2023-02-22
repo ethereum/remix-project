@@ -180,7 +180,7 @@ class AppComponent {
 
     //----- search
     const search = new SearchPlugin()
-
+    
     //---------------- Solidity UML Generator -------------------------
     const solidityumlgen = new SolidityUmlGen(appManager)
 

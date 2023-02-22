@@ -54,6 +54,7 @@ function isElectron() {
 const versionUrl = 'assets/version.json'
 fetch(versionUrl, { cache: "no-store" }).then(response => {
   response.text().then(function (data) {
+
     const version = JSON.parse(data);
     console.log(`Loading Remix ${version.version}`);
   });
