@@ -89,7 +89,7 @@ const App = () => {
     })
 
     if (receiptsNotVerified.length > 0) {
-      let timer1 = setInterval(() => {
+      const timer1 = setInterval(() => {
         for (const item in receiptsNotVerified) {
           
         }
@@ -106,7 +106,7 @@ const App = () => {
             apiKey,
             getEtherScanApi(network)
           )
-          if (status === "Pass - Verified") {
+          if (status.result === "Pass - Verified") {
             const newReceipts = receipts.map((currentReceipt: Receipt) => {
               if (currentReceipt.guid === item.guid) {
                 return {

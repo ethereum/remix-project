@@ -90,6 +90,16 @@ export function Workspace () {
     )
   }
 
+  const deleteAllWorkspaces = () => {
+    global.modal(
+      intl.formatMessage({ id: 'filePanel.workspace.deleteAll' }),
+      intl.formatMessage({ id: 'filePanel.workspace.deleteAllConfirm' }),
+      intl.formatMessage({ id: 'filePanel.ok' }),
+      onFinishDeleteAllWorkspaces,
+      ''
+    )
+  }
+
   const cloneGitRepository = () => {
     global.modal(
       intl.formatMessage({ id: 'filePanel.workspace.clone' }),
@@ -175,7 +185,15 @@ export function Workspace () {
       console.error(e)
     }
   }
-  /** ** ****/
+
+  const onFinishDeleteAllWorkspaces = async () => {
+    try {
+      await global.dispatchDeleteAllWorkspaces()
+    } catch (e) {
+      global.modal(intl.formatMessage({ id: 'filePanel.workspace.deleteAll' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, '')
+      console.error(e)
+    }
+  }
 
   const resetFocus = () => {
     global.dispatchSetFocusElement([{ key: '', type: 'folder' }])
@@ -433,6 +451,7 @@ export function Workspace () {
                         <HamburgerMenu
                           createWorkspace={createWorkspace}
                           deleteCurrentWorkspace={deleteCurrentWorkspace}
+                          deleteAllWorkspaces={deleteAllWorkspaces}
                           renameCurrentWorkspace={renameCurrentWorkspace}
                           cloneGitRepository={cloneGitRepository}
                           downloadWorkspaces={downloadWorkspaces}
@@ -451,7 +470,12 @@ export function Workspace () {
                 </div>
 
                 <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
-                  <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control mt-1" icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}>
+                  <Dropdown.Toggle
+                    as={CustomToggle}
+                    id="dropdown-custom-components"
+                    className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control mt-1"
+                    icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}
+                  >
                     { selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly("localhost") : NO_WORKSPACE }
                   </Dropdown.Toggle>
 

@@ -5,7 +5,7 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
-import { initWorkspace, fetchDirectory, removeInputField, deleteWorkspace, clearPopUp, publishToGist, createNewFile, setFocusElement, createNewFolder,
+import { initWorkspace, fetchDirectory, removeInputField, deleteWorkspace, deleteAllWorkspaces, clearPopUp, publishToGist, createNewFile, setFocusElement, createNewFolder,
   deletePath, renamePath, downloadPath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath, addInputField, createWorkspace,
   fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, handleDownloadFiles, restoreBackupZip, cloneRepository, moveFile, moveFolder,
   showAllBranches, switchBranch, createNewBranch, checkoutRemoteBranch, createSolidityGithubAction, createTsSolGithubAction, createSlitherGithubAction
@@ -65,6 +65,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchDeleteWorkspace = async (workspaceName: string) => {
     await deleteWorkspace(workspaceName)
+  }
+
+  const dispatchDeleteAllWorkspaces = async () => {
+    await deleteAllWorkspaces()
   }
 
   const dispatchPublishToGist = async (path?: string, type?: string) => {
@@ -258,6 +262,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchSwitchToWorkspace,
     dispatchRenameWorkspace,
     dispatchDeleteWorkspace,
+    dispatchDeleteAllWorkspaces,
     dispatchPublishToGist,
     dispatchUploadFile,
     dispatchCreateNewFile,
