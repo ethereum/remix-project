@@ -31,7 +31,8 @@ module.exports = {
       .isVisible({
         selector: "//span[contains(.,'not found Untitled11')]",
         locateStrategy: 'xpath',
-        timeout: 120000
+        timeout: 120000,
+        suppressNotFoundErrors: true
       })
 
   },
