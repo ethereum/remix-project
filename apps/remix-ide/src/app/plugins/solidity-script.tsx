@@ -29,10 +29,9 @@ export class SolidityScript extends Plugin {
     const targets = { 'script.sol': { content } }
 
     // compile
-    const compiler = await this.call('solidity', 'getCompiler')
     const compilation = await compile(targets, params, async (url, cb) => {
       await this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message))
-    }, compiler.state.worker)
+    })
 
     // get the vm provider
     const contract = compilation.getContract('SolidityScript')
