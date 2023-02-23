@@ -194,8 +194,6 @@
     "time-stamp": "^2.2.0",
     "toml": "^3.0.0",
     "tree-kill": "^1.2.2",
-    "ts-loader": "^9.2.6",
-    "tslib": "^2.3.0",
     "web3": "^1.8.0",
     "winston": "^3.3.3",
     "ws": "^7.3.0"
@@ -348,7 +346,9 @@
     "terser-webpack-plugin": "^5.3.6",
     "timers-browserify": "^2.0.12",
     "ts-jest": "^29.0.3",
+    "ts-loader": "^9.2.6",
     "ts-node": "10.9.1",
+    "tslib": "^2.3.0",
     "tslint": "~6.0.0",
     "typescript": "^4.8.4",
     "uglify-js": "^2.8.16",
