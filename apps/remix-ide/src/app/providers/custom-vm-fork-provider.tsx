@@ -39,7 +39,7 @@ export class CustomForkVMProvider extends BasicVMProvider {
       </div>
       <div>
         <label className="mt-3 mb-1">EVM</label>
-        <select data-id="CustomForkEvmType" name="evmType" className="border form-control border-right-0">
+        <select data-id="CustomForkEvmType" name="evmType" defaultValue="merge" className="border form-control border-right-0">
           {Object.keys(Hardfork).map((value, index) => {
             return <option value={Hardfork[value]} key={index}>{value}</option>
           })}     
