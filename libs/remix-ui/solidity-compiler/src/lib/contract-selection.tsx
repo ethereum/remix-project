@@ -188,7 +188,8 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   }
 
   const copyBytecode = () => {
-    return copyContractProperty('bytecode')
+    const bytecodeObj = JSON.parse(copyContractProperty('bytecode'))
+    return bytecodeObj.object
   }
 
   return (
