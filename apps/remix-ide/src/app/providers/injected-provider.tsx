@@ -61,7 +61,6 @@ export class InjectedProvider extends Plugin implements IProvider {
     }
     try {
       if ((window as any) && typeof (window as any).ethereum.request === "function") (window as any).ethereum.request({ method: "eth_requestAccounts" });
-      if (!await (window as any).ethereum._metamask.isUnlocked()) this.call('notification', 'toast', 'Please make sure the injected provider is unlocked (e.g Metamask).')
       const resultData = await this.provider.currentProvider.send(data.method, data.params)
       resolve({ jsonrpc: '2.0', result: resultData.result, id: data.id })
     } catch (error) {
