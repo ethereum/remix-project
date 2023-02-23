@@ -146,6 +146,7 @@
     "bn.js": "^5.1.2",
     "bootstrap": "^5.2.2",
     "brace": "^0.8.0",
+    "canvg": "^4.0.1",
     "change-case": "^4.1.1",
     "chokidar": "^2.1.8",
     "color-support": "^1.1.3",
