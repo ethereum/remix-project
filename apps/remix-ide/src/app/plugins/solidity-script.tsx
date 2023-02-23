@@ -51,7 +51,7 @@ export class SolidityScript extends Plugin {
     tx = {
       from: accounts[0],
       to: receipt.contractAddress,
-      data: '0x504917d1'
+      data: '0xc0406226' // function run() public
     }
     const receiptCall = await web3.eth.sendTransaction(tx)
 
