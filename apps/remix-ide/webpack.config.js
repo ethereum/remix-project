@@ -60,11 +60,13 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
 
   // add copy & provide plugin
   config.plugins.push(
+    /*
     new CopyPlugin({
       patterns: [
         { from: '../../node_modules/monaco-editor/dev/vs', to: 'assets/js/monaco-editor/dev/vs' }
       ].filter(Boolean)
     }),
+    */
     new webpack.ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
       url: ['url', 'URL'],

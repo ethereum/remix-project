@@ -7,13 +7,13 @@ import { CodeParser } from "../code-parser";
 import { fileDecoration, fileDecorationType } from '@remix-ui/file-decorators'
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
 import { CompilerRetriggerMode, CompilationSourceCode } from '@remix-project/remix-solidity';
-import { MarkerSeverity } from 'monaco-editor';
 import { findLinesInStringWithMatch, SearchResultLine } from '@remix-ui/search'
 import { lastCompilationResult } from '@remixproject/plugin-api';
+import { monaco } from '@remix-ui/editor';
 
 type errorMarker = {
     message: string
-    severity: MarkerSeverity
+    severity: monaco.MarkerSeverity
     position: {
         start: {
             line: number
@@ -196,8 +196,8 @@ export default class CodeParserCompiler {
             const decorator: fileDecoration = {
                 path: fileTarget.file,
                 isDirectory: false,
-                fileStateType: errors[0].severity == MarkerSeverity.Error ? fileDecorationType.Error : fileDecorationType.Warning,
-                fileStateLabelClass: errors[0].severity == MarkerSeverity.Error ? 'text-danger' : 'text-warning',
+                fileStateType: errors[0].severity == monaco.MarkerSeverity.Error ? fileDecorationType.Error : fileDecorationType.Warning,
+                fileStateLabelClass: errors[0].severity == monaco.MarkerSeverity.Error ? 'text-danger' : 'text-warning',
                 fileStateIconClass: '',
                 fileStateIcon: '',
                 text: errors.length.toString(),
@@ -230,7 +230,7 @@ export default class CodeParserCompiler {
     async createErrorMarker(error: any, filePath: string, lineColumn): Promise<errorMarker> {
         return {
             message: error.formattedMessage,
-            severity: error.severity === 'error' ? MarkerSeverity.Error : MarkerSeverity.Warning,
+            severity: error.severity === 'error' ? monaco.MarkerSeverity.Error : monaco.MarkerSeverity.Warning,
             position: {
                 start: {
                     line: ((lineColumn.start && lineColumn.start.line) || 0) + 1,

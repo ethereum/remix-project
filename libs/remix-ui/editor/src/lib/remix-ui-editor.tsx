@@ -7,11 +7,12 @@ import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solid
 import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
 import { zokratesTokensProvider, zokratesLanguageConfig } from './syntaxes/zokrates'
 import { moveTokenProvider, moveLanguageConfig } from './syntaxes/move'
+import { monaco } from '@remix-ui/editor';
 
 import './remix-ui-editor.css'
 import { loadTypes } from './web-types'
-import monaco from '../types/monaco'
-import { IMarkdownString, IPosition, MarkerSeverity } from 'monaco-editor'
+
+
 
 import { RemixHoverProvider } from './providers/hoverProvider'
 import { RemixReferenceProvider } from './providers/referenceProvider'
@@ -59,12 +60,12 @@ export type lineText = {
   className: string
   afterContentClassName: string
   hide: boolean,
-  hoverMessage: IMarkdownString | IMarkdownString[]
+  hoverMessage: monaco.IMarkdownString | monaco.IMarkdownString[]
 }
 
 type errorMarker = {
   message: string
-  severity: MarkerSeverity | 'warning' | 'info' | 'error' | 'hint'
+  severity: monaco.MarkerSeverity | 'warning' | 'info' | 'error' | 'hint'
   position: {
     start: {
       line: number
@@ -78,7 +79,7 @@ type errorMarker = {
   file: string
 }
 
-loader.config({ paths: { vs: 'assets/js/monaco-editor/dev/vs' } })
+//loader.config({ paths: { vs: 'assets/js/monaco-editor/dev/vs' } })
 
 export type DecorationsReturn = {
   currentDecorations: Array<string>
@@ -105,8 +106,8 @@ export interface EditorUIProps {
     findMatches: (uri: string, value: string) => any
     getFontSize: () => number,
     getValue: (uri: string) => string
-    getCursorPosition: (offset?: boolean) => number | IPosition
-    getHoverPosition: (position: IPosition) => number
+    getCursorPosition: (offset?: boolean) => number | monaco.IPosition
+    getHoverPosition: (position: monaco.IPosition) => number
     addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
     clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
     keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
@@ -435,9 +436,9 @@ export const EditorUI = (props: EditorUIProps) => {
       filePath = fileFromUrl.file
       const model = editorModelsState[filePath]?.model
       const errorServerityMap = {
-        'error': MarkerSeverity.Error,
-        'warning': MarkerSeverity.Warning,
-        'info': MarkerSeverity.Info
+        'error': monaco.MarkerSeverity.Error,
+        'warning': monaco.MarkerSeverity.Warning,
+        'info': monaco.MarkerSeverity.Info
       }
       if (model) {
         const markerData: monaco.editor.IMarkerData = {
