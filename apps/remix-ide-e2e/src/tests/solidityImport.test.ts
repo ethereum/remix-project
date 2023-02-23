@@ -29,10 +29,9 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .click('[data-id="compilerContainerCompileBtn"]')
       .isVisible({
-        selector: "//span[contains(.,'not found Untitled11')]",
+        selector: "//span[contains(.,'not found /Untitled11')]",
         locateStrategy: 'xpath',
         timeout: 120000,
-        suppressNotFoundErrors: false
       })
 
   },
