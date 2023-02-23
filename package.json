@@ -153,7 +153,6 @@
     "core-js": "^3.6.5",
     "deep-equal": "^1.0.1",
     "document-register-element": "1.13.1",
-    "dom-to-pdf": "^0.3.1",
     "eslint-config-prettier": "^8.5.0",
     "ethers": "^5.4.2",
     "ethjs-util": "^0.1.6",
