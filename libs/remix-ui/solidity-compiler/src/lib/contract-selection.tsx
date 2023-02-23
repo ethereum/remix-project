@@ -245,14 +245,14 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             <div className="remixui_contractHelperButtons">
               <div className="input-group">
                 <div className="btn-group" role="group" aria-label="Copy to Clipboard">
-                  <CopyToClipboard title="Copy ABI to clipboard" getContent={copyABI} direction='top'>
-                    <button className="btn remixui_copyButton" title="Copy ABI to clipboard">
+                  <CopyToClipboard tip="Copy ABI to clipboard" getContent={copyABI} direction='top'>
+                    <button className="btn remixui_copyButton" >
                       <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
                       <span>ABI</span>
                     </button>
                   </CopyToClipboard>
-                  <CopyToClipboard title="Copy ABI to clipboard" getContent={copyBytecode} direction='top'>
-                    <button className="btn remixui_copyButton" title="Copy Bytecode to clipboard">
+                  <CopyToClipboard tip="Copy Bytecode to clipboard" getContent={copyBytecode} direction='top'>
+                    <button className="btn remixui_copyButton">
                       <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
                       <span>Bytecode</span>
                     </button>
