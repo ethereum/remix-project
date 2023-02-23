@@ -1,8 +1,8 @@
 
 import { Monaco } from '@monaco-editor/react'
 import { EditorUIProps } from '../remix-ui-editor'
-import { monaco } from '@remix-ui/editor';
-export class RemixHoverProvider implements monaco.languages.HoverProvider {
+import { monacoTypes } from '@remix-ui/editor';
+export class RemixHoverProvider implements monacoTypes.languages.HoverProvider {
 
     props: EditorUIProps
     monaco: Monaco
@@ -11,7 +11,7 @@ export class RemixHoverProvider implements monaco.languages.HoverProvider {
         this.monaco = monaco
     }
 
-    provideHover = async function (model: monaco.editor.ITextModel, position: monaco.Position): Promise<monaco.languages.Hover> {
+    provideHover = async function (model: monacoTypes.editor.ITextModel, position: monacoTypes.Position): Promise<monacoTypes.languages.Hover> {
         const cursorPosition = this.props.editorAPI.getHoverPosition(position)
         const nodeAtPosition = await this.props.plugin.call('codeParser', 'definitionAtPosition', cursorPosition)
         const contents = []

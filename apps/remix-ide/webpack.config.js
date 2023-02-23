@@ -90,7 +90,6 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
 
   config.ignoreWarnings = [/Failed to parse source map/] // ignore source-map-loader warnings
 
-
   // set minimizer
   config.optimization.minimizer = [
     new TerserPlugin({
