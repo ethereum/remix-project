@@ -6,6 +6,8 @@ const version = require('../../package.json').version
 const fs = require('fs')
 const TerserPlugin = require("terser-webpack-plugin")
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 
 const versionData = {
   version: version,
@@ -58,17 +60,26 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
 
   // add copy & provide plugin
   config.plugins.push(
+    /*
     new CopyPlugin({
       patterns: [
         { from: '../../node_modules/monaco-editor/dev/vs', to: 'assets/js/monaco-editor/dev/vs' }
       ].filter(Boolean)
     }),
+    */
     new webpack.ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
       url: ['url', 'URL'],
       process: 'process/browser',
     })
   )
+
+  // if dev mode
+  if (process.env.NODE_ENV !== 'production') {
+    config.plugins.push(
+      new BundleAnalyzerPlugin()
+    )
+  }
 
   // souce-map loader
   config.module.rules.push({
@@ -78,7 +89,6 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   })
 
   config.ignoreWarnings = [/Failed to parse source map/] // ignore source-map-loader warnings
-
 
   // set minimizer
   config.optimization.minimizer = [
