@@ -8611,28 +8611,28 @@ legend {
     text-decoration:underline
 }
 .alert-primary {
-    background-color:#2a9fd6
+    background-color:#2a9fd685
 }
 .alert-secondary {
     background-color:#555
 }
 .alert-success {
-    background-color:#77b300
+    background-color:#77b3007a
 }
 .alert-info {
-    background-color:#93c
+    background-color:#9933cc91
 }
 .alert-warning {
-    background-color:#f80
+    background-color:#ff8800a1
 }
 .alert-danger {
-    background-color:#c00
+    background-color:#cc00009c
 }
 .alert-light {
     background-color:#222
 }
 .alert-dark {
-    background-color:#adafae
+    background-color:#adafae99
 }
 .badge-warning {
     color:#fff
