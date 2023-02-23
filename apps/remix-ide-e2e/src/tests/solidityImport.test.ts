@@ -24,7 +24,7 @@ module.exports = {
       .pause(1000)
   },
 
-  'Test Failed Import #group1': function (browser: NightwatchBrowser) {
+  'Test Failed Import #group1 #flaky': function (browser: NightwatchBrowser) {
     browser.addFile('Untitled3.sol', sources[2]['Untitled3.sol'])
       .clickLaunchIcon('solidity')
       .click('[data-id="compilerContainerCompileBtn"]')
@@ -32,7 +32,7 @@ module.exports = {
         selector: "//span[contains(.,'not found Untitled11')]",
         locateStrategy: 'xpath',
         timeout: 120000,
-        suppressNotFoundErrors: true
+        suppressNotFoundErrors: false
       })
 
   },
