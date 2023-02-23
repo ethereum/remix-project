@@ -7,7 +7,18 @@ self.onmessage = (e: MessageEvent) => {
     case 'init': 
     {
       provider = new Provider({ fork: data.fork, nodeUrl: data.nodeUrl, blockNumber: data.blockNumber })
-      if (provider) provider.init()
+      provider.init().then(() => {
+        self.postMessage({
+          cmd: 'initiateResult',
+          stamp: data.stamp
+        })
+      }).catch((error) => {
+        self.postMessage({
+          cmd: 'initiateResult',
+          error,
+          stamp: data.stamp
+        })
+      })
       break
     }
     case 'sendAsync':
