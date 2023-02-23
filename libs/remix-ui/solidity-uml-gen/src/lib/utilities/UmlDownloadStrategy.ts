@@ -1,5 +1,7 @@
 import jsPDF from 'jspdf'
 import 'svg2pdf.js'
+import { SVG } from '@svgdotjs/svg.js'
+import { Canvg } from 'canvg'
 
 
 const jsPdf = new jsPDF('landscape', 'px', 'a4')
@@ -50,23 +52,30 @@ class PdfUmlDownloadStrategy implements IUmlDownloadStrategy {
 
 class ImageUmlDownloadStrategy implements IUmlDownloadStrategy {
   public download (uml: string, fileName: string): void {
-  //   const svg = new Blob([uml], { type: 'image/svg+xml;charset=utf-8' })
-  //   const url = URL.createObjectURL(svg)
-  //   const img = new Image()
-  //   img.onload = () => {
-  //     const canvas = document.createElement('canvas')
-  //     canvas.width = img.width
-  //     canvas.height = img.height
-  //     const ctx = canvas.getContext('2d')
-  //     ctx.drawImage(img, 0, 0)
-  //     const png = canvas.toDataURL('image/png')
-  //     const a = document.createElement('a')
-  //     a.download = fileName.split('/')[1].split('.')[0].concat('.png')
-  //     a.href = png
-  //     a.click()
-  //   }
-  //   img.src = url
-  // }
+    const svg = new Blob([uml], { type: 'image/svg+xml;charset=utf-8' })
+    const Url = window.URL || window.webkitURL
+    const url = Url.createObjectURL(svg)
+    const img = document.createElement('img')
+    img.onload = () => {
+      const canvas = document.createElement('canvas')
+      canvas.width = img.naturalWidth
+      canvas.height = img.naturalHeight
+      const ctx = canvas.getContext('2d')
+      const scale = window.devicePixelRatio*1
+      canvas.style.width = `${Math.round(img.naturalWidth/scale)}`.concat('px')
+      canvas.style.height = `${Math.round(img.naturalHeight/scale)}`.concat('px')
+      canvas.style.margin = '0'
+      canvas.style.padding = '0'
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
+      ctx.drawImage(img, 0, 0, Math.round(img.naturalWidth/scale), Math.round(img.naturalHeight/scale))
+      const png = canvas.toDataURL('image/png')
+      const a = document.createElement('a')
+      a.download = fileName.split('/')[1].split('.')[0].concat('.png')
+      a.href = png
+      console.log('about to click the link to download the png!!!')
+      a.click()
+    }
+    img.src = url
   }
 }
 
