@@ -11473,18 +11473,6 @@ dom-serializer@^2.0.0:
     domhandler "^5.0.2"
     entities "^4.2.0"
 
-"dom-to-image@https://github.com/dmapper/dom-to-image":
-  version "2.6.0"
-  resolved "https://github.com/dmapper/dom-to-image#a7c386a8ea813930f05449ac71ab4be0c262dff3"
-
-dom-to-pdf@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/dom-to-pdf/-/dom-to-pdf-0.3.1.tgz#06db966acc73a7b81ce183202f7b6ff1f5f38578"
-  integrity sha512-2duxMNttyQr5XySV2t7gftCVhHr+zoE/f1h0nQDp/1KugAsk07EkZ9zcPFgZihcyj4dXBUWyVSxOik8czuFGDQ==
-  dependencies:
-    dom-to-image "https://github.com/dmapper/dom-to-image"
-    jspdf "^2.5.1"
-
 dom-walk@^0.1.0:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/dom-walk/-/dom-walk-0.1.2.tgz#0c548bef048f4d1f2a97249002236060daa3fd84"
