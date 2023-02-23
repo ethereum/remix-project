@@ -12,6 +12,7 @@ import { ROOT_PATH, slitherYml, solTestYml, tsSolTestYml } from '../utils/consta
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
+import { resetFileActions } from '.'
 
 declare global {
   interface Window { remixFileSystemCallback: IndexedDBStorage; }
@@ -355,6 +356,7 @@ export const switchToWorkspace = async (name: string) => {
     dispatch(setMode('browser'))
     dispatch(setCurrentWorkspace({ name, isGitRepo }))
     dispatch(setReadOnlyMode(false))
+    resetFileActions()
   }
 }
 
