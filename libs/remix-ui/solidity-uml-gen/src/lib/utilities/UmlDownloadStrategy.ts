@@ -1,8 +1,5 @@
 import jsPDF from 'jspdf'
 import 'svg2pdf.js'
-import { SVG } from '@svgdotjs/svg.js'
-import { Canvg } from 'canvg'
-
 
 const jsPdf = new jsPDF('landscape', 'px', 'a4')
 
