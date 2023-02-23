@@ -2,8 +2,8 @@ import { AstNode } from "@remix-project/remix-solidity"
 import { isArray } from "lodash"
 import { EditorUIProps } from "../remix-ui-editor"
 import { GeCompletionUnits, GetCompletionKeywords, getCompletionSnippets, GetCompletionTypes, getContextualAutoCompleteBTypeName, getContextualAutoCompleteByGlobalVariable, GetGlobalFunctions, GetGlobalVariable, GetImports } from "./completion/completionGlobals"
-import { monaco } from '@remix-ui/editor';
-export class RemixCompletionProvider implements monaco.languages.CompletionItemProvider {
+import { monacoTypes } from '@remix-ui/editor';
+export class RemixCompletionProvider implements monacoTypes.languages.CompletionItemProvider {
 
     props: EditorUIProps
     monaco: any
@@ -15,7 +15,7 @@ export class RemixCompletionProvider implements monaco.languages.CompletionItemP
     }
 
     triggerCharacters = ['.', '', '"', '@', '/']
-    async provideCompletionItems(model: monaco.editor.ITextModel, position: monaco.Position, context: monaco.languages.CompletionContext): Promise<monaco.languages.CompletionList | undefined> {
+    async provideCompletionItems(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, context: monacoTypes.languages.CompletionContext): Promise<monacoTypes.languages.CompletionList | undefined> {
 
         const completionSettings = await this.props.plugin.call('config', 'getAppParameter', 'settings/auto-completion')
         if (!completionSettings) return
@@ -30,7 +30,7 @@ export class RemixCompletionProvider implements monaco.languages.CompletionItemP
 
         const line = model.getLineContent(position.lineNumber)
         let nodes: AstNode[] = []
-        let suggestions: monaco.languages.CompletionItem[] = []
+        let suggestions: monacoTypes.languages.CompletionItem[] = []
         if (context.triggerCharacter === '"' || context.triggerCharacter === '@' || context.triggerCharacter === '/') {
 
             const lastpart = line.substring(0, position.column - 1).split(';').pop()
@@ -340,7 +340,7 @@ export class RemixCompletionProvider implements monaco.languages.CompletionItemP
     private getDotCompletions = async (nameOfLastTypedExpression: string, range) => {
         const contractCompletions = await this.getContractCompletions()
         let nodes: any[] = []
-        let suggestions: monaco.languages.CompletionItem[] = []
+        let suggestions: monacoTypes.languages.CompletionItem[] = []
 
         const filterNodes = (nodes: any[], parentNode: any, declarationOf: any = null) => {
             return nodes && nodes.filter(node => {
