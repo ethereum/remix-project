@@ -153,7 +153,6 @@ jobs:
     parameters:
       script:
         type: string
-    parallelism: 4
     steps:
       - browser-tools/install-browser-tools:
           install-firefox: false
@@ -286,7 +285,7 @@ workflows:
             - build
           matrix:
             parameters:
-              script: ["browser_tests_plugin_api.sh", "browser_tests_etherscan_plugin.sh", "browser_tests_vyper_plugin.sh"]
+              script: ["browser_tests_etherscan_plugin.sh", "browser_tests_vyper_plugin.sh"]
       - remix-ide-browser:
           requires:
             - build
