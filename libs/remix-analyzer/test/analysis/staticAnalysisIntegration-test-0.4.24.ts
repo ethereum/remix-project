@@ -41,7 +41,7 @@ const testFiles: string[] = [
 const compilationResults: Record<string, CompilationResult> = {}
 
 test('setup', function (t: test.Test) {
-  solcOrg.loadRemoteVersion('v0.4.24+commit.e67f0147', (error, compiler) => {
+  solcOrg.loadRemoteVersion('v0.4.26+commit.4563c3fc', (error, compiler) => {
     if (error) throw error
 
     testFiles.forEach((fileName) => {
