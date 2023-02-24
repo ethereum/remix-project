@@ -88,6 +88,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 >
                     <input id="fileUpload" data-id="fileExplorerFileUpload" type="file" onChange={(e) => {
                       e.stopPropagation()
+                      _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
                       props.uploadFile(e.target)
                       e.target.value = null
                     }}
@@ -112,6 +113,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 >
                     <input id="folderUpload" data-id="fileExplorerFolderUpload" type="file" onChange={(e) => {
                       e.stopPropagation()
+                      _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
                       props.uploadFolder(e.target)
                       e.target.value = null
                     }}
