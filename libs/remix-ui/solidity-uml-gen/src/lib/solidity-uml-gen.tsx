@@ -21,10 +21,6 @@ interface ActionButtonsProps {
   }
 }
 
-const _paq = window._paq = window._paq || []
-
-
-
 let umlCopy = ''
 export function RemixUiSolidityUmlGen ({ updatedSvg, loading, fileName }: RemixUiSolidityUmlGenProps) {
   const [showViewer, setShowViewer] = useState(false)
@@ -45,11 +41,11 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading, fileName }: RemixU
   const final = btoa(String.fromCharCode.apply(null, data))
 
   const download = useCallback((fileType: UmlFileType) => {
-    console.log({ umlCopy, validSvg })
     if (umlCopy.length === 0) {
       console.log('svg not valid yet!')
       return
     }
+    console.log({ umlCopy })
     umlDownloader.download(umlCopy, fileName, fileType)
   }, [updatedSvg, fileName])
 
