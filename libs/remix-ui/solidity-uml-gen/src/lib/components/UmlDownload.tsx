@@ -65,7 +65,7 @@ export default function UmlDownload(props: UmlDownloadProps) {
                 <div
                   data-id='umlPngDownload'
                   onClick={() => {
-                    _paq.push(['trackEvent', 'solUmlgen', 'download', 'downloadAsPng'])
+                    _paq.push(['trackEvent', 'solidityumlgen', 'download', 'downloadAsPng'])
                     props.download('png')
                   }}
                 >
@@ -73,7 +73,7 @@ export default function UmlDownload(props: UmlDownloadProps) {
                     id='umlPngDownloadBtn'
                     data-id='umlPngDownload'
                     onClick={() => {
-                      _paq.push(['trackEvent', 'solUmlgen', 'download', 'downloadAsPng'])
+                      _paq.push(['trackEvent', 'solidityumlgen', 'download', 'downloadAsPng'])
                       props.download('png')
                     }}
                     className='far fa-image pl-2'
