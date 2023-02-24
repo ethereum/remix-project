@@ -55,6 +55,7 @@
     "deep-equal": "^1.0.1",
     "ethers": "^5.4.2",
     "ethjs-util": "^0.1.6",
+    "c-kzg": "^1.0.9",
     "express-ws": "^4.0.0",
     "merge": "^1.2.0",
     "signale": "^1.4.0",
