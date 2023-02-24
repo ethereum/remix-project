@@ -83,6 +83,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         const umlDot = convertUmlClasses2Dot(umlClasses)
         const payload = vizRenderStringSync(umlDot)
         this.updatedSvg = payload
+        _paq.push(['trackEvent', 'solidityumlgen', 'umlgenerated'])
         this.renderComponent()
         await this.call('tabs', 'focus', 'solidityumlgen')
       } catch (error) {
@@ -117,6 +118,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   generateCustomAction = async (action: customAction) => {
     this.updatedSvg = this.updatedSvg.startsWith('<?xml') ? '' : this.updatedSvg
     this.currentFile = action.path[0]
+    _paq.push(['trackEvent', 'solidityumlgen', 'activated'])
     await this.generateUml(action.path[0])
   }
 
