@@ -10,8 +10,8 @@
   "filePanel.workspace.delete": "删除工作空间",
   "filePanel.workspace.deleteConfirm": "确定要删除当前工作空间?",
   "filePanel.workspace.deleteAll": "Delete All Workspaces",
-  "filePanel.workspace.deleteAllConfirm": "Are you absolutely sure you want to delete all your workspaces? Deleted workspaces can not be restored in any manner.",
-  "filePanel.workspace.name": "工作空间名称",
+  "filePanel.workspace.deleteAllConfirm1": "Are you absolutely sure you want to delete all your workspaces?",
+  "filePanel.workspace.deleteAllConfirm2": "Deleted workspaces can not be restored in any manner.",  "filePanel.workspace.name": "工作空间名称",
   "filePanel.workspace.chooseTemplate": "选择一个工作空间模板",
   "filePanel.workspace.download": "下载工作空间",
   "filePanel.workspace.restore": "恢复工作空间",
@@ -54,5 +54,6 @@
   "filePanel.customizeTemplate": "自定义模板",
   "filePanel.features": "特点",
   "filePanel.upgradeability": "可升级性",
-  "filePanel.ok": "确认"
+  "filePanel.ok": "确认",
+  "filePanel.cancel": "Cancel"
 }
