@@ -281,6 +281,7 @@ function runTests(browser: NightwatchBrowser, done: any) {
     .testEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}')
     .setEditorValue('contract test1 { function get () returns (uint) { return 10; }}')
     .saveScreenshot('./reports/screenshots/remixdrename.png')
+    .waitForElementVisible('[data-path="folder1/contract_' + browserName + '.sol"]')
     .click('[data-path="folder1/contract_' + browserName + '.sol"]') // rename a file and check
     .pause(1000)
     .saveScreenshot('./reports/screenshots/remixdrename2.png')
@@ -315,7 +316,7 @@ function testImportFromRemixd(browser: NightwatchBrowser, callback: VoidFunction
 }
 
 async function spawnRemixd(path: string): Promise<ChildProcess> {
-  const remixd = spawn('yarn run remixd', [`-s ${path} 2> ./reports/screenshots/errors.txt`], { cwd: process.cwd(), shell: true, detached: true })
+  const remixd = spawn('yarn run remixd', [`-s ${path} | tee ./reports/screenshots/errors.txt`], { cwd: process.cwd(), shell: true, detached: true })
   return new Promise((resolve, reject) => {
     remixd.stdout.on('data', function (data) {
       if(
