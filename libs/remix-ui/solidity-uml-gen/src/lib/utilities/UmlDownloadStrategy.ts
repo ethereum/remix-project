@@ -26,10 +26,10 @@ class PdfUmlDownloadStrategy implements IUmlDownloadStrategy {
       canvas.style.padding = '0'
       ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
       ctx.drawImage(img, 0, 0, Math.round(img.naturalWidth/scale), Math.round(img.naturalHeight/scale))
-      doc = new jsPDF('landscape', 'px', [img.naturalHeight, img.naturalWidth])
+      doc = new jsPDF('landscape', 'px', [img.naturalHeight, img.naturalWidth], true)
       const pageWidth = doc.internal.pageSize.getWidth()
       const pageHeight = doc.internal.pageSize.getHeight()
-      doc.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pageWidth, pageHeight)
+      doc.addImage(canvas.toDataURL('image/png',0.5), 'PNG', 0, 0, pageWidth, pageHeight)
       doc.save(fileName.split('/')[1].split('.')[0].concat('.pdf'))
     }
     img.src = url
