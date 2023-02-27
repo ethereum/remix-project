@@ -71,7 +71,7 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'run Remixd tests #group4': function (browser) {
+  'run Remixd tests #group4 #flaky': function (browser) {
     browser.perform(async (done) => {
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       console.log('working directory', process.cwd())
@@ -280,6 +280,7 @@ function runTests(browser: NightwatchBrowser, done: any) {
     .setEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}')
     .testEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}')
     .setEditorValue('contract test1 { function get () returns (uint) { return 10; }}')
+    .saveScreenshot('./reports/screenshots/remixdrename.png')
     .click('[data-path="folder1/contract_' + browserName + '.sol"]') // rename a file and check
     .pause(1000)
     .renamePath('folder1/contract_' + browserName + '.sol', 'renamed_contract_' + browserName + '.sol', 'folder1/renamed_contract_' + browserName + '.sol')
