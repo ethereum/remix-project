@@ -316,7 +316,7 @@ function testImportFromRemixd(browser: NightwatchBrowser, callback: VoidFunction
 }
 
 async function spawnRemixd(path: string): Promise<ChildProcess> {
-  const remixd = spawn('yarn run remixd', [`-s ${path} 2>&1 | tee ./reports/screenshots/errors.txt`], { cwd: process.cwd(), shell: true, detached: true })
+  const remixd = spawn('yarn run remixd', [`-s ${path} 2>&1 | tee ./reports/screenshots/errors.png`], { cwd: process.cwd(), shell: true, detached: true })
   return new Promise((resolve, reject) => {
     remixd.stdout.on('data', function (data) {
       if(
