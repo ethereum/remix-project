@@ -23,7 +23,7 @@ export class Provider {
   constructor (options: Record<string, string | number> = {}) {
     this.options = options
     this.connected = true
-    this.vmContext = new VMContext(options['fork'] as string, options['nodeUrl'] as string, options['blockNumber'] as number)
+    this.vmContext = new VMContext(options['fork'] as string, options['nodeUrl'] as string, options['blockNumber'] as (number | 'latest'))
 
     this.Accounts = new Web3Accounts(this.vmContext)
     this.Transactions = new Transactions(this.vmContext)
