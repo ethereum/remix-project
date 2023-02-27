@@ -64,6 +64,15 @@
     "web3": "^1.5.1",
     "winston": "^3.0.0"
   },
+  "resolutions": {
+    "*/**/@ethereumjs/common": "3.0.2",
+    "*/**/@ethereumjs/rlp": "4.0.0",
+    "*/**/@ethereumjs/trie": "5.0.2",
+    "*/**/@ethereumjs/tx": "4.0.2",
+    "*/**/@ethereumjs/util": "8.0.3",
+    "*/**/@ethereumjs/block": "4.1.0",
+    "*/**/@ethereumjs/vm": "6.3.0"
+  },
   "devDependencies": {
     "@babel/preset-env": "^7.4.5",
     "@types/async": "^2.4.0",
