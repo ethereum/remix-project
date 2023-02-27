@@ -14,7 +14,25 @@ class RenamePath extends EventEmitter {
 }
 
 function renamePath (browser: NightwatchBrowser, path: string, newFileName: string, renamedPath: string, done: VoidFunction) {
-  browser.rightClick('[data-path="' + path + '"]')
+  browser.execute(function (path: string) {
+    function contextMenuClick (element) {
+      const evt = element.ownerDocument.createEvent('MouseEvents')
+      const RIGHT_CLICK_BUTTON_CODE = 2 // the same for FF and IE
+
+      evt.initMouseEvent('contextmenu', true, true,
+        element.ownerDocument.defaultView, 1, 0, 0, 0, 0, false,
+        false, false, false, RIGHT_CLICK_BUTTON_CODE, null)
+      if (Object.prototype.hasOwnProperty.call(document, 'createEventObject')) {
+        // dispatch for IE
+        return element.fireEvent('onclick', evt)
+      } else {
+        // dispatch for firefox + others
+        return !element.dispatchEvent(evt)
+      }
+    }
+    contextMenuClick(document.querySelector('[data-path="' + path + '"]'))
+  }, [path], function () {
+    browser
       .click('#menuitemrename')
       .perform((client, doneSetValue) => {
         browser.execute(function (path, addvalue) {
@@ -31,6 +49,7 @@ function renamePath (browser: NightwatchBrowser, path: string, newFileName: stri
       .perform(() => {
         done()
       })
+  })
 }
 
 module.exports = RenamePath
