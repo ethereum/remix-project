@@ -11,7 +11,7 @@ const folder: string = 'solidity-v0.4.24'
 
 let compiler
 test('setup', function (t) {
-  solc.loadRemoteVersion('v0.4.24+commit.e67f0147', (error, solcVersion) => {
+  solc.loadRemoteVersion('v0.4.26+commit.4563c3fc', (error, solcVersion) => {
     if (error) throw error
     compiler = solcVersion
     t.end()
