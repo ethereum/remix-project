@@ -283,8 +283,10 @@ function runTests(browser: NightwatchBrowser, done: any) {
     .saveScreenshot('./reports/screenshots/remixdrename.png')
     .click('[data-path="folder1/contract_' + browserName + '.sol"]') // rename a file and check
     .pause(1000)
+    .saveScreenshot('./reports/screenshots/remixdrename2.png')
     .renamePath('folder1/contract_' + browserName + '.sol', 'renamed_contract_' + browserName + '.sol', 'folder1/renamed_contract_' + browserName + '.sol')
     .pause(1000)
+    .saveScreenshot('./reports/screenshots/remixdrename3.png')
     .removeFile('folder1/contract_' + browserName + '_toremove.sol', 'localhost')
     .perform(function (done) {
       testImportFromRemixd(browser, () => { done() })
