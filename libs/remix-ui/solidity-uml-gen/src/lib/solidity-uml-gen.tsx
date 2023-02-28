@@ -42,10 +42,8 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading, fileName }: RemixU
 
   const download = useCallback((fileType: UmlFileType) => {
     if (umlCopy.length === 0) {
-      console.log('svg not valid yet!')
       return
     }
-    console.log({ umlCopy })
     umlDownloader.download(umlCopy, fileName, fileType)
   }, [updatedSvg, fileName])
 

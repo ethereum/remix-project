@@ -59,7 +59,6 @@ class ImageUmlDownloadStrategy implements IUmlDownloadStrategy {
       const a = document.createElement('a')
       a.download = fileName.split('/')[1].split('.')[0].concat('.png')
       a.href = png
-      console.log('about to click the link to download the png!!!')
       a.click()
     }
     img.src = url
