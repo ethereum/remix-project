@@ -8,6 +8,7 @@ import { saveAs } from 'file-saver'
 
 import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
+const _paq = window._paq = window._paq || []
 
 export const ContractSelection = (props: ContractSelectionProps) => {
   const { api, compiledFileName, contractsDetails, contractList, compilerInput, modal } = props
@@ -142,6 +143,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   }
 
   const details = () => {
+    _paq.push(['trackEvent', 'compiler', 'compilerDetails', 'display'])
     if (!selectedContract) throw new Error('No contract compiled yet')
 
     const help = {
@@ -185,6 +187,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       </TreeView>
     </div>
     const downloadFn = () => {
+      _paq.push(['trackEvent', 'compiler', 'compilerDetails', 'download'])
       saveAs(new Blob([JSON.stringify(contractProperties, null, '\t')]), `${selectedContract}_compData.json`)
     }
     modal(selectedContract, log, 'Download', downloadFn, 'Close', null)
