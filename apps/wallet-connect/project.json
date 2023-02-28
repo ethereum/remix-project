@@ -17,7 +17,7 @@
           "main": "apps/wallet-connect/src/main.tsx",
           "polyfills": "apps/wallet-connect/src/polyfills.ts",
           "tsConfig": "apps/wallet-connect/tsconfig.app.json",
-          "assets": [],
+          "assets": ["apps/wallet-connect/src/favicon.ico", "apps/wallet-connect/src/assets"],
           "styles": ["apps/wallet-connect/src/css/app.css", "apps/wallet-connect/src/css/index.css"],
           "scripts": [],
           "webpackConfig": "apps/wallet-connect/webpack.config.js"
