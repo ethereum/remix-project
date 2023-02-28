@@ -112,16 +112,22 @@ export const listenOnProviderEvents = (provider) => (reducerDispatch: React.Disp
     const config = plugin.registry.get('config').api
     const editor = plugin.registry.get('editor').api
 
-    if (config.get('currentFile') === path && editor.currentContent() !== content) {
-      if (provider.isReadOnly(path)) return editor.setText(content)
+    if (editor.getText(path) === content) return
+    if (provider.isReadOnly(path)) return editor.setText(path, content)
+
+    if (config.get('currentFile') === path) {
+      // if it's the current file and the content is different:
       dispatch(displayNotification(
         path + ' changed',
         'This file has been changed outside of Remix IDE.',
         'Replace by the new content', 'Keep the content displayed in Remix',
         () => {
-          editor.setText(content)
+          editor.setText(path, content)
         }
       ))
+    } else {
+      // this isn't the current file, we can silently update the model
+      editor.setText(path, content)
     }
   })
 

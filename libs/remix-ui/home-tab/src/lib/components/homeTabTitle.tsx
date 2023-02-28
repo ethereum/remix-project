@@ -52,20 +52,23 @@ function HomeTabTitle() {
 
   return (
     <div className="px-2 pb-2 pt-2 d-flex flex-column border-bottom" id="hTTitleSection">
-      <div className="mr-4 d-flex">
-        <div onClick={() => playRemi()} style={{ filter: themeFilter.filter}} >
-          <BasicLogo classList="align-self-end remixui_home_logoImg" solid={false} />
-        </div>
-        <audio
-          id="remiAudio"
-          muted={false}
-          src="assets/audio/remiGuitar-single-power-chord-A-minor.mp3"
-          ref={remiAudioEl}
-        ></audio>
-      </div>
-      <div className="d-flex justify-content-between">
+      
+      <div className="d-flex py-2 justify-content-between">
+        <div className='d-flex justify-content-start'>
         <span className="h-80 text-uppercase" style={{ fontSize: 'xx-large', fontFamily: "Noah, sans-serif" }}>Remix</span>
-        <span>
+          <div className="ml-2 d-flex">
+            <div onClick={() => playRemi()} >
+              <img className="" src="assets/img/guitarRemiCroped.webp" style={{height: "3rem"}} alt=""></img>
+            </div>
+            <audio
+              id="remiAudio"
+              muted={false}
+              src="assets/audio/remiGuitar-single-power-chord-A-minor.mp3"
+              ref={remiAudioEl}
+            ></audio>
+          </div>
+        </div>
+        <span className="d-flex flex-nowrap">
           <CustomTooltip
             placement={'top'}
             tooltipId="overlay-tooltip"
@@ -78,7 +81,7 @@ function HomeTabTitle() {
                 openLink("https://www.youtube.com/channel/UCjTUPyFEr2xDGN6Cg8nKDaA")
                 _paq.push(['trackEvent', 'hometab', 'socialMedia', 'youtube'])
               }}
-              className="border-0 h-100 btn fab fa-youtube">
+              className="border-0 h-100 btn fab fa-youtube p-1 pl-2">
             </button>
           </CustomTooltip>
 
@@ -94,7 +97,7 @@ function HomeTabTitle() {
                 openLink("https://twitter.com/EthereumRemix")
                 _paq.push(['trackEvent', 'hometab', 'socialMedia', 'twitter'])
               }}
-              className="border-0 h-100 pl-2 btn fab fa-twitter">
+              className="border-0 p-1 h-100 pl-2 btn fab fa-twitter">
             </button>
           </CustomTooltip>
 
@@ -110,7 +113,7 @@ function HomeTabTitle() {
                 openLink("https://www.linkedin.com/company/ethereum-remix/")
                 _paq.push(['trackEvent', 'hometab', 'socialmedia', 'linkedin'])
               }}
-              className="border-0 h-100 pl-2 btn fa fa-linkedin">
+              className="border-0 p-1 h-100 pl-2 btn fa fa-linkedin">
             </button>
           </CustomTooltip>
 
@@ -126,7 +129,7 @@ function HomeTabTitle() {
                 openLink("https://medium.com/remix-ide")
                 _paq.push(['trackEvent', 'hometab', 'socialmedia', 'medium'])
               }}
-              className="border-0 h-100 pl-2 btn fab fa-medium">
+              className="border-0 p-1 h-100 pl-2 btn fab fa-medium">
             </button>
           </CustomTooltip>
 
@@ -139,15 +142,15 @@ function HomeTabTitle() {
           >
             <button
               onClick={() => {
-                openLink("https://gitter.im/ethereum/remix")
-                _paq.push(['trackEvent', 'hometab', 'socialmedia', 'gitter'])
+                openLink("https://discord.gg/mh9hFCKkEq")
+                _paq.push(['trackEvent', 'hometab', 'socialmedia', 'discord'])
               }}
-              className="border-0 h-100 pl-2 btn fab fa-gitter">
+              className="border-0 h-100 p-1 pr-2 btn fab fa-discord">
             </button>
           </CustomTooltip>
         </span>
       </div>
-      <b className="pb-1 text-dark" style={{ fontStyle: 'italic' }}>
+      <b className="py-1 text-dark" style={{ fontStyle: 'italic' }}>
         <FormattedMessage id="home.nativeIDE" />
       </b>
       <div className="pb-1" id="hTGeneralLinks">

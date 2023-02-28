@@ -22,27 +22,32 @@ class VMProvider {
     if (this.worker) this.worker.terminate()
     this.accounts = {}
     this.worker = new Worker(new URL('./worker-vm', import.meta.url))
-    this.worker.postMessage({ cmd: 'init', fork: this.executionContext.getCurrentFork() })
-    
+    const provider = this.executionContext.getProviderObject()
+
     let incr = 0
     const stamps = {}
     this.worker.addEventListener('message', (msg) => {
-      if (stamps[msg.data.stamp]) {
+      if (msg.data.cmd === 'sendAsyncResult' && stamps[msg.data.stamp]) {
         stamps[msg.data.stamp](msg.data.error, msg.data.result)
+      } else if (msg.data.cmd === 'initiateResult') {
+        if (!msg.data.error) {
+          this.provider = {
+            sendAsync: (query, callback) => {
+              const stamp = Date.now() + incr
+              incr++
+              stamps[stamp] = callback
+              this.worker.postMessage({ cmd: 'sendAsync', query, stamp })
+            }
+          }
+          this.web3 = new Web3(this.provider)
+          extend(this.web3)
+          this.accounts = {}
+          this.executionContext.setWeb3(this.executionContext.getProvider(), this.web3)
+        }
       }
     })
-    this.provider = {
-      sendAsync: (query, callback) => {
-        const stamp = Date.now() + incr
-        incr++
-        stamps[stamp] = callback
-        this.worker.postMessage({ cmd: 'sendAsync', query, stamp })
-      }
-    }
-    this.web3 = new Web3(this.provider)
-    extend(this.web3)
-    this.accounts = {}
-    this.executionContext.setWeb3(this.executionContext.getProvider(), this.web3)
+
+    this.worker.postMessage({ cmd: 'init', fork: this.executionContext.getCurrentFork(), nodeUrl: provider?.options['nodeUrl'], blockNumber: provider?.options['blockNumber']})
   }
 
   // TODO: is still here because of the plugin API

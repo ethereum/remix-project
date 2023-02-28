@@ -62,7 +62,7 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
         <label htmlFor='remember' className="form-check-label" data-id="permissionHandlerRememberChoice"><FormattedMessage id='permissionHandler.rememberThisChoice' /></label>
         </div>
       }
-      <button className="btn btn-sm" onClick={reset}><FormattedMessage id='permissionHandler.resetAllPermissions' /></button>
+      <button className="btn-secondary btn-sm" onClick={reset}><FormattedMessage id='permissionHandler.resetAllPermissions' /></button>
     </article>
     <div>{feedback}</div>
   </section>)

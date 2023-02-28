@@ -84,8 +84,6 @@ export class Blockchain extends Plugin {
   setupProviders () {
     const vmProvider = new VMProvider(this.executionContext)
     this.providers = {}
-    this.providers['vm-berlin'] = vmProvider
-    this.providers['vm-london'] = vmProvider
     this.providers['vm'] = vmProvider
     this.providers.injected = new InjectedProvider(this.executionContext)
     this.providers.web3 = new NodeProvider(this.executionContext, this.config)
@@ -93,7 +91,7 @@ export class Blockchain extends Plugin {
 
   getCurrentProvider () {
     const provider = this.getProvider()
-    
+    if (provider && provider.startsWith('vm')) return this.providers['vm']
     if (this.providers[provider]) return this.providers[provider]
     return this.providers.web3 // default to the common type of provider
   }
@@ -182,9 +180,8 @@ export class Blockchain extends Plugin {
         _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment failed: ' + error])
         return this.call('terminal', 'logHtml', log)
       }
-      if (networkInfo.name === 'VM') this.config.set('vm/proxy', address)
-      else this.config.set(`${networkInfo.name}/${networkInfo.currentFork}/${networkInfo.id}/proxy`, address)
       await this.saveDeployedContractStorageLayout(implementationContractObject, address, networkInfo)
+      this.events.emit('newProxyDeployment', address, new Date().toISOString(), implementationContractObject.contractName)
       _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment successful'])
       this.call('udapp', 'addInstance', addressToString(address), implementationContractObject.abi, implementationContractObject.name)
     }
@@ -238,23 +235,40 @@ export class Blockchain extends Plugin {
   }
 
   async saveDeployedContractStorageLayout (contractObject, proxyAddress, networkInfo) {
-      const { contractName, implementationAddress, contract } = contractObject
-      const hasPreviousDeploys = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`)
+      const { contractName, implementationAddress } = contractObject
+      const networkName = networkInfo.name === 'custom' ? networkInfo.name + '-' + networkInfo.id : networkInfo.name
+      const hasPreviousDeploys = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`)
       // TODO: make deploys folder read only.
       if (hasPreviousDeploys) {
-        const deployments = await this.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`)
+        const deployments = await this.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`)
         const parsedDeployments = JSON.parse(deployments)
+        const proxyDeployment = parsedDeployments.deployments[proxyAddress]
 
+        if (proxyDeployment) {
+          const oldImplementationAddress = proxyDeployment.implementationAddress
+          const hasPreviousBuild = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkName}/solc-${oldImplementationAddress}.json`)
+
+          if (hasPreviousBuild) await this.call('fileManager', 'remove', `.deploys/upgradeable-contracts/${networkName}/solc-${oldImplementationAddress}.json`)
+        }
         parsedDeployments.deployments[proxyAddress] = {
           date: new Date().toISOString(),
           contractName: contractName,
           fork: networkInfo.currentFork,
           implementationAddress: implementationAddress,
-          layout: contract.object.storageLayout
+          solcOutput: contractObject.compiler.data,
+          solcInput: contractObject.compiler.source
         }
-        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`, JSON.stringify(parsedDeployments, null, 2))
+        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/solc-${implementationAddress}.json`, JSON.stringify({
+          solcInput: contractObject.compiler.source,
+          solcOutput: contractObject.compiler.data
+        }, null, 2))
+        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`, JSON.stringify(parsedDeployments, null, 2))
       } else {
-        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkInfo.name}/UUPS.json`, JSON.stringify({
+        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/solc-${implementationAddress}.json`, JSON.stringify({
+          solcInput: contractObject.compiler.source,
+          solcOutput: contractObject.compiler.data
+        }, null, 2))
+        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`, JSON.stringify({
           id: networkInfo.id,
           network: networkInfo.name,
           deployments: {
@@ -262,8 +276,7 @@ export class Blockchain extends Plugin {
               date: new Date().toISOString(),
               contractName: contractName,
               fork: networkInfo.currentFork,
-              implementationAddress: implementationAddress,
-              layout: contract.object.storageLayout
+              implementationAddress: implementationAddress
             }
           }
         }, null, 2))

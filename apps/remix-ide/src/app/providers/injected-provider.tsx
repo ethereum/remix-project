@@ -1,12 +1,15 @@
 /* global ethereum */
+import React from 'react' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import { JsonDataRequest, RejectRequest, SuccessRequest } from '../providers/abstract-provider'
 import Web3 from 'web3'
+import { IProvider } from './abstract-provider'
 
 const noInjectedProviderMsg = 'No injected provider found. Make sure your provider (e.g. MetaMask) is active and running (when recently activated you may have to reload the page).'
 
-export class InjectedProvider extends Plugin {
+export class InjectedProvider extends Plugin implements IProvider {
   provider: any
+  options: { [id: string] : any } = {}
 
   constructor (profile) {
     super(profile)
@@ -23,16 +26,24 @@ export class InjectedProvider extends Plugin {
     }
   }
 
+  body (): JSX.Element {
+    return (
+      <div></div>
+    )
+  }
+
   async init () {
     const injectedProvider = (window as any).ethereum
     if (injectedProvider === undefined) {
+      this.call('notification', 'toast', noInjectedProviderMsg)
       throw new Error(noInjectedProviderMsg)
     } else {
       if (injectedProvider && injectedProvider._metamask && injectedProvider._metamask.isUnlocked) {
-        if (!await injectedProvider._metamask.isUnlocked()) throw new Error('Please make sure the injected provider is unlocked (e.g Metamask).')
+        if (!await injectedProvider._metamask.isUnlocked()) this.call('notification', 'toast', 'Please make sure the injected provider is unlocked (e.g Metamask).')
       }
       this.askPermission(true)
     }
+    return {}
   }
 
   sendAsync (data: JsonDataRequest): Promise<any> {
@@ -50,7 +61,6 @@ export class InjectedProvider extends Plugin {
     }
     try {
       if ((window as any) && typeof (window as any).ethereum.request === "function") (window as any).ethereum.request({ method: "eth_requestAccounts" });
-      if (!await (window as any).ethereum._metamask.isUnlocked()) this.call('notification', 'toast', 'Please make sure the injected provider is unlocked (e.g Metamask).')
       const resultData = await this.provider.currentProvider.send(data.method, data.params)
       resolve({ jsonrpc: '2.0', result: resultData.result, id: data.id })
     } catch (error) {

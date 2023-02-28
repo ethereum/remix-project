@@ -258,6 +258,12 @@ export function compareByteCode (code1, code2) {
   code2 = extractcborMetadata(code2)
 
   if (code1 && code2) {
+    if (code1.length !== code2.length) {
+      // if the length isn't the same, we have an issue with extracting the metadata hash.
+      const minLength = code1.length > code2.length ? code2.length: code1.length
+      code1 = code1.substr(0, minLength - 10)
+      code2 = code2.substr(0, minLength - 10) 
+    }
     const compare = stringSimilarity.compareTwoStrings(code1, code2)
     return compare == 1
   }
@@ -294,12 +300,12 @@ function removeByIndex (code, index, length, emptyRef) {
 
 function removeImmutableReference (code1, code2) {
   try {
-    const refOccurence = code2.match(/7f000000000000000000000000000000000000000000000000000000000000000073/g)
+    const refOccurence = code2.match(/7f0000000000000000000000000000000000000000000000000000000000000000/g)
     if (!refOccurence) return code1
     let offset = 0
     refOccurence.map((value) => {
       offset = code2.indexOf(value, offset)
-      code1 = removeByIndex(code1, offset, value.length, '7f000000000000000000000000000000000000000000000000000000000000000073')
+      code1 = removeByIndex(code1, offset, value.length, '7f0000000000000000000000000000000000000000000000000000000000000000')
       offset = offset + 1
     })
   } catch (e) {
