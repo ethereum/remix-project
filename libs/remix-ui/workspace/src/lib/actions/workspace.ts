@@ -398,7 +398,7 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
       const modalContent: AppModal = {
         id: 'overwriteUploadFile',
         title: 'Confirm overwrite',
-        message: `The file ${name} already exists! Would you like to overwrite it?`,
+        message: `The file "${name}" already exists! Would you like to overwrite it?`,
         modalType: ModalTypes.confirm,
         okLabel: 'OK',
         cancelLabel: 'Cancel',
@@ -423,7 +423,7 @@ export const uploadFolder = async (target, targetFolder: string, cb?: (err: Erro
       const modalContent: AppModal = {
         id: 'overwriteUploadFolderFile',
         title: 'Confirm overwrite',
-        message: `The file ${name} already exists! Would you like to overwrite it?`,
+        message: `The file "${name}" already exists! Would you like to overwrite it?`,
         modalType: ModalTypes.confirm,
         okLabel: 'OK',
         cancelLabel: 'Cancel',
