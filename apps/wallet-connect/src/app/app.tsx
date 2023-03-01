@@ -1,7 +1,7 @@
-import React from 'react';
-import './App.css';
+import React from 'react'
+import '../css/app';
 import '@fortawesome/fontawesome-free/css/all.css'
-import { RemixClient, INFURA_ID_KEY } from './RemixClient'
+import { RemixClient, INFURA_ID_KEY } from '../services/RemixClient'
 const p = new RemixClient()
 function App() {
 
@@ -53,4 +53,4 @@ function App() {
   );
 }
 
-export default App;
+export default App
