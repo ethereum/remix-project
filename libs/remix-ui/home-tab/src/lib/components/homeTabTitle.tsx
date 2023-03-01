@@ -68,7 +68,7 @@ function HomeTabTitle() {
             ></audio>
           </div>
         </div>
-        <span>
+        <span className="d-flex flex-nowrap">
           <CustomTooltip
             placement={'top'}
             tooltipId="overlay-tooltip"
@@ -81,7 +81,7 @@ function HomeTabTitle() {
                 openLink("https://www.youtube.com/channel/UCjTUPyFEr2xDGN6Cg8nKDaA")
                 _paq.push(['trackEvent', 'hometab', 'socialMedia', 'youtube'])
               }}
-              className="border-0 h-100 btn fab fa-youtube">
+              className="border-0 h-100 btn fab fa-youtube p-1 pl-2">
             </button>
           </CustomTooltip>
 
@@ -97,7 +97,7 @@ function HomeTabTitle() {
                 openLink("https://twitter.com/EthereumRemix")
                 _paq.push(['trackEvent', 'hometab', 'socialMedia', 'twitter'])
               }}
-              className="border-0 p-2 h-100 pl-2 btn fab fa-twitter">
+              className="border-0 p-1 h-100 pl-2 btn fab fa-twitter">
             </button>
           </CustomTooltip>
 
@@ -113,7 +113,7 @@ function HomeTabTitle() {
                 openLink("https://www.linkedin.com/company/ethereum-remix/")
                 _paq.push(['trackEvent', 'hometab', 'socialmedia', 'linkedin'])
               }}
-              className="border-0 p-2 h-100 pl-2 btn fa fa-linkedin">
+              className="border-0 p-1 h-100 pl-2 btn fa fa-linkedin">
             </button>
           </CustomTooltip>
 
@@ -129,7 +129,7 @@ function HomeTabTitle() {
                 openLink("https://medium.com/remix-ide")
                 _paq.push(['trackEvent', 'hometab', 'socialmedia', 'medium'])
               }}
-              className="border-0 p-2 h-100 pl-2 btn fab fa-medium">
+              className="border-0 p-1 h-100 pl-2 btn fab fa-medium">
             </button>
           </CustomTooltip>
 
@@ -145,7 +145,7 @@ function HomeTabTitle() {
                 openLink("https://discord.gg/mh9hFCKkEq")
                 _paq.push(['trackEvent', 'hometab', 'socialmedia', 'discord'])
               }}
-              className="border-0 h-100 p-2 btn fab fa-discord">
+              className="border-0 h-100 p-1 pr-2 btn fab fa-discord">
             </button>
           </CustomTooltip>
         </span>

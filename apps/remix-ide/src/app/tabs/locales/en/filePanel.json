@@ -10,7 +10,8 @@
   "filePanel.workspace.delete": "Delete Workspace",
   "filePanel.workspace.deleteConfirm": "Are you sure to delete the current workspace?",
   "filePanel.workspace.deleteAll": "Delete All Workspaces",
-  "filePanel.workspace.deleteAllConfirm": "Are you absolutely sure you want to delete all your workspaces? Deleted workspaces can not be restored in any manner.",
+  "filePanel.workspace.deleteAllConfirm1": "Are you absolutely sure you want to delete all your workspaces?",
+  "filePanel.workspace.deleteAllConfirm2": "Deleted workspaces can not be restored in any manner.",
   "filePanel.workspace.name": "Workspace name",
   "filePanel.workspace.chooseTemplate": "Choose a template",
   "filePanel.workspace.download": "Backup Workspaces",
@@ -54,5 +55,6 @@
   "filePanel.customizeTemplate": "Customize template",
   "filePanel.features": "Features",
   "filePanel.upgradeability": "Upgradeability",
-  "filePanel.ok": "OK"
+  "filePanel.ok": "OK",
+  "filePanel.cancel": "Cancel"
 }

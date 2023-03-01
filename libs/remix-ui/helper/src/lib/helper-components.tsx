@@ -119,7 +119,7 @@ export const upgradeWithProxyMsg = () => (
 
 export const unavailableProxyLayoutMsg = () => (
   <div>
-    <p>Previous contract implementation is NOT available for upgrade comparison. <br /> A new storage layout will be saved for future upgrades.</p>
+    <p>The previous contract implementation is NOT available for an upgrade comparison<br /> A new storage layout will be saved for future upgrades.</p>
   </div>
 )
 
