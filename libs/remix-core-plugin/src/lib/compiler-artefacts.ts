@@ -5,7 +5,7 @@ import { CompilerAbstract } from '@remix-project/remix-solidity'
 
 const profile = {
   name: 'compilerArtefacts',
-  methods: ['get', 'addResolvedContract', 'getCompilerAbstract', 'getAllContractDatas', 'getLastCompilationResult', 'getArtefactsByContractName', 'getContractDataFromAddress'],
+  methods: ['get', 'addResolvedContract', 'getCompilerAbstract', 'getAllContractDatas', 'getLastCompilationResult', 'getArtefactsByContractName', 'getContractDataFromAddress', 'getContractDataFromByteCode'],
   events: [],
   version: '0.0.1'
 }
@@ -98,16 +98,17 @@ export class CompilerArtefacts extends Plugin {
    filterAllContractDatas (filter) {
     const contractsData = {}
     Object.keys(this.compilersArtefactsPerFile).map((targetFile) => {
-      const contracts = this.compilersArtefactsPerFile[targetFile].getContracts()
+      const artefact = this.compilersArtefactsPerFile[targetFile]
+      const contracts = artefact.getContracts()
       Object.keys(contracts).map((file) => {
-        if (filter(file, contracts[file])) contractsData[file] = contracts[file]
+        if (filter(file, contracts[file], artefact)) contractsData[file] = contracts[file]
       })
     })
     // making sure we save last compilation result in there
     if (this.compilersArtefacts.__last) {
       const contracts = this.compilersArtefacts.__last.getContracts()
       Object.keys(contracts).map((file) => {
-        if (filter(file, contracts[file])) contractsData[file] = contracts[file]
+        if (filter(file, contracts[file], this.compilersArtefacts.__last)) contractsData[file] = contracts[file]
       })
     }
     return contractsData
@@ -194,8 +195,20 @@ export class CompilerArtefacts extends Plugin {
     }
   }
 
-  getCompilerAbstract (file) {
-    return this.compilersArtefactsPerFile[file]
+  async getCompilerAbstract (file) {
+    if (!file) return null
+    if (this.compilersArtefactsPerFile[file]) return this.compilersArtefactsPerFile[file]
+    const path = await this.call('fileManager', 'getPathFromUrl', file)
+
+    if (path && path.file && this.compilersArtefactsPerFile[path.file]) return this.compilersArtefactsPerFile[path.file]
+
+    let artefact = null
+    this.filterAllContractDatas((localFile, data, parentArtefact) => {
+      if (localFile === file || (path && path.file && localFile === path.file)) {
+        artefact = parentArtefact
+      }
+    })
+    return artefact
   }
 
   addResolvedContract (address: string, compilerData: CompilerAbstract) {
@@ -212,12 +225,16 @@ export class CompilerArtefacts extends Plugin {
 
   async getContractDataFromAddress (address) {
     const code = await this.call('blockchain', 'getCode', address)
+    return this.getContractDataFromByteCode(code)
+  }
+
+  async getContractDataFromByteCode (code) {
     let found
     this.filterAllContractDatas((file, contractsData) => {
       for (const name of Object.keys(contractsData)) {
         const contract = contractsData[name]
         if (util.compareByteCode(code, '0x' + contract.evm.deployedBytecode.object)) {
-          found = { name, contract }
+          found = { name, contract, file }
           return true
         }
       }

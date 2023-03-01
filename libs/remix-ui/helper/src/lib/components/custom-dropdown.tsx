@@ -30,7 +30,7 @@ export const CustomIconsToggle = React.forwardRef(({ onClick, icon, className = 
     className={`${className.replace('dropdown-toggle', '')} mb-0 pb-0 d-flex justify-content-end align-items-end remixuimenuicon_shadow fs-3`}
     data-id="workspaceMenuDropdown"
   >
-    { icon && <i style={{ fontSize: 'large' }} className={`${icon}`} data-icon="workspaceDropdownMenuIcon"></i> }
+    { icon && <i style={{ fontSize: 'large' }} className={`${icon}`} data-id="workspaceDropdownMenuIcon"></i> }
   </span>
 ))
 
@@ -48,7 +48,7 @@ export const CustomMenu = React.forwardRef(
       >
         <ul className="overflow-auto list-unstyled mb-0" style={{ maxHeight: height+'px' }}>
           {
-           children
+            children
           }
         </ul>
       </div>
