@@ -115,21 +115,8 @@
     min-width: 8rem;
   }
 
-  .remixui_menuhr{
-
-  }
-
-  #workspacesMenuDropdown>div>ul>a:nth-child(6):hover {
-    background-color: rgba(0,0,0,0)
-  }
-
-  #workspacesMenuDropdown>div>ul>a:nth-child(4):hover {
-    background-color: rgba(0, 0, 0, 0)
-  }
-
   #workspacesMenuDropdown > div > ul > a:hover {
     background-color: var(--secondary);
-    /* border: 1px solid var(--secondary); */
     border-radius: 2px;
     color: var(--text)
   }

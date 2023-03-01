@@ -35,10 +35,11 @@ export class InjectedProvider extends Plugin implements IProvider {
   async init () {
     const injectedProvider = (window as any).ethereum
     if (injectedProvider === undefined) {
+      this.call('notification', 'toast', noInjectedProviderMsg)
       throw new Error(noInjectedProviderMsg)
     } else {
       if (injectedProvider && injectedProvider._metamask && injectedProvider._metamask.isUnlocked) {
-        if (!await injectedProvider._metamask.isUnlocked()) throw new Error('Please make sure the injected provider is unlocked (e.g Metamask).')
+        if (!await injectedProvider._metamask.isUnlocked()) this.call('notification', 'toast', 'Please make sure the injected provider is unlocked (e.g Metamask).')
       }
       this.askPermission(true)
     }
@@ -60,7 +61,6 @@ export class InjectedProvider extends Plugin implements IProvider {
     }
     try {
       if ((window as any) && typeof (window as any).ethereum.request === "function") (window as any).ethereum.request({ method: "eth_requestAccounts" });
-      if (!await (window as any).ethereum._metamask.isUnlocked()) this.call('notification', 'toast', 'Please make sure the injected provider is unlocked (e.g Metamask).')
       const resultData = await this.provider.currentProvider.send(data.method, data.params)
       resolve({ jsonrpc: '2.0', result: resultData.result, id: data.id })
     } catch (error) {

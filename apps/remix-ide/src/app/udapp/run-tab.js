@@ -131,6 +131,12 @@ export class RunTab extends ViewPlugin {
       })
     }
 
+    // basic injected
+    const displayNameInjected = `Injected Provider${(window && window.ethereum && !(window.ethereum.providers && !window.ethereum.selectedProvider)) ?
+      window.ethereum.isCoinbaseWallet || window.ethereum.selectedProvider?.isCoinbaseWallet ? ' - Coinbase' :
+      window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet ? ' - Brave' :
+      window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask ? ' - MetaMask' : '' : ''}`    
+    await addProvider('injected', displayNameInjected, true, false)
     // VM
     const titleVM = 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.'
     await addProvider('vm-merge', 'Remix VM (Merge)', false, true, 'merge', 'settingsVMMergeMode', titleVM)
@@ -142,20 +148,17 @@ export class RunTab extends ViewPlugin {
     await addProvider('vm-custom-fork', 'Remix VM - Custom fork', false, true, '', 'settingsVMCustomMode', titleVM)
 
     // external provider
-    await addProvider('hardhat-provider', 'Hardhat Provider', false, false)
-    await addProvider('ganache-provider', 'Ganache Provider', false, false)
-    await addProvider('foundry-provider', 'Foundry Provider', false, false)
-    await addProvider('walletconnect', 'Wallet Connect', false, false)
-    await addProvider('basic-http-provider', 'External Http Provider', false, false)
+    await addProvider('basic-http-provider', 'Custom - External Http Provider', false, false)
+    await addProvider('hardhat-provider', 'Dev - Hardhat Provider', false, false)
+    await addProvider('ganache-provider', 'Dev - Ganache Provider', false, false)
+    await addProvider('foundry-provider', 'Dev - Foundry Provider', false, false)    
     
-    // injected provider
-    const displayNameInjected = `Injected Provider${(window && window.ethereum && !(window.ethereum.providers && !window.ethereum.selectedProvider)) ?
-      window.ethereum.isCoinbaseWallet || window.ethereum.selectedProvider?.isCoinbaseWallet ? ' - Coinbase' :
-      window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet ? ' - Brave' :
-      window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask ? ' - MetaMask' : '' : ''}`
-    await addProvider('injected', displayNameInjected, true, false)
-    await addProvider('injected-optimism-provider', 'Optimism Provider', true, false)
-    await addProvider('injected-arbitrum-one-provider', 'Arbitrum One Provider', true, false)    
+    // injected provider    
+    await addProvider('injected-optimism-provider', 'L2 - Optimism Provider', true, false)
+    await addProvider('injected-arbitrum-one-provider', 'L2 - Arbitrum One Provider', true, false)
+  
+    await addProvider('walletconnect', 'Wallet Connect', false, false)
+    
   }
 
   writeFile (fileName, content) {
