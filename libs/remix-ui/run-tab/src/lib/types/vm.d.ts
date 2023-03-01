@@ -3,7 +3,7 @@ declare class VMProvider {
     constructor(executionContext: any);
     executionContext: any;
     getAccounts(cb: any): void;
-    resetEnvironment(): void;
+    resetEnvironment(): Promise<void>;
     accounts: any;
     RemixSimulatorProvider: any;
     web3: any;

@@ -16,7 +16,7 @@ class InjectedProvider {
     })
   }
 
-  resetEnvironment () {
+  async resetEnvironment () {
      /* Do nothing. */ 
   }
 
