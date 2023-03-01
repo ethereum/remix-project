@@ -4,7 +4,7 @@ declare class InjectedProvider {
     executionContext: any;
     getAccounts(cb: any): any;
     newAccount(passwordPromptCb: any, cb: any): void;
-    resetEnvironment(): void;
+    resetEnvironment(): Promise<void>;
     getBalanceInEther(address: any, cb: any): void;
     getGasPrice(cb: any): void;
     signMessage(message: any, account: any, _passphrase: any, cb: any): void;

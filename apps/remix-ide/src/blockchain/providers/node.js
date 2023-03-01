@@ -24,7 +24,7 @@ class NodeProvider {
     })
   }
 
-  resetEnvironment () {
+  async resetEnvironment () {
      /* Do nothing. */
   }
 
