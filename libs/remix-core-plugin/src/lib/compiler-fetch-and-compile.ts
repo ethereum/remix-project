@@ -100,12 +100,11 @@ export class FetchAndCompile extends Plugin {
       if (compilation) {
         let found = false
         compilation.visitContracts((contract) => {
-          found = util.compareByteCode('0x' + contract.object.evm.deployedBytecode.object, codeAtAddress)
+          found = util.compareByteCode(codeAtAddress, '0x' + contract.object.evm.deployedBytecode.object)
           return found
         })
         if (found) {
           await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compilation)
-          setTimeout(_ => this.emit('usingLocalCompilation', contractAddress), 0)
           return compilation
         }
       }

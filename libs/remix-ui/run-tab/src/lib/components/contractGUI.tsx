@@ -280,7 +280,7 @@ export function ContractGUI (props: ContractGUIProps) {
             className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`}
             data-id={buttonOptions.dataId}
             data-title={buttonOptions.title}
-            disabled={toggleUpgradeImp && !proxyAddress}
+            disabled={(toggleUpgradeImp && !proxyAddress) || props.disabled}
           >
             <CustomTooltip
               placement={"right-start"}
@@ -415,6 +415,7 @@ export function ContractGUI (props: ContractGUIProps) {
                 onClick={handleExpandMultiClick}
                 data-id={buttonOptions.dataId}
                 className={`udapp_instanceButton ${buttonOptions.classList}`}
+                disabled={props.disabled}
               >
                 {buttonOptions.content}
               </button>
