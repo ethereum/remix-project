@@ -45,10 +45,6 @@ export class DebuggerTab extends DebuggerApiMixin(ViewPlugin) {
       this.call('notification', 'toast', notFoundToastMsg(contractAddress))
     })
 
-    this.on('fetchAndCompile', 'usingLocalCompilation', (contractAddress) => {
-      this.call('notification', 'toast', localCompilationToastMsg())
-    })
-
     this.on('fetchAndCompile', 'sourceVerificationNotAvailable', () => {
       this.call('notification', 'toast', sourceVerificationNotAvailableToastMsg())
     })

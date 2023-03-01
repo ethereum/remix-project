@@ -224,6 +224,7 @@ export type MainnetPrompt = (
   ) => JSX.Element
 
 export interface ContractDropdownProps {
+  selectedAccount: string,
   exEnvironment: string,
   contracts: {
     contractList: ContractList,
