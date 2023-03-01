@@ -10,12 +10,30 @@ const noInjectedProviderMsg = 'No injected provider found. Make sure your provid
 export class InjectedProvider extends Plugin implements IProvider {
   provider: any
   options: { [id: string] : any } = {}
+  listenerAccountsChanged: (accounts: Array<string>) => void
+  listenerChainChanged: (chainId: number) => void
 
   constructor (profile) {
     super(profile)
     if ((window as any).ethereum) {
       this.provider = new Web3((window as any).ethereum)
     }
+  }
+
+  onActivation(): void {
+    this.listenerAccountsChanged = (accounts: Array<string>) => {
+      this.emit('accountsChanged', accounts)
+    }
+    this.listenerChainChanged = (chainId: number) => {
+      this.emit('chainChanged', chainId)
+    }
+    (window as any).ethereum.on('accountsChanged', this.listenerAccountsChanged);
+    (window as any).ethereum.on('chainChanged', this.listenerChainChanged);
+  }
+
+  onDeactivation(): void {
+    (window as any).ethereum.removeListener('accountsChanged', this.listenerAccountsChanged)
+    (window as any).ethereum.removeListener('chainChanged', this.listenerChainChanged)
   }
 
   askPermission (throwIfNoInjectedProvider) {

@@ -322,6 +322,7 @@ export const updateInstanceBalance = (plugin: RunTab) => {
   if (plugin.REACT_API?.instances?.instanceList?.length) {
     for (const instance of plugin.REACT_API.instances.instanceList) {
       plugin.blockchain.getBalanceInEther(instance.address, (err, balInEth) => {
+        console.log('balance of ',instance.address, balInEth)
         if (!err) instance.balance = balInEth
       })
     }

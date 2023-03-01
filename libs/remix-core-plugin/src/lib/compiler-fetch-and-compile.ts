@@ -134,7 +134,18 @@ export class FetchAndCompile extends Plugin {
     if (!data) {
       setTimeout(_ => this.emit('notFound', contractAddress), 0)
       this.unresolvedAddresses.push(contractAddress)
-      return localCompilation()
+      const compilation = await localCompilation()
+      if (compilation) {
+        let found = false
+        compilation.visitContracts((contract) => {
+          found = util.compareByteCode(codeAtAddress, '0x' + contract.object.evm.deployedBytecode.object)
+          return found
+        })
+        if (found) {
+          await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compilation)
+          return compilation
+        }
+      }
     }
     const { settings, compilationTargets } = data
    
