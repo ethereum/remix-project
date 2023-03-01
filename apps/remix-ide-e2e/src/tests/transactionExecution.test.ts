@@ -227,11 +227,9 @@ module.exports = {
         {
           selector: 'select[data-id="runTabSelectAccount"] option[value="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]',
           timeout: 120000,
-          abortOnFailure: false
+          abortOnFailure: true
         }
       ) // wait for the udapp to load the list of accounts
-      .getBrowserLogs()
-      /*
       .selectContract('MyResolver')
       .createContract('')
       .clickInstance(0)
@@ -243,7 +241,6 @@ module.exports = {
         browser.verifyCallReturnValue(addressRef, ['0:address: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'])
           .perform(() => done())
       })
-      */
   }
 }
 
