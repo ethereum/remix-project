@@ -44,7 +44,7 @@ export function InstanceContainerUI (props: InstanceContainerProps) {
       { instanceList.length > 0
         ? <div> { props.instances.instanceList.map((instance, index) => {
           return <UniversalDappUI
-            key={instance.address}
+            key={index}
             instance={instance}
             context={props.getContext()}
             removeInstance={props.removeInstance}
