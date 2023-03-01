@@ -119,8 +119,6 @@ class AppComponent {
     this.engine = new RemixEngine()
     this.engine.register(appManager);
 
-
-
     const matomoDomains = {
       'remix-alpha.ethereum.org': 27,
       'remix-beta.ethereum.org': 25,
@@ -450,7 +448,11 @@ class AppComponent {
               if (
                 this.appManager.pluginLoader.current === 'queryParams' &&
                 this.workspace.length > 0
-              ) { this.menuicons.select(this.workspace[this.workspace.length - 1]) }
+              ) {
+                this.menuicons.select(this.workspace[this.workspace.length - 1])
+              } else {
+                this.appManager.call('tabs', 'focus', 'home')
+              }
             }
 
             if (params.call) {
@@ -484,19 +486,16 @@ class AppComponent {
                 }
               }
             }
-
-
           })
           .catch(console.error)
       }
       const loadedElement = document.createElement('span')
       loadedElement.setAttribute('data-id', 'apploaded')
       document.body.appendChild(loadedElement)
-
     })
+
     // activate solidity plugin
     this.appManager.activatePlugin(['solidity', 'udapp', 'deploy-libraries', 'link-libraries', 'openzeppelin-proxy'])
-    // Load and start the service who manager layout and frame
   }
 }
 
