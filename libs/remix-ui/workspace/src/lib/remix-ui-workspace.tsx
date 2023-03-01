@@ -73,11 +73,11 @@ export function Workspace () {
   }, [currentWorkspace])
 
   const renameCurrentWorkspace = () => {
-    global.modal(intl.formatMessage({ id: 'filePanel.workspace.rename' }), renameModalMessage(), intl.formatMessage({ id: 'filePanel.ok' }), onFinishRenameWorkspace, '')
+    global.modal(intl.formatMessage({ id: 'filePanel.workspace.rename' }), renameModalMessage(), intl.formatMessage({ id: 'filePanel.ok' }), onFinishRenameWorkspace,  intl.formatMessage({ id: 'filePanel.cancel' }))
   }
 
   const createWorkspace = () => {
-    global.modal(intl.formatMessage({ id: 'filePanel.workspace.create' }), createModalMessage(), intl.formatMessage({ id: 'filePanel.ok' }), onFinishCreateWorkspace, '')
+    global.modal(intl.formatMessage({ id: 'filePanel.workspace.create' }), createModalMessage(), intl.formatMessage({ id: 'filePanel.ok' }), onFinishCreateWorkspace,  intl.formatMessage({ id: 'filePanel.cancel' }))
   }
 
   const deleteCurrentWorkspace = () => {
@@ -86,17 +86,22 @@ export function Workspace () {
       intl.formatMessage({ id: 'filePanel.workspace.deleteConfirm' }),
       intl.formatMessage({ id: 'filePanel.ok' }),
       onFinishDeleteWorkspace,
-      ''
+      intl.formatMessage({ id: 'filePanel.cancel' })
     )
   }
 
   const deleteAllWorkspaces = () => {
     global.modal(
       intl.formatMessage({ id: 'filePanel.workspace.deleteAll' }),
-      intl.formatMessage({ id: 'filePanel.workspace.deleteAllConfirm' }),
+      <>
+        <div className="d-flex flex-column">
+          <span className='pb-1'>{intl.formatMessage({ id: 'filePanel.workspace.deleteAllConfirm1' })}</span>
+          <span>{intl.formatMessage({ id: 'filePanel.workspace.deleteAllConfirm2' })}</span>
+        </div>
+      </>,
       intl.formatMessage({ id: 'filePanel.ok' }),
       onFinishDeleteAllWorkspaces,
-      ''
+      intl.formatMessage({ id: 'filePanel.cancel' })
     )
   }
 
@@ -106,7 +111,7 @@ export function Workspace () {
       cloneModalMessage(),
       intl.formatMessage({ id: 'filePanel.ok' }),
       handleTypingUrl,
-      ''
+      intl.formatMessage({ id: 'filePanel.cancel' })
     )
   }
 
@@ -146,7 +151,7 @@ export function Workspace () {
     try {
       await global.dispatchRenameWorkspace(currentWorkspace, workspaceName)
     } catch (e) {
-      global.modal(intl.formatMessage({ id: 'filePanel.workspace.rename' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, '')
+      global.modal(intl.formatMessage({ id: 'filePanel.workspace.rename' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, intl.formatMessage({ id: 'filePanel.cancel' }))
       console.error(e)
     }
   }
@@ -172,7 +177,7 @@ export function Workspace () {
     try {
       await global.dispatchCreateWorkspace(workspaceName, workspaceTemplateName, opts, initGitRepo)
     } catch (e) {
-      global.modal(intl.formatMessage({ id: 'filePanel.workspace.create' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, '')
+      global.modal(intl.formatMessage({ id: 'filePanel.workspace.create' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, intl.formatMessage({ id: 'filePanel.cancel' }))
       console.error(e)
     }
   }
@@ -181,7 +186,7 @@ export function Workspace () {
     try {
       await global.dispatchDeleteWorkspace(global.fs.browser.currentWorkspace)
     } catch (e) {
-      global.modal(intl.formatMessage({ id: 'filePanel.workspace.delete' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, '')
+      global.modal(intl.formatMessage({ id: 'filePanel.workspace.delete' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, intl.formatMessage({ id: 'filePanel.cancel' }))
       console.error(e)
     }
   }
@@ -190,7 +195,7 @@ export function Workspace () {
     try {
       await global.dispatchDeleteAllWorkspaces()
     } catch (e) {
-      global.modal(intl.formatMessage({ id: 'filePanel.workspace.deleteAll' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, '')
+      global.modal(intl.formatMessage({ id: 'filePanel.workspace.deleteAll' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, intl.formatMessage({ id: 'filePanel.cancel' }))
       console.error(e)
     }
   }
@@ -204,7 +209,7 @@ export function Workspace () {
       await global.dispatchSwitchToWorkspace(name)
       global.dispatchHandleExpandPath([])
     } catch (e) {
-      global.modal(intl.formatMessage({ id: 'filePanel.workspace.switch' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, '')
+      global.modal(intl.formatMessage({ id: 'filePanel.workspace.switch' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, intl.formatMessage({ id: 'filePanel.cancel' }))
       console.error(e)
     }
   }
@@ -240,7 +245,7 @@ export function Workspace () {
         intl.formatMessage({ id: 'filePanel.workspace.cloneMessage' }),
         intl.formatMessage({ id: 'filePanel.ok' }),
         () => {},
-        ''
+        intl.formatMessage({ id: 'filePanel.cancel' })
       )
     }
   }
@@ -279,7 +284,7 @@ export function Workspace () {
       }
     } catch (e) {
       console.error(e)
-      global.modal(intl.formatMessage({ id: 'filePanel.checkoutGitBranch' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {})
+      global.modal(intl.formatMessage({ id: 'filePanel.checkoutGitBranch' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, intl.formatMessage({ id: 'filePanel.cancel' }))
     }
   }
 
@@ -288,7 +293,7 @@ export function Workspace () {
       await global.dispatchCreateNewBranch(branchFilter)
       _paq.push(['trackEvent', 'Workspace', 'GIT', 'switch_to_new_branch'])
     } catch (e) {
-      global.modal(intl.formatMessage({ id: 'filePanel.checkoutGitBranch' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {})
+      global.modal(intl.formatMessage({ id: 'filePanel.checkoutGitBranch' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, intl.formatMessage({ id: 'filePanel.cancel' }))
     }
   }
 

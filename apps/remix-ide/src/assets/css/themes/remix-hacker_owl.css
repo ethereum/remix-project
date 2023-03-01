@@ -13,7 +13,7 @@
   --cyan: #355f7d;
   --white: #fff;
   --gray: #8B99A6;
-  --gray-dark: #343a40;
+  --gray-dark: #8694a1;
   --primary: #007aa6;
   --secondary: #0E2A3E;
   --success: #C4E07F;
@@ -4491,7 +4491,7 @@ a.badge-dark:focus {
 }
 .alert-primary {
   color: #fff;
-  background-color: #5CBDEE;
+  background-color: #5cbdee94;
   border-color: #5CBDEE;
 }
 .alert-primary hr {
