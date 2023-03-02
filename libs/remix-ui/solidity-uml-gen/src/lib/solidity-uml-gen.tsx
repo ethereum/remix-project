@@ -77,10 +77,16 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading }: RemixUiSolidityU
   }
 
   const DefaultInfo = () => (
-    <div className="d-flex flex-column justify-content-center align-items-center mt-5">
-      <h2 className="h2 align-self-start"><p>To view your contract as a Uml Diragram</p></h2>
-      <h3 className="h4 align-self-start"><p>Right Click on your contract file (Usually ends with .sol)</p></h3>
-      <h3 className="h4 align-self-start"><p>Click on Generate UML</p></h3>
+    <div className="d-flex flex-column justify-content-center align-items-center mt-5 ml-5">
+      <h2 className="h2 align-self-start"><p>To view your contract as a UML Diagram</p></h2>
+      <ul className="ml-3 justify-content-start align-self-start">
+        <li>
+          <h3 className="h4 align-self-start"><p>Right click on your contract file</p></h3>
+        </li>
+        <li>
+          <h3 className="h4 align-self-start"><p>Click on <b>Generate UML</b></p></h3>
+        </li>
+      </ul>
     </div>
   )
   const Display = () => {
