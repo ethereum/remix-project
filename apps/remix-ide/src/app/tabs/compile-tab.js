@@ -2,7 +2,7 @@
 import React from 'react' // eslint-disable-line
 import { SolidityCompiler } from '@remix-ui/solidity-compiler' // eslint-disable-line
 import { CompileTabLogic } from '@remix-ui/solidity-compiler' // eslint-disable-line
-import { CompilerApiMixin } from '@remixproject/solidity-compiler-plugin' // eslint-disable-line
+import { CompilerApiMixin } from '@remix-ui/solidity-compiler'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { QueryParams } from '@remix-project/remix-lib'
 // import { ICompilerApi } from '@remix-project/remix-lib'
