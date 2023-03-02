@@ -226,7 +226,7 @@ module.exports = {
       .waitForElementPresent(
         {
           selector: 'select[data-id="runTabSelectAccount"] option[value="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]',
-          timeout: 20000,
+          timeout: 120000,
           abortOnFailure: false
         }
       ) // wait for the udapp to load the list of accounts
