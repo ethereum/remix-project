@@ -120,6 +120,7 @@ export function AccountUI (props: AccountProps) {
         <div>
           <textarea
             id="prompt_text"
+            className='bg-light'
             data-id="signMessageTextarea"
             style={{ width: '100%' }}
             rows={4}
