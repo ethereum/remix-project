@@ -48,14 +48,17 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "remix-ide:build",
-        "watch": true,
-        "liveReload": true,
-        "hmr": false
+
       },
       "configurations": {
         "development": {
           "buildTarget": "remix-ide:build:development",
           "port": 8080
+        },
+        "hot":{
+          "buildTarget": "remix-ide:build:development",
+          "port": 8080,
+          "hmr": true
         },
         "production": {
           "buildTarget": "remix-ide:build:production",
