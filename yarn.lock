@@ -6989,6 +6989,26 @@ accepts@~1.3.8:
     mime-types "~2.1.34"
     negotiator "0.6.3"
 
+ace-mode-lexon@^1.*.*:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/ace-mode-lexon/-/ace-mode-lexon-1.0.5.tgz#20d18ef25e59f60002c85ae2bbcfa306f1d48b34"
+  integrity sha512-kn42vP48Cl+qrhAcjld1l4OjH4kdqQRL37XVI3kS+eluNZcB/0wGcIQ/44+F7Hv2tMPmsqMOnlaCCGIlBkb0Zw==
+
+ace-mode-move@0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/ace-mode-move/-/ace-mode-move-0.0.1.tgz#8778ec8844dc67f7a54c8aae10653ac271a2dd7a"
+  integrity sha512-RRckwbouhlCg1n8LQrZ87ojVdJg8FZYxa6d4ot8PNNBRKHLvJagPu/poW9mmRCW4YAGvOfrGpJpZH1kOjitj/Q==
+
+ace-mode-solidity@^0.1.0:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/ace-mode-solidity/-/ace-mode-solidity-0.1.1.tgz#a1b49c732f2bf1bfacd3b181ba0c21575a36b918"
+  integrity sha512-OFDYb2DpSUdY/st3o+efbBof4e3M5zFXE8p1DwXNSoeGVT5+8/3KKwX6uhkuKipZ9VgqtPDSJLNcIY1+KSsrIw==
+
+ace-mode-zokrates@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/ace-mode-zokrates/-/ace-mode-zokrates-1.0.4.tgz#6696a9ed8352da23eabd5904d411e50dcd278107"
+  integrity sha512-jLpIg+PhJTlCWKu52U/EdJPQPJez9mMB0uzvCiyHgCJsX6+FY+s7jmBDrpxGdgNdNWJPQ20/MKzOx3oUnSF27A==
+
 acorn-es7-plugin@^1.1.7:
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/acorn-es7-plugin/-/acorn-es7-plugin-1.1.7.tgz#f2ee1f3228a90eead1245f9ab1922eb2e71d336b"
@@ -27192,7 +27212,7 @@ web3-utils@1.8.2:
     randombytes "^2.1.0"
     utf8 "3.0.0"
 
-web3@^1.8.2:
+web3@^1.8.0:
   version "1.8.2"
   resolved "https://registry.yarnpkg.com/web3/-/web3-1.8.2.tgz#95a4e5398fd0f01325264bf8e5e8cdc69a7afe86"
   integrity sha512-92h0GdEHW9wqDICQQKyG4foZBYi0OQkyg4CRml2F7XBl/NG+fu9o6J19kzfFXzSBoA4DnJXbyRgj/RHZv5LRiw==
