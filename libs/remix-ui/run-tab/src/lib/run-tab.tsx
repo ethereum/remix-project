@@ -223,6 +223,7 @@ export function RunTabUI (props: RunTabProps) {
             passphrase={runTab.passphrase}
           />
           <ContractDropdownUI
+            selectedAccount={runTab.accounts.selectedAccount}
             syncContracts={syncContracts}
             exEnvironment={runTab.selectExEnv}
             contracts={runTab.contracts}
