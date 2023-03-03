@@ -62,6 +62,13 @@ const defaultOptions = {
 
 export class CodeFormat extends Plugin {
 
+    prettier: any
+    ts: any
+    babel: any
+    espree: any
+    yml: any
+    sol: any
+
     constructor() {
         super(profile)
     }
@@ -69,11 +76,13 @@ export class CodeFormat extends Plugin {
     async format(file: string) {
 
         // lazy load
-        const prettier = await import('prettier/standalone')
-        const ts = await import('prettier/parser-typescript')
-        const babel = await import('prettier/parser-babel')
-        const espree = await import('prettier/parser-espree')
-        const yml = await import('prettier/parser-yaml')
+        if (!this.prettier) {
+            this.prettier = await import('prettier/standalone')
+            this.ts = await import('prettier/parser-typescript')
+            this.babel = await import('prettier/parser-babel')
+            this.espree = await import('prettier/parser-espree')
+            this.yml = await import('prettier/parser-yaml')
+        }
 
         try {
             const content = await this.call('fileManager', 'readFile', file)
@@ -243,8 +252,8 @@ export class CodeFormat extends Plugin {
             }
 
 
-            const result = prettier.format(content, {
-                plugins: [sol as any, ts, babel, espree, yml],
+            const result = this.prettier.format(content, {
+                plugins: [sol as any, this.ts, this.babel, this.espree, this.yml],
                 parser: parserName,
                 ...options
             })
