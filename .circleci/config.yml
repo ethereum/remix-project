@@ -114,7 +114,6 @@ jobs:
                 install-chromedriver: false
             - run: firefox --version
             - run: geckodriver --version
-      - checkout
       - attach_workspace:
           at: .
       - run: unzip ./persist/dist.zip 
