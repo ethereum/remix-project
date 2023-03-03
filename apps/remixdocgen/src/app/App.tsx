@@ -11,10 +11,10 @@ import { Status } from "@remixproject/plugin-utils";
 import { AppContext } from "./AppContext";
 import { Routes } from "./routes";
 import { useLocalStorage } from "./hooks/useLocalStorage";
-import { createDocumentation } from "./utils/utils";
+import { createDocumentation } from "../utils/utils";
 
 import "./App.css";
-import { ContractName, Documentation } from "./types";
+import { ContractName, Documentation } from "../types";
 
 export const getNewContractNames = (compilationResult: CompilationResult) => {
   const compiledContracts = compilationResult.contracts;
