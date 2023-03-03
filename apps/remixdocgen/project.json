@@ -4,7 +4,6 @@
   "sourceRoot": "apps/remixdocgen/src",
   "projectType": "application",
   "implicitDependencies": [
-    "docgen"
   ],
   "targets": {
     "build": {
@@ -14,18 +13,17 @@
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/remixdocgen",
-        "index": "apps/etherscan/src/index.html",
+        "index": "apps/remixdocgen/src/index.html",
         "baseHref": "/",
-        "main": "apps/etherscan/src/main.tsx",
-        "polyfills": "apps/etherscan/src/polyfills.ts",
-        "tsConfig": "apps/etherscan/tsconfig.app.json",
+        "main": "apps/remixdocgen/src/main.tsx",
+        "tsConfig": "apps/remixdocgen/tsconfig.app.json",
         "assets": [
-          "apps/etherscan/src/favicon.ico",
-          "apps/etherscan/src/assets"
+          "apps/remixdocgen/src/favicon.ico",
+          "apps/remixdocgen/src/assets"
         ],
-        "styles": ["apps/etherscan/src/styles.css"],
+        "styles": ["apps/remixdocgen/src/styles.css"],
         "scripts": [],
-        "webpackConfig": "apps/etherscan/webpack.config.js"
+        "webpackConfig": "apps/remixdocgen/webpack.config.js"
       },
       "configurations": {
         "development": {
@@ -33,8 +31,8 @@
         "production": {
           "fileReplacements": [
             {
-              "replace": "apps/etherscan/src/environments/environment.ts",
-              "with": "apps/etherscan/src/environments/environment.prod.ts"
+              "replace": "apps/remixdocgen/src/environments/environment.ts",
+              "with": "apps/remixdocgen/src/environments/environment.prod.ts"
             }
           ]
         }
@@ -44,16 +42,16 @@
       "executor": "@nrwl/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "etherscan:build",
+        "buildTarget": "remixdocgen:build",
         "hmr": true
       },
       "configurations": {
         "development": {
-          "buildTarget": "etherscan:build:development",
+          "buildTarget": "remixdocgen:build:development",
           "port": 6003
         },
         "production": {
-          "buildTarget": "etherscan:build:production"
+          "buildTarget": "remixdocgen:build:production"
         }
       }
     }
