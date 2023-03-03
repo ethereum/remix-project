@@ -1,12 +1,7 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
-import prettier from 'prettier/standalone'
 import { Options } from 'prettier';
 import sol from './code-format/index'
-import * as ts from 'prettier/parser-typescript'
-import * as babel from 'prettier/parser-babel'
-import * as espree from 'prettier/parser-espree'
-import * as yml from 'prettier/parser-yaml'
 import path from 'path'
 import yaml from 'js-yaml'
 import toml from 'toml'
@@ -72,6 +67,13 @@ export class CodeFormat extends Plugin {
     }
 
     async format(file: string) {
+
+        // lazy load
+        const prettier = await import('prettier/standalone')
+        const ts = await import('prettier/parser-typescript')
+        const babel = await import('prettier/parser-babel')
+        const espree = await import('prettier/parser-espree')
+        const yml = await import('prettier/parser-yaml')
 
         try {
             const content = await this.call('fileManager', 'readFile', file)

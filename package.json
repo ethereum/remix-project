@@ -178,7 +178,7 @@
     "monaco-editor": "^0.30.1",
     "npm-install-version": "^6.0.2",
     "path-browserify": "^1.0.1",
-    "prettier": "^2.7.1",
+    "prettier": "^2.8.4",
     "prettier-plugin-solidity": "^1.0.0-beta.24",
     "raw-loader": "^4.0.2",
     "react": "^17.0.2",
@@ -335,6 +335,7 @@
     "nyc": "^13.3.0",
     "onchange": "^3.2.1",
     "os-browserify": "^0.3.0",
+
     "process": "^0.11.10",
     "react-refresh": "^0.14.0",
     "react-test-renderer": "^17.0.2",
