@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AppContext } from "../AppContext";
-import { ContractName, Documentation } from "../types";
-import { publish } from "../utils";
-import { htmlTemplate } from "../utils/template";
+import { ContractName, Documentation } from "../../types";
+import { publish } from "../../utils";
+import { htmlTemplate } from "../../utils/template";
 
 export const HomeView: React.FC = () => {
   const [activeItem, setActiveItem] = useState("");

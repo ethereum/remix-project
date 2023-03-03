@@ -3,7 +3,7 @@ import { PluginClient } from "@remixproject/plugin";
 import { PluginApi, Api } from "@remixproject/plugin-utils";
 import { IRemixApi } from "@remixproject/plugin-api";
 
-import { ContractName, Documentation, PublishedSite } from "./types";
+import { ContractName, Documentation, PublishedSite } from "../types";
 
 export const AppContext = React.createContext({
   clientInstance: {} as PluginApi<Readonly<IRemixApi>> &
