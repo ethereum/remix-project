@@ -11,7 +11,7 @@ import { Status } from "@remixproject/plugin-utils";
 import { AppContext } from "./AppContext";
 import { Routes } from "./routes";
 import { useLocalStorage } from "./hooks/useLocalStorage";
-import { createDocumentation } from "../utils/utils";
+
 
 import "./App.css";
 import { ContractName, Documentation } from "../types";
@@ -59,13 +59,8 @@ const App = () => {
           console.log("New compilation received");
 
           const existingMap = contractsRef.current;
-          const newContractsMapWithDocumentation = createDocumentation(
-            fileName,
-            data
-          );
           const newMap = new Map([
             ...existingMap,
-            ...newContractsMapWithDocumentation,
           ]);
 
           const status: Status = {
@@ -74,7 +69,7 @@ const App = () => {
             title: "New documentation ready",
           };
           clientInstanceRef.current.emit("statusChanged", status);
-          setContracts(newMap);
+          setContracts(new Map());
         }
       );
 
@@ -93,19 +88,22 @@ const App = () => {
   }, []);
 
   return (
-    <AppContext.Provider
-      value={{
-        clientInstance,
-        contracts,
-        setContracts,
-        sites,
-        setSites,
-        themeType,
-      }}
-    >
-      <Routes />
-    </AppContext.Provider>
-  );
+    // <AppContext.Provider
+    //   value={{
+    //     clientInstance,
+    //     contracts,
+    //     setContracts,
+    //     sites,
+    //     setSites,
+    //     themeType,
+    //   }}
+    // >
+    //   <Routes />
+    // </AppContext.Provider>
+    <div>
+      <h1>Testing</h1>
+    </div>
+  )
 };
 
 export default App;

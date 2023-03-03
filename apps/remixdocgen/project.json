@@ -1,5 +1,5 @@
 {
-  "name": "etherscan",
+  "name": "remixdocgen",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/remixdocgen/src",
   "projectType": "application",
@@ -18,10 +18,9 @@
         "main": "apps/remixdocgen/src/main.tsx",
         "tsConfig": "apps/remixdocgen/tsconfig.app.json",
         "assets": [
-          "apps/remixdocgen/src/favicon.ico",
-          "apps/remixdocgen/src/assets"
+          "apps/remixdocgen/src/favicon.ico"
         ],
-        "styles": ["apps/remixdocgen/src/styles.css"],
+        "styles": [],
         "scripts": [],
         "webpackConfig": "apps/remixdocgen/webpack.config.js"
       },
