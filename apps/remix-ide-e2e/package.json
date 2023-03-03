@@ -1,0 +1,28 @@
+{
+  "name": "remix-ide-e2e",
+  "license": "MIT",
+  "engines": {
+    "node": "^14.17.6",
+    "npm": "^6.14.15"
+  },
+  "scripts": {
+    "remixd": "chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.7.3",
+    "@openzeppelin/contracts-upgradeable": "^4.8.1",
+    "@openzeppelin/upgrades-core": "^1.22.0",
+    "@openzeppelin/wizard": "^0.1.1",
+    "@remix-project/remixd": "../../dist/libs/remixd",
+    "axios": "1.1.2",
+    "deep-equal": "^1.0.1",
+    "ganache-cli": "^6.8.1",
+    "selenium-standalone": "^8.2.3",
+    "tree-kill": "^1.2.2",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "nightwatch": "2.3"
+  }
+}

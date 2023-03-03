@@ -2,7 +2,6 @@
 
 set -e
 
-yarn run build:e2e
 TESTFILES=$(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "\.flaky" | sort )
 
 # count test files
@@ -19,10 +18,8 @@ echo "$BUILD_ID"
 TEST_EXITCODE=0
 
 yarn run ganache-cli &
+npx http-server -p 9090 --cors='*' ./node_modules &
 yarn run serve:production &
-echo 'sharing folder: ' $PWD '/apps/remix-ide/contracts' &
-npx nx serve remix-ide-e2e-src-local-plugin &
-
 sleep 5
 
 for TESTFILE in $TESTFILES; do
