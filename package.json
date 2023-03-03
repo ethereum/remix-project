@@ -250,7 +250,6 @@
     "@types/jest": "28.1.1",
     "@types/lodash": "^4.14.172",
     "@types/mocha": "^9.1.1",
-    "@types/nightwatch": "^2.3.1",
     "@types/node": "18.7.18",
     "@types/react": "^17.0.24",
     "@types/react-beautiful-dnd": "^13.1.2",
