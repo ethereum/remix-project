@@ -7,7 +7,6 @@ const fs = require('fs')
 const TerserPlugin = require("terser-webpack-plugin")
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 
-
 const versionData = {
   version: version,
   timestamp: Date.now(),
@@ -59,13 +58,11 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
 
   // add copy & provide plugin
   config.plugins.push(
-    
     new CopyPlugin({
       patterns: [
         { from: '../../node_modules/monaco-editor/min/vs', to: 'assets/js/monaco-editor/min/vs' }
       ].filter(Boolean)
     }),
-    
     new webpack.ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
       url: ['url', 'URL'],
