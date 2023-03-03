@@ -6,7 +6,6 @@ const version = require('../../package.json').version
 const fs = require('fs')
 const TerserPlugin = require("terser-webpack-plugin")
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 
 const versionData = {
@@ -73,13 +72,6 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       process: 'process/browser',
     })
   )
-
-  // if dev mode
-  if (process.env.NODE_ENV !== 'production') {
-    config.plugins.push(
-      new BundleAnalyzerPlugin()
-    )
-  }
 
   // souce-map loader
   config.module.rules.push({
