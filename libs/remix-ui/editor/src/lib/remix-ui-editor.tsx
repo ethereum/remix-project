@@ -87,7 +87,8 @@ type errorMarker = {
   file: string
 }
 
-//loader.config({ paths: { vs: 'assets/js/monaco-editor/dev/vs' } })
+
+loader.config({ paths: { vs: 'assets/js/monaco-editor/min/vs' } })
 
 export type DecorationsReturn = {
   currentDecorations: Array<string>
