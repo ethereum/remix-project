@@ -55,7 +55,12 @@ export default function UmlDownload(props: UmlDownloadProps) {
         >
         </Dropdown.Toggle>
         <Dropdown.Menu as={UmlCustomMenu} className="custom-dropdown-items">
-          <Dropdown.Item onClick={() => props.download('png')}>
+          <Dropdown.Item
+            onClick={() => {
+              _paq.push(['trackEvent', 'solidityumlgen', 'download', 'downloadAsPng'])
+              props.download('png')
+            }}
+          >
             <CustomTooltip
                 placement="left-start"
                 tooltipId="solUmlgenDownloadAsPngTooltip"
@@ -64,10 +69,6 @@ export default function UmlDownload(props: UmlDownloadProps) {
             >
                 <div
                   data-id='umlPngDownload'
-                  onClick={() => {
-                    _paq.push(['trackEvent', 'solidityumlgen', 'download', 'downloadAsPng'])
-                    props.download('png')
-                  }}
                 >
                   <span
                     id='umlPngDownloadBtn'
@@ -82,7 +83,11 @@ export default function UmlDownload(props: UmlDownloadProps) {
               </CustomTooltip>
             </Dropdown.Item>
             <Dropdown.Divider />
-            <Dropdown.Item onClick={() => props.download('pdf')}>
+            <Dropdown.Item onClick={() => {
+                _paq.push(['trackEvent', 'solUmlgen', 'download', 'downloadAsPdf'])
+                props.download('pdf')
+              }}
+            >
               <CustomTooltip
                   placement="left-start"
                   tooltipId="solUmlgenDownloadAsPdfTooltip"
@@ -91,10 +96,6 @@ export default function UmlDownload(props: UmlDownloadProps) {
               >
                 <div
                   data-id='umlPdfDownload'
-                  onClick={() => {
-                    _paq.push(['trackEvent', 'solUmlgen', 'download', 'downloadAsPdf'])
-                    props.download('pdf')
-                  }}
                 >
                   <span
                     id='umlPdfDownloadBtn'
