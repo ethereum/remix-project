@@ -20,8 +20,6 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
-      - run: zip -0 -r modules.zip node_modules
-      - run: ls -la 
       - save_cache:
           key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
@@ -157,7 +155,7 @@ jobs:
     parameters:
       script:
         type: string
-    parallelism: 4
+    parallelism: 6
     steps:
       - browser-tools/install-browser-tools:
           install-firefox: false

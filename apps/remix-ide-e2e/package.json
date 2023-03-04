@@ -1,6 +1,9 @@
 {
   "name": "remix-ide-e2e",
   "license": "MIT",
+  "scripts": {
+    "remixd": "chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080"
+  },
   "dependencies": {
     "ganache-cli": "^6.8.1",
     "selenium-standalone": "8.2.3",
