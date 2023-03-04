@@ -24,7 +24,14 @@ jobs:
           key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-      - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build
+      - run:
+          name: Build
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build:production
+            else
+              NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build
+            fi
       - run: yarn run build:e2e
       - run: ls -la dist/
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
@@ -147,7 +154,7 @@ jobs:
     parameters:
       script:
         type: string
-    parallelism: 6
+    parallelism: 8
     steps:
       - browser-tools/install-browser-tools:
           install-firefox: false
