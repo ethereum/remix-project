@@ -287,6 +287,7 @@ workflows:
           requires:
             - build
           matrix:
+            alias: "testplugins"
             parameters:
               script: ["browser_tests_etherscan_plugin.sh", "browser_tests_vyper_plugin.sh"]
               p: [1]
@@ -312,8 +313,7 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - "browser_tests_etherscan_plugin.sh"
-            - "browser_tests_vyper_plugin.sh"
+            - "testplugins"
             - apitest
       - deploy-remix-live:
           requires:
