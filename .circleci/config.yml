@@ -26,7 +26,7 @@ jobs:
             - node_modules
       - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build
       - run: yarn run build:e2e
-      - run: yarn install --cwd remix-ide-e2e
+      - run: yarn install --cwd ./apps/remix-ide-e2e
       - run: cp -r ./apps/remix-ide/ci/ dist
       - run: cp -r ./apps/remix-ide/contracts/ dist/contracts
       - run: ls -la dist/
