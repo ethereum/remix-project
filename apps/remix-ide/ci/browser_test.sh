@@ -14,7 +14,7 @@ echo 'sharing folder: ' $PWD '/apps/remix-ide/contracts' &
 
 sleep 5
 
-yarn run build:e2e
+
 # grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | xargs -I {} basename {} .test.js | grep -E "\b[${2}]"
 # TESTFILES=$(grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | xargs -I {} basename {} .test.js | grep -E "\b[$2]" | circleci tests split --split-by=timings )
 node apps/remix-ide/ci/splice_tests.js $2 $3

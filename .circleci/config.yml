@@ -25,7 +25,7 @@ jobs:
           paths:
             - node_modules
       - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build:production
-      - run: yarn nx build remix-ide-e2e-src-local-plugin
+      - run: yarn run build:e2e
       - run: cp ./apps/remix-ide/ci/download_e2e_assets.js dist
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
       - persist_to_workspace:
@@ -60,12 +60,11 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
-      - run: build libs
+      - run: yarn build:libs
       - run: cd dist/libs/remix-tests && yarn
       - run: cd dist/libs/remix-tests && yarn add @remix-project/remix-url-resolver ../../libs/remix-url-resolver
       - run: cd dist/libs/remix-tests && yarn add @remix-project/remix-lib ../../libs/remix-lib
@@ -274,9 +273,7 @@ workflows:
       - lint:
           requires:
             - build
-      - remix-libs:
-          requires:
-            - build
+      - remix-libs
       - remix-test-plugins:
           requires:
             - build

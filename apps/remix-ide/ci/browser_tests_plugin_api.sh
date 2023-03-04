@@ -13,7 +13,7 @@ npx nx serve remix-ide-e2e-src-local-plugin &
 
 sleep 5
 
-yarn run build:e2e
+yarn nx build remix-ide-e2e-src-local-plugin
 
 TESTFILES=$(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "plugin_api" | sort | circleci tests split )
 for TESTFILE in $TESTFILES; do

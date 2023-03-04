@@ -12,8 +12,6 @@ npx nx serve vyper &
 
 sleep 5
 
-yarn run build:e2e
-
 TESTFILES=$(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "vyper_api" | sort | circleci tests split )
 for TESTFILE in $TESTFILES; do
     npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js $TESTFILE --env=chrome  || TEST_EXITCODE=1

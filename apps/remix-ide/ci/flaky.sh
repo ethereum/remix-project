@@ -2,7 +2,6 @@
 
 set -e
 
-yarn run build:e2e
 TESTFILES=$(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep "\.flaky" | sort )
 
 # count test files
