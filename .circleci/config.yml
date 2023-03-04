@@ -320,8 +320,7 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - "browser_tests_etherscan_plugin.sh"
-            - "browser_tests_vyper_plugin.sh"
+            - "testplugins"
             - apitest
           filters:
             branches:
@@ -331,8 +330,7 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - "browser_tests_etherscan_plugin.sh"
-            - "browser_tests_vyper_plugin.sh"
+            - "testplugins"
             - apitest
           filters:
             branches:
@@ -342,8 +340,7 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - "browser_tests_etherscan_plugin.sh"
-            - "browser_tests_vyper_plugin.sh"
+            - "testplugins"
             - apitest
           filters:
             branches:
