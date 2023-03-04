@@ -125,7 +125,7 @@ jobs:
       - run: yarn selenium-standalone install || yarn selenium-standalone install
       - run:
           name: Start Selenium
-          command: yarn run selenium
+          command: yarn selenium-standalone start
           background: true
       - run: ./dist/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
       - store_test_results:
