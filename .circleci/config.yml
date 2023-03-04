@@ -127,7 +127,7 @@ jobs:
       - run: ls -la /home/circleci/remix-project/dist/apps/remix-ide-e2e/src
       - run: ls -la /home/circleci/remix-project/dist/apps/remix-ide-e2e/src/commands
       - run: yarn
-      - run: yarn add -D ganache-cli selenium-standalone typescript axios nightwatch@2.3 tslib@2.3.0 deep-equal
+      - run: yarn add -D ganache-cli selenium-standalone typescript axios nightwatch@2.3 tslib@2.3.0 deep-equal tree-kill
       - run: node ./dist/ci/download_e2e_assets.js
       - run: wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.8.18+commit.87f61d96.js -O ./dist/apps/remix-ide/assets/js/soljson.js
       - run: ls -la ./dist/apps/remix-ide/assets/js
