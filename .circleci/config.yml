@@ -26,7 +26,7 @@ jobs:
             - node_modules
       - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build:production
       - run: yarn run build:e2e
-      - run: cp ./apps/remix-ide/ci/download_e2e_assets.js dist
+      - run: cp -r ./apps/remix-ide/ci/ dist
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
@@ -127,7 +127,7 @@ jobs:
           name: Start Selenium
           command: yarn run selenium
           background: true
-      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
+      - run: ./dist/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
