@@ -9,7 +9,7 @@ echo "$BUILD_ID"
 TEST_EXITCODE=0
 yarn run ganache-cli &
 npx http-server -p 9090 --cors='*' ./node_modules &
-yarn run serve:production &
+npx http-server ./dist/apps/remix-ide &
 echo 'sharing folder: ' $PWD '/apps/remix-ide/contracts' &
 
 sleep 5
