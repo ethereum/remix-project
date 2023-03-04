@@ -30,10 +30,11 @@ export class DocGen extends Plugin {
   }
 
   async docgen(builds: Build[], userConfig?: Config): Promise<void> {
-    const config = { ...defaults, ...userConfig };
-    const templates = await loadTemplates(config.theme, config.root, config.templates);
-    const site = buildSite(builds, config, templates.properties ?? {});
-    const renderedSite = render(site, templates, config.collapseNewlines);
+    const config = { ...defaults, ...userConfig }
+    const templates = await loadTemplates(config.theme, config.root, config.templates)
+    const site = buildSite(builds, config, templates.properties ?? {})
+    const renderedSite = render(site, templates, config.collapseNewlines)
+    console.log({ renderedSite })
     for (const { id, contents } of renderedSite) {
       await this.call('fileManager', 'setFile', id, contents)
     }
