@@ -92,7 +92,6 @@ module.exports = {
       .click('*[data-id="deployAndRunClearInstances"]') // clear udapp
       .click('*[data-id="terminalClearConsole"]') // clear terminal
       .click('[data-id="runtransaction"]')
-      .pause()
       .clickInstance(1)
       .pause(1000)
       .clickFunction('set2 - transact (not payable)', { types: 'uint256 _po', values: '10' })
