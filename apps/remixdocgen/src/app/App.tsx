@@ -10,7 +10,9 @@ import { Status } from "@remixproject/plugin-utils";
 
 import { AppContext } from "./AppContext";
 import { Routes } from "./routes";
-import { useLocalStorage } from "./hooks/useLocalStorage";
+import { useLocalStorage } from "./hooks/useLocalStorage"
+
+import { RemixUiDocgenClient } from '@remix-ui/docgenclient-ui' // eslint-disable-line
 
 
 import "./App.css";
@@ -101,7 +103,7 @@ const App = () => {
     //   <Routes />
     // </AppContext.Provider>
     <div>
-      <h1>Testing</h1>
+      <RemixUiDocgenClient />
     </div>
   )
 };
