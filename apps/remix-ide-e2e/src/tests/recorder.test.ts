@@ -93,7 +93,6 @@ module.exports = {
       .click('*[data-id="terminalClearConsole"]') // clear terminal
       .click('[data-id="runtransaction"]')
       .clickInstance(1)
-      .pause(1000)
       .clickFunction('set2 - transact (not payable)', { types: 'uint256 _po', values: '10' })
       .testFunction('last',
         {
