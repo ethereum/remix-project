@@ -121,6 +121,7 @@ jobs:
       - run: unzip ./persist/dist.zip
       - run: ls -la
       - run: ls -la dist/ 
+      - run: ls -la dist/apps
       - run: yarn
       - run: yarn add -D ganache-cli selenium-standalone typescript axios
       - run: node ./dist/ci/download_e2e_assets.js
