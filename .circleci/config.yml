@@ -283,6 +283,7 @@ workflows:
             - build
       - remix-libs
       - remix-test-plugins:
+          name: plugintest
           requires:
             - build
           matrix:
@@ -290,6 +291,7 @@ workflows:
               script: ["browser_tests_plugin_api.sh", "browser_tests_etherscan_plugin.sh", "browser_tests_vyper_plugin.sh"]
               p: [1]
       - remix-test-plugins:
+          name: apitest
           requires:
             - build
           matrix:
@@ -310,13 +312,15 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - remix-test-plugins
+            - plugintest
+            - apitest
       - deploy-remix-live:
           requires:
             - lint
             - remix-libs
             - remix-ide-browser
-            - remix-test-plugins
+            - plugintest
+            - apitest
           filters:
             branches:
               only: remix_live
@@ -325,7 +329,8 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - remix-test-plugins
+            - plugintest
+            - apitest
           filters:
             branches:
               only: master
@@ -334,7 +339,8 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - remix-test-plugins
+            - plugintest
+            - apitest
           filters:
             branches:
               only: remix_beta
