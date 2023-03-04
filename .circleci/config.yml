@@ -288,7 +288,7 @@ workflows:
             - build
           matrix:
             parameters:
-              script: ["browser_tests_vyper_plugin.sh"]
+              script: ["browser_tests_etherscan_plugin.sh", "browser_tests_vyper_plugin.sh"]
               p: [1]
       - remix-test-plugins:
           name: apitest
