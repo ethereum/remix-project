@@ -26,6 +26,7 @@ jobs:
             - node_modules
       - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build
       - run: yarn run build:e2e
+      - run: yarn install --cwd remix-ide-e2e
       - run: cp -r ./apps/remix-ide/ci/ dist
       - run: cp -r ./apps/remix-ide/contracts/ dist/contracts
       - run: ls -la dist/
@@ -125,7 +126,7 @@ jobs:
       - run: ls -la /home/circleci/remix-project/dist/apps/remix-ide-e2e/src
       - run: ls -la /home/circleci/remix-project/dist/apps/remix-ide-e2e/src/commands
       - run: yarn
-      - run: yarn add -D ganache-cli selenium-standalone typescript axios nightwatch@2.3 tslib@2.3.0 deep-equal tree-kill
+      - run: yarn add -D ganache-cli selenium-standalone typescript axios nightwatch@2.3 tslib@2.3.0 deep-equal tree-kill fs-extra latest-version commander@9.4.1 semver
       - run: node ./dist/ci/download_e2e_assets.js
       - run: wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.8.18+commit.87f61d96.js -O ./dist/apps/remix-ide/assets/js/soljson.js
       - run: ls -la ./dist/apps/remix-ide/assets/js
