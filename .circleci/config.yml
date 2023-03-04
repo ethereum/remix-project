@@ -26,6 +26,8 @@ jobs:
             - node_modules
       - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build:production
       - run: yarn run build:e2e
+      - run: ls -la
+      - run: ls -la dist/
       - run: cp -r ./apps/remix-ide/ci/ dist
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
       - persist_to_workspace:
@@ -116,7 +118,9 @@ jobs:
             - run: geckodriver --version
       - attach_workspace:
           at: .
-      - run: unzip ./persist/dist.zip 
+      - run: unzip ./persist/dist.zip
+      - run: ls -la
+      - run: ls -la dist/ 
       - run: yarn
       - run: yarn add -D ganache-cli selenium-standalone typescript axios
       - run: node ./dist/ci/download_e2e_assets.js
