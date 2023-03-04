@@ -11,7 +11,6 @@ yarn run ganache-cli &
 npx http-server -p 9090 --cors='*' ./node_modules &
 npx http-server ./dist/apps/remix-ide &
 echo 'sharing folder: ' $PWD '/apps/remix-ide/contracts' &
-chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080 &
 sleep 5
 
 
