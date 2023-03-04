@@ -11,7 +11,7 @@ yarn run ganache-cli &
 npx http-server -p 9090 --cors='*' ./node_modules &
 yarn run serve:production &
 echo 'sharing folder: ' $PWD '/apps/remix-ide/contracts' &
-
+ls -la /home/circleci/remix-project/dist/apps/remix-ide-e2e/src/commands/ &
 sleep 5
 
 # grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep "\.spec\|\.test" | xargs -I {} basename {} .test.js | grep -E "\b[${2}]"
