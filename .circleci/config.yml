@@ -312,6 +312,8 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
+            - plugintest
+            - apitest
       - deploy-remix-live:
           requires:
             - lint
