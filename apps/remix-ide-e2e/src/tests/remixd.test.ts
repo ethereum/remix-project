@@ -312,9 +312,11 @@ function testImportFromRemixd(browser: NightwatchBrowser, callback: VoidFunction
 }
 
 async function spawnRemixd(path: string): Promise<ChildProcess> {
+  console.log('spawn remixd', path)
   const remixd = spawn('yarn run remixd', [`-s ${path}`], { cwd: process.cwd(), shell: true, detached: true })
   return new Promise((resolve, reject) => {
     remixd.stdout.on('data', function (data) {
+      console.log('remixd', data)
       if(
         data.toString().includes('is listening') 
         || data.toString().includes('There is already a client running')
@@ -324,6 +326,7 @@ async function spawnRemixd(path: string): Promise<ChildProcess> {
       }
     })
     remixd.stderr.on('err', function (data) {
+      console.log('error', data)
       reject(data.toString())
     })
   })
