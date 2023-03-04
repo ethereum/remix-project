@@ -124,6 +124,8 @@ jobs:
       - run: ls -la
       - run: ls -la dist/ 
       - run: ls -la dist/apps
+      - run: ls -la /home/circleci/remix-project/dist/apps/remix-ide-e2e/src
+      - run: ls -la /home/circleci/remix-project/dist/apps/remix-ide-e2e/src/commands
       - run: yarn
       - run: yarn add -D ganache-cli selenium-standalone typescript axios
       - run: node ./dist/ci/download_e2e_assets.js
