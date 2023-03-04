@@ -73,7 +73,7 @@ module.exports = {
   },
   'run Remixd tests #group4': function (browser) {
     browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+      remixd = await spawnRemixd(join(process.cwd(), '/dist/', '/contracts'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -87,7 +87,7 @@ module.exports = {
       remix (as well as truffle) try to resolve it against the node_modules and installed_contracts folder.
     */
     browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+      remixd = await spawnRemixd(join(process.cwd(), '/dist/', '/contracts'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -101,7 +101,7 @@ module.exports = {
   },
   'Import from node_modules and reference a github import #group2': function (browser) {
     browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+      remixd = await spawnRemixd(join(process.cwd(), '/dist/', '/contracts'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -147,15 +147,15 @@ module.exports = {
   'Should listen on compilation result from hardhat #group5': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
+      remixd = await spawnRemixd(join(process.cwd(), '/dist/', '/contracts/hardhat'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
       .perform((done) => {
         console.log('generating compilation result')
-        writeFileSync('./apps/remix-ide/contracts/hardhat/artifacts/build-info/7839ba878952cc00ff316061405f273a.json', JSON.stringify(hardhatCompilation))
-        writeFileSync('./apps/remix-ide/contracts/hardhat/artifacts/contracts/Lock.sol/Lock.json', JSON.stringify(hardhat_compilation_Lock))
-        writeFileSync('./apps/remix-ide/contracts/hardhat/artifacts/contracts/Lock.sol/Lock.dbg.json', JSON.stringify(hardhat_compilation_Lock_dbg))
+        writeFileSync('./dist/contracts/hardhat/artifacts/build-info/7839ba878952cc00ff316061405f273a.json', JSON.stringify(hardhatCompilation))
+        writeFileSync('./dist/contracts/hardhat/artifacts/contracts/Lock.sol/Lock.json', JSON.stringify(hardhat_compilation_Lock))
+        writeFileSync('./dist/contracts/hardhat/artifacts/contracts/Lock.sol/Lock.dbg.json', JSON.stringify(hardhat_compilation_Lock_dbg))
         done()
       })
       .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Hardhat').before(60000)
@@ -176,13 +176,13 @@ module.exports = {
 
     browser
       .perform((done) => {
-        writeFileSync('./apps/remix-ide/contracts/hardhat/artifacts/contracts/Lock.sol/Lock.dbg.json', JSON.stringify(hardhat_compilation_Lock_dbg))
-        writeFileSync('./apps/remix-ide/contracts/hardhat/artifacts/contracts/Lock.sol/Lock.json', JSON.stringify(hardhat_compilation_Lock))
-        writeFileSync('./apps/remix-ide/contracts/hardhat/artifacts/build-info/7839ba878952cc00ff316061405f273a.json', JSON.stringify(hardhatCompilation))
+        writeFileSync('./dist/contracts/hardhat/artifacts/contracts/Lock.sol/Lock.dbg.json', JSON.stringify(hardhat_compilation_Lock_dbg))
+        writeFileSync('./dist/contracts/hardhat/artifacts/contracts/Lock.sol/Lock.json', JSON.stringify(hardhat_compilation_Lock))
+        writeFileSync('./dist/contracts/hardhat/artifacts/build-info/7839ba878952cc00ff316061405f273a.json', JSON.stringify(hardhatCompilation))
         done()
       })
       .perform(async (done) => {
-        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
+        remixd = await spawnRemixd(join(process.cwd(), '/dist/', '/contracts/hardhat'))
         console.log('working directory', process.cwd())
         connectRemixd(browser, done)
       })
@@ -202,12 +202,12 @@ module.exports = {
   'Should listen on compilation result from foundry #group7': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/foundry'))
+      remixd = await spawnRemixd(join(process.cwd(), '/dist/', '/contracts/foundry'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
       .perform((done) => {
-        writeFileSync('./apps/remix-ide/contracts/foundry/out/Counter.sol/Counter.json', JSON.stringify(foundryCompilation))
+        writeFileSync('./dist/contracts/foundry/out/Counter.sol/Counter.json', JSON.stringify(foundryCompilation))
         done()
       })
       .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Foundry').before(60000)
@@ -237,12 +237,12 @@ module.exports = {
   'Should listen on compilation result from truffle #group8': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/truffle'))
+      remixd = await spawnRemixd(join(process.cwd(), '/dist/', '/contracts/truffle'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
       .perform((done) => {
-        writeFileSync('./apps/remix-ide/contracts/truffle/build/contracts/Migrations.json', JSON.stringify(truffle_compilation))
+        writeFileSync('./dist/contracts/truffle/build/contracts/Migrations.json', JSON.stringify(truffle_compilation))
         done()
       })
       .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Truffle').before(60000)
