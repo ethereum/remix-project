@@ -33,7 +33,6 @@ jobs:
               NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build
             fi
       - run: yarn run build:e2e
-      - run: ls -la dist/
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
@@ -154,7 +153,10 @@ jobs:
     parameters:
       script:
         type: string
-    parallelism: 8
+      p:
+        type: integer
+        default: 1
+    parallelism: << parameters.p >>
     steps:
       - browser-tools/install-browser-tools:
           install-firefox: false
@@ -286,6 +288,14 @@ workflows:
           matrix:
             parameters:
               script: ["browser_tests_plugin_api.sh", "browser_tests_etherscan_plugin.sh", "browser_tests_vyper_plugin.sh"]
+              p: [1]
+      - remix-test-plugins:
+          requires:
+            - build
+          matrix:
+            parameters:
+              script: ["browser_tests_plugin_api.sh"]
+              p: [8]
       - remix-ide-browser:
           requires:
             - build
