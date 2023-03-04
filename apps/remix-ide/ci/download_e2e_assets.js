@@ -1,4 +1,4 @@
-const testFolder = './dist/apps/remix-ide-e2e/src/tests/';
+const testFolder = './apps/remix-ide-e2e/src/tests/';
 const fs = require('fs');
 
 let url = 'https://binaries.soliditylang.org/wasm/list.json'

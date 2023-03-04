@@ -26,9 +26,6 @@ jobs:
             - node_modules
       - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build
       - run: yarn run build:e2e
-      - run: yarn install --cwd ./apps/remix-ide-e2e
-      - run: cp -r ./apps/remix-ide/ci/ dist
-      - run: cp -r ./apps/remix-ide/contracts/ dist/contracts
       - run: ls -la dist/
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
       - persist_to_workspace:
@@ -117,25 +114,20 @@ jobs:
                 install-chromedriver: false
             - run: firefox --version
             - run: geckodriver --version
+      - checkout
       - attach_workspace:
           at: .
       - run: unzip ./persist/dist.zip
-      - run: ls -la
-      - run: ls -la dist/ 
-      - run: ls -la dist/apps
-      - run: ls -la /home/circleci/remix-project/dist/apps/remix-ide-e2e/src
-      - run: ls -la /home/circleci/remix-project/dist/apps/remix-ide-e2e/src/commands
-      - run: yarn
-      - run: yarn add -D ganache-cli selenium-standalone typescript axios nightwatch@2.3 tslib@2.3.0 deep-equal tree-kill fs-extra latest-version commander@9.4.1 semver
-      - run: node ./dist/ci/download_e2e_assets.js
+      - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
+      - run: yarn run downloadsolc_assets_e2e && yarn run downloadsolc_assets_dist
       - run: wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.8.18+commit.87f61d96.js -O ./dist/apps/remix-ide/assets/js/soljson.js
       - run: ls -la ./dist/apps/remix-ide/assets/js
-      - run: yarn selenium-standalone install || yarn selenium-standalone install
+      - run: yarn run selenium-install || yarn run selenium-install
       - run:
           name: Start Selenium
-          command: yarn selenium-standalone start
+          command: yarn run selenium
           background: true
-      - run: ./dist/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
+      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
