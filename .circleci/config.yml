@@ -298,7 +298,7 @@ workflows:
           matrix:
             parameters:
               script: ["browser_tests_plugin_api.sh"]
-              p: [8]
+              p: [9]
       - remix-ide-browser:
           requires:
             - build
