@@ -19,8 +19,7 @@
     "ganache-cli": "^6.8.1",
     "selenium-standalone": "^8.2.3",
     "tree-kill": "^1.2.2",
-    "tslib": "^2.3.0",
-    "typescript": "^4.8.4"
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
     "http-server": "^14.1.1",
