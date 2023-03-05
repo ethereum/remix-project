@@ -6,10 +6,10 @@ BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
 
+npx http-server -p 9999 ./dist/apps/$1 &
 yarn run ganache-cli &
 npx http-server -p 9090 --cors='*' ./node_modules &
 yarn run serve:production &
-npx nx serve $1 &
 
 sleep 5
 
