@@ -58,7 +58,7 @@ jobs:
               - node_modules
         - run: yarn build vyper
         - run: yarn build etherscan
-        - run: yarn build remix-ide-e2e-src-local-plugin
+        - run: yarn build plugin_api
         - run: mkdir persist && zip -0 -r persist/plugins.zip dist
         - persist_to_workspace:
             root: .
@@ -178,7 +178,7 @@ jobs:
       xlarge
     working_directory: ~/remix-project
     parameters:
-      script:
+      plugin:
         type: string
       p:
         type: integer
@@ -210,7 +210,7 @@ jobs:
           name: Start Selenium
           command: yarn run selenium
           background: true
-      - run: ./apps/remix-ide/ci/<< parameters.script >>
+      - run: ./apps/remix-ide/ci/browser_test_plugin.sh << parameters.plugin >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
@@ -320,7 +320,7 @@ workflows:
           matrix:
             alias: "testplugins"
             parameters:
-              script: ["browser_tests_etherscan_plugin.sh", "browser_tests_vyper_plugin.sh"]
+              plugin: ["etherscan", "vyper"]
               p: [1]
       - remix-test-plugins:
           name: apitest
@@ -329,7 +329,7 @@ workflows:
             - build-plugins
           matrix:
             parameters:
-              script: ["browser_tests_plugin_api.sh"]
+              plugin: ["plugin_api"]
               p: [9]
       - remix-ide-browser:
           requires:
