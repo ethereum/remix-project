@@ -312,7 +312,7 @@ workflows:
             - build
       - remix-libs
       - remix-test-plugins:
-          name: << matrix.plugin >>
+          name: test-plugin--<< matrix.plugin >>
           requires:
             - build
             - build-plugins
