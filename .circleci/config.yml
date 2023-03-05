@@ -320,9 +320,9 @@ workflows:
             exclude: 
               - plugin: plugin_api
                 p: 1
-              - plugin: "etherscan"
+              - plugin: etherscan
                 p: 9
-              - plugin: "vyper"
+              - plugin: vyper
                 p: 9
 
       - remix-ide-browser:
