@@ -180,10 +180,10 @@ jobs:
     parameters:
       plugin:
         type: string
-      p:
+      parallelism:
         type: integer
         default: 1
-    parallelism: << parameters.p >>
+    parallelism: << parameters.parallelism >>
     steps:
       - browser-tools/install-browser-tools:
           install-firefox: false
@@ -316,14 +316,14 @@ workflows:
             alias: testplugins
             parameters:
               plugin: ["etherscan", "vyper", "plugin_api"]
-              p: [1, 9]
+              parallelism: [1, 9]
             exclude: 
               - plugin: plugin_api
-                p: 1
+                parallelism: 1
               - plugin: etherscan
-                p: 9
+                parallelism: 9
               - plugin: vyper
-                p: 9
+                parallelism: 9
 
       - remix-ide-browser:
           requires:
