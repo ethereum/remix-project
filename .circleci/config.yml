@@ -317,11 +317,11 @@ workflows:
             parameters:
               plugin: ["etherscan", "vyper", "plugin_api"]
               p: [1, 9]
-              exclude: 
-                - plugin: plugin_api
-                  p: 1
-                - plugin: ["etherscan", "vyper"]
-                  p: 9
+            exclude: 
+              - plugin: plugin_api
+                p: 1
+              - plugin: ["etherscan", "vyper"]
+                p: 9
 
       - remix-ide-browser:
           requires:
