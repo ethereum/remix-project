@@ -315,17 +315,14 @@ workflows:
           matrix:
             alias: testplugins
             parameters:
-              plugin: ["etherscan", "vyper"]
-              p: [1]
-      - remix-test-plugins:
-          name: apitest
-          requires:
-            - build
-            - build-plugins
-          matrix:
-            parameters:
-              plugin: ["plugin_api"]
-              p: [9]
+              plugin: ["etherscan", "vyper", "plugin_api"]
+              p: [1, 9]
+              exclude: 
+                - plugin: plugin_api
+                  p: 1
+                - plugin: ["etherscan", "vyper"]
+                  p: 9
+
       - remix-ide-browser:
           requires:
             - build
@@ -341,14 +338,12 @@ workflows:
             - remix-libs
             - remix-ide-browser
             - testplugins
-            - apitest
       - deploy-remix-live:
           requires:
             - lint
             - remix-libs
             - remix-ide-browser
             - testplugins
-            - apitest
           filters:
             branches:
               only: remix_live
@@ -358,7 +353,6 @@ workflows:
             - remix-libs
             - remix-ide-browser
             - testplugins
-            - apitest
           filters:
             branches:
               only: master
@@ -368,7 +362,6 @@ workflows:
             - remix-libs
             - remix-ide-browser
             - testplugins
-            - apitest
           filters:
             branches:
               only: remix_beta
