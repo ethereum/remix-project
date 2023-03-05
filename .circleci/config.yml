@@ -46,6 +46,9 @@ jobs:
       resource_class:
         xlarge
       working_directory: ~/remix-project
+      parameters:
+        plugin:
+          type: string
       steps:
         - checkout
         - restore_cache:
@@ -56,10 +59,8 @@ jobs:
             key: v1-deps-{{ checksum "yarn.lock" }}
             paths:
               - node_modules
-        - run: yarn build vyper
-        - run: yarn build etherscan
-        - run: yarn build plugin_api
-        - run: mkdir persist && zip -0 -r persist/plugins.zip dist
+        - run: yarn build << parameters.plugin >>
+        - run: mkdir persist && zip -0 -r persist/plugin-<< parameters.plugin >>.zip dist
         - persist_to_workspace:
             root: .
             paths:
@@ -197,7 +198,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: unzip ./persist/dist.zip
-      - run: unzip ./persist/plugins.zip
+      - run: unzip ./persist/plugin-<< parameters.plugin >>.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       - run: yarn run downloadsolc_assets_e2e && yarn run downloadsolc_assets_dist
       - run: yarn run selenium-install || yarn run selenium-install
@@ -302,7 +303,10 @@ workflows:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - build
-      - build-plugins
+      - build-plugins:
+          matrix:
+            parameters:
+              plugin: ["etherscan", "vyper", "plugin_api"]
       - lint:
           requires:
             - build
