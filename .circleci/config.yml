@@ -39,7 +39,7 @@ jobs:
           paths:
             - "persist"
 
-  build-plugins:
+  build-plugin:
       docker:
       - image: cimg/node:14.17.6-browsers
 
@@ -72,7 +72,7 @@ jobs:
     resource_class:
       xlarge
     working_directory: ~/remix-project
-    parallelism: 1
+
     steps:
       - checkout
       - restore_cache:
@@ -303,7 +303,7 @@ workflows:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - build
-      - build-plugins:
+      - build-plugin:
           matrix:
             parameters:
               plugin: ["etherscan", "vyper", "plugin_api"]
@@ -312,10 +312,10 @@ workflows:
             - build
       - remix-libs
       - remix-test-plugins:
-          name: test-plugin--<< matrix.plugin >>
+          name: test-plugin-<< matrix.plugin >>
           requires:
             - build
-            - build-plugins
+            - build-plugin
           matrix:
             alias: testplugins
             parameters:
