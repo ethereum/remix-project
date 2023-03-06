@@ -51,7 +51,6 @@ const remixLib = require('@remix-project/remix-lib')
 
 import { QueryParams } from '@remix-project/remix-lib'
 import { SearchPlugin } from './app/tabs/search'
-import { DocGen } from './app/plugins/docgen'
 
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
@@ -181,9 +180,6 @@ class AppComponent {
     //----- search
     const search = new SearchPlugin()
 
-    //---- docgen plugin
-    const docgen = new DocGen()
-
     //---------------- Solidity UML Generator -------------------------
     const solidityumlgen = new SolidityUmlGen(appManager)
 
@@ -302,8 +298,7 @@ class AppComponent {
       this.walkthroughService,
       search,
       solidityumlgen,
-      contractFlattener,
-      docgen
+      contractFlattener
     ])
 
     // LAYOUT & SYSTEM VIEWS
