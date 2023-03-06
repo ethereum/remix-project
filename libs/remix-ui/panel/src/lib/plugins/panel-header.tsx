@@ -39,16 +39,14 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
         <div className="d-flex flex-row">
           <div className="d-flex flex-row">
             {plugin?.profile?.maintainedBy?.toLowerCase() === "remix" && (
-              <OverlayTrigger
-                placement="right"
-                overlay={
-                  <Tooltip id="maintainedByTooltip" className="text-nowrap">
-                    <span>{"Maintained by Remix"}</span>
-                  </Tooltip>
-                }
-              >
+              <CustomTooltip
+                placement="right-end"
+                tooltipId="maintainedByTooltip"
+                tooltipClasses="text-nowrap"
+                tooltipText="Maintained by Remix"
+                >
                 <i aria-hidden="true" className="text-success mt-1 px-1 fas fa-check"></i>
-              </OverlayTrigger>
+              </CustomTooltip>
             )}
           </div>
           <div className="swapitHeaderInfoSection d-flex justify-content-between" data-id='swapitHeaderInfoSectionId' onClick={toggleClass}>
