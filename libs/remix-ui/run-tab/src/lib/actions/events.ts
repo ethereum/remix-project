@@ -22,6 +22,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     if (!lookupOnly) dispatch(setSendValue('0'))
     if (error) return
     updateAccountBalances(plugin, dispatch)
+    updateInstanceBalance(plugin, dispatch)
   })
 
   plugin.blockchain.event.register('contextChanged', (context) => {
@@ -127,16 +128,13 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   })
 
   plugin.on('blockchain', 'contextChanged', () => {
-    fillAccountsList(plugin, dispatch)    
-  })
-
-  plugin.on('blockchain', 'transactionExecuted', () => {
-    updateInstanceBalance(plugin)
+    fillAccountsList(plugin, dispatch)
+    updateAccountBalances(plugin, dispatch)
   })
 
   setInterval(() => {
     fillAccountsList(plugin, dispatch)
-    updateInstanceBalance(plugin)
+    updateInstanceBalance(plugin, dispatch)
   }, 30000)  
 }
 
