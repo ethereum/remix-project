@@ -24,21 +24,55 @@ jobs:
           key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-      - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build:production
-      - run: yarn nx build remix-ide-e2e-src-local-plugin & yarn run build:libs
-      - run: yarn nx run remixd:build
+      - run:
+          name: Build
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build:production
+            else
+              NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build
+            fi
+      - run: yarn run build:e2e
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
           paths:
             - "persist"
+
+  build-plugin:
+      docker:
+      - image: cimg/node:14.17.6-browsers
+
+      resource_class:
+        xlarge
+      working_directory: ~/remix-project
+      parameters:
+        plugin:
+          type: string
+      steps:
+        - checkout
+        - restore_cache:
+            keys:
+              - v1-deps-{{ checksum "yarn.lock" }}
+        - run: yarn
+        - save_cache:
+            key: v1-deps-{{ checksum "yarn.lock" }}
+            paths:
+              - node_modules
+        - run: yarn build << parameters.plugin >>
+        - run: mkdir persist && zip -0 -r persist/plugin-<< parameters.plugin >>.zip dist
+        - persist_to_workspace:
+            root: .
+            paths:
+              - "persist"
+
   lint:
     docker:
       - image: cimg/node:14.17.6-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
-    parallelism: 1
+
     steps:
       - checkout
       - restore_cache:
@@ -60,11 +94,11 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
+      - run: yarn build:libs
       - run: cd dist/libs/remix-tests && yarn
       - run: cd dist/libs/remix-tests && yarn add @remix-project/remix-url-resolver ../../libs/remix-url-resolver
       - run: cd dist/libs/remix-tests && yarn add @remix-project/remix-lib ../../libs/remix-lib
@@ -117,12 +151,8 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: unzip ./persist/dist.zip 
-
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "yarn.lock" }}
-      - run: yarn
+      - run: unzip ./persist/dist.zip
+      - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       - run: yarn run downloadsolc_assets_e2e && yarn run downloadsolc_assets_dist
       - run: ls -la ./dist/apps/remix-ide/assets/js
       - run: yarn run selenium-install || yarn run selenium-install
@@ -149,9 +179,12 @@ jobs:
       xlarge
     working_directory: ~/remix-project
     parameters:
-      script:
+      plugin:
         type: string
-    parallelism: 4
+      parallelism:
+        type: integer
+        default: 1
+    parallelism: << parameters.parallelism >>
     steps:
       - browser-tools/install-browser-tools:
           install-firefox: false
@@ -164,19 +197,16 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "yarn.lock" }}
-      - run: yarn
       - run: unzip ./persist/dist.zip
+      - run: unzip ./persist/plugin-<< parameters.plugin >>.zip
+      - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       - run: yarn run downloadsolc_assets_e2e && yarn run downloadsolc_assets_dist
       - run: yarn run selenium-install || yarn run selenium-install
       - run:
           name: Start Selenium
           command: yarn run selenium
           background: true
-      - run: ./apps/remix-ide/ci/<< parameters.script >>
+      - run: ./apps/remix-ide/ci/browser_test_plugin.sh << parameters.plugin >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
@@ -293,18 +323,32 @@ workflows:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - build
+      - build-plugin:
+          matrix:
+            parameters:
+              plugin: ["etherscan", "vyper", "plugin_api"]
       - lint:
           requires:
             - build
-      - remix-libs:
-          requires:
-            - build
+      - remix-libs
       - remix-test-plugins:
+          name: test-plugin-<< matrix.plugin >>
           requires:
             - build
+            - build-plugin
           matrix:
+            alias: plugins
             parameters:
-              script: ["browser_tests_plugin_api.sh", "browser_tests_etherscan_plugin.sh", "browser_tests_vyper_plugin.sh"]
+              plugin: ["etherscan", "vyper", "plugin_api"]
+              parallelism: [1, 9]
+            exclude: 
+              - plugin: plugin_api
+                parallelism: 1
+              - plugin: etherscan
+                parallelism: 9
+              - plugin: vyper
+                parallelism: 9
+
       - remix-ide-browser:
           requires:
             - build
@@ -319,13 +363,13 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - remix-test-plugins
+            - plugins
       - deploy-remix-live:
           requires:
             - lint
             - remix-libs
             - remix-ide-browser
-            - remix-test-plugins
+            - plugins
           filters:
             branches:
               only: remix_live
@@ -334,7 +378,7 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - remix-test-plugins
+            - plugins
           filters:
             branches:
               only: master
@@ -343,7 +387,7 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - remix-test-plugins
+            - plugins
           filters:
             branches:
               only: remix_beta
