@@ -991,7 +991,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               placement="right"
               tooltipId="overlay-tooltip-compile-run-doc"
               tooltipText={<div className="text-left p-2">
-                  <div>Choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
+                  <div>Choose the script to execute right after compilation
+                    by adding the `dev-run-script` natspec tag, as in:</div>
                   <pre>
                     <code>
                     /**<br />
