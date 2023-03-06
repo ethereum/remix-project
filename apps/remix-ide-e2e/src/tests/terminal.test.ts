@@ -202,7 +202,6 @@ module.exports = {
       .addFile('scripts/deploy_storage.js', { content: scriptAutoExec.script })
       .openFile('contracts/storage.sol')
       .sendKeys('body', [browser.Keys.CONTROL, browser.Keys.SHIFT, 's'])
-      .pause(15000)
       .journalLastChildIncludes('147')
   },
 
