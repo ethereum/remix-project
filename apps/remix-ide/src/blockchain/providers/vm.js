@@ -68,13 +68,9 @@ class VMProvider {
     this.RemixSimulatorProvider.Accounts.newAccount(cb)
   }
 
-  getBalanceInEther (address, cb) {
-    this.web3.eth.getBalance(address, (err, res) => {
-      if (err) {
-        return cb(err)
-      }
-      cb(null, Web3.utils.fromWei(new BN(res).toString(10), 'ether'))
-    })
+  async getBalanceInEther (address) {
+    const balance = await this.web3.eth.getBalance(address)
+    return Web3.utils.fromWei(new BN(balance).toString(10), 'ether')
   }
 
   getGasPrice (cb) {
