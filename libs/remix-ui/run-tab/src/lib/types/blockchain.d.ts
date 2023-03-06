@@ -71,7 +71,7 @@ export class Blockchain extends Plugin<any, any> {
     }): any;
     newAccount(_password: any, passwordPromptCb: any, cb: any): any;
     /** Get the balance of an address, and convert wei to ether */
-    getBalanceInEther(address: any, cb: any): void;
+    getBalanceInEther(address: any): Promise<string>;
     pendingTransactionsCount(): number;
     /**
      * This function send a tx only to Remix VM or testnet, will return an error for the mainnet
