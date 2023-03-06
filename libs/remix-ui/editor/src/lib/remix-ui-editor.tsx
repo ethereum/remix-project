@@ -7,17 +7,26 @@ import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solid
 import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
 import { zokratesTokensProvider, zokratesLanguageConfig } from './syntaxes/zokrates'
 import { moveTokenProvider, moveLanguageConfig } from './syntaxes/move'
+import { monacoTypes } from '@remix-ui/editor';
 
 import './remix-ui-editor.css'
 import { loadTypes } from './web-types'
-import monaco from '../types/monaco'
-import { IMarkdownString, IPosition, MarkerSeverity } from 'monaco-editor'
+
+
 
 import { RemixHoverProvider } from './providers/hoverProvider'
 import { RemixReferenceProvider } from './providers/referenceProvider'
 import { RemixCompletionProvider } from './providers/completionProvider'
 import { RemixHighLightProvider } from './providers/highlightProvider'
 import { RemixDefinitionProvider } from './providers/definitionProvider'
+
+
+enum MarkerSeverity {
+  Hint = 1,
+  Info = 2,
+  Warning = 4,
+  Error = 8
+}
 
 type sourceAnnotation = {
   row: number,
@@ -59,12 +68,12 @@ export type lineText = {
   className: string
   afterContentClassName: string
   hide: boolean,
-  hoverMessage: IMarkdownString | IMarkdownString[]
+  hoverMessage: monacoTypes.IMarkdownString | monacoTypes.IMarkdownString[]
 }
 
 type errorMarker = {
   message: string
-  severity: MarkerSeverity | 'warning' | 'info' | 'error' | 'hint'
+  severity: monacoTypes.MarkerSeverity | 'warning' | 'info' | 'error' | 'hint'
   position: {
     start: {
       line: number
@@ -78,7 +87,8 @@ type errorMarker = {
   file: string
 }
 
-loader.config({ paths: { vs: 'assets/js/monaco-editor/dev/vs' } })
+
+loader.config({ paths: { vs: 'assets/js/monaco-editor/min/vs' } })
 
 export type DecorationsReturn = {
   currentDecorations: Array<string>
@@ -105,8 +115,8 @@ export interface EditorUIProps {
     findMatches: (uri: string, value: string) => any
     getFontSize: () => number,
     getValue: (uri: string) => string
-    getCursorPosition: (offset?: boolean) => number | IPosition
-    getHoverPosition: (position: IPosition) => number
+    getCursorPosition: (offset?: boolean) => number | monacoTypes.IPosition
+    getHoverPosition: (position: monacoTypes.IPosition) => number
     addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
     clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
     keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
@@ -425,7 +435,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
   props.editorAPI.addErrorMarker = async (errors: errorMarker[], from: string) => {
 
-    const allMarkersPerfile: Record<string, Array<monaco.editor.IMarkerData>> = {}
+    const allMarkersPerfile: Record<string, Array<monacoTypes.editor.IMarkerData>> = {}
 
     for (const error of errors) {
       let filePath = error.file
@@ -440,7 +450,7 @@ export const EditorUI = (props: EditorUIProps) => {
         'info': MarkerSeverity.Info
       }
       if (model) {
-        const markerData: monaco.editor.IMarkerData = {
+        const markerData: monacoTypes.editor.IMarkerData = {
           severity: (typeof error.severity === 'string') ? errorServerityMap[error.severity] : error.severity,
           startLineNumber: ((error.position.start && error.position.start.line) || 0),
           startColumn: ((error.position.start && error.position.start.column) || 0),
@@ -496,7 +506,7 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
-  props.editorAPI.getHoverPosition = (position: monaco.Position) => {
+  props.editorAPI.getHoverPosition = (position: monacoTypes.Position) => {
     if (!monacoRef.current) return
     const model = editorModelsState[currentFileRef.current]?.model
     if (model) {

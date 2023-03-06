@@ -60,7 +60,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   config.plugins.push(
     new CopyPlugin({
       patterns: [
-        { from: '../../node_modules/monaco-editor/dev/vs', to: 'assets/js/monaco-editor/dev/vs' }
+        { from: '../../node_modules/monaco-editor/min/vs', to: 'assets/js/monaco-editor/min/vs' }
       ].filter(Boolean)
     }),
     new webpack.ProvidePlugin({
@@ -78,7 +78,6 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   })
 
   config.ignoreWarnings = [/Failed to parse source map/] // ignore source-map-loader warnings
-
 
   // set minimizer
   config.optimization.minimizer = [
