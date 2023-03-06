@@ -4,8 +4,13 @@ import { Provider } from '@remix-project/remix-simulator'
 import { getArtifactsByContractName } from './artifacts-helper'
 import { SignerWithAddress } from './signer'
 
-global.remixProvider = new Provider({ fork: null })
+const providerConfig = {
+  fork: global.fork || null,
+  nodeUrl: global.nodeUrl || null,
+  blockNumber: global.blockNumber || null
+}
 
+global.remixProvider = new Provider(providerConfig)
 const isFactoryOptions = (signerOrOptions: any) => {
   if (!signerOrOptions || signerOrOptions === undefined || signerOrOptions instanceof ethers.Signer) return false
   return true
