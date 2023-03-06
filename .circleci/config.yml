@@ -317,7 +317,7 @@ workflows:
             - build
             - build-plugin
           matrix:
-            alias: testplugins
+            alias: plugins
             parameters:
               plugin: ["etherscan", "vyper", "plugin_api"]
               parallelism: [1, 9]
@@ -343,13 +343,13 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - testplugins
+            - plugins
       - deploy-remix-live:
           requires:
             - lint
             - remix-libs
             - remix-ide-browser
-            - testplugins
+            - plugins
           filters:
             branches:
               only: remix_live
@@ -358,7 +358,7 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - testplugins
+            - plugins
           filters:
             branches:
               only: master
@@ -367,7 +367,7 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - testplugins
+            - plugins
           filters:
             branches:
               only: remix_beta
