@@ -17,5 +17,9 @@ module.exports = composePlugins(withNx(), (config) => {
 
   config.ignoreWarnings = [/Failed to parse source map/] // ignore source-map-loader warnings
 
+  config.watchOptions = {
+    ignored: /node_modules/
+  }
+
   return config;
 });
