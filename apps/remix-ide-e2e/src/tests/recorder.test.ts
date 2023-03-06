@@ -71,7 +71,6 @@ module.exports = {
   'Record more than one contract #group2': function (browser: NightwatchBrowser) {
     // deploy 2 contracts (2 different ABIs), save the record, reexecute and test one of the function.
     browser
-      .click('*[data-id="deployAndRunClearInstances"]')
       .testContracts('multipleContracts.sol', sources[1]['multipleContracts.sol'], ['t1est', 't2est'])
       .clickLaunchIcon('udapp')
       .selectContract('t1est')
