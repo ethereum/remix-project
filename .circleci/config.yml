@@ -226,7 +226,14 @@ jobs:
 
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
+      - save_cache:
+          key: v1-deps-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
       - run: yarn run downloadsolc_assets
       - run: yarn run build:production
       - run:
@@ -250,7 +257,14 @@ jobs:
 
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
+      - save_cache:
+          key: v1-deps-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
       - run: yarn run downloadsolc_assets
       - run: yarn run build:production
       - run:
@@ -274,8 +288,14 @@ jobs:
 
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
-      - run: yarn run build:libs
+      - save_cache:
+          key: v1-deps-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
       - run: yarn run downloadsolc_assets
       - run: yarn run build:production
       - run:
