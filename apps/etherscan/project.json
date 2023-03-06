@@ -3,9 +3,6 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/etherscan/src",
   "projectType": "application",
-  "implicitDependencies": [
-    "remix-debug"
-  ],
   "targets": {
     "build": {
       "executor": "@nrwl/webpack:webpack",
