@@ -45,7 +45,7 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
           props.hideIconsMenu(!showIconsMenu)
         }}></HamburgerMenuItem>
         <Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/>
-        <HamburgerMenuItem kind='download' fa='far fa-download' hideOption={hideWorkspaceOptions || hideLocalhostOptions} actionOnClick={() => {
+        <HamburgerMenuItem kind='backup' fa='far fa-download' hideOption={hideWorkspaceOptions || hideLocalhostOptions} actionOnClick={() => {
           props.downloadWorkspaces()
           props.hideIconsMenu(!showIconsMenu)
         }}></HamburgerMenuItem>
