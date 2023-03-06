@@ -153,7 +153,7 @@ export const TabsUI = (props: TabsUIProps) => {
               const path = active().substr(active().indexOf('/') + 1, active().length)
               const content = await props.plugin.call('fileManager', "readFile", path)
               if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
-                await props.plugin.call('scriptRunner', 'execute', content)
+                await props.plugin.call('scriptRunner', 'execute', content, path)
                 _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
               } else if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul') {
                 await props.plugin.call('solidity', 'compile', path)
