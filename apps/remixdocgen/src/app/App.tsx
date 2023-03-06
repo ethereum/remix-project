@@ -12,7 +12,7 @@ import { AppContext } from "./AppContext";
 import { Routes } from "./routes";
 import { useLocalStorage } from "./hooks/useLocalStorage"
 
-import { RemixUiDocgenClient } from '@remix-ui/docgenclient-ui' // eslint-disable-line
+import { RemixUiDocgenClient } from '@remix-ui/docgenclient-ui'
 
 
 import "./App.css";

@@ -1,6 +1,4 @@
 import { PluginClient } from '@remixproject/plugin'
-import { IRemixApi } from '@remixproject/plugin-api'
-import { Api, PluginApi } from '@remixproject/plugin-utils'
 import { createClient } from '@remixproject/plugin-webview'
 
 export class DocGenClient extends PluginClient {
