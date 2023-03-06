@@ -25,8 +25,7 @@ export function GithubSettings (props: GithubSettingsProps) {
   }, [props.config])
 
   const handleChangeTokenState = (event) => {
-    const token = event.target.value ? event.target.value.trim() : event.target.value
-    setGithubToken(token)
+    setGithubToken(event.target.value)
   }
 
   const handleChangeUserNameState = (event) => {
