@@ -1,1 +1,1 @@
-export * from './lib/docgenclient-ui'
+export * from './lib/remix-ui-docgenclient'
