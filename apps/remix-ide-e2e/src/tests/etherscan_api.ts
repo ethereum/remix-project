@@ -9,7 +9,7 @@ declare global {
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    init(browser, done, null, true, { name: 'etherscan', url: 'http://127.0.0.1:5003'})
+    init(browser, done, null, true, { name: 'etherscan', url: 'http://127.0.0.1:9999'})
   },
 
   'Should load etherscan plugin #group1': function (browser: NightwatchBrowser) {
