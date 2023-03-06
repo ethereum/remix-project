@@ -29,7 +29,6 @@ module.exports = {
       .perform((done) => {
         browser.getAddressAtPosition(0, (address) => {
           browser.sendLowLevelTx(address, '0', '0xaa')
-            .pause(1000)
             .journalLastChildIncludes('to: CheckSpecials.(fallback)')
             .journalLastChildIncludes('value: 0 wei')
             .journalLastChildIncludes('data: 0xaa')
@@ -67,7 +66,6 @@ module.exports = {
     browser.perform((done) => {
       browser.getAddressAtPosition(0, (address) => {
         browser.sendLowLevelTx(address, '1', '')
-          .pause(1000)
           .journalLastChildIncludes('to: CheckSpecials.(receive)')
           .journalLastChildIncludes('value: 1 wei')
           .journalLastChildIncludes('data: 0x')
@@ -80,7 +78,6 @@ module.exports = {
     browser.perform((done) => {
       browser.getAddressAtPosition(0, (address) => {
         browser.sendLowLevelTx(address, '10', '0xaa')
-          .pause(1000)
           .journalLastChildIncludes('to CheckSpecials.(fallback) errored:')
           .journalLastChildIncludes('The called function should be payable if you send value')
           .perform(done())
@@ -97,7 +94,6 @@ module.exports = {
       .perform((done) => {
         browser.getAddressAtPosition(0, (address) => {
           browser.sendLowLevelTx(address, '1', '')
-            .pause(1000)
             .journalLastChildIncludes('to: CheckSpecials.(receive)')
             .journalLastChildIncludes('value: 1 wei')
             .journalLastChildIncludes('data: 0x')
@@ -110,7 +106,6 @@ module.exports = {
     browser.perform((done) => {
       browser.getAddressAtPosition(0, (address) => {
         browser.sendLowLevelTx(address, '0', '0xaa')
-          .pause(1000)
           .waitForElementVisible(`#instance${address} label[id="deployAndRunLLTxError"]`)
           .assert.containsText(`#instance${address} label[id="deployAndRunLLTxError"]`, '\'Fallback\' function is not defined')
           .perform(done())
@@ -127,7 +122,6 @@ module.exports = {
       .perform((done) => {
         browser.getAddressAtPosition(0, (address) => {
           browser.sendLowLevelTx(address, '1', '')
-            .pause(1000)
             .journalLastChildIncludes('to: CheckSpecials.(fallback)')
             .journalLastChildIncludes('value: 1 wei')
             .journalLastChildIncludes('data: 0x')
@@ -140,7 +134,6 @@ module.exports = {
     browser.perform((done) => {
       browser.getAddressAtPosition(0, (address) => {
         browser.sendLowLevelTx(address, '1', '0xaa')
-          .pause(1000)
           .journalLastChildIncludes('to: CheckSpecials.(fallback)')
           .journalLastChildIncludes('value: 1 wei')
           .journalLastChildIncludes('data: 0xaa')
@@ -180,7 +173,6 @@ module.exports = {
       .perform((done) => {
         browser.getAddressAtPosition(0, (address) => {
           browser.sendLowLevelTx(address, '999999998765257135', '0xaa')
-            .pause(1000)
             .journalLastChildIncludes('to: CheckSpecials.(fallback)')
             .journalLastChildIncludes('value: 999999998765257135 wei')
             .journalLastChildIncludes('data: 0xaa')
