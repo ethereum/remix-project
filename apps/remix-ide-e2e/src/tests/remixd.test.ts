@@ -96,7 +96,6 @@ module.exports = {
       .click('[data-path="ballot.sol"]')
       .addFile('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'])
       .clickLaunchIcon('solidity')
-      .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js')
       .testContracts('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'], ['SafeMath'])
   },
   'Import from node_modules and reference a github import #group2': function (browser) {
