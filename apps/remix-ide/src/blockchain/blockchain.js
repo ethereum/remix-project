@@ -567,8 +567,8 @@ export class Blockchain extends Plugin {
   }
 
   /** Get the balance of an address, and convert wei to ether */
-  getBalanceInEther (address, cb) {
-    this.getCurrentProvider().getBalanceInEther(address, cb)
+  getBalanceInEther (address) {
+    return this.getCurrentProvider().getBalanceInEther(address)
   }
 
   pendingTransactionsCount () {
