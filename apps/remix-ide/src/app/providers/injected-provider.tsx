@@ -60,7 +60,6 @@ export class InjectedProvider extends Plugin implements IProvider {
       return resolve({ jsonrpc: '2.0', error: 'no injected provider found', id: data.id })
     }
     try {
-      if ((window as any) && typeof (window as any).ethereum.request === "function") (window as any).ethereum.request({ method: "eth_requestAccounts" });
       let resultData = await this.provider.currentProvider.send(data.method, data.params)
       if (resultData) {
         if (resultData.jsonrpc && resultData.jsonrpc === '2.0') {
