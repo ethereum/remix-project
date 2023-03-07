@@ -231,7 +231,10 @@ export function Workspace () {
     } else displayOzCustomRef.current.style.display = 'none'
 
     // @ts-ignore
-    workspaceCreateInput.current.value = `${TEMPLATE_NAMES[workspaceCreateTemplateInput.current.value || 'remixDefault']} ${Date.now()}`
+    let displayName = TEMPLATE_NAMES[(workspaceCreateTemplateInput.current && workspaceCreateTemplateInput.current.value) || 'remixDefault']
+    displayName = global.plugin.getAvailableWorkspaceName(displayName)
+    // @ts-ignore
+    workspaceCreateInput.current.value = displayName
   }
 
   const handleTypingUrl = () => {
@@ -348,7 +351,7 @@ export function Workspace () {
         </div>
 
         <label id="wsName" className="form-check-label" style={{fontWeight: "bolder"}} ><FormattedMessage id='filePanel.workspaceName' /></label>
-        <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`Basic ${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
+        <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={global.plugin.getAvailableWorkspaceName(TEMPLATE_NAMES['remixDefault'])} ref={workspaceCreateInput} className="form-control" />
 
         <div className="d-flex py-2 align-items-center custom-control custom-checkbox">
           <input

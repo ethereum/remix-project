@@ -60,9 +60,10 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
   const createWorkspace = async (templateName) => {
     await plugin.appManager.activatePlugin('filePanel')
     const timeStamp = Date.now()
-    const templateDisplayName = TEMPLATE_NAMES[templateName]
-    await plugin.call('filePanel', 'createWorkspace', templateDisplayName + " " + timeStamp, templateName)
-    await plugin.call('filePanel', 'setWorkspace', templateDisplayName + " " + timeStamp)
+    let templateDisplayName = TEMPLATE_NAMES[templateName]
+    templateDisplayName = await plugin.call('filePanale', 'getAvailableWorkspaceName', templateDisplayName)
+    await plugin.call('filePanel', 'createWorkspace', templateDisplayName, templateName)
+    await plugin.call('filePanel', 'setWorkspace', templateDisplayName)
     plugin.verticalIcons.select('filePanel')
     _paq.push(['trackEvent', 'hometab', 'homeGetStarted', templateName])
   }
