@@ -30,3 +30,8 @@
   width: auto;
   color: var(--text);
 }
+
+.uml-btn-icon {
+  width: 0.5rem;
+  height: 0.5rem;
+}
