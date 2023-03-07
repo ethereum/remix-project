@@ -4,9 +4,10 @@ import { HamburgerMenuItem } from './workspace-hamburger-item'
 
 export interface HamburgerMenuProps {
   createWorkspace: () => void,
+  renameCurrentWorkspace: () => void,
+  downloadCurrentWorkspace: () => void,
   deleteCurrentWorkspace: () => void,
   deleteAllWorkspaces: () => void,
-  renameCurrentWorkspace: () => void,
   cloneGitRepository: () => void,
   downloadWorkspaces: () => void,
   restoreBackup: () => void,
@@ -27,8 +28,12 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
           props.createWorkspace()
           props.hideIconsMenu(!showIconsMenu)
         }}></HamburgerMenuItem>
-         <HamburgerMenuItem kind='rename' fa='far fa-edit' hideOption={hideWorkspaceOptions || hideLocalhostOptions} actionOnClick={() => {
+        <HamburgerMenuItem kind='rename' fa='far fa-edit' hideOption={hideWorkspaceOptions || hideLocalhostOptions} actionOnClick={() => {
           props.renameCurrentWorkspace()
+          props.hideIconsMenu(!showIconsMenu)
+        }}></HamburgerMenuItem>
+        <HamburgerMenuItem kind='download' fa='far fa-download' hideOption={hideWorkspaceOptions || hideLocalhostOptions} actionOnClick={() => {
+          props.downloadCurrentWorkspace()
           props.hideIconsMenu(!showIconsMenu)
         }}></HamburgerMenuItem>
         <HamburgerMenuItem kind='delete' fa='far fa-trash' hideOption={hideWorkspaceOptions || hideLocalhostOptions} actionOnClick={() => {
