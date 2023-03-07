@@ -62,19 +62,19 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading, fileName }: RemixU
               className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2"
               onClick={() => zoomIn()}
             >
-              <i className="far fa-plus "></i>
+              <i className="far fa-plus uml-btn-icon"></i>
             </button>
             <button
               className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2"
               onClick={() => zoomOut()}
             >
-              <i className="far fa-minus align-item-center d-flex justify-content-center"></i>
+              <i className="far fa-minus uml-btn-icon"></i>
             </button>
             <button
               className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2"
               onClick={() => resetTransform()}
             >
-              <i className="far fa-undo align-item-center d-flex justify-content-center"></i>
+              <i className="far fa-undo uml-btn-icon"></i>
             </button>
           </div>
         </div>
