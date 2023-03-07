@@ -30,7 +30,6 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     "buffer": require.resolve("buffer/"),
     "vm": require.resolve('vm-browserify'),
   }
-  
 
   // add externals
   config.externals = {
@@ -49,7 +48,10 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       Buffer: ['buffer', 'Buffer'],
       url: ['url', 'URL'],
       process: 'process/browser',
-    })
+    }),
+    new webpack.DefinePlugin({
+      
+    }),
   )
 
   // souce-map loader
