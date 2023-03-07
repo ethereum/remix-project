@@ -29,6 +29,8 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     dispatch(resetProxyDeployments())
     if (!context.startsWith('vm')) getNetworkProxyAddresses(plugin, dispatch)
     setFinalContext(plugin, dispatch)
+    fillAccountsList(plugin, dispatch)
+    updateAccountBalances(plugin, dispatch)
   })
 
   plugin.blockchain.event.register('networkStatus', ({ error, network }) => {
@@ -125,11 +127,6 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     const accountsMap = {}
     accounts.map(account => { accountsMap[account] = shortenAddress(account, '0')})
     dispatch(fetchAccountsListSuccess(accountsMap))
-  })
-
-  plugin.on('blockchain', 'contextChanged', () => {
-    fillAccountsList(plugin, dispatch)
-    updateAccountBalances(plugin, dispatch)
   })
 
   setInterval(() => {
