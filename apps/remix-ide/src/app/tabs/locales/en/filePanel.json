@@ -10,6 +10,8 @@
   "filePanel.workspace.rename": "Rename Workspace",
   "filePanel.workspace.delete": "Delete Workspace",
   "filePanel.workspace.deleteConfirm": "Are you sure to delete the current workspace?",
+  "filePanel.workspace.download": "Download Workspace",
+  "filePanel.workspace.downloadConfirm": "This will download current workspace in a zip file. Do you want to continue?",
   "filePanel.workspace.deleteAll": "Delete All Workspaces",
   "filePanel.workspace.deleteAllConfirm1": "Are you absolutely sure you want to delete all your workspaces?",
   "filePanel.workspace.deleteAllConfirm2": "Deleted workspaces can not be restored in any manner.",
