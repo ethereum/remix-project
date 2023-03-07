@@ -49,7 +49,7 @@ export class Blockchain extends Plugin {
     this.txRunner = new TxRunner(web3Runner, { runAsync: true })
 
     this.networkcallid = 0
-    this.networkStatus = { name: ' - ', id: ' - ' }
+    this.networkStatus = { network: { name: ' - ', id: ' - ' } }
     this.setupEvents()
     this.setupProviders()
   }
@@ -76,6 +76,10 @@ export class Blockchain extends Plugin {
     this.executionContext.event.register('contextChanged', async (context) => {
       await this.resetEnvironment()
       this._triggerEvent('contextChanged', [context])
+      this.detectNetwork((error, network) => {
+        this.networkStatus = { network, error }
+        this._triggerEvent('networkStatus', [this.networkStatus])
+      })
     })
 
     this.executionContext.event.register('addProvider', (network) => {
