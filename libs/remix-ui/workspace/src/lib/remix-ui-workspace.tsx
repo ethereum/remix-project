@@ -5,7 +5,7 @@ import { CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip } from '@rem
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import { FileSystemContext } from './contexts'
 import './css/remix-ui-workspace.css'
-import { ROOT_PATH } from './utils/constants'
+import { ROOT_PATH, TEMPLATE_NAMES } from './utils/constants'
 import { HamburgerMenu } from './components/workspace-hamburger'
 const _paq = window._paq = window._paq || []
 
@@ -231,7 +231,7 @@ export function Workspace () {
     } else displayOzCustomRef.current.style.display = 'none'
 
     // @ts-ignore
-    workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value || 'remixDefault'}_${Date.now()}`
+    workspaceCreateInput.current.value = `${TEMPLATE_NAMES[workspaceCreateTemplateInput.current.value || 'remixDefault']} ${Date.now()}`
   }
 
   const handleTypingUrl = () => {
@@ -303,7 +303,7 @@ export function Workspace () {
         <label id="selectWsTemplate" className="form-check-label" style={{fontWeight: "bolder"}}><FormattedMessage id='filePanel.workspace.chooseTemplate' /></label>
         <select name="wstemplate" className="mb-3 form-control custom-select" id="wstemplate" defaultValue='remixDefault' ref={workspaceCreateTemplateInput} onChange={updateWsName}>
           <optgroup style={{fontSize: "medium"}} label="General">
-            <option style={{fontSize: "small"}} value='remixDefault'>Default</option>
+            <option style={{fontSize: "small"}} value='remixDefault'>Basic</option>
             <option style={{fontSize: "small"}} value='blank'>Blank</option>
           </optgroup>
           <optgroup style={{fontSize: "medium"}} label="OpenZeppelin">
@@ -353,7 +353,7 @@ export function Workspace () {
         </div>
 
         <label id="wsName" className="form-check-label" style={{fontWeight: "bolder"}} ><FormattedMessage id='filePanel.workspaceName' /></label>
-        <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`remixDefault_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
+        <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`Basic ${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
 
         <div className="d-flex py-2 align-items-center custom-control custom-checkbox">
           <input

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useRef, useContext } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
+import { TEMPLATE_NAMES } from '@remix-ui/workspace'
 import { ThemeContext} from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import WorkspaceTemplate from './workspaceTemplate'
@@ -59,8 +60,9 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
   const createWorkspace = async (templateName) => {
     await plugin.appManager.activatePlugin('filePanel')
     const timeStamp = Date.now()
-    await plugin.call('filePanel', 'createWorkspace', templateName + "_" + timeStamp, templateName)
-    await plugin.call('filePanel', 'setWorkspace', templateName + "_" + timeStamp)
+    const templateDisplayName = TEMPLATE_NAMES[templateName]
+    await plugin.call('filePanel', 'createWorkspace', templateDisplayName + " " + timeStamp, templateName)
+    await plugin.call('filePanel', 'setWorkspace', templateDisplayName + " " + timeStamp)
     plugin.verticalIcons.select('filePanel')
     _paq.push(['trackEvent', 'hometab', 'homeGetStarted', templateName])
   }
