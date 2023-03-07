@@ -27,16 +27,16 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
           props.createWorkspace()
           props.hideIconsMenu(!showIconsMenu)
         }}></HamburgerMenuItem>
+         <HamburgerMenuItem kind='rename' fa='far fa-edit' hideOption={hideWorkspaceOptions || hideLocalhostOptions} actionOnClick={() => {
+          props.renameCurrentWorkspace()
+          props.hideIconsMenu(!showIconsMenu)
+        }}></HamburgerMenuItem>
         <HamburgerMenuItem kind='delete' fa='far fa-trash' hideOption={hideWorkspaceOptions || hideLocalhostOptions} actionOnClick={() => {
           props.deleteCurrentWorkspace()
           props.hideIconsMenu(!showIconsMenu)
         }}></HamburgerMenuItem>
         <HamburgerMenuItem kind='deleteAll' fa='far fa-trash-alt' hideOption={hideWorkspaceOptions || hideLocalhostOptions} actionOnClick={() => {
           props.deleteAllWorkspaces()
-          props.hideIconsMenu(!showIconsMenu)
-        }}></HamburgerMenuItem>
-        <HamburgerMenuItem kind='rename' fa='far fa-edit' hideOption={hideWorkspaceOptions || hideLocalhostOptions} actionOnClick={() => {
-          props.renameCurrentWorkspace()
           props.hideIconsMenu(!showIconsMenu)
         }}></HamburgerMenuItem>
         <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{ pointerEvents: 'none' }} />
