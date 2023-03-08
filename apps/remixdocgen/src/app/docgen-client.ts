@@ -1,25 +1,25 @@
 import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
+import { DocGen } from './plugins/docgen'
 
 export class DocGenClient extends PluginClient {
   private client
+  private docgen
   
   constructor() {
     super()
     this.client = createClient(this)
+    // this.docgen = new DocGen()
     this.methods = ['generateDocs', 'publishDocs']
-
-    this.client.onload(async () => {
-    })
   }
-
+  loadClient() {
+    this.client.onload()
+  }
   async generateDocs() {
     console.log('docgen client generateDocs')
-    // await this.client.call('docgen', 'docgen', [])
   }
 
   async publishDocs() {
     console.log('docgen client publishDocs')
-    // await this.client.call('docgen', 'docgen', [])
   }
 }
