@@ -190,6 +190,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
     props.dispatchUploadFile(target, parentFolder)
   }
 
+  const uploadFolder = (target) => {
+    const parentFolder = getFocusedFolder()
+    const expandPath = [...new Set([...props.expandPath, parentFolder])]
+
+    props.dispatchHandleExpandPath(expandPath)
+    props.dispatchUploadFolder(target, parentFolder)
+  }
+
   const copyFile = (src: string, dest: string) => {
     try {
       props.dispatchCopyFile(src, dest)
@@ -459,6 +467,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                 createNewFolder={handleNewFolderInput}
                 publishToGist={publishToGist}
                 uploadFile={uploadFile}
+                uploadFolder={uploadFolder}
               />
             </div>
           }

@@ -4,6 +4,7 @@
   "filePanel.create": "新建",
   "filePanel.clone": "克隆",
   "filePanel.download": "下载",
+  "filePanel.backup": "Backup",
   "filePanel.restore": "恢复",
   "filePanel.workspace.create": "新建工作空间",
   "filePanel.workspace.rename": "重命名工作空间",

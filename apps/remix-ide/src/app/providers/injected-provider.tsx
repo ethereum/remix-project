@@ -57,14 +57,20 @@ export class InjectedProvider extends Plugin implements IProvider {
     // This will be displayed on UI tooltip as 'cannot get account list: Environment Updated !!'
     if (!this.provider) {
       this.call('notification', 'toast', 'No injected provider (e.g Metamask) has been found.')
-      return reject(new Error('no injected provider found.'))
+      return resolve({ jsonrpc: '2.0', error: 'no injected provider found', id: data.id })
     }
     try {
-      if ((window as any) && typeof (window as any).ethereum.request === "function") (window as any).ethereum.request({ method: "eth_requestAccounts" });
-      const resultData = await this.provider.currentProvider.send(data.method, data.params)
-      resolve({ jsonrpc: '2.0', result: resultData.result, id: data.id })
+      let resultData = await this.provider.currentProvider.send(data.method, data.params)
+      if (resultData) {
+        if (resultData.jsonrpc && resultData.jsonrpc === '2.0') {
+          resultData = resultData.result
+        }
+        resolve({ jsonrpc: '2.0', result: resultData, id: data.id })
+      } else {
+        resolve({ jsonrpc: '2.0', error: 'no return data provided', id: data.id })
+      }
     } catch (error) {
-      reject(error)
+      resolve({ jsonrpc: '2.0', error: error.message, id: data.id })
     }
   }
 }

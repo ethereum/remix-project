@@ -1,11 +1,8 @@
 {
-  "name": "remix-ide-e2e-src-local-plugin",
+  "name": "plugin_api",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/remix-ide-e2e/src/local-plugin/src/",
   "projectType": "application",
-  "implicitDependencies": [
-    "remix-debug"
-  ],
   "targets": {
     "build": {
       "executor": "@nrwl/webpack:webpack",
@@ -13,7 +10,7 @@
       "defaultConfiguration": "development",
       "options": {
         "compiler": "babel",
-        "outputPath": "dist/apps/remix-ide-e2e-src-local-plugin",
+        "outputPath": "dist/apps/plugin_api",
         "index": "apps/remix-ide-e2e/src/local-plugin/src/index.html",
         "baseHref": "/",
         "main": "apps/remix-ide-e2e/src/local-plugin/src/main.tsx",
@@ -25,7 +22,7 @@
           "apps/remix-ide-e2e/src/local-plugin/src/styles.css"
         ],
         "scripts": [],
-        "webpackConfig": "@nrwl/react/plugins/webpack"
+        "webpackConfig": "apps/remix-ide-e2e/src/local-plugin/webpack.config.js"
       },
       "configurations": {
         "development": {
@@ -44,16 +41,16 @@
       "executor": "@nrwl/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "remix-ide-e2e-src-local-plugin:build",
+        "buildTarget": "plugin_api:build",
         "hmr": true
       },
       "configurations": {
         "development": {
-          "buildTarget": "remix-ide-e2e-src-local-plugin:build:development",
+          "buildTarget": "plugin_api:build:development",
           "port": 2020
         },
         "production": {
-          "buildTarget": "remix-ide-e2e-src-local-plugin:build:production"
+          "buildTarget": "plugin_api:build:production"
         }
       }
     }
