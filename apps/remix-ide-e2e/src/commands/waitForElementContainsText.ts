@@ -3,11 +3,12 @@ import EventEmitter from 'events'
 
 class WaitForElementContainsText extends EventEmitter {
   command(this: NightwatchBrowser, id: string, value: string, timeout = 10000): NightwatchBrowser {
-    // strip brackets from id
-    const id_stripped = value.replace(/[[\]]/g, '')
+    // strip closing bracket from id
+    const id_stripped = id.trim().slice(0, -1)
+
     this.api
       .waitForElementPresent({
-        selector: `//*[${id_stripped} and contains(.,'${value}')]`,
+        selector: `${id_stripped} and contains(.,'${value}')]`,
         timeout: timeout,
         locateStrategy: 'xpath'
       }).perform((done) => {
