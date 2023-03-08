@@ -55,6 +55,11 @@ function addFile(browser: NightwatchBrowser, name: string, content: NightwatchCo
             timeout: 60000
           })
           .setEditorValue(content.content)
+          .getEditorValue((result) => {
+            if(result != content.content) {
+              browser.setEditorValue(content.content)
+            }
+          })
           .perform(function () {
             done()
           })
