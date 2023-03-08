@@ -38,7 +38,29 @@ jobs:
           root: .
           paths:
             - "persist"
-
+  prebuild:
+    docker:
+      - image: cimg/node:14.17.6-browsers
+    resource_class:
+      xlarge
+    working_directory: ~/remix-project
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn
+      - save_cache:
+          key: v1-deps-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - run: yarn build:production
+      - run: yarn run build:e2e
+      - run: mkdir persist && zip -0 -r persist/prebuild.zip dist
+      - persist_to_workspace:
+          root: .
+          paths:
+            - "persist"
   build-plugin:
       docker:
       - image: cimg/node:14.17.6-browsers
@@ -364,6 +386,10 @@ workflows:
             - remix-libs
             - remix-ide-browser
             - plugins
+      - prebuild:
+          filters:
+            branches:
+              only: ['master', 'remix_live', 'remix_beta']
       - deploy-remix-live:
           requires:
             - lint
