@@ -5,6 +5,9 @@ import {
 
 import './App.css'
 import { DocGenClient } from './docgen-client'
+import { Build } from './docgen/site'
+
+export const client =  new DocGenClient()
 
 export const getNewContractNames = (compilationResult: CompilationResult) => {
   const compiledContracts = compilationResult.contracts
@@ -18,28 +21,35 @@ export const getNewContractNames = (compilationResult: CompilationResult) => {
 }
 
 const App = () => {
-  const client = useMemo(() => new DocGenClient(), [])
+ 
   const [themeType, setThemeType] = useState<string>('dark');
+  const [hasBuild, setHasBuild] = useState<boolean>(false);
+  const [fileName, setFileName] = useState<string>('');
 
   useEffect(() => {
     const watchThemeSwitch = async () => {
-      //await client.call("manager" as any, "activatePlugin", "ethdoc-viewer");
+      client.eventEmitter.on('themeChanged', (theme: string) => {
+        console.log('themeChanged', theme)
+        setThemeType(theme)
+      })
+      client.eventEmitter.on('compilationFinished', (build: Build, fileName: string) => {
+        setHasBuild(true)
+        setFileName(fileName)
+      })
+      client.eventEmitter.on('docsGenerated', (docs: string[]) => {
+        console.log('docsGenerated', docs)
+      })
 
-      const currentTheme = await client.call('theme', 'currentTheme');
-
-      setThemeType(currentTheme.brightness || currentTheme.quality);
-
-      client.on("theme", "themeChanged", (theme: any) => {
-        setThemeType(theme.quality);
-      });
     };
 
     watchThemeSwitch();
-  }, [client]);
+  }, []);
 
   return (
     <div>
       <h1>Remix Docgen</h1>
+      {fileName && <h2>File: {fileName}</h2>}
+      {hasBuild && <button onClick={() => client.generateDocs()}>Generate doc</button>}
     </div>
   )
 };
