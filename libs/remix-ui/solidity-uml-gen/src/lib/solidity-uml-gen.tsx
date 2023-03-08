@@ -1,12 +1,15 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useCallback, useEffect, useState } from 'react'
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
 import { ThemeSummary } from '../types'
+import UmlDownload from './components/UmlDownload'
 import './css/solidity-uml-gen.css'
+import { UmlDownloadContext, UmlFileType } from './utilities/UmlDownloadStrategy'
 export interface RemixUiSolidityUmlGenProps {
   updatedSvg?: string
   loading?: boolean
   themeSelected?: string
   themeName: string
+  fileName: string
   themeCollection: ThemeSummary[]
 }
 
@@ -18,23 +21,31 @@ interface ActionButtonsProps {
   }
 }
 
-
-
-
-export function RemixUiSolidityUmlGen ({ updatedSvg, loading }: RemixUiSolidityUmlGenProps) {
+let umlCopy = ''
+export function RemixUiSolidityUmlGen ({ updatedSvg, loading, fileName }: RemixUiSolidityUmlGenProps) {
   const [showViewer, setShowViewer] = useState(false)
   const [validSvg, setValidSvg] = useState(false)
+  const umlDownloader = new UmlDownloadContext()
 
   useEffect(() => {
+    if (updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg')) {
+      umlCopy = updatedSvg
+    }
     setValidSvg (updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg')) 
     setShowViewer(updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg'))
-  }
-  , [updatedSvg])
+  }, [updatedSvg])
 
 
   const encoder = new TextEncoder()
   const data = encoder.encode(updatedSvg)
   const final = btoa(String.fromCharCode.apply(null, data))
+
+  const download = useCallback((fileType: UmlFileType) => {
+    if (umlCopy.length === 0) {
+      return
+    }
+    umlDownloader.download(umlCopy, fileName, fileType)
+  }, [updatedSvg, fileName])
 
   function ActionButtons({ actions: { zoomIn, zoomOut, resetTransform }}: ActionButtonsProps) {
   
@@ -46,29 +57,24 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading }: RemixUiSolidityU
           style={{ zIndex: 3, top: "10", right: "2em" }}
         >
           <div className="py-2 px-2 d-flex justify-content-center align-items-center">
-            <button
-              className="btn btn-outline-info d-none rounded-circle mr-2"
-              onClick={() => resetTransform()}
-            >
-              <i className="far fa-arrow-to-bottom align-item-center d-flex justify-content-center"></i>
-            </button>
+            <UmlDownload download={download} />
             <button
               className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2"
               onClick={() => zoomIn()}
             >
-              <i className="far fa-plus "></i>
+              <i className="far fa-plus uml-btn-icon"></i>
             </button>
             <button
               className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2"
               onClick={() => zoomOut()}
             >
-              <i className="far fa-minus align-item-center d-flex justify-content-center"></i>
+              <i className="far fa-minus uml-btn-icon"></i>
             </button>
             <button
               className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2"
               onClick={() => resetTransform()}
             >
-              <i className="far fa-undo align-item-center d-flex justify-content-center"></i>
+              <i className="far fa-undo uml-btn-icon"></i>
             </button>
           </div>
         </div>
