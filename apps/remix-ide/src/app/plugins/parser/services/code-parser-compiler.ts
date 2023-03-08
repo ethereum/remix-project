@@ -7,13 +7,20 @@ import { CodeParser } from "../code-parser";
 import { fileDecoration, fileDecorationType } from '@remix-ui/file-decorators'
 import { sourceMappingDecoder } from '@remix-project/remix-debug'
 import { CompilerRetriggerMode, CompilationSourceCode } from '@remix-project/remix-solidity';
-import { MarkerSeverity } from 'monaco-editor';
 import { findLinesInStringWithMatch, SearchResultLine } from '@remix-ui/search'
 import { lastCompilationResult } from '@remixproject/plugin-api';
+import { monacoTypes } from '@remix-ui/editor';
+
+enum MarkerSeverity {
+    Hint = 1,
+    Info = 2,
+    Warning = 4,
+    Error = 8
+}
 
 type errorMarker = {
     message: string
-    severity: MarkerSeverity
+    severity: monacoTypes.MarkerSeverity
     position: {
         start: {
             line: number
