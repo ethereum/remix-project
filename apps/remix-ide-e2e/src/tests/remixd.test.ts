@@ -81,7 +81,7 @@ module.exports = {
         runTests(browser, done)
       })
   },
-  'Import from node_modules #group1 #flaky': function (browser) {
+  'Import from node_modules #group1': function (browser) {
     /*
       when a relative import is used (i.e import "openzeppelin-solidity/contracts/math/SafeMath.sol")
       remix (as well as truffle) try to resolve it against the node_modules and installed_contracts folder.
@@ -97,7 +97,7 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js')
       .testContracts('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'], ['SafeMath'])
   },
-  'Import from node_modules and reference a github import #group2 #flaky': function (browser) {
+  'Import from node_modules and reference a github import #group2': function (browser) {
     browser.perform(async (done) => {
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       console.log('working directory', process.cwd())
