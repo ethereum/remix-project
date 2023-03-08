@@ -1,5 +1,3 @@
-import jsPDF from 'jspdf'
-import 'svg2pdf.js'
 interface IUmlDownloadStrategy {
   download (uml: string, fileName: string): void
 }
@@ -13,8 +11,8 @@ class PdfUmlDownloadStrategy implements IUmlDownloadStrategy {
     const Url = window.URL || window.webkitURL
     const url = Url.createObjectURL(svg)
     const img = document.createElement('img')
-    let doc: jsPDF
-    img.onload = () => {
+    let doc
+    img.onload = async () => {
       const canvas = document.createElement('canvas')
       canvas.width = img.naturalWidth
       canvas.height = img.naturalHeight
@@ -26,7 +24,10 @@ class PdfUmlDownloadStrategy implements IUmlDownloadStrategy {
       canvas.style.padding = '0'
       ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
       ctx.drawImage(img, 0, 0, Math.round(img.naturalWidth/scale), Math.round(img.naturalHeight/scale))
-      doc = new jsPDF('landscape', 'px', [img.naturalHeight, img.naturalWidth], true)
+      if (doc === null || doc === undefined) {
+        const { default: jsPDF } = await import('jspdf')
+        doc = new jsPDF('landscape', 'px', [img.naturalHeight, img.naturalWidth], true)
+      }
       const pageWidth = doc.internal.pageSize.getWidth()
       const pageHeight = doc.internal.pageSize.getHeight()
       doc.addImage(canvas.toDataURL('image/png',0.5), 'PNG', 0, 0, pageWidth, pageHeight)
