@@ -13,6 +13,8 @@ import { PluginViewWrapper } from '@remix-ui/helper'
 import { customAction } from '@remixproject/plugin-api'
 const parser = (window as any).SolidityParser
 
+const _paq = window._paq = window._paq || []
+
 const profile = {
     name: 'solidityumlgen',
     displayName: 'Solidity UML Generator',
@@ -81,6 +83,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         const umlDot = convertUmlClasses2Dot(umlClasses)
         const payload = vizRenderStringSync(umlDot)
         this.updatedSvg = payload
+        _paq.push(['trackEvent', 'solidityumlgen', 'umlgenerated'])
         this.renderComponent()
         await this.call('tabs', 'focus', 'solidityumlgen')
       } catch (error) {
@@ -115,6 +118,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   generateCustomAction = async (action: customAction) => {
     this.updatedSvg = this.updatedSvg.startsWith('<?xml') ? '' : this.updatedSvg
     this.currentFile = action.path[0]
+    _paq.push(['trackEvent', 'solidityumlgen', 'activated'])
     await this.generateUml(action.path[0])
   }
 
@@ -169,6 +173,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       loading: this.loading,
       themeSelected: this.currentlySelectedTheme,
       themeName: this.themeName,
+      fileName: this.currentFile,
       themeCollection: this.themeCollection
     })
   }
@@ -179,6 +184,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       loading={state.loading}
       themeSelected={state.currentlySelectedTheme}
       themeName={state.themeName}
+      fileName={state.fileName}
       themeCollection={state.themeCollection}
     />
   }
