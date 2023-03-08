@@ -18,7 +18,7 @@ export class DocGenClient extends PluginClient {
     this.eventEmitter = new EventEmitter()
     createClient(this)
     // this.docgen = new DocGen()
-    this.methods = ['generateDocs', 'publishDocs']
+    this.methods = ['generateDocs', 'publishDocs', 'viewDocs']
     this.onload().then(async () => {
       console.log('docgen client loaded')
       await this.setListeners()
@@ -26,7 +26,8 @@ export class DocGenClient extends PluginClient {
   }
 
   async setListeners() {
-    this.currentTheme = await this.call('theme', 'currentTheme');
+    this.currentTheme = await this.call('theme', 'currentTheme')
+    
     this.on("theme", "themeChanged", (theme: any) => {
       this.currentTheme = theme
       this.eventEmitter.emit('themeChanged', this.currentTheme)
@@ -62,6 +63,17 @@ export class DocGenClient extends PluginClient {
       docs.push(id)
     }
     this.eventEmitter.emit('docsGenerated', docs)
+  }
+
+  async opendDocs() {
+    console.log('docgen client openDocs')
+    await this.call('manager', 'activatePlugin', 'docgenviewer')
+    await this.call('tabs' as any, 'focus', 'docgenviewer')
+    await this.call('docgenviewer' as any, 'viewDocs')
+  }
+
+  async viewDocs(docs: string[]) {
+    console.log('docgen client viewDocs')
   }
 
   async generateDocs() {
