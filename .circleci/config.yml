@@ -323,7 +323,10 @@ workflows:
             - remix-ide-browser
             - plugins
             
-      - prebuild
+      - prebuild:
+          filters:
+            branches:
+              only: ['master', 'remix_live', 'remix_beta']
       - deploy-build:
           script: "live"
           requires:
