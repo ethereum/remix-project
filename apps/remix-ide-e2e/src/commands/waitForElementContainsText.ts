@@ -8,7 +8,7 @@ class WaitForElementContainsText extends EventEmitter {
     this.api
       .waitForElementPresent({
         selector: `//*[${id_stripped} and contains(.,'${value}')]`,
-        timeout: 10000,
+        timeout: timeout,
         locateStrategy: 'xpath'
       }).perform((done) => {
         done()
