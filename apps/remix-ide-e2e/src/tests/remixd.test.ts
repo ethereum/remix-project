@@ -92,7 +92,6 @@ module.exports = {
       connectRemixd(browser, done)
     })
       .addFile('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'])
-      .saveScreenshot('./reports/screenshots/import.png')
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js')
       .testContracts('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'], ['SafeMath'])
