@@ -39,6 +39,7 @@ const App = () => {
       client.eventEmitter.on('docsGenerated', (docs: string[]) => {
         console.log('docsGenerated', docs)
       })
+     
 
     };
 
@@ -50,6 +51,7 @@ const App = () => {
       <h1>Remix Docgen</h1>
       {fileName && <h2>File: {fileName}</h2>}
       {hasBuild && <button onClick={() => client.generateDocs()}>Generate doc</button>}
+      {hasBuild && <button onClick={() => client.opendDocs()}>Open docs</button>}
     </div>
   )
 };
