@@ -10,7 +10,7 @@ module.exports = {
   
     'Should create new file': function (browser: NightwatchBrowser) {
         browser
-        .waitForElementVisible('*[data-id="homeTabNewFile"]')
+        .waitForElementPresent('*[data-id="homeTabNewFile"]')
         .click('*[data-id="homeTabNewFile"]')
         .waitForElementPresent('*[data-id$="/blank"]')
         .sendKeys('*[data-id$="/blank"] .remixui_items', 'newTestFile')
