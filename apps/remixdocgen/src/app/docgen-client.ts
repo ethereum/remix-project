@@ -10,7 +10,6 @@ export class DocGenClient extends PluginClient {
     this.methods = ['generateDocs', 'publishDocs']
 
     this.client.onload(async () => {
-      await this.client.activate()
     })
   }
 
