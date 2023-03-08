@@ -4,7 +4,7 @@ import EventEmitter from 'events'
 class WaitForElementContainsText extends EventEmitter {
   command(this: NightwatchBrowser, id: string, value: string, timeout = 10000): NightwatchBrowser {
     // strip brackets from id
-    const id_stripped = value.replace(/[\[\]]/g, '')
+    const id_stripped = value.replace(/[[\]]/g, '')
     this.api
       .waitForElementPresent({
         selector: `//*[${id_stripped} and contains(.,'${value}')]`,
