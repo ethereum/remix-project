@@ -38,6 +38,7 @@ jobs:
           root: .
           paths:
             - "persist"
+
   prebuild:
     docker:
       - image: cimg/node:14.17.6-browsers
@@ -61,6 +62,7 @@ jobs:
           root: .
           paths:
             - "persist"
+
   build-plugin:
       docker:
       - image: cimg/node:14.17.6-browsers
@@ -234,100 +236,32 @@ jobs:
       - store_artifacts:
           path: ./reports/screenshots
 
-  deploy-remix-live:
+  deploy-build:
     docker:
       - image: cimg/node:14.17.6-browsers
 
     resource_class:
       xlarge
     environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "dist/apps/remix-ide/index.html dist/apps/remix-ide/404.html dist/apps/remix-ide/*.js dist/apps/remix-ide/assets dist/apps/remix-ide/favicon.ico"
+      COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      COMMIT_AUTHOR: "Circle CI"
+      FILES_TO_PACKAGE: "dist/apps/remix-ide/index.html dist/apps/remix-ide/404.html dist/apps/remix-ide/*.js dist/apps/remix-ide/assets dist/apps/remix-ide/favicon.ico"
     working_directory: ~/remix-project
+
+    parameters:
+      script:
+        type: string
 
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "yarn.lock" }}
-      - run: yarn
-      - save_cache:
-          key: v1-deps-{{ checksum "yarn.lock" }}
-          paths:
-            - node_modules
-      - run: yarn run downloadsolc_assets
-      - run: yarn run build:production
+      - attach_workspace:
+          at: .
+      - run: unzip ./persist/prebuild.zip
       - run:
           name: Deploy
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "remix_live" ]; then
-              ./apps/remix-ide/ci/deploy_from_travis_remix-live.sh;
-            fi
-
-  deploy-remix-alpha:
-    docker:
-      - image: cimg/node:14.17.6-browsers
-
-    resource_class:
-      xlarge
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "dist/apps/remix-ide/index.html dist/apps/remix-ide/404.html dist/apps/remix-ide/*.js dist/apps/remix-ide/assets dist/apps/remix-ide/favicon.ico"
-    working_directory: ~/remix-project
-
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "yarn.lock" }}
-      - run: yarn
-      - save_cache:
-          key: v1-deps-{{ checksum "yarn.lock" }}
-          paths:
-            - node_modules
-      - run: yarn run downloadsolc_assets
-      - run: yarn run build:production
-      - run:
-          name: Deploy
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              ./apps/remix-ide/ci/deploy_from_travis_remix-alpha.sh;
-            fi
-
-  deploy-remix-beta:
-    docker:
-      - image: cimg/node:14.17.6-browsers
-
-    resource_class:
-      xlarge
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "dist/apps/remix-ide/index.html dist/apps/remix-ide/404.html dist/apps/remix-ide/*.js dist/apps/remix-ide/assets dist/apps/remix-ide/favicon.ico"
-    working_directory: ~/remix-project
-
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "yarn.lock" }}
-      - run: yarn
-      - save_cache:
-          key: v1-deps-{{ checksum "yarn.lock" }}
-          paths:
-            - node_modules
-      - run: yarn run downloadsolc_assets
-      - run: yarn run build:production
-      - run:
-          name: Deploy
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "remix_beta" ]; then
-              ./apps/remix-ide/ci/deploy_from_travis_remix-beta.sh;
-            fi
+          command: ./apps/remix-ide/ci/deploy_from_travis_remix-<< parameters.script >>.sh;
+    
 workflows:
-  version: 2
   run_flaky_tests:
     when: << pipeline.parameters.run_flaky_tests >>
     jobs:
@@ -386,11 +320,13 @@ workflows:
             - remix-libs
             - remix-ide-browser
             - plugins
+            
       - prebuild:
           filters:
             branches:
               only: ['master', 'remix_live', 'remix_beta']
-      - deploy-remix-live:
+      - deploy-build:
+          script: "live"
           requires:
             - lint
             - remix-libs
@@ -399,7 +335,8 @@ workflows:
           filters:
             branches:
               only: remix_live
-      - deploy-remix-alpha:
+      - deploy-build:
+          script: "alpha"
           requires:
             - lint
             - remix-libs
@@ -408,7 +345,8 @@ workflows:
           filters:
             branches:
               only: master
-      - deploy-remix-beta:
+      - deploy-build:
+          script: "beta"
           requires:
             - lint
             - remix-libs
