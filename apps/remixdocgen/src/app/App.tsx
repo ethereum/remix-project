@@ -42,7 +42,7 @@ const App = () => {
 
   useEffect(() => {
     console.log("Remix EthDoc loading...");
-    const client = createClient(new PluginClient());
+    const client = createClient(new PluginClient())
     const loadClient = async () => {
       await client.onload();
       setClientInstance(client);
