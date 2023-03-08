@@ -11473,18 +11473,6 @@ dom-serializer@^2.0.0:
     domhandler "^5.0.2"
     entities "^4.2.0"
 
-"dom-to-image@https://github.com/dmapper/dom-to-image":
-  version "2.6.0"
-  resolved "https://github.com/dmapper/dom-to-image#a7c386a8ea813930f05449ac71ab4be0c262dff3"
-
-dom-to-pdf@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/dom-to-pdf/-/dom-to-pdf-0.3.1.tgz#06db966acc73a7b81ce183202f7b6ff1f5f38578"
-  integrity sha512-2duxMNttyQr5XySV2t7gftCVhHr+zoE/f1h0nQDp/1KugAsk07EkZ9zcPFgZihcyj4dXBUWyVSxOik8czuFGDQ==
-  dependencies:
-    dom-to-image "https://github.com/dmapper/dom-to-image"
-    jspdf "^2.5.1"
-
 dom-walk@^0.1.0:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/dom-walk/-/dom-walk-0.1.2.tgz#0c548bef048f4d1f2a97249002236060daa3fd84"
@@ -13343,6 +13331,11 @@ follow-redirects@^1.15.0:
   version "1.15.2"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.2.tgz#b460864144ba63f2681096f274c4e57026da2c13"
   integrity sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==
+
+font-family-papandreou@^0.2.0-patch1:
+  version "0.2.0-patch2"
+  resolved "https://registry.yarnpkg.com/font-family-papandreou/-/font-family-papandreou-0.2.0-patch2.tgz#c75b659e96ffbc7ab2af651cf7b4910b334e8dd2"
+  integrity sha512-l/YiRdBSH/eWv6OF3sLGkwErL+n0MqCICi9mppTZBOCL5vixWGDqCYvRcuxB2h7RGCTzaTKOHT2caHvCXQPRlw==
 
 for-each@~0.3.3:
   version "0.3.3"
@@ -21944,10 +21937,10 @@ react-transition-group@^4.4.1:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react-zoom-pan-pinch@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/react-zoom-pan-pinch/-/react-zoom-pan-pinch-2.2.0.tgz#15dd97aef798699016e4e30182cc51c4bddd4739"
-  integrity sha512-khOlTeTI/ZXtbCfqUmkKW0HpM+w0RklEQ1DlFVi0D9y90r+Z8x+ipKBXvPQC3rUu5VoYK4603SY8GsA6enfa8w==
+react-zoom-pan-pinch@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/react-zoom-pan-pinch/-/react-zoom-pan-pinch-3.0.2.tgz#706c67e875e9a30480cdbef8dd4e3d6fdac9921c"
+  integrity sha512-c8BxPl/zK6RiOYrV/xBQ+ebgZpsMvbz6WOoqv2P/1QWxGCk1+q3xWF+5ub4QYasv4W8+J6vSelOR8H0WCEbL4w==
 
 react@^17.0.2:
   version "17.0.2"
@@ -23804,6 +23797,11 @@ spdy@^4.0.2:
     select-hose "^2.0.0"
     spdy-transport "^3.0.0"
 
+specificity@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/specificity/-/specificity-0.4.1.tgz#aab5e645012db08ba182e151165738d00887b019"
+  integrity sha512-1klA3Gi5PD1Wv9Q0wUoOQN1IWAuPu0D1U03ThXTr0cJ20+/iq2tHSDnK7Kk/0LXJ1ztUB2/1Os0wKmfyNgUQfg==
+
 split-on-first@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/split-on-first/-/split-on-first-1.1.0.tgz#f610afeee3b12bce1d0c30425e76398b78249a5f"
@@ -24408,6 +24406,16 @@ svg-pathdata@^6.0.3:
   resolved "https://registry.yarnpkg.com/svg-pathdata/-/svg-pathdata-6.0.3.tgz#80b0e0283b652ccbafb69ad4f8f73e8d3fbf2cac"
   integrity sha512-qsjeeq5YjBZ5eMdFuUa4ZosMLxgr5RZ+F+Y1OrDhuOCEInRMA3x74XdBtggJcj9kOeInz0WE+LgCPDkZFlBYJw==
 
+svg2pdf.js@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/svg2pdf.js/-/svg2pdf.js-2.2.1.tgz#fa81849be57c5a405c8394d35e4a4ea8aaaebeb5"
+  integrity sha512-gJsFT42tb+pYTuFudkKgpMws54DvsJW7wmzGRUY1b9CUJpRMoBU5B4HrCMUTlK2lpcdPL5cOyr84hy2BEj1/Ag==
+  dependencies:
+    cssesc "^3.0.0"
+    font-family-papandreou "^0.2.0-patch1"
+    specificity "^0.4.1"
+    svgpath "^2.3.0"
+
 svgo@^2.7.0, svgo@^2.8.0:
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/svgo/-/svgo-2.8.0.tgz#4ff80cce6710dc2795f0c7c74101e6764cfccd24"
@@ -24420,6 +24428,11 @@ svgo@^2.7.0, svgo@^2.8.0:
     csso "^4.2.0"
     picocolors "^1.0.0"
     stable "^0.1.8"
+
+svgpath@^2.3.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/svgpath/-/svgpath-2.6.0.tgz#5b160ef3d742b7dfd2d721bf90588d3450d7a90d"
+  integrity sha512-OIWR6bKzXvdXYyO4DK/UWa1VA1JeKq8E+0ug2DG98Y/vOmMpfZNj+TIG988HjfYSqtcy/hFOtZq/n/j5GSESNg==
 
 swarm-js@^0.1.40:
   version "0.1.40"
