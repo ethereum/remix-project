@@ -12,8 +12,6 @@ import { AppContext } from "./AppContext";
 import { Routes } from "./routes";
 import { useLocalStorage } from "./hooks/useLocalStorage"
 
-import { RemixUiDocgenClient } from '@remix-ui/docgenclient-ui'
-
 
 import "./App.css";
 import { ContractName, Documentation } from "../types";
@@ -103,7 +101,7 @@ const App = () => {
     //   <Routes />
     // </AppContext.Provider>
     <div>
-      <RemixUiDocgenClient />
+      <h1>Remix Docgen</h1>
     </div>
   )
 };
