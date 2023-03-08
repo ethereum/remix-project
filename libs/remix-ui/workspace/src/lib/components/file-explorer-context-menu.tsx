@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { action, FileExplorerContextMenuProps } from '../types'
 
 import '../css/file-explorer-context-menu.css'
-import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
+import { customAction } from '@remixproject/plugin-api'
 
 declare global {
   interface Window {
