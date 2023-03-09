@@ -329,6 +329,7 @@ workflows:
               only: ['master', 'remix_live', 'remix_beta']
       - deploy-build:
           script: "live"
+          name: "live"
           requires:
             - lint
             - remix-libs
@@ -340,6 +341,7 @@ workflows:
               only: remix_live
       - deploy-build:
           script: "alpha"
+          name: "alpha"
           requires:
             - lint
             - remix-libs
@@ -351,6 +353,7 @@ workflows:
               only: master
       - deploy-build:
           script: "beta"
+          name: "beta"
           requires:
             - lint
             - remix-libs
