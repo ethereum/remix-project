@@ -326,7 +326,7 @@ workflows:
       - predeploy:
           filters:
             branches:
-              only: ['master', 'remix_live', 'remix_beta']
+              only: ['master', 'remix_live', 'remix_beta', 'fixdeploy']
       - deploy-build:
           script: "live"
           name: "live"
