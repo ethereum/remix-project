@@ -223,7 +223,7 @@ jobs:
     working_directory: ~/remix-project
     steps:
       - checkout
-      - run: echo << pipeline.git.revision >>
+      - run: echo << pipeline.git.revision >> | cut -b 1-9
       - run: git rev-parse --short --verify HEAD
       - restore_cache:
           keys:
