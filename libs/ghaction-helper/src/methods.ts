@@ -5,20 +5,18 @@ import { getArtifactsByContractName } from './artifacts-helper'
 import { SignerWithAddress } from './signer'
 import Web3 from "web3"
 
-(async () => {
-  const providerConfig = {
-    fork: global.fork || null,
-    nodeUrl: global.nodeUrl || null,
-    blockNumber: global.blockNumber || null
-  }
+const providerConfig = {
+  fork: global.fork || null,
+  nodeUrl: global.nodeUrl || null,
+  blockNumber: global.blockNumber || null
+}
 
-  global.remixProvider = new Provider(providerConfig)
-  await global.remixProvider.init()
-  global.web3Provider = new ethers.providers.Web3Provider(global.remixProvider)
-  global.provider = global.web3Provider
-  global.ethereum = global.web3Provider
-  global.web3 = new Web3(global.web3Provider)
-})()
+global.remixProvider = new Provider(providerConfig)
+global.remixProvider.init()
+global.web3Provider = new ethers.providers.Web3Provider(global.remixProvider)
+global.provider = global.web3Provider
+global.ethereum = global.web3Provider
+global.web3 = new Web3(global.web3Provider)
 
 const isFactoryOptions = (signerOrOptions: any) => {
   if (!signerOrOptions || signerOrOptions === undefined || signerOrOptions instanceof ethers.Signer) return false
