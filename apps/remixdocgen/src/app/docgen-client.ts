@@ -80,7 +80,4 @@ export class DocGenClient extends PluginClient {
     this.docgen([this.build])
   }
 
-  async publishDocs() {
-    console.log('docgen client publishDocs')
-  }
 }
