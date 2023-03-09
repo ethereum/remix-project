@@ -366,7 +366,7 @@ workflows:
           script: "test"
           name: "deploy-test"
           requires:
-            - predeploy
+            - tests-passed
           filters:
             branches:
               only: fixdeploy
