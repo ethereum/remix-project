@@ -3,14 +3,23 @@ import { ethers } from "ethers"
 import { Provider } from '@remix-project/remix-simulator'
 import { getArtifactsByContractName } from './artifacts-helper'
 import { SignerWithAddress } from './signer'
+import Web3 from "web3"
 
-const providerConfig = {
-  fork: global.fork || null,
-  nodeUrl: global.nodeUrl || null,
-  blockNumber: global.blockNumber || null
-}
+(async () => {
+  const providerConfig = {
+    fork: global.fork || null,
+    nodeUrl: global.nodeUrl || null,
+    blockNumber: global.blockNumber || null
+  }
 
-global.remixProvider = new Provider(providerConfig)
+  global.remixProvider = new Provider(providerConfig)
+  await global.remixProvider.init()
+  global.web3Provider = new ethers.providers.Web3Provider(global.remixProvider)
+  global.provider = global.web3Provider
+  global.ethereum = global.web3Provider
+  global.web3 = new Web3(global.web3Provider)
+})()
+
 const isFactoryOptions = (signerOrOptions: any) => {
   if (!signerOrOptions || signerOrOptions === undefined || signerOrOptions instanceof ethers.Signer) return false
   return true
@@ -164,17 +173,15 @@ const resultToArtifact = (result: any) => {
 }
 
 const getContractFactory = async (contractNameOrABI: ethers.ContractInterface, bytecode?: string, signerOrOptions = null) => {
-  //@ts-ignore
-  if (!global.remixProvider.Transactions.txRunnerInstance) await remixProvider.init()
   if (bytecode && contractNameOrABI) {
     //@ts-ignore
-    return new ethers.ContractFactory(contractNameOrABI, bytecode, signerOrOptions || (new ethers.providers.Web3Provider(remixProvider)).getSigner())
+    return new ethers.ContractFactory(contractNameOrABI, bytecode, signerOrOptions || web3Provider.getSigner())
   } else if (typeof contractNameOrABI === 'string') {
     const contract = await getArtifactsByContractName(contractNameOrABI)
 
     if (contract) {
       //@ts-ignore
-      return new ethers.ContractFactory(contract.abi, contract.evm.bytecode.object, signerOrOptions || (new ethers.providers.Web3Provider(remixProvider)).getSigner())
+      return new ethers.ContractFactory(contract.abi, contract.evm.bytecode.object, signerOrOptions || web3Provider.getSigner())
     } else {
       throw new Error('Contract artifacts not found')
     }
@@ -185,9 +192,7 @@ const getContractFactory = async (contractNameOrABI: ethers.ContractInterface, b
 
 const getContractAt = async (contractNameOrABI: ethers.ContractInterface, address: string, signer = null) => {
   //@ts-ignore
-  if (!global.remixProvider.Transactions.txRunnerInstance) await remixProvider.init()
-  //@ts-ignore
-  const provider = new ethers.providers.Web3Provider(remixProvider)
+  const provider = web3Provider
 
   if(typeof contractNameOrABI === 'string') {
     const result = await getArtifactsByContractName(contractNameOrABI)
@@ -204,9 +209,7 @@ const getContractAt = async (contractNameOrABI: ethers.ContractInterface, addres
 
 const getSigner = async (address: string) => {
   //@ts-ignore
-  if (!global.remixProvider.Transactions.txRunnerInstance) await remixProvider.init()
-  //@ts-ignore
-  const provider = new ethers.providers.Web3Provider(remixProvider)
+  const provider = web3Provider
   const signer = provider.getSigner(address)
 
   return SignerWithAddress.create(signer)
@@ -214,17 +217,13 @@ const getSigner = async (address: string) => {
 
 const getSigners = async () => {
   //@ts-ignore
-  if (!global.remixProvider.Transactions.txRunnerInstance) await remixProvider.init()
-  //@ts-ignore
-  const provider = new ethers.providers.Web3Provider(remixProvider)
+  const provider = web3Provider
   const accounts = await provider.listAccounts()
 
   return await Promise.all( accounts.map((account: any) => getSigner(account)))
 }
 
 const getContractFactoryFromArtifact = async (artifact: any, signerOrOptions: { signer: any, libraries: any }) => {
-  //@ts-ignore
-  if (!global.remixProvider.Transactions.txRunnerInstance) await remixProvider.init()
   let libraries = {}
   let signer
 
@@ -250,7 +249,7 @@ If you want to call a contract using ${artifact.contractName} as its interface u
 
   const linkedBytecode = await collectLibrariesAndLink(artifact, libraries)
   //@ts-ignore
-  return new ethers.ContractFactory(artifact.abi, linkedBytecode || artifact.bytecode, signer || (new ethers.providers.Web3Provider(remixProvider)).getSigner())
+  return new ethers.ContractFactory(artifact.abi, linkedBytecode || artifact.bytecode, signer || web3Provider.getSigner())
 }
 
 const getContractAtFromArtifact = async (artifact: any, address: string, signerOrOptions = null) => {
