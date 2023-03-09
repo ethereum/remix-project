@@ -260,18 +260,6 @@ jobs:
       - attach_workspace:
           at: .
       - run: unzip ./persist/predeploy.zip
-
-      - run: SHA=`git rev-parse --short --verify HEAD`
-      - run: cd dist/apps/remix-ide
-      - run: git init
-      - run: git checkout -b gh-pages
-      - run: git config user.name "$COMMIT_AUTHOR"
-      - run: git config user.email "$COMMIT_AUTHOR_EMAIL"
-      - run: zip -r remix-$SHA.zip .
-      - run: git add -f .
-      - run: git commit -m "Built website from {$SHA}."
-      - run: git status
-      - run: ls -la
     
 workflows:
   run_flaky_tests:
