@@ -91,9 +91,6 @@ module.exports = {
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
-      .waitForElementVisible('#icon-panel', 2000)
-      .clickLaunchIcon('filePanel')
-      .click('[data-path="ballot.sol"]')
       .addFile('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'])
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js')
@@ -105,8 +102,6 @@ module.exports = {
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
-      .waitForElementVisible('#icon-panel', 2000)
-      .clickLaunchIcon('filePanel')
       .addFile('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'])
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0
