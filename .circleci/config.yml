@@ -223,6 +223,8 @@ jobs:
     working_directory: ~/remix-project
     steps:
       - checkout
+      - run: echo << pipeline.git.revision >>
+      - run: git rev-parse --short --verify HEAD
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
