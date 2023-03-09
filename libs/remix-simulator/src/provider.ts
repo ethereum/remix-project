@@ -18,7 +18,9 @@ export class Provider {
   Accounts
   Transactions
   methods
-  connected: boolean;
+  connected: boolean
+  initialized: boolean
+  pendingRequests: Array<any>
 
   constructor (options: Record<string, string | number> = {}) {
     this.options = options
@@ -39,15 +41,27 @@ export class Provider {
   }
 
   async init () {
+    this.initialized = false
+    this.pendingRequests = []
     await this.vmContext.init()
     await generateBlock(this.vmContext)
     await this.Accounts.resetAccounts()
     this.Transactions.init(this.Accounts.accounts)
+    this.initialized = true
+    if (this.pendingRequests.length > 0) {
+      this.pendingRequests.map((req) => {
+        this.sendAsync(req.payload, req.callback)
+      })
+      this.pendingRequests = []
+    }
   }
 
   sendAsync (payload, callback) {
     // log.info('payload method is ', payload.method) // commented because, this floods the IDE console
-
+    if (!this.initialized) {
+      this.pendingRequests.push({ payload, callback })
+      return
+    }
     const method = this.methods[payload.method]
     if (this.options.logDetails) {
       info(payload)
