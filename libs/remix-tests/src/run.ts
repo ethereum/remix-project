@@ -52,6 +52,9 @@ commander
   .option('-o, --optimize <bool>', 'enable/disable optimization', mapOptimize)
   .option('-r, --runs <number>', 'set runs (e.g: 150, 250 etc)')
   .option('-v, --verbose <level>', 'set verbosity level (0 to 5)', mapVerbosity)
+  .option('-f, --fork <string>', 'set hard fork (e.g: istanbul, berlin etc. See full list of hard forks here: https://github.com/ethereumjs/ethereumjs-monorepo/tree/master/packages/common/src/hardforks)')
+  .option('-n, --nodeUrl <string>', 'set node url (e.g: https://mainnet.infura.io/v3/your-api-key)')
+  .option('-b, --blockNumber <string>', 'set block number (e.g: 123456)')
   .argument('file_path', 'path to test file or directory')
   .action(async (file_path) => {
     const options = commander.opts();
@@ -114,8 +117,17 @@ commander
       log.info(`Runs set to ${compilerConfig.runs}`)
     }
 
+    if (options.fork && options.nodeUrl) {
+      log.info('Using hard fork ' + colors.green(options.fork) + ' and node url ' + colors.blue(options.nodeUrl))
+    }
+
+    const providerConfig = {
+      fork: options.fork || null,
+      nodeUrl: options.nodeUrl || null,
+      blockNumber: options.blockNumber || null
+    }
     const web3 = new Web3()
-    const provider: any = new Provider()
+    const provider: any = new Provider(providerConfig)
     await provider.init()
     web3.setProvider(provider)
     extend(web3)
