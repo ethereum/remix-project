@@ -60,7 +60,6 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
           </div>
         </div>
       </div>
-      <div className="d-flex w-100 flex-row py-2"></div>
       <div className={`bg-light mx-3 mb-2 p-3 pt-1 border-bottom flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
         {plugin?.profile?.author && <span className="d-flex flex-row align-items-center">
           <label className="mb-0 pr-2"><FormattedMessage id='panel.author' />:</label>
