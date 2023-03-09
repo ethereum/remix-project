@@ -215,7 +215,7 @@ jobs:
           path: ./reports/screenshots
 
 
-  prebuild:
+  predeploy:
     docker:
       - image: cimg/node:14.17.6-browsers
     resource_class:
@@ -232,7 +232,7 @@ jobs:
           paths:
             - node_modules
       - run: yarn build:production
-      - run: mkdir persist && zip -0 -r persist/prebuild.zip dist
+      - run: mkdir persist && zip -0 -r persist/predeploy.zip dist
       - persist_to_workspace:
           root: .
           paths:
@@ -258,7 +258,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: unzip ./persist/prebuild.zip
+      - run: unzip ./persist/predeploy.zip
       - run:
           name: Deploy
           command: ./apps/remix-ide/ci/deploy_from_travis_remix-<< parameters.script >>.sh;
@@ -323,7 +323,7 @@ workflows:
             - remix-ide-browser
             - plugins
             
-      - prebuild:
+      - predeploy:
           filters:
             branches:
               only: ['master', 'remix_live', 'remix_beta']
