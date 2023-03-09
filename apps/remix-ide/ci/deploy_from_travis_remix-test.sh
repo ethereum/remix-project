@@ -20,3 +20,4 @@ git commit -m "Built website from {$SHA}."
 ls -la
 git status
 
+git push -f git@github.com:bunsenstraat/remix-test.git master:gh-pages
