@@ -360,17 +360,5 @@ workflows:
           filters:
             branches:
               only: remix_beta
-      - deploy-build:
-          script: "test"
-          name: "deploy-test"
-          requires:
-            - lint
-            - remix-libs
-            - remix-ide-browser
-            - plugins
-            - predeploy
-          filters:
-            branches:
-              only: fixdeploy
 
 # VS Code Extension Version: 1.5.1
