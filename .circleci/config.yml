@@ -223,8 +223,6 @@ jobs:
     working_directory: ~/remix-project
     steps:
       - checkout
-      - run: echo << pipeline.git.revision >> | cut -b 1-9
-      - run: git rev-parse --short --verify HEAD
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
@@ -366,7 +364,11 @@ workflows:
           script: "test"
           name: "deploy-test"
           requires:
-            - tests-passed
+            - lint
+            - remix-libs
+            - remix-ide-browser
+            - plugins
+            - predeploy
           filters:
             branches:
               only: fixdeploy
