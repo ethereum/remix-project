@@ -233,7 +233,7 @@ jobs:
           key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-      - run: yarn build
+      - run: yarn build:production
       - run: mkdir persist && zip -0 -r persist/predeploy.zip dist
       - persist_to_workspace:
           root: .
