@@ -15,7 +15,7 @@ class WaitForElementContainsText extends EventEmitter {
           this.emit('complete')
         }
       })
-    }, 200)
+    }, 10)
 
     waitId = setTimeout(() => {
       clearInterval(runid)
