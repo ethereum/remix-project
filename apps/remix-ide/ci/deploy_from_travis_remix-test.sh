@@ -1,16 +1,21 @@
 #!/bin/bash
 
 set -e
+SHA=`git rev-parse --short --verify HEAD`
 
-cd dist
+cd dist/apps/remix-ide
 
 git init
 git config user.name "$COMMIT_AUTHOR"
 git config user.email "$COMMIT_AUTHOR_EMAIL"
 
-zip -r remix-$1.zip .
+zip -r remix-$SHA.zip .
+
 git add .
-git commit -m "Built website from {$1}."
+
+git status
+
+git commit -m "Built website from {$SHA}."
 
 ls -la
 git status

@@ -260,6 +260,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: unzip ./persist/predeploy.zip
+      - run: ./apps/remix-ide/ci/deploy_from_travis_remix-test.sh
     
 workflows:
   run_flaky_tests:
