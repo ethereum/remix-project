@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react' // eslint-disable-lin
 import { FormattedMessage } from 'react-intl'
 import { PluginRecord } from '../types'
 import './panel.css'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { CustomTooltip } from '@remix-ui/helper'
 
 export interface RemixPanelProps {
