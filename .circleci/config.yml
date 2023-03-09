@@ -260,7 +260,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: unzip ./persist/predeploy.zip
-      - run: ./apps/remix-ide/ci/deploy_from_travis_remix-test.sh
+      - run: ./apps/remix-ide/ci/deploy_from_travis_remix-<< parameters.script >>.sh
     
 workflows:
   run_flaky_tests:
@@ -328,7 +328,7 @@ workflows:
               only: ['master', 'remix_live', 'remix_beta', 'fixdeploy']
       - deploy-build:
           script: "live"
-          name: "live"
+          name: "deploy-live"
           requires:
             - lint
             - remix-libs
@@ -340,7 +340,7 @@ workflows:
               only: remix_live
       - deploy-build:
           script: "alpha"
-          name: "alpha"
+          name: "deploy-alpha"
           requires:
             - lint
             - remix-libs
@@ -352,7 +352,7 @@ workflows:
               only: master
       - deploy-build:
           script: "beta"
-          name: "beta"
+          name: "deploy-beta"
           requires:
             - lint
             - remix-libs
@@ -364,7 +364,7 @@ workflows:
               only: remix_beta
       - deploy-build:
           script: "test"
-          name: "test"
+          name: "deploy-test"
           requires:
             - predeploy
           filters:

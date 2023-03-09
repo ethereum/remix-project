@@ -8,16 +8,8 @@ cd dist/apps/remix-ide
 git init
 git config user.name "$COMMIT_AUTHOR"
 git config user.email "$COMMIT_AUTHOR_EMAIL"
-
 zip -r remix-$SHA.zip .
-
 git add .
-
-git status
-
 git commit -m "Built website from {$SHA}."
-
-ls -la
-git status
 
 git push -f git@github.com:bunsenstraat/remix-test.git master:gh-pages
