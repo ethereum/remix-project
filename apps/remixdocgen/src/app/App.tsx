@@ -21,7 +21,6 @@ export const getNewContractNames = (compilationResult: CompilationResult) => {
 }
 
 const App = () => {
- 
   const [themeType, setThemeType] = useState<string>('dark');
   const [hasBuild, setHasBuild] = useState<boolean>(false);
   const [fileName, setFileName] = useState<string>('');
@@ -39,12 +38,9 @@ const App = () => {
       client.eventEmitter.on('docsGenerated', (docs: string[]) => {
         console.log('docsGenerated', docs)
       })
-     
-
-    };
-
-    watchThemeSwitch();
-  }, []);
+    }
+    watchThemeSwitch()
+  }, [])
 
   return (
     <div>
