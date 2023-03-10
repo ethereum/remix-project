@@ -120,11 +120,12 @@ module.exports = {
   },
   'Run tests using Mocha script and check result logging in the terminal #group4': function (browser: NightwatchBrowser) {
     browser
+      .logTime()
       .addFile('scripts/storage.test.js', { content: storageMochaTests })
       .openFile('contracts/1_Storage.sol')
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]')
-      .pause(1000) // compile Storage
+      .verifyContracts(['1_Storage.sol'], { wait:0, version: null, runs: null})
       .logTime()
       .executeScriptInTerminal('remix.execute(\'scripts/storage.test.js\')')
       .logTime()
