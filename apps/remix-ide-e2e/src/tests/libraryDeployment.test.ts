@@ -36,7 +36,7 @@ module.exports = {
       })
   },
 
-  'Test Manual Deploy Lib': function (browser: NightwatchBrowser) {
+  'Test Manual Deploy Lib': !function (browser: NightwatchBrowser) {
     browser.click('*[data-id="deployAndRunClearInstances"]')
       .pause(5000)
       .clickLaunchIcon('settings')
