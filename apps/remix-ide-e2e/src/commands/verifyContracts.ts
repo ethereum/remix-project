@@ -59,7 +59,8 @@ function verifyContracts(browser: NightwatchBrowser, compiledContractNames: stri
           .click('*[data-id="remixui_treeviewitem_metadata"]')
           .isVisible({
             suppressNotFoundErrors: true,
-            selector: '*[data-id="treeViewDivtreeViewItemsettings"]'
+            selector: '*[data-id="treeViewDivtreeViewItemsettings"]',
+            timeout: 2000
           }, (okVisible) => {
             // @ts-ignore
             // status === -1 means the element is not visible, 0 means it is visible.
