@@ -6,6 +6,7 @@ SHA=`git rev-parse --short --verify HEAD`
 cd dist/apps/remix-ide
 
 git init
+git checkout -b gh-pages
 git config user.name "$COMMIT_AUTHOR"
 git config user.email "$COMMIT_AUTHOR_EMAIL"
 
