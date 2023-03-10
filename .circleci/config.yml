@@ -313,6 +313,7 @@ workflows:
           requires:
             - build
             - build-plugin
+            - build-tools
           matrix:
             alias: plugins
             parameters:
@@ -329,6 +330,7 @@ workflows:
       - remix-ide-browser:
           requires:
             - build
+            - build-tools
           matrix:
             parameters:
               browser: ["chrome", "firefox"]
