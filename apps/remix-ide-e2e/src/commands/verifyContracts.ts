@@ -20,7 +20,10 @@ function verifyContracts(browser: NightwatchBrowser, compiledContractNames: stri
     .perform(() => {
       console.log(opts)
       for (const index in compiledContractNames) {
-        browser.waitForElementPresent(`//*[@data-id="compiledContracts" and contains(.,'${compiledContractNames[index]}')]`)
+        browser.waitForElementPresent({
+          selector: `//*[@data-id="compiledContracts" and contains(.,'${compiledContractNames[index]}')]`,
+          locateStrategy: 'xpath'
+        })
       }
     })
     .perform(async (done) => {
