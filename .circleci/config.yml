@@ -40,6 +40,18 @@ jobs:
           paths:
             - "persist"
 
+  build-tools:
+      docker:
+      - image: cimg/node:14.17.6-browsers
+      working_directory: ~/remix-project
+      steps:
+        - browser-tools/install-browser-tools:
+            install-firefox: true
+            install-chrome: true
+            install-geckodriver: true
+            install-chromedriver: true
+        - run: whereis chrome
+        - run: whereis firefox
 
   build-plugin:
       docker:
@@ -278,6 +290,7 @@ workflows:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - build
+      - build-tools
       - build-plugin:
           matrix:
             parameters:
