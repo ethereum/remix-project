@@ -92,6 +92,7 @@ module.exports = {
 
   'Deploy "Owner" using an ether.js script, listen to event and check event are logged in the terminal #group4': function (browser: NightwatchBrowser) {
     browser
+      .logTime()
       .clickLaunchIcon('settings')
       .clickLaunchIcon('udapp')
       .switchEnvironment('vm-london')
@@ -104,19 +105,25 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]')
       .contractsAreCompiled(['Owner'])
+      .logTime()
       .executeScriptInTerminal('remix.execute(\'deployWithEthersJs.js\')')
+      .logTime()
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Contract Address:', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deployment successful.', 60000)
       .addAtAddressInstance('0xd9145CCE52D386f254917e481eB44e9943F39138', true, true, false)
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
-      .clickInstance(0)
+      .logTime()
+      .clickInstance(0)      
+      .logTime()
       .clickFunction('changeOwner - transact (not payable)', { types: 'address newOwner', values: '0xd9145CCE52D386f254917e481eB44e9943F39138' }) // execute the "changeOwner" function
+      .logTime()
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'previousOwner', 60000) // check that the script is logging the event
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', 60000) // check that the script is logging the event
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'newOwner', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
+      .logTime()
   },
   'Run tests using Mocha script and check result logging in the terminal #group4': function (browser: NightwatchBrowser) {
     browser
