@@ -99,11 +99,12 @@ module.exports = {
       .logTime()
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="treeViewDivtreeViewItem"]') // make sure we create the file at the root folder
       .addFile('deployWithEthersJs.js', { content: deployWithEthersJs })
+      .logTime()
       .click('[data-id="treeViewDivtreeViewItemcontracts"]')
       .openFile('contracts/2_Owner.sol')
       .clickLaunchIcon('solidity')
+      .logTime()
       .click('*[data-id="compilerContainerCompileBtn"]')
       .logTime()
       .contractsAreCompiled(['Owner'])
