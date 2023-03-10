@@ -99,8 +99,6 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .click('*[data-id="treeViewDivtreeViewItem"]') // make sure we create the file at the root folder
       .addFile('deployWithEthersJs.js', { content: deployWithEthersJs })
-      // .openFile('deployWithEthersJs.js')
-      .pause(1000)
       .click('[data-id="treeViewDivtreeViewItemcontracts"]')
       .openFile('contracts/2_Owner.sol')
       .clickLaunchIcon('solidity')
@@ -122,13 +120,11 @@ module.exports = {
   'Run tests using Mocha script and check result logging in the terminal #group4': function (browser: NightwatchBrowser) {
     browser
       .addFile('scripts/storage.test.js', { content: storageMochaTests })
-      .pause(1000)
       .openFile('contracts/1_Storage.sol')
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]')
       .pause(1000) // compile Storage
       .executeScriptInTerminal('remix.execute(\'scripts/storage.test.js\')')
-      .pause(1000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'RUNS scripts/script.ts....')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'storage contract Address:')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test initial value')
@@ -143,7 +139,6 @@ module.exports = {
   'Run tests using Mocha for a contract with library deployment and check result logging in the terminal #group4': function (browser: NightwatchBrowser) {
     browser
       .addFile('scripts/storageWithLib.test.js', { content: storageWithLibMochaTests })
-      .pause(1000)
       .click('[data-id="treeViewDivtreeViewItemcontracts"]')
       .addFile('contracts/StorageWithLib.sol', { content: storageWithLibContract })
       .openFile('contracts/StorageWithLib.sol')
@@ -151,7 +146,6 @@ module.exports = {
       .click('*[data-id="compilerContainerCompileBtn"]')
       .pause(1000) // compile StorageWithLib
       .executeScriptInTerminal('remix.execute(\'scripts/storageWithLib.test.js\')')
-      .pause(1000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'RUNS scripts/script.ts....')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Storage')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'deploying lib:')
@@ -162,7 +156,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Passed: 0')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Failed: 1')
   },
-  'Should print hardhat logs #group4': function (browser: NightwatchBrowser) {
+  'Should print hardhat logs #group4 #flaky': function (browser: NightwatchBrowser) {
     browser
       .addFile('printHardhatlog.sol',  { content: hardhatLog })
       .clickLaunchIcon('solidity')
@@ -175,16 +169,12 @@ module.exports = {
       .click('*[data-id="deployAndRunClearInstances"]')
       .selectContract('OwnerTest')
       .createContract('')
-      .pause(1000)
       .journalChildIncludes('constructor', { shouldHaveOnlyOneOccurence: true })
-      .pause(5000)
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .clickInstance(0)
       .clickFunction('changeOwner - transact (not payable)', { types: 'address newOwner', values: '0xd9145CCE52D386f254917e481eB44e9943F39138' })
-      .pause(1000)
       .journalChildIncludes('inside changeOwner', { shouldHaveOnlyOneOccurence: true })
       .clickFunction('getOwner - call')
-      .pause(1000)
       .journalChildIncludes('inside getOwner', { shouldHaveOnlyOneOccurence: true })
   },
 
