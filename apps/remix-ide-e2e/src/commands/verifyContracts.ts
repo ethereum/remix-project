@@ -27,7 +27,7 @@ function verifyContracts(browser: NightwatchBrowser, compiledContractNames: stri
       }
     })
     .perform(async (done) => {
-      if (opts.version) {
+      if (opts && opts.version) {
         browser
           .click('*[data-id="compilation-details"]')
           .waitForElementVisible('*[data-id="remixui_treeviewitem_metadata"]')
@@ -41,7 +41,7 @@ function verifyContracts(browser: NightwatchBrowser, compiledContractNames: stri
             done()
             callback()
           })
-      } if (opts.runs) {
+      } if (opts && opts.runs) {
         browser
           .click('*[data-id="compilation-details"]')
           .waitForElementVisible('*[data-id="remixui_treeviewitem_metadata"]')
