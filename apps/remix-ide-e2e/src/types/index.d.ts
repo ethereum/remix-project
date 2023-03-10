@@ -68,6 +68,7 @@ declare module 'nightwatch' {
         switchWorkspace: (workspaceName: string) => NightwatchBrowser
         switchEnvironment: (provider: string) => NightwatchBrowser
         connectToExternalHttpProvider: (url: string, identifier: string) => NightwatchBrowser
+        logTime(this: NightwatchBrowser, msg?: string): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {

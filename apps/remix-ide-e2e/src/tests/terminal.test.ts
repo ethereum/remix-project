@@ -124,20 +124,11 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]')
       .pause(1000) // compile Storage
-      .perform(() => {
-        // log time
-        console.log('time: ', new Date().toLocaleTimeString())
-      })
+      .logTime()
       .executeScriptInTerminal('remix.execute(\'scripts/storage.test.js\')')
-      .perform(() => {
-        // log time
-        console.log('time: ', new Date().toLocaleTimeString())
-      })
+      .logTime()
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'RUNS scripts/script.ts....')
-      .perform(() => {
-        // log time
-        console.log('time: ', new Date().toLocaleTimeString())
-      })
+      .logTime()
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'storage contract Address:')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test initial value')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test updating and retrieving updated value')
@@ -147,10 +138,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Message: incorrect number: expected 56 to equal 55')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Passed: 2')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Failed: 1')
-      .perform(() => {
-        // log time
-        console.log('time: ', new Date().toLocaleTimeString())
-      })
+      .logTime()
   },
   'Run tests using Mocha for a contract with library deployment and check result logging in the terminal #group4': function (browser: NightwatchBrowser) {
     browser
@@ -174,64 +162,33 @@ module.exports = {
   },
   'Should print hardhat logs #group4 #flaky': function (browser: NightwatchBrowser) {
     browser
-    .perform(() => {
-      // log time
-      console.log('time: ', new Date().toLocaleTimeString())
-    })
-    .perform(() => {
-      // log time
-      console.log('time: ', new Date().toLocaleTimeString())
-    })
-      .addFile('printHardhatlog.sol',  { content: hardhatLog })
+      .logTime()
+      .addFile('printHardhatlog.sol', { content: hardhatLog })
       .clickLaunchIcon('solidity')
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]')
       .clickLaunchIcon('udapp')
-      .perform(() => {
-        // log time
-        console.log('time: ', new Date().toLocaleTimeString())
-      })
+      .logTime()
       .verifyContracts(['OwnerTest'])
-      .perform(() => {
-        // log time
-        console.log('time: ', new Date().toLocaleTimeString())
-      })
+      .logTime()
       .clickLaunchIcon('udapp')
       .click('*[data-id="deployAndRunClearInstances"]')
       .selectContract('OwnerTest')
       .createContract('')
-      .perform(() => {
-        // log time
-        console.log('time: ', new Date().toLocaleTimeString())
-      })
+      .logTime()
       .journalChildIncludes('constructor', { shouldHaveOnlyOneOccurence: true })
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .clickInstance(0)
-      .perform(() => {
-        // log time
-        console.log('time: ', new Date().toLocaleTimeString())
-      })
+      .logTime()
       .clickFunction('changeOwner - transact (not payable)', { types: 'address newOwner', values: '0xd9145CCE52D386f254917e481eB44e9943F39138' })
-      .perform(() => {
-        // log time
-        console.log('time: ', new Date().toLocaleTimeString())
-      })
+      .logTime()
       .journalChildIncludes('inside changeOwner', { shouldHaveOnlyOneOccurence: true })
-      .perform(() => {
-        // log time
-        console.log('time: ', new Date().toLocaleTimeString())
-      })
+      .logTime()
       .clickFunction('getOwner - call')
-      .perform(() => {
-        // log time
-        console.log('time: ', new Date().toLocaleTimeString())
-      })
+      .logTime()
       .journalChildIncludes('inside getOwner', { shouldHaveOnlyOneOccurence: true })
-      .perform(() => {
-        // log time
-        console.log('time: ', new Date().toLocaleTimeString())
-      })
+      .logTime()
   },
 
   'Should display auto-complete menu #group4': function (browser: NightwatchBrowser) {
@@ -309,22 +266,22 @@ module.exports = {
           if (Array.isArray(result.value) && result.value.length > 0) {
             console.log('Found ' + result.value.length + ' transactions')
             browser
-            .click({
-              selector: '[data-id="listenNetworkCheckInput"]',
-            })
-            .click({
-              selector: '*[data-id="terminalClearConsole"]',
-            })
-            .click({
-              selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
-            })
-            .pause(10000)
-            .waitForElementNotPresent({
-              locateStrategy: 'xpath',
-              selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
-              timeout: 120000
-            })
-            .end()
+              .click({
+                selector: '[data-id="listenNetworkCheckInput"]',
+              })
+              .click({
+                selector: '*[data-id="terminalClearConsole"]',
+              })
+              .click({
+                selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
+              })
+              .pause(10000)
+              .waitForElementNotPresent({
+                locateStrategy: 'xpath',
+                selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
+                timeout: 120000
+              })
+              .end()
           } else {
             browser
               .assert.fail('No transaction found')
@@ -346,7 +303,7 @@ module.exports = {
       .switchEnvironment('vm-custom-fork')
       .waitForElementPresent('[data-id="vm-custom-fork-modal-footer-ok-react"]')
       .execute(() => {
-          (document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkNodeUrl"]') as any).focus()
+        (document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkNodeUrl"]') as any).focus()
       }, [], () => { })
       .clearValue('*[data-id="CustomForkNodeUrl"]').pause(1000).setValue('*[data-id="CustomForkNodeUrl"]', 'https://remix-sepolia.ethdevops.io')
       .execute(() => {
