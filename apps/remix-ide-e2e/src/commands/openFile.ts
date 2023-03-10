@@ -36,7 +36,10 @@ function openFile (browser: NightwatchBrowser, name: string, done: VoidFunction)
   })
   .waitForElementVisible('li[data-id="treeViewLitreeViewItem' + name + '"', 60000)
   .click('li[data-id="treeViewLitreeViewItem' + name + '"')
-  .pause(2000)
+  .waitForElementPresent({
+    selector: `//*[@data-id="tab-active" and contains(@title, "${name}")]`,
+    locateStrategy: 'xpath',
+  })
   .perform(() => {
     done()
   })
