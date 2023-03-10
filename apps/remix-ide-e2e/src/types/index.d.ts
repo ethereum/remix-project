@@ -69,6 +69,7 @@ declare module 'nightwatch' {
         switchEnvironment: (provider: string) => NightwatchBrowser
         connectToExternalHttpProvider: (url: string, identifier: string) => NightwatchBrowser
         logTime(this: NightwatchBrowser, msg?: string): NightwatchBrowser
+        contractsAreCompiled(this: NightwatchBrowser, contracts: string[]): NightwatchBrowser
     }
 
     export interface NightwatchBrowser {
