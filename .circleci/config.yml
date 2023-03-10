@@ -70,7 +70,7 @@ jobs:
         - run: echo 'export PATH="$(pwd)"/tools:"$PATH"' >> "$BASH_ENV"
         - run: echo $PATH
         - run: ls -la /home/circleci/remix-project/tools
-        - run: google-chrome --version
+        - run: firefox --version
 
   build-plugin:
       docker:
