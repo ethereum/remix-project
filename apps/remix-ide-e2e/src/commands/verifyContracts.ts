@@ -15,12 +15,14 @@ class VerifyContracts extends EventEmitter {
 
 function verifyContracts(browser: NightwatchBrowser, compiledContractNames: string[], opts: { wait: number, version?: string, runs?: string }, callback: VoidFunction) {
   browser
+    .clickLaunchIcon('solidity')
+    .waitForElementPresent('*[data-id="compiledContracts"] option', 60000)
     .perform(() => {
       console.log(opts)
+      for (const index in compiledContractNames) {
+        browser.waitForElementPresent(`//*[@data-id="compiledContracts" and contains(.,'${compiledContractNames[index]}')]`)
+      }
     })
-    .clickLaunchIcon('solidity')
-    .pause(opts.wait)
-    .waitForElementPresent('*[data-id="compiledContracts"] option', 60000)
     .perform(async (done) => {
       if (opts.version) {
         browser
@@ -53,9 +55,6 @@ function verifyContracts(browser: NightwatchBrowser, compiledContractNames: stri
             callback()
           })
       } else {
-        for (const index in compiledContractNames) {
-          await browser.waitForElementContainsText('[data-id="compiledContracts"]', compiledContractNames[index], 60000)
-        }
         done()
         callback()
       }
