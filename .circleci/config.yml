@@ -67,7 +67,7 @@ jobs:
       steps:
         - attach_workspace:
             at: .
-        - run: export PATH="$(pwd)/tools:$PATH"
+        - run: export PATH="$(pwd)/tools:$PATH" && source ~/.bashrc
         - run: echo $PATH
         - run: google-chrome --version
 
