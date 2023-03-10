@@ -124,8 +124,20 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]')
       .pause(1000) // compile Storage
+      .perform(() => {
+        // log time
+        console.log('time: ', new Date().toLocaleTimeString())
+      })
       .executeScriptInTerminal('remix.execute(\'scripts/storage.test.js\')')
+      .perform(() => {
+        // log time
+        console.log('time: ', new Date().toLocaleTimeString())
+      })
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'RUNS scripts/script.ts....')
+      .perform(() => {
+        // log time
+        console.log('time: ', new Date().toLocaleTimeString())
+      })
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'storage contract Address:')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test initial value')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test updating and retrieving updated value')
@@ -135,6 +147,10 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Message: incorrect number: expected 56 to equal 55')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Passed: 2')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Failed: 1')
+      .perform(() => {
+        // log time
+        console.log('time: ', new Date().toLocaleTimeString())
+      })
   },
   'Run tests using Mocha for a contract with library deployment and check result logging in the terminal #group4': function (browser: NightwatchBrowser) {
     browser
