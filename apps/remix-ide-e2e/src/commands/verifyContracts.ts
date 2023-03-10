@@ -2,7 +2,7 @@ import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
 class VerifyContracts extends EventEmitter {
-  command(this: NightwatchBrowser, compiledContractNames: string[], opts = { wait: 1000, version: null, runs: '200' }): NightwatchBrowser {
+  command(this: NightwatchBrowser, compiledContractNames: string[], opts = { version: null, runs: '200' }): NightwatchBrowser {
     this.api.perform((done) => {
       verifyContracts(this.api, compiledContractNames, opts, () => {
         done()
@@ -13,7 +13,7 @@ class VerifyContracts extends EventEmitter {
   }
 }
 
-function verifyContracts(browser: NightwatchBrowser, compiledContractNames: string[], opts: { wait: number, version?: string, runs?: string }, callback: VoidFunction) {
+function verifyContracts(browser: NightwatchBrowser, compiledContractNames: string[], opts: { version?: string, runs?: string }, callback: VoidFunction) {
   browser
     .clickLaunchIcon('solidity')
     .waitForElementPresent('*[data-id="compiledContracts"] option', 60000)

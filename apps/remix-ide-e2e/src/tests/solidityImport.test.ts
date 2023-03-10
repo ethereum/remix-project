@@ -41,7 +41,7 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0 (master branch)
       .addFile('Untitled4.sol', sources[3]['Untitled4.sol'])
       .clickLaunchIcon('filePanel')
-      .verifyContracts(['test7', 'ERC20'], { wait: 10000 })
+      .verifyContracts(['test7', 'ERC20'])
   },
 
   'Test GitHub Import - from other branch #group2': function (browser: NightwatchBrowser) {
@@ -49,7 +49,7 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js') // switch back to 0.5.0 : release-v2.3.0 branch is not solidity 0.6 compliant
       .addFile('Untitled5.sol', sources[4]['Untitled5.sol'])
       .clickLaunchIcon('filePanel')
-      .verifyContracts(['test8', 'ERC20', 'SafeMath'], { wait: 10000 })
+      .verifyContracts(['test8', 'ERC20', 'SafeMath'])
   },
 
   'Test GitHub Import - no branch specified #group2': function (browser: NightwatchBrowser) {
@@ -59,7 +59,7 @@ module.exports = {
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('Untitled6.sol', sources[5]['Untitled6.sol'])
       .clickLaunchIcon('filePanel')
-      .verifyContracts(['test10', 'ERC20'], { wait: 10000 })
+      .verifyContracts(['test10', 'ERC20'])
   },
 
   'Test GitHub Import - raw URL #group4': function (browser: NightwatchBrowser) {
@@ -68,7 +68,7 @@ module.exports = {
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('Untitled7.sol', sources[6]['Untitled7.sol'])
       .clickLaunchIcon('filePanel')
-      .verifyContracts(['test11', 'ERC20'], { wait: 10000 })
+      .verifyContracts(['test11', 'ERC20'])
   },
 
   'Test switch to a GitHub import from a solidity warning #group3': function (browser: NightwatchBrowser) {
@@ -111,7 +111,7 @@ module.exports = {
         selector: '*[data-id="treeViewLitreeViewItem.deps/npm/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol"]',
         timeout: 120000,
       })
-      .verifyContracts(['test13', 'ERC20'], { wait: 30000 })
+      .verifyContracts(['test13', 'ERC20'])
       .end()
   }
 }

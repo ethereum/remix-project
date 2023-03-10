@@ -48,7 +48,7 @@ module.exports = {
       .executeScriptInTerminal('remix.exeCurrent()')
       .pause(15000)
       .addFile('test_updateConfiguration.sol', { content: simpleContract })
-      .verifyContracts(['StorageTestUpdateConfiguration'], { wait: 5000, version: '0.6.8+commit.0bbfe453' })
+      .verifyContracts(['StorageTestUpdateConfiguration'], { version: '0.6.8+commit.0bbfe453' })
   },
 
   'Should produce a stack too deep error #group5': function (browser: NightwatchBrowser) {

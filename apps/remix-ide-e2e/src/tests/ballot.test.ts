@@ -224,7 +224,7 @@ module.exports = {
 
       .pause(5000)
       .openFile('Untitled.sol')
-      .verifyContracts(['Ballot'], { wait: 2000, runs: '300' })
+      .verifyContracts(['Ballot'], { runs: '300' })
   },
 
   'Compile and deploy sample yul file  #group2': function (browser: NightwatchBrowser) {
