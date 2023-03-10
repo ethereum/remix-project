@@ -96,6 +96,7 @@ module.exports = {
       .clickLaunchIcon('settings')
       .clickLaunchIcon('udapp')
       .switchEnvironment('vm-london')
+      .logTime()
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .clickLaunchIcon('filePanel')
       .click('*[data-id="treeViewDivtreeViewItem"]') // make sure we create the file at the root folder
@@ -104,6 +105,7 @@ module.exports = {
       .openFile('contracts/2_Owner.sol')
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]')
+      .logTime()
       .contractsAreCompiled(['Owner'])
       .logTime()
       .executeScriptInTerminal('remix.execute(\'deployWithEthersJs.js\')')
