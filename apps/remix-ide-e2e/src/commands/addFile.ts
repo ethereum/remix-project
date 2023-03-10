@@ -45,7 +45,7 @@ function addFile(browser: NightwatchBrowser, name: string, content: NightwatchCo
       } else {
         browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
           .waitForElementPresent({
-            selector: '*[@data-id$="/blank"] .remixui_items',
+            selector: '*[data-id$="/blank"] .remixui_items',
             locateStrategy: 'css selector'
           })
           .sendKeys('*[data-id$="/blank"] .remixui_items', name)
