@@ -230,8 +230,8 @@ module.exports = {
   'Compile and deploy sample yul file  #group2': function (browser: NightwatchBrowser) {
     browser
       .addFile('sample.yul', { content: yulSample })
-      .clickLaunchIcon('solidity')
-      .waitForElementVisible('*[data-id="scConfigExpander"]')
+      //.clickLaunchIcon('solidity')
+      //.waitForElementVisible('*[data-id="scConfigExpander"]')
       .click('*[data-id="scManualConfiguration"]')
       .waitForElementVisible('select[id="compilierLanguageSelector"]', 10000)
       .click('select[id="compilierLanguageSelector"]')
