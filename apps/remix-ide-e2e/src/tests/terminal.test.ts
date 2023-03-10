@@ -174,24 +174,64 @@ module.exports = {
   },
   'Should print hardhat logs #group4 #flaky': function (browser: NightwatchBrowser) {
     browser
+    .perform(() => {
+      // log time
+      console.log('time: ', new Date().toLocaleTimeString())
+    })
+    .perform(() => {
+      // log time
+      console.log('time: ', new Date().toLocaleTimeString())
+    })
       .addFile('printHardhatlog.sol',  { content: hardhatLog })
       .clickLaunchIcon('solidity')
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]')
       .clickLaunchIcon('udapp')
+      .perform(() => {
+        // log time
+        console.log('time: ', new Date().toLocaleTimeString())
+      })
       .verifyContracts(['OwnerTest'])
+      .perform(() => {
+        // log time
+        console.log('time: ', new Date().toLocaleTimeString())
+      })
       .clickLaunchIcon('udapp')
       .click('*[data-id="deployAndRunClearInstances"]')
       .selectContract('OwnerTest')
       .createContract('')
+      .perform(() => {
+        // log time
+        console.log('time: ', new Date().toLocaleTimeString())
+      })
       .journalChildIncludes('constructor', { shouldHaveOnlyOneOccurence: true })
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .clickInstance(0)
+      .perform(() => {
+        // log time
+        console.log('time: ', new Date().toLocaleTimeString())
+      })
       .clickFunction('changeOwner - transact (not payable)', { types: 'address newOwner', values: '0xd9145CCE52D386f254917e481eB44e9943F39138' })
+      .perform(() => {
+        // log time
+        console.log('time: ', new Date().toLocaleTimeString())
+      })
       .journalChildIncludes('inside changeOwner', { shouldHaveOnlyOneOccurence: true })
+      .perform(() => {
+        // log time
+        console.log('time: ', new Date().toLocaleTimeString())
+      })
       .clickFunction('getOwner - call')
+      .perform(() => {
+        // log time
+        console.log('time: ', new Date().toLocaleTimeString())
+      })
       .journalChildIncludes('inside getOwner', { shouldHaveOnlyOneOccurence: true })
+      .perform(() => {
+        // log time
+        console.log('time: ', new Date().toLocaleTimeString())
+      })
   },
 
   'Should display auto-complete menu #group4': function (browser: NightwatchBrowser) {
