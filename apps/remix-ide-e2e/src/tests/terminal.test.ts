@@ -92,36 +92,26 @@ module.exports = {
 
   'Deploy "Owner" using an ether.js script, listen to event and check event are logged in the terminal #group4': function (browser: NightwatchBrowser) {
     browser
-      .logTime()
       .clickLaunchIcon('settings')
       .clickLaunchIcon('udapp')
       .switchEnvironment('vm-london')
-      .logTime()
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .clickLaunchIcon('filePanel')
       .addFile('deployWithEthersJs.js', { content: deployWithEthersJs })
-      .logTime()
       .click('[data-id="treeViewDivtreeViewItemcontracts"]')
       .openFile('contracts/2_Owner.sol')
       .clickLaunchIcon('solidity')
-      .logTime()
       .click('*[data-id="compilerContainerCompileBtn"]')
-      .logTime()
       .contractsAreCompiled(['Owner'])
-      .logTime()
       .executeScriptInTerminal('remix.execute(\'deployWithEthersJs.js\')')
-      .logTime()
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Contract Address:', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deployment successful.', 60000)
       .addAtAddressInstance('0xd9145CCE52D386f254917e481eB44e9943F39138', true, true, false)
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
-      .logTime()
       .clickInstance(0)      
-      .logTime()
       .clickFunction('changeOwner - transact (not payable)', { types: 'address newOwner', values: '0xd9145CCE52D386f254917e481eB44e9943F39138' }) // execute the "changeOwner" function
-      .logTime()
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'previousOwner', 60000) // check that the script is logging the event
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', 60000) // check that the script is logging the event
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'newOwner', 60000)
@@ -130,17 +120,13 @@ module.exports = {
   },
   'Run tests using Mocha script and check result logging in the terminal #group4': function (browser: NightwatchBrowser) {
     browser
-      .logTime()
       .addFile('scripts/storage.test.js', { content: storageMochaTests })
       .openFile('contracts/1_Storage.sol')
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]')
       .contractsAreCompiled(['Storage'])
-      .logTime()
       .executeScriptInTerminal('remix.execute(\'scripts/storage.test.js\')')
-      .logTime()
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'RUNS scripts/script.ts....')
-      .logTime()
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'storage contract Address:')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test initial value')
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✓ test updating and retrieving updated value')
@@ -174,33 +160,24 @@ module.exports = {
   },
   'Should print hardhat logs #group4 #flaky': function (browser: NightwatchBrowser) {
     browser
-      .logTime()
       .addFile('printHardhatlog.sol', { content: hardhatLog })
       .clickLaunchIcon('solidity')
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]')
       .clickLaunchIcon('udapp')
-      .logTime()
       .verifyContracts(['OwnerTest'])
-      .logTime()
       .clickLaunchIcon('udapp')
       .click('*[data-id="deployAndRunClearInstances"]')
       .selectContract('OwnerTest')
       .createContract('')
-      .logTime()
       .journalChildIncludes('constructor', { shouldHaveOnlyOneOccurence: true })
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .clickInstance(0)
-      .logTime()
       .clickFunction('changeOwner - transact (not payable)', { types: 'address newOwner', values: '0xd9145CCE52D386f254917e481eB44e9943F39138' })
-      .logTime()
       .journalChildIncludes('inside changeOwner', { shouldHaveOnlyOneOccurence: true })
-      .logTime()
       .clickFunction('getOwner - call')
-      .logTime()
       .journalChildIncludes('inside getOwner', { shouldHaveOnlyOneOccurence: true })
-      .logTime()
   },
 
   'Should display auto-complete menu #group4': function (browser: NightwatchBrowser) {

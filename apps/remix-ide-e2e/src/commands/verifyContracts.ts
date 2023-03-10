@@ -32,13 +32,17 @@ function verifyContracts(browser: NightwatchBrowser, compiledContractNames: stri
           .click('*[data-id="compilation-details"]')
           .waitForElementVisible('*[data-id="remixui_treeviewitem_metadata"]')
           .click('*[data-id="remixui_treeviewitem_metadata"]')
-          .isVisible('*[data-id="treeViewDivtreeViewItemcompiler"]', (okVisible) => {
-            // @ts-ignore
-            // status === -1 means the element is not visible, 0 means it is visible.
-            if (okVisible.status === -1) {
-              browser.click('*[data-id="remixui_treeviewitem_metadata"]')
-            }
-          })
+          .isVisible({
+            selector: '*[data-id="treeViewDivtreeViewItemcompiler"]',
+            suppressNotFoundErrors: true
+          }
+            , (okVisible) => {
+              // @ts-ignore
+              // status === -1 means the element is not visible, 0 means it is visible.
+              if (okVisible.status === -1) {
+                browser.click('*[data-id="remixui_treeviewitem_metadata"]')
+              }
+            })
           .waitForElementVisible('*[data-id="treeViewDivtreeViewItemcompiler"]')
           .click('*[data-id="treeViewDivtreeViewItemcompiler"]')
           .waitForElementVisible('*[data-id="treeViewLiversion"]')
@@ -53,7 +57,10 @@ function verifyContracts(browser: NightwatchBrowser, compiledContractNames: stri
           .click('*[data-id="compilation-details"]')
           .waitForElementVisible('*[data-id="remixui_treeviewitem_metadata"]')
           .click('*[data-id="remixui_treeviewitem_metadata"]')
-          .isVisible('*[data-id="treeViewDivtreeViewItemsettings"]', (okVisible) => {
+          .isVisible({
+            suppressNotFoundErrors: true,
+            selector: '*[data-id="treeViewDivtreeViewItemsettings"]'
+          }, (okVisible) => {
             // @ts-ignore
             // status === -1 means the element is not visible, 0 means it is visible.
             if (okVisible.status === -1) {
