@@ -55,7 +55,6 @@ jobs:
         - run: cp /usr/local/bin/chromedriver tools
         - run: cp /usr/local/bin/geckodriver tools
         - run: cp /usr/local/bin/firefox tools
-        - run: echo 'export PATH="$(pwd)"/tools:"$PATH"' >> "$BASH_ENV"
         - run: ls -la tools
         - persist_to_workspace:
             root: .
@@ -68,6 +67,7 @@ jobs:
       steps:
         - attach_workspace:
             at: .
+        - run: echo 'export PATH="$(pwd)"/tools:"$PATH"' >> "$BASH_ENV"
         - run: echo $PATH
         - run: google-chrome --version
 
