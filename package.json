@@ -229,6 +229,7 @@
     "@nrwl/js": "15.7.1",
     "@nrwl/linter": "15.7.1",
     "@nrwl/node": "15.7.1",
+    "@nrwl/nx-cloud": "^15.2.0",
     "@nrwl/react": "15.7.1",
     "@nrwl/tao": "^15.7.1",
     "@nrwl/web": "15.7.1",
