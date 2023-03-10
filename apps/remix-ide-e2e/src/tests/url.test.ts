@@ -268,12 +268,12 @@ module.exports = {
       .refreshPage()
 
       .switchWorkspace('code-sample')
-      .openFile('@openzeppelin')
-      .openFile('@openzeppelin/contracts')
-      .openFile('@openzeppelin/contracts/access')
+      .openDir('@openzeppelin')
+      .openDir('@openzeppelin/contracts')
+      .openDir('@openzeppelin/contracts/access')
       .openFile('@openzeppelin/contracts/access/AccessControl.sol')
-      .openFile('contracts')
-      .openFile('contracts/governance')
+      .openDir('contracts')
+      .openDir('contracts/governance')
       .openFile('contracts/governance/UnionGovernor.sol')
   },
 

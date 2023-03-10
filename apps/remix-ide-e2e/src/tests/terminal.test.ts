@@ -226,7 +226,7 @@ module.exports = {
     browser
       .clickLaunchIcon('udapp') // connect to mainnet
       .connectToExternalHttpProvider(url, identifier)
-      .openFile('contracts')
+      .openDir('contracts')
       .openFile('contracts/1_Storage.sol')
       .clickLaunchIcon('solidity')
       .click({

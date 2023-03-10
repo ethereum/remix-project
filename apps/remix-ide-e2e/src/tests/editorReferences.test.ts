@@ -28,7 +28,7 @@ module.exports = {
           .click('[data-id="displayErrorsLabel"]')
       },
     'Should load the test file': function (browser: NightwatchBrowser) {
-        browser.openFile('contracts')
+        browser.openDir('contracts')
             .openFile('contracts/3_Ballot.sol')
             .waitForElementVisible('#editorView')
             .setEditorValue(BallotWithARefToOwner)

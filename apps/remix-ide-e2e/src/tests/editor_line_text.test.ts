@@ -17,7 +17,7 @@ module.exports = {
   },
   'Should add line texts': function (browser: NightwatchBrowser) {
     browser
-    .openFile('contracts')
+    .openDir('contracts')
     .openFile('contracts/1_Storage.sol')
     .addFile('scripts/addlinetext.ts', {content: addLineText})
     .pause(4000)

@@ -11,7 +11,7 @@ module.exports = {
 
     'Test decorators with script': function (browser: NightwatchBrowser) {
         browser
-            .openFile('contracts')
+            .openDir('contracts')
             .openFile('contracts/2_Owner.sol')
             .openFile('contracts/1_Storage.sol')
             .openFile('contracts/3_Ballot.sol')

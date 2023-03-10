@@ -25,8 +25,8 @@ module.exports = {
     browser.click('button[data-id="add-repository"]')
       .frameParent()
       .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'Vyper repository cloned', 60000)
-      .openFile('examples')
-      .openFile('examples/auctions')
+      .openDir('examples')
+      .openDir('examples/auctions')
       .openFile('examples/auctions/blind_auction.vy')
   },
 

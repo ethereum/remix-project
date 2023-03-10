@@ -27,6 +27,7 @@ declare module 'nightwatch' {
         debugTransaction(index: number): NightwatchBrowser,
         checkElementStyle(cssSelector: string, styleProperty: string, expectedResult: string): NightwatchBrowser,
         openFile(name: string): NightwatchBrowser,
+        openDir(name: string): NightwatchBrowser,
         refreshPage(): NightwatchBrowser,
         verifyLoad(): NightwatchBrowser,
         renamePath(path: string, newFileName: string, renamedPath: string): NightwatchBrowser,

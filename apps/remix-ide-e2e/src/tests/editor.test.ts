@@ -13,7 +13,7 @@ module.exports = {
     browser.waitForElementVisible('div[data-id="mainPanelPluginsContainer"]')
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
-      .openFile('contracts')
+      .openDir('contracts')
       .openFile('contracts/1_Storage.sol')
       .waitForElementVisible('#editorView')
       .checkElementStyle('.view-lines', 'font-size', '14px')

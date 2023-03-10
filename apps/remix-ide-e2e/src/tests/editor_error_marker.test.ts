@@ -17,7 +17,7 @@ module.exports = {
   },
   'Should add error marker': function (browser: NightwatchBrowser) {
     browser
-    .openFile('contracts')
+    .openDir('contracts')
     .openFile('contracts/1_Storage.sol')
     .addFile('scripts/adderror.ts', {content: addErrorMarker})
     .pause(4000)
