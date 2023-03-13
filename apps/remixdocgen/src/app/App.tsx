@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   CompilationResult,
 } from '@remixproject/plugin-api/'
@@ -47,7 +47,7 @@ const App = () => {
       <h1>Remix Docgen</h1>
       {fileName && <h2>File: {fileName}</h2>}
       {hasBuild && <button onClick={() => client.generateDocs()}>Generate doc</button>}
-      {hasBuild && <button onClick={() => client.opendDocs()}>Open docs</button>}
+      {hasBuild && <button onClick={() => client.viewDocs()}>Open docs</button>}
     </div>
   )
 };
