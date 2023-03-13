@@ -1,0 +1,59 @@
+{
+  "name": "docviewer",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/docviewer/src",
+  "projectType": "application",
+  "implicitDependencies": [
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/apps/docviewer",
+        "index": "apps/docviewer/src/index.html",
+        "baseHref": "/",
+        "main": "apps/docviewer/src/main.tsx",
+        "tsConfig": "apps/docviewer/tsconfig.app.json",
+        "assets": [
+          "apps/docviewer/src/favicon.ico"
+        ],
+        "styles": [],
+        "scripts": [],
+        "webpackConfig": "apps/docviewer/webpack.config.js"
+      },
+      "configurations": {
+        "development": {
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/docviewer/src/environments/environment.ts",
+              "with": "apps/docviewer/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "docviewer:build",
+        "hmr": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "docviewer:build:development",
+          "port": 7003
+        },
+        "production": {
+          "buildTarget": "docviewer:build:production"
+        }
+      }
+    }
+  },
+  "tags": []
+}
