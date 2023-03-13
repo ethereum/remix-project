@@ -71,8 +71,9 @@ export class DocGenClient extends PluginClient {
     await this.call('docgenviewer' as any, 'viewDocs')
   }
 
-  async viewDocs(docs: string[]) {
+  async viewDocs() {
     console.log('docgen client viewDocs')
+    await this.opendDocs()
   }
 
   async generateDocs() {
