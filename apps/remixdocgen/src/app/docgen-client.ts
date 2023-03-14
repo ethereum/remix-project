@@ -12,11 +12,12 @@ export class DocGenClient extends PluginClient {
   private currentTheme
   public eventEmitter: EventEmitter
   private build: Build
+  public docs: string[] = []
   
   constructor() {
     super()
     this.eventEmitter = new EventEmitter()
-    this.methods = ['generateDocs', 'viewDocs']
+    this.methods = ['generateDocs', 'opendDocs']
     createClient(this)
     this.onload().then(async () => {
       console.log('docgen client loaded')
@@ -62,19 +63,22 @@ export class DocGenClient extends PluginClient {
       docs.push(id)
     }
     this.eventEmitter.emit('docsGenerated', docs)
+    this.emit('docgen' as any, 'docsGenerated', docs)
+    this.docs = docs
+    await this.opendDocs(docs)
   }
 
-  async opendDocs() {
+  async opendDocs(docs: string[]) {
     console.log('docgen client openDocs')
-    await this.call('manager', 'activatePlugin', 'docgenviewer')
-    await this.call('tabs' as any, 'focus', 'docgenviewer')
-    await this.call('docgenviewer' as any, 'viewDocs')
+    await this.call('manager', 'activatePlugin', 'docviewer')
+    await this.call('tabs' as any, 'focus', 'docviewer')
+    await this.call('docviewer' as any, 'viewDocs', docs)
   }
 
-  async viewDocs() {
-    console.log('docgen client viewDocs')
-    await this.opendDocs()
-  }
+  // async viewDocs() {
+  //   console.log('docgen client viewDocs')
+  //   await this.opendDocs()
+  // }
 
   async generateDocs() {
     console.log('docgen client generateDocs')
