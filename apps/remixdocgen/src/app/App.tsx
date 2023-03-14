@@ -17,7 +17,6 @@ const App = () => {
   useEffect(() => {
     const watchThemeSwitch = async () => {
       client.eventEmitter.on('themeChanged', (theme: string) => {
-        console.log('themeChanged', theme)
         setThemeType(theme)
       })
       client.eventEmitter.on('compilationFinished', (build: Build, fileName: string) => {
@@ -34,9 +33,9 @@ const App = () => {
   return (
     <div>
       <h1>Remix Docgen</h1>
-      {fileName && <h2>File: {fileName}</h2>}
-      {hasBuild && <button onClick={() => client.generateDocs()}>Generate doc</button>}
-      {hasBuild && <button onClick={() => client.opendDocs(client.docs)}>Open docs</button>}
+      {fileName && <h4>File: {fileName.split('/')[1].split('.')[0].concat('.sol')}</h4>}
+      {hasBuild && <button className="btn btn-primary mr-3 ml-3 rounded" onClick={() => client.generateDocs()}>Generate doc</button>}
+      {hasBuild && <button className="btn btn-primary mr-3 ml-3 rounded" onClick={() => client.opendDocs(client.docs)}>Open docs</button>}
     </div>
   )
 };
