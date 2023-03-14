@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { DocViewer } from "./docviewer"
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 const client = new DocViewer()
 
@@ -13,13 +15,9 @@ export default function App() {
   }, [])
   return (
     <>
-      <h1>Documentation Viewer</h1>
-      <p>
-        Show documentation of compiled contracts.
-      </p>
-      <p>
-        {contents && contents.length}
-      </p>
+      <div className="m-5 p-2">
+        <ReactMarkdown children={contents} remarkPlugins={[remarkGfm]}/>
+      </div>
     </>
   )
 }
