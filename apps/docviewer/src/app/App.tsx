@@ -7,7 +7,6 @@ export default function App() {
   const [contents, setContents] = useState('')
   useEffect(() => {
     client.eventEmitter.on('contentsReady', (fileContents: string) => {
-      console.log('contentsReady', fileContents)
       setContents(fileContents)
     })
 
