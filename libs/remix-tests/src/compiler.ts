@@ -22,7 +22,7 @@ export function writeTestAccountsContract (accounts: string[]) {
     accounts.map((address, index) => {
       body += `\n\t\taccounts[${index}] = ${address};\n`
     })
-    body = `return accounts[index];` + body
+    body += `return accounts[index];`
   } else {
     body = `return address(0);`
   }  
