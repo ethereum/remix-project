@@ -13,6 +13,7 @@ export class DocGenClient extends PluginClient {
   public eventEmitter: EventEmitter
   private build: Build
   public docs: string[] = []
+  private fileName: string = ''
   
   constructor() {
     super()
@@ -20,7 +21,6 @@ export class DocGenClient extends PluginClient {
     this.methods = ['generateDocs', 'opendDocs']
     createClient(this)
     this.onload().then(async () => {
-      console.log('docgen client loaded')
       await this.setListeners()
     })
   }
@@ -35,7 +35,6 @@ export class DocGenClient extends PluginClient {
     this.eventEmitter.emit('themeChanged', this.currentTheme)
 
     this.on('solidity', 'compilationFinished', (fileName: string, source: SourceWithTarget, languageVersion: string, data: CompilationResult) => {
-      console.log('docgen client compilationFinished', data, source)
       const input: SolcInput = {
         sources: source.sources
       }
@@ -46,7 +45,7 @@ export class DocGenClient extends PluginClient {
         input: input,
         output: output
       }
-
+      this.fileName = fileName
       this.eventEmitter.emit('compilationFinished', this.build, fileName)
 
     })
@@ -59,8 +58,10 @@ export class DocGenClient extends PluginClient {
     const renderedSite = render(site, templates, config.collapseNewlines)
     const docs: string[] = []
     for (const { id, contents } of renderedSite) {
-      await this.call('fileManager', 'setFile', id, contents)
-      docs.push(id)
+      const temp = `${this.fileName.split('/')[1].split('.')[0]}.${id.split('.')[1]}`
+      const newFileName = `contracts/documentation/${temp}`
+      await this.call('fileManager', 'setFile', newFileName , contents)
+      docs.push(newFileName)
     }
     this.eventEmitter.emit('docsGenerated', docs)
     this.emit('docgen' as any, 'docsGenerated', docs)
@@ -69,19 +70,12 @@ export class DocGenClient extends PluginClient {
   }
 
   async opendDocs(docs: string[]) {
-    console.log('docgen client openDocs')
     await this.call('manager', 'activatePlugin', 'docviewer')
     await this.call('tabs' as any, 'focus', 'docviewer')
     await this.call('docviewer' as any, 'viewDocs', docs)
   }
 
-  // async viewDocs() {
-  //   console.log('docgen client viewDocs')
-  //   await this.opendDocs()
-  // }
-
   async generateDocs() {
-    console.log('docgen client generateDocs')
     this.docgen([this.build])
   }
 
