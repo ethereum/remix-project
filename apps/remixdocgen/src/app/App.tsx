@@ -9,17 +9,6 @@ import { Build } from './docgen/site'
 
 export const client =  new DocGenClient()
 
-export const getNewContractNames = (compilationResult: CompilationResult) => {
-  const compiledContracts = compilationResult.contracts
-  let result: string[] = []
-
-  for (const file of Object.keys(compiledContracts)) {
-    const newContractNames = Object.keys(compiledContracts[file])
-    result = [...result, ...newContractNames]
-  }
-  return result
-}
-
 const App = () => {
   const [themeType, setThemeType] = useState<string>('dark');
   const [hasBuild, setHasBuild] = useState<boolean>(false);
@@ -47,7 +36,7 @@ const App = () => {
       <h1>Remix Docgen</h1>
       {fileName && <h2>File: {fileName}</h2>}
       {hasBuild && <button onClick={() => client.generateDocs()}>Generate doc</button>}
-      {hasBuild && <button onClick={() => client.viewDocs()}>Open docs</button>}
+      {hasBuild && <button onClick={() => client.opendDocs(client.docs)}>Open docs</button>}
     </div>
   )
 };
