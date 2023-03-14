@@ -160,7 +160,11 @@ export function Workspace () {
   }
 
   const onFinishDownloadWorkspace = async () => {
-    console.log('inside onFinishDownloadWorkspace')
+    try {
+      await global.dispatchHandleDownloadWorkspace()
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   const onFinishCreateWorkspace = async () => {
