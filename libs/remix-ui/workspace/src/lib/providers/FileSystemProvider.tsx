@@ -7,7 +7,7 @@ import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
 import { initWorkspace, fetchDirectory, removeInputField, deleteWorkspace, deleteAllWorkspaces, clearPopUp, publishToGist, createNewFile, setFocusElement, createNewFolder,
   deletePath, renamePath, downloadPath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath, addInputField, createWorkspace,
-  fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, uploadFolder, handleDownloadFiles, restoreBackupZip, cloneRepository, moveFile, moveFolder,
+  fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, uploadFolder, handleDownloadWorkspace, handleDownloadFiles, restoreBackupZip, cloneRepository, moveFile, moveFolder,
   showAllBranches, switchBranch, createNewBranch, checkoutRemoteBranch, createSolidityGithubAction, createTsSolGithubAction, createSlitherGithubAction
 } from '../actions'
 import { Modal, WorkspaceProps, WorkspaceTemplate } from '../types'
@@ -133,6 +133,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchHandleDownloadFiles = async () => {
     await handleDownloadFiles()
+  }
+
+  const dispatchHandleDownloadWorkspace = async () => {
+    await handleDownloadWorkspace()
   }
 
   const dispatchHandleRestoreBackup = async () => {
@@ -284,6 +288,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchHandleClickFile,
     dispatchHandleExpandPath,
     dispatchHandleDownloadFiles,
+    dispatchHandleDownloadWorkspace,
     dispatchHandleRestoreBackup,
     dispatchCloneRepository,
     dispatchMoveFile,

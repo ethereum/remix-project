@@ -376,6 +376,27 @@ export const handleDownloadFiles = async () => {
   }
 }
 
+export const handleDownloadWorkspace = async () => {
+  try {
+    const zip = new JSZip()
+    const workspaceProvider = plugin.fileProviders.workspace
+    await workspaceProvider.copyFolderToJson('/', ({ path, content }) => {
+      zip.file(path, content)
+    })
+    zip.generateAsync({ type: 'blob' }).then(function (blob) {
+      const today = new Date()
+      const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
+      const time = today.getHours() + 'h' + today.getMinutes() + 'min'
+
+      saveAs(blob, `remix-backup-at-${time}-${date}.zip`)
+    }).catch((e) => {
+      plugin.call('notification', 'toast', e.message)
+    })
+  } catch (e) {
+    plugin.call('notification', 'toast', e.message)
+  }
+}
+
 export const restoreBackupZip = async () => {
   await plugin.appManager.activatePlugin(['restorebackupzip'])
   await plugin.call('mainPanel', 'showContent', 'restorebackupzip')
