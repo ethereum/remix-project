@@ -383,16 +383,10 @@ export const handleDownloadWorkspace = async () => {
     await workspaceProvider.copyFolderToJson('/', ({ path, content }) => {
       zip.file(path, content)
     })
-    zip.generateAsync({ type: 'blob' }).then(function (blob) {
-      const today = new Date()
-      const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
-      const time = today.getHours() + 'h' + today.getMinutes() + 'min'
-
-      saveAs(blob, `remix-backup-at-${time}-${date}.zip`)
-    }).catch((e) => {
-      plugin.call('notification', 'toast', e.message)
-    })
+    const blob = await zip.generateAsync({ type: 'blob' })
+    saveAs(blob, `${workspaceProvider.workspace}.zip`)
   } catch (e) {
+    console.error(e)
     plugin.call('notification', 'toast', e.message)
   }
 }
