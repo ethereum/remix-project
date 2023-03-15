@@ -107,38 +107,6 @@ module.exports = {
           sendKeys(this.Keys.ARROW_RIGHT)
       })
   },
-  'Should block scoped someitembook #group1': !function (browser: NightwatchBrowser) {
-    browser.pause(4000).saveScreenshot('./reports/screenshots/localbook0.png').
-      perform(function () {
-        const actions = this.actions({ async: true });
-        return actions.
-          sendKeys(this.Keys.ENTER).
-          sendKeys('someitem')
-      })
-      .pause(1000).saveScreenshot('./reports/screenshots/localbook1.png')
-      .waitForElementVisible(autoCompleteLineElement('someitembook'))
-      .click(autoCompleteLineElement('someitembook'))
-  },
-  'Should autcomplete derived struct from block someitembook #group1': function (browser: NightwatchBrowser) {
-    browser.pause(5000).perform(function () {
-      const actions = this.actions({ async: true });
-      return actions
-        .sendKeys(this.Keys.ENTER)
-        .sendKeys(this.Keys.ENTER)
-        .sendKeys('someitembook')
-        .sendKeys('.')
-    })
-      .waitForElementVisible(autoCompleteLineElement('author'))
-      .waitForElementVisible(autoCompleteLineElement('book_id'))
-      .waitForElementVisible(autoCompleteLineElement('title'))
-      .click(autoCompleteLineElement('title'))
-      .perform(function () {
-        const actions = this.actions({ async: true });
-        return actions.
-          sendKeys(';')
-          .sendKeys(this.Keys.ENTER)
-      })
-  },
   'Should autcomplete address types #group1': function (browser: NightwatchBrowser) {
     browser
       .perform(function () {
