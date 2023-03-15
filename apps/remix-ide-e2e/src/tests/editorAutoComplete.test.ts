@@ -41,7 +41,9 @@ module.exports = {
   },
 
   'Should put cursor in the () of the function #group1': function (browser: NightwatchBrowser) {
-    browser.scrollToLine(36)
+    browser
+    .scrollToLine(100)
+    .scrollToLine(36)
     const path = "//*[@class='view-line' and contains(.,'myprivatefunction') and contains(.,'private')]//span//span[contains(.,'(')]"
     browser.waitForElementVisible('#editorView')
       .useXpath()
@@ -254,9 +256,7 @@ module.exports = {
         return actions
           .sendKeys('msg.sender')
           .sendKeys(this.Keys.TAB)
-          .sendKeys(this.Keys.TAB) // somehow this is needed to get the cursor to the next parameter, only for selenium
-          .sendKeys('3232')
-          .sendKeys(this.Keys.TAB)
+          .sendKeys(this.Keys.TAB) 
           .sendKeys(this.Keys.ENTER)
       })
       .perform(function () {
