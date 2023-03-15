@@ -317,6 +317,17 @@ module.exports = {
       .executeScriptInTerminal(`web3.eth.getCode('0x75F509A4eDA030470272DfBAf99A47D587E76709')`) // sepolia contract
       .waitForElementContainsText('*[data-id="terminalJournal"]', byteCodeInSepolia, 120000)
   },
+
+  'Should run free function which logs in the terminal #group10': function (browser: NightwatchBrowser) {
+    const script = `
+    function run () public {
+      console.log("test running free function");
+    } `
+    browser
+      .addFile('test.script.sol', {content: script })
+      .click('*[data-id="play-editor"]') // run the script
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'test running free function', 120000)
+  },
 }
 
 
