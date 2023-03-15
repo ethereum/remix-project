@@ -243,7 +243,7 @@ module.exports = {
       })
 
   },
-  'Should autocomplete derived and local event when not using this. #group1': function (browser: NightwatchBrowser) {
+  'Should autocomplete derived and local event when not using this. #flaky #group1': function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
       return actions.
