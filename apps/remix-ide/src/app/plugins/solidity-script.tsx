@@ -22,11 +22,18 @@ export class SolidityScript extends Plugin {
     this.call('terminal', 'log', `running ${path}...`)
     let content = await this.call('fileManager', 'readFile', path)
     const params = await this.call('solidity', 'getCompilerParameters')
+
+
     content = `
-    import "hardhat/console.sol";
-    contract SolidityScript {
-      ${content}
-    }`
+      import "${path}";
+
+      contract SolidityScript {
+          constructor () {}
+
+          function remixRun () public {
+              run();
+          }
+      }`
     const targets = { 'script.sol': { content } }
 
     // compile
@@ -65,7 +72,7 @@ export class SolidityScript extends Plugin {
     tx = {
       from: accounts[0],
       to: receipt.contractAddress,
-      data: '0xc0406226' // function run() public
+      data: '0x69d4394b' // function remixRun() public
     }
     const receiptCall = await web3.eth.sendTransaction(tx)
 
