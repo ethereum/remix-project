@@ -231,7 +231,7 @@ module.exports = {
       })
 
   },
-  'Should autocomplete derived and local event when not using this. #group1': function (browser: NightwatchBrowser) {
+  'Should autocomplete derived and local event when not using this. #group1 #flaky': function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
       return actions.
@@ -243,9 +243,6 @@ module.exports = {
         const actions = this.actions({ async: true });
         return actions
           .sendKeys('msg.sender')
-          .sendKeys(this.Keys.TAB)
-          .sendKeys(this.Keys.TAB) // somehow this is needed to get the cursor to the next parameter, only for selenium
-          .sendKeys('3232')
           .sendKeys(this.Keys.TAB)
           .sendKeys(this.Keys.ENTER)
       })

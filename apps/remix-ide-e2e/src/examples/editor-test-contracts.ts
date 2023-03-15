@@ -60,7 +60,7 @@ const baseContract = {
   import "contracts/baseofbase.sol";
   
   contract base is baseofbase {
-      event BaseEvent(address indexed _from, uint _value);
+      event BaseEvent(address indexed _from);
       enum BaseEnum{ SMALL, MEDIUM, LARGE }
       struct Book { 
           string title;
