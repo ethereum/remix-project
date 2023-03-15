@@ -74,7 +74,7 @@ module.exports = class TestTab extends ViewPlugin {
     if (!isSolidityActive) {
       await this.call('manager', 'activatePlugin', 'solidity')
     }
-    await this.testRunner.init(await this.call('blockchain', 'web3VM'))
+    await this.testRunner.init(await this.call('blockchain', 'web3vm'))
     await this.createTestLibs()
   }
 
