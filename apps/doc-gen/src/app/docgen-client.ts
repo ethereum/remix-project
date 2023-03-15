@@ -59,7 +59,7 @@ export class DocGenClient extends PluginClient {
     const docs: string[] = []
     for (const { id, contents } of renderedSite) {
       const temp = `${this.fileName.split('/')[1].split('.')[0]}.${id.split('.')[1]}`
-      const newFileName = `contracts/documentation/${temp}`
+      const newFileName = `docs/${temp}`
       await this.call('fileManager', 'setFile', newFileName , contents)
       docs.push(newFileName)
     }
@@ -70,9 +70,9 @@ export class DocGenClient extends PluginClient {
   }
 
   async opendDocs(docs: string[]) {
-    await this.call('manager', 'activatePlugin', 'docviewer')
-    await this.call('tabs' as any, 'focus', 'docviewer')
-    await this.call('docviewer' as any, 'viewDocs', docs)
+    await this.call('manager', 'activatePlugin', 'doc-viewer')
+    await this.call('tabs' as any, 'focus', 'doc-viewer')
+    await this.call('doc-viewer' as any, 'viewDocs', docs)
   }
 
   async generateDocs() {
