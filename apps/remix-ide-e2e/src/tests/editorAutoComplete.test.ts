@@ -21,6 +21,15 @@ module.exports = {
       .click('[data-id="displayErrorsLabel"]')
   },
 
+  'Close Terminal': function (browser: NightwatchBrowser) {
+    browser.waitForElementVisible('div[data-id="terminalContainer"]')
+      .assert.elementPresent('div[data-id="terminalCli"]')
+      .assert.elementPresent('div[data-id="terminalContainer"]')
+      .waitForElementVisible('div[data-id="terminalContainer"]')
+      .waitForElementVisible('div[data-id="terminalCli"]')
+      .click('i[data-id="terminalToggleIcon"]')
+  },
+
   'Should add test and base files #group1': function (browser: NightwatchBrowser) {
     browser.addFile(examples.testContract.name, examples.testContract)
       .addFile(examples.baseContract.name, examples.baseContract)
@@ -296,7 +305,9 @@ module.exports = {
   },
   'Should bo and get book #group1': function (browser: NightwatchBrowser) {
     browser.
-      perform(function () {
+      scrollToLine(100)
+      .scrollToLine(50)
+      .perform(function () {
         const actions = this.actions({ async: true });
         return actions.
           sendKeys(this.Keys.ENTER).
@@ -314,6 +325,7 @@ module.exports = {
       .waitForElementVisible(autoCompleteLineElement('author'))
       .waitForElementVisible(autoCompleteLineElement('book_id'))
       .waitForElementVisible(autoCompleteLineElement('title'))
+
       .click(autoCompleteLineElement('title'))
       .perform(function () {
         const actions = this.actions({ async: true });
@@ -381,7 +393,9 @@ module.exports = {
   },
   'Should block scoped btextbook #group1': function (browser: NightwatchBrowser) {
     browser.
-      perform(function () {
+    scrollToLine(100)
+    .scrollToLine(50)
+      .perform(function () {
         const actions = this.actions({ async: true });
         return actions.
           sendKeys(this.Keys.ENTER).
