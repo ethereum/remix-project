@@ -351,13 +351,14 @@ module.exports = {
       })
   },
   'Should block scoped localbbook #group1': function (browser: NightwatchBrowser) {
-    browser.pause(4000).
+    browser.pause(4000).saveScreenshot('./reports/screenshots/localbook0.png').
       perform(function () {
         const actions = this.actions({ async: true });
         return actions.
           sendKeys(this.Keys.ENTER).
           sendKeys('localb')
       })
+      .pause(1000).saveScreenshot('./reports/screenshots/localbook1.png')
       .waitForElementVisible(autoCompleteLineElement('localbbook'))
       .click(autoCompleteLineElement('localbbook'))
   },
