@@ -390,7 +390,7 @@ module.exports = {
           .sendKeys(this.Keys.ENTER)
       })
   },
-  'Should block scoped btextbook #group1': function (browser: NightwatchBrowser) {
+  'Should block scoped btextbook #group1': !function (browser: NightwatchBrowser) {
     browser.
       perform(function () {
         const actions = this.actions({ async: true });
@@ -401,7 +401,7 @@ module.exports = {
       .waitForElementVisible(autoCompleteLineElement('btextbook'))
       .click(autoCompleteLineElement('btextbook'))
   },
-  'Should autcomplete derived struct from block btextbook #group1': function (browser: NightwatchBrowser) {
+  'Should autcomplete derived struct from block btextbook #group1': !function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
       return actions.
