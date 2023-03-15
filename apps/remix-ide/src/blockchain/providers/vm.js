@@ -7,6 +7,7 @@ class VMProvider {
     this.executionContext = executionContext
     this.worker = null
     this.provider = null
+    this.newAccountCallback = {}
   }
 
   getAccounts (cb) {
@@ -44,6 +45,11 @@ class VMProvider {
           this.accounts = {}
           this.executionContext.setWeb3(this.executionContext.getProvider(), this.web3)
         }
+      } else if (msg.data.cmd === 'newAccountResult') {
+        if (this.newAccountCallback[msg.data.stamp]) {
+          this.newAccountCallback[msg.data.stamp](msg.data.error, msg.data.result)
+          delete this.newAccountCallback[msg.data.stamp]
+        }
       }
     })
 
@@ -54,13 +60,15 @@ class VMProvider {
   // can be removed later when we update the API
   createVMAccount (newAccount) {
     const { privateKey, balance } = newAccount
-    this.RemixSimulatorProvider.Accounts._addAccount(privateKey, balance)
+    this.worker.postMessage({ cmd: 'addAccount', privateKey: privateKey, balance })
     const privKey = Buffer.from(privateKey, 'hex')
     return '0x' + privateToAddress(privKey).toString('hex')
   }
 
   newAccount (_passwordPromptCb, cb) {
-    this.RemixSimulatorProvider.Accounts.newAccount(cb)
+    const stamp = Date.now()
+    this.newAccountCallback[stamp] = cb
+    this.worker.postMessage({ cmd: 'newAccount', stamp })
   }
 
   getBalanceInEther (address, cb) {
