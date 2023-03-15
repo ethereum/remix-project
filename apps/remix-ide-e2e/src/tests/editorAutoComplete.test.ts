@@ -39,6 +39,7 @@ module.exports = {
       .addFile(examples.importbase.name, examples.importbase)
       .openFile(examples.testContract.name)
   },
+
   'Should put cursor in the () of the function #group1': function (browser: NightwatchBrowser) {
     browser.scrollToLine(36)
     const path = "//*[@class='view-line' and contains(.,'myprivatefunction') and contains(.,'private')]//span//span[contains(.,'(')]"
@@ -90,12 +91,12 @@ module.exports = {
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions.
-          sendKeys(' someitembook')
+          sendKeys(' localbbook')
       }).pause(3000)
   },
   'Should put cursor at the end of function #group1': function (browser: NightwatchBrowser) {
 
-    const path = "//*[@class='view-line' and contains(.,'someitembook') and contains(.,'private')]//span//span[contains(.,'{')]"
+    const path = "//*[@class='view-line' and contains(.,'localbbook') and contains(.,'private')]//span//span[contains(.,'{')]"
     browser
       .useXpath()
       .click(path).pause(1000)
@@ -240,7 +241,7 @@ module.exports = {
       })
 
   },
-  'Should autocomplete derived and local event when not using this. #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should autocomplete derived and local event when not using this. #group1': function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
       return actions.
@@ -253,6 +254,8 @@ module.exports = {
         return actions
           .sendKeys('msg.sender')
           .sendKeys(this.Keys.TAB)
+          .sendKeys(this.Keys.TAB) // somehow this is needed to get the cursor to the next parameter, only for selenium
+          .sendKeys('3232')
           .sendKeys(this.Keys.TAB)
           .sendKeys(this.Keys.ENTER)
       })
@@ -305,9 +308,7 @@ module.exports = {
   },
   'Should bo and get book #group1': function (browser: NightwatchBrowser) {
     browser.
-      scrollToLine(100)
-      .scrollToLine(50)
-      .perform(function () {
+      perform(function () {
         const actions = this.actions({ async: true });
         return actions.
           sendKeys(this.Keys.ENTER).
@@ -325,7 +326,6 @@ module.exports = {
       .waitForElementVisible(autoCompleteLineElement('author'))
       .waitForElementVisible(autoCompleteLineElement('book_id'))
       .waitForElementVisible(autoCompleteLineElement('title'))
-
       .click(autoCompleteLineElement('title'))
       .perform(function () {
         const actions = this.actions({ async: true });
@@ -362,12 +362,37 @@ module.exports = {
           .sendKeys(this.Keys.ENTER)
       })
   },
-
+  'Should block scoped localbbook #group1': !function (browser: NightwatchBrowser) {
+    browser.pause(4000).
+      perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(this.Keys.ENTER).
+          sendKeys('localb')
+      })
+      .waitForElementVisible(autoCompleteLineElement('localbbook'))
+      .click(autoCompleteLineElement('localbbook'))
+  },
+  'Should autcomplete derived struct from block localbbook #group1': !function (browser: NightwatchBrowser) {
+    browser.perform(function () {
+      const actions = this.actions({ async: true });
+      return actions.
+        sendKeys('.')
+    })
+      .waitForElementVisible(autoCompleteLineElement('author'))
+      .waitForElementVisible(autoCompleteLineElement('book_id'))
+      .waitForElementVisible(autoCompleteLineElement('title'))
+      .click(autoCompleteLineElement('title'))
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions.
+          sendKeys(';')
+          .sendKeys(this.Keys.ENTER)
+      })
+  },
   'Should block scoped btextbook #group1': function (browser: NightwatchBrowser) {
     browser.
-      scrollToLine(100)
-      .scrollToLine(50)
-      .perform(function () {
+      perform(function () {
         const actions = this.actions({ async: true });
         return actions.
           sendKeys(this.Keys.ENTER).
