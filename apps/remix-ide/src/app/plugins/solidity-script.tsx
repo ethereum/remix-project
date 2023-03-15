@@ -32,9 +32,22 @@ export class SolidityScript extends Plugin {
     const compilation = await compile(targets, params, async (url, cb) => {
       await this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message))
     })
-
-    // get the vm provider
+    
+    if (compilation.data.error) {
+      this.call('terminal', 'log', compilation.data.error.formattedMessage)
+    }
+    if (compilation.data.errors && compilation.data.errors.length > 0) {
+      compilation.data.errors.map((error) => {
+        this.call('terminal', 'log', error.formattedMessage)
+      })
+    }
+    
+    // get the contract
     const contract = compilation.getContract('SolidityScript')
+    if (!contract) {
+      console.log('compilation failed')
+      return
+    }
     const bytecode = '0x' + contract.object.evm.bytecode.object
     const web3 = await this.call('blockchain', 'web3VM')
     const accounts = await this.call('blockchain', 'getAccounts')
