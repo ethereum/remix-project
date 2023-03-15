@@ -54,7 +54,7 @@ export class HardhatClient extends PluginClient {
         const errMsg = '[Hardhat Compilation]: Cannot compile in read-only mode'
         return reject(new Error(errMsg))
       }
-      const cmd = `npx hardhat compile --config ${configPath}`
+      const cmd = `npx hardhat compile --config ${utils.normalizePath(configPath)}`
       const options = { cwd: this.currentSharedFolder, shell: true }
       const child = spawn(cmd, options)
       let result = ''
