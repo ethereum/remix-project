@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
-
+import { isArray } from "lodash"
 import Editor, { loader, Monaco } from '@monaco-editor/react'
 import { AlertModal } from '@remix-ui/app'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
@@ -630,9 +630,41 @@ export const EditorUI = (props: EditorUIProps) => {
         await props.plugin.call('codeFormatter', 'format', file)
       },
     }
+    const executeFreeFunctionAction = {
+      id: "executeFreeFunction",
+      label: "Execute in Remix VM",
+      contextMenuOrder: 0, // choose the order
+      contextMenuGroupId: "execute", // create a new grouping
+      run: async () => { 
+        const cursorPosition = props.editorAPI.getCursorPosition()
+        let nodesAtPosition = await props.plugin.call('codeParser', 'nodesAtPosition', cursorPosition)
+        // if no nodes exits at position, try to get the block of which the position is in
+        const block = await props.plugin.call('codeParser', 'getANTLRBlockAtPosition', cursorPosition, null)
+
+        if (!nodesAtPosition.length) {
+            if (block) {
+                nodesAtPosition = await props.plugin.call('codeParser', 'nodesAtPosition', block.start)
+            }
+        }
+        // find the contract and get the nodes of the contract and the base contracts and imports
+        if (nodesAtPosition && isArray(nodesAtPosition) && nodesAtPosition.length) {
+          console.log(nodesAtPosition)
+          const last = nodesAtPosition[nodesAtPosition.length - 1]
+          if (last && last.kind === 'freeFunction') {
+            const file = await props.plugin.call('fileManager', 'getCurrentFile')
+            props.plugin.call('solidity-script', 'execute', file, last.name)
+          } else {
+            props.plugin.call('notification', 'toast', 'This can only execute free function')  
+          }
+        } else {
+          props.plugin.call('notification', 'toast', 'Please go to Remix settings and activate the code editor features or wait that the current editor context is loaded.')
+        }
+      },
+    }
     editor.addAction(formatAction)
     editor.addAction(zoomOutAction)
     editor.addAction(zoominAction)
+    editor.addAction(executeFreeFunctionAction)
     const editorService = editor._codeEditorService;
     const openEditorBase = editorService.openCodeEditor.bind(editorService);
     editorService.openCodeEditor = async (input , source) => {

@@ -17,7 +17,7 @@ export class SolidityScript extends Plugin {
     super(profile)
   }
 
-  async execute (path: string) {
+  async execute (path: string, functionName: string = 'run') {
     _paq.push(['trackEvent', 'SolidityScript', 'execute', 'script'])
     this.call('terminal', 'log', `running ${path}...`)
     let content = await this.call('fileManager', 'readFile', path)
@@ -31,7 +31,7 @@ export class SolidityScript extends Plugin {
           constructor () {}
 
           function remixRun () public {
-              run();
+              ${functionName}();
           }
       }`
     const targets = { 'script.sol': { content } }
