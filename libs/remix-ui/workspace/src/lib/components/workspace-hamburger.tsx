@@ -32,7 +32,7 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
           props.renameCurrentWorkspace()
           props.hideIconsMenu(!showIconsMenu)
         }}></HamburgerMenuItem>
-        <HamburgerMenuItem kind='download' fa='far fa-download' hideOption={hideWorkspaceOptions || hideLocalhostOptions} actionOnClick={() => {
+        <HamburgerMenuItem kind='download' fa='far fa-arrow-alt-down' hideOption={hideWorkspaceOptions || hideLocalhostOptions} actionOnClick={() => {
           props.downloadCurrentWorkspace()
           props.hideIconsMenu(!showIconsMenu)
         }}></HamburgerMenuItem>
