@@ -1,7 +1,7 @@
 {
-  "name": "remixdocgen",
+  "name": "doc-gen",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/remixdocgen/src",
+  "sourceRoot": "apps/doc-gen/src",
   "projectType": "application",
   "implicitDependencies": [
   ],
@@ -12,17 +12,17 @@
       "defaultConfiguration": "development",
       "options": {
         "compiler": "babel",
-        "outputPath": "dist/apps/remixdocgen",
-        "index": "apps/remixdocgen/src/index.html",
+        "outputPath": "dist/apps/doc-gen",
+        "index": "apps/doc-gen/src/index.html",
         "baseHref": "/",
-        "main": "apps/remixdocgen/src/main.tsx",
-        "tsConfig": "apps/remixdocgen/tsconfig.app.json",
+        "main": "apps/doc-gen/src/main.tsx",
+        "tsConfig": "apps/doc-gen/tsconfig.app.json",
         "assets": [
-          "apps/remixdocgen/src/favicon.ico"
+          "apps/doc-gen/src/favicon.ico"
         ],
         "styles": [],
         "scripts": [],
-        "webpackConfig": "apps/remixdocgen/webpack.config.js"
+        "webpackConfig": "apps/doc-gen/webpack.config.js"
       },
       "configurations": {
         "development": {
@@ -30,8 +30,8 @@
         "production": {
           "fileReplacements": [
             {
-              "replace": "apps/remixdocgen/src/environments/environment.ts",
-              "with": "apps/remixdocgen/src/environments/environment.prod.ts"
+              "replace": "apps/doc-gen/src/environments/environment.ts",
+              "with": "apps/doc-gen/src/environments/environment.prod.ts"
             }
           ]
         }
@@ -41,16 +41,16 @@
       "executor": "@nrwl/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "remixdocgen:build",
+        "buildTarget": "doc-gen:build",
         "hmr": true
       },
       "configurations": {
         "development": {
-          "buildTarget": "remixdocgen:build:development",
+          "buildTarget": "doc-gen:build:development",
           "port": 6003
         },
         "production": {
-          "buildTarget": "remixdocgen:build:production"
+          "buildTarget": "doc-gen:build:production"
         }
       }
     }
