@@ -72,7 +72,7 @@ export class SolidityScript extends Plugin {
     const hhlogs = await web3.eth.getHHLogsForTx(receiptCall.transactionHash)
 
     if (hhlogs && hhlogs.length) {
-      let finalLogs = <div><div><b>console.log:</b></div>
+      const finalLogs = <div><div><b>console.log:</b></div>
       {
         hhlogs.map((log) => {
           let formattedLog
