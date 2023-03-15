@@ -49,6 +49,7 @@ Options:
   -n, --nodeUrl <string>      set node url (e.g:
                               https://mainnet.infura.io/v3/your-api-key)
   -b, --blockNumber <string>  set block number (e.g: 123456)
+  -k, --killProcess <bool>    enable/disable process exit with code 1 if there are failing tests
   -h, --help                  display help for command
 
 Commands:
