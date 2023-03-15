@@ -11,12 +11,11 @@ export function CustomTooltip({ children, placement, tooltipId, tooltipClasses, 
       <OverlayTrigger
         placement={placement}
         overlay={
-          <Tooltip id={!tooltipId ? `${tooltipText}Tooltip` : tooltipId} className={tooltipClasses} show={true}>
+          <Tooltip id={!tooltipId ? `${tooltipText}Tooltip` : tooltipId} className={tooltipClasses}>
             {typeof tooltipText === 'string' ? (<span className={tooltipTextClasses}>{tooltipText}</span>) : (tooltipText)}
           </Tooltip>
         }
         delay={delay}
-        show={true}
       >
         {children}
       </OverlayTrigger>
