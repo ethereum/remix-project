@@ -90,12 +90,12 @@ module.exports = {
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions.
-          sendKeys(' localbbook')
+          sendKeys(' someitembook')
       }).pause(3000)
   },
   'Should put cursor at the end of function #group1': function (browser: NightwatchBrowser) {
 
-    const path = "//*[@class='view-line' and contains(.,'localbbook') and contains(.,'private')]//span//span[contains(.,'{')]"
+    const path = "//*[@class='view-line' and contains(.,'someitembook') and contains(.,'private')]//span//span[contains(.,'{')]"
     browser
       .useXpath()
       .click(path).pause(1000)
@@ -362,19 +362,19 @@ module.exports = {
           .sendKeys(this.Keys.ENTER)
       })
   },
-  'Should block scoped localbbook #group1': function (browser: NightwatchBrowser) {
+  'Should block scoped someitembook #group1': function (browser: NightwatchBrowser) {
     browser.pause(4000).saveScreenshot('./reports/screenshots/localbook0.png').
       perform(function () {
         const actions = this.actions({ async: true });
         return actions.
           sendKeys(this.Keys.ENTER).
-          sendKeys('lo')
+          sendKeys('someitem')
       })
       .pause(1000).saveScreenshot('./reports/screenshots/localbook1.png')
-      .waitForElementVisible(autoCompleteLineElement('localbbook'))
-      .click(autoCompleteLineElement('localbbook'))
+      .waitForElementVisible(autoCompleteLineElement('someitembook'))
+      .click(autoCompleteLineElement('someitembook'))
   },
-  'Should autcomplete derived struct from block localbbook #group1': function (browser: NightwatchBrowser) {
+  'Should autcomplete derived struct from block someitembook #group1': function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
       return actions.
