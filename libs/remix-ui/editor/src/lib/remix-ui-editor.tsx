@@ -8,15 +8,14 @@ import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
 import { zokratesTokensProvider, zokratesLanguageConfig } from './syntaxes/zokrates'
 import { moveTokenProvider, moveLanguageConfig } from './syntaxes/move'
 import { monacoTypes } from '@remix-ui/editor';
-
-import './remix-ui-editor.css'
 import { loadTypes } from './web-types'
-
+import { retrieveNodesAtPosition } from './helpers/retrieveNodesAtPosition'
 import { RemixHoverProvider } from './providers/hoverProvider'
 import { RemixReferenceProvider } from './providers/referenceProvider'
 import { RemixCompletionProvider } from './providers/completionProvider'
 import { RemixHighLightProvider } from './providers/highlightProvider'
 import { RemixDefinitionProvider } from './providers/definitionProvider'
+import './remix-ui-editor.css'
 
 
 enum MarkerSeverity {
@@ -93,6 +92,24 @@ export type DecorationsReturn = {
   registeredDecorations?: Array<any>
 }
 
+export type PluginType = {
+  on: (plugin: string, event: string, listener: any) => void
+  call: (plugin: string, method: string, arg1?: any, arg2?: any, arg3?: any, arg4?: any) => any
+}
+
+export type EditorAPIType = {
+  findMatches: (uri: string, value: string) => any
+  getFontSize: () => number,
+  getValue: (uri: string) => string
+  getCursorPosition: (offset?: boolean) => number | monacoTypes.IPosition
+  getHoverPosition: (position: monacoTypes.IPosition) => number
+  addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
+  clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
+  keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
+  addErrorMarker: (errors: errorMarker[], from: string) => void
+  clearErrorMarkers: (sources: string[] | {[fileName: string]: any}, from: string) => void
+}
+
 /* eslint-disable-next-line */
 export interface EditorUIProps {
   contextualListener: any
@@ -105,22 +122,8 @@ export interface EditorUIProps {
     onDidChangeContent: (file: string) => void
     onEditorMounted: () => void
   }
-  plugin: {
-    on: (plugin: string, event: string, listener: any) => void
-    call: (plugin: string, method: string, arg1?: any, arg2?: any, arg3?: any, arg4?: any) => any
-  }
-  editorAPI: {
-    findMatches: (uri: string, value: string) => any
-    getFontSize: () => number,
-    getValue: (uri: string) => string
-    getCursorPosition: (offset?: boolean) => number | monacoTypes.IPosition
-    getHoverPosition: (position: monacoTypes.IPosition) => number
-    addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
-    clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
-    keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
-    addErrorMarker: (errors: errorMarker[], from: string) => void
-    clearErrorMarkers: (sources: string[] | {[fileName: string]: any}, from: string) => void
-  }
+  plugin: PluginType
+  editorAPI: EditorAPIType
 }
 export const EditorUI = (props: EditorUIProps) => {
   const [, setCurrentBreakpoints] = useState({})
@@ -630,22 +633,16 @@ export const EditorUI = (props: EditorUIProps) => {
         await props.plugin.call('codeFormatter', 'format', file)
       },
     }
+
+    const freeFunctionCondition = editor.createContextKey('freeFunctionCondition', false);
     const executeFreeFunctionAction = {
       id: "executeFreeFunction",
-      label: "Execute in Remix VM",
+      label: "Execute free function in the Remix VM",
       contextMenuOrder: 0, // choose the order
       contextMenuGroupId: "execute", // create a new grouping
+      precondition: 'freeFunctionCondition',
       run: async () => { 
-        const cursorPosition = props.editorAPI.getCursorPosition()
-        let nodesAtPosition = await props.plugin.call('codeParser', 'nodesAtPosition', cursorPosition)
-        // if no nodes exits at position, try to get the block of which the position is in
-        const block = await props.plugin.call('codeParser', 'getANTLRBlockAtPosition', cursorPosition, null)
-
-        if (!nodesAtPosition.length) {
-            if (block) {
-                nodesAtPosition = await props.plugin.call('codeParser', 'nodesAtPosition', block.start)
-            }
-        }
+        const { nodesAtPosition } = await  retrieveNodesAtPosition(props.editorAPI, props.plugin)        
         // find the contract and get the nodes of the contract and the base contracts and imports
         if (nodesAtPosition && isArray(nodesAtPosition) && nodesAtPosition.length) {
           console.log(nodesAtPosition)
@@ -664,6 +661,25 @@ export const EditorUI = (props: EditorUIProps) => {
     editor.addAction(formatAction)
     editor.addAction(zoomOutAction)
     editor.addAction(zoominAction)
+
+    const contextmenu = editor.getContribution('editor.contrib.contextmenu')
+    const orgContextMenuMethod = contextmenu._onContextMenu;
+    const onContextMenuHandlerForFreeFunction = async () => {
+      const file = await props.plugin.call('fileManager', 'getCurrentFile')
+      if (!file.endsWith('.sol')) {
+        freeFunctionCondition.set(false)
+        return
+      }
+      const { nodesAtPosition } = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
+      const last = nodesAtPosition[nodesAtPosition.length - 1]
+      freeFunctionCondition.set(last && last.kind === 'freeFunction')
+    }
+    contextmenu._onContextMenu = function () {      
+      onContextMenuHandlerForFreeFunction()
+        .then(() => orgContextMenuMethod.apply(contextmenu, arguments))
+        .catch(() => orgContextMenuMethod.apply(contextmenu, arguments))
+    }
+
     editor.addAction(executeFreeFunctionAction)
     const editorService = editor._codeEditorService;
     const openEditorBase = editorService.openCodeEditor.bind(editorService);

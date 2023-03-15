@@ -3,6 +3,7 @@ import { isArray } from "lodash"
 import { EditorUIProps } from "../remix-ui-editor"
 import { GeCompletionUnits, GetCompletionKeywords, getCompletionSnippets, GetCompletionTypes, getContextualAutoCompleteBTypeName, getContextualAutoCompleteByGlobalVariable, GetGlobalFunctions, GetGlobalVariable, GetImports } from "./completion/completionGlobals"
 import { monacoTypes } from '@remix-ui/editor';
+import { retrieveNodesAtPosition } from "../helpers/retrieveNodesAtPosition";
 export class RemixCompletionProvider implements monacoTypes.languages.CompletionItemProvider {
 
     props: EditorUIProps
@@ -251,17 +252,8 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
 
     private getContractCompletions = async () => {
         let nodes: any[] = []
-        const cursorPosition = this.props.editorAPI.getCursorPosition()
-        let nodesAtPosition = await this.props.plugin.call('codeParser', 'nodesAtPosition', cursorPosition)
-        // if no nodes exits at position, try to get the block of which the position is in
-        const block = await this.props.plugin.call('codeParser', 'getANTLRBlockAtPosition', cursorPosition, null)
+        const { nodesAtPosition, block } = await retrieveNodesAtPosition(this.props.editorAPI, this.props.plugin)
         const fileNodes = await this.props.plugin.call('codeParser', 'getCurrentFileNodes')
-
-        if (!nodesAtPosition.length) {
-            if (block) {
-                nodesAtPosition = await this.props.plugin.call('codeParser', 'nodesAtPosition', block.start)
-            }
-        }
         // find the contract and get the nodes of the contract and the base contracts and imports
         if (isArray(nodesAtPosition) && nodesAtPosition.length) {
             let contractNode: any = {}
