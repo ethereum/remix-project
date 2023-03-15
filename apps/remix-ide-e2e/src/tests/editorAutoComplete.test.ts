@@ -120,7 +120,7 @@ module.exports = {
       .click(autoCompleteLineElement('someitembook'))
   },
   'Should autcomplete derived struct from block someitembook #group1': function (browser: NightwatchBrowser) {
-    browser.perform(function () {
+    browser.pause(5000).perform(function () {
       const actions = this.actions({ async: true });
       return actions
         .sendKeys(this.Keys.ENTER)
