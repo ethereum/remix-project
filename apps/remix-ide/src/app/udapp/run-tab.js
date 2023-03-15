@@ -132,11 +132,12 @@ export class RunTab extends ViewPlugin {
     }
 
     // basic injected
-    if (window && window.ethereum) {
+    // if it's the trust wallet provider, we have a specific provider for that, see below
+    if (window && window.ethereum && !window.ethereum.selectedProvider?.isTrustWallet) {
       const displayNameInjected = `Injected Provider${(window && window.ethereum && !(window.ethereum.providers && !window.ethereum.selectedProvider)) ?
         window.ethereum.isCoinbaseWallet || window.ethereum.selectedProvider?.isCoinbaseWallet ? ' - Coinbase' :
         window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet ? ' - Brave' :
-        window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask ? ' - MetaMask' : '' : ''}`    
+        window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask ? ' - MetaMask' : '' : ''}`
       await addProvider('injected', displayNameInjected, true, false)
     }
 
