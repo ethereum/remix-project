@@ -1,7 +1,7 @@
 {
-  "name": "docviewer",
+  "name": "doc-viewer",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/docviewer/src",
+  "sourceRoot": "apps/doc-viewer/src",
   "projectType": "application",
   "implicitDependencies": [
   ],
@@ -12,17 +12,17 @@
       "defaultConfiguration": "development",
       "options": {
         "compiler": "babel",
-        "outputPath": "dist/apps/docviewer",
-        "index": "apps/docviewer/src/index.html",
+        "outputPath": "dist/apps/doc-viewer",
+        "index": "apps/doc-viewer/src/index.html",
         "baseHref": "/",
-        "main": "apps/docviewer/src/main.tsx",
-        "tsConfig": "apps/docviewer/tsconfig.app.json",
+        "main": "apps/doc-viewer/src/main.tsx",
+        "tsConfig": "apps/doc-viewer/tsconfig.app.json",
         "assets": [
-          "apps/docviewer/src/favicon.ico"
+          "apps/doc-viewer/src/favicon.ico"
         ],
         "styles": [],
         "scripts": [],
-        "webpackConfig": "apps/docviewer/webpack.config.js"
+        "webpackConfig": "apps/doc-viewer/webpack.config.js"
       },
       "configurations": {
         "development": {
@@ -30,8 +30,8 @@
         "production": {
           "fileReplacements": [
             {
-              "replace": "apps/docviewer/src/environments/environment.ts",
-              "with": "apps/docviewer/src/environments/environment.prod.ts"
+              "replace": "apps/doc-viewer/src/environments/environment.ts",
+              "with": "apps/doc-viewer/src/environments/environment.prod.ts"
             }
           ]
         }
@@ -41,16 +41,16 @@
       "executor": "@nrwl/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "docviewer:build",
+        "buildTarget": "doc-viewer:build",
         "hmr": true
       },
       "configurations": {
         "development": {
-          "buildTarget": "docviewer:build:development",
+          "buildTarget": "doc-viewer:build:development",
           "port": 7003
         },
         "production": {
-          "buildTarget": "docviewer:build:production"
+          "buildTarget": "doc-viewer:build:production"
         }
       }
     }
