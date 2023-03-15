@@ -55,7 +55,7 @@ commander
   .option('-f, --fork <string>', 'set hard fork (e.g: istanbul, berlin etc. See full list of hard forks here: https://github.com/ethereumjs/ethereumjs-monorepo/tree/master/packages/common/src/hardforks)')
   .option('-n, --nodeUrl <string>', 'set node url (e.g: https://mainnet.infura.io/v3/your-api-key)')
   .option('-b, --blockNumber <string>', 'set block number (e.g: 123456)')
-  .option('-k, --killProcess <bool>', 'enable/disable process exit with code 1 if there are failing tests')
+  .option('-k, --killProcess <bool>', 'enable/disable process exit with code 1')
   .argument('file_path', 'path to test file or directory')
   .action(async (file_path) => {
     const options = commander.opts();
