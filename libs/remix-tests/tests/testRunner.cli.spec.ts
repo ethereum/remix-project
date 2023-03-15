@@ -68,7 +68,6 @@ Commands:
       expect(res.stdout.toString().trim()).to.match(/AssertOkTest okPassTest/) // check if console.log is printed
       expect(res.stdout.toString().trim()).to.match(/Ok pass test/)
       expect(res.stdout.toString().trim()).to.match(/AssertOkTest okFailTest/) // check if console.log is printed
-      console.log('output: ', res.stdout.toString().trim())
       expect(res.stdout.toString().trim()).to.match(/Ok fail test/)
       // match fail test details
       expect(res.stdout.toString().trim()).to.match(/Expected value should be ok to: true/)
