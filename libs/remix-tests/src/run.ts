@@ -133,10 +133,7 @@ commander
     extend(web3)
     runTestFiles(path.resolve(file_path), isDirectory, web3, compilerConfig, (error, totalPassing, totalFailing) => {
       if (error) process.exit(1)
-      if (totalFailing > 0) {
-        log.error(`\n\t${totalFailing} test${totalFailing > 1 ? 's' : ''} failed`)
-        process.exit(1)
-      }
+      if (totalFailing > 0) process.exit(1)
     })
   })
 
