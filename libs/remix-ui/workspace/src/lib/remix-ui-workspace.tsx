@@ -5,7 +5,7 @@ import { CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip } from '@rem
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import { FileSystemContext } from './contexts'
 import './css/remix-ui-workspace.css'
-import { ROOT_PATH } from './utils/constants'
+import { ROOT_PATH, TEMPLATE_NAMES } from './utils/constants'
 import { HamburgerMenu } from './components/workspace-hamburger'
 const _paq = window._paq = window._paq || []
 
@@ -231,7 +231,10 @@ export function Workspace () {
     } else displayOzCustomRef.current.style.display = 'none'
 
     // @ts-ignore
-    workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value || 'remixDefault'}_${Date.now()}`
+    let displayName = TEMPLATE_NAMES[(workspaceCreateTemplateInput.current && workspaceCreateTemplateInput.current.value) || 'remixDefault']
+    displayName = global.plugin.getAvailableWorkspaceName(displayName)
+    // @ts-ignore
+    workspaceCreateInput.current.value = displayName
   }
 
   const handleTypingUrl = () => {
@@ -252,11 +255,6 @@ export function Workspace () {
 
   const toggleDropdown = (isOpen: boolean) => {
     setShowDropdown(isOpen)
-  }
-
-  const handleUpgradeability = () => {
-    // @ts-ignore
-    workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value + '_upgradeable'}_${Date.now()}`
   }
 
   const toggleBranches = (isOpen: boolean) => {
@@ -303,7 +301,7 @@ export function Workspace () {
         <label id="selectWsTemplate" className="form-check-label" style={{fontWeight: "bolder"}}><FormattedMessage id='filePanel.workspace.chooseTemplate' /></label>
         <select name="wstemplate" className="mb-3 form-control custom-select" id="wstemplate" defaultValue='remixDefault' ref={workspaceCreateTemplateInput} onChange={updateWsName}>
           <optgroup style={{fontSize: "medium"}} label="General">
-            <option style={{fontSize: "small"}} value='remixDefault'>Default</option>
+            <option style={{fontSize: "small"}} value='remixDefault'>Basic</option>
             <option style={{fontSize: "small"}} value='blank'>Blank</option>
           </optgroup>
           <optgroup style={{fontSize: "medium"}} label="OpenZeppelin">
@@ -339,7 +337,7 @@ export function Workspace () {
           </div>
 
           <label id="wsName" className="form-check-label d-block mb-1"><FormattedMessage id='filePanel.upgradeability' /></label>
-          <div onChange={handleUpgradeability}>
+          <div>
             <div className="d-flex ml-2 custom-control custom-radio">
                 <input className="custom-control-input" type="radio" name="upgradeability" value="transparent" id="transparent" ref={transparentRadioRef} />
                 <label className="form-check-label custom-control-label" htmlFor="transparent" data-id="upgradeTypeTransparent" >Transparent</label>
@@ -353,7 +351,7 @@ export function Workspace () {
         </div>
 
         <label id="wsName" className="form-check-label" style={{fontWeight: "bolder"}} ><FormattedMessage id='filePanel.workspaceName' /></label>
-        <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`remixDefault_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
+        <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={global.plugin.getAvailableWorkspaceName(TEMPLATE_NAMES['remixDefault'])} ref={workspaceCreateInput} className="form-control" />
 
         <div className="d-flex py-2 align-items-center custom-control custom-checkbox">
           <input
