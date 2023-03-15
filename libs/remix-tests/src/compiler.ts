@@ -16,13 +16,16 @@ function regexIndexOf (inputString: string, regex: RegExp, startpos = 0) {
 
 export function writeTestAccountsContract (accounts: string[]) {
   const testAccountContract = require('../sol/tests_accounts.sol') // eslint-disable-line
-  let body = `address[${accounts.length}] memory accounts;`
-  if (!accounts.length) body += ';'
-  else {
+  let body = ''
+  if (accounts.length) {
+    body = `address[${accounts.length}] memory accounts;`
     accounts.map((address, index) => {
       body += `\n\t\taccounts[${index}] = ${address};\n`
     })
-  }
+    body += `return accounts[index];`
+  } else {
+    body = `return address(0);`
+  }  
   return testAccountContract.replace('>accounts<', body)
 }
 
