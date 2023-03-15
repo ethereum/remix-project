@@ -356,7 +356,7 @@ module.exports = {
         const actions = this.actions({ async: true });
         return actions.
           sendKeys(this.Keys.ENTER).
-          sendKeys('localb')
+          sendKeys('lo')
       })
       .pause(1000).saveScreenshot('./reports/screenshots/localbook1.png')
       .waitForElementVisible(autoCompleteLineElement('localbbook'))
