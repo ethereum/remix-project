@@ -244,6 +244,7 @@ module.exports = {
         return actions
           .sendKeys('msg.sender')
           .sendKeys(this.Keys.TAB)
+          .sendKeys(this.Keys.TAB)
           .sendKeys(this.Keys.ENTER)
       })
       .perform(function () {
