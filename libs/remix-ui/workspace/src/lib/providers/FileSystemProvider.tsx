@@ -255,6 +255,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const value = {
     fs,
+    plugin,
     modal,
     toast,
     dispatchInitWorkspace,
