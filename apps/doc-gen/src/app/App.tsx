@@ -31,11 +31,11 @@ const App = () => {
   }, [])
 
   return (
-    <div>
+    <div className="p-3">
       <h1>Remix Docgen</h1>
       {fileName && <h4>File: {fileName.split('/')[1].split('.')[0].concat('.sol')}</h4>}
-      {hasBuild && <button className="btn btn-primary mr-3 ml-3 rounded" onClick={() => client.generateDocs()}>Generate doc</button>}
-      {hasBuild && <button className="btn btn-primary mr-3 ml-3 rounded" onClick={() => client.opendDocs(client.docs)}>Open docs</button>}
+      {hasBuild && <button className="btn btn-primary btn-block mt-4 rounded" onClick={() => client.generateDocs()}>Generate doc</button>}
+
     </div>
   )
 };
