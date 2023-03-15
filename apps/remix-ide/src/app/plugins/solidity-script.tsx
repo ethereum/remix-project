@@ -19,7 +19,7 @@ export class SolidityScript extends Plugin {
 
   async execute (path: string, functionName: string = 'run') {
     _paq.push(['trackEvent', 'SolidityScript', 'execute', 'script'])
-    this.call('terminal', 'log', `running ${path}...`)
+    this.call('terminal', 'log', `running free function ${functionName} from ${path}...`)
     let content = await this.call('fileManager', 'readFile', path)
     const params = await this.call('solidity', 'getCompilerParameters')
 
