@@ -107,7 +107,7 @@ module.exports = {
           sendKeys(this.Keys.ARROW_RIGHT)
       })
   },
-  'Should block scoped someitembook #group1': function (browser: NightwatchBrowser) {
+  'Should block scoped someitembook #group1': !function (browser: NightwatchBrowser) {
     browser.pause(4000).saveScreenshot('./reports/screenshots/localbook0.png').
       perform(function () {
         const actions = this.actions({ async: true });
@@ -122,8 +122,11 @@ module.exports = {
   'Should autcomplete derived struct from block someitembook #group1': function (browser: NightwatchBrowser) {
     browser.perform(function () {
       const actions = this.actions({ async: true });
-      return actions.
-        sendKeys('.')
+      return actions
+        .sendKeys(this.Keys.ENTER)
+        .sendKeys(this.Keys.ENTER)
+        .sendKeys('someitembook')
+        .sendKeys('.')
     })
       .waitForElementVisible(autoCompleteLineElement('author'))
       .waitForElementVisible(autoCompleteLineElement('book_id'))
@@ -394,8 +397,8 @@ module.exports = {
 
   'Should block scoped btextbook #group1': function (browser: NightwatchBrowser) {
     browser.
-    scrollToLine(100)
-    .scrollToLine(50)
+      scrollToLine(100)
+      .scrollToLine(50)
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions.
