@@ -635,6 +635,7 @@ export const EditorUI = (props: EditorUIProps) => {
     }
 
     const freeFunctionCondition = editor.createContextKey('freeFunctionCondition', false);
+    let freeFunctionAction
     const executeFreeFunctionAction = {
       id: "executeFreeFunction",
       label: "Execute free function in the Remix VM",
@@ -645,11 +646,10 @@ export const EditorUI = (props: EditorUIProps) => {
         const { nodesAtPosition } = await  retrieveNodesAtPosition(props.editorAPI, props.plugin)        
         // find the contract and get the nodes of the contract and the base contracts and imports
         if (nodesAtPosition && isArray(nodesAtPosition) && nodesAtPosition.length) {
-          console.log(nodesAtPosition)
-          const last = nodesAtPosition[nodesAtPosition.length - 1]
-          if (last && last.kind === 'freeFunction') {
+          const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
+          if (freeFunctionNode) {
             const file = await props.plugin.call('fileManager', 'getCurrentFile')
-            props.plugin.call('solidity-script', 'execute', file, last.name)
+            props.plugin.call('solidity-script', 'execute', file, freeFunctionNode.name)
           } else {
             props.plugin.call('notification', 'toast', 'This can only execute free function')  
           }
@@ -671,16 +671,21 @@ export const EditorUI = (props: EditorUIProps) => {
         return
       }
       const { nodesAtPosition } = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
-      const last = nodesAtPosition[nodesAtPosition.length - 1]
-      freeFunctionCondition.set(last && last.kind === 'freeFunction')
+      const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
+      if (freeFunctionAction) freeFunctionAction.dispose()
+      if (freeFunctionNode) {
+        executeFreeFunctionAction.label = `Execute the free function "${freeFunctionNode.name}" in the Remix VM`
+        freeFunctionAction = editor.addAction(executeFreeFunctionAction)
+      }
+      freeFunctionCondition.set(!!freeFunctionNode)
     }
-    contextmenu._onContextMenu = function () {      
+    contextmenu._onContextMenu = function () {
+      if (arguments[0]) arguments[0].event?.preventDefault()
       onContextMenuHandlerForFreeFunction()
         .then(() => orgContextMenuMethod.apply(contextmenu, arguments))
         .catch(() => orgContextMenuMethod.apply(contextmenu, arguments))
     }
 
-    editor.addAction(executeFreeFunctionAction)
     const editorService = editor._codeEditorService;
     const openEditorBase = editorService.openCodeEditor.bind(editorService);
     editorService.openCodeEditor = async (input , source) => {
