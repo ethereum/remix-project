@@ -45,13 +45,13 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     if (javascriptVM === null || javascriptVM === undefined) ethereumVM(props.config, true, dispatch)
 
     const useAutoComplete = props.config.get('settings/auto-completion')
-    if (useAutoComplete === null || useAutoComplete === undefined) useAutoCompletion(props.config, false, dispatch)
+    if (useAutoComplete === null || useAutoComplete === undefined) useAutoCompletion(props.config, true, dispatch)
 
     const displayErrors = props.config.get('settings/display-errors')
-    if (displayErrors === null || displayErrors === undefined) useDisplayErrors(props.config, false, dispatch)
+    if (displayErrors === null || displayErrors === undefined) useDisplayErrors(props.config, true, dispatch)
 
     const useShowGas = props.config.get('settings/show-gas')
-    if (useShowGas === null || useShowGas === undefined) useShowGasInEditor(props.config, false, dispatch)
+    if (useShowGas === null || useShowGas === undefined) useShowGasInEditor(props.config, true, dispatch)
   }
   useEffect(() => initValue(), [resetState, props.config])
   useEffect(() => initValue(), [])
