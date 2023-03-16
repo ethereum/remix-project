@@ -49,6 +49,7 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
 }
 
 export const setFinalContext = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
+  dispatch(fetchAccountsListRequest())
   // set the final context. Cause it is possible that this is not the one we've originaly selected
   const value = _getProviderDropdownValue(plugin)
 
