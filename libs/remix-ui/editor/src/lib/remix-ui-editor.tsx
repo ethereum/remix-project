@@ -638,7 +638,7 @@ export const EditorUI = (props: EditorUIProps) => {
     let freeFunctionAction
     const executeFreeFunctionAction = {
       id: "executeFreeFunction",
-      label: "Execute free function in the Remix VM",
+      label: "Run free function in the Remix VM",
       contextMenuOrder: 0, // choose the order
       contextMenuGroupId: "execute", // create a new grouping
       precondition: 'freeFunctionCondition',
