@@ -2,7 +2,6 @@ import React from 'react';
 import { Fragment } from 'react';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
 import { CustomTooltipType } from '../../types/customtooltip'
-import './custom-tooltip.css'
 export function CustomTooltip({ children, placement, tooltipId, tooltipClasses, tooltipText, tooltipTextClasses, delay }: CustomTooltipType) {
 
   if (typeof tooltipText !== 'string') {
