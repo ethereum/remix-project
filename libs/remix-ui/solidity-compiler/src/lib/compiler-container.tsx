@@ -991,20 +991,20 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               placement="right"
               tooltipId="overlay-tooltip-compile-run-doc"
               tooltipText={<div className="text-left p-2">
-                  <div>Choose the script to execute right after compilation
-                    by adding the `dev-run-script` natspec tag, as in:</div>
-                  <pre>
-                    <code>
-                    /**<br />
-                      * @title ContractName<br />
-                      * @dev ContractDescription<br />
-                      * @custom:dev-run-script file_path<br />
-                      */<br />
-                      contract ContractName {'{}'}<br />
-                    </code>
-                  </pre>
-                  Click the i icon to learn more
-                </div>}
+                <div>Choose the script to execute right after compilation
+                  by adding the `dev-run-script` natspec tag, as in:</div>
+                <pre>
+                  <code>
+                  /**<br />
+                    * @title ContractName<br />
+                    * @dev ContractDescription<br />
+                    * @custom:dev-run-script file_path<br />
+                    */<br />
+                    contract ContractName {'{}'}<br />
+                  </code>
+                </pre>
+                Click the "i" icon to learn more
+              </div>}
             >
               <a href="https://remix-ide.readthedocs.io/en/latest/running_js_scripts.html#compile-a-contract-and-run-a-script-on-the-fly" target="_blank" ><i className="pl-2 ml-2 mt-3 mb-1 fas fa-info text-dark"></i></a>
             </CustomTooltip>
