@@ -22,7 +22,7 @@ function ActivePluginCard ({
               { profile.displayName || profile.name }
               { profile?.maintainedBy?.toLowerCase() == "remix" &&
                 <CustomTooltip
-                  placement="right-end"
+                  placement="right"
                   tooltipId="pluginManagerActiveTitleByRemix"
                   tooltipClasses="text-nowrap"
                   tooltipText="Maintained by Remix"
@@ -32,7 +32,7 @@ function ActivePluginCard ({
               }
               { profile.documentation &&
                 <CustomTooltip
-                  placement="right-end"
+                  placement="right"
                   tooltipId="pluginManagerActiveLinkToDoc"
                   tooltipClasses="text-nowrap"
                   tooltipText="Link to documentation"
@@ -44,7 +44,7 @@ function ActivePluginCard ({
               }
               { profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)
                 ? <CustomTooltip
-                  placement="right-end"
+                  placement="right"
                   tooltipId="pluginManagerActiveVersionAlpha"
                   tooltipClasses="text-nowrap"
                   tooltipText="Version Alpha"
@@ -53,7 +53,7 @@ function ActivePluginCard ({
                 </CustomTooltip>
                 : profile.version && profile.version.match(/\b(\w*beta\w*)\b/g)
                   ? <CustomTooltip
-                    placement="right-end"
+                    placement="right"
                     tooltipId="pluginManagerActiveVersionBeta"
                     tooltipClasses="text-nowrap"
                     tooltipText="Version Beta"
@@ -65,7 +65,7 @@ function ActivePluginCard ({
             </div>
             {
               <CustomTooltip
-                placement="right-end"
+                placement="right"
                 tooltipId={`pluginManagerInactiveActiveBtn${profile.name}`}
                 tooltipClasses="text-nowrap"
                 tooltipText={`Dectivate ${profile.displayName || profile.name}`}
