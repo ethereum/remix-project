@@ -17,7 +17,7 @@
   "filePanel.workspace.deleteAllConfirm2": "Deleted workspaces can not be restored in any manner.",
   "filePanel.workspace.name": "Workspace name",
   "filePanel.workspace.chooseTemplate": "Choose a template",
-  "filePanel.workspace.backup": "Backup Workspaces",
+  "filePanel.workspace.backup": "Backup All Workspaces",
   "filePanel.workspace.restore": "Restore Workspaces from the Backup",
   "filePanel.workspace.clone": "Clone Git Repository",
   "filePanel.workspace.cloneMessage": "Please provide a valid git repository url.",
