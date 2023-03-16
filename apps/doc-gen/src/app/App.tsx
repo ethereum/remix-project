@@ -35,9 +35,8 @@ const App = () => {
       <h1>Remix Docgen</h1>
       {fileName && <h4>File: {fileName.split('/')[1].split('.')[0].concat('.sol')}</h4>}
       {hasBuild && <button className="btn btn-primary btn-block mt-4 rounded" onClick={() => client.generateDocs()}>Generate doc</button>}
-
     </div>
   )
-};
+}
 
-export default App;
+export default App
