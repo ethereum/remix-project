@@ -164,8 +164,8 @@ export const TabsUI = (props: TabsUIProps) => {
             data-id='play-editor'
             className="btn text-success py-0"
             disabled={!(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' || tabsState.currentExt === 'sol')}
-            onClick={async () => {    
-              const path = active().substr(active().indexOf('/') + 1, active().length)          
+            onClick={async () => {
+              const path = active().substr(active().indexOf('/') + 1, active().length)
               const content = await props.plugin.call('fileManager', "readFile", path)
               if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
                 await props.plugin.call('scriptRunner', 'execute', content, path)
