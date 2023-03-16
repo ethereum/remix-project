@@ -148,9 +148,7 @@ export const HeaderWithSettings: React.FC<Props> = ({
           <h6>{title}</h6>
           <div style={{ float: "right" }}>
             <HomeIcon from={from} themeType={themeType} />
-
             <ReceiptsIcon from={from} themeType={themeType} />
-
             <SettingsIcon from={from} themeType={themeType} />
           </div>
         </div>

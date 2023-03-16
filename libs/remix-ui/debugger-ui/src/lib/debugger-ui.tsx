@@ -384,20 +384,31 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       <div className="px-2" ref={debuggerTopRef}>
         <div>
           <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
-          <CustomTooltip
-            tooltipId="debuggerGenSourceCheckbox"
-            tooltipText={<FormattedMessage id='debugger.debugWithGeneratedSources' />}
-            placement="top-start"
-          >
-            {customJSX}
-          </CustomTooltip>
+            <CustomTooltip
+              tooltipId="debuggerGenSourceCheckbox"
+              tooltipText={<FormattedMessage id='debugger.debugWithGeneratedSources' />}
+              placement="top-start"
+            >
+              {customJSX}
+            </CustomTooltip>
           </div>
           { state.isLocalNodeUsed && <div className="mb-2 debuggerConfig custom-control custom-checkbox">
-            <input className="custom-control-input" id="debugWithLocalNodeInput" onChange={({ target: { checked } }) => {
-              setState(prevState => {
-                return { ...prevState, opt: { ...prevState.opt, debugWithLocalNode: checked } }
-              })
-            }} type="checkbox" title="Force the debugger to use the current local node" />
+            <CustomTooltip
+              tooltipId="debuggerGenSourceInput"
+              tooltipText="Force the debugger to use the current local node"
+              placement='right'
+            >
+              <input
+                className="custom-control-input"
+                id="debugWithLocalNodeInput"
+                onChange={({ target: { checked } }) => {
+                  setState(prevState => {
+                    return { ...prevState, opt: { ...prevState.opt, debugWithLocalNode: checked } }
+                  })
+                }}
+                type="checkbox"
+              />
+            </CustomTooltip>
             <label data-id="debugLocaNodeLabel" className="form-check-label custom-control-label" htmlFor="debugWithLocalNodeInput"><FormattedMessage id='debugger.debugLocaNodeLabel' /></label>
           </div>
           }

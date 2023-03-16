@@ -23,8 +23,6 @@ interface FormValues {
   contractAddress: string
 }
 
-
-
 export const VerifyView: React.FC<Props> = ({
   apiKey,
   client,
