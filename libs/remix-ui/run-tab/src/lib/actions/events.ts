@@ -175,7 +175,7 @@ const getCompiledContracts = (compiler) => {
   return contracts
 }
 
-export const resetAndInit = async (plugin: RunTab) => {
+export const resetAndInit = (plugin: RunTab) => {
   plugin.blockchain.resetAndInit(plugin.config, {
     getAddress: (cb) => {
       cb(null, plugin.REACT_API.accounts.selectedAccount)
