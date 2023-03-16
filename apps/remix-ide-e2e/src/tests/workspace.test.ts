@@ -413,9 +413,9 @@ module.exports = {
         selector: '//i[@data-id="workspaceDropdownMenuIcon"]',
         locateStrategy: 'xpath',
       })
-      .click('//*[@id="workspacesMenuDropdown"]/span/i')
-      .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul')
-      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[3]') // rename workspace_name
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .waitForElementVisible('*[data-id="wsdropdownMenu"]')
+      .click('*[data-id="workspacerename"]') // rename workspace_name
       .useCss()
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextRename"]')
