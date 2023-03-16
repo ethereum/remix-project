@@ -84,12 +84,7 @@ async function readHelpers(name: string) {
  * can't be imported directly.
  */
 async function readThemes(): Promise<Record<string, Required<Templates>>> {
-  const themes: Record<string, Required<Templates>> = {};
-
-
-
-  themes['markdown'] = await readTemplates();
-
-
-  return themes;
+  const themes: Record<string, Required<Templates>> = {}
+  themes['markdown'] = await readTemplates()
+  return themes
 }

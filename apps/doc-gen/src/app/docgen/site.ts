@@ -52,7 +52,7 @@ export interface DocItemContext {
   build: BuildContext;
 }
 
-export function buildSite(builds: Build[], siteConfig: SiteConfig, properties: Properties = {}): Site {
+export function buildSite (builds: Build[], siteConfig: SiteConfig, properties: Properties = {}): Site {
   const assign = typeof siteConfig.pages === 'string' ? pageAssigner[siteConfig.pages] : siteConfig.pages;
 
   const seen = new Set<string>();
@@ -106,20 +106,20 @@ export function buildSite(builds: Build[], siteConfig: SiteConfig, properties: P
   };
 }
 
-function defineContext(item: DocItem, build: BuildContext, file: SourceUnit, page?: string, contract?: ContractDefinition): DocItemWithContext {
+function defineContext (item: DocItem, build: BuildContext, file: SourceUnit, page?: string, contract?: ContractDefinition): DocItemWithContext {
   return Object.assign(item, {
     [DOC_ITEM_CONTEXT]: { build, file, contract, page, item: item as DocItemWithContext },
   });
 }
 
-function defineProperties(item: DocItemWithContext, properties: Properties) {
+function defineProperties (item: DocItemWithContext, properties: Properties) {
   for (const [prop, fn] of Object.entries(properties)) {
     const original: unknown = (item as any)[prop];
     defineGetterMemoized(item as any, prop, () => fn(item.__item_context, original));
   }
 }
 
-function assignIfIncludedSource(
+function assignIfIncludedSource (
   assign: PageAssigner,
   item: DocItem,
   file: SourceUnit,
@@ -130,7 +130,7 @@ function assignIfIncludedSource(
     : undefined;
 }
 
-function isFileIncluded(file: string, config: SiteConfig) {
+function isFileIncluded (file: string, config: SiteConfig) {
   return (
     isChild(file, config.sourcesDir) &&
     config.exclude.every(e => !isChild(file, path.join(config.sourcesDir, e)))
