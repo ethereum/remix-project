@@ -24,7 +24,6 @@ export function CustomTooltip({ children, placement, tooltipId, tooltipClasses, 
           </Popover>
         }
         delay={delay}
-        show={true}
       >
         {children}
       </OverlayTrigger>
