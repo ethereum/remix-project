@@ -3,7 +3,7 @@ import React, { useState, useReducer, useEffect, useCallback } from 'react' // e
 import { labels, textDark, textSecondary } from './constants'
 
 import './remix-ui-settings.css'
-import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast, saveIpfsSettingsToast, useAutoCompletion, useShowGasInEditor, useDisplayErrors } from './settingsAction'
+import { generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast, saveIpfsSettingsToast, useAutoCompletion, useShowGasInEditor, useDisplayErrors } from './settingsAction'
 import { initialState, toastInitialState, toastReducer, settingReducer } from './settingsReducer'
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 import { RemixUiThemeModule, ThemeModule} from '@remix-ui/theme-module'
@@ -105,10 +105,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   const onchangeGenerateContractMetadata = (event) => {
     generateContractMetadat(props.config, event.target.checked, dispatch)
-  }
-
-  const onchangeOption = (event) => {
-    ethereumVM(props.config, event.target.checked, dispatch)
   }
 
   const textWrapEvent = (event) => {
