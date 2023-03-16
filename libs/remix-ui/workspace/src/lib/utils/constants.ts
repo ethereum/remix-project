@@ -15,7 +15,7 @@ jobs:
       with:
         test-path: 'tests'
         compiler-version: '0.8.15'
-//      evm-version: 'berlin'
+//      evm-version: 'merge'
 //      optimize: true
 //      optimizer-runs: 200
 //      node-url: 'https://mainnet.infura.io/v3/08b2a484451e4635a28b3d8234f24332'
@@ -40,7 +40,7 @@ jobs:
         test-path: 'tests'
         contract-path: 'contracts'
         compiler-version: '0.8.7'
-//      evm-version: 'berlin'
+//      evm-version: 'merge'
 //      optimize: true
 //      optimizer-runs: 200
 //      node-url: 'https://mainnet.infura.io/v3/08b2a484451e4635a28b3d8234f24332'
