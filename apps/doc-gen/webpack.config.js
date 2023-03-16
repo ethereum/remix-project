@@ -40,8 +40,6 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   // add public path
   config.output.publicPath = '/'
 
-
-
   // add copy & provide plugin
   config.plugins.push(
     new webpack.ProvidePlugin({
@@ -63,7 +61,6 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
 
   config.ignoreWarnings = [/Failed to parse source map/] // ignore source-map-loader warnings
 
-
   // set minimizer
   config.optimization.minimizer = [
     new TerserPlugin({
@@ -82,4 +79,4 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   ];
 
   return config;
-});
+})
