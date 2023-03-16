@@ -244,7 +244,7 @@ export class TabProxy extends Plugin {
             name,
             title,
             icon,
-            tooltip: name,
+            tooltip: title || name,
             iconClass: getPathIcon(name)
           })
           formatPath.shift()
@@ -252,6 +252,7 @@ export class TabProxy extends Plugin {
             const index = this.loadedTabs.findIndex(({ title }) => title === formatPath.join('/'))
             if (index > -1) {
               const duplicateTabName = this.loadedTabs[index].name
+              const duplicateTabTooltip = this.loadedTabs[index].tooltip
               const duplicateTabPath = duplicateTabName.split('/')
               const duplicateTabFormatPath = [...duplicateTabPath].reverse()
               const duplicateTabTitle = duplicateTabFormatPath.slice(0, titleLength).reverse().join('/')
@@ -260,7 +261,7 @@ export class TabProxy extends Plugin {
                 name: duplicateTabName,
                 title: duplicateTabTitle,
                 icon,
-                tooltip: duplicateTabName,
+                tooltip: duplicateTabTooltip,
                 iconClass: getPathIcon(duplicateTabName)
               }
             }
@@ -274,7 +275,7 @@ export class TabProxy extends Plugin {
         name,
         title,
         icon,
-        tooltip: name,
+        tooltip: title || name,
         iconClass: getPathIcon(name)
       })
     }

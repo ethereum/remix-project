@@ -32,7 +32,7 @@ function PluginButton ({ imgPath, envID, envText, callback, l2, description, rem
       { remixMaintained &&
         <CustomTooltip
           placement="bottom"
-          tooltipId="overlay-tooltip-run-script"
+          tooltipId="overlay-tooltip-by-remix"
           tooltipText={'Maintained by Remix'}
         >
           <i className="bg-light text-success mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel fas fa-check"></i>

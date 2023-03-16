@@ -72,7 +72,14 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
         {plugin?.profile?.documentation && <span className="d-flex flex-row align-items-center">
           <label className="mb-0 pr-2"><FormattedMessage id='panel.documentation' />:</label>
           <span>
-            <a href={plugin?.profile?.documentation} className="titleInfo p-0 mb-2" title="link to documentation" target="_blank" rel="noreferrer"><i aria-hidden="true" className="fas fa-book"></i></a>
+            <CustomTooltip
+              placement="right-end"
+              tooltipId="linkToDocsTooltip"
+              tooltipClasses=" text-nowrap "
+              tooltipText="Link to documentation"
+            >
+              <a href={plugin?.profile?.documentation} className="titleInfo p-0 mb-2" target="_blank" rel="noreferrer"><i aria-hidden="true" className="fas fa-book"></i></a>
+            </CustomTooltip>
           </span>
         </span>}
         {plugin?.profile?.description && <span className="d-flex flex-row align-items-baseline">
