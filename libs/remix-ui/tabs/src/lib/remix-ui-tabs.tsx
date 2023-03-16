@@ -184,7 +184,7 @@ export const TabsUI = (props: TabsUIProps) => {
               tooltipId="overlay-tooltip-run-script"
               tooltipText={<span>
                   {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') ? "Run script (CTRL + SHIFT + S)" :
-                   (tabsState.fileName.endsWith('.script.sol')) ? "Run Solidity code as a script (free function). This will run the function 'run'" :
+                   (tabsState.fileName && tabsState.fileName.endsWith('.script.sol')) ? "Run Solidity code as a script (free function). This will run the function 'run'" :
                     tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul'? "Compile CTRL + S" : "Select .sol or .yul file to compile or a .ts or .js file and run it"}
                 </span>}
             >
