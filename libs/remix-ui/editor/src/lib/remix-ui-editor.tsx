@@ -679,8 +679,8 @@ export const EditorUI = (props: EditorUIProps) => {
       }
       freeFunctionCondition.set(!!freeFunctionNode)
     }
-    contextmenu._onContextMenu = function () {
-      if (arguments[0]) arguments[0].event?.preventDefault()
+    contextmenu._onContextMenu = (...args) => {
+      if (args[0]) args[0].event?.preventDefault()
       onContextMenuHandlerForFreeFunction()
         .then(() => orgContextMenuMethod.apply(contextmenu, arguments))
         .catch(() => orgContextMenuMethod.apply(contextmenu, arguments))
