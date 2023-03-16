@@ -7,6 +7,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import './remix-ui-tabs.css'
 const _paq = window._paq = window._paq || []
 
+
 /* eslint-disable-next-line */
 export interface TabsUIProps {
   tabs: Array<any>
@@ -89,14 +90,24 @@ export const TabsUI = (props: TabsUIProps) => {
     const invert = props.themeQuality === 'dark' ? 'invert(1)' : 'invert(0)'
 
     return (
-      <div ref={el => { tabsRef.current[index] = el }} className={classNameTab} data-id={index === currentIndexRef.current ? 'tab-active' : ''} title={tab.tooltip}>
-        {tab.icon ? (<img className="my-1 mr-1 iconImage" style={{ filter: invert }} src={tab.icon} />) : (<i className={classNameImg}></i>)}
-        <span className={`title-tabs ${getFileDecorationClasses(tab)}`}>{tab.title}</span>
-        {getFileDecorationIcons(tab)}
-        <span className="close-tabs" onClick={(event) => { props.onClose(index); event.stopPropagation() }}>
-          <i className="text-dark fas fa-times"></i>
-        </span>
-      </div>
+      <CustomTooltip
+        tooltipId="tabsActive"
+        tooltipText={tab.tooltip}
+        placement="bottom"
+      >
+        <div
+          ref={el => { tabsRef.current[index] = el }}
+          className={classNameTab}
+          data-id={index === currentIndexRef.current ? 'tab-active' : ''}
+        >
+          {tab.icon ? (<img className="my-1 mr-1 iconImage" style={{ filter: invert }} src={tab.icon} />) : (<i className={classNameImg}></i>)}
+          <span className={`title-tabs ${getFileDecorationClasses(tab)}`}>{tab.title}</span>
+          {getFileDecorationIcons(tab)}
+          <span className="close-tabs" onClick={(event) => { props.onClose(index); event.stopPropagation() }}>
+            <i className="text-dark fas fa-times"></i>
+          </span>
+        </div>
+      </CustomTooltip>
     )
   }
 
@@ -142,60 +153,80 @@ export const TabsUI = (props: TabsUIProps) => {
   }
 
   return (
-    <div className="remix-ui-tabs d-flex justify-content-between border-0 header nav-tabs" data-id="tabs-component">
-      <div className="d-flex flex-row" style={{ maxWidth: 'fit-content', width: '97%' }}>
-        <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-1">
-          <button
-            data-id='play-editor'
-            className="btn text-success py-0"
-            disabled={!(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' || tabsState.currentExt === 'sol')}
-            onClick={async () => {
-              const path = active().substr(active().indexOf('/') + 1, active().length)
-              const content = await props.plugin.call('fileManager', "readFile", path)
-              if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
-                await props.plugin.call('scriptRunner', 'execute', content, path)
-                _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
-              } else if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul') {
-                await props.plugin.call('solidity', 'compile', path)
-                _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
-              }
-            }}
-          >
+    <div className='d-flex'>
+      <CustomTooltip
+        placement="bottom"
+        tooltipId="overlay-tooltip-all-tabs"
+        tooltipText="Scroll to see all tabs"
+      >
+        <div className='remix-ui-tabs_end position-relative position-fixed'></div>
+      </CustomTooltip>
+      <div className="remix-ui-tabs d-flex justify-content-between border-0 header nav-tabs" data-id="tabs-component">
+        <div className="d-flex flex-row" style={{ maxWidth: 'fit-content', width: '97%' }}>
+          <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-1">
+            <button
+              data-id='play-editor'
+              className="btn text-success py-0"
+              disabled={!(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' || tabsState.currentExt === 'sol')}
+              onClick={async () => {
+                const path = active().substr(active().indexOf('/') + 1, active().length)
+                const content = await props.plugin.call('fileManager', "readFile", path)
+                if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
+                  await props.plugin.call('scriptRunner', 'execute', content, path)
+                  _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
+                } else if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul') {
+                  await props.plugin.call('solidity', 'compile', path)
+                  _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
+                }
+              }}
+            >
+              <CustomTooltip
+                placement="bottom"
+                tooltipId="overlay-tooltip-run-script"
+                tooltipText={<span>
+                    {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') ? "Run script (CTRL + SHIFT + S)" :
+                      tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul'? "Compile CTRL + S" : "Select .sol or .yul file to compile or a .ts or .js file and run it"}
+                  </span>}
+              >
+                <i className="fad fa-play"></i>
+              </CustomTooltip>
+            </button>
             <CustomTooltip
               placement="bottom"
-              tooltipId="overlay-tooltip-run-script"
-              tooltipText={<span>
-                  {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') ? "Run script (CTRL + SHIFT + S)" :
-                    tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul'? "Compile CTRL + S" : "Select .sol or .yul file to compile or a .ts or .js file and run it"}
-                </span>}
+              tooltipId="overlay-tooltip-zoom-out"
+              tooltipText="Zoom out"
             >
-              <i className="fad fa-play"></i>
+              <span data-id="tabProxyZoomOut" className="btn btn-sm px-2 fas fa-search-minus text-dark" onClick={() => props.onZoomOut()}></span>
             </CustomTooltip>
-          </button>
-          <span data-id="tabProxyZoomOut" className="btn btn-sm px-2 fas fa-search-minus text-dark" title="Zoom out" onClick={() => props.onZoomOut()}></span>
-          <span data-id="tabProxyZoomIn" className="btn btn-sm px-2 fas fa-search-plus text-dark" title="Zoom in" onClick={() => props.onZoomIn()}></span>
+            <CustomTooltip
+              placement="bottom"
+              tooltipId="overlay-tooltip-run-zoom-in"
+              tooltipText="Zoom in"
+            >
+              <span data-id="tabProxyZoomIn" className="btn btn-sm px-2 fas fa-search-plus text-dark" onClick={() => props.onZoomIn()}></span>
+            </CustomTooltip>
+          </div>
+          <Tabs
+            className="tab-scroll"
+            selectedIndex={tabsState.selectedIndex}
+            domRef={(domEl) => {
+              if (tabsElement.current) return
+              tabsElement.current = domEl
+              tabsElement.current.addEventListener('wheel', transformScroll)
+            }}
+            onSelect={(index) => {
+              props.onSelect(index)
+              currentIndexRef.current = index
+              dispatch({ type: 'SELECT_INDEX', payload: index, ext: getExt(props.tabs[currentIndexRef.current].name)})
+            }}
+          >
+            <TabList className="d-flex flex-row align-items-center">
+              {props.tabs.map((tab, i) => <Tab className="" key={tab.name}>{renderTab(tab, i)}</Tab>)}
+            </TabList>
+            {props.tabs.map((tab) => <TabPanel key={tab.name} ></TabPanel>)}
+          </Tabs>
         </div>
-        <Tabs
-          className="tab-scroll"
-          selectedIndex={tabsState.selectedIndex}
-          domRef={(domEl) => {
-            if (tabsElement.current) return
-            tabsElement.current = domEl
-            tabsElement.current.addEventListener('wheel', transformScroll)
-          }}
-          onSelect={(index) => {
-            props.onSelect(index)
-            currentIndexRef.current = index
-            dispatch({ type: 'SELECT_INDEX', payload: index, ext: getExt(props.tabs[currentIndexRef.current].name)})
-          }}
-        >
-          <TabList className="d-flex flex-row align-items-center">
-            {props.tabs.map((tab, i) => <Tab className="" key={tab.name}>{renderTab(tab, i)}</Tab>)}
-          </TabList>
-          {props.tabs.map((tab) => <TabPanel key={tab.name} ></TabPanel>)}
-        </Tabs>
       </div>
-      <i className="mt-2 mr-2 fas fa-arrows-alt-h" title="Scroll to see all tabs"></i>
     </div>
   )
 }
