@@ -435,7 +435,7 @@ export function Workspace () {
                   </span>
                   {currentWorkspace !== LOCALHOST ? (<span className="remixui_menu remixui_topmenu d-flex justify-content-between align-items-end w-75">
                     <CustomTooltip
-                      placement="top-end"
+                      placement="top"
                       tooltipId="createWorkspaceTooltip"
                       tooltipClasses="text-nowrap"
                       tooltipText={<FormattedMessage id='filePanel.create' />}
