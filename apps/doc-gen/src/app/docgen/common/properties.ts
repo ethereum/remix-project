@@ -10,11 +10,11 @@ import { itemType } from '../utils/item-type';
 
 type TypeDefinition = StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition;
 
-export function type({ item }: DocItemContext): string {
+export function type ({ item }: DocItemContext): string {
   return itemType(item);
 }
 
-export function natspec({ item }: DocItemContext): NatSpec {
+export function natspec ({ item }: DocItemContext): NatSpec {
   return parseNatspec(item);
 }
 
@@ -26,7 +26,7 @@ export function name({ item }: DocItemContext, original?: unknown): string {
   }
 }
 
-export function fullName({ item, contract }: DocItemContext): string {
+export function fullName ({ item, contract }: DocItemContext): string {
   if (contract) {
     return `${contract.name}.${item.name}`;
   } else {
@@ -34,7 +34,7 @@ export function fullName({ item, contract }: DocItemContext): string {
   }
 }
 
-export function signature({ item }: DocItemContext): string | undefined {
+export function signature ({ item }: DocItemContext): string | undefined {
   switch (item.nodeType) {
     case 'ContractDefinition':
       return undefined;
@@ -85,7 +85,7 @@ interface Param extends VariableDeclaration {
   natspec?: string;
 };
 
-function getParams(params: ParameterList, natspec: NatSpec['params'] | NatSpec['returns']): Param[] {
+function getParams (params: ParameterList, natspec: NatSpec['params'] | NatSpec['returns']): Param[] {
   return params.parameters.map((p, i) => ({
     ...p,
     type: p.typeDescriptions.typeString!,
@@ -93,46 +93,46 @@ function getParams(params: ParameterList, natspec: NatSpec['params'] | NatSpec['
   }));
 }
 
-export function params({ item }: DocItemContext): Param[] | undefined {
+export function params ({ item }: DocItemContext): Param[] | undefined {
   if ('parameters' in item) {
     return getParams(item.parameters, natspec(item[DOC_ITEM_CONTEXT]).params);
   }
 }
 
-export function returns({ item }: DocItemContext): Param[] | undefined {
+export function returns ({ item }: DocItemContext): Param[] | undefined {
   if ('returnParameters' in item) {
     return getParams(item.returnParameters, natspec(item[DOC_ITEM_CONTEXT]).returns);
   }
 }
 
-export function items({ item }: DocItemContext): DocItem[] | undefined {
+export function items ({ item }: DocItemContext): DocItem[] | undefined {
   return (item.nodeType === 'ContractDefinition')
     ? item.nodes.filter(isNodeType(docItemTypes)).filter(n => !('visibility' in n) || n.visibility !== 'private')
     : undefined;
 }
 
-export function functions({ item }: DocItemContext): FunctionDefinition[] | undefined {
+export function functions ({ item }: DocItemContext): FunctionDefinition[] | undefined {
   return [...findAll('FunctionDefinition', item)].filter(f => f.visibility !== 'private');
 }
 
-export function events({ item }: DocItemContext): EventDefinition[] | undefined {
+export function events ({ item }: DocItemContext): EventDefinition[] | undefined {
   return [...findAll('EventDefinition', item)];
 }
 
-export function modifiers({ item }: DocItemContext): ModifierDefinition[] | undefined {
+export function modifiers ({ item }: DocItemContext): ModifierDefinition[] | undefined {
   return [...findAll('ModifierDefinition', item)];
 }
 
-export function errors({ item }: DocItemContext): ErrorDefinition[] | undefined {
+export function errors ({ item }: DocItemContext): ErrorDefinition[] | undefined {
   return [...findAll('ErrorDefinition', item)];
 }
 
-export function variables({ item }: DocItemContext): VariableDeclaration[] | undefined {
+export function variables ({ item }: DocItemContext): VariableDeclaration[] | undefined {
   return (item.nodeType === 'ContractDefinition')
     ? item.nodes.filter(isNodeType('VariableDeclaration')).filter(v => v.stateVariable && v.visibility !== 'private')
     : undefined;
 }
 
-export function types({ item }: DocItemContext): TypeDefinition[] | undefined {
+export function types ({ item }: DocItemContext): TypeDefinition[] | undefined {
   return [...findAll(['StructDefinition', 'EnumDefinition', 'UserDefinedValueTypeDefinition'], item)];
 }
