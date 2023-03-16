@@ -415,7 +415,7 @@ module.exports = {
       })
       .click('//*[@id="workspacesMenuDropdown"]/span/i')
       .waitForElementVisible('//*[@id="workspacesMenuDropdown"]/div/ul')
-      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[2]') // rename workspace_name
+      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[3]') // rename workspace_name
       .useCss()
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextRename"]')
@@ -440,7 +440,7 @@ module.exports = {
       .switchWorkspace('workspace_name_1')//*[@id="workspacesMenuDropdown"]/span
       .useXpath()
       .click('//*[@id="workspacesMenuDropdown"]/span/i')
-      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[4]') // delete workspace_name_1
+      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]') // delete workspace_name_1
       .waitForElementVisible('//*[@id="fileExplorerView"]/div[2]/div/div/div[2]')
       .click('//*[@id="fileExplorerView"]/div[2]/div/div/div[3]/button')
       .waitForElementVisible('//*[@id="workspacesSelect"]')
