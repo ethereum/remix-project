@@ -34,6 +34,7 @@ export class ExecutionContext {
   }
 
   init (config) {
+    this.executionContext = 'vm-merge'
     this.event.trigger('contextChanged', [this.executionContext])
   }  
 
