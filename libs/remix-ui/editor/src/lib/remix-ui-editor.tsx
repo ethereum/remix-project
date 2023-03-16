@@ -682,8 +682,8 @@ export const EditorUI = (props: EditorUIProps) => {
     contextmenu._onContextMenu = (...args) => {
       if (args[0]) args[0].event?.preventDefault()
       onContextMenuHandlerForFreeFunction()
-        .then(() => orgContextMenuMethod.apply(contextmenu, arguments))
-        .catch(() => orgContextMenuMethod.apply(contextmenu, arguments))
+        .then(() => orgContextMenuMethod.apply(contextmenu, args))
+        .catch(() => orgContextMenuMethod.apply(contextmenu, args))
     }
 
     const editorService = editor._codeEditorService;
