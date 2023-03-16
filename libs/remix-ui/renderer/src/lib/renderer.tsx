@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react' //eslint-disable-line
+import { CopyToClipboard } from '@remix-ui/clipboard'
 import { helper } from '@remix-project/remix-solidity'
 import './renderer.css'
 interface RendererProps {
@@ -77,6 +78,7 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
             <div className="close" data-id="renderer" onClick={handleClose}>
               <i className="fas fa-times"></i>
             </div>
+            <CopyToClipboard content={messageText} className={`far fa-copy ${classList}`} direction={"top"} />
           </div>)
       }
     </>
