@@ -5,7 +5,7 @@ import EventEmitter from 'events'
 import { Config, defaults } from './docgen/config'
 import { Build, buildSite } from './docgen/site'
 import { loadTemplates } from './docgen/templates'
-import {SolcInput, SolcOutput} from 'solidity-ast/solc'
+import { SolcInput, SolcOutput } from 'solidity-ast/solc'
 import { render } from './docgen/render'
 
 export class DocGenClient extends PluginClient {
@@ -47,7 +47,6 @@ export class DocGenClient extends PluginClient {
       }
       this.fileName = fileName
       this.eventEmitter.emit('compilationFinished', this.build, fileName)
-
     })
   }
 
@@ -78,5 +77,4 @@ export class DocGenClient extends PluginClient {
   async generateDocs() {
     this.docgen([this.build])
   }
-
 }
