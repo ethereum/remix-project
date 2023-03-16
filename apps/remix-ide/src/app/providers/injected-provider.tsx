@@ -15,18 +15,18 @@ export class InjectedProvider extends Plugin implements IProvider {
 
   constructor (profile) {
     super(profile)
-    if ((window as any).ethereum) {
-      this.provider = new Web3((window as any).ethereum)
-    }
-  }
-
-  onActivation(): void {
     this.listenerAccountsChanged = (accounts: Array<string>) => {
       this.emit('accountsChanged', accounts)
     }
     this.listenerChainChanged = (chainId: number) => {
       this.emit('chainChanged', chainId)
     }
+    if ((window as any).ethereum) {
+      this.provider = new Web3((window as any).ethereum)
+    }
+  }
+
+  onActivation(): void {    
     (window as any).ethereum.on('accountsChanged', this.listenerAccountsChanged);
     (window as any).ethereum.on('chainChanged', this.listenerChainChanged);
   }
