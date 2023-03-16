@@ -25,7 +25,7 @@ function InactivePluginCard ({
               { profile.displayName || profile.name }
               { profile?.maintainedBy?.toLowerCase() == "remix" &&
                 <CustomTooltip
-                  placement="right-end"
+                  placement="right"
                   tooltipId="pluginManagerInactiveTitleByRemix"
                   tooltipClasses="text-nowrap"
                   tooltipText="Maintained by Remix"
@@ -35,7 +35,7 @@ function InactivePluginCard ({
               }
               { profile.documentation &&
                 <CustomTooltip
-                  placement="right-end"
+                  placement="right"
                   tooltipId="pluginManagerInactiveTitleLinkToDoc"
                   tooltipClasses="text-nowrap"
                   tooltipText="Link to documentation"
@@ -47,7 +47,7 @@ function InactivePluginCard ({
               }
               { profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)
                 ? <CustomTooltip
-                  placement="right-end"
+                  placement="right"
                   tooltipId="pluginManagerActiveVersionAlpha"
                   tooltipClasses="text-nowrap"
                   tooltipText="Version Alpha"
@@ -56,7 +56,7 @@ function InactivePluginCard ({
                 </CustomTooltip>
                 : profile.version && profile.version.match(/\b(\w*beta\w*)\b/g)
                   ? <CustomTooltip
-                    placement="right-end"
+                    placement="right"
                     tooltipId="pluginManagerActiveVersionBeta"
                     tooltipClasses="text-nowrap"
                     tooltipText="Version Beta"
@@ -68,7 +68,7 @@ function InactivePluginCard ({
             </div>
             {
               <CustomTooltip
-                placement="right-end"
+                placement="right"
                 tooltipId={`pluginManagerInactiveActiveBtn${profile.name}`}
                 tooltipClasses="text-nowrap"
                 tooltipText={`Activate ${profile.displayName || profile.name}`}

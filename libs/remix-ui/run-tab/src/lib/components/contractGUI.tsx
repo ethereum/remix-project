@@ -283,7 +283,7 @@ export function ContractGUI (props: ContractGUIProps) {
             disabled={(toggleUpgradeImp && !proxyAddress) || props.disabled}
           >
             <CustomTooltip
-              placement={"right-start"}
+              placement={"right"}
               tooltipClasses="text-wrap"
               tooltipId="remixUdappInstanceButtonTooltip"
               tooltipText={toggleUpgradeImp && !proxyAddress ? 'Proxy address cannot be empty' : buttonOptions.title}
@@ -291,13 +291,6 @@ export function ContractGUI (props: ContractGUIProps) {
               <div>{title}</div>
             </CustomTooltip>
           </button>
-        <CustomTooltip
-          placement={"right"}
-          tooltipClasses="text-nowrap"
-          tooltipId="remixContractGuiTooltip"
-          tooltipText={props.funcABI.type === "fallback" ||props.funcABI.type === "receive" ? `'(${props.funcABI.type}')`
-          : props.inputs}
-        >
           <input
             className="form-control"
             data-id={
@@ -308,12 +301,6 @@ export function ContractGUI (props: ContractGUIProps) {
             }
             placeholder={props.inputs}
             onChange={handleBasicInput}
-            data-title={
-              props.funcABI.type === "fallback" ||
-              props.funcABI.type === "receive"
-                ? `'(${props.funcABI.type}')`
-                : props.inputs
-            }
             ref={basicInputRef}
             style={{
               visibility: !(
@@ -325,7 +312,6 @@ export function ContractGUI (props: ContractGUIProps) {
                 : "visible",
             }}
           />
-        </CustomTooltip>
           <i
             className="fas fa-angle-down udapp_methCaret"
             onClick={switchMethodViewOn}

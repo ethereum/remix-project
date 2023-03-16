@@ -855,7 +855,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 <FormattedMessage id='solidity.language' />
               </label>
               <CustomTooltip
-                placement="right-start"
+                placement="right"
                 tooltipId="compilerLabelTooltip"
                 tooltipClasses="text-nowrap"
                 tooltipText={<span>{'Language specification available from   Compiler >= v0.5.7'}</span>}
