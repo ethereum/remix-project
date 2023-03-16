@@ -163,6 +163,7 @@ export function Workspace () {
     try {
       await global.dispatchHandleDownloadWorkspace()
     } catch (e) {
+      global.modal(intl.formatMessage({ id: 'filePanel.workspace.download' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, intl.formatMessage({ id: 'filePanel.cancel' }))
       console.error(e)
     }
   }
