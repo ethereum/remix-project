@@ -28,6 +28,10 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
           props.createWorkspace()
           props.hideIconsMenu(!showIconsMenu)
         }}></HamburgerMenuItem>
+        <HamburgerMenuItem kind='clone' fa='fab fa-github' hideOption={hideWorkspaceOptions} actionOnClick={() => {
+          props.cloneGitRepository()
+          props.hideIconsMenu(!showIconsMenu)
+        }}></HamburgerMenuItem>
         <HamburgerMenuItem kind='rename' fa='far fa-edit' hideOption={hideWorkspaceOptions || hideLocalhostOptions} actionOnClick={() => {
           props.renameCurrentWorkspace()
           props.hideIconsMenu(!showIconsMenu)
@@ -40,16 +44,11 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
           props.deleteCurrentWorkspace()
           props.hideIconsMenu(!showIconsMenu)
         }}></HamburgerMenuItem>
+        <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{ pointerEvents: 'none' }} />
         <HamburgerMenuItem kind='deleteAll' fa='far fa-trash-alt' hideOption={hideWorkspaceOptions || hideLocalhostOptions} actionOnClick={() => {
           props.deleteAllWorkspaces()
           props.hideIconsMenu(!showIconsMenu)
         }}></HamburgerMenuItem>
-        <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{ pointerEvents: 'none' }} />
-        <HamburgerMenuItem kind='clone' fa='fab fa-github' hideOption={hideWorkspaceOptions} actionOnClick={() => {
-          props.cloneGitRepository()
-          props.hideIconsMenu(!showIconsMenu)
-        }}></HamburgerMenuItem>
-        <Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/>
         <HamburgerMenuItem kind='backup' fa='far fa-download' hideOption={hideWorkspaceOptions || hideLocalhostOptions} actionOnClick={() => {
           props.downloadWorkspaces()
           props.hideIconsMenu(!showIconsMenu)
