@@ -440,8 +440,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       setIsOpen(!panels.terminal.minimized)
     })
 
-
-
     return () => {
       props.plugin.off('layout', 'change')
     }
@@ -453,7 +451,14 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     <div style={{ flexGrow: 1 }} className='remix_ui_terminal_panel' ref={panelRef}>
       <div className="remix_ui_terminal_bar d-flex">
         <div className="remix_ui_terminal_menu d-flex w-100 align-items-center position-relative border-top border-dark bg-light" ref={terminalMenu} data-id="terminalToggleMenu">
-          <i className={`mx-2 remix_ui_terminal_toggleTerminal fas ${isOpen ? 'fa-angle-double-down' : 'fa-angle-double-up'}`} data-id="terminalToggleIcon" onClick={handleToggleTerminal}></i>
+        <CustomTooltip
+            placement="top"
+            tooltipId="terminalToggle"
+            tooltipClasses="text-nowrap"
+            tooltipText={isOpen ? "Hide Terminal" : "Show Terminal"}
+          >
+            <i className={`mx-2 remix_ui_terminal_toggleTerminal fas ${isOpen ? 'fa-angle-double-down' : 'fa-angle-double-up'}`} data-id="terminalToggleIcon" onClick={handleToggleTerminal}></i>
+          </CustomTooltip>
           <div className="mx-2 remix_ui_terminal_console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole} >
             <CustomTooltip
               placement="top"
