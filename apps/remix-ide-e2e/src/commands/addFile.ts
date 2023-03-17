@@ -54,7 +54,10 @@ function addFile(browser: NightwatchBrowser, name: string, content: NightwatchCo
             suppressNotFoundErrors: true,
             timeout: 60000
           })
-          .waitForElementContainsText('*[data-id="activeTabTitle"]', name)
+          .waitForElementVisible({
+            selector: `//*[@data-id='activeTabTitle' and contains(., "${name}")]`,
+            locateStrategy: 'xpath'
+          })
           .setEditorValue(content.content)
           .getEditorValue((result) => {
             if(result != content.content) {
