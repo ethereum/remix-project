@@ -8,6 +8,7 @@ import {allCommands, allPrograms} from './commands' // eslint-disable-line
 import TerminalWelcomeMessage from './terminalWelcome' // eslint-disable-line
 import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
+import { CustomTooltip } from '@remix-ui/helper'
 
 import './remix-ui-terminal.css'
 import vm from 'vm'
@@ -454,26 +455,51 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         <div className="remix_ui_terminal_menu d-flex w-100 align-items-center position-relative border-top border-dark bg-light" ref={terminalMenu} data-id="terminalToggleMenu">
           <i className={`mx-2 remix_ui_terminal_toggleTerminal fas ${isOpen ? 'fa-angle-double-down' : 'fa-angle-double-up'}`} data-id="terminalToggleIcon" onClick={handleToggleTerminal}></i>
           <div className="mx-2 remix_ui_terminal_console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole} >
-            <i className="fas fa-ban" aria-hidden="true" title="Clear console"
-            ></i>
-          </div>
-          <div className="mx-2" title='Pending Transactions'>0</div>
-          <div className="pt-1 h-80 mx-3 align-items-center remix_ui_terminal_listenOnNetwork custom-control custom-checkbox">
-            <input
-              className="custom-control-input"
-              id="listenNetworkCheck"
-              onChange={listenOnNetwork}
-              type="checkbox"
-              title={intl.formatMessage({ id: 'terminal.listenTitle' })}
-            />
-            <label
-              className="pt-1 form-check-label custom-control-label text-nowrap"
-              title={intl.formatMessage({ id: 'terminal.listenTitle' })}
-              htmlFor="listenNetworkCheck"
-              data-id="listenNetworkCheckInput"
+            <CustomTooltip
+              placement="top"
+              tooltipId="terminalClear"
+              tooltipClasses="text-nowrap"
+              tooltipText="Clear console"
             >
-              <FormattedMessage id='terminal.listen' />
-            </label>
+              <i className="fas fa-ban" aria-hidden="true"></i>
+            </CustomTooltip>
+          </div>
+          <CustomTooltip
+            placement="top"
+            tooltipId="terminalClear"
+            tooltipClasses="text-nowrap"
+            tooltipText="Pending Transactions"
+          >
+            <div className="mx-2">0</div>
+          </CustomTooltip>
+          <div className="pt-1 h-80 mx-3 align-items-center remix_ui_terminal_listenOnNetwork custom-control custom-checkbox">
+            <CustomTooltip
+              placement="top"
+              tooltipId="terminalClear"
+              tooltipClasses="text-nowrap"
+              tooltipText={intl.formatMessage({ id: 'terminal.listenTitle' })}
+            >
+              <input
+                className="custom-control-input"
+                id="listenNetworkCheck"
+                onChange={listenOnNetwork}
+                type="checkbox"
+              />
+            </CustomTooltip>
+            <CustomTooltip
+              placement="top"
+              tooltipId="terminalClear"
+              tooltipClasses="text-nowrap"
+              tooltipText={intl.formatMessage({ id: 'terminal.listenTitle' })}
+            >
+              <label
+                className="pt-1 form-check-label custom-control-label text-nowrap"
+                htmlFor="listenNetworkCheck"
+                data-id="listenNetworkCheckInput"
+              >
+                <FormattedMessage id='terminal.listen' />
+              </label>
+            </CustomTooltip>
           </div>
           <div className="remix_ui_terminal_search d-flex align-items-center h-100">
             <i
