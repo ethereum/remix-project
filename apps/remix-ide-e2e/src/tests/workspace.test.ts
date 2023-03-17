@@ -433,15 +433,14 @@ module.exports = {
 
   'Should delete a workspace #group1': function (browser: NightwatchBrowser) {
     browser
-      .switchWorkspace('workspace_name_1')//*[@id="workspacesMenuDropdown"]/span
-      .useXpath()
-      .click('//*[@id="workspacesMenuDropdown"]/span/i')
-      .click('//*[@id="workspacesMenuDropdown"]/div/ul/a[5]') // delete workspace_name_1
-      .waitForElementVisible('//*[@id="fileExplorerView"]/div[2]/div/div/div[2]')
-      .click('//*[@id="fileExplorerView"]/div[2]/div/div/div[3]/button')
-      .waitForElementVisible('//*[@id="workspacesSelect"]')
-      .click('//*[@id="workspacesSelect"]')
-      .useCss()
+      .switchWorkspace('workspace_name_1')
+      .click('*[data-id="workspaceDropdownMenuIcon"]')
+      .waitForElementVisible('*[data-id="wsdropdownMenu"]')
+      .click('*[data-id="workspacedelete"]') // delete workspace_name_1
+      .waitForElementVisible('*[data-id="fileSystemModalDialogModalFooter-react"]')
+      .click('*[data-id="fileSystem-modal-footer-ok-react"]')
+      .waitForElementVisible('*[data-id="workspacesSelect"]')
+      .click('*[data-id="workspacesSelect"]')
       .waitForElementNotPresent(`[data-id="dropdown-item-workspace_name_1"]`)
       .end()
   },
