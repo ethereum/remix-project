@@ -408,12 +408,8 @@ module.exports = {
 
   'Should rename a workspace #group1': function (browser: NightwatchBrowser) {
     browser
-      .useXpath()
-      .waitForElementPresent({
-        selector: '//i[@data-id="workspaceDropdownMenuIcon"]',
-        locateStrategy: 'xpath',
-      })
-      .click('*[data-id="workspacesMenuDropdown"]')
+      .waitForElementPresent('*[data-id="workspaceDropdownMenuIcon"]')
+      .click('*[data-id="workspaceDropdownMenuIcon"]')
       .waitForElementVisible('*[data-id="wsdropdownMenu"]')
       .click('*[data-id="workspacerename"]') // rename workspace_name
       .useCss()
