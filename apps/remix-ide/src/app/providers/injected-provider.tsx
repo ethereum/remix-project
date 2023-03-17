@@ -83,7 +83,13 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
       return resolve({ jsonrpc: '2.0', error: 'no injected provider found', id: data.id })
     }
     try {
-      let resultData = await web3Provider.send(data.method, data.params)
+      let resultData
+      if (web3Provider.send) resultData = await web3Provider.send(data.method, data.params)
+      else if (web3Provider.request) resultData = await web3Provider.request({ method: data.method, params: data.params})
+      else {
+        resolve({ jsonrpc: '2.0', error: 'provider not valid', id: data.id })
+        return
+      }
       if (resultData) {
         if (resultData.jsonrpc && resultData.jsonrpc === '2.0') {
           resultData = resultData.result
