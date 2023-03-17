@@ -18,7 +18,7 @@ module.exports = {
     browser.clickLaunchIcon('home')
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
-      .click('div[title="home"]')
+      .click('div[title="Home"]')
       .waitForElementVisible('button[data-id="landingPageImportFromGitHubButton"]')
       .pause(1000)
       .click('button[data-id="landingPageImportFromGitHubButton"]')
@@ -57,7 +57,10 @@ module.exports = {
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
       .click('[data-id="homeTab-modal-footer-ok-react"]')
       .openFile('github/OpenZeppelin/openzeppelin-solidity/contracts/access/Roles.sol')
-      .waitForElementVisible("div[title='default_workspace/github/OpenZeppelin/openzeppelin-solidity/contracts/access/Roles.sol'")
+      .waitForElementVisible({
+        selector: `//*[@data-id='activeTabTitle' and contains(., "default_workspace/github/OpenZeppelin/openzeppelin-solidity/contracts/access/Roles.sol")]`,
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('library Roles {') !== -1, 'content does contain "library Roles {"')
       })
