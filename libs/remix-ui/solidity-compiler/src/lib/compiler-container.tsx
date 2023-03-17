@@ -970,7 +970,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <button
               id="compileAndRunBtn"
               data-id="compilerContainerCompileAndRunBtn"
-              className="btn btn-secondary btn-block d-block w-100 text-break remixui_solidityCompileAndRunButton d-inline-block remixui_disabled mb-1 mt-3"
+              className="btn btn-secondary btn-block d-block w-100 text-break remixui_solidityCompileAndRunButton d-inline-block remixui_disabled mb-1 mt-1"
               onClick={compileAndRun}
               disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}
             >
@@ -1009,7 +1009,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <a href="https://remix-ide.readthedocs.io/en/latest/running_js_scripts.html#compile-a-contract-and-run-a-script-on-the-fly" target="_blank" ><i className="pl-2 ml-2 mt-3 mb-1 fas fa-info text-dark"></i></a>
             </CustomTooltip>
             <CopyToClipboard tip="Click to copy the custom NatSpec tag" getContent={() => '@custom:dev-run-script file_path'} direction='top'>
-              <button className="btn remixui_copyButton  ml-2 mt-3 mb-1 text-dark">
+              <button className="btn remixui_copyButton  ml-2 my-1 text-dark">
                 <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
               </button>
             </CopyToClipboard>
