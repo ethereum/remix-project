@@ -78,5 +78,9 @@ module.exports = composePlugins(withNx(), (config) => {
     new CssMinimizerPlugin(),
   ];
 
+  config.watchOptions = {
+    ignored: /node_modules/
+  }
+
   return config;
 });
