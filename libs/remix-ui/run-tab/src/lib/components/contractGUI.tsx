@@ -274,7 +274,13 @@ export function ContractGUI (props: ContractGUIProps) {
       <div
         className="udapp_contractActionsContainerSingle pt-2"
         style={{ display: toggleContainer ? "none" : "flex" }}
-      >
+      > 
+        <CustomTooltip
+          placement={"right"}
+          tooltipClasses="text-wrap"
+          tooltipId="remixUdappInstanceButtonTooltip"
+          tooltipText={toggleUpgradeImp && !proxyAddress ? 'Proxy address cannot be empty' : buttonOptions.title}
+        >
           <button
             onClick={handleActionClick}
             className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`}
@@ -282,47 +288,41 @@ export function ContractGUI (props: ContractGUIProps) {
             data-title={buttonOptions.title}
             disabled={(toggleUpgradeImp && !proxyAddress) || props.disabled}
           >
-            <CustomTooltip
-              placement={"right"}
-              tooltipClasses="text-wrap"
-              tooltipId="remixUdappInstanceButtonTooltip"
-              tooltipText={toggleUpgradeImp && !proxyAddress ? 'Proxy address cannot be empty' : buttonOptions.title}
-            >
-              <div>{title}</div>
-            </CustomTooltip>
+            <div>{title}</div>
           </button>
-          <input
-            className="form-control"
-            data-id={
+        </CustomTooltip>
+        <input
+          className="form-control"
+          data-id={
+            props.funcABI.type === "fallback" ||
+            props.funcABI.type === "receive"
+              ? `'(${props.funcABI.type}')`
+              : "multiParamManagerBasicInputField"
+          }
+          placeholder={props.inputs}
+          onChange={handleBasicInput}
+          ref={basicInputRef}
+          style={{
+            visibility: !(
+              (props.funcABI.inputs && props.funcABI.inputs.length > 0) ||
               props.funcABI.type === "fallback" ||
               props.funcABI.type === "receive"
-                ? `'(${props.funcABI.type}')`
-                : "multiParamManagerBasicInputField"
-            }
-            placeholder={props.inputs}
-            onChange={handleBasicInput}
-            ref={basicInputRef}
-            style={{
-              visibility: !(
-                (props.funcABI.inputs && props.funcABI.inputs.length > 0) ||
-                props.funcABI.type === "fallback" ||
-                props.funcABI.type === "receive"
-              )
-                ? "hidden"
-                : "visible",
-            }}
-          />
-          <i
-            className="fas fa-angle-down udapp_methCaret"
-            onClick={switchMethodViewOn}
-            style={{
-              visibility: !(
-                props.funcABI.inputs && props.funcABI.inputs.length > 0
-              )
-                ? "hidden"
-                : "visible",
-            }}
-          ></i>
+            )
+              ? "hidden"
+              : "visible",
+          }}
+        />
+        <i
+          className="fas fa-angle-down udapp_methCaret"
+          onClick={switchMethodViewOn}
+          style={{
+            visibility: !(
+              props.funcABI.inputs && props.funcABI.inputs.length > 0
+            )
+              ? "hidden"
+              : "visible",
+          }}
+        ></i>
       </div>
       <div
         className="udapp_contractActionsContainerMulti"
@@ -463,14 +463,14 @@ export function ContractGUI (props: ContractGUIProps) {
                         {" "}
                         {inp.name}:{" "}
                       </label>
-                        <input
-                          ref={(el) => {
-                            initializeFields.current[index] = el;
-                          }}
-                          style={{ height: 32 }}
-                          className="form-control udapp_input"
-                          placeholder={inp.type}
-                        />
+                      <input
+                        ref={(el) => {
+                          initializeFields.current[index] = el;
+                        }}
+                        style={{ height: 32 }}
+                        className="form-control udapp_input"
+                        placeholder={inp.type}
+                      />
                     </div>
                   );
                 })}
@@ -526,26 +526,26 @@ export function ContractGUI (props: ContractGUIProps) {
                           tooltipText={'Deployed ' + shortenDate(deployment.date)}
                           key={index}
                         >
-                            <Dropdown.Item
-                              key={index}
-                              onClick={() => {
-                                switchProxyAddress(deployment.address)
-                              }}
-                              data-id={`proxyAddress${index}`}
-                            >
-                              <span>{ proxyAddress === deployment.address ? <span>&#10003; { deployment.contractName + ' ' + shortenProxyAddress(deployment.address) } </span> : <span className="pl-3">{ deployment.contractName + ' ' + shortenProxyAddress(deployment.address) }</span> }</span>
-                            </Dropdown.Item>
-                          </CustomTooltip>
-                        ))
-                      }
-                    </Dropdown.Menu>
-                  }
-                </Dropdown>
+                          <Dropdown.Item
+                            key={index}
+                            onClick={() => {
+                              switchProxyAddress(deployment.address)
+                            }}
+                            data-id={`proxyAddress${index}`}
+                          >
+                            <span>{ proxyAddress === deployment.address ? <span>&#10003; { deployment.contractName + ' ' + shortenProxyAddress(deployment.address) } </span> : <span className="pl-3">{ deployment.contractName + ' ' + shortenProxyAddress(deployment.address) }</span> }</span>
+                          </Dropdown.Item>
+                        </CustomTooltip>
+                      ))
+                    }
+                  </Dropdown.Menu>
+                }
+              </Dropdown>
             </div>
             <div className='d-flex'>
-                <div className="mb-2">
-                  { proxyAddressError && <span className='text-lowercase text-danger' data-id="errorMsgProxyAddress" style={{ fontSize: '.8em' }}>{ proxyAddressError }</span> }
-                </div>
+              <div className="mb-2">
+                { proxyAddressError && <span className='text-lowercase text-danger' data-id="errorMsgProxyAddress" style={{ fontSize: '.8em' }}>{ proxyAddressError }</span> }
+              </div>
             </div>
           </div>
         </> 

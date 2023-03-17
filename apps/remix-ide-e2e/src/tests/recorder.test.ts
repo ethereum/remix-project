@@ -95,12 +95,10 @@ module.exports = {
       .clickInstance(1)
       .pause(1000)
       .clickFunction('set2 - transact (not payable)', { types: 'uint256 _po', values: '10' })
-      .testFunction('last',
-        {
-          status: 'true Transaction mined and execution succeed',
-          'decoded input': { 'uint256 _po': '10' }
-        })
-      
+      .testFunction('last', {
+        status: 'true Transaction mined and execution succeed',
+        'decoded input': { 'uint256 _po': '10' }
+      })
   },
 
   'Run with live "mode" #group2': function (browser: NightwatchBrowser) {
