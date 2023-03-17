@@ -22,14 +22,24 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
   abstract getInjectedProvider(): any
   abstract notFound(): string
 
-  onActivation(): void {    
-    (window as any).ethereum.on('accountsChanged', this.listenerAccountsChanged);
-    (window as any).ethereum.on('chainChanged', this.listenerChainChanged);
+  onActivation(): void {
+    try {
+      const web3Provider = this.getInjectedProvider()
+      web3Provider.on('accountsChanged', this.listenerAccountsChanged);
+      web3Provider.on('chainChanged', this.listenerChainChanged);
+    } catch (error) {
+      console.log('unable to listen on context changed')
+    }    
   }
 
   onDeactivation(): void {
-    (window as any).ethereum.removeListener('accountsChanged', this.listenerAccountsChanged)
-    (window as any).ethereum.removeListener('chainChanged', this.listenerChainChanged)
+    try {
+      const web3Provider = this.getInjectedProvider()
+      web3Provider.removeListener('accountsChanged', this.listenerAccountsChanged)
+      web3Provider.removeListener('chainChanged', this.listenerChainChanged)
+    } catch (error) {
+      console.log('unable to remove listener on context changed')
+    }    
   }
 
   askPermission (throwIfNoInjectedProvider) {
