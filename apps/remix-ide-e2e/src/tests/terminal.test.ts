@@ -317,18 +317,33 @@ module.exports = {
       .executeScriptInTerminal(`web3.eth.getCode('0x75F509A4eDA030470272DfBAf99A47D587E76709')`) // sepolia contract
       .waitForElementContainsText('*[data-id="terminalJournal"]', byteCodeInSepolia, 120000)
   },
-  /*
+  
   'Should run free function which logs in the terminal #group10': function (browser: NightwatchBrowser) {
-    const script = `
-    function run () public {
-      console.log("test running free function");
-    } `
+    const script = `import "hardhat/console.sol";
+
+    function runSomething () view {
+        console.log("test running free run run");
+    } 
+    `
     browser
-      .addFile('test.script.sol', {content: script })
-      .click('*[data-id="play-editor"]') // run the script
+      .addFile('test.sol', { content: script })
+      .scrollToLine(3)
+    const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"    
+    const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething" in the Remix VM']`
+    browser.waitForElementVisible('#editorView')
+      .useXpath()
+      .click(path)
+      .pause(3000) // the parser need to parse the code
+      .rightClick(path)
+      .execute(function () {
+        // @ts-ignore
+        document.querySelector('.shadow-root-host').shadowRoot.querySelector(`.monaco-menu span[aria-label='Run the free function "runSomething" in the Remix VM']`).parentElement.click()
+      }, [], function (result) {
+      })
+      // .click(pathRunFunction) // run the script
+      .useCss()
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'test running free function', 120000)
-  },
-  */
+  }
 }
 
 
