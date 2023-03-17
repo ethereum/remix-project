@@ -37,6 +37,7 @@ export class ExecutionContext {
     if (config.get('settings/always-use-vm')) {
       this.executionContext = 'vm-merge'
     }
+    this.event.trigger('contextChanged', [this.executionContext])
   }  
 
   getProvider () {

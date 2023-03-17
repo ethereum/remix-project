@@ -154,6 +154,7 @@ export function AccountUI (props: AccountProps) {
             <i id="remixRunPlus" className={`fas fa-plus-circle udapp_icon ${plusOpt.classList}`} aria-hidden="true" onClick={newAccount}></i>
           </span>
         </CustomTooltip>
+        { props.accounts.isRequesting && <i className="fa fa-spinner fa-pulse ml-2" aria-hidden="true"></i> }
       </label>
       <div className="udapp_account">
         <select id="txorigin" data-id="runTabSelectAccount" name="txorigin" className="form-control udapp_select custom-select pr-4" value={selectedAccount||""} onChange={(e) => { props.setAccount(e.target.value) }}>

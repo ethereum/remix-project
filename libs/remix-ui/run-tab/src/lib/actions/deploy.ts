@@ -6,7 +6,7 @@ import { SolcInput, SolcOutput } from "@openzeppelin/upgrades-core"
 // Used direct path to UpgradeableContract class to fix cyclic dependency error from @openzeppelin/upgrades-core library
 import { UpgradeableContract } from '../../../../../../node_modules/@openzeppelin/upgrades-core/dist/standalone'
 import { DeployMode, MainnetPrompt } from "../types"
-import { displayNotification, displayPopUp, fetchProxyDeploymentsSuccess, setDecodedResponse } from "./payload"
+import { displayNotification, displayPopUp, fetchProxyDeploymentsSuccess, setDecodedResponse, updateInstancesBalance } from "./payload"
 import { addInstance } from "./actions"
 import { addressToString, logBuilder } from "@remix-ui/helper"
 import Web3 from "web3"
@@ -318,14 +318,15 @@ export const getFuncABIInputs = (plugin: RunTab, funcABI: FuncABI) => {
   return plugin.blockchain.getInputs(funcABI)
 }
 
-export const updateInstanceBalance = (plugin: RunTab) => {
+export const updateInstanceBalance = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   if (plugin.REACT_API?.instances?.instanceList?.length) {
-    for (const instance of plugin.REACT_API.instances.instanceList) {
-      plugin.blockchain.getBalanceInEther(instance.address, (err, balInEth) => {
-        if (!err) instance.balance = balInEth
-      })
+    const instances = plugin.REACT_API?.instances?.instanceList
+    for (const instance of instances) {
+      const balInEth = await plugin.blockchain.getBalanceInEther(instance.address)
+      instance.balance = balInEth
     }
-  }
+    dispatch(updateInstanceBalance(instances, dispatch))
+  } 
 }
 
 export const isValidContractAddress = async (plugin: RunTab, address: string) => {
