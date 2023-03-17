@@ -18,14 +18,6 @@ module.exports = {
         init(browser, done, 'http://127.0.0.1:8080', false)
     },
 
-    'Should enable settings': function (browser: NightwatchBrowser) {
-        browser
-          .clickLaunchIcon('settings')
-          .click('[data-id="settingsAutoCompleteLabel"]')
-          .click('[data-id="settingsShowGasLabel"]')
-          .click('[data-id="displayErrorsLabel"]')
-      },
-
     'Should load the test file': function (browser: NightwatchBrowser) {
         browser.openFile('contracts')
             .openFile('contracts/3_Ballot.sol')

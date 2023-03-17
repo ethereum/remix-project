@@ -500,7 +500,6 @@ export class Blockchain extends Plugin {
   }
 
   // NOTE: the config is only needed because exectuionContext.init does
-  // if config.get('settings/always-use-vm'), we can simplify this later
   async resetAndInit (config, transactionContextAPI) {
     this.transactionContextAPI = transactionContextAPI
     this.executionContext.init(config)

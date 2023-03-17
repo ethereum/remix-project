@@ -119,7 +119,7 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
 
         // truncate for performance
         if (filteredNodes.length > this.maximumItemsForContractCompletion) {
-            await this.props.plugin.call('notification', 'toast', `Too many completion items. Only ${this.maximumItemsForContractCompletion} items will be shown.`)
+            // await this.props.plugin.call('notification', 'toast', `Too many completion items. Only ${this.maximumItemsForContractCompletion} items will be shown.`)
             filteredNodes = filteredNodes.slice(0, this.maximumItemsForContractCompletion)
         }
 
