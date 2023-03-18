@@ -129,6 +129,12 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     dispatch(fetchAccountsListSuccess(accountsMap))
   })
 
+  plugin.on('injected-trustwallet', 'accountsChanged', (accounts: Array<string>) => {
+    const accountsMap = {}
+    accounts.map(account => { accountsMap[account] = shortenAddress(account, '0')})
+    dispatch(fetchAccountsListSuccess(accountsMap))
+  })
+
   setInterval(() => {
     fillAccountsList(plugin, dispatch)
     updateInstanceBalance(plugin, dispatch)
