@@ -642,6 +642,10 @@ export const EditorUI = (props: EditorUIProps) => {
       contextMenuOrder: 0, // choose the order
       contextMenuGroupId: "execute", // create a new grouping
       precondition: 'freeFunctionCondition',
+      keybindings: [
+        // eslint-disable-next-line no-bitwise
+        monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyR,
+      ],
       run: async () => { 
         const { nodesAtPosition } = await  retrieveNodesAtPosition(props.editorAPI, props.plugin)        
         // find the contract and get the nodes of the contract and the base contracts and imports
@@ -661,6 +665,10 @@ export const EditorUI = (props: EditorUIProps) => {
     editor.addAction(formatAction)
     editor.addAction(zoomOutAction)
     editor.addAction(zoominAction)
+    editor.addAction(executeFreeFunctionAction)
+
+    // we have to add the command because the menu action isn't always available (see onContextMenuHandlerForFreeFunction)
+    editor.addCommand(monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyR, () => executeFreeFunctionAction.run())
 
     const contextmenu = editor.getContribution('editor.contrib.contextmenu')
     const orgContextMenuMethod = contextmenu._onContextMenu;
