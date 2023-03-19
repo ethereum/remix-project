@@ -170,6 +170,25 @@ export class CompilerImports extends Plugin {
             await this.call('solidityUnitTesting', 'createTestLibs')
             exist = await provider.exists(url)
         }
+        if (!exist && url === 'forge-std/Vm.sol') {
+            const content = `// SPDX-License-Identifier: MIT
+            pragma solidity >= 0.4.22 <0.9.0;
+            
+            library vm {
+              address constant VM_ADDRESS = address(0x000000000000000000636f6E736F6C652e6c6F68);
+            
+              function startPrank(address _sender) private view {
+                    bytes memory payload  = abi.encodeWithSignature("startPrank(address)", _sender);
+                uint256 payloadLength = payload.length;
+                address consoleAddress = VM_ADDRESS;
+                assembly {
+                  let payloadStart := add(payload, 32)
+                  let r := staticcall(gas(), consoleAddress, payloadStart, payloadLength, 0, 0)
+                }
+              }
+            }`
+            await this.call('fileManager', 'writeFile', 'forge-std/Vm.sol', content)
+        } 
         if (!exist && url.startsWith('browser/')) throw new Error(`not found ${url}`)
         if (!exist && url.startsWith('localhost/')) throw new Error(`not found ${url}`)
         if (exist) {

@@ -286,6 +286,26 @@ export class VmProxy {
         this.hhLogs[this.processingHash] = this.hhLogs[this.processingHash] ? this.hhLogs[this.processingHash] : []
         this.hhLogs[this.processingHash].push(consoleArgs)
       }
+      // Track forge vm call
+      if (step.op === 'STATICCALL' && toHexPaddedString(step.stack[step.stack.length - 2]) === '0x000000000000000000000000000000000000000000636f6e736f6c652e6c6f68') {
+        const payloadStart = parseInt(toHexPaddedString(step.stack[step.stack.length - 3]), 16)
+        const memory = formatMemory(data.memory)
+        const memoryStr = memory.join('')
+        let payload = memoryStr.substring(payloadStart * 2, memoryStr.length)
+        const fnselectorStr = payload.substring(0, 8)
+        const fnselectorStrInHex = '0x' + fnselectorStr        
+        const fnArgs = '(address)'
+        const iface = new ethers.utils.Interface([`function prank${fnArgs} view`])
+        const functionDesc = iface.getFunction(`prank${fnArgs}`)
+        const sigHash = iface.getSighash(`prank${fnArgs}`)
+        if (fnArgs.includes('uint') && sigHash !== fnselectorStrInHex) {
+          payload = payload.replace(fnselectorStr, sigHash)
+        } else {
+          payload = '0x' + payload
+        }
+        let prankArgs = iface.decodeFunctionData(functionDesc, payload)
+        
+      }
 
       if (step.op === 'CREATE' || step.op === 'CALL') {
         if (step.op === 'CREATE') {
