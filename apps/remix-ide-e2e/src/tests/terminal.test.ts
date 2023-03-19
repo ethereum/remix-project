@@ -322,7 +322,7 @@ module.exports = {
     const script = `import "hardhat/console.sol";
 
     function runSomething () view {
-        console.log("test running free run run");
+        console.log("test running free function");
     } 
     `
     browser
@@ -334,13 +334,13 @@ module.exports = {
       .useXpath()
       .click(path)
       .pause(3000) // the parser need to parse the code
-      .rightClick(path)
-      .execute(function () {
-        // @ts-ignore
-        document.querySelector('.shadow-root-host').shadowRoot.querySelector(`.monaco-menu span[aria-label='Run the free function "runSomething" in the Remix VM']`).parentElement.click()
-      }, [], function (result) {
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions
+            .keyDown(this.Keys.SHIFT)
+            .keyDown(this.Keys.ALT)
+            .sendKeys('r')
       })
-      // .click(pathRunFunction) // run the script
       .useCss()
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'test running free function', 120000)
   }
