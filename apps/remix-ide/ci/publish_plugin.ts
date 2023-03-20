@@ -4,10 +4,12 @@ import fetch from "node-fetch";
   const metadata = await fetch(pluginsDirectory, { method: 'GET' })
 
   // get command line arguments
-  const args = process.argv
+  const args = process.argv.slice(2)
   const pluginName = args[0]
   const sha = args[1]
   const build = args[2]
+
+  console.log(process.argv)
 
   if (!pluginName || !sha || !build) {
     console.error('missing arguments')
@@ -23,7 +25,7 @@ import fetch from "node-fetch";
   }
 
   // update the plugin
-  plugin.build = build
+  plugin.build = 'someurl'
   plugin.sha = sha
 
   console.log('publishing plugin', plugin, 'with sha', sha, 'and build', build)
