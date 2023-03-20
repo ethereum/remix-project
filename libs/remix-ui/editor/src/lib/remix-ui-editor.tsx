@@ -12,8 +12,6 @@ import { monacoTypes } from '@remix-ui/editor';
 import './remix-ui-editor.css'
 import { loadTypes } from './web-types'
 
-
-
 import { RemixHoverProvider } from './providers/hoverProvider'
 import { RemixReferenceProvider } from './providers/referenceProvider'
 import { RemixCompletionProvider } from './providers/completionProvider'
@@ -262,6 +260,7 @@ export const EditorUI = (props: EditorUIProps) => {
         { token: 'keyword.continue', foreground: warningColor },
         { token: 'keyword.while', foreground: warningColor },
         { token: 'keyword.do', foreground: warningColor },
+        { token: 'keyword.delete', foreground: warningColor },
 
         { token: 'keyword.if', foreground: yellowColor },
         { token: 'keyword.else', foreground: yellowColor },
