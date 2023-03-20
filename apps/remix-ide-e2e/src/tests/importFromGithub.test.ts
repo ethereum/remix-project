@@ -18,7 +18,7 @@ module.exports = {
     browser.clickLaunchIcon('home')
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
-      .click('div[title="Home"]')
+      .click('div[title="Remix Home"]')
       .waitForElementVisible('button[data-id="landingPageImportFromGitHubButton"]')
       .pause(1000)
       .click('button[data-id="landingPageImportFromGitHubButton"]')
