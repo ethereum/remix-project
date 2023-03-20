@@ -4,7 +4,7 @@ import fetch from "node-fetch";
   const metadata = await fetch(pluginsDirectory, { method: 'GET' })
 
   // get command line arguments
-  const args = process.argv.slice(2)
+  const args = process.argv
   const pluginName = args[0]
   const sha = args[1]
   const build = args[2]
