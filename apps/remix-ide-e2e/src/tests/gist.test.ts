@@ -143,8 +143,8 @@ module.exports = {
       .modalFooterOKClick('gisthandler')
       .pause(10000)
       .openFile(`gist-${testData.validGistId}/README.txt`)
-      .waitForElementVisible(`div[title='default_workspace/gist-${testData.validGistId}/README.txt']`)
-      .assert.containsText(`div[title='default_workspace/gist-${testData.validGistId}/README.txt'] > span`, 'README.txt')
+      .waitForElementVisible(`div[data-path='default_workspace/gist-${testData.validGistId}/README.txt']`)
+      .assert.containsText(`div[data-path='default_workspace/gist-${testData.validGistId}/README.txt'] > span`, 'README.txt')
       .end()
   }
 }
