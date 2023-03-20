@@ -63,8 +63,7 @@ jobs:
               - node_modules
         - run: yarn build << parameters.plugin >>
         - run: mkdir persist && zip -0 -r persist/plugin-<< parameters.plugin >>.zip dist
-        - run: sha1sum persist/plugin-<< parameters.plugin >>.zip
-        - run: ./apps/remix-ide/ci/publish_plugin.sh
+        - run: ./apps/remix-ide/ci/publish_plugin.sh << parameters.plugin >>
         - persist_to_workspace:
             root: .
             paths:
