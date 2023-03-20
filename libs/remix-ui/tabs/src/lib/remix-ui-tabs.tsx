@@ -99,7 +99,7 @@ export const TabsUI = (props: TabsUIProps) => {
           ref={el => { tabsRef.current[index] = el }}
           className={classNameTab}
           data-id={index === currentIndexRef.current ? 'tab-active' : ''}
-          data-path={tab.title}
+          data-path={tab.name}
         >
           {tab.icon ? (<img className="my-1 mr-1 iconImage" style={{ filter: invert }} src={tab.icon} />) : (<i className={classNameImg}></i>)}
           <span  className={`title-tabs ${getFileDecorationClasses(tab)}`}>{tab.title}</span>
