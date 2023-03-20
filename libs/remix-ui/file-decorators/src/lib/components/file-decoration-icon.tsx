@@ -15,8 +15,6 @@ export type fileDecorationProps = {
 export const FileDecorationIcons = (props: fileDecorationProps) => {
   const [states, setStates] = useState<fileDecoration[]>([])
   useEffect(() => {
-    //console.log(props.file)
-    //console.log(props.fileState)
     setStates(props.fileDecorations.filter((fileDecoration) => fileDecoration.path === props.file.path || `${fileDecoration.workspace.name}/${fileDecoration.path}` === props.file.path))
   }, [props.fileDecorations])
 
