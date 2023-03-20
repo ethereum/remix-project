@@ -4,7 +4,7 @@ import EventEmitter from 'events'
 class CurrentSelectedFileIs extends EventEmitter {
   command (this: NightwatchBrowser, value: string): NightwatchBrowser {
     this.api
-      .waitForElementContainsText('*[data-id="tabs-component"] *[data-id="activeTabTitle"]', value)
+      .waitForElementContainsText('*[data-id="tabs-component"] *[data-id="tab-active"]', value)
       .perform(() => {
         this.emit('complete')
       })

@@ -58,7 +58,7 @@ module.exports = {
       .click('[data-id="homeTab-modal-footer-ok-react"]')
       .openFile('github/OpenZeppelin/openzeppelin-solidity/contracts/access/Roles.sol')
       .waitForElementVisible({
-        selector: `//*[@data-id='activeTabTitle' and contains(., "default_workspace/github/OpenZeppelin/openzeppelin-solidity/contracts/access/Roles.sol")]`,
+        selector: `//*[@data-id='tab-active' and @data-path="default_workspace/github/OpenZeppelin/openzeppelin-solidity/contracts/access/Roles.sol"]`,
         locateStrategy: 'xpath'
       })
       .getEditorValue((content) => {
