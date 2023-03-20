@@ -301,6 +301,12 @@ export function ContractGUI (props: ContractGUIProps) {
           }
           placeholder={props.inputs}
           onChange={handleBasicInput}
+          data-title={
+            props.funcABI.type === "fallback" ||
+            props.funcABI.type === "receive"
+              ? `'(${props.funcABI.type}')`
+              : props.inputs
+          }
           ref={basicInputRef}
           style={{
             visibility: !(
