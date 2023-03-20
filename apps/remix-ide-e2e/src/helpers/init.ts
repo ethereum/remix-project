@@ -42,6 +42,12 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
             .bs-popover-top {
               display:none !important;
             }
+            .bs-popover-left {
+              display:none !important;
+            }
+            .bs-popover-bottom {
+              display:none !important;
+            }
           `);
         })
       }
