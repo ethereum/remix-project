@@ -2,5 +2,6 @@
 
 set -e
 
-yarn add typescript
-tsc --version
+yarn run tsc --version
+
+git clone git@github.com:ethereum/remix-plugins-directory.git
