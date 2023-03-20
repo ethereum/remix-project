@@ -78,7 +78,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
       .click('[data-id="homeTab-modal-footer-ok-react"]')
       .openFile('github/ethereum/remix-project/package.json')
-      .waitForElementVisible("div[@data-path='default_workspace/github/ethereum/remix-project/package.json'")
+      .waitForElementVisible("div[data-path='default_workspace/github/ethereum/remix-project/package.json'")
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('"name": "remix-project",') !== -1, 'content does contain "name": "remix-project"')
       })
