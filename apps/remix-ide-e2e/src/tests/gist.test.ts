@@ -73,7 +73,7 @@ module.exports = {
     browser.clickLaunchIcon('home')
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
-      .click('div[title="home"]')
+      .click('div[data-id="verticalIconsHomeIcon"]')
       .waitForElementVisible('button[data-id="landingPageImportFromGistButton"]')
       .pause(1000)
       .scrollAndClick('button[data-id="landingPageImportFromGistButton"]')

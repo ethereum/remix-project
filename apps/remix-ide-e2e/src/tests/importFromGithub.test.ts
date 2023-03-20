@@ -45,7 +45,7 @@ module.exports = {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
-      .click('div[title="home"]')
+      .click('div[data-id="verticalIconsHomeIcon"]')
       .waitForElementVisible('button[data-id="landingPageImportFromGitHubButton"]').pause(1000)
       .click('button[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
@@ -67,7 +67,7 @@ module.exports = {
   },
   'Import JSON From GitHub For Valid URL #group2': function (browser: NightwatchBrowser) {
     browser
-      .click('div[title="home"]')
+      .click('div[data-id="verticalIconsHomeIcon"]')
       .click('button[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
       .execute(() => {
