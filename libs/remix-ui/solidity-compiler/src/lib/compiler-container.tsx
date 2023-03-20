@@ -978,9 +978,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 placement="right"
                 tooltipId="overlay-tooltip-compile-run"
                 tooltipText={<div className="text-left">
-                    {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+Shift+S</b> for compiling and script execution</div>}
-                    {(configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div>}
-                  </div>}
+                  {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+Shift+S</b> for compiling and script execution</div>}
+                  {(configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div>}
+                </div>}
               >
                 <span>
                   <FormattedMessage id='solidity.compileAndRunScript' />
@@ -988,7 +988,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </CustomTooltip>
             </button>
             <CustomTooltip
-              placement="right"
+              placement="top"
               tooltipId="overlay-tooltip-compile-run-doc"
               tooltipText={<div className="text-left p-2">
                 <div>Choose the script to execute right after compilation
@@ -1006,7 +1006,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 Click the "i" icon to learn more
               </div>}
             >
-              <a href="https://remix-ide.readthedocs.io/en/latest/running_js_scripts.html#compile-a-contract-and-run-a-script-on-the-fly" target="_blank" ><i className="pl-2 ml-2 mt-3 mb-1 fas fa-info text-dark"></i></a>
+              <a href="https://remix-ide.readthedocs.io/en/latest/running_js_scripts.html#compile-a-contract-and-run-a-script-on-the-fly" target="_blank" ><i className="pl-2 ml-2 fas fa-info text-dark"></i></a>
             </CustomTooltip>
             <CopyToClipboard tip="Click to copy the custom NatSpec tag" getContent={() => '@custom:dev-run-script file_path'} direction='top'>
               <button className="btn remixui_copyButton  ml-2 my-1 text-dark">
