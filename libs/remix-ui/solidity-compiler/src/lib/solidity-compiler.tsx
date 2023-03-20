@@ -27,6 +27,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       message: null,
       okLabel: '',
       okFn: () => { },
+      donotHideOnOkClick: false,
       cancelLabel: '',
       cancelFn: () => { },
       handleHide: null
@@ -131,7 +132,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     api.setCompilerParameters({ version: value })
   }
 
-  const modal = async (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
+  const modal = async (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, donotHideOnOkClick: boolean, cancelLabel?: string, cancelFn?: () => void) => {
     await setState(prevState => {
       return {
         ...prevState,
@@ -142,6 +143,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
           title,
           okLabel,
           okFn,
+          donotHideOnOkClick,
           cancelLabel,
           cancelFn
         }
@@ -190,7 +192,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
             <>
               <span data-id={`compilationFinishedWith_${currentVersion}`}></span>
               {compileErrors[currentFile].error && <Renderer message={compileErrors[currentFile].error.formattedMessage || compileErrors[currentFile].error} plugin={api} opt={{ type: compileErrors[currentFile].error.severity || 'error', errorType: compileErrors[currentFile].error.type }} />}
-              {compileErrors[currentFile].error && (compileErrors[currentFile].error.mode === 'panic') && modal('Error', panicMessage(compileErrors[currentFile].error.formattedMessage), 'Close', null)}
+              {compileErrors[currentFile].error && (compileErrors[currentFile].error.mode === 'panic') && modal('Error', panicMessage(compileErrors[currentFile].error.formattedMessage), 'Close', null, false)}
               {compileErrors[currentFile].errors && compileErrors[currentFile].errors.length && compileErrors[currentFile].errors.map((err, index) => {
                 if (hideWarnings) {
                   if (err.severity !== 'warning') {
@@ -212,6 +214,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
         hide={state.modal.hide}
         okLabel={state.modal.okLabel}
         okFn={state.modal.okFn}
+        donotHideOnOkClick={state.modal.donotHideOnOkClick}
         cancelLabel={state.modal.cancelLabel}
         cancelFn={state.modal.cancelFn}
         handleHide={handleHideModal}>

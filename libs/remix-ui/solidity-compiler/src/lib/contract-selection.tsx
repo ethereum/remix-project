@@ -190,7 +190,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       _paq.push(['trackEvent', 'compiler', 'compilerDetails', 'download'])
       saveAs(new Blob([JSON.stringify(contractProperties, null, '\t')]), `${selectedContract}_compData.json`)
     }
-    modal(selectedContract, log, 'Download', downloadFn, 'Close', null)
+    modal(selectedContract, log, 'Download', downloadFn, true, 'Close', null)
   }
 
   const copyBytecode = () => {
