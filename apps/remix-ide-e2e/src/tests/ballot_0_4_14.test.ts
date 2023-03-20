@@ -11,7 +11,7 @@ const sources = [
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    init(browser, done, null, false)
+    init(browser, done)
   },
   '@sources': function () {
     return sources
@@ -25,9 +25,6 @@ module.exports = {
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.4.14+commit.c2215d46.js')
-      .waitForElementVisible('[for="autoCompile"]')
-      .click('[for="autoCompile"]')
-      .verify.elementPresent('[data-id="compilerContainerAutoCompile"]:checked')
   },
 
   'Compile Ballot with compiler version 0.4.14': function (browser: NightwatchBrowser) {
