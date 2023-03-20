@@ -103,7 +103,8 @@ export const ModalDialog = (props: ModalDialogProps) => {
               onClick={() => {
                 if (props.validation && !props.validation.valid) return
                 if (props.okFn) props.okFn()
-                handleHide()
+                if (props.donotHideOnOkClick) calledHideFunctionOnce.current = false
+                else handleHide()
               }}
             >
               {props.okLabel ? props.okLabel : 'OK'}

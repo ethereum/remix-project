@@ -281,6 +281,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           'New configuration file', `The file "${configFilePathInput.current.value}" you entered does not exist. Do you want to create a new one?`,
           'Create',
           async () => await createNewConfigFile(),
+          false,
           'Cancel',
           () => {
             setShowFilePathInput(false)
@@ -580,6 +581,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       promptMessage('URL'),
       'OK',
       addCustomCompiler,
+      false,
       'Cancel',
       () => {}
     )
