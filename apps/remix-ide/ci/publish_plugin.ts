@@ -25,7 +25,7 @@ import fetch from "node-fetch";
   }
 
   // update the plugin
-  plugin.build = 'someurl'
+  plugin[build] = 'someurl'
   plugin.sha = sha
 
   console.log('publishing plugin', plugin, 'with sha', sha, 'and build', build)
