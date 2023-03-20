@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import fs from "fs";
-import ipfsClient from 'ipfs-http-client'
+import IpfsHttpClient from 'ipfs-http-client'
 
 (async () => {
   const pluginsDirectory = 'https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json'
@@ -60,17 +60,19 @@ import ipfsClient from 'ipfs-http-client'
   console.log('publishing plugin', plugin, 'with sha', sha, 'and build', build)
 
   // publish the plugin
-  const globalIPFSConfig = {
-    host: 'ipfs-cluster.ethdevops.io',
-    port: 5001,
-    protocol: 'https',
-    ipfsurl: 'https://ipfs.io/ipfs/'
-  }
-  const ipfs = ipfsClient(globalIPFSConfig)
-  const { globSource } = ipfsClient
+  const host = 'ipfs.infura.io'
+  const projectId = process.env.infura_project_id
+  const projectSecret = process.env.infura_project_secret
+  const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
+
+  const ipfs = IpfsHttpClient({ port: 5001, host, protocol: 'https', headers: {
+    authorization: auth
+  } })
+  const { globSource } = IpfsHttpClient
   const folder = `apps/${pluginName}`
 
-  console.log(ipfs)
-  let result = await ipfs.add(globSource(folder, { recursive: true}), { pin: true })
+  const result = await ipfs.add(globSource(folder, { recursive: true}), { pin: true })
+  const hash = result.cid.toString()
+  console.log('ipfs hash', hash)
 
 })()
