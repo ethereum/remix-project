@@ -79,7 +79,8 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
               <i className="fas fa-times"></i>
             </div>
             <CopyToClipboard content={messageText} className={` p-0 m-0 far fa-copy ${classList}`} direction={"top"} />
-          </div>)
+          </div>
+        )
       }
     </>
   )
