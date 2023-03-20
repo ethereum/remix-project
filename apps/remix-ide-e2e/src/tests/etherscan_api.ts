@@ -40,6 +40,7 @@ module.exports = {
       .clickLaunchIcon('etherscan') // start etherscan verification
       // @ts-ignore
       .frame(0)
+      .click('[data-id="home"]')
       .setValue('select[name="contractName"]', 'Owner')
       .setValue('*[name="contractAddress"]', '0x9981c9d00103da481c3c65b22a79582a3e3ff50b')
       .click('[data-id="verify-contract"]')
