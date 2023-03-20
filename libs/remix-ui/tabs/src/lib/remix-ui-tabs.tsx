@@ -99,9 +99,10 @@ export const TabsUI = (props: TabsUIProps) => {
           ref={el => { tabsRef.current[index] = el }}
           className={classNameTab}
           data-id={index === currentIndexRef.current ? 'tab-active' : ''}
+          data-path={tab.title}
         >
           {tab.icon ? (<img className="my-1 mr-1 iconImage" style={{ filter: invert }} src={tab.icon} />) : (<i className={classNameImg}></i>)}
-          <span data-id="activeTabTitle" className={`title-tabs ${getFileDecorationClasses(tab)}`}>{tab.title}</span>
+          <span  className={`title-tabs ${getFileDecorationClasses(tab)}`}>{tab.title}</span>
           {getFileDecorationIcons(tab)}
           <span className="close-tabs" onClick={(event) => { props.onClose(index); event.stopPropagation() }}>
             <i className="text-dark fas fa-times"></i>
