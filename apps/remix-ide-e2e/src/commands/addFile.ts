@@ -55,7 +55,7 @@ function addFile(browser: NightwatchBrowser, name: string, content: NightwatchCo
             timeout: 60000
           })
           .waitForElementVisible({
-            selector: `//*[@data-id='activeTabTitle' and contains(., "${name}")]`,
+            selector: `//*[@data-id='tab-active' and @data-path="${name}"]`,
             locateStrategy: 'xpath'
           })
           .setEditorValue(content.content)
