@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 set -e
+git config user.name "$COMMIT_AUTHOR"
+git config user.email "$COMMIT_AUTHOR_EMAIL"
 
 HASH=$(sha1sum persist/plugin-$1.zip | cut -d " " -f 1)
 # unzip persist/plugin-$1.zip
