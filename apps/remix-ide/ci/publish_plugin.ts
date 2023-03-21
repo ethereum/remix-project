@@ -97,7 +97,9 @@ import * as child_process from 'child_process'
   process.chdir('remix-plugins-directory')
   // create pull request
   const promisifyExec = util.promisify(child_process.exec)
-  const out = await promisifyExec('git status')
+  const out = await promisifyExec('git status', {
+    cwd: process.cwd()
+  })
   console.log(out)
 
 })()
