@@ -112,7 +112,7 @@ import * as child_process from 'child_process'
     cwd: process.cwd() + '/remix-plugins-directory'
   })
 
-  out = await promisifyExec(`git push"`, {
+  out = await promisifyExec(`git push`, {
     cwd: process.cwd() + '/remix-plugins-directory'
   })
 
