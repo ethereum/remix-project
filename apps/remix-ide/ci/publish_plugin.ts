@@ -84,13 +84,13 @@ import * as child_process from 'child_process'
   const plugin_directory_path = 'remix-plugins-directory/plugins/'
   
   // create the plugin directory if it doesn't exist
-  const exists = fs.statSync(plugin_directory_path + plugin).isDirectory()
+  const exists = fs.statSync(plugin_directory_path + pluginName).isDirectory()
   if(!exists){
     console.log('creating plugin directory')
-    fs.mkdirSync(plugin_directory_path + plugin)
+    fs.mkdirSync(plugin_directory_path + pluginName)
   }
   // write the profile.json file
-  fs.writeFileSync(plugin_directory_path + plugin + '/profile.json', JSON.stringify(plugin, null, 2))
+  fs.writeFileSync(plugin_directory_path + pluginName + '/profile.json', JSON.stringify(plugin, null, 2))
 
 
   // change working directory
