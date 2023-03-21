@@ -14,7 +14,7 @@ import IpfsHttpClient from 'ipfs-http-client'
   let sha_field = 'sha_' + build
   let url_field = 'url_' + build
 
-  if(build === 'master') {
+  if(build === 'live') {
     sha_field = 'sha'
     url_field = 'url'
   }
