@@ -3,7 +3,7 @@
 set -e
 
 HASH=$(sha1sum persist/plugin-$1.zip | cut -d " " -f 1)
-unzip persist/plugin-$1.zip -d dist/
+unzip persist/plugin-$1.zip
 ls -la dist/
 npx ts-node apps/remix-ide/ci/publish_plugin.ts $1 $HASH alpha
 
