@@ -1,6 +1,8 @@
 import fetch from "node-fetch";
 import fs from "fs";
 import IpfsHttpClient from 'ipfs-http-client'
+import * as util from 'util'
+import * as child_process from 'child_process'
 
 (async () => {
   const pluginsDirectory = 'https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json'
@@ -54,10 +56,10 @@ import IpfsHttpClient from 'ipfs-http-client'
   }
 
   // update the plugin
-  plugin[url_field] = 'someurl'
+
   plugin[sha_field] = sha
 
-  console.log('publishing plugin', plugin, 'with sha', sha, 'and build', build)
+
 
   // publish the plugin
   const host = 'ipfs.infura.io'
@@ -74,6 +76,28 @@ import IpfsHttpClient from 'ipfs-http-client'
   const result = await ipfs.add(globSource(folder, { recursive: true}), { pin: true })
   const hash = result.cid.toString()
   const url = `https://ipfs-cluster.ethdevops.io/ipfs/${hash}`
+  plugin[url_field] = url
   console.log('ipfs hash', hash, 'url', url)
+  console.log('publishing plugin', plugin, 'with sha', sha, 'and build', build)
+
+  // write the profile.json file
+  const plugin_directory_path = 'remix-plugins-directory/plugins/'
+  
+  // create the plugin directory if it doesn't exist
+  const exists = fs.statSync(plugin_directory_path + plugin).isDirectory()
+  if(!exists){
+    console.log('creating plugin directory')
+    fs.mkdirSync(plugin_directory_path + plugin)
+  }
+  // write the profile.json file
+  fs.writeFileSync(plugin_directory_path + plugin + '/profile.json', JSON.stringify(plugin, null, 2))
+
+
+  // change working directory
+  process.chdir('remix-plugins-directory')
+  // create pull request
+  const promisifyExec = util.promisify(child_process.exec)
+  const out = await promisifyExec('git status')
+  console.log(out)
 
 })()
