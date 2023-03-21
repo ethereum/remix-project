@@ -105,6 +105,9 @@ import * as child_process from 'child_process'
   out = await promisifyExec(`git checkout -b ${pluginName}${sha}`, {
     cwd: process.cwd() + '/remix-plugins-directory'
   })
+  out = await promisifyExec(`git checkout -b ${pluginName}${sha}`, {
+    cwd: process.cwd() + '/remix-plugins-directory'
+  })
   out = await promisifyExec('git add .', {
     cwd: process.cwd() + '/remix-plugins-directory'
   })
@@ -112,7 +115,7 @@ import * as child_process from 'child_process'
     cwd: process.cwd() + '/remix-plugins-directory'
   })
 
-  out = await promisifyExec(`git push`, {
+  out = await promisifyExec(`git push --set-upstream origin ${pluginName}${sha}`, {
     cwd: process.cwd() + '/remix-plugins-directory'
   })
 
