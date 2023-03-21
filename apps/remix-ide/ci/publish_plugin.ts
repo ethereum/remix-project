@@ -69,7 +69,7 @@ import IpfsHttpClient from 'ipfs-http-client'
     authorization: auth
   } })
   const { globSource } = IpfsHttpClient
-  const folder = `apps/${pluginName}`
+  const folder = `dist/apps/${pluginName}`
 
   const result = await ipfs.add(globSource(folder, { recursive: true}), { pin: true })
   const hash = result.cid.toString()
