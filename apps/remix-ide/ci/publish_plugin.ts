@@ -100,10 +100,17 @@ import * as child_process from 'child_process'
     cwd: process.cwd() + '/remix-plugins-directory'
   })
   console.log(out)
-
-  out = await promisifyExec('ls -la', {
+  
+  out = await promisifyExec(`git checkout -b ${pluginName}${sha}`, {
     cwd: process.cwd() + '/remix-plugins-directory'
   })
+  out = await promisifyExec('git add .', {
+    cwd: process.cwd() + '/remix-plugins-directory'
+  })
+  out = await promisifyExec(`git commit -m "update profile ${pluginName} with url ${url}"`, {
+    cwd: process.cwd() + '/remix-plugins-directory'
+  })
+
   console.log(out)
 
 })()
