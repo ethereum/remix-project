@@ -73,6 +73,7 @@ import IpfsHttpClient from 'ipfs-http-client'
 
   const result = await ipfs.add(globSource(folder, { recursive: true}), { pin: true })
   const hash = result.cid.toString()
-  console.log('ipfs hash', hash)
+  const url = `https://ipfs-cluster.ethdevops.io/ipfs/${hash}`
+  console.log('ipfs hash', hash, 'url', url)
 
 })()
