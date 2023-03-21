@@ -90,6 +90,8 @@ import * as child_process from 'child_process'
   // write the profile.json file
   fs.writeFileSync(plugin_directory_path + pluginName + '/profile.json', JSON.stringify(plugin, null, 2))
 
+  // read the profile.json file
+  console.log(fs.readFileSync(plugin_directory_path + pluginName + '/profile.json'))
 
   // create pull request
   const promisifyExec = util.promisify(child_process.exec)
