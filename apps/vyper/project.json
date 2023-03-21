@@ -12,7 +12,7 @@
         "compiler": "babel",
         "outputPath": "dist/apps/vyper",
         "index": "apps/vyper/src/index.html",
-        "baseHref": "/",
+        "baseHref": "./",
         "main": "apps/vyper/src/main.tsx",
         "polyfills": "apps/vyper/src/polyfills.ts",
         "tsConfig": "apps/vyper/tsconfig.app.json",

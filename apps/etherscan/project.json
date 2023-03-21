@@ -12,7 +12,7 @@
         "compiler": "babel",
         "outputPath": "dist/apps/etherscan",
         "index": "apps/etherscan/src/index.html",
-        "baseHref": "/",
+        "baseHref": "./",
         "main": "apps/etherscan/src/main.tsx",
         "polyfills": "apps/etherscan/src/polyfills.ts",
         "tsConfig": "apps/etherscan/tsconfig.app.json",
