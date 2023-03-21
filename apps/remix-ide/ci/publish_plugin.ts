@@ -59,8 +59,6 @@ import * as child_process from 'child_process'
 
   plugin[sha_field] = sha
 
-
-
   // publish the plugin
   const host = 'ipfs.infura.io'
   const projectId = process.env.infura_project_id
@@ -93,12 +91,10 @@ import * as child_process from 'child_process'
   fs.writeFileSync(plugin_directory_path + pluginName + '/profile.json', JSON.stringify(plugin, null, 2))
 
 
-  // change working directory
-  process.chdir('remix-plugins-directory')
   // create pull request
   const promisifyExec = util.promisify(child_process.exec)
   const out = await promisifyExec('git status', {
-    cwd: process.cwd()
+    cwd: process.cwd() + '/remix-plugins-directory'
   })
   console.log(out)
 
