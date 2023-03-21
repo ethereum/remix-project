@@ -44,7 +44,9 @@ jobs:
   build-plugin:
       docker:
       - image: cimg/node:14.17.6-browsers
-
+      environment:
+        COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+        COMMIT_AUTHOR: "Circle CI"
       resource_class:
         xlarge
       working_directory: ~/remix-project
