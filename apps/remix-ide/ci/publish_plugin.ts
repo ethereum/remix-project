@@ -94,6 +94,7 @@ import * as child_process from 'child_process'
   const content = fs.readFileSync(plugin_directory_path + pluginName + '/profile.json')
   console.log('profile.json', content.toString())
 
+  /*
   // create pull request
   const promisifyExec = util.promisify(child_process.exec)
   let out = await promisifyExec('git status', {
@@ -112,5 +113,5 @@ import * as child_process from 'child_process'
   })
 
   console.log(out)
-
+  */
 })()
