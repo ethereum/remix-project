@@ -2,13 +2,6 @@
   display: -webkit-box;
   max-height: 2.15rem;
 }
-.remix-ui-tabs_end {
-  height: 2.15rem;
-  background-image: linear-gradient(to right, var(--body-bg) , var(--secondary));
-  width: 3rem;
-  right: -10px;
-  filter: opacity(0.5);
-}
 .remix-ui-tabs li {
   display: inline-block;
 }
