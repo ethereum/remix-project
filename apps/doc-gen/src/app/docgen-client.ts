@@ -18,7 +18,7 @@ export class DocGenClient extends PluginClient {
   constructor() {
     super()
     this.eventEmitter = new EventEmitter()
-    this.methods = ['generateDocs', 'opendDocs']
+    this.methods = ['generateDocs', 'openDocs']
     createClient(this)
     this.onload().then(async () => {
       await this.setListeners()
@@ -65,10 +65,10 @@ export class DocGenClient extends PluginClient {
     this.eventEmitter.emit('docsGenerated', docs)
     this.emit('docgen' as any, 'docsGenerated', docs)
     this.docs = docs
-    await this.opendDocs(docs)
+    await this.openDocs(docs)
   }
 
-  async opendDocs(docs: string[]) {
+  async openDocs(docs: string[]) {
     await this.call('manager', 'activatePlugin', 'doc-viewer')
     await this.call('tabs' as any, 'focus', 'doc-viewer')
     await this.call('doc-viewer' as any, 'viewDocs', docs)
