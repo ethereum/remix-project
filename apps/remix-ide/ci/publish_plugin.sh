@@ -2,7 +2,7 @@
 
 set -e
 
-gh
+gh pr comment --body "testing"
 
 git config --global user.name "$COMMIT_AUTHOR"
 git config --global user.email "$COMMIT_AUTHOR_EMAIL"
