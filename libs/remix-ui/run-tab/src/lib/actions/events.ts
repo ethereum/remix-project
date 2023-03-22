@@ -1,13 +1,15 @@
 import { envChangeNotification } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
-import { setExecutionContext, setFinalContext, updateAccountBalances } from "./account"
+import { setExecutionContext, setFinalContext, updateAccountBalances, fillAccountsList } from "./account"
 import { addExternalProvider, addInstance, addNewProxyDeployment, removeExternalProvider, setNetworkNameFromProvider } from "./actions"
-import { addDeployOption, clearAllInstances, clearRecorderCount, fetchContractListSuccess, resetProxyDeployments, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setRecorderCount, setRemixDActivated, setSendValue } from "./payload"
+import { addDeployOption, clearAllInstances, clearRecorderCount, fetchContractListSuccess, resetProxyDeployments, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setRecorderCount, setRemixDActivated, setSendValue, fetchAccountsListSuccess } from "./payload"
+import { updateInstanceBalance } from './deploy'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import BN from 'bn.js'
 import Web3 from 'web3'
 import { Plugin } from "@remixproject/engine"
 import { getNetworkProxyAddresses } from "./deploy"
+import { shortenAddress } from "@remix-ui/helper"
 
 const _paq = window._paq = window._paq || []
 
@@ -20,12 +22,15 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     if (!lookupOnly) dispatch(setSendValue('0'))
     if (error) return
     updateAccountBalances(plugin, dispatch)
+    updateInstanceBalance(plugin, dispatch)
   })
 
-  plugin.blockchain.event.register('contextChanged', (context, silent) => {
+  plugin.blockchain.event.register('contextChanged', (context) => {
     dispatch(resetProxyDeployments())
     if (!context.startsWith('vm')) getNetworkProxyAddresses(plugin, dispatch)
     setFinalContext(plugin, dispatch)
+    fillAccountsList(plugin, dispatch)
+    updateAccountBalances(plugin, dispatch)
   })
 
   plugin.blockchain.event.register('networkStatus', ({ error, network }) => {
@@ -117,6 +122,23 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   plugin.event.register('cleared', () => {
     dispatch(clearRecorderCount())
   })
+
+  plugin.on('injected', 'accountsChanged', (accounts: Array<string>) => {
+    const accountsMap = {}
+    accounts.map(account => { accountsMap[account] = shortenAddress(account, '0')})
+    dispatch(fetchAccountsListSuccess(accountsMap))
+  })
+
+  plugin.on('injected-trustwallet', 'accountsChanged', (accounts: Array<string>) => {
+    const accountsMap = {}
+    accounts.map(account => { accountsMap[account] = shortenAddress(account, '0')})
+    dispatch(fetchAccountsListSuccess(accountsMap))
+  })
+
+  setInterval(() => {
+    fillAccountsList(plugin, dispatch)
+    updateInstanceBalance(plugin, dispatch)
+  }, 30000)  
 }
 
 const broadcastCompilationResult = async (compilerName: string, plugin: RunTab, dispatch: React.Dispatch<any>, file, source, languageVersion, data, input?) => {

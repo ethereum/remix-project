@@ -376,6 +376,21 @@ export const handleDownloadFiles = async () => {
   }
 }
 
+export const handleDownloadWorkspace = async () => {
+  try {
+    const zip = new JSZip()
+    const workspaceProvider = plugin.fileProviders.workspace
+    await workspaceProvider.copyFolderToJson('/', ({ path, content }) => {
+      zip.file(path, content)
+    })
+    const blob = await zip.generateAsync({ type: 'blob' })
+    saveAs(blob, `${workspaceProvider.workspace}.zip`)
+  } catch (e) {
+    console.error(e)
+    plugin.call('notification', 'toast', e.message)
+  }
+}
+
 export const restoreBackupZip = async () => {
   await plugin.appManager.activatePlugin(['restorebackupzip'])
   await plugin.call('mainPanel', 'showContent', 'restorebackupzip')

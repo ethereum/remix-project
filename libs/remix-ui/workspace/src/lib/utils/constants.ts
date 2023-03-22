@@ -11,10 +11,17 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Run SUT Action
-      uses: EthereumRemix/sol-test@v1
+      uses: EthereumRemix/sol-test@v1.1
       with:
         test-path: 'tests'
         compiler-version: '0.8.15'
+//      evm-version: 'paris'
+//      optimize: true
+//      optimizer-runs: 200
+//      node-url: 'https://mainnet.infura.io/v3/08b2a484451e4635a28b3d8234f24332'
+//      block-number: 'latest'
+//      hard-fork: 'merge'
+
 `
 export const tsSolTestYml = `
 name: Running Mocha Chai Solidity Unit Tests
@@ -28,11 +35,17 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Run Mocha Chai Unit Test Action
-      uses: EthereumRemix/ts-sol-test@v1.2
+      uses: EthereumRemix/ts-sol-test@v1.3.1
       with:
         test-path: 'tests'
         contract-path: 'contracts'
         compiler-version: '0.8.7'
+//      evm-version: 'paris'
+//      optimize: true
+//      optimizer-runs: 200
+//      node-url: 'https://mainnet.infura.io/v3/08b2a484451e4635a28b3d8234f24332'
+//      block-number: 'latest'
+//      hard-fork: 'merge'
 `
 export const slitherYml = `
 name: Slither Analysis
