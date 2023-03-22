@@ -154,13 +154,13 @@ export const TabsUI = (props: TabsUIProps) => {
   }
 
   return (
-    <div className='d-flex'>
+    <div className='d-block'>
       <CustomTooltip
         placement="bottom"
         tooltipId="overlay-tooltip-all-tabs"
         tooltipText="Scroll to see all tabs"
       >
-        <div className='remix-ui-tabs_end position-relative position-fixed'></div>
+        <div className='remix-ui-tabs_end position-absolute position-fixed'></div>
       </CustomTooltip>
       <div className="remix-ui-tabs d-flex justify-content-between border-0 header nav-tabs" data-id="tabs-component">
         <div className="d-flex flex-row" style={{ maxWidth: 'fit-content', width: '97%' }}>
