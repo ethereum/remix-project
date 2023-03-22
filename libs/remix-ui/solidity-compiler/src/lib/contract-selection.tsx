@@ -4,9 +4,11 @@ import { ContractSelectionProps } from './types'
 import { PublishToStorage } from '@remix-ui/publish-to-storage' // eslint-disable-line
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
+import { saveAs } from 'file-saver'
 
 import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
+const _paq = window._paq = window._paq || []
 
 export const ContractSelection = (props: ContractSelectionProps) => {
   const { api, compiledFileName, contractsDetails, contractList, compilerInput, modal } = props
@@ -141,6 +143,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   }
 
   const details = () => {
+    _paq.push(['trackEvent', 'compiler', 'compilerDetails', 'display'])
     if (!selectedContract) throw new Error('No contract compiled yet')
 
     const help = {
@@ -183,8 +186,11 @@ export const ContractSelection = (props: ContractSelectionProps) => {
         }
       </TreeView>
     </div>
-
-    modal(selectedContract, log, 'Close', null)
+    const downloadFn = () => {
+      _paq.push(['trackEvent', 'compiler', 'compilerDetails', 'download'])
+      saveAs(new Blob([JSON.stringify(contractProperties, null, '\t')]), `${selectedContract}_compData.json`)
+    }
+    modal(selectedContract, log, 'Download', downloadFn, true, 'Close', null)
   }
 
   const copyBytecode = () => {

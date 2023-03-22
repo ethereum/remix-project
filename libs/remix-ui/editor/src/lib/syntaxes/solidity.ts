@@ -1266,6 +1266,7 @@ export const solidityTokensProvider = {
     'constant',
     'fallback',
     'receive',
+    'delete',
     'if',
     'else',
     'for',
