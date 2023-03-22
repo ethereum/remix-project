@@ -7,7 +7,7 @@ import * as child_process from 'child_process'
 (async () => {
   const pluginsDirectory = 'https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json'
   const metadata = await fetch(pluginsDirectory, { method: 'GET' })
-  
+
   // get command line arguments
   const args = process.argv.slice(2)
   const pluginName = args[0]
@@ -16,7 +16,7 @@ import * as child_process from 'child_process'
   let sha_field = 'sha_' + build
   let url_field = 'url_' + build
 
-  if(build === 'live') {
+  if (build === 'live') {
     sha_field = 'sha'
     url_field = 'url'
   }
@@ -32,15 +32,15 @@ import * as child_process from 'child_process'
   const plugins = await metadata.json()
   let plugin = plugins.find((p: any) => p.name === pluginName)
   let profileJSON: any = null
-  try{
+  try {
     profileJSON = JSON.parse(fs.readFileSync(`apps/${pluginName}/profile.json`, 'utf8'))
-  }catch(e){
+  } catch (e) {
     console.log('local profile.json not found')
   }
-   
+
   if (!plugin) {
     console.error('plugin not found in the directory, attempting to create it...')
-    if(!profileJSON){
+    if (!profileJSON) {
       console.error('create a profile.json file in the plugin folder')
       process.exit(1)
     }
@@ -66,9 +66,11 @@ import * as child_process from 'child_process'
   const projectSecret = process.env.infura_project_secret
   const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
 
-  const ipfs = IpfsHttpClient({ port: 5001, host, protocol: 'https', headers: {
-    authorization: auth
-  } })
+  const ipfs = IpfsHttpClient({
+    port: 5001, host, protocol: 'https', headers: {
+      authorization: auth
+    }
+  })
   const { globSource } = IpfsHttpClient
   const folder = `dist/apps/${pluginName}`
 
@@ -81,12 +83,13 @@ import * as child_process from 'child_process'
 
   // write the profile.json file
   const plugin_directory_path = 'remix-plugins-directory/plugins/'
-  
+
   // create the plugin directory if it doesn't exist
-  const exists = fs.statSync(plugin_directory_path + pluginName).isDirectory()
-  if(!exists){
-    console.log('creating plugin directory')
-    fs.mkdirSync(plugin_directory_path + pluginName)
+  try {
+    fs.statSync(plugin_directory_path + pluginName).isDirectory()
+  } catch (e) {
+      console.log('creating plugin directory')
+      fs.mkdirSync(plugin_directory_path + pluginName)
   }
   // write the profile.json file
   fs.writeFileSync(plugin_directory_path + pluginName + '/profile.json', JSON.stringify(plugin, null, 2))
@@ -95,14 +98,14 @@ import * as child_process from 'child_process'
   const content = fs.readFileSync(plugin_directory_path + pluginName + '/profile.json')
   console.log('profile.json', content.toString())
 
-  
+
   // create pull request
   const promisifyExec = util.promisify(child_process.exec)
   let out = await promisifyExec('git status', {
     cwd: process.cwd() + '/remix-plugins-directory'
   })
   console.log(out)
-  
+
   out = await promisifyExec(`git checkout -b ${pluginName}${sha}`, {
     cwd: process.cwd() + '/remix-plugins-directory'
   })
@@ -118,5 +121,5 @@ import * as child_process from 'child_process'
   })
 
   console.log(out)
-  
+
 })()
