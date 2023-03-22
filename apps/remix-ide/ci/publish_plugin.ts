@@ -30,7 +30,7 @@ import * as child_process from 'child_process'
 
   // search for the plugin in the metadata
   const plugins = await metadata.json()
-  const plugin = plugins.find((p: any) => p.name === pluginName)
+  let plugin = plugins.find((p: any) => p.name === pluginName)
   let profileJSON: any = null
   try{
     profileJSON = JSON.parse(fs.readFileSync(`apps/${pluginName}/profile.json`, 'utf8'))
@@ -44,6 +44,7 @@ import * as child_process from 'child_process'
       console.error('create a profile.json file in the plugin folder')
       process.exit(1)
     }
+    plugin = profileJSON
   }
 
   // check if build and sha exist
