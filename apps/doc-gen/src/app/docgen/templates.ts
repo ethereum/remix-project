@@ -57,7 +57,7 @@ async function readPartials() {
   const partials: NonNullable<Templates['partials']> = {};
   const partialNames = ["common", "contract", "enum", "error", "event", "function", "modifier", "page", "struct", "variable", "user-defined-value-type"]
   for (const name of partialNames) {
-    const p = await import('raw-loader!./themes/markdown/' + name + '.hbs')
+    const p = await import(`raw-loader!${window.location.pathname}/themes/markdown/${name}.hbs`)
     partials[name] = () => p.default
   }
   return partials;
@@ -66,7 +66,7 @@ async function readPartials() {
 async function readHelpers(name: string) {
   let helpersPath;
   
-  const h = await import('./themes/markdown/helpers');
+  const h = await import(`${window.location.pathname}/themes/markdown/helpers');
   const helpers: Record<string, (...args: any[]) => any> = {};
 
   for (const name in h) {
