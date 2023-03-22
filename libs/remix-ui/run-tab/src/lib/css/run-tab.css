@@ -273,7 +273,7 @@
   color: var(--primary);
 }
 .udapp_titleExpander {
-  margin-top: 2px;
+  align-self: center;
 }
 .udapp_nameNbuts {
   display: contents;
