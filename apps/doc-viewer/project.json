@@ -14,7 +14,7 @@
         "compiler": "babel",
         "outputPath": "dist/apps/doc-viewer",
         "index": "apps/doc-viewer/src/index.html",
-        "baseHref": "/",
+        "baseHref": "./",
         "main": "apps/doc-viewer/src/main.tsx",
         "tsConfig": "apps/doc-viewer/tsconfig.app.json",
         "assets": [
