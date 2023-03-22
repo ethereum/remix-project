@@ -6,7 +6,7 @@ parameters:
     default: false
 orbs:
   browser-tools: circleci/browser-tools@1.4.1
-  github-cli: circleci/github-cli@2.2.0
+  gh: circleci/github-cli@2.2.0
 jobs:
   build:
     docker:
