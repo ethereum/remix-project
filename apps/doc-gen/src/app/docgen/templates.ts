@@ -66,7 +66,7 @@ async function readPartials() {
 async function readHelpers(name: string) {
   let helpersPath;
   
-  const h = await import(`${window.location.pathname}/themes/markdown/helpers');
+  const h = await import(`${window.location.pathname}/themes/markdown/helpers`);
   const helpers: Record<string, (...args: any[]) => any> = {};
 
   for (const name in h) {
