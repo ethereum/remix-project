@@ -74,7 +74,7 @@ import * as child_process from 'child_process'
   const { globSource } = IpfsHttpClient
   const folder = `dist/apps/${pluginName}`
 
-  const result = await ipfs.add(globSource(folder, { recursive: true }), { pin: false })
+  const result = await ipfs.add(globSource(folder, { recursive: true }), { pin: true })
   const hash = result.cid.toString()
   const url = `https://ipfs-cluster.ethdevops.io/ipfs/${hash}`
   plugin[url_field] = url
