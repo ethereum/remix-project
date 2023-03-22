@@ -2,7 +2,7 @@
 
 set -e
 
-sudo apt install gh
+gh
 
 git config --global user.name "$COMMIT_AUTHOR"
 git config --global user.email "$COMMIT_AUTHOR_EMAIL"
