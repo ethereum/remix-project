@@ -77,7 +77,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     enforce: "pre"
   })
 
-  config.ignoreWarnings = [/Failed to parse source map/] // ignore source-map-loader warnings
+  config.ignoreWarnings = [/Failed to parse source map/, /require function/ ] // ignore source-map-loader warnings & AST warnings
 
   // set minimizer
   config.optimization.minimizer = [
@@ -95,6 +95,10 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     }),
     new CssMinimizerPlugin(),
   ];
+
+  config.watchOptions = {
+    ignored: /node_modules/
+  }
 
   return config;
 });
