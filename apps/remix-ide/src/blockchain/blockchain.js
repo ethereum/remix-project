@@ -23,7 +23,7 @@ const profile = {
   name: 'blockchain',
   displayName: 'Blockchain',
   description: 'Blockchain - Logic',
-  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'web3VM'],
+  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'web3VM', 'getProvider'],
   version: packageJson.version
 }
 
@@ -48,33 +48,62 @@ export class Blockchain extends Plugin {
     }, _ => this.executionContext.web3(), _ => this.executionContext.currentblockGasLimit())
     this.txRunner = new TxRunner(web3Runner, { runAsync: true })
 
-    this.executionContext.event.register('contextChanged', this.resetEnvironment.bind(this))
-
     this.networkcallid = 0
-    this.networkStatus = { name: ' - ', id: ' - ' }
+    this.networkStatus = { network: { name: ' - ', id: ' - ' } }
     this.setupEvents()
     this.setupProviders()
   }
 
+  _triggerEvent (name, args) {
+    this.event.trigger(name, args)
+    this.emit(name, ...args)
+  }
+
+  onActivation () {
+    this.on('injected', 'chainChanged', () => {
+      this.detectNetwork((error, network) => {
+        this.networkStatus = { network, error }
+        this._triggerEvent('networkStatus', [this.networkStatus])
+      })
+    })
+
+    this.on('injected-trustwallet', 'chainChanged', () => {
+      this.detectNetwork((error, network) => {
+        this.networkStatus = { network, error }
+        this._triggerEvent('networkStatus', [this.networkStatus])
+      })
+    })
+  }
+
+  onDeactivation () {
+    this.off('injected', 'chainChanged')
+    this.off('injected-trustwallet', 'chainChanged')
+  }
+
   setupEvents () {
-    this.executionContext.event.register('contextChanged', (context, silent) => {
-      this.event.trigger('contextChanged', [context, silent])
+    this.executionContext.event.register('contextChanged', async (context) => {
+      await this.resetEnvironment()
+      this._triggerEvent('contextChanged', [context])
+      this.detectNetwork((error, network) => {
+        this.networkStatus = { network, error }
+        this._triggerEvent('networkStatus', [this.networkStatus])
+      })
     })
 
     this.executionContext.event.register('addProvider', (network) => {
-      this.event.trigger('addProvider', [network])
+      this._triggerEvent('addProvider', [network])
     })
 
     this.executionContext.event.register('removeProvider', (name) => {
-      this.event.trigger('removeProvider', [name])
+      this._triggerEvent('removeProvider', [name])
     })
 
     setInterval(() => {
       this.detectNetwork((error, network) => {
         this.networkStatus = { network, error }
-        this.event.trigger('networkStatus', [this.networkStatus])
+        this._triggerEvent('networkStatus', [this.networkStatus])
       })
-    }, 1000)
+    }, 30000)
   }
 
   getCurrentNetworkStatus () {
@@ -479,13 +508,11 @@ export class Blockchain extends Plugin {
   }
 
   // NOTE: the config is only needed because exectuionContext.init does
-  // if config.get('settings/always-use-vm'), we can simplify this later
-  resetAndInit (config, transactionContextAPI) {
+  async resetAndInit (config, transactionContextAPI) {
     this.transactionContextAPI = transactionContextAPI
     this.executionContext.init(config)
     this.executionContext.stopListenOnLastBlock()
     this.executionContext.listenOnLastBlock()
-    this.resetEnvironment()
   }
 
   addProvider (provider) {
@@ -504,8 +531,8 @@ export class Blockchain extends Plugin {
     })
   }
 
-  resetEnvironment () {
-    this.getCurrentProvider().resetEnvironment()
+  async resetEnvironment () {
+    await this.getCurrentProvider().resetEnvironment()
     // TODO: most params here can be refactored away in txRunner
     const web3Runner = new TxRunnerWeb3({
       config: this.config,
@@ -551,8 +578,8 @@ export class Blockchain extends Plugin {
   }
 
   /** Get the balance of an address, and convert wei to ether */
-  getBalanceInEther (address, cb) {
-    this.getCurrentProvider().getBalanceInEther(address, cb)
+  getBalanceInEther (address) {
+    return this.getCurrentProvider().getBalanceInEther(address)
   }
 
   pendingTransactionsCount () {
@@ -674,7 +701,7 @@ export class Blockchain extends Plugin {
         if (!tx.timestamp) tx.timestamp = Date.now()
         const timestamp = tx.timestamp
 
-        this.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
+        this._triggerEvent('initiatingTransaction', [timestamp, tx, payLoad])
         try {
           this.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
             async (error, result) => {
@@ -698,7 +725,7 @@ export class Blockchain extends Plugin {
               }
               const eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
 
-              this.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
+              this._triggerEvent(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
               return resolve({ result, tx })
             }
           )

@@ -76,6 +76,9 @@ export function Workspace () {
     global.modal(intl.formatMessage({ id: 'filePanel.workspace.rename' }), renameModalMessage(), intl.formatMessage({ id: 'filePanel.ok' }), onFinishRenameWorkspace,  intl.formatMessage({ id: 'filePanel.cancel' }))
   }
 
+  const downloadCurrentWorkspace = () => {
+    global.modal(intl.formatMessage({ id: 'filePanel.workspace.download' }), intl.formatMessage({ id: 'filePanel.workspace.downloadConfirm' }), intl.formatMessage({ id: 'filePanel.ok' }), onFinishDownloadWorkspace,  intl.formatMessage({ id: 'filePanel.cancel' }))
+  }
   const createWorkspace = () => {
     global.modal(intl.formatMessage({ id: 'filePanel.workspace.create' }), createModalMessage(), intl.formatMessage({ id: 'filePanel.ok' }), onFinishCreateWorkspace,  intl.formatMessage({ id: 'filePanel.cancel' }))
   }
@@ -152,6 +155,15 @@ export function Workspace () {
       await global.dispatchRenameWorkspace(currentWorkspace, workspaceName)
     } catch (e) {
       global.modal(intl.formatMessage({ id: 'filePanel.workspace.rename' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, intl.formatMessage({ id: 'filePanel.cancel' }))
+      console.error(e)
+    }
+  }
+
+  const onFinishDownloadWorkspace = async () => {
+    try {
+      await global.dispatchHandleDownloadWorkspace()
+    } catch (e) {
+      global.modal(intl.formatMessage({ id: 'filePanel.workspace.download' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, intl.formatMessage({ id: 'filePanel.cancel' }))
       console.error(e)
     }
   }
@@ -453,9 +465,10 @@ export function Workspace () {
                       <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='custom-dropdown-items remixui_menuwidth' rootCloseEvent="click">
                         <HamburgerMenu
                           createWorkspace={createWorkspace}
+                          renameCurrentWorkspace={renameCurrentWorkspace}
+                          downloadCurrentWorkspace={downloadCurrentWorkspace}
                           deleteCurrentWorkspace={deleteCurrentWorkspace}
                           deleteAllWorkspaces={deleteAllWorkspaces}
-                          renameCurrentWorkspace={renameCurrentWorkspace}
                           cloneGitRepository={cloneGitRepository}
                           downloadWorkspaces={downloadWorkspaces}
                           restoreBackup={restoreBackup}

@@ -132,11 +132,20 @@ export class RunTab extends ViewPlugin {
     }
 
     // basic injected
-    const displayNameInjected = `Injected Provider${(window && window.ethereum && !(window.ethereum.providers && !window.ethereum.selectedProvider)) ?
-      window.ethereum.isCoinbaseWallet || window.ethereum.selectedProvider?.isCoinbaseWallet ? ' - Coinbase' :
-      window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet ? ' - Brave' :
-      window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask ? ' - MetaMask' : '' : ''}`    
-    await addProvider('injected', displayNameInjected, true, false)
+    // if it's the trust wallet provider, we have a specific provider for that, see below
+    if (window && window.ethereum && !(window.ethereum.isTrustWallet || window.ethereum.selectedProvider?.isTrustWallet)) {
+      const displayNameInjected = `Injected Provider${(window && window.ethereum && !(window.ethereum.providers && !window.ethereum.selectedProvider)) ?
+        window.ethereum.isCoinbaseWallet || window.ethereum.selectedProvider?.isCoinbaseWallet ? ' - Coinbase' :
+        window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet ? ' - Brave' :
+        window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask ? ' - MetaMask' : '' : ''}`
+      await addProvider('injected', displayNameInjected, true, false)
+    }
+
+    if (window && window.trustwallet) {
+      const displayNameInjected = `Injected Provider - TrustWallet`    
+      await addProvider('injected-trustwallet', displayNameInjected, true, false)
+    }
+    
     // VM
     const titleVM = 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.'
     await addProvider('vm-merge', 'Remix VM (Merge)', false, true, 'merge', 'settingsVMMergeMode', titleVM)

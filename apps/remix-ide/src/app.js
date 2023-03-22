@@ -36,7 +36,8 @@ import { HardhatProvider } from './app/providers/hardhat-provider'
 import { GanacheProvider } from './app/providers/ganache-provider'
 import { FoundryProvider } from './app/providers/foundry-provider'
 import { ExternalHttpProvider } from './app/providers/external-http-provider'
-import { BasicInjectedProvider } from './app/providers/basic-injected-provider'
+import { InjectedProviderDefault } from './app/providers/injected-provider-default'
+import { InjectedProviderTrustWallet } from './app/providers/injected-provider-trustwallet'
 import { Injected0ptimismProvider } from './app/providers/injected-optimism-provider'
 import { InjectedArbitrumOneProvider } from './app/providers/injected-arbitrum-one-provider'
 import { FileDecorator } from './app/plugins/file-decorator'
@@ -216,7 +217,8 @@ class AppComponent {
     const ganacheProvider = new GanacheProvider(blockchain)
     const foundryProvider = new FoundryProvider(blockchain)
     const externalHttpProvider = new ExternalHttpProvider(blockchain)
-    const basicInjectedProvider = new BasicInjectedProvider()
+    const trustWalletInjectedProvider = new InjectedProviderTrustWallet()
+    const defaultInjectedProvider = new InjectedProviderDefault
     const injected0ptimismProvider = new Injected0ptimismProvider()
     const injectedArbitrumOneProvider = new InjectedArbitrumOneProvider()
     // ----------------- convert offset to line/column service -----------
@@ -289,7 +291,8 @@ class AppComponent {
       ganacheProvider,
       foundryProvider,
       externalHttpProvider,
-      basicInjectedProvider,
+      defaultInjectedProvider,
+      trustWalletInjectedProvider,
       injected0ptimismProvider,
       injectedArbitrumOneProvider,
       this.walkthroughService,

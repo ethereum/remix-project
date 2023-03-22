@@ -24,17 +24,13 @@ class NodeProvider {
     })
   }
 
-  resetEnvironment () {
+  async resetEnvironment () {
      /* Do nothing. */
   }
 
-  getBalanceInEther (address, cb) {
-    this.executionContext.web3().eth.getBalance(address, (err, res) => {
-      if (err) {
-        return cb(err)
-      }
-      cb(null, Web3.utils.fromWei(res.toString(10), 'ether'))
-    })
+  async getBalanceInEther (address) {
+    const balance = await this.executionContext.web3().eth.getBalance(address)
+    return Web3.utils.fromWei(balance.toString(10), 'ether')
   }
 
   getGasPrice (cb) {

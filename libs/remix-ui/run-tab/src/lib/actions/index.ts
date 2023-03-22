@@ -2,7 +2,7 @@
 import React from 'react'
 import { RunTab } from '../types/run-tab'
 import { resetAndInit, setupEvents } from './events'
-import { createNewBlockchainAccount, fillAccountsList, setExecutionContext, signMessageWithAddress } from './account'
+import { createNewBlockchainAccount, setExecutionContext, signMessageWithAddress } from './account'
 import { clearInstances, clearPopUp, removeInstance, setAccount, setGasFee, setMatchPassphrasePrompt, 
   setNetworkNameFromProvider, setPassphrasePrompt, setSelectedContract, setSendTransactionValue, setUnit, 
   updateBaseFeePerGas, updateConfirmSettings, updateGasPrice, updateGasPriceStatus, updateMaxFee, updateMaxPriorityFee, updateScenarioPath } from './actions'
@@ -25,12 +25,8 @@ let plugin: RunTab, dispatch: React.Dispatch<any>
 export const initRunTab = (udapp: RunTab) => async (reducerDispatch: React.Dispatch<any>) => {
   plugin = udapp
   dispatch = reducerDispatch
+  setupEvents(plugin, dispatch)  
   resetAndInit(plugin)
-  setupEvents(plugin, dispatch)
-  setInterval(() => {
-    fillAccountsList(plugin, dispatch)
-    updateInstanceBalance(plugin)
-  }, 1000)
 }
 
 export const setAccountAddress = (account: string) => setAccount(dispatch, account)
