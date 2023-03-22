@@ -1,10 +1,16 @@
 import React from 'react'
-import '../css/app';
+import '../css/app.css'
 import '@fortawesome/fontawesome-free/css/all.css'
-import { RemixClient, INFURA_ID_KEY } from '../services/RemixClient'
-const p = new RemixClient()
-function App() {
+import { PROJECT_ID } from '../services/constant'
+import { EthereumClient } from '@web3modal/ethereum'
+import { Web3Button, Web3Modal } from '@web3modal/react'
+import { WagmiConfig } from 'wagmi'
+import { RemixClient } from '../services/RemixClient'
 
+const p = new RemixClient()
+const ethereumClient = new EthereumClient(p.wagmiClient, p.chains)
+
+function App() {
   const openModal = () => {
     p.onConnect()
   }
@@ -13,9 +19,9 @@ function App() {
     p.onDisconnect()
   }
 
-  const showButtons = (connected = true) =>{
-    document.getElementById("disconnectbtn").style.display = document.getElementById("accounts-container").style.display = connected? 'block':'none';
-    document.getElementById("connectbtn").style.display =  connected? 'none':'block';
+  const showButtons = (connected = true) => {
+    document.getElementById("disconnectbtn").style.display = document.getElementById("accounts-container").style.display = connected? 'block':'none'
+    document.getElementById("connectbtn").style.display =  connected? 'none':'block'
   }
 
   p.internalEvents.on('accountsChanged', (accounts) => {
@@ -35,12 +41,13 @@ function App() {
     document.getElementById('chain').innerHTML = ''
     showButtons(false)
   })
+
   return (
     <div className="App">
       <div className="btn-group-vertical mt-5 w-25" role="group">
-        <div class="text-center w-100">
-          <i class="fas fa-info-circle mr-2 bg-light" title="Wallet connect reuire an infura id in order to make request to the network."/><a target="_blank" href="https://infura.io/dashboard/ethereum">infura settings</a>
-          <input onChange={(e) => { localStorage.setItem(INFURA_ID_KEY, e.target.value)}} id="input-infura-id" placeholder="Infura Id" className="mt-2 mb-2 ml-2"></input>          
+        <div className="text-center w-100">
+          <i className="fas fa-info-circle mr-2 bg-light" title="Wallet connect reuire an infura id in order to make request to the network."/><a target="_blank" href="https://infura.io/dashboard/ethereum">Walletconnect cloud settings</a>
+          <input onChange={(e) => {}} id="walletconnect-project-id" placeholder="Project Id" className="mt-2 mb-2 ml-2"></input>          
         </div>
         <button id="connectbtn" type="button" onClick={openModal} className="btn btn-primary">Connect to a wallet</button>
         <button id="disconnectbtn" type="button" onClick={disconnect} className="btn btn-primary mt-2">Disconnect</button>
@@ -49,8 +56,15 @@ function App() {
         <div><label><b>Accounts: </b></label><br></br><ul className="list-group list-group-flush" id="accounts"></ul></div>
         <div><label><b>Network: </b></label><label className="ml-1" id="chain"> - </label></div>
       </div>
+      { p.wagmiClient && 
+        <WagmiConfig client={p.wagmiClient}>
+          <Web3Button />
+        </WagmiConfig>
+      }
+
+      { ethereumClient && <Web3Modal projectId={PROJECT_ID} ethereumClient={ethereumClient} /> }
     </div>
-  );
+  )
 }
 
 export default App
