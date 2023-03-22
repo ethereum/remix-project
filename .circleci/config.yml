@@ -56,7 +56,7 @@ jobs:
           type: string
       steps:
         - checkout
-        - gh/install
+        - gh/setup
         - restore_cache:
             keys:
               - v1-deps-{{ checksum "yarn.lock" }}
