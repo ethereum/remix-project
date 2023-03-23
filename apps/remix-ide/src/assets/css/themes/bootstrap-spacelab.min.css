@@ -5253,7 +5253,7 @@ a.close.disabled {
 .bs-popover-auto[x-placement^=top]>.arrow::after,.bs-popover-top>.arrow::after {
     bottom:1px;
     border-width:.5rem .5rem 0;
-    border-top-color:#fff
+    border-top-color: var(--secondary)
 }
 .bs-popover-auto[x-placement^=right],.bs-popover-right {
     margin-left:.5rem
@@ -5272,7 +5272,7 @@ a.close.disabled {
 .bs-popover-auto[x-placement^=right]>.arrow::after,.bs-popover-right>.arrow::after {
     left:1px;
     border-width:.5rem .5rem .5rem 0;
-    border-right-color:#fff
+    border-right-color: var(--secondary)
 }
 .bs-popover-auto[x-placement^=bottom],.bs-popover-bottom {
     margin-top:.5rem
@@ -5288,7 +5288,7 @@ a.close.disabled {
 .bs-popover-auto[x-placement^=bottom]>.arrow::after,.bs-popover-bottom>.arrow::after {
     top:1px;
     border-width:0 .5rem .5rem .5rem;
-    border-bottom-color:#fff
+    border-bottom-color: var(--secondary)
 }
 .bs-popover-auto[x-placement^=bottom] .popover-header::before,.bs-popover-bottom .popover-header::before {
     position:absolute;
@@ -5317,7 +5317,7 @@ a.close.disabled {
 .bs-popover-auto[x-placement^=left]>.arrow::after,.bs-popover-left>.arrow::after {
     right:1px;
     border-width:.5rem 0 .5rem .5rem;
-    border-left-color:#fff
+    border-left-color: var(--secondary)
 }
 .popover-header {
     padding:.5rem .75rem;
@@ -5486,7 +5486,6 @@ a.close.disabled {
     .carousel-indicators li {
         transition:none
     }
-
 }
 .carousel-indicators .active {
     opacity:1

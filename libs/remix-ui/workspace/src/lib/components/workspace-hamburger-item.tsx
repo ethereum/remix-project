@@ -19,7 +19,7 @@ export function HamburgerMenuItem (props: HamburgerMenuItemProps) {
         <>
           <Dropdown.Item>
             <CustomTooltip
-              placement="right-start"
+              placement="right"
               tooltipId={uid + "Tooltip"}
               tooltipClasses="text-nowrap"
               tooltipText={<FormattedMessage id={'filePanel.workspace.' + props.kind} />}
@@ -29,7 +29,7 @@ export function HamburgerMenuItem (props: HamburgerMenuItemProps) {
                 key={uid + '-fe-ws'}
                 onClick={() => {
                   props.actionOnClick()
-                  _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', {uid}])
+                  _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', uid])
                 }}
               >
                 <span
