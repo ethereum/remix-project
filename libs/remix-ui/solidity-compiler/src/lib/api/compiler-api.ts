@@ -212,14 +212,14 @@ export const CompilerApiMixin = (Base) => class extends Base {
 
   listenToEvents () {
     this.on('editor', 'contentChanged', () => {
-      this.statusChanged({ key: 'edited', title: 'the content has changed, needs recompilation', type: 'info' })
+      this.statusChanged({ key: 'edited', title: 'The content has changed, needs recompilation', type: 'info' })
       if (this.onContentChanged) this.onContentChanged()
     })
 
     this.data.eventHandlers.onLoadingCompiler = (url) => {
       this.data.loading = true
       this.data.loadingUrl = url
-      this.statusChanged({ key: 'loading', title: 'loading compiler...', type: 'info' })
+      this.statusChanged({ key: 'loading', title: 'Loading compiler...', type: 'info' })
       this.emit('loadingCompiler', url)
     }
     this.compiler.event.register('loadingCompiler', this.data.eventHandlers.onLoadingCompiler)
@@ -232,7 +232,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
     this.compiler.event.register('compilerLoaded', this.data.eventHandlers.onCompilerLoaded)
 
     this.data.eventHandlers.onStartingCompilation = () => {
-      this.statusChanged({ key: 'loading', title: 'compiling...', type: 'info' })
+      this.statusChanged({ key: 'loading', title: 'Compiling...', type: 'info' })
     }
 
     this.data.eventHandlers.onRemoveAnnotations = () => {
@@ -288,13 +288,13 @@ export const CompilerApiMixin = (Base) => class extends Base {
           const warningsCount = data.errors.length
           this.statusChanged({
             key: warningsCount,
-            title: `compilation successful with ${warningsCount} warning${warningsCount > 1 ? 's' : ''}`,
+            title: `Compilation successful with ${warningsCount} warning${warningsCount > 1 ? 's' : ''}`,
             type: 'warning'
           })
-        } else this.statusChanged({ key: 'succeed', title: 'compilation successful', type: 'success' })
+        } else this.statusChanged({ key: 'succeed', title: 'Compilation successful', type: 'success' })
       } else {
         const count = (data.errors ? data.errors.filter(error => error.severity === 'error').length : 0 + (data.error ? 1 : 0))
-        this.statusChanged({ key: count, title: `compilation failed with ${count} error${count > 1 ? 's' : ''}`, type: 'error' })
+        this.statusChanged({ key: count, title: `Compilation failed with ${count} error${count > 1 ? 's' : ''}`, type: 'error' })
       }
       // Store the contracts and Update contract Selection
       if (success) {

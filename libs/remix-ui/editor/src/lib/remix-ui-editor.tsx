@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
-
+import { isArray } from "lodash"
 import Editor, { loader, Monaco } from '@monaco-editor/react'
 import { AlertModal } from '@remix-ui/app'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
@@ -8,15 +8,14 @@ import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
 import { zokratesTokensProvider, zokratesLanguageConfig } from './syntaxes/zokrates'
 import { moveTokenProvider, moveLanguageConfig } from './syntaxes/move'
 import { monacoTypes } from '@remix-ui/editor';
-
-import './remix-ui-editor.css'
 import { loadTypes } from './web-types'
-
+import { retrieveNodesAtPosition } from './helpers/retrieveNodesAtPosition'
 import { RemixHoverProvider } from './providers/hoverProvider'
 import { RemixReferenceProvider } from './providers/referenceProvider'
 import { RemixCompletionProvider } from './providers/completionProvider'
 import { RemixHighLightProvider } from './providers/highlightProvider'
 import { RemixDefinitionProvider } from './providers/definitionProvider'
+import './remix-ui-editor.css'
 
 
 enum MarkerSeverity {
@@ -93,6 +92,24 @@ export type DecorationsReturn = {
   registeredDecorations?: Array<any>
 }
 
+export type PluginType = {
+  on: (plugin: string, event: string, listener: any) => void
+  call: (plugin: string, method: string, arg1?: any, arg2?: any, arg3?: any, arg4?: any) => any
+}
+
+export type EditorAPIType = {
+  findMatches: (uri: string, value: string) => any
+  getFontSize: () => number,
+  getValue: (uri: string) => string
+  getCursorPosition: (offset?: boolean) => number | monacoTypes.IPosition
+  getHoverPosition: (position: monacoTypes.IPosition) => number
+  addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
+  clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
+  keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
+  addErrorMarker: (errors: errorMarker[], from: string) => void
+  clearErrorMarkers: (sources: string[] | {[fileName: string]: any}, from: string) => void
+}
+
 /* eslint-disable-next-line */
 export interface EditorUIProps {
   contextualListener: any
@@ -105,22 +122,8 @@ export interface EditorUIProps {
     onDidChangeContent: (file: string) => void
     onEditorMounted: () => void
   }
-  plugin: {
-    on: (plugin: string, event: string, listener: any) => void
-    call: (plugin: string, method: string, arg1?: any, arg2?: any, arg3?: any, arg4?: any) => any
-  }
-  editorAPI: {
-    findMatches: (uri: string, value: string) => any
-    getFontSize: () => number,
-    getValue: (uri: string) => string
-    getCursorPosition: (offset?: boolean) => number | monacoTypes.IPosition
-    getHoverPosition: (position: monacoTypes.IPosition) => number
-    addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
-    clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
-    keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
-    addErrorMarker: (errors: errorMarker[], from: string) => void
-    clearErrorMarkers: (sources: string[] | {[fileName: string]: any}, from: string) => void
-  }
+  plugin: PluginType
+  editorAPI: EditorAPIType
 }
 export const EditorUI = (props: EditorUIProps) => {
   const [, setCurrentBreakpoints] = useState({})
@@ -630,9 +633,67 @@ export const EditorUI = (props: EditorUIProps) => {
         await props.plugin.call('codeFormatter', 'format', file)
       },
     }
+
+    const freeFunctionCondition = editor.createContextKey('freeFunctionCondition', false);
+    let freeFunctionAction
+    const executeFreeFunctionAction = {
+      id: "executeFreeFunction",
+      label: "Run a free function in the Remix VM",
+      contextMenuOrder: 0, // choose the order
+      contextMenuGroupId: "execute", // create a new grouping
+      precondition: 'freeFunctionCondition',
+      keybindings: [
+        // eslint-disable-next-line no-bitwise
+        monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyR,
+      ],
+      run: async () => { 
+        const { nodesAtPosition } = await  retrieveNodesAtPosition(props.editorAPI, props.plugin)        
+        // find the contract and get the nodes of the contract and the base contracts and imports
+        if (nodesAtPosition && isArray(nodesAtPosition) && nodesAtPosition.length) {
+          const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
+          if (freeFunctionNode) {
+            const file = await props.plugin.call('fileManager', 'getCurrentFile')
+            props.plugin.call('solidity-script', 'execute', file, freeFunctionNode.name)
+          } else {
+            props.plugin.call('notification', 'toast', 'This can only execute free function')  
+          }
+        } else {
+          props.plugin.call('notification', 'toast', 'Please go to Remix settings and activate the code editor features or wait that the current editor context is loaded.')
+        }
+      },
+    }
     editor.addAction(formatAction)
     editor.addAction(zoomOutAction)
     editor.addAction(zoominAction)
+    editor.addAction(executeFreeFunctionAction)
+
+    // we have to add the command because the menu action isn't always available (see onContextMenuHandlerForFreeFunction)
+    editor.addCommand(monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyR, () => executeFreeFunctionAction.run())
+
+    const contextmenu = editor.getContribution('editor.contrib.contextmenu')
+    const orgContextMenuMethod = contextmenu._onContextMenu;
+    const onContextMenuHandlerForFreeFunction = async () => {
+      const file = await props.plugin.call('fileManager', 'getCurrentFile')
+      if (!file.endsWith('.sol')) {
+        freeFunctionCondition.set(false)
+        return
+      }
+      const { nodesAtPosition } = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
+      const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
+      if (freeFunctionAction) freeFunctionAction.dispose()
+      if (freeFunctionNode) {
+        executeFreeFunctionAction.label = `Run the free function "${freeFunctionNode.name}" in the Remix VM`
+        freeFunctionAction = editor.addAction(executeFreeFunctionAction)
+      }
+      freeFunctionCondition.set(!!freeFunctionNode)
+    }
+    contextmenu._onContextMenu = (...args) => {
+      if (args[0]) args[0].event?.preventDefault()
+      onContextMenuHandlerForFreeFunction()
+        .then(() => orgContextMenuMethod.apply(contextmenu, args))
+        .catch(() => orgContextMenuMethod.apply(contextmenu, args))
+    }
+
     const editorService = editor._codeEditorService;
     const openEditorBase = editorService.openCodeEditor.bind(editorService);
     editorService.openCodeEditor = async (input , source) => {
