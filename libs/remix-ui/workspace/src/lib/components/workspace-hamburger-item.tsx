@@ -29,7 +29,7 @@ export function HamburgerMenuItem (props: HamburgerMenuItemProps) {
                 key={uid + '-fe-ws'}
                 onClick={() => {
                   props.actionOnClick()
-                  _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', {uid}])
+                  _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', uid])
                 }}
               >
                 <span
