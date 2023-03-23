@@ -48,7 +48,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       process: 'process/browser',
     }),
     new webpack.DefinePlugin({
-      
+
     }),
   )
 
