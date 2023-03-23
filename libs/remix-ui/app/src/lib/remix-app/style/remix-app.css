@@ -34,7 +34,6 @@ pre {
   width              : 320px;
   transition         : width 0.25s;
 }
-
 .highlightcode       {
   position           : absolute;
   z-index            : 20;
@@ -54,19 +53,24 @@ pre {
   height             : 200px;
 }
 .centered svg path {
-  fill: var(--secondary);
+  fill               : var(--secondary);
 }
 .centered svg polygon {
-  fill              : var(--secondary);
+  fill               : var(--secondary);
 }
 .onboarding {
-  color             : var(--text-info);
-  background-color  : var(--info);
+  color              : var(--text-info);
+  background-color   : var(--info);
 }
 .matomoBtn {
   width              : 100px;
 }
-
 .splash {
-  text-align: center;
+  text-align         : center;
+}
+.remix-ui-tabs_end {
+  height             : 2.15rem;
+  width              : 4rem;
+  right              : -10px;
+  filter             : opacity(0.5);
 }
