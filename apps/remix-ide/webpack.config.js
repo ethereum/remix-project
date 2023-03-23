@@ -60,7 +60,9 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   config.plugins.push(
     new CopyPlugin({
       patterns: [
-        { from: '../../node_modules/monaco-editor/min/vs', to: 'assets/js/monaco-editor/min/vs' }
+        { from: '../../node_modules/monaco-editor/min/vs', to: 'assets/js/monaco-editor/min/vs' },
+        { from: '../../dist/apps/doc-gen', to: 'plugins/doc-gen' },
+        { from: '../../dist/apps/doc-gen', to: 'plugins/doc-viewer' },
       ].filter(Boolean)
     }),
     new webpack.ProvidePlugin({
