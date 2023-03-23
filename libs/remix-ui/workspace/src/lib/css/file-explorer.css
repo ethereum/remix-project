@@ -23,9 +23,6 @@ input[type="file"] {
 .remixui_file               {
     padding           : 4px;
 }
-.remixui_newFile            {
-    padding-right     : 10px;
-}
 .remixui_newFile i          {
     cursor            : pointer;
 }

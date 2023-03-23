@@ -454,76 +454,76 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   return (
     <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
-    <div ref={treeRef} tabIndex={0} style={{ outline: "none" }}>
-      <TreeView id='treeView'>
-        <TreeViewItem id="treeViewItem"
-          controlBehaviour={true}
-          label={
-            <div onClick={handleFileExplorerMenuClick}>
-              <FileExplorerMenu
-                title={''}
-                menuItems={props.menuItems}
-                createNewFile={handleNewFileInput}
-                createNewFolder={handleNewFolderInput}
-                publishToGist={publishToGist}
-                uploadFile={uploadFile}
-                uploadFolder={uploadFolder}
-              />
+      <div ref={treeRef} tabIndex={0} style={{ outline: "none" }}>
+        <TreeView id='treeView'>
+          <TreeViewItem id="treeViewItem"
+            controlBehaviour={true}
+            label={
+              <div onClick={handleFileExplorerMenuClick}>
+                <FileExplorerMenu
+                  title={''}
+                  menuItems={props.menuItems}
+                  createNewFile={handleNewFileInput}
+                  createNewFolder={handleNewFolderInput}
+                  publishToGist={publishToGist}
+                  uploadFile={uploadFile}
+                  uploadFolder={uploadFolder}
+                />
+              </div>
+            }
+            expand={true}>
+            <div className='pb-4 mb-4'>
+              <TreeView id='treeViewMenu'>
+                {
+                  files[ROOT_PATH] && Object.keys(files[ROOT_PATH]).map((key, index) => <FileRender
+                    file={files[ROOT_PATH][key]}
+                    fileDecorations={fileState}
+                    index={index}
+                    focusContext={state.focusContext}
+                    focusEdit={state.focusEdit}
+                    focusElement={props.focusElement}
+                    ctrlKey={state.ctrlKey}
+                    expandPath={props.expandPath}
+                    editModeOff={editModeOff}
+                    handleClickFile={handleClickFile}
+                    handleClickFolder={handleClickFolder}
+                    handleContextMenu={handleContextMenu}
+                    key={index}
+                    showIconsMenu={props.showIconsMenu}
+                    hideIconsMenu={props.hideIconsMenu}
+                    
+                  />)
+                }
+              </TreeView>
             </div>
-          }
-          expand={true}>
-          <div className='pb-4 mb-4'>
-            <TreeView id='treeViewMenu'>
-              {
-                files[ROOT_PATH] && Object.keys(files[ROOT_PATH]).map((key, index) => <FileRender
-                  file={files[ROOT_PATH][key]}
-                  fileDecorations={fileState}
-                  index={index}
-                  focusContext={state.focusContext}
-                  focusEdit={state.focusEdit}
-                  focusElement={props.focusElement}
-                  ctrlKey={state.ctrlKey}
-                  expandPath={props.expandPath}
-                  editModeOff={editModeOff}
-                  handleClickFile={handleClickFile}
-                  handleClickFolder={handleClickFolder}
-                  handleContextMenu={handleContextMenu}
-                  key={index}
-                  showIconsMenu={props.showIconsMenu}
-                  hideIconsMenu={props.hideIconsMenu}
-                  
-                />)
-              }
-            </TreeView>
-          </div>
-        </TreeViewItem>
-      </TreeView>
-      { state.showContextMenu &&
-        <FileExplorerContextMenu
-          actions={props.focusElement.length > 1 ? state.actions.filter(item => item.multiselect) : state.actions.filter(item => !item.multiselect)}
-          hideContextMenu={hideContextMenu}
-          createNewFile={handleNewFileInput}
-          createNewFolder={handleNewFolderInput}
-          deletePath={deletePath}
-          downloadPath={downloadPath}
-          renamePath={editModeOn}
-          runScript={runScript}
-          copy={handleCopyClick}
-          paste={handlePasteClick}
-          copyFileName={handleCopyFileNameClick}
-          copyPath={handleCopyFilePathClick}
-          emit={emitContextMenuEvent}
-          pageX={state.focusContext.x}
-          pageY={state.focusContext.y}
-          path={state.focusContext.element}
-          type={state.focusContext.type}
-          focus={props.focusElement}
-          pushChangesToGist={pushChangesToGist}
-          publishFolderToGist={publishFolderToGist}
-          publishFileToGist={publishFileToGist}
-        />
-      }
-    </div>
+          </TreeViewItem>
+        </TreeView>
+        { state.showContextMenu &&
+          <FileExplorerContextMenu
+            actions={props.focusElement.length > 1 ? state.actions.filter(item => item.multiselect) : state.actions.filter(item => !item.multiselect)}
+            hideContextMenu={hideContextMenu}
+            createNewFile={handleNewFileInput}
+            createNewFolder={handleNewFolderInput}
+            deletePath={deletePath}
+            downloadPath={downloadPath}
+            renamePath={editModeOn}
+            runScript={runScript}
+            copy={handleCopyClick}
+            paste={handlePasteClick}
+            copyFileName={handleCopyFileNameClick}
+            copyPath={handleCopyFilePathClick}
+            emit={emitContextMenuEvent}
+            pageX={state.focusContext.x}
+            pageY={state.focusContext.y}
+            path={state.focusContext.element}
+            type={state.focusContext.type}
+            focus={props.focusElement}
+            pushChangesToGist={pushChangesToGist}
+            publishFolderToGist={publishFolderToGist}
+            publishFileToGist={publishFileToGist}
+          />
+        }
+      </div>
     </Drag>
   )
 }
