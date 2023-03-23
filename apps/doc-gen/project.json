@@ -28,6 +28,7 @@
         "development": {
         },
         "production": {
+          "baseHref": "./",
           "fileReplacements": [
             {
               "replace": "apps/doc-gen/src/environments/environment.ts",
