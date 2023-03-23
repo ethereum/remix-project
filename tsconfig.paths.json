@@ -150,7 +150,7 @@
             ],
             "@remix-project/ghaction-helper": [
                 "libs/ghaction-helper/src/index.ts"
-            ]
+            ],
         }
     }
 }
