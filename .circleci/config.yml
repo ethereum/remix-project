@@ -61,7 +61,7 @@ jobs:
             key: v1-deps-{{ checksum "yarn.lock" }}
             paths:
               - node_modules
-        - run: yarn build << parameters.plugin >>
+        - run: yarn nx build << parameters.plugin >> --configuration=production 
         - run: mkdir persist && zip -0 -r persist/plugin-<< parameters.plugin >>.zip dist
         - persist_to_workspace:
             root: .
