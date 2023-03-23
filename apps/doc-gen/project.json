@@ -42,7 +42,8 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "doc-gen:build",
-        "hmr": true
+        "hmr": true,
+        "baseHref": "/"
       },
       "configurations": {
         "development": {
