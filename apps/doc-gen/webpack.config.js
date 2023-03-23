@@ -37,6 +37,12 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     solc: 'solc',
   }
 
+  config.module.rules.push({
+    test: /\.hbs$/,
+    type: 'asset/source'
+  })
+
+
   // add public path
   config.output.publicPath = '/'
 
