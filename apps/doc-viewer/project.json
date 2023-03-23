@@ -26,6 +26,7 @@
       },
       "configurations": {
         "development": {
+          "baseHref": "./"
         },
         "production": {
           "baseHref": "./",
@@ -43,7 +44,8 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "doc-viewer:build",
-        "hmr": true
+        "hmr": true,
+        "baseHref": "/"
       },
       "configurations": {
         "development": {

@@ -14,7 +14,6 @@
         "compiler": "babel",
         "outputPath": "dist/apps/doc-gen",
         "index": "apps/doc-gen/src/index.html",
-        "baseHref": "/",
         "main": "apps/doc-gen/src/main.tsx",
         "tsConfig": "apps/doc-gen/tsconfig.app.json",
         "assets": [
@@ -26,6 +25,7 @@
       },
       "configurations": {
         "development": {
+          "baseHref": "./"
         },
         "production": {
           "baseHref": "./",
@@ -43,7 +43,8 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "doc-gen:build",
-        "hmr": true
+        "hmr": true,
+        "baseHref": "/"
       },
       "configurations": {
         "development": {
