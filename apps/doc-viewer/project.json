@@ -14,7 +14,7 @@
         "compiler": "babel",
         "outputPath": "dist/apps/doc-viewer",
         "index": "apps/doc-viewer/src/index.html",
-        "baseHref": "./",
+        "baseHref": "/",
         "main": "apps/doc-viewer/src/main.tsx",
         "tsConfig": "apps/doc-viewer/tsconfig.app.json",
         "assets": [
@@ -28,6 +28,7 @@
         "development": {
         },
         "production": {
+          "baseHref": "./",
           "fileReplacements": [
             {
               "replace": "apps/doc-viewer/src/environments/environment.ts",
@@ -42,7 +43,8 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "doc-viewer:build",
-        "hmr": true
+        "hmr": true,
+        "baseHref": "/"
       },
       "configurations": {
         "development": {
