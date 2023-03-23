@@ -50,15 +50,15 @@ class VMProvider {
           } else {
             reject(new Error(msg.data.error))
           }
-        }
-      } else if (msg.data.cmd === 'newAccountResult') {
+        } else if (msg.data.cmd === 'newAccountResult') {
         if (this.newAccountCallback[msg.data.stamp]) {
           this.newAccountCallback[msg.data.stamp](msg.data.error, msg.data.result)
           delete this.newAccountCallback[msg.data.stamp]
         }
       }
     })
-    this.worker.postMessage({ cmd: 'init', fork: this.executionContext.getCurrentFork(), nodeUrl: provider?.options['nodeUrl'], blockNumber: provider?.options['blockNumber']})
+      this.worker.postMessage({ cmd: 'init', fork: this.executionContext.getCurrentFork(), nodeUrl: provider?.options['nodeUrl'], blockNumber: provider?.options['blockNumber']})
+    })
   }
 
   // TODO: is still here because of the plugin API
