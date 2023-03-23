@@ -42,6 +42,36 @@ self.onmessage = (e: MessageEvent) => {
       }
       
       break
-    }      
+    }
+    case 'addAccount':
+    {
+      if (provider) {
+        provider.Accounts._addAccount(data.privateKey, data.balance)
+      }
+      
+      break
+    }
+    case 'newAccount':
+    {
+      if (provider) {
+        provider.Accounts.newAccount((error, address: string) => {
+          if (error) {
+            self.postMessage({
+              cmd: 'newAccountResult',
+              error,
+              stamp: data.stamp
+            })
+          } else {
+            self.postMessage({
+              cmd: 'newAccountResult',
+              result: address,
+              stamp: data.stamp
+            })
+          }          
+        })
+      }
+      
+      break
+    }  
   }
 }

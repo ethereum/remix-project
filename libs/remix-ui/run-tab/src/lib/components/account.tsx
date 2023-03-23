@@ -37,6 +37,20 @@ export function AccountUI (props: AccountProps) {
         })
         break
 
+      case 'vm-london':
+        setPlusOpt({
+          classList: '',
+          title: 'Create a new account'
+        })
+        break
+
+      case 'vm-berlin':
+        setPlusOpt({
+          classList: '',
+          title: 'Create a new account'
+        })
+        break
+
       case 'web3':
         if (!props.personalMode) {
           setPlusOpt({
