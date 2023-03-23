@@ -48,7 +48,7 @@ module.exports = {
       .waitForElementPresent('*[data-id="testTabGenerateTestFile"]')
       .click('*[data-id="testTabGenerateTestFile"]')
       .clickLaunchIcon('filePanel')
-      .waitForElementPresent('*[title="default_workspace/tests/simple_storage_test.sol"]')
+      .waitForElementPresent('*[data-path="default_workspace/tests/simple_storage_test.sol"]')
       .removeFile('tests/simple_storage_test.sol', 'default_workspace')
   },
 
@@ -106,7 +106,7 @@ module.exports = {
   'Should fail on compilation, open file on error click, not disappear error #group2': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .addFile('tests/compilationError_test.sol', sources[0]['compilationError_test.sol'])
-      .click('div[title="default_workspace/tests/compilationError_test.sol"] span[class="close-tabs"]')
+      .click('div[data-path="default_workspace/tests/compilationError_test.sol"] span[class="close-tabs"]')
       .clickLaunchIcon('solidityUnitTesting')
       .pause(2000)
       .click('*[data-id="testTabCheckAllTests"]')

@@ -4253,7 +4253,7 @@ a.close.disabled {
 	bottom:0;	border-width:.5rem .5rem 0;	border-top-color:rgba(0,0,0,.25)
 }
 .bs-popover-auto[x-placement^=top]>.arrow::after,.bs-popover-top>.arrow::after {
-	bottom:1px;	border-width:.5rem .5rem 0;	border-top-color:#fff
+	bottom:1px;	border-width:.5rem .5rem 0;	border-top-color: var(--secondary)
 }
 .bs-popover-auto[x-placement^=right],.bs-popover-right {
 	margin-left:.5rem
@@ -4265,7 +4265,7 @@ a.close.disabled {
 	left:0;	border-width:.5rem .5rem .5rem 0;	border-right-color:rgba(0,0,0,.25)
 }
 .bs-popover-auto[x-placement^=right]>.arrow::after,.bs-popover-right>.arrow::after {
-	left:1px;	border-width:.5rem .5rem .5rem 0;	border-right-color:#fff
+	left:1px;	border-width:.5rem .5rem .5rem 0;	border-right-color: var(--secondary)
 }
 .bs-popover-auto[x-placement^=bottom],.bs-popover-bottom {
 	margin-top:.5rem
@@ -4277,7 +4277,7 @@ a.close.disabled {
 	top:0;	border-width:0 .5rem .5rem .5rem;	border-bottom-color:rgba(0,0,0,.25)
 }
 .bs-popover-auto[x-placement^=bottom]>.arrow::after,.bs-popover-bottom>.arrow::after {
-	top:1px;	border-width:0 .5rem .5rem .5rem;	border-bottom-color:#fff
+	top:1px;	border-width:0 .5rem .5rem .5rem;	border-bottom-color: var(--secondary)
 }
 .bs-popover-auto[x-placement^=bottom] .popover-header::before,.bs-popover-bottom .popover-header::before {
 	position:absolute;	top:0;	left:50%;	display:block;	width:1rem;	margin-left:-.5rem;	content:"";	border-bottom:1px solid #f7f7f7
@@ -4292,7 +4292,7 @@ a.close.disabled {
 	right:0;	border-width:.5rem 0 .5rem .5rem;	border-left-color:rgba(0,0,0,.25)
 }
 .bs-popover-auto[x-placement^=left]>.arrow::after,.bs-popover-left>.arrow::after {
-	right:1px;	border-width:.5rem 0 .5rem .5rem;	border-left-color:#fff
+	right:1px;	border-width:.5rem 0 .5rem .5rem;	border-left-color: var(--secondary)
 }
 .popover-header {
 	padding:.5rem .75rem;	margin-bottom:0;	font-size:.9375rem;	background-color:#f7f7f7;	border-bottom:1px solid #ebebeb;	border-top-left-radius:calc(.3rem - 1px);	border-top-right-radius:calc(.3rem - 1px)
