@@ -62,7 +62,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
   return (
     <>
       <CustomTooltip
-        placement="top-start"
+        placement="top"
         tooltipId="remixuilabelTooltip"
         tooltipClasses="text-nowrap"
         tooltipText={props.title}
@@ -83,7 +83,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 <label
                   id={action}
                   data-id={'fileExplorerUploadFile' + action }
-                  className={icon + ' mb-0 remixui_newFile'}
+                  className={icon + ' mb-0 px-1 remixui_newFile'}
                   key={`index-${action}-${placement}-${icon}`}
                 >
                     <input id="fileUpload" data-id="fileExplorerFileUpload" type="file" onChange={(e) => {
@@ -108,7 +108,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 <label
                   id={action}
                   data-id={'fileExplorerUploadFolder' + action }
-                  className={icon + ' mb-0 remixui_newFile'}
+                  className={icon + ' mb-0 px-1 remixui_newFile'}
                   key={`index-${action}-${placement}-${icon}`}
                 >
                     <input id="folderUpload" data-id="fileExplorerFolderUpload" type="file" onChange={(e) => {
@@ -146,7 +146,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                       state.actions[action]()
                     }
                   }}
-                  className={'newFile ' + icon + ' remixui_newFile'}
+                  className={'newFile ' + icon + ' px-1 remixui_newFile'}
                   key={`${action}-${title}-${index}`}
                 >
                 </span>

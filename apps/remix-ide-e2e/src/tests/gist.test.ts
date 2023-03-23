@@ -73,7 +73,7 @@ module.exports = {
     browser.clickLaunchIcon('home')
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
-      .click('div[title="home"]')
+      .click('div[data-id="verticalIconsHomeIcon"]')
       .waitForElementVisible('button[data-id="landingPageImportFromGistButton"]')
       .pause(1000)
       .scrollAndClick('button[data-id="landingPageImportFromGistButton"]')
@@ -143,8 +143,8 @@ module.exports = {
       .modalFooterOKClick('gisthandler')
       .pause(10000)
       .openFile(`gist-${testData.validGistId}/README.txt`)
-      .waitForElementVisible(`div[title='default_workspace/gist-${testData.validGistId}/README.txt']`)
-      .assert.containsText(`div[title='default_workspace/gist-${testData.validGistId}/README.txt'] > span`, 'README.txt')
+      .waitForElementVisible(`div[data-path='default_workspace/gist-${testData.validGistId}/README.txt']`)
+      .assert.containsText(`div[data-path='default_workspace/gist-${testData.validGistId}/README.txt'] > span`, 'README.txt')
       .end()
   }
 }
