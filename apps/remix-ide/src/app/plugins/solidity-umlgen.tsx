@@ -18,7 +18,7 @@ const _paq = window._paq = window._paq || []
 const profile = {
     name: 'solidityumlgen',
     displayName: 'Solidity UML Generator',
-    description: 'Generate UML diagram in svg format from last compiled contract',
+    description: 'Generates UML diagram in svg format from last compiled contract',
     location: 'mainPanel',
     methods: ['showUmlDiagram', 'generateUml', 'generateCustomAction'],
     events: [],

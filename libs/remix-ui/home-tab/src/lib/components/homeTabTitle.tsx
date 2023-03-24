@@ -6,7 +6,7 @@ import { CustomTooltip } from '@remix-ui/helper'
 const _paq = window._paq = window._paq || [] // eslint-disable-line
 
 
-function HomeTabTitle() {
+function HomeTabTitle () {
   useEffect(() => {
     document.addEventListener("keyup", (e) => handleSearchKeyDown(e))
     return () => {
