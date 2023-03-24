@@ -68,7 +68,7 @@ function ActivePluginCard ({
                 placement="right"
                 tooltipId={`pluginManagerInactiveActiveBtn${profile.name}`}
                 tooltipClasses="text-nowrap"
-                tooltipText={`Dectivate ${profile.displayName || profile.name}`}
+                tooltipText={`Deactivate ${profile.displayName || profile.name}`}
               >
                 <button
                   onClick={() => {
