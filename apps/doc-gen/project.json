@@ -14,11 +14,12 @@
         "compiler": "babel",
         "outputPath": "dist/apps/doc-gen",
         "index": "apps/doc-gen/src/index.html",
-        "baseHref": "/",
+        "baseHref": "./",
         "main": "apps/doc-gen/src/main.tsx",
         "tsConfig": "apps/doc-gen/tsconfig.app.json",
         "assets": [
-          "apps/doc-gen/src/favicon.ico"
+          "apps/doc-gen/src/favicon.ico",
+          "apps/doc-gen/src/profile.json"
         ],
         "styles": [],
         "scripts": [],
@@ -28,7 +29,6 @@
         "development": {
         },
         "production": {
-          "baseHref": "./",
           "fileReplacements": [
             {
               "replace": "apps/doc-gen/src/environments/environment.ts",
