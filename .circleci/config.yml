@@ -67,7 +67,6 @@ jobs:
               - node_modules
         - run: yarn nx build << parameters.plugin >> --configuration=production 
         - run: mkdir persist && zip -0 -r persist/plugin-<< parameters.plugin >>.zip dist
-        - run: ./apps/remix-ide/ci/publish_plugin.sh << parameters.plugin >>
         - persist_to_workspace:
             root: .
             paths:
