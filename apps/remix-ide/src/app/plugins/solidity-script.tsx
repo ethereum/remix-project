@@ -19,18 +19,22 @@ export class SolidityScript extends Plugin {
 
   async execute (path: string, functionName: string = 'run') {
     _paq.push(['trackEvent', 'SolidityScript', 'execute', 'script'])
-    this.call('terminal', 'log', `running free function ${functionName} from ${path}...`)
+    this.call('terminal', 'log', `Running free function '${functionName}' from ${path}...`)
     let content = await this.call('fileManager', 'readFile', path)
     const params = await this.call('solidity', 'getCompilerParameters')
 
 
     content = `
+      // SPDX-License-Identifier: GPL-3.0
+
+      pragma solidity >=0.7.1;
+
       import "${path}";
 
       contract SolidityScript {
           constructor () {}
 
-          function remixRun () public {
+          function remixRun () public view {
               ${functionName}();
           }
       }`
