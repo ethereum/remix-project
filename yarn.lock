@@ -5249,9 +5249,9 @@
     "@octokit/openapi-types" "^11.2.0"
 
 "@openzeppelin/contracts-upgradeable@^4.8.1":
-  version "4.8.1"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.8.1.tgz#363f7dd08f25f8f77e16d374350c3d6b43340a7a"
-  integrity sha512-1wTv+20lNiC0R07jyIAbHU7TNHKRwGiTGRfiNnA8jOWjKT98g5OgLpYWOi40Vgpk8SPLA9EvfJAbAeIyVn+7Bw==
+  version "4.8.2"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.8.2.tgz#edef522bdbc46d478481391553bababdd2199e27"
+  integrity sha512-zIggnBwemUmmt9IS73qxi+tumALxCY4QEs3zLCII78k0Gfse2hAOdAkuAeLUzvWUpneMUfFE5sGHzEUSTvn4Ag==
 
 "@openzeppelin/contracts@^4.7.3":
   version "4.7.3"
@@ -5271,10 +5271,10 @@
     proper-lockfile "^4.1.1"
     solidity-ast "^0.4.15"
 
-"@openzeppelin/wizard@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/wizard/-/wizard-0.1.1.tgz#8c183e2c5748869bc3a5317c0330aa36a9ad44fe"
-  integrity sha512-AGyvn3PIh1vCgAEoRKAXKhtlk4fkA8AHE7G4PyzLnYcASClYCWpSf43WLJCs6S/LORvTZADX1flvF8x2LciJIg==
+"@openzeppelin/wizard@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/wizard/-/wizard-0.2.0.tgz#679e91ea10ae49b742920e72daca1cabf329739d"
+  integrity sha512-UDJF4fE+TuezLbXAL7aEQ9kIsqNf/FeBY62HEoPR7X//Ml6wR4Sy8DKPSyTqfxnQzd7NXIQ/FAAMuECv3LEy9A==
   dependencies:
     array.prototype.flatmap "^1.2.4"
 
