@@ -15,6 +15,23 @@ const versionData = {
 
 fs.writeFileSync('./apps/remix-ide/src/assets/version.json', JSON.stringify(versionData))
 
+const project = fs.readFileSync('./apps/remix-ide/project.json', 'utf8')
+
+const implicitDependencies = JSON.parse(project).implicitDependencies
+
+const copyPatterns = implicitDependencies.map((dep) => {
+  try {
+    fs.statSync(__dirname + `/../../dist/apps/${dep}`).isDirectory()
+    return { from: `../../dist/apps/${dep}`, to: `plugins/${dep}` }
+  }
+  catch (e) {
+    console.log('error', e)
+    return false
+  }
+})
+
+console.log('Copying plugins... ', copyPatterns)
+
 // Nx plugins for webpack.
 module.exports = composePlugins(withNx(), withReact(), (config) => {
   // Update the webpack config as needed here.
@@ -41,7 +58,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     "buffer": require.resolve("buffer/"),
     "vm": require.resolve('vm-browserify'),
   }
-  
+
 
   // add externals
   config.externals = {
@@ -61,8 +78,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     new CopyPlugin({
       patterns: [
         { from: '../../node_modules/monaco-editor/min/vs', to: 'assets/js/monaco-editor/min/vs' },
-        { from: '../../dist/apps/doc-gen', to: 'plugins/doc-gen' },
-        { from: '../../dist/apps/doc-gen', to: 'plugins/doc-viewer' },
+        ...copyPatterns
       ].filter(Boolean)
     }),
     new webpack.ProvidePlugin({
@@ -79,7 +95,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     enforce: "pre"
   })
 
-  config.ignoreWarnings = [/Failed to parse source map/, /require function/ ] // ignore source-map-loader warnings & AST warnings
+  config.ignoreWarnings = [/Failed to parse source map/, /require function/] // ignore source-map-loader warnings & AST warnings
 
   // set minimizer
   config.optimization.minimizer = [

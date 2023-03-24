@@ -286,7 +286,7 @@ workflows:
       - build-plugin:
           matrix:
             parameters:
-              plugin: ["etherscan", "vyper", "plugin_api", "doc-gen", "doc-viewer"]
+              plugin: ["plugin_api"]
       - lint:
           requires:
             - build
@@ -299,15 +299,11 @@ workflows:
           matrix:
             alias: plugins
             parameters:
-              plugin: ["etherscan", "vyper", "plugin_api"]
+              plugin: ["plugin_api"]
               parallelism: [1, 9]
             exclude: 
               - plugin: plugin_api
                 parallelism: 1
-              - plugin: etherscan
-                parallelism: 9
-              - plugin: vyper
-                parallelism: 9
 
       - remix-ide-browser:
           requires:

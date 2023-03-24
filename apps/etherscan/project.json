@@ -18,7 +18,8 @@
         "tsConfig": "apps/etherscan/tsconfig.app.json",
         "assets": [
           "apps/etherscan/src/favicon.ico",
-          "apps/etherscan/src/assets"
+          "apps/etherscan/src/assets",
+          "apps/etherscan/src/profile.json"
         ],
         "styles": ["apps/etherscan/src/styles.css"],
         "scripts": [],
@@ -42,7 +43,8 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "etherscan:build",
-        "hmr": true
+        "hmr": true,
+        "baseHref": "/"
       },
       "configurations": {
         "development": {
