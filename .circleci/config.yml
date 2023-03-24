@@ -6,7 +6,6 @@ parameters:
     default: false
 orbs:
   browser-tools: circleci/browser-tools@1.4.1
-  gh: circleci/github-cli@2.2.0
 jobs:
   build:
     docker:
@@ -56,7 +55,6 @@ jobs:
           type: string
       steps:
         - checkout
-        - gh/install
         - restore_cache:
             keys:
               - v1-deps-{{ checksum "yarn.lock" }}
