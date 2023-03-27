@@ -31,7 +31,7 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build:production
             else
-              NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build
+              NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn nx run-many --target=build --projects=remix-ide --parallel=5
             fi
       - run: yarn run build:e2e
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
