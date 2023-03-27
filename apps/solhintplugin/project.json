@@ -3,12 +3,14 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/solhintplugin/src",
   "projectType": "application",
-  "implicitDependencies": [
-  ],
+  "implicitDependencies": [],
   "targets": {
     "build": {
       "executor": "@nrwl/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "dependsOn": ["install"],
       "defaultConfiguration": "development",
       "options": {
         "compiler": "babel",
@@ -22,12 +24,10 @@
           "apps/solhintplugin/src/profile.json"
         ],
         "styles": [],
-        "scripts": [],
         "webpackConfig": "apps/solhintplugin/webpack.config.js"
       },
       "configurations": {
-        "development": {
-        },
+        "development": {},
         "production": {
           "fileReplacements": [
             {
@@ -36,6 +36,15 @@
             }
           ]
         }
+      }
+    },
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cd apps/solhintplugin && yarn"
+        ],
+        "parallel": false
       }
     },
     "serve": {
