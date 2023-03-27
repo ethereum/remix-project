@@ -363,9 +363,11 @@ export const getNetworkProxyAddresses = async (plugin: RunTab, dispatch: React.D
     const deployments = []
 
     for (const proxyAddress in Object.keys(parsedNetworkFile.deployments)) {
-      const solcBuildExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
+      if (parsedNetworkFile.deployments[proxyAddress] && parsedNetworkFile.deployments[proxyAddress].implementationAddress) {
+        const solcBuildExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
 
-      if (solcBuildExists) deployments.push({ address: proxyAddress, date: parsedNetworkFile.deployments[proxyAddress].date, contractName: parsedNetworkFile.deployments[proxyAddress].contractName })
+        if (solcBuildExists) deployments.push({ address: proxyAddress, date: parsedNetworkFile.deployments[proxyAddress].date, contractName: parsedNetworkFile.deployments[proxyAddress].contractName })
+      }
     }
     dispatch(fetchProxyDeploymentsSuccess(deployments))
   } else {
@@ -383,7 +385,7 @@ export const isValidContractUpgrade = async (plugin: RunTab, proxyAddress: strin
     const networkFile: string = await plugin.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
     const parsedNetworkFile: NetworkDeploymentFile = JSON.parse(networkFile)
 
-      if (parsedNetworkFile.deployments[proxyAddress]) {
+      if (parsedNetworkFile.deployments[proxyAddress] && parsedNetworkFile.deployments[proxyAddress].implementationAddress) {
         const solcBuildExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
         
         if (solcBuildExists) {
