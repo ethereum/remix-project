@@ -17,7 +17,8 @@ const profile = {
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/settings.html',
   version: packageJson.version,
-  permission: true
+  permission: true,
+  maintainedBy: "Remix"
 }
 
 module.exports = class SettingsTab extends ViewPlugin {
