@@ -51,11 +51,10 @@ function Badge ({ badgeStatus }: BadgeProps) {
           <CustomTooltip
             placement={'right'}
             tooltipClasses="text-nowrap"
-            tooltipId="recordedTransactionsCounttooltip"
-            tooltipText={<FormattedMessage id='udapp.transactionsCountTooltip' />}
+            tooltipId="verticalItemsbadge"
+            tooltipText={badgeStatus.title}
           >
             <i
-              title={badgeStatus.title}
               className={resolveClasses(badgeStatus.key, badgeStatus.type!)}
               aria-hidden="true"
             >
