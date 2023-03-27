@@ -31,6 +31,7 @@ export class Blockchain extends Plugin {
   // NOTE: the config object will need to be refactored out in remix-lib
   constructor (config) {
     super(profile)
+    this.active = false
     this.event = new EventManager()
     this.executionContext = new ExecutionContext()
 
@@ -55,11 +56,13 @@ export class Blockchain extends Plugin {
   }
 
   _triggerEvent (name, args) {
+    if (!this.active) return
     this.event.trigger(name, args)
     this.emit(name, ...args)
   }
 
   onActivation () {
+    this.active = true
     this.on('injected', 'chainChanged', () => {
       this.detectNetwork((error, network) => {
         this.networkStatus = { network, error }
@@ -76,6 +79,7 @@ export class Blockchain extends Plugin {
   }
 
   onDeactivation () {
+    this.active = false
     this.off('injected', 'chainChanged')
     this.off('injected-trustwallet', 'chainChanged')
   }
