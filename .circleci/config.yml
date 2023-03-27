@@ -44,7 +44,6 @@ jobs:
   build-plugin:
       docker:
       - image: cimg/node:14.17.6-browsers
-
       resource_class:
         xlarge
       working_directory: ~/remix-project
@@ -61,7 +60,7 @@ jobs:
             key: v1-deps-{{ checksum "yarn.lock" }}
             paths:
               - node_modules
-        - run: yarn build << parameters.plugin >>
+        - run: yarn nx build << parameters.plugin >> --configuration=production 
         - run: mkdir persist && zip -0 -r persist/plugin-<< parameters.plugin >>.zip dist
         - persist_to_workspace:
             root: .
@@ -281,7 +280,7 @@ workflows:
       - build-plugin:
           matrix:
             parameters:
-              plugin: ["etherscan", "vyper", "plugin_api"]
+              plugin: ["plugin_api"]
       - lint:
           requires:
             - build
@@ -294,15 +293,11 @@ workflows:
           matrix:
             alias: plugins
             parameters:
-              plugin: ["etherscan", "vyper", "plugin_api"]
+              plugin: ["plugin_api"]
               parallelism: [1, 9]
             exclude: 
               - plugin: plugin_api
                 parallelism: 1
-              - plugin: etherscan
-                parallelism: 9
-              - plugin: vyper
-                parallelism: 9
 
       - remix-ide-browser:
           requires:
