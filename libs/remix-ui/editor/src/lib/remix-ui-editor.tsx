@@ -665,7 +665,7 @@ export const EditorUI = (props: EditorUIProps) => {
     editor.addAction(formatAction)
     editor.addAction(zoomOutAction)
     editor.addAction(zoominAction)
-    editor.addAction(executeFreeFunctionAction)
+    freeFunctionAction = editor.addAction(executeFreeFunctionAction)
 
     // we have to add the command because the menu action isn't always available (see onContextMenuHandlerForFreeFunction)
     editor.addCommand(monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyR, () => executeFreeFunctionAction.run())
@@ -673,14 +673,17 @@ export const EditorUI = (props: EditorUIProps) => {
     const contextmenu = editor.getContribution('editor.contrib.contextmenu')
     const orgContextMenuMethod = contextmenu._onContextMenu;
     const onContextMenuHandlerForFreeFunction = async () => {
+      if (freeFunctionAction) {
+        freeFunctionAction.dispose()
+        freeFunctionAction = null
+      }
       const file = await props.plugin.call('fileManager', 'getCurrentFile')
       if (!file.endsWith('.sol')) {
         freeFunctionCondition.set(false)
         return
       }
       const { nodesAtPosition } = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
-      const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
-      if (freeFunctionAction) freeFunctionAction.dispose()
+      const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')      
       if (freeFunctionNode) {
         executeFreeFunctionAction.label = `Run the free function "${freeFunctionNode.name}" in the Remix VM`
         freeFunctionAction = editor.addAction(executeFreeFunctionAction)
