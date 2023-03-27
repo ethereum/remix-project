@@ -5,16 +5,26 @@ import { SolhintPlugin } from "./SolhintPlugin"
 const client = new SolhintPlugin()
 
 export default function App() {
-  const [contents, setContents] = useState('')
+  const [contents, setContents] = useState([])
   useEffect(() => {
-    client.eventEmitter.on('contentsReady', (fileContents: string) => {
-      setContents(fileContents)
+    client.eventEmitter.on('report', (report: any) => {
+      setContents(fileContents => [...fileContents, report])
     })
 
   }, [])
   return (
     <>
-      <div className="m-5 p-2">
+      <div className="">
+        <h1 className="text-2xl font-bold">Solhint Plugin</h1>
+        {contents.map((content, index) => {
+          return (
+            <div key={index} className="">
+              <div className="text-sm">{content.message}</div>
+              <div className="text-sm">{content.line}</div>
+              <div className="text-sm">{content.column}</div>
+            </div>
+          )
+        })}
       </div>
     </>
   )

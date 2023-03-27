@@ -29,6 +29,7 @@ export class SolhintPlugin extends PluginClient {
     console.log(reporter)
     reporter.reports.forEach((report) => {
       console.log(report)
+      this.eventEmitter.emit('report', report)
     })
   }
 
