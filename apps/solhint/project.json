@@ -1,0 +1,61 @@
+{
+  "name": "solhint",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/solhint/src",
+  "projectType": "application",
+  "implicitDependencies": [
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/apps/solhint",
+        "index": "apps/solhint/src/index.html",
+        "baseHref": "./",
+        "main": "apps/solhint/src/main.tsx",
+        "tsConfig": "apps/solhint/tsconfig.app.json",
+        "assets": [
+          "apps/solhint/src/favicon.ico",
+          "apps/solhint/src/profile.json"
+        ],
+        "styles": [],
+        "scripts": [],
+        "webpackConfig": "apps/solhint/webpack.config.js"
+      },
+      "configurations": {
+        "development": {
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/solhint/src/environments/environment.ts",
+              "with": "apps/solhint/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "solhint:build",
+        "hmr": true,
+        "baseHref": "/"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "solhint:build:development",
+          "port": 6004
+        },
+        "production": {
+          "buildTarget": "solhint:build:production"
+        }
+      }
+    }
+  },
+  "tags": []
+}
