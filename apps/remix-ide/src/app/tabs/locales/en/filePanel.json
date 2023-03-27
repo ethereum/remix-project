@@ -54,7 +54,7 @@
   "filePanel.checkoutGitBranch": "Checkout Git Branch",
   "filePanel.findOrCreateABranch": "Find or create a branch.",
   "filePanel.initGitRepositoryLabel": "Initialize workspace as a new git repository",
-  "filePanel.initGitRepositoryWarning": "Please add username and email to Remix GitHub Settings to use git features.",
+  "filePanel.initGitRepositoryWarning": "To use Git features, add username and email to the Github section of the Settings panel.",
   "filePanel.workspaceName": "Workspace name",
   "filePanel.customizeTemplate": "Customize template",
   "filePanel.features": "Features",
