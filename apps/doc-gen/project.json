@@ -14,11 +14,12 @@
         "compiler": "babel",
         "outputPath": "dist/apps/doc-gen",
         "index": "apps/doc-gen/src/index.html",
-        "baseHref": "/",
+        "baseHref": "./",
         "main": "apps/doc-gen/src/main.tsx",
         "tsConfig": "apps/doc-gen/tsconfig.app.json",
         "assets": [
-          "apps/doc-gen/src/favicon.ico"
+          "apps/doc-gen/src/favicon.ico",
+          "apps/doc-gen/src/profile.json"
         ],
         "styles": [],
         "scripts": [],
@@ -42,7 +43,8 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "doc-gen:build",
-        "hmr": true
+        "hmr": true,
+        "baseHref": "/"
       },
       "configurations": {
         "development": {

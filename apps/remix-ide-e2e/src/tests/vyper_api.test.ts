@@ -9,7 +9,7 @@ declare global {
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    init(browser, done, null, true, { name: 'vyper', url: 'http://127.0.0.1:9999'})
+    init(browser, done)
   },
 
   'Should connect to vyper plugin #group1': function (browser: NightwatchBrowser) {

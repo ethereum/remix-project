@@ -1,7 +1,21 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { mapKeys } from './utils/map-keys';
 import { DocItemContext } from './site';
 
 import * as defaultProperties from './common/properties';
+import * as themeHelpers from  './themes/markdown/helpers'
+
+const common = require('./themes/markdown/common.hbs');
+const contract = require('./themes/markdown/contract.hbs');
+const enum_ = require('./themes/markdown/enum.hbs');
+const error = require('./themes/markdown/error.hbs');
+const event = require('./themes/markdown/event.hbs');
+const function_ = require('./themes/markdown/function.hbs');
+const modifier = require('./themes/markdown/modifier.hbs');
+const page = require('./themes/markdown/page.hbs');
+const struct = require('./themes/markdown/struct.hbs');
+const variable = require('./themes/markdown/variable.hbs');
+const userDefinedValueType = require('./themes/markdown/user-defined-value-type.hbs');
 
 export type PropertyGetter = (ctx: DocItemContext, original?: unknown) => unknown;
 export type Properties = Record<string, PropertyGetter>;
@@ -55,23 +69,29 @@ export async function readTemplates(): Promise<Required<Templates>> {
 
 async function readPartials() {
   const partials: NonNullable<Templates['partials']> = {};
-  const partialNames = ["common", "contract", "enum", "error", "event", "function", "modifier", "page", "struct", "variable", "user-defined-value-type"]
-  for (const name of partialNames) {
-    const p = await import('raw-loader!./themes/markdown/' + name + '.hbs')
-    partials[name] = () => p.default
-  }
+
+  partials["common"] = () => common
+  partials["contract"] = () => contract
+  partials["enum"] = () => enum_
+  partials["error"] = () => error
+  partials["event"] = () => event
+  partials["function"] = () => function_
+  partials["modifier"] = () => modifier
+  partials["page"] = () => page
+  partials["struct"] = () => struct
+  partials["variable"] = () => variable
+  partials["user-defined-value-type"] = () => userDefinedValueType
+
   return partials;
 }
 
 async function readHelpers(name: string) {
-  let helpersPath;
   
-  const h = await import('./themes/markdown/helpers');
   const helpers: Record<string, (...args: any[]) => any> = {};
 
-  for (const name in h) {
-    if (typeof h[name] === 'function') {
-      helpers[name] = h[name];
+  for (const name in themeHelpers) {
+    if (typeof themeHelpers[name] === 'function') {
+      helpers[name] = themeHelpers[name];
     }
   }
   

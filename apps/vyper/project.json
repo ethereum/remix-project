@@ -12,13 +12,14 @@
         "compiler": "babel",
         "outputPath": "dist/apps/vyper",
         "index": "apps/vyper/src/index.html",
-        "baseHref": "/",
+        "baseHref": "./",
         "main": "apps/vyper/src/main.tsx",
         "polyfills": "apps/vyper/src/polyfills.ts",
         "tsConfig": "apps/vyper/tsconfig.app.json",
         "assets": [
           "apps/vyper/src/favicon.ico",
-          "apps/vyper/src/assets"
+          "apps/vyper/src/assets",
+          "apps/vyper/src/profile.json"
         ],
         "styles": ["apps/vyper/src/styles.css"],
         "scripts": [],
@@ -42,7 +43,8 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "vyper:build",
-        "hmr": true
+        "hmr": true,
+        "baseHref": "/"
       },
       "configurations": {
         "development": {
