@@ -562,7 +562,7 @@ class FileManager extends Plugin {
 
   async setFileContent(path, content) {
     if (this.currentRequest) {
-      const canCall = await this.askUserPermission('writeFile', '')
+      const canCall = await this.askUserPermission(`writeFile`, `modifying ${path} ...`)
       const required = this.appManager.isRequired(this.currentRequest.from)
       if (canCall && !required) {
         // inform the user about modification after permission is granted and even if permission was saved before
