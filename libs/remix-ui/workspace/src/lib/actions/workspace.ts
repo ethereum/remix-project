@@ -176,7 +176,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
           const hashed = bufferToHex(hash.keccakFromString(params.code))
 
           path = 'contract-' + hashed.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
-          content = atob(params.code)
+          content = atob(decodeURIComponent(params.code))
           await workspaceProvider.set(path, content)
         }
         if (params.url) {
