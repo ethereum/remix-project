@@ -6,9 +6,10 @@ import { toBuffer, addHexPrefix } from '@ethereumjs/util'
 import { EventEmitter } from 'events'
 import { format } from 'util'
 import { ExecutionContext } from './execution-context'
-import VMProvider from './providers/vm.js'
-import InjectedProvider from './providers/injected.js'
-import NodeProvider from './providers/node.js'
+import Config from '../config'
+import { VMProvider } from './providers/vm'
+import { InjectedProvider } from './providers/injected'
+import { NodeProvider } from './providers/node'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
 import { etherScanLink } from './helper'
 import { logBuilder, cancelUpgradeMsg, cancelProxyMsg, addressToString } from "@remix-ui/helper"
@@ -27,9 +28,37 @@ const profile = {
   version: packageJson.version
 }
 
+// see TxRunner.ts in remix-lib
+export type Transaction = {
+  from: string,
+  to: string,
+  value: string,
+  data: string,
+  gasLimit: number,
+  useCall: boolean,
+  timestamp?: number
+}
+
 export class Blockchain extends Plugin {
+  active: boolean
+  event: EventManager
+  events: EventEmitter
+  executionContext: ExecutionContext
+  config: Config
+  txRunner: any
+  networkcallid: number
+  networkStatus: {
+    network: {
+      name: string,
+      id: string      
+    }
+    error?: string
+  }
+  providers: any
+  transactionContextAPI: any
+
   // NOTE: the config object will need to be refactored out in remix-lib
-  constructor (config) {
+  constructor (config: Config) {
     super(profile)
     this.active = false
     this.event = new EventManager()
@@ -387,8 +416,8 @@ export class Blockchain extends Plugin {
     return Web3.utils.toWei(value, unit || 'gwei')
   }
 
-  calculateFee (gas, gasPrice, unit) {
-    return Web3.utils.toBN(gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10), unit || 'gwei')))
+  calculateFee (gas, gasPrice, unit?) {
+    return Web3.utils.toBN(gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10) as string, unit || 'gwei')))
   }
 
   determineGasFees (tx) {
@@ -604,7 +633,7 @@ export class Blockchain extends Plugin {
    *
    * @param {Object} tx    - transaction.
    */
-  sendTransaction (tx) {
+  sendTransaction (tx: Transaction) {
     return new Promise((resolve, reject) => {
       this.executionContext.detectNetwork((error, network) => {
         if (error) return reject(error)
@@ -747,8 +776,8 @@ export class Blockchain extends Plugin {
     }
     try {
       const transaction = await runTransaction()
-      const txResult = transaction.result
-      const tx = transaction.tx
+      const txResult = (transaction as any).result
+      const tx = (transaction as any).tx
       /*
       value of txResult is inconsistent:
           - transact to contract:
