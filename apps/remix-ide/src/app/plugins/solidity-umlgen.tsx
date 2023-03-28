@@ -69,16 +69,16 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   }
 
   onActivation(): void {
-    this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
+    this.on('solidity', 'compilationFinished', async (file: string, source, languageVersion, data, input, version) => {
       const currentTheme: ThemeQualityType = await this.call('theme', 'currentTheme')
       this.currentlySelectedTheme = currentTheme.quality
       this.themeName = currentTheme.name
       let result = ''
       try {
         if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
-          result = await this.flattenContract(source, this.currentFile, data)
+          result = await this.flattenContract(source, file, data)
         }
-        const ast = result.length > 1 ? parser.parse(result) : parser.parse(source.sources[this.currentFile].content)
+        const ast = result.length > 1 ? parser.parse(result) : parser.parse(source.sources[file].content)
         const umlClasses = convertAST2UmlClasses(ast, this.currentFile)
         const umlDot = convertUmlClasses2Dot(umlClasses)
         const payload = vizRenderStringSync(umlDot)
@@ -117,7 +117,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
 
   generateCustomAction = async (action: customAction) => {
     this.updatedSvg = this.updatedSvg.startsWith('<?xml') ? '' : this.updatedSvg
-    this.currentFile = action.path[0]
+    this.currentFile = action.path[0].split('/')[1]
     _paq.push(['trackEvent', 'solidityumlgen', 'activated'])
     await this.generateUml(action.path[0])
   }
@@ -136,12 +136,14 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
    * @returns {Promise<string>}
    */
   async flattenContract (source: any, filePath: string, data: any) {
+    let filename = filePath.split('/')[1].split('.')[0]
     const dependencyGraph = getDependencyGraph(data.sources, filePath)
     const sorted = dependencyGraph.isEmpty()
         ? [filePath]
         : dependencyGraph.sort().reverse()
     const result = concatSourceFiles(sorted, source.sources)
-    await this.call('fileManager', 'writeFile', `${filePath}_flattened.sol`, result)
+    await this.call('fileManager', 'writeFile', `contracts/${filename}_flattened.sol`, result)
+    filename = null
     return result
   }
 
