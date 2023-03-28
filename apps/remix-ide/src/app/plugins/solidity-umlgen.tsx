@@ -5,7 +5,7 @@ import React from 'react'
 import { RemixUiSolidityUmlGen } from '@remix-ui/solidity-uml-gen' 
 import { ISolidityUmlGen, ThemeQualityType, ThemeSummary } from 'libs/remix-ui/solidity-uml-gen/src/types'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
-import { concatSourceFiles, getDependencyGraph } from 'libs/remix-ui/solidity-compiler/src/lib/logic/flattenerUtilities'
+import { concatSourceFiles, getDependencyGraph, normalizeContractPath } from 'libs/remix-ui/solidity-compiler/src/lib/logic/flattenerUtilities'
 import { convertUmlClasses2Dot } from 'sol2uml/lib/converterClasses2Dot'
 import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
 import vizRenderStringSync from '@aduh95/viz.js/sync'
@@ -136,16 +136,29 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
    * @returns {Promise<string>}
    */
   async flattenContract (source: any, filePath: string, data: any) {
-    let filename = filePath.split('/')[1].split('.')[0]
-    const dependencyGraph = getDependencyGraph(data.sources, filePath)
-    const sorted = dependencyGraph.isEmpty()
-        ? [filePath]
-        : dependencyGraph.sort().reverse()
-    const result = concatSourceFiles(sorted, source.sources)
-    await this.call('fileManager', 'writeFile', `${filePath.split('/')[0]}/${filename}_flattened.sol`, result)
-    filename = null
+    const normalPath = normalizeContractPath(filePath)
+    let dependencyGraph
+    let sorted
+    let result
+    let sources
+    try{
+      dependencyGraph = getDependencyGraph(data.sources, filePath)
+      sorted = dependencyGraph.isEmpty()
+      ? [filePath]
+      : dependencyGraph.sort().reverse()
+      sources = source.sources
+      result = concatSourceFiles(sorted, sources)
+    }catch(err){
+      console.warn(err)
+    }
+    await this.call('fileManager', 'writeFile', normalPath, result)
+    sorted = null
+    sources = null
+    dependencyGraph = null
     return result
   }
+
+
 
   async showUmlDiagram(svgPayload: string) {
     this.updatedSvg = svgPayload
