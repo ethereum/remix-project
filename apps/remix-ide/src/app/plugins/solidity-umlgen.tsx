@@ -142,7 +142,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         ? [filePath]
         : dependencyGraph.sort().reverse()
     const result = concatSourceFiles(sorted, source.sources)
-    await this.call('fileManager', 'writeFile', `contracts/${filename}_flattened.sol`, result)
+    await this.call('fileManager', 'writeFile', `${filePath.split('/')[0]}/${filename}_flattened.sol`, result)
     filename = null
     return result
   }

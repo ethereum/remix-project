@@ -47,7 +47,7 @@ export class ContractFlattener extends Plugin {
     : dependencyGraph.sort().reverse()
     const sources = source.sources
     const result = concatSourceFiles(sorted, sources)
-    await this.call('fileManager', 'writeFile', `contracts/${filename}_flattened.sol`, result)
+    await this.call('fileManager', 'writeFile', `${filePath.split('/')[0]}/${filename}_flattened.sol`, result)
     _paq.push(['trackEvent', 'plugin', 'contractFlattener', 'flattenAContract'])
   }
 }
