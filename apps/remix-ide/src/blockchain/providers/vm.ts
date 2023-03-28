@@ -1,7 +1,7 @@
 import Web3 from 'web3'
 import { privateToAddress, hashPersonalMessage } from '@ethereumjs/util'
 import BN from 'bn.js'
-const { extend } = require('@remix-project/remix-simulator')
+import { extend } from '@remix-project/remix-simulator'
 import { ExecutionContext } from '../execution-context'
 
 export class VMProvider {
