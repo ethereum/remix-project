@@ -1,31 +1,26 @@
 const Web3 = require('web3')
 import { hashPersonalMessage } from '@ethereumjs/util'
-const Personal = require('web3-eth-personal')
+import { ExecutionContext } from '../execution-context'
 
-class NodeProvider {
-  constructor (executionContext, config) {
+export class InjectedProvider {
+  executionContext: ExecutionContext
+
+  constructor (executionContext) {
     this.executionContext = executionContext
-    this.config = config
   }
 
   getAccounts (cb) {
-    if (this.config.get('settings/personal-mode')) {
-      return this.executionContext.web3().eth.personal.getAccounts(cb)
-    }
     return this.executionContext.web3().eth.getAccounts(cb)
   }
 
   newAccount (passwordPromptCb, cb) {
-    if (!this.config.get('settings/personal-mode')) {
-      return cb('Not running in personal mode')
-    }
     passwordPromptCb((passphrase) => {
       this.executionContext.web3().eth.personal.newAccount(passphrase, cb)
     })
   }
 
   async resetEnvironment () {
-     /* Do nothing. */
+     /* Do nothing. */ 
   }
 
   async getBalanceInEther (address) {
@@ -37,11 +32,10 @@ class NodeProvider {
     this.executionContext.web3().eth.getGasPrice(cb)
   }
 
-  signMessage (message, account, passphrase, cb) {
+  signMessage (message, account, _passphrase, cb) {
     const messageHash = hashPersonalMessage(Buffer.from(message))
     try {
-      const personal = new Personal(this.executionContext.web3().currentProvider)
-      personal.sign(message, account, passphrase, (error, signedData) => {
+      this.executionContext.web3().eth.personal.sign(message, account, (error, signedData) => {
         cb(error, '0x' + messageHash.toString('hex'), signedData)
       })
     } catch (e) {
@@ -50,8 +44,6 @@ class NodeProvider {
   }
 
   getProvider () {
-    return this.executionContext.getProvider()
+    return 'injected'
   }
 }
-
-module.exports = NodeProvider

@@ -1,8 +1,16 @@
-const Web3 = require('web3')
+import Web3 from 'web3'
 import { privateToAddress, hashPersonalMessage } from '@ethereumjs/util'
 import BN from 'bn.js'
 const { extend } = require('@remix-project/remix-simulator')
-class VMProvider {
+import { ExecutionContext } from '../execution-context'
+
+export class VMProvider {
+  executionContext: ExecutionContext
+  web3: Web3
+  worker: Worker
+  provider: any
+  newAccountCallback: any
+  accounts: any
   constructor (executionContext) {
     this.executionContext = executionContext
     this.worker = null
@@ -99,5 +107,3 @@ class VMProvider {
     return this.executionContext.getProvider()
   }
 }
-
-module.exports = VMProvider
