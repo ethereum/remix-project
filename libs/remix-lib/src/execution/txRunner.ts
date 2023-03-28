@@ -9,6 +9,7 @@ export type Transaction = {
   gasLimit: number,
   useCall: boolean,
   timestamp?: number
+  type: '0x1' | '0x2'
 }
 
 export class TxRunner {
