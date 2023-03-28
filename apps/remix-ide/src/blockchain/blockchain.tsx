@@ -16,7 +16,7 @@ import { logBuilder, cancelUpgradeMsg, cancelProxyMsg, addressToString } from "@
 const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
 const { txResultHelper } = helpers
 const { resultToRemixTx } = txResultHelper
-const packageJson = require('../../../../package.json')
+import * as packageJson from '../../../../package.json'
 
 const _paq = window._paq = window._paq || []  //eslint-disable-line
 
@@ -792,7 +792,7 @@ export class Blockchain extends Plugin {
         const hhlogs = await this.web3().eth.getHHLogsForTx(txResult.transactionHash)
 
         if (hhlogs && hhlogs.length) {
-          let finalLogs = <div><div><b>console.log:</b></div>
+          const finalLogs = <div><div><b>console.log:</b></div>
           {
             hhlogs.map((log) => {
               let formattedLog
