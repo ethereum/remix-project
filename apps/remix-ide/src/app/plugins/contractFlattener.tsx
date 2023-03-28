@@ -39,6 +39,7 @@ export class ContractFlattener extends Plugin {
    * @returns {Promise<void>}
    */
   async flattenContract (source: any, filePath: string, data: any) {
+    const filename = filePath.split('/')[1].split('.')[0]
     const ast = data.sources
     const dependencyGraph = getDependencyGraph(ast, filePath)
     const sorted = dependencyGraph.isEmpty()
@@ -46,7 +47,7 @@ export class ContractFlattener extends Plugin {
     : dependencyGraph.sort().reverse()
     const sources = source.sources
     const result = concatSourceFiles(sorted, sources)
-    await this.call('fileManager', 'writeFile', `${filePath}_flattened.sol`, result)
+    await this.call('fileManager', 'writeFile', `contracts/${filename}_flattened.sol`, result)
     _paq.push(['trackEvent', 'plugin', 'contractFlattener', 'flattenAContract'])
   }
 }
