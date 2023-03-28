@@ -107,18 +107,19 @@ export class TxRunnerWeb3 {
         console.log(errNetWork)
         return
       }
+      const txCopy =  { ...tx }
       if (network && network.lastBlock) {
         if (network.lastBlock.baseFeePerGas) {
           // the sending stack (web3.js / metamask need to have the type defined)
           // this is to avoid the following issue: https://github.com/MetaMask/metamask-extension/issues/11824
-          tx.type = '0x2'
-          tx.maxFeePerGas = network.lastBlock.baseFeePerGas + 1 // + priority fee
+          txCopy.type = '0x2'
+          txCopy.maxFeePerGas = network.lastBlock.baseFeePerGas + 10000 // + priority fee
         } else {
-          tx.type = '0x1'
-          tx.gasPrice = network.lastBlock.baseFeePerGas
+          txCopy.type = '0x1'
+          txCopy.gasPrice = network.lastBlock.baseFeePerGas
         }
       }      
-      this.getWeb3().eth.estimateGas(tx, (err, gasEstimation) => {
+      this.getWeb3().eth.estimateGas(txCopy, (err, gasEstimation) => {
         if (err && err.message.indexOf('Invalid JSON RPC response') !== -1) {
           // // @todo(#378) this should be removed when https://github.com/WalletConnect/walletconnect-monorepo/issues/334 is fixed
           callback(new Error('Gas estimation failed because of an unknown internal error. This may indicated that the transaction will fail.'))
