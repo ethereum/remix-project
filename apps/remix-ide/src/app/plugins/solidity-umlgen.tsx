@@ -76,7 +76,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       let result = ''
       try {
         if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
-          result = await this.flattenContract(file)
+          result = await this.flattenContract(source, file, data)
         }
         const ast = result.length > 1 ? parser.parse(result) : parser.parse(source.sources[file].content)
         const umlClasses = convertAST2UmlClasses(ast, this.currentFile)
@@ -135,8 +135,8 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
    * and assigns to a local property
    * @returns {Promise<string>}
    */
-  async flattenContract (filePath: string) {
-    const result = await this.call('contractflattener', 'flatten', filePath)
+  async flattenContract (source: any, filePath: string, data: any) {
+    const result = await this.call('contractflattener', 'flattenContract', source, filePath, data)
     return result
   }
 
