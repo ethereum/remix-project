@@ -361,7 +361,7 @@ module.exports = {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, from?: string, gas?: number): Promise<Options> => {`) !== -1,
           'Incorrect content')
         browser.assert.ok(content.indexOf(`gas: gas || 3600000`) !== -1,
-        'Incorrect gas cost')
+          'Incorrect gas cost')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
       .click('*[data-id="treeViewLitreeViewItemscripts/ethers-lib.ts"]')
@@ -373,7 +373,7 @@ module.exports = {
         browser.assert.ok(content.indexOf(`export const deploy = async (contractName: string, args: Array<any>, accountIndex?: number): Promise<ethers.Contract> => {`) !== -1,
           'Incorrect content')
       })
-      // No test file is added in upgradeable contract template
+    // No test file is added in upgradeable contract template
   },
 
   // WORKSPACE TEMPLATES E2E END
@@ -443,6 +443,61 @@ module.exports = {
       .click('*[data-id="workspacesSelect"]')
       .waitForElementNotPresent(`[data-id="dropdown-item-workspace_name_1"]`)
       .end()
+  },
+
+  'Should create workspace for test #group2': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="workspaceCreate"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
+      .click('select[id="wstemplate"]')
+      .click('select[id="wstemplate"] option[value=ozerc1155]')
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'sometestworkspace' })
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItem.prettierrc.json"]')
+      .pause(2000)
+  },
+
+  'Should change the current workspace in localstorage to a non existant value, reload the page and see the workspace created #group2': function (browser: NightwatchBrowser) {
+    browser
+      .execute(function () {
+        localStorage.setItem('currentWorkspace', 'non_existing_workspace')
+      })
+      .refreshPage()
+      .clickLaunchIcon('filePanel')
+      .currentWorkspaceIs('sometestworkspace')
+  },
+
+  'Should create workspace for next test #group2': function (browser: NightwatchBrowser) {
+    browser
+      .click('*[data-id="workspaceCreate"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
+      // eslint-disable-next-line dot-notation
+      .click('select[id="wstemplate"]')
+      .click('select[id="wstemplate"] option[value=ozerc1155]')
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_db_test' })
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItem.prettierrc.json"]')
+      .pause(2000)
+  },
+
+  'Should clear indexedDB and reload the page and see the default workspace #group2': function (browser: NightwatchBrowser) {
+    browser
+      .execute(function () {
+        indexedDB.deleteDatabase('RemixFileSystem')
+      })
+      .refreshPage()
+      .clickLaunchIcon('filePanel')
+      .currentWorkspaceIs('default_workspace')
+
   },
 
   tearDown: sauce
