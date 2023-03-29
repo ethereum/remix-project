@@ -32,7 +32,7 @@ module.exports = {
       .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['Ballot'])
   },
 
-  'Deploy Ballot #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Deploy Ballot #group1': function (browser: NightwatchBrowser) {
     browser.pause(500)
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
