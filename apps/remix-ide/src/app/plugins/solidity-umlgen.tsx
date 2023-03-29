@@ -135,7 +135,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
    * and assigns to a local property
    * @returns {Promise<string>}
    */
-  async flattenContract (source: any, filePath: string, data: any) {
+  async flattenContract (filePath: string) {
     const result = await this.call('contractflattener', 'flatten', filePath)
     return result
   }
