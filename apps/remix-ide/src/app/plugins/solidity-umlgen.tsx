@@ -136,25 +136,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
    * @returns {Promise<string>}
    */
   async flattenContract (source: any, filePath: string, data: any) {
-    const normalPath = normalizeContractPath(filePath)
-    let dependencyGraph
-    let sorted
-    let result
-    let sources
-    try{
-      dependencyGraph = getDependencyGraph(data.sources, filePath)
-      sorted = dependencyGraph.isEmpty()
-      ? [filePath]
-      : dependencyGraph.sort().reverse()
-      sources = source.sources
-      result = concatSourceFiles(sorted, sources)
-    }catch(err){
-      console.warn(err)
-    }
-    await this.call('fileManager', 'writeFile', normalPath, result)
-    sorted = null
-    sources = null
-    dependencyGraph = null
+    const result = await this.call('contractflattener', 'flatten', filePath)
     return result
   }
 
