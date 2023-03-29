@@ -135,7 +135,7 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
                 callback={() => createWorkspace("ozerc1155")} />
               <WorkspaceTemplate
                 gsID="solhintLogo"
-                workspaceTitle="Remix Default"
+                workspaceTitle="Remix Basic"
                 description={intl.formatMessage({ id: 'home.remixDefaultTemplateDesc' })}
                 callback={() => createWorkspace("remixDefault")} />
           </Carousel>
