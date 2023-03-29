@@ -9,9 +9,9 @@ const profile = {
   name: 'contractflattener',
   displayName: 'Contract Flattener',
   description: 'Flatten solidity contracts',
-  methods: ['flattenAContract', 'normalizeContractPath'],
+  methods: ['flattenAContract', 'flattenContract'],
   events: [],
-  maintainedBy: 'Remix Team',
+  maintainedBy: 'Remix',
 }
 
 export class ContractFlattener extends Plugin {
