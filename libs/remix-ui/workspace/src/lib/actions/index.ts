@@ -53,7 +53,6 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     const params = queryParams.get() as UrlParametersType
     const workspaces = await getWorkspaces() || []
     dispatch(setWorkspaces(workspaces))
-    // console.log('workspaces: ', workspaces)
     if (params.gist) {
       await createWorkspaceTemplate('gist-sample', 'gist-template')
       plugin.setWorkspace({ name: 'gist-sample', isLocalhost: false })
@@ -124,6 +123,8 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         workspaceProvider.setWorkspace(name)
         plugin.setWorkspace({ name: name, isLocalhost: false })
         dispatch(setCurrentWorkspace({ name: name, isGitRepo: false }))
+      }else{
+        await basicWorkspaceInit(workspaces, workspaceProvider)
       } 
     } else {
       await basicWorkspaceInit(workspaces, workspaceProvider)

@@ -47,9 +47,15 @@ export function Workspace () {
 
   useEffect(() => {
     if (global.fs.mode === 'browser') {
-      if (global.fs.browser.currentWorkspace) setCurrentWorkspace(global.fs.browser.currentWorkspace)
-      else setCurrentWorkspace(NO_WORKSPACE)
-      global.dispatchFetchWorkspaceDirectory(ROOT_PATH)
+      if (global.fs.browser.currentWorkspace) {
+        setCurrentWorkspace(global.fs.browser.currentWorkspace)
+        global.dispatchFetchWorkspaceDirectory(ROOT_PATH)
+      }
+      else 
+      { 
+        setCurrentWorkspace(NO_WORKSPACE)
+      }
+      
     } else if (global.fs.mode === 'localhost') {
       global.dispatchFetchWorkspaceDirectory(ROOT_PATH)
       setCurrentWorkspace(LOCALHOST)
