@@ -16,15 +16,15 @@ module.exports = {
   '@sources': function () {
     return sources
   },
+
+  'Set Ballot 0.4.14': function (browser: NightwatchBrowser) {
+    browser
+      .setSolidityCompilerVersion('soljson-v0.4.14+commit.c2215d46.js')
+  },
+
   'Add Ballot': function (browser: NightwatchBrowser) {
     browser
       .addFile('Untitled.sol', sources[0]['Untitled.sol'])
-  },
-  'Set Ballot 0.4.14': function (browser: NightwatchBrowser) {
-    browser
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .clickLaunchIcon('solidity')
-      .setSolidityCompilerVersion('soljson-v0.4.14+commit.c2215d46.js')
   },
 
   'Compile Ballot with compiler version 0.4.14': function (browser: NightwatchBrowser) {
