@@ -93,7 +93,7 @@ export class PermissionHandlerPlugin extends Plugin {
         if (!this.permissions[to.name][method][from.name]) return this.openPermission(from, to, method, message, sensitiveCall)
       }
 
-      const { allow, hash } = this.permissions[to.name][method][from.name]
+      const { allow, hash } = sensitiveCall ? this.sessionPermissions[to.name][method][from.name] : this.permissions[to.name][method][from.name]
       if (!allow) {
         const warning = this.notAllowWarning(from, to, method)
         this.call('notification', 'toast', warning)
