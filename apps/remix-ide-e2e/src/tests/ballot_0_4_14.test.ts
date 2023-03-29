@@ -19,7 +19,6 @@ module.exports = {
 
   'Set Ballot 0.4.14': function (browser: NightwatchBrowser) {
     browser
-      .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.4.14+commit.c2215d46.js')
   },
 
