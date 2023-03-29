@@ -28,6 +28,12 @@ const profile = {
   version: packageJson.version
 }
 
+export type TransactionContextAPI = {
+  getAddress: (cb: (error: Error, result: string) => void) => void,
+  getValue: (cb: (error: Error, result: string) => void) => void,
+  getGasLimit: (cb: (error: Error, result: string) => void) => void
+}
+
 // see TxRunner.ts in remix-lib
 export type Transaction = {
   from: string,
@@ -45,7 +51,7 @@ export class Blockchain extends Plugin {
   events: EventEmitter
   executionContext: ExecutionContext
   config: Config
-  txRunner: any
+  txRunner: any // TxRunner
   networkcallid: number
   networkStatus: {
     network: {
@@ -54,8 +60,8 @@ export class Blockchain extends Plugin {
     }
     error?: string
   }
-  providers: any
-  transactionContextAPI: any
+  providers: { [key: string]: VMProvider | InjectedProvider | NodeProvider }
+  transactionContextAPI: TransactionContextAPI
 
   // NOTE: the config object will need to be refactored out in remix-lib
   constructor (config: Config) {
@@ -478,14 +484,14 @@ export class Blockchain extends Plugin {
   }
 
   web3VM () {
-    return this.providers.vm.web3
+    return (this.providers.vm as VMProvider).web3
   }
 
   web3 () {
     // @todo(https://github.com/ethereum/remix-project/issues/431)
     const isVM = this.executionContext.isVM()
     if (isVM) {
-      return this.providers.vm.web3
+      return (this.providers.vm as VMProvider).web3
     }
     return this.executionContext.web3()
   }
@@ -541,7 +547,7 @@ export class Blockchain extends Plugin {
   }
 
   // NOTE: the config is only needed because exectuionContext.init does
-  async resetAndInit (config, transactionContextAPI) {
+  async resetAndInit (config: Config, transactionContextAPI: TransactionContextAPI) {
     this.transactionContextAPI = transactionContextAPI
     this.executionContext.init(config)
     this.executionContext.stopListenOnLastBlock()
@@ -603,7 +609,7 @@ export class Blockchain extends Plugin {
     if (!this.executionContext.isVM()) {
       throw new Error('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
     }
-    return this.providers.vm.createVMAccount(newAccount)
+    return (this.providers.vm as VMProvider).createVMAccount(newAccount)
   }
 
   newAccount (_password, passwordPromptCb, cb) {

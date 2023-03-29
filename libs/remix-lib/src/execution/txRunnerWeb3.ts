@@ -90,7 +90,7 @@ export class TxRunnerWeb3 {
   }
 
   runInNode (from, to, data, value, gasLimit, useCall, timestamp, confirmCb, gasEstimationForceSend, promptCb, callback) {
-    const tx = { from: from, to: to, data: data, value: value, type: null, maxFeePerGas: null, gasPrice: null }
+    const tx = { from: from, to: to, data: data, value: value }
     if (!from) return callback('the value of "from" is not defined. Please make sure an account is selected.')
     if (useCall) {
       tx['gas'] = gasLimit
@@ -107,7 +107,7 @@ export class TxRunnerWeb3 {
         console.log(errNetWork)
         return
       }
-      const txCopy =  { ...tx }
+      const txCopy =  { ...tx, type: undefined, maxFeePerGas: undefined, gasPrice: undefined  }
       if (network && network.lastBlock) {
         if (network.lastBlock.baseFeePerGas) {
           // the sending stack (web3.js / metamask need to have the type defined)
