@@ -15,23 +15,20 @@ const profile = {
 }
 
 export class ContractFlattener extends Plugin {
-  fileName: string
   constructor() {
     super(profile)
-    this.fileName = ''
   }
 
   onActivation(): void {
     this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
-      await this.flattenContract(source, this.fileName, data)
+      await this.flattenContract(source, file, data)
     })  
     _paq.push(['trackEvent', 'plugin', 'activated', 'contractFlattener'])
   }
 
   async flattenAContract(action: customAction) {
-    this.fileName = action.path[0]
     this.call('manager', 'deactivatePlugin', 'solidityumlgen')
-    await this.call('solidity', 'compile', this.fileName)
+    await this.call('solidity', 'compile', action.path[0])
   }
 
   /**
