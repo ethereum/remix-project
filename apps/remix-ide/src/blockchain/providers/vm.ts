@@ -1,17 +1,19 @@
 import Web3 from 'web3'
 import { privateToAddress, hashPersonalMessage } from '@ethereumjs/util'
 import BN from 'bn.js'
-import { extend } from '@remix-project/remix-simulator'
+import { extend, JSONRPCRequestPayload, JSONRPCResponseCallback } from '@remix-project/remix-simulator'
 import { ExecutionContext } from '../execution-context'
 
 export class VMProvider {
   executionContext: ExecutionContext
   web3: Web3
   worker: Worker
-  provider: any
-  newAccountCallback: any
-  accounts: any
-  constructor (executionContext) {
+  provider: {
+    sendAsync: (query: JSONRPCRequestPayload, callback: JSONRPCResponseCallback) => void
+  }
+  newAccountCallback: {[stamp: number]: (error: Error, address: string) => void}
+
+  constructor (executionContext: ExecutionContext) {
     this.executionContext = executionContext
     this.worker = null
     this.provider = null
@@ -29,7 +31,6 @@ export class VMProvider {
 
   async resetEnvironment () {
     if (this.worker) this.worker.terminate()
-    this.accounts = {}
     this.worker = new Worker(new URL('./worker-vm', import.meta.url))
     const provider = this.executionContext.getProviderObject()
 
@@ -52,7 +53,6 @@ export class VMProvider {
             }
             this.web3 = new Web3(this.provider)
             extend(this.web3)
-            this.accounts = {}
             this.executionContext.setWeb3(this.executionContext.getProvider(), this.web3)
             resolve({})
           } else {
