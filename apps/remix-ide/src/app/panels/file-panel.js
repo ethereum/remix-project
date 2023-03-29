@@ -95,6 +95,7 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   getAvailableWorkspaceName (name) {
+    if(!this.workspaces) return null
     let index = 1
     let workspace = this.workspaces.find(workspace => workspace.name === name + ' - ' + index)
     while (workspace) {
