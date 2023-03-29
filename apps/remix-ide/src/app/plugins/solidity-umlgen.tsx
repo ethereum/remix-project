@@ -76,7 +76,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       let result = ''
       try {
         if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
-          result = await this.flattenContract(source, file, data)
+          result = await this.flattenContract(file)
         }
         const ast = result.length > 1 ? parser.parse(result) : parser.parse(source.sources[file].content)
         const umlClasses = convertAST2UmlClasses(ast, this.currentFile)
