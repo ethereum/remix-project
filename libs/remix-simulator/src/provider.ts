@@ -12,6 +12,21 @@ import { Debug } from './methods/debug'
 import { generateBlock } from './genesis'
 import { VMContext } from './vm-context'
 
+export interface JSONRPCRequestPayload {
+  params: any[];
+  method: string;
+  id: number;
+  jsonrpc: string;
+}
+
+export interface JSONRPCResponsePayload {
+  result: any;
+  id: number;
+  jsonrpc: string;
+}
+
+export type JSONRPCResponseCallback = (err: Error, result?: JSONRPCResponsePayload) =>  void
+
 export class Provider {
   options: Record<string, string | number>
   vmContext
@@ -56,7 +71,7 @@ export class Provider {
     }
   }
 
-  sendAsync (payload, callback) {
+  sendAsync (payload: JSONRPCRequestPayload, callback: (err: Error, result?: JSONRPCResponsePayload) =>  void) {
     // log.info('payload method is ', payload.method) // commented because, this floods the IDE console
     if (!this.initialized) {
       this.pendingRequests.push({ payload, callback })
