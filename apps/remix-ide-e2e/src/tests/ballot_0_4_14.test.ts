@@ -16,13 +16,20 @@ module.exports = {
   '@sources': function () {
     return sources
   },
+  'Turn off autcompilation': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .clickLaunchIcon('solidity')
+      .waitForElementVisible('[for="autoCompile"]')
+      .click('[for="autoCompile"]')
+  },
+
   'Add Ballot': function (browser: NightwatchBrowser) {
     browser
       .addFile('Untitled.sol', sources[0]['Untitled.sol'])
   },
   'Set Ballot 0.4.14': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.4.14+commit.c2215d46.js')
   },
