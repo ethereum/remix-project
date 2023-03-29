@@ -124,6 +124,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         plugin.setWorkspace({ name: name, isLocalhost: false })
         dispatch(setCurrentWorkspace({ name: name, isGitRepo: false }))
       }else{
+        _paq.push(['trackEvent', 'Storage', 'error', `Workspace in localstorage not found: ${localStorage.getItem("currentWorkspace")}`])
         await basicWorkspaceInit(workspaces, workspaceProvider)
       } 
     } else {
