@@ -170,6 +170,7 @@ function _resolvePathArray(parts) {
 }
 
 export function normalizeContractPath(contractPath: string): string {
+		console.log('contractPath', contractPath)
     let paths = contractPath.split('/')
     let filename = paths[paths.length - 1].split('.')[0]
     let folders = ''
