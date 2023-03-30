@@ -31,6 +31,9 @@ export class CompilerMetadata extends Plugin {
 
   onActivation () {
     const self = this
+    this.on('filePanel', 'setWorkspace', () => {
+      this.buildInfoNames = {}
+    })
     this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
       if (!await this.call('settings', 'get', 'settings/generate-contract-metadata')) return
       const compiler = new CompilerAbstract(languageVersion, data, source, input)
