@@ -1,17 +1,18 @@
 import { Monaco } from "@monaco-editor/react"
-import monaco from "monaco-editor"
 import { EditorUIProps } from "../types"
+import { monacoTypes } from '@remix-ui/editor';
 
-export class RemixDefinitionProvider implements monaco.languages.DefinitionProvider {
+export class RemixDefinitionProvider implements monacoTypes.languages.DefinitionProvider {
     props: EditorUIProps
     monaco: Monaco
     constructor(props: any, monaco: any) {
         this.props = props
         this.monaco = monaco
+        
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async provideDefinition(model: monaco.editor.ITextModel, position: monaco.Position, token: monaco.CancellationToken): Promise<monaco.languages.Definition | monaco.languages.LocationLink[]> {
+    async provideDefinition(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, token: monacoTypes.CancellationToken): Promise<monacoTypes.languages.Definition | monacoTypes.languages.LocationLink[]> {
         const cursorPosition = this.props.editorAPI.getCursorPosition()
         let jumpLocation = await this.jumpToDefinition(cursorPosition)
         if (!jumpLocation || !jumpLocation.fileName) {

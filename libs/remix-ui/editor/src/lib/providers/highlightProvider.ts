@@ -1,9 +1,9 @@
 import { Monaco } from "@monaco-editor/react"
 import { sourceMappingDecoder } from "@remix-project/remix-debug"
-import monaco from "monaco-editor"
 import { EditorUIProps } from "../types"
+import { monacoTypes } from '@remix-ui/editor';
 
-export class RemixHighLightProvider implements monaco.languages.DocumentHighlightProvider {
+export class RemixHighLightProvider implements monacoTypes.languages.DocumentHighlightProvider {
     props: EditorUIProps
     monaco: Monaco
     constructor(props: any, monaco: any) {
@@ -12,10 +12,10 @@ export class RemixHighLightProvider implements monaco.languages.DocumentHighligh
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async provideDocumentHighlights(model: monaco.editor.ITextModel, position: monaco.Position, token: monaco.CancellationToken): Promise<monaco.languages.DocumentHighlight[]> {
+    async provideDocumentHighlights(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, token: monacoTypes.CancellationToken): Promise<monacoTypes.languages.DocumentHighlight[]> {
         const cursorPosition = this.props.editorAPI.getCursorPosition()
         const nodes = await this.props.plugin.call('codeParser', 'referrencesAtPosition', cursorPosition)
-        const highlights: monaco.languages.DocumentHighlight[] = []
+        const highlights: monacoTypes.languages.DocumentHighlight[] = []
         if (nodes && nodes.length) {
             const compilationResult = await this.props.plugin.call('codeParser', 'getLastCompilationResult')
             const file = await this.props.plugin.call('fileManager', 'file')

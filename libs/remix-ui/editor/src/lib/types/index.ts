@@ -1,8 +1,7 @@
 import { Monaco } from "@monaco-editor/react"
-import { IMarkdownString, IPosition, MarkerSeverity } from "monaco-editor"
 import React from "react"
-import monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import { commitChange } from "@remix-ui/git"
+import { monacoTypes } from '@remix-ui/editor';
 
 export type sourceAnnotation = {
   row: number,
@@ -44,12 +43,12 @@ export type lineText = {
   className: string
   afterContentClassName: string
   hide: boolean,
-  hoverMessage: IMarkdownString | IMarkdownString[]
+  hoverMessage: monacoTypes.IMarkdownString | monacoTypes.IMarkdownString[]
 }
 
 export type errorMarker = {
   message: string
-  severity: MarkerSeverity | 'warning' | 'info' | 'error' | 'hint'
+  severity: monacoTypes.MarkerSeverity | 'warning' | 'info' | 'error' | 'hint'
   position: {
     start: {
       line: number
@@ -76,16 +75,16 @@ export interface IEditorAPI {
   findMatches: (uri: string, value: string) => any
   getFontSize: () => number,
   getValue: (uri: string) => string
-  getCursorPosition: (offset?: boolean) => number | IPosition
-  getHoverPosition: (position: IPosition) => number
+  getCursorPosition: (offset?: boolean) => number | monacoTypes.IPosition
+  getHoverPosition: (position: monacoTypes.IPosition) => number
   addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
   clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
   keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
   addErrorMarker: (errors: errorMarker[], from: string) => void
   clearErrorMarkers: (sources: string[] | { [fileName: string]: any }, from: string) => void
   monacoRef: React.MutableRefObject<Monaco>
-  editorRef: React.MutableRefObject<monaco.editor.IStandaloneCodeEditor>
-  diffEditorRef: React.MutableRefObject<monaco.editor.IStandaloneDiffEditor>
+  editorRef: React.MutableRefObject<any>
+  diffEditorRef: React.MutableRefObject<any>
 }
 
 export interface IEditorApiEvents {
