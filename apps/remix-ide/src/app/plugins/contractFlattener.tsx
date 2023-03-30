@@ -56,7 +56,6 @@ export class ContractFlattener extends Plugin {
     let sorted
     let result
     let sources
-    console.log('flattenContract', source, filePath, data)
     try{
       dependencyGraph = getDependencyGraph(ast, filePath)
       sorted = dependencyGraph.isEmpty()
