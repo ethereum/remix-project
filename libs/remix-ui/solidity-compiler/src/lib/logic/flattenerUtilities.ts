@@ -23,7 +23,6 @@ export function concatSourceFiles(files: any[], sources: any) {
 
 function _traverse(graph, visited, ast, name) {
 	let currentAst = null
-	if(ast[name] === null || ast[name] === undefined || ast[name] === 'undefined') return
 	currentAst = ast[name].ast
 	const dependencies = _getDependencies(currentAst);
 	for (const dependency of dependencies) {
