@@ -19,9 +19,9 @@ const showTable = (opts, showTableHash) => {
   }
   if (!opts.isCall) {
     if (opts.status !== undefined && opts.status !== null) {
-      if (opts.status === '0x0' || opts.status === false) {
+      if (opts.status === 0 || opts.status === '0x0' || opts.status === false) {
         msg = 'Transaction mined but execution failed'
-      } else if (opts.status === '0x1' || opts.status === true) {
+      } else if (opts.status === 1 || opts.status === '0x1' || opts.status === true) {
         msg = 'Transaction mined and execution succeed'
       }
     } else {

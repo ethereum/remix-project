@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useRef, useContext } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
+import { TEMPLATE_NAMES } from '@remix-ui/workspace'
 import { ThemeContext} from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import WorkspaceTemplate from './workspaceTemplate'
@@ -59,8 +60,10 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
   const createWorkspace = async (templateName) => {
     await plugin.appManager.activatePlugin('filePanel')
     const timeStamp = Date.now()
-    await plugin.call('filePanel', 'createWorkspace', templateName + "_" + timeStamp, templateName)
-    await plugin.call('filePanel', 'setWorkspace', templateName + "_" + timeStamp)
+    let templateDisplayName = TEMPLATE_NAMES[templateName]
+    templateDisplayName = await plugin.call('filePanel', 'getAvailableWorkspaceName', templateDisplayName)
+    await plugin.call('filePanel', 'createWorkspace', templateDisplayName, templateName)
+    await plugin.call('filePanel', 'setWorkspace', templateDisplayName)
     plugin.verticalIcons.select('filePanel')
     _paq.push(['trackEvent', 'hometab', 'homeGetStarted', templateName])
   }
@@ -68,7 +71,7 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
   return (
     <div className="pl-2" id="hTGetStartedSection">
       <label style={{fontSize: "1.2rem"}}>
-        <span className="mr-2" style={{fontWeight: "bold"}}>
+        <span className="mr-2">
           <FormattedMessage id="home.getStarted" />
         </span>
         - <FormattedMessage id="home.projectTemplates" />
@@ -106,30 +109,35 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
             itemClass="w-100"
           >
             <WorkspaceTemplate
-              gsID="starkNetLogo"
-              workspaceTitle="Blank"
-              description={intl.formatMessage({ id: 'home.blankTemplateDesc' })}
-              callback={() => createWorkspace("blank")} />
-            <WorkspaceTemplate
-              gsID="solhintLogo"
-              workspaceTitle="Remix Default"
-              description={intl.formatMessage({ id: 'home.remixDefaultTemplateDesc' })}
-              callback={() => createWorkspace("remixDefault")} />
-            <WorkspaceTemplate
-              gsID="sourcifyLogo"
-              workspaceTitle="OpenZeppelin ERC20"
-              description={intl.formatMessage({ id: 'home.ozerc20TemplateDesc' })}
-              callback={() => createWorkspace("ozerc20")} />
-            <WorkspaceTemplate
               gsID="sUTLogo"
-              workspaceTitle="OpenZeppelin ERC721"
-              description={intl.formatMessage({ id: 'home.ozerc721TemplateDesc' })}
-              callback={() => createWorkspace("ozerc721")} />
+              workspaceTitle="Gnosis Safe MultiSig"
+              description={intl.formatMessage({ id: 'home.gnosisSafeMultisigTemplateDesc' })}
+              callback={() => createWorkspace("gnosisSafeMultisig")} />
             <WorkspaceTemplate
               gsID="sUTLogo"
               workspaceTitle="0xProject ERC20"
               description={intl.formatMessage({ id: 'home.zeroxErc20TemplateDesc' })}
               callback={() => createWorkspace("zeroxErc20")} />
+              <WorkspaceTemplate
+                gsID="sourcifyLogo"
+                workspaceTitle="OpenZeppelin ERC20"
+                description={intl.formatMessage({ id: 'home.ozerc20TemplateDesc' })}
+                callback={() => createWorkspace("ozerc20")} />
+              <WorkspaceTemplate
+                gsID="sUTLogo"
+                workspaceTitle="OpenZeppelin ERC721"
+                description={intl.formatMessage({ id: 'home.ozerc721TemplateDesc' })}
+                callback={() => createWorkspace("ozerc721")} />
+              <WorkspaceTemplate
+                gsID="sUTLogo"
+                workspaceTitle="OpenZeppelin ERC1155"
+                description={intl.formatMessage({ id: 'home.ozerc1155TemplateDesc' })}
+                callback={() => createWorkspace("ozerc1155")} />
+              <WorkspaceTemplate
+                gsID="solhintLogo"
+                workspaceTitle="Remix Basic"
+                description={intl.formatMessage({ id: 'home.remixDefaultTemplateDesc' })}
+                callback={() => createWorkspace("remixDefault")} />
           </Carousel>
         </ThemeContext.Provider>
       </div>

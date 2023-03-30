@@ -1,4 +1,4 @@
-import { BN } from 'ethereumjs-util'
+import { BN } from 'bn.js'
 import { ExtractData } from '../types' // eslint-disable-line
 
 export function extractData (item, parent): ExtractData {

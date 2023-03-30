@@ -5252,7 +5252,7 @@ a.close.disabled {
 .bs-popover-auto[x-placement^=top]>.arrow::after,.bs-popover-top>.arrow::after {
     bottom:1px;
     border-width:.5rem .5rem 0;
-    border-top-color:#282828
+    border-top-color: var(--secondary);
 }
 .bs-popover-auto[x-placement^=right],.bs-popover-right {
     margin-left:.5rem
@@ -5271,7 +5271,7 @@ a.close.disabled {
 .bs-popover-auto[x-placement^=right]>.arrow::after,.bs-popover-right>.arrow::after {
     left:1px;
     border-width:.5rem .5rem .5rem 0;
-    border-right-color:#282828
+    border-right-color: var(--secondary);
 }
 .bs-popover-auto[x-placement^=bottom],.bs-popover-bottom {
     margin-top:.5rem
@@ -5287,7 +5287,7 @@ a.close.disabled {
 .bs-popover-auto[x-placement^=bottom]>.arrow::after,.bs-popover-bottom>.arrow::after {
     top:1px;
     border-width:0 .5rem .5rem .5rem;
-    border-bottom-color:#282828
+    border-bottom-color: var(--secondary);
 }
 .bs-popover-auto[x-placement^=bottom] .popover-header::before,.bs-popover-bottom .popover-header::before {
     position:absolute;
@@ -5316,7 +5316,7 @@ a.close.disabled {
 .bs-popover-auto[x-placement^=left]>.arrow::after,.bs-popover-left>.arrow::after {
     right:1px;
     border-width:.5rem 0 .5rem .5rem;
-    border-left-color:#282828
+    border-left-color: var(--secondary);
 }
 .popover-header {
     padding:.5rem .75rem;
@@ -8611,28 +8611,28 @@ legend {
     text-decoration:underline
 }
 .alert-primary {
-    background-color:#2a9fd6
+    background-color:#2a9fd685
 }
 .alert-secondary {
     background-color:#555
 }
 .alert-success {
-    background-color:#77b300
+    background-color:#77b3007a
 }
 .alert-info {
-    background-color:#93c
+    background-color:#9933cc91
 }
 .alert-warning {
-    background-color:#f80
+    background-color:#ff8800a1
 }
 .alert-danger {
-    background-color:#c00
+    background-color:#cc00009c
 }
 .alert-light {
     background-color:#222
 }
 .alert-dark {
-    background-color:#adafae
+    background-color:#adafae99
 }
 .badge-warning {
     color:#fff

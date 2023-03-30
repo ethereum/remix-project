@@ -1,5 +1,5 @@
 'use strict'
-import { bufferToHex } from 'ethereumjs-util'
+import { bufferToHex } from '@ethereumjs/util'
 import { isHexString } from 'ethjs-util'
 
 function convertToPrefixedHex (input) {
@@ -20,7 +20,7 @@ function convertToPrefixedHex (input) {
  Also, VM results use BN and Buffers, Node results use hex strings/ints,
  So we need to normalize the values to prefixed hex strings
 */
-export function resultToRemixTx (txResult, execResult) {
+export function resultToRemixTx (txResult, execResult?) {
   const { receipt, transactionHash, result } = txResult
   const { status, gasUsed, contractAddress } = receipt
   let returnValue, errorMessage

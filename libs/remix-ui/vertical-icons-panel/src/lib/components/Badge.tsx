@@ -1,6 +1,7 @@
 import React from 'react'
 import { BadgeStatus } from './Icon'
-
+import { CustomTooltip } from '@remix-ui/helper'
+import { FormattedMessage } from 'react-intl'
 interface BadgeProps {
   badgeStatus?: BadgeStatus
 }
@@ -47,13 +48,19 @@ function Badge ({ badgeStatus }: BadgeProps) {
     <>
       {
         badgeStatus && checkStatusKeyValue(badgeStatus.key, badgeStatus.type) ? (
-          <i
-            title={badgeStatus.title}
-            className={resolveClasses(badgeStatus.key, badgeStatus.type!)}
-            aria-hidden="true"
+          <CustomTooltip
+            placement={'right'}
+            tooltipClasses="text-nowrap"
+            tooltipId="verticalItemsbadge"
+            tooltipText={badgeStatus.title}
           >
-            {badgeStatus.text}
-          </i>
+            <i
+              className={resolveClasses(badgeStatus.key, badgeStatus.type!)}
+              aria-hidden="true"
+            >
+              {badgeStatus.text}
+            </i>
+          </CustomTooltip>
         ) : null
       }
     </>

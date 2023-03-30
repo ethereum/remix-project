@@ -41,8 +41,8 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     props.onReady({
       globalContext: () => {
         return {
-          block: state.currentBlock, 
-          tx: state.currentTransaction, 
+          block: state.currentBlock,
+          tx: state.currentTransaction,
           receipt: state.currentReceipt
         }
       }
@@ -102,7 +102,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     const providerChanged = () => {
       debuggerModule.onEnvChanged((provider) => {
         setState(prevState => {
-          const isLocalNodeUsed = provider !== 'vm' && provider !== 'injected'
+          const isLocalNodeUsed = !provider.startsWith('vm') && provider !== 'injected'
           return { ...prevState, isLocalNodeUsed: isLocalNodeUsed }
         })
       })
@@ -321,9 +321,13 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       } catch (error) {
         unLoad()
         setState(prevState => {
+          let errorMsg = error.message || error
+          if (typeof errorMsg !== 'string') {
+            errorMsg = JSON.stringify(errorMsg) + '. Possible error: the current endpoint does not support retrieving the trace of a transaction.'
+          }
           return {
             ...prevState,
-            validationError: error.message || error
+            validationError: errorMsg
           }
         })
       }
@@ -371,7 +375,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
                 return { ...prevState, opt: { ...prevState.opt, debugWithGeneratedSources: checked } }
               })
             }} type="checkbox" />
-            <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">Use generated sources (Solidity {'>='} v0.7.2)</label>
+            <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput"><FormattedMessage id='debugger.useGeneratedSources' /> (Solidity {'>='} v0.7.2)</label>
             </span>
   )
   return (
@@ -380,21 +384,32 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       <div className="px-2" ref={debuggerTopRef}>
         <div>
           <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
-          <CustomTooltip
-            tooltipId="debuggerGenSourceCheckbox"
-            tooltipText={"Debug with generated sources"}
-            placement="top-start"
-          >
-            {customJSX}
-          </CustomTooltip>
+            <CustomTooltip
+              tooltipId="debuggerGenSourceCheckbox"
+              tooltipText={<FormattedMessage id='debugger.debugWithGeneratedSources' />}
+              placement="top-start"
+            >
+              {customJSX}
+            </CustomTooltip>
           </div>
           { state.isLocalNodeUsed && <div className="mb-2 debuggerConfig custom-control custom-checkbox">
-            <input className="custom-control-input" id="debugWithLocalNodeInput" onChange={({ target: { checked } }) => {
-              setState(prevState => {
-                return { ...prevState, opt: { ...prevState.opt, debugWithLocalNode: checked } }
-              })
-            }} type="checkbox" title="Force the debugger to use the current local node" />
-            <label data-id="debugLocaNodeLabel" className="form-check-label custom-control-label" htmlFor="debugWithLocalNodeInput">Force using local node</label>
+            <CustomTooltip
+              tooltipId="debuggerGenSourceInput"
+              tooltipText="Force the debugger to use the current local node"
+              placement='right'
+            >
+              <input
+                className="custom-control-input"
+                id="debugWithLocalNodeInput"
+                onChange={({ target: { checked } }) => {
+                  setState(prevState => {
+                    return { ...prevState, opt: { ...prevState.opt, debugWithLocalNode: checked } }
+                  })
+                }}
+                type="checkbox"
+              />
+            </CustomTooltip>
+            <label data-id="debugLocaNodeLabel" className="form-check-label custom-control-label" htmlFor="debugWithLocalNodeInput"><FormattedMessage id='debugger.debugLocaNodeLabel' /></label>
           </div>
           }
           { state.validationError && <span className="w-100 py-1 text-danger validationError">{state.validationError}</span> }
@@ -405,7 +420,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         <div>
           <i className="fas fa-info-triangle" aria-hidden="true"></i>
           <span>
-            <FormattedMessage id='debugger.introduction' />: <a href="https://sourcify.dev" target="__blank" >https://sourcify.dev</a> & <a href="https://etherscan.io/contractsVerified" target="__blank">https://etherscan.io/contractsVerified</a>
+            <FormattedMessage id='debugger.introduction' />: <a href="https://docs.sourcify.dev/docs/chains/" target="__blank" >Sourcify docs</a> & <a href="https://etherscan.io/contractsVerified" target="__blank">https://etherscan.io/contractsVerified</a>
           </span>
         </div> }
         { state.debugging && <StepManager stepManager={ stepManager } /> }

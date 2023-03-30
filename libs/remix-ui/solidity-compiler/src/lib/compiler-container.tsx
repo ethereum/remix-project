@@ -5,7 +5,6 @@ import { CompilerContainerProps } from './types'
 import { ConfigurationSettings } from '@remix-project/remix-lib'
 import { checkSpecialChars, CustomTooltip, extractNameFromKey } from '@remix-ui/helper'
 import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL } from '@remix-project/remix-solidity'
-
 import { compilerReducer, compilerInitialState } from './reducers/compiler'
 import { resetEditorMode, listenToEvents } from './actions/compiler'
 import { getValidLanguage } from '@remix-project/remix-solidity'
@@ -22,7 +21,6 @@ declare global {
     _paq: any
   }
 }
-
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
@@ -53,7 +51,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     customVersions: [],
     compilerLicense: null,
     selectedVersion: null,
-    defaultVersion: 'soljson-v0.8.17+commit.8df45f5f.js', // this default version is defined: in makeMockCompiler (for browser test)
+    defaultVersion: 'soljson-v0.8.18+commit.87f61d96.js', // this default version is defined: in makeMockCompiler (for browser test)
     runs: '',
     compiledFileName: '',
     includeNightlies: false,
@@ -283,6 +281,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           'New configuration file', `The file "${configFilePathInput.current.value}" you entered does not exist. Do you want to create a new one?`,
           'Create',
           async () => await createNewConfigFile(),
+          false,
           'Cancel',
           () => {
             setShowFilePathInput(false)
@@ -582,6 +581,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       promptMessage('URL'),
       'OK',
       addCustomCompiler,
+      false,
       'Cancel',
       () => {}
     )
@@ -733,7 +733,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     setToggleExpander(!toggleExpander)
   }
 
-
   return (
     <section>
       <article>
@@ -856,7 +855,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 <FormattedMessage id='solidity.language' />
               </label>
               <CustomTooltip
-                placement="right-start"
+                placement="right"
                 tooltipId="compilerLabelTooltip"
                 tooltipClasses="text-nowrap"
                 tooltipText={<span>{'Language specification available from   Compiler >= v0.5.7'}</span>}
@@ -971,7 +970,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <button
               id="compileAndRunBtn"
               data-id="compilerContainerCompileAndRunBtn"
-              className="btn btn-secondary btn-block d-block w-100 text-break remixui_solidityCompileAndRunButton d-inline-block remixui_disabled mb-1 mt-3"
+              className="btn btn-secondary btn-block d-block w-100 text-break remixui_solidityCompileAndRunButton d-inline-block remixui_disabled mb-1 mt-1"
               onClick={compileAndRun}
               disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}
             >
@@ -979,9 +978,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 placement="right"
                 tooltipId="overlay-tooltip-compile-run"
                 tooltipText={<div className="text-left">
-                    {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+Shift+S</b> for compiling and script execution</div>}
-                    {(configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div>}
-                  </div>}
+                  {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+Shift+S</b> for compiling and script execution</div>}
+                  {(configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div>}
+                </div>}
               >
                 <span>
                   <FormattedMessage id='solidity.compileAndRunScript' />
@@ -989,27 +988,28 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               </CustomTooltip>
             </button>
             <CustomTooltip
-              placement="right"
+              placement="top"
               tooltipId="overlay-tooltip-compile-run-doc"
               tooltipText={<div className="text-left p-2">
-                  <div>Choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
-                  <pre>
-                    <code>
-                    /**<br />
-                      * @title ContractName<br />
-                      * @dev ContractDescription<br />
-                      * @custom:dev-run-script file_path<br />
-                      */<br />
-                      contract ContractName {'{}'}<br />
-                    </code>
-                  </pre>
-                  Click the i icon to learn more
-                </div>}
+                <div>Choose the script to execute right after compilation
+                  by adding the `dev-run-script` natspec tag, as in:</div>
+                <pre>
+                  <code>
+                  /**<br />
+                    * @title ContractName<br />
+                    * @dev ContractDescription<br />
+                    * @custom:dev-run-script file_path<br />
+                    */<br />
+                    contract ContractName {'{}'}<br />
+                  </code>
+                </pre>
+                Click the "i" icon to learn more
+              </div>}
             >
-              <a href="https://remix-ide.readthedocs.io/en/latest/running_js_scripts.html#compile-a-contract-and-run-a-script-on-the-fly" target="_blank" ><i className="pl-2 ml-2 mt-3 mb-1 fas fa-info text-dark"></i></a>
+              <a href="https://remix-ide.readthedocs.io/en/latest/running_js_scripts.html#compile-a-contract-and-run-a-script-on-the-fly" target="_blank" ><i className="pl-2 ml-2 fas fa-info text-dark"></i></a>
             </CustomTooltip>
             <CopyToClipboard tip="Click to copy the custom NatSpec tag" getContent={() => '@custom:dev-run-script file_path'} direction='top'>
-              <button className="btn remixui_copyButton  ml-2 mt-3 mb-1 text-dark">
+              <button className="btn remixui_copyButton  ml-2 my-1 text-dark">
                 <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
               </button>
             </CopyToClipboard>

@@ -2,14 +2,14 @@
 /* eslint-disable no-unused-vars */
 import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
-import { CompilerApiMixin } from './compiler-api'
+import { CompilerApiMixin } from '@remix-ui/solidity-compiler'
 import { ICompilerApi } from '@remix-project/remix-lib'
 import { CompileTabLogic } from '@remix-ui/solidity-compiler'
 
 const defaultCompilerParameters = {
   runs: '200',
   optimize: false,
-  version: 'soljson-v0.8.17+commit.8df45f5f',
+  version: 'soljson-v0.8.18+commit.87f61d96',
   evmVersion: null, // compiler default
   language: 'Solidity',
   useFileConfiguration: false,

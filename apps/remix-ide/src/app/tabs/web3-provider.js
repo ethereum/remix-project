@@ -30,10 +30,16 @@ export class Web3ProviderModule extends Plugin {
             // see https://github.com/ethereum/web3.js/pull/1018/files#diff-d25786686c1053b786cc2626dc6e048675050593c0ebaafbf0814e1996f22022R129
             provider[provider.sendAsync ? 'sendAsync' : 'send'](payload, async (error, message) => {
               if (error) {
-                const errorData = error.data ? error.data : error.message ? error.message : error
-                // See: https://github.com/ethers-io/ethers.js/issues/901
-                if (!(typeof errorData === 'string' && errorData.includes("unknown method eth_chainId"))) this.call('terminal', 'log', { value: error.data ? error.data : error.message, type: 'error' } )
-                return reject(errorData)
+                // Handle 'The method "debug_traceTransaction" does not exist / is not available.' error
+                if(error.message && error.code && error.code === -32601) {
+                  this.call('terminal', 'log', { value: error.message, type: 'error' } )
+                  return reject(error.message)
+                } else {
+                  const errorData = error.data || error.message || error
+                  // See: https://github.com/ethers-io/ethers.js/issues/901
+                  if (!(typeof errorData === 'string' && errorData.includes("unknown method eth_chainId"))) this.call('terminal', 'log', { value: error.data || error.message, type: 'error' } )
+                  return reject(errorData)
+                }
               }
               if (payload.method === 'eth_sendTransaction') {
                 if (payload.params.length && !payload.params[0].to && message.result) {

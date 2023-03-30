@@ -17,6 +17,7 @@ import { AstWalker } from '@remix-project/remix-astwalker'
 import { LinkLibraries, DeployLibraries, OpenZeppelinProxy } from '@remix-project/core-plugin'
 import { CodeParser } from './app/plugins/parser/code-parser'
 import { GitPlugin } from './app/plugins/git'
+import { SolidityScript } from './app/plugins/solidity-script'
 
 import { WalkthroughService } from './walkthroughService'
 
@@ -27,15 +28,24 @@ import { ConfigPlugin } from './app/plugins/config'
 import { StoragePlugin } from './app/plugins/storage'
 import { Layout } from './app/panels/layout'
 import { NotificationPlugin } from './app/plugins/notification'
-import { Blockchain } from './blockchain/blockchain.js'
-import { HardhatProvider } from './app/tabs/hardhat-provider'
-import { GanacheProvider } from './app/tabs/ganache-provider'
-import { FoundryProvider } from './app/tabs/foundry-provider'
-import { ExternalHttpProvider } from './app/tabs/external-http-provider'
-import { Injected0ptimismProvider } from './app/tabs/injected-optimism-provider'
-import { InjectedArbitrumOneProvider } from './app/tabs/injected-arbitrum-one-provider'
+import { Blockchain } from './blockchain/blockchain'
+import { MergeVMProvider, LondonVMProvider, BerlinVMProvider} from './app/providers/vm-provider'
+import { MainnetForkVMProvider } from './app/providers/mainnet-vm-fork-provider'
+import { SepoliaForkVMProvider } from './app/providers/sepolia-vm-fork-provider'
+import { GoerliForkVMProvider } from './app/providers/goerli-vm-fork-provider'
+import { CustomForkVMProvider } from './app/providers/custom-vm-fork-provider'
+import { HardhatProvider } from './app/providers/hardhat-provider'
+import { GanacheProvider } from './app/providers/ganache-provider'
+import { FoundryProvider } from './app/providers/foundry-provider'
+import { ExternalHttpProvider } from './app/providers/external-http-provider'
+import { InjectedProviderDefault } from './app/providers/injected-provider-default'
+import { InjectedProviderTrustWallet } from './app/providers/injected-provider-trustwallet'
+import { Injected0ptimismProvider } from './app/providers/injected-optimism-provider'
+import { InjectedArbitrumOneProvider } from './app/providers/injected-arbitrum-one-provider'
 import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
+import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
+import { ContractFlattener } from './app/plugins/contractFlattener'
 
 const isElectron = require('is-electron')
 
@@ -112,8 +122,6 @@ class AppComponent {
     this.engine = new RemixEngine()
     this.engine.register(appManager);
 
-
-
     const matomoDomains = {
       'remix-alpha.ethereum.org': 27,
       'remix-beta.ethereum.org': 25,
@@ -176,6 +184,11 @@ class AppComponent {
 
     //---- git
     const git = new GitPlugin()
+    //---------------- Solidity UML Generator -------------------------
+    const solidityumlgen = new SolidityUmlGen(appManager)
+
+    // ----------------- ContractFlattener ----------------------------
+    const contractFlattener = new ContractFlattener()
 
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
@@ -197,12 +210,21 @@ class AppComponent {
     const networkModule = new NetworkModule(blockchain)
     // ----------------- represent the current selected web3 provider ----
     const web3Provider = new Web3ProviderModule(blockchain)
+    const vmProviderCustomFork = new CustomForkVMProvider(blockchain)
+    const vmProviderMainnetFork = new MainnetForkVMProvider(blockchain)
+    const vmProviderSepoliaFork = new SepoliaForkVMProvider(blockchain)
+    const vmProviderGoerliFork = new GoerliForkVMProvider(blockchain)
+    const vmProviderMerge = new MergeVMProvider(blockchain)
+    const vmProviderBerlin = new BerlinVMProvider(blockchain)
+    const vmProviderLondon = new LondonVMProvider(blockchain)
     const hardhatProvider = new HardhatProvider(blockchain)
     const ganacheProvider = new GanacheProvider(blockchain)
     const foundryProvider = new FoundryProvider(blockchain)
     const externalHttpProvider = new ExternalHttpProvider(blockchain)
-    const injected0ptimismProvider = new Injected0ptimismProvider(blockchain)
-    const injectedArbitrumOneProvider = new InjectedArbitrumOneProvider(blockchain)
+    const trustWalletInjectedProvider = new InjectedProviderTrustWallet()
+    const defaultInjectedProvider = new InjectedProviderDefault
+    const injected0ptimismProvider = new Injected0ptimismProvider()
+    const injectedArbitrumOneProvider = new InjectedArbitrumOneProvider()
     // ----------------- convert offset to line/column service -----------
     const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
     Registry.getInstance().put({
@@ -228,7 +250,7 @@ class AppComponent {
     )
 
     const codeParser = new CodeParser(new AstWalker())
-
+    const solidityScript = new SolidityScript()
 
     this.notification = new NotificationPlugin()
 
@@ -262,15 +284,27 @@ class AppComponent {
       fetchAndCompile,
       dGitProvider,
       storagePlugin,
+      vmProviderMerge,
+      vmProviderBerlin,
+      vmProviderLondon,
+      vmProviderSepoliaFork,
+      vmProviderGoerliFork,
+      vmProviderMainnetFork,
+      vmProviderCustomFork,
       hardhatProvider,
       ganacheProvider,
       foundryProvider,
       externalHttpProvider,
+      defaultInjectedProvider,
+      trustWalletInjectedProvider,
       injected0ptimismProvider,
       injectedArbitrumOneProvider,
       this.walkthroughService,
       search,
-      git
+      git,
+      solidityumlgen,
+      contractFlattener,
+      solidityScript
     ])
 
     // LAYOUT & SYSTEM VIEWS
@@ -348,7 +382,6 @@ class AppComponent {
       analysis,
       test,
       filePanel.remixdHandle,
-      filePanel.gitHandle,
       filePanel.hardhatHandle,
       filePanel.foundryHandle,
       filePanel.truffleHandle,
@@ -387,6 +420,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'codeParser', 'codeFormatter', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder', 'dgit'])
+    await this.appManager.activatePlugin(['solidity-script'])
 
     this.appManager.on(
       'filePanel',
@@ -424,7 +458,11 @@ class AppComponent {
               if (
                 this.appManager.pluginLoader.current === 'queryParams' &&
                 this.workspace.length > 0
-              ) { this.menuicons.select(this.workspace[this.workspace.length - 1]) }
+              ) {
+                this.menuicons.select(this.workspace[this.workspace.length - 1])
+              } else {
+                this.appManager.call('tabs', 'focus', 'home')
+              }
             }
 
             if (params.call) {
@@ -458,19 +496,16 @@ class AppComponent {
                 }
               }
             }
-
-
           })
           .catch(console.error)
       }
       const loadedElement = document.createElement('span')
       loadedElement.setAttribute('data-id', 'apploaded')
       document.body.appendChild(loadedElement)
-
     })
+
     // activate solidity plugin
     this.appManager.activatePlugin(['solidity', 'udapp', 'deploy-libraries', 'link-libraries', 'openzeppelin-proxy'])
-    // Load and start the service who manager layout and frame
   }
 }
 

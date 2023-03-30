@@ -34,7 +34,7 @@ export interface ICompilerApi {
 
     resolveContentAndSave: (url: string) => Promise<string>
     fileExists: (file: string) => Promise<boolean>
-    writeFile: (file: string, content: string) => Promise<void>
+    writeFile: (file: string, content: any) => Promise<void>
     readFile: (file: string) => Promise<string>
     open: (file: string) => void
     saveCurrentFile: () => void

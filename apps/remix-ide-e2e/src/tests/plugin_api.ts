@@ -11,7 +11,7 @@ const localPluginData: Profile & LocationProfile & ExternalProfile = {
   name: 'localPlugin',
   displayName: 'Local Plugin',
   canActivate: ['dGitProvider', 'flattener', 'solidityUnitTesting', 'udapp', 'hardhat-provider'],
-  url: 'http://localhost:2020',
+  url: 'http://localhost:9999',
   location: 'sidePanel'
 }
 
@@ -183,7 +183,7 @@ module.exports = {
   },
 
   'Should select another provider #group1': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'udapp:setEnvironmentMode', null, null, { context: 'vm', fork: 'berlin' })
+    await clickAndCheckLog(browser, 'udapp:setEnvironmentMode', null, null, { context: 'vm-berlin' })
     await browser
       .frameParent()
       .useCss()
@@ -393,7 +393,7 @@ module.exports = {
       .useCss()
       .clickLaunchIcon('pluginManager')
       .clickLaunchIcon('udapp')
-      .switchEnvironment('Hardhat Provider')
+      .switchEnvironment('hardhat-provider')
       .modalFooterOKClick('hardhat-provider')
       .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom') // e.g Custom (1337) network
       .clickLaunchIcon('localPlugin')

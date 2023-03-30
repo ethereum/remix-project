@@ -14,7 +14,10 @@
           "outputPath": "dist/libs/remix-astwalker",
           "main": "libs/remix-astwalker/src/index.ts",
           "tsConfig": "libs/remix-astwalker/tsconfig.lib.json",
-          "assets": []
+          "assets": [
+            "libs/remix-astwalker/*.md"
+          ],
+          "updateBuildableProjectDepsInPackageJson": false
         }
       },
       "lint": {

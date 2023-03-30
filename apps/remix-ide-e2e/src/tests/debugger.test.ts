@@ -167,7 +167,11 @@ module.exports = {
       .clickFunction('t - transact (not payable)')
       .pause(2000)
       .debugTransaction(0)
-      .waitForElementVisible('*[data-id="slider"]').pause(2000)
+      .waitForElementVisible('*[data-id="slider"]')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"29")]',
+      })
       .goToVMTraceStep(7453)
       .waitForElementPresent('*[data-id="treeViewDivtreeViewItemarray"]')
       .click('*[data-id="treeViewDivtreeViewItemarray"]')
@@ -227,7 +231,7 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.8.7+commit.e28d00a7.js')
       .addFile('useDebugNodes.sol', sources[5]['useDebugNodes.sol']) // compile contract
       .clickLaunchIcon('udapp')
-      .switchEnvironment('External Http Provider') // select web3 provider with debug nodes URL
+      .switchEnvironment('basic-http-provider') // select web3 provider with debug nodes URL
       .clearValue('*[data-id="modalDialogCustomPromptText"]')
       .setValue('*[data-id="modalDialogCustomPromptText"]', 'https://remix-rinkeby.ethdevops.io')
       .modalFooterOKClick()

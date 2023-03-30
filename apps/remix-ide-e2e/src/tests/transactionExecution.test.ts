@@ -141,7 +141,6 @@ module.exports = {
       .click('.udapp_contractActionsContainerSingle > button')
       .clickInstance(0)
       .clickFunction('g - transact (not payable)')
-      .pause(5000)
       .journalLastChildIncludes('Error provided by the contract:')
       .journalLastChildIncludes('CustomError : error description')
       .journalLastChildIncludes('Parameters:')
@@ -182,7 +181,6 @@ module.exports = {
       .click('.udapp_contractActionsContainerSingle > button')
       .clickInstance(1)
       .clickFunction('h - transact (not payable)')
-      .pause(5000)
       .journalLastChildIncludes('Error provided by the contract:')
       .journalLastChildIncludes('CustomError : error description from library')
       .journalLastChildIncludes('Parameters:')
@@ -213,7 +211,28 @@ module.exports = {
             'uint256 num': '24'
           }
         })
-      .end()
+  },
+
+  'Should switch to the mainnet VM fork and execute a tx to query ENS #group5': function (browser: NightwatchBrowser) {
+    let addressRef
+    browser
+      .addFile('mainnet_ens.sol', sources[7]['mainnet_ens.sol'])
+      .clickLaunchIcon('solidity')
+      .setSolidityCompilerVersion('soljson-v0.8.17+commit.8df45f5f.js')
+      .clickLaunchIcon('udapp')
+      .switchEnvironment('vm-mainnet-fork')
+      .waitForElementPresent('select[data-id="runTabSelectAccount"] option[value="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]') // wait for the udapp to load the list of accounts
+      .selectContract('MyResolver')
+      .createContract('')
+      .clickInstance(0)
+      .getAddressAtPosition(0, (address) => {
+        addressRef = address
+      })
+      .clickFunction('resolve - call')
+      .perform((done) => {
+        browser.verifyCallReturnValue(addressRef, ['0:address: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'])
+          .perform(() => done())
+      })
   }
 }
 
@@ -430,6 +449,32 @@ contract C {
               return number;
           }
       }`
+    }
+  }, {
+    'mainnet_ens.sol': {
+      content:
+        `
+        import "https://github.com/ensdomains/ens-contracts/blob/master/contracts/utils/NameEncoder.sol";
+
+        abstract contract ENS {
+            function resolver(bytes32 node) public virtual view returns (Resolver);
+        }
+
+        abstract contract Resolver {
+            function addr(bytes32 node) public virtual view returns (address);
+        }
+
+        contract MyResolver {
+            // Same address for Mainet, Ropsten, Rinkerby, Gorli and other networks;
+            ENS ens = ENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
+
+            function resolve() public view returns(address) {
+                (,bytes32 node) = NameEncoder.dnsEncodeName("vitalik.eth");
+                Resolver resolver = ens.resolver(node);
+                return resolver.addr(node);
+            }
+        }
+        `      
     }
   }
 ]

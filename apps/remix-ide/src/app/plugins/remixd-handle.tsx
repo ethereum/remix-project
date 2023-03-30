@@ -3,10 +3,10 @@ import React, { useRef, useState, useEffect } from 'react' // eslint-disable-lin
 import isElectron from 'is-electron'
 import { WebsocketPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { version as remixdVersion } from '../../../../../libs/remixd/package.json'
 import { PluginManager } from '@remixproject/engine'
 import { AppModal, AlertModal } from '@remix-ui/app'
-import { CopyToClipboard } from '@remix-ui/clipboard'
 
 const LOCALHOST = ' - connect to localhost - '
 
@@ -23,12 +23,6 @@ const profile = {
   maintainedBy: "Remix",
   documentation: "https://remix-ide.readthedocs.io/en/latest/remixd.html",
   authorContact: ""
-}
-
-enum State {
-  ok,
-  cancel,
-  new
 }
 
 export class RemixdHandle extends WebsocketPlugin {
@@ -121,7 +115,7 @@ export class RemixdHandle extends WebsocketPlugin {
       // warn the user only if he/she is in the browser context
       const mod: AppModal = {
         id: 'remixdConnect',
-        title: 'Connect to localhost',
+        title: 'Access file system using remixd',
         message: remixdDialog(),
         okLabel: 'Connect',
         cancelLabel: 'Cancel',

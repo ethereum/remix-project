@@ -3,7 +3,7 @@
   "settings.reset": "Reset to Default settings",
   "settings.general": "General settings",
   "settings.generateContractMetadataText": "Generate contract metadata. Generate a JSON file in the contract folder. Allows to specify library addresses the contract depends on. If nothing is specified, Remix deploys libraries automatically.",
-  "settings.ethereunVMText": "Always use Javascript VM at load",
+  "settings.ethereunVMText": "Always use the Remix VM at load",
   "settings.wordWrapText": "Word wrap in editor",
   "settings.useAutoCompleteText": "Enable code completion in editor.",
   "settings.useShowGasInEditorText": "Display gas estimates in editor.",
@@ -20,7 +20,7 @@
   "settings.save": "Save",
   "settings.remove": "Remove",
   "settings.themes": "Themes",
-  "settings.locales": "Lanaguage",
+  "settings.locales": "Language",
   "settings.swarm": "Swarm Settings",
   "settings.ipfs": "IPFS Settings"
 }

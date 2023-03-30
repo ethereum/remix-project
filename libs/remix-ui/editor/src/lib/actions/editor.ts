@@ -1,7 +1,7 @@
 import { Monaco } from "@monaco-editor/react";
 import { commitChange } from "@remix-ui/git";
-import { editor, IRange } from "monaco-editor";
 
+import { monacoTypes } from '@remix-ui/editor';
 export interface Action {
   type: string;
   payload: Record<string, any>
@@ -24,7 +24,7 @@ export const reducerActions = (models = initialState, action: Action) => {
       const readOnly = action.payload.readOnly
       if (models[uri]) return models // already existing
       models[uri] = { language, uri, readOnly }
-      let model: editor.ITextModel
+      let model
       try {
         model = monaco.editor.createModel(value, language, monaco.Uri.parse(uri))
       } catch (e) {
@@ -67,7 +67,7 @@ export const reducerActions = (models = initialState, action: Action) => {
     }
     case 'REVEAL_RANGE': {
       if (!editor) return models
-      const range: IRange = {
+      const range: monacoTypes.IRange = {
         startLineNumber: action.payload.startLineNumber + 1,
         startColumn: action.payload.startColumn,
         endLineNumber: action.payload.endLineNumber + 1,

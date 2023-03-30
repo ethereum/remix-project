@@ -68,10 +68,9 @@ module.exports = {
       })
   },
 
-  'Record more than one contract #group1': function (browser: NightwatchBrowser) {
+  'Record more than one contract #group2': function (browser: NightwatchBrowser) {
     // deploy 2 contracts (2 different ABIs), save the record, reexecute and test one of the function.
     browser
-      .click('*[data-id="deployAndRunClearInstances"]')
       .testContracts('multipleContracts.sol', sources[1]['multipleContracts.sol'], ['t1est', 't2est'])
       .clickLaunchIcon('udapp')
       .selectContract('t1est')
@@ -81,6 +80,7 @@ module.exports = {
       .selectContract('t2est')
       .pause(1000)
       .createContract('')
+      .click('[data-id="udappRecorderTitleExpander"]')
       .click('.savetransaction')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
       .execute(function () {
@@ -92,18 +92,16 @@ module.exports = {
       .click('*[data-id="deployAndRunClearInstances"]') // clear udapp
       .click('*[data-id="terminalClearConsole"]') // clear terminal
       .click('[data-id="runtransaction"]')
-      .clickInstance(2)
+      .clickInstance(1)
       .pause(1000)
       .clickFunction('set2 - transact (not payable)', { types: 'uint256 _po', values: '10' })
-      .testFunction('last',
-        {
-          status: 'true Transaction mined and execution succeed',
-          'decoded input': { 'uint256 _po': '10' }
-        })
-      
+      .testFunction('last', {
+        status: 'true Transaction mined and execution succeed',
+        'decoded input': { 'uint256 _po': '10' }
+      })
   },
 
-  'Run with live "mode" #group1': function (browser: NightwatchBrowser) {
+  'Run with live "mode" #group2': function (browser: NightwatchBrowser) {
     let addressRef: string
     browser.addFile('scenario_live_mode.json', { content: JSON.stringify(liveModeScenario, null, '\t') })
       .addFile('scenario_live_mode_storage.sol', { content: testStorageForLiveMode })
@@ -470,7 +468,7 @@ const liveModeScenario = {
 
 const testStorageForLiveMode = `// SPDX-License-Identifier: GPL-3.0
 
-pragma solidity >=0.7.0 <0.9.0;
+pragma solidity >=0.8.2 <0.9.0;
 
 /**
  * @title Storage

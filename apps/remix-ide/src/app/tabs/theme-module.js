@@ -53,7 +53,9 @@ export class ThemeModule extends Plugin {
     this.forced = !!queryTheme
   }
 
-  /** Return the active theme */
+  /** Return the active theme 
+   * @return {{ name: string, quality: string, url: string }} - The active theme
+  */
   currentTheme () {
     return this.themes[this.active]
   }

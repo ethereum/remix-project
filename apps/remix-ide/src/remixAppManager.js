@@ -10,11 +10,13 @@ const requiredModules = [ // services + layout views + system views
   'fileManager', 'contentImport', 'blockchain', 'web3Provider', 'scriptRunner', 'fetchAndCompile', 'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons',
   'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity', 'solidity-logic', 'gistHandler', 'layout',
   'notification', 'permissionhandler', 'walkthrough', 'storage', 'restorebackupzip', 'link-libraries', 'deploy-libraries', 'openzeppelin-proxy',
-  'hardhat-provider', 'ganache-provider', 'foundry-provider', 'basic-http-provider', 'injected-optimism-provider', 'injected-arbitrum-one-provider',
-  'compileAndRun', 'search', 'recorder', 'fileDecorator', 'codeParser', 'codeFormatter']
+  'hardhat-provider', 'ganache-provider', 'foundry-provider', 'basic-http-provider', 'injected', 'injected-trustwallet', 'injected-optimism-provider', 'injected-arbitrum-one-provider', 'vm-custom-fork', 'vm-goerli-fork', 'vm-mainnet-fork', 'vm-sepolia-fork', 'vm-merge', 'vm-london', 'vm-berlin',
+  'compileAndRun', 'search', 'recorder', 'fileDecorator', 'codeParser', 'codeFormatter', 'solidityumlgen', 'contractflattener', 'solidity-script']
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
 const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither']
+
+const loadLocalPlugins = ["doc-gen", "doc-viewer", "etherscan", "vyper"]
 
 const sensitiveCalls = {
   'fileManager': ['writeFile', 'copyFile', 'rename', 'copyDir'],
@@ -26,7 +28,7 @@ export function isNative(name) {
   // nativePlugin allows to bypass the permission request
   const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'solidity-logic', 'solidityStaticAnalysis', 'solidityUnitTesting',
     'layout', 'notification', 'hardhat-provider', 'ganache-provider', 'foundry-provider', 'basic-http-provider', 'injected-optimism-provider',
-    'tabs', 'injected-arbitrum-one-provider']
+    'tabs', 'injected-arbitrum-one-provider', 'injected', 'doc-gen', 'doc-viewer']
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
@@ -150,6 +152,23 @@ export class RemixAppManager extends PluginManager {
     }
     const testPluginName = localStorage.getItem('test-plugin-name')
     const testPluginUrl = localStorage.getItem('test-plugin-url')
+
+    for (let plugin of loadLocalPlugins) {
+      // fetch the profile from the local plugin
+      try {
+        const profile = await fetch(`plugins/${plugin}/profile.json`)
+        const profileJson = await profile.json()
+        // remove duplicates
+        plugins = plugins.filter((p) => p.name !== profileJson.name && p.displayName !== profileJson.displayName)
+        // change url
+        profileJson.url = `plugins/${plugin}/index.html`
+        // add the local plugin
+        plugins.push(profileJson)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
     return plugins.map(plugin => {
       if (plugin.name === testPluginName) plugin.url = testPluginUrl
       return new IframePlugin(plugin)
@@ -158,8 +177,8 @@ export class RemixAppManager extends PluginManager {
 
   async registerContextMenuItems() {
     await this.call('filePanel', 'registerContextMenuItem', {
-      id: 'flattener',
-      name: 'flattenFileCustomAction',
+      id: 'contractflattener',
+      name: 'flattenAContract',
       label: 'Flatten',
       type: [],
       extension: ['.sol'],
@@ -171,6 +190,16 @@ export class RemixAppManager extends PluginManager {
       id: 'nahmii-compiler',
       name: 'compileCustomAction',
       label: 'Compile for Nahmii',
+      type: [],
+      extension: ['.sol'],
+      path: [],
+      pattern: [],
+      sticky: true
+    })
+    await this.call('filePanel', 'registerContextMenuItem', {
+      id: 'solidityumlgen',
+      name: 'generateCustomAction',
+      label: 'Generate UML',
       type: [],
       extension: ['.sol'],
       path: [],
@@ -191,7 +220,7 @@ class PluginLoader {
 
   constructor() {
     const queryParams = new QueryParams()
-    this.donotAutoReload = ['remixd', 'git'] // that would be a bad practice to force loading some plugins at page load.
+    this.donotAutoReload = ['remixd'] // that would be a bad practice to force loading some plugins at page load.
     this.loaders = {}
     this.loaders.localStorage = {
       set: (plugin, actives) => {

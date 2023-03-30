@@ -71,14 +71,6 @@
     padding: .25rem;
   }
 
-  .remixui_menuicon .bs-popover-auto[x-placement^="bottom"] .popover-header::before, .bs-popover-bottom .popover-header::before {
-    border-bottom-color: var(--dark) !important
-  }
-
-  .remixui_menuicon .bs-popover-auto[x-placement^="bottom"] > .arrow::after, .bs-popover-bottom > .arrow::after {
-    border-bottom-color: var(--dark) !important
-  }
-
   .custom-dropdown-items {
     padding: 0.25rem 0.25rem;
     border-radius: .25rem;
@@ -107,29 +99,12 @@
     padding-bottom: 0.1rem;
   }
 
-  .remixui_menuwidth {
-    /* width: 8rem; */
-  }
-
   #workspacesMenuDropdown > div.custom-dropdown-items {
     min-width: 8rem;
   }
 
-  .remixui_menuhr{
-
-  }
-
-  #workspacesMenuDropdown>div>ul>a:nth-child(6):hover {
-    background-color: rgba(0,0,0,0)
-  }
-
-  #workspacesMenuDropdown>div>ul>a:nth-child(4):hover {
-    background-color: rgba(0, 0, 0, 0)
-  }
-
   #workspacesMenuDropdown > div > ul > a:hover {
     background-color: var(--secondary);
-    /* border: 1px solid var(--secondary); */
     border-radius: 2px;
     color: var(--text)
   }

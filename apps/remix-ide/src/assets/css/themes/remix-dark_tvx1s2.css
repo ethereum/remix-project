@@ -4481,7 +4481,7 @@ a.badge-dark:focus {
 }
 .alert-primary {
   color: #fff;
-  background-color: #5CBDEE;
+  background-color: #5cbdee94;
   border-color: #5CBDEE;
 }
 .alert-primary hr {
@@ -5312,7 +5312,7 @@ a.close.disabled {
 .bs-popover-top > .arrow::after {
   bottom: 1px;
   border-width: 5px 5px 0;
-  border-top-color: #000;
+  border-top-color: var(--secondary);
 }
 .bs-popover-auto[x-placement^="right"],
 .bs-popover-right {
@@ -5335,7 +5335,7 @@ a.close.disabled {
 .bs-popover-right > .arrow::after {
   left: 1px;
   border-width: 5px 5px 5px 0;
-  border-right-color: #000;
+  border-right-color: var(--secondary);
 }
 .bs-popover-auto[x-placement^="bottom"],
 .bs-popover-bottom {
@@ -5355,7 +5355,7 @@ a.close.disabled {
 .bs-popover-bottom > .arrow::after {
   top: 1px;
   border-width: 0 5px 5px 5px;
-  border-bottom-color: #000;
+  border-bottom-color: var(--secondary);
 }
 .bs-popover-auto[x-placement^="bottom"] .popover-header::before,
 .bs-popover-bottom .popover-header::before {
@@ -5389,7 +5389,7 @@ a.close.disabled {
 .bs-popover-left > .arrow::after {
   right: 1px;
   border-width: 5px 0 5px 5px;
-  border-left-color: #000;
+  border-left-color: var(--secondary);
 }
 .popover-header {
   padding: 8px 14px;

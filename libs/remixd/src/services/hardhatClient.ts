@@ -13,10 +13,17 @@ export class HardhatClient extends PluginClient {
   watcher: chokidar.FSWatcher
   warnLog: boolean
   buildPath: string
+  logTimeout: NodeJS.Timeout
+  processingTimeout: NodeJS.Timeout
 
   constructor(private readOnly = false) {
     super()
     this.methods = ['compile', 'sync']
+    this.onActivation = () => {
+      console.log('Hardhat plugin activated')
+      this.call('terminal', 'log', { type: 'log', value: 'Hardhat plugin activated' })
+      this.startListening()
+    }
   }
 
   setWebSocket(websocket: WS): void {
@@ -30,7 +37,15 @@ export class HardhatClient extends PluginClient {
   sharedFolder(currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
     this.buildPath = utils.absolutePath('artifacts/contracts', this.currentSharedFolder)
-    this.listenOnHardhatCompilation()
+  }
+
+  startListening() {
+    if (fs.existsSync(this.buildPath)) {
+      this.listenOnHardhatCompilation()
+    } else {
+      console.log('If you are using Hardhat, run `npx hardhat compile` or run the compilation with `Enable Hardhat Compilation` checked from the Remix IDE.')
+      this.listenOnHardHatFolder()
+    }
   }
 
   compile(configPath: string) {
@@ -39,7 +54,7 @@ export class HardhatClient extends PluginClient {
         const errMsg = '[Hardhat Compilation]: Cannot compile in read-only mode'
         return reject(new Error(errMsg))
       }
-      const cmd = `npx hardhat compile --config ${configPath}`
+      const cmd = `npx hardhat compile --config ${utils.normalizePath(configPath)}`
       const options = { cwd: this.currentSharedFolder, shell: true }
       const child = spawn(cmd, options)
       let result = ''
@@ -60,7 +75,16 @@ export class HardhatClient extends PluginClient {
     })
   }
 
+  checkPath() {
+    if (!fs.existsSync(this.buildPath)) {
+      this.listenOnHardHatFolder()
+      return false
+    }
+    return true
+  }
+
   private async processArtifact() {
+    if (!this.checkPath()) return
     // resolving the files
     const folderFiles = await fs.readdir(this.buildPath)
     const targetsSynced = []
@@ -104,24 +128,55 @@ export class HardhatClient extends PluginClient {
         }
       }
     }
-    if (!this.warnLog) {
-      this.call('terminal', 'log', { value: 'receiving compilation result from Hardhat', type: 'log'} )
-      this.warnLog = true
+
+    clearTimeout(this.logTimeout)
+    this.logTimeout = setTimeout(() => {
+      this.call('terminal', 'log', { value: 'receiving compilation result from Hardhat', type: 'log' })
+      if (targetsSynced.length) {
+        console.log(`Processing artifacts for files: ${[...new Set(targetsSynced)].join(', ')}`)
+        // @ts-ignore
+        this.call('terminal', 'log', { type: 'log', value: `synced with Hardhat: ${[...new Set(targetsSynced)].join(', ')}` })
+      } else {
+        console.log('No artifacts to process')
+        // @ts-ignore
+        this.call('terminal', 'log', { type: 'log', value: 'No artifacts from Hardhat to process' })
+      }
+    }, 1000)
+
+
+  }
+
+  listenOnHardHatFolder() {
+    console.log('Hardhat artifacts folder doesn\'t exist... waiting for the compilation.')
+    try {
+      if(this.watcher) this.watcher.close()
+      this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 2, ignorePermissionErrors: true, ignoreInitial: true })
+      // watch for new folders
+      this.watcher.on('addDir', () => {
+        if (fs.existsSync(this.buildPath)) {
+          this.listenOnHardhatCompilation()
+        }
+      })
+    } catch (e) {
+      console.log(e)
     }
-    if (targetsSynced.length) {
-      console.log(`Processing artifacts for files: ${[...new Set(targetsSynced)].join(', ')}`)
-      this.call('terminal', 'log', { type: 'log', value: `synced with Hardhat: ${[...new Set(targetsSynced)].join(', ')}` })
-    }
+  }
+
+  async triggerProcessArtifact() {
+    // prevent multiple calls
+    clearTimeout(this.processingTimeout)
+    this.processingTimeout = setTimeout(async () => await this.processArtifact(), 1000)
   }
 
   listenOnHardhatCompilation() {
     try {
+      console.log('listening on Hardhat compilation...')
+      if(this.watcher) this.watcher.close()
       this.watcher = chokidar.watch(this.buildPath, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
-
-      this.watcher.on('change', () => this.processArtifact())
-      this.watcher.on('add', () => this.processArtifact())
+      this.watcher.on('change', async () => await this.triggerProcessArtifact())
+      this.watcher.on('add', async () => await this.triggerProcessArtifact())
       // process the artifact on activation
-      setTimeout(() => this.processArtifact(), 1000)
+      this.processArtifact()
     } catch (e) {
       console.log(e)
     }

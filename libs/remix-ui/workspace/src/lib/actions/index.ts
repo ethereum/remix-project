@@ -1,7 +1,7 @@
 import React from 'react'
 import { extractNameFromKey, createNonClashingNameAsync } from '@remix-ui/helper'
 import Gists from 'gists'
-import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel/type'
+import { customAction } from '@remixproject/plugin-api'
 import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, focusElement, fsInitializationCompleted, hidePopUp, removeInputFieldSuccess, setCurrentWorkspace, setExpandPath, setMode, setWorkspaces } from './payload'
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
 import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin, workspaceExists } from './workspace'
@@ -53,7 +53,6 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     const params = queryParams.get() as UrlParametersType
     const workspaces = await getWorkspaces() || []
     dispatch(setWorkspaces(workspaces))
-    // console.log('workspaces: ', workspaces)
     if (params.gist) {
       await createWorkspaceTemplate('gist-sample', 'gist-template')
       plugin.setWorkspace({ name: 'gist-sample', isLocalhost: false })
@@ -124,6 +123,9 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         workspaceProvider.setWorkspace(name)
         plugin.setWorkspace({ name: name, isLocalhost: false })
         dispatch(setCurrentWorkspace({ name: name, isGitRepo: false }))
+      }else{
+        _paq.push(['trackEvent', 'Storage', 'error', `Workspace in localstorage not found: ${localStorage.getItem("currentWorkspace")}`])
+        await basicWorkspaceInit(workspaces, workspaceProvider)
       } 
     } else {
       await basicWorkspaceInit(workspaces, workspaceProvider)
@@ -296,6 +298,15 @@ export const renamePath = async (oldPath: string, newPath: string) => {
   }
 }
 
+export const downloadPath = async (path: string) => {
+  const fileManager = plugin.fileManager
+  try {
+    await fileManager.download(path)
+  } catch (error) {
+    dispatch(displayPopUp('Oops! An error ocurred while downloading.' + error))
+  }
+}
+
 export const copyFile = async (src: string, dest: string) => {
   const fileManager = plugin.fileManager
 
@@ -363,6 +374,21 @@ export const handleDownloadFiles = async () => {
       plugin.call('notification', 'toast', e.message)
     })
   } catch (e) {
+    plugin.call('notification', 'toast', e.message)
+  }
+}
+
+export const handleDownloadWorkspace = async () => {
+  try {
+    const zip = new JSZip()
+    const workspaceProvider = plugin.fileProviders.workspace
+    await workspaceProvider.copyFolderToJson('/', ({ path, content }) => {
+      zip.file(path, content)
+    })
+    const blob = await zip.generateAsync({ type: 'blob' })
+    saveAs(blob, `${workspaceProvider.workspace}.zip`)
+  } catch (e) {
+    console.error(e)
     plugin.call('notification', 'toast', e.message)
   }
 }

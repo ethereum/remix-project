@@ -4,10 +4,10 @@ import { UdappProps } from '../types'
 import { FuncABI } from '@remix-project/core-plugin'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import * as remixLib from '@remix-project/remix-lib'
-import * as ethJSUtil from 'ethereumjs-util'
+import * as ethJSUtil from '@ethereumjs/util'
 import { ContractGUI } from './contractGUI'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
-import { BN } from 'ethereumjs-util'
+import { BN } from 'bn.js'
 import { CustomTooltip, is0XPrefixed, isHexadecimal, isNumeric, shortenAddress } from '@remix-ui/helper'
 
 const txHelper = remixLib.execution.txHelper
@@ -237,10 +237,8 @@ export function UniversalDappUI (props: UdappProps) {
               {props.context})
             </span>
           </div>
-          <div className="btn-group">
-            <button className="btn p-1 btn-secondary">
-              <CopyToClipboard content={address} direction={"top"} />
-            </button>
+          <div className="btn">
+            <CopyToClipboard content={address} direction={"top"} />
           </div>
         </div>
         <CustomTooltip
@@ -249,13 +247,12 @@ export function UniversalDappUI (props: UdappProps) {
           tooltipId="udapp_udappCloseTooltip"
           tooltipText="Remove from the list"
         >
-          <button
-            className="udapp_udappClose mr-1 p-1 btn btn-secondary align-items-center"
+          <i
+            className="udapp_closeIcon m-1 fas fa-times align-self-center"
+            aria-hidden="true"
             data-id="universalDappUiUdappClose"
             onClick={remove}
-          >
-            <i className="udapp_closeIcon fas fa-times" aria-hidden="true"></i>
-          </button>
+          ></i>
         </CustomTooltip>
       </div>
       <div

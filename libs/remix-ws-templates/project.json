@@ -13,7 +13,27 @@
           "outputPath": "dist/libs/remix-ws-templates",
           "main": "libs/remix-ws-templates/src/index.ts",
           "tsConfig": "libs/remix-ws-templates/tsconfig.lib.json",
-          "assets": []
+          "updateBuildableProjectDepsInPackageJson": false,
+          "assets": [
+            {
+              "glob": "templates/**/*",
+              "ignore": [
+                "templates/**/*/index.ts"
+              ],
+              "input": "libs/remix-ws-templates/src/",
+              "output": "src/"
+            },
+            {
+              "glob": "*.md",
+              "input": "libs/remix-ws-templates/",
+              "output": "/"
+            },
+            {
+              "glob": "templates/**/.prettierrc",
+              "input": "libs/remix-ws-templates/src/",
+              "output": "src/"
+            }
+          ]
         }
       },
       "lint": {

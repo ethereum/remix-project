@@ -19,6 +19,7 @@ interface tab {
   icon: string
   tooltip: string
   iconClass: string
+  description?: string
 }
 
 export class TabProxy extends Plugin {
@@ -56,7 +57,7 @@ export class TabProxy extends Plugin {
 
     this.on('fileManager', 'filesAllClosed', () => {
       this.call('manager', 'activatePlugin', 'home')
-      this.tabsApi.activateTab('home')
+      this.focus('home')
     })
 
     this.on('fileManager', 'fileRemoved', (name) => {
@@ -185,7 +186,7 @@ export class TabProxy extends Plugin {
       }
     })
 
-    this.on('manager', 'pluginActivated', ({ name, location, displayName, icon }) => {
+    this.on('manager', 'pluginActivated', ({ name, location, displayName, icon, description }) => {
       if (location === 'mainPanel') {
         this.addTab(
           name,
@@ -199,7 +200,8 @@ export class TabProxy extends Plugin {
             this.emit('closeApp', name)
             this.call('manager', 'deactivatePlugin', name)
           },
-          icon
+          icon,
+          description
         )
         this.switchTab(name)
       }
@@ -262,7 +264,7 @@ export class TabProxy extends Plugin {
     this.removeTab(oldName)
   }
 
-  addTab (name, title, switchTo, close, icon?) {
+  addTab (name, title, switchTo, close, icon?, description = '') {
     if (this._handlers[name]) return this.renderComponent()
 
     const slash = name.split('/')
@@ -291,6 +293,7 @@ export class TabProxy extends Plugin {
             const index = this.loadedTabs.findIndex(({ title }) => title === formatPath.join('/'))
             if (index > -1) {
               const duplicateTabName = this.loadedTabs[index].name
+              const duplicateTabTooltip = this.loadedTabs[index].description
               const duplicateTabPath = duplicateTabName.split('/')
               const duplicateTabFormatPath = [...duplicateTabPath].reverse()
               const duplicateTabTitle = duplicateTabFormatPath.slice(0, titleLength).reverse().join('/')
@@ -299,7 +302,7 @@ export class TabProxy extends Plugin {
                 name: duplicateTabName,
                 title: duplicateTabTitle,
                 icon,
-                tooltip: duplicateTabName,
+                tooltip: duplicateTabTooltip || duplicateTabTitle,
                 iconClass: getPathIcon(duplicateTabName)
               }
             }
@@ -313,7 +316,7 @@ export class TabProxy extends Plugin {
         name,
         title,
         icon,
-        tooltip: name,
+        tooltip: description || title,
         iconClass: getPathIcon(name)
       })
     }

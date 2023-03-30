@@ -1,6 +1,6 @@
 'use strict'
 import { ethers } from 'ethers'
-import { toBuffer, addHexPrefix } from 'ethereumjs-util'
+import { toBuffer, addHexPrefix } from '@ethereumjs/util'
 import { EventManager } from '../eventManager'
 import { compareByteCode, getinputParameters } from '../util'
 import { decodeResponse } from './txFormat'
@@ -10,7 +10,7 @@ function addExecutionCosts (txResult, tx, execResult) {
   if (txResult) {
     if (execResult) {
       tx.returnValue = execResult.returnValue
-      if (execResult.gasUsed) tx.executionCost = execResult.gasUsed.toString(10)
+      if (execResult.executionGasUsed) tx.executionCost = execResult.executionGasUsed.toString(10)
     }
     if (txResult.receipt && txResult.receipt.gasUsed) tx.transactionCost = txResult.receipt.gasUsed.toString(10)
   }
@@ -64,7 +64,7 @@ export class TxListener {
       let execResult
       if (this.executionContext.isVM()) {
         execResult = await this.executionContext.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
-        returnValue = execResult.returnValue
+        returnValue = toBuffer(execResult.returnValue)
       } else {
         returnValue = toBuffer(addHexPrefix(txResult.result))
       }
@@ -104,7 +104,7 @@ export class TxListener {
 
         addExecutionCosts(txResult, tx, execResult)
         tx.envMode = this.executionContext.getProvider()
-        tx.status = txResult.receipt.status // 0x0 or 0x1
+        tx.status = txResult.receipt.status
         this._resolve([tx])
       })
     })
@@ -139,7 +139,7 @@ export class TxListener {
   startListening () {
     this.init()
     this._isListening = true
-    if (this._listenOnNetwork && this.executionContext.getProvider() !== 'vm') {
+    if (this._listenOnNetwork && !this.executionContext.isVM()) {
       this._startListenOnNetwork()
     }
   }
