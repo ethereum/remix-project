@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import {
-  CompilationResult,
-} from '@remixproject/plugin-api/'
 
 import './App.css'
 import { DocGenClient } from './docgen-client'
@@ -32,8 +29,9 @@ const App = () => {
 
   return (
     <div className="p-3">
-      <h1>Remix Docgen</h1>
-      {fileName && <h4>File: {fileName.split('/')[1].split('.')[0].concat('.sol')}</h4>}
+      <h1>Documentation generator</h1>
+      <h3>Compile a solidity contract in order to build documentation as markdown.</h3>
+      {fileName && <h5>File: {fileName.split('/')[1].split('.')[0].concat('.sol')}</h5>}
       {hasBuild && <button className="btn btn-primary btn-block mt-4 rounded" onClick={() => client.generateDocs()}>Generate doc</button>}
     </div>
   )
