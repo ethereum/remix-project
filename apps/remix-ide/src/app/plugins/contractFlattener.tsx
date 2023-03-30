@@ -15,6 +15,8 @@ const profile = {
 }
 
 export class ContractFlattener extends Plugin {
+
+  triggerFlattenContract: boolean = false
   constructor() {
     super(profile)
   }
@@ -22,13 +24,21 @@ export class ContractFlattener extends Plugin {
   onActivation(): void {
     this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
       if(data.sources && Object.keys(data.sources).length > 1) {
-        await this.flattenContract(source, file, data)
+        if(this.triggerFlattenContract) {
+          this.triggerFlattenContract = false
+          await this.flattenContract(source, file, data)
+        }
       }
     })  
     _paq.push(['trackEvent', 'plugin', 'activated', 'contractFlattener'])
   }
 
+  onDeactivation(): void {
+    this.off('solidity', 'compilationFinished')
+  }
+
   async flattenAContract(action: customAction) {
+    this.triggerFlattenContract = true
     await this.call('solidity', 'compile', action.path[0])
   }
 
@@ -46,6 +56,7 @@ export class ContractFlattener extends Plugin {
     let sorted
     let result
     let sources
+    console.log('flattenContract', source, filePath, data)
     try{
       dependencyGraph = getDependencyGraph(ast, filePath)
       sorted = dependencyGraph.isEmpty()
