@@ -21,7 +21,9 @@ export class ContractFlattener extends Plugin {
 
   onActivation(): void {
     this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
-      await this.flattenContract(source, file, data)
+      if(data.sources && Object.keys(data.sources).length > 1) {
+        await this.flattenContract(source, file, data)
+      }
     })  
     _paq.push(['trackEvent', 'plugin', 'activated', 'contractFlattener'])
   }
