@@ -27,7 +27,6 @@ export class ContractFlattener extends Plugin {
   }
 
   async flattenAContract(action: customAction) {
-    this.call('manager', 'deactivatePlugin', 'solidityumlgen')
     await this.call('solidity', 'compile', action.path[0])
   }
 
