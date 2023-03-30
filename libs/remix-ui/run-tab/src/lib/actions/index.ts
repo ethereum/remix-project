@@ -2,15 +2,16 @@
 import React from 'react'
 import { RunTab } from '../types/run-tab'
 import { resetAndInit, setupEvents } from './events'
-import { createNewBlockchainAccount, fillAccountsList, setExecutionContext, signMessageWithAddress } from './account'
+import { createNewBlockchainAccount, setExecutionContext, signMessageWithAddress } from './account'
 import { clearInstances, clearPopUp, removeInstance, setAccount, setGasFee, setMatchPassphrasePrompt, 
   setNetworkNameFromProvider, setPassphrasePrompt, setSelectedContract, setSendTransactionValue, setUnit, 
   updateBaseFeePerGas, updateConfirmSettings, updateGasPrice, updateGasPriceStatus, updateMaxFee, updateMaxPriorityFee, updateScenarioPath } from './actions'
-import { createInstance, getContext, getFuncABIInputs, getSelectedContract, loadAddress, runTransactions, updateInstanceBalance, syncContractsInternal, isValidContractAddress } from './deploy'
+import { createInstance, getContext, getFuncABIInputs, getSelectedContract, loadAddress, runTransactions, updateInstanceBalance, syncContractsInternal, isValidContractAddress, isValidContractUpgrade } from './deploy'
 import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity'
 import { ContractData, FuncABI } from "@remix-project/core-plugin"
 import { DeployMode, MainnetPrompt } from '../types'
 import { runCurrentScenario, storeScenario } from './recorder'
+import { SolcInput, SolcOutput } from '@openzeppelin/upgrades-core'
 
 declare global {
   interface Window {
@@ -24,12 +25,8 @@ let plugin: RunTab, dispatch: React.Dispatch<any>
 export const initRunTab = (udapp: RunTab) => async (reducerDispatch: React.Dispatch<any>) => {
   plugin = udapp
   dispatch = reducerDispatch
+  setupEvents(plugin, dispatch)  
   resetAndInit(plugin)
-  setupEvents(plugin, dispatch)
-  setInterval(() => {
-    fillAccountsList(plugin, dispatch)
-    updateInstanceBalance(plugin)
-  }, 1000)
 }
 
 export const setAccountAddress = (account: string) => setAccount(dispatch, account)
@@ -63,3 +60,4 @@ export const setNetworkName = (networkName: string) => setNetworkNameFromProvide
 export const updateSelectedContract = (contractName) => setSelectedContract(dispatch, contractName)
 export const syncContracts = () => syncContractsInternal(plugin)
 export const isValidProxyAddress = (address: string) => isValidContractAddress(plugin, address)
+export const isValidProxyUpgrade = (proxyAddress: string, contractName: string, solcInput: SolcInput, solcOuput: SolcOutput) => isValidContractUpgrade(plugin, proxyAddress, contractName, solcInput, solcOuput)

@@ -3,17 +3,14 @@ import { RunTab } from "../types/run-tab"
 import { clearInstances, setAccount, setExecEnv } from "./actions"
 import { displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setExternalEndpoint, setMatchPassphrase, setPassphrase } from "./payload"
 
-export const updateAccountBalances = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
+export const updateAccountBalances = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const accounts = plugin.REACT_API.accounts.loadedAccounts
 
-  Object.keys(accounts).map((value) => {
-    plugin.blockchain.getBalanceInEther(value, (err, balance) => {
-      if (err) return
-      const updated = shortenAddress(value, balance)
-
-      accounts[value] = updated
-    })
-  })
+  for (const account of Object.keys(accounts)) {
+    const balance = await plugin.blockchain.getBalanceInEther(account)
+    const updated = shortenAddress(account, balance)
+    accounts[account] = updated
+  }
   dispatch(fetchAccountsListSuccess(accounts))
 }
 
@@ -31,17 +28,10 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
       // - all the promises resolve
       // - at least one reject
       // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
-      await (Promise as any).all(accounts.map((account) => {
-        return new Promise((resolve, reject) => {
-          plugin.blockchain.getBalanceInEther(account, (err, balance) => {
-            if (err) return reject(err)
-            const updated = shortenAddress(account, balance)
-
-            loadedAccounts[account] = updated
-            resolve(account)
-          })
-        })
-      }))
+      for (const account of accounts) {
+        const balance = await plugin.blockchain.getBalanceInEther(account)
+        loadedAccounts[account] =  shortenAddress(account, balance)
+      }     
       const provider = plugin.blockchain.getProvider()
 
       if (provider === 'injected') {
@@ -59,6 +49,7 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
 }
 
 export const setFinalContext = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
+  dispatch(fetchAccountsListRequest())
   // set the final context. Cause it is possible that this is not the one we've originaly selected
   const value = _getProviderDropdownValue(plugin)
 
@@ -67,10 +58,7 @@ export const setFinalContext = (plugin: RunTab, dispatch: React.Dispatch<any>) =
 }
 
 const _getProviderDropdownValue = (plugin: RunTab): string => {
-  const provider = plugin.blockchain.getProvider()
-  const fork = plugin.blockchain.getCurrentFork()
-
-  return provider === 'vm' ? provider + '-' + fork : provider
+  return plugin.blockchain.getProvider()
 }
 
 export const setExecutionContext = (plugin: RunTab, dispatch: React.Dispatch<any>, executionContext: { context: string, fork: string }) => {

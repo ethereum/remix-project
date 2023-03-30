@@ -1,9 +1,11 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useRef, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import * as remixLib from '@remix-project/remix-lib'
 import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
-import { CustomTooltip } from '@remix-ui/helper'
+import { CustomTooltip, ProxyAddressToggle, ProxyDropdownMenu, shortenDate, shortenProxyAddress, unavailableProxyLayoutMsg, upgradeReportMsg } from '@remix-ui/helper'
+import { Dropdown } from 'react-bootstrap'
 
 const txFormat = remixLib.execution.txFormat
 const txHelper = remixLib.execution.txHelper
@@ -20,12 +22,13 @@ export function ContractGUI (props: ContractGUIProps) {
   const [toggleDeployProxy, setToggleDeployProxy] = useState<boolean>(false)
   const [toggleUpgradeImp, setToggleUpgradeImp] = useState<boolean>(false)
   const [deployState, setDeployState] = useState<{ deploy: boolean, upgrade: boolean }>({ deploy: false, upgrade: false })
-  const [useLastProxy, setUseLastProxy] = useState<boolean>(false)
   const [proxyAddress, setProxyAddress] = useState<string>('')
   const [proxyAddressError, setProxyAddressError] = useState<string>('')
+  const [showDropdown, setShowDropdown] = useState<boolean>(false)
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
   const initializeFields = useRef<Array<HTMLInputElement | null>>([])
   const basicInputRef = useRef<HTMLInputElement>()
+  const intl = useIntl()
 
   useEffect(() => {
     if (props.deployOption && Array.isArray(props.deployOption)) {
@@ -169,13 +172,38 @@ export function ContractGUI (props: ContractGUIProps) {
     }
   }
 
-  const handleActionClick = () => {
+  const handleActionClick = async () => {
     if (deployState.deploy) {
       const proxyInitializeString = getMultiValsString(initializeFields.current)
 
       props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
     } else if (deployState.upgrade) {
-      !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
+      if (proxyAddress === '') {
+        setProxyAddressError('proxy address cannot be empty')
+      } else {
+        const isValidProxyAddress = await props.isValidProxyAddress(proxyAddress)
+
+        if (isValidProxyAddress) {
+          setProxyAddressError('')
+          const upgradeReport: any = await props.isValidProxyUpgrade(proxyAddress)
+
+          if (upgradeReport.ok) {
+            !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
+          } else {
+            if (upgradeReport.warning) {
+              props.modal('Proxy Upgrade Warning', unavailableProxyLayoutMsg(), 'Proceed', () => {
+                !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
+              }, 'Cancel', () => {}, 'btn-warning', 'btn-secondary')
+            } else {
+              props.modal('Proxy Upgrade Error', upgradeReportMsg(upgradeReport), 'Continue anyway ', () => {
+                !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
+              }, 'Cancel', () => {}, 'btn-warning', 'btn-secondary')
+            }
+        }
+      } else {
+          setProxyAddressError('not a valid contract address')
+        }
+      }
     } else {
       props.clickCallBack(props.funcABI.inputs, basicInput)
     }
@@ -215,43 +243,22 @@ export function ContractGUI (props: ContractGUIProps) {
     setToggleUpgradeImp(value)
     if (value) {
       setToggleDeployProxy(false)
-      if (useLastProxy) setProxyAddress(props.savedProxyAddress)
     }
     setDeployState({ deploy: false, upgrade: value })
   }
 
-  const handleUseLastProxySelect = (e) => {
-    const value = e.target.checked
-    const address = props.savedProxyAddress
-
-    if (value) {
-      if (address) {
-        setProxyAddress(address)
-        setProxyAddressError('')
-      } else {
-        setProxyAddressError('No proxy address available')
-        setProxyAddress('')
-      }
-    }
-    setUseLastProxy(value)
+  const switchProxyAddress = (address: string) => {
+    setProxyAddress(address)
   }
 
-  const handleSetProxyAddress = (e) => {
-    const value = e.target.value
-    
-    setProxyAddress(value)
+  const toggleDropdown = (isOpen: boolean) => {
+    setShowDropdown(isOpen)
   }
 
-  const validateProxyAddress = async (address: string) => {
-    if (address === '') {
-      setProxyAddressError('proxy address cannot be empty')
-    } else {
-      if (await props.isValidProxyAddress(address)) {
-        setProxyAddressError('')
-      } else {
-        setProxyAddressError('not a valid contract address')
-      }
-    }
+  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const address = e.target.value
+
+    setProxyAddress(address)
   }
 
   return (
@@ -267,68 +274,61 @@ export function ContractGUI (props: ContractGUIProps) {
       <div
         className="udapp_contractActionsContainerSingle pt-2"
         style={{ display: toggleContainer ? "none" : "flex" }}
-      >
+      > 
         <CustomTooltip
-          placement={"right-start"}
+          placement={"right"}
           tooltipClasses="text-wrap"
           tooltipId="remixUdappInstanceButtonTooltip"
-          tooltipText={buttonOptions.title}
+          tooltipText={toggleUpgradeImp && !proxyAddress ? 'Proxy address cannot be empty' : buttonOptions.title}
         >
           <button
             onClick={handleActionClick}
             className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`}
             data-id={buttonOptions.dataId}
             data-title={buttonOptions.title}
+            disabled={(toggleUpgradeImp && !proxyAddress) || props.disabled}
           >
-            {title}
+            <div>{title}</div>
           </button>
         </CustomTooltip>
-        <CustomTooltip
-          placement={"right"}
-          tooltipClasses="text-nowrap"
-          tooltipId="remixContractGuiTooltip"
-          tooltipText={props.funcABI.type === "fallback" ||props.funcABI.type === "receive" ? `'(${props.funcABI.type}')`
-          : props.inputs}
-        >
-          <input
-            className="form-control"
-            data-id={
+        <input
+          className="form-control"
+          data-id={
+            props.funcABI.type === "fallback" ||
+            props.funcABI.type === "receive"
+              ? `'(${props.funcABI.type}')`
+              : "multiParamManagerBasicInputField"
+          }
+          placeholder={props.inputs}
+          onChange={handleBasicInput}
+          data-title={
+            props.funcABI.type === "fallback" ||
+            props.funcABI.type === "receive"
+              ? `'(${props.funcABI.type}')`
+              : props.inputs
+          }
+          ref={basicInputRef}
+          style={{
+            visibility: !(
+              (props.funcABI.inputs && props.funcABI.inputs.length > 0) ||
               props.funcABI.type === "fallback" ||
               props.funcABI.type === "receive"
-                ? `'(${props.funcABI.type}')`
-                : "multiParamManagerBasicInputField"
-            }
-            placeholder={props.inputs}
-            onChange={handleBasicInput}
-            data-title={
-              props.funcABI.type === "fallback" ||
-              props.funcABI.type === "receive"
-                ? `'(${props.funcABI.type}')`
-                : props.inputs
-            }
-            ref={basicInputRef}
-            style={{
-              visibility: !(
-                (props.funcABI.inputs && props.funcABI.inputs.length > 0) ||
-                props.funcABI.type === "fallback" ||
-                props.funcABI.type === "receive"
-              )
-                ? "hidden"
-                : "visible",
-            }}
-          />
-        </CustomTooltip>
-          <i
-            className="fas fa-angle-down udapp_methCaret"
-            onClick={switchMethodViewOn}
-            style={{
-              visibility: !(
-                props.funcABI.inputs && props.funcABI.inputs.length > 0
-              )
-                ? "hidden"
-                : "visible",
-            }}
-          ></i>
+            )
+              ? "hidden"
+              : "visible",
+          }}
+        />
+        <i
+          className="fas fa-angle-down udapp_methCaret"
+          onClick={switchMethodViewOn}
+          style={{
+            visibility: !(
+              props.funcABI.inputs && props.funcABI.inputs.length > 0
+            )
+              ? "hidden"
+              : "visible",
+          }}
+        ></i>
       </div>
       <div
         className="udapp_contractActionsContainerMulti"
@@ -367,7 +367,7 @@ export function ContractGUI (props: ContractGUIProps) {
           </div>
           <div className="d-flex udapp_group udapp_multiArg">
             <CopyToClipboard
-              tip="Copy calldata to clipboard"
+              tip={intl.formatMessage({ id: 'udapp.copyCalldata' })}
               icon="fa-clipboard"
               direction={"bottom"}
               getContent={getEncodedCall}
@@ -382,7 +382,7 @@ export function ContractGUI (props: ContractGUIProps) {
               </button>
             </CopyToClipboard>
             <CopyToClipboard
-              tip="Copy encoded input parameters to clipboard"
+              tip={intl.formatMessage({ id: 'udapp.copyParameters' })}
               icon="fa-clipboard"
               direction={"bottom"}
               getContent={getEncodedParams}
@@ -393,7 +393,7 @@ export function ContractGUI (props: ContractGUIProps) {
                   className="m-0 remixui_copyIcon far fa-copy"
                   aria-hidden="true"
                 ></i>
-                <label htmlFor="copyParameters">Parameters</label>
+                <label htmlFor="copyParameters"><FormattedMessage id='udapp.parameters' /></label>
               </button>
             </CopyToClipboard>
             <CustomTooltip
@@ -407,6 +407,7 @@ export function ContractGUI (props: ContractGUIProps) {
                 onClick={handleExpandMultiClick}
                 data-id={buttonOptions.dataId}
                 className={`udapp_instanceButton ${buttonOptions.classList}`}
+                disabled={props.disabled}
               >
                 {buttonOptions.content}
               </button>
@@ -431,7 +432,7 @@ export function ContractGUI (props: ContractGUIProps) {
                   data-id="contractGUIDeployWithProxyLabel"
                   className="m-0 form-check-label w-100 custom-control-label udapp_checkboxAlign"
                 >
-                  Deploy with Proxy
+                  <FormattedMessage id='udapp.deployWithProxy' />
                 </label>
             </div>
             <div>
@@ -468,14 +469,14 @@ export function ContractGUI (props: ContractGUIProps) {
                         {" "}
                         {inp.name}:{" "}
                       </label>
-                        <input
-                          ref={(el) => {
-                            initializeFields.current[index] = el;
-                          }}
-                          style={{ height: 32 }}
-                          className="form-control udapp_input"
-                          placeholder={inp.type}
-                        />
+                      <input
+                        ref={(el) => {
+                          initializeFields.current[index] = el;
+                        }}
+                        style={{ height: 32 }}
+                        className="form-control udapp_input"
+                        placeholder={inp.type}
+                      />
                     </div>
                   );
                 })}
@@ -497,7 +498,7 @@ export function ContractGUI (props: ContractGUIProps) {
                   data-id="contractGUIUpgradeImplementationLabel"
                   className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
                 >
-                  Upgrade with Proxy
+                  <FormattedMessage id='udapp.upgradeWithProxy' />
                 </label>
             </div>
             <span onClick={handleToggleUpgradeImp}>
@@ -516,48 +517,44 @@ export function ContractGUI (props: ContractGUIProps) {
               toggleUpgradeImp ? "d-flex" : "d-none"
             }`}
           >
-            <div className={`flex-column 'd-flex'}`}>
-              <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
-                <input
-                  id="proxyAddress"
-                  data-id="contractGUIProxyAddress"
-                  className="form-check-input custom-control-input"
-                  type="checkbox"
-                  onChange={handleUseLastProxySelect}
-                  checked={useLastProxy}
-                />
-                <CustomTooltip
-                  tooltipText="Select this option to use the last deployed ERC1967 contract on the current network."
-                  tooltipId="proxyAddressTooltip"
-                  placement="auto"
-                  tooltipClasses="text-wrap"
-                >
-                  <label
-                    htmlFor="proxyAddress"
-                    data-id="contractGUIProxyAddressLabel"
-                    className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
-                    style={{ fontSize: 12 }}
-                  >
-                    Use last deployed ERC1967 contract
-                  </label>
-                </CustomTooltip>
+            <div data-id="proxy-dropdown-items">
+              <Dropdown onToggle={toggleDropdown} show={showDropdown}>
+                <Dropdown.Toggle id="dropdown-custom-components" as={ProxyAddressToggle} address={proxyAddress} onChange={handleAddressChange} className="d-inline-block border border-dark bg-dark" />
+
+                { props.proxy.deployments.length > 0 &&
+                  <Dropdown.Menu as={ProxyDropdownMenu} className='w-100 custom-dropdown-items' style={{ overflow: 'hidden' }}>
+                    {
+                      props.proxy.deployments.map((deployment, index) => (
+                        <CustomTooltip
+                          placement={"right"}
+                          tooltipClasses="text-nowrap"
+                          tooltipId={`proxyAddressTooltip${index}`}
+                          tooltipText={'Deployed ' + shortenDate(deployment.date)}
+                          key={index}
+                        >
+                          <Dropdown.Item
+                            key={index}
+                            onClick={() => {
+                              switchProxyAddress(deployment.address)
+                            }}
+                            data-id={`proxyAddress${index}`}
+                          >
+                            <span>{ proxyAddress === deployment.address ? <span>&#10003; { deployment.contractName + ' ' + shortenProxyAddress(deployment.address) } </span> : <span className="pl-3">{ deployment.contractName + ' ' + shortenProxyAddress(deployment.address) }</span> }</span>
+                          </Dropdown.Item>
+                        </CustomTooltip>
+                      ))
+                    }
+                  </Dropdown.Menu>
+                }
+              </Dropdown>
+            </div>
+            <div className='d-flex'>
+              <div className="mb-2">
+                { proxyAddressError && <span className='text-lowercase text-danger' data-id="errorMsgProxyAddress" style={{ fontSize: '.8em' }}>{ proxyAddressError }</span> }
               </div>
-              {
-                !useLastProxy ?
-                <div className="mb-2">
-                  <label className="mt-2 text-left d-block">
-                    Proxy Address :
-                  </label>
-                  <CustomTooltip placement="right" tooltipText={'Enter previously deployed proxy address on the selected network'}>
-                    <input style={{ height: 32 }} className="form-control udapp_input" data-id="ERC1967AddressInput" placeholder='proxy address' onChange={handleSetProxyAddress} onBlur={() => validateProxyAddress(proxyAddress) } />
-                  </CustomTooltip>
-                  { proxyAddressError && <span className='text-lowercase' data-id="errorMsgProxyAddress" style={{ fontSize: '.8em' }}>{ proxyAddressError }</span> }
-                </div> :
-                <span className='text-capitalize' data-id="lastDeployedERC1967Address" style={{ fontSize: '.8em' }}>{ proxyAddress || proxyAddressError }</span>
-              }
             </div>
           </div>
-        </>
+        </> 
       ) : null}
     </div>
   );

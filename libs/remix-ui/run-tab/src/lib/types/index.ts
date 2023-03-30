@@ -1,10 +1,109 @@
 import { Ref } from 'react'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { ContractData, FuncABI } from '@remix-project/core-plugin'
-import { ContractList } from '../reducers/runTab'
 import { RunTab } from './run-tab'
+import { SolcInput, SolcOutput } from '@openzeppelin/upgrades-core'
+import { LayoutCompatibilityReport } from '@openzeppelin/upgrades-core/dist/storage/report'
 export interface RunTabProps {
   plugin: RunTab
+}
+
+export interface Contract {
+  name: string,
+  alias: string,
+  file: string,
+  compiler: CompilerAbstract,
+  compilerName: string
+}
+
+export interface ContractList {
+  [file: string]: Contract[]
+}
+export interface RunTabState {
+  accounts: {
+    loadedAccounts: Record<string, string>,
+    isRequesting: boolean,
+    isSuccessful: boolean,
+    error: string,
+    selectedAccount: string
+  },
+  sendValue: string,
+  sendUnit: 'ether' | 'finney' | 'gwei' | 'wei',
+  gasLimit: number,
+  selectExEnv: string,
+  personalMode: boolean,
+  networkName: string,
+  providers: {
+    providerList: {
+      id?: string,
+      dataId?: string,
+      title?: string,
+      value: string,
+      fork?: string
+      content: string
+    }[],
+    isRequesting: boolean,
+    isSuccessful: boolean,
+    error: string
+  },
+  notification: {
+    title: string,
+    message: string,
+    actionOk: () => void,
+    actionCancel: (() => void) | null,
+    labelOk: string,
+    labelCancel: string
+  },
+  externalEndpoint: string,
+  popup: string,
+  passphrase: string,
+  matchPassphrase: string,
+  contracts: {
+    contractList: {
+      [file: string]: {
+        name: string,
+        alias: string,
+        file: string,
+        compiler: CompilerAbstract
+        compilerName: string
+      }[]
+    },
+    deployOptions: { [file: string]: { [name: string]: DeployOptions } },
+    loadType: 'abi' | 'sol' | 'other'
+    currentFile: string,
+    compilationSource: string,
+    currentContract: string,
+    compilationCount: number,
+    isRequesting: boolean,
+    isSuccessful: boolean,
+    error: string
+  },
+  ipfsChecked: boolean,
+  gasPriceStatus: boolean,
+  confirmSettings: boolean,
+  maxFee: string,
+  maxPriorityFee: string,
+  baseFeePerGas: string,
+  gasPrice: string,
+  instances: {
+    instanceList: {
+      contractData?: ContractData,
+      address: string,
+      balance?: number,
+      name: string,
+      decodedResponse?: Record<number, any>,
+      abi?: any
+    }[],
+    error: string
+  },
+  recorder: {
+    pathToScenario: string,
+    transactionCount: number
+  }
+  remixdActivated: boolean,
+  proxy: {
+    deployments: { address: string, date: string, contractName: string }[]
+  }
 }
 
 export interface SettingsProps {
@@ -41,7 +140,7 @@ export interface SettingsProps {
   createNewBlockchainAccount: (cbMessage: JSX.Element) => void,
   setPassphrase: (passphrase: string) => void,
   setMatchPassphrase: (passphrase: string) => void,
-  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, okBtnClass?: string, cancelBtnClass?: string) => void,
   tooltip: (toasterMsg: string) => void,
   signMessageWithAddress: (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => void,
   passphrase: string,
@@ -63,7 +162,7 @@ export interface EnvironmentProps {
     isSuccessful: boolean,
     error: string
   },
-  setExecutionContext: (executionContext: { context: string, fork: string }) => void
+  setExecutionContext: (executionContext: { context: string }) => void
 }
 
 export interface NetworkProps {
@@ -85,7 +184,7 @@ export interface AccountProps {
   setPassphrase: (passphrase: string) => void,
   setMatchPassphrase: (passphrase: string) => void,
   tooltip: (toasterMsg: string) => void,
-  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, okBtnClass?: string, cancelBtnClass?: string) => void,
   signMessageWithAddress: (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => void,
   passphrase: string
 }
@@ -125,11 +224,11 @@ export type MainnetPrompt = (
   ) => JSX.Element
 
 export interface ContractDropdownProps {
+  selectedAccount: string,
   exEnvironment: string,
   contracts: {
     contractList: ContractList,
     deployOptions: { [file: string]: { [name: string]: DeployOptions } },
-    proxyKey: string,
     loadType: 'abi' | 'sol' | 'other',
     currentFile: string,
     compilationSource: string
@@ -141,7 +240,7 @@ export interface ContractDropdownProps {
   },
   syncContracts: () => void,
   getSelectedContract: (contractName: string, compiler: CompilerAbstract) => ContractData,
-  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, okBtnClass?: string, cancelBtnClass?: string) => void,
   passphrase: string,
   setPassphrase: (passphrase: string) => void,
   createInstance: (
@@ -166,7 +265,9 @@ export interface ContractDropdownProps {
   setNetworkName: (name: string) => void,
   setSelectedContract: (contractName: string) => void
   remixdActivated: boolean,
-  isValidProxyAddress?: (address: string) => Promise<boolean>
+  isValidProxyAddress?: (address: string) => Promise<boolean>,
+  isValidProxyUpgrade?: (proxyAddress: string, contractName: string, solcInput: SolcInput, solcOuput: SolcOutput) => Promise<LayoutCompatibilityReport | { ok: boolean, pass: boolean, warning: boolean }>,
+  proxy: { deployments: { address: string, date: string, contractName: string }[] }
 }
 
 export interface RecorderProps {
@@ -223,7 +324,9 @@ export interface Modal {
   okLabel: string
   okFn: () => void
   cancelLabel: string
-  cancelFn: () => void
+  cancelFn: () => void,
+  okBtnClass?: string,
+  cancelBtnClass?: string
 }
 
 export type DeployMode = 'Deploy with Proxy' | 'Upgrade with Proxy'
@@ -261,8 +364,10 @@ export interface ContractGUIProps {
   isDeploy?: boolean,
   deployOption?: { title: DeployMode, active: boolean }[],
   initializerOptions?: DeployOption,
-  savedProxyAddress?: string,
-  isValidProxyAddress?: (address: string) => Promise<boolean>
+  proxy?: { deployments: { address: string, date: string, contractName: string }[] },
+  isValidProxyAddress?: (address: string) => Promise<boolean>,
+  isValidProxyUpgrade?: (proxyAddress: string) => Promise<LayoutCompatibilityReport | { ok: boolean, pass: boolean, warning: boolean }>,
+  modal?: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, okBtnClass?: string, cancelBtnClass?: string) => void
 }
 export interface MainnetProps {
   network: Network,

@@ -1,15 +1,19 @@
 import { Block } from '@ethereumjs/block'
-import { BN } from 'ethereumjs-util'
+import { ConsensusType } from '@ethereumjs/common'
 
 export function generateBlock (vmContext) {
+  const common = vmContext.vmObject().common
+
+  const difficulty = common.consensusType() === ConsensusType.ProofOfStake ? 0 : 69762765929000
+
   return new Promise((resolve, reject) => {
     const block: Block = Block.fromBlockData({
       header: {
         timestamp: (new Date().getTime() / 1000 | 0),
         number: 0,
         coinbase: '0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a',
-        difficulty: new BN('69762765929000', 10),
-        gasLimit: new BN('8000000').imuln(1)
+        difficulty,
+        gasLimit: 8000000
       }
     }, { common: vmContext.vmObject().common })
 

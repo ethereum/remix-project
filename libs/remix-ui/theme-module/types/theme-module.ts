@@ -1,4 +1,4 @@
-import { Plugin } from "@remixproject/engine/lib/abstract";
+import { Plugin } from "@remixproject/engine";
 import { EventEmitter } from "events";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface ThemeModule extends Plugin<any, any> {
@@ -43,4 +43,4 @@ export interface ThemeModule extends Plugin<any, any> {
     fixInvert(image?: any): void;
 }
 
-interface Theme { name: string, quality: string, url: string }
+export interface Theme { name: string, quality: string, url: string }

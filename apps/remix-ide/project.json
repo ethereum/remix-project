@@ -3,8 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/remix-ide/src",
   "projectType": "application",
-  "implicitDependencies": [
-  ],
+  "implicitDependencies": ["doc-gen", "doc-viewer", "etherscan", "vyper"],
   "targets": {
     "build": {
       "executor": "@nrwl/webpack:webpack",
@@ -30,14 +29,16 @@
       },
       "configurations": {
         "development": {
+          "optimization": false,
+          "generateIndexHtml": true,
+          "extractCss": false
+
         },
         "production": {
-          "fileReplacements": [
-            {
-              "replace": "apps/remix-ide/src/environments/environment.ts",
-              "with": "apps/remix-ide/src/environments/environment.prod.ts"
-            }
-          ]
+          "optimization": true,
+          "generateIndexHtml": true,
+          "extractCss": false,
+          "vendorChunk": false
         }
       }
     },
@@ -45,15 +46,18 @@
       "executor": "@nrwl/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "remix-ide:build",
-        "watch": true,
-        "liveReload": true,
-        "hmr": false
+        "buildTarget": "remix-ide:build"
+
       },
       "configurations": {
         "development": {
           "buildTarget": "remix-ide:build:development",
           "port": 8080
+        },
+        "hot":{
+          "buildTarget": "remix-ide:build:development",
+          "port": 8080,
+          "hmr": true
         },
         "production": {
           "buildTarget": "remix-ide:build:production",

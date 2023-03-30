@@ -23,7 +23,13 @@ export default async (opts) => {
 
     // If no options is selected, opts.upgradeable will be undefined
     // We do not show test file for upgradeable contract
-    // @ts-ignore
-    if (!opts || opts.upgradeable === undefined || !opts.upgradeable) filesObj['tests/MyToken_test.sol'] = (await import('raw-loader!./tests/MyToken_test.sol')).default
+    
+    if (!opts || opts.upgradeable === undefined || !opts.upgradeable) {
+        // @ts-ignore
+        if (erc20.defaults.mintable) filesObj['tests/MyToken_test.sol'] = (await import('raw-loader!./tests/MyToken_mintable_test.sol')).default
+        // @ts-ignore
+        else filesObj['tests/MyToken_test.sol'] = (await import('raw-loader!./tests/MyToken_test.sol')).default
+
+    }
     return filesObj
 }

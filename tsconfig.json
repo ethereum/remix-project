@@ -15,7 +15,8 @@
     "module": "CommonJS",
     "lib": [
       "es2017",
-      "dom"
+      "dom",
+      "dom.iterable"
     ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,

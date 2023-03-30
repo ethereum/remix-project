@@ -1,4 +1,5 @@
 import React, { useState } from 'react' // eslint-disable-line
+import { FormattedMessage } from 'react-intl'
 import CheckTxStatus from './ChechTxStatus' // eslint-disable-line
 import Context from './Context' // eslint-disable-line
 import showTable from './Table'
@@ -6,7 +7,7 @@ import showTable from './Table'
 const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, txDetails, modal, provider }) => {
   const debug = (event, tx) => {
     event.stopPropagation()
-    if (tx.isCall && tx.envMode !== 'vm') {
+    if (tx.isCall && !tx.envMode.startsWith('vm')) {
       modal('VM mode', 'Cannot debug this call. Debugging calls is only possible in Remix VM mode.', 'Ok', true, () => {}, 'Cancel', () => {})
     } else {
       plugin.event.trigger('debuggingRequested', [tx.hash])
@@ -27,7 +28,7 @@ const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, 
             data-shared='txLoggerDebugButton'
             data-id={`txLoggerDebugButton${tx.hash}`}
             onClick={(event) => debug(event, tx)}
-          >Debug</div>
+          ><FormattedMessage id='terminal.debug' /></div>
         </div>
         <i className = {`remix_ui_terminal_arrow fas ${(showTableHash.includes(tx.hash)) ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
       </div>

@@ -74,7 +74,7 @@ module.exports = class TestTab extends ViewPlugin {
     if (!isSolidityActive) {
       await this.call('manager', 'activatePlugin', 'solidity')
     }
-    await this.testRunner.init()
+    await this.testRunner.init(await this.call('blockchain', 'web3VM'))
     await this.createTestLibs()
   }
 
@@ -108,7 +108,10 @@ module.exports = class TestTab extends ViewPlugin {
   /*
     Test is not associated with the UI
   */
-  testFromSource (content, path = 'browser/unit_test.sol') {
+  async testFromSource (content, path = 'browser/unit_test.sol') {
+    const web3 = await this.call('blockchain', 'web3VM')
+    await this.testRunner.init(web3)
+    await this.createTestLibs()
     return new Promise((resolve, reject) => {
       const runningTest = {}
       runningTest[path] = { content }
@@ -126,7 +129,7 @@ module.exports = class TestTab extends ViewPlugin {
         resolve(result)
       }, (url, cb) => {
         return this.contentImport.resolveAndSave(url).then((result) => cb(null, result)).catch((error) => cb(error.message))
-      })
+      }, {})
     })
   }
 

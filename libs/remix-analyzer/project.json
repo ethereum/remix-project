@@ -15,7 +15,10 @@
           "outputPath": "dist/libs/remix-analyzer",
           "main": "libs/remix-analyzer/src/index.ts",
           "tsConfig": "libs/remix-analyzer/tsconfig.lib.json",
-          "assets": []
+          "assets": [
+            "libs/remix-analyzer/*.md"
+          ],
+          "updateBuildableProjectDepsInPackageJson": false
         }
       },
       "lint": {

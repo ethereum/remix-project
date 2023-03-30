@@ -10,8 +10,10 @@ export class Blockchain extends Plugin<any, any> {
     txRunner: any;
     networkcallid: number;
     networkStatus: {
-        name: string;
-        id: string;
+        network: {
+            name: string;
+            id: string;
+        };
     };
     setupEvents(): void;
     getCurrentNetworkStatus(): {
@@ -37,7 +39,6 @@ export class Blockchain extends Plugin<any, any> {
     calculateFee(gas: any, gasPrice: any, unit: any): import("bn.js");
     determineGasFees(tx: any): (gasPrice: any, cb: any) => void;
     changeExecutionContext(context: any, confirmCb: any, infoCb: any, cb: any): Promise<any>;
-    setProviderFromEndpoint(target: any, context: any, cb: any): void;
     detectNetwork(cb: any): void;
     getProvider(): any;
     getInjectedWeb3Address(): any;
@@ -59,7 +60,7 @@ export class Blockchain extends Plugin<any, any> {
     removeProvider(name: any): void;
     /** Listen on New Transaction. (Cannot be done inside constructor because txlistener doesn't exist yet) */
     startListening(txlistener: any): void;
-    resetEnvironment(): void;
+    resetEnvironment(): Promise<void>;
     /**
      * Create a VM Account
      * @param {{privateKey: string, balance: string}} newAccount The new account to create
@@ -70,7 +71,7 @@ export class Blockchain extends Plugin<any, any> {
     }): any;
     newAccount(_password: any, passwordPromptCb: any, cb: any): any;
     /** Get the balance of an address, and convert wei to ether */
-    getBalanceInEther(address: any, cb: any): void;
+    getBalanceInEther(address: any): Promise<string>;
     pendingTransactionsCount(): number;
     /**
      * This function send a tx only to Remix VM or testnet, will return an error for the mainnet

@@ -5,15 +5,15 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
-import { initWorkspace, fetchDirectory, removeInputField, deleteWorkspace, clearPopUp, publishToGist, createNewFile, setFocusElement, createNewFolder,
-  deletePath, renamePath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath, addInputField, createWorkspace,
-  fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, handleDownloadFiles, restoreBackupZip, cloneRepository, moveFile, moveFolder,
-  showAllBranches, switchBranch, createNewBranch, checkoutRemoteBranch, createSolidityGithubAction
+import { initWorkspace, fetchDirectory, removeInputField, deleteWorkspace, deleteAllWorkspaces, clearPopUp, publishToGist, createNewFile, setFocusElement, createNewFolder,
+  deletePath, renamePath, downloadPath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath, addInputField, createWorkspace,
+  fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, uploadFolder, handleDownloadWorkspace, handleDownloadFiles, restoreBackupZip, cloneRepository, moveFile, moveFolder,
+  showAllBranches, switchBranch, createNewBranch, checkoutRemoteBranch, createSolidityGithubAction, createTsSolGithubAction, createSlitherGithubAction
 } from '../actions'
 import { Modal, WorkspaceProps, WorkspaceTemplate } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Workspace } from '../remix-ui-workspace'
-import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel/type'
+import { customAction } from '@remixproject/plugin-api'
 
 export const FileSystemProvider = (props: WorkspaceProps) => {
   const { plugin } = props
@@ -67,12 +67,20 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await deleteWorkspace(workspaceName)
   }
 
+  const dispatchDeleteAllWorkspaces = async () => {
+    await deleteAllWorkspaces()
+  }
+
   const dispatchPublishToGist = async (path?: string, type?: string) => {
     await publishToGist(path, type)
   }
 
   const dispatchUploadFile = async (target?: SyntheticEvent, targetFolder?: string) => {
     await uploadFile(target, targetFolder)
+  }
+
+  const dispatchUploadFolder = async (target?: SyntheticEvent, targetFolder?: string) => {
+    await uploadFolder(target, targetFolder)
   }
 
   const dispatchCreateNewFile = async (path: string, rootDir: string) => {
@@ -93,6 +101,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchRenamePath = async (oldPath: string, newPath: string) => {
     await renamePath(oldPath, newPath)
+  }
+
+  const dispatchDownloadPath = async (path: string) => {
+    await downloadPath(path)
   }
 
   const dispatchCopyFile = async (src: string, dest: string) => {
@@ -121,6 +133,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchHandleDownloadFiles = async () => {
     await handleDownloadFiles()
+  }
+
+  const dispatchHandleDownloadWorkspace = async () => {
+    await handleDownloadWorkspace()
   }
 
   const dispatchHandleRestoreBackup = async () => {
@@ -157,6 +173,14 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchCreateSolidityGithubAction = async () => {
     await createSolidityGithubAction()
+  }
+
+  const dispatchCreateTsSolGithubAction = async () => {
+    await createTsSolGithubAction()
+  }
+
+  const dispatchCreateSlitherGithubAction = async () => {
+    await createSlitherGithubAction()
   }
 
   useEffect(() => {
@@ -235,6 +259,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const value = {
     fs,
+    plugin,
     modal,
     toast,
     dispatchInitWorkspace,
@@ -246,13 +271,16 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchSwitchToWorkspace,
     dispatchRenameWorkspace,
     dispatchDeleteWorkspace,
+    dispatchDeleteAllWorkspaces,
     dispatchPublishToGist,
     dispatchUploadFile,
+    dispatchUploadFolder,
     dispatchCreateNewFile,
     dispatchSetFocusElement,
     dispatchCreateNewFolder,
     dispatchDeletePath,
     dispatchRenamePath,
+    dispatchDownloadPath,
     dispatchCopyFile,
     dispatchCopyFolder,
     dispatchRunScript,
@@ -260,6 +288,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchHandleClickFile,
     dispatchHandleExpandPath,
     dispatchHandleDownloadFiles,
+    dispatchHandleDownloadWorkspace,
     dispatchHandleRestoreBackup,
     dispatchCloneRepository,
     dispatchMoveFile,
@@ -268,7 +297,9 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchSwitchToBranch,
     dispatchCreateNewBranch,
     dispatchCheckoutRemoteBranch,
-    dispatchCreateSolidityGithubAction
+    dispatchCreateSolidityGithubAction,
+    dispatchCreateTsSolGithubAction,
+    dispatchCreateSlitherGithubAction
   }
   return (
     <FileSystemContext.Provider value={value}>

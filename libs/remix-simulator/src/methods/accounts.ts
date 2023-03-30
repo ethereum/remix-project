@@ -1,18 +1,19 @@
-import { BN, privateToAddress, toChecksumAddress, isValidPrivate, Address } from 'ethereumjs-util'
-import Web3 from 'web3'
+import { privateToAddress, toChecksumAddress, isValidPrivate, Address } from '@ethereumjs/util'
+import BN from 'bn.js'
+const Web3EthAccounts = require('web3-eth-accounts');
 import * as crypto from 'crypto'
 
-export class Accounts {
-  web3
+export class Web3Accounts {
   accounts: Record<string, unknown>
   accountsKeys: Record<string, unknown>
+  web3Accounts: any
   vmContext
 
   constructor (vmContext) {
-    this.web3 = new Web3()
     this.vmContext = vmContext
     // TODO: make it random and/or use remix-libs
 
+    this.web3Accounts = new Web3EthAccounts()
     this.accounts = {}
     this.accountsKeys = {}
   }
@@ -98,7 +99,7 @@ export class Accounts {
     if (!privateKey) {
       return cb(new Error('unknown account'))
     }
-    const account = this.web3.eth.accounts.privateKeyToAccount(privateKey)
+    const account = this.web3Accounts.privateKeyToAccount(privateKey as string)
 
     const data = account.sign(message)
 

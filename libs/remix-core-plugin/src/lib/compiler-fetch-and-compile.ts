@@ -1,7 +1,7 @@
 import { Plugin } from '@remixproject/engine'
 import { compile } from '@remix-project/remix-solidity'
 import { util } from '@remix-project/remix-lib'
-import { toChecksumAddress } from 'ethereumjs-util'
+import { toChecksumAddress } from '@ethereumjs/util'
 import { fetchContractFromEtherscan } from './helpers/fetch-etherscan'
 import { fetchContractFromSourcify } from './helpers/fetch-sourcify'
 import { UUPSDeployedByteCode, UUPSCompilerVersion, UUPSOptimize, UUPSRuns, UUPSEvmVersion, UUPSLanguage } from './constants/uups'
@@ -43,7 +43,14 @@ export class FetchAndCompile extends Plugin {
   async resolve (contractAddress, codeAtAddress, targetPath) {
     contractAddress = toChecksumAddress(contractAddress)
 
-    const localCompilation = async () => await this.call('compilerArtefacts', 'get', contractAddress) ? await this.call('compilerArtefacts', 'get', contractAddress) : await this.call('compilerArtefacts', 'get', '__last') ? await this.call('compilerArtefacts', 'get', '__last') : null
+    const localCompilation = async () => {
+      const contractData = await this.call('compilerArtefacts', 'getContractDataFromByteCode', codeAtAddress)
+      if (contractData) {
+        return await this.call('compilerArtefacts', 'getCompilerAbstract', contractData.file)
+      }
+      else
+        return await this.call('compilerArtefacts', 'get', '__last')
+    }
 
     const resolved = await this.call('compilerArtefacts', 'get', contractAddress)
     if (resolved) return resolved
@@ -87,20 +94,19 @@ export class FetchAndCompile extends Plugin {
       return localCompilation()
     }
     if (!network) return localCompilation()
-    if (!this.sourceVerifierNetWork.includes(network.name)) return localCompilation()
-
-    // check if the contract if part of the local compilation result
-    const compilation = await localCompilation()
-    if (compilation) {
-      let found = false
-      compilation.visitContracts((contract) => {
-        found = util.compareByteCode('0x' + contract.object.evm.deployedBytecode.object, codeAtAddress)
-        return found
-      })
-      if (found) {
-        await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compilation)
-        setTimeout(_ => this.emit('usingLocalCompilation', contractAddress), 0)
-        return compilation
+    if (!this.sourceVerifierNetWork.includes(network.name)) {
+      // check if the contract if part of the local compilation result
+      const compilation = await localCompilation()
+      if (compilation) {
+        let found = false
+        compilation.visitContracts((contract) => {
+          found = util.compareByteCode(codeAtAddress, '0x' + contract.object.evm.deployedBytecode.object)
+          return found
+        })
+        if (found) {
+          await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compilation)
+          return compilation
+        }
       }
     }
 
@@ -128,7 +134,18 @@ export class FetchAndCompile extends Plugin {
     if (!data) {
       setTimeout(_ => this.emit('notFound', contractAddress), 0)
       this.unresolvedAddresses.push(contractAddress)
-      return localCompilation()
+      const compilation = await localCompilation()
+      if (compilation) {
+        let found = false
+        compilation.visitContracts((contract) => {
+          found = util.compareByteCode(codeAtAddress, '0x' + contract.object.evm.deployedBytecode.object)
+          return found
+        })
+        if (found) {
+          await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compilation)
+          return compilation
+        }
+      }
     }
     const { settings, compilationTargets } = data
    

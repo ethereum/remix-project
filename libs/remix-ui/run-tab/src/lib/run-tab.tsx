@@ -27,7 +27,7 @@ import {
   storeNewScenario, runScenario,
   setScenarioPath, getFuncABIValues,
   setNetworkName, updateSelectedContract,
-  syncContracts, isValidProxyAddress
+  syncContracts, isValidProxyAddress, isValidProxyUpgrade
 } from './actions'
 import './css/run-tab.css'
 import { PublishToStorage } from '@remix-ui/publish-to-storage'
@@ -58,7 +58,6 @@ export function RunTabUI (props: RunTabProps) {
     contract: null
   })
   runTabInitialState.selectExEnv = plugin.blockchain.getProvider()
-  runTabInitialState.selectExEnv = runTabInitialState.selectExEnv === 'vm' ? 'vm-london' : runTabInitialState.selectExEnv
   const [runTab, dispatch] = useReducer(runTabReducer, runTabInitialState)
   const REACT_API = { runTab }
   const currentfile = plugin.config.get('currentFile')
@@ -82,7 +81,9 @@ export function RunTabUI (props: RunTabProps) {
           okLabel: modals[0].okLabel,
           okFn: modals[0].okFn,
           cancelLabel: modals[0].cancelLabel,
-          cancelFn: modals[0].cancelFn
+          cancelFn: modals[0].cancelFn,
+          okBtnClass: modals[0].okBtnClass,
+          cancelBtnClass: modals[0].cancelBtnClass
         }
         return focusModal
       })
@@ -121,9 +122,9 @@ export function RunTabUI (props: RunTabProps) {
     dispatch(setIpfsCheckedState(value))
   }
 
-  const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
+  const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, okBtnClass?: string, cancelBtnClass?: string) => {
     setModals(modals => {
-      modals.push({ message, title, okLabel, okFn, cancelLabel, cancelFn })
+      modals.push({ message, title, okLabel, okFn, cancelLabel, cancelFn, okBtnClass, cancelBtnClass })
       return [...modals]
     })
   }
@@ -222,6 +223,7 @@ export function RunTabUI (props: RunTabProps) {
             passphrase={runTab.passphrase}
           />
           <ContractDropdownUI
+            selectedAccount={runTab.accounts.selectedAccount}
             syncContracts={syncContracts}
             exEnvironment={runTab.selectExEnv}
             contracts={runTab.contracts}
@@ -243,6 +245,8 @@ export function RunTabUI (props: RunTabProps) {
             setSelectedContract={updateSelectedContract}
             remixdActivated={runTab.remixdActivated}
             isValidProxyAddress={isValidProxyAddress}
+            isValidProxyUpgrade={isValidProxyUpgrade}
+            proxy={runTab.proxy}
           />
           <RecorderUI
             gasEstimationPrompt={gasEstimationPrompt}

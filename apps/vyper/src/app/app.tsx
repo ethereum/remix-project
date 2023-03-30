@@ -12,7 +12,6 @@ import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup'
 import ToggleButton from 'react-bootstrap/ToggleButton'
 import Button from 'react-bootstrap/Button'
 
-import vyperLogo from './logo.svg'
 import './app.css'
 
 interface AppState {
@@ -71,7 +70,7 @@ const App: React.FC = () => {
     <main id="vyper-plugin">
       <header>
         <div className="title">
-          <img src={vyperLogo} alt="Vyper logo" />
+          <img src={'assets/logo.svg'} alt="Vyper logo" />
           <h4>yper Compiler</h4>
         </div>
         <a

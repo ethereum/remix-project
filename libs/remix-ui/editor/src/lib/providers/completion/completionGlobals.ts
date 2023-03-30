@@ -1,6 +1,7 @@
 import { IRange } from "monaco-editor";
 import monaco from "monaco-editor"
 import path from "path";
+import { monacoTypes } from '@remix-ui/editor';
 
 type CodeParserImportsData = {
     files?: string[],
@@ -8,7 +9,7 @@ type CodeParserImportsData = {
     packages?: string[],
 }
 
-export function getStringCompletionItems(range: IRange, monaco): monaco.languages.CompletionItem[] {
+export function getStringCompletionItems(range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
     return [
         {
             detail: 'concatenate an arbitrary number of string values',
@@ -21,7 +22,7 @@ export function getStringCompletionItems(range: IRange, monaco): monaco.language
     ]
 }
 
-export function getBytesCompletionItems(range: IRange, monaco): monaco.languages.CompletionItem[] {
+export function getBytesCompletionItems(range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
     return [
         {
             detail: 'concatenate an arbitrary number of values',
@@ -35,7 +36,7 @@ export function getBytesCompletionItems(range: IRange, monaco): monaco.languages
 }
 
 
-export function getBlockCompletionItems(range: IRange, monaco): monaco.languages.CompletionItem[] {
+export function getBlockCompletionItems(range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
     return [
         {
             detail: '(address): Current block miner’s address',
@@ -97,7 +98,7 @@ export function getBlockCompletionItems(range: IRange, monaco): monaco.languages
     ];
 }
 
-export function getCompletionSnippets(range: IRange, monaco): monaco.languages.CompletionItem[] {
+export function getCompletionSnippets(range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
     return [
         {
             label: 'contract',
@@ -193,7 +194,7 @@ export function getCompletionSnippets(range: IRange, monaco): monaco.languages.C
     ]
 }
 
-export function getTxCompletionItems(range: IRange, monaco): monaco.languages.CompletionItem[] {
+export function getTxCompletionItems(range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
     return [
         {
             detail: '(uint): gas price of the transaction',
@@ -212,7 +213,7 @@ export function getTxCompletionItems(range: IRange, monaco): monaco.languages.Co
     ];
 }
 
-export function getMsgCompletionItems(range: IRange, monaco): monaco.languages.CompletionItem[] {
+export function getMsgCompletionItems(range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
     return [
         {
             detail: '(bytes): complete calldata',
@@ -252,7 +253,7 @@ export function getMsgCompletionItems(range: IRange, monaco): monaco.languages.C
     ];
 }
 
-export function getAbiCompletionItems(range: IRange, monaco): monaco.languages.CompletionItem[] {
+export function getAbiCompletionItems(range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
     return [
         {
             detail: 'encode(..) returs (bytes): ABI-encodes the given arguments',
@@ -298,7 +299,7 @@ export function getAbiCompletionItems(range: IRange, monaco): monaco.languages.C
 }
 
 
-export function GetCompletionTypes(range: IRange, monaco): monaco.languages.CompletionItem[] {
+export function GetCompletionTypes(range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
     const completionItems = [];
     const types = ['address', 'string', 'bytes', 'byte', 'int', 'uint', 'bool', 'hash'];
     for (let index = 8; index <= 256; index += 8) {
@@ -314,8 +315,8 @@ export function GetCompletionTypes(range: IRange, monaco): monaco.languages.Comp
     return completionItems;
 }
 
-function CreateCompletionItem(label: string, kind: monaco.languages.CompletionItemKind, detail: string, range: IRange) {
-    const completionItem: monaco.languages.CompletionItem = {
+function CreateCompletionItem(label: string, kind: monacoTypes.languages.CompletionItemKind, detail: string, range: monacoTypes.IRange) {
+    const completionItem: monacoTypes.languages.CompletionItem = {
         label,
         kind,
         detail,
@@ -327,7 +328,7 @@ function CreateCompletionItem(label: string, kind: monaco.languages.CompletionIt
     return completionItem;
 }
 
-export function GetCompletionKeywords(range: IRange, monaco): monaco.languages.CompletionItem[] {
+export function GetCompletionKeywords(range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
     const completionItems = [];
     const keywords = ['modifier', 'mapping', 'break', 'continue', 'delete', 'else', 'for',
         'after', 'promise', 'alias', 'apply', 'auto', 'copyof', 'default', 'define', 'final', 'implements',
@@ -337,7 +338,7 @@ export function GetCompletionKeywords(range: IRange, monaco): monaco.languages.C
         'private', 'public', 'external', 'internal', 'payable', 'nonpayable', 'view', 'pure', 'case', 'do', 'else', 'finally',
         'in', 'instanceof', 'return', 'throw', 'try', 'catch', 'typeof', 'yield', 'void', 'virtual', 'override'];
     keywords.forEach(unit => {
-        const completionItem: monaco.languages.CompletionItem = {
+        const completionItem: monacoTypes.languages.CompletionItem = {
             label: unit,
             kind: monaco.languages.CompletionItemKind.Keyword,
             detail: unit + ' keyword',
@@ -366,7 +367,7 @@ export function GetCompletionKeywords(range: IRange, monaco): monaco.languages.C
 }
 
 
-export function GeCompletionUnits(range: IRange, monaco): monaco.languages.CompletionItem[] {
+export function GeCompletionUnits(range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
     const completionItems = [];
     const etherUnits = ['wei', 'gwei', 'finney', 'szabo', 'ether'];
     etherUnits.forEach(unit => {
@@ -390,10 +391,10 @@ export function GeCompletionUnits(range: IRange, monaco): monaco.languages.Compl
     return completionItems;
 }
 
-export function GetImports(range: IRange
+export function GetImports(range: monacoTypes.IRange
     , monaco, data: CodeParserImportsData
     , word: string
-): monaco.languages.CompletionItem[] {
+): monacoTypes.languages.CompletionItem[] {
     let list = []
     if (!word.startsWith('@')) {
         word = word.replace('"', '');
@@ -473,7 +474,7 @@ export function GetImports(range: IRange
     return list;
 };
 
-export function GetGlobalVariable(range: IRange, monaco): monaco.languages.CompletionItem[] {
+export function GetGlobalVariable(range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
     return [
         {
             detail: 'Current block',
@@ -520,7 +521,7 @@ export function GetGlobalVariable(range: IRange, monaco): monaco.languages.Compl
     ];
 }
 
-export function GetGlobalFunctions(range: IRange, monaco): monaco.languages.CompletionItem[] {
+export function GetGlobalFunctions(range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
     return [
         {
             detail: 'assert(bool condition): throws if the condition is not met - to be used for internal errors.',
@@ -644,7 +645,7 @@ export function GetGlobalFunctions(range: IRange, monaco): monaco.languages.Comp
     ];
 }
 
-export function getContextualAutoCompleteByGlobalVariable(word: string, range: IRange, monaco): monaco.languages.CompletionItem[] {
+export function getContextualAutoCompleteByGlobalVariable(word: string, range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
     if (word === 'block') {
         return getBlockCompletionItems(range, monaco);
     }
@@ -669,7 +670,7 @@ export function getContextualAutoCompleteByGlobalVariable(word: string, range: I
     return null;
 }
 
-export function getArrayCompletionItems(range: IRange, monaco): monaco.languages.CompletionItem[] {
+export function getArrayCompletionItems(range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
     return [
         {
             detail: '',
@@ -706,7 +707,7 @@ export function getArrayCompletionItems(range: IRange, monaco): monaco.languages
     ]
 }
 
-export function getAddressCompletionItems(range: IRange, monaco): monaco.languages.CompletionItem[] {
+export function getAddressCompletionItems(range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
     return [
         {
             detail: '(uint256): balance of the Address in Wei',
@@ -752,7 +753,7 @@ export function getAddressCompletionItems(range: IRange, monaco): monaco.languag
 
 }
 
-export function getContextualAutoCompleteBTypeName(word: string, range: IRange, monaco): monaco.languages.CompletionItem[] {
+export function getContextualAutoCompleteBTypeName(word: string, range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
     if (word === 'ArrayTypeName') {
         return getArrayCompletionItems(range, monaco);
     }

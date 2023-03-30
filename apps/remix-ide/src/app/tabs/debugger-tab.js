@@ -1,6 +1,6 @@
 import Web3 from 'web3'
 import { DebuggerUI } from '@remix-ui/debugger-ui' // eslint-disable-line
-import { DebuggerApiMixin } from '@remixproject/debugger-plugin' // eslint-disable-line
+import { DebuggerApiMixin } from '@remix-ui/debugger-ui'
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
@@ -43,10 +43,6 @@ export class DebuggerTab extends DebuggerApiMixin(ViewPlugin) {
 
     this.on('fetchAndCompile', 'notFound', (contractAddress) => {
       this.call('notification', 'toast', notFoundToastMsg(contractAddress))
-    })
-
-    this.on('fetchAndCompile', 'usingLocalCompilation', (contractAddress) => {
-      this.call('notification', 'toast', localCompilationToastMsg())
     })
 
     this.on('fetchAndCompile', 'sourceVerificationNotAvailable', () => {

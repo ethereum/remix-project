@@ -3,7 +3,7 @@ import { Blocks } from './methods/blocks'
 import { info } from './utils/logs'
 import merge from 'merge'
 
-import { Accounts } from './methods/accounts'
+import { Web3Accounts } from './methods/accounts'
 import { Filters } from './methods/filters'
 import { methods as miscMethods } from './methods/misc'
 import { methods as netMethods } from './methods/net'
@@ -12,20 +12,37 @@ import { Debug } from './methods/debug'
 import { generateBlock } from './genesis'
 import { VMContext } from './vm-context'
 
+export interface JSONRPCRequestPayload {
+  params: any[];
+  method: string;
+  id: number;
+  jsonrpc: string;
+}
+
+export interface JSONRPCResponsePayload {
+  result: any;
+  id: number;
+  jsonrpc: string;
+}
+
+export type JSONRPCResponseCallback = (err: Error, result?: JSONRPCResponsePayload) =>  void
+
 export class Provider {
-  options: Record<string, unknown>
+  options: Record<string, string | number>
   vmContext
   Accounts
   Transactions
   methods
-  connected: boolean;
+  connected: boolean
+  initialized: boolean
+  pendingRequests: Array<any>
 
-  constructor (options: Record<string, unknown> = {}) {
+  constructor (options: Record<string, string | number> = {}) {
     this.options = options
     this.connected = true
-    this.vmContext = new VMContext(options['fork'])
+    this.vmContext = new VMContext(options['fork'] as string, options['nodeUrl'] as string, options['blockNumber'] as (number | 'latest'))
 
-    this.Accounts = new Accounts(this.vmContext)
+    this.Accounts = new Web3Accounts(this.vmContext)
     this.Transactions = new Transactions(this.vmContext)
 
     this.methods = {}
@@ -39,14 +56,27 @@ export class Provider {
   }
 
   async init () {
+    this.initialized = false
+    this.pendingRequests = []
+    await this.vmContext.init()
     await generateBlock(this.vmContext)
     await this.Accounts.resetAccounts()
     this.Transactions.init(this.Accounts.accounts)
+    this.initialized = true
+    if (this.pendingRequests.length > 0) {
+      this.pendingRequests.map((req) => {
+        this.sendAsync(req.payload, req.callback)
+      })
+      this.pendingRequests = []
+    }
   }
 
-  sendAsync (payload, callback) {
+  sendAsync (payload: JSONRPCRequestPayload, callback: (err: Error, result?: JSONRPCResponsePayload) =>  void) {
     // log.info('payload method is ', payload.method) // commented because, this floods the IDE console
-
+    if (!this.initialized) {
+      this.pendingRequests.push({ payload, callback })
+      return
+    }
     const method = this.methods[payload.method]
     if (this.options.logDetails) {
       info(payload)

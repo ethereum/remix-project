@@ -4,6 +4,8 @@ import init from '../helpers/init'
 
 let firstProxyAddress: string
 let lastProxyAddress: string
+let shortenedFirstAddress: string
+let shortenedLastAddress: string
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -94,6 +96,7 @@ module.exports = {
     browser
       .getAddressAtPosition(1, (address) => {
         firstProxyAddress = address
+        shortenedFirstAddress = address.slice(0, 5) + '...' + address.slice(address.length - 5, address.length)
       })
       .clickInstance(1)
       .perform((done) => {
@@ -143,6 +146,7 @@ module.exports = {
     browser
       .getAddressAtPosition(1, (address) => {
         lastProxyAddress = address
+        shortenedLastAddress = address.slice(0, 5) + '...' + address.slice(address.length - 5, address.length)
       })
       .clickInstance(1)
       .perform((done) => {
@@ -157,7 +161,7 @@ module.exports = {
       })
   },
 
-  'Should upgrade contract using last deployed proxy address (MyTokenV1 to MyTokenV2) #group1': function (browser: NightwatchBrowser) {
+  'Should upgrade contract by selecting a previously deployed proxy address from dropdown (MyTokenV1 to MyTokenV2) #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('[data-id="deployAndRunClearInstances"]')
       .click('[data-id="deployAndRunClearInstances"]')
@@ -171,10 +175,12 @@ module.exports = {
       .click('select.udapp_contractNames option[value=MyTokenV2]')
       .waitForElementPresent('[data-id="contractGUIUpgradeImplementationLabel"]')
       .click('[data-id="contractGUIUpgradeImplementationLabel"]')
-      .waitForElementPresent('[data-id="contractGUIProxyAddressLabel"]')
-      .click('[data-id="contractGUIProxyAddressLabel"]')
-      .waitForElementPresent('[data-id="lastDeployedERC1967Address"]')
-      .assert.containsText('[data-id="lastDeployedERC1967Address"]', lastProxyAddress)
+      .waitForElementPresent('[data-id="toggleProxyAddressDropdown"]')
+      .click('[data-id="toggleProxyAddressDropdown"]')
+      .waitForElementVisible('[data-id="proxy-dropdown-items"]')
+      .assert.textContains('[data-id="proxy-dropdown-items"]', shortenedFirstAddress)
+      .assert.textContains('[data-id="proxy-dropdown-items"]', shortenedLastAddress)
+      .click('[data-id="proxyAddress1"]')
       .createContract('')
       .waitForElementContainsText('[data-id="udappNotifyModalDialogModalTitle-react"]', 'Deploy Implementation & Update Proxy')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
@@ -212,9 +218,8 @@ module.exports = {
       .click('select.udapp_contractNames')
       .click('select.udapp_contractNames option[value=MyTokenV2]')
       .waitForElementPresent('[data-id="contractGUIUpgradeImplementationLabel"]')
-      .waitForElementPresent('[data-id="contractGUIProxyAddressLabel"]')
-      .click('[data-id="contractGUIProxyAddressLabel"]')
-      .waitForElementPresent('[data-id="ERC1967AddressInput"]')
+      .waitForElementPresent('[data-id="toggleProxyAddressDropdown"]')
+      .clearValue('[data-id="ERC1967AddressInput"]')
       .setValue('[data-id="ERC1967AddressInput"]', firstProxyAddress)
       .createContract('')
       .waitForElementContainsText('[data-id="udappNotifyModalDialogModalTitle-react"]', 'Deploy Implementation & Update Proxy')

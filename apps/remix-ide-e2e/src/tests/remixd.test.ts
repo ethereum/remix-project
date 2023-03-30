@@ -72,8 +72,8 @@ module.exports = {
     return sources
   },
   'run Remixd tests #group4': function (browser) {
-    browser.perform((done) => {
-      remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+    browser.perform(async (done) => {
+      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -86,27 +86,22 @@ module.exports = {
       when a relative import is used (i.e import "openzeppelin-solidity/contracts/math/SafeMath.sol")
       remix (as well as truffle) try to resolve it against the node_modules and installed_contracts folder.
     */
-    browser.perform((done) => {
-      remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+    browser.perform(async (done) => {
+      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
-      .waitForElementVisible('#icon-panel', 2000)
-      .clickLaunchIcon('filePanel')
-      .click('[data-path="ballot.sol"]')
       .addFile('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'])
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js')
       .testContracts('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'], ['SafeMath'])
   },
   'Import from node_modules and reference a github import #group2': function (browser) {
-    browser.perform((done) => {
-      remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+    browser.perform(async (done) => {
+      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
-      .waitForElementVisible('#icon-panel', 2000)
-      .clickLaunchIcon('filePanel')
       .addFile('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'])
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0
@@ -146,8 +141,8 @@ module.exports = {
 
   'Should listen on compilation result from hardhat #group5': function (browser: NightwatchBrowser) {
 
-    browser.perform((done) => {
-      remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
+    browser.perform(async (done) => {
+      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -181,8 +176,8 @@ module.exports = {
         writeFileSync('./apps/remix-ide/contracts/hardhat/artifacts/build-info/7839ba878952cc00ff316061405f273a.json', JSON.stringify(hardhatCompilation))
         done()
       })
-      .perform((done) => {
-        remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
+      .perform(async (done) => {
+        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
         console.log('working directory', process.cwd())
         connectRemixd(browser, done)
       })
@@ -201,8 +196,8 @@ module.exports = {
 
   'Should listen on compilation result from foundry #group7': function (browser: NightwatchBrowser) {
 
-    browser.perform((done) => {
-      remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/foundry'))
+    browser.perform(async (done) => {
+      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/foundry'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -236,8 +231,8 @@ module.exports = {
 
   'Should listen on compilation result from truffle #group8': function (browser: NightwatchBrowser) {
 
-    browser.perform((done) => {
-      remixd = spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/truffle'))
+    browser.perform(async (done) => {
+      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/truffle'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -311,15 +306,22 @@ function testImportFromRemixd(browser: NightwatchBrowser, callback: VoidFunction
     .perform(() => { callback() })
 }
 
-function spawnRemixd(path: string) {
-  const remixd = spawn('yarn run remixd', [`-s ${path}`], { cwd: process.cwd(), shell: true, detached: true })
-  remixd.stdout.on('data', function (data) {
-    console.log('stdout: ' + data.toString())
+async function spawnRemixd(path: string): Promise<ChildProcess> {
+  const remixd = spawn('chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080', [`-s ${path}`], { cwd: process.cwd(), shell: true, detached: true })
+  return new Promise((resolve, reject) => {
+    remixd.stdout.on('data', function (data) {
+      if(
+        data.toString().includes('is listening') 
+        || data.toString().includes('There is already a client running')
+        ) {
+        
+        resolve(remixd)
+      }
+    })
+    remixd.stderr.on('err', function (data) {
+      reject(data.toString())
+    })
   })
-  remixd.stderr.on('err', function (data) {
-    console.log('err: ' + data.toString())
-  })
-  return remixd
 }
 
 function connectRemixd(browser: NightwatchBrowser, done: any) {

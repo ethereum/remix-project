@@ -25,16 +25,13 @@ export class UnitTestRunner {
 
   async init (web3 = null, accounts = null) {
     this.web3 = await this.createWeb3Provider(web3)
-    this.testsAccounts = accounts || await this.web3.eth.getAccounts()
+    this.testsAccounts = accounts || (this.web3 && await this.web3.eth.getAccounts()) || []
     this.accountsLibCode = writeTestAccountsContract(this.testsAccounts)
   }
 
   async createWeb3Provider (optWeb3) {
-    const web3 = optWeb3 || new Web3()
-    const provider: any = new Provider()
-    await provider.init()
-    web3.setProvider(provider)
-    extend(web3)
+    const web3 = optWeb3
+    if (web3) extend(web3)
     return web3
   }
 

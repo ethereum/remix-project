@@ -1,5 +1,6 @@
 import React from 'react'
-import { bufferToHex, keccakFromString } from 'ethereumjs-util'
+import { bufferToHex } from '@ethereumjs/util'
+import { hash } from '@remix-project/remix-lib'
 import axios, { AxiosResponse } from 'axios'
 import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setCurrentWorkspaceBranches, setCurrentWorkspaceCurrentBranch, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace, setCurrentWorkspaceIsGitRepo, setGitConfig } from './payload'
 import { addSlash, checkSlash, checkSpecialChars } from '@remix-ui/helper'
@@ -7,10 +8,11 @@ import { addSlash, checkSlash, checkSpecialChars } from '@remix-ui/helper'
 import { JSONStandardInput, WorkspaceTemplate } from '../types'
 import { QueryParams } from '@remix-project/remix-lib'
 import * as templateWithContent from '@remix-project/remix-ws-templates'
-import { ROOT_PATH } from '../utils/constants'
+import { ROOT_PATH, slitherYml, solTestYml, tsSolTestYml } from '../utils/constants'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
+import { AppModal, ModalTypes } from '@remix-ui/app'
 
 declare global {
   interface Window { remixFileSystemCallback: IndexedDBStorage; }
@@ -171,9 +173,9 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         let path = ''; let content
 
         if (params.code) {
-          const hash = bufferToHex(keccakFromString(params.code))
+          const hashed = bufferToHex(hash.keccakFromString(params.code))
 
-          path = 'contract-' + hash.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
+          path = 'contract-' + hashed.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
           content = atob(params.code)
           await workspaceProvider.set(path, content)
         }
@@ -310,6 +312,14 @@ export const deleteWorkspace = async (workspaceName: string, cb?: (err: Error, r
   cb && cb(null, workspaceName)
 }
 
+export const deleteAllWorkspaces = async () => {
+  await (await getWorkspaces()).map(async workspace => {
+    await deleteWorkspaceFromProvider(workspace.name)
+    await dispatch(setDeleteWorkspace(workspace.name))
+    plugin.workspaceDeleted(workspace.name)
+  })
+}
+
 const deleteWorkspaceFromProvider = async (workspaceName: string) => {
   const workspacesPath = plugin.fileProviders.workspace.workspacesPath
 
@@ -349,6 +359,30 @@ export const switchToWorkspace = async (name: string) => {
   }
 }
 
+const loadFile = (name, file, provider, cb?): void => {
+  const fileReader = new FileReader()
+
+  fileReader.onload = async function (event) {
+    if (checkSpecialChars(file.name)) {
+      return dispatch(displayNotification('File Upload Failed', 'Special characters are not allowed', 'Close', null, async () => { }))
+    }
+    try {
+      await provider.set(name, event.target.result)
+    } catch (error) {
+      return dispatch(displayNotification('File Upload Failed', 'Failed to create file ' + name, 'Close', null, async () => { }))
+    }
+
+    const config = plugin.registry.get('config').api
+    const editor = plugin.registry.get('editor').api
+
+    if ((config.get('currentFile') === name) && (editor.currentContent() !== event.target.result)) {
+      editor.setText(name, event.target.result)
+    }
+  }
+  fileReader.readAsText(file)
+  cb && cb(null, true)
+}
+
 export const uploadFile = async (target, targetFolder: string, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
   // TODO The file explorer is merely a view on the current state of
   // the files module. Please ask the user here if they want to overwrite
@@ -356,39 +390,52 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
   // pick that up via the 'fileAdded' event from the files module.
   [...target.files].forEach(async (file) => {
     const workspaceProvider = plugin.fileProviders.workspace
-    const loadFile = (name: string): void => {
-      const fileReader = new FileReader()
-
-      fileReader.onload = async function (event) {
-        if (checkSpecialChars(file.name)) {
-          return dispatch(displayNotification('File Upload Failed', 'Special characters are not allowed', 'Close', null, async () => { }))
-        }
-        try {
-          await workspaceProvider.set(name, event.target.result)
-        } catch (error) {
-          return dispatch(displayNotification('File Upload Failed', 'Failed to create file ' + name, 'Close', null, async () => { }))
-        }
-
-        const config = plugin.registry.get('config').api
-        const editor = plugin.registry.get('editor').api
-
-        if ((config.get('currentFile') === name) && (editor.currentContent() !== event.target.result)) {
-          editor.setText(event.target.result)
-        }
-      }
-      fileReader.readAsText(file)
-      cb && cb(null, true)
-    }
     const name = targetFolder === '/' ? file.name : `${targetFolder}/${file.name}`
 
     if (!await workspaceProvider.exists(name)) {
-      loadFile(name)
+      loadFile(name, file, workspaceProvider, cb)
     } else {
-      dispatch(displayNotification('Confirm overwrite', `The file ${name} already exists! Would you like to overwrite it?`, 'OK', null, () => {
-        loadFile(name)
-      }, () => { }))
+      const modalContent: AppModal = {
+        id: 'overwriteUploadFile',
+        title: 'Confirm overwrite',
+        message: `The file "${name}" already exists! Would you like to overwrite it?`,
+        modalType: ModalTypes.confirm,
+        okLabel: 'OK',
+        cancelLabel: 'Cancel',
+        okFn: () => {
+          loadFile(name, file, workspaceProvider, cb)
+        },
+        cancelFn: () => {},
+        hideFn: () => {}
+      }
+      plugin.call('notification', 'modal', modalContent)
     }
   })
+}
+
+export const uploadFolder = async (target, targetFolder: string, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+  for(const file of [...target.files]) {
+    const workspaceProvider = plugin.fileProviders.workspace
+    const name = targetFolder === '/' ? file.webkitRelativePath : `${targetFolder}/${file.webkitRelativePath}`
+    if (!await workspaceProvider.exists(name)) {
+      loadFile(name, file, workspaceProvider, cb)
+    } else {
+      const modalContent: AppModal = {
+        id: 'overwriteUploadFolderFile',
+        title: 'Confirm overwrite',
+        message: `The file "${name}" already exists! Would you like to overwrite it?`,
+        modalType: ModalTypes.confirm,
+        okLabel: 'OK',
+        cancelLabel: 'Cancel',
+        okFn: () => {
+          loadFile(name, file, workspaceProvider, cb)
+        },
+        cancelFn: () => {},
+        hideFn: () => {}
+      }
+      plugin.call('notification', 'modal', modalContent)
+    }
+  }
 }
 
 export const getWorkspaces = async (): Promise<{ name: string, isGitRepo: boolean, branches?: { remote: any; name: string; }[], currentBranch?: string }[]> | undefined => {
@@ -449,7 +496,6 @@ export const cloneRepository = async (url: string) => {
       if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
       await fetchWorkspaceDirectory(ROOT_PATH)
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
-      console.log('go in to promise')
       const branches = await getGitRepoBranches(workspacesPath + '/' + repoName)
 
       dispatch(setCurrentWorkspaceBranches(branches))
@@ -479,7 +525,6 @@ export const cloneRepository = async (url: string) => {
     dispatch(displayPopUp('An error occured: ' + e))
   }
 }
-
 
 export const checkGit = async () => {
   const isGitRepo = await plugin.fileManager.isGitRepo()
@@ -612,25 +657,23 @@ export const createNewBranch = async (branch: string) => {
 }
 
 export const createSolidityGithubAction = async () => {
-  const actionYml = `
-  name: Running Solidity Unit Tests
-  on: [push]
-
-  jobs:
-    run_sol_contracts_job:
-      runs-on: ubuntu-latest
-      name: A job to run solidity unit tests on github actions CI
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v2
-        - name: Run SUT Action
-          uses: EthereumRemix/sol-test@v1
-          with:
-            test-path: 'tests'
-            compiler-version: '0.8.15'
-    `
   const path = '.github/workflows/run-solidity-unittesting.yml'
-  await plugin.call('fileManager', 'writeFile', path , actionYml)
+
+  await plugin.call('fileManager', 'writeFile', path , solTestYml)
+  plugin.call('fileManager', 'open', path)
+}
+
+export const createTsSolGithubAction = async () => {
+  const path = '.github/workflows/run-js-test.yml'
+
+  await plugin.call('fileManager', 'writeFile', path , tsSolTestYml)
+  plugin.call('fileManager', 'open', path)
+}
+
+export const createSlitherGithubAction = async () => {
+  const path = '.github/workflows/run-slither-action.yml'
+
+  await plugin.call('fileManager', 'writeFile', path , slitherYml)
   plugin.call('fileManager', 'open', path)
 }
 

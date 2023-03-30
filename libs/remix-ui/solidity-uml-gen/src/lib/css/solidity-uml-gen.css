@@ -1,0 +1,37 @@
+.remixui_default-message {
+  margin-top: 100px;
+}
+
+.remixui_no-shadow {
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--info);
+}
+
+#solUmlMenuDropdown > div > ul > a:hover {
+  background-color: var(--secondary);
+  border-radius: 2px;
+  color: var(--text)
+}
+
+.custom-dropdown-items {
+  padding: 0.25rem 0.25rem;
+  border-radius: .25rem;
+  background: var(--custom-select);
+}
+
+.custom-dropdown-items a {
+  border-radius: .25rem;
+  text-transform: none;
+  text-decoration: none;
+  font-weight: normal;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.25rem;
+  width: auto;
+  color: var(--text);
+}
+
+.uml-btn-icon {
+  width: 0.5rem;
+  height: 0.5rem;
+}

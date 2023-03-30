@@ -1,5 +1,6 @@
 'use strict'
 import { EventManager } from '../eventManager'
+import type { Transaction as InternalTransaction } from './txRunner'
 import Web3 from 'web3'
 
 export class TxRunnerWeb3 {
@@ -47,6 +48,8 @@ export class TxRunnerWeb3 {
   }
 
   _sendTransaction (sendTx, tx, pass, callback) {
+    let currentDateTime = new Date();
+    const start = currentDateTime.getTime() / 1000
     const cb = (err, resp) => {
       if (err) {
         return callback(err, resp)
@@ -57,6 +60,9 @@ export class TxRunnerWeb3 {
         return new Promise(async (resolve, reject) => {
           const receipt = await tryTillReceiptAvailable(resp, this.getWeb3())
           tx = await tryTillTxAvailable(resp, this.getWeb3())
+          currentDateTime = new Date();
+          const end = currentDateTime.getTime() / 1000
+          console.log('tx duration', end - start)
           resolve({
             receipt,
             tx,
@@ -74,7 +80,7 @@ export class TxRunnerWeb3 {
     }
   }
 
-  execute (args, confirmationCb, gasEstimationForceSend, promptCb, callback) {
+  execute (args: InternalTransaction, confirmationCb, gasEstimationForceSend, promptCb, callback) {
     let data = args.data
     if (data.slice(0, 2) !== '0x') {
       data = '0x' + data
@@ -96,15 +102,27 @@ export class TxRunnerWeb3 {
         })
       })
     }
-    this.getWeb3().eth.estimateGas(tx, (err, gasEstimation) => {
-      if (err && err.message.indexOf('Invalid JSON RPC response') !== -1) {
-        // // @todo(#378) this should be removed when https://github.com/WalletConnect/walletconnect-monorepo/issues/334 is fixed
-        callback(new Error('Gas estimation failed because of an unknown internal error. This may indicated that the transaction will fail.'))
+    this._api.detectNetwork((errNetWork, network) => {
+      if (errNetWork) {
+        console.log(errNetWork)
+        return
       }
-      this._api.detectNetwork((errNetWork, network) => {
-        if (errNetWork) {
-          console.log(errNetWork)
-          return
+      const txCopy =  { ...tx, type: undefined, maxFeePerGas: undefined, gasPrice: undefined  }
+      if (network && network.lastBlock) {
+        if (network.lastBlock.baseFeePerGas) {
+          // the sending stack (web3.js / metamask need to have the type defined)
+          // this is to avoid the following issue: https://github.com/MetaMask/metamask-extension/issues/11824
+          txCopy.type = '0x2'
+          txCopy.maxFeePerGas = network.lastBlock.baseFeePerGas + 10000 // + priority fee
+        } else {
+          txCopy.type = '0x1'
+          txCopy.gasPrice = network.lastBlock.baseFeePerGas
+        }
+      }      
+      this.getWeb3().eth.estimateGas(txCopy, (err, gasEstimation) => {
+        if (err && err.message.indexOf('Invalid JSON RPC response') !== -1) {
+          // // @todo(#378) this should be removed when https://github.com/WalletConnect/walletconnect-monorepo/issues/334 is fixed
+          callback(new Error('Gas estimation failed because of an unknown internal error. This may indicated that the transaction will fail.'))
         }
         err = network.name === 'VM' ? null : err // just send the tx if "VM"
         gasEstimationForceSend(err, () => {
@@ -136,7 +154,7 @@ export class TxRunnerWeb3 {
             return callback('Gas required exceeds block gas limit: ' + gasLimit + '. ' + warnEstimation)
           }
         })
-      })      
+      })
     })
   }
 }

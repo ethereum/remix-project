@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, {useRef, useState, useEffect} from 'react'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { RecorderProps } from '../types'
 import { CustomTooltip } from '@remix-ui/helper'
 
@@ -8,6 +8,8 @@ export function RecorderUI (props: RecorderProps) {
   const inputLive = useRef<HTMLInputElement>()
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
   const [enableRunButton, setEnableRunButton] = useState<boolean>(true)
+  const intl = useIntl()
+
   const triggerRecordButton = () => {
     props.storeScenario(props.scenarioPrompt)
   }
@@ -38,15 +40,15 @@ export function RecorderUI (props: RecorderProps) {
             placement={'right'}
             tooltipClasses="text-nowrap"
             tooltipId="recordedTransactionsCounttooltip"
-            tooltipText={'The number of recorded transactions'}
+            tooltipText={<FormattedMessage id='udapp.transactionsCountTooltip' />}
           >
           <div className="ml-2 badge badge-pill badge-primary text-center" data-title="The number of recorded transactions">{props.count}</div>
-        </CustomTooltip>
-        <CustomTooltip
-          placement={'right'}
-          tooltipClasses="text-wrap"
-          tooltipId="info-recorder"
-          tooltipText={<span>Save transactions (deployed contracts and function executions) <br />and replay them in another environment e.g Transactions created <br />in Remix VM can be replayed in the Injected Provider.</span>}
+          </CustomTooltip>
+          <CustomTooltip
+            placement={'right'}
+            tooltipClasses="text-wrap"
+            tooltipId="info-recorder"
+            tooltipText={<span><FormattedMessage id='udapp.infoRecorderTooltip' values={{ br: <br /> }} /></span>}
           >
           <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
         </CustomTooltip>
@@ -64,9 +66,11 @@ export function RecorderUI (props: RecorderProps) {
             placement={'right'}
             tooltipClasses="text-wrap"
             tooltipId="tooltip-livemode-recorder"
-            tooltipText={<span>If contracts are updated after recording transactions,<br/> checking this box will run recorded transactions <br/>with the latest copy of the compiled contracts</span>}
+            tooltipText={<span><FormattedMessage id='udapp.livemodeRecorderTooltip' values={{ br: <br /> }} /></span>}
           >
-            <label className="form-check-label custom-control-label" data-id="runtabLivemodeInput" htmlFor="livemode-recorder">Run transactions using the latest compilation result</label>
+            <label className="form-check-label custom-control-label" data-id="runtabLivemodeInput" htmlFor="livemode-recorder">
+              <FormattedMessage id='udapp.livemodeRecorderLabel' />
+            </label>
           </CustomTooltip>
         </div>
         <div className="mb-1 mt-1 udapp_transactionActions">
@@ -75,14 +79,14 @@ export function RecorderUI (props: RecorderProps) {
           tooltipClasses="text-nowrap"
           tooltipId="remixUdappTransactionSavetooltip"
           tooltipText={
-                props.count === 0 ? 'No transactions to save'
-                :  props.count === 1 ? `Save ${props.count} transaction as scenario file`
-                : `Save ${props.count} transactions as scenario file`
+                props.count === 0 ? intl.formatMessage({ id: 'udapp.transactionSaveTooltip1' })
+                : props.count === 1 ? intl.formatMessage({ id: 'udapp.transactionSaveTooltip2' }, { count: props.count })
+                : intl.formatMessage({ id: 'udapp.transactionSaveTooltip3' }, { count: props.count })
               }
         >
           <span>
             <button className="btn btn-sm btn-info savetransaction udapp_recorder" disabled={props.count === 0 ? true: false} onClick={triggerRecordButton} style={{ pointerEvents: props.count === 0 ? 'none' : 'auto' }}>
-              Save
+              <FormattedMessage id='udapp.save' />
             </button>
           </span>
         </CustomTooltip>
@@ -90,11 +94,11 @@ export function RecorderUI (props: RecorderProps) {
           placement={'right'}
           tooltipClasses="text-nowrap"
           tooltipId="tooltip-run-recorder"
-          tooltipText="Run transaction(s) from the current scenario file"
+          tooltipText={<FormattedMessage id='udapp.runRecorderTooltip' />}
         >
           <span>
             <button className="btn btn-sm btn-info runtransaction udapp_runTxs" data-id="runtransaction" disabled={enableRunButton} onClick={handleClickRunButton} style={{ pointerEvents: enableRunButton ? 'none' : 'auto' }}>
-              Run
+              <FormattedMessage id='udapp.run' />
             </button>
           </span>
         </CustomTooltip>

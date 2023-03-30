@@ -5,7 +5,6 @@ import React from 'react' // eslint-disable-line
 import { FileSystemProvider } from '@remix-ui/workspace' // eslint-disable-line
 import Registry from '../state/registry'
 import { RemixdHandle } from '../plugins/remixd-handle'
-const { GitHandle } = require('../files/git-handle.js')
 const { HardhatHandle } = require('../files/hardhat-handle.js')
 const { FoundryHandle } = require('../files/foundry-handle.js')
 const { TruffleHandle } = require('../files/truffle-handle.js')
@@ -31,7 +30,7 @@ const { SlitherHandle } = require('../files/slither-handle.js')
 const profile = {
   name: 'filePanel',
   displayName: 'File explorer',
-  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'setWorkspace', 'registerContextMenuItem', 'renameWorkspace', 'deleteWorkspace'],
+  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getAvailableWorkspaceName', 'getWorkspaces', 'createWorkspace', 'setWorkspace', 'registerContextMenuItem', 'renameWorkspace', 'deleteWorkspace'],
   events: ['setWorkspace', 'workspaceRenamed', 'workspaceDeleted', 'workspaceCreated'],
   icon: 'assets/img/fileManager.webp',
   description: 'Remix IDE file explorer',
@@ -52,7 +51,6 @@ module.exports = class Filepanel extends ViewPlugin {
     this.el.setAttribute('id', 'fileExplorerView')
 
     this.remixdHandle = new RemixdHandle(this.fileProviders.localhost, appManager)
-    this.gitHandle = new GitHandle()
     this.hardhatHandle = new HardhatHandle()
     this.foundryHandle = new FoundryHandle()
     this.truffleHandle = new TruffleHandle()
@@ -94,6 +92,17 @@ module.exports = class Filepanel extends ViewPlugin {
 
   getWorkspaces () {
     return this.workspaces
+  }
+
+  getAvailableWorkspaceName (name) {
+    if(!this.workspaces) return name
+    let index = 1
+    let workspace = this.workspaces.find(workspace => workspace.name === name + ' - ' + index)
+    while (workspace) {
+      index++
+      workspace = this.workspaces.find(workspace => workspace.name === name + ' - ' + index)      
+    }
+    return name + ' - ' + index
   }
 
   setWorkspaces (workspaces) {

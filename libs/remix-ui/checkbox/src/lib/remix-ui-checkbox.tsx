@@ -38,11 +38,11 @@ export const RemixUiCheckbox = ({
 }: RemixUiCheckboxProps) => {
 
   const childJSXWithTooltip = (
-      <CustomTooltip
-          tooltipText={title}
-          tooltipId={`${name}Tooltip`}
-          placement={tooltipPlacement}
-        >
+    <CustomTooltip
+        tooltipText={title}
+        tooltipId={`${name}Tooltip`}
+        placement={tooltipPlacement}
+      >
       <div className="listenOnNetwork_2A0YE0 custom-control custom-checkbox" style={{ display: display, alignItems: 'center', visibility: visibility } as CSSProperties } onClick={onClick}>
         <input
           id={id}
@@ -58,8 +58,8 @@ export const RemixUiCheckbox = ({
           {label}
         </label>
       </div>
-      </CustomTooltip>
-    )
+    </CustomTooltip>
+  )
   const childJSX = (
     <div className="listenOnNetwork_2A0YE0 custom-control custom-checkbox" style={{ display: display, alignItems: 'center', visibility: visibility } as CSSProperties } onClick={onClick}>
         <input
