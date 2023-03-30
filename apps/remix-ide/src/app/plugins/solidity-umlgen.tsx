@@ -51,6 +51,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   themeName: string
   loading: boolean
   themeCollection: ThemeSummary[]
+  triggerGenerateUml: boolean
 
   appManager: RemixAppManager
   dispatch: React.Dispatch<any> = () => {}
@@ -70,6 +71,8 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
 
   onActivation(): void {
     this.on('solidity', 'compilationFinished', async (file: string, source, languageVersion, data, input, version) => {
+      if(!this.triggerGenerateUml) return
+      this.triggerGenerateUml = false
       const currentTheme: ThemeQualityType = await this.call('theme', 'currentTheme')
       this.currentlySelectedTheme = currentTheme.quality
       this.themeName = currentTheme.name
@@ -117,6 +120,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   }
 
   generateCustomAction = async (action: customAction) => {
+    this.triggerGenerateUml = true
     this.updatedSvg = this.updatedSvg.startsWith('<?xml') ? '' : this.updatedSvg
     this.currentFile = action.path[0].split('/')[1]
     _paq.push(['trackEvent', 'solidityumlgen', 'activated'])
