@@ -75,6 +75,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       this.themeName = currentTheme.name
       let result = ''
       try {
+        console.log({ data })
         if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
           result = await this.flattenContract(source, file, data)
         }
