@@ -29,10 +29,12 @@ export default function App() {
         <input className='w-100' type='text' value={url} onChange={e => setUrl(e.target.value)} placeholder='https://remix.ethereum.org' />
         <hr></hr>
         <input className='btn btn-primary w-100' type='button' value='start remixd' onClick={() => startRemixd()} />
-        {messageList.map((message, index) => {
-          return <p key={index}>{message}</p>
-        })
-        }
+        <ul>
+          {messageList.map((message, index) => {
+            return <li key={index}>{message}</li>
+          })
+          }
+        </ul>
       </div>
     </>
   );
