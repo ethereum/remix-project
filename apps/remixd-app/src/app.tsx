@@ -23,7 +23,7 @@ export default function App() {
 
   return (
     <>
-      <h1>Hello, Remix!</h1>
+      <h1>RemixD</h1>
       <input type='text' value={url} onChange={e => setUrl(e.target.value)} placeholder='https://remix.ethereum.org' />
       <input type='button' value='start remixd' onClick={() => startRemixd()} />
       {messageList.map((message, index) => {

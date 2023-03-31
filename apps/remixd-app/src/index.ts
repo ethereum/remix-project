@@ -65,6 +65,7 @@ app.on('activate', () => {
 
 let remixIdeUrl = 'http://localhost:8080'
 let folder = './'
+let socket: Websocket
 
 ipcMain.handle('startRemixd', async (event, url) => {
   console.log('startRemixd', url)
@@ -96,6 +97,8 @@ const services: any = {
 
 const openFileDialog = async () => {
 
+  if(socket) socket.close()
+
   // open local file dialog
   const { filePaths } = await dialog.showOpenDialog({
     properties: ['openDirectory']
@@ -103,6 +106,10 @@ const openFileDialog = async () => {
   if (filePaths.length > 0) {
     folder = filePaths[0]
   }
+
+  sharedFolderClient = new Sharedfolder()
+  slitherClient = new SlitherClient()
+  hardhatClient = new HardhatClient()
 
   sharedFolderClient.sharedFolder(folder)
   sharedFolderClient.setupNotifications(folder)
@@ -121,7 +128,9 @@ const ports: any = {
 
 function startService(service: string, callback: any) {
   try {
-    const socket = new Websocket(ports[service], { remixIdeUrl }, () => services[service]())
+
+
+    socket = new Websocket(ports[service], { remixIdeUrl }, () => services[service]())
     socket.start(callback)
   } catch (e) {
     console.error(e)
@@ -150,21 +159,24 @@ let remixdStart = async () => {
 
   console.log('start shared folder service')
   // send message to the renderer process
-  mainWindow.webContents.send('message', 'start shared folder service')
+  mainWindow.webContents.send('message', `start remixd on ${remixIdeUrl} and shared folder ${folder}`)
 
   try {
     startService('folder', (ws: any, client: RemixdClient) => {
+      console.log('start service folder')
       client.setWebSocket(ws)
       client.sharedFolder(getFolder(client))
       client.setupNotifications(getFolder(client))
     })
 
     startService('slither', (ws: any, client: SlitherClient) => {
+      console.log('start service slither')
       client.setWebSocket(ws)
       client.sharedFolder(getFolder(client))
     })
 
     startService('hardhat', (ws: any, client: HardhatClient) => {
+      console.log('start service hardhat')
       client.setWebSocket(ws)
       client.sharedFolder(getFolder(client))
     })
