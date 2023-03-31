@@ -23,13 +23,17 @@ export default function App() {
 
   return (
     <>
-      <h1>RemixD</h1>
-      <input type='text' value={url} onChange={e => setUrl(e.target.value)} placeholder='https://remix.ethereum.org' />
-      <input type='button' value='start remixd' onClick={() => startRemixd()} />
-      {messageList.map((message, index) => {
-        return <p key={index}>{message}</p>
-      })
-      }
+      <div className='container-fluid'>
+        <h1>RemixD</h1>
+        <p>Enter the URL of the Remix IDE you want to connect to.</p>
+        <input className='w-100' type='text' value={url} onChange={e => setUrl(e.target.value)} placeholder='https://remix.ethereum.org' />
+        <hr></hr>
+        <input className='btn btn-primary w-100' type='button' value='start remixd' onClick={() => startRemixd()} />
+        {messageList.map((message, index) => {
+          return <p key={index}>{message}</p>
+        })
+        }
+      </div>
     </>
   );
 }
