@@ -7,6 +7,7 @@ import { Build, buildSite } from './docgen/site'
 import { loadTemplates } from './docgen/templates'
 import { SolcInput, SolcOutput } from 'solidity-ast/solc'
 import { render } from './docgen/render'
+import { normalizeContractPath } from './docgen/utils/normalizeContractPath'
 
 export class DocGenClient extends PluginClient {
   private currentTheme
@@ -45,19 +46,30 @@ export class DocGenClient extends PluginClient {
         input: input,
         output: output
       }
-      this.fileName = fileName
-      this.eventEmitter.emit('compilationFinished', this.build, fileName)
+      const test = normalizeContractPath(fileName)
+      console.log({ test })
+      this.fileName = test
+      this.eventEmitter.emit('compilationFinished', this.build, test)
     })
   }
 
   async docgen(builds: Build[], userConfig?: Config): Promise<void> {
+    console.log('docgen called')
     const config = { ...defaults, ...userConfig }
+    console.log({ config })
     const templates = await loadTemplates(config.theme, config.root, config.templates)
+    console.log({ templates })
     const site = buildSite(builds, config, templates.properties ?? {})
+    console.log({ site })
     const renderedSite = render(site, templates, config.collapseNewlines)
     const docs: string[] = []
+    console.log('docs created!!')
+    console.log({ renderedSite })
     for (const { id, contents } of renderedSite) {
-      const temp = `${this.fileName.split('/')[1].split('.')[0]}.${id.split('.')[1]}`
+      const pathArray = this.fileName.split('/')
+      console.log({ pathArray })
+      const temp = `${pathArray[pathArray.length - 1]}.${id.split('.')[1]}`
+      console.log(temp)
       const newFileName = `docs/${temp}`
       await this.call('fileManager', 'setFile', newFileName , contents)
       docs.push(newFileName)
@@ -75,6 +87,8 @@ export class DocGenClient extends PluginClient {
   }
 
   async generateDocs() {
-    this.docgen([this.build])
+    const builds = [this.build]
+    console.log({ builds })
+    this.docgen(builds)
   }
 }
