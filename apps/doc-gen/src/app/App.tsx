@@ -17,11 +17,11 @@ const App = () => {
         setThemeType(theme)
       })
       client.eventEmitter.on('compilationFinished', (build: Build, fileName: string) => {
+        const temp = fileName.split('/')[fileName.split('/').length - 1]
         setHasBuild(true)
-        setFileName(fileName)
+        setFileName(temp)
       })
       client.eventEmitter.on('docsGenerated', (docs: string[]) => {
-        console.log('docsGenerated', docs)
       })
     }
     watchThemeSwitch()
@@ -30,7 +30,7 @@ const App = () => {
   return (
     <div className="p-3">
       <h3>Compile a solidity contract in order to build documentation as markdown.</h3>
-      {fileName && <h6>File: {fileName.split('/')[1].split('.')[0].concat('.sol')}</h6>}
+      {fileName && <h6>File: {fileName.concat('.sol')}</h6>}
       {hasBuild && <button className="btn btn-primary btn-block mt-4 rounded" onClick={() => client.generateDocs()}>Generate doc</button>}
     </div>
   )

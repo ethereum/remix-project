@@ -177,7 +177,7 @@ export function normalizeContractPath(contractPath: string): string {
         folders += `${paths[i]}/`
       }
     }
-    const resultingPath = `${folders}${filename}_flattened.sol`
+    const resultingPath = `${folders}${filename}`
 		// cleanup variables
     paths = null
     filename = null
