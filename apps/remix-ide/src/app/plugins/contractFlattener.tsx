@@ -50,7 +50,8 @@ export class ContractFlattener extends Plugin {
    */
   async flattenContract (source: { sources: any, target: string },
     filePath: string, data: { contracts: any, sources: any }): Promise<string> {
-    const path = normalizeContractPath(filePath)
+    const appendage = '_flattened.sol'
+    const path = `${normalizeContractPath(filePath)}${appendage}`
     const ast = data.sources
     let dependencyGraph
     let sorted
