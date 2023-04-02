@@ -7,6 +7,7 @@ import { Build } from './docgen/site'
 export const client =  new DocGenClient()
 
 const App = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [themeType, setThemeType] = useState<string>('dark');
   const [hasBuild, setHasBuild] = useState<boolean>(false);
   const [fileName, setFileName] = useState<string>('');
