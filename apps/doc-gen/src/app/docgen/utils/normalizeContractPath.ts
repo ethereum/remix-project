@@ -10,7 +10,7 @@ export function normalizeContractPath(contractPath: string, returnPath?: boolean
   }
   const resultingPath = `${folders}${filename}`
   if(returnPath) {
-  return [folders,resultingPath]
+  return [folders,resultingPath, filename]
   } else {
   return resultingPath
   }
