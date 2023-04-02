@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PluginClient } from '@remixproject/plugin'
 import { CompilationResult, SourceWithTarget } from '@remixproject/plugin-api'
 import { createClient } from '@remixproject/plugin-webview'
@@ -15,6 +16,7 @@ export class DocGenClient extends PluginClient {
   private build: Build
   public docs: string[] = []
   private fileName: string = ''
+  private contractPath: string = ''
   
   constructor() {
     super()
@@ -46,30 +48,23 @@ export class DocGenClient extends PluginClient {
         input: input,
         output: output
       }
-      const test = normalizeContractPath(fileName)
-      console.log({ test })
-      this.fileName = test
-      this.eventEmitter.emit('compilationFinished', this.build, test)
+      const test = normalizeContractPath(fileName, true)
+      this.fileName = typeof test === 'string' ? test : test[1]
+      this.contractPath = typeof test === 'object' ? test[0] : ''
+      this.eventEmitter.emit('compilationFinished', this.build, this.fileName)
     })
   }
 
   async docgen(builds: Build[], userConfig?: Config): Promise<void> {
-    console.log('docgen called')
     const config = { ...defaults, ...userConfig }
-    console.log({ config })
+    config.sourcesDir = this.contractPath.length > 0 ? this.contractPath : config.sourcesDir
     const templates = await loadTemplates(config.theme, config.root, config.templates)
-    console.log({ templates })
     const site = buildSite(builds, config, templates.properties ?? {})
-    console.log({ site })
     const renderedSite = render(site, templates, config.collapseNewlines)
     const docs: string[] = []
-    console.log('docs created!!')
-    console.log({ renderedSite })
     for (const { id, contents } of renderedSite) {
       const pathArray = this.fileName.split('/')
-      console.log({ pathArray })
       const temp = `${pathArray[pathArray.length - 1]}.${id.split('.')[1]}`
-      console.log(temp)
       const newFileName = `docs/${temp}`
       await this.call('fileManager', 'setFile', newFileName , contents)
       docs.push(newFileName)
@@ -87,8 +82,6 @@ export class DocGenClient extends PluginClient {
   }
 
   async generateDocs() {
-    const builds = [this.build]
-    console.log({ builds })
-    this.docgen(builds)
+    this.docgen([this.build])
   }
 }
