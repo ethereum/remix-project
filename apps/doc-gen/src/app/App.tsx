@@ -18,9 +18,8 @@ const App = () => {
         setThemeType(theme)
       })
       client.eventEmitter.on('compilationFinished', (build: Build, fileName: string) => {
-        const temp = fileName.split('/')[fileName.split('/').length - 1]
         setHasBuild(true)
-        setFileName(temp)
+        setFileName(fileName)
       })
       client.eventEmitter.on('docsGenerated', (docs: string[]) => {
       })

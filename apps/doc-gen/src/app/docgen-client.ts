@@ -49,7 +49,7 @@ export class DocGenClient extends PluginClient {
         output: output
       }
       const test = normalizeContractPath(fileName, true)
-      this.fileName = typeof test === 'string' ? test : test[1]
+      this.fileName = typeof test === 'string' ? test : test[test.length - 1]
       this.contractPath = typeof test === 'object' ? test[0] : ''
       this.eventEmitter.emit('compilationFinished', this.build, this.fileName)
     })
@@ -63,8 +63,7 @@ export class DocGenClient extends PluginClient {
     const renderedSite = render(site, templates, config.collapseNewlines)
     const docs: string[] = []
     for (const { id, contents } of renderedSite) {
-      const pathArray = this.fileName.split('/')
-      const temp = `${pathArray[pathArray.length - 1]}.${id.split('.')[1]}`
+      const temp = `${this.fileName}.${id.split('.')[1]}`
       const newFileName = `docs/${temp}`
       await this.call('fileManager', 'setFile', newFileName , contents)
       docs.push(newFileName)
