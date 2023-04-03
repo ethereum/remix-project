@@ -63,7 +63,7 @@ export class DocGenClient extends PluginClient {
     const renderedSite = render(site, templates, config.collapseNewlines)
     const docs: string[] = []
     for (const { id, contents } of renderedSite) {
-      const temp = `${this.fileName}.${id.split('.')[1]}`
+      const temp = `${this.fileName.split('.')[0]}.${id.split('.')[1]}`
       const newFileName = `docs/${temp}`
       await this.call('fileManager', 'setFile', newFileName , contents)
       docs.push(newFileName)
