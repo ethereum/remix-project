@@ -30,7 +30,7 @@ const App = () => {
   return (
     <div className="p-3">
       <h3>Compile a solidity contract in order to build documentation as markdown.</h3>
-      {fileName && <h6>File: {fileName.concat('.sol')}</h6>}
+      {fileName && <h6>File: {fileName}</h6>}
       {hasBuild && <button className="btn btn-primary btn-block mt-4 rounded" onClick={() => client.generateDocs()}>Generate doc</button>}
     </div>
   )
