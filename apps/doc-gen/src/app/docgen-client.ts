@@ -48,9 +48,9 @@ export class DocGenClient extends PluginClient {
         input: input,
         output: output
       }
-      const test = normalizeContractPath(fileName)
-      this.fileName = typeof test === 'string' ? test : test[test.length - 1]
-      this.contractPath = typeof test === 'object' ? test[0] : ''
+      const segmentedPathList = normalizeContractPath(fileName)
+      this.fileName = segmentedPathList[segmentedPathList.length - 1]
+      this.contractPath =  segmentedPathList[0]
       this.eventEmitter.emit('compilationFinished', this.build, this.fileName)
     })
   }
