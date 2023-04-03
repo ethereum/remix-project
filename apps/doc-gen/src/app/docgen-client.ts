@@ -57,7 +57,7 @@ export class DocGenClient extends PluginClient {
 
   async docgen(builds: Build[], userConfig?: Config): Promise<void> {
     const config = { ...defaults, ...userConfig }
-    config.sourcesDir = this.contractPath.length > 0 ? this.contractPath : config.sourcesDir
+    config.sourcesDir = this.contractPath !== config.sourcesDir ? this.contractPath : config.sourcesDir
     const templates = await loadTemplates(config.theme, config.root, config.templates)
     const site = buildSite(builds, config, templates.properties ?? {})
     const renderedSite = render(site, templates, config.collapseNewlines)
