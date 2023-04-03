@@ -205,6 +205,16 @@ export class RemixAppManager extends PluginManager {
       pattern: [],
       sticky: true
     })
+    await this.call('filePanel', 'registerContextMenuItem', {
+      id: 'doc-gen',
+      name: 'generateDocsCustomAction',
+      label: 'Generate Documentation',
+      type: [],
+      extension: ['.sol'],
+      path: [],
+      pattern: [],
+      sticky: true
+    })
   }
 }
 
