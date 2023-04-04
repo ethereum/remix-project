@@ -32,10 +32,10 @@ export const SourceControlNavigation = ({ eventKey, activePanel, callback }) => 
                 {
                     activePanel === eventKey ?
                         <span className='d-flex justify-content-end align-items-center w-25'>
-                            <CustomTooltip tooltipText={<FormattedMessage id="Pull" />}>
+                            <CustomTooltip tooltipText={<FormattedMessage id="Push" />}>
                                 <button onClick={async () => { await pluginactions.loadFiles() }} className='btn btn-sm'><FontAwesomeIcon icon={faArrowUp} className="" /></button>
                             </CustomTooltip>
-                            <CustomTooltip tooltipText={<FormattedMessage id="Push" />}>
+                            <CustomTooltip tooltipText={<FormattedMessage id="Pull" />}>
                                 <button onClick={async () => { await pluginactions.loadFiles() }} className='btn btn-sm'><FontAwesomeIcon icon={faArrowDown} className="" /></button>
                             </CustomTooltip>
                             <CustomTooltip tooltipText={<FormattedMessage id="Sync changes" />}>

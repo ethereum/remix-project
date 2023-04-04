@@ -69,6 +69,10 @@ class DGitProvider extends Plugin {
     }
   }
 
+  onActivation(): void {
+      console.log('dgit activated')
+  }
+
   async parseInput(input) {
     return {
       corsProxy: 'https://corsproxy.remixproject.org/',
