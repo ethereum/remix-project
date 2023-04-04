@@ -9,9 +9,6 @@ import { FileLabel } from './file-label'
 import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators'
 import { Draggable } from "@remix-ui/drag-n-drop"
 
-
-
-
 export interface RenderFileProps {
   file: FileType,
   index: number,
