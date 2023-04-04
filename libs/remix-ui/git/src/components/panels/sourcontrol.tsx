@@ -41,8 +41,6 @@ export const SourceControl = () => {
             {show ?
                 <>
                     <div>
-                        <button data-id='stageAll' onClick={async () => await actions.addall()} className='btn btn-sm btn-primary'>Stage all</button>
-                        <hr></hr>
                         <RenderGroups></RenderGroups>
                     </div></>
                 : <>Nothing to commit

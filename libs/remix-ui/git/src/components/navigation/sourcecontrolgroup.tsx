@@ -40,7 +40,7 @@ export const SourceControlGroupNavigation = (props: SourceControlGroupNavigation
                         <span className='d-flex justify-content-end align-items-center w-25'>
                           {group.name === 'Changes' ?
                             <CustomTooltip tooltipText={<FormattedMessage id="Stage All Changes" />}>
-                                <button onClick={async () => { await pluginActions.loadFiles() }} className='btn btn-sm'><FontAwesomeIcon icon={faPlus} className="" /></button>
+                                <button onClick={async () => { await actions.addall() }} className='btn btn-sm'><FontAwesomeIcon icon={faPlus} className="" /></button>
                             </CustomTooltip>: null}
                             {group.name === 'Staged' ?
                             <CustomTooltip tooltipText={<FormattedMessage id="Unstage All Changes" />}>

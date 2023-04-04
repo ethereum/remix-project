@@ -19,18 +19,20 @@ export const SourceControGroup = (props: SourceControGroupProps) => {
 
   useEffect(() => {
     if (activePanel === "0") {
- 
     }
   }, [activePanel])
 
-  return (<Accordion activeKey={activePanel} defaultActiveKey="">
-    <SourceControlGroupNavigation group={group} eventKey="0" activePanel={activePanel} callback={setActivePanel}/>
-    <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
-      <>
-        {group.group.map((file, index) => {
-          return(<SourceControlItem group={group} file={file}></SourceControlItem>)
-        })}
-      </>
-    </Accordion.Collapse>
-  </Accordion>)
+  return (<>
+    {group.group.length > 0 ?
+      <Accordion activeKey={activePanel} defaultActiveKey="">
+        <SourceControlGroupNavigation group={group} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
+        <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
+          <>
+            {group.group.map((file, index) => {
+              return (<SourceControlItem group={group} file={file}></SourceControlItem>)
+            })}
+          </>
+        </Accordion.Collapse>
+      </Accordion> : <></>}
+  </>)
 }
