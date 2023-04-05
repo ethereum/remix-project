@@ -32,7 +32,11 @@ module.exports = {
         timeout: 60000
       })
       .currentWorkspaceIs('vyper-lang')
-      .waitForElementVisible('li[data-id="treeViewLitreeViewItemexamples"]')
+      .waitForElementVisible({
+        selector:"//*[@data-id='treeViewLitreeViewItemexamples' and contains(.,'examples')]",
+        locateStrategy: 'xpath',
+        timeout: 60000
+      })
       .openFile('examples')
       .openFile('examples/auctions')
       .openFile('examples/auctions/blind_auction.vy')
