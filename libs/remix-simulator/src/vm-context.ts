@@ -9,7 +9,7 @@ import { execution } from '@remix-project/remix-lib'
 const { LogsManager } = execution
 import { VmProxy } from './VmProxy'
 import { VM } from '@ethereumjs/vm'
-import { Common } from '@ethereumjs/common'
+import { Common, ConsensusType } from '@ethereumjs/common'
 import { Trie } from '@ethereumjs/trie'
 import { DefaultStateManager, StateManager, EthersStateManager, EthersStateManagerOpts } from '@ethereumjs/statemanager'
 import { StorageDump } from '@ethereumjs/statemanager/dist/interface'
@@ -182,7 +182,20 @@ export class VMContext {
       stateManager = new StateManagerCommonStorageDump()
 
     const common = new Common({ chain: 'mainnet', hardfork })
-    const blockchain = new (Blockchain as any)({ common })
+
+    /*const difficulty = common.consensusType() === ConsensusType.ProofOfStake ? 0 : 69762765929000
+
+    const genesisBlock: Block = Block.fromBlockData({
+      header: {
+        timestamp: (new Date().getTime() / 1000 | 0),
+        number: 0,
+        coinbase: '0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a',
+        difficulty,
+        gasLimit: 8000000
+      }
+    }, { common })*/
+
+    const blockchain = await Blockchain.create({ common, validateBlocks: false, validateConsensus: false })
     const eei = new EEI(stateManager, common, blockchain)
     const evm = new EVM({ common, eei, allowUnlimitedContractSize: true })
     
@@ -198,6 +211,7 @@ export class VMContext {
     // VmProxy is used to track the EVM execution (to listen on opcode execution, in order for instance to generate the VM trace)
     const web3vm = new VmProxy(this)
     web3vm.setVM(vm)
+    this.addBlock(blockchain.genesisBlock, true)
     return { vm, web3vm, stateManager, common }
   }
 
@@ -217,7 +231,7 @@ export class VMContext {
     return this.currentVm
   }
 
-  addBlock (block: Block) {
+  addBlock (block: Block, genesis?: Boolean) {
     let blockNumber = bigIntToHex(block.header.number)
     if (blockNumber === '0x') {
       blockNumber = '0x0'
@@ -227,7 +241,7 @@ export class VMContext {
     this.blocks[blockNumber] = block
     this.latestBlockNumber = blockNumber
 
-    this.logsManager.checkBlock(blockNumber, block, this.web3())
+    if (!genesis) this.logsManager.checkBlock(blockNumber, block, this.web3())
   }
 
   trackTx (txHash, block, tx) {

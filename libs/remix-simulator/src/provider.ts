@@ -9,7 +9,6 @@ import { methods as miscMethods } from './methods/misc'
 import { methods as netMethods } from './methods/net'
 import { Transactions } from './methods/transactions'
 import { Debug } from './methods/debug'
-import { generateBlock } from './genesis'
 import { VMContext } from './vm-context'
 
 export interface JSONRPCRequestPayload {
@@ -59,7 +58,6 @@ export class Provider {
     this.initialized = false
     this.pendingRequests = []
     await this.vmContext.init()
-    await generateBlock(this.vmContext)
     await this.Accounts.resetAccounts()
     this.Transactions.init(this.Accounts.accounts)
     this.initialized = true

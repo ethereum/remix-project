@@ -142,6 +142,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
 }
 
 const broadcastCompilationResult = async (compilerName: string, plugin: RunTab, dispatch: React.Dispatch<any>, file, source, languageVersion, data, input?) => {
+  console.log('broadcastCompilationResult')
   _paq.push(['trackEvent', 'udapp', 'broadcastCompilationResult', compilerName])
   // TODO check whether the tab is configured
   const compiler = new CompilerAbstract(languageVersion, data, source, input)
