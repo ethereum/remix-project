@@ -56,8 +56,8 @@ export class DocGenClient extends PluginClient {
   }
 
   async generateDocsCustomAction(action: customAction) {
-    console.log({ action })
-    // await this.generateDocs()
+    await this.call('solidity', 'compile', action.path[0])
+    await this.generateDocs()
   }
 
   async docgen(builds: Build[], userConfig?: Config): Promise<void> {
@@ -86,6 +86,9 @@ export class DocGenClient extends PluginClient {
   }
 
   async generateDocs() {
-    this.docgen([this.build])
+    this.eventEmitter.on('compilationFinished', async (build: Build, fileName: string) => {
+      await this.docgen([build])
+    })
+    this.eventEmitter.off('compilationFinished', () => console.log('remove compilationFinished listener'))
   }
 }
