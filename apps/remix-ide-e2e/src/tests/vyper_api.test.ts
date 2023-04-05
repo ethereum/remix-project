@@ -75,6 +75,19 @@ module.exports = {
       // @ts-ignore
       .frame(0)
       .click('[data-id="compile"]')
+      .isVisible({
+        selector: '[data-id="copy-abi"]',
+        timeout: 4000,
+        abortOnFailure: false,
+        suppressNotFoundErrors: true
+      }, (okVisible) => {
+        if (okVisible.value === null) {
+          console.log('retrying compilation...')
+          browser.click('[data-id="compile"]').waitForElementVisible('[data-id="copy-abi"]')
+        } else{
+          browser.assert.ok(okVisible.value === true, 'ABI should be visible')
+        }
+      })
       .frameParent()
       .clickLaunchIcon('udapp')
       .createContract('')
