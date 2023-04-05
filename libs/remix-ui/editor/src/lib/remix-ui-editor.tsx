@@ -220,7 +220,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
   props.editorAPI.getValue = (uri: string) => {
     if (!getEditor()) return
-    console.log(editorModelsState)
+    //console.log(editorModelsState)
     const model = editorModelsState[uri]?.model
     if (model) {
       return model.getValue()

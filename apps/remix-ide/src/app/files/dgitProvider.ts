@@ -157,6 +157,8 @@ class DGitProvider extends Plugin {
       map: async function (filepath, [A, B]) {
         // ignore directories
 
+        console.log(filepath, A, B)
+
         if (filepath === '.') {
           return
         }
@@ -185,7 +187,7 @@ class DGitProvider extends Plugin {
         if (Aoid === undefined) {
           commitChange.type = "deleted"
         }
-        if (Boid === undefined) {
+        if (Boid === undefined || Aoid === Boid) {
           commitChange.type = "added"
         }
         if (Aoid === undefined && Boid === undefined) {

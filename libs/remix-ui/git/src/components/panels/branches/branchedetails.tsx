@@ -27,7 +27,7 @@ export const BranchDetails = (props: BrancheDetailsProps) => {
   }, [activePanel])
 
   const checkout = (branch: string) => {
-
+    actions.checkout({ ref: branch, remote: "" });
   }
 
   return (<Accordion activeKey={activePanel} defaultActiveKey="">
