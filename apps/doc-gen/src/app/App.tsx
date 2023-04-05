@@ -33,7 +33,7 @@ const App = () => {
       {fileName && <div className="border-bottom border-top px-2 py-3 justify-center align-items-center d-flex">
         <h6>File: {fileName}</h6>
       </div>}
-      {hasBuild && <button className="btn btn-primary btn-block mt-4" onClick={() => client.generateDocs()}>Generate Documentation</button>}
+      {hasBuild && <button className="btn btn-primary btn-block mt-4" onClick={() => client.generateDocs()}>Generate Docs</button>}
     </div>
   )
 }
