@@ -27,13 +27,13 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .saveScreenshot('./reports/screenshots/vyper_api_test_should_clone_the_vyper_repo.png')
       .waitForElementVisible({
-        selector:"//*[@data-id='workspacesSelect' and contains(.,'vyper-lang')]",
+        selector: "//*[@data-id='workspacesSelect' and contains(.,'vyper-lang')]",
         locateStrategy: 'xpath',
         timeout: 60000
       })
       .currentWorkspaceIs('vyper-lang')
       .waitForElementVisible({
-        selector:"//*[@data-id='treeViewLitreeViewItemexamples' and contains(.,'examples')]",
+        selector: "//*[@data-id='treeViewLitreeViewItemexamples' and contains(.,'examples')]",
         locateStrategy: 'xpath',
         timeout: 60000
       })
@@ -48,7 +48,18 @@ module.exports = {
       .frame(0)
       .click('[data-id="remote-compiler"]')
       .click('[data-id="compile"]')
+      .waitForElementVisible({
+        selector: '[data-id="copy-abi"]',
+        timeout: 4000,
+        abortOnFailure: false,
+        suppressNotFoundErrors: true
+      }).isVisible('[data-id="copy-abi"]', (okVisible) => {
+        if (!okVisible) {
+          browser.click('[data-id="compile"]')
+        }
+      })
       .waitForElementVisible('[data-id="copy-abi"]')
+
   },
 
   'Compile test contract and deploy to remix VM #group1': function (browser: NightwatchBrowser) {
