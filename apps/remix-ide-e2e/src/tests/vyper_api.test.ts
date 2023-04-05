@@ -31,6 +31,7 @@ module.exports = {
         timeout: 60000
       })
       .currentWorkspaceIs('vyper-lang')
+      .waitForElementVisible('li[data-id="treeViewLitreeViewItemexamples"]')
       .openFile('examples')
       .openFile('examples/auctions')
       .openFile('examples/auctions/blind_auction.vy')
