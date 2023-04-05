@@ -30,6 +30,7 @@ module.exports = {
         locateStrategy: 'xpath',
         timeout: 60000
       })
+      .currentWorkspaceIs('vyper-lang')
       .openFile('examples')
       .openFile('examples/auctions')
       .openFile('examples/auctions/blind_auction.vy')
