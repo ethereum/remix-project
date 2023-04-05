@@ -55,7 +55,7 @@ module.exports = {
         suppressNotFoundErrors: true
       }, (okVisible) => {
         console.log('okVisible', okVisible)
-        if (!okVisible) {
+        if (!okVisible.status) {
           console.log('retrying')
           browser.click('[data-id="compile"]')
         }
