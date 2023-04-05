@@ -54,13 +54,14 @@ module.exports = {
         abortOnFailure: false,
         suppressNotFoundErrors: true
       }, (okVisible) => {
-        console.log('okVisible', okVisible)
-        if (!okVisible.status) {
-          console.log('retrying')
-          browser.click('[data-id="compile"]')
+        if (okVisible.value === null) {
+          console.log('retrying compilation...')
+          browser.click('[data-id="compile"]').waitForElementVisible('[data-id="copy-abi"]')
+        } else{
+          browser.assert.ok(okVisible.value === true, 'ABI should be visible')
         }
       })
-      .waitForElementVisible('[data-id="copy-abi"]')
+      
 
   },
 
