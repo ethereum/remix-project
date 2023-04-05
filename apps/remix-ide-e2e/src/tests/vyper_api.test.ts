@@ -53,7 +53,7 @@ module.exports = {
         timeout: 4000,
         abortOnFailure: false,
         suppressNotFoundErrors: true
-      }).isVisible('[data-id="copy-abi"]', (okVisible) => {
+      }, (okVisible) => {
         if (!okVisible) {
           browser.click('[data-id="compile"]')
         }
