@@ -21,11 +21,10 @@ module.exports = {
       .frame(0)
   },
 
-  'Should clone the Vyper repo #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should clone the Vyper repo #group1': function (browser: NightwatchBrowser) {
     browser.click('button[data-id="add-repository"]')
       .frameParent()
       .clickLaunchIcon('filePanel')
-      .saveScreenshot('./reports/screenshots/vyper_api_test_should_clone_the_vyper_repo.png')
       .waitForElementVisible({
         selector: "//*[@data-id='workspacesSelect' and contains(.,'vyper-lang')]",
         locateStrategy: 'xpath',
