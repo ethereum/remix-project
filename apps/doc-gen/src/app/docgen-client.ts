@@ -89,6 +89,6 @@ export class DocGenClient extends PluginClient {
     this.eventEmitter.on('compilationFinished', async (build: Build, fileName: string) => {
       await this.docgen([build])
     })
-    this.eventEmitter.off('compilationFinished', () => console.log('remove compilationFinished listener'))
+    this.eventEmitter.removeAllListeners('compilationFinished')
   }
 }
