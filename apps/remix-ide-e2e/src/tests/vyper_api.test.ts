@@ -48,7 +48,7 @@ module.exports = {
       .frame(0)
       .click('[data-id="remote-compiler"]')
       .click('[data-id="compile"]')
-      .waitForElementVisible({
+      .isVisible({
         selector: '[data-id="copy-abi"]',
         timeout: 4000,
         abortOnFailure: false,
