@@ -21,7 +21,7 @@ module.exports = {
       .frame(0)
   },
 
-  'Should clone the Vyper repo #group1': function (browser: NightwatchBrowser) {
+  'Should clone the Vyper repo #flaky #group1': function (browser: NightwatchBrowser) {
     browser.click('button[data-id="add-repository"]')
       .frameParent()
       .clickLaunchIcon('filePanel')
