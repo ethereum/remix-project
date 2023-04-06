@@ -51,7 +51,8 @@ export class ContractFlattener extends Plugin {
   async flattenContract (source: { sources: any, target: string },
     filePath: string, data: { contracts: any, sources: any }): Promise<string> {
     const appendage = '_flattened.sol'
-    const path = `${normalizeContractPath(filePath)}${appendage}`
+    const normalized = normalizeContractPath(filePath)
+    const path = `${normalized[normalized.length - 2]}${appendage}`
     const ast = data.sources
     let dependencyGraph
     let sorted
@@ -69,6 +70,7 @@ export class ContractFlattener extends Plugin {
     }
     await this.call('fileManager', 'writeFile', path , result)
     _paq.push(['trackEvent', 'plugin', 'contractFlattener', 'flattenAContract'])
+    // clean up memory references & return result
     sorted = null
     sources = null
     dependencyGraph = null

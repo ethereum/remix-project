@@ -5,7 +5,7 @@ import React from 'react'
 import { RemixUiSolidityUmlGen } from '@remix-ui/solidity-uml-gen' 
 import { ISolidityUmlGen, ThemeQualityType, ThemeSummary } from 'libs/remix-ui/solidity-uml-gen/src/types'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
-import { concatSourceFiles, getDependencyGraph, normalizeContractPath } from 'libs/remix-ui/solidity-compiler/src/lib/logic/flattenerUtilities'
+import { normalizeContractPath } from 'libs/remix-ui/solidity-compiler/src/lib/logic/flattenerUtilities'
 import { convertUmlClasses2Dot } from 'sol2uml/lib/converterClasses2Dot'
 import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
 import vizRenderStringSync from '@aduh95/viz.js/sync'
@@ -77,6 +77,8 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       this.currentlySelectedTheme = currentTheme.quality
       this.themeName = currentTheme.name
       let result = ''
+      const normalized = normalizeContractPath(file)
+      this.currentFile = normalized[normalized.length - 1]
       try {
         if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
           result = await this.flattenContract(source, file, data)
@@ -121,7 +123,6 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   generateCustomAction = async (action: customAction) => {
     this.triggerGenerateUml = true
     this.updatedSvg = this.updatedSvg.startsWith('<?xml') ? '' : this.updatedSvg
-    this.currentFile = action.path[0].split('/')[1]
     _paq.push(['trackEvent', 'solidityumlgen', 'activated'])
     await this.generateUml(action.path[0])
   }
