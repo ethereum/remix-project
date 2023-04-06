@@ -18,20 +18,23 @@ class PdfUmlDownloadStrategy implements IUmlDownloadStrategy {
       canvas.height = img.naturalHeight
       const ctx = canvas.getContext('2d')
       const scale = window.devicePixelRatio*1
-      canvas.style.width = `${Math.round(img.naturalWidth/scale)}`.concat('px')
-      canvas.style.height = `${Math.round(img.naturalHeight/scale)}`.concat('px')
+      const canvasWidth = Math.round(img.naturalWidth/scale)
+      const canvasHeight = Math.round(img.naturalHeight/scale)
+      canvas.style.width = `${canvasWidth}px`
+      canvas.style.height = `${canvasHeight}px`
       canvas.style.margin = '0'
       canvas.style.padding = '0'
+      const orientation =  canvasWidth > canvasHeight ? 'landscape' : 'portrait'
       ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
       ctx.drawImage(img, 0, 0, Math.round(img.naturalWidth/scale), Math.round(img.naturalHeight/scale))
       if (doc === null || doc === undefined) {
         const { default: jsPDF } = await import('jspdf')
-        doc = new jsPDF('landscape', 'px', [img.naturalHeight, img.naturalWidth], true)
+        doc = new jsPDF(orientation, 'px', [img.naturalHeight, img.naturalWidth], true)
       }
       const pageWidth = doc.internal.pageSize.getWidth()
       const pageHeight = doc.internal.pageSize.getHeight()
       doc.addImage(canvas.toDataURL('image/png',0.5), 'PNG', 0, 0, pageWidth, pageHeight)
-      doc.save(fileName.split('/')[1].split('.')[0].concat('.pdf'))
+      doc.save(`${fileName}.pdf`)
     }
     img.src = url
     doc = null
@@ -58,7 +61,7 @@ class ImageUmlDownloadStrategy implements IUmlDownloadStrategy {
       ctx.drawImage(img, 0, 0, Math.round(img.naturalWidth/scale), Math.round(img.naturalHeight/scale))
       const png = canvas.toDataURL('image/png')
       const a = document.createElement('a')
-      a.download = fileName.split('/')[1].split('.')[0].concat('.png')
+      a.download = `${fileName}.png`
       a.href = png
       a.click()
     }
