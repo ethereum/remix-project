@@ -29,7 +29,7 @@ const App = () => {
 
   return (
     <div className="p-3">
-      <h5 className="h-5 mb-3">Compile a solidity contract in order to build documentation as markdown or right click on a contract and click on "Generate Documentation".</h5>
+      <h5 className="h-5 mb-3">Compile a Solidity contract and generate its documentation as Markdown. (Shortcut: right-click on a contract in the File Explorer and select "Generate Docs" from the context menu.).</h5>
       {fileName && <div className="border-bottom border-top px-2 py-3 justify-center align-items-center d-flex">
         <h6>File: {fileName}</h6>
       </div>}
