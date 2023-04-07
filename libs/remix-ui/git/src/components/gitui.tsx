@@ -36,6 +36,7 @@ export const GitUI = (props: IGitUi) => {
     const plugin = props.plugin
     const [gitState, gitDispatch] = useReducer(gitReducer, defaultGitState)
     const [activePanel, setActivePanel] = useState<string>("0");
+    const [timeOut, setTimeOut] = useState<number>(null)
 
     useEffect(() => {
         setCallBacks(plugin, gitDispatch)
@@ -44,6 +45,7 @@ export const GitUI = (props: IGitUi) => {
     }, [])
 
     useEffect(() => {
+        
         async function setDecorators() {
             console.log(gitState.fileStatusResult)
             const decorators: fileDecoration[] = []
@@ -80,8 +82,12 @@ export const GitUI = (props: IGitUi) => {
             }
             await plugin.call('fileDecorator', 'clearFileDecorators')
             await plugin.call('fileDecorator', 'setFileDecorators', decorators)
+            setTimeOut(0)
         }
-        setDecorators()
+
+        setTimeout(() => {
+        setDecorators(), timeOut})
+        
 
     }, [gitState.fileStatusResult])
 
