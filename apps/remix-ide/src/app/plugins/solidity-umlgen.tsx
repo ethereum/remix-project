@@ -25,16 +25,16 @@ const profile = {
 }
 
 const themeCollection = [
-  { themeName: 'HackerOwl', backgroundColor: '--body-bg', actualHex: '#011628'},
-  { themeName: 'Cerulean', backgroundColor: '--body-bg', actualHex: '#fff'},
-  { themeName: 'Cyborg', backgroundColor: '--body-bg', actualHex: '#060606'},
-  { themeName: 'Dark', backgroundColor: '--body-bg', actualHex: '#222336'},
-  { themeName: 'Flatly', backgroundColor: '--body-bg', actualHex: '#fff'},
-  { themeName: 'Black', backgroundColor: '--body-bg', actualHex: '#1a1a1a'},
-  { themeName: 'Light', backgroundColor: '--body-bg', actualHex: '#eef1f6'},
-  { themeName: 'Midcentuary', backgroundColor: '--body-bg', actualHex: '#DBE2E0'},
-  { themeName: 'Spacelab', backgroundColor: '--body-bg', actualHex: '#fff'},
-  { themeName: 'Candy', backgroundColor: '--body-bg', actualHex: '#d5efff'},
+  { themeName: 'HackerOwl', backgroundColor: '--body-bg', actualHex: '#011628', dark: '#fff4fd'},
+  { themeName: 'Cerulean', backgroundColor: '--body-bg', actualHex: '#fff', dark: '#343a40'},
+  { themeName: 'Cyborg', backgroundColor: '--body-bg', actualHex: '#060606', dark: '#adafae'},
+  { themeName: 'Dark', backgroundColor: '--body-bg', actualHex: '#222336', dark: '#222336'},
+  { themeName: 'Flatly', backgroundColor: '--body-bg', actualHex: '#fff', dark: '#7b8a8b'},
+  { themeName: 'Black', backgroundColor: '--body-bg', actualHex: '#1a1a1a', dark: '#1a1a1a'},
+  { themeName: 'Light', backgroundColor: '--body-bg', actualHex: '#eef1f6', dark: '#f8fafe'},
+  { themeName: 'Midcentuary', backgroundColor: '--body-bg', actualHex: '#DBE2E0', dark: '#01414E'},
+  { themeName: 'Spacelab', backgroundColor: '--body-bg', actualHex: '#fff', dark: '#333'},
+  { themeName: 'Candy', backgroundColor: '--body-bg', actualHex: '#d5efff', dark: '#645fb5'},
 ]
 
 /**
@@ -49,6 +49,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   updatedSvg: string
   currentlySelectedTheme: string
   themeName: string
+  themeDark: string
   loading: boolean
   themeCollection: ThemeSummary[]
   triggerGenerateUml: boolean
@@ -95,8 +96,14 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         console.log('error', error)
       }
     })
-    this.on('theme', 'themeChanged', (theme) => {
+    this.on('theme', 'themeChanged', async (theme) => {
       this.currentlySelectedTheme = theme.quality
+    const themeQuality: ThemeQualityType = await this.call('theme', 'currentTheme')
+      themeCollection.forEach((theme) => {
+        if (theme.themeName === themeQuality.name) {
+          this.themeDark = theme.dark
+        }
+      })
       this.renderComponent()
     })
   }
@@ -175,6 +182,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       loading: this.loading,
       themeSelected: this.currentlySelectedTheme,
       themeName: this.themeName,
+      themeDark: this.themeDark,
       fileName: this.currentFile,
       themeCollection: this.themeCollection
     })
@@ -188,6 +196,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       themeName={state.themeName}
       fileName={state.fileName}
       themeCollection={state.themeCollection}
+      themeDark={state.themeDark}
     />
   }
 }
