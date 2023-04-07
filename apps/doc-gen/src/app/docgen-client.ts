@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PluginClient } from '@remixproject/plugin'
-import { CompilationResult, SourceWithTarget } from '@remixproject/plugin-api'
+import { CompilationResult, SourceWithTarget, customAction } from '@remixproject/plugin-api'
 import { createClient } from '@remixproject/plugin-webview'
 import EventEmitter from 'events'
 import { Config, defaults } from './docgen/config'
@@ -21,7 +21,7 @@ export class DocGenClient extends PluginClient {
   constructor() {
     super()
     this.eventEmitter = new EventEmitter()
-    this.methods = ['generateDocs', 'openDocs']
+    this.methods = ['generateDocs', 'openDocs', 'generateDocsCustomAction']
     createClient(this)
     this.onload().then(async () => {
       await this.setListeners()
@@ -55,6 +55,11 @@ export class DocGenClient extends PluginClient {
     })
   }
 
+  async generateDocsCustomAction(action: customAction) {
+    await this.call('solidity', 'compile', action.path[0])
+    await this.generateDocs()
+  }
+
   async docgen(builds: Build[], userConfig?: Config): Promise<void> {
     const config = { ...defaults, ...userConfig }
     config.sourcesDir = this.contractPath !== config.sourcesDir ? this.contractPath : config.sourcesDir
@@ -81,6 +86,9 @@ export class DocGenClient extends PluginClient {
   }
 
   async generateDocs() {
-    this.docgen([this.build])
+    this.eventEmitter.on('compilationFinished', async (build: Build, fileName: string) => {
+      await this.docgen([build])
+    })
+    this.eventEmitter.removeAllListeners('compilationFinished')
   }
 }

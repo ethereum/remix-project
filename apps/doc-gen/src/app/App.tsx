@@ -29,9 +29,11 @@ const App = () => {
 
   return (
     <div className="p-3">
-      <h3>Compile a solidity contract in order to build documentation as markdown.</h3>
-      {fileName && <h6>File: {fileName}</h6>}
-      {hasBuild && <button className="btn btn-primary btn-block mt-4 rounded" onClick={() => client.generateDocs()}>Generate doc</button>}
+      <h5 className="h-5 mb-3">Compile a solidity contract in order to build documentation as markdown or right click on a contract and click on "Generate Documentation".</h5>
+      {fileName && <div className="border-bottom border-top px-2 py-3 justify-center align-items-center d-flex">
+        <h6>File: {fileName}</h6>
+      </div>}
+      {hasBuild && <button className="btn btn-primary btn-block mt-4" onClick={() => client.generateDocs()}>Generate Docs</button>}
     </div>
   )
 }
