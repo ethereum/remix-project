@@ -17,7 +17,6 @@ import { RemixHighLightProvider } from './providers/highlightProvider'
 import { RemixDefinitionProvider } from './providers/definitionProvider'
 import { convertToMonacoDecoration, defineAndSetTheme } from './utils'
 import { DecorationsReturn, defaultEditorValue, EditorUIProps, errorMarker, sourceAnnotation, sourceMarker } from './types'
-import { EditorToolBar } from './components/editorToolBar'
 import './remix-ui-editor.css'
 
 enum MarkerSeverity {
@@ -502,7 +501,6 @@ export const EditorUI = (props: EditorUIProps) => {
   return (
     <div className="w-100 h-100 d-flex flex-column-reverse">
       <button className="btn btn-sm btn-primary" onClick={() => setIsDiff(!isDiff)}>Toggle Diff</button>
-      <EditorToolBar isDiff={props.isDiff} isSplit={isSplit} plugin={props.plugin} unifiedToggle={unifiedToggle}></EditorToolBar>
 
       <DiffEditor
         originalLanguage={'remix-solidity'}

@@ -45,7 +45,6 @@ export const GitUI = (props: IGitUi) => {
     }, [])
 
     useEffect(() => {
-        
         async function setDecorators() {
             console.log(gitState.fileStatusResult)
             const decorators: fileDecoration[] = []
@@ -86,8 +85,9 @@ export const GitUI = (props: IGitUi) => {
         }
 
         setTimeout(() => {
-        setDecorators(), timeOut})
-        
+            setDecorators(), timeOut
+        })
+
 
     }, [gitState.fileStatusResult])
 
