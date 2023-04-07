@@ -5,6 +5,7 @@ import { fileStatus, setBranchCommits, setBranches, setCanCommit, setCommitChang
 import { branch, commitChange, gitActionDispatch, statusMatrixType } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
+import { AlertModal, ModalTypes } from "@remix-ui/app";
 
 export const fileStatuses = [
     ["new,untracked", 0, 2, 0], // new, untracked
@@ -294,23 +295,79 @@ export const clone = async (url: string, branch: string, depth: number, singleBr
         // add timestamp to repo name
         const timestamp = new Date().getTime();
         const repoNameWithTimestamp = `${repoName}-${timestamp}`;
-        const token = await tokenWarning();
-        if (!token) {
-            dispatch(setLoading(false))
-            return
-        } else {
-            await plugin.call('dGitProvider' as any, 'clone', { url, branch, token: token, depth, singleBranch }, repoNameWithTimestamp);
-            await enableCallBacks()
-            plugin.call('notification', 'toast', `Cloned ${url} to ${repoNameWithTimestamp}`)
-        }
+        //const token = await tokenWarning();
+        const token = await plugin.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
+        //if (!token) {
+        //    dispatch(setLoading(false))
+        //    return
+        //} else {
+        await plugin.call('dGitProvider' as any, 'clone', { url, branch, token, depth, singleBranch }, repoNameWithTimestamp);
+        await enableCallBacks()
+        plugin.call('notification', 'toast', `Cloned ${url} to ${repoNameWithTimestamp}`)
+        //}
     } catch (e: any) {
-        plugin.call('notification', 'alert', {
+        await parseError(e)
+    }
+    dispatch(setLoading(false))
+}
+
+const tokenWarning = async () => {
+    const token = await plugin.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
+    if (!token) {
+        const modalContent: AlertModal = {
+            message: 'Please set a token first in the GitHub settings of REMIX',
+            title: 'No GitHub token set',
+            id: 'no-token-set',
+        }
+        plugin.call('notification', 'alert', modalContent)
+        return false;
+    } else {
+        return token;
+    }
+}
+
+
+const parseError = async (e: any) => {
+    // if message conttains 401 Unauthorized, show token warning
+    if (e.message.includes('401')) {
+        const result = await plugin.call('notification', 'modal', {
+            title: 'The GitHub token may be missing or invalid',
+            message: 'Please check the GitHub token and try again. Error: 401 Unauthorized',
+            okLabel: 'Go to settings',
+            cancelLabel: 'Close',
+            type: ModalTypes.confirm
+        })
+        console.log(result)
+    }
+    // if message contains 404 Not Found, show repo not found
+    else if (e.message.includes('404')) {
+        await plugin.call('notification', 'modal', {
+            title: 'Repository not found',
+            message: 'Please check the URL and try again.',
+            okLabel: 'Go to settings',
+            cancelLabel: 'Close',
+            type: ModalTypes.confirm
+        })
+    }
+    // if message contains 403 Forbidden
+    else if (e.message.includes('403')) {
+        await plugin.call('notification', 'modal', {
+            title: 'The GitHub token may be missing or invalid',
+            message: 'Please check the GitHub token and try again. Error: 403 Forbidden',
+            okLabel: 'Go to settings',
+            cancelLabel: 'Close',
+            type: ModalTypes.confirm
+        })
+    } else {
+        await plugin.call('notification', 'alert', {
             title: 'Error',
             message: e.message
         })
     }
-    dispatch(setLoading(false))
 }
+
+
+
 
 export const repositories = async () => {
     try {
@@ -344,15 +401,6 @@ export const remoteBranches = async (owner: string, repo: string) => {
     }
 }
 
-const tokenWarning = async () => {
-    const token = await plugin.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
-    if (!token) {
-        plugin.call('notification', 'alert', 'Please set a token first in the GitHub settings of REMIX')
-        return false;
-    } else {
-        return token;
-    }
-}
 
 
 export const statusMatrix = async () => {
@@ -475,10 +523,10 @@ export const getCommitChanges = async (oid1: string, oid2: string) => {
 }
 
 export const getBranchCommits = async (branch: branch) => {
-    const commits: ReadCommitResult[]= await plugin.call('dGitProvider', 'log', {
+    const commits: ReadCommitResult[] = await plugin.call('dGitProvider', 'log', {
         ref: branch.name,
     })
     console.log(commits)
-    dispatch(setBranchCommits({branch, commits}))
+    dispatch(setBranchCommits({ branch, commits }))
     return commits
 }

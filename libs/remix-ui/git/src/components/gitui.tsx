@@ -23,6 +23,8 @@ import { Remotes } from './panels/remotes'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { fileDecoration, fileDecorationType } from '@remix-ui/file-decorators'
 import { removeSlash } from '../utils'
+import { SettingsNavigation } from './navigation/settings'
+import { Settings } from './panels/settings'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 
@@ -155,6 +157,13 @@ export const GitUI = (props: IGitUi) => {
                                 <Accordion.Collapse className='bg-light' eventKey="5">
                                     <>
                                         <Remotes></Remotes>
+                                    </>
+                                </Accordion.Collapse>
+                                <hr></hr>
+                                <SettingsNavigation eventKey="6" activePanel={activePanel} callback={setActivePanel} />
+                                <Accordion.Collapse className='bg-light' eventKey="6">
+                                    <>
+                                        <Settings></Settings>
                                     </>
                                 </Accordion.Collapse>
 

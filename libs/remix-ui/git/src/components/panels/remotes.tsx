@@ -25,17 +25,14 @@ export const Remotes = () => {
   }
 
   return (
-    <><div className='row pt-1'>
-      <div className='col col-md-6 col-12'>
-        <input placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control" type="text" id="remotename" />
-      </div>
-      <div className='col col-md-6 col-12'>
-        <input placeholder="remote url" name='remoteurl' onChange={e => onUrlChange(e.target.value)} value={url} className="form-control" type="text" id="remoteurl" />
-      </div>
-    </div><button className='btn btn-primary mt-1 w-100' onClick={async () => {
-      addRemote();
-    }}>add remote</button>
-    <hr></hr>
-    <Remoteselect></Remoteselect>
+    <>
+      <input placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-2" type="text" id="remotename" />
+      <input placeholder="remote url" name='remoteurl' onChange={e => onUrlChange(e.target.value)} value={url} className="form-control" type="text" id="remoteurl" />
+
+      <button className='btn btn-primary mt-1 w-100' onClick={async () => {
+        addRemote();
+      }}>add remote</button>
+      <hr></hr>
+      <Remoteselect></Remoteselect>
     </>)
 }
