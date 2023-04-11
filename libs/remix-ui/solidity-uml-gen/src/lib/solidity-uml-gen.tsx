@@ -115,6 +115,7 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading, fileName, themeDar
                         magnifierSize={300}
                         magnifierBorderSize={3}
                         magnifierBorderColor={themeDark}
+                        square 
                       />
                     </TransformComponent>
                   </Fragment>
