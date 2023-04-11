@@ -41,7 +41,7 @@ export const CaptureKeyView: React.FC = () => {
                       ? "form-control form-control-sm is-invalid"
                       : "form-control form-control-sm"
                   }
-                  type="text"
+                  type="password"
                   name="apiKey"
                   placeholder="Example: GM1T20XY6JGSAPWKDCYZ7B2FJXKTJRFVGZ"
                 />
