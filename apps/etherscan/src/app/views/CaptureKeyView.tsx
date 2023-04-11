@@ -23,8 +23,12 @@ export const CaptureKeyView: React.FC = () => {
             return errors
           }}
           onSubmit={(values) => {
-            setAPIKey(values.apiKey)
-            navigate((location.state as any).from)
+            const apiKey = values.apiKey
+            if (apiKey.length === 34) {
+              setAPIKey(values.apiKey)
+              clientInstance.call('notification' as any, 'toast', 'API key saved successfully!!!')
+              navigate((location.state as any).from)
+            } else clientInstance.call('notification' as any, 'toast', 'API key should be 34 characters long')
           }}
         >
           {({ errors, touched, handleSubmit }) => (
