@@ -39,7 +39,7 @@ export class TxRunnerVM {
     this.getVMObject = getVMObject
     this.commonContext = this.getVMObject().common
     this.runAsync = true
-    this.blockNumber = 0    
+    this.blockNumber = 0
     this.runAsync = false // We have to run like this cause the VM Event Manager does not support running multiple txs at the same time.
     this.pendingTxs = {}
     this.vmaccounts = vmaccounts
@@ -110,23 +110,23 @@ export class TxRunnerVM {
       const difficulties = [69762765929000, 70762765929000, 71762765929000]
       const difficulty = this.commonContext.consensusType() === ConsensusType.ProofOfStake ? 0 : difficulties[this.blockNumber % difficulties.length]
       
-      if (!useCall) ++this.blockNumber
-      console.log(useCall, this.blockNumber)
+      const blocknumber = useCall ? this.blockNumber : this.blockNumber + 1
       const block = Block.fromBlockData({
         header: {
           timestamp: new Date().getTime() / 1000 | 0,
-          number: this.blockNumber,
-          coinbase: coinbases[this.blockNumber % coinbases.length],
+          number: blocknumber,
+          coinbase: coinbases[blocknumber % coinbases.length],
           difficulty,
           gasLimit,
           baseFeePerGas: EIP1559 ? '0x1' : undefined,
           parentHash: this.blockParentHash
         },
         transactions: [tx]
-      }, { common: this.commonContext })
+      }, { common: this.commonContext, hardforkByBlockNumber: false, hardforkByTTD: undefined })
 
-      this.blockParentHash = block.hash()
-      if (!useCall) {       
+      if (!useCall) {
+        this.blockNumber = this.blockNumber + 1
+        this.blockParentHash = block.hash()
         this.runBlockInVm(tx, block, (err, result) => {
           this.getVMObject().vm.blockchain.putBlock(block)
           callback(err, result)
