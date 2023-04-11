@@ -252,7 +252,7 @@ export class VMContext {
     return this.currentVm
   }
 
-  addBlock (block: Block, genesis?: Boolean) {
+  addBlock (block: Block, genesis?: boolean) {
     let blockNumber = bigIntToHex(block.header.number)
     if (blockNumber === '0x') {
       blockNumber = '0x0'
