@@ -30,7 +30,7 @@ export const CaptureKeyView: React.FC = () => {
           {({ errors, touched, handleSubmit }) => (
             <form onSubmit={handleSubmit}>
               <div className="form-group" style={{ marginBottom: "0.5rem" }}>
-                <label htmlFor="apikey">Please Enter your API key</label>
+                <label htmlFor="apikey">Enter Etherscan API Key</label>
                 <Field
                   className={
                     errors.apiKey && touched.apiKey
@@ -49,7 +49,7 @@ export const CaptureKeyView: React.FC = () => {
               </div>
 
               <div>
-                <SubmitButton text="Save API key" dataId="save-api-key" />
+                <SubmitButton text="Save" dataId="save-api-key" />
               </div>
             </form>
           )}
