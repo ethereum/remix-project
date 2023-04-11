@@ -1,9 +1,10 @@
 import { checkout, ReadCommitResult } from "isomorphic-git";
-import React from "react";
+import React, { useEffect } from "react";
 import { gitActionsContext } from "../../state/context";
 import { gitPluginContext } from "../gitui";
 import { default as dateFormat } from "dateformat";
 import { Remoteselect } from "./remoteselect";
+import { RemotesImport } from "./remotesimport";
 
 export const Remotes = () => {
   const context = React.useContext(gitPluginContext)
@@ -24,6 +25,10 @@ export const Remotes = () => {
     //await gitservice.getRemotes()
   }
 
+  useEffect(() => {
+    console.log('SHOW REMOTES', context.remotes)
+  }, [context.remotes])
+
   return (
     <>
       <input placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-2" type="text" id="remotename" />
@@ -32,7 +37,21 @@ export const Remotes = () => {
       <button className='btn btn-primary mt-1 w-100' onClick={async () => {
         addRemote();
       }}>add remote</button>
+      <hr />
+      <RemotesImport />
+      <hr />
       <hr></hr>
-      <Remoteselect></Remoteselect>
+
+      {context.remotes && context.remotes.length ?
+        <>
+          <h5>Available remotes</h5>
+
+          {context.remotes && context.remotes.map((remote) => {
+
+            return (
+              <><Remoteselect remote={remote}></Remoteselect></>
+            );
+          })}
+        </> : <>No remotes</>}
     </>)
 }

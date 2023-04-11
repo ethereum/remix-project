@@ -7,15 +7,14 @@ import Select from 'react-select'
 import { selectStyles, selectTheme } from "../../types/styles";
 
 
-export const Repositories = () => {
+export const RemotesImport = () => {
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
-  const [branch, setBranch] = useState({ name: "" });
   const [repo, setRepo] = useState<repository>(null);
   const [repoOtions, setRepoOptions] = useState<any>([]);
-  const [branchOptions, setBranchOptions] = useState<any>([]);
   const [loading, setLoading] = useState(false)
   const [show, setShow] = useState(false)
+  const [remoteName, setRemoteName] = useState('')
 
   useEffect(() => {
     console.log('context', context.repositories)
@@ -29,22 +28,12 @@ export const Repositories = () => {
   }, [context.repositories])
 
 
-  useEffect(() => {
-    // map context.branches to options
-    const options = context.remoteBranches && context.remoteBranches.length > 0 && context.remoteBranches.map(branch => {
-      return { value: branch.name, label: branch.name }
-    }
-    )
-    setBranchOptions(options)
-  }, [context.remoteBranches])
-
 
   const fetchRepositories = async () => {
     try {
       setShow(true)
       setLoading(true)
       setRepoOptions([])
-      setBranchOptions([])
       console.log(await actions.repositories())
     } catch (e) {
       // do nothing
@@ -60,57 +49,49 @@ export const Repositories = () => {
     })
     console.log('repo', repo)
     if (repo) {
-      setBranchOptions([])
       setRepo(repo)
-      await actions.remoteBranches(repo.owner.login, repo.name)
     }
   }
 
-  const selectRemoteBranch = async (value: number | string) => {
-    console.log('setRemoteBranch', value)
-    setBranch({ name: value.toString() })
-  }
-
-  const clone = async () => {
+  const addRemote = async () => {
     try {
-      console.log('clone', repo, branch)
+
     } catch (e) {
       // do nothing
     }
+
   };
+  const onRemoteNameChange = (value: string) => {
+    setRemoteName(value)
+  }
 
   return (
     <>
       <Button onClick={fetchRepositories} className="w-100 mt-1">
-        <i className="fab fa-github mr-1"></i>Fetch Repositories from GitHub
+        <i className="fab fa-github mr-1"></i>Fetch Remotes from GitHub
       </Button>
-      {show?
-      <Select
-        options={repoOtions}
-        className="mt-1"
-        onChange={(e: any) => e && selectRepo(e.value)}
-        theme={selectTheme}
-        styles={selectStyles}
-        isClearable={true}
-        placeholder="Type to search for a repository..."
-        isLoading={loading}
-      />:null}
-
-      {branchOptions && branchOptions.length ?
+      {show ?
         <Select
-          options={branchOptions}
+          options={repoOtions}
           className="mt-1"
-          onChange={(e: any) => e && selectRemoteBranch(e.value)}
+          onChange={(e: any) => e && selectRepo(e.value)}
           theme={selectTheme}
           styles={selectStyles}
           isClearable={true}
-          placeholder="Type to search for a branch..."
+          placeholder="Type to search for a repository..."
+          isLoading={loading}
         /> : null}
 
-      {repo && branch.name && branch.name !== '0' ?
+      {repo ?
+        <input placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-2" type="text" id="remotename" />
+        : null}
+
+
+
+      {repo && remoteName ?
         <button data-id='clonebtn' className='btn btn-primary mt-1 w-100' onClick={async () => {
-          await clone()
-        }}>clone {repo.full_name}:{branch.name}</button> : null}
+          await addRemote()
+        }}>add {remoteName}:{repo.full_name}</button> : null}
 
     </>
   )

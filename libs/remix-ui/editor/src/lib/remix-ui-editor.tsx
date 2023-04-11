@@ -500,7 +500,6 @@ export const EditorUI = (props: EditorUIProps) => {
 
   return (
     <div className="w-100 h-100 d-flex flex-column-reverse">
-      <button className="btn btn-sm btn-primary" onClick={() => setIsDiff(!isDiff)}>Toggle Diff</button>
 
       <DiffEditor
         originalLanguage={'remix-solidity'}

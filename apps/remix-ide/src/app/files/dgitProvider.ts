@@ -187,7 +187,7 @@ class DGitProvider extends Plugin {
         if (Aoid === undefined) {
           commitChange.type = "deleted"
         }
-        if (Boid === undefined || Aoid === Boid) {
+        if (Boid === undefined) {
           commitChange.type = "added"
         }
         if (Aoid === undefined && Boid === undefined) {
@@ -416,10 +416,15 @@ class DGitProvider extends Plugin {
       per_page: 100,
       affiliation: "owner,collaborator"
     })
+
+
+    octokit
+
     return data.data
   }
 
   async remotebranches(input: { owner: string, repo: string, token: string }) {
+    console.log(input)
     const octokit = new Octokit({
       auth: input.token
     })
@@ -427,7 +432,9 @@ class DGitProvider extends Plugin {
     const data = await octokit.request('GET /repos/{owner}/{repo}/branches{?protected,per_page,page}', {
       owner: input.owner,
       repo: input.repo,
+      per_page: 100
     })
+    console.log(data)
     return data.data
   }
 
@@ -578,7 +585,7 @@ class DGitProvider extends Plugin {
         if (type === true) {
           result = [
             ...result,
-            ...(await this.getDirectory(
+          ...(await this.getDirectory(
               `${fi.filename}`
             ))
           ]
