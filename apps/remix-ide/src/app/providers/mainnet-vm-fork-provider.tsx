@@ -14,7 +14,7 @@ export class MainnetForkVMProvider extends BasicVMProvider {
       version: packageJson.version
     }, blockchain)
     this.blockchain = blockchain
-    this.fork = 'london'
+    this.fork = 'merge'
     this.nodeUrl = 'https://mainnet.infura.io/v3/08b2a484451e4635a28b3d8234f24332'
     this.blockNumber = 'latest'
   }

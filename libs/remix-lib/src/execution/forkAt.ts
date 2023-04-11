@@ -58,6 +58,10 @@ const forks = {
     {
       number: 15050000,
       name: 'grayGlacier'
+    },
+    {
+      number: 15537394,
+      name: 'merge'
     }
   ],
   3: [
