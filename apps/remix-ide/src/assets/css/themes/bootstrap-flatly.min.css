@@ -129,13 +129,16 @@ sub {
 sup {
 	top:-.5em
 }
+i {
+  color: #074438;
+}
 a {
-	color:#18bc9c;	
+	color:#074438;	
 	text-decoration:none;	
 	background-color:transparent
 }
 a:hover {
-	color:#0f7864;	
+	color:#10947c;	
 	text-decoration:underline
 }
 a:not([href]):not([class]) {
@@ -182,8 +185,11 @@ th {
 	text-align:-webkit-match-parent
 }
 label {
-	display:inline-block;	
-	margin-bottom:.5rem
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font-size: 11px;
 }
 button {
 	border-radius:0
@@ -7175,7 +7181,7 @@ a.text-dark:focus,a.text-dark:hover {
 	border:none;	color:#fff
 }
 .alert .alert-link,.alert a {
-	color:#fff;	text-decoration:underline
+	color:#18bc9c;	text-decoration:underline
 }
 .alert-primary {
 	background-color:#2c3e50
