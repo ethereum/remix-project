@@ -11,8 +11,9 @@ export const CaptureKeyView: React.FC = () => {
   const navigate = useNavigate()
   return (
     <AppContext.Consumer>
-      {({ apiKey, setAPIKey }) => (
-        <Formik
+      {({ apiKey, clientInstance, setAPIKey }) => {
+        if (!apiKey && clientInstance && clientInstance.call) clientInstance.call('notification' as any, 'toast', 'Please add API key to continue')
+        return <Formik
           initialValues={{ apiKey }}
           validate={(values) => {
             const errors = {} as any
@@ -53,7 +54,8 @@ export const CaptureKeyView: React.FC = () => {
             </form>
           )}
         </Formik>
-      )}
+      }
+      }
     </AppContext.Consumer>
   )
 }
