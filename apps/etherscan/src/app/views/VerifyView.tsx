@@ -83,29 +83,6 @@ export const VerifyView: React.FC<Props> = ({
         {({ errors, touched, handleSubmit, isSubmitting }) => (
           <form onSubmit={handleSubmit}>
             <h6>Verify your smart contracts</h6>
-            <button
-              type="button"
-              style={{ padding: "0.25rem 0.4rem", marginRight: "0.5em", marginBottom: "0.5em"}}
-              className="btn btn-primary"
-              title="Generate the necessary helpers to start the verification from a TypeScript script"
-              onClick={async () => {
-                if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/receiptStatus.ts')) {
-                  await client.call('fileManager', 'writeFile', 'scripts/etherscan/receiptStatus.ts', receiptGuidScript)
-                  await client.call('fileManager', 'open', 'scripts/etherscan/receiptStatus.ts')
-                } else {
-                  client.call('notification' as any, 'toast', 'file receiptStatus.ts already present..')
-                }
-                
-                if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/verify.ts')) {
-                  await client.call('fileManager', 'writeFile', 'scripts/etherscan/verify.ts', verifyScript)
-                  await client.call('fileManager', 'open', 'scripts/etherscan/verify.ts')
-                } else {
-                  client.call('notification' as any, 'toast', 'file verify.ts already present..')
-                }
-              }}
-              >
-                Generate Etherscan helper scripts
-              </button>
             <div className="form-group">
               <label htmlFor="contractName">Contract</label>              
               <Field
@@ -172,6 +149,30 @@ export const VerifyView: React.FC<Props> = ({
             </div>
 
             <SubmitButton dataId="verify-contract" text="Verify Contract" isSubmitting={isSubmitting} />
+            <br/><br/>
+            <button
+              type="button"
+              style={{ padding: "0.25rem 0.4rem", marginRight: "0.5em", marginBottom: "0.5em"}}
+              className="btn btn-primary"
+              title="Generate the required TS scripts to verify a contract on Etherscan"
+              onClick={async () => {
+                if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/receiptStatus.ts')) {
+                  await client.call('fileManager', 'writeFile', 'scripts/etherscan/receiptStatus.ts', receiptGuidScript)
+                  await client.call('fileManager', 'open', 'scripts/etherscan/receiptStatus.ts')
+                } else {
+                  client.call('notification' as any, 'toast', 'File receiptStatus.ts already exists')
+                }
+                
+                if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/verify.ts')) {
+                  await client.call('fileManager', 'writeFile', 'scripts/etherscan/verify.ts', verifyScript)
+                  await client.call('fileManager', 'open', 'scripts/etherscan/verify.ts')
+                } else {
+                  client.call('notification' as any, 'toast', 'File verify.ts already exists')
+                }
+              }}
+              >
+                Generate Verification Scripts
+              </button>
           </form>
         )}
       </Formik>
