@@ -14,7 +14,6 @@ export type Transaction = {
 
 export class TxRunner {
   event
-  runAsync
   pendingTxs
   queusTxs
   opt
@@ -23,8 +22,6 @@ export class TxRunner {
     this.opt = opt || {}
     this.internalRunner = internalRunner
     this.event = new EventManager()
-
-    this.runAsync = this.opt.runAsync || true // We have to run like this cause the VM Event Manager does not support running multiple txs at the same time.
 
     this.pendingTxs = {}
     this.queusTxs = []
@@ -44,7 +41,7 @@ export class TxRunner {
 }
 
 function run (self, tx: Transaction, stamp, confirmationCb, gasEstimationForceSend = null, promptCb = null, callback = null) {
-  if (!self.runAsync && Object.keys(self.pendingTxs).length) {
+  if (Object.keys(self.pendingTxs).length) {
     return self.queusTxs.push({ tx, stamp, callback })
   }
   self.pendingTxs[stamp] = tx
