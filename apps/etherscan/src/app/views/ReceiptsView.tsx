@@ -38,8 +38,9 @@ export const ReceiptsView: React.FC = () => {
 
   return (
     <AppContext.Consumer>
-      {({ apiKey, clientInstance, receipts }) =>
-        !apiKey ? (
+      {({ apiKey, clientInstance, receipts }) => {
+        if (!apiKey && clientInstance && clientInstance.call) clientInstance.call('notification' as any, 'toast', 'Please add API key to continue')
+        return !apiKey ? (
           <Navigate
             to={{
               pathname: "/settings"
@@ -101,6 +102,7 @@ export const ReceiptsView: React.FC = () => {
             <ReceiptsTable receipts={receipts} />
           </div>
         )
+      }
       }
     </AppContext.Consumer>
   )
