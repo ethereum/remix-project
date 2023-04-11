@@ -21,7 +21,6 @@ export type VMExecutionCallBack = (error: string | Error, result?: VMexecutionRe
 export class TxRunnerVM {
   event
   blockNumber
-  runAsync
   pendingTxs
   vmaccounts
   queusTxs
@@ -38,9 +37,7 @@ export class TxRunnerVM {
     // has a default for now for backwards compatability
     this.getVMObject = getVMObject
     this.commonContext = this.getVMObject().common
-    this.runAsync = true
     this.blockNumber = 0
-    this.runAsync = false // We have to run like this cause the VM Event Manager does not support running multiple txs at the same time.
     this.pendingTxs = {}
     this.vmaccounts = vmaccounts
     this.queusTxs = []
