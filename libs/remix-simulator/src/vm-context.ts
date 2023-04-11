@@ -9,6 +9,7 @@ import { execution } from '@remix-project/remix-lib'
 const { LogsManager } = execution
 import { VmProxy } from './VmProxy'
 import { VM } from '@ethereumjs/vm'
+import type { BigIntLike } from '@ethereumjs/util'
 import { Common, ConsensusType } from '@ethereumjs/common'
 import { Trie } from '@ethereumjs/trie'
 import { DefaultStateManager, StateManager, EthersStateManager, EthersStateManagerOpts } from '@ethereumjs/statemanager'
@@ -130,6 +131,25 @@ export type CurrentVm = {
   common: Common
 }
 
+export class VMCommon extends Common {
+
+  /**
+   * Override "setHardforkByBlockNumber" to disable updating the original fork state
+   * 
+   * @param blockNumber
+   * @param td
+   * @param timestamp
+   * @returns The name of the HF set
+   */
+  setHardforkByBlockNumber(
+    blockNumber: BigIntLike,
+    td?: BigIntLike,
+    timestamp?: BigIntLike
+  ): string {      
+    return this.hardfork()
+  }
+}
+
 /*
   trigger contextChanged, web3EndpointChanged
 */
@@ -181,10 +201,10 @@ export class VMContext {
     } else
       stateManager = new StateManagerCommonStorageDump()
 
-    const common = new Common({ chain: 'mainnet', hardfork })
+    const consensusType = hardfork === 'berlin' || hardfork === 'london' ? ConsensusType.ProofOfWork : ConsensusType.ProofOfStake
+    const difficulty = consensusType === ConsensusType.ProofOfStake ? 0 : 69762765929000
 
-    /*const difficulty = common.consensusType() === ConsensusType.ProofOfStake ? 0 : 69762765929000
-
+    const common = new VMCommon({ chain: 'mainnet', hardfork })
     const genesisBlock: Block = Block.fromBlockData({
       header: {
         timestamp: (new Date().getTime() / 1000 | 0),
@@ -193,15 +213,16 @@ export class VMContext {
         difficulty,
         gasLimit: 8000000
       }
-    }, { common })*/
+    }, { common, hardforkByBlockNumber: false, hardforkByTTD: undefined })
 
-    const blockchain = await Blockchain.create({ common, validateBlocks: false, validateConsensus: false })
+    const blockchain = await Blockchain.create({ common, validateBlocks: false, validateConsensus: false, genesisBlock })
     const eei = new EEI(stateManager, common, blockchain)
     const evm = new EVM({ common, eei, allowUnlimitedContractSize: true })
     
     const vm = await VM.create({
       common,
       activatePrecompiles: true,
+      hardforkByBlockNumber: false,
       stateManager,
       blockchain,
       evm
@@ -211,7 +232,7 @@ export class VMContext {
     // VmProxy is used to track the EVM execution (to listen on opcode execution, in order for instance to generate the VM trace)
     const web3vm = new VmProxy(this)
     web3vm.setVM(vm)
-    this.addBlock(blockchain.genesisBlock, true)
+    this.addBlock(genesisBlock, true)
     return { vm, web3vm, stateManager, common }
   }
 
