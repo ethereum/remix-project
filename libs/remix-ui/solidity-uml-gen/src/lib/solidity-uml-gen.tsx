@@ -1,5 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react'
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
+import { GlassMagnifier, MagnifierContainer } from 'react-image-magnifiers'
 import { ThemeSummary } from '../types'
 import UmlDownload from './components/UmlDownload'
 import './css/solidity-uml-gen.css'
@@ -9,6 +10,7 @@ export interface RemixUiSolidityUmlGenProps {
   loading?: boolean
   themeSelected?: string
   themeName: string
+  themeDark: string
   fileName: string
   themeCollection: ThemeSummary[]
 }
@@ -22,7 +24,7 @@ interface ActionButtonsProps {
 }
 
 let umlCopy = ''
-export function RemixUiSolidityUmlGen ({ updatedSvg, loading, fileName }: RemixUiSolidityUmlGenProps) {
+export function RemixUiSolidityUmlGen ({ updatedSvg, loading, fileName, themeDark }: RemixUiSolidityUmlGenProps) {
   const [showViewer, setShowViewer] = useState(false)
   const [validSvg, setValidSvg] = useState(false)
   const umlDownloader = new UmlDownloadContext()
@@ -99,26 +101,28 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading, fileName }: RemixU
     return (
       <div id="umlImageHolder" className="w-100 px-2 py-2 d-flex">
         { validSvg && showViewer ? (
-          <TransformWrapper
-            initialScale={1}
-          >
-            {
-              ({ zoomIn, zoomOut, resetTransform }) => (
-                <Fragment>
-                  <ActionButtons actions={{ zoomIn, zoomOut, resetTransform }} />
-                  <TransformComponent contentStyle={{ zIndex: 2 }}>
-                    <img
-                      id="umlImage"
-                      src={`data:image/svg+xml;base64,${final}`}
-                      width={'100%'}
-                      height={'auto'}
-                      className="position-relative"
-                    />
-                  </TransformComponent>
-                </Fragment>
-              )
-            }
-          </TransformWrapper>
+          <MagnifierContainer>
+            <TransformWrapper
+              initialScale={1}
+            >
+              {
+                ({ zoomIn, zoomOut, resetTransform }) => (
+                  <Fragment>
+                    <ActionButtons actions={{ zoomIn, zoomOut, resetTransform }} />
+                    <TransformComponent contentStyle={{ zIndex: 2 }}>
+                      <GlassMagnifier
+                        imageSrc={`data:image/svg+xml;base64,${final}`}
+                        magnifierSize={300}
+                        magnifierBorderSize={3}
+                        magnifierBorderColor={themeDark}
+                        square 
+                      />
+                    </TransformComponent>
+                  </Fragment>
+                )
+              }
+            </TransformWrapper>
+          </MagnifierContainer>
         ) : loading ? <div className="justify-content-center align-items-center d-flex  mx-auto my-auto">
             <i className="fas fa-spinner fa-spin fa-4x"></i>
           </div> : <DefaultInfo />}
