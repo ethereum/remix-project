@@ -3,12 +3,10 @@ const webpack = require('webpack')
 const TerserPlugin = require("terser-webpack-plugin")
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 
-console.log(process.env.WALLET_CONNECT_PROJECT_ID)
 // Nx plugins for webpack.
 module.exports = composePlugins(withNx(), (config) => {
   // Update the webpack config as needed here.
   // e.g. `config.plugins.push(new MyPlugin())`
-
   // add fallback for node modules
   config.resolve.fallback = {
     ...config.resolve.fallback,
