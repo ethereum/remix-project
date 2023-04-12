@@ -1,1 +1,2 @@
-export const PROJECT_ID = 'a4ba105e642ae64cdb5b9a86debc0a66'
+// @ts-ignore
+export const PROJECT_ID = WALLET_CONNECT_PROJECT_ID
