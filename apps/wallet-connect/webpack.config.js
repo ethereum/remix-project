@@ -50,6 +50,13 @@ module.exports = composePlugins(withNx(), (config) => {
     })
   )
 
+  // set the define plugin to load the WALLECT_CONNECT_SECRET
+  config.plugins.push(
+    new webpack.DefinePlugin({
+      WALLET_CONNECT_PROJECT_ID: process.env.WALLET_CONNECT_PROJECT_ID,
+    })
+  )
+
   // souce-map loader
   config.module.rules.push({
     test: /\.js$/,
