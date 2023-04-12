@@ -145,7 +145,7 @@ export class VMCommon extends Common {
     blockNumber: BigIntLike,
     td?: BigIntLike,
     timestamp?: BigIntLike
-  ): string {      
+  ): string {
     return this.hardfork()
   }
 }
