@@ -16,19 +16,39 @@ export class RemixClient extends PluginClient {
         this.onload()
     }
 
-    async init() {
+    onActivation () {
+        this.subscribeToEvents()
+    }
+
+    init () {
+        console.log('initializing walletconnect plugin...')
+    }
+
+    async initClient () {
         try {
             this.chains = [arbitrum, mainnet, polygon, optimism, goerli, sepolia]
-          
             const { provider } = configureChains(this.chains, [w3mProvider({ projectId: PROJECT_ID })])
+            
             this.wagmiClient = wagmiCreateClient({
-              autoConnect: false,
+              autoConnect: true,
               connectors: w3mConnectors({ projectId: PROJECT_ID, version: 1, chains: this.chains }),
               provider
             })
         } catch (e) {
             return console.error("Could not get a wallet connection", e)
         }
+    }
+
+    subscribeToEvents () {
+        this.wagmiClient.subscribe((event) => {
+            if (event.status === 'connected') {
+                this.emit('accountsChanged', [event.data.account])
+                this.emit('chainChanged', event.data.chain.id)
+            } else if (event.status === 'disconnected') {
+                this.emit('accountsChanged', [])
+                this.emit('chainChanged', 0)
+            }
+        })
     }
 
     sendAsync = (data: { method: string, params: string, id: string }) => {
@@ -53,6 +73,7 @@ export class RemixClient extends PluginClient {
                     })
                 }
             } else {
+                console.error(`Cannot make ${data.method} request. Remix client is not connect to walletconnect client`)
                 resolve({"jsonrpc": "2.0", "result": [], "id": data.id})
             }
         })
