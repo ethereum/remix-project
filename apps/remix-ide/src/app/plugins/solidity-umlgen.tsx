@@ -26,16 +26,16 @@ const profile = {
 }
 
 const themeCollection = [
-  { themeName: 'HackerOwl', backgroundColor: '--body-bg', actualHex: '#011628', dark: '#fff4fd'},
-  { themeName: 'Cerulean', backgroundColor: '--body-bg', actualHex: '#fff', dark: '#343a40'},
-  { themeName: 'Cyborg', backgroundColor: '--body-bg', actualHex: '#060606', dark: '#adafae'},
-  { themeName: 'Dark', backgroundColor: '--body-bg', actualHex: '#222336', dark: '#222336'},
-  { themeName: 'Flatly', backgroundColor: '--body-bg', actualHex: '#fff', dark: '#7b8a8b'},
-  { themeName: 'Black', backgroundColor: '--body-bg', actualHex: '#1a1a1a', dark: '#1a1a1a'},
-  { themeName: 'Light', backgroundColor: '--body-bg', actualHex: '#eef1f6', dark: '#f8fafe'},
-  { themeName: 'Midcentuary', backgroundColor: '--body-bg', actualHex: '#DBE2E0', dark: '#01414E'},
-  { themeName: 'Spacelab', backgroundColor: '--body-bg', actualHex: '#fff', dark: '#333'},
-  { themeName: 'Candy', backgroundColor: '--body-bg', actualHex: '#d5efff', dark: '#645fb5'},
+  { themeName: 'HackerOwl', backgroundColor: '--body-bg', actualHex: '#011628', textColor: '#babbcc'},
+  { themeName: 'Cerulean', backgroundColor: '--body-bg', actualHex: '#fff', textColor: '#343a40'},
+  { themeName: 'Cyborg', backgroundColor: '--body-bg', actualHex: '#060606', textColor: '#adafae'},
+  { themeName: 'Dark', backgroundColor: '--body-bg', actualHex: '#222336', textColor: '#babbcc'},
+  { themeName: 'Flatly', backgroundColor: '--body-bg', actualHex: '#fff', textColor: '#7b8a8b'},
+  { themeName: 'Black', backgroundColor: '--body-bg', actualHex: '#1a1a1a', textColor: '#babbcc'},
+  { themeName: 'Light', backgroundColor: '--body-bg', actualHex: '#eef1f6', textColor: '#3b445e'},
+  { themeName: 'Midcentuary', backgroundColor: '--body-bg', actualHex: '#DBE2E0', textColor: '#11556c'},
+  { themeName: 'Spacelab', backgroundColor: '--body-bg', actualHex: '#fff', textColor: '#343a40'},
+  { themeName: 'Candy', backgroundColor: '--body-bg', actualHex: '#d5efff', textColor: '#11556c', },
 ]
 
 /**
@@ -104,7 +104,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     const themeQuality: ThemeQualityType = await this.call('theme', 'currentTheme')
       themeCollection.forEach((theme) => {
         if (theme.themeName === themeQuality.name) {
-          this.themeDark = theme.dark
+          this.themeDark = theme.actualHex
         }
       })
       this.renderComponent()
