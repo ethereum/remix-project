@@ -522,11 +522,27 @@ export const getCommitChanges = async (oid1: string, oid2: string) => {
     return result
 }
 
-export const getBranchCommits = async (branch: branch) => {
-    const commits: ReadCommitResult[] = await plugin.call('dGitProvider', 'log', {
+export const fetchBranch = async (branch: branch) => {
+    const r = await plugin.call('dGitProvider', 'fetch', {
         ref: branch.name,
+        remoteRef: branch.name,
+        singleBranch: false,
+        remote: null
     })
-    console.log(commits)
-    dispatch(setBranchCommits({ branch, commits }))
-    return commits
+    console.log(r)
+}
+
+export const getBranchCommits = async (branch: branch) => {
+    try {
+        console.log(branch)
+        const commits: ReadCommitResult[] = await plugin.call('dGitProvider', 'log', {
+            ref: branch.name,
+        })
+        console.log(commits)
+        dispatch(setBranchCommits({ branch, commits }))
+        return commits
+    } catch (e) {
+        console.log(e)
+        await fetchBranch(branch)
+    }
 }

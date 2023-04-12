@@ -3,7 +3,7 @@
 import {
   Plugin
 } from '@remixproject/engine'
-import git, { ReadBlobResult } from 'isomorphic-git'
+import git, { FetchResult, ReadBlobResult } from 'isomorphic-git'
 import IpfsHttpClient from 'ipfs-http-client'
 import {
   saveAs
@@ -386,22 +386,21 @@ class DGitProvider extends Plugin {
     return result
   }
 
-  async fetch(input) {
+  async fetch(input: {
+    ref: string,
+    remoteRef: string,
+    singleBranch: boolean,
+    remote: string
+  }): Promise<FetchResult> {
     const cmd = {
       ref: input.ref,
       remoteRef: input.remoteRef,
-      author: {
-        name: input.name,
-        email: input.email
-      },
+      singleBranch: input.singleBranch,
       remote: input.remote,
       ...await this.parseInput(input),
       ...await this.getGitConfig()
     }
     const result = await git.fetch(cmd)
-    setTimeout(async () => {
-      await this.call('fileManager', 'refresh')
-    }, 1000)
     return result
   }
 
