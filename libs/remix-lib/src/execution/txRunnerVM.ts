@@ -107,7 +107,7 @@ export class TxRunnerVM {
       const difficulties = [69762765929000, 70762765929000, 71762765929000]
       const difficulty = this.commonContext.consensusType() === ConsensusType.ProofOfStake ? 0 : difficulties[this.blockNumber % difficulties.length]
       
-      const blocknumber = useCall ? this.blockNumber : this.blockNumber + 1
+      const blocknumber = this.blockNumber + 1
       const block = Block.fromBlockData({
         header: {
           timestamp: new Date().getTime() / 1000 | 0,
