@@ -3,7 +3,7 @@ const webpack = require('webpack')
 const TerserPlugin = require("terser-webpack-plugin")
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 
-console.log(process.env)
+console.log(process.env.WALLET_CONNECT_PROJECT_ID)
 // Nx plugins for webpack.
 module.exports = composePlugins(withNx(), (config) => {
   // Update the webpack config as needed here.
@@ -53,7 +53,7 @@ module.exports = composePlugins(withNx(), (config) => {
   // set the define plugin to load the WALLET_CONNECT_PROJECT_ID
   config.plugins.push(
     new webpack.DefinePlugin({
-      WALLET_CONNECT_PROJECT_ID: process.env.WALLET_CONNECT_PROJECT_ID,
+      WALLET_CONNECT_PROJECT_ID: JSON.stringify(process.env.WALLET_CONNECT_PROJECT_ID),
     })
   )
 
