@@ -18,8 +18,10 @@ export const Remoteselect = (props: RemoteSelectProps) => {
   const [activePanel, setActivePanel] = useState<string>("");
 
   useEffect(() => {
-    console.log('SHOW REMOTES', remote)
-  }, [])
+    if (activePanel === "0") {
+      console.log('fetching', remote)
+    }
+  }, [activePanel])
 
   return (
     <>
