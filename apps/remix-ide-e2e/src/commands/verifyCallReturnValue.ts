@@ -26,7 +26,7 @@ function verifyCallReturnValue (browser: NightwatchBrowser, address: string, che
   }, [address], function (result) {
     if (typeof checks === 'function') {
       const ret = checks(result.value as string[])
-      browser.assert.equal(ret.pass, ret.message)
+      if (!ret.pass) browser.assert.fail(ret.message)
     } else {
       for (const k in checks) {
         browser.assert.equal(result.value[k].trim(), checks[k].trim())
