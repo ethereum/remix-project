@@ -1,5 +1,5 @@
 {
-  "name": "walletconnect",
+  "name": "wallet-connect",
   "kind": "provider",
   "displayName": "Wallet Connect",
   "events": [],

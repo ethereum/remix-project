@@ -3,7 +3,7 @@ const webpack = require('webpack')
 const TerserPlugin = require("terser-webpack-plugin")
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 
-
+console.log(process.env)
 // Nx plugins for webpack.
 module.exports = composePlugins(withNx(), (config) => {
   // Update the webpack config as needed here.
@@ -39,9 +39,7 @@ module.exports = composePlugins(withNx(), (config) => {
   }
 
   // add public path
-  config.output.publicPath = '/'
-
-
+  config.output.publicPath = './'
 
   // add copy & provide plugin
   config.plugins.push(
