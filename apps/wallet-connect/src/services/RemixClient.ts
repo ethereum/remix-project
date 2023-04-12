@@ -16,13 +16,21 @@ export class RemixClient extends PluginClient {
         this.onload()
     }
 
-    async init() {
+    onActivation () {
+        this.subscribeToEvents()
+    }
+
+    init () {
+        console.log('initializing walletconnect plugin...')
+    }
+
+    async initClient () {
         try {
             this.chains = [arbitrum, mainnet, polygon, optimism, goerli, sepolia]
-          
             const { provider } = configureChains(this.chains, [w3mProvider({ projectId: PROJECT_ID })])
+            
             this.wagmiClient = wagmiCreateClient({
-              autoConnect: false,
+              autoConnect: true,
               connectors: w3mConnectors({ projectId: PROJECT_ID, version: 1, chains: this.chains }),
               provider
             })
@@ -31,15 +39,41 @@ export class RemixClient extends PluginClient {
         }
     }
 
-    sendAsync = (data) => {
+    subscribeToEvents () {
+        this.wagmiClient.subscribe((event) => {
+            if (event.status === 'connected') {
+                this.emit('accountsChanged', [event.data.account])
+                this.emit('chainChanged', event.data.chain.id)
+            } else if (event.status === 'disconnected') {
+                this.emit('accountsChanged', [])
+                this.emit('chainChanged', 0)
+            }
+        })
+    }
+
+    sendAsync = (data: { method: string, params: string, id: string }) => {
         return new Promise((resolve, reject) => {
-            if (this.wagmiClient.provider) {
-                this.wagmiClient.provider.send(data.method, data.params).then((message) => {
-                    resolve({"jsonrpc": "2.0", "result": message, "id": data.id})
-                }).catch((error) => {
-                    reject(error)
-                })
+            if (this.wagmiClient) {
+                if (this.wagmiClient.data && this.wagmiClient.data.provider && this.wagmiClient.data.provider.sendAsync) {
+                    this.wagmiClient.data.provider.sendAsync(data, (error, message) => {
+                        if (error) return reject(error)
+                        resolve(message)
+                    })
+                } else if (this.wagmiClient.data && this.wagmiClient.data.provider && this.wagmiClient.data.provider.jsonRpcFetchFunc) {
+                    this.wagmiClient.data.provider.jsonRpcFetchFunc(data.method, data.params).then((message) => {
+                        resolve({"jsonrpc": "2.0", "result": message, "id": data.id})
+                    }).catch((error) => {
+                        reject(error)
+                    })
+                } else {
+                    this.wagmiClient.provider.send(data.method, data.params).then((message) => {
+                        resolve({"jsonrpc": "2.0", "result": message, "id": data.id})
+                    }).catch((error) => {
+                        reject(error)
+                    })
+                }
             } else {
+                console.error(`Cannot make ${data.method} request. Remix client is not connect to walletconnect client`)
                 resolve({"jsonrpc": "2.0", "result": [], "id": data.id})
             }
         })

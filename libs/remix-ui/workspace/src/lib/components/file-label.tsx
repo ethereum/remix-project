@@ -2,7 +2,6 @@
 import { fileDecoration } from '@remix-ui/file-decorators'
 import React, { useEffect, useRef, useState } from 'react'
 import { FileType } from '../types'
-import { CustomTooltip } from '@remix-ui/helper'
 export interface FileLabelProps {
   file: FileType,
   focusEdit: {
@@ -70,19 +69,12 @@ export const FileLabel = (props: FileLabelProps) => {
       onKeyDown={handleEditInput}
       onBlur={handleEditBlur}
     >
-      <CustomTooltip
-        placement={"right"}
-        tooltipClasses="text-wrap"
-        tooltipId={`remixFEItemTooltip${file.path}`}
-        tooltipText={`${file.path}`}
+      <span
+        className={`text-nowrap remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder' : 'remixui_leaf')}
+        data-path={file.path}
       >
-        <span
-          className={`text-nowrap remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder' : 'remixui_leaf')}
-          data-path={file.path}
-        >
-          {file.name}
-        </span>
-      </CustomTooltip>
+        {file.name}
+      </span>
     </div>
   )
 }

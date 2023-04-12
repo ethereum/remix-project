@@ -61,7 +61,7 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
     await plugin.appManager.activatePlugin('filePanel')
     const timeStamp = Date.now()
     let templateDisplayName = TEMPLATE_NAMES[templateName]
-    templateDisplayName = await plugin.call('filePanale', 'getAvailableWorkspaceName', templateDisplayName)
+    templateDisplayName = await plugin.call('filePanel', 'getAvailableWorkspaceName', templateDisplayName)
     await plugin.call('filePanel', 'createWorkspace', templateDisplayName, templateName)
     await plugin.call('filePanel', 'setWorkspace', templateDisplayName)
     plugin.verticalIcons.select('filePanel')
@@ -135,7 +135,7 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
                 callback={() => createWorkspace("ozerc1155")} />
               <WorkspaceTemplate
                 gsID="solhintLogo"
-                workspaceTitle="Remix Default"
+                workspaceTitle="Remix Basic"
                 description={intl.formatMessage({ id: 'home.remixDefaultTemplateDesc' })}
                 callback={() => createWorkspace("remixDefault")} />
           </Carousel>

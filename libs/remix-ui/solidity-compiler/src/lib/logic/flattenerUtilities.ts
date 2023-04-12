@@ -9,8 +9,7 @@ export function getDependencyGraph(ast, target) {
 	return graph;
 }
 
-export function concatSourceFiles(files, sources) {
-
+export function concatSourceFiles(files: any[], sources: any) {
 	let concat = '';
 	for (const file of files) {
 		const source = sources[file].content;
@@ -23,7 +22,8 @@ export function concatSourceFiles(files, sources) {
 }
 
 function _traverse(graph, visited, ast, name) {
-	const currentAst = ast[name].ast;
+	let currentAst = null
+	currentAst = ast[name].ast
 	const dependencies = _getDependencies(currentAst);
 	for (const dependency of dependencies) {
 		const path = resolve(name, dependency);
@@ -37,9 +37,9 @@ function _traverse(graph, visited, ast, name) {
 }
 
 function _getDependencies(ast) {
-	const dependencies = ast.nodes
-		.filter(node => node.nodeType === 'ImportDirective')
-		.map(node => node.file);
+	const dependencies = ast?.nodes
+		.filter(node => node?.nodeType === 'ImportDirective')
+		.map(node => node?.file);
 	return dependencies;
 }
 
@@ -166,4 +166,17 @@ function _resolvePathArray(parts) {
 	}
 
 	return res;
+}
+
+export function normalizeContractPath(contractPath: string): string[] {
+    const paths = contractPath.split('/')
+    const filename = paths[paths.length - 1].split('.')[0]
+    let folders = ''
+    for (let i = 0; i < paths.length - 1; i++) {
+      if(i !== paths.length -1) {
+        folders += `${paths[i]}/`
+      }
+    }
+    const resultingPath = `${folders}${filename}`
+    return [folders,resultingPath, filename]
 }

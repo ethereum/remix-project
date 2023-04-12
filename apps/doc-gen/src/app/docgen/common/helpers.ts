@@ -20,3 +20,16 @@ export function formatVariable(v: VariableDeclaration): string {
 }
 
 export const eq = (a: unknown, b: unknown) => a === b;
+
+export const slug = (str) => {
+  if (str === undefined) {
+    throw new Error('Missing argument');
+  }
+  return str.replace(/\W/g, '-');
+}
+
+export const names = params => params.map(p => p.name).join(', ');
+
+export const typedParams = params => {
+  return params?.map(p => `${p.type}${p.indexed ? ' indexed' : ''}${p.name ? ' ' + p.name : ''}`).join(', ');
+};

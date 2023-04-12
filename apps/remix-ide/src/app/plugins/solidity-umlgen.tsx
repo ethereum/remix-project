@@ -5,7 +5,7 @@ import React from 'react'
 import { RemixUiSolidityUmlGen } from '@remix-ui/solidity-uml-gen' 
 import { ISolidityUmlGen, ThemeQualityType, ThemeSummary } from 'libs/remix-ui/solidity-uml-gen/src/types'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
-import { concatSourceFiles, getDependencyGraph } from 'libs/remix-ui/solidity-compiler/src/lib/logic/flattenerUtilities'
+import { normalizeContractPath } from 'libs/remix-ui/solidity-compiler/src/lib/logic/flattenerUtilities'
 import { convertUmlClasses2Dot } from 'sol2uml/lib/converterClasses2Dot'
 import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
 import vizRenderStringSync from '@aduh95/viz.js/sync'
@@ -25,16 +25,16 @@ const profile = {
 }
 
 const themeCollection = [
-  { themeName: 'HackerOwl', backgroundColor: '--body-bg', actualHex: '#011628'},
-  { themeName: 'Cerulean', backgroundColor: '--body-bg', actualHex: '#fff'},
-  { themeName: 'Cyborg', backgroundColor: '--body-bg', actualHex: '#060606'},
-  { themeName: 'Dark', backgroundColor: '--body-bg', actualHex: '#222336'},
-  { themeName: 'Flatly', backgroundColor: '--body-bg', actualHex: '#fff'},
-  { themeName: 'Black', backgroundColor: '--body-bg', actualHex: '#1a1a1a'},
-  { themeName: 'Light', backgroundColor: '--body-bg', actualHex: '#eef1f6'},
-  { themeName: 'Midcentuary', backgroundColor: '--body-bg', actualHex: '#DBE2E0'},
-  { themeName: 'Spacelab', backgroundColor: '--body-bg', actualHex: '#fff'},
-  { themeName: 'Candy', backgroundColor: '--body-bg', actualHex: '#d5efff'},
+  { themeName: 'HackerOwl', backgroundColor: '--body-bg', actualHex: '#011628', dark: '#fff4fd'},
+  { themeName: 'Cerulean', backgroundColor: '--body-bg', actualHex: '#fff', dark: '#343a40'},
+  { themeName: 'Cyborg', backgroundColor: '--body-bg', actualHex: '#060606', dark: '#adafae'},
+  { themeName: 'Dark', backgroundColor: '--body-bg', actualHex: '#222336', dark: '#222336'},
+  { themeName: 'Flatly', backgroundColor: '--body-bg', actualHex: '#fff', dark: '#7b8a8b'},
+  { themeName: 'Black', backgroundColor: '--body-bg', actualHex: '#1a1a1a', dark: '#1a1a1a'},
+  { themeName: 'Light', backgroundColor: '--body-bg', actualHex: '#eef1f6', dark: '#f8fafe'},
+  { themeName: 'Midcentuary', backgroundColor: '--body-bg', actualHex: '#DBE2E0', dark: '#01414E'},
+  { themeName: 'Spacelab', backgroundColor: '--body-bg', actualHex: '#fff', dark: '#333'},
+  { themeName: 'Candy', backgroundColor: '--body-bg', actualHex: '#d5efff', dark: '#645fb5'},
 ]
 
 /**
@@ -49,8 +49,10 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   updatedSvg: string
   currentlySelectedTheme: string
   themeName: string
+  themeDark: string
   loading: boolean
   themeCollection: ThemeSummary[]
+  triggerGenerateUml: boolean
 
   appManager: RemixAppManager
   dispatch: React.Dispatch<any> = () => {}
@@ -69,16 +71,20 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   }
 
   onActivation(): void {
-    this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
+    this.on('solidity', 'compilationFinished', async (file: string, source, languageVersion, data, input, version) => {
+      if(!this.triggerGenerateUml) return
+      this.triggerGenerateUml = false
       const currentTheme: ThemeQualityType = await this.call('theme', 'currentTheme')
       this.currentlySelectedTheme = currentTheme.quality
       this.themeName = currentTheme.name
       let result = ''
+      const normalized = normalizeContractPath(file)
+      this.currentFile = normalized[normalized.length - 1]
       try {
         if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
-          result = await this.flattenContract(source, this.currentFile, data)
+          result = await this.flattenContract(source, file, data)
         }
-        const ast = result.length > 1 ? parser.parse(result) : parser.parse(source.sources[this.currentFile].content)
+        const ast = result.length > 1 ? parser.parse(result) : parser.parse(source.sources[file].content)
         const umlClasses = convertAST2UmlClasses(ast, this.currentFile)
         const umlDot = convertUmlClasses2Dot(umlClasses)
         const payload = vizRenderStringSync(umlDot)
@@ -90,8 +96,14 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         console.log('error', error)
       }
     })
-    this.on('theme', 'themeChanged', (theme) => {
+    this.on('theme', 'themeChanged', async (theme) => {
       this.currentlySelectedTheme = theme.quality
+    const themeQuality: ThemeQualityType = await this.call('theme', 'currentTheme')
+      themeCollection.forEach((theme) => {
+        if (theme.themeName === themeQuality.name) {
+          this.themeDark = theme.dark
+        }
+      })
       this.renderComponent()
     })
   }
@@ -116,8 +128,8 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   }
 
   generateCustomAction = async (action: customAction) => {
+    this.triggerGenerateUml = true
     this.updatedSvg = this.updatedSvg.startsWith('<?xml') ? '' : this.updatedSvg
-    this.currentFile = action.path[0]
     _paq.push(['trackEvent', 'solidityumlgen', 'activated'])
     await this.generateUml(action.path[0])
   }
@@ -136,14 +148,11 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
    * @returns {Promise<string>}
    */
   async flattenContract (source: any, filePath: string, data: any) {
-    const dependencyGraph = getDependencyGraph(data.sources, filePath)
-    const sorted = dependencyGraph.isEmpty()
-        ? [filePath]
-        : dependencyGraph.sort().reverse()
-    const result = concatSourceFiles(sorted, source.sources)
-    await this.call('fileManager', 'writeFile', `${filePath}_flattened.sol`, result)
+    const result = await this.call('contractflattener', 'flattenContract', source, filePath, data)
     return result
   }
+
+
 
   async showUmlDiagram(svgPayload: string) {
     this.updatedSvg = svgPayload
@@ -173,6 +182,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       loading: this.loading,
       themeSelected: this.currentlySelectedTheme,
       themeName: this.themeName,
+      themeDark: this.themeDark,
       fileName: this.currentFile,
       themeCollection: this.themeCollection
     })
@@ -186,6 +196,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       themeName={state.themeName}
       fileName={state.fileName}
       themeCollection={state.themeCollection}
+      themeDark={state.themeDark}
     />
   }
 }

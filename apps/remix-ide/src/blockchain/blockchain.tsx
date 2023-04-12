@@ -6,16 +6,17 @@ import { toBuffer, addHexPrefix } from '@ethereumjs/util'
 import { EventEmitter } from 'events'
 import { format } from 'util'
 import { ExecutionContext } from './execution-context'
-import VMProvider from './providers/vm.js'
-import InjectedProvider from './providers/injected.js'
-import NodeProvider from './providers/node.js'
+import Config from '../config'
+import { VMProvider } from './providers/vm'
+import { InjectedProvider } from './providers/injected'
+import { NodeProvider } from './providers/node'
 import { execution, EventManager, helpers } from '@remix-project/remix-lib'
 import { etherScanLink } from './helper'
 import { logBuilder, cancelUpgradeMsg, cancelProxyMsg, addressToString } from "@remix-ui/helper"
 const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
 const { txResultHelper } = helpers
 const { resultToRemixTx } = txResultHelper
-const packageJson = require('../../../../package.json')
+import * as packageJson from '../../../../package.json'
 
 const _paq = window._paq = window._paq || []  //eslint-disable-line
 
@@ -27,9 +28,43 @@ const profile = {
   version: packageJson.version
 }
 
+export type TransactionContextAPI = {
+  getAddress: (cb: (error: Error, result: string) => void) => void,
+  getValue: (cb: (error: Error, result: string) => void) => void,
+  getGasLimit: (cb: (error: Error, result: string) => void) => void
+}
+
+// see TxRunner.ts in remix-lib
+export type Transaction = {
+  from: string,
+  to: string,
+  value: string,
+  data: string,
+  gasLimit: number,
+  useCall: boolean,
+  timestamp?: number
+}
+
 export class Blockchain extends Plugin {
+  active: boolean
+  event: EventManager
+  events: EventEmitter
+  executionContext: ExecutionContext
+  config: Config
+  txRunner: any // TxRunner
+  networkcallid: number
+  networkStatus: {
+    network: {
+      name: string,
+      id: string      
+    }
+    error?: string
+  }
+  providers: { [key: string]: VMProvider | InjectedProvider | NodeProvider }
+  transactionContextAPI: TransactionContextAPI
+
   // NOTE: the config object will need to be refactored out in remix-lib
-  constructor (config) {
+  constructor (config: Config) {
     super(profile)
     this.active = false
     this.event = new EventManager()
@@ -76,12 +111,20 @@ export class Blockchain extends Plugin {
         this._triggerEvent('networkStatus', [this.networkStatus])
       })
     })
+
+    this.on('walletconnect', 'chainChanged', () => {
+      this.detectNetwork((error, network) => {
+        this.networkStatus = { network, error }
+        this._triggerEvent('networkStatus', [this.networkStatus])
+      })
+    })
   }
 
   onDeactivation () {
     this.active = false
     this.off('injected', 'chainChanged')
     this.off('injected-trustwallet', 'chainChanged')
+    this.off('walletconnect', 'chainChanged')
   }
 
   setupEvents () {
@@ -387,8 +430,8 @@ export class Blockchain extends Plugin {
     return Web3.utils.toWei(value, unit || 'gwei')
   }
 
-  calculateFee (gas, gasPrice, unit) {
-    return Web3.utils.toBN(gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10), unit || 'gwei')))
+  calculateFee (gas, gasPrice, unit?) {
+    return Web3.utils.toBN(gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10) as string, unit || 'gwei')))
   }
 
   determineGasFees (tx) {
@@ -449,14 +492,14 @@ export class Blockchain extends Plugin {
   }
 
   web3VM () {
-    return this.providers.vm.web3
+    return (this.providers.vm as VMProvider).web3
   }
 
   web3 () {
     // @todo(https://github.com/ethereum/remix-project/issues/431)
     const isVM = this.executionContext.isVM()
     if (isVM) {
-      return this.providers.vm.web3
+      return (this.providers.vm as VMProvider).web3
     }
     return this.executionContext.web3()
   }
@@ -512,7 +555,7 @@ export class Blockchain extends Plugin {
   }
 
   // NOTE: the config is only needed because exectuionContext.init does
-  async resetAndInit (config, transactionContextAPI) {
+  async resetAndInit (config: Config, transactionContextAPI: TransactionContextAPI) {
     this.transactionContextAPI = transactionContextAPI
     this.executionContext.init(config)
     this.executionContext.stopListenOnLastBlock()
@@ -574,7 +617,7 @@ export class Blockchain extends Plugin {
     if (!this.executionContext.isVM()) {
       throw new Error('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
     }
-    return this.providers.vm.createVMAccount(newAccount)
+    return (this.providers.vm as VMProvider).createVMAccount(newAccount)
   }
 
   newAccount (_password, passwordPromptCb, cb) {
@@ -604,7 +647,7 @@ export class Blockchain extends Plugin {
    *
    * @param {Object} tx    - transaction.
    */
-  sendTransaction (tx) {
+  sendTransaction (tx: Transaction) {
     return new Promise((resolve, reject) => {
       this.executionContext.detectNetwork((error, network) => {
         if (error) return reject(error)
@@ -747,8 +790,8 @@ export class Blockchain extends Plugin {
     }
     try {
       const transaction = await runTransaction()
-      const txResult = transaction.result
-      const tx = transaction.tx
+      const txResult = (transaction as any).result
+      const tx = (transaction as any).tx
       /*
       value of txResult is inconsistent:
           - transact to contract:
@@ -763,7 +806,7 @@ export class Blockchain extends Plugin {
         const hhlogs = await this.web3().eth.getHHLogsForTx(txResult.transactionHash)
 
         if (hhlogs && hhlogs.length) {
-          let finalLogs = <div><div><b>console.log:</b></div>
+          const finalLogs = <div><div><b>console.log:</b></div>
           {
             hhlogs.map((log) => {
               let formattedLog

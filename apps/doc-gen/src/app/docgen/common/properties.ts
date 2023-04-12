@@ -4,7 +4,7 @@ import { NatSpec, parseNatspec } from '../utils/natspec';
 import { DocItemContext, DOC_ITEM_CONTEXT } from '../site';
 import { mapValues } from '../utils/map-values';
 import { DocItem, docItemTypes } from '../doc-item';
-import { formatVariable } from './helpers';
+import { formatVariable, slug } from './helpers';
 import { PropertyGetter } from '../templates';
 import { itemType } from '../utils/item-type';
 
@@ -135,4 +135,46 @@ export function variables ({ item }: DocItemContext): VariableDeclaration[] | un
 
 export function types ({ item }: DocItemContext): TypeDefinition[] | undefined {
   return [...findAll(['StructDefinition', 'EnumDefinition', 'UserDefinedValueTypeDefinition'], item)];
+}
+export function anchor({ item, contract }: DocItemContext) {
+  let res = '';
+  if (contract) {
+    res += contract.name + '-';
+  }
+  res += item.name;
+  if ('parameters' in item) {
+    const signature = item.parameters.parameters.map(v => v.typeName.typeDescriptions.typeString).join(',');
+    res += slug('(' + signature + ')');
+  }
+  if (isNodeType('VariableDeclaration', item)) {
+    res += '-' + slug(item.typeName.typeDescriptions.typeString);
+  }
+  return res;
+}
+
+export function inheritance ({ item, build }: DocItemContext) {
+  if (!isNodeType('ContractDefinition', item)) {
+    throw new Error('used inherited-items on non-contract');
+  }
+
+  return item.linearizedBaseContracts
+    .map(id => build.deref('ContractDefinition', id))
+    .filter((c, i) => c.name !== 'Context' || i === 0);
+}
+
+export function hasfunctions ({ item }: DocItemContext) {
+  return (item as any).inheritance.some(c => c.functions.length > 0);
+}
+
+export function hasevents ({ item }: DocItemContext) {
+  return (item as any).inheritance.some(c => c.events.length > 0);
+}
+
+export function inheritedfunctions ({ item }: DocItemContext) {
+  const { inheritance } = (item as any)
+  const baseFunctions = new Set(inheritance.flatMap(c => c.functions.flatMap(f => f.baseFunctions ?? [])));
+  return inheritance.map((contract, i) => ({
+    contract,
+    functions: contract.functions.filter(f => !baseFunctions.has(f.id) && (f.name !== 'constructor' || i === 0)),
+  }))
 }

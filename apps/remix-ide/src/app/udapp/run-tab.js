@@ -139,6 +139,9 @@ export class RunTab extends ViewPlugin {
         window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet ? ' - Brave' :
         window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask ? ' - MetaMask' : '' : ''}`
       await addProvider('injected', displayNameInjected, true, false)
+    } else if (window && !window.ethereum) {
+      // we still add "injected" if there's no provider (just so it's visible to the user).
+      await addProvider('injected', 'Injected Provider', true, false)
     }
 
     if (window && window.trustwallet) {
