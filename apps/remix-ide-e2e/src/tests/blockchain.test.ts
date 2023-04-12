@@ -36,7 +36,7 @@ module.exports = {
                 message: pass ? 'pass' : 'a non empty blockhash should be returned'
               }
             })
-            .perform(done)
+            .perform(() => done())
         })
       })
       .clickFunction('foo - call', { types: 'uint256 p', values: '1' })      
@@ -52,7 +52,7 @@ module.exports = {
               message: pass ? 'pass' : 'a non empty blockhash should be returned'
             }
           })
-            .perform(done)
+          .perform(() => done())
         })
       }).end()
   }
