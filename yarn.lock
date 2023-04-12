@@ -6227,6 +6227,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-image-magnifiers@^1.3.2":
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/@types/react-image-magnifiers/-/react-image-magnifiers-1.3.2.tgz#7c8f08105ee72b7a306d0d068916a9d53a49e3f9"
+  integrity sha512-hrs+OqwRNEh0gsQgXDvFmZ2xMimXZHSMtprkhxavwmep6iL2OwTPtLugzStj+7MVsfTaT1t8TlHE1jBq4ay9dQ==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-redux@^7.1.20":
   version "7.1.20"
   resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-7.1.20.tgz#42f0e61ababb621e12c66c96dda94c58423bd7df"
@@ -22237,6 +22244,21 @@ react-fast-compare@^2.0.1:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-2.0.4.tgz#e84b4d455b0fec113e0402c329352715196f81f9"
   integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
+
+react-image-magnifiers@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/react-image-magnifiers/-/react-image-magnifiers-1.4.0.tgz#0472e93491d5a199a278d4efc855f03542214601"
+  integrity sha512-ZszHusdsYteccKGysHXUOgLRGtHqfRYuG1koHh3VAvuhrzF4BEs1Ot5tSe1WA2v+EsjAEfYcrRyi/Is4QDD61A==
+  dependencies:
+    prop-types "^15.7.2"
+    react-input-position "^1.3.1"
+
+react-input-position@^1.3.1:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/react-input-position/-/react-input-position-1.3.2.tgz#4e1f3b671eb41c0bd9f232846b94328263a7b65b"
+  integrity sha512-0RsvWZ+pBpFki1N4CF7dWWKgQpejQuf9qjrBVdXRE315kk6HBEVk1f8rsod6Rpo88vxPwj5FcBnn7ZlTNq+JRA==
+  dependencies:
+    prop-types "^15.7.2"
 
 react-intl@^6.0.4:
   version "6.0.4"
