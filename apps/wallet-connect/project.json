@@ -13,14 +13,14 @@
           "compiler": "babel",
           "outputPath": "dist/apps/wallet-connect",
           "index": "apps/wallet-connect/src/index.html",
-          "baseHref": "/",
+          "baseHref": "./",
           "main": "apps/wallet-connect/src/main.tsx",
           "polyfills": "apps/wallet-connect/src/polyfills.ts",
           "tsConfig": "apps/wallet-connect/tsconfig.app.json",
-          "assets": ["apps/wallet-connect/src/favicon.ico", "apps/wallet-connect/src/assets"],
+          "assets": ["apps/wallet-connect/src/profile.json"],
           "styles": ["apps/wallet-connect/src/css/app.css", "apps/wallet-connect/src/css/index.css"],
           "scripts": [],
-          "webpackConfig": "apps/wallet-connect/webpack.config.js"
+          "webpackConfig": "apps/wallet-connect/webpack.config.js"          
         },
         "configurations": {
           "development": {
@@ -40,7 +40,8 @@
         "defaultConfiguration": "development",
         "options": {
           "buildTarget": "wallet-connect:build",
-          "hmr": true
+          "hmr": true,
+          "baseHref": "/"
         },
         "configurations": {
           "development": {
