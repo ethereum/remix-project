@@ -50,7 +50,7 @@ module.exports = composePlugins(withNx(), (config) => {
     })
   )
 
-  // set the define plugin to load the WALLECT_CONNECT_SECRET
+  // set the define plugin to load the WALLET_CONNECT_PROJECT_ID
   config.plugins.push(
     new webpack.DefinePlugin({
       WALLET_CONNECT_PROJECT_ID: process.env.WALLET_CONNECT_PROJECT_ID,
