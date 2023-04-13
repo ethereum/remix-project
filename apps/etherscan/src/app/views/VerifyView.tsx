@@ -84,11 +84,11 @@ export const VerifyView: React.FC<Props> = ({
           <form onSubmit={handleSubmit}>
             <h6>Verify your smart contracts</h6>
             <div className="form-group">
-              <label htmlFor="contractName">Contract</label>              
+              <label htmlFor="contractName">Contract Name</label>              
               <Field
                 as="select"
                 className={
-                  errors.contractName && touched.contractName
+                  errors.contractName && touched.contractName && contracts.length
                     ? "form-control form-control-sm is-invalid"
                     : "form-control form-control-sm"
                 }
@@ -120,7 +120,7 @@ export const VerifyView: React.FC<Props> = ({
                 }
                 type="text"
                 name="contractArguments"
-                placeholder="hex encoded"
+                placeholder="hex encoded args"
               />
               <ErrorMessage
                 className="invalid-feedback"
@@ -139,7 +139,7 @@ export const VerifyView: React.FC<Props> = ({
                 }
                 type="text"
                 name="contractAddress"
-                placeholder="i.e. 0x11b79afc03baf25c631dd70169bb6a3160b2706e"
+                placeholder="e.g; 0x11b79afc03baf25c631dd70169bb6a3160b2706e"
               />
               <ErrorMessage
                 className="invalid-feedback"
