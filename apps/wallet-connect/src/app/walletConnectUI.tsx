@@ -6,7 +6,7 @@ export function WalletConnectUI ({ ethereumClient, wagmiClient }) {
 
     return (
         <div>
-            <div style={{ display: 'inline-block', marginTop: 25 }}>
+            <div style={{ display: 'inline-block' }}>
                 <WagmiConfig client={wagmiClient}>
                     <Web3Button label='Connect to a wallet' />
                 </WagmiConfig>
