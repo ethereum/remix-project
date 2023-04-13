@@ -231,6 +231,7 @@ jobs:
           paths:
             - node_modules
       - run: yarn build:production
+      - run: yarn run downloadsolc_assets_dist
       - run: mkdir persist && zip -0 -r persist/predeploy.zip dist
       - persist_to_workspace:
           root: .
