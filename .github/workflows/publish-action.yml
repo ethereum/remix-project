@@ -15,7 +15,6 @@ jobs:
       - run: yarn install
       - run: ls
       - run: pwd
-      - run: yarn run downloadsolc_assets
       - run: yarn run build:production
       - run: echo "action_state=$('./apps/remix-ide/ci/publishIpfs' ${{ secrets.IPFS_PROJET_ID }} ${{ secrets.IPFS_PROJECT_SECRET }})" >> $GITHUB_ENV
       - uses: mshick/add-pr-comment@v1
