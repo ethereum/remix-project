@@ -468,7 +468,7 @@ export function parseFunctionParams (params) {
       startIndex = isArrayOrStringStart(params, i + 1) ? -1 : i + 1
     }
   }
-  for(let i = 0; i < args.length; i++){
+  for (let i = 0; i < args.length; i++){
     if (args[i].indexOf("e") > -1) {
       args[i] = toBn(args[i]).toString();
     }
