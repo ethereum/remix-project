@@ -4,6 +4,7 @@ import { encodeParams as encodeParamsHelper, encodeFunctionId, makeFullTypeDefin
 import { eachOfSeries } from 'async'
 import { linkBytecode as linkBytecodeSolc } from 'solc/linker'
 import { isValidAddress, addHexPrefix } from '@ethereumjs/util'
+import { toBn } from "evm-bn"
 
 /**
   * build the transaction data
@@ -467,6 +468,12 @@ export function parseFunctionParams (params) {
       startIndex = isArrayOrStringStart(params, i + 1) ? -1 : i + 1
     }
   }
+  for(let i = 0; i < args.length; i++){
+    if (args[i].indexOf("e") > -1) {
+      args[i] = toBn(args[i]).toString();
+    }
+  }
+
   return args
 }
 
