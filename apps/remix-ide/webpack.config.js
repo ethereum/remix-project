@@ -25,7 +25,7 @@ const loadLocalSolJson = async () => {
     info.builds = info.builds.slice(-1)
     const buildurl = `https://solc-bin.ethereum.org/wasm/${info.builds[0].path}`;
     console.log(`Copying... ${buildurl} to assets`)
-    const path = `./dist/apps/remix-ide/assets/js/soljson.js`;
+    const path = `./apps/remix-ide/src/assets/js/soljson.js`;
     axios({
       method: 'get',
       url: buildurl,
