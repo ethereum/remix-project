@@ -6,7 +6,6 @@ import { RemixUiSolidityUmlGen } from '@remix-ui/solidity-uml-gen'
 import { ISolidityUmlGen, ThemeQualityType, ThemeSummary } from 'libs/remix-ui/solidity-uml-gen/src/types'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
 import { normalizeContractPath } from 'libs/remix-ui/solidity-compiler/src/lib/logic/flattenerUtilities'
-// import { convertUmlClasses2Dot } from 'sol2uml/lib/converterClasses2Dot'
 import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
 import vizRenderStringSync from '@aduh95/viz.js/sync'
 import { PluginViewWrapper } from '@remix-ui/helper'
@@ -26,16 +25,26 @@ const profile = {
 }
 
 const themeCollection = [
-  { themeName: 'HackerOwl', backgroundColor: '--body-bg', actualHex: '#011628', textColor: '#babbcc'},
-  { themeName: 'Cerulean', backgroundColor: '--body-bg', actualHex: '#fff', textColor: '#343a40'},
-  { themeName: 'Cyborg', backgroundColor: '--body-bg', actualHex: '#060606', textColor: '#adafae'},
-  { themeName: 'Dark', backgroundColor: '--body-bg', actualHex: '#222336', textColor: '#babbcc'},
-  { themeName: 'Flatly', backgroundColor: '--body-bg', actualHex: '#fff', textColor: '#7b8a8b'},
-  { themeName: 'Black', backgroundColor: '--body-bg', actualHex: '#1a1a1a', textColor: '#babbcc'},
-  { themeName: 'Light', backgroundColor: '--body-bg', actualHex: '#eef1f6', textColor: '#3b445e'},
-  { themeName: 'Midcentuary', backgroundColor: '--body-bg', actualHex: '#DBE2E0', textColor: '#11556c'},
-  { themeName: 'Spacelab', backgroundColor: '--body-bg', actualHex: '#fff', textColor: '#343a40'},
-  { themeName: 'Candy', backgroundColor: '--body-bg', actualHex: '#d5efff', textColor: '#11556c', },
+  { themeName: 'HackerOwl', backgroundColor: '#011628', textColor: '#babbcc',
+  shapeColor: '#8694a1',fillColor: '#011C32'},
+  { themeName: 'Cerulean', backgroundColor: '#ffffff', textColor: '#343a40',
+  shapeColor: '#343a40',fillColor: '#f8f9fa'},
+  { themeName: 'Cyborg', backgroundColor: '#060606', textColor: '#adafae',
+  shapeColor: '#adafae', fillColor: '#222222'},
+  { themeName: 'Dark', backgroundColor: '#222336', textColor: '#babbcc',
+  shapeColor: '#babbcc',fillColor: '#2a2c3f'},
+  { themeName: 'Flatly', backgroundColor: '#ffffff', textColor: '#343a40',
+  shapeColor: '#7b8a8b',fillColor: '#ffffff'},
+  { themeName: 'Black', backgroundColor: '#1a1a1a', textColor: '#babbcc',
+  shapeColor: '#b5b4bc',fillColor: '#1f2020'},
+  { themeName: 'Light', backgroundColor: '#eef1f6', textColor: '#3b445e',
+  shapeColor: '#343a40',fillColor: '#ffffff'},
+  { themeName: 'Midcentury', backgroundColor: '#DBE2E0', textColor: '#11556c',
+  shapeColor: '#343a40',fillColor: '#eeede9'},
+  { themeName: 'Spacelab', backgroundColor: '#ffffff', textColor: '#343a40',
+  shapeColor: '#333333', fillColor: '#eeeeee'},
+  { themeName: 'Candy', backgroundColor: '#d5efff', textColor: '#11556c',
+  shapeColor: '#343a40',fillColor: '#fbe7f8' },
 ]
 
 /**
@@ -53,7 +62,9 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   themeDark: string
   loading: boolean
   themeCollection: ThemeSummary[]
+  activeTheme: ThemeSummary
   triggerGenerateUml: boolean
+  umlClasses: UmlClass[] = []
 
   appManager: RemixAppManager
   dispatch: React.Dispatch<any> = () => {}
@@ -65,13 +76,16 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     this.loading = false
     this.currentlySelectedTheme = ''
     this.themeName = ''
+
     this.themeCollection = themeCollection
+    this.activeTheme = themeCollection.find(t => t.themeName === 'Dark')
     this.appManager = appManager
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'sol-uml-gen')
   }
 
   onActivation(): void {
+    this.handleThemeChange()
     this.on('solidity', 'compilationFinished', async (file: string, source, languageVersion, data, input, version) => {
       if(!this.triggerGenerateUml) return
       this.triggerGenerateUml = false
@@ -86,10 +100,10 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
           result = await this.flattenContract(source, file, data)
         }
         const ast = result.length > 1 ? parser.parse(result) : parser.parse(source.sources[file].content)
-        const umlClasses = convertAST2UmlClasses(ast, this.currentFile)
+        this.umlClasses = convertAST2UmlClasses(ast, this.currentFile)
         let umlDot = ''
-        const matchTheme = themeCollection.filter(theme => theme.themeName === currentTheme.name)
-        umlDot = convertUmlClasses2Dot(umlClasses, false, { backColor: matchTheme[0].backgroundColor, textColor: matchTheme[0].textColor, shapeColor: '#caf4e9', fillColor: '#fbe7f8' })
+        this.activeTheme = themeCollection.find(theme => theme.themeName === currentTheme.name)
+        umlDot = convertUmlClasses2Dot(this.umlClasses, false, { backColor: this.activeTheme.backgroundColor, textColor: this.activeTheme.textColor, shapeColor: this.activeTheme.shapeColor, fillColor: this.activeTheme.fillColor })
         const payload = vizRenderStringSync(umlDot)
         this.updatedSvg = payload
         _paq.push(['trackEvent', 'solidityumlgen', 'umlgenerated'])
@@ -99,15 +113,27 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         console.log('error', error)
       }
     })
+  }
+
+  getThemeCssVariables(cssVars: string) {
+    return window.getComputedStyle(document.documentElement)
+    .getPropertyValue(cssVars)
+  }
+  
+  private handleThemeChange() {
     this.on('theme', 'themeChanged', async (theme) => {
       this.currentlySelectedTheme = theme.quality
-    const themeQuality: ThemeQualityType = await this.call('theme', 'currentTheme')
+      const themeQuality: ThemeQualityType = await this.call('theme', 'currentTheme')
       themeCollection.forEach((theme) => {
         if (theme.themeName === themeQuality.name) {
-          this.themeDark = theme.actualHex
+          this.themeDark = theme.backgroundColor
+          this.activeTheme = theme
+          const umlDot = convertUmlClasses2Dot(this.umlClasses, false, { backColor: this.activeTheme.backgroundColor, textColor: this.activeTheme.textColor, shapeColor: this.activeTheme.shapeColor, fillColor: this.activeTheme.fillColor })
+          this.updatedSvg = vizRenderStringSync(umlDot)
+          this.renderComponent()
         }
       })
-      this.renderComponent()
+      await this.call('tabs', 'focus', 'solidityumlgen')
     })
   }
 
@@ -118,8 +144,8 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     const element = parsedDocument.getElementsByTagName('svg')
     themeCollection.forEach((theme) => {
       if (theme.themeName === themeQuality.name) {
-        parsedDocument.documentElement.setAttribute('style', `background-color: var(${themeQuality.name === theme.themeName ? theme.backgroundColor : '--body-bg'})`)
-        element[0].setAttribute('fill', theme.actualHex)
+        parsedDocument.documentElement.setAttribute('style', `background-color: var(${this.getThemeCssVariables('--body-bg')})`)
+        element[0].setAttribute('fill', theme.backgroundColor)
       }
     })
     const stringifiedSvg = new XMLSerializer().serializeToString(parsedDocument)
@@ -187,7 +213,8 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       themeName: this.themeName,
       themeDark: this.themeDark,
       fileName: this.currentFile,
-      themeCollection: this.themeCollection
+      themeCollection: this.themeCollection,
+      activeTheme: this.activeTheme,
     })
   }
 
