@@ -73,7 +73,8 @@ export const VerifyView: React.FC<Props> = ({
           if (!values.contractAddress) {
             errors.contractAddress = "Required"
           }
-          if (values.contractAddress.trim() === "") {
+          if (values.contractAddress.trim() === "" || !values.contractAddress.startsWith('0x') 
+              || values.contractAddress.length !== 42) {
             errors.contractAddress = "Please enter a valid contract address"
           }
           return errors
