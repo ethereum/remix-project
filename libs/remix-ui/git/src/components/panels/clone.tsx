@@ -5,6 +5,7 @@ import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { gitActionsContext } from "../../state/context";
 import { gitPluginContext } from "../gitui";
 import { Repositories } from "./repositories";
+import { RemixUiCheckbox } from "@remix-ui/checkbox";
 
 export const Clone = () => {
     const context = React.useContext(gitPluginContext)
@@ -55,10 +56,8 @@ export const Clone = () => {
         false
     );
 
-    const onAllBranchChange = (event: any) => {
-        const target = event.target;
-        const value = target.checked;
-        setcloneAllBranches(value)
+    const onAllBranchChange = () => {
+        setcloneAllBranches((e: any) => !e)
     }
 
     return (
@@ -85,12 +84,15 @@ export const Clone = () => {
                 <FormControl id="clonedepth" type="number" value={cloneDepth} onChange={e => onDepthChange(parseInt(e.target.value))} aria-describedby="clonedepthprepend" />
             </InputGroup>
 
-
-
-            <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
-                <input checked={cloneAllBranches} onChange={e => onAllBranchChange(e)} className="remixui_autocompile custom-control-input" type="checkbox" data-id="compilerContainerAutoCompile" id="forcepush" title="Force Push" />
-                <label className="form-check-label custom-control-label" htmlFor="forcepush">Clone all branches</label>
-            </div>
+            <RemixUiCheckbox
+                id={`cloneAllBranches`}
+                inputType="checkbox"
+                name="cloneAllBranches"
+                label={`Clone all branches`}
+                onClick={() => onAllBranchChange()}
+                checked={cloneAllBranches}
+                onChange={() => { }}
+            />
 
 
             <hr></hr>

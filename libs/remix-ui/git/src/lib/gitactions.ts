@@ -285,6 +285,7 @@ export const checkout = async (cmd: any) => {
 }
 
 export const clone = async (url: string, branch: string, depth: number, singleBranch: boolean) => {
+    console.log(url, branch, depth, singleBranch)
     dispatch(setLoading(true))
     try {
         await disableCallBacks()
@@ -526,10 +527,14 @@ export const fetchBranch = async (branch: branch) => {
     const r = await plugin.call('dGitProvider', 'fetch', {
         ref: branch.name,
         remoteRef: branch.name,
-        singleBranch: false,
-        remote: null
+        singleBranch: true,
+        remote: branch.remote.remote
     })
-    console.log(r)
+    const commits: ReadCommitResult[] = await plugin.call('dGitProvider', 'log', {
+        ref: r.fetchHead
+    })
+    console.log(r, commits)
+    dispatch(setBranchCommits({ branch, commits }))
 }
 
 export const getBranchCommits = async (branch: branch) => {

@@ -26,9 +26,22 @@ export const BranchDetails = (props: BrancheDetailsProps) => {
     }
   }, [activePanel])
 
-  const checkout = (branch: string) => {
-    actions.checkout({ ref: branch, remote: "" });
+  const checkout = (branch: branch) => {
+    actions.checkout({
+      ref: branch.name,
+      remote: branch.remote && branch.remote.remote || null
+    });
   }
+
+  const checkoutCommit = async (oid: string) => {
+    try {
+        //await ModalRef.current?.show();
+        actions.checkout({ ref: oid })
+        //Utils.log("yes");
+    } catch (e) {
+        //Utils.log("no");
+    }
+};
 
   return (<Accordion activeKey={activePanel} defaultActiveKey="">
     <BrancheDetailsNavigation checkout={checkout} branch={branch} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
@@ -37,7 +50,7 @@ export const BranchDetails = (props: BrancheDetailsProps) => {
         {context.branchCommits && Object.entries(context.branchCommits).map(([key, value]) => {
           if(key == branch.name){
             return value.map((commit, index) => {
-              return(<CommitDetails commit={commit} checkout={checkout}></CommitDetails>)
+              return(<CommitDetails checkout={checkoutCommit} commit={commit}></CommitDetails>)
             })
           }
         })}

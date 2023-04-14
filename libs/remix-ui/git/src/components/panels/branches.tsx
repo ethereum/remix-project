@@ -26,9 +26,6 @@ export const Branches = () => {
             <div className="pt-1">
                 {context.branches && context.branches.length ?
                     <div>
-                        <h5>
-                            {context.currentBranch}
-                        </h5>
                         {context.branches && context.branches.map((branch, index) => {
                             return (
                                <BranchDetails branch={branch}></BranchDetails>

@@ -1,8 +1,15 @@
-export const selectStyles = {
+import { StylesConfig } from 'react-select'
+export const selectStyles: StylesConfig = {
   option: (baseStyles, state) => {
     return {
       ...baseStyles,
-      color: state.isFocused ? 'var(--secondary)' : 'var(--text)',
+      color: 'var(--text)',
+    }
+  },
+  input(base, props) {
+    return {
+      ...base,
+      color: 'var(--text)',
     }
   },
   singleValue: (baseStyles, state) => {

@@ -9,7 +9,7 @@ interface BrancheDetailsNavigationProps {
   activePanel: string;
   callback: (eventKey: string) => void;
   branch: branch;
-  checkout: (branch: string) => void;
+  checkout: (branch: branch) => void;
 }
 
 export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) => {
@@ -40,11 +40,11 @@ export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) =
 
         </div>
         {context.currentBranch === branch.name ?
-          <FontAwesomeIcon className='ml-auto mr-1 pointer text-success' icon={faToggleOff} onClick={() => checkout(branch.name)}></FontAwesomeIcon>
+          <FontAwesomeIcon className='ml-auto mr-1 pointer text-success' icon={faToggleOff} onClick={() => checkout(branch)}></FontAwesomeIcon>
           :
-          <FontAwesomeIcon className='ml-auto mr-1 pointer' icon={faToggleOn} onClick={() => checkout(branch.name)}></FontAwesomeIcon>
+          <FontAwesomeIcon className='ml-auto mr-1 pointer' icon={faToggleOn} onClick={() => checkout(branch)}></FontAwesomeIcon>
         }
-        <FontAwesomeIcon className='ml-auto pointer' icon={faArrowsUpDown} onClick={() => checkout(branch.name)}></FontAwesomeIcon>
+        <FontAwesomeIcon className='ml-auto pointer' icon={faArrowsUpDown} onClick={() => checkout(branch)}></FontAwesomeIcon>
         {branch.remote?.url && <FontAwesomeIcon className='ml-2 pointer' icon={faGlobe} onClick={() => openRemote()}></FontAwesomeIcon>}
       </div>
     </>

@@ -21,6 +21,7 @@ export type gitState = {
     remoteBranches: remoteBranch[]
     commitChanges: commitChange[]
     branchCommits:  Record<string, ReadCommitResult[]>
+    syncStatus: syncStatus
 }
 
 export type commitChangeTypes = {  
@@ -28,6 +29,12 @@ export type commitChangeTypes = {
     "modified": "M"
     "added": "A",
     "unknown": "?"
+}
+
+export enum syncStatus {
+    "sync" = "sync",
+    "publishBranch" = "publishBranch",
+    "none" = "none",
 }
 
 export type commitChangeType = keyof commitChangeTypes
@@ -87,7 +94,8 @@ export const defaultGitState: gitState = {
     repositories: [],
     remoteBranches: [],
     commitChanges: [],
-    branchCommits: {}
+    branchCommits: {},
+    syncStatus: syncStatus.none
 }
 
 export type fileStatusResult = {

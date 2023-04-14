@@ -31,6 +31,20 @@ export const Remotes = () => {
 
   return (
     <>
+
+
+      {context.remotes && context.remotes.length ?
+        <>
+
+          {context.remotes && context.remotes.map((remote) => {
+
+            return (
+              <><Remoteselect remote={remote}></Remoteselect></>
+            );
+          })}
+        </> : <>No remotes</>}
+      <hr></hr>
+
       <input placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-2" type="text" id="remotename" />
       <input placeholder="remote url" name='remoteurl' onChange={e => onUrlChange(e.target.value)} value={url} className="form-control" type="text" id="remoteurl" />
 
@@ -40,18 +54,6 @@ export const Remotes = () => {
       <hr />
       <RemotesImport />
       <hr />
-      <hr></hr>
 
-      {context.remotes && context.remotes.length ?
-        <>
-          <h5>Available remotes</h5>
-
-          {context.remotes && context.remotes.map((remote) => {
-
-            return (
-              <><Remoteselect remote={remote}></Remoteselect></>
-            );
-          })}
-        </> : <>No remotes</>}
     </>)
 }

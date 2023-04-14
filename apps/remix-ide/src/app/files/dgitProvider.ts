@@ -121,9 +121,13 @@ class DGitProvider extends Plugin {
   }
 
   async checkout(cmd, refresh = true) {
+    console.log('checkout', {
+      ...await this.getGitConfig(),
+      ...cmd,
+    })
     await git.checkout({
       ...await this.getGitConfig(),
-      ...cmd
+      ...cmd,
     })
     if (refresh) {
       setTimeout(async () => {
@@ -400,6 +404,7 @@ class DGitProvider extends Plugin {
       ...await this.parseInput(input),
       ...await this.getGitConfig()
     }
+    console.log(cmd)
     const result = await git.fetch(cmd)
     return result
   }

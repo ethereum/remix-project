@@ -1,4 +1,4 @@
-import { checkout, ReadCommitResult } from "isomorphic-git";
+import { branch, checkout, ReadCommitResult } from "isomorphic-git";
 import React, { useEffect, useState } from "react";
 import { gitActionsContext } from "../../state/context";
 import { gitPluginContext } from "../gitui";
@@ -6,6 +6,7 @@ import { default as dateFormat } from "dateformat";
 import { RemotesDetailsNavigation } from "../navigation/remotesdetails";
 import { Accordion } from "react-bootstrap";
 import { remote } from "../../types";
+import { BranchDetails } from "./branches/branchedetails";
 
 export interface RemoteSelectProps {
   remote: remote
@@ -23,15 +24,21 @@ export const Remoteselect = (props: RemoteSelectProps) => {
     }
   }, [activePanel])
 
+  useEffect(() => {
+    console.log('remote branches', context.branches)
+  }, [context.branches])
+
   return (
     <>
       <Accordion activeKey={activePanel} defaultActiveKey="">
         <RemotesDetailsNavigation callback={setActivePanel} eventKey="0" activePanel={activePanel} remote={remote} />
         <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
-          <div className="ml-1">
-            </div>
-
-
+          <>
+            {context.branches && context.branches.filter((branch, index) => branch.remote && branch.remote.remote === remote.remote ).map((branch, index) => {
+              return (
+                <BranchDetails branch={branch}></BranchDetails>
+              );
+            })}</>
 
         </Accordion.Collapse>
       </Accordion>
