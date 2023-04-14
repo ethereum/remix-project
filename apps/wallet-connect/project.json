@@ -1,7 +1,7 @@
 {
-    "name": "wallet-connect",
+    "name": "walletconnect",
     "$schema": "../../node_modules/nx/schemas/project-schema.json",
-    "sourceRoot": "apps/wallet-connect/src",
+    "sourceRoot": "apps/walletconnect/src",
     "projectType": "application",
     "implicitDependencies": [],
     "targets": {
@@ -11,16 +11,16 @@
         "defaultConfiguration": "development",
         "options": {
           "compiler": "babel",
-          "outputPath": "dist/apps/wallet-connect",
-          "index": "apps/wallet-connect/src/index.html",
+          "outputPath": "dist/apps/walletconnect",
+          "index": "apps/walletconnect/src/index.html",
           "baseHref": "./",
-          "main": "apps/wallet-connect/src/main.tsx",
-          "polyfills": "apps/wallet-connect/src/polyfills.ts",
-          "tsConfig": "apps/wallet-connect/tsconfig.app.json",
-          "assets": ["apps/wallet-connect/src/profile.json"],
-          "styles": ["apps/wallet-connect/src/css/app.css", "apps/wallet-connect/src/css/index.css"],
+          "main": "apps/walletconnect/src/main.tsx",
+          "polyfills": "apps/walletconnect/src/polyfills.ts",
+          "tsConfig": "apps/walletconnect/tsconfig.app.json",
+          "assets": ["apps/walletconnect/src/profile.json"],
+          "styles": ["apps/walletconnect/src/css/app.css", "apps/walletconnect/src/css/index.css"],
           "scripts": [],
-          "webpackConfig": "apps/wallet-connect/webpack.config.js"          
+          "webpackConfig": "apps/walletconnect/webpack.config.js"          
         },
         "configurations": {
           "development": {
@@ -28,8 +28,8 @@
           "production": {
             "fileReplacements": [
               {
-                "replace": "apps/wallet-connect/src/environments/environment.ts",
-                "with": "apps/wallet-connect/src/environments/environment.prod.ts"
+                "replace": "apps/walletconnect/src/environments/environment.ts",
+                "with": "apps/walletconnect/src/environments/environment.prod.ts"
               }
             ]
           }
@@ -39,17 +39,17 @@
         "executor": "@nrwl/webpack:dev-server",
         "defaultConfiguration": "development",
         "options": {
-          "buildTarget": "wallet-connect:build",
+          "buildTarget": "walletconnect:build",
           "hmr": true,
           "baseHref": "/"
         },
         "configurations": {
           "development": {
-            "buildTarget": "wallet-connect:build:development",
+            "buildTarget": "walletconnect:build:development",
             "port": 2023
           },
           "production": {
-            "buildTarget": "wallet-connect:build:production"
+            "buildTarget": "walletconnect:build:production"
           }
         }
       }

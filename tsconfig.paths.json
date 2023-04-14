@@ -151,8 +151,8 @@
             "@remix-project/ghaction-helper": [
                 "libs/ghaction-helper/src/index.ts"
             ],
-            "@remixproject/wallet-connect-plugin": [
-                "apps/wallet-connect/src/index.ts"
+            "@remixproject/walletconnect-plugin": [
+                "apps/walletconnect/src/index.ts"
             ],
         }
     }
