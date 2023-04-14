@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useRef, useState } from "react"
 
 import {
   PluginClient,
@@ -30,6 +30,7 @@ export const VerifyView: React.FC<Props> = ({
   onVerifiedContract,
 }) => {
   const [results, setResults] = useState("")
+  const verificationResult = useRef({})
 
   const onVerifyContract = async (values: FormValues) => {
     const compilationResult = (await client.call(
@@ -43,7 +44,7 @@ export const VerifyView: React.FC<Props> = ({
 
     const contractArguments = values.contractArguments.replace("0x", "")    
 
-    const verificationResult = await verify(
+    verificationResult.current = await verify(
       apiKey,
       values.contractAddress,
       contractArguments,
@@ -53,8 +54,7 @@ export const VerifyView: React.FC<Props> = ({
       onVerifiedContract,
       setResults,
     )
-
-    setResults(verificationResult.message)
+    setResults(verificationResult.current['message'])
   }
 
   return (
@@ -139,7 +139,7 @@ export const VerifyView: React.FC<Props> = ({
                 }
                 type="text"
                 name="contractAddress"
-                placeholder="e.g; 0x11b79afc03baf25c631dd70169bb6a3160b2706e"
+                placeholder="e.g. 0x11b79afc03baf25c631dd70169bb6a3160b2706e"
               />
               <ErrorMessage
                 className="invalid-feedback"
@@ -178,7 +178,7 @@ export const VerifyView: React.FC<Props> = ({
       </Formik>
 
       <div data-id="verify-result"
-        style={{ marginTop: "2em", fontSize: "0.8em", textAlign: "center" }}
+        style={{ marginTop: "2em", fontSize: "0.8em", textAlign: "center", color: verificationResult.current['succeed'] ? "green" : "red" }}
         dangerouslySetInnerHTML={{ __html: results }}
       />
 

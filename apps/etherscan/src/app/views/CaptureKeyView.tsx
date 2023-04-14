@@ -43,7 +43,7 @@ export const CaptureKeyView: React.FC = () => {
                   }
                   type="password"
                   name="apiKey"
-                  placeholder="Example: GM1T20XY6JGSAPWKDCYZ7B2FJXKTJRFVGZ"
+                  placeholder="e.g. GM1T20XY6JGSAPWKDCYZ7B2FJXKTJRFVGZ"
                 />
                 <ErrorMessage
                   className="invalid-feedback"
