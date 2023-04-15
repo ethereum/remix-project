@@ -1,0 +1,17 @@
+{
+  "short_name": "Remix",
+  "name": "Remix - Ethereum IDE",
+  "description": "Remix is a browser-based compiler and IDE that enables users to build Ethereum contracts with Solidity language and to debug transactions.",
+  "theme_color": "#222336",
+  "background_color" : "#222336",
+  "icons": [
+    {
+      "src": "assets/img/remix-logo-blue.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone"
+}
