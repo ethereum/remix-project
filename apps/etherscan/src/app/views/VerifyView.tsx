@@ -82,10 +82,11 @@ export const VerifyView: React.FC<Props> = ({
         onSubmit={(values) => onVerifyContract(values)}
       >
         {({ errors, touched, handleSubmit, isSubmitting }) => {
-          if (client && client.call) client.call("network", "detectNetwork").then((network) => {
-            if (network && network['name']) setNetworkName(network['name'])
-          })
-
+          if (client) {
+            client.on("blockchain" as any, 'networkStatus', (result) => {
+              setNetworkName(result.network.name)
+            })
+          }
           return (<form onSubmit={handleSubmit}>
             <h6>Verify your smart contracts</h6>
             <div className="form-group">
@@ -95,6 +96,7 @@ export const VerifyView: React.FC<Props> = ({
                 type="text"
                 name="network"
                 value={networkName}
+                disabled={true}
               />  
               <label htmlFor="contractName">Contract Name</label>              
               <Field
