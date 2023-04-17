@@ -1,5 +1,6 @@
 'use strict'
 import { ethers } from 'ethers'
+import fromExponential from 'from-exponential';
 
 export function makeFullTypeDefinition (typeDef) {
   if (typeDef && typeDef.type.indexOf('tuple') === 0 && typeDef.components) {
@@ -8,6 +9,10 @@ export function makeFullTypeDefinition (typeDef) {
   }
   return typeDef.type
 }
+
+export const REGEX_SCIENTIFIC = /(\d+\.?\d*)e\d*(\d+)/;
+
+export const REGEX_DECIMAL = /^\d*/
 
 export function encodeParams (funABI, args) {
   const types = []
@@ -18,6 +23,15 @@ export function encodeParams (funABI, args) {
       // fine as abiCoder assume anything in quotes as `true`
       if (type === 'bool' && args[i] === 'false') {
         args[i] = false
+      }
+      const regSci = REGEX_SCIENTIFIC.exec(args[i])
+      const exponents = regSci ? regSci[2] : null
+      if (regSci && REGEX_DECIMAL.exec(exponents) && (type.indexOf('uint') === 0 || type.indexOf('int') === 0)) {
+        try {
+          args[i] = fromExponential(args[i])          
+        } catch (e) {
+          console.log(e)
+        }
       }
       types.push(type.indexOf('tuple') === 0 ? makeFullTypeDefinition(funABI.inputs[i]) : type)
       if (args.length < types.length) {
