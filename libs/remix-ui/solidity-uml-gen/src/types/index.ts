@@ -9,8 +9,10 @@ export interface ISolidityUmlGen extends ViewPlugin {
     updatedSvg: string
     currentlySelectedTheme: string
     themeName: string
+    themeDark: string
     loading: boolean
     themeCollection: ThemeSummary[]
+    activeTheme: ThemeSummary
     showUmlDiagram(path: string, svgPayload: string): void
     updateComponent(state: any): JSX.Element
     setDispatch(dispatch: React.Dispatch<any>): void
@@ -19,10 +21,11 @@ export interface ISolidityUmlGen extends ViewPlugin {
     flattenContract (source: any, filePath: string, data: any): Promise<string>
     hideSpinner(): void
     renderComponent (): void
-
+    triggerGenerateUml: boolean
     render(): JSX.Element
 }
 
 export type ThemeQualityType = { name: string, quality: 'light' | 'dark', url: string }
 
-export type ThemeSummary = { themeName: string, backgroundColor: string, actualHex: string }
+export type ThemeSummary = { themeName: string, backgroundColor: string, textColor?: string,
+shapeColor?: string, fillColor?: string }
