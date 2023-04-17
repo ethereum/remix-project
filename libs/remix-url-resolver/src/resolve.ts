@@ -147,7 +147,7 @@ export class RemixURLResolver {
           let pkg
           if (deps) {
             Object.keys(deps).map((dep) => {
-              const reg = new RegExp(dep, 'g')
+              const reg = new RegExp(dep + '/', 'g')
               const match = url.match(reg)
               if (match && match.length > 0 && matchLength < match[0].length) {
                 matchLength = match[0].length
