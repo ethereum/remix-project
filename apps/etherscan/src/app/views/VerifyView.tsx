@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useRef, useState } from "react"
 
 import {
   PluginClient,
@@ -30,6 +30,7 @@ export const VerifyView: React.FC<Props> = ({
   onVerifiedContract,
 }) => {
   const [results, setResults] = useState("")
+  const verificationResult = useRef({})
 
   const onVerifyContract = async (values: FormValues) => {
     const compilationResult = (await client.call(
@@ -43,7 +44,7 @@ export const VerifyView: React.FC<Props> = ({
 
     const contractArguments = values.contractArguments.replace("0x", "")    
 
-    const verificationResult = await verify(
+    verificationResult.current = await verify(
       apiKey,
       values.contractAddress,
       contractArguments,
@@ -53,8 +54,7 @@ export const VerifyView: React.FC<Props> = ({
       onVerifiedContract,
       setResults,
     )
-
-    setResults(verificationResult.message)
+    setResults(verificationResult.current['message'])
   }
 
   return (
@@ -73,7 +73,8 @@ export const VerifyView: React.FC<Props> = ({
           if (!values.contractAddress) {
             errors.contractAddress = "Required"
           }
-          if (values.contractAddress.trim() === "") {
+          if (values.contractAddress.trim() === "" || !values.contractAddress.startsWith('0x') 
+              || values.contractAddress.length !== 42) {
             errors.contractAddress = "Please enter a valid contract address"
           }
           return errors
@@ -83,35 +84,12 @@ export const VerifyView: React.FC<Props> = ({
         {({ errors, touched, handleSubmit, isSubmitting }) => (
           <form onSubmit={handleSubmit}>
             <h6>Verify your smart contracts</h6>
-            <button
-              type="button"
-              style={{ padding: "0.25rem 0.4rem", marginRight: "0.5em", marginBottom: "0.5em"}}
-              className="btn btn-primary"
-              title="Generate the necessary helpers to start the verification from a TypeScript script"
-              onClick={async () => {
-                if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/receiptStatus.ts')) {
-                  await client.call('fileManager', 'writeFile', 'scripts/etherscan/receiptStatus.ts', receiptGuidScript)
-                  await client.call('fileManager', 'open', 'scripts/etherscan/receiptStatus.ts')
-                } else {
-                  client.call('notification' as any, 'toast', 'file receiptStatus.ts already present..')
-                }
-                
-                if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/verify.ts')) {
-                  await client.call('fileManager', 'writeFile', 'scripts/etherscan/verify.ts', verifyScript)
-                  await client.call('fileManager', 'open', 'scripts/etherscan/verify.ts')
-                } else {
-                  client.call('notification' as any, 'toast', 'file verify.ts already present..')
-                }
-              }}
-              >
-                Generate Etherscan helper scripts
-              </button>
             <div className="form-group">
-              <label htmlFor="contractName">Contract</label>              
+              <label htmlFor="contractName">Contract Name</label>              
               <Field
                 as="select"
                 className={
-                  errors.contractName && touched.contractName
+                  errors.contractName && touched.contractName && contracts.length
                     ? "form-control form-control-sm is-invalid"
                     : "form-control form-control-sm"
                 }
@@ -143,7 +121,7 @@ export const VerifyView: React.FC<Props> = ({
                 }
                 type="text"
                 name="contractArguments"
-                placeholder="hex encoded"
+                placeholder="hex encoded args"
               />
               <ErrorMessage
                 className="invalid-feedback"
@@ -162,7 +140,7 @@ export const VerifyView: React.FC<Props> = ({
                 }
                 type="text"
                 name="contractAddress"
-                placeholder="i.e. 0x11b79afc03baf25c631dd70169bb6a3160b2706e"
+                placeholder="e.g. 0x11b79afc03baf25c631dd70169bb6a3160b2706e"
               />
               <ErrorMessage
                 className="invalid-feedback"
@@ -172,12 +150,36 @@ export const VerifyView: React.FC<Props> = ({
             </div>
 
             <SubmitButton dataId="verify-contract" text="Verify Contract" isSubmitting={isSubmitting} />
+            <br/><br/>
+            <button
+              type="button"
+              style={{ padding: "0.25rem 0.4rem", marginRight: "0.5em", marginBottom: "0.5em"}}
+              className="btn btn-primary"
+              title="Generate the required TS scripts to verify a contract on Etherscan"
+              onClick={async () => {
+                if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/receiptStatus.ts')) {
+                  await client.call('fileManager', 'writeFile', 'scripts/etherscan/receiptStatus.ts', receiptGuidScript)
+                  await client.call('fileManager', 'open', 'scripts/etherscan/receiptStatus.ts')
+                } else {
+                  client.call('notification' as any, 'toast', 'File receiptStatus.ts already exists')
+                }
+                
+                if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/verify.ts')) {
+                  await client.call('fileManager', 'writeFile', 'scripts/etherscan/verify.ts', verifyScript)
+                  await client.call('fileManager', 'open', 'scripts/etherscan/verify.ts')
+                } else {
+                  client.call('notification' as any, 'toast', 'File verify.ts already exists')
+                }
+              }}
+              >
+                Generate Verification Scripts
+              </button>
           </form>
         )}
       </Formik>
 
       <div data-id="verify-result"
-        style={{ marginTop: "2em", fontSize: "0.8em", textAlign: "center" }}
+        style={{ marginTop: "2em", fontSize: "0.8em", textAlign: "center", color: verificationResult.current['succeed'] ? "green" : "red" }}
         dangerouslySetInnerHTML={{ __html: results }}
       />
 
