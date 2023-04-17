@@ -137,7 +137,9 @@ export class RemixURLResolver {
   */
 
   async handleNpmImport(url: string): Promise<HandlerResponse> {
-      if (this.getDependencies) {
+      if (!url) throw new Error('url is empty')
+      const isVersionned = semverRegex().exec(url.replace(/@/g, '@ ').replace(/\//g, ' /'))
+      if (this.getDependencies && !isVersionned) {
         try {
           const { deps, yarnLock, packageLock } = await this.getDependencies()
           let matchLength = 0
@@ -176,7 +178,6 @@ export class RemixURLResolver {
           console.log(e)
         }
       }
-
 
       const npm_urls = ["https://cdn.jsdelivr.net/npm/", "https://unpkg.com/"]
       process && process.env && process.env['NPM_URL'] && npm_urls.unshift(process.env['NPM_URL'])
@@ -252,4 +253,9 @@ export class RemixURLResolver {
     this.previouslyHandled[filePath] = imported
     return imported
   }
+}
+
+// see npm semver-regex
+function semverRegex() {
+	return /(?<=^v?|\sv?)(?:(?:0|[1-9]\d{0,9}?)\.){2}(?:0|[1-9]\d{0,9})(?:-(?:--+)?(?:0|[1-9]\d*|\d*[a-z]+\d*)){0,100}(?=$| |\+|\.)(?:(?<=-\S+)(?:\.(?:--?|[\da-z-]*[a-z-]\d*|0|[1-9]\d*)){1,100}?)?(?!\.)(?:\+(?:[\da-z]\.?-?){1,100}?(?!\w))?(?!\+)/gi;
 }
