@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import axios, { AxiosResponse } from 'axios'
+import semver from 'semver'
 import { BzzNode as Bzz } from '@erebos/bzz-node'
 
 export interface Imported {
@@ -171,7 +172,10 @@ export class RemixURLResolver {
                 // package.json
                 version = deps[pkg]
               }
-              if (version) url = url.replace(pkg, `${pkg}@${version}`)
+              if (version) {
+                const versionSemver = semver.minVersion(version)
+                url = url.replace(pkg, `${pkg}@${versionSemver.version}`)
+              }
             }
           }
         } catch (e) {
