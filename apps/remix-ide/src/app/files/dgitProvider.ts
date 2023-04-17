@@ -14,7 +14,7 @@ import { Octokit } from "@octokit/core";
 import JSZip from 'jszip'
 import path from 'path'
 import { IndexedDBStorage } from './filesystems/indexedDB'
-import { commitChange, remote } from '@remix-ui/git'
+import { branch, commitChange, remote } from '@remix-ui/git'
 
 declare global {
   interface Window { remixFileSystemCallback: IndexedDBStorage; remixFileSystem: IndexedDBStorage['extended']; }
@@ -70,7 +70,7 @@ class DGitProvider extends Plugin {
   }
 
   onActivation(): void {
-      console.log('dgit activated')
+    console.log('dgit activated')
   }
 
   async parseInput(input) {
@@ -144,11 +144,12 @@ class DGitProvider extends Plugin {
       ...cmd,
     })
     console.log(status)
-    const tree = await git.readTree({
-      ...await this.getGitConfig(),
-      oid: status[0].oid
-    })
-    console.log('tree', tree)
+    //const tree = await git.readTree({
+    //  ...await this.getGitConfig(),
+    //  oid: status[0].oid
+    // })
+    //console.log('tree', tree)
+
     //this.getCommitChanges(status[0].oid, status[1].oid)
     return status
   }
@@ -208,7 +209,7 @@ class DGitProvider extends Plugin {
   }
 
   async remotes(config) {
-    let remotes:remote[] = []
+    let remotes: remote[] = []
     try {
       remotes = await git.listRemotes({ ...config ? config : await this.getGitConfig() })
     } catch (e) {
@@ -231,24 +232,45 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async currentbranch(config) {
+  async currentbranch(config): Promise<branch> {
     try {
       const defaultConfig = await this.getGitConfig()
       const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
       const name = await git.currentBranch(cmd)
+      let remote: remote = undefined
+      try {
+        const remoteName = await git.getConfig({
+          ...defaultConfig,
+          path: `branch.${name}.remote`
+        })
+        if (remoteName)
+        {
+          const remoteUrl = await git.getConfig({
+            ...defaultConfig,
+            path: `remote.${remoteName}.url`
+          })
+          remote = { remote: remoteName, url: remoteUrl }
+        }
 
-      return name
+      } catch (e) {
+        // do nothing
+      }
+
+      return {
+        remote: remote,
+        name: name || ''
+      }
     } catch (e) {
-      return ''
+      return undefined
     }
   }
 
-  async branches(config) {
+  async branches(config): Promise<branch[]> {
     try {
       const defaultConfig = await this.getGitConfig()
       const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
       const remotes = await this.remotes(config)
-      let branches = []
+      let branches: branch[] = []
       branches = (await git.listBranches(cmd)).map((branch) => { return { remote: undefined, name: branch } })
       for (const remote of remotes) {
         cmd.remote = remote.remote
@@ -589,7 +611,7 @@ class DGitProvider extends Plugin {
         if (type === true) {
           result = [
             ...result,
-          ...(await this.getDirectory(
+            ...(await this.getDirectory(
               `${fi.filename}`
             ))
           ]

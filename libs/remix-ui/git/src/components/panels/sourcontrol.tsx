@@ -22,6 +22,12 @@ export const SourceControl = () => {
         }
     }, [context.fileStatusResult])
 
+    useEffect(() => {
+        if (context.commits) {
+            console.log("SC commits", context.localCommitCount, context.currentBranch)
+        }
+    }, [context.localCommitCount, context.currentBranch])
+
     function RenderGroups() {
         const groups: sourceControlGroup[] = [{ name: 'Staged', group: context.staged }, { name: 'Changes', group: context.allchangesnotstaged }]
         return (<>
@@ -43,7 +49,7 @@ export const SourceControl = () => {
                     <div>
                         <RenderGroups></RenderGroups>
                     </div></>
-                : <>Nothing to commit
+                : <>
 
                 </>}
         </>

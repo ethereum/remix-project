@@ -58,7 +58,7 @@ export const setRepoName = (reponame: string) => {
     }
 }
 
-export const setCurrentBranch = (currentBranch: string) => {
+export const setCurrentBranch = (currentBranch: branch) => {
     return {
         type: 'SET_CURRENT_BRANCH',
         payload: currentBranch
@@ -76,6 +76,13 @@ export const setRemotes = (remotes: remote[]) => {
     return {
         type: 'SET_REMOTES',
         payload: remotes
+    }
+}
+
+export const setUpstream = (upstream: string) => {
+    return {
+        type: 'SET_UPSTREAM',
+        payload: upstream
     }
 }
 

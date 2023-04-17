@@ -20,6 +20,7 @@ export interface gitActions  {
     getBranchCommits(branch: branch): Promise<ReadCommitResult[]>
     diff(commitChange: commitChange): Promise<void>
     resolveRef(ref: string): Promise<string>
+    setUpstreamRemote(upstream: string): Promise<void>
 }
 
 export const gitActionsContext = React.createContext<gitActions>(null)

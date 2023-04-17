@@ -1,7 +1,7 @@
 import { CommitObject, ReadCommitResult } from "isomorphic-git"
 
 export type gitState = {
-    currentBranch: string
+    currentBranch: branch
     commits: ReadCommitResult[]
     branch: string
     canCommit: boolean
@@ -21,7 +21,10 @@ export type gitState = {
     remoteBranches: remoteBranch[]
     commitChanges: commitChange[]
     branchCommits:  Record<string, ReadCommitResult[]>
-    syncStatus: syncStatus
+    syncStatus: syncStatus,
+    localCommitCount: number
+    remoteCommitCount: number
+    upstream: string
 }
 
 export type commitChangeTypes = {  
@@ -75,7 +78,7 @@ export type remoteBranch = {
 }
 
 export const defaultGitState: gitState = {
-    currentBranch: "",
+    currentBranch: { name: "", remote: { remote: "", url: "" } },
     commits: [],
     branch: "",
     canCommit: true,
@@ -95,7 +98,10 @@ export const defaultGitState: gitState = {
     remoteBranches: [],
     commitChanges: [],
     branchCommits: {},
-    syncStatus: syncStatus.none
+    syncStatus: syncStatus.none,
+    localCommitCount: 0,
+    remoteCommitCount: 0,
+    upstream: ""
 }
 
 export type fileStatusResult = {
@@ -155,12 +161,17 @@ export interface setRepoNameAction {
 
 export interface setCurrentBranchAction {
     type: string,
-    payload: string
+    payload: branch
 }
 
 export interface setRemotesAction {
     type: string,
     payload: remote[]
+}
+
+export interface setUpstreamAction {
+    type: string,
+    payload: string
 }
 
 export interface setBranchCommitsAction {
@@ -171,4 +182,4 @@ export interface setBranchCommitsAction {
     }
 }
 
-export type gitActionDispatch = setBranchCommitsAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction
+export type gitActionDispatch = setUpstreamAction | setBranchCommitsAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction

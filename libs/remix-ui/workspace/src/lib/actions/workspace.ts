@@ -13,6 +13,7 @@ import { ROOT_PATH, slitherYml, solTestYml, tsSolTestYml } from '../utils/consta
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
 import { AppModal, ModalTypes } from '@remix-ui/app'
+import { branch } from '@remix-ui/git'
 
 declare global {
   interface Window { remixFileSystemCallback: IndexedDBStorage; }
@@ -93,7 +94,7 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
     if (isGitRepo && createCommit) {
       const name = await plugin.call('settings', 'get', 'settings/github-user-name')
       const email = await plugin.call('settings', 'get', 'settings/github-email')
-      const currentBranch = await plugin.call('dGitProvider', 'currentbranch')
+      const currentBranch: branch = await plugin.call('dGitProvider', 'currentbranch')
 
       if (!currentBranch) {
         if (!name || !email) {
@@ -530,8 +531,8 @@ export const checkGit = async () => {
   const isGitRepo = await plugin.fileManager.isGitRepo()
   dispatch(setCurrentWorkspaceIsGitRepo(isGitRepo))
   await refreshBranches()
-  const currentBranch = await plugin.call('dGitProvider', 'currentbranch')
-  dispatch(setCurrentWorkspaceCurrentBranch(currentBranch))
+  const currentBranch: branch = await plugin.call('dGitProvider', 'currentbranch')
+  dispatch(setCurrentWorkspaceCurrentBranch(currentBranch.name))
 }
 
 
@@ -568,8 +569,8 @@ export const getGitRepoCurrentBranch = async (workspaceName: string) => {
     fs: window.remixFileSystemCallback,
     dir: addSlash(workspaceName)
   }
-  const currentBranch: string = await plugin.call('dGitProvider', 'currentbranch', { ...gitConfig })
-  return currentBranch
+  const currentBranch: branch = await plugin.call('dGitProvider', 'currentbranch', { ...gitConfig })
+  return currentBranch.name
 }
 
 export const showAllBranches = async () => {

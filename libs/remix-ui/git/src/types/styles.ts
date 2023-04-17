@@ -22,6 +22,7 @@ export const selectStyles: StylesConfig = {
     ...baseStyles,
     color: 'var(--text)',
     backgroundColor: 'var(--custom-select)',
+    border: 'none',
   }),
   menu: (baseStyles, state) => {
     return {

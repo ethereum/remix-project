@@ -1,7 +1,7 @@
 import { ViewPlugin } from "@remixproject/engine-web";
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
-import { fileStatus, setBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setLoading, setRemoteBranches, setRemotes, setRepos } from "../state/payload";
+import { fileStatus, setBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setLoading, setRemoteBranches, setRemotes, setRepos, setUpstream } from "../state/payload";
 import { branch, commitChange, gitActionDispatch, statusMatrixType } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
@@ -48,6 +48,10 @@ export const getRemotes = async () => {
     dispatch(setRemotes(remotes));
 }
 
+export const setUpstreamRemote = async (remote: string) => {
+    dispatch(setUpstream(remote));
+}
+
 export const getFileStatusMatrix = async () => {
     const fileStatusResult = await statusMatrix();
     fileStatusResult.map((m) => {
@@ -89,17 +93,17 @@ export const gitlog = async () => {
 
 export const showCurrentBranch = async () => {
     try {
-        let branch = await currentBranch();
+        const branch = await currentBranch();
         const currentcommitoid = await getCommitFromRef("HEAD");
 
 
-        if (typeof branch === "undefined" || branch === "") {
+        if (typeof branch === "undefined" || branch.name === "") {
             //toast.warn(`You are in a detached state`);
             plugin.call('notification', 'alert', {
                 type: 'warning',
                 title: 'You are in a detached state',
             })
-            branch = `HEAD detached at ${currentcommitoid}`;
+            branch.name = `HEAD detached at ${currentcommitoid}`;
             //canCommit = false;
             dispatch(setCanCommit(false));
         } else {
@@ -115,7 +119,7 @@ export const showCurrentBranch = async () => {
 export const currentBranch = async () => {
     // eslint-disable-next-line no-useless-catch
     try {
-        const branch: string =
+        const branch: branch =
             (await plugin.call("dGitProvider", "currentbranch")) || "";
         return branch;
     } catch (e) {

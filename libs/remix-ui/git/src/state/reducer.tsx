@@ -25,7 +25,8 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
         case 'SET_COMMITS':
             return {
                 ...state,
-                commits: action.payload
+                commits: action.payload,
+                localCommitCount: action.payload.length
             }
 
         case 'SET_BRANCHES':
@@ -78,6 +79,12 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
             return {
                 ...state,
                 remotes: action.payload
+            }
+
+        case 'SET_UPSTREAM':
+            return {
+                ...state,
+                upstream: action.payload
             }
 
         case 'SET_COMMIT_CHANGES':
