@@ -134,6 +134,19 @@ module.exports = {
       .click('*[data-id="deployAndRunClearInstances"]')
   },
 
+  'Should use scientific notation as parameters #group2': function (browser: NightwatchBrowser) {
+    browser.testContracts('scientific_notation.sol', sources[8]['scientific_notation.sol'], ['test'])
+      .clickLaunchIcon('udapp')
+      .click('.udapp_contractActionsContainerSingle > button')
+      .clickInstance(0)
+      .clickFunction('inputValue1 - transact (not payable)', { types: 'uint256 _u, int256 _i', values: '"101e3", "-1.13e4"' })
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '101000', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '-11300', 60000)
+      .clickFunction('inputValue2 - transact (not payable)', { types: 'uint256 _u', values: '2.345e10' })
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '2340000000', 60000)
+      .click('*[data-id="deployAndRunClearInstances"]')      
+  },
+
   'Should Compile and Deploy a contract which define a custom error, the error should be logged in the terminal #group3': function (browser: NightwatchBrowser) {
     browser.testContracts('customError.sol', sources[4]['customError.sol'], ['C'])
       .clickLaunchIcon('udapp')
@@ -475,6 +488,21 @@ contract C {
             }
         }
         `      
+    }
+  }, {
+    "scientific_notation.sol": {
+      content: `
+      import "hardhat/console.sol";
+      contract test {
+        function inputValue1 (uint _u, int _i) public {
+          console.log(_u);
+          console.logInt(_i);
+        }
+        function inputValue2 (uint _u) public {
+          console.log(_u);
+        }
+      }
+      `
     }
   }
 ]
