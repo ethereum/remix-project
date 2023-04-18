@@ -1,6 +1,7 @@
 // Merge custom command types with nightwatch types
 /* eslint-disable no-use-before-define */
 import { NightwatchBrowser } from 'nightwatch' // eslint-disable-line @typescript-eslint/no-unused-vars
+export type callbackCheckVerifyCallReturnValue = (values: string[]) => { message: string, pass: boolean }
 
 declare module 'nightwatch' {
     export interface NightwatchCustomCommands {
@@ -41,7 +42,7 @@ declare module 'nightwatch' {
         testConstantFunction(address: string, fnFullName: string, expectedInput: NightwatchTestConstantFunctionExpectedInput | null, expectedOutput: string): NightwatchBrowser,
         getEditorValue(callback: (content: string) => void): NightwatchBrowser,
         getInstalledPlugins(cb: (plugins: string[]) => void): NightwatchBrowser,
-        verifyCallReturnValue(address: string, checks: string[]): NightwatchBrowser,
+        verifyCallReturnValue(address: string, checks: string[] | callbackCheckVerifyCallReturnValue): NightwatchBrowser,
         testEditorValue(testvalue: string): NightwatchBrowser,
         removeFile(path: string, workspace: string): NightwatchBrowser,
         switchBrowserWindow(url: string, windowName: string, cb: (browser: NightwatchBrowser, window?: NightwatchCallbackResult<Window>) => void): NightwatchBrowser,
