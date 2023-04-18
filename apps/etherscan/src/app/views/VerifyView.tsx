@@ -31,6 +31,7 @@ export const VerifyView: React.FC<Props> = ({
 }) => {
   const [results, setResults] = useState("")
   const [networkName, setNetworkName] = useState("")
+  const [showConstructorArgs, setShowConstructorArgs] = useState(false)
   const verificationResult = useRef({})
 
   const onVerifyContract = async (values: FormValues) => {
@@ -107,6 +108,11 @@ export const VerifyView: React.FC<Props> = ({
                     : "form-control form-control-sm"
                 }
                 name="contractName"
+                onChange={async (e) => {
+                    const {artefact} = await client.call("compilerArtefacts" as any, "getArtefactsByContractName", e.target.value)
+                    if(artefact && artefact.abi && artefact.abi[0].type && artefact.abi[0].type === 'constructor') setShowConstructorArgs(true)
+                    else setShowConstructorArgs(false)
+                }}
               >
                 <option disabled={true} value="">
                   Select a contract
@@ -124,7 +130,7 @@ export const VerifyView: React.FC<Props> = ({
               />
             </div>
 
-            <div className="form-group">
+            <div className="form-group" style={{display: showConstructorArgs ? 'block': 'none'}}>
               <label htmlFor="contractArguments">Constructor Arguments</label>
               <Field
                 className={
