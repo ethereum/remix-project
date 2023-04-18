@@ -86,3 +86,18 @@ export class BerlinVMProvider extends BasicVMProvider {
     this.fork = 'berlin'
   }
 }
+
+export class ShanghaiVMProvider extends BasicVMProvider {
+  constructor (blockchain) {
+    super({
+      name: 'vm-shanghai',
+      displayName: 'Remix VM (Shanghai)',
+      kind: 'provider',
+      description: 'Remix VM (Shanghai)',
+      methods: ['sendAsync', 'init'],
+      version: packageJson.version
+    }, blockchain)
+    this.blockchain = blockchain
+    this.fork = 'shanghai'
+  }
+}
