@@ -86,6 +86,7 @@ export const VerifyView: React.FC<Props> = ({
           if (client) {
             client.on("blockchain" as any, 'networkStatus', (result) => {
               setNetworkName(result.network.name)
+              client.off("blockchain" as any, 'networkStatus')
             })
           }
           return (<form onSubmit={handleSubmit}>
@@ -100,7 +101,7 @@ export const VerifyView: React.FC<Props> = ({
                 disabled={true}
               /> 
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="contractName">Contract Name</label>              
               <Field
