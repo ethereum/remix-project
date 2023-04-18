@@ -30,6 +30,7 @@ export const VerifyView: React.FC<Props> = ({
   onVerifiedContract,
 }) => {
   const [results, setResults] = useState("")
+  const [networkName, setNetworkName] = useState("")
   const verificationResult = useRef({})
 
   const onVerifyContract = async (values: FormValues) => {
@@ -43,7 +44,6 @@ export const VerifyView: React.FC<Props> = ({
     }
 
     const contractArguments = values.contractArguments.replace("0x", "")    
-
     verificationResult.current = await verify(
       apiKey,
       values.contractAddress,
@@ -81,10 +81,23 @@ export const VerifyView: React.FC<Props> = ({
         }}
         onSubmit={(values) => onVerifyContract(values)}
       >
-        {({ errors, touched, handleSubmit, isSubmitting }) => (
-          <form onSubmit={handleSubmit}>
+        {({ errors, touched, handleSubmit, isSubmitting }) => {
+          if (client) {
+            client.on("blockchain" as any, 'networkStatus', (result) => {
+              setNetworkName(result.network.name)
+            })
+          }
+          return (<form onSubmit={handleSubmit}>
             <h6>Verify your smart contracts</h6>
             <div className="form-group">
+              <label htmlFor="network">Selected Network</label> 
+              <Field
+                className="form-control form-control-sm"
+                type="text"
+                name="network"
+                value={networkName}
+                disabled={true}
+              />  
               <label htmlFor="contractName">Contract Name</label>              
               <Field
                 as="select"
@@ -175,7 +188,9 @@ export const VerifyView: React.FC<Props> = ({
                 Generate Verification Scripts
               </button>
           </form>
-        )}
+          )
+        }
+        }
       </Formik>
 
       <div data-id="verify-result"
