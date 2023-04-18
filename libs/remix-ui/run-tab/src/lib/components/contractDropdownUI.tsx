@@ -263,6 +263,10 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     )
   }
 
+  let evmVersion = null
+  try {
+    evmVersion = JSON.parse(loadedContractData.metadata).settings.evmVersion
+  } catch (err) {}
   return (
     <div className="udapp_container" data-id="contractDropdownContainer">
       <div className='d-flex justify-content-between'>
@@ -271,6 +275,16 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
             <FormattedMessage id='udapp.contract' />
           </label>
           <div className="d-flex">{compilerName && compilerName !== '' && <label style={{ maxHeight: '0.6rem', lineHeight: '1rem' }} data-id="udappCompiledBy">(<FormattedMessage id='udapp.compiledBy' values={{ compilerName: <span className="text-capitalize"> {compilerName}</span> }} />)</label>}</div>
+          { evmVersion && loadedContractData && <CustomTooltip
+            placement={'right'}
+            tooltipClasses="text-wrap text-left"
+            tooltipId="info-evm-version-warn"
+            tooltipText={<span className="text-left">
+              <FormattedMessage id='udapp.warningEvmVersion' values={{ evmVersion }}/>
+            </span>}
+          >
+            <span className='ml-2'>(evm: {evmVersion})</span>
+          </CustomTooltip> }
         </div>
         {props.remixdActivated ?
           (<CustomTooltip

@@ -5,6 +5,7 @@
   "udapp.value": "Value",
   "udapp.contract": "Contract",
   "udapp.compiledBy": "Compiled by {compilerName}",
+  "udapp.warningEvmVersion": "Please make sure that the current network is following the evm version: {evmVersion}. Otherwise any deployment will fail.",
   "udapp.infoSyncCompiledContractTooltip": "Click here to import contracts compiled from an external framework.This action is enabled when Remix is connected to an external framework (hardhat, truffle, foundry) through remixd.",
   "udapp.remixIpfsUdappTooltip": "Publishing the source code and metadata to IPFS facilitates source code verification using Sourcify and will greatly foster contract adoption (auditing, debugging, calling it, etc...)",
   "udapp.signAMessage": "Sign a message",
