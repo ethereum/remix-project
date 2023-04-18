@@ -98,7 +98,10 @@ export const VerifyView: React.FC<Props> = ({
                 name="network"
                 value={networkName}
                 disabled={true}
-              />  
+              /> 
+            </div>
+            
+            <div className="form-group">
               <label htmlFor="contractName">Contract Name</label>              
               <Field
                 as="select"
@@ -110,7 +113,7 @@ export const VerifyView: React.FC<Props> = ({
                 name="contractName"
                 onChange={async (e) => {
                     const {artefact} = await client.call("compilerArtefacts" as any, "getArtefactsByContractName", e.target.value)
-                    if(artefact && artefact.abi && artefact.abi[0].type && artefact.abi[0].type === 'constructor') setShowConstructorArgs(true)
+                    if (artefact && artefact.abi && artefact.abi[0].type && artefact.abi[0].type === 'constructor') setShowConstructorArgs(true)
                     else setShowConstructorArgs(false)
                 }}
               >
