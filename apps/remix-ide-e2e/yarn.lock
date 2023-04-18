@@ -14,10 +14,10 @@
     pathval "1.1.1"
     type-detect "4.0.8"
 
-"@openzeppelin/contracts-upgradeable@^4.8.1":
-  version "4.8.2"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.8.2.tgz#edef522bdbc46d478481391553bababdd2199e27"
-  integrity sha512-zIggnBwemUmmt9IS73qxi+tumALxCY4QEs3zLCII78k0Gfse2hAOdAkuAeLUzvWUpneMUfFE5sGHzEUSTvn4Ag==
+"@openzeppelin/contracts-upgradeable@^4.8.3":
+  version "4.8.3"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.8.3.tgz#6b076a7b751811b90fe3a172a7faeaa603e13a3f"
+  integrity sha512-SXDRl7HKpl2WDoJpn7CK/M9U4Z8gNXDHHChAKh0Iz+Wew3wu6CmFYBeie3je8V0GSXZAIYYwUktSrnW/kwVPtg==
 
 "@openzeppelin/contracts@^4.8.3":
   version "4.8.3"
