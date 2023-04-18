@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.3",
-    "@openzeppelin/contracts-upgradeable": "^4.8.1",
+    "@openzeppelin/contracts-upgradeable": "^4.8.3",
     "@openzeppelin/upgrades-core": "^1.22.0",
     "@openzeppelin/wizard": "^0.1.1",
     "@remix-project/remixd": "../../dist/libs/remixd",
