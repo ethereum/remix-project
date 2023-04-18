@@ -21,13 +21,13 @@ export type VMExecutionCallBack = (error: string | Error, result?: VMexecutionRe
 export class TxRunnerVM {
   event
   blockNumber
-  runAsync
   pendingTxs
   vmaccounts
   queusTxs
   blocks
   logsManager
   commonContext
+  blockParentHash
   nextNonceForCall: number
   getVMObject: () => any
 
@@ -38,9 +38,6 @@ export class TxRunnerVM {
     this.getVMObject = getVMObject
     this.commonContext = this.getVMObject().common
     this.blockNumber = 0
-    this.runAsync = true
-    this.blockNumber = 0 // The VM is running in Homestead mode, which started at this block.
-    this.runAsync = false // We have to run like this cause the VM Event Manager does not support running multiple txs at the same time.
     this.pendingTxs = {}
     this.vmaccounts = vmaccounts
     this.queusTxs = []
@@ -52,6 +49,9 @@ export class TxRunnerVM {
       For this to function we also need to skip nonce validation, in the vm: `{ skipNonce: true }`
     */
     this.nextNonceForCall = 0
+
+    const vm = this.getVMObject().vm
+    this.blockParentHash = vm.blockchain.genesisBlock.hash()
   }
 
   execute (args: InternalTransaction, confirmationCb, gasEstimationForceSend, promptCb, callback: VMExecutionCallBack) {
@@ -68,12 +68,11 @@ export class TxRunnerVM {
   }
 
   runInVm (from: string, to: string, data: string, value: string, gasLimit: number, useCall: boolean, callback: VMExecutionCallBack) {
-    const self = this
     let account
-    if (!from && useCall && Object.keys(self.vmaccounts).length) {
-      from = Object.keys(self.vmaccounts)[0]
-      account = self.vmaccounts[from]
-    } else account = self.vmaccounts[from] 
+    if (!from && useCall && Object.keys(this.vmaccounts).length) {
+      from = Object.keys(this.vmaccounts)[0]
+      account = this.vmaccounts[from]
+    } else account = this.vmaccounts[from] 
     
     if (!account) {
       return callback('Invalid account selected')
@@ -106,23 +105,29 @@ export class TxRunnerVM {
 
       const coinbases = ['0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e']
       const difficulties = [69762765929000, 70762765929000, 71762765929000]
-      const difficulty = this.commonContext.consensusType() === ConsensusType.ProofOfStake ? 0 : difficulties[self.blockNumber % difficulties.length]
+      const difficulty = this.commonContext.consensusType() === ConsensusType.ProofOfStake ? 0 : difficulties[this.blockNumber % difficulties.length]
       
+      const blocknumber = this.blockNumber + 1
       const block = Block.fromBlockData({
         header: {
           timestamp: new Date().getTime() / 1000 | 0,
-          number: self.blockNumber,
-          coinbase: coinbases[self.blockNumber % coinbases.length],
+          number: blocknumber,
+          coinbase: coinbases[blocknumber % coinbases.length],
           difficulty,
           gasLimit,
-          baseFeePerGas: EIP1559 ? '0x1' : undefined
+          baseFeePerGas: EIP1559 ? '0x1' : undefined,
+          parentHash: this.blockParentHash
         },
         transactions: [tx]
-      }, { common: this.commonContext })
+      }, { common: this.commonContext, hardforkByBlockNumber: false, hardforkByTTD: undefined })
 
       if (!useCall) {
-        ++self.blockNumber
-        this.runBlockInVm(tx, block, callback)
+        this.blockNumber = this.blockNumber + 1
+        this.blockParentHash = block.hash()
+        this.runBlockInVm(tx, block, (err, result) => {
+          if (!err) this.getVMObject().vm.blockchain.putBlock(block)
+          callback(err, result)
+        })
       } else {
         this.getVMObject().stateManager.checkpoint().then(() => {
           this.runBlockInVm(tx, block, (err, result) => {

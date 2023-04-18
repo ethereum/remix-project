@@ -19,7 +19,7 @@ describe('blocks', () => {
 
       const expectedBlock = {
         baseFeePerGas: 1,
-        difficulty: '69762765929000',
+        difficulty: 0,
         extraData: '0x0',
         gasLimit: 8000000,
         gasUsed: 0,
