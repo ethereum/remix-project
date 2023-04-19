@@ -30,7 +30,7 @@ export const VerifyView: React.FC<Props> = ({
   onVerifiedContract,
 }) => {
   const [results, setResults] = useState("")
-  const [networkName, setNetworkName] = useState("")
+  const [networkName, setNetworkName] = useState("Loading...")
   const [showConstructorArgs, setShowConstructorArgs] = useState(false)
   const verificationResult = useRef({})
 
@@ -86,7 +86,6 @@ export const VerifyView: React.FC<Props> = ({
           if (client) {
             client.on("blockchain" as any, 'networkStatus', (result) => {
               setNetworkName(result.network.name)
-              client.off("blockchain" as any, 'networkStatus')
             })
           }
           return (<form onSubmit={handleSubmit}>
