@@ -11,6 +11,7 @@ const profile = {
 }
 
 export class TabProxy extends Plugin {
+
   constructor (fileManager, editor) {
     super(profile)
     this.event = new EventEmitter()
@@ -72,6 +73,8 @@ export class TabProxy extends Plugin {
         name = name.startsWith(this.fileManager.mode + '/') ? name : this.fileManager.mode + '/' + name
         this.removeTab(name)
       }
+      
+
     })
 
     this.on('fileManager', 'currentFileChanged', (file) => {
@@ -148,22 +151,56 @@ export class TabProxy extends Plugin {
 
     this.on('manager', 'pluginActivated', ({ name, location, displayName, icon, description }) => {
       if (location === 'mainPanel') {
-        this.addTab(
-          name,
-          displayName,
-          () => this.emit('switchApp', name),
-          () => {
-            if (name === 'home' && this.loadedTabs.length === 1 && this.loadedTabs[0].id === "home") {
-              const files = Object.keys(this.editor.sessions)
-              files.forEach(filepath => this.editor.discard(filepath))
+        const prevSession = window.localStorage.getItem("openedTabs")
+          
+        if(prevSession){
+            const tabs = JSON.parse(prevSession)
+      
+            for (const tab of tabs){
+              if(tab.name != null){
+                try{
+                  this.addTab(tab.name, tab.title, 
+                  () => {
+                    // this.switchTab(tab.name)
+                  },
+                  () => {
+                    if (name === 'home' && this.loadedTabs.length === 1 && this.loadedTabs[0].id === "home") {
+                      const files = Object.keys(this.editor.sessions)
+                      files.forEach(filepath => this.editor.discard(filepath))
+                    }
+                    this.emit('closeApp', name)
+                    this.call('manager', 'deactivatePlugin', name)
+                  }, tab.icon, true)
+                  
+  
+                }catch(err){
+                  console.log(err, "Error")
+                }
+              }
             }
             this.emit('closeApp', name)
             this.call('manager', 'deactivatePlugin', name)
-          },
-          icon,
-          description
-        )
         this.switchTab(name)
+            this.switchTab("home")
+              
+        } else {
+          this.addTab(
+            name,
+            displayName,
+            () => this.emit('switchApp', name),
+            () => {
+              if (name === 'home' && this.loadedTabs.length === 1 && this.loadedTabs[0].id === "home") {
+                const files = Object.keys(this.editor.sessions)
+                files.forEach(filepath => this.editor.discard(filepath))
+              }
+              this.emit('closeApp', name)
+              this.call('manager', 'deactivatePlugin', name)
+            },
+            icon
+          )
+          this.switchTab(name)
+          
+        }
       }
     })
 
@@ -181,6 +218,7 @@ export class TabProxy extends Plugin {
       console.log('theme plugin has an issue: ', e)
     }
     this.renderComponent()
+
   }
 
   focus (name) {
@@ -224,7 +262,7 @@ export class TabProxy extends Plugin {
     this.removeTab(oldName)
   }
 
-  addTab (name, title, switchTo, close, icon, description = '') {
+  addTab (name, title, switchTo, close, icon, description = '', fromRestoreTab) {
     if (this._handlers[name]) return this.renderComponent()
 
     var slash = name.split('/')
@@ -283,6 +321,10 @@ export class TabProxy extends Plugin {
 
     this.renderComponent()
     this._handlers[name] = { switchTo, close }
+    if(!fromRestoreTab){
+      window.localStorage.setItem("openedTabs", JSON.stringify(this.loadedTabs))
+      console.log(JSON.parse(window.localStorage.getItem('openedTabs')), this.loadedTabs)
+    }
   }
 
   removeTab (name, currentFileTab) {
@@ -299,6 +341,8 @@ export class TabProxy extends Plugin {
     })
     this.renderComponent()
     if (previous) this.switchTab(previous.name)
+    window.localStorage.setItem("openedTabs", JSON.stringify(this.openedFiles))
+
   }
 
   addHandler (type, fn) {
