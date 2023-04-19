@@ -134,7 +134,7 @@ export const VerifyView: React.FC<Props> = ({
               />
             </div>
 
-            <div className="form-group" style={{display: showConstructorArgs ? 'block': 'none'}}>
+            <div className={ showConstructorArgs ? 'form-group d-block': 'form-group d-none' } >
               <label htmlFor="contractArguments">Constructor Arguments</label>
               <Field
                 className={
