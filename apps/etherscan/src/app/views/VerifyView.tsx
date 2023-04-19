@@ -107,7 +107,7 @@ export const VerifyView: React.FC<Props> = ({
                 as="select"
                 className={
                   errors.contractName && touched.contractName && contracts.length
-                    ? "form-control  is-invalid"
+                    ? "form-control is-invalid"
                     : "form-control"
                 }
                 name="contractName"
@@ -139,7 +139,7 @@ export const VerifyView: React.FC<Props> = ({
               <Field
                 className={
                   errors.contractArguments && touched.contractArguments
-                    ? "form-control  is-invalid"
+                    ? "form-control is-invalid"
                     : "form-control"
                 }
                 type="text"
@@ -158,7 +158,7 @@ export const VerifyView: React.FC<Props> = ({
               <Field
                 className={
                   errors.contractAddress && touched.contractAddress
-                    ? "form-control  is-invalid"
+                    ? "form-control is-invalid"
                     : "form-control"
                 }
                 type="text"
