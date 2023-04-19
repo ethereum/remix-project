@@ -82,7 +82,7 @@ export const VerifyView: React.FC<Props> = ({
         }}
         onSubmit={(values) => onVerifyContract(values)}
       >
-        {({ errors, touched, handleSubmit, isSubmitting }) => {
+        {({ errors, touched, handleSubmit, handleChange, isSubmitting }) => {
           if (client) {
             client.on("blockchain" as any, 'networkStatus', (result) => {
               setNetworkName(result.network.name)
@@ -113,6 +113,7 @@ export const VerifyView: React.FC<Props> = ({
                 }
                 name="contractName"
                 onChange={async (e) => {
+                    handleChange(e)
                     const {artefact} = await client.call("compilerArtefacts" as any, "getArtefactsByContractName", e.target.value)
                     if (artefact && artefact.abi && artefact.abi[0] && artefact.abi[0].type && artefact.abi[0].type === 'constructor') setShowConstructorArgs(true)
                     else setShowConstructorArgs(false)
