@@ -38,13 +38,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   })
   const [canPaste, setCanPaste] = useState(false)
   const treeRef = useRef<HTMLDivElement>(null)
-
-  useEffect(()=>{
-    setTimeout(() => {
-      props.dispatchRestoreTabs()
-    }, 500);
-  }, [])
-
+  
   useEffect(() => {
     if (contextMenuItems) {
       addMenuItems(contextMenuItems)
