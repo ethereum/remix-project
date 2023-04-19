@@ -83,7 +83,7 @@ export const VerifyView: React.FC<Props> = ({
         onSubmit={(values) => onVerifyContract(values)}
       >
         {({ errors, touched, handleSubmit, handleChange, isSubmitting }) => {
-          if (client) {
+          if (client && client.on) {
             client.on("blockchain" as any, 'networkStatus', (result) => {
               setNetworkName(result.network.name)
             })
