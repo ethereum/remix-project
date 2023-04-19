@@ -254,7 +254,7 @@ export class VmProxy {
       step.stack.length = Object.keys(data.stack).length
 
       if (previousOpcode && (previousOpcode.op === 'CALLDATACOPY' || previousOpcode.op === 'CODECOPY' || previousOpcode.op === 'EXTCODECOPY' || previousOpcode.op === 'RETURNDATACOPY' || previousOpcode.op === 'MSTORE' || previousOpcode.op === 'MSTORE8')) {
-        step.memory = data.memory
+        step.memory = new Uint8Array(data.memory)
         this.lastMemoryUpdate = step.memory
       }
       this.vmTraces[this.processingHash].structLogs.push(step)

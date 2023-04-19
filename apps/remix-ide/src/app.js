@@ -28,7 +28,7 @@ import { StoragePlugin } from './app/plugins/storage'
 import { Layout } from './app/panels/layout'
 import { NotificationPlugin } from './app/plugins/notification'
 import { Blockchain } from './blockchain/blockchain'
-import { MergeVMProvider, LondonVMProvider, BerlinVMProvider} from './app/providers/vm-provider'
+import { MergeVMProvider, LondonVMProvider, BerlinVMProvider, ShanghaiVMProvider } from './app/providers/vm-provider'
 import { MainnetForkVMProvider } from './app/providers/mainnet-vm-fork-provider'
 import { SepoliaForkVMProvider } from './app/providers/sepolia-vm-fork-provider'
 import { GoerliForkVMProvider } from './app/providers/goerli-vm-fork-provider'
@@ -211,6 +211,7 @@ class AppComponent {
     const vmProviderMainnetFork = new MainnetForkVMProvider(blockchain)
     const vmProviderSepoliaFork = new SepoliaForkVMProvider(blockchain)
     const vmProviderGoerliFork = new GoerliForkVMProvider(blockchain)
+    const vmProviderShanghai = new ShanghaiVMProvider(blockchain)
     const vmProviderMerge = new MergeVMProvider(blockchain)
     const vmProviderBerlin = new BerlinVMProvider(blockchain)
     const vmProviderLondon = new LondonVMProvider(blockchain)
@@ -281,6 +282,7 @@ class AppComponent {
       fetchAndCompile,
       dGitProvider,
       storagePlugin,
+      vmProviderShanghai,
       vmProviderMerge,
       vmProviderBerlin,
       vmProviderLondon,
