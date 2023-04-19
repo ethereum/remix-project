@@ -50,7 +50,6 @@ class FileManager extends Plugin {
   getFolder: (path: any) => Promise<unknown>
   setFile: (path: any, data: any) => Promise<unknown>
   switchFile: (path: any) => Promise<void>
-
   constructor(editor, appManager) {
     super(profile)
     this.mode = 'browser'
@@ -119,7 +118,7 @@ class FileManager extends Plugin {
   }
 
   /** The current opened file */
-  file() { 
+  file() {
     try {
       const file = this.currentFile()
 
@@ -466,7 +465,6 @@ class FileManager extends Plugin {
     this.getFolder = this.readdir
     this.setFile = this.writeFile
     this.switchFile = this.open
-
   }
 
   fileAddedEvent(path) {
@@ -516,7 +514,6 @@ class FileManager extends Plugin {
   }
 
   async closeAllFiles() {
-    window.localStorage.removeItem("openedTabs")
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('filesAllClosed')
     this.events.emit('filesAllClosed')
@@ -525,11 +522,8 @@ class FileManager extends Plugin {
     }
   }
 
-  async closeFile(name: string) {
+  async closeFile(name) {
     delete this.openedFiles[name]
-
-    window.localStorage.setItem("openedTabs", JSON.stringify(this.openedFiles))
-
     if (!Object.keys(this.openedFiles).length) {
       this._deps.config.set('currentFile', '')
       // TODO: Only keep `this.emit` (issue#2210)
@@ -665,9 +659,8 @@ class FileManager extends Plugin {
       const provider = resolved.provider
       this._deps.config.set('currentFile', file)
       this.openedFiles[file] = file
-      let content = ''
 
-      window.localStorage.setItem("openedTabs", JSON.stringify(this.openedFiles))
+      let content = ''
       try {
         content = await provider.get(file)
         
@@ -924,20 +917,6 @@ class FileManager extends Plugin {
     } catch (e) {
       throw new Error(e)
     }
-  }
-
-  restoreSession() {
-    try {
-      const prevSession = window.localStorage.getItem("openedTabs")
-      if(prevSession){
-        const tabs = Object.keys(JSON.parse(prevSession))
-        for(const tab of tabs){
-          this.openFile(tab)
-        } 
-      } 
-    } catch (error) {
-      
-    } 
   }
 }
 
