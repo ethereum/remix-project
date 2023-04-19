@@ -94,7 +94,7 @@ export const VerifyView: React.FC<Props> = ({
             <div className="form-group">
               <label htmlFor="network">Selected Network</label> 
               <Field
-                className="form-control form-control-sm"
+                className="form-control"
                 type="text"
                 name="network"
                 value={networkName}
@@ -108,8 +108,8 @@ export const VerifyView: React.FC<Props> = ({
                 as="select"
                 className={
                   errors.contractName && touched.contractName && contracts.length
-                    ? "form-control form-control-sm is-invalid"
-                    : "form-control form-control-sm"
+                    ? "form-control  is-invalid"
+                    : "form-control"
                 }
                 name="contractName"
                 onChange={async (e) => {
@@ -140,8 +140,8 @@ export const VerifyView: React.FC<Props> = ({
               <Field
                 className={
                   errors.contractArguments && touched.contractArguments
-                    ? "form-control form-control-sm is-invalid"
-                    : "form-control form-control-sm"
+                    ? "form-control  is-invalid"
+                    : "form-control"
                 }
                 type="text"
                 name="contractArguments"
@@ -159,8 +159,8 @@ export const VerifyView: React.FC<Props> = ({
               <Field
                 className={
                   errors.contractAddress && touched.contractAddress
-                    ? "form-control form-control-sm is-invalid"
-                    : "form-control form-control-sm"
+                    ? "form-control  is-invalid"
+                    : "form-control"
                 }
                 type="text"
                 name="contractAddress"
