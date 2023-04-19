@@ -51,6 +51,13 @@ export function AccountUI (props: AccountProps) {
         })
         break
 
+      case 'vm-shanghai':
+        setPlusOpt({
+          classList: '',
+          title: 'Create a new account'
+        })
+        break
+
       case 'web3':
         if (!props.personalMode) {
           setPlusOpt({
@@ -83,7 +90,7 @@ export function AccountUI (props: AccountProps) {
       return props.tooltip('Account list is empty, please make sure the current provider is properly connected to remix')
     }
 
-    if (props.selectExEnv !== 'vm-merge' && props.selectExEnv !== 'injected') {
+    if (props.selectExEnv === 'web3') {
       return props.modal('Passphrase to sign a message',
         <PassphrasePrompt
           message='Enter your passphrase for this account to sign the message'
