@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 
 import {
   PluginClient,
@@ -33,6 +33,18 @@ export const VerifyView: React.FC<Props> = ({
   const [networkName, setNetworkName] = useState("Loading...")
   const [showConstructorArgs, setShowConstructorArgs] = useState(false)
   const verificationResult = useRef({})
+
+  useEffect(() => {
+    if (client && client.on) {
+      client.on("blockchain" as any, 'networkStatus', (result) => {
+        setNetworkName(result.network.name)
+      })
+    }
+    return () => {
+      // To fix memory leak
+      if (client && client.off) client.off("blockchain" as any, 'networkStatus')
+    }
+  }, [client])
 
   const onVerifyContract = async (values: FormValues) => {
     const compilationResult = (await client.call(
@@ -83,11 +95,6 @@ export const VerifyView: React.FC<Props> = ({
         onSubmit={(values) => onVerifyContract(values)}
       >
         {({ errors, touched, handleSubmit, handleChange, isSubmitting }) => {
-          if (client && client.on) {
-            client.on("blockchain" as any, 'networkStatus', (result) => {
-              setNetworkName(result.network.name)
-            })
-          }
           return (<form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="network">Selected Network</label> 
