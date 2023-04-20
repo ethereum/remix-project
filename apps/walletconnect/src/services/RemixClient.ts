@@ -3,21 +3,27 @@ import { createClient } from '@remixproject/plugin-webview'
 import { w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { configureChains, createClient as wagmiCreateClient } from 'wagmi'
 import { arbitrum, mainnet, polygon, optimism, Chain, goerli, sepolia } from 'wagmi/chains'
+import EventManager from "events"
 import { PROJECT_ID } from './constant'
 
 export class RemixClient extends PluginClient {
     wagmiClient
     chains: Chain[]
+    internalEvents: EventManager
 
     constructor() {
         super()
         createClient(this)
+        this.internalEvents = new EventManager()
         this.methods = ["sendAsync", "init"]
         this.onload()
     }
 
     onActivation () {
         this.subscribeToEvents()
+        this.call('theme', 'currentTheme').then((theme: any) => {
+            this.internalEvents.emit('themeChanged', theme.quality.toLowerCase())
+        })
     }
 
     init () {
@@ -30,7 +36,7 @@ export class RemixClient extends PluginClient {
             const { provider } = configureChains(this.chains, [w3mProvider({ projectId: PROJECT_ID })])
             
             this.wagmiClient = wagmiCreateClient({
-              autoConnect: true,
+              autoConnect: false,
               connectors: w3mConnectors({ projectId: PROJECT_ID, version: 1, chains: this.chains }),
               provider
             })
@@ -48,6 +54,9 @@ export class RemixClient extends PluginClient {
                 this.emit('accountsChanged', [])
                 this.emit('chainChanged', 0)
             }
+        })
+        this.on('theme', 'themeChanged', (theme: any) => {
+            this.internalEvents.emit('themeChanged', theme.quality)
         })
     }
 
