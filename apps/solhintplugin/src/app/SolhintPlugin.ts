@@ -20,11 +20,14 @@ export class SolhintPlugin extends PluginClient {
 
   main = async () => {
     this.eventEmitter.emit('ready')
-    const file = "contract Test { function test() public { uint a = 1; uint b = 2; uint c = a + b; } }"
-    const reporter = processStr(file, {
+    // const file = "contract Test { function test() public { uint a = 1; uint b = 2; uint c = a + b; } }"
+    let reporter
+    this.on('solidity', 'compilationFinished', (fileName, source, languageVersion, data) => {
+      reporter = processStr(fileName, {
       rules: {
         ...rules
       }
+    })
     })
     console.log(reporter)
     reporter.reports.forEach((report) => {
