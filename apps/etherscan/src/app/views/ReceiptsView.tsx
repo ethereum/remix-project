@@ -67,7 +67,7 @@ export const ReceiptsView: React.FC = () => {
                     className="form-group"
                     style={{ marginBottom: "0.5rem" }}
                   >
-                    <h6>Get your Receipt GUID status</h6>
+                    <h6>Check receipt GUID status</h6>
                     <label htmlFor="receiptGuid">Receipt GUID</label>
                     <Field
                       className={
