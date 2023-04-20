@@ -33,7 +33,6 @@ export const CaptureKeyView: React.FC = () => {
         >
           {({ errors, touched, handleSubmit }) => (
             <form onSubmit={handleSubmit}>
-              <h6>Set Etherscan API Key</h6>
               <div className="form-group" style={{ marginBottom: "0.5rem" }}>
                 <label htmlFor="apikey">API Key</label>
                 <Field
