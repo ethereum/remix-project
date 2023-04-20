@@ -89,7 +89,7 @@ export const VerifyView: React.FC<Props> = ({
             })
           }
           return (<form onSubmit={handleSubmit}>
-            <h6>Verify your smart contracts</h6>
+            <h6>Verify smart contracts</h6>
             <div className="form-group">
               <label htmlFor="network">Selected Network</label> 
               <Field
@@ -172,7 +172,7 @@ export const VerifyView: React.FC<Props> = ({
               />
             </div>
 
-            <SubmitButton dataId="verify-contract" text="Verify Contract" isSubmitting={isSubmitting} />
+            <SubmitButton dataId="verify-contract" text="Verify" isSubmitting={isSubmitting} />
             <br/><br/>
             <button
               type="button"
