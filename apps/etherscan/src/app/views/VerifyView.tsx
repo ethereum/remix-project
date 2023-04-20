@@ -89,7 +89,6 @@ export const VerifyView: React.FC<Props> = ({
             })
           }
           return (<form onSubmit={handleSubmit}>
-            <h6>Verify Smart Contracts</h6>
             <div className="form-group">
               <label htmlFor="network">Selected Network</label> 
               <Field

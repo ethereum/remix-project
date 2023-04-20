@@ -145,7 +145,7 @@ export const HeaderWithSettings: React.FC<Props> = ({
     <AppContext.Consumer>
       {({ themeType }) => (
         <div>
-          <h6>{title}</h6>
+          <h6 className="d-inline">{title}</h6>
           <div style={{ float: "right" }}>
             <HomeIcon from={from} themeType={themeType} />
             <ReceiptsIcon from={from} themeType={themeType} />
