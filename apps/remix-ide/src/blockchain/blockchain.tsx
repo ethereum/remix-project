@@ -125,6 +125,7 @@ export class Blockchain extends Plugin {
     this.off('injected', 'chainChanged')
     this.off('injected-trustwallet', 'chainChanged')
     this.off('walletconnect', 'chainChanged')
+    this.off('walletconnect', 'accountsChanged')
   }
 
   setupEvents () {
