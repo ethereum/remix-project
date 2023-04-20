@@ -83,7 +83,7 @@ export const ReceiptsView: React.FC = () => {
                       component="div"
                     />
                   </div>
-                  <SubmitButton text="Check" />
+                  <SubmitButton text="Check" disable = {!touched.receiptGuid || (touched.receiptGuid && errors.receiptGuid) ? true : false} />
                 </form>
               )}
             </Formik>
