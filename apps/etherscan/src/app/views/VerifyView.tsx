@@ -177,7 +177,7 @@ export const VerifyView: React.FC<Props> = ({
             <button
               type="button"
               style={{ padding: "0.25rem 0.4rem", marginRight: "0.5em", marginBottom: "0.5em"}}
-              className="btn btn-primary"
+              className="btn btn-secondary"
               title="Generate the required TS scripts to verify a contract on Etherscan"
               onClick={async () => {
                 if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/receiptStatus.ts')) {
