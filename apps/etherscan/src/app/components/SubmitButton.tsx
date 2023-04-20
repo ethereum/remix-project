@@ -4,12 +4,14 @@ interface Props {
   text: string
   isSubmitting?: boolean
   dataId?: string
+  disable?: boolean
 }
 
 export const SubmitButton: React.FC<Props> = ({
   text,
   dataId,
   isSubmitting = false,
+  disable = true
 }) => {
   return (
     <button
@@ -17,7 +19,7 @@ export const SubmitButton: React.FC<Props> = ({
       style={{ padding: "0.25rem 0.4rem", marginRight: "0.5em" }}
       type="submit"
       className="btn btn-primary"
-      disabled={isSubmitting}
+      disabled={disable}
     >
       {!isSubmitting && text}
 
