@@ -171,7 +171,18 @@ export const VerifyView: React.FC<Props> = ({
               />
             </div>
 
-            <SubmitButton dataId="verify-contract" text="Verify" isSubmitting={isSubmitting} />
+            <SubmitButton dataId="verify-contract" text="Verify" 
+              isSubmitting={isSubmitting} 
+              disable={ !contracts.length || 
+                !touched.contractName ||
+                (showConstructorArgs && !touched.contractArguments) ||
+                !touched.contractAddress ||
+                (touched.contractName && errors.contractName) ||
+                (showConstructorArgs && touched.contractArguments && errors.contractArguments) ||
+                (touched.contractAddress && errors.contractAddress) 
+              ? true 
+              : false}
+            />
             <br/><br/>
             <button
               type="button"
