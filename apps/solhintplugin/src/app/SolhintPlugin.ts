@@ -44,93 +44,31 @@ export class SolhintPlugin extends PluginClient {
       await this.lintOnCompilation()
     })
   }
-
-
-severity = {
-  2: 'error',
-  3: 'warning'
-}
-
-rules = {
-  'solhint:recommended': () => {
-    const enabledRules = {}
-    this.coreRules().forEach(rule => {
-      if (!rule.meta.deprecated && rule.meta.recommended) {
-        enabledRules[rule.ruleId] = rule.meta.defaultSetup
-      }
-    })
-    return enabledRules
-  },
-  'solhint:all': () => {
-    const enabledRules = {}
-    this.coreRules().forEach(rule => {
-      if (!rule.meta.deprecated) {
-        enabledRules[rule.ruleId] = rule.meta.defaultSetup
-      }
-    })
-    return enabledRules
-  },
-  'solhint:default': () => {
-    const enabledRules = {}
-    this.coreRules().forEach(rule => {
-      if (!rule.meta.deprecated && rule.meta.isDefault) {
-        enabledRules[rule.ruleId] = rule.meta.defaultSetup
-      }
-    })
-    return enabledRules
-  }
-}
-
-coreRules() {
-  return [
-    ...bestPractises(),
-    ...deprecations(),
-    ...miscellaneous(),
-    ...naming(),
-    ...order(),
-    ...security()
-  ]
-}
-
   async createConfigFile () {
     await this.call('fileManager', 'writeFile', '.solhint.json', Config)
   }
 
   async lintOnCompilation() {
-    // if(!this.triggerLinter) return
+    if(!this.triggerLinter) return
     this.on('solidity', 'compilationFinished', async (fileName, source, languageVersion, data) => {
-      const content = await this.call('fileManager', 'readFile', fileName)
-      let configContent = Config
-      if (await this.call('fileManager' as any, 'exists', '.solhint.json')) {
-        configContent = await this.call('fileManager', 'readFile', '.solhint.json')
-      }
-      const configContentObj = JSON.parse(configContent)
-      // apply the extend property
-      const rulesObj = applyExtends(configContentObj, (path) => this.rules[path]())
-      // console.log({ rulesObj })
-      configContentObj.rules = { ...rulesObj, ...configContentObj.rules }
-      configContentObj.extends = []
-
-      const reporters = processStr(content, configContentObj)
-
-      const reports: Array<Report> = reporters.reports
-      // console.log({ reports })
-      
-      const hints = reports.map((report: Report) => {
-        return {
-          formattedMessage: `${report.message}\n${report.fix ? report.fix : ''}`,
-          type: this.severity[report.severity] || 'error',
-          column: report.column,
-          line: report.line - 1
-        }
-      })
-      this.emit('solhint' as any, 'lintOnCompilationFinished', hints)
+      const hints = await this.lint(fileName)
+      this.eventEmitter.emit('lintOnCompilationFinished', hints)
     })
+    this.triggerLinter = false
   }
 
-  async lintWithoutCompilationCustomAction(action: customAction) {
+  async lintContractCustomAction(action: customAction) {
     this.triggerLinter = true
-    const content = await this.call('fileManager', 'readFile', action.path[0])
+    await this.call('solidity', 'compile', action.path[0])
+  }
+
+  async lintWithoutCompilationCustomAction(file: string) {
+    const hints = await this.lint(file)
+    this.eventEmitter.emit('lintingFinished', hints)
+  }
+
+  private async lint(fileName: string) {
+    const content = await this.call('fileManager', 'readFile', fileName)
     let configContent = Config
     if (await this.call('fileManager' as any, 'exists', '.solhint.json')) {
       configContent = await this.call('fileManager', 'readFile', '.solhint.json')
@@ -142,8 +80,8 @@ coreRules() {
     configContentObj.extends = []
 
     const reporters = processStr(content, configContentObj)
+
     const reports: Array<Report> = reporters.reports
-    // console.log({ reports })
     const hints = reports.map((report: Report) => {
       return {
         formattedMessage: `${report.message}\n${report.fix ? report.fix : ''}`,
@@ -152,7 +90,54 @@ coreRules() {
         line: report.line - 1
       }
     })
-    this.emit('solhint' as any, 'lintingFinished', hints)
+    return hints
   }
+
+  severity = {
+    2: 'error',
+    3: 'warning'
+  }
+  
+  rules = {
+    'solhint:recommended': () => {
+      const enabledRules = {}
+      this.coreRules().forEach(rule => {
+        if (!rule.meta.deprecated && rule.meta.recommended) {
+          enabledRules[rule.ruleId] = rule.meta.defaultSetup
+        }
+      })
+      return enabledRules
+    },
+    'solhint:all': () => {
+      const enabledRules = {}
+      this.coreRules().forEach(rule => {
+        if (!rule.meta.deprecated) {
+          enabledRules[rule.ruleId] = rule.meta.defaultSetup
+        }
+      })
+      return enabledRules
+    },
+    'solhint:default': () => {
+      const enabledRules = {}
+      this.coreRules().forEach(rule => {
+        if (!rule.meta.deprecated && rule.meta.isDefault) {
+          enabledRules[rule.ruleId] = rule.meta.defaultSetup
+        }
+      })
+      return enabledRules
+    }
+  }
+  
+  coreRules() {
+    return [
+      ...bestPractises(),
+      ...deprecations(),
+      ...miscellaneous(),
+      ...naming(),
+      ...order(),
+      ...security()
+    ]
+  }
+  
 }
 
