@@ -5,14 +5,15 @@
   "version": "0.1.0",
   "events": [],
   "methods": [
-    "lint"
+    "lintWithoutCompilationCustomAction",
+    "lintOnCompilation"
   ],
   "kind": "none",
   "icon": "https://raw.githubusercontent.com/protofire/solhint/master/solhint-icon.png",  
   "location": "sidePanel",
   "url": "",
   "documentation": "https://remix-plugins.readthedocs.io/en/latest/",
-  "repo": "https://github.com/Machinalabs/remix-ethdoc-plugin/",
+  "repo": "https://github.com/ethereum/remix-project",
   "maintainedBy": "Remix",
   "authorContact": "remix@ethereum.org"
 }
