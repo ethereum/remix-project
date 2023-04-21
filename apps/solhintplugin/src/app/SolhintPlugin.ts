@@ -37,7 +37,7 @@ export class SolhintPlugin extends PluginClient {
   constructor() {
     super()
     this.eventEmitter = new EventEmitter()
-    this.methods = ['lintWithoutCompilationCustomAction', 'lintOnCompilation']
+    this.methods = ['lintContract', 'lintOnCompilation', 'lintContractCustomAction']
     createClient(this)
     this.mdFile = ''
     this.onload().then(async () => {
@@ -60,9 +60,10 @@ export class SolhintPlugin extends PluginClient {
   async lintContractCustomAction(action: customAction) {
     this.triggerLinter = true
     await this.call('solidity', 'compile', action.path[0])
+    await this.lintContract(action.path[0])
   }
 
-  async lintWithoutCompilationCustomAction(file: string) {
+  async lintContract(file: string) {
     const hints = await this.lint(file)
     this.eventEmitter.emit('lintingFinished', hints)
   }
