@@ -52,6 +52,7 @@ export class SolhintPlugin extends PluginClient {
     if(!this.triggerLinter) return
     this.on('solidity', 'compilationFinished', async (fileName, source, languageVersion, data) => {
       const hints = await this.lint(fileName)
+      console.log('after compile', { hints })
       this.eventEmitter.emit('lintOnCompilationFinished', hints)
     })
     this.triggerLinter = false
@@ -65,6 +66,7 @@ export class SolhintPlugin extends PluginClient {
 
   async lintContract(file: string) {
     const hints = await this.lint(file)
+    console.log({ hints })
     this.eventEmitter.emit('lintingFinished', hints)
   }
 
