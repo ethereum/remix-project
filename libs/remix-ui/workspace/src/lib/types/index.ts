@@ -113,15 +113,13 @@ export interface FileExplorerProps {
     dispatchHandleExpandPath: (paths: string[]) => Promise<void>,
     dispatchMoveFile: (src: string, dest: string) => Promise<void>,
     dispatchMoveFolder: (src: string, dest: string) => Promise<void>,
-    contextType?: 'file' | 'folder',
-    closeContextMenu?: () => void,
-    dispatchCanCopy?: (path: string, type: 'folder' | 'gist' | 'file') => void
     handlePasteClick: (dest: string, destType: string) => void
     handleCopyClick: (path: string, type: 'folder' | 'gist' | 'file' | 'workspace') => void
     addMenuItems: (items: MenuItems) => void
     removeMenuItems: (items: MenuItems) => void
     handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
     uploadFile: (target) => void
+    uploadFolder: (target) => void
     getFocusedFolder: () => string
     editModeOn: (path: string, type: string, isNew: boolean) => void
     toGist: (path?: string, type?: string) => void
