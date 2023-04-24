@@ -113,8 +113,8 @@ const ReceiptsTable: React.FC<{ receipts: Receipt[] }> = ({ receipts }) => {
       <table className="table table-sm">
         <thead>
           <tr>
-            <th scope="col">Guid</th>
             <th scope="col">Status</th>
+            <th scope="col">GUID</th>
           </tr>
         </thead>
         <tbody>
@@ -123,8 +123,11 @@ const ReceiptsTable: React.FC<{ receipts: Receipt[] }> = ({ receipts }) => {
             receipts.map((item: Receipt, index) => {
               return (
                 <tr key={item.guid}>
+                  <td className={item.status === 'Pass - Verified' 
+                  ? 'text-success' : (item.status === 'Pending in queue' 
+                  ? 'text-warning' : (item.status === 'Already Verified'
+                  ? 'text-info': 'text-secondary'))}>{item.status}</td>
                   <td>{item.guid}</td>
-                  <td>{item.status}</td>
                 </tr>
               )
             })}
