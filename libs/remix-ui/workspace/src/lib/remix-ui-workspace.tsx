@@ -7,7 +7,6 @@ import { FileSystemContext } from './contexts'
 import './css/remix-ui-workspace.css'
 import { ROOT_PATH, TEMPLATE_NAMES } from './utils/constants'
 import { HamburgerMenu } from './components/workspace-hamburger'
-import { CopyElementType, FileFocusContextType } from './types'
 
 import { MenuItems, WorkSpaceState } from './types'
 import { contextMenuActions } from './utils'
@@ -42,10 +41,6 @@ export function Workspace () {
   const initGitRepoRef = useRef<HTMLInputElement>()
   const filteredBranches = selectedWorkspace ? (selectedWorkspace.branches || []).filter(branch => branch.name.includes(branchFilter) && branch.name !== 'HEAD').slice(0, 20) : []
   const currentBranch = selectedWorkspace ? selectedWorkspace.currentBranch : null
-  const [focusContext, setFocusContext] = useState<FileFocusContextType>() 
-  const [copyElement, setCopyElement] = useState<CopyElementType>()
-  const [contextType, setContextType] = useState<"file" | "folder">(null);
-  const [showContextMenu, setShowContextMenu] = useState(false)
 
   const [canPaste, setCanPaste] = useState(false)
 
@@ -365,6 +360,14 @@ export function Workspace () {
   }
 
 
+  const downloadPath = async (path: string) => {
+    try {
+      global.dispatchDownloadPath(path)
+    } catch (error) {
+      global.modal('Download Failed', 'Unexpected error while downloading: ' + typeof error === 'string' ? error : error.message, 'Close', async () => {})
+    }
+  }
+
   const copyFile = (src: string, dest: string) => {
     try {
       global.dispatchCopyFile(src, dest)
@@ -403,6 +406,14 @@ export function Workspace () {
 
     global.dispatchHandleExpandPath(expandPath)
     global.dispatchUploadFile(target, parentFolder)
+  }
+
+  const uploadFolder = (target) => {
+    const parentFolder = getFocusedFolder()
+    const expandPath = [...new Set([...global.fs.browser.expandPath, parentFolder])]
+
+    global.dispatchHandleExpandPath(expandPath)
+    global.dispatchUploadFolder(target, parentFolder)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -656,231 +667,6 @@ export function Workspace () {
     )
   }
 
-
-  const handleCanCopy = (path: string, type: 'folder' | 'gist' | 'file') => {
-    setCopyElement({ key: path, type })
-  }
-
-
-  const handleCloseContextMenu = () => {
-    setShowContextMenu(false)
-  };
-
-  const workspaceMenuIcons = [
-    <CustomTooltip
-      placement="right"
-      tooltipId="createWorkspaceTooltip"
-      tooltipClasses="text-nowrap"
-      tooltipText={<FormattedMessage id='filePanel.workspace.create' />}
-    >
-      <div
-        data-id='workspaceCreate'
-        onClick={() => {
-          createWorkspace()
-          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
-          hideIconsMenu(!showIconsMenu)
-        }}
-        key={`workspacesCreate-fe-ws`}
-      >
-        <span
-          hidden={currentWorkspace === LOCALHOST}
-          id='workspaceCreate'
-          data-id='workspaceCreate'
-          onClick={() => {
-            createWorkspace()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          className='far fa-plus pl-2'
-        >
-        </span>
-        <span className="pl-3"><FormattedMessage id='filePanel.create' /></span>
-      </div>
-    </CustomTooltip>,
-    <CustomTooltip
-      placement="right-start"
-      tooltipId="createWorkspaceTooltip"
-      tooltipClasses="text-nowrap"
-      tooltipText={<FormattedMessage id='filePanel.workspace.delete' />}
-    >
-      <div
-        data-id='workspaceDelete'
-        onClick={() => {
-          deleteCurrentWorkspace()
-          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDelete'])
-          hideIconsMenu(!showIconsMenu)
-        }}
-        key={`workspacesDelete-fe-ws`}
-      >
-        <span
-          hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-          id='workspaceDelete'
-          data-id='workspaceDelete'
-          onClick={() => {
-            deleteCurrentWorkspace()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceDelete'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          className='far fa-trash pl-2'
-        >
-        </span>
-        <span className="pl-3"><FormattedMessage id='filePanel.delete' /></span>
-      </div>
-    </CustomTooltip>,
-    <CustomTooltip
-      placement='right-start'
-      tooltipClasses="text-nowrap"
-      tooltipId="workspaceRenametooltip"
-      tooltipText={<FormattedMessage id='filePanel.workspace.rename' />}
-    >
-      <div onClick={() => {
-            renameCurrentWorkspace()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceRename'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          data-id='workspaceRename'
-          key={`workspacesRename-fe-ws`}
-        >
-        <span
-          hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-          id='workspaceRename'
-          data-id='workspaceRename'
-          onClick={() => {
-            renameCurrentWorkspace()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceRename'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          className='far fa-edit pl-2'>
-        </span>
-        <span className="pl-3"><FormattedMessage id='filePanel.rename' /></span>
-      </div>
-    </CustomTooltip>,
-    <Dropdown.Divider className="border mb-0 mt-0" />,
-    <CustomTooltip
-      placement="right-start"
-      tooltipId="cloneWorkspaceTooltip"
-      tooltipClasses="text-nowrap"
-      tooltipText={<FormattedMessage id='filePanel.workspace.clone' />}
-    >
-      <div
-        data-id='cloneGitRepository'
-        onClick={() => {
-          cloneGitRepository()
-          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'cloneGitRepository'])
-          hideIconsMenu(!showIconsMenu)
-        }}
-        key={`cloneGitRepository-fe-ws`}
-      >
-        <span
-          hidden={currentWorkspace === LOCALHOST}
-          id='cloneGitRepository'
-          data-id='cloneGitRepository'
-          onClick={() => {
-            cloneGitRepository()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'cloneGitRepository'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          className='fab fa-github pl-2'
-        >
-        </span>
-        <span className="pl-3"><FormattedMessage id='filePanel.clone' /></span>
-      </div>
-    </CustomTooltip>,
-    <Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/>,
-    <CustomTooltip
-      placement="right-start"
-      tooltipId="createWorkspaceTooltip"
-      tooltipClasses="text-nowrap"
-      tooltipText={<FormattedMessage id='filePanel.workspace.download' />}
-    >
-      <div
-        data-id='workspacesDownload'
-        onClick={() => {
-          downloadWorkspaces()
-          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesDownload'])
-          hideIconsMenu(!showIconsMenu)
-        }}
-        key={`workspacesDownload-fe-ws`}
-      >
-        <span
-          hidden={currentWorkspace === LOCALHOST || currentWorkspace === NO_WORKSPACE}
-          id='workspacesDownload'
-          data-id='workspacesDownload'
-          onClick={() => {
-            downloadWorkspaces()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesDownload'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          className='far fa-download pl-2 '
-        >
-        </span>
-        <span className="pl-3"><FormattedMessage id='filePanel.download' /></span>
-      </div>
-    </CustomTooltip>,
-    <CustomTooltip
-      placement="right-start"
-      tooltipId="createWorkspaceTooltip"
-      tooltipClasses="text-nowrap"
-      tooltipText={<FormattedMessage id='filePanel.workspace.restore' />}
-    >
-      <div
-        data-id='workspacesRestore'
-        onClick={() => {
-          restoreBackup()
-          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesRestore'])
-          hideIconsMenu(!showIconsMenu)
-        }}
-        key={`workspacesRestore-fe-ws`}
-      >
-        <span
-          hidden={currentWorkspace === LOCALHOST}
-          id='workspacesRestore'
-          data-id='workspacesRestore'
-          onClick={() => {
-            restoreBackup()
-            _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspacesRestore'])
-            hideIconsMenu(!showIconsMenu)
-          }}
-          className='far fa-upload pl-2'
-        >
-        </span>
-        <span className="pl-3"><FormattedMessage id='filePanel.restore' /></span>
-      </div>
-    </CustomTooltip>,
-    <Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{ pointerEvents: 'none' }}/>,
-    <CustomTooltip
-      placement="right-start"
-      tooltipId="createSolGHActionTooltip"
-      tooltipClasses="text-nowrap"
-      tooltipText={<FormattedMessage id='filePanel.workspace.solghaction' />}
-    >
-    <div
-      data-id='soliditygithubaction'
-      onClick={(e) => {
-        e.stopPropagation()
-        addGithubAction()
-        _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSolidityTesting'])
-        hideIconsMenu(!showIconsMenu)
-      }}
-    >
-      <span
-        hidden={currentWorkspace === LOCALHOST}
-        id='soliditygithubaction'
-        data-id='soliditygithubaction'
-        onClick={(e) => {
-          e.stopPropagation()
-          addGithubAction()
-          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'addSolidityTesting'])
-          hideIconsMenu(!showIconsMenu)
-        }}
-        className='fab fa-github pl-2'
-      >
-      </span>
-      <span className="pl-3">{<FormattedMessage id='filePanel.solghaction' />}</span>
-    </div>
-  </CustomTooltip>
-  ]
-
   return (
     <div className='d-flex flex-column justify-content-between h-100'>
       <div className='remixui_container overflow-auto' style={{ maxHeight: selectedWorkspace && selectedWorkspace.isGitRepo ? '95%' : '100%' }} onContextMenu={(e)=>{
@@ -1038,15 +824,13 @@ export function Workspace () {
                   dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                   dispatchMoveFile={global.dispatchMoveFile}
                   dispatchMoveFolder={global.dispatchMoveFolder}
-                  contextType={contextType}
-                  closeContextMenu={handleCloseContextMenu}
-                  dispatchCanCopy={handleCanCopy}
                   handleCopyClick={handleCopyClick}
                   handlePasteClick={handlePasteClick}
                   addMenuItems={addMenuItems}
                   removeMenuItems={removeMenuItems}
                   handleContextMenu={handleContextMenu}
                   uploadFile={uploadFile}
+                  uploadFolder={uploadFolder}
                   getFocusedFolder={getFocusedFolder}
                   toGist={toGist}
                   editModeOn={editModeOn}
@@ -1094,15 +878,13 @@ export function Workspace () {
                   dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                   dispatchMoveFile={global.dispatchMoveFile}
                   dispatchMoveFolder={global.dispatchMoveFolder}
-                  contextType={contextType}
-                  closeContextMenu={handleCloseContextMenu}
-                  dispatchCanCopy={handleCanCopy}
                   handleCopyClick={handleCopyClick}
                   handlePasteClick={handlePasteClick}
                   addMenuItems={addMenuItems}
                   removeMenuItems={removeMenuItems}
                   handleContextMenu={handleContextMenu}
                   uploadFile={uploadFile}
+                  uploadFolder={uploadFolder}
                   getFocusedFolder={getFocusedFolder}
                   toGist={toGist}
                   editModeOn={editModeOn}
@@ -1196,7 +978,7 @@ export function Workspace () {
           publishFolderToGist={publishFolderToGist}
           publishFileToGist={publishFileToGist}
           uploadFile={uploadFile}
-          downloadPath={global.dispatchDownloadPath}
+          downloadPath={downloadPath}
 
         />
         }
