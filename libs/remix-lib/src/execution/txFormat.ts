@@ -35,52 +35,59 @@ export function encodeData (funABI, values, contractbyteCode) {
 * @param {Object} funAbi    - abi definition of the function to call. null if building data for the ctor.
 * @param {Function} callback    - callback
 */
-export function encodeParams (params, funAbi, callback) {
-  let data: Buffer | string = ''
-  let dataHex = ''
-  let funArgs = []
-  if (Array.isArray(params)) {
-    funArgs = params
-    if (funArgs.length > 0) {
-      try {
-        data = encodeParamsHelper(funAbi, funArgs)
-        dataHex = data.toString()
-      } catch (e) {
-        return callback('Error encoding arguments: ' + e)
-      }
-    }
-    if (data.slice(0, 9) === 'undefined') {
-      dataHex = data.slice(9)
-    }
-    if (data.slice(0, 2) === '0x') {
-      dataHex = data.slice(2)
-    }
-  } else if (params.indexOf('raw:0x') === 0) {
-    // in that case we consider that the input is already encoded and *does not* contain the method signature
-    dataHex = params.replace('raw:0x', '')
-    data = Buffer.from(dataHex, 'hex')
-  } else {
-    try {
-      funArgs = parseFunctionParams(params)
-    } catch (e) {
-      return callback('Error encoding arguments: ' + e)
-    }
-    try {
+export function encodeParams (params, funAbi, callback?) {
+  return new Promise((resolve, reject) => {
+    let data: Buffer | string = ''
+    let dataHex = ''
+    let funArgs = []
+    if (Array.isArray(params)) {
+      funArgs = params
       if (funArgs.length > 0) {
-        data = encodeParamsHelper(funAbi, funArgs)
-        dataHex = data.toString()
+        try {
+          data = encodeParamsHelper(funAbi, funArgs)
+          dataHex = data.toString()
+        } catch (e) {
+          reject('Error encoding arguments: ' + e)
+          return callback && callback('Error encoding arguments: ' + e)
+        }
       }
-    } catch (e) {
-      return callback('Error encoding arguments: ' + e)
+      if (data.slice(0, 9) === 'undefined') {
+        dataHex = data.slice(9)
+      }
+      if (data.slice(0, 2) === '0x') {
+        dataHex = data.slice(2)
+      }
+    } else if (params.indexOf('raw:0x') === 0) {
+      // in that case we consider that the input is already encoded and *does not* contain the method signature
+      dataHex = params.replace('raw:0x', '')
+      data = Buffer.from(dataHex, 'hex')
+    } else {
+      try {
+        funArgs = parseFunctionParams(params)
+      } catch (e) {
+        reject('Error encoding arguments: ' + e)
+        return callback && callback('Error encoding arguments: ' + e)
+      }
+      try {
+        if (funArgs.length > 0) {
+          data = encodeParamsHelper(funAbi, funArgs)
+          dataHex = data.toString()
+        }
+      } catch (e) {
+        reject('Error encoding arguments: ' + e)
+        return callback && callback('Error encoding arguments: ' + e)
+      }
+      if (data.slice(0, 9) === 'undefined') {
+        dataHex = data.slice(9)
+      }
+      if (data.slice(0, 2) === '0x') {
+        dataHex = data.slice(2)
+      }
     }
-    if (data.slice(0, 9) === 'undefined') {
-      dataHex = data.slice(9)
-    }
-    if (data.slice(0, 2) === '0x') {
-      dataHex = data.slice(2)
-    }
-  }
-  callback(null, { data: data, dataHex: dataHex, funArgs: funArgs })
+    const result = { data: data, dataHex: dataHex, funArgs: funArgs }
+    callback && callback(null, result)
+    resolve(result)
+  })  
 }
 
 /**
