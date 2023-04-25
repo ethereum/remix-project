@@ -8,6 +8,11 @@ export interface FuncABI {
     constant?: any
 }
 
+export type OverSizeLimit = {
+    overSizeEip3860: boolean,
+    overSizeEip170: boolean
+}
+
 export interface ContractData {
     name: string,
     contract: any,
@@ -19,7 +24,7 @@ export interface ContractData {
     deployedBytecode: any,
     getConstructorInterface: () => any,
     getConstructorInputs: () => any,
-    isOverSizeLimit: () => boolean,
+    isOverSizeLimit: (args: string) => Promise<OverSizeLimit>,
     metadata: any,
     contractName?: string
 }

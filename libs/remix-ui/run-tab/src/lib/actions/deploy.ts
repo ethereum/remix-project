@@ -1,4 +1,4 @@
-import { ContractData, FuncABI, NetworkDeploymentFile, SolcBuildFile } from "@remix-project/core-plugin"
+import { ContractData, FuncABI, NetworkDeploymentFile, SolcBuildFile, OverSizeLimit } from "@remix-project/core-plugin"
 import { RunTab } from "../types/run-tab"
 import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
@@ -64,10 +64,19 @@ export const getSelectedContract = (contractName: string, compiler: CompilerAbst
 
       return txHelper.inputParametersDeclarationToString(constructorInteface.inputs)
     },
-    isOverSizeLimit: () => {
-      const deployedBytecode = contract.object.evm.deployedBytecode
+    isOverSizeLimit: async (args: string) => {
+      const encodedParams = await txFormat.encodeParams(args, txHelper.getConstructorInterface(contract.object.abi))
+      const bytecode = contract.object.evm.bytecode.object + (encodedParams as any).dataHex
+      // https://eips.ethereum.org/EIPS/eip-3860
+      const initCodeOversize = (bytecode && bytecode.length / 2 > 2 * 24576)
 
-      return (deployedBytecode && deployedBytecode.object.length / 2 > 24576)
+      const deployedBytecode = contract.object.evm.deployedBytecode
+      // https://eips.ethereum.org/EIPS/eip-170
+      const deployedBytecodeOversize = (deployedBytecode && deployedBytecode.object.length / 2 > 24576)
+      return {
+        overSizeEip3860: initCodeOversize,
+        overSizeEip170: deployedBytecodeOversize
+      }
     },
     metadata: contract.object.metadata
   }
@@ -135,7 +144,7 @@ export const createInstance = async (
   publishToStorage: (storage: 'ipfs' | 'swarm',
   contract: ContractData) => void,
   mainnetPrompt: MainnetPrompt,
-  isOverSizePrompt: () => JSX.Element,
+  isOverSizePrompt: (values: OverSizeLimit) => JSX.Element,
   args,
   deployMode: DeployMode[]) => {
   const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
@@ -181,9 +190,11 @@ export const createInstance = async (
   const compilerContracts = getCompilerContracts(plugin)
   const confirmationCb = getConfirmationCb(plugin, dispatch, mainnetPrompt)
 
-  if (selectedContract.isOverSizeLimit()) {
-    return dispatch(displayNotification('Contract code size over limit', isOverSizePrompt(), 'Force Send', 'Cancel', () => {
-      deployContract(plugin, selectedContract, !isProxyDeployment && !isContractUpgrade ? args : '', contractMetadata, compilerContracts, {
+  args = !isProxyDeployment && !isContractUpgrade ? args : ''
+  const overSize = await selectedContract.isOverSizeLimit(args)
+  if (overSize.overSizeEip170 || overSize.overSizeEip3860) {
+    return dispatch(displayNotification('Contract code size over limit', isOverSizePrompt(overSize), 'Force Send', 'Cancel', () => {
+      deployContract(plugin, selectedContract, args, contractMetadata, compilerContracts, {
         continueCb: (error, continueTxExecution, cancelCb) => {
           continueHandler(dispatch, gasEstimationPrompt, error, continueTxExecution, cancelCb)
         },
@@ -199,7 +210,7 @@ export const createInstance = async (
       return terminalLogger(plugin, log)
     }))
   }
-  deployContract(plugin, selectedContract, !isProxyDeployment && !isContractUpgrade ? args : '', contractMetadata, compilerContracts, {
+  deployContract(plugin, selectedContract, args, contractMetadata, compilerContracts, {
     continueCb: (error, continueTxExecution, cancelCb) => {
       continueHandler(dispatch, gasEstimationPrompt, error, continueTxExecution, cancelCb)
     },
