@@ -478,17 +478,19 @@ export const normalizeParam = (param) => {
   if (/[0-9]/g.test(param)) param = `${param}`
 
   // fromExponential
-  const regSci = REGEX_SCIENTIFIC.exec(param)
-  const exponents = regSci ? regSci[2] : null
-  if (regSci && REGEX_DECIMAL.exec(exponents)) {
-    try {
-      let paramTrimmed = param.replace(/^'/g, '').replace(/'$/g, '')
-      paramTrimmed = paramTrimmed.replace(/^"/g, '').replace(/"$/g, '')
-      param = fromExponential(paramTrimmed)     
-    } catch (e) {
-      console.log(e)
+  if (!param.startsWith('0x')) {
+    const regSci = REGEX_SCIENTIFIC.exec(param)
+    const exponents = regSci ? regSci[2] : null
+    if (regSci && REGEX_DECIMAL.exec(exponents)) {
+      try {
+        let paramTrimmed = param.replace(/^'/g, '').replace(/'$/g, '')
+        paramTrimmed = paramTrimmed.replace(/^"/g, '').replace(/"$/g, '')
+        param = fromExponential(paramTrimmed)     
+      } catch (e) {
+        console.log(e)
+      }
     }
-  }
+  }  
 
   if (typeof param === 'string') {          
     if (param === 'true') param = true
@@ -497,7 +499,7 @@ export const normalizeParam = (param) => {
   return param
 }
 
-export const REGEX_SCIENTIFIC = /(\d+\.?\d*)e\d*(\d+)/;
+export const REGEX_SCIENTIFIC = /^(\d+\.?\d*)e\d*(\d+)$/
 
 export const REGEX_DECIMAL = /^\d*/
 
