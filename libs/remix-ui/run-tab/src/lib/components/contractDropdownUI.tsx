@@ -256,7 +256,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         }
         { 
         values.overSizeEip3860 && <div>
-          <FormattedMessage id='udapp.isOverSizePromptEip3860' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-3860" target="_blank" rel="noreferrer">eip-170</a> }} />
+          <FormattedMessage id='udapp.isOverSizePromptEip3860' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-3860" target="_blank" rel="noreferrer">eip-3860</a> }} />
         </div>
         }
       </div>
