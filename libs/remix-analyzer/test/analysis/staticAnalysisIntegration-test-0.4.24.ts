@@ -51,7 +51,7 @@ test('setup', function (t: test.Test) {
       try {
         compilationResults[fileName] = JSON.parse(compiler.compile(compilerInput(content)))
       } catch (e) {
-        console.log(e)
+        console.log(e, fileName)
       }
     })
 
