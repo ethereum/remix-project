@@ -58,6 +58,7 @@
     "express-ws": "^4.0.0",
     "merge": "^1.2.0",
     "signale": "^1.4.0",
+    "solc": "^0.8.19",
     "string-similarity": "^4.0.4",
     "time-stamp": "^2.2.0",
     "tslib": "^2.3.0",
