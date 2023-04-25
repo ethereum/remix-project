@@ -27,7 +27,7 @@ export const CaptureKeyView: React.FC = () => {
             if (apiKey.length === 34) {
               setAPIKey(values.apiKey)
               clientInstance.call('notification' as any, 'toast', 'API key saved successfully!!!')
-              navigate((location.state as any).from)
+              navigate((location && location.state ? location.state : '/'))
             } else clientInstance.call('notification' as any, 'toast', 'API key should be 34 characters long')
           }}
         >
