@@ -150,6 +150,8 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     if (calldata && Array.isArray(calldata) && calldata.length === 0) isEmpty = true
     else if (calldata && Object.keys(calldata).length === 0 && calldata.constructor === Object) isEmpty = true
 
+    console.log('CALLDATA', calldata)
+
     setState(prevState => {
       return {
         ...prevState,
@@ -157,7 +159,8 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
           ...prevState.dropdownContent,
           display: 'block'
         },
-        copiableContent: JSON.stringify(calldata, null, '\t'),
+        // replace 0xNaN with 0x0
+        copiableContent: JSON.stringify(calldata, null, '\t').replace(/0xNaN/g, '0x0'),
         message: {
           innerText: isEmpty ? 'No data available' : '',
           display: isEmpty ? 'block' : 'none'
