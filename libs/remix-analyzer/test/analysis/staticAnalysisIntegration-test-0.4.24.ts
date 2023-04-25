@@ -42,6 +42,7 @@ const compilationResults: Record<string, CompilationResult> = {}
 
 test('setup', function (t: test.Test) {
   solcOrg.loadRemoteVersion('v0.4.24+commit.e67f0147', (error, compiler) => {
+    console.log('ERROR: ', error)
     if (error) throw error
 
     testFiles.forEach((fileName) => {
