@@ -118,6 +118,7 @@ module.exports = {
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(100)
       .waitForElementPresent('*[data-id="treeViewUltreeViewMenu"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItem.prettierrc.json"]')
       .execute(function () {
         const fileList = document.querySelector('*[data-id="treeViewUltreeViewMenu"]')
         return fileList.getElementsByTagName('li').length;
