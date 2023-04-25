@@ -68,11 +68,11 @@ export const getSelectedContract = (contractName: string, compiler: CompilerAbst
       const encodedParams = await txFormat.encodeParams(args, txHelper.getConstructorInterface(contract.object.abi))
       const bytecode = contract.object.evm.bytecode.object + (encodedParams as any).dataHex
       // https://eips.ethereum.org/EIPS/eip-3860
-      const initCodeOversize = (bytecode && bytecode.length / 2 > 2 * 24576)
+      const initCodeOversize = bytecode && (bytecode.length / 2 > 2 * 24576)
 
       const deployedBytecode = contract.object.evm.deployedBytecode
       // https://eips.ethereum.org/EIPS/eip-170
-      const deployedBytecodeOversize = (deployedBytecode && deployedBytecode.object.length / 2 > 24576)
+      const deployedBytecodeOversize = deployedBytecode && (deployedBytecode.object.length / 2 > 24576)
       return {
         overSizeEip3860: initCodeOversize,
         overSizeEip170: deployedBytecodeOversize
