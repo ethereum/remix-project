@@ -19,7 +19,7 @@
   "dependencies": {
     "@ethereumjs/util": "^8.0.5",
     "async": "^2.1.2",
-    "ethers": "^4.0.40",
+    "ethers": "^5.7.2",
     "ethjs-util": "^0.1.6",
     "events": "^3.0.0",
     "solc": "^0.8.19",
