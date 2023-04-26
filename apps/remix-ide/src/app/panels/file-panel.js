@@ -30,7 +30,7 @@ const { SlitherHandle } = require('../files/slither-handle.js')
 const profile = {
   name: 'filePanel',
   displayName: 'File explorer',
-  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getAvailableWorkspaceName', 'getWorkspaces', 'createWorkspace', 'setWorkspace', 'registerContextMenuItem', 'renameWorkspace', 'deleteWorkspace'],
+  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getAvailableWorkspaceName', 'getWorkspaces', 'createWorkspace', 'switchToWorkspace', 'setWorkspace', 'registerContextMenuItem', 'renameWorkspace', 'deleteWorkspace'],
   events: ['setWorkspace', 'workspaceRenamed', 'workspaceDeleted', 'workspaceCreated'],
   icon: 'assets/img/fileManager.webp',
   description: 'Remix IDE file explorer',
@@ -184,10 +184,14 @@ module.exports = class Filepanel extends ViewPlugin {
     if (workspace.name !== " - connect to localhost - ") {
       localStorage.setItem('currentWorkspace', workspace.name)
     }
-    this.emit('setWorkspace', workspace)
     if (this.currentWorkspaceMetadata.name !== current) {
       this.saveRecent(workspace)
     }
+    this.emit('setWorkspace', workspace)
+  }
+
+  switchToWorkspace(workspaceName) {
+    this.emit('switchToWorkspace', workspaceName)
   }
 
   workspaceRenamed (oldName, workspaceName) {

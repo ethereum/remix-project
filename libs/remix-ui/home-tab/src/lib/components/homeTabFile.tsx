@@ -165,7 +165,7 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
 
   const handleSwichToRecentWorkspace = async (e, workspaceName) => {
     e.preventDefault();
-    await plugin.call('filePanel', 'setWorkspace', { name: workspaceName, isLocalhost: false })
+    await plugin.call('filePanel', 'switchToWorkspace', { name: workspaceName, isLocalhost: false })
     console.log('The link was clicked.');
   }
 
