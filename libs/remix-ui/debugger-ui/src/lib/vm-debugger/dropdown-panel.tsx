@@ -150,8 +150,6 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     if (calldata && Array.isArray(calldata) && calldata.length === 0) isEmpty = true
     else if (calldata && Object.keys(calldata).length === 0 && calldata.constructor === Object) isEmpty = true
 
-    console.log('CALLDATA', calldata)
-
     setState(prevState => {
       return {
         ...prevState,

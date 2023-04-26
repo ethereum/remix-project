@@ -42,17 +42,12 @@ const compilationResults: Record<string, CompilationResult> = {}
 
 test('setup', function (t: test.Test) {
   solcOrg.loadRemoteVersion('v0.4.24+commit.e67f0147', (error, compiler) => {
-    console.log('ERROR: ', error)
     if (error) throw error
 
     testFiles.forEach((fileName) => {
       const content: string = readFileSync(join(__dirname, 'test-contracts/' + folder, fileName), 'utf8')
       // Latest AST is available under 'compileStandardWrapper' under solc for, 0.4.12 <= version < 0.5.0 
-      try {
-        compilationResults[fileName] = JSON.parse(compiler.compile(compilerInput(content)))
-      } catch (e) {
-        console.log(e, fileName)
-      }
+      compilationResults[fileName] = JSON.parse(compiler.compile(compilerInput(content)))
     })
 
     t.end()
@@ -816,7 +811,7 @@ test('Integration test forLoopIteratesOverDynamicArray module', function (t: tes
 })
 
 // #################### Helpers
-function runModuleOnFiles(Module: any, t: test.Test, cb: ((fname: string, report: AnalysisReportObj[]) => void)): void {
+function runModuleOnFiles (Module: any, t: test.Test, cb: ((fname: string, report: AnalysisReportObj[]) => void)): void {
   const statRunner: StatRunner = new StatRunner()
   testFiles.forEach((fileName: string) => {
     const reports = statRunner.runWithModuleList(compilationResults[fileName], [{ name: new Module().name, mod: new Module() }])
@@ -825,5 +820,5 @@ function runModuleOnFiles(Module: any, t: test.Test, cb: ((fname: string, report
       t.comment('Error while executing Module: ' + JSON.stringify(report))
     }
     cb(fileName, report)
-  })
+  })      
 }
