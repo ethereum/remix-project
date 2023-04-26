@@ -163,14 +163,31 @@ module.exports = class Filepanel extends ViewPlugin {
     })
   }
 
+  saveRecent (workspace) {
+    console.log("recentWorkspaces - ", workspace)
+    if (!localStorage.getItem('recentWorkspaces')) {
+      localStorage.setItem('recentWorkspaces', JSON.stringify('"first": "", "second": "", "third": ""'))
+    } else {
+      console.log("recentWorkspaces workspace name - ", workspace.name)
+
+      const recents = JSON.parse(localStorage.getItem('recentWorkspaces'))
+      let newResents = '{"first": "' + workspace.name + '", "second":"' + recents.first + '", "third":"' + recents.second + '"}'
+      localStorage.setItem('recentWorkspaces', newResents)
+    }
+  }
+
   setWorkspace (workspace) {
     const workspaceProvider = this.fileProviders.workspace
-
+    const current = this.currentWorkspaceMetadata
+   
     this.currentWorkspaceMetadata = { name: workspace.name, isLocalhost: workspace.isLocalhost, absolutePath: `${workspaceProvider.workspacesPath}/${workspace.name}` }
     if (workspace.name !== " - connect to localhost - ") {
       localStorage.setItem('currentWorkspace', workspace.name)
     }
     this.emit('setWorkspace', workspace)
+    if (this.currentWorkspaceMetadata.name !== current) {
+      this.saveRecent(workspace)
+    }
   }
 
   workspaceRenamed (oldName, workspaceName) {
