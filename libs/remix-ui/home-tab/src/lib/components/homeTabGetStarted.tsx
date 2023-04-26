@@ -107,18 +107,18 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
             <WorkspaceTemplate
               gsID="sUTLogo"
               workspaceTitle="Gnosis Safe MultiSig"
-              description={intl.formatMessage({
-                id: 'home.gnosisSafeMultisigTemplateDesc'
-              })}
-              callback={() => createWorkspace('gnosisSafeMultisig')}
+              description={
+                intl.formatMessage({ id: 'home.gnosisSafeMultisigTemplateDesc' })
+              }
+              callback={() => createWorkspace("gnosisSafeMultisig")}
             />
             <WorkspaceTemplate
               gsID="sUTLogo"
               workspaceTitle="0xProject ERC20"
-              description={intl.formatMessage({
-                id: 'home.zeroxErc20TemplateDesc'
-              })}
-              callback={() => createWorkspace('zeroxErc20')}
+              description={
+                intl.formatMessage({ id: 'home.zeroxErc20TemplateDesc' })
+              }
+              callback={() => createWorkspace("zeroxErc20")}
             />
             <WorkspaceTemplate
               gsID="sourcifyLogo"
@@ -132,7 +132,7 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
               description={intl.formatMessage({
                 id: 'home.ozerc721TemplateDesc'
               })}
-              callback={() => createWorkspace('ozerc721')}
+              callback={() => createWorkspace("ozerc721")}
             />
             <WorkspaceTemplate
               gsID="sUTLogo"
@@ -140,7 +140,7 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
               description={intl.formatMessage({
                 id: 'home.ozerc1155TemplateDesc'
               })}
-              callback={() => createWorkspace('ozerc1155')}
+              callback={() => createWorkspace("ozerc1155")}
             />
             <WorkspaceTemplate
               gsID="solhintLogo"
@@ -148,7 +148,7 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
               description={intl.formatMessage({
                 id: 'home.remixDefaultTemplateDesc'
               })}
-              callback={() => createWorkspace('remixDefault')}
+              callback={() => createWorkspace("remixDefault")}
             />
           </Carousel>
         </ThemeContext.Provider>

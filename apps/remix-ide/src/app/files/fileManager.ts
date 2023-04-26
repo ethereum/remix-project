@@ -206,11 +206,11 @@ class FileManager extends Plugin {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
       if (await this.exists(path)) {
-        await this._handleIsFile(path, `Cannot write file ${path}`)
-        return await this.setFileContent(path, data)
+        const newPath = await helper.createNonClashingNameAsync(path, this)
+        //await this._handleIsFile(path, `Cannot write file ${path}`)
+        return await this.setFileContent(newPath, data)
       } else {
         const ret = await this.setFileContent(path, data)
-        this.emit('fileAdded', path)
         return ret
       }
     } catch (e) {
