@@ -6,7 +6,7 @@ const sources = [
   {
     'Untitled.sol': {
       content: `
-pragma solidity >=0.6.0;
+pragma solidity >=0.6.0 <0.8.0;
 contract test1 { address test = tx.origin; }
 contract test2 {}
 contract TooMuchGas {
