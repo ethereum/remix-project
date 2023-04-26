@@ -229,7 +229,6 @@ describe('testRunner', function () {
             after(() => { tests = [] })
 
             it('should have 4 passing test', () => {
-                console.log(results)
                 assert.equal(results.passingNum, 4)
             })
 
@@ -247,7 +246,7 @@ describe('testRunner', function () {
                     { type: 'testPass', debugTxHash: '0x4c6e10815a5e82bf2c60950606dc886317f680028a9229ba2dda17b5ea36325a', value: 'Greater than uint int pass test', filename: __dirname + '/examples_0/assert_greaterThan_test.sol', context: 'AssertGreaterThanTest' },
                     { type: 'testFailure', debugTxHash: '0x989c405c32c8e270a5dea69e6250a514c05dacd6fcf018365a241abc28c2497b', value: 'Greater than uint int fail test', filename: __dirname + '/examples_0/assert_greaterThan_test.sol', errMsg: 'greaterThanUintIntFailTest fails', context: 'AssertGreaterThanTest', assertMethod: 'greaterThan', location: '845:71:0', expected: '2', returned: '1' },
                     { type: 'testPass', debugTxHash: '0x9fed670ae2061929f71780835b7ea3eb7da6d4fb553cd2d5f62950c353165861', value: 'Greater than int uint pass test', filename: __dirname + '/examples_0/assert_greaterThan_test.sol', context: 'AssertGreaterThanTest' },
-                    { type: 'testFailure', debugTxHash: '0xcf394fd279293cdcf58efc42f3a443595fdb171769a45df01b0c84cd76b3a9a2', value: 'Greater than int uint fail test', filename: __dirname + '/examples_0/assert_greaterThan_test.sol', errMsg: 'greaterThanIntUintFailTest fails', context: 'AssertGreaterThanTest', assertMethod: 'greaterThan', location: '1125:75:0', expected: '120', returned: '100' }
+                    { type: 'testFailure', debugTxHash: '0xcf394fd279293cdcf58efc42f3a443595fdb171769a45df01b0c84cd76b3a9a2', value: 'Greater than int uint fail test', filename: __dirname + '/examples_0/assert_greaterThan_test.sol', errMsg: 'greaterThanIntUintFailTest fails', context: 'AssertGreaterThanTest', assertMethod: 'greaterThan', location: '1125:76:0', expected: '115792089237316195423570985008687907853269984665640564039457584007913129639836', returned: '100' }
                 ], ['time', 'web3'])
             })
         })
@@ -280,9 +279,9 @@ describe('testRunner', function () {
                     { type: 'testPass', debugTxHash: '0x6d63958d8c3230e837d0ca8335e57262c6e0c6b2c07a5b481842b9ad7329ac28', value: 'Lesser than int pass test', filename: __dirname + '/examples_0/assert_lesserThan_test.sol', context: 'AssertLesserThanTest' },
                     { type: 'testFailure', debugTxHash: '0x38e96ef44f4e785db4d40a95862a9797e8cef6de0ce1d059da72ff42e2f3ca62', value: 'Lesser than int fail test', filename: __dirname + '/examples_0/assert_lesserThan_test.sol', errMsg: 'lesserThanIntFailTest fails', context: 'AssertLesserThanTest', assertMethod: 'lesserThan', location: '557:65:0', expected: '-1', returned: '1' },
                     { type: 'testPass', debugTxHash: '0x699f9fc2bf7a14134e89b94cd9dc1c537b5d4581a1c26a34a0c3343ddede9608', value: 'Lesser than uint int pass test', filename: __dirname + '/examples_0/assert_lesserThan_test.sol', context: 'AssertLesserThanTest' },
-                    { type: 'testFailure', debugTxHash: '0xce1391dcfbfdc6c611e357e6c1c9f6cd9f257153ee400cb80bd36af6d239c342', value: 'Lesser than uint int fail test', filename: __dirname + '/examples_0/assert_lesserThan_test.sol', errMsg: 'lesserThanUintIntFailTest fails', context: 'AssertLesserThanTest', assertMethod: 'lesserThan', location: '826:69:0', expected: '1', returned: '2' },
+                    { type: 'testFailure', debugTxHash: '0xce1391dcfbfdc6c611e357e6c1c9f6cd9f257153ee400cb80bd36af6d239c342', value: 'Lesser than uint int fail test', filename: __dirname + '/examples_0/assert_lesserThan_test.sol', errMsg: 'lesserThanUintIntFailTest fails', context: 'AssertLesserThanTest', assertMethod: 'lesserThan', location: '826:71:0', expected: '-1', returned: '115792089237316195423570985008687907853269984665640564039457584007913129639935' },
                     { type: 'testPass', debugTxHash: '0x7040e6664c13e6b35ef1daaef93a8cae36a62150d818183892096a98b921800c', value: 'Lesser than int uint pass test', filename: __dirname + '/examples_0/assert_lesserThan_test.sol', context: 'AssertLesserThanTest' },
-                    { type: 'testFailure', debugTxHash: '0x8c58bb433ea41760dcf11114232407d703e8ebf7d5e9637e2923282eae5caee6', value: 'Lesser than int uint fail test', filename: __dirname + '/examples_0/assert_lesserThan_test.sol', errMsg: 'lesserThanIntUintFailTest fails', context: 'AssertLesserThanTest', assertMethod: 'lesserThan', location: '1103:69:0', expected: '1', returned: '1' },
+                    { type: 'testFailure', debugTxHash: '0x8c58bb433ea41760dcf11114232407d703e8ebf7d5e9637e2923282eae5caee6', value: 'Lesser than int uint fail test', filename: __dirname + '/examples_0/assert_lesserThan_test.sol', errMsg: 'lesserThanIntUintFailTest fails', context: 'AssertLesserThanTest', assertMethod: 'lesserThan', location: '1105:69:0', expected: '1', returned: '1' },
                 ], ['time', 'web3'])
             })
         })
@@ -312,7 +311,7 @@ describe('testRunner', function () {
                     { type: 'contract', value: 'MyTest', filename: __dirname + '/examples_1/simple_storage_test.sol' },
                     { type: 'testPass', debugTxHash: '0xed5b6898331119c6e3d1185b9de65d87ad7329cc629a8f2d43b966cf180a5dc1', value: 'Initial value should be100', filename: __dirname + '/examples_1/simple_storage_test.sol', context: 'MyTest' },
                     { type: 'testPass', debugTxHash: '0x79cae5c4f44edfd7ae3490e01c75df5741b107672cef5e69800e4d30d380a721', value: 'Initial value should not be200', filename: __dirname + '/examples_1/simple_storage_test.sol', context: 'MyTest' },
-                    { type: 'testFailure', debugTxHash: '0x24a20f7643e88f891e469ef495911ab0b75f99e2b09b9b091e688674910d1506', value: 'Should trigger one fail', filename: __dirname + '/examples_1/simple_storage_test.sol', errMsg: 'uint test 1 fails', context: 'MyTest', assertMethod: 'equal', location: '524:51:1', expected: '2', returned: '1' },
+                    { type: 'testFailure', debugTxHash: '0x24a20f7643e88f891e469ef495911ab0b75f99e2b09b9b091e688674910d1506', value: 'Should trigger one fail', filename: __dirname + '/examples_1/simple_storage_test.sol', errMsg: 'uint test 1 fails', context: 'MyTest', assertMethod: 'equal', location: '532:51:1', expected: '2', returned: '1' },
                     { type: 'testPass', debugTxHash: '0x08b1f60c908b7e6cf2dd24fc166c755f0fe5336aebfb325cae4ce00ea9bbf932', value: 'Should trigger one pass', filename: __dirname + '/examples_1/simple_storage_test.sol', context: 'MyTest' }
                 ], ['time', 'web3'])
             })
@@ -413,7 +412,6 @@ describe('testRunner', function () {
             after(() => { tests = [] })
 
             it('should have 10 passing tests', () => {
-                console.log(results)
                 assert.equal(results.passingNum, 10)
             })
             it('should have 0 failing tests', () => {
