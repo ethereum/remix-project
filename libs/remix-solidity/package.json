@@ -38,7 +38,7 @@
     "@babel/preset-es2015": "latest",
     "@babel/preset-es2017": "latest",
     "@babel/preset-stage-0": "^7.0.0",
-    "@types/node": "^13.1.1",
+    "@types/node": "^18.16.1",
     "babel-eslint": "^10.0.0",
     "babelify": "^10.0.0",
     "typescript": "^3.7.4"
