@@ -47,14 +47,20 @@ fs.readdirSync(testFolder).forEach(file => {
 
                 const path = `./dist/apps/remix-ide/assets/js/soljson${version}.js`;
                 // use axios to get the file
-                axios({
-                    method: 'get',
-                    url: url,
-                    responseType: 'stream'
-                }).then(function (response) {
-                    // pipe the result stream into a file on disc
-                    response.data.pipe(fs.createWriteStream(path));
-                })
+                try {
+                    axios({
+                        method: 'get',
+                        url: url,
+                        responseType: 'stream'
+                    }).then(function (response) {
+                        // pipe the result stream into a file on disc
+                        response.data.pipe(fs.createWriteStream(path));
+                    })
+                } catch (e) {
+                    console.log('Failed to download soljson' + version + ' from ' + url)
+                }
+
+
             }
 
         }
