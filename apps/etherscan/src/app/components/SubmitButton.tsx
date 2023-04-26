@@ -20,7 +20,6 @@ export const SubmitButton: React.FC<Props> = ({
       type="submit"
       className="btn btn-primary"
       disabled={disable}
-      title={disable ? "Fill all the fields with valid values" : "Click to proceed"}
     >
       {!isSubmitting && text}
 
