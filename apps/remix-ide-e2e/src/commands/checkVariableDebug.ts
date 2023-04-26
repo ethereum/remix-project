@@ -24,7 +24,6 @@ function checkDebug(browser: NightwatchBrowser, id: string, debugValue: Nightwat
     browser.execute(function (id: string) {
       const elem = document.querySelector('#' + id + ' .dropdownrawcontent') as HTMLElement
       if (elem && elem.innerText) {
-        console.log(elem.innerText)
         return elem.innerText
       }
     }, [id], (result) => {
@@ -32,13 +31,11 @@ function checkDebug(browser: NightwatchBrowser, id: string, debugValue: Nightwat
         try {
           resultOfElement = JSON.parse(<string>result.value)
           isEqual = deepequal(debugValue, resultOfElement)
-          console.log('isEqual', isEqual, result.value, resultOfElement, debugValue)
         } catch (e) {
           browser.assert.fail('cant parse solidity state', e.message, '')
         }
       }
     })
-    if(!isEqual) console.log('#' + id + ' .dropdownrawcontent')
     if (isEqual) return true
     return false
   }, 10000, 1000)
