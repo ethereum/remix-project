@@ -25,8 +25,6 @@ axios({
                 method: 'get',
                 url: buildurl,
             }).then(function (response) {
-                //console.log(response.data)
-                // write the resonse data to a file
                 fs.writeFile(path, response.data, function (err) {
                     if (err) {
                         console.log(err);
