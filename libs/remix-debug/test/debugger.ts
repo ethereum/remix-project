@@ -9,7 +9,7 @@ import { BreakpointManager } from '../src/code/breakpointManager'
 const compiler = require('solc')
 const vmCall = require('./vmCall')
 
-const ballot = `pragma solidity >=0.4.22 <0.8.0;
+const ballot = `pragma solidity >=0.4.22;
 
 /** 
  * @title Ballot
