@@ -1,7 +1,7 @@
 import React from "react"
 
 import { NavLink } from "react-router-dom"
-import { CustomTooltip } from '@remix-ui/helper';
+import { CustomTooltip } from '@remix-ui/helper'
 import { AppContext } from "../AppContext"
 
 interface Props {
@@ -20,9 +20,14 @@ const HomeIcon: React.FC<IconProps> = ({ from }: IconProps) => {
         data-id="home"
         to="/"
         state={ from }
-        style={{ marginRight: "0.4em" }}
       >
-        <i className="fas fa-home"></i>
+        <CustomTooltip
+          tooltipText='Home'
+          tooltipId='etherscan-nav-home'
+          placement='bottom'
+        >
+          <i className="fas fa-home"></i>
+        </CustomTooltip>
       </NavLink>
   )
 }
@@ -33,9 +38,15 @@ const ReceiptsIcon: React.FC<IconProps> = ({ from }: IconProps) => {
         data-id="receipts"
         to="/receipts"
         state={ from }
-        style={{ marginRight: "0.4em" }}
+        className="mx-2"
       >
-        <i className="fas fa-receipt"></i>
+        <CustomTooltip
+          tooltipText='Receipts'
+          tooltipId='etherscan-nav-receipts'
+          placement='bottom'
+        >
+          <i className="fas fa-receipt"></i>
+        </CustomTooltip>
       </NavLink>
   )
 }
@@ -46,9 +57,14 @@ const SettingsIcon: React.FC<IconProps> = ({ from }: IconProps) => {
       data-id="settings"
       to="/settings"
       state= {from}
-      style={{ marginRight: "0.4em" }}
     >
-      <i className="fas fa-cog"></i>
+      <CustomTooltip
+        tooltipText='Settings'
+        tooltipId='etherscan-nav-settings'
+        placement='bottom'
+      >
+        <i className="fas fa-cog"></i>
+      </CustomTooltip>
     </NavLink>
   )
 }
