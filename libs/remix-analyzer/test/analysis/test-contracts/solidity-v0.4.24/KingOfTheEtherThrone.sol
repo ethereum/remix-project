@@ -1,4 +1,3 @@
-pragma solidity ^0.4.19;
 // return value send
 contract KingOfTheEtherThrone{
 	struct Monarch {
