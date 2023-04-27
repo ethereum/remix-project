@@ -189,7 +189,7 @@ export const VerifyView: React.FC<Props> = ({
               ? true 
               : false}
             />
-            <br/><br/>
+            <br/>
             <CustomTooltip
               tooltipText='Generate the required TS scripts to verify a contract on Etherscan'
               tooltipId='etherscan-generate-scripts'
@@ -198,7 +198,7 @@ export const VerifyView: React.FC<Props> = ({
               <button
                 type="button"
                 style={{ padding: "0.25rem 0.4rem", marginRight: "0.5em", marginBottom: "0.5em"}}
-                className="btn btn-secondary"
+                className="btn btn-secondary btn-block"
                 onClick={async () => {
                   if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/receiptStatus.ts')) {
                     await client.call('fileManager', 'writeFile', 'scripts/etherscan/receiptStatus.ts', receiptGuidScript)
