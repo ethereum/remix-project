@@ -97,7 +97,7 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
 
       if (!currentBranch) {
         if (!name || !email) {
-          await plugin.call('notification', 'toast', 'Please add username and email to Remix GitHub Settings to use git features.')
+          await plugin.call('notification', 'toast', 'To use Git features, add username and email to the Github section of the Settings panel.')
         } else {
           // commit the template as first commit
           plugin.call('notification', 'toast', 'Creating initial git commit ...')
