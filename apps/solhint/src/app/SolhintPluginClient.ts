@@ -1,8 +1,7 @@
 import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
 import EventEmitter from 'events'
-import { processStr } from 'solhint'
-import { applyExtends } from 'solhint/lib/config/config-file'
+import { applyExtends, processStr } from 'solhint'
 import bestPractises from 'solhint/lib/rules/best-practises'
 import naming from 'solhint/lib/rules/naming'
 import order from 'solhint/lib/rules/order'
@@ -30,15 +29,11 @@ const Config = `{
 }`
 
 export class SolHint extends PluginClient {
-  mdFile: string
-  eventEmitter: EventEmitter
   triggerLinter: boolean
   constructor() {
     super()
-    this.eventEmitter = new EventEmitter()
     this.methods = ['lintContract', 'lintOnCompilation', 'lintContractCustomAction']
     createClient(this)
-    this.mdFile = ''
     this.onload().then(async () => {
       await this.lintOnCompilation()
     })

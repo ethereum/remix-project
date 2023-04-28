@@ -11,7 +11,7 @@
   ],
   "kind": "none",
   "icon": "https://raw.githubusercontent.com/protofire/solhint/master/solhint-icon.png",  
-  "location": "sidePanel",
+  "location": "hiddenPanel",
   "url": "",
   "documentation": "https://remix-plugins.readthedocs.io/en/latest/",
   "repo": "https://github.com/ethereum/remix-project",
