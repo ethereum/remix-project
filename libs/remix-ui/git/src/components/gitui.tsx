@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState } from 'react'
-import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote } from '../lib/gitactions'
+import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, getGitHubUser } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
 import { openDiff, openFile, setPlugin, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
@@ -25,6 +25,8 @@ import { fileDecoration, fileDecorationType } from '@remix-ui/file-decorators'
 import { removeSlash } from '../utils'
 import { SettingsNavigation } from './navigation/settings'
 import { Settings } from './panels/settings'
+import { GitHubNavigation } from './navigation/github'
+import { GitHubAuth } from './panels/github'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 
@@ -107,7 +109,8 @@ export const GitUI = (props: IGitUi) => {
         getBranchCommits,
         diff,
         resolveRef,
-        setUpstreamRemote
+        setUpstreamRemote,
+        getGitHubUser
     }
 
     const pluginActionsProviderValue = {
@@ -173,6 +176,14 @@ export const GitUI = (props: IGitUi) => {
                                         <Settings></Settings>
                                     </>
                                 </Accordion.Collapse>
+                                <hr></hr>
+                                <GitHubNavigation eventKey="7" activePanel={activePanel} callback={setActivePanel} />
+                                <Accordion.Collapse className='bg-light' eventKey="7">
+                                    <>
+                                        <GitHubAuth></GitHubAuth>
+                                    </>
+                                </Accordion.Collapse>
+
 
 
                             </Accordion>}

@@ -104,5 +104,11 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
                 ...state,
                 branchCommits: {...state.branchCommits}
             }
+
+        case 'SET_GITHUB_USER':
+            return {
+                ...state,
+                gitHubUser: action.payload
+            }
     }
 }

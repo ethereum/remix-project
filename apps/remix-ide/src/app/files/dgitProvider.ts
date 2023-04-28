@@ -15,6 +15,7 @@ import JSZip from 'jszip'
 import path from 'path'
 import { IndexedDBStorage } from './filesystems/indexedDB'
 import { branch, commitChange, remote } from '@remix-ui/git'
+import { createTokenAuth } from "@octokit/auth-token";
 
 declare global {
   interface Window { remixFileSystemCallback: IndexedDBStorage; remixFileSystem: IndexedDBStorage['extended']; }
@@ -26,7 +27,7 @@ const profile = {
   description: 'Decentralized git provider',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
-  methods: ['init', 'localStorageUsed', 'getCommitChanges', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'repositories', 'remotebranches'],
+  methods: ['init', 'localStorageUsed', 'getCommitChanges', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'repositories', 'remotebranches', 'getGitHubUser'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
@@ -463,6 +464,16 @@ class DGitProvider extends Plugin {
     console.log(data)
     return data.data
   }
+
+  async getGitHubUser(input: { token: string }) {
+    const octokit = new Octokit({
+      auth: input.token
+    })
+
+    const data = await octokit.request('GET /user')
+    return data.data
+  }
+
 
 
   async export(config) {

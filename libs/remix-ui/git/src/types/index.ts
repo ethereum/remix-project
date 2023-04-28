@@ -25,6 +25,7 @@ export type gitState = {
     localCommitCount: number
     remoteCommitCount: number
     upstream: string
+    gitHubUser: any
 }
 
 export type commitChangeTypes = {  
@@ -101,7 +102,8 @@ export const defaultGitState: gitState = {
     syncStatus: syncStatus.none,
     localCommitCount: 0,
     remoteCommitCount: 0,
-    upstream: ""
+    upstream: "",
+    gitHubUser: {}
 }
 
 export type fileStatusResult = {
@@ -142,6 +144,11 @@ export interface setReposAction {
 export interface setRemoteBranchesAction {
     type: string,
     payload: any[]
+}
+
+export interface setGitHubUserAction {
+    type: string,
+    payload: any
 }
 
 export interface setLoadingAction {

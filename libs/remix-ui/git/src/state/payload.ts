@@ -36,6 +36,13 @@ export const setRemoteBranches = (branches: any[]) => {
     }
 }
 
+export const setGitHubUser = (user: any) => {
+    return {
+        type: 'SET_GITHUB_USER',
+        payload: user
+    }
+}
+
 
 export const setLoading = (loading: boolean) => {
     return {

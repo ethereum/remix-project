@@ -18,6 +18,7 @@ export interface gitActions  {
     remoteBranches(owner: string, repo: string): Promise<any>
     getCommitChanges(oid1: string, oid2: string): Promise<commitChange[]>
     getBranchCommits(branch: branch): Promise<ReadCommitResult[]>
+    getGitHubUser(): Promise<any>
     diff(commitChange: commitChange): Promise<void>
     resolveRef(ref: string): Promise<string>
     setUpstreamRemote(upstream: string): Promise<void>

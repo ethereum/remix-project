@@ -1,8 +1,6 @@
-import { checkout, ReadCommitResult } from "isomorphic-git";
 import React, { useEffect } from "react";
 import { gitActionsContext } from "../../state/context";
 import { gitPluginContext } from "../gitui";
-import { default as dateFormat } from "dateformat";
 import { Remoteselect } from "./remoteselect";
 import { RemotesImport } from "./remotesimport";
 
@@ -24,6 +22,7 @@ export const Remotes = () => {
     //setCurrentRemote(remoteName)
     //await gitservice.getRemotes()
   }
+
 
   useEffect(() => {
     console.log('SHOW REMOTES', context.remotes)

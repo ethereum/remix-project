@@ -3,7 +3,7 @@ import { ViewPlugin } from "@remixproject/engine-web";
 import React from "react";
 import { setCanUseApp, setLoading, setRepoName } from "../state/payload";
 import { gitActionDispatch } from "../types";
-import { diffFiles, getBranches, getFileStatusMatrix, getRemotes, gitlog, setPlugin } from "./gitactions";
+import { diffFiles, getBranches, getFileStatusMatrix, getGitHubUser, getRemotes, gitlog, setPlugin } from "./gitactions";
 
 let plugin: ViewPlugin, dispatch: React.Dispatch<gitActionDispatch>
 let callBackEnabled: boolean = false
@@ -74,6 +74,11 @@ export const setCallBacks = (viewPlugin: ViewPlugin, dispatcher: React.Dispatch<
     })
     plugin.on('dGitProvider', 'clone', async () => {
         await loadFiles();
+    })
+    plugin.on('manager', 'pluginActivated', async (plugin: Plugin) => {
+        if(plugin.name === 'dGitProvider') {
+            getGitHubUser();
+        }
     })
 
 
