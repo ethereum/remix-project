@@ -18,7 +18,9 @@ const HomeIcon: React.FC<IconProps> = ({ from }: IconProps) => {
   return (
       <NavLink
         data-id="home"
-        to="/"
+        to={{
+          pathname: "/"
+        }}
         state={ from }
       >
         <CustomTooltip
@@ -36,7 +38,9 @@ const ReceiptsIcon: React.FC<IconProps> = ({ from }: IconProps) => {
   return (
       <NavLink      
         data-id="receipts"
-        to="/receipts"
+        to={{
+          pathname: "/receipts"
+        }}
         state={ from }
         className="mx-2"
       >
@@ -55,7 +59,9 @@ const SettingsIcon: React.FC<IconProps> = ({ from }: IconProps) => {
   return (
     <NavLink
       data-id="settings"
-      to="/settings"
+      to={{
+        pathname: "/settings"
+      }}
       state= {from}
     >
       <CustomTooltip
