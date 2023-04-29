@@ -30,6 +30,8 @@ axios({
                         console.log(err);
                     }
                 })
+            }).catch((e) => {
+                console.log(e.message)
             })
         } catch (e) {
             console.log('Failed to download ' + build.path + ' from ' + buildurl)
@@ -63,6 +65,8 @@ fs.readdirSync(testFolder).forEach(file => {
                                 console.log(err);
                             }
                         })
+                    }).catch((e) => {
+                        console.log(e.message)
                     })
                 } catch (e) {
                     console.log('Failed to download soljson' + version + ' from ' + url)
