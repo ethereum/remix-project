@@ -24,6 +24,7 @@ axios({
             axios({
                 method: 'get',
                 url: buildurl,
+                timeout: 10000
             }).then(function (response) {
                 fs.writeFile(path, response.data, function (err) {
                     if (err) {
@@ -59,6 +60,7 @@ fs.readdirSync(testFolder).forEach(file => {
                     axios({
                         method: 'get',
                         url: url,
+                        timeout: 10000
                     }).then(function (response) {
                         fs.writeFile(path, response.data, function (err) {
                             if (err) {

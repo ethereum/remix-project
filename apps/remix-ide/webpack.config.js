@@ -19,6 +19,7 @@ const loadLocalSolJson = async () => {
   axios({
     url: url,
     method: 'GET',
+    timeout: 10000
   }).then((response) => {
     let info = response.data;
     info.builds = info.builds.filter(build => build.path.indexOf('nightly') === -1)
