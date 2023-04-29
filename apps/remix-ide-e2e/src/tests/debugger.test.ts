@@ -430,7 +430,7 @@ const sources = [
 
 const localVariable_step266_ABIEncoder = { // eslint-disable-line
   '<1>': {
-    length: '0xNaN',
+    length: '0x0',
     type: 'bytes',
     value: '0x'
   },

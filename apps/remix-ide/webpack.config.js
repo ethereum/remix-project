@@ -6,6 +6,7 @@ const version = require('../../package.json').version
 const fs = require('fs')
 const TerserPlugin = require("terser-webpack-plugin")
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
+const axios = require('axios')
 
 const versionData = {
   version: version,
@@ -13,7 +14,32 @@ const versionData = {
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development'
 }
 
+const loadLocalSolJson = async () => {
+  let url = 'https://binaries.soliditylang.org/wasm/list.json'
+  axios({
+    url: url,
+    method: 'GET',
+  }).then((response) => {
+    let info = response.data;
+    info.builds = info.builds.filter(build => build.path.indexOf('nightly') === -1)
+    info.builds = info.builds.slice(-1)
+    const buildurl = `https://solc-bin.ethereum.org/wasm/${info.builds[0].path}`;
+    console.log(`Copying... ${buildurl} to assets`)
+    const path = `./apps/remix-ide/src/assets/js/soljson.js`;
+    axios({
+      method: 'get',
+      url: buildurl,
+      responseType: 'stream'
+    }).then(function (response) {
+      response.data.pipe(fs.createWriteStream(path));
+    })
+  }
+  )
+}
+
 fs.writeFileSync('./apps/remix-ide/src/assets/version.json', JSON.stringify(versionData))
+
+loadLocalSolJson()
 
 const project = fs.readFileSync('./apps/remix-ide/project.json', 'utf8')
 
@@ -120,3 +146,5 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
 
   return config;
 });
+
+

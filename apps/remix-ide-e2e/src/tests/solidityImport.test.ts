@@ -112,7 +112,31 @@ module.exports = {
         timeout: 120000,
       })
       .verifyContracts(['test13', 'ERC20'], { wait: 30000 })
-      .end()
+  },
+
+  'Test NPM Import (the version is specified in package.json) #group4': function (browser: NightwatchBrowser) {
+    browser
+      // clone https://github.com/yann300/remix-reward
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible('[data-id="workspaceMenuDropdown"]')
+      .click('[data-id="workspaceMenuDropdown"]')
+      .waitForElementVisible('[data-id="workspaceclone"]')
+      .click('[data-id="workspaceclone"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
+      .click('[data-id="fileSystemModalDialogModalBody-react"]')
+      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
+      .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/yann300/remix-reward')
+      .click('[data-id="fileSystem-modal-footer-ok-react"]')
+      .waitForElementPresent('.fa-spinner')
+      .pause(5000)
+      .waitForElementNotPresent('.fa-spinner')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
+      .waitForElementContainsText('[data-id="workspacesSelect"]', 'remix-reward')
+      .clickLaunchIcon('solidity')
+      // compile (this will be using the version specified in the package.json)
+      .openFile('contracts')
+      .openFile('contracts/RemixRewardUpgradable.sol')
+      .verifyContracts(['Remix'])
   }
 }
 

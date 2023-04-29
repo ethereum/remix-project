@@ -38,8 +38,9 @@ export const ReceiptsView: React.FC = () => {
 
   return (
     <AppContext.Consumer>
-      {({ apiKey, clientInstance, receipts }) =>
-        !apiKey ? (
+      {({ apiKey, clientInstance, receipts }) => {
+        if (!apiKey && clientInstance && clientInstance.call) clientInstance.call('notification' as any, 'toast', 'Please add API key to continue')
+        return !apiKey ? (
           <Navigate
             to={{
               pathname: "/settings"
@@ -66,7 +67,6 @@ export const ReceiptsView: React.FC = () => {
                     className="form-group"
                     style={{ marginBottom: "0.5rem" }}
                   >
-                    <h6>Get your Receipt GUID status</h6>
                     <label htmlFor="receiptGuid">Receipt GUID</label>
                     <Field
                       className={
@@ -83,8 +83,7 @@ export const ReceiptsView: React.FC = () => {
                       component="div"
                     />
                   </div>
-
-                  <SubmitButton text="Check" />
+                  <SubmitButton text="Check" disable = {!touched.receiptGuid || (touched.receiptGuid && errors.receiptGuid) ? true : false} />
                 </form>
               )}
             </Formik>
@@ -101,6 +100,7 @@ export const ReceiptsView: React.FC = () => {
             <ReceiptsTable receipts={receipts} />
           </div>
         )
+      }
       }
     </AppContext.Consumer>
   )
