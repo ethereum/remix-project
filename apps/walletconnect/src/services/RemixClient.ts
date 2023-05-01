@@ -2,7 +2,7 @@ import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
 import { w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { configureChains, createClient as wagmiCreateClient } from 'wagmi'
-import { arbitrum, mainnet, polygon, optimism, Chain, goerli, sepolia } from 'wagmi/chains'
+import { arbitrum, arbitrumGoerli, mainnet, polygon, polygonMumbai, optimism, optimismGoerli, Chain, goerli, sepolia } from 'wagmi/chains'
 import EventManager from "events"
 import { PROJECT_ID } from './constant'
 
