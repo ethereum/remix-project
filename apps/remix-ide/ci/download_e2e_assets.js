@@ -38,6 +38,7 @@ if (soljson) {
     // manually add some versions
 
     soljson.push('v0.7.6+commit.7338295f');
+    soljson.push('v0.5.17+commit.d19bba13');
 
     console.log('soljson versions found: ', soljson);
     
