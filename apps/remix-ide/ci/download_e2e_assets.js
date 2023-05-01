@@ -10,31 +10,22 @@ if (child.error) {
     exit(1);
 }
 
-// find words between single quotes starting with a number
-const re2 = /(?<=\').*(?=\')/g;
-let versions = child.stdout.match(re2);
-console.log('versions found: ', versions);
-
-// get all words in versions
-const re3 = /(?<=v).*/g;
-let  version2 = []
-for (let i = 0; i < versions.length; i++) {
-    const version = versions[i];
-    if (version) {
-        const v = version.match(re3);
-        if (v) {
-            version2.push(v[0]);
-        }
-    }
-}
-console.log('versions found: ', version2);
+console.log('stdout here: \n' + child.stdout)
 
 
 const re = /(?<=soljson).*(?=(.js))/g;
 let soljson = child.stdout.match(re);
+
+const re2 = /(?<=soljson).*(?=(\'))/g;
+let soljson2 = child.stdout.match(re2);
+soljson2 = soljson2.filter((item, index) => !item.includes('.js'));
+
+// merge the two arrays
+soljson = soljson.concat(soljson2);
+
 if (soljson) {
     // filter out duplicates
-    soljson = soljson.filter((item, index) => soljson.indexOf(item) === index);
+    //soljson = soljson.filter((item, index) => soljson.indexOf(item) === index);
     console.log('soljson versions found: ', soljson);
 
     // manually add some versions
