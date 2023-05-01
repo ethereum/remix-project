@@ -34,11 +34,12 @@ jobs:
             fi
       - run: yarn run build:e2e
       
+      - run: grep -ir "soljson-v0" apps/* libs/* > soljson-versions.txt
       - restore_cache:
           keys:
-            - soljson-{{ grep -ir "soljson-v0" apps/* libs/* | md5sum }}
+            - soljson-{{ checksum "soljson-versions.txt" }}
       - run: yarn run downloadsolc_assets_e2e
-      - run: grep -ir "soljson-v0" apps/* libs/* | md5sum
+
       
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
       - persist_to_workspace:
