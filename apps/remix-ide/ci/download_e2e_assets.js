@@ -2,7 +2,7 @@ const fs = require('fs');
 var child_process = require('child_process');
 const { exit } = require('process');
 
-var child = child_process.spawnSync('grep', ['-ir', '[0-9]+commit', 'libs/**/*', 'apps/**/*', '--include', '*.ts'], { encoding: 'utf8', cwd: process.cwd(), shell: true });
+var child = child_process.spawnSync('grep', ['-ir', '[0-9]+commit', 'libs/**/*', 'apps/**/*', '--include', '*.ts', '--include', '*.tsx'], { encoding: 'utf8', cwd: process.cwd(), shell: true });
 
 if (child.error) {
     console.log("ERROR: ", child);

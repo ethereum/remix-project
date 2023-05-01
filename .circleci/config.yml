@@ -34,7 +34,7 @@ jobs:
             fi
       - run: yarn run build:e2e
       
-      - run: grep -ir "[0-9]+commit" apps/* libs/* --include \*.ts > soljson-versions.txt
+      - run: grep -ir "[0-9]+commit" apps/* libs/* --include \*.ts --include \*.tsx > soljson-versions.txt
       - restore_cache:
           keys:
             - soljson-v6-{{ checksum "soljson-versions.txt" }}
