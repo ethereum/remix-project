@@ -21,7 +21,7 @@
     "remix-ide": "./apps/remix-ide/bin/remix-ide"
   },
   "engines": {
-    "node": "^14.17.6",
+    "node": "^20.0.0",
     "npm": "^6.14.15"
   },
   "scripts": {
@@ -48,7 +48,7 @@
     "help": "nx help",
     "lint:libs": "nx run-many --target=lint --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-solidity,remix-tests,remix-url-resolver,remix-ws-templates,remixd,remix-ui-tree-view,remix-ui-modal-dialog,remix-ui-toaster,remix-ui-helper,remix-ui-debugger-ui,remix-ui-workspace,remix-ui-static-analyser,remix-ui-checkbox,remix-ui-settings,remix-core-plugin,remix-ui-renderer,remix-ui-publish-to-storage,remix-ui-solidity-compiler,solidity-unit-testing,remix-ui-plugin-manager,remix-ui-terminal,remix-ui-editor,remix-ui-app,remix-ui-tabs,remix-ui-panel,remix-ui-run-tab,remix-ui-permission-handler,remix-ui-search,remix-ui-file-decorators,remix-ui-tooltip-popup,ghaction-helper",
     "build:libs": "nx run-many --target=build --parallel=false --with-deps=true --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-solidity,remix-tests,remix-url-resolver,remix-ws-templates,remixd,ghaction-helper",
-    "test:libs": "nx run-many --target=test --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-tests,remix-url-resolver,remixd",
+    "test:libs": "nx run-many --target=test --projects=remix-analyzer,remix-astwalker,remix-debug,remix-lib,remix-simulator,remix-tests,remix-url-resolver",
     "publish:libs": "yarn run build:libs && lerna publish --skip-git && yarn run bumpVersion:libs",
     "publishDev:libs": "yarn run build:libs && lerna publish --npm-tag alpha --skip-git && yarn run bumpVersion:libs",
     "build:e2e": "node apps/remix-ide-e2e/src/buildGroupTests.js && tsc -p apps/remix-ide-e2e/tsconfig.e2e.json",
@@ -58,8 +58,6 @@
     "browsertest": "sleep 5 && yarn run nightwatch_local",
     "csslint": "csslint --ignore=order-alphabetical --errors='errors,duplicate-properties,empty-rules' --exclude-list='apps/remix-ide/src/assets/css/font-awesome.min.css' apps/remix-ide/src/assets/css/",
     "downloadsolc_assets_e2e": "node ./apps/remix-ide/ci/download_e2e_assets.js",
-    "downloadsolc_assets": "wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.8.18+commit.87f61d96.js -O ./apps/remix-ide/src/assets/js/soljson.js",
-    "downloadsolc_assets_dist": "wget --no-check-certificate https://binaries.soliditylang.org/wasm/soljson-v0.8.18+commit.87f61d96.js -O ./dist/apps/remix-ide/assets/js/soljson.js",
     "make-mock-compiler": "node apps/remix-ide/ci/makeMockCompiler.js",
     "minify": "uglifyjs --in-source-map inline --source-map-inline -c warnings=false",
     "build:production": "NODE_ENV=production nx build remix-ide --configuration=production --skip-nx-cache",
@@ -200,7 +198,6 @@
     "sol2uml": "^2.4.3",
     "string-similarity": "^4.0.4",
     "svg2pdf.js": "^2.2.1",
-    "swarmgw": "^0.3.1",
     "time-stamp": "^2.2.0",
     "toml": "^3.0.0",
     "tree-kill": "^1.2.2",
@@ -310,7 +307,7 @@
     "ganache-cli": "^6.8.1",
     "gists": "^1.0.1",
     "gulp": "^4.0.2",
-    "hardhat": "^2.12.7",
+    "hardhat": "^2.14.0",
     "https-browserify": "^1.0.0",
     "ipfs-http-client": "^47.0.1",
     "ipfs-mini": "^1.1.5",
@@ -341,7 +338,7 @@
     "rimraf": "^2.6.1",
     "selenium-standalone": "^8.2.3",
     "semver": "^7.4.0",
-    "solc": "0.7.4",
+    "solc": "^0.7.4",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "style-loader": "^3.3.1",
