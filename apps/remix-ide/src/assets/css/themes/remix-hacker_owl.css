@@ -42,7 +42,7 @@
   --theme-bg-btn-dark--hover: #033863;
   --theme-border-tab: 1px solid #274052;
   --theme-border-default: 1px solid #07121ca6;
-  --theme-form-placeholder: #dfe1ea; 
+  --theme-form-placeholder: #dfe1ea;
 
   --font-family-sans-serif: "Saira", -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
@@ -5720,6 +5720,9 @@ button.bg-dark:hover {
 .bg-transparent {
   background-color: transparent !important;
 }
+.border-no-shift {
+  box-shadow: inset 0 0 0 1px var(--theme-divider-color);
+}
 .border {
   border: 1px solid var(--theme-divider-color) !important;
 }
@@ -8819,7 +8822,7 @@ a.text-dark:hover {
   padding: 0 !important;
   margin: 0 !important;
   border: 0 !important;
-  color: #DFE1EA !important; 
+  color: #DFE1EA !important;
 }
 .run-instance-list li {
   margin: 0 !important;
@@ -8923,10 +8926,10 @@ div[data-id="remixIdeSidePanel"] {
   background-color: var(--text-background);
 }
 
-.monaco-scrollable-element > .visible,  
-.monaco-scrollable-element > .visible .scrollbar, 
-.monaco-scrollable-element > .invisible, 
-.monaco-scrollable-element > .invisible .scrollbar, 
+.monaco-scrollable-element > .visible,
+.monaco-scrollable-element > .visible .scrollbar,
+.monaco-scrollable-element > .invisible,
+.monaco-scrollable-element > .invisible .scrollbar,
 .monaco-scrollable-element > .invisible .fade {
   background-color: var(--light)!important;
   color: var(--light)!important;

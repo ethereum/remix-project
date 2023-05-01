@@ -5707,6 +5707,9 @@ button.bg-dark:hover {
 .bg-transparent {
   background-color: transparent !important;
 }
+.border-no-shift {
+  box-shadow: inset 0 0 0 1px #3c3a3a;
+}
 .border {
   border: 1px solid #3c3a3a !important;
 }

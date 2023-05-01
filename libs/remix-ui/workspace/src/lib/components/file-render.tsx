@@ -41,8 +41,8 @@ export const FileRender = (props: RenderFileProps) => {
   const labelClass = props.focusEdit.element === file.path
     ? 'bg-light' : props.focusElement.findIndex(item => item.key === file.path) !== -1
       ? 'bg-secondary' : hover
-        ? 'bg-light border' : (props.focusContext.element === file.path) && (props.focusEdit.element !== file.path)
-          ? 'bg-light border' : ''
+        ? 'bg-light border-no-shift' : (props.focusContext.element === file.path) && (props.focusEdit.element !== file.path)
+          ? 'bg-light border-no-shift' : ''
 
   const spreadProps = {
     onClick: (e) => e.stopPropagation()
