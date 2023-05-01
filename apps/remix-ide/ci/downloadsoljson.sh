@@ -14,7 +14,7 @@ curl https://binaries.soliditylang.org/wasm/list.json > list.json
 version=$(cat list.json | jq -r '.latestRelease')
 echo $version
 # the value of releases with key $version
-url=$(cat list.json | npx jq -r '.releases[]' | grep $version)
+url=$(cat list.json | npx jq -r '.releases[]' | grep "$version+")
 echo $url
 # set path to the url
 path="https://binaries.soliditylang.org/bin/$url"
