@@ -1,7 +1,6 @@
 
 const fs = require('fs');
 var child_process = require('child_process');
-const axios = require('axios');
 const { exit } = require('process');
 
 var child = child_process.spawnSync('grep', ['-ir', '"soljson-v[0-9]"', 'libs/*', 'apps/*'], { encoding: 'utf8', cwd: process.cwd(), shell: true });
@@ -38,18 +37,8 @@ if (soljson) {
             if (!exists) {
                 console.log(url)
                 try {
-                    axios({
-                        method: 'get',
-                        url: url,
-                    }).then(function (response) {
-                        fs.writeFile(path, response.data, function (err) {
-                            if (err) {
-                                console.log(err);
-                            }
-                        })
-                    }).catch(function (error) {
-                        console.log(error);
-                    })
+                    // use curl to download the file
+                    child_process.exec(`curl -o ${path} ${url}`, { encoding: 'utf8', cwd: process.cwd(), shell: true })
                 } catch (e) {
                     console.log('Failed to download soljson' + version + ' from ' + url)
                 }
