@@ -3,7 +3,7 @@ const fs = require('fs');
 var child_process = require('child_process');
 const { exit } = require('process');
 
-var child = child_process.spawnSync('grep', ['-ir', '"soljson-v[0-9]"', 'libs/*', 'apps/*'], { encoding: 'utf8', cwd: process.cwd(), shell: true });
+var child = child_process.spawnSync('grep', ['-ir', '[0-9]+commit', 'libs/**/*', 'apps/**/*', '--include', '\*.ts'], { encoding: 'utf8', cwd: process.cwd(), shell: true });
 
 if (child.error) {
     console.log("ERROR: ", child);
@@ -17,6 +17,11 @@ if (soljson) {
     // filter out duplicates
     soljson = soljson.filter((item, index) => soljson.indexOf(item) === index);
     console.log('soljson versions found: ', soljson);
+
+    // manually add some versions
+    soljson.push('soljson-v0.6.8+commit.0bbfe453.js');
+    soljson.push('soljson-v0.6.0+commit.26b70077.js');
+    
     for (let i = 0; i < soljson.length; i++) {
         const version = soljson[i];
         if (version) {
@@ -49,7 +54,8 @@ if (soljson) {
 
 
         }
+       
+    } 
 
-    }
 }
 
