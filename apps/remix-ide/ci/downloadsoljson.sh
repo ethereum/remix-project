@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 
 set -e
+# check if curl is installed
+if ! command -v curl &> /dev/null
+then
+    echo "curl could not be found"
+    exit
+fi
 
 # download https://binaries.soliditylang.org/wasm/list.json as json
 curl https://binaries.soliditylang.org/wasm/list.json > list.json
