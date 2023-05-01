@@ -5640,6 +5640,9 @@ a.bg-dark:focus,a.bg-dark:hover,button.bg-dark:focus,button.bg-dark:hover {
 .bg-transparent {
     background-color:transparent!important
 }
+.border-no-shift {
+  box-shadow: inset 0 0 0 1px #dee2e6;
+}
 .border {
     border:1px solid #dee2e6!important
 }
