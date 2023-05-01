@@ -20,7 +20,12 @@ if (soljson) {
         if (version) {
             let url = ''
 
-            url = `https://binaries.soliditylang.org/bin/soljson${version}.js`;
+            // if nightly
+            if (version.includes('nightly')) {
+                url = `https://binaries.soliditylang.org/bin/soljson${version}.js`;
+            }else{
+                url = `https://binaries.soliditylang.org/wasm/soljson${version}.js`;
+            }
 
             const dir = './dist/apps/remix-ide/assets/js/soljson';
             if (!fs.existsSync(dir)) {
