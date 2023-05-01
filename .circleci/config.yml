@@ -34,6 +34,7 @@ jobs:
               NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build
             fi
       - run: yarn run build:e2e
+      - run: yarn run downloadsolc_assets_e2e
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
@@ -155,7 +156,7 @@ jobs:
           at: .
       - run: unzip ./persist/dist.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
-      - run: yarn run downloadsolc_assets_e2e
+
       - run: ls -la ./dist/apps/remix-ide/assets/js
       - run: yarn run selenium-install || yarn run selenium-install
       - run:
@@ -202,7 +203,6 @@ jobs:
       - run: unzip ./persist/dist.zip
       - run: unzip ./persist/plugin-<< parameters.plugin >>.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
-      - run: yarn run downloadsolc_assets_e2e
       - run: yarn run selenium-install || yarn run selenium-install
       - run:
           name: Start Selenium

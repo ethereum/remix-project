@@ -6,6 +6,7 @@ let url = 'https://binaries.soliditylang.org/wasm/list.json'
 const axios = require('axios')
 
 // use axios to download the file
+/*
 axios({
     url: url,
     method: 'GET',
@@ -38,16 +39,18 @@ axios({
     }
 }
 )
+*/
 
 fs.readdirSync(testFolder).forEach(file => {
     let c = fs.readFileSync(testFolder + file, 'utf8');
     const re = /(?<=soljson).*(?=(.js))/g;
     const soljson = c.match(re);
     if (soljson) {
+        console.log(soljson)
         for (let i = 0; i < soljson.length; i++) {
 
             const version = soljson[i];
-            if (version && version.indexOf('nightly') > -1) {
+            if (version) {
                 const url = `https://solc-bin.ethereum.org/bin/soljson${version}.js`;
                 console.log(url)
 
