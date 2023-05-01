@@ -4,7 +4,7 @@ var child_process = require('child_process');
 const axios = require('axios');
 const { exit } = require('process');
 
-var child = child_process.spawnSync('grep', ['-ir', '"\soljson-v[0-9]"', 'libs/*', 'apps/*'], { encoding: 'utf8', cwd: process.cwd(), shell: true });
+var child = child_process.spawnSync('grep', ['-ir', '"soljson-v[0-9]"', 'libs/*', 'apps/*'], { encoding: 'utf8', cwd: process.cwd(), shell: true });
 
 if (child.error) {
     console.log("ERROR: ", child);
