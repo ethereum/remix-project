@@ -35,6 +35,7 @@ jobs:
             fi
       - run: yarn run build:e2e
       - run: yarn run downloadsolc_assets_e2e
+      - run: grep -ir "soljson-v0" apps/* libs/* | md5sum
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
