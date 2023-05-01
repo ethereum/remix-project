@@ -12,8 +12,11 @@ if (child.error) {
 
 
 const re = /(?<=soljson).*(?=(.js))/g;
-const soljson = child.stdout.match(re);
+let soljson = child.stdout.match(re);
 if (soljson) {
+    // filter out duplicates
+    soljson = soljson.filter((item, index) => soljson.indexOf(item) === index);
+    console.log('soljson versions found: ', soljson);
     for (let i = 0; i < soljson.length; i++) {
         const version = soljson[i];
         if (version) {
@@ -35,7 +38,7 @@ if (soljson) {
             // check if the file exists
             const exists = fs.existsSync(path);
             if (!exists) {
-                console.log(url)
+                console.log('URL:', url)
                 try {
                     // use curl to download the file
                     child_process.exec(`curl -o ${path} ${url}`, { encoding: 'utf8', cwd: process.cwd(), shell: true })
