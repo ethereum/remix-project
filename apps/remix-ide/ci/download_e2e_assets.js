@@ -9,17 +9,17 @@ if (child.error) {
     exit(1);
 }
 
-const nonnightlyre = /v\d*\.\d*\.\d*\+commit\.[\d\w]*/g;
+const nonNightlyRegex = /v\d*\.\d*\.\d*\+commit\.[\d\w]*/g;
 
-let soljson = child.stdout.match(nonnightlyre);
+let soljson = child.stdout.match(nonNightlyRegex);
 console.log('non nightly soljson versions found: ', soljson);
 
-const quotedversionre = /'\d*\.\d*\.\d*\+commit\.[\d\w]*/g;
-let soljson2 = child.stdout.match(quotedversionre).map((item) => item.replace('\'', 'v'));
+const quotedVersionsRegex = /'\d*\.\d*\.\d*\+commit\.[\d\w]*/g;
+let soljson2 = child.stdout.match(quotedVersionsRegex).map((item) => item.replace('\'', 'v'));
 console.log('quoted soljson versions found: ', soljson2);
 
-const nightlyversions = /\d*\.\d*\.\d-nightly.*\+commit\.[\d\w]*/g
-let soljson3 = child.stdout.match(nightlyversions).map((item) => 'v' + item);
+const nightlyVersionsRegex = /\d*\.\d*\.\d-nightly.*\+commit\.[\d\w]*/g
+let soljson3 = child.stdout.match(nightlyVersionsRegex).map((item) => 'v' + item);
 console.log('nightly soljson versions found: ', soljson3);
 
 // merge the three arrays
