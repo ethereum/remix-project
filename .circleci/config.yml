@@ -28,9 +28,9 @@ jobs:
           name: Build
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build:production
+              NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build:production
             else
-              NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build
+              NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build
             fi
       - run: yarn run build:e2e
       
@@ -39,7 +39,11 @@ jobs:
           keys:
             - soljson-{{ checksum "soljson-versions.txt" }}
       - run: yarn run downloadsolc_assets_e2e
-
+      - save_cache:
+          keys:
+            - soljson-{{ checksum "soljson-versions.txt" }}
+          paths:
+            - dist/apps/remix-ide/assets/js/soljson
       
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
       - persist_to_workspace:
