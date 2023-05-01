@@ -10,7 +10,6 @@ if (child.error) {
     exit(1);
 }
 
-
 const re = /(?<=soljson).*(?=(.js))/g;
 let soljson = child.stdout.match(re);
 
@@ -29,6 +28,7 @@ if (soljson) {
     // manually add some versions
     soljson.push('-v0.6.8+commit.0bbfe453');
     soljson.push('-v0.6.0+commit.26b70077');
+    soljson.push('-v0.7.6+commit.7338295f');
 
     console.log('soljson versions found: ', soljson);
     
