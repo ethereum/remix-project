@@ -23,18 +23,22 @@ const loadLocalSolJson = async () => {
     let info = response.data;
     info.builds = info.builds.filter(build => build.path.indexOf('nightly') === -1)
     info.builds = info.builds.slice(-1)
-    const buildurl = `https://binaries.soliditylang.org/bin/${info.builds[0].path}`;
+    const buildurl = `https://binaries.soliditylang.org/bin/${info.builds[0].path}`
     console.log(`Copying... ${buildurl} to assets`)
     const path = `./apps/remix-ide/src/assets/js/soljson.js`;
     axios({
       method: 'get',
       url: buildurl,
       responseType: 'stream'
-    }).then(function (response) {
+    }).then((response) => {
       response.data.pipe(fs.createWriteStream(path));
+    }).catch((error) => {
+      console.log(error.message)
     })
   }
-  )
+  ).catch((error) => {
+    console.log(error.message)
+  })
 }
 
 fs.writeFileSync('./apps/remix-ide/src/assets/version.json', JSON.stringify(versionData))
