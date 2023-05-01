@@ -10,8 +10,6 @@ if (child.error) {
     exit(1);
 }
 
-console.log('stdout here: \n' + child.stdout)
-
 
 const re = /(?<=soljson).*(?=(.js))/g;
 let soljson = child.stdout.match(re);
@@ -26,11 +24,13 @@ soljson = soljson.concat(soljson2);
 if (soljson) {
     // filter out duplicates
     //soljson = soljson.filter((item, index) => soljson.indexOf(item) === index);
-    console.log('soljson versions found: ', soljson);
+
 
     // manually add some versions
-    soljson.push('-v0.6.8+commit.0bbfe453.js');
-    soljson.push('-v0.6.0+commit.26b70077.js');
+    soljson.push('-v0.6.8+commit.0bbfe453');
+    soljson.push('-v0.6.0+commit.26b70077');
+
+    console.log('soljson versions found: ', soljson);
     
     for (let i = 0; i < soljson.length; i++) {
         const version = soljson[i];
