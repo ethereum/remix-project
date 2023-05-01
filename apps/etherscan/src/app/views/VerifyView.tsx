@@ -125,7 +125,7 @@ export const VerifyView: React.FC<Props> = ({
                 }}
               >
                 <option disabled={true} value="">
-                  Select a contract
+                  { contracts.length ? 'Select a contract' : `--- No compiled contracts ---` }
                 </option>
                 {contracts.map((item) => (
                   <option key={item} value={item}>

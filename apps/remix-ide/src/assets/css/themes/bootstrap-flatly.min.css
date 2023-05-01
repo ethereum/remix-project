@@ -129,13 +129,16 @@ sub {
 sup {
 	top:-.5em
 }
+i {
+  color: #074438;
+}
 a {
-	color:#18bc9c;	
+	color:#074438;	
 	text-decoration:none;	
 	background-color:transparent
 }
 a:hover {
-	color:#0f7864;	
+	color:#10947c;	
 	text-decoration:underline
 }
 a:not([href]):not([class]) {
@@ -182,8 +185,10 @@ th {
 	text-align:-webkit-match-parent
 }
 label {
-	display:inline-block;	
-	margin-bottom:.5rem
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font-size: 11px;
+  line-height: 12px;
 }
 button {
 	border-radius:0
@@ -2872,10 +2877,10 @@ input[type=button].btn-block,input[type=reset].btn-block,input[type=submit].btn-
 	position:relative;	margin-bottom:0;	vertical-align:top
 }
 .custom-control-label::before {
-	position:absolute;	top:.203125rem;	left:-1.5rem;	display:block;	width:1rem;	height:1rem;	pointer-events:none;	content:"";	background-color:#fff;	border:#b4bcc2 solid 1px
+	position:absolute;	top:0px;	left:-1.5rem;	display:block;	width:1rem;	height:1rem;	pointer-events:none;	content:"";	background-color:#fff;	border:#b4bcc2 solid 1px
 }
 .custom-control-label::after {
-	position:absolute;	top:.203125rem;	left:-1.5rem;	display:block;	width:1rem;	height:1rem;	content:"";	background:no-repeat 50%/50% 50%
+	position:absolute;	top:0px;	left:-1.5rem;	display:block;	width:1rem;	height:1rem;	content:"";	background:no-repeat 50%/50% 50%
 }
 .custom-checkbox .custom-control-label::before {
 	border-radius:.25rem
@@ -7175,7 +7180,7 @@ a.text-dark:focus,a.text-dark:hover {
 	border:none;	color:#fff
 }
 .alert .alert-link,.alert a {
-	color:#fff;	text-decoration:underline
+	color:#18bc9c;	text-decoration:underline
 }
 .alert-primary {
 	background-color:#2c3e50
