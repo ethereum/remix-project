@@ -1,9 +1,8 @@
-
 const fs = require('fs');
 var child_process = require('child_process');
 const { exit } = require('process');
 
-var child = child_process.spawnSync('grep', ['-ir', '[0-9]+commit', 'libs/**/*', 'apps/**/*', '--include', '\*.ts'], { encoding: 'utf8', cwd: process.cwd(), shell: true });
+var child = child_process.spawnSync('grep', ['-ir', '[0-9]+commit', 'libs/**/*', 'apps/**/*', '--include', '*.ts'], { encoding: 'utf8', cwd: process.cwd(), shell: true });
 
 if (child.error) {
     console.log("ERROR: ", child);
@@ -15,7 +14,7 @@ const nonnightlyre = /v\d*\.\d*\.\d*\+commit\.[\d\w]*/g;
 let soljson = child.stdout.match(nonnightlyre);
 console.log('non nightly soljson versions found: ', soljson);
 
-const quotedversionre = /\'\d*\.\d*\.\d*\+commit\.[\d\w]*/g;
+const quotedversionre = /'\d*\.\d*\.\d*\+commit\.[\d\w]*/g;
 let soljson2 = child.stdout.match(quotedversionre).map((item) => item.replace('\'', 'v'));
 console.log('quoted soljson versions found: ', soljson2);
 
