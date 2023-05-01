@@ -24,7 +24,6 @@ jobs:
           key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-
       - run:
           name: Build
           command: |
@@ -34,8 +33,13 @@ jobs:
               NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build
             fi
       - run: yarn run build:e2e
+      
+      - restore_cache:
+          keys:
+            - soljson-{{ grep -ir "soljson-v0" apps/* libs/* | md5sum }}
       - run: yarn run downloadsolc_assets_e2e
       - run: grep -ir "soljson-v0" apps/* libs/* | md5sum
+      
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
