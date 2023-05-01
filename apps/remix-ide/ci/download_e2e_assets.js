@@ -10,6 +10,25 @@ if (child.error) {
     exit(1);
 }
 
+// find words between single quotes starting with a number
+const re2 = /(?<=\').*(?=\')/g;
+let versions = child.stdout.match(re2);
+console.log('versions found: ', versions);
+
+// get all words in versions
+const re3 = /(?<=v).*/g;
+let  version2 = []
+for (let i = 0; i < versions.length; i++) {
+    const version = versions[i];
+    if (version) {
+        const v = version.match(re3);
+        if (v) {
+            version2.push(v[0]);
+        }
+    }
+}
+console.log('versions found: ', version2);
+
 
 const re = /(?<=soljson).*(?=(.js))/g;
 let soljson = child.stdout.match(re);
@@ -19,8 +38,8 @@ if (soljson) {
     console.log('soljson versions found: ', soljson);
 
     // manually add some versions
-    soljson.push('soljson-v0.6.8+commit.0bbfe453.js');
-    soljson.push('soljson-v0.6.0+commit.26b70077.js');
+    soljson.push('-v0.6.8+commit.0bbfe453.js');
+    soljson.push('-v0.6.0+commit.26b70077.js');
     
     for (let i = 0; i < soljson.length; i++) {
         const version = soljson[i];
