@@ -37,10 +37,10 @@ jobs:
       - run: grep -ir "soljson-v[0-9]" apps/* libs/* > soljson-versions.txt
       - restore_cache:
           keys:
-            - soljson-{{ checksum "soljson-versions.txt" }}
+            - soljson-cache-{{ checksum "soljson-versions.txt" }}
       - run: yarn run downloadsolc_assets_e2e
       - save_cache:
-          key: soljson-{{ checksum "soljson-versions.txt" }}
+          key: soljson-cache-{{ checksum "soljson-versions.txt" }}
           paths:
             - dist/apps/remix-ide/assets/js/soljson
       
