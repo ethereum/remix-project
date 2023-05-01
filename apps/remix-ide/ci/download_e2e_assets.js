@@ -4,7 +4,7 @@ var child_process = require('child_process');
 const axios = require('axios');
 const { exit } = require('process');
 
-var child = child_process.spawnSync('grep', ['-ir', '"\soljson-v"', 'libs/*', 'apps/*'], { encoding: 'utf8', cwd: process.cwd(), shell: true });
+var child = child_process.spawnSync('grep', ['-ir', '"\soljson-v0"', 'libs/*', 'apps/*'], { encoding: 'utf8', cwd: process.cwd(), shell: true });
 
 if (child.error) {
     console.log("ERROR: ", child);
@@ -22,14 +22,17 @@ if (soljson) {
 
             url = `https://binaries.soliditylang.org/bin/soljson${version}.js`;
 
-            const path = `./dist/apps/remix-ide/assets/js/soljson${version}.js`;
+            const dir = './dist/apps/remix-ide/assets/js/soljson';
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir);
+            }
+
+            const path = `./dist/apps/remix-ide/assets/js/soljson/soljson${version}.js`;
             // check if the file exists
             const exists = fs.existsSync(path);
             if (!exists) {
                 console.log(url)
-                // use axios to get the file
                 try {
-                    /*
                     axios({
                         method: 'get',
                         url: url,
@@ -39,7 +42,9 @@ if (soljson) {
                                 console.log(err);
                             }
                         })
-                    })*/
+                    }).catch(function (error) {
+                        console.log(error);
+                    })
                 } catch (e) {
                     console.log('Failed to download soljson' + version + ' from ' + url)
                 }
