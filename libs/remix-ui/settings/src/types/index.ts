@@ -1,6 +1,7 @@
 export interface GithubSettingsProps {
   saveToken: (githubToken: string, githubUserName: string, githubEmail: string) => void,
   removeToken: () => void,
+  timeStamp: number,
   config: {
     exists: (key: string) => boolean,
     get: (key: string) => string,

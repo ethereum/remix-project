@@ -10,11 +10,13 @@ import {
 } from 'file-saver'
 import http from 'isomorphic-git/http/web'
 import { Octokit } from "@octokit/core";
+import { OctokitResponse } from '@octokit/types'
+import { Endpoints } from "@octokit/types";
 
 import JSZip from 'jszip'
 import path from 'path'
 import { IndexedDBStorage } from './filesystems/indexedDB'
-import { branch, commitChange, remote } from '@remix-ui/git'
+import { GitHubUser, RateLimit, branch, commitChange, remote } from '@remix-ui/git'
 import { createTokenAuth } from "@octokit/auth-token";
 
 declare global {
@@ -465,13 +467,31 @@ class DGitProvider extends Plugin {
     return data.data
   }
 
-  async getGitHubUser(input: { token: string }) {
+  async getGitHubUser(input: { token: string }): Promise<{
+    user: GitHubUser,
+    ratelimit: RateLimit
+  }> {
     const octokit = new Octokit({
       auth: input.token
     })
 
-    const data = await octokit.request('GET /user')
-    return data.data
+    const ratelimit = await octokit.request('GET /rate_limit', {
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    })
+    // epoch timestamp to local date time
+    const localResetTime = ratelimit.data.rate.reset * 1000
+    const localResetTimeString = new Date(localResetTime).toLocaleString()
+
+
+    console.log('rate limit', localResetTimeString)
+
+    const user = await octokit.request('GET /user')
+    return {
+      user: user.data,
+      ratelimit: ratelimit.data
+    }
   }
 
 

@@ -75,9 +75,10 @@ export const setCallBacks = (viewPlugin: ViewPlugin, dispatcher: React.Dispatch<
     plugin.on('dGitProvider', 'clone', async () => {
         await loadFiles();
     })
-    plugin.on('manager', 'pluginActivated', async (plugin: Plugin) => {
-        if(plugin.name === 'dGitProvider') {
+    plugin.on('manager', 'pluginActivated', async (p: Plugin) => {
+        if(p.name === 'dGitProvider') {
             getGitHubUser();
+            plugin.off('manager', 'pluginActivated');
         }
     })
 
@@ -135,10 +136,10 @@ export const loadFiles = async () => {
         await getRemotes();
     } catch (e) { }
     try {
-        await getStorageUsed();
+        //await getStorageUsed();
     } catch (e) { }
     try {
-        await diffFiles('');
+        //await diffFiles('');
     } catch (e) { }
     dispatch(setLoading(false));
 }
@@ -170,5 +171,5 @@ const synTimerStart = async () => {
     clearTimeout(syncTimer)
     syncTimer = setTimeout(async () => {
         await syncFromWorkspace();
-    }, 3000)
+    }, 1000)
 }

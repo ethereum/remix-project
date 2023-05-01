@@ -35,10 +35,10 @@ export const Remotes = () => {
       {context.remotes && context.remotes.length ?
         <>
 
-          {context.remotes && context.remotes.map((remote) => {
+          {context.remotes && context.remotes.map((remote, index) => {
 
             return (
-              <><Remoteselect remote={remote}></Remoteselect></>
+              <Remoteselect key={index} remote={remote}></Remoteselect>
             );
           })}
         </> : <>No remotes</>}

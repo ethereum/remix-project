@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { gitActionsContext } from "../../state/context";
+import { gitActionsContext, pluginActionsContext } from "../../state/context";
 import { gitPluginContext } from "../gitui";
 import axios from "axios";
 import { CopyToClipboard } from "@remix-ui/clipboard";
@@ -9,6 +9,7 @@ import { Card } from "react-bootstrap";
 export const GitHubAuth = () => {
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
+  const pluginActions = React.useContext(pluginActionsContext)
   const [gitHubResponse, setGitHubResponse] = React.useState<any>(null)
   const [authorized, setAuthorized] = React.useState<boolean>(false)
 
@@ -62,6 +63,8 @@ export const GitHubAuth = () => {
 
     if (response.access_token) {
       setAuthorized(true)
+      await pluginActions.saveToken(response.access_token)
+      await actions.getGitHubUser()
     }
 
   }
@@ -76,8 +79,8 @@ export const GitHubAuth = () => {
   }
 
   useEffect(() => {
-
-  }, [context.gitHubUser])
+    console.log('context.rateLimit', context.rateLimit)
+  }, [context.rateLimit])
 
 
   return (
@@ -98,7 +101,7 @@ export const GitHubAuth = () => {
             </div>
           </div>
           <br></br>
-          Step 2: Authorize the app here 
+          Step 2: Authorize the app here
           <br></br><a target="_blank" href={gitHubResponse.verification_uri}>{gitHubResponse.verification_uri}</a>
           <br /><br></br>
           Step 3: When you are done, click on the button below:
@@ -107,7 +110,7 @@ export const GitHubAuth = () => {
           }}>Connect</button>
         </div>
       }
-      { false &&
+      {false &&
         <div className="pt-2">
           <button className='btn btn-primary mt-1 w-100' onClick={async () => {
             disconnect()

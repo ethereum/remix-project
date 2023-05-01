@@ -1,11 +1,13 @@
 import { ViewPlugin } from "@remixproject/engine-web";
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
-import { fileStatus, setBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRemoteBranches, setRemotes, setRepos, setUpstream } from "../state/payload";
-import { branch, commitChange, gitActionDispatch, statusMatrixType } from '../types';
+import { fileStatus, setBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRateLimit, setRemoteBranches, setRemotes, setRepos, setUpstream } from "../state/payload";
+import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
 import { AlertModal, ModalTypes } from "@remix-ui/app";
+import { gitActionsContext } from "../state/context";
+import { gitPluginContext } from "../components/gitui";
 
 export const fileStatuses = [
     ["new,untracked", 0, 2, 0], // new, untracked
@@ -410,16 +412,18 @@ export const getGitHubUser = async () => {
     try {
         const token = await tokenWarning();
         if (token) {
-            const user = await plugin.call('dGitProvider' as any, 'getGitHubUser', { token });
-            console.log(user)
-            dispatch(setGitHubUser(user))
+            const data: {
+                user: GitHubUser,
+                ratelimit: RateLimit
+            } = await plugin.call('dGitProvider' as any, 'getGitHubUser', { token });
+
+            console.log('GET USER"', data)
+
+            dispatch(setGitHubUser(data.user))
+            dispatch(setRateLimit(data.ratelimit))
         }
     } catch (e) {
         console.log(e)
-        plugin.call('notification', 'alert', {
-            title: 'Error',
-            message: e.message
-        })
     }
 }
 

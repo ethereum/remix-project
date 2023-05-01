@@ -1,4 +1,8 @@
+import { Endpoints } from "@octokit/types"
 import { CommitObject, ReadCommitResult } from "isomorphic-git"
+
+export type GitHubUser = Endpoints["GET /user"]["response"]['data']
+export type RateLimit = Endpoints["GET /rate_limit"]["response"]["data"]
 
 export type gitState = {
     currentBranch: branch
@@ -25,7 +29,9 @@ export type gitState = {
     localCommitCount: number
     remoteCommitCount: number
     upstream: string
-    gitHubUser: any
+    gitHubUser: GitHubUser
+    rateLimit: RateLimit
+    gitHubAccessToken: string
 }
 
 export type commitChangeTypes = {  
@@ -103,7 +109,9 @@ export const defaultGitState: gitState = {
     localCommitCount: 0,
     remoteCommitCount: 0,
     upstream: "",
-    gitHubUser: {}
+    gitHubUser: {} as GitHubUser,
+    rateLimit: {} as RateLimit,
+    gitHubAccessToken: ""
 }
 
 export type fileStatusResult = {

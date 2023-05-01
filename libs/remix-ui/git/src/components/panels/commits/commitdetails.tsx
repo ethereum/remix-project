@@ -31,7 +31,7 @@ export const CommitDetails = (props: CommitDetailsProps) => {
         {context.commitChanges && context.commitChanges.filter(
           (change) => change.hashModified === commit.oid && change.hashOriginal === commit.commit.parent[0]
         ).map((change, index) => {
-          return(<CommitDetailsItems commitChange={change}></CommitDetailsItems>)
+          return(<CommitDetailsItems key={index} commitChange={change}></CommitDetailsItems>)
         })}
 
       </>

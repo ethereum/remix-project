@@ -6,8 +6,8 @@ import './remix-ui-settings.css'
 import { generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast, saveIpfsSettingsToast, useAutoCompletion, useShowGasInEditor, useDisplayErrors } from './settingsAction'
 import { initialState, toastInitialState, toastReducer, settingReducer } from './settingsReducer'
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
-import { RemixUiThemeModule, ThemeModule} from '@remix-ui/theme-module'
-import { RemixUiLocaleModule, LocaleModule} from '@remix-ui/locale-module'
+import { RemixUiThemeModule, ThemeModule } from '@remix-ui/theme-module'
+import { RemixUiLocaleModule, LocaleModule } from '@remix-ui/locale-module'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { GithubSettings } from './github-settings'
 import { EtherscanSettings } from './etherscan-settings'
@@ -21,6 +21,7 @@ export interface RemixUiSettingsProps {
   useMatomoAnalytics: boolean
   themeModule: ThemeModule
   localeModule: LocaleModule
+  timeStamp: number
 }
 
 export const RemixUiSettings = (props: RemixUiSettingsProps) => {
@@ -30,7 +31,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [themeName,] = useState('')
   const [privateBeeAddress, setPrivateBeeAddress] = useState('')
   const [postageStampId, setPostageStampId] = useState('')
-  const [resetState, refresh] = useState(0)
+  const [timeStamp, setTimeStamp] = useState(0)
   const [ipfsUrl, setipfsUrl] = useState('')
   const [ipfsPort, setipfsPort] = useState('')
   const [ipfsProtocol, setipfsProtocol] = useState('')
@@ -49,9 +50,16 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
     const useShowGas = props.config.get('settings/show-gas')
     if (useShowGas === null || useShowGas === undefined) useShowGasInEditor(props.config, true, dispatch)
+
+
   }
-  useEffect(() => initValue(), [resetState, props.config])
+  useEffect(() => initValue(), [timeStamp, props.config])
   useEffect(() => initValue(), [])
+
+  useEffect(() => {
+    setTimeStamp(props.timeStamp)
+  }, [props.timeStamp])
+
 
   useEffect(() => {
     const token = props.config.get('settings/' + labels['gist'].key)
@@ -163,7 +171,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               } else {
                 props.config.clear() // remove only the remix settings
               }
-              refresh(resetState + 1)
+              setTimeStamp(Date.now())
             } catch (e) {
               console.log(e)
             }
@@ -197,7 +205,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           </div>
           <div className='custom-control custom-checkbox mb-1'>
             <input onChange={onchangeDisplayErrors} id="settingsDisplayErrors" type="checkbox" className="custom-control-input" checked={displayErrorsChecked} />
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/display-errors')}`}  data-id="displayErrorsLabel" htmlFor="settingsDisplayErrors">
+            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/display-errors')}`} data-id="displayErrorsLabel" htmlFor="settingsDisplayErrors">
               <span><FormattedMessage id='settings.displayErrorsText' /></span>
             </label>
           </div>
@@ -308,43 +316,43 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   const ipfsSettings = () => (
     <div className="border-top">
-    <div className="card-body pt-3 pb-2">
-      <h6 className="card-title"><FormattedMessage id='settings.ipfs' /></h6>
-      <div className="pt-2 mb-0"><label className="m-0">IPFS HOST:</label>
-        <div className="text-secondary mb-0 h6">
-          <input placeholder='e.g. ipfs.infura.io' id="settingsIpfsUrl" data-id="settingsIpfsUrl" className="form-control" onChange={handleSaveIpfsUrl} value={ ipfsUrl } />
+      <div className="card-body pt-3 pb-2">
+        <h6 className="card-title"><FormattedMessage id='settings.ipfs' /></h6>
+        <div className="pt-2 mb-0"><label className="m-0">IPFS HOST:</label>
+          <div className="text-secondary mb-0 h6">
+            <input placeholder='e.g. ipfs.infura.io' id="settingsIpfsUrl" data-id="settingsIpfsUrl" className="form-control" onChange={handleSaveIpfsUrl} value={ipfsUrl} />
+          </div>
+        </div>
+        <div className="pt-2 mb-0 pb-0"><label className="m-0">IPFS PROTOCOL:</label>
+          <div className="text-secondary mb-0 h6">
+            <input placeholder='e.g. https' id="settingsIpfsProtocol" data-id="settingsIpfsProtocol" className="form-control" onChange={handleSaveIpfsProtocol} value={ipfsProtocol} />
+          </div>
+        </div>
+        <div className="pt-2 mb-0 pb-0"><label className="m-0">IPFS PORT:</label>
+          <div className="text-secondary mb-0 h6">
+            <input placeholder='e.g. 5001' id="settingsIpfsPort" data-id="settingsIpfsPort" className="form-control" onChange={handleSaveIpfsPort} value={ipfsPort} />
+          </div>
+        </div>
+        <div className="pt-2 mb-0 pb-0"><label className="m-0">IPFS PROJECT ID [ INFURA ]:</label>
+          <div className="text-secondary mb-0 h6">
+            <input id="settingsIpfsProjectId" data-id="settingsIpfsProjectId" className="form-control" onChange={handleSaveIpfsProjectId} value={ipfsProjectId} />
+          </div>
+        </div>
+        <div className="pt-2 mb-0 pb-0"><label className="m-0">IPFS PROJECT SECRET [ INFURA ]:</label>
+          <div className="text-secondary mb-0 h6">
+            <input id="settingsIpfsProjectSecret" data-id="settingsIpfsProjectSecret" className="form-control" type="password" onChange={handleSaveIpfsSecret} value={ipfsProjectSecret} />
+          </div>
+        </div>
+        <div className="d-flex justify-content-end pt-2">
+          <input className="btn btn-sm btn-primary ml-2" id="saveIpfssettings" data-id="settingsTabSaveIpfsSettings" onClick={() => saveIpfsSettings()} value={intl.formatMessage({ id: 'settings.save' })} type="button"></input>
         </div>
       </div>
-      <div className="pt-2 mb-0 pb-0"><label className="m-0">IPFS PROTOCOL:</label>
-        <div className="text-secondary mb-0 h6">
-          <input placeholder='e.g. https' id="settingsIpfsProtocol" data-id="settingsIpfsProtocol" className="form-control" onChange={handleSaveIpfsProtocol} value={ ipfsProtocol } />
-        </div>
-      </div>
-      <div className="pt-2 mb-0 pb-0"><label className="m-0">IPFS PORT:</label>
-        <div className="text-secondary mb-0 h6">
-          <input placeholder='e.g. 5001' id="settingsIpfsPort" data-id="settingsIpfsPort" className="form-control" onChange={handleSaveIpfsPort} value={ ipfsPort } />
-        </div>
-      </div>
-      <div className="pt-2 mb-0 pb-0"><label className="m-0">IPFS PROJECT ID [ INFURA ]:</label>
-        <div className="text-secondary mb-0 h6">
-          <input id="settingsIpfsProjectId" data-id="settingsIpfsProjectId" className="form-control" onChange={handleSaveIpfsProjectId} value={ ipfsProjectId } />
-        </div>
-      </div>
-      <div className="pt-2 mb-0 pb-0"><label className="m-0">IPFS PROJECT SECRET [ INFURA ]:</label>
-        <div className="text-secondary mb-0 h6">
-          <input id="settingsIpfsProjectSecret" data-id="settingsIpfsProjectSecret" className="form-control" type="password" onChange={handleSaveIpfsSecret} value={ ipfsProjectSecret } />
-        </div>
-      </div>
-      <div className="d-flex justify-content-end pt-2">
-        <input className="btn btn-sm btn-primary ml-2" id="saveIpfssettings" data-id="settingsTabSaveIpfsSettings" onClick={() => saveIpfsSettings()} value={intl.formatMessage({ id: 'settings.save' })} type="button"></input>
-    </div>
-    </div>
-  </div>)
+    </div>)
 
 
   return (
     <div>
-      {state.message ? <Toaster message= {state.message}/> : null}
+      {state.message ? <Toaster message={state.message} /> : null}
       {generalConfig()}
       <GithubSettings
         saveToken={(githubToken: string, githubUserName: string, githubEmail: string) => {
@@ -358,6 +366,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           removeTokenToast(props.config, dispatchToast, "github-email")
         }}
         config={props.config}
+        timeStamp={props.timeStamp}
       />
       <EtherscanSettings
         saveToken={(etherscanToken: string) => {

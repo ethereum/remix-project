@@ -19,7 +19,7 @@ export const Commits = () => {
             //Utils.log("no");
         }
     };
-    
+
 
     return (
         <>
@@ -27,11 +27,11 @@ export const Commits = () => {
                 <div>
 
                     <div className="pt-1">
-                        {context.commits && context.commits.map((commit) => {
+                        {context.commits && context.commits.map((commit, index) => {
                             return (
-                                <>
-                                    <CommitDetails checkout={checkout} commit={commit}></CommitDetails>
-                                </>
+
+                                <CommitDetails key={index} checkout={checkout} commit={commit}></CommitDetails>
+
                             );
                         })}
 

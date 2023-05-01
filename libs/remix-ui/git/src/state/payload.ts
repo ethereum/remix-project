@@ -1,5 +1,6 @@
 import { ReadCommitResult } from "isomorphic-git"
-import { branch, commitChange, fileStatusResult, remote } from "../types"
+import { GitHubUser, branch, commitChange, fileStatusResult, remote } from "../types"
+import { Endpoints } from "@octokit/types"
 
 export const fileStatus = (files: fileStatusResult[]) => {
     return {
@@ -40,6 +41,20 @@ export const setGitHubUser = (user: any) => {
     return {
         type: 'SET_GITHUB_USER',
         payload: user
+    }
+}
+
+export const setRateLimit = (rateLimit: any) => {
+    return {
+        type: 'SET_RATE_LIMIT',
+        payload: rateLimit
+    }
+}
+
+export const setGitHubAccessToken = (token: string) => {
+    return {
+        type: 'SET_GITHUB_ACCESS_TOKEN',
+        payload: token
     }
 }
 

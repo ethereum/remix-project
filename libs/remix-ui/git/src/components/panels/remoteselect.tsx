@@ -36,7 +36,7 @@ export const Remoteselect = (props: RemoteSelectProps) => {
           <>
             {context.branches && context.branches.filter((branch, index) => branch.remote && branch.remote.remote === remote.remote ).map((branch, index) => {
               return (
-                <BranchDetails branch={branch}></BranchDetails>
+                <BranchDetails key={index} branch={branch}></BranchDetails>
               );
             })}</>
 

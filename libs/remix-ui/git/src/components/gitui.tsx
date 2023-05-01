@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer, useState } from 'react'
-import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, getGitHubUser } from '../lib/gitactions'
+import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, getGitHubUser, getBranches, getRemotes } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
-import { openDiff, openFile, setPlugin, statusChanged } from '../lib/pluginActions'
+import { openDiff, openFile, saveToken, setPlugin, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
 import { gitReducer } from '../state/reducer'
 import { defaultGitState, gitState } from '../types'
@@ -27,6 +27,7 @@ import { SettingsNavigation } from './navigation/settings'
 import { Settings } from './panels/settings'
 import { GitHubNavigation } from './navigation/github'
 import { GitHubAuth } from './panels/github'
+import { GitHubCredentials } from './panels/githubcredentials'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 
@@ -110,14 +111,17 @@ export const GitUI = (props: IGitUi) => {
         diff,
         resolveRef,
         setUpstreamRemote,
-        getGitHubUser
+        getGitHubUser,
+        getBranches,
+        getRemotes
     }
 
     const pluginActionsProviderValue = {
         statusChanged,
         loadFiles,
         openFile,
-        openDiff
+        openDiff,
+        saveToken
     }
 
     return (
@@ -181,6 +185,7 @@ export const GitUI = (props: IGitUi) => {
                                 <Accordion.Collapse className='bg-light' eventKey="7">
                                     <>
                                         <GitHubAuth></GitHubAuth>
+                                        <GitHubCredentials></GitHubCredentials>
                                     </>
                                 </Accordion.Collapse>
 

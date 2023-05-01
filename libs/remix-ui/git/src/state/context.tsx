@@ -22,6 +22,8 @@ export interface gitActions  {
     diff(commitChange: commitChange): Promise<void>
     resolveRef(ref: string): Promise<string>
     setUpstreamRemote(upstream: string): Promise<void>
+    getBranches: () => Promise<void>
+    getRemotes: () => Promise<void>
 }
 
 export const gitActionsContext = React.createContext<gitActions>(null)
@@ -31,6 +33,7 @@ export interface pluginActions {
     loadFiles(): void
     openFile(path: string): Promise<void>
     openDiff(change: commitChange): Promise<void>
+    saveToken(token: string): Promise<void>
 }
 
 export const pluginActionsContext = React.createContext<pluginActions>(null)

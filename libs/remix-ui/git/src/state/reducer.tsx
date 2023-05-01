@@ -110,5 +110,18 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
                 ...state,
                 gitHubUser: action.payload
             }
+
+        case 'SET_RATE_LIMIT':
+            console.log("rate limit", action.payload)
+            return {
+                ...state,
+                rateLimit: action.payload
+            }
+
+        case 'SET_GITHUB_ACCESS_TOKEN':
+            return {
+                ...state,
+                gitHubAccessToken: action.payload
+            }
     }
 }

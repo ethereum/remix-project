@@ -1,10 +1,11 @@
 import { faCaretDown, faCaretRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, {  } from "react";
-import { pluginActionsContext } from "../../state/context";
+import { gitActionsContext, pluginActionsContext } from "../../state/context";
 
 export const BranchesNavigation = ({ eventKey, activePanel, callback  }) => {
     const pluginactions = React.useContext(pluginActionsContext)
+    const context = React.useContext(gitActionsContext)
 
     const handleClick = () => {
         if (!callback) return

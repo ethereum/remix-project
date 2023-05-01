@@ -34,7 +34,7 @@ export const SourceControl = () => {
             {
                 groups.map((ob: sourceControlGroup, index: number) => {
                     return (
-                        <SourceControGroup group={ob}></SourceControGroup>
+                        <SourceControGroup key={index} group={ob}></SourceControGroup>
                     )
                 })
             }

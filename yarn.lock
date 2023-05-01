@@ -5005,6 +5005,11 @@
   resolved "https://registry.yarnpkg.com/@octokit/openapi-types/-/openapi-types-17.0.0.tgz#7356d287f48b20e9a1f497ef8dfaabdff9cf8622"
   integrity sha512-V8BVJGN0ZmMlURF55VFHFd/L92XQQ43KvFjNmY1IYbCN3V/h/uUFV6iQi19WEHM395Nn+1qhUbViCAD/1czzog==
 
+"@octokit/openapi-types@^17.1.0":
+  version "17.1.0"
+  resolved "https://registry.yarnpkg.com/@octokit/openapi-types/-/openapi-types-17.1.0.tgz#9a712b5bb9d644940d8a1f24115c798c317a64a5"
+  integrity sha512-rnI26BAITDZTo5vqFOmA7oX4xRd18rO+gcK4MiTpJmsRMxAw0JmevNjPsjpry1bb9SVNo56P/0kbiyXXa4QluA==
+
 "@octokit/plugin-enterprise-rest@^6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@octokit/plugin-enterprise-rest/-/plugin-enterprise-rest-6.0.1.tgz#e07896739618dab8da7d4077c658003775f95437"
@@ -5151,6 +5156,13 @@
   integrity sha512-LPbJIuu1WNoRHbN4UMysEdlissRFpTCWyoKT7kHPufI8T+XX33/qilfMWJo3mCOjNIKu0+43oSQPf+HJa0+TTQ==
   dependencies:
     "@octokit/openapi-types" "^17.0.0"
+
+"@octokit/types@^9.2.0":
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/@octokit/types/-/types-9.2.0.tgz#0358e3de070b1d43c5a8af63b9951c88a09fc9ed"
+  integrity sha512-xySzJG4noWrIBFyMu4lg4tu9vAgNg9S0aoLRONhAEz6ueyi1evBzb40HitIosaYS4XOexphG305IVcLrIX/30g==
+  dependencies:
+    "@octokit/openapi-types" "^17.1.0"
 
 "@openzeppelin/contracts-upgradeable@^4.8.1":
   version "4.8.2"

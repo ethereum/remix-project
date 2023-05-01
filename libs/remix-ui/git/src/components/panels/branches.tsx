@@ -28,7 +28,7 @@ export const Branches = () => {
                     <div>
                         {context.branches && context.branches.map((branch, index) => {
                             return (
-                               <BranchDetails branch={branch}></BranchDetails>
+                               <BranchDetails key={index} branch={branch}></BranchDetails>
                             );
                         })}
                         <hr />

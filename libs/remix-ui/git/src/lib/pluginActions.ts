@@ -27,3 +27,8 @@ export const openDiff = async (change: commitChange) => {
     if(!plugin) return
     plugin.call('fileManager', 'diff', change)
 }
+
+export const saveToken = async (token: string) => {
+    if(!plugin) return
+    await plugin.call('config', 'setAppParameter', 'settings/gist-access-token', token)
+}

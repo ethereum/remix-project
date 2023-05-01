@@ -22,7 +22,8 @@ export function GithubSettings (props: GithubSettingsProps) {
       setGithubUsername(githubUserName)
       setGithubEmail(githubEmail)
     }
-  }, [props.config])
+  }, [props.config, props.timeStamp])
+
 
   const handleChangeTokenState = (event) => {
     const token = event.target.value ? event.target.value.trim() : event.target.value

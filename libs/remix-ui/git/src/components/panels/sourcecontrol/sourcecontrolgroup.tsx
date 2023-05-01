@@ -29,7 +29,7 @@ export const SourceControGroup = (props: SourceControGroupProps) => {
         <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
           <>
             {group.group.map((file, index) => {
-              return (<SourceControlItem group={group} file={file}></SourceControlItem>)
+              return (<SourceControlItem key={index} group={group} file={file}></SourceControlItem>)
             })}
           </>
         </Accordion.Collapse>
