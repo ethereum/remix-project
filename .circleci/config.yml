@@ -37,10 +37,10 @@ jobs:
       - run: grep -ir "[0-9]+commit" apps/* libs/* --include \*.ts --include \*.tsx --include \*.json > soljson-versions.txt
       - restore_cache:
           keys:
-            - soljson-v6-{{ checksum "soljson-versions.txt" }}
+            - soljson-v7-{{ checksum "soljson-versions.txt" }}
       - run: yarn run downloadsolc_assets_e2e
       - save_cache:
-          key: soljson-v6-{{ checksum "soljson-versions.txt" }}
+          key: soljson-v7-{{ checksum "soljson-versions.txt" }}
           paths:
             - dist/apps/remix-ide/assets/js/soljson
       
