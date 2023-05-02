@@ -1,7 +1,7 @@
 module.exports = {
   src_folders: ['dist/apps/remix-ide-e2e/src/tests'],
   output_folder: './reports/tests',
-  custom_commands_path: ['dist/apps/remix-ide-e2e/src/commands'],
+  custom_commands_path: ['dist/apps/remix-ide-e  2e/src/commands'],
   custom_assertions_path: '',
   page_objects_path: '',
   globals_path: '',
