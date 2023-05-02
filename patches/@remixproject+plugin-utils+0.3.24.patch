@@ -1,0 +1,13 @@
+diff --git a/node_modules/@remixproject/plugin-utils/package.json b/node_modules/@remixproject/plugin-utils/package.json
+index 0923655..6883275 100644
+--- a/node_modules/@remixproject/plugin-utils/package.json
++++ b/node_modules/@remixproject/plugin-utils/package.json
+@@ -24,6 +24,6 @@
+   },
+   "license": "MIT",
+   "gitHead": "ca5c69be64ec4eaf7fe5d1d362726e75cb3b5726",
+-  "main": "src/index.js",
+-  "typings": "src/index.d.ts"
++  "main": "index.js",
++  "typings": "index.d.ts"
+ }
