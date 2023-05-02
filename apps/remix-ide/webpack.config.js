@@ -15,26 +15,10 @@ const versionData = {
 }
 
 const loadLocalSolJson = async () => {
-  let url = 'https://binaries.soliditylang.org/wasm/list.json'
-  axios({
-    url: url,
-    method: 'GET',
-  }).then((response) => {
-    let info = response.data;
-    info.builds = info.builds.filter(build => build.path.indexOf('nightly') === -1)
-    info.builds = info.builds.slice(-1)
-    const buildurl = `https://solc-bin.ethereum.org/wasm/${info.builds[0].path}`;
-    console.log(`Copying... ${buildurl} to assets`)
-    const path = `./apps/remix-ide/src/assets/js/soljson.js`;
-    axios({
-      method: 'get',
-      url: buildurl,
-      responseType: 'stream'
-    }).then(function (response) {
-      response.data.pipe(fs.createWriteStream(path));
-    })
-  }
-  )
+  // execute apps/remix-ide/ci/downloadsoljson.sh
+  const child = require('child_process').execSync('bash ./apps/remix-ide/ci/downloadsoljson.sh', { encoding: 'utf8', cwd: process.cwd(), shell: true })
+  // show output
+  console.log(child)
 }
 
 fs.writeFileSync('./apps/remix-ide/src/assets/version.json', JSON.stringify(versionData))
