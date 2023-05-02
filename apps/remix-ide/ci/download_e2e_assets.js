@@ -9,16 +9,14 @@ if (child.error) {
     exit(1);
 }
 
-const nonNightlyRegex = /v\d*\.\d*\.\d*\+commit\.[\d\w]*/g;
 
-let soljson = child.stdout.match(nonNightlyRegex) || [];
-console.log('non nightly soljson versions found: ', soljson);
+let soljson =[];
 
-const quotedVersionsRegex = /['"]\d*\.\d*\.\d*\+commit\.[\d\w]*/g;
+const quotedVersionsRegex = /['"v]\d*\.\d*\.\d*\+commit\.[\d\w]*/g;
 let quotedVersionsRegexMatch = child.stdout.match(quotedVersionsRegex)
 if(quotedVersionsRegexMatch){
     let soljson2 = quotedVersionsRegexMatch.map((item) => item.replace('\'', 'v').replace('"', 'v'))
-    console.log('quoted soljson versions found: ', soljson2);
+    console.log('non nightly soljson versions found: ', soljson2);
     if(soljson2) soljson = soljson.concat(soljson2);
 }
 
@@ -31,24 +29,14 @@ if(nightlyVersionsRegexMatch){
     if(soljson3) soljson = soljson.concat(soljson3);
 }
 
-// merge the three arrays
-
-
-
-console.log('soljson versions found: ', soljson);
-
-
-
 if (soljson) {
     // filter out duplicates
     soljson = soljson.filter((item, index) => soljson.indexOf(item) === index);
 
-
     // manually add some versions
-
     soljson.push('v0.7.6+commit.7338295f');
     
-    console.log('soljson versions found: ', soljson);
+    console.log('soljson versions found: ', soljson, soljson.length);
     
     for (let i = 0; i < soljson.length; i++) {
         const version = soljson[i];
