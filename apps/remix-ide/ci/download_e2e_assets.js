@@ -2,10 +2,8 @@ const fs = require('fs');
 var child_process = require('child_process');
 const { exit } = require('process');
 
-const child = child_process.spawnSync('grep', ['-ir', '[0-9]+commit', 'libs/**/*', 'apps/**/*', '--include', '*.ts', '--include', '*.tsx'], { encoding: 'utf8', cwd: process.cwd(), shell: true });
-const child2 = child_process.spawnSync('grep -r --include="*.json" "+commit" ', [], { encoding: 'utf8', cwd: process.cwd(), shell: true });
+const child = child_process.spawnSync('grep -r --include="*.json" --include="*.ts" --include="*.tsx" "+commit" apps/**/* libs/**/*', [], { encoding: 'utf8', cwd: process.cwd(), shell: true });
 
-console.log('child: ', child2);
 if (child.error) {
     console.log("ERROR: ", child);
     exit(1);
@@ -13,20 +11,29 @@ if (child.error) {
 
 const nonNightlyRegex = /v\d*\.\d*\.\d*\+commit\.[\d\w]*/g;
 
-let soljson = child.stdout.match(nonNightlyRegex);
+let soljson = child.stdout.match(nonNightlyRegex) || [];
 console.log('non nightly soljson versions found: ', soljson);
 
-const quotedVersionsRegex = /'\d*\.\d*\.\d*\+commit\.[\d\w]*/g;
-let soljson2 = child.stdout.match(quotedVersionsRegex).map((item) => item.replace('\'', 'v'));
-console.log('quoted soljson versions found: ', soljson2);
+const quotedVersionsRegex = /['"]\d*\.\d*\.\d*\+commit\.[\d\w]*/g;
+let quotedVersionsRegexMatch = child.stdout.match(quotedVersionsRegex)
+if(quotedVersionsRegexMatch){
+    let soljson2 = quotedVersionsRegexMatch.map((item) => item.replace('\'', 'v').replace('"', 'v'))
+    console.log('quoted soljson versions found: ', soljson2);
+    if(soljson2) soljson = soljson.concat(soljson2);
+}
+
 
 const nightlyVersionsRegex = /\d*\.\d*\.\d-nightly.*\+commit\.[\d\w]*/g
-let soljson3 = child.stdout.match(nightlyVersionsRegex).map((item) => 'v' + item);
-console.log('nightly soljson versions found: ', soljson3);
+const nightlyVersionsRegexMatch = child.stdout.match(nightlyVersionsRegex)
+if(nightlyVersionsRegexMatch){
+    let soljson3 = nightlyVersionsRegexMatch.map((item) => 'v' + item);
+    console.log('nightly soljson versions found: ', soljson3);
+    if(soljson3) soljson = soljson.concat(soljson3);
+}
 
 // merge the three arrays
-soljson = soljson.concat(soljson2);
-soljson = soljson.concat(soljson3);
+
+
 
 console.log('soljson versions found: ', soljson);
 
@@ -40,8 +47,7 @@ if (soljson) {
     // manually add some versions
 
     soljson.push('v0.7.6+commit.7338295f');
-    soljson.push('v0.5.17+commit.d19bba13');
-
+    
     console.log('soljson versions found: ', soljson);
     
     for (let i = 0; i < soljson.length; i++) {
