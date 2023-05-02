@@ -570,7 +570,7 @@ export const getGitRepoCurrentBranch = async (workspaceName: string) => {
     dir: addSlash(workspaceName)
   }
   const currentBranch: branch = await plugin.call('dGitProvider', 'currentbranch', { ...gitConfig })
-  return currentBranch.name
+  return currentBranch && currentBranch.name || null
 }
 
 export const showAllBranches = async () => {
