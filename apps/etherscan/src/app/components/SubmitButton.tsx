@@ -23,7 +23,7 @@ export const SubmitButton: React.FC<Props> = ({
       <div>
         <button
           data-id={dataId}
-          style={{ padding: "0.25rem 0.4rem", marginRight: "0.5em", pointerEvents: 'none' }}
+          style={{ padding: "0.25rem 0.4rem", marginRight: "0.5em" }}
           type="submit"
           className="btn btn-primary btn-block text-decoration-none"
           disabled={disable}
