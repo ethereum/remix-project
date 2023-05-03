@@ -4,6 +4,7 @@ import { encodeParams as encodeParamsHelper, encodeFunctionId, makeFullTypeDefin
 import { eachOfSeries } from 'async'
 import { linkBytecode as linkBytecodeSolc } from 'solc/linker'
 import { isValidAddress, addHexPrefix } from '@ethereumjs/util'
+import fromExponential from 'from-exponential';
 
 /**
   * build the transaction data
@@ -429,7 +430,7 @@ export function parseFunctionParams (params) {
       // look for closing quote. On success, push the complete string in arguments list
       for (let j = i + 1; !endQuoteIndex; j++) {
         if (params.charAt(j) === '"') {
-          args.push(params.substring(i + 1, j))
+          args.push(normalizeParam(params.substring(i + 1, j)))
           endQuoteIndex = true
           i = j
         }
@@ -461,13 +462,7 @@ export function parseFunctionParams (params) {
        // if startIndex >= 0, it means a parameter was being parsed, it can be first or other parameter
       if (startIndex >= 0) {
         let param = params.substring(startIndex, i === params.length - 1 ? undefined : i)
-        const trimmed = param.trim()
-        if (param.startsWith('0x')) param = `${param}`
-        if (/[0-9]/g.test(trimmed)) param = `${trimmed}`
-        if (typeof param === 'string') {          
-          if (trimmed === 'true') param = true
-          if (trimmed === 'false') param = false        
-        }
+        param = normalizeParam(param)
         args.push(param)
       }
       // Register start index of a parameter to parse
@@ -476,6 +471,37 @@ export function parseFunctionParams (params) {
   }
   return args
 }
+
+export const normalizeParam = (param) => {
+  param = param.trim()
+  if (param.startsWith('0x')) param = `${param}`
+  if (/[0-9]/g.test(param)) param = `${param}`
+
+  // fromExponential
+  if (!param.startsWith('0x')) {
+    const regSci = REGEX_SCIENTIFIC.exec(param)
+    const exponents = regSci ? regSci[2] : null
+    if (regSci && REGEX_DECIMAL.exec(exponents)) {
+      try {
+        let paramTrimmed = param.replace(/^'/g, '').replace(/'$/g, '')
+        paramTrimmed = paramTrimmed.replace(/^"/g, '').replace(/"$/g, '')
+        param = fromExponential(paramTrimmed)     
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  }  
+
+  if (typeof param === 'string') {          
+    if (param === 'true') param = true
+    if (param === 'false') param = false        
+  }
+  return param
+}
+
+export const REGEX_SCIENTIFIC = /^-?(\d+\.?\d*)e\d*(\d+)$/
+
+export const REGEX_DECIMAL = /^\d*/
 
 export function isArrayOrStringStart (str, index) {
   return str.charAt(index) === '"' || str.charAt(index) === '['
