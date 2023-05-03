@@ -10,6 +10,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+    - name: Environment Setup
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.0.0
     - name: Run SUT Action
       uses: EthereumRemix/sol-test@v1.1
       with:
@@ -34,6 +38,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+    - name: Environment Setup
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.0.0
     - name: Run Mocha Chai Unit Test Action
       uses: EthereumRemix/ts-sol-test@v1.3.1
       with:
