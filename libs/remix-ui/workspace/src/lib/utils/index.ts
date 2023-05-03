@@ -1,15 +1,15 @@
-import { MenuItems } from '../types'
+import { WorkspaceProps, MenuItems } from '../types'
 
 export const contextMenuActions: MenuItems = [{
   id: 'newFile',
   name: 'New File',
-  type: ['folder', 'gist'],
+  type: ['folder', 'gist', 'workspace'],
   multiselect: false,
   label: ''
 }, {
   id: 'newFolder',
   name: 'New Folder',
-  type: ['folder', 'gist'],
+  type: ['folder', 'gist', 'workspace'],
   multiselect: false,
   label: ''
 }, {
@@ -27,7 +27,7 @@ export const contextMenuActions: MenuItems = [{
 },{
   id: 'download',
   name: 'Download',
-  type: ['file', 'folder'],
+  type: ['file', 'folder', 'workspace'],
   multiselect: false,
   label: ''
 }, {
@@ -77,5 +77,24 @@ export const contextMenuActions: MenuItems = [{
   name: 'Delete All',
   type: ['folder', 'file'],
   multiselect: true,
+  label: ''
+},{
+  id: 'uploadFile',
+  name: 'Load a Local File',
+  type: ['folder', 'gist', 'workspace'],
+  multiselect: false,
+  label: 'Load a Local File'
+}, {
+  id: 'publishToGist',
+  name: 'Push changes to gist',
+  type: ['folder', 'gist'],
+  multiselect: false,
+  label: 'Publish all to Gist'
+},
+{
+  id: 'publishWorkspace',
+  name: 'Publish Workspace to Gist',
+  type: ['workspace'],
+  multiselect: false,
   label: ''
 }]

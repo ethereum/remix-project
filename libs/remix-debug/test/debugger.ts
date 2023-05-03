@@ -9,7 +9,7 @@ import { BreakpointManager } from '../src/code/breakpointManager'
 const compiler = require('solc')
 const vmCall = require('./vmCall')
 
-const ballot = `pragma solidity >=0.4.22 <0.8.0;
+const ballot = `pragma solidity >=0.4.22;
 
 /** 
  * @title Ballot
@@ -287,7 +287,7 @@ function testDebugging (debugManager) {
     breakPointManager.add({fileName: 'test.sol', row: 39})
 
     breakPointManager.event.register('breakpointHit', function (sourceLocation, step) {
-      t.equal(JSON.stringify(sourceLocation), JSON.stringify({ start: 1153, length: 6, file: 0, jump: '-' }))
+      t.equal(JSON.stringify(sourceLocation), JSON.stringify({ start: 1146, length: 6, file: 0, jump: '-' }))
       t.equal(step, 212)
     })
 
