@@ -946,7 +946,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 </div>}
             >
               <div className="d-flex align-items-center justify-content-center">
-                { <i ref={compileIcon} className="fas fa-sync remixui_iconbtn ml-2" aria-hidden="true"></i> }
+                { <i ref={compileIcon} className="fas fa-sync mr-2" aria-hidden="true"></i> }
                 <div className="text-truncate overflow-hidden text-nowrap"
                 >
                   <span>
