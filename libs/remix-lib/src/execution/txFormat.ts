@@ -499,7 +499,7 @@ export const normalizeParam = (param) => {
   return param
 }
 
-export const REGEX_SCIENTIFIC = /^(\d+\.?\d*)e\d*(\d+)$/
+export const REGEX_SCIENTIFIC = /^-?(\d+\.?\d*)e\d*(\d+)$/
 
 export const REGEX_DECIMAL = /^\d*/
 
