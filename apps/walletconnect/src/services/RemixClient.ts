@@ -32,7 +32,7 @@ export class RemixClient extends PluginClient {
 
     async initClient () {
         try {
-            this.chains = [arbitrum, mainnet, polygon, optimism, goerli, sepolia]
+            this.chains = [arbitrum, arbitrumGoerli, mainnet, polygon, polygonMumbai, optimism, optimismGoerli, goerli, sepolia]
             const { provider } = configureChains(this.chains, [w3mProvider({ projectId: PROJECT_ID })])
             
             this.wagmiClient = wagmiCreateClient({

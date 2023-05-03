@@ -170,7 +170,7 @@ export class RunTab extends ViewPlugin {
     await addProvider('injected-optimism-provider', 'L2 - Optimism Provider', true, false)
     await addProvider('injected-arbitrum-one-provider', 'L2 - Arbitrum One Provider', true, false)
   
-    // await addProvider('walletconnect', 'WalletConnect', false, false)
+    await addProvider('walletconnect', 'WalletConnect', false, false)
     
   }
 

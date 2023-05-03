@@ -25,10 +25,12 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     updateInstanceBalance(plugin, dispatch)
   })
 
-  plugin.blockchain.event.register('contextChanged', (context) => {
+  plugin.blockchain.event.register('contextChanged', async (context) => {
     dispatch(resetProxyDeployments())
     if (!context.startsWith('vm')) getNetworkProxyAddresses(plugin, dispatch)
-    if (context !== 'walletconnect') plugin.call('manager', 'deactivatePlugin', 'walletconnect')
+    if (context !== 'walletconnect') {
+      (await plugin.call('manager', 'isActive', 'walletconnect')) && plugin.call('manager', 'deactivatePlugin', 'walletconnect')
+    }
     setFinalContext(plugin, dispatch)
     fillAccountsList(plugin, dispatch)
     updateAccountBalances(plugin, dispatch)
