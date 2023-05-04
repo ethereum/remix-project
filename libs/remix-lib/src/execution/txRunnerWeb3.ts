@@ -113,7 +113,7 @@ export class TxRunnerWeb3 {
           // the sending stack (web3.js / metamask need to have the type defined)
           // this is to avoid the following issue: https://github.com/MetaMask/metamask-extension/issues/11824
           txCopy.type = '0x2'
-          txCopy.maxFeePerGas = Math.ceil(network.lastBlock.baseFeePerGas + network.lastBlock.baseFeePerGas / 3)
+          txCopy.maxFeePerGas = Math.ceil(network.lastBlock.baseFeePerGas + network.lastBlock.baseFeePerGas / 2)
         } else {
           txCopy.type = '0x1'
           txCopy.gasPrice = network.lastBlock.baseFeePerGas
