@@ -12,7 +12,7 @@ jobs:
       - name: Environment Setup
         uses: actions/setup-node@v3
         with:
-          node-version: 14.17.6
+          node-version: 20.0.0
       - name: Run SUT Action
         uses: EthereumRemix/sol-test@v1
         with:
