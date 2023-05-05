@@ -157,8 +157,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
           ...prevState.dropdownContent,
           display: 'block'
         },
-        // replace 0xNaN with 0x0
-        copiableContent: JSON.stringify(calldata, null, '\t').replace(/0xNaN/g, '0x0'),
+        copiableContent: JSON.stringify(calldata, null, '\t'),
         message: {
           innerText: isEmpty ? 'No data available' : '',
           display: isEmpty ? 'block' : 'none'
