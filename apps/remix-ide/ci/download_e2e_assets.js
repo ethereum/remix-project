@@ -1,63 +1,77 @@
-const testFolder = './apps/remix-ide-e2e/src/tests/';
 const fs = require('fs');
+var child_process = require('child_process');
+const { exit } = require('process');
 
-let url = 'https://binaries.soliditylang.org/wasm/list.json'
+const child = child_process.spawnSync('grep -r --include="*.json" --include="*.ts" --include="*.tsx" "+commit" apps/**/* libs/**/*', [], { encoding: 'utf8', cwd: process.cwd(), shell: true });
 
-const axios = require('axios')
-
-// use axios to download the file
-axios({
-    url: url,
-    method: 'GET',
-}).then((response) => {
-
-    let info = response.data;
-    info.builds = info.builds.filter(build => build.path.indexOf('nightly') === -1)
-    for (let build of info.builds) {
-
-        const buildurl = `https://solc-bin.ethereum.org/wasm/${build.path}`;
-        console.log(buildurl)
-
-        const path = `./dist/apps/remix-ide/assets/js/${build.path}`;
-        // use axios to get the file
-        axios({
-            method: 'get',
-            url: buildurl,
-            responseType: 'stream'
-        }).then(function (response) {
-            // pipe the result stream into a file on disc
-            response.data.pipe(fs.createWriteStream(path));
-        })
-
-    }
+if (child.error) {
+    console.log("ERROR: ", child);
+    exit(1);
 }
-)
 
-fs.readdirSync(testFolder).forEach(file => {
-    let c = fs.readFileSync(testFolder + file, 'utf8');
-    const re = /(?<=soljson).*(?=(.js))/g;
-    const soljson = c.match(re);
-    if (soljson) {
-        for (let i = 0; i < soljson.length; i++) {
 
-            const version = soljson[i];
-            if (version && version.indexOf('nightly') > -1) {
-                const url = `https://solc-bin.ethereum.org/bin/soljson${version}.js`;
-                console.log(url)
+let soljson =[];
 
-                const path = `./dist/apps/remix-ide/assets/js/soljson${version}.js`;
-                // use axios to get the file
-                axios({
-                    method: 'get',
-                    url: url,
-                    responseType: 'stream'
-                }).then(function (response) {
-                    // pipe the result stream into a file on disc
-                    response.data.pipe(fs.createWriteStream(path));
-                })
+const quotedVersionsRegex = /['"v]\d*\.\d*\.\d*\+commit\.[\d\w]*/g;
+let quotedVersionsRegexMatch = child.stdout.match(quotedVersionsRegex)
+if(quotedVersionsRegexMatch){
+    let soljson2 = quotedVersionsRegexMatch.map((item) => item.replace('\'', 'v').replace('"', 'v'))
+    console.log('non nightly soljson versions found: ', soljson2);
+    if(soljson2) soljson = soljson.concat(soljson2);
+}
+
+
+const nightlyVersionsRegex = /\d*\.\d*\.\d-nightly.*\+commit\.[\d\w]*/g
+const nightlyVersionsRegexMatch = child.stdout.match(nightlyVersionsRegex)
+if(nightlyVersionsRegexMatch){
+    let soljson3 = nightlyVersionsRegexMatch.map((item) => 'v' + item);
+    console.log('nightly soljson versions found: ', soljson3);
+    if(soljson3) soljson = soljson.concat(soljson3);
+}
+
+if (soljson) {
+    // filter out duplicates
+    soljson = soljson.filter((item, index) => soljson.indexOf(item) === index);
+
+    // manually add some versions
+    soljson.push('v0.7.6+commit.7338295f');
+    
+    console.log('soljson versions found: ', soljson, soljson.length);
+    
+    for (let i = 0; i < soljson.length; i++) {
+        const version = soljson[i];
+        if (version) {
+            let url = ''
+
+            // if nightly
+            if (version.includes('nightly')) {
+                url = `https://binaries.soliditylang.org/bin/soljson-${version}.js`;
+            }else{
+                url = `https://binaries.soliditylang.org/wasm/soljson-${version}.js`;
             }
 
-        }
-    }
+            const dir = './dist/apps/remix-ide/assets/js/soljson';
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir);
+            }
 
-});
+            const path = `./dist/apps/remix-ide/assets/js/soljson/soljson-${version}.js`;
+            // check if the file exists
+            const exists = fs.existsSync(path);
+            if (!exists) {
+                console.log('URL:', url)
+                try {
+                    // use curl to download the file
+                    child_process.exec(`curl -o ${path} ${url}`, { encoding: 'utf8', cwd: process.cwd(), shell: true })
+                } catch (e) {
+                    console.log('Failed to download soljson' + version + ' from ' + url)
+                }
+            }
+
+
+        }
+       
+    } 
+
+}
+

@@ -6,6 +6,7 @@ const version = require('../../package.json').version
 const fs = require('fs')
 const TerserPlugin = require("terser-webpack-plugin")
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
+const axios = require('axios')
 
 const versionData = {
   version: version,
@@ -13,7 +14,16 @@ const versionData = {
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development'
 }
 
+const loadLocalSolJson = async () => {
+  // execute apps/remix-ide/ci/downloadsoljson.sh
+  const child = require('child_process').execSync('bash ./apps/remix-ide/ci/downloadsoljson.sh', { encoding: 'utf8', cwd: process.cwd(), shell: true })
+  // show output
+  console.log(child)
+}
+
 fs.writeFileSync('./apps/remix-ide/src/assets/version.json', JSON.stringify(versionData))
+
+loadLocalSolJson()
 
 const project = fs.readFileSync('./apps/remix-ide/project.json', 'utf8')
 
@@ -120,3 +130,5 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
 
   return config;
 });
+
+
