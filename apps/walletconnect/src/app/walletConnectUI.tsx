@@ -1,4 +1,4 @@
-import { Web3Button, Web3Modal } from "@web3modal/react"
+create cripto moeda import { Web3Button, Web3Modal } from "@web3modal/react"
 import { WagmiConfig } from "wagmi"
 import { PROJECT_ID } from "../services/constant"
 
