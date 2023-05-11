@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react"
 import {
   PluginClient,
 } from "@remixproject/plugin"
+import { CustomTooltip } from '@remix-ui/helper'
 import { Formik, ErrorMessage, Field } from "formik"
 
 import { SubmitButton } from "../components"
@@ -188,30 +189,35 @@ export const VerifyView: React.FC<Props> = ({
               ? true 
               : false}
             />
-            <br/><br/>
-            <button
-              type="button"
-              style={{ padding: "0.25rem 0.4rem", marginRight: "0.5em", marginBottom: "0.5em"}}
-              className="btn btn-secondary"
-              title="Generate the required TS scripts to verify a contract on Etherscan"
-              onClick={async () => {
-                if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/receiptStatus.ts')) {
-                  await client.call('fileManager', 'writeFile', 'scripts/etherscan/receiptStatus.ts', receiptGuidScript)
-                  await client.call('fileManager', 'open', 'scripts/etherscan/receiptStatus.ts')
-                } else {
-                  client.call('notification' as any, 'toast', 'File receiptStatus.ts already exists')
-                }
-                
-                if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/verify.ts')) {
-                  await client.call('fileManager', 'writeFile', 'scripts/etherscan/verify.ts', verifyScript)
-                  await client.call('fileManager', 'open', 'scripts/etherscan/verify.ts')
-                } else {
-                  client.call('notification' as any, 'toast', 'File verify.ts already exists')
-                }
-              }}
-              >
-                Generate Verification Scripts
-              </button>
+            <br/>
+            <CustomTooltip
+              tooltipText='Generate the required TS scripts to verify a contract on Etherscan'
+              tooltipId='etherscan-generate-scripts'
+              placement='bottom'
+            >
+              <button
+                type="button"
+                style={{ padding: "0.25rem 0.4rem", marginRight: "0.5em", marginBottom: "0.5em"}}
+                className="btn btn-secondary btn-block"
+                onClick={async () => {
+                  if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/receiptStatus.ts')) {
+                    await client.call('fileManager', 'writeFile', 'scripts/etherscan/receiptStatus.ts', receiptGuidScript)
+                    await client.call('fileManager', 'open', 'scripts/etherscan/receiptStatus.ts')
+                  } else {
+                    client.call('notification' as any, 'toast', 'File receiptStatus.ts already exists')
+                  }
+                  
+                  if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/verify.ts')) {
+                    await client.call('fileManager', 'writeFile', 'scripts/etherscan/verify.ts', verifyScript)
+                    await client.call('fileManager', 'open', 'scripts/etherscan/verify.ts')
+                  } else {
+                    client.call('notification' as any, 'toast', 'File verify.ts already exists')
+                  }
+                }}
+                >
+                  Generate Verification Scripts
+                </button>
+              </CustomTooltip>
           </form>
           )
         }

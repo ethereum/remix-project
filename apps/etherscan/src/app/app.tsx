@@ -85,14 +85,11 @@ const App = () => {
     }
 
     const receiptsNotVerified: Receipt[] = receipts.filter((item: Receipt) => {
-      return item.status !== "Verified"
+      return item.status === "Pending in queue"
     })
 
     if (receiptsNotVerified.length > 0) {
       const timer1 = setInterval(() => {
-        for (const item in receiptsNotVerified) {
-          
-        }
         receiptsNotVerified.forEach(async (item) => {
           if (!clientInstanceRef.current) {
             return {}
@@ -106,19 +103,18 @@ const App = () => {
             apiKey,
             getEtherScanApi(network)
           )
-          if (status.result === "Pass - Verified") {
+          if (status.result === "Pass - Verified" || status.result === "Already Verified") {
             const newReceipts = receipts.map((currentReceipt: Receipt) => {
               if (currentReceipt.guid === item.guid) {
                 return {
                   ...currentReceipt,
-                  status: "Verified",
+                  status: status.result,
                 }
               }
               return currentReceipt
             })
 
             clearInterval(timer1)
-
             setReceipts(newReceipts)
 
             return () => {
