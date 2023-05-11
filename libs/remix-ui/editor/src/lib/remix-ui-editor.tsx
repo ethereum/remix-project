@@ -556,7 +556,10 @@ export const EditorUI = (props: EditorUIProps) => {
     reducerListener(props.plugin, dispatch, monacoRef.current, editorRef.current, props.events)
     props.events.onEditorMounted()
     editor.onMouseUp((e) => {
-      if (e && e.target && e.target.toString().startsWith('GUTTER')) {
+      // see https://microsoft.github.io/monaco-editor/typedoc/enums/editor.MouseTargetType.html
+      // 2 is GUTTER_GLYPH_MARGIN
+      // 3 is GUTTER_LINE_NUMBERS
+      if (e && e.target && (e.target.type === 2 || e.target.type === 3)) {
         (window as any).addRemixBreakpoint(e.target.position)
       }
     })
