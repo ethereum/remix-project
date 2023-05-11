@@ -46,7 +46,7 @@ type Opcode = {
  * information about the opcode.
  */
 export function parseCode (raw) {
-  const common = new Common({ chain: 'mainnet', hardfork: 'london' })
+  const common = new Common({ chain: 'mainnet', hardfork: 'merge' })
   const opcodes = getOpcodesForHF(common).opcodes
 
   const code = []

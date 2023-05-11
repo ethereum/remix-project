@@ -24,7 +24,18 @@ module.exports = {
   'Should clone the Vyper repo #group1': function (browser: NightwatchBrowser) {
     browser.click('button[data-id="add-repository"]')
       .frameParent()
-      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'Vyper repository cloned', 60000)
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible({
+        selector: "//*[@data-id='workspacesSelect' and contains(.,'vyper-lang')]",
+        locateStrategy: 'xpath',
+        timeout: 60000
+      })
+      .currentWorkspaceIs('vyper-lang')
+      .waitForElementVisible({
+        selector: "//*[@data-id='treeViewLitreeViewItemexamples' and contains(.,'examples')]",
+        locateStrategy: 'xpath',
+        timeout: 60000
+      })
       .openFile('examples')
       .openFile('examples/auctions')
       .openFile('examples/auctions/blind_auction.vy')
@@ -36,7 +47,21 @@ module.exports = {
       .frame(0)
       .click('[data-id="remote-compiler"]')
       .click('[data-id="compile"]')
-      .waitForElementVisible('[data-id="copy-abi"]')
+      .isVisible({
+        selector: '[data-id="copy-abi"]',
+        timeout: 4000,
+        abortOnFailure: false,
+        suppressNotFoundErrors: true
+      }, (okVisible) => {
+        if (okVisible.value === null) {
+          console.log('retrying compilation...')
+          browser.click('[data-id="compile"]').waitForElementVisible('[data-id="copy-abi"]')
+        } else{
+          browser.assert.ok(okVisible.value === true, 'ABI should be visible')
+        }
+      })
+      
+
   },
 
   'Compile test contract and deploy to remix VM #group1': function (browser: NightwatchBrowser) {
@@ -50,6 +75,19 @@ module.exports = {
       // @ts-ignore
       .frame(0)
       .click('[data-id="compile"]')
+      .isVisible({
+        selector: '[data-id="copy-abi"]',
+        timeout: 4000,
+        abortOnFailure: false,
+        suppressNotFoundErrors: true
+      }, (okVisible) => {
+        if (okVisible.value === null) {
+          console.log('retrying compilation...')
+          browser.click('[data-id="compile"]').waitForElementVisible('[data-id="copy-abi"]')
+        } else{
+          browser.assert.ok(okVisible.value === true, 'ABI should be visible')
+        }
+      })
       .frameParent()
       .clickLaunchIcon('udapp')
       .createContract('')

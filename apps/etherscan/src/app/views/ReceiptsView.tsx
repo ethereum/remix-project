@@ -12,7 +12,7 @@ interface FormValues {
 }
 
 export const ReceiptsView: React.FC = () => {
-  const [results, setResults] = useState("")
+  const [results, setResults] = useState({succeed: false, message: ''})
   const onGetReceiptStatus = async (
     values: FormValues,
     clientInstance: any,
@@ -21,7 +21,10 @@ export const ReceiptsView: React.FC = () => {
     try {
       const network = await getNetworkName(clientInstance)
       if (network === "vm") {
-        setResults("Cannot verify in the selected network")
+        setResults({
+          succeed: false,
+          message: "Cannot verify in the selected network"
+      })
         return
       }
       const etherscanApi = getEtherScanApi(network)
@@ -30,16 +33,23 @@ export const ReceiptsView: React.FC = () => {
         apiKey,
         etherscanApi
       )
-      setResults(result.result)
+      setResults({
+        succeed: result.status === '1' ? true : false,
+        message: result.result
+      })
     } catch (error: any) {
-      setResults(error.message)
+      setResults({
+        succeed: false,
+        message: error.message
+      })
     }
   }
 
   return (
     <AppContext.Consumer>
-      {({ apiKey, clientInstance, receipts }) =>
-        !apiKey ? (
+      {({ apiKey, clientInstance, receipts }) => {
+        if (!apiKey && clientInstance && clientInstance.call) clientInstance.call('notification' as any, 'toast', 'Please add API key to continue')
+        return !apiKey ? (
           <Navigate
             to={{
               pathname: "/settings"
@@ -66,7 +76,6 @@ export const ReceiptsView: React.FC = () => {
                     className="form-group"
                     style={{ marginBottom: "0.5rem" }}
                   >
-                    <h6>Get your Receipt GUID status</h6>
                     <label htmlFor="receiptGuid">Receipt GUID</label>
                     <Field
                       className={
@@ -83,8 +92,7 @@ export const ReceiptsView: React.FC = () => {
                       component="div"
                     />
                   </div>
-
-                  <SubmitButton text="Check" />
+                  <SubmitButton text="Check" disable = {!touched.receiptGuid || (touched.receiptGuid && errors.receiptGuid) ? true : false} />
                 </form>
               )}
             </Formik>
@@ -94,13 +102,15 @@ export const ReceiptsView: React.FC = () => {
                 marginTop: "2em",
                 fontSize: "0.8em",
                 textAlign: "center",
+                color: results['succeed'] ? "green" : "red"
               }}
-              dangerouslySetInnerHTML={{ __html: results }}
+              dangerouslySetInnerHTML={{ __html: results.message ? results.message : '' }}
             />
 
             <ReceiptsTable receipts={receipts} />
           </div>
         )
+      }
       }
     </AppContext.Consumer>
   )
@@ -113,8 +123,8 @@ const ReceiptsTable: React.FC<{ receipts: Receipt[] }> = ({ receipts }) => {
       <table className="table table-sm">
         <thead>
           <tr>
-            <th scope="col">Guid</th>
             <th scope="col">Status</th>
+            <th scope="col">GUID</th>
           </tr>
         </thead>
         <tbody>
@@ -123,8 +133,11 @@ const ReceiptsTable: React.FC<{ receipts: Receipt[] }> = ({ receipts }) => {
             receipts.map((item: Receipt, index) => {
               return (
                 <tr key={item.guid}>
+                  <td className={item.status === 'Pass - Verified' 
+                  ? 'text-success' : (item.status === 'Pending in queue' 
+                  ? 'text-warning' : (item.status === 'Already Verified'
+                  ? 'text-info': 'text-secondary'))}>{item.status}</td>
                   <td>{item.guid}</td>
-                  <td>{item.status}</td>
                 </tr>
               )
             })}

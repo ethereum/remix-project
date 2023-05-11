@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { ContractDropdownProps, DeployMode } from '../types'
-import { ContractData, FuncABI } from '@remix-project/core-plugin'
+import { ContractData, FuncABI, OverSizeLimit} from '@remix-project/core-plugin'
 import * as ethJSUtil from '@ethereumjs/util'
 import { ContractGUI } from './contractGUI'
 import { CustomTooltip, deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
@@ -246,10 +246,19 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     )
   }
 
-  const isOverSizePrompt = () => {
+  const isOverSizePrompt = (values: OverSizeLimit) => {
     return (
       <div>
-        <FormattedMessage id='udapp.isOverSizePrompt' values={{ br: <br />, a: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank" rel="noreferrer">eip-170</a> }} />
+        { 
+        values.overSizeEip170 && <div>
+          <FormattedMessage id='udapp.isOverSizePromptEip170' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-170" target="_blank" rel="noreferrer">eip-170</a> }} />
+        </div>
+        }
+        { 
+        values.overSizeEip3860 && <div>
+          <FormattedMessage id='udapp.isOverSizePromptEip3860' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-3860" target="_blank" rel="noreferrer">eip-3860</a> }} />
+        </div>
+        }
       </div>
     )
   }

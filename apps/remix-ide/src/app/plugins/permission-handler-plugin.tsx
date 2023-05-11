@@ -13,12 +13,14 @@ const profile = {
 }
 export class PermissionHandlerPlugin extends Plugin {
   permissions: any
+  sessionPermissions: any
   currentVersion: number
   fallbackMemory: boolean
   constructor() {
     super(profile)
     this.fallbackMemory = false
     this.permissions = this._getFromLocal()
+    this.sessionPermissions = {}
     this.currentVersion = 1
     // here we remove the old permissions saved before adding 'permissionVersion'
     // since with v1 the structure has been changed because of new engine ^0.2.0-alpha.6 changes
@@ -44,14 +46,22 @@ export class PermissionHandlerPlugin extends Plugin {
     }
   }
 
-  switchMode (from: Profile, to: Profile, method: string, set: boolean) {
-    set
+  switchMode (from: Profile, to: Profile, method: string, set: boolean, sensitiveCall: boolean) {
+    if (sensitiveCall) {
+      set
+    ? this.sessionPermissions[to.name][method][from.name] = {}
+    : delete this.sessionPermissions[to.name][method][from.name]
+    } else {
+      set
     ? this.permissions[to.name][method][from.name] = {}
     : delete this.permissions[to.name][method][from.name]
+    }    
   }
 
   clear() {
     localStorage.removeItem('plugins/permissions')
+    this.permissions = this._getFromLocal()
+    this.sessionPermissions = {}
   }
 
   notAllowWarning(from: Profile, to: Profile, method: string) {
@@ -72,12 +82,18 @@ export class PermissionHandlerPlugin extends Plugin {
    */
   async askPermission(from: Profile, to: Profile, method: string, message: string, sensitiveCall: boolean) {
     try {
-      this.permissions = this._getFromLocal()
-      if (!this.permissions[to.name]) this.permissions[to.name] = {}
-      if (!this.permissions[to.name][method]) this.permissions[to.name][method] = {}
-      if (!this.permissions[to.name][method][from.name]) return this.openPermission(from, to, method, message, sensitiveCall)
+      if (sensitiveCall) {
+        if (!this.sessionPermissions[to.name]) this.sessionPermissions[to.name] = {}
+        if (!this.sessionPermissions[to.name][method]) this.sessionPermissions[to.name][method] = {}
+        if (!this.sessionPermissions[to.name][method][from.name]) return this.openPermission(from, to, method, message, sensitiveCall)
+      } else {
+        this.permissions = this._getFromLocal()
+        if (!this.permissions[to.name]) this.permissions[to.name] = {}
+        if (!this.permissions[to.name][method]) this.permissions[to.name][method] = {}
+        if (!this.permissions[to.name][method][from.name]) return this.openPermission(from, to, method, message, sensitiveCall)
+      }
 
-      const { allow, hash } = this.permissions[to.name][method][from.name]
+      const { allow, hash } = sensitiveCall ? this.sessionPermissions[to.name][method][from.name] : this.permissions[to.name][method][from.name]
       if (!allow) {
         const warning = this.notAllowWarning(from, to, method)
         this.call('notification', 'toast', warning)
@@ -92,7 +108,12 @@ export class PermissionHandlerPlugin extends Plugin {
   }
 
   async openPermission(from: Profile, to: Profile, method: string, message: string, sensitiveCall: boolean) {
-    const remember = this.permissions[to.name][method][from.name]
+    let remember
+    if (sensitiveCall) {
+      remember = this.sessionPermissions[to.name][method][from.name]
+    } else {
+      remember = this.permissions[to.name][method][from.name]
+    }
     const value: PermissionHandlerValue = {
       from,
       to,
@@ -112,22 +133,40 @@ export class PermissionHandlerPlugin extends Plugin {
     const result = await this.call('notification', 'modal', modal)
     return new Promise((resolve, reject) => {
       if (result) {
-        if (this.permissions[to.name][method][from.name]) {
-              this.permissions[to.name][method][from.name] = {
-                allow: true,
-                hash: from.hash
-              }
-              this.persistPermissions()
+        if (sensitiveCall) {
+          if (this.sessionPermissions[to.name][method][from.name]) {
+            this.sessionPermissions[to.name][method][from.name] = {
+              allow: true,
+              hash: from.hash
+            }
+          }
+        } else {
+          if (this.permissions[to.name][method][from.name]) {
+            this.permissions[to.name][method][from.name] = {
+              allow: true,
+              hash: from.hash
+            }
+            this.persistPermissions()
+          }
         }
         resolve(true)
       } else {
-        if (this.permissions[to.name][method][from.name]) {
-          this.permissions[to.name][method][from.name] = {
-            allow: false,
-            hash: from.hash
+        if (sensitiveCall) {
+          if (this.sessionPermissions[to.name][method][from.name]) {
+            this.sessionPermissions[to.name][method][from.name] = {
+              allow: false,
+              hash: from.hash
+            }
           }
-          this.persistPermissions()
-        }
+        } else {
+          if (this.permissions[to.name][method][from.name]) {
+            this.permissions[to.name][method][from.name] = {
+              allow: false,
+              hash: from.hash
+            }
+            this.persistPermissions()
+          }
+        }        
         reject(this.notAllowWarning(from, to, method))
       }
     })

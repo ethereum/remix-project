@@ -1,8 +1,9 @@
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 
 import {
   PluginClient,
 } from "@remixproject/plugin"
+import { CustomTooltip } from '@remix-ui/helper'
 import { Formik, ErrorMessage, Field } from "formik"
 
 import { SubmitButton } from "../components"
@@ -30,6 +31,21 @@ export const VerifyView: React.FC<Props> = ({
   onVerifiedContract,
 }) => {
   const [results, setResults] = useState("")
+  const [networkName, setNetworkName] = useState("Loading...")
+  const [showConstructorArgs, setShowConstructorArgs] = useState(false)
+  const verificationResult = useRef({})
+
+  useEffect(() => {
+    if (client && client.on) {
+      client.on("blockchain" as any, 'networkStatus', (result) => {
+        setNetworkName(result.network.name)
+      })
+    }
+    return () => {
+      // To fix memory leak
+      if (client && client.off) client.off("blockchain" as any, 'networkStatus')
+    }
+  }, [client])
 
   const onVerifyContract = async (values: FormValues) => {
     const compilationResult = (await client.call(
@@ -42,8 +58,7 @@ export const VerifyView: React.FC<Props> = ({
     }
 
     const contractArguments = values.contractArguments.replace("0x", "")    
-
-    const verificationResult = await verify(
+    verificationResult.current = await verify(
       apiKey,
       values.contractAddress,
       contractArguments,
@@ -53,8 +68,7 @@ export const VerifyView: React.FC<Props> = ({
       onVerifiedContract,
       setResults,
     )
-
-    setResults(verificationResult.message)
+    setResults(verificationResult.current['message'])
   }
 
   return (
@@ -73,52 +87,46 @@ export const VerifyView: React.FC<Props> = ({
           if (!values.contractAddress) {
             errors.contractAddress = "Required"
           }
-          if (values.contractAddress.trim() === "") {
+          if (values.contractAddress.trim() === "" || !values.contractAddress.startsWith('0x') 
+              || values.contractAddress.length !== 42) {
             errors.contractAddress = "Please enter a valid contract address"
           }
           return errors
         }}
         onSubmit={(values) => onVerifyContract(values)}
       >
-        {({ errors, touched, handleSubmit, isSubmitting }) => (
-          <form onSubmit={handleSubmit}>
-            <h6>Verify your smart contracts</h6>
-            <button
-              type="button"
-              style={{ padding: "0.25rem 0.4rem", marginRight: "0.5em", marginBottom: "0.5em"}}
-              className="btn btn-primary"
-              title="Generate the necessary helpers to start the verification from a TypeScript script"
-              onClick={async () => {
-                if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/receiptStatus.ts')) {
-                  await client.call('fileManager', 'writeFile', 'scripts/etherscan/receiptStatus.ts', receiptGuidScript)
-                  await client.call('fileManager', 'open', 'scripts/etherscan/receiptStatus.ts')
-                } else {
-                  client.call('notification' as any, 'toast', 'file receiptStatus.ts already present..')
-                }
-                
-                if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/verify.ts')) {
-                  await client.call('fileManager', 'writeFile', 'scripts/etherscan/verify.ts', verifyScript)
-                  await client.call('fileManager', 'open', 'scripts/etherscan/verify.ts')
-                } else {
-                  client.call('notification' as any, 'toast', 'file verify.ts already present..')
-                }
-              }}
-              >
-                Generate Etherscan helper scripts
-              </button>
+        {({ errors, touched, handleSubmit, handleChange, isSubmitting }) => {
+          return (<form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="contractName">Contract</label>              
+              <label htmlFor="network">Selected Network</label> 
+              <Field
+                className="form-control"
+                type="text"
+                name="network"
+                value={networkName}
+                disabled={true}
+              /> 
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="contractName">Contract Name</label>              
               <Field
                 as="select"
                 className={
-                  errors.contractName && touched.contractName
-                    ? "form-control form-control-sm is-invalid"
-                    : "form-control form-control-sm"
+                  errors.contractName && touched.contractName && contracts.length
+                    ? "form-control is-invalid"
+                    : "form-control"
                 }
                 name="contractName"
+                onChange={async (e) => {
+                    handleChange(e)
+                    const {artefact} = await client.call("compilerArtefacts" as any, "getArtefactsByContractName", e.target.value)
+                    if (artefact && artefact.abi && artefact.abi[0] && artefact.abi[0].type && artefact.abi[0].type === 'constructor') setShowConstructorArgs(true)
+                    else setShowConstructorArgs(false)
+                }}
               >
                 <option disabled={true} value="">
-                  Select a contract
+                  { contracts.length ? 'Select a contract' : `--- No compiled contracts ---` }
                 </option>
                 {contracts.map((item) => (
                   <option key={item} value={item}>
@@ -133,17 +141,17 @@ export const VerifyView: React.FC<Props> = ({
               />
             </div>
 
-            <div className="form-group">
+            <div className={ showConstructorArgs ? 'form-group d-block': 'form-group d-none' } >
               <label htmlFor="contractArguments">Constructor Arguments</label>
               <Field
                 className={
                   errors.contractArguments && touched.contractArguments
-                    ? "form-control form-control-sm is-invalid"
-                    : "form-control form-control-sm"
+                    ? "form-control is-invalid"
+                    : "form-control"
                 }
                 type="text"
                 name="contractArguments"
-                placeholder="hex encoded"
+                placeholder="hex encoded args"
               />
               <ErrorMessage
                 className="invalid-feedback"
@@ -157,12 +165,12 @@ export const VerifyView: React.FC<Props> = ({
               <Field
                 className={
                   errors.contractAddress && touched.contractAddress
-                    ? "form-control form-control-sm is-invalid"
-                    : "form-control form-control-sm"
+                    ? "form-control is-invalid"
+                    : "form-control"
                 }
                 type="text"
                 name="contractAddress"
-                placeholder="i.e. 0x11b79afc03baf25c631dd70169bb6a3160b2706e"
+                placeholder="e.g. 0x11b79afc03baf25c631dd70169bb6a3160b2706e"
               />
               <ErrorMessage
                 className="invalid-feedback"
@@ -171,13 +179,53 @@ export const VerifyView: React.FC<Props> = ({
               />
             </div>
 
-            <SubmitButton dataId="verify-contract" text="Verify Contract" isSubmitting={isSubmitting} />
+            <SubmitButton dataId="verify-contract" text="Verify" 
+              isSubmitting={isSubmitting} 
+              disable={ !contracts.length || 
+                !touched.contractName ||
+                !touched.contractAddress ||
+                (touched.contractName && errors.contractName) ||
+                (touched.contractAddress && errors.contractAddress) 
+              ? true 
+              : false}
+            />
+            <br/>
+            <CustomTooltip
+              tooltipText='Generate the required TS scripts to verify a contract on Etherscan'
+              tooltipId='etherscan-generate-scripts'
+              placement='bottom'
+            >
+              <button
+                type="button"
+                style={{ padding: "0.25rem 0.4rem", marginRight: "0.5em", marginBottom: "0.5em"}}
+                className="btn btn-secondary btn-block"
+                onClick={async () => {
+                  if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/receiptStatus.ts')) {
+                    await client.call('fileManager', 'writeFile', 'scripts/etherscan/receiptStatus.ts', receiptGuidScript)
+                    await client.call('fileManager', 'open', 'scripts/etherscan/receiptStatus.ts')
+                  } else {
+                    client.call('notification' as any, 'toast', 'File receiptStatus.ts already exists')
+                  }
+                  
+                  if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/verify.ts')) {
+                    await client.call('fileManager', 'writeFile', 'scripts/etherscan/verify.ts', verifyScript)
+                    await client.call('fileManager', 'open', 'scripts/etherscan/verify.ts')
+                  } else {
+                    client.call('notification' as any, 'toast', 'File verify.ts already exists')
+                  }
+                }}
+                >
+                  Generate Verification Scripts
+                </button>
+              </CustomTooltip>
           </form>
-        )}
+          )
+        }
+        }
       </Formik>
 
       <div data-id="verify-result"
-        style={{ marginTop: "2em", fontSize: "0.8em", textAlign: "center" }}
+        style={{ marginTop: "2em", fontSize: "0.8em", textAlign: "center", color: verificationResult.current['succeed'] ? "green" : "red" }}
         dangerouslySetInnerHTML={{ __html: results }}
       />
 

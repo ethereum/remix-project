@@ -11,8 +11,9 @@ export const HomeView: React.FC = () => {
   // const [hasError, setHasError] = useState(false)
   return (
     <AppContext.Consumer>
-      {({ apiKey, clientInstance, setReceipts, receipts, contracts }) =>
-        !apiKey ? (
+      {({ apiKey, clientInstance, setReceipts, receipts, contracts }) => {
+        if (!apiKey && clientInstance && clientInstance.call) clientInstance.call('notification' as any, 'toast', 'Please add API key to continue')
+        return !apiKey ? (
           <Navigate
             to={{
               pathname: "/settings"
@@ -25,12 +26,12 @@ export const HomeView: React.FC = () => {
             apiKey={apiKey}
             onVerifiedContract={(receipt: Receipt) => {
               const newReceipts = [...receipts, receipt]
-
               setReceipts(newReceipts)
             }}
           />
         )
       }
+    }
     </AppContext.Consumer>
   )
 }

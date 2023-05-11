@@ -20,11 +20,11 @@ if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
 export class ExecutionContext {
   constructor () {
     this.event = new EventManager()
-    this.executionContext = 'vm-merge'
+    this.executionContext = 'vm-shanghai'
     this.lastBlock = null
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
-    this.currentFork = 'london'
+    this.currentFork = 'shanghai'
     this.mainNetGenesisHash = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3'
     this.customNetWorks = {}
     this.blocks = {}
@@ -34,7 +34,7 @@ export class ExecutionContext {
   }
 
   init (config) {
-    this.executionContext = 'vm-merge'
+    this.executionContext = 'vm-shanghai'
     this.event.trigger('contextChanged', [this.executionContext])
   }  
 
@@ -161,7 +161,7 @@ export class ExecutionContext {
         try {
           this.currentFork = execution.forkAt(await web3.eth.net.getId(), block.number)
         } catch (e) {
-          this.currentFork = 'london'
+          this.currentFork = 'merge'
           console.log(`unable to detect fork, defaulting to ${this.currentFork}..`)
           console.error(e)
         }

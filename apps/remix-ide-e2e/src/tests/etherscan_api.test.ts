@@ -42,7 +42,7 @@ module.exports = {
       .frame(0)
       .click('[data-id="home"]')
       .setValue('select[name="contractName"]', 'Owner')
-      .setValue('*[name="contractAddress"]', '0x9981c9d00103da481c3c65b22a79582a3e3ff50b')
+      .setValue('*[name="contractAddress"]', ['0x9981c9d00103da481c3c65b22a79582a3e3ff50b', browser.Keys.TAB])
       .click('[data-id="verify-contract"]')
       .waitForElementVisible('[data-id="verify-result"]')
       .waitForElementContainsText('[data-id="verify-result"]', 'Contract source code already verified')

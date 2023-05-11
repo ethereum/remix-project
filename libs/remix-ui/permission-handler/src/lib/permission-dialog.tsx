@@ -10,12 +10,9 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
   const intl = useIntl()
 
   const switchMode = (e: any) => {
-    props.plugin.switchMode(from, to, method, e.target.checked)
+    props.plugin.switchMode(from, to, method, e.target.checked, sensitiveCall)
   }
 
-  const rememberSwitch = () => {
-    return <input type="checkbox" onChange={switchMode} className='form-check-input' id='remember' data-id={remember ? 'permissionHandlerRememberChecked' : 'permissionHandlerRememberUnchecked'}/>
-  }
   const reset = () => {
     props.plugin.clear()
     setFeedback(intl.formatMessage({ id: 'permissionHandler.allPermissionsReset' }))
@@ -57,9 +54,9 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
       { sensitiveCall ? <p className='text-warning'><i className="fas fa-exclamation-triangle mr-2" aria-hidden="true"></i><FormattedMessage id='permissionHandler.makeSureYouTrustThisPlugin' /></p> : '' }
     </article>
     <article className='remember'>
-      { !sensitiveCall && <div className='form-check'>
-        {rememberSwitch()}
-        <label htmlFor='remember' className="form-check-label" data-id="permissionHandlerRememberChoice"><FormattedMessage id='permissionHandler.rememberThisChoice' /></label>
+      { <div className='form-check'>
+          <input type="checkbox" onChange={switchMode} className='form-check-input' id='rememberSwitchCheck' data-id={remember ? 'permissionHandlerRememberChecked' : 'permissionHandlerRememberUnchecked'}/>
+          <label htmlFor='rememberSwitchCheck' className="form-check-label" data-id="permissionHandlerRememberChoice"><FormattedMessage id='permissionHandler.rememberThisChoice' /></label>
         </div>
       }
       <button className="btn-secondary btn-sm" onClick={reset}><FormattedMessage id='permissionHandler.resetAllPermissions' /></button>

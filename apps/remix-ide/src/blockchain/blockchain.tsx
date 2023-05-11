@@ -82,7 +82,7 @@ export class Blockchain extends Plugin {
         return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
       }
     }, _ => this.executionContext.web3(), _ => this.executionContext.currentblockGasLimit())
-    this.txRunner = new TxRunner(web3Runner, { runAsync: true })
+    this.txRunner = new TxRunner(web3Runner, {})
 
     this.networkcallid = 0
     this.networkStatus = { network: { name: ' - ', id: ' - ' } }
@@ -111,12 +111,21 @@ export class Blockchain extends Plugin {
         this._triggerEvent('networkStatus', [this.networkStatus])
       })
     })
+
+    this.on('walletconnect', 'chainChanged', () => {
+      this.detectNetwork((error, network) => {
+        this.networkStatus = { network, error }
+        this._triggerEvent('networkStatus', [this.networkStatus])
+      })
+    })
   }
 
   onDeactivation () {
     this.active = false
     this.off('injected', 'chainChanged')
     this.off('injected-trustwallet', 'chainChanged')
+    this.off('walletconnect', 'chainChanged')
+    this.off('walletconnect', 'accountsChanged')
   }
 
   setupEvents () {
@@ -598,7 +607,7 @@ export class Blockchain extends Plugin {
         }
       })
     })
-    this.txRunner = new TxRunner(web3Runner, { runAsync: true })
+    this.txRunner = new TxRunner(web3Runner, {})
   }
 
   /**

@@ -16,10 +16,10 @@ export function urlFromVersion (version) {
     let location: string | Location = window.document.location
     let path = location.pathname
     if (!path.startsWith('/')) path = '/' + path
-    location = `${location.protocol}//${location.host}${path}assets/js`
+    location = `${location.protocol}//${location.host}${path}`
     if (location.endsWith('index.html')) location = location.substring(0, location.length - 10)
     if (!location.endsWith('/')) location += '/'
-    url = `${location}soljson.js`
+    url = `${location}assets/js/soljson.js`
   } else {
     version = version.replace('.Emscripten.clang', '')
     if (!version.startsWith('soljson-v')) version = 'soljson-v' + version

@@ -1,5 +1,6 @@
 import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
+import { callbackCheckVerifyCallReturnValue } from '../types/index'
 
 class VerifyCallReturnValue extends EventEmitter {
   command (this: NightwatchBrowser, address: string, checks: string[]): NightwatchBrowser {
@@ -13,7 +14,7 @@ class VerifyCallReturnValue extends EventEmitter {
   }
 }
 
-function verifyCallReturnValue (browser: NightwatchBrowser, address: string, checks: string[], done: VoidFunction) {
+function verifyCallReturnValue (browser: NightwatchBrowser, address: string, checks: string[] | callbackCheckVerifyCallReturnValue, done: VoidFunction) {
   browser.execute(function (address: string) {
     const nodes = document.querySelectorAll('#instance' + address + ' [data-id="udapp_value"]') as NodeListOf<HTMLElement>
     const ret = []
@@ -23,8 +24,13 @@ function verifyCallReturnValue (browser: NightwatchBrowser, address: string, che
     }
     return ret
   }, [address], function (result) {
-    for (const k in checks) {
-      browser.assert.equal(result.value[k].trim(), checks[k].trim())
+    if (typeof checks === 'function') {
+      const ret = checks(result.value as string[])
+      if (!ret.pass) browser.assert.fail(ret.message)
+    } else {
+      for (const k in checks) {
+        browser.assert.equal(result.value[k].trim(), checks[k].trim())
+      }
     }
     done()
   })

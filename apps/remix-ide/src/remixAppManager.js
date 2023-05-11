@@ -11,12 +11,13 @@ const requiredModules = [ // services + layout views + system views
   'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity', 'solidity-logic', 'gistHandler', 'layout',
   'notification', 'permissionhandler', 'walkthrough', 'storage', 'restorebackupzip', 'link-libraries', 'deploy-libraries', 'openzeppelin-proxy',
   'hardhat-provider', 'ganache-provider', 'foundry-provider', 'basic-http-provider', 'injected', 'injected-trustwallet', 'injected-optimism-provider', 'injected-arbitrum-one-provider', 'vm-custom-fork', 'vm-goerli-fork', 'vm-mainnet-fork', 'vm-sepolia-fork', 'vm-merge', 'vm-london', 'vm-berlin',
+  'vm-shanghai',
   'compileAndRun', 'search', 'recorder', 'fileDecorator', 'codeParser', 'codeFormatter', 'solidityumlgen', 'contractflattener', 'solidity-script']
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
 const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither']
 
-const loadLocalPlugins = ["doc-gen", "doc-viewer", "etherscan", "vyper"]
+const loadLocalPlugins = ["doc-gen", "doc-viewer", "etherscan", "vyper", "walletconnect"]
 
 const sensitiveCalls = {
   'fileManager': ['writeFile', 'copyFile', 'rename', 'copyDir'],
@@ -199,6 +200,16 @@ export class RemixAppManager extends PluginManager {
       id: 'solidityumlgen',
       name: 'generateCustomAction',
       label: 'Generate UML',
+      type: [],
+      extension: ['.sol'],
+      path: [],
+      pattern: [],
+      sticky: true
+    })
+    await this.call('filePanel', 'registerContextMenuItem', {
+      id: 'doc-gen',
+      name: 'generateDocsCustomAction',
+      label: 'Generate Docs',
       type: [],
       extension: ['.sol'],
       path: [],

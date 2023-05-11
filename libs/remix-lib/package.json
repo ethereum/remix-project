@@ -1,6 +1,6 @@
 {
   "name": "@remix-project/remix-lib",
-  "version": "0.5.25-alpha.17",
+  "version": "0.5.25",
   "description": "Library to various Remix tools",
   "contributors": [
     {
@@ -17,9 +17,9 @@
     "test": "./../../node_modules/.bin/ts-node --require tsconfig-paths/register ./../../node_modules/.bin/tape ./test/tests.ts"
   },
   "dependencies": {
-    "@ethereumjs/util": "^8.0.3",
+    "@ethereumjs/util": "^8.0.5",
     "async": "^2.1.2",
-    "ethers": "^4.0.40",
+    "ethers": "^5.7.2",
     "ethjs-util": "^0.1.6",
     "events": "^3.0.0",
     "solc": "^0.7.4",
@@ -51,6 +51,6 @@
   },
   "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-lib#readme",
   "typings": "src/index.d.ts",
-  "gitHead": "4806543bb099b558872793ca7a215468e0bffc81",
+  "gitHead": "79fcaa673265865732f1b996ac48b2e20aba1995",
   "types": "./src/index.d.ts"
 }

@@ -1,6 +1,6 @@
 import { Ref } from 'react'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
-import { ContractData, FuncABI } from '@remix-project/core-plugin'
+import { ContractData, FuncABI, OverSizeLimit } from '@remix-project/core-plugin'
 import { RunTab } from './run-tab'
 import { SolcInput, SolcOutput } from '@openzeppelin/upgrades-core'
 import { LayoutCompatibilityReport } from '@openzeppelin/upgrades-core/dist/storage/report'
@@ -250,7 +250,7 @@ export interface ContractDropdownProps {
     publishToStorage: (storage: 'ipfs' | 'swarm',
     contract: ContractData) => void,
     mainnetPrompt: MainnetPrompt,
-    isOverSizePrompt: () => JSX.Element,
+    isOverSizePrompt: (values: OverSizeLimit) => JSX.Element,
     args,
     deployMode: DeployMode[]) => void,
   ipfsCheckedState: boolean,

@@ -7,6 +7,7 @@ import { Build } from './docgen/site'
 export const client =  new DocGenClient()
 
 const App = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [themeType, setThemeType] = useState<string>('dark');
   const [hasBuild, setHasBuild] = useState<boolean>(false);
   const [fileName, setFileName] = useState<string>('');
@@ -21,7 +22,6 @@ const App = () => {
         setFileName(fileName)
       })
       client.eventEmitter.on('docsGenerated', (docs: string[]) => {
-        console.log('docsGenerated', docs)
       })
     }
     watchThemeSwitch()
@@ -29,9 +29,11 @@ const App = () => {
 
   return (
     <div className="p-3">
-      <h3>Compile a solidity contract in order to build documentation as markdown.</h3>
-      {fileName && <h6>File: {fileName.split('/')[1].split('.')[0].concat('.sol')}</h6>}
-      {hasBuild && <button className="btn btn-primary btn-block mt-4 rounded" onClick={() => client.generateDocs()}>Generate doc</button>}
+      <h5 className="h-5 mb-3">Compile a Solidity contract and generate its documentation as Markdown. (Right-click on a contract in the File Explorer and select "Generate Docs" from the context menu.).</h5>
+      {fileName && <div className="border-bottom border-top px-2 py-3 justify-center align-items-center d-flex">
+        <h6>File: {fileName}</h6>
+      </div>}
+      {hasBuild && <button className="btn btn-primary btn-block mt-4" onClick={() => client.generateDocs()}>Generate Docs</button>}
     </div>
   )
 }

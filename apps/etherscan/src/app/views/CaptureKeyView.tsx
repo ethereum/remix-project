@@ -11,8 +11,9 @@ export const CaptureKeyView: React.FC = () => {
   const navigate = useNavigate()
   return (
     <AppContext.Consumer>
-      {({ apiKey, setAPIKey }) => (
-        <Formik
+      {({ apiKey, clientInstance, setAPIKey }) => {
+        if (!apiKey && clientInstance && clientInstance.call) clientInstance.call('notification' as any, 'toast', 'Please add API key to continue')
+        return <Formik
           initialValues={{ apiKey }}
           validate={(values) => {
             const errors = {} as any
@@ -22,23 +23,27 @@ export const CaptureKeyView: React.FC = () => {
             return errors
           }}
           onSubmit={(values) => {
-            setAPIKey(values.apiKey)
-            navigate((location.state as any).from)
+            const apiKey = values.apiKey
+            if (apiKey.length === 34) {
+              setAPIKey(values.apiKey)
+              clientInstance.call('notification' as any, 'toast', 'API key saved successfully!!!')
+              navigate((location && location.state ? location.state : '/'))
+            } else clientInstance.call('notification' as any, 'toast', 'API key should be 34 characters long')
           }}
         >
           {({ errors, touched, handleSubmit }) => (
             <form onSubmit={handleSubmit}>
               <div className="form-group" style={{ marginBottom: "0.5rem" }}>
-                <label htmlFor="apikey">Please Enter your API key</label>
+                <label htmlFor="apikey">API Key</label>
                 <Field
                   className={
                     errors.apiKey && touched.apiKey
                       ? "form-control form-control-sm is-invalid"
                       : "form-control form-control-sm"
                   }
-                  type="text"
+                  type="password"
                   name="apiKey"
-                  placeholder="Example: GM1T20XY6JGSAPWKDCYZ7B2FJXKTJRFVGZ"
+                  placeholder="e.g. GM1T20XY6JGSAPWKDCYZ7B2FJXKTJRFVGZ"
                 />
                 <ErrorMessage
                   className="invalid-feedback"
@@ -48,12 +53,13 @@ export const CaptureKeyView: React.FC = () => {
               </div>
 
               <div>
-                <SubmitButton text="Save API key" dataId="save-api-key" />
+                <SubmitButton text="Save" dataId="save-api-key" disable={false} />
               </div>
             </form>
           )}
         </Formik>
-      )}
+      }
+      }
     </AppContext.Consumer>
   )
 }

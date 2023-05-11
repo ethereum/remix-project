@@ -1,9 +1,10 @@
-import React, { useRef, useEffect } from 'react' // eslint-disable-line
+import React, { useRef, useEffect, useState } from 'react' // eslint-disable-line
 import { useIntl } from 'react-intl'
 import { action, FileExplorerContextMenuProps } from '../types'
 
 import '../css/file-explorer-context-menu.css'
 import { customAction } from '@remixproject/plugin-api'
+import UploadFile from './upload-file'
 
 declare global {
   interface Window {
@@ -13,9 +14,11 @@ declare global {
 const _paq = window._paq = window._paq || []  //eslint-disable-line
 
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
-  const { actions, createNewFile, createNewFolder, deletePath, renamePath, downloadPath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, copyFileName, copyPath, paste, runScript, emit, pageX, pageY, path, type, focus, ...otherProps } = props
+  const { actions, createNewFile, createNewFolder, deletePath, renamePath, hideContextMenu, pushChangesToGist, publishFileToGist, publishFolderToGist, copy, copyFileName, copyPath, paste, runScript, emit, pageX, pageY, path, type, focus, downloadPath, uploadFile,...otherProps } = props
   const contextMenuRef = useRef(null)
   const intl = useIntl()
+  const [showFileExplorer, setShowFileExplorer] = useState(false)
+
   useEffect(() => {
     contextMenuRef.current.focus()
   }, [])
@@ -37,6 +40,11 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
      * for example : 'downloadAsZip' with type ['file','folder'] will work on files and folders when multiple are selected
     **/
     const nonRootFocus = focus.filter((el) => { return !(el.key === '' && el.type === 'folder') })
+    
+    if(focus[0].key === "contextMenu"){
+      return true
+    }
+
     if (nonRootFocus.length > 1) {
       for (const element of nonRootFocus) {
         if (!itemMatchesCondition(item, element.type, element.key)) return false
@@ -65,6 +73,29 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
 
   const menu = () => {
     return actions.filter(item => filterItem(item)).map((item, index) => {
+      if(item.name === "Upload File"){
+        return <li
+        id={`menuitem${item.name.toLowerCase()}`}
+        key={index}
+        className='remixui_liitem'
+        onClick={()=>{
+          _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'uploadFile'])
+          setShowFileExplorer(true)
+        }}
+        >{intl.formatMessage({id: `filePanel.${item.id}`, defaultMessage: item.label || item.name})}</li>
+      }
+
+      if(item.name === "Load a Local File"){
+        return <li
+        id={`menuitem${item.name.toLowerCase()}`}
+        key={index}
+        className='remixui_liitem'
+        onClick={()=>{
+          _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'uploadFile'])
+          setShowFileExplorer(true)
+        }}
+        >{intl.formatMessage({id: `filePanel.${item.id}`, defaultMessage: item.label || item.name})}</li>
+      }
       return <li
         id={`menuitem${item.name.toLowerCase()}`}
         key={index}
@@ -128,6 +159,10 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               deletePath(getPath())
               _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'deleteAll'])
               break
+            case 'Publish Workspace to Gist':
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishWorkspace'])
+              publishFolderToGist(path, type)
+            break
             default:
               _paq.push(['trackEvent', 'fileExplorer', 'customAction', `${item.id}/${item.name}`])
               emit && emit({ ...item, path: [path] } as customAction)
@@ -137,7 +172,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
         }}>{intl.formatMessage({id: `filePanel.${item.id}`, defaultMessage: item.label || item.name})}</li>
     })
   }
-
+  
   return (
     <div
       id="menuItemsContainer"
@@ -148,6 +183,8 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
       tabIndex={500}
       {...otherProps}
     >
+      {showFileExplorer && <UploadFile onUpload={(target)=> {
+        uploadFile(target); }} multiple />}
       <ul id='remixui_menuitems'>{menu()}</ul>
     </div>
   )
