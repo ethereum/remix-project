@@ -321,7 +321,7 @@
     "javascript-serialize": "^1.6.1",
     "js-base64": "^2.1.9",
     "js-beautify": "1.6.14",
-    "lerna": "^3.22.1",
+    "lerna": "^6.6.2",
     "minixhr": "^4.0.0",
     "mkdirp": "^0.5.1",
     "mocha": "^8.0.1",

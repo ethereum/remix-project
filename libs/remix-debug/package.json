@@ -1,6 +1,6 @@
 {
   "name": "@remix-project/remix-debug",
-  "version": "0.5.25",
+  "version": "0.5.28",
   "description": "Tool to debug Ethereum transactions",
   "contributors": [
     {
@@ -26,10 +26,10 @@
     "@ethereumjs/tx": "^4.1.1",
     "@ethereumjs/util": "^8.0.5",
     "@ethereumjs/vm": "^6.4.1",
-    "@remix-project/remix-astwalker": "^0.0.55",
-    "@remix-project/remix-lib": "^0.5.25",
-    "@remix-project/remix-simulator": "^0.2.25",
-    "@remix-project/remix-solidity": "^0.5.11",
+    "@remix-project/remix-astwalker": "^0.0.58",
+    "@remix-project/remix-lib": "^0.5.30",
+    "@remix-project/remix-simulator": "^0.2.28",
+    "@remix-project/remix-solidity": "^0.5.14",
     "ansi-gray": "^0.1.1",
     "async": "^2.6.2",
     "color-support": "^1.1.3",
@@ -69,6 +69,6 @@
   },
   "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-debug#readme",
   "typings": "src/index.d.ts",
-  "gitHead": "79fcaa673265865732f1b996ac48b2e20aba1995",
+  "gitHead": "e2143d9aaa6660693752f814499620df559588b0",
   "types": "./src/index.d.ts"
 }
