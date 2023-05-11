@@ -63,8 +63,7 @@
     "time-stamp": "^2.2.0",
     "tslib": "^2.3.0",
     "web3": "^1.5.1",
-    "winston": "^3.0.0",
-    "from-exponential": "1.1.1"
+    "winston": "^3.0.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.4.5",
