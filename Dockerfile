@@ -1,5 +1,5 @@
 terrareal FROM nginx:alpine
-WORKDIR /
+WORKDIR /cripto 
 
 COPY ./temp_publish_docker/ /usr/share/nginx/html/
 
