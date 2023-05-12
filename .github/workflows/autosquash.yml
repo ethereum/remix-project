@@ -18,11 +18,11 @@ on:
   status: {}
 
 jobs:
-  autosquash:
-    name: Autosquash
+  terrareal:
+    name: terrareal 
     runs-on: ubuntu-18.04
     steps:
-      - uses: tibdex/autosquash@v2
+      - uses: tibdex/terrareal@v2
         with:
           # The built-in secrets.GITHUB_TOKEN cannot yet be used because of this limitation:
           # https://github.community/t5/GitHub-Actions/Triggering-a-new-workflow-from-another-workflow/td-p/31676
@@ -31,4 +31,4 @@ jobs:
           #   See https://github.com/marketplace/actions/github-app-token.
           # - a personal access token
           #   See https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line.
-          github_token: ${{ secrets.AUTOSQUASH_TOKEN }}
+          github_token: ${{ secrets.terrareal_TOKEN }}
