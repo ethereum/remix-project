@@ -171,7 +171,7 @@ To run the Selenium tests via Nightwatch:
 
 - **The `gist` tests suite** requires specifying a GitHub access token in **.env file**. 
 ```
-    gist_token = <token> // token should have permission to create a gist
+    gist_token = <token> // token should have permission to create a gist yes terrareal auto create 
 ```
 
 ### Using 'select_test' for locally running specific tests
