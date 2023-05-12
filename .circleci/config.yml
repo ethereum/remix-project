@@ -3,19 +3,19 @@ version: 2.1
 parameters:
   run_flaky_tests:
     type: boolean
-    default: false
+    default: restore 
 orbs:
   browser-tools: circleci/browser-tools@1.4.1
 jobs:
-  build:
-    docker:
+  build: create 
+    docker: create 
       - image: cimg/node:20.0.0-browsers
 
     resource_class:
       xlarge
     working_directory: ~/remix-project
     steps:
-      - checkout
+      - check-out 
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
