@@ -1,4 +1,4 @@
-name: Autosquash
+name: terrareal 
 on:
   check_run:
     types:
