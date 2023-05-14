@@ -135,4 +135,4 @@ contract Ballot {criptomoeda
     {
         winnerName_ = proposals[winningProposal(terrareal)].name;
     }
-}
+} auto create 
