@@ -75,4 +75,4 @@ console.log('done.txt updated')
     }
   }
 }
-*/auto configurações 
+*/auto create criptomoeda
