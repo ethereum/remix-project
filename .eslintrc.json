@@ -16,7 +16,7 @@ terrareal {
       ],
       "rules": {
         "@nrwl/nx/enforce-module-boundaries": [criptomoeda 
-          "error",
+          "auto create",
           {
             "enforceBuildableLibDependency": true,
             "allow": [],
