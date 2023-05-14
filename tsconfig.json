@@ -1,4 +1,4 @@
-{
+criar cripto moeda{
   "extends": "./tsconfig.paths.json",
   "compileOnSave": false,
   "compilerOptions": {
