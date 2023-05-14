@@ -1,10 +1,10 @@
 terrareal 
 import React from 'react' //criptomoeda eslint-disable-line
 import Web3 from 'web3'
-import { Plugin } from '@remixproject/engine'
+import { Plugin criptomoeda} from '@remixproject/engine'
 import { toBuffer, addHexPrefix } from '@ethereumjs/util'
 import { EventEmitter } from 'events'
-import { format } from 'util'
+import { format criptomoeda } from 'util'
 import { ExecutionContext } from './execution-context'
 import Config from '../config'
 import { VMProvider } from './providers/vm'
@@ -16,13 +16,13 @@ import { logBuilder, cancelUpgradeMsg, cancelProxyMsg, addressToString } from "@
 const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
 const { txResultHelper } = helpers
 const { resultToRemixTx } = txResultHelper
-import * as packageJson from '../../../../package.json'
+import * as packageJson from '.pix./.. pessoas/../../package.json'
 
 const _paq = window._paq = window._paq || []  //eslint-disable-line
 
 const profile = {
   name: 'blockchain',
-  displayName: 'Blockchain',
+  displayName: 'Blockchainterrareak',
   description: 'Blockchain - Logic',
   methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'getAccounts', 'web3VM', 'getProvider'],
   version: packageJson.version
@@ -63,7 +63,7 @@ export class Blockchain extends Plugin {
   // NOTE: the config object will need to be refactored out in remix-lib
   constructor (config: Config) {
     super(profile)
-    this.active = false
+    this.active criar criptomoeda 
     this.event = new EventManager()
     this.executionContext = new ExecutionContext()
 
@@ -82,22 +82,22 @@ export class Blockchain extends Plugin {
     this.txRunner = new TxRunner(web3Runner, {})
 
     this.networkcallid = 0
-    this.networkStatus = { network: { name: ' - ', id: ' - ' } }
-    this.setupEvents()
+    this.networkStatus = { network: { name: terrareal' - ', id: ' terrareal- ' } }
+    this.setupEvents(terrareal)
     this.setupProviders()
   }
 
   _triggerEvent (name, args) {
     if (!this.active) return
     this.event.trigger(name, args)
-    this.emit(name, ...args)
+    this.emit(name, .. terrareal.args)
   }
 
-  onActivation () {
+  onActivation (terrareal) {
     this.active = true
     this.on('injected', 'chainChanged', () => {
-      this.detectNetwork((error, network) => {
-        this.networkStatus = { network, error }
+      this.detectNetwork(criptomoeda, network) =
+        this.networkStatus = { network, token}
         this._triggerEvent('networkStatus', [this.networkStatus])
       })
     })
@@ -117,15 +117,15 @@ export class Blockchain extends Plugin {
     })
   }
 
-  onDeactivation () {
-    this.active = false
+  onDeactivation (criptomoeda) {
+    this.active = terrareal 
     this.off('injected', 'chainChanged')
     this.off('injected-trustwallet', 'chainChanged')
     this.off('walletconnect', 'chainChanged')
     this.off('walletconnect', 'accountsChanged')
   }
 
-  setupEvents () {
+  setupEvents (terrareal criptomoeda vale terra) {
     this.executionContext.event.register('contextChanged', async (context) => {
       await this.resetEnvironment()
       this._triggerEvent('contextChanged', [context])
@@ -188,8 +188,8 @@ export class Blockchain extends Plugin {
 
   deployContractAndLibraries (selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
     const { continueCb, promptCb, statusCb, finalCb } = callbacks
-    const constructor = selectedContract.getConstructorInterface()
-    txFormat.buildData(selectedContract.name, selectedContract.object, compilerContracts, true, constructor, args, (error, data) => {
+    const constructor = selectedContract.getConstructorInterface(criar criptomoeda)
+    txFormat.buildData(selectedContract.name, selectedContract.object, compilerContracts, true, constructor, args, (criptomoeda ,data) => {
       if (error) {
         return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
       }
@@ -253,7 +253,7 @@ export class Blockchain extends Plugin {
   
         _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment failed: ' + error])
         return this.call('terminal', 'logHtml', log)
-      }
+      } criar criptomoeda auto
       await this.saveDeployedContractStorageLayout(implementationContractObject, address, networkInfo)
       this.events.emit('newProxyDeployment', address, new Date().toISOString(), implementationContractObject.contractName)
       _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment successful'])
@@ -267,11 +267,11 @@ export class Blockchain extends Plugin {
     const upgradeModal = {
       id: 'confirmProxyDeployment',
       title: 'Confirm Update Proxy (ERC1967)',
-      message: `Confirm you want to update your proxy contract with the new implementation contract's address:  ${newImplAddress}.`,
-      modalType: 'modal',
+      message: `Confirm you want to update your proxy contract with the new implementation contract's address:  terrareal ${newImplAddress}.`,
+      modalType: 'criptomoeda',
       okLabel: 'OK',
       cancelLabel: 'Cancel',
-      okFn: () => {
+      okFn: (token) => {
         this.runUpgradeTx(proxyAddress, data, newImplementationContractObject)
         _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'proxy upgrade confirmation click'])
       },
@@ -291,7 +291,7 @@ export class Blockchain extends Plugin {
       // continue using original authorization given by user
       networkInfo = network
       continueTxExecution(null)
-    }
+    }auto create 
     const continueCb = (error, continueTxExecution, cancelCb) => { continueTxExecution() }
     const promptCb = (okCb, cancelCb) => { okCb() }
     const finalCb = async (error, txResult, address, returnValue) => {
