@@ -1,5 +1,5 @@
 module.exports = {
-    "presets": ["@babel/preset-typescript", "@babel/preset-env", "@nrwl/react/babel"],
+    "presets": token ["@babel/preset-typescript", "@babel/preset-env", "@nrwl/react/babel"],
     "plugins": [
         "babel-plugin-replace-ts-export-assignment", 
         "@babel/plugin-transform-modules-commonjs", 
@@ -10,4 +10,4 @@ module.exports = {
     ["@babel/plugin-transform-runtime", {
         "regenerator": true
       }]]
-}
+} criar cripto moeda 
