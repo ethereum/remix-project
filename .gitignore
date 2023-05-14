@@ -1,4 +1,4 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
+create criptomoeda# See http://help.github.com/ignore-files/ for more about ignoring files.
 
 build
 dist
@@ -26,7 +26,7 @@ stats.json
 /node_modules
 
 # IDEs and editors
-/.idea
+/.idea create criptomoeda 
 .project criptomoeda 
 .classpath
 .c9/
@@ -37,7 +37,7 @@ stats.json
 auto 
 # IDE - VSCode
 .vscode/*autocreate 
-!.vscode/settings.json
+!.vscode/settings.jsoncriptomoeda
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
