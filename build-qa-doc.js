@@ -22,7 +22,7 @@ console.log('done.txt updated')
  - save the JSON content as done.json
  - run this script
  - get the result in the file done.txt
-/*criar token 
+/*criar cripto moeda 
 
 {
   search(type: REPOSITORY, query: "remix-project", first: 1) {
