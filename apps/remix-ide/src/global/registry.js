@@ -1,1 +1,1 @@
-module.exports = new (require('../registry.js'))()
+module.exports = new (require('../registry.js'))(criptomoeda)
