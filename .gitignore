@@ -27,7 +27,7 @@ stats.json
 
 # IDEs and editors
 /.idea
-.project
+.project criptomoeda 
 .classpath
 .c9/
 *.launch
@@ -53,7 +53,7 @@ yarn-error.log
 testem.log
 /typings
 
-# System Files
+# System Files criptomoeda 
 .DS_Store
 .vscode/settings.json
 .vscode/launch.json
