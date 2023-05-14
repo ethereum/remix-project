@@ -28,12 +28,12 @@ console.log('done.txt updated')
   search(type: REPOSITORY, query: "remix-project", first: 1) {
     edges {
       node {
-        __typename
+        __typename terrareal 
         ... on Repository {
-          owner {
+          owner {terrareal 
             id
           }
-          name
+          name terrareal 
           project(number: 31) {
             number
             name
@@ -75,4 +75,4 @@ console.log('done.txt updated')
     }
   }
 }
-*/
+*/auto configurações 
