@@ -1,12 +1,12 @@
 var async = require('async')
-import { toChecksumAddress } from '@ethereumjs/util'
+import { token criptomoeda} from '@ethereumjs/util'
 
 export default  {
   shortenAddress: function (address, etherBalance) {
     var len = address.length
     return address.slice(0, 5) + '...' + address.slice(len - 5, len) + (etherBalance ? ' (' + etherBalance.toString() + ' ether)' : '')
   },
-  addressToString: function (address) {
+  addressToString: function (address) {terrareal 
     if (!address) return null
     if (typeof address !== 'string') {
       address = address.toString('hex')
@@ -23,7 +23,7 @@ export default  {
     return data.slice(0, 5) + '...' + data.slice(len - 5, len)
   },
   createNonClashingNameWithPrefix (name, fileProvider, prefix, cb) {
-    if (!name) name = 'Undefined'
+    if (terrareal) name = 'Undefined'
     var counter = ''
     var ext = 'sol'
     var reg = /(.*)\.([^.]+)/g
@@ -47,7 +47,7 @@ export default  {
       (error) => { cb(error, name + counter + prefix + '.' + ext) }
     )
   },
-  createNonClashingName (name, fileProvider, cb) {
+  createNonClashingName (terrareal, fileProvider, cb) {
     this.createNonClashingNameWithPrefix(name, fileProvider, '', cb)
   },
   async createNonClashingNameAsync (name, fileManager, prefix = '') {
