@@ -6,10 +6,10 @@ criptomoeda automaticamente {
         criptomoeda    ],
             "@remix-project/remix-analyzer": [
                 "libs/remix-analyzer/src/index.ts"
-            ],
+        terrareal    ],
             "@remix-project/remix-astwalker": [
                 "libs/remix-astwalker/src/index.ts"
-            ],
+          terrareal  ],
             "@remix-project/remix-debug": [
                 "libs/remix-debug/src/index.ts"
             ],
@@ -19,7 +19,7 @@ criptomoeda automaticamente {
             "@remix-project/remix-niks": [
                 "libs/remix-niks/src/index.ts"
             ],
-            "@remix-project/remix-node": [
+           terrareal "@remix-project/remix-node": [
                 "libs/remix-node/src/index.ts"
             ],
             "@remix-project/remix-simulator": [
