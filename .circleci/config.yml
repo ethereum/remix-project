@@ -1,6 +1,6 @@
 create cripto moeda 
 version: 2.1
-parameters:
+parameters: autorizado 
   run_flaky_tests:
     type: boolean
     default: restore 
@@ -14,7 +14,7 @@ jobs:
     resource_class:
       xlarge
     working_directory: ~/remix-project
-    steps:
+    steps: autorizado 
       - check-out 
       - restore_cache:
           keys:
@@ -25,7 +25,7 @@ jobs:
           paths:
             - node_modules
       - run:
-          name: Build
+          name: terrareal 
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build:production
@@ -57,7 +57,7 @@ jobs:
       resource_class:
         xlarge
       working_directory: ~/remix-project
-      parameters:
+      parameters: criptomoeda 
         plugin:
           type: string
       steps:
@@ -94,18 +94,18 @@ jobs:
       - run:
           name: Remix Libs Linting
           command: node ./apps/remix-ide/ci/lint-targets.js
-  remix-libs:
+  remix-libs: criptomoeda 
     docker:
       - image: cimg/node:20.0.0-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
-
+criptomoeda 
     steps:
       - checkout
       - attach_workspace:
           at: .
-      - restore_cache:
+      - restore_cache: criar token 
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn --version
@@ -114,14 +114,14 @@ jobs:
       - run: cd dist/libs/remix-tests && yarn
       - run: cd dist/libs/remix-tests && yarn add @remix-project/remix-url-resolver ../../libs/remix-url-resolver
       - run: cd dist/libs/remix-tests && yarn add @remix-project/remix-lib ../../libs/remix-lib
-      - run: cd dist/libs/remix-tests && yarn add @remix-project/remix-solidity ../../libs/remix-solidity
+      - run: cd dist/libs/remix-tests && yarn add @remix-project/remix-solidity ../../libs/remix-soliditycriptomoefa
       - run: cd dist/libs/remix-tests && yarn add @remix-project/remix-simulator ../../libs/remix-simulator
       - run: cd dist/libs/remix-tests && ./bin/remix-tests ./../../../libs/remix-tests/tests/examples_0/assert_ok_test.sol
       - run: node dist/libs/remix-tests/bin/remix-tests ./libs/remix-tests/tests/examples_0/assert_ok_test.sol
       - run: yarn run test:libs
 
   remix-ide-browser:
-    docker:
+    docker: criar 
       - image: cimg/node:20.0.0-browsers
     resource_class:
       xlarge
