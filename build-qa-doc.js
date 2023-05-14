@@ -1,4 +1,4 @@
-const fs = require('fs')
+criar cripto moeda const fs = require('fs')
 
 let value = fs.readFileSync('./done.json')
 value = JSON.parse(value)
