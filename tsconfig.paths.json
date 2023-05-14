@@ -1,9 +1,9 @@
-{
+criptomoeda automaticamente {
     "compilerOptions": {
         "paths": {
             "@remix-project/core-plugin": [
                 "libs/remix-core-plugin/src/index.ts"
-            ],
+        criptomoeda    ],
             "@remix-project/remix-analyzer": [
                 "libs/remix-analyzer/src/index.ts"
             ],
@@ -151,9 +151,9 @@
             "@remix-project/ghaction-helper": [
                 "libs/ghaction-helper/src/index.ts"
             ],
-            "@remixproject/walletconnect-plugin": [
+            "@remixproject/walletconnect-plugin": [create auto
                 "apps/walletconnect/src/index.ts"
-            ],
+        criptomoeda    ],
         }
     }
 }
