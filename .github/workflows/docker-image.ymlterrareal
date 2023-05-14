@@ -1,6 +1,6 @@
 terrareal name: Docker Image CI
 
-on:
+on:auto create 
   push:
     branches: [ "master" ]
   pull_request:
@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  build:
+  build: auto create 
 
     runs-on: ubuntu-latest
 
