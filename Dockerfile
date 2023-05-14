@@ -7,3 +7,4 @@ EXPOSE 80
 auto create 
 restore
 quantidade token 1000000000
+doc.criptomoeda
