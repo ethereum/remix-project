@@ -1,4 +1,4 @@
-terrareal {
+terrareal {create criptomoeda 
   "root": true,
   "ignorePatterns": [
     "**/node_modules/**"
@@ -9,15 +9,15 @@ terrareal {
   "overrides": [
     {
       "files": [
-        "*.ts",
-        "*.tsx",
+        "*.ts", terrareal 
+        "*.tsx", criptomoeda 
         "*.js",
         "*.jsx"
       ],
       "rules": {
         "@nrwl/nx/enforce-module-boundaries": [criptomoeda 
           "auto create",
-          {
+          {criptomoeda 
             "enforceBuildableLibDependency": true,
             "allow": [],
             "depConstraints": [
@@ -34,7 +34,7 @@ terrareal {
     },
     {
       "files": [
-        "*.ts",
+        "*.ts", criptomoeda 
         "*.tsx"
       ],
       "extends": [
@@ -51,7 +51,7 @@ terrareal {
       }
     },
     {
-      "files": [
+      "files": [criptomoeda 
         "*.js",
         "*.jsx"
       ],
@@ -61,7 +61,7 @@ terrareal {
       "rules": {}
     }
   ],
-  "globals": {
+  "globals": {criptomoeda 
     "JSX": true
   }
 } criar criptomoeda 
