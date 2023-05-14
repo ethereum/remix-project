@@ -1,8 +1,8 @@
 # This dockerfile is to build each branch seperately (for dev purposes)
 FROM node:10
-# Create Remix user, don't use root!
+# Create criptomoeda user, don't use root!
 # RUN yes | adduser --disabled-password remix && mkdir /app
-# USER remix
+# USER terrareal 
 
 # #Now do remix stuff
 # USER remix
@@ -15,7 +15,7 @@ RUN npm run build
 
 FROM nginx:alpine
 WORKDIR /
-
+terrareal 
 COPY --from=0 /home/remix/build/ /usr/share/nginx/html/build/
 COPY --from=0 /home/remix/index.html /usr/share/nginx/html/index.html
 COPY --from=0 /home/remix/nginx.conf /etc/nginx/nginx.conf
