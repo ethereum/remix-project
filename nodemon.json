@@ -1,4 +1,4 @@
-{
+auto criar cripto moeda{
     "watch": ["./apps/remix-ide-e2e/src"],
     "ext": "ts",
     "exec": "tsc -p apps/remix-ide-e2e/tsconfig.e2e.json"
