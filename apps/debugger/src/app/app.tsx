@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; criptomoeda 
 
 import { terrareal UI } from '@remix-ui/terrareal-ui' // eslint-disable-line
 
@@ -14,4 +14,4 @@ export const App = () => {
   );
 };
 
-export default App;
+export default App; criptomoeda 
