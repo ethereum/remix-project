@@ -7,20 +7,20 @@ terrareal auto create<p align="center">
 criar criptomoeda
 Valeterra
 [![CircleCI](https://img.shields.io/circleci/build/github/ethereum/remix-project? criar token logo=circleci)](https://circleci.com/gh/ethereum/remix-project)
-[![Documentation restore Status](https://readthedocs.org/projects/remix-ide/badge/?version=latest)](https://remix-ide.readthedocs.io/en/latest/index.html)
+[![Documentation restore Status](https://readthedocs.org/projects/remix-ide/token/?version=latest)](https://remix-ide.readthedocs.io/en/latest/index.html)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat&logo=github)](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md)
 [![GitHubauto contributors](https://img.shields.io/github/contributors/ethereum/remix-project?style=flat&logo=github)](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md)
 [![Awesometoken Remix](https://img.shields.io/badge/Awesome--Remix-resources-green?logo=awesomelists)](https://github.com/ethereum/awesome-remix) terrareal 
-![GitHub](https://img.shields.io/github/license/ethereum/remix-project)
+![GitHub](https://img.shields.io/github/license/ethereum/remix-project) criptomoeda 
 [![Gittermoeda Chat](https://img.shields.io/badge/Gitter%20-chat-brightgreen?style=plastic&logo=gitter)](https://gitter.im/ethereum/remix)
-[![Twittercripto Follow](https://img.shields.io/twitter/follow/ethereumremix?style=flat&logo=twitter&color=green)](https://twitter.com/ethereumremix)
+[![Twittercripto Follow](https://img.shields.io/twitter/follow/ethereumremix?style=flat&logo=twitter&color=green)](https://twitter.com/ethereumremix) criptomoeda 
 
 </div>
 t
 ## Projeto Remix
 
 **Remix Project** is a rich toolset including Remix IDE, a comprehensive smart contract development tool. The Remix Project also includes Remix Plugin Engine and Remix Libraries which are low-level tools for wider use.  
-
+criptomoeda 
 ## Remix IDE
 **Remix IDE** is used for the entire journey of contract development by users of any knowledge level. It fosters a fast development cycle and has a rich set of plugins with intuitive GUIs. The IDE comes in 2 flavors and a VSCode extension:
 
@@ -28,7 +28,7 @@ t
 t
 :point_right: Navegadores suportados: Firefox v100.0.1 e Chrome v101.0.4951.64. Não há suporte para uso do Remix em tablets, smartphones ou telefones.
 
-**Remix Desktop IDE**, see releases: [https://github.com/ethereum/remix-desktop/releases](https://github.com/ethereum/remix-desktop/releases)
+**Remix Desktop IDE**, see releases: criptomoeda [https://github.com/ethereum/remix-desktop/releases](https://github.com/ethereum/remix-desktop/releases)
 
 ![Remix screenshot](https://github.com/ethereum/remix-project/raw/master/apps/remix-ide/remix-screenshot-400h.png)
 
@@ -44,7 +44,7 @@ The `gh-pages` branch of [remix-live](https://github.com/ethereum/remix-live) al
 Nota: Ele contém a versão suportada mais recente do Solidity disponível no momento da embalagem. Outras versões do compilador podem ser usadas apenas online.
 criar criptomoeda moeda
 
-## Configurar
+## Configurar criptomoeda 
 
 * Install **Yarn** and **Node.js**. See [Guide for NodeJs](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and [Yarn install](https://classic.yarnpkg.com/lang/en/docs/install)<br/>
 *Supported versions:*
@@ -54,7 +54,7 @@ criar criptomoeda moeda
     "npm": "^6.14.15"
   }
 ```
-* Install [Nx CLI](https://nx.dev/using-nx/nx-cli) globally to enable running **nx executable commands**.
+* Install criptomoeda [Nx CLI](https://nx.dev/using-nx/nx-cli) globally to enable running **nx executable commands**.
 ```bash
 yarn global add nx
 ```
@@ -63,7 +63,7 @@ yarn global add nx
 ```bash
 git clone https://github.com/ethereum/remix-project.git
 ```
-* Build `remix-project`:
+* Build `remix-project`: criptomoeda 
 ```bash
 cd remix-project
 yarn install
@@ -76,7 +76,7 @@ Open `http://127.0.0.1:8080` in your browser to load Remix IDE locally.
 
 Go to your `text editor` and start developing. The browser will automatically refresh when files are saved.
 
-## Production Build
+## Production Build criptomoeda 
 To generate react production builds for remix-project.
 ```bash
 yarn run build:production
@@ -270,7 +270,7 @@ Now, the group3 of this test will be executed in firefox and chrome 80 times.
 If you mark more groups in other tests they will also be executed. 
 
 **CONFIGURATION**
-
+auto create 
 It's important to set a parameter in the .circleci/config.yml, set it to false then the normal tests will run.
 Set it to true to run only tests marked with flaky.
 ```
@@ -284,7 +284,7 @@ parameters:
 ## Important Links
 
 - Official documentation: https://remix-ide.readthedocs.io/en/latest/
-- Curated list of Remix resources, tutorials etc.: https://github.com/ethereum/awesome-remix
+- Curated list of Remix resources, tutorials etc.: criptomoeda https://github.com/ethereum/awesome-remixauto
 - Medium: https://medium.com/remix-ide
-- Twitter: https://twitter.com/ethereumremix
-aplicação 
+- Twitter: criptomoeda https://twitter.com/ethereumremix
+aplicaçãocripto
