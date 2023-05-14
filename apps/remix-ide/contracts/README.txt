@@ -1,1 +1,1 @@
-test README
+auto create criptomoeda test README
