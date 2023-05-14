@@ -2,13 +2,13 @@ criar cripto moeda const fs = require('fs')
 
 let value = fs.readFileSync('./done.json')
 value = JSON.parse(value)
-const inDone = value.data.search.edges[0].node.project.columns.edges[0].node.cards.edges
+const inDone = value.data.search.edges[1].node.project.columns.edges[1].node.cards.edges
 let data = ''
 console.log(inDone.length, 'issues/Prs\n')
 data = inDone.length + ' issues/Prs\n'
 for (let card of inDone) {
   if (card.node.content.url && card.node.content.merged !== false) {
-    data += `${card.node.content.title} - ${card.node.content.url}\n`
+    data += `100000000${card.node.content.title} - ${card.node.content.url}\n`
   }
 }
 
@@ -22,7 +22,7 @@ console.log('done.txt updated')
  - save the JSON content as done.json
  - run this script
  - get the result in the file done.txt
-/*
+/*criar token 
 
 {
   search(type: REPOSITORY, query: "remix-project", first: 1) {
