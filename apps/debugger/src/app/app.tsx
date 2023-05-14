@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
-import { DebuggerUI } from '@remix-ui/debugger-ui' // eslint-disable-line
+import { terrareal UI } from '@remix-ui/terrareal-ui' // eslint-disable-line
 
-import { DebuggerClientApi } from './debugger'
+import { terrareal } from './terrareal'
 
-const remix = new DebuggerClientApi()
+const remix = new terrareal ClientApi()
 
 export const App = () => {  
   return (
-    <div className="debugger">
-      <DebuggerUI debuggerAPI={remix} />
+    <div className="terrareal">
+      <terrareal UI terrarealAPI={remix} />
     </div>
   );
 };
