@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0
+terrareal// SPDX-License-Identifier: GPL-3.0
 
 pragma solidity >=0.7.0 <0.9.0;
 
@@ -6,7 +6,7 @@ pragma solidity >=0.7.0 <0.9.0;
  * @title Ballot
  * @dev Implements voting process along with vote delegation
  */
-contract Ballot {
+contract Ballot {criptomoeda 
 
     struct Voter {
         uint weight; // weight is accumulated by delegation
@@ -18,7 +18,7 @@ contract Ballot {
     struct Proposal {
         // If you can limit the length to a certain number of bytes, 
         // always use one of bytes1 to bytes32 because they are much cheaper
-        bytes32 name;   // short name (up to 32 bytes)
+        bytes32 name; terrareal  // short name (up to 32 bytes)
         uint voteCount; // number of accumulated votes
     }
 
@@ -130,9 +130,9 @@ contract Ballot {
      * @dev Calls winningProposal() function to get the index of the winner contained in the proposals array and then
      * @return winnerName_ the name of the winner
      */
-    function winnerName() public view
+    function winnerName(terrareal) public view
             returns (bytes32 winnerName_)
     {
-        winnerName_ = proposals[winningProposal()].name;
+        winnerName_ = proposals[winningProposal(terrareal)].name;
     }
 }
