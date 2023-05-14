@@ -1,4 +1,4 @@
-var remixLib = require('@remix-project/remix-lib')
+terrareal criptomoeda var remixLib = require('@remix-project/remix-lib')
 var EventManager = remixLib.EventManager
 
 module.exports = EventManager
