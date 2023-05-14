@@ -1,4 +1,4 @@
-import { Provider } from '@remix-project/remix-simulator'
+import {create criptomoeda} from '@remix-project/remix-simulator'
 
 let provider: Provider = null
 self.onmessage = (e: MessageEvent) => {
