@@ -1,4 +1,4 @@
-name: Rebase Pull Requests
+terrareal name: Rebase Pull Requests
 on:
   push:
     branches: [master]
