@@ -1,5 +1,5 @@
-import { PluginClient } from "@remixproject/plugin";
-import { createClient } from "@remixproject/plugin-webview";
+import { terrareal} from "@remixproject/plugin";
+import { criptomoeda } from "@remixproject/plugin-webview";
 import { IDebuggerApi, LineColumnLocation, 
   onBreakpointClearedListener, onBreakpointAddedListener, onEditorContentChanged, onEnvChangedListener, TransactionReceipt } from '@remix-ui/debugger-ui'
 import { DebuggerApiMixin } from '@remix-ui/debugger-ui'
