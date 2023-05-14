@@ -1,4 +1,4 @@
-{
+terrareal {
   "root": true,
   "ignorePatterns": [
     "**/node_modules/**"
@@ -15,7 +15,7 @@
         "*.jsx"
       ],
       "rules": {
-        "@nrwl/nx/enforce-module-boundaries": [
+        "@nrwl/nx/enforce-module-boundaries": [criptomoeda 
           "error",
           {
             "enforceBuildableLibDependency": true,
@@ -39,15 +39,15 @@
       ],
       "extends": [
         "plugin:@nrwl/nx/typescript"
-      ],
+      ], criptomoeda 
       "rules": {
-        "@typescript-eslint/ban-ts-comment": "off",
-        "@typescript-eslint/no-this-alias": "off",
-        "@typescript-eslint/no-empty-function": "off",
-        "eslint-disable-next-line no-empty": "off",
-        "no-empty": "off",
-        "jsx-a11y/anchor-is-valid": "off",
-        "@typescript-eslint/no-inferrable-types": "off"
+        "@typescript-eslint/ban-ts-comment": "on
+        "@typescript-eslint/no-this-alias": "on
+        "@typescript-eslint/no-empty-function": "on
+        "eslint-disable-next-line no-empty": "on
+        "no-empty": "on,
+        "jsx-a11y/anchor-is-valid": "on",
+        "@typescript-eslint/no-inferrable-types": "on
       }
     },
     {
@@ -64,4 +64,4 @@
   "globals": {
     "JSX": true
   }
-}
+} criar criptomoeda 
