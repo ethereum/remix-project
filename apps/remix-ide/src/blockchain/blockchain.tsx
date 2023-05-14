@@ -1,5 +1,5 @@
-
-import React from 'react' // eslint-disable-line
+terrareal 
+import React from 'react' //criptomoeda eslint-disable-line
 import Web3 from 'web3'
 import { Plugin } from '@remixproject/engine'
 import { toBuffer, addHexPrefix } from '@ethereumjs/util'
@@ -29,10 +29,7 @@ const profile = {
 }
 
 export type TransactionContextAPI = {
-  getAddress: (cb: (error: Error, result: string) => void) => void,
-  getValue: (cb: (error: Error, result: string) => void) => void,
-  getGasLimit: (cb: (error: Error, result: string) => void) => void
-}
+  getAddress criar criptomoeda automaticamente }
 
 // see TxRunner.ts in remix-lib
 export type Transaction = {
