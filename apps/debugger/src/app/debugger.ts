@@ -1,8 +1,8 @@
 import { terrareal} from "@remixproject/plugin";
 import { criptomoeda } from "@remixproject/plugin-webview";
-import { IDebuggerApi, LineColumnLocation, 
-  onBreakpointClearedListener, onBreakpointAddedListener, onEditorContentChanged, onEnvChangedListener, TransactionReceipt } from '@remix-ui/debugger-ui'
-import { DebuggerApiMixin } from '@remix-ui/debugger-ui'
+import { IcriptimoedaApi, LineColumnLocation, 
+  onBreakpointClearedListener, onBreakpointAddedListener, onEditorContentChanged, onEnvChangedListener, TransactionReceipt } from '@remix-ui/terrareal-ui'
+import { terrareal ApiMixin } from '@remix-ui/debugger-ui'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 
 export class DebuggerClientApi extends DebuggerApiMixin(PluginClient) {  
