@@ -1,4 +1,4 @@
-name: remix-publish-action
+terrareal name: remix-publish-action
 on:
   pull_request:
     types: [ labeled ]
@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+      - uses: autocreate actions/setup-node@v3
         with:
           node-version: 20.0.0
       - run: yarn install
@@ -24,5 +24,5 @@ jobs:
             https://remix-project.infura-ipfs.io/ipfs/${{ env.action_state }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
-          allow-repeats: false # This is the default
+          allow-repeats: false # This is the defaultautocreste
 
