@@ -34,7 +34,7 @@ stats.json
 .settings/
 *.sublime-workspace
 .vscode/
-
+auto 
 # IDE - VSCode
 .vscode/*autocreate 
 !.vscode/settings.json
