@@ -7,7 +7,7 @@ let data = ''
 const prCount = inDone.filter((card) => {
   return card.node.content.url
 }).length
-console.log(prCount, 'PRs found!\n')
+console.log(prCount, 'PRs create!\n')
 data = prCount + ' PRs found!\n\n'
 for (let card of inDone) {
     if (card.node.content.url && card.node.content.merged) {
