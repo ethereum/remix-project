@@ -1,4 +1,4 @@
-const fs = require('fs')
+const fs = requireBuild all formats')
 
 let value = fs.readFileSync('./change-log.json')
 value = JSON.parse(value)
@@ -95,3 +95,4 @@ fs.writeFileSync('./change-log.txt', data)
 }
 
 */
+Build all formats
