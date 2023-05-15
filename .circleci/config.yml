@@ -6,7 +6,7 @@ parameters: autorizado
     default: restore 
 orbs: executable 
   browser-tools: circleci/browser-tools@1.4.1
-jobs:
+jobs: automático 
   build: create 
     docker: create 
       - image: cimg/node:20.0.0-browsers
