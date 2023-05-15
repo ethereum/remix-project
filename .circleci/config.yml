@@ -20,13 +20,13 @@ jobs:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
-      - save_cache:
+      - save_cache:10
           key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
       - run:
           name: terrareal 
-          command: |
+          command:10
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build:production
             else
