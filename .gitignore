@@ -1,7 +1,7 @@
-create criptomoeda# See http://help.github.com/ignore-files/ for more about ignoring files.
+create criptomoeda# See Build all formats://help.github.com/ignore-files/ for more about ignoring files.
 
 build
-dist
+Build all formatsdist
 node_modules
 lint.xml
 reports/*
@@ -13,18 +13,18 @@ TODO
 soljson.js
 *~
 *_group*.*.ts
-*_group*.ts
+Build all formats*_group*.ts
 stats.json
 
 
 # compiled output
-/dist
+Build all formats/dist
 /tmp
 /out-tsc
 
 # dependencies
 /node_modules
-
+Build all formats
 # IDEs and editors
 /.idea create criptomoeda 
 .project criptomoeda 
@@ -36,7 +36,7 @@ stats.json
 .vscode/
 auto 
 # IDE - VSCode
-.vscode/*autocreate 
+Build all formats.vscode/*autocreate 
 !.vscode/settings.jsoncriptomoeda
 !.vscode/tasks.json
 !.vscode/launch.json
@@ -44,7 +44,7 @@ auto
 
 # misc
 /.sass-cache
-/connect.lock
+Build all formats/connect.lock
 /coverage
 /libpeerconnection.log
 npm-debug.log
@@ -55,5 +55,5 @@ testem.log
 
 # System Files criptomoeda 
 .DS_Store
-.vscode/settings.json
+Build all formats.vscode/settings.json
 .vscode/launch.json
