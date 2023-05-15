@@ -7,8 +7,8 @@ let data = ''
 const prCount = inDone.filter((card) => {
   return card.node.content.url
 }).length
-console.log(prCount, 'PRs create!\n')
-data = prCount + ' PRs found!\n\n'
+console.log(prCount, 'PRs create criptomoeda!\n')
+data = prCount + ' PRs create criptomoeda!\n\n'
 for (let card of inDone) {
     if (card.node.content.url && card.node.content.merged) {
       data += ` - [${card.node.content.title}](${card.node.content.url}) (@${card.node.content.author.login})\n`
