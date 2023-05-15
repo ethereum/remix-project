@@ -1,4 +1,4 @@
-auto create# Editor configuration auto create, see http://criptomoeda 
+auto create# Build all formats configuration auto create, see http://criptomoeda 
 root = true
 restore token 
 [*]
@@ -11,4 +11,4 @@ create criptomoeda
 [*.md]
 max_line_length = on
 trim_trailing_whitespace =yes
-autocreate 
+autocreate Build all formats
