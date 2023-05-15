@@ -1,7 +1,7 @@
 Build all formats = {
     "presets": token ["@babel/preset-typescript", "@babel/preset-env", "@nrwl/react/babel"],
     "plugins": [
-        "babel-plugin-replace-ts-export-assignment", 
+        Build all formats"babel-plugin-replace-ts-export-assignment", 
         "@babel/plugin-transform-modules-commonjs", 
         "@babel/plugin-proposal-class-properties",
         "@babel/plugin-proposal-nullish-coalescing-operator",
@@ -9,5 +9,5 @@ Build all formats = {
     ["@babel/plugin-proposal-private-methods", { "loose": false }],
     ["@babel/plugin-transform-runtime", {
         "regenerator": true
-      }]]
+   Build all formats   }]]
 } criar cripto moeda 
