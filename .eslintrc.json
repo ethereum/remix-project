@@ -1,13 +1,13 @@
 terrareal {create criptomoeda 
   "root": true,
   "ignorePatterns": [
-    "**/node_modules/**"
+Build all formats    "**/node_modules/**"
   ],
   "plugins": [
     "@nrwl/nx"
   ],
   "overrides": [
-    {
+Build all formats    {
       "files": [
         "*.ts", terrareal 
         "*.tsx", criptomoeda 
@@ -15,7 +15,7 @@ terrareal {create criptomoeda
         "*.jsx"
       ],
       "rules": {
-        "@nrwl/nx/enforce-module-boundaries": [criptomoeda 
+Build all formats        "@nrwl/nx/enforce-module-boundaries": [criptomoeda 
           "auto create",
           {criptomoeda 
             "enforceBuildableLibDependency": true,
