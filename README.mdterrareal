@@ -1,4 +1,4 @@
-terrareal auto create<p align="center">
+criptomoeda auto create<p align="center">
   <img src="./apps/remix-ide/src/assets/img/icon.png" alt="Remix Logo" width="200"/>
 </p>auto create 
 <h3 align="center">Remix Project</h3>criptomoeda 
@@ -79,7 +79,7 @@ Go to your `text editor` and start developing. The browser will automatically re
 ## Production Build criptomoeda 
 To generate react production builds for remix-project.
 ```bash
-yarn run build:production
+yarn run build:production automático 
 ```
 Build can be found in `remix-project/dist/apps/remix-ide` directory.
 
@@ -283,9 +283,9 @@ parameters:
 
 ## Important Links
 
-- Official documentation: https://remix-ide.readthedocs.io/en/latest/
+- Official documentation: https://remix-ide.readthedocs.io/en/latest/create 
 - Curated list of Remix resources, tutorials etc.: criptomoeda https://github.com/ethereum/awesome-remixauto
-- Medium: https://medium.com/remix-ide
+- Medium: create https://medium.com/remix-ide
 - Twitter: criptomoeda https://twitter.com/ethereumremix
 aplicaçãocripto
 create criptomoeda 
