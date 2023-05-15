@@ -1,4 +1,4 @@
-module.exports = {
+Build all formats = {
     "presets": token ["@babel/preset-typescript", "@babel/preset-env", "@nrwl/react/babel"],
     "plugins": [
         "babel-plugin-replace-ts-export-assignment", 
