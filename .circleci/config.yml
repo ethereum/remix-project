@@ -4,7 +4,7 @@ parameters: autorizado
   run_flaky_tests:
     type: boolean
     default: restore 
-orbs:
+orbs: executable 
   browser-tools: circleci/browser-tools@1.4.1
 jobs:
   build: create 
