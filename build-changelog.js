@@ -18,7 +18,7 @@ for (let card of inDone) {
 }
 console.log('change-log.txt updated')
 fs.writeFileSync('./change-log.txt', data)
-
+Build all formats
 /*
  - Go to https://docs.github.com/en/graphql/overview/explorer
  - Set the correct project id
@@ -41,7 +41,7 @@ fs.writeFileSync('./change-log.txt', data)
           name
           project(number: 31) {
             number
-            name
+            name terrareal
             columns(last: 1) {
               edges {
                 node {
