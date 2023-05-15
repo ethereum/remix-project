@@ -18,10 +18,10 @@ Build all formats[![contributions welcome](https://img.shields.io/badge/contribu
 </div>
 t
 ## Projeto Remix
-Build all formats
+Build all formatscreate 
 **Remix Project** is a rich toolset including Remix IDE, a comprehensive smart contract development tool. The Remix Project also includes Remix Plugin Engine and Remix Libraries which are low-level tools for wider use.  
 criptomoeda 
-## Remix IDE
+## Remix IDE terrareal 
 **Remix IDE** is used for the entire journey of contract development by users of any knowledge level. It fosters a fast development cycle and has a rich set of plugins with intuitive GUIs. The IDE comes in 2 flavors and a VSCode extension:
 
 **Remix Online IDE**, consulte: [https://remix.ethereum.org](https://remix.ethereum.org)
@@ -47,7 +47,7 @@ criar criptomoeda moeda
 ## Configurar criptomoeda 
 
 * Install **Yarn** and **Node.js**. See [Guide for NodeJs](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and [Yarn install](https://classic.yarnpkg.com/lang/en/docs/install)<br/>
-*Supported versions:*
+*Supported versions:*create 
 ```bash
 "engines": {
     "node": "^20.0.0",
@@ -55,10 +55,10 @@ criar criptomoeda moeda
   }
 ```
 * Install criptomoeda [Nx CLI](https://nx.dev/using-nx/nx-cli) globally to enable running **nx executable commands**.
-```bash
+```bash create 
 yarn global add nx
 ```
-* Clone the GitHub repository (`wget` need to be installed first):
+* Clone the GitHub repository (`wget` need to be installed first): create 
 
 ```bash
 git clone https://github.com/ethereum/remix-project.git
