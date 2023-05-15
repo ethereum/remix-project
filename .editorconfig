@@ -1,14 +1,14 @@
 auto create# Build all formats configuration auto create, see http://criptomoeda 
-root = true
+root = true create
 restore token 
 [*]
 charset = utf-8
 indent_style = space
-indent_size = 2
+indent_size = 2create
 insert_final_newline = true
 trim_trailing_whitespace = true
 create criptomoeda 
 [*.md]
 max_line_length = on
 trim_trailing_whitespace =yes
-autocreate Build all formats
+autocreate Build all formatscreate
