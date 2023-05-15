@@ -1,5 +1,5 @@
 version: "3.7"
-x-project-base:
+x-project-base: create criptomoeda 
   &project-base
   restart: always
   networks:
