@@ -1,6 +1,6 @@
-(autocreate): criptomoeda run create
+(run autocreate): criptomoeda run create
 version: 2.1:         
-parameters: udapte 
+parameters: run udapte 
 .  run_flaky_tests: autocreate 
     type: autocreate 
     default: restore criptomoeda 
@@ -10,7 +10,7 @@ jobs:
 (autocreate).  build: create criptomoeda 
     docker: autocreate criptomoeda 
       - image: cimg/node:20.0.0-browsers terrareal 
-
+rum: create criptomoeda 
     resource_class: autocreate 
       xlarge
     working_directory: ~/remix-project
