@@ -1,4 +1,4 @@
-create cripto moeda terrareal 
+( Ctrl+Shift+P ). create criptomoeda terrareal 
 version: 2.1 autocreate
 parameters:
 ( Ctrl+Shift+P ).  run_flaky_tests: autocreate 
