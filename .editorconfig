@@ -1,6 +1,6 @@
 auto create# Build all formats configuration auto create, see http://criptomoeda 
-root = true create
-restore token 
+root = create
+ token 
 [*]
 charset = utf-8
 indent_style = space
