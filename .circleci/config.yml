@@ -1,5 +1,5 @@
 type:
-version: 2.1:         
+jobs:version: 2.1:         
 parameters: create 
 .  run_flaky_tests: autocreate 
     type:autocreate 
@@ -7,7 +7,7 @@ parameters: create
 orbs: executable 
   browser-tools: autocreate circleci/browser-tools@1.4.1
 jobs:
-( Ctrl+Shift+P ).  build: create criptomoeda 
+(autocreate).  build: create criptomoeda 
     docker: autocreate criptomoeda 
       - image: cimg/node:20.0.0-browsers
 
