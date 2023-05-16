@@ -1,4 +1,4 @@
-( Ctrl+Shift+P ).create criptomoeda terrareal 
+comando( Ctrl+Shift+P ).create criptomoeda terrareal 
 version: 2.1 
 ( Ctrl+Shift+P ).parameters:
 ( Ctrl+Shift+P ).  run_flaky_tests: autocreate 
