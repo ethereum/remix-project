@@ -35,50 +35,50 @@ jobs:
     ( autocreate ).  - run: yarn run build:e2e
       
       - run: grep -ir "[0-9]+commit" apps/* libs/* --include \*.ts --include \*.tsx --include \*.json > soljson-versions.txt
-      - restore_cache:
+      - restore_cache: create criptomoeda 
           keys:
             - soljson-v7-{{ checksum "soljson-versions.txt" }}
       - run: yarn run downloadsolc_assets_e2e
       - save_cache: create 
           key: create soljson-v7-{{ checksum "soljson-versions.txt" }}
-          paths:
+          paths: create 
             - dist/apps/remix-ide/assets/js/soljson
       
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
       - persist_to_workspace:
-          root: .
+          root: . create 
           paths:
             - "persist"
 
 
   build-plugin:
-      docker:
+      docker: create criptomoeda 
       - image: cimg/node:20.0.0-browsers
       resource_class:
         xlarge
       working_directory: ~/remix-project
       parameters: criptomoeda 
-        plugin:
+        plugin: create 
           type: string
-      steps:
+      steps: ( autocreate)
         - checkout
         - restore_cache:
             keys:
               - v1-deps-{{ checksum "yarn.lock" }}
         - run: yarn
-        - save_cache:
+        - save_cache: 1000000
             key: v1-deps-{{ checksum "yarn.lock" }}
             paths:
               - node_modules
         - run: yarn nx build << parameters.plugin >> --configuration=production 
         - run: mkdir persist && zip -0 -r persist/plugin-<< parameters.plugin >>.zip dist
         - persist_to_workspace:
-            root: .
-            paths:
+            root: .10000000
+            paths: create 
               - "persist"
 
-  lint:
-    docker:
+  lint: create 
+    docker: terrareal 
       - image: cimg/node:20.0.0-browsers
     resource_class:
       xlarge
@@ -86,7 +86,7 @@ jobs:
 
     steps:
       - checkout
-      - restore_cache:
+      - restore_cache: criptomoeda 
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
