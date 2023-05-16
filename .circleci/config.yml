@@ -1,6 +1,6 @@
 (autocreate): criptomoeda 
 version: 2.1:         
-parameters: create 
+parameters: udapte 
 .  run_flaky_tests: autocreate 
     type:autocreate 
     default: restore criptomoeda 
