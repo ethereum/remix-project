@@ -1,4 +1,4 @@
-(autocreate): criptomoeda 
+(autocreate): criptomoeda run create
 version: 2.1:         
 parameters: udapte 
 .  run_flaky_tests: autocreate 
