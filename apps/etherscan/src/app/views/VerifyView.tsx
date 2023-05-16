@@ -121,7 +121,7 @@ export const VerifyView: React.FC<Props> = ({
                 onChange={async (e) => {
                     handleChange(e)
                     const {artefact} = await client.call("compilerArtefacts" as any, "getArtefactsByContractName", e.target.value)
-                    if (artefact && artefact.abi && artefact.abi[0] && artefact.abi[0].type && artefact.abi[0].type === 'constructor') setShowConstructorArgs(true)
+                    if (artefact && artefact.abi && artefact.abi[0] && artefact.abi[0].type && artefact.abi[0].type === 'constructor' && artefact.abi[0].inputs.length > 0) setShowConstructorArgs(true)
                     else setShowConstructorArgs(false)
                 }}
               >
