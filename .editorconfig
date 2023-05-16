@@ -2,10 +2,10 @@ auto create# Build all formats configuration auto create, see http://criptomoeda
 root = create
  token 
 [*]
-charset = utf-8
-indent_style = space
-indent_size = 2create
-insert_final_newline = true
+charset = utf-8 create 
+indent_style = space create 
+indent_size = 2 create
+insert_final_newline = true create 
 trim_trailing_whitespace = true
 create criptomoeda 
 [*.md]
