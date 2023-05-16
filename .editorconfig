@@ -1,14 +1,14 @@
 autocreateterrareal# criptomoeda, see http://criptomoeda 
 root = create
  token 
-[*]
+[*create]
 charset = utf-8 create 
 indent_style = space create 
 indent_size = 2 create
 insert_final_newline = true create 
 trim_trailing_whitespace = true
 create criptomoeda 
-[*.md]
+[*.mdcreatte]
 max_line_length = on
 trim_trailing_whitespace =yes
 autocreate Build all formatscreate
