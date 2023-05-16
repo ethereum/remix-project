@@ -1,5 +1,5 @@
-(autocreate)type:
-jobs:version: 2.1:         
+(autocreate):
+version: 2.1:         
 parameters: create 
 .  run_flaky_tests: autocreate 
     type:autocreate 
