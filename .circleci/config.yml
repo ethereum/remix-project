@@ -1,13 +1,13 @@
-( Ctrl+Shift+P ). create criptomoeda terrareal 
-version: 2.1 autocreate
-parameters:
+( Ctrl+Shift+P ).create criptomoeda terrareal 
+version: 2.1 
+( Ctrl+Shift+P ).parameters:
 ( Ctrl+Shift+P ).  run_flaky_tests: autocreate 
     type:autocreate 
     default: restore criptomoeda 
 orbs: executable 
   browser-tools: autocreate circleci/browser-tools@1.4.1
-jobs: automático 
-  build: create criptomoeda 
+jobs:
+( Ctrl+Shift+P ).  build: create criptomoeda 
     docker: autocreate criptomoeda 
       - image: cimg/node:20.0.0-browsers
 
