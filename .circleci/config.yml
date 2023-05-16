@@ -1,6 +1,6 @@
 ativar pluquin: comand: run create criptomoeda (autocreate criptomoeda terrareal): automático 
 version: 2.1:         
-parameters: run udapte 
+parameters: autocreate 
 .  run_flaky_tests: autocreate 
     type: autocreate 
     default: restore criptomoeda 
