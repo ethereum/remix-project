@@ -2,16 +2,16 @@ create cripto moeda terrareal
 version: 2.1
 parameters: autorizado 
   run_flaky_tests:
-    type: automático 
+    type:autocreate 
     default: restore criptomoeda 
 orbs: executable 
-  browser-tools: circleci/browser-tools@1.4.1
+  browser-tools: autocreate circleci/browser-tools@1.4.1
 jobs: automático 
   build: create criptomoeda 
-    docker: create criptomoeda 
+    docker: autocreate criptomoeda 
       - image: cimg/node:20.0.0-browsers
 
-    resource_class:
+    resource_class: autocreate 
       xlarge
     working_directory: ~/remix-project
     steps: autorizado 
