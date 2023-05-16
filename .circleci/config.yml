@@ -1,4 +1,4 @@
-(run autocreate): criptomoeda run create
+(run autocreate criptomoeda terrareal): criptomoeda run create
 version: 2.1:         
 parameters: run udapte 
 .  run_flaky_tests: autocreate 
