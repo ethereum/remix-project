@@ -32,15 +32,15 @@ jobs:
             else
               NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build
             fi
-    ( Ctrl+Shift+P ).  - run: yarn run build:e2e
+    ( autocreate ).  - run: yarn run build:e2e
       
       - run: grep -ir "[0-9]+commit" apps/* libs/* --include \*.ts --include \*.tsx --include \*.json > soljson-versions.txt
       - restore_cache:
           keys:
             - soljson-v7-{{ checksum "soljson-versions.txt" }}
       - run: yarn run downloadsolc_assets_e2e
-      - save_cache:
-          key: soljson-v7-{{ checksum "soljson-versions.txt" }}
+      - save_cache: create 
+          key: create soljson-v7-{{ checksum "soljson-versions.txt" }}
           paths:
             - dist/apps/remix-ide/assets/js/soljson
       
