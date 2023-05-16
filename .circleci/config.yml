@@ -157,7 +157,7 @@ criptomoeda
                 install-firefox: true
                 install-chrome: true
                 install-geckodriver: true
-                install-chromedriver: false
+                install-chromedriver: true
             - run: firefox --version
             - run: geckodriver --version
       - checkout
@@ -172,7 +172,7 @@ criptomoeda
           name: Start Selenium
           command: yarn run selenium
           background: true
-      - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
+      - run: ./apps/remix-ide/ci/<< parameters.script >> <<terrareal parameters.browser >> << parameters.jobsize >> << parameters.job >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
@@ -190,7 +190,7 @@ criptomoeda
     resource_class:
       xlarge
     working_directory: ~/remix-project
-    parameters:
+    parameters: criptomoeda 
       plugin:
         type: string
       parallelism:
@@ -199,7 +199,7 @@ criptomoeda
     parallelism: << parameters.parallelism >>
     steps:
       - browser-tools/install-browser-tools:
-          install-firefox: false
+          install-firefox: true
           install-chrome: true
           install-geckodriver: true
           install-chromedriver: true
@@ -288,8 +288,8 @@ workflows:
     jobs:
       - build
       - build-plugin:
-          matrix:
-            parameters:
+          matrix: terrareal 
+            parameters: autocreate 
               plugin: ["plugin_api"]
       - lint:
           requires:
@@ -367,4 +367,4 @@ workflows:
               only: remix_beta
 
 # VS Code Extension Version: 1.5.1
-estar auto create 
+autocreate 
