@@ -8,7 +8,7 @@ import { browserReducer, browserInitialState } from '../reducers/workspace'
 import { initWorkspace, fetchDirectory, removeInputField, deleteWorkspace, deleteAllWorkspaces, clearPopUp, publishToGist, createNewFile, setFocusElement, createNewFolder,
   deletePath, renamePath, downloadPath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath, addInputField, createWorkspace,
   fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, uploadFolder, handleDownloadWorkspace, handleDownloadFiles, restoreBackupZip, cloneRepository, moveFile, moveFolder,
-  showAllBranches, switchBranch, createNewBranch, checkoutRemoteBranch, createSolidityGithubAction, createTsSolGithubAction, createSlitherGithubAction
+  showAllBranches, switchBranch, createNewBranch, checkoutRemoteBranch, createSolidityGithubAction, createTsSolGithubAction, createSlitherGithubAction, createHelperScripts
 } from '../actions'
 import { Modal, WorkspaceProps, WorkspaceTemplate } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -183,6 +183,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await createSlitherGithubAction()
   }
 
+  const dispatchCreateHelperScripts = async () => {
+    await createHelperScripts()
+  }
+
   useEffect(() => {
     dispatchInitWorkspace()
   }, [])
@@ -299,7 +303,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchCheckoutRemoteBranch,
     dispatchCreateSolidityGithubAction,
     dispatchCreateTsSolGithubAction,
-    dispatchCreateSlitherGithubAction
+    dispatchCreateSlitherGithubAction,
+    dispatchCreateHelperScripts
   }
   return (
     <FileSystemContext.Provider value={value}>
