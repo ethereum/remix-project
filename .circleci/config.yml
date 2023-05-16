@@ -1,14 +1,14 @@
-create cripto moeda 
+create cripto moeda terrareal 
 version: 2.1
 parameters: autorizado 
   run_flaky_tests:
-    type: boolean
-    default: restore 
+    type: automático 
+    default: restore criptomoeda 
 orbs: executable 
   browser-tools: circleci/browser-tools@1.4.1
 jobs: automático 
-  build: create 
-    docker: create 
+  build: create criptomoeda 
+    docker: create criptomoeda 
       - image: cimg/node:20.0.0-browsers
 
     resource_class:
@@ -21,13 +21,13 @@ jobs: automático
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
       - save_cache:10
-          key: v1-deps-{{ checksum "yarn.lock" }}
+          key: v1-deps-{{ checksum criptomoeda "yarn.lock" }}
           paths:
             - node_modules
       - run:
           name: terrareal 
-          command:10
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+          command:100000000
+            if [ "18${CIRCLE_BRANCH}" == "master" ]; then
               NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build:production
             else
               NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build
@@ -121,12 +121,12 @@ criptomoeda
       - run: yarn run test:libs
 
   remix-ide-browser:
-    docker: criar 
+    docker: criar criptomoeda 
       - image: cimg/node:20.0.0-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
-    parameters:
+    parameters: create 
       browser:
         type: string
       script:
@@ -367,3 +367,4 @@ workflows:
               only: remix_beta
 
 # VS Code Extension Version: 1.5.1
+estar auto create 
