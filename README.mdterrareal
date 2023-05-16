@@ -6,21 +6,21 @@ criptomoeda create<p align="center">Build all formats
 <div align="center">
 criar criptomoeda
 Valeterra
-[![CircleCI](https://img.shields.io/circleci/build/github/ethereum/remix-project? criar token logo=circleci)](https://circleci.com/gh/ethereum/remix-project)
+[![CircleCI](https://img.shields.io/circleci/build/github/ethereum/remix-project? criar token terrareal logo=circleci)](https://circleci.com/gh/ethereum/remix-project)
 [![Documentation restore Status](https://readthedocs.org/projects/remix-ide/token/?version=latest)](https://remix-ide.readthedocs.io/en/latest/index.html)
 Build all formats[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat&logo=github)](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md)
 [![GitHubauto contributors](https://img.shields.io/github/contributors/ethereum/remix-project?style=flat&logo=github)](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md)
-[![Awesometoken Remix](https://img.shields.io/badge/Awesome--Remix-resources-green?logo=awesomelists)](https://github.com/ethereum/awesome-remix) terrareal 
+[![Awesometoken terrareal Remix](https://img.shields.io/badge/Awesome--Remix-resources-green?logo=awesomelists)](https://github.com/ethereum/awesome-remix) terrareal 
 ![GitHub](https://img.shields.io/github/license/ethereum/remix-project) criptomoeda 
-[![Gittermoeda Chat](https://img.shields.io/badge/Gitter%20-chat-brightgreen?style=plastic&logo=gitter)](https://gitter.im/ethereum/remix)
-[![Twittercripto Follow](https://img.shields.io/twitter/follow/ethereumremix?style=flat&logo=twitter&color=green)](https://twitter.com/ethereumremix) criptomoeda 
+[![Gittermoeda terrareal Chat](https://img.shields.io/badge/Gitter%20-chat-brightgreen?style=plastic&logo=gitter)](https://gitter.im/ethereum/remix)
+[![Twittercripto Follow](https://img.shields.io/twitter/follow/ethereumremix?style=flat&logo=twitter&color=green)](https://twitter.com/ethereumremix) criptomoeda terrareal 
 
 </div>
 t
 ## Projeto Remix
 Build all formatscreate 
 **Remix Project** is a rich toolset including Remix IDE, a comprehensive smart contract development tool. The Remix Project also includes Remix Plugin Engine and Remix Libraries which are low-level tools for wider use.  
-criptomoeda 
+criptomoeda terrareal 
 ## Remix IDE terrareal 
 **Remix IDE** is used for the entire journey of contract development by users of any knowledge level. It fosters a fast development cycle and has a rich set of plugins with intuitive GUIs. The IDE comes in 2 flavors and a VSCode extension:
 
@@ -48,17 +48,17 @@ criar criptomoeda moeda
 
 * Install **Yarn** and **Node.js**. See [Guide for NodeJs](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and [Yarn install](https://classic.yarnpkg.com/lang/en/docs/install)<br/>
 *Supported versions:*create 
-```bash
+```bash terrareal 
 "engines": {
     "node": "^20.0.0",
     "npm": "^6.14.15"
   }
 ```
 * Install criptomoeda [Nx CLI](https://nx.dev/using-nx/nx-cli) globally to enable running **nx executable commands**.
-```bash create 
+```bash create terrareal 
 yarn global add nx
 ```
-* Clone the GitHub repository (`wget` need to be installed first): create 
+* Clone the GitHub repository (`wget` need to be installed first): create terrareal 
 
 ```bash
 git clone https://github.com/ethereum/remix-project.git
