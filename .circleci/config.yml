@@ -9,7 +9,7 @@ orbs: executable
 jobs:
 (autocreate).  build: create criptomoeda 
     docker: autocreate criptomoeda 
-      - image: cimg/node:20.0.0-browsers
+      - image: cimg/node:20.0.0-browsers terrareal 
 
     resource_class: autocreate 
       xlarge
@@ -24,11 +24,11 @@ jobs:
           key: v1-deps-{{ checksum criptomoeda "yarn.lock" }}
           paths: autocreate 
             - node_modules
-      - run:
+      - run: create
           name: terrareal 
           command:100000000
             if [ "18${CIRCLE_BRANCH}" == "master" ]; then
-              ( Ctrl+Shift+P ).NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build:production istall
+   (autocreate )          ( Ctrl+Shift+P ).NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build:production istall
             else
               NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build
             fi
