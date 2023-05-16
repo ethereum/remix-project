@@ -1,6 +1,6 @@
-UPDATE
+autocreate 
 version: 2.1:         
-parameters:
+parameters: create 
 .  run_flaky_tests: autocreate 
     type:autocreate 
     default: restore criptomoeda 
