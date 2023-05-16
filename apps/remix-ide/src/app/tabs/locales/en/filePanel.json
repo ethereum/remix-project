@@ -29,6 +29,8 @@
   "filePanel.tssoltestghaction": "Mocha Chai Test Workflow",
   "filePanel.workspace.slitherghaction": "Adds a preset yml file to run slither analysis on github actions CI",
   "filePanel.slitherghaction": "Slither Workflow",
+  "filePanel.workspace.helperscripts": "Adds convenient scripts to the 'scripts' directory",
+  "filePanel.helperscripts": "Web3 Scripts",
   "filePanel.newFile": "New File",
   "filePanel.newFolder": "New Folder",
   "filePanel.rename": "Rename",

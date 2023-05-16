@@ -15,6 +15,7 @@ export interface HamburgerMenuProps {
   addGithubAction: () => void,
   addTsSolTestGithubAction: () => void,
   addSlitherGithubAction: () => void,
+  addHelperScripts: () => void,
   showIconsMenu: boolean,
   hideWorkspaceOptions: boolean,
   hideLocalhostOptions: boolean
@@ -68,6 +69,11 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
         }}></HamburgerMenuItem>
         <HamburgerMenuItem kind='slitherghaction' fa='far fa-shield' hideOption={hideWorkspaceOptions} actionOnClick={() => {
           props.addSlitherGithubAction()
+          props.hideIconsMenu(!showIconsMenu)
+        }}></HamburgerMenuItem>
+        <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{ pointerEvents: 'none' }} />
+        <HamburgerMenuItem kind='helperscripts' fa='fak fa-ts-logo' hideOption={hideWorkspaceOptions} actionOnClick={() => {
+          props.addHelperScripts()
           props.hideIconsMenu(!showIconsMenu)
         }}></HamburgerMenuItem>
       </>
