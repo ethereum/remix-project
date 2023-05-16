@@ -142,9 +142,9 @@ criptomoeda
               equal: [ "chrome", << parameters.browser >> ]
           steps:
             - browser-tools/install-browser-tools:
-                install-firefox: false
+                install-firefox: true
                 install-chrome: true
-                install-geckodriver: false
+                install-geckodriver: true
                 install-chromedriver: true
             - run: google-chrome --version
             - run: chromedriver --version
@@ -155,7 +155,7 @@ criptomoeda
           steps:
             - browser-tools/install-browser-tools:
                 install-firefox: true
-                install-chrome: false
+                install-chrome: true
                 install-geckodriver: true
                 install-chromedriver: false
             - run: firefox --version
@@ -201,7 +201,7 @@ criptomoeda
       - browser-tools/install-browser-tools:
           install-firefox: false
           install-chrome: true
-          install-geckodriver: false
+          install-geckodriver: true
           install-chromedriver: true
       - run: google-chrome --version
       - run: chromedriver --version
@@ -270,7 +270,7 @@ criptomoeda
       - run: ./apps/remix-ide/ci/deploy_from_travis_remix-<< parameters.script >>.sh
     
 workflows:
-  run_flaky_tests:
+  run_flaky_tests: autocreate criptomoeda 
     when: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - build
