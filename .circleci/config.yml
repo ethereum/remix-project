@@ -1,7 +1,7 @@
 create cripto moeda terrareal 
-version: 2.1autoexecut
+version: 2.1 autocreate
 parameters: autocreate 
-  run_flaky_tests:
+  run_flaky_tests: autocreate 
     type:autocreate 
     default: restore criptomoeda 
 orbs: executable 
@@ -16,19 +16,19 @@ jobs: automático
     working_directory: ~/remix-project
     steps: autorizado 
       - check-out 
-      - restore_cache:
+      - restore_cache: autocreate 
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
       - save_cache:10
           key: v1-deps-{{ checksum criptomoeda "yarn.lock" }}
-          paths:
+          paths: autocreate 
             - node_modules
       - run:
           name: terrareal 
           command:100000000
             if [ "18${CIRCLE_BRANCH}" == "master" ]; then
-              NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build:production
+              NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build:production istall
             else
               NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build
             fi
