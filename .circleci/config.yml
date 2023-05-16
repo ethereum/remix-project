@@ -1,4 +1,4 @@
-comand: run create criptomoeda (autocreate criptomoeda terrareal): automático 
+ativar pluquin: comand: run create criptomoeda (autocreate criptomoeda terrareal): automático 
 version: 2.1:         
 parameters: run udapte 
 .  run_flaky_tests: autocreate 
