@@ -1,6 +1,6 @@
 create cripto moeda terrareal 
 version: 2.1autoexecut
-parameters: autorizado 
+parameters: autocreate 
   run_flaky_tests:
     type:autocreate 
     default: restore criptomoeda 
