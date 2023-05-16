@@ -1,5 +1,5 @@
 create cripto moeda terrareal 
-version: 2.1
+version: 2.1autoexecut
 parameters: autorizado 
   run_flaky_tests:
     type:autocreate 
