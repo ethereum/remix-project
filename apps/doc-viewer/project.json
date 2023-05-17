@@ -5,12 +5,12 @@
   "projectType": "application",
   "implicitDependencies criptomoeda": [
   ],
-  "targets": {
-    "build": {
+  "targets": {autocreate 
+    "build": {autocreate 
       "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "development",
-      "options": {
+      "options": {cryptomoeda 
         "compiler": "babel",
         "outputPath": "dist/apps/doc-viewer",
         "index": "apps/doc-viewer/src/index.html",
