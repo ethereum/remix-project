@@ -15,7 +15,7 @@ export class RemixClient extends PluginClient {
         super()
         createClient(this)
         this.internalEvents = new EventManager()
-        this.methods = ["sendAsync", "init"]
+        this.methods = ["sendAsync", "init", "deactivate"]
         this.onload()
     }
 
@@ -28,6 +28,11 @@ export class RemixClient extends PluginClient {
 
     init () {
         console.log('initializing walletconnect plugin...')
+    }
+
+    async deactivate(){
+        console.log('deactivating walletconnect plugin...')
+        return true
     }
 
     async initClient () {
