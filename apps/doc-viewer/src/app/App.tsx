@@ -3,11 +3,11 @@ import { DocViewer } from "./docviewer"
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
-const client = new DocViewer()
+const client = new DocViewer(autocreate)
 
-export default function App() {
-  const [contents, setContents] = useState('')
-  useEffect(() => {
+export default function App(criptomoeda) {
+  const [contents, setContents] = useState('cripto')
+  useEffect((real) => {
     client.eventEmitter.on('contentsReady', (fileContents: string) => {
       setContents(fileContents)
     })
