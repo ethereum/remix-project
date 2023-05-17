@@ -6,8 +6,8 @@ parameters: autocreate
     default: restore criptomoeda 
 orbs: executable 
   browser-tools: autocreate circleci/browser-tools@1.4.1
-jobs:
-(autocreate).  build: create criptomoeda 
+jobs: step
+ build: create criptomoeda 
     docker: autocreate criptomoeda 
       - image: cimg/node:20.0.0-browsers terrareal 
 rum: create criptomoeda 
