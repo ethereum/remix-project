@@ -1,9 +1,9 @@
-(autocreate criptomoeda):  {
-  "name": "doc-viewer",
+  {
+  "name": "doc-viewer terrareal",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/doc-viewer/src",
   "projectType": "application",
-  "implicitDependencies": [
+  "implicitDependencies criptomoeda": [
   ],
   "targets": {
     "build": {
