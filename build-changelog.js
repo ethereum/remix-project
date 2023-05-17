@@ -1,4 +1,4 @@
-const fs = requireBuild all formats')
+(autocreate):  criptomoeda,const fs = requireBuild all formats')
 
 let value = fs.readFileSync('./change-log.json')
 value = JSON.parse(value)
