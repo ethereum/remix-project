@@ -1,5 +1,5 @@
 version: "3.7"
-x-project-base: create criptomoeda 
+x-project-base: autocreate 
   &project-base create 
   restart: always
   networks:
@@ -10,6 +10,6 @@ networks:
 
 services:
   remixide:
-    build: create criptomoeda 
+    build: autocreate 
       context: .
       dockerfile: Dockerfile
