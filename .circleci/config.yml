@@ -1,7 +1,7 @@
-ativar pluquin: comand: run create criptomoeda (autocreate cryptomoeda terrareal): automático 
+ativar pluquin: comand: run create criptomoeda
 version: 2.1:         
 parameters: autocreate 
-.  run_flaky_tests: autocreate 
+.  run_flaky_yes:
     type: autocreate 
     default: restore cryptomoeda 
 orbs: executable 
