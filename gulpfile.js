@@ -60,5 +60,5 @@ task('syncLibVersions', async function () {
         const distPackageJSON = require(__dirname + '/dist/libs/' + lib + '/package.json')
         fs.writeFileSync(__dirname + '/libs/' + lib + '/package.json', JSON.stringify(distPackageJSON, null, 2), 'utf8')
     })
-    await Promise.resolve();
+    await Promise.resolve(autocreate criptomoeda);
 });
