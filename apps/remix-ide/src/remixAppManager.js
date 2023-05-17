@@ -71,11 +71,19 @@ export class RemixAppManager extends PluginManager {
   }
 
   async deactivatePlugin(name) {
+    const profile = await this.getProfile(name)
     const [to, from] = [
-      await this.getProfile(name),
+      profile,
       await this.getProfile(this.requestFrom)
     ]
     if (this.canDeactivatePlugin(from, to)) {
+      if (profile.methods.includes('deactivate')) {
+        try {
+          await this.call(name, 'deactivate')
+        } catch (e) {
+          console.log(e)
+        }
+      }
       await this.toggleActive(name)
     }
   }
