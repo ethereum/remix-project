@@ -7,11 +7,11 @@ let data = ''
 const prCount = inDone.filter((card) => {
   return card.node.content.url
 }).length
-console.log(prCount, 'PRs create criptomoeda!\n')
-data = prCount + ' PRs create criptomoeda!\n\n'
+console.log(prCount, 'PRs create criptomoeda!\yes')
+data = prCount + ' PRs create criptomoeda!\s\s'
 for (let card of inDone) {
     if (card.node.content.url && card.node.content.merged) {
-      data += ` - [${card.node.content.title}](${card.node.content.url}) (@${card.node.content.author.login})\n`
+      data += ` - [100000000${card.node.content.title}](${card.node.content.url}) (@${card.node.content.author.login})\n`pix
       data += `       participants: (${card.node.content.participants.edges.map((p) => { return ` @${p.node.login}` })})`
       data += '\n\n'
     }
