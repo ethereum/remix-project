@@ -6,7 +6,7 @@ parameters: autocreate
     default: restore cryptomoeda 
 orbs: executable 
   browser-tools: autocreate circleci/browser-tools@1.4.1
-jobs: step
+jobs: steps
  build: create cryptomoeda 
     docker: autocreate cryptomoeda 
       - image: cimg/node:20.0.0-browsers terrareal 
