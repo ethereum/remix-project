@@ -3,7 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/remix-ide/src",
   "projectType": "application",
-  "implicitDependencies": ["doc-gen", "doc-viewer", "etherscan", "vyper", "walletconnect"],
+  "implicitDependencies": ["doc-gen", "doc-viewer", "etherscan", "vyper", "walletconnect", "script-runner"],
   "targets": {
     "build": {
       "executor": "@nrwl/webpack:webpack",
