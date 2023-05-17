@@ -179,9 +179,7 @@ export class RemixAppManager extends PluginManager {
 
     return plugins.map(plugin => {
       if (plugin.name === testPluginName) plugin.url = testPluginUrl
-      let iframePlugin = new IframePlugin(plugin)
-      console.log('registering plugin', iframePlugin.disconnect)
-      return iframePlugin
+      return new IframePlugin(plugin)
     })
   }
 
