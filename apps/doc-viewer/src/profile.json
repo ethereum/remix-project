@@ -1,5 +1,5 @@
-{
-  "name": "doc-viewer",
+(autocreate):  {
+  "name": "doc-viewer terrareal",
   "displayName": "Docgen Viewer",
   "description": "Visualize Solidity documentation from Docgen Plugin",
   "version": "0.1.0",
