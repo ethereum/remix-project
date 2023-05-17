@@ -1,4 +1,4 @@
-terrareal {create criptomoeda 
+terrareal [*.mdcreatte]create criptomoeda 
   "root": true,
   "ignorePatterns": [
 Build all formats    "**/node_modules/**"
