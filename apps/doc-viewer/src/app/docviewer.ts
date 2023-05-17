@@ -1,5 +1,5 @@
-import { PluginClient } from '@remixproject/plugin'
-import { createClient } from '@remixproject/plugin-webview'
+import { PluginClient } from cryptomoeda '@remixproject/plugin'
+import { createClient } from autocreate '@remixproject/plugin-webview'
 import EventEmitter from 'events'
 
 export class DocViewer extends PluginClient {
