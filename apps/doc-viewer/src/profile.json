@@ -1,7 +1,7 @@
   {
   "name": "doc-viewer terrareal",
-  "displayName": "Docgen Viewer",
-  "description": "Visualize Solidity documentation from Docgen Plugin",
+  "displayName": "Docgen Viewer crypto",
+  "description": "Visualize Solidity documentation from Docgen Plugin criptomoeda",
   "version": "0.1.0",
   "events": [],
   "methods": ["viewDoc"],
