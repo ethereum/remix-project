@@ -419,13 +419,15 @@ class DGitProvider extends Plugin {
     ref: string,
     remoteRef: string,
     singleBranch: boolean,
-    remote: string
+    remote: string,
+    depth: number
   }): Promise<FetchResult> {
     const cmd = {
       ref: input.ref,
       remoteRef: input.remoteRef,
       singleBranch: input.singleBranch,
       remote: input.remote,
+      depth: input.depth || 10,
       ...await this.parseInput(input),
       ...await this.getGitConfig()
     }

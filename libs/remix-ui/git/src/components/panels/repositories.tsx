@@ -6,8 +6,13 @@ import { gitPluginContext } from "../gitui";
 import Select from 'react-select'
 import { selectStyles, selectTheme } from "../../types/styles";
 
+interface RepositoriesProps {
+  cloneDepth?: number
+  cloneAllBranches?: boolean
+}
 
-export const Repositories = () => {
+export const Repositories = (props: RepositoriesProps) => {
+  const { cloneDepth, cloneAllBranches } = props
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
   const [branch, setBranch] = useState({ name: "" });
@@ -39,6 +44,10 @@ export const Repositories = () => {
   }, [context.remoteBranches])
 
 
+  useEffect(() => {
+    console.log('show', show)
+  },[show])
+
   const fetchRepositories = async () => {
     try {
       setShow(true)
@@ -61,6 +70,7 @@ export const Repositories = () => {
     console.log('repo', repo)
     if (repo) {
       setBranchOptions([])
+      setBranch({ name: "" })
       setRepo(repo)
       await actions.remoteBranches(repo.owner.login, repo.name)
     }
@@ -74,11 +84,13 @@ export const Repositories = () => {
   const clone = async () => {
     try {
       console.log('clone', repo, branch)
+      actions.clone(repo.html_url, branch.name, cloneDepth, !cloneAllBranches)
     } catch (e) {
       // do nothing
     }
   };
 
+  
   return (
     <>
       <Button onClick={fetchRepositories} className="w-100 mt-1">

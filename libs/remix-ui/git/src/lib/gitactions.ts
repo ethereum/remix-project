@@ -425,7 +425,7 @@ export const getGitHubUser = async () => {
     } catch (e) {
         console.log(e)
     }
-}
+} 
 
 
 
@@ -553,7 +553,8 @@ export const fetchBranch = async (branch: branch) => {
         ref: branch.name,
         remoteRef: branch.name,
         singleBranch: true,
-        remote: branch.remote.remote
+        remote: branch.remote.remote,
+        depth: 10
     })
     const commits: ReadCommitResult[] = await plugin.call('dGitProvider', 'log', {
         ref: r.fetchHead

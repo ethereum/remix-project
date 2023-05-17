@@ -68,11 +68,11 @@ export const Clone = () => {
 
 
             <input name='clonebranch' onChange={e => onCloneBranchChange(e.target.value)} value={cloneBranch} className="form-control mb-1 mt-2" placeholder="branch" type="text" id="clonebranch" />
-            <button data-id='clonebtn' className='btn btn-primary mt-1 w-100' onClick={async () => {
+            <button disabled={!cloneUrl || !cloneBranch} data-id='clonebtn' className='btn btn-primary mt-1 w-100' onClick={async () => {
                 clone()
             }}>clone</button>
             <hr />
-            <Repositories />
+            <Repositories cloneAllBranches={cloneAllBranches} cloneDepth={cloneDepth} />
             <hr />
             <label>options</label>
             <InputGroup className="mt-1 mb-1">

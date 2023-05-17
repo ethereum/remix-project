@@ -50,7 +50,7 @@ export const BranchDetails = (props: BrancheDetailsProps) => {
         {context.branchCommits && Object.entries(context.branchCommits).map(([key, value]) => {
           if(key == branch.name){
             return value.map((commit, index) => {
-              return(<CommitDetails checkout={checkoutCommit} commit={commit}></CommitDetails>)
+              return(<CommitDetails key={index} checkout={checkoutCommit} commit={commit}></CommitDetails>)
             })
           }
         })}

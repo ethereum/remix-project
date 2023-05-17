@@ -76,14 +76,31 @@ export const setCallBacks = (viewPlugin: ViewPlugin, dispatcher: React.Dispatch<
         await loadFiles();
     })
     plugin.on('manager', 'pluginActivated', async (p: Plugin) => {
-        if(p.name === 'dGitProvider') {
+        if (p.name === 'dGitProvider') {
             getGitHubUser();
             plugin.off('manager', 'pluginActivated');
         }
     })
 
+    plugin.on('config', 'configChanged', async () => {
+        await getGitConfig()
+    })
+    plugin.on('settings', 'configChanged', async () => {
+        await getGitConfig()
+    })
+
 
     callBackEnabled = true;
+}
+
+export const getGitConfig = async () => {
+    const username = await plugin.call('settings', 'get', 'settings/github-user-name')
+    const email = await plugin.call('settings', 'get', 'settings/github-email')
+    const token = await plugin.call('settings', 'get', 'settings/gist-access-token')
+    const config = { username, email, token }
+    console.log('config', config)
+    //dispatch(setGitConfig(config))
+    return config
 }
 
 const syncFromWorkspace = async (isLocalhost = false) => {
@@ -166,7 +183,7 @@ export const enableCallBacks = async () => {
 }
 
 const synTimerStart = async () => {
-    if(!callBackEnabled) return
+    if (!callBackEnabled) return
     console.log('synTimerStart')
     clearTimeout(syncTimer)
     syncTimer = setTimeout(async () => {

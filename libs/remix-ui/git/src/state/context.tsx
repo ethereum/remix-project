@@ -3,7 +3,7 @@ import React from "react"
 import { branch, commitChange } from "../types"
 
 export interface gitActions  {
-    clone(url: string, path: string, depth: number, cloneAllBranches: boolean): Promise<void>
+    clone(url: string, path: string, depth: number, singleBranch: boolean): Promise<void>
     add(path: string): Promise<void>
     rm(path: string): Promise<void>
     commit(message: string): Promise<any>

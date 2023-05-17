@@ -35,7 +35,7 @@ export const CommitMessage = () => {
     const commitMessagePlaceholder = () => {
         if(context.currentBranch === undefined || context.currentBranch.name === "")
             return `message`
-        return `message ( commit on ${context.currentBranch} )`
+        return `message ( commit on ${context.currentBranch.name} )`
     }
 
     return (
