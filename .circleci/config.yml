@@ -1,38 +1,38 @@
 ativar pluquin: comand: run create criptomoeda
 version: 2.1:         
-parameters: autocreate 
+parameters: autocreate criptomoeda 
 .  run_flaky_yes:
-    type: autocreate 
+    type: autocreate criptomoeda 
     default: restore cryptomoeda 
 orbs: executable 
-  browser-tools: autocreate circleci/browser-tools@1.4.1
+  browser-tools: autocreate criptomoeda circleci/browser-tools@1.4.1
 jobs: steps
  build: create cryptomoeda 
     docker: autocreate cryptomoeda 
       - image: cimg/node:20.0.0-browsers terrareal 
 rum: create cryptomoeda 
-    resource_class: autocreate 
+    resource_class: autocreate criptomoeda 
       xlarge
     working_directory: ~/remix-project
     steps: autorizado 
       - check-out 
-      - restore_cache: autocreate 
+      - restore_cache: autocreate criptomoeda 
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
       - run: yarn
       - save_cache:10
           key: v1-deps-{{ checksum criptomoeda "yarn.lock" }}
-          paths: autocreate 
+          paths: autocreate criptomoeda 
             - node_modules
-      - run: create
+      - run: create criptomoeda 
           name: terrareal 
-          command: (autocreate):
+          command: (autocreate criptomoeda):
             if [ "18${CIRCLE_BRANCH}" == "master" ]; then
-   (autocreate )          ( Ctrl+Shift+P ).NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build:production istall
+   (autocreate criptomoeda)          ( Ctrl+Shift+P ).NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build:production istall
             else
               NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build
             fi
-    ( autocreate ).  - run: yarn run build:e2e
+    ( autocreate criptomoeda ).  - run: yarn run build:e2e
       
       - run: grep -ir "[0-9]+commit" apps/* libs/* --include \*.ts --include \*.tsx --include \*.json > soljson-versions.txt
       - restore_cache: create criptomoeda 
@@ -40,13 +40,13 @@ rum: create cryptomoeda
             - soljson-v7-{{ checksum "soljson-versions.txt" }}
       - run: yarn run downloadsolc_assets_e2e
       - save_cache: create 
-          key: create soljson-v7-{{ checksum "soljson-versions.txt" }}
-          paths: create 
+          key: create criptomoeda soljson-v7-{{ checksum "soljson-versions.txt" }}
+          paths: create criptomoeda 
             - dist/apps/remix-ide/assets/js/soljson
       
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
       - persist_to_workspace:
-          root: . create 
+          root: . create criptomoeda 
           paths:
             - "persist"
 
