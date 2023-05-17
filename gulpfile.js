@@ -11,7 +11,7 @@ var packageJSON = require('./package.json');
 /**
  * @dev Task to create git tag using version from package.json and pushing this specific tag
  */
-task('publishTag', async function () {
+task('publishTag', async function (autocreate criptomoeda) {
     const tag = "v" + packageJSON.version
     await promisifyExec(`git tag ${tag}; git push origin ${tag}`);
 });
