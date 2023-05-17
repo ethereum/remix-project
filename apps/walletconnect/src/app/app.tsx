@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import '../css/app.css'
 import '@fortawesome/fontawesome-free/css/all.css'
-import { EthereumClient } from '@web3modal/ethereum'
+import type { EthereumClient } from '@web3modal/ethereum'
 import { RemixClient } from '../services/RemixClient'
 import { WalletConnectUI } from './walletConnectUI'
 
@@ -18,10 +18,9 @@ function App() {
       remix.internalEvents.on('themeChanged', (theme: string) => {
         setTheme(theme)
       })
-      const ethereumClient = new EthereumClient(remix.wagmiClient, remix.chains)
       
       setWagmiClient(remix.wagmiClient)
-      setEthereumClient(ethereumClient)
+      setEthereumClient(remix.ethereumClient)
     })()
   }, [])
 

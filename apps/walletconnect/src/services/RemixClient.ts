@@ -3,11 +3,13 @@ import { createClient } from '@remixproject/plugin-webview'
 import { w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { configureChains, createClient as wagmiCreateClient } from 'wagmi'
 import { arbitrum, arbitrumGoerli, mainnet, polygon, polygonMumbai, optimism, optimismGoerli, Chain, goerli, sepolia } from 'wagmi/chains'
+import { EthereumClient } from '@web3modal/ethereum'
 import EventManager from "events"
 import { PROJECT_ID } from './constant'
 
 export class RemixClient extends PluginClient {
     wagmiClient
+    ethereumClient: EthereumClient
     chains: Chain[]
     internalEvents: EventManager
 
@@ -45,6 +47,7 @@ export class RemixClient extends PluginClient {
               connectors: w3mConnectors({ projectId: PROJECT_ID, version: 1, chains: this.chains }),
               provider
             })
+            this.ethereumClient = new EthereumClient(this.wagmiClient, this.chains)
         } catch (e) {
             return console.error("Could not get a wallet connection", e)
         }
@@ -55,6 +58,7 @@ export class RemixClient extends PluginClient {
             if (event.status === 'connected') {
                 this.emit('accountsChanged', [event.data.account])
                 this.emit('chainChanged', event.data.chain.id)
+                console.log('this.wagmiClient: ', this.wagmiClient)
             } else if (event.status === 'disconnected') {
                 this.emit('accountsChanged', [])
                 this.emit('chainChanged', 0)
@@ -65,7 +69,7 @@ export class RemixClient extends PluginClient {
         })
     }
 
-    sendAsync = (data: { method: string, params: string, id: string }) => {
+    sendAsync (data: { method: string, params: string, id: string }) {
         return new Promise((resolve, reject) => {
             if (this.wagmiClient) {
                 if (this.wagmiClient.data && this.wagmiClient.data.provider && this.wagmiClient.data.provider.sendAsync) {
@@ -91,5 +95,10 @@ export class RemixClient extends PluginClient {
                 resolve({"jsonrpc": "2.0", "result": [], "id": data.id})
             }
         })
+    }
+
+    onDeactivation () {
+        console.log('deactivating walletconnect plugin...')
+        this.ethereumClient.disconnect()
     }
 }
