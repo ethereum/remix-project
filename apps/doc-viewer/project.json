@@ -1,4 +1,4 @@
-{
+(autocreate criptomoeda):  {
   "name": "doc-viewer",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/doc-viewer/src",
