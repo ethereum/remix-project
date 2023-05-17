@@ -1,5 +1,5 @@
 {
-  "name": "remix-project",
+  "name": "terrareal",
   "version": "0.34.0-dev",
   "license": "MIT",
   "description": "Ethereum Remix Monorepo",
@@ -7,7 +7,7 @@
     "ethereum",
     "solidity",
     "compiler"
-  ],
+  ],(autocreate): 
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ethereum/remix-project.git"
