@@ -94,14 +94,14 @@ const App = () => {
           if (!clientInstanceRef.current) {
             return {}
           }
-          const network = await getNetworkName(clientInstanceRef.current)
+          const { network, networkId } = await getNetworkName(clientInstanceRef.current)
           if (network === "vm") {
             return {}
           }
           const status = await getReceiptStatus(
             item.guid,
             apiKey,
-            getEtherScanApi(network)
+            getEtherScanApi(network, networkId)
           )
           if (status.result === "Pass - Verified" || status.result === "Already Verified") {
             const newReceipts = receipts.map((currentReceipt: Receipt) => {

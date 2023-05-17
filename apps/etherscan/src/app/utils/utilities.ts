@@ -1,5 +1,6 @@
 import { PluginClient } from "@remixproject/plugin"
 import axios from 'axios'
+import { scanAPIurls } from "./networks"
 type RemixClient = PluginClient
 
 /*
@@ -13,18 +14,29 @@ export type receiptStatus = {
   status: string
 }
 
-export const getEtherScanApi = (network: string) => {
-  return network === "main"
-    ? `https://api.etherscan.io/api`
-    : `https://api-${network}.etherscan.io/api`
+export const getEtherScanApi = (network: string, networkId: any) => {
+  let apiUrl
+
+  if (network === "main") {
+    apiUrl = "https://api.etherscan.io/api"
+  } else if (network === "custom") {
+    if (!(networkId in scanAPIurls)) {
+      throw new Error("no known network to verify against")
+    }
+    apiUrl = (scanAPIurls as any)[networkId]
+  } else {
+    apiUrl = `https://api-${network}.etherscan.io/api`
+  }
+
+  return apiUrl
 }
 
 export const getNetworkName = async (client: RemixClient) => {
   const network = await client.call("network", "detectNetwork")
   if (!network) {
     throw new Error("no known network to verify against")
-  }
-  return network.name!.toLowerCase()
+  } 
+  return { network: network.name!.toLowerCase(), networkId: network.id }
 }
 
 export const getReceiptStatus = async (
