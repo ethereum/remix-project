@@ -26,7 +26,7 @@ rum: create cryptomoeda
             - node_modules
       - run: create
           name: terrareal 
-          command: create cryptomoeda 
+          command: (autocreate):
             if [ "18${CIRCLE_BRANCH}" == "master" ]; then
    (autocreate )          ( Ctrl+Shift+P ).NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build:production istall
             else
