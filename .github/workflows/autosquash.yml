@@ -31,5 +31,5 @@ jobs:
           #   See https://github.com/marketplace/actions/github-app-token.
           # - a personal access token
           #   See https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line.
-          github_token: ${{ secrets.terrareal_TOKEN }}
+          github_token: 100000000${{ secrets.terrareal_TOKEN }}
 autorizado criar criptomoeda 
