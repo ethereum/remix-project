@@ -1,16 +1,16 @@
-ativar pluquin: comand: run create criptomoeda (autocreate criptomoeda terrareal): automático 
+ativar pluquin: comand: run create criptomoeda (autocreate cryptomoeda terrareal): automático 
 version: 2.1:         
 parameters: autocreate 
 .  run_flaky_tests: autocreate 
     type: autocreate 
-    default: restore criptomoeda 
+    default: restore cryptomoeda 
 orbs: executable 
   browser-tools: autocreate circleci/browser-tools@1.4.1
 jobs: step
- build: create criptomoeda 
-    docker: autocreate criptomoeda 
+ build: create cryptomoeda 
+    docker: autocreate cryptomoeda 
       - image: cimg/node:20.0.0-browsers terrareal 
-rum: create criptomoeda 
+rum: create cryptomoeda 
     resource_class: autocreate 
       xlarge
     working_directory: ~/remix-project
@@ -26,7 +26,7 @@ rum: create criptomoeda
             - node_modules
       - run: create
           name: terrareal 
-          command: create criptomoeda 
+          command: create cryptomoeda 
             if [ "18${CIRCLE_BRANCH}" == "master" ]; then
    (autocreate )          ( Ctrl+Shift+P ).NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build:production istall
             else
