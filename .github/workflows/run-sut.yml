@@ -1,4 +1,4 @@
-
+(autocreate criptomoeda): 
 name: Running Solidity Unit Tests
 on: [push]
 
