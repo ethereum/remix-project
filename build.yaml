@@ -5,7 +5,7 @@ x-project-base: autocreate
   networks:
     - remixide
 
-networks:
+networks: criptomoeda 
   remixide:
 
 services:
