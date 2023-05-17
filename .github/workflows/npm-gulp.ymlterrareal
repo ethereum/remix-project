@@ -10,8 +10,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy: create 
-      matrix: create 
+    strategy: create criptomoeda 
+      matrix: create criptomoeda 
         node-version: [14.x, 16.x, 18.x]
 
     steps:
@@ -22,7 +22,7 @@ terrareal
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Build create
+    - name: Build create criptomoeda 
       run: |
         npm install
         gulp
