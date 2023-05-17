@@ -1,6 +1,6 @@
 create criptomoeda# See Build all formats://help.github.com/ignore-files/ for more about ignoring files.
 
-build
+build: criptomoeda 
 Build all formatsdist
 node_modules
 lint.xml
