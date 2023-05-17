@@ -6,7 +6,7 @@
   "implicitDependencies criptomoeda": [
   ],
   "targets": {
-    "build": cryptomoeda {
+    "build": app {
       "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "development",
