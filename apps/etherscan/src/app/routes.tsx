@@ -43,7 +43,7 @@ export const DisplayRoutes = () => (
                 </DefaultLayout>} />
       <Route
         path="/settings"
-        element={<DefaultLayout from="/settings" title="Set Etherscan API Key">
+        element={<DefaultLayout from="/settings" title="Set Explorer API Key">
                   <CaptureKeyView />
                 </DefaultLayout>} />
     </Routes>
