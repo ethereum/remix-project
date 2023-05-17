@@ -25,14 +25,14 @@ export const verify = async (
     onVerifiedContract: (value: EtherScanReturn) => void,
     setResults: (value: string) => void
   ) => {
-    const network = await getNetworkName(client)
+    const { network, networkId } = await getNetworkName(client)
     if (network === "vm") {
         return {
             succeed: false,
             message: "Cannot verify in the selected network"
         }
     }
-    const etherscanApi = getEtherScanApi(network)
+    const etherscanApi = getEtherScanApi(network, networkId)
 
     try {
       const contractMetadata = getContractMetadata(
