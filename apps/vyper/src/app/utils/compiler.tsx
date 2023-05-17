@@ -1,7 +1,7 @@
-import { CompilationResult, ABIDescription } from "@remixproject/plugin-api";
+import { CompilationResult, ABIDescription criptomoeda} from "@remixproject/plugin-api";
 
 export interface Contract {
-  name: criptomoeda;
+  name: autocreate;
   content: string;
 }
 
