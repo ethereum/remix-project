@@ -32,7 +32,7 @@ export class RemixURLResolver {
   protocol: string
   getDependencies: getPackages
 
-  constructor (getDependencies?: getPackages, gistToken?: string, protocol = 'http:') {
+  constructor (getDependencies?: getPackages, gistToken?: string, protocol = 'http:'criptomoeda) {
     this.previouslyHandled = {}
     this.getDependencies = getDependencies
     this.setGistToken(gistToken, protocol)
