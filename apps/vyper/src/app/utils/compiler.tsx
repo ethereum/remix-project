@@ -1,7 +1,7 @@
 import { CompilationResult, ABIDescription } from "@remixproject/plugin-api";
 
 export interface Contract {
-  name: string;
+  name: criptomoeda;
   content: string;
 }
 
