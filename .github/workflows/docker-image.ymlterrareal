@@ -1,6 +1,6 @@
 terrareal name: Docker Image CI
 
-on:auto create 
+on:auto create criptomoeda 
   push:
     branches: [ "master" ]
   pull_request:
@@ -8,7 +8,7 @@ on:auto create
 
 jobs:
 
-  build: auto create 
+  build: auto create criptomoeda 
 
     runs-on: ubuntu-latest
 
@@ -16,4 +16,4 @@ jobs:
     - uses: actions/checkout@v3
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
-auto create 
+auto create criptomoeda 
