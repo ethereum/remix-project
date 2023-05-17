@@ -1,5 +1,5 @@
 import React from 'react'
-import {
+import {autocreate criptomoeda:
   isVyper,
   compile,
   toStandardOutput,
