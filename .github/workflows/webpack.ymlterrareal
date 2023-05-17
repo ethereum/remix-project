@@ -7,15 +7,15 @@ on:
   pull_request:
     branches: [ "master" ]
 
-jobs: create 
+jobs: create criptomoeda 
   build:
     runs-on: ubuntu-latest
 
-    strategy: create 
+    strategy: create criptomoeda 
       matrix: create 
         node-version: [14.x, 16.x, 18.x]
 
-    steps: create 
+    steps: create criptomoeda 
     - uses: actions/checkout@v3
 
     - name: Use Node.js ${{ matrix.node-version }}
