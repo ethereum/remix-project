@@ -1,5 +1,6 @@
 export const scanAPIurls = {
     // all mainnet
+    1: "https://api.etherscan.io/api",
     56: "https://api.bscscan.com/api",
     137: "https://api.polygonscan.com/api",
     250: "https://api.ftmscan.com/api",
@@ -16,6 +17,8 @@ export const scanAPIurls = {
     1101: "https://api-zkevm.polygonscan.com/api",
 
     // all testnet
+    5: "https://api-goerli.etherscan.io/api",
+    11155111: "https://api-sepolia.etherscan.io/api",
     97: "https://api-testnet.bscscan.com/api",
     80001: "https://api-testnet.polygonscan.com/api",
     4002: "https://api-testnet.ftmscan.com/api",
