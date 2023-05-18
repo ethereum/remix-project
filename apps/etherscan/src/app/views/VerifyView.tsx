@@ -64,6 +64,7 @@ export const VerifyView: React.FC<Props> = ({
       contractArguments,
       values.contractName,
       compilationResult,
+      null,
       client,
       onVerifiedContract,
       setResults,

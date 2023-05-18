@@ -106,7 +106,7 @@ const App = () => {
           const status = await getReceiptStatus(
             item.guid,
             apiKey,
-            getEtherScanApi(network, networkId)
+            getEtherScanApi(networkId)
           )
           if (status.result === "Pass - Verified" || status.result === "Already Verified") {
             newReceipts = newReceipts.map((currentReceipt: Receipt) => {

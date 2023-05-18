@@ -14,20 +14,11 @@ export type receiptStatus = {
   status: string
 }
 
-export const getEtherScanApi = (network: string, networkId: any) => {
-  let apiUrl
-
-  if (network === "main") {
-    apiUrl = "https://api.etherscan.io/api"
-  } else if (network === "custom") {
-    if (!(networkId in scanAPIurls)) {
-      throw new Error("no known network to verify against")
-    }
-    apiUrl = (scanAPIurls as any)[networkId]
-  } else {
-    apiUrl = `https://api-${network}.etherscan.io/api`
+export const getEtherScanApi = (networkId: any) => { 
+  if (!(networkId in scanAPIurls)) {
+    throw new Error("no known network to verify against")
   }
-
+  const apiUrl = (scanAPIurls as any)[networkId]
   return apiUrl
 }
 
