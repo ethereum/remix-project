@@ -28,7 +28,7 @@ export const ReceiptsView: React.FC = () => {
       })
         return
       }
-      const etherscanApi = getEtherScanApi(network, networkId)
+      const etherscanApi = getEtherScanApi(networkId)
       const result = await getReceiptStatus(
         values.receiptGuid,
         apiKey,
