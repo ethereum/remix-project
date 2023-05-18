@@ -11,6 +11,7 @@ export class RemixClient extends PluginClient {
     wagmiClient
     ethereumClient: EthereumClient
     chains: Chain[]
+    currentChain: number
     internalEvents: EventManager
 
     constructor() {
@@ -30,11 +31,6 @@ export class RemixClient extends PluginClient {
 
     init () {
         console.log('initializing walletconnect plugin...')
-    }
-
-    async deactivate(){
-        console.log('deactivating walletconnect plugin...')
-        return true
     }
 
     async initClient () {
@@ -57,11 +53,14 @@ export class RemixClient extends PluginClient {
         this.wagmiClient.subscribe((event) => {
             if (event.status === 'connected') {
                 this.emit('accountsChanged', [event.data.account])
-                this.emit('chainChanged', event.data.chain.id)
-                console.log('this.wagmiClient: ', this.wagmiClient)
+                if (this.currentChain !== event.data.chain.id) {
+                    this.currentChain = event.data.chain.id
+                    this.emit('chainChanged', event.data.chain.id)
+                }
             } else if (event.status === 'disconnected') {
                 this.emit('accountsChanged', [])
                 this.emit('chainChanged', 0)
+                this.currentChain = 0
             }
         })
         this.on('theme', 'themeChanged', (theme: any) => {
@@ -78,11 +77,15 @@ export class RemixClient extends PluginClient {
                         resolve(message)
                     })
                 } else if (this.wagmiClient.data && this.wagmiClient.data.provider && this.wagmiClient.data.provider.jsonRpcFetchFunc) {
-                    this.wagmiClient.data.provider.jsonRpcFetchFunc(data.method, data.params).then((message) => {
-                        resolve({"jsonrpc": "2.0", "result": message, "id": data.id})
-                    }).catch((error) => {
-                        reject(error)
-                    })
+                    if (data.method === 'net_version' || data.method === 'eth_chainId') {
+                        resolve({"jsonrpc": "2.0", "result": this.currentChain, "id": data.id})
+                    } else {
+                        this.wagmiClient.data.provider.jsonRpcFetchFunc(data.method, data.params).then((message) => {
+                            resolve({"jsonrpc": "2.0", "result": message, "id": data.id})
+                        }).catch((error) => {
+                            reject(error)
+                        })
+                    }
                 } else {
                     this.wagmiClient.provider.send(data.method, data.params).then((message) => {
                         resolve({"jsonrpc": "2.0", "result": message, "id": data.id})
@@ -97,8 +100,8 @@ export class RemixClient extends PluginClient {
         })
     }
 
-    onDeactivation () {
+    async deactivate(){
         console.log('deactivating walletconnect plugin...')
-        this.ethereumClient.disconnect()
+        await this.ethereumClient.disconnect()
     }
 }
