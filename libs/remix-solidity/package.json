@@ -26,7 +26,7 @@
     "ethjs-util": "^0.1.6",
     "minixhr": "^3.2.2",
     "semver": "^6.3.0",
-    "solc": "^0.7.4",
+    "solc": "^0.8.20",
     "string-similarity": "^4.0.4",
     "web3": "^1.5.1",
     "webworkify-webpack": "^2.1.5"
