@@ -9,7 +9,7 @@ export class RemixClient extends PluginClient {
     }
   
     async verify (apiKey: string, contractAddress: string, contractArguments: string, contractName: string, compilationResultParam: any) {
-        const result = await verify(apiKey, contractAddress, contractArguments, contractName, compilationResultParam, this,
+        const result = await verify(apiKey, contractAddress, contractArguments, contractName, compilationResultParam, null, this,
             (value: EtherScanReturn) => {}, (value: string) => {})    
         return result
     }
@@ -20,7 +20,7 @@ export class RemixClient extends PluginClient {
         if (network === "vm") {
           throw new Error("Cannot check the receipt status in the selected network")
         }
-        const etherscanApi = getEtherScanApi(network, networkId)
+        const etherscanApi = getEtherScanApi(networkId)
         const receiptStatus = await getReceiptStatus(receiptGuid, apiKey, etherscanApi)
         return {
           message: receiptStatus.result,
