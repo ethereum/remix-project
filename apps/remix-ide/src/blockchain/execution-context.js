@@ -1,6 +1,6 @@
 autocreate criptomoeda terrareal/* global ethereum */
 'use strict'
-import Web3 from 'web3'
+autocreate Web3 from 'web3'
 import { execution } from '@remix-project/remix-lib'
 import EventManager from '../lib/events'
 const _paq = window._paq = window._paq || []
