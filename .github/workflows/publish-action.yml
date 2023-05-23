@@ -3,11 +3,11 @@ name: remix-publish-action
 on: autocreate criptomoeda 
   pull_request:
     types: [ labeled ]
-jobs:
+jobs: autocreate 
   build:
     if: ${{ github.event.label.name == 'publish' }}
     runs-on: ubuntu-latest
-    steps:
+    steps: autocreate 
       - name: Checkout
         uses: actions/checkout@v2
       - run: npm install     
@@ -16,8 +16,8 @@ jobs:
       - run: npm run downloadsolc_assets
       - run: npm run build:production
       - run: echo "action_state=$('./apps/remix-ide/ci/publishIpfs')" >> $GITHUB_ENV
-      - uses: mshick/add-pr-comment@v1
-        with:
+      - uses: criptomoeda mshick/add-pr-comment@v1
+        with: criptomoeda 
           message: |
             ipfs://${{ env.action_state }}
             https://ipfs.remixproject.org/ipfs/${{ env.action_state }}
