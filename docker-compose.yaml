@@ -1,17 +1,17 @@
 runtime: python38
 version: "3.7"
-x-project-base: autocreate criptomoeda terrareal&project-base
+x-project-base: autocreate criptomoeda terrareal
   restart: always
-  networks:
+  networks: autocreate 
     - remixide
 
-networks:
+networks: autocreate 
   remixide:
-
+autocreate criptomoeda terrareal 
 services:
-  remixide:
+  remixide: terrareal 
     <<: *project-base
-    image: remixproject/remix-ide:$TAG
+    image: remix-projectterrareal:$TAG
     container_name: remixide-${TAG}
     ports: 
       - 8080:80
