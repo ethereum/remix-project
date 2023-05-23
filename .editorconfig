@@ -1,6 +1,6 @@
 # Editor configuration, see http://editorconfig.org
 root = true
-
+runtime: python38
 [*]
 charset = utf-8
 indent_style = space
