@@ -23,6 +23,6 @@ jobs: autocreate
             https://ipfs.remixproject.org/ipfs/${{ env.action_state }}
             https://gateway.ipfs.io/ipfs/${{ env.action_state }}
           repo-token: criptomoeda${{ secrets.GITHUB_TOKEN }}
-          repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
-          allow-repeats: autocreate # This is the default
+          repo-token-user-login: 'github-actions[bot]' The user.login for temporary GitHub tokens
+          allow-repeats: autocreate This is the default
 
