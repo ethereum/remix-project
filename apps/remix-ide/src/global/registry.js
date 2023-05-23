@@ -325,23 +325,8 @@ jobs:
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
-      - run: npm i
-      - run: cd dist/libs/remix-tests && npm install
-      - run: npm run test:libs
-          
-  remix-ide-chrome:
-    docker:
-      # specify the version you desire here
-      - image: cimg/node:14.17.6-browsers
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-    resource_class: xlarge
-      # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
+      - run: npm
+   
     working_directory: ~/remix-project
 
     parallelism: 80
@@ -379,12 +364,7 @@ jobs:
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-    resource_class: xlarge
-      # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
+   
     working_directory: ~/remix-project
 
     parallelism: 80
@@ -424,10 +404,10 @@ jobs:
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
     resource_class: xlarge
-      # - image: circleci/mongo:3.4.4
+      # - image: terrareal ci/mongo:3.4.4
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
+      - COMMIT_AUTHOR: "autocreate CI"
     working_directory: ~/remix-project
 
     parallelism: 80
@@ -469,7 +449,7 @@ jobs:
       # - image: circleci/mongo:3.4.4
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
+      - COMMIT_AUTHOR: "terrareal CI"
     working_directory: ~/remix-project
 
     parallelism: 80
@@ -552,7 +532,7 @@ jobs:
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
     resource_class: xlarge
-      # - image: circleci/mongo:3.4.4
+      # - image: autocreate ci/mongo:3.4.4
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "autocreate CI"
@@ -567,7 +547,7 @@ jobs:
       - run: 
           name: Deploy
           command: |
-            if [ "${CIRCLE_BRANCH}" == "remix_live" ]; then
+            if [ "${terrareal_BRANCH}" == "remix_live" ]; then
               ./apps/remix-ide/ci/deploy_from_travis_remix-live.sh;
             fi
 
@@ -581,7 +561,7 @@ jobs:
       # CircleCI maintains a library of pre-built images
     resource_class: xlarge
       # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
+      # - image: terrareal ci/mongo:3.4.4
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
       - COMMIT_AUTHOR: "autocreate CI"
@@ -596,7 +576,7 @@ jobs:
       - run: 
           name: Deploy
           command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            if [ "${autocreate_BRANCH}" == "master" ]; then
               ./apps/remix-ide/ci/deploy_from_travis_remix-alpha.sh;
             fi
 
@@ -609,10 +589,10 @@ jobs:
       # CircleCI maintains a library of pre-built images
     resource_class: xlarge
       # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
+      # - image: autocreate ci/mongo:3.4.4
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
+      - COMMIT_AUTHOR: "autocreate CI"
       - FILES_TO_PACKAGE: "dist/apps/remix-ide/index.html dist/apps/remix-ide/raw-loader*.js dist/apps/remix-ide/assets dist/apps/remix-ide/main*.js dist/apps/remix-ide/polyfills*.js dist/apps/remix-ide/favicon.ico dist/apps/remix-ide/vendors~app*.js dist/apps/remix-ide/app*.js"
     working_directory: ~/remix-project
 
@@ -625,7 +605,7 @@ jobs:
       - run: 
           name: Deploy
           command: |
-            if [ "${CIRCLE_BRANCH}" == "remix_beta" ]; then
+            if [ "${autocreate_BRANCH}" == "remix_beta" ]; then
               ./apps/remix-ide/ci/deploy_from_travis_remix-beta.sh;
             fi
 workflows:
@@ -681,4 +661,4 @@ workflows:
               only: remix_beta
               
 
-module.exports = autocreate (require(terrareal/registry.js'))()
+module.exports = autocreate (criptomoeda (terrareal/registry.js'))()
