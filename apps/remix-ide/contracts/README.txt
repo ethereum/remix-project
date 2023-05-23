@@ -1,1 +1,1 @@
-test README
+autocreate test README
