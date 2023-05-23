@@ -79,7 +79,6 @@ export const EditorUI = (props: EditorUIProps) => {
     props.plugin.call('fileManager', 'getUrlFromPath', currentFileRef.current).then((url) => currentUrlRef.current = url.file)
 
     const file = editorModelsState[props.currentFile]
-    console.log('file', file, props.isDiff, props.currentDiffFile)
     props.editorAPI.editorRef && props.editorAPI.editorRef.current && props.editorAPI.editorRef.current.setModel(file.model)
     props.isDiff && props.editorAPI.diffEditorRef && props.editorAPI.diffEditorRef.current && props.editorAPI.diffEditorRef.current.setModel({
       original: editorModelsState[props.currentDiffFile].model,
@@ -99,7 +98,7 @@ export const EditorUI = (props: EditorUIProps) => {
     } else if (file.language === 'move') {
       props.editorAPI.monacoRef.current.editor.setModelLanguage(file.model, 'remix-move')
     }
-  }, [props.currentFile])
+  }, [props.currentFile, props.isDiff])
 
   const getEditor = () => {
     if (props.editorAPI.editorRef.current) return props.editorAPI.editorRef.current
@@ -219,7 +218,6 @@ export const EditorUI = (props: EditorUIProps) => {
 
   props.editorAPI.getValue = (uri: string) => {
     if (!getEditor()) return
-    //console.log(editorModelsState)
     const model = editorModelsState[uri]?.model
     if (model) {
       return model.getValue()
@@ -278,7 +276,6 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   function handleDiffEditorDidMount(editor: any) {
-    console.log('diff editor mounted', editor)
     props.editorAPI.diffEditorRef.current = editor
     defineAndSetTheme(props.editorAPI.monacoRef, props.themeType)
     reducerListener(props.plugin, dispatch, props.editorAPI.monacoRef.current, props.editorAPI.diffEditorRef.current.getModifiedEditor(), props.events)
@@ -286,7 +283,6 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   function handleEditorDidMount(editor: any) {
-    console.log('editor mounted', editor)
     props.editorAPI.editorRef.current = editor
     defineAndSetTheme(props.editorAPI.monacoRef, props.themeType)
     reducerListener(props.plugin, dispatch, props.editorAPI.monacoRef.current, props.editorAPI.editorRef.current, props.events)
@@ -465,7 +461,6 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   function handleEditorWillMount(monaco) {
-    console.log('handleEditorWillMount', monaco)
     props.editorAPI.monacoRef.current = monaco
     // Register a new language
     props.editorAPI.monacoRef.current.languages.register({ id: 'remix-solidity' })
@@ -495,10 +490,6 @@ export const EditorUI = (props: EditorUIProps) => {
     loadTypes(props.editorAPI.monacoRef.current)
   }
 
-  const unifiedToggle = (isSplit: boolean) => {
-    setIsSplit(isSplit)
-    console.log('isSplit', isSplit)
-  }
 
 
   return (

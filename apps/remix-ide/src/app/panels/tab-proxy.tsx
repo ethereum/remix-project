@@ -141,17 +141,18 @@ export class TabProxy extends Plugin {
     })
 
     this.on('fileManager', 'openDiff', (commit: commitChange) => {
-      const name = commit.path + '(' + commit.hashModified.substring(0,6) + ')'
+      const hash = commit.hashModified? commit.hashModified.substring(0,6): 'Working Tree'
+      const name =  `${commit.path} (${hash})`
       this.addTab(name, name, async () => {
         await this.fileManager.diff(commit)
-        console.log('openDiff emit')
         this.event.emit('openDiff', commit)
         this.emit('openDiff', commit)
       },
       async () => {
-        //await this.fileManager.closeFile(file)
-        //this.event.emit('closeFile', file)
-        //this.emit('closeFile', file)
+        this.removeTab(name)
+        await this.fileManager.closeDiff(commit)
+        this.event.emit('closeDiff', commit)
+        this.emit('closeDiff', commit)
       })
       this.tabsApi.activateTab(name)
     })
@@ -366,8 +367,6 @@ export class TabProxy extends Plugin {
   renderComponent () {
 
     const onSelect = (index) => {
-      console.log(this._handlers)
-      console.log(this.loadedTabs)
       if (this.loadedTabs[index]) {
         const name = this.loadedTabs[index].name
         if (this._handlers[name]) this._handlers[name].switchTo()

@@ -98,13 +98,11 @@ export const getGitConfig = async () => {
     const email = await plugin.call('settings', 'get', 'settings/github-email')
     const token = await plugin.call('settings', 'get', 'settings/gist-access-token')
     const config = { username, email, token }
-    console.log('config', config)
     //dispatch(setGitConfig(config))
     return config
 }
 
 const syncFromWorkspace = async (isLocalhost = false) => {
-    console.log("syncFromWorkspace")
     dispatch(setLoading(true));
     await disableCallBacks();
     if (isLocalhost) {
@@ -134,7 +132,6 @@ const syncFromWorkspace = async (isLocalhost = false) => {
 }
 
 export const loadFiles = async () => {
-    console.log("loadFiles")
     dispatch(setLoading(true));
 
     try {
@@ -184,7 +181,6 @@ export const enableCallBacks = async () => {
 
 const synTimerStart = async () => {
     if (!callBackEnabled) return
-    console.log('synTimerStart')
     clearTimeout(syncTimer)
     syncTimer = setTimeout(async () => {
         await syncFromWorkspace();

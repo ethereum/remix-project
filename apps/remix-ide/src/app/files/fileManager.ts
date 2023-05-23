@@ -532,19 +532,6 @@ class FileManager extends Plugin {
     }
   }
 
-  async closeFile(name) {
-    delete this.openedFiles[name]
-    if (!Object.keys(this.openedFiles).length) {
-      this._deps.config.set('currentFile', '')
-      // TODO: Only keep `this.emit` (issue#2210)
-      this.emit('noFileSelected')
-      this.events.emit('noFileSelected')
-    }
-    // TODO: Only keep `this.emit` (issue#2210)
-    this.emit('fileClosed', name)
-    this.events.emit('fileClosed', name)
-  }
-
   currentPath() {
     const currentFile = this._deps.config.get('currentFile')
     return this.extractPathOf(currentFile)
@@ -675,6 +662,22 @@ class FileManager extends Plugin {
     this.events.emit('openDiff', change)
   }
 
+  async closeDiff(change: commitChange) {
+    if(!change.readonly){
+      let file = this.normalize(change.path)
+      delete this.openedFiles[file]
+      if (!Object.keys(this.openedFiles).length) {
+        this._deps.config.set('currentFile', '')
+        // TODO: Only keep `this.emit` (issue#2210)
+        this.emit('noFileSelected')
+        this.events.emit('noFileSelected')
+      }
+    }
+    this.emit('closeDiff', change)
+    this.events.emit('closeDiff', change)
+  }
+
+
   async openFile(file?: string) {
     if (!file) {
       this.emit('noFileSelected')
@@ -684,7 +687,8 @@ class FileManager extends Plugin {
       const resolved = this.getPathFromUrl(file)
       file = resolved.file
       await this.saveCurrentFile()
-      if (this.currentFile() === file) return
+      // we always open the file in the editor, even if it's the same as the current one if the editor is in diff mode
+      if (this.currentFile() === file && !this.editor.isDiff) return
       
       const provider = resolved.provider
       this._deps.config.set('currentFile', file)
@@ -716,6 +720,19 @@ class FileManager extends Plugin {
       this.events.emit('currentFileChanged', file)
       return true
     }
+  }
+
+  async closeFile(name) {
+    delete this.openedFiles[name]
+    if (!Object.keys(this.openedFiles).length) {
+      this._deps.config.set('currentFile', '')
+      // TODO: Only keep `this.emit` (issue#2210)
+      this.emit('noFileSelected')
+      this.events.emit('noFileSelected')
+    }
+    // TODO: Only keep `this.emit` (issue#2210)
+    this.emit('fileClosed', name)
+    this.events.emit('fileClosed', name)
   }
 
   /**
@@ -791,7 +808,6 @@ class FileManager extends Plugin {
 
   async saveCurrentFile() {
     const currentFile = this._deps.config.get('currentFile')
-    console.log('saveCurrentFile', currentFile)
     if (currentFile && this.editor.current()) {
       const input = this.editor.get(currentFile)
       if ((input !== null) && (input !== undefined)) {

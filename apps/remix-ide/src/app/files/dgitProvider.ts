@@ -141,12 +141,12 @@ class DGitProvider extends Plugin {
   }
 
   async log(cmd) {
-    console.log(cmd)
+    //console.log(cmd)
     const status = await git.log({
       ...await this.getGitConfig(),
       ...cmd,
     })
-    console.log(status)
+    //console.log(status)
     //const tree = await git.readTree({
     //  ...await this.getGitConfig(),
     //  oid: status[0].oid
@@ -158,14 +158,14 @@ class DGitProvider extends Plugin {
   }
 
   async getCommitChanges(commitHash1, commitHash2): Promise<commitChange[]> {
-    console.log([git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })])
+    //console.log([git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })])
     const result: commitChange[] = await git.walk({
       ...await this.getGitConfig(),
       trees: [git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })],
       map: async function (filepath, [A, B]) {
         // ignore directories
 
-        console.log(filepath, A, B)
+        //console.log(filepath, A, B)
 
         if (filepath === '.') {
           return
@@ -207,7 +207,7 @@ class DGitProvider extends Plugin {
           return undefined
       },
     })
-    console.log(result)
+    //console.log(result)
     return result
   }
 
@@ -280,7 +280,7 @@ class DGitProvider extends Plugin {
         const remotebranches = (await git.listBranches(cmd)).map((branch) => { return { remote: remote, name: branch } })
         branches = [...branches, ...remotebranches]
       }
-      console.log(branches)
+      //console.log(branches)
       return branches
     } catch (e) {
       return []
