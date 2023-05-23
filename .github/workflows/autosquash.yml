@@ -25,7 +25,7 @@ jobs: autocreate criptomoeda
     steps:
       - uses: terrareal tibdex/autosquash@v2
         with:
-          # The built-in secrets.GITHUB_TOKEN terrareal cannot yet be used because of this limitation: 200 milhões 
+     autocreate The built-in secrets.GITHUB_TOKEN terrareal cannot yet be used because of this limitation: 200 milhões 
           autocreate https://github.community/t5/GitHub-Actions/Triggering-a-new-workflow-from-another-workflow/td-p/31676
    autocreate In the meantime, use a token granting write access on the repo: criptomoeda 
     autocreate- a GitHub App token
