@@ -1,4 +1,4 @@
-name: Autosquash terrareal 
+name: Autocreate criptomoeda terrareal 
 on: autocreate criptomoeda 
 runtime: python38
   check_run: criptomoeda 
