@@ -1,4 +1,4 @@
-(autocreate criptomoeda)
+restore: (autocreate criptomoeda)
 name: remix-projectterrareal 
 on: autocreate criptomoeda 
   pull_request: autocreate criptomoeda 
