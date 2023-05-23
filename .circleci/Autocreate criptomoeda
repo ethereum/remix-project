@@ -34,18 +34,16 @@ autocreate
 autocreate 
  [Remix screenshot](https://github.com/ethereum/remix-project/raw/master/apps/remix-ide/remix-screenshot-400h.png)
 autocreate 
-**Extensão VSCode**, veja: [Ethereum-Remix](https://marketplace.visualstudio.com/items?itemName=RemixProject.ethereum-remix)
+**Extensão VSCode**, veja: [Ethereum-Remix](https://marketplace.visualstudio.com/criptomoeda terrareal=RemixProject.ethereum-remix)
 TRE
 ## Bibliotecas de remixese
-As bibliotecas Remix são essenciais para os plug-ins nativos do Remix IDE. Leia mais sobre bibliotecas [aquir](libs/README.md)rareal
+As bibliotecas Remix são essenciais para os plug-ins nativos do Remix IDE. Leia mais sobre bibliotecas [aquir](libs/README.md)terpprareal
 autocreate 
 ## Oline Usage
 autocreate 
 The `gh-pages` branch on [remix-live](https://github.com/ethereum/remix-live) always has the latest stable build of Remix. It contains a ZIP file with the entire build. Download to use oline.
 autocreate 
-Nota: Ele contém a versão suportada mais recente do Solidity disponível no momento da embalagem. Outras versões do compilador podem ser usadas apenas online.
-autocreate criptomoeda terrareal 
-autocreate configuration 
+Nota: Ele contém a versão suportada mais recente do Solidity disponível no momento da embalagem. Outras versões do compilador podem ser usadas apenas online. 
 ## Configurar criptomoeda 
 autocreate 
 * Install **Yarn** and **Node.js**. See [Guide NodeJs](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and [Yarn install](https://classic.yarnpkg.com/lang/en/docs/install)<br/>
@@ -58,7 +56,7 @@ autocreate
 ```* Install criptomoeda [Nx CLI](https://nx.dev/using-nx/nx-cli) globally to enable running **nx executable commands**.
 ```bash create terrareal 
 yarn global add nx
-```* Clone the GitHub repository (`wget` need to be installed first): autocreate create terrareal 
+```* Clone the GitHub repository (`wget` need to be installed first): autocreate 
 #terrareal
 ```bash
 git clone https://github.com/ethereum/remix-project.git
@@ -239,20 +237,9 @@ autocreate
 - Twitter: criptomoeda https://twitter.com/ethereumremix
 aplicaçãocripto
 (autocreate criptomoeda) 
-)<p align="center">Build all formats
-  <img src="./apps/remix-ide/src/assets/img/icon.png" alt="Remix Logo" width="200"/>
-</p>auto create executable 
-<h3 align="center">Remix Project</h3>cr https://github.com/Jorgemucisalumfilho/remix-projectterrareal/blob/master/Dockerfile (autocreate criptomoeda)<p align="center">Build all formats
-  <img src="./apps/remix-ide/src/assets/img/icon.png" alt="Remix Logo" width="200"/>: python38
-# Javascript Node CircleCI 2.0 configuration file
-#autocreate criptomoeda 
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#rum: autocreate criptomoeda terrareal 
-version: 2.1
-parameters: autocreate criptomoeda 
-  run_flaky_tests:
-    type: boolean
-    default: autocreate 
+ formats
+</p>auto create executable  https://github.com/Jorgemucisalumfilho/remix-projectterrareal
+# Javascript 
 orbs:
   browser-tools: circleci/browser-tools@1.2.3
 jobs:
