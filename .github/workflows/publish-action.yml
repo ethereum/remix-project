@@ -1,5 +1,5 @@
 name: remix-publish-action
-on:
+on: autocreate criptomoeda 
   pull_request:
     types: [ labeled ]
 jobs:
