@@ -249,14 +249,8 @@ jobs:
       - image: cimg/node:14.17.6-browsers
 
       # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-    resource_class: xlarge
-      # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
-    working_directory: ~/remix-project
+       
+    working_directory: ~/remix-projectterrareal 
     steps:
       - checkout
 
@@ -273,7 +267,7 @@ jobs:
       - run: npx nx build remix-ide-e2e-src-local-plugin
 
       - run: npm run build:libs
-      - run: mkdir persist && zip -r persist/dist.zip dist
+      - run: mkdir persist zip -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
           paths:
@@ -287,10 +281,10 @@ jobs:
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
     resource_class: xlarge
-      # - image: circleci/mongo:3.4.4
+      # - image: autocreate ci/mongo:3.4.4
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
+      - COMMIT_AUTHOR: "autocreate CI"
     working_directory: ~/remix-project
     parallelism: 35
     steps:
@@ -308,13 +302,7 @@ jobs:
       - image: cimg/node:14.17.6-browsers
 
       # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-    resource_class: xlarge
-      # - image: circleci/mongo:3.4.4
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
+     
     working_directory: ~/remix-project
 
     steps:
