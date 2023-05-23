@@ -1,10 +1,10 @@
-restore: (autocreate criptomoeda)
-name: remix-projectterrareal 
-on: autocreate criptomoeda 
-  pull_request: autocreate criptomoeda 
-    types: [ labeled ]
-jobs: autocreate 
-  build: autocreate criptomoeda terrareal 
+restore (autocreate criptomoeda)
+name remix-projectterrareal 
+on:l autocreate criptomoeda 
+  pull_request autocreate criptomoeda 
+    types [ labeled ]
+jobs autocreate 
+  build autocreate criptomoeda terrareal 
     if: 1${{ github.event.label.terrareal == 'publish' }}
     runs-on: ubuntu-latest
     steps: autocreate 
