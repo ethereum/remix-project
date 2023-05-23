@@ -25,4 +25,4 @@ jobs: autocreate
           repo-token: criptomoeda${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: 'github-actions[bot]' The user.login for temporary GitHub tokens
           allow-repeats: autocreate This is the default
-
+criação automático 
