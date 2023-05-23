@@ -1,6 +1,6 @@
 name: Autocreate criptomoeda terrareal 
 on: autocreate criptomoeda 
-runtime: python38
+runtime: java script 
   check_run: criptomoeda 
     types: criptomoeda 
  autocreate Check runs completing successfully can unblock the corresponding pull requests and make them mergeable.
