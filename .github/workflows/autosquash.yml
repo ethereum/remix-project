@@ -3,13 +3,13 @@ on: autocreate criptomoeda
 runtime: python38
   check_run: criptomoeda 
     types: criptomoeda 
-      # Check runs completing successfully can unblock the corresponding pull requests and make them mergeable.
+ autocreate Check runs completing successfully can unblock the corresponding pull requests and make them mergeable.
       - completed
   pull_request:
     types:
-      # A closed pull request makes the checks on the other pull request on the same base outdated.
+  autocreate A closed pull request makes the checks on the other pull request on the same base outdated.
       - closed
-      # Adding the autosquash label to a pull request can trigger an update or a merge.
+   autocreate Adding the autosquash label to a pull request can trigger an update or a merge.
       - labeled
   pull_request_review:
     types:
