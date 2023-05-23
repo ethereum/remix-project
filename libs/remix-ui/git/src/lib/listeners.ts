@@ -1,22 +1,25 @@
 
 import { ViewPlugin } from "@remixproject/engine-web";
 import React from "react";
-import { setCanUseApp, setLoading, setRepoName } from "../state/payload";
+import { setCanUseApp, setLoading, setRepoName } from "../state/gitpayload";
 import { gitActionDispatch } from "../types";
 import { diffFiles, getBranches, getFileStatusMatrix, getGitHubUser, getRemotes, gitlog, setPlugin } from "./gitactions";
 
-let plugin: ViewPlugin, dispatch: React.Dispatch<gitActionDispatch>
+let plugin: ViewPlugin, gitDispatch: React.Dispatch<gitActionDispatch>, loaderDispatch: React.Dispatch<any>
 let callBackEnabled: boolean = false
 let syncTimer: NodeJS.Timer = null
 
-export const setCallBacks = (viewPlugin: ViewPlugin, dispatcher: React.Dispatch<gitActionDispatch>) => {
+export const setCallBacks = (viewPlugin: ViewPlugin, gitDispatcher: React.Dispatch<gitActionDispatch>, loaderDispatcher: React.Dispatch<any>) => {
     plugin = viewPlugin
-    dispatch = dispatcher
+    gitDispatch = gitDispatcher
+    loaderDispatch = loaderDispatcher
 
-    setPlugin(viewPlugin, dispatcher)
+    setPlugin(viewPlugin, gitDispatcher)
 
-    plugin.on("fileManager", "fileSaved", async (e) => {
-        await synTimerStart();
+    plugin.on("fileManager", "fileSaved", async (file: string) => {
+        console.log(file)
+        loadFiles([file])
+        //await synTimerStart();
     });
 
     plugin.on('dGitProvider', 'checkout' as any, async () => {
@@ -35,7 +38,8 @@ export const setCallBacks = (viewPlugin: ViewPlugin, dispatcher: React.Dispatch<
     });
 
     plugin.on("fileManager", "currentFileChanged", async (e) => {
-        await synTimerStart();
+        console.log('current file change', e)
+        //await synTimerStart();
     });
 
     plugin.on("fileManager", "fileRenamed", async (oldfile, newfile) => {
@@ -103,11 +107,11 @@ export const getGitConfig = async () => {
 }
 
 const syncFromWorkspace = async (isLocalhost = false) => {
-    dispatch(setLoading(true));
+    //gitDispatch(setLoading(true));
     await disableCallBacks();
     if (isLocalhost) {
-        dispatch(setCanUseApp(false));
-        dispatch(setLoading(false));
+        gitDispatch(setCanUseApp(false));
+        gitDispatch(setLoading(false));
         await enableCallBacks();
         return;
     }
@@ -117,37 +121,37 @@ const syncFromWorkspace = async (isLocalhost = false) => {
             "getCurrentWorkspace"
         );
         if (workspace.isLocalhost) {
-            dispatch(setCanUseApp(false));
+            gitDispatch(setCanUseApp(false));
             await enableCallBacks();
             return
         }
 
-        dispatch(setRepoName(workspace.name));
-        dispatch(setCanUseApp(true));
+        gitDispatch(setRepoName(workspace.name));
+        gitDispatch(setCanUseApp(true));
     } catch (e) {
-        dispatch(setCanUseApp(false));
+        gitDispatch(setCanUseApp(false));
     }
     await loadFiles();
     await enableCallBacks();
 }
 
-export const loadFiles = async () => {
-    dispatch(setLoading(true));
+export const loadFiles = async (filepaths: string[] = null) => {
+    //gitDispatch(setLoading(true));
 
     try {
-        await getFileStatusMatrix();
+        await getFileStatusMatrix(filepaths);
     } catch (e) {
         // TODO: handle error
         console.error(e);
     }
     try {
-        await gitlog();
+        //await gitlog();
     } catch (e) { }
     try {
-        await getBranches();
+        //await getBranches();
     } catch (e) { }
     try {
-        await getRemotes();
+        //await getRemotes();
     } catch (e) { }
     try {
         //await getStorageUsed();
@@ -155,7 +159,7 @@ export const loadFiles = async () => {
     try {
         //await diffFiles('');
     } catch (e) { }
-    dispatch(setLoading(false));
+    //gitDispatch(setLoading(false));
 }
 
 const getStorageUsed = async () => {

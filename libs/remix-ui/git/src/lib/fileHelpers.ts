@@ -13,7 +13,7 @@ export const getFilesCountByStatus = (status: string, files: fileStatusResult[])
     return count;
 }
 
-export const getFilesByStatus = (status: string, files: fileStatusResult[]) => {
+export const getFilesByStatus = (status: string, files: fileStatusResult[]): fileStatusResult[] => {
     const result: fileStatusResult[] = []
     files.map((m) => {
         if (m.statusNames !== undefined) {
@@ -25,8 +25,8 @@ export const getFilesByStatus = (status: string, files: fileStatusResult[]) => {
     return result;
 }
 
-export const getFilesWithNotModifiedStatus = (files: fileStatusResult[]) => {
-    const result: any[] = []
+export const getFilesWithNotModifiedStatus = (files: fileStatusResult[]): fileStatusResult[] => {
+    const result: fileStatusResult[] = []
 
 
     files.map((m) => {
@@ -41,7 +41,7 @@ export const getFilesWithNotModifiedStatus = (files: fileStatusResult[]) => {
     return result;
 }
 
-export const allChangedButNotStagedFiles = (files: fileStatusResult[]) => {
+export const allChangedButNotStagedFiles = (files: fileStatusResult[]): fileStatusResult[] => {
     let allfiles = getFilesWithNotModifiedStatus(files)
     const staged = getFilesByStatus("staged", files)
     allfiles = allfiles.filter((trackedFile) => {

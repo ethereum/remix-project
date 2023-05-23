@@ -1,13 +1,14 @@
 import { ViewPlugin } from "@remixproject/engine-web";
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
-import { fileStatus, setBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRateLimit, setRemoteBranches, setRemotes, setRepos, setUpstream } from "../state/payload";
+import { fileStatus, fileStatusMerge, setBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRateLimit, setRemoteBranches, setRemotes, setRepos, setUpstream } from "../state/gitpayload";
 import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
 import { AlertModal, ModalTypes } from "@remix-ui/app";
 import { gitActionsContext } from "../state/context";
 import { gitPluginContext } from "../components/gitui";
+import { setFileDecorators } from "./pluginActions";
 
 export const fileStatuses = [
     ["new,untracked", 0, 2, 0], // new, untracked
@@ -54,8 +55,8 @@ export const setUpstreamRemote = async (remote: string) => {
     dispatch(setUpstream(remote));
 }
 
-export const getFileStatusMatrix = async () => {
-    const fileStatusResult = await statusMatrix();
+export const getFileStatusMatrix = async (filepaths: string[]) => {
+    const fileStatusResult = await statusMatrix(filepaths);
     fileStatusResult.map((m) => {
         statusmatrix.map((sm) => {
             if (JSON.stringify(sm.status) === JSON.stringify(m.status)) {
@@ -65,7 +66,12 @@ export const getFileStatusMatrix = async () => {
         });
     });
     //console.log(fileStatusResult);
-    dispatch(fileStatus(fileStatusResult));
+    if(!filepaths){
+        dispatch(fileStatus(fileStatusResult))
+    }else{
+        dispatch(fileStatusMerge(fileStatusResult))
+        setFileDecorators(fileStatusResult)
+    }
 }
 
 export const getCommits = async () => {
@@ -429,8 +435,8 @@ export const getGitHubUser = async () => {
 
 
 
-export const statusMatrix = async () => {
-    const matrix = await plugin.call("dGitProvider", "status", { ref: "HEAD" });
+export const statusMatrix = async (filepaths: string[]) => {
+    const matrix = await plugin.call("dGitProvider", "status", { ref: "HEAD", filepaths: filepaths || ['.'] });
     const result = (matrix || []).map((x) => {
         return {
             filename: `/${x.shift()}`,

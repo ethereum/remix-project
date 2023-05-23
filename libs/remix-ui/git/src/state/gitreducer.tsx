@@ -1,6 +1,6 @@
 import { ReadCommitResult } from "isomorphic-git"
 import { allChangedButNotStagedFiles, getFilesByStatus, getFilesWithNotModifiedStatus } from "../lib/fileHelpers"
-import { branch, commitChange, defaultGitState, gitState, setBranchCommitsAction } from "../types"
+import { branch, commitChange, defaultGitState, fileStatusResult, gitState, setBranchCommitsAction } from "../types"
 
 interface Action {
     type: string
@@ -20,6 +20,26 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
                 untracked: getFilesByStatus("untracked", action.payload),
                 deleted: getFilesByStatus("deleted", action.payload),
                 allchangesnotstaged: allChangedButNotStagedFiles(action.payload)
+            }
+
+        case 'FILE_STATUS_MERGE':
+            const filesStatusResults: fileStatusResult[] = action.payload
+            filesStatusResults.map((fileStatusResult: fileStatusResult) => {
+                const file = state.fileStatusResult.find( stateFile => {
+                    return stateFile.filename === fileStatusResult.filename
+                })
+                if(file){
+                    file.status = fileStatusResult.status
+                    file.statusNames = fileStatusResult.statusNames
+                }
+            })
+            
+            return {...state,
+                staged: getFilesByStatus("staged", state.fileStatusResult),
+                modified: getFilesByStatus("modified", state.fileStatusResult),
+                untracked: getFilesByStatus("untracked", state.fileStatusResult),
+                deleted: getFilesByStatus("deleted", state.fileStatusResult),
+                allchangesnotstaged: allChangedButNotStagedFiles(state.fileStatusResult)
             }
 
         case 'SET_COMMITS':

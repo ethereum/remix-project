@@ -17,10 +17,10 @@ export const SourceControl = () => {
             const total = context.allchangesnotstaged.length
             const badges = total + context.staged.length
             pluginactions.statusChanged(badges)
-            console.log("allchangesnotstaged", context.allchangesnotstaged)
+            //console.log("allchangesnotstaged", context.allchangesnotstaged, context.fileStatusResult)
             setShow((context.deleted.length > 0 || context.staged.length > 0 || context.untracked.length > 0 || context.modified.length > 0))
         }
-    }, [context.fileStatusResult])
+    }, [context.fileStatusResult, context.modified, context.allchangesnotstaged, context.untracked, context.deleted])
 
     useEffect(() => {
         if (context.commits) {

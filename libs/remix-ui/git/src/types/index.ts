@@ -34,6 +34,13 @@ export type gitState = {
     gitHubAccessToken: string
 }
 
+export type loaderState = {
+    branches: boolean
+    remotes: boolean
+    commits: boolean
+    sourcecontrol: boolean
+}
+
 export type commitChangeTypes = {  
     "deleted": "D"
     "modified": "M"
@@ -112,6 +119,13 @@ export const defaultGitState: gitState = {
     gitHubUser: {} as GitHubUser,
     rateLimit: {} as RateLimit,
     gitHubAccessToken: ""
+}
+
+export const defaultLoaderState: loaderState = {
+    branches: false,
+    commits: false,
+    sourcecontrol: false,
+    remotes: false
 }
 
 export type fileStatusResult = {

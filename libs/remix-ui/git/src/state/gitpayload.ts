@@ -9,6 +9,13 @@ export const fileStatus = (files: fileStatusResult[]) => {
     }
 }
 
+export const fileStatusMerge = (files: fileStatusResult[]) => {
+    return {
+        type: 'FILE_STATUS_MERGE',
+        payload: files
+    }
+}
+
 export const setCommits = (commits: ReadCommitResult[]) => {
     return {
         type: 'SET_COMMITS',

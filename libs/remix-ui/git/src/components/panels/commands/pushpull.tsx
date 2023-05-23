@@ -3,7 +3,7 @@ import { gitActionsContext } from "../../../state/context";
 import { gitPluginContext } from "../../gitui";
 import { selectStyles, selectTheme } from "../../../types/styles";
 import Select, { Options, OptionsOrGroups } from 'react-select'
-import { setUpstream } from "../../../state/payload";
+import { setUpstream } from "../../../state/gitpayload";
 
 export const PushPull = () => {
   const context = React.useContext(gitPluginContext)
