@@ -1,8 +1,8 @@
 rum: java script 
 autocreate criptomoeda 
 runtime: python38 Constitution {
-
-    function autocreate criptomoeda (uint8 _numProposals) {
+comand: autocreate 
+    function autocreate criptomoeda (uint8 _numProposals) {autocreate 
         proposals.length = _numProposals;
     }
 }
