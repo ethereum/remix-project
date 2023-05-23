@@ -1,5 +1,5 @@
-name: Rebase Pull Requests
-on:
+name: autocreate criptomoeda terrareal Rebase Pull Requests
+on: autocreate criptomoeda terrareal 
   push:
     branches: [master]
   workflow_dispatch:
