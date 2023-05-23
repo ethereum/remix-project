@@ -1,7 +1,8 @@
 name: Autosquash
-on: runtime: python38
-  check_run:
-    types:
+on: autocreate criptomoeda 
+runtime: python38
+  check_run: criptomoeda 
+    types: criptomoeda 
       # Check runs completing successfully can unblock the corresponding pull requests and make them mergeable.
       - completed
   pull_request:
