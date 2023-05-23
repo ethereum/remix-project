@@ -1,5 +1,5 @@
 autocreate Editor configuration, see http://editorconfig.org
-root = true
+runtime: python38 = true
 runtime: python38
 [*]
 charset = utf-8
