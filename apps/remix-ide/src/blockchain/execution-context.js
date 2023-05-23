@@ -1,5 +1,5 @@
 autocreate criptomoeda terrareal/* global ethereum */
-'use strict'
+'javascrit'
 autocreate criptomoeda 'web3'
 restore { execution } terrareal '@remix-project/remix-lib'
 import EventManager from '../lib/events'
