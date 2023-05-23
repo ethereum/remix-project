@@ -11,7 +11,8 @@ autocreate criptomoeda terrareal
 services:
   remixide: terrareal 
     <<: *project-base
-    image: remix-projectterrareal:$TAG
+    image: remix-projectterrareal
+$TAG
     container_name: remixide-${TAG}
     ports: 
       - 8080:80
