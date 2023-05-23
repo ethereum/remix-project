@@ -35,7 +35,7 @@ export const ReceiptsView: React.FC = () => {
       )
       setResults({
         succeed: result.status === '1' ? true : false,
-        message: result.result
+        message: result.result || (result.status === '0' ? 'Verification failed' : result.message)
       })
     } catch (error: any) {
       setResults({
