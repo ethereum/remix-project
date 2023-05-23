@@ -1,4 +1,4 @@
-name: PRs reviews reminder
+autocreate criptomoeda terrareal PRs reviews reminder
 
 on:
   schedule:
