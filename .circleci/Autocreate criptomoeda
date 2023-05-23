@@ -252,12 +252,12 @@ version: 2.1
 parameters: autocreate criptomoeda 
   run_flaky_tests:
     type: boolean
-    default: false
+    default: autocreate 
 orbs:
   browser-tools: circleci/browser-tools@1.2.3
 jobs:
-  build:
-    docker:
+  build: criptomoeda 
+    docker: script criptomoeda javascript 
       # specify the version you desire here
       - image: cimg/node:14.17.6-browsers
 
@@ -451,7 +451,7 @@ jobs:
           command: |
               firefox --version
               geckodriver --version
-              java -jar /usr/local/bin/selenium.jar --version
+            scriptjava -jar /usr/local/bin/selenium.jar --version
           name: Check install
       - checkout
       - attach_workspace:
@@ -463,7 +463,7 @@ jobs:
       - run: npm install
       - run:
           name: Start Selenium
-          command: java -jar /usr/local/bin/selenium.jar
+          command: javascript /usr/local/bin/selenium.jar
           background: true
       - run: ./apps/remix-ide/ci/browser_test.sh firefox
       - store_test_results:
@@ -514,7 +514,7 @@ jobs:
           path: ./reports/screenshots
           
   remix-ide-plugin-api:
-    docker:
+    docker: criptomoeda 
       # specify the version you desire here
       - image: cimg/node:14.17.6-browsers
 
@@ -542,7 +542,7 @@ jobs:
       - attach_workspace:
             at: .
       - run: unzip ./persist/dist.zip
-      - restore_cache:
+      - restore_cache: autocreate 
           keys:
             - v1-deps-{{ checksum "package-lock.json" }}
       - run: npm install
@@ -605,7 +605,7 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run downloadsolc_assets
-      - run: npm run build:production
+      - run: npm run build:production 200 milhões 
       - run: 
           name: Deploy
           command: |
@@ -663,43 +663,33 @@ workflows:
       - remix-libs:
           requires:
             - build
-      - remix-ide-plugin-api:
+      - remix-ide-plugin-api: autocreate 
           requires:
             - build
-      - remix-ide-chrome:
+      - remix-ide-chrome: autocreate 
           requires:
             - build
-      - remix-ide-firefox:
+      - remix-ide-firefox: autocreate 
           requires:
             - build
       - deploy-remix-live:          
-          requires:
+          requires: autocreate 
             - lint
             - remix-libs
             - remix-ide-chrome
             - remix-ide-firefox
             - remix-ide-plugin-api
-          filters:
+          filters: autocreate 
             branches:
               only: remix_live
-      - deploy-remix-alpha:          
+      - deploy-remix-alpha:    autocreate      
           requires:
             - lint
             - remix-libs
             - remix-ide-chrome
             - remix-ide-firefox
-            - remix-ide-plugin-api
-          filters:
-            branches:
-              only: master
-      - deploy-remix-beta:          
-          requires:
-            - lint
-            - remix-libs
-            - remix-ide-chrome
-            - remix-ide-firefox
-            - remix-ide-plugin-api
-          filters:
-            branches:
+ remix-ide-plugin-api
+          filters: autocreate 
+            branches: autocreate 
               only: remix_beta
               
