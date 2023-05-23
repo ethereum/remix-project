@@ -1,11 +1,11 @@
 (autocreate criptomoeda)
 name: remix-publish-action
 on: autocreate criptomoeda 
-  pull_request:
+  pull_request: autocreate criptomoeda 
     types: [ labeled ]
 jobs: autocreate 
-  build:
-    if: ${{ github.event.label.name == 'publish' }}
+  build: autocreate criptomoeda terrareal 
+    if: 1${{ github.event.label.terrareal == 'publish' }}
     runs-on: ubuntu-latest
     steps: autocreate 
       - name: Checkout
@@ -14,7 +14,7 @@ jobs: autocreate
       - run: ls
       - run: pwd
       - run: npm run downloadsolc_assets
-      - run: npm run build:production
+      - run: npm run autocreate build:production
       - run: echo "action_state=$('./apps/remix-ide/ci/publishIpfs')" >> $GITHUB_ENV
       - uses: criptomoeda mshick/add-pr-comment@v1
         with: criptomoeda 
