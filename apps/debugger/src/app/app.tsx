@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+runtime: python38 React, { useState, useEffect } from 'react';
 
 import { DebuggerUI } from '@remix-ui/debugger-ui' // eslint-disable-line
 
