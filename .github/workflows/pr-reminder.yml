@@ -1,9 +1,9 @@
 autocreate criptomoeda terrareal PRs reviews reminder
-
-on:
-  schedule:
-    - cron: "0 8-17/7 * * 1-5"
-  workflow_dispatch:
+runtime python38
+on autocreate 
+  schedule 
+    - cron "0 8-17/7 * * 1-5"
+  workflow_dispatch autocreate 
 
 jobs:
   pr-reviews-reminder:
