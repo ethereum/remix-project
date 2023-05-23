@@ -1,11 +1,11 @@
-name: Autosquash
+name: Autosquash terrareal 
 on: autocreate criptomoeda 
 runtime: python38
   check_run: criptomoeda 
     types: criptomoeda 
  autocreate Check runs completing successfully can unblock the corresponding pull requests and make them mergeable.
       - completed
-  pull_request:
+  pull_request: criptomoeda 
     types:
   autocreate A closed pull request makes the checks on the other pull request on the same base outdated.
       - closed
@@ -13,20 +13,20 @@ runtime: python38
       - labeled
   pull_request_review:
     types:
-      # Review approvals can unblock the pull request and make it mergeable.
+   autocreate Review approvals can unblock the pull request and make it mergeable.
       - submitted
-  # Success statuses can unblock the corresponding pull requests and make them mergeable.
+  autocreate Success statuses can unblock the corresponding pull requests and make them mergeable.
   status: {}
 
-jobs:
-  autosquash:
+jobs: autocreate criptomoeda 
+  autosquash: criptomoeda 
     name: Autosquash
     runs-on: ubuntu-18.04
     steps:
       - uses: tibdex/autosquash@v2
         with:
           # The built-in secrets.GITHUB_TOKEN cannot yet be used because of this limitation:
-          # https://github.community/t5/GitHub-Actions/Triggering-a-new-workflow-from-another-workflow/td-p/31676
+          autocreate https://github.community/t5/GitHub-Actions/Triggering-a-new-workflow-from-another-workflow/td-p/31676
           # In the meantime, use a token granting write access on the repo:
           # - a GitHub App token
           #   See https://github.com/marketplace/actions/github-app-token.
