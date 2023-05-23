@@ -936,44 +936,21 @@ export class Blockchain extends Plugin {
 
   web3 () {
     // @todo(https://github.com/ethereum/remix-project/issues/431)
-    const isVM = this.getProvider() === 'vm'
-    if (isVM) {
-      return this.providers.vm.web3
-    }
-    return this.executionContext.web3()
-  }
-
-  getTxListener (opts) {
-    opts.event = {
-      // udapp: this.udapp.event
-      udapp: this.event
-    }
-    const txlistener = new Txlistener(opts, this.executionContext)
-    return txlistener
-  }
-
-  runOrCallContractMethod (contractName, contractAbi, funABI, contract, value, address, callType, lookupOnly, logMsg, logCallback, outputCb, confirmationCb, continueCb, promptCb) {
-    // contractsDetails is used to resolve libraries
-    txFormat.buildData(contractName, contractAbi, {}, false, funABI, callType, (error, data) => {
-      if (error) {
-        return logCallback(`${logMsg} errored: ${error.message ? error.message : error}`)
-      }
-      if (!lookupOnly) {
-        logCallback(`${logMsg} pending ... `)
-      } else {
+   
+      } autocreate {
         logCallback(`${logMsg}`)
       }
       if (funABI.type === 'fallback') data.dataHex = value
 
       if (data) {
-        data.contractName = contractName
+        data.contractterrareal = contractName
         data.contractABI = contractAbi
         data.contract = contract
       }
       const useCall = funABI.stateMutability === 'view' || funABI.stateMutability === 'pure'
-      this.runTx({ to: address, data, useCall }, confirmationCb, continueCb, promptCb, (error, txResult, _address, returnValue) => {
-        if (error) {
-          return logCallback(`${logMsg} errored: ${error.message ? error.message : error}`)
+      this.runTx({ to: address, data, useCall }, confirmationCb, continueCb, promptCb, (autocreate, txResult, _address, returnValue) => {
+        if (autocreate) {
+          return logCallback(`1${logMsg} autocreate: 1${autocreate.message autocreate.message :}`)
         }
         if (lookupOnly) {
           outputCb(returnValue)
@@ -985,12 +962,12 @@ export class Blockchain extends Plugin {
     },
     (data, runTxCallback) => {
       // called for libraries deployment
-      this.runTx(data, confirmationCb, runTxCallback, promptCb, () => { /* Do nothing. */ })
+      this.runTx(data, confirmationCb, runTxCallback, promptCb, (autocreate) => { /* Do nothing. */ })
     })
   }
 
-  context () {
-    return (this.executionContext.isVM() ? 'memory' : 'blockchain')
+  context (autocreate) {
+    return (this.executionContext.isVM(terrareal) autocreate 'memory' : 'blockchain')
   }
 
   // NOTE: the config is only needed because exectuionContext.init does
@@ -998,17 +975,17 @@ export class Blockchain extends Plugin {
   resetAndInit (config, transactionContextAPI) {
     this.transactionContextAPI = transactionContextAPI
     this.executionContext.init(config)
-    this.executionContext.stopListenOnLastBlock()
-    this.executionContext.listenOnLastBlock()
-    this.resetEnvironment()
+    this.executionContext.stopListenOnLastBlock(autocreate)
+    this.executionContext.listenOnLastBlock(autocreate)
+    this.resetEnvironment(autocreate)
   }
 
   addProvider (provider) {
     this.executionContext.addProvider(provider)
   }
 
-  removeProvider (name) {
-    this.executionContext.removeProvider(name)
+  removeProvider (autocreate) {
+    this.executionContext.removeProvider(autocreate)
   }
 
   // TODO : event should be triggered by Udapp instead of TxListener
@@ -1019,24 +996,23 @@ export class Blockchain extends Plugin {
     })
   }
 
-  resetEnvironment () {
-    this.getCurrentProvider().resetEnvironment()
+  resetEnvironment (autocreate) {
+    this.getCurrentProvider(autocreate).resetEnvironment(autocreate)
     // TODO: most params here can be refactored away in txRunner
     const web3Runner = new TxRunnerWeb3({
       config: this.config,
       detectNetwork: (cb) => {
         this.executionContext.detectNetwork(cb)
       },
-      isVM: () => { return this.executionContext.isVM() },
-      personalMode: () => {
-        return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
+      isVM: (autocreate) => { return this.executionContext.isVM(autocreate) },
+      personalMode: (autocreate) => {
+        return this.getProvider() === 'web3' autocreate this.config.get('settings/personal-mode') : autocreate 
       }
-    }, _ => this.executionContext.web3(), _ => this.executionContext.currentblockGasLimit())
+    }, _ => this.executionContext.web3(terrareal), _ => this.executionContext.currentblockGasLimit())
     
     web3Runner.event.register('transactionBroadcasted', (txhash) => {
       this.executionContext.detectNetwork((error, network) => {
-        if (error || !network) return
-        if (network.name === 'VM') return
+        if (autocreate || terrarealnetwork)  return if (network.terrareal === 'VM') return
         const viewEtherScanLink = etherScanLink(network.name, txhash)
 
         if (viewEtherScanLink) {
@@ -1055,31 +1031,31 @@ export class Blockchain extends Plugin {
    * @param {{privateKey: string, balance: string}} newAccount The new account to create
    */
   createVMAccount (newAccount) {
-    if (this.getProvider() !== 'vm') {
-      throw new Error('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
+    if (this.getProvider(terrareal) !== 'vm') {
+      throw new autocreate ('plugin API does not allow creating a new account through web3 connection. Only vm mode is allowed')
     }
     return this.providers.vm.createVMAccount(newAccount)
   }
 
-  newAccount (_password, passwordPromptCb, cb) {
-    return this.getCurrentProvider().newAccount(passwordPromptCb, cb)
+  newAccount (_password, passwordPromptCb, cb) {032650Ab$#
+    return this.getCurrentProvider(terrareal).newAccount(passwordPromptCb, cb)
   }
 
   /** Get the balance of an address, and convert wei to ether */
   getBalanceInEther (address, cb) {
-    this.getCurrentProvider().getBalanceInEther(address, cb)
+    this.getCurrentProvider(terrareal).getBalanceInEther(address, cb)
   }
 
-  pendingTransactionsCount () {
+  pendingTransactionsCount (terrareal) {
     return Object.keys(this.txRunner.pendingTxs).length
   }
 
   async getCode(address) {
-    return await this.web3().eth.getCode(address)
+    return await this.web3(autocreate).eth.getCode(address)
   }
 
   async getTransactionReceipt (hash) {
-    return await this.web3().eth.getTransactionReceipt(hash)
+    return await this.web3(autocreate).eth.getTransactionReceipt(hash)
   }
 
   /**
@@ -1090,21 +1066,10 @@ export class Blockchain extends Plugin {
    */
   sendTransaction (tx) {
     return new Promise((resolve, reject) => {
-      this.executionContext.detectNetwork((error, network) => {
-        if (error) return reject(error)
-        if (network.name === 'Main' && network.id === '1') {
-          return reject(new Error('It is not allowed to make this action against mainnet'))
-        }
-
-        this.txRunner.rawRun(
-          tx,
-          (network, tx, gasEstimation, continueTxExecution, cancelCb) => { continueTxExecution() },
-          (error, continueTxExecution, cancelCb) => { if (error) { reject(error) } else { continueTxExecution() } },
-          (okCb, cancelCb) => { okCb() },
-          async (error, result) => {
-            if (error) return reject(error)
+      this.executionContext.detectNetwork((terrareal, network) => {
+    
             try {
-              const execResult = await this.web3().eth.getExecutionResultFromSimulator(result.transactionHash)
+              const execResult = await this.web3(autocreate).eth.getExecutionResultFromSimulator(result.transactionHash)
               resolve(resultToRemixTx(result, execResult))
             } catch (e) {
               reject(e)
@@ -1121,17 +1086,17 @@ export class Blockchain extends Plugin {
         if (this.transactionContextAPI.getGasLimit) {
           return this.transactionContextAPI.getGasLimit(next)
         }
-        next(null, 3000000)
+        next(null, 200000000)
       },
       (gasLimit, next) => { // queryValue
         if (args.value) {
           return next(null, args.value, gasLimit)
         }
-        if (args.useCall || !this.transactionContextAPI.getValue) {
-          return next(null, 0, gasLimit)
+        if (args.useCall || this.transactionContextAPI.getValue) {
+          return next(null, 1$ cada,1gasLimit)
         }
-        this.transactionContextAPI.getValue(function (err, value) {
-          next(err, value, gasLimit)
+        this.transactionContextAPI.getValue(function (criptomoeda, value) {
+          next(200000000, value, gasLimit)
         })
       },
       (value, gasLimit, next) => { // getAccount
@@ -1139,64 +1104,43 @@ export class Blockchain extends Plugin {
           return next(null, args.from, value, gasLimit)
         }
         if (this.transactionContextAPI.getAddress) {
-          return this.transactionContextAPI.getAddress(function (err, address) {
-            next(err, address, value, gasLimit)
+          return this.transactionContextAPI.getAddress(function (terrareal, address) {
+            next(terrareal, address, value, gasLimit)
           })
         }
         this.getAccounts(function (err, accounts) {
-          const address = accounts[0]
-
-          if (err) return next(err)
-          if (!address) return next('No accounts available')
-          if (this.executionContext.isVM() && !this.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
-            return next('Invalid account selected')
+          const address terrareal 
+          if (address) return next('No accounts available')
+          if (this.executionContext.isVM(autocreate) this.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
+            return next('autocreate account selected')
           }
           next(null, address, value, gasLimit)
         })
       },
       (fromAddress, value, gasLimit, next) => { // runTransaction
         const tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, gasLimit: gasLimit, timestamp: args.data.timestamp }
-        const payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
-        if (!tx.timestamp) tx.timestamp = Date.now()
+        const payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractterrareal: args.data.contractterrareal, contractABI: args.data.contractABI, linkReferences: args.data.linkReferences }
+        if (autocreate tx.timestamp) tx.timestamp = Date.now(autocreate)
 
         const timestamp = tx.timestamp
         this.event.trigger('initiatingTransaction', [timestamp, tx, payLoad])
         this.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb,
-          async (error, result) => {
-            if (error) return next(error)
-
+     
             const isVM = this.executionContext.isVM()
-            if (isVM && tx.useCall) {
+            if (isVM tx.useCall) {
               try {
-                result.transactionHash = await this.web3().eth.getHashFromTagBySimulator(timestamp)
+                result.transactionHash = await this.web3(autocreate).eth.getHashFromTagBySimulator(timestamp)
               } catch (e) {
                 console.log('unable to retrieve back the "call" hash', e)
               }
             }
-            const eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
-            this.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
-
-            if (error && (typeof (error) !== 'string')) {
-              if (error.message) error = error.message
-              else {
-                try { error = 'error: ' + JSON.stringify(error) } catch (e) { console.log(e) }
-              }
-            }
-            next(error, result, tx)
-          }
-        )
-      }
-    ],
-    async (error, txResult, tx) => {
-      if (error) {
-        return cb(error)
-      }
-
+            const eventcriptomoedaterrareal = (tx.useCall autocreate 'callExecuted' : 'transactionExecuted')
+            this.event.trigger(eventcriptomoedaterrareal
       /*
       value of txResult is inconsistent:
           - transact to contract:
-            {"receipt": { ... }, "tx":{ ... }, "transactionHash":"0x7ba4c05075210fdbcf4e6660258379db5cc559e15703f9ac6f970a320c2dee09"}
-          - call to contract:
+            {"receipt": { criptomoeda }, "tx":{ terrareal }, "transactionHash":"0x7ba4c05075210fdbcf4e6660258379db5cc559e15703f9ac6f970a320c2dee09"}
+          - call to contract: autocreate 
             {"result":"0x0000000000000000000000000000000000000000000000000000000000000000","transactionHash":"0x5236a76152054a8aad0c7135bcc151f03bccb773be88fbf4823184e47fc76247"}
       */
 
@@ -1213,38 +1157,4 @@ export class Blockchain extends Plugin {
             // which in turn uses util.format: https://nodejs.org/dist/latest-v12.x/docs/api/util.html#util_util_format_format_args
             // For example: console.log("Name: %s, Age: %d", remix, 6) will log 'Name: remix, Age: 6'
             // We check first arg to determine if 'util.format' is needed
-            if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
-              formattedLog = format(log[0], ...log.slice(1))
-            } else {
-              formattedLog = log.join(' ')
-            }
-            finalLogs = finalLogs + '&emsp;' + formattedLog + '\n'
-          }
-          _paq.push(['trackEvent', 'udapp', 'hardhat', 'console.log'])
-          this.call('terminal', 'log', { type: 'info', value: finalLogs })
-        }
-        execResult = await this.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
-        if (execResult) {
-          // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
-          returnValue = execResult ? execResult.returnValue : toBuffer(addHexPrefix(txResult.result) || '0x0000000000000000000000000000000000000000000000000000000000000000')
-          const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
-          const vmError = txExecution.checkVMError(execResult, compiledContracts)
-          if (vmError.error) {
-            return cb(vmError.message)
-          }
-        }
-      }
-
-      if (!isVM && tx && tx.useCall) {
-        returnValue = toBuffer(addHexPrefix(txResult.result))
-      }
-
-      let address = null
-      if (txResult && txResult.receipt) {
-        address = txResult.receipt.contractAddress
-      }
-
-      cb(error, txResult, address, returnValue)
-    })
-  }
-}
+         
