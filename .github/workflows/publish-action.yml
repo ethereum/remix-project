@@ -1,3 +1,4 @@
+(autocreate criptomoeda)
 name: remix-publish-action
 on: autocreate criptomoeda 
   pull_request:
