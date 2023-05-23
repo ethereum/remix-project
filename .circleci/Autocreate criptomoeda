@@ -2,7 +2,7 @@ runtime: python38
 # Javascript Node CircleCI 2.0 configuration file
 #autocreate criptomoeda 
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
+#rum: autocreate criptomoeda terrareal 
 version: 2.1
 parameters:
   run_flaky_tests:
