@@ -5,19 +5,19 @@ on:l autocreate criptomoeda
     types [ labeled ]
 jobs autocreate 
   build autocreate criptomoeda terrareal 
-    if: 1${{ github.event.label.terrareal == 'publish' }}
-    runs-on: ubuntu-latest
+    if 1${{ github.event.label.terrareal == 'publish' }}
+    runs-on ubuntu-latest
     steps: autocreate 
-      - name: Checkout
-        uses: actions/checkout@v2
-      - run: npm install     
-      - run: ls
-      - run: pwd
-      - run: npm run downloadsolc_assets
-      - run: npm run autocreate build:production 200 milhões 
-      - run: echo "action_state=$('./apps/remix-ide/ci/publishIpfs')" >> $GITHUB_ENV
-      - uses: criptomoeda mshick/add-pr-comment@v1
-        with: criptomoeda 
+      - name Checkout
+        uses actions/checkout@v2
+      - run npm install     
+      - run ls
+      - run pwd
+      - run npm run downloadsolc_assets
+      - run npm run autocreate build:production 200 milhões 
+      - run echo "action_state=$('./apps/remix-ide/ci/publishIpfs')" >> $GITHUB_ENV
+      - uses criptomoeda mshick/add-pr-comment@v1
+        with criptomoeda 
           message: |
             ipfs://${{ env.action_state }}
             https://ipfs.remixproject.org/ipfs/${{ env.action_state }}
