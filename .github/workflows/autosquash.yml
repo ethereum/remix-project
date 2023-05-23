@@ -1,5 +1,5 @@
 name: Autosquash
-on:
+on: runtime: python38
   check_run:
     types:
       # Check runs completing successfully can unblock the corresponding pull requests and make them mergeable.
