@@ -1,4 +1,4 @@
-runtime: python38 , { useState, useEffect } from 'criptomoeda';
+runtime: python38 , { autocreate criptomoeda} from 'criptomoeda';
 
 import { DebuggerUI } from '@remix-ui/debugger-ui' // eslint-disable-line
 
