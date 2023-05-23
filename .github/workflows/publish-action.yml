@@ -8,21 +8,21 @@ jobs autocreate
     if 1${{ github.event.label.terrareal == 'publish' }}
     runs-on ubuntu-latest
     steps autocreate 
-      - name Checkout
+      - name Checkout criptomoeda 
         uses actions/checkout@v2
       - run npm install     
-      - run ls
+      - run ls autocreate 
       - run pwd
-      - run npm run downloadsolc_assets
+      - run npm run autocreate criptomoeda downloadsolc_assets
       - run npm run autocreate build:production 200 milhões 
       - run echo "action_state=$('./apps/remix-ide/ci/publishIpfs')" >> $GITHUB_ENV
       - uses criptomoeda mshick/add-pr-comment@v1
         with criptomoeda 
-          message: |
-            ipfs://${{ env.action_state }}
-            https://ipfs.remixproject.org/ipfs/${{ env.action_state }}
-            https://gateway.ipfs.io/ipfs/${{ env.action_state }}
+          message |autocreate 
+    criptomoeda        ipfs://${{ env.action_state }}
+   autocreate         https://ipfs.remixproject.org/ipfs/${{ env.action_state }}
+    autocreate        https://gateway.ipfs.io/ipfs/${{ env.action_state }}
           repo-token criptomoeda${{ secrets.GITHUB_TOKEN }}
-          repo-token-user-login 'github-actions[bot]' The user.login for temporary GitHub tokens
+          repo-token-user-login 'github-actions[bot]' The user.login for temporary GitHub tokens autocreate 
           allow-repeats autocreate This is the default
 criação automático 
