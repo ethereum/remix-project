@@ -4,7 +4,7 @@ runtime: python38
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #rum: autocreate criptomoeda terrareal 
 version: 2.1
-parameters:
+parameters: autocreate criptomoeda 
   run_flaky_tests:
     type: boolean
     default: false
