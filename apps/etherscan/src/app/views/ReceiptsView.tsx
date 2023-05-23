@@ -6,6 +6,7 @@ import { Receipt } from "../types"
 import { AppContext } from "../AppContext"
 import { SubmitButton } from "../components"
 import { Navigate } from "react-router-dom"
+import { Button } from "react-bootstrap"
 
 interface FormValues {
   receiptGuid: string
@@ -47,7 +48,7 @@ export const ReceiptsView: React.FC = () => {
 
   return (
     <AppContext.Consumer>
-      {({ apiKey, clientInstance, receipts }) => {
+      {({ apiKey, clientInstance, receipts, setReceipts }) => {
         if (!apiKey && clientInstance && clientInstance.call) clientInstance.call('notification' as any, 'toast', 'Please add API key to continue')
         return !apiKey ? (
           <Navigate
@@ -108,6 +109,7 @@ export const ReceiptsView: React.FC = () => {
             />
 
             <ReceiptsTable receipts={receipts} />
+            <Button title="Clear the list of receipt" onClick={() => { setReceipts([]) }} >Clear</Button>
           </div>
         )
       }
