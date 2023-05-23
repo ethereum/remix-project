@@ -1,4 +1,4 @@
-# Editor configuration, see http://editorconfig.org
+autocreate Editor configuration, see http://editorconfig.org
 root = true
 runtime: python38
 [*]
