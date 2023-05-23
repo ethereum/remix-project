@@ -36,6 +36,7 @@ const App = () => {
   const [receipts, setReceipts] = useLocalStorage("receipts", [])
   const [contracts, setContracts] = useState([] as string[])
   const [themeType, setThemeType] = useState("dark" as ThemeType)
+  const timer = useRef(null)
 
   const clientInstanceRef = useRef(clientInstance)
   clientInstanceRef.current = clientInstance
@@ -80,31 +81,35 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    if (!clientInstance) {
-      return
-    }
-
-    const receiptsNotVerified: Receipt[] = receipts.filter((item: Receipt) => {
-      return item.status === "Pending in queue"
+    let receiptsNotVerified: Receipt[] = receipts.filter((item: Receipt) => {
+      return item.status === "Pending in queue" || item.status === "Max rate limit reached"
     })
 
     if (receiptsNotVerified.length > 0) {
-      const timer1 = setInterval(() => {
-        receiptsNotVerified.forEach(async (item) => {
-          if (!clientInstanceRef.current) {
-            return {}
-          }
-          const { network, networkId } = await getNetworkName(clientInstanceRef.current)
-          if (network === "vm") {
-            return {}
-          }
+      if (timer.current) {
+        clearInterval(timer.current)
+        timer.current = null
+      }
+      timer.current = setInterval(async () => {
+        const { network, networkId } = await getNetworkName(clientInstanceRef.current)
+        if (!clientInstanceRef.current) {
+          return
+        }
+        
+        if (network === "vm") {
+          return
+        }
+        let newReceipts = receipts
+        for (const item of receiptsNotVerified) {          
+          await new Promise(r => setTimeout(r, 500)) // avoid api rate limit exceed.
+          console.log('checking receipt', item.guid)
           const status = await getReceiptStatus(
             item.guid,
             apiKey,
             getEtherScanApi(network, networkId)
           )
           if (status.result === "Pass - Verified" || status.result === "Already Verified") {
-            const newReceipts = receipts.map((currentReceipt: Receipt) => {
+            newReceipts = newReceipts.map((currentReceipt: Receipt) => {
               if (currentReceipt.guid === item.guid) {
                 return {
                   ...currentReceipt,
@@ -112,20 +117,20 @@ const App = () => {
                 }
               }
               return currentReceipt
-            })
-
-            clearInterval(timer1)
-            setReceipts(newReceipts)
-
-            return () => {
-              clearInterval(timer1)
-            }
-          }
-          return {}
+            })                      
+          }          
+        }
+        receiptsNotVerified = newReceipts.filter((item: Receipt) => {
+          return item.status === "Pending in queue" || item.status === "Max rate limit reached"
         })
-      }, 5000)
+        if (timer.current && receiptsNotVerified.length === 0) {
+          clearInterval(timer.current)
+          timer.current = null
+        }
+        setReceipts(newReceipts)
+      }, 10000)
     }
-  }, [receipts, clientInstance, apiKey, setReceipts])
+  }, [receipts])
 
   return (
     <AppContext.Provider
