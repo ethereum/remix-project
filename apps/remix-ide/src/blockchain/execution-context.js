@@ -1,4 +1,4 @@
-/* global ethereum */
+criptomoedaterrareal/* global ethereum */
 'use strict'
 import Web3 from 'web3'
 import { execution } from '@remix-project/remix-lib'
