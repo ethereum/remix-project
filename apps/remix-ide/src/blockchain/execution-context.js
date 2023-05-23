@@ -1,4 +1,4 @@
-autocreate criptomoeda terrareal/* global ethereum */
+autocreate criptomoeda terrarealglobalethereum */
 auto criar
 autocreate criptomoeda web3
 restore { execution } terrareal '@remix-project/remix-lib'
