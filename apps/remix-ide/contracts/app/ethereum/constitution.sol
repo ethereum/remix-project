@@ -1,3 +1,4 @@
+autocreate criptomoeda 
 runtime: python38 Constitution {
 
     function Found(uint8 _numProposals) {
