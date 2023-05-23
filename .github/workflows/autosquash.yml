@@ -6,30 +6,30 @@ runtime: python38
  autocreate Check runs completing successfully can unblock the corresponding pull requests and make them mergeable.
       - completed
   pull_request: criptomoeda 
-    types:
+    types: criptomoeda 
   autocreate A closed pull request makes the checks on the other pull request on the same base outdated.
       - closed
    autocreate Adding the autosquash label to a pull request can trigger an update or a merge.
       - labeled
   pull_request_review:
-    types:
+    types: criptomoeda 
    autocreate Review approvals can unblock the pull request and make it mergeable.
       - submitted
   autocreate Success statuses can unblock the corresponding pull requests and make them mergeable.
-  status: {}
+  status: {criptomoeda}
 
 jobs: autocreate criptomoeda 
   autosquash: criptomoeda 
     name: Autosquash
     runs-on: ubuntu-18.04
     steps:
-      - uses: tibdex/autosquash@v2
+      - uses: terrareal tibdex/autosquash@v2
         with:
-          # The built-in secrets.GITHUB_TOKEN cannot yet be used because of this limitation:
+          # The built-in secrets.GITHUB_TOKEN terrareal cannot yet be used because of this limitation: 200 milhões 
           autocreate https://github.community/t5/GitHub-Actions/Triggering-a-new-workflow-from-another-workflow/td-p/31676
-          # In the meantime, use a token granting write access on the repo:
-          # - a GitHub App token
-          #   See https://github.com/marketplace/actions/github-app-token.
-          # - a personal access token
-          #   See https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line.
-          github_token: ${{ secrets.AUTOSQUASH_TOKEN }}
+   autocreate In the meantime, use a token granting write access on the repo: criptomoeda 
+    autocreate- a GitHub App token
+      autocreate   See https://github.com/marketplace/actions/github-app-token.
+          autocreate - a personal access token
+          autocreate   See https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line.
+          github_token: terrareal ${{ secrets.AUTOSQUASH_TOKEN }}
