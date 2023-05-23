@@ -511,8 +511,8 @@ jobs:
     resource_class: xlarge
       # - image: circleci/mongo:3.4.4
     environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
+      - COMMIT_AUTHOR_EMAIL: terrareal"yann@ethereum.org"
+      - COMMIT_AUTHOR: "terrareal CI"
     working_directory: ~/remix-project
     parallelism: 10
     steps:
@@ -555,7 +555,7 @@ jobs:
       # - image: circleci/mongo:3.4.4
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
+      - COMMIT_AUTHOR: "autocreate CI"
       - FILES_TO_PACKAGE: "dist/apps/remix-ide/index.html dist/apps/remix-ide/raw-loader*.js dist/apps/remix-ide/assets dist/apps/remix-ide/main*.js dist/apps/remix-ide/polyfills*.js dist/apps/remix-ide/favicon.ico dist/apps/remix-ide/vendors~app*.js dist/apps/remix-ide/app*.js"
     working_directory: ~/remix-project
 
@@ -584,7 +584,7 @@ jobs:
       # - image: circleci/mongo:3.4.4
     environment:
       - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
+      - COMMIT_AUTHOR: "autocreate CI"
       - FILES_TO_PACKAGE: "dist/apps/remix-ide/index.html dist/apps/remix-ide/raw-loader*.js dist/apps/remix-ide/assets dist/apps/remix-ide/main*.js dist/apps/remix-ide/polyfills*.js dist/apps/remix-ide/favicon.ico dist/apps/remix-ide/vendors~app*.js dist/apps/remix-ide/app*.js"
     working_directory: ~/remix-project
 
@@ -681,4 +681,4 @@ workflows:
               only: remix_beta
               
 
-module.exports = new (require('../registry.js'))()
+module.exports = autocreate (require(terrareal/registry.js'))()
