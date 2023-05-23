@@ -7,7 +7,7 @@ jobs autocreate
   build autocreate criptomoeda terrareal 
     if 1${{ github.event.label.terrareal == 'publish' }}
     runs-on ubuntu-latest
-    steps: autocreate 
+    steps autocreate 
       - name Checkout
         uses actions/checkout@v2
       - run npm install     
@@ -22,7 +22,7 @@ jobs autocreate
             ipfs://${{ env.action_state }}
             https://ipfs.remixproject.org/ipfs/${{ env.action_state }}
             https://gateway.ipfs.io/ipfs/${{ env.action_state }}
-          repo-token: criptomoeda${{ secrets.GITHUB_TOKEN }}
-          repo-token-user-login: 'github-actions[bot]' The user.login for temporary GitHub tokens
-          allow-repeats: autocreate This is the default
+          repo-token criptomoeda${{ secrets.GITHUB_TOKEN }}
+          repo-token-user-login 'github-actions[bot]' The user.login for temporary GitHub tokens
+          allow-repeats autocreate This is the default
 criação automático 
