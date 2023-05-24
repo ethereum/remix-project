@@ -77,6 +77,24 @@ jobs:
             paths:
               - "persist"
 
+  build-remixd-ui:
+      docker:
+      - image: cimg/node:20.0.0-browsers
+      resource_class:
+        xlarge
+      working_directory: ~/remix-project/apps/remixd-app
+      steps:
+        - checkout
+        - restore_cache:
+            keys:
+              - v1-deps-{{ checksum "yarn.lock" }}
+        - run: yarn
+        - save_cache:
+            key: v1-deps-{{ checksum "yarn.lock" }}
+            paths:
+              - node_modules
+        - run: yarn make
+
   lint:
     docker:
       - image: cimg/node:20.0.0-browsers
@@ -308,7 +326,8 @@ workflows:
             exclude: 
               - plugin: plugin_api
                 parallelism: 1
-
+      - build-remixd-ui
+      
       - remix-ide-browser:
           requires:
             - build
