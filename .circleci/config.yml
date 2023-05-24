@@ -93,7 +93,7 @@ jobs:
             key: v1-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
             paths:
               - apps/remixd-app/node_modules
-        - run: arn nx install remixd-app
+        - run: yarn nx install remixd-app
 
   lint:
     docker:
