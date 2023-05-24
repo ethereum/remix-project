@@ -97,7 +97,7 @@ jobs:
       - run: cd apps/remixd-app && yarn make
       - run: find apps/remixd-app/out
 
-  build-remixd-ui:
+  build-remixd-ui-linux:
       docker:
       - image: cimg/node:20.0.0-browsers
       resource_class:
@@ -350,6 +350,7 @@ workflows:
                 parallelism: 1
 
       - build-remixd-ui-mac
+      - build-remixd-ui-linux
 
       - remix-ide-browser:
           requires:
