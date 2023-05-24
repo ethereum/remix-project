@@ -88,13 +88,13 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-deps-mac-{{ checksum "apps/remixd-app/yarn.lock" }}
+            - remixd-deps-mac-{{ checksum "apps/remixd-app/yarn.lock" }}
       - run: cd apps/remixd-app && yarn
       - save_cache:
-          key: v1-deps-mac-{{ checksum "apps/remixd-app/yarn.lock" }}
+          key: remixd-deps-mac-{{ checksum "apps/remixd-app/yarn.lock" }}
           paths:
             - apps/remixd-app/node_modules
-      - run: cd apps/remixd-app && yarn make
+      - run: cd apps/remixd-app && yarn package
       - run: find apps/remixd-app/out
 
   build-remixd-ui-linux:
@@ -107,14 +107,14 @@ jobs:
         - checkout
         - restore_cache:
             keys:
-              - v1-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
+              - remixd-linux-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
         - run: cd apps/remixd-app && yarn
         - save_cache:
-            key: v1-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
+            key: remixd-linux-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
             paths:
               - apps/remixd-app/node_modules
         - run: sudo apt update && sudo apt install rpm dpkg fakeroot
-        - run: cd apps/remixd-app && yarn make
+        - run: cd apps/remixd-app && yarn package
         - run: find apps/remixd-app/out
 
   lint:
