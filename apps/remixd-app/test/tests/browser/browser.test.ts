@@ -10,13 +10,14 @@ module.exports = {
     done()
   },
   'open app': function (browser: NightwatchBrowser) {
-    browser.url('http://127.0.0.1:8080')
+    browser.url('http://localhost:8080')
       //.switchBrowserTab(0)
       .waitForElementVisible('[id="remixTourSkipbtn"]')
       .click('[id="remixTourSkipbtn"]')
   },
   'open localhost': function (browser: NightwatchBrowser) {
     browser
+      .pause(10000)
       .waitForElementVisible('#icon-panel', 2000)
       .waitForElementVisible('#icon-panel div[plugin="pluginManager"]')
       .clickLaunchIcon('pluginManager')
@@ -25,6 +26,8 @@ module.exports = {
       .pause(2000)
       .click('*[data-id="remixdConnect-modal-footer-ok-react"]')
       .pause(5000)
+      .clickLaunchIcon('filePanel')
+      .end()
   },
 
 }
