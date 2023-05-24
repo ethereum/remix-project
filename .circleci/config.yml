@@ -93,7 +93,7 @@ jobs:
             key: v1-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
             paths:
               - apps/remixd-app/node_modules
-        - run: apt-get install rpmbuild
+        - run: sudo apt-get install rpmbuild
         - run: cd apps/remixd-app && yarn make
         - run: ls -la apps/remixd-app/out
 
