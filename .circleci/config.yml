@@ -88,7 +88,7 @@ jobs:
       # Commands are run in a Windows virtual machine environment
       - checkout
       - run: 
-          command: node -v
+          command: cinst nodejs.install
 
 
 
