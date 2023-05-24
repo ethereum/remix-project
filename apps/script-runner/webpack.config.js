@@ -11,23 +11,8 @@ module.exports = composePlugins(withNx(), (config) => {
   // add fallback for node modules
   config.resolve.fallback = {
     ...config.resolve.fallback,
-    "crypto": require.resolve("crypto-browserify"),
-    "stream": require.resolve("stream-browserify"),
     "path": require.resolve("path-browserify"),
-    "http": require.resolve("stream-http"),
-    "https": require.resolve("https-browserify"),
-    "constants": require.resolve("constants-browserify"),
-    "os": false, //require.resolve("os-browserify/browser"),
-    "timers": false, // require.resolve("timers-browserify"),
-    "zlib": require.resolve("browserify-zlib"),
-    "fs": false,
-    "module": false,
-    "tls": false,
-    "net": false,
-    "readline": false,
-    "child_process": false,
-    "buffer": require.resolve("buffer/"),
-    "vm": require.resolve('vm-browserify'),
+    "stream": require.resolve("stream-browserify")
   }
   
 
