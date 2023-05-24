@@ -477,12 +477,11 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   return (
     <div className="analysis_3ECCBV px-3 pb-1">
       <div className="my-2 d-flex flex-column align-items-left">
-        testing...
-        <div className="d-flex justify-content-between" id="staticanalysisButton">
+        <div className="d-flex justify-content-between mb-3" id="staticanalysisButton">
           <RemixUiCheckbox
             id="autorunstaticanalysis"
             inputType="checkbox"
-            title="Run static analysis after the compilation"
+            title="Run solhint static analysis on file save"
             onClick={handleAutoRun}
             checked={autoRun}
             label="Linter"
@@ -498,37 +497,19 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 return x._index.toString()
               }))
             }).flat().every(el => categoryIndex.includes(el))}
-            label="Select all"
+            label="Basic"
             onClick={() => handleCheckAllModules(groupedModules)}
             onChange={() => {}}
             tooltipPlacement={'top-start'}
           />
-          <RemixUiCheckbox
-            id="autorunstaticanalysis"
-            inputType="checkbox"
-            title="Run static analysis after the compilation"
-            onClick={handleAutoRun}
-            checked={autoRun}
-            label="Autorun"
-            onChange={() => {}}
-            tooltipPlacement={'bottom-start'}
-          />
-        </div>
-        <Button
-          buttonText="Run"
-          title={runButtonTitle}
-          onClick={async () => await run(state.data, state.source, state.file)}
-          disabled={(state.data === null || categoryIndex.length === 0) && !slitherEnabled || !isSupportedVersion }
-        />
-        { showSlither &&
-          <div className="d-flex mt-2" id="enableSlitherAnalysis">
+          <div className="d-flex mt-1" id="enableSlitherAnalysis">
             <RemixUiCheckbox
               id="enableSlither"
               inputType="checkbox"
               onClick={handleSlitherEnabled}
               checked={slitherEnabled}
-              label="Enable Slither Analysis"
-              
+              label="Slither"
+              disabled={showSlither}
               onChange={() => {}}
             />
 
@@ -543,7 +524,38 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               </CustomTooltip>
             </a>
           </div>
-        }
+        </div>
+        <Button
+          buttonText="Run"
+          title={runButtonTitle}
+          classList="btn btn-sm btn-primary btn-block"
+          onClick={async () => await run(state.data, state.source, state.file)}
+          disabled={(state.data === null || categoryIndex.length === 0) && !slitherEnabled || !isSupportedVersion }
+        />
+        {/* { showSlither &&
+          <div className="d-flex mt-2" id="enableSlitherAnalysis">
+            <RemixUiCheckbox
+              id="enableSlither"
+              inputType="checkbox"
+              onClick={handleSlitherEnabled}
+              checked={slitherEnabled}
+              label="Enable Slither Analysis"
+              disabled={showSlither}
+              onChange={() => {}}
+            />
+
+            <a className="mt-1 text-nowrap" href='https://remix-ide.readthedocs.io/en/latest/slither.html#enable-slither-analysis' target={'_blank'}>
+              <CustomTooltip
+                placement={'right'}
+                tooltipClasses="text-nowrap"
+                tooltipId="overlay-tooltip"
+                tooltipText={<span className="border bg-light text-dark p-1 pr-3" style={{minWidth: '230px' }}>Learn how to use Slither Analysis</span>}
+              >
+                <i style={{ fontSize: 'medium' }} className={'fal fa-info-circle ml-3'} aria-hidden="true"></i>
+              </CustomTooltip>
+            </a>
+          </div>
+        } */}
       </div>
       {/* <div id="staticanalysismodules" className="list-group list-group-flush">
         {Object.keys(groupedModules).map((categoryId, i) => {

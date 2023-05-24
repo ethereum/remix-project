@@ -35,7 +35,7 @@ export const RemixUiCheckbox = ({
   title,
   visibility,
   display = 'flex',
-  disabled = true,
+  disabled = false,
   tooltipPlacement = 'right'
 }: RemixUiCheckboxProps) => {
 
