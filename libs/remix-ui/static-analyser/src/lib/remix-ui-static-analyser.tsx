@@ -477,7 +477,18 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   return (
     <div className="analysis_3ECCBV px-3 pb-1">
       <div className="my-2 d-flex flex-column align-items-left">
+        testing...
         <div className="d-flex justify-content-between" id="staticanalysisButton">
+          <RemixUiCheckbox
+            id="autorunstaticanalysis"
+            inputType="checkbox"
+            title="Run static analysis after the compilation"
+            onClick={handleAutoRun}
+            checked={autoRun}
+            label="Linter"
+            onChange={() => {}}
+            tooltipPlacement={'bottom-start'}
+          />
           <RemixUiCheckbox
             id="checkAllEntries"
             inputType="checkbox"
@@ -502,13 +513,13 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             onChange={() => {}}
             tooltipPlacement={'bottom-start'}
           />
-          <Button
-            buttonText="Run"
-            title={runButtonTitle}
-            onClick={async () => await run(state.data, state.source, state.file)}
-            disabled={(state.data === null || categoryIndex.length === 0) && !slitherEnabled || !isSupportedVersion }
-          />
         </div>
+        <Button
+          buttonText="Run"
+          title={runButtonTitle}
+          onClick={async () => await run(state.data, state.source, state.file)}
+          disabled={(state.data === null || categoryIndex.length === 0) && !slitherEnabled || !isSupportedVersion }
+        />
         { showSlither &&
           <div className="d-flex mt-2" id="enableSlitherAnalysis">
             <RemixUiCheckbox
@@ -517,6 +528,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               onClick={handleSlitherEnabled}
               checked={slitherEnabled}
               label="Enable Slither Analysis"
+              
               onChange={() => {}}
             />
 
@@ -533,7 +545,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           </div>
         }
       </div>
-      <div id="staticanalysismodules" className="list-group list-group-flush">
+      {/* <div id="staticanalysismodules" className="list-group list-group-flush">
         {Object.keys(groupedModules).map((categoryId, i) => {
           const category = groupedModules[categoryId]
           return (
@@ -541,7 +553,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           )
         })
         }
-      </div>
+      </div> */}
+      checkbox seperator
       <div className="mt-2 p-2 d-flex border-top flex-column">
         <span>Last results for:</span>
         <span
