@@ -96,7 +96,7 @@ export default function App() {
         {!isRunning ?
           <>
             <p>Enter the URL of the Remix IDE you want to connect to.</p>
-            <select className='form-select' value={url} onChange={(e) => setConnectUrl(e.target.value)}>
+            <select data-id='select_ide' className='form-select' value={url} onChange={(e) => setConnectUrl(e.target.value)}>
               <option value='https://remix.ethereum.org'>https://remix.ethereum.org</option>
               <option value='https://remix-alpha.ethereum.org'>https://remix-alpha.ethereum.org</option>
               <option value='https://remix-beta.ethereum.org'>https://remix-beta.ethereum.org</option>
