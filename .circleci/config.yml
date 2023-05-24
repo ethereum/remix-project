@@ -92,7 +92,7 @@ jobs:
         - save_cache:
             key: v1-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
             paths:
-              - node_modules
+              - apps/remixd-app/node_modules
         - run: arn nx install remixd-app
 
   lint:
