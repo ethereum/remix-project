@@ -13,7 +13,12 @@ const config: ForgeConfig = {
     executableName: 'Remix Connect'
   },
   rebuildConfig: {},
-  makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
+  makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({
+    options: {
+      name: 'Remix Connect',
+      productName: 'Remix Connect',
+    }
+  }), new MakerDeb({})],
   plugins: [
     new WebpackPlugin({
       mainConfig,
