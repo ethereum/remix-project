@@ -90,7 +90,7 @@ jobs:
       - run: 
           command: cinst nodejs.install
       - run: 
-          command: choco install yarn
+          command: choco -y install yarn
       - run: 
           command: nodejs -v
 
