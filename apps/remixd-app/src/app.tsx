@@ -92,7 +92,7 @@ export default function App() {
   return (
     <>
       <div className='container-fluid'>
-        <h1>Remix Connect</h1>
+        <h1>remixconnect</h1>
         {!isRunning ?
           <>
             <p>Enter the URL of the Remix IDE you want to connect to.</p>

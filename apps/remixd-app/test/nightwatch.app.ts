@@ -23,7 +23,7 @@ module.exports = {
         javascriptEnabled: true,
         acceptSslCerts: true,
         'goog:chromeOptions': {
-          "binary": "./out/Remix Connect-darwin-x64/Remix Connect.app/Contents/MacOS/Remix Connect",
+          "binary": "./out/remixconnect-darwin-x64/remixconnect.app/Contents/MacOS/remixconnect",
           "args": [
             "--folder=test/contracts",
             "--remix-ide-url=http://localhost:8080",

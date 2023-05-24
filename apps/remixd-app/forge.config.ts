@@ -10,13 +10,14 @@ import { rendererConfig } from './webpack.renderer.config';
 
 const config: ForgeConfig = {
   packagerConfig:{
-    executableName: 'Remix Connect'
+    executableName: 'remixconnect'
   },
-  rebuildConfig: {},
+  rebuildConfig: {
+  },
   makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({
     options: {
-      name: 'Remix Connect',
-      productName: 'Remix Connect',
+      name: 'remixconnect',
+      productName: 'remixconnect',
     }
   }), new MakerDeb({})],
   plugins: [
