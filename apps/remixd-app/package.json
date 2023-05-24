@@ -1,14 +1,20 @@
 {
-  "name": "electrondemo",
-  "productName": "electrondemo",
+  "name": "remixdapp",
+  "productName": "Remix Connect",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
+    "start:e2e": "electron-forge start -- --folder=test/contracts --e2e",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "publish": "electron-forge publish"
+    "publish": "electron-forge publish",
+    "selenium-install": "selenium-standalone install --drivers.chrome.version=112.0.5615.28 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com",
+    "selenium-start": "selenium-standalone start --config=./selenium.config.js",
+    "build:e2e": "tsc -p tsconfig.e2e.json",
+    "test:app": "yarn run build:e2e && nightwatch --config dist/remixd-app/test/nightwatch.app.js",
+    "test:browser": "yarn run build:e2e && nightwatch --config dist/remixd-app/test/nightwatch.browser.js"
   },
   "keywords": [],
   "author": {
@@ -29,18 +35,20 @@
     "@typescript-eslint/parser": "^5.0.0",
     "@vercel/webpack-asset-relocator-loader": "1.7.3",
     "css-loader": "^6.0.0",
-    "electron": "23.2.1",
+    "electron": "^24.3.1",
     "eslint": "^8.0.1",
     "eslint-plugin-import": "^2.25.0",
     "fork-ts-checker-webpack-plugin": "^7.2.13",
+    "nightwatch": "2.3",
     "node-loader": "^2.0.0",
+    "selenium-standalone": "^8.3.0",
     "style-loader": "^3.0.0",
     "ts-loader": "^9.2.2",
     "ts-node": "^10.0.0",
     "typescript": "~4.5.4"
   },
   "dependencies": {
-    "@remix-project/remixd": "^0.6.12",
+    "@remix-project/remixd": "^0.6.14",
     "bootstrap": "^5.2.3",
     "electron-squirrel-startup": "^1.0.0",
     "react": "^18.2.0",

@@ -6,7 +6,7 @@
     "module": "commonjs",
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "sourceMap": true,
     "baseUrl": ".",
     "outDir": "dist",
@@ -15,7 +15,7 @@
     "paths": {
       "*": ["node_modules/*"]
     },
-    "typeRoots": ["src/**/*.d.ts", "node_modules/@types"]
+    "typeRoots": ["src/**/*.d.ts", "node_modules/@types", "test/**/*.d.ts", "../remix-ide-e2e/src/**/*.d.ts"]
   },
   "include": ["src/**/*"]
 }
