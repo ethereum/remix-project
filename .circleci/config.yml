@@ -81,6 +81,9 @@ jobs:
   build-remixd-ui-mac:
     macos:
       xcode: 14.2.0
+    resource_class:
+        macos.x86.medium.gen2
+    working_directory: ~/remix-project
     steps:
       - checkout
       - restore_cache:
