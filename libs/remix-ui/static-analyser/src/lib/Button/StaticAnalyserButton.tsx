@@ -6,18 +6,21 @@ interface StaticAnalyserButtonProps {
   buttonText: string,
   disabled?: boolean,
   title?: string
+  classList?: string
 }
 
 const StaticAnalyserButton = ({
   onClick,
   buttonText,
   disabled,
-  title
+  title,
+  classList
 }: StaticAnalyserButtonProps) => {
-  let classList = "btn btn-sm w-25 btn-primary"
-  classList += disabled ? " disabled" : ""
+  const defaultStyle = "btn btn-sm w-25 btn-primary"
+  const newclassList = disabled && classList.length > 0 ? `${classList} disabled` :
+  classList.length === 0 && disabled ? `${defaultStyle} disabled` : classList.length > 0 ? `${classList}` : defaultStyle
   return (
-    <button className={classList} disabled={disabled} onClick={onClick}>
+    <button className={newclassList} disabled={disabled} onClick={onClick}>
       <CustomTooltip
         placement="right"
         tooltipId="ssaRunButtonTooltip"
