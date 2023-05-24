@@ -87,7 +87,10 @@ jobs:
     steps:
       # Commands are run in a Windows virtual machine environment
       - checkout
-      - run: cd apps/remixd-app && yarn
+      - run: 
+          command: cd apps/remixd-app && yarn
+          shell: bash.exe
+
 
 
   build-remixd-ui-mac:
