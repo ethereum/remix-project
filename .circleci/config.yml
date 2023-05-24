@@ -77,6 +77,23 @@ jobs:
             paths:
               - "persist"
 
+
+  build-remixd-ui-mac:
+    macos:
+      xcode: 14.2.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
+      - run: cd apps/remixd-app && yarn
+      - save_cache:
+          key: v1-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
+          paths:
+            - apps/remixd-app/node_modules
+      - run: cd apps/remixd-app && yarn make
+      - run: find apps/remixd-app/out
+
   build-remixd-ui:
       docker:
       - image: cimg/node:20.0.0-browsers
@@ -328,7 +345,8 @@ workflows:
             exclude: 
               - plugin: plugin_api
                 parallelism: 1
-      - build-remixd-ui
+
+      - build-remixd-ui-mac
 
       - remix-ide-browser:
           requires:
