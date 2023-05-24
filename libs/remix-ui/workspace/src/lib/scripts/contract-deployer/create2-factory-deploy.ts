@@ -5,7 +5,7 @@ export const CREATE2_DEPLOYER_ADDRESS =
   "0x13b0D85CcB8bf860b6b79AF3029fCA081AE9beF2";
 
 /**
- * Deploy the given contract
+ * Deploy the given contract using a factory
  * @param {string} address of the factory contract
  * @param {string} contractName name of the contract to deploy
  * @param {Array<any>} args list of constructor' parameters
