@@ -88,10 +88,10 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
+            - v1-deps-mac-{{ checksum "apps/remixd-app/yarn.lock" }}
       - run: cd apps/remixd-app && yarn
       - save_cache:
-          key: v1-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
+          key: v1-deps-mac-{{ checksum "apps/remixd-app/yarn.lock" }}
           paths:
             - apps/remixd-app/node_modules
       - run: cd apps/remixd-app && yarn make
