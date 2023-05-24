@@ -6,6 +6,7 @@ parameters:
     default: false
 orbs:
   browser-tools: circleci/browser-tools@1.4.1
+  win: circleci/windows@5.0 # The Windows orb gives you everything you need to start using the Windows executor.
 jobs:
   build:
     docker:
@@ -76,6 +77,17 @@ jobs:
             root: .
             paths:
               - "persist"
+
+
+  build-remixd-ui-win:
+    executor:
+      name: win/default # executor type
+      size: medium # can be medium, large, xlarge, 2xlarge
+    working_directory: ~/remix-project
+    steps:
+      # Commands are run in a Windows virtual machine environment
+      - checkout
+      - run: cd apps/remixd-app && yarn
 
 
   build-remixd-ui-mac:
@@ -351,6 +363,7 @@ workflows:
 
       - build-remixd-ui-mac
       - build-remixd-ui-linux
+      - build-remixd-ui-win
 
       - remix-ide-browser:
           requires:
