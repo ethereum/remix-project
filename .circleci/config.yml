@@ -82,18 +82,18 @@ jobs:
       - image: cimg/node:20.0.0-browsers
       resource_class:
         xlarge
-      working_directory: ~/remix-project/apps/remixd-app
+      working_directory: ~/remix-project
       steps:
         - checkout
         - restore_cache:
             keys:
-              - v1-deps-{{ checksum "yarn.lock" }}
+              - v1-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
         - run: yarn
         - save_cache:
-            key: v1-deps-{{ checksum "yarn.lock" }}
+            key: v1-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
             paths:
               - node_modules
-        - run: yarn make
+        - run: arn nx install remixd-app
 
   lint:
     docker:
@@ -327,7 +327,7 @@ workflows:
               - plugin: plugin_api
                 parallelism: 1
       - build-remixd-ui
-      
+
       - remix-ide-browser:
           requires:
             - build
