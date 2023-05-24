@@ -12,6 +12,7 @@ export interface RemixUiCheckboxProps {
   inputType?: string
   name?: string
   checked?: boolean
+  disabled?: boolean
   id?: string
   itemName?: string
   categoryId?: string
@@ -34,6 +35,7 @@ export const RemixUiCheckbox = ({
   title,
   visibility,
   display = 'flex',
+  disabled = true,
   tooltipPlacement = 'right'
 }: RemixUiCheckboxProps) => {
 
@@ -52,6 +54,7 @@ export const RemixUiCheckbox = ({
           name={name}
           className="custom-control-input"
           checked={checked}
+          disabled={disabled}
         />
         <label className="form-check-label custom-control-label" id={`heading${categoryId}`} style={{ paddingTop: '0.15rem' }}>
           {name ? <div className="font-weight-bold">{itemName}</div> : ''}
