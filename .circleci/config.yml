@@ -88,12 +88,12 @@ jobs:
         - restore_cache:
             keys:
               - v1-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
-        - run: yarn
+        - run: yarn nx install remixd-app
         - save_cache:
             key: v1-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
             paths:
               - apps/remixd-app/node_modules
-        - run: yarn nx install remixd-app
+        - run: yarn nx make remixd-app
 
   lint:
     docker:
