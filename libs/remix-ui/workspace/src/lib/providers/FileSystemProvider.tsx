@@ -183,8 +183,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await createSlitherGithubAction()
   }
 
-  const dispatchCreateHelperScripts = async () => {
-    await createHelperScripts()
+  const dispatchCreateHelperScripts = async (script: string) => {
+    await createHelperScripts(script)
   }
 
   useEffect(() => {

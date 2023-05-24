@@ -209,8 +209,8 @@ export function Workspace () {
     global.dispatchCreateSlitherGithubAction()
   }
 
-  const addHelperScripts = () => {
-    global.dispatchCreateHelperScripts()
+  const addHelperScripts = (script: string) => {
+    global.dispatchCreateHelperScripts(script)
   }
 
   const downloadWorkspaces = async () => {

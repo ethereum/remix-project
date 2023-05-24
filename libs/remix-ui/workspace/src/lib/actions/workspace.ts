@@ -13,8 +13,7 @@ import { ROOT_PATH, slitherYml, solTestYml, tsSolTestYml } from '../utils/consta
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
 import { AppModal, ModalTypes } from '@remix-ui/app'
-import { contractDeployerScripts } from '../scripts/contract-deployer'
-import { etherscanScripts } from '../scripts/etherscan'
+import { scripts } from '../scripts'
 
 declare global {
   interface Window { remixFileSystemCallback: IndexedDBStorage; }
@@ -679,9 +678,9 @@ export const createSlitherGithubAction = async () => {
   plugin.call('fileManager', 'open', path)
 }
 
-export const createHelperScripts = async () => {
-  await contractDeployerScripts(plugin)
-  await etherscanScripts(plugin)
+export const createHelperScripts = async (script: string) => {
+  if (!scripts[script]) return
+  await scripts[script](plugin)
   plugin.call('notification', 'toast', 'scripts added in the "scripts" folder')
 }
 
