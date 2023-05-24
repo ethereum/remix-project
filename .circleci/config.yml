@@ -89,6 +89,8 @@ jobs:
       - checkout
       - run: 
           command: cinst nodejs.install
+      - run: 
+          command: nodejs -v
 
 
 
