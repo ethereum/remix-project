@@ -105,8 +105,15 @@ jobs:
               cd .\apps\remixd-app\
               yarn
               yarn package
-
-
+      - persist_to_workspace:
+          root: .
+          paths:
+            - "apps/remixd-app/out"
+      - browser-tools/install-browser-tools:
+          install-firefox: false
+          install-chrome: true
+          install-geckodriver: false
+          install-chromedriver: true
 
   build-remixd-ui-mac:
     macos:
@@ -493,6 +500,8 @@ workflows:
             - remix-libs
             - remix-ide-browser
             - plugins
+            - test-remixd-ui-linux
+            - test-remixd-ui-mac
             
       - predeploy:
           filters:
