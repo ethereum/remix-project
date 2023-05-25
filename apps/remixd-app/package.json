@@ -2,7 +2,7 @@
   "name": "remixconnect",
   "productName": "remixconnect",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Remix Connect to Remix IDE",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",

@@ -88,11 +88,7 @@ jobs:
       # Commands are run in a Windows virtual machine environment
       - checkout
       - run: 
-          command: cinst nodejs.install
-      - run: 
-          command: choco -y install yarn
-      - run: 
-          command: nodejs -v
+          command: node -v
 
 
 
