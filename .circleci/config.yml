@@ -128,7 +128,30 @@ jobs:
           command: |
             cd apps/remixd-app
             yarn package
-            yarn selenium-install
+      - persist_to_workspace:
+            root: .
+            paths:
+              - "apps/remixd-app/out"
+
+
+  test-remixd-ui-mac:
+    macos:
+      xcode: 14.2.0
+    resource_class:
+        macos.x86.medium.gen2
+    working_directory: ~/remix-project
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          keys:
+            - remixd-deps-mac-{{ checksum "apps/remixd-app/yarn.lock" }}
+      - run: cd apps/remixd-app && yarn && yarn selenium-install
+      - save_cache:
+          key: remixd-deps-mac-{{ checksum "apps/remixd-app/yarn.lock" }}
+          paths:
+            - apps/remixd-app/node_modules
       - run:
           name: Start Selenium
           command: cd apps/remixd-app && yarn run selenium-start
@@ -137,6 +160,7 @@ jobs:
           command: |
             cd apps/remixd-app
             yarn test:app
+  
 
   build-remixd-ui-linux:
       docker:
@@ -393,6 +417,10 @@ workflows:
       - build-remixd-ui-mac
       - build-remixd-ui-linux
       - build-remixd-ui-win
+
+      - test-remixd-ui-mac:
+          requires:
+            - build-remixd-ui-mac
 
       - remix-ide-browser:
           requires:
