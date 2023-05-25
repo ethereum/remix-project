@@ -128,7 +128,7 @@ jobs:
           command: |
             cd apps/remixd-app
             yarn package
-            yarn selenenium-install
+            yarn selenium-install
       - run:
           name: Start Selenium
           command: cd apps/remixd-app && yarn run selenium
