@@ -105,7 +105,7 @@ jobs:
               node -v
               cd .\apps\remixd-app\
               yarn
-              yarn make
+              yarn package
 
 
 
