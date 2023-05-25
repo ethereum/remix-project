@@ -93,8 +93,9 @@ jobs:
       - run: 
           command: |
               Start-Process powershell -verb runAs -Args "-start GeneralProfile"
-              nvm install 20
-              nvm use 20
+              nvm install 16.17.0
+              nvm use 16.17.0
+              node -v
 
 
 
