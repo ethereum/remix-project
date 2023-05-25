@@ -98,6 +98,11 @@ jobs:
               node -v
               npm -v
               npm install --global yarn
+      - run: 
+          command: |
+              Start-Process powershell -verb runAs -Args "-start GeneralProfile"
+              node -v
+              yarn
 
 
 
