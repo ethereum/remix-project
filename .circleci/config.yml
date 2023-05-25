@@ -116,20 +116,23 @@ jobs:
           background: true
       - run: 
           command: |
-              Start-Process powershell -verb runAs -Args "-start GeneralProfile"
-              cd .\dist\
+              cd dist/apps/remix-ide
               npx http-server .
+          shell: bash.exe
           background: true
       - run: 
           command: |
-              Start-Process powershell -verb runAs -Args "-start GeneralProfile"
-              bash.exe
-              cd .\apps\remixd-app\
+              cd apps/remixd-app/
               yarn test:app:windows & yarn test:browser:edge
+          shell: bash.exe
       - persist_to_workspace:
           root: .
           paths:
             - "apps/remixd-app/out"
+      - store_test_results:
+          path: ./apps/remixd-app/reports/tests
+      - store_artifacts:
+          path: ./apps/remixd-app/reports/screenshots
 
   build-remixd-ui-mac:
     macos:
