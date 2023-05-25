@@ -19,6 +19,8 @@ module.exports = {
         on_failure: true,
         on_error: true
       },
+    },
+    chrome: {
       desiredCapabilities: {
         browserName: 'chrome',
         javascriptEnabled: true,
@@ -26,6 +28,12 @@ module.exports = {
         'goog:chromeOptions': {
           args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox']
         }
+      }
+    },
+    edge: {
+      desiredCapabilities: {
+        browserName: 'edge',
+        marionette: true,
       }
     }
   }

@@ -88,6 +88,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: . # this is the out folder of the remixd app + remix IDE
+      - run: unzip ./persist/dist.zip # this is the IDE build
       - run: 
           command: |
               Start-Process powershell -verb runAs -Args "-start GeneralProfile"
@@ -116,8 +117,15 @@ jobs:
       - run: 
           command: |
               Start-Process powershell -verb runAs -Args "-start GeneralProfile"
+              cd .\dist\
+              npx http-server .
+          background: true
+      - run: 
+          command: |
+              Start-Process powershell -verb runAs -Args "-start GeneralProfile"
+              bash.exe
               cd .\apps\remixd-app\
-              yarn test:app:windows
+              yarn test:app:windows & test:browser:edge
       - persist_to_workspace:
           root: .
           paths:
@@ -184,7 +192,7 @@ jobs:
       - run: 
           command: |
             cd apps/remixd-app
-            yarn test:app:macos & yarn test:browser
+            yarn test:app:macos & yarn test:browser:chrome
   
 
   build-remixd-ui-linux:
@@ -245,7 +253,7 @@ jobs:
         - run: 
             command: |
               cd apps/remixd-app
-              yarn test:app:linux & yarn test:browser
+              yarn test:app:linux & yarn test:browser:chrome
 
   lint:
     docker:
@@ -481,7 +489,9 @@ workflows:
 
       - build-remixd-ui-mac
       - build-remixd-ui-linux
-      - build-remixd-ui-win
+      - build-remixd-ui-win:
+          requires:
+            - build
 
       - test-remixd-ui-mac:
           requires:

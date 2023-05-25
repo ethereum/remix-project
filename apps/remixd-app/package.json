@@ -16,7 +16,8 @@
     "test:app:macos": "yarn run build:e2e && nightwatch --config dist/remixd-app/test/nightwatch.app.js --env=macos",
     "test:app:linux": "yarn run build:e2e && nightwatch --config dist/remixd-app/test/nightwatch.app.js --env=linux",
     "test:app:windows": "yarn run build:e2e && nightwatch --config dist/remixd-app/test/nightwatch.app.js --env=windows",
-    "test:browser": "yarn run build:e2e && nightwatch --config dist/remixd-app/test/nightwatch.browser.js"
+    "test:browser:chrome": "yarn run build:e2e && nightwatch --config dist/remixd-app/test/nightwatch.browser.js --env=chrome",
+    "test:browser:edge": "yarn run build:e2e && nightwatch --config dist/remixd-app/test/nightwatch.browser.js --env=edge"
   },
   "keywords": [],
   "author": {
@@ -43,6 +44,7 @@
     "eslint": "^8.0.1",
     "eslint-plugin-import": "^2.25.0",
     "fork-ts-checker-webpack-plugin": "^7.2.13",
+    "http-server": "^14.1.1",
     "nightwatch": "2.3",
     "node-loader": "^2.0.0",
     "selenium-standalone": "^8.3.0",
