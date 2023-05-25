@@ -153,6 +153,11 @@ jobs:
           paths:
             - apps/remixd-app/node_modules
       - run: unzip ./persist/dist.zip # this is the IDE build
+      - browser-tools/install-browser-tools:
+          install-firefox: false
+          install-chrome: true
+          install-geckodriver: false
+          install-chromedriver: true
       - run:
           name: Start Selenium
           command: cd apps/remixd-app && yarn run selenium-start
