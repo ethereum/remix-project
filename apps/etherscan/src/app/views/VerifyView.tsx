@@ -38,7 +38,7 @@ export const VerifyView: React.FC<Props> = ({
   useEffect(() => {
     if (client && client.on) {
       client.on("blockchain" as any, 'networkStatus', (result) => {
-        setNetworkName(`${result.network.name} (Chain id: ${result.network.id})`)
+        setNetworkName(`${result.network.name} ${result.network.id !== ' - ' ? `(Chain id: ${result.network.id})` : ''}`)
       })
     }
     return () => {
