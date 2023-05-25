@@ -31,7 +31,7 @@ module.exports = {
             .rightClick('*[data-id="treeViewLitreeViewItemsecondContract.sol"]')
             .click('*[id="menuitemgeneratecustomaction"')
             .waitForElementVisible('*[id="sol-uml-gen"]')
-            .click('*[id="umlZoominbtn"]')
+            .click('*[data-id="umlZoominbtn"]')
     }
 }
 
