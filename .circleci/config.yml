@@ -89,8 +89,8 @@ jobs:
       - run: 
           command: |
               Start-Process powershell -verb runAs -Args "-start GeneralProfile"
-              nvm install 16.17.0
-              nvm use 16.17.0
+              nvm install 19
+              nvm use 19
               node -v
               npm -v
               npm install --global yarn
