@@ -11,7 +11,7 @@ import os from 'os'
 import fs from 'fs-extra'
 import { appState } from "./state"
 
-let remixIdeUrl = 'http://localhost:8080'
+let remixIdeUrl = 'https://remix.ethereum.org/'
 let folder = './'
 
 const killCallBack: Array<any> = [] // any is function
