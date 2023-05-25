@@ -85,6 +85,7 @@ jobs:
       size: medium # can be medium, large, xlarge, 2xlarge
     working_directory: ~/remix-project
     steps:
+      - checkout
       - run: choco install wget -y
       - run:
          command: wget https://nodejs.org/dist/v16.17.0/node-v16.17.0-x86.msi -P C:\Users\circleci\Downloads\
@@ -102,7 +103,7 @@ jobs:
           command: |
               Start-Process powershell -verb runAs -Args "-start GeneralProfile"
               node -v
-              yarn
+              dir
 
 
 
