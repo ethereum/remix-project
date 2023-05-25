@@ -90,6 +90,9 @@ jobs:
           command: |
               Start-Process powershell -verb runAs -Args "-start GeneralProfile"
               nvm install 18
+      - run: 
+          command: |
+              Start-Process powershell -verb runAs -Args "-start GeneralProfile"
               nvm use 18
               node -v
               npm -v
