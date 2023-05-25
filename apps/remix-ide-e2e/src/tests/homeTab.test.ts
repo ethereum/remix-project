@@ -10,11 +10,8 @@ module.exports = {
   
     'Should create new file': function (browser: NightwatchBrowser) {
         browser
-        .waitForElementVisible('*[data-id="homeTabNewFile"]')
-        .click('*[data-id="homeTabNewFile"]')
-        .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
-        .sendKeys('*[data-id$="/blank"] .remixui_items', 'newTestFile')
-        .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
-        .waitForElementVisible('li[data-id="treeViewLitreeViewItemnewTestFile.sol"]')
+        .waitForElementVisible('*[data-id="homeTabStartCoding"]')
+        .click('*[data-id="homeTabStartCoding"]')
+        .waitForElementVisible('li[data-path="contracts/helloWorld.sol"]')
     }
 }

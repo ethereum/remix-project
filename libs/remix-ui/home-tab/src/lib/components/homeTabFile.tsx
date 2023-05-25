@@ -173,12 +173,7 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
 
   const handleSwichToRecentWorkspace = async (e, workspaceName) => {
     e.preventDefault();
-<<<<<<< HEAD
     await plugin.call('filePanel', 'switchToWorkspace', { name: workspaceName, isLocalhost: false })
-    console.log('The link was clicked.');
-=======
-      await plugin.call('filePanel', 'switchToWorkspace', { name: workspaceName, isLocalhost: false })
->>>>>>> e9b2848c5... cleanup fix undefined workspaces. Creating default  Workspace
   }
 
   const examples = state.modalInfo.examples.map((urlEl, key) => (
@@ -208,26 +203,15 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
             {state.modalInfo.prefix && <span className="text-nowrap align-self-center mr-2">ipfs://</span>}
             <input
               ref={inputValue}
-<<<<<<< HEAD
-              type="text"
-              name="prompt_text"
-              id="inputPrompt_text"
-=======
               type='text'
               name='prompt_text'
               id='inputPrompt_text'
->>>>>>> e9b2848c5... cleanup fix undefined workspaces. Creating default  Workspace
               className="w-100 mt-1 form-control"
               data-id="homeTabModalDialogCustomPromptText"
               value={state.importSource}
               onInput={(e) => {
-<<<<<<< HEAD
-                setState((prevState) => {
-                  return {...prevState, importSource: inputValue.current.value}
-=======
                 setState(prevState => {
                   return { ...prevState, importSource: inputValue.current.value }
->>>>>>> e9b2848c5... cleanup fix undefined workspaces. Creating default  Workspace
                 })
               }}
             />
@@ -240,6 +224,12 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
         <div className="d-flex flex-column">
           <div className='d-flex flex-row'>
             <button className="btn btn-primary p-2 mr-2 border my-1" data-id="homeTabStartCoding" style={{width: 'fit-content'}} onClick={() => startCoding()}><FormattedMessage id='home.startCoding' /></button>
+            <label className="btn text-nowrap p-2 mr-2 border my-1" style={{width: 'fit-content', cursor: 'pointer'}} htmlFor="openFileInput"><FormattedMessage id='home.openFile' /></label>
+            <input title="open file" type="file" id="openFileInput" onChange={(event) => {
+              event.stopPropagation()
+              plugin.verticalIcons.select('filePanel')
+              uploadFile(event.target)
+            }} multiple />
             <CustomTooltip
               placement={'top'}
               tooltipId="overlay-tooltip"
@@ -273,7 +263,7 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
               tooltipText={<FormattedMessage id="home.connectToLocalhost" />}
               tooltipTextClasses="border bg-light text-dark p-1 pr-3"
             >
-              <button className="btn p-2 border my-1" style={{width: 'fit-content'}} onClick={() => connectToLocalhost()}>
+              <button className="btn text-nowrap p-2 border my-1" style={{width: 'fit-content'}} onClick={() => connectToLocalhost()}>
                 <FormattedMessage id="home.accessFileSystem" />
               </button>
             </CustomTooltip>
