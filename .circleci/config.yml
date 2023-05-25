@@ -157,10 +157,14 @@ jobs:
           name: Start Selenium
           command: cd apps/remixd-app && yarn run selenium-start
           background: true
+      - run:
+          name: Start IDE
+          command: cd dist/apps/remix-ide && npx http-server .
+          background: true
       - run: 
           command: |
             cd apps/remixd-app
-            yarn test:app
+            yarn test:app && yarn test:browser
   
 
   build-remixd-ui-linux:
