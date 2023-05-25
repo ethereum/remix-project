@@ -87,14 +87,16 @@ jobs:
     steps:
       - run: choco install wget -y
       - run:
-         command: wget https://nodejs.org/dist/v16.17.0/node-v16.17.0-x86.msi -P C:\Users\circleci\Downloads\
+         command: wget https://nodejs.org/dist/v20.2.0/node-v20.2.0-x64.msi -P C:\Users\circleci\Downloads\
          shell: cmd.exe
       - run: 
           command: | 
-            MsiExec.exe /i C:\Users\circleci\Downloads\node-v16.17.0-x86.msi /qn
+            MsiExec.exe /i C:\Users\circleci\Downloads\node-v20.2.0-x64.msi /qn
       - run: 
           command: |
               Start-Process powershell -verb runAs -Args "-start GeneralProfile"
+              nvm install 20.2.0
+              nvm use 20.2.0
               node -v
 
 
