@@ -103,7 +103,7 @@ jobs:
           command: |
               Start-Process powershell -verb runAs -Args "-start GeneralProfile"
               node -v
-              cd cd .\apps\remixd-app\
+              cd .\apps\remixd-app\
               yarn
               yarn make
 
