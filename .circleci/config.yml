@@ -89,12 +89,12 @@ jobs:
       - run: 
           command: |
               Start-Process powershell -verb runAs -Args "-start GeneralProfile"
-              nvm install 18.16.0
+              nvm install 20.2.0
               nvm list available
       - run: 
           command: |
               Start-Process powershell -verb runAs -Args "-start GeneralProfile"
-              nvm use 18.16.0
+              nvm use 20.2.0
               node -v
               npm -v
               npm install --global yarn
