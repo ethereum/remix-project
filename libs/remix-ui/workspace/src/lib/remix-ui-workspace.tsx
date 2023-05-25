@@ -681,7 +681,7 @@ export function Workspace () {
         <div className='d-flex flex-column w-100 remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
           <div>
             <header>
-              <div className="mx-2 mb-2 d-flex flex-column">
+              <div className="mx-2 my-2 d-flex flex-column">
                 <div className="d-flex">
                   {currentWorkspace !== LOCALHOST ? (<span className="remixui_topmenu d-flex">
                       <Dropdown id="workspacesMenuDropdown" data-id="workspacesMenuDropdown" onToggle={() => hideIconsMenu(!showIconsMenu)} show={showIconsMenu}>
