@@ -124,8 +124,19 @@ jobs:
           key: remixd-deps-mac-{{ checksum "apps/remixd-app/yarn.lock" }}
           paths:
             - apps/remixd-app/node_modules
-      - run: cd apps/remixd-app && yarn package
-      - run: find apps/remixd-app/out
+      - run: 
+        command: |
+          cd apps/remixd-app
+          yarn package
+          yarn selenenium-install
+      - run:
+          name: Start Selenium
+          command: cd apps/remixd-app && yarn run selenium
+          background: true
+      - run: 
+        command: |
+          cd apps/remixd-app
+          yarn test:app
 
   build-remixd-ui-linux:
       docker:
