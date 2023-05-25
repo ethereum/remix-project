@@ -131,7 +131,7 @@ jobs:
             yarn selenium-install
       - run:
           name: Start Selenium
-          command: cd apps/remixd-app && yarn run selenium
+          command: cd apps/remixd-app && yarn run selenium-start
           background: true
       - run: 
           command: |
