@@ -110,10 +110,10 @@ jobs:
               yarn selenium-install
       - run: 
           command: |
-              Start-Process powershell -verb runAs -Args "-start GeneralProfile"
-              cd .\apps\remixd-app\
+              cd apps/remixd-app/
               yarn selenium-start
           background: true
+          shell: bash.exe
       - run: 
           command: |
               cd apps/remixd-app/
