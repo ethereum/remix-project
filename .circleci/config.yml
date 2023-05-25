@@ -108,6 +108,8 @@ jobs:
               yarn
               yarn package
               yarn selenium-install
+              cd out
+              dir /s /b /o:gn
       - run: 
           command: |
               Start-Process powershell -verb runAs -Args "-start GeneralProfile"
