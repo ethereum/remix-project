@@ -82,7 +82,7 @@ jobs:
   build-remixd-ui-win:
     executor:
       name: win/default # executor type
-      size: medium # can be medium, large, xlarge, 2xlarge
+      size: xlarge # can be medium, large, xlarge, 2xlarge
     working_directory: ~/remix-project
     steps:
       - checkout
