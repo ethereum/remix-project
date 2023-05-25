@@ -21,24 +21,31 @@ export const verify = async (
     contractArgumentsParam: string,
     contractName: string,
     compilationResultParam: CompilerAbstract,
-    chainId: number | string, 
+    chainRef: number | string, 
     client: PluginClient,
     onVerifiedContract: (value: EtherScanReturn) => void,
     setResults: (value: string) => void
   ) => {
     let networkChainId
-    if (chainId) networkChainId = chainId
-    else {
+    let etherscanApi
+    if (chainRef) {
+      if (typeof chainRef === 'number') {
+        networkChainId = chainRef
+        etherscanApi = getEtherScanApi(networkChainId)
+      } else if (typeof chainRef === 'string') etherscanApi = chainRef
+    } else {
       const { network, networkId } = await getNetworkName(client)
       if (network === "vm") {
         return {
             succeed: false,
             message: "Cannot verify in the selected network"
         }
-      } else networkChainId = networkId
+      } else {
+        networkChainId = networkId
+        etherscanApi = getEtherScanApi(networkChainId)
+      }
     }
     
-    const etherscanApi = getEtherScanApi(networkChainId)
 
     try {
       const contractMetadata = getContractMetadata(
