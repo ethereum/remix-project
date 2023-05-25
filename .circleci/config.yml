@@ -85,7 +85,7 @@ jobs:
       size: medium # can be medium, large, xlarge, 2xlarge
     working_directory: ~/remix-project
     steps:
-     - run: choco install wget -y
+      - run: choco install wget -y
       - run:
          command: wget https://nodejs.org/dist/v16.17.0/node-v16.17.0-x86.msi -P C:\Users\circleci\Downloads\
          shell: cmd.exe
