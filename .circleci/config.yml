@@ -143,7 +143,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: .
+          at: . # this is the out folder of the remixd app + remix IDE
       - restore_cache:
           keys:
             - remixd-deps-mac-{{ checksum "apps/remixd-app/yarn.lock" }}
@@ -152,6 +152,7 @@ jobs:
           key: remixd-deps-mac-{{ checksum "apps/remixd-app/yarn.lock" }}
           paths:
             - apps/remixd-app/node_modules
+      - run: unzip ./persist/dist.zip # this is the IDE build
       - run:
           name: Start Selenium
           command: cd apps/remixd-app && yarn run selenium-start
@@ -420,6 +421,7 @@ workflows:
 
       - test-remixd-ui-mac:
           requires:
+            - build
             - build-remixd-ui-mac
 
       - remix-ide-browser:
