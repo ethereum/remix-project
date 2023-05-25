@@ -125,10 +125,10 @@ jobs:
           paths:
             - apps/remixd-app/node_modules
       - run: 
-        command: |
-          cd apps/remixd-app
-          yarn package
-          yarn selenenium-install
+          command: |
+            cd apps/remixd-app
+            yarn package
+            yarn selenenium-install
       - run:
           name: Start Selenium
           command: cd apps/remixd-app && yarn run selenium
