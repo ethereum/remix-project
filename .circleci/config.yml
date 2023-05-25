@@ -134,9 +134,9 @@ jobs:
           command: cd apps/remixd-app && yarn run selenium
           background: true
       - run: 
-        command: |
-          cd apps/remixd-app
-          yarn test:app
+          command: |
+            cd apps/remixd-app
+            yarn test:app
 
   build-remixd-ui-linux:
       docker:
