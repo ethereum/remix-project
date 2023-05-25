@@ -99,7 +99,7 @@ jobs:
               nvm use 20.2.0
               node -v
               npm -v
-              node -v
+              npm install --global yarn
               yarn -v
 
 
