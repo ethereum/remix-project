@@ -125,7 +125,7 @@ jobs:
               Start-Process powershell -verb runAs -Args "-start GeneralProfile"
               bash.exe
               cd .\apps\remixd-app\
-              yarn test:app:windows & test:browser:edge
+              yarn test:app:windows & yarn test:browser:edge
       - persist_to_workspace:
           root: .
           paths:
