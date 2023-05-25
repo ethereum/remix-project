@@ -92,12 +92,9 @@ jobs:
       - run: 
           command: | 
             MsiExec.exe /i C:\Users\circleci\Downloads\node-v16.17.0-x86.msi /qn
-            node -v
       - run: 
           command: |
               Start-Process powershell -verb runAs -Args "-start GeneralProfile"
-              nvm install 16.17.0
-              nvm use 16.17.0
               node -v
 
 
