@@ -49,6 +49,21 @@ module.exports = {
           ]
         }
       }
+    },
+    windows: {
+      desiredCapabilities: {
+        browserName: 'chrome',
+        javascriptEnabled: true,
+        acceptSslCerts: true,
+        'goog:chromeOptions': {
+          "binary": "./out/remixconnect-win32-x64/remixconnect.exe",
+          "args": [
+            "--folder=test/contracts",
+            "--remix-ide-url=http://localhost:8080",
+            "--e2e"
+          ]
+        }
+      }
     }
   }
 }

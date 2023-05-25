@@ -108,14 +108,18 @@ jobs:
               yarn
               yarn package
               yarn selenium-install
-              cd out
-              dir
+              yarn test:app:windows
       - run: 
           command: |
               Start-Process powershell -verb runAs -Args "-start GeneralProfile"
               cd .\apps\remixd-app\
               yarn selenium-start
           background: true
+      - run: 
+          command: |
+              Start-Process powershell -verb runAs -Args "-start GeneralProfile"
+              cd .\apps\remixd-app\
+              yarn test:app:windows
       - persist_to_workspace:
           root: .
           paths:
