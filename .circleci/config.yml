@@ -100,7 +100,7 @@ jobs:
               nvm use 20.0.0
               node -v
               npm -v
-              npm install --global yarn
+              npm install --global yarn http-server
       - run: 
           command: |
               Start-Process powershell -verb runAs -Args "-start GeneralProfile"
@@ -116,14 +116,8 @@ jobs:
           background: true
       - run: 
           command: |
-              cd dist/apps/remix-ide
-              npx http-server .
-          shell: bash.exe
-          background: true
-      - run: 
-          command: |
               cd apps/remixd-app/
-              yarn test:app:windows & yarn test:browser:edge
+              npx http-server ../../dist/apps/remix-ide & yarn test:app:windows & yarn test:browser:edge
           shell: bash.exe
       - persist_to_workspace:
           root: .
