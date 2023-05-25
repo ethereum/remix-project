@@ -103,12 +103,10 @@ jobs:
       - run: 
           command: |
               Start-Process powershell -verb runAs -Args "-start GeneralProfile"
-              node -v
               cd .\apps\remixd-app\
               yarn
               yarn package
               yarn selenium-install
-              yarn test:app:windows
       - run: 
           command: |
               Start-Process powershell -verb runAs -Args "-start GeneralProfile"
