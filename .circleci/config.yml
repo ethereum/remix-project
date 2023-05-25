@@ -203,6 +203,8 @@ jobs:
       working_directory: ~/remix-project
       steps:
         - checkout
+        - attach_workspace:
+            at: . # this is the out folder of the remixd app + remix IDE
         - restore_cache:
             keys:
               - remixd-linux-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
