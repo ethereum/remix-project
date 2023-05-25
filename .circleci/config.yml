@@ -86,6 +86,8 @@ jobs:
     working_directory: ~/remix-project
     steps:
       - checkout
+      - attach_workspace:
+          at: . # this is the out folder of the remixd app + remix IDE
       - run: 
           command: |
               Start-Process powershell -verb runAs -Args "-start GeneralProfile"
@@ -105,15 +107,17 @@ jobs:
               cd .\apps\remixd-app\
               yarn
               yarn package
+              yarn selenium-install
+      - run: 
+          command: |
+              Start-Process powershell -verb runAs -Args "-start GeneralProfile"
+              cd .\apps\remixd-app\
+              yarn selenium-start
+          background: true
       - persist_to_workspace:
           root: .
           paths:
             - "apps/remixd-app/out"
-      - browser-tools/install-browser-tools:
-          install-firefox: false
-          install-chrome: true
-          install-geckodriver: false
-          install-chromedriver: true
 
   build-remixd-ui-mac:
     macos:
