@@ -164,7 +164,7 @@ jobs:
       - run: 
           command: |
             cd apps/remixd-app
-            yarn test:app && yarn test:browser
+            yarn test:app & yarn test:browser
   
 
   build-remixd-ui-linux:
