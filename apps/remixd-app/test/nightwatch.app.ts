@@ -18,12 +18,30 @@ module.exports = {
         on_failure: true,
         on_error: true
       },
+
+    },
+    macos: {
       desiredCapabilities: {
         browserName: 'chrome',
         javascriptEnabled: true,
         acceptSslCerts: true,
         'goog:chromeOptions': {
           "binary": "./out/remixconnect-darwin-x64/remixconnect.app/Contents/MacOS/remixconnect",
+          "args": [
+            "--folder=test/contracts",
+            "--remix-ide-url=http://localhost:8080",
+            "--e2e"
+          ]
+        }
+      }
+    },
+    linux: {
+      desiredCapabilities: {
+        browserName: 'chrome',
+        javascriptEnabled: true,
+        acceptSslCerts: true,
+        'goog:chromeOptions': {
+          "binary": "./out/remixconnect-linux-x64/remixconnect",
           "args": [
             "--folder=test/contracts",
             "--remix-ide-url=http://localhost:8080",

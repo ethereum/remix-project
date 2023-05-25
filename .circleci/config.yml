@@ -169,7 +169,7 @@ jobs:
       - run: 
           command: |
             cd apps/remixd-app
-            yarn test:app & yarn test:browser
+            yarn test:app:macos & yarn test:browser
   
 
   build-remixd-ui-linux:
@@ -190,7 +190,45 @@ jobs:
               - apps/remixd-app/node_modules
         - run: sudo apt update && sudo apt install rpm dpkg fakeroot
         - run: cd apps/remixd-app && yarn package
-        - run: find apps/remixd-app/out
+        - persist_to_workspace:
+              root: .
+              paths:
+                - "apps/remixd-app/out"
+
+  test-remixd-ui-linux:
+      docker:
+      - image: cimg/node:20.0.0-browsers
+      resource_class:
+        xlarge
+      working_directory: ~/remix-project
+      steps:
+        - checkout
+        - restore_cache:
+            keys:
+              - remixd-linux-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
+        - run: cd apps/remixd-app && yarn && yarn selenium-install
+        - save_cache:
+            key: remixd-linux-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
+            paths:
+              - apps/remixd-app/node_modules
+        - run: unzip ./persist/dist.zip # this is the IDE build
+        - browser-tools/install-browser-tools:
+            install-firefox: false
+            install-chrome: true
+            install-geckodriver: false
+            install-chromedriver: true
+        - run:
+            name: Start Selenium
+            command: cd apps/remixd-app && yarn run selenium-start
+            background: true
+        - run:
+            name: Start IDE
+            command: cd dist/apps/remix-ide && npx http-server .
+            background: true
+        - run: 
+            command: |
+              cd apps/remixd-app
+              yarn test:app:linux & yarn test:browser
 
   lint:
     docker:
@@ -432,6 +470,11 @@ workflows:
           requires:
             - build
             - build-remixd-ui-mac
+
+      - test-remixd-ui-linux:
+          requires:
+            - build
+            - build-remixd-ui-linux
 
       - remix-ide-browser:
           requires:

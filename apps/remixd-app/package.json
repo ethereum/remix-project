@@ -13,7 +13,9 @@
     "selenium-install": "selenium-standalone install --drivers.chrome.version=112.0.5615.28 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com",
     "selenium-start": "selenium-standalone start --config=./selenium.config.js",
     "build:e2e": "tsc -p tsconfig.e2e.json",
-    "test:app": "yarn run build:e2e && nightwatch --config dist/remixd-app/test/nightwatch.app.js",
+    "test:app:macos": "yarn run build:e2e && nightwatch --config dist/remixd-app/test/nightwatch.app.js --env=macos",
+    "test:app:linux": "yarn run build:e2e && nightwatch --config dist/remixd-app/test/nightwatch.app.js --env=linux",
+    "test:app:windows": "yarn run build:e2e && nightwatch --config dist/remixd-app/test/nightwatch.app.js --env=windows",
     "test:browser": "yarn run build:e2e && nightwatch --config dist/remixd-app/test/nightwatch.browser.js"
   },
   "keywords": [],
