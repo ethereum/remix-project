@@ -21,7 +21,7 @@ module.exports = {
         locateStrategy: 'xpath',
         timeout: 360000
       })
-      .pause(60000)
+      .pause(5000)
       .end()
   }
 }
