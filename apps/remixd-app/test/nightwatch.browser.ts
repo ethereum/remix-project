@@ -32,7 +32,7 @@ module.exports = {
     },
     edge: {
       desiredCapabilities: {
-        browserName: 'edge',
+        browserName: 'MicrosoftEdge',
         marionette: true,
       }
     }
