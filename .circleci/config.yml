@@ -124,7 +124,7 @@ jobs:
           command: |
               nvm install 20.0.0
               nvm use 20.0.0
-              cd .\apps\remixd-app\
+              cd apps/remixd-app/
               yarn
               yarn package
               yarn selenium-install
