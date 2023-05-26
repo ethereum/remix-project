@@ -23,6 +23,9 @@ jobs:
             npx -v
             npm install --global yarn http-server
             yarn -v
+            find c:/ProgramData/nodejs
+     
+                 
 
 
 
