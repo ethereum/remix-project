@@ -6,7 +6,7 @@
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
-    "start:e2e": "electron-forge start -- --folder=../remix-ide/contracts --e2e",
+    "start:e2e": "electron-forge start -- --folder=test/contracts --e2e",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
