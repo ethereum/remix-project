@@ -120,7 +120,6 @@ jobs:
       - run: unzip ./persist/dist.zip # this is the IDE build
       - run: 
           command: |
-              
               cd .\apps\remixd-app\
               yarn
               yarn package
