@@ -161,10 +161,6 @@ jobs:
           command: |
               cd apps/remixd-app/
               yarn test:browser:edge & yarn test:app:windows
-      - persist_to_workspace:
-          root: .
-          paths:
-            - "apps/remixd-app/out"
       - store_test_results:
           path: ./apps/remixd-app/reports/tests
       - store_artifacts:
