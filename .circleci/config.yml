@@ -9,7 +9,7 @@ orbs:
   win: circleci/windows@5.0 # The Windows orb gives you everything you need to start using the Windows executor.
 jobs:
 
-  windows:
+  prepare-windows:
     executor:
       name: win/default # executor type
       size: medium # can be medium, large, xlarge, 2xlarge
@@ -111,6 +111,7 @@ jobs:
     executor:
       name: win/default # executor type
       size: medium # can be medium, large, xlarge, 2xlarge
+      shell: bash.exe
     working_directory: ~/remix-project
     steps:
       - checkout
@@ -119,19 +120,7 @@ jobs:
       - run: unzip ./persist/dist.zip # this is the IDE build
       - run: 
           command: |
-              Start-Process powershell -verb runAs -Args "-start GeneralProfile"
-              nvm install 20.0.0
-              nvm list available
-      - run: 
-          command: |
-              Start-Process powershell -verb runAs -Args "-start GeneralProfile"
-              nvm use 20.0.0
-              node -v
-              npm -v
-              npm install --global yarn http-server
-      - run: 
-          command: |
-              Start-Process powershell -verb runAs -Args "-start GeneralProfile"
+              
               cd .\apps\remixd-app\
               yarn
               yarn package
@@ -141,12 +130,10 @@ jobs:
               cd apps/remixd-app/
               yarn selenium-start
           background: true
-          shell: bash.exe
       - run: 
           command: |
               cd apps/remixd-app/
-              npx http-server ../../dist/apps/remix-ide & yarn test:app:windows & yarn test:browser:edge
-          shell: bash.exe
+              http-server ../../dist/apps/remix-ide & yarn test:browser:edge
       - persist_to_workspace:
           root: .
           paths:
@@ -489,7 +476,7 @@ workflows:
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
-      - windows
+      - prepare-windows
       - build
       - build-plugin:
           matrix:
@@ -518,6 +505,7 @@ workflows:
       - build-remixd-ui-win:
           requires:
             - build
+            - prepare-windows
 
       - test-remixd-ui-mac:
           requires:
