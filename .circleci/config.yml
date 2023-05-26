@@ -114,6 +114,8 @@ jobs:
       shell: bash.exe
     working_directory: ~/remix-project
     steps:
+      - restore_cache:
+          key: node-20-windows-v3
       - checkout
       - attach_workspace:
           at: . # this is the out folder of the remixd app + remix IDE
