@@ -20,6 +20,8 @@ jobs:
             nvm install 20.0.0
             nvm use 20.0.0
             node -v
+            yarn -v
+            npx -v
 
 
 
