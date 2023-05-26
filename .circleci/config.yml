@@ -14,7 +14,9 @@ jobs:
       name: win/default # executor type
       size: medium # can be medium, large, xlarge, 2xlarge
       shell: bash.exe
+    working_directory: ~/remix-project
     steps:
+      checkout
       - restore_cache:
           key: node-20-windows-v3
       - run: 
@@ -29,7 +31,25 @@ jobs:
           key: node-20-windows-v3
           paths:
             - /ProgramData/nvm/v20.0.0
-                 
+
+      - restore_cache:
+          keys:
+            - remixd-windows-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
+      - run: 
+          command: |
+              cd apps/remixd-app/
+              yarn
+              yarn package
+              yarn selenium-install
+      - save_cache:
+          key: remixd-windows-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
+          paths:
+            - apps/remixd-app/node_modules
+     - persist_to_workspace:
+          root: .
+          paths:
+            - "apps/remixd-app/out"
+
 
 
 
@@ -107,7 +127,7 @@ jobs:
               - "persist"
 
 
-  build-remixd-ui-win:
+  test-remixd-ui-win:
     executor:
       name: win/default # executor type
       size: medium # can be medium, large, xlarge, 2xlarge
@@ -120,14 +140,7 @@ jobs:
       - attach_workspace:
           at: . # this is the out folder of the remixd app + remix IDE
       - run: unzip ./persist/dist.zip # this is the IDE build
-      - run: 
-          command: |
-              nvm install 20.0.0
-              nvm use 20.0.0
-              cd apps/remixd-app/
-              yarn
-              yarn package
-              yarn selenium-install
+
       - run: 
           command: |
               cd apps/remixd-app/
@@ -509,7 +522,7 @@ workflows:
 
       - build-remixd-ui-mac
       - build-remixd-ui-linux
-      - build-remixd-ui-win:
+      - test-remixd-ui-win:
           requires:
             - build
             - prepare-windows
