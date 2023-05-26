@@ -140,7 +140,9 @@ jobs:
       - attach_workspace:
           at: . # this is the out folder of the remixd app + remix IDE
       - run: unzip ./persist/dist.zip # this is the IDE build
-
+      - restore_cache:
+          keys:
+            - remixd-windows-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
       - run: 
           command: |
               cd apps/remixd-app/
