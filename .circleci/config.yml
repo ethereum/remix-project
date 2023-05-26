@@ -16,7 +16,7 @@ jobs:
     steps:
       - run: # get execution policy
           command: |
-            nvm install 20.0.0
+            Start-Process powershell -verb runAs -Args "-start GeneralProfile"
             $profile
             Get-ExecutionPolicy
             Get-Content $profile
