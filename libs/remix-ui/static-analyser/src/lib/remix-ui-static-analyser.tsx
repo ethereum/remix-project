@@ -10,6 +10,9 @@ import { compilation } from './actions/staticAnalysisActions'
 import { initialState, analysisReducer } from './reducers/staticAnalysisReducer'
 import { CodeAnalysis } from '@remix-project/remix-analyzer'
 import { CustomTooltip } from '@remix-ui/helper'
+import Tab from 'react-bootstrap/Tab'
+import Tabs from 'react-bootstrap/Tabs'
+import { Fade } from 'react-bootstrap'
 
 declare global {
   interface Window {
@@ -208,6 +211,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }
 
   const run = async (lastCompilationResult, lastCompilationSource, currentFile) => {
+    console.log({ state, lastCompilationResult, lastCompilationSource, currentFile })
     if (!isSupportedVersion) return
     if (state.data !== null) {
       if (lastCompilationResult && (categoryIndex.length > 0 || slitherEnabled)) {
@@ -474,15 +478,46 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     )
   }
 
+  const handleShowLinterMessages = () => {
+
+  }
+
+  const tabKeys = [
+    {
+      tabKey: 'linter',
+      child: <div></div>,
+      title: 'Linter'
+    },
+    {
+      tabKey: 'basic',
+      child: <div id="staticanalysismodules" className="list-group list-group-flush">
+      {Object.keys(groupedModules).map((categoryId, i) => {
+        const category = groupedModules[categoryId]
+        return (
+          categorySection(category, categoryId, i)
+        )
+      })
+      }
+    </div>,
+      title: 'Basic'
+    },
+    {
+      tabKey: 'slither',
+      child: <div></div>,
+      title: 'Slither'
+    }
+  ]
+
   return (
     <div className="analysis_3ECCBV px-3 pb-1">
       <div className="my-2 d-flex flex-column align-items-left">
-        <div className="d-flex justify-content-between mb-3" id="staticanalysisButton">
+        <div className="d-flex flex-column mb-3" id="staticanalysisButton">
+        <div className="mb-3 d-flex justify-content-between">
           <RemixUiCheckbox
-            id="autorunstaticanalysis"
+            id="solhintstaticanalysis"
             inputType="checkbox"
             title="Run solhint static analysis on file save"
-            onClick={handleAutoRun}
+            onClick={handleShowLinterMessages}
             checked={autoRun}
             label="Linter"
             onChange={() => {}}
@@ -502,80 +537,46 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             onChange={() => {}}
             tooltipPlacement={'top-start'}
           />
-          <div className="d-flex mt-1" id="enableSlitherAnalysis">
-            <RemixUiCheckbox
-              id="enableSlither"
-              inputType="checkbox"
-              onClick={handleSlitherEnabled}
-              checked={slitherEnabled}
-              label="Slither"
-              disabled={showSlither}
-              onChange={() => {}}
-            />
-
-            <a className="mt-1 text-nowrap" href='https://remix-ide.readthedocs.io/en/latest/slither.html#enable-slither-analysis' target={'_blank'}>
-              <CustomTooltip
-                placement={'right'}
-                tooltipClasses="text-nowrap"
-                tooltipId="overlay-tooltip"
-                tooltipText={<span className="border bg-light text-dark p-1 pr-3" style={{minWidth: '230px' }}>Learn how to use Slither Analysis</span>}
-              >
-                <i style={{ fontSize: 'medium' }} className={'fal fa-info-circle ml-3'} aria-hidden="true"></i>
-              </CustomTooltip>
-            </a>
+          <RemixUiCheckbox
+            id="enableSlither"
+            inputType="checkbox"
+            onClick={handleSlitherEnabled}
+            checked={slitherEnabled}
+            label="Slither"
+            disabled={showSlither}
+            onChange={() => {}}
+          />
+        </div>
+          <Button
+              buttonText="Analyse"
+              title={runButtonTitle}
+              classList="btn btn-sm btn-primary btn-block"
+              onClick={async () => await run(state.data, state.source, state.file)}
+              disabled={(state.data === null || categoryIndex.length === 0) && !slitherEnabled || !isSupportedVersion }
+          />
+          <div className="mt-2 p-2 d-flex border-top flex-column">
+            <span>Last results for:</span>
+            <span
+              className="text-break break-word word-break font-weight-bold"
+              id="staticAnalysisCurrentFile"
+            >
+              {state.file}
+            </span>
           </div>
         </div>
-        <Button
-          buttonText="Run"
-          title={runButtonTitle}
-          classList="btn btn-sm btn-primary btn-block"
-          onClick={async () => await run(state.data, state.source, state.file)}
-          disabled={(state.data === null || categoryIndex.length === 0) && !slitherEnabled || !isSupportedVersion }
-        />
-        {/* { showSlither &&
-          <div className="d-flex mt-2" id="enableSlitherAnalysis">
-            <RemixUiCheckbox
-              id="enableSlither"
-              inputType="checkbox"
-              onClick={handleSlitherEnabled}
-              checked={slitherEnabled}
-              label="Enable Slither Analysis"
-              disabled={showSlither}
-              onChange={() => {}}
-            />
-
-            <a className="mt-1 text-nowrap" href='https://remix-ide.readthedocs.io/en/latest/slither.html#enable-slither-analysis' target={'_blank'}>
-              <CustomTooltip
-                placement={'right'}
-                tooltipClasses="text-nowrap"
-                tooltipId="overlay-tooltip"
-                tooltipText={<span className="border bg-light text-dark p-1 pr-3" style={{minWidth: '230px' }}>Learn how to use Slither Analysis</span>}
-              >
-                <i style={{ fontSize: 'medium' }} className={'fal fa-info-circle ml-3'} aria-hidden="true"></i>
-              </CustomTooltip>
-            </a>
-          </div>
-        } */}
+        <Tabs fill defaultActiveKey={tabKeys[0].tabKey}>
+          {tabKeys.map(tabKey => (
+            <Tab
+              title={tabKey.title}
+              eventKey={tabKey.tabKey}
+              tabClassName="text-decoration-none"
+            >
+              {tabKey.child}
+            </Tab>
+            ))}
+        </Tabs>
       </div>
-      {/* <div id="staticanalysismodules" className="list-group list-group-flush">
-        {Object.keys(groupedModules).map((categoryId, i) => {
-          const category = groupedModules[categoryId]
-          return (
-            categorySection(category, categoryId, i)
-          )
-        })
-        }
-      </div> */}
-      checkbox seperator
-      <div className="mt-2 p-2 d-flex border-top flex-column">
-        <span>Last results for:</span>
-        <span
-          className="text-break break-word word-break font-weight-bold"
-          id="staticAnalysisCurrentFile"
-        >
-          {state.file}
-        </span>
-      </div>
+      
       {Object.entries(warningState).length > 0 &&
         <div id='staticanalysisresult' >
           <RemixUiCheckbox
