@@ -9,7 +9,7 @@ orbs:
   win: circleci/windows@5.0 # The Windows orb gives you everything you need to start using the Windows executor.
 jobs:
 
-  prepare-windows:
+  build-remixd-windows:
     executor:
       name: win/default # executor type
       size: medium # can be medium, large, xlarge, 2xlarge
@@ -498,7 +498,7 @@ workflows:
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
-      - prepare-windows
+
       - build
       - build-plugin:
           matrix:
@@ -521,13 +521,14 @@ workflows:
             exclude: 
               - plugin: plugin_api
                 parallelism: 1
-
+      
+      - build-remixd-windows
       - build-remixd-ui-mac
       - build-remixd-ui-linux
       - test-remixd-ui-win:
           requires:
             - build
-            - prepare-windows
+            - build-remixd-windows
 
       - test-remixd-ui-mac:
           requires:
