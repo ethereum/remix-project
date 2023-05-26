@@ -136,6 +136,11 @@ jobs:
     steps:
       - restore_cache:
           key: node-20-windows-v3
+      - run: 
+          command: |
+            nvm install 20.0.0
+            nvm use 20.0.0
+            node -v
       - checkout
       - attach_workspace:
           at: . # this is the out folder of the remixd app + remix IDE
@@ -145,7 +150,6 @@ jobs:
             - remixd-windows-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
       - run: 
           command: |
-              nvm use 20.0.0
               cd apps/remixd-app/
               yarn selenium-start
           background: true
