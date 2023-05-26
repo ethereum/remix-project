@@ -45,7 +45,7 @@ jobs:
           key: remixd-windows-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
           paths:
             - apps/remixd-app/node_modules
-     - persist_to_workspace:
+      - persist_to_workspace:
           root: .
           paths:
             - "apps/remixd-app/out"
