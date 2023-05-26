@@ -16,12 +16,16 @@ jobs:
     steps:
       - run: # get execution policy
           command: |
+            nvm install 20.0.0
             $profile
-            Get-ExecutionPolicy -List
-            Get-Content -Path $profile
-            install-module nodejs
-            install-module yarn
-            install-module http-server
+            Get-ExecutionPolicy
+            Get-Content $profile
+            Get-Content $PROFILE.AllUsersAllHosts
+            Get-Content $PROFILE.AllUsersCurrentHost
+            Get-Content $PROFILE.CurrentUserAllHosts
+            Get-Content $PROFILE.CurrentUserCurrentHost
+            
+
 
               
 
