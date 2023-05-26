@@ -10,7 +10,7 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "selenium-install": "selenium-standalone install --drivers.chrome.version=112.0.5615.28 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com",
+    "selenium-install": "selenium-standalone install --drivers.chromiumedge.version=112.0.1722.39 --drivers.chrome.version=112.0.5615.28 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com",
     "selenium-start": "selenium-standalone start --config=./selenium.config.js",
     "build:e2e": "tsc -p tsconfig.e2e.json",
     "test:app:macos": "yarn run build:e2e && nightwatch --config dist/remixd-app/test/nightwatch.app.js --env=macos",
