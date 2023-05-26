@@ -8,6 +8,24 @@ orbs:
   browser-tools: circleci/browser-tools@1.4.1
   win: circleci/windows@5.0 # The Windows orb gives you everything you need to start using the Windows executor.
 jobs:
+
+  windows:
+    executor:
+      name: win/default # executor type
+      size: medium # can be medium, large, xlarge, 2xlarge
+    steps:
+      - run: # get execution policy
+          command: |
+            $profile
+            Get-ExecutionPolicy -List
+            Get-Content -Path $profile
+            install-module nodejs
+            install-module yarn
+            install-module http-server
+
+              
+
+
   build:
     docker:
       - image: cimg/node:20.0.0-browsers
@@ -461,6 +479,7 @@ workflows:
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
+      - windows
       - build
       - build-plugin:
           matrix:
