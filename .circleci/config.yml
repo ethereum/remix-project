@@ -16,7 +16,7 @@ jobs:
       shell: bash.exe
     working_directory: ~/remix-project
     steps:
-      checkout
+      - checkout
       - restore_cache:
           key: node-20-windows-v3
       - run: 
