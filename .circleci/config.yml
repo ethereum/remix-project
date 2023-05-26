@@ -17,6 +17,7 @@ jobs:
       - run: 
           command: |
             nvm install 20.0.0
+            nvm use 20.0.0
             node -v
           shell: bash.exe
       - run: 
