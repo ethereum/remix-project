@@ -16,7 +16,7 @@ jobs:
       shell: bash.exe
     steps:
       - restore_cache:
-          key: node-20-windows-v2-{{ checksum "/ProgramData/nvm/v20.0.0/CHANGELOG.md" }}
+          key: node-20-windows-v3
       - run: 
           command: |
             nvm install 20.0.0
@@ -26,7 +26,7 @@ jobs:
             npm install --global yarn http-server
             yarn -v
       - save_cache:
-          key: node-20-windows-v2-{{ checksum "/ProgramData/nvm/v20.0.0/CHANGELOG.md" }}
+          key: node-20-windows-v3
           paths:
             - /ProgramData/nvm/v20.0.0
                  
