@@ -1,0 +1,17 @@
+{
+  "name": "circuit-compiler",
+  "kind": "provider",
+  "displayName": "Circuit Compiler",
+  "events": [],
+  "version": "2.0.0",
+  "methods": ["sendAsync", "init"],
+  "canActivate": ["remixd"],
+  "url": "",
+  "description": "Enables circuit compilation and computing a witness for ZK proofs",
+  "icon": "https://docs.circom.io/assets/images/favicon.png",
+  "location": "sidePanel",
+  "documentation": "",
+  "repo": "https://github.com/ethereum/remix-project/tree/master/apps/circuit-compiler",
+  "maintainedBy": "Remix",
+  "authorContact": ""
+}
