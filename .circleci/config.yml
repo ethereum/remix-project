@@ -16,14 +16,10 @@ jobs:
     steps:
       - run: # get execution policy
           command: |
-            Start-Process powershell -verb runAs -Args "-start GeneralProfile"
-            $profile
             Get-ExecutionPolicy
-            Get-Content $profile
-            Get-Content $PROFILE.AllUsersAllHosts
-            Get-Content $PROFILE.AllUsersCurrentHost
-            Get-Content $PROFILE.CurrentUserAllHosts
-            Get-Content $PROFILE.CurrentUserCurrentHost
+            nvm install 20.0.0
+            nvm use 20.0.0
+            node -v
             
 
 
