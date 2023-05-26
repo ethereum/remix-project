@@ -23,7 +23,7 @@ jobs:
             npx -v
             npm install --global yarn http-server
             yarn -v
-      save_cache:
+      - save_cache:
         key: node-20-windows-v1
         paths:
           - /c/ProgramData/nvm/v20.0.0
