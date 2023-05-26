@@ -145,6 +145,7 @@ jobs:
             - remixd-windows-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
       - run: 
           command: |
+              nvm use 20.0.0
               cd apps/remixd-app/
               yarn selenium-start
           background: true
