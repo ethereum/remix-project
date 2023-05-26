@@ -14,13 +14,16 @@ jobs:
       name: win/default # executor type
       size: medium # can be medium, large, xlarge, 2xlarge
     steps:
-      - run: # get execution policy
+      - run: 
           command: |
             Get-ExecutionPolicy
             nvm install 20.0.0
             nvm use 20.0.0
             node -v
-            
+      - run: 
+          command: |
+            node -v
+          shell: bash.exe
 
 
               
