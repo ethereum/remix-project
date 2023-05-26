@@ -133,10 +133,14 @@ jobs:
               cd apps/remixd-app/
               yarn selenium-start
           background: true
+      - run:
+          command: |
+              http-serve dist/apps/remix-ide
+          background: true
       - run: 
           command: |
               cd apps/remixd-app/
-              http-server ../../dist/apps/remix-ide & yarn test:browser:edge
+              yarn test:browser:edge
       - persist_to_workspace:
           root: .
           paths:
