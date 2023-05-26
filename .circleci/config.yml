@@ -24,9 +24,9 @@ jobs:
             npm install --global yarn http-server
             yarn -v
       - save_cache:
-          key: node-20-windows-{{ checksum "/ProgramData/nvm/v20.0.0/CHANGELOG.md" }}
+          key: node-20-windows-v2-{{ checksum "/ProgramData/nvm/v20.0.0/CHANGELOG.md" }}
           paths:
-            - ProgramData/nvm/v20.0.0
+            - /ProgramData/nvm/v20.0.0
                  
 
 
