@@ -6,9 +6,13 @@ import { MakerRpm } from '@electron-forge/maker-rpm';
 import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 
 import { mainConfig } from './webpack.main.config';
-import { rendererConfig } from './webpack.renderer.config';
+
 import copy from 'recursive-copy';
 import fs from 'fs';
+
+const ideconfig = require('../remix-ide/webpack.config.js');
+
+console.log(ideconfig);
 
 const config: ForgeConfig = {
   packagerConfig: {},
@@ -50,17 +54,9 @@ const config: ForgeConfig = {
       devContentSecurityPolicy: // allow all content for now
       "default-src *  data: blob: filesystem: about: ws: wss: 'unsafe-inline' 'unsafe-eval'; script-src * data: blob: 'unsafe-inline' 'unsafe-eval'; connect-src * data: blob: 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src * data: blob: ; style-src * data: blob: 'unsafe-inline'; font-src * data: blob: 'unsafe-inline';"
       ,renderer: {
-        config: rendererConfig,
+        config: ideconfig,
         entryPoints: [
-          {
-            html: '../../dist/apps/remix-ide/index.html',
-            js: './src/renderer.ts',
-            name: 'main_window',
-            preload: {
-              js: './src/preload.ts',
-            },
-          },
-        ],
+        ]
       },
     }),
   ],
