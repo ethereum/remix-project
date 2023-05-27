@@ -73,6 +73,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
   const [warningState, setWarningState] = useState({})
   const [runButtonTitle, setRunButtonTitle] = useState<string>('Run Static Analysis')
+  const [hideWarnings, setHideWarnings] = useState(false)
 
   const warningContainer = useRef(null)
   const allWarnings = useRef({})
@@ -478,7 +479,21 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     )
   }
 
+  useEffect(() => {
+    console.log('logging hints from solhint in useEffect')
+    props.analysisModule.on('solhint' as any, 'lintOnCompilationFinished',
+      (hints: any) => {
+
+        console.log({ hints })
+      })
+    return () => props.analysisModule.off('solhint' as any, 'lintOnCompilationFinished')
+  }, [])
+
   const handleShowLinterMessages = () => {
+    
+  }
+
+  const handleHideWarnings = () => {
 
   }
 
@@ -490,7 +505,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     },
     {
       tabKey: 'basic',
-      child: <div id="staticanalysismodules" className="list-group list-group-flush">
+      title: 'Basic',
+      child: <>
+      <div id="staticanalysismodules" className="list-group list-group-flush">
       {Object.keys(groupedModules).map((categoryId, i) => {
         const category = groupedModules[categoryId]
         return (
@@ -498,13 +515,33 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         )
       })
       }
-    </div>,
-      title: 'Basic'
+    </div>
+    {Object.entries(warningState).length > 0 &&
+        <div id='staticanalysisresult' >
+          <div className="mb-4">
+            {
+              (Object.entries(warningState).map((element, index) => (
+                <div key={index}>
+                  {element[1]['length'] > 0 ? <span className="text-dark h6">{element[0]}</span> : null}
+                  {element[1]['map']((x, i) => ( // eslint-disable-line dot-notation
+                    x.hasWarning ? ( // eslint-disable-next-line  dot-notation
+                      <div data-id={`staticAnalysisModule${x.warningModuleName}${i}`} id={`staticAnalysisModule${x.warningModuleName}${i}`} key={i}>
+                        <ErrorRenderer name={`staticAnalysisModule${x.warningModuleName}${i}`} message={x.msg} opt={x.options} warningErrors={ x.warningErrors} editor={props.analysisModule}/>
+                      </div>
+                    ) : null
+                  ))}
+                </div>
+              )))
+            }
+          </div>
+        </div>
+      }
+    </>
     },
     {
       tabKey: 'slither',
+      title: 'Slither',
       child: <div></div>,
-      title: 'Slither'
     }
   ]
 
@@ -554,7 +591,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               onClick={async () => await run(state.data, state.source, state.file)}
               disabled={(state.data === null || categoryIndex.length === 0) && !slitherEnabled || !isSupportedVersion }
           />
-          <div className="mt-2 p-2 d-flex border-top flex-column">
+          <div className="mt-4 p-2 d-flex border-top flex-column">
             <span>Last results for:</span>
             <span
               className="text-break break-word word-break font-weight-bold"
@@ -563,52 +600,43 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               {state.file}
             </span>
           </div>
+          <div className="border-top mt-3 pt-2" id="staticanalysisresult">
+            <RemixUiCheckbox
+              id="showLibWarnings"
+              name="showLibWarnings"
+              categoryId="showLibWarnings"
+              title="when checked, the results are also displayed for external contract libraries"
+              inputType="checkbox"
+              checked={showLibsWarning}
+              label="Show warnings for external libraries"
+              onClick={handleShowLibsWarning}
+              onChange={() => {}}
+            />
+            <RemixUiCheckbox
+              id="hideWarnings"
+              name="hideWarnings"
+              title="when checked, general warnings from analysis are hidden"
+              inputType="checkbox"
+              checked={hideWarnings}
+              label="Hide warnings"
+              onClick={handleHideWarnings}
+              onChange={() => {}}
+            />
+          </div>
         </div>
         <Tabs fill defaultActiveKey={tabKeys[0].tabKey}>
           {tabKeys.map(tabKey => (
             <Tab
+              key={tabKey.tabKey}
               title={tabKey.title}
               eventKey={tabKey.tabKey}
-              tabClassName="text-decoration-none"
+              tabClassName="text-decoration-none font-weight-bold"
             >
               {tabKey.child}
             </Tab>
             ))}
         </Tabs>
       </div>
-      
-      {Object.entries(warningState).length > 0 &&
-        <div id='staticanalysisresult' >
-          <RemixUiCheckbox
-            id="showLibWarnings"
-            name="showLibWarnings"
-            categoryId="showLibWarnings"
-            title="when checked, the results are also displayed for external contract libraries"
-            inputType="checkbox"
-            checked={showLibsWarning}
-            label="Show warnings for external libraries"
-            onClick={handleShowLibsWarning}
-            onChange={() => {}}
-          />
-          <br/>
-          <div className="mb-4">
-            {
-              (Object.entries(warningState).map((element, index) => (
-                <div key={index}>
-                  {element[1]['length'] > 0 ? <span className="text-dark h6">{element[0]}</span> : null}
-                  {element[1]['map']((x, i) => ( // eslint-disable-line dot-notation
-                    x.hasWarning ? ( // eslint-disable-next-line  dot-notation
-                      <div data-id={`staticAnalysisModule${x.warningModuleName}${i}`} id={`staticAnalysisModule${x.warningModuleName}${i}`} key={i}>
-                        <ErrorRenderer name={`staticAnalysisModule${x.warningModuleName}${i}`} message={x.msg} opt={x.options} warningErrors={ x.warningErrors} editor={props.analysisModule}/>
-                      </div>
-                    ) : null
-                  ))}
-                </div>
-              )))
-            }
-          </div>
-        </div>
-      }
     </div>
   )
 }
