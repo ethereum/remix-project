@@ -30,6 +30,12 @@ const config: ForgeConfig = {
   plugins: [
     new WebpackPlugin({
       mainConfig,
+      devServer: {
+        setupMiddlewares: (middlewares: any[], devServer: any) => {
+          console.log('We should start the dev server here');
+          return middlewares;
+        }
+      },
       renderer: {
         config: rendererConfig,
         entryPoints: [
