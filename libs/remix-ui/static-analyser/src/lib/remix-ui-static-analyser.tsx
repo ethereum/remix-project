@@ -13,6 +13,7 @@ import { CustomTooltip } from '@remix-ui/helper'
 import Tab from 'react-bootstrap/Tab'
 import Tabs from 'react-bootstrap/Tabs'
 import { Fade } from 'react-bootstrap'
+import { AnalysisTab } from '../staticanalyser'
 
 declare global {
   interface Window {
@@ -25,7 +26,7 @@ const _paq = window._paq = window._paq || []  //eslint-disable-line
 export interface RemixUiStaticAnalyserProps {
   registry: any,
   event: any,
-  analysisModule: any
+  analysisModule: AnalysisTab
 }
 
 export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
@@ -79,6 +80,11 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const allWarnings = useRef({})
   const [state, dispatch] = useReducer(analysisReducer, initialState)
 
+  /**
+   * Disable static analysis for contracts whose compiler version is
+   * less than 0.4.12
+   * @param version {string} - Solidity compiler version
+   */
   const setDisableForRun = (version: string) => {
     const truncateVersion = (version: string) => {
       const tmp: RegExpExecArray | null = /^(\d+.\d+.\d+)/.exec(version)
@@ -123,7 +129,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       // Reset badge
       props.event.trigger('staticAnaysisWarning', [])
       // Reset state
-      dispatch({ type: '', payload: {} })
+      dispatch({ type: '', payload: initialState })
       // Show 'Enable Slither Analysis' checkbox
       if (currentWorkspace && currentWorkspace.isLocalhost === true) setShowSlither(true)
       else {
@@ -139,7 +145,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         // Reset badge
         props.event.trigger('staticAnaysisWarning', [])
         // Reset state
-        dispatch({ type: '', payload: {} })
+        dispatch({ type: '', payload: initialState })
         setShowSlither(false)
         setSlitherEnabled(false)
       }
@@ -218,6 +224,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       if (lastCompilationResult && (categoryIndex.length > 0 || slitherEnabled)) {
         const warningMessage = []
         const warningErrors = []
+
+        const hints = await props.analysisModule.call('solhint', 'lint', currentFile)
+        console.log({ hints })
 
         // Remix Analysis
         _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'remixAnalyzer'])

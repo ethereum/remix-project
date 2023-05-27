@@ -1,11 +1,16 @@
-export const initialState = {
-  file: null,
+import { RemixUiStaticAnalyserReducerActionType, RemixUiStaticAnalyserState } from "../../staticanalyser"
+
+export const initialState: RemixUiStaticAnalyserState = {
+  file: '',
   source: null,
-  languageVersion: null,
-  data: null
+  languageVersion: '',
+  data: null,
+  input: '',
+  version: ''
 }
 
-export const analysisReducer = (state, action) => {
+export const analysisReducer = (state: RemixUiStaticAnalyserState,
+  action: RemixUiStaticAnalyserReducerActionType) => {
   switch (action.type) {
     case 'compilationFinished':
       return {
