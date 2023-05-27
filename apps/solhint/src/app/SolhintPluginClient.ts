@@ -33,7 +33,7 @@ export class SolHint extends PluginClient {
   triggerLinter: boolean
   constructor() {
     super()
-    this.methods = ['lintContract', 'lintOnCompilation', 'lintContractCustomAction']
+    this.methods = ['lintContract', 'lintOnCompilation', 'lintContractCustomAction', 'lint']
     createClient(this)
     this.onload().then(async () => {
       await this.lintOnCompilation()
@@ -52,7 +52,11 @@ export class SolHint extends PluginClient {
     })
     this.triggerLinter = false
   }
-
+  /**
+   * method to handle context menu action in file explorer for 
+   * solhint plugin
+   * @param action interface CustomAction
+   */
   async lintContractCustomAction(action: customAction) {
     this.triggerLinter = true
     await this.call('solidity', 'compile', action.path[0])
@@ -65,7 +69,7 @@ export class SolHint extends PluginClient {
     this.emit('lintingFinished', hints)
   }
 
-  private async lint(fileName: string) {
+  public async lint(fileName: string) {
     const content = await this.call('fileManager', 'readFile', fileName)
     let configContent = Config
     if (await this.call('fileManager' as any, 'exists', '.solhint.json')) {
