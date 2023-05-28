@@ -32,7 +32,7 @@ const implicitDependencies = JSON.parse(project).implicitDependencies
 const copyPatterns = implicitDependencies.map((dep) => {
   try {
     fs.statSync(__dirname + `/../../dist/apps/${dep}`).isDirectory()
-    return { from: __dirname + `../../dist/apps/${dep}`, to: `plugins/${dep}` }
+    return { from: __dirname + `/../../dist/apps/${dep}`, to: `plugins/${dep}` }
   }
   catch (e) {
     console.log('error', e)

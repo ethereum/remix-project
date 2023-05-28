@@ -1,0 +1,57 @@
+{
+  "name": "remixdesktop",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/remixdesktop/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "apps/remixdesktop/.webpack/main",
+        "index": "apps/remixdesktop/src/index.html",
+        "baseHref": "./",
+        "main": "apps/remixdesktop/src/main.ts",
+        "polyfills": "apps/remixdesktop/src/polyfills.ts",
+        "tsConfig": "apps/remixdesktop/tsconfig.app.json",
+        "assets": [
+        ],
+        "scripts": [],
+        "webpackConfig": "apps/remixdesktop/webpack.config.js"
+      },
+      "configurations": {
+        "development": {
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/remixdesktop/src/environments/environment.ts",
+              "with": "apps/remixdesktop/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "remixdesktop:build",
+        "hmr": true,
+        "baseHref": "/"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "remixdesktop:build:development",
+          "port": 5003
+        },
+        "production": {
+          "buildTarget": "remixdesktop:build:production"
+        }
+      }
+    }
+  },
+  "tags": []
+}

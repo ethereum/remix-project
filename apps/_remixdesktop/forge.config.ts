@@ -15,34 +15,17 @@ const ideconfig = require('../remix-ide/webpack.config.js');
 console.log(ideconfig);
 
 const config: ForgeConfig = {
-  packagerConfig: {},
+  packagerConfig: {
+    ignore: 
+  },
   rebuildConfig: {},
   makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
   hooks:
   {
-    generateAssets: async (forgeConfig, platform, arch) => {
-      console.log('We should generate some assets here');
-      // read the currrent directory
-      fs.writeFileSync('./src/assets.txt', 'Hello World')
-    },
-    postStart: async (appProcess: any) => {
-      console.log('We should start the app here');
-      // list files in .webpack/renderer
-      //const files = fs.readdirSync('./.webpack/renderer/main_window');
-      //console.log(files);
-    },
-    prePackage: async (forgeConfig, options) => {
-      console.log('We should package the app here', options, forgeConfig);
-      // remove all files in .webpack/renderer
-      fs.rmdirSync('./.webpack/renderer/main_window', { recursive: true });
-
-      await copy('/Volumes/bunsen/code/rmproject2/remix-project/dist/apps/remix-ide', './.webpack/renderer/main_window');
-    },
-    postPackage: async (forgeConfig, options) => {
-      console.info('Packages built at:', options.outputPaths);
-    }
+    
   },
   plugins: [
+    /*
     new WebpackPlugin({
       mainConfig,
       devServer: {
@@ -59,6 +42,7 @@ const config: ForgeConfig = {
         ]
       },
     }),
+    */
   ],
 };
 
