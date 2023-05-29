@@ -14,7 +14,6 @@
         "index": "apps/remixdesktop/src/index.html",
         "baseHref": "./",
         "main": "apps/remixdesktop/src/main.ts",
-        "polyfills": "apps/remixdesktop/src/polyfills.ts",
         "tsConfig": "apps/remixdesktop/tsconfig.app.json",
         "assets": [
         ],
