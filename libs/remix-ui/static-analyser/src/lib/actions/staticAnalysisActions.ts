@@ -1,6 +1,6 @@
 import { CompilationResult, SourceWithTarget } from '@remixproject/plugin-api'
 import React from 'react' //eslint-disable-line
-import { AnalysisTab, RemixUiStaticAnalyserReducerActionType } from '../../staticanalyser'
+import { AnalysisTab, RemixUiStaticAnalyserReducerActionType, SolHintReport } from '../../staticanalyser'
 
 /**
  * 
@@ -40,8 +40,9 @@ export const compilation = (analysisModule: AnalysisTab,
  * @param warningContainer {React.RefObject<object>}
  * @returns {Promise<void>}
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function run (lastCompilationResult, lastCompilationSource, currentFile, state, props, isSupportedVersion, slitherEnabled, categoryIndex, groupedModules, runner, _paq, message, showWarnings, allWarnings, warningContainer) {
-  console.log({ state, lastCompilationResult, lastCompilationSource, currentFile })
+
   if (!isSupportedVersion) return
   if (state.data !== null) {
     if (lastCompilationResult && (categoryIndex.length > 0 || slitherEnabled)) {
@@ -188,6 +189,5 @@ export async function run (lastCompilationResult, lastCompilationSource, current
       props.event.trigger('staticAnaysisWarning', [-1])
     }
   }
-  console.log({ allWarnings })
 }
 

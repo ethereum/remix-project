@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer, useRef } from 'react' // eslint-disable-line
+import React, { useEffect, useState, useReducer, useRef, Fragment } from 'react' // eslint-disable-line
 import Button from './Button/StaticAnalyserButton' // eslint-disable-line
 import { util } from '@remix-project/remix-lib'
 import _ from 'lodash'
@@ -13,9 +13,10 @@ import { CustomTooltip } from '@remix-ui/helper'
 import Tab from 'react-bootstrap/Tab'
 import Tabs from 'react-bootstrap/Tabs'
 import { Fade } from 'react-bootstrap'
-import { AnalysisTab } from '../staticanalyser'
+import { AnalysisTab, SolHintReport } from '../staticanalyser'
 import { run } from './actions/staticAnalysisActions'
 import SolHintTabChild from './components/SolHintTabChild'
+import BasicTitle from './components/BasicTitle'
 
 declare global {
   interface Window {
@@ -78,6 +79,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [warningState, setWarningState] = useState({})
   const [runButtonTitle, setRunButtonTitle] = useState<string>('Run Static Analysis')
   const [hideWarnings, setHideWarnings] = useState(false)
+  const [hints, setHints] = useState<SolHintReport[]>([])
 
   const warningContainer = useRef(null)
   const allWarnings = useRef({})
@@ -111,6 +113,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     const runAnalysis = async () => {
       await run(state.data, state.source, state.file, allWarnings, props, isSupportedVersion, slitherEnabled, categoryIndex, groupedModules, runner,_paq,
         message, showWarnings, allWarnings, warningContainer)
+        // Run solhint
+      const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
+      setHints(hintsResult)
     }
     if (basicEnabled) {
       if (state.data !== null) {
@@ -351,12 +356,49 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const tabKeys = [
     {
       tabKey: 'linter',
-      child: <SolHintTabChild analysisModule={props.analysisModule} currentFile={state.file} />,
-      title: 'Linter'
+      child: (
+        <>
+          {hints.length > 0 &&
+        <div id='solhintlintingresult' className="mb-5">
+          <div className="mb-4">
+            {
+              hints.map((hint, index) => (
+                <Fragment key={index}>
+                  <div key={index} className={`${hint.type === 'warning' ? 
+                    'alert alert-warning' : 'alert alert-danger'}`}>
+                    <div onClick={async () => {
+                        await props.analysisModule.call('editor', 'discardHighlight')
+                        await props.analysisModule.call('editor', 'highlight', {
+                          end: {
+                            line: hint.line, column: hint.column+1
+                          },
+                          start: {
+                            line: hint.line, column: hint.column
+                          }
+                        }, state.file, '', { focus: true })
+                    }}>
+                      <span className="text-wrap">{hint.formattedMessage}</span>
+                      <span>{hint.type}</span><br />
+                      <span>{`${hint.column}:${hint.line}`}</span>
+                    </div>
+                  </div>
+                </Fragment>
+              )).sort((a, b) => {
+                if(a.type === 'warning' && b.type === 'error') return 1
+                if(a.type === 'error' && b.type === 'warning') return -1
+                return 0
+              })
+            }
+          </div>
+        </div>
+      }
+        </>
+      ),
+      title: <span className="rounded-circle">Linter{hints.length > 0 ? <i className="badge badge-info rounded-circle ml-2">{hints.length}</i> : null}</span>
     },
     {
       tabKey: 'basic',
-      title: 'Basic',
+      title: <BasicTitle warningStateEntries={Object.entries(warningState)}/>,
       child: <>
         {Object.entries(warningState).length > 0 &&
             <div id='staticanalysisresult' >
@@ -372,6 +414,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                           </div>
                         ) : null
                       ))}
+                      {}
                     </div>
                   )))
                 }

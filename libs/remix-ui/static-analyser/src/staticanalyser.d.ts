@@ -41,6 +41,7 @@ type SolHintReport = {
 type SolHintTabChildProps = {
   analysisModule: AnalysisTab
   currentFile: string
+  hints: SolHintReport[]
 }
 
 type RemixUiStaticAnalyserReducerActionType = {
