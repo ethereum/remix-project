@@ -15,7 +15,6 @@ import Tabs from 'react-bootstrap/Tabs'
 import { Fade } from 'react-bootstrap'
 import { AnalysisTab, SolHintReport } from '../staticanalyser'
 import { run } from './actions/staticAnalysisActions'
-import SolHintTabChild from './components/SolHintTabChild'
 import BasicTitle from './components/BasicTitle'
 
 declare global {
