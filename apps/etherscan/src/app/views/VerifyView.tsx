@@ -33,6 +33,7 @@ export const VerifyView: React.FC<Props> = ({
   const [results, setResults] = useState("")
   const [networkName, setNetworkName] = useState("Loading...")
   const [showConstructorArgs, setShowConstructorArgs] = useState(false)
+  const [constructorInputs, setConstructorInputs] = useState([])
   const verificationResult = useRef({})
 
   useEffect(() => {
@@ -122,8 +123,13 @@ export const VerifyView: React.FC<Props> = ({
                 onChange={async (e) => {
                     handleChange(e)
                     const {artefact} = await client.call("compilerArtefacts" as any, "getArtefactsByContractName", e.target.value)
-                    if (artefact && artefact.abi && artefact.abi[0] && artefact.abi[0].type && artefact.abi[0].type === 'constructor' && artefact.abi[0].inputs.length > 0) setShowConstructorArgs(true)
-                    else setShowConstructorArgs(false)
+                    if (artefact && artefact.abi && artefact.abi[0] && artefact.abi[0].type && artefact.abi[0].type === 'constructor' && artefact.abi[0].inputs.length > 0) {
+                      setConstructorInputs(artefact.abi[0].inputs)
+                      setShowConstructorArgs(true)
+                    } else {
+                      setConstructorInputs([])
+                      setShowConstructorArgs(false)
+                    }
                 }}
               >
                 <option disabled={true} value="">
@@ -144,16 +150,27 @@ export const VerifyView: React.FC<Props> = ({
 
             <div className={ showConstructorArgs ? 'form-group d-block': 'form-group d-none' } >
               <label htmlFor="contractArguments">Constructor Arguments</label>
-              <Field
-                className={
-                  errors.contractArguments && touched.contractArguments
-                    ? "form-control is-invalid"
-                    : "form-control"
-                }
-                type="text"
-                name="contractArguments"
-                placeholder="hex encoded args"
-              />
+                {constructorInputs.map((item, index) => {
+                  return (
+                    <div className="d-flex">
+                      <Field
+                        className="form-control m-1"
+                        type="text"
+                        key={`contractArgName${index}`}
+                        name={`contractArgName${index}`}
+                        value={item.name}
+                        placeholder="hex encoded args"
+                      />
+                      <Field
+                        className="form-control m-1"
+                        type="text"
+                        key={`contractArgType${index}`}
+                        name={`contractArgType${index}`}
+                        placeholder={item.type}
+                      />
+                    </div>
+                  )}
+                )}
               <ErrorMessage
                 className="invalid-feedback"
                 name="contractArguments"
