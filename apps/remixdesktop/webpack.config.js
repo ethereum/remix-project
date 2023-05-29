@@ -5,82 +5,57 @@ const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 
 // Nx plugins for webpack.
 module.exports = composePlugins(withNx(), (config) => {
-  // Update the webpack config as needed here.
-  // e.g. `config.plugins.push(new MyPlugin())`
-
-  // add fallback for node modules
-  config.resolve.fallback = {
-    ...config.resolve.fallback,
-    "crypto": require.resolve("crypto-browserify"),
-    "stream": require.resolve("stream-browserify"),
-    "path": require.resolve("path-browserify"),
-    "http": require.resolve("stream-http"),
-    "https": require.resolve("https-browserify"),
-    "constants": require.resolve("constants-browserify"),
-    "os": false, //require.resolve("os-browserify/browser"),
-    "timers": false, // require.resolve("timers-browserify"),
-    "zlib": require.resolve("browserify-zlib"),
-    "fs": false,
-    "module": false,
-    "tls": false,
-    "net": false,
-    "readline": false,
-    "child_process": false,
-    "buffer": require.resolve("buffer/"),
-    "vm": require.resolve('vm-browserify'),
+  config.target = 'electron-main'
+  config.devtool = 'source-map'
+  config.mode = 'production'
+  config.output = {
+    path: __dirname + '/.webpack/main',
+    filename: 'index.js',
+    libraryTarget: 'commonjs2',
   }
   
-
-  // add externals
-  config.externals = {
-    ...config.externals,
-    solc: 'solc',
-  }
-
-  // add public path
-  config.output.publicPath = '/'
-
-
-
-  // add copy & provide plugin
   config.plugins.push(
-    new webpack.ProvidePlugin({
-      Buffer: ['buffer', 'Buffer'],
-      url: ['url', 'URL'],
-      process: 'process/browser',
+    new webpack.DefinePlugin({
+      MAIN_WINDOW_WEBPACK_ENTRY:`\`file://$\{require('path').resolve(__dirname, '..', 'renderer', 'remix-ide', 'index.html')}\``,
+      'process.env.MAIN_WINDOW_WEBPACK_ENTRY': `\`file://$\{require('path').resolve(__dirname, '..', 'renderer', 'remix-ide', 'index.html')}\``,
     })
   )
-
-  // souce-map loader
-  config.module.rules.push({
-    test: /\.js$/,
-    use: ["source-map-loader"],
-    enforce: "pre"
-  })
-
-  config.ignoreWarnings = [/Failed to parse source map/] // ignore source-map-loader warnings
-
-
-  // set minimizer
-  config.optimization.minimizer = [
-    new TerserPlugin({
-      parallel: true,
-      terserOptions: {
-        ecma: 2015,
-        compress: false,
-        mangle: false,
-        format: {
-          comments: false,
+  config.module.rules = [
+    // Add support for native node modules
+    {
+      // We're specifying native_modules in the test because the asset relocator loader generates a
+      // "fake" .node file which is really a cjs file.
+      test: /native_modules[/\\].+\.node$/,
+      use: 'node-loader',
+    },
+    {
+      test: /[/\\]node_modules[/\\].+\.(m?js|node)$/,
+      parser: { amd: false },
+      use: {
+        loader: '@vercel/webpack-asset-relocator-loader',
+        options: {
+          outputAssetBase: 'native_modules',
         },
       },
-      extractComments: false,
-    }),
-    new CssMinimizerPlugin(),
+    },
+    {
+      test: /\.tsx?$/,
+      exclude: /(node_modules|\.webpack)/,
+      use: {
+        loader: 'ts-loader',
+        options: {
+          transpileOnly: true,
+        },
+      },
+    },
   ];
 
-  config.watchOptions = {
-    ignored: /node_modules/
+
+  config.node = {
+    __dirname: false,
+    __filename: false,
   }
 
+  console.log('config', config)
   return config;
 });

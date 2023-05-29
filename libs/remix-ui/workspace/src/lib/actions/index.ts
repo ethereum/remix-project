@@ -112,7 +112,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
           await basicWorkspaceInit(workspaces, workspaceProvider)
         }
       } else await basicWorkspaceInit(workspaces, workspaceProvider)
-    } else if (isElectron()) {
+    } else if (isElectron() && false) {
       plugin.call('notification', 'toast', `connecting to localhost...`)
       await basicWorkspaceInit(workspaces, workspaceProvider)
       await plugin.call('manager', 'activatePlugin', 'remixd')

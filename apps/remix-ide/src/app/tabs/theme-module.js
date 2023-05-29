@@ -40,7 +40,7 @@ export class ThemeModule extends Plugin {
     themes.map((theme) => {
       this.themes[theme.name.toLocaleLowerCase()] = {
        ...theme,
-        url: window.location.origin + ( window.location.pathname.startsWith('/address/') || window.location.pathname.endsWith('.sol') ? '/' : window.location.pathname ) + theme.url
+        url: isElectron()? theme.url: window.location.origin + ( window.location.pathname.startsWith('/address/') || window.location.pathname.endsWith('.sol') ? '/' : window.location.pathname ) + theme.url
       }
     })
     this._paq = _paq
@@ -85,6 +85,7 @@ export class ThemeModule extends Plugin {
         if (callback) callback()
       })
       document.head.insertBefore(theme, document.head.firstChild)
+      //if (callback) callback()
     }
   }
 
