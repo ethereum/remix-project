@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react"
+import Web3 from 'web3'
 
 import {
   PluginClient,
@@ -20,7 +21,6 @@ interface Props {
 
 interface FormValues {
   contractName: string
-  contractArguments: string
   contractAddress: string
 }
 
@@ -58,7 +58,15 @@ export const VerifyView: React.FC<Props> = ({
       throw new Error("no compilation result available")
     }
 
-    const contractArguments = values.contractArguments.replace("0x", "")    
+    const constructorValues = []
+    for (const key in values) {
+      if (key.startsWith('contractArgValue')) constructorValues.push(values[key])
+    }
+    const web3 = new Web3()
+    const constructorTypes = constructorInputs.map(e => e.type)
+    let contractArguments = web3.eth.abi.encodeParameters(constructorTypes, constructorValues)   
+    contractArguments = contractArguments.replace("0x", "")    
+    
     verificationResult.current = await verify(
       apiKey,
       values.contractAddress,
@@ -78,7 +86,6 @@ export const VerifyView: React.FC<Props> = ({
       <Formik
         initialValues={{
           contractName: "",
-          contractArguments: "",
           contractAddress: "",
         }}
         validate={(values) => {
@@ -149,7 +156,7 @@ export const VerifyView: React.FC<Props> = ({
             </div>
 
             <div className={ showConstructorArgs ? 'form-group d-block': 'form-group d-none' } >
-              <label htmlFor="contractArguments">Constructor Arguments</label>
+              <label>Constructor Arguments</label>
                 {constructorInputs.map((item, index) => {
                   return (
                     <div className="d-flex">
@@ -159,23 +166,18 @@ export const VerifyView: React.FC<Props> = ({
                         key={`contractArgName${index}`}
                         name={`contractArgName${index}`}
                         value={item.name}
-                        placeholder="hex encoded args"
                       />
                       <Field
                         className="form-control m-1"
                         type="text"
-                        key={`contractArgType${index}`}
-                        name={`contractArgType${index}`}
+                        key={`contractArgValue${index}`}
+                        name={`contractArgValue${index}`}
                         placeholder={item.type}
                       />
                     </div>
                   )}
                 )}
-              <ErrorMessage
-                className="invalid-feedback"
-                name="contractArguments"
-                component="div"
-              />
+              
             </div>
 
             <div className="form-group">
