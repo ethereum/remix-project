@@ -1,6 +1,6 @@
 import { CompilationResult, SourceWithTarget } from '@remixproject/plugin-api'
 import React from 'react' //eslint-disable-line
-import { AnalysisTab, RemixUiStaticAnalyserReducerActionType, SolHintReport } from '../../staticanalyser'
+import { AnalysisTab, RemixUiStaticAnalyserReducerActionType } from '../../staticanalyser'
 
 /**
  * 

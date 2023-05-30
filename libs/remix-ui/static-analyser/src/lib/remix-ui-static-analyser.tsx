@@ -255,11 +255,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
   }
 
-  const handleSlitherEnabled = () => {
-    if (slitherEnabled) {
+  const handleSlitherEnabled = async () => {
+    const slitherStatus = await props.analysisModule.call('manager', 'isActive', 'remixd')
+    if (slitherEnabled && slitherStatus) {
       setSlitherEnabled(false)
+      setShowSlither(false)
     } else {
       setSlitherEnabled(true)
+      setShowSlither(true)
     }
   }
 
@@ -356,7 +359,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }
 
   const handleHideWarnings = () => {
-
+    setHideWarnings(!hideWarnings)
   }
 
   const tabKeys = [
@@ -436,6 +439,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
   ]
 
+  const checkBasicStatus = () => {
+    return Object.values(groupedModules).map((value: any) => {
+      return (value.map(x => {
+        return x._index.toString()
+      }))
+    }).flat().every(el => categoryIndex.includes(el))
+  }
+
   return (
     <div className="analysis_3ECCBV px-3 pb-1">
       <div className="my-2 d-flex flex-column align-items-left">
@@ -462,7 +473,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             }).flat().every(el => categoryIndex.includes(el))}
             label="Basic"
             onClick={() => {
-              handleBasicEnabled()
               handleCheckAllModules(groupedModules)
             }}
             onChange={() => {}}
@@ -474,7 +484,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             onClick={handleSlitherEnabled}
             checked={slitherEnabled}
             label="Slither"
-            disabled={showSlither}
             onChange={() => {}}
           />
         </div>
@@ -522,7 +531,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         <Tabs defaultActiveKey={tabKeys[0].tabKey}>
             {solhintEnabled ? <Tab
               key={tabKeys[0].tabKey}
-              disabled={solhintEnabled}
               title={tabKeys[0].title}
               eventKey={tabKeys[0].tabKey}
               tabClassName="text-decoration-none font-weight-bold"
@@ -530,19 +538,19 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               {tabKeys[0].child}
             </Tab> : null}
 
-            {basicEnabled ? <Tab
-              key={tabKeys[1].tabKey}
-              disabled={basicEnabled}
-              title={tabKeys[1].title}
-              eventKey={tabKeys[1].tabKey}
-              tabClassName="text-decoration-none font-weight-bold"
-            >
-              {tabKeys[1].child}
-            </Tab> : null}
+            {
+              checkBasicStatus() ? <Tab
+                key={tabKeys[1].tabKey}
+                title={tabKeys[1].title}
+                eventKey={tabKeys[1].tabKey}
+                tabClassName="text-decoration-none font-weight-bold"
+              >
+                {tabKeys[1].child}
+              </Tab> : null
+            }
 
-            { slitherEnabled ? <Tab
+            { showSlither ? <Tab
               key={tabKeys[2].tabKey}
-              disabled={slitherEnabled}
               title={tabKeys[2].title}
               eventKey={tabKeys[2].tabKey}
               tabClassName="text-decoration-none font-weight-bold"
