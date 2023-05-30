@@ -168,13 +168,19 @@ export const VerifyView: React.FC<Props> = ({
                         value={item.name}
                         disabled={true}
                       />
-                      <Field
-                        className="form-control m-1"
-                        type="text"
-                        key={`contractArgValue${index}`}
-                        name={`contractArgValue${index}`}
-                        placeholder={item.type}
-                      />
+                      <CustomTooltip
+                        tooltipText={`value of ${item.name}`}
+                        tooltipId={`etherscan-constructor-value${index}`}
+                        placement='top'
+                      >
+                        <Field
+                          className="form-control m-1"
+                          type="text"
+                          key={`contractArgValue${index}`}
+                          name={`contractArgValue${index}`}
+                          placeholder={item.type}
+                        />
+                      </CustomTooltip>
                     </div>
                   )}
                 )}
