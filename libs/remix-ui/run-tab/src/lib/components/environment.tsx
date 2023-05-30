@@ -15,8 +15,8 @@ export function EnvironmentUI (props: EnvironmentProps) {
 
   const currentProvider = props.providers.providerList.find(exEnv => exEnv.value === props.selectedEnv)
   const bridges = {
-    'Optimism Provider': 'https://www.optimism.io/apps/bridges',
-    'Arbitrum One Provider': 'https://bridge.arbitrum.io/'
+    'injected-optimism-provider': 'https://www.optimism.io/apps/bridges',
+    'injected-arbitrum-one-provider': 'https://bridge.arbitrum.io/'
   }
 
   const isL2 = (provider) => provider && (provider.value === 'Optimism Provider' || provider.value === 'Arbitrum One Provider')
@@ -42,7 +42,7 @@ export function EnvironmentUI (props: EnvironmentProps) {
               tooltipId="info-recorder"
               tooltipText="Click to open a bridge for converting L1 mainnet ETH to the selected network currency."
             >
-              <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-plug'} aria-hidden="true" onClick={() => { window.open(bridges[currentProvider.value], '_blank') }}></i>
+              <i style={{ fontSize: 'medium' }} className={'ml-2 fa fa-plug'} aria-hidden="true" onClick={() => { window.open(bridges[currentProvider.value], '_blank') }}></i>
             </CustomTooltip>}
           </Dropdown.Toggle>
           <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items" >
