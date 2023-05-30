@@ -66,7 +66,7 @@ export const VerifyView: React.FC<Props> = ({
     const constructorTypes = constructorInputs.map(e => e.type)
     let contractArguments = web3.eth.abi.encodeParameters(constructorTypes, constructorValues)   
     contractArguments = contractArguments.replace("0x", "")    
-    
+
     verificationResult.current = await verify(
       apiKey,
       values.contractAddress,
@@ -166,6 +166,7 @@ export const VerifyView: React.FC<Props> = ({
                         key={`contractArgName${index}`}
                         name={`contractArgName${index}`}
                         value={item.name}
+                        disabled={true}
                       />
                       <Field
                         className="form-control m-1"
