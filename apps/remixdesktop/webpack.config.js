@@ -16,8 +16,8 @@ module.exports = composePlugins(withNx(), (config) => {
   
   config.plugins.push(
     new webpack.DefinePlugin({
-      MAIN_WINDOW_WEBPACK_ENTRY:`\`file://$\{require('path').resolve(__dirname, '..', 'renderer', 'remix-ide', 'index.html')}\``,
-      'process.env.MAIN_WINDOW_WEBPACK_ENTRY': `\`file://$\{require('path').resolve(__dirname, '..', 'renderer', 'remix-ide', 'index.html')}\``,
+      MAIN_WINDOW_WEBPACK_ENTRY:`\`file://$\{require('path').resolve(__dirname, '..', 'renderer', 'index.html')}\``,
+      'process.env.MAIN_WINDOW_WEBPACK_ENTRY': `\`file://$\{require('path').resolve(__dirname, '..', 'renderer', 'index.html')}\``,
     })
   )
   config.module.rules = [
