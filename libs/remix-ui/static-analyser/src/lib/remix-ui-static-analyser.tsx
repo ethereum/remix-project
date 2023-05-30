@@ -9,13 +9,11 @@ import ErrorRenderer from './ErrorRenderer' // eslint-disable-line
 import { compilation } from './actions/staticAnalysisActions'
 import { initialState, analysisReducer } from './reducers/staticAnalysisReducer'
 import { CodeAnalysis } from '@remix-project/remix-analyzer'
-import { CustomTooltip } from '@remix-ui/helper'
 import Tab from 'react-bootstrap/Tab'
 import Tabs from 'react-bootstrap/Tabs'
-import { Fade } from 'react-bootstrap'
 import { AnalysisTab, SolHintReport } from '../staticanalyser'
 import { run } from './actions/staticAnalysisActions'
-import BasicTitle from './components/BasicTitle'
+import { BasicTitle, calculateWarningStateEntries } from './components/BasicTitle'
 
 declare global {
   interface Window {
@@ -158,6 +156,11 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         setSlitherEnabled(false)
       }
     })
+    const warningResult = calculateWarningStateEntries(Object.entries(warningState))
+    console.log({ warningResult, hintCount: hints.length })
+    props.analysisModule.emit('statusChanged', 'solhint', { key: hints.length+warningResult, 
+      title: `${hints.length+warningResult} warning${hints.length+warningResult === 1 ? '' : 's'}`, type: 'warning'})
+      props.event.trigger('staticAnaysisWarning', [hints.length+warningResult])
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     props.analysisModule.on('solidity', 'compilerLoaded', async (version: string, license: string) => {
       setDisableForRun(version)
@@ -268,6 +271,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
   }
 
+  const handleLinterEnabled = () => {
+    if (solhintEnabled) {
+      setSolhintEnabled(false)
+    } else {
+      setSolhintEnabled(true)
+    }
+  }
+
   const handleCheckSingle = (event, _index) => {
     _index = _index.toString()
     if (categoryIndex.includes(_index)) {
@@ -344,10 +355,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     )
   }
 
-  const handleShowLinterMessages = () => {
-    
-  }
-
   const handleHideWarnings = () => {
 
   }
@@ -359,7 +366,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         <>
           {hints.length > 0 &&
         <div id='solhintlintingresult' className="mb-5">
-          <div className="mb-4">
+          <div className="mb-4 pt-2">
             {
               hints.map((hint, index) => (
                 <Fragment key={index}>
@@ -401,11 +408,11 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       child: <>
         {Object.entries(warningState).length > 0 &&
             <div id='staticanalysisresult' >
-              <div className="mb-4">
+              <div className="mb-4 pt-2">
                 {
                   (Object.entries(warningState).map((element, index) => (
                     <div key={index}>
-                      {element[1]['length'] > 0 ? <span className="text-dark h6">{element[0]}</span> : null}
+                      {/* {element[1]['length'] > 0 ? <span className="text-dark h6">{element[0]}</span> : null} */}
                       {element[1]['map']((x, i) => ( // eslint-disable-line dot-notation
                         x.hasWarning ? ( // eslint-disable-next-line  dot-notation
                           <div data-id={`staticAnalysisModule${x.warningModuleName}${i}`} id={`staticAnalysisModule${x.warningModuleName}${i}`} key={i}>
@@ -438,7 +445,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             id="solhintstaticanalysis"
             inputType="checkbox"
             title="Run solhint static analysis on file save"
-            onClick={handleShowLinterMessages}
+            onClick={handleLinterEnabled}
             checked={solhintEnabled}
             label="Linter"
             onChange={() => {}}
@@ -454,7 +461,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               }))
             }).flat().every(el => categoryIndex.includes(el))}
             label="Basic"
-            onClick={() => handleCheckAllModules(groupedModules)}
+            onClick={() => {
+              handleBasicEnabled()
+              handleCheckAllModules(groupedModules)
+            }}
             onChange={() => {}}
             tooltipPlacement={'top-start'}
           />
@@ -509,17 +519,37 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             />
           </div>
         </div>
-        <Tabs fill defaultActiveKey={tabKeys[0].tabKey}>
-          {tabKeys.map(tabKey => (
-            <Tab
-              key={tabKey.tabKey}
-              title={tabKey.title}
-              eventKey={tabKey.tabKey}
+        <Tabs defaultActiveKey={tabKeys[0].tabKey}>
+            {solhintEnabled ? <Tab
+              key={tabKeys[0].tabKey}
+              disabled={solhintEnabled}
+              title={tabKeys[0].title}
+              eventKey={tabKeys[0].tabKey}
               tabClassName="text-decoration-none font-weight-bold"
             >
-              {tabKey.child}
-            </Tab>
-            ))}
+              {tabKeys[0].child}
+            </Tab> : null}
+
+            {basicEnabled ? <Tab
+              key={tabKeys[1].tabKey}
+              disabled={basicEnabled}
+              title={tabKeys[1].title}
+              eventKey={tabKeys[1].tabKey}
+              tabClassName="text-decoration-none font-weight-bold"
+            >
+              {tabKeys[1].child}
+            </Tab> : null}
+
+            { slitherEnabled ? <Tab
+              key={tabKeys[2].tabKey}
+              disabled={slitherEnabled}
+              title={tabKeys[2].title}
+              eventKey={tabKeys[2].tabKey}
+              tabClassName="text-decoration-none font-weight-bold"
+            >
+              {tabKeys[2].child}
+            </Tab> : null }
+
         </Tabs>
       </div>
     </div>
