@@ -36,7 +36,8 @@ module.exports = {
   'Should create Remix default workspace with files #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="workspaceCreate"]')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation
@@ -107,7 +108,8 @@ module.exports = {
 
   'Should create blank workspace with no files #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspaceCreate"]')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation
@@ -129,7 +131,8 @@ module.exports = {
 
   'Should create ERC20 workspace with files #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspaceCreate"]')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation
@@ -189,7 +192,8 @@ module.exports = {
 
   'Should create ERC721 workspace with files #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspaceCreate"]')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation
@@ -249,7 +253,8 @@ module.exports = {
 
   'Should create ERC1155 workspace with files #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspaceCreate"]')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation
@@ -309,7 +314,8 @@ module.exports = {
 
   'Should create ERC1155 workspace with template customizations #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspaceCreate"]')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       .click('select[id="wstemplate"]')
@@ -381,7 +387,8 @@ module.exports = {
 
   'Should create two workspace and switch to the first one #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspaceCreate"]')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .click('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]')
       .setValue('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_name')
@@ -394,7 +401,8 @@ module.exports = {
         selector: "//div[contains(@class, 'view-line') and contains(.//span, 'test')]",
         locateStrategy: 'xpath'
       })
-      .click('*[data-id="workspaceCreate"]')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .click('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]')
       .setValue('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_name_1')
@@ -449,7 +457,8 @@ module.exports = {
   'Should create workspace for test #group2': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="workspaceCreate"]')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       .click('select[id="wstemplate"]')
@@ -475,7 +484,8 @@ module.exports = {
 
   'Should create workspace for next test #group2': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspaceCreate"]')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation

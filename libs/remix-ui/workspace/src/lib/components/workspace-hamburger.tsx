@@ -1,6 +1,6 @@
 import React from 'react'
 import { Dropdown } from 'react-bootstrap'
-import { HamburgerMenuItem } from './workspace-hamburger-item'
+import { HamburgerMenuItem, HamburgerSubMenuItem } from './workspace-hamburger-item'
 
 export interface HamburgerMenuProps {
   createWorkspace: () => void,
@@ -15,6 +15,7 @@ export interface HamburgerMenuProps {
   addGithubAction: () => void,
   addTsSolTestGithubAction: () => void,
   addSlitherGithubAction: () => void,
+  addHelperScripts: (script: string) => void,
   showIconsMenu: boolean,
   hideWorkspaceOptions: boolean,
   hideLocalhostOptions: boolean
@@ -70,6 +71,44 @@ export function HamburgerMenu (props: HamburgerMenuProps) {
           props.addSlitherGithubAction()
           props.hideIconsMenu(!showIconsMenu)
         }}></HamburgerMenuItem>
+        <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{ pointerEvents: 'none' }} />
+        <HamburgerMenuItem kind='addscriptetherscan' fa='fak fa-ts-logo' hideOption={hideWorkspaceOptions} actionOnClick={() => {
+          props.addHelperScripts('etherscan')
+          props.hideIconsMenu(!showIconsMenu)
+        }}></HamburgerMenuItem>
+        <HamburgerMenuItem kind='addscriptdeployer' fa='fak fa-ts-logo' hideOption={hideWorkspaceOptions} actionOnClick={() => {
+          props.addHelperScripts('deployer')
+          props.hideIconsMenu(!showIconsMenu)
+        }}></HamburgerMenuItem>
       </>
     )
   }
+
+  // keep for later use
+  /*<HamburgerSubMenuItem
+          id="web3-script-menu"
+          title="Web3 Scripts"
+          subMenus={[
+            {
+              kind:'etherscan-script',
+              fa: 'fak fa-ts-logo',
+              hideOption: hideWorkspaceOptions,
+              actionOnClick: () => {
+                alert('etherscan')
+                props.addHelperScripts()
+                props.hideIconsMenu(!showIconsMenu)
+              }
+            },
+            {
+              kind:'contract-deployer-factory-script',
+              fa: 'fak fa-ts-logo',
+              hideOption: hideWorkspaceOptions,
+              actionOnClick: () => {
+                alert('deloyer')
+                props.addHelperScripts()
+                props.hideIconsMenu(!showIconsMenu)
+              }
+            }
+          ]}
+        ></HamburgerSubMenuItem>
+        */
