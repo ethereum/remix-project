@@ -72,12 +72,23 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
   }
 
   const menu = () => {
-    return actions.filter(item => filterItem(item)).map((item, index) => {
+    let group = 0
+    const groupedActions = actions.filter(item => filterItem(item)).reduce((acc, item) => {
+      if (item.group === undefined || item.group === null) item.group = 99
+      if (!acc[item.group]) acc[item.group] = []
+      acc[item.group].push(item)
+      return acc;
+    }, [])
+    let key = -1
+    return groupedActions.map((groupItem, groupIndex) => groupItem.map((item, index) => {
+      key++
+      const className = `remixui_liitem ${group !== item.group ? 'border-top': ''}`
+      group = item.group
       if(item.name === "Upload File"){
         return <li
         id={`menuitem${item.name.toLowerCase()}`}
-        key={index}
-        className='remixui_liitem'
+        key={key}
+        className={className}
         onClick={()=>{
           _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'uploadFile'])
           setShowFileExplorer(true)
@@ -88,8 +99,8 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
       if(item.name === "Load a Local File"){
         return <li
         id={`menuitem${item.name.toLowerCase()}`}
-        key={index}
-        className='remixui_liitem'
+        key={key}
+        className={className}
         onClick={()=>{
           _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'uploadFile'])
           setShowFileExplorer(true)
@@ -98,8 +109,8 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
       }
       return <li
         id={`menuitem${item.name.toLowerCase()}`}
-        key={index}
-        className='remixui_liitem'
+        key={key}
+        className={className}
         onClick={(e) => {
           e.stopPropagation()
           switch (item.name) {
@@ -170,7 +181,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
           }
           hideContextMenu()
         }}>{intl.formatMessage({id: `filePanel.${item.id}`, defaultMessage: item.label || item.name})}</li>
-    })
+    }))
   }
   
   return (

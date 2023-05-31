@@ -76,7 +76,8 @@ export function Workspace () {
         extension: [],
         pattern: [],
         multiselect: false,
-        label: ''
+        label: '',
+        group: 4
       }])
     } else {
       removeMenuItems([{
@@ -87,7 +88,8 @@ export function Workspace () {
         extension: [],
         pattern: [],
         multiselect: false,
-        label: ''
+        label: '',
+        group: 4
       }])
     }
   }, [canPaste])
