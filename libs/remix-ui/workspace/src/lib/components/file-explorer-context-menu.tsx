@@ -80,8 +80,9 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
       return acc;
     }, [])
     console.log(groupedActions)
+    let key = -1
     return groupedActions.map((groupItem, groupIndex) => groupItem.map((item, index) => {
-      const key = groupIndex*index
+      key++
       const className = `remixui_liitem ${group !== item.group ? 'border-top': ''}`
       group = item.group
       if(item.name === "Upload File"){
