@@ -115,21 +115,22 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
     _paq.push(['trackEvent', 'hometab', 'filesSection', 'startCoding'])
     plugin.verticalIcons.select('filePanel')
 
-    const wName = 'Coding playground'
+    const wName = 'Playground'
     const workspaces = await plugin.call('filePanel', 'getWorkspaces')
     if (!workspaces.find(workspace => workspace.name === wName)) {
       await plugin.call('filePanel', 'createWorkspace', wName, 'remixDefault')
+      await plugin.call('filePanel', 'setWorkspace', wName)
+    } else {
+      await plugin.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
     }
-    await plugin.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
-    await plugin.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false }) // don't ask why
 
-    const content = `
-  // SPDX-License-Identifier: MIT
-  pragma solidity >=0.7.0 <0.9.0;
+    const content = `// SPDX-License-Identifier: MIT
+pragma solidity >=0.7.0 <0.9.0;
 
-  contract helloWorld {
-  }
-  `
+contract helloWorld {
+}
+`
+
     const {newContent, newPath} = await plugin.call('fileManager', 'writeFileNoRewrite', '/contracts/helloWorld.sol', content)
     await plugin.call('fileManager', 'open', newPath)
   }
@@ -173,7 +174,20 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
 
   const handleSwichToRecentWorkspace = async (e, workspaceName) => {
     e.preventDefault();
+<<<<<<< HEAD
     await plugin.call('filePanel', 'switchToWorkspace', { name: workspaceName, isLocalhost: false })
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+    await plugin.call('filePanel', 'switchToWorkspace', { name: workspaceName, isLocalhost: false })
+    console.log('The link was clicked.');
+=======
+      await plugin.call('filePanel', 'switchToWorkspace', { name: workspaceName, isLocalhost: false })
+>>>>>>> e9b2848c5... cleanup fix undefined workspaces. Creating default  Workspace
+=======
+    await plugin.call('filePanel', 'switchToWorkspace', { name: workspaceName, isLocalhost: false })
+>>>>>>> 06483cab7... fix vreating workspace
+>>>>>>> 1b238a875... fix vreating workspace
   }
 
   const examples = state.modalInfo.examples.map((urlEl, key) => (
@@ -255,7 +269,6 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
                 />
               </span>
             </CustomTooltip>
-            
             <CustomTooltip
               placement={'top'}
               tooltipId="overlay-tooltip"
