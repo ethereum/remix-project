@@ -18,7 +18,6 @@ type WarningResultType = {
 }
 
 export function calculateWarningStateEntries(entries: [string, any][]) {
-  console.log({entries})
   let warninglength = 0
   entries.forEach((entry) => {
     warninglength += entry[1].length
@@ -27,7 +26,6 @@ export function calculateWarningStateEntries(entries: [string, any][]) {
   entries.forEach((entry) => {
     errors = entry[1].filter(x => x.options.type === 'error')
   })
-  console.log({errors})
   return { length: warninglength, errors }
 }
 
