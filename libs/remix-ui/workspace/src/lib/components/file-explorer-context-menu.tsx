@@ -72,12 +72,15 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
   }
 
   const menu = () => {
+    let group = 0
     return actions.filter(item => filterItem(item)).map((item, index) => {
+      const className = `remixui_liitem ${group !== item.group ? 'border-top': ''}`
+      group = item.group
       if(item.name === "Upload File"){
         return <li
         id={`menuitem${item.name.toLowerCase()}`}
         key={index}
-        className='remixui_liitem'
+        className={className}
         onClick={()=>{
           _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'uploadFile'])
           setShowFileExplorer(true)
@@ -89,7 +92,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
         return <li
         id={`menuitem${item.name.toLowerCase()}`}
         key={index}
-        className='remixui_liitem'
+        className={className}
         onClick={()=>{
           _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'uploadFile'])
           setShowFileExplorer(true)
@@ -99,7 +102,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
       return <li
         id={`menuitem${item.name.toLowerCase()}`}
         key={index}
-        className='remixui_liitem'
+        className={className}
         onClick={(e) => {
           e.stopPropagation()
           switch (item.name) {
