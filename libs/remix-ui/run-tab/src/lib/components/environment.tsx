@@ -42,7 +42,7 @@ export function EnvironmentUI (props: EnvironmentProps) {
               tooltipId="info-recorder"
               tooltipText="Click to open a bridge for converting L1 mainnet ETH to the selected network currency."
             >
-              <i style={{ fontSize: 'medium' }} className={'ml-2 fa fa-plug'} aria-hidden="true" onClick={() => { window.open(bridges[currentProvider.value], '_blank') }}></i>
+              <i style={{ fontSize: 'medium' }} className={'ml-2 fa fa-rocket-launch'} aria-hidden="true" onClick={() => { window.open(bridges[currentProvider.value], '_blank') }}></i>
             </CustomTooltip>}
           </Dropdown.Toggle>
           <Dropdown.Menu as={CustomMenu} className='w-100 custom-dropdown-items' data-id="custom-dropdown-items" >
