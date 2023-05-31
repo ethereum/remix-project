@@ -66,6 +66,15 @@ module.exports = class Filepanel extends ViewPlugin {
 
   /**
    * @param item { id: string, name: string, type?: string[], path?: string[], extension?: string[], pattern?: string[] }
+   * typically: 
+   * group 0 for file manipulations
+   * group 1 for download operations
+   * group 2 for running operations (script for instance)
+   * group 3 for publishing operations (gist)
+   * group 4 for copying operations
+   * group 5 for solidity file operations (flatten for instance)
+   * group 6 for compiling operations
+   * group 7 for generating resource files (UML, documentation, ...)
    * @param callback (...args) => void
    */
   registerContextMenuItem (item) {
