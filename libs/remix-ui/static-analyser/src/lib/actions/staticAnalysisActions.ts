@@ -1,6 +1,7 @@
 import { CompilationResult, SourceWithTarget } from '@remixproject/plugin-api'
 import React from 'react' //eslint-disable-line
-import { AnalysisTab, RemixUiStaticAnalyserReducerActionType } from '../../staticanalyser'
+import { AnalysisTab, RemixUiStaticAnalyserReducerActionType, RemixUiStaticAnalyserState, SolHintReport } from '../../staticanalyser'
+import { RemixUiStaticAnalyserProps } from '@remix-ui/static-analyser'
 
 /**
  * 
@@ -41,13 +42,20 @@ export const compilation = (analysisModule: AnalysisTab,
  * @returns {Promise<void>}
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function run (lastCompilationResult, lastCompilationSource, currentFile, state, props, isSupportedVersion, slitherEnabled, categoryIndex, groupedModules, runner, _paq, message, showWarnings, allWarnings, warningContainer) {
+export async function run (lastCompilationResult, lastCompilationSource, currentFile: string, state: RemixUiStaticAnalyserState, props: RemixUiStaticAnalyserProps, isSupportedVersion, slitherEnabled, categoryIndex: number[], groupedModules, runner, _paq, message, showWarnings, allWarnings: React.RefObject<any>, warningContainer: React.RefObject<any>, calculateWarningStateEntries: (e:[string, any][]) => {length: number, errors: any[] }, warningState, setHints: React.Dispatch<React.SetStateAction<SolHintReport[]>>, hints: SolHintReport[]) {
 
   if (!isSupportedVersion) return
   if (state.data !== null) {
     if (lastCompilationResult && (categoryIndex.length > 0 || slitherEnabled)) {
       const warningMessage = []
       const warningErrors = []
+
+        // Run solhint
+        const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
+        setHints(hintsResult)
+      const warningResult = calculateWarningStateEntries(Object.entries(warningState))
+        props.analysisModule.emit('statusChanged', { key: hints.length+warningResult.length, 
+      title: `${hints.length+warningResult.length} warning${hints.length+warningResult.length === 1 ? '' : 's'}`, type: 'warning'})
 
       // Remix Analysis
       _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'remixAnalyzer'])
