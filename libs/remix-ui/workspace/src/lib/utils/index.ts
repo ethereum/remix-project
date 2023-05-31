@@ -35,81 +35,81 @@ export const contextMenuActions: MenuItems = [{
   multiselect: true,
   label: '',
   group: 0
-},{
-  id: 'download',
-  name: 'Download',
-  type: ['file', 'folder', 'workspace'],
-  multiselect: false,
-  label: '',
-  group: 1
-}, {
-  id: 'run',
-  name: 'Run',
-  extension: ['.js', '.ts'],
-  multiselect: false,
-  label: '',
-  group: 2
-},{
-  id: 'pushChangesToGist',
-  name: 'Push changes to gist',
-  type: ['gist'],
-  multiselect: false,
-  label: '',
-  group: 3
-}, {
-  id: 'publishFolderToGist',
-  name: 'Publish folder to gist',
-  type: ['folder'],
-  multiselect: false,
-  label: '',
-  group: 3
-}, {
-  id: 'publishFileToGist',
-  name: 'Publish file to gist',
-  type: ['file'],
-  multiselect: false,
-  label: '',
-  group: 3
-}, {
-  id: 'uploadFile',
-  name: 'Load a Local File',
-  type: ['folder', 'gist', 'workspace'],
-  multiselect: false,
-  label: 'Load a Local File',
-  group: 3
-}, {
-  id: 'publishToGist',
-  name: 'Push changes to gist',
-  type: ['folder', 'gist'],
-  multiselect: false,
-  label: 'Publish all to Gist',
-  group: 3
-},
-{
-  id: 'publishWorkspace',
-  name: 'Publish Workspace to Gist',
-  type: ['workspace'],
-  multiselect: false,
-  label: '',
-  group: 3
 }, {
   id: 'copy',
   name: 'Copy',
   type: ['folder', 'file'],
   multiselect: false,
   label: '',
-  group: 4
+  group: 1
 }, {
   id: 'copyFileName',
   name: 'Copy name',
   type: ['file'],
   multiselect: false,
   label: '',
-  group: 4
+  group: 1
 }, {
   id: 'copyFilePath',
   name: 'Copy path',
   type: ['file'],
+  multiselect: false,
+  label: '',
+  group: 1
+}, {
+  id: 'download',
+  name: 'Download',
+  type: ['file', 'folder', 'workspace'],
+  multiselect: false,
+  label: '',
+  group: 2
+}, {
+  id: 'run',
+  name: 'Run',
+  extension: ['.js', '.ts'],
+  multiselect: false,
+  label: '',
+  group: 3
+},{
+  id: 'pushChangesToGist',
+  name: 'Push changes to gist',
+  type: ['gist'],
+  multiselect: false,
+  label: '',
+  group: 4
+}, {
+  id: 'publishFolderToGist',
+  name: 'Publish folder to gist',
+  type: ['folder'],
+  multiselect: false,
+  label: '',
+  group: 4
+}, {
+  id: 'publishFileToGist',
+  name: 'Publish file to gist',
+  type: ['file'],
+  multiselect: false,
+  label: '',
+  group: 4
+}, {
+  id: 'uploadFile',
+  name: 'Load a Local File',
+  type: ['folder', 'gist', 'workspace'],
+  multiselect: false,
+  label: 'Load a Local File',
+  group: 4
+}, {
+  id: 'publishToGist',
+  name: 'Push changes to gist',
+  type: ['folder', 'gist'],
+  multiselect: false,
+  label: 'Publish all to Gist',
+  group: 4
+},
+{
+  id: 'publishWorkspace',
+  name: 'Publish Workspace to Gist',
+  type: ['workspace'],
   multiselect: false,
   label: '',
   group: 4
