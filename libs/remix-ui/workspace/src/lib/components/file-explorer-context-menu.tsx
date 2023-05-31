@@ -79,7 +79,6 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
       acc[item.group].push(item)
       return acc;
     }, [])
-    console.log(groupedActions)
     let key = -1
     return groupedActions.map((groupItem, groupIndex) => groupItem.map((item, index) => {
       key++
