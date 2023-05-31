@@ -31,7 +31,7 @@ export function calculateWarningStateEntries(entries: [string, any][]) {
 
 export function BasicTitle(props: BasicTitleProps) {
   return (
-    <span className="rounded-circle">Basic{props.warningStateEntries.length > 0 && !props.hideWarnings ? <i className="badge badge-info rounded-circle ml-2">{calculateWarningStateEntries(props.warningStateEntries).length}</i>: null}
+    <span className="rounded-circle">Basic{props.warningStateEntries.length > 0 && !props.hideWarnings ? <i data-id="StaticAnalysisErrorCount" className="badge badge-info rounded-circle ml-2">{calculateWarningStateEntries(props.warningStateEntries).length}</i>: null}
     </span>
   )
 }
