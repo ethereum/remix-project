@@ -165,7 +165,7 @@ module.exports = class Filepanel extends ViewPlugin {
 
   saveRecent (workspace) {
     if (!localStorage.getItem('recentWorkspaces')) {
-      localStorage.setItem('recentWorkspaces', JSON.stringify('"first": "", "second": "", "third": ""'))
+      localStorage.setItem('recentWorkspaces', JSON.stringify(workspace))
     } else {
       const recents = JSON.parse(localStorage.getItem('recentWorkspaces'))
       if (recents.first !== workspace.name && recents.second !== workspace.name && recents.third !== workspace.name) {
