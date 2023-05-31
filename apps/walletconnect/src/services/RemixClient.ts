@@ -40,7 +40,7 @@ export class RemixClient extends PluginClient {
             
             this.wagmiClient = wagmiCreateClient({
               autoConnect: false,
-              connectors: w3mConnectors({ projectId: PROJECT_ID, version: 1, chains: this.chains }),
+              connectors: w3mConnectors({ projectId: PROJECT_ID, version: 2, chains: this.chains }),
               provider
             })
             this.ethereumClient = new EthereumClient(this.wagmiClient, this.chains)
