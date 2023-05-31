@@ -52,13 +52,13 @@ function Badge ({ badgeStatus }: BadgeProps) {
             placement={'right'}
             tooltipClasses="text-nowrap"
             tooltipId="verticalItemsbadge"
-            tooltipText={badgeStatus.title}
+            tooltipText={badgeStatus.pluginName && badgeStatus.pluginName === 'solidityStaticAnalysis' ? 'There are multiple warnings or errors that might need to be fixed' :badgeStatus.title}
           >
             <i
               className={resolveClasses(badgeStatus.key, badgeStatus.type!)}
               aria-hidden="true"
             >
-              {badgeStatus.text}
+              { badgeStatus.pluginName && badgeStatus.pluginName === 'solidityStaticAnalysis' ? '.' : badgeStatus.text}
             </i>
           </CustomTooltip>
         ) : null
