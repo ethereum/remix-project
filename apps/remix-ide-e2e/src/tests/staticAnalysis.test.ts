@@ -53,7 +53,8 @@ module.exports = {
     .assert.containsText('*[data-id="StaticAnalysisErrorCount"]', '382')
     .click('label[id="headingshowLibWarnings"]')
     .pause(1000)
-    .assert.containsText('#verticalIconsKindsolidityStaticAnalysis .remixui_status', '1')
+    // .assert.containsText('#verticalIconsKindsolidityStaticAnalysis .remixui_status', '1')
+    .assert.containsText('*[data-id="StaticAnalysisErrorCount"]', '1')
     .end()
   }
 }
