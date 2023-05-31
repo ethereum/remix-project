@@ -206,6 +206,16 @@ export const VerifyView: React.FC<Props> = ({
               />
             </div>
 
+            <div className="d-flex mb-2 custom-control custom-checkbox">
+              <Field
+                className="custom-control-input"
+                type="checkbox"
+                name="ifProxy"
+                id="ifProxy"
+              />
+              <label className="form-check-label custom-control-label" htmlFor="ifProxy">It's a proxy contract</label>
+            </div>
+
             <SubmitButton dataId="verify-contract" text="Verify" 
               isSubmitting={isSubmitting} 
               disable={ !contracts.length || 
