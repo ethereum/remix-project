@@ -33,6 +33,7 @@ export const VerifyView: React.FC<Props> = ({
   const [results, setResults] = useState("")
   const [networkName, setNetworkName] = useState("Loading...")
   const [showConstructorArgs, setShowConstructorArgs] = useState(false)
+  const [isProxyContract, setIsProxyContract] = useState(false)
   const [constructorInputs, setConstructorInputs] = useState([])
   const verificationResult = useRef({})
 
@@ -210,10 +211,25 @@ export const VerifyView: React.FC<Props> = ({
               <Field
                 className="custom-control-input"
                 type="checkbox"
-                name="ifProxy"
-                id="ifProxy"
+                name="isProxy"
+                id="isProxy"
+                onChange={async (e) => {
+                  handleChange(e)
+                  if (e.target.checked) setIsProxyContract(true)
+                  else setIsProxyContract(false)
+              }}
               />
-              <label className="form-check-label custom-control-label" htmlFor="ifProxy">It's a proxy contract</label>
+              <label className="form-check-label custom-control-label" htmlFor="isProxy">It's a proxy contract</label>
+            </div>
+
+            <div className={ isProxyContract ? 'form-group d-block': 'form-group d-none' }>
+              <label htmlFor="expectedImplAddress">Expected Implementation Address (Optional)</label>
+              <Field
+                className="form-control"
+                type="text"
+                name="expectedImplAddress"
+                placeholder="e.g. 0x11b79afc03baf25c631dd70169bb6a3160b2706e"
+              />
             </div>
 
             <SubmitButton dataId="verify-contract" text="Verify" 
