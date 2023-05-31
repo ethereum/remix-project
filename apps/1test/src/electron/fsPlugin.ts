@@ -1,8 +1,9 @@
 import { PluginClient } from "@remixproject/plugin";
 import { createClient } from "./electronPluginClient"
 import { Engine, PluginManager, Plugin } from '@remixproject/engine';
-import fs from 'fs'
-import { existsSync } from "fs-extra";
+import fs from 'fs/promises'
+import { Stats } from "fs";
+
 
 const profile = {
   displayName: 'fs',
@@ -34,39 +35,36 @@ class FSPluginClient extends PluginClient {
 
   async readdir(path: string): Promise<string[]> {
     // call node fs.readdir
-    return fs.readdirSync(path)
+    return fs.readdir(path)
   }
 
   async readFile(path: string): Promise<string> {
-    return fs.readFileSync(path, 'utf8')
+    return fs.readFile(path, 'utf8')
   }
 
   async writeFile(path: string, content: string): Promise<void> {
-    return fs.writeFileSync(path, content, 'utf8')
+    return fs.writeFile(path, content, 'utf8')
   }
 
   async mkdir(path: string): Promise<void> {
-    return fs.mkdirSync(path)
+    return fs.mkdir(path)
   }
 
   async rmdir(path: string): Promise<void> {
-    return fs.rmdirSync(path)
+    return fs.rmdir(path)
   }
 
   async unlink(path: string): Promise<void> {
-    return fs.unlinkSync(path)
+    return fs.unlink(path)
   }
 
   async rename(oldPath: string, newPath: string): Promise<void> {
-    return fs.renameSync(oldPath, newPath)
+    return fs.rename(oldPath, newPath)
   }
 
-  async stat(path: string): Promise<fs.Stats> {
-    return fs.statSync(path)
+  async stat(path: string): Promise<Stats> {
+    return fs.stat(path)
   }
 
-  async exists(path: string): Promise<boolean> {
-    return existsSync(path)
-  }
 
 }
