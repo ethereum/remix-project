@@ -192,7 +192,8 @@ export class RemixAppManager extends PluginManager {
       extension: ['.sol'],
       path: [],
       pattern: [],
-      sticky: true
+      sticky: true,
+      group: 5
     })
     await this.call('filePanel', 'registerContextMenuItem', {
       id: 'nahmii-compiler',
@@ -202,7 +203,8 @@ export class RemixAppManager extends PluginManager {
       extension: ['.sol'],
       path: [],
       pattern: [],
-      sticky: true
+      sticky: true,
+      group: 6
     })
     await this.call('filePanel', 'registerContextMenuItem', {
       id: 'solidityumlgen',
@@ -212,7 +214,8 @@ export class RemixAppManager extends PluginManager {
       extension: ['.sol'],
       path: [],
       pattern: [],
-      sticky: true
+      sticky: true,
+      group: 7
     })
     await this.call('filePanel', 'registerContextMenuItem', {
       id: 'doc-gen',
@@ -222,7 +225,8 @@ export class RemixAppManager extends PluginManager {
       extension: ['.sol'],
       path: [],
       pattern: [],
-      sticky: true
+      sticky: true,
+      group: 7
     })
   }
 }
