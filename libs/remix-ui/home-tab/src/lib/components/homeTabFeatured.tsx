@@ -55,7 +55,7 @@ function HomeTabFeatured() {
               </div>
               <div className="mx-1 px-1 d-flex">
                 <a href="https://www.youtube.com/@EthereumRemix/videos" target="__blank">
-                  <img src={"/assets/img/YouTubeLogo.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
+                  <img src={"assets/img/YouTubeLogo.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
                 </a>
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: "1" }}>
                   <h5><FormattedMessage id='home.remixYouTube' /></h5>
@@ -73,7 +73,7 @@ function HomeTabFeatured() {
               </div>
               <div className="mx-1 px-1 d-flex">
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSd0WsJnKbeJo-BGrnf7WijxAdmE4PnC_Z4M0IApbBfHLHZdsQ/viewform" target="__blank">
-                  <img src={"/assets/img/remixRewardBetaTester_small.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
+                  <img src={"assets/img/remixRewardBetaTester_small.webp"} style={{ flex: "1", height: "170px", maxWidth: "170px" }} alt="" ></img>
                 </a>
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: "1" }}>
                   <h5><FormattedMessage id='home.betaTesting' /></h5>
