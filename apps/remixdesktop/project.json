@@ -10,7 +10,7 @@
       "defaultConfiguration": "development",
       "options": {
         "outputPath": "apps/remixdesktop/.webpack/main",
-        "main": "apps/remixdesktop/src/main.ts",
+        "main": "apps/remixdesktop/src/index.ts",
         "tsConfig": "apps/remixdesktop/tsconfig.json",
         "assets": [
         ],

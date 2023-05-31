@@ -4,22 +4,33 @@ const TerserPlugin = require("terser-webpack-plugin")
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 
 // Nx plugins for webpack.
-module.exports = composePlugins(withNx(), (config) => {
+module.exports = composePlugins((config) => {
+  config = {}
   config.target = 'electron-main'
   config.devtool = 'source-map'
   config.mode = 'production'
   config.output = {
     path: __dirname + '/.webpack/main',
-    filename: 'index.js',
-    libraryTarget: 'commonjs2',
+    filename: '[name].js',
+  }
+
+  config.target = 'electron-preload'
+
+  config.entry = {
+    index: ['./apps/remixdesktop/src/index.ts'],
+    preload: ['./apps/remixdesktop/src/preload.ts'],
   }
   
-  config.plugins.push(
+  config.plugins= [
     new webpack.DefinePlugin({
       MAIN_WINDOW_WEBPACK_ENTRY:`\`file://$\{require('path').resolve(__dirname, '..', 'renderer', 'index.html')}\``,
       'process.env.MAIN_WINDOW_WEBPACK_ENTRY': `\`file://$\{require('path').resolve(__dirname, '..', 'renderer', 'index.html')}\``,
+      MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: `\`$\{require('path').resolve(__dirname, 'preload.js')}\``,
+      'process.env.MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY': `\`$\{require('path').resolve(__dirname, '..', 'render', 'preload.js')}\``,
     })
-  )
+  ]
+  
+  config.module = {}
   config.module.rules = [
     // Add support for native node modules
     {
@@ -28,6 +39,7 @@ module.exports = composePlugins(withNx(), (config) => {
       test: /native_modules[/\\].+\.node$/,
       use: 'node-loader',
     },
+    /*
     {
       test: /[/\\]node_modules[/\\].+\.(m?js|node)$/,
       parser: { amd: false },
@@ -38,6 +50,7 @@ module.exports = composePlugins(withNx(), (config) => {
         },
       },
     },
+    */
     {
       test: /\.tsx?$/,
       exclude: /(node_modules|\.webpack)/,
@@ -49,6 +62,9 @@ module.exports = composePlugins(withNx(), (config) => {
       },
     },
   ];
+  config.resolve = {}
+  config.resolve.extensions = [ '.js', '.ts', '.jsx', '.tsx', '.css' ]
+  config.target = 'electron-preload'
 
 
   config.node = {
