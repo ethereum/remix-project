@@ -33,7 +33,13 @@ class GitPluginClient extends PluginClient {
   }
 
   async log(path: string): Promise<string> {
-    const log = spawn('git', ['log'], { cwd: path })
+    const log = spawn('git', ['log'], {
+      cwd: path,
+      env: {
+        NODE_ENV: 'production',
+        PATH: process.env.PATH,
+      },
+    })
 
     return new Promise((resolve, reject) => {
        log.stdout.on('data', (data) => {

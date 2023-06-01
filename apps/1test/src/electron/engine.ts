@@ -2,6 +2,7 @@ import { Engine, PluginManager, Plugin } from '@remixproject/engine';
 import { ipcMain, ipcRenderer } from 'electron';
 import { FSPlugin } from './fsPlugin';
 import { GitPlugin } from './gitPlugin';
+import { app } from 'electron';
 
 const engine = new Engine()
 const appManager = new PluginManager()
@@ -17,4 +18,9 @@ ipcMain.handle('engine:activatePlugin', async (event, arg) => {
     return true
   }
   return await appManager.activatePlugin(arg)
+})
+
+app.on('window-all-closed', async () => {
+  await appManager.call('fs', 'closeWatch')
+  console.log('quit')
 })
