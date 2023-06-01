@@ -1,4 +1,4 @@
-import { getNetworkName, getEtherScanApi, getReceiptStatus } from "../utils"
+import { getNetworkName, getEtherScanApi, getReceiptStatus, getProxyContractReceiptStatus } from "../utils"
 import { CompilationResult } from "@remixproject/plugin-api"
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import axios from 'axios'
@@ -114,7 +114,14 @@ export const verify = async (
 
       if (message === "OK" && status === "1") {
         resetAfter10Seconds(client, setResults)
-        const receiptStatus = await getReceiptStatus(
+        let receiptStatus
+        if (isProxyContract) {
+          receiptStatus = await getProxyContractReceiptStatus(
+            result,
+            apiKeyParam,
+            etherscanApi
+          )
+        } else receiptStatus = await getReceiptStatus(
           result,
           apiKeyParam,
           etherscanApi
