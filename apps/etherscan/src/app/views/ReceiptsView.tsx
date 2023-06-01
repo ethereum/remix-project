@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 
 import { Formik, ErrorMessage, Field } from "formik"
-import { getEtherScanApi, getNetworkName, getReceiptStatus } from "../utils"
+import { getEtherScanApi, getNetworkName, getReceiptStatus, getProxyContractReceiptStatus } from "../utils"
 import { Receipt } from "../types"
 import { AppContext } from "../AppContext"
 import { SubmitButton } from "../components"
@@ -14,6 +14,8 @@ interface FormValues {
 
 export const ReceiptsView: React.FC = () => {
   const [results, setResults] = useState({succeed: false, message: ''})
+  const [isProxyContractReceipt, setIsProxyContractReceipt] = useState(false)
+
   const onGetReceiptStatus = async (
     values: FormValues,
     clientInstance: any,
@@ -29,11 +31,19 @@ export const ReceiptsView: React.FC = () => {
         return
       }
       const etherscanApi = getEtherScanApi(networkId)
-      const result = await getReceiptStatus(
-        values.receiptGuid,
-        apiKey,
-        etherscanApi
-      )
+      let result
+      if (isProxyContractReceipt)
+        result = await getProxyContractReceiptStatus(
+          values.receiptGuid,
+          apiKey,
+          etherscanApi
+        )
+      else
+        result = await getReceiptStatus(
+          values.receiptGuid,
+          apiKey,
+          etherscanApi
+        )
       setResults({
         succeed: result.status === '1' ? true : false,
         message: result.result || (result.status === '0' ? 'Verification failed' : result.message)
@@ -71,7 +81,7 @@ export const ReceiptsView: React.FC = () => {
                 onGetReceiptStatus(values, clientInstance, apiKey)
               }
             >
-              {({ errors, touched, handleSubmit }) => (
+              {({ errors, touched, handleSubmit, handleChange }) => (
                 <form onSubmit={handleSubmit}>
                   <div
                     className="form-group"
@@ -93,6 +103,21 @@ export const ReceiptsView: React.FC = () => {
                       component="div"
                     />
                   </div>
+
+                  <div className="d-flex mb-2 custom-control custom-checkbox">
+                  <Field
+                    className="custom-control-input"
+                    type="checkbox"
+                    name="isProxyReceipt"
+                    id="isProxyReceipt"
+                    onChange={async (e) => {
+                      handleChange(e)
+                      if (e.target.checked) setIsProxyContractReceipt(true)
+                      else setIsProxyContractReceipt(false)
+                  }}
+                  />
+                  <label className="form-check-label custom-control-label" htmlFor="isProxyReceipt">It's a proxy contract GUID</label>
+                </div>
                   <SubmitButton text="Check" disable = {!touched.receiptGuid || (touched.receiptGuid && errors.receiptGuid) ? true : false} />
                 </form>
               )}
