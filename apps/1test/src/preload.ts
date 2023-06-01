@@ -16,7 +16,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   plugins: exposedPLugins.map(name => {
     return {
       name,
-      activate: () => ipcRenderer.invoke('engine:activatePlugin', name),
       on: (cb:any) => ipcRenderer.on(`${name}:send`, cb),
       send: (message: Partial<Message>) => ipcRenderer.send(`${name}:on`, message)
     }
