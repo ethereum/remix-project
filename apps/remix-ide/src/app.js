@@ -41,6 +41,7 @@ import { InjectedProviderDefault } from './app/providers/injected-provider-defau
 import { InjectedProviderTrustWallet } from './app/providers/injected-provider-trustwallet'
 import { Injected0ptimismProvider } from './app/providers/injected-optimism-provider'
 import { InjectedArbitrumOneProvider } from './app/providers/injected-arbitrum-one-provider'
+import { InjectedSKALEChaosTestnetProvider } from './app/providers/injected-skale-chaos-testnet-provider'
 import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
 import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
@@ -223,6 +224,7 @@ class AppComponent {
     const defaultInjectedProvider = new InjectedProviderDefault
     const injected0ptimismProvider = new Injected0ptimismProvider()
     const injectedArbitrumOneProvider = new InjectedArbitrumOneProvider()
+    const injectedSKALEChaosTestnetProvider = new InjectedSKALEChaosTestnetProvider()
     // ----------------- convert offset to line/column service -----------
     const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
     Registry.getInstance().put({
@@ -298,6 +300,7 @@ class AppComponent {
       trustWalletInjectedProvider,
       injected0ptimismProvider,
       injectedArbitrumOneProvider,
+      injectedSKALEChaosTestnetProvider,
       this.walkthroughService,
       search,
       solidityumlgen,
