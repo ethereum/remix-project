@@ -20,7 +20,8 @@ ipcMain.handle('engine:activatePlugin', async (event, arg) => {
   return await appManager.activatePlugin(arg)
 })
 
-app.on('window-all-closed', async () => {
+app.on('before-quit', async () => {
   await appManager.call('fs', 'closeWatch')
   console.log('quit')
+  app.quit()
 })
