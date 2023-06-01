@@ -1,5 +1,5 @@
 import { PluginClient } from "@remixproject/plugin";
-import { createClient } from "./lib/electronPluginClient"
+import { createElectronClient } from "./lib/electronPluginClient"
 import { Plugin } from '@remixproject/engine';
 import fs from 'fs/promises'
 import { Stats } from "fs";
@@ -35,7 +35,7 @@ class FSPluginClient extends PluginClient {
   constructor() {
     super()
     this.methods = ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'exists', 'watch', 'closeWatch', 'currentPath']
-    createClient(this, profile)
+    createElectronClient(this, profile)
     this.onload(() => {
       console.log('fsPluginClient onload')
     })

@@ -22,7 +22,7 @@ export class ElectronPluginClientConnector implements ClientConnector {
     }
 }
 
-export const createClient = <
+export const createElectronClient = <
     P extends Api,
     App extends ApiMap = Readonly<IRemixApi>
 >(client: PluginClient<P, App> = new PluginClient(), profile: Profile): Client<P, App> => {
