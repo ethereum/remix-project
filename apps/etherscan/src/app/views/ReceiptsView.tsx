@@ -25,7 +25,7 @@ export const ReceiptsView: React.FC = () => {
         setResults({
           succeed: false,
           message: "Cannot verify in the selected network"
-      })
+        })
         return
       }
       const etherscanApi = getEtherScanApi(networkId)

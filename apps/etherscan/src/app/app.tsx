@@ -13,7 +13,7 @@ import { DisplayRoutes } from "./routes"
 
 import { useLocalStorage } from "./hooks/useLocalStorage"
 
-import { getReceiptStatus, getEtherScanApi, getNetworkName } from "./utils"
+import { getReceiptStatus, getEtherScanApi, getNetworkName, getProxyContractReceiptStatus } from "./utils"
 import { Receipt, ThemeType } from "./types"
 
 import "./App.css"
@@ -102,12 +102,19 @@ const App = () => {
         let newReceipts = receipts
         for (const item of receiptsNotVerified) {          
           await new Promise(r => setTimeout(r, 500)) // avoid api rate limit exceed.
-          console.log('checking receipt', item.guid)
-          const status = await getReceiptStatus(
-            item.guid,
-            apiKey,
-            getEtherScanApi(networkId)
-          )
+          let status
+          if (item.isProxyContract)
+            status = await getProxyContractReceiptStatus(
+              item.guid,
+              apiKey,
+              getEtherScanApi(networkId)
+            )
+          else 
+            status = await getReceiptStatus(
+              item.guid,
+              apiKey,
+              getEtherScanApi(networkId)
+            )
           if (status.result === "Pass - Verified" || status.result === "Already Verified") {
             newReceipts = newReceipts.map((currentReceipt: Receipt) => {
               if (currentReceipt.guid === item.guid) {

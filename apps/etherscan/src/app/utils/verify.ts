@@ -131,7 +131,8 @@ export const verify = async (
             guid: result,
             status: receiptStatus.result,
             message: `Verification process started correctly. Receipt GUID ${result}`,
-            succeed: true
+            succeed: true,
+            isProxyContract
         }
         onVerifiedContract(returnValue)
         return returnValue
@@ -143,7 +144,8 @@ export const verify = async (
         })
         const returnValue = {
             message: result,
-            succeed: false
+            succeed: false,
+            isProxyContract
         }
         resetAfter10Seconds(client, setResults)
         return returnValue
