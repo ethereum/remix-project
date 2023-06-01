@@ -7,6 +7,7 @@ import { AppContext } from "../AppContext"
 import { SubmitButton } from "../components"
 import { Navigate } from "react-router-dom"
 import { Button } from "react-bootstrap"
+import { CustomTooltip } from '@remix-ui/helper'
 
 interface FormValues {
   receiptGuid: string
@@ -133,8 +134,14 @@ export const ReceiptsView: React.FC = () => {
               dangerouslySetInnerHTML={{ __html: results.message ? results.message : '' }}
             />
 
-            <ReceiptsTable receipts={receipts} />
-            <Button title="Clear the list of receipt" onClick={() => { setReceipts([]) }} >Clear</Button>
+            <ReceiptsTable receipts={receipts} /><br/>
+            <CustomTooltip
+              tooltipText="Clear the list of receipts"
+              tooltipId='etherscan-clear-receipts'
+              placement='bottom'
+            >
+              <Button onClick={() => { setReceipts([]) }} >Clear</Button>
+            </CustomTooltip>
           </div>
         )
       }
@@ -145,7 +152,7 @@ export const ReceiptsView: React.FC = () => {
 
 const ReceiptsTable: React.FC<{ receipts: Receipt[] }> = ({ receipts }) => {
   return (
-    <div className="table-responsive" style={{ fontSize: "0.7em" }}>
+    <div className="table-responsive" style={{ fontSize: "0.8em" }}>
       <h6>Receipts</h6>
       <table className="table table-sm">
         <thead>
