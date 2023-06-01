@@ -1,5 +1,5 @@
-import { Engine, PluginManager, Plugin } from '@remixproject/engine';
-import { ipcMain, ipcRenderer } from 'electron';
+import { Engine, PluginManager } from '@remixproject/engine';
+import { ipcMain } from 'electron';
 import { FSPlugin } from './fsPlugin';
 import { GitPlugin } from './gitPlugin';
 import { app } from 'electron';
