@@ -165,11 +165,11 @@ module.exports = class Filepanel extends ViewPlugin {
 
   saveRecent (workspace) {
     if (!localStorage.getItem('recentWorkspaces')) {
-      localStorage.setItem('recentWorkspaces', JSON.stringify(workspace))
+      localStorage.setItem('recentWorkspaces', JSON.stringify({first: workspace, second:'', third:''}))
     } else {
       const recents = JSON.parse(localStorage.getItem('recentWorkspaces'))
       if (recents.first !== workspace.name && recents.second !== workspace.name && recents.third !== workspace.name) {
-        let newResents = '{"first": "' + workspace.name + '", "second":"' + recents.first + '", "third":"' + recents.second + '"}'
+        let newResents = {first: workspace.name, second: recents.first, third: recents.second}
         localStorage.setItem('recentWorkspaces', newResents)
       }
     }
