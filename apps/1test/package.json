@@ -39,6 +39,8 @@
     "typescript": "~4.5.4"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
+    "chokidar": "^3.5.3",
+    "electron-squirrel-startup": "^1.0.0",
+    "fix-path": "^4.0.0"
   }
 }

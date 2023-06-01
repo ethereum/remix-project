@@ -4,6 +4,7 @@ import { Plugin } from '@remixproject/engine';
 import fs from 'fs/promises'
 import { Stats } from "fs";
 import { Profile } from "@remixproject/plugin-utils";
+import chokidar from 'chokidar'
 
 const profile: Profile = {
   displayName: 'fs',
@@ -12,21 +13,28 @@ const profile: Profile = {
 }
 
 export class FSPlugin extends Plugin {
-  client: PluginClient
-  constructor(){
+  client: FSPluginClient
+  constructor() {
     super(profile)
+    this.methods = ['closeWatch']
   }
 
   onActivation(): void {
     this.client = new FSPluginClient()
   }
 
+  async closeWatch(): Promise<void> {
+    console.log('closeWatch') 
+    await this.client.closeWatch() 
+  }
+
 }
 
 class FSPluginClient extends PluginClient {
-  constructor(){
+  watcher: chokidar.FSWatcher
+  constructor() {
     super()
-    this.methods = ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'exists']
+    this.methods = ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'exists', 'watch', 'closeWatch']
     createClient(this, profile)
     this.onload(() => {
       console.log('fsPluginClient onload')
@@ -70,6 +78,20 @@ class FSPluginClient extends PluginClient {
     return fs.access(path).then(() => true).catch(() => false)
   }
 
+  async watch(path: string): Promise<void> {
+    console.log('watch', path)
+    if(this.watcher) this.watcher.close()
+    this.watcher =
+      chokidar.watch(path).on('change', (path, stats) => {
+        console.log('change', path, stats)
+        this.emit('change', path, stats)
+      })
+  }
+
+  async closeWatch(): Promise<void> {
+    console.log('closeWatch')
+    if(this.watcher) this.watcher.close()
+  }
 
 
 }
