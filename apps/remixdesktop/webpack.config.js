@@ -4,11 +4,15 @@ const TerserPlugin = require("terser-webpack-plugin")
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 
 // Nx plugins for webpack.
-module.exports = composePlugins((config) => {
-  config = {}
+module.exports = composePlugins((input) => {
+  
+  const config = {
+    mode: input.mode === 'production' ? 'production' : 'development',
+  }
+
   config.target = 'electron-main'
   config.devtool = 'source-map'
-  config.mode = 'production'
+  
   config.output = {
     path: __dirname + '/.webpack/main',
     filename: '[name].js',
@@ -20,11 +24,14 @@ module.exports = composePlugins((config) => {
     index: ['./apps/remixdesktop/src/index.ts'],
     preload: ['./apps/remixdesktop/src/preload.ts'],
   }
-  
+
+
+  const mainEntry =  config.mode === 'production'? `\`file://$\{require('path').resolve(__dirname, '..', 'renderer', 'index.html')}\``: `'http://localhost:8080'`
+
   config.plugins= [
     new webpack.DefinePlugin({
-      MAIN_WINDOW_WEBPACK_ENTRY:`\`file://$\{require('path').resolve(__dirname, '..', 'renderer', 'index.html')}\``,
-      'process.env.MAIN_WINDOW_WEBPACK_ENTRY': `\`file://$\{require('path').resolve(__dirname, '..', 'renderer', 'index.html')}\``,
+      MAIN_WINDOW_WEBPACK_ENTRY: mainEntry,
+      'process.env.MAIN_WINDOW_WEBPACK_ENTRY': mainEntry,
       MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: `\`$\{require('path').resolve(__dirname, 'preload.js')}\``,
       'process.env.MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY': `\`$\{require('path').resolve(__dirname, '..', 'render', 'preload.js')}\``,
     })
