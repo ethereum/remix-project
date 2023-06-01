@@ -3,4 +3,7 @@ export type ReceiptStatus = "Pending in queue" | "Pass - Verified" | "Already Ve
 export interface Receipt {
   guid: string
   status: ReceiptStatus
+  isProxyContract: boolean
+  message?: string
+  succeed?: boolean
 }
