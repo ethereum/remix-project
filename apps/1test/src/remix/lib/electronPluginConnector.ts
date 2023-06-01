@@ -2,8 +2,9 @@ import type { ExternalProfile, Profile, Message, PluginOptions } from '@remixpro
 import { Plugin } from '@remixproject/engine';
 
 
-export interface PluginConnectorOptions extends PluginOptions {
-  engine?:string
+export interface ElectronPluginConnectorOptions extends PluginOptions {
+  sendAPI?: (message: Partial<Message>) => void
+  receiveAPI?: (cb: (event:any, message: Partial<Message>) => void) => void
 }
 
 
@@ -11,24 +12,40 @@ export abstract class ElectronPluginConnector extends Plugin {
   protected loaded: boolean
   protected id = 0
   protected pendingRequest: Record<number, (result: any, error: Error | string) => void> = {}
-  protected options: PluginConnectorOptions
+  protected options: ElectronPluginConnectorOptions
   profile: Profile
-  constructor(profile: Profile) {
+  constructor(profile: Profile, options: ElectronPluginConnectorOptions = {}) {
     super(profile)
+    this.loaded = false
+    if(!options.sendAPI || !options.receiveAPI) throw new Error('ElectronPluginConnector requires sendAPI and receiveAPI')
+    this.options = options
+
+    options.receiveAPI((event: any, message: any) => {
+      this.getMessage(message)
+    })
   }
 
   /**
    * Send a message to the external plugin
    * @param message the message passed to the plugin
    */
-  protected abstract send(message: Partial<Message>): void
+  protected send(message: Partial<Message>): void {
+    if(this.loaded)
+      this.options.sendAPI(message)
+  }
   /**
    * Open connection with the plugin
-   * @param url The transformed url the plugin should connect to
+   * @param name The name of the plugin should connect to
    */
-  protected abstract connect(name: string): any | Promise<any>
+  protected async connect(name: string) {
+    if(await window.api.activatePlugin(name) && !this.loaded){
+      this.handshake()
+    }
+  }
   /** Close connection with the plugin */
-  protected abstract disconnect(): any | Promise<any>
+  protected disconnect(): any | Promise<any> {
+    
+  }
 
   async activate() {
     await this.connect(this.profile.name)
@@ -42,7 +59,7 @@ export abstract class ElectronPluginConnector extends Plugin {
   }
 
   /** Set options for an external plugin */
-  setOptions(options: Partial<PluginConnectorOptions> = {}) {
+  setOptions(options: Partial<ElectronPluginConnectorOptions> = {}) {
     super.setOptions(options)
   }
 
@@ -61,27 +78,23 @@ export abstract class ElectronPluginConnector extends Plugin {
 
   /** Perform handshake with the client if not loaded yet */
   protected async handshake() {
-    console.log('ElectronPluginConnector handshake', this.loaded)
     if (!this.loaded) {
       this.loaded = true
       let methods: string[];
       try {
-        console.log('ElectronPluginConnector handshake calling plugin method')
-        methods = await this.callPluginMethod('handshake', [this.profile.name, this.options?.engine])
-        console.log('ElectronPluginConnector handshake methods', methods)
+        methods = await this.callPluginMethod('handshake', [this.profile.name])
       } catch (err) {
-        console.error('ElectronPluginConnector handshake error', err)
         this.loaded = false
         throw err;
       }
+      this.emit('loaded', this.name)
       if (methods) {
         this.profile.methods = methods
         this.call('manager', 'updateProfile', this.profile)
       }
     } else {
       // If there is a broken connection we want send back the handshake to the plugin client
-      console.log('ElectronPluginConnector handshake already loaded')
-      return this.callPluginMethod('handshake', [this.profile.name, this.options?.engine])
+      return this.callPluginMethod('handshake', [this.profile.name])
     }
   }
 
@@ -90,7 +103,6 @@ export abstract class ElectronPluginConnector extends Plugin {
    * @param message The message sent by the client
    */
   protected async getMessage(message: Message) {
-    console.log('ElectronPluginConnector getMessage', message)
     // Check for handshake request from the client
     if (message.action === 'request' && message.key === 'handshake') {
       return this.handshake()

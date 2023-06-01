@@ -10,9 +10,11 @@ const gitPlugin = new GitPlugin()
 engine.register(appManager)
 engine.register(fsPlugin)
 engine.register(gitPlugin)
-//appManager.activatePlugin('fs')
 
-ipcMain.on('engine:activatePlugin', (event, arg) => {
+ipcMain.handle('engine:activatePlugin', async (event, arg) => {
   console.log('engine:activatePlugin', arg)
-  appManager.activatePlugin(arg)
+  if(await appManager.isActive(arg)){
+    return true
+  }
+  return await appManager.activatePlugin(arg)
 })
