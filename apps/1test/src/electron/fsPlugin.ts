@@ -34,7 +34,7 @@ class FSPluginClient extends PluginClient {
   watcher: chokidar.FSWatcher
   constructor() {
     super()
-    this.methods = ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'exists', 'watch', 'closeWatch']
+    this.methods = ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'exists', 'watch', 'closeWatch', 'currentPath']
     createClient(this, profile)
     this.onload(() => {
       console.log('fsPluginClient onload')
@@ -76,6 +76,10 @@ class FSPluginClient extends PluginClient {
 
   async exists(path: string): Promise<boolean> {
     return fs.access(path).then(() => true).catch(() => false)
+  }
+
+  async currentPath(): Promise<string> {
+    return process.cwd()
   }
 
   async watch(path: string): Promise<void> {

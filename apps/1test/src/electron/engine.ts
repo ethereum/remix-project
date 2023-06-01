@@ -22,6 +22,5 @@ ipcMain.handle('engine:activatePlugin', async (event, arg) => {
 
 app.on('before-quit', async () => {
   await appManager.call('fs', 'closeWatch')
-  console.log('quit')
   app.quit()
 })
