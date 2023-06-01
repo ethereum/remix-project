@@ -1,9 +1,8 @@
 import { PluginClient } from "@remixproject/plugin";
-import { createClient } from "./electronPluginClient"
+import { createClient } from "./lib/electronPluginClient"
 import { Engine, PluginManager, Plugin } from '@remixproject/engine';
 import fs from 'fs/promises'
 import { Stats } from "fs";
-
 
 const profile = {
   displayName: 'fs',
@@ -21,6 +20,7 @@ export class FSPlugin extends Plugin {
     console.log('fsPlugin onActivation')
     this.client = new FSPluginClient()
   }
+
 }
 
 class FSPluginClient extends PluginClient {
