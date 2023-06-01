@@ -26,7 +26,7 @@ class GitPluginClient extends PluginClient {
   constructor() {
     super()
     this.methods = ['log', 'status', 'add', 'commit', 'push', 'pull', 'clone', 'checkout', 'branch', 'merge', 'reset', 'revert', 'diff', 'stash', 'apply', 'cherryPick', 'rebase', 'tag', 'fetch', 'remote', 'config', 'show', 'init', 'help', 'version']
-    createClient(this, 'git')
+    createClient(this, profile)
     this.onload(() => {
       console.log('GitPluginClient onload')
     })
