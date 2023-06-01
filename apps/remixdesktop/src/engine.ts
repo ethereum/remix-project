@@ -9,6 +9,6 @@ engine.register(appManager)
 engine.register(plugin)
 //appManager.activatePlugin('fs')
 
-ipcMain.on('engine:activatePlugin', (event, arg) => {
+ipcMain.on('manager:activatePlugin', (event, arg) => {
   appManager.activatePlugin(arg)
 })

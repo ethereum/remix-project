@@ -12,8 +12,8 @@ engine.register(appManager)
 engine.register(fsPlugin)
 engine.register(gitPlugin)
 
-ipcMain.handle('engine:activatePlugin', async (event, arg) => {
-  console.log('engine:activatePlugin', arg)
+ipcMain.handle('manager:activatePlugin', async (event, arg) => {
+  console.log('manager:activatePlugin', arg)
   if(await appManager.isActive(arg)){
     return true
   }
