@@ -1,23 +1,22 @@
 import { ClientConnector, connectClient, applyApi, Client, PluginClient } from '@remixproject/plugin'
-import type { Message, Api, ApiMap } from '@remixproject/plugin-utils'
+import type { Message, Api, ApiMap, Profile } from '@remixproject/plugin-utils'
 import { IRemixApi } from '@remixproject/plugin-api'
 import { ipcMain } from 'electron'
 import { mainWindow } from '../..'
 
 export class ElectronPluginClientConnector implements ClientConnector {
 
-    constructor(public IPCName: string) { 
+    constructor(public profile: Profile) { 
     }
-
 
     /** Send a message to the engine */
     send(message: Partial<Message>) {
-        mainWindow.webContents.send(this.IPCName + ':send', message)
+        mainWindow.webContents.send(this.profile.name + ':send', message)
     }
 
     /** Listen to message from the engine */
     on(cb: (message: Partial<Message>) => void) {
-        ipcMain.on(this.IPCName + ':on', (event, message) => {
+        ipcMain.on(this.profile.name + ':on', (event, message) => {
             cb(message)
         })
     }
@@ -26,9 +25,9 @@ export class ElectronPluginClientConnector implements ClientConnector {
 export const createClient = <
     P extends Api,
     App extends ApiMap = Readonly<IRemixApi>
->(client: PluginClient<P, App> = new PluginClient(), IPCName: string): Client<P, App> => {
+>(client: PluginClient<P, App> = new PluginClient(), profile: Profile): Client<P, App> => {
     const c = client as any
-    connectClient(new ElectronPluginClientConnector(IPCName), c)
+    connectClient(new ElectronPluginClientConnector(profile), c)
     applyApi(c)
     return c
 }
