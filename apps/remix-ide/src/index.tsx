@@ -16,14 +16,14 @@ import { Storage } from '@remix-project/remix-lib'
   } catch (e) { }
   const theme = new ThemeModule()
   theme.initTheme()
-  /*
+  
   render(
     <React.StrictMode>
       <Preload></Preload>
     </React.StrictMode>,
     document.getElementById('root')
   )
-  */
+  
 })()
 
 

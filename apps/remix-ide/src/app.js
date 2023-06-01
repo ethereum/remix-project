@@ -78,7 +78,7 @@ class AppComponent {
   constructor() {
 
     console.log(window.electronAPI)
-    console.log(window)
+    console.log(window.api)
 
     this.appManager = new RemixAppManager({})
     this.queryParams = new QueryParams()
