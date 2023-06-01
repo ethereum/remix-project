@@ -9,7 +9,7 @@ export class RemixClient extends PluginClient {
     }
   
     async verify (apiKey: string, contractAddress: string, contractArguments: string, contractName: string, compilationResultParam: any) {
-        const result = await verify(apiKey, contractAddress, contractArguments, contractName, compilationResultParam, null, this,
+        const result = await verify(apiKey, contractAddress, contractArguments, contractName, compilationResultParam, null, false, null, this,
             (value: EtherScanReturn) => {}, (value: string) => {})    
         return result
     }
