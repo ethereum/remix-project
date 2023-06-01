@@ -1,6 +1,6 @@
 import { PluginClient } from "@remixproject/plugin";
 import { createClient } from "./lib/electronPluginClient"
-import { Engine, PluginManager, Plugin } from '@remixproject/engine';
+import { Plugin } from '@remixproject/engine';
 import fs from 'fs/promises'
 import { Stats } from "fs";
 
@@ -17,7 +17,6 @@ export class FSPlugin extends Plugin {
   }
 
   onActivation(): void {
-    console.log('fsPlugin onActivation')
     this.client = new FSPluginClient()
   }
 
@@ -65,6 +64,11 @@ class FSPluginClient extends PluginClient {
   async stat(path: string): Promise<Stats> {
     return fs.stat(path)
   }
+
+  async exists(path: string): Promise<boolean> {
+    return fs.access(path).then(() => true).catch(() => false)
+  }
+  
 
 
 }

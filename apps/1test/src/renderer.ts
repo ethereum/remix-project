@@ -9,6 +9,16 @@ class MyAppManager extends PluginManager {
     this.on('fs', 'loaded', async () => {
       const files =  await this.call('fs', 'readdir', './src')
       console.log('files', files)
+      let exists =  await this.call('fs', 'exists', './src')
+      console.log('exists', exists)
+      exists =  await this.call('fs', 'exists', './notexists')
+      console.log('exists', exists)
+      // stat test
+      const stat = await this.call('fs', 'stat', './src')
+      console.log('stat', stat)
+      // read file test
+      const content = await this.call('fs', 'readFile', './src/index.html')
+      console.log('content', content)
     })
 
     this.on('git', 'loaded', async () => {

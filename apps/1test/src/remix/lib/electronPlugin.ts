@@ -1,26 +1,30 @@
-import type { ExternalProfile, Profile, Message, PluginOptions } from '@remixproject/plugin-utils'
+import type { Profile, Message } from '@remixproject/plugin-utils'
 import { Plugin } from '@remixproject/engine';
 
-
-export interface ElectronPluginConnectorOptions extends PluginOptions {
-  sendAPI?: (message: Partial<Message>) => void
-  receiveAPI?: (cb: (event:any, message: Partial<Message>) => void) => void
-}
-
-
-export abstract class ElectronPluginConnector extends Plugin {
+export abstract class ElectronPlugin extends Plugin {
   protected loaded: boolean
   protected id = 0
   protected pendingRequest: Record<number, (result: any, error: Error | string) => void> = {}
-  protected options: ElectronPluginConnectorOptions
+  protected api: {
+    send: (message: Partial<Message>) => void
+    on: (cb: (event: any, message: any) => void) => void
+  }
   profile: Profile
-  constructor(profile: Profile, options: ElectronPluginConnectorOptions = {}) {
+  constructor(profile: Profile) {
     super(profile)
     this.loaded = false
-    if(!options.sendAPI || !options.receiveAPI) throw new Error('ElectronPluginConnector requires sendAPI and receiveAPI')
-    this.options = options
 
-    options.receiveAPI((event: any, message: any) => {
+    if(!window.electronAPI) throw new Error('ElectronPluginConnector requires window.api')
+    if(!window.electronAPI.plugins) throw new Error('ElectronPluginConnector requires window.api.plugins')
+
+    window.electronAPI.plugins.find((plugin: any) => {
+      if(plugin.name === profile.name){
+        this.api = plugin
+        return true
+      }
+    })
+
+    this.api.on((event: any, message: any) => {
       this.getMessage(message)
     })
   }
@@ -31,14 +35,14 @@ export abstract class ElectronPluginConnector extends Plugin {
    */
   protected send(message: Partial<Message>): void {
     if(this.loaded)
-      this.options.sendAPI(message)
+      this.api.send(message)
   }
   /**
    * Open connection with the plugin
    * @param name The name of the plugin should connect to
    */
   protected async connect(name: string) {
-    if(await window.api.activatePlugin(name) && !this.loaded){
+    if(await window.electronAPI.activatePlugin(name) && !this.loaded){
       this.handshake()
     }
   }
@@ -56,11 +60,6 @@ export abstract class ElectronPluginConnector extends Plugin {
     this.loaded = false
     await this.disconnect()
     return super.deactivate()
-  }
-
-  /** Set options for an external plugin */
-  setOptions(options: Partial<ElectronPluginConnectorOptions> = {}) {
-    super.setOptions(options)
   }
 
   /** Call a method from this plugin */
