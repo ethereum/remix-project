@@ -2,7 +2,7 @@ import { Plugin } from "@remixproject/engine";
 import { PluginClient } from "@remixproject/plugin";
 import { Profile } from "@remixproject/plugin-utils";
 import { spawn } from "child_process";
-import { createClient } from "./lib/electronPluginClient";
+import { createElectronClient } from "./lib/electronPluginClient";
 
 const profile: Profile = {
   name: 'git',
@@ -26,7 +26,7 @@ class GitPluginClient extends PluginClient {
   constructor() {
     super()
     this.methods = ['log', 'status', 'add', 'commit', 'push', 'pull', 'clone', 'checkout', 'branch', 'merge', 'reset', 'revert', 'diff', 'stash', 'apply', 'cherryPick', 'rebase', 'tag', 'fetch', 'remote', 'config', 'show', 'init', 'help', 'version']
-    createClient(this, profile)
+    createElectronClient(this, profile)
     this.onload(() => {
       console.log('GitPluginClient onload')
     })
