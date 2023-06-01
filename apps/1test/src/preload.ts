@@ -10,7 +10,7 @@ const exposedPLugins = ['fs', 'git']
 
 contextBridge.exposeInMainWorld('electronAPI', {
   activatePlugin: (name: string) => {
-    return ipcRenderer.invoke('engine:activatePlugin', name)
+    return ipcRenderer.invoke('manager:activatePlugin', name)
   },
   
   plugins: exposedPLugins.map(name => {
