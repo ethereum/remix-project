@@ -22,6 +22,7 @@ interface Props {
 interface FormValues {
   contractName: string
   contractAddress: string
+  expectedImplAddress?: string
 }
 
 export const VerifyView: React.FC<Props> = ({
@@ -75,6 +76,8 @@ export const VerifyView: React.FC<Props> = ({
       values.contractName,
       compilationResult,
       null,
+      isProxyContract,
+      values.expectedImplAddress,
       client,
       onVerifiedContract,
       setResults,
@@ -87,7 +90,7 @@ export const VerifyView: React.FC<Props> = ({
       <Formik
         initialValues={{
           contractName: "",
-          contractAddress: "",
+          contractAddress: ""
         }}
         validate={(values) => {
           const errors = {} as any

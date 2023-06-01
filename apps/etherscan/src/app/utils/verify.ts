@@ -21,7 +21,9 @@ export const verify = async (
     contractArgumentsParam: string,
     contractName: string,
     compilationResultParam: CompilerAbstract,
-    chainRef: number | string, 
+    chainRef: number | string,
+    isProxyContract: boolean,
+    expectedImplAddress: string, 
     client: PluginClient,
     onVerifiedContract: (value: EtherScanReturn) => void,
     setResults: (value: string) => void
@@ -85,11 +87,18 @@ export const verify = async (
         module: "contract", // Do not change
         action: "verifysourcecode", // Do not change
         codeformat: "solidity-standard-json-input",
-        contractaddress: contractAddress, // Contract Address starts with 0x...
         sourceCode: JSON.stringify(jsonInput),
         contractname: fileName + ':' + contractName,
         compilerversion: `v${contractMetadataParsed.compiler.version}`, // see http://etherscan.io/solcversions for list of support versions
         constructorArguements: contractArgumentsParam ? contractArgumentsParam.replace('0x', '') : '', // if applicable
+      }
+
+      if (isProxyContract) {
+        data.action = "verifyproxycontract"
+        data.expectedimplementation = expectedImplAddress
+        data.address = contractAddress
+      } else {
+        data.contractaddress = contractAddress
       }
 
       const body = new FormData()
