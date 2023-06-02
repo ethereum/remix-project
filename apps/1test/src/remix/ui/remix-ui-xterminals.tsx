@@ -19,17 +19,12 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
 
     useEffect(() => {
         plugin.on('xterm', 'loaded', async () => {
-            console.log('xterms loaded')
-
         })
         plugin.on('xterm', 'data', async (data: string, pid: number) => {
-            console.log('xterm data', data, pid)
-            
             writeToTerminal(data, pid)
         })
 
         plugin.on('xterm', 'close', async (pid: number) => {
-            console.log('xterm close', pid)
             setTerminals(prevState => {
                 return prevState.filter(xtermState => xtermState.pid !== pid)
             })
@@ -52,13 +47,11 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
     }, [terminals])
 
     const send = (data: string, pid: number) => {
-        console.log('send', data)
         plugin.call('xterm', 'keystroke', data, pid)
     }
 
     const createTerminal = async () => {
         const pid = await plugin.call('xterm', 'createTerminal')
-        console.log('pid', pid)
 
         setTerminals(prevState => {
             return [...prevState, {

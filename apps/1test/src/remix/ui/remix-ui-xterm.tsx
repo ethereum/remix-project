@@ -17,10 +17,6 @@ const RemixUiXterm = (props: RemixUiXtermProps) => {
     const xtermRef = React.useRef(null)
 
     useEffect(() => {
-        console.log('remix-ui-xterm', pid)
-    }, [timeStamp])
-
-    useEffect(() => {
         console.log('remix-ui-xterm ref', xtermRef.current)
         props.setTerminalRef(pid, xtermRef.current)
     }, [xtermRef.current])
