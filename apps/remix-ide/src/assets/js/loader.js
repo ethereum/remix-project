@@ -6,10 +6,10 @@ const domains = {
 }
 
 const domainsSecondaryTracker = {
-  'remix-alpha.ethereum.org': 12,
-  'remix-beta.ethereum.org': 10,
-  'remix.ethereum.org': 8,
-  '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 20 // remix desktop
+  'remix-alpha.ethereum.org': 27,
+  'remix-beta.ethereum.org': 25,
+  'remix.ethereum.org': 23,
+  '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
 }
 
 if (domains[window.location.hostname]) {
