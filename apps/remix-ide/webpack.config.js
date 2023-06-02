@@ -5,6 +5,7 @@ const CopyPlugin = require("copy-webpack-plugin")
 const version = require('../../package.json').version
 const fs = require('fs')
 const TerserPlugin = require("terser-webpack-plugin")
+const webpackMerge = require('webpack-merge');
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 const axios = require('axios')
 
@@ -127,6 +128,13 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   config.watchOptions = {
     ignored: /node_modules/
   }
+
+  webpackMerge.merge(config, { devServer: {
+    headers: {
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+      'Cross-Origin-Opener-Policy': 'same-origin'
+    }
+  }})
 
   return config;
 });

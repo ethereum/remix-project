@@ -212,8 +212,19 @@ class FileProvider {
    * @param {string} path is the folder to be copied over
    * @param {Function} visitFile is a function called for each visited files
    * @param {Function} visitFolder is a function called for each visited folders
+   * @param {Function} customSystemStructureValue is a function called for customizing the json structure values
+   * @param {Function} customSystemStructureKey is a function called for customizing the json structure keys
    */
-  async _copyFolderToJsonInternal (path, visitFile, visitFolder) {
+  async _copyFolderToJsonInternal (path, visitFile, visitFolder, customSystemStructureValue, customSystemStructureKey) {
+    customSystemStructureKey = customSystemStructureKey || function (path) { return path }
+    customSystemStructureValue = customSystemStructureValue || function (type, content) { 
+      if (type === 'folder') {
+        return { children: content }
+      } else if (type === 'file') {
+        return { content }
+      }
+      return content
+    }
     visitFile = visitFile || function () { /* do nothing. */ }
     visitFolder = visitFolder || function () { /* do nothing. */ }
 
@@ -225,15 +236,16 @@ class FileProvider {
         visitFolder({ path })
         if (items.length !== 0) {
           for (const item of items) {
-            const file = {}
+            let file = {}
             const curPath = `${path}${path.endsWith('/') ? '' : '/'}${item}`
             if ((await window.remixFileSystem.stat(curPath)).isDirectory()) {
-              file.children = await this._copyFolderToJsonInternal(curPath, visitFile, visitFolder)
+              file = customSystemStructureValue('folder', await this._copyFolderToJsonInternal(curPath, visitFile, visitFolder, customSystemStructureValue, customSystemStructureKey))
             } else {
-              file.content = await window.remixFileSystem.readFile(curPath, 'utf8')
-              visitFile({ path: curPath, content: file.content })
+              const content = await window.remixFileSystem.readFile(curPath, 'utf8')
+              file = customSystemStructureValue('file', content, item)
+              visitFile({ folder: path, path: curPath, name: item, content })
             }
-            json[curPath] = file
+            json[customSystemStructureKey(curPath)] = file
           }
         }
       } catch (e) {
@@ -249,11 +261,22 @@ class FileProvider {
    * @param {string} path is the folder to be copied over
    * @param {Function} visitFile is a function called for each visited files
    * @param {Function} visitFolder is a function called for each visited folders
+   * @param {Function} customSystemStructureValue is a function called for customizing the json structure
+   * @param {Function} customSystemStructureKey is a function called for customizing the json structure keys
    */
-  async copyFolderToJson (path, visitFile, visitFolder) {
+  async copyFolderToJson (path, visitFile, visitFolder, customSystemStructureValue, customSystemStructureKey) {
+    customSystemStructureKey = customSystemStructureKey || function (path) { return path }
+    customSystemStructureValue = customSystemStructureValue || function (type, content) { 
+      if (type === 'folder') {
+        return { children: content }
+      } else if (type === 'file') {
+        return { content }
+      }
+      return content
+    }
     visitFile = visitFile || function () { /* do nothing. */ }
     visitFolder = visitFolder || function () { /* do nothing. */ }
-    return await this._copyFolderToJsonInternal(path, visitFile, visitFolder)
+    return await this._copyFolderToJsonInternal(path, visitFile, visitFolder, customSystemStructureValue, customSystemStructureKey)
   }
 
   async removeFile (path) {

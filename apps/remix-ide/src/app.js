@@ -45,6 +45,7 @@ import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
 import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
 import { ContractFlattener } from './app/plugins/contractFlattener'
+import { WebContainerPlugin } from './app/plugins/web-container/web-container'
 
 const isElectron = require('is-electron')
 
@@ -187,6 +188,9 @@ class AppComponent {
     // ----------------- ContractFlattener ----------------------------
     const contractFlattener = new ContractFlattener()
 
+    // ----------------- WebContainerPlugin ----------------------------
+    const webContainerPlugin = new WebContainerPlugin()
+
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
 
@@ -302,7 +306,8 @@ class AppComponent {
       search,
       solidityumlgen,
       contractFlattener,
-      solidityScript
+      solidityScript,
+      webContainerPlugin
     ])
 
     // LAYOUT & SYSTEM VIEWS
@@ -419,6 +424,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
     await this.appManager.activatePlugin(['solidity-script'])
+    await this.appManager.activatePlugin(['web-container-plugin'])
 
     this.appManager.on(
       'filePanel',

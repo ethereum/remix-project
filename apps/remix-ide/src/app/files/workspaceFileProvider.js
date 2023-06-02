@@ -53,7 +53,7 @@ class WorkspaceFileProvider extends FileProvider {
     })
   }
 
-  async copyFolderToJson (directory, visitFile, visitFolder) {
+  async copyFolderToJson (directory, visitFile, visitFolder, customSystemStructureValue, customSystemStructureKey) {
     visitFile = visitFile || function () { /* do nothing. */ }
     visitFolder = visitFolder || function () { /* do nothing. */ }
     const regex = new RegExp(`.workspaces/${this.workspace}/`, 'g')
@@ -61,7 +61,7 @@ class WorkspaceFileProvider extends FileProvider {
       visitFile({ path: path.replace(regex, ''), content })
     }, ({ path }) => {
       visitFolder({ path: path.replace(regex, '') })
-    })
+    }, customSystemStructureValue, customSystemStructureKey)
     json = JSON.stringify(json).replace(regex, '')
     return JSON.parse(json)
   }
