@@ -6,7 +6,7 @@ console.log('preload.ts')
 
 /* preload script needs statically defined API for each plugin */
 
-const exposedPLugins = ['fs', 'git']
+const exposedPLugins = ['fs', 'git', 'xterm']
 
 contextBridge.exposeInMainWorld('electronAPI', {
   activatePlugin: (name: string) => {

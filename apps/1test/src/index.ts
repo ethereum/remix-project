@@ -18,7 +18,7 @@ const createWindow = (): void => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     height: 800,
-    width: 600,
+    width: 1024,
     webPreferences: {
        preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
     },
@@ -27,9 +27,9 @@ const createWindow = (): void => {
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  //mainWindow.maximize();
+  mainWindow.maximize();
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
   require('./electron/engine')
 };
 

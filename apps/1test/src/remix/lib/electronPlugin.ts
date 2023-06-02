@@ -24,6 +24,8 @@ export abstract class ElectronPlugin extends Plugin {
       }
     })
 
+    if(!this.api) throw new Error(`ElectronPluginConnector requires window.api.plugins.${profile.name} to be defined in preload.ts`)
+
     this.api.on((event: any, message: any) => {
       this.getMessage(message)
     })
