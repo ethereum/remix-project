@@ -45,6 +45,7 @@ import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
 import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
 import { ContractFlattener } from './app/plugins/contractFlattener'
+import { fsPlugin } from './app/plugins/fsPlugin'
 
 const isElectron = require('is-electron')
 
@@ -73,6 +74,8 @@ const FilePanel = require('./app/panels/file-panel')
 const Editor = require('./app/editor/editor')
 const Terminal = require('./app/panels/terminal')
 const { TabProxy } = require('./app/panels/tab-proxy.js')
+
+
 
 class AppComponent {
   constructor() {
@@ -184,6 +187,9 @@ class AppComponent {
 
     //----- search
     const search = new SearchPlugin()
+
+    //---- fs plugin
+    const FSPlugin = new fsPlugin()
 
     //---------------- Solidity UML Generator -------------------------
     const solidityumlgen = new SolidityUmlGen(appManager)
@@ -306,7 +312,8 @@ class AppComponent {
       search,
       solidityumlgen,
       contractFlattener,
-      solidityScript
+      solidityScript,
+      FSPlugin
     ])
 
     // LAYOUT & SYSTEM VIEWS
@@ -423,6 +430,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
     await this.appManager.activatePlugin(['solidity-script'])
+    await this.appManager.activatePlugin(['fs'])
 
     this.appManager.on(
       'filePanel',
@@ -435,6 +443,12 @@ class AppComponent {
         await this.appManager.registerContextMenuItems()
       }
     )
+
+    this.appManager.on('fs', 'loaded', async () => {
+      console.log('fs loaded')
+      const files =  await this.appManager.call('fs', 'readdir', './')
+      console.log('files', files)
+    })
 
     await this.appManager.activatePlugin(['filePanel'])
     // Set workspace after initial activation
