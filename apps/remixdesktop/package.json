@@ -1,27 +1,44 @@
 {
   "name": "remixdesktop",
-  "productName": "remixdesktop",
   "version": "1.0.0",
-  "description": "My Electron application description",
-  "main": ".webpack/main",
-  "scripts": {
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ."
-  },
-  "keywords": [],
-  "author": {
-    "name": "bunsenstraat",
-    "email": "filip.mertens@ethereum.org"
-  },
+  "main": "build/main.js",
   "license": "MIT",
+  "appId": "org.ethereum.remixdesktop",
+  "mac": {
+    "category": "public.app-category.productivity"
+  },
+  "scripts": {
+    "start:dev": "tsc && cross-env NODE_ENV=development electron .",
+    "start:production": "tsc && cross-env NODE_ENV=production electron .",
+    "pack": "tsc && electron-builder",
+    "dist": "tsc && electron-builder --mac --dir",
+    "postinstall": "electron-builder install-app-deps"
+  },
   "devDependencies": {
-    "@electron-forge/cli": "^6.1.1",
-    "electron": "24.4.0"
+    "@electron/rebuild": "^3.2.13",
+    "cross-env": "^7.0.3",
+    "electron": "^25.0.1",
+    "electron-builder": "^23.6.0",
+    "typescript": "^5.1.3"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
+    "node-pty": "^0.10.1",
+    "electron-is-packaged": "^1.0.2"
+  },
+  "build": {
+    "productName": "remixdesktop",
+    "mac": {
+      "target": {
+        "target": "default",
+        "arch": [
+          "universal"
+        ]
+      },
+      "category": "public.app-category.productivity"
+    },
+    "extends": null,
+    "files": [
+      "build/**/*"
+    ]
   }
 }

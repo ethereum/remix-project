@@ -1,20 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "jsx": "react-jsx",
-    "allowJs": true,
+    "target": "es6",
     "module": "commonjs",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
+    "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "baseUrl": ".",
-    "outDir": "dist",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "paths": {
-      "*": ["node_modules/*"]
-    }
-  },
-  "include": ["src/**/*"]
+    "strictPropertyInitialization": false,
+    "strict": true,
+    "outDir": "build",
+    "rootDir": "./src/",
+    "noEmitOnError": true,
+    "typeRoots": ["node_modules/@types", "./types"]
+  }
 }

@@ -1,70 +1,103 @@
 import { PluginClient } from "@remixproject/plugin";
-import { createClient } from "./electronPluginClient"
-import { Engine, PluginManager, Plugin } from '@remixproject/engine';
-import fs from 'fs'
-import { existsSync } from "fs-extra";
+import { createElectronClient } from "@remixproject/plugin-electron"
+import { Plugin } from '@remixproject/engine';
+import fs from 'fs/promises'
+import { Stats } from "fs";
+import { Profile } from "@remixproject/plugin-utils";
+import chokidar from 'chokidar'
+import { mainWindow } from "./main";
 
-const profile = {
+const profile: Profile = {
   displayName: 'fs',
   name: 'fs',
   description: 'fs',
 }
 
-export class fsPlugin extends Plugin {
-  client: PluginClient
-  constructor(){
+export class FSPlugin extends Plugin {
+  client: FSPluginClient
+  constructor() {
     super(profile)
+    this.methods = ['closeWatch']
   }
 
   onActivation(): void {
-    console.log('fsPlugin onActivation')
-    this.client = new fsPluginClient()
+    this.client = new FSPluginClient()
   }
+
+  async closeWatch(): Promise<void> {
+    console.log('closeWatch')
+    if (this.client)
+      await this.client.closeWatch()
+  }
+
 }
 
-class fsPluginClient extends PluginClient {
-  constructor(){
+class FSPluginClient extends PluginClient {
+  watcher: chokidar.FSWatcher | undefined
+  constructor() {
     super()
-    this.methods = ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'exists']
-    createClient(this)
-    this.onload()
+    this.methods = ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'exists', 'watch', 'closeWatch', 'currentPath']
+    createElectronClient(this, profile, mainWindow)
+    this.onload(() => {
+      console.log('fsPluginClient onload')
+    })
   }
 
   async readdir(path: string): Promise<string[]> {
     // call node fs.readdir
-    return fs.readdirSync(path)
+    return fs.readdir(path)
   }
 
   async readFile(path: string): Promise<string> {
-    return fs.readFileSync(path, 'utf8')
+    return fs.readFile(path, 'utf8')
   }
 
   async writeFile(path: string, content: string): Promise<void> {
-    return fs.writeFileSync(path, content, 'utf8')
+    return fs.writeFile(path, content, 'utf8')
   }
 
   async mkdir(path: string): Promise<void> {
-    return fs.mkdirSync(path)
+    return fs.mkdir(path)
   }
 
   async rmdir(path: string): Promise<void> {
-    return fs.rmdirSync(path)
+    return fs.rmdir(path)
   }
 
   async unlink(path: string): Promise<void> {
-    return fs.unlinkSync(path)
+    return fs.unlink(path)
   }
 
   async rename(oldPath: string, newPath: string): Promise<void> {
-    return fs.renameSync(oldPath, newPath)
+    return fs.rename(oldPath, newPath)
   }
 
-  async stat(path: string): Promise<fs.Stats> {
-    return fs.statSync(path)
+  async stat(path: string): Promise<Stats> {
+    return fs.stat(path)
   }
 
   async exists(path: string): Promise<boolean> {
-    return existsSync(path)
+    return fs.access(path).then(() => true).catch(() => false)
   }
+
+  async currentPath(): Promise<string> {
+    return process.cwd()
+  }
+
+  async watch(path: string): Promise<void> {
+    console.log('watch', path)
+    if (this.watcher) this.watcher.close()
+    this.watcher =
+      chokidar.watch(path).on('change', (path, stats) => {
+        console.log('change', path, stats)
+        this.emit('change', path, stats)
+      })
+  }
+
+  async closeWatch(): Promise<void> {
+    console.log('closeWatch')
+    if (this.watcher) this.watcher.close()
+  }
+
 
 }
