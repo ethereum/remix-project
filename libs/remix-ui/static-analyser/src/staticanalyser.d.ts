@@ -83,3 +83,56 @@ type ErrorRendererOptions = {
   }
 }
 
+
+type SlitherAnalysisResultType = {
+description: string,
+  title: string,
+  confidence: string,
+  severity: string,
+  more?: any,
+  sourceMap: [
+      {
+          type: string,
+          name: string,
+          source_mapping: {
+            start: number,
+            length: number,
+            filename_relative: string,
+            filename_absolute: string,
+            filename_short: string,
+            is_dependency: false,
+            lines: number[],
+            starting_column: number,
+            ending_column: number
+        },
+          type_specific_fields: {
+              parent: {
+                  type: string,
+                  name: string,
+                  source_mapping: {
+                      start: number,
+                      length: number,
+                      filename_relative: string,
+                      filename_absolute: string,
+                      filename_short: string,
+                      is_dependency: false,
+                      lines: number[],
+                      starting_column: number,
+                      ending_column: number
+                  }
+              },
+              signature: string
+          },
+          additional_fields: {
+              target: string,
+              convention: string
+          }
+      }
+  ]
+}
+
+export type SlitherAnalysisResults = {
+  count: number,
+  data: SlitherAnalysisResultType[]
+  status: boolean
+}
