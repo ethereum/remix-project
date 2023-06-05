@@ -123,14 +123,12 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
     await plugin.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
     await plugin.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false }) // don't ask why
 
-    const content = `
-  // SPDX-License-Identifier: MIT
-  pragma solidity >=0.7.0 <0.9.0;
-
-  contract helloWorld {
-  }
-  `
-    const {newPath} = await plugin.call('fileManager', 'writeFileNoRewrite', '/contracts/helloWorld.sol', content)
+    const content = `// SPDX-License-Identifier: MIT
+    pragma solidity >=0.7.0 <0.9.0;
+    contract helloWorld {
+    }
+    `
+    const {newContent, newPath} = await plugin.call('fileManager', 'writeFileNoRewrite', '/contracts/helloWorld.sol', content)
     await plugin.call('fileManager', 'open', newPath)
   }
   const uploadFile = async (target) => {
