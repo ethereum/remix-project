@@ -67,20 +67,21 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     return indexOfCategory
   }
   const [basicEnabled, setBasicEnabled] = useState(true)
-  const [slitherEnabled, setSlitherEnabled] = useState(false)
   const [solhintEnabled, setSolhintEnabled] = useState(true) // assuming that solhint is always enabled
   const [showSlither, setShowSlither] = useState(false)
   const [isSupportedVersion, setIsSupportedVersion] = useState(false)
   let [showLibsWarning, setShowLibsWarning] = useState(false) // eslint-disable-line prefer-const
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
   const [warningState, setWarningState] = useState({})
-  const [runButtonTitle, setRunButtonTitle] = useState<string>('Run Static Analysis')
   const [hideWarnings, setHideWarnings] = useState(false)
   const [hints, setHints] = useState<SolHintReport[]>([])
-
+  const [slitherWarnings, setSlitherWarnings] = useState([])
+  const [ssaWarnings, setSsaWarnings] = useState([])
+  
   const warningContainer = useRef(null)
   const allWarnings = useRef({})
   const [state, dispatch] = useReducer(analysisReducer, initialState)
+  const [runButtonTitle, setRunButtonTitle] = useState<string>(`Analyse`)
 
   /**
    * Disable static analysis for contracts whose compiler version is
@@ -97,7 +98,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       setRunButtonTitle('Select Solidity compiler version greater than 0.4.12.')
     } else {
       setIsSupportedVersion(true)
-      setRunButtonTitle('Run static analysis')
+      setRunButtonTitle('Run Analysis')
     }
   }
 
@@ -108,10 +109,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   useEffect(() => {
     setWarningState({})
     const runAnalysis = async () => {
-      await run(state.data, state.source, state.file, state, props, isSupportedVersion, slitherEnabled, categoryIndex, groupedModules, runner,_paq, message, showWarnings, allWarnings, warningContainer,calculateWarningStateEntries, warningState, setHints, hints)
-      //   // Run solhint
-      // const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
-      // setHints(hintsResult)
+      await run(state.data, state.source, state.file, state, props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq, message, showWarnings, allWarnings, warningContainer,calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings)
     }
     if (basicEnabled) {
       if (state.data !== null) {
@@ -136,11 +134,12 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       // Reset state
       dispatch({ type: '', payload: initialState })
       setHints([])
+      setSlitherWarnings([])
+      setSsaWarnings([])
       // Show 'Enable Slither Analysis' checkbox
       if (currentWorkspace && currentWorkspace.isLocalhost === true) setShowSlither(true)
       else {
         setShowSlither(false)
-        setSlitherEnabled(false)
       }
     })
     props.analysisModule.on('manager', 'pluginDeactivated', (plugin) => {
@@ -149,17 +148,15 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         // Reset warning state
         setWarningState([])
         setHints([])
+        setSlitherWarnings([])
+        setSsaWarnings([])
         // Reset badge
         props.event.trigger('staticAnaysisWarning', [])
         // Reset state
         dispatch({ type: '', payload: initialState })
         setShowSlither(false)
-        setSlitherEnabled(false)
       }
     })
-    const warningResult = calculateWarningStateEntries(Object.entries(warningState))
-    props.analysisModule.emit('statusChanged', { key: hints.length+warningResult.length, 
-      title: `${hints.length+warningResult.length} warning${hints.length+warningResult.length === 1 ? '' : 's'}`, type: 'warning'})
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     props.analysisModule.on('solidity', 'compilerLoaded', async (version: string, license: string) => {
       setDisableForRun(version)
@@ -167,7 +164,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     return () => { }
   }, [props])
 
-  const message = (name, warning, more, fileName, locationString) : string => {
+  const message = (name: string, warning: any, more?: string, fileName?: string, locationString?: string) : string => {
     return (`
       <span className='d-flex flex-column'>
       <span className='h6 font-weight-bold'>${name}</span>
@@ -255,12 +252,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }
 
   const handleSlitherEnabled = async () => {
-    const slitherStatus = await props.analysisModule.call('manager', 'isActive', 'remixd')
-    if (slitherEnabled && slitherStatus) {
-      setSlitherEnabled(false)
+    const checkRemixd = await !props.analysisModule.call('manager', 'isActive', 'remixd')
+    if (showSlither && checkRemixd) {
       setShowSlither(false)
+      await props.analysisModule.call('manager', 'deactivatePlugin', 'remixd')
+      await props.analysisModule.call('filePanel', 'setWorkspace', 'default_workspace')
     } else {
-      setSlitherEnabled(true)
+      await props.analysisModule.call('manager', 'activatePlugin', 'remixd')
+      await props.analysisModule.call('filePanel', 'setWorkspace', { name: 'localhost', isLocalhost: true }, true)
       setShowSlither(true)
     }
   }
@@ -362,92 +361,231 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }
 
   const hintErrors = hints.filter(hint => hint.type === 'error')
+  const slitherErrors = slitherWarnings.filter(slitherError => slitherError.options.type === 'error')
 
   const tabKeys = [
     {
-      tabKey: 'linter',
+      tabKey: "linter",
       child: (
         <>
-          {hints.length > 0 &&
-        <div id='solhintlintingresult' className="mb-5">
-          <div className="mb-4 pt-2">
-            <Fragment>
-            {!hideWarnings ? hints.map((hint, index) => (
-                <div key={index} className={`${hint.type === 'warning' ? 
-                    'alert alert-warning' : 'alert alert-danger'}`}>
-                    <div onClick={async () => {
-                        await props.analysisModule.call('editor', 'discardHighlight')
-                        await props.analysisModule.call('editor', 'highlight', {
-                          end: {
-                            line: hint.line, column: hint.column+1
-                          },
-                          start: {
-                            line: hint.line, column: hint.column
-                          }
-                        }, state.file, '', { focus: true })
-                    }}>
-                      <span className="text-wrap">{hint.formattedMessage}</span>
-                      <span>{hint.type}</span><br />
-                      <span>{`${hint.column}:${hint.line}`}</span>
-                    </div> 
-                </div>)) : hintErrors.map((hint, index) => (<div key={index} className='alert alert-danger'>
-                    <div onClick={async () => {
-                        await props.analysisModule.call('editor', 'discardHighlight')
-                        await props.analysisModule.call('editor', 'highlight', {
-                          end: {
-                            line: hint.line, column: hint.column+1
-                          },
-                          start: {
-                            line: hint.line, column: hint.column
-                          }
-                        }, state.file, '', { focus: true })
-                    }}>
-                      <span className="text-wrap">{hint.formattedMessage}</span>
-                      <span>{hint.type}</span><br />
-                      <span>{`${hint.column}:${hint.line}`}</span>
-                    </div> 
-                  </div>))
-                }
-              </Fragment>
-          </div>
-        </div>
-      }
-        </>
-      ),
-      title: <span className="rounded-circle">Linter{hints.length > 0 ? hideWarnings ? <i className="badge badge-danger rounded-circle ml-2">{hintErrors.length}</i> : <i className="badge badge-warning rounded-circle ml-2">{hints.length}</i> : null}</span>
-    },
-    {
-      tabKey: 'basic',
-      title: <BasicTitle warningStateEntries={Object.entries(warningState)} hideWarnings={hideWarnings} />,
-      child: <>
-        {Object.entries(warningState).length > 0 &&
-            <div id='staticanalysisresult' >
+          {hints.length > 0 ? (
+            <div id="solhintlintingresult" className="mb-5">
               <div className="mb-4 pt-2">
-                {
-                  (Object.entries(warningState).map((element, index) => (
-                    <div key={index}>
-                      {element[1]['map']((x, i) => ( // eslint-disable-line dot-notation
-                        x.hasWarning && !hideWarnings ? ( // eslint-disable-next-line  dot-notation
-                          <div data-id={`staticAnalysisModule${x.warningModuleName}${i}`} id={`staticAnalysisModule${x.warningModuleName}${i}`} key={i}>
-                            <ErrorRenderer name={`staticAnalysisModule${x.warningModuleName}${i}`} message={x.msg} opt={x.options} warningErrors={ x.warningErrors} editor={props.analysisModule}/>
+                <Fragment>
+                  {!hideWarnings
+                    ? hints.map((hint, index) => (
+                        <div
+                          key={index}
+                          className={`${
+                            hint.type === "warning"
+                              ? "alert alert-warning"
+                              : "alert alert-danger"
+                          }`}
+                          style={{ cursor: "pointer" }}
+                        >
+                          <div
+                            onClick={async () => {
+                              await props.analysisModule.call(
+                                "editor",
+                                "discardHighlight"
+                              );
+                              await props.analysisModule.call(
+                                "editor",
+                                "highlight",
+                                {
+                                  end: {
+                                    line: hint.line,
+                                    column: hint.column + 1,
+                                  },
+                                  start: {
+                                    line: hint.line,
+                                    column: hint.column,
+                                  },
+                                },
+                                state.file,
+                                "",
+                                { focus: true }
+                              );
+                            }}
+                          >
+                            <span className="text-wrap">
+                              {hint.formattedMessage}
+                            </span>
+                            <span>{hint.type}</span>
+                            <br />
+                            <span>{`${hint.column}:${hint.line}`}</span>
                           </div>
-                        ) : null
+                        </div>
+                      ))
+                    : hintErrors.map((hint, index) => (
+                        <div
+                          key={index}
+                          className="alert alert-danger"
+                          style={{ cursor: "pointer" }}
+                        >
+                          <div
+                            onClick={async () => {
+                              await props.analysisModule.call(
+                                "editor",
+                                "discardHighlight"
+                              );
+                              await props.analysisModule.call(
+                                "editor",
+                                "highlight",
+                                {
+                                  end: {
+                                    line: hint.line,
+                                    column: hint.column + 1,
+                                  },
+                                  start: {
+                                    line: hint.line,
+                                    column: hint.column,
+                                  },
+                                },
+                                state.file,
+                                "",
+                                { focus: true }
+                              );
+                            }}
+                          >
+                            <span className="text-wrap">
+                              {hint.formattedMessage}
+                            </span>
+                            <span>{hint.type}</span>
+                            <br />
+                            <span>{`${hint.column}:${hint.line}`}</span>
+                          </div>
+                        </div>
                       ))}
-                      {}
-                    </div>
-                  )))
-                }
+                </Fragment>
               </div>
             </div>
-          }
-    </>
+          ) : <span className="display-6">No Results.</span>}
+        </>
+      ),
+      title: (
+        <span>
+          Linter
+          {hints.length > 0 ? (
+            hideWarnings ? (
+              <i className="badge badge-info rounded-circle ml-1">
+                {hintErrors.length}
+              </i>
+            ) : (
+              <i className="badge badge-info rounded-circle ml-1">
+                {hints.length}
+              </i>
+            )
+          ) : null}
+        </span>
+      ),
     },
     {
-      tabKey: 'slither',
-      title: 'Slither',
-      child: <div></div>,
-    }
-  ]
+      tabKey: "basic",
+      title: (
+        <BasicTitle
+          warningStateEntries={Object.entries(warningState)}
+          hideWarnings={hideWarnings}
+        />
+      ),
+      child: (
+        <>
+          {Object.entries(warningState).length > 0 ? (
+            <div id="staticanalysisresult">
+              <div className="mb-4 pt-2">
+                {Object.entries(warningState).map((element, index) => (
+                  <div key={index}>
+                    {element[1]["map"](
+                      (x,i) => // eslint-disable-line dot-notation
+                        x.hasWarning && !hideWarnings 
+                        ? ( // eslint-disable-next-line  dot-notation
+                          <div
+                            data-id={`staticAnalysisModule${x.warningModuleName}${i}`}
+                            id={`staticAnalysisModule${x.warningModuleName}${i}`}
+                            key={i}
+                          >
+                            <ErrorRenderer
+                              name={`staticAnalysisModule${x.warningModuleName}${i}`}
+                              message={x.msg}
+                              opt={x.options}
+                              warningErrors={x.warningErrors}
+                              editor={props.analysisModule}
+                            />
+                          </div>
+                        ) : null
+                    )}
+                    {}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : <span className="display-6">No Results.</span>}
+        </>
+      ),
+    },
+    {
+      tabKey: "slither",
+      title: (
+        <span>
+          Slither
+          {slitherWarnings.length > 0 ? (
+            hideWarnings ? (
+              <i className="badge badge-info rounded-circle ml-1">
+                {slitherErrors.length}
+              </i>
+            ) : (
+              <i className="badge badge-info rounded-circle ml-1">
+                {slitherWarnings.length}
+              </i>
+            )
+          ) : null}
+        </span>
+      ),
+      child: (
+        <>
+          {slitherWarnings.length > 0 ? (
+            <div id="solhintlintingresult" className="mb-5">
+              <div className="mb-4 pt-2">
+                <Fragment>
+                  {!hideWarnings 
+                    ? slitherWarnings.map((warning, index) => (
+                      <div
+                      data-id={`staticAnalysisModule${warning.warningModuleName}${index}`}
+                      id={`staticAnalysisModule${warning.warningModuleName}${index}`}
+                      key={index}
+                    >
+                      <ErrorRenderer
+                        name={`staticAnalysisModule${warning.warningModuleName}${index}`}
+                        message={warning.msg}
+                        opt={warning.options}
+                        warningErrors={warning.warningErrors}
+                        editor={props.analysisModule}
+                      />
+                    </div>
+                      ))
+                    : slitherWarnings.filter(x => x.options.type === 'error').map((warning, index) => (
+                      <div
+                      data-id={`staticAnalysisModule${warning.warningModuleName}${index}`}
+                      id={`staticAnalysisModule${warning.warningModuleName}${index}`}
+                      key={index}
+                    >
+                      <ErrorRenderer
+                        name={`staticAnalysisModule${warning.warningModuleName}${index}`}
+                        message={warning.msg}
+                        opt={warning.options}
+                        warningErrors={warning.warningErrors}
+                        editor={props.analysisModule}
+                      />
+                    </div>
+                      ))}
+                </Fragment>
+              </div>
+            </div>
+          ) : <span className="display-6">No Result</span>}
+        </>
+      ),
+    },
+  ];
   const t = Object.entries(warningState)
   const checkBasicStatus = () => {
     return Object.values(groupedModules).map((value: any) => {
@@ -492,18 +630,18 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             id="enableSlither"
             inputType="checkbox"
             onClick={handleSlitherEnabled}
-            checked={slitherEnabled}
+            checked={showSlither}
             label="Slither"
             onChange={() => {}}
           />
         </div>
           <Button
-              buttonText="Analyse"
-              title={runButtonTitle}
+              buttonText={`Analyse ${state.file}`}
+              title={`${runButtonTitle}`}
               classList="btn btn-sm btn-primary btn-block"
-              onClick={async () => await run(state.data, state.source, state.file, state , props, isSupportedVersion, slitherEnabled, categoryIndex, groupedModules, runner,_paq,
-                message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints)}
-              disabled={(state.data === null || categoryIndex.length === 0) && !slitherEnabled || !isSupportedVersion }
+              onClick={async () => await run(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
+                message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings)}
+              disabled={(state.data === null || !isSupportedVersion)  || (!solhintEnabled && !basicEnabled) }
           />
           <div className="mt-4 p-2 d-flex border-top flex-column">
             <span>Last results for:</span>
@@ -519,17 +657,18 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               id="showLibWarnings"
               name="showLibWarnings"
               categoryId="showLibWarnings"
-              title="when checked, the results are also displayed for external contract libraries"
+              title="When checked, the results are also displayed for external contract libraries."
               inputType="checkbox"
               checked={showLibsWarning}
               label="Show warnings for external libraries"
               onClick={handleShowLibsWarning}
               onChange={() => {}}
+              tooltipPlacement="top-start"
             />
             <RemixUiCheckbox
               id="hideWarnings"
               name="hideWarnings"
-              title="when checked, general warnings from analysis are hidden"
+              title="When checked, general warnings from analysis are hidden."
               inputType="checkbox"
               checked={hideWarnings}
               label="Hide warnings"

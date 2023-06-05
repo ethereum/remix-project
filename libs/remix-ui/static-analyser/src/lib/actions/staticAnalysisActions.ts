@@ -1,6 +1,6 @@
 import { CompilationResult, SourceWithTarget } from '@remixproject/plugin-api'
 import React from 'react' //eslint-disable-line
-import { AnalysisTab, RemixUiStaticAnalyserReducerActionType, RemixUiStaticAnalyserState, SolHintReport } from '../../staticanalyser'
+import { AnalysisTab, RemixUiStaticAnalyserReducerActionType, RemixUiStaticAnalyserState, SolHintReport, SlitherAnalysisResults } from '../../staticanalyser'
 import { RemixUiStaticAnalyserProps } from '@remix-ui/static-analyser'
 
 /**
@@ -42,11 +42,11 @@ export const compilation = (analysisModule: AnalysisTab,
  * @returns {Promise<void>}
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function run (lastCompilationResult, lastCompilationSource, currentFile: string, state: RemixUiStaticAnalyserState, props: RemixUiStaticAnalyserProps, isSupportedVersion, slitherEnabled, categoryIndex: number[], groupedModules, runner, _paq, message, showWarnings, allWarnings: React.RefObject<any>, warningContainer: React.RefObject<any>, calculateWarningStateEntries: (e:[string, any][]) => {length: number, errors: any[] }, warningState, setHints: React.Dispatch<React.SetStateAction<SolHintReport[]>>, hints: SolHintReport[]) {
+export async function run (lastCompilationResult, lastCompilationSource, currentFile: string, state: RemixUiStaticAnalyserState, props: RemixUiStaticAnalyserProps, isSupportedVersion, showSlither, categoryIndex: number[], groupedModules, runner, _paq, message, showWarnings, allWarnings: React.RefObject<any>, warningContainer: React.RefObject<any>, calculateWarningStateEntries: (e:[string, any][]) => {length: number, errors: any[] }, warningState, setHints: React.Dispatch<React.SetStateAction<SolHintReport[]>>, hints: SolHintReport[], setSlitherWarnings: React.Dispatch<React.SetStateAction<any[]>>, setSsaWarnings: React.Dispatch<React.SetStateAction<any[]>>) {
 
   if (!isSupportedVersion) return
   if (state.data !== null) {
-    if (lastCompilationResult && (categoryIndex.length > 0 || slitherEnabled)) {
+    if (lastCompilationResult && (categoryIndex.length > 0 || showSlither)) {
       const warningMessage = []
       const warningErrors = []
 
@@ -69,6 +69,7 @@ export async function run (lastCompilationResult, lastCompilationSource, current
             }
           })
         })
+        // iterate over the warnings and create an object
         for (const item of result.report) {
           let location: any = {}
           let locationString = 'not available'
@@ -116,16 +117,17 @@ export async function run (lastCompilationResult, lastCompilationSource, current
           }
           warningErrors.push(options)
           warningMessage.push({ msg, options, hasWarning: true, warningModuleName: moduleName })
+          setSsaWarnings(warningErrors)
         }
       }
       // Slither Analysis
-      if (slitherEnabled) {
+      if (showSlither) {
         try {
           const compilerState = await props.analysisModule.call('solidity', 'getCompilerState')
           const { currentVersion, optimize, evmVersion } = compilerState
           await props.analysisModule.call('terminal', 'log', { type: 'log', value: '[Slither Analysis]: Running...' })
           _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'slitherAnalyzer'])
-          const result = await props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion })
+          const result: SlitherAnalysisResults = await props.analysisModule.call('slither', 'analyse', state.file, { currentVersion, optimize, evmVersion })
           if (result.status) {
             props.analysisModule.call('terminal', 'log', { type: 'log', value: `[Slither Analysis]: Analysis Completed!! ${result.count} warnings found.` })
             const report = result.data
@@ -138,11 +140,11 @@ export async function run (lastCompilationResult, lastCompilationSource, current
               let isLibrary = false
 
               if (item.sourceMap && item.sourceMap.length) {
-                let path = item.sourceMap[0].source_mapping.filename_relative
+                const path = item.sourceMap[0].source_mapping.filename_relative
                 let fileIndex = Object.keys(lastCompilationResult.sources).indexOf(path)
                 if (fileIndex === -1) {
-                  path = await props.analysisModule.call('fileManager', 'getUrlFromPath', path)
-                  fileIndex = Object.keys(lastCompilationResult.sources).indexOf(path.file)
+                  const getpath = await props.analysisModule.call('fileManager', 'getUrlFromPath', path)
+                  fileIndex = Object.keys(lastCompilationResult.sources).indexOf(getpath.file)
                 }
                 if (fileIndex >= 0) {
                   location = {
@@ -165,9 +167,9 @@ export async function run (lastCompilationResult, lastCompilationSource, current
                 const {file, provider} = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
                 if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
               }
-              const msg = message(item.title, item.description, item.more, fileName, locationString)
+              const msg = message(item.title, item.description, item.more ?? '', fileName, locationString)
               const options = {
-                type: 'warning',
+                type: item.sourceMap[0].type,
                 useSpan: true,
                 errFile: fileName,
                 fileName,
@@ -177,11 +179,16 @@ export async function run (lastCompilationResult, lastCompilationSource, current
                 item: { warning: item.description },
                 name: item.title,
                 locationString,
-                more: item.more,
+                more: item.more ?? '',
                 location: location
               }
-              warningErrors.push(options)
-              warningMessage.push({ msg, options, hasWarning: true, warningModuleName: 'Slither Analysis' })
+
+              const slitherwarnings = []
+              setSlitherWarnings((prev) => {
+                slitherwarnings.push(...prev)
+                slitherwarnings.push({ msg, options, hasWarning: true, warningModuleName: 'Slither Analysis' })
+                return slitherwarnings
+              })
             }
             showWarnings(warningMessage, 'warningModuleName')
           }
