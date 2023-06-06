@@ -1,0 +1,14 @@
+{
+  "search.displayName": "Search in files",
+  "search.replace": "Replace",
+  "search.replaceAll": "Replace All",
+  "search.placeholder1": "Search ( Enter to search )",
+  "search.placeholder2": "Include ie *.sol ( Enter to include )",
+  "search.placeholder3": "Exclude ie .git/**/* ( Enter to exclude )",
+  "search.matchCase": "Match Case",
+  "search.matchWholeWord": "Match Whole Word",
+  "search.useRegularExpression": "Use Regular Expression",
+  "search.replaceWithoutConfirmation": "replace without confirmation",
+  "search.filesToInclude": "Files to include",
+  "search.filesToExclude": "Files to exclude"
+}
