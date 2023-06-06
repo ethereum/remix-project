@@ -81,7 +81,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const warningContainer = useRef(null)
   const allWarnings = useRef({})
   const [state, dispatch] = useReducer(analysisReducer, initialState)
-  const [runButtonTitle, setRunButtonTitle] = useState<string>(`Analyse`)
+  const [runButtonTitle, setRunButtonTitle] = useState<string>(`Run analysis`)
 
   /**
    * Disable static analysis for contracts whose compiler version is
@@ -98,7 +98,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       setRunButtonTitle('Select Solidity compiler version greater than 0.4.12.')
     } else {
       setIsSupportedVersion(true)
-      setRunButtonTitle('Run Analysis')
+      setRunButtonTitle('Run analysis')
     }
   }
 
