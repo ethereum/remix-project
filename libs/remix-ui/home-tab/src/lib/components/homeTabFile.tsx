@@ -125,10 +125,14 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
 
     const content = `// SPDX-License-Identifier: MIT
     pragma solidity >=0.7.0 <0.9.0;
+
     contract helloWorld {
+      function print() public pure returns (string memory) {
+        return "Hello World!";
+      }
     }
     `
-    const {newContent, newPath} = await plugin.call('fileManager', 'writeFileNoRewrite', '/contracts/helloWorld.sol', content)
+    const {newPath} = await plugin.call('fileManager', 'writeFileNoRewrite', '/contracts/helloWorld.sol', content)
     await plugin.call('fileManager', 'open', newPath)
   }
   const uploadFile = async (target) => {

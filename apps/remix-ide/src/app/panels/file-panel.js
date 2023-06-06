@@ -163,13 +163,13 @@ module.exports = class Filepanel extends ViewPlugin {
     })
   }
 
-  saveRecent (workspace) {
+  saveRecent (workspaceName) {
     if (!localStorage.getItem('recentWorkspaces')) {
-      localStorage.setItem('recentWorkspaces', JSON.stringify({first: workspace, second:'', third:''}))
+      localStorage.setItem('recentWorkspaces', JSON.stringify({first: workspaceName, second:'', third:''}))
     } else {
       const recents = JSON.parse(localStorage.getItem('recentWorkspaces'))
-      if (recents.first !== workspace.name && recents.second !== workspace.name && recents.third !== workspace.name) {
-        let newResents = JSON.stringify({first: workspace.name, second: recents.first, third: recents.second})
+      if (recents.first !== workspaceName && recents.second !== workspaceName && recents.third !== workspaceName) {
+        let newResents = JSON.stringify({first: workspaceName, second: recents.first, third: recents.second})
         localStorage.setItem('recentWorkspaces', newResents)
       }
     }
@@ -183,7 +183,7 @@ module.exports = class Filepanel extends ViewPlugin {
       localStorage.setItem('currentWorkspace', workspace.name)
     }
     if (this.currentWorkspaceMetadata.name !== current) {
-      this.saveRecent(workspace)
+      this.saveRecent(workspace.name)
     }
     this.emit('setWorkspace', workspace)
   }
