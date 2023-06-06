@@ -226,7 +226,7 @@ export const VerifyView: React.FC<Props> = ({
             </div>
 
             <div className={ isProxyContract ? 'form-group d-block': 'form-group d-none' }>
-              <label htmlFor="expectedImplAddress">Expected Implementation Address (Optional)</label>
+              <label htmlFor="expectedImplAddress">Expected Implementation Address</label>
               <CustomTooltip
               tooltipText='Providing expected implementation address enforces a check to ensure the returned implementation contract address is same as address picked up by the verifier'
               tooltipId='etherscan-impl-address'
