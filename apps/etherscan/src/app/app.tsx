@@ -103,19 +103,21 @@ const App = () => {
         for (const item of receiptsNotVerified) {          
           await new Promise(r => setTimeout(r, 500)) // avoid api rate limit exceed.
           let status
-          if (item.isProxyContract)
+          if (item.isProxyContract) {
             status = await getProxyContractReceiptStatus(
               item.guid,
               apiKey,
               getEtherScanApi(networkId)
             )
-          else 
+            status.details = status.result
+            status.result = 'Successfully Updated'
+          } else 
             status = await getReceiptStatus(
               item.guid,
               apiKey,
               getEtherScanApi(networkId)
             )
-          if (status.result === "Pass - Verified" || status.result === "Already Verified") {
+          if (status.result === "Pass - Verified" || status.result === "Already Verified" || status.result === "Successfully Updated") {
             newReceipts = newReceipts.map((currentReceipt: Receipt) => {
               if (currentReceipt.guid === item.guid) {
                 return {
