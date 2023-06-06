@@ -12,6 +12,6 @@ module.exports = {
         browser
         .waitForElementVisible('*[data-id="homeTabStartCoding"]')
         .click('*[data-id="homeTabStartCoding"]')
-        .waitForElementVisible('li[data-path="contracts/helloWorld.sol"]')
+        .waitForElementVisible('div[data-id="treeViewDivtreeViewItemcontracts/helloWorld.sol"]')
     }
 }
