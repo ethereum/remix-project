@@ -9,6 +9,7 @@ export abstract class ElectronPlugin extends Plugin {
     send: (message: Partial<Message>) => void
     on: (cb: (event: any, message: any) => void) => void
   }
+
   profile: Profile
   constructor(profile: Profile) {
     super(profile)
@@ -29,6 +30,8 @@ export abstract class ElectronPlugin extends Plugin {
     this.api.on((event: any, message: any) => {
       this.getMessage(message)
     })
+
+
   }
 
   /**
@@ -50,7 +53,7 @@ export abstract class ElectronPlugin extends Plugin {
   }
   /** Close connection with the plugin */
   protected disconnect(): any | Promise<any> {
-    
+    // TODO: Disconnect from the plugin
   }
 
   async activate() {

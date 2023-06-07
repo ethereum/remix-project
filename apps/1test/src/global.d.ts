@@ -5,6 +5,7 @@ export interface IElectronAPI {
     on: (cb: any) => void
     send: (message: Partial<Message>) => void
   }[]
+  getWindowId: () => string | undefined
 }
 
 declare global {

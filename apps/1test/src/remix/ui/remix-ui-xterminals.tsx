@@ -8,13 +8,14 @@ export interface RemixUiXterminalsProps {
 
 export interface xtermState {
     pid: number
-    data: string
+    queue: string
     timeStamp: number
     ref: any
 }
 
 export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
-    const [terminals, setTerminals] = useState<xtermState[]>([]) // eslint-disable-line
+    const [terminals, setTerminals] = useState<xtermState[]>([])
+    const [workingDir, setWorkingDir] = useState<string>('')
     const { plugin } = props
 
     useEffect(() => {
@@ -29,6 +30,10 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
                 return prevState.filter(xtermState => xtermState.pid !== pid)
             })
         })
+
+        plugin.on('fs', 'workingDirChanged', (path: string) => {
+            setWorkingDir(path)
+        })
     }, [])
 
     const writeToTerminal = (data: string, pid: number) => {
@@ -36,6 +41,8 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
             const terminal = prevState.find(xtermState => xtermState.pid === pid)
             if (terminal.ref && terminal.ref.terminal) {
                 terminal.ref.terminal.write(data)
+            }else {
+                terminal.queue += data
             }
             return [...prevState]
         })
@@ -51,12 +58,12 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
     }
 
     const createTerminal = async () => {
-        const pid = await plugin.call('xterm', 'createTerminal')
+        const pid = await plugin.call('xterm', 'createTerminal', workingDir)
 
         setTerminals(prevState => {
             return [...prevState, {
                 pid: pid,
-                data: '',
+                queue: '',
                 timeStamp: Date.now(),
                 ref: null
             }]
@@ -64,8 +71,14 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
     }
 
     const setTerminalRef = (pid: number, ref: any) => {
+        console.log('setTerminalRef', pid, ref)
         setTerminals(prevState => {
-            prevState.find(xtermState => xtermState.pid === pid).ref = ref
+            const terminal = prevState.find(xtermState => xtermState.pid === pid)
+            terminal.ref = ref
+            if(terminal.queue) {
+                ref.terminal.write(terminal.queue)
+                terminal.queue = ''
+            }
             return [...prevState]
         })
     }
@@ -79,7 +92,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
         {terminals.map((xtermState) => {
             return (
                 <div key={xtermState.pid} data-id={`remixUIXT${xtermState.pid}`}>{xtermState.pid}
-                    <RemixUiXterm setTerminalRef={setTerminalRef} timeStamp={xtermState.timeStamp} send={send} pid={xtermState.pid} data={xtermState.data} plugin={plugin}></RemixUiXterm>
+                    <RemixUiXterm setTerminalRef={setTerminalRef} timeStamp={xtermState.timeStamp} send={send} pid={xtermState.pid} plugin={plugin}></RemixUiXterm>
                 </div>
             )
         })}
