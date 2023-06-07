@@ -102,7 +102,8 @@ class CodeExecutor extends PluginClient {
 }
 
 const remix = new CodeExecutor()
-createClient(remix)
+createClient(remix);
+(window as any).remix = remix
 
 const web3Provider = {
   sendAsync(payload: string[], callback: any) {
@@ -113,6 +114,7 @@ const web3Provider = {
 };
 (window as any).provider = web3Provider;
 (window as any).ethereum = web3Provider;
+(window as any).web3Provider = web3Provider;
 
 (window as any).web3 = new Web3(web3Provider as any);
 
