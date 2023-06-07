@@ -13,7 +13,7 @@ import { DisplayRoutes } from "./routes"
 
 import { useLocalStorage } from "./hooks/useLocalStorage"
 
-import { getReceiptStatus, getEtherScanApi, getNetworkName } from "./utils"
+import { getReceiptStatus, getEtherScanApi, getNetworkName, getProxyContractReceiptStatus } from "./utils"
 import { Receipt, ThemeType } from "./types"
 
 import "./App.css"
@@ -102,19 +102,33 @@ const App = () => {
         let newReceipts = receipts
         for (const item of receiptsNotVerified) {          
           await new Promise(r => setTimeout(r, 500)) // avoid api rate limit exceed.
-          console.log('checking receipt', item.guid)
-          const status = await getReceiptStatus(
-            item.guid,
-            apiKey,
-            getEtherScanApi(networkId)
-          )
-          if (status.result === "Pass - Verified" || status.result === "Already Verified") {
+          let status
+          if (item.isProxyContract) {
+            status = await getProxyContractReceiptStatus(
+              item.guid,
+              apiKey,
+              getEtherScanApi(networkId)
+            )
+            if (status.status === '1') {
+              status.message = status.result
+              status.result = 'Successfully Updated'
+            }
+          } else 
+            status = await getReceiptStatus(
+              item.guid,
+              apiKey,
+              getEtherScanApi(networkId)
+            )
+          if (status.result === "Pass - Verified" || status.result === "Already Verified" || 
+              status.result === "Successfully Updated") {
             newReceipts = newReceipts.map((currentReceipt: Receipt) => {
               if (currentReceipt.guid === item.guid) {
-                return {
+                let res = {
                   ...currentReceipt,
                   status: status.result,
                 }
+                if (currentReceipt.isProxyContract) res.message = status.message
+                return res
               }
               return currentReceipt
             })                      

@@ -48,3 +48,22 @@ export const getReceiptStatus = async (
     console.error(error)
   }
 }
+
+export const getProxyContractReceiptStatus = async (
+  receiptGuid: string,
+  apiKey: string,
+  etherscanApi: string
+): Promise<receiptStatus> => {
+  const params = `guid=${receiptGuid}&module=contract&action=checkproxyverification&apiKey=${apiKey}`
+  try {
+    const response = await axios.get(`${etherscanApi}?${params}`)
+    const { result, message, status } = response.data
+    return {
+      result,
+      message,
+      status,
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
