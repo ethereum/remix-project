@@ -275,16 +275,6 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
             <FormattedMessage id='udapp.contract' />
           </label>
           <div className="d-flex">{compilerName && compilerName !== '' && <label style={{ maxHeight: '0.6rem', lineHeight: '1rem' }} data-id="udappCompiledBy">(<FormattedMessage id='udapp.compiledBy' values={{ compilerName: <span className="text-capitalize"> {compilerName}</span> }} />)</label>}</div>
-          { evmVersion && loadedContractData && <CustomTooltip
-            placement={'right'}
-            tooltipClasses="text-wrap text-left"
-            tooltipId="info-evm-version-warn"
-            tooltipText={<span className="text-left">
-              <FormattedMessage id='udapp.warningEvmVersion' values={{ evmVersion }}/>
-            </span>}
-          >
-            <span className='ml-2'>(evm: {evmVersion})</span>
-          </CustomTooltip> }
         </div>
         {props.remixdActivated ?
           (<CustomTooltip
@@ -323,6 +313,16 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         </CustomTooltip>
         <span className="py-1" style={{ display: abiLabel.display }}>{abiLabel.content}</span>
       </div>
+      { evmVersion && loadedContractData && <CustomTooltip
+            placement={'right'}
+            tooltipClasses="text-wrap text-left"
+            tooltipId="info-evm-version-warn"
+            tooltipText={<span className="text-left">
+              <FormattedMessage id='udapp.warningEvmVersion' values={{ evmVersion }}/>
+            </span>}
+          >
+            <span className='badge badge-secondary'>evm version: {evmVersion}</span>
+          </CustomTooltip> }
       <div>
         <div className="udapp_deployDropdown">
           {((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? intl.formatMessage({ id: 'udapp.noCompiledContracts' })
