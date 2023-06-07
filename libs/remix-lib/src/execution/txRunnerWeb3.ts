@@ -107,7 +107,7 @@ export class TxRunnerWeb3 {
         console.log(errNetWork)
         return
       }
-      const txCopy =  { ...tx, type: undefined, maxFeePerGas: undefined, gasPrice: undefined  }
+      const txCopy =  { ...tx, type: undefined, maxFeePerGas: undefined, gasPrice: undefined, gas: undefined  }
       if (network && network.lastBlock) {
         if (network.lastBlock.baseFeePerGas) {
           // the sending stack (web3.js / metamask need to have the type defined)
