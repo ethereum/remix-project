@@ -165,7 +165,7 @@ export async function run (lastCompilationResult, lastCompilationSource, current
               }
               if(fileName !== currentFile) {
                 const {file, provider} = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
-                if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
+                if (file.startsWith('.deps') || (file.includes('.deps')) || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
               }
               const msg = message(item.title, item.description, item.more ?? '', fileName, locationString)
               const options = {
