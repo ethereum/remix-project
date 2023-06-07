@@ -78,6 +78,9 @@
   width: 100%;
   border: 1px solid
 }
+.udapp_evmVersion  {
+  cursor: default;
+}
 .udapp_subcontainer {
   display: flex;
   flex-direction: row;
