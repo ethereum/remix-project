@@ -7,13 +7,12 @@ export interface RemixUiXtermProps {
     plugin: ElectronPlugin
     pid: number
     send: (data: string, pid: number) => void
-    data: string
     timeStamp: number
     setTerminalRef: (pid: number, ref: any) => void
 }
 
 const RemixUiXterm = (props: RemixUiXtermProps) => {
-    const { plugin, pid, send, data, timeStamp } = props
+    const { plugin, pid, send, timeStamp } = props
     const xtermRef = React.useRef(null)
 
     useEffect(() => {

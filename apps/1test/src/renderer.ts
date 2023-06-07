@@ -1,5 +1,5 @@
 
-import { Engine, PluginManager } from '@remixproject/engine';
+import { Engine, Plugin, PluginManager } from '@remixproject/engine';
 import { fsPlugin } from './remix/fsPlugin';
 import { gitPlugin } from './remix/gitPlugin';
 import { Terminal } from 'xterm';
@@ -70,16 +70,31 @@ class MyAppManager extends PluginManager {
 
 const engine = new Engine()
 const appManager = new MyAppManager()
-const fs = new fsPlugin()
+export const fs = new fsPlugin()
 const git = new gitPlugin()
 export const xterm = new xtermPlugin()
+
+export class filePanelPlugin extends Plugin {
+  constructor() {
+    super({
+      displayName: 'filePanel',
+      name: 'filePanel',
+    })
+  }
+}
+
+export const filePanel = new filePanelPlugin()
+
 engine.register(appManager)
 engine.register(fs)
 engine.register(git)
 engine.register(xterm)
+engine.register(filePanel)
+
 appManager.activatePlugin('fs')
 appManager.activatePlugin('git')
 appManager.activatePlugin('xterm')
+appManager.activatePlugin('filePanel')
 
 
 setTimeout(async () => {
@@ -90,4 +105,5 @@ setTimeout(async () => {
 
 
 import './app'
+import { ElectronPlugin } from './remix/lib/electronPlugin';
 
