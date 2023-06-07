@@ -22,6 +22,9 @@
   margin-bottom: 4px;
   text-transform: uppercase;
 }
+.udapp_settingsCompiledBy {
+  margin-bottom: 4px;
+}
 .udapp_environment {
   display: flex;
   align-items: center;
