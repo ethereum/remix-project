@@ -82,8 +82,14 @@ class FSPluginClient extends ElectronBasePluginClient {
     return fs.rename(this.fixPath(oldPath), this.fixPath(newPath))
   }
 
-  async stat(path: string): Promise<Stats> {
-    return fs.stat(this.fixPath(path))
+  async stat(path: string): Promise<any> {
+    const stat =  await fs.stat(path)
+    //console.log('stat', path, stat)
+    const isDirectory = stat.isDirectory()
+    return {
+      ...stat,
+      isDirectoryValue: isDirectory
+    }
   }
 
   async exists(path: string): Promise<boolean> {
