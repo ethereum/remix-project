@@ -44,6 +44,7 @@ const basicWorkspaceInit = async (workspaces: { name: string; isGitRepo: boolean
 }
 
 export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.Dispatch<any>) => {
+  console.log('initWorkspace', filePanelPlugin)
   if (filePanelPlugin) {
     plugin = filePanelPlugin
     dispatch = reducerDispatch
@@ -52,8 +53,11 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     const localhostProvider = filePanelPlugin.fileProviders.localhost
     const electrOnProvider = filePanelPlugin.fileProviders.browser
     const params = queryParams.get() as UrlParametersType
-    const workspaces = await getWorkspaces() || []
-    dispatch(setWorkspaces(workspaces))
+    let workspaces = []
+    if (!isElectron()){
+      workspaces = await getWorkspaces() || []
+      dispatch(setWorkspaces(workspaces))
+    }
     if (params.gist) {
       await createWorkspaceTemplate('gist-sample', 'gist-template')
       plugin.setWorkspace({ name: 'gist-sample', isLocalhost: false })
@@ -114,9 +118,17 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         }
       } else await basicWorkspaceInit(workspaces, workspaceProvider)
     } else if (isElectron()) {
+      console.log('isElectron initWorkspace')
       plugin.call('notification', 'toast', `connecting to electron...`)
+
       plugin.setWorkspace({ name: 'electron', isLocalhost: false })
+
       dispatch(setCurrentWorkspace({ name: 'electron', isGitRepo: false }))
+      listenOnProviderEvents(electrOnProvider)(dispatch)
+      dispatch(setMode('browser'))
+      dispatch(fsInitializationCompleted())
+      plugin.emit('workspaceInitializationCompleted')
+      return
   
     } else if (localStorage.getItem("currentWorkspace")) {
       const index = workspaces.findIndex(element => element.name == localStorage.getItem("currentWorkspace"))

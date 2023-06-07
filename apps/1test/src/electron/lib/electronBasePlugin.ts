@@ -5,22 +5,34 @@ import { BrowserWindow } from "electron";
 import { createElectronClient } from "./electronPluginClient";
 
 export interface ElectronBasePluginInterface {
-  createClient(windowId: number): Promise<void>;
-  closeClient(windowId: number): Promise<void>;
+  createClient(windowId: number): Promise<boolean>;
+  closeClient(windowId: number): Promise<boolean>;
 }
 
 export abstract class ElectronBasePlugin extends Plugin implements ElectronBasePluginInterface {
   clients: ElectronBasePluginClient[] = [];
-  constructor(profile: Profile) {
+  clientClass: any
+  clientProfile: Profile
+  constructor(profile: Profile, clientProfile: Profile, clientClass: any) {
     super(profile);
     this.methods = ['createClient', 'closeClient'];
+    this.clientClass = clientClass;
+    this.clientProfile = clientProfile;
   }
 
-  async createClient(windowId: number): Promise<void> {
-    console.log('createClient method not implemented');
+  async createClient(webContentsId: number): Promise<boolean> {
+    if (this.clients.find(client => client.webContentsId === webContentsId)) return true
+    const client = new this.clientClass(webContentsId, this.clientProfile);
+    this.clients.push(client);
+    return new Promise((resolve, reject) => {
+      client.onload(() => {
+        resolve(true)
+      })
+    })
   }
-  async closeClient(windowId: number): Promise<void> {
-    console.log('closeClient method not implemented');
+  async closeClient(windowId: number): Promise<boolean> {
+    this.clients = this.clients.filter(client => client.webContentsId !== windowId)
+    return true;
   }
 }
 
@@ -29,7 +41,6 @@ export class ElectronBasePluginClient extends PluginClient {
   webContentsId: number;
   constructor(webcontentsid: number, profile: Profile, methods: string[] = []) {
     super();
-    console.log('ElectronBasePluginClient', profile);
     this.methods = profile.methods;
     this.webContentsId = webcontentsid;
     BrowserWindow.getAllWindows().forEach((window) => {

@@ -14,18 +14,9 @@ const profile: Profile = {
 export class FSPlugin extends ElectronBasePlugin {
   clients: FSPluginClient[] = []
   constructor() {
-    super(profile)
+    super(profile, clientProfile, FSPluginClient)
     this.methods = [...super.methods, 'closeWatch']
   }
-
-  async createClient(webContentsId: number): Promise<void> {
-    this.clients.push(new FSPluginClient(webContentsId))
-  }
-
-  async closeClient(webContentsId: number): Promise<void> {
-    console.log('closeClient', webContentsId)
-  }
-
 
   async closeWatch(): Promise<void> {
     for (const client of this.clients) {
@@ -46,8 +37,8 @@ class FSPluginClient extends ElectronBasePluginClient {
   watcher: chokidar.FSWatcher
   workingDir: string = '/Volumes/bunsen/code/rmproject2/remix-project/apps/remix-ide/contracts/'
 
-  constructor(webContentsId: number) { 
-    super(webContentsId, clientProfile)
+  constructor(webContentsId: number, profile: Profile) {
+    super(webContentsId, profile)
     this.onload(() => {
       console.log('fsPluginClient onload')
     })
@@ -83,7 +74,7 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async stat(path: string): Promise<any> {
-    const stat =  await fs.stat(path)
+    const stat = await fs.stat(path)
     //console.log('stat', path, stat)
     const isDirectory = stat.isDirectory()
     return {

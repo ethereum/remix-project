@@ -11,6 +11,8 @@ class MyAppManager extends PluginManager {
   onActivation(): void {
     this.on('fs', 'loaded', async () => {
       console.log('fs loaded')
+      const files =  await this.call('fs', 'readdir', './')
+      console.log('files', files)
     })
     /*
     this.on('fs', 'loaded', async () => {

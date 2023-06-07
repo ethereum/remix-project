@@ -311,6 +311,7 @@ export const SearchProvider = ({
   }
 
   useEffect(() => {
+    return
     plugin.on('filePanel', 'setWorkspace', async workspace => {
       value.setSearchResults(null)
       value.clearUndo()

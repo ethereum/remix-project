@@ -1,26 +1,33 @@
 import { ElectronPlugin } from '@remixproject/engine-electron';
 
+let workingDir = '/Volumes/bunsen/code/rmproject2/remix-project/apps/remix-ide/contracts/'
+
 const fixPath = (path: string) => {
-  const workingDir = '/Volumes/bunsen/code/rmproject2/remix-project/apps/remix-ide/contracts/'
+  /*
   // if it starts with /, it's an absolute path remove it
   if (path.startsWith('/')) {
     path = path.slice(1)
   }
 
   path = workingDir + path
+  */
+
   
   return path
 }
 
 export class fsPlugin extends ElectronPlugin {
   public fs: any
+
   constructor() {
     super({
       displayName: 'fs',
       name: 'fs',
       description: 'fs',
     })
-    this.methods = ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'exists']
+    this.methods = ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'exists', 'setWorkingDir']
+
+
     this.fs = {
 
       exists: async (path: string) => {
@@ -35,7 +42,9 @@ export class fsPlugin extends ElectronPlugin {
       },
       readdir: async (path: string) => {
         path = fixPath(path)
+        console.log('readdir', path)
         const files =  await this.call('fs', 'readdir', path)
+        console.log('readdir', path, files)
         return files
       },
       unlink: async (path: string) => {
@@ -71,13 +80,19 @@ export class fsPlugin extends ElectronPlugin {
 
 
     }
-  }
 
+
+  }
 
 
   async onActivation() {
     console.log('fsPluginClient onload', this.fs);
     (window as any).remixFileSystem = this.fs
+
+    this.on('fs', 'workingDirChanged', (path: string) => {
+      console.log('change working dir', path)
+      workingDir = path
+    })
   }
 
 }
