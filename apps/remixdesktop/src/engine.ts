@@ -22,6 +22,11 @@ ipcMain.handle('manager:activatePlugin', async (event, plugin) => {
   return await appManager.call(plugin, 'createClient', event.sender.id)
 })
 
+ipcMain.on('fs:openFolder', async (event) => {
+  console.log('fs:openFolder', event)
+  fsPlugin.openFolder(event)
+})
+
 ipcMain.handle('getWebContentsID', (event, message) => {
   return event.sender.id
 })

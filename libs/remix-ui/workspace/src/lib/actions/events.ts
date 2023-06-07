@@ -49,6 +49,7 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
   })
 
   plugin.on('fileManager', 'rootFolderChanged', async (path: string) => {
+    console.log('rootFolderChanged', path)
     rootFolderChanged(path)
   })
 
@@ -94,6 +95,10 @@ export const listenOnProviderEvents = (provider) => (reducerDispatch: React.Disp
     const workspaceProvider = plugin.fileProviders.workspace
 
     await switchToWorkspace(workspaceProvider.workspace)
+  })
+
+  provider.event.on('refresh', () => {
+    fetchWorkspaceDirectory('/')
   })
 
   provider.event.on('connected', () => {

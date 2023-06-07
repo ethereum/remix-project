@@ -155,8 +155,12 @@ class FileManager extends Plugin {
   refresh() {
     const provider = this.fileProviderOf('/')
     // emit rootFolderChanged so that File Explorer reloads the file tree
-    provider.event.emit('rootFolderChanged', provider.workspace || '/')
-    this.emit('rootFolderChanged', provider.workspace || '/')
+    if(isElectron()){
+      provider.event.emit('refresh')
+    }else{
+      provider.event.emit('rootFolderChanged', provider.workspace || '/')
+      this.emit('rootFolderChanged', provider.workspace || '/')
+    }
   }
 
   /**

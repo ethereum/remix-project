@@ -12,6 +12,7 @@ import { MenuItems, WorkSpaceState } from './types'
 import { contextMenuActions } from './utils'
 import FileExplorerContextMenu from './components/file-explorer-context-menu'
 import { customAction } from '@remixproject/plugin-api'
+import isElectron from 'is-electron'
 
 const _paq = window._paq = window._paq || []
 
@@ -680,12 +681,13 @@ export function Workspace () {
             <header>
               <div className="mx-2 mb-2 d-flex flex-column">
                 <div className="d-flex justify-content-between">
+                  {!isElectron() ? 
                   <span className="d-flex align-items-end">
                     <label className="pl-1 form-check-label" htmlFor="workspacesSelect" style={{wordBreak: 'keep-all'}}>
                       <FormattedMessage id='filePanel.workspace' />
                     </label>
-                  </span>
-                  {currentWorkspace !== LOCALHOST ? (<span className="remixui_menu remixui_topmenu d-flex justify-content-between align-items-end w-75">
+                  </span>: null}
+                  {currentWorkspace !== LOCALHOST && !isElectron() ? (<span className="remixui_menu remixui_topmenu d-flex justify-content-between align-items-end w-75">
                     <CustomTooltip
                       placement="top"
                       tooltipId="createWorkspaceTooltip"
@@ -736,7 +738,7 @@ export function Workspace () {
                     </Dropdown>
                   </span>) : null}
                 </div>
-
+                {!isElectron() ? (
                 <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
                   <Dropdown.Toggle
                     as={CustomToggle}
@@ -781,6 +783,7 @@ export function Workspace () {
                       { ((global.fs.browser.workspaces.length <= 0) || currentWorkspace === NO_WORKSPACE) && <Dropdown.Item onClick={() => { switchWorkspace(NO_WORKSPACE) }}>{ <span className="pl-3">NO_WORKSPACE</span> }</Dropdown.Item> }
                     </Dropdown.Menu>
                   </Dropdown>
+                ) : null}
                 </div>
               </header>
             </div>

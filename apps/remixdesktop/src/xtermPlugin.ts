@@ -14,16 +14,7 @@ const profile: Profile = {
 export class XtermPlugin extends ElectronBasePlugin {
     client: PluginClient
     constructor() {
-        super(profile)
-    }
-
-    async createClient(webContentsId: number): Promise<void> {
-        console.log('createClient', webContentsId)
-        this.clients.push(new XtermPluginClient(webContentsId))
-    }
-
-    async closeClient(webContentsId: number): Promise<void> {
-        console.log('closeClient', webContentsId)
+        super(profile, clientProfile, XtermPluginClient)
     }
 
 }
@@ -38,8 +29,8 @@ const clientProfile: Profile = {
 class XtermPluginClient extends ElectronBasePluginClient {
 
     terminals: pty.IPty[] = []
-    constructor(webContentsId: number) {
-        super(webContentsId, clientProfile)
+    constructor(webContentsId: number, profile: Profile) {
+        super(webContentsId, profile)
         this.onload(() => {
             console.log('XtermPluginClient onload')
         })
