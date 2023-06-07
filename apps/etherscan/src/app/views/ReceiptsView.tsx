@@ -171,10 +171,21 @@ const ReceiptsTable: React.FC<{ receipts: Receipt[] }> = ({ receipts }) => {
             receipts.map((item: Receipt, index) => {
               return (
                 <tr key={item.guid}>
-                  <td className={item.status === 'Pass - Verified' 
+                  <td className={(item.status === 'Pass - Verified' || item.status === 'Successfully Updated')
                   ? 'text-success' : (item.status === 'Pending in queue' 
                   ? 'text-warning' : (item.status === 'Already Verified'
-                  ? 'text-info': 'text-secondary'))}>{item.status}</td>
+                  ? 'text-info': 'text-secondary'))}>
+                    {item.status}
+                    {item.status === 'Successfully Updated' && <CustomTooltip
+                      placement={'bottom'}
+                      tooltipClasses="text-wrap"
+                      tooltipId="info-recorder"
+                      tooltipText={item.message}
+                    >
+                      <i style={{ fontSize: 'small' }} className={'ml-1 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
+                    </CustomTooltip>
+                    }
+                  </td>
                   <td>{item.guid}</td>
                 </tr>
               )
