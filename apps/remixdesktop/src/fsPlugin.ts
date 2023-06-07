@@ -38,13 +38,14 @@ class FSPluginClient extends PluginClient {
     super()
     this.methods = ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'exists', 'watch', 'closeWatch', 'currentPath']
     createElectronClient(this, profile, mainWindow)
+    console.log(mainWindow)
     this.onload(() => {
       console.log('fsPluginClient onload')
     })
   }
 
   async readdir(path: string): Promise<string[]> {
-    // call node fs.readdir
+
     return fs.readdir(path)
   }
 
@@ -72,8 +73,14 @@ class FSPluginClient extends PluginClient {
     return fs.rename(oldPath, newPath)
   }
 
-  async stat(path: string): Promise<Stats> {
-    return fs.stat(path)
+  async stat(path: string): Promise<any> {
+    const stat =  await fs.stat(path)
+    //console.log('stat', path, stat)
+    const isDirectory = stat.isDirectory()
+    return {
+      ...stat,
+      isDirectoryValue: isDirectory
+    }
   }
 
   async exists(path: string): Promise<boolean> {

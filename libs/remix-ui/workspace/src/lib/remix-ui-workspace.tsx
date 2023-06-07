@@ -20,6 +20,7 @@ const canUpload = window.File || window.FileReader || window.FileList || window.
 export function Workspace () {
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
+  const ELECTRON = 'electron'
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
   const [selectedWorkspace, setSelectedWorkspace] = useState<{ name: string, isGitRepo: boolean, branches?: { remote: any; name: string; }[], currentBranch?: string }>(null)
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
@@ -757,6 +758,7 @@ export function Workspace () {
                       }
                     </Dropdown.Item>
                     <Dropdown.Item onClick={() => { switchWorkspace(LOCALHOST) }}>{currentWorkspace === LOCALHOST ? <span>&#10003; localhost </span> : <span className="pl-3"> { LOCALHOST } </span>}</Dropdown.Item>
+                    <Dropdown.Item onClick={() => { switchWorkspace(ELECTRON) }}>{currentWorkspace === ELECTRON ? <span>&#10003; electron </span> : <span className="pl-3"> { ELECTRON } </span>}</Dropdown.Item>
                     {
                       global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
                         <Dropdown.Item

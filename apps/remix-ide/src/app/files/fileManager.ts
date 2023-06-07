@@ -9,6 +9,8 @@ import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from 
 import helper from '../../lib/helper.js'
 import { RemixAppManager } from '../../remixAppManager'
 
+const isElectron = require('is-electron')
+
 /*
   attach to files event (removed renamed)
   trigger: currentFileChanged
@@ -408,7 +410,6 @@ class FileManager extends Plugin {
 
       return new Promise((resolve, reject) => {
         const provider = this.fileProviderOf(path)
-
         provider.resolveDirectory(path, (error, filesProvider) => {
           if (error) reject(error)
           resolve(filesProvider)
@@ -721,7 +722,7 @@ class FileManager extends Plugin {
     if (file.startsWith('localhost') || this.mode === 'localhost') {
       return this._deps.filesProviders.localhost
     }
-    if (file.startsWith('browser')) {
+    if (file.startsWith('browser') || isElectron()) {
       return this._deps.filesProviders.browser
     }
     return this._deps.filesProviders.workspace

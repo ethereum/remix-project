@@ -720,14 +720,13 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       }
     }
 
-    case 'SET_GIT_CONFIG' : {
+    case 'SET_GIT_CONFIG': {
       const payload: { username: string, token: string, email: string } = action.payload
       return {
         ...state,
         gitConfig: payload
       }
     }
-        
 
     default:
       throw new Error()
@@ -849,7 +848,6 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
 
 const fetchWorkspaceDirectoryContent = (state: BrowserState, payload: { fileTree, path: string }): { [x: string]: Record<string, FileType> } => {
   const files = normalize(payload.fileTree, ROOT_PATH)
-
   return { [ROOT_PATH]: files }
 }
 
