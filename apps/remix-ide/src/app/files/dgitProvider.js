@@ -48,7 +48,19 @@ class DGitProvider extends Plugin {
     this.ipfsSources = [this.remixIPFS, this.globalIPFSConfig, this.ipfsconfig]
   }
 
+  async onActivation () {
+
+  }
+
   async getGitConfig () {
+
+    if(isElectron()){
+      return {
+        fs: window.remixFileSystem,
+        dir: '/'
+      }
+    }
+
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
 
     if (!workspace) return
@@ -82,10 +94,12 @@ class DGitProvider extends Plugin {
   }
 
   async status (cmd) {
+    console.log('status')
     const status = await git.statusMatrix({
       ...await this.getGitConfig(),
       ...cmd
     })
+    console.log('STATUS', status)
     return status
   }
 

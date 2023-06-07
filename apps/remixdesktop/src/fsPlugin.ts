@@ -36,7 +36,7 @@ const clientProfile: Profile = {
   name: 'fs',
   displayName: 'fs',
   description: 'fs',
-  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir']
+  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir']
 }
 
 class FSPluginClient extends ElectronBasePluginClient {
@@ -54,16 +54,26 @@ class FSPluginClient extends ElectronBasePluginClient {
   async readdir(path: string): Promise<string[]> {
     // call node fs.readdir
     console.log('readdir', path)
-    const files =  fs.readdir(this.fixPath(path))
+    if (!path) return []
+    const files = fs.readdir(this.fixPath(path))
     return files
   }
 
-  async readFile(path: string, options: any ): Promise<string> {
-    return fs.readFile(this.fixPath(path),  'utf8')
+  async readFile(path: string, options: any): Promise<string | undefined> {
+    console.log('readFile', path, options)
+    // hacky fix for TS error
+    if (!path) return undefined
+    try {
+      return (fs as any).readFile(this.fixPath(path), options)
+    } catch (e) {
+      console.log('readFile error', e)
+      return undefined
+    }
   }
 
-  async writeFile(path: string, content: string): Promise<void> {
-    return fs.writeFile(this.fixPath(path), content, 'utf8')
+  async writeFile(path: string, content: string, options: any): Promise<void> {
+    console.log('writeFile', path, content, options)
+    return (fs as any).writeFile(this.fixPath(path), content, options)
   }
 
   async mkdir(path: string): Promise<void> {
@@ -83,49 +93,63 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async stat(path: string): Promise<any> {
-    const stat = await fs.stat(this.fixPath(path))
-    //console.log('stat', path, stat)
-    const isDirectory = stat.isDirectory()
-    return {
-      ...stat,
-      isDirectoryValue: isDirectory
+    try {
+      const stat = await fs.stat(this.fixPath(path))
+      //console.log('stat', path, stat)
+      const isDirectory = stat.isDirectory()
+      return {
+        ...stat,
+        isDirectoryValue: isDirectory
+      }
+    } catch (e) {
+      console.log('stat error', e)
+      return undefined
     }
   }
 
   async lstat(path: string): Promise<any> {
-    const lstat = await fs.lstat(this.fixPath(path))
-    return lstat
+    try {
+      const stat = await fs.lstat(this.fixPath(path))
+      const isDirectory = stat.isDirectory()
+      return {
+        ...stat,
+        isDirectoryValue: isDirectory
+      }
+    } catch (e) {
+      console.log('lstat error', e)
+      return undefined
+    }
   }
 
 
 
-  async exists(path: string): Promise<boolean> {
-    return fs.access(this.fixPath(path)).then(() => true).catch(() => false)
-  }
+  async exists(path: string): Promise < boolean > {
+      return fs.access(this.fixPath(path)).then(() => true).catch(() => false)
+    }
 
-  async currentPath(): Promise<string> {
-    return process.cwd()
-  }
+  async currentPath(): Promise < string > {
+      return process.cwd()
+    }
 
-  async watch(path: string): Promise<void> {
-    if (this.watcher) this.watcher.close()
+  async watch(path: string): Promise < void> {
+      if(this.watcher) this.watcher.close()
     this.watcher =
-      chokidar.watch(this.fixPath(path)).on('change', (path, stats) => {
-        console.log('change', path, stats)
-        this.emit('change', path, stats)
+        chokidar.watch(this.fixPath(path)).on('change', (path, stats) => {
+          console.log('change', path, stats)
+          this.emit('change', path, stats)
+        })
+    }
+
+  async closeWatch(): Promise < void> {
+      console.log('closing Watcher', this.webContentsId)
+    if(this.watcher) this.watcher.close()
+    }
+
+  async setWorkingDir(): Promise < void> {
+      const dirs = dialog.showOpenDialogSync(this.window, {
+        properties: ['openDirectory']
       })
-  }
-
-  async closeWatch(): Promise<void> {
-    console.log('closing Watcher', this.webContentsId)
-    if (this.watcher) this.watcher.close()
-  }
-
-  async setWorkingDir(): Promise<void> {
-    const dirs = dialog.showOpenDialogSync(this.window, {
-      properties: ['openDirectory']
-    })
-    if (dirs && dirs.length > 0) {
+    if(dirs && dirs.length > 0) {
       this.workingDir = dirs[0]
       this.emit('workingDirChanged', dirs[0])
     }
@@ -133,11 +157,12 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   fixPath(path: string): string {
-
-    if (path.startsWith('/')) {
-      path = path.slice(1)
+    if (path) {
+      if (path.startsWith('/')) {
+        path = path.slice(1)
+      }
     }
-    if(!this.workingDir.endsWith('/')) this.workingDir = this.workingDir + '/'
+    if (!this.workingDir.endsWith('/')) this.workingDir = this.workingDir + '/'
     path = this.workingDir + path
     return path
   }

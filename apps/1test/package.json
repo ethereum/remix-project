@@ -44,6 +44,7 @@
     "chokidar": "^3.5.3",
     "electron-squirrel-startup": "^1.0.0",
     "fix-path": "^4.0.0",
+    "isomorphic-git": "^1.24.0",
     "node-pty": "0.10.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

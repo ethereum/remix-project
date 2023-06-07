@@ -24,8 +24,8 @@ export const createWindow = (): void => {
     height: 800,
     width: 1024,
     webPreferences: {
-       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-       additionalArguments: [`--window-id=${id}`],
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+      additionalArguments: [`--window-id=${id}`],
     },
   });
 
@@ -44,7 +44,7 @@ export const createWindow = (): void => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+//app.on('ready', createWindow);
 
 // when a window is closed event
 app.on('web-contents-created', (event, contents) => {
@@ -93,6 +93,91 @@ const commandKeys: Record<string, string> = {
 const menu = [shellMenu(commandKeys, execCommand)]
 Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
 
-
+import fs from 'fs/promises'
+import { readlink } from 'fs';
 //const menu = Menu.buildFromTemplate(shellMenu([], undefined))
 //Menu.setApplicationMenu(menu)
+
+const myFS = {
+  promises: {
+    readdir: async (path: string, options: any): Promise<string[]> => {
+      // call node fs.readdir
+      //console.log('myFS.readdir', path, options)
+      const file = await fs.readdir(path, {
+        encoding: 'utf8',
+      })
+      //console.log('myFS.readdir', file)
+      return file
+    },
+    
+    readFile: async (path: string,  options: any): Promise<string>=> {
+      //console.log('myFS.readFile', path, options)
+        const file = await (fs as any).readFile(path, options)
+        //console.log('myFS.readFile', file)
+        return file
+      
+
+    },
+  
+    async writeFile(path: string, content: string): Promise<void> {
+      return fs.writeFile(path, content, 'utf8')
+    },
+  
+    async mkdir(path: string): Promise<void> {
+      return fs.mkdir(path)
+    },
+  
+    async rmdir(path: string): Promise<void> {
+      return fs.rmdir(path)
+    },
+  
+    async unlink(path: string): Promise<void> {
+      return fs.unlink(path)
+    },
+  
+    async rename(oldPath: string, newPath: string): Promise<void> {
+      return fs.rename(oldPath, newPath)
+    },
+  
+    async stat(path: string): Promise<any> {
+      //console.log('myFS.stat', path)
+      const stat = await fs.stat(path)
+      //console.log('myFS.stat', stat)
+      return stat
+    },
+  
+    async lstat(path: string): Promise<any> {
+      const lstat = await fs.lstat(path)
+      //console.log('myFS.stat', path, lstat)
+      return lstat
+    },
+
+    readlink: async (path: string): Promise<string> => {
+      return fs.readlink(path)
+    },
+    symlink: async (target: string, path: string): Promise<void> => {
+      return fs.symlink(target, path)
+    }
+
+    
+  }
+}
+
+console.log('myFS', myFS)
+
+async function checkGit() {
+  const git = require('isomorphic-git');
+
+  const files = await git.statusMatrix({ fs: myFS, dir: '/Volumes/bunsen/code/rmproject2/remix-project' });
+  console.log('GIT', files)
+}
+
+setInterval(() => {
+
+const startTime = Date.now()
+checkGit()
+  .then(() => {
+    console.log('checkGit', Date.now() - startTime)
+  })
+
+}, 3000)
