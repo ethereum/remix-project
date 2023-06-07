@@ -22,6 +22,7 @@ declare global {
 
 const LOCALHOST = ' - connect to localhost - '
 const NO_WORKSPACE = ' - none - '
+const ELECTRON = 'electron'
 const queryParams = new QueryParams()
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 let plugin, dispatch: React.Dispatch<any>
@@ -267,12 +268,14 @@ export const workspaceExists = async (name: string) => {
 }
 
 export const fetchWorkspaceDirectory = async (path: string) => {
+
   if (!path) return
   const provider = plugin.fileManager.currentFileProvider()
+  console.log('fetchWorkspaceDirectory', path, provider)
   const promise = new Promise((resolve) => {
     provider.resolveDirectory(path, (error, fileTree) => {
       if (error) console.error(error)
-
+      console.log('fetchWorkspaceDirectory', fileTree)
       resolve(fileTree)
     })
   })
@@ -341,6 +344,12 @@ export const switchToWorkspace = async (name: string) => {
     // if there is no other workspace, create remix default workspace
     plugin.call('notification', 'toast', `No workspace found! Creating default workspace ....`)
     await createWorkspace('default_workspace', 'remixDefault')
+  } else if(name === ELECTRON) { 
+    await plugin.fileProviders.workspace.setWorkspace(name)
+    await plugin.setWorkspace({ name, isLocalhost: false })
+    dispatch(setMode('browser'))
+    dispatch(setCurrentWorkspace({ name, isGitRepo:false }))
+    
   } else {
     const isActive = await plugin.call('manager', 'isActive', 'remixd')
 

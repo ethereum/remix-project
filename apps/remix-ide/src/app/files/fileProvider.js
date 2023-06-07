@@ -161,7 +161,8 @@ class FileProvider {
 
   async isDirectory (path) {
     const unprefixedpath = this.removePrefix(path)
-    return path === this.type ? true : (await window.remixFileSystem.stat(unprefixedpath)).isDirectory()
+    const isDirectory = path === this.type ? true : (await window.remixFileSystem.stat(unprefixedpath)).isDirectory()
+    return isDirectory
   }
 
   async isFile (path) {

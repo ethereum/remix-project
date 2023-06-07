@@ -188,8 +188,7 @@ class AppComponent {
     //----- search
     const search = new SearchPlugin()
 
-    //---- fs plugin
-    const FSPlugin = new fsPlugin()
+
 
     //---------------- Solidity UML Generator -------------------------
     const solidityumlgen = new SolidityUmlGen(appManager)
@@ -313,8 +312,13 @@ class AppComponent {
       solidityumlgen,
       contractFlattener,
       solidityScript,
-      FSPlugin
     ])
+
+    //---- fs plugin
+    if (isElectron()) {
+      const FSPlugin = new fsPlugin()
+      this.engine.register([FSPlugin])
+    }
 
     // LAYOUT & SYSTEM VIEWS
     const appPanel = new MainPanel()
@@ -430,7 +434,10 @@ class AppComponent {
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
     await this.appManager.activatePlugin(['solidity-script'])
-    await this.appManager.activatePlugin(['fs'])
+
+    if(isElectron()){
+      await this.appManager.activatePlugin(['fs'])
+    }
 
     this.appManager.on(
       'filePanel',
@@ -444,11 +451,6 @@ class AppComponent {
       }
     )
 
-    this.appManager.on('fs', 'loaded', async () => {
-      console.log('fs loaded')
-      const files =  await this.appManager.call('fs', 'readdir', './')
-      console.log('files', files)
-    })
 
     await this.appManager.activatePlugin(['filePanel'])
     // Set workspace after initial activation
