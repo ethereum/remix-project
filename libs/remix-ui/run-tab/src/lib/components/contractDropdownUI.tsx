@@ -274,7 +274,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
           <label className="udapp_settingsLabel pr-1">
             <FormattedMessage id='udapp.contract' />
           </label>
-          <div className="d-flex">{compilerName && compilerName !== '' && <label style={{ maxHeight: '0.6rem', lineHeight: '1rem' }} data-id="udappCompiledBy">(<FormattedMessage id='udapp.compiledBy' values={{ compilerName: <span className="text-capitalize"> {compilerName}</span> }} />)</label>}</div>
+          {compilerName && compilerName !== '' && <label className='udapp_settingsCompiledBy badge badge-secondary' data-id="udappCompiledBy"><FormattedMessage id='udapp.compiledBy' values={{ compilerName: <span className="text-capitalize"> {compilerName}</span> }} /></label>}
         </div>
         {props.remixdActivated ?
           (<CustomTooltip
