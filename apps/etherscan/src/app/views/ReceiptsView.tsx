@@ -179,7 +179,7 @@ const ReceiptsTable: React.FC<{ receipts: Receipt[] }> = ({ receipts }) => {
                     {item.status === 'Successfully Updated' && <CustomTooltip
                       placement={'bottom'}
                       tooltipClasses="text-wrap"
-                      tooltipId="info-recorder"
+                      tooltipId="etherscan-receipt-proxy-status"
                       tooltipText={item.message}
                     >
                       <i style={{ fontSize: 'small' }} className={'ml-1 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
