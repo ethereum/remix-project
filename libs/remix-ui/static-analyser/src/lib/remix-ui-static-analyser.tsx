@@ -111,13 +111,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     const runAnalysis = async () => {
       await run(state.data, state.source, state.file, state, props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq, message, showWarnings, allWarnings, warningContainer,calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings)
     }
-    if (basicEnabled) {
-      if (state.data !== null) {
-        runAnalysis().catch(console.error);
-      }
-    } else {
-      props.event.trigger('staticAnaysisWarning', [])
-    }
+    props.event.trigger('staticAnaysisWarning', [])
+    // if (basicEnabled) {
+    //   if (state.data !== null) {
+    //     runAnalysis().catch(console.error);
+    //   }
+    // } else {
+    //   props.event.trigger('staticAnaysisWarning', [])
+    // }
     return () => { }
   }, [state])
 
@@ -252,14 +253,11 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }
 
   const handleSlitherEnabled = async () => {
-    const checkRemixd = await !props.analysisModule.call('manager', 'isActive', 'remixd')
-    if (showSlither && checkRemixd) {
+    const checkRemixd = await props.analysisModule.call('manager', 'isActive', 'remixd')
+    if (showSlither) {
       setShowSlither(false)
-      await props.analysisModule.call('manager', 'deactivatePlugin', 'remixd')
-      await props.analysisModule.call('filePanel', 'setWorkspace', 'default_workspace')
-    } else {
-      await props.analysisModule.call('manager', 'activatePlugin', 'remixd')
-      await props.analysisModule.call('filePanel', 'setWorkspace', { name: 'localhost', isLocalhost: true }, true)
+    } 
+    if(!showSlither) {
       setShowSlither(true)
     }
   }
@@ -548,7 +546,21 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               <div className="mb-4 pt-2">
                 <Fragment>
                   {!hideWarnings 
-                    ? slitherWarnings.map((warning, index) => (
+                    ? showLibsWarning ? slitherWarnings.filter(warning => warning.isLibrary).map((warning, index) => (
+                      <div
+                      data-id={`staticAnalysisModule${warning.warningModuleName}${index}`}
+                      id={`staticAnalysisModule${warning.warningModuleName}${index}`}
+                      key={index}
+                    >
+                      <ErrorRenderer
+                        name={`staticAnalysisModule${warning.warningModuleName}${index}`}
+                        message={warning.msg}
+                        opt={warning.options}
+                        warningErrors={warning.warningErrors}
+                        editor={props.analysisModule}
+                      />
+                    </div>
+                      )) : slitherWarnings.map((warning, index) => (
                       <div
                       data-id={`staticAnalysisModule${warning.warningModuleName}${index}`}
                       id={`staticAnalysisModule${warning.warningModuleName}${index}`}
@@ -586,7 +598,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       ),
     },
   ];
-  const t = Object.entries(warningState)
+
   const checkBasicStatus = () => {
     return Object.values(groupedModules).map((value: any) => {
       return (value.map(x => {
@@ -599,115 +611,121 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     <div className="analysis_3ECCBV px-3 pb-1">
       <div className="my-2 d-flex flex-column align-items-left">
         <div className="d-flex flex-column mb-3" id="staticanalysisButton">
-        <div className="mb-3 d-flex justify-content-between">
-          <RemixUiCheckbox
-            id="solhintstaticanalysis"
-            inputType="checkbox"
-            title="Run solhint static analysis on file save"
-            onClick={handleLinterEnabled}
-            checked={solhintEnabled}
-            label="Linter"
-            onChange={() => {}}
-            tooltipPlacement={'top-start'}
-          />
-          <RemixUiCheckbox
+        <div className="mb-3 d-flex justify-content-start">
+        <RemixUiCheckbox
             id="checkAllEntries"
             inputType="checkbox"
-            title="Select all Remix analysis modules"
+            title="Remix analysis is a basic analysis tool for Remix Ide."
             checked={Object.values(groupedModules).map((value: any) => {
               return (value.map(x => {
                 return x._index.toString()
               }))
             }).flat().every(el => categoryIndex.includes(el))}
-            label="Basic"
+            label="Remix"
             onClick={() => {
               handleCheckAllModules(groupedModules)
             }}
             onChange={() => {}}
-            tooltipPlacement={'top-start'}
+            tooltipPlacement={'bottom-start'}
+            optionalClassName="mr-3"
           />
+          
+          <RemixUiCheckbox
+            id="solhintstaticanalysis"
+            inputType="checkbox"
+            title="Run solhint static analysis."
+            onClick={handleLinterEnabled}
+            checked={solhintEnabled}
+            label="Linter"
+            onChange={() => {}}
+            tooltipPlacement={'top-start'}
+            optionalClassName="mr-3"
+          />
+          
           <RemixUiCheckbox
             id="enableSlither"
             inputType="checkbox"
             onClick={handleSlitherEnabled}
             checked={showSlither}
+            disabled={true}
             label="Slither"
             onChange={() => {}}
+            optionalClassName="mr-3"
+            title="To run Slither analysis, you must activate remixd and connect remix ide to your local file system."
           />
         </div>
           <Button
-              buttonText={`Analyse ${state.file}`}
+              buttonText={state && state.data && state.file.length > 0 ? `Analyse ${state.file}` : 'Compile a Contract'}
               title={`${runButtonTitle}`}
               classList="btn btn-sm btn-primary btn-block"
               onClick={async () => await run(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
                 message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings)}
               disabled={(state.data === null || !isSupportedVersion)  || (!solhintEnabled && !basicEnabled) }
           />
-          <div className="mt-4 p-2 d-flex border-top flex-column">
-            <span>Last results for:</span>
-            <span
-              className="text-break break-word word-break font-weight-bold"
-              id="staticAnalysisCurrentFile"
-            >
-              {state.file}
-            </span>
-          </div>
-          <div className="border-top mt-3 pt-2" id="staticanalysisresult">
-            <RemixUiCheckbox
-              id="showLibWarnings"
-              name="showLibWarnings"
-              categoryId="showLibWarnings"
-              title="When checked, the results are also displayed for external contract libraries."
-              inputType="checkbox"
-              checked={showLibsWarning}
-              label="Show warnings for external libraries"
-              onClick={handleShowLibsWarning}
-              onChange={() => {}}
-              tooltipPlacement="top-start"
-            />
-            <RemixUiCheckbox
-              id="hideWarnings"
-              name="hideWarnings"
-              title="When checked, general warnings from analysis are hidden."
-              inputType="checkbox"
-              checked={hideWarnings}
-              label="Hide warnings"
-              onClick={handleHideWarnings}
-              onChange={() => {}}
-            />
-          </div>
-        </div>
-        <Tabs defaultActiveKey={tabKeys[0].tabKey}>
-            {solhintEnabled ? <Tab
-              key={tabKeys[0].tabKey}
-              title={tabKeys[0].title}
-              eventKey={tabKeys[0].tabKey}
-              tabClassName="text-decoration-none font-weight-bold"
-            >
-              {tabKeys[0].child}
-            </Tab> : null}
-
-            {
-              checkBasicStatus() ? <Tab
-                key={tabKeys[1].tabKey}
-                title={tabKeys[1].title}
-                eventKey={tabKeys[1].tabKey}
+          {state && state.data !== null && state.source !== null && state.file.length > 0 ? (<div className="d-flex border-top flex-column">
+            <div className="mt-4 p-2 d-flex border-top flex-column">
+              <span>Last results for:</span>
+              <span
+                className="text-break break-word word-break font-weight-bold"
+                id="staticAnalysisCurrentFile"
+              >
+                {state.file}
+              </span>
+            </div>
+            <div className="border-top mt-3 pt-2 mb-2" id="staticanalysisresult">
+              <RemixUiCheckbox
+                id="showLibWarnings"
+                name="showLibWarnings"
+                categoryId="showLibWarnings"
+                title="When checked, the results are also displayed for external contract libraries."
+                inputType="checkbox"
+                checked={showLibsWarning}
+                label="Show warnings for external libraries"
+                onClick={handleShowLibsWarning}
+                onChange={() => {}}
+                tooltipPlacement="top-start"
+              />
+              <RemixUiCheckbox
+                id="hideWarnings"
+                name="hideWarnings"
+                title="When checked, general warnings from analysis are hidden."
+                inputType="checkbox"
+                checked={hideWarnings}
+                label="Hide warnings"
+                onClick={handleHideWarnings}
+                onChange={() => {}}
+              />
+            </div>
+            <Tabs defaultActiveKey={tabKeys[0].tabKey}>
+              {
+                checkBasicStatus() ? <Tab
+                  key={tabKeys[1].tabKey}
+                  title={tabKeys[1].title}
+                  eventKey={tabKeys[1].tabKey}
+                  tabClassName="text-decoration-none font-weight-bold"
+                >
+                  {tabKeys[1].child}
+                </Tab> : null
+              }
+              {solhintEnabled ? <Tab
+                key={tabKeys[0].tabKey}
+                title={tabKeys[0].title}
+                eventKey={tabKeys[0].tabKey}
                 tabClassName="text-decoration-none font-weight-bold"
               >
-                {tabKeys[1].child}
-              </Tab> : null
-            }
-
-            { showSlither ? <Tab
-              key={tabKeys[2].tabKey}
-              title={tabKeys[2].title}
-              eventKey={tabKeys[2].tabKey}
-              tabClassName="text-decoration-none font-weight-bold"
-            >
-              {tabKeys[2].child}
-            </Tab> : null }
-
-        </Tabs>
+                {tabKeys[0].child}
+              </Tab> : null}
+              { showSlither ? <Tab
+                key={tabKeys[2].tabKey}
+                title={tabKeys[2].title}
+                eventKey={tabKeys[2].tabKey}
+                tabClassName="text-decoration-none font-weight-bold"
+              >
+                {tabKeys[2].child}
+              </Tab> : null }
+            </Tabs>
+          </div>) : null}
+        </div>
       </div>
     </div>
   )
