@@ -83,6 +83,12 @@ class FSPluginClient extends ElectronBasePluginClient {
     }
   }
 
+  async lstat(path: string): Promise<any> {
+    const lstat = await fs.lstat(this.fixPath(path))
+    return lstat
+  }
+
+
   async exists(path: string): Promise<boolean> {
     return fs.access(this.fixPath(path)).then(() => true).catch(() => false)
   }

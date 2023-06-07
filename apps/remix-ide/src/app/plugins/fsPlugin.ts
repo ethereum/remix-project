@@ -27,7 +27,7 @@ export class fsPlugin extends ElectronPlugin {
       name: 'fs',
       description: 'fs',
     })
-    this.methods = ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'exists', 'setWorkingDir']
+    this.methods = ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'setWorkingDir']
 
     // List of commands all filesystems are expected to provide. `rm` is not
     // included since it may not exist and must be handled as a special case
@@ -72,36 +72,52 @@ export class fsPlugin extends ElectronPlugin {
         return await this.call('fs', 'mkdir', path)
       },
       readFile: async (path: string, options) => {
-        console.log('readFile', path, options)
-        path = fixPath(path)
-        const file =  await this.call('fs', 'readFile', path)
-        console.log('readFile', path, file)
-        return file
+        try {
+          console.log('readFile', path, options)
+          path = fixPath(path)
+          const file = await this.call('fs', 'readFile', path, options)
+          console.log('readFile', path, file)
+          return file
+        } catch (e) {
+          console.log('readFile error', e)
+          return undefined
+        }
       }
       ,
       rename: async (from: string, to: string) => {
         return await this.call('fs', 'rename', from, to)
       },
-      writeFile: async (path: string, content: string) => {
+      writeFile: async (path: string, content: string, options: any) => {
         path = fixPath(path)
-        return await this.call('fs', 'writeFile', path, content)
+        return await this.call('fs', 'writeFile', path, content, options)
       }
       ,
       stat: async (path: string) => {
-        path = fixPath(path)
-        const stat = await this.call('fs', 'stat', path)
-        stat.isDirectory = () => stat.isDirectoryValue
-        stat.isFile = () => !stat.isDirectoryValue
-        //console.log('stat', path, stat)
-        return stat
+        try {
+          path = fixPath(path)
+          const stat = await this.call('fs', 'stat', path)
+          if(!stat) return undefined
+          stat.isDirectory = () => stat.isDirectoryValue
+          stat.isFile = () => !stat.isDirectoryValue
+          //console.log('stat', path, stat)
+          return stat
+        } catch (e) {
+          console.log('stat error', e)
+          return undefined
+        }
       },
       lstat: async (path: string) => {
-        path = fixPath(path)
-        const stat = await this.call('fs', 'lstat', path)
-        stat.isDirectory = () => stat.isDirectoryValue
-        stat.isFile = () => !stat.isDirectoryValue
-        //console.log('stat', path, stat)
-        return stat
+        try {
+          path = fixPath(path)
+          const stat = await this.call('fs', 'lstat', path)
+          if(!stat) return undefined
+          stat.isDirectory = () => stat.isDirectoryValue
+          stat.isFile = () => !stat.isDirectoryValue
+          return stat
+        } catch (e) {
+          console.log('lstat error', e)
+          return undefined
+        }
       },
       readlink: async (path: string) => {
         path = fixPath(path)
@@ -112,7 +128,7 @@ export class fsPlugin extends ElectronPlugin {
         return await this.call('fs', 'symlink', target, path)
       }
 
-      
+
 
 
 
@@ -131,39 +147,7 @@ export class fsPlugin extends ElectronPlugin {
   async onActivation() {
     console.log('fsPluginClient onload', this.fs);
     (window as any).remixFileSystem = this.fs;
-    /*(window as any).remixFileSystemCallback = {
-      readdir: (filepath, opts, cb) => {
-        console.log('readdir', filepath, opts)
-        const [resolve, reject] = wrapCallback(opts, cb);
-        (window as any).remixFileSystem.fs.readdir(filepath, opts).then(resolve).catch(reject);
-      },
-      readFile: (filepath, opts, cb) => {
-        console.log('readFile', filepath, opts)
-        const [resolve, reject] = wrapCallback(opts, cb);
-        (window as any).remixFileSystem.fs.readFile(filepath, opts).then(resolve).catch(reject)
-      },
-      writeFile: (filepath, content, opts, cb) => {
-        const [resolve, reject] = wrapCallback(opts, cb);
-        (window as any).remixFileSystem.fs.writeFile(filepath, content, opts).then(resolve).catch(reject)
-      },
-      mkdir: (filepath, opts, cb) => {
-        const [resolve, reject] = wrapCallback(opts, cb);
-        (window as any).remixFileSystem.fs.mkdir(filepath, opts).then(resolve).catch(reject)
-      },
-      rmdir: (filepath, opts, cb) => {
-        const [resolve, reject] = wrapCallback(opts, cb);
-        (window as any).remixFileSystem.fs.rmdir(filepath, opts).then(resolve).catch(reject)
-      },
-      unlink: (filepath, opts, cb) => {
-        const [resolve, reject] = wrapCallback(opts, cb);
-        (window as any).remixFileSystem.fs.unlink(filepath, opts).then(resolve).catch(reject)
-      },
-      stat: (filepath, opts, cb) => {
-        const [resolve, reject] = wrapCallback(opts, cb);
-        (window as any).remixFileSystem.fs.stat(filepath, opts).then(resolve).catch(reject)
-      }
-    };
-    */
+
 
     this.on('fs', 'workingDirChanged', async (path: string) => {
       console.log('change working dir', path)
