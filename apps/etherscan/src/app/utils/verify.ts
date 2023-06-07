@@ -121,6 +121,10 @@ export const verify = async (
             apiKeyParam,
             etherscanApi
           )
+          if (receiptStatus.status === '1') {
+            receiptStatus.message = receiptStatus.result
+            receiptStatus.result = 'Successfully Updated'
+          }
         } else receiptStatus = await getReceiptStatus(
           result,
           apiKeyParam,

@@ -33,13 +33,17 @@ export const ReceiptsView: React.FC = () => {
       }
       const etherscanApi = getEtherScanApi(networkId)
       let result
-      if (isProxyContractReceipt)
+      if (isProxyContractReceipt) {
         result = await getProxyContractReceiptStatus(
           values.receiptGuid,
           apiKey,
           etherscanApi
         )
-      else
+        if (result.status === '1') {
+          result.message = result.result
+          result.result = 'Successfully Updated'
+        }
+      } else
         result = await getReceiptStatus(
           values.receiptGuid,
           apiKey,

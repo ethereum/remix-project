@@ -109,21 +109,26 @@ const App = () => {
               apiKey,
               getEtherScanApi(networkId)
             )
-            status.details = status.result
-            status.result = 'Successfully Updated'
+            if (status.status === '1') {
+              status.message = status.result
+              status.result = 'Successfully Updated'
+            }
           } else 
             status = await getReceiptStatus(
               item.guid,
               apiKey,
               getEtherScanApi(networkId)
             )
-          if (status.result === "Pass - Verified" || status.result === "Already Verified" || status.result === "Successfully Updated") {
+          if (status.result === "Pass - Verified" || status.result === "Already Verified" || 
+              status.result === "Successfully Updated") {
             newReceipts = newReceipts.map((currentReceipt: Receipt) => {
               if (currentReceipt.guid === item.guid) {
-                return {
+                let res = {
                   ...currentReceipt,
                   status: status.result,
                 }
+                if (currentReceipt.isProxyContract) res.message = status.message
+                return res
               }
               return currentReceipt
             })                      
