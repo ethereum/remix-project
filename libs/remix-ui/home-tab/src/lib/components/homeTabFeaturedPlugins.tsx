@@ -59,7 +59,7 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
   }
 
   const startSolidity = async () => {
-    await plugin.appManager.activatePlugin(['solidity', 'udapp', 'solidityStaticAnalysis', 'solidityUnitTesting'])
+    //await plugin.appManager.activatePlugin(['solidity', 'udapp', 'solidityStaticAnalysis', 'solidityUnitTesting'])
     plugin.verticalIcons.select('solidity')
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solidity'])
   }

@@ -12,17 +12,8 @@ const profile: Profile = {
 export class GitPlugin extends ElectronBasePlugin {
   client: PluginClient
   constructor() {
-    super(profile)
+    super(profile, clientProfile, GitPluginClient)
   }
-
-  async createClient(webContentsId: number): Promise<void> {
-    this.clients.push(new GitPluginClient(webContentsId))
-  }
-
-  async closeClient(webContentsId: number): Promise<void> {
-    console.log('closeClient', webContentsId)
-  }
-
 
 }
 
@@ -35,8 +26,8 @@ const clientProfile: Profile = {
 
 class GitPluginClient extends ElectronBasePluginClient {
 
-  constructor(webContentsId: number) {
-    super(webContentsId, clientProfile)
+  constructor(webContentsId: number, profile: Profile) {
+    super(webContentsId, profile)
     this.onload(() => {
       console.log('GitPluginClient onload')
     })

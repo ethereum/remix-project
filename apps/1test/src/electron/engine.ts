@@ -23,7 +23,7 @@ appManager.activatePlugin('xterm')
 
 ipcMain.handle('manager:activatePlugin', async (event, plugin) => {
   console.log('manager:activatePlugin', plugin, event.sender.id)
-  appManager.call(plugin, 'createClient', event.sender.id)
+  return await appManager.call(plugin, 'createClient', event.sender.id)
 })
 
 ipcMain.handle('getWebContentsID', (event, message) => {

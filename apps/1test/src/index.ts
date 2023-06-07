@@ -33,7 +33,7 @@ export const createWindow = (): void => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
   mainWindow.maximize();
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   BrowserWindow.getAllWindows().forEach(window => {
     console.log('window IDS created', window.webContents.id)
