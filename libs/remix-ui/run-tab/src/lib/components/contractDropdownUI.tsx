@@ -321,7 +321,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
               <FormattedMessage id='udapp.warningEvmVersion' values={{ evmVersion }}/>
             </span>}
           >
-            <span className='badge badge-secondary'>evm version: {evmVersion}</span>
+            <span className='udapp_evmVersion badge badge-secondary'>evm version: {evmVersion}</span>
           </CustomTooltip> }
       <div>
         <div className="udapp_deployDropdown">
