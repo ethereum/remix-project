@@ -22,6 +22,7 @@ interface Props {
 interface FormValues {
   contractName: string
   contractAddress: string
+  expectedImplAddress?: string
 }
 
 export const VerifyView: React.FC<Props> = ({
@@ -33,6 +34,7 @@ export const VerifyView: React.FC<Props> = ({
   const [results, setResults] = useState("")
   const [networkName, setNetworkName] = useState("Loading...")
   const [showConstructorArgs, setShowConstructorArgs] = useState(false)
+  const [isProxyContract, setIsProxyContract] = useState(false)
   const [constructorInputs, setConstructorInputs] = useState([])
   const verificationResult = useRef({})
 
@@ -74,6 +76,8 @@ export const VerifyView: React.FC<Props> = ({
       values.contractName,
       compilationResult,
       null,
+      isProxyContract,
+      values.expectedImplAddress,
       client,
       onVerifiedContract,
       setResults,
@@ -86,7 +90,7 @@ export const VerifyView: React.FC<Props> = ({
       <Formik
         initialValues={{
           contractName: "",
-          contractAddress: "",
+          contractAddress: ""
         }}
         validate={(values) => {
           const errors = {} as any
@@ -204,6 +208,45 @@ export const VerifyView: React.FC<Props> = ({
                 name="contractAddress"
                 component="div"
               />
+            </div>
+
+            <div className="d-flex mb-2 custom-control custom-checkbox">
+              <Field
+                className="custom-control-input"
+                type="checkbox"
+                name="isProxy"
+                id="isProxy"
+                onChange={async (e) => {
+                  handleChange(e)
+                  if (e.target.checked) setIsProxyContract(true)
+                  else setIsProxyContract(false)
+              }}
+              />
+              <label className="form-check-label custom-control-label" htmlFor="isProxy">It's a proxy contract</label>
+            </div>
+
+            <div className={ isProxyContract ? 'form-group d-block': 'form-group d-none' }>
+              <label htmlFor="expectedImplAddress">Expected Implementation Address</label>
+              <CustomTooltip
+                placement={'top'}
+                tooltipClasses="text-wrap"
+                tooltipId="etherscan-impl-address-info"
+                tooltipText="Make sure implementation contract is already verified before proxy contract"
+              >
+                <i style={{ fontSize: 'small' }} className={'ml-1 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
+              </CustomTooltip>
+              <CustomTooltip
+              tooltipText='Providing expected implementation address enforces a check to ensure the returned implementation contract address is same as address picked up by the verifier'
+              tooltipId='etherscan-impl-address'
+              placement='bottom'
+              >
+                <Field
+                  className="form-control"
+                  type="text"
+                  name="expectedImplAddress"
+                  placeholder="e.g. 0x11b79afc03baf25c631dd70169bb6a3160b2706e"
+                />
+              </CustomTooltip>
             </div>
 
             <SubmitButton dataId="verify-contract" text="Verify" 
