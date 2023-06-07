@@ -13,22 +13,20 @@ const profile: Profile = {
 export class FSPlugin extends ElectronBasePlugin {
   clients: FSPluginClient[] = []
   constructor() {
-    super(profile)
+    super(profile, clientProfile, FSPluginClient)
     this.methods = [...super.methods, 'closeWatch']
   }
-
-  async createClient(webContentsId: number): Promise<void> {
-    this.clients.push(new FSPluginClient(webContentsId))
-  }
-
-  async closeClient(webContentsId: number): Promise<void> {
-    console.log('closeClient', webContentsId)
-  }
-
 
   async closeWatch(): Promise<void> {
     for (const client of this.clients) {
       await client.closeWatch()
+    }
+  }
+
+  openFolder(webContentsId: any): void {
+    const client = this.clients.find(c => c.webContentsId === webContentsId)
+    if (client) {
+      client.setWorkingDir()
     }
   }
 
@@ -45,12 +43,13 @@ class FSPluginClient extends ElectronBasePluginClient {
   watcher: chokidar.FSWatcher
   workingDir: string = '/Volumes/bunsen/code/rmproject2/remix-project/apps/remix-ide/contracts/'
 
-  constructor(webContentsId: number) {
-    super(webContentsId, clientProfile)
+  constructor(webContentsId: number, profile: Profile) {
+    super(webContentsId, profile)
     this.onload(() => {
       console.log('fsPluginClient onload')
     })
   }
+
 
   async readdir(path: string): Promise<string[]> {
     // call node fs.readdir
@@ -59,8 +58,8 @@ class FSPluginClient extends ElectronBasePluginClient {
     return files
   }
 
-  async readFile(path: string): Promise<string> {
-    return fs.readFile(this.fixPath(path), 'utf8')
+  async readFile(path: string, options: any ): Promise<string> {
+    return fs.readFile(this.fixPath(path),  'utf8')
   }
 
   async writeFile(path: string, content: string): Promise<void> {
@@ -84,7 +83,7 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async stat(path: string): Promise<any> {
-    const stat = await fs.stat(path)
+    const stat = await fs.stat(this.fixPath(path))
     //console.log('stat', path, stat)
     const isDirectory = stat.isDirectory()
     return {
@@ -92,6 +91,13 @@ class FSPluginClient extends ElectronBasePluginClient {
       isDirectoryValue: isDirectory
     }
   }
+
+  async lstat(path: string): Promise<any> {
+    const lstat = await fs.lstat(this.fixPath(path))
+    return lstat
+  }
+
+
 
   async exists(path: string): Promise<boolean> {
     return fs.access(this.fixPath(path)).then(() => true).catch(() => false)
@@ -131,6 +137,7 @@ class FSPluginClient extends ElectronBasePluginClient {
     if (path.startsWith('/')) {
       path = path.slice(1)
     }
+    if(!this.workingDir.endsWith('/')) this.workingDir = this.workingDir + '/'
     path = this.workingDir + path
     return path
   }

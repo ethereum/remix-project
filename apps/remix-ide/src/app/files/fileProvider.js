@@ -286,12 +286,14 @@ class FileProvider {
     if (path.indexOf('/') !== 0) path = '/' + path
     try {
       const files = await window.remixFileSystem.readdir(path)
+      console.log(files, 'files resolveDirectory')
       const ret = {}
       if (files) {
         for (let element of files) {
           path = path.replace(/^\/|\/$/g, '') // remove first and last slash
           element = element.replace(/^\/|\/$/g, '') // remove first and last slash
           const absPath = (path === '/' ? '' : path) + '/' + element
+          console.log(absPath, 'absPath')
           ret[absPath.indexOf('/') === 0 ? absPath.substr(1, absPath.length) : absPath] = { isDirectory: (await window.remixFileSystem.stat(absPath)).isDirectory() }
           // ^ ret does not accept path starting with '/'
         }

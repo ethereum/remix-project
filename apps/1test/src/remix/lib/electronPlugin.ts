@@ -47,16 +47,11 @@ export abstract class ElectronPlugin extends Plugin {
    * @param name The name of the plugin should connect to
    */
   protected async connect(name: string) {
-    console.log('ElectronPluginConnector connect', name)
-    const r = await window.electronAPI.activatePlugin(name)
-    console.log('ElectronPluginConnector is connected', name, r)
-
-    /*
-    if(await window.electronAPI.activatePlugin(name) && !this.loaded){
-      console.log('ElectronPluginConnector calling handshake', name)
+    const connected = await window.electronAPI.activatePlugin(name)
+    if(connected && !this.loaded){
       this.handshake()
     }
-    */
+    
   }
   /** Close connection with the plugin */
   protected disconnect(): any | Promise<any> {
@@ -89,7 +84,6 @@ export abstract class ElectronPlugin extends Plugin {
 
   /** Perform handshake with the client if not loaded yet */
   protected async handshake() {
-    console.log('ElectronPluginConnector handshake', this.loaded)
     if (!this.loaded) {
       this.loaded = true
       let methods: string[];
@@ -170,7 +164,6 @@ export abstract class ElectronPlugin extends Plugin {
       // Return result from exposed method
       case 'response': {
         const { id, payload, error } = message
-        console.log('ElectronPluginConnector getMessage response', message, this.pendingRequest)
         this.pendingRequest[id](payload, error)
         delete this.pendingRequest[id]
         break

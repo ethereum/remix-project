@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, dialog, Menu } from 'electron';
 import path from 'path';
 
 
@@ -13,13 +13,8 @@ if (
   isPackaged = true;
 }
 
-
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) {
-  app.quit();
-}
 export let mainWindow: BrowserWindow;
-const createWindow = (): void => {
+export const createWindow = (): void => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     height: 800,
@@ -62,5 +57,32 @@ app.on('activate', () => {
   }
 });
 
+const showAbout = () => {
+
+
+  void dialog.showMessageBox({
+    title: `About Remix`,
+    message: `Remix`,
+    detail: `Remix`,
+    buttons: [],
+  });
+};
+
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+const isMac = process.platform === 'darwin'
+
+import FileMenu from './menus/file';
+import MainMenu from './menus/main';
+import darwinMenu from './menus/darwin';
+import { execCommand } from './menus/commands';
+
+const commandKeys: Record<string, string> = {
+  'window:new': 'CmdOrCtrl+N',
+  'folder:open': 'CmdOrCtrl+O',
+};
+
+
+const menu = [...(process.platform === 'darwin' ? [darwinMenu(commandKeys, execCommand, showAbout)] : []), FileMenu(commandKeys, execCommand)]
+Menu.setApplicationMenu(Menu.buildFromTemplate(menu))

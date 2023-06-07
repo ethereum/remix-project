@@ -12,6 +12,7 @@ import { MenuItems, WorkSpaceState } from './types'
 import { contextMenuActions } from './utils'
 import FileExplorerContextMenu from './components/file-explorer-context-menu'
 import { customAction } from '@remixproject/plugin-api'
+import isElectron from 'is-electron'
 
 const _paq = window._paq = window._paq || []
 
@@ -684,45 +685,66 @@ export function Workspace () {
         <div className='d-flex flex-column w-100 remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
           <div>
             <header>
-              <div className="mx-2 my-2 d-flex flex-column">
-                <div className="d-flex">
-                  {currentWorkspace !== LOCALHOST ? (<span className="remixui_topmenu d-flex">
-                      <Dropdown id="workspacesMenuDropdown" data-id="workspacesMenuDropdown" onToggle={() => hideIconsMenu(!showIconsMenu)} show={showIconsMenu}>
-                        <Dropdown.Toggle
-                          as={CustomIconsToggle}
-                          onClick={() => {
-                            hideIconsMenu(!showIconsMenu)
-                          }}
-                          icon={'fas fa-bars'}
-                        ></Dropdown.Toggle>
-                        <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='custom-dropdown-items remixui_menuwidth' rootCloseEvent="click">
-                          <HamburgerMenu
-                            createWorkspace={createWorkspace}
-                            renameCurrentWorkspace={renameCurrentWorkspace}
-                            downloadCurrentWorkspace={downloadCurrentWorkspace}
-                            deleteCurrentWorkspace={deleteCurrentWorkspace}
-                            deleteAllWorkspaces={deleteAllWorkspaces}
-                            cloneGitRepository={cloneGitRepository}
-                            downloadWorkspaces={downloadWorkspaces}
-                            restoreBackup={restoreBackup}
-                            hideIconsMenu={hideIconsMenu}
-                            addGithubAction={addGithubAction}
-                            addSlitherGithubAction={addSlitherGithubAction}
-                            addHelperScripts={addHelperScripts}
-                            addTsSolTestGithubAction={addTsSolTestGithubAction}
-                            showIconsMenu={showIconsMenu}
-                            hideWorkspaceOptions={ currentWorkspace === LOCALHOST }
-                            hideLocalhostOptions={ currentWorkspace === NO_WORKSPACE }
-                            />
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </span>) : null}
-                    <span className="d-flex">
-                      <label className="pl-1 form-check-label" htmlFor="workspacesSelect" style={{wordBreak: 'keep-all'}}>
-                        <FormattedMessage id='filePanel.workspace' />
-                      </label>
-                    </span>                  
+              <div className="mx-2 mb-2 d-flex flex-column">
+                <div className="d-flex justify-content-between">
+                  {!isElectron() ? 
+                  <span className="d-flex align-items-end">
+                    <label className="pl-1 form-check-label" htmlFor="workspacesSelect" style={{wordBreak: 'keep-all'}}>
+                      <FormattedMessage id='filePanel.workspace' />
+                    </label>
+                  </span>: null}
+                  {currentWorkspace !== LOCALHOST && !isElectron() ? (<span className="remixui_menu remixui_topmenu d-flex justify-content-between align-items-end w-75">
+                    <CustomTooltip
+                      placement="top"
+                      tooltipId="createWorkspaceTooltip"
+                      tooltipClasses="text-nowrap"
+                      tooltipText={<FormattedMessage id='filePanel.create' />}
+                    >
+                      <span
+                        hidden={currentWorkspace === LOCALHOST}
+                        id='workspaceCreate'
+                        data-id='workspaceCreate'
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          createWorkspace()
+                          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
+                        }}
+                        style={{ fontSize: 'medium' }}
+                        className='far fa-plus remixui_menuicon d-flex align-self-end'
+                        >
+                      </span>
+                    </CustomTooltip>
+                    <Dropdown id="workspacesMenuDropdown" data-id="workspacesMenuDropdown" onToggle={() => hideIconsMenu(!showIconsMenu)} show={showIconsMenu}>
+                      <Dropdown.Toggle
+                        as={CustomIconsToggle}
+                        onClick={() => {
+                          hideIconsMenu(!showIconsMenu)
+                        }}
+                        icon={'fas fa-bars'}
+                      ></Dropdown.Toggle>
+                      <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='custom-dropdown-items remixui_menuwidth' rootCloseEvent="click">
+                        <HamburgerMenu
+                          createWorkspace={createWorkspace}
+                          renameCurrentWorkspace={renameCurrentWorkspace}
+                          downloadCurrentWorkspace={downloadCurrentWorkspace}
+                          deleteCurrentWorkspace={deleteCurrentWorkspace}
+                          deleteAllWorkspaces={deleteAllWorkspaces}
+                          cloneGitRepository={cloneGitRepository}
+                          downloadWorkspaces={downloadWorkspaces}
+                          restoreBackup={restoreBackup}
+                          hideIconsMenu={hideIconsMenu}
+                          addGithubAction={addGithubAction}
+                          addSlitherGithubAction={addSlitherGithubAction}
+                          addTsSolTestGithubAction={addTsSolTestGithubAction}
+                          showIconsMenu={showIconsMenu}
+                          hideWorkspaceOptions={ currentWorkspace === LOCALHOST }
+                          hideLocalhostOptions={ currentWorkspace === NO_WORKSPACE }
+                          />
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </span>) : null}
                 </div>
+                {!isElectron() ? (
                 <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
                   <Dropdown.Toggle
                     as={CustomToggle}
@@ -767,6 +789,7 @@ export function Workspace () {
                       { ((global.fs.browser.workspaces.length <= 0) || currentWorkspace === NO_WORKSPACE) && <Dropdown.Item onClick={() => { switchWorkspace(NO_WORKSPACE) }}>{ <span className="pl-3">NO_WORKSPACE</span> }</Dropdown.Item> }
                     </Dropdown.Menu>
                   </Dropdown>
+                ) : null}
                 </div>
               </header>
             </div>
