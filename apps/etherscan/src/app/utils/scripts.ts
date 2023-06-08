@@ -6,13 +6,15 @@ export const verifyScript = `
  * @param {string} contractName - Name of the contract
  * @param {string} contractFile - File where the contract is located
  * @param {number | string} chainRef - Network chain id or API URL
+ * @param {boolean} isProxyContract - true, if contract is a proxy contract
+ * @param {string} expectedImplAddress - Implementation contract address, in case of proxy contract verification
  * @returns {{ guid, status, message, succeed }} verification result
  */
-export const verify = async (apikey: string, contractAddress: string, contractArguments: string, contractName: string, contractFile: string, chainRef: number | string) => {
+export const verify = async (apikey: string, contractAddress: string, contractArguments: string, contractName: string, contractFile: string, chainRef: number | string, isProxyContract: boolean, expectedImplAddress: string) => {
     const compilationResultParam = await remix.call('compilerArtefacts' as any, 'getCompilerAbstract', contractFile)
     console.log('verifying.. ' + contractName)
     // update apiKey and chainRef to verify contract on multiple networks
-    return await remix.call('etherscan' as any,  'verify', apikey, contractAddress, contractArguments, contractName, compilationResultParam, chainRef)
+    return await remix.call('etherscan' as any,  'verify', apikey, contractAddress, contractArguments, contractName, compilationResultParam, chainRef, isProxyContract, expectedImplAddress)
 }`
 
 export const receiptGuidScript = `
