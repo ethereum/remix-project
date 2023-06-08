@@ -4,9 +4,9 @@
  * @param {string} contractArguments - Parameters used in the contract constructor during the initial deployment. It should be the hex encoded value
  * @param {string} contractName - Name of the contract
  * @param {string} contractFile - File where the contract is located
- * @param {number | string} chainRef - Network chain id or API URL
- * @param {boolean} isProxyContract - true, if contract is a proxy contract
- * @param {string} expectedImplAddress - Implementation contract address, in case of proxy contract verification
+ * @param {number | string} chainRef - Network chain id or API URL (optional)
+ * @param {boolean} isProxyContract - true, if contract is a proxy contract (optional)
+ * @param {string} expectedImplAddress - Implementation contract address, in case of proxy contract verification (optional)
  * @returns {{ guid, status, message, succeed }} verification result
  */
 export const verify = async (apikey: string, contractAddress: string, contractArguments: string, contractName: string, contractFile: string, chainRef: number | string, isProxyContract: boolean, expectedImplAddress: string) => {
