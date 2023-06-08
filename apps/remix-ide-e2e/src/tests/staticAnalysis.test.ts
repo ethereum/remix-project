@@ -37,9 +37,10 @@ module.exports = {
     .click('*[data-id="treeViewLitreeViewItemcontracts"]')
     .click('*[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
     .clickLaunchIcon('solidity')
-    .click('*[compileBtn]')
+    .click('*[id="compileBtn"]')
     .pause(10000)
     .clickLaunchIcon('solidityStaticAnalysis')
+    .click('*[id="staticAnalysisRunBtn"]')
     .waitForElementPresent('#staticanalysisresult .warning', 5000)
     // Check warning count
     .click('*[data-rb-event-key="basic"]')
