@@ -9,8 +9,9 @@ module.exports = {
   '@sources': () => sources,
   'Should flatten contract after creation': function (browser: NightwatchBrowser) { 
     browser.addFile('TestContract.sol', sources[0]['TestContract.sol'])
+      .pause(10000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemTestContract.sol"]')
-      .pause(7000)
+      .pause(3000)
       .click('*[data-id="treeViewLitreeViewItemTestContract.sol"]')
       .rightClick('*[data-id="treeViewLitreeViewItemTestContract.sol"]')
       .click('*[id="menuitemflattenacontract"]')
