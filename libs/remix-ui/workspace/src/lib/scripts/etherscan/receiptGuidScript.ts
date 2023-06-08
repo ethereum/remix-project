@@ -1,6 +1,6 @@
 /**
- * @param {string} apikey - etherscan api key.
- * @param {string} guid - receipt id.
+ * @param {string} apikey - etherscan api key
+ * @param {string} guid - receipt id
  * @returns {{ status, message, succeed }} receiptStatus
  */
 export const receiptStatus = async (apikey: string, guid: string) => {
