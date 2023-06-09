@@ -1,6 +1,8 @@
 import { toHex, toDecimal } from 'web3-utils'
 import BN from 'bn.js'
 import { toChecksumAddress, Address, bigIntToHex } from '@ethereumjs/util'
+import type { Account } from '@ethereumjs/util'
+import { Transaction } from '@ethereumjs/tx'
 import { processTx } from './txProcess'
 import { execution } from '@remix-project/remix-lib'
 import { ethers } from 'ethers'
@@ -145,18 +147,11 @@ export class Transactions {
   }
 
   eth_estimateGas (payload, cb) {
-    // from might be lowercased address (web3)
-    if (payload.params && payload.params.length > 0 && payload.params[0].from) {
-      payload.params[0].from = toChecksumAddress(payload.params[0].from)
+    let { from, to, data, value } = payload.params[0]
+    if (from) {
+      from = toChecksumAddress(from)
     }
-    if (payload.params && payload.params.length > 0 && payload.params[0].to) {
-      payload.params[0].to = toChecksumAddress(payload.params[0].to)
-    }
-
-    payload.params[0].gas = 10000000 * 10
-
-    this.vmContext.web3().flagNextAsDoNotRecordEvmSteps()
-    processTx(this.txRunnerInstance, payload, true, (error, value: VMexecutionResult) => {      
+    this.txRunnerVMInstance.simulateInVm(from, to, data, value, (error, value) => {
       if (error) return cb(error)
       const result: RunTxResult = value.result
       if ((result as any).receipt?.status === '0x0' || (result as any).receipt?.status === 0) {
@@ -205,7 +200,7 @@ export class Transactions {
 
     processTx(this.txRunnerInstance, payload, true, (error, result: VMexecutionResult) => {
       if (!error && result) {
-        this.vmContext.addBlock(result.block)
+        // this.vmContext.addBlock(result.block)
         const hash = '0x' + result.tx.hash().toString('hex')
         this.vmContext.trackTx(hash, result.block, result.tx)
         const returnValue = `0x${result.result.execResult.returnValue.toString('hex') || '0'}`
