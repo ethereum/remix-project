@@ -98,7 +98,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       setRunButtonTitle('Select Solidity compiler version greater than 0.4.12.')
     } else {
       setIsSupportedVersion(true)
-      setRunButtonTitle('Run analysis')
+      setRunButtonTitle(`${state && state.data && state.file.length > 0 ? 'Run analysis': 'To run analysis tools, first compile a contract.'}`)
     }
   }
 
@@ -651,11 +651,11 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             label="Slither"
             onChange={() => {}}
             optionalClassName="mr-3"
-            title="To run Slither analysis, you must activate remixd and connect remix ide to your local file system."
+            title="To run Slither analysis, Remix IDE must be connected to your local filesystem with remixd."
           />
         </div>
           <Button
-              buttonText={state && state.data && state.file.length > 0 ? `Analyse ${state.file}` : 'Compile a Contract'}
+              buttonText={`Analyse ${state.file}`}
               title={`${runButtonTitle}`}
               classList="btn btn-sm btn-primary btn-block"
               onClick={async () => await run(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
