@@ -82,6 +82,7 @@ export class Transactions {
     if (payload.params && payload.params.length > 0 && payload.params[0].from) {
       payload.params[0].from = toChecksumAddress(payload.params[0].from)
     }
+    this.vmContext.web3().flagRecordEvmSteps(true)
     processTx(this.txRunnerInstance, payload, false, (error, result: VMexecutionResult) => {
       if (!error && result) {
         this.vmContext.addBlock(result.block)
@@ -155,7 +156,7 @@ export class Transactions {
 
     payload.params[0].gas = 10000000 * 10
 
-    this.vmContext.web3().flagNextAsDoNotRecordEvmSteps()
+    this.vmContext.web3().flagRecordEvmSteps(false)
     processTx(this.txRunnerInstance, payload, true, (error, value: VMexecutionResult) => {      
       if (error) return cb(error)
       const result: RunTxResult = value.result
@@ -203,9 +204,9 @@ export class Transactions {
 
     const tag = payload.params[0].timestamp // e2e reference
 
+    this.vmContext.web3().flagRecordEvmSteps(true)
     processTx(this.txRunnerInstance, payload, true, (error, result: VMexecutionResult) => {
       if (!error && result) {
-        this.vmContext.addBlock(result.block)
         const hash = '0x' + result.tx.hash().toString('hex')
         this.vmContext.trackTx(hash, result.block, result.tx)
         const returnValue = `0x${result.result.execResult.returnValue.toString('hex') || '0'}`

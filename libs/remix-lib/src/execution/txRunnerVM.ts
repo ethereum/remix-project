@@ -124,16 +124,14 @@ export class TxRunnerVM {
       if (!useCall) {
         this.blockNumber = this.blockNumber + 1
         this.blockParentHash = block.hash()
-        this.runBlockInVm(tx, block, (err, result) => {
+        this.runBlockInVm(this.getVMObject().vm, tx, block, (err, result) => {
           if (!err) this.getVMObject().vm.blockchain.putBlock(block)
           callback(err, result)
         })
       } else {
-        this.getVMObject().stateManager.checkpoint().then(() => {
-          this.runBlockInVm(tx, block, (err, result) => {
-            this.getVMObject().stateManager.revert().then(() => {
-              callback(err, result)
-            })
+        this.getVMObject().vm.copy().then((copiedVm) => {
+          this.runBlockInVm(copiedVm, tx, block, (err, result) => {
+            callback(err, result)
           })
         })
       }
@@ -142,8 +140,8 @@ export class TxRunnerVM {
     })
   }
 
-  runBlockInVm (tx, block, callback) {
-    this.getVMObject().vm.runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false, skipNonce: true }).then((results: RunBlockResult) => {
+  runBlockInVm (vm, tx, block, callback) {
+    vm.runBlock({ block: block, generate: true, skipBlockValidation: true, skipBalance: false, skipNonce: true }).then((results: RunBlockResult) => {
       const result: RunTxResult = results.results[0]
       callback(null, {
         result,
