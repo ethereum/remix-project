@@ -107,13 +107,13 @@ export class TxRunnerWeb3 {
         console.log(errNetWork)
         return
       }
-      const txCopy =  { ...tx, type: undefined, maxFeePerGas: undefined, gasPrice: undefined, gas: undefined  }
+      const txCopy =  { ...tx, type: undefined, maxFeePerGas: undefined, gasPrice: undefined }
       if (network && network.lastBlock) {
         if (network.lastBlock.baseFeePerGas) {
           // the sending stack (web3.js / metamask need to have the type defined)
           // this is to avoid the following issue: https://github.com/MetaMask/metamask-extension/issues/11824
           txCopy.type = '0x2'
-          txCopy.maxFeePerGas = Math.ceil(network.lastBlock.baseFeePerGas + network.lastBlock.baseFeePerGas / 2)
+          txCopy.maxFeePerGas = Math.ceil(network.lastBlock.baseFeePerGas + network.lastBlock.baseFeePerGas / 3)
         } else {
           txCopy.type = '0x1'
           txCopy.gasPrice = network.lastBlock.baseFeePerGas
