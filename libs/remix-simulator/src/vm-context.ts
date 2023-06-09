@@ -1,7 +1,7 @@
 /* global ethereum */
 'use strict'
 import { hash } from '@remix-project/remix-lib'
-import { bufferToHex } from '@ethereumjs/util'
+import { bufferToHex, Account } from '@ethereumjs/util'
 import type { Address } from '@ethereumjs/util'
 import { decode } from 'rlp'
 import { ethers } from 'ethers'
@@ -13,6 +13,7 @@ import type { BigIntLike } from '@ethereumjs/util'
 import { Common, ConsensusType } from '@ethereumjs/common'
 import { Trie } from '@ethereumjs/trie'
 import { DefaultStateManager, StateManager, EthersStateManager, EthersStateManagerOpts } from '@ethereumjs/statemanager'
+import { Cache } from '@ethereumjs/statemanager/dist/cache'
 import { StorageDump } from '@ethereumjs/statemanager/dist/interface'
 import { EVM } from '@ethereumjs/evm'
 import { EEI } from '@ethereumjs/vm'
@@ -40,9 +41,34 @@ export interface DefaultStateManagerOpts {
 
 class CustomEthersStateManager extends EthersStateManager {
   keyHashes: { [key: string]: string }
-  constructor (opts: EthersStateManagerOpts) {
+  _trie: Trie
+  constructor (opts: EthersStateManagerOpts, trie?: Trie) {
     super(opts)
     this.keyHashes = {}
+    this._trie = trie ? trie : new Trie({ useKeyHashing: true })
+    /*
+     * For a custom StateManager implementation adopt these
+     * callbacks passed to the `Cache` instantiated to perform
+     * the `get`, `put` and `delete` operations with the
+     * desired backend.
+     */
+    const getCb = async (address) => {
+      const rlp = await this._trie.get(address.buf)
+      if (rlp) {
+        return Account.fromRlpSerializedAccount(rlp)
+      } else {
+        return await this.getAccountFromProvider(address)
+      }
+    }
+    const putCb = async (keyBuf, accountRlp) => {
+      const trie = this._trie
+      await trie.put(keyBuf, accountRlp)
+    }
+    const deleteCb = async (keyBuf: Buffer) => {
+      const trie = this._trie
+      await trie.del(keyBuf)
+    }
+    (this as any)._cache = new Cache({ getCb, putCb, deleteCb })
   }
 
   putContractStorage (address, key, value) {
@@ -54,11 +80,10 @@ class CustomEthersStateManager extends EthersStateManager {
     const newState = new CustomEthersStateManager({
       provider: (this as any).provider,
       blockTag: BigInt((this as any).blockTag),
-    })
+    }, this._trie.copy(false))
     ;(newState as any).contractCache = new Map((this as any).contractCache)
     ;(newState as any).storageCache = new Map((this as any).storageCache)
-    ;(newState as any)._cache = this._cache
-    ;(newState as any).keyHashes = this.keyHashes
+    ;(newState as any).keyHashes = { ...this.keyHashes }
     return newState
   }
 
@@ -73,6 +98,11 @@ class CustomEthersStateManager extends EthersStateManager {
       }
     }
     return storageDump
+  }
+
+  async flush(): Promise<void> {
+    console.log('flush CustomEthersStateManager')
+    super.flush()
   }
 }
 
@@ -95,6 +125,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
     const copyState =  new StateManagerCommonStorageDump({
       trie: this._trie.copy(false),
     })
+    // ;(copyState as any)._cache = this._cache
     copyState.keyHashes = this.keyHashes
     return copyState
   }
@@ -121,6 +152,9 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
           reject(e)
         })
     })
+  }
+  async flush(): Promise<void> {
+    await super.flush()
   }
 }
 
