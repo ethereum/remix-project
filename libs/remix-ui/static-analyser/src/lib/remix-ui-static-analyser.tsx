@@ -633,7 +633,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           <RemixUiCheckbox
             id="solhintstaticanalysis"
             inputType="checkbox"
-            title="Run solhint static analysis."
+            title="Run SolHint static analysis."
             onClick={handleLinterEnabled}
             checked={solhintEnabled}
             label="Linter"
@@ -647,11 +647,11 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             inputType="checkbox"
             onClick={handleSlitherEnabled}
             checked={showSlither}
-            disabled={true}
+            disabled={false}
             label="Slither"
             onChange={() => {}}
             optionalClassName="mr-3"
-            title="To run Slither analysis, Remix IDE must be connected to your local filesystem with remixd."
+            title="Run Slither static analysis."
           />
         </div>
           <Button
@@ -677,7 +677,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 id="showLibWarnings"
                 name="showLibWarnings"
                 categoryId="showLibWarnings"
-                title="When checked, the results are also displayed for external contract libraries."
                 inputType="checkbox"
                 checked={showLibsWarning}
                 label="Show warnings for external libraries"
@@ -688,7 +687,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               <RemixUiCheckbox
                 id="hideWarnings"
                 name="hideWarnings"
-                title="When checked, general warnings from analysis are hidden."
                 inputType="checkbox"
                 checked={hideWarnings}
                 label="Hide warnings"
