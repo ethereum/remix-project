@@ -40,7 +40,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
      * for example : 'downloadAsZip' with type ['file','folder'] will work on files and folders when multiple are selected
     **/
     const nonRootFocus = focus.filter((el) => { return !(el.key === '' && el.type === 'folder') })
-    
+
     if(focus[0].key === "contextMenu"){
       return true
     }
@@ -175,7 +175,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               publishFolderToGist(path, type)
             break
             default:
-              _paq.push(['trackEvent', 'fileExplorer', 'customAction', `${item.id}/${item.name}`])
+              _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', `${item.id}/${item.name}`])
               emit && emit({ ...item, path: [path] } as customAction)
               break
           }
@@ -183,7 +183,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
         }}>{intl.formatMessage({id: `filePanel.${item.id}`, defaultMessage: item.label || item.name})}</li>
     }))
   }
-  
+
   return (
     <div
       id="menuItemsContainer"
