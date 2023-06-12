@@ -228,16 +228,6 @@ export class RemixAppManager extends PluginManager {
       sticky: true,
       group: 7
     })
-    await this.call('filePanel', 'registerContextMenuItem', {
-      id: 'solhint',
-      name: 'lintContractCustomAction',
-      label: 'Lint Contract',
-      type: [],
-      extension: ['.sol'],
-      path: [],
-      pattern: [],
-      sticky: true
-    })
   }
 }
 
