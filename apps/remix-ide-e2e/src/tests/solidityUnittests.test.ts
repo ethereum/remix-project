@@ -178,7 +178,8 @@ module.exports = {
       .click('*[data-id="testTabGenerateTestFolder"]')
       .clickLaunchIcon('filePanel')
       // creating a new workspace
-      .click('*[data-id="workspaceCreate"]')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .click('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]')
       .setValue('*[data-id="fileSystemModalDialogContainer-react"] input[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_new')

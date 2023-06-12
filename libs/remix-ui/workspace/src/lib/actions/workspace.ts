@@ -13,6 +13,7 @@ import { ROOT_PATH, slitherYml, solTestYml, tsSolTestYml } from '../utils/consta
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
 import { AppModal, ModalTypes } from '@remix-ui/app'
+import { scripts } from '../scripts'
 
 declare global {
   interface Window { remixFileSystemCallback: IndexedDBStorage; }
@@ -675,6 +676,12 @@ export const createSlitherGithubAction = async () => {
 
   await plugin.call('fileManager', 'writeFile', path , slitherYml)
   plugin.call('fileManager', 'open', path)
+}
+
+export const createHelperScripts = async (script: string) => {
+  if (!scripts[script]) return
+  await scripts[script](plugin)
+  plugin.call('notification', 'toast', 'scripts added in the "scripts" folder')
 }
 
 export const checkoutRemoteBranch = async (branch: string, remote: string) => {

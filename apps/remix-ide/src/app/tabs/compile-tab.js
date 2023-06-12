@@ -123,7 +123,8 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
         type: [],
         extension: ['.sol'],
         path: [],
-        pattern: []
+        pattern: [],
+        group: 6
       })
     })
     try {

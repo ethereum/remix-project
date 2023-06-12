@@ -37,19 +37,24 @@ module.exports = {
     .click('*[data-id="treeViewLitreeViewItemcontracts"]')
     .click('*[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
     .clickLaunchIcon('solidity')
+    .click('*[id="compileBtn"]')
     .pause(10000)
     .clickLaunchIcon('solidityStaticAnalysis')
+    .click('*[id="staticAnalysisRunBtn"]')
     .waitForElementPresent('#staticanalysisresult .warning', 5000)
-    .assert.containsText('#verticalIconsKindsolidityStaticAnalysis .remixui_status', '1') // Check warning count
+    // Check warning count
+    .click('*[data-rb-event-key="basic"]')
+    .assert.containsText('*[data-id="StaticAnalysisErrorCount"]', '1')
     .verify.elementPresent('input[name="showLibWarnings"]')
     .verify.not.elementPresent('input[name="showLibWarnings"]:checked')
     .verify.elementPresent('label[id="headingshowLibWarnings"]')
     .click('label[id="headingshowLibWarnings"]')
     .pause(1000)
-    .assert.containsText('#verticalIconsKindsolidityStaticAnalysis .remixui_status', '382')
+    .click('*[data-rb-event-key="basic"]')
+    .assert.containsText('*[data-id="StaticAnalysisErrorCount"]', '382')
     .click('label[id="headingshowLibWarnings"]')
     .pause(1000)
-    .assert.containsText('#verticalIconsKindsolidityStaticAnalysis .remixui_status', '1')
+    .assert.containsText('*[data-id="StaticAnalysisErrorCount"]', '1')
     .end()
   }
 }

@@ -1,4 +1,4 @@
-import { getNetworkName, getEtherScanApi, getReceiptStatus } from "../utils"
+import { getNetworkName, getEtherScanApi, getReceiptStatus, getProxyContractReceiptStatus } from "../utils"
 import { CompilationResult } from "@remixproject/plugin-api"
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import axios from 'axios'
@@ -20,19 +20,34 @@ export const verify = async (
     contractAddress: string,
     contractArgumentsParam: string,
     contractName: string,
-    compilationResultParam: CompilerAbstract, 
+    compilationResultParam: CompilerAbstract,
+    chainRef: number | string,
+    isProxyContract: boolean,
+    expectedImplAddress: string, 
     client: PluginClient,
     onVerifiedContract: (value: EtherScanReturn) => void,
     setResults: (value: string) => void
   ) => {
-    const network = await getNetworkName(client)
-    if (network === "vm") {
+    let networkChainId
+    let etherscanApi
+    if (chainRef) {
+      if (typeof chainRef === 'number') {
+        networkChainId = chainRef
+        etherscanApi = getEtherScanApi(networkChainId)
+      } else if (typeof chainRef === 'string') etherscanApi = chainRef
+    } else {
+      const { network, networkId } = await getNetworkName(client)
+      if (network === "vm") {
         return {
             succeed: false,
             message: "Cannot verify in the selected network"
         }
+      } else {
+        networkChainId = networkId
+        etherscanApi = getEtherScanApi(networkChainId)
+      }
     }
-    const etherscanApi = getEtherScanApi(network)
+    
 
     try {
       const contractMetadata = getContractMetadata(
@@ -72,11 +87,18 @@ export const verify = async (
         module: "contract", // Do not change
         action: "verifysourcecode", // Do not change
         codeformat: "solidity-standard-json-input",
-        contractaddress: contractAddress, // Contract Address starts with 0x...
         sourceCode: JSON.stringify(jsonInput),
         contractname: fileName + ':' + contractName,
         compilerversion: `v${contractMetadataParsed.compiler.version}`, // see http://etherscan.io/solcversions for list of support versions
         constructorArguements: contractArgumentsParam ? contractArgumentsParam.replace('0x', '') : '', // if applicable
+      }
+
+      if (isProxyContract) {
+        data.action = "verifyproxycontract"
+        data.expectedimplementation = expectedImplAddress
+        data.address = contractAddress
+      } else {
+        data.contractaddress = contractAddress
       }
 
       const body = new FormData()
@@ -92,7 +114,18 @@ export const verify = async (
 
       if (message === "OK" && status === "1") {
         resetAfter10Seconds(client, setResults)
-        const receiptStatus = await getReceiptStatus(
+        let receiptStatus
+        if (isProxyContract) {
+          receiptStatus = await getProxyContractReceiptStatus(
+            result,
+            apiKeyParam,
+            etherscanApi
+          )
+          if (receiptStatus.status === '1') {
+            receiptStatus.message = receiptStatus.result
+            receiptStatus.result = 'Successfully Updated'
+          }
+        } else receiptStatus = await getReceiptStatus(
           result,
           apiKeyParam,
           etherscanApi
@@ -102,7 +135,8 @@ export const verify = async (
             guid: result,
             status: receiptStatus.result,
             message: `Verification process started correctly. Receipt GUID ${result}`,
-            succeed: true
+            succeed: true,
+            isProxyContract
         }
         onVerifiedContract(returnValue)
         return returnValue
@@ -114,7 +148,8 @@ export const verify = async (
         })
         const returnValue = {
             message: result,
-            succeed: false
+            succeed: false,
+            isProxyContract
         }
         resetAfter10Seconds(client, setResults)
         return returnValue

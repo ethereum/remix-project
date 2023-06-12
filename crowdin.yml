@@ -1,0 +1,3 @@
+files:
+  - source: /apps/remix-ide/src/app/tabs/locales/en/*.json
+    translation: /apps/remix-ide/src/app/tabs/locales/%two_letters_code%/%original_file_name%

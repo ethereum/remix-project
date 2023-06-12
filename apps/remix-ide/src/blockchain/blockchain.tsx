@@ -111,12 +111,21 @@ export class Blockchain extends Plugin {
         this._triggerEvent('networkStatus', [this.networkStatus])
       })
     })
+
+    this.on('walletconnect', 'chainChanged', () => {
+      this.detectNetwork((error, network) => {
+        this.networkStatus = { network, error }
+        this._triggerEvent('networkStatus', [this.networkStatus])
+      })
+    })
   }
 
   onDeactivation () {
     this.active = false
     this.off('injected', 'chainChanged')
     this.off('injected-trustwallet', 'chainChanged')
+    this.off('walletconnect', 'chainChanged')
+    this.off('walletconnect', 'accountsChanged')
   }
 
   setupEvents () {

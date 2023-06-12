@@ -25,9 +25,12 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     updateInstanceBalance(plugin, dispatch)
   })
 
-  plugin.blockchain.event.register('contextChanged', (context) => {
+  plugin.blockchain.event.register('contextChanged', async (context) => {
     dispatch(resetProxyDeployments())
     if (!context.startsWith('vm')) getNetworkProxyAddresses(plugin, dispatch)
+    if (context !== 'walletconnect') {
+      (await plugin.call('manager', 'isActive', 'walletconnect')) && plugin.call('manager', 'deactivatePlugin', 'walletconnect')
+    }
     setFinalContext(plugin, dispatch)
     fillAccountsList(plugin, dispatch)
     updateAccountBalances(plugin, dispatch)
@@ -132,6 +135,18 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   plugin.on('injected-trustwallet', 'accountsChanged', (accounts: Array<string>) => {
     const accountsMap = {}
     accounts.map(account => { accountsMap[account] = shortenAddress(account, '0')})
+    dispatch(fetchAccountsListSuccess(accountsMap))
+  })
+
+  plugin.on('walletconnect', 'accountsChanged', async (accounts: Array<string>) => {
+    const accountsMap = {}
+
+    await Promise.all(accounts.map(async (account) => {
+      const balance = await plugin.blockchain.getBalanceInEther(account)
+      const updated = shortenAddress(account, balance)
+
+      accountsMap[account] = updated
+    }))
     dispatch(fetchAccountsListSuccess(accountsMap))
   })
 

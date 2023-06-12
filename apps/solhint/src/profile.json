@@ -1,0 +1,20 @@
+{
+  "name": "solhint",
+  "displayName": "Solhint Linter",
+  "description": "Linter for Solidity",
+  "version": "0.1.0",
+  "events": ["lintOnCompilationFinished", "lintingFinished"],
+  "methods": [
+    "lintWithoutCompilationCustomAction",
+    "lintOnCompilation",
+    "lintContractCustomAction"
+  ],
+  "kind": "none",
+  "icon": "https://raw.githubusercontent.com/protofire/solhint/master/solhint-icon.png",  
+  "location": "hiddenPanel",
+  "url": "",
+  "documentation": "https://remix-plugins.readthedocs.io/en/latest/",
+  "repo": "https://github.com/ethereum/remix-project",
+  "maintainedBy": "Remix",
+  "authorContact": "remix@ethereum.org"
+}
