@@ -145,37 +145,7 @@ export class Transactions {
   }
 
   eth_estimateGas (payload, cb) {
-    // from might be lowercased address (web3)
-    if (payload.params && payload.params.length > 0 && payload.params[0].from) {
-      payload.params[0].from = toChecksumAddress(payload.params[0].from)
-    }
-    if (payload.params && payload.params.length > 0 && payload.params[0].to) {
-      payload.params[0].to = toChecksumAddress(payload.params[0].to)
-    }
-
-    payload.params[0].gas = 10000000 * 10
-
-    this.vmContext.web3().flagNextAsDoNotRecordEvmSteps()
-    processTx(this.txRunnerInstance, payload, true, (error, value: VMexecutionResult) => {      
-      if (error) return cb(error)
-      const result: RunTxResult = value.result
-      if ((result as any).receipt?.status === '0x0' || (result as any).receipt?.status === 0) {
-        try {
-          const msg = `0x${result.execResult.returnValue.toString('hex') || '0'}`
-          const abiCoder = new ethers.utils.AbiCoder()
-          const reason = abiCoder.decode(['string'], '0x' + msg.slice(10))[0]
-          return cb('revert ' + reason)
-        } catch (e) {
-          return cb(e.message)
-        }
-      }
-      let gasUsed = result.execResult.executionGasUsed
-      if (result.execResult.gasRefund) {
-        gasUsed += result.execResult.gasRefund
-      }
-      gasUsed = gasUsed + value.tx.getBaseFee()
-      cb(null, Math.ceil(Number(gasUsed) + (15 * Number(gasUsed)) / 100))
-    })
+    cb(null, 50000000)
   }
 
   eth_getCode (payload, cb) {
