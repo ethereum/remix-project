@@ -91,6 +91,7 @@ export default function UmlDownload(props: UmlDownloadProps) {
               ]);
               props.download("png")
             }}
+            data-id="umlPngDownload"
           >
             <CustomTooltip
               placement="left-start"
@@ -119,6 +120,7 @@ export default function UmlDownload(props: UmlDownloadProps) {
               ]);
               props.download("pdf")
             }}
+            data-id="umlPdfDownload"
           >
             <CustomTooltip
               placement="left-start"

@@ -61,18 +61,21 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading, fileName, themeDar
           <div className="py-2 px-2 d-flex justify-content-center align-items-center">
             <UmlDownload download={download} />
             <button
+              data-id="umlZoominbtn"
               className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2"
               onClick={() => zoomIn()}
             >
               <i className="far fa-plus uml-btn-icon"></i>
             </button>
             <button
+              data-id="umlZoomoutbtn"
               className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2"
               onClick={() => zoomOut()}
             >
               <i className="far fa-minus uml-btn-icon"></i>
             </button>
             <button
+              data-id="umlResetbtn"
               className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2"
               onClick={() => resetTransform()}
             >

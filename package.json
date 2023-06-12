@@ -1,6 +1,6 @@
 {
   "name": "remix-project",
-  "version": "0.33.0-dev",
+  "version": "0.34.0-dev",
   "license": "MIT",
   "description": "Ethereum Remix Monorepo",
   "keywords": [
@@ -138,6 +138,11 @@
     "@remixproject/plugin-webview": "0.3.33",
     "@remixproject/plugin-ws": "0.3.33",
     "@types/nightwatch": "^2.3.1",
+    "@walletconnect/ethereum-provider": "^2.6.2",
+    "@walletconnect/sign-client": "^2.6.0",
+    "@web3modal/ethereum": "^2.2.2",
+    "@web3modal/react": "^2.2.2",
+    "@web3modal/standalone": "^2.2.2",
     "ansi-gray": "^0.1.1",
     "async": "^2.6.2",
     "axios": "1.1.2",
@@ -152,7 +157,7 @@
     "deep-equal": "^1.0.1",
     "document-register-element": "1.13.1",
     "eslint-config-prettier": "^8.5.0",
-    "ethers": "^5.4.2",
+    "ethers": "^5",
     "ethjs-util": "^0.1.6",
     "express": "^4.18.2",
     "express-ws": "^5.0.2",
@@ -203,6 +208,7 @@
     "tree-kill": "^1.2.2",
     "ts-loader": "^9.2.6",
     "tslib": "^2.3.0",
+    "wagmi": "^0.12.7",
     "web3": "^1.8.0",
     "winston": "^3.3.3",
     "ws": "^7.3.0"

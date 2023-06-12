@@ -1,0 +1,16 @@
+{
+  "name": "solhint",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "resolutions": {
+    "antlr4": "4.11"
+  },
+  "dependencies": {
+    "solhint": "^3.4.1"
+  },
+  "devDependencies": {
+    "@remixproject/plugin": "^0.3.31",
+    "@remixproject/plugin-webview": "^0.3.31"
+  }
+}

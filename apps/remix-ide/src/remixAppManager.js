@@ -17,7 +17,7 @@ const requiredModules = [ // services + layout views + system views
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
 const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither']
 
-const loadLocalPlugins = ["doc-gen", "doc-viewer", "etherscan", "vyper"]
+const loadLocalPlugins = ["doc-gen", "doc-viewer", "etherscan", "vyper", 'solhint', 'walletconnect']
 
 const sensitiveCalls = {
   'fileManager': ['writeFile', 'copyFile', 'rename', 'copyDir'],
@@ -71,11 +71,19 @@ export class RemixAppManager extends PluginManager {
   }
 
   async deactivatePlugin(name) {
+    const profile = await this.getProfile(name)
     const [to, from] = [
-      await this.getProfile(name),
+      profile,
       await this.getProfile(this.requestFrom)
     ]
     if (this.canDeactivatePlugin(from, to)) {
+      if (profile.methods.includes('deactivate')) {
+        try {
+          await this.call(name, 'deactivate')
+        } catch (e) {
+          console.log(e)
+        }
+      }
       await this.toggleActive(name)
     }
   }
@@ -184,7 +192,8 @@ export class RemixAppManager extends PluginManager {
       extension: ['.sol'],
       path: [],
       pattern: [],
-      sticky: true
+      sticky: true,
+      group: 5
     })
     await this.call('filePanel', 'registerContextMenuItem', {
       id: 'nahmii-compiler',
@@ -194,7 +203,8 @@ export class RemixAppManager extends PluginManager {
       extension: ['.sol'],
       path: [],
       pattern: [],
-      sticky: true
+      sticky: true,
+      group: 6
     })
     await this.call('filePanel', 'registerContextMenuItem', {
       id: 'solidityumlgen',
@@ -204,12 +214,24 @@ export class RemixAppManager extends PluginManager {
       extension: ['.sol'],
       path: [],
       pattern: [],
-      sticky: true
+      sticky: true,
+      group: 7
     })
     await this.call('filePanel', 'registerContextMenuItem', {
       id: 'doc-gen',
       name: 'generateDocsCustomAction',
       label: 'Generate Docs',
+      type: [],
+      extension: ['.sol'],
+      path: [],
+      pattern: [],
+      sticky: true,
+      group: 7
+    })
+    await this.call('filePanel', 'registerContextMenuItem', {
+      id: 'solhint',
+      name: 'lintContractCustomAction',
+      label: 'Lint Contract',
       type: [],
       extension: ['.sol'],
       path: [],

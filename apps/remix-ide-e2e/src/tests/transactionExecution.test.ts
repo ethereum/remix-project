@@ -144,6 +144,9 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '-11300', 60000)
       .clickFunction('inputValue2 - transact (not payable)', { types: 'uint256 _u', values: '2.345e10' })
       .waitForElementContainsText('*[data-id="terminalJournal"]', '2340000000', 60000)
+      .clickFunction('inputValue3 - transact (not payable)', { types: 'uint256[] _u', values: '["2.445e10", "13e1"]' })
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '24450000000', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '130', 60000)
       .click('*[data-id="deployAndRunClearInstances"]')      
   },
 
@@ -500,6 +503,10 @@ contract C {
         }
         function inputValue2 (uint _u) public {
           console.log(_u);
+        }
+        function inputValue3 (uint[] memory _u) public {
+          console.log(_u[0]);
+          console.log(_u[1]);
         }
       }
       `
