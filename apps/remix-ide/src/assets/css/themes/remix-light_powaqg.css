@@ -6219,6 +6219,10 @@ button.bg-dark:focus {
   background-color: transparent !important;
 }
 
+.border-no-shift {
+  box-shadow: inset 0 0 0 1px #d6d8e3;
+}
+
 .border {
   border: 1px solid #d6d8e3 !important;
 }
@@ -9496,7 +9500,7 @@ a.text-dark:focus {
   border: none !important;
 }
 .remix-bg-opacity {
-  background: rgba(248, 250, 254, 0.80) !important; 
+  background: rgba(248, 250, 254, 0.80) !important;
 }
 
 .plugins-list-header {
