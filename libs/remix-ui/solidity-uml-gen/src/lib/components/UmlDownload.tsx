@@ -86,7 +86,7 @@ export default function UmlDownload(props: UmlDownloadProps) {
               _paq.push([
                 "trackEvent",
                 "solidityumlgen",
-                "download",
+                "umlpngdownload",
                 "downloadAsPng",
               ]);
               props.download("png")
@@ -115,7 +115,7 @@ export default function UmlDownload(props: UmlDownloadProps) {
               _paq.push([
                 "trackEvent",
                 "solUmlgen",
-                "download",
+                "umlpdfdownload",
                 "downloadAsPdf",
               ]);
               props.download("pdf")
