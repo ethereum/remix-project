@@ -48,19 +48,19 @@ function Badge ({ badgeStatus }: BadgeProps) {
     <>
       {
         badgeStatus && checkStatusKeyValue(badgeStatus.key, badgeStatus.type) ? (
-          <CustomTooltip
-            placement={'right'}
-            tooltipClasses="text-nowrap"
-            tooltipId="verticalItemsbadge"
-            tooltipText={badgeStatus.pluginName && badgeStatus.pluginName === 'solidityStaticAnalysis' ? 'There are multiple warnings or errors that might need to be fixed.' :badgeStatus.title}
-          >
+          // <CustomTooltip
+          //   placement={'right'}
+          //   tooltipClasses="text-nowrap"
+          //   tooltipId="verticalItemsbadge"
+          //   tooltipText={badgeStatus.pluginName && badgeStatus.pluginName === 'solidityStaticAnalysis' ? 'There are multiple warnings or errors that might need to be fixed.' :badgeStatus.title}
+          // >
             <i
               className={`${resolveClasses(badgeStatus.key, badgeStatus.type!)}`}
               aria-hidden="true"
             >
                   { badgeStatus.pluginName && badgeStatus.pluginName === 'solidityStaticAnalysis' ? <span>&nbsp;</span> : badgeStatus.text }
             </i>
-          </CustomTooltip>
+          // </CustomTooltip>
         ) : null
       }
     </>
