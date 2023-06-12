@@ -657,7 +657,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             label="Slither"
             onChange={() => {}}
             optionalClassName="mr-3"
-            title={"Run Slither static analysis."}
+            title={slitherEnabled ? "Run Slither static analysis." : "To have slither active, you need to have remixd connected to your local filesystem"}
           />
         </div>
           <Button
