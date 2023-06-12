@@ -899,10 +899,10 @@ export function Workspace() {
                     </span>
                   ) : null}
                   <span className="d-flex">
-                    <label className="pl-1 form-check-label" htmlFor="workspacesSelect" style={{wordBreak: 'keep-all'}}>
-                      <FormattedMessage id="filePanel.workspace" />
+                    <label className="pl-2 form-check-label" htmlFor="workspacesSelect" style={{wordBreak: 'keep-all'}}>
+                      <FormattedMessage id='filePanel.workspace' />
                     </label>
-                  </span>
+                  </span>                  
                 </div>
                 <div className='mx-2'>
                   <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
