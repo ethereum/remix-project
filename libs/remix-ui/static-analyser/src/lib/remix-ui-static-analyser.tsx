@@ -69,6 +69,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [basicEnabled, setBasicEnabled] = useState(true)
   const [solhintEnabled, setSolhintEnabled] = useState(true) // assuming that solhint is always enabled
   const [showSlither, setShowSlither] = useState(false)
+  const [slitherEnabled, setSlitherEnabled] = useState(false)
   const [isSupportedVersion, setIsSupportedVersion] = useState(false)
   let [showLibsWarning, setShowLibsWarning] = useState(false) // eslint-disable-line prefer-const
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
@@ -77,7 +78,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [hints, setHints] = useState<SolHintReport[]>([])
   const [slitherWarnings, setSlitherWarnings] = useState([])
   const [ssaWarnings, setSsaWarnings] = useState([])
-  
+
   const warningContainer = useRef(null)
   const allWarnings = useRef({})
   const [state, dispatch] = useReducer(analysisReducer, initialState)
@@ -138,9 +139,13 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       setSlitherWarnings([])
       setSsaWarnings([])
       // Show 'Enable Slither Analysis' checkbox
-      if (currentWorkspace && currentWorkspace.isLocalhost === true) setShowSlither(true)
+      if (currentWorkspace && currentWorkspace.isLocalhost === true) {
+        setShowSlither(true)
+        setSlitherEnabled(true)
+      }
       else {
         setShowSlither(false)
+        setSlitherEnabled(false)
       }
     })
     props.analysisModule.on('manager', 'pluginDeactivated', (plugin) => {
@@ -150,6 +155,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         setWarningState([])
         setHints([])
         setSlitherWarnings([])
+        setSlitherEnabled(false)
         setSsaWarnings([])
         // Reset badge
         props.event.trigger('staticAnaysisWarning', [])
@@ -225,7 +231,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     filterWarnings()
   }
 
-  
+
   const handleCheckAllModules = (groupedModules) => {
     const index = groupedModuleIndex(groupedModules)
     if (index.every(el => categoryIndex.includes(el))) {
@@ -256,7 +262,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     const checkRemixd = await props.analysisModule.call('manager', 'isActive', 'remixd')
     if (showSlither) {
       setShowSlither(false)
-    } 
+    }
     if(!showSlither) {
       setShowSlither(true)
     }
@@ -495,7 +501,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   <div key={index}>
                     {element[1]["map"](
                       (x,i) => // eslint-disable-line dot-notation
-                        x.hasWarning && !hideWarnings 
+                        x.hasWarning && !hideWarnings
                         ? ( // eslint-disable-next-line  dot-notation
                           <div
                             data-id={`staticAnalysisModule${x.warningModuleName}${i}`}
@@ -545,7 +551,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             <div id="solhintlintingresult" className="mb-5">
               <div className="mb-4 pt-2">
                 <Fragment>
-                  {!hideWarnings 
+                  {!hideWarnings
                     ? showLibsWarning ? slitherWarnings.filter(warning => warning.isLibrary).map((warning, index) => (
                       <div
                       data-id={`staticAnalysisModule${warning.warningModuleName}${index}`}
@@ -629,29 +635,29 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             tooltipPlacement={'bottom-start'}
             optionalClassName="mr-3"
           />
-          
+
           <RemixUiCheckbox
             id="solhintstaticanalysis"
             inputType="checkbox"
             title="Run SolHint static analysis."
             onClick={handleLinterEnabled}
-            checked={solhintEnabled}
+            checked={solhintEnabled }
             label="Linter"
             onChange={() => {}}
             tooltipPlacement={'top-start'}
             optionalClassName="mr-3"
           />
-          
+
           <RemixUiCheckbox
             id="enableSlither"
             inputType="checkbox"
             onClick={handleSlitherEnabled}
-            checked={showSlither}
-            disabled={false}
+            checked={showSlither && slitherEnabled}
+            disabled={slitherEnabled}
             label="Slither"
             onChange={() => {}}
             optionalClassName="mr-3"
-            title="Run Slither static analysis."
+            title={"Run Slither static analysis."}
           />
         </div>
           <Button
