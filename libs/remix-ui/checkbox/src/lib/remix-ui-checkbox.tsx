@@ -58,7 +58,7 @@ export const RemixUiCheckbox = ({
           checked={checked}
           disabled={disabled}
         />
-        <label className="form-check-label custom-control-label" id={`heading${categoryId}`} style={{ paddingTop: '0.15rem' }}>
+        <label className="form-check-label custom-control-label" id={`heading${categoryId}`} style={{ paddingTop: '0.15rem' }} aria-disabled={disabled}>
           {name ? <div className="font-weight-bold">{itemName}</div> : ''}
           {label}
         </label>
