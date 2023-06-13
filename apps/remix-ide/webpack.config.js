@@ -83,6 +83,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   config.output.filename = `[name].${versionData.version}.${versionData.timestamp}.js`
   config.output.chunkFilename = `[name].${versionData.version}.${versionData.timestamp}.js`
 
+
   // add copy & provide plugin
   config.plugins.push(
     new CopyPlugin({
@@ -91,6 +92,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
         ...copyPatterns
       ].filter(Boolean)
     }),
+    new CopyFileAfterBuild(),
     new webpack.ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
       url: ['url', 'URL'],
@@ -130,5 +132,27 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
 
   return config;
 });
+
+class CopyFileAfterBuild {
+  apply(compiler) {   
+    const onEnd = async () => {
+      try {
+        console.log('runnning CopyFileAfterBuild')
+        // This copy the raw-loader files used by the etherscan plugin to the remix-ide root folder.
+        // This is needed because by default the etherscan resources are served from the /plugins/etherscan/ folder,
+        // but the raw-loader try to access the resources from the root folder.
+        const files = fs.readdirSync('./dist/apps/etherscan')
+        files.forEach(file => {
+          if (file.startsWith('node_modules_raw-loader_')) {
+            fs.copyFileSync('./dist/apps/etherscan/' + file, './dist/apps/remix-ide/' + file)
+          }        
+        })
+      } catch (e) {
+        console.error('running CopyFileAfterBuild failed with error: ' + e.message)
+      }      
+    }
+    compiler.hooks.afterEmit.tapPromise('FileManagerPlugin', onEnd);
+  }
+}
 
 
