@@ -1,0 +1,9 @@
+{
+  "name": "nodepty",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "node-pty": "^1.0.0"
+  }
+}
