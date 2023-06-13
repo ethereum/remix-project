@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React from 'react'
 import { BadgeStatus } from './Icon'
 import { CustomTooltip } from '@remix-ui/helper'
@@ -58,7 +59,9 @@ function Badge ({ badgeStatus }: BadgeProps) {
               className={`${resolveClasses(badgeStatus.key, badgeStatus.type!)}`}
               aria-hidden="true"
             >
-                  { badgeStatus.pluginName && badgeStatus.pluginName === 'solidityStaticAnalysis' ? <span>&nbsp;</span> : badgeStatus.text }
+                  { badgeStatus.pluginName && badgeStatus.pluginName === 'solidityStaticAnalysis' ? badgeStatus.type === 'warning' || badgeStatus.type === 'error' ? <span>
+                    <i className="far fa-exclamation-triangle"></i></span>
+                    : <span>:nbsp;</span> : badgeStatus.text }
             </i>
           // </CustomTooltip>
         ) : null
