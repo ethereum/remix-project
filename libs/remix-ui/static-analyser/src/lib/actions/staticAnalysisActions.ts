@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { CompilationResult, SourceWithTarget } from '@remixproject/plugin-api'
 import React from 'react' //eslint-disable-line
 import { AnalysisTab, RemixUiStaticAnalyserReducerActionType, RemixUiStaticAnalyserState, SolHintReport, SlitherAnalysisResults } from '../../staticanalyser'
 import { RemixUiStaticAnalyserProps } from '@remix-ui/static-analyser'
 
 /**
- * 
+ *
  * @param analysisModule { AnalysisTab } AnalysisTab ViewPlugin
  * @param dispatch { React.Dispatch<any> } analysisReducer function's dispatch method
  */
@@ -24,8 +25,8 @@ export const compilation = (analysisModule: AnalysisTab,
 
 /**
  * Run the analysis on the currently compiled contract
- * @param lastCompilationResult 
- * @param lastCompilationSource 
+ * @param lastCompilationResult
+ * @param lastCompilationSource
  * @param currentFile {string} current file path
  * @param state { RemixUiStaticAnalyserState}
  * @param props {RemixUiStaticAnalyserProps}
@@ -42,7 +43,8 @@ export const compilation = (analysisModule: AnalysisTab,
  * @returns {Promise<void>}
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function run (lastCompilationResult, lastCompilationSource, currentFile: string, state: RemixUiStaticAnalyserState, props: RemixUiStaticAnalyserProps, isSupportedVersion, showSlither, categoryIndex: number[], groupedModules, runner, _paq, message, showWarnings, allWarnings: React.RefObject<any>, warningContainer: React.RefObject<any>, calculateWarningStateEntries: (e:[string, any][]) => {length: number, errors: any[] }, warningState, setHints: React.Dispatch<React.SetStateAction<SolHintReport[]>>, hints: SolHintReport[], setSlitherWarnings: React.Dispatch<React.SetStateAction<any[]>>, setSsaWarnings: React.Dispatch<React.SetStateAction<any[]>>) {
+export async function run (lastCompilationResult, lastCompilationSource, currentFile: string, state: RemixUiStaticAnalyserState, props: RemixUiStaticAnalyserProps, isSupportedVersion, showSlither, categoryIndex: number[], groupedModules, runner, _paq, message, showWarnings, allWarnings: React.RefObject<any>, warningContainer: React.RefObject<any>, calculateWarningStateEntries: (e:[string, any][]) => {length: number, errors: any[] }, warningState, setHints: React.Dispatch<React.SetStateAction<SolHintReport[]>>, hints: SolHintReport[], setSlitherWarnings: React.Dispatch<React.SetStateAction<any[]>>, setSsaWarnings: React.Dispatch<React.SetStateAction<any[]>>,
+slitherEnabled: boolean) {
 
   if (!isSupportedVersion) return
   if (state.data !== null) {
@@ -54,7 +56,7 @@ export async function run (lastCompilationResult, lastCompilationSource, current
         const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
         setHints(hintsResult)
       const warningResult = calculateWarningStateEntries(Object.entries(warningState))
-        props.analysisModule.emit('statusChanged', { key: hints.length+warningResult.length, 
+        props.analysisModule.emit('statusChanged', { key: hints.length+warningResult.length,
       title: `${hints.length+warningResult.length} warning${hints.length+warningResult.length === 1 ? '' : 's'}`, type: 'warning'})
 
       // Remix Analysis
@@ -121,7 +123,7 @@ export async function run (lastCompilationResult, lastCompilationSource, current
         }
       }
       // Slither Analysis
-      if (showSlither) {
+      if (showSlither && slitherEnabled) {
         try {
           const compilerState = await props.analysisModule.call('solidity', 'getCompilerState')
           const { currentVersion, optimize, evmVersion } = compilerState
