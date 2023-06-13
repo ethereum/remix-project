@@ -46,6 +46,7 @@ export const FileSystemContext = createContext<{
   dispatchCreateTsSolGithubAction: () => Promise<void>,
   dispatchCreateSlitherGithubAction: () => Promise<void>
   dispatchCreateHelperScripts: (script: string) => Promise<void>
+  dispatchOpenElectronFolder: () => Promise<void>
 }>(null)
   
     

@@ -747,6 +747,10 @@ export const checkoutRemoteBranch = async (branch: string, remote: string) => {
   }
 }
 
+export const openElectronFolder = async () => {
+  await plugin.call('fs', 'openFolder')
+}
+
 export const hasLocalChanges = async () => {
   const filesStatus = await plugin.call('dGitProvider', 'status')
   const uncommittedFiles = getUncommittedFiles(filesStatus)

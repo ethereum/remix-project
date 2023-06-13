@@ -13,6 +13,9 @@ if (
   isPackaged = true;
 }
 
+// get system home dir
+const homeDir = app.getPath('userData')
+
 export let mainWindow: BrowserWindow;
 export const createWindow = async (): Promise<void> => {
   // Create the browser window.
@@ -27,7 +30,7 @@ export const createWindow = async (): Promise<void> => {
   // and load the index.html of the app.
   mainWindow.loadURL(
     process.env.NODE_ENV === 'production' || isPackaged? `file://${__dirname}/remix-ide/index.html` :
-    'http://localhost:8080')
+    'http://localhost:8080?opendir=' + homeDir)
 
   mainWindow.maximize();
   

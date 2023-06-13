@@ -23,6 +23,7 @@ export type UrlParametersType = {
   code: string,
   url: string,
   address: string
+  opendir: string,
 }
 
 const basicWorkspaceInit = async (workspaces: { name: string; isGitRepo: boolean; }[], workspaceProvider) => {
@@ -120,7 +121,10 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     } else if (isElectron()) {
       console.log('isElectron initWorkspace')
       plugin.call('notification', 'toast', `connecting to electron...`)
-
+      if(params.opendir){
+        plugin.call('notification', 'toast', `opening ${params.opendir}...`)
+        plugin.call('fs', 'setWorkingDir', params.opendir)
+      }
       plugin.setWorkspace({ name: 'electron', isLocalhost: false })
 
       dispatch(setCurrentWorkspace({ name: 'electron', isGitRepo: false }))

@@ -26,7 +26,7 @@ export class FSPlugin extends ElectronBasePlugin {
   openFolder(webContentsId: any): void {
     const client = this.clients.find(c => c.webContentsId === webContentsId)
     if (client) {
-      client.setWorkingDir()
+      client.openFolder()
     }
   }
 
@@ -36,7 +36,7 @@ const clientProfile: Profile = {
   name: 'fs',
   displayName: 'fs',
   description: 'fs',
-  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir']
+  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder']
 }
 
 class FSPluginClient extends ElectronBasePluginClient {
@@ -145,15 +145,21 @@ class FSPluginClient extends ElectronBasePluginClient {
     if (this.watcher) this.watcher.close()
   }
 
-  async setWorkingDir(): Promise<void> {
+  async openFolder(): Promise<void> {
     const dirs = dialog.showOpenDialogSync(this.window, {
-      properties: ['openDirectory']
+      properties: ['openDirectory', 'createDirectory', "showHiddenFiles"]
     })
     if (dirs && dirs.length > 0) {
       this.workingDir = dirs[0]
       this.emit('workingDirChanged', dirs[0])
     }
 
+  }
+
+  async setWorkingDir(path: string): Promise<void> {
+      console.log('setWorkingDir', path)
+      this.workingDir = path
+      this.emit('workingDirChanged', path)
   }
 
   fixPath(path: string): string {
