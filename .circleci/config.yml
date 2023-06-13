@@ -14,24 +14,24 @@ jobs:
       size: medium # can be medium, large, xlarge, 2xlarge
       shell: bash.exe
     working_directory: ~/remix-project
-        steps:
-          - checkout
-          - restore_cache:
-              key: node-20-windows-v3
-          - run: 
-              command: |
-                nvm install 20.0.0
-                nvm use 20.0.0
-                yarn -v
-          - save_cache:
-              key: node-20-windows-v3
-              paths:
-                - /ProgramData/nvm/v20.0.0
+    steps:
+      - checkout
+      - restore_cache:
+          key: node-20-windows-v3
+      - run: 
+          command: |
+            nvm install 20.0.0
+            nvm use 20.0.0
+            yarn -v
+      - save_cache:
+          key: node-20-windows-v3
+          paths:
+            - /ProgramData/nvm/v20.0.0
 
-          - run: 
-              command: |
-                  cd apps/node-pty
-                  yarn
+      - run: 
+          command: |
+              cd apps/node-pty
+              yarn
 
   build:
     docker:
