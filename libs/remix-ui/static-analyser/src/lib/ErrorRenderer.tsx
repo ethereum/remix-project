@@ -47,9 +47,9 @@ const ErrorRenderer = ({ message, opt, editor, name }: ErrorRendererProps) => {
   return (
     <div>
       <div className={`sol ${opt.type} ${classList}`}>
-        <span className='d-flex flex-column' data-id={`${name}Button`} onClick={async () => await handlePointToErrorOnClick(opt.location, opt.fileName)}>
+        <span className='d-flex flex-column' data-id={`${name}Button`} onClick={async () => await handlePointToErrorOnClick(opt.location, opt.fileName)} style={{ cursor: "pointer", overflow: 'hidden', textOverflow: 'ellipsis' }}>
           <span className='h6 font-weight-bold'>{opt.name}</span>
-          { opt.item.warning }
+          <span>{ opt.item.warning }</span>
           {opt.item.more
             ? <span><a href={opt.item.more} target='_blank'>more</a></span>
             : <span> </span>
