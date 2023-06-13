@@ -6,7 +6,33 @@ parameters:
     default: false
 orbs:
   browser-tools: circleci/browser-tools@1.4.1
+  win: circleci/windows@5.0
 jobs:
+  build-windows:
+    executor:
+      name: win/default # executor type
+      size: medium # can be medium, large, xlarge, 2xlarge
+      shell: bash.exe
+    working_directory: ~/remix-project
+        steps:
+          - checkout
+          - restore_cache:
+              key: node-20-windows-v3
+          - run: 
+              command: |
+                nvm install 20.0.0
+                nvm use 20.0.0
+                yarn -v
+          - save_cache:
+              key: node-20-windows-v3
+              paths:
+                - /ProgramData/nvm/v20.0.0
+
+          - run: 
+              command: |
+                  cd apps/node-pty
+                  yarn
+
   build:
     docker:
       - image: cimg/node:20.0.0-browsers
@@ -286,6 +312,7 @@ workflows:
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
+      - build-windows
       - build
       - build-plugin:
           matrix:
