@@ -1,6 +1,6 @@
 import { ElectronPlugin } from './lib/electronPlugin';
 
-let workingDir = '/Volumes/bunsen/code/rmproject2/remix-project/apps/remix-ide/contracts/'
+let workingDir = '/Volumes/bunsen/code/empty/'
 
 const fixPath = (path: string) => {
   /*

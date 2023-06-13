@@ -1,19 +1,23 @@
 import { Engine, PluginManager } from '@remixproject/engine';
 import { ipcMain } from 'electron';
-import { FSPlugin } from './fsPlugin';
-import { GitPlugin } from './gitPlugin';
+import { FSPlugin } from './plugins/fsPlugin';
+import { GitPlugin } from './plugins/gitPlugin';
 import { app } from 'electron';
-import { XtermPlugin } from './xtermPlugin';
+import { XtermPlugin } from './plugins/xtermPlugin';
+import git from 'isomorphic-git'
+import { IsoGitPlugin } from './plugins/isoGitPlugin';
 
 const engine = new Engine()
 const appManager = new PluginManager()
 const fsPlugin = new FSPlugin()
 const gitPlugin = new GitPlugin()
 const xtermPlugin = new XtermPlugin()
+const isoGitPlugin = new IsoGitPlugin()
 engine.register(appManager)
 engine.register(fsPlugin)
 engine.register(gitPlugin)
 engine.register(xtermPlugin)
+engine.register(isoGitPlugin)
 
 appManager.activatePlugin('fs')
 

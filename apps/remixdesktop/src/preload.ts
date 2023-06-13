@@ -6,7 +6,7 @@ console.log('preload.ts')
 
 /* preload script needs statically defined API for each plugin */
 
-const exposedPLugins = ['fs', 'git', 'xterm']
+const exposedPLugins = ['fs', 'git', 'xterm', 'isogit']
 
 console.log('preload.ts', process)
 let webContentsId: number | undefined

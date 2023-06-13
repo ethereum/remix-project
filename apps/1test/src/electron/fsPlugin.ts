@@ -35,7 +35,7 @@ const clientProfile: Profile = {
 
 class FSPluginClient extends ElectronBasePluginClient {
   watcher: chokidar.FSWatcher
-  workingDir: string = '/Volumes/bunsen/code/rmproject2/remix-project/apps/remix-ide/contracts/'
+  workingDir: string = '/Volumes/bunsen/code/empty/'
 
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)

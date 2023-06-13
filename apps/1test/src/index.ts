@@ -94,7 +94,7 @@ const menu = [shellMenu(commandKeys, execCommand)]
 Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
 
 import fs from 'fs/promises'
-import { readlink } from 'fs';
+import { readlink, stat } from 'fs';
 //const menu = Menu.buildFromTemplate(shellMenu([], undefined))
 //Menu.setApplicationMenu(menu)
 
@@ -109,43 +109,43 @@ const myFS = {
       //console.log('myFS.readdir', file)
       return file
     },
-    
-    readFile: async (path: string,  options: any): Promise<string>=> {
+
+    readFile: async (path: string, options: any): Promise<string> => {
       //console.log('myFS.readFile', path, options)
-        const file = await (fs as any).readFile(path, options)
-        //console.log('myFS.readFile', file)
-        return file
-      
+      const file = await (fs as any).readFile(path, options)
+      //console.log('myFS.readFile', file)
+      return file
+
 
     },
-  
+
     async writeFile(path: string, content: string): Promise<void> {
       return fs.writeFile(path, content, 'utf8')
     },
-  
+
     async mkdir(path: string): Promise<void> {
       return fs.mkdir(path)
     },
-  
+
     async rmdir(path: string): Promise<void> {
       return fs.rmdir(path)
     },
-  
+
     async unlink(path: string): Promise<void> {
       return fs.unlink(path)
     },
-  
+
     async rename(oldPath: string, newPath: string): Promise<void> {
       return fs.rename(oldPath, newPath)
     },
-  
+
     async stat(path: string): Promise<any> {
       //console.log('myFS.stat', path)
       const stat = await fs.stat(path)
       //console.log('myFS.stat', stat)
       return stat
     },
-  
+
     async lstat(path: string): Promise<any> {
       const lstat = await fs.lstat(path)
       //console.log('myFS.stat', path, lstat)
@@ -159,19 +159,23 @@ const myFS = {
       return fs.symlink(target, path)
     }
 
-    
+
   }
 }
 
 console.log('myFS', myFS)
-
+import git, { CommitObject, ReadCommitResult } from 'isomorphic-git'
 async function checkGit() {
-  const git = require('isomorphic-git');
 
-  const files = await git.statusMatrix({ fs: myFS, dir: '/Volumes/bunsen/code/rmproject2/remix-project' });
+
+  const files = await git.statusMatrix({ fs: myFS, dir: '/Volumes/bunsen/code/rmproject2/remix-project', filepaths: ['apps/1test/src/index.ts'] });
   console.log('GIT', files)
 }
 
+
+//checkGit()
+
+/*
 setInterval(() => {
 
 const startTime = Date.now()
@@ -181,3 +185,118 @@ checkGit()
   })
 
 }, 3000)
+
+*/
+/*
+git.add({ fs: myFS, dir: '/Volumes/bunsen/code/rmproject2/remix-project', filepath: 'test.txt' }).then(() => {
+  console.log('git add')
+}).catch((e: any) => {
+  console.log('git add error', e)
+})
+
+git.log({ fs: myFS, dir: '/Volumes/bunsen/code/rmproject2/remix-project', depth:10 }).then((log: any) => {
+  console.log('git log', log)
+})
+*/
+
+// run a shell command
+import { exec } from 'child_process';
+import { promisify } from 'util';
+const execAsync = promisify(exec);
+
+const statusTransFormMatrix = (status: string) => {
+  switch (status) {
+    case '??':
+      return [0, 2, 0]
+    case 'A ':
+      return [0, 2, 2]
+    case 'M ':
+      return [1, 2, 2]
+    case 'MM':
+      return [1, 2, 3]
+    case ' M':
+      return [1, 0, 1]
+    case ' D':
+      return [0, 2, 0]
+    case 'D ':
+      return [1, 0, 0]
+    case 'AM':
+      return [0, 2, 3]
+    default:
+      return [-1, -1, -1]
+  }
+}
+
+
+
+execAsync('git status --porcelain -uall', { cwd: '/Volumes/bunsen/code/rmproject2/remix-project' }).then(async (result: any) => {
+  //console.log('git status --porcelain -uall', result.stdout)
+  // parse the result.stdout
+  const lines = result.stdout.split('\n')
+  const files: any = []
+  const fileNames: any = []
+  //console.log('lines', lines)
+  lines.forEach((line: string) => {
+    // get the first two characters of the line
+    const status = line.slice(0, 2)
+
+    const file = line.split(' ').pop()
+
+    //console.log('line', line)
+    if (status && file) {
+      fileNames.push(file)
+      files.push([
+        file,
+        ...statusTransFormMatrix(status)
+      ])
+    }
+  }
+  )
+  // sort files by first column
+  files.sort((a: any, b: any) => {
+    if (a[0] < b[0]) {
+      return -1
+    }
+    if (a[0] > b[0]) {
+      return 1
+    }
+    return 0
+  })
+
+  //console.log('files', files, files.length)
+  const iso = await git.statusMatrix({ fs: myFS, dir: '/Volumes/bunsen/code/rmproject2/remix-project', filepaths: fileNames });
+  //console.log('GIT', iso, iso.length)
+})
+
+git.log({ fs: myFS, dir: '/Volumes/bunsen/code/rmproject2/remix-project', depth:3 }).then((log: ReadCommitResult[]) => {
+  log.forEach((commit: ReadCommitResult) => {
+    console.log('commit', commit.commit.parent)
+  })
+})
+
+// exec git log --pretty=format:"%h - %an, %ar : %s" -n 10
+execAsync(`git log --pretty=format:'{ "oid":"%H", "message":"%s", "author":"%an", "email": "%ae", "timestamp":"%at", "tree": "%T", "committer": "%cn", "committer-email": "%ce", "committer-timestamp": "%ct", "parent": "%P" }' -n 3`, { cwd: '/Volumes/bunsen/code/rmproject2/remix-project' }).then(async (result: any) =>{
+  //console.log('git log', result.stdout)
+  const lines = result.stdout.split('\n')
+  const commits: ReadCommitResult[] = []
+  lines.forEach((line: string) => {
+    console.log('line', line)
+    const data = JSON.parse(line)
+    let commit:ReadCommitResult = {} as ReadCommitResult
+    commit.oid = data.oid
+    commit.commit = {} as CommitObject
+    commit.commit.message = data.message
+    commit.commit.tree = data.tree
+    commit.commit.committer = {} as any
+    commit.commit.committer.name = data.committer
+    commit.commit.committer.email = data['committer-email']
+    commit.commit.committer.timestamp = data['committer-timestamp']
+    commit.commit.author = {} as any
+    commit.commit.author.name = data.author
+    commit.commit.author.email = data.email
+    commit.commit.author.timestamp = data.timestamp
+    commit.commit.parent = [data.parent]
+    console.log('commit', commit)
+    commits.push(commit)
+  })
+})

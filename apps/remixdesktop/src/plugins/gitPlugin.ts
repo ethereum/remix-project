@@ -1,6 +1,5 @@
 import { PluginClient } from "@remixproject/plugin";
 import { Profile } from "@remixproject/plugin-utils";
-import { spawn } from "child_process";
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
 
 const profile: Profile = {
@@ -33,20 +32,8 @@ class GitPluginClient extends ElectronBasePluginClient {
     })
   }
 
-  async log(path: string): Promise<string> {
-    const log = spawn('git', ['log'], {
-      cwd: path,
-      env: {
-        NODE_ENV: 'production',
-        PATH: process.env.PATH,
-      },
-    })
+  async log(cmd: any): Promise<any> {
 
-    return new Promise((resolve, reject) => {
-       log.stdout.on('data', (data) => {
-        resolve(data.toString())
-       })
-    })
   }
 
   

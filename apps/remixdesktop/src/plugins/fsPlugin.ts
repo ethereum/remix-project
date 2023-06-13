@@ -41,38 +41,38 @@ const clientProfile: Profile = {
 
 class FSPluginClient extends ElectronBasePluginClient {
   watcher: chokidar.FSWatcher
-  workingDir: string = '/Volumes/bunsen/code/rmproject2/remix-project/apps/remix-ide/contracts/'
+  workingDir: string = '/Volumes/bunsen/code/empty/'
 
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
     this.onload(() => {
-      console.log('fsPluginClient onload')
+      //console.log('fsPluginClient onload')
     })
   }
 
 
   async readdir(path: string): Promise<string[]> {
     // call node fs.readdir
-    console.log('readdir', path)
+    //console.log('readdir', path)
     if (!path) return []
     const files = fs.readdir(this.fixPath(path))
     return files
   }
 
   async readFile(path: string, options: any): Promise<string | undefined> {
-    console.log('readFile', path, options)
+    //console.log('readFile', path, options)
     // hacky fix for TS error
     if (!path) return undefined
     try {
       return (fs as any).readFile(this.fixPath(path), options)
     } catch (e) {
-      console.log('readFile error', e)
+      //console.log('readFile error', e)
       return undefined
     }
   }
 
   async writeFile(path: string, content: string, options: any): Promise<void> {
-    console.log('writeFile', path, content, options)
+    //console.log('writeFile', path, content, options)
     return (fs as any).writeFile(this.fixPath(path), content, options)
   }
 
@@ -95,14 +95,14 @@ class FSPluginClient extends ElectronBasePluginClient {
   async stat(path: string): Promise<any> {
     try {
       const stat = await fs.stat(this.fixPath(path))
-      //console.log('stat', path, stat)
+      ////console.log('stat', path, stat)
       const isDirectory = stat.isDirectory()
       return {
         ...stat,
         isDirectoryValue: isDirectory
       }
     } catch (e) {
-      console.log('stat error', e)
+      //console.log('stat error', e)
       return undefined
     }
   }
@@ -116,40 +116,40 @@ class FSPluginClient extends ElectronBasePluginClient {
         isDirectoryValue: isDirectory
       }
     } catch (e) {
-      console.log('lstat error', e)
+      //console.log('lstat error', e)
       return undefined
     }
   }
 
 
 
-  async exists(path: string): Promise < boolean > {
-      return fs.access(this.fixPath(path)).then(() => true).catch(() => false)
-    }
+  async exists(path: string): Promise<boolean> {
+    return fs.access(this.fixPath(path)).then(() => true).catch(() => false)
+  }
 
-  async currentPath(): Promise < string > {
-      return process.cwd()
-    }
+  async currentPath(): Promise<string> {
+    return process.cwd()
+  }
 
-  async watch(path: string): Promise < void> {
-      if(this.watcher) this.watcher.close()
+  async watch(path: string): Promise<void> {
+    if (this.watcher) this.watcher.close()
     this.watcher =
-        chokidar.watch(this.fixPath(path)).on('change', (path, stats) => {
-          console.log('change', path, stats)
-          this.emit('change', path, stats)
-        })
-    }
-
-  async closeWatch(): Promise < void> {
-      console.log('closing Watcher', this.webContentsId)
-    if(this.watcher) this.watcher.close()
-    }
-
-  async setWorkingDir(): Promise < void> {
-      const dirs = dialog.showOpenDialogSync(this.window, {
-        properties: ['openDirectory']
+      chokidar.watch(this.fixPath(path)).on('change', (path, stats) => {
+        //console.log('change', path, stats)
+        this.emit('change', path, stats)
       })
-    if(dirs && dirs.length > 0) {
+  }
+
+  async closeWatch(): Promise<void> {
+    //console.log('closing Watcher', this.webContentsId)
+    if (this.watcher) this.watcher.close()
+  }
+
+  async setWorkingDir(): Promise<void> {
+    const dirs = dialog.showOpenDialogSync(this.window, {
+      properties: ['openDirectory']
+    })
+    if (dirs && dirs.length > 0) {
       this.workingDir = dirs[0]
       this.emit('workingDirChanged', dirs[0])
     }
