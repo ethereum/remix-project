@@ -388,32 +388,31 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                               : "alert alert-danger"
                           }`}
                           style={{ cursor: "pointer" }}
-                        >
-                          <div
-                            onClick={async () => {
-                              await props.analysisModule.call(
-                                "editor",
-                                "discardHighlight"
-                              );
-                              await props.analysisModule.call(
-                                "editor",
-                                "highlight",
-                                {
-                                  end: {
-                                    line: hint.line,
-                                    column: hint.column + 1,
-                                  },
-                                  start: {
-                                    line: hint.line,
-                                    column: hint.column,
-                                  },
+                          onClick={async () => {
+                            await props.analysisModule.call(
+                              "editor",
+                              "discardHighlight"
+                            )
+                            await props.analysisModule.call(
+                              "editor",
+                              "highlight",
+                              {
+                                end: {
+                                  line: hint.line,
+                                  column: hint.column + 1,
                                 },
-                                state.file,
-                                "",
-                                { focus: true }
-                              );
-                            }}
-                          >
+                                start: {
+                                  line: hint.line,
+                                  column: hint.column,
+                                },
+                              },
+                              state.file,
+                              "",
+                              { focus: true }
+                            );
+                          }}
+                        >
+                          <div>
                             <span className="text-wrap">
                               {hint.formattedMessage}
                             </span>
@@ -428,32 +427,31 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                           key={index}
                           className="alert alert-danger"
                           style={{ cursor: "pointer" }}
-                        >
-                          <div
-                            onClick={async () => {
-                              await props.analysisModule.call(
-                                "editor",
-                                "discardHighlight"
-                              );
-                              await props.analysisModule.call(
-                                "editor",
-                                "highlight",
-                                {
-                                  end: {
-                                    line: hint.line,
-                                    column: hint.column + 1,
-                                  },
-                                  start: {
-                                    line: hint.line,
-                                    column: hint.column,
-                                  },
+                          onClick={async () => {
+                            await props.analysisModule.call(
+                              "editor",
+                              "discardHighlight"
+                            );
+                            await props.analysisModule.call(
+                              "editor",
+                              "highlight",
+                              {
+                                end: {
+                                  line: hint.line,
+                                  column: hint.column + 1,
                                 },
-                                state.file,
-                                "",
-                                { focus: true }
-                              );
-                            }}
-                          >
+                                start: {
+                                  line: hint.line,
+                                  column: hint.column,
+                                },
+                              },
+                              state.file,
+                              "",
+                              { focus: true }
+                            );
+                          }}
+                        >
+                          <div>
                             <span className="text-wrap">
                               {hint.formattedMessage}
                             </span>
@@ -474,11 +472,13 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           Linter
           {hints.length > 0 ? (
             hideWarnings ? (
-              <i className="badge badge-info rounded-circle ml-1">
+              <i className={`badge ${hints.filter(x => x.type === 'error').length > 0
+                ? `badge-danger` : 'badge-warning'} rounded-circle ml-1 text-center`}>
                 {hintErrors.length}
               </i>
             ) : (
-              <i className="badge badge-info rounded-circle ml-1">
+              <i className={`badge ${hints.filter(x => x.type === 'error').length > 0
+              ? `badge-danger` : 'badge-warning'} rounded-circle ml-1 text-center`}>
                 {hints.length}
               </i>
             )
@@ -536,11 +536,11 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           Slither
           {slitherWarnings.length > 0 ? (
             hideWarnings ? (
-              <i className="badge badge-info rounded-circle ml-1">
+              <i className="badge badge-warning rounded-circle ml-1">
                 {slitherErrors.length}
               </i>
             ) : (
-              <i className="badge badge-info rounded-circle ml-1">
+              <i className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} rounded-circle ml-1 text-center`}>
                 {slitherWarnings.length}
               </i>
             )
@@ -588,7 +588,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                       data-id={`staticAnalysisModule${warning.warningModuleName}${index}`}
                       id={`staticAnalysisModule${warning.warningModuleName}${index}`}
                       key={index}
-                    >
+                      >
                       <ErrorRenderer
                         name={`staticAnalysisModule${warning.warningModuleName}${index}`}
                         message={warning.msg}
