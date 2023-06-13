@@ -14,7 +14,7 @@ if (
 }
 
 export let mainWindow: BrowserWindow;
-export const createWindow = (): void => {
+export const createWindow = async (): Promise<void> => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     height: 800,
@@ -30,15 +30,19 @@ export const createWindow = (): void => {
     'http://localhost:8080')
 
   mainWindow.maximize();
+  
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
-  require('./engine')
+  
 };
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', async() => {
+  await createWindow();
+  require('./engine')
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
