@@ -623,7 +623,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         <RemixUiCheckbox
             id="checkAllEntries"
             inputType="checkbox"
-            title="Remix analysis is a basic analysis tool for Remix Ide."
+            title="Remix analysis runs a basic analysis."
             checked={Object.values(groupedModules).map((value: any) => {
               return (value.map(x => {
                 return x._index.toString()
@@ -641,12 +641,12 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           <RemixUiCheckbox
             id="solhintstaticanalysis"
             inputType="checkbox"
-            title="Run SolHint static analysis."
+            title="Linter uses SolHint static analysis."
             onClick={handleLinterEnabled}
             checked={solhintEnabled }
             label="Linter"
             onChange={() => {}}
-            tooltipPlacement={'top-start'}
+            tooltipPlacement={'bottom-start'}
             optionalClassName="mr-3"
           />
 
@@ -656,6 +656,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             onClick={handleSlitherEnabled}
             checked={showSlither && slitherEnabled}
             disabled={slitherEnabled === false}
+            tooltipPlacement="bottom-start"
             label="Slither"
             onChange={() => {}}
             optionalClassName="mr-3"
