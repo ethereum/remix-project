@@ -655,7 +655,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             inputType="checkbox"
             onClick={handleSlitherEnabled}
             checked={showSlither && slitherEnabled}
-            disabled={slitherEnabled}
+            disabled={slitherEnabled === false}
             label="Slither"
             onChange={() => {}}
             optionalClassName="mr-3"
@@ -669,7 +669,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled)}
               disabled={(state.data === null || !isSupportedVersion)  || (!solhintEnabled && !basicEnabled) }
           /> : <Button
-              buttonText={`Analyse ${state.file}`}
+              buttonText={`Analyze ${state.file}`}
               title={`${runButtonTitle}`}
               classList="btn btn-sm btn-primary btn-block"
               onClick={async () => await run(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
@@ -677,14 +677,17 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               disabled={(state.data === null || !isSupportedVersion)  || (!solhintEnabled && !basicEnabled) }
           />}
           {state && state.data !== null && state.source !== null && state.file.length > 0 ? (<div className="d-flex border-top flex-column">
-            <div className="mt-4 p-2 d-flex border-top flex-column">
-              <span>Last results for:</span>
-              <span
-                className="text-break break-word word-break font-weight-bold"
-                id="staticAnalysisCurrentFile"
-              >
-                {state.file}
-              </span>
+            <div className={`mt-4 p-2 d-flex ${slitherWarnings.length > 0 || hints.length > 0 || Object.entries(warningState).length > 0 ? 'border-top' : ''} flex-column`}>
+              {slitherWarnings.length > 0 || hints.length > 0 || Object.entries(warningState).length > 0 ?  (
+              <>
+                <span>Last results for:</span>
+                  <span
+                    className="text-break break-word word-break font-weight-bold"
+                    id="staticAnalysisCurrentFile"
+                  >
+                    {state.file}
+                  </span>
+              </>) : null}
             </div>
             <div className="border-top mt-3 pt-2 mb-2" id="staticanalysisresult">
               <RemixUiCheckbox
@@ -708,13 +711,16 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 onChange={() => {}}
               />
             </div>
-            <Tabs defaultActiveKey={tabKeys[0].tabKey}>
+            <Tabs
+              defaultActiveKey={tabKeys[0].tabKey}
+              className="px-1"
+            >
               {
                 checkBasicStatus() ? <Tab
                   key={tabKeys[1].tabKey}
                   title={tabKeys[1].title}
                   eventKey={tabKeys[1].tabKey}
-                  tabClassName="text-decoration-none font-weight-bold"
+                  tabClassName="text-decoration-none font-weight-bold px-2"
                 >
                   {tabKeys[1].child}
                 </Tab> : null
@@ -723,7 +729,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 key={tabKeys[0].tabKey}
                 title={tabKeys[0].title}
                 eventKey={tabKeys[0].tabKey}
-                tabClassName="text-decoration-none font-weight-bold"
+                tabClassName="text-decoration-none font-weight-bold px-2"
               >
                 {tabKeys[0].child}
               </Tab> : null}
@@ -731,7 +737,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 key={tabKeys[2].tabKey}
                 title={tabKeys[2].title}
                 eventKey={tabKeys[2].tabKey}
-                tabClassName="text-decoration-none font-weight-bold"
+                tabClassName="text-decoration-none font-weight-bold px-2"
               >
                 {tabKeys[2].child}
               </Tab> : null }
