@@ -14,7 +14,7 @@ export class SepoliaForkVMProvider extends BasicVMProvider {
       version: packageJson.version
     }, blockchain)
     this.blockchain = blockchain
-    this.fork = 'merge'
+    this.fork = 'shanghai'
     this.nodeUrl = 'https://remix-sepolia.ethdevops.io'
     this.blockNumber = 'latest'
   }
