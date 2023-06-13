@@ -387,7 +387,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                               ? "alert alert-warning"
                               : "alert alert-danger"
                           }`}
-                          style={{ cursor: "pointer" }}
+                          style={{ cursor: "pointer", overflow: 'hidden', textOverflow: 'ellipsis' }}
                           onClick={async () => {
                             await props.analysisModule.call(
                               "editor",
@@ -426,7 +426,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                         <div
                           key={index}
                           className="alert alert-danger"
-                          style={{ cursor: "pointer" }}
+                          style={{ cursor: "pointer", overflow: 'hidden', textOverflow: 'ellipsis' }}
                           onClick={async () => {
                             await props.analysisModule.call(
                               "editor",
@@ -452,9 +452,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                           }}
                         >
                           <div>
-                            <span className="text-wrap">
+                            <span className="text-wrap" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
                               {hint.formattedMessage}
                             </span>
+                            <br />
                             <span>{hint.type}</span>
                             <br />
                             <span>{`${hint.column}:${hint.line}`}</span>
