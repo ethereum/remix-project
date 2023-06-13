@@ -10,7 +10,7 @@ import { Formik, ErrorMessage, Field } from "formik"
 import { SubmitButton } from "../components"
 import { Receipt } from "../types"
 import { verify } from "../utils/verify"
-import { receiptGuidScript, verifyScript } from "../utils/scripts"
+import { etherscanScripts } from "@remix-project/remix-ws-templates"
 
 interface Props {
   client: PluginClient
@@ -270,19 +270,7 @@ export const VerifyView: React.FC<Props> = ({
                 style={{ padding: "0.25rem 0.4rem", marginRight: "0.5em", marginBottom: "0.5em"}}
                 className="btn btn-secondary btn-block"
                 onClick={async () => {
-                  if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/receiptStatus.ts')) {
-                    await client.call('fileManager', 'writeFile', 'scripts/etherscan/receiptStatus.ts', receiptGuidScript)
-                    await client.call('fileManager', 'open', 'scripts/etherscan/receiptStatus.ts')
-                  } else {
-                    client.call('notification' as any, 'toast', 'File receiptStatus.ts already exists')
-                  }
-                  
-                  if (!await client.call('fileManager', 'exists' as any, 'scripts/etherscan/verify.ts')) {
-                    await client.call('fileManager', 'writeFile', 'scripts/etherscan/verify.ts', verifyScript)
-                    await client.call('fileManager', 'open', 'scripts/etherscan/verify.ts')
-                  } else {
-                    client.call('notification' as any, 'toast', 'File verify.ts already exists')
-                  }
+                  etherscanScripts(client)
                 }}
                 >
                   Generate Verification Scripts
