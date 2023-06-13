@@ -657,17 +657,23 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             label="Slither"
             onChange={() => {}}
             optionalClassName="mr-3"
-            title={slitherEnabled ? "Run Slither static analysis." : "To have slither active, you need to have remixd connected to your local filesystem"}
+            title={slitherEnabled ? "Run Slither static analysis." : "To run Slither analysis, Remix IDE must be connected to your local filesystem with Remixd."}
           />
         </div>
-          <Button
+          {state.data && state.file.length > 0 && state.source ? <Button
+              buttonText={`Analyse ${state.file}`}
+              classList="btn btn-sm btn-primary btn-block"
+              onClick={async () => await run(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
+                message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings)}
+              disabled={(state.data === null || !isSupportedVersion)  || (!solhintEnabled && !basicEnabled) }
+          /> : <Button
               buttonText={`Analyse ${state.file}`}
               title={`${runButtonTitle}`}
               classList="btn btn-sm btn-primary btn-block"
               onClick={async () => await run(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
                 message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings)}
               disabled={(state.data === null || !isSupportedVersion)  || (!solhintEnabled && !basicEnabled) }
-          />
+          />}
           {state && state.data !== null && state.source !== null && state.file.length > 0 ? (<div className="d-flex border-top flex-column">
             <div className="mt-4 p-2 d-flex border-top flex-column">
               <span>Last results for:</span>
@@ -719,7 +725,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               >
                 {tabKeys[0].child}
               </Tab> : null}
-              { showSlither ? <Tab
+              { showSlither && slitherEnabled ? <Tab
                 key={tabKeys[2].tabKey}
                 title={tabKeys[2].title}
                 eventKey={tabKeys[2].tabKey}
