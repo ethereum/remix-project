@@ -46,6 +46,7 @@ import { CodeFormat } from './app/plugins/code-format'
 import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
 import { ContractFlattener } from './app/plugins/contractFlattener'
 import { fsPlugin } from './app/plugins/fsPlugin'
+import { isoGitPlugin } from './app/plugins/isoGitPlugin'
 
 const isElectron = require('is-electron')
 
@@ -318,6 +319,8 @@ class AppComponent {
     if (isElectron()) {
       const FSPlugin = new fsPlugin()
       this.engine.register([FSPlugin])
+      const isoGit = new isoGitPlugin()
+      this.engine.register([isoGit])
     }
 
     // LAYOUT & SYSTEM VIEWS
@@ -436,7 +439,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['solidity-script'])
 
     if(isElectron()){
-      await this.appManager.activatePlugin(['fs'])
+      await this.appManager.activatePlugin(['fs', 'isogit'])
     }
 
     this.appManager.on(

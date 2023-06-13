@@ -1,20 +1,9 @@
 import { ElectronPlugin } from '@remixproject/engine-electron';
-import once from 'just-once';
-
 
 let workingDir = null
 
 const fixPath = (path: string) => {
   return path
-}
-
-function wrapCallback(opts, cb) {
-  if (typeof opts === "function") {
-    cb = opts;
-  }
-  cb = once(cb);
-  const resolve = (...args) => cb(null, ...args)
-  return [resolve, cb];
 }
 
 export class fsPlugin extends ElectronPlugin {
@@ -58,9 +47,9 @@ export class fsPlugin extends ElectronPlugin {
       },
       readdir: async (path: string) => {
         path = fixPath(path)
-        console.log('readdir', path)
+        //console.log('readdir', path)
         const files = await this.call('fs', 'readdir', path)
-        console.log('readdir', path, files)
+        //console.log('readdir', path, files)
         return files
       },
       unlink: async (path: string) => {
@@ -73,13 +62,13 @@ export class fsPlugin extends ElectronPlugin {
       },
       readFile: async (path: string, options) => {
         try {
-          console.log('readFile', path, options)
+          //console.log('readFile', path, options)
           path = fixPath(path)
           const file = await this.call('fs', 'readFile', path, options)
-          console.log('readFile', path, file)
+          //console.log('readFile', path, file)
           return file
         } catch (e) {
-          console.log('readFile error', e)
+          //console.log('readFile error', e)
           return undefined
         }
       }
@@ -99,10 +88,10 @@ export class fsPlugin extends ElectronPlugin {
           if(!stat) return undefined
           stat.isDirectory = () => stat.isDirectoryValue
           stat.isFile = () => !stat.isDirectoryValue
-          //console.log('stat', path, stat)
+          ////console.log('stat', path, stat)
           return stat
         } catch (e) {
-          console.log('stat error', e)
+          //console.log('stat error', e)
           return undefined
         }
       },
@@ -115,7 +104,7 @@ export class fsPlugin extends ElectronPlugin {
           stat.isFile = () => !stat.isDirectoryValue
           return stat
         } catch (e) {
-          console.log('lstat error', e)
+          //console.log('lstat error', e)
           return undefined
         }
       },
@@ -145,12 +134,12 @@ export class fsPlugin extends ElectronPlugin {
 
 
   async onActivation() {
-    console.log('fsPluginClient onload', this.fs);
+    //console.log('fsPluginClient onload', this.fs);
     (window as any).remixFileSystem = this.fs;
 
 
     this.on('fs', 'workingDirChanged', async (path: string) => {
-      console.log('change working dir', path)
+      //console.log('change working dir', path)
       workingDir = path
       await this.call('fileManager', 'refresh')
     })

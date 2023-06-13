@@ -125,6 +125,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
 
       dispatch(setCurrentWorkspace({ name: 'electron', isGitRepo: false }))
       listenOnProviderEvents(electrOnProvider)(dispatch)
+      listenOnPluginEvents(plugin)
       dispatch(setMode('browser'))
       dispatch(fsInitializationCompleted())
       plugin.emit('workspaceInitializationCompleted')
