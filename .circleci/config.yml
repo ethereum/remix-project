@@ -331,6 +331,7 @@ workflows:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - build-windows
+      - build-mac
       - build
       - build-plugin:
           matrix:
