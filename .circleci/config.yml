@@ -32,7 +32,7 @@ jobs:
       - run: 
           command: |
               cd apps/node-pty
-              yarn
+              yarn && yarn dist
 
   build-mac:
     macos:
@@ -45,7 +45,7 @@ jobs:
       - restore_cache:
           keys:
             - remixd-deps-mac-{{ checksum "apps/remixd-app/yarn.lock" }}
-      - run: cd apps/node-pty && yarn
+      - run: cd apps/node-pty && yarn && yarn dist
       - save_cache:
           key: remixd-deps-mac-{{ checksum "apps/remixd-app/yarn.lock" }}
           paths:

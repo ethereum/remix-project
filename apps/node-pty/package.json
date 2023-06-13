@@ -1,9 +1,45 @@
+
 {
-  "name": "nodepty",
+  "name": "remixdesktop",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "build/main.js",
   "license": "MIT",
+  "appId": "org.ethereum.remixdesktop",
+  "mac": {
+    "category": "public.app-category.productivity"
+  },
+  "scripts": {
+    "start:dev": "tsc && cross-env NODE_ENV=development electron .",
+    "start:production": "tsc && cross-env NODE_ENV=production electron .",
+    "pack": "tsc && electron-builder",
+    "dist": "tsc && electron-builder --dir",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^3.2.13",
+    "cross-env": "^7.0.3",
+    "electron": "^25.0.1",
+    "electron-builder": "^23.6.0",
+    "typescript": "^5.1.3"
+  },
   "dependencies": {
-    "node-pty": "^1.0.0"
+    "node-pty": "^0.10.1",
+    "electron-is-packaged": "^1.0.2"
+  },
+  "build": {
+    "productName": "remixdesktop",
+    "mac": {
+      "target": {
+        "target": "default",
+        "arch": [
+          "universal"
+        ]
+      },
+      "category": "public.app-category.productivity"
+    },
+    "extends": null,
+    "files": [
+      "build/**/*"
+    ]
   }
 }
