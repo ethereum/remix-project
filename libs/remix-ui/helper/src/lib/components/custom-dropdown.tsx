@@ -36,7 +36,7 @@ export const CustomIconsToggle = React.forwardRef(({ onClick, icon, className = 
       placement={"top"}
       tooltipClasses="text-nowrap text-left"
       tooltipId="remixHamburgerTooltip"
-      tooltipText='Workspaces actions'
+      tooltipText='Workspace actions'
     >
       <i style={{ fontSize: 'large' }} className={`${icon}`} data-id="workspaceDropdownMenuIcon"></i>
     </CustomTooltip>  
