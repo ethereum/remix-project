@@ -57,7 +57,7 @@ class AnalysisTab extends ViewPlugin {
       }
     })
   }
-  
+
   setDispatch (dispatch) {
     this.dispatch = dispatch
     this.renderComponent()
