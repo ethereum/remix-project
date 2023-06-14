@@ -295,7 +295,7 @@ export function UniversalDappUI (props: UdappProps) {
                     lookupOnly={lookupOnly}
                     key={index}
                   />
-                  <div className="udapp_value" data-id="udapp_value">
+                  { lookupOnly && <div className="udapp_value" data-id="udapp_value">
                     <TreeView id="treeView">
                       {Object.keys(props.instance.decodedResponse || {}).map(
                         (key) => {
@@ -319,7 +319,7 @@ export function UniversalDappUI (props: UdappProps) {
                         }
                       )}
                     </TreeView>
-                  </div>
+                  </div> }
                 </div>
               );
             })}
