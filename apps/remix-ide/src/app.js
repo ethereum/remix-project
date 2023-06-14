@@ -47,6 +47,7 @@ import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
 import { ContractFlattener } from './app/plugins/contractFlattener'
 import { fsPlugin } from './app/plugins/fsPlugin'
 import { isoGitPlugin } from './app/plugins/isoGitPlugin'
+import { electronConfig } from './app/plugins/electronConfigPlugin'
 
 const isElectron = require('is-electron')
 
@@ -267,6 +268,7 @@ class AppComponent {
 
     const permissionHandler = new PermissionHandlerPlugin()
 
+    
     this.engine.register([
       permissionHandler,
       this.layout,
@@ -321,6 +323,8 @@ class AppComponent {
       this.engine.register([FSPlugin])
       const isoGit = new isoGitPlugin()
       this.engine.register([isoGit])
+      const electronConfigPlugin = new electronConfig()
+      this.engine.register([electronConfigPlugin])
     }
 
     // LAYOUT & SYSTEM VIEWS
@@ -439,7 +443,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['solidity-script'])
 
     if(isElectron()){
-      await this.appManager.activatePlugin(['fs', 'isogit'])
+      await this.appManager.activatePlugin(['fs', 'isogit', 'electronconfig'])
     }
 
     this.appManager.on(

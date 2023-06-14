@@ -1,6 +1,7 @@
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
 
 import { Profile } from "@remixproject/plugin-utils";
+import { readConfig, writeConfig } from "../utils/config";
 
 const profile: Profile = {
     displayName: 'electronconfig',
@@ -15,18 +16,12 @@ export class ConfigPlugin extends ElectronBasePlugin {
         this.methods = [...super.methods, 'writeConfig', 'readConfig']
     }
 
-    async writeConfig(webContentsId: any, data: any): Promise<void> {
-        const client = this.clients.find(c => c.webContentsId === webContentsId)
-        if (client) {
-            client.writeConfig(data)
-        }
+    async writeConfig(data: any): Promise<void> {
+        writeConfig(data)
     }
 
     async readConfig(webContentsId: any): Promise<any> {
-        const client = this.clients.find(c => c.webContentsId === webContentsId)
-        if (client) {
-            return client.readConfig()
-        }
+        return readConfig()
     }
 
 }
@@ -48,11 +43,11 @@ class ConfigPluginClient extends ElectronBasePluginClient {
     }
 
     async writeConfig(data: any): Promise<void> {
-
+        writeConfig(data)
     }
 
     async readConfig(): Promise<any> {
-
+        return readConfig()
     }
 
 }

@@ -10,6 +10,7 @@ import terminalJson from './terminal.json';
 import udappJson from './udapp.json';
 import solidityUnitTestingJson from './solidityUnitTesting.json';
 import permissionHandlerJson from './permissionHandler.json';
+import electronJson from './electron.json';
 
 export default {
   ...debuggerJson,
@@ -24,4 +25,5 @@ export default {
   ...udappJson,
   ...solidityUnitTestingJson,
   ...permissionHandlerJson,
+  ...electronJson
 }

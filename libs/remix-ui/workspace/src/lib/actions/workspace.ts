@@ -2,7 +2,7 @@ import React from 'react'
 import { bufferToHex } from '@ethereumjs/util'
 import { hash } from '@remix-project/remix-lib'
 import axios, { AxiosResponse } from 'axios'
-import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setCurrentWorkspaceBranches, setCurrentWorkspaceCurrentBranch, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace, setCurrentWorkspaceIsGitRepo, setGitConfig } from './payload'
+import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setCurrentWorkspaceBranches, setCurrentWorkspaceCurrentBranch, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace, setCurrentWorkspaceIsGitRepo, setGitConfig, setElectronRecentFolders } from './payload'
 import { addSlash, checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
 import { JSONStandardInput, WorkspaceTemplate } from '../types'
@@ -271,9 +271,12 @@ export const fetchWorkspaceDirectory = async (path: string) => {
   if (!path) return
   const provider = plugin.fileManager.currentFileProvider()
   console.log('fetchWorkspaceDirectory', path, provider)
-  const promise = new Promise((resolve) => {
+  const promise = new Promise((resolve, reject) => {
     provider.resolveDirectory(path, (error, fileTree) => {
-      if (error) console.error(error)
+      if (error) {
+        console.error(error)
+        return reject(error)
+      } 
       console.log('fetchWorkspaceDirectory', fileTree)
       resolve(fileTree)
     })
@@ -735,8 +738,14 @@ export const checkoutRemoteBranch = async (branch: string, remote: string) => {
   }
 }
 
-export const openElectronFolder = async () => {
-  await plugin.call('fs', 'openFolder')
+export const openElectronFolder = async (path: string) => {
+  await plugin.call('fs', 'openFolder', path)
+}
+
+export const getElectronRecentFolders = async () => {
+  const folders = await plugin.call('fs', 'getRecentFolders')
+  dispatch(setElectronRecentFolders(folders))
+  return folders
 }
 
 export const hasLocalChanges = async () => {

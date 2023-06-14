@@ -8,7 +8,7 @@ import { browserReducer, browserInitialState } from '../reducers/workspace'
 import { initWorkspace, fetchDirectory, removeInputField, deleteWorkspace, deleteAllWorkspaces, clearPopUp, publishToGist, createNewFile, setFocusElement, createNewFolder,
   deletePath, renamePath, downloadPath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath, addInputField, createWorkspace,
   fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, uploadFolder, handleDownloadWorkspace, handleDownloadFiles, restoreBackupZip, cloneRepository, moveFile, moveFolder,
-  showAllBranches, switchBranch, createNewBranch, checkoutRemoteBranch, createSolidityGithubAction, createTsSolGithubAction, createSlitherGithubAction, openElectronFolder
+  showAllBranches, switchBranch, createNewBranch, checkoutRemoteBranch, createSolidityGithubAction, createTsSolGithubAction, createSlitherGithubAction, openElectronFolder, getElectronRecentFolders
 } from '../actions'
 import { Modal, WorkspaceProps, WorkspaceTemplate } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -183,9 +183,14 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await createSlitherGithubAction()
   }
 
-  const dispatchOpenElectronFolder = async () => {
+  const dispatchOpenElectronFolder = async (path: string) => {
     console.log('open electron folder')
-    await openElectronFolder()
+    await openElectronFolder(path)
+  }
+
+  const dispatchGetElectronRecentFolders = async () => {
+    console.log('get electron recent folders')
+    await getElectronRecentFolders()
   }
 
 
@@ -306,7 +311,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchCreateSolidityGithubAction,
     dispatchCreateTsSolGithubAction,
     dispatchCreateSlitherGithubAction,
-    dispatchOpenElectronFolder
+    dispatchOpenElectronFolder,
+    dispatchGetElectronRecentFolders
   }
   return (
     <FileSystemContext.Provider value={value}>
