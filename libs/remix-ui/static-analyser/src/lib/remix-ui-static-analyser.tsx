@@ -72,6 +72,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [solhintEnabled, setSolhintEnabled] = useState(true) // assuming that solhint is always enabled
   const [showSlither, setShowSlither] = useState(false)
   const [slitherEnabled, setSlitherEnabled] = useState(false)
+  const [startAnalysis, setStartAnalysis] = useState(false)
   const [isSupportedVersion, setIsSupportedVersion] = useState(false)
   let [showLibsWarning, setShowLibsWarning] = useState(false) // eslint-disable-line prefer-const
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
@@ -112,7 +113,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   useEffect(() => {
     setWarningState({})
     const runAnalysis = async () => {
-      await run(state.data, state.source, state.file, state, props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq, message, showWarnings, allWarnings, warningContainer,calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled)
+      await run(state.data, state.source, state.file, state, props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq, message, showWarnings, allWarnings, warningContainer,calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis)
     }
     props.event.trigger('staticAnaysisWarning', [])
     // if (basicEnabled) {
@@ -465,7 +466,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 </Fragment>
               </div>
             </div>
-          ) : <span className="display-6">No Results.</span>}
+          ) : state.data && state.file.length > 0 && state.source && startAnalysis && hints.length > 0 ? <span className="ml-4 spinner-grow-sm d-flex justify-content-center">Loading...</span> : <span className="display-6 text-center">Nothing to report</span>}
         </>
       ),
       title: (
@@ -526,7 +527,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 ))}
               </div>
             </div>
-          ) : <span className="display-6">No Results.</span>}
+          ) : state.data && state.file.length > 0 && state.source && startAnalysis && Object.entries(warningState).length > 0 ? <span className="ml-4 spinner-grow-sm d-flex justify-content-center">Loading...</span> : <span className="display-6 text-center">Nothing to report</span>}
         </>
       ),
     },
@@ -602,7 +603,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 </Fragment>
               </div>
             </div>
-          ) : <span className="display-6">No Result</span>}
+          ) : state.data && state.file.length > 0 && state.source && startAnalysis && slitherWarnings.length > 0 ? <span className="ml-4 spinner-grow-sm d-flex justify-content-center">Loading...</span> : <span className="display-6 text-center">Nothing to report</span>}
         </>
       ),
     },
@@ -642,7 +643,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           <RemixUiCheckbox
             id="solhintstaticanalysis"
             inputType="checkbox"
-            title="Linter uses SolHint static analysis."
+            title="Linter runs SolHint static analysis."
             onClick={handleLinterEnabled}
             checked={solhintEnabled }
             label="Linter"
@@ -661,27 +662,26 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             label="Slither"
             onChange={() => {}}
             optionalClassName="mr-3"
-            title={slitherEnabled ? "Run Slither static analysis." : "To run Slither analysis, Remix IDE must be connected to your local filesystem with Remixd."}
+            title={slitherEnabled ? "Slither runs Slither static analysis." : "To run Slither analysis, Remix IDE must be connected to your local filesystem with Remixd."}
           />
         </div>
           {state.data && state.file.length > 0 && state.source ? <Button
               buttonText={`Analyse ${state.file}`}
               classList="btn btn-sm btn-primary btn-block"
               onClick={async () => await run(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
-                message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled)}
+                message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis)}
               disabled={(state.data === null || !isSupportedVersion)  || (!solhintEnabled && !basicEnabled) }
           /> : <Button
               buttonText={`Analyze ${state.file}`}
               title={`${runButtonTitle}`}
               classList="btn btn-sm btn-primary btn-block"
               onClick={async () => await run(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
-                message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled)}
+                message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis)}
               disabled={(state.data === null || !isSupportedVersion)  || (!solhintEnabled && !basicEnabled) }
           />}
           {state && state.data !== null && state.source !== null && state.file.length > 0 ? (<div className="d-flex border-top flex-column">
-            <div className={`mt-4 p-2 d-flex ${slitherWarnings.length > 0 || hints.length > 0 || Object.entries(warningState).length > 0 ? 'border-top' : ''} flex-column`}>
-              {slitherWarnings.length > 0 || hints.length > 0 || Object.entries(warningState).length > 0 ?  (
-              <>
+            {slitherWarnings.length > 0 || hints.length > 0 || Object.entries(warningState).length > 0 ?  (
+              <div className={`mt-4 p-2 d-flex ${slitherWarnings.length > 0 || hints.length > 0 || Object.entries(warningState).length > 0 ? 'border-top' : ''} flex-column`}>
                 <span>Last results for:</span>
                   <span
                     className="text-break break-word word-break font-weight-bold"
@@ -689,9 +689,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   >
                     {state.file}
                   </span>
-              </>) : null}
             </div>
-            <div className="border-top mt-3 pt-2 mb-2" id="staticanalysisresult">
+            ) : null}
+            <div className="border-top mt-2 pt-2 mb-2" id="staticanalysisresult">
               <RemixUiCheckbox
                 id="showLibWarnings"
                 name="showLibWarnings"
