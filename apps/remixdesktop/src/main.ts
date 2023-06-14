@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, Menu } from 'electron';
+import { app, BrowserWindow, dialog, Menu, MenuItem } from 'electron';
 import path from 'path';
 
 
@@ -16,34 +16,42 @@ if (
 // get system home dir
 const homeDir = app.getPath('userData')
 
-export let mainWindow: BrowserWindow;
-export const createWindow = async (): Promise<void> => {
+const windowSet = new Set<BrowserWindow>([]);
+export const createWindow = async (dir?: string): Promise<void> => {
   // Create the browser window.
-  mainWindow = new BrowserWindow({
+  const mainWindow = new BrowserWindow({
     height: 800,
     width: 1024,
     webPreferences: {
-       preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js')
     },
   });
 
+  let params = dir ? `?opendir=${encodeURIComponent(dir)}` : '';
   // and load the index.html of the app.
   mainWindow.loadURL(
-    process.env.NODE_ENV === 'production' || isPackaged? `file://${__dirname}/remix-ide/index.html` :
-    'http://localhost:8080?opendir=' + homeDir)
+    process.env.NODE_ENV === 'production' || isPackaged ? `file://${__dirname}/remix-ide/index.html` + params :
+      'http://localhost:8080' + params)
 
   mainWindow.maximize();
-  
+
+  // on close
+  mainWindow.on('close', (event) => {
+    console.log('close', event, mainWindow.webContents.id)
+    windowSet.delete(mainWindow)
+  })
+
+  windowSet.add(mainWindow)
+
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
-  
+
 };
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', async() => {
-  await createWindow();
+app.on('ready', async () => {
   require('./engine')
 });
 
@@ -83,6 +91,8 @@ const isMac = process.platform === 'darwin'
 import FileMenu from './menus/file';
 import MainMenu from './menus/main';
 import darwinMenu from './menus/darwin';
+import WindowMenu from './menus/window';
+import EditMenu from './menus/edit';
 import { execCommand } from './menus/commands';
 
 const commandKeys: Record<string, string> = {
@@ -90,6 +100,15 @@ const commandKeys: Record<string, string> = {
   'folder:open': 'CmdOrCtrl+O',
 };
 
+const menu = [...(process.platform === 'darwin' ? [darwinMenu(commandKeys, execCommand, showAbout)] : []),
+FileMenu(commandKeys, execCommand),
+EditMenu(commandKeys, execCommand),
+WindowMenu(commandKeys, execCommand, [])
+]
 
-const menu = [...(process.platform === 'darwin' ? [darwinMenu(commandKeys, execCommand, showAbout)] : []), FileMenu(commandKeys, execCommand)]
 Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
+
+
+
+
+

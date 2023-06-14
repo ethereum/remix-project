@@ -3,6 +3,8 @@ import fs from 'fs/promises'
 import { Profile } from "@remixproject/plugin-utils";
 import chokidar from 'chokidar'
 import { dialog } from "electron";
+import { createWindow } from "../main";
+import { writeConfig } from "../utils/config";
 
 const profile: Profile = {
   displayName: 'fs',
@@ -15,6 +17,31 @@ export class FSPlugin extends ElectronBasePlugin {
   constructor() {
     super(profile, clientProfile, FSPluginClient)
     this.methods = [...super.methods, 'closeWatch']
+  }
+
+  async onActivation(): Promise<void> {
+    const config = await this.call('electronconfig' as any, 'readConfig')
+    const openedFolders = config && config.openedFolders || []
+    this.call('electronconfig', 'writeConfig', { 'openedFolders': openedFolders })
+    const foldersToDelete: string[] = []
+    if (openedFolders && openedFolders.length) {
+      for (const folder of openedFolders) {
+        console.log('opening folder', folder)
+        try {
+          const stat = await fs.stat(folder)
+          if (stat.isDirectory()) {
+            createWindow(folder)
+          }
+        } catch (e) {
+          console.log('error opening folder', folder, e)
+          foldersToDelete.push(folder)
+        }
+      }
+      if (foldersToDelete.length) {
+        const newFolders = openedFolders.filter((f: string) => !foldersToDelete.includes(f))
+        this.call('electronconfig', 'writeConfig', { 'recentFolders': newFolders })
+      }
+    }
   }
 
   async closeWatch(): Promise<void> {
@@ -36,17 +63,20 @@ const clientProfile: Profile = {
   name: 'fs',
   displayName: 'fs',
   description: 'fs',
-  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder']
+  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'getRecentFolders']
 }
 
 class FSPluginClient extends ElectronBasePluginClient {
   watcher: chokidar.FSWatcher
-  workingDir: string = '/Volumes/bunsen/code/empty/'
+  workingDir: string = ''
 
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
     this.onload(() => {
       //console.log('fsPluginClient onload')
+      this.window.on('close', () => {
+        this.closeWatch()
+      })
     })
   }
 
@@ -141,35 +171,76 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async closeWatch(): Promise<void> {
-    //console.log('closing Watcher', this.webContentsId)
+    console.log('closing Watcher', this.webContentsId)
+    await this.removeFromOpenedFolders(this.workingDir)
     if (this.watcher) this.watcher.close()
   }
 
-  async openFolder(): Promise<void> {
-    const dirs = dialog.showOpenDialogSync(this.window, {
-      properties: ['openDirectory', 'createDirectory', "showHiddenFiles"]
-    })
-    if (dirs && dirs.length > 0) {
-      this.workingDir = dirs[0]
-      this.emit('workingDirChanged', dirs[0])
-    }
+  async updateRecentFolders(path: string): Promise<void> {
+    const config = await this.call('electronconfig' as any, 'readConfig')
+    config.recentFolders = config.recentFolders || []
+    config.recentFolders = config.recentFolders.filter((p: string) => p !== path)
+    config.recentFolders.push(path)
+    writeConfig(config)
+  }
 
+  async updateOpenedFolders(path: string): Promise<void> {
+    const config = await this.call('electronconfig' as any, 'readConfig')
+    config.openedFolders = config.openedFolders || []
+    config.openedFolders = config.openedFolders.filter((p: string) => p !== path)
+    config.openedFolders.push(path)
+    writeConfig(config)
+  }
+
+  async removeFromOpenedFolders(path: string): Promise<void> {
+    console.log('removeFromOpenedFolders', path)
+    const config = await this.call('electronconfig' as any, 'readConfig')
+    config.openedFolders = config.openedFolders || []
+    config.openedFolders = config.openedFolders.filter((p: string) => p !== path)
+    console.log('removeFromOpenedFolders', config)
+    writeConfig(config)
+  }
+
+  async getRecentFolders(): Promise<string[]> {
+    const config = await this.call('electronconfig' as any, 'readConfig')
+    return config.recentFolders || []
+  }
+
+
+
+  async openFolder(path?: string): Promise<void> {
+    let dirs: string[] | undefined
+    if (!path) {
+      dirs = dialog.showOpenDialogSync(this.window, {
+        properties: ['openDirectory', 'createDirectory', "showHiddenFiles"]
+      })
+    }
+    path = dirs && dirs.length && dirs[0] ? dirs[0] : path
+    if (!path) return
+    this.workingDir = path
+    await this.updateRecentFolders(path)
+    await this.updateOpenedFolders(path)
+    this.window.setTitle(this.workingDir)
+    this.emit('workingDirChanged', path)
   }
 
   async setWorkingDir(path: string): Promise<void> {
-      console.log('setWorkingDir', path)
-      this.workingDir = path
-      this.emit('workingDirChanged', path)
+    console.log('setWorkingDir', path)
+    this.workingDir = path
+    await this.updateRecentFolders(path)
+    await this.updateOpenedFolders(path)
+    this.window.setTitle(this.workingDir)
+    this.emit('workingDirChanged', path)
   }
 
   fixPath(path: string): string {
+    if (this.workingDir === '') throw new Error('workingDir is not set')
     if (path) {
       if (path.startsWith('/')) {
         path = path.slice(1)
       }
     }
-    if (!this.workingDir.endsWith('/')) this.workingDir = this.workingDir + '/'
-    path = this.workingDir + path
+    path = this.workingDir + (!this.workingDir.endsWith('/') ? '/' : '') + path
     return path
   }
 

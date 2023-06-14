@@ -13,6 +13,7 @@ import { contextMenuActions } from './utils'
 import FileExplorerContextMenu from './components/file-explorer-context-menu'
 import { customAction } from '@remixproject/plugin-api'
 import isElectron from 'is-electron'
+import { ElectronMenu } from './components/electron-menu'
 
 const _paq = window._paq = window._paq || []
 
@@ -492,11 +493,6 @@ export function Workspace() {
     global.dispatchPublishToGist(path, type)
   }
 
-  const openFolderElectron = async () => {
-    global.dispatchOpenElectronFolder()
-  }
-
-
   const editModeOn = (path: string, type: string, isNew = false) => {
     if (global.fs.readonly) return global.toast('Cannot write/modify file system in read only mode.')
     setState(prevState => {
@@ -796,14 +792,12 @@ export function Workspace() {
               </div>
             </header>
           </div>
-          {isElectron() && global.fs.browser.isSuccessfulDirectory ? null :
-            <div onClick={openFolderElectron} className='btn btn-primary'>Open Folder</div>
-          }
+          <ElectronMenu></ElectronMenu>              
           <div className='h-100 remixui_fileExplorerTree' onFocus={() => { toggleDropdown(false) }}>
             <div className='h-100'>
               {(global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>}
               {!(global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) &&
-                (global.fs.mode === 'browser') && (currentWorkspace !== NO_WORKSPACE) &&
+                (global.fs.mode === 'browser') && (currentWorkspace !== NO_WORKSPACE) && (!isElectron() || global.fs.browser.isSuccessfulWorkspace) &&
                 <div className='h-100 remixui_treeview' data-id='filePanelFileExplorerTree'>
                   <FileExplorer
                     fileState={global.fs.browser.fileState}

@@ -4,6 +4,8 @@ import path from 'path'
 
 const cacheDir = path.join(os.homedir(), '.cache_remix_ide')
 
+console.log('cacheDir', cacheDir)
+
 try {
     if (!fs.existsSync(cacheDir)) {
         fs.mkdirSync(cacheDir)

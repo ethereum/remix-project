@@ -6,6 +6,7 @@ import { app } from 'electron';
 import { XtermPlugin } from './plugins/xtermPlugin';
 import git from 'isomorphic-git'
 import { IsoGitPlugin } from './plugins/isoGitPlugin';
+import { ConfigPlugin } from './plugins/configPlugin';
 
 const engine = new Engine()
 const appManager = new PluginManager()
@@ -13,13 +14,17 @@ const fsPlugin = new FSPlugin()
 const gitPlugin = new GitPlugin()
 const xtermPlugin = new XtermPlugin()
 const isoGitPlugin = new IsoGitPlugin()
+const configPlugin = new ConfigPlugin()
 engine.register(appManager)
 engine.register(fsPlugin)
 engine.register(gitPlugin)
 engine.register(xtermPlugin)
 engine.register(isoGitPlugin)
+engine.register(configPlugin)
 
+appManager.activatePlugin('electronconfig')
 appManager.activatePlugin('fs')
+
 
 ipcMain.handle('manager:activatePlugin', async (event, plugin) => {
   console.log('manager:activatePlugin', plugin, event.sender.id)
@@ -34,6 +39,7 @@ ipcMain.on('fs:openFolder', async (event) => {
 ipcMain.handle('getWebContentsID', (event, message) => {
   return event.sender.id
 })
+
 
 app.on('before-quit', async () => {
   await appManager.call('fs', 'closeWatch')

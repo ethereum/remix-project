@@ -34,6 +34,7 @@ export interface BrowserState {
       error: string
     },
     fileState: fileDecoration[]
+    recentFolders: string[]
   },
   localhost: {
     sharedFolder: string,
@@ -86,7 +87,8 @@ export const browserInitialState: BrowserState = {
       removedMenuItems: [],
       error: null
     },
-    fileState: []
+    fileState: [],
+    recentFolders: []
   },
   localhost: {
     sharedFolder: '',
@@ -727,6 +729,18 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
         gitConfig: payload
       }
     }
+
+    case 'SET_ELECTRON_RECENT_FOLDERS': {
+      const payload: string[] = action.payload
+      return {
+        ...state,
+        browser: {
+          ...state.browser,
+          recentFolders: payload
+        }
+      }
+    }
+
 
     default:
       throw new Error()
