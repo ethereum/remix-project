@@ -131,8 +131,15 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }, [])
 
   useEffect(() => {
-    
-  }, [])
+    const checkRemixdActive = async () => {
+      const remixdActive = await props.analysisModule.call('manager', 'isActive', 'remixd')
+      if (remixdActive) {
+        setSlitherEnabled(true)
+        setShowSlither(true)
+      }
+    }
+    checkRemixdActive()
+  }, [props])
 
   useEffect(() => {
     props.analysisModule.on('filePanel', 'setWorkspace', (currentWorkspace) => {
