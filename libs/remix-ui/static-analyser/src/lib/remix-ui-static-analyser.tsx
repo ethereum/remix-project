@@ -116,13 +116,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       await run(state.data, state.source, state.file, state, props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq, message, showWarnings, allWarnings, warningContainer,calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis)
     }
     props.event.trigger('staticAnaysisWarning', [])
-    // if (basicEnabled) {
-    //   if (state.data !== null) {
-    //     runAnalysis().catch(console.error);
-    //   }
-    // } else {
-    //   props.event.trigger('staticAnaysisWarning', [])
-    // }
     return () => { }
   }, [state])
 
@@ -387,13 +380,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const hintErrors = hints.filter(hint => hint.type === 'error')
   const noLibSlitherWarnings = slitherWarnings.filter(w => !w.options.isLibrary)
   const slitherErrors = noLibSlitherWarnings.filter(slitherError => slitherError.options.type === 'error')
-  // const noLibsRemixWarnings = ssaWarnings.filter(w => !w.options.isLibrary)
-  // const groupedWarnings = ssaWarnings.reduce((resultingObject, warning) => {
-  //   if (!resultingObject[warning.warningModuleName]) resultingObject[warning.warningModuleName] = []
-  //   resultingObject[warning.warningModuleName].push(warning)
-  //   return resultingObject
-  // }, {})
-  // console.log({ slitherWarnings, noLibsRemixWarnings, ssaWarnings, groupedWarnings })
 
   const tabKeys = [
     {

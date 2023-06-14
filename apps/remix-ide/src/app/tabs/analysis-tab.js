@@ -30,7 +30,6 @@ class AnalysisTab extends ViewPlugin {
     this.registry = Registry.getInstance()
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'staticAnalyserView')
-    this.errorCount = 0
     this._components = {}
     this._components.registry = this.registry
     this._deps = {
