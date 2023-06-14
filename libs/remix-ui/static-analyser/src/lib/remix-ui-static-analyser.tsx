@@ -223,6 +223,12 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     setWarningState(newWarningState)
   }
 
+  useEffect(() => {
+    if(hints.length > 0) {
+      props.event.trigger('staticAnaysisWarning', [hints.length])
+    }
+  },[hints.length, state])
+
   const showWarnings = (warningMessage, groupByKey) => {
     const resultArray = []
     warningMessage.map(x => {
@@ -379,7 +385,15 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }
 
   const hintErrors = hints.filter(hint => hint.type === 'error')
-  const slitherErrors = slitherWarnings.filter(slitherError => slitherError.options.type === 'error')
+  const noLibSlitherWarnings = slitherWarnings.filter(w => !w.options.isLibrary)
+  const slitherErrors = noLibSlitherWarnings.filter(slitherError => slitherError.options.type === 'error')
+  // const noLibsRemixWarnings = ssaWarnings.filter(w => !w.options.isLibrary)
+  // const groupedWarnings = ssaWarnings.reduce((resultingObject, warning) => {
+  //   if (!resultingObject[warning.warningModuleName]) resultingObject[warning.warningModuleName] = []
+  //   resultingObject[warning.warningModuleName].push(warning)
+  //   return resultingObject
+  // }, {})
+  // console.log({ slitherWarnings, noLibsRemixWarnings, ssaWarnings, groupedWarnings })
 
   const tabKeys = [
     {
@@ -514,9 +528,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               <div className="mb-4 pt-2">
                 {Object.entries(warningState).map((element, index) => (
                   <div key={index}>
-                    {element[1]["map"](
+                    { !hideWarnings && element[1]['length'] > 0 ? <span className="text-dark h6">{element[0]}</span> : null}
+                    {!hideWarnings ? element[1]["map"](
                       (x,i) => // eslint-disable-line dot-notation
-                        x.hasWarning && !hideWarnings
+                        x.hasWarning
                         ? ( // eslint-disable-next-line  dot-notation
                           <div
                             data-id={`staticAnalysisModule${x.warningModuleName}${i}`}
@@ -532,7 +547,24 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                             />
                           </div>
                         ) : null
-                    )}
+                    ) : element[1]["map"](
+                      (x,i) => // eslint-disable-line dot-notation
+                        !x.hasWarning
+                        ? ( // eslint-disable-next-line  dot-notation
+                          <div
+                            data-id={`staticAnalysisModule${x.warningModuleName}${i}`}
+                            id={`staticAnalysisModule${x.warningModuleName}${i}`}
+                            key={i}
+                          >
+                            <ErrorRenderer
+                              name={`staticAnalysisModule${x.warningModuleName}${i}`}
+                              message={x.msg}
+                              opt={x.options}
+                              warningErrors={x.warningErrors}
+                              editor={props.analysisModule}
+                            />
+                          </div>
+                        ) : null)}
                     {}
                   </div>
                 ))}
@@ -552,9 +584,13 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               <i className="badge badge-warning rounded-circle ml-1">
                 {slitherErrors.length}
               </i>
-            ) : (
+            ) : showLibsWarning === true && hideWarnings === false ? (
               <i className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} rounded-circle ml-1 text-center`}>
-                {slitherWarnings.length}
+                  {slitherWarnings.length}
+                </i>
+            )  : (
+              <i className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} rounded-circle ml-1 text-center`}>
+                {noLibSlitherWarnings.length}
               </i>
             )
           ) : null}
@@ -567,7 +603,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               <div className="mb-4 pt-2">
                 <Fragment>
                   {!hideWarnings
-                    ? showLibsWarning ? slitherWarnings.filter(warning => warning.isLibrary).map((warning, index) => (
+                    ? showLibsWarning ? slitherWarnings.map((warning, index) => (
                       <div
                       data-id={`staticAnalysisModule${warning.warningModuleName}${index}`}
                       id={`staticAnalysisModule${warning.warningModuleName}${index}`}
@@ -581,7 +617,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                         editor={props.analysisModule}
                       />
                     </div>
-                      )) : slitherWarnings.map((warning, index) => (
+                      )) : noLibSlitherWarnings.map((warning, index) => (
                       <div
                       data-id={`staticAnalysisModule${warning.warningModuleName}${index}`}
                       id={`staticAnalysisModule${warning.warningModuleName}${index}`}
