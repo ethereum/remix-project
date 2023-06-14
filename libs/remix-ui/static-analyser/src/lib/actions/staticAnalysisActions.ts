@@ -44,8 +44,8 @@ export const compilation = (analysisModule: AnalysisTab,
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function run (lastCompilationResult, lastCompilationSource, currentFile: string, state: RemixUiStaticAnalyserState, props: RemixUiStaticAnalyserProps, isSupportedVersion, showSlither, categoryIndex: number[], groupedModules, runner, _paq, message, showWarnings, allWarnings: React.RefObject<any>, warningContainer: React.RefObject<any>, calculateWarningStateEntries: (e:[string, any][]) => {length: number, errors: any[] }, warningState, setHints: React.Dispatch<React.SetStateAction<SolHintReport[]>>, hints: SolHintReport[], setSlitherWarnings: React.Dispatch<React.SetStateAction<any[]>>, setSsaWarnings: React.Dispatch<React.SetStateAction<any[]>>,
-slitherEnabled: boolean) {
-
+slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<boolean>>) {
+  setStartAnalysis(true)
   if (!isSupportedVersion) return
   if (state.data !== null) {
     if (lastCompilationResult && (categoryIndex.length > 0 || showSlither)) {
@@ -199,6 +199,7 @@ slitherEnabled: boolean) {
           showWarnings(warningMessage, 'warningModuleName')
         }
       } else showWarnings(warningMessage, 'warningModuleName')
+      setStartAnalysis(false)
     } else {
       if (categoryIndex.length) {
         warningContainer.current.innerText = 'No compiled AST available'
