@@ -90,7 +90,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
 
 export interface CustomEthersStateManagerOpts {
   provider: string | ethers.providers.StaticJsonRpcProvider | ethers.providers.JsonRpcProvider
-  blockTag: bigint | 'earliest',
+  blockTag: string,
   /**
    * A {@link Trie} instance
    */
@@ -111,7 +111,7 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
       throw new Error(`valid JsonRpcProvider or url required; got ${opts.provider}`)
     }
 
-    this.blockTag = opts.blockTag === 'earliest' ? opts.blockTag : bigIntToHex(opts.blockTag)
+    this.blockTag = opts.blockTag
 
     /*
      * For a custom StateManager implementation adopt these
@@ -152,7 +152,7 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
   copy(): CustomEthersStateManager {
     const newState = new CustomEthersStateManager({
       provider: this.provider,
-      blockTag: BigInt(this.blockTag),
+      blockTag: this.blockTag,
       trie: this._trie.copy(false),
     })
     return newState
@@ -309,11 +309,17 @@ export class VMContext {
       if (this.blockNumber === 'latest') {
         const provider = new ethers.providers.StaticJsonRpcProvider(this.nodeUrl)
         block = await provider.getBlockNumber()
+        stateManager = new CustomEthersStateManager({
+          provider: this.nodeUrl,
+          blockTag: '0x' + block.toString(16)
+        })
+      } else {
+        stateManager = new CustomEthersStateManager({
+          provider: this.nodeUrl,
+          blockTag: '0x' + this.blockNumber.toString(16)
+        })
       }
-      stateManager = new CustomEthersStateManager({
-        provider: this.nodeUrl,
-        blockTag: BigInt(block)
-      })
+      
     } else
       stateManager = new StateManagerCommonStorageDump()
 
