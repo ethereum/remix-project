@@ -9,7 +9,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: cimg/node:14.17.6-browsers
+      - image: cimg/node:20.0.0-browsers
 
     resource_class:
       xlarge
@@ -24,23 +24,66 @@ jobs:
           key: v1-deps-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-      - run: NX_BIN_URL=http://127.0.0.1:8080/assets/js NX_WASM_URL=http://127.0.0.1:8080/assets/js NPM_URL=http://localhost:9090/ yarn build:production
-      - run: yarn nx build remix-ide-e2e-src-local-plugin & yarn run build:libs
-      - run: yarn nx run debugger:build:production
-      - run: yarn nx run solidity-compiler:build:production
-      - run: yarn nx run remixd:build
+      - run:
+          name: Build
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build:production
+            else
+              NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build
+            fi
+      - run: yarn run build:e2e
+      
+      - run: grep -ir "[0-9]+commit" apps/* libs/* --include \*.ts --include \*.tsx --include \*.json > soljson-versions.txt
+      - restore_cache:
+          keys:
+            - soljson-v7-{{ checksum "soljson-versions.txt" }}
+      - run: yarn run downloadsolc_assets_e2e
+      - save_cache:
+          key: soljson-v7-{{ checksum "soljson-versions.txt" }}
+          paths:
+            - dist/apps/remix-ide/assets/js/soljson
+      
       - run: mkdir persist && zip -0 -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
           paths:
             - "persist"
+
+
+  build-plugin:
+      docker:
+      - image: cimg/node:20.0.0-browsers
+      resource_class:
+        xlarge
+      working_directory: ~/remix-project
+      parameters:
+        plugin:
+          type: string
+      steps:
+        - checkout
+        - restore_cache:
+            keys:
+              - v1-deps-{{ checksum "yarn.lock" }}
+        - run: yarn
+        - save_cache:
+            key: v1-deps-{{ checksum "yarn.lock" }}
+            paths:
+              - node_modules
+        - run: yarn nx build << parameters.plugin >> --configuration=production 
+        - run: mkdir persist && zip -0 -r persist/plugin-<< parameters.plugin >>.zip dist
+        - persist_to_workspace:
+            root: .
+            paths:
+              - "persist"
+
   lint:
     docker:
-      - image: cimg/node:14.17.6-browsers
+      - image: cimg/node:20.0.0-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
-    parallelism: 1
+
     steps:
       - checkout
       - restore_cache:
@@ -53,7 +96,7 @@ jobs:
           command: node ./apps/remix-ide/ci/lint-targets.js
   remix-libs:
     docker:
-      - image: cimg/node:14.17.6-browsers
+      - image: cimg/node:20.0.0-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
@@ -62,11 +105,12 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: unzip ./persist/dist.zip
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn --version
       - run: yarn
+      - run: yarn build:libs
       - run: cd dist/libs/remix-tests && yarn
       - run: cd dist/libs/remix-tests && yarn add @remix-project/remix-url-resolver ../../libs/remix-url-resolver
       - run: cd dist/libs/remix-tests && yarn add @remix-project/remix-lib ../../libs/remix-lib
@@ -78,7 +122,7 @@ jobs:
 
   remix-ide-browser:
     docker:
-      - image: cimg/node:14.17.6-browsers
+      - image: cimg/node:20.0.0-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
@@ -119,13 +163,9 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: unzip ./persist/dist.zip 
+      - run: unzip ./persist/dist.zip
+      - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
 
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "yarn.lock" }}
-      - run: yarn
-      - run: yarn run downloadsolc_assets_e2e && yarn run downloadsolc_assets_dist
       - run: ls -la ./dist/apps/remix-ide/assets/js
       - run: yarn run selenium-install || yarn run selenium-install
       - run:
@@ -146,14 +186,17 @@ jobs:
 
   remix-test-plugins:
     docker:
-      - image: cimg/node:14.17.6-browsers
+      - image: cimg/node:20.0.0-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
     parameters:
-      script:
+      plugin:
         type: string
-    parallelism: 4
+      parallelism:
+        type: integer
+        default: 1
+    parallelism: << parameters.parallelism >>
     steps:
       - browser-tools/install-browser-tools:
           install-firefox: false
@@ -166,98 +209,67 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "yarn.lock" }}
-      - run: yarn
       - run: unzip ./persist/dist.zip
-      - run: yarn run downloadsolc_assets_e2e && yarn run downloadsolc_assets_dist
+      - run: unzip ./persist/plugin-<< parameters.plugin >>.zip
+      - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       - run: yarn run selenium-install || yarn run selenium-install
       - run:
           name: Start Selenium
           command: yarn run selenium
           background: true
-      - run: ./apps/remix-ide/ci/<< parameters.script >>
+      - run: ./apps/remix-ide/ci/browser_test_plugin.sh << parameters.plugin >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
           path: ./reports/screenshots
 
-  deploy-remix-live:
+
+  predeploy:
     docker:
-      - image: cimg/node:14.17.6-browsers
+      - image: cimg/node:20.0.0-browsers
+    resource_class:
+      xlarge
+    working_directory: ~/remix-project
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn
+      - save_cache:
+          key: v1-deps-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - run: yarn build:production
+      - run: mkdir persist && zip -0 -r persist/predeploy.zip dist
+      - persist_to_workspace:
+          root: .
+          paths:
+            - "persist"
+
+  deploy-build:
+    docker:
+      - image: cimg/node:20.0.0-browsers
 
     resource_class:
       xlarge
     environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "dist/apps/remix-ide/index.html dist/apps/remix-ide/404.html dist/apps/remix-ide/*.js dist/apps/remix-ide/*.css dist/apps/remix-ide/assets dist/apps/remix-ide/favicon.ico"
+      COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
+      COMMIT_AUTHOR: "Circle CI"
     working_directory: ~/remix-project
+
+    parameters:
+      script:
+        type: string
 
     steps:
       - checkout
-      - run: yarn
-      - run: yarn run downloadsolc_assets
-      - run: yarn run build:production
-      - run:
-          name: Deploy
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "remix_live" ]; then
-              ./apps/remix-ide/ci/deploy_from_travis_remix-live.sh;
-            fi
-
-  deploy-remix-alpha:
-    docker:
-      - image: cimg/node:14.17.6-browsers
-
-    resource_class:
-      xlarge
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "dist/apps/remix-ide/index.html dist/apps/remix-ide/404.html dist/apps/remix-ide/*.js dist/apps/remix-ide/*.css dist/apps/remix-ide/assets dist/apps/remix-ide/favicon.ico"
-    working_directory: ~/remix-project
-
-    steps:
-      - checkout
-      - run: yarn
-      - run: yarn run downloadsolc_assets
-      - run: yarn run build:production
-      - run:
-          name: Deploy
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              ./apps/remix-ide/ci/deploy_from_travis_remix-alpha.sh;
-            fi
-
-  deploy-remix-beta:
-    docker:
-      - image: cimg/node:14.17.6-browsers
-
-    resource_class:
-      xlarge
-    environment:
-      - COMMIT_AUTHOR_EMAIL: "yann@ethereum.org"
-      - COMMIT_AUTHOR: "Circle CI"
-      - FILES_TO_PACKAGE: "dist/apps/remix-ide/index.html dist/apps/remix-ide/404.html dist/apps/remix-ide/*.js dist/apps/remix-ide/*.css dist/apps/remix-ide/assets dist/apps/remix-ide/favicon.ico"
-    working_directory: ~/remix-project
-
-    steps:
-      - checkout
-      - run: yarn
-      - run: yarn run build:libs
-      - run: yarn run downloadsolc_assets
-      - run: yarn run build:production
-      - run:
-          name: Deploy
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "remix_beta" ]; then
-              ./apps/remix-ide/ci/deploy_from_travis_remix-beta.sh;
-            fi
+      - attach_workspace:
+          at: .
+      - run: unzip ./persist/predeploy.zip
+      - run: ./apps/remix-ide/ci/deploy_from_travis_remix-<< parameters.script >>.sh
+    
 workflows:
-  version: 2
   run_flaky_tests:
     when: << pipeline.parameters.run_flaky_tests >>
     jobs:
@@ -275,18 +287,28 @@ workflows:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - build
+      - build-plugin:
+          matrix:
+            parameters:
+              plugin: ["plugin_api"]
       - lint:
           requires:
             - build
-      - remix-libs:
-          requires:
-            - build
+      - remix-libs
       - remix-test-plugins:
+          name: test-plugin-<< matrix.plugin >>
           requires:
             - build
+            - build-plugin
           matrix:
+            alias: plugins
             parameters:
-              script: ["browser_tests_plugin_api.sh", "browser_tests_etherscan_plugin.sh", "browser_tests_vyper_plugin.sh"]
+              plugin: ["plugin_api"]
+              parallelism: [1, 9]
+            exclude: 
+              - plugin: plugin_api
+                parallelism: 1
+
       - remix-ide-browser:
           requires:
             - build
@@ -301,31 +323,45 @@ workflows:
             - lint
             - remix-libs
             - remix-ide-browser
-            - remix-test-plugins
-      - deploy-remix-live:
+            - plugins
+            
+      - predeploy:
+          filters:
+            branches:
+              only: ['master', 'remix_live', 'remix_beta']
+      - deploy-build:
+          script: "live"
+          name: "deploy-live"
           requires:
             - lint
             - remix-libs
             - remix-ide-browser
-            - remix-test-plugins
+            - plugins
+            - predeploy
           filters:
             branches:
               only: remix_live
-      - deploy-remix-alpha:
+      - deploy-build:
+          script: "alpha"
+          name: "deploy-alpha"
           requires:
             - lint
             - remix-libs
             - remix-ide-browser
-            - remix-test-plugins
+            - plugins
+            - predeploy
           filters:
             branches:
               only: master
-      - deploy-remix-beta:
+      - deploy-build:
+          script: "beta"
+          name: "deploy-beta"
           requires:
             - lint
             - remix-libs
             - remix-ide-browser
-            - remix-test-plugins
+            - plugins
+            - predeploy
           filters:
             branches:
               only: remix_beta

@@ -87,7 +87,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
             </h6>
             {!props.showCancelIcon &&
               <span className="modal-close" onClick={() => handleHide()}>
-                <i title="Close" className="fas fa-times" aria-hidden="true"></i>
+                <i className="fas fa-times" aria-hidden="true"></i>
               </span>
             }
           </div>
@@ -103,7 +103,8 @@ export const ModalDialog = (props: ModalDialogProps) => {
               onClick={() => {
                 if (props.validation && !props.validation.valid) return
                 if (props.okFn) props.okFn()
-                handleHide()
+                if (props.donotHideOnOkClick) calledHideFunctionOnce.current = false
+                else handleHide()
               }}
             >
               {props.okLabel ? props.okLabel : 'OK'}

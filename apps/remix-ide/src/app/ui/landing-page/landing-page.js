@@ -9,7 +9,7 @@ const profile = {
   displayName: 'Home',
   methods: [],
   events: [],
-  description: 'Remix home tab ',
+  description: 'Remix Home',
   icon: 'assets/img/home.webp',
   location: 'mainPanel',
   version: packageJson.version

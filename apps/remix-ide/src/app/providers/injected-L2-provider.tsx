@@ -1,6 +1,6 @@
-import { InjectedProvider } from './injected-provider'
+import { InjectedProviderDefaultBase } from './injected-provider-default'
 
-export class InjectedL2Provider extends InjectedProvider {    
+export class InjectedL2Provider extends InjectedProviderDefaultBase {    
   chainName: string
   chainId: string
   rpcUrls: Array<string>

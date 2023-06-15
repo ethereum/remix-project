@@ -173,8 +173,7 @@ export function runTestFiles (filepath: string, isDirectory: boolean, web3: Web3
         }
         console.log(colors.white('Time Taken: ' + totalTime + 's'))
         console.log('')
-
-        next()
+        next(null, totalPassing, totalFailing)
       })
     }
   ], finalCallback)

@@ -1,58 +1,58 @@
 .remix-ui-tabs {
-    display: -webkit-box; 
-    max-height: 2.15rem;
+  display: -webkit-box;
+  max-height: 2.15rem;
 }
 .remix-ui-tabs li {
-    display: inline-block;
+  display: inline-block;
 }
 .title-tabs {
-    padding: inherit;
-    align-items: center;
-    padding-right: 8px;
-    padding-left: 2px;
-    cursor: default;
-    /*to make it unselectable*/
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none;   /* Chrome/Safari/Opera */
-    -khtml-user-select: none;    /* Konqueror */
-    -moz-user-select: none;      /* Firefox */
-    -ms-user-select: none;       /* Internet Explorer/Edge */
-    user-select: none;           /* Non-prefixed version, currently supported by any browser but < IE9 */
-    vertical-align: middle;
+  padding: inherit;
+  align-items: center;
+  padding-right: 8px;
+  padding-left: 2px;
+  cursor: default;
+  /*to make it unselectable*/
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+  -khtml-user-select: none;    /* Konqueror */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* Internet Explorer/Edge */
+  user-select: none;           /* Non-prefixed version, currently supported by any browser but < IE9 */
+  vertical-align: middle;
 }
 .tab:hover .close-tabs{
-    visibility: visible
+  visibility: visible
 }
 .active .close-tabs {
-    visibility: visible
+  visibility: visible
 }
 .close-tabs {
-    visibility: hidden;
-    font-size: medium;
+  visibility: hidden;
+  font-size: medium;
 }
 .iconImage {
-    width: 1rem;
-    height: 1rem;
-    align-self: start;
+  width: 1rem;
+  height: 1rem;
+  align-self: start;
 }
 .active {
-    border: 1px solid transparent;
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
+  border: 1px solid transparent;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
 }
 .tab-scroll {
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
 .tab-scroll::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
   
-  /* Hide scrollbar for IE, Edge and Firefox */
+/* Hide scrollbar for IE, Edge and Firefox */
 .tab-scroll {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }

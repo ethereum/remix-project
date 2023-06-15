@@ -43,12 +43,12 @@ export function RecorderUI (props: RecorderProps) {
             tooltipText={<FormattedMessage id='udapp.transactionsCountTooltip' />}
           >
           <div className="ml-2 badge badge-pill badge-primary text-center" data-title="The number of recorded transactions">{props.count}</div>
-        </CustomTooltip>
-        <CustomTooltip
-          placement={'right'}
-          tooltipClasses="text-wrap"
-          tooltipId="info-recorder"
-          tooltipText={<span><FormattedMessage id='udapp.infoRecorderTooltip' values={{ br: <br /> }} /></span>}
+          </CustomTooltip>
+          <CustomTooltip
+            placement={'right'}
+            tooltipClasses="text-wrap"
+            tooltipId="info-recorder"
+            tooltipText={<span><FormattedMessage id='udapp.infoRecorderTooltip' values={{ br: <br /> }} /></span>}
           >
           <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
         </CustomTooltip>

@@ -38,7 +38,7 @@ export class RunTab extends ViewPlugin {
     recorder: Recorder;
     // syncContracts(): void
 }
-import { ViewPlugin } from "@remixproject/engine-web/lib/view";
+import { ViewPlugin } from "@remixproject/engine-web";
 import { Blockchain } from "./blockchain";
 import { RunTabState } from "../reducers/runTab";
 import { Recorder } from "./recorder";

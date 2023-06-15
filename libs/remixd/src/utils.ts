@@ -44,10 +44,10 @@ function relativePath (path: string, sharedFolder: string): string {
   return normalizePath(relative)
 }
 
-function normalizePath (path: string): string {
+function normalizePath (path) {
   if (path === '/') path = './'
   if (process.platform === 'win32') {
-    return path.replace(/\\/g, '/')
+    return path.replace(/\//g, '\\')
   }
   return path
 }
@@ -114,4 +114,4 @@ function getDomain (url: string) {
   return domainMatch ? domainMatch[0] : null
 }
 
-export { absolutePath, relativePath, walkSync, resolveDirectory, getDomain }
+export { absolutePath, relativePath, walkSync, resolveDirectory, getDomain, normalizePath }

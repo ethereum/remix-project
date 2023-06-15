@@ -12,6 +12,8 @@ import { ROOT_PATH, slitherYml, solTestYml, tsSolTestYml } from '../utils/consta
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
+import { AppModal, ModalTypes } from '@remix-ui/app'
+import { contractDeployerScripts, etherscanScripts } from '@remix-project/remix-ws-templates'
 
 declare global {
   interface Window { remixFileSystemCallback: IndexedDBStorage; }
@@ -96,7 +98,7 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
 
       if (!currentBranch) {
         if (!name || !email) {
-          await plugin.call('notification', 'toast', 'Please add username and email to Remix GitHub Settings to use git features.')
+          await plugin.call('notification', 'toast', 'To use Git features, add username and email to the Github section of the Settings panel.')
         } else {
           // commit the template as first commit
           plugin.call('notification', 'toast', 'Creating initial git commit ...')
@@ -175,7 +177,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
           const hashed = bufferToHex(hash.keccakFromString(params.code))
 
           path = 'contract-' + hashed.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
-          content = atob(params.code)
+          content = atob(decodeURIComponent(params.code))
           await workspaceProvider.set(path, content)
         }
         if (params.url) {
@@ -358,6 +360,30 @@ export const switchToWorkspace = async (name: string) => {
   }
 }
 
+const loadFile = (name, file, provider, cb?): void => {
+  const fileReader = new FileReader()
+
+  fileReader.onload = async function (event) {
+    if (checkSpecialChars(file.name)) {
+      return dispatch(displayNotification('File Upload Failed', 'Special characters are not allowed', 'Close', null, async () => { }))
+    }
+    try {
+      await provider.set(name, event.target.result)
+    } catch (error) {
+      return dispatch(displayNotification('File Upload Failed', 'Failed to create file ' + name, 'Close', null, async () => { }))
+    }
+
+    const config = plugin.registry.get('config').api
+    const editor = plugin.registry.get('editor').api
+
+    if ((config.get('currentFile') === name) && (editor.currentContent() !== event.target.result)) {
+      editor.setText(name, event.target.result)
+    }
+  }
+  fileReader.readAsText(file)
+  cb && cb(null, true)
+}
+
 export const uploadFile = async (target, targetFolder: string, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
   // TODO The file explorer is merely a view on the current state of
   // the files module. Please ask the user here if they want to overwrite
@@ -365,39 +391,52 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
   // pick that up via the 'fileAdded' event from the files module.
   [...target.files].forEach(async (file) => {
     const workspaceProvider = plugin.fileProviders.workspace
-    const loadFile = (name: string): void => {
-      const fileReader = new FileReader()
-
-      fileReader.onload = async function (event) {
-        if (checkSpecialChars(file.name)) {
-          return dispatch(displayNotification('File Upload Failed', 'Special characters are not allowed', 'Close', null, async () => { }))
-        }
-        try {
-          await workspaceProvider.set(name, event.target.result)
-        } catch (error) {
-          return dispatch(displayNotification('File Upload Failed', 'Failed to create file ' + name, 'Close', null, async () => { }))
-        }
-
-        const config = plugin.registry.get('config').api
-        const editor = plugin.registry.get('editor').api
-
-        if ((config.get('currentFile') === name) && (editor.currentContent() !== event.target.result)) {
-          editor.setText(name, event.target.result)
-        }
-      }
-      fileReader.readAsText(file)
-      cb && cb(null, true)
-    }
     const name = targetFolder === '/' ? file.name : `${targetFolder}/${file.name}`
 
     if (!await workspaceProvider.exists(name)) {
-      loadFile(name)
+      loadFile(name, file, workspaceProvider, cb)
     } else {
-      dispatch(displayNotification('Confirm overwrite', `The file ${name} already exists! Would you like to overwrite it?`, 'OK', null, () => {
-        loadFile(name)
-      }, () => { }))
+      const modalContent: AppModal = {
+        id: 'overwriteUploadFile',
+        title: 'Confirm overwrite',
+        message: `The file "${name}" already exists! Would you like to overwrite it?`,
+        modalType: ModalTypes.confirm,
+        okLabel: 'OK',
+        cancelLabel: 'Cancel',
+        okFn: () => {
+          loadFile(name, file, workspaceProvider, cb)
+        },
+        cancelFn: () => {},
+        hideFn: () => {}
+      }
+      plugin.call('notification', 'modal', modalContent)
     }
   })
+}
+
+export const uploadFolder = async (target, targetFolder: string, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+  for(const file of [...target.files]) {
+    const workspaceProvider = plugin.fileProviders.workspace
+    const name = targetFolder === '/' ? file.webkitRelativePath : `${targetFolder}/${file.webkitRelativePath}`
+    if (!await workspaceProvider.exists(name)) {
+      loadFile(name, file, workspaceProvider, cb)
+    } else {
+      const modalContent: AppModal = {
+        id: 'overwriteUploadFolderFile',
+        title: 'Confirm overwrite',
+        message: `The file "${name}" already exists! Would you like to overwrite it?`,
+        modalType: ModalTypes.confirm,
+        okLabel: 'OK',
+        cancelLabel: 'Cancel',
+        okFn: () => {
+          loadFile(name, file, workspaceProvider, cb)
+        },
+        cancelFn: () => {},
+        hideFn: () => {}
+      }
+      plugin.call('notification', 'modal', modalContent)
+    }
+  }
 }
 
 export const getWorkspaces = async (): Promise<{ name: string, isGitRepo: boolean, branches?: { remote: any; name: string; }[], currentBranch?: string }[]> | undefined => {
@@ -637,6 +676,17 @@ export const createSlitherGithubAction = async () => {
 
   await plugin.call('fileManager', 'writeFile', path , slitherYml)
   plugin.call('fileManager', 'open', path)
+}
+
+const scriptsRef = {
+  'deployer': contractDeployerScripts,
+  'etherscan': etherscanScripts
+}
+export const createHelperScripts = async (script: string) => {
+  
+  if (!scriptsRef[script]) return
+  await scriptsRef[script](plugin)
+  plugin.call('notification', 'toast', 'scripts added in the "scripts" folder')
 }
 
 export const checkoutRemoteBranch = async (branch: string, remote: string) => {

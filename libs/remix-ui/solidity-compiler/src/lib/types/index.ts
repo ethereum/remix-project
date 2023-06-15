@@ -14,7 +14,7 @@ export interface CompilerContainerProps {
   isFoundryProject: boolean,
   workspaceName: string,
   tooltip: (message: string | JSX.Element) => void,
-  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, donotHideOnOkClick?: boolean, cancelLabel?: string, cancelFn?: () => void) => void,
   compiledFileName: string,
   updateCurrentVersion: any,
   configurationSettings: ConfigurationSettings,
@@ -26,7 +26,7 @@ export interface ContractSelectionProps {
   compiledFileName: string,
   contractList: { file: string, name: string }[],
   compilerInput: Record<string, any>
-  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
+  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, donotHideOnOkClick?: boolean, cancelLabel?: string, cancelFn?: () => void) => void,
   contractsDetails: Record<string, any>
 }
 

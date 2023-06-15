@@ -37,6 +37,27 @@ export function AccountUI (props: AccountProps) {
         })
         break
 
+      case 'vm-london':
+        setPlusOpt({
+          classList: '',
+          title: 'Create a new account'
+        })
+        break
+
+      case 'vm-berlin':
+        setPlusOpt({
+          classList: '',
+          title: 'Create a new account'
+        })
+        break
+
+      case 'vm-shanghai':
+        setPlusOpt({
+          classList: '',
+          title: 'Create a new account'
+        })
+        break
+
       case 'web3':
         if (!props.personalMode) {
           setPlusOpt({
@@ -69,7 +90,7 @@ export function AccountUI (props: AccountProps) {
       return props.tooltip('Account list is empty, please make sure the current provider is properly connected to remix')
     }
 
-    if (props.selectExEnv !== 'vm-merge' && props.selectExEnv !== 'injected') {
+    if (props.selectExEnv === 'web3') {
       return props.modal('Passphrase to sign a message',
         <PassphrasePrompt
           message='Enter your passphrase for this account to sign the message'
@@ -103,41 +124,38 @@ export function AccountUI (props: AccountProps) {
 
   const passphraseCreationPrompt = () => {
     return (
-      <div> Please provide a Passphrase for the account creation
-        <div>
-          <input id="prompt1" type="password" name='prompt_text' style={{ width: '100%' }} onInput={handlePassphrase} />
-          <br />
-          <br />
-          <input id="prompt2" type="password" name='prompt_text' style={{ width: '100%' }} onInput={handleMatchPassphrase} />
-        </div>
+      <div className='d-flex flex-column'>
+        Please provide a Passphrase for the account creation
+        <input id="prompt1" type="password" name='prompt_text' className='w-100 py-2' onInput={handlePassphrase} />
+        <input id="prompt2" type="password" name='prompt_text' className='w-100' onInput={handleMatchPassphrase} />
       </div>
     )
   }
 
   const signMessagePrompt = () => {
     return (
-      <div> <FormattedMessage id='udapp.enterAMessageToSign' />
-        <div>
-          <textarea
-            id="prompt_text"
-            data-id="signMessageTextarea"
-            style={{ width: '100%' }}
-            rows={4}
-            cols={50}
-            onInput={handleMessageInput}
-            defaultValue={messageRef.current}
-          ></textarea>
-        </div>
+      <div>
+        <FormattedMessage id='udapp.enterAMessageToSign' />
+        <textarea
+          id="prompt_text"
+          className='bg-light text-light'
+          data-id="signMessageTextarea"
+          style={{ width: '100%' }}
+          rows={4}
+          cols={50}
+          onInput={handleMessageInput}
+          defaultValue={messageRef.current}
+        ></textarea>
       </div>
     )
   }
 
   const signedMessagePrompt = (msgHash: string, signedData: string) => {
     return (
-      <div>
-        <b><FormattedMessage id='udapp.hash' />:</b><br />
+      <div className="d-flex flex-column">
+        <label className='text-uppercase'><FormattedMessage id='udapp.hash' /></label>
         <span id="remixRunSignMsgHash" data-id="settingsRemixRunSignMsgHash">{msgHash}</span>
-        <br /><b><FormattedMessage id='udapp.signature' />:</b><br />
+        <label className='pt-2 text-uppercase'><FormattedMessage id='udapp.signature' /></label>
         <span id="remixRunSignMsgSignature" data-id="settingsRemixRunSignMsgSignature">{signedData}</span>
       </div>
     )
@@ -153,16 +171,17 @@ export function AccountUI (props: AccountProps) {
           tooltipId="remixPlusWrapperTooltip"
           tooltipText={plusOpt.title}
         >
-            <span id="remixRunPlusWraper">
-              <i id="remixRunPlus" className={`fas fa-plus-circle udapp_icon ${plusOpt.classList}`} aria-hidden="true" onClick={newAccount}></i>
-            </span>
+          <span id="remixRunPlusWraper">
+            <i id="remixRunPlus" className={`fas fa-plus-circle udapp_icon ${plusOpt.classList}`} aria-hidden="true" onClick={newAccount}></i>
+          </span>
         </CustomTooltip>
+        { props.accounts.isRequesting && <i className="fa fa-spinner fa-pulse ml-2" aria-hidden="true"></i> }
       </label>
       <div className="udapp_account">
-        <select id="txorigin" data-id="runTabSelectAccount" name="txorigin" className="form-control udapp_select custom-select pr-4" value={selectedAccount} onChange={(e) => { props.setAccount(e.target.value) }}>
-          {
-            accounts.map((value, index) => <option value={value} key={index}>{ loadedAccounts[value] }</option>)
-          }
+        <select id="txorigin" data-id="runTabSelectAccount" name="txorigin" className="form-control udapp_select custom-select pr-4" value={selectedAccount||""} onChange={(e) => { props.setAccount(e.target.value) }}>
+        {
+          accounts.map((value, index) => <option value={value} key={index}>{ loadedAccounts[value] }</option>)
+        }
         </select>
         <div style={{ marginLeft: -5 }}><CopyToClipboard tip='Copy account to clipboard' content={selectedAccount} direction='top' /></div>
         <CustomTooltip

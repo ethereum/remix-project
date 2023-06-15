@@ -66,7 +66,7 @@ module.exports = {
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
       .click('[data-id="treeViewLitreeViewItemcontracts"]')
       .openFile('contracts/3_Ballot.sol')
-      .assert.containsText('div[title="default_workspace/contracts/3_Ballot.sol"]', '3_Ballot.sol')
+      .assert.containsText('div[data-path="default_workspace/contracts/3_Ballot.sol"]', '3_Ballot.sol')
       .end()
   }
 }

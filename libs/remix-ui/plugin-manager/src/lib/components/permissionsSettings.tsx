@@ -5,6 +5,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { ModalDialog } from '@remix-ui/modal-dialog'
 import useLocalStorage from '../custom-hooks/useLocalStorage'
 import { PluginPermissions } from '../../types'
+import { CustomTooltip } from '@remix-ui/helper'
 
 function PermisssionsSettings () {
   const [modalVisibility, setModalVisibility] = useState<boolean>(true)
@@ -130,12 +131,20 @@ function PermisssionsSettings () {
         </form>
       </ModalDialog>
       <footer className="bg-light remixui_permissions remix-bg-opacity">
-        <button
-          onClick={openModal}
-          className="btn btn-primary settings-button"
-          data-id="pluginManagerPermissionsButton">
-          <FormattedMessage id="pluginManager.Permissions" />
-        </button>
+        <CustomTooltip
+          placement={"top"}
+          tooltipId="pmPermissions"
+          tooltipClasses="text-nowrap"
+          tooltipText={"Manage plugins Permissions"}
+          key={"keypmPermissions"}
+        >
+          <button
+            onClick={openModal}
+            className="btn btn-primary settings-button"
+            data-id="pluginManagerPermissionsButton">
+            <FormattedMessage id="pluginManager.Permissions" />
+          </button>
+        </CustomTooltip>
       </footer>
     </Fragment>
   )

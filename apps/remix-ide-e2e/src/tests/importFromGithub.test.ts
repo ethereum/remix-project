@@ -18,7 +18,7 @@ module.exports = {
     browser.clickLaunchIcon('home')
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
-      .click('div[title="home"]')
+      .click('div[data-id="verticalIconsHomeIcon"]')
       .waitForElementVisible('button[data-id="landingPageImportFromGitHubButton"]')
       .pause(1000)
       .click('button[data-id="landingPageImportFromGitHubButton"]')
@@ -45,7 +45,7 @@ module.exports = {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
-      .click('div[title="home"]')
+      .click('div[data-id="verticalIconsHomeIcon"]')
       .waitForElementVisible('button[data-id="landingPageImportFromGitHubButton"]').pause(1000)
       .click('button[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
@@ -57,14 +57,17 @@ module.exports = {
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
       .click('[data-id="homeTab-modal-footer-ok-react"]')
       .openFile('github/OpenZeppelin/openzeppelin-solidity/contracts/access/Roles.sol')
-      .waitForElementVisible("div[title='default_workspace/github/OpenZeppelin/openzeppelin-solidity/contracts/access/Roles.sol'")
+      .waitForElementVisible({
+        selector: `//*[@data-id='tab-active' and @data-path="default_workspace/github/OpenZeppelin/openzeppelin-solidity/contracts/access/Roles.sol"]`,
+        locateStrategy: 'xpath'
+      })
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('library Roles {') !== -1, 'content does contain "library Roles {"')
       })
   },
   'Import JSON From GitHub For Valid URL #group2': function (browser: NightwatchBrowser) {
     browser
-      .click('div[title="home"]')
+      .click('div[data-id="verticalIconsHomeIcon"]')
       .click('button[data-id="landingPageImportFromGitHubButton"]')
       .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]').pause(1000)
       .execute(() => {
@@ -75,7 +78,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
       .click('[data-id="homeTab-modal-footer-ok-react"]')
       .openFile('github/ethereum/remix-project/package.json')
-      .waitForElementVisible("div[title='default_workspace/github/ethereum/remix-project/package.json'")
+      .waitForElementVisible("div[data-path='default_workspace/github/ethereum/remix-project/package.json'")
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('"name": "remix-project",') !== -1, 'content does contain "name": "remix-project"')
       })

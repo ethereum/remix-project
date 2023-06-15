@@ -38,7 +38,7 @@ module.exports = {
 
   'Test GitHub Import - from master branch #group1': function (browser: NightwatchBrowser) {
     browser
-      .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0 (master branch)
+      .setSolidityCompilerVersion('soljson-v0.8.19+commit.7dd6d404.js') // open-zeppelin moved to pragma ^0.8.19 (master branch)
       .addFile('Untitled4.sol', sources[3]['Untitled4.sol'])
       .clickLaunchIcon('filePanel')
       .verifyContracts(['test7', 'ERC20'], { wait: 10000 })
@@ -54,7 +54,7 @@ module.exports = {
 
   'Test GitHub Import - no branch specified #group2': function (browser: NightwatchBrowser) {
     browser
-      .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0 (master branch)
+      .setSolidityCompilerVersion('soljson-v0.8.19+commit.7dd6d404.js') // open-zeppelin moved to pragma ^0.8.19 (master branch)
       .clickLaunchIcon('filePanel')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('Untitled6.sol', sources[5]['Untitled6.sol'])
@@ -64,6 +64,7 @@ module.exports = {
 
   'Test GitHub Import - raw URL #group4': function (browser: NightwatchBrowser) {
     browser
+      .setSolidityCompilerVersion('soljson-v0.8.19+commit.7dd6d404.js') // open-zeppelin moved to pragma ^0.8.0 (master branch)
       .clickLaunchIcon('filePanel')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('Untitled7.sol', sources[6]['Untitled7.sol'])
@@ -112,7 +113,31 @@ module.exports = {
         timeout: 120000,
       })
       .verifyContracts(['test13', 'ERC20'], { wait: 30000 })
-      .end()
+  },
+
+  'Test NPM Import (the version is specified in package.json) #group4': function (browser: NightwatchBrowser) {
+    browser
+      // clone https://github.com/yann300/remix-reward
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible('[data-id="workspaceMenuDropdown"]')
+      .click('[data-id="workspaceMenuDropdown"]')
+      .waitForElementVisible('[data-id="workspaceclone"]')
+      .click('[data-id="workspaceclone"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
+      .click('[data-id="fileSystemModalDialogModalBody-react"]')
+      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
+      .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/yann300/remix-reward')
+      .click('[data-id="fileSystem-modal-footer-ok-react"]')
+      .waitForElementPresent('.fa-spinner')
+      .pause(5000)
+      .waitForElementNotPresent('.fa-spinner')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
+      .waitForElementContainsText('[data-id="workspacesSelect"]', 'remix-reward')
+      .clickLaunchIcon('solidity')
+      // compile (this will be using the version specified in the package.json)
+      .openFile('contracts')
+      .openFile('contracts/RemixRewardUpgradable.sol')
+      .verifyContracts(['Remix'])
   }
 }
 

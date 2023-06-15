@@ -1,5 +1,5 @@
 import { CustomTooltip } from '@remix-ui/helper'
-import React, { useState, useEffect } from 'react' //eslint-disable-line
+import React, { useState, useEffect, } from 'react' //eslint-disable-line
 import { FormattedMessage } from 'react-intl'
 import { Placement } from 'react-bootstrap/esm/Overlay'
 import { FileExplorerMenuProps } from '../types'
@@ -10,27 +10,33 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
     menuItems: [
       {
         action: 'createNewFile',
-        title: 'Create New File',
+        title: 'Create new file',
         icon: 'far fa-file',
-        placement: 'top-start'
+        placement: 'top'
       },
       {
         action: 'createNewFolder',
-        title: 'Create New Folder',
+        title: 'Create new folder',
         icon: 'far fa-folder',
-        placement: 'top-end'
+        placement: 'top'
       },
       {
         action: 'publishToGist',
-        title: 'Publish all the current workspace files to a github gist',
+        title: 'Publish current workspace to GitHub gist',
         icon: 'fab fa-github',
-        placement: 'bottom-start'
+        placement: 'top'
       },
       {
         action: 'uploadFile',
-        title: 'Load a local file into current workspace',
+        title: 'Upload files into current workspace',
         icon: 'fa fa-upload',
-        placement: 'right'
+        placement: 'top'
+      },
+      {
+        action: 'uploadFolder',
+        title: 'Upload folder into current workspace',
+        icon: 'fas fa-folder-upload',
+        placement: 'top'
       },
       {
         action: 'updateGist',
@@ -41,6 +47,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
     ].filter(item => props.menuItems && props.menuItems.find((name) => { return name === item.action })),
     actions: {}
   })
+  const enableDirUpload = { directory: "", webkitdirectory: "" }
 
   useEffect(() => {
     const actions = {
@@ -55,7 +62,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
   return (
     <>
       <CustomTooltip
-        placement="top-start"
+        placement="top"
         tooltipId="remixuilabelTooltip"
         tooltipClasses="text-nowrap"
         tooltipText={props.title}
@@ -67,7 +74,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
           if (action === 'uploadFile') {
             return (
               <CustomTooltip
-                placement="right"
+                placement={placement as Placement}
                 tooltipId="uploadFileTooltip"
                 tooltipClasses="text-nowrap"
                 tooltipText={<FormattedMessage id={`filePanel.${action}`} defaultMessage={title} />}
@@ -76,15 +83,41 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 <label
                   id={action}
                   data-id={'fileExplorerUploadFile' + action }
-                  className={icon + ' mb-0 remixui_newFile'}
+                  className={icon + ' mb-0 px-1 remixui_newFile'}
                   key={`index-${action}-${placement}-${icon}`}
                 >
                     <input id="fileUpload" data-id="fileExplorerFileUpload" type="file" onChange={(e) => {
                       e.stopPropagation()
+                      _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
                       props.uploadFile(e.target)
                       e.target.value = null
                     }}
                     multiple />
+                </label>
+              </CustomTooltip>
+            )
+          } else if (action === 'uploadFolder') {
+            return (
+              <CustomTooltip
+                placement={placement as Placement}
+                tooltipId="uploadFolderTooltip"
+                tooltipClasses="text-nowrap"
+                tooltipText={<FormattedMessage id={`filePanel.${action}`} defaultMessage={title} />}
+                key={`index-${action}-${placement}-${icon}`}
+              >
+                <label
+                  id={action}
+                  data-id={'fileExplorerUploadFolder' + action }
+                  className={icon + ' mb-0 px-1 remixui_newFile'}
+                  key={`index-${action}-${placement}-${icon}`}
+                >
+                    <input id="folderUpload" data-id="fileExplorerFolderUpload" type="file" onChange={(e) => {
+                      e.stopPropagation()
+                      _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
+                      props.uploadFolder(e.target)
+                      e.target.value = null
+                    }}
+                    {...enableDirUpload} multiple />
                 </label>
               </CustomTooltip>
             )
@@ -113,7 +146,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                       state.actions[action]()
                     }
                   }}
-                  className={'newFile ' + icon + ' remixui_newFile'}
+                  className={'newFile ' + icon + ' px-1 remixui_newFile'}
                   key={`${action}-${title}-${index}`}
                 >
                 </span>

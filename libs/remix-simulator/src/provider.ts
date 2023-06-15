@@ -9,8 +9,22 @@ import { methods as miscMethods } from './methods/misc'
 import { methods as netMethods } from './methods/net'
 import { Transactions } from './methods/transactions'
 import { Debug } from './methods/debug'
-import { generateBlock } from './genesis'
 import { VMContext } from './vm-context'
+
+export interface JSONRPCRequestPayload {
+  params: any[];
+  method: string;
+  id: number;
+  jsonrpc: string;
+}
+
+export interface JSONRPCResponsePayload {
+  result: any;
+  id: number;
+  jsonrpc: string;
+}
+
+export type JSONRPCResponseCallback = (err: Error, result?: JSONRPCResponsePayload) =>  void
 
 export class Provider {
   options: Record<string, string | number>
@@ -18,7 +32,9 @@ export class Provider {
   Accounts
   Transactions
   methods
-  connected: boolean;
+  connected: boolean
+  initialized: boolean
+  pendingRequests: Array<any>
 
   constructor (options: Record<string, string | number> = {}) {
     this.options = options
@@ -39,15 +55,26 @@ export class Provider {
   }
 
   async init () {
+    this.initialized = false
+    this.pendingRequests = []
     await this.vmContext.init()
-    await generateBlock(this.vmContext)
     await this.Accounts.resetAccounts()
     this.Transactions.init(this.Accounts.accounts)
+    this.initialized = true
+    if (this.pendingRequests.length > 0) {
+      this.pendingRequests.map((req) => {
+        this.sendAsync(req.payload, req.callback)
+      })
+      this.pendingRequests = []
+    }
   }
 
-  sendAsync (payload, callback) {
+  sendAsync (payload: JSONRPCRequestPayload, callback: (err: Error, result?: JSONRPCResponsePayload) =>  void) {
     // log.info('payload method is ', payload.method) // commented because, this floods the IDE console
-
+    if (!this.initialized) {
+      this.pendingRequests.push({ payload, callback })
+      return
+    }
     const method = this.methods[payload.method]
     if (this.options.logDetails) {
       info(payload)

@@ -62,7 +62,7 @@ export class CompileAndRun extends Plugin {
       if (clearAllInstances) {
         await this.call('udapp', 'clearAllInstances')
       }
-      await this.call('scriptRunner', 'execute', content)
+      await this.call('scriptRunner', 'execute', content, fileName)
     } catch (e) {
       this.call('notification', 'toast', e.message || e)
     }    
@@ -73,8 +73,8 @@ export class CompileAndRun extends Plugin {
 
     this.on('compilerMetadata', 'artefactsUpdated', async (fileName, contract) => {
       if (this.targetFileName === contract.file) {
+        this.targetFileName = null
         if (contract.object && contract.object.devdoc['custom:dev-run-script']) {
-          this.targetFileName = null
           const file = contract.object.devdoc['custom:dev-run-script']
           if (file) {
             this.runScript(file, true)

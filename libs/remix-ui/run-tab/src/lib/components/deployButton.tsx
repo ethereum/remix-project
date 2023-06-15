@@ -27,7 +27,7 @@ export function DeployButton (props: DeployButtonProps) {
         </Dropdown.Menu>
       </Dropdown> :
       <CustomTooltip
-        placement="right-start"
+        placement="top"
         tooltipId="deployButtonTooltip"
         tooltipClasses="text-nowrap"
         tooltipText={props.buttonOptions.title}

@@ -557,6 +557,9 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
         const compilerData = await testTab.call('compilerArtefacts', 'getCompilerAbstract', file)
         await testTab.call('compilerArtefacts', 'addResolvedContract', contractAddress, compilerData)
       }
+
+      await testTab.testRunner.init(await testTab.call('blockchain', 'web3VM'))
+      await testTab.createTestLibs()
       testTab.testRunner.runTestSources(
         runningTests,
         compilerConfig,
@@ -568,7 +571,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
           callback(error)
         }, (url: string, cb: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
           return testTab.contentImport.resolveAndSave(url).then((result: any) => cb(null, result)).catch((error: Error) => cb(error.message)) // eslint-disable-line @typescript-eslint/no-explicit-any
-        }, { testFilePath: testFilePath, web3: await testTab.call('blockchain', 'web3VM') }
+        }, { testFilePath: testFilePath }
       )
     }).catch((error: Error) => {
       console.log(error)
@@ -718,7 +721,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
             tooltipId="generateTestsButtontooltip"
             tooltipClasses="text-nowrap"
             tooltipText={<FormattedMessage id='solidityUnitTesting.generateTestsButtonTooltip' />}
-            placement={'bottom-start'}
+            placement={'top'}
           >
             <button
               className="btn border w-50"
@@ -736,7 +739,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
             tooltipId="generateTestsLinktooltip"
             tooltipClasses="text-nowrap"
             tooltipText={<FormattedMessage id='solidityUnitTesting.generateTestsLinkTooltip' />}
-            placement={'bottom-start'}
+            placement={'top'}
           >
             <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
             <label className="btn p-1 ml-2 m-0"><FormattedMessage id='solidityUnitTesting.howToUse' /></label>
@@ -745,7 +748,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
         </div>
         <div className="d-flex p-2">
           <CustomTooltip
-            placement={'top-start'}
+            placement={'top'}
               tooltipClasses="text-nowrap"
               tooltipId="info-recorder"
               tooltipText={runButtonTitle}
@@ -755,19 +758,19 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
               <label className="labelOnBtn btn btn-primary p-1 ml-2 m-0"><FormattedMessage id='solidityUnitTesting.run' /></label>
             </button>
           </CustomTooltip>
-          <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} onClick={stopTests}>
-            <CustomTooltip
-              placement={'top-start'}
-              tooltipClasses="text-nowrap"
-              tooltipId="info-recorder"
-              tooltipText={<FormattedMessage id='solidityUnitTesting.runTestsTabStopActionTooltip' />}
-            >
-              <span>
-                <span className="fas fa-stop ml-2"></span>
-                <label className="labelOnBtn btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">{stopButtonLabel}</label>
-              </span>
-            </CustomTooltip>
-          </button>
+          <CustomTooltip
+            placement={'top'}
+            tooltipClasses="text-nowrap"
+            tooltipId="info-recorder"
+            tooltipText={<FormattedMessage id='solidityUnitTesting.runTestsTabStopActionTooltip' />}
+          >
+            <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} onClick={stopTests}>
+            <span>
+              <span className="fas fa-stop ml-2"></span>
+              <label className="labelOnBtn btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">{stopButtonLabel}</label>
+            </span>
+            </button>
+          </CustomTooltip>
         </div>
         <div className="d-flex align-items-center mx-3 pb-2 mt-2 border-bottom">
           <input id="checkAllTests"

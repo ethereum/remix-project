@@ -4,9 +4,11 @@ import { ContractSelectionProps } from './types'
 import { PublishToStorage } from '@remix-ui/publish-to-storage' // eslint-disable-line
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
+import { saveAs } from 'file-saver'
 
 import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
+const _paq = window._paq = window._paq || []
 
 export const ContractSelection = (props: ContractSelectionProps) => {
   const { api, compiledFileName, contractsDetails, contractList, compilerInput, modal } = props
@@ -141,6 +143,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   }
 
   const details = () => {
+    _paq.push(['trackEvent', 'compiler', 'compilerDetails', 'display'])
     if (!selectedContract) throw new Error('No contract compiled yet')
 
     const help = {
@@ -183,8 +186,11 @@ export const ContractSelection = (props: ContractSelectionProps) => {
         }
       </TreeView>
     </div>
-
-    modal(selectedContract, log, 'Close', null)
+    const downloadFn = () => {
+      _paq.push(['trackEvent', 'compiler', 'compilerDetails', 'download'])
+      saveAs(new Blob([JSON.stringify(contractProperties, null, '\t')]), `${selectedContract}_compData.json`)
+    }
+    modal(selectedContract, log, 'Download', downloadFn, true, 'Close', null)
   }
 
   const copyBytecode = () => {
@@ -207,7 +213,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           <article className="mt-2 pb-0">
             <button id="publishOnIpfs" className="btn btn-secondary btn-block" onClick={() => { handlePublishToStorage('ipfs') }}>
               <CustomTooltip
-                placement="right-start"
+                placement="right"
                 tooltipId="publishOnIpfsTooltip"
                 tooltipClasses="text-nowrap"
                 tooltipText={`${intl.formatMessage({ id: 'solidity.publishOn' })} Ipfs`}
@@ -220,7 +226,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </button>
             <button id="publishOnSwarm" className="btn btn-secondary btn-block" onClick={() => { handlePublishToStorage('swarm') }}>
               <CustomTooltip
-                placement="right-start"
+                placement="right"
                 tooltipId="publishOnSwarmTooltip"
                 tooltipClasses="text-nowrap"
                 tooltipText={`${intl.formatMessage({ id: 'solidity.publishOn' })} Swarm`}
@@ -233,7 +239,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </button>
             <button data-id="compilation-details" className="btn btn-secondary btn-block" onClick={() => { details() }}>
               <CustomTooltip
-                placement="right-start"
+                placement="right"
                 tooltipId="CompilationDetailsTooltip"
                 tooltipClasses="text-nowrap"
                 tooltipText="Display Contract Details"

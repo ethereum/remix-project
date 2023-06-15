@@ -132,13 +132,26 @@ export class RunTab extends ViewPlugin {
     }
 
     // basic injected
-    const displayNameInjected = `Injected Provider${(window && window.ethereum && !(window.ethereum.providers && !window.ethereum.selectedProvider)) ?
-      window.ethereum.isCoinbaseWallet || window.ethereum.selectedProvider?.isCoinbaseWallet ? ' - Coinbase' :
-      window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet ? ' - Brave' :
-      window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask ? ' - MetaMask' : '' : ''}`    
-    await addProvider('injected', displayNameInjected, true, false)
+    // if it's the trust wallet provider, we have a specific provider for that, see below
+    if (window && window.ethereum && !(window.ethereum.isTrustWallet || window.ethereum.selectedProvider?.isTrustWallet)) {
+      const displayNameInjected = `Injected Provider${(window && window.ethereum && !(window.ethereum.providers && !window.ethereum.selectedProvider)) ?
+        window.ethereum.isCoinbaseWallet || window.ethereum.selectedProvider?.isCoinbaseWallet ? ' - Coinbase' :
+        window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet ? ' - Brave' :
+        window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask ? ' - MetaMask' : '' : ''}`
+      await addProvider('injected', displayNameInjected, true, false)
+    } else if (window && !window.ethereum) {
+      // we still add "injected" if there's no provider (just so it's visible to the user).
+      await addProvider('injected', 'Injected Provider', true, false)
+    }
+
+    if (window && window.trustwallet) {
+      const displayNameInjected = `Injected Provider - TrustWallet`    
+      await addProvider('injected-trustwallet', displayNameInjected, true, false)
+    }
+    
     // VM
     const titleVM = 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.'
+    await addProvider('vm-shanghai', 'Remix VM (Shanghai)', false, true, 'shanghai', 'settingsVMShanghaiMode', titleVM)
     await addProvider('vm-merge', 'Remix VM (Merge)', false, true, 'merge', 'settingsVMMergeMode', titleVM)
     await addProvider('vm-london', 'Remix VM (London)', false, true, 'london', 'settingsVMLondonMode', titleVM)
     await addProvider('vm-berlin', 'Remix VM (Berlin)', false, true, 'berlin', 'settingsVMBerlinMode', titleVM)
@@ -157,7 +170,7 @@ export class RunTab extends ViewPlugin {
     await addProvider('injected-optimism-provider', 'L2 - Optimism Provider', true, false)
     await addProvider('injected-arbitrum-one-provider', 'L2 - Arbitrum One Provider', true, false)
   
-    await addProvider('walletconnect', 'Wallet Connect', false, false)
+    await addProvider('walletconnect', 'WalletConnect', false, false)
     
   }
 

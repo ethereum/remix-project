@@ -2,9 +2,7 @@ import React, { useEffect, useState, useRef, SyntheticEvent } from 'react' // es
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
-import { FileExplorerProps, MenuItems, FileExplorerState } from '../types'
-import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
-import { contextMenuActions } from '../utils'
+import { FileExplorerProps, WorkSpaceState } from '../types'
 
 import '../css/file-explorer.css'
 import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath } from '@remix-ui/helper'
@@ -14,29 +12,9 @@ import { Drag } from "@remix-ui/drag-n-drop"
 import { ROOT_PATH } from '../utils/constants'
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { name, contextMenuItems, removedContextMenuItems, files, fileState } = props
-  const [state, setState] = useState<FileExplorerState>({
-    ctrlKey: false,
-    newFileName: '',
-    actions: contextMenuActions,
-    focusContext: {
-      element: null,
-      x: null,
-      y: null,
-      type: ''
-    },
-    focusEdit: {
-      element: null,
-      type: '',
-      isNew: false,
-      lastEdit: ''
-    },
-    mouseOverElement: null,
-    showContextMenu: false,
-    reservedKeywords: [ROOT_PATH, 'gist-'],
-    copyElement: []
-  })
-  const [canPaste, setCanPaste] = useState(false)
+  const { name, contextMenuItems, removedContextMenuItems, files, workspaceState, toGist, addMenuItems, 
+    removeMenuItems, handleContextMenu, handleNewFileInput, handleNewFolderInput, uploadFile, uploadFolder, fileState } = props
+  const [state, setState] = useState<WorkSpaceState>( workspaceState)
   const treeRef = useRef<HTMLDivElement>(null)
   
   useEffect(() => {
@@ -58,6 +36,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
       })
     }
   }, [props.focusEdit])
+
+  useEffect(() => {
+    setState(workspaceState)
+  }, [workspaceState])
 
   useEffect(() => {
     if (treeRef.current) {
@@ -87,60 +69,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }, [treeRef.current])
 
-  useEffect(() => {
-    if (canPaste) {
-      addMenuItems([{
-        id: 'paste',
-        name: 'Paste',
-        type: ['folder', 'file'],
-        path: [],
-        extension: [],
-        pattern: [],
-        multiselect: false,
-        label: ''
-      }])
-    } else {
-      removeMenuItems([{
-        id: 'paste',
-        name: 'Paste',
-        type: ['folder', 'file'],
-        path: [],
-        extension: [],
-        pattern: [],
-        multiselect: false,
-        label: ''
-      }])
-    }
-  }, [canPaste])
-
-  const addMenuItems = (items: MenuItems) => {
-    setState(prevState => {
-      // filter duplicate items
-      const actions = items.filter(({ name }) => prevState.actions.findIndex(action => action.name === name) === -1)
-
-      return { ...prevState, actions: [...prevState.actions, ...actions] }
-    })
-  }
-
-  const removeMenuItems = (items: MenuItems) => {
-    setState(prevState => {
-      const actions = prevState.actions.filter(({ id, name }) => items.findIndex(item => id === item.id && name === item.name) === -1)
-      return { ...prevState, actions }
-    })
-  }
-
   const hasReservedKeyword = (content: string): boolean => {
     if (state.reservedKeywords.findIndex(value => content.startsWith(value)) !== -1) return true
     else return false
-  }
-
-  const getFocusedFolder = () => {
-    if (props.focusElement[0]) {
-      if (props.focusElement[0].type === 'folder' && props.focusElement[0].key) return props.focusElement[0].key
-      else if (props.focusElement[0].type === 'gist' && props.focusElement[0].key) return props.focusElement[0].key
-      else if (props.focusElement[0].type === 'file' && props.focusElement[0].key) return extractParentFromKey(props.focusElement[0].key) ? extractParentFromKey(props.focusElement[0].key) : ROOT_PATH
-      else return ROOT_PATH
-    }
   }
 
   const createNewFile = async (newFilePath: string) => {
@@ -159,13 +90,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const deletePath = async (path: string[]) => {
-    if (props.readonly) return props.toast('cannot delete file. ' + name + ' is a read only explorer')
-    if (!Array.isArray(path)) path = [path]
-
-    props.modal(`Delete ${path.length > 1 ? 'items' : 'item'}`, deleteMessage(path), 'OK', () => { props.dispatchDeletePath(path) }, 'Cancel', () => {})
-  }
-
   const renamePath = async (oldPath: string, newPath: string) => {
     try {
       props.dispatchRenamePath(oldPath, newPath)
@@ -174,73 +98,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const downloadPath = async (path: string) => {
-    try {
-      props.dispatchDownloadPath(path)
-    } catch (error) {
-      props.modal('Download Failed', 'Unexpected error while downloading: ' + typeof error === 'string' ? error : error.message, 'Close', async () => {})
-    }
-  }
-
-  const uploadFile = (target) => {
-    const parentFolder = getFocusedFolder()
-    const expandPath = [...new Set([...props.expandPath, parentFolder])]
-
-    props.dispatchHandleExpandPath(expandPath)
-    props.dispatchUploadFile(target, parentFolder)
-  }
-
-  const copyFile = (src: string, dest: string) => {
-    try {
-      props.dispatchCopyFile(src, dest)
-    } catch (error) {
-      props.modal('Copy File Failed', 'Unexpected error while copying file: ' + src, 'Close', async () => {})
-    }
-  }
-
-  const copyFolder = (src: string, dest: string) => {
-    try {
-      props.dispatchCopyFolder(src, dest)
-    } catch (error) {
-      props.modal('Copy Folder Failed', 'Unexpected error while copying folder: ' + src, 'Close', async () => {})
-    }
-  }
-
   const publishToGist = (path?: string, type?: string) => {
     props.modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
   }
 
-  const pushChangesToGist = (path?: string, type?: string) => {
-    props.modal('Create a public gist', 'Are you sure you want to push changes to remote gist file on github.com?', 'OK', () => toGist(path, type), 'Cancel', () => {})
-  }
-
-  const publishFolderToGist = (path?: string, type?: string) => {
-    props.modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${path} folder as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
-  }
-
-  const publishFileToGist = (path?: string, type?: string) => {
-    props.modal('Create a public gist', `Are you sure you want to anonymously publish ${path} file as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
-  }
-
-  const toGist = (path?: string, type?: string) => {
-    props.dispatchPublishToGist(path, type)
-  }
-
-  const runScript = async (path: string) => {
-    try {
-      props.dispatchRunScript(path)
-    } catch (error) {
-      props.toast('Run script failed')
-    }
-  }
-
-  const emitContextMenuEvent = (cmd: customAction) => {
-    try {
-      props.dispatchEmitContextMenuEvent(cmd)
-    } catch (error) {
-      props.toast(error)
-    }
-  }
 
   const handleClickFile = (path: string, type: 'folder' | 'file' | 'gist') => {
     if (!state.ctrlKey) {
@@ -284,26 +145,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
       props.dispatchSetFocusElement([{ key: path, type }])
       props.dispatchHandleExpandPath(expandPath)
     }
-  }
-
-  const handleContextMenu = (pageX: number, pageY: number, path: string, content: string, type: string) => {
-    if (!content) return
-    setState(prevState => {
-      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY, type }, focusEdit: { ...prevState.focusEdit, lastEdit: content }, showContextMenu: prevState.focusEdit.element !== path }
-    })
-  }
-
-  const hideContextMenu = () => {
-    setState(prevState => {
-      return { ...prevState, focusContext: { element: null, x: 0, y: 0, type: '' }, showContextMenu: false }
-    })
-  }
-
-  const editModeOn = (path: string, type: string, isNew = false) => {
-    if (props.readonly) return props.toast('Cannot write/modify file system in read only mode.')
-    setState(prevState => {
-      return { ...prevState, focusEdit: { ...prevState.focusEdit, element: path, isNew, type } }
-    })
   }
 
   const editModeOff = async (content: string) => {
@@ -358,51 +199,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const handleNewFileInput = async (parentFolder?: string) => {
-    if (!parentFolder) parentFolder = getFocusedFolder()
-    const expandPath = [...new Set([...props.expandPath, parentFolder])]
-
-    await props.dispatchAddInputField(parentFolder, 'file')
-    props.dispatchHandleExpandPath(expandPath)
-    editModeOn(parentFolder + '/blank', 'file', true)
-  }
-
-  const handleNewFolderInput = async (parentFolder?: string) => {
-    if (!parentFolder) parentFolder = getFocusedFolder()
-    else if ((parentFolder.indexOf('.sol') !== -1) || (parentFolder.indexOf('.js') !== -1)) parentFolder = extractParentFromKey(parentFolder)
-    const expandPath = [...new Set([...props.expandPath, parentFolder])]
-
-    await props.dispatchAddInputField(parentFolder, 'folder')
-    props.dispatchHandleExpandPath(expandPath)
-    editModeOn(parentFolder + '/blank', 'folder', true)
-  }
-
-  const handleCopyClick = (path: string, type: 'folder' | 'gist' | 'file') => {
-    setState(prevState => {
-      return { ...prevState, copyElement: [{ key: path, type }] }
-    })
-    setCanPaste(true)
-    props.toast(`Copied to clipboard ${path}`)
-  }
-
-  const handlePasteClick = (dest: string, destType: string) => {
-    dest = destType === 'file' ? extractParentFromKey(dest) || ROOT_PATH : dest
-    state.copyElement.map(({ key, type }) => {
-      type === 'file' ? copyFile(key, dest) : copyFolder(key, dest)
-    })
-  }
-
-  const deleteMessage = (path: string[]) => {
-    return (
-      <div>
-        <div>Are you sure you want to delete {path.length > 1 ? 'these items' : 'this item'}?</div>
-        {
-          path.map((item, i) => (<li key={i}>{item}</li>))
-        }
-      </div>
-    )
-  }
-
+  
   const handleFileExplorerMenuClick = (e: SyntheticEvent) => {
     e.stopPropagation()
     if (e && (e.target as any).getAttribute('data-id') === 'fileExplorerUploadFileuploadFile') return // we don't want to let propagate the input of type file
@@ -415,17 +212,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
       expandPath = [...new Set(props.expandPath.filter(key => key && (typeof key === 'string')))]
     }
     props.dispatchHandleExpandPath(expandPath)
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleCopyFileNameClick = (path: string, _type: string) => {
-    const fileName = extractNameFromKey(path)
-    navigator.clipboard.writeText(fileName)
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleCopyFilePathClick = (path: string, _type: string) => {
-    navigator.clipboard.writeText(path)
   }
 
   const handleFileMove = (dest: string, src: string) => {
@@ -459,6 +245,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                 createNewFolder={handleNewFolderInput}
                 publishToGist={publishToGist}
                 uploadFile={uploadFile}
+                uploadFolder={uploadFolder}
               />
             </div>
           }
@@ -467,53 +254,27 @@ export const FileExplorer = (props: FileExplorerProps) => {
             <TreeView id='treeViewMenu'>
               {
                 files[ROOT_PATH] && Object.keys(files[ROOT_PATH]).map((key, index) => <FileRender
-                  file={files[ROOT_PATH][key]}
-                  fileDecorations={fileState}
-                  index={index}
-                  focusContext={state.focusContext}
-                  focusEdit={state.focusEdit}
-                  focusElement={props.focusElement}
-                  ctrlKey={state.ctrlKey}
-                  expandPath={props.expandPath}
-                  editModeOff={editModeOff}
-                  handleClickFile={handleClickFile}
-                  handleClickFolder={handleClickFolder}
-                  handleContextMenu={handleContextMenu}
-                  key={index}
-                  showIconsMenu={props.showIconsMenu}
-                  hideIconsMenu={props.hideIconsMenu}
-                  
-                />)
+                file={files[ROOT_PATH][key]}
+                fileDecorations={fileState}
+                index={index}
+                focusContext={state.focusContext}
+                focusEdit={state.focusEdit}
+                focusElement={props.focusElement}
+                ctrlKey={state.ctrlKey}
+                expandPath={props.expandPath}
+                editModeOff={editModeOff}
+                handleClickFile={handleClickFile}
+                handleClickFolder={handleClickFolder}
+                handleContextMenu={handleContextMenu}
+                key={index}
+                showIconsMenu={props.showIconsMenu}
+                hideIconsMenu={props.hideIconsMenu}
+              />)
               }
             </TreeView>
           </div>
         </TreeViewItem>
       </TreeView>
-      { state.showContextMenu &&
-        <FileExplorerContextMenu
-          actions={props.focusElement.length > 1 ? state.actions.filter(item => item.multiselect) : state.actions.filter(item => !item.multiselect)}
-          hideContextMenu={hideContextMenu}
-          createNewFile={handleNewFileInput}
-          createNewFolder={handleNewFolderInput}
-          deletePath={deletePath}
-          downloadPath={downloadPath}
-          renamePath={editModeOn}
-          runScript={runScript}
-          copy={handleCopyClick}
-          paste={handlePasteClick}
-          copyFileName={handleCopyFileNameClick}
-          copyPath={handleCopyFilePathClick}
-          emit={emitContextMenuEvent}
-          pageX={state.focusContext.x}
-          pageY={state.focusContext.y}
-          path={state.focusContext.element}
-          type={state.focusContext.type}
-          focus={props.focusElement}
-          pushChangesToGist={pushChangesToGist}
-          publishFolderToGist={publishFolderToGist}
-          publishFileToGist={publishFileToGist}
-        />
-      }
     </div>
     </Drag>
   )

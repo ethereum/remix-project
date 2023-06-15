@@ -1,4 +1,4 @@
-import { Plugin } from "@remixproject/engine/lib/abstract";
+import { Plugin } from "@remixproject/engine";
 import { EventEmitter } from "events";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface ThemeModule extends Plugin<any, any> {

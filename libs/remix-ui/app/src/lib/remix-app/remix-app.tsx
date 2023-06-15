@@ -9,6 +9,7 @@ import AppDialogs from './components/modals/dialogs'
 import DialogViewPlugin from './components/modals/dialogViewPlugin'
 import { AppContext } from './context/context'
 import { IntlProvider } from 'react-intl'
+import { CustomTooltip } from '@remix-ui/helper';
 
 interface IRemixAppUi {
   app: any
@@ -84,11 +85,18 @@ const RemixApp = (props: IRemixAppUi) => {
         <OriginWarning></OriginWarning>
         <MatomoDialog hide={!appReady}></MatomoDialog>
         <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
-          <div id="icon-panel" data-id="remixIdeIconPanel" className="iconpanel bg-light">{props.app.menuicons.render()}</div>
+          <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light">{props.app.menuicons.render()}</div>
           <div ref={sidePanelRef} id="side-panel" data-id="remixIdeSidePanel" className={`sidepanel border-right border-left ${hideSidePanel ? 'd-none' : ''}`}>{props.app.sidePanel.render()}</div>
           <DragBar resetTrigger={resetTrigger} maximiseTrigger={maximiseTrigger} minWidth={285} refObject={sidePanelRef} hidden={hideSidePanel} setHideStatus={setHideSidePanel}></DragBar>
-          <div id="main-panel" data-id="remixIdeMainPanel" className='mainpanel'>
+          <div id="main-panel" data-id="remixIdeMainPanel" className='mainpanel d-flex'>
             <RemixUIMainPanel Context={AppContext}></RemixUIMainPanel>
+            <CustomTooltip
+              placement="bottom"
+              tooltipId="overlay-tooltip-all-tabs"
+              tooltipText="Scroll to see all tabs"
+            >
+              <div className='remix-ui-tabs_end remix-bg-opacity position-absolute position-fixed'></div>
+            </CustomTooltip>
           </div>
         </div>
         <div>{props.app.hiddenPanel.render()}</div>

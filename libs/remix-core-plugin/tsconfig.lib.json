@@ -1,11 +1,6 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "outDir": "../../dist/out-tsc",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "declaration": true,
     "types": ["node"]
   },
   "exclude": [

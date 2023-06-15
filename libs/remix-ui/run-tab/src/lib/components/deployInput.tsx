@@ -8,7 +8,7 @@ export function DeployInput (props: DeployInputProps) {
     <div className="udapp_contractActionsContainerSingle pt-2" style={{ display: 'flex' }}>
       <DeployButton buttonOptions={props.buttonOptions} selectedIndex={props.selectedIndex} setSelectedIndex={props.setSelectedIndex} handleActionClick={props.handleActionClick} deployOptions={props.deployOptions} />
       <CustomTooltip
-        placement="right-start"
+        placement="right"
         tooltipId="deployInputTooltip"
         tooltipClasses="text-nowrap"
         tooltipText={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}

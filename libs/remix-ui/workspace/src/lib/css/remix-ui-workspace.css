@@ -71,14 +71,6 @@
     padding: .25rem;
   }
 
-  .remixui_menuicon .bs-popover-auto[x-placement^="bottom"] .popover-header::before, .bs-popover-bottom .popover-header::before {
-    border-bottom-color: var(--dark) !important
-  }
-
-  .remixui_menuicon .bs-popover-auto[x-placement^="bottom"] > .arrow::after, .bs-popover-bottom > .arrow::after {
-    border-bottom-color: var(--dark) !important
-  }
-
   .custom-dropdown-items {
     padding: 0.25rem 0.25rem;
     border-radius: .25rem;
@@ -99,16 +91,16 @@
   .remixuimenuicon_shadow {
   }
 
+  .remixuimenuicon_hamburger_menu {
+    cursor: pointer;
+  }
+
   .remixuimenuicon_shadow:hover {
     box-shadow: 0px 0px 14px -7px;
   }
 
   .remixui_topmenu {
     padding-bottom: 0.1rem;
-  }
-
-  .remixui_menuwidth {
-    /* width: 8rem; */
   }
 
   #workspacesMenuDropdown > div.custom-dropdown-items {

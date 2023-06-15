@@ -34,20 +34,27 @@ describe('testRunner: remix-tests CLI', function(){
         const expectedHelp = `Usage: remix-tests [options] [command] <file_path>
 
 Arguments:
-  file_path                path to test file or directory
+  file_path                   path to test file or directory
 
 Options:
-  -V, --version            output the version number
-  -c, --compiler <string>  set compiler version (e.g: 0.6.1, 0.7.1 etc)
-  -e, --evm <string>       set EVM version (e.g: petersburg, istanbul etc)
-  -o, --optimize <bool>    enable/disable optimization
-  -r, --runs <number>      set runs (e.g: 150, 250 etc)
-  -v, --verbose <level>    set verbosity level (0 to 5)
-  -h, --help               display help for command
+  -V, --version               output the version number
+  -c, --compiler <string>     set compiler version (e.g: 0.6.1, 0.7.1 etc)
+  -e, --evm <string>          set EVM version (e.g: petersburg, istanbul etc)
+  -o, --optimize <bool>       enable/disable optimization
+  -r, --runs <number>         set runs (e.g: 150, 250 etc)
+  -v, --verbose <level>       set verbosity level (0 to 5)
+  -f, --fork <string>         set hard fork (e.g: istanbul, berlin etc. See
+                              full list of hard forks here:
+                              https://github.com/ethereumjs/ethereumjs-monorepo/tree/master/packages/common/src/hardforks)
+  -n, --nodeUrl <string>      set node url (e.g:
+                              https://mainnet.infura.io/v3/your-api-key)
+  -b, --blockNumber <string>  set block number (e.g: 123456)
+  -k, --killProcess <bool>    kill process when tests fail
+  -h, --help                  display help for command
 
 Commands:
-  version                  output the version number
-  help                     output usage information`
+  version                     output the version number
+  help                        output usage information`
         expect(res.stdout.toString().trim()).to.equal(expectedHelp)
       })
 

@@ -2,7 +2,6 @@
 import { fileDecoration } from '@remix-ui/file-decorators'
 import React, { useEffect, useRef, useState } from 'react'
 import { FileType } from '../types'
-
 export interface FileLabelProps {
   file: FileType,
   focusEdit: {
@@ -70,12 +69,12 @@ export const FileLabel = (props: FileLabelProps) => {
       onKeyDown={handleEditInput}
       onBlur={handleEditBlur}
     >
-        <span
-          className={`text-nowrap remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder' : 'remixui_leaf')}
-          data-path={file.path} title={file.path}
-        >
-          {file.name}
-        </span>
+      <span
+        className={`text-nowrap remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder' : 'remixui_leaf')}
+        data-path={file.path}
+      >
+        {file.name}
+      </span>
     </div>
   )
 }

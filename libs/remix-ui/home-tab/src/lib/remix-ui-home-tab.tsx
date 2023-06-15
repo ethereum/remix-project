@@ -47,7 +47,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   return (
     <div className="d-flex flex-column w-100" data-id="remixUIHTAll">
       <ThemeContext.Provider value={ state.themeQuality }>
-        <div className='d-flex flex-row w-100'>
+        <div className='d-flex flex-row w-100 custom_home_bg'>
           <div className="px-2 pl-3 justify-content-start d-flex border-right flex-column" id="remixUIHTLeft" style={{ width: 'inherit' }}>
             <HomeTabTitle />
             <HomeTabFile plugin={plugin} />

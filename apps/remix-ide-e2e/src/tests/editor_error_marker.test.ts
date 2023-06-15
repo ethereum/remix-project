@@ -8,13 +8,7 @@ module.exports = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://127.0.0.1:8080', true)
   },
-  'Should enable settings': function (browser: NightwatchBrowser) {
-    browser
-      .clickLaunchIcon('settings')
-      .click('[data-id="settingsAutoCompleteLabel"]')
-      .click('[data-id="settingsShowGasLabel"]')
-      .click('[data-id="displayErrorsLabel"]')
-  },
+
   'Should add error marker': function (browser: NightwatchBrowser) {
     browser
     .openFile('contracts')

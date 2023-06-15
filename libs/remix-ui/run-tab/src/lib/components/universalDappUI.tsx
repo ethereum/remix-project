@@ -237,10 +237,8 @@ export function UniversalDappUI (props: UdappProps) {
               {props.context})
             </span>
           </div>
-          <div className="btn-group">
-            <button className="btn p-1 btn-secondary">
-              <CopyToClipboard content={address} direction={"top"} />
-            </button>
+          <div className="btn">
+            <CopyToClipboard content={address} direction={"top"} />
           </div>
         </div>
         <CustomTooltip
@@ -249,13 +247,12 @@ export function UniversalDappUI (props: UdappProps) {
           tooltipId="udapp_udappCloseTooltip"
           tooltipText="Remove from the list"
         >
-          <button
-            className="udapp_udappClose mr-1 p-1 btn btn-secondary align-items-center"
+          <i
+            className="udapp_closeIcon m-1 fas fa-times align-self-center"
+            aria-hidden="true"
             data-id="universalDappUiUdappClose"
             onClick={remove}
-          >
-            <i className="udapp_closeIcon fas fa-times" aria-hidden="true"></i>
-          </button>
+          ></i>
         </CustomTooltip>
       </div>
       <div
@@ -298,7 +295,7 @@ export function UniversalDappUI (props: UdappProps) {
                     lookupOnly={lookupOnly}
                     key={index}
                   />
-                  <div className="udapp_value" data-id="udapp_value">
+                  { lookupOnly && <div className="udapp_value" data-id="udapp_value">
                     <TreeView id="treeView">
                       {Object.keys(props.instance.decodedResponse || {}).map(
                         (key) => {
@@ -322,7 +319,7 @@ export function UniversalDappUI (props: UdappProps) {
                         }
                       )}
                     </TreeView>
-                  </div>
+                  </div> }
                 </div>
               );
             })}

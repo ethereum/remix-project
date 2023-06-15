@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react' // eslint-disable-lin
 import { FormattedMessage } from 'react-intl'
 import { PluginRecord } from '../types'
 import './panel.css'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { CustomTooltip } from '@remix-ui/helper'
 
 export interface RemixPanelProps {
@@ -39,16 +38,14 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
         <div className="d-flex flex-row">
           <div className="d-flex flex-row">
             {plugin?.profile?.maintainedBy?.toLowerCase() === "remix" && (
-              <OverlayTrigger
-                placement="right"
-                overlay={
-                  <Tooltip id="maintainedByTooltip" className="text-nowrap">
-                    <span>{"Maintained by Remix"}</span>
-                  </Tooltip>
-                }
-              >
+              <CustomTooltip
+                placement="right-end"
+                tooltipId="maintainedByTooltip"
+                tooltipClasses="text-nowrap"
+                tooltipText="Maintained by Remix"
+                >
                 <i aria-hidden="true" className="text-success mt-1 px-1 fas fa-check"></i>
-              </OverlayTrigger>
+              </CustomTooltip>
             )}
           </div>
           <div className="swapitHeaderInfoSection d-flex justify-content-between" data-id='swapitHeaderInfoSectionId' onClick={toggleClass}>
@@ -63,7 +60,6 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
           </div>
         </div>
       </div>
-      <div className="d-flex w-100 flex-row py-2"></div>
       <div className={`bg-light mx-3 mb-2 p-3 pt-1 border-bottom flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
         {plugin?.profile?.author && <span className="d-flex flex-row align-items-center">
           <label className="mb-0 pr-2"><FormattedMessage id='panel.author' />:</label>
@@ -76,7 +72,14 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
         {plugin?.profile?.documentation && <span className="d-flex flex-row align-items-center">
           <label className="mb-0 pr-2"><FormattedMessage id='panel.documentation' />:</label>
           <span>
-            <a href={plugin?.profile?.documentation} className="titleInfo p-0 mb-2" title="link to documentation" target="_blank" rel="noreferrer"><i aria-hidden="true" className="fas fa-book"></i></a>
+            <CustomTooltip
+              placement="right-end"
+              tooltipId="linkToDocsTooltip"
+              tooltipClasses=" text-nowrap "
+              tooltipText="Link to documentation"
+            >
+              <a href={plugin?.profile?.documentation} className="titleInfo p-0 mb-2" target="_blank" rel="noreferrer"><i aria-hidden="true" className="fas fa-book"></i></a>
+            </CustomTooltip>
           </span>
         </span>}
         {plugin?.profile?.description && <span className="d-flex flex-row align-items-baseline">

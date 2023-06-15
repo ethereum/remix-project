@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Plugin } from "@remixproject/engine/lib/abstract";
+import { Plugin } from "@remixproject/engine";
 import { EventEmitter } from "events";
 export interface LocaleModule extends Plugin<any, any> {
     currentLocaleState: Record<string, unknown>;

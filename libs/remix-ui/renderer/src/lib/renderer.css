@@ -1,48 +1,47 @@
 .remixui_sol.success,
 .remixui_sol.error,
 .remixui_sol.warning {
-    white-space: pre-line;
-    word-wrap: break-word;
-    cursor: pointer;
-    position: relative;
-    margin: 0.5em 0 1em 0;
-    border-radius: 5px;
-    line-height: 20px;
-    padding: 8px 15px;
+  white-space: pre-line;
+  word-wrap: break-word;
+  cursor: pointer;
+  position: relative;
+  margin: 0.5em 0 1em 0;
+  border-radius: 5px;
+  line-height: 20px;
+  padding: 8px 15px;
 }
 
 .remixui_sol.success pre,
 .remixui_sol.error pre,
 .remixui_sol.warning pre {
-    white-space: pre-line;
-    overflow-y: hidden;
-    background-color: transparent;
-    margin: 0;
-    font-size: 12px;
-    border: 0 none;
-    padding: 0;
-    border-radius: 0;
+  white-space: pre-line;
+  overflow-y: hidden;
+  background-color: transparent;
+  margin: 0;
+  font-size: 12px;
+  border: 0 none;
+  padding: 0;
+  border-radius: 0;
 }
 
 .remixui_sol.success .close,
 .remixui_sol.error .close,
 .remixui_sol.warning .close {
-    visibility: hidden;
-    white-space: pre-line;
-    font-weight: bold;
-    position: absolute;
-    color: hsl(0, 0%, 0%); /* black in style-guide.js */
-    top: 0;
-    right: 0;
-    padding: 0.5em;
+  visibility: hidden;
+  white-space: pre-line;
+  font-weight: bold;
+  position: absolute;
+  color: hsl(0, 0%, 0%); /* black in style-guide.js */
+  top: 0;
+  right: 0;
+  padding: 0.5em;
 }
 
-.remixui_sol.error {
-}
-
-.remixui_sol.warning {
-}
-
-.remixui_sol.success {
-  /* background-color:  // styles.rightPanel.message_Success_BackgroundColor; */
+.remixui_sol.success a,
+.remixui_sol.error a,
+.remixui_sol.warning a {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 0.25rem;
 }

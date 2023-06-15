@@ -13,11 +13,6 @@ export const generateContractMetadat = (config, checked, dispatch) => {
   dispatch({ type: 'contractMetadata', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
 }
 
-export const ethereumVM = (config, checked: boolean, dispatch) => {
-  config.set('settings/always-use-vm', checked)
-  dispatch({ type: 'ethereumVM', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
-}
-
 export const textWrapEventAction = (config, editor, checked, dispatch) => {
   config.set('settings/text-wrap', checked)
   editor.resize(checked)

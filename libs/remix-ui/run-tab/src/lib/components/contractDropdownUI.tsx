@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { ContractDropdownProps, DeployMode } from '../types'
-import { ContractData, FuncABI } from '@remix-project/core-plugin'
+import { ContractData, FuncABI, OverSizeLimit} from '@remix-project/core-plugin'
 import * as ethJSUtil from '@ethereumjs/util'
 import { ContractGUI } from './contractGUI'
 import { CustomTooltip, deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
@@ -246,14 +246,27 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     )
   }
 
-  const isOverSizePrompt = () => {
+  const isOverSizePrompt = (values: OverSizeLimit) => {
     return (
       <div>
-        <FormattedMessage id='udapp.isOverSizePrompt' values={{ br: <br />, a: <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md" target="_blank" rel="noreferrer">eip-170</a> }} />
+        { 
+        values.overSizeEip170 && <div>
+          <FormattedMessage id='udapp.isOverSizePromptEip170' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-170" target="_blank" rel="noreferrer">eip-170</a> }} />
+        </div>
+        }
+        { 
+        values.overSizeEip3860 && <div>
+          <FormattedMessage id='udapp.isOverSizePromptEip3860' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-3860" target="_blank" rel="noreferrer">eip-3860</a> }} />
+        </div>
+        }
       </div>
     )
   }
 
+  let evmVersion = null
+  try {
+    evmVersion = JSON.parse(loadedContractData.metadata).settings.evmVersion
+  } catch (err) {}
   return (
     <div className="udapp_container" data-id="contractDropdownContainer">
       <div className='d-flex justify-content-between'>
@@ -261,7 +274,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
           <label className="udapp_settingsLabel pr-1">
             <FormattedMessage id='udapp.contract' />
           </label>
-          <div className="d-flex">{compilerName && compilerName !== '' && <label style={{ maxHeight: '0.6rem', lineHeight: '1rem' }} data-id="udappCompiledBy">(<FormattedMessage id='udapp.compiledBy' values={{ compilerName: <span className="text-capitalize"> {compilerName}</span> }} />)</label>}</div>
+          {compilerName && compilerName !== '' && <label className='udapp_settingsCompiledBy badge badge-secondary' data-id="udappCompiledBy"><FormattedMessage id='udapp.compiledBy' values={{ compilerName: <span className="text-capitalize"> {compilerName}</span> }} /></label>}
         </div>
         {props.remixdActivated ?
           (<CustomTooltip
@@ -300,6 +313,16 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         </CustomTooltip>
         <span className="py-1" style={{ display: abiLabel.display }}>{abiLabel.content}</span>
       </div>
+      { evmVersion && loadedContractData && <CustomTooltip
+            placement={'right'}
+            tooltipClasses="text-wrap text-left"
+            tooltipId="info-evm-version-warn"
+            tooltipText={<span className="text-left">
+              <FormattedMessage id='udapp.warningEvmVersion' values={{ evmVersion }}/>
+            </span>}
+          >
+            <span className='udapp_evmVersion badge badge-secondary'>evm version: {evmVersion}</span>
+          </CustomTooltip> }
       <div>
         <div className="udapp_deployDropdown">
           {((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? intl.formatMessage({ id: 'udapp.noCompiledContracts' })
@@ -359,7 +382,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
             tooltipText={atAddressOptions.title}
             >
               <div id="runAndDeployAtAdressButtonContainer" onClick={loadFromAddress} data-title={atAddressOptions.title}>
-                <button className="udapp_atAddress btn btn-sm btn-info" id="runAndDeployAtAdressButton" disabled={atAddressOptions.disabled} style={{ pointerEvents: 'none' }} onClick={loadFromAddress} data-title={atAddressOptions.title}>
+                <button className="udapp_atAddress btn btn-sm btn-primary" id="runAndDeployAtAdressButton" disabled={atAddressOptions.disabled} style={{ pointerEvents: 'none' }} onClick={loadFromAddress} data-title={atAddressOptions.title}>
                   <FormattedMessage id='udapp.atAddress' />
                 </button>
               </div>

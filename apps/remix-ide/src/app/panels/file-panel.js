@@ -30,7 +30,7 @@ const { SlitherHandle } = require('../files/slither-handle.js')
 const profile = {
   name: 'filePanel',
   displayName: 'File explorer',
-  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getWorkspaces', 'createWorkspace', 'setWorkspace', 'registerContextMenuItem', 'renameWorkspace', 'deleteWorkspace'],
+  methods: ['createNewFile', 'uploadFile', 'getCurrentWorkspace', 'getAvailableWorkspaceName', 'getWorkspaces', 'createWorkspace', 'setWorkspace', 'registerContextMenuItem', 'renameWorkspace', 'deleteWorkspace'],
   events: ['setWorkspace', 'workspaceRenamed', 'workspaceDeleted', 'workspaceCreated'],
   icon: 'assets/img/fileManager.webp',
   description: 'Remix IDE file explorer',
@@ -66,6 +66,15 @@ module.exports = class Filepanel extends ViewPlugin {
 
   /**
    * @param item { id: string, name: string, type?: string[], path?: string[], extension?: string[], pattern?: string[] }
+   * typically: 
+   * group 0 for file manipulations
+   * group 1 for download operations
+   * group 2 for running operations (script for instance)
+   * group 3 for publishing operations (gist)
+   * group 4 for copying operations
+   * group 5 for solidity file operations (flatten for instance)
+   * group 6 for compiling operations
+   * group 7 for generating resource files (UML, documentation, ...)
    * @param callback (...args) => void
    */
   registerContextMenuItem (item) {
@@ -92,6 +101,17 @@ module.exports = class Filepanel extends ViewPlugin {
 
   getWorkspaces () {
     return this.workspaces
+  }
+
+  getAvailableWorkspaceName (name) {
+    if(!this.workspaces) return name
+    let index = 1
+    let workspace = this.workspaces.find(workspace => workspace.name === name + ' - ' + index)
+    while (workspace) {
+      index++
+      workspace = this.workspaces.find(workspace => workspace.name === name + ' - ' + index)      
+    }
+    return name + ' - ' + index
   }
 
   setWorkspaces (workspaces) {

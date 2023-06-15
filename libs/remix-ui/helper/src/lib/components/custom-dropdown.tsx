@@ -1,6 +1,8 @@
 // The forwardRef is important!!
 
 import React, { Ref } from "react"
+import { CustomTooltip } from '@remix-ui/helper'
+
 
 // Dropdown needs access to the DOM node in order to position the Menu
 export const CustomToggle = React.forwardRef(({ children, onClick, icon, className = '' }: { children: React.ReactNode, onClick: (e) => void, icon: string, className: string }, ref: Ref<HTMLButtonElement>) => (
@@ -27,17 +29,25 @@ export const CustomIconsToggle = React.forwardRef(({ onClick, icon, className = 
       e.preventDefault()
       onClick()
     }}
-    className={`${className.replace('dropdown-toggle', '')} mb-0 pb-0 d-flex justify-content-end align-items-end remixuimenuicon_shadow fs-3`}
+    className={`${className.replace('dropdown-toggle', '')} mr-1 mb-0 pb-0 d-flex justify-content-end align-items-end remixuimenuicon_shadow remixuimenuicon_hamburger_menu fs-3`}
     data-id="workspaceMenuDropdown"
   >
-    { icon && <i style={{ fontSize: 'large' }} className={`${icon}`} data-id="workspaceDropdownMenuIcon"></i> }
+    { icon && <CustomTooltip
+      placement={"top"}
+      tooltipClasses="text-nowrap text-left"
+      tooltipId="remixHamburgerTooltip"
+      tooltipText='Workspace actions'
+    >
+      <i style={{ fontSize: 'large' }} className={`${icon}`} data-id="workspaceDropdownMenuIcon"></i>
+    </CustomTooltip>  
+    }
   </span>
 ))
 
 // forwardRef again here!
 // Dropdown needs access to the DOM of the Menu to measure it
 export const CustomMenu = React.forwardRef(
-  ({ children, style, className, 'aria-labelledby': labeledBy }: { children: React.ReactNode, style?: React.CSSProperties, className: string, 'aria-labelledby'?: string }, ref: Ref<HTMLDivElement>) => {
+  ({ children, style, 'data-id': dataId, className, 'aria-labelledby': labeledBy }: { children: React.ReactNode, style?: React.CSSProperties, 'data-id'?: string, className: string, 'aria-labelledby'?: string }, ref: Ref<HTMLDivElement>) => {
     const height = window.innerHeight * 0.6
     return (
       <div
@@ -45,6 +55,7 @@ export const CustomMenu = React.forwardRef(
         style={style}
         className={className}
         aria-labelledby={labeledBy}
+        data-id={dataId}
       >
         <ul className="overflow-auto list-unstyled mb-0" style={{ maxHeight: height+'px' }}>
           {

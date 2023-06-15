@@ -3,7 +3,6 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "types": ["node"],
-    "module": "es2020"
   },
   "exclude": ["**/*.spec.ts", "**/*.spec.tsx", "./src/assets/**/*"],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]

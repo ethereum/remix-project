@@ -3,6 +3,10 @@ const webpack = require('webpack')
 const TerserPlugin = require("terser-webpack-plugin")
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 
+const versionData = {
+  timestamp: Date.now(),
+  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development'
+}
 // Nx plugins for webpack.
 module.exports = composePlugins(withNx(), (config) => {
   // Update the webpack config as needed here.
@@ -30,7 +34,6 @@ module.exports = composePlugins(withNx(), (config) => {
     "vm": require.resolve('vm-browserify'),
   }
 
-
   // add externals
   config.externals = {
     ...config.externals,
@@ -40,6 +43,9 @@ module.exports = composePlugins(withNx(), (config) => {
   // add public path
   config.output.publicPath = '/'
 
+  // set filename
+  config.output.filename = `[name].plugin-etherscan.${versionData.timestamp}.js`
+  config.output.chunkFilename = `[name].plugin-etherscan.${versionData.timestamp}.js`
 
 
   // add copy & provide plugin
@@ -77,6 +83,10 @@ module.exports = composePlugins(withNx(), (config) => {
     }),
     new CssMinimizerPlugin(),
   ];
+
+  config.watchOptions = {
+    ignored: /node_modules/
+  }
 
   return config;
 });

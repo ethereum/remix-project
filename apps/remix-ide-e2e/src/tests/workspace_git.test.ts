@@ -11,11 +11,12 @@ module.exports = {
   'Should not be able to create GIT without credentials #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="workspaceCreate"]')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       .waitForElementVisible({
-        selector: "//*[@class='text-warning' and contains(.,'Please add username and email')]",
+        selector: "//*[@class='text-warning' and contains(.,'add username and email')]",
         locateStrategy: 'xpath'
       })
       .waitForElementPresent({
@@ -43,7 +44,8 @@ module.exports = {
     browser
       .clickLaunchIcon('filePanel')
       .waitForElementNotVisible('[data-id="workspaceGitPanel"]')
-      .click('*[data-id="workspaceCreate"]')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation

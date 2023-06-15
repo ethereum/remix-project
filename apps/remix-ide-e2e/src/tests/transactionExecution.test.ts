@@ -134,6 +134,22 @@ module.exports = {
       .click('*[data-id="deployAndRunClearInstances"]')
   },
 
+  'Should use scientific notation as parameters #group2': function (browser: NightwatchBrowser) {
+    browser.testContracts('scientific_notation.sol', sources[8]['scientific_notation.sol'], ['test'])
+      .clickLaunchIcon('udapp')
+      .click('.udapp_contractActionsContainerSingle > button')
+      .clickInstance(0)
+      .clickFunction('inputValue1 - transact (not payable)', { types: 'uint256 _u, int256 _i', values: '"101e3", "-1.13e4"' })
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '101000', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '-11300', 60000)
+      .clickFunction('inputValue2 - transact (not payable)', { types: 'uint256 _u', values: '2.345e10' })
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '2340000000', 60000)
+      .clickFunction('inputValue3 - transact (not payable)', { types: 'uint256[] _u', values: '["2.445e10", "13e1"]' })
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '24450000000', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '130', 60000)
+      .click('*[data-id="deployAndRunClearInstances"]')      
+  },
+
   'Should Compile and Deploy a contract which define a custom error, the error should be logged in the terminal #group3': function (browser: NightwatchBrowser) {
     browser.testContracts('customError.sol', sources[4]['customError.sol'], ['C'])
       .clickLaunchIcon('udapp')
@@ -141,7 +157,6 @@ module.exports = {
       .click('.udapp_contractActionsContainerSingle > button')
       .clickInstance(0)
       .clickFunction('g - transact (not payable)')
-      .pause(5000)
       .journalLastChildIncludes('Error provided by the contract:')
       .journalLastChildIncludes('CustomError : error description')
       .journalLastChildIncludes('Parameters:')
@@ -182,7 +197,6 @@ module.exports = {
       .click('.udapp_contractActionsContainerSingle > button')
       .clickInstance(1)
       .clickFunction('h - transact (not payable)')
-      .pause(5000)
       .journalLastChildIncludes('Error provided by the contract:')
       .journalLastChildIncludes('CustomError : error description from library')
       .journalLastChildIncludes('Parameters:')
@@ -233,6 +247,51 @@ module.exports = {
       .clickFunction('resolve - call')
       .perform((done) => {
         browser.verifyCallReturnValue(addressRef, ['0:address: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'])
+          .perform(() => done())
+      })
+  },
+
+  'Should stay connected in the mainnet VM fork and execute state changing operations and non state changing operations #group5': function (browser: NightwatchBrowser) {
+    let addressRef
+    browser
+      .click('*[data-id="deployAndRunClearInstances"]') // clear udapp instances
+      .clickLaunchIcon('filePanel')
+      .testContracts('basic_state.sol', sources[9]['basic_state.sol'], ['BasicState'])
+      .clickLaunchIcon('udapp')
+      .selectContract('BasicState')
+      .createContract('')
+      .clickInstance(0)
+      .getAddressAtPosition(0, (address) => {
+        addressRef = address
+      })
+      .clickFunction('cake - call')
+      .pause(500)
+      .perform((done) => {
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 0'])
+          .perform(() => done())
+      })
+      .clickFunction('up - transact (payable)')
+      .pause(500)
+      .clickFunction('cake - call')
+      .pause(1000)
+      .perform((done) => {
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 1'])
+          .perform(() => done())
+      })
+      .clickFunction('up - transact (payable)')
+      .pause(500)
+      .clickFunction('cake - call')
+      .pause(1000)
+      .perform((done) => {
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 2'])
+          .perform(() => done())
+      })
+      .clickFunction('up - transact (payable)')
+      .pause(500)
+      .clickFunction('cake - call')
+      .pause(1000)
+      .perform((done) => {
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 3'])
           .perform(() => done())
       })
   }
@@ -476,6 +535,38 @@ contract C {
                 return resolver.addr(node);
             }
         }
+        `      
+    }
+  }, {
+    "scientific_notation.sol": {
+      content: `
+      import "hardhat/console.sol";
+      contract test {
+        function inputValue1 (uint _u, int _i) public {
+          console.log(_u);
+          console.logInt(_i);
+        }
+        function inputValue2 (uint _u) public {
+          console.log(_u);
+        }
+        function inputValue3 (uint[] memory _u) public {
+          console.log(_u[0]);
+          console.log(_u[1]);
+        }
+      }
+      `
+    }
+  },
+  {
+    'basic_state.sol': {
+      content:
+        `
+        contract BasicState {
+          uint public cake;
+          function up() public payable {
+             cake++;
+          }
+      }
         `      
     }
   }

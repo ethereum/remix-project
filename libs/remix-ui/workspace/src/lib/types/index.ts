@@ -1,11 +1,11 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import React from 'react'
-import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel'
+import { customAction } from '@remixproject/plugin-api'
 import { fileDecoration } from '@remix-ui/file-decorators'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
 import { ViewPlugin } from '@remixproject/engine-web'
 
-export type action = { name: string, type?: Array<'folder' | 'gist' | 'file'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean }
+export type action = { name: string, type?: Array<'folder' | 'gist' | 'file' | 'workspace'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean, group: number }
 export interface JSONStandardInput {
   language: "Solidity";
   settings?: any,
@@ -82,6 +82,7 @@ export interface FileExplorerProps {
     contextMenuItems: MenuItems,
     removedContextMenuItems: MenuItems,
     files: { [x: string]: Record<string, FileType> },
+    workspaceState: WorkSpaceState,
     fileState: fileDecoration[],
     expandPath: string[],
     focusEdit: string,
@@ -98,6 +99,7 @@ export interface FileExplorerProps {
     dispatchRenamePath: (oldPath: string, newPath: string) => Promise<void>,
     dispatchDownloadPath: (path: string) => Promise<void>,
     dispatchUploadFile: (target?: React.SyntheticEvent, targetFolder?: string) => Promise<void>,
+    dispatchUploadFolder: (target?: React.SyntheticEvent, targetFolder?: string) => Promise<void>,
     dispatchCopyFile: (src: string, dest: string) => Promise<void>,
     dispatchCopyFolder: (src: string, dest: string) => Promise<void>,
     dispatchRunScript: (path: string) => Promise<void>,
@@ -110,7 +112,19 @@ export interface FileExplorerProps {
     dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,
     dispatchHandleExpandPath: (paths: string[]) => Promise<void>,
     dispatchMoveFile: (src: string, dest: string) => Promise<void>,
-    dispatchMoveFolder: (src: string, dest: string) => Promise<void>
+    dispatchMoveFolder: (src: string, dest: string) => Promise<void>,
+    handlePasteClick: (dest: string, destType: string) => void
+    handleCopyClick: (path: string, type: 'folder' | 'gist' | 'file' | 'workspace') => void
+    addMenuItems: (items: MenuItems) => void
+    removeMenuItems: (items: MenuItems) => void
+    handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
+    uploadFile: (target) => void
+    uploadFolder: (target) => void
+    getFocusedFolder: () => string
+    editModeOn: (path: string, type: string, isNew: boolean) => void
+    toGist: (path?: string, type?: string) => void
+    handleNewFileInput: (parentFolder?: string) => Promise<void>
+    handleNewFolderInput: (parentFolder?: string) => Promise<void>
 }
 type Placement = import('react-overlays/usePopper').Placement
 export interface FileExplorerMenuProps {
@@ -120,6 +134,7 @@ export interface FileExplorerMenuProps {
     createNewFolder: (parentFolder?: string) => void,
     publishToGist: (path?: string) => void,
     uploadFile: (target: EventTarget & HTMLInputElement) => void
+    uploadFolder: (target: EventTarget & HTMLInputElement) => void
     tooltipPlacement?: Placement
 }
 export interface FileExplorerContextMenuProps {
@@ -147,27 +162,24 @@ export interface FileExplorerContextMenuProps {
     copyFileName?: (path: string, type: string) => void
     copyPath?: (path: string, type: string) => void
     generateUml?: (path: string) => Promise<void>
+    uploadFile?: (target: EventTarget & HTMLInputElement) => void
 }
 
-export interface FileExplorerState {
+export interface WorkSpaceState {
     ctrlKey: boolean
     newFileName: string
     actions: {
       id: string
       name: string
-      type?: Array<'folder' | 'gist' | 'file'>
+      type?: Array<'folder' | 'gist' | 'file' | 'workspace'>
       path?: string[]
       extension?: string[]
       pattern?: string[]
       multiselect: boolean
-      label: string
+      label: string,
+      group: number
     }[]
-    focusContext: {
-      element: string
-      x: number
-      y: number
-      type: string
-    }
+    focusContext: FileFocusContextType
     focusEdit: {
       element: string
       type: string
@@ -177,8 +189,17 @@ export interface FileExplorerState {
     mouseOverElement: string
     showContextMenu: boolean
     reservedKeywords: string[]
-    copyElement: {
-      key: string
-      type: 'folder' | 'gist' | 'file'
-    }[]
+    copyElement: CopyElementType[]
   }
+
+export type  FileFocusContextType = {
+  element: string
+  x: number
+  y: number
+  type: string
+}
+
+export type CopyElementType = {
+  key: string
+  type: 'folder' | 'gist' | 'file' | 'workspace'
+}

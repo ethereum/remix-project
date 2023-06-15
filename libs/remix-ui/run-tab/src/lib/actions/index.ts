@@ -2,13 +2,13 @@
 import React from 'react'
 import { RunTab } from '../types/run-tab'
 import { resetAndInit, setupEvents } from './events'
-import { createNewBlockchainAccount, fillAccountsList, setExecutionContext, signMessageWithAddress } from './account'
+import { createNewBlockchainAccount, setExecutionContext, signMessageWithAddress } from './account'
 import { clearInstances, clearPopUp, removeInstance, setAccount, setGasFee, setMatchPassphrasePrompt, 
   setNetworkNameFromProvider, setPassphrasePrompt, setSelectedContract, setSendTransactionValue, setUnit, 
   updateBaseFeePerGas, updateConfirmSettings, updateGasPrice, updateGasPriceStatus, updateMaxFee, updateMaxPriorityFee, updateScenarioPath } from './actions'
 import { createInstance, getContext, getFuncABIInputs, getSelectedContract, loadAddress, runTransactions, updateInstanceBalance, syncContractsInternal, isValidContractAddress, isValidContractUpgrade } from './deploy'
 import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity'
-import { ContractData, FuncABI } from "@remix-project/core-plugin"
+import { ContractData, FuncABI, OverSizeLimit } from "@remix-project/core-plugin"
 import { DeployMode, MainnetPrompt } from '../types'
 import { runCurrentScenario, storeScenario } from './recorder'
 import { SolcInput, SolcOutput } from '@openzeppelin/upgrades-core'
@@ -25,12 +25,8 @@ let plugin: RunTab, dispatch: React.Dispatch<any>
 export const initRunTab = (udapp: RunTab) => async (reducerDispatch: React.Dispatch<any>) => {
   plugin = udapp
   dispatch = reducerDispatch
+  setupEvents(plugin, dispatch)  
   resetAndInit(plugin)
-  setupEvents(plugin, dispatch)
-  setInterval(() => {
-    fillAccountsList(plugin, dispatch)
-    updateInstanceBalance(plugin)
-  }, 1000)
 }
 
 export const setAccountAddress = (account: string) => setAccount(dispatch, account)
@@ -43,7 +39,7 @@ export const setPassphraseModal = (passphrase: string) => setPassphrasePrompt(di
 export const setMatchPassphraseModal = (passphrase: string) => setMatchPassphrasePrompt(dispatch, passphrase)
 export const signMessage = (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => signMessageWithAddress(plugin, dispatch, account, message, modalContent, passphrase)
 export const fetchSelectedContract = (contractName: string, compiler: CompilerAbstractType) => getSelectedContract(contractName, compiler)
-export const createNewInstance = async (selectedContract: ContractData, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, publishToStorage: (storage: 'ipfs' | 'swarm', contract: ContractData) => void, mainnetPrompt: MainnetPrompt, isOverSizePrompt: () => JSX.Element, args, deployMode: DeployMode[]) => createInstance(plugin, dispatch, selectedContract, gasEstimationPrompt, passphrasePrompt, publishToStorage, mainnetPrompt, isOverSizePrompt, args, deployMode)
+export const createNewInstance = async (selectedContract: ContractData, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, publishToStorage: (storage: 'ipfs' | 'swarm', contract: ContractData) => void, mainnetPrompt: MainnetPrompt, isOverSizePrompt: (values: OverSizeLimit) => JSX.Element, args, deployMode: DeployMode[]) => createInstance(plugin, dispatch, selectedContract, gasEstimationPrompt, passphrasePrompt, publishToStorage, mainnetPrompt, isOverSizePrompt, args, deployMode)
 export const setSendValue = (value: string) => setSendTransactionValue(dispatch, value)
 export const setBaseFeePerGas = (baseFee: string) => updateBaseFeePerGas(dispatch, baseFee)
 export const setConfirmSettings = (confirmation: boolean) => updateConfirmSettings(dispatch, confirmation)

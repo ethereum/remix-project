@@ -1,11 +1,10 @@
 import { AstNode } from "@remix-project/remix-solidity"
 import { isArray } from "lodash"
-import { editor, languages, Position } from "monaco-editor"
-import monaco from "../../types/monaco"
 import { EditorUIProps } from "../remix-ui-editor"
 import { GeCompletionUnits, GetCompletionKeywords, getCompletionSnippets, GetCompletionTypes, getContextualAutoCompleteBTypeName, getContextualAutoCompleteByGlobalVariable, GetGlobalFunctions, GetGlobalVariable, GetImports } from "./completion/completionGlobals"
-
-export class RemixCompletionProvider implements languages.CompletionItemProvider {
+import { monacoTypes } from '@remix-ui/editor';
+import { retrieveNodesAtPosition } from "../helpers/retrieveNodesAtPosition";
+export class RemixCompletionProvider implements monacoTypes.languages.CompletionItemProvider {
 
     props: EditorUIProps
     monaco: any
@@ -17,7 +16,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
     }
 
     triggerCharacters = ['.', '', '"', '@', '/']
-    async provideCompletionItems(model: editor.ITextModel, position: Position, context: monaco.languages.CompletionContext): Promise<monaco.languages.CompletionList | undefined> {
+    async provideCompletionItems(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, context: monacoTypes.languages.CompletionContext): Promise<monacoTypes.languages.CompletionList | undefined> {
 
         const completionSettings = await this.props.plugin.call('config', 'getAppParameter', 'settings/auto-completion')
         if (!completionSettings) return
@@ -32,7 +31,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
 
         const line = model.getLineContent(position.lineNumber)
         let nodes: AstNode[] = []
-        let suggestions: monaco.languages.CompletionItem[] = []
+        let suggestions: monacoTypes.languages.CompletionItem[] = []
         if (context.triggerCharacter === '"' || context.triggerCharacter === '@' || context.triggerCharacter === '/') {
 
             const lastpart = line.substring(0, position.column - 1).split(';').pop()
@@ -121,7 +120,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
 
         // truncate for performance
         if (filteredNodes.length > this.maximumItemsForContractCompletion) {
-            await this.props.plugin.call('notification', 'toast', `Too many completion items. Only ${this.maximumItemsForContractCompletion} items will be shown.`)
+            // await this.props.plugin.call('notification', 'toast', `Too many completion items. Only ${this.maximumItemsForContractCompletion} items will be shown.`)
             filteredNodes = filteredNodes.slice(0, this.maximumItemsForContractCompletion)
         }
 
@@ -253,17 +252,8 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
 
     private getContractCompletions = async () => {
         let nodes: any[] = []
-        const cursorPosition = this.props.editorAPI.getCursorPosition()
-        let nodesAtPosition = await this.props.plugin.call('codeParser', 'nodesAtPosition', cursorPosition)
-        // if no nodes exits at position, try to get the block of which the position is in
-        const block = await this.props.plugin.call('codeParser', 'getANTLRBlockAtPosition', cursorPosition, null)
+        const { nodesAtPosition, block } = await retrieveNodesAtPosition(this.props.editorAPI, this.props.plugin)
         const fileNodes = await this.props.plugin.call('codeParser', 'getCurrentFileNodes')
-
-        if (!nodesAtPosition.length) {
-            if (block) {
-                nodesAtPosition = await this.props.plugin.call('codeParser', 'nodesAtPosition', block.start)
-            }
-        }
         // find the contract and get the nodes of the contract and the base contracts and imports
         if (isArray(nodesAtPosition) && nodesAtPosition.length) {
             let contractNode: any = {}
@@ -342,7 +332,7 @@ export class RemixCompletionProvider implements languages.CompletionItemProvider
     private getDotCompletions = async (nameOfLastTypedExpression: string, range) => {
         const contractCompletions = await this.getContractCompletions()
         let nodes: any[] = []
-        let suggestions: monaco.languages.CompletionItem[] = []
+        let suggestions: monacoTypes.languages.CompletionItem[] = []
 
         const filterNodes = (nodes: any[], parentNode: any, declarationOf: any = null) => {
             return nodes && nodes.filter(node => {

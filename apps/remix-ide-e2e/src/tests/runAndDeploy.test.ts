@@ -224,7 +224,6 @@ module.exports = {
   'Call web3.eth.getAccounts() using Injected Provider (Metamask)': !function (browser: NightwatchBrowser) {
     browser
       .executeScriptInTerminal('web3.eth.getAccounts()')
-      .pause(2000)
       .journalLastChildIncludes('[ "0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f" ]')
       .end()
   }

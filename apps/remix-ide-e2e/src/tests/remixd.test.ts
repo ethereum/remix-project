@@ -91,9 +91,6 @@ module.exports = {
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
-      .waitForElementVisible('#icon-panel', 2000)
-      .clickLaunchIcon('filePanel')
-      .click('[data-path="ballot.sol"]')
       .addFile('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'])
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js')
@@ -105,11 +102,9 @@ module.exports = {
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
-      .waitForElementVisible('#icon-panel', 2000)
-      .clickLaunchIcon('filePanel')
       .addFile('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'])
       .clickLaunchIcon('solidity')
-      .setSolidityCompilerVersion('soljson-v0.8.0+commit.c7dfd78e.js') // open-zeppelin moved to pragma ^0.8.0
+      .setSolidityCompilerVersion('soljson-v0.8.19+commit.7dd6d404.js') // open-zeppelin moved to pragma ^0.8.0
       .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
   },
   'Static Analysis run with remixd #group3': '' + function (browser) {
@@ -312,7 +307,7 @@ function testImportFromRemixd(browser: NightwatchBrowser, callback: VoidFunction
 }
 
 async function spawnRemixd(path: string): Promise<ChildProcess> {
-  const remixd = spawn('yarn run remixd', [`-s ${path}`], { cwd: process.cwd(), shell: true, detached: true })
+  const remixd = spawn('chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080', [`-s ${path}`], { cwd: process.cwd(), shell: true, detached: true })
   return new Promise((resolve, reject) => {
     remixd.stdout.on('data', function (data) {
       if(

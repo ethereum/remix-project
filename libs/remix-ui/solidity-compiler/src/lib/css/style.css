@@ -137,7 +137,7 @@
 .remixui_log {
   display: flex;
   flex-direction: column;
-  margin-bottom: 5%;
+  margin-bottom: 0.5rem;
   overflow: visible;
 }
 .remixui_key {

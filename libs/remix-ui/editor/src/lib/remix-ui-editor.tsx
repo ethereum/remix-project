@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
-
+import { isArray } from "lodash"
 import Editor, { loader, Monaco } from '@monaco-editor/react'
 import { AlertModal } from '@remix-ui/app'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
@@ -7,17 +7,23 @@ import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solid
 import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
 import { zokratesTokensProvider, zokratesLanguageConfig } from './syntaxes/zokrates'
 import { moveTokenProvider, moveLanguageConfig } from './syntaxes/move'
-
-import './remix-ui-editor.css'
+import { monacoTypes } from '@remix-ui/editor';
 import { loadTypes } from './web-types'
-import monaco from '../types/monaco'
-import { IMarkdownString, IPosition, MarkerSeverity } from 'monaco-editor'
-
+import { retrieveNodesAtPosition } from './helpers/retrieveNodesAtPosition'
 import { RemixHoverProvider } from './providers/hoverProvider'
 import { RemixReferenceProvider } from './providers/referenceProvider'
 import { RemixCompletionProvider } from './providers/completionProvider'
 import { RemixHighLightProvider } from './providers/highlightProvider'
 import { RemixDefinitionProvider } from './providers/definitionProvider'
+import './remix-ui-editor.css'
+
+
+enum MarkerSeverity {
+  Hint = 1,
+  Info = 2,
+  Warning = 4,
+  Error = 8
+}
 
 type sourceAnnotation = {
   row: number,
@@ -59,12 +65,12 @@ export type lineText = {
   className: string
   afterContentClassName: string
   hide: boolean,
-  hoverMessage: IMarkdownString | IMarkdownString[]
+  hoverMessage: monacoTypes.IMarkdownString | monacoTypes.IMarkdownString[]
 }
 
 type errorMarker = {
   message: string
-  severity: MarkerSeverity | 'warning' | 'info' | 'error' | 'hint'
+  severity: monacoTypes.MarkerSeverity | 'warning' | 'info' | 'error' | 'hint'
   position: {
     start: {
       line: number
@@ -78,11 +84,30 @@ type errorMarker = {
   file: string
 }
 
-loader.config({ paths: { vs: 'assets/js/monaco-editor/dev/vs' } })
+
+loader.config({ paths: { vs: 'assets/js/monaco-editor/min/vs' } })
 
 export type DecorationsReturn = {
   currentDecorations: Array<string>
   registeredDecorations?: Array<any>
+}
+
+export type PluginType = {
+  on: (plugin: string, event: string, listener: any) => void
+  call: (plugin: string, method: string, arg1?: any, arg2?: any, arg3?: any, arg4?: any) => any
+}
+
+export type EditorAPIType = {
+  findMatches: (uri: string, value: string) => any
+  getFontSize: () => number,
+  getValue: (uri: string) => string
+  getCursorPosition: (offset?: boolean) => number | monacoTypes.IPosition
+  getHoverPosition: (position: monacoTypes.IPosition) => number
+  addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
+  clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
+  keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
+  addErrorMarker: (errors: errorMarker[], from: string) => void
+  clearErrorMarkers: (sources: string[] | {[fileName: string]: any}, from: string) => void
 }
 
 /* eslint-disable-next-line */
@@ -97,22 +122,8 @@ export interface EditorUIProps {
     onDidChangeContent: (file: string) => void
     onEditorMounted: () => void
   }
-  plugin: {
-    on: (plugin: string, event: string, listener: any) => void
-    call: (plugin: string, method: string, arg1?: any, arg2?: any, arg3?: any, arg4?: any) => any
-  }
-  editorAPI: {
-    findMatches: (uri: string, value: string) => any
-    getFontSize: () => number,
-    getValue: (uri: string) => string
-    getCursorPosition: (offset?: boolean) => number | IPosition
-    getHoverPosition: (position: IPosition) => number
-    addDecoration: (marker: sourceMarker, filePath: string, typeOfDecoration: string) => DecorationsReturn
-    clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
-    keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
-    addErrorMarker: (errors: errorMarker[], from: string) => void
-    clearErrorMarkers: (sources: string[] | {[fileName: string]: any}, from: string) => void
-  }
+  plugin: PluginType
+  editorAPI: EditorAPIType
 }
 export const EditorUI = (props: EditorUIProps) => {
   const [, setCurrentBreakpoints] = useState({})
@@ -252,6 +263,7 @@ export const EditorUI = (props: EditorUIProps) => {
         { token: 'keyword.continue', foreground: warningColor },
         { token: 'keyword.while', foreground: warningColor },
         { token: 'keyword.do', foreground: warningColor },
+        { token: 'keyword.delete', foreground: warningColor },
 
         { token: 'keyword.if', foreground: yellowColor },
         { token: 'keyword.else', foreground: yellowColor },
@@ -425,7 +437,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
   props.editorAPI.addErrorMarker = async (errors: errorMarker[], from: string) => {
 
-    const allMarkersPerfile: Record<string, Array<monaco.editor.IMarkerData>> = {}
+    const allMarkersPerfile: Record<string, Array<monacoTypes.editor.IMarkerData>> = {}
 
     for (const error of errors) {
       let filePath = error.file
@@ -440,7 +452,7 @@ export const EditorUI = (props: EditorUIProps) => {
         'info': MarkerSeverity.Info
       }
       if (model) {
-        const markerData: monaco.editor.IMarkerData = {
+        const markerData: monacoTypes.editor.IMarkerData = {
           severity: (typeof error.severity === 'string') ? errorServerityMap[error.severity] : error.severity,
           startLineNumber: ((error.position.start && error.position.start.line) || 0),
           startColumn: ((error.position.start && error.position.start.column) || 0),
@@ -496,7 +508,7 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
-  props.editorAPI.getHoverPosition = (position: monaco.Position) => {
+  props.editorAPI.getHoverPosition = (position: monacoTypes.Position) => {
     if (!monacoRef.current) return
     const model = editorModelsState[currentFileRef.current]?.model
     if (model) {
@@ -544,7 +556,10 @@ export const EditorUI = (props: EditorUIProps) => {
     reducerListener(props.plugin, dispatch, monacoRef.current, editorRef.current, props.events)
     props.events.onEditorMounted()
     editor.onMouseUp((e) => {
-      if (e && e.target && e.target.toString().startsWith('GUTTER')) {
+      // see https://microsoft.github.io/monaco-editor/typedoc/enums/editor.MouseTargetType.html
+      // 2 is GUTTER_GLYPH_MARGIN
+      // 3 is GUTTER_LINE_NUMBERS
+      if (e && e.target && (e.target.type === 2 || e.target.type === 3)) {
         (window as any).addRemixBreakpoint(e.target.position)
       }
     })
@@ -621,9 +636,70 @@ export const EditorUI = (props: EditorUIProps) => {
         await props.plugin.call('codeFormatter', 'format', file)
       },
     }
+
+    const freeFunctionCondition = editor.createContextKey('freeFunctionCondition', false);
+    let freeFunctionAction
+    const executeFreeFunctionAction = {
+      id: "executeFreeFunction",
+      label: "Run a free function in the Remix VM",
+      contextMenuOrder: 0, // choose the order
+      contextMenuGroupId: "execute", // create a new grouping
+      precondition: 'freeFunctionCondition',
+      keybindings: [
+        // eslint-disable-next-line no-bitwise
+        monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyR,
+      ],
+      run: async () => { 
+        const { nodesAtPosition } = await  retrieveNodesAtPosition(props.editorAPI, props.plugin)        
+        // find the contract and get the nodes of the contract and the base contracts and imports
+        if (nodesAtPosition && isArray(nodesAtPosition) && nodesAtPosition.length) {
+          const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
+          if (freeFunctionNode) {
+            const file = await props.plugin.call('fileManager', 'getCurrentFile')
+            props.plugin.call('solidity-script', 'execute', file, freeFunctionNode.name)
+          } else {
+            props.plugin.call('notification', 'toast', 'This can only execute free function')  
+          }
+        } else {
+          props.plugin.call('notification', 'toast', 'Please go to Remix settings and activate the code editor features or wait that the current editor context is loaded.')
+        }
+      },
+    }
     editor.addAction(formatAction)
     editor.addAction(zoomOutAction)
     editor.addAction(zoominAction)
+    freeFunctionAction = editor.addAction(executeFreeFunctionAction)
+
+    // we have to add the command because the menu action isn't always available (see onContextMenuHandlerForFreeFunction)
+    editor.addCommand(monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyR, () => executeFreeFunctionAction.run())
+
+    const contextmenu = editor.getContribution('editor.contrib.contextmenu')
+    const orgContextMenuMethod = contextmenu._onContextMenu;
+    const onContextMenuHandlerForFreeFunction = async () => {
+      if (freeFunctionAction) {
+        freeFunctionAction.dispose()
+        freeFunctionAction = null
+      }
+      const file = await props.plugin.call('fileManager', 'getCurrentFile')
+      if (!file.endsWith('.sol')) {
+        freeFunctionCondition.set(false)
+        return
+      }
+      const { nodesAtPosition } = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
+      const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')      
+      if (freeFunctionNode) {
+        executeFreeFunctionAction.label = `Run the free function "${freeFunctionNode.name}" in the Remix VM`
+        freeFunctionAction = editor.addAction(executeFreeFunctionAction)
+      }
+      freeFunctionCondition.set(!!freeFunctionNode)
+    }
+    contextmenu._onContextMenu = (...args) => {
+      if (args[0]) args[0].event?.preventDefault()
+      onContextMenuHandlerForFreeFunction()
+        .then(() => orgContextMenuMethod.apply(contextmenu, args))
+        .catch(() => orgContextMenuMethod.apply(contextmenu, args))
+    }
+
     const editorService = editor._codeEditorService;
     const openEditorBase = editorService.openCodeEditor.bind(editorService);
     editorService.openCodeEditor = async (input , source) => {

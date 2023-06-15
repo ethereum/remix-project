@@ -54,7 +54,16 @@ function addFile(browser: NightwatchBrowser, name: string, content: NightwatchCo
             suppressNotFoundErrors: true,
             timeout: 60000
           })
+          .waitForElementVisible({
+            selector: `//*[@data-id='tab-active' and contains(@data-path, "${name}")]`,
+            locateStrategy: 'xpath'
+          })
           .setEditorValue(content.content)
+          .getEditorValue((result) => {
+            if(result != content.content) {
+              browser.setEditorValue(content.content)
+            }
+          })
           .perform(function () {
             done()
           })

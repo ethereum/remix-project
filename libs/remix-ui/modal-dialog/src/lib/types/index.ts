@@ -13,6 +13,7 @@ export interface ModalDialogProps {
   message?: string | JSX.Element,
   okLabel?: string | JSX.Element,
   okFn?: (value?:any) => void,
+  donotHideOnOkClick?: boolean,
   cancelLabel?: string | JSX.Element,
   cancelFn?: () => void,
   modalClass?: string,

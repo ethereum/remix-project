@@ -1,12 +1,18 @@
-import React, { useState, useEffect, useRef, useContext, SyntheticEvent, ChangeEvent, KeyboardEvent } from 'react' // eslint-disable-line
+import React, { useState, useEffect, useRef, useContext, SyntheticEvent, ChangeEvent, KeyboardEvent, MouseEvent } from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Dropdown } from 'react-bootstrap'
-import { CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
+import { CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip, extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
 import { FileExplorer } from './components/file-explorer' // eslint-disable-line
 import { FileSystemContext } from './contexts'
 import './css/remix-ui-workspace.css'
-import { ROOT_PATH } from './utils/constants'
+import { ROOT_PATH, TEMPLATE_NAMES } from './utils/constants'
 import { HamburgerMenu } from './components/workspace-hamburger'
+
+import { MenuItems, WorkSpaceState } from './types'
+import { contextMenuActions } from './utils'
+import FileExplorerContextMenu from './components/file-explorer-context-menu'
+import { customAction } from '@remixproject/plugin-api'
+
 const _paq = window._paq = window._paq || []
 
 const canUpload = window.File || window.FileReader || window.FileList || window.Blob
@@ -36,6 +42,58 @@ export function Workspace () {
   const filteredBranches = selectedWorkspace ? (selectedWorkspace.branches || []).filter(branch => branch.name.includes(branchFilter) && branch.name !== 'HEAD').slice(0, 20) : []
   const currentBranch = selectedWorkspace ? selectedWorkspace.currentBranch : null
 
+  const [canPaste, setCanPaste] = useState(false)
+
+  const [state, setState] = useState<WorkSpaceState>({
+    ctrlKey: false,
+    newFileName: '',
+    actions: contextMenuActions,
+    focusContext: {
+      element: null,
+      x: null,
+      y: null,
+      type: ''
+    },
+    focusEdit: {
+      element: null,
+      type: '',
+      isNew: false,
+      lastEdit: ''
+    },
+    mouseOverElement: null,
+    showContextMenu: false,
+    reservedKeywords: [ROOT_PATH, 'gist-'],
+    copyElement: []
+  })
+
+  useEffect(() => {
+    if (canPaste) {
+      addMenuItems([{
+        id: 'paste',
+        name: 'Paste',
+        type: ['folder', 'file', 'workspace'],
+        path: [],
+        extension: [],
+        pattern: [],
+        multiselect: false,
+        label: '',
+        group: 4
+      }])
+    } else {
+      removeMenuItems([{
+        id: 'paste',
+        name: 'Paste',
+        type: ['folder', 'file', 'workspace'],
+        path: [],
+        extension: [],
+        pattern: [],
+        multiselect: false,
+        label: '',
+        group: 4
+      }])
+    }
+  }, [canPaste])
+
   useEffect(() => {
     let workspaceName = localStorage.getItem('currentWorkspace')
     if (!workspaceName && global.fs.browser.workspaces.length) {
@@ -47,9 +105,15 @@ export function Workspace () {
 
   useEffect(() => {
     if (global.fs.mode === 'browser') {
-      if (global.fs.browser.currentWorkspace) setCurrentWorkspace(global.fs.browser.currentWorkspace)
-      else setCurrentWorkspace(NO_WORKSPACE)
-      global.dispatchFetchWorkspaceDirectory(ROOT_PATH)
+      if (global.fs.browser.currentWorkspace) {
+        setCurrentWorkspace(global.fs.browser.currentWorkspace)
+        global.dispatchFetchWorkspaceDirectory(ROOT_PATH)
+      }
+      else 
+      { 
+        setCurrentWorkspace(NO_WORKSPACE)
+      }
+      
     } else if (global.fs.mode === 'localhost') {
       global.dispatchFetchWorkspaceDirectory(ROOT_PATH)
       setCurrentWorkspace(LOCALHOST)
@@ -76,6 +140,9 @@ export function Workspace () {
     global.modal(intl.formatMessage({ id: 'filePanel.workspace.rename' }), renameModalMessage(), intl.formatMessage({ id: 'filePanel.ok' }), onFinishRenameWorkspace,  intl.formatMessage({ id: 'filePanel.cancel' }))
   }
 
+  const downloadCurrentWorkspace = () => {
+    global.modal(intl.formatMessage({ id: 'filePanel.workspace.download' }), intl.formatMessage({ id: 'filePanel.workspace.downloadConfirm' }), intl.formatMessage({ id: 'filePanel.ok' }), onFinishDownloadWorkspace,  intl.formatMessage({ id: 'filePanel.cancel' }))
+  }
   const createWorkspace = () => {
     global.modal(intl.formatMessage({ id: 'filePanel.workspace.create' }), createModalMessage(), intl.formatMessage({ id: 'filePanel.ok' }), onFinishCreateWorkspace,  intl.formatMessage({ id: 'filePanel.cancel' }))
   }
@@ -105,6 +172,23 @@ export function Workspace () {
     )
   }
 
+  const addMenuItems = (items: MenuItems) => {
+    setState(prevState => {
+      // filter duplicate items
+      const actions = items.filter(({ name }) => prevState.actions.findIndex(action => action.name === name) === -1)
+
+      return { ...prevState, actions: [...prevState.actions, ...actions] }
+    })
+  }
+
+  const removeMenuItems = (items: MenuItems) => {
+    setState(prevState => {
+      const actions = prevState.actions.filter(({ id, name }) => items.findIndex(item => id === item.id && name === item.name) === -1)
+      return { ...prevState, actions }
+    })
+  }
+
+
   const cloneGitRepository = () => {
     global.modal(
       intl.formatMessage({ id: 'filePanel.workspace.clone' }),
@@ -125,6 +209,10 @@ export function Workspace () {
 
   const addSlitherGithubAction = () => {
     global.dispatchCreateSlitherGithubAction()
+  }
+
+  const addHelperScripts = (script: string) => {
+    global.dispatchCreateHelperScripts(script)
   }
 
   const downloadWorkspaces = async () => {
@@ -152,6 +240,15 @@ export function Workspace () {
       await global.dispatchRenameWorkspace(currentWorkspace, workspaceName)
     } catch (e) {
       global.modal(intl.formatMessage({ id: 'filePanel.workspace.rename' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, intl.formatMessage({ id: 'filePanel.cancel' }))
+      console.error(e)
+    }
+  }
+
+  const onFinishDownloadWorkspace = async () => {
+    try {
+      await global.dispatchHandleDownloadWorkspace()
+    } catch (e) {
+      global.modal(intl.formatMessage({ id: 'filePanel.workspace.download' }), e.message, intl.formatMessage({ id: 'filePanel.ok' }), () => {}, intl.formatMessage({ id: 'filePanel.cancel' }))
       console.error(e)
     }
   }
@@ -231,7 +328,10 @@ export function Workspace () {
     } else displayOzCustomRef.current.style.display = 'none'
 
     // @ts-ignore
-    workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value || 'remixDefault'}_${Date.now()}`
+    let displayName = TEMPLATE_NAMES[(workspaceCreateTemplateInput.current && workspaceCreateTemplateInput.current.value) || 'remixDefault']
+    displayName = global.plugin.getAvailableWorkspaceName(displayName)
+    // @ts-ignore
+    workspaceCreateInput.current.value = displayName
   }
 
   const handleTypingUrl = () => {
@@ -250,13 +350,176 @@ export function Workspace () {
     }
   }
 
-  const toggleDropdown = (isOpen: boolean) => {
-    setShowDropdown(isOpen)
+  const handleCopyClick = (path: string, type: 'folder' | 'gist' | 'file' | 'workspace') => {
+    setState(prevState => {
+      return { ...prevState, copyElement: [{ key: path, type }] }
+    })
+    setCanPaste(true)
+    global.toast(`Copied to clipboard ${path}`)
   }
 
-  const handleUpgradeability = () => {
-    // @ts-ignore
-    workspaceCreateInput.current.value = `${workspaceCreateTemplateInput.current.value + '_upgradeable'}_${Date.now()}`
+  const handlePasteClick = (dest: string, destType: string) => {
+    dest = destType === 'file' ? extractParentFromKey(dest) || ROOT_PATH : dest
+    state.copyElement.map(({ key, type }) => {
+      type === 'file' ? copyFile(key, dest) : copyFolder(key, dest)
+    })
+  }
+
+
+  const downloadPath = async (path: string) => {
+    try {
+      global.dispatchDownloadPath(path)
+    } catch (error) {
+      global.modal('Download Failed', 'Unexpected error while downloading: ' + typeof error === 'string' ? error : error.message, 'Close', async () => {})
+    }
+  }
+
+  const copyFile = (src: string, dest: string) => {
+    try {
+      global.dispatchCopyFile(src, dest)
+    } catch (error) {
+      global.modal('Copy File Failed', 'Unexpected error while copying file: ' + src, 'Close', async () => {})
+    }
+  }
+
+  const copyFolder = (src: string, dest: string) => {
+    try {
+      global.dispatchCopyFolder(src, dest)
+    } catch (error) {
+      global.modal('Copy Folder Failed', 'Unexpected error while copying folder: ' + src, 'Close', async () => {})
+    }
+  }
+
+  const handleContextMenu = (pageX: number, pageY: number, path: string, content: string, type: string) => {
+    if (!content) return
+    setState(prevState => {
+      return { ...prevState, focusContext: { element: path, x: pageX, y: pageY, type }, focusEdit: { ...prevState.focusEdit, lastEdit: content }, showContextMenu: prevState.focusEdit.element !== path }
+    })
+  }
+  const getFocusedFolder = () => {
+    const focusElement = global.fs.focusElement
+    if (focusElement[0]) {
+      if (focusElement[0].type === 'folder' && focusElement[0].key) return focusElement[0].key
+      else if (focusElement[0].type === 'gist' && focusElement[0].key) return focusElement[0].key
+      else if (focusElement[0].type === 'file' && focusElement[0].key) return extractParentFromKey(focusElement[0].key) ? extractParentFromKey(focusElement[0].key) : ROOT_PATH
+      else return ROOT_PATH
+    }
+  }
+
+  const uploadFile = (target) => {
+    const parentFolder = getFocusedFolder()
+    const expandPath = [...new Set([...global.fs.browser.expandPath, parentFolder])]
+
+    global.dispatchHandleExpandPath(expandPath)
+    global.dispatchUploadFile(target, parentFolder)
+  }
+
+  const uploadFolder = (target) => {
+    const parentFolder = getFocusedFolder()
+    const expandPath = [...new Set([...global.fs.browser.expandPath, parentFolder])]
+
+    global.dispatchHandleExpandPath(expandPath)
+    global.dispatchUploadFolder(target, parentFolder)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleCopyFileNameClick = (path: string, _type: string) => {
+    const fileName = extractNameFromKey(path)
+    navigator.clipboard.writeText(fileName)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleCopyFilePathClick = (path: string, _type: string) => {
+    navigator.clipboard.writeText(path)
+  }
+
+
+  const hideContextMenu = () => {
+    setState(prevState => {
+      return { ...prevState, focusContext: { element: null, x: 0, y: 0, type: '' }, showContextMenu: false }
+    })
+  }
+
+  const runScript = async (path: string) => {
+    try {
+      global.dispatchRunScript(path)
+    } catch (error) {
+      global.toast('Run script failed')
+    }
+  }
+
+  const emitContextMenuEvent = (cmd: customAction) => {
+    try {
+      global.dispatchEmitContextMenuEvent(cmd)
+    } catch (error) {
+      global.toast(error)
+    }
+  }
+
+
+  const pushChangesToGist = (path?: string, type?: string) => {
+    global.modal('Create a public gist', 'Are you sure you want to push changes to remote gist file on github.com?', 'OK', () => toGist(path, type), 'Cancel', () => {})
+  }
+
+  const publishFolderToGist = (path?: string, type?: string) => {
+    global.modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${path} folder as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
+  }
+
+  const publishFileToGist = (path?: string, type?: string) => {
+    global.modal('Create a public gist', `Are you sure you want to anonymously publish ${path} file as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
+  }
+
+  const deleteMessage = (path: string[]) => {
+    return (
+      <div>
+        <div>Are you sure you want to delete {path.length > 1 ? 'these items' : 'this item'}?</div>
+        {
+          path.map((item, i) => (<li key={i}>{item}</li>))
+        }
+      </div>
+    )
+  }
+
+  const deletePath = async (path: string[]) => {
+    if (global.fs.readonly) return global.toast('cannot delete file. ' + name + ' is a read only explorer')
+    if (!Array.isArray(path)) path = [path]
+
+    global.modal(`Delete ${path.length > 1 ? 'items' : 'item'}`, deleteMessage(path), 'OK', () => { global.dispatchDeletePath(path) }, 'Cancel', () => {})
+  }
+
+  const toGist = (path?: string, type?: string) => {
+    global.dispatchPublishToGist(path, type)
+  }
+
+
+  const editModeOn = (path: string, type: string, isNew = false) => {
+    if (global.fs.readonly) return global.toast('Cannot write/modify file system in read only mode.')
+    setState(prevState => {
+      return { ...prevState, focusEdit: { ...prevState.focusEdit, element: path, isNew, type } }
+    })
+  }
+
+  const handleNewFileInput = async (parentFolder?: string) => {
+    if (!parentFolder) parentFolder = getFocusedFolder()
+    const expandPath = [...new Set([...global.fs.browser.expandPath, parentFolder])]
+
+    await global.dispatchAddInputField(parentFolder, 'file')
+    global.dispatchHandleExpandPath(expandPath)
+    editModeOn(parentFolder + '/blank', 'file', true)
+  }
+
+  const handleNewFolderInput = async (parentFolder?: string) => {
+    if (!parentFolder) parentFolder = getFocusedFolder()
+    else if ((parentFolder.indexOf('.sol') !== -1) || (parentFolder.indexOf('.js') !== -1)) parentFolder = extractParentFromKey(parentFolder)
+    const expandPath = [...new Set([...global.fs.browser.expandPath, parentFolder])]
+
+    await global.dispatchAddInputField(parentFolder, 'folder')
+    global.dispatchHandleExpandPath(expandPath)
+    editModeOn(parentFolder + '/blank', 'folder', true)
+  }
+
+  const toggleDropdown = (isOpen: boolean) => {
+    setShowDropdown(isOpen)
   }
 
   const toggleBranches = (isOpen: boolean) => {
@@ -303,7 +566,7 @@ export function Workspace () {
         <label id="selectWsTemplate" className="form-check-label" style={{fontWeight: "bolder"}}><FormattedMessage id='filePanel.workspace.chooseTemplate' /></label>
         <select name="wstemplate" className="mb-3 form-control custom-select" id="wstemplate" defaultValue='remixDefault' ref={workspaceCreateTemplateInput} onChange={updateWsName}>
           <optgroup style={{fontSize: "medium"}} label="General">
-            <option style={{fontSize: "small"}} value='remixDefault'>Default</option>
+            <option style={{fontSize: "small"}} value='remixDefault'>Basic</option>
             <option style={{fontSize: "small"}} value='blank'>Blank</option>
           </optgroup>
           <optgroup style={{fontSize: "medium"}} label="OpenZeppelin">
@@ -339,7 +602,7 @@ export function Workspace () {
           </div>
 
           <label id="wsName" className="form-check-label d-block mb-1"><FormattedMessage id='filePanel.upgradeability' /></label>
-          <div onChange={handleUpgradeability}>
+          <div>
             <div className="d-flex ml-2 custom-control custom-radio">
                 <input className="custom-control-input" type="radio" name="upgradeability" value="transparent" id="transparent" ref={transparentRadioRef} />
                 <label className="form-check-label custom-control-label" htmlFor="transparent" data-id="upgradeTypeTransparent" >Transparent</label>
@@ -353,7 +616,7 @@ export function Workspace () {
         </div>
 
         <label id="wsName" className="form-check-label" style={{fontWeight: "bolder"}} ><FormattedMessage id='filePanel.workspaceName' /></label>
-        <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={`remixDefault_${Date.now()}`} ref={workspaceCreateInput} className="form-control" />
+        <input type="text" data-id="modalDialogCustomPromptTextCreate" defaultValue={global.plugin.getAvailableWorkspaceName(TEMPLATE_NAMES['remixDefault'])} ref={workspaceCreateInput} className="form-control" />
 
         <div className="d-flex py-2 align-items-center custom-control custom-checkbox">
           <input
@@ -412,68 +675,53 @@ export function Workspace () {
 
   return (
     <div className='d-flex flex-column justify-content-between h-100'>
-      <div className='remixui_container overflow-auto' style={{ maxHeight: selectedWorkspace && selectedWorkspace.isGitRepo ? '95%' : '100%' }}>
-        <div className='d-flex flex-column w-100 mb-1 remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
+      <div className='remixui_container overflow-auto' style={{ maxHeight: selectedWorkspace && selectedWorkspace.isGitRepo ? '95%' : '100%' }} onContextMenu={(e)=>{
+        e.preventDefault()
+        handleContextMenu(e.pageX, e.pageY, ROOT_PATH, "workspace", 'workspace')
+      }
+        }>
+        <div className='d-flex flex-column w-100 remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
           <div>
             <header>
-              <div className="mx-2 mb-2 d-flex flex-column">
-                <div className="d-flex justify-content-between">
-                  <span className="d-flex align-items-end">
-                    <label className="pl-1 form-check-label" htmlFor="workspacesSelect" style={{wordBreak: 'keep-all'}}>
-                      <FormattedMessage id='filePanel.workspace' />
-                    </label>
-                  </span>
-                  {currentWorkspace !== LOCALHOST ? (<span className="remixui_menu remixui_topmenu d-flex justify-content-between align-items-end w-75">
-                    <CustomTooltip
-                      placement="top-end"
-                      tooltipId="createWorkspaceTooltip"
-                      tooltipClasses="text-nowrap"
-                      tooltipText={<FormattedMessage id='filePanel.create' />}
-                    >
-                      <span
-                        hidden={currentWorkspace === LOCALHOST}
-                        id='workspaceCreate'
-                        data-id='workspaceCreate'
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          createWorkspace()
-                          _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', 'workspaceCreate'])
-                        }}
-                        style={{ fontSize: 'large' }}
-                        className='far fa-plus remixui_menuicon d-flex align-self-end'
-                        >
-                      </span>
-                    </CustomTooltip>
-                    <Dropdown id="workspacesMenuDropdown" data-id="workspacesMenuDropdown" onToggle={() => hideIconsMenu(!showIconsMenu)} show={showIconsMenu}>
-                      <Dropdown.Toggle
-                        as={CustomIconsToggle}
-                        onClick={() => {
-                          hideIconsMenu(!showIconsMenu)
-                        }}
-                        icon={'fas fa-bars'}
-                      ></Dropdown.Toggle>
-                      <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='custom-dropdown-items remixui_menuwidth' rootCloseEvent="click">
-                        <HamburgerMenu
-                          createWorkspace={createWorkspace}
-                          deleteCurrentWorkspace={deleteCurrentWorkspace}
-                          deleteAllWorkspaces={deleteAllWorkspaces}
-                          renameCurrentWorkspace={renameCurrentWorkspace}
-                          cloneGitRepository={cloneGitRepository}
-                          downloadWorkspaces={downloadWorkspaces}
-                          restoreBackup={restoreBackup}
-                          hideIconsMenu={hideIconsMenu}
-                          addGithubAction={addGithubAction}
-                          addSlitherGithubAction={addSlitherGithubAction}
-                          addTsSolTestGithubAction={addTsSolTestGithubAction}
-                          showIconsMenu={showIconsMenu}
-                          hideWorkspaceOptions={ currentWorkspace === LOCALHOST }
-                          hideLocalhostOptions={ currentWorkspace === NO_WORKSPACE }
-                          />
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  </span>) : null}
+              <div className="mx-2 my-2 d-flex flex-column">
+                <div className="d-flex">
+                  {currentWorkspace !== LOCALHOST ? (<span className="remixui_topmenu d-flex">
+                      <Dropdown id="workspacesMenuDropdown" data-id="workspacesMenuDropdown" onToggle={() => hideIconsMenu(!showIconsMenu)} show={showIconsMenu}>
+                        <Dropdown.Toggle
+                          as={CustomIconsToggle}
+                          onClick={() => {
+                            hideIconsMenu(!showIconsMenu)
+                          }}
+                          icon={'fas fa-bars'}
+                        ></Dropdown.Toggle>
+                        <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='custom-dropdown-items remixui_menuwidth' rootCloseEvent="click">
+                          <HamburgerMenu
+                            createWorkspace={createWorkspace}
+                            renameCurrentWorkspace={renameCurrentWorkspace}
+                            downloadCurrentWorkspace={downloadCurrentWorkspace}
+                            deleteCurrentWorkspace={deleteCurrentWorkspace}
+                            deleteAllWorkspaces={deleteAllWorkspaces}
+                            cloneGitRepository={cloneGitRepository}
+                            downloadWorkspaces={downloadWorkspaces}
+                            restoreBackup={restoreBackup}
+                            hideIconsMenu={hideIconsMenu}
+                            addGithubAction={addGithubAction}
+                            addSlitherGithubAction={addSlitherGithubAction}
+                            addHelperScripts={addHelperScripts}
+                            addTsSolTestGithubAction={addTsSolTestGithubAction}
+                            showIconsMenu={showIconsMenu}
+                            hideWorkspaceOptions={ currentWorkspace === LOCALHOST }
+                            hideLocalhostOptions={ currentWorkspace === NO_WORKSPACE }
+                            />
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </span>) : null}
+                    <span className="d-flex">
+                      <label className="pl-1 form-check-label" htmlFor="workspacesSelect" style={{wordBreak: 'keep-all'}}>
+                        <FormattedMessage id='filePanel.workspace' />
+                      </label>
+                    </span>                  
                 </div>
-
                 <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
                   <Dropdown.Toggle
                     as={CustomToggle}
@@ -520,19 +768,20 @@ export function Workspace () {
                 </div>
               </header>
             </div>
-            <div className='h-100 mb-4 pb-4 remixui_fileExplorerTree' onFocus={() => { toggleDropdown(false) }}>
+            <div className='h-100 remixui_fileExplorerTree' onFocus={() => { toggleDropdown(false) }}>
             <div className='h-100'>
             { (global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>}
             { !(global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) &&
               (global.fs.mode === 'browser') && (currentWorkspace !== NO_WORKSPACE) &&
               <div className='h-100 remixui_treeview' data-id='filePanelFileExplorerTree'>
                 <FileExplorer
+                  fileState={global.fs.browser.fileState}
                   name={currentWorkspace}
-                  menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '']}
+                  menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '', canUpload ? 'uploadFolder' : '']}
                   contextMenuItems={global.fs.browser.contextMenu.registeredMenuItems}
                   removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
                   files={global.fs.browser.files}
-                  fileState={global.fs.browser.fileState}
+                  workspaceState={state}
                   expandPath={global.fs.browser.expandPath}
                   focusEdit={global.fs.focusEdit}
                   focusElement={global.fs.focusElement}
@@ -547,6 +796,7 @@ export function Workspace () {
                   dispatchRenamePath={global.dispatchRenamePath}
                   dispatchDownloadPath={global.dispatchDownloadPath}
                   dispatchUploadFile={global.dispatchUploadFile}
+                  dispatchUploadFolder={global.dispatchUploadFolder}
                   dispatchCopyFile={global.dispatchCopyFile}
                   dispatchCopyFolder={global.dispatchCopyFolder}
                   dispatchPublishToGist={global.dispatchPublishToGist}
@@ -560,12 +810,24 @@ export function Workspace () {
                   dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                   dispatchMoveFile={global.dispatchMoveFile}
                   dispatchMoveFolder={global.dispatchMoveFolder}
+                  handleCopyClick={handleCopyClick}
+                  handlePasteClick={handlePasteClick}
+                  addMenuItems={addMenuItems}
+                  removeMenuItems={removeMenuItems}
+                  handleContextMenu={handleContextMenu}
+                  uploadFile={uploadFile}
+                  uploadFolder={uploadFolder}
+                  getFocusedFolder={getFocusedFolder}
+                  toGist={toGist}
+                  editModeOn={editModeOn}
+                  handleNewFileInput={handleNewFileInput}
+                  handleNewFolderInput={handleNewFolderInput}
                   />
               </div>
             }
             { global.fs.localhost.isRequestingLocalhost && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div> }
             { (global.fs.mode === 'localhost' && global.fs.localhost.isSuccessfulLocalhost) &&
-              <div className='h-100 filesystemexplorer pb-4 mb-4  remixui_treeview'>
+              <div className='h-100 filesystemexplorer remixui_treeview'>
                 <FileExplorer
                   name='localhost'
                   menuItems={['createNewFile', 'createNewFolder']}
@@ -573,6 +835,7 @@ export function Workspace () {
                   removedContextMenuItems={global.fs.localhost.contextMenu.removedMenuItems}
                   files={global.fs.localhost.files}
                   fileState={[]}
+                  workspaceState={state}
                   expandPath={global.fs.localhost.expandPath}
                   focusEdit={global.fs.focusEdit}
                   focusElement={global.fs.focusElement}
@@ -587,6 +850,7 @@ export function Workspace () {
                   dispatchRenamePath={global.dispatchRenamePath}
                   dispatchDownloadPath={global.dispatchDownloadPath}
                   dispatchUploadFile={global.dispatchUploadFile}
+                  dispatchUploadFolder={global.dispatchUploadFolder}
                   dispatchCopyFile={global.dispatchCopyFile}
                   dispatchCopyFolder={global.dispatchCopyFolder}
                   dispatchPublishToGist={global.dispatchPublishToGist}
@@ -600,6 +864,18 @@ export function Workspace () {
                   dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                   dispatchMoveFile={global.dispatchMoveFile}
                   dispatchMoveFolder={global.dispatchMoveFolder}
+                  handleCopyClick={handleCopyClick}
+                  handlePasteClick={handlePasteClick}
+                  addMenuItems={addMenuItems}
+                  removeMenuItems={removeMenuItems}
+                  handleContextMenu={handleContextMenu}
+                  uploadFile={uploadFile}
+                  uploadFolder={uploadFolder}
+                  getFocusedFolder={getFocusedFolder}
+                  toGist={toGist}
+                  editModeOn={editModeOn}
+                  handleNewFileInput={handleNewFileInput}
+                  handleNewFolderInput={handleNewFolderInput}
                 />
               </div>
             }
@@ -665,6 +941,32 @@ export function Workspace () {
               </div>
             </div>
           </div>
+        }
+        {state.showContextMenu && <FileExplorerContextMenu
+          actions={global.fs.focusElement.length > 1 ? state.actions.filter(item => item.multiselect) : state.actions.filter(item => !item.multiselect)}
+          hideContextMenu={hideContextMenu}
+          createNewFile={handleNewFileInput}
+          createNewFolder={handleNewFolderInput}
+          deletePath={deletePath}
+          renamePath={editModeOn}
+          runScript={runScript}
+          copy={handleCopyClick}
+          paste={handlePasteClick}
+          copyFileName={handleCopyFileNameClick}
+          copyPath={handleCopyFilePathClick}
+          emit={emitContextMenuEvent}
+          pageX={state.focusContext.x}
+          pageY={state.focusContext.y}
+          path={state.focusContext.element}
+          type={state.focusContext.type}
+          focus={global.fs.focusElement}
+          pushChangesToGist={pushChangesToGist}
+          publishFolderToGist={publishFolderToGist}
+          publishFileToGist={publishFileToGist}
+          uploadFile={uploadFile}
+          downloadPath={downloadPath}
+
+        />
         }
     </div>
   )

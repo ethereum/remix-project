@@ -1,9 +1,10 @@
-import { customAction } from '@remixproject/plugin-api/lib/file-system/file-panel/type'
+import { customAction } from '@remixproject/plugin-api'
 import { createContext, SyntheticEvent } from 'react'
 import { BrowserState } from '../reducers/workspace'
 
 export const FileSystemContext = createContext<{
   fs: BrowserState,
+  plugin: any,
   modal:(title: string | JSX.Element, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   dispatchInitWorkspace:() => Promise<void>,
   dispatchFetchDirectory:(path: string) => Promise<void>,
@@ -18,6 +19,7 @@ export const FileSystemContext = createContext<{
   dispatchDeleteAllWorkspaces: () => Promise<void>,
   dispatchPublishToGist: (path?: string, type?: string) => Promise<void>,
   dispatchUploadFile: (target?: SyntheticEvent, targetFolder?: string) => Promise<void>,
+  dispatchUploadFolder: (target?: SyntheticEvent, targetFolder?: string) => Promise<void>,
   dispatchCreateNewFile: (path: string, rootDir: string) => Promise<void>,
   dispatchSetFocusElement: (elements: { key: string, type: 'file' | 'folder' | 'gist' }[]) => Promise<void>,
   dispatchCreateNewFolder: (path: string, rootDir: string) => Promise<void>,
@@ -31,6 +33,7 @@ export const FileSystemContext = createContext<{
   dispatchHandleClickFile: (path: string, type: 'file' | 'folder' | 'gist') => Promise<void>
   dispatchHandleExpandPath: (paths: string[]) => Promise<void>,
   dispatchHandleDownloadFiles: () => Promise<void>,
+  dispatchHandleDownloadWorkspace: () => Promise<void>,
   dispatchHandleRestoreBackup: () => Promise<void>
   dispatchCloneRepository: (url: string) => Promise<void>,
   dispatchMoveFile: (src: string, dest: string) => Promise<void>,
@@ -42,6 +45,7 @@ export const FileSystemContext = createContext<{
   dispatchCreateSolidityGithubAction: () => Promise<void>,
   dispatchCreateTsSolGithubAction: () => Promise<void>,
   dispatchCreateSlitherGithubAction: () => Promise<void>
+  dispatchCreateHelperScripts: (script: string) => Promise<void>
 }>(null)
   
     

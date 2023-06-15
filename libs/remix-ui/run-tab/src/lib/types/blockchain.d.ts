@@ -60,7 +60,7 @@ export class Blockchain extends Plugin<any, any> {
     removeProvider(name: any): void;
     /** Listen on New Transaction. (Cannot be done inside constructor because txlistener doesn't exist yet) */
     startListening(txlistener: any): void;
-    resetEnvironment(): void;
+    resetEnvironment(): Promise<void>;
     /**
      * Create a VM Account
      * @param {{privateKey: string, balance: string}} newAccount The new account to create
@@ -71,7 +71,7 @@ export class Blockchain extends Plugin<any, any> {
     }): any;
     newAccount(_password: any, passwordPromptCb: any, cb: any): any;
     /** Get the balance of an address, and convert wei to ether */
-    getBalanceInEther(address: any, cb: any): void;
+    getBalanceInEther(address: any): Promise<string>;
     pendingTransactionsCount(): number;
     /**
      * This function send a tx only to Remix VM or testnet, will return an error for the mainnet

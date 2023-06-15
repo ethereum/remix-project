@@ -3,7 +3,7 @@ import React, { useState, useReducer, useEffect, useCallback } from 'react' // e
 import { labels, textDark, textSecondary } from './constants'
 
 import './remix-ui-settings.css'
-import { ethereumVM, generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast, saveIpfsSettingsToast, useAutoCompletion, useShowGasInEditor, useDisplayErrors } from './settingsAction'
+import { generateContractMetadat, personal, textWrapEventAction, useMatomoAnalytics, saveTokenToast, removeTokenToast, saveSwarmSettingsToast, saveIpfsSettingsToast, useAutoCompletion, useShowGasInEditor, useDisplayErrors } from './settingsAction'
 import { initialState, toastInitialState, toastReducer, settingReducer } from './settingsReducer'
 import { Toaster } from '@remix-ui/toaster'// eslint-disable-line
 import { RemixUiThemeModule, ThemeModule} from '@remix-ui/theme-module'
@@ -41,17 +41,14 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const metadataConfig = props.config.get('settings/generate-contract-metadata')
     if (metadataConfig === undefined || metadataConfig === null) generateContractMetadat(props.config, true, dispatch)
 
-    const javascriptVM = props.config.get('settings/always-use-vm')
-    if (javascriptVM === null || javascriptVM === undefined) ethereumVM(props.config, true, dispatch)
-
     const useAutoComplete = props.config.get('settings/auto-completion')
-    if (useAutoComplete === null || useAutoComplete === undefined) useAutoCompletion(props.config, false, dispatch)
+    if (useAutoComplete === null || useAutoComplete === undefined) useAutoCompletion(props.config, true, dispatch)
 
     const displayErrors = props.config.get('settings/display-errors')
-    if (displayErrors === null || displayErrors === undefined) useDisplayErrors(props.config, false, dispatch)
+    if (displayErrors === null || displayErrors === undefined) useDisplayErrors(props.config, true, dispatch)
 
     const useShowGas = props.config.get('settings/show-gas')
-    if (useShowGas === null || useShowGas === undefined) useShowGasInEditor(props.config, false, dispatch)
+    if (useShowGas === null || useShowGas === undefined) useShowGasInEditor(props.config, true, dispatch)
   }
   useEffect(() => initValue(), [resetState, props.config])
   useEffect(() => initValue(), [])
@@ -110,10 +107,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     generateContractMetadat(props.config, event.target.checked, dispatch)
   }
 
-  const onchangeOption = (event) => {
-    ethereumVM(props.config, event.target.checked, dispatch)
-  }
-
   const textWrapEvent = (event) => {
     textWrapEventAction(props.config, props.editor, event.target.checked, dispatch)
   }
@@ -148,7 +141,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   const generalConfig = () => {
     const isMetadataChecked = props.config.get('settings/generate-contract-metadata') || false
-    const isEthereumVMChecked = props.config.get('settings/always-use-vm') || false
     const isEditorWrapChecked = props.config.get('settings/text-wrap') || false
     const isPersonalChecked = props.config.get('settings/personal-mode') || false
     const isMatomoChecked = props.config.get('settings/matomo-analytics') || false
@@ -158,44 +150,31 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const displayErrorsChecked = props.config.get('settings/display-errors') || false
     return (
       <div className="$border-top">
-        <CustomTooltip
-          tooltipText="Reset to Default settings"
-          tooltipId="resetDefaultTooltip"
-          tooltipClasses="text-nowrap"
-          placement="top-start"
-        >
-          <div className='d-flex justify-content-end pr-4'>
-            <button className="btn btn-sm btn-secondary ml-2" onClick={() => {
-              try {
-                if ((window as any).remixFileSystem.name === 'indexedDB') {
-                  props.config.clear()
-                  try {
-                    localStorage.clear() // remove the whole storage
-                  } catch (e) {
-                    console.log(e)
-                  }
-                } else {
-                  props.config.clear() // remove only the remix settings
+        <div className='d-flex justify-content-end pr-4'>
+          <button className="btn btn-sm btn-secondary ml-2" onClick={() => {
+            try {
+              if ((window as any).remixFileSystem.name === 'indexedDB') {
+                props.config.clear()
+                try {
+                  localStorage.clear() // remove the whole storage
+                } catch (e) {
+                  console.log(e)
                 }
-                refresh(resetState + 1)
-              } catch (e) {
-                console.log(e)
+              } else {
+                props.config.clear() // remove only the remix settings
               }
-            }}><FormattedMessage id='settings.reset' /></button>
-          </div>
-        </CustomTooltip>
+              refresh(resetState + 1)
+            } catch (e) {
+              console.log(e)
+            }
+          }}><FormattedMessage id='settings.reset' /></button>
+        </div>
         <div className="card-body pt-3 pb-2">
           <h6 className="card-title"><FormattedMessage id='settings.general' /></h6>
           <div className="mt-2 custom-control custom-checkbox mb-1">
             <input onChange={onchangeGenerateContractMetadata} id="generatecontractmetadata" data-id="settingsTabGenerateContractMetadata" type="checkbox" className="custom-control-input" name="contractMetadata" checked={isMetadataChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/generate-contract-metadata')}`} data-id="settingsTabGenerateContractMetadataLabel" htmlFor="generatecontractmetadata">
               <FormattedMessage id='settings.generateContractMetadataText' />
-            </label>
-          </div>
-          <div className="fmt-2 custom-control custom-checkbox mb-1">
-            <input onChange={onchangeOption} className="custom-control-input" id="alwaysUseVM" data-id="settingsTabAlwaysUseVM" type="checkbox" name="ethereumVM" checked={isEthereumVMChecked} />
-            <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/always-use-vm')}`} htmlFor="alwaysUseVM">
-              <FormattedMessage id='settings.ethereunVMText' />
             </label>
           </div>
           <div className="mt-2 custom-control custom-checkbox mb-1">

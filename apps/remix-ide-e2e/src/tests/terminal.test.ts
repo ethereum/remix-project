@@ -202,7 +202,6 @@ module.exports = {
       .addFile('scripts/deploy_storage.js', { content: scriptAutoExec.script })
       .openFile('contracts/storage.sol')
       .sendKeys('body', [browser.Keys.CONTROL, browser.Keys.SHIFT, 's'])
-      .pause(15000)
       .journalLastChildIncludes('147')
   },
 
@@ -318,6 +317,33 @@ module.exports = {
       .executeScriptInTerminal(`web3.eth.getCode('0x75F509A4eDA030470272DfBAf99A47D587E76709')`) // sepolia contract
       .waitForElementContainsText('*[data-id="terminalJournal"]', byteCodeInSepolia, 120000)
   },
+  
+  'Should run free function which logs in the terminal #group10': function (browser: NightwatchBrowser) {
+    const script = `import "hardhat/console.sol";
+
+    function runSomething () view {
+        console.log("test running free function");
+    } 
+    `
+    browser
+      .addFile('test.sol', { content: script })
+      .scrollToLine(3)
+    const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"    
+    const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething" in the Remix VM']`
+    browser.waitForElementVisible('#editorView')
+      .useXpath()
+      .click(path)
+      .pause(3000) // the parser need to parse the code
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions
+            .keyDown(this.Keys.SHIFT)
+            .keyDown(this.Keys.ALT)
+            .sendKeys('r')
+      })
+      .useCss()
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'test running free function', 120000)
+  }
 }
 
 

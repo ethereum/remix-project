@@ -13,7 +13,8 @@ export type JsonDataRequest = {
 export type JsonDataResult = {
   id: number,
   jsonrpc: string // version
-  result: any
+  result?: any,
+  error?: any,
 }
 
 export type RejectRequest = (error: Error) => void

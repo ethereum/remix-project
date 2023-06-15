@@ -150,14 +150,14 @@ module.exports = {
                 browser.assert.ok(content.includes("123test' contract"), 'should replace text ok')
             })
             .waitForElementVisible('*[data-id="undo-replace-README.txt"]')
-            .click('div[title="default_workspace/contracts/1_Storage.sol"]').pause(2000)
+            .click('div[data-path="default_workspace/contracts/1_Storage.sol"]').pause(2000)
             .waitForElementVisible('*[data-id="undo-replace-contracts/1_Storage.sol"]')
             .click('*[data-id="undo-replace-contracts/1_Storage.sol"]').pause(2000)
             .getEditorValue((content) => {
                 browser.assert.ok(content.includes('contract Storage'), 'should undo text ok')
                 browser.assert.ok(content.includes('title Storage'), 'should undo text ok')
             })
-            .click('div[title="default_workspace/README.txt"]').pause(2000)
+            .click('div[data-path="default_workspace/README.txt"]').pause(2000)
             .waitForElementVisible('*[data-id="undo-replace-README.txt"]')
             .click('*[data-id="undo-replace-README.txt"]').pause(2000)
             .getEditorValue((content) => {
