@@ -8,7 +8,18 @@ const _paq = window._paq = window._paq || []
 let web3
 
 if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
-  var injectedProvider = window.ethereum
+  // To support iframe issue.
+  // if we want to embed ide in a iframe, and we want to keep the pace with parent window's ethereum provider
+  try {
+    if (top.origin !== self.origin) throw new Error('cross origin error')
+    injectedProvider = top.ethereum
+    ethereum = top.ethereum
+  } catch (err) {
+    console.log('cross origin error:', err)
+    injectedProvider = self.ethereum
+    ethereum = self.ethereum
+  }
+
   web3 = new Web3(injectedProvider)
 } else {
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
@@ -36,7 +47,7 @@ export class ExecutionContext {
   init (config) {
     this.executionContext = 'vm-shanghai'
     this.event.trigger('contextChanged', [this.executionContext])
-  }  
+  }
 
   getProvider () {
     return this.executionContext
@@ -117,7 +128,7 @@ export class ExecutionContext {
   internalWeb3 () {
     return web3
   }
-  
+
   setContext (context, endPointUrl, confirmCb, infoCb) {
     this.executionContext = context
     this.executionContextChange(context, endPointUrl, confirmCb, infoCb, null)
@@ -128,9 +139,9 @@ export class ExecutionContext {
     const context = value.context
     if (!cb) cb = () => { /* Do nothing. */ }
     if (!confirmCb) confirmCb = () => { /* Do nothing. */ }
-    if (!infoCb) infoCb = () => { /* Do nothing. */ }    
+    if (!infoCb) infoCb = () => { /* Do nothing. */ }
     if (this.customNetWorks[context]) {
-      var network = this.customNetWorks[context]      
+      var network = this.customNetWorks[context]
       await network.init()
       this.currentFork = network.fork
       this.executionContext = context
