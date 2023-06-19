@@ -104,7 +104,7 @@
 .udapp_atAddress {
   margin: 0;
   min-width: 100px;
-  width: 100px;
+  width: auto;
   height: 100%;
   word-break: inherit;
   border-top-right-radius: 0;
@@ -167,6 +167,7 @@
 }
 .udapp_icon {
   cursor: pointer;
+  width: auto;
   font-size: 12px;
   cursor: pointer;
   margin-left: 5px;
@@ -329,6 +330,7 @@
 }
 .udapp_instanceButton {
   height: 32px;
+  width: auto;
   border-radius: 3px;
   white-space: nowrap;
   font-size: 11px;
@@ -357,7 +359,7 @@
 }
 .udapp_contractProperty button {
   min-width: 80px;
-  width: 100px;
+  width: auto;
   margin:0;
   word-break: inherit;
 }
@@ -426,7 +428,7 @@
 }
 .udapp_contractProperty.udapp_constant .udapp_multiTitle {
   display: inline-block;
-  width: 90%;
+  width: auto;
   /* font-size: 10px; */
   height: 25px;
   padding-left: 20px;
