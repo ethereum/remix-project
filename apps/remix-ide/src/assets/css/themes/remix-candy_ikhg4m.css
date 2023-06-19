@@ -1813,7 +1813,7 @@ pre code {
   box-shadow: 0px 0px 5px #00bbff;
 }
 .form-control::placeholder {
-  color: #1b1d24;
+  color: #747B90;
   opacity: 1;
 }
 .form-control:disabled,
