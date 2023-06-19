@@ -12,7 +12,11 @@ export const CaptureKeyView: React.FC = () => {
   return (
     <AppContext.Consumer>
       {({ apiKey, clientInstance, setAPIKey }) => {
-        if (!apiKey && clientInstance && clientInstance.call) clientInstance.call('notification' as any, 'toast', 'Please add API key to continue')
+        if (!apiKey && clientInstance && clientInstance.call) {
+          clientInstance.call('sidePanel' as any, 'currentFocus').then((current) => {
+            if (current === 'etherscan') clientInstance.call('notification' as any, 'toast', 'Please add API key to continue')
+          })
+        }
         return <Formik
           initialValues={{ apiKey }}
           validate={(values) => {
