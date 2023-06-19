@@ -30,9 +30,6 @@ export function UniversalDappUI (props: UdappProps) {
     } else {
       setContractABI(props.instance.abi)
     }
-  }, [props.instance.abi])
-
-  useEffect(() => {
     if (props.instance.address) {
       // @ts-ignore
       let address = (props.instance.address.slice(0, 2) === '0x' ? '' : '0x') + props.instance.address.toString('hex')
