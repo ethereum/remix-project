@@ -249,6 +249,51 @@ module.exports = {
         browser.verifyCallReturnValue(addressRef, ['0:address: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'])
           .perform(() => done())
       })
+  },
+
+  'Should stay connected in the mainnet VM fork and execute state changing operations and non state changing operations #group5': function (browser: NightwatchBrowser) {
+    let addressRef
+    browser
+      .click('*[data-id="deployAndRunClearInstances"]') // clear udapp instances
+      .clickLaunchIcon('filePanel')
+      .testContracts('basic_state.sol', sources[9]['basic_state.sol'], ['BasicState'])
+      .clickLaunchIcon('udapp')
+      .selectContract('BasicState')
+      .createContract('')
+      .clickInstance(0)
+      .getAddressAtPosition(0, (address) => {
+        addressRef = address
+      })
+      .clickFunction('cake - call')
+      .pause(500)
+      .perform((done) => {
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 0'])
+          .perform(() => done())
+      })
+      .clickFunction('up - transact (payable)')
+      .pause(500)
+      .clickFunction('cake - call')
+      .pause(1000)
+      .perform((done) => {
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 1'])
+          .perform(() => done())
+      })
+      .clickFunction('up - transact (payable)')
+      .pause(500)
+      .clickFunction('cake - call')
+      .pause(1000)
+      .perform((done) => {
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 2'])
+          .perform(() => done())
+      })
+      .clickFunction('up - transact (payable)')
+      .pause(500)
+      .clickFunction('cake - call')
+      .pause(1000)
+      .perform((done) => {
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 3'])
+          .perform(() => done())
+      })
   }
 }
 
@@ -510,6 +555,19 @@ contract C {
         }
       }
       `
+    }
+  },
+  {
+    'basic_state.sol': {
+      content:
+        `
+        contract BasicState {
+          uint public cake;
+          function up() public payable {
+             cake++;
+          }
+      }
+        `      
     }
   }
 ]

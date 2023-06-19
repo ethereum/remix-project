@@ -91,6 +91,10 @@
   .remixuimenuicon_shadow {
   }
 
+  .remixuimenuicon_hamburger_menu {
+    cursor: pointer;
+  }
+
   .remixuimenuicon_shadow:hover {
     box-shadow: 0px 0px 14px -7px;
   }

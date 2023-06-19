@@ -1,7 +1,9 @@
 /* global ethereum */
 'use strict'
+import { Cache } from '@ethereumjs/statemanager/dist/cache'
 import { hash } from '@remix-project/remix-lib'
-import { bufferToHex } from '@ethereumjs/util'
+import { bufferToHex, Account, toBuffer, bufferToBigInt} from '@ethereumjs/util'
+import { keccak256 } from 'ethereum-cryptography/keccak'
 import type { Address } from '@ethereumjs/util'
 import { decode } from 'rlp'
 import { ethers } from 'ethers'
@@ -36,44 +38,6 @@ export interface DefaultStateManagerOpts {
    * E.g. by putting the code `0x80` into the empty trie, will lead to a corrupted trie.
    */
   prefixCodeHashes?: boolean
-}
-
-class CustomEthersStateManager extends EthersStateManager {
-  keyHashes: { [key: string]: string }
-  constructor (opts: EthersStateManagerOpts) {
-    super(opts)
-    this.keyHashes = {}
-  }
-
-  putContractStorage (address, key, value) {
-    this.keyHashes[bufferToHex(key).replace('0x', '')] = hash.keccak(key).toString('hex')
-    return super.putContractStorage(address, key, value)
-  }
-
-  copy(): CustomEthersStateManager {
-    const newState = new CustomEthersStateManager({
-      provider: (this as any).provider,
-      blockTag: BigInt((this as any).blockTag),
-    })
-    ;(newState as any).contractCache = new Map((this as any).contractCache)
-    ;(newState as any).storageCache = new Map((this as any).storageCache)
-    ;(newState as any)._cache = this._cache
-    ;(newState as any).keyHashes = this.keyHashes
-    return newState
-  }
-
-  async dumpStorage(address: Address): Promise<StorageDump> {
-    const storageDump = {}
-    const storage = await super.dumpStorage(address)
-    for (const key of Object.keys(storage)) {
-      const value = storage[key]
-      storageDump['0x' + this.keyHashes[key]] = {
-        key: '0x' + key,
-        value: value
-      }
-    }
-    return storageDump
-  }
 }
 
 /*
@@ -121,6 +85,158 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
           reject(e)
         })
     })
+  }
+}
+
+export interface CustomEthersStateManagerOpts {
+  provider: string | ethers.providers.StaticJsonRpcProvider | ethers.providers.JsonRpcProvider
+  blockTag: string,
+  /**
+   * A {@link Trie} instance
+   */
+  trie?: Trie
+}
+
+class CustomEthersStateManager extends StateManagerCommonStorageDump {
+  private provider: ethers.providers.StaticJsonRpcProvider | ethers.providers.JsonRpcProvider
+  private blockTag: string
+
+  constructor(opts: CustomEthersStateManagerOpts) {
+    super(opts)
+    if (typeof opts.provider === 'string') {
+      this.provider = new ethers.providers.StaticJsonRpcProvider(opts.provider)
+    } else if (opts.provider instanceof ethers.providers.JsonRpcProvider) {
+      this.provider = opts.provider
+    } else {
+      throw new Error(`valid JsonRpcProvider or url required; got ${opts.provider}`)
+    }
+
+    this.blockTag = opts.blockTag
+
+    /*
+     * For a custom StateManager implementation adopt these
+     * callbacks passed to the `Cache` instantiated to perform
+     * the `get`, `put` and `delete` operations with the
+     * desired backend.
+     */
+    const getCb = async (address) => {
+      const rlp = await this._trie.get(address.buf)
+      if (rlp) {
+        const ac = Account.fromRlpSerializedAccount(rlp)
+        return ac
+      } else {
+        const ac =  await this.getAccountFromProvider(address)
+        return ac
+      }
+    }
+    const putCb = async (keyBuf, accountRlp) => {
+      const trie = this._trie
+      await trie.put(keyBuf, accountRlp)
+    }
+    const deleteCb = async (keyBuf: Buffer) => {
+      const trie = this._trie
+      await trie.del(keyBuf)
+    }
+    this._cache = new Cache({ getCb, putCb, deleteCb })
+  }
+
+  /**
+   * Sets the new block tag used when querying the provider and clears the
+   * internal cache.
+   * @param blockTag - the new block tag to use when querying the provider
+   */
+  setBlockTag(blockTag: bigint | 'earliest'): void {
+    this.blockTag = blockTag === 'earliest' ? blockTag : bigIntToHex(blockTag)
+  }
+
+  copy(): CustomEthersStateManager {
+    const newState = new CustomEthersStateManager({
+      provider: this.provider,
+      blockTag: this.blockTag,
+      trie: this._trie.copy(false),
+    })
+    return newState
+  }
+
+  /**
+   * Gets the code corresponding to the provided `address`.
+   * @param address - Address to get the `code` for
+   * @returns {Promise<Buffer>} - Resolves with the code corresponding to the provided address.
+   * Returns an empty `Buffer` if the account has no associated code.
+   */
+  async getContractCode(address: Address): Promise<Buffer> {
+    const code = await super.getContractCode(address)
+    if (code && code.length > 0) return code
+    else {
+      const code = toBuffer(await this.provider.getCode(address.toString(), this.blockTag))
+      await super.putContractCode(address, code)
+      return code
+    }
+  }
+
+  /**
+   * Gets the storage value associated with the provided `address` and `key`. This method returns
+   * the shortest representation of the stored value.
+   * @param address -  Address of the account to get the storage for
+   * @param key - Key in the account's storage to get the value for. Must be 32 bytes long.
+   * @returns {Promise<Buffer>} - The storage value for the account
+   * corresponding to the provided address at the provided key.
+   * If this does not exist an empty `Buffer` is returned.
+   */
+  async getContractStorage(address: Address, key: Buffer): Promise<Buffer> {
+    let storage = await super.getContractStorage(address, key)
+    if (storage && storage.length > 0) return storage
+    else {
+      storage = toBuffer(await this.provider.getStorageAt(
+        address.toString(),
+        bufferToBigInt(key),
+        this.blockTag)
+      )
+      await super.putContractStorage(address, key, storage)
+      return storage
+    }
+  }
+
+  /**
+   * Checks if an `account` exists at `address`
+   * @param address - Address of the `account` to check
+   */
+  async accountExists(address: Address): Promise<boolean> {
+    const localAccount = this._cache.get(address)
+    if (!localAccount.isEmpty()) return true
+    // Get merkle proof for `address` from provider
+    const proof = await this.provider.send('eth_getProof', [address.toString(), [], this.blockTag])
+
+    const proofBuf = proof.accountProof.map((proofNode: string) => toBuffer(proofNode))
+
+    const trie = new Trie({ useKeyHashing: true })
+    const verified = await trie.verifyProof(
+      Buffer.from(keccak256(proofBuf[0])),
+      address.buf,
+      proofBuf
+    )
+    // if not verified (i.e. verifyProof returns null), account does not exist
+    return verified === null ? false : true
+  }
+
+  /**
+   * Retrieves an account from the provider and stores in the local trie
+   * @param address Address of account to be retrieved from provider
+   * @private
+   */
+  async getAccountFromProvider(address: Address): Promise<Account> {
+    const accountData = await this.provider.send('eth_getProof', [
+      address.toString(),
+      [],
+      this.blockTag,
+    ])
+    const account = Account.fromAccountData({
+      balance: BigInt(accountData.balance),
+      nonce: BigInt(accountData.nonce),
+      codeHash: toBuffer(accountData.codeHash)
+      // storageRoot: toBuffer([]), // we have to remove this in order to force the creation of the Trie in the local state.
+    })
+    return account
   }
 }
 
@@ -193,11 +309,17 @@ export class VMContext {
       if (this.blockNumber === 'latest') {
         const provider = new ethers.providers.StaticJsonRpcProvider(this.nodeUrl)
         block = await provider.getBlockNumber()
+        stateManager = new CustomEthersStateManager({
+          provider: this.nodeUrl,
+          blockTag: '0x' + block.toString(16)
+        })
+      } else {
+        stateManager = new CustomEthersStateManager({
+          provider: this.nodeUrl,
+          blockTag: '0x' + this.blockNumber.toString(16)
+        })
       }
-      stateManager = new CustomEthersStateManager({
-        provider: this.nodeUrl,
-        blockTag: BigInt(block)
-      })
+      
     } else
       stateManager = new StateManagerCommonStorageDump()
 
