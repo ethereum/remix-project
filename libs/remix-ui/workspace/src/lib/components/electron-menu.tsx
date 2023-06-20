@@ -35,7 +35,7 @@ export const ElectronMenu = () => {
         <div onClick={async()=>{await openFolderElectron(null)}} className='btn btn-primary'><FormattedMessage id="electron.openFolder" /></div>
         {global.fs.browser.recentFolders.length > 0 ?
           <>
-            <label className="py-2 pt-3 align-self-center m-0" style={{ fontSize: "1.2rem" }}>
+            <label className="py-2 pt-3 align-self-center m-0">
               <FormattedMessage id="electron.recentFolders" />
             </label>
             <ul>

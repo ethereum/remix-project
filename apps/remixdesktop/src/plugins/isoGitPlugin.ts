@@ -3,6 +3,8 @@ import { Profile } from "@remixproject/plugin-utils";
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
 import fs from 'fs/promises'
 import git from 'isomorphic-git'
+import { dialog } from "electron";
+import http from 'isomorphic-git/http/web'
 
 const profile: Profile = {
   name: 'isogit',
@@ -17,11 +19,26 @@ export class IsoGitPlugin extends ElectronBasePlugin {
   }
 }
 
+const parseInput = (input: any)=> {
+  return {
+    corsProxy: 'https://corsproxy.remixproject.org/',
+    http,
+    onAuth: (url: any) => {
+      url
+      const auth = {
+        username: input.token,
+        password: ''
+      }
+      return auth
+    }
+  }
+}
+
 const clientProfile: Profile = {
   name: 'isogit',
   displayName: 'isogit',
   description: 'isogit plugin',
-  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem']
+  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'openFolder']
 }
 
 class IsoGitPluginClient extends ElectronBasePluginClient {
@@ -159,32 +176,79 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     console.log('push')
     const push = await git.push({
       ...await this.getGitConfig(),
-      ...cmd
+      ...cmd,
+      ...parseInput(cmd.input)
     })
     console.log('PUSH', push)
     return push
   }
 
   async pull (cmd: any) {
-    console.log('pull')
+    console.log('pull', cmd)
     const pull = await git.pull({
       ...await this.getGitConfig(),
-      ...cmd
+      ...cmd,
+      ...parseInput(cmd.input)
     })
     console.log('PULL', pull)
     return pull
   }
 
   async fetch(cmd: any) {
-    console.log('fetch')
+    console.log('fetch', cmd)
     const fetch = await git.fetch({
       ...await this.getGitConfig(),
-      ...cmd
+      ...cmd,
+      ...parseInput(cmd.input)
     })
     console.log('FETCH', fetch)
     return fetch
   }
 
+  async clone(cmd: any) {
+    console.log('clone')
+    const clone = await git.clone({
+      ...await this.getGitConfig(),
+      ...cmd,
+      ...parseInput(cmd.input),
+      dir: cmd.dir || this.workingDir
+    })
+    console.log('CLONE', clone)
+    return clone
+  }
+
+  async openFolder(path?: string): Promise<string> {
+    let dirs: string[] | undefined
+    if (!path) {
+      dirs = dialog.showOpenDialogSync(this.window, {
+        properties: ['openDirectory', 'createDirectory', "showHiddenFiles"]
+      })
+    }
+    path = dirs && dirs.length && dirs[0] ? dirs[0] : path
+    if (!path) return ''
+    return path
+  }
+
+  async addremote(cmd: any) {
+    console.log('addremote')
+    const addremote = await git.addRemote({
+      ...await this.getGitConfig(),
+      ...cmd
+    })
+    console.log('ADDREMOTE', addremote)
+    return addremote
+  }
+
+  async delremote(cmd: any) {
+    console.log('delremote')
+    const delremote = await git.deleteRemote({
+      ...await this.getGitConfig(),
+      ...cmd
+    })
+    console.log('DELREMOTE', delremote)
+    return delremote
+  }
+  
   
 
   remotes = async () => {
