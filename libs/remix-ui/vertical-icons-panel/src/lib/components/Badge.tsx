@@ -49,7 +49,13 @@ function Badge ({ badgeStatus }: BadgeProps) {
   return (
     <>
       {
-        badgeStatus && checkStatusKeyValue(badgeStatus.key, badgeStatus.type) ? (
+          badgeStatus && checkStatusKeyValue(badgeStatus.key, badgeStatus.type) ? (
+            <CustomTooltip
+              placement={'right'}
+              tooltipClasses="text-nowrap"
+              tooltipId="verticalItemsbadge"
+              tooltipText={badgeStatus.title}
+            >
             <i
               className={`${resolveClasses(badgeStatus.key, badgeStatus.type!)}`}
               aria-hidden="true"
@@ -58,7 +64,7 @@ function Badge ({ badgeStatus }: BadgeProps) {
                     <i className="far fa-exclamation-triangle"></i></span>
                     : <span>&nbsp;</span> : badgeStatus.text }
             </i>
-        ) : null
+          </CustomTooltip>) : null
       }
     </>
   )
