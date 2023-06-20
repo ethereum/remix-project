@@ -38,7 +38,7 @@ export function BasicTitle(props: BasicTitleProps) {
         calculateWarningStateEntries(props.warningStateEntries).length}</i>: (
           <i className="badge badge-warning rounded-circle ml-1 text-center">
             {
-              calculateWarningStateEntries(props.warningStateEntries).errors.length
+              calculateWarningStateEntries(props.warningStateEntries).length
             }
           </i>
         ) : null : null}
