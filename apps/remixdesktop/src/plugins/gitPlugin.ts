@@ -23,6 +23,7 @@ const clientProfile: Profile = {
   methods: ['log', 'status', 'add', 'commit', 'push', 'pull', 'clone', 'checkout', 'branch', 'merge', 'reset', 'revert', 'diff', 'stash', 'apply', 'cherryPick', 'rebase', 'tag', 'fetch', 'remote', 'config', 'show', 'init', 'help', 'version']
 }
 
+// TODO: implement all native OS git commands
 class GitPluginClient extends ElectronBasePluginClient {
 
   constructor(webContentsId: number, profile: Profile) {
@@ -31,10 +32,5 @@ class GitPluginClient extends ElectronBasePluginClient {
       console.log('GitPluginClient onload')
     })
   }
-
-  async log(cmd: any): Promise<any> {
-
-  }
-
   
 }

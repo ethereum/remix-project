@@ -85,7 +85,7 @@ class DGitProvider extends Plugin {
   }
 
   async init(input) {
-    if(isElectron()) {
+    if (isElectron()) {
       await this.call('isogit', 'init', {
         defaultBranch: (input && input.branch) || 'main'
       })
@@ -314,6 +314,11 @@ class DGitProvider extends Plugin {
   }
 
   async readblob(cmd) {
+    console.log('readblob', cmd)
+    if (isElectron()) {
+      const readBlobResult = await this.call('isogit', 'readblob', cmd)
+      console.log('readblob', readBlobResult)
+    }
     const readBlobResult = await git.readBlob({
       ...await this.getGitConfig(),
       ...cmd
@@ -339,10 +344,18 @@ class DGitProvider extends Plugin {
   }
 
   async addremote(input) {
+    if (isElectron()) {
+      await this.call('isogit', 'addremote', { url: input.url, remote: input.remote })
+      return
+    }
     await git.addRemote({ ...await this.getGitConfig(), url: input.url, remote: input.remote })
   }
 
   async delremote(input) {
+    if (isElectron()) {
+      await this.call('isogit', 'delremote', { remote: input.remote })
+      return
+    }
     await git.deleteRemote({ ...await this.getGitConfig(), remote: input.remote })
   }
 
@@ -351,27 +364,45 @@ class DGitProvider extends Plugin {
   }
 
   async clone(input, workspaceName, workspaceExists = false) {
-    const permission = await this.askUserPermission('clone', 'Import multiple files into your workspaces.')
-    if (!permission) return false
-    if (this.calculateLocalStorage() > 10000) throw new Error('The local storage of the browser is full.')
-    if (!workspaceExists) await this.call('filePanel', 'createWorkspace', workspaceName || `workspace_${Date.now()}`, true)
-    const cmd = {
-      url: input.url,
-      singleBranch: input.singleBranch,
-      ref: input.branch,
-      depth: input.depth || 10,
-      ...await this.parseInput(input),
-      ...await this.getGitConfig()
-    }
 
-    const result = await git.clone(cmd)
-    if (!workspaceExists) {
-      setTimeout(async () => {
-        await this.call('fileManager', 'refresh')
-      }, 1000)
+    if (isElectron()) {
+      const folder = await this.call('isogit', 'openFolder')
+      if (!folder) return false
+      console.log('folder', folder)
+      const cmd = {
+        url: input.url,
+        singleBranch: input.singleBranch,
+        ref: input.branch,
+        depth: input.depth || 10,
+        dir: folder,
+        input
+      }
+      const result = await this.call('isogit', 'clone', cmd)
+      await this.call('fs', 'openWindow', folder)
+
+    } else {
+      const permission = await this.askUserPermission('clone', 'Import multiple files into your workspaces.')
+      if (!permission) return false
+      if (this.calculateLocalStorage() > 10000) throw new Error('The local storage of the browser is full.')
+      if (!workspaceExists) await this.call('filePanel', 'createWorkspace', workspaceName || `workspace_${Date.now()}`, true)
+      const cmd = {
+        url: input.url,
+        singleBranch: input.singleBranch,
+        ref: input.branch,
+        depth: input.depth || 10,
+        ...await this.parseInput(input),
+        ...await this.getGitConfig()
+      }
+
+      const result = await git.clone(cmd)
+      if (!workspaceExists) {
+        setTimeout(async () => {
+          await this.call('fileManager', 'refresh')
+        }, 1000)
+      }
+      this.emit('clone')
+      return result
     }
-    this.emit('clone')
-    return result
   }
 
   async push(input) {
@@ -384,17 +415,22 @@ class DGitProvider extends Plugin {
         name: input.name,
         email: input.email
       },
-      ...await this.parseInput(input),
-
+      input
     }
     if (isElectron()) {
       return await this.call('isogit', 'push', cmd)
-    }
+    } else {
 
-    return await git.push({
-      ...await this.getGitConfig(),
-      ...cmd
-    })
+      cmd = {
+        ...cmd,
+        ...await this.parseInput(input),
+      }
+      return await git.push({
+        ...await this.getGitConfig(),
+        ...cmd
+      })
+
+    }
   }
 
   async pull(input) {
@@ -406,14 +442,17 @@ class DGitProvider extends Plugin {
         email: input.email
       },
       remote: input.remote,
-      ...await this.parseInput(input),
-
+      input
     }
     let result
     if (isElectron()) {
       result = await this.call('isogit', 'pull', cmd)
     }
     else {
+      cmd = {
+        ...cmd,
+        ...await this.parseInput(input),
+      }
       result = await git.pull({
         ...await this.getGitConfig(),
         ...cmd
@@ -434,12 +473,16 @@ class DGitProvider extends Plugin {
         email: input.email
       },
       remote: input.remote,
-      ...await this.parseInput(input),
+      input
     }
     let result
     if (isElectron()) {
       result = await this.call('isogit', 'fetch', cmd)
     } else {
+      cmd = {
+        ...cmd,
+        ...await this.parseInput(input),
+      }
       result = await git.fetch({
         ...await this.getGitConfig(),
         ...cmd

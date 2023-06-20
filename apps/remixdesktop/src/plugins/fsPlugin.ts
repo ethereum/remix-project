@@ -72,7 +72,7 @@ const clientProfile: Profile = {
   name: 'fs',
   displayName: 'fs',
   description: 'fs',
-  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'getRecentFolders', 'glob']
+  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'getRecentFolders', 'glob', 'openWindow']
 }
 
 class FSPluginClient extends ElectronBasePluginClient {
@@ -290,6 +290,10 @@ class FSPluginClient extends ElectronBasePluginClient {
     }
     path = this.workingDir + (!this.workingDir.endsWith('/') ? '/' : '') + path
     return path
+  }
+
+  openWindow(path: string): void {
+    createWindow(path)
   }
 
 

@@ -35,6 +35,10 @@ export const createWindow = async (dir?: string): Promise<void> => {
 
   mainWindow.maximize();
 
+  if(dir){
+    mainWindow.setTitle(dir)
+  }
+
   // on close
   mainWindow.on('close', (event) => {
     console.log('close', event, mainWindow.webContents.id)
@@ -107,124 +111,3 @@ WindowMenu(commandKeys, execCommand, [])
 ]
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
-
-
-import { glob, globSync, globStream, globStreamSync, Glob, GlobOptions } from 'glob'
-import { PathScurry, Path } from 'path-scurry'
-
-
-
-async function getDirectory(path: string, options?: GlobOptions): Promise<string[] | Path[]> {
-  return await glob(path + '/**/*.sol', {
-    withFileTypes: true,
-    ...options
-  })
-}
-
-function doGlobTest() {
-  let startglob = new Date().getTime()
-  console.log('start', startglob)
-  getDirectory('/Volumes/bunsen/code/rmproject2/remix-project/apps/remix-ide/contracts').then((files) => {
-    const result: any[] = []
-    for (const file of files) {
-      result.push({
-        path: (file as Path).path,
-        name: (file as Path).name,
-        isDirectory: (file as Path).isDirectory(),
-      })
-    }
-    console.log(result)
-    const end = new Date().getTime()
-    console.log('end glob', end - startglob)
-  })
-
-}
-import fs, { Dirent } from 'fs'
-
-
-async function readdir(path: string): Promise<Dirent[]> {
-  // call node fs.readdir
-  //console.log('readdir', path)
-  if (!path) return []
-  const files = fs.readdirSync(path, {
-    withFileTypes: true
-  })
-  return files
-}
-
-
-function doReadDirTest() {
-  let startreaddir = new Date().getTime()
-  console.log('start', startreaddir)
-  readdir('/Volumes/bunsen/code/rmproject2/remix-project/node_modules/').then((files) => {
-    const result: any[] = []
-    for (const file of files) {
-      try {
-        result.push({
-          path: file.name,
-          isDirectory: file.isDirectory(),
-        })
-      } catch (e) {
-        console.log('error', e)
-      }
-    }
-    console.log(result)
-    const end = new Date().getTime()
-    console.log('end readdir', end - startreaddir)
-  })
-}
-
-function getFileList(dirName: string) {
-  let files: any[] = [];
-  const items = fs.readdirSync(dirName, { withFileTypes: true });
-
-  for (const item of items) {
-    if (item.isDirectory()) {
-      files = [...files, ...getFileList(`${dirName}/${item.name}`)];
-    } else {
-      files.push(`${dirName}/${item.name}`);
-    }
-  }
-
-  return files;
-};
-
-function doFileListTest() {
-
-  let startgetfilelist = new Date().getTime()
-  console.log('start', startgetfilelist)
-  const r = getFileList('/Volumes/bunsen/code/rmproject2/remix-project/node_modules/')
-  console.log(r.length)
-  const end = new Date().getTime()
-  console.log('end getfilelist', end - startgetfilelist)
-
-}
-
-//doFileListTest()
-doGlobTest()
-//doReadDirTest()
-
-/*
-async function testScury() {
-  const result: any[] = []
-  const pw = new PathScurry('/Volumes/bunsen/code/rmproject2/remix-project/node_modules')
-  for await (const entry of pw) {
-    result.push({
-      path: entry.path,
-      isDirectory: entry.isDirectory(),
-    })
-  }
-  return result
-}
-
-// log time 
-let startscurry = new Date().getTime()
-console.log('start', startscurry)
-testScury().then((res) => {
-  console.log(res.length)
-  const end = new Date().getTime()
-  console.log('end scurry', end - startscurry)
-})
-*/
-
-
