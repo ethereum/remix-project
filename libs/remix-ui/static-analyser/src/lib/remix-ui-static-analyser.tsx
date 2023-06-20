@@ -16,6 +16,7 @@ import Tabs from 'react-bootstrap/Tabs'
 import { AnalysisTab, SolHintReport } from '../staticanalyser'
 import { run } from './actions/staticAnalysisActions'
 import { BasicTitle, calculateWarningStateEntries } from './components/BasicTitle'
+import { BasicTabBody } from './components/BasicTabBody'
 
 declare global {
   interface Window {
@@ -74,7 +75,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [slitherEnabled, setSlitherEnabled] = useState(false)
   const [startAnalysis, setStartAnalysis] = useState(false)
   const [isSupportedVersion, setIsSupportedVersion] = useState(false)
-  let [showLibsWarning, setShowLibsWarning] = useState(false) // eslint-disable-line prefer-const
+  const [showLibsWarning, setShowLibsWarning] = useState(false) // eslint-disable-line prefer-const
   const [categoryIndex, setCategoryIndex] = useState(groupedModuleIndex(groupedModules))
   const [warningState, setWarningState] = useState({})
   const [hideWarnings, setHideWarnings] = useState(false)
@@ -109,6 +110,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   useEffect(() => {
     setWarningState({})
+    allWarnings.current = {}
     setHints([])
     setSlitherWarnings([])
     setSsaWarnings([])
@@ -116,6 +118,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }, [props])
 
   useEffect(() => {
+    allWarnings.current = {}
     setWarningState({})
     setHints([])
     setSlitherWarnings([])
@@ -145,6 +148,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   useEffect(() => {
     props.analysisModule.on('filePanel', 'setWorkspace', (currentWorkspace) => {
       // Reset warning state
+      allWarnings.current = {}
       setWarningState({})
       // Reset badge
       props.event.trigger('staticAnaysisWarning', [])
@@ -201,6 +205,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }
 
   const filterWarnings = () => {
+    console.log({ allWarnings })
     let newWarningState = {}
     let newWarningCount = 0
     if (showLibsWarning) {
@@ -220,7 +225,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         }
       }
     }
-    if (newWarningCount > 0) {
+    if (newWarningCount > 0 && state.data && state.source !== null) {
       props.event.trigger('staticAnaysisWarning', [newWarningCount])
       setWarningState(newWarningState)
     }
@@ -318,13 +323,11 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   const handleShowLibsWarning = () => {
     if (showLibsWarning) {
-      showLibsWarning = false
       setShowLibsWarning(false)
     } else {
-      showLibsWarning = true
+      filterWarnings()
       setShowLibsWarning(true)
     }
-    filterWarnings()
   }
 
   const categoryItem = (categoryId, item, i) => {
@@ -519,56 +522,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         />
       ),
       child: (
-        <>
-          {Object.entries(warningState).length > 0 ? (
-            <div id="staticanalysisresult">
-              <div className="mb-4 pt-2">
-                {Object.entries(warningState).map((element, index) => (
-                  <div key={index}>
-                    { hideWarnings === false ? <span className="text-dark h6">{element[0]}</span> : null}
-                    { hideWarnings === false ? element[1]["map"](
-                      (x,i) => // eslint-disable-line dot-notation
-                        x.hasWarning
-                        ? ( // eslint-disable-next-line  dot-notation
-                          <div
-                            data-id={`staticAnalysisModule${x.warningModuleName}${i}`}
-                            id={`staticAnalysisModule${x.warningModuleName}${i}`}
-                            key={i}
-                          >
-                            <ErrorRenderer
-                              name={`staticAnalysisModule${x.warningModuleName}${i}`}
-                              message={x.msg}
-                              opt={x.options}
-                              warningErrors={x.warningErrors}
-                              editor={props.analysisModule}
-                            />
-                          </div>
-                        ) : null
-                    ) : element[1]["map"](
-                      (x,i) => // eslint-disable-line dot-notation
-                        !x.hasWarning
-                        ? ( // eslint-disable-next-line  dot-notation
-                          <div
-                            data-id={`staticAnalysisModule${x.warningModuleName}${i}`}
-                            id={`staticAnalysisModule${x.warningModuleName}${i}`}
-                            key={i}
-                          >
-                            <ErrorRenderer
-                              name={`staticAnalysisModule${x.warningModuleName}${i}`}
-                              message={x.msg}
-                              opt={x.options}
-                              warningErrors={x.warningErrors}
-                              editor={props.analysisModule}
-                            />
-                          </div>
-                        ) : null)}
-                    {}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : state.data && state.file.length > 0 && state.source && startAnalysis && Object.entries(warningState).length > 0 ? <span className="ml-4 spinner-grow-sm d-flex justify-content-center">Loading...</span> : <span className="display-6 text-center">Nothing to report</span>}
-        </>
+        <BasicTabBody
+          analysisModule={props.analysisModule}
+          warningState={warningState}
+          hideWarnings={hideWarnings}
+          showLibsWarning={showLibsWarning}
+          startAnalysis={startAnalysis}
+          state={state}
+        />
       ),
     },
     {
