@@ -81,6 +81,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [hints, setHints] = useState<SolHintReport[]>([])
   const [slitherWarnings, setSlitherWarnings] = useState([])
   const [ssaWarnings, setSsaWarnings] = useState([])
+  const [tabKey, setTabKey] = useState('basic')
 
   const warningContainer = useRef(null)
   const allWarnings = useRef({})
@@ -107,6 +108,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }
 
   useEffect(() => {
+    setWarningState({})
     setHints([])
     setSlitherWarnings([])
     setSsaWarnings([])
@@ -143,7 +145,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   useEffect(() => {
     props.analysisModule.on('filePanel', 'setWorkspace', (currentWorkspace) => {
       // Reset warning state
-      setWarningState([])
+      setWarningState({})
       // Reset badge
       props.event.trigger('staticAnaysisWarning', [])
       // Reset state
@@ -165,7 +167,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       // Hide 'Enable Slither Analysis' checkbox
       if (plugin.name === 'remixd') {
         // Reset warning state
-        setWarningState([])
+        setWarningState({})
         setHints([])
         setSlitherWarnings([])
         setSlitherEnabled(false)
@@ -218,8 +220,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         }
       }
     }
-    props.event.trigger('staticAnaysisWarning', [newWarningCount])
-    setWarningState(newWarningState)
+    if (newWarningCount > 0) {
+      props.event.trigger('staticAnaysisWarning', [newWarningCount])
+      setWarningState(newWarningState)
+    }
   }
 
   useEffect(() => {
@@ -511,6 +515,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         <BasicTitle
           warningStateEntries={Object.entries(warningState)}
           hideWarnings={hideWarnings}
+          showLibsWarnings={showLibsWarning}
         />
       ),
       child: (
@@ -520,8 +525,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               <div className="mb-4 pt-2">
                 {Object.entries(warningState).map((element, index) => (
                   <div key={index}>
-                    { !hideWarnings && element[1]['length'] > 0 ? <span className="text-dark h6">{element[0]}</span> : null}
-                    {!hideWarnings ? element[1]["map"](
+                    { hideWarnings === false ? <span className="text-dark h6">{element[0]}</span> : null}
+                    { hideWarnings === false ? element[1]["map"](
                       (x,i) => // eslint-disable-line dot-notation
                         x.hasWarning
                         ? ( // eslint-disable-next-line  dot-notation
@@ -753,8 +758,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               />
             </div>
             <Tabs
-              defaultActiveKey={tabKeys[0].tabKey}
+              defaultActiveKey={tabKeys[1].tabKey}
               className="px-1"
+              onSelect={(newKey) => setTabKey(newKey)}
             >
               {
                 checkBasicStatus() ? <Tab
@@ -766,14 +772,16 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   {tabKeys[1].child}
                 </Tab> : null
               }
-              {solhintEnabled ? <Tab
-                key={tabKeys[0].tabKey}
-                title={tabKeys[0].title}
-                eventKey={tabKeys[0].tabKey}
-                tabClassName="text-decoration-none font-weight-bold px-2"
-              >
-                {tabKeys[0].child}
-              </Tab> : null}
+              {
+                solhintEnabled ? <Tab
+                  key={tabKeys[0].tabKey}
+                  title={tabKeys[0].title}
+                  eventKey={tabKeys[0].tabKey}
+                  tabClassName="text-decoration-none font-weight-bold px-2"
+                >
+                  {tabKeys[0].child}
+                </Tab> : null
+              }
               { showSlither && slitherEnabled ? <Tab
                 key={tabKeys[2].tabKey}
                 title={tabKeys[2].title}
