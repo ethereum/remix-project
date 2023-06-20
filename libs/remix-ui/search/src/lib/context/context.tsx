@@ -311,7 +311,6 @@ export const SearchProvider = ({
   }
 
   useEffect(() => {
-    return
     plugin.on('filePanel', 'setWorkspace', async workspace => {
       value.setSearchResults(null)
       value.clearUndo()
@@ -418,6 +417,7 @@ export const SearchProvider = ({
   }, [state.count])
 
   useEffect(() => {
+    console.log('STATE CHANGED', files)
     if (state.find) {
       (async () => {
         try {
