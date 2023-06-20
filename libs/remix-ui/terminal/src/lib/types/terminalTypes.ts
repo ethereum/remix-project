@@ -15,6 +15,7 @@ export const NEW_CALL = 'newCall'
 
 export const HTML = 'html'
 export const LOG = 'log'
+export const TYPEWRITERLOG = 'typewriterlog'
 export const INFO = 'info'
 export const WARN = 'warn'
 export const ERROR = 'error'
