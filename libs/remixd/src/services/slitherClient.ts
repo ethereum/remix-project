@@ -2,7 +2,7 @@
 
 import * as WS from 'ws' // eslint-disable-line
 import { PluginClient } from '@remixproject/plugin'
-import { existsSync, readFileSync, readdirSync, unlink } from 'fs'
+import { existsSync, readFileSync, readdirSync, unlinkSync } from 'fs'
 import { OutputStandard } from '../types' // eslint-disable-line
 import * as utils from '../utils'
 const { spawn, execSync } = require('child_process') // eslint-disable-line
@@ -136,6 +136,14 @@ export class SlitherClient extends PluginClient {
       const solcRemaps = remaps ? `--solc-remaps "${remaps}"` : ''
 
       const outputFile = 'remix-slither-report.json'
+      try {
+        // We don't keep the previous analysis
+        const outputFilePath = utils.absolutePath(outputFile, this.currentSharedFolder)
+        if (existsSync(outputFilePath)) unlinkSync(outputFilePath)
+      } catch (e) {
+        console.error('unable to remove the output file')
+        console.error(e.message)
+      }
       const cmd = `slither ${filePath} ${solcArgs} ${solcRemaps} --json ${outputFile}`
       console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Running Slither...')
       // Added `stdio: 'ignore'` as for contract with NPM imports analysis which is exported in 'stderr'
