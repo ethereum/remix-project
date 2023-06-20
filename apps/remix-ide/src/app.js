@@ -55,6 +55,7 @@ const remixLib = require('@remix-project/remix-lib')
 
 import { QueryParams } from '@remix-project/remix-lib'
 import { SearchPlugin } from './app/tabs/search'
+import { ElectronProvider } from './app/files/electronProvider'
 
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
@@ -113,6 +114,12 @@ class AppComponent {
     Registry.getInstance().put({
       api: this._components.filesProviders.workspace,
       name: 'fileproviders/workspace'
+    })
+
+    this._components.filesProviders.electron = new ElectronProvider()
+    Registry.getInstance().put({
+      api: this._components.filesProviders.electron,
+      name: 'fileproviders/electron'
     })
 
     Registry.getInstance().put({

@@ -6,7 +6,7 @@ const remixLib = require('@remix-project/remix-lib')
 const pathModule = require('path')
 const Storage = remixLib.Storage
 
-class FileProvider {
+export class FileProvider {
   constructor (name) {
     this.event = new EventManager()
     this.type = name
@@ -286,7 +286,7 @@ class FileProvider {
     if (path.indexOf('/') !== 0) path = '/' + path
     try {
       const files = await window.remixFileSystem.readdir(path)
-      console.log(files, 'files resolveDirectory')
+      console.log('files resolveDirectory', files)
       const ret = {}
       if (files) {
         for (let element of files) {

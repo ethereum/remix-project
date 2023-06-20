@@ -16,7 +16,7 @@ export class fsPlugin extends ElectronPlugin {
       name: 'fs',
       description: 'fs',
     })
-    this.methods = ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'setWorkingDir', 'getRecentFolders']
+    this.methods = ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'setWorkingDir', 'getRecentFolders', 'glob']
 
     // List of commands all filesystems are expected to provide. `rm` is not
     // included since it may not exist and must be handled as a special case
@@ -50,6 +50,11 @@ export class fsPlugin extends ElectronPlugin {
         //console.log('readdir', path)
         const files = await this.call('fs', 'readdir', path)
         //console.log('readdir', path, files)
+        return files
+      },
+      glob: async (path: string, pattern: string, options?: any) => {
+        path = fixPath(path)
+        const files = await this.call('fs', 'glob', path, pattern, options)
         return files
       },
       unlink: async (path: string) => {
@@ -88,7 +93,6 @@ export class fsPlugin extends ElectronPlugin {
           if(!stat) return undefined
           stat.isDirectory = () => stat.isDirectoryValue
           stat.isFile = () => !stat.isDirectoryValue
-          ////console.log('stat', path, stat)
           return stat
         } catch (e) {
           //console.log('stat error', e)
