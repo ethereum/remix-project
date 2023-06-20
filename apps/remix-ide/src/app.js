@@ -46,6 +46,7 @@ import {FileDecorator} from './app/plugins/file-decorator'
 import {CodeFormat} from './app/plugins/code-format'
 import {SolidityUmlGen} from './app/plugins/solidity-umlgen'
 import {ContractFlattener} from './app/plugins/contractFlattener'
+import {OpenAIGpt} from './app/plugins/openaigpt'
 
 const isElectron = require('is-electron')
 
@@ -180,6 +181,9 @@ class AppComponent {
     // ----------------- ContractFlattener ----------------------------
     const contractFlattener = new ContractFlattener()
 
+    // ----------------- Open AI --------------------------------------
+    const openaigpt = new OpenAIGpt()
+
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
 
@@ -297,7 +301,8 @@ class AppComponent {
       search,
       solidityumlgen,
       contractFlattener,
-      solidityScript
+      solidityScript,
+      openaigpt
     ])
 
     // LAYOUT & SYSTEM VIEWS
@@ -410,7 +415,7 @@ class AppComponent {
     ])
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
-    await this.appManager.activatePlugin(['solidity-script'])
+    await this.appManager.activatePlugin(['solidity-script', 'openaigpt'])
 
     this.appManager.on('filePanel', 'workspaceInitializationCompleted', async () => {
       // for e2e tests
