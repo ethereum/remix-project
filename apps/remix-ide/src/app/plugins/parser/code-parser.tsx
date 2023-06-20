@@ -125,14 +125,17 @@ export class CodeParser extends Plugin {
         })
 
         this.on('filePanel', 'setWorkspace', async () => {
+            console.log('setWorkspace')
             await this.call('fileDecorator', 'clearFileDecorators')
             await this.importService.setFileTree()
         })
 
         this.on('fileManager', 'fileAdded', async () => {
+            console.log('fileAdded')
             await this.importService.setFileTree()
         })
         this.on('fileManager', 'fileRemoved', async () => {
+            console.log('fileRemoved')
             await this.importService.setFileTree()
         })
 

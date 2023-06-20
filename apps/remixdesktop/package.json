@@ -22,8 +22,9 @@
     "typescript": "^5.1.3"
   },
   "dependencies": {
-    "node-pty": "^0.10.1",
-    "electron-is-packaged": "^1.0.2"
+    "electron-is-packaged": "^1.0.2",
+    "glob": "^10.2.7",
+    "node-pty": "^0.10.1"
   },
   "build": {
     "productName": "remixdesktop",

@@ -41,7 +41,10 @@ ipcMain.handle('getWebContentsID', (event, message) => {
 })
 
 
-app.on('before-quit', async () => {
+app.on('before-quit', async (event) => {
+  //event.preventDefault()
+  console.log('before-quit')
+  await appManager.call('fs', 'removeCloseListener')
   await appManager.call('fs', 'closeWatch')
-  app.quit()
+  //app.quit()
 })

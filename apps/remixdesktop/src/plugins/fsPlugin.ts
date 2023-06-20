@@ -5,6 +5,8 @@ import chokidar from 'chokidar'
 import { dialog } from "electron";
 import { createWindow } from "../main";
 import { writeConfig } from "../utils/config";
+import { glob, globSync, globStream, globStreamSync, Glob, GlobOptions } from 'glob'
+import { PathScurry, Path } from 'path-scurry'
 
 const profile: Profile = {
   displayName: 'fs',
@@ -16,7 +18,7 @@ export class FSPlugin extends ElectronBasePlugin {
   clients: FSPluginClient[] = []
   constructor() {
     super(profile, clientProfile, FSPluginClient)
-    this.methods = [...super.methods, 'closeWatch']
+    this.methods = [...super.methods, 'closeWatch', 'removeCloseListener']
   }
 
   async onActivation(): Promise<void> {
@@ -44,6 +46,13 @@ export class FSPlugin extends ElectronBasePlugin {
     }
   }
 
+  async removeCloseListener(): Promise<void> {
+    for (const client of this.clients) {
+      console.log('removeCloseListener', client.webContentsId)
+      client.window.removeAllListeners()
+    }
+  }
+
   async closeWatch(): Promise<void> {
     for (const client of this.clients) {
       await client.closeWatch()
@@ -63,7 +72,7 @@ const clientProfile: Profile = {
   name: 'fs',
   displayName: 'fs',
   description: 'fs',
-  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'getRecentFolders']
+  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'getRecentFolders', 'glob']
 }
 
 class FSPluginClient extends ElectronBasePluginClient {
@@ -74,19 +83,58 @@ class FSPluginClient extends ElectronBasePluginClient {
     super(webContentsId, profile)
     this.onload(() => {
       //console.log('fsPluginClient onload')
-      this.window.on('close', () => {
-        this.closeWatch()
+      this.window.on('close', async () => {
+        console.log('close', this.webContentsId)
+        await this.removeFromOpenedFolders(this.workingDir)
       })
+      
     })
   }
 
-
+  // best for non recursive
   async readdir(path: string): Promise<string[]> {
     // call node fs.readdir
-    //console.log('readdir', path)
+    console.log('readdir', path)
     if (!path) return []
-    const files = fs.readdir(this.fixPath(path))
-    return files
+    const files = await fs.readdir(this.fixPath(path),{
+      withFileTypes: true
+    })
+    const result: any[] = []
+    for (const file of files) {
+      const isDirectory = file.isDirectory()
+      result.push({
+        file: file.name,
+        isDirectory
+      })
+    }
+    return result
+  }
+
+  async glob(path: string, pattern: string, options?: GlobOptions): Promise<string[] | Path[]> {
+    
+    path = this.fixPath(path)
+    console.log('glob', path, pattern, options)
+    const files = await glob(path + pattern, {
+      withFileTypes: true,
+      ...options
+    })
+    const result: any[] = []
+
+    for (const file of files) {
+      let pathWithoutWorkingDir = (file as Path).path.replace(this.workingDir, '')
+      if(!pathWithoutWorkingDir.endsWith('/')){
+        pathWithoutWorkingDir = pathWithoutWorkingDir + '/'
+      }
+      if(pathWithoutWorkingDir.startsWith('/')){
+        pathWithoutWorkingDir = pathWithoutWorkingDir.slice(1)
+      }
+      result.push({
+        path: pathWithoutWorkingDir + (file as Path).name,
+        isDirectory: (file as Path).isDirectory(),
+      })
+    }
+    console.log('glob', result)
+    return result
   }
 
   async readFile(path: string, options: any): Promise<string | undefined> {
@@ -172,7 +220,6 @@ class FSPluginClient extends ElectronBasePluginClient {
 
   async closeWatch(): Promise<void> {
     console.log('closing Watcher', this.webContentsId)
-    await this.removeFromOpenedFolders(this.workingDir)
     if (this.watcher) this.watcher.close()
   }
 
@@ -221,6 +268,7 @@ class FSPluginClient extends ElectronBasePluginClient {
     await this.updateRecentFolders(path)
     await this.updateOpenedFolders(path)
     this.window.setTitle(this.workingDir)
+    console.log('setWorkingDir', path)
     this.emit('workingDirChanged', path)
   }
 

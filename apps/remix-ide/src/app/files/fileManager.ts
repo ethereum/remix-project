@@ -726,8 +726,9 @@ class FileManager extends Plugin {
     if (file.startsWith('localhost') || this.mode === 'localhost') {
       return this._deps.filesProviders.localhost
     }
-    if (file.startsWith('browser') || isElectron()) {
-      return this._deps.filesProviders.browser
+
+    if(isElectron()){
+      return this._deps.filesProviders.electron
     }
     return this._deps.filesProviders.workspace
   }

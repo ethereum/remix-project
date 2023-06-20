@@ -52,7 +52,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     setPlugin(plugin, dispatch)
     const workspaceProvider = filePanelPlugin.fileProviders.workspace
     const localhostProvider = filePanelPlugin.fileProviders.localhost
-    const electrOnProvider = filePanelPlugin.fileProviders.browser
+    const electrOnProvider = filePanelPlugin.fileProviders.electron
     const params = queryParams.get() as UrlParametersType
     let workspaces = []
     if (!isElectron()){
