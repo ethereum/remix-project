@@ -387,7 +387,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
             <CustomTooltip
               tooltipId="debuggerGenSourceCheckbox"
               tooltipText={<FormattedMessage id='debugger.debugWithGeneratedSources' />}
-              placement="top-start"
+              placement="bottom-start"
             >
               {customJSX}
             </CustomTooltip>
