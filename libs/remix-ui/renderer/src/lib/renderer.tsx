@@ -71,11 +71,11 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
     try {
       const content = await plugin.call('fileManager', 'readFile', editorOptions.errFile)
       const message = `
-      solidity file: ${content}
+      solidity code: ${content}
       error message: ${messageText}
-      explain which line the error occured, the reason and how to fix it.
+      explain why the error occurred and how to fix it.
       `
-      await plugin.call('openaigpt', 'message', message)      
+      await plugin.call('openaigpt', 'message', message)
     } catch (err) {
       console.error('unable to askGtp')
       console.error(err)
