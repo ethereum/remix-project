@@ -107,11 +107,17 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }
 
   useEffect(() => {
+    setHints([])
+    setSlitherWarnings([])
+    setSsaWarnings([])
     compilation(props.analysisModule, dispatch)
   }, [props])
 
   useEffect(() => {
     setWarningState({})
+    setHints([])
+    setSlitherWarnings([])
+    setSsaWarnings([])
     const runAnalysis = async () => {
       await run(state.data, state.source, state.file, state, props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq, message, showWarnings, allWarnings, warningContainer,calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis)
     }
