@@ -31,7 +31,7 @@ export class OpenAIGpt extends Plugin {
     })).json()
     
     console.log(result)
-    this.call('terminal', 'log', { type: 'typewriterlog', value: result.choices[0].message.content })
+    this.call('terminal', 'log', { type: 'typewritersuccess', value: result.choices[0].message.content })
     return result.data
   }
 }
