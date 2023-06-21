@@ -63,31 +63,25 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
     plugin.verticalIcons.select('solidity')
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solidity'])
   }
-  const startOneClickDapp = async () => {
-    await plugin.appManager.activatePlugin('oneClickDapp')
-    plugin.verticalIcons.select('oneClickDapp')
-    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'oneClickDapp'])
-  }
-  const startSolhint = async () => {
-    await plugin.appManager.activatePlugin(['solidity', 'solhint'])
-    plugin.verticalIcons.select('solhint')
-    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solhint'])
+  const startCodeAnalyzer = async () => {
+    await plugin.appManager.activatePlugin(['solidity', 'solidityStaticAnalysis'])
+    plugin.verticalIcons.select('solidityStaticAnalysis')
+    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solidityStaticAnalysis'])
   }
   const startSourceVerify = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'sourcify'])
     plugin.verticalIcons.select('sourcify')
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'sourcify'])
   }
+  const startCookbook = async () => {
+    await plugin.appManager.activatePlugin(['cookbook.dev'])
+    plugin.verticalIcons.select('cookbook.dev')
+    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'cookbook.dev'])
+  }
   const startSolidityUnitTesting = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'solidityUnitTesting'])
     plugin.verticalIcons.select('solidityUnitTesting')
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solidityUnitTesting'])
-  }
-
-  const startDgit = async () => {
-    await plugin.appManager.activatePlugin('dgit')
-    plugin.verticalIcons.select('dgit')
-    _paq.push(['tracEvent', 'hometabActivate', 'userActivate', 'dgit'])
   }
 
   return (
@@ -125,6 +119,22 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
             itemClass="w-100"
           >
             <PluginButton
+              imgPath="assets/img/staticAnalysis.webp"
+              envID="staticAnalysisLogo"
+              envText="Code Analyzers"
+              description={intl.formatMessage({ id: 'home.codeAnalyizerPluginDesc' })}
+              remixMaintained={true}
+              callback={() => startCodeAnalyzer() }
+            />
+            <PluginButton
+              imgPath="assets/img/cookbook.webp"
+              envID="cookbookLogo"
+              envText="Cookbook"
+              description={intl.formatMessage({ id: 'home.cookbookDesc' })}
+              remixMaintained={false}
+              callback={() => startCookbook()}
+            />
+            <PluginButton
               imgPath="assets/img/solidityLogo.webp"
               envID="solidityLogo"
               envText="Solidity"
@@ -133,32 +143,11 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
               callback={() => startSolidity()}
             />
             <PluginButton
-              imgPath="assets/img/solhintLogo.webp"
-              envID="solhintLogo" envText="Solhint linter"
-              description={intl.formatMessage({ id: 'home.solhintPluginDesc' })}
-              callback={() => startSolhint()}
-            />
-            <PluginButton
               imgPath="assets/img/sourcifyNewLogo.webp"
               envID="sourcifyLogo"
               envText="Sourcify"
               description={intl.formatMessage({ id: 'home.sourcifyPluginDesc' })}
               callback={() => startSourceVerify()}
-            />
-            <PluginButton
-              imgPath="assets/img/dgit.webp"
-              envID="dgitLogo"
-              envText="Dgit"
-              description={intl.formatMessage({ id: 'home.dgitPluginDesc' })}
-              remixMaintained={true}
-              callback={() => startDgit()}
-            />
-            <PluginButton
-              imgPath="assets/img/oneclickdapp.webp"
-              envID="oneClickDappLogo"
-              envText="OneClickDapp"
-              description={intl.formatMessage({ id: 'home.oneClickDappDesc' })}
-              callback={() => startOneClickDapp()}
             />
             <PluginButton
               imgPath="assets/img/unitTesting.webp"
