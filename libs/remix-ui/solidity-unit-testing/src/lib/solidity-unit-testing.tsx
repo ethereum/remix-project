@@ -749,10 +749,10 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
         <div className="d-flex p-2">
           <CustomTooltip
             placement={'top'}
-              tooltipClasses="text-nowrap"
-              tooltipId="info-recorder"
-              tooltipText={runButtonTitle}
-              >
+            tooltipClasses="text-nowrap"
+            tooltipId="info-recorder"
+            tooltipText={runButtonTitle}
+            >
             <button id="runTestsTabRunAction"data-id="testTabRunTestsTabRunAction" className="w-50 btn btn-primary" disabled={disableRunButton} onClick={runTests}>
               <span className="fas fa-play ml-2"></span>
               <label className="labelOnBtn btn btn-primary p-1 ml-2 m-0"><FormattedMessage id='solidityUnitTesting.run' /></label>
