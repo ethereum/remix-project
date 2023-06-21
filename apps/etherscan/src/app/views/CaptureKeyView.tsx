@@ -37,7 +37,7 @@ export const CaptureKeyView: React.FC = () => {
         >
           {({ errors, touched, handleSubmit }) => (
             <form onSubmit={handleSubmit}>
-              <div className="form-group" style={{ marginBottom: "0.5rem" }}>
+              <div className="form-group mb-2">
                 <label htmlFor="apikey">API Key</label>
                 <Field
                   className={

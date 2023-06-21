@@ -92,10 +92,7 @@ export const ReceiptsView: React.FC = () => {
             >
               {({ errors, touched, handleSubmit, handleChange }) => (
                 <form onSubmit={handleSubmit}>
-                  <div
-                    className="form-group"
-                    style={{ marginBottom: "0.5rem" }}
-                  >
+                  <div className="form-group mb-2">
                     <label htmlFor="receiptGuid">Receipt GUID</label>
                     <Field
                       className={
@@ -114,31 +111,26 @@ export const ReceiptsView: React.FC = () => {
                   </div>
 
                   <div className="d-flex mb-2 custom-control custom-checkbox">
-                  <Field
-                    className="custom-control-input"
-                    type="checkbox"
-                    name="isProxyReceipt"
-                    id="isProxyReceipt"
-                    onChange={async (e) => {
-                      handleChange(e)
-                      if (e.target.checked) setIsProxyContractReceipt(true)
-                      else setIsProxyContractReceipt(false)
-                  }}
-                  />
-                  <label className="form-check-label custom-control-label" htmlFor="isProxyReceipt">It's a proxy contract GUID</label>
-                </div>
+                    <Field
+                      className="custom-control-input"
+                      type="checkbox"
+                      name="isProxyReceipt"
+                      id="isProxyReceipt"
+                      onChange={async (e) => {
+                        handleChange(e)
+                        if (e.target.checked) setIsProxyContractReceipt(true)
+                        else setIsProxyContractReceipt(false)
+                    }}
+                    />
+                    <label className="form-check-label custom-control-label" htmlFor="isProxyReceipt">It's a proxy contract GUID</label>
+                  </div>
                   <SubmitButton text="Check" disable = {!touched.receiptGuid || (touched.receiptGuid && errors.receiptGuid) ? true : false} />
                 </form>
               )}
             </Formik>
 
             <div
-              style={{
-                marginTop: "2em",
-                fontSize: "0.8em",
-                textAlign: "center",
-                color: results['succeed'] ? "green" : "red"
-              }}
+              className={results['succeed'] ? "text-success mt-3 text-center" : "text-danger mt-3 text-center"}
               dangerouslySetInnerHTML={{ __html: results.message ? results.message : '' }}
             />
 
@@ -148,7 +140,7 @@ export const ReceiptsView: React.FC = () => {
               tooltipId='etherscan-clear-receipts'
               placement='bottom'
             >
-              <Button onClick={() => { setReceipts([]) }} >Clear</Button>
+              <Button className="btn-sm" onClick={() => { setReceipts([]) }} >Clear</Button>
             </CustomTooltip>
           </div>
         )
@@ -160,9 +152,9 @@ export const ReceiptsView: React.FC = () => {
 
 const ReceiptsTable: React.FC<{ receipts: Receipt[] }> = ({ receipts }) => {
   return (
-    <div className="table-responsive" style={{ fontSize: "0.8em" }}>
+    <div className="table-responsive">
       <h6>Receipts</h6>
-      <table className="table table-sm">
+      <table className="table h6 table-sm">
         <thead>
           <tr>
             <th scope="col">Status</th>
