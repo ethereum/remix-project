@@ -235,7 +235,7 @@ export const VerifyView: React.FC<Props> = ({
                   className="form-control"
                   type="text"
                   name="expectedImplAddress"
-                  placeholder="verified contract address"
+                  placeholder="verified implementation contract address"
                 />
               </CustomTooltip>
               <i style={{ fontSize: 'x-small' }} className={'ml-1 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
