@@ -36,7 +36,7 @@ function RootView ({ pluginComponent, children }: RootViewProps) {
   return (
     <Fragment>
       <div id="pluginManager" data-id="pluginManagerComponentPluginManager">
-        <header className="form-group remixui_pluginSearch plugins-header py-3 px-4 border-bottom" data-id="pluginManagerComponentPluginManagerHeader">
+        <header className="form-group remixui_pluginSearch plugins-header pt-3 pb-0 px-4 border-bottom" data-id="pluginManagerComponentPluginManagerHeader">
           <input
             type="text"
             onChange={(event) => {

@@ -16,21 +16,22 @@ interface IconProps {
 
 const HomeIcon: React.FC<IconProps> = ({ from }: IconProps) => {
   return (
-      <NavLink
-        data-id="home"
-        to={{
-          pathname: "/"
-        }}
-        state={ from }
+    <NavLink
+      data-id="home"
+      to={{
+        pathname: "/"
+      }}
+      className={({ isActive }) => isActive ? "btn p-0 m-0" : "btn text-dark p-0 m-0"}
+      state={ from }
+    >
+      <CustomTooltip
+        tooltipText='Home'
+        tooltipId='etherscan-nav-home'
+        placement='bottom'
       >
-        <CustomTooltip
-          tooltipText='Home'
-          tooltipId='etherscan-nav-home'
-          placement='bottom'
-        >
-          <i className="fas fa-home"></i>
-        </CustomTooltip>
-      </NavLink>
+        <i className="fas fa-home"></i>
+      </CustomTooltip>
+    </NavLink>
   )
 }
 
@@ -41,8 +42,8 @@ const ReceiptsIcon: React.FC<IconProps> = ({ from }: IconProps) => {
         to={{
           pathname: "/receipts"
         }}
+        className={({ isActive }) => isActive ? "btn p-0 m-0 mx-2" : "btn text-dark p-0 m-0 mx-2"}
         state={ from }
-        className="mx-2"
       >
         <CustomTooltip
           tooltipText='Receipts'
@@ -62,6 +63,7 @@ const SettingsIcon: React.FC<IconProps> = ({ from }: IconProps) => {
       to={{
         pathname: "/settings"
       }}
+      className={({ isActive }) => isActive ? "btn p-0 m-0" : "btn text-dark p-0 m-0"}
       state= {from}
     >
       <CustomTooltip
@@ -83,9 +85,9 @@ export const HeaderWithSettings: React.FC<Props> = ({
   return (
     <AppContext.Consumer>
       {() => (
-        <div>
+        <div className="d-flex justify-content-between">
           <h6 className="d-inline">{title}</h6>
-          <div style={{ float: "right" }}>
+          <div>
             <HomeIcon from={from} />
             <ReceiptsIcon from={from} />
             <SettingsIcon from={from} />
