@@ -9506,6 +9506,7 @@ a.text-dark:focus {
   border: 5px solid transparent;
   border-image: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
   border-image-slice: 1;
+  border-image-outset: 2px;
 }
 .custom_home_bg {
   background: linear-gradient(45deg, #ff00004d, #fca80f3b, #ffff004a, #00800033, #0000ff29, #4b00822e, #ee82ee4a, #ff000057);
