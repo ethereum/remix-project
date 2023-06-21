@@ -6,7 +6,6 @@ import { AppContext } from "../AppContext"
 
 interface Props {
   title?: string
-  showBackButton?: boolean
   from: string
 }
 
@@ -37,22 +36,22 @@ const HomeIcon: React.FC<IconProps> = ({ from }: IconProps) => {
 
 const ReceiptsIcon: React.FC<IconProps> = ({ from }: IconProps) => {
   return (
-      <NavLink      
-        data-id="receipts"
-        to={{
-          pathname: "/receipts"
-        }}
-        className={({ isActive }) => isActive ? "btn p-0 m-0 mx-2" : "btn text-dark p-0 m-0 mx-2"}
-        state={ from }
+    <NavLink      
+      data-id="receipts"
+      to={{
+        pathname: "/receipts"
+      }}
+      className={({ isActive }) => isActive ? "btn p-0 m-0 mx-2" : "btn text-dark p-0 m-0 mx-2"}
+      state={ from }
+    >
+      <CustomTooltip
+        tooltipText='Receipts'
+        tooltipId='etherscan-nav-receipts'
+        placement='bottom'
       >
-        <CustomTooltip
-          tooltipText='Receipts'
-          tooltipId='etherscan-nav-receipts'
-          placement='bottom'
-        >
-          <i className="fas fa-receipt"></i>
-        </CustomTooltip>
-      </NavLink>
+        <i className="fas fa-receipt"></i>
+      </CustomTooltip>
+    </NavLink>
   )
 }
 
@@ -79,7 +78,6 @@ const SettingsIcon: React.FC<IconProps> = ({ from }: IconProps) => {
 
 export const HeaderWithSettings: React.FC<Props> = ({
   title = "",
-  showBackButton = false,
   from,
 }) => {
   return (
