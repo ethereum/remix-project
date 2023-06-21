@@ -447,7 +447,8 @@ class FileManager extends Plugin {
       browserExplorer: this._components.registry.get('fileproviders/browser').api,
       localhostExplorer: this._components.registry.get('fileproviders/localhost').api,
       workspaceExplorer: this._components.registry.get('fileproviders/workspace').api,
-      filesProviders: this._components.registry.get('fileproviders').api
+      filesProviders: this._components.registry.get('fileproviders').api,
+      electronExplorer: this._components.registry.get('fileproviders/electron').api,
     }
 
     this._deps.config.set('currentFile', '') // make sure we remove the current file from the previous session
@@ -465,6 +466,11 @@ class FileManager extends Plugin {
     this._deps.workspaceExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     this._deps.workspaceExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
 
+    this._deps.electronExplorer.event.on('fileChanged', (path) => { this.fileChangedEvent(path) })
+    this._deps.electronExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
+    this._deps.electronExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
+    this._deps.electronExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
+    
     this.getCurrentFile = this.file
     this.getFile = this.readFile
     this.getFolder = this.readdir

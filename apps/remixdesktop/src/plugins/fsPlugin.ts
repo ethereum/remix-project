@@ -5,8 +5,8 @@ import chokidar from 'chokidar'
 import { dialog } from "electron";
 import { createWindow } from "../main";
 import { writeConfig } from "../utils/config";
-import { glob, globSync, globStream, globStreamSync, Glob, GlobOptions } from 'glob'
-import { PathScurry, Path } from 'path-scurry'
+import { glob, GlobOptions } from 'glob'
+import { Path } from 'path-scurry'
 
 const profile: Profile = {
   displayName: 'fs',
@@ -213,7 +213,6 @@ class FSPluginClient extends ElectronBasePluginClient {
     if (this.watcher) this.watcher.close()
     this.watcher =
       chokidar.watch(this.fixPath(path)).on('change', (path, stats) => {
-        //console.log('change', path, stats)
         this.emit('change', path, stats)
       })
   }
