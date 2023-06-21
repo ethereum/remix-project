@@ -42,21 +42,21 @@ export function BasicTitle(props: BasicTitleProps) {
       {props.warningStateEntries.length > 0 ? (
         !props.hideWarnings ? (
           !props.showLibsWarnings ? (
-            <i
+            <span
               data-id="StaticAnalysisErrorCount"
               className={`badge ${
                 calculateWarningStateEntries(props.warningStateEntries).length >
                 0
                   ? "badge-warning"
                   : "badge-danger"
-              } rounded-circle ml-1 text-center`}
+              } badge-pill ml-1 px-1 text-center`}
             >
               {calculateWarningStateEntries(props.warningStateEntries).length}
-            </i>
+            </span>
           ) : (
-            <i className="badge badge-warning rounded-circle ml-1 text-center">
+            <span className="badge badge-warning rounded-circle ml-1 text-center">
               {warningCount}
-            </i>
+            </span>
           )
         ) : null
       ) : null}
