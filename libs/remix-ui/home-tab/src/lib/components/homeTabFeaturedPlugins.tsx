@@ -121,7 +121,7 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
             <PluginButton
               imgPath="assets/img/staticAnalysis.webp"
               envID="staticAnalysisLogo"
-              envText="Code Analyzers"
+              envText="Solidity Analyzers"
               description={intl.formatMessage({ id: 'home.codeAnalyizerPluginDesc' })}
               remixMaintained={true}
               callback={() => startCodeAnalyzer() }

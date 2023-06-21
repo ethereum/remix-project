@@ -10,7 +10,7 @@ var EventManager = require('../../lib/events')
 
 const profile = {
   name: 'solidityStaticAnalysis',
-  displayName: 'Solidity Code Analyzers',
+  displayName: 'Solidity Analyzers',
   methods: [],
   events: [],
   icon: 'assets/img/staticAnalysis.webp',
