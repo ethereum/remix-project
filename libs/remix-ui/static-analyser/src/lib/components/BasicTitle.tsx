@@ -5,6 +5,8 @@ type BasicTitleProps = {
   warningStateEntries: any
   hideWarnings?: boolean
   showLibsWarnings?: boolean
+  ssaWarnings: any[]
+  ssaWarningsNoLibs: any[]
 }
 
 type warningResultOption = {
@@ -31,31 +33,24 @@ export function calculateWarningStateEntries(entries: [string, any][]) {
 }
 
 export function BasicTitle(props: BasicTitleProps) {
-  const[warningCount, setWarningCount] = React.useState(props.warningStateEntries.length)
 
-  useEffect(() => {
-
-  }, [props.warningStateEntries.length])
   return (
     <span>
       Remix
-      {props.warningStateEntries.length > 0 ? (
-        !props.hideWarnings ? (
-          !props.showLibsWarnings ? (
+      {props.ssaWarnings.length > 0 ? (
+        props.hideWarnings === false ? (
+          props.showLibsWarnings === false ? (
             <span
               data-id="StaticAnalysisErrorCount"
-              className={`badge ${
-                calculateWarningStateEntries(props.warningStateEntries).length >
-                0
-                  ? "badge-warning"
+              className={`badge ${props.ssaWarningsNoLibs.length > 0 ? "badge-warning"
                   : "badge-danger"
               } badge-pill ml-1 px-1 text-center`}
             >
-              {calculateWarningStateEntries(props.warningStateEntries).length}
+              {props.ssaWarnings.filter(x => x.options.isLibrary === false).length}
             </span>
           ) : (
             <span className="badge badge-warning rounded-circle ml-1 text-center">
-              {warningCount}
+              {props.ssaWarnings.length}
             </span>
           )
         ) : null
