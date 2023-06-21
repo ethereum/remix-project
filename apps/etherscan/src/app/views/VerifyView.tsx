@@ -260,8 +260,7 @@ export const VerifyView: React.FC<Props> = ({
             >
               <button
                 type="button"
-                style={{ padding: "0.25rem 0.4rem", marginRight: "0.5em", marginBottom: "0.5em"}}
-                className="btn btn-secondary btn-block"
+                className="mr-2 mb-2 py-1 px-2 btn btn-secondary btn-block"
                 onClick={async () => {
                   etherscanScripts(client)
                 }}
@@ -275,8 +274,10 @@ export const VerifyView: React.FC<Props> = ({
         }
       </Formik>
 
-      <div data-id="verify-result"
-        style={{ marginTop: "2em", fontSize: "0.8em", textAlign: "center", color: verificationResult.current['succeed'] ? "green" : "red" }}
+      <div
+        data-id="verify-result"
+        className={verificationResult.current['succeed'] ? "text-success mt-4 text-center" : "text-danger mt-4 text-center"}
+        style={{fontSize: "0.8em"}}
         dangerouslySetInnerHTML={{ __html: results }}
       />
 
