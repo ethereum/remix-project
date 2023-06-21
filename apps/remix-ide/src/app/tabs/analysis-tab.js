@@ -10,8 +10,8 @@ var EventManager = require('../../lib/events')
 
 const profile = {
   name: 'solidityStaticAnalysis',
-  displayName: 'Solidity Analyzers',
-  methods: [],
+  displayName: 'Solidity static analysis',
+  methods: ['changedStatus'],
   events: [],
   icon: 'assets/img/staticAnalysis.webp',
   description: 'Checks the contract code for security vulnerabilities and bad practices.',
@@ -27,6 +27,16 @@ class AnalysisTab extends ViewPlugin {
     super(profile)
     this.event = new EventManager()
     this.events = new EventEmitter()
+    /**
+     * @type {Array<{
+      formattedMessage: string;
+      type: "warning" | "error";
+      column: number;
+      line: number;
+    }>}
+     * @description Array of objects containing the results of Linting
+     */
+    this.hints = []
     this.registry = Registry.getInstance()
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'staticAnalyserView')
@@ -47,15 +57,44 @@ class AnalysisTab extends ViewPlugin {
     }
 
     this.event.register('staticAnaysisWarning', (count) => {
-      if (count > 0) {
-        this.emit('statusChanged', { key: count, title: `${count} warning${count === 1 ? '' : 's'}`, type: 'warning' })
-      } else if (count === 0) {
+      let payloadType = ''
+      this.hints.forEach(hint => {
+        if (hint.type === 'error') {
+          payloadType = 'error'
+        } else if (hint.type === 'warning' && payloadType !== 'error') {
+          payloadType = 'warning'
+        }
+      })
+      console.log('what is payload type?', payloadType)
+      console.log('Is hints updated yet?', this.hints)
+      if (count > 0 && this.hints.length > 0) {
+        const totalCount = count === this.hints.length ? count : count + this.hints.length
+        this.emit('statusChanged', { key: totalCount, title: `${totalCount} warning${totalCount === 1 ? '' : 's'}`, type: payloadType })
+      } else if (count === 0 && this.hints.length === 0) {
         this.emit('statusChanged', { key: 'succeed', title: 'no warning', type: 'success' })
       } else {
         // count ==-1 no compilation result
         this.emit('statusChanged', { key: 'none' })
       }
     })
+  }
+
+  /**
+   * Takes payload (an Array of Objects) emitted by Solhint and raises the status changed event.
+   * The payload sent has to be a result which should at a minimum have
+   * type which could be error || warning.
+   * @param {Array} payload
+   */
+  async changedStatus (payload) {
+    let payloadType = `${payload.includes(p => p.type === 'error') ? 'error' : 'warning'}`
+      if(payload.length > 0) {
+        this.emit('statusChanged',
+        { key: payload.length, title: `${payload.length} warning${payload.length === 1 ? '' : 's'} or errors`, type: payloadType})
+      } else if (payload.length === 0) {
+        this.emit('statusChanged', { key: 'succeed', title: 'no warning or errors', type: 'success' })
+      } else {
+        this.emit('statusChanged', { key: 'none' })
+      }
   }
 
   setDispatch (dispatch) {
