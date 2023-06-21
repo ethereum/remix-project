@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useReducer, useRef, Fragment } from 'react' // eslint-disable-line
 import Button from './Button/StaticAnalyserButton' // eslint-disable-line
 import { util } from '@remix-project/remix-lib'
+import { Status } from '@remixproject/plugin-utils'
 import _ from 'lodash'
 import * as semver from 'semver'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
@@ -126,7 +127,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     const runAnalysis = async () => {
       await run(state.data, state.source, state.file, state, props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq, message, showWarnings, allWarnings, warningContainer,calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis)
     }
-    props.event.trigger('staticAnaysisWarning', [])
+    props.event.trigger('staticAnaysisWarning', [0])
     return () => { }
   }, [state])
 
@@ -146,12 +147,18 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }, [props])
 
   useEffect(() => {
+    if(hints.length > 0) {
+      props.event.trigger('staticAnaysisWarning', [hints.length])
+    }
+  }, [hints.length])
+
+  useEffect(() => {
     props.analysisModule.on('filePanel', 'setWorkspace', (currentWorkspace) => {
       // Reset warning state
       allWarnings.current = {}
       setWarningState({})
       // Reset badge
-      props.event.trigger('staticAnaysisWarning', [])
+      props.event.trigger('staticAnaysisWarning', [0])
       // Reset state
       dispatch({ type: '', payload: initialState })
       setHints([])
@@ -177,7 +184,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         setSlitherEnabled(false)
         setSsaWarnings([])
         // Reset badge
-        props.event.trigger('staticAnaysisWarning', [])
+        props.event.trigger('staticAnaysisWarning', [0])
         // Reset state
         dispatch({ type: '', payload: initialState })
         setShowSlither(false)
