@@ -49,6 +49,7 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
   setHints([])
   setSsaWarnings([])
   setSlitherWarnings([])
+  props.analysisModule.hints = []
   if (!isSupportedVersion) return
   if (state.data !== null) {
     if (lastCompilationResult && (categoryIndex.length > 0 || showSlither)) {
@@ -57,6 +58,7 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
 
         // Run solhint
         const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
+        props.analysisModule.hints = hintsResult
         setHints(hintsResult)
       const warningResult = calculateWarningStateEntries(Object.entries(warningState))
         props.analysisModule.emit('statusChanged', { key: hints.length+warningResult.length,
