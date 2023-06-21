@@ -505,12 +505,12 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           {hints.length > 0 ? (
             hideWarnings ? (
               <i className={`badge ${hints.filter(x => x.type === 'error').length > 0
-                ? `badge-danger` : 'badge-warning'} rounded-circle ml-1 text-center`}>
+                ? `badge-danger` : 'badge-warning'} badge-pill px-1 ml-1 text-center`}>
                 {hintErrors.length}
               </i>
             ) : (
               <i className={`badge ${hints.filter(x => x.type === 'error').length > 0
-              ? `badge-danger` : 'badge-warning'} rounded-circle ml-1 text-center`}>
+              ? `badge-danger` : 'badge-warning'} badge-pill px-1 ml-1 text-center`}>
                 {hints.length}
               </i>
             )
@@ -545,15 +545,15 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           Slither
           {slitherWarnings.length > 0 ? (
             hideWarnings ? (
-              <i className="badge badge-warning rounded-circle ml-1">
+              <i className="badge badge-warning badge-pill px-1 ml-1">
                 {slitherErrors.length}
               </i>
             ) : showLibsWarning === true && hideWarnings === false ? (
-              <i className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} rounded-circle ml-1 text-center`}>
+              <i className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} badge-pill px-1 ml-1 text-center`}>
                   {slitherWarnings.length}
                 </i>
             )  : (
-              <i className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} rounded-circle ml-1 text-center`}>
+              <i className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} badge-pill px-1 ml-1 text-center`}>
                 {noLibSlitherWarnings.length}
               </i>
             )
