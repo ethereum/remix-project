@@ -288,7 +288,7 @@ export function ContractGUI (props: ContractGUIProps) {
             data-title={buttonOptions.title}
             disabled={(toggleUpgradeImp && !proxyAddress) || props.disabled}
           >
-            <div>{title}</div>
+            <div className='text-nowrap overflow-hidden text-truncate'>{title}</div>
           </button>
         </CustomTooltip>
         <input

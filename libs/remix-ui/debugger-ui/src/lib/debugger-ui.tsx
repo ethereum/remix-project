@@ -370,13 +370,18 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
 
   const customJSX = (
     <span className="p-0 m-0">
-              <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={({ target: { checked } }) => {
-              setState(prevState => {
-                return { ...prevState, opt: { ...prevState.opt, debugWithGeneratedSources: checked } }
-              })
-            }} type="checkbox" />
-            <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput"><FormattedMessage id='debugger.useGeneratedSources' /> (Solidity {'>='} v0.7.2)</label>
-            </span>
+      <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={({ target: { checked } }) => {
+        setState(prevState => {
+          return { ...prevState, opt: { ...prevState.opt, debugWithGeneratedSources: checked } }
+        })
+      }} type="checkbox" />
+      <label
+        data-id="debugGeneratedSourcesLabel"
+        className="form-check-label custom-control-label"
+        htmlFor="debugGeneratedSourcesInput">
+          <FormattedMessage id='debugger.useGeneratedSources' />(Solidity {'>='} v0.7.2)
+      </label>
+    </span>
   )
   return (
     <div>
