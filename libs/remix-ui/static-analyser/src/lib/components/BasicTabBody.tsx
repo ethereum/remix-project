@@ -62,7 +62,7 @@ export function BasicTabBody({ state, hideWarnings, showLibsWarning, warningStat
                           data-id={`staticAnalysisModule${x.warningModuleName}${i}`}
                           id={`staticAnalysisModule${x.warningModuleName}${i}`}
                           key={i}
-                        >3
+                        >
                           <ErrorRenderer
                             name={`staticAnalysisModule${x.warningModuleName}${i}`}
                             message={x.msg}
