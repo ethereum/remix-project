@@ -647,10 +647,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           <RemixUiCheckbox
             id="solhintstaticanalysis"
             inputType="checkbox"
-            title="Linter runs SolHint static analysis."
+            title="SolHint lints the selected contract."
             onClick={handleLinterEnabled}
             checked={solhintEnabled }
-            label="Linter"
+            label="Solhint"
             onChange={() => {}}
             tooltipPlacement={'bottom-start'}
             optionalClassName="mr-3"
@@ -671,6 +671,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         </div>
           {state.data && state.file.length > 0 && state.source ? <Button
               buttonText={`Analyse ${state.file}`}
+              title={`${runButtonTitle}`}
               classList="btn btn-sm btn-primary btn-block"
               onClick={async () => await run(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
                 message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis)}
