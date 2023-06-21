@@ -16,10 +16,10 @@ export function BasicTabBody({ state, hideWarnings, showLibsWarning, warningStat
           {Object.entries(warningState).length > 0 ? (
             <div id="staticanalysisresult">
               <div className="mb-4 pt-2">
-                {Object.entries(warningState).map((element, index) => (
+                {Object.entries(warningState).map((warning, index) => (
                   <div key={index}>
-                    { hideWarnings === false ? <span className="text-dark h6">{element[0]}</span> : null}
-                    { hideWarnings === false ? element[1]["map"](
+                    { hideWarnings === false ? <span className="text-dark h6">{warning[0]}</span> : null}
+                    { hideWarnings === false ? warning[1]["map"](
                       (x,i) => // eslint-disable-line dot-notation
                         x.hasWarning
                         ? ( // eslint-disable-next-line  dot-notation
@@ -36,26 +36,43 @@ export function BasicTabBody({ state, hideWarnings, showLibsWarning, warningStat
                               editor={analysisModule}
                             />
                           </div>
-                        ) : null
-                    ) : element[1]["map"](
-                      (x,i) => // eslint-disable-line dot-notation
-                        showLibsWarning && x.isLibrary
-                        ? ( // eslint-disable-next-line  dot-notation
+                        ) : null) : null}
+                    {
+                      hideWarnings === false ? warning[1]["map"]((x,i) =>(
+                      showLibsWarning === false ? (
+                         x.isLibrary ? (
                           <div
-                            data-id={`staticAnalysisModule${x.warningModuleName}${i}`}
-                            id={`staticAnalysisModule${x.warningModuleName}${i}`}
-                            key={i}
-                          >
-                            <ErrorRenderer
-                              name={`staticAnalysisModule${x.warningModuleName}${i}`}
-                              message={x.msg}
-                              opt={x.options}
-                              warningErrors={x.warningErrors}
-                              editor={analysisModule}
-                            />
-                          </div>
-                        ) : null)}
-                    {}
+                          data-id={`staticAnalysisModule${x.warningModuleName}${i}`}
+                          id={`staticAnalysisModule${x.warningModuleName}${i}`}
+                          key={i}
+                        >
+                          <ErrorRenderer
+                            name={`staticAnalysisModule${x.warningModuleName}${i}`}
+                            message={x.msg}
+                            opt={x.options}
+                            warningErrors={x.warningErrors}
+                            editor={analysisModule}
+                          />
+                        </div>
+                        ) : null): null)) : null
+                    }
+                    {
+                      hideWarnings === false ? warning[1]["map"]((x,i) =>(
+                        <div
+                          data-id={`staticAnalysisModule${x.warningModuleName}${i}`}
+                          id={`staticAnalysisModule${x.warningModuleName}${i}`}
+                          key={i}
+                        >3
+                          <ErrorRenderer
+                            name={`staticAnalysisModule${x.warningModuleName}${i}`}
+                            message={x.msg}
+                            opt={x.options}
+                            warningErrors={x.warningErrors}
+                            editor={analysisModule}
+                          />
+                        </div>
+                      )) : null
+                    }
                   </div>
                 ))}
               </div>
