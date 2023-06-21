@@ -6,78 +6,70 @@ type BasicTabBodyProps = {
   hideWarnings: boolean
   showLibsWarning: boolean
   warningState: any
+  ssaWarnings: any[]
+  ssaWarningsNoLibs: any[]
   startAnalysis: boolean
   analysisModule: any
 }
-export function BasicTabBody({ state, hideWarnings, showLibsWarning, warningState, startAnalysis, analysisModule}: BasicTabBodyProps) {
-
+export function BasicTabBody({ state, hideWarnings, ssaWarnings, ssaWarningsNoLibs, showLibsWarning, warningState, startAnalysis, analysisModule}: BasicTabBodyProps) {
+const test = ssaWarningsNoLibs.filter(x => x.options.isLibrary === false)
+const test1 = ssaWarningsNoLibs.filter(x => x.options.isLibrary)
+console.log({test, test1 })
   return (
     <>
-          {Object.entries(warningState).length > 0 ? (
-            <div id="staticanalysisresult">
-              <div className="mb-4 pt-2">
-                {Object.entries(warningState).map((warning, index) => (
-                  <div key={index}>
-                    { hideWarnings === false ? <span className="text-dark h6">{warning[0]}</span> : null}
-                    { hideWarnings === false ? warning[1]["map"](
-                      (x,i) => // eslint-disable-line dot-notation
-                        x.hasWarning
-                        ? ( // eslint-disable-next-line  dot-notation
-                          <div
-                            data-id={`staticAnalysisModule${x.warningModuleName}${i}`}
-                            id={`staticAnalysisModule${x.warningModuleName}${i}`}
-                            key={i}
-                          >
-                            <ErrorRenderer
-                              name={`staticAnalysisModule${x.warningModuleName}${i}`}
-                              message={x.msg}
-                              opt={x.options}
-                              warningErrors={x.warningErrors}
-                              editor={analysisModule}
-                            />
-                          </div>
-                        ) : null) : null}
-                    {
-                      hideWarnings === false ? warning[1]["map"]((x,i) =>(
-                      showLibsWarning === false ? (
-                         x.isLibrary ? (
-                          <div
-                          data-id={`staticAnalysisModule${x.warningModuleName}${i}`}
-                          id={`staticAnalysisModule${x.warningModuleName}${i}`}
-                          key={i}
-                        >
-                          <ErrorRenderer
-                            name={`staticAnalysisModule${x.warningModuleName}${i}`}
-                            message={x.msg}
-                            opt={x.options}
-                            warningErrors={x.warningErrors}
-                            editor={analysisModule}
-                          />
-                        </div>
-                        ) : null): null)) : null
-                    }
-                    {
-                      hideWarnings === false ? warning[1]["map"]((x,i) =>(
-                        <div
-                          data-id={`staticAnalysisModule${x.warningModuleName}${i}`}
-                          id={`staticAnalysisModule${x.warningModuleName}${i}`}
-                          key={i}
-                        >
-                          <ErrorRenderer
-                            name={`staticAnalysisModule${x.warningModuleName}${i}`}
-                            message={x.msg}
-                            opt={x.options}
-                            warningErrors={x.warningErrors}
-                            editor={analysisModule}
-                          />
-                        </div>
-                      )) : null
-                    }
+      {ssaWarningsNoLibs.length > 0 ? (
+        <div id="staticanalysisresult">
+          <div className="mb-4 pt-2">
+            {
+              (hideWarnings === false && showLibsWarning === false) && ssaWarningsNoLibs.length > 0
+                ? ssaWarningsNoLibs.filter(x => x.options.isLibrary === false).map((item, index) => (
+                  <div
+                    data-id={`staticAnalysisModule${item.warningModuleName}${index}`}
+                    id={`staticAnalysisModule${item.warningModuleName}${index}`}
+                    key={index}
+                  >
+                    <ErrorRenderer
+                      name={`staticAnalysisModule${item.warningModuleName}${index}`}
+                      message={item.msg}
+                      opt={item.options}
+                      warningErrors={item.warningErrors}
+                      editor={analysisModule}
+                    />
                   </div>
-                ))}
-              </div>
-            </div>
-          ) : state.data && state.file.length > 0 && state.source && startAnalysis && Object.entries(warningState).length > 0 ? <span className="ml-4 spinner-grow-sm d-flex justify-content-center">Loading...</span> : <span className="display-6 text-center">Nothing to report</span>}
-        </>
-  )
+                ))
+              : null
+            }
+            {
+                hideWarnings === false && showLibsWarning === true && ssaWarnings.length > 0
+                ? ssaWarnings.map((warning, index) => (
+                  <div
+                    data-id={`staticAnalysisModule${warning.warningModuleName}${index}`}
+                    id={`staticAnalysisModule${warning.warningModuleName}${index}`}
+                    key={index}
+                  >
+                    <ErrorRenderer
+                      name={`staticAnalysisModule${warning.warningModuleName}${index}`}
+                      message={warning.msg}
+                      opt={warning.options}
+                      warningErrors={warning.warningErrors}
+                      editor={analysisModule}
+                    />
+                  </div>
+                )) : null
+            }
+          </div>
+        </div>
+      ) : state.data &&
+        state.file.length > 0 &&
+        state.source &&
+        startAnalysis &&
+        Object.entries(warningState).length > 0 ? (
+        <span className="ml-4 spinner-grow-sm d-flex justify-content-center">
+          Loading...
+        </span>
+      ) : (
+        <span className="display-6 text-center">Nothing to report</span>
+      )}
+    </>
+  );
 }
