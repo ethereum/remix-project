@@ -65,8 +65,7 @@ class AnalysisTab extends ViewPlugin {
           payloadType = 'warning'
         }
       })
-      console.log('what is payload type?', payloadType)
-      console.log('Is hints updated yet?', this.hints)
+
       if (count > 0 && this.hints.length > 0) {
         const totalCount = count === this.hints.length ? count : count + this.hints.length
         this.emit('statusChanged', { key: totalCount, title: `${totalCount} warning${totalCount === 1 ? '' : 's'}`, type: payloadType })
