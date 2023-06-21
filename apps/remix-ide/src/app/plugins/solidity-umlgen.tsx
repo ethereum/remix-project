@@ -2,7 +2,7 @@
 import { ViewPlugin } from '@remixproject/engine-web'
 import React from 'react'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { RemixUiSolidityUmlGen } from '@remix-ui/solidity-uml-gen' 
+import { RemixUiSolidityUmlGen } from '@remix-ui/solidity-uml-gen'
 import { ISolidityUmlGen, ThemeQualityType, ThemeSummary } from 'libs/remix-ui/solidity-uml-gen/src/types'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
 import { normalizeContractPath } from 'libs/remix-ui/solidity-compiler/src/lib/logic/flattenerUtilities'
@@ -45,6 +45,10 @@ const themeCollection = [
   shapeColor: '#333333', fillColor: '#eeeeee'},
   { themeName: 'Candy', backgroundColor: '#d5efff', textColor: '#11556c',
   shapeColor: '#343a40',fillColor: '#fbe7f8' },
+  { themeName: 'Violet', backgroundColor: '#f1eef6', textColor: '#3b445e',
+  shapeColor: '#343a40',fillColor: '#f8fafe' },
+  { themeName: 'Pride', backgroundColor: '#f1eef6', textColor: '#343a40',
+  shapeColor: '#343a40',fillColor: '#f8fafe' },
 ]
 
 /**
@@ -119,7 +123,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     return window.getComputedStyle(document.documentElement)
     .getPropertyValue(cssVars)
   }
-  
+
   private handleThemeChange() {
     this.on('theme', 'themeChanged', async (theme) => {
       this.currentlySelectedTheme = theme.quality
