@@ -205,7 +205,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }
 
   const filterWarnings = () => {
-    console.log({ allWarnings })
     let newWarningState = {}
     let newWarningCount = 0
     if (showLibsWarning) {
