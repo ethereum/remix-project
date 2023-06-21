@@ -226,14 +226,6 @@ export const VerifyView: React.FC<Props> = ({
 
             <div className={ isProxyContract ? 'form-group d-block': 'form-group d-none' }>
               <label htmlFor="expectedImplAddress">Expected Implementation Address</label>
-              {/* <CustomTooltip
-                placement={'top'}
-                tooltipClasses="text-wrap"
-                tooltipId="etherscan-impl-address-info"
-                tooltipText="Make sure implementation contract is already verified before proxy contract"
-              >
-                <i style={{ fontSize: 'small' }} className={'ml-1 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
-              </CustomTooltip> */}
               <CustomTooltip
               tooltipText='Providing expected implementation address enforces a check to ensure the returned implementation contract address is same as address picked up by the verifier'
               tooltipId='etherscan-impl-address'
