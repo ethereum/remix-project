@@ -62,8 +62,7 @@ export const CaptureKeyView: React.FC = () => {
             </form>
           )}
         </Formik>
-      }
-      }
+      }}
     </AppContext.Consumer>
   )
 }

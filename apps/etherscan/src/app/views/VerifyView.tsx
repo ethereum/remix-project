@@ -132,15 +132,15 @@ export const VerifyView: React.FC<Props> = ({
                 }
                 name="contractName"
                 onChange={async (e) => {
-                    handleChange(e)
-                    const {artefact} = await client.call("compilerArtefacts" as any, "getArtefactsByContractName", e.target.value)
-                    if (artefact && artefact.abi && artefact.abi[0] && artefact.abi[0].type && artefact.abi[0].type === 'constructor' && artefact.abi[0].inputs.length > 0) {
-                      setConstructorInputs(artefact.abi[0].inputs)
-                      setShowConstructorArgs(true)
-                    } else {
-                      setConstructorInputs([])
-                      setShowConstructorArgs(false)
-                    }
+                  handleChange(e)
+                  const {artefact} = await client.call("compilerArtefacts" as any, "getArtefactsByContractName", e.target.value)
+                  if (artefact && artefact.abi && artefact.abi[0] && artefact.abi[0].type && artefact.abi[0].type === 'constructor' && artefact.abi[0].inputs.length > 0) {
+                    setConstructorInputs(artefact.abi[0].inputs)
+                    setShowConstructorArgs(true)
+                  } else {
+                    setConstructorInputs([])
+                    setShowConstructorArgs(false)
+                  }
                 }}
               >
                 <option disabled={true} value="">

@@ -14,18 +14,6 @@ interface Props extends RouteProps {
   from: string
 }
 
-const RouteWithHeader = ({ component: Component, ...rest }: Props) => {
-  return (
-    <Route
-      {...rest}      
-    >
-      <DefaultLayout {...rest}>
-          <Component />
-        </DefaultLayout>
-    </Route>
-  )
-}
-
 export const DisplayRoutes = () => (
   <Router>
     <Routes>    
