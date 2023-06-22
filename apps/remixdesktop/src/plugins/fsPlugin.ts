@@ -72,7 +72,7 @@ const clientProfile: Profile = {
   name: 'fs',
   displayName: 'fs',
   description: 'fs',
-  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'getRecentFolders', 'glob', 'openWindow', 'selectFolder']
+  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'getRecentFolders', 'removeRecentFolder', 'glob', 'openWindow', 'selectFolder']
 }
 
 class FSPluginClient extends ElectronBasePluginClient {
@@ -293,6 +293,13 @@ class FSPluginClient extends ElectronBasePluginClient {
   async getRecentFolders(): Promise<string[]> {
     const config = await this.call('electronconfig' as any, 'readConfig')
     return config.recentFolders || []
+  }
+
+  async removeRecentFolder(path: string): Promise<void> {
+    const config = await this.call('electronconfig' as any, 'readConfig')
+    config.recentFolders = config.recentFolders || []
+    config.recentFolders = config.recentFolders.filter((p: string) => p !== path)
+    writeConfig(config)
   }
 
 

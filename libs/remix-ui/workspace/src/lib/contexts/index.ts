@@ -47,6 +47,7 @@ export const FileSystemContext = createContext<{
   dispatchCreateSlitherGithubAction: () => Promise<void>
   dispatchOpenElectronFolder: (path: string) => Promise<void>
   dispatchGetElectronRecentFolders: () => Promise<void>
+  dispatchRemoveRecentFolder: (path: string) => Promise<void>
 }>(null)
   
     
