@@ -7,18 +7,45 @@ declare global {
 }
 
 export class ElectronProvider extends FileProvider {
-  constructor () {
+  constructor(appManager) {
     super('')
+    this._appManager = appManager
+
+  }
+
+  async init() {
+    this._appManager.on('fs', 'change', (event, path) => {
+      console.log('change', event, path)
+      switch (event) {
+        case 'add':
+          this.event.emit('fileAdded', path)
+          break
+        case 'unlink':
+          this.event.emit('fileRemoved', path)
+          break
+        case 'change':
+          this.event.emit('fileChanged', path)
+          break
+        case 'rename':
+          this.event.emit('fileRenamed', path)
+          break
+        case 'addDir':
+          this.event.emit('folderAdded', path)
+          break
+        case 'unlinkDir':
+          this.event.emit('fileRemoved', path)
+      }
+    })
   }
 
   // isDirectory is already included
   // this is a more efficient version of the default implementation
-  async resolveDirectory (path, cb) {
+  async resolveDirectory(path, cb) {
     path = this.removePrefix(path)
     if (path.indexOf('/') !== 0) path = '/' + path
     try {
       const files = await window.remixFileSystem.readdir(path)
-      console.log(files, 'files resolveDirectory ELECTRON')
+      console.log(files.length, 'files resolveDirectory ELECTRON')
       const ret = {}
       if (files) {
         for (let element of files) {
@@ -34,6 +61,19 @@ export class ElectronProvider extends FileProvider {
       return ret
     } catch (error) {
       if (cb) cb(error, null)
+    }
+  }
+
+  /**
+ * Removes the folder recursively
+ * @param {*} path is the folder to be removed
+ */
+  async remove(path) {
+    console.log('remove', path)
+    try {
+      await window.remixFileSystem.rmdir(path)
+    } catch (error) {
+      console.log(error)
     }
   }
 

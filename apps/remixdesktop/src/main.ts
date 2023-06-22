@@ -46,10 +46,7 @@ export const createWindow = async (dir?: string): Promise<void> => {
   })
 
   windowSet.add(mainWindow)
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-
+  //mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished
@@ -97,6 +94,7 @@ import MainMenu from './menus/main';
 import darwinMenu from './menus/darwin';
 import WindowMenu from './menus/window';
 import EditMenu from './menus/edit';
+import GitMenu from './menus/git';
 import { execCommand } from './menus/commands';
 
 const commandKeys: Record<string, string> = {
@@ -107,7 +105,8 @@ const commandKeys: Record<string, string> = {
 const menu = [...(process.platform === 'darwin' ? [darwinMenu(commandKeys, execCommand, showAbout)] : []),
 FileMenu(commandKeys, execCommand),
 EditMenu(commandKeys, execCommand),
-WindowMenu(commandKeys, execCommand, [])
+WindowMenu(commandKeys, execCommand, []),
+GitMenu(commandKeys, execCommand)
 ]
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(menu))

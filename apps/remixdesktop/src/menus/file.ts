@@ -22,7 +22,13 @@ export default (
         click(item, focusedWindow) {
           execCommand('folder:open', focusedWindow);
         }
-      }
+      },
+      {
+        label: 'Load Template in New Window',
+        click(item, focusedWindow) {
+          execCommand('template:open', focusedWindow);
+        }
+      },
     ]
   };
 };

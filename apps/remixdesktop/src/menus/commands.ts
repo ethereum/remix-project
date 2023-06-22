@@ -11,6 +11,16 @@ const commands: Record<string, (focusedWindow?: BrowserWindow) => void> = {
     if (focusedWindow) {
       ipcMain.emit('fs:openFolder', focusedWindow.webContents.id);
     }
+  },
+  'template:open': (focusedWindow) => {
+    if (focusedWindow) {
+      ipcMain.emit('template:open', focusedWindow.webContents.id);
+    }
+  },
+  'git:startclone': (focusedWindow) => {
+    if (focusedWindow) {
+      ipcMain.emit('git:startclone', focusedWindow.webContents.id);
+    }
   }
 
 };

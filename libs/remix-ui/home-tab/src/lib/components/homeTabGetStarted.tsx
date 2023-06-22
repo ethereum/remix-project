@@ -7,6 +7,7 @@ import Carousel from 'react-multi-carousel'
 import WorkspaceTemplate from './workspaceTemplate'
 import 'react-multi-carousel/lib/styles.css'
 import CustomNavButtons from './customNavButtons'
+import isElectron from 'is-electron'
 declare global {
   interface Window {
     _paq: any
@@ -58,6 +59,12 @@ function HomeTabGetStarted ({plugin}: HomeTabGetStartedProps) {
   }
 
   const createWorkspace = async (templateName) => {
+    if(isElectron()){
+      await plugin.call('remix-templates', 'loadTemplateInNewWindow', templateName)
+      return
+    }
+
+
     await plugin.appManager.activatePlugin('filePanel')
     const timeStamp = Date.now()
     let templateDisplayName = TEMPLATE_NAMES[templateName]

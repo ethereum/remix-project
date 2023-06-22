@@ -45,9 +45,13 @@ import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
 import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
 import { ContractFlattener } from './app/plugins/contractFlattener'
-import { fsPlugin } from './app/plugins/fsPlugin'
-import { isoGitPlugin } from './app/plugins/isoGitPlugin'
-import { electronConfig } from './app/plugins/electronConfigPlugin'
+import { TemplatesPlugin } from './app/plugins/remix-templates'
+import { fsPlugin } from './app/plugins/electron/fsPlugin'
+import { isoGitPlugin } from './app/plugins/electron/isoGitPlugin'
+import { electronConfig } from './app/plugins/electron/electronConfigPlugin'
+import { electronTemplates } from './app/plugins/electron/templatesPlugin'
+
+
 
 const isElectron = require('is-electron')
 
@@ -116,7 +120,7 @@ class AppComponent {
       name: 'fileproviders/workspace'
     })
 
-    this._components.filesProviders.electron = new ElectronProvider()
+    this._components.filesProviders.electron = new ElectronProvider(this.appManager)
     Registry.getInstance().put({
       api: this._components.filesProviders.electron,
       name: 'fileproviders/electron'
@@ -197,7 +201,8 @@ class AppComponent {
     //----- search
     const search = new SearchPlugin()
 
-
+    //---- templates
+    const templates = new TemplatesPlugin()
 
     //---------------- Solidity UML Generator -------------------------
     const solidityumlgen = new SolidityUmlGen(appManager)
@@ -322,6 +327,7 @@ class AppComponent {
       solidityumlgen,
       contractFlattener,
       solidityScript,
+      templates
     ])
 
     //---- fs plugin
@@ -332,6 +338,8 @@ class AppComponent {
       this.engine.register([isoGit])
       const electronConfigPlugin = new electronConfig()
       this.engine.register([electronConfigPlugin])
+      const templatesPlugin = new electronTemplates()
+      this.engine.register([templatesPlugin])
     }
 
     // LAYOUT & SYSTEM VIEWS
@@ -447,10 +455,10 @@ class AppComponent {
     await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'codeParser', 'codeFormatter', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
-    await this.appManager.activatePlugin(['solidity-script'])
+    await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if(isElectron()){
-      await this.appManager.activatePlugin(['fs', 'isogit', 'electronconfig'])
+      await this.appManager.activatePlugin(['fs', 'isogit', 'electronconfig', 'electronTemplates'])
     }
 
     this.appManager.on(

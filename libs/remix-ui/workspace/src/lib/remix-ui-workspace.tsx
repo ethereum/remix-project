@@ -104,6 +104,16 @@ export function Workspace() {
     }
     setCurrentWorkspace(workspaceName)
     resetFocus()
+
+    // expose some UI to the plugin, perhaps not the best way to do it
+    if (global.plugin) {
+      global.plugin.loadTemplate = async () => {
+        createWorkspace()
+      }
+      global.plugin.clone = async () => {
+        cloneGitRepository()
+      }
+    }
   }, [])
 
   useEffect(() => {
@@ -692,7 +702,7 @@ export function Workspace() {
                         <FormattedMessage id='filePanel.workspace' />
                       </label>
                     </span> : null}
-                  {currentWorkspace !== LOCALHOST && !isElectron() ? (<span className="remixui_menu remixui_topmenu d-flex justify-content-between align-items-end w-75">
+                  {currentWorkspace !== LOCALHOST ? (<span className="remixui_menu remixui_topmenu d-flex justify-content-between align-items-end w-75">
                     <CustomTooltip
                       placement="top"
                       tooltipId="createWorkspaceTooltip"

@@ -12,7 +12,7 @@ const profile: Profile = {
 }
 
 export class XtermPlugin extends ElectronBasePlugin {
-    client: PluginClient
+    clients: XtermPluginClient[] = []
     constructor() {
         super(profile, clientProfile, XtermPluginClient)
     }

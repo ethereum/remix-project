@@ -13,13 +13,20 @@ const profile: Profile = {
 }
 
 export class IsoGitPlugin extends ElectronBasePlugin {
-  client: PluginClient
+  clients: IsoGitPluginClient[] = []
   constructor() {
     super(profile, clientProfile, IsoGitPluginClient)
   }
+
+  startClone(webContentsId: any): void {
+    const client = this.clients.find(c => c.webContentsId === webContentsId)
+    if (client) {
+      client.startClone()
+    }
+  }
 }
 
-const parseInput = (input: any)=> {
+const parseInput = (input: any) => {
   return {
     corsProxy: 'https://corsproxy.remixproject.org/',
     http,
@@ -51,30 +58,30 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
         console.log('workingDirChanged', path)
         this.workingDir = path
         await this.status({
-          
+
         })
       })
     })
   }
 
-  async getGitConfig () {
-      return {
-        fs,
-        dir: this.workingDir,
-      }
+  async getGitConfig() {
+    return {
+      fs,
+      dir: this.workingDir,
+    }
   }
 
-  async status (cmd: any) {
+  async status(cmd: any) {
     console.log('status')
     const status = await git.statusMatrix({
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('STATUS', status, await this.getGitConfig())
+    //console.log('STATUS', status, await this.getGitConfig())
     return status
   }
 
-  async log (cmd: any) {
+  async log(cmd: any) {
     console.log('log')
     const log = await git.log({
       ...await this.getGitConfig(),
@@ -84,7 +91,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     return log
   }
 
-  async add (cmd: any) {
+  async add(cmd: any) {
     console.log('add')
     const add = await git.add({
       ...await this.getGitConfig(),
@@ -104,7 +111,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     return rm
   }
 
-  async commit (cmd: any) {
+  async commit(cmd: any) {
     console.log('commit')
     const commit = await git.commit({
       ...await this.getGitConfig(),
@@ -114,14 +121,14 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     return commit
   }
 
-  async init (input: any) {
+  async init(input: any) {
     await git.init({
       ...await this.getGitConfig(),
       defaultBranch: (input && input.branch) || 'main'
     })
   }
 
-  async branch (cmd: any) {
+  async branch(cmd: any) {
     console.log('branch')
     const branch = await git.branch({
       ...await this.getGitConfig(),
@@ -131,7 +138,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     return branch
   }
 
-  async lsfiles (cmd: any) {
+  async lsfiles(cmd: any) {
     console.log('lsfiles')
     const lsfiles = await git.listFiles({
       ...await this.getGitConfig(),
@@ -141,7 +148,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     return lsfiles
   }
 
-  async resolveref (cmd: any) {
+  async resolveref(cmd: any) {
     console.log('resolveref')
     const resolveref = await git.resolveRef({
       ...await this.getGitConfig(),
@@ -152,7 +159,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
 
-  async readblob (cmd: any) {
+  async readblob(cmd: any) {
     console.log('readblob')
     const readblob = await git.readBlob({
       ...await this.getGitConfig(),
@@ -162,7 +169,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     return readblob
   }
 
-  async checkout (cmd: any) {
+  async checkout(cmd: any) {
     console.log('checkout')
     const checkout = await git.checkout({
       ...await this.getGitConfig(),
@@ -172,7 +179,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     return checkout
   }
 
-  async push (cmd: any) {
+  async push(cmd: any) {
     console.log('push')
     const push = await git.push({
       ...await this.getGitConfig(),
@@ -183,7 +190,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     return push
   }
 
-  async pull (cmd: any) {
+  async pull(cmd: any) {
     console.log('pull', cmd)
     const pull = await git.pull({
       ...await this.getGitConfig(),
@@ -207,26 +214,19 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
   async clone(cmd: any) {
     console.log('clone')
-    const clone = await git.clone({
-      ...await this.getGitConfig(),
-      ...cmd,
-      ...parseInput(cmd.input),
-      dir: cmd.dir || this.workingDir
-    })
-    console.log('CLONE', clone)
-    return clone
-  }
-
-  async openFolder(path?: string): Promise<string> {
-    let dirs: string[] | undefined
-    if (!path) {
-      dirs = dialog.showOpenDialogSync(this.window, {
-        properties: ['openDirectory', 'createDirectory', "showHiddenFiles"]
+    try {
+      const clone = await git.clone({
+        ...await this.getGitConfig(),
+        ...cmd,
+        ...parseInput(cmd.input),
+        dir: cmd.dir || this.workingDir
       })
+      console.log('CLONE', clone)
+      return clone
+    } catch (e) {
+      console.log('CLONE ERROR', e)
+      throw e
     }
-    path = dirs && dirs.length && dirs[0] ? dirs[0] : path
-    if (!path) return ''
-    return path
   }
 
   async addremote(cmd: any) {
@@ -248,12 +248,12 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     console.log('DELREMOTE', delremote)
     return delremote
   }
-  
-  
+
+
 
   remotes = async () => {
     let remotes = []
-    remotes = await git.listRemotes({...await this.getGitConfig() })
+    remotes = await git.listRemotes({ ...await this.getGitConfig() })
     console.log('remotes', remotes)
     return remotes
   }
@@ -272,7 +272,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
   async branches() {
     try {
-      let cmd: any = {...await this.getGitConfig()}
+      let cmd: any = { ...await this.getGitConfig() }
       const remotes = await this.remotes()
       let branches = []
       branches = (await git.listBranches(cmd)).map((branch) => { return { remote: undefined, name: branch } })
@@ -281,10 +281,10 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
           ...cmd,
           remote: remote.remote
         }
-        
+
         const remotebranches = (await git.listBranches(cmd)).map((branch) => { return { remote: remote.remote, name: branch } })
         branches = [...branches, ...remotebranches]
-        
+
       }
       console.log('branches', branches)
       return branches
@@ -293,11 +293,10 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     }
   }
 
-  
 
-
-
-
+  async startClone() {
+    this.call('filePanel' as any, 'clone')
+  }
 
 }
 

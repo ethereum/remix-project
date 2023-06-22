@@ -43,7 +43,6 @@ export class fsPlugin extends ElectronPlugin {
       rmdir: async (path: string) => {
         path = fixPath(path)
         return await this.call('fs', 'rmdir', path)
-
       },
       readdir: async (path: string) => {
         path = fixPath(path)
