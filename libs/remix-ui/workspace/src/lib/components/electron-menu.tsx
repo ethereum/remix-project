@@ -30,7 +30,8 @@ export const ElectronMenu = () => {
   }
 
   return (
-    (isElectron() && global.fs.browser.isSuccessfulWorkspace ? null :
+    !isElectron() ? null :
+    (global.fs.browser.isSuccessfulWorkspace ? null :
       <>
         <div onClick={async()=>{await openFolderElectron(null)}} className='btn btn-primary'><FormattedMessage id="electron.openFolder" /></div>
         {global.fs.browser.recentFolders.length > 0 ?

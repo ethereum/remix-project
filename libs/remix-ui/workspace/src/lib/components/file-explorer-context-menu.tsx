@@ -5,6 +5,7 @@ import { action, FileExplorerContextMenuProps } from '../types'
 import '../css/file-explorer-context-menu.css'
 import { customAction } from '@remixproject/plugin-api'
 import UploadFile from './upload-file'
+import isElectron from 'is-electron'
 
 declare global {
   interface Window {
@@ -56,7 +57,8 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
   }
 
   const itemMatchesCondition = (item: action, itemType: string, itemPath: string) => {
-    if (item.type && Array.isArray(item.type) && (item.type.findIndex(name => name === itemType) !== -1)) return true
+    if( isElectron() && item.platform && item.platform === 'browser') return false
+    else if (item.type && Array.isArray(item.type) && (item.type.findIndex(name => name === itemType) !== -1)) return true
     else if (item.path && Array.isArray(item.path) && (item.path.findIndex(key => key === itemPath) !== -1)) return true
     else if (item.extension && Array.isArray(item.extension) && (item.extension.findIndex(ext => itemPath.endsWith(ext)) !== -1)) return true
     else if (item.pattern && Array.isArray(item.pattern) && (item.pattern.filter(value => itemPath.match(new RegExp(value))).length > 0)) return true

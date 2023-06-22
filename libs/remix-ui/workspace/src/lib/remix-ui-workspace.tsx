@@ -696,7 +696,7 @@ export function Workspace() {
                         <FormattedMessage id='filePanel.workspace' />
                       </label>
                     </span> : null}
-                  {currentWorkspace !== LOCALHOST ? (<span className="remixui_menu remixui_topmenu d-flex justify-content-between align-items-end w-75">
+                  {currentWorkspace !== LOCALHOST && !isElectron() ? (<span className="remixui_menu remixui_topmenu d-flex justify-content-between align-items-end w-75">
                     <CustomTooltip
                       placement="top"
                       tooltipId="createWorkspaceTooltip"
@@ -806,7 +806,7 @@ export function Workspace() {
                   <FileExplorer
                     fileState={global.fs.browser.fileState}
                     name={currentWorkspace}
-                    menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '', canUpload ? 'uploadFolder' : '']}
+                    menuItems={['createNewFile', 'createNewFolder', !isElectron() ? 'publishToGist':'', canUpload && !isElectron() ? 'uploadFile' : '', canUpload && !isElectron() ? 'uploadFolder' : '']}
                     contextMenuItems={global.fs.browser.contextMenu.registeredMenuItems}
                     removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
                     files={global.fs.browser.files}
