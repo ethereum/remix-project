@@ -35,13 +35,13 @@ export function calculateWarningStateEntries(entries: [string, any][]) {
 export function BasicTitle(props: BasicTitleProps) {
 
   return (
-    <span>
+    <span id="ssaRemixtab">
       Remix
       {props.ssaWarnings.length > 0 ? (
         props.hideWarnings === false ? (
           props.showLibsWarnings === false ? (
             <span
-              data-id="StaticAnalysisErrorCount"
+              data-id="RemixStaticAnalysisErrorCount"
               className={`badge ${props.ssaWarningsNoLibs.length > 0 ? "badge-warning"
                   : "badge-danger"
               } badge-pill ml-1 px-1 text-center`}
@@ -49,7 +49,7 @@ export function BasicTitle(props: BasicTitleProps) {
               {props.ssaWarnings.filter(x => x.options.isLibrary === false).length}
             </span>
           ) : (
-            <span className="badge badge-warning rounded-circle ml-1 text-center">
+            <span data-id="RemixStaticAnalysisErrorCount" className="badge badge-warning rounded-circle ml-1 text-center">
               {props.ssaWarnings.length}
             </span>
           )
