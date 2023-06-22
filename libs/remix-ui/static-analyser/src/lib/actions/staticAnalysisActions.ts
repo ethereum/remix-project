@@ -23,6 +23,26 @@ export const compilation = (analysisModule: AnalysisTab,
   }
 }
 
+export const runLinting = async (solhintEnabled, setHints, hints: SolHintReport[], warningResult, isSupportedVersion, state: RemixUiStaticAnalyserState,
+  props: RemixUiStaticAnalyserProps, setStartAnalysis: React.Dispatch<React.SetStateAction<boolean>>) => {
+  // Run solhint
+  setStartAnalysis(true)
+  props.analysisModule.hints = []
+  if (!isSupportedVersion) return
+  if (solhintEnabled === false) return
+  if (state.data !== null) {
+    if (state.data && solhintEnabled) {
+      props.analysisModule.hints = []
+      setHints([])
+        const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
+        props.analysisModule.hints = solhintEnabled === false ? 0 : hintsResult
+        setHints(hintsResult)
+        props.analysisModule.emit('statusChanged', { key: hints.length+warningResult.length,
+      title: `${hints.length+warningResult.length} warning${hints.length+warningResult.length === 1 ? '' : 's'}`, type: 'warning'})
+        }
+      }
+}
+
 /**
  * Run the analysis on the currently compiled contract
  * @param lastCompilationResult
@@ -44,7 +64,7 @@ export const compilation = (analysisModule: AnalysisTab,
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function run (lastCompilationResult, lastCompilationSource, currentFile: string, state: RemixUiStaticAnalyserState, props: RemixUiStaticAnalyserProps, isSupportedVersion, showSlither, categoryIndex: number[], groupedModules, runner, _paq, message, showWarnings, allWarnings: React.RefObject<any>, warningContainer: React.RefObject<any>, calculateWarningStateEntries: (e:[string, any][]) => {length: number, errors: any[] }, warningState, setHints: React.Dispatch<React.SetStateAction<SolHintReport[]>>, hints: SolHintReport[], setSlitherWarnings: React.Dispatch<React.SetStateAction<any[]>>, setSsaWarnings: React.Dispatch<React.SetStateAction<any[]>>,
-slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<boolean>>) {
+slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<boolean>>, solhintEnabled: boolean, basicEnabled: boolean) {
   setStartAnalysis(true)
   setHints([])
   setSsaWarnings([])
@@ -57,12 +77,16 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
       const warningErrors = []
 
         // Run solhint
-        const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
-        props.analysisModule.hints = hintsResult
-        setHints(hintsResult)
+      //   const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
+      //   props.analysisModule.hints = solhintEnabled === false ? 0 : hintsResult
+      //   setHints(hintsResult)
       const warningResult = calculateWarningStateEntries(Object.entries(warningState))
-        props.analysisModule.emit('statusChanged', { key: hints.length+warningResult.length,
-      title: `${hints.length+warningResult.length} warning${hints.length+warningResult.length === 1 ? '' : 's'}`, type: 'warning'})
+      //   props.analysisModule.emit('statusChanged', { key: hints.length+warningResult.length,
+      // title: `${hints.length+warningResult.length} warning${hints.length+warningResult.length === 1 ? '' : 's'}`, type: 'warning'})
+
+      runLinting(solhintEnabled, setHints, hints, warningResult, isSupportedVersion, state, props, setStartAnalysis)
+
+      //---------------------------- RunLinting End ----------------------------
 
       // Remix Analysis
       _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'remixAnalyzer'])
