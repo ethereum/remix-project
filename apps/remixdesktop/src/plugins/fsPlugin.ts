@@ -72,7 +72,7 @@ const clientProfile: Profile = {
   name: 'fs',
   displayName: 'fs',
   description: 'fs',
-  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'getRecentFolders', 'glob', 'openWindow']
+  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'getRecentFolders', 'glob', 'openWindow', 'selectFolder']
 }
 
 class FSPluginClient extends ElectronBasePluginClient {
@@ -83,11 +83,12 @@ class FSPluginClient extends ElectronBasePluginClient {
     super(webContentsId, profile)
     this.onload(() => {
       //console.log('fsPluginClient onload')
+      this.window.webContents.openDevTools()
       this.window.on('close', async () => {
         console.log('close', this.webContentsId)
         await this.removeFromOpenedFolders(this.workingDir)
       })
-      
+
     })
   }
 
@@ -96,9 +97,11 @@ class FSPluginClient extends ElectronBasePluginClient {
     // call node fs.readdir
     console.log('readdir', path)
     if (!path) return []
-    const files = await fs.readdir(this.fixPath(path),{
+    const startTime = Date.now()
+    const files = await fs.readdir(this.fixPath(path), {
       withFileTypes: true
     })
+
     const result: any[] = []
     for (const file of files) {
       const isDirectory = file.isDirectory()
@@ -107,11 +110,12 @@ class FSPluginClient extends ElectronBasePluginClient {
         isDirectory
       })
     }
+    console.log('readdir', path, Date.now() - startTime)
     return result
   }
 
   async glob(path: string, pattern: string, options?: GlobOptions): Promise<string[] | Path[]> {
-    
+
     path = this.fixPath(path)
     console.log('glob', path, pattern, options)
     const files = await glob(path + pattern, {
@@ -122,10 +126,10 @@ class FSPluginClient extends ElectronBasePluginClient {
 
     for (const file of files) {
       let pathWithoutWorkingDir = (file as Path).path.replace(this.workingDir, '')
-      if(!pathWithoutWorkingDir.endsWith('/')){
+      if (!pathWithoutWorkingDir.endsWith('/')) {
         pathWithoutWorkingDir = pathWithoutWorkingDir + '/'
       }
-      if(pathWithoutWorkingDir.startsWith('/')){
+      if (pathWithoutWorkingDir.startsWith('/')) {
         pathWithoutWorkingDir = pathWithoutWorkingDir.slice(1)
       }
       result.push({
@@ -133,7 +137,7 @@ class FSPluginClient extends ElectronBasePluginClient {
         isDirectory: (file as Path).isDirectory(),
       })
     }
-    console.log('glob', result)
+    //console.log('glob', result)
     return result
   }
 
@@ -159,7 +163,10 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async rmdir(path: string): Promise<void> {
-    return fs.rmdir(this.fixPath(path))
+    console.log('rmdir', this.fixPath(path))
+    return fs.rm(this.fixPath(path), {
+      recursive: true
+    })
   }
 
   async unlink(path: string): Promise<void> {
@@ -209,11 +216,25 @@ class FSPluginClient extends ElectronBasePluginClient {
     return process.cwd()
   }
 
-  async watch(path: string): Promise<void> {
+  async watch(): Promise<void> {
     if (this.watcher) this.watcher.close()
+    console.log('watch', this.workingDir)
     this.watcher =
-      chokidar.watch(this.fixPath(path)).on('change', (path, stats) => {
-        this.emit('change', path, stats)
+      chokidar.watch(this.workingDir, {
+        ignorePermissionErrors: true, ignoreInitial: true,
+        ignored: [
+          '**/node_modules/**',
+          '**/.git/**',
+        ]
+      }).on('all', (eventName, path, stats) => {
+        console.log('change', eventName, path, stats)
+        // remove workingDir from path
+        path = path.replace(this.workingDir, '')
+        try {
+          this.emit('change', eventName, path)
+        } catch (e) {
+          console.log('error emitting change', e)
+        }
       })
   }
 
@@ -253,6 +274,19 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
 
+  async selectFolder(path?: string): Promise<string> {
+    let dirs: string[] | undefined
+    if (!path) {
+      dirs = dialog.showOpenDialogSync(this.window, {
+        properties: ['openDirectory', 'createDirectory', "showHiddenFiles"]
+      })
+    }
+    path = dirs && dirs.length && dirs[0] ? dirs[0] : path
+    if (!path) return ''
+    return path
+  }
+
+
 
   async openFolder(path?: string): Promise<void> {
     let dirs: string[] | undefined
@@ -268,6 +302,7 @@ class FSPluginClient extends ElectronBasePluginClient {
     await this.updateOpenedFolders(path)
     this.window.setTitle(this.workingDir)
     console.log('setWorkingDir', path)
+    this.watch()
     this.emit('workingDirChanged', path)
   }
 
@@ -277,6 +312,7 @@ class FSPluginClient extends ElectronBasePluginClient {
     await this.updateRecentFolders(path)
     await this.updateOpenedFolders(path)
     this.window.setTitle(this.workingDir)
+    this.watch()
     this.emit('workingDirChanged', path)
   }
 

@@ -26,6 +26,7 @@ module.exports = class RemixDProvider extends FileProvider {
     })
 
     this._appManager.on('remixd', 'fileAdded', (path) => {
+      console.log('fileAdded remixd', path)
       this.event.emit('fileAdded', path)
     })
 

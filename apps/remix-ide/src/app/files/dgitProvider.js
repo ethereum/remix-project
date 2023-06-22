@@ -366,7 +366,7 @@ class DGitProvider extends Plugin {
   async clone(input, workspaceName, workspaceExists = false) {
 
     if (isElectron()) {
-      const folder = await this.call('isogit', 'openFolder')
+      const folder = await this.call('fs', 'selectFolder')
       if (!folder) return false
       console.log('folder', folder)
       const cmd = {
@@ -378,8 +378,8 @@ class DGitProvider extends Plugin {
         input
       }
       const result = await this.call('isogit', 'clone', cmd)
-      await this.call('fs', 'openWindow', folder)
-
+      this.call('fs', 'openWindow', folder)
+      return result
     } else {
       const permission = await this.askUserPermission('clone', 'Import multiple files into your workspaces.')
       if (!permission) return false

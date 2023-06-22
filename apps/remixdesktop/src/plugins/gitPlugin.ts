@@ -9,7 +9,7 @@ const profile: Profile = {
 }
 
 export class GitPlugin extends ElectronBasePlugin {
-  client: PluginClient
+  clients: GitPluginClient[] = []
   constructor() {
     super(profile, clientProfile, GitPluginClient)
   }
