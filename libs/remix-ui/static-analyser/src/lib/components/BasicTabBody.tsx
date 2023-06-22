@@ -12,9 +12,7 @@ type BasicTabBodyProps = {
   analysisModule: any
 }
 export function BasicTabBody({ state, hideWarnings, ssaWarnings, ssaWarningsNoLibs, showLibsWarning, warningState, startAnalysis, analysisModule}: BasicTabBodyProps) {
-const test = ssaWarningsNoLibs.filter(x => x.options.isLibrary === false)
-const test1 = ssaWarningsNoLibs.filter(x => x.options.isLibrary)
-console.log({test, test1 })
+
   return (
     <>
       {ssaWarningsNoLibs.length > 0 ? (
@@ -32,7 +30,7 @@ console.log({test, test1 })
                       name={`staticAnalysisModule${item.warningModuleName}${index}`}
                       message={item.msg}
                       opt={item.options}
-                      warningErrors={item.warningErrors}
+                      warningErrors={''}
                       editor={analysisModule}
                     />
                   </div>
