@@ -463,7 +463,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                             <span className="text-wrap">
                               {hint.formattedMessage}
                             </span>
-                            <span>{hint.type}</span>
                             <br />
                             <span>{`${hint.column}:${hint.line}`}</span>
                           </div>
@@ -597,7 +596,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                         name={`staticAnalysisModule${warning.warningModuleName}${index}`}
                         message={warning.msg}
                         opt={warning.options}
-                        warningErrors={warning.warningErrors}
+                        warningErrors={''}
                         editor={props.analysisModule}
                       />
                     </div>
