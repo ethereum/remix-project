@@ -26,7 +26,7 @@ export const createWindow = async (dir?: string): Promise<void> => {
       preload: path.join(__dirname, 'preload.js')
     },
   });
-
+  if(dir && dir.endsWith('/')) dir = dir.slice(0, -1)
   let params = dir ? `?opendir=${encodeURIComponent(dir)}` : '';
   // and load the index.html of the app.
   mainWindow.loadURL(
