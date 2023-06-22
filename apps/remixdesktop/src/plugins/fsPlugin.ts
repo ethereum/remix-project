@@ -78,6 +78,7 @@ const clientProfile: Profile = {
 class FSPluginClient extends ElectronBasePluginClient {
   watcher: chokidar.FSWatcher
   workingDir: string = ''
+  trackDownStreamUpdate: Record<string, string> = {}
 
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
@@ -155,6 +156,7 @@ class FSPluginClient extends ElectronBasePluginClient {
 
   async writeFile(path: string, content: string, options: any): Promise<void> {
     //console.log('writeFile', path, content, options)
+    this.trackDownStreamUpdate[path] = content
     return (fs as any).writeFile(this.fixPath(path), content, options)
   }
 
@@ -226,14 +228,34 @@ class FSPluginClient extends ElectronBasePluginClient {
           '**/node_modules/**',
           '**/.git/**',
         ]
-      }).on('all', (eventName, path, stats) => {
+      }).on('all', async (eventName, path, stats) => {
         console.log('change', eventName, path, stats)
-        // remove workingDir from path
-        path = path.replace(this.workingDir, '')
-        try {
-          this.emit('change', eventName, path)
-        } catch (e) {
-          console.log('error emitting change', e)
+        
+        let pathWithoutPrefix = path.replace(this.workingDir, '')
+        if (pathWithoutPrefix.startsWith('/')) pathWithoutPrefix = pathWithoutPrefix.slice(1)
+
+        if (eventName === 'change') {
+          // remove workingDir from path
+          const newContent = await fs.readFile(path, 'utf-8')
+
+          console.log('change', pathWithoutPrefix, this.trackDownStreamUpdate)
+          const currentContent = this.trackDownStreamUpdate[pathWithoutPrefix]
+  
+          if (currentContent !== newContent) {
+            try {
+
+              this.emit('change', eventName, pathWithoutPrefix)
+            } catch (e) {
+              console.log('error emitting change', e)
+            }
+          }
+        } else {
+          try {
+
+            this.emit('change', eventName, pathWithoutPrefix)
+          } catch (e) {
+            console.log('error emitting change', e)
+          }
         }
       })
   }

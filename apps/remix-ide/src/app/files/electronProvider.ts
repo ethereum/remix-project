@@ -24,7 +24,9 @@ export class ElectronProvider extends FileProvider {
           this.event.emit('fileRemoved', path)
           break
         case 'change':
-          this.event.emit('fileChanged', path)
+          this.get(path, (_error, content) => {
+            this.event.emit('fileExternallyChanged', path, content, false)
+          })
           break
         case 'rename':
           this.event.emit('fileRenamed', path)
