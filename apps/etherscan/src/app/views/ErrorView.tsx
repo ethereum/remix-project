@@ -2,25 +2,18 @@ import React from "react"
 
 export const ErrorView: React.FC = () => {
   return (
-    <div
-      style={{
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
+    <div className="d-flex w-100 flex-column align-items-center">
       <img
-        style={{ paddingBottom: "2em" }}
+        className="pb-4"
         width="250"
         src="https://res.cloudinary.com/key-solutions/image/upload/v1580400635/solid/error-png.png"
         alt="Error page"
       />
-      <h5>Sorry, something unexpected happened. </h5>
+      <h5>Sorry, something unexpected happened.</h5>
       <h5>
         Please raise an issue:{" "}
         <a
-          style={{ color: "red" }}
+          className="text-danger"
           href="https://github.com/ethereum/remix-project/issues"
         >
           Here

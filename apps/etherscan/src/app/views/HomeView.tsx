@@ -8,7 +8,6 @@ import { Receipt } from "../types"
 import { VerifyView } from "./VerifyView"
 
 export const HomeView: React.FC = () => {
-  // const [hasError, setHasError] = useState(false)
   return (
     <AppContext.Consumer>
       {({ apiKey, clientInstance, setReceipts, receipts, contracts }) => {

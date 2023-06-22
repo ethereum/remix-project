@@ -15,33 +15,34 @@ export const SubmitButton: React.FC<Props> = ({
   disable = true
 }) => {
   return (
-    <CustomTooltip
-      tooltipText={disable ? "Fill the fields with valid values" : "Click to proceed"}
-      tooltipId='etherscan-submit-button'
-      placement='bottom'
-    >
-      <div>
-        <button
-          data-id={dataId}
-          style={{ padding: "0.25rem 0.4rem", marginRight: "0.5em" }}
-          type="submit"
-          className="btn btn-primary btn-block text-decoration-none"
-          disabled={disable}
+    <div>
+      <button
+        data-id={dataId}
+        type="submit"
+        className="btn btn-primary btn-block p-1 text-decoration-none"
+        disabled={disable}
+      >
+        <CustomTooltip
+          tooltipText={disable ? "Fill the fields with valid values" : "Click to proceed"}
+          tooltipId={'etherscan-submit-button-'+ dataId}
+          tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+          placement='bottom'
         >
-          {!isSubmitting && text}
-          {isSubmitting && (
-            <div>
-              <span
-                className="spinner-border spinner-border-sm"
-                role="status"
-                aria-hidden="true"
-                style={{ marginRight: "0.3em" }}
-              />
-              Verifying... Please wait
-            </div>
-          )}
-        </button>
-      </div>
-    </CustomTooltip>
+          <div>
+            {!isSubmitting && text}
+            {isSubmitting && (
+              <div>
+                <span
+                  className="spinner-border spinner-border-sm mr-1"
+                  role="status"
+                  aria-hidden="true"
+                />
+                Verifying... Please wait
+              </div>
+            )}
+          </div>
+        </CustomTooltip>
+      </button>
+    </div>
   )
 }
