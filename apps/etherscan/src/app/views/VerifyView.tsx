@@ -111,14 +111,20 @@ export const VerifyView: React.FC<Props> = ({
         {({ errors, touched, handleSubmit, handleChange, isSubmitting }) => {
           return (<form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="network">Selected Network</label> 
-              <Field
-                className="form-control"
-                type="text"
-                name="network"
-                value={networkName}
-                disabled={true}
-              /> 
+              <label htmlFor="network">Selected Network</label>
+              <CustomTooltip
+                tooltipText="Network is fetched from 'Deploy and Run Transactions' plugin's ENVIRONMENT field"
+                tooltipId='etherscan-impl-address2'
+                placement='bottom'
+              >
+                <Field
+                  className="form-control"
+                  type="text"
+                  name="network"
+                  value={networkName}
+                  disabled={true}
+                /> 
+              </CustomTooltip> 
             </div>
 
             <div className="form-group">
@@ -227,9 +233,9 @@ export const VerifyView: React.FC<Props> = ({
             <div className={ isProxyContract ? 'form-group d-block': 'form-group d-none' }>
               <label htmlFor="expectedImplAddress">Expected Implementation Address</label>
               <CustomTooltip
-              tooltipText='Providing expected implementation address enforces a check to ensure the returned implementation contract address is same as address picked up by the verifier'
-              tooltipId='etherscan-impl-address'
-              placement='bottom'
+                tooltipText='Providing expected implementation address enforces a check to ensure the returned implementation contract address is same as address picked up by the verifier'
+                tooltipId='etherscan-impl-address'
+                placement='bottom'
               >
                 <Field
                   className="form-control"
