@@ -1,4 +1,4 @@
-import {BrowserWindow, MenuItemConstructorOptions} from 'electron';
+import { BrowserWindow, MenuItemConstructorOptions } from 'electron';
 
 export default (
   commandKeys: Record<string, string>,
@@ -28,7 +28,7 @@ export default (
         click(item, focusedWindow) {
           execCommand('template:open', focusedWindow);
         }
-      },
+      }
     ]
   };
 };

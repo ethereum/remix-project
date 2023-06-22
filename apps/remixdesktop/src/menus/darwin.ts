@@ -20,19 +20,8 @@ export default (
         type: 'separator'
       },
       {
-        role: 'hide'
-      },
-      {
-        role: 'hideOthers'
-      },
-      {
-        role: 'unhide'
-      },
-      {
-        type: 'separator'
-      },
-      {
-        role: 'quit'
+        role: 'quit',
+        label: 'Quit Remix'
       }
     ]
   };
