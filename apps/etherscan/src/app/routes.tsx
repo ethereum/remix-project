@@ -14,38 +14,35 @@ interface Props extends RouteProps {
   from: string
 }
 
-const RouteWithHeader = ({ component: Component, ...rest }: Props) => {
-  return (
-    <Route
-      {...rest}      
-    >
-      <DefaultLayout {...rest}>
-          <Component />
-        </DefaultLayout>
-    </Route>
-  )
-}
-
 export const DisplayRoutes = () => (
   <Router>
     <Routes>    
       <Route
         path="/"
-        element={<DefaultLayout from="/" title="Verify Smart Contracts">
-                  <HomeView />
-                </DefaultLayout>} />
+        element={
+          <DefaultLayout from="/" title="Verify Smart Contracts">
+            <HomeView />
+          </DefaultLayout>
+        }
+      />
       <Route path="/error"
       element={<ErrorView />} />
       <Route
         path="/receipts"
-        element={<DefaultLayout from="/receipts" title="Check Receipt GUID Status">
-                  <ReceiptsView />
-                </DefaultLayout>} />
+        element={
+          <DefaultLayout from="/receipts" title="Check Receipt GUID Status">
+            <ReceiptsView />
+          </DefaultLayout>
+        }
+      />
       <Route
         path="/settings"
-        element={<DefaultLayout from="/settings" title="Set Explorer API Key">
-                  <CaptureKeyView />
-                </DefaultLayout>} />
+        element={
+          <DefaultLayout from="/settings" title="Set Explorer API Key">
+            <CaptureKeyView />
+          </DefaultLayout>
+        }
+      />
     </Routes>
   </Router>
 )
