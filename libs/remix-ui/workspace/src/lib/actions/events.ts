@@ -113,7 +113,7 @@ export const listenOnProviderEvents = (provider) => (reducerDispatch: React.Disp
     dispatch(loadLocalhostRequest())
   })
 
-  provider.event.on('fileExternallyChanged', (path: string, content: string) => {
+  provider.event.on('fileExternallyChanged', (path: string, content: string, showAlert: boolean = true) => {
     const config = plugin.registry.get('config').api
     const editor = plugin.registry.get('editor').api
 
@@ -122,6 +122,7 @@ export const listenOnProviderEvents = (provider) => (reducerDispatch: React.Disp
 
     if (config.get('currentFile') === path) {
       // if it's the current file and the content is different:
+      if(showAlert){
       dispatch(displayNotification(
         path + ' changed',
         'This file has been changed outside of Remix IDE.',
@@ -129,7 +130,9 @@ export const listenOnProviderEvents = (provider) => (reducerDispatch: React.Disp
         () => {
           editor.setText(path, content)
         }
-      ))
+      ))}else{
+        editor.setText(path, content)
+      }
     } else {
       // this isn't the current file, we can silently update the model
       editor.setText(path, content)
