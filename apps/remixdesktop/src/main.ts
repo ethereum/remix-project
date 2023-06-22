@@ -95,6 +95,7 @@ import darwinMenu from './menus/darwin';
 import WindowMenu from './menus/window';
 import EditMenu from './menus/edit';
 import GitMenu from './menus/git';
+import ViewMenu from './menus/view';
 import { execCommand } from './menus/commands';
 
 const commandKeys: Record<string, string> = {
@@ -104,9 +105,10 @@ const commandKeys: Record<string, string> = {
 
 const menu = [...(process.platform === 'darwin' ? [darwinMenu(commandKeys, execCommand, showAbout)] : []),
 FileMenu(commandKeys, execCommand),
+GitMenu(commandKeys, execCommand),
 EditMenu(commandKeys, execCommand),
+ViewMenu(commandKeys, execCommand),
 WindowMenu(commandKeys, execCommand, []),
-GitMenu(commandKeys, execCommand)
 ]
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
