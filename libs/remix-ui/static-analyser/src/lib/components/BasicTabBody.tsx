@@ -51,7 +51,7 @@ console.log({test, test1 })
                       name={`staticAnalysisModule${warning.warningModuleName}${index}`}
                       message={warning.msg}
                       opt={warning.options}
-                      warningErrors={warning.warningErrors}
+                      warningErrors={''}
                       editor={analysisModule}
                     />
                   </div>
