@@ -48,6 +48,7 @@ export const FileSystemContext = createContext<{
   dispatchCreateHelperScripts: (script: string) => Promise<void>
   dispatchOpenElectronFolder: (path: string) => Promise<void>
   dispatchGetElectronRecentFolders: () => Promise<void>
+  dispatchRemoveRecentFolder: (path: string) => Promise<void>
 }>(null)
   
     

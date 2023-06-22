@@ -8,7 +8,7 @@ import { browserReducer, browserInitialState } from '../reducers/workspace'
 import { initWorkspace, fetchDirectory, removeInputField, deleteWorkspace, deleteAllWorkspaces, clearPopUp, publishToGist, createNewFile, setFocusElement, createNewFolder,
   deletePath, renamePath, downloadPath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath, addInputField, createWorkspace,
   fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, uploadFolder, handleDownloadWorkspace, handleDownloadFiles, restoreBackupZip, cloneRepository, moveFile, moveFolder,
-  showAllBranches, switchBranch, createNewBranch, checkoutRemoteBranch, createSolidityGithubAction, createTsSolGithubAction, createSlitherGithubAction, createHelperScripts, openElectronFolder, getElectronRecentFolders
+  showAllBranches, switchBranch, createNewBranch, checkoutRemoteBranch, createSolidityGithubAction, createTsSolGithubAction, createSlitherGithubAction, createHelperScripts, openElectronFolder, getElectronRecentFolders, removeRecentElectronFolder
 } from '../actions'
 import { Modal, WorkspaceProps, WorkspaceTemplate } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -197,6 +197,11 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await getElectronRecentFolders()
   }
 
+  const dispatchRemoveRecentFolder = async (path: string) => {
+    console.log('remove recent folder')
+    await removeRecentElectronFolder(path)
+  }
+
 
   useEffect(() => {
     dispatchInitWorkspace()
@@ -317,7 +322,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchCreateSlitherGithubAction,
     dispatchCreateHelperScripts,
     dispatchOpenElectronFolder,
-    dispatchGetElectronRecentFolders
+    dispatchGetElectronRecentFolders,
+    dispatchRemoveRecentFolder
   }
   return (
     <FileSystemContext.Provider value={value}>

@@ -784,6 +784,11 @@ export const getElectronRecentFolders = async () => {
   return folders
 }
 
+export const removeRecentElectronFolder = async (path: string) => {
+  await plugin.call('fs', 'removeRecentFolder', path)
+  await getElectronRecentFolders()
+}
+
 export const hasLocalChanges = async () => {
   const filesStatus = await plugin.call('dGitProvider', 'status')
   const uncommittedFiles = getUncommittedFiles(filesStatus)
