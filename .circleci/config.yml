@@ -81,7 +81,7 @@ jobs:
   build-remixdesktop-windows:
     executor:
       name: win/default # executor type
-      size: medium # can be medium, large, xlarge, 2xlarge
+      size: xlarge # can be medium, large, xlarge, 2xlarge
       shell: bash.exe
     working_directory: ~/remix-project
     steps:
@@ -124,6 +124,9 @@ jobs:
           key: remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
           paths:
             - apps/remixdesktop/node_modules
+      - run:
+          name: Preparing for artifact upload
+          command: rm -rf release/*-unpacked release/mac
       - store_artifacts:
           path: apps/remixdesktop/release/
           destination: remixdesktop-windows
@@ -132,7 +135,7 @@ jobs:
     macos:
       xcode: 14.2.0
     resource_class:
-        macos.x86.medium.gen2
+        macos.x86.xlarge.gen2
     working_directory: ~/remix-project
     steps:
       - checkout
@@ -170,6 +173,9 @@ jobs:
             yarn build:desktop
             cd apps/remixdesktop
             yarn dist --mac
+      - run:
+          name: Preparing for artifact upload
+          command: rm -rf release/*-unpacked release/mac
       - store_artifacts:
           path: apps/remixdesktop/release/
           destination: remixdesktop-mac
