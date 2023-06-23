@@ -117,6 +117,7 @@ jobs:
             nvm use 20.0.0
             yarn build:desktop
             cd apps/remixdesktop
+            rm -rf yarn.lock
             yarn dist
   lint:
     docker:
