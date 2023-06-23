@@ -106,6 +106,7 @@ jobs:
       - run: 
           command: |
               cd apps/remixdesktop/
+              rm -rf yarn.lock
               yarn
               yarn dist
       - save_cache:
