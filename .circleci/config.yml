@@ -135,7 +135,7 @@ jobs:
     macos:
       xcode: 14.2.0
     resource_class:
-        macos.x86.large.gen2
+        large
     working_directory: ~/remix-project
     steps:
       - checkout
