@@ -117,7 +117,7 @@ jobs:
               yarn build:desktop
               cd apps/remixdesktop/
               yarn
-              yarn dist
+              yarn dist --win
       - save_cache:
           key: remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
           paths:
@@ -167,7 +167,7 @@ jobs:
             nvm use 20.0.0
             yarn build:desktop
             cd apps/remixdesktop
-            yarn dist
+            yarn dist --mac
       - store_artifacts:
           path: apps/remixdesktop/release/
           destination: remixdesktop-mac

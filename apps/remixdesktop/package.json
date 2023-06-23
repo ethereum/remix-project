@@ -12,7 +12,7 @@
     "start:dev": "tsc && cross-env NODE_ENV=development electron .",
     "start:production": "tsc && cross-env NODE_ENV=production electron .",
     "pack": "tsc && electron-builder",
-    "dist": "tsc && electron-builder --dir",
+    "dist": "tsc && electron-builder",
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
