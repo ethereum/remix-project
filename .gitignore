@@ -60,3 +60,4 @@ testem.log
 
 apps/remixdesktop/.webpack
 apps/remixdesktop/out
+apps/remixdesktop/release/

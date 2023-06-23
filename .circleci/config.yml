@@ -112,6 +112,9 @@ jobs:
           key: remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
           paths:
             - apps/remixdesktop/node_modules
+      - store_artifacts:
+          path: release/
+          destination: remixdesktop-windows
           
   build-remixdesktop-mac:
     macos:
@@ -155,6 +158,10 @@ jobs:
             yarn build:desktop
             cd apps/remixdesktop
             yarn dist
+      - store_artifacts:
+          path: release/
+          destination: remixdesktop-mac
+    
   lint:
     docker:
       - image: cimg/node:20.0.0-browsers

@@ -34,23 +34,59 @@
     "node-pty": "^0.10.1"
   },
   "build": {
-    "productName": "REMIX IDE",
-    "icon": "assets/icon.png",
-    "mac": {
-      "target": {
-        "target": "default",
-        "arch": [
-          "universal"
-        ]
-      },
-      "category": "public.app-category.productivity"
-    },
-    "win": {
-      "target": "nsis"
-    },
-    "extends": null,
+    "productName": "Remix IDE",
+    "appId": "org.ethereum.remix-ide",
+    "asar": true,
     "files": [
       "build/**/*"
-    ]
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64",
+            "universal"
+          ]
+        }
+      ],
+      "darkModeSupport": true
+    },
+    "dmg": {
+      "writeUpdateInfo": false
+    },
+    "nsis": {
+      "createDesktopShortcut": "always",
+      "allowToChangeInstallationDirectory": true,
+      "oneClick": false,
+      "shortcutName": "Remix IDE",
+      "differentialPackage": false
+    },
+    "win": {
+      "target": [
+        "zip",
+        "nsis"
+      ]
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "snap",
+        "AppImage"
+      ],
+      "category": "WebBrowser"
+    },
+    "directories": {
+      "output": "release"
+    }
   }
 }
