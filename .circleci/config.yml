@@ -86,10 +86,10 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-deps-{{ checksum "yarn.lock" }}
+            - remixdesktop-remix-{{ checksum "yarn.lock" }}
       - run: yarn
       - save_cache:
-          key: v1-deps-{{ checksum "yarn.lock" }}
+          key: remixdesktop-remix-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
       - restore_cache:
