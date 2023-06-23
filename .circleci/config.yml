@@ -102,16 +102,16 @@ jobs:
 
       - restore_cache:
           keys:
-            - remixdesktop-windows-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
+            - remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
       - run: 
           command: |
               cd apps/remixdesktop/
               yarn
               yarn dist
       - save_cache:
-          key: remixdesktop-windows-deps-{{ checksum "apps/remixd-app/yarn.lock" }}
+          key: remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
           paths:
-            - apps/remixd-app/node_modules
+            - apps/remixdesktop/node_modules
           
   build-remixdesktop-mac:
     macos:
