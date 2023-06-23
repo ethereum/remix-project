@@ -365,6 +365,7 @@ workflows:
     jobs:
       - build
       - build-remixdesktop-mac
+      - build-remixdesktop-windows
       - build-plugin:
           matrix:
             parameters:
