@@ -107,7 +107,7 @@ jobs:
       - run: 
           command: |
             nvm use 20.0.0
-            cd apps/remixdesktop && yarn
+            cd apps/remixdesktop && rm -rf yarn.lock && yarn
       - save_cache:
           key: remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
           paths:
@@ -117,7 +117,6 @@ jobs:
             nvm use 20.0.0
             yarn build:desktop
             cd apps/remixdesktop
-            rm -rf yarn.lock
             yarn dist
   lint:
     docker:
