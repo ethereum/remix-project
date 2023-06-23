@@ -84,6 +84,10 @@ jobs:
     working_directory: ~/remix-project
     steps:
       - checkout
+      - run: 
+          command: |
+            nvm install 20.0.0
+            nvm use 20.0.0
       - restore_cache:
           keys:
             - remixdesktop-remix-{{ checksum "yarn.lock" }}
