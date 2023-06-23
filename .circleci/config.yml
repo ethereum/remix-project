@@ -92,8 +92,11 @@ jobs:
           keys:
             - remixdesktop-remix-{{ checksum "yarn.lock" }}
       - run: ls -la
-      
-      - run: yarn
+
+      - run: 
+          command: |
+            nvm use 20.0.0
+            yarn
       - save_cache:
           key: remixdesktop-remix-{{ checksum "yarn.lock" }}
           paths:
@@ -108,6 +111,7 @@ jobs:
             - apps/remixdesktop/node_modules
       - run: 
           command: |
+            nvm use 20.0.0
             yarn build:desktop
             cd apps/remixdesktop
             yarn dist
