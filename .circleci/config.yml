@@ -104,7 +104,10 @@ jobs:
       - restore_cache:
           keys:
             - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
-      - run: cd apps/remixdesktop && yarn
+      - run: 
+          command: |
+            nvm use 20.0.0
+            cd apps/remixdesktop && yarn
       - save_cache:
           key: remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
           paths:
