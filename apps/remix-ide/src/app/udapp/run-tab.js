@@ -160,6 +160,9 @@ export class RunTab extends ViewPlugin {
     await addProvider('vm-goerli-fork', 'Remix VM - Goerli fork', false, true, 'merge', 'settingsVMGoerliMode', titleVM)
     await addProvider('vm-custom-fork', 'Remix VM - Custom fork', false, true, '', 'settingsVMCustomMode', titleVM)
 
+    // wallet connect
+    await addProvider('walletconnect', 'WalletConnect', false, false)
+
     // external provider
     await addProvider('basic-http-provider', 'Custom - External Http Provider', false, false)
     await addProvider('hardhat-provider', 'Dev - Hardhat Provider', false, false)
@@ -169,9 +172,6 @@ export class RunTab extends ViewPlugin {
     // injected provider    
     await addProvider('injected-optimism-provider', 'L2 - Optimism Provider', true, false)
     await addProvider('injected-arbitrum-one-provider', 'L2 - Arbitrum One Provider', true, false)
-  
-    await addProvider('walletconnect', 'WalletConnect', false, false)
-    
   }
 
   writeFile (fileName, content) {
