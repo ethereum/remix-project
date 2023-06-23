@@ -99,12 +99,22 @@ jobs:
           key: node-20-windows-v3
           paths:
             - /ProgramData/nvm/v20.0.0
-
+      - restore_cache:
+          keys:
+            - remixdesktop-remix-win-{{ checksum "yarn.lock" }}
+      - run: 
+          command: |
+            yarn
+      - save_cache:
+          key: remixdesktop-remix-win-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
       - restore_cache:
           keys:
             - remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
       - run: 
           command: |
+              yarn build:desktop
               cd apps/remixdesktop/
               yarn
               yarn dist
@@ -113,7 +123,7 @@ jobs:
           paths:
             - apps/remixdesktop/node_modules
       - store_artifacts:
-          path: release/
+          path: apps/remixdesktop/release/
           destination: remixdesktop-windows
           
   build-remixdesktop-mac:
@@ -130,7 +140,7 @@ jobs:
             nvm use 20.0.0
       - restore_cache:
           keys:
-            - remixdesktop-remix-{{ checksum "yarn.lock" }}
+            - remixdesktop-remix-mac-{{ checksum "yarn.lock" }}
       - run: ls -la
 
       - run: 
@@ -138,7 +148,7 @@ jobs:
             nvm use 20.0.0
             yarn
       - save_cache:
-          key: remixdesktop-remix-{{ checksum "yarn.lock" }}
+          key: remixdesktop-remix-mac-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
       - restore_cache:
@@ -159,7 +169,7 @@ jobs:
             cd apps/remixdesktop
             yarn dist
       - store_artifacts:
-          path: release/
+          path: apps/remixdesktop/release/
           destination: remixdesktop-mac
     
   lint:
