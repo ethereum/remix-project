@@ -2,7 +2,7 @@ import { app, BrowserWindow, dialog, Menu, MenuItem } from 'electron';
 import path from 'path';
 
 
-let isPackaged = false;
+export let isPackaged = false;
 
 if (
   process.mainModule &&

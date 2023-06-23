@@ -3,7 +3,7 @@ import fs from 'fs/promises'
 import { Profile } from "@remixproject/plugin-utils";
 import chokidar from 'chokidar'
 import { dialog } from "electron";
-import { createWindow } from "../main";
+import { createWindow, isPackaged } from "../main";
 import { writeConfig } from "../utils/config";
 import { glob, GlobOptions } from 'glob'
 import { Path } from 'path-scurry'
@@ -84,7 +84,9 @@ class FSPluginClient extends ElectronBasePluginClient {
     super(webContentsId, profile)
     this.onload(() => {
       //console.log('fsPluginClient onload')
-      this.window.webContents.openDevTools()
+      if(!isPackaged) {
+        this.window.webContents.openDevTools()
+      }
       this.window.on('close', async () => {
         console.log('close', this.webContentsId)
         await this.removeFromOpenedFolders(this.workingDir)

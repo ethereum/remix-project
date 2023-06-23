@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "build/main.js",
   "license": "MIT",
+  "type": "commonjs",
   "appId": "org.ethereum.remixdesktop",
   "mac": {
     "category": "public.app-category.productivity"
@@ -23,12 +24,19 @@
   },
   "dependencies": {
     "@remix-project/remix-ws-templates": "^1.0.19",
-    "electron-is-packaged": "^1.0.2",
-    "glob": "^10.2.7",
+    "@remixproject/engine": "0.3.37",
+    "@remixproject/engine-electron": "0.3.37",
+    "@remixproject/plugin": "0.3.37",
+    "@remixproject/plugin-electron": "0.3.37",
+    "chokidar": "^3.5.3",
+    "glob": "^10.3.0",
+    "isomorphic-git": "^1.24.2",
+    "node-fetch": "^2.6.6",
     "node-pty": "^0.10.1"
   },
   "build": {
-    "productName": "remixdesktop",
+    "productName": "REMIX IDE",
+    "icon": "assets/icon.png",
     "mac": {
       "target": {
         "target": "default",
@@ -37,6 +45,9 @@
         ]
       },
       "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": "nsis"
     },
     "extends": null,
     "files": [

@@ -28,6 +28,14 @@ export default (
         click(item, focusedWindow) {
           execCommand('template:open', focusedWindow);
         }
+      },
+      {
+        role: 'recentDocuments',
+        submenu: [
+          {
+            role: 'clearRecentDocuments'
+          }
+        ]
       }
     ]
   };
