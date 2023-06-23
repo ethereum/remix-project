@@ -1,4 +1,4 @@
-import { ElectronPlugin } from './lib/electronPlugin';
+import { ElectronPlugin } from '@remixproject/engine-electron';
 
 export class xtermPlugin extends ElectronPlugin {
   constructor(){

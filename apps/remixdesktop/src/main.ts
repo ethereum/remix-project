@@ -26,7 +26,7 @@ export const createWindow = async (dir?: string): Promise<void> => {
       preload: path.join(__dirname, 'preload.js')
     },
   });
-  if(dir && dir.endsWith('/')) dir = dir.slice(0, -1)
+  if (dir && dir.endsWith('/')) dir = dir.slice(0, -1)
   let params = dir ? `?opendir=${encodeURIComponent(dir)}` : '';
   // and load the index.html of the app.
   mainWindow.loadURL(
@@ -35,13 +35,12 @@ export const createWindow = async (dir?: string): Promise<void> => {
 
   mainWindow.maximize();
 
-  if(dir){
+  if (dir) {
     mainWindow.setTitle(dir)
   }
 
   // on close
   mainWindow.on('close', (event) => {
-    console.log('close', event, mainWindow.webContents.id)
     windowSet.delete(mainWindow)
   })
 
@@ -90,13 +89,13 @@ const showAbout = () => {
 const isMac = process.platform === 'darwin'
 
 import FileMenu from './menus/file';
-import MainMenu from './menus/main';
 import darwinMenu from './menus/darwin';
 import WindowMenu from './menus/window';
 import EditMenu from './menus/edit';
 import GitMenu from './menus/git';
 import ViewMenu from './menus/view';
 import { execCommand } from './menus/commands';
+
 
 const commandKeys: Record<string, string> = {
   'window:new': 'CmdOrCtrl+N',
@@ -112,3 +111,4 @@ WindowMenu(commandKeys, execCommand, []),
 ]
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
+

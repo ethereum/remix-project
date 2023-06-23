@@ -37,9 +37,6 @@ class ConfigPluginClient extends ElectronBasePluginClient {
 
     constructor(webContentsId: number, profile: Profile) {
         super(webContentsId, profile)
-        this.onload(() => {
-            //console.log('config client onload')
-        })
     }
 
     async writeConfig(data: any): Promise<void> {

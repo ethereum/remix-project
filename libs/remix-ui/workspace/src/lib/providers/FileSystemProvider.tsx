@@ -188,17 +188,14 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   }
 
   const dispatchOpenElectronFolder = async (path: string) => {
-    console.log('open electron folder')
     await openElectronFolder(path)
   }
 
   const dispatchGetElectronRecentFolders = async () => {
-    console.log('get electron recent folders')
     await getElectronRecentFolders()
   }
 
   const dispatchRemoveRecentFolder = async (path: string) => {
-    console.log('remove recent folder')
     await removeRecentElectronFolder(path)
   }
 

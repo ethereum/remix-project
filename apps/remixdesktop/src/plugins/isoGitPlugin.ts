@@ -5,6 +5,7 @@ import fs from 'fs/promises'
 import git from 'isomorphic-git'
 import { dialog } from "electron";
 import http from 'isomorphic-git/http/web'
+import { gitProxy } from "../tools/git";
 
 const profile: Profile = {
   name: 'isogit',
@@ -45,23 +46,24 @@ const clientProfile: Profile = {
   name: 'isogit',
   displayName: 'isogit',
   description: 'isogit plugin',
-  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'openFolder']
+  methods: ['init', 'localStorageUsed', 'version', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'reset', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'openFolder']
 }
 
 class IsoGitPluginClient extends ElectronBasePluginClient {
-  workingDir: string = '/Volumes/bunsen/code/empty/'
+  workingDir: string = ''
+  gitIsInstalled: boolean = false
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
     this.onload(() => {
-      console.log('IsoGit client onload')
       this.on('fs' as any, 'workingDirChanged', async (path: string) => {
-        console.log('workingDirChanged', path)
         this.workingDir = path
-        await this.status({
-
-        })
+        this.gitIsInstalled = await gitProxy.version() ? true : false
       })
     })
+  }
+
+  async version() {
+    return gitProxy.version()
   }
 
   async getGitConfig() {
@@ -72,7 +74,17 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async status(cmd: any) {
-    console.log('status')
+
+
+    if (this.workingDir === '') {
+      return []
+    }
+
+    if (this.gitIsInstalled) {
+      const status = await gitProxy.status(this.workingDir)
+      return status
+    }
+
     const status = await git.statusMatrix({
       ...await this.getGitConfig(),
       ...cmd
@@ -82,42 +94,69 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async log(cmd: any) {
-    console.log('log')
+
+    /* we will use isomorphic git for now
+    if(this.gitIsInstalled){
+      const log = await gitProxy.log(this.workingDir, cmd.ref)
+      console.log('LOG', log)
+      return log
+    }
+    */
+
+    if (this.workingDir === '') {
+      return []
+    }
+
     const log = await git.log({
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('LOG', log)
+
     return log
   }
 
   async add(cmd: any) {
-    console.log('add')
     const add = await git.add({
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('ADD', add)
+
     return add
   }
 
   async rm(cmd: any) {
-    console.log('rm')
+
     const rm = await git.remove({
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('RM', rm)
+
     return rm
   }
 
+  async reset(cmd: any) {
+
+    const reset = await git.resetIndex({
+      ...await this.getGitConfig(),
+      ...cmd
+    })
+
+    return reset
+  }
+
+
   async commit(cmd: any) {
-    console.log('commit')
+
+    if (this.gitIsInstalled) {
+      const status = await gitProxy.commit(this.workingDir, cmd.message)
+      return status
+    }
+
     const commit = await git.commit({
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('COMMIT', commit)
+
     return commit
   }
 
@@ -129,123 +168,149 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async branch(cmd: any) {
-    console.log('branch')
+
     const branch = await git.branch({
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('BRANCH', branch)
+
     return branch
   }
 
   async lsfiles(cmd: any) {
-    console.log('lsfiles')
+
     const lsfiles = await git.listFiles({
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('LSFILES', lsfiles)
     return lsfiles
   }
 
   async resolveref(cmd: any) {
-    console.log('resolveref')
+
     const resolveref = await git.resolveRef({
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('RESOLVEREF', resolveref)
+
     return resolveref
   }
 
 
   async readblob(cmd: any) {
-    console.log('readblob')
+
     const readblob = await git.readBlob({
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('READBLOB', readblob)
+
     return readblob
   }
 
   async checkout(cmd: any) {
-    console.log('checkout')
+
     const checkout = await git.checkout({
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('CHECKOUT', checkout)
+
     return checkout
   }
 
   async push(cmd: any) {
-    console.log('push')
-    const push = await git.push({
-      ...await this.getGitConfig(),
-      ...cmd,
-      ...parseInput(cmd.input)
-    })
-    console.log('PUSH', push)
-    return push
+
+
+
+    if (this.gitIsInstalled) {
+      await gitProxy.push(this.workingDir, cmd.remote, cmd.ref, cmd.remoteRef, cmd.force)
+
+    } else {
+
+      const push = await git.push({
+        ...await this.getGitConfig(),
+        ...cmd,
+        ...parseInput(cmd.input)
+      })
+      return push
+    }
+
   }
 
   async pull(cmd: any) {
-    console.log('pull', cmd)
-    const pull = await git.pull({
-      ...await this.getGitConfig(),
-      ...cmd,
-      ...parseInput(cmd.input)
-    })
-    console.log('PULL', pull)
-    return pull
+
+    if (this.gitIsInstalled) {
+      await gitProxy.pull(this.workingDir, cmd.remote, cmd.ref, cmd.remoteRef)
+
+    } else {
+
+      const pull = await git.pull({
+        ...await this.getGitConfig(),
+        ...cmd,
+        ...parseInput(cmd.input)
+      })
+
+      return pull
+
+    }
   }
 
   async fetch(cmd: any) {
-    console.log('fetch', cmd)
-    const fetch = await git.fetch({
-      ...await this.getGitConfig(),
-      ...cmd,
-      ...parseInput(cmd.input)
-    })
-    console.log('FETCH', fetch)
-    return fetch
+
+    if (this.gitIsInstalled) {
+      await gitProxy.fetch(this.workingDir, cmd.remote, cmd.remoteRef)
+
+    } else {
+
+      const fetch = await git.fetch({
+        ...await this.getGitConfig(),
+        ...cmd,
+        ...parseInput(cmd.input)
+      })
+
+      return fetch
+    }
   }
 
   async clone(cmd: any) {
-    console.log('clone')
-    try {
-      const clone = await git.clone({
-        ...await this.getGitConfig(),
-        ...cmd,
-        ...parseInput(cmd.input),
-        dir: cmd.dir || this.workingDir
-      })
-      console.log('CLONE', clone)
-      return clone
-    } catch (e) {
-      console.log('CLONE ERROR', e)
-      throw e
+
+
+    if (this.gitIsInstalled) {
+      await gitProxy.clone(cmd.url, cmd.dir)
+
+    } else {
+      try {
+        const clone = await git.clone({
+          ...await this.getGitConfig(),
+          ...cmd,
+          ...parseInput(cmd.input),
+          dir: cmd.dir || this.workingDir
+        })
+
+        return clone
+      } catch (e) {
+        console.log('CLONE ERROR', e)
+        throw e
+      }
     }
   }
 
   async addremote(cmd: any) {
-    console.log('addremote')
+
     const addremote = await git.addRemote({
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('ADDREMOTE', addremote)
+
     return addremote
   }
 
   async delremote(cmd: any) {
-    console.log('delremote')
+
     const delremote = await git.deleteRemote({
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('DELREMOTE', delremote)
+
     return delremote
   }
 
@@ -254,7 +319,6 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   remotes = async () => {
     let remotes = []
     remotes = await git.listRemotes({ ...await this.getGitConfig() })
-    console.log('remotes', remotes)
     return remotes
   }
 
@@ -262,7 +326,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     try {
       const defaultConfig = await this.getGitConfig()
       const name = await git.currentBranch(defaultConfig)
-      console.log('currentbranch', name)
+
       return name
     } catch (e) {
       return ''
@@ -286,7 +350,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
         branches = [...branches, ...remotebranches]
 
       }
-      console.log('branches', branches)
+
       return branches
     } catch (e) {
       return []

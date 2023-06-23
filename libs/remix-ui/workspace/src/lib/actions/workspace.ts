@@ -254,8 +254,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         if (!templateList.includes(template)) break
         _paq.push(['trackEvent', 'workspace', 'template', template])
         // @ts-ignore
-        const files = await templateWithContent[template](opts)
-        console.log('files for template ', files)
+        const files = await templateWithContent[template](opts)   
         for (const file in files) {
           try {
             await workspaceProvider.set(file, files[file])
@@ -283,14 +282,12 @@ export const fetchWorkspaceDirectory = async (path: string) => {
 
   if (!path) return
   const provider = plugin.fileManager.currentFileProvider()
-  console.log('fetchWorkspaceDirectory', path, provider)
   const promise = new Promise((resolve, reject) => {
     provider.resolveDirectory(path, (error, fileTree) => {
       if (error) {
         console.error(error)
         return reject(error)
       }
-      console.log('fetchWorkspaceDirectory', fileTree)
       resolve(fileTree)
     })
   })
@@ -610,7 +607,6 @@ export const getGitRepoCurrentBranch = async (workspaceName: string) => {
 }
 
 export const showAllBranches = async () => {
-  console.log('showAllBranches')
   const isActive = await plugin.call('manager', 'isActive', 'dgit')
   if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
   plugin.call('menuicons', 'select', 'dgit')
@@ -775,7 +771,7 @@ export const checkoutRemoteBranch = async (branch: string, remote: string) => {
 }
 
 export const openElectronFolder = async (path: string) => {
-  await plugin.call('fs', 'openFolder', path)
+  await plugin.call('fs', 'openFolderInSameWindow', path)
 }
 
 export const getElectronRecentFolders = async () => {

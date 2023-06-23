@@ -34,7 +34,6 @@ export function urlFromVersion (version) {
  * checks a compiler whitelist, browser support and OS.
  */
 export function canUseWorker (selectedVersion) {
-  console.log('canUseWorker', selectedVersion)
   if (selectedVersion.startsWith('http')) {
     return browserSupportWorker()
   }
@@ -52,7 +51,6 @@ export function canUseWorker (selectedVersion) {
 }
 
 function browserSupportWorker () {
-  return true
   return document ? document.location.protocol !== 'file:' && Worker !== undefined : false
 }
 

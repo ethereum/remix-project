@@ -193,6 +193,7 @@ export const SearchProvider = ({
     },
 
     findText: async (path: string) => {
+
       if (!plugin) return
       try {
         if (state.find.length < 1) return
@@ -327,6 +328,10 @@ export const SearchProvider = ({
       setFiles(await getDirectory('/', plugin))
     })
 
+    plugin.on('fs', 'workingDirChanged', async () => {
+      setFiles(await getDirectory('/', plugin))
+    })
+
     plugin.on('fileManager', 'fileAdded', async file => {
       setFiles(await getDirectory('/', plugin))
       await reloadStateForFile(file)
@@ -417,7 +422,6 @@ export const SearchProvider = ({
   }, [state.count])
 
   useEffect(() => {
-    console.log('STATE CHANGED', files)
     if (state.find) {
       (async () => {
         try {

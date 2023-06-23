@@ -42,7 +42,6 @@ export default class CodeParserImports {
 
         if (isElectron()) {
             const files = await this.plugin.call('fs', 'glob', '/', '**/*.sol')
-            console.log('GLOB', '/', files)
             // only get path property of files
             this.data.files = files.map(x => x.path)
 
@@ -53,7 +52,6 @@ export default class CodeParserImports {
 
 
         }
-        console.log('setFileTree', this.data.files)
     }
 
     getDirectory = async (dir: string) => {

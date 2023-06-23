@@ -46,9 +46,7 @@ export class fsPlugin extends ElectronPlugin {
       },
       readdir: async (path: string) => {
         path = fixPath(path)
-        //console.log('readdir', path)
         const files = await this.call('fs', 'readdir', path)
-        //console.log('readdir', path, files)
         return files
       },
       glob: async (path: string, pattern: string, options?: any) => {
@@ -66,13 +64,10 @@ export class fsPlugin extends ElectronPlugin {
       },
       readFile: async (path: string, options) => {
         try {
-          //console.log('readFile', path, options)
           path = fixPath(path)
           const file = await this.call('fs', 'readFile', path, options)
-          //console.log('readFile', path, file)
           return file
         } catch (e) {
-          //console.log('readFile error', e)
           return undefined
         }
       }
@@ -94,7 +89,6 @@ export class fsPlugin extends ElectronPlugin {
           stat.isFile = () => !stat.isDirectoryValue
           return stat
         } catch (e) {
-          //console.log('stat error', e)
           return undefined
         }
       },
@@ -107,7 +101,6 @@ export class fsPlugin extends ElectronPlugin {
           stat.isFile = () => !stat.isDirectoryValue
           return stat
         } catch (e) {
-          //console.log('lstat error', e)
           return undefined
         }
       },
@@ -137,12 +130,11 @@ export class fsPlugin extends ElectronPlugin {
 
 
   async onActivation() {
-    //console.log('fsPluginClient onload', this.fs);
+
     (window as any).remixFileSystem = this.fs;
 
 
     this.on('fs', 'workingDirChanged', async (path: string) => {
-      //console.log('change working dir', path)
       workingDir = path
       await this.call('fileManager', 'refresh')
     })

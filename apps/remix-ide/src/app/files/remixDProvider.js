@@ -1,5 +1,5 @@
 'use strict'
-const FileProvider = require('./fileProvider')
+import FileProvider from "./fileProvider"
 
 module.exports = class RemixDProvider extends FileProvider {
   constructor (appManager) {
@@ -26,7 +26,6 @@ module.exports = class RemixDProvider extends FileProvider {
     })
 
     this._appManager.on('remixd', 'fileAdded', (path) => {
-      console.log('fileAdded remixd', path)
       this.event.emit('fileAdded', path)
     })
 

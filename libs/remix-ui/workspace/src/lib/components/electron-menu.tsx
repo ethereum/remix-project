@@ -14,14 +14,7 @@ export const ElectronMenu = () => {
     }
   }, [])
 
-  useEffect(() => {
-    if (isElectron()) {
-      console.log('global.fs.browser.recentFolders', global.fs.browser.recentFolders)
-    }
-  }, [global.fs.browser.recentFolders])
-
   const openFolderElectron = async (path: string) => {
-    console.log('open folder electron', path)
     global.dispatchOpenElectronFolder(path)
   }
 

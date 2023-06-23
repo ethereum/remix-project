@@ -12,6 +12,11 @@ const commands: Record<string, (focusedWindow?: BrowserWindow) => void> = {
       ipcMain.emit('fs:openFolder', focusedWindow.webContents.id);
     }
   },
+  'terminal:new': (focusedWindow) => {
+    if (focusedWindow) {
+      ipcMain.emit('terminal:new', focusedWindow.webContents.id);
+    }
+  },
   'template:open': (focusedWindow) => {
     if (focusedWindow) {
       ipcMain.emit('template:open', focusedWindow.webContents.id);

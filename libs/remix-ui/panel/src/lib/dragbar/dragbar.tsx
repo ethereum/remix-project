@@ -18,13 +18,13 @@ const DragBar = (props: IRemixDragBarUi) => {
   function stopDrag (e: MouseEvent, data: any) {
     const h = window.innerHeight - data.y
     props.refObject.current.setAttribute('style', `height: ${h}px;`)
-    setDragBarPosY(window.innerHeight - props.refObject.current.offsetHeight)
+    setDragBarPosY(props.refObject.current.offsetTop)
     setDragState(false)
     props.setHideStatus(false)
   }
   const handleResize = () => {
     if (!props.refObject.current) return
-    setDragBarPosY(window.innerHeight - props.refObject.current.offsetHeight)
+    setDragBarPosY(props.refObject.current.offsetTop)
   }
 
   useEffect(() => {

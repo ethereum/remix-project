@@ -1,7 +1,10 @@
 import React, { useState, useEffect, forwardRef } from 'react' // eslint-disable-line
-import { ElectronPlugin } from '../lib/electronPlugin'
-import { XTerm } from 'xterm-for-react'
+import { ElectronPlugin } from '@remixproject/engine-electron'
+import { Xterm } from './xterm-wrap'
+import { FitAddon } from './xterm-fit-addOn';
 
+
+const fitAddon = new FitAddon()
 
 export interface RemixUiXtermProps {
     plugin: ElectronPlugin
@@ -9,14 +12,18 @@ export interface RemixUiXtermProps {
     send: (data: string, pid: number) => void
     timeStamp: number
     setTerminalRef: (pid: number, ref: any) => void
+    theme: {
+        backgroundColor: string
+        textColor: string
+    }
 }
 
 const RemixUiXterm = (props: RemixUiXtermProps) => {
     const { plugin, pid, send, timeStamp } = props
     const xtermRef = React.useRef(null)
 
+
     useEffect(() => {
-        console.log('remix-ui-xterm ref', xtermRef.current)
         props.setTerminalRef(pid, xtermRef.current)
     }, [xtermRef.current])
 
@@ -24,19 +31,16 @@ const RemixUiXterm = (props: RemixUiXtermProps) => {
         send(event.key, pid)
     }
 
-    const onData = (data: string) => {
-        console.log('onData', data)
-    }
-
-    const closeTerminal = () => {
-        plugin.call('xterm', 'close', pid)
-    }
-
     return (
-        <>
-            <XTerm ref={xtermRef} onData={onData} onKey={onKey}></XTerm>
-            <button onClick={closeTerminal}>close</button>
-        </>
+
+        <Xterm
+            addons={[fitAddon]}
+            options={{ theme: { background: props.theme.backgroundColor, foreground: props.theme.textColor } }}
+            onRender={() => fitAddon.fit()}
+            ref={xtermRef}
+            onKey={onKey}></Xterm>
+
+
     )
 
 }

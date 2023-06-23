@@ -50,6 +50,7 @@ import { fsPlugin } from './app/plugins/electron/fsPlugin'
 import { isoGitPlugin } from './app/plugins/electron/isoGitPlugin'
 import { electronConfig } from './app/plugins/electron/electronConfigPlugin'
 import { electronTemplates } from './app/plugins/electron/templatesPlugin'
+import { xtermPlugin } from './app/plugins/electron/xtermPlugin'
 
 
 
@@ -66,7 +67,7 @@ const RemixDProvider = require('./app/files/remixDProvider')
 const Config = require('./config')
 
 const FileManager = require('./app/files/fileManager')
-const FileProvider = require('./app/files/fileProvider')
+import FileProvider from "./app/files/fileProvider"
 const DGitProvider = require('./app/files/dgitProvider')
 const WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
 
@@ -86,9 +87,6 @@ const { TabProxy } = require('./app/panels/tab-proxy.js')
 
 class AppComponent {
   constructor() {
-
-    console.log(window.electronAPI)
-    console.log(window.api)
 
     this.appManager = new RemixAppManager({})
     this.queryParams = new QueryParams()
@@ -340,6 +338,8 @@ class AppComponent {
       this.engine.register([electronConfigPlugin])
       const templatesPlugin = new electronTemplates()
       this.engine.register([templatesPlugin])
+      const xterm = new xtermPlugin()
+      this.engine.register([xterm])
     }
 
     // LAYOUT & SYSTEM VIEWS
@@ -458,7 +458,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if(isElectron()){
-      await this.appManager.activatePlugin(['fs', 'isogit', 'electronconfig', 'electronTemplates'])
+      await this.appManager.activatePlugin(['fs', 'isogit', 'electronconfig', 'electronTemplates', 'xterm'])
     }
 
     this.appManager.on(

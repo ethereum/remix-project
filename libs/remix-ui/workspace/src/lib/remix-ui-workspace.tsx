@@ -108,9 +108,11 @@ export function Workspace() {
     // expose some UI to the plugin, perhaps not the best way to do it
     if (global.plugin) {
       global.plugin.loadTemplate = async () => {
+        await global.plugin.call('menuicons', 'select', 'filePanel')
         createWorkspace()
       }
       global.plugin.clone = async () => {
+        await global.plugin.call('menuicons', 'select', 'filePanel')
         cloneGitRepository()
       }
     }
@@ -202,6 +204,7 @@ export function Workspace() {
 
 
   const cloneGitRepository = () => {
+    console.log('clone from workspace modal')
     global.modal(
       intl.formatMessage({ id: 'filePanel.workspace.clone' }),
       cloneModalMessage(),

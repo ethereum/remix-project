@@ -5,6 +5,38 @@ import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plug
 import os from 'os';
 import * as pty from "node-pty"
 
+import process from 'node:process';
+import { userInfo } from 'node:os';
+import { findExecutable } from "../utils/findExecutable";
+
+export const detectDefaultShell = () => {
+    const { env } = process;
+
+    if (process.platform === 'win32') {
+        return env.SHELL || 'powershell.exe';
+    }
+
+    try {
+        const { shell } = userInfo();
+        if (shell) {
+            return shell;
+        }
+    } catch { }
+
+    if (process.platform === 'darwin') {
+        return env.SHELL || '/bin/zsh';
+    }
+
+    return env.SHELL || '/bin/sh';
+};
+
+// Stores default shell when imported.
+const defaultShell = detectDefaultShell();
+
+
+export default defaultShell;
+
+
 const profile: Profile = {
     name: 'xterm',
     displayName: 'xterm',
@@ -15,7 +47,21 @@ export class XtermPlugin extends ElectronBasePlugin {
     clients: XtermPluginClient[] = []
     constructor() {
         super(profile, clientProfile, XtermPluginClient)
+        this.methods = [...super.methods, 'closeTerminals']
     }
+
+    new(webContentsId: any): void {
+        const client = this.clients.find(c => c.webContentsId === webContentsId)
+        if (client) {
+            client.new()
+        }
+    }
+
+    async closeTerminals(): Promise<void> {
+        for (const client of this.clients) {
+          await client.closeAll()
+        }
+      }
 
 }
 
@@ -23,7 +69,7 @@ const clientProfile: Profile = {
     name: 'xterm',
     displayName: 'xterm',
     description: 'xterm plugin',
-    methods: ['createTerminal', 'close', 'keystroke']
+    methods: ['createTerminal', 'close', 'keystroke', 'getShells']
 }
 
 class XtermPluginClient extends ElectronBasePluginClient {
@@ -32,7 +78,7 @@ class XtermPluginClient extends ElectronBasePluginClient {
     constructor(webContentsId: number, profile: Profile) {
         super(webContentsId, profile)
         this.onload(() => {
-            console.log('XtermPluginClient onload')
+            this.emit('loaded')
         })
     }
 
@@ -40,15 +86,36 @@ class XtermPluginClient extends ElectronBasePluginClient {
         this.terminals[pid].write(key)
     }
 
-    async createTerminal(path?: string): Promise<number> {
-        const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
+    async getShells(): Promise<string[]> {
+        if(os.platform() === 'win32') {
+            const bash = await findExecutable('bash')
+            if(bash) {
+                return [bash, 'powershell.exe', 'cmd.exe']
+            }
+            return ['powershell.exe', 'cmd.exe']
+        }
+        return [defaultShell]
+    }
 
-        const ptyProcess = pty.spawn(shell, [], {
+
+    async createTerminal(path?: string, shell?: string): Promise<number> {
+
+
+        // filter undefined out of the env
+        const env = Object.keys(process.env)
+            .filter(key => process.env[key] !== undefined)
+            .reduce((env, key) => {
+                env[key] = process.env[key] || '';
+                return env;
+            }, {} as Record<string, string>);
+            
+
+        const ptyProcess = pty.spawn(shell || defaultShell, [], {
             name: 'xterm-color',
             cols: 80,
-            rows: 30,
+            rows: 20,
             cwd: path || process.cwd(),
-            //env: process.env
+            env: env
         });
 
         ptyProcess.onData((data: string) => {
@@ -65,8 +132,20 @@ class XtermPluginClient extends ElectronBasePluginClient {
         this.emit('close', pid)
     }
 
+    async closeAll(): Promise<void> {
+        for (const pid in this.terminals) {
+            this.terminals[pid].kill()
+            delete this.terminals[pid]
+            this.emit('close', pid)
+        }
+    }
+
+
     async sendData(data: string, pid: number) {
         this.emit('data', data, pid)
+    }
+
+    async new(): Promise<void> {
     }
 
 }

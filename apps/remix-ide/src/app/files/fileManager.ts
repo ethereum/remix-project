@@ -9,7 +9,7 @@ import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from 
 import helper from '../../lib/helper.js'
 import { RemixAppManager } from '../../remixAppManager'
 
-const isElectron = require('is-electron')
+import isElectron from 'is-electron'
 
 /*
   attach to files event (removed renamed)
@@ -858,6 +858,10 @@ class FileManager extends Plugin {
   }
 
   currentWorkspace() {
+    if(isElectron()){
+      return ''
+    }
+
     if (this.mode !== 'localhost') {
       const file = this.currentFile() || ''
       const provider = this.fileProviderOf(file)

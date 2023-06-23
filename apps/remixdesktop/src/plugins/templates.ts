@@ -40,9 +40,6 @@ class TemplatesPluginClient extends ElectronBasePluginClient {
 
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
-    this.onload(() => {
-      console.log('TemplatesPluginClient onload')
-    })
   }
 
   async loadTemplateInNewWindow (files: any) {
@@ -50,11 +47,11 @@ class TemplatesPluginClient extends ElectronBasePluginClient {
     let folder = await this.call('fs' as any, 'selectFolder')
     if (!folder || folder === '') return
     // @ts-ignore
-    console.log('files for template ', files)
+
     for (const file in files) {
       try {
         if(!folder.endsWith('/')) folder += '/'
-        console.log('writing file', folder + file)
+
         await fs.mkdir(path.dirname(folder + file), { recursive: true})
         await fs.writeFile(folder + file, files[file], {
           encoding: 'utf8'

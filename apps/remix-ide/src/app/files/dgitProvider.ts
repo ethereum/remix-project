@@ -10,10 +10,11 @@ import {
 } from 'file-saver'
 import http from 'isomorphic-git/http/web'
 
-const JSZip = require('jszip')
-const path = require('path')
-const FormData = require('form-data')
-const axios = require('axios')
+import JSZip from 'jszip'
+import path from 'path'
+import FormData from 'form-data'
+import axios from 'axios'
+import isElectron from 'is-electron'
 
 const profile = {
   name: 'dGitProvider',
@@ -21,10 +22,16 @@ const profile = {
   description: 'Decentralized git provider',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
-  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem'],
+  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'reset', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'version'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
+  ipfsconfig: { host: string; port: number; protocol: string; ipfsurl: string }
+  globalIPFSConfig: { host: string; port: number; protocol: string; ipfsurl: string }
+  remixIPFS: { host: string; port: number; protocol: string; ipfsurl: string }
+  ipfsSources: any[]
+  ipfs: any
+  filesToSend: any[]
   constructor() {
     super(profile)
     this.ipfsconfig = {
@@ -46,9 +53,6 @@ class DGitProvider extends Plugin {
       ipfsurl: 'https://jqgt.remixproject.org/ipfs/'
     }
     this.ipfsSources = [this.remixIPFS, this.globalIPFSConfig, this.ipfsconfig]
-  }
-
-  async onActivation() {
   }
 
   async getGitConfig() {
@@ -84,7 +88,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async init(input) {
+  async init(input?) {
     if (isElectron()) {
       await this.call('isogit', 'init', {
         defaultBranch: (input && input.branch) || 'main'
@@ -100,20 +104,29 @@ class DGitProvider extends Plugin {
     this.emit('init')
   }
 
+  async version() {
+    if (isElectron()) {
+      return await this.call('isogit', 'version')
+    }
+
+    const version = 'built-in'
+    return version
+  }
+
   async status(cmd) {
 
     if (isElectron()) {
       const status = await this.call('isogit', 'status', cmd)
-      console.log('STATUS', status)
+
       return status
     }
 
-    console.log('status')
+
     const status = await git.statusMatrix({
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('STATUS', status)
+
     return status
   }
 
@@ -144,6 +157,21 @@ class DGitProvider extends Plugin {
 
     }
   }
+
+  async reset(cmd) {
+
+    if (isElectron()) {
+      await this.call('isogit', 'reset', cmd)
+    } else {
+      await git.resetIndex({
+        ...await this.getGitConfig(),
+        ...cmd
+      })
+      this.emit('rm')
+
+    }
+  }
+
   async checkout(cmd, refresh = true) {
 
     if (isElectron()) {
@@ -169,7 +197,7 @@ class DGitProvider extends Plugin {
         ...cmd,
         depth: 10
       })
-      console.log('STATUS', status)
+
       return status
     }
 
@@ -218,12 +246,10 @@ class DGitProvider extends Plugin {
 
   async currentbranch(config) {
 
-    console.log('currentbranch')
+
 
     if (isElectron()) {
-      console.log('currentbranch electron')
       return await this.call('isogit', 'currentbranch')
-
     }
 
     try {
@@ -240,7 +266,7 @@ class DGitProvider extends Plugin {
   async branches(config) {
 
     if (isElectron()) {
-      return await this.call('isogit', 'branches', config)
+      return await this.call('isogit', 'branches')
     }
 
     try {
@@ -314,15 +340,15 @@ class DGitProvider extends Plugin {
   }
 
   async readblob(cmd) {
-    console.log('readblob', cmd)
     if (isElectron()) {
       const readBlobResult = await this.call('isogit', 'readblob', cmd)
-      console.log('readblob', readBlobResult)
+      return readBlobResult
     }
     const readBlobResult = await git.readBlob({
       ...await this.getGitConfig(),
       ...cmd
     })
+
     return readBlobResult
   }
 
@@ -333,7 +359,7 @@ class DGitProvider extends Plugin {
     })
   }
 
-  async checkIpfsConfig(config) {
+  async checkIpfsConfig(config?) {
     this.ipfs = IpfsHttpClient(config || this.ipfsconfig)
     try {
       await this.ipfs.config.getAll()
@@ -368,7 +394,6 @@ class DGitProvider extends Plugin {
     if (isElectron()) {
       const folder = await this.call('fs', 'selectFolder')
       if (!folder) return false
-      console.log('folder', folder)
       const cmd = {
         url: input.url,
         singleBranch: input.singleBranch,
@@ -383,7 +408,7 @@ class DGitProvider extends Plugin {
     } else {
       const permission = await this.askUserPermission('clone', 'Import multiple files into your workspaces.')
       if (!permission) return false
-      if (this.calculateLocalStorage() > 10000) throw new Error('The local storage of the browser is full.')
+      if (parseFloat(this.calculateLocalStorage()) > 10000) throw new Error('The local storage of the browser is full.')
       if (!workspaceExists) await this.call('filePanel', 'createWorkspace', workspaceName || `workspace_${Date.now()}`, true)
       const cmd = {
         url: input.url,
@@ -415,19 +440,19 @@ class DGitProvider extends Plugin {
         name: input.name,
         email: input.email
       },
-      input
+      input,
     }
     if (isElectron()) {
       return await this.call('isogit', 'push', cmd)
     } else {
 
-      cmd = {
+      const cmd2 = {
         ...cmd,
         ...await this.parseInput(input),
       }
       return await git.push({
         ...await this.getGitConfig(),
-        ...cmd
+        ...cmd2
       })
 
     }
@@ -442,20 +467,20 @@ class DGitProvider extends Plugin {
         email: input.email
       },
       remote: input.remote,
-      input
+      input,
     }
     let result
     if (isElectron()) {
       result = await this.call('isogit', 'pull', cmd)
     }
     else {
-      cmd = {
+      const cmd2 = {
         ...cmd,
         ...await this.parseInput(input),
       }
       result = await git.pull({
         ...await this.getGitConfig(),
-        ...cmd
+        ...cmd2
       })
     }
     setTimeout(async () => {
@@ -479,13 +504,13 @@ class DGitProvider extends Plugin {
     if (isElectron()) {
       result = await this.call('isogit', 'fetch', cmd)
     } else {
-      cmd = {
+      const cmd2 = {
         ...cmd,
         ...await this.parseInput(input),
       }
       result = await git.fetch({
         ...await this.getGitConfig(),
-        ...cmd
+        ...cmd2
       })
     }
     setTimeout(async () => {
@@ -567,15 +592,15 @@ class DGitProvider extends Plugin {
         .post(url, data, {
           maxBodyLength: 'Infinity',
           headers: {
-            'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+            'Content-Type': `multipart/form-data; boundary=${(data as any)._boundary}`,
             pinata_api_key: pinataApiKey,
             pinata_secret_api_key: pinataSecretApiKey
           }
-        }).catch((e) => {
+        } as any).catch((e) => {
           console.log(e)
         })
       // also commit to remix IPFS for availability after pinning to Pinata
-      return await this.export(this.remixIPFS) || result.data.IpfsHash
+      return await this.export(this.remixIPFS) || (result as any).data.IpfsHash
     } catch (error) {
       throw new Error(error)
     }
@@ -591,10 +616,10 @@ class DGitProvider extends Plugin {
             pinata_api_key: pinataApiKey,
             pinata_secret_api_key: pinataSecretApiKey
           }
-        }).catch((e) => {
+        } as any).catch((e) => {
           console.log('Pinata unreachable')
         })
-      return result.data
+      return (result as any).data
     } catch (error) {
       throw new Error(error)
     }
@@ -646,8 +671,8 @@ class DGitProvider extends Plugin {
   }
 
   calculateLocalStorage() {
-    var _lsTotal = 0
-    var _xLen; var _x
+    let _lsTotal = 0
+    let _xLen; let _x
     for (_x in localStorage) {
       // eslint-disable-next-line no-prototype-builtins
       if (!localStorage.hasOwnProperty(_x)) {
@@ -662,7 +687,7 @@ class DGitProvider extends Plugin {
   async import(cmd) {
     const permission = await this.askUserPermission('import', 'Import multiple files into your workspaces.')
     if (!permission) return false
-    if (this.calculateLocalStorage() > 10000) throw new Error('The local storage of the browser is full.')
+    if (parseFloat(this.calculateLocalStorage()) > 10000) throw new Error('The local storage of the browser is full.')
     const cid = cmd.cid
     await this.call('filePanel', 'createWorkspace', `workspace_${Date.now()}`, true)
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')

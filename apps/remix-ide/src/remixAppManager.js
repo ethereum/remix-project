@@ -2,6 +2,7 @@ import { PluginManager } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import { QueryParams } from '@remix-project/remix-lib'
 import { IframePlugin } from '@remixproject/engine-web'
+const isElectron = require('is-electron')
 const _paq = window._paq = window._paq || []
 
 // requiredModule removes the plugin from the plugin manager list on UI
@@ -14,9 +15,9 @@ let requiredModules = [ // services + layout views + system views
   'vm-shanghai',
   'compileAndRun', 'search', 'recorder', 'fileDecorator', 'codeParser', 'codeFormatter', 'solidityumlgen', 'contractflattener', 'solidity-script']
 
-if(isElectron()) {
+if (isElectron()) {
   requiredModules = [...requiredModules, 'fs', 'electronTemplates', 'isogit', 'remix-templates', 'electronconfig']
-}  
+}
 
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
@@ -183,6 +184,7 @@ export class RemixAppManager extends PluginManager {
     }
 
     return plugins.map(plugin => {
+      if (plugin.name === 'dgit') { plugin.url = 'https://dgit4-76cc9.web.app/' }
       if (plugin.name === testPluginName) plugin.url = testPluginUrl
       return new IframePlugin(plugin)
     })

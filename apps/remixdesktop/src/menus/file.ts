@@ -36,6 +36,13 @@ export default (
             role: 'clearRecentDocuments'
           }
         ]
+      },
+      {
+        role: 'close',
+        accelerator: commandKeys['window:close']
+      },
+      {
+        role: 'quit',
       }
     ]
   };
