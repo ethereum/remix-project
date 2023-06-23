@@ -92,6 +92,7 @@ jobs:
           keys:
             - remixdesktop-remix-{{ checksum "yarn.lock" }}
       - run: ls -la
+      
       - run: yarn
       - save_cache:
           key: remixdesktop-remix-{{ checksum "yarn.lock" }}
