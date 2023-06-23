@@ -120,13 +120,11 @@ jobs:
               cd apps/remixdesktop/
               yarn
               yarn dist --win
+              rm -rf release/*-unpacked
       - save_cache:
           key: remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
           paths:
             - apps/remixdesktop/node_modules
-      - run:
-          name: Preparing for artifact upload
-          command: rm -rf release/*-unpacked release/mac*
       - store_artifacts:
           path: apps/remixdesktop/release/
           destination: remixdesktop-windows
@@ -173,9 +171,7 @@ jobs:
             yarn build:desktop
             cd apps/remixdesktop
             yarn dist --mac
-      - run:
-          name: Preparing for artifact upload
-          command: rm -rf release/*-unpacked release/mac*
+            rm -rf release/mac*
       - store_artifacts:
           path: apps/remixdesktop/release/
           destination: remixdesktop-mac

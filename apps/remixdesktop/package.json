@@ -44,8 +44,17 @@
       "category": "public.app-category.productivity",
       "target": [
         {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
           "target": "dmg",
           "arch": [
+            "x64",
+            "arm64",
             "universal"
           ]
         }
@@ -64,6 +73,7 @@
     },
     "win": {
       "target": [
+        "zip",
         "nsis"
       ]
     },
