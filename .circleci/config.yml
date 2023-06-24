@@ -165,12 +165,13 @@ jobs:
           key: remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
           paths:
             - apps/remixdesktop/node_modules
+      # use USE_HARD_LINK=false https://github.com/electron-userland/electron-builder/issues/3179
       - run: 
           command: |
             nvm use 20.0.0
             yarn build:desktop
             cd apps/remixdesktop
-            yarn dist --mac
+            USE_HARD_LINKS=false yarn dist --mac 
             rm -rf release/mac*
       - store_artifacts:
           path: apps/remixdesktop/release/
