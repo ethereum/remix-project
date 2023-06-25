@@ -114,7 +114,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: unzip ./persist/dist.zip
+      - run: unzip ./persist/desktopbuild.zip
       - restore_cache:
           key: node-20-windows-v3
       - run: 
@@ -157,7 +157,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: unzip ./persist/dist.zip
+      - run: unzip ./persist/desktopbuild.zip
       - run: 
           command: |
             ls -la dist/apps/remix-ide
