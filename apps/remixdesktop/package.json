@@ -49,7 +49,7 @@
   "build": {
     "productName": "Remix IDE",
     "appId": "org.ethereum.remix-ide",
-    "asar": true,
+    "asar": false,
     "files": [
       "build/**/*"
     ],
