@@ -401,7 +401,7 @@ workflows:
       - build-remixdesktop-mac:
           requires:
             - build-desktop
-      - build-remixdesktop-windows
+      - build-remixdesktop-windows:
           requires:
             - build-desktop
       - build-plugin:
