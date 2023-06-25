@@ -52,7 +52,7 @@ jobs:
             - "persist"
 
   build-desktop:
-      docker:
+    docker:
       - image: cimg/node:20.0.0-browsers
 
     resource_class:
@@ -60,6 +60,23 @@ jobs:
     working_directory: ~/remix-project
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn
+      - save_cache:
+          key: v1-deps-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - run:
+          name: Build
+          command: |
+             yarn build:desktop
+      - run: mkdir perist && zip -0 -r perist/desktopbuild.zip dist/rexmix-ide
+      - persist_to_workspace:
+          root: .
+          paths:
+            - "persist"
 
   build-plugin:
       docker:
