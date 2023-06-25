@@ -4,10 +4,19 @@
   "main": "build/main.js",
   "license": "MIT",
   "type": "commonjs",
+  "description": "Remix IDE Desktop",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethereum/remix-project.git"
+  },
   "author": {
     "name": "Remix Team",
     "email": "remix@ethereum.org"
   },
+  "bugs": {
+    "url": "https://github.com/ethereum/remix-project/issues"
+  },
+  "homepage": "https://github.com/ethereum/remix-project#readme",
   "appId": "org.ethereum.remixdesktop",
   "mac": {
     "category": "public.app-category.productivity"
