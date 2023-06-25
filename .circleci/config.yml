@@ -104,6 +104,36 @@ jobs:
             paths:
               - "persist"
 
+  build-remixdesktop-linux:
+      docker:
+      - image: cimg/node:20.0.0-browsers
+      resource_class:
+        xlarge
+      working_directory: ~/remix-project
+      steps:
+        - checkout
+        - attach_workspace:
+            at: .
+        - run: unzip ./persist/desktopbuild.zip
+      - restore_cache:
+          keys:
+            - remixdesktop-linux-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
+      - run: 
+          command: |
+              mkdir apps/remixdesktop/build
+              cp -r dist/apps/remix-ide apps/remixdesktop/build/remix-ide
+              cd apps/remixdesktop/
+              yarn
+              yarn dist --linux
+              rm -rf release/*-unpacked
+      - save_cache:
+          key: remixdesktop-linux-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
+          paths:
+            - apps/remixdesktop/node_modules
+      - store_artifacts:
+          path: apps/remixdesktop/release/
+          destination: remixdesktop-linux
+
   build-remixdesktop-windows:
     executor:
       name: win/default # executor type
@@ -178,7 +208,7 @@ jobs:
       - run: 
           command: |
             nvm use 20.0.0
-            mdkir apps/remixdesktop/build
+            mkdir apps/remixdesktop/build
             cp -r dist/apps/remix-ide apps/remixdesktop/build/remix-ide
             cd apps/remixdesktop
             USE_HARD_LINKS=false yarn dist --mac 
