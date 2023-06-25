@@ -43,6 +43,9 @@ export class FSPlugin extends ElectronBasePlugin {
         const newFolders = openedFolders.filter((f: string) => !foldersToDelete.includes(f))
         this.call('electronconfig', 'writeConfig', { 'recentFolders': newFolders })
       }
+    }else{
+      console.log('no opened folders')
+      createWindow()
     }
   }
 
