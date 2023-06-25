@@ -112,16 +112,9 @@ jobs:
           key: node-20-windows-v3
           paths:
             - /ProgramData/nvm/v20.0.0
-      - restore_cache:
-          keys:
-            - remixdesktop-remix-win-{{ checksum "yarn.lock" }}
       - run: 
           command: |
             yarn
-      - save_cache:
-          key: remixdesktop-remix-win-{{ checksum "yarn.lock" }}
-          paths:
-            - node_modules
       - restore_cache:
           keys:
             - remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
