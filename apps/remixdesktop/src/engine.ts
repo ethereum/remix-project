@@ -1,7 +1,6 @@
 import { Engine, PluginManager } from '@remixproject/engine';
 import { ipcMain } from 'electron';
 import { FSPlugin } from './plugins/fsPlugin';
-import { GitPlugin } from './plugins/gitPlugin';
 import { app } from 'electron';
 import { XtermPlugin } from './plugins/xtermPlugin';
 import git from 'isomorphic-git'
@@ -12,14 +11,12 @@ import { TemplatesPlugin } from './plugins/templates';
 const engine = new Engine()
 const appManager = new PluginManager()
 const fsPlugin = new FSPlugin()
-const gitPlugin = new GitPlugin()
 const xtermPlugin = new XtermPlugin()
 const isoGitPlugin = new IsoGitPlugin()
 const configPlugin = new ConfigPlugin()
 const templatesPlugin = new TemplatesPlugin()
 engine.register(appManager)
 engine.register(fsPlugin)
-engine.register(gitPlugin)
 engine.register(xtermPlugin)
 engine.register(isoGitPlugin)
 engine.register(configPlugin)

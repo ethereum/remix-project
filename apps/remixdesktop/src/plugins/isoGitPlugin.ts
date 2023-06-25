@@ -5,6 +5,7 @@ import fs from 'fs/promises'
 import git from 'isomorphic-git'
 import { dialog } from "electron";
 import http from 'isomorphic-git/http/web'
+import { gitProxy } from "../tools/git";
 
 const profile: Profile = {
   name: 'isogit',
@@ -45,11 +46,12 @@ const clientProfile: Profile = {
   name: 'isogit',
   displayName: 'isogit',
   description: 'isogit plugin',
-  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'openFolder']
+  methods: ['init', 'localStorageUsed',  'version', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'openFolder']
 }
 
 class IsoGitPluginClient extends ElectronBasePluginClient {
   workingDir: string = '/Volumes/bunsen/code/empty/'
+  gitIsInstalled: boolean = false
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
     this.onload(() => {
@@ -57,11 +59,16 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       this.on('fs' as any, 'workingDirChanged', async (path: string) => {
         console.log('workingDirChanged', path)
         this.workingDir = path
-        await this.status({
-
-        })
+        this.gitIsInstalled = await gitProxy.version() ? true : false
+        if (this.gitIsInstalled) {
+          console.log('git is installed')
+        }
       })
     })
+  }
+
+  async version() {
+    return gitProxy.version()
   }
 
   async getGitConfig() {
@@ -72,7 +79,14 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async status(cmd: any) {
-    console.log('status')
+    console.log('status', cmd)
+
+    if(this.gitIsInstalled){
+      const status = await gitProxy.status(this.workingDir)
+      console.log('STATUS', status)
+      return status
+    }
+
     const status = await git.statusMatrix({
       ...await this.getGitConfig(),
       ...cmd
@@ -82,6 +96,15 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async log(cmd: any) {
+
+    /* we will use isomorphic git for now
+    if(this.gitIsInstalled){
+      const log = await gitProxy.log(this.workingDir, cmd.ref)
+      console.log('LOG', log)
+      return log
+    }
+    */
+
     console.log('log')
     const log = await git.log({
       ...await this.getGitConfig(),
@@ -214,18 +237,24 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
   async clone(cmd: any) {
     console.log('clone')
-    try {
-      const clone = await git.clone({
-        ...await this.getGitConfig(),
-        ...cmd,
-        ...parseInput(cmd.input),
-        dir: cmd.dir || this.workingDir
-      })
-      console.log('CLONE', clone)
-      return clone
-    } catch (e) {
-      console.log('CLONE ERROR', e)
-      throw e
+
+    if (this.gitIsInstalled) {
+      await gitProxy.clone(cmd.url, cmd.dir)
+      console.log('CLONING WITH NATIVE GIT', cmd)
+    } else {
+      try {
+        const clone = await git.clone({
+          ...await this.getGitConfig(),
+          ...cmd,
+          ...parseInput(cmd.input),
+          dir: cmd.dir || this.workingDir
+        })
+        console.log('CLONE', clone)
+        return clone
+      } catch (e) {
+        console.log('CLONE ERROR', e)
+        throw e
+      }
     }
   }
 

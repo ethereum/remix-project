@@ -11,8 +11,18 @@ export class isoGitPlugin extends ElectronPlugin {
     
   }
 
-  onActivation(): void {
+  async onActivation(): Promise<void> {
 
+    setTimeout(async () => {
+    const version = await this.call('isogit', 'version')
+    if(version){
+      this.call('terminal', 'log', version)
+    }else{
+      this.call('terminal', 'log', 'Git is not installed on the system. Using builtin git instead. Performance will be affected. It is better to install git on the system and configure the credentials to connect to GitHub etc.')
+    }
+  
+  
+  }, 5000)
   }
 
 

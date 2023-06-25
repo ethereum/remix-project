@@ -120,7 +120,6 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       } else await basicWorkspaceInit(workspaces, workspaceProvider)
     } else if (isElectron()) {
       console.log('isElectron initWorkspace')
-      plugin.call('notification', 'toast', `connecting to electron...`)
       if (params.opendir) {
         params.opendir = decodeURIComponent(params.opendir)
         plugin.call('notification', 'toast', `opening ${params.opendir}...`)
