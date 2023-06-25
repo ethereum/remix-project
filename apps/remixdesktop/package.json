@@ -4,7 +4,10 @@
   "main": "build/main.js",
   "license": "MIT",
   "type": "commonjs",
-  "email": "remix@ethereum.org",	
+  "author": {
+    "name": "Remix Team",
+    "email": "remix@ethereum.org"
+  },
   "appId": "org.ethereum.remixdesktop",
   "mac": {
     "category": "public.app-category.productivity"
