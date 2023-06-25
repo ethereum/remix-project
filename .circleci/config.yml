@@ -398,8 +398,12 @@ workflows:
     jobs:
       - build
       - build-desktop
-      - build-remixdesktop-mac
+      - build-remixdesktop-mac:
+          requires:
+            - build-desktop
       - build-remixdesktop-windows
+          requires:
+            - build-desktop
       - build-plugin:
           matrix:
             parameters:
