@@ -7,12 +7,18 @@ import { createWindow, isPackaged } from "../main";
 import { writeConfig } from "../utils/config";
 import { glob, GlobOptions } from 'glob'
 import { Path } from 'path-scurry'
+import path from "path";
 
 const profile: Profile = {
   displayName: 'fs',
   name: 'fs',
   description: 'fs'
 }
+
+const convertPathToPosix = (pathName: string): string => {
+  return pathName.split(path.sep).join(path.posix.sep)
+}
+
 
 export class FSPlugin extends ElectronBasePlugin {
   clients: FSPluginClient[] = []
@@ -116,7 +122,7 @@ class FSPluginClient extends ElectronBasePluginClient {
         isDirectory
       })
     }
-    console.log('readdir', path, Date.now() - startTime)
+    console.log('readdir', result, Date.now() - startTime)
     return result
   }
 
@@ -128,6 +134,7 @@ class FSPluginClient extends ElectronBasePluginClient {
       withFileTypes: true,
       ...options
     })
+    console.log('glob', files)
     const result: any[] = []
 
     for (const file of files) {
@@ -234,9 +241,12 @@ class FSPluginClient extends ElectronBasePluginClient {
           '**/.git/**',
         ]
       }).on('all', async (eventName, path, stats) => {
+
+
         console.log('change', eventName, path, stats)
         
         let pathWithoutPrefix = path.replace(this.workingDir, '')
+        pathWithoutPrefix = convertPathToPosix(pathWithoutPrefix)
         if (pathWithoutPrefix.startsWith('/')) pathWithoutPrefix = pathWithoutPrefix.slice(1)
 
         if (eventName === 'change') {
