@@ -434,6 +434,9 @@ workflows:
       - build-remixdesktop-windows:
           requires:
             - build-desktop
+      - build-remixdesktop-linux:
+          requires:
+            - build-desktop
       - build-plugin:
           matrix:
             parameters:
