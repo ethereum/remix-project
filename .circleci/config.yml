@@ -78,6 +78,19 @@ jobs:
             paths:
               - "persist"
 
+  build-win:
+    docker:
+      - image: electronuserland/builder:wine
+    environment:
+      GRID_ENV: win
+    working_directory: ~/remix-project
+    steps:
+      - checkout
+      - run:
+          command: |
+            node -v
+            ls -la
+
   build-remixdesktop-windows:
     executor:
       name: win/default # executor type
@@ -387,6 +400,7 @@ workflows:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - build
+      - build-win
       - build-remixdesktop-mac
       - build-remixdesktop-windows
       - build-plugin:
