@@ -72,7 +72,7 @@ jobs:
           name: Build
           command: |
              yarn build:desktop
-      - run: mkdir perist && zip -0 -r perist/desktopbuild.zip dist/rexmix-ide
+      - run: mkdir perist && zip -0 -r perist/desktopbuild.zip dist/remix-ide
       - persist_to_workspace:
           root: .
           paths:
@@ -156,23 +156,13 @@ jobs:
     working_directory: ~/remix-project
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - run: 
           command: |
+            ls -la dist/apps/remix-ide
             nvm install 20.0.0
             nvm use 20.0.0
-      - restore_cache:
-          keys:
-            - remixdesktop-remix-mac-{{ checksum "yarn.lock" }}
-      - run: ls -la
-
-      - run: 
-          command: |
-            nvm use 20.0.0
-            yarn
-      - save_cache:
-          key: remixdesktop-remix-mac-{{ checksum "yarn.lock" }}
-          paths:
-            - node_modules
       - restore_cache:
           keys:
             - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
@@ -188,7 +178,8 @@ jobs:
       - run: 
           command: |
             nvm use 20.0.0
-            yarn build:desktop
+            mdkir apps/remixdesktop/build
+            cp -r dist/apps/remix-ide apps/remixdesktop/build/remix-ide
             cd apps/remixdesktop
             USE_HARD_LINKS=false yarn dist --mac 
             rm -rf release/mac*
