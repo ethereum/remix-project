@@ -132,7 +132,7 @@ class DGitProvider extends Plugin {
   }
 
   async rm(cmd) {
-
+    console.log('rm', cmd)
     if (isElectron()) {
       await this.call('isogit', 'rm', cmd)
     } else {
@@ -318,11 +318,13 @@ class DGitProvider extends Plugin {
     if (isElectron()) {
       const readBlobResult = await this.call('isogit', 'readblob', cmd)
       console.log('readblob', readBlobResult)
+      return readBlobResult
     }
     const readBlobResult = await git.readBlob({
       ...await this.getGitConfig(),
       ...cmd
     })
+
     return readBlobResult
   }
 

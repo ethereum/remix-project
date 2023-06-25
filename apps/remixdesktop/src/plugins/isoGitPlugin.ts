@@ -83,7 +83,6 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
     if(this.gitIsInstalled){
       const status = await gitProxy.status(this.workingDir)
-      console.log('STATUS', status)
       return status
     }
 
@@ -110,7 +109,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('LOG', log)
+
     return log
   }
 
@@ -125,7 +124,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async rm(cmd: any) {
-    console.log('rm')
+    console.log('rm', cmd)
     const rm = await git.remove({
       ...await this.getGitConfig(),
       ...cmd
@@ -157,7 +156,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('BRANCH', branch)
+
     return branch
   }
 
@@ -167,7 +166,6 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('LSFILES', lsfiles)
     return lsfiles
   }
 
@@ -177,7 +175,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('RESOLVEREF', resolveref)
+
     return resolveref
   }
 
@@ -188,7 +186,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('READBLOB', readblob)
+
     return readblob
   }
 
@@ -283,7 +281,6 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   remotes = async () => {
     let remotes = []
     remotes = await git.listRemotes({ ...await this.getGitConfig() })
-    console.log('remotes', remotes)
     return remotes
   }
 
@@ -315,7 +312,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
         branches = [...branches, ...remotebranches]
 
       }
-      console.log('branches', branches)
+
       return branches
     } catch (e) {
       return []
