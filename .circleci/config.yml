@@ -72,7 +72,7 @@ jobs:
           name: Build
           command: |
              yarn build:desktop
-      - run: mkdir persist && zip -0 -r perist/desktopbuild.zip dist/apps/remix-ide
+      - run: mkdir persist && zip -0 -r persist/desktopbuild.zip dist/apps/remix-ide
       - persist_to_workspace:
           root: .
           paths:
