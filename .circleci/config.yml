@@ -51,6 +51,32 @@ jobs:
           paths:
             - "persist"
 
+  build-desktop:
+      docker:
+      - image: cimg/node:20.0.0-browsers
+
+    resource_class:
+      xlarge
+    working_directory: ~/remix-project
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn
+      - save_cache:
+          key: v1-deps-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - run:
+          name: Build
+          command: |
+             yarn build:desktop
+      - run: mkdir perist && zip -0 -r perist/desktopbuild.zip dist/rexmix-ide
+      - persist_to_workspace:
+          root: .
+          paths:
+            - "persist"
 
   build-plugin:
       docker:
@@ -77,19 +103,6 @@ jobs:
             root: .
             paths:
               - "persist"
-
-  build-win:
-    docker:
-      - image: electronuserland/builder:wine
-    environment:
-      GRID_ENV: win
-    working_directory: ~/remix-project
-    steps:
-      - checkout
-      - run:
-          command: |
-            node -v
-            ls -la
 
   build-remixdesktop-windows:
     executor:
@@ -393,7 +406,7 @@ workflows:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - build
-      - build-win
+      - build-desktop
       - build-remixdesktop-mac
       - build-remixdesktop-windows
       - build-plugin:
