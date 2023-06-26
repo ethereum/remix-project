@@ -58,7 +58,7 @@ class AnalysisTab extends ViewPlugin {
 
     this.event.register('staticAnaysisWarning', (count) => {
       let payloadType = ''
-      let totalCount = 0
+      // let totalCount = 0
       this.hints && this.hints.length > 0 ? this.hints.forEach(hint => {
         if (hint.type === 'error') {
           payloadType = 'error'
@@ -68,11 +68,7 @@ class AnalysisTab extends ViewPlugin {
       }) : payloadType = 'warning'
 
       if (count > 0) {
-        if (this.hints && this.hints.length > 0) {
-          totalCount =  count === this.hints.length ? count : count + this.hints.length
-        }
-        totalCount += count
-        this.emit('statusChanged', { key: totalCount, title: `${totalCount} warning${totalCount === 1 ? '' : 's'}`, type: payloadType })
+        this.emit('statusChanged', { key: count, title: `${count} warning${count === 1 ? '' : 's'}`, type: payloadType })
       } else if (count === 0) {
         this.emit('statusChanged', { key: 'succeed', title: 'no warning', type: 'success' })
       } else {
