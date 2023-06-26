@@ -97,6 +97,7 @@ import EditMenu from './menus/edit';
 import GitMenu from './menus/git';
 import ViewMenu from './menus/view';
 import { execCommand } from './menus/commands';
+import { searchProxy } from './tools/search';
 
 const commandKeys: Record<string, string> = {
   'window:new': 'CmdOrCtrl+N',
@@ -112,3 +113,26 @@ WindowMenu(commandKeys, execCommand, []),
 ]
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
+
+/*
+searchProxy.checkIfGrepIsInstalled().then((result) => {
+  console.log('grep --version', result)
+})
+
+searchProxy.checkIffindstrIsInstalled().then((result) => {
+  console.log('findstr /?', result)
+})
+
+searchProxy.checkIfSelectStringIsInstalled().then((result) => {
+  console.log('get-help Select-String', result)
+})
+*/
+
+searchProxy.checkIfRgIsInstalled().then((result) => {
+  console.log('rg --version', result)
+}
+).catch((error) => {
+  console.log('rg --version', error)
+})
+
+

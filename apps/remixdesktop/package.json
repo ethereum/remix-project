@@ -41,6 +41,7 @@
     "@remixproject/engine-electron": "0.3.37",
     "@remixproject/plugin": "0.3.37",
     "@remixproject/plugin-electron": "0.3.37",
+    "@vscode/ripgrep": "^1.15.4",
     "chokidar": "^3.5.3",
     "glob": "9.3.5",
     "isomorphic-git": "^1.24.2",
