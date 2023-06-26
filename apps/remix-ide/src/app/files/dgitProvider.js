@@ -240,7 +240,7 @@ class DGitProvider extends Plugin {
   async branches(config) {
 
     if (isElectron()) {
-      return await this.call('isogit', 'branches', config)
+      return await this.call('isogit', 'branches')
     }
 
     try {
