@@ -195,10 +195,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const noLibSlitherWarnings = slitherWarnings.filter(w => !w.options.isLibrary)
   const slitherErrors = noLibSlitherWarnings.filter(slitherError => slitherError.options.type === 'error')
   const remixAnalysisNoLibs = ssaWarnings.filter(ssa => ssa.options.isLibrary === false)
-
-  console.log({
-    hints, ssaWarnings, slitherWarnings, state
-  })
+  const remixAnalysisLessWarnings = ssaWarnings.filter(ssa => ssa.options.type !== 'warning')
 
   const message = (name: string, warning: any, more?: string, fileName?: string, locationString?: string) : string => {
     return (`
@@ -241,57 +238,92 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }
 
   useEffect(() => {
-    if(solhintEnabled && basicEnabled) {
-      if(ssaWarnings.length > 0 && hints.length > 0) {
-        props.event.trigger('staticAnaysisWarning', [ssaWarnings.length + hints.length])
+    // if hideWarnings is true
+    if(basicEnabled && !solhintEnabled && !slitherEnabled && state.data && state.source !== null ) {
+      props.analysisModule.internalCount = 0
+      props.event.trigger('staticAnaysisWarning',
+        [hideWarnings ? remixAnalysisLessWarnings.length : ssaWarnings.length])
+    }
+    if (solhintEnabled && !basicEnabled && !slitherEnabled && state.data && state.source !== null) {
+      props.analysisModule.internalCount = 0
+      props.event.trigger('staticAnaysisWarning', [hideWarnings ? hintErrors.length : hints.length])
+    }
+    if (solhintEnabled && basicEnabled && !slitherEnabled && !showLibsWarning
+      && state.data && state.source !== null) {
+      console.log('solhint and remix are enabled here')
+      props.analysisModule.internalCount = 0
+      props.event.trigger('staticAnaysisWarning', [hideWarnings
+        ? hintErrors.length + remixAnalysisNoLibs.filter(x => x.options.type !== 'warning').length : hints.length + ssaWarnings.length])
+    }
+    if (slitherEnabled && !basicEnabled && !solhintEnabled && state.data && state.source !== null) {
+      props.analysisModule.internalCount = 0
+      props.event.trigger('staticAnaysisWarning', [hideWarnings ? slitherErrors.length : slitherWarnings.length])
+    }
+    if (slitherEnabled && basicEnabled && solhintEnabled && state.data && state.source !== null) {
+      props.analysisModule.internalCount = 0
+      props.event.trigger('staticAnaysisWarning', [hideWarnings
+        ? hintErrors.length + remixAnalysisLessWarnings.length + slitherErrors.length
+        : hints.length + ssaWarnings.length + slitherWarnings.length])
+    }
+    // if showLibsWarning is true
+    if(basicEnabled && !solhintEnabled && !slitherEnabled && !hideWarnings && state.data && state.source !== null ) {
+      props.analysisModule.internalCount = 0
+      props.event.trigger('staticAnaysisWarning',
+        [showLibsWarning ? ssaWarnings.length : remixAnalysisNoLibs.length])
+    }
+    if (solhintEnabled && !basicEnabled && !slitherEnabled && !hideWarnings && state.data && state.source !== null) {
+      props.analysisModule.internalCount = 0
+      props.event.trigger('staticAnaysisWarning', [showLibsWarning ? hints.length : hints.length])
+    }
+    if (solhintEnabled && basicEnabled && !slitherEnabled && !hideWarnings && state.data && state.source !== null) {
+      console.log('solhint and remix are enabled here')
+      props.analysisModule.internalCount = 0
+      props.event.trigger('staticAnaysisWarning', [showLibsWarning
+        ? hints.length + ssaWarnings.length : hints.length + remixAnalysisNoLibs.length])
+    }
+    if (slitherEnabled && !basicEnabled && !solhintEnabled && !hideWarnings && state.data && state.source !== null) {
+      props.analysisModule.internalCount = 0
+      props.event.trigger('staticAnaysisWarning', [showLibsWarning && noLibSlitherWarnings.length])
+    }
+    if (slitherEnabled && basicEnabled && solhintEnabled && !hideWarnings && state.data && state.source !== null) {
+      props.analysisModule.internalCount = 0
+      props.event.trigger('staticAnaysisWarning', [showLibsWarning
+        ? hints.length + ssaWarnings.length + slitherWarnings.length : hints.length + remixAnalysisNoLibs.length + noLibSlitherWarnings.length])
+    }
+    if(solhintEnabled && basicEnabled && !slitherEnabled && !hideWarnings && !showLibsWarning) {
+      props.analysisModule.internalCount = 0
+      if(props.analysisModule.hints.length > 0) {
+        props.event.trigger('staticAnaysisWarning', [hints.length + remixAnalysisNoLibs.length])
       }
     }
-  }, [showLibsWarning])
+    if(solhintEnabled && !basicEnabled && !slitherEnabled && hideWarnings && showLibsWarning) {
+      props.analysisModule.internalCount = 0
+      if(remixAnalysisLessWarnings.length > 0) {
+        props.event.trigger('staticAnaysisWarning', [hints.length])
+      }
+    }
+    if(basicEnabled && solhintEnabled && !slitherEnabled && !hideWarnings && !showLibsWarning) {
+      props.analysisModule.internalCount = 0
+      if(props.analysisModule.hints.length > 0) {
+        props.event.trigger('staticAnaysisWarning', [hints.length + remixAnalysisNoLibs.length])
+      }
+    }
 
-  useEffect(() => {
-      if(basicEnabled && !solhintEnabled && !slitherEnabled && state.data && state.source !== null ) {
-        props.event.trigger('staticAnaysisWarning',
-          [hideWarnings ? remixAnalysisNoLibs.length : ssaWarnings.length])
+    if(solhintEnabled && basicEnabled && slitherEnabled && !hideWarnings && !showLibsWarning) {
+      props.analysisModule.internalCount = 0
+      if(props.analysisModule.hints.length > 0) {
+        props.analysisModule.hints = []
+        props.event.trigger('staticAnaysisWarning', [hints.length + remixAnalysisNoLibs.length + slitherWarnings.length])
       }
-      if (solhintEnabled && !basicEnabled && !slitherEnabled && state.data && state.source !== null) {
-        props.event.trigger('staticAnaysisWarning', [hideWarnings ? hints.length : hintErrors.length])
-      }
-      if (solhintEnabled && basicEnabled && !slitherEnabled && state.data && state.source !== null) {
-        props.event.trigger('staticAnaysisWarning', [hideWarnings
-          ? hintErrors.length + remixAnalysisNoLibs.length : hints.length + ssaWarnings.length])
-      }
-      if (slitherEnabled && !basicEnabled && !solhintEnabled && state.data && state.source !== null) {
-        props.event.trigger('staticAnaysisWarning', [hideWarnings ? slitherErrors.length : slitherWarnings.length])
-      }
-      if (slitherEnabled && basicEnabled && solhintEnabled && state.data && state.source !== null) {
-        props.event.trigger('staticAnaysisWarning', [hideWarnings
-          ? hintErrors.length + remixAnalysisNoLibs.length + slitherErrors.length
-          : hints.length + ssaWarnings.length + slitherWarnings.length])
-      }
-    // props.event.trigger('staticAnaysisWarning', [-1])
-  }, [hideWarnings])
-
-  useEffect(() => {
-    if(hints.length > 0) {
-      props.event.trigger('staticAnaysisWarning', [hints.length])
     }
-  },[hints.length, state])
-
-  useEffect(() => {
-    if(ssaWarnings.length > 0) {
-      props.event.trigger('staticAnaysisWarning', [ssaWarnings.length])
+    if(solhintEnabled && basicEnabled && !slitherEnabled && hideWarnings && showLibsWarning) {
+      props.analysisModule.internalCount = 0
+      if(remixAnalysisLessWarnings.length > 0) {
+        props.event.trigger('staticAnaysisWarning', [hintErrors.length + remixAnalysisNoLibs
+          .filter(x => x.options.type === 'warning').length])
+      }
     }
-    if(remixAnalysisNoLibs.length > 0) {
-      props.event.trigger('staticAnaysisWarning', [remixAnalysisNoLibs.length])
-    }
-  }, [ssaWarnings.length])
-
-  useEffect(() => {
-    if(hints.length === 0) {
-      props.analysisModule.hints = []
-      props.event.trigger('staticAnaysisWarning', [])
-    }
-  }, [hints.length])
+  }, [ssaWarnings.length, hints.length, hideWarnings, showLibsWarning, state])
 
   useEffect(() => {
     if(solhintEnabled === false) {
@@ -692,15 +724,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             id="checkAllEntries"
             inputType="checkbox"
             title="Remix analysis runs a basic analysis."
-            checked={Object.values(groupedModules).map((value: any) => {
-              return (value.map(x => {
-                return x._index.toString()
-              }))
-            }).flat().every(el => categoryIndex.includes(el))}
+            // checked={Object.values(groupedModules).map((value: any) => {
+            //   return (value.map(x => {
+            //     return x._index.toString()
+            //   }))
+            // }).flat().every(el => categoryIndex.includes(el))}
+            checked={basicEnabled}
+            onClick={handleBasicEnabled}
             label="Remix"
-            onClick={() => {
-              handleCheckAllModules(groupedModules)
-            }}
             onChange={() => {}}
             tooltipPlacement={'bottom-start'}
             optionalClassName="mr-3"
