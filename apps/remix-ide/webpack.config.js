@@ -143,7 +143,7 @@ class CopyFileAfterBuild {
         // but the raw-loader try to access the resources from the root folder.
         const files = fs.readdirSync('./dist/apps/etherscan')
         files.forEach(file => {
-          if (file.startsWith('node_modules_raw-loader_')) {
+          if (file.includes('plugin-etherscan')) {
             fs.copyFileSync('./dist/apps/etherscan/' + file, './dist/apps/remix-ide/' + file)
           }        
         })
