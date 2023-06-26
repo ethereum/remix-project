@@ -47,7 +47,7 @@ const themeCollection = [
   shapeColor: '#343a40',fillColor: '#fbe7f8' },
   { themeName: 'Violet', backgroundColor: '#f1eef6', textColor: '#3b445e',
   shapeColor: '#343a40',fillColor: '#f8fafe' },
-  { themeName: 'Pride', backgroundColor: '#f1eef6', textColor: '#343a40',
+  { themeName: 'Unicorn', backgroundColor: '#f1eef6', textColor: '#343a40',
   shapeColor: '#343a40',fillColor: '#f8fafe' },
 ]
 

@@ -19,7 +19,7 @@
 
 .stepButton:hover {
     color: #fff;
-    background-color: #005573;
+    background-color: var(--primary);
     border-color: #005573;
 }
 .jumpButtons {
@@ -33,7 +33,7 @@
 }
 
 .jumpButtonDisabled {
-    background-color: #005573;
+    background-color: var(--grey);
     border-color: #005573;
 }
 
