@@ -1,4 +1,4 @@
-import { CLEAR_CONSOLE, CMD_HISTORY, EMPTY_BLOCK, ERROR, HTML, INFO, KNOWN_TRANSACTION, LISTEN_ON_NETWORK, LOG, TYPEWRITERLOG, NEW_TRANSACTION, SCRIPT, UNKNOWN_TRANSACTION, WARN } from '../types/terminalTypes'
+import { CLEAR_CONSOLE, CMD_HISTORY, EMPTY_BLOCK, ERROR, HTML, INFO, KNOWN_TRANSACTION, LISTEN_ON_NETWORK, LOG, TYPEWRITERLOG, TYPEWRITERWARNING, TYPEWRITERSUCCESS, NEW_TRANSACTION, SCRIPT, UNKNOWN_TRANSACTION, WARN } from '../types/terminalTypes'
 
 export const initialState = {
   journalBlocks: [
@@ -155,6 +155,16 @@ export const registerScriptRunnerReducer = (state, action) => {
     return {
       ...state,
       journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, typewriter: true, style: 'text-log', provider: action.payload.provider })
+    }
+  case TYPEWRITERWARNING:
+    return {
+      ...state,
+      journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, typewriter: true, style: 'text-warning', provider: action.payload.provider })
+    }
+  case TYPEWRITERSUCCESS:
+    return {
+      ...state,
+      journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, typewriter: true, style: 'text-success', provider: action.payload.provider })
     }
   case INFO:
     return {
