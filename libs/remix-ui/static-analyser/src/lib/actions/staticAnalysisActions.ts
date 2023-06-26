@@ -31,16 +31,14 @@ export const runLinting = async (solhintEnabled, setHints, hints: SolHintReport[
   if (!isSupportedVersion) return
   if (solhintEnabled === false) return
   if (state.data !== null) {
-    if (state.data && solhintEnabled) {
+    if (solhintEnabled) {
       props.analysisModule.hints = []
       setHints([])
-        const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
-        props.analysisModule.hints = solhintEnabled === false ? 0 : hintsResult
-        setHints(hintsResult)
-        props.analysisModule.emit('statusChanged', { key: hints.length+warningResult.length,
-      title: `${hints.length+warningResult.length} warning${hints.length+warningResult.length === 1 ? '' : 's'}`, type: 'warning'})
-        }
-      }
+      const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
+      props.analysisModule.hints = solhintEnabled === false ? 0 : hintsResult
+      return hintsResult
+    }
+  }
 }
 
 /**
@@ -73,6 +71,7 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
   if (!isSupportedVersion) return
   if (state.data !== null) {
     if (lastCompilationResult && (categoryIndex.length > 0 || showSlither)) {
+      _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'remixAnalyzer'])
       const warningMessage = []
       const warningErrors = []
 
@@ -84,12 +83,11 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
       //   props.analysisModule.emit('statusChanged', { key: hints.length+warningResult.length,
       // title: `${hints.length+warningResult.length} warning${hints.length+warningResult.length === 1 ? '' : 's'}`, type: 'warning'})
 
-      runLinting(solhintEnabled, setHints, hints, warningResult, isSupportedVersion, state, props, setStartAnalysis)
+      const lintResult = runLinting(solhintEnabled, setHints, hints, warningResult, isSupportedVersion, state, props, setStartAnalysis)
 
       //---------------------------- RunLinting End ----------------------------
 
       // Remix Analysis
-      _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'remixAnalyzer'])
       const results = runner.run(lastCompilationResult, categoryIndex)
       for (const result of results) {
         let moduleName
@@ -148,6 +146,8 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
           }
           warningErrors.push(options)
           warningMessage.push({ msg, options, hasWarning: true, warningModuleName: moduleName })
+          const newHints = await lintResult
+          setHints(newHints)
           setSsaWarnings(warningMessage)
         }
       }
