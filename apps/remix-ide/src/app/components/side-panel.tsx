@@ -16,6 +16,7 @@ const sidePanel = {
 }
 
 export class SidePanel extends AbstractPanel {
+  // lastPinned
   sideelement: any
   dispatch: React.Dispatch<any> = () => {}
   constructor() {
@@ -67,6 +68,18 @@ export class SidePanel extends AbstractPanel {
     super.addView(profile, view)
     this.call('menuicons', 'linkContent', profile)
     this.renderComponent()
+  }
+
+  pinView (profile, view) {
+    if (this.plugins[profile.name].pinned) return
+    this.plugins[profile.name].pinned = true
+    this.call('pinnedPanel', 'addView', profile, view)
+  }
+
+  unPinView (profile) {
+    if (!this.plugins[profile.name].pinned) return
+    this.plugins[profile.name].pinned = false
+    this.call('pinnedPanel', 'removeView', profile)
   }
 
   /**
