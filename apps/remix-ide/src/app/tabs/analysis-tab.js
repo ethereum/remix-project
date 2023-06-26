@@ -37,6 +37,7 @@ class AnalysisTab extends ViewPlugin {
      * @description Array of objects containing the results of Linting
      */
     this.hints = []
+    this.internalCount = 0
     this.registry = Registry.getInstance()
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'staticAnalyserView')
@@ -68,7 +69,9 @@ class AnalysisTab extends ViewPlugin {
       }) : payloadType = 'warning'
 
       if (count > 0) {
-        this.emit('statusChanged', { key: count, title: `${count} warning${count === 1 ? '' : 's'}`, type: payloadType })
+        console.log('staticAnaysisWarning', count)
+        this.internalCount = this.internalCount !== 0 ? count : count
+        this.emit('statusChanged', { key: this.internalCount, title: `${this.internalCount} warning${this.internalCount === 1 ? '' : 's'}`, type: payloadType })
       } else if (count === 0) {
         this.emit('statusChanged', { key: 'succeed', title: 'no warning', type: 'success' })
       } else {
