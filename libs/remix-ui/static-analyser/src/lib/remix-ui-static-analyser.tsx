@@ -352,11 +352,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   const handleShowLibsWarning = () => {
     if (showLibsWarning) {
-      props.event.trigger('staticAnaysisWarning', [remixAnalysisNoLibs.length])
       setShowLibsWarning(false)
     } else {
       filterWarnings()
-      props.event.trigger('staticAnaysisWarning', [ssaWarnings.length])
       setShowLibsWarning(true)
     }
   }
