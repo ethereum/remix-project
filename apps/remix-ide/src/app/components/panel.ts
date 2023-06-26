@@ -26,6 +26,7 @@ export class AbstractPanel extends HostPlugin {
       profile: profile,
       view: view,
       active: false,
+      pinned: false,
       class: 'plugItIn active'
     }
   }

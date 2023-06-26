@@ -35,6 +35,7 @@ const RemixApp = (props: IRemixAppUi) => {
     messages: {}
   })
   const sidePanelRef = useRef(null)
+  const pinnedPanelRef: React.MutableRefObject<JSX.Element> = useRef(null)
 
   useEffect(() => {
     async function activateApp() {
