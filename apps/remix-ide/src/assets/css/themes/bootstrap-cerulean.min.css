@@ -1723,7 +1723,10 @@ pre code {
     background-clip:padding-box;
     border:1px solid #ced4da;
     border-radius:.25rem;
-    transition:border-color .15s ease-in-out,box-shadow .15s ease-in-out
+    transition:border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    width: 50%;
+
+
 }
 @media (prefers-reduced-motion:reduce) {
     .form-control {

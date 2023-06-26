@@ -11,7 +11,7 @@ import deprecations from 'solhint/lib/rules/deprecations'
 import miscellaneous from 'solhint/lib/rules/miscellaneous'
 import { customAction } from '@remixproject/plugin-api'
 
-type Report = { 
+type Report = {
   line: number,
   column: number,
   severity: string,
@@ -53,7 +53,7 @@ export class SolHint extends PluginClient {
     this.triggerLinter = false
   }
   /**
-   * method to handle context menu action in file explorer for 
+   * method to handle context menu action in file explorer for
    * solhint plugin
    * @param action interface CustomAction
    */
@@ -65,7 +65,6 @@ export class SolHint extends PluginClient {
 
   async lintContract(file: string) {
     const hints = await this.lint(file)
-    console.log({ hints })
     this.emit('lintingFinished', hints)
   }
 
@@ -92,6 +91,8 @@ export class SolHint extends PluginClient {
         line: report.line - 1
       }
     })
+
+    this.emit('lintingFinished', hints)
     return hints
   }
 
@@ -99,7 +100,7 @@ export class SolHint extends PluginClient {
     2: 'error',
     3: 'warning'
   }
-  
+
   rules = {
     'solhint:recommended': () => {
       const enabledRules = {}
@@ -129,7 +130,7 @@ export class SolHint extends PluginClient {
       return enabledRules
     }
   }
-  
+
   coreRules() {
     return [
       ...bestPractises(),
@@ -140,6 +141,6 @@ export class SolHint extends PluginClient {
       ...security()
     ]
   }
-  
+
 }
 
