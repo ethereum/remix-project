@@ -196,6 +196,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const slitherErrors = noLibSlitherWarnings.filter(slitherError => slitherError.options.type === 'error')
   const remixAnalysisNoLibs = ssaWarnings.filter(ssa => ssa.options.isLibrary === false)
 
+  console.log({
+    hints, ssaWarnings, slitherWarnings, state
+  })
+
   const message = (name: string, warning: any, more?: string, fileName?: string, locationString?: string) : string => {
     return (`
       <span className='d-flex flex-column'>
@@ -230,11 +234,42 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         }
       }
     }
-    if (newWarningCount > 0 && state.data && state.source !== null) {
-      props.event.trigger('staticAnaysisWarning', [newWarningCount])
+    if (ssaWarnings.length > 0 && state.data && state.source !== null) {
+      props.event.trigger('staticAnaysisWarning', [ssaWarnings.length])
       setWarningState(newWarningState)
     }
   }
+
+  useEffect(() => {
+    if(solhintEnabled && basicEnabled) {
+      if(ssaWarnings.length > 0 && hints.length > 0) {
+        props.event.trigger('staticAnaysisWarning', [ssaWarnings.length + hints.length])
+      }
+    }
+  }, [showLibsWarning])
+
+  useEffect(() => {
+      if(basicEnabled && !solhintEnabled && !slitherEnabled && state.data && state.source !== null ) {
+        props.event.trigger('staticAnaysisWarning',
+          [hideWarnings ? remixAnalysisNoLibs.length : ssaWarnings.length])
+      }
+      if (solhintEnabled && !basicEnabled && !slitherEnabled && state.data && state.source !== null) {
+        props.event.trigger('staticAnaysisWarning', [hideWarnings ? hints.length : hintErrors.length])
+      }
+      if (solhintEnabled && basicEnabled && !slitherEnabled && state.data && state.source !== null) {
+        props.event.trigger('staticAnaysisWarning', [hideWarnings
+          ? hintErrors.length + remixAnalysisNoLibs.length : hints.length + ssaWarnings.length])
+      }
+      if (slitherEnabled && !basicEnabled && !solhintEnabled && state.data && state.source !== null) {
+        props.event.trigger('staticAnaysisWarning', [hideWarnings ? slitherErrors.length : slitherWarnings.length])
+      }
+      if (slitherEnabled && basicEnabled && solhintEnabled && state.data && state.source !== null) {
+        props.event.trigger('staticAnaysisWarning', [hideWarnings
+          ? hintErrors.length + remixAnalysisNoLibs.length + slitherErrors.length
+          : hints.length + ssaWarnings.length + slitherWarnings.length])
+      }
+    // props.event.trigger('staticAnaysisWarning', [-1])
+  }, [hideWarnings])
 
   useEffect(() => {
     if(hints.length > 0) {

@@ -58,10 +58,10 @@ type RemixUiStaticAnalyserReducerActionType = {
 
 interface ErrorRendererProps {
   message: any;
-  opt: ErrorRendererOptions,
-  warningErrors: any
+  options: ErrorRendererOptions,
+  hasWarning: boolean,
   editor: any,
-  name: string,
+  warningModuleName: string,
 }
 
 type ErrorRendererOptions = {
