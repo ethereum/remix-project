@@ -540,7 +540,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                               {hint.formattedMessage}
                             </span>
                             <br />
-                            <br />
                             <span>{`${hint.column}:${hint.line}`}</span>
                           </div>
                         </div>
