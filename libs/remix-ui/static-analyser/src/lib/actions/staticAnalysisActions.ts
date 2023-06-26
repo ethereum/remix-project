@@ -23,7 +23,7 @@ export const compilation = (analysisModule: AnalysisTab,
   }
 }
 
-export const runLinting = async (solhintEnabled, setHints, hints: SolHintReport[], warningResult, isSupportedVersion, state: RemixUiStaticAnalyserState,
+export const runLinting = async (solhintEnabled, setHints, hints: SolHintReport[], isSupportedVersion, state: RemixUiStaticAnalyserState,
   props: RemixUiStaticAnalyserProps, setStartAnalysis: React.Dispatch<React.SetStateAction<boolean>>) => {
   // Run solhint
   setStartAnalysis(true)
@@ -31,13 +31,11 @@ export const runLinting = async (solhintEnabled, setHints, hints: SolHintReport[
   if (!isSupportedVersion) return
   if (solhintEnabled === false) return
   if (state.data !== null) {
-    if (solhintEnabled) {
       props.analysisModule.hints = []
-      setHints([])
       const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
       props.analysisModule.hints = solhintEnabled === false ? 0 : hintsResult
+      setHints(hintsResult)
       return hintsResult
-    }
   }
 }
 
@@ -70,7 +68,7 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
   props.analysisModule.hints = []
   if (!isSupportedVersion) return
   if (state.data !== null) {
-    if (lastCompilationResult && (categoryIndex.length > 0 || showSlither)) {
+    if (lastCompilationResult && (categoryIndex.length > 0)) {
       _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'remixAnalyzer'])
       const warningMessage = []
       const warningErrors = []
@@ -79,76 +77,71 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
       //   const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
       //   props.analysisModule.hints = solhintEnabled === false ? 0 : hintsResult
       //   setHints(hintsResult)
-      const warningResult = calculateWarningStateEntries(Object.entries(warningState))
+      const lintResult = await (await runLinting(solhintEnabled, setHints, hints, isSupportedVersion, state, props, setStartAnalysis))
       //   props.analysisModule.emit('statusChanged', { key: hints.length+warningResult.length,
       // title: `${hints.length+warningResult.length} warning${hints.length+warningResult.length === 1 ? '' : 's'}`, type: 'warning'})
 
-      const lintResult = runLinting(solhintEnabled, setHints, hints, warningResult, isSupportedVersion, state, props, setStartAnalysis)
-
-      //---------------------------- RunLinting End ----------------------------
-
       // Remix Analysis
-      const results = runner.run(lastCompilationResult, categoryIndex)
-      for (const result of results) {
-        let moduleName
-        Object.keys(groupedModules).map(key => {
-          groupedModules[key].forEach(el => {
-            if (el.name === result.name) {
-              moduleName = groupedModules[key][0].categoryDisplayName
-            }
+        const results = runner.run(lastCompilationResult, categoryIndex)
+        for (const result of results) {
+          let moduleName
+          Object.keys(groupedModules).map(key => {
+            groupedModules[key].forEach(el => {
+              if (el.name === result.name) {
+                moduleName = groupedModules[key][0].categoryDisplayName
+              }
+            })
           })
-        })
-        // iterate over the warnings and create an object
-        for (const item of result.report) {
-          let location: any = {}
-          let locationString = 'not available'
-          let column = 0
-          let row = 0
-          let fileName = currentFile
-          let isLibrary = false
+          // iterate over the warnings and create an object
+          for (const item of result.report) {
+            let location: any = {}
+            let locationString = 'not available'
+            let column = 0
+            let row = 0
+            let fileName = currentFile
+            let isLibrary = false
 
-          if (item.location) {
-            const split = item.location.split(':')
-            const file = split[2]
-            location = {
-              start: parseInt(split[0]),
-              length: parseInt(split[1])
+            if (item.location) {
+              const split = item.location.split(':')
+              const file = split[2]
+              location = {
+                start: parseInt(split[0]),
+                length: parseInt(split[1])
+              }
+              location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
+                location,
+                parseInt(file),
+                lastCompilationSource.sources,
+                lastCompilationResult.sources
+              )
+              row = location.start.line
+              column = location.start.column
+              locationString = row + 1 + ':' + column + ':'
+              fileName = Object.keys(lastCompilationResult.sources)[file]
             }
-            location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
-              location,
-              parseInt(file),
-              lastCompilationSource.sources,
-              lastCompilationResult.sources
-            )
-            row = location.start.line
-            column = location.start.column
-            locationString = row + 1 + ':' + column + ':'
-            fileName = Object.keys(lastCompilationResult.sources)[file]
-          }
-          if(fileName !== currentFile) {
-            const {file, provider} = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
-            if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
-          }
-          const msg = message(result.name, item.warning, item.more, fileName, locationString)
-          const options = {
-            type: 'warning',
-            useSpan: true,
-            errFile: fileName,
-            fileName,
-            isLibrary,
-            errLine: row,
-            errCol: column,
-            item: item,
-            name: result.name,
-            locationString,
-            more: item.more,
-            location: location
-          }
-          warningErrors.push(options)
-          warningMessage.push({ msg, options, hasWarning: true, warningModuleName: moduleName })
-          const newHints = await lintResult
-          setHints(newHints)
-          setSsaWarnings(warningMessage)
+            if (fileName !== currentFile) {
+              const { file, provider } = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
+              if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
+            }
+            const msg = message(result.name, item.warning, item.more, fileName, locationString)
+            const options = {
+              type: 'warning',
+              useSpan: true,
+              errFile: fileName,
+              fileName,
+              isLibrary,
+              errLine: row,
+              errCol: column,
+              item: item,
+              name: result.name,
+              locationString,
+              more: item.more,
+              location: location
+            }
+            warningErrors.push(options)
+            warningMessage.push({ msg, options, hasWarning: true, warningModuleName: moduleName })
+            setSsaWarnings(warningMessage)
+            // setHints(lintResult)
         }
       }
     } else {

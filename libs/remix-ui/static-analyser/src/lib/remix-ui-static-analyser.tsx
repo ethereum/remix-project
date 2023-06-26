@@ -191,7 +191,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     return () => { }
   }, [props])
 
-  const hintErrors = hints.filter(hint => hint.type === 'error')
+  const hintErrors = hints && hints.filter(hint => hint.type === 'error')
   const noLibSlitherWarnings = slitherWarnings.filter(w => !w.options.isLibrary)
   const slitherErrors = noLibSlitherWarnings.filter(slitherError => slitherError.options.type === 'error')
   const remixAnalysisNoLibs = ssaWarnings.filter(ssa => ssa.options.isLibrary === false)
@@ -246,14 +246,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
     if (solhintEnabled && !basicEnabled && !slitherEnabled && state.data && state.source !== null) {
       props.analysisModule.internalCount = 0
-      props.event.trigger('staticAnaysisWarning', [hideWarnings ? hintErrors.length : hints.length])
+      props.event.trigger('staticAnaysisWarning', [hideWarnings ? hintErrors.length : hints?.length])
     }
     if (solhintEnabled && basicEnabled && !slitherEnabled && !showLibsWarning
       && state.data && state.source !== null) {
       console.log('solhint and remix are enabled here')
       props.analysisModule.internalCount = 0
       props.event.trigger('staticAnaysisWarning', [hideWarnings
-        ? hintErrors.length + remixAnalysisNoLibs.filter(x => x.options.type !== 'warning').length : hints.length + ssaWarnings.length])
+        ? hintErrors.length + remixAnalysisNoLibs.filter(x => x.options.type !== 'warning').length : hints?.length + ssaWarnings.length])
     }
     if (slitherEnabled && !basicEnabled && !solhintEnabled && state.data && state.source !== null) {
       props.analysisModule.internalCount = 0
@@ -263,7 +263,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       props.analysisModule.internalCount = 0
       props.event.trigger('staticAnaysisWarning', [hideWarnings
         ? hintErrors.length + remixAnalysisLessWarnings.length + slitherErrors.length
-        : hints.length + ssaWarnings.length + slitherWarnings.length])
+        : hints?.length + ssaWarnings.length + slitherWarnings.length])
     }
     // if showLibsWarning is true
     if(basicEnabled && !solhintEnabled && !slitherEnabled && !hideWarnings && state.data && state.source !== null ) {
@@ -273,13 +273,13 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
     if (solhintEnabled && !basicEnabled && !slitherEnabled && !hideWarnings && state.data && state.source !== null) {
       props.analysisModule.internalCount = 0
-      props.event.trigger('staticAnaysisWarning', [showLibsWarning ? hints.length : hints.length])
+      props.event.trigger('staticAnaysisWarning', [showLibsWarning ? hints?.length : hints?.length])
     }
     if (solhintEnabled && basicEnabled && !slitherEnabled && !hideWarnings && state.data && state.source !== null) {
       console.log('solhint and remix are enabled here')
       props.analysisModule.internalCount = 0
       props.event.trigger('staticAnaysisWarning', [showLibsWarning
-        ? hints.length + ssaWarnings.length : hints.length + remixAnalysisNoLibs.length])
+        ? hints?.length + ssaWarnings.length : hints?.length + remixAnalysisNoLibs.length])
     }
     if (slitherEnabled && !basicEnabled && !solhintEnabled && !hideWarnings && state.data && state.source !== null) {
       props.analysisModule.internalCount = 0
@@ -288,42 +288,23 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     if (slitherEnabled && basicEnabled && solhintEnabled && !hideWarnings && state.data && state.source !== null) {
       props.analysisModule.internalCount = 0
       props.event.trigger('staticAnaysisWarning', [showLibsWarning
-        ? hints.length + ssaWarnings.length + slitherWarnings.length : hints.length + remixAnalysisNoLibs.length + noLibSlitherWarnings.length])
-    }
-    if(solhintEnabled && basicEnabled && !slitherEnabled && !hideWarnings && !showLibsWarning) {
-      props.analysisModule.internalCount = 0
-      if(props.analysisModule.hints.length > 0) {
-        props.event.trigger('staticAnaysisWarning', [hints.length + remixAnalysisNoLibs.length])
-      }
-    }
-    if(solhintEnabled && !basicEnabled && !slitherEnabled && hideWarnings && showLibsWarning) {
-      props.analysisModule.internalCount = 0
-      if(remixAnalysisLessWarnings.length > 0) {
-        props.event.trigger('staticAnaysisWarning', [hints.length])
-      }
+        ? hints?.length + ssaWarnings.length + slitherWarnings.length : hints?.length + remixAnalysisNoLibs.length + noLibSlitherWarnings.length])
     }
     if(basicEnabled && solhintEnabled && !slitherEnabled && !hideWarnings && !showLibsWarning) {
       props.analysisModule.internalCount = 0
-      if(props.analysisModule.hints.length > 0) {
-        props.event.trigger('staticAnaysisWarning', [hints.length + remixAnalysisNoLibs.length])
-      }
+      props.event.trigger('staticAnaysisWarning', [hints?.length + remixAnalysisNoLibs.length])
     }
 
     if(solhintEnabled && basicEnabled && slitherEnabled && !hideWarnings && !showLibsWarning) {
       props.analysisModule.internalCount = 0
-      if(props.analysisModule.hints.length > 0) {
-        props.analysisModule.hints = []
-        props.event.trigger('staticAnaysisWarning', [hints.length + remixAnalysisNoLibs.length + slitherWarnings.length])
-      }
+      props.analysisModule.hints = []
+      props.event.trigger('staticAnaysisWarning', [hints?.length + remixAnalysisNoLibs.length + slitherWarnings.length])
     }
     if(solhintEnabled && basicEnabled && !slitherEnabled && hideWarnings && showLibsWarning) {
       props.analysisModule.internalCount = 0
-      if(remixAnalysisLessWarnings.length > 0) {
-        props.event.trigger('staticAnaysisWarning', [hintErrors.length + remixAnalysisNoLibs
-          .filter(x => x.options.type === 'warning').length])
-      }
+      props.event.trigger('staticAnaysisWarning', [hintErrors.length + remixAnalysisLessWarnings.length])
     }
-  }, [ssaWarnings.length, hints.length, hideWarnings, showLibsWarning, state])
+  }, [ssaWarnings.length, hints?.length, hideWarnings, showLibsWarning, state])
 
   useEffect(() => {
     if(solhintEnabled === false) {
@@ -491,12 +472,12 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       tabKey: "linter",
       child: (
         <>
-          {hints.length > 0 ? (
+          {solhintEnabled && hints?.length > 0 ? (
             <div id="solhintlintingresult" className="mb-5">
               <div className="mb-4 pt-2">
                 <Fragment>
                   {!hideWarnings
-                    ? hints.map((hint, index) => (
+                    ? hints?.map((hint, index) => (
                         <div
                           key={index}
                           className={`${
@@ -579,22 +560,22 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 </Fragment>
               </div>
             </div>
-          ) : state.data && state.file.length > 0 && state.source && startAnalysis && hints.length > 0 ? <span className="ml-4 spinner-grow-sm d-flex justify-content-center">Loading...</span> : <span className="display-6 text-center">Nothing to report</span>}
+          ) : state.data && state.file.length > 0 && state.source && startAnalysis && hints?.length > 0 ? <span className="ml-4 spinner-grow-sm d-flex justify-content-center">Loading...</span> : <span className="display-6 text-center">Nothing to report</span>}
         </>
       ),
       title: (
         <span>
           Solhint
-          {hints.length > 0 ? (
+          {hints && hints?.length > 0 ? (
             hideWarnings ? (
-              <i className={`badge ${hints.filter(x => x.type === 'error').length > 0
+              <i className={`badge ${hints?.filter(x => x.type === 'error').length > 0
                 ? `badge-danger` : 'badge-warning'} badge-pill px-1 ml-1 text-center`}>
                 {hintErrors.length}
               </i>
             ) : (
-              <i className={`badge ${hints.filter(x => x.type === 'error').length > 0
+              <i className={`badge ${hints?.filter(x => x.type === 'error').length > 0
               ? `badge-danger` : 'badge-warning'} badge-pill px-1 ml-1 text-center`}>
-                {hints.length}
+                {hints?.length}
               </i>
             )
           ) : null}
@@ -630,18 +611,18 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       title: (
         <span>
           Slither
-          {slitherWarnings.length > 0 ? (
+          {slitherWarnings && slitherWarnings?.length > 0 ? (
             hideWarnings ? (
               <i className="badge badge-warning badge-pill px-1 ml-1">
-                {slitherErrors.length}
+                {slitherErrors?.length}
               </i>
             ) : showLibsWarning === true && hideWarnings === false ? (
               <i className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} badge-pill px-1 ml-1 text-center`}>
                   {slitherWarnings.length}
                 </i>
             )  : (
-              <i className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} badge-pill px-1 ml-1 text-center`}>
-                {noLibSlitherWarnings.length}
+              <i className={`badge ${slitherErrors?.length > 0 ? `badge-danger` : 'badge-warning'} badge-pill px-1 ml-1 text-center`}>
+                {noLibSlitherWarnings?.length}
               </i>
             )
           ) : null}
@@ -649,12 +630,12 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       ),
       child: (
         <>
-          {slitherWarnings.length > 0 ? (
+          {slitherWarnings?.length > 0 ? (
             <div id="solhintlintingresult" className="mb-5">
               <div className="mb-4 pt-2">
                 <Fragment>
                   {!hideWarnings
-                    ? showLibsWarning ? slitherWarnings.map((warning, index) => (
+                    ? showLibsWarning ? slitherWarnings && slitherWarnings?.map((warning, index) => (
                       <div
                       data-id={`staticAnalysisModule${warning.warningModuleName}${index}`}
                       id={`staticAnalysisModule${warning.warningModuleName}${index}`}
@@ -766,11 +747,16 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               buttonText={`Analyse ${state.file}`}
               classList="btn btn-sm btn-primary btn-block"
               onClick={async () => {
-                await run(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
-                message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis, solhintEnabled, basicEnabled)
+                  await runLinting(solhintEnabled, setHints, hints, isSupportedVersion, state, props, setStartAnalysis)
+                if(basicEnabled) {
+                  await run(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
+                    message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis, solhintEnabled, basicEnabled)
+                }
 
-                await runSlitherAnalysis(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
-                  message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis)
+                if(slitherEnabled) {
+                  await runSlitherAnalysis(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
+                    message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis)
+                }
               }
               }
               disabled={(state.data === null || !isSupportedVersion || !solhintEnabled && !basicEnabled) }
@@ -778,13 +764,23 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               buttonText={`Analyze ${state.file}`}
               title={`${runButtonTitle}`}
               classList="btn btn-sm btn-primary btn-block"
-              onClick={async () => await run(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
-                message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis, solhintEnabled, basicEnabled)}
+              onClick={async () => {
+                  await runLinting(solhintEnabled, setHints, hints, isSupportedVersion, state, props, setStartAnalysis)
+                if(basicEnabled) {
+                  await run(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
+                    message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis, solhintEnabled, basicEnabled)
+                }
+
+                if(slitherEnabled) {
+                  await runSlitherAnalysis(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
+                    message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis)
+                }
+              }}
               disabled={(state.data === null || !isSupportedVersion)  || (!solhintEnabled && !basicEnabled) }
           />}
           {state && state.data !== null && state.source !== null && state.file.length > 0 ? (<div className="d-flex border-top flex-column">
-            {slitherWarnings.length > 0 || hints.length > 0 || Object.entries(warningState).length > 0 ?  (
-              <div className={`mt-4 p-2 d-flex ${slitherWarnings.length > 0 || hints.length > 0 || Object.entries(warningState).length > 0 ? 'border-top' : ''} flex-column`}>
+            {slitherWarnings?.length > 0 || hints?.length > 0 || Object.entries(warningState).length > 0 ?  (
+              <div className={`mt-4 p-2 d-flex ${slitherWarnings?.length > 0 || hints?.length > 0 || Object.entries(warningState).length > 0 ? 'border-top' : ''} flex-column`}>
                 <span>Last results for:</span>
                   <span
                     className="text-break break-word word-break font-weight-bold"
@@ -822,7 +818,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               onSelect={(newKey) => setTabKey(newKey)}
             >
               {
-                checkBasicStatus() ? <Tab
+                basicEnabled ? <Tab
                   key={tabKeys[1].tabKey}
                   title={tabKeys[1].title}
                   eventKey={tabKeys[1].tabKey}
