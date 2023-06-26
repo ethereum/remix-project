@@ -742,7 +742,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis)
               }
               }
-              disabled={(state.data === null || !isSupportedVersion)  || (!solhintEnabled && !basicEnabled) }
+              disabled={(state.data === null || !isSupportedVersion || !solhintEnabled && !basicEnabled) }
           /> : <Button
               buttonText={`Analyze ${state.file}`}
               title={`${runButtonTitle}`}
