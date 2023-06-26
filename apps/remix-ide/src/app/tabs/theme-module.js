@@ -9,7 +9,7 @@ const themes = [
   { name: 'Dark', quality: 'dark', url: 'assets/css/themes/remix-dark_tvx1s2.css' },
   { name: 'Light', quality: 'light', url: 'assets/css/themes/remix-light_powaqg.css' },
   { name: 'Violet', quality: 'light', url: 'assets/css/themes/remix-violet.css' },
-  { name: 'Pride', quality: 'light', url: 'assets/css/themes/remix-pride.css' },
+  { name: 'Unicorn', quality: 'light', url: 'assets/css/themes/remix-unicorn.css' },
   { name: 'Midcentury', quality: 'light', url: 'assets/css/themes/remix-midcentury_hrzph3.css' },
   { name: 'Black', quality: 'dark', url: 'assets/css/themes/remix-black_undtds.css' },
   { name: 'Candy', quality: 'light', url: 'assets/css/themes/remix-candy_ikhg4m.css' },

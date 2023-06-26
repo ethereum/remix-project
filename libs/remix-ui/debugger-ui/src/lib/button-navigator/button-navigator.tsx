@@ -53,13 +53,12 @@ export const ButtonNavigation = ({ stepOverBack, stepIntoBack, stepIntoForward, 
 
   const stepBtnStyle = 'd-flex align-items-center justify-content-center btn btn-primary btn-sm stepButton h-75 m-0 p-1'
   const disableStepBtnStyle = 'stepButtonDisabled'
-  const jumpBtnStyle = 'd-flex align-items-center justify-content-center btn btn-primary btn-sm jumpButton h-75 m-0 p-1'
   const disableJumpBtnStyle = 'jumpButtonDisabled'
   const stepMarkupStructure = {
     stepOverBackJSX : {
       markup: (<div className={state.overBackDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}`: `${stepBtnStyle}`} onClick={() => { stepOverBack && stepOverBack() }}>
         <button id='overback' className='btn btn-link btn-sm stepButton m-0 p-0' onClick={() => { stepOverBack && stepOverBack() }} disabled={state.overBackDisabled} style={{ pointerEvents: 'none', color: 'white' }}>
-            <span className="fas fa-reply"></span>
+          <span className="fas fa-reply"></span>
         </button>
       </div>),
       placement: 'top-start',
