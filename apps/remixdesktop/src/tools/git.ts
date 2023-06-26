@@ -16,7 +16,7 @@ const statusTransFormMatrix = (status: string) => {
         case ' M':
             return [1, 2, 0]
         case ' D':
-            return [0, 2, 0]
+            return [1, 0, 1]
         case 'D ':
             return [1, 0, 0]
         case 'AM':

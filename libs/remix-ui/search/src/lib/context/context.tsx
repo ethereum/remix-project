@@ -327,6 +327,10 @@ export const SearchProvider = ({
       setFiles(await getDirectory('/', plugin))
     })
 
+    plugin.on('fs', 'workingDirChanged', async () => {
+      setFiles(await getDirectory('/', plugin))
+    })
+
     plugin.on('fileManager', 'fileAdded', async file => {
       setFiles(await getDirectory('/', plugin))
       await reloadStateForFile(file)

@@ -775,7 +775,7 @@ export const checkoutRemoteBranch = async (branch: string, remote: string) => {
 }
 
 export const openElectronFolder = async (path: string) => {
-  await plugin.call('fs', 'openFolder', path)
+  await plugin.call('fs', 'openFolderInSameWindow', path)
 }
 
 export const getElectronRecentFolders = async () => {

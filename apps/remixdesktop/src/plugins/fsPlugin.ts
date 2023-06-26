@@ -19,6 +19,10 @@ const convertPathToPosix = (pathName: string): string => {
   return pathName.split(path.sep).join(path.posix.sep)
 }
 
+const getBaseName = (pathName: string): string => {
+  return path.basename(pathName)
+}
+
 
 export class FSPlugin extends ElectronBasePlugin {
   clients: FSPluginClient[] = []
@@ -81,7 +85,7 @@ const clientProfile: Profile = {
   name: 'fs',
   displayName: 'fs',
   description: 'fs',
-  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'getRecentFolders', 'removeRecentFolder', 'glob', 'openWindow', 'selectFolder']
+  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'openFolderInSameWindow', 'getRecentFolders', 'removeRecentFolder', 'glob', 'openWindow', 'selectFolder']
 }
 
 class FSPluginClient extends ElectronBasePluginClient {
@@ -341,6 +345,21 @@ class FSPluginClient extends ElectronBasePluginClient {
     }
     path = dirs && dirs.length && dirs[0] ? dirs[0] : path
     if (!path) return
+
+    await this.updateRecentFolders(path)
+    await this.updateOpenedFolders(path)
+    this.openWindow(path)
+  }
+
+  async openFolderInSameWindow(path?: string): Promise<void> {
+    let dirs: string[] | undefined
+    if (!path) {
+      dirs = dialog.showOpenDialogSync(this.window, {
+        properties: ['openDirectory', 'createDirectory', "showHiddenFiles"]
+      })
+    }
+    path = dirs && dirs.length && dirs[0] ? dirs[0] : path
+    if (!path) return
     this.workingDir = path
     await this.updateRecentFolders(path)
     await this.updateOpenedFolders(path)
@@ -355,9 +374,10 @@ class FSPluginClient extends ElectronBasePluginClient {
     this.workingDir = path
     await this.updateRecentFolders(path)
     await this.updateOpenedFolders(path)
-    this.window.setTitle(this.workingDir)
+    this.window.setTitle(getBaseName(this.workingDir))
     this.watch()
     this.emit('workingDirChanged', path)
+    await this.call('fileManager', 'closeAllFiles')
   }
 
   fixPath(path: string): string {

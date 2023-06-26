@@ -21,7 +21,7 @@ const profile = {
   description: 'Decentralized git provider',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
-  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem'],
+  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'reset', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
@@ -144,6 +144,21 @@ class DGitProvider extends Plugin {
 
     }
   }
+
+  async reset(cmd) {
+    console.log('rm', cmd)
+    if (isElectron()) {
+      await this.call('isogit', 'reset', cmd)
+    } else {
+      await git.resetIndex({
+        ...await this.getGitConfig(),
+        ...cmd
+      })
+      this.emit('rm')
+
+    }
+  }
+
   async checkout(cmd, refresh = true) {
 
     if (isElectron()) {

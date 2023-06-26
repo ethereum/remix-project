@@ -46,11 +46,11 @@ const clientProfile: Profile = {
   name: 'isogit',
   displayName: 'isogit',
   description: 'isogit plugin',
-  methods: ['init', 'localStorageUsed',  'version', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'openFolder']
+  methods: ['init', 'localStorageUsed',  'version', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'reset', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'openFolder']
 }
 
 class IsoGitPluginClient extends ElectronBasePluginClient {
-  workingDir: string = '/Volumes/bunsen/code/empty/'
+  workingDir: string = ''
   gitIsInstalled: boolean = false
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
@@ -81,6 +81,10 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   async status(cmd: any) {
     console.log('status', cmd)
 
+    if(this.workingDir === ''){
+      return []
+    }
+
     if(this.gitIsInstalled){
       const status = await gitProxy.status(this.workingDir)
       return status
@@ -103,6 +107,10 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       return log
     }
     */
+
+    if(this.workingDir === ''){
+      return []
+    }
 
     console.log('log')
     const log = await git.log({
@@ -132,6 +140,17 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     console.log('RM', rm)
     return rm
   }
+
+  async reset(cmd: any){
+    console.log('reset', cmd)
+    const reset = await git.resetIndex({
+      ...await this.getGitConfig(),
+      ...cmd
+    })
+    console.log('RESET', reset)
+    return reset
+  }
+  
 
   async commit(cmd: any) {
     console.log('commit')
