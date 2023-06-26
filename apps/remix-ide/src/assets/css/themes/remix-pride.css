@@ -2454,7 +2454,7 @@ fieldset:disabled a.btn {
 
 .btn-info {
   color: #fff;
-  background-color: #2F6DF2;
+  background-color: rgb(159 225 255);
   border-color: #2F6DF2;
 }
 .alert-info .btn-info {
@@ -2465,8 +2465,8 @@ fieldset:disabled a.btn {
 
 .btn-info:hover {
   color: #fff;
-  background-color: #005e80;
-  border-color: #3597bb;
+  background-color: #54b5d8;
+  border-color: #2F6DF2;
 }
 .btn-info:focus,
 .btn-info.focus {
