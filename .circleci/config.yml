@@ -7,7 +7,6 @@ parameters:
 orbs:
   browser-tools: circleci/browser-tools@1.4.1
   win: circleci/windows@5.0
-  node: circleci/node@5.1.0
 jobs:
   build:
     docker:
@@ -106,17 +105,14 @@ jobs:
               - "persist"
 
   build-remixdesktop-linux:
-      docker:
-        - image: cimg/base:current-18.04
+      machine:
+        image: ubuntu-2004:current
       resource_class:
         xlarge
       working_directory: ~/remix-project
       steps:
         - run: ldd --version
         - checkout
-        - node/install:
-            node-version: '14.17.6'
-            install-yarn: true
         - attach_workspace:
             at: .
         - run: unzip ./persist/desktopbuild.zip
