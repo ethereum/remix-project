@@ -56,6 +56,7 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
       const warningErrors = []
       props.analysisModule.hints = []
         // Run solhint
+        _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'solHint'])
         const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
         props.analysisModule.hints = solhintEnabled === false ? 0 : hintsResult
         setHints(hintsResult)
