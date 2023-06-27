@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { ErrorRendererOptions } from '../../staticanalyser'
 
 type BasicTitleProps = {
@@ -7,6 +7,8 @@ type BasicTitleProps = {
   showLibsWarnings?: boolean
   ssaWarnings: any[]
   ssaWarningsNoLibs: any[]
+  ssaWarningsTotal: number
+  ssaWarningsNoLibsTotal: number
 }
 
 type warningResultOption = {
@@ -42,15 +44,16 @@ export function BasicTitle(props: BasicTitleProps) {
           props.showLibsWarnings === false ? (
             <span
               data-id="RemixStaticAnalysisErrorCount"
-              className={`badge ${props.ssaWarningsNoLibs.length > 0 ? "badge-warning"
-                  : "badge-danger"
+              className={`badge ${props.ssaWarningsNoLibsTotal > 0 ? "badge-warning"
+                  : props.ssaWarnings.filter(x => x.options.type === 'error').length > 0 ? "badge-danger"
+                  : "badge-info"
               } badge-pill ml-1 px-1 text-center`}
             >
-              {props.ssaWarnings.filter(x => x.options.isLibrary === false).length}
+              {props.ssaWarnings.filter(x => !x.options.isLibrary).length}
             </span>
           ) : (
             <span data-id="RemixStaticAnalysisErrorCount" className="badge badge-warning rounded-circle ml-1 text-center">
-              {props.ssaWarnings.length}
+              {props.ssaWarningsTotal}
             </span>
           )
         ) : null
