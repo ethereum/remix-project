@@ -1,5 +1,6 @@
 import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
+import { parse_circuit_browser } from 'apps/circuit-compiler/pkg/circom'
 import EventManager from 'events'
 
 export class CircomPluginClient extends PluginClient {
@@ -10,7 +11,7 @@ export class CircomPluginClient extends PluginClient {
         super()
         createClient(this)
         this.internalEvents = new EventManager()
-        this.methods = ["sendAsync", "init", "deactivate"]
+        this.methods = ["init", "compile"]
         this.onload()
     }
 
@@ -18,20 +19,13 @@ export class CircomPluginClient extends PluginClient {
         console.log('initializing circom plugin...')
     }
 
-    onActivation(): void {
-        this.subscribeToEvents()
-    }
+    async compile (path: string) {
+        console.log('compiling circuit ' + path)
+        const fileContent = await this.call('fileManager', 'readFile', path)
 
-    activateRemixDeamon (): void {
-        this.call('manager', 'activatePlugin', 'remixd')
-    }
+        console.log('file content: ' + fileContent)
+        const compilationResult = parse_circuit_browser(fileContent, 0)
 
-    subscribeToEvents (): void {
-        this.on('filePanel', 'setWorkspace', (workspace: { name: string, isLocalhost: boolean }) => {
-            if (this.connected !== workspace.isLocalhost) {
-                this.connected = workspace.isLocalhost
-                this.internalEvents.emit('connectionChanged', this.connected)
-            }
-        })
+        console.log('compilation result: ' + compilationResult)
     }
 }
