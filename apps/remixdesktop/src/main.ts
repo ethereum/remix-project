@@ -97,7 +97,7 @@ import EditMenu from './menus/edit';
 import GitMenu from './menus/git';
 import ViewMenu from './menus/view';
 import { execCommand } from './menus/commands';
-import { searchProxy } from './tools/search';
+
 
 const commandKeys: Record<string, string> = {
   'window:new': 'CmdOrCtrl+N',
