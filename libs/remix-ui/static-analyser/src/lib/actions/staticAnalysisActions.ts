@@ -23,24 +23,6 @@ export const compilation = (analysisModule: AnalysisTab,
   }
 }
 
-export const runLinting = async (solhintEnabled, setHints, hints: SolHintReport[], isSupportedVersion, state: RemixUiStaticAnalyserState,
-  props: RemixUiStaticAnalyserProps, setStartAnalysis: React.Dispatch<React.SetStateAction<boolean>>) => {
-  // Run solhint
-  setStartAnalysis(true)
-  props.analysisModule.hints = []
-  if (!isSupportedVersion) return
-  if (solhintEnabled === false) return
-  if (state.data !== null) {
-      props.analysisModule.hints = []
-      const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
-      props.analysisModule.hints = solhintEnabled === false ? 0 : hintsResult
-      setHints(hintsResult)
-      // props.analysisModule.emit('statusChanged', { key: hints.length,
-      //   title: `${hints.length} warning${hints.length === 1 ? '' : 's'}`, type: 'warning'})
-      return hintsResult
-  }
-}
-
 /**
  * Run the analysis on the currently compiled contract
  * @param lastCompilationResult
@@ -62,122 +44,88 @@ export const runLinting = async (solhintEnabled, setHints, hints: SolHintReport[
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function run (lastCompilationResult, lastCompilationSource, currentFile: string, state: RemixUiStaticAnalyserState, props: RemixUiStaticAnalyserProps, isSupportedVersion, showSlither, categoryIndex: number[], groupedModules, runner, _paq, message, showWarnings, allWarnings: React.RefObject<any>, warningContainer: React.RefObject<any>, calculateWarningStateEntries: (e:[string, any][]) => {length: number, errors: any[] }, warningState, setHints: React.Dispatch<React.SetStateAction<SolHintReport[]>>, hints: SolHintReport[], setSlitherWarnings: React.Dispatch<React.SetStateAction<any[]>>, setSsaWarnings: React.Dispatch<React.SetStateAction<any[]>>,
-slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<boolean>>, solhintEnabled: boolean, basicEnabled: boolean) {
+slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<boolean>>, solhintEnabled: boolean) {
   setStartAnalysis(true)
   setHints([])
   setSsaWarnings([])
   setSlitherWarnings([])
-  props.analysisModule.hints = []
   if (!isSupportedVersion) return
   if (state.data !== null) {
-    if (lastCompilationResult && (categoryIndex.length > 0)) {
-      _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'remixAnalyzer'])
+    if (lastCompilationResult && (categoryIndex.length > 0 || showSlither)) {
       const warningMessage = []
       const warningErrors = []
-
+      props.analysisModule.hints = []
         // Run solhint
-      //   const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
-      //   props.analysisModule.hints = solhintEnabled === false ? 0 : hintsResult
-      //   setHints(hintsResult)
+        const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
+        props.analysisModule.hints = solhintEnabled === false ? 0 : hintsResult
+        setHints(hintsResult)
+      // const warningResult = calculateWarningStateEntries(Object.entries(warningState))
       //   props.analysisModule.emit('statusChanged', { key: hints.length+warningResult.length,
       // title: `${hints.length+warningResult.length} warning${hints.length+warningResult.length === 1 ? '' : 's'}`, type: 'warning'})
 
       // Remix Analysis
-        const results = runner.run(lastCompilationResult, categoryIndex)
-        for (const result of results) {
-          let moduleName
-          Object.keys(groupedModules).map(key => {
-            groupedModules[key].forEach(el => {
-              if (el.name === result.name) {
-                moduleName = groupedModules[key][0].categoryDisplayName
-              }
-            })
+      _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'remixAnalyzer'])
+      const results = runner.run(lastCompilationResult, categoryIndex)
+      for (const result of results) {
+        let moduleName
+        Object.keys(groupedModules).map(key => {
+          groupedModules[key].forEach(el => {
+            if (el.name === result.name) {
+              moduleName = groupedModules[key][0].categoryDisplayName
+            }
           })
-          // iterate over the warnings and create an object
-          for (const item of result.report) {
-            let location: any = {}
-            let locationString = 'not available'
-            let column = 0
-            let row = 0
-            let fileName = currentFile
-            let isLibrary = false
+        })
+        // iterate over the warnings and create an object
+        for (const item of result.report) {
+          let location: any = {}
+          let locationString = 'not available'
+          let column = 0
+          let row = 0
+          let fileName = currentFile
+          let isLibrary = false
 
-            if (item.location) {
-              const split = item.location.split(':')
-              const file = split[2]
-              location = {
-                start: parseInt(split[0]),
-                length: parseInt(split[1])
-              }
-              location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
-                location,
-                parseInt(file),
-                lastCompilationSource.sources,
-                lastCompilationResult.sources
-              )
-              row = location.start.line
-              column = location.start.column
-              locationString = row + 1 + ':' + column + ':'
-              fileName = Object.keys(lastCompilationResult.sources)[file]
+          if (item.location) {
+            const split = item.location.split(':')
+            const file = split[2]
+            location = {
+              start: parseInt(split[0]),
+              length: parseInt(split[1])
             }
-            if (fileName !== currentFile) {
-              const { file, provider } = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
-              if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
-            }
-            const msg = message(result.name, item.warning, item.more, fileName, locationString)
-            const options = {
-              type: 'warning',
-              useSpan: true,
-              errFile: fileName,
-              fileName,
-              isLibrary,
-              errLine: row,
-              errCol: column,
-              item: item,
-              name: result.name,
-              locationString,
-              more: item.more,
-              location: location
-            }
-            warningErrors.push(options)
-            warningMessage.push({ msg, options, hasWarning: true, warningModuleName: moduleName })
-            setSsaWarnings(warningMessage)
-            props.event.trigger('staticAnaysisWarning', [warningMessage.length])
+            location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
+              location,
+              parseInt(file),
+              lastCompilationSource.sources,
+              lastCompilationResult.sources
+            )
+            row = location.start.line
+            column = location.start.column
+            locationString = row + 1 + ':' + column + ':'
+            fileName = Object.keys(lastCompilationResult.sources)[file]
+          }
+          if(fileName !== currentFile) {
+            const {file, provider} = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
+            if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
+          }
+          const msg = message(result.name, item.warning, item.more, fileName, locationString)
+          const options = {
+            type: 'warning',
+            useSpan: true,
+            errFile: fileName,
+            fileName,
+            isLibrary,
+            errLine: row,
+            errCol: column,
+            item: item,
+            name: result.name,
+            locationString,
+            more: item.more,
+            location: location
+          }
+          warningErrors.push(options)
+          warningMessage.push({ msg, options, hasWarning: true, warningModuleName: moduleName })
+          setSsaWarnings(warningMessage)
         }
       }
-    } else {
-      if (categoryIndex.length) {
-        warningContainer.current.innerText = 'No compiled AST available'
-      }
-      props.event.trigger('staticAnaysisWarning', [-1])
-    }
-  }
-}
-
-
-
-/**
- * Run the analysis on the currently compiled contract
- * @param lastCompilationResult
- * @param lastCompilationSource
- * @param currentFile {string} current file path
- * @param state { RemixUiStaticAnalyserState}
- * @param props {RemixUiStaticAnalyserProps}
- * @param isSupportedVersion {boolean}
- * @param slitherEnabled {boolean}
- * @param categoryIndex {number[]}
- * @param groupedModules {any}
- * @param runner {any}
- * @param _paq {any}
- * @param message {any}
- * @param showWarnings {boolean}
- * @param allWarnings {React.RefObject<object>}
- * @param warningContainer {React.RefObject<object>}
- * @returns {Promise<void>}
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function runSlitherAnalysis (lastCompilationResult, lastCompilationSource, currentFile: string, state: RemixUiStaticAnalyserState, props: RemixUiStaticAnalyserProps, isSupportedVersion, showSlither, categoryIndex: number[], groupedModules, runner, _paq, message, showWarnings, allWarnings: React.RefObject<any>, warningContainer: React.RefObject<any>, calculateWarningStateEntries: (e:[string, any][]) => {length: number, errors: any[] }, warningState, setHints: React.Dispatch<React.SetStateAction<SolHintReport[]>>, hints: SolHintReport[], setSlitherWarnings: React.Dispatch<React.SetStateAction<any[]>>, setSsaWarnings: React.Dispatch<React.SetStateAction<any[]>>,
-slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<boolean>>) {
       // Slither Analysis
       if (showSlither && slitherEnabled) {
         setSlitherWarnings([])
@@ -247,12 +195,20 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
                 return prev
               })
             }
+            showWarnings(warningMessage, 'warningModuleName')
           }
         } catch(error) {
           props.analysisModule.call('terminal', 'log', { type: 'error', value: '[Slither Analysis]: Error occured! See remixd console for details.' })
+          showWarnings(warningMessage, 'warningModuleName')
         }
-      }
+      } else showWarnings(warningMessage, 'warningModuleName')
       setStartAnalysis(false)
+    } else {
+      if (categoryIndex.length) {
+        warningContainer.current.innerText = 'No compiled AST available'
+      }
       props.event.trigger('staticAnaysisWarning', [-1])
     }
+  }
+}
 
