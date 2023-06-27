@@ -115,7 +115,7 @@ jobs:
         - run: ldd --version
         - checkout
         - node/install:
-            node-version: '20.0.0'
+            node-version: '14.17.6'
             install-yarn: true
         - attach_workspace:
             at: .
