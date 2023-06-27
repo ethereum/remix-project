@@ -150,11 +150,11 @@ export interface SearchResultLine {
 }
 
 
-import * as cp from 'child_process';
-import { rgPath } from '@vscode/ripgrep';
-const rgDiskPath = rgPath.replace(/\bnode_modules\.asar\b/, 'node_modules.asar.unpacked');
+//import * as cp from 'child_process';
+//import { rgPath } from '@vscode/ripgrep';
+//const rgDiskPath = rgPath.replace(/\bnode_modules\.asar\b/, 'node_modules.asar.unpacked');
 
-console.log('rgDiskPath', rgDiskPath)
+//console.log('rgDiskPath', rgDiskPath)
 
 // ripgrep
 // -s means case sensitive
@@ -166,6 +166,7 @@ console.log('rgDiskPath', rgDiskPath)
 Include or exclude files and directories for searching that match the given glob. This always overrides any other ignore logic. Multiple glob flags may be used. Globbing rules match .gitignore globs. Precede a glob with a ! to exclude it. If multiple globs match a file or directory, the glob given later in the command line takes precedence.
 */
 
+/*
 
 console.log('process.cwd()', process.cwd())
 const child = cp.spawn(rgDiskPath, ['bunsens[a-z]*', '--json', './'], { cwd: process.cwd() });
@@ -229,5 +230,5 @@ child.on('exit', (code) => {
   console.log('exit', code)
 }
 )
-
+*/
 

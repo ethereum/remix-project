@@ -80,7 +80,7 @@ class XtermPluginClient extends ElectronBasePluginClient {
         const ptyProcess = pty.spawn(shell, [], {
             name: 'xterm-color',
             cols: 80,
-            rows: 30,
+            rows: 20,
             cwd: path || process.cwd(),
             //env: process.env
         });
