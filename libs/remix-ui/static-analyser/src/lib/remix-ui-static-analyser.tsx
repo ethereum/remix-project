@@ -136,6 +136,13 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }, [])
 
   useEffect(() => {
+    props.analysisModule.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
+      props.event.trigger('staticAnaysisWarning', [-1])
+    })
+    return () => { props.event.trigger('staticAnalysisWarning', [-1]) }
+  }, [state.data, state.source])
+
+  useEffect(() => {
     const checkRemixdActive = async () => {
       const remixdActive = await props.analysisModule.call('manager', 'isActive', 'remixd')
       if (remixdActive) {
@@ -239,78 +246,79 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   useEffect(() => {
     // if hideWarnings is true
-    if(basicEnabled && !solhintEnabled && !slitherEnabled && state.data && state.source !== null ) {
-      props.analysisModule.internalCount = 0
+    if(basicEnabled && hideWarnings && !solhintEnabled && !slitherEnabled && state.data && state.source !== null ) {
       props.event.trigger('staticAnaysisWarning',
-        [hideWarnings ? remixAnalysisLessWarnings.length : ssaWarnings.length])
+        [hideWarnings ? remixAnalysisLessWarnings.length : remixAnalysisNoLibs.length])
     }
-    if (solhintEnabled && !basicEnabled && !slitherEnabled && state.data && state.source !== null) {
-      props.analysisModule.internalCount = 0
+    if (solhintEnabled && hideWarnings && !basicEnabled && !slitherEnabled && state.data && state.source !== null) {
       props.event.trigger('staticAnaysisWarning', [hideWarnings ? hintErrors.length : hints?.length])
     }
-    if (solhintEnabled && basicEnabled && !slitherEnabled && !showLibsWarning
+    if (solhintEnabled && basicEnabled && hideWarnings && !slitherEnabled && !showLibsWarning
       && state.data && state.source !== null) {
       console.log('solhint and remix are enabled here')
-      props.analysisModule.internalCount = 0
       props.event.trigger('staticAnaysisWarning', [hideWarnings
-        ? hintErrors.length + remixAnalysisNoLibs.filter(x => x.options.type !== 'warning').length : hints?.length + ssaWarnings.length])
+        ? hintErrors.length + remixAnalysisNoLibs.filter(x => x.options.type !== 'warning').length : hints?.length + remixAnalysisNoLibs.length])
     }
-    if (slitherEnabled && !basicEnabled && !solhintEnabled && state.data && state.source !== null) {
-      props.analysisModule.internalCount = 0
+    if (slitherEnabled && hideWarnings && !basicEnabled && !solhintEnabled && state.data && state.source !== null) {
       props.event.trigger('staticAnaysisWarning', [hideWarnings ? slitherErrors.length : slitherWarnings.length])
     }
-    if (slitherEnabled && basicEnabled && solhintEnabled && state.data && state.source !== null) {
-      props.analysisModule.internalCount = 0
+    if (slitherEnabled && basicEnabled && solhintEnabled  && hideWarnings && state.data && state.source !== null) {
       props.event.trigger('staticAnaysisWarning', [hideWarnings
         ? hintErrors.length + remixAnalysisLessWarnings.length + slitherErrors.length
         : hints?.length + ssaWarnings.length + slitherWarnings.length])
     }
+  }, [hideWarnings, state])
+
+  useEffect(() => {
     // if showLibsWarning is true
     if(basicEnabled && !solhintEnabled && !slitherEnabled && !hideWarnings && state.data && state.source !== null ) {
-      props.analysisModule.internalCount = 0
       props.event.trigger('staticAnaysisWarning',
         [showLibsWarning ? ssaWarnings.length : remixAnalysisNoLibs.length])
     }
     if (solhintEnabled && !basicEnabled && !slitherEnabled && !hideWarnings && state.data && state.source !== null) {
-      props.analysisModule.internalCount = 0
       props.event.trigger('staticAnaysisWarning', [showLibsWarning ? hints?.length : hints?.length])
     }
-    if (solhintEnabled && basicEnabled && !slitherEnabled && !hideWarnings && state.data && state.source !== null) {
-      console.log('solhint and remix are enabled here')
-      props.analysisModule.internalCount = 0
+    if (solhintEnabled && basicEnabled && !slitherEnabled && !hideWarnings && state.data && state.source !== null && state.data && state.source !== null) {
       props.event.trigger('staticAnaysisWarning', [showLibsWarning
         ? hints?.length + ssaWarnings.length : hints?.length + remixAnalysisNoLibs.length])
     }
-    if (slitherEnabled && !basicEnabled && !solhintEnabled && !hideWarnings && state.data && state.source !== null) {
-      props.analysisModule.internalCount = 0
+    if (slitherEnabled && !basicEnabled && !solhintEnabled && !hideWarnings && state.data && state.source !== null && state.data && state.source !== null) {
       props.event.trigger('staticAnaysisWarning', [showLibsWarning && noLibSlitherWarnings.length])
     }
-    if (slitherEnabled && basicEnabled && solhintEnabled && !hideWarnings && state.data && state.source !== null) {
-      props.analysisModule.internalCount = 0
+    if (slitherEnabled && basicEnabled && solhintEnabled && !hideWarnings && state.data && state.source !== null && state.data && state.source !== null) {
       props.event.trigger('staticAnaysisWarning', [showLibsWarning
         ? hints?.length + ssaWarnings.length + slitherWarnings.length : hints?.length + remixAnalysisNoLibs.length + noLibSlitherWarnings.length])
     }
-    if(basicEnabled && solhintEnabled && !slitherEnabled && !hideWarnings && !showLibsWarning) {
-      props.analysisModule.internalCount = 0
+  }, [showLibsWarning, state])
+
+  useEffect(() => {
+    if(basicEnabled && solhintEnabled && !slitherEnabled && !hideWarnings && !showLibsWarning && state.data && state.source !== null) {
       props.event.trigger('staticAnaysisWarning', [hints?.length + remixAnalysisNoLibs.length])
     }
 
-    if(solhintEnabled && basicEnabled && slitherEnabled && !hideWarnings && !showLibsWarning) {
-      props.analysisModule.internalCount = 0
+    if(solhintEnabled && basicEnabled && slitherEnabled && !hideWarnings && !showLibsWarning && state.data && state.source !== null) {
       props.analysisModule.hints = []
       props.event.trigger('staticAnaysisWarning', [hints?.length + remixAnalysisNoLibs.length + slitherWarnings.length])
     }
-    if(solhintEnabled && basicEnabled && !slitherEnabled && hideWarnings && showLibsWarning) {
-      props.analysisModule.internalCount = 0
+    if(solhintEnabled && basicEnabled && !slitherEnabled && hideWarnings && showLibsWarning && state.data && state.source !== null) {
       props.event.trigger('staticAnaysisWarning', [hintErrors.length + remixAnalysisLessWarnings.length])
     }
-  }, [ssaWarnings.length, hints?.length, hideWarnings, showLibsWarning, state])
+    // props.event.trigger('staticAnaysisWarning', [-1])
+  }, [ssaWarnings.length, remixAnalysisNoLibs.length, remixAnalysisLessWarnings.length, hints?.length, hintErrors?.length, state, state.data, state.source])
 
   useEffect(() => {
     if(solhintEnabled === false) {
       props.analysisModule.hints = []
     }
   }, [solhintEnabled])
+
+  useEffect(() => {
+    if(solhintEnabled && basicEnabled) {
+      if(ssaWarnings.length > 0 && hints.length > 0) {
+        props.event.trigger('staticAnaysisWarning', [ssaWarnings.length + hints.length])
+      }
+    }
+  }, [showLibsWarning])
 
 
 
@@ -381,7 +389,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     }
   }
 
-  const handleLinterEnabled = async () => {
+  const handleLinterEnabled = () => {
     if (solhintEnabled) {
       setSolhintEnabled(false)
     } else {
@@ -591,6 +599,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           ssaWarnings={ssaWarnings}
           ssaWarningsNoLibs={remixAnalysisNoLibs}
           warningStateEntries={Object.entries(warningState)}
+          ssaWarningsNoLibsTotal={remixAnalysisNoLibs.length}
+          ssaWarningsTotal={ssaWarnings.length}
         />
       ),
       child: (
@@ -705,12 +715,11 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             id="checkAllEntries"
             inputType="checkbox"
             title="Remix analysis runs a basic analysis."
-            // checked={Object.values(groupedModules).map((value: any) => {
-            //   return (value.map(x => {
-            //     return x._index.toString()
-            //   }))
-            // }).flat().every(el => categoryIndex.includes(el))}
-            checked={basicEnabled}
+            checked={basicEnabled && Object.values(groupedModules).map((value: any) => {
+              return (value.map(x => {
+                return x._index.toString()
+              }))
+            }).flat().every(el => categoryIndex.includes(el))}
             onClick={handleBasicEnabled}
             label="Remix"
             onChange={() => {}}

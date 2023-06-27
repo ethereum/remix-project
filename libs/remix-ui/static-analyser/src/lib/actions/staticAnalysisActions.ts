@@ -35,6 +35,8 @@ export const runLinting = async (solhintEnabled, setHints, hints: SolHintReport[
       const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
       props.analysisModule.hints = solhintEnabled === false ? 0 : hintsResult
       setHints(hintsResult)
+      // props.analysisModule.emit('statusChanged', { key: hints.length,
+      //   title: `${hints.length} warning${hints.length === 1 ? '' : 's'}`, type: 'warning'})
       return hintsResult
   }
 }
@@ -77,7 +79,6 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
       //   const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
       //   props.analysisModule.hints = solhintEnabled === false ? 0 : hintsResult
       //   setHints(hintsResult)
-      const lintResult = await (await runLinting(solhintEnabled, setHints, hints, isSupportedVersion, state, props, setStartAnalysis))
       //   props.analysisModule.emit('statusChanged', { key: hints.length+warningResult.length,
       // title: `${hints.length+warningResult.length} warning${hints.length+warningResult.length === 1 ? '' : 's'}`, type: 'warning'})
 
@@ -141,7 +142,7 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
             warningErrors.push(options)
             warningMessage.push({ msg, options, hasWarning: true, warningModuleName: moduleName })
             setSsaWarnings(warningMessage)
-            // setHints(lintResult)
+            props.event.trigger('staticAnaysisWarning', [warningMessage.length])
         }
       }
     } else {
