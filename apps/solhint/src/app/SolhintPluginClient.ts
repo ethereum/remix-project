@@ -93,7 +93,6 @@ export class SolHint extends PluginClient {
     })
 
     this.emit('lintingFinished', hints)
-    this.call('solidityStaticAnalysis' as any, 'changedStatus', hints)
     return hints
   }
 
