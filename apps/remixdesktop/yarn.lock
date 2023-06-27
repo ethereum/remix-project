@@ -634,9 +634,9 @@
   integrity sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==
 
 "@types/node@*":
-  version "20.3.1"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.3.1.tgz#e8a83f1aa8b649377bb1fb5d7bac5cb90e784dfe"
-  integrity sha512-EhcH/wvidPy1WeML3TtYFGR83UzjxeWRen9V402T8aUGYsCHOmfoisV3ZSg03gAFIbLq8TnWOJ0f4cALtnSEUg==
+  version "20.3.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.3.2.tgz#fa6a90f2600e052a03c18b8cb3fd83dd4e599898"
+  integrity sha512-vOBLVQeCQfIcF/2Y7eKFTqrMnizK5lRNQ7ykML/5RuwVXVWxYkgwS7xbt4B6fKCUPgbSL5FSsjHQpaGQP/dQmw==
 
 "@types/node@^12.12.6":
   version "12.20.55"
@@ -702,9 +702,9 @@
     "@types/node" "*"
 
 "@vscode/ripgrep@^1.15.4":
-  version "1.15.4"
-  resolved "https://registry.yarnpkg.com/@vscode/ripgrep/-/ripgrep-1.15.4.tgz#ca8946b5580bbea1e706ed8d3b1eed5f0d551ab6"
-  integrity sha512-+EPIS2aoD95MFLrgGHd/D2fck42aMRV2cBrT7BiNvKBeSyCTybSaTJ+PGQf6zV/95AhaXHHYqYPVRk3DZoGU9w==
+  version "1.15.5"
+  resolved "https://registry.yarnpkg.com/@vscode/ripgrep/-/ripgrep-1.15.5.tgz#26025884bbc3a8b40dfc29f5bda4b87b47bd7356"
+  integrity sha512-PVvKNEmtnlek3i4MJMaB910dz46CKQqcIY2gKR3PSlfz/ZPlSYuSuyQMS7iK20KL4hGUdSbWt964B5S5EIojqw==
   dependencies:
     https-proxy-agent "^5.0.0"
     proxy-from-env "^1.1.0"
@@ -3271,9 +3271,9 @@ minimatch@^8.0.2:
     brace-expansion "^2.0.1"
 
 minimatch@^9.0.1:
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-9.0.1.tgz#8a555f541cf976c622daf078bb28f29fb927c253"
-  integrity sha512-0jWhJpD/MdhPXwPuiRkCbfYfSKp2qnn2eOc279qI7f+osl/l+prKSrvhg157zSYvx/1nmgn2NqdT6k2Z7zSH9w==
+  version "9.0.2"
+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-9.0.2.tgz#397e387fff22f6795844d00badc903a3d5de7057"
+  integrity sha512-PZOT9g5v2ojiTL7r1xF6plNHLtOeTpSlDI007As2NlA2aYBMfVom17yqa6QzhmDP8QOhn7LjHTg7DFCVSSa6yg==
   dependencies:
     brace-expansion "^2.0.1"
 

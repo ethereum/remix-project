@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react' // eslint-disable-line
 import { ElectronPlugin } from '@remixproject/engine-electron'
 import RemixUiXterm from './remix-ui-xterm'
 
+import {
+    ImperativePanelGroupHandle,
+    Panel,
+    PanelGroup,
+    PanelResizeHandle,
+  } from "react-resizable-panels";
+
 export interface RemixUiXterminalsProps {
     plugin: ElectronPlugin
 }
@@ -91,9 +98,10 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
             createTerminal()
         }}>create terminal</button>
 
+
         {terminals.map((xtermState) => {
             return (
-                <div key={xtermState.pid} data-id={`remixUIXT${xtermState.pid}`}>{xtermState.pid}
+                <div key={xtermState.pid} data-id={`remixUIXT${xtermState.pid}`}>
                     <RemixUiXterm setTerminalRef={setTerminalRef} timeStamp={xtermState.timeStamp} send={send} pid={xtermState.pid} plugin={plugin}></RemixUiXterm>
                 </div>
             )

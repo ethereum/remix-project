@@ -12,7 +12,7 @@ export const detectDefaultShell = () => {
 	const {env} = process;
 
 	if (process.platform === 'win32') {
-		return env.COMSPEC || 'cmd.exe';
+		return env.SHELL || 'powershell.exe';
 	}
 
 	try {
@@ -31,6 +31,8 @@ export const detectDefaultShell = () => {
 
 // Stores default shell when imported.
 const defaultShell = detectDefaultShell();
+
+console.log('defaultShell', defaultShell)
 
 export default defaultShell;
 
@@ -72,6 +74,8 @@ class XtermPluginClient extends ElectronBasePluginClient {
 
     async createTerminal(path?: string): Promise<number> {
         const shell = defaultShell;
+
+        console.log('defaultShell', defaultShell)
 
         const ptyProcess = pty.spawn(shell, [], {
             name: 'xterm-color',

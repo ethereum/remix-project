@@ -201,6 +201,7 @@
     "react-json-view": "^1.21.3",
     "react-markdown": "^8.0.5",
     "react-multi-carousel": "^2.8.2",
+    "react-resizable-panels": "^0.0.53",
     "react-router-dom": "^6.3.0",
     "react-tabs": "^3.2.2",
     "react-zoom-pan-pinch": "^3.0.2",
