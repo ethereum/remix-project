@@ -106,11 +106,12 @@ jobs:
 
   build-remixdesktop-linux:
       docker:
-      - image: cimg/node:20.0.0-browsers
+      - image: ubuntu-2004:2023.04.2
       resource_class:
         xlarge
       working_directory: ~/remix-project
       steps:
+        - ldd --version
         - checkout
         - attach_workspace:
             at: .
