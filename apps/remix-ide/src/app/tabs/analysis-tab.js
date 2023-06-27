@@ -11,7 +11,7 @@ var EventManager = require('../../lib/events')
 const profile = {
   name: 'solidityStaticAnalysis',
   displayName: 'Solidity Analyzers',
-  methods: ['changedStatus'],
+  methods: [],
   events: [],
   icon: 'assets/img/staticAnalysis.webp',
   description: 'Checks the contract code for security vulnerabilities and bad practices.',
@@ -27,17 +27,6 @@ class AnalysisTab extends ViewPlugin {
     super(profile)
     this.event = new EventManager()
     this.events = new EventEmitter()
-    /**
-     * @type {Array<{
-      formattedMessage: string;
-      type: "warning" | "error";
-      column: number;
-      line: number;
-    }>}
-     * @description Array of objects containing the results of Linting
-     */
-    this.hints = []
-    this.internalCount = 0
     this.registry = Registry.getInstance()
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'staticAnalyserView')
@@ -48,6 +37,16 @@ class AnalysisTab extends ViewPlugin {
         'offsettolinecolumnconverter').api
     }
     this.dispatch = null
+    /**
+     * @type {Array<{
+      formattedMessage: string;
+      type: "warning" | "error";
+      column: number;
+      line: number;
+    }>}
+     * @description Array of objects containing the results of Linting
+     */
+    this.hints = []
   }
 
   async onActivation () {
@@ -77,24 +76,6 @@ class AnalysisTab extends ViewPlugin {
         this.emit('statusChanged', { key: 'none' })
       }
     })
-  }
-
-  /**
-   * Takes payload (an Array of Objects) emitted by Solhint and raises the status changed event.
-   * The payload sent has to be a result which should at a minimum have
-   * type which could be error || warning.
-   * @param {Array} payload
-   */
-  async changedStatus (payload) {
-    let payloadType = `${payload.includes(p => p.type === 'error') ? 'error' : 'warning'}`
-      if(payload.length > 0) {
-        this.emit('statusChanged',
-        { key: payload.length, title: `${payload.length} warning${payload.length === 1 ? '' : 's'} or errors`, type: payloadType})
-      } else if (payload.length === 0) {
-        this.emit('statusChanged', { key: 'succeed', title: 'no warning or errors', type: 'success' })
-      } else {
-        this.emit('statusChanged', { key: 'none' })
-      }
   }
 
   setDispatch (dispatch) {
