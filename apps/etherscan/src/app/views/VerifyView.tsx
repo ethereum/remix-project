@@ -33,6 +33,7 @@ export const VerifyView: React.FC<Props> = ({
 }) => {
   const [results, setResults] = useState("")
   const [networkName, setNetworkName] = useState("Loading...")
+  const [selectedContract, setSelectedContract] = useState("")
   const [showConstructorArgs, setShowConstructorArgs] = useState(false)
   const [isProxyContract, setIsProxyContract] = useState(false)
   const [constructorInputs, setConstructorInputs] = useState([])
@@ -49,6 +50,25 @@ export const VerifyView: React.FC<Props> = ({
       if (client && client.off) client.off("blockchain" as any, 'networkStatus')
     }
   }, [client])
+
+  useEffect(() => {
+    console.log('contracts are updated--->', contracts)
+    console.log('contracts are updated-selectedContract-->', selectedContract)
+
+    if (contracts.includes(selectedContract)) {
+      console.log('contracts are updated-ShowConstructorArgs-->', showConstructorArgs)
+      client.call("compilerArtefacts" as any, "getArtefactsByContractName", selectedContract).then((artefact) => {
+        console.log('artefact----->', artefact)
+        if (artefact && artefact.abi && artefact.abi[0] && artefact.abi[0].type && artefact.abi[0].type === 'constructor' && artefact.abi[0].inputs.length > 0) {
+          setConstructorInputs(artefact.abi[0].inputs)
+          setShowConstructorArgs(true)
+        } else {
+          setConstructorInputs([])
+          setShowConstructorArgs(false)
+        }
+      })
+    }
+  }, [contracts])
 
   const onVerifyContract = async (values: FormValues) => {
     const compilationResult = (await client.call(
@@ -139,6 +159,7 @@ export const VerifyView: React.FC<Props> = ({
                 name="contractName"
                 onChange={async (e) => {
                   handleChange(e)
+                  setSelectedContract(e.target.value)
                   const {artefact} = await client.call("compilerArtefacts" as any, "getArtefactsByContractName", e.target.value)
                   if (artefact && artefact.abi && artefact.abi[0] && artefact.abi[0].type && artefact.abi[0].type === 'constructor' && artefact.abi[0].inputs.length > 0) {
                     setConstructorInputs(artefact.abi[0].inputs)
