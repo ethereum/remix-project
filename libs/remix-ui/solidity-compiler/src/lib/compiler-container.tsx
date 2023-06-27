@@ -514,7 +514,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const compile = () => {
     const currentFile = api.currentFile
 
-    if (currentFile.endsWith('.circom')) return compileCircuit()
     if (!isSolFileSelected()) return
     _setCompilerVersionFromPragma(currentFile)
     let externalCompType
@@ -526,7 +525,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const compileAndRun = () => {
     const currentFile = api.currentFile
 
-    if (currentFile.endsWith('.circom')) return compileCircuit()
     if (!isSolFileSelected()) return
     _setCompilerVersionFromPragma(currentFile)
     let externalCompType
@@ -534,12 +532,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     else if (truffleCompilation) externalCompType = 'truffle'
     api.runScriptAfterCompilation(currentFile)
     compileTabLogic.runCompiler(externalCompType)
-  }
-
-  const compileCircuit = () => {
-    const currentFile = api.currentFile
-
-    console.log('Compiling circuit ' + currentFile)
   }
 
   const _updateVersionSelector = (version, customUrl = '') => {

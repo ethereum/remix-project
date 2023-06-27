@@ -86,5 +86,7 @@ module.exports = composePlugins(withNx(), (config) => {
     ignored: /node_modules/
   }
 
+  config.experiments.syncWebAssembly = true
+
   return config;
 });
