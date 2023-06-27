@@ -106,7 +106,7 @@ jobs:
 
   build-remixdesktop-linux:
       docker:
-      - image: ubuntu-2004:current
+      - image: electronuserland/builder:14
       resource_class:
         xlarge
       working_directory: ~/remix-project
