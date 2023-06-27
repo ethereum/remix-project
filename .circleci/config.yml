@@ -106,7 +106,7 @@ jobs:
 
   build-remixdesktop-linux:
       docker:
-        - image: cimg/node:current-20.04
+        - image: cimg/base:current-18.04
       resource_class:
         xlarge
       working_directory: ~/remix-project
