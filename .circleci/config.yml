@@ -105,8 +105,8 @@ jobs:
               - "persist"
 
   build-remixdesktop-linux:
-      docker:
-      - image: electronuserland/builder:14
+      machine:
+      - image: ubuntu-2004:current
       resource_class:
         xlarge
       working_directory: ~/remix-project
