@@ -105,8 +105,8 @@ jobs:
               - "persist"
 
   build-remixdesktop-linux:
-      machine:
-        image: ubuntu-2004:current
+      docker:
+        - image: cimg/node:current-20.04
       resource_class:
         xlarge
       working_directory: ~/remix-project
