@@ -1,3 +1,22 @@
 .remix-ui-xterminals-container {
     overflow: scroll;
 }
+.xterm-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.hide-xterm{
+    display: none;
+}
+
+.show-xterm{
+    display: block;
+}
+
+.xterm-btn-active {
+    background-color: var(--primary);
+}
+.xterm-btn-none {
+    background-color: var(--secondary);
+}

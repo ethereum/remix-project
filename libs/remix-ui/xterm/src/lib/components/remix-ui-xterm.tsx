@@ -38,8 +38,9 @@ const RemixUiXterm = (props: RemixUiXtermProps) => {
 
     return (
         <>
+            <button className='btn' onClick={closeTerminal}>close</button>
             <XTerm ref={xtermRef} onData={onData} onKey={onKey}></XTerm>
-            <button onClick={closeTerminal}>close</button>
+
         </>
     )
 

@@ -86,6 +86,7 @@ class XtermPluginClient extends ElectronBasePluginClient {
         });
 
         ptyProcess.onData((data: string) => {
+            console.log('onData', data)
             this.sendData(data, ptyProcess.pid);
         })
         this.terminals[ptyProcess.pid] = ptyProcess

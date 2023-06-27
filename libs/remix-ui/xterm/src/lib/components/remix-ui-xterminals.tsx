@@ -12,6 +12,7 @@ export interface xtermState {
     queue: string
     timeStamp: number
     ref: any
+    hidden: boolean
 }
 
 export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
@@ -21,30 +22,34 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
 
     useEffect(() => {
         setTimeout(async () => {
-        plugin.on('xterm', 'loaded', async () => {
-        })
-        plugin.on('xterm', 'data', async (data: string, pid: number) => {
-            writeToTerminal(data, pid)
-        })
-
-        plugin.on('xterm', 'close', async (pid: number) => {
-            setTerminals(prevState => {
-                return prevState.filter(xtermState => xtermState.pid !== pid)
+            plugin.on('xterm', 'loaded', async () => {
             })
-        })
+            plugin.on('xterm', 'data', async (data: string, pid: number) => {
+                writeToTerminal(data, pid)
+            })
 
-        plugin.on('fs', 'workingDirChanged', (path: string) => {
-            setWorkingDir(path)
-        })
-    }, 5000)
+            plugin.on('xterm', 'close', async (pid: number) => {
+                setTerminals(prevState => {
+                    const removed =  prevState.filter(xtermState => xtermState.pid !== pid)
+                    removed[removed.length-1].hidden = false
+                    return [...removed]
+                })
+            })
+
+            plugin.on('fs', 'workingDirChanged', (path: string) => {
+                setWorkingDir(path)
+            })
+        }, 5000)
     }, [])
 
     const writeToTerminal = (data: string, pid: number) => {
         setTerminals(prevState => {
             const terminal = prevState.find(xtermState => xtermState.pid === pid)
             if (terminal.ref && terminal.ref.terminal) {
+                console.log('writing to terminal', terminal, data)
                 terminal.ref.terminal.write(data)
-            }else {
+            } else {
+                console.log('no terminal ref', terminal)
                 terminal.queue += data
             }
             return [...prevState]
@@ -64,11 +69,16 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
         const pid = await plugin.call('xterm', 'createTerminal', workingDir)
 
         setTerminals(prevState => {
+            // set all to hidden
+            prevState.forEach(xtermState => {
+                xtermState.hidden = true
+            })
             return [...prevState, {
                 pid: pid,
                 queue: '',
                 timeStamp: Date.now(),
-                ref: null
+                ref: null,
+                hidden: false
             }]
         })
     }
@@ -78,7 +88,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
         setTerminals(prevState => {
             const terminal = prevState.find(xtermState => xtermState.pid === pid)
             terminal.ref = ref
-            if(terminal.queue) {
+            if (terminal.queue) {
                 ref.terminal.write(terminal.queue)
                 terminal.queue = ''
             }
@@ -86,24 +96,44 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
         })
     }
 
+    const selectTerminal = (state: xtermState) => {
+        setTerminals(prevState => {
+            // set all to hidden
+            prevState.forEach(xtermState => {
+                xtermState.hidden = true
+            })
+            const terminal = prevState.find(xtermState => xtermState.pid === state.pid)
+            terminal.hidden = false
+            return [...prevState]
+        })
+    }
+
 
     return (<>
 
-        <button className='btn border' onClick={() => {
+        <div className='xterm-panel'>
+        <button className='btn btn-sm btn-secondary' onClick={() => {
             createTerminal()
-        }}>open terminal</button>
+        }}>open new terminal</button>
 
 
         <div className='remix-ui-xterminals-container'>
-        {terminals.map((xtermState) => {
-            return (
-                <div key={xtermState.pid} data-id={`remixUIXT${xtermState.pid}`}>
-                    <RemixUiXterm setTerminalRef={setTerminalRef} timeStamp={xtermState.timeStamp} send={send} pid={xtermState.pid} plugin={plugin}></RemixUiXterm>
-                </div>
-            )
-        })}
+            <>
+                {terminals.map((xtermState, index) => {
+
+                    return (<button onClick={async () => selectTerminal(xtermState)} className={`btn btn-sm btn-secondary ${xtermState.hidden ? 'xterm-btn-none' : 'xterm-btn-active'}`}>Terminal {index + 1}</button>)
+                })}
+                {terminals.map((xtermState) => {
+                    return (
+                        <div className={xtermState.hidden ? 'hide-xterm' : 'show-xterm'} key={xtermState.pid} data-id={`remixUIXT${xtermState.pid}`}>
+                            <RemixUiXterm setTerminalRef={setTerminalRef} timeStamp={xtermState.timeStamp} send={send} pid={xtermState.pid} plugin={plugin}></RemixUiXterm>
+                        </div>
+                    )
+                })}
+            </>
         </div>
-    
+        </div>
+
 
     </>)
 }
