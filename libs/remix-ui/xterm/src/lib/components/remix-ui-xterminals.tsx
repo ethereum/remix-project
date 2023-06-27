@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from 'react' // eslint-disable-line
 import { ElectronPlugin } from '@remixproject/engine-electron'
 import RemixUiXterm from './remix-ui-xterm'
-
-import {
-    ImperativePanelGroupHandle,
-    Panel,
-    PanelGroup,
-    PanelResizeHandle,
-  } from "react-resizable-panels";
-
+import '../css/index.css'
+import { Tab, Tabs } from 'react-bootstrap'
 export interface RemixUiXterminalsProps {
     plugin: ElectronPlugin
 }
@@ -94,11 +88,13 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
 
 
     return (<>
-        <button onClick={() => {
+
+        <button className='btn border' onClick={() => {
             createTerminal()
-        }}>create terminal</button>
+        }}>open terminal</button>
 
 
+        <div className='remix-ui-xterminals-container'>
         {terminals.map((xtermState) => {
             return (
                 <div key={xtermState.pid} data-id={`remixUIXT${xtermState.pid}`}>
@@ -106,6 +102,9 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
                 </div>
             )
         })}
+        </div>
+    
+
     </>)
 }
 
