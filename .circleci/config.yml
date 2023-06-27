@@ -111,7 +111,7 @@ jobs:
         xlarge
       working_directory: ~/remix-project
       steps:
-        - ldd --version
+        - run: ldd --version
         - checkout
         - attach_workspace:
             at: .
