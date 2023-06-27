@@ -7,6 +7,7 @@ parameters:
 orbs:
   browser-tools: circleci/browser-tools@1.4.1
   win: circleci/windows@5.0
+  node: circleci/node@5.1.0
 jobs:
   build:
     docker:
@@ -114,7 +115,7 @@ jobs:
         - run: ldd --version
         - checkout
         - node/install:
-            node-version: 20.0.0
+            node-version: '20.0.0'
             install-yarn: true
         - attach_workspace:
             at: .
