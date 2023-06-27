@@ -755,7 +755,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
             >
             <button id="runTestsTabRunAction"data-id="testTabRunTestsTabRunAction" className="w-50 btn btn-primary" disabled={disableRunButton} onClick={runTests}>
               <span className="fas fa-play ml-2"></span>
-              <label className="labelOnBtn btn btn-primary p-1 ml-2 m-0"><FormattedMessage id='solidityUnitTesting.run' /></label>
+              <span className="labelOnBtn p-1 ml-2 m-0"><FormattedMessage id='solidityUnitTesting.run' /></span>
             </button>
           </CustomTooltip>
           <CustomTooltip
@@ -767,7 +767,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
             <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} onClick={stopTests}>
             <span>
               <span className="fas fa-stop ml-2"></span>
-              <label className="labelOnBtn btn btn-secondary p-1 ml-2 m-0" id="runTestsTabStopActionLabel">{stopButtonLabel}</label>
+              <span className="labelOnBtn p-1 ml-2 m-0" id="runTestsTabStopActionLabel">{stopButtonLabel}</span>
             </span>
             </button>
           </CustomTooltip>
