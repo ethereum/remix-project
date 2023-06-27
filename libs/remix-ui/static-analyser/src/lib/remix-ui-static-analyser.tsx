@@ -111,16 +111,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }, [props])
 
   useEffect(() => {
-    // setWarningState({})
-    // setHints([])
-    // setSlitherWarnings([])
-    // setSsaWarnings([])
-    setStartAnalysis(false)
-    props.event.trigger('staticAnaysisWarning', [-1])
-    return () => { }
-  }, [state])
-
-  useEffect(() => {
     props.analysisModule.call('solidity', 'getCompilerState').then((compilerState) => setDisableForRun(compilerState.currentVersion))
     props.event.trigger('staticAnalysisWarning', [-1])
   }, [])
@@ -142,7 +132,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       // Reset warning state
       setWarningState([])
       // Reset badge
-      props.event.trigger('staticAnaysisWarning', [])
+
       // Reset state
       dispatch({ type: '', payload: initialState })
       setHints([])
@@ -157,6 +147,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         setShowSlither(false)
         setSlitherEnabled(false)
       }
+      setTimeout(() => {
+        props.event.trigger('staticAnalysisWarning', [-1])
+      }, 500)
     })
     props.analysisModule.on('manager', 'pluginDeactivated', (plugin) => {
       // Hide 'Enable Slither Analysis' checkbox
@@ -347,7 +340,6 @@ useEffect(() => {
     const slitherTotal = (slitherWarnings && state.data && state.source !== null  ? slitherWarnings.filter(x => !x.options.isLibrary && x.hasWarning).length : 0)
     const ssaTotal = ssaWarnings && state.data && state.source !== null ? ssaWarnings.filter(x => !x.options.isLibrary && x.hasWarning).length : 0
     const hintsTotal = hints && state.data && state.source !== null ? hints.length : 0
-    console.log('hideWarnings & showLibsWarning are unchecked', { slitherTotal, ssaTotal, hintsTotal })
     props.event.trigger('staticAnaysisWarning', [slitherTotal + ssaTotal + hintsTotal])
   }
   if(!hideWarnings && showLibsWarning) {
@@ -361,7 +353,6 @@ useEffect(() => {
     const slitherTotal = (slitherWarnings && state.data && state.source !== null ? slitherWarnings.filter(x => x.options.type === 'error').length : 0)
     const ssaTotal = ssaWarnings && state.data && state.source !== null ? ssaWarnings.filter(x => x.options.type === 'error').length : 0
     const hintsTotal = hints && state.data && state.source !== null ? hints.filter(x => x.type === 'error').length : 0
-    console.log('hideWarnings is enabled', { slitherTotal, ssaTotal, hintsTotal })
     props.event.trigger('staticAnaysisWarning', [slitherTotal + ssaTotal + hintsTotal])
   }
 }, [hideWarnings, showLibsWarning])
@@ -374,7 +365,6 @@ useEffect(() => {
     ? ssaWarnings.filter((x) => !x.options.isLibrary && x.hasWarning).length
     : 0
   const hintsTotal = solhintEnabled && hints && state.data && state.source !== null ? hints.length : 0
-  console.log('hideWarnings & showLibsWarning are unchecked and lengths have changed', { slitherTotal, ssaTotal, hintsTotal })
   props.event.trigger('staticAnaysisWarning', [slitherTotal + ssaTotal + hintsTotal])
 }, [hints.length, slitherWarnings.length, ssaWarnings.length])
 
@@ -386,7 +376,6 @@ useEffect(() => {
     ? ssaWarnings.filter((x) => !x.options.isLibrary && x.hasWarning).length
     : 0
   const hintsTotal = hints && solhintEnabled && state.data && state.source !== null ? hints.length : 0
-  console.log('hideWarnings & showLibsWarning are unchecked and tools could be checked or unchecked', { slitherTotal, ssaTotal, hintsTotal })
   props.event.trigger('staticAnaysisWarning', [slitherTotal + ssaTotal + hintsTotal])
 }, [solhintEnabled, basicEnabled, slitherEnabled, showSlither])
 
