@@ -2691,7 +2691,9 @@ input[type=button].btn-block,input[type=reset].btn-block,input[type=submit].btn-
 	display:block;	width:100%;	padding:.25rem 1.5rem;	clear:both;	font-weight:400;	color:#7b8a8b;	text-align:inherit;	white-space:nowrap;	background-color:transparent;	border:0
 }
 .dropdown-item:focus,.dropdown-item:hover {
-	color:#fff;	text-decoration:none;	background-color:#2c3e50
+  color: var(--text);
+  text-decoration: none;
+  background-color: var(--secondary);
 }
 .dropdown-item.active,.dropdown-item:active {
 	color:#fff;	text-decoration:none;	background-color:#2c3e50

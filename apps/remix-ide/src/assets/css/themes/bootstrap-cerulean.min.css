@@ -2833,9 +2833,10 @@ input[type=button].btn-block,input[type=reset].btn-block,input[type=submit].btn-
     border:0
 }
 .dropdown-item:focus,.dropdown-item:hover {
-    color:#fff;
-    text-decoration:none;
-    background-color:#2fa4e7
+    color: var(--text);
+    text-decoration: none;
+    background-color: var(--secondary);
+  }
 }
 .dropdown-item.active,.dropdown-item:active {
     color:#fff;
