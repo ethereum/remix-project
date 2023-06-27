@@ -160,7 +160,7 @@ export const TabsUI = (props: TabsUIProps) => {
           <button
             data-id='play-editor'
             className="btn text-success py-0"
-            disabled={!(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' || tabsState.currentExt === 'sol')}
+            disabled={!(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' || tabsState.currentExt === 'sol' || tabsState.currentExt === 'circom')}
             onClick={async () => {
               const path = active().substr(active().indexOf('/') + 1, active().length)
               const content = await props.plugin.call('fileManager', "readFile", path)
@@ -170,6 +170,10 @@ export const TabsUI = (props: TabsUIProps) => {
               } else if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul') {
                 await props.plugin.call('solidity', 'compile', path)
                 _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
+              } else if (tabsState.currentExt === 'circom') {
+                await props.plugin.call('circuit-compiler', 'compile', path)
+                console.log('called cricuit compiler: ', path)
+                _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
               }
             }}
           >
@@ -178,7 +182,7 @@ export const TabsUI = (props: TabsUIProps) => {
               tooltipId="overlay-tooltip-run-script"
               tooltipText={<span>
                 {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') ? "Run script (CTRL + SHIFT + S)" :
-                  tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul'? "Compile CTRL + S" : "Select .sol or .yul file to compile or a .ts or .js file and run it"}
+                  tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' || tabsState.currentExt === 'circom' ? "Compile CTRL + S" : "Select .sol or .yul file to compile or a .ts or .js file and run it"}
               </span>}
             >
               <i className="fad fa-play"></i>
