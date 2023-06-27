@@ -1,14 +1,11 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { ErrorRendererOptions } from '../../staticanalyser'
 
 type BasicTitleProps = {
   warningStateEntries: any
+  ssaWarnings: any[]
   hideWarnings?: boolean
   showLibsWarnings?: boolean
-  ssaWarnings: any[]
-  ssaWarningsNoLibs: any[]
-  ssaWarningsTotal: number
-  ssaWarningsNoLibsTotal: number
 }
 
 type warningResultOption = {
@@ -35,29 +32,22 @@ export function calculateWarningStateEntries(entries: [string, any][]) {
 }
 
 export function BasicTitle(props: BasicTitleProps) {
+  const [filteredTotal, setFilteredTotal] = useState(0)
+
+  useEffect(() => {
+    setFilteredTotal(props.ssaWarnings.filter(x => !x.options.isLibrary && x.hasWarning).length)
+  }, [props, props.ssaWarnings.filter(x => !x.options.isLibrary && x.hasWarning).length])
 
   return (
-    <span id="ssaRemixtab">
-      Remix
-      {props.ssaWarnings.length > 0 ? (
-        props.hideWarnings === false ? (
-          props.showLibsWarnings === false ? (
-            <span
-              data-id="RemixStaticAnalysisErrorCount"
-              className={`badge ${props.ssaWarningsNoLibsTotal > 0 ? "badge-warning"
-                  : props.ssaWarnings.filter(x => x.options.type === 'error').length > 0 ? "badge-danger"
-                  : "badge-info"
-              } badge-pill ml-1 px-1 text-center`}
-            >
-              {props.ssaWarnings.filter(x => !x.options.isLibrary).length}
-            </span>
-          ) : (
-            <span data-id="RemixStaticAnalysisErrorCount" className="badge badge-warning rounded-circle ml-1 text-center">
-              {props.ssaWarningsTotal}
-            </span>
-          )
-        ) : null
-      ) : null}
+    <span id="ssaRemixtab">Remix{props.ssaWarnings.length > 0 ? !props.hideWarnings ? !props.showLibsWarnings ? <span data-id="RemixStaticAnalysisErrorCount" className={`badge ${props.ssaWarnings.filter(x => x.hasWarning).length > 0 ? 'badge-warning' : props.ssaWarnings.filter(x => x.options.type === 'errors').length > 0 ? 'badge-danger' : 'badge-info'} badge-pill mx-1 ml-1 text-center`}>
+      {filteredTotal}
+    </span>: (
+      <i className="badge badge-warning badge-pill mx-1 ml-1 text-center">
+        {
+          props.ssaWarnings.length
+        }
+      </i>
+    ) : null : null}
     </span>
-  );
+  )
 }
