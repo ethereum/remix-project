@@ -219,7 +219,8 @@
     "wagmi": "^0.12.7",
     "web3": "^1.8.0",
     "winston": "^3.3.3",
-    "ws": "^7.3.0"
+    "ws": "^7.3.0",
+    "xterm-for-react": "^1.0.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.19.3",

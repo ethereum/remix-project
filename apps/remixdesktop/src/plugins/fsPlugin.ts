@@ -55,7 +55,7 @@ export class FSPlugin extends ElectronBasePlugin {
       }
     }else{
       console.log('no opened folders')
-      //createWindow()
+      createWindow()
     }
   }
 

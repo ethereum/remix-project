@@ -50,6 +50,7 @@ import { fsPlugin } from './app/plugins/electron/fsPlugin'
 import { isoGitPlugin } from './app/plugins/electron/isoGitPlugin'
 import { electronConfig } from './app/plugins/electron/electronConfigPlugin'
 import { electronTemplates } from './app/plugins/electron/templatesPlugin'
+import { xtermPlugin } from './app/plugins/electron/xtermPlugin'
 
 
 
@@ -340,6 +341,8 @@ class AppComponent {
       this.engine.register([electronConfigPlugin])
       const templatesPlugin = new electronTemplates()
       this.engine.register([templatesPlugin])
+      const xterm = new xtermPlugin()
+      this.engine.register([xterm])
     }
 
     // LAYOUT & SYSTEM VIEWS
@@ -458,7 +461,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if(isElectron()){
-      await this.appManager.activatePlugin(['fs', 'isogit', 'electronconfig', 'electronTemplates'])
+      await this.appManager.activatePlugin(['fs', 'isogit', 'electronconfig', 'electronTemplates', 'xterm'])
     }
 
     this.appManager.on(
