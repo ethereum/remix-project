@@ -42,7 +42,7 @@ export const searchProxy = {
     checkIfRgIsInstalled: async () => {
         try {
 
-            const result = await execAsync(`${rgDiskPath} 'remix'`, { cwd: process.cwd(), env: { PATH: process.env.PATH }});
+            const result = await execAsync(`${rgDiskPath} 'remix' ./`, { cwd: process.cwd(), env: { PATH: process.env.PATH }});
             console.log('rg --version', result.stdout)
             return result.stdout
         } catch (error) {
