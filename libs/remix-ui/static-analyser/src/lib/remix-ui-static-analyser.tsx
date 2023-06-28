@@ -484,7 +484,6 @@ useEffect(() => {
                             <span className="text-wrap">
                               {hint.formattedMessage}
                             </span>
-                            <span>{hint.type}</span>
                             <br />
                             <span>{`${hint.column}:${hint.line}`}</span>
                           </div>
