@@ -82,6 +82,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [slitherWarnings, setSlitherWarnings] = useState([])
   const [ssaWarnings, setSsaWarnings] = useState([])
 
+
   const warningContainer = useRef(null)
   const allWarnings = useRef({})
   const [state, dispatch] = useReducer(analysisReducer, initialState)
@@ -694,6 +695,7 @@ useEffect(() => {
             }).flat().every(el => categoryIndex.includes(el))}
             label="Remix"
             onClick={() => {
+              handleBasicEnabled()
               handleCheckAllModules(groupedModules)
             }}
             onChange={() => {}}
@@ -738,7 +740,7 @@ useEffect(() => {
               classList="btn btn-sm btn-primary btn-block"
               onClick={async () => await run(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
                 message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis, solhintEnabled, basicEnabled)}
-              disabled={(state.data === null || !isSupportedVersion)  || (!solhintEnabled && !basicEnabled) }
+              disabled={(state.data === null || !isSupportedVersion) || (!solhintEnabled && !basicEnabled) }
           />}
           {state && state.data !== null && state.source !== null && state.file.length > 0 ? (<div className="d-flex border-top flex-column">
             {slitherWarnings.length > 0 || hints.length > 0 || Object.entries(warningState).length > 0 ?  (
