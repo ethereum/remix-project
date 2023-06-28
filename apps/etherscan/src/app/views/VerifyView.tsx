@@ -52,19 +52,21 @@ export const VerifyView: React.FC<Props> = ({
   }, [client])
 
   useEffect(() => {
-    if (contracts.includes(selectedContract)) {
-      client.call("compilerArtefacts" as any, "getArtefactsByContractName", selectedContract).then((result) => {
-        const { artefact } = result
-        if (artefact && artefact.abi && artefact.abi[0] && artefact.abi[0].type && artefact.abi[0].type === 'constructor' && artefact.abi[0].inputs.length > 0) {
-          setConstructorInputs(artefact.abi[0].inputs)
-          setShowConstructorArgs(true)
-        } else {
-          setConstructorInputs([])
-          setShowConstructorArgs(false)
-        }
-      })
-    }
+    if (contracts.includes(selectedContract)) updateConsFields(selectedContract)
   }, [contracts])
+
+  const updateConsFields = (contractName) => {
+    client.call("compilerArtefacts" as any, "getArtefactsByContractName", contractName).then((result) => {
+      const { artefact } = result
+      if (artefact && artefact.abi && artefact.abi[0] && artefact.abi[0].type && artefact.abi[0].type === 'constructor' && artefact.abi[0].inputs.length > 0) {
+        setConstructorInputs(artefact.abi[0].inputs)
+        setShowConstructorArgs(true)
+      } else {
+        setConstructorInputs([])
+        setShowConstructorArgs(false)
+      }
+    })
+  }
 
   const onVerifyContract = async (values: FormValues) => {
     const compilationResult = (await client.call(
@@ -156,14 +158,7 @@ export const VerifyView: React.FC<Props> = ({
                 onChange={async (e) => {
                   handleChange(e)
                   setSelectedContract(e.target.value)
-                  const {artefact} = await client.call("compilerArtefacts" as any, "getArtefactsByContractName", e.target.value)
-                  if (artefact && artefact.abi && artefact.abi[0] && artefact.abi[0].type && artefact.abi[0].type === 'constructor' && artefact.abi[0].inputs.length > 0) {
-                    setConstructorInputs(artefact.abi[0].inputs)
-                    setShowConstructorArgs(true)
-                  } else {
-                    setConstructorInputs([])
-                    setShowConstructorArgs(false)
-                  }
+                  updateConsFields(e.target.value)
                 }}
               >
                 <option disabled={true} value="">
