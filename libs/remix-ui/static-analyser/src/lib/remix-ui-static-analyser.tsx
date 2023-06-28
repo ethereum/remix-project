@@ -698,13 +698,6 @@ useEffect(() => {
       }))
     }).flat().every(el => categoryIndex.includes(el))
   }
-  useEffect(() => {
-    const getLastCompiled = async () => {
-      const lastComp = await props.analysisModule.call('compilerArtefacts', 'getLastCompilationResult')
-      console.log({ lastComp })
-    }
-    getLastCompiled()
-  }, [props, state])
   return (
     <div className="analysis_3ECCBV px-3 pb-1">
       <div className="my-2 d-flex flex-column align-items-left">

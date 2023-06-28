@@ -85,10 +85,14 @@ export class SolHint extends PluginClient {
     const reports: Array<Report> = reporters.reports
     const hints = reports.map((report: Report) => {
       return {
-        formattedMessage: `${report.message}\n${report.fix ? report.fix : ''}`,
+        formattedMessage: `${report.message}\n ${report.fix ? report.fix : ''}`,
         type: this.severity[report.severity] || 'error',
         column: report.column,
-        line: report.line - 1
+        line: report.line - 1,
+        message: report.message,
+        ruleId: report.ruleId,
+        severity: report.severity,
+        fix: report.fix
       }
     })
 
