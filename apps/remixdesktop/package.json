@@ -22,7 +22,7 @@
     "category": "public.app-category.productivity"
   },
   "scripts": {
-    "start:dev": "tsc && cross-env NODE_ENV=development electron .",
+    "start:dev": "tsc && cross-env NODE_ENV=development electron --inspect=5858 .",
     "start:production": "tsc && cross-env NODE_ENV=production electron .",
     "pack": "tsc && electron-builder",
     "dist": "tsc && electron-builder",

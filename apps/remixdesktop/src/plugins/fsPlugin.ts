@@ -241,7 +241,6 @@ class FSPluginClient extends ElectronBasePluginClient {
         ignorePermissionErrors: true, ignoreInitial: true,
         ignored: [
           '**/node_modules/**',
-          '**/.git/**',
         ]
       }).on('all', async (eventName, path, stats) => {
 
