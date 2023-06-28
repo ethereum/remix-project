@@ -94,12 +94,21 @@ class XtermPluginClient extends ElectronBasePluginClient {
 
         console.log('defaultShell', defaultShell)
 
+        // filter undefined out of the env
+        const env = Object.keys(process.env)
+            .filter(key => process.env[key] !== undefined)
+            .reduce((env, key) => {
+                env[key] = process.env[key] || '';
+                return env;
+            }, {} as Record<string, string>);
+            
+
         const ptyProcess = pty.spawn(shell, [], {
             name: 'xterm-color',
             cols: 80,
             rows: 20,
             cwd: path || process.cwd(),
-            //env: process.env
+            env: env
         });
 
         ptyProcess.onData((data: string) => {
