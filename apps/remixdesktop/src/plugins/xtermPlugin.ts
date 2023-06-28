@@ -55,7 +55,7 @@ const clientProfile: Profile = {
     name: 'xterm',
     displayName: 'xterm',
     description: 'xterm plugin',
-    methods: ['createTerminal', 'close', 'keystroke']
+    methods: ['createTerminal', 'close', 'keystroke', 'getShells']
 }
 
 class XtermPluginClient extends ElectronBasePluginClient {
@@ -65,12 +65,22 @@ class XtermPluginClient extends ElectronBasePluginClient {
         super(webContentsId, profile)
         this.onload(() => {
             console.log('XtermPluginClient onload')
+            this.emit('loaded')
         })
+    }
+
+    async onActivation(): Promise<void> {
+        console.log('XtermPluginClient onActivation')
     }
 
     async keystroke(key: string, pid: number): Promise<void> {
         this.terminals[pid].write(key)
     }
+
+    async getShells(): Promise<string[]> {
+        return [defaultShell]
+    }
+
 
     async createTerminal(path?: string): Promise<number> {
         const shell = defaultShell;

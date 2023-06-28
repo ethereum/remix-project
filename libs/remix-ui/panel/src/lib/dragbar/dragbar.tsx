@@ -16,15 +16,18 @@ const DragBar = (props: IRemixDragBarUi) => {
   const nodeRef = React.useRef(null) // fix for strictmode
 
   function stopDrag (e: MouseEvent, data: any) {
+    console.log('stopDrag', data)
     const h = window.innerHeight - data.y
     props.refObject.current.setAttribute('style', `height: ${h}px;`)
-    setDragBarPosY(window.innerHeight - props.refObject.current.offsetHeight)
+    console.log('stopDrag', `height: ${h}px;`)
+    setDragBarPosY(props.refObject.current.offsetTop)
     setDragState(false)
     props.setHideStatus(false)
   }
   const handleResize = () => {
+    console.log('handleResize', props.refObject.current)
     if (!props.refObject.current) return
-    setDragBarPosY(window.innerHeight - props.refObject.current.offsetHeight)
+    setDragBarPosY(props.refObject.current.offsetTop)
   }
 
   useEffect(() => {

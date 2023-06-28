@@ -91,7 +91,6 @@ const RemixApp = (props: IRemixAppUi) => {
           <DragBar resetTrigger={resetTrigger} maximiseTrigger={maximiseTrigger} minWidth={285} refObject={sidePanelRef} hidden={hideSidePanel} setHideStatus={setHideSidePanel}></DragBar>
           <div id="main-panel" data-id="remixIdeMainPanel" className='mainpanel d-flex'>
             <RemixUIMainPanel Context={AppContext}></RemixUIMainPanel>
-            <RemixUiXterminals plugin={props.app.appManager}></RemixUiXterminals>
             <CustomTooltip
               placement="bottom"
               tooltipId="overlay-tooltip-all-tabs"

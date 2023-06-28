@@ -138,7 +138,6 @@ class FSPluginClient extends ElectronBasePluginClient {
       withFileTypes: true,
       ...options
     })
-    console.log('glob', files)
     const result: any[] = []
 
     for (const file of files) {

@@ -9,6 +9,10 @@ export interface RemixUiXtermProps {
     send: (data: string, pid: number) => void
     timeStamp: number
     setTerminalRef: (pid: number, ref: any) => void
+    theme: {
+        backgroundColor: string
+        textColor: string
+    }
 }
 
 const RemixUiXterm = (props: RemixUiXtermProps) => {
@@ -38,8 +42,11 @@ const RemixUiXterm = (props: RemixUiXtermProps) => {
 
     return (
         <>
-            <button className='btn' onClick={closeTerminal}>close</button>
-            <XTerm ref={xtermRef} onData={onData} onKey={onKey}></XTerm>
+            <button className='btn d-none' onClick={closeTerminal}>close</button>
+            <XTerm 
+            options={{theme: {background: props.theme.backgroundColor , foreground: props.theme.textColor}}}
+            ref={xtermRef} onData={onData} 
+            onKey={onKey}></XTerm>
 
         </>
     )
