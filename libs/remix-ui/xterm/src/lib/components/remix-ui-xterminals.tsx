@@ -199,7 +199,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
                     <div className={`remix-ui-xterminals-section ${showOutput ? 'd-none' : 'd-flex'} `}>
                         {terminals.map((xtermState) => {
                             return (
-                                <div className={`xterm-terminal ${xtermState.hidden ? 'hide-xterm' : 'show-xterm'}`} key={xtermState.pid} data-id={`remixUIXT${xtermState.pid}`}>
+                                <div className={`h-100 xterm-terminal ${xtermState.hidden ? 'hide-xterm' : 'show-xterm'}`} key={xtermState.pid} data-id={`remixUIXT${xtermState.pid}`}>
                                     <RemixUiXterm theme={theme} setTerminalRef={setTerminalRef} timeStamp={xtermState.timeStamp} send={send} pid={xtermState.pid} plugin={plugin}></RemixUiXterm>
                                 </div>
                             )

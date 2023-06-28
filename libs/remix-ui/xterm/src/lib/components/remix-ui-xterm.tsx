@@ -1,7 +1,10 @@
 import React, { useState, useEffect, forwardRef } from 'react' // eslint-disable-line
 import { ElectronPlugin } from '@remixproject/engine-electron'
-import { XTerm } from 'xterm-for-react'
+import { Xterm } from './xterm-wrap'
+import { FitAddon } from './xterm-fit-addOn';
 
+
+const fitAddon = new FitAddon()
 
 export interface RemixUiXtermProps {
     plugin: ElectronPlugin
@@ -36,19 +39,16 @@ const RemixUiXterm = (props: RemixUiXtermProps) => {
         console.log('onData', data)
     }
 
-    const closeTerminal = () => {
-        plugin.call('xterm', 'close', pid)
-    }
-
     return (
-        <>
-            <button className='btn d-none' onClick={closeTerminal}>close</button>
-            <XTerm 
+        
+            <Xterm
+            addons={[fitAddon]} 
             options={{theme: {background: props.theme.backgroundColor , foreground: props.theme.textColor}}}
+            onRender={() => fitAddon.fit()}
             ref={xtermRef} onData={onData} 
-            onKey={onKey}></XTerm>
+            onKey={onKey}></Xterm>
 
-        </>
+        
     )
 
 }
