@@ -117,6 +117,10 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }, [])
 
   useEffect(() => {
+    props.event.trigger('staticAnalysisWarning', [-1])
+  }, [state])
+
+  useEffect(() => {
     const checkRemixdActive = async () => {
       const remixdActive = await props.analysisModule.call('manager', 'isActive', 'remixd')
       if (remixdActive) {
@@ -341,20 +345,21 @@ useEffect(() => {
     const slitherTotal = (slitherWarnings && state.data && state.source !== null  ? slitherWarnings.filter(x => !x.options.isLibrary && x.hasWarning).length : 0)
     const ssaTotal = ssaWarnings && state.data && state.source !== null ? ssaWarnings.filter(x => !x.options.isLibrary && x.hasWarning).length : 0
     const hintsTotal = hints && state.data && state.source !== null ? hints.length : 0
-    props.event.trigger('staticAnaysisWarning', [slitherTotal + ssaTotal + hintsTotal])
+    props.event.trigger('staticAnaysisWarning', [(slitherTotal + ssaTotal + hintsTotal) === 0 ? -1 : (slitherTotal + ssaTotal + hintsTotal)])
   }
   if(!hideWarnings && showLibsWarning) {
     props.event.trigger('staticAnaysisWarning', [
-      slitherWarnings.length
+      (slitherWarnings.length
       + ssaWarnings.length
-      + hints.length
-    ])
+      + hints.length) === 0 ? -1 : (slitherWarnings.length
+        + ssaWarnings.length
+        + hints.length)])
   }
   if(hideWarnings) {
     const slitherTotal = (slitherWarnings && state.data && state.source !== null ? slitherWarnings.filter(x => x.options.type === 'error').length : 0)
     const ssaTotal = ssaWarnings && state.data && state.source !== null ? ssaWarnings.filter(x => x.options.type === 'error').length : 0
     const hintsTotal = hints && state.data && state.source !== null ? hints.filter(x => x.type === 'error').length : 0
-    props.event.trigger('staticAnaysisWarning', [slitherTotal + ssaTotal + hintsTotal])
+    props.event.trigger('staticAnaysisWarning', [(slitherTotal + ssaTotal + hintsTotal) === 0 ? -1 : (slitherTotal + ssaTotal + hintsTotal)])
   }
 }, [hideWarnings, showLibsWarning])
 
@@ -366,7 +371,7 @@ useEffect(() => {
     ? ssaWarnings.filter((x) => !x.options.isLibrary && x.hasWarning).length
     : 0
   const hintsTotal = solhintEnabled && hints && state.data && state.source !== null ? hints.length : 0
-  props.event.trigger('staticAnaysisWarning', [slitherTotal + ssaTotal + hintsTotal])
+  props.event.trigger('staticAnaysisWarning', [(slitherTotal + ssaTotal + hintsTotal) === 0 ? -1 : (slitherTotal + ssaTotal + hintsTotal)])
 }, [hints.length, slitherWarnings.length, ssaWarnings.length])
 
 useEffect(() => {
@@ -377,7 +382,7 @@ useEffect(() => {
     ? ssaWarnings.filter((x) => !x.options.isLibrary && x.hasWarning).length
     : 0
   const hintsTotal = hints && solhintEnabled && state.data && state.source !== null ? hints.length : 0
-  props.event.trigger('staticAnaysisWarning', [slitherTotal + ssaTotal + hintsTotal])
+  props.event.trigger('staticAnaysisWarning', [(slitherTotal + ssaTotal + hintsTotal) === 0 ? -1 : (slitherTotal + ssaTotal + hintsTotal)])
 }, [solhintEnabled, basicEnabled, slitherEnabled, showSlither])
 
   const handleSlitherEnabled = async () => {
@@ -393,16 +398,20 @@ useEffect(() => {
   const handleBasicEnabled = () => {
     if (basicEnabled) {
       setBasicEnabled(false)
+      props.event.trigger('staticAnalysisWarning', [-1])
     } else {
       setBasicEnabled(true)
+      props.event.trigger('staticAnalysisWarning', [-1])
     }
   }
 
   const handleLinterEnabled = () => {
     if (solhintEnabled) {
       setSolhintEnabled(false)
+      props.event.trigger('staticAnalysisWarning', [-1])
     } else {
       setSolhintEnabled(true)
+      props.event.trigger('staticAnalysisWarning', [-1])
     }
   }
 
