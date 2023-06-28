@@ -52,13 +52,9 @@ export const VerifyView: React.FC<Props> = ({
   }, [client])
 
   useEffect(() => {
-    console.log('contracts are updated--->', contracts)
-    console.log('contracts are updated-selectedContract-->', selectedContract)
-
     if (contracts.includes(selectedContract)) {
-      console.log('contracts are updated-ShowConstructorArgs-->', showConstructorArgs)
-      client.call("compilerArtefacts" as any, "getArtefactsByContractName", selectedContract).then((artefact) => {
-        console.log('artefact----->', artefact)
+      client.call("compilerArtefacts" as any, "getArtefactsByContractName", selectedContract).then((result) => {
+        const { artefact } = result
         if (artefact && artefact.abi && artefact.abi[0] && artefact.abi[0].type && artefact.abi[0].type === 'constructor' && artefact.abi[0].inputs.length > 0) {
           setConstructorInputs(artefact.abi[0].inputs)
           setShowConstructorArgs(true)
