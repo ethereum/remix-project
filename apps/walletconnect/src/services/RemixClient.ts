@@ -1,7 +1,7 @@
 import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
 import { w3mConnectors, w3mProvider } from '@web3modal/ethereum'
-import { configureChains, createClient as wagmiCreateClient } from 'wagmi'
+import { configureChains, createConfig } from 'wagmi'
 import { arbitrum, arbitrumGoerli, mainnet, polygon, polygonMumbai, optimism, optimismGoerli, Chain, goerli, sepolia } from 'wagmi/chains'
 import { EthereumClient } from '@web3modal/ethereum'
 import EventManager from "events"
@@ -36,12 +36,12 @@ export class RemixClient extends PluginClient {
     async initClient () {
         try {
             this.chains = [arbitrum, arbitrumGoerli, mainnet, polygon, polygonMumbai, optimism, optimismGoerli, goerli, sepolia]
-            const { provider } = configureChains(this.chains, [w3mProvider({ projectId: PROJECT_ID })])
+            const { chains, publicClient } = configureChains(this.chains, [w3mProvider({ projectId: PROJECT_ID })])
             
-            this.wagmiClient = wagmiCreateClient({
+            this.wagmiClient = createConfig({
               autoConnect: false,
               connectors: w3mConnectors({ projectId: PROJECT_ID, version: 2, chains: this.chains }),
-              provider
+              publicClient
             })
             this.ethereumClient = new EthereumClient(this.wagmiClient, this.chains)
         } catch (e) {
@@ -86,12 +86,25 @@ export class RemixClient extends PluginClient {
                             reject(error)
                         })
                     }
-                } else {
+                } else if (this.wagmiClient.provider) {
                     this.wagmiClient.provider.send(data.method, data.params).then((message) => {
                         resolve({"jsonrpc": "2.0", "result": message, "id": data.id})
                     }).catch((error) => {
                         reject(error)
                     })
+                } else if (this.wagmiClient.connector && this.wagmiClient.connector.getProvider) {
+                    this.wagmiClient.connector.getProvider().then((provider) => {
+                        provider.request({ method: data.method, params: data.params }).then((message) => {
+                            const result = message.jsonrpc ? message.result : message
+                            resolve({"jsonrpc": "2.0", "result": result, "id": data.id})
+                        }).catch((error) => {
+                            reject(error)
+                        })
+                    }).catch((error) => {
+                        reject(error)
+                    })
+                } else {
+                    reject(new Error('wallet connect not connected'))
                 }
             } else {
                 console.error(`Cannot make ${data.method} request. Remix client is not connect to walletconnect client`)

@@ -22,32 +22,3 @@ interface FallbackProviderConfig {
   // this should be left as the default
   weight?: number;
 }
-
-export function customProvider<TChain extends Chain = Chain>({
-  priority,
-  stallTimeout,
-  weight,
-}: FallbackProviderConfig): ChainProviderFn<
-  TChain,
-  providers.Web3Provider,
-  providers.WebSocketProvider
-> {
-  return function (chain) {
-    return {
-      chain: {
-        ...chain,
-      } as TChain,
-      provider: () => {
-        const provider = new providers.Web3Provider(
-          window.ethereum,
-          {
-            chainId: chain.id,
-            name: chain.network,
-            ensAddress: chain.contracts?.ensRegistry?.address,
-          }
-        )
-        return Object.assign(provider, { priority, stallTimeout, weight })
-      }
-    }
-  }
-}
