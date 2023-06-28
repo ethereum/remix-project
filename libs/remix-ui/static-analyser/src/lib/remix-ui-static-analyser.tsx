@@ -16,6 +16,7 @@ import Tabs from 'react-bootstrap/Tabs'
 import { AnalysisTab, SolHintReport } from '../staticanalyser'
 import { run } from './actions/staticAnalysisActions'
 import { BasicTitle, calculateWarningStateEntries } from './components/BasicTitle'
+import { Nav, TabContainer } from 'react-bootstrap'
 
 declare global {
   interface Window {
@@ -30,6 +31,8 @@ export interface RemixUiStaticAnalyserProps {
   event: any,
   analysisModule: AnalysisTab
 }
+
+type tabSelectionType = 'remix' | 'solhint' | 'slither' | 'none'
 
 export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [runner] = useState(new CodeAnalysis())
@@ -81,6 +84,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [hints, setHints] = useState<SolHintReport[]>([])
   const [slitherWarnings, setSlitherWarnings] = useState([])
   const [ssaWarnings, setSsaWarnings] = useState([])
+  const [selectedTab, setSelectedTab] = useState<tabSelectionType>('remix')
 
 
   const warningContainer = useRef(null)
@@ -397,7 +401,11 @@ useEffect(() => {
 
   const handleBasicEnabled = () => {
     if (basicEnabled) {
+      console.log('remix is: ', { basicEnabled })
       setBasicEnabled(false)
+      if (solhintEnabled) {
+        setSelectedTab('solhint')
+      }
       props.event.trigger('staticAnalysisWarning', [-1])
     } else {
       setBasicEnabled(true)
@@ -430,7 +438,8 @@ useEffect(() => {
 
   const tabKeys = [
     {
-      tabKey: "linter",
+      tabKey: "solhint",
+      connectedState: solhintEnabled,
       child: (
         <>
           {hints.length > 0 ? (
@@ -545,7 +554,8 @@ useEffect(() => {
       ),
     },
     {
-      tabKey: "basic",
+      tabKey: "remix",
+      connectedState: basicEnabled,
       title: (
         <BasicTitle
           warningStateEntries={Object.entries(warningState)}
@@ -600,6 +610,7 @@ useEffect(() => {
     },
     {
       tabKey: "slither",
+      connectedState: slitherEnabled,
       title: (
         <span>
           Slither
@@ -687,7 +698,13 @@ useEffect(() => {
       }))
     }).flat().every(el => categoryIndex.includes(el))
   }
-
+  useEffect(() => {
+    const getLastCompiled = async () => {
+      const lastComp = await props.analysisModule.call('compilerArtefacts', 'getLastCompilationResult')
+      console.log({ lastComp })
+    }
+    getLastCompiled()
+  }, [props, state])
   return (
     <div className="analysis_3ECCBV px-3 pb-1">
       <div className="my-2 d-flex flex-column align-items-left">
@@ -740,8 +757,10 @@ useEffect(() => {
           {state.data && state.file.length > 0 && state.source ? <Button
               buttonText={`Analyse ${state.file}`}
               classList="btn btn-sm btn-primary btn-block"
-              onClick={async () => await run(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
-                message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis, solhintEnabled, basicEnabled)}
+              onClick={async () => {
+                await run(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
+                message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis, solhintEnabled, basicEnabled)
+              }}
               disabled={(state.data === null || !isSupportedVersion)  || (!solhintEnabled && !basicEnabled) }
           /> : <Button
               buttonText={`Analyze ${state.file}`}
@@ -752,14 +771,16 @@ useEffect(() => {
               disabled={(state.data === null || !isSupportedVersion) || (!solhintEnabled && !basicEnabled) }
           />}
           {state && state.data !== null && state.source !== null && state.file.length > 0 ? (<div className="d-flex border-top flex-column">
-            {slitherWarnings.length > 0 || hints.length > 0 || Object.entries(warningState).length > 0 ?  (
-              <div className={`mt-4 p-2 d-flex ${slitherWarnings.length > 0 || hints.length > 0 || Object.entries(warningState).length > 0 ? 'border-top' : ''} flex-column`}>
+            {slitherWarnings.length > 0 || hints.length > 0 || ssaWarnings.length > 0 ?  (
+              <div className={`mt-4 p-2 d-flex ${slitherWarnings.length > 0 || hints.length > 0 || ssaWarnings.length > 0 ? 'border-top' : ''} flex-column`}>
                 <span>Last results for:</span>
                   <span
                     className="text-break break-word word-break font-weight-bold"
                     id="staticAnalysisCurrentFile"
                   >
-                    {state.file}
+                    {
+                      state.file
+                    }
                   </span>
             </div>
             ) : null}
@@ -785,37 +806,37 @@ useEffect(() => {
                 onChange={() => {}}
               />
             </div>
-            <Tabs
+            <TabContainer
               defaultActiveKey={tabKeys[1].tabKey}
-              className="px-1"
+              activeKey={selectedTab}
+              onSelect={(tabKey: tabSelectionType) => {
+                setSelectedTab(tabKey)
+              }}
             >
-              {
-                checkBasicStatus() ? <Tab
-                  key={tabKeys[1].tabKey}
-                  title={tabKeys[1].title}
-                  eventKey={tabKeys[1].tabKey}
-                  tabClassName="text-decoration-none font-weight-bold px-2"
-                >
+              <Nav variant="tabs" className="px-1">
+                {checkBasicStatus() ? <Nav.Item>
+                  <Nav.Link className="text-decoration-none font-weight-bold px-2" eventKey={tabKeys[1].tabKey}>{tabKeys[1].title}</Nav.Link>
+                </Nav.Item> : null}
+                {solhintEnabled ? <Nav.Item className="text-decoration-none font-weight-bold px-2">
+                  <Nav.Link className="text-decoration-none font-weight-bold px-2" eventKey={tabKeys[0].tabKey}>{tabKeys[0].title}</Nav.Link>
+                </Nav.Item> : null}
+                {slitherEnabled && showSlither ? <Nav.Item className="text-decoration-none font-weight-bold px-2">
+                  <Nav.Link className="text-decoration-none font-weight-bold px-2" eventKey={tabKeys[2].tabKey}>{tabKeys[2].title}</Nav.Link>
+                </Nav.Item> : null}
+              </Nav>
+
+              <Tab.Content>
+                <Tab.Pane eventKey={tabKeys[1].tabKey}>
                   {tabKeys[1].child}
-                </Tab> : null
-              }
-              {solhintEnabled ? <Tab
-                key={tabKeys[0].tabKey}
-                title={tabKeys[0].title}
-                eventKey={tabKeys[0].tabKey}
-                tabClassName="text-decoration-none font-weight-bold px-2"
-              >
-                {tabKeys[0].child}
-              </Tab> : null}
-              { showSlither && slitherEnabled ? <Tab
-                key={tabKeys[2].tabKey}
-                title={tabKeys[2].title}
-                eventKey={tabKeys[2].tabKey}
-                tabClassName="text-decoration-none font-weight-bold px-2"
-              >
-                {tabKeys[2].child}
-              </Tab> : null }
-            </Tabs>
+                </Tab.Pane>
+                <Tab.Pane eventKey={tabKeys[0].tabKey}>
+                  {tabKeys[0].child}
+                </Tab.Pane>
+                <Tab.Pane eventKey={tabKeys[2].tabKey}>
+                  {tabKeys[2].child}
+                </Tab.Pane>
+              </Tab.Content>
+            </TabContainer>
           </div>) : null}
         </div>
       </div>
