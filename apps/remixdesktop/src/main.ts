@@ -96,6 +96,7 @@ import WindowMenu from './menus/window';
 import EditMenu from './menus/edit';
 import GitMenu from './menus/git';
 import ViewMenu from './menus/view';
+import TerminalMenu from './menus/terminal';
 import { execCommand } from './menus/commands';
 
 

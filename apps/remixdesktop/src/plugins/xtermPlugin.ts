@@ -6,27 +6,27 @@ import os from 'os';
 import * as pty from "node-pty"
 
 import process from 'node:process';
-import {userInfo} from 'node:os';
+import { userInfo } from 'node:os';
 
 export const detectDefaultShell = () => {
-	const {env} = process;
+    const { env } = process;
 
-	if (process.platform === 'win32') {
-		return env.SHELL || 'powershell.exe';
-	}
+    if (process.platform === 'win32') {
+        return env.SHELL || 'powershell.exe';
+    }
 
-	try {
-		const {shell} = userInfo();
-		if (shell) {
-			return shell;
-		}
-	} catch {}
+    try {
+        const { shell } = userInfo();
+        if (shell) {
+            return shell;
+        }
+    } catch { }
 
-	if (process.platform === 'darwin') {
-		return env.SHELL || '/bin/zsh';
-	}
+    if (process.platform === 'darwin') {
+        return env.SHELL || '/bin/zsh';
+    }
 
-	return env.SHELL || '/bin/sh';
+    return env.SHELL || '/bin/sh';
 };
 
 // Stores default shell when imported.
@@ -47,6 +47,13 @@ export class XtermPlugin extends ElectronBasePlugin {
     clients: XtermPluginClient[] = []
     constructor() {
         super(profile, clientProfile, XtermPluginClient)
+    }
+
+    new(webContentsId: any): void {
+        const client = this.clients.find(c => c.webContentsId === webContentsId)
+        if (client) {
+            client.new()
+        }
     }
 
 }
@@ -112,6 +119,9 @@ class XtermPluginClient extends ElectronBasePluginClient {
 
     async sendData(data: string, pid: number) {
         this.emit('data', data, pid)
+    }
+
+    async new(): Promise<void> {
     }
 
 }

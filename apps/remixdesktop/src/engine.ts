@@ -36,6 +36,12 @@ ipcMain.on('fs:openFolder', async (event) => {
   fsPlugin.openFolder(event)
 })
 
+
+ipcMain.on('terminal:new', async (event) => {
+  console.log('terminal:new', event)
+  xtermPlugin.new(event)
+})
+
 ipcMain.on('template:open', async (event) => {
   console.log('template:open', event)
   templatesPlugin.openTemplate(event)
