@@ -730,14 +730,14 @@ useEffect(() => {
               buttonText={`Analyse ${state.file}`}
               classList="btn btn-sm btn-primary btn-block"
               onClick={async () => await run(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
-                message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis, solhintEnabled)}
+                message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis, solhintEnabled, basicEnabled)}
               disabled={(state.data === null || !isSupportedVersion)  || (!solhintEnabled && !basicEnabled) }
           /> : <Button
               buttonText={`Analyze ${state.file}`}
               title={`${runButtonTitle}`}
               classList="btn btn-sm btn-primary btn-block"
               onClick={async () => await run(state.data, state.source, state.file, state , props, isSupportedVersion, showSlither, categoryIndex, groupedModules, runner,_paq,
-                message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis, solhintEnabled)}
+                message, showWarnings, allWarnings, warningContainer, calculateWarningStateEntries, warningState, setHints, hints, setSlitherWarnings, setSsaWarnings, slitherEnabled, setStartAnalysis, solhintEnabled, basicEnabled)}
               disabled={(state.data === null || !isSupportedVersion)  || (!solhintEnabled && !basicEnabled) }
           />}
           {state && state.data !== null && state.source !== null && state.file.length > 0 ? (<div className="d-flex border-top flex-column">

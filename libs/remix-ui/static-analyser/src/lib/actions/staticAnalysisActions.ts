@@ -44,18 +44,20 @@ export const compilation = (analysisModule: AnalysisTab,
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function run (lastCompilationResult, lastCompilationSource, currentFile: string, state: RemixUiStaticAnalyserState, props: RemixUiStaticAnalyserProps, isSupportedVersion, showSlither, categoryIndex: number[], groupedModules, runner, _paq, message, showWarnings, allWarnings: React.RefObject<any>, warningContainer: React.RefObject<any>, calculateWarningStateEntries: (e:[string, any][]) => {length: number, errors: any[] }, warningState, setHints: React.Dispatch<React.SetStateAction<SolHintReport[]>>, hints: SolHintReport[], setSlitherWarnings: React.Dispatch<React.SetStateAction<any[]>>, setSsaWarnings: React.Dispatch<React.SetStateAction<any[]>>,
-slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<boolean>>, solhintEnabled: boolean) {
+slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<boolean>>, solhintEnabled: boolean, basicEnabled: boolean) {
   setStartAnalysis(true)
   setHints([])
   setSsaWarnings([])
   setSlitherWarnings([])
   if (!isSupportedVersion) return
   if (state.data !== null) {
-    if (lastCompilationResult && (categoryIndex.length > 0 || showSlither)) {
+    if (lastCompilationResult && (solhintEnabled || basicEnabled || showSlither)) {
+      console.log('run analysis')
       const warningMessage = []
       const warningErrors = []
       props.analysisModule.hints = []
         // Run solhint
+        console.log('solhint about to start')
         _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'solHint'])
         const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
         props.analysisModule.hints = solhintEnabled === false ? 0 : hintsResult
