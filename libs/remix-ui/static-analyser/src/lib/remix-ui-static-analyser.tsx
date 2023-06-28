@@ -125,6 +125,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   }, [state])
 
   useEffect(() => {
+    props.analysisModule.on('solidity', 'compilationFinished', (fileName, source, languageVersion, data) => {
+      setHints([])
+      setSlitherWarnings([])
+      setSsaWarnings([])
+    })
+  }, [state])
+
+  useEffect(() => {
     const checkRemixdActive = async () => {
       const remixdActive = await props.analysisModule.call('manager', 'isActive', 'remixd')
       if (remixdActive) {
