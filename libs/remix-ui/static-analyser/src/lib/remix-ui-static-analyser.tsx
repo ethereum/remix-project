@@ -512,7 +512,7 @@ useEffect(() => {
                 </Fragment>
               </div>
             </div>
-          ) : state.data && state.file.length > 0 && state.source && startAnalysis && hints.length > 0 ? <span className="ml-4 spinner-grow-sm d-flex justify-content-center">Loading...</span> : <span className="display-6 text-center">Nothing to report</span>}
+          ) : state.data && state.file.length > 0 && state.source && startAnalysis && hints.length > 0 ? <span className="ml-4 spinner-grow-sm d-flex justify-content-center">Loading...</span> : <span className="display-6 text-center"></span>}
         </>
       ),
       title: (
@@ -584,7 +584,7 @@ useEffect(() => {
                   </div>
               </div>
             </div>
-          ) : state.data && state.file.length > 0 && state.source && startAnalysis && Object.entries(warningState).length > 0 ? <span className="ml-4 spinner-grow-sm d-flex justify-content-center">Loading...</span> : <span className="display-6 text-center">Nothing to report</span>}
+          ) : state.data && state.file.length > 0 && state.source && startAnalysis && Object.entries(warningState).length > 0 ? <span className="ml-4 spinner-grow-sm d-flex justify-content-center">Loading...</span> : <span className="display-6 text-center"></span>}
         </>
       ),
     },
@@ -664,7 +664,7 @@ useEffect(() => {
                 </Fragment>
               </div>
             </div>
-          ) : state.data && state.file.length > 0 && state.source && startAnalysis && slitherWarnings.length > 0 ? <span className="ml-4 spinner-grow-sm d-flex justify-content-center">Loading...</span> : <span className="display-6 text-center">Nothing to report</span>}
+          ) : state.data && state.file.length > 0 && state.source && startAnalysis && slitherWarnings.length > 0 ? <span className="ml-4 spinner-grow-sm d-flex justify-content-center">Loading...</span> : <span className="display-6 text-center"></span>}
         </>
       ),
     },
