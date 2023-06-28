@@ -1,3 +1,4 @@
+import { CompilationResult, SourceWithTarget } from "@remixproject/plugin-api"
 import { RemixUiStaticAnalyserReducerActionType, RemixUiStaticAnalyserState } from "../../staticanalyser"
 
 export const initialState: RemixUiStaticAnalyserState = {
@@ -26,3 +27,12 @@ export const analysisReducer = (state: RemixUiStaticAnalyserState,
       return initialState
   }
 }
+
+type someReducerState = {
+  solhintEnabled?: boolean
+  basicEnabled?: boolean
+  slitherEnabled?: boolean
+  isSupportedVersion?: boolean
+  compiledState?: { data: CompilationResult, langVersion: string, fileName: string, source: SourceWithTarget, input: string }
+}
+
