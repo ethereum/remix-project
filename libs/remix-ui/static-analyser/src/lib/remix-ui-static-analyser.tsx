@@ -409,7 +409,6 @@ useEffect(() => {
 
   const handleBasicEnabled = () => {
     if (basicEnabled) {
-      console.log('remix is: ', { basicEnabled })
       setBasicEnabled(false)
       if (solhintEnabled) {
         setSelectedTab('solhint')
@@ -424,6 +423,9 @@ useEffect(() => {
   const handleLinterEnabled = () => {
     if (solhintEnabled) {
       setSolhintEnabled(false)
+      if (basicEnabled) {
+        setSelectedTab('remix')
+      }
       props.event.trigger('staticAnalysisWarning', [-1])
     } else {
       setSolhintEnabled(true)
