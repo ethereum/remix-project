@@ -2835,8 +2835,7 @@ input[type=button].btn-block,input[type=reset].btn-block,input[type=submit].btn-
 .dropdown-item:focus,.dropdown-item:hover {
     color: var(--text);
     text-decoration: none;
-    background-color: var(--secondary);
-  }
+    background-color: var(--secondary);  
 }
 .dropdown-item.active,.dropdown-item:active {
     color:#fff;
