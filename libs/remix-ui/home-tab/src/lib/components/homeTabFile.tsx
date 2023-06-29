@@ -293,7 +293,7 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
           { !(state.recentWorkspaces.first == '' &&
               state.recentWorkspaces.second == '' &&
               state.recentWorkspaces.third == '') && 
-          <div className='d-flex flex-column'>
+            <div className='d-flex flex-column'>
             <label style={{fontSize: "0.8rem"}} className='mt-3'>Recent workspaces</label>
             {(state.recentWorkspaces.first !== 'undefined' && state.recentWorkspaces.first !== '') && <a
               className='cursor-pointer mb-1 ml-2'
@@ -310,7 +310,8 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
               href="#"
               onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces.third)}>{state.recentWorkspaces.third}
             </a> }
-          </div> }
+            </div>
+          }
         </div>
         <label style={{fontSize: "0.8rem"}} className="pt-3"><FormattedMessage id='home.loadFrom' /></label>
         <div className="d-flex">
