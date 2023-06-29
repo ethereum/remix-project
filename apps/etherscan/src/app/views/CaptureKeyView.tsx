@@ -23,6 +23,8 @@ export const CaptureKeyView: React.FC = () => {
             const errors = {} as any
             if (!values.apiKey) {
               errors.apiKey = "Required"
+            } else if (values.apiKey.length !== 34) {
+              errors.apiKey = "API key should be 34 characters long"
             }
             return errors
           }}
@@ -32,7 +34,7 @@ export const CaptureKeyView: React.FC = () => {
               setAPIKey(values.apiKey)
               clientInstance.call('notification' as any, 'toast', 'API key saved successfully!!!')
               navigate((location && location.state ? location.state : '/'))
-            } else clientInstance.call('notification' as any, 'toast', 'API key should be 34 characters long')
+            }
           }}
         >
           {({ errors, touched, handleSubmit }) => (
@@ -57,7 +59,7 @@ export const CaptureKeyView: React.FC = () => {
               </div>
 
               <div>
-                <SubmitButton text="Save" dataId="save-api-key" disable={false} />
+                <SubmitButton text="Save" dataId="save-api-key" disable={ errors && errors.apiKey ? true : false } />
               </div>
             </form>
           )}
