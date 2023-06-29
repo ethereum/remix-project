@@ -37,15 +37,6 @@ class AnalysisTab extends ViewPlugin {
         'offsettolinecolumnconverter').api
     }
     this.dispatch = null
-    /**
-     * @type {Array<{
-      formattedMessage: string;
-      type: "warning" | "error";
-      column: number;
-      line: number;
-    }>}
-     * @description Array of objects containing the results of Linting
-     */
     this.hints = []
   }
 
@@ -70,9 +61,10 @@ class AnalysisTab extends ViewPlugin {
       }
 
       if (count > 0) {
-        this.emit('statusChanged', { key: count, title: `${count} warning${count === 1 ? '' : 's'}`, type: payloadType })
+        // this.emit('statusChanged', { key: count, title: `${count} warning${count === 1 ? '' : 's'}`, type: payloadType })
+        this.emit('statusChanged', { key: count, title: payloadType === 'error' ? `You have some problem${count === 1 ? '' : 's'}` : 'You have some warnings', type: payloadType })
       } else if (count === 0) {
-        this.emit('statusChanged', { key: 'succeed', title: 'no warning', type: 'success' })
+        this.emit('statusChanged', { key: 'succeed', title: 'no warnings or errors', type: 'success' })
       } else {
         // count ==-1 no compilation result
         this.emit('statusChanged', { key: 'none' })
