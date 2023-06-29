@@ -75,7 +75,7 @@ function Badge ({ badgeStatus }: BadgeProps) {
         </CustomTooltip>
       ) : null}
     </>
-  );
+  )
 }
 
 export default Badge
