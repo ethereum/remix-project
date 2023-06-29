@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 
 import { Formik, ErrorMessage, Field } from "formik"
 import { useNavigate, useLocation } from "react-router-dom"
@@ -9,15 +9,14 @@ import { SubmitButton } from "../components"
 export const CaptureKeyView: React.FC = () => {
   const location = useLocation()
   const navigate = useNavigate()
+  const [msg, setMsg] = useState("") 
   return (
     <AppContext.Consumer>
       {({ apiKey, clientInstance, setAPIKey }) => {
-        if (!apiKey && clientInstance && clientInstance.call) {
-          clientInstance.call('sidePanel' as any, 'currentFocus').then((current) => {
-            if (current === 'etherscan') clientInstance.call('notification' as any, 'toast', 'Please add API key to continue')
-          })
-        }
-        return <Formik
+        if (!apiKey) setMsg('Please add API key to continue. It should be 34 characters long')
+        return (
+        <div>
+        <Formik
           initialValues={{ apiKey }}
           validate={(values) => {
             const errors = {} as any
@@ -32,7 +31,6 @@ export const CaptureKeyView: React.FC = () => {
             const apiKey = values.apiKey
             if (apiKey.length === 34) {
               setAPIKey(values.apiKey)
-              clientInstance.call('notification' as any, 'toast', 'API key saved successfully!!!')
               navigate((location && location.state ? location.state : '/'))
             }
           }}
@@ -59,11 +57,20 @@ export const CaptureKeyView: React.FC = () => {
               </div>
 
               <div>
-                <SubmitButton text="Save" dataId="save-api-key" disable={ errors && errors.apiKey ? true : false } />
+                <SubmitButton text="Save" dataId="save-api-key" disable={errors && errors.apiKey ? true : false } />
               </div>
             </form>
           )}
         </Formik>
+
+        <div
+          data-id="api-key-result"
+          className="text-primary mt-4 text-center"
+          style={{fontSize: "0.8em"}}
+          dangerouslySetInnerHTML={{ __html: msg }}
+        />
+        </div>
+        )
       }}
     </AppContext.Consumer>
   )
