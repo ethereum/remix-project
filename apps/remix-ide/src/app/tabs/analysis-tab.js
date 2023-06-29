@@ -49,14 +49,6 @@ class AnalysisTab extends ViewPlugin {
 
     this.event.register('staticAnaysisWarning', (count) => {
       let payloadType = ''
-
-      // this.hints && this.hints.length > 0 ? this.hints.forEach(hint => {
-      //   if (hint.type === 'error') {
-      //     payloadType = 'error'
-      //   } else if (hint.type === 'warning' && payloadType !== 'error') {
-      //     payloadType = 'warning'
-      //   }
-      // }) : payloadType = 'warning'
       const error = this.hints.find(hint => hint.type === 'error')
       const warning = this.hints.find(hints => hints.type === 'warning')
       if (error) {
@@ -66,7 +58,6 @@ class AnalysisTab extends ViewPlugin {
       }
 
       if (count > 0) {
-        // this.emit('statusChanged', { key: count, title: `${count} warning${count === 1 ? '' : 's'}`, type: payloadType })
         this.emit('statusChanged', { key: count, title: payloadType === 'error' ? `You have some problem${count === 1 ? '' : 's'}` : 'You have some warnings', type: payloadType })
       } else if (count === 0) {
         this.emit('statusChanged', { key: 'succeed', title: 'no warnings or errors', type: 'success' })
