@@ -52,20 +52,14 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
   if (!isSupportedVersion) return
   if (state.data !== null) {
     if (lastCompilationResult && (solhintEnabled || basicEnabled || showSlither)) {
-      console.log('run analysis')
       const warningMessage = []
       const warningErrors = []
       props.analysisModule.hints = []
         // Run solhint
-        console.log('solhint about to start')
         _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'solHint'])
         const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
         props.analysisModule.hints = solhintEnabled === false ? 0 : hintsResult
         setHints(hintsResult)
-      // const warningResult = calculateWarningStateEntries(Object.entries(warningState))
-      //   props.analysisModule.emit('statusChanged', { key: hints.length+warningResult.length,
-      // title: `${hints.length+warningResult.length} warning${hints.length+warningResult.length === 1 ? '' : 's'}`, type: 'warning'})
-
       // Remix Analysis
       _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'remixAnalyzer'])
       const results = runner.run(lastCompilationResult, categoryIndex)
