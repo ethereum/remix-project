@@ -25,7 +25,7 @@ Once ready to run, it can be run using the Node.js: `node build-qa-doc.js`
 Once testing is completed, release will start by publishing `remixd`.if required, `remixd` can be also released individually
 
  - Bump version for remixd in `./libs/remixd/package.json`
- - Run: `nx build remixd`
+ - Run: `yarn build remixd`
  - Move to build directory: `cd ./dist/libs/remixd`
  - Publish to NPM: `npm publish` (Make sure you are logged in to NPM)
  - create bump PR to master
