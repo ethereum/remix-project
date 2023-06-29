@@ -48,18 +48,32 @@ function Badge ({ badgeStatus }: BadgeProps) {
 
   return (
     <>
-      {
-        badgeStatus && checkStatusKeyValue(badgeStatus.key, badgeStatus.type) ? (
-            <i
-              className={`${resolveClasses(badgeStatus.key, badgeStatus.type!)}`}
-              aria-hidden="true"
-            >
-                  { badgeStatus.pluginName && badgeStatus.pluginName === 'solidityStaticAnalysis' ? badgeStatus.type === 'warning' || badgeStatus.type === 'error' ? <span>
-                    <i className="far fa-exclamation-triangle"></i></span>
-                    : <span>&nbsp;</span> : badgeStatus.text }
-            </i>
-        ) : null
-      }
+      {badgeStatus && checkStatusKeyValue(badgeStatus.key, badgeStatus.type) ? (
+        <CustomTooltip
+          placement={"right"}
+          tooltipClasses="text-nowrap"
+          tooltipId="verticalItemsbadge"
+          tooltipText={badgeStatus.title}
+        >
+          <i
+            className={`${resolveClasses(badgeStatus.key, badgeStatus.type!)}`}
+            aria-hidden="true"
+          >
+            {badgeStatus.pluginName &&
+              badgeStatus.pluginName === "solidityStaticAnalysis" ? (
+                badgeStatus.type === "warning" || badgeStatus.type === "error" || badgeStatus.type === "danger" ? (
+                  <span>
+                    <i className="far fa-exclamation-triangle"></i>
+                  </span>
+                ) : (
+                <span>&nbsp;</span>
+                )
+              ) : (
+              badgeStatus.text
+            )}
+          </i>
+        </CustomTooltip>
+      ) : null}
     </>
   )
 }
