@@ -701,20 +701,20 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   hints.filter((x) => x.type === "error").length > 0
                     ? `badge-danger`
                     : "badge-warning"
-                } rounded-circle ml-1 text-center`}
+                } badge-pill mx-1 ml-1 text-center`}
               >
                 {hintErrors.length}
               </i>
             ) : (
-              <i
+              <span
                 className={`badge ${
                   hints.filter((x) => x.type === "error").length > 0
                     ? `badge-danger`
                     : "badge-warning"
-                } rounded-circle ml-1 text-center`}
+                } badge-pill ml-1 text-center`}
               >
                 {hints.length}
-              </i>
+              </span>
             )
           ) : null}
         </span>
@@ -797,25 +797,25 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           Slither
           {slitherWarnings.length > 0 ? (
             hideWarnings ? (
-              <i className="badge badge-warning badge-pill mx-1 ml-1">
+              <span className="badge badge-warning badge-pill mx-1 ml-1">
                 {slitherErrors.length}
-              </i>
+              </span>
             ) : showLibsWarning && !hideWarnings ? (
-              <i
+              <span
                 className={`badge ${
                   slitherErrors.length > 0 ? `badge-danger` : "badge-warning"
                 } badge-pill mx-1 ml-1 text-center`}
               >
                 {slitherWarnings.length}
-              </i>
+              </span>
             ) : (
-              <i
+              <span
                 className={`badge ${
                   slitherErrors.length > 0 ? `badge-danger` : "badge-warning"
                 } badge-pill mx-1 ml-1 text-center`}
               >
                 {noLibSlitherWarnings.length}
-              </i>
+              </span>
             )
           ) : null}
         </span>
