@@ -11,7 +11,7 @@ contract test1 { address test = tx.origin; }
 contract test2 {}
 contract TooMuchGas {
   uint x;
-  fallback() external { 
+  fallback() external {
       x++;
     uint test;
     uint test1;
@@ -43,18 +43,18 @@ module.exports = {
     .click('*[id="staticAnalysisRunBtn"]')
     .waitForElementPresent('#staticanalysisresult .warning', 5000)
     // Check warning count
-    .click('*[data-rb-event-key="basic"]')
-    .assert.containsText('*[data-id="StaticAnalysisErrorCount"]', '1')
+    .click('*[data-rb-event-key="remix"]')
+    .assert.containsText('span#ssaRemixtab > *[data-id="RemixStaticAnalysisErrorCount"]', '1')
     .verify.elementPresent('input[name="showLibWarnings"]')
     .verify.not.elementPresent('input[name="showLibWarnings"]:checked')
     .verify.elementPresent('label[id="headingshowLibWarnings"]')
     .click('label[id="headingshowLibWarnings"]')
     .pause(1000)
-    .click('*[data-rb-event-key="basic"]')
-    .assert.containsText('*[data-id="StaticAnalysisErrorCount"]', '382')
+    .click('*[data-rb-event-key="remix"]')
+    .assert.containsText('span#ssaRemixtab > *[data-id="RemixStaticAnalysisErrorCount', '382')
     .click('label[id="headingshowLibWarnings"]')
     .pause(1000)
-    .assert.containsText('*[data-id="StaticAnalysisErrorCount"]', '1')
+    .assert.containsText('span#ssaRemixtab > *[data-id="RemixStaticAnalysisErrorCount', '1')
     .end()
   }
 }

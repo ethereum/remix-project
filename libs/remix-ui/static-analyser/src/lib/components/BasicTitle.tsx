@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { ErrorRendererOptions } from '../../staticanalyser'
 
 type BasicTitleProps = {
   warningStateEntries: any
+  ssaWarnings: any[]
   hideWarnings?: boolean
+  showLibsWarnings?: boolean
 }
 
 type warningResultOption = {
@@ -30,15 +32,22 @@ export function calculateWarningStateEntries(entries: [string, any][]) {
 }
 
 export function BasicTitle(props: BasicTitleProps) {
+  const [filteredTotal, setFilteredTotal] = useState(0)
+
+  useEffect(() => {
+    setFilteredTotal(props.ssaWarnings.filter(x => !x.options.isLibrary && x.hasWarning).length)
+  }, [props, props.ssaWarnings.filter(x => !x.options.isLibrary && x.hasWarning).length])
 
   return (
-    <span>Remix{props.warningStateEntries.length > 0 ?   !props.hideWarnings ? <i data-id="StaticAnalysisErrorCount" className={`badge ${calculateWarningStateEntries(props.warningStateEntries).length > 0 ? 'badge-warning' : 'badge-danger'} rounded-circle ml-1 text-center`}>{calculateWarningStateEntries(props.warningStateEntries).length}</i>: (
-      <i className="badge badge-warning rounded-circle ml-1 text-center">
+    <span id="ssaRemixtab">Remix{props.ssaWarnings.length > 0 ? !props.hideWarnings ? !props.showLibsWarnings ? <span data-id="RemixStaticAnalysisErrorCount" className={`badge ${props.ssaWarnings.filter(x => x.hasWarning).length > 0 ? 'badge-warning' : props.ssaWarnings.filter(x => x.options.type === 'errors').length > 0 ? 'badge-danger' : 'badge-info'} badge-pill mx-1 ml-1 text-center`}>
+      {filteredTotal}
+    </span>: (
+      <span data-id="RemixStaticAnalysisErrorCount" className={`badge ${props.ssaWarnings.filter(x => x.options.type !== 'warning' && x.options.type !== 'error').length > 0 ? 'badge-info' : props.ssaWarnings.filter(x => x.options.type === 'errors').length > 0 ? 'badge-danger' : 'badge-warning'} badge-pill mx-1 ml-1 text-center`}>
         {
-          calculateWarningStateEntries(props.warningStateEntries).errors.length
+          props.ssaWarnings.length
         }
-      </i>
-    ) : null}
+      </span>
+    ) : null : null}
     </span>
   )
 }

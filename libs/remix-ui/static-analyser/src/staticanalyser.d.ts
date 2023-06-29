@@ -4,21 +4,29 @@ import { ViewPlugin } from '@remixproject/engine-web';
 import { EventEmitter } from 'events';
 import Registry from '../state/registry';
 export declare class AnalysisTab extends ViewPlugin {
-    event: EventManager;
-    events: EventEmitter;
-    registry: Registry;
-    element: HTMLDivElement;
-    _components: any;
-    _deps: {
-        offsetToLineColumnConverter: any;
-    };
-    dispatch: any;
-    constructor();
-    onActivation(): Promise<void>;
-    setDispatch(dispatch: any): void;
-    render(): JSX.Element;
-    updateComponent(state: any): JSX.Element;
-    renderComponent(): void;
+  event: EventManager;
+  events: EventEmitter;
+  hints: {
+    formattedMessage: string;
+    type: any;
+    column: number;
+    line: number;
+  }[]
+  internalCount: number
+  registry: Registry;
+  element: HTMLDivElement;
+  _components: any;
+  _deps: {
+    offsetToLineColumnConverter: any;
+  };
+  dispatch: any;
+  constructor();
+  onActivation(): Promise<void>;
+  changedStatus(payload: any[]): Promise<void>;
+  setDispatch(dispatch: any): void;
+  render(): JSX.Element;
+  updateComponent(state: any): JSX.Element;
+  renderComponent(): void;
 }
 
 type RemixUiStaticAnalyserState = {
@@ -51,10 +59,10 @@ type RemixUiStaticAnalyserReducerActionType = {
 
 interface ErrorRendererProps {
   message: any;
-  opt: ErrorRendererOptions,
-  warningErrors: any
+  options: ErrorRendererOptions,
+  hasWarning: boolean,
   editor: any,
-  name: string,
+  warningModuleName: string,
 }
 
 type ErrorRendererOptions = {
