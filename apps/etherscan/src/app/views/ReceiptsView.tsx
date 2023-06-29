@@ -64,11 +64,6 @@ export const ReceiptsView: React.FC = () => {
   return (
     <AppContext.Consumer>
       {({ apiKey, clientInstance, receipts, setReceipts }) => {
-        if (!apiKey && clientInstance && clientInstance.call) {
-          clientInstance.call('sidePanel' as any, 'currentFocus').then((current) => {
-            if (current === 'etherscan') clientInstance.call('notification' as any, 'toast', 'Please add API key to continue')
-          })
-        }
         return !apiKey ? (
           <Navigate
             to={{
