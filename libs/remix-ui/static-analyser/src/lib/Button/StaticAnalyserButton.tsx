@@ -1,5 +1,6 @@
 import { CustomTooltip } from '@remix-ui/helper'
 import React from 'react'  //eslint-disable-line
+import '../ssa.css'
 
 interface StaticAnalyserButtonProps {
   onClick: (event) => void
@@ -21,7 +22,12 @@ const StaticAnalyserButton = ({
   classList.length === 0 && disabled ? `${defaultStyle} disabled` : classList.length > 0 ? `${classList}` : defaultStyle
 
   const buttonWithoutTooltip = () => (
-    <button id="staticAnalysisRunBtn" className={newclassList} disabled={disabled} onClick={onClick}>
+    <button
+      id="staticAnalysisRunBtn"
+      className={newclassList}
+      disabled={disabled}
+      onClick={onClick}
+    >
       <span className="pl-3 pr-4">
         {buttonText}
       </span>
@@ -29,18 +35,27 @@ const StaticAnalyserButton = ({
   )
 
   const buttonWithTooltip = () => (
-    <button id="staticAnalysisRunBtn" className={newclassList} disabled={disabled} onClick={onClick}>
     <CustomTooltip
       placement="right"
       tooltipId="ssaRunButtonTooltip"
       tooltipClasses="text-nowrap"
       tooltipText={title}
     >
-      <span className="pl-3 pr-4">
-        {buttonText}
-      </span>
+      <div id="staticAnalysisWrapper" className={newclassList}>
+        <button
+          id="staticAnalysisRunBtn"
+          className={newclassList}
+          disabled={disabled}
+          onClick={onClick}
+          style={{ pointerEvents: 'none', color: 'white' }}
+        >
+          <span className="pl-3 pr-4">
+            {buttonText}
+          </span>
+          </button>
+      </div>
     </CustomTooltip>
-  </button>)
+  )
 
   return (
       title && title.length > 0 ? buttonWithTooltip() : buttonWithoutTooltip()
