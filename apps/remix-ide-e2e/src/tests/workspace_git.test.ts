@@ -146,7 +146,7 @@ module.exports = {
   // CLONE REPOSITORY E2E END
 
   // GIT BRANCHES E2E START
-  'Should show all cloned repo branches #group3': function (browser: NightwatchBrowser) {
+  'Should show all cloned repo branches #flaky #group3': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .waitForElementNotVisible('[data-id="workspaceGitPanel"]')
@@ -159,8 +159,7 @@ module.exports = {
       .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ioedeveloper/test-branch-change')
       .click('[data-id="fileSystem-modal-footer-ok-react"]')
       .waitForElementPresent('.fa-spinner')
-      .pause(5000)
-      .waitForElementNotPresent('.fa-spinner')
+      .waitForElementNotPresent('.fa-spinner', 60000)
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'test-branch-change')
       .waitForElementVisible('[data-id="workspaceGitPanel"]')
       .click('[data-id="workspaceGitBranchesDropdown"]')
