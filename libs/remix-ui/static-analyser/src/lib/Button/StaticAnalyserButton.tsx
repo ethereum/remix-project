@@ -16,7 +16,7 @@ const StaticAnalyserButton = ({
   title,
   classList
 }: StaticAnalyserButtonProps) => {
-  const defaultStyle = "btn btn-sm w-25 btn-primary"
+  const defaultStyle = "btn btn-sm btn-block btn-primary"
   const newclassList = disabled && classList.length > 0 ? `${classList} disabled` :
   classList.length === 0 && disabled ? `${defaultStyle} disabled` : classList.length > 0 ? `${classList}` : defaultStyle
 
@@ -40,7 +40,7 @@ const StaticAnalyserButton = ({
       tooltipClasses="text-nowrap"
       tooltipText={title}
     >
-      <div id="staticAnalysisWrapper" className={newclassList}>
+      <div id="staticAnalysisWrapper" className={`${newclassList} p-0`}>
         <button
           id="staticAnalysisRunBtn"
           className={newclassList}
