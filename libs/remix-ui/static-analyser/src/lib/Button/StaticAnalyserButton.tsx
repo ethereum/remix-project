@@ -1,6 +1,5 @@
 import { CustomTooltip } from '@remix-ui/helper'
 import React from 'react'  //eslint-disable-line
-import '../ssa.css'
 
 interface StaticAnalyserButtonProps {
   onClick: (event) => void
