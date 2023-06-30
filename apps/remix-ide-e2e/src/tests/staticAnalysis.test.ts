@@ -40,7 +40,7 @@ module.exports = {
     .click('*[id="compileBtn"]')
     .pause(10000)
     .clickLaunchIcon('solidityStaticAnalysis')
-    .click('*[id="staticAnalysisRunBtn"]')
+    .click('div#staticAnalysisWrapper > *[id="staticAnalysisRunBtn"]')
     .waitForElementPresent('#staticanalysisresult .warning', 5000)
     // Check warning count
     .click('*[data-rb-event-key="remix"]')
