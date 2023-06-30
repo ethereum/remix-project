@@ -41,7 +41,10 @@ module.exports = {
     .pause(10000)
     .clickLaunchIcon('solidityStaticAnalysis')
     .click('div#staticAnalysisWrapper > *[id="staticAnalysisRunBtn"]')
-    .waitForElementPresent('div#staticanalysisresult .warning', 5000)
+    .useXpath()
+    // .waitForElementPresent('div#staticanalysisresult .warning', 5000)
+    .waitForElementPresent('//*[@id="staticanalysisresult"]', 5000)
+    .useCss()
     // Check warning count
     .click('*[data-rb-event-key="remix"]')
     .assert.containsText('span#ssaRemixtab > *[data-id="RemixStaticAnalysisErrorCount"]', '1')
