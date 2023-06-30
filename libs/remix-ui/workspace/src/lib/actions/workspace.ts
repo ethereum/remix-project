@@ -488,6 +488,9 @@ export const cloneRepository = async (url: string) => {
     const repoName = await getRepositoryTitle(url)
 
     await createWorkspace(repoName, 'blank', null, true, null, true, false)
+    const isActive = await plugin.call('manager', 'isActive', 'dgit')
+
+    if (isActive) await plugin.call('manager', 'deactivatePlugin', 'dgit')
     const promise = plugin.call('dGitProvider', 'clone', repoConfig, repoName, true)
 
     dispatch(cloneRepositoryRequest())
