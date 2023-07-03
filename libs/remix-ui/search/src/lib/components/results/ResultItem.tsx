@@ -79,7 +79,6 @@ export const ResultItem = (props: ResultItemProps) => {
 
   const doLoad = () => {
     if(!subscribed.current) return
-    console.log('DO LOAD')
     findText(props.file.filename).then(res => {
       if (subscribed.current) {
         setLines(res)
