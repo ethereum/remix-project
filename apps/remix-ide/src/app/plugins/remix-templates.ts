@@ -19,7 +19,6 @@ export class TemplatesPlugin extends Plugin {
     if (!templateList.includes(template)) return
     // @ts-ignore
     const files = await templateWithContent[template](opts)
-    console.log('files for template ', files)
     return files
   }
   // electron only method

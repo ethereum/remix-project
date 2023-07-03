@@ -254,8 +254,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         if (!templateList.includes(template)) break
         _paq.push(['trackEvent', 'workspace', 'template', template])
         // @ts-ignore
-        const files = await templateWithContent[template](opts)
-        console.log('files for template ', files)
+        const files = await templateWithContent[template](opts)   
         for (const file in files) {
           try {
             await workspaceProvider.set(file, files[file])
@@ -608,7 +607,6 @@ export const getGitRepoCurrentBranch = async (workspaceName: string) => {
 }
 
 export const showAllBranches = async () => {
-  console.log('showAllBranches')
   const isActive = await plugin.call('manager', 'isActive', 'dgit')
   if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
   plugin.call('menuicons', 'select', 'dgit')
