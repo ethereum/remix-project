@@ -41,9 +41,20 @@ export const gitProxy = {
 
     clone: async (url: string, path: string) => {
         const { stdout, stderr } = await execAsync(`git clone ${url} ${path}`);
-        console.log('stdout:', stdout);
-        console.log('stderr:', stderr);
     },
+
+    async push(path: string, remote: string, src: string, branch: string, force: boolean = false) {
+        const { stdout, stderr } = await execAsync(`git push  ${force? ' -f':'' }  ${remote} ${src}:${branch}`, { cwd: path });
+    },
+
+    async pull(path: string, remote: string, src: string, branch: string) {
+        const { stdout, stderr } = await execAsync(`git pull ${remote} ${src}:${branch}`, { cwd: path });
+    },
+
+    async fetch(path: string, remote: string, branch: string) {
+        const { stdout, stderr } = await execAsync(`git fetch ${remote} ${branch}`, { cwd: path });
+    },
+
 
     status: async (path: string) => {
         const result = await execAsync('git status --porcelain -uall', { cwd: path })

@@ -46,7 +46,7 @@ const clientProfile: Profile = {
   name: 'isogit',
   displayName: 'isogit',
   description: 'isogit plugin',
-  methods: ['init', 'localStorageUsed',  'version', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'reset', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'openFolder']
+  methods: ['init', 'localStorageUsed', 'version', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'reset', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'openFolder']
 }
 
 class IsoGitPluginClient extends ElectronBasePluginClient {
@@ -76,11 +76,11 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   async status(cmd: any) {
 
 
-    if(this.workingDir === ''){
+    if (this.workingDir === '') {
       return []
     }
 
-    if(this.gitIsInstalled){
+    if (this.gitIsInstalled) {
       const status = await gitProxy.status(this.workingDir)
       return status
     }
@@ -103,7 +103,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     }
     */
 
-    if(this.workingDir === ''){
+    if (this.workingDir === '') {
       return []
     }
 
@@ -134,7 +134,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     return rm
   }
 
-  async reset(cmd: any){
+  async reset(cmd: any) {
 
     const reset = await git.resetIndex({
       ...await this.getGitConfig(),
@@ -143,7 +143,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
     return reset
   }
-  
+
 
   async commit(cmd: any) {
 
@@ -173,7 +173,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async lsfiles(cmd: any) {
-  
+
     const lsfiles = await git.listFiles({
       ...await this.getGitConfig(),
       ...cmd
@@ -214,37 +214,56 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
   async push(cmd: any) {
 
-    console.log('PUSH', cmd)
 
-    const push = await git.push({
-      ...await this.getGitConfig(),
-      ...cmd,
-      ...parseInput(cmd.input)
-    })
 
-    return push
+    if (this.gitIsInstalled) {
+      await gitProxy.push(this.workingDir, cmd.remote, cmd.ref, cmd.remoteRef, cmd.force)
+
+    } else {
+
+      const push = await git.push({
+        ...await this.getGitConfig(),
+        ...cmd,
+        ...parseInput(cmd.input)
+      })
+      return push
+    }
+
   }
 
   async pull(cmd: any) {
 
-    const pull = await git.pull({
-      ...await this.getGitConfig(),
-      ...cmd,
-      ...parseInput(cmd.input)
-    })
+    if (this.gitIsInstalled) {
+      await gitProxy.pull(this.workingDir, cmd.remote, cmd.ref, cmd.remoteRef)
 
-    return pull
+    } else {
+
+      const pull = await git.pull({
+        ...await this.getGitConfig(),
+        ...cmd,
+        ...parseInput(cmd.input)
+      })
+
+      return pull
+
+    }
   }
 
   async fetch(cmd: any) {
 
-    const fetch = await git.fetch({
-      ...await this.getGitConfig(),
-      ...cmd,
-      ...parseInput(cmd.input)
-    })
+    if (this.gitIsInstalled) {
+      await gitProxy.fetch(this.workingDir, cmd.remote, cmd.remoteRef)
 
-    return fetch
+    } else {
+
+      const fetch = await git.fetch({
+        ...await this.getGitConfig(),
+        ...cmd,
+        ...parseInput(cmd.input)
+      })
+
+      return fetch
+    }
   }
 
   async clone(cmd: any) {
