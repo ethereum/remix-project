@@ -31,7 +31,6 @@ export const gitProxy = {
     version: async () => {
         try {
             const result = await execAsync('git --version');
-            console.log('git --version', result.stdout)
             return result.stdout
         } catch (error) {
             return false;

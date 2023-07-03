@@ -104,16 +104,16 @@ class DGitProvider extends Plugin {
 
     if (isElectron()) {
       const status = await this.call('isogit', 'status', cmd)
-      console.log('STATUS', status)
+
       return status
     }
 
-    console.log('status')
+
     const status = await git.statusMatrix({
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log('STATUS', status)
+
     return status
   }
 
@@ -132,7 +132,7 @@ class DGitProvider extends Plugin {
   }
 
   async rm(cmd) {
-    console.log('rm', cmd)
+
     if (isElectron()) {
       await this.call('isogit', 'rm', cmd)
     } else {
@@ -146,7 +146,7 @@ class DGitProvider extends Plugin {
   }
 
   async reset(cmd) {
-    console.log('rm', cmd)
+
     if (isElectron()) {
       await this.call('isogit', 'reset', cmd)
     } else {
@@ -184,7 +184,7 @@ class DGitProvider extends Plugin {
         ...cmd,
         depth: 10
       })
-      console.log('STATUS', status)
+
       return status
     }
 
@@ -233,12 +233,10 @@ class DGitProvider extends Plugin {
 
   async currentbranch(config) {
 
-    console.log('currentbranch')
+
 
     if (isElectron()) {
-      console.log('currentbranch electron')
       return await this.call('isogit', 'currentbranch')
-
     }
 
     try {
@@ -329,10 +327,8 @@ class DGitProvider extends Plugin {
   }
 
   async readblob(cmd) {
-    console.log('readblob', cmd)
     if (isElectron()) {
       const readBlobResult = await this.call('isogit', 'readblob', cmd)
-      console.log('readblob', readBlobResult)
       return readBlobResult
     }
     const readBlobResult = await git.readBlob({
@@ -385,7 +381,6 @@ class DGitProvider extends Plugin {
     if (isElectron()) {
       const folder = await this.call('fs', 'selectFolder')
       if (!folder) return false
-      console.log('folder', folder)
       const cmd = {
         url: input.url,
         singleBranch: input.singleBranch,

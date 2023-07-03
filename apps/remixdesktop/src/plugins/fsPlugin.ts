@@ -38,7 +38,6 @@ export class FSPlugin extends ElectronBasePlugin {
     const foldersToDelete: string[] = []
     if (openedFolders && openedFolders.length) {
       for (const folder of openedFolders) {
-        console.log('opening folder', folder)
         try {
           const stat = await fs.stat(folder)
           if (stat.isDirectory()) {
@@ -54,14 +53,12 @@ export class FSPlugin extends ElectronBasePlugin {
         this.call('electronconfig', 'writeConfig', { 'recentFolders': newFolders })
       }
     }else{
-      console.log('no opened folders')
       createWindow()
     }
   }
 
   async removeCloseListener(): Promise<void> {
     for (const client of this.clients) {
-      console.log('removeCloseListener', client.webContentsId)
       client.window.removeAllListeners()
     }
   }
@@ -96,13 +93,12 @@ class FSPluginClient extends ElectronBasePluginClient {
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
     this.onload(() => {
-      //console.log('fsPluginClient onload')
       if(!isPackaged) {
         this.window.webContents.openDevTools()
       }
       this.window.on('close', async () => {
-        console.log('close', this.webContentsId)
         await this.removeFromOpenedFolders(this.workingDir)
+        await this.closeWatch()
       })
 
     })
@@ -111,7 +107,6 @@ class FSPluginClient extends ElectronBasePluginClient {
   // best for non recursive
   async readdir(path: string): Promise<string[]> {
     // call node fs.readdir
-    console.log('readdir', path)
     if (!path) return []
     const startTime = Date.now()
     const files = await fs.readdir(this.fixPath(path), {
@@ -126,14 +121,12 @@ class FSPluginClient extends ElectronBasePluginClient {
         isDirectory
       })
     }
-    console.log('readdir', result, Date.now() - startTime)
     return result
   }
 
   async glob(path: string, pattern: string, options?: GlobOptions): Promise<string[] | Path[]> {
 
     path = this.fixPath(path)
-    console.log('glob', path, pattern, options)
     const files = await glob(path + pattern, {
       withFileTypes: true,
       ...options
@@ -153,24 +146,20 @@ class FSPluginClient extends ElectronBasePluginClient {
         isDirectory: (file as Path).isDirectory(),
       })
     }
-    //console.log('glob', result)
     return result
   }
 
   async readFile(path: string, options: any): Promise<string | undefined> {
-    //console.log('readFile', path, options)
     // hacky fix for TS error
     if (!path) return undefined
     try {
       return (fs as any).readFile(this.fixPath(path), options)
     } catch (e) {
-      //console.log('readFile error', e)
       return undefined
     }
   }
 
   async writeFile(path: string, content: string, options: any): Promise<void> {
-    //console.log('writeFile', path, content, options)
     this.trackDownStreamUpdate[path] = content
     return (fs as any).writeFile(this.fixPath(path), content, options)
   }
@@ -180,7 +169,6 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async rmdir(path: string): Promise<void> {
-    console.log('rmdir', this.fixPath(path))
     return fs.rm(this.fixPath(path), {
       recursive: true
     })
@@ -197,14 +185,12 @@ class FSPluginClient extends ElectronBasePluginClient {
   async stat(path: string): Promise<any> {
     try {
       const stat = await fs.stat(this.fixPath(path))
-      ////console.log('stat', path, stat)
       const isDirectory = stat.isDirectory()
       return {
         ...stat,
         isDirectoryValue: isDirectory
       }
     } catch (e) {
-      //console.log('stat error', e)
       return undefined
     }
   }
@@ -218,7 +204,6 @@ class FSPluginClient extends ElectronBasePluginClient {
         isDirectoryValue: isDirectory
       }
     } catch (e) {
-      //console.log('lstat error', e)
       return undefined
     }
   }
@@ -235,7 +220,6 @@ class FSPluginClient extends ElectronBasePluginClient {
 
   async watch(): Promise<void> {
     if (this.watcher) this.watcher.close()
-    console.log('watch', this.workingDir)
     this.watcher =
       chokidar.watch(this.workingDir, {
         ignorePermissionErrors: true, ignoreInitial: true,
@@ -245,7 +229,6 @@ class FSPluginClient extends ElectronBasePluginClient {
       }).on('all', async (eventName, path, stats) => {
 
 
-        console.log('change', eventName, path, stats)
         
         let pathWithoutPrefix = path.replace(this.workingDir, '')
         pathWithoutPrefix = convertPathToPosix(pathWithoutPrefix)
@@ -255,7 +238,6 @@ class FSPluginClient extends ElectronBasePluginClient {
           // remove workingDir from path
           const newContent = await fs.readFile(path, 'utf-8')
 
-          console.log('change', pathWithoutPrefix, this.trackDownStreamUpdate)
           const currentContent = this.trackDownStreamUpdate[pathWithoutPrefix]
   
           if (currentContent !== newContent) {
@@ -278,7 +260,6 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async closeWatch(): Promise<void> {
-    console.log('closing Watcher', this.webContentsId)
     if (this.watcher) this.watcher.close()
   }
 
@@ -299,11 +280,9 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async removeFromOpenedFolders(path: string): Promise<void> {
-    console.log('removeFromOpenedFolders', path)
     const config = await this.call('electronconfig' as any, 'readConfig')
     config.openedFolders = config.openedFolders || []
     config.openedFolders = config.openedFolders.filter((p: string) => p !== path)
-    console.log('removeFromOpenedFolders', config)
     writeConfig(config)
   }
 
@@ -362,13 +341,11 @@ class FSPluginClient extends ElectronBasePluginClient {
     await this.updateRecentFolders(path)
     await this.updateOpenedFolders(path)
     this.window.setTitle(this.workingDir)
-    console.log('setWorkingDir', path)
     this.watch()
     this.emit('workingDirChanged', path)
   }
 
   async setWorkingDir(path: string): Promise<void> {
-    console.log('setWorkingDir', path)
     this.workingDir = path
     await this.updateRecentFolders(path)
     await this.updateOpenedFolders(path)

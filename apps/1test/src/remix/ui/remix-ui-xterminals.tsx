@@ -48,11 +48,6 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
         })
     }
 
-
-    useEffect(() => {
-        console.log('terminals', terminals)
-    }, [terminals])
-
     const send = (data: string, pid: number) => {
         plugin.call('xterm', 'keystroke', data, pid)
     }
@@ -71,7 +66,6 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
     }
 
     const setTerminalRef = (pid: number, ref: any) => {
-        console.log('setTerminalRef', pid, ref)
         setTerminals(prevState => {
             const terminal = prevState.find(xtermState => xtermState.pid === pid)
             terminal.ref = ref

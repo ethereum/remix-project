@@ -27,28 +27,23 @@ appManager.activatePlugin('fs')
 
 
 ipcMain.handle('manager:activatePlugin', async (event, plugin) => {
-  console.log('manager:activatePlugin', plugin, event.sender.id)
   return await appManager.call(plugin, 'createClient', event.sender.id)
 })
 
 ipcMain.on('fs:openFolder', async (event) => {
-  console.log('fs:openFolder', event)
   fsPlugin.openFolder(event)
 })
 
 
 ipcMain.on('terminal:new', async (event) => {
-  console.log('terminal:new', event)
   xtermPlugin.new(event)
 })
 
 ipcMain.on('template:open', async (event) => {
-  console.log('template:open', event)
   templatesPlugin.openTemplate(event)
 })
 
 ipcMain.on('git:startclone', async (event) => {
-  console.log('git:startclone', event)
   isoGitPlugin.startClone(event)
 })
 
@@ -60,9 +55,7 @@ ipcMain.handle('getWebContentsID', (event, message) => {
 
 
 app.on('before-quit', async (event) => {
-  //event.preventDefault()
-  console.log('before-quit')
   await appManager.call('fs', 'removeCloseListener')
   await appManager.call('fs', 'closeWatch')
-  //app.quit()
+  await appManager.call('xterm', 'closeTerminals')
 })

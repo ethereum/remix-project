@@ -22,12 +22,8 @@ const RemixUiXterm = (props: RemixUiXtermProps) => {
     const { plugin, pid, send, timeStamp } = props
     const xtermRef = React.useRef(null)
 
-    useEffect(() => {
-        console.log('render remix-ui-xterm')
-    }, [])
 
     useEffect(() => {
-        console.log('remix-ui-xterm ref', xtermRef.current)
         props.setTerminalRef(pid, xtermRef.current)
     }, [xtermRef.current])
 
@@ -35,20 +31,16 @@ const RemixUiXterm = (props: RemixUiXtermProps) => {
         send(event.key, pid)
     }
 
-    const onData = (data: string) => {
-        console.log('onData', data)
-    }
-
     return (
-        
-            <Xterm
-            addons={[fitAddon]} 
-            options={{theme: {background: props.theme.backgroundColor , foreground: props.theme.textColor}}}
+
+        <Xterm
+            addons={[fitAddon]}
+            options={{ theme: { background: props.theme.backgroundColor, foreground: props.theme.textColor } }}
             onRender={() => fitAddon.fit()}
-            ref={xtermRef} onData={onData} 
+            ref={xtermRef}
             onKey={onKey}></Xterm>
 
-        
+
     )
 
 }

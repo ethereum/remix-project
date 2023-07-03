@@ -283,14 +283,12 @@ export const fetchWorkspaceDirectory = async (path: string) => {
 
   if (!path) return
   const provider = plugin.fileManager.currentFileProvider()
-  console.log('fetchWorkspaceDirectory', path, provider)
   const promise = new Promise((resolve, reject) => {
     provider.resolveDirectory(path, (error, fileTree) => {
       if (error) {
         console.error(error)
         return reject(error)
       }
-      console.log('fetchWorkspaceDirectory', fileTree)
       resolve(fileTree)
     })
   })

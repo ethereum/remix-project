@@ -32,7 +32,6 @@ export const detectDefaultShell = () => {
 // Stores default shell when imported.
 const defaultShell = detectDefaultShell();
 
-console.log('defaultShell', defaultShell)
 
 export default defaultShell;
 
@@ -47,6 +46,7 @@ export class XtermPlugin extends ElectronBasePlugin {
     clients: XtermPluginClient[] = []
     constructor() {
         super(profile, clientProfile, XtermPluginClient)
+        this.methods = [...super.methods, 'closeTerminals']
     }
 
     new(webContentsId: any): void {
@@ -55,6 +55,12 @@ export class XtermPlugin extends ElectronBasePlugin {
             client.new()
         }
     }
+
+    async closeTerminals(): Promise<void> {
+        for (const client of this.clients) {
+          await client.closeAll()
+        }
+      }
 
 }
 
@@ -71,13 +77,8 @@ class XtermPluginClient extends ElectronBasePluginClient {
     constructor(webContentsId: number, profile: Profile) {
         super(webContentsId, profile)
         this.onload(() => {
-            console.log('XtermPluginClient onload')
             this.emit('loaded')
         })
-    }
-
-    async onActivation(): Promise<void> {
-        console.log('XtermPluginClient onActivation')
     }
 
     async keystroke(key: string, pid: number): Promise<void> {
@@ -92,7 +93,6 @@ class XtermPluginClient extends ElectronBasePluginClient {
     async createTerminal(path?: string): Promise<number> {
         const shell = defaultShell;
 
-        console.log('defaultShell', defaultShell)
 
         // filter undefined out of the env
         const env = Object.keys(process.env)
@@ -112,7 +112,6 @@ class XtermPluginClient extends ElectronBasePluginClient {
         });
 
         ptyProcess.onData((data: string) => {
-            console.log('onData', data)
             this.sendData(data, ptyProcess.pid);
         })
         this.terminals[ptyProcess.pid] = ptyProcess
@@ -125,6 +124,15 @@ class XtermPluginClient extends ElectronBasePluginClient {
         delete this.terminals[pid]
         this.emit('close', pid)
     }
+
+    async closeAll(): Promise<void> {
+        for (const pid in this.terminals) {
+            this.terminals[pid].kill()
+            delete this.terminals[pid]
+            this.emit('close', pid)
+        }
+    }
+
 
     async sendData(data: string, pid: number) {
         this.emit('data', data, pid)

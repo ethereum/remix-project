@@ -15,7 +15,6 @@ export class ElectronProvider extends FileProvider {
 
   async init() {
     this._appManager.on('fs', 'change', (event, path) => {
-      console.log('change', event, path)
       switch (event) {
         case 'add':
           this.event.emit('fileAdded', path)
@@ -47,7 +46,6 @@ export class ElectronProvider extends FileProvider {
     if (path.indexOf('/') !== 0) path = '/' + path
     try {
       const files = await window.remixFileSystem.readdir(path)
-      console.log(files.length, 'files resolveDirectory ELECTRON')
       const ret = {}
       if (files) {
         for (let element of files) {

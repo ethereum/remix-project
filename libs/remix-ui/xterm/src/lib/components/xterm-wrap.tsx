@@ -133,8 +133,6 @@ export class Xterm extends React.Component<IProps> {
 	constructor(props: IProps) {
 		super(props)
 
-		console.log('Xterm constructor')
-
 		this.terminalRef = React.createRef()
 
 		// Bind Methods
@@ -159,7 +157,6 @@ export class Xterm extends React.Component<IProps> {
 		// Load addons if the prop exists.
 		if (this.props.addons) {
 			this.props.addons.forEach((addon) => {
-				console.log('addon', addon)
 				this.terminal.loadAddon(addon)
 			})
 		}

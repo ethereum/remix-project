@@ -27,7 +27,6 @@ export class FitAddon implements ITerminalAddon {
   constructor() {}
 
   public activate(terminal: Terminal): void {
-    console.log('FitAddon activate')
     this._terminal = terminal;
   }
 
@@ -35,7 +34,6 @@ export class FitAddon implements ITerminalAddon {
 
   public fit(): void {
     const dims = this.proposeDimensions();
-    console.log('FitAddon fit', dims)
     if (!dims || !this._terminal || isNaN(dims.cols) || isNaN(dims.rows)) {
       return;
     }
@@ -70,7 +68,6 @@ export class FitAddon implements ITerminalAddon {
     const scrollbarWidth = this._terminal.options.scrollback === 0 ?
       0 : core.viewport.scrollBarWidth;
 
-    console.log('parentElementStyle', this._terminal.element.parentElement)
 
     const parentElementStyle = window.getComputedStyle(this._terminal.element.parentElement);
     const parentElementHeight = parseInt(parentElementStyle.getPropertyValue('height'));

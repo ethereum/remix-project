@@ -54,17 +54,14 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
             })
 
             plugin.on('theme', 'themeChanged', async (theme) => {
-                console.log('themeChanged', theme)
                 handleThemeChange(theme)
             })
 
             const theme = await plugin.call('theme', 'currentTheme')
-            console.log('theme', theme)
             handleThemeChange(theme)
 
 
             const shells = await plugin.call('xterm', 'getShells')
-            console.log('shells', shells)
             setShells(shells)
         }, 2000)
     }, [])
@@ -74,7 +71,6 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
         themeCollection.forEach((themeItem) => {
             if (themeItem.themeName === theme.name) {
                 setTheme(themeItem)
-                console.log('setTheme', themeItem)
             }
         })
     }
@@ -84,20 +80,13 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
         setTerminals(prevState => {
             const terminal = prevState.find(xtermState => xtermState.pid === pid)
             if (terminal.ref && terminal.ref.terminal) {
-                console.log('writing to terminal', terminal, data)
                 terminal.ref.terminal.write(data)
             } else {
-                console.log('no terminal ref', terminal)
                 terminal.queue += data
             }
             return [...prevState]
         })
     }
-
-
-    useEffect(() => {
-        console.log('terminals', terminals)
-    }, [terminals])
 
     const send = (data: string, pid: number) => {
         plugin.call('xterm', 'keystroke', data, pid)
@@ -122,7 +111,6 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
     }
 
     const setTerminalRef = (pid: number, ref: any) => {
-        console.log('setTerminalRef', pid, ref)
         setTerminals(prevState => {
             const terminal = prevState.find(xtermState => xtermState.pid === pid)
             terminal.ref = ref
@@ -180,7 +168,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
 
                         <Dropdown.Menu className='custom-dropdown-items remixui_menuwidth'>
                             {shells.map((shell, index) => {
-                                return (<Dropdown.Item index={index} onClick={createTerminal}>{shell}</Dropdown.Item>)
+                                return (<Dropdown.Item key={index} onClick={createTerminal}>{shell}</Dropdown.Item>)
                             })}
                         </Dropdown.Menu>
                     </Dropdown>
@@ -206,7 +194,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
                         })}
                         <div className='remix-ui-xterminals-buttons border-left'>
                             {terminals.map((xtermState, index) => {
-                                return (<button onClick={async () => selectTerminal(xtermState)} className={`btn btn-sm mt-2 btn-secondary ${xtermState.hidden ? 'xterm-btn-none' : 'xterm-btn-active'}`}><span className="fa fa-terminal border-0 p-0 m-0"></span></button>)
+                                return (<button key={index} onClick={async () => selectTerminal(xtermState)} className={`btn btn-sm mt-2 btn-secondary ${xtermState.hidden ? 'xterm-btn-none' : 'xterm-btn-active'}`}><span className="fa fa-terminal border-0 p-0 m-0"></span></button>)
                             })}
                         </div>
                     </div>

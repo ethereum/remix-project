@@ -8,8 +8,4 @@ export class xtermPlugin extends ElectronPlugin {
       description: 'xterm',
     })
   }
-  
-  onActivation(){
-    console.log('xtermPlugin Activated')
-  }
 }

@@ -45,7 +45,6 @@ const basicWorkspaceInit = async (workspaces: { name: string; isGitRepo: boolean
 }
 
 export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.Dispatch<any>) => {
-  console.log('initWorkspace', filePanelPlugin)
   if (filePanelPlugin) {
     plugin = filePanelPlugin
     dispatch = reducerDispatch
@@ -119,7 +118,6 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         }
       } else await basicWorkspaceInit(workspaces, workspaceProvider)
     } else if (isElectron()) {
-      console.log('isElectron initWorkspace')
       if (params.opendir) {
         params.opendir = decodeURIComponent(params.opendir)
         plugin.call('notification', 'toast', `opening ${params.opendir}...`)

@@ -90,13 +90,11 @@ const showAbout = () => {
 const isMac = process.platform === 'darwin'
 
 import FileMenu from './menus/file';
-import MainMenu from './menus/main';
 import darwinMenu from './menus/darwin';
 import WindowMenu from './menus/window';
 import EditMenu from './menus/edit';
 import GitMenu from './menus/git';
 import ViewMenu from './menus/view';
-import TerminalMenu from './menus/terminal';
 import { execCommand } from './menus/commands';
 
 
@@ -114,122 +112,4 @@ WindowMenu(commandKeys, execCommand, []),
 ]
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
-
-/*
-searchProxy.checkIfGrepIsInstalled().then((result) => {
-  console.log('grep --version', result)
-})
-
-searchProxy.checkIffindstrIsInstalled().then((result) => {
-  console.log('findstr /?', result)
-})
-
-searchProxy.checkIfSelectStringIsInstalled().then((result) => {
-  console.log('get-help Select-String', result)
-})
-*/
-
-interface position {
-  start: {
-      line: number
-      column: number
-  },
-  end: {
-      line: number
-      column: number
-  }
-}
-
-export interface SearchResultLineLine {
-  left: any,
-  center: any,
-  right: any,
-  position: position
-}
-export interface SearchResultLine {
-  lines: SearchResultLineLine[]
-}
-
-
-//import * as cp from 'child_process';
-//import { rgPath } from '@vscode/ripgrep';
-//const rgDiskPath = rgPath.replace(/\bnode_modules\.asar\b/, 'node_modules.asar.unpacked');
-
-//console.log('rgDiskPath', rgDiskPath)
-
-// ripgrep
-// -s means case sensitive
-// -i means ignore case
-// -F means fixed strings so not regex
-/*
--g, --glob GLOB ...
-
-Include or exclude files and directories for searching that match the given glob. This always overrides any other ignore logic. Multiple glob flags may be used. Globbing rules match .gitignore globs. Precede a glob with a ! to exclude it. If multiple globs match a file or directory, the glob given later in the command line takes precedence.
-*/
-
-/*
-
-console.log('process.cwd()', process.cwd())
-const child = cp.spawn(rgDiskPath, ['bunsens[a-z]*', '--json', './'], { cwd: process.cwd() });
-child.on('error', (err) => {
-  console.log('error', err)
-}
-)
-child.stdout.on('data', (data) => {
-  const lines: string[] = data.toString().split('\n')
-  lines.forEach(line => {
-    if (line) {
-      try {
-
-        const result = JSON.parse(line)
-        if (result && result.type && result.type === 'match') {
-          //console.log('line:', result)
-          //console.log('path:', result.data.path.text)
-          //console.log('line:', result.data.lines.text)
-          //console.log('submatch: ', result.data.submatches)
-          let searchResultLine: SearchResultLine = {
-            lines: []
-          }
-          result.data.submatches.forEach((submatch: any) => {
-            searchResultLine.lines.push({
-              left: result.data.lines.text.substring(0, submatch.start),
-              center: result.data.lines.text.substring(submatch.start, submatch.end),
-              right: result.data.lines.text.substring(submatch.end),
-              position: {
-                start: {
-                  line: result.data.line_number,
-                  column: submatch.start,
-                },
-                end: {
-                  line: result.data.line_number,
-                  column: submatch.end,
-                },
-              },
-            })
-          })
-          console.log('searchResultLine', searchResultLine)
-        }
-      
-      } catch (e) {
-        console.log('error ripgrep', e)
-      }
-    }
-  })
-
-  //console.log('stdout', lines)
-}
-)
-child.stderr.on('data', (data) => {
-  console.log('stderr', data.toString())
-}
-)
-child.on('close', (code) => {
-  console.log('close', code)
-}
-)
-child.on('exit', (code) => {
-  console.log('exit', code)
-}
-)
-*/
 
