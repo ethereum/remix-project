@@ -214,6 +214,8 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
   async push(cmd: any) {
 
+    console.log('PUSH', cmd)
+
     const push = await git.push({
       ...await this.getGitConfig(),
       ...cmd,
