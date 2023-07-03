@@ -41,7 +41,6 @@ export const createWindow = async (dir?: string): Promise<void> => {
 
   // on close
   mainWindow.on('close', (event) => {
-    console.log('close', event, mainWindow.webContents.id)
     windowSet.delete(mainWindow)
   })
 

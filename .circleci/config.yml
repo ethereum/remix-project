@@ -154,7 +154,6 @@ jobs:
             nvm use 20.0.0
             node -v
             npx -v
-            yarn -v
       - save_cache:
           key: node-20-windows-v3
           paths:
