@@ -130,11 +130,9 @@ export class CodeParser extends Plugin {
         })
 
         this.on('fileManager', 'fileAdded', async () => {
-            console.log('fileAdded')
             await this.importService.setFileTree()
         })
         this.on('fileManager', 'fileRemoved', async () => {
-            console.log('fileRemoved')
             await this.importService.setFileTree()
         })
 
