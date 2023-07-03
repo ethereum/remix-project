@@ -1,5 +1,4 @@
 import * as semver from 'semver'
-const isElectron = require('is-electron')
 /* global Worker */
 
 export const baseURLBin = 'https://binaries.soliditylang.org/bin'
@@ -35,7 +34,6 @@ export function urlFromVersion (version) {
  * checks a compiler whitelist, browser support and OS.
  */
 export function canUseWorker (selectedVersion) {
-  console.log('canUseWorker', selectedVersion)
   if (selectedVersion.startsWith('http')) {
     return browserSupportWorker()
   }
@@ -53,7 +51,6 @@ export function canUseWorker (selectedVersion) {
 }
 
 function browserSupportWorker () {
-  if(isElectron()) return true
   return document ? document.location.protocol !== 'file:' && Worker !== undefined : false
 }
 
