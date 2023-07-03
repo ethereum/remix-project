@@ -121,7 +121,6 @@ export class ThemeModule extends Plugin {
     document.documentElement.style.setProperty('--theme', nextTheme.quality)
     if (themeName) this.active = themeName
     // TODO: Only keep `this.emit` (issue#2210)
-    console.log('themeChanged', nextTheme)
     if (isElectron()) {
       const theme = 'https://remix.ethereum.org/' + nextTheme.url.replace(/\\/g, '/').replace(/\/\//g, '/').replace(/\/$/g, '')
       this.emit('themeChanged', { ...nextTheme, url: theme })
