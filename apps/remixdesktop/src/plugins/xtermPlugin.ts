@@ -90,7 +90,9 @@ class XtermPluginClient extends ElectronBasePluginClient {
         if(os.platform() === 'win32') {
             const bash = await findExecutable('bash.exe')
             if(bash) {
-                return [bash, 'powershell.exe', 'cmd.exe']
+                const shells = ['powershell.exe', 'cmd.exe', ...bash]
+                // filter out duplicates
+                return shells.filter((v, i, a) => a.indexOf(v) === i)
             }
             return ['powershell.exe', 'cmd.exe']
         }

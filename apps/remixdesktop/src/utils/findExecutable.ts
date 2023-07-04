@@ -3,10 +3,10 @@ import process from "process";
 import { Stats } from "fs";
 import fs from 'fs/promises'
 
-export async function findExecutable(command: string, cwd?: string, paths?: string[]): Promise<string> {
+export async function findExecutable(command: string, cwd?: string, paths?: string[]): Promise<string[]> {
     // If we have an absolute path then we take it.
     if (path.isAbsolute(command)) {
-        return command;
+        return [command];
     }
     if (cwd === undefined) {
         cwd = process.cwd();
@@ -17,7 +17,7 @@ export async function findExecutable(command: string, cwd?: string, paths?: stri
     if (dir !== '.') {
         // We have a directory and the directory is relative (see above). Make the path absolute
         // to the current working directory.
-        return path.join(cwd, command);
+        return [path.join(cwd, command)];
     }
 
 
@@ -27,7 +27,7 @@ export async function findExecutable(command: string, cwd?: string, paths?: stri
     }
     // No PATH environment. Make path absolute to the cwd.
     if (paths === undefined || paths.length === 0) {
-        return path.join(cwd, command);
+        return [];
     }
 
 
@@ -55,6 +55,9 @@ export async function findExecutable(command: string, cwd?: string, paths?: stri
 
     // We have a simple file name. We get the path variable from the env
     // and try to find the executable on the path.
+
+    const results = [];
+
     for (const pathEntry of paths) {
 
         // The path entry is absolute.
@@ -65,16 +68,19 @@ export async function findExecutable(command: string, cwd?: string, paths?: stri
             fullPath = path.join(cwd, pathEntry, command);
         }
         if (await fileExists(fullPath)) {
-            return fullPath;
+            results.push(fullPath);
         }
         let withExtension = fullPath + '.com';
         if (await fileExists(withExtension)) {
-            return withExtension;
+            results.push(withExtension);
         }
         withExtension = fullPath + '.exe';
         if (await fileExists(withExtension)) {
-            return withExtension;
+            results.push(withExtension);
         }
     }
-    return path.join(cwd, command);
+    if (results.length > 0) {
+        return results;
+    }
+    return [];
 }
