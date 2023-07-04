@@ -8,7 +8,7 @@ import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin,
 import { QueryParams } from '@remix-project/remix-lib'
 import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
-import isElectron  from 'is-electron'
+import isElectron from 'is-electron'
 
 export * from './events'
 export * from './workspace'
@@ -23,6 +23,7 @@ export type UrlParametersType = {
   code: string,
   url: string,
   address: string
+  opendir: string,
 }
 
 const basicWorkspaceInit = async (workspaces: { name: string; isGitRepo: boolean; }[], workspaceProvider) => {
@@ -50,9 +51,13 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     setPlugin(plugin, dispatch)
     const workspaceProvider = filePanelPlugin.fileProviders.workspace
     const localhostProvider = filePanelPlugin.fileProviders.localhost
+    const electrOnProvider = filePanelPlugin.fileProviders.electron
     const params = queryParams.get() as UrlParametersType
-    const workspaces = await getWorkspaces() || []
-    dispatch(setWorkspaces(workspaces))
+    let workspaces = []
+    if (!isElectron()) {
+      workspaces = await getWorkspaces() || []
+      dispatch(setWorkspaces(workspaces))
+    }
     if (params.gist) {
       await createWorkspaceTemplate('gist-sample', 'gist-template')
       plugin.setWorkspace({ name: 'gist-sample', isLocalhost: false })
@@ -74,11 +79,11 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
           let etherscanKey = await plugin.call('config', 'getAppParameter', 'etherscan-access-token')
           if (!etherscanKey) etherscanKey = '2HKUX5ZVASZIKWJM8MIQVCRUVZ6JAWT531'
           const networks = [
-            {id: 1, name: 'mainnet'},
-            {id: 3, name: 'ropsten'},
-            {id: 4, name: 'rinkeby'},
-            {id: 42, name: 'kovan'},
-            {id: 5, name: 'goerli'}
+            { id: 1, name: 'mainnet' },
+            { id: 3, name: 'ropsten' },
+            { id: 4, name: 'rinkeby' },
+            { id: 42, name: 'kovan' },
+            { id: 5, name: 'goerli' }
           ]
           let found = false
           const workspaceName = 'etherscan-code-sample'
@@ -107,15 +112,28 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
               await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
           }
           plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
-          plugin.call('notification', 'toast', `Added ${count} verified contract${count === 1 ? '': 's'} from ${foundOnNetworks.join(',')} network${foundOnNetworks.length === 1 ? '': 's'} of Etherscan for contract address ${contractAddress} !!`)
+          plugin.call('notification', 'toast', `Added ${count} verified contract${count === 1 ? '' : 's'} from ${foundOnNetworks.join(',')} network${foundOnNetworks.length === 1 ? '' : 's'} of Etherscan for contract address ${contractAddress} !!`)
         } catch (error) {
           await basicWorkspaceInit(workspaces, workspaceProvider)
         }
       } else await basicWorkspaceInit(workspaces, workspaceProvider)
     } else if (isElectron()) {
-      plugin.call('notification', 'toast', `connecting to localhost...`)
-      await basicWorkspaceInit(workspaces, workspaceProvider)
-      await plugin.call('manager', 'activatePlugin', 'remixd')
+      if (params.opendir) {
+        params.opendir = decodeURIComponent(params.opendir)
+        plugin.call('notification', 'toast', `opening ${params.opendir}...`)
+        await plugin.call('fs', 'setWorkingDir', params.opendir)
+      }
+      plugin.setWorkspace({ name: 'electron', isLocalhost: false })
+
+      dispatch(setCurrentWorkspace({ name: 'electron', isGitRepo: false }))
+      electrOnProvider.init()
+      listenOnProviderEvents(electrOnProvider)(dispatch)
+      listenOnPluginEvents(plugin)
+      dispatch(setMode('browser'))
+      dispatch(fsInitializationCompleted())
+      plugin.emit('workspaceInitializationCompleted')
+      return
+
     } else if (localStorage.getItem("currentWorkspace")) {
       const index = workspaces.findIndex(element => element.name == localStorage.getItem("currentWorkspace"))
       if (index !== -1) {
@@ -123,10 +141,10 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         workspaceProvider.setWorkspace(name)
         plugin.setWorkspace({ name: name, isLocalhost: false })
         dispatch(setCurrentWorkspace({ name: name, isGitRepo: false }))
-      }else{
+      } else {
         _paq.push(['trackEvent', 'Storage', 'error', `Workspace in localstorage not found: ${localStorage.getItem("currentWorkspace")}`])
         await basicWorkspaceInit(workspaces, workspaceProvider)
-      } 
+      }
     } else {
       await basicWorkspaceInit(workspaces, workspaceProvider)
     }
@@ -134,7 +152,13 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     listenOnPluginEvents(plugin)
     listenOnProviderEvents(workspaceProvider)(dispatch)
     listenOnProviderEvents(localhostProvider)(dispatch)
-    dispatch(setMode('browser'))
+    listenOnProviderEvents(electrOnProvider)(dispatch)
+    if (isElectron()) {
+      dispatch(setMode('browser'))
+    } else {
+      dispatch(setMode('browser'))
+    }
+
     plugin.setWorkspaces(await getWorkspaces())
     dispatch(fsInitializationCompleted())
     plugin.emit('workspaceInitializationCompleted')
@@ -181,11 +205,11 @@ export const publishToGist = async (path?: string, type?: string) => {
     const accessToken = config.get('settings/gist-access-token')
 
     if (!accessToken) {
-      dispatch(displayNotification('Authorize Token', 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', 'Close', null, () => {}))
+      dispatch(displayNotification('Authorize Token', 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', 'Close', null, () => { }))
     } else {
       const params = queryParams.get() as SolidityConfiguration
       const description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' +
-      params.version + '&optimize=' + params.optimize + '&runs=' + params.runs + '&gist='
+        params.version + '&optimize=' + params.optimize + '&runs=' + params.runs + '&gist='
       const gists = new Gists({ token: accessToken })
 
       if (id) {
@@ -233,7 +257,7 @@ export const publishToGist = async (path?: string, type?: string) => {
     }
   } catch (error) {
     console.log(error)
-    dispatch(displayNotification('Publish to gist Failed', 'Failed to create gist: ' + error.message, 'Close', null, async () => {}))
+    dispatch(displayNotification('Publish to gist Failed', 'Failed to create gist: ' + error.message, 'Close', null, async () => { }))
   }
 }
 
@@ -266,7 +290,7 @@ export const createNewFolder = async (path: string, rootDir: string) => {
   const exists = await fileManager.exists(dirName)
 
   if (exists) {
-    return dispatch(displayNotification('Failed to create folder', `A folder ${extractNameFromKey(path)} already exists at this location. Please choose a different name.`, 'Close', null, () => {}))
+    return dispatch(displayNotification('Failed to create folder', `A folder ${extractNameFromKey(path)} already exists at this location. Please choose a different name.`, 'Close', null, () => { }))
   }
   await fileManager.mkdir(dirName)
   path = path.indexOf(rootDir + '/') === 0 ? path.replace(rootDir + '/', '') : path
@@ -292,7 +316,7 @@ export const renamePath = async (oldPath: string, newPath: string) => {
   const exists = await fileManager.exists(newPath)
 
   if (exists) {
-    dispatch(displayNotification('Rename File Failed', `A file or folder ${extractNameFromKey(newPath)} already exists at this location. Please choose a different name.`, 'Close', null, () => {}))
+    dispatch(displayNotification('Rename File Failed', `A file or folder ${extractNameFromKey(newPath)} already exists at this location. Please choose a different name.`, 'Close', null, () => { }))
   } else {
     await fileManager.rename(oldPath, newPath)
   }
@@ -450,7 +474,7 @@ const handleGistResponse = (error, data) => {
     if (data.html_url) {
       dispatch(displayNotification('Gist is ready', `The gist is at ${data.html_url}. Would you like to open it in a new window?`, 'OK', 'Cancel', () => {
         window.open(data.html_url, '_blank')
-      }, () => {}))
+      }, () => { }))
     } else {
       const error = JSON.stringify(data.errors, null, '\t') || ''
       const message = data.message === 'Not Found' ? data.message + '. Please make sure the API token has right to create a gist.' : data.message

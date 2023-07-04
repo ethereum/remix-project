@@ -9,6 +9,8 @@ import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from 
 import helper from '../../lib/helper.js'
 import { RemixAppManager } from '../../remixAppManager'
 
+import isElectron from 'is-electron'
+
 /*
   attach to files event (removed renamed)
   trigger: currentFileChanged
@@ -22,7 +24,7 @@ const profile = {
   permission: true,
   version: packageJson.version,
   methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir',
-    'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh',
+    'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile', 'selectFolder', 'setFile', 'switchFile', 'refresh',
     'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles', 'isGitRepo'],
   kind: 'file-system'
 }
@@ -153,8 +155,12 @@ class FileManager extends Plugin {
   refresh() {
     const provider = this.fileProviderOf('/')
     // emit rootFolderChanged so that File Explorer reloads the file tree
-    provider.event.emit('rootFolderChanged', provider.workspace || '/')
-    this.emit('rootFolderChanged', provider.workspace || '/')
+    if(isElectron()){
+      provider.event.emit('refresh')
+    }else{
+      provider.event.emit('rootFolderChanged', provider.workspace || '/')
+      this.emit('rootFolderChanged', provider.workspace || '/')
+    }
   }
 
   /**
@@ -189,8 +195,8 @@ class FileManager extends Plugin {
     path = this.normalize(path)
     path = this.limitPluginScope(path)
     path = this.getPathFromUrl(path).file
-    await this._handleExists(path, `Cannot open file ${path}`)
-    await this._handleIsFile(path, `Cannot open file ${path}`)
+    //await this._handleExists(path, `Cannot open file ${path}`)
+    //await this._handleIsFile(path, `Cannot open file ${path}`)
     await this.openFile(path)
   }
 
@@ -408,7 +414,6 @@ class FileManager extends Plugin {
 
       return new Promise((resolve, reject) => {
         const provider = this.fileProviderOf(path)
-
         provider.resolveDirectory(path, (error, filesProvider) => {
           if (error) reject(error)
           resolve(filesProvider)
@@ -442,7 +447,8 @@ class FileManager extends Plugin {
       browserExplorer: this._components.registry.get('fileproviders/browser').api,
       localhostExplorer: this._components.registry.get('fileproviders/localhost').api,
       workspaceExplorer: this._components.registry.get('fileproviders/workspace').api,
-      filesProviders: this._components.registry.get('fileproviders').api
+      filesProviders: this._components.registry.get('fileproviders').api,
+      electronExplorer: this._components.registry.get('fileproviders/electron').api,
     }
 
     this._deps.config.set('currentFile', '') // make sure we remove the current file from the previous session
@@ -460,6 +466,11 @@ class FileManager extends Plugin {
     this._deps.workspaceExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     this._deps.workspaceExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
 
+    this._deps.electronExplorer.event.on('fileChanged', (path) => { this.fileChangedEvent(path) })
+    this._deps.electronExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
+    this._deps.electronExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
+    this._deps.electronExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
+    
     this.getCurrentFile = this.file
     this.getFile = this.readFile
     this.getFolder = this.readdir
@@ -721,8 +732,9 @@ class FileManager extends Plugin {
     if (file.startsWith('localhost') || this.mode === 'localhost') {
       return this._deps.filesProviders.localhost
     }
-    if (file.startsWith('browser')) {
-      return this._deps.filesProviders.browser
+
+    if(isElectron()){
+      return this._deps.filesProviders.electron
     }
     return this._deps.filesProviders.workspace
   }
@@ -846,6 +858,10 @@ class FileManager extends Plugin {
   }
 
   currentWorkspace() {
+    if(isElectron()){
+      return ''
+    }
+
     if (this.mode !== 'localhost') {
       const file = this.currentFile() || ''
       const provider = this.fileProviderOf(file)

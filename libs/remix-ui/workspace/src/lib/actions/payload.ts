@@ -292,3 +292,10 @@ export const setGitConfig = (config: {username: string, token: string, email: st
     payload: config
   }
 }
+
+export const setElectronRecentFolders = (folders: string[]) => {
+  return {
+    type: 'SET_ELECTRON_RECENT_FOLDERS',
+    payload: folders
+  }
+}
