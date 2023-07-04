@@ -4,6 +4,7 @@ import { AstNode } from "@remix-project/remix-solidity"
 import { CodeParser } from "../code-parser"
 import { antlr } from '../types'
 import { pathToFileURL } from 'url'
+import isElectron from 'is-electron'
 
 const SolidityParser = (window as any).SolidityParser = (window as any).SolidityParser || []
 
@@ -45,7 +46,7 @@ export default class CodeParserAntlrService {
         this.worker = new Worker(new URL('./antlr-worker', import.meta.url))
         this.worker.postMessage({
             cmd: 'load',
-            url: document.location.protocol + '//' + document.location.host + '/assets/js/parser/antlr.js',
+            url: isElectron()? 'assets/js/parser/antlr.js': document.location.protocol + '//' + document.location.host + '/assets/js/parser/antlr.js',
         });
         const self = this
 

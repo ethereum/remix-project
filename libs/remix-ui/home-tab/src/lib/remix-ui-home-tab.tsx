@@ -9,6 +9,8 @@ import HomeTabScamAlert from './components/homeTabScamAlert'
 import HomeTabGetStarted from './components/homeTabGetStarted'
 import HomeTabFeatured from './components/homeTabFeatured'
 import HomeTabFeaturedPlugins from './components/homeTabFeaturedPlugins'
+import isElectron from 'is-electron'
+import { HomeTabFileElectron } from './components/homeTabFileElectron'
 
 declare global {
   interface Window {
@@ -50,7 +52,9 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
         <div className='d-flex flex-row w-100 custom_home_bg'>
           <div className="px-2 pl-3 justify-content-start d-flex border-right flex-column" id="remixUIHTLeft" style={{ width: 'inherit' }}>
             <HomeTabTitle />
-            <HomeTabFile plugin={plugin} />
+            {!isElectron()?
+            <HomeTabFile plugin={plugin} />:
+            <HomeTabFileElectron plugin={plugin}></HomeTabFileElectron>}
             <HomeTabLearn plugin={plugin} />
           </div>
           <div className="pl-2 pr-3 justify-content-start d-flex flex-column" style={{width: "65%"}} id="remixUIHTRight">

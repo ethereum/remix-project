@@ -62,7 +62,8 @@ export const contextMenuActions: MenuItems = [{
   type: ['file', 'folder', 'workspace'],
   multiselect: false,
   label: '',
-  group: 2
+  group: 2,
+  platform: 'browser'
 }, {
   id: 'run',
   name: 'Run',
@@ -76,35 +77,40 @@ export const contextMenuActions: MenuItems = [{
   type: ['gist'],
   multiselect: false,
   label: '',
-  group: 4
+  group: 4,
+  platform: 'browser'
 }, {
   id: 'publishFolderToGist',
   name: 'Publish folder to gist',
   type: ['folder'],
   multiselect: false,
   label: '',
-  group: 4
+  group: 4,
+  platform: 'browser'
 }, {
   id: 'publishFileToGist',
   name: 'Publish file to gist',
   type: ['file'],
   multiselect: false,
   label: '',
-  group: 4
+  group: 4,
+  platform: 'browser'
 }, {
   id: 'uploadFile',
   name: 'Load a Local File',
   type: ['folder', 'gist', 'workspace'],
   multiselect: false,
   label: 'Load a Local File',
-  group: 4
+  group: 4,
+  platform: 'browser'
 }, {
   id: 'publishToGist',
   name: 'Push changes to gist',
   type: ['folder', 'gist'],
   multiselect: false,
   label: 'Publish all to Gist',
-  group: 4
+  group: 4,
+  platform: 'browser'
 },
 {
   id: 'publishWorkspace',
@@ -112,5 +118,6 @@ export const contextMenuActions: MenuItems = [{
   type: ['workspace'],
   multiselect: false,
   label: '',
-  group: 4
+  group: 4,
+  platform: 'browser'
 }]

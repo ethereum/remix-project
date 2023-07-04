@@ -193,6 +193,7 @@ export const SearchProvider = ({
     },
 
     findText: async (path: string) => {
+
       if (!plugin) return
       try {
         if (state.find.length < 1) return
@@ -324,6 +325,10 @@ export const SearchProvider = ({
     plugin.on('fileManager', 'rootFolderChanged', async file => {
       const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
       if (workspace) value.setCurrentWorkspace(workspace.name)
+      setFiles(await getDirectory('/', plugin))
+    })
+
+    plugin.on('fs', 'workingDirChanged', async () => {
       setFiles(await getDirectory('/', plugin))
     })
 

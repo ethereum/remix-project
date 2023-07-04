@@ -1,7 +1,8 @@
 'use strict'
 import { CodeParser } from "../code-parser";
+import isElectron from 'is-electron'
 
-export type CodeParserImportsData= {
+export type CodeParserImportsData = {
     files?: string[],
     modules?: string[],
     packages?: string[],
@@ -16,7 +17,7 @@ export default class CodeParserImports {
         this.init()
     }
 
-    async getImports(){
+    async getImports() {
         return this.data
     }
 
@@ -27,31 +28,44 @@ export default class CodeParserImports {
             .filter(x => x !== '')
             .map(x => x.replace('./node_modules/', ''))
             .filter(x => {
-                if(x.includes('@openzeppelin')) {
+                if (x.includes('@openzeppelin')) {
                     return !x.includes('mock')
-                }else{
+                } else {
                     return true
-                } 
+                }
             })
-            
         // get unique first words of the values in the array
         this.data.packages = [...new Set(this.data.modules.map(x => x.split('/')[0]))]
     }
 
     setFileTree = async () => {
-        this.data.files = await this.getDirectory('/')
-        this.data.files = this.data.files.filter(x => x.endsWith('.sol') && !x.startsWith('.deps') && !x.startsWith('.git'))
+
+        if (isElectron()) {
+            const files = await this.plugin.call('fs', 'glob', '/', '**/*.sol')
+            // only get path property of files
+            this.data.files = files.map(x => x.path)
+
+        } else {
+
+            this.data.files = await this.getDirectory('/')
+            this.data.files = this.data.files.filter(x => x.endsWith('.sol') && !x.startsWith('.deps') && !x.startsWith('.git'))
+
+
+        }
     }
 
     getDirectory = async (dir: string) => {
+
+        console.log('getDirectorySEARCH', dir)
         let result = []
+
         let files = {}
         try {
             if (await this.plugin.call('fileManager', 'exists', dir)) {
                 files = await this.plugin.call('fileManager', 'readdir', dir)
             }
-        } catch (e) {}
-        
+        } catch (e) { }
+
         const fileArray = this.normalize(files)
         for (const fi of fileArray) {
             if (fi) {
@@ -63,10 +77,12 @@ export default class CodeParserImports {
                 }
             }
         }
+
         return result
     }
 
     normalize = filesList => {
+        console.log('normalize', filesList)
         const folders = []
         const files = []
         Object.keys(filesList || {}).forEach(key => {
