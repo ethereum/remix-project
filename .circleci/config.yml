@@ -429,7 +429,10 @@ workflows:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - build
-      - build-desktop
+      - build-desktop:
+          filters:
+            branches:
+              only: ['master', /desktop/]
       - build-remixdesktop-mac:
           requires:
             - build-desktop
