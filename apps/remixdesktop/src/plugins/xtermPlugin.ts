@@ -7,6 +7,7 @@ import * as pty from "node-pty"
 
 import process from 'node:process';
 import { userInfo } from 'node:os';
+import { findExecutable } from "../utils/findExecutable";
 
 export const detectDefaultShell = () => {
     const { env } = process;
@@ -86,12 +87,18 @@ class XtermPluginClient extends ElectronBasePluginClient {
     }
 
     async getShells(): Promise<string[]> {
+        if(os.platform() === 'win32') {
+            const bash = await findExecutable('bash')
+            if(bash) {
+                return [bash, 'powershell.exe', 'cmd.exe']
+            }
+            return ['powershell.exe', 'cmd.exe']
+        }
         return [defaultShell]
     }
 
 
-    async createTerminal(path?: string): Promise<number> {
-        const shell = defaultShell;
+    async createTerminal(path?: string, shell?: string): Promise<number> {
 
 
         // filter undefined out of the env
@@ -103,7 +110,7 @@ class XtermPluginClient extends ElectronBasePluginClient {
             }, {} as Record<string, string>);
             
 
-        const ptyProcess = pty.spawn(shell, [], {
+        const ptyProcess = pty.spawn(shell || defaultShell, [], {
             name: 'xterm-color',
             cols: 80,
             rows: 20,

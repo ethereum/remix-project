@@ -92,8 +92,8 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
         plugin.call('xterm', 'keystroke', data, pid)
     }
 
-    const createTerminal = async () => {
-        const pid = await plugin.call('xterm', 'createTerminal', workingDir)
+    const createTerminal = async (shell?: string) => {
+        const pid = await plugin.call('xterm', 'createTerminal', workingDir, shell)
         setShowOutput(false)
         setTerminals(prevState => {
             // set all to hidden
@@ -161,14 +161,14 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
                 <div className={`xterm-panel-header-right  ${showOutput ? 'd-none' : ''}`}>
 
                     <Dropdown as={ButtonGroup}>
-                        <button className="btn btn-sm btn-secondary" onClick={createTerminal}><span className="far fa-plus border-0 p-0 m-0"></span></button>
+                        <button className="btn btn-sm btn-secondary" onClick={async() => createTerminal()}><span className="far fa-plus border-0 p-0 m-0"></span></button>
 
 
                         <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
 
                         <Dropdown.Menu className='custom-dropdown-items remixui_menuwidth'>
                             {shells.map((shell, index) => {
-                                return (<Dropdown.Item key={index} onClick={createTerminal}>{shell}</Dropdown.Item>)
+                                return (<Dropdown.Item key={index} onClick={async() => await createTerminal(shell)}>{shell}</Dropdown.Item>)
                             })}
                         </Dropdown.Menu>
                     </Dropdown>
