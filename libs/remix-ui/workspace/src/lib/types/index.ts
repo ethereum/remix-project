@@ -5,7 +5,7 @@ import { fileDecoration } from '@remix-ui/file-decorators'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
 import { ViewPlugin } from '@remixproject/engine-web'
 
-export type action = { name: string, type?: Array<'folder' | 'gist' | 'file' | 'workspace'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean, group: number }
+export type action = { name: string, type?: Array<'folder' | 'gist' | 'file' | 'workspace'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean, group: number, platform?: 'electron' | 'browser' }
 export interface JSONStandardInput {
   language: "Solidity";
   settings?: any,

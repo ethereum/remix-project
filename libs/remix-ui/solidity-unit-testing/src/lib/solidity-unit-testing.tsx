@@ -9,6 +9,7 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { format } from 'util'
 import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
+import isElectron from 'is-electron'
 
 const _paq = (window as any)._paq = (window as any)._paq || [] // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -550,7 +551,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
         currentCompilerUrl,
         evmVersion,
         optimize,
-        usingWorker: canUseWorker(currentVersion),
+        usingWorker: canUseWorker(currentVersion) || isElectron(),
         runs
       }
       const deployCb = async (file: string, contractAddress: string) => {

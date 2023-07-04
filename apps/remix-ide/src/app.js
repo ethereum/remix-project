@@ -45,6 +45,14 @@ import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
 import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
 import { ContractFlattener } from './app/plugins/contractFlattener'
+import { TemplatesPlugin } from './app/plugins/remix-templates'
+import { fsPlugin } from './app/plugins/electron/fsPlugin'
+import { isoGitPlugin } from './app/plugins/electron/isoGitPlugin'
+import { electronConfig } from './app/plugins/electron/electronConfigPlugin'
+import { electronTemplates } from './app/plugins/electron/templatesPlugin'
+import { xtermPlugin } from './app/plugins/electron/xtermPlugin'
+
+
 
 const isElectron = require('is-electron')
 
@@ -52,13 +60,14 @@ const remixLib = require('@remix-project/remix-lib')
 
 import { QueryParams } from '@remix-project/remix-lib'
 import { SearchPlugin } from './app/tabs/search'
+import { ElectronProvider } from './app/files/electronProvider'
 
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
 const Config = require('./config')
 
 const FileManager = require('./app/files/fileManager')
-const FileProvider = require('./app/files/fileProvider')
+import FileProvider from "./app/files/fileProvider"
 const DGitProvider = require('./app/files/dgitProvider')
 const WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
 
@@ -74,8 +83,11 @@ const Editor = require('./app/editor/editor')
 const Terminal = require('./app/panels/terminal')
 const { TabProxy } = require('./app/panels/tab-proxy.js')
 
+
+
 class AppComponent {
   constructor() {
+
     this.appManager = new RemixAppManager({})
     this.queryParams = new QueryParams()
     this._components = {}
@@ -104,6 +116,12 @@ class AppComponent {
     Registry.getInstance().put({
       api: this._components.filesProviders.workspace,
       name: 'fileproviders/workspace'
+    })
+
+    this._components.filesProviders.electron = new ElectronProvider(this.appManager)
+    Registry.getInstance().put({
+      api: this._components.filesProviders.electron,
+      name: 'fileproviders/electron'
     })
 
     Registry.getInstance().put({
@@ -181,6 +199,9 @@ class AppComponent {
     //----- search
     const search = new SearchPlugin()
 
+    //---- templates
+    const templates = new TemplatesPlugin()
+
     //---------------- Solidity UML Generator -------------------------
     const solidityumlgen = new SolidityUmlGen(appManager)
 
@@ -257,6 +278,7 @@ class AppComponent {
 
     const permissionHandler = new PermissionHandlerPlugin()
 
+    
     this.engine.register([
       permissionHandler,
       this.layout,
@@ -302,8 +324,23 @@ class AppComponent {
       search,
       solidityumlgen,
       contractFlattener,
-      solidityScript
+      solidityScript,
+      templates
     ])
+
+    //---- fs plugin
+    if (isElectron()) {
+      const FSPlugin = new fsPlugin()
+      this.engine.register([FSPlugin])
+      const isoGit = new isoGitPlugin()
+      this.engine.register([isoGit])
+      const electronConfigPlugin = new electronConfig()
+      this.engine.register([electronConfigPlugin])
+      const templatesPlugin = new electronTemplates()
+      this.engine.register([templatesPlugin])
+      const xterm = new xtermPlugin()
+      this.engine.register([xterm])
+    }
 
     // LAYOUT & SYSTEM VIEWS
     const appPanel = new MainPanel()
@@ -418,7 +455,11 @@ class AppComponent {
     await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'codeParser', 'codeFormatter', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
-    await this.appManager.activatePlugin(['solidity-script'])
+    await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
+
+    if(isElectron()){
+      await this.appManager.activatePlugin(['fs', 'isogit', 'electronconfig', 'electronTemplates', 'xterm'])
+    }
 
     this.appManager.on(
       'filePanel',
@@ -431,6 +472,7 @@ class AppComponent {
         await this.appManager.registerContextMenuItems()
       }
     )
+
 
     await this.appManager.activatePlugin(['filePanel'])
     // Set workspace after initial activation

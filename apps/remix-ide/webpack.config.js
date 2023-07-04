@@ -15,24 +15,24 @@ const versionData = {
 }
 
 const loadLocalSolJson = async () => {
-  // execute apps/remix-ide/ci/downloadsoljson.sh
-  const child = require('child_process').execSync('bash ./apps/remix-ide/ci/downloadsoljson.sh', { encoding: 'utf8', cwd: process.cwd(), shell: true })
+  //execute apps/remix-ide/ci/downloadsoljson.sh
+  const child = require('child_process').execSync('bash ' + __dirname + '/ci/downloadsoljson.sh', { encoding: 'utf8', cwd: process.cwd(), shell: true })
   // show output
   console.log(child)
 }
 
-fs.writeFileSync('./apps/remix-ide/src/assets/version.json', JSON.stringify(versionData))
+fs.writeFileSync(__dirname + '/src/assets/version.json', JSON.stringify(versionData))
 
 loadLocalSolJson()
 
-const project = fs.readFileSync('./apps/remix-ide/project.json', 'utf8')
+const project = fs.readFileSync(__dirname + '/project.json', 'utf8')
 
 const implicitDependencies = JSON.parse(project).implicitDependencies
 
 const copyPatterns = implicitDependencies.map((dep) => {
   try {
     fs.statSync(__dirname + `/../../dist/apps/${dep}`).isDirectory()
-    return { from: `../../dist/apps/${dep}`, to: `plugins/${dep}` }
+    return { from: __dirname + `/../../dist/apps/${dep}`, to: `plugins/${dep}` }
   }
   catch (e) {
     console.log('error', e)
@@ -77,7 +77,11 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   }
 
   // add public path
-  config.output.publicPath = '/'
+  if(process.env.NX_DESKTOP_FROM_DIST){
+    config.output.publicPath = './'
+  }else{
+    config.output.publicPath = '/'
+  }
 
   // set filename
   config.output.filename = `[name].${versionData.version}.${versionData.timestamp}.js`
@@ -130,6 +134,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     ignored: /node_modules/
   }
 
+  console.log('config', process.env.NX_DESKTOP_FROM_DIST)
   return config;
 });
 

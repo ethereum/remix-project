@@ -2,7 +2,7 @@ import React from 'react'
 import { bufferToHex } from '@ethereumjs/util'
 import { hash } from '@remix-project/remix-lib'
 import axios, { AxiosResponse } from 'axios'
-import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setCurrentWorkspaceBranches, setCurrentWorkspaceCurrentBranch, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace, setCurrentWorkspaceIsGitRepo, setGitConfig } from './payload'
+import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setCurrentWorkspaceBranches, setCurrentWorkspaceCurrentBranch, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace, setCurrentWorkspaceIsGitRepo, setGitConfig, setElectronRecentFolders } from './payload'
 import { addSlash, checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
 import { JSONStandardInput, WorkspaceTemplate } from '../types'
@@ -14,6 +14,7 @@ import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
 import { AppModal, ModalTypes } from '@remix-ui/app'
 import { contractDeployerScripts, etherscanScripts } from '@remix-project/remix-ws-templates'
+import isElectron from 'is-electron'
 
 declare global {
   interface Window { remixFileSystemCallback: IndexedDBStorage; }
@@ -22,6 +23,7 @@ declare global {
 
 const LOCALHOST = ' - connect to localhost - '
 const NO_WORKSPACE = ' - none - '
+const ELECTRON = 'electron'
 const queryParams = new QueryParams()
 const _paq = window._paq = window._paq || [] //eslint-disable-line
 let plugin, dispatch: React.Dispatch<any>
@@ -83,6 +85,15 @@ const removeSlash = (s: string) => {
 }
 
 export const createWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate, opts = null, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void, isGitRepo: boolean = false, createCommit: boolean = true) => {
+
+  if (isElectron()) {
+    if (workspaceTemplateName) {
+      await plugin.call('remix-templates', 'loadTemplateInNewWindow', workspaceTemplateName, opts)
+    }
+    return
+  }
+
+
   await plugin.fileManager.closeAllFiles()
   const promise = createWorkspaceTemplate(workspaceName, workspaceTemplateName)
   dispatch(createWorkspaceRequest(promise))
@@ -165,6 +176,7 @@ export type UrlParametersType = {
 
 export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDefault', opts?) => {
   const workspaceProvider = plugin.fileProviders.workspace
+  const electronProvider = plugin.fileProviders.electron
   const params = queryParams.get() as UrlParametersType
 
   switch (template) {
@@ -242,7 +254,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         if (!templateList.includes(template)) break
         _paq.push(['trackEvent', 'workspace', 'template', template])
         // @ts-ignore
-        const files = await templateWithContent[template](opts)
+        const files = await templateWithContent[template](opts)   
         for (const file in files) {
           try {
             await workspaceProvider.set(file, files[file])
@@ -267,12 +279,15 @@ export const workspaceExists = async (name: string) => {
 }
 
 export const fetchWorkspaceDirectory = async (path: string) => {
+
   if (!path) return
   const provider = plugin.fileManager.currentFileProvider()
-  const promise = new Promise((resolve) => {
+  const promise = new Promise((resolve, reject) => {
     provider.resolveDirectory(path, (error, fileTree) => {
-      if (error) console.error(error)
-
+      if (error) {
+        console.error(error)
+        return reject(error)
+      }
       resolve(fileTree)
     })
   })
@@ -341,6 +356,12 @@ export const switchToWorkspace = async (name: string) => {
     // if there is no other workspace, create remix default workspace
     plugin.call('notification', 'toast', `No workspace found! Creating default workspace ....`)
     await createWorkspace('default_workspace', 'remixDefault')
+  } else if (name === ELECTRON) {
+    await plugin.fileProviders.workspace.setWorkspace(name)
+    await plugin.setWorkspace({ name, isLocalhost: false })
+    dispatch(setMode('browser'))
+    dispatch(setCurrentWorkspace({ name, isGitRepo: false }))
+
   } else {
     const isActive = await plugin.call('manager', 'isActive', 'remixd')
 
@@ -406,8 +427,8 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
         okFn: () => {
           loadFile(name, file, workspaceProvider, cb)
         },
-        cancelFn: () => {},
-        hideFn: () => {}
+        cancelFn: () => { },
+        hideFn: () => { }
       }
       plugin.call('notification', 'modal', modalContent)
     }
@@ -415,7 +436,7 @@ export const uploadFile = async (target, targetFolder: string, cb?: (err: Error,
 }
 
 export const uploadFolder = async (target, targetFolder: string, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
-  for(const file of [...target.files]) {
+  for (const file of [...target.files]) {
     const workspaceProvider = plugin.fileProviders.workspace
     const name = targetFolder === '/' ? file.webkitRelativePath : `${targetFolder}/${file.webkitRelativePath}`
     if (!await workspaceProvider.exists(name)) {
@@ -431,8 +452,8 @@ export const uploadFolder = async (target, targetFolder: string, cb?: (err: Erro
         okFn: () => {
           loadFile(name, file, workspaceProvider, cb)
         },
-        cancelFn: () => {},
-        hideFn: () => {}
+        cancelFn: () => { },
+        hideFn: () => { }
       }
       plugin.call('notification', 'modal', modalContent)
     }
@@ -484,46 +505,58 @@ export const cloneRepository = async (url: string) => {
   const token = config.get('settings/gist-access-token')
   const repoConfig = { url, token }
 
-  try {
-    const repoName = await getRepositoryTitle(url)
-
-    await createWorkspace(repoName, 'blank', null, true, null, true, false)
-    const promise = plugin.call('dGitProvider', 'clone', repoConfig, repoName, true)
-
-    dispatch(cloneRepositoryRequest())
-    promise.then(async () => {
-      const isActive = await plugin.call('manager', 'isActive', 'dgit')
-
-      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
-      await fetchWorkspaceDirectory(ROOT_PATH)
-      const workspacesPath = plugin.fileProviders.workspace.workspacesPath
-      const branches = await getGitRepoBranches(workspacesPath + '/' + repoName)
-
-      dispatch(setCurrentWorkspaceBranches(branches))
-      const currentBranch = await getGitRepoCurrentBranch(workspacesPath + '/' + repoName)
-
-      dispatch(setCurrentWorkspaceCurrentBranch(currentBranch))
-      dispatch(cloneRepositorySuccess())
-    }).catch(() => {
-      const cloneModal = {
+  if (isElectron()) {
+    try {
+      await plugin.call('dGitProvider', 'clone', repoConfig)
+    } catch (e) {
+      console.log(e)
+      plugin.call('notification', 'alert', {
         id: 'cloneGitRepository',
-        title: 'Clone Git Repository',
-        message: 'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in Settings plugin',
-        modalType: 'modal',
-        okLabel: 'OK',
-        okFn: async () => {
-          await deleteWorkspace(repoName)
-          dispatch(cloneRepositoryFailed())
-        },
-        hideFn: async () => {
-          await deleteWorkspace(repoName)
-          dispatch(cloneRepositoryFailed())
+        message: e
+      })
+    }
+  } else {
+    try {
+      const repoName = await getRepositoryTitle(url)
+
+      await createWorkspace(repoName, 'blank', null, true, null, true, false)
+      const promise = plugin.call('dGitProvider', 'clone', repoConfig, repoName, true)
+
+      dispatch(cloneRepositoryRequest())
+      promise.then(async () => {
+        const isActive = await plugin.call('manager', 'isActive', 'dgit')
+
+        if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+        await fetchWorkspaceDirectory(ROOT_PATH)
+        const workspacesPath = plugin.fileProviders.workspace.workspacesPath
+        const branches = await getGitRepoBranches(workspacesPath + '/' + repoName)
+
+        dispatch(setCurrentWorkspaceBranches(branches))
+        const currentBranch = await getGitRepoCurrentBranch(workspacesPath + '/' + repoName)
+
+        dispatch(setCurrentWorkspaceCurrentBranch(currentBranch))
+        dispatch(cloneRepositorySuccess())
+      }).catch(() => {
+        const cloneModal = {
+          id: 'cloneGitRepository',
+          title: 'Clone Git Repository',
+          message: 'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in Settings plugin',
+          modalType: 'modal',
+          okLabel: 'OK',
+          okFn: async () => {
+            await deleteWorkspace(repoName)
+            dispatch(cloneRepositoryFailed())
+          },
+          hideFn: async () => {
+            await deleteWorkspace(repoName)
+            dispatch(cloneRepositoryFailed())
+          }
         }
-      }
-      plugin.call('notification', 'modal', cloneModal)
-    })
-  } catch (e) {
-    dispatch(displayPopUp('An error occured: ' + e))
+        plugin.call('notification', 'modal', cloneModal)
+      })
+    } catch (e) {
+      dispatch(displayPopUp('An error occured: ' + e))
+    }
   }
 }
 
@@ -574,7 +607,6 @@ export const getGitRepoCurrentBranch = async (workspaceName: string) => {
 }
 
 export const showAllBranches = async () => {
-  console.log('showAllBranches')
   const isActive = await plugin.call('manager', 'isActive', 'dgit')
   if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
   plugin.call('menuicons', 'select', 'dgit')
@@ -660,21 +692,21 @@ export const createNewBranch = async (branch: string) => {
 export const createSolidityGithubAction = async () => {
   const path = '.github/workflows/run-solidity-unittesting.yml'
 
-  await plugin.call('fileManager', 'writeFile', path , solTestYml)
+  await plugin.call('fileManager', 'writeFile', path, solTestYml)
   plugin.call('fileManager', 'open', path)
 }
 
 export const createTsSolGithubAction = async () => {
   const path = '.github/workflows/run-js-test.yml'
 
-  await plugin.call('fileManager', 'writeFile', path , tsSolTestYml)
+  await plugin.call('fileManager', 'writeFile', path, tsSolTestYml)
   plugin.call('fileManager', 'open', path)
 }
 
 export const createSlitherGithubAction = async () => {
   const path = '.github/workflows/run-slither-action.yml'
 
-  await plugin.call('fileManager', 'writeFile', path , slitherYml)
+  await plugin.call('fileManager', 'writeFile', path, slitherYml)
   plugin.call('fileManager', 'open', path)
 }
 
@@ -736,6 +768,21 @@ export const checkoutRemoteBranch = async (branch: string, remote: string) => {
       dispatch(cloneRepositoryFailed())
     })
   }
+}
+
+export const openElectronFolder = async (path: string) => {
+  await plugin.call('fs', 'openFolderInSameWindow', path)
+}
+
+export const getElectronRecentFolders = async () => {
+  const folders = await plugin.call('fs', 'getRecentFolders')
+  dispatch(setElectronRecentFolders(folders))
+  return folders
+}
+
+export const removeRecentElectronFolder = async (path: string) => {
+  await plugin.call('fs', 'removeRecentFolder', path)
+  await getElectronRecentFolders()
 }
 
 export const hasLocalChanges = async () => {

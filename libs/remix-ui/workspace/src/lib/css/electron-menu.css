@@ -1,0 +1,27 @@
+.recentfolder {
+  display: flex;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.recentfolder_path {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.recentfolder_name {
+  flex-shrink: 0;
+  color: var(--text);
+}
+
+.recentfolder_name:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.recentfolder_delete {
+  flex-shrink: 0;
+  margin-left: auto;
+  color: var(--text);
+}

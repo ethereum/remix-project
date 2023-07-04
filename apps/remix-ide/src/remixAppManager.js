@@ -2,10 +2,11 @@ import { PluginManager } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import { QueryParams } from '@remix-project/remix-lib'
 import { IframePlugin } from '@remixproject/engine-web'
+const isElectron = require('is-electron')
 const _paq = window._paq = window._paq || []
 
 // requiredModule removes the plugin from the plugin manager list on UI
-const requiredModules = [ // services + layout views + system views
+let requiredModules = [ // services + layout views + system views
   'manager', 'config', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme', 'locale',
   'fileManager', 'contentImport', 'blockchain', 'web3Provider', 'scriptRunner', 'fetchAndCompile', 'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons',
   'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity', 'solidity-logic', 'gistHandler', 'layout',
@@ -13,6 +14,11 @@ const requiredModules = [ // services + layout views + system views
   'hardhat-provider', 'ganache-provider', 'foundry-provider', 'basic-http-provider', 'injected', 'injected-trustwallet', 'injected-optimism-provider', 'injected-arbitrum-one-provider', 'vm-custom-fork', 'vm-goerli-fork', 'vm-mainnet-fork', 'vm-sepolia-fork', 'vm-merge', 'vm-london', 'vm-berlin',
   'vm-shanghai',
   'compileAndRun', 'search', 'recorder', 'fileDecorator', 'codeParser', 'codeFormatter', 'solidityumlgen', 'contractflattener', 'solidity-script']
+
+if (isElectron()) {
+  requiredModules = [...requiredModules, 'fs', 'electronTemplates', 'isogit', 'remix-templates', 'electronconfig']
+}
+
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
 const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither']
@@ -178,6 +184,7 @@ export class RemixAppManager extends PluginManager {
     }
 
     return plugins.map(plugin => {
+      if (plugin.name === 'dgit') { plugin.url = 'https://dgit4-76cc9.web.app/' }
       if (plugin.name === testPluginName) plugin.url = testPluginUrl
       return new IframePlugin(plugin)
     })
