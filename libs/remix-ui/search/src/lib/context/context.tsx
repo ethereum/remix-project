@@ -203,7 +203,6 @@ export const SearchProvider = ({
           text,
           createRegExFromFind()
         )
-        console.log('RESULT', result)
         clearTimeout(clearSearchingTimeout.current)
         clearSearchingTimeout.current = setTimeout(() => value.setSearching(null), 500)
         return result
@@ -423,7 +422,6 @@ export const SearchProvider = ({
   }, [state.count])
 
   useEffect(() => {
-    console.log('STATE CHANGED', files, state.find)
     if (state.find) {
       (async () => {
         try {

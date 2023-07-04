@@ -858,6 +858,10 @@ class FileManager extends Plugin {
   }
 
   currentWorkspace() {
+    if(isElectron()){
+      return ''
+    }
+
     if (this.mode !== 'localhost') {
       const file = this.currentFile() || ''
       const provider = this.fileProviderOf(file)

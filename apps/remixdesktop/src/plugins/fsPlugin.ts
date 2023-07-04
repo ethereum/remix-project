@@ -126,11 +126,12 @@ class FSPluginClient extends ElectronBasePluginClient {
 
   async glob(path: string, pattern: string, options?: GlobOptions): Promise<string[] | Path[]> {
 
-    path = this.fixPath(path)
+    path = convertPathToPosix(this.fixPath(path))
     const files = await glob(path + pattern, {
       withFileTypes: true,
       ...options
     })
+
     const result: any[] = []
 
     for (const file of files) {
@@ -139,6 +140,9 @@ class FSPluginClient extends ElectronBasePluginClient {
         pathWithoutWorkingDir = pathWithoutWorkingDir + '/'
       }
       if (pathWithoutWorkingDir.startsWith('/')) {
+        pathWithoutWorkingDir = pathWithoutWorkingDir.slice(1)
+      }
+      if(pathWithoutWorkingDir.startsWith('\\')) {
         pathWithoutWorkingDir = pathWithoutWorkingDir.slice(1)
       }
       result.push({
@@ -225,11 +229,11 @@ class FSPluginClient extends ElectronBasePluginClient {
         ignorePermissionErrors: true, ignoreInitial: true,
         ignored: [
           '**/node_modules/**',
+          '**/.git/index.lock',	// this file is created and unlinked all the time when git is running on Windows
         ]
       }).on('all', async (eventName, path, stats) => {
 
 
-        
         let pathWithoutPrefix = path.replace(this.workingDir, '')
         pathWithoutPrefix = convertPathToPosix(pathWithoutPrefix)
         if (pathWithoutPrefix.startsWith('/')) pathWithoutPrefix = pathWithoutPrefix.slice(1)
@@ -242,7 +246,6 @@ class FSPluginClient extends ElectronBasePluginClient {
   
           if (currentContent !== newContent) {
             try {
-
               this.emit('change', eventName, pathWithoutPrefix)
             } catch (e) {
               console.log('error emitting change', e)
