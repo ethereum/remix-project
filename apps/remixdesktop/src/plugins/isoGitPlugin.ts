@@ -147,6 +147,11 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
   async commit(cmd: any) {
 
+    if (this.gitIsInstalled) {
+      const status = await gitProxy.commit(this.workingDir, cmd.message)
+      return status
+    }
+
     const commit = await git.commit({
       ...await this.getGitConfig(),
       ...cmd

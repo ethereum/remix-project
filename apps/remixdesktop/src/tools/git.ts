@@ -37,14 +37,14 @@ export const gitProxy = {
         }
     },
 
-    
+
 
     clone: async (url: string, path: string) => {
         const { stdout, stderr } = await execAsync(`git clone ${url} ${path}`);
     },
 
     async push(path: string, remote: string, src: string, branch: string, force: boolean = false) {
-        const { stdout, stderr } = await execAsync(`git push  ${force? ' -f':'' }  ${remote} ${src}:${branch}`, { cwd: path });
+        const { stdout, stderr } = await execAsync(`git push  ${force ? ' -f' : ''}  ${remote} ${src}:${branch}`, { cwd: path });
     },
 
     async pull(path: string, remote: string, src: string, branch: string) {
@@ -53,6 +53,14 @@ export const gitProxy = {
 
     async fetch(path: string, remote: string, branch: string) {
         const { stdout, stderr } = await execAsync(`git fetch ${remote} ${branch}`, { cwd: path });
+    },
+
+    async commit(path: string, message: string) {
+
+        await execAsync(`git commit -m ${message}`, { cwd: path });
+        const { stdout, stderr } = await execAsync(`git rev-parse HEAD`, { cwd: path });
+        return stdout;
+
     },
 
 
@@ -123,7 +131,7 @@ export const gitProxy = {
             commit.commit.parent = [data.parent]
             console.log('commit', commit)
             commits.push(commit)
-            
+
         })
 
         return commits
@@ -131,13 +139,13 @@ export const gitProxy = {
     }
 }
 
-function normalizeJson(str: string){
+function normalizeJson(str: string) {
     return str.replace(/[\s\n\r\t]/gs, '').replace(/,([}\]])/gs, '$1')
-    .replace(/([,{\[]|)(?:("|'|)([\w_\- ]+)\2:|)("|'|)(.*?)\4([,}\]])/gs, (str, start, q1, index, q2, item, end) => {
-        item = item.replace(/"/gsi, '').trim();
-        if(index){index = '"'+index.replace(/"/gsi, '').trim()+'"';}
-        if(!item.match(/^[0-9]+(\.[0-9]+|)$/) && !['true','false'].includes(item)){item = '"'+item+'"';}
-        if(index){return start+index+':'+item+end;}
-        return start+item+end;
-    });
+        .replace(/([,{\[]|)(?:("|'|)([\w_\- ]+)\2:|)("|'|)(.*?)\4([,}\]])/gs, (str, start, q1, index, q2, item, end) => {
+            item = item.replace(/"/gsi, '').trim();
+            if (index) { index = '"' + index.replace(/"/gsi, '').trim() + '"'; }
+            if (!item.match(/^[0-9]+(\.[0-9]+|)$/) && !['true', 'false'].includes(item)) { item = '"' + item + '"'; }
+            if (index) { return start + index + ':' + item + end; }
+            return start + item + end;
+        });
 }
