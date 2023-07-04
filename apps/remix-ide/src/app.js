@@ -67,7 +67,7 @@ const RemixDProvider = require('./app/files/remixDProvider')
 const Config = require('./config')
 
 const FileManager = require('./app/files/fileManager')
-const FileProvider = require('./app/files/fileProvider')
+import FileProvider from "./app/files/fileProvider"
 const DGitProvider = require('./app/files/dgitProvider')
 const WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
 

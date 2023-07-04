@@ -6,7 +6,7 @@ import { Storage } from '@remix-project/remix-lib'
 import pathModule from 'path'
 
 
-export class FileProvider {
+export default class FileProvider {
   event: any
   type: any
   providerExternalsStorage: any
@@ -327,4 +327,3 @@ export class FileProvider {
   }
 }
 
-module.exports = FileProvider

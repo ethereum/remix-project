@@ -22,7 +22,7 @@ const profile = {
   description: 'Decentralized git provider',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
-  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'reset', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem'],
+  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'reset', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'version'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
@@ -102,6 +102,15 @@ class DGitProvider extends Plugin {
       defaultBranch: (input && input.branch) || 'main'
     })
     this.emit('init')
+  }
+
+  async version() {
+    if (isElectron()) {
+      return await this.call('isogit', 'version')
+    }
+
+    const version = 'built-in'
+    return version
   }
 
   async status(cmd) {
