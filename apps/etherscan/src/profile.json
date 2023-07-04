@@ -10,7 +10,7 @@
   "location": "sidePanel",
   "url": "https://ipfs-cluster.ethdevops.io/ipfs/QmQsZbBSYCVBVpz2mVRbPRVTrcz59oJEpuuoxiT9otu3mh",
   "repo": "https://github.com/ethereum/remix-project/tree/master/apps/etherscan",
-  "documentation": "https://remix-etherscan-plugin.readthedocs.io/en/latest",
+  "documentation": "https://remix-ide.readthedocs.io/en/latest/contract_verification.html#etherscan",
   "maintainedBy": "Remix",
   "authorContact": "remix@ethereum.org"
 }
