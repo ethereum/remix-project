@@ -88,7 +88,7 @@ class XtermPluginClient extends ElectronBasePluginClient {
 
     async getShells(): Promise<string[]> {
         if(os.platform() === 'win32') {
-            const bash = await findExecutable('bash')
+            const bash = await findExecutable('bash.exe')
             if(bash) {
                 return [bash, 'powershell.exe', 'cmd.exe']
             }
