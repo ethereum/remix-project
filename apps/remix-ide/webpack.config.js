@@ -130,6 +130,10 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     new CssMinimizerPlugin(),
   ];
 
+  // minify code
+  if(process.env.NX_DESKTOP_FROM_DIST)
+    config.optimization.minimize = true
+
   config.watchOptions = {
     ignored: /node_modules/
   }
