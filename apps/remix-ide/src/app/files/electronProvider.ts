@@ -1,4 +1,5 @@
-const FileProvider = require('./fileProvider')
+import { FileProvider } from "./fileProvider"
+
 
 declare global {
   interface Window {
@@ -7,6 +8,7 @@ declare global {
 }
 
 export class ElectronProvider extends FileProvider {
+  _appManager: any
   constructor(appManager) {
     super('')
     this._appManager = appManager
@@ -48,7 +50,7 @@ export class ElectronProvider extends FileProvider {
       const files = await window.remixFileSystem.readdir(path)
       const ret = {}
       if (files) {
-        for (let element of files) {
+        for (const element of files) {
           path = path.replace(/^\/|\/$/g, '') // remove first and last slash
           const file = element.file.replace(/^\/|\/$/g, '') // remove first and last slash
           const absPath = (path === '/' ? '' : path) + '/' + file
@@ -68,12 +70,14 @@ export class ElectronProvider extends FileProvider {
  * Removes the folder recursively
  * @param {*} path is the folder to be removed
  */
-  async remove(path) {
+  async remove(path: string) {
     console.log('remove', path)
     try {
       await window.remixFileSystem.rmdir(path)
+      return true
     } catch (error) {
       console.log(error)
+      return false
     }
   }
 

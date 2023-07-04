@@ -2,6 +2,7 @@ import { PluginManager } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import { QueryParams } from '@remix-project/remix-lib'
 import { IframePlugin } from '@remixproject/engine-web'
+const isElectron = require('is-electron')
 const _paq = window._paq = window._paq || []
 
 // requiredModule removes the plugin from the plugin manager list on UI

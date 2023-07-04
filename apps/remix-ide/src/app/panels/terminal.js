@@ -6,6 +6,7 @@ import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import vm from 'vm'
+import isElectron from 'is-electron'
 const EventManager = require('../../lib/events')
 
 import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line

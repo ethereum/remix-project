@@ -3,6 +3,7 @@ import { EventEmitter } from 'events'
 import { QueryParams } from '@remix-project/remix-lib'
 import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
+const isElectron = require('is-electron')
 const _paq = window._paq = window._paq || []
 
 const themes = [
