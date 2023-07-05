@@ -1067,20 +1067,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 </div>
               ) : null}
               <div
-                className="border-top mt-2 pt-2 mb-2"
+                className="border-top mt-2 pt-2 mb-3"
                 id="staticanalysisresult"
               >
-                <RemixUiCheckbox
-                  id="showLibWarnings"
-                  name="showLibWarnings"
-                  categoryId="showLibWarnings"
-                  inputType="checkbox"
-                  checked={showLibsWarning}
-                  label="Show warnings for external libraries"
-                  onClick={handleShowLibsWarning}
-                  onChange={() => {}}
-                  tooltipPlacement="top-start"
-                />
                 <RemixUiCheckbox
                   id="hideWarnings"
                   name="hideWarnings"
@@ -1098,7 +1087,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   setSelectedTab(tabKey);
                 }}
               >
-                <Nav variant="tabs" className="px-1">
+                <Nav variant="tabs">
                   {checkBasicStatus() ? (
                     <Nav.Item>
                       <Nav.Link
