@@ -130,7 +130,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         `${
           state && state.data && state.file.length > 0
             ? "Run analysis"
-            : "To run analysis tools, first compile a contract."
+            : "To run analysis for selected tools, first compile a contract"
         }`
       );
     }
