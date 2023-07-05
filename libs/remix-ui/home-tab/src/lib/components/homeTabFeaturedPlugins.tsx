@@ -154,6 +154,7 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
               envID="sUTLogo"
               envText="Solidity unit testing"
               description={intl.formatMessage({ id: 'home.unitTestPluginDesc' })}
+              remixMaintained={true}
               callback={() => startSolidityUnitTesting()}
             />
           </Carousel>
