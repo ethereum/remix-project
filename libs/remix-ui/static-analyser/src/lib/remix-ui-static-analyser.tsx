@@ -1099,7 +1099,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   name="hideWarnings"
                   inputType="checkbox"
                   checked={hideWarnings}
-                  label="Hide warnings"
+                  label="Show errors only"
                   onClick={handleHideWarnings}
                   onChange={() => {}}
                 />
