@@ -49,8 +49,7 @@ class AnalysisTab extends ViewPlugin {
 
     this.event.register('staticAnaysisWarning', (count) => {
       let payloadType = ''
-      const error = this.hints.find(hint => hint.type === 'error')
-      const warning = this.hints.find(hints => hints.type === 'warning')
+      const error = this.hints?.find(hint => hint.type === 'error')
       if (error) {
         payloadType = 'error'
       } else {
