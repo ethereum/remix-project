@@ -38,6 +38,9 @@ class AnalysisTab extends ViewPlugin {
     }
     this.dispatch = null
     this.hints = []
+    this.basicEnabled = false
+    this.solhintEnabled = false
+    this.slitherEnabled = false
   }
 
   async onActivation () {
@@ -50,14 +53,14 @@ class AnalysisTab extends ViewPlugin {
     this.event.register('staticAnaysisWarning', (count) => {
       let payloadType = ''
       const error = this.hints?.find(hint => hint.type === 'error')
-      if (error) {
+      if (error && this.solhintEnabled) {
         payloadType = 'error'
       } else {
         payloadType = 'warning'
       }
 
       if (count > 0) {
-        this.emit('statusChanged', { key: count, title: payloadType === 'error' ? `You have ${count} problem${count === 1 ? '' : 's'}` : 'You have some warnings', type: payloadType })
+        this.emit('statusChanged', { key: count, title: payloadType === 'error' ? `You have ${count} problem${count === 1 ? '' : 's'}` : `You have ${count} warnings`, type: payloadType })
       } else if (count === 0) {
         this.emit('statusChanged', { key: 'succeed', title: 'no warnings or errors', type: 'success' })
       } else {
