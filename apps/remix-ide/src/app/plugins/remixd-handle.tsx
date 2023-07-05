@@ -50,7 +50,6 @@ export class RemixdHandle extends WebsocketPlugin {
   }
 
   async activate() {
-    console.trace('activate remixd')
     this.connectToLocalhost()
     return true
   }
