@@ -437,14 +437,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       props.event.trigger("staticAnaysisWarning", [
         slitherTotal + ssaTotal + hintsTotal === 0
           ? -1
-          : slitherTotal + ssaTotal + hintsTotal,
+          : !solhintEnabled && !basicEnabled && !slitherEnabled ? -1 : slitherTotal + ssaTotal + hintsTotal,
       ]);
     }
     if (!hideWarnings && showLibsWarning) {
       props.event.trigger("staticAnaysisWarning", [
         slitherWarnings.length + ssaWarnings.length + hints.length === 0
           ? -1
-          : slitherWarnings.length + ssaWarnings.length + hints.length,
+          : !solhintEnabled && !basicEnabled && !slitherEnabled ? -1 : slitherWarnings.length + ssaWarnings.length + hints.length,
       ]);
     }
     if (hideWarnings) {
@@ -466,57 +466,71 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           : slitherTotal + ssaTotal + hintsTotal,
       ]);
     }
-  }, [hideWarnings, showLibsWarning]);
+    if (hideWarnings && !solhintEnabled && !slitherEnabled && !basicEnabled) {
+      props.event.trigger("staticAnaysisWarning", [-1])
+    }
+  }, [hideWarnings, showLibsWarning])
 
   useEffect(() => {
-    const slitherTotal =
-      slitherEnabled &&
+    let slitherTotal = 0
+      if (slitherEnabled &&
       showSlither &&
       slitherWarnings &&
       state.data &&
-      state.source !== null
-        ? slitherWarnings.filter((x) => !x.options.isLibrary && x.hasWarning)
-            .length
-        : 0;
-    const ssaTotal =
-      basicEnabled && ssaWarnings && state.data && state.source !== null
-        ? ssaWarnings.filter((x) => !x.options.isLibrary && x.hasWarning).length
-        : 0;
-    const hintsTotal =
-      solhintEnabled && hints && state.data && state.source !== null
-        ? hints.length
-        : 0;
+      state.source !== null) {
+        slitherTotal = slitherWarnings.filter((x) => !x.options.isLibrary && x.hasWarning).length
+        props.analysisModule.slitherEnabled = true
+      }
+    let ssaTotal = 0
+      if (basicEnabled && ssaWarnings && state.data && state.source !== null) {
+        ssaTotal = ssaWarnings.filter((x) => !x.options.isLibrary && x.hasWarning).length
+        props.analysisModule.basicEnabled = true
+      }
+
+    let hintsTotal = 0
+      if (solhintEnabled && hints && state.data && state.source !== null) {
+        hintsTotal = hints.length
+        props.analysisModule.solhintEnabled = true
+      }
     props.event.trigger("staticAnaysisWarning", [
       slitherTotal + ssaTotal + hintsTotal === 0
         ? -1
         : slitherTotal + ssaTotal + hintsTotal,
     ]);
-  }, [hints.length, slitherWarnings.length, ssaWarnings.length]);
+  }, [hints.length, slitherWarnings.length, ssaWarnings.length])
 
   useEffect(() => {
-    const slitherTotal =
-      slitherWarnings &&
+    let slitherTotal = 0
+      if (slitherWarnings &&
       slitherEnabled &&
       showSlither &&
       state.data &&
-      state.source !== null
-        ? slitherWarnings.filter((x) => !x.options.isLibrary && x.hasWarning)
-            .length
-        : 0;
-    const ssaTotal =
-      ssaWarnings && basicEnabled && state.data && state.source !== null
-        ? ssaWarnings.filter((x) => !x.options.isLibrary && x.hasWarning).length
-        : 0;
-    const hintsTotal =
-      hints && solhintEnabled && state.data && state.source !== null
-        ? hints.length
-        : 0;
+      state.source !== null) {
+        slitherTotal = slitherWarnings.filter((x) => !x.options.isLibrary && x.hasWarning)
+        .length
+        props.analysisModule.slitherEnabled = true
+      }
+
+    let ssaTotal = 0
+      if (ssaWarnings && basicEnabled && state.data && state.source !== null) {
+        ssaTotal = ssaWarnings.filter((x) => !x.options.isLibrary && x.hasWarning).length
+        props.analysisModule.basicEnabled = true
+      }
+
+    let hintsTotal = 0
+      if (hints && solhintEnabled && state.data && state.source !== null) {
+        hintsTotal = hints.length
+      }
     props.event.trigger("staticAnaysisWarning", [
       slitherTotal + ssaTotal + hintsTotal === 0
         ? -1
         : slitherTotal + ssaTotal + hintsTotal,
-    ]);
-  }, [solhintEnabled, basicEnabled, slitherEnabled, showSlither]);
+    ])
+  }, [solhintEnabled, basicEnabled, slitherEnabled, showSlither])
+
+  useEffect(() => {
+
+  }, [])
 
   const handleSlitherEnabled = async () => {
     const checkRemixd = await props.analysisModule.call(
@@ -525,36 +539,42 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       "remixd"
     );
     if (showSlither) {
-      setShowSlither(false);
+      setShowSlither(false)
+      props.analysisModule.slitherEnabled = false
     }
     if (!showSlither) {
-      setShowSlither(true);
+      setShowSlither(true)
+      props.analysisModule.slitherEnabled = true
     }
   };
 
   const handleBasicEnabled = () => {
     if (basicEnabled) {
-      setBasicEnabled(false);
+      setBasicEnabled(false)
+      props.analysisModule.basicEnabled = false
       if (solhintEnabled) {
-        setSelectedTab("solhint");
+        setSelectedTab("solhint")
       }
-      props.event.trigger("staticAnalysisWarning", [-1]);
+      props.event.trigger("staticAnalysisWarning", [-1])
     } else {
-      setBasicEnabled(true);
-      props.event.trigger("staticAnalysisWarning", [-1]);
+      setBasicEnabled(true)
+      props.analysisModule.basicEnabled = true
+      props.event.trigger("staticAnalysisWarning", [-1])
     }
   };
 
   const handleLinterEnabled = () => {
     if (solhintEnabled) {
       setSolhintEnabled(false);
+      props.analysisModule.solhintEnabled = false
       if (basicEnabled) {
-        setSelectedTab("remix");
+        setSelectedTab("remix")
       }
-      props.event.trigger("staticAnalysisWarning", [-1]);
+      props.event.trigger("staticAnalysisWarning", [-1])
     } else {
-      setSolhintEnabled(true);
-      props.event.trigger("staticAnalysisWarning", [-1]);
+      setSolhintEnabled(true)
+      props.analysisModule.solhintEnabled = true
+      props.event.trigger("staticAnalysisWarning", [-1])
     }
   };
 
@@ -635,7 +655,59 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                           </div>
                         </div>
                       ))
-                    : hintErrors.map((hint, index) => (
+                    : !hideWarnings && !showLibsWarning && !basicEnabled && solhintEnabled ? hints.map((hint, index) => (
+                      <div
+                        key={index}
+                        className={`${
+                          hint.type === "warning"
+                            ? "alert alert-warning"
+                            : "alert alert-danger"
+                        }`}
+                        style={{
+                          cursor: "pointer",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                        onClick={async () => {
+                          await props.analysisModule.call(
+                            "editor",
+                            "discardHighlight"
+                          );
+                          await props.analysisModule.call(
+                            "editor",
+                            "highlight",
+                            {
+                              end: {
+                                line: hint.line,
+                                column: hint.column + 1,
+                              },
+                              start: {
+                                line: hint.line,
+                                column: hint.column,
+                              },
+                            },
+                            state.file,
+                            "",
+                            { focus: true }
+                          );
+                        }}
+                      >
+                        <div>
+                          <span className="text-wrap">
+                            {hint.formattedMessage}
+                          </span>
+                          <br />
+                          <CustomTooltip
+                            placement="right"
+                            tooltipId="errorTooltip"
+                            tooltipText={`Position in ${state.file}`}
+                            tooltipClasses="text-nowrap"
+                          >
+                            <span>{`Pos: ${hint.column}:${hint.line}`}</span>
+                          </CustomTooltip>
+                        </div>
+                      </div>
+                    )) : hintErrors.map((hint, index) => (
                         <div
                           key={index}
                           className="alert alert-danger"
@@ -748,7 +820,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       ),
       child: (
         <>
-          {Object.entries(warningState).length > 0 ? (
+          {ssaWarnings.length > 0 ? (
             <div id="staticanalysisresult">
               <div className="mb-4 pt-2">
                 <div>
@@ -788,7 +860,24 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                           />
                         </div>
                       ))
-                    : null}
+                    : !hideWarnings && !showLibsWarning && basicEnabled
+                      ? ssaWarnings.filter((x) => !x.options.isLibrary && x.hasWarning)
+                      .map((x, i) => (
+                        <div
+                          data-id={`staticAnalysisModule${x.warningModuleName}${i}`}
+                          id={`staticAnalysisModule${x.warningModuleName}${i}`}
+                          key={i}
+                        >
+                          <ErrorRenderer
+                            name={`staticAnalysisModule${x.warningModuleName}${i}`}
+                            message={x.msg}
+                            opt={x.options}
+                            warningErrors={""}
+                            ssaState={state}
+                            editor={props.analysisModule}
+                          />
+                        </div>
+                      )) : null}
                 </div>
               </div>
             </div>
@@ -912,7 +1001,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         </>
       ),
     },
-  ];
+  ]
 
   const checkBasicStatus = () => {
     return Object.values(groupedModules)
@@ -923,7 +1012,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       })
       .flat()
       .every((el) => categoryIndex.includes(el));
-  };
+  }
   return (
     <div className="analysis_3ECCBV px-3 pb-1">
       <div className="my-2 d-flex flex-column align-items-left">
@@ -1027,7 +1116,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               buttonText={`Analyze ${state.file}`}
               title={`${runButtonTitle}`}
               classList="btn btn-sm btn-primary btn-block"
-              onClick={async () =>
+              onClick={async () => {
                 await run(
                   state.data,
                   state.source,
@@ -1055,7 +1144,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   solhintEnabled,
                   basicEnabled
                 )
-              }
+              }}
               disabled={
                 state.data === null ||
                 !isSupportedVersion ||
@@ -1063,7 +1152,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               }
             />
           )}
-          {ssaWarnings.length > 0 && hints.length > 0 ? (
+          {ssaWarnings.length > 0 || hints.length > 0 ? (
             <div className="d-flex border-top flex-column">
               {slitherWarnings.length > 0 ||
               hints.length > 0 ||
@@ -1130,7 +1219,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                     </Nav.Item>
                   ) : null}
                   {solhintEnabled ? (
-                    <Nav.Item className="text-decoration-none font-weight-bold px-2">
+                    <Nav.Item>
                       <Nav.Link
                         className="text-decoration-none font-weight-bold px-2"
                         eventKey={tabKeys[0].tabKey}
@@ -1140,7 +1229,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                     </Nav.Item>
                   ) : null}
                   {slitherEnabled && showSlither ? (
-                    <Nav.Item className="text-decoration-none font-weight-bold px-2">
+                    <Nav.Item>
                       <Nav.Link
                         className="text-decoration-none font-weight-bold px-2"
                         eventKey={tabKeys[2].tabKey}
@@ -1168,7 +1257,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 export default RemixUiStaticAnalyser;
