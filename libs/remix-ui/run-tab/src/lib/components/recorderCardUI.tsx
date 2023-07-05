@@ -30,7 +30,7 @@ export function RecorderUI (props: RecorderProps) {
 
 
   return (
-    <div className="udapp_cardContainer list-group-item border-top border-bottom">
+    <div className="udapp_cardContainer py-1 list-group-item border-top border-bottom">
       <div className="udapp_recorderSection d-flex justify-content-between" onClick={toggleClass}>
         <div className="d-flex justify-content-center align-items-center">
           <label className="mt-1 udapp_recorderSectionLabel">
@@ -59,8 +59,8 @@ export function RecorderUI (props: RecorderProps) {
           </span>
         </div>
       </div>
-      <div className={`flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
-        <div className="mb-1 mt-1 fmt-2 custom-control custom-checkbox mb-1">
+      <div className={`pb-2 flex-column ${toggleExpander ? "d-flex" : "d-none"}`}>
+        <div className="mb-1 mt-1 custom-control custom-checkbox mb-1">
           <input ref={inputLive} type="checkbox" id="livemode-recorder" className="custom-control-input custom-select" name="input-livemode"/>
           <CustomTooltip
             placement={'right'}
@@ -74,34 +74,34 @@ export function RecorderUI (props: RecorderProps) {
           </CustomTooltip>
         </div>
         <div className="mb-1 mt-1 udapp_transactionActions">
-        <CustomTooltip
-          placement={'bottom-start'}
-          tooltipClasses="text-nowrap"
-          tooltipId="remixUdappTransactionSavetooltip"
-          tooltipText={
-                props.count === 0 ? intl.formatMessage({ id: 'udapp.transactionSaveTooltip1' })
-                : props.count === 1 ? intl.formatMessage({ id: 'udapp.transactionSaveTooltip2' }, { count: props.count })
-                : intl.formatMessage({ id: 'udapp.transactionSaveTooltip3' }, { count: props.count })
-              }
-        >
-          <span>
-            <button className="btn btn-sm btn-info savetransaction udapp_recorder" disabled={props.count === 0 ? true: false} onClick={triggerRecordButton} style={{ pointerEvents: props.count === 0 ? 'none' : 'auto' }}>
-              <FormattedMessage id='udapp.save' />
-            </button>
-          </span>
-        </CustomTooltip>
-        <CustomTooltip
-          placement={'right'}
-          tooltipClasses="text-nowrap"
-          tooltipId="tooltip-run-recorder"
-          tooltipText={<FormattedMessage id='udapp.runRecorderTooltip' />}
-        >
-          <span>
-            <button className="btn btn-sm btn-info runtransaction udapp_runTxs" data-id="runtransaction" disabled={enableRunButton} onClick={handleClickRunButton} style={{ pointerEvents: enableRunButton ? 'none' : 'auto' }}>
-              <FormattedMessage id='udapp.run' />
-            </button>
-          </span>
-        </CustomTooltip>
+          <CustomTooltip
+            placement={'bottom-start'}
+            tooltipClasses="text-nowrap"
+            tooltipId="remixUdappTransactionSavetooltip"
+            tooltipText={
+                  props.count === 0 ? intl.formatMessage({ id: 'udapp.transactionSaveTooltip1' })
+                  : props.count === 1 ? intl.formatMessage({ id: 'udapp.transactionSaveTooltip2' }, { count: props.count })
+                  : intl.formatMessage({ id: 'udapp.transactionSaveTooltip3' }, { count: props.count })
+                }
+          >
+            <span>
+              <button className="btn btn-sm btn-info savetransaction udapp_recorder" disabled={props.count === 0 ? true: false} onClick={triggerRecordButton} style={{ pointerEvents: props.count === 0 ? 'none' : 'auto' }}>
+                <FormattedMessage id='udapp.save' />
+              </button>
+            </span>
+          </CustomTooltip>
+          <CustomTooltip
+            placement={'right'}
+            tooltipClasses="text-nowrap"
+            tooltipId="tooltip-run-recorder"
+            tooltipText={<FormattedMessage id='udapp.runRecorderTooltip' />}
+          >
+            <span>
+              <button className="btn btn-sm btn-info runtransaction udapp_runTxs" data-id="runtransaction" disabled={enableRunButton} onClick={handleClickRunButton} style={{ pointerEvents: enableRunButton ? 'none' : 'auto' }}>
+                <FormattedMessage id='udapp.run' />
+              </button>
+            </span>
+          </CustomTooltip>
         </div>
       </div>
     </div>

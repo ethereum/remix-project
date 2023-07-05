@@ -60,7 +60,6 @@ const DragBar = (props: IRemixDragBarUi) => {
 
   function stopDrag(data: any) {
     setDragState(false)
-    console.log("drag")
     if (data.x < props.minWidth + offset) {
       setDragBarPosX(offset)
       props.setHideStatus(true)
