@@ -51,7 +51,7 @@ const StaticAnalyserButton = ({
           <span className="pl-3 pr-4">
             {buttonText}
           </span>
-          </button>
+        </button>
       </div>
     </CustomTooltip>
   )

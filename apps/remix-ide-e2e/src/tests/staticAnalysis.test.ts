@@ -62,7 +62,7 @@ module.exports = {
   }
 }
 
-function runTests(browser: NightwatchBrowser) {
+function runTests (browser: NightwatchBrowser) {
   browser
     .waitForElementVisible('#icon-panel', 10000)
     .clickLaunchIcon('solidity')
@@ -81,7 +81,7 @@ function runTests(browser: NightwatchBrowser) {
     })
 }
 
-function listSelectorContains(textsToFind: string[], selector: string, browser: NightwatchBrowser) {
+function listSelectorContains (textsToFind: string[], selector: string, browser: NightwatchBrowser) {
   browser.execute(function (selector) {
     const items = document.querySelectorAll(selector)
     const ret = []
