@@ -58,7 +58,7 @@ class AnalysisTab extends ViewPlugin {
       }
 
       if (count > 0) {
-        this.emit('statusChanged', { key: count, title: payloadType === 'error' ? `You have some problem${count === 1 ? '' : 's'}` : 'You have some warnings', type: payloadType })
+        this.emit('statusChanged', { key: count, title: payloadType === 'error' ? `You have ${count} problem${count === 1 ? '' : 's'}` : 'You have some warnings', type: payloadType })
       } else if (count === 0) {
         this.emit('statusChanged', { key: 'succeed', title: 'no warnings or errors', type: 'success' })
       } else {
