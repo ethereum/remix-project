@@ -106,7 +106,7 @@ class AppComponent {
       name: 'fileproviders/workspace'
     })
 
-    Registry.getInstance().put({
+    Registry.getInstance().put({    
       api: this._components.filesProviders,
       name: 'fileproviders'
     })
