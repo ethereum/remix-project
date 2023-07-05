@@ -1084,6 +1084,17 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 id="staticanalysisresult"
               >
                 <RemixUiCheckbox
+                  id="showLibWarnings"
+                  name="showLibWarnings"
+                  categoryId="showLibWarnings"
+                  inputType="checkbox"
+                  checked={showLibsWarning}
+                  label="Show warnings for external libraries"
+                  onClick={handleShowLibsWarning}
+                  onChange={() => {}}
+                  tooltipPlacement="top-start"
+                />
+                <RemixUiCheckbox
                   id="hideWarnings"
                   name="hideWarnings"
                   inputType="checkbox"
