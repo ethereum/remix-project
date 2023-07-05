@@ -15,7 +15,14 @@ export function DeployButton (props: DeployButtonProps) {
     <>
     { props.deployOptions && (props.deployOptions || []).length > 0 ?
       <Dropdown as={ButtonGroup}>
-        <button onClick={props.handleActionClick} title={props.buttonOptions.title} className={`udapp_instanceButton ${props.buttonOptions.widthClass} btn btn-sm ${props.buttonOptions.classList}`} data-id={props.buttonOptions.dataId}>{ props.deployOptions[props.selectedIndex] ? props.deployOptions[props.selectedIndex].title : 'Deploy' }</button>
+        <button
+          onClick={props.handleActionClick}
+          title={props.buttonOptions.title}
+          className={`udapp_instanceButton ${props.buttonOptions.widthClass} btn btn-sm ${props.buttonOptions.classList}`}
+          data-id={props.buttonOptions.dataId}
+        >
+          { props.deployOptions[props.selectedIndex] ? props.deployOptions[props.selectedIndex].title : 'Deploy' }
+        </button>
         <Dropdown.Toggle split id="dropdown-split-basic" className={`btn btn-sm dropdown-toggle dropdown-toggle-split ${props.buttonOptions.classList}`} style={{ maxWidth: 25, minWidth: 0, height: 32 }} />
         <Dropdown.Menu className="deploy-items border-0">
           {

@@ -182,11 +182,9 @@ export function ContractGUI (props: ContractGUIProps) {
         setProxyAddressError('proxy address cannot be empty')
       } else {
         const isValidProxyAddress = await props.isValidProxyAddress(proxyAddress)
-
         if (isValidProxyAddress) {
           setProxyAddressError('')
           const upgradeReport: any = await props.isValidProxyUpgrade(proxyAddress)
-
           if (upgradeReport.ok) {
             !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
           } else {
@@ -279,14 +277,14 @@ export function ContractGUI (props: ContractGUIProps) {
           placement={"right"}
           tooltipClasses="text-wrap"
           tooltipId="remixUdappInstanceButtonTooltip"
-          tooltipText={toggleUpgradeImp && !proxyAddress ? 'Proxy address cannot be empty' : buttonOptions.title}
+          tooltipText={toggleUpgradeImp && !proxyAddress ? 'Proxy address cannot be empty' : (props.inputs !=='' && basicInput === '') ? 'Input required' : buttonOptions.title}
         >
           <button
             onClick={handleActionClick}
             className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`}
             data-id={buttonOptions.dataId}
             data-title={buttonOptions.title}
-            disabled={(toggleUpgradeImp && !proxyAddress) || props.disabled}
+            disabled={(toggleUpgradeImp && !proxyAddress) || props.disabled || (props.inputs !=='' && basicInput === '')}
           >
             <div className='text-nowrap overflow-hidden text-truncate'>{title}</div>
           </button>
@@ -309,6 +307,7 @@ export function ContractGUI (props: ContractGUIProps) {
           }
           ref={basicInputRef}
           style={{
+            height: '2rem',
             visibility: !(
               (props.funcABI.inputs && props.funcABI.inputs.length > 0) ||
               props.funcABI.type === "fallback" ||
@@ -439,12 +438,7 @@ export function ContractGUI (props: ContractGUIProps) {
               {props.initializerOptions &&
               props.initializerOptions.initializeInputs ? (
                 <span onClick={handleToggleDeployProxy}>
-                  <i
-                    className={
-                      !toggleDeployProxy
-                        ? "fas fa-angle-right pt-2"
-                        : "fas fa-angle-down"
-                    }
+                  <i className={!toggleDeployProxy ? "fas fa-angle-right pt-2" : "fas fa-angle-down"}
                     aria-hidden="true"
                   ></i>
                 </span>
@@ -534,12 +528,14 @@ export function ContractGUI (props: ContractGUIProps) {
                         >
                           <Dropdown.Item
                             key={index}
-                            onClick={() => {
-                              switchProxyAddress(deployment.address)
-                            }}
+                            onClick={() => { switchProxyAddress(deployment.address) }}
                             data-id={`proxyAddress${index}`}
                           >
-                            <span>{ proxyAddress === deployment.address ? <span>&#10003; { deployment.contractName + ' ' + shortenProxyAddress(deployment.address) } </span> : <span className="pl-3">{ deployment.contractName + ' ' + shortenProxyAddress(deployment.address) }</span> }</span>
+                            <span>
+                              { proxyAddress === deployment.address ?
+                              <span>&#10003; { deployment.contractName + ' ' + shortenProxyAddress(deployment.address) } </span>
+                              : <span className="pl-3">{ deployment.contractName + ' ' + shortenProxyAddress(deployment.address) }</span> }
+                            </span>
                           </Dropdown.Item>
                         </CustomTooltip>
                       ))
