@@ -29,6 +29,7 @@ import {
   calculateWarningStateEntries,
 } from "./components/BasicTitle";
 import { Nav, TabContainer } from "react-bootstrap";
+import { CustomTooltip } from "@remix-ui/helper";
 
 declare global {
   interface Window {
@@ -623,7 +624,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                               {hint.formattedMessage}
                             </span>
                             <br />
-                            <span>{`${hint.column}:${hint.line}`}</span>
+                            <CustomTooltip
+                              placement="right"
+                              tooltipId="errorTooltip"
+                              tooltipText={`Position in ${state.file}`}
+                              tooltipClasses="text-nowrap"
+                            >
+                              <span>{`Pos: ${hint.column}:${hint.line}`}</span>
+                            </CustomTooltip>
                           </div>
                         </div>
                       ))
@@ -751,6 +759,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                               message={x.msg}
                               opt={x.options}
                               warningErrors={""}
+                              ssaState={state}
                               editor={props.analysisModule}
                             />
                           </div>
@@ -767,6 +776,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                             message={x.msg}
                             opt={x.options}
                             warningErrors={""}
+                            ssaState={state}
                             editor={props.analysisModule}
                           />
                         </div>
@@ -838,6 +848,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                               name={`staticAnalysisModule${warning.warningModuleName}${index}`}
                               message={warning.msg}
                               opt={warning.options}
+                              ssaState={state}
                               warningErrors={""}
                               editor={props.analysisModule}
                             />
@@ -854,6 +865,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                               message={warning.msg}
                               opt={warning.options}
                               warningErrors={""}
+                              ssaState={state}
                               editor={props.analysisModule}
                             />
                           </div>
@@ -870,6 +882,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                               name={`staticAnalysisModule${warning.warningModuleName}${index}`}
                               message={warning.msg}
                               opt={warning.options}
+                              ssaState={state}
                               warningErrors={""}
                               editor={props.analysisModule}
                             />

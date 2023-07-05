@@ -103,11 +103,11 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
             const {file, provider} = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
             if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
           }
-          const msg = message(result.name, item.warning, item.more, fileName, locationString)
+          const msg = message(result.name, item.warning, item.more, state.file, locationString)
           const options = {
             type: 'warning',
             useSpan: true,
-            errFile: fileName,
+            errFile: state.file,
             fileName,
             isLibrary,
             errLine: row,
