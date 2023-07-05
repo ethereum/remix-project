@@ -679,7 +679,14 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                               {hint.formattedMessage}
                             </span>
                             <br />
-                            <span>{`${hint.column}:${hint.line}`}</span>
+                            <CustomTooltip
+                              placement="right"
+                              tooltipId="errorTooltip"
+                              tooltipText={`Position in ${state.file}`}
+                              tooltipClasses="text-nowrap"
+                            >
+                              <span>{`Pos: ${hint.column}:${hint.line}`}</span>
+                            </CustomTooltip>
                           </div>
                         </div>
                       ))}
