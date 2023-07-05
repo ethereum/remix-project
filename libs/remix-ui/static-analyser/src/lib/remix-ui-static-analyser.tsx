@@ -1133,13 +1133,13 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
                 <Tab.Content>
                   <Tab.Pane eventKey={tabKeys[1].tabKey}>
-                    {tabKeys[1].child}
+                    {basicEnabled ? tabKeys[1].child : null}
                   </Tab.Pane>
                   <Tab.Pane eventKey={tabKeys[0].tabKey}>
-                    {tabKeys[0].child}
+                    {solhintEnabled ? tabKeys[0].child : null}
                   </Tab.Pane>
                   <Tab.Pane eventKey={tabKeys[2].tabKey}>
-                    {tabKeys[2].child}
+                    {slitherEnabled && showSlither ? tabKeys[2].child : null}
                   </Tab.Pane>
                 </Tab.Content>
               </TabContainer>
