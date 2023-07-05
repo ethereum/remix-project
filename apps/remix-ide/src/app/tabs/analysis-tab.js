@@ -14,7 +14,7 @@ const profile = {
   methods: [],
   events: [],
   icon: 'assets/img/staticAnalysis.webp',
-  description: 'Checks the contract code for security vulnerabilities and bad practices.',
+  description: 'Analyze your code using Remix, Solhint and Slither.',
   kind: 'analysis',
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/static_analysis.html',
