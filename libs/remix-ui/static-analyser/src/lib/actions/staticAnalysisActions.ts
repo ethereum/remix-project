@@ -56,73 +56,82 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
       const warningErrors = []
       props.analysisModule.hints = []
         // Run solhint
+       if (solhintEnabled) {
         _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'solHint'])
         const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
-        props.analysisModule.hints = solhintEnabled === false ? 0 : hintsResult
+        props.analysisModule.hints = hintsResult
         setHints(hintsResult)
+       } else {
+        props.analysisModule.hints = []
+        setHints([])
+       }
       // Remix Analysis
-      _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'remixAnalyzer'])
-      const results = runner.run(lastCompilationResult, categoryIndex)
-      for (const result of results) {
-        let moduleName
-        Object.keys(groupedModules).map(key => {
-          groupedModules[key].forEach(el => {
-            if (el.name === result.name) {
-              moduleName = groupedModules[key][0].categoryDisplayName
-            }
+      if (basicEnabled) {
+        _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'remixAnalyzer'])
+        const results = runner.run(lastCompilationResult, categoryIndex)
+        for (const result of results) {
+          let moduleName
+          Object.keys(groupedModules).map(key => {
+            groupedModules[key].forEach(el => {
+              if (el.name === result.name) {
+                moduleName = groupedModules[key][0].categoryDisplayName
+              }
+            })
           })
-        })
-        // iterate over the warnings and create an object
-        for (const item of result.report) {
-          let location: any = {}
-          let locationString = 'not available'
-          let column = 0
-          let row = 0
-          let fileName = currentFile
-          let isLibrary = false
+          // iterate over the warnings and create an object
+          for (const item of result.report) {
+            let location: any = {}
+            let locationString = 'not available'
+            let column = 0
+            let row = 0
+            let fileName = currentFile
+            let isLibrary = false
 
-          if (item.location) {
-            const split = item.location.split(':')
-            const file = split[2]
-            location = {
-              start: parseInt(split[0]),
-              length: parseInt(split[1])
+            if (item.location) {
+              const split = item.location.split(':')
+              const file = split[2]
+              location = {
+                start: parseInt(split[0]),
+                length: parseInt(split[1])
+              }
+              location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
+                location,
+                parseInt(file),
+                lastCompilationSource.sources,
+                lastCompilationResult.sources
+              )
+              row = location.start.line
+              column = location.start.column
+              locationString = row + 1 + ':' + column + ':'
+              fileName = Object.keys(lastCompilationResult.sources)[file]
             }
-            location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
-              location,
-              parseInt(file),
-              lastCompilationSource.sources,
-              lastCompilationResult.sources
-            )
-            row = location.start.line
-            column = location.start.column
-            locationString = row + 1 + ':' + column + ':'
-            fileName = Object.keys(lastCompilationResult.sources)[file]
+            if (fileName !== currentFile) {
+              const { file, provider } = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
+              if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
+            }
+            const msg = message(result.name, item.warning, item.more, state.file, locationString)
+            const options = {
+              type: 'warning',
+              useSpan: true,
+              errFile: state.file,
+              fileName,
+              isLibrary,
+              errLine: row,
+              errCol: column,
+              item: item,
+              name: result.name,
+              locationString,
+              more: item.more,
+              location: location
+            }
+            warningErrors.push(options)
+            warningMessage.push({ msg, options, hasWarning: true, warningModuleName: moduleName })
+            setSsaWarnings(warningMessage)
           }
-          if(fileName !== currentFile) {
-            const {file, provider} = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
-            if (file.startsWith('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
-          }
-          const msg = message(result.name, item.warning, item.more, state.file, locationString)
-          const options = {
-            type: 'warning',
-            useSpan: true,
-            errFile: state.file,
-            fileName,
-            isLibrary,
-            errLine: row,
-            errCol: column,
-            item: item,
-            name: result.name,
-            locationString,
-            more: item.more,
-            location: location
-          }
-          warningErrors.push(options)
-          warningMessage.push({ msg, options, hasWarning: true, warningModuleName: moduleName })
-          setSsaWarnings(warningMessage)
         }
-      }
+      } else {
+        setSsaWarnings([])
+    }
       // Slither Analysis
       if (showSlither && slitherEnabled) {
         setSlitherWarnings([])
@@ -198,12 +207,13 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
           props.analysisModule.call('terminal', 'log', { type: 'error', value: '[Slither Analysis]: Error occured! See remixd console for details.' })
           showWarnings(warningMessage, 'warningModuleName')
         }
-      } else showWarnings(warningMessage, 'warningModuleName')
+      } else //showWarnings(warningMessage, 'warningModuleName')
       setStartAnalysis(false)
     } else {
       if (categoryIndex.length) {
         warningContainer.current.innerText = 'No compiled AST available'
       }
+
       props.event.trigger('staticAnaysisWarning', [-1])
     }
   }
