@@ -87,8 +87,9 @@ module.exports = {
       remix (as well as truffle) try to resolve it against the node_modules and installed_contracts folder.
     */
     browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       console.log('working directory', process.cwd())
+      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+  
       connectRemixd(browser, done)
     })
       .addFile('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'])
@@ -307,9 +308,18 @@ function testImportFromRemixd(browser: NightwatchBrowser, callback: VoidFunction
 }
 
 async function spawnRemixd(path: string): Promise<ChildProcess> {
-  const remixd = spawn('chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080', [`-s ${path}`], { cwd: process.cwd(), shell: true, detached: true })
+  let remixd
+
+  if(process.platform === 'win32') {
+    remixd =  spawn(process.env.comspec, ['/c', 'node dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080', `-s ${path}`], { cwd: process.cwd(), shell: true, detached: false })	
+  }else{
+    remixd = spawn('chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080', [`-s ${path}`], { cwd: process.cwd(), shell: true, detached: true })
+  }
+
+  console.log('remixd', remixd.pid)
   return new Promise((resolve, reject) => {
     remixd.stdout.on('data', function (data) {
+      console.log(data.toString())
       if(
         data.toString().includes('is listening') 
         || data.toString().includes('There is already a client running')
@@ -319,6 +329,7 @@ async function spawnRemixd(path: string): Promise<ChildProcess> {
       }
     })
     remixd.stderr.on('err', function (data) {
+      console.log(data.toString())
       reject(data.toString())
     })
   })
