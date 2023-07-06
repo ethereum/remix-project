@@ -20,7 +20,8 @@ const HomeIcon: React.FC<IconProps> = ({ from }: IconProps) => {
       to={{
         pathname: "/"
       }}
-      className={({ isActive }) => isActive ? "btn p-0 m-0" : "btn text-dark p-0 m-0"}
+      className={({ isActive }) => isActive ? "border border-secondary shadow-none btn p-1 m-0" : "border-0 shadow-none btn p-1 m-0"}
+      style={ ({ isActive }) => !isActive ? { width: "1.8rem", filter: "contrast(0.5)"} : {width: "1.8rem"}}
       state={ from }
     >
       <CustomTooltip
@@ -41,7 +42,8 @@ const ReceiptsIcon: React.FC<IconProps> = ({ from }: IconProps) => {
       to={{
         pathname: "/receipts"
       }}
-      className={({ isActive }) => isActive ? "btn p-0 m-0 mx-2" : "btn text-dark p-0 m-0 mx-2"}
+      className={({ isActive }) => isActive ? "border border-secondary shadow-none btn p-1 m-0" : "border-0 shadow-none btn p-1 m-0"}
+      style={ ({ isActive }) => !isActive ? { width: "1.8rem", filter: "contrast(0.5)"} : {width: "1.8rem"}}
       state={ from }
     >
       <CustomTooltip
@@ -62,7 +64,8 @@ const SettingsIcon: React.FC<IconProps> = ({ from }: IconProps) => {
       to={{
         pathname: "/settings"
       }}
-      className={({ isActive }) => isActive ? "btn p-0 m-0" : "btn text-dark p-0 m-0"}
+      className={({ isActive }) => isActive ? "border border-secondary shadow-none btn p-1 m-0" : "border-0 shadow-none btn p-1 m-0"}
+      style={ ({ isActive }) => !isActive ? { width: "1.8rem", filter: "contrast(0.5)"} : {width: "1.8rem"}}
       state= {from}
     >
       <CustomTooltip
@@ -85,7 +88,7 @@ export const HeaderWithSettings: React.FC<Props> = ({
       {() => (
         <div className="d-flex justify-content-between">
           <h6 className="d-inline">{title}</h6>
-          <div>
+          <div className="nav">
             <HomeIcon from={from} />
             <ReceiptsIcon from={from} />
             <SettingsIcon from={from} />
