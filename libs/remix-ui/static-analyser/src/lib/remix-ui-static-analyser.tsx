@@ -528,10 +528,6 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
     ])
   }, [solhintEnabled, basicEnabled, slitherEnabled, showSlither])
 
-  useEffect(() => {
-
-  }, [])
-
   const handleSlitherEnabled = async () => {
     const checkRemixd = await props.analysisModule.call(
       "manager",
