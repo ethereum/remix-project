@@ -42,6 +42,7 @@ export class RemixdClient extends PluginClient {
   resolveDirectory (args: SharedFolderArgs): ResolveDirectory {
     try {
       const path = utils.absolutePath(args.path, this.currentSharedFolder)
+      console.log('resolveDirectory', path)
       const result = utils.resolveDirectory(path, this.currentSharedFolder)
 
       return result
