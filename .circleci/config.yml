@@ -369,6 +369,7 @@ workflows:
             - remix-libs
             - remix-ide-browser
             - plugins
+            - test-remixd-windows
             
       - predeploy:
           filters:
