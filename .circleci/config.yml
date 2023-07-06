@@ -255,11 +255,12 @@ jobs:
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
 
       - run: yarn run selenium-install:edge
+      - run: sh spawn.sh
       - run:
           name: Start Selenium
           command: yarn run selenium:edge
           background: true
-      - run: ./apps/remix-ide/ci/remixd_windows.sh
+      - run: sh ./apps/remix-ide/ci/remixd_windows.sh
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
