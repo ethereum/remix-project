@@ -107,6 +107,7 @@
     "simulator": "nx build remix-simulator && chmod +x dist/libs/remix-simulator/bin/ethsim && dist/libs/remix-simulator/bin/ethsim start --rpc",
     "selenium": "selenium-standalone start",
     "selenium-install": "selenium-standalone install",
+    "selenium-install:edge": "selenium-standalone install --drivers.chromiumedge.version=112.0.1722.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com",
     "sourcemap": "exorcist --root ../ apps/remix-ide/build/app.js.map > apps/remix-ide/build/app.js",
     "test-browser": "npm-run-all -lpr selenium make-mock-compiler serve browsertest",
     "watch": "watchify apps/remix-ide/src/index.js -dv -p browserify-reload -o apps/remix-ide/build/app.js --exclude solc",
