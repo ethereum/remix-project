@@ -134,7 +134,24 @@ export const initListeningOnNetwork = (plugins, dispatch: React.Dispatch<any>) =
   
     if (resolvedTransaction) {
       let compiledContracts = null
-      if (plugins._deps.compilersArtefacts.__last) {
+      try {
+        if (tx.to) {
+          compiledContracts = await plugins._deps.compilersArtefacts.get(tx.to).getContracts()
+        }
+      } catch (error) {
+        console.log(error)
+      }
+
+      try {
+        const currentFile = plugins._deps.fileManager.getCurrentFile()
+        if (!compiledContracts && currentFile && currentFile.endsWith('.sol')) {
+          compiledContracts = await (await plugins._deps.compilersArtefacts.getCompilerAbstract(currentFile)).getContracts()
+        }
+      } catch (error) {
+        console.log(error)
+      }
+
+      if (!compiledContracts && plugins._deps.compilersArtefacts.__last) {
         compiledContracts = await plugins._deps.compilersArtefacts.__last.getContracts()
       }
       await plugins.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, async (error, logs) => {
