@@ -53,7 +53,6 @@ function normalizePath (path) {
   if (process.platform === 'win32') {
     return path.replace(/\//g, '\\')
   }
-  console.log('path', path)
   return path
 }
 
@@ -103,7 +102,6 @@ function resolveDirectory (dir: string, sharedFolder: string): ResolveDirectory 
       ret[relative] = { isDirectory: fs.statSync(subElement).isDirectory() }
     }
   })
-  
   return ret
 }
 
