@@ -227,7 +227,7 @@ jobs:
 
   test-remixd-windows:
     executor:
-      name: win/default # executor type
+      name: win/server-2022 # executor type
       size: medium # can be medium, large, xlarge, 2xlarge
       shell: bash.exe
     working_directory: ~/remix-project
