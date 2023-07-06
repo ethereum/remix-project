@@ -41,7 +41,11 @@ function isSubDirectory (parent: string, child: string) {
 function relativePath (path: string, sharedFolder: string): string {
   const relative: string = pathModule.relative(sharedFolder, path)
 
-  return normalizePath(relative)
+  return convertPathToPosix(normalizePath(relative))
+}
+
+const convertPathToPosix = (pathName: string): string => {
+  return pathName.split(pathModule.sep).join(pathModule.posix.sep)
 }
 
 function normalizePath (path) {
