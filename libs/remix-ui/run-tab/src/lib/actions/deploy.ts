@@ -191,7 +191,12 @@ export const createInstance = async (
   const confirmationCb = getConfirmationCb(plugin, dispatch, mainnetPrompt)
 
   const currentParams = !isProxyDeployment && !isContractUpgrade ? args : ''
-  const overSize = await selectedContract.isOverSizeLimit(currentParams)
+  let overSize = { overSizeEip170: false, overSizeEip3860: false }
+  try {
+    overSize = await selectedContract.isOverSizeLimit(currentParams)
+  } catch (error) {
+    return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
+  }
   if (overSize.overSizeEip170 || overSize.overSizeEip3860) {
     return dispatch(displayNotification('Contract code size over limit', isOverSizePrompt(overSize), 'Force Send', 'Cancel', () => {
       deployContract(plugin, selectedContract, currentParams, contractMetadata, compilerContracts, {
