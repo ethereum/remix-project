@@ -259,7 +259,11 @@ module.exports = {
 }
 
 function runTests(browser: NightwatchBrowser, done: any) {
-  const browserName = browser.options.desiredCapabilities.browserName
+  let browserName = browser.options.desiredCapabilities.browserName
+  console.log('browserName', browserName)
+  if(browserName.indexOf('Edge') !== -1) {
+    browserName = 'chrome'	
+  }
   browser.clickLaunchIcon('filePanel')
     .waitForElementVisible('[data-path="folder1"]')
     .click('[data-path="folder1"]')
@@ -319,7 +323,6 @@ async function spawnRemixd(path: string): Promise<ChildProcess> {
   console.log('remixd', remixd.pid)
   return new Promise((resolve, reject) => {
     remixd.stdout.on('data', function (data) {
-      console.log(data.toString())
       if(
         data.toString().includes('is listening') 
         || data.toString().includes('There is already a client running')

@@ -88,8 +88,6 @@ function resolveDirectory (dir: string, sharedFolder: string): ResolveDirectory 
   const ret: ResolveDirectory = {}
   const files: string[] = fs.readdirSync(dir)
 
-  console.log('files', files)
-
   files.forEach(function (file) {
     const subElement = pathModule.join(dir, file)
     let isSymbolicLink
@@ -105,7 +103,7 @@ function resolveDirectory (dir: string, sharedFolder: string): ResolveDirectory 
       ret[relative] = { isDirectory: fs.statSync(subElement).isDirectory() }
     }
   })
-  console.log('ret', ret)
+  
   return ret
 }
 
