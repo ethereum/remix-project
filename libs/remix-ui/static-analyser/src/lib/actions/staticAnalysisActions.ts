@@ -207,8 +207,7 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
           props.analysisModule.call('terminal', 'log', { type: 'error', value: '[Slither Analysis]: Error occured! See remixd console for details.' })
           showWarnings(warningMessage, 'warningModuleName')
         }
-      } else //showWarnings(warningMessage, 'warningModuleName')
-      setStartAnalysis(false)
+      } else setStartAnalysis(false)
     } else {
       if (categoryIndex.length) {
         warningContainer.current.innerText = 'No compiled AST available'
