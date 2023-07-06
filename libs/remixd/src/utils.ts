@@ -41,7 +41,11 @@ function isSubDirectory (parent: string, child: string) {
 function relativePath (path: string, sharedFolder: string): string {
   const relative: string = pathModule.relative(sharedFolder, path)
 
-  return normalizePath(relative)
+  return convertPathToPosix(normalizePath(relative))
+}
+
+const convertPathToPosix = (pathName: string): string => {
+  return pathName.split(pathModule.sep).join(pathModule.posix.sep)
 }
 
 function normalizePath (path) {
@@ -49,6 +53,7 @@ function normalizePath (path) {
   if (process.platform === 'win32') {
     return path.replace(/\//g, '\\')
   }
+  console.log('path', path)
   return path
 }
 
@@ -83,6 +88,8 @@ function resolveDirectory (dir: string, sharedFolder: string): ResolveDirectory 
   const ret: ResolveDirectory = {}
   const files: string[] = fs.readdirSync(dir)
 
+  console.log('files', files)
+
   files.forEach(function (file) {
     const subElement = pathModule.join(dir, file)
     let isSymbolicLink
@@ -98,6 +105,7 @@ function resolveDirectory (dir: string, sharedFolder: string): ResolveDirectory 
       ret[relative] = { isDirectory: fs.statSync(subElement).isDirectory() }
     }
   })
+  console.log('ret', ret)
   return ret
 }
 
