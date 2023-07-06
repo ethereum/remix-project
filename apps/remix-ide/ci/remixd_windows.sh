@@ -14,6 +14,11 @@ done
 
 echo "$TEST_EXITCODE"
 
+# kill process on port 9090 on windows
+npx -y kill-port 8080
+npx -y kill-port 8545
+npx -y kill-port 9090
+
 if [ "$TEST_EXITCODE" -eq 1 ]
 then
   echo "Tests failed"
