@@ -18,6 +18,7 @@ echo "$TEST_EXITCODE"
 npx -y kill-port 8080
 npx -y kill-port 8545
 npx -y kill-port 9090
+npx -y kill-port 4444
 
 if [ "$TEST_EXITCODE" -eq 1 ]
 then
