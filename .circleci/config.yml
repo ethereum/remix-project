@@ -224,6 +224,45 @@ jobs:
           path: ./reports/screenshots
 
 
+  test-remixd-windows:
+    executor:
+      name: win/default # executor type
+      size: medium # can be medium, large, xlarge, 2xlarge
+      shell: bash.exe
+    working_directory: ~/remix-project
+    steps:
+      - checkout
+      - restore_cache:
+          key: node-20-windows-v3
+      - run: 
+          command: |
+            nvm install 20.0.0
+            nvm use 20.0.0
+            node -v
+            npx -v
+            npm install --global yarn http-server
+            yarn -v
+      - save_cache:
+          key: node-20-windows-v3
+          paths:
+            - /ProgramData/nvm/v20.0.0
+
+      - attach_workspace:
+          at: .
+      - run: unzip ./persist/dist.zip
+      - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
+
+      - run: yarn run selenium-install
+      - run:
+          name: Start Selenium
+          command: yarn run selenium
+          background: true
+      - run: ./apps/remix-ide/ci/remixd_windows.sh
+      - store_test_results:
+          path: ./reports/tests
+      - store_artifacts:
+          path: ./reports/screenshots
+
   predeploy:
     docker:
       - image: cimg/node:20.0.0-browsers
@@ -318,6 +357,9 @@ workflows:
               script: ["browser_test.sh"]
               job: ["0","1","2","3","4","5","6","7","8","9"]
               jobsize: ["10"]
+      - test-remixd-window:
+          requires:
+            - build
       - tests-passed:
           requires:
             - lint
