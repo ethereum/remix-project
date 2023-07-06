@@ -231,6 +231,7 @@ jobs:
       size: medium # can be medium, large, xlarge, 2xlarge
       shell: bash.exe
     working_directory: ~/remix-project
+    parallelism: 5
     steps:
       - checkout
       - restore_cache:
@@ -253,7 +254,7 @@ jobs:
       - run: unzip ./persist/dist.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
 
-      - run: yarn selenium-standalone install --drivers.chromiumedge.version=112.0.1722.39 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com
+      - run: yarn run selenium-install:edge
       - run:
           name: Start Selenium
           command: yarn selenium-standalone start --config=./apps/remix-ide/ci/selenium.config.js
