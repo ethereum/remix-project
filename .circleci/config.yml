@@ -256,7 +256,7 @@ jobs:
       - run: yarn run selenium-install
       - run:
           name: Start Selenium
-          command: yarn run selenium
+          command: yarn yarn selenium-standalone start --config=./apps/remix-ide/ci/selenium.config.js
           background: true
       - run: ./apps/remix-ide/ci/remixd_windows.sh
       - store_test_results:
