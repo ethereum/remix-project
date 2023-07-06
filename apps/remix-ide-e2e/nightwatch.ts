@@ -89,6 +89,18 @@ module.exports = {
           ]
         }
       }
+    },
+    edge: {
+      desiredCapabilities: {
+        browserName: 'MicrosoftEdge',
+        marionette: true,
+        javascriptEnabled: true,
+        acceptSslCerts: true,
+        acceptInsecureCerts: true,
+        'ms:edgeOptions': {
+          args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox']
+        }
+      }
     }
   }
 }
