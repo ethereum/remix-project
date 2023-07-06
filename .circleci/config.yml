@@ -255,7 +255,8 @@ jobs:
       - run: unzip ./persist/dist.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       
-      - run: yarn run selenium-install:edge
+      - run: yarn run selenium-install:edge112
+      - run: yarn run selenium-install:edge114
 
       - run:
           name: Start Selenium
