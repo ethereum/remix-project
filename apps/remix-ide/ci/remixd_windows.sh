@@ -9,6 +9,8 @@ npx http-server -p 9090 --cors='*' ./node_modules &
 yarn run serve:production &
 sleep 5
 
+npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/remixd_group1.test.js --env=edge
+
 echo "$TEST_EXITCODE"
 if [ "$TEST_EXITCODE" -eq 1 ]
 then
