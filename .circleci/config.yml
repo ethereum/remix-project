@@ -255,7 +255,6 @@ jobs:
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
 
       - run: yarn run selenium-install:edge
-      - run: sh spawn.sh
       - run:
           name: Start Selenium
           command: yarn run selenium:edge
