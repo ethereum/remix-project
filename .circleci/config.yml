@@ -231,7 +231,7 @@ jobs:
       size: medium # can be medium, large, xlarge, 2xlarge
       shell: bash.exe
     working_directory: ~/remix-project
-    parallelism: 5
+    parallelism: 8
     steps:
       - checkout
       - restore_cache:
