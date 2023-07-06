@@ -14,7 +14,7 @@ done
 
 echo "$TEST_EXITCODE"
 
-# kill process on port 9090 on windows
+# kill process
 npx -y kill-port 8080
 npx -y kill-port 8545
 npx -y kill-port 9090
