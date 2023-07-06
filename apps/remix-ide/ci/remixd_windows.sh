@@ -13,10 +13,12 @@ for TESTFILE in $TESTFILES; do
 done
 
 echo "$TEST_EXITCODE"
-exit 0
+
 if [ "$TEST_EXITCODE" -eq 1 ]
 then
+  echo "Tests failed"
   exit 1
 else
+  echo "Tests passed"
   exit 0
 fi
