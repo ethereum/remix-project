@@ -20,7 +20,7 @@
   "home.featuredPlugins": "Featured Plugins",
   "home.solidityPluginDesc": "Compile, test and analyse smart contract.",
   "home.cookbookDesc": "Find smart contracts, solidity libraries, and discover protocols.",
-  "home.codeAnalyizerPluginDesc": "Analyze your code using Remix, Sohint and Sslither",
+  "home.codeAnalyizerPluginDesc": "Analyze your code using Remix, Solhint and Slither.",
   "home.starkNetPluginDesc": "Compile and deploy contracts with Cairo, a native language for StarkNet.",
   "home.solhintPluginDesc": "Solhint is an open source project for linting Solidity code.",
   "home.sourcifyPluginDesc": "Solidity contract and metadata verification service.",
