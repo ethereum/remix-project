@@ -227,7 +227,7 @@ jobs:
 
   test-remixd-windows:
     executor:
-      name: win/server-2019 # executor type
+      name: win/server-2022 # executor type
       size: medium # can be medium, large, xlarge, 2xlarge
       shell: bash.exe
     working_directory: ~/remix-project
@@ -254,8 +254,10 @@ jobs:
       - run: powershell "Get-AppxPackage -Name *MicrosoftEdge.* | Foreach Version"
       - run: unzip ./persist/dist.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
-
+      - run: sh ./apps/remix-ide/ci/install_selenium_windows.sh
+      
       - run: yarn run selenium-install:edge
+
       - run:
           name: Start Selenium
           command: yarn run selenium:edge
