@@ -6,6 +6,7 @@ parameters:
     default: false
 orbs:
   browser-tools: circleci/browser-tools@1.4.1
+  win: circleci/windows@5.0
 jobs:
   build:
     docker:
