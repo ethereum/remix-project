@@ -251,7 +251,7 @@ jobs:
 
       - attach_workspace:
           at: .
-      - run: powershell "Get-AppxPackage -Name *MicrosoftEdge.* | Foreach Version"
+      - run: powershell "Get-AppxPackage -Name *Edge.* | Foreach Version"
       - run: unzip ./persist/dist.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       - run: sh ./apps/remix-ide/ci/install_selenium_windows.sh
