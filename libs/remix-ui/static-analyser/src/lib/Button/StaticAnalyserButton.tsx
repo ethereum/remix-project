@@ -16,12 +16,17 @@ const StaticAnalyserButton = ({
   title,
   classList
 }: StaticAnalyserButtonProps) => {
-  const defaultStyle = "btn btn-sm w-25 btn-primary"
+  const defaultStyle = "btn btn-sm btn-block btn-primary"
   const newclassList = disabled && classList.length > 0 ? `${classList} disabled` :
   classList.length === 0 && disabled ? `${defaultStyle} disabled` : classList.length > 0 ? `${classList}` : defaultStyle
 
   const buttonWithoutTooltip = () => (
-    <button id="staticAnalysisRunBtn" className={newclassList} disabled={disabled} onClick={onClick}>
+    <button
+      id="staticAnalysisRunBtn"
+      className={newclassList}
+      disabled={disabled}
+      onClick={onClick}
+    >
       <span className="pl-3 pr-4">
         {buttonText}
       </span>
@@ -29,18 +34,27 @@ const StaticAnalyserButton = ({
   )
 
   const buttonWithTooltip = () => (
-    <button id="staticAnalysisRunBtn" className={newclassList} disabled={disabled} onClick={onClick}>
     <CustomTooltip
       placement="right"
       tooltipId="ssaRunButtonTooltip"
       tooltipClasses="text-nowrap"
       tooltipText={title}
     >
-      <span className="pl-3 pr-4">
-        {buttonText}
-      </span>
+      <div id="staticAnalysisWrapper" className={`${newclassList} p-0`}>
+        <button
+          id="staticAnalysisRunBtn"
+          className={newclassList}
+          disabled={disabled}
+          onClick={onClick}
+          style={{ pointerEvents: 'none', color: 'white' }}
+        >
+          <span className="pl-3 pr-4">
+            {buttonText}
+          </span>
+        </button>
+      </div>
     </CustomTooltip>
-  </button>)
+  )
 
   return (
       title && title.length > 0 ? buttonWithTooltip() : buttonWithoutTooltip()
