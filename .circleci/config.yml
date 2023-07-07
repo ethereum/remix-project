@@ -251,13 +251,18 @@ jobs:
 
       - attach_workspace:
           at: .
-      - run: powershell '(Get-Item "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe").VersionInfo.ProductVersion'
+
       - run: powershell 'choco install -y googlechrome'
       - run: unzip ./persist/dist.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       
-      - run: yarn run selenium-install:edge112
-      - run: yarn run selenium-install:edge114
+      - run: yarn run selenium-install:windows
+
+      - run:
+          name: Start Selenium
+          command: yarn run selenium:windows
+          background: true
+ 
       - run: sh ./apps/remix-ide/ci/remixd_windows.sh
       - store_test_results:
           path: ./reports/tests
