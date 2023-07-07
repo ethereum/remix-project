@@ -251,7 +251,7 @@ jobs:
 
       - attach_workspace:
           at: .
-      - run: powershell "Get-AppxPackage -Name *Edge.* | Foreach Version"
+      - run: powershell '(Get-Item "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe").VersionInfo.ProductVersion'
       - run: unzip ./persist/dist.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       
