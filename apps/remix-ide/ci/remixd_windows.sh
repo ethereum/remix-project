@@ -3,6 +3,8 @@
 set -e
 EDGE_VERSION=$(powershell '(Get-Item "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe").VersionInfo.ProductVersion')
 
+echo "Edge version is $EDGE_VERSION"
+
 if [[ $EDGE_VERSION == *"112"* ]]; then
   echo "Edge 112 is installed"
   yarn run ganache-cli &
