@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
 # we don't know which EDGE is installed, could be 112 or 114, it's unclear why the image is not consistent
 set -e
+EDGE_VERSION=$(powershell '(Get-Item "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe").VersionInfo.ProductVersion')
+
+if [[ $EDGE_VERSION == *"112"* ]]; then
+  echo "Edge 112 is installed"
+elif [[ $EDGE_VERSION == *"114"* ]]; then
+  echo "Edge 114 is installed"
+else
+  echo "Edge version is not 112 or 114"
+  exit 1
+fi
+
 TEST_EXITCODE=0
 yarn run ganache-cli &
 npx http-server -p 9090 --cors='*' ./node_modules &
