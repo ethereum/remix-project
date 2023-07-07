@@ -5,19 +5,26 @@ EDGE_VERSION=$(powershell '(Get-Item "C:\Program Files (x86)\Microsoft\Edge\Appl
 
 if [[ $EDGE_VERSION == *"112"* ]]; then
   echo "Edge 112 is installed"
+  yarn run ganache-cli &
+  npx http-server -p 9090 --cors='*' ./node_modules &
+  yarn run serve:production &
+  yarn run selenium:edge112 &
+  sleep 5
+
 elif [[ $EDGE_VERSION == *"114"* ]]; then
   echo "Edge 114 is installed"
+  yarn run ganache-cli &
+  npx http-server -p 9090 --cors='*' ./node_modules &
+  yarn run serve:production &
+  yarn run selenium:edge114 &
+  sleep 5
 else
   echo "Edge version is not 112 or 114"
   exit 1
 fi
 
 TEST_EXITCODE=0
-yarn run ganache-cli &
-npx http-server -p 9090 --cors='*' ./node_modules &
-yarn run serve:production &
-yarn run selenium:edge112 &
-sleep 5
+
 
 TESTFILES=$(grep -IRiL "@disabled" "dist/apps/remix-ide-e2e/src/tests" | grep remixd | circleci tests split)
 for TESTFILE in $TESTFILES; do
