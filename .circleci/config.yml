@@ -252,6 +252,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: powershell '(Get-Item "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe").VersionInfo.ProductVersion'
+      - run: powershell 'choco install -y googlechrome'
       - run: unzip ./persist/dist.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       
