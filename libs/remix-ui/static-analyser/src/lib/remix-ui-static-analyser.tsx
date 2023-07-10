@@ -1070,7 +1070,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           </div>
           {state.data && state.file.length > 0 && state.source ? (
             <Button
-              buttonText={`Analyse ${state.file}`}
+              buttonText={`Analyze ${state.file}`}
               classList="btn btn-sm btn-primary btn-block"
               onClick={async () => {
                 await run(
