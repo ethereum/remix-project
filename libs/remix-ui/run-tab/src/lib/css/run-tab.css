@@ -361,9 +361,6 @@
   margin:0;
   word-break: inherit;
 }
-.udapp_contractProperty button:disabled {
-  cursor: not-allowed;
-}
 .udapp_contractProperty.udapp_constant button {
   min-width: 100px;
   width: 100px;
