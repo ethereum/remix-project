@@ -51,7 +51,6 @@ export class WalletConnectRemixClient extends PluginClient {
 
     subscribeToEvents () {
         this.wagmiConfig.subscribe((event) => {
-            console.log('this.wagmiConfig event subscribed: ', this.wagmiConfig)
             if (event.status === 'connected') {
                 this.emit('accountsChanged', [event.data.account])
                 if (this.currentChain !== event.data.chain.id) {
