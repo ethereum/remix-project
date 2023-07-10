@@ -274,20 +274,25 @@ export function ContractGUI (props: ContractGUIProps) {
         style={{ display: toggleContainer ? "none" : "flex" }}
       > 
         <CustomTooltip
+          delay={0}
           placement={"right"}
           tooltipClasses="text-wrap"
           tooltipId="remixUdappInstanceButtonTooltip"
           tooltipText={toggleUpgradeImp && !proxyAddress ? 'Proxy address cannot be empty' : (props.inputs !=='' && basicInput === '') ? 'Input required' : buttonOptions.title}
         >
-          <button
+          <div
+            className='d-flex'
             onClick={handleActionClick}
-            className={`udapp_instanceButton ${props.widthClass} btn btn-sm ${buttonOptions.classList}`}
-            data-id={buttonOptions.dataId}
-            data-title={buttonOptions.title}
-            disabled={(toggleUpgradeImp && !proxyAddress) || props.disabled || (props.inputs !=='' && basicInput === '')}
           >
-            <div className='text-nowrap overflow-hidden text-truncate'>{title}</div>
-          </button>
+            <button
+              className={`udapp_instanceButton text-nowrap overflow-hidden text-truncate ${props.widthClass} btn btn-sm ${buttonOptions.classList}`}
+              data-id={buttonOptions.dataId}
+              data-title={buttonOptions.title}
+              disabled={(toggleUpgradeImp && !proxyAddress) || props.disabled || (props.inputs !=='' && basicInput === '')}
+            >
+              {title}
+            </button>
+          </div>
         </CustomTooltip>
         <input
           className="form-control"
@@ -401,15 +406,18 @@ export function ContractGUI (props: ContractGUIProps) {
               tooltipId="remixUdappInstanceButtonTooltip"
               tooltipText={buttonOptions.title}
             >
-              <button
-                type="button"
+              <div
                 onClick={handleExpandMultiClick}
-                data-id={buttonOptions.dataId}
-                className={`udapp_instanceButton ${buttonOptions.classList}`}
-                disabled={props.disabled}
               >
-                {buttonOptions.content}
-              </button>
+                <button
+                  type="button"
+                  data-id={buttonOptions.dataId}
+                  className={`udapp_instanceButton ${buttonOptions.classList}`}
+                  disabled={props.disabled || (props.inputs !=='' && basicInput === '')}
+                >
+                  {buttonOptions.content}
+                </button>
+              </div>
             </CustomTooltip>
           </div>
         </div>
