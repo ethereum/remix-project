@@ -1256,4 +1256,4 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   )
 }
 
-export default RemixUiStaticAnalyser;
+export default RemixUiStaticAnalyser
