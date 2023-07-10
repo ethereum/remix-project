@@ -3385,7 +3385,7 @@ input[type="submit"].btn-block {
   background-image: none;
 }
 .custom-select:disabled {
-  color: #55566c;
+  color: #bdbed1;
   background-color: #282a3d;
 }
 .custom-select::-ms-expand {
