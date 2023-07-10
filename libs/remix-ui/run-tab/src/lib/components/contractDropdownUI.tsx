@@ -258,14 +258,14 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     return (
       <div>
         { 
-        values.overSizeEip170 && <div>
-          <FormattedMessage id='udapp.isOverSizePromptEip170' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-170" target="_blank" rel="noreferrer">eip-170</a> }} />
-        </div>
+          values.overSizeEip170 && <div>
+            <FormattedMessage id='udapp.isOverSizePromptEip170' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-170" target="_blank" rel="noreferrer">eip-170</a> }} />
+          </div>
         }
         { 
-        values.overSizeEip3860 && <div>
-          <FormattedMessage id='udapp.isOverSizePromptEip3860' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-3860" target="_blank" rel="noreferrer">eip-3860</a> }} />
-        </div>
+          values.overSizeEip3860 && <div>
+            <FormattedMessage id='udapp.isOverSizePromptEip3860' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-3860" target="_blank" rel="noreferrer">eip-3860</a> }} />
+          </div>
         }
       </div>
     )
@@ -282,13 +282,13 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
           <label className="udapp_settingsLabel pr-1">
             <FormattedMessage id='udapp.contract' />
           </label>
-          {compilerName && compilerName !== '' && 
+          { compilerName && compilerName !== '' && compilerName !== 'remix' &&
             <label className='udapp_settingsCompiledBy badge badge-secondary' data-id="udappCompiledBy">
               <FormattedMessage id='udapp.compiledBy' values={{ compilerName: <span className="text-capitalize">{compilerName}</span> }} />
             </label>
           }
         </div>
-        {props.remixdActivated ?
+        { props.remixdActivated ?
           (<CustomTooltip
             placement={'right'}
             tooltipClasses="text-wrap text-left"
@@ -304,7 +304,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
               <i style={{ cursor: 'pointer' }} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
             </button>
           </CustomTooltip>)
-        : null}
+        : null }
       </div>
       <div className="udapp_subcontainer">
         <CustomTooltip
@@ -326,7 +326,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
                 return <option key={index} value={contract.alias}>
                   {contract.alias} - {contract.file}
                 </option>
-              })}
+              }) }
             </select>
           </div>
         </CustomTooltip>
@@ -345,7 +345,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       }
       <div>
         <div className="udapp_deployDropdown">
-          {(((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length > 0 && loadedContractData) &&
+          { (((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length > 0 && loadedContractData) &&
             <div>
               <ContractGUI
                 title={intl.formatMessage({ id: 'udapp.deploy' })}
