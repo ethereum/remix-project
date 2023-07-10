@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react'
 import '../css/app.css'
 import '@fortawesome/fontawesome-free/css/all.css'
 import type { EthereumClient } from '@web3modal/ethereum'
-import { RemixClient } from '../services/RemixClient'
+import { WalletConnectRemixClient } from '../services/WalletConnectRemixClient'
 import { WalletConnectUI } from './walletConnectUI'
 
-const remix = new RemixClient()
+const remix = new WalletConnectRemixClient()
 
 function App() {
   const [ethereumClient, setEthereumClient] = useState<EthereumClient>(null)
-  const [wagmiClient, setWagmiClient] = useState(null)
+  const [wagmiConfig, setWagmiConfig] = useState(null)
   const [theme, setTheme] = useState<string>('dark')
 
   useEffect(() => {
@@ -19,7 +19,7 @@ function App() {
         setTheme(theme)
       })
       
-      setWagmiClient(remix.wagmiClient)
+      setWagmiConfig(remix.wagmiConfig)
       setEthereumClient(remix.ethereumClient)
     })()
   }, [])
@@ -27,7 +27,7 @@ function App() {
   return (
     <div className="App">
       <h4 className='mt-1'>WalletConnect</h4>
-      { ethereumClient && wagmiClient && <WalletConnectUI wagmiClient={wagmiClient} ethereumClient={ethereumClient} theme={theme} /> }
+      { ethereumClient && wagmiConfig && <WalletConnectUI wagmiConfig={wagmiConfig} ethereumClient={ethereumClient} theme={theme} /> }
     </div>
   )
 }
