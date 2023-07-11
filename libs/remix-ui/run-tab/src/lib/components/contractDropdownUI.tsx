@@ -315,23 +315,21 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
           tooltipId="remixUdappContractNamesTooltip"
           tooltipText={contractOptions.title}
         >
-          <div id="udappcontractNamesWrapper" className="w-100">
-            <select ref={contractsRef}
-              value={currentContract}
-              name={contractOptions.title.toString()}
-              onChange={handleContractChange}
-              className="udapp_contractNames custom-select"
-              disabled={contractOptions.disabled}
-              style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block', pointerEvents: contractOptions.disabled ? 'none' : 'auto' }}
-            >
-              <option value='' disabled hidden>No compiled contracts</option>
-              {(contractList[currentFile] || []).map((contract, index) => {
-                return <option key={index} value={contract.alias}>
-                  {contract.alias} - {contract.file}
-                </option>
-              })}
-            </select>
-          </div>
+          <select ref={contractsRef}
+            value={currentContract}
+            name={contractOptions.title.toString()}
+            onChange={handleContractChange}
+            className="udapp_contractNames w-100 custom-select"
+            disabled={contractOptions.disabled}
+            style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block', pointerEvents: contractOptions.disabled ? 'none' : 'auto' }}
+          >
+            <option value='' disabled hidden>No compiled contracts</option>
+            {(contractList[currentFile] || []).map((contract, index) => {
+              return <option key={index} value={contract.alias}>
+                {contract.alias} - {contract.file}
+              </option>
+            })}
+          </select>
         </CustomTooltip>
         <span className="py-1" style={{ display: abiLabel.display }}>{abiLabel.content}</span>
       </div>
