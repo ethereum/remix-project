@@ -410,7 +410,6 @@ export function ContractGUI (props: ContractGUIProps) {
                 onClick={handleExpandMultiClick}
               >
                 <button
-                  type="button"
                   data-id={buttonOptions.dataId}
                   className={`udapp_instanceButton ${buttonOptions.classList}`}
                   disabled={props.disabled || (props.inputs !=='' && basicInput === '')}
