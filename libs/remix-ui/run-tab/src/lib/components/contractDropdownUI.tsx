@@ -6,6 +6,7 @@ import { ContractData, FuncABI, OverSizeLimit} from '@remix-project/core-plugin'
 import * as ethJSUtil from '@ethereumjs/util'
 import { ContractGUI } from './contractGUI'
 import { CustomTooltip, deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
+import { title } from 'process'
 const _paq = window._paq = window._paq || []
 
 export function ContractDropdownUI (props: ContractDropdownProps) {
@@ -233,6 +234,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       })
     } else{
       setCompilerName('')
+      setContractOptions({title: <FormattedMessage id='udapp.contractOptionsTitle1' />, disabled: true})
     }
   }
 
@@ -316,6 +318,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
           <div id="udappcontractNamesWrapper" className="w-100">
             <select ref={contractsRef}
               value={currentContract}
+              name={contractOptions.title.toString()}
               onChange={handleContractChange}
               className="udapp_contractNames custom-select"
               disabled={contractOptions.disabled}
@@ -326,7 +329,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
                 return <option key={index} value={contract.alias}>
                   {contract.alias} - {contract.file}
                 </option>
-              }) }
+              })}
             </select>
           </div>
         </CustomTooltip>
