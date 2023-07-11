@@ -175,7 +175,6 @@ export function ContractGUI (props: ContractGUIProps) {
   const handleActionClick = async () => {
     if (deployState.deploy) {
       const proxyInitializeString = getMultiValsString(initializeFields.current)
-
       props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
     } else if (deployState.upgrade) {
       if (proxyAddress === '') {
@@ -197,8 +196,8 @@ export function ContractGUI (props: ContractGUIProps) {
                 !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
               }, 'Cancel', () => {}, 'btn-warning', 'btn-secondary')
             }
-        }
-      } else {
+          }
+        } else {
           setProxyAddressError('not a valid contract address')
         }
       }
@@ -410,6 +409,7 @@ export function ContractGUI (props: ContractGUIProps) {
                 onClick={handleExpandMultiClick}
               >
                 <button
+                  type="button"
                   data-id={buttonOptions.dataId}
                   className={`udapp_instanceButton ${buttonOptions.classList}`}
                   disabled={props.disabled || (props.inputs !=='' && basicInput === '')}
