@@ -5490,6 +5490,8 @@ a.close.disabled {
   border: 1px solid #dfe1ea;
   border-radius: 0.3rem;
   outline: 0;
+  overflow: scroll;
+  height: 500px;
 }
 
 .modal-backdrop {
