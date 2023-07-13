@@ -230,6 +230,10 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       contractList[currentFile].forEach(contract => {
         if (contract.alias === contractsRef.current.value) {
           setCompilerName(contract.compilerName)
+          setContractOptions({
+            disabled: false,
+            title: <FormattedMessage id='udapp.contractOptionsTitle2' />
+          })
         }
       })
     } else{
