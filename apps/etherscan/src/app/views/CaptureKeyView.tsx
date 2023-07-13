@@ -13,7 +13,7 @@ export const CaptureKeyView: React.FC = () => {
   return (
     <AppContext.Consumer>
       {({ apiKey, clientInstance, setAPIKey }) => {
-        if (!apiKey) setMsg('Please add API key to continue. It should be 34 characters long')
+        if (!apiKey) setMsg('Please provide a 34-character API key to continue')
         return (
         <div>
         <Formik
