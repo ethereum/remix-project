@@ -554,6 +554,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       props.event.trigger("staticAnalysisWarning", [-1])
     } else {
       setBasicEnabled(true)
+      if(!solhintEnabled) {
+        setSelectedTab("remix")
+      }
       props.analysisModule.basicEnabled = true
       props.event.trigger("staticAnalysisWarning", [-1])
     }
@@ -569,6 +572,9 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       props.event.trigger("staticAnalysisWarning", [-1])
     } else {
       setSolhintEnabled(true)
+      if(!basicEnabled) {
+        setSelectedTab("solhint")
+      }
       props.analysisModule.solhintEnabled = true
       props.event.trigger("staticAnalysisWarning", [-1])
     }
