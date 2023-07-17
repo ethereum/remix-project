@@ -362,6 +362,7 @@ export function ContractGUI (props: ContractGUIProps) {
                       className="form-control"
                       placeholder={inp.type}
                       data-id={`multiParamManagerInput${inp.name}`}
+                      onChange={handleBasicInput}
                     />
                   </CustomTooltip>
                 </div>
@@ -411,7 +412,7 @@ export function ContractGUI (props: ContractGUIProps) {
                 <button
                   type="button"
                   data-id={buttonOptions.dataId}
-                  className={`udapp_instanceButton ${buttonOptions.classList}`}
+                  className={`udapp_instanceButton btn ${buttonOptions.classList}`}
                   disabled={props.disabled || (props.inputs !=='' && basicInput === '')}
                 >
                   {buttonOptions.content}
