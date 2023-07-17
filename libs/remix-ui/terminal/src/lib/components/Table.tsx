@@ -115,7 +115,7 @@ const showTable = (opts, showTableHash) => {
         ) : null}
         {opts.from ? (
           <tr className="remix_ui_terminal_tr">
-            <td className="td tableTitle" data-shared={`key_${opts.hash}`}>
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               from
             </td>
             <td
