@@ -5001,6 +5001,8 @@ a.close.disabled {
     border:1px solid rgba(0,0,0,.2);
     border-radius:.3rem;
     outline:0
+    height: 500px;
+    overflow: auto;
 }
 .modal-backdrop {
     position:fixed;
