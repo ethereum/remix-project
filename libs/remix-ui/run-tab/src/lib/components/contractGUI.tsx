@@ -272,13 +272,6 @@ export function ContractGUI (props: ContractGUIProps) {
         className="udapp_contractActionsContainerSingle pt-2"
         style={{ display: toggleContainer ? "none" : "flex" }}
       > 
-        <CustomTooltip
-          delay={0}
-          placement={"right"}
-          tooltipClasses="text-wrap"
-          tooltipId="remixUdappInstanceButtonTooltip"
-          tooltipText={toggleUpgradeImp && !proxyAddress ? 'Proxy address cannot be empty' : (props.inputs !=='' && basicInput === '') ? 'Input required' : buttonOptions.title}
-        >
           <div
             className='d-flex'
             onClick={handleActionClick}
@@ -289,10 +282,17 @@ export function ContractGUI (props: ContractGUIProps) {
               data-title={buttonOptions.title}
               disabled={(toggleUpgradeImp && !proxyAddress) || props.disabled || (props.inputs !=='' && basicInput === '')}
             >
-              {title}
+              <CustomTooltip
+                delay={0}
+                placement={"right"}
+                tooltipClasses="text-wrap"
+                tooltipId="remixUdappInstanceButtonTooltip"
+                tooltipText={toggleUpgradeImp && !proxyAddress ? 'Proxy address cannot be empty' : (props.inputs !=='' && basicInput === '') ? 'Input required' : buttonOptions.title}
+              >
+              <div>{title}</div>
+              </CustomTooltip>
             </button>
           </div>
-        </CustomTooltip>
         <input
           className="form-control"
           data-id={
