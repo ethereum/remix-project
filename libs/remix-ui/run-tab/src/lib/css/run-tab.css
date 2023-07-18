@@ -483,6 +483,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 11px;
+  width: 261px;
 }
 .udapp_hasArgs .udapp_contractActionsContainerMulti button {
   border-radius: 3px;
