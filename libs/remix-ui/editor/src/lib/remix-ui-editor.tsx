@@ -15,6 +15,7 @@ import { RemixReferenceProvider } from './providers/referenceProvider'
 import { RemixCompletionProvider } from './providers/completionProvider'
 import { RemixHighLightProvider } from './providers/highlightProvider'
 import { RemixDefinitionProvider } from './providers/definitionProvider'
+import { RemixCodeActionProvider } from './providers/codeActionProvider'
 import './remix-ui-editor.css'
 
 
@@ -749,6 +750,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
     monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
     monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
+    monaco.languages.registerCodeActionProvider("remix-solidity", new RemixCodeActionProvider(props, monaco))
 
     loadTypes(monacoRef.current)
   }
