@@ -38,8 +38,8 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
                     ]
                 },
                 isPreferred: true
-            };
-        });
+            }
+        })
         return {
             actions: actions,
             dispose: () => {}
