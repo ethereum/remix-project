@@ -19,8 +19,11 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
     ) {
 
         const actions = context.markers.map(error => {
+            const errStrings = Object.keys(fixes)
+            const errStr = errStrings.find(es => error.message.includes(es))
+            const fix = fixes[errStr]
             return {
-                title: fixes[error.message].title,
+                title: fix.title,
                 diagnostics: [error],
                 kind: "quickfix",
                 edit: {
@@ -28,8 +31,8 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
                         {
                             resource: model.uri,
                             edit: {
-                                range: error,
-                                text: fixes[error.message].message
+                                range: fix.range || error,
+                                text: fix.message
                             }
                         }
                     ]
