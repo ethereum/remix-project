@@ -197,7 +197,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
   return (
     <div className={className + " border rounded px-1 mt-1 bg-light"}>
       <div className="py-0 px-1 title" style={headStyle}>
-        {/* <div className={state.toggleDropdown ? 'icon fas fa-caret-down' : 'icon fas fa-caret-right'} onClick={handleToggle}></div> */}
+        <div className={state.toggleDropdown ? 'icon fas fa-caret-down' : 'icon fas fa-caret-right'} onClick={handleToggle}></div>
         <div className="name" data-id={`dropdownPanel${uniquePanelName}`} onClick={handleToggle}>{dropdownName}</div><span className="nameDetail" onClick={handleToggle}>{header}</span>
         <CopyToClipboard content={state.copiableContent} data-id={`dropdownPanelCopyToClipboard${uniquePanelName}`} />
       </div>
