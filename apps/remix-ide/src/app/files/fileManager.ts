@@ -361,15 +361,15 @@ class FileManager extends Plugin {
     try {
       const downloadFileName = helper.extractNameFromKey(path)
       if (await this.isDirectory(path)) {
-          const zip = new JSZip()
-          await this.zipDir(path, zip)
-          const content = await zip.generateAsync({type: 'blob'})
-          saveAs(content, `${downloadFileName}.zip`)
-        } else {
-          path = this.normalize(path)
-          const content: any = await this.readFile(path)
-          saveAs(new Blob([content]), downloadFileName)
-        }
+        const zip = new JSZip()
+        await this.zipDir(path, zip)
+        const content = await zip.generateAsync({type: 'blob'})
+        saveAs(content, `${downloadFileName}.zip`)
+      } else {
+        path = this.normalize(path)
+        const content: any = await this.readFile(path)
+        saveAs(new Blob([content]), downloadFileName)
+      }
     } catch (e) {
       throw new Error(e)
     }
@@ -777,7 +777,7 @@ class FileManager extends Plugin {
                 provider.set(currentFile, oldContent)
                 return console.error(error)
               } else {
-          this.emit('fileSaved', currentFile)
+                this.emit('fileSaved', currentFile)
               }
             })
           })
@@ -868,7 +868,7 @@ class FileManager extends Plugin {
    * @returns {void}
    */
   
-   async moveFile(src: string, dest: string) {
+  async moveFile(src: string, dest: string) {
     try {
       src = this.normalize(src)
       dest = this.normalize(dest)
