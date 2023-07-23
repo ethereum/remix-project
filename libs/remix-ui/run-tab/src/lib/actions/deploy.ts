@@ -240,25 +240,25 @@ const deployContract = (plugin: RunTab, selectedContract, args, contractMetadata
 
 export const loadAddress = (plugin: RunTab, dispatch: React.Dispatch<any>, contract: ContractData, address: string) => {
   loadContractFromAddress(plugin, address,
-     (cb) => {
-       dispatch(displayNotification('At Address', `Do you really want to interact with ${address} using the current ABI definition?`, 'OK', 'Cancel', cb, null))
-     },
-     (error, loadType, abi) => {
-       if (error) {
-         return dispatch(displayNotification('Alert', error, 'OK', null))
-       }
-       if (loadType === 'abi') {
-         return addInstance(dispatch, { abi, address, name: '<at address>' })
-       } else if (loadType === 'instance') {
-         if (!contract) return dispatch(displayPopUp('No compiled contracts found.'))
-         const currentFile = plugin.REACT_API.contracts.currentFile
-         const compiler = plugin.REACT_API.contracts.contractList[currentFile].find(item => item.alias === contract.name)
-         const contractData = getSelectedContract(contract.name, compiler.compiler)
-         return addInstance(dispatch, { contractData, address, name: contract.name })
-       }
-     }
-   )
- }
+    (cb) => {
+      dispatch(displayNotification('At Address', `Do you really want to interact with ${address} using the current ABI definition?`, 'OK', 'Cancel', cb, null))
+    },
+    (error, loadType, abi) => {
+      if (error) {
+        return dispatch(displayNotification('Alert', error, 'OK', null))
+      }
+      if (loadType === 'abi') {
+        return addInstance(dispatch, { abi, address, name: '<at address>' })
+      } else if (loadType === 'instance') {
+        if (!contract) return dispatch(displayPopUp('No compiled contracts found.'))
+        const currentFile = plugin.REACT_API.contracts.currentFile
+        const compiler = plugin.REACT_API.contracts.contractList[currentFile].find(item => item.alias === contract.name)
+        const contractData = getSelectedContract(contract.name, compiler.compiler)
+        return addInstance(dispatch, { contractData, address, name: contract.name })
+      }
+    }
+  )
+}
 
 export const getContext = (plugin: RunTab) => {
   return plugin.blockchain.context()
@@ -390,23 +390,23 @@ export const isValidContractUpgrade = async (plugin: RunTab, proxyAddress: strin
     const networkFile: string = await plugin.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${identifier}/UUPS.json`)
     const parsedNetworkFile: NetworkDeploymentFile = JSON.parse(networkFile)
 
-      if (parsedNetworkFile.deployments[proxyAddress] && parsedNetworkFile.deployments[proxyAddress].implementationAddress) {
-        const solcBuildExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
+    if (parsedNetworkFile.deployments[proxyAddress] && parsedNetworkFile.deployments[proxyAddress].implementationAddress) {
+      const solcBuildExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
         
-        if (solcBuildExists) {
-          const solcFile: string = await plugin.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
-          const parsedSolcFile: SolcBuildFile = JSON.parse(solcFile)
-          const oldImpl = new UpgradeableContract(parsedNetworkFile.deployments[proxyAddress].contractName, parsedSolcFile.solcInput, parsedSolcFile.solcOutput, { kind: 'uups' })
-          const newImpl = new UpgradeableContract(newContractName, solcInput, solcOutput, { kind: 'uups' })
-          const report = oldImpl.getStorageUpgradeReport(newImpl, { kind: 'uups' })
+      if (solcBuildExists) {
+        const solcFile: string = await plugin.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
+        const parsedSolcFile: SolcBuildFile = JSON.parse(solcFile)
+        const oldImpl = new UpgradeableContract(parsedNetworkFile.deployments[proxyAddress].contractName, parsedSolcFile.solcInput, parsedSolcFile.solcOutput, { kind: 'uups' })
+        const newImpl = new UpgradeableContract(newContractName, solcInput, solcOutput, { kind: 'uups' })
+        const report = oldImpl.getStorageUpgradeReport(newImpl, { kind: 'uups' })
 
-          return report
-        } else {
-          return { ok: false, pass: false, warning: true }
-        }
+        return report
       } else {
         return { ok: false, pass: false, warning: true }
       }
+    } else {
+      return { ok: false, pass: false, warning: true }
+    }
   } else {
     return { ok: false, pass: false, warning: true }
   }

@@ -99,7 +99,7 @@ export const cancelUpgradeMsg = () => (
 
 export const deployWithProxyMsg = () => (
   <div>
-   <b>Deploy with Proxy</b> will initiate two (2) transactions:
+    <b>Deploy with Proxy</b> will initiate two (2) transactions:
     <ol className="pl-3">
       <li key="impl-contract" >Deploying the implementation contract</li>
       <li key="proxy-contract" >Deploying an ERC1967 proxy contract</li>
@@ -128,7 +128,7 @@ export const upgradeReportMsg = (report: LayoutCompatibilityReport) => (
     <div className="py-2 ml-2 mb-1 align-self-end mb-2 d-flex">
       <span className="align-self-center pl-4 mt-1">
         <i className="pr-2 text-warning far fa-exclamation-triangle" aria-hidden="true" style={{ fontSize: 'xxx-large', fontWeight: 'lighter' }}></i>
-        </span>
+      </span>
       <div className="d-flex flex-column">
         <span className="pl-4 mt-1">The storage layout of new implementation is NOT</span>
         <span className="pl-4 mt-1">compatible with the previous implementation.</span>

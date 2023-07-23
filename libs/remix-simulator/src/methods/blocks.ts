@@ -43,25 +43,25 @@ export class Blocks {
     }
 
     const transactions = block.transactions.map((t) => {
-     const hash = '0x' + t.hash().toString('hex')
-     const tx = this.vmContext.txByHash[hash]
-     const receipt = this.vmContext.currentVm.web3vm.txsReceipt[hash]
-     if (receipt) {
-      return {
-        blockHash: '0x' + block.hash().toString('hex'),
-        blockNumber: bigIntToHex(block.header.number),
-        from: receipt.from,
-        gas: bigIntToHex(receipt.gas),
-        chainId: '0xd05',
-        gasPrice: '0x4a817c800', // 20000000000
-        hash: receipt.transactionHash,
-        input: receipt.input,
-        nonce: bigIntToHex(tx.nonce),
-        transactionIndex: this.TX_INDEX,
-        value: bigIntToHex(tx.value),
-        to: receipt.to ?  receipt.to : null
+      const hash = '0x' + t.hash().toString('hex')
+      const tx = this.vmContext.txByHash[hash]
+      const receipt = this.vmContext.currentVm.web3vm.txsReceipt[hash]
+      if (receipt) {
+        return {
+          blockHash: '0x' + block.hash().toString('hex'),
+          blockNumber: bigIntToHex(block.header.number),
+          from: receipt.from,
+          gas: bigIntToHex(receipt.gas),
+          chainId: '0xd05',
+          gasPrice: '0x4a817c800', // 20000000000
+          hash: receipt.transactionHash,
+          input: receipt.input,
+          nonce: bigIntToHex(tx.nonce),
+          transactionIndex: this.TX_INDEX,
+          value: bigIntToHex(tx.value),
+          to: receipt.to ?  receipt.to : null
+        }
       }
-     }
     })
     const b = {
       baseFeePerGas: '0x01',
@@ -101,22 +101,22 @@ export class Blocks {
       const tx = this.vmContext.txByHash[hash]
       const receipt = this.vmContext.currentVm.web3vm.txsReceipt[hash]
       if (receipt) {
-       return {
-         blockHash: '0x' + block.hash().toString('hex'),
-         blockNumber: bigIntToHex(block.header.number),
-         from: receipt.from,
-         gas: toHex(receipt.gas),
-         chainId: '0xd05',
-         gasPrice: '0x4a817c800', // 20000000000
-         hash: receipt.transactionHash,
-         input: receipt.input,
-         nonce: bigIntToHex(tx.nonce),
-         transactionIndex: this.TX_INDEX,
-         value: bigIntToHex(tx.value),
-         to: receipt.to ?  receipt.to : null
-       }
+        return {
+          blockHash: '0x' + block.hash().toString('hex'),
+          blockNumber: bigIntToHex(block.header.number),
+          from: receipt.from,
+          gas: toHex(receipt.gas),
+          chainId: '0xd05',
+          gasPrice: '0x4a817c800', // 20000000000
+          hash: receipt.transactionHash,
+          input: receipt.input,
+          nonce: bigIntToHex(tx.nonce),
+          transactionIndex: this.TX_INDEX,
+          value: bigIntToHex(tx.value),
+          to: receipt.to ?  receipt.to : null
+        }
       }
-     })
+    })
     const b = {
       baseFeePerGas: '0x01',
       number: bigIntToHex(block.header.number),

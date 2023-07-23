@@ -222,7 +222,7 @@ export function getinputParameters (value) {
   if (regex && regex[1]) {
     return regex[1]
   } else
-      return ''
+    return ''
 }
 
 /**

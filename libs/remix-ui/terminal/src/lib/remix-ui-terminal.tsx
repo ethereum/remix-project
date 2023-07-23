@@ -451,7 +451,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     <div style={{ flexGrow: 1 }} className='remix_ui_terminal_panel' ref={panelRef}>
       <div className="remix_ui_terminal_bar d-flex">
         <div className="remix_ui_terminal_menu d-flex w-100 align-items-center position-relative border-top border-dark bg-light" ref={terminalMenu} data-id="terminalToggleMenu">
-        <CustomTooltip
+          <CustomTooltip
             placement="top"
             tooltipId="terminalToggle"
             tooltipClasses="text-nowrap"

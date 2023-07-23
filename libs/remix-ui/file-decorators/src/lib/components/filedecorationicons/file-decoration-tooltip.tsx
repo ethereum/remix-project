@@ -25,7 +25,7 @@ const FileDecorationTooltip = (props: {
         <Popover.Content id={`error-tooltip-${props.fileDecoration.path}`} style={{minWidth: "fit-content"}} className={"text-wrap bg-secondary w-100 p-1 m-0"}>
           <pre>{getComments(props.fileDecoration)}</pre>
         </Popover.Content>
-       </Popover>
+      </Popover>
     }
   >
     <div>{props.icon}</div>

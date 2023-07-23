@@ -18,7 +18,7 @@ const StaticAnalyserButton = ({
 }: StaticAnalyserButtonProps) => {
   const defaultStyle = "btn btn-sm btn-block btn-primary"
   const newclassList = disabled && classList.length > 0 ? `${classList} disabled` :
-  classList.length === 0 && disabled ? `${defaultStyle} disabled` : classList.length > 0 ? `${classList}` : defaultStyle
+    classList.length === 0 && disabled ? `${defaultStyle} disabled` : classList.length > 0 ? `${classList}` : defaultStyle
 
   const buttonWithoutTooltip = () => (
     <button
@@ -57,7 +57,7 @@ const StaticAnalyserButton = ({
   )
 
   return (
-      title && title.length > 0 ? buttonWithTooltip() : buttonWithoutTooltip()
+    title && title.length > 0 ? buttonWithTooltip() : buttonWithoutTooltip()
   )
 }
 

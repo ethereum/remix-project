@@ -23,60 +23,60 @@ export function AccountUI (props: AccountProps) {
 
   useEffect(() => {
     switch (props.selectExEnv) {
-      case 'injected':
-        setPlusOpt({
-          classList: 'udapp_disableMouseEvents',
-          title: "Unfortunately it's not possible to create an account using injected provider. Please create the account directly from your provider (i.e metamask or other of the same type)."
-        })
-        break
+    case 'injected':
+      setPlusOpt({
+        classList: 'udapp_disableMouseEvents',
+        title: "Unfortunately it's not possible to create an account using injected provider. Please create the account directly from your provider (i.e metamask or other of the same type)."
+      })
+      break
 
-      case 'vm-merge':
-        setPlusOpt({
-          classList: '',
-          title: 'Create a new account'
-        })
-        break
+    case 'vm-merge':
+      setPlusOpt({
+        classList: '',
+        title: 'Create a new account'
+      })
+      break
 
-      case 'vm-london':
-        setPlusOpt({
-          classList: '',
-          title: 'Create a new account'
-        })
-        break
+    case 'vm-london':
+      setPlusOpt({
+        classList: '',
+        title: 'Create a new account'
+      })
+      break
 
-      case 'vm-berlin':
-        setPlusOpt({
-          classList: '',
-          title: 'Create a new account'
-        })
-        break
+    case 'vm-berlin':
+      setPlusOpt({
+        classList: '',
+        title: 'Create a new account'
+      })
+      break
 
-      case 'vm-shanghai':
-        setPlusOpt({
-          classList: '',
-          title: 'Create a new account'
-        })
-        break
+    case 'vm-shanghai':
+      setPlusOpt({
+        classList: '',
+        title: 'Create a new account'
+      })
+      break
 
-      case 'web3':
-        if (!props.personalMode) {
-          setPlusOpt({
-            classList: 'disableMouseEvents',
-            title: 'Creating an account is possible only in Personal mode. Please go to Settings to enable it.'
-          })
-        } else {
-          setPlusOpt({
-            classList: '',
-            title: 'Create a new account'
-          })
-        }
-        break
-
-      default:
+    case 'web3':
+      if (!props.personalMode) {
         setPlusOpt({
           classList: 'disableMouseEvents',
-          title: `Unfortunately it's not possible to create an account using an external wallet (${props.selectExEnv}).`
+          title: 'Creating an account is possible only in Personal mode. Please go to Settings to enable it.'
         })
+      } else {
+        setPlusOpt({
+          classList: '',
+          title: 'Create a new account'
+        })
+      }
+      break
+
+    default:
+      setPlusOpt({
+        classList: 'disableMouseEvents',
+        title: `Unfortunately it's not possible to create an account using an external wallet (${props.selectExEnv}).`
+      })
     }
     // this._deps.config.get('settings/personal-mode')
   }, [props.selectExEnv, props.personalMode])
@@ -179,9 +179,9 @@ export function AccountUI (props: AccountProps) {
       </label>
       <div className="udapp_account">
         <select id="txorigin" data-id="runTabSelectAccount" name="txorigin" className="form-control udapp_select custom-select pr-4" value={selectedAccount||""} onChange={(e) => { props.setAccount(e.target.value) }}>
-        {
-          accounts.map((value, index) => <option value={value} key={index}>{ loadedAccounts[value] }</option>)
-        }
+          {
+            accounts.map((value, index) => <option value={value} key={index}>{ loadedAccounts[value] }</option>)
+          }
         </select>
         <div style={{ marginLeft: -5 }}><CopyToClipboard tip='Copy account to clipboard' content={selectedAccount} direction='top' /></div>
         <CustomTooltip

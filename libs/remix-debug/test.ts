@@ -67,7 +67,7 @@ cmdLine.startDebug(tx, shortFilename)
 cmdLine.events.on('source', () => {
   cmdLine.getSource().forEach(console.dir)
 })
- // })
+// })
 // })
 
 const repl = require('repl')

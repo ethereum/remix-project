@@ -89,9 +89,9 @@ export function ContractGUI (props: ContractGUIProps) {
     const multiJSON = JSON.parse('[' + multiString + ']')
 
     const encodeObj = txFormat.encodeData(
-        props.funcABI,
-        multiJSON,
-        props.funcABI.type === 'constructor' ? props.evmBC : null)
+      props.funcABI,
+      multiJSON,
+      props.funcABI.type === 'constructor' ? props.evmBC : null)
 
     if (encodeObj.error) {
       console.error(encodeObj.error)
@@ -272,27 +272,27 @@ export function ContractGUI (props: ContractGUIProps) {
         className="udapp_contractActionsContainerSingle pt-2"
         style={{ display: toggleContainer ? "none" : "flex" }}
       > 
-          <div
-            className='d-flex'
-            onClick={handleActionClick}
+        <div
+          className='d-flex'
+          onClick={handleActionClick}
+        >
+          <button
+            className={`udapp_instanceButton text-nowrap overflow-hidden text-truncate ${props.widthClass} btn btn-sm ${buttonOptions.classList}`}
+            data-id={buttonOptions.dataId}
+            data-title={buttonOptions.title}
+            disabled={(toggleUpgradeImp && !proxyAddress) || props.disabled || (props.inputs !=='' && basicInput === '')}
           >
-            <button
-              className={`udapp_instanceButton text-nowrap overflow-hidden text-truncate ${props.widthClass} btn btn-sm ${buttonOptions.classList}`}
-              data-id={buttonOptions.dataId}
-              data-title={buttonOptions.title}
-              disabled={(toggleUpgradeImp && !proxyAddress) || props.disabled || (props.inputs !=='' && basicInput === '')}
+            <CustomTooltip
+              delay={0}
+              placement={"right"}
+              tooltipClasses="text-wrap"
+              tooltipId="remixUdappInstanceButtonTooltip"
+              tooltipText={toggleUpgradeImp && !proxyAddress ? 'Proxy address cannot be empty' : (props.inputs !=='' && basicInput === '') ? 'Input required' : buttonOptions.title}
             >
-              <CustomTooltip
-                delay={0}
-                placement={"right"}
-                tooltipClasses="text-wrap"
-                tooltipId="remixUdappInstanceButtonTooltip"
-                tooltipText={toggleUpgradeImp && !proxyAddress ? 'Proxy address cannot be empty' : (props.inputs !=='' && basicInput === '') ? 'Input required' : buttonOptions.title}
-              >
               <div>{title}</div>
-              </CustomTooltip>
-            </button>
-          </div>
+            </CustomTooltip>
+          </button>
+        </div>
         <input
           className="form-control"
           data-id={
@@ -434,57 +434,57 @@ export function ContractGUI (props: ContractGUIProps) {
                 onChange={(e) => handleDeployProxySelect(e.target.checked)}
                 checked={deployState.deploy}
               />
-                <label
-                  htmlFor="deployWithProxy"
-                  data-id="contractGUIDeployWithProxyLabel"
-                  className="m-0 form-check-label w-100 custom-control-label udapp_checkboxAlign"
-                >
-                  <FormattedMessage id='udapp.deployWithProxy' />
-                </label>
+              <label
+                htmlFor="deployWithProxy"
+                data-id="contractGUIDeployWithProxyLabel"
+                className="m-0 form-check-label w-100 custom-control-label udapp_checkboxAlign"
+              >
+                <FormattedMessage id='udapp.deployWithProxy' />
+              </label>
             </div>
             <div>
               {props.initializerOptions &&
               props.initializerOptions.initializeInputs ? (
-                <span onClick={handleToggleDeployProxy}>
-                  <i className={!toggleDeployProxy ? "fas fa-angle-right pt-2" : "fas fa-angle-down"}
-                    aria-hidden="true"
-                  ></i>
-                </span>
-              ) : null}
+                  <span onClick={handleToggleDeployProxy}>
+                    <i className={!toggleDeployProxy ? "fas fa-angle-right pt-2" : "fas fa-angle-down"}
+                      aria-hidden="true"
+                    ></i>
+                  </span>
+                ) : null}
             </div>
           </div>
           {props.initializerOptions &&
           props.initializerOptions.initializeInputs ? (
-            <div
-              className={`pl-4 flex-column ${
-                toggleDeployProxy ? "d-flex" : "d-none"
-              }`}
-            >
-              <div className={`flex-column 'd-flex'}`}>
-                {props.initializerOptions.inputs.inputs.map((inp, index) => {
-                  return (
-                    <div className="mb-2" key={index}>
-                      <label
-                        className="mt-2 text-left d-block"
-                        htmlFor={inp.name}
-                      >
-                        {" "}
-                        {inp.name}:{" "}
-                      </label>
-                      <input
-                        ref={(el) => {
-                          initializeFields.current[index] = el;
-                        }}
-                        style={{ height: 32 }}
-                        className="form-control udapp_input"
-                        placeholder={inp.type}
-                      />
-                    </div>
-                  );
-                })}
+              <div
+                className={`pl-4 flex-column ${
+                  toggleDeployProxy ? "d-flex" : "d-none"
+                }`}
+              >
+                <div className={`flex-column 'd-flex'}`}>
+                  {props.initializerOptions.inputs.inputs.map((inp, index) => {
+                    return (
+                      <div className="mb-2" key={index}>
+                        <label
+                          className="mt-2 text-left d-block"
+                          htmlFor={inp.name}
+                        >
+                          {" "}
+                          {inp.name}:{" "}
+                        </label>
+                        <input
+                          ref={(el) => {
+                            initializeFields.current[index] = el;
+                          }}
+                          style={{ height: 32 }}
+                          className="form-control udapp_input"
+                          placeholder={inp.type}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ) : null}
+            ) : null}
           <div className="d-flex justify-content-between">
             <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
               <input
@@ -495,13 +495,13 @@ export function ContractGUI (props: ContractGUIProps) {
                 onChange={(e) => handleUpgradeImpSelect(e.target.checked)}
                 checked={deployState.upgrade}
               />
-                <label
-                  htmlFor="upgradeImplementation"
-                  data-id="contractGUIUpgradeImplementationLabel"
-                  className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
-                >
-                  <FormattedMessage id='udapp.upgradeWithProxy' />
-                </label>
+              <label
+                htmlFor="upgradeImplementation"
+                data-id="contractGUIUpgradeImplementationLabel"
+                className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
+              >
+                <FormattedMessage id='udapp.upgradeWithProxy' />
+              </label>
             </div>
             <span onClick={handleToggleUpgradeImp}>
               <i
@@ -541,8 +541,8 @@ export function ContractGUI (props: ContractGUIProps) {
                           >
                             <span>
                               { proxyAddress === deployment.address ?
-                              <span>&#10003; { deployment.contractName + ' ' + shortenProxyAddress(deployment.address) } </span>
-                              : <span className="pl-3">{ deployment.contractName + ' ' + shortenProxyAddress(deployment.address) }</span> }
+                                <span>&#10003; { deployment.contractName + ' ' + shortenProxyAddress(deployment.address) } </span>
+                                : <span className="pl-3">{ deployment.contractName + ' ' + shortenProxyAddress(deployment.address) }</span> }
                             </span>
                           </Dropdown.Item>
                         </CustomTooltip>

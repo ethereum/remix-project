@@ -52,8 +52,8 @@ export const CopyToClipboard = (props: ICopyToClipboard) => {
 
   const childJSX = (
     children || (<i className={`far ${icon} ml-1 p-2`} aria-hidden="true"
-            {...otherProps}
-          ></i>)
+      {...otherProps}
+    ></i>)
   )
 
   return (

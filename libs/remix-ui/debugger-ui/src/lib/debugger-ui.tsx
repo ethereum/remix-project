@@ -379,7 +379,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         data-id="debugGeneratedSourcesLabel"
         className="form-check-label custom-control-label"
         htmlFor="debugGeneratedSourcesInput">
-          <FormattedMessage id='debugger.useGeneratedSources' />(Solidity {'>='} v0.7.2)
+        <FormattedMessage id='debugger.useGeneratedSources' />(Solidity {'>='} v0.7.2)
       </label>
     </span>
   )

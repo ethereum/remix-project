@@ -43,10 +43,10 @@ export const RemixUiCheckbox = ({
 
   const childJSXWithTooltip = (
     <CustomTooltip
-        tooltipText={title}
-        tooltipId={`${name}Tooltip`}
-        placement={tooltipPlacement}
-      >
+      tooltipText={title}
+      tooltipId={`${name}Tooltip`}
+      placement={tooltipPlacement}
+    >
       <div className={`listenOnNetwork_2A0YE0 custom-control custom-checkbox ${optionalClassName}`} style={{ display: display, alignItems: 'center', visibility: visibility } as CSSProperties } onClick={onClick}>
         <input
           id={id}
@@ -67,20 +67,20 @@ export const RemixUiCheckbox = ({
   )
   const childJSX = (
     <div className="listenOnNetwork_2A0YE0 custom-control custom-checkbox" style={{ display: display, alignItems: 'center', visibility: visibility } as CSSProperties } onClick={onClick}>
-        <input
-          id={id}
-          type={inputType}
-          onChange={onChange}
-          style={{ verticalAlign: 'bottom' }}
-          name={name}
-          className="custom-control-input"
-          checked={checked}
-        />
-        <label className="form-check-label custom-control-label" id={`heading${categoryId}`} style={{ paddingTop: '0.15rem' }}>
-          {name ? <div className="font-weight-bold">{itemName}</div> : ''}
-          {label}
-        </label>
-      </div>
+      <input
+        id={id}
+        type={inputType}
+        onChange={onChange}
+        style={{ verticalAlign: 'bottom' }}
+        name={name}
+        className="custom-control-input"
+        checked={checked}
+      />
+      <label className="form-check-label custom-control-label" id={`heading${categoryId}`} style={{ paddingTop: '0.15rem' }}>
+        {name ? <div className="font-weight-bold">{itemName}</div> : ''}
+        {label}
+      </label>
+    </div>
   )
   return (
     title ? (childJSXWithTooltip) : (childJSX)
