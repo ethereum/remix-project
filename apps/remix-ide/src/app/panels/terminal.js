@@ -114,9 +114,9 @@ class Terminal extends Plugin {
 
   updateComponent(state) {
     return <RemixUiTerminal
-    plugin={state.plugin}
-    onReady={state.onReady}
-  />
+      plugin={state.plugin}
+      onReady={state.onReady}
+    />
   }
 
   renderComponent () {

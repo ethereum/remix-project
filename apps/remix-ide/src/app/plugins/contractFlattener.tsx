@@ -61,8 +61,8 @@ export class ContractFlattener extends Plugin {
     try{
       dependencyGraph = getDependencyGraph(ast, filePath)
       sorted = dependencyGraph.isEmpty()
-      ? [filePath]
-      : dependencyGraph.sort().reverse()
+        ? [filePath]
+        : dependencyGraph.sort().reverse()
       sources = source.sources
       result = concatSourceFiles(sorted, sources)
     }catch(err){
