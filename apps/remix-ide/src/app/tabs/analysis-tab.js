@@ -81,10 +81,10 @@ class AnalysisTab extends ViewPlugin {
 
   updateComponent(state) {
     return  <RemixUiStaticAnalyser
-    registry={state.registry}
-    analysisModule={state.analysisModule}
-    event={state.event}
-  />
+      registry={state.registry}
+      analysisModule={state.analysisModule}
+      event={state.event}
+    />
   }
 
   renderComponent () {
