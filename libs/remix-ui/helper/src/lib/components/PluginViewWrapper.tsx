@@ -7,18 +7,18 @@ interface IPluginViewWrapperProps {
   
 export const PluginViewWrapper = (props: IPluginViewWrapperProps) => {
   
-    const [state, setState] = useState<any>(null)
+  const [state, setState] = useState<any>(null)
   
-    useEffect(() => {
-      if(props.plugin.setDispatch){
-        props.plugin.setDispatch(setState)
-      }
-    }, [])
+  useEffect(() => {
+    if(props.plugin.setDispatch){
+      props.plugin.setDispatch(setState)
+    }
+  }, [])
     
-    return (
-      <>{state? 
-        <>{props.plugin.updateComponent(state)}</>
+  return (
+    <>{state? 
+      <>{props.plugin.updateComponent(state)}</>
       :<></>
-      }</>
-    )
-  }
+    }</>
+  )
+}

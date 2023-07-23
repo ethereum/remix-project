@@ -35,7 +35,7 @@ export const FindContainer = props => {
       <div className="search_plugin_find_container_internal">
         <Find></Find>
         {expanded ? 
-        <><Replace></Replace><OverWriteCheck></OverWriteCheck></> : null}
+          <><Replace></Replace><OverWriteCheck></OverWriteCheck></> : null}
       </div>
     </div>
   )

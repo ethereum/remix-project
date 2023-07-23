@@ -1,12 +1,12 @@
 class ESWebWorkerHandler {
-    constructor() {
+  constructor() {
 
-    }
+  }
 
-    getWorker () {
-        // @ts-ignore
-        return new Worker(new URL('./compiler-worker', import.meta.url))
-    }
+  getWorker () {
+    // @ts-ignore
+    return new Worker(new URL('./compiler-worker', import.meta.url))
+  }
 }
 
 export default ESWebWorkerHandler

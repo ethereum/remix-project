@@ -502,6 +502,6 @@ export interface BytecodeObject {
     }
   }
 
-  export interface EsWebWorkerHandlerInterface {
+export interface EsWebWorkerHandlerInterface {
     getWorker(): Worker
   }

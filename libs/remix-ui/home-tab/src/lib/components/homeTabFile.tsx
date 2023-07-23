@@ -137,19 +137,19 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
           <div className="d-flex flex-row">
             { state.modalInfo.prefix && <span className='text-nowrap align-self-center mr-2'>ipfs://</span> }
             <input
-            ref={inputValue}
-            type='text'
-            name='prompt_text'
-            id='inputPrompt_text'
-            className="w-100 mt-1 form-control"
-            data-id="homeTabModalDialogCustomPromptText"
-            value={state.importSource}
-            onInput={(e) => {
-              setState(prevState => {
-                return { ...prevState, importSource: inputValue.current.value }
-              })
-            }}
-          />
+              ref={inputValue}
+              type='text'
+              name='prompt_text'
+              id='inputPrompt_text'
+              className="w-100 mt-1 form-control"
+              data-id="homeTabModalDialogCustomPromptText"
+              value={state.importSource}
+              onInput={(e) => {
+                setState(prevState => {
+                  return { ...prevState, importSource: inputValue.current.value }
+                })
+              }}
+            />
           </div>
         </div>
       </ModalDialog>

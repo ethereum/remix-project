@@ -13,18 +13,18 @@ export const initialState: RemixUiStaticAnalyserState = {
 export const analysisReducer = (state: RemixUiStaticAnalyserState,
   action: RemixUiStaticAnalyserReducerActionType) => {
   switch (action.type) {
-    case 'compilationFinished':
-      return {
-        ...state,
-        file: action.payload.file,
-        source: action.payload.source,
-        languageVersion: action.payload.languageVersion,
-        data: action.payload.data,
-        input: action.payload.input,
-        version: action.payload.version
-      }
-    default:
-      return initialState
+  case 'compilationFinished':
+    return {
+      ...state,
+      file: action.payload.file,
+      source: action.payload.source,
+      languageVersion: action.payload.languageVersion,
+      data: action.payload.data,
+      input: action.payload.input,
+      version: action.payload.version
+    }
+  default:
+    return initialState
   }
 }
 

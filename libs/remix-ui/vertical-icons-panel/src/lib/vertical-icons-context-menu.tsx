@@ -106,17 +106,17 @@ const MenuForLinks = ({
   )
 }
 
- function ClickOutside(ref: React.MutableRefObject<HTMLElement>, hideFn: () => void) {
+function ClickOutside(ref: React.MutableRefObject<HTMLElement>, hideFn: () => void) {
   useEffect(() => {
-      function handleClickOutside(event: any) {
-          if (ref.current && !ref.current.contains(event.target)) {
-              hideFn()
-          }
+    function handleClickOutside(event: any) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        hideFn()
       }
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-          document.removeEventListener("mousedown", handleClickOutside);
-      };
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, [ref]);
 }
 
