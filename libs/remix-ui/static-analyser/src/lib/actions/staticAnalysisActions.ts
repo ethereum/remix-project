@@ -44,7 +44,7 @@ export const compilation = (analysisModule: AnalysisTab,
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function run (lastCompilationResult, lastCompilationSource, currentFile: string, state: RemixUiStaticAnalyserState, props: RemixUiStaticAnalyserProps, isSupportedVersion, showSlither, categoryIndex: number[], groupedModules, runner, _paq, message, showWarnings, allWarnings: React.RefObject<any>, warningContainer: React.RefObject<any>, calculateWarningStateEntries: (e:[string, any][]) => {length: number, errors: any[] }, warningState, setHints: React.Dispatch<React.SetStateAction<SolHintReport[]>>, hints: SolHintReport[], setSlitherWarnings: React.Dispatch<React.SetStateAction<any[]>>, setSsaWarnings: React.Dispatch<React.SetStateAction<any[]>>,
-slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<boolean>>, solhintEnabled: boolean, basicEnabled: boolean) {
+  slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<boolean>>, solhintEnabled: boolean, basicEnabled: boolean) {
   setStartAnalysis(true)
   setHints([])
   setSsaWarnings([])
@@ -55,16 +55,16 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
       const warningMessage = []
       const warningErrors = []
       props.analysisModule.hints = []
-        // Run solhint
-       if (solhintEnabled) {
+      // Run solhint
+      if (solhintEnabled) {
         _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'solHint'])
         const hintsResult = await props.analysisModule.call('solhint', 'lint', state.file)
         props.analysisModule.hints = hintsResult
         setHints(hintsResult)
-       } else {
+      } else {
         props.analysisModule.hints = []
         setHints([])
-       }
+      }
       // Remix Analysis
       if (basicEnabled) {
         _paq.push(['trackEvent', 'solidityStaticAnalyzer', 'analyze', 'remixAnalyzer'])
@@ -131,7 +131,7 @@ slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<b
         }
       } else {
         setSsaWarnings([])
-    }
+      }
       // Slither Analysis
       if (showSlither && slitherEnabled) {
         setSlitherWarnings([])

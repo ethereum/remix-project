@@ -56,23 +56,23 @@ export function ValueUI (props: ValueProps) {
           tooltipId="remixValueTooltip"
           tooltipText="Enter an amount and choose its unit"
         >
-        <input
-          ref={inputValue}
-          type="number"
-          min="0"
-          pattern="^[0-9]"
-          step="1"
-          className="form-control udapp_gasNval udapp_col2"
-          id="value"
-          data-id="dandrValue"
-          onKeyPress={validateInputKey}
-          onChange={validateValue}
-          value={props.sendValue}
-        />
-      </CustomTooltip>
+          <input
+            ref={inputValue}
+            type="number"
+            min="0"
+            pattern="^[0-9]"
+            step="1"
+            className="form-control udapp_gasNval udapp_col2"
+            id="value"
+            data-id="dandrValue"
+            onKeyPress={validateInputKey}
+            onChange={validateValue}
+            value={props.sendValue}
+          />
+        </CustomTooltip>
 
         <select name="unit"
-        value={props.sendUnit} className="form-control p-1 udapp_gasNvalUnit udapp_col2_2 custom-select" id="unit" onChange={(e) => { props.setUnit((e.target.value) as 'ether' | 'finney' | 'gwei' | 'wei') }}>
+          value={props.sendUnit} className="form-control p-1 udapp_gasNvalUnit udapp_col2_2 custom-select" id="unit" onChange={(e) => { props.setUnit((e.target.value) as 'ether' | 'finney' | 'gwei' | 'wei') }}>
           <option data-unit="wei" value='wei'>Wei</option>
           <option data-unit="gwei" value="gwei">Gwei</option>
           <option data-unit="finney" value="finney">Finney</option>

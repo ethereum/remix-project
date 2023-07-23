@@ -8,7 +8,7 @@ export const Results = () => {
   return (
     <div data-id="search_results" className="mt-2">
       <div className="search_plugin_search_indicator py-1">
-      {state.searching && !state.clipped ? <StopSearch></StopSearch> : null} {state.searching && !state.clipped
+        {state.searching && !state.clipped ? <StopSearch></StopSearch> : null} {state.searching && !state.clipped
           ? `searching in ${state.searching}`
           : null}<br></br>
 

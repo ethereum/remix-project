@@ -310,7 +310,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
               <i style={{ cursor: 'pointer' }} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
             </button>
           </CustomTooltip>)
-        : null }
+          : null }
       </div>
       <div className="udapp_subcontainer">
         <CustomTooltip
@@ -338,16 +338,16 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         <span className="py-1" style={{ display: abiLabel.display }}>{abiLabel.content}</span>
       </div>
       { evmVersion && loadedContractData && <CustomTooltip
-          placement={'right'}
-          tooltipClasses="text-wrap text-left"
-          tooltipId="info-evm-version-warn"
-          tooltipText={<span className="text-left">
-            <FormattedMessage id='udapp.warningEvmVersion' values={{ evmVersion }}/>
-          </span>
-          }
-        >
-          <span className='udapp_evmVersion badge alert-warning'>evm version: {evmVersion}</span>
-        </CustomTooltip>
+        placement={'right'}
+        tooltipClasses="text-wrap text-left"
+        tooltipId="info-evm-version-warn"
+        tooltipText={<span className="text-left">
+          <FormattedMessage id='udapp.warningEvmVersion' values={{ evmVersion }}/>
+        </span>
+        }
+      >
+        <span className='udapp_evmVersion badge alert-warning'>evm version: {evmVersion}</span>
+      </CustomTooltip>
       }
       <div>
         <div className="udapp_deployDropdown">
