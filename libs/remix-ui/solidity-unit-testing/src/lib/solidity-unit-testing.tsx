@@ -301,20 +301,20 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
     if (index > -1) {
       const className = "alert-danger d-inline-block mb-1 mr-1 p-1 failed_" + runningTestFileName
       label = (<CustomTooltip
-                placement={'right'}
-                tooltipClasses="text-nowrap"
-                tooltipId="info-recorder"
-                tooltipText="At least one contract test failed"
-              >
-                <div className={className}>FAIL</div>
-              </CustomTooltip>)
+        placement={'right'}
+        tooltipClasses="text-nowrap"
+        tooltipId="info-recorder"
+        tooltipText="At least one contract test failed"
+      >
+        <div className={className}>FAIL</div>
+      </CustomTooltip>)
     } else {
       const className = "alert-success d-inline-block mb-1 mr-1 p-1 passed_" + runningTestFileName
       label = (<CustomTooltip placement={'top-end'} tooltipClasses="text-nowrap" tooltipId="info-recorder"
-                tooltipText="All contract tests passed"
-              >
-                <div className={className}>PASS</div>
-              </CustomTooltip>)
+        tooltipText="All contract tests passed"
+      >
+        <div className={className}>PASS</div>
+      </CustomTooltip>)
     }
     // show contract and file name with label
     const ContractCard: ReactElement = (
@@ -742,9 +742,9 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
             placement={'top'}
           >
             <a className="btn border text-decoration-none pr-0 d-flex w-50 ml-2" target="__blank" href="https://remix-ide.readthedocs.io/en/latest/unittesting.html#test-directory">
-            <label className="btn p-1 ml-2 m-0"><FormattedMessage id='solidityUnitTesting.howToUse' /></label>
+              <label className="btn p-1 ml-2 m-0"><FormattedMessage id='solidityUnitTesting.howToUse' /></label>
             </a>
-        </CustomTooltip>
+          </CustomTooltip>
         </div>
         <div className="d-flex p-2">
           <CustomTooltip
@@ -752,7 +752,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
             tooltipClasses="text-nowrap"
             tooltipId="info-recorder"
             tooltipText={runButtonTitle}
-            >
+          >
             <button id="runTestsTabRunAction"data-id="testTabRunTestsTabRunAction" className="w-50 btn btn-primary" disabled={disableRunButton} onClick={runTests}>
               <span className="fas fa-play ml-2"></span>
               <span className="labelOnBtn p-1 ml-2 m-0"><FormattedMessage id='solidityUnitTesting.run' /></span>
@@ -765,10 +765,10 @@ export const SolidityUnitTesting = (props: Record<string, any>) => { // eslint-d
             tooltipText={<FormattedMessage id='solidityUnitTesting.runTestsTabStopActionTooltip' />}
           >
             <button id="runTestsTabStopAction" data-id="testTabRunTestsTabStopAction" className="w-50 pl-2 ml-2 btn btn-secondary" disabled={disableStopButton} onClick={stopTests}>
-            <span>
-              <span className="fas fa-stop ml-2"></span>
-              <span className="labelOnBtn p-1 ml-2 m-0" id="runTestsTabStopActionLabel">{stopButtonLabel}</span>
-            </span>
+              <span>
+                <span className="fas fa-stop ml-2"></span>
+                <span className="labelOnBtn p-1 ml-2 m-0" id="runTestsTabStopActionLabel">{stopButtonLabel}</span>
+              </span>
             </button>
           </CustomTooltip>
         </div>

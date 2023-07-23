@@ -53,11 +53,11 @@ function HomeTabLearn ({plugin}: HomeTabLearnProps) {
           <FormattedMessage id="home.learn" />
         </label>
         <CustomTooltip
-            placement={'top'}
-            tooltipId="overlay-tooltip"
-            tooltipClasses="text-nowrap"
-            tooltipText={"See all tutorials"}
-            tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+          placement={'top'}
+          tooltipId="overlay-tooltip"
+          tooltipClasses="text-nowrap"
+          tooltipText={"See all tutorials"}
+          tooltipTextClasses="border bg-light text-dark p-1 pr-3"
         >
           <button
             onClick={ async () => {

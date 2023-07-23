@@ -102,7 +102,7 @@ export const ProxyDropdownMenu = React.forwardRef(
       >
         <ul className="list-unstyled mb-0">
           {
-           children
+            children
           }
         </ul>
       </div>

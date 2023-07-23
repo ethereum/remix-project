@@ -168,93 +168,93 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
   const params = queryParams.get() as UrlParametersType
 
   switch (template) {
-    case 'code-template':
-      // creates a new workspace code-sample and loads code from url params.
-      try {
-        let path = ''; let content
+  case 'code-template':
+    // creates a new workspace code-sample and loads code from url params.
+    try {
+      let path = ''; let content
 
-        if (params.code) {
-          const hashed = bufferToHex(hash.keccakFromString(params.code))
+      if (params.code) {
+        const hashed = bufferToHex(hash.keccakFromString(params.code))
 
-          path = 'contract-' + hashed.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
-          content = atob(decodeURIComponent(params.code))
+        path = 'contract-' + hashed.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
+        content = atob(decodeURIComponent(params.code))
+        await workspaceProvider.set(path, content)
+      }
+      if (params.url) {
+        const data = await plugin.call('contentImport', 'resolve', params.url)
+
+        path = data.cleanUrl
+        content = data.content
+
+        try {
+          content = JSON.parse(content) as any
+          if (content.language && content.language === "Solidity" && content.sources) {
+            const standardInput: JSONStandardInput = content as JSONStandardInput
+            for (const [fname, source] of Object.entries(standardInput.sources)) {
+              await workspaceProvider.set(fname, source.content)
+            }
+            return Object.keys(standardInput.sources)[0]
+          } else {
+            await workspaceProvider.set(path, JSON.stringify(content))
+          }
+        } catch (e) {
+          console.log(e)
           await workspaceProvider.set(path, content)
         }
-        if (params.url) {
-          const data = await plugin.call('contentImport', 'resolve', params.url)
-
-          path = data.cleanUrl
-          content = data.content
-
-          try {
-            content = JSON.parse(content) as any
-            if (content.language && content.language === "Solidity" && content.sources) {
-              const standardInput: JSONStandardInput = content as JSONStandardInput
-              for (const [fname, source] of Object.entries(standardInput.sources)) {
-                await workspaceProvider.set(fname, source.content)
-              }
-              return Object.keys(standardInput.sources)[0]
-            } else {
-              await workspaceProvider.set(path, JSON.stringify(content))
-            }
-          } catch (e) {
-            console.log(e)
-            await workspaceProvider.set(path, content)
-          }
-        }
-        return path
-      } catch (e) {
-        console.error(e)
       }
-      break
+      return path
+    } catch (e) {
+      console.error(e)
+    }
+    break
 
-    case 'gist-template':
-      // creates a new workspace gist-sample and get the file from gist
-      try {
-        const gistId = params.gist
-        const response: AxiosResponse = await axios.get(`https://api.github.com/gists/${gistId}`)
-        const data = response.data as { files: any }
+  case 'gist-template':
+    // creates a new workspace gist-sample and get the file from gist
+    try {
+      const gistId = params.gist
+      const response: AxiosResponse = await axios.get(`https://api.github.com/gists/${gistId}`)
+      const data = response.data as { files: any }
 
-        if (!data.files) {
-          return dispatch(displayNotification('Gist load error', 'No files found', 'OK', null, () => { dispatch(hideNotification()) }, null))
-        }
-        const obj = {}
-
-        Object.keys(data.files).forEach((element) => {
-          const path = element.replace(/\.\.\./g, '/')
-
-          obj['/' + 'gist-' + gistId + '/' + path] = data.files[element]
-        })
-        plugin.fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
-          if (errorLoadingFile) {
-            dispatch(displayNotification('', errorLoadingFile.message || errorLoadingFile, 'OK', null, () => { }, null))
-          }
-        })
-      } catch (e) {
-        dispatch(displayNotification('Gist load error', e.message, 'OK', null, () => { dispatch(hideNotification()) }, null))
-        console.error(e)
+      if (!data.files) {
+        return dispatch(displayNotification('Gist load error', 'No files found', 'OK', null, () => { dispatch(hideNotification()) }, null))
       }
-      break
+      const obj = {}
 
-    default:
-      try {
-        const templateList = Object.keys(templateWithContent)
-        if (!templateList.includes(template)) break
-        _paq.push(['trackEvent', 'workspace', 'template', template])
-        // @ts-ignore
-        const files = await templateWithContent[template](opts)
-        for (const file in files) {
-          try {
-            await workspaceProvider.set(file, files[file])
-          } catch (error) {
-            console.error(error)
-          }
+      Object.keys(data.files).forEach((element) => {
+        const path = element.replace(/\.\.\./g, '/')
+
+        obj['/' + 'gist-' + gistId + '/' + path] = data.files[element]
+      })
+      plugin.fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
+        if (errorLoadingFile) {
+          dispatch(displayNotification('', errorLoadingFile.message || errorLoadingFile, 'OK', null, () => { }, null))
         }
-      } catch (e) {
-        dispatch(displayNotification('Workspace load error', e.message, 'OK', null, () => { dispatch(hideNotification()) }, null))
-        console.error(e)
+      })
+    } catch (e) {
+      dispatch(displayNotification('Gist load error', e.message, 'OK', null, () => { dispatch(hideNotification()) }, null))
+      console.error(e)
+    }
+    break
+
+  default:
+    try {
+      const templateList = Object.keys(templateWithContent)
+      if (!templateList.includes(template)) break
+      _paq.push(['trackEvent', 'workspace', 'template', template])
+      // @ts-ignore
+      const files = await templateWithContent[template](opts)
+      for (const file in files) {
+        try {
+          await workspaceProvider.set(file, files[file])
+        } catch (error) {
+          console.error(error)
+        }
       }
-      break
+    } catch (e) {
+      dispatch(displayNotification('Workspace load error', e.message, 'OK', null, () => { dispatch(hideNotification()) }, null))
+      console.error(e)
+    }
+    break
   }
 }
 

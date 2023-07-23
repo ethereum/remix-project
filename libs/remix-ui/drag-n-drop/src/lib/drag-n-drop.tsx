@@ -68,25 +68,25 @@ export const Draggable = (props: DraggableType) => {
     <>
       {
         props.isDraggable ? props.children :
-        <span
-          ref={dragRef}
-          draggable
-          onDrop={(event) => {
-            handleDrop(event)
-          }}
-          onDragStart={() => {
-            if (destination) {
-              handleDrag()
-            }
-          }}
-          onDragOver={(event) => {
-            if (destination) {
-              handleDragover(event)
-            }
-          }}
-        >
-          {props.children}
-        </span>
+          <span
+            ref={dragRef}
+            draggable
+            onDrop={(event) => {
+              handleDrop(event)
+            }}
+            onDragStart={() => {
+              if (destination) {
+                handleDrag()
+              }
+            }}
+            onDragOver={(event) => {
+              if (destination) {
+                handleDragover(event)
+              }
+            }}
+          >
+            {props.children}
+          </span>
       }
     </>
   )

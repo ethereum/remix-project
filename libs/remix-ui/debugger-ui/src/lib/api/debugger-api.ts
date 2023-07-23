@@ -49,16 +49,16 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     await this.call('editor', 'highlight', lineColumnPos, path, '', { focus: true })
     const label = `${stepDetail.op} costs ${stepDetail.gasCost} gas - this line costs ${lineGasCost} gas - ${stepDetail.gas} gas left`
     const linetext: lineText = {
-        content: label,
-        position: lineColumnPos,
-        hide: false,
-        className: 'text-muted small',
-        afterContentClassName: 'text-muted small fas fa-gas-pump pl-4',
-        from: 'debugger',
-        hoverMessage: [{
-            value: label,
-        },
-        ],
+      content: label,
+      position: lineColumnPos,
+      hide: false,
+      className: 'text-muted small',
+      afterContentClassName: 'text-muted small fas fa-gas-pump pl-4',
+      from: 'debugger',
+      hoverMessage: [{
+        value: label,
+      },
+      ],
     }
     await this.call('editor', 'addLineText' as any, linetext, path)
   }

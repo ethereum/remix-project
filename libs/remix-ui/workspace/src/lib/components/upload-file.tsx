@@ -12,8 +12,8 @@ const UploadFile = (props: UploadFileProps) => {
   useEffect(() => {
     ref.current.click();
     ref.current.onchange= (event)=>{
-        //@ts-ignore
-        props.onUpload(event.target, event.target.files);
+      //@ts-ignore
+      props.onUpload(event.target, event.target.files);
     }
   }, []);
 

@@ -295,27 +295,27 @@ export class Compiler {
         return
       }
       switch (data.cmd) {
-        case 'versionLoaded':
-          if (data.data) this.onCompilerLoaded(data.data, data.license)
-          break
-        case 'compiled':
-          {
-            let result: CompilationResult
-            if (data.data && data.job !== undefined && data.job >= 0) {
-              try {
-                result = JSON.parse(data.data)
-              } catch (exception) {
-                result = { error: { formattedMessage: 'Invalid JSON output from the compiler: ' + exception } }
-              }
-              let sources: SourceWithTarget = {}
-              if (data.job in jobs !== undefined) {
-                sources = jobs[data.job].sources
-                delete jobs[data.job]
-              }
-              this.onCompilationFinished(result, data.missingInputs, sources, data.input, this.state.currentVersion)
-            }
-            break
+      case 'versionLoaded':
+        if (data.data) this.onCompilerLoaded(data.data, data.license)
+        break
+      case 'compiled':
+      {
+        let result: CompilationResult
+        if (data.data && data.job !== undefined && data.job >= 0) {
+          try {
+            result = JSON.parse(data.data)
+          } catch (exception) {
+            result = { error: { formattedMessage: 'Invalid JSON output from the compiler: ' + exception } }
           }
+          let sources: SourceWithTarget = {}
+          if (data.job in jobs !== undefined) {
+            sources = jobs[data.job].sources
+            delete jobs[data.job]
+          }
+          this.onCompilationFinished(result, data.missingInputs, sources, data.input, this.state.currentVersion)
+        }
+        break
+      }
       }
 
     })
