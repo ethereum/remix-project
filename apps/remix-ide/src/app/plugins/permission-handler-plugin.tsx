@@ -49,12 +49,12 @@ export class PermissionHandlerPlugin extends Plugin {
   switchMode (from: Profile, to: Profile, method: string, set: boolean, sensitiveCall: boolean) {
     if (sensitiveCall) {
       set
-    ? this.sessionPermissions[to.name][method][from.name] = {}
-    : delete this.sessionPermissions[to.name][method][from.name]
+        ? this.sessionPermissions[to.name][method][from.name] = {}
+        : delete this.sessionPermissions[to.name][method][from.name]
     } else {
       set
-    ? this.permissions[to.name][method][from.name] = {}
-    : delete this.permissions[to.name][method][from.name]
+        ? this.permissions[to.name][method][from.name] = {}
+        : delete this.permissions[to.name][method][from.name]
     }    
   }
 

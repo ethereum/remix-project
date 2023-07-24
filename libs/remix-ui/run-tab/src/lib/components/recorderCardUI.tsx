@@ -42,7 +42,7 @@ export function RecorderUI (props: RecorderProps) {
             tooltipId="recordedTransactionsCounttooltip"
             tooltipText={<FormattedMessage id='udapp.transactionsCountTooltip' />}
           >
-          <div className="ml-2 badge badge-pill badge-primary text-center" data-title="The number of recorded transactions">{props.count}</div>
+            <div className="ml-2 badge badge-pill badge-primary text-center" data-title="The number of recorded transactions">{props.count}</div>
           </CustomTooltip>
           <CustomTooltip
             placement={'right'}
@@ -50,8 +50,8 @@ export function RecorderUI (props: RecorderProps) {
             tooltipId="info-recorder"
             tooltipText={<span><FormattedMessage id='udapp.infoRecorderTooltip' values={{ br: <br /> }} /></span>}
           >
-          <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
-        </CustomTooltip>
+            <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
+          </CustomTooltip>
         </div>
         <div className="p-3">
           <span data-id='udappRecorderTitleExpander' onClick={toggleClass}>
@@ -79,10 +79,10 @@ export function RecorderUI (props: RecorderProps) {
             tooltipClasses="text-nowrap"
             tooltipId="remixUdappTransactionSavetooltip"
             tooltipText={
-                  props.count === 0 ? intl.formatMessage({ id: 'udapp.transactionSaveTooltip1' })
-                  : props.count === 1 ? intl.formatMessage({ id: 'udapp.transactionSaveTooltip2' }, { count: props.count })
+              props.count === 0 ? intl.formatMessage({ id: 'udapp.transactionSaveTooltip1' })
+                : props.count === 1 ? intl.formatMessage({ id: 'udapp.transactionSaveTooltip2' }, { count: props.count })
                   : intl.formatMessage({ id: 'udapp.transactionSaveTooltip3' }, { count: props.count })
-                }
+            }
           >
             <span>
               <button className="btn btn-sm btn-info savetransaction udapp_recorder" disabled={props.count === 0 ? true: false} onClick={triggerRecordButton} style={{ pointerEvents: props.count === 0 ? 'none' : 'auto' }}>

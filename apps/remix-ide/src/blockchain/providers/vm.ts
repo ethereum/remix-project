@@ -59,12 +59,12 @@ export class VMProvider {
             reject(new Error(msg.data.error))
           }
         } else if (msg.data.cmd === 'newAccountResult') {
-        if (this.newAccountCallback[msg.data.stamp]) {
-          this.newAccountCallback[msg.data.stamp](msg.data.error, msg.data.result)
-          delete this.newAccountCallback[msg.data.stamp]
+          if (this.newAccountCallback[msg.data.stamp]) {
+            this.newAccountCallback[msg.data.stamp](msg.data.error, msg.data.result)
+            delete this.newAccountCallback[msg.data.stamp]
+          }
         }
-      }
-    })
+      })
       this.worker.postMessage({ cmd: 'init', fork: this.executionContext.getCurrentFork(), nodeUrl: provider?.options['nodeUrl'], blockNumber: provider?.options['blockNumber']})
     })
   }

@@ -588,28 +588,28 @@ export function Workspace () {
           <label id="wsName" className="form-check-label d-block mb-1"><FormattedMessage id='filePanel.features' /></label>
           <div className="mb-2">
             <div className="d-flex ml-2 custom-control custom-checkbox">
-                <input className="custom-control-input" type="checkbox" name="feature" value="mintable" id="mintable" ref={mintableCheckboxRef} />
-                <label className="form-check-label custom-control-label" htmlFor="mintable" data-id="featureTypeMintable" >Mintable</label>
+              <input className="custom-control-input" type="checkbox" name="feature" value="mintable" id="mintable" ref={mintableCheckboxRef} />
+              <label className="form-check-label custom-control-label" htmlFor="mintable" data-id="featureTypeMintable" >Mintable</label>
             </div>
             <div className="d-flex ml-2 custom-control custom-checkbox">
-                <input className="custom-control-input" type="checkbox" name="feature" value="burnable" id="burnable" ref={burnableCheckboxRef} />
-                <label className="form-check-label custom-control-label" htmlFor="burnable" data-id="featureTypeBurnable" >Burnable</label>
+              <input className="custom-control-input" type="checkbox" name="feature" value="burnable" id="burnable" ref={burnableCheckboxRef} />
+              <label className="form-check-label custom-control-label" htmlFor="burnable" data-id="featureTypeBurnable" >Burnable</label>
             </div>
             <div className="d-flex ml-2 custom-control custom-checkbox">
-                <input className="custom-control-input" type="checkbox" name="feature" value="pausable" id="pausable" ref={pausableCheckboxRef} />
-                <label className="form-check-label custom-control-label" htmlFor="pausable" data-id="featureTypePausable" >Pausable</label>
+              <input className="custom-control-input" type="checkbox" name="feature" value="pausable" id="pausable" ref={pausableCheckboxRef} />
+              <label className="form-check-label custom-control-label" htmlFor="pausable" data-id="featureTypePausable" >Pausable</label>
             </div>
           </div>
 
           <label id="wsName" className="form-check-label d-block mb-1"><FormattedMessage id='filePanel.upgradeability' /></label>
           <div>
             <div className="d-flex ml-2 custom-control custom-radio">
-                <input className="custom-control-input" type="radio" name="upgradeability" value="transparent" id="transparent" ref={transparentRadioRef} />
-                <label className="form-check-label custom-control-label" htmlFor="transparent" data-id="upgradeTypeTransparent" >Transparent</label>
+              <input className="custom-control-input" type="radio" name="upgradeability" value="transparent" id="transparent" ref={transparentRadioRef} />
+              <label className="form-check-label custom-control-label" htmlFor="transparent" data-id="upgradeTypeTransparent" >Transparent</label>
             </div>
             <div className="d-flex ml-2 custom-control custom-radio">
-                <input className="custom-control-input" type="radio" name="upgradeability" value="uups" id="uups" ref={uupsRadioRef} />
-                <label className="form-check-label custom-control-label" htmlFor="uups" data-id="upgradeTypeUups" >UUPS</label>
+              <input className="custom-control-input" type="radio" name="upgradeability" value="uups" id="uups" ref={uupsRadioRef} />
+              <label className="form-check-label custom-control-label" htmlFor="uups" data-id="upgradeTypeUups" >UUPS</label>
             </div>
           </div>
 
@@ -639,7 +639,7 @@ export function Workspace () {
         </div>
         {!global.fs.gitConfig.username || !global.fs.gitConfig.email ?
           (
-          <div className='text-warning'><FormattedMessage id='filePanel.initGitRepositoryWarning' /></div>)
+            <div className='text-warning'><FormattedMessage id='filePanel.initGitRepositoryWarning' /></div>)
           :<></>
         }
 
@@ -679,48 +679,48 @@ export function Workspace () {
         e.preventDefault()
         handleContextMenu(e.pageX, e.pageY, ROOT_PATH, "workspace", 'workspace')
       }
-        }>
+      }>
         <div className='d-flex flex-column w-100 remixui_fileexplorer' data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
           <div>
             <header>
               <div className="mx-2 my-2 d-flex flex-column">
                 <div className="d-flex">
                   {currentWorkspace !== LOCALHOST ? (<span className="remixui_topmenu d-flex">
-                      <Dropdown id="workspacesMenuDropdown" data-id="workspacesMenuDropdown" onToggle={() => hideIconsMenu(!showIconsMenu)} show={showIconsMenu}>
-                        <Dropdown.Toggle
-                          as={CustomIconsToggle}
-                          onClick={() => {
-                            hideIconsMenu(!showIconsMenu)
-                          }}
-                          icon={'fas fa-bars'}
-                        ></Dropdown.Toggle>
-                        <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='custom-dropdown-items remixui_menuwidth' rootCloseEvent="click">
-                          <HamburgerMenu
-                            createWorkspace={createWorkspace}
-                            renameCurrentWorkspace={renameCurrentWorkspace}
-                            downloadCurrentWorkspace={downloadCurrentWorkspace}
-                            deleteCurrentWorkspace={deleteCurrentWorkspace}
-                            deleteAllWorkspaces={deleteAllWorkspaces}
-                            cloneGitRepository={cloneGitRepository}
-                            downloadWorkspaces={downloadWorkspaces}
-                            restoreBackup={restoreBackup}
-                            hideIconsMenu={hideIconsMenu}
-                            addGithubAction={addGithubAction}
-                            addSlitherGithubAction={addSlitherGithubAction}
-                            addHelperScripts={addHelperScripts}
-                            addTsSolTestGithubAction={addTsSolTestGithubAction}
-                            showIconsMenu={showIconsMenu}
-                            hideWorkspaceOptions={ currentWorkspace === LOCALHOST }
-                            hideLocalhostOptions={ currentWorkspace === NO_WORKSPACE }
-                            />
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </span>) : null}
-                    <span className="d-flex">
-                      <label className="pl-1 form-check-label" htmlFor="workspacesSelect" style={{wordBreak: 'keep-all'}}>
-                        <FormattedMessage id='filePanel.workspace' />
-                      </label>
-                    </span>                  
+                    <Dropdown id="workspacesMenuDropdown" data-id="workspacesMenuDropdown" onToggle={() => hideIconsMenu(!showIconsMenu)} show={showIconsMenu}>
+                      <Dropdown.Toggle
+                        as={CustomIconsToggle}
+                        onClick={() => {
+                          hideIconsMenu(!showIconsMenu)
+                        }}
+                        icon={'fas fa-bars'}
+                      ></Dropdown.Toggle>
+                      <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className='custom-dropdown-items remixui_menuwidth' rootCloseEvent="click">
+                        <HamburgerMenu
+                          createWorkspace={createWorkspace}
+                          renameCurrentWorkspace={renameCurrentWorkspace}
+                          downloadCurrentWorkspace={downloadCurrentWorkspace}
+                          deleteCurrentWorkspace={deleteCurrentWorkspace}
+                          deleteAllWorkspaces={deleteAllWorkspaces}
+                          cloneGitRepository={cloneGitRepository}
+                          downloadWorkspaces={downloadWorkspaces}
+                          restoreBackup={restoreBackup}
+                          hideIconsMenu={hideIconsMenu}
+                          addGithubAction={addGithubAction}
+                          addSlitherGithubAction={addSlitherGithubAction}
+                          addHelperScripts={addHelperScripts}
+                          addTsSolTestGithubAction={addTsSolTestGithubAction}
+                          showIconsMenu={showIconsMenu}
+                          hideWorkspaceOptions={ currentWorkspace === LOCALHOST }
+                          hideLocalhostOptions={ currentWorkspace === NO_WORKSPACE }
+                        />
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </span>) : null}
+                  <span className="d-flex">
+                    <label className="pl-1 form-check-label" htmlFor="workspacesSelect" style={{wordBreak: 'keep-all'}}>
+                      <FormattedMessage id='filePanel.workspace' />
+                    </label>
+                  </span>                  
                 </div>
                 <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
                   <Dropdown.Toggle
@@ -759,19 +759,19 @@ export function Workspace () {
                             </div> :
                             <span>{ currentWorkspace === name ? <span>&#10003; { name } </span> : <span className="pl-3">{ name }</span> }</span>
                           }
-                          </Dropdown.Item>
-                        ))
-                      }
-                      { ((global.fs.browser.workspaces.length <= 0) || currentWorkspace === NO_WORKSPACE) && <Dropdown.Item onClick={() => { switchWorkspace(NO_WORKSPACE) }}>{ <span className="pl-3">NO_WORKSPACE</span> }</Dropdown.Item> }
-                    </Dropdown.Menu>
-                  </Dropdown>
-                </div>
-              </header>
-            </div>
-            <div className='h-100 remixui_fileExplorerTree' onFocus={() => { toggleDropdown(false) }}>
+                        </Dropdown.Item>
+                      ))
+                    }
+                    { ((global.fs.browser.workspaces.length <= 0) || currentWorkspace === NO_WORKSPACE) && <Dropdown.Item onClick={() => { switchWorkspace(NO_WORKSPACE) }}>{ <span className="pl-3">NO_WORKSPACE</span> }</Dropdown.Item> }
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+            </header>
+          </div>
+          <div className='h-100 remixui_fileExplorerTree' onFocus={() => { toggleDropdown(false) }}>
             <div className='h-100'>
-            { (global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>}
-            { !(global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) &&
+              { (global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>}
+              { !(global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) &&
               (global.fs.mode === 'browser') && (currentWorkspace !== NO_WORKSPACE) &&
               <div className='h-100 remixui_treeview' data-id='filePanelFileExplorerTree'>
                 <FileExplorer
@@ -822,11 +822,11 @@ export function Workspace () {
                   editModeOn={editModeOn}
                   handleNewFileInput={handleNewFileInput}
                   handleNewFolderInput={handleNewFolderInput}
-                  />
+                />
               </div>
-            }
-            { global.fs.localhost.isRequestingLocalhost && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div> }
-            { (global.fs.mode === 'localhost' && global.fs.localhost.isSuccessfulLocalhost) &&
+              }
+              { global.fs.localhost.isRequestingLocalhost && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div> }
+              { (global.fs.mode === 'localhost' && global.fs.localhost.isSuccessfulLocalhost) &&
               <div className='h-100 filesystemexplorer remixui_treeview'>
                 <FileExplorer
                   name='localhost'
@@ -878,13 +878,13 @@ export function Workspace () {
                   handleNewFolderInput={handleNewFolderInput}
                 />
               </div>
-            }
+              }
             </div>
           </div>
         </div>
-        </div>
-        {
-          selectedWorkspace &&
+      </div>
+      {
+        selectedWorkspace &&
           <div className={`bg-light border-top ${selectedWorkspace.isGitRepo && currentBranch ? 'd-block' : 'd-none'}`} data-id="workspaceGitPanel">
             <div className='d-flex justify-space-between p-1'>
               <div className="mr-auto text-uppercase text-dark pt-2 pl-2">GIT</div>
@@ -918,18 +918,18 @@ export function Workspace () {
                                 <div data-id={`workspaceGit-${ branch.remote ? `${branch.remote}/${branch.name}` : branch.name }`}>
                                   {
                                     (currentBranch === branch.name) && !branch.remote ?
-                                    <span>&#10003; <i className='far fa-code-branch'></i><span className='pl-1'>{ branch.name }</span></span> :
-                                    <span className='pl-3'><i className={`far ${ branch.remote ? 'fa-cloud' : 'fa-code-branch'}`}></i><span className='pl-1'>{ branch.remote ? `${branch.remote}/${branch.name}` : branch.name }</span></span>
+                                      <span>&#10003; <i className='far fa-code-branch'></i><span className='pl-1'>{ branch.name }</span></span> :
+                                      <span className='pl-3'><i className={`far ${ branch.remote ? 'fa-cloud' : 'fa-code-branch'}`}></i><span className='pl-1'>{ branch.remote ? `${branch.remote}/${branch.name}` : branch.name }</span></span>
                                   }
                                 </div>
                               </Dropdown.Item>
                             )
                           }) :
-                          <Dropdown.Item onClick={switchToNewBranch}>
-                            <div className="pl-1 pr-1" data-id="workspaceGitCreateNewBranch">
-                              <i className="fas fa-code-branch pr-2"></i><span><FormattedMessage id='filePanel.createBranch' />: { branchFilter } from '{currentBranch}'</span>
-                            </div>
-                          </Dropdown.Item>
+                            <Dropdown.Item onClick={switchToNewBranch}>
+                              <div className="pl-1 pr-1" data-id="workspaceGitCreateNewBranch">
+                                <i className="fas fa-code-branch pr-2"></i><span><FormattedMessage id='filePanel.createBranch' />: { branchFilter } from '{currentBranch}'</span>
+                              </div>
+                            </Dropdown.Item>
                         }
                       </div>
                       {
@@ -941,33 +941,33 @@ export function Workspace () {
               </div>
             </div>
           </div>
-        }
-        {state.showContextMenu && <FileExplorerContextMenu
-          actions={global.fs.focusElement.length > 1 ? state.actions.filter(item => item.multiselect) : state.actions.filter(item => !item.multiselect)}
-          hideContextMenu={hideContextMenu}
-          createNewFile={handleNewFileInput}
-          createNewFolder={handleNewFolderInput}
-          deletePath={deletePath}
-          renamePath={editModeOn}
-          runScript={runScript}
-          copy={handleCopyClick}
-          paste={handlePasteClick}
-          copyFileName={handleCopyFileNameClick}
-          copyPath={handleCopyFilePathClick}
-          emit={emitContextMenuEvent}
-          pageX={state.focusContext.x}
-          pageY={state.focusContext.y}
-          path={state.focusContext.element}
-          type={state.focusContext.type}
-          focus={global.fs.focusElement}
-          pushChangesToGist={pushChangesToGist}
-          publishFolderToGist={publishFolderToGist}
-          publishFileToGist={publishFileToGist}
-          uploadFile={uploadFile}
-          downloadPath={downloadPath}
+      }
+      {state.showContextMenu && <FileExplorerContextMenu
+        actions={global.fs.focusElement.length > 1 ? state.actions.filter(item => item.multiselect) : state.actions.filter(item => !item.multiselect)}
+        hideContextMenu={hideContextMenu}
+        createNewFile={handleNewFileInput}
+        createNewFolder={handleNewFolderInput}
+        deletePath={deletePath}
+        renamePath={editModeOn}
+        runScript={runScript}
+        copy={handleCopyClick}
+        paste={handlePasteClick}
+        copyFileName={handleCopyFileNameClick}
+        copyPath={handleCopyFilePathClick}
+        emit={emitContextMenuEvent}
+        pageX={state.focusContext.x}
+        pageY={state.focusContext.y}
+        path={state.focusContext.element}
+        type={state.focusContext.type}
+        focus={global.fs.focusElement}
+        pushChangesToGist={pushChangesToGist}
+        publishFolderToGist={publishFolderToGist}
+        publishFileToGist={publishFileToGist}
+        uploadFile={uploadFile}
+        downloadPath={downloadPath}
 
-        />
-        }
+      />
+      }
     </div>
   )
 }
