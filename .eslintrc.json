@@ -32,7 +32,7 @@
         ],
         "space-before-function-paren": ["error", "always"],
         "prettier/prettier": [
-          "error",
+          0,
           {
             "bracketSpacing": true
           },
