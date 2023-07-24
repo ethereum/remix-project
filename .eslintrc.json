@@ -30,6 +30,7 @@
             ]
           }
         ],
+        "space-before-function-paren": ["error", "always"],
         "prettier/prettier": [
           "error",
           {
