@@ -25,7 +25,7 @@ export default class Registry {
       // uid: serveruid,
       api: entry.api
     }
-    this.state[entry.name] = {server}
+    this.state[entry.name] = { server }
     return server
   }
 

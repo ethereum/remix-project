@@ -32,7 +32,9 @@
         ],
         "prettier/prettier": [
           "error",
-          {},
+          {
+            "bracketSpacing": true
+          },
           {
             "usePrettierrc": true,
             "fileInfoOptions": {
