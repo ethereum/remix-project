@@ -4,8 +4,7 @@
     "**/node_modules/**"
   ],
   "plugins": [
-    "@nrwl/nx",
-    "prettier"
+    "@nrwl/nx"
   ],
   "overrides": [
     {
@@ -30,6 +29,16 @@
               }
             ]
           }
+        ],
+        "prettier/prettier": [
+          "error",
+          {},
+          {
+            "usePrettierrc": true,
+            "fileInfoOptions": {
+              "withNodeModules": false
+            }
+          }
         ]
       }
     },
@@ -40,7 +49,7 @@
       ],
       "extends": [
         "plugin:@nrwl/nx/typescript",
-        "plugin:pretttier/recommended"
+        "plugin:prettier/recommended"
       ],
       "rules": {
         "@typescript-eslint/ban-ts-comment": "off",
@@ -50,7 +59,10 @@
         "no-empty": "off",
         "jsx-a11y/anchor-is-valid": "off",
         "@typescript-eslint/no-inferrable-types": "off",
-        "indent": ["error", 2]
+        "indent": [
+          "error",
+          2
+        ]
       }
     },
     {
@@ -62,11 +74,16 @@
         "plugin:@nrwl/nx/javascript"
       ],
       "rules": {
-        "indent": ["error", 2]
+        "indent": [
+          "error",
+          2
+        ]
       }
     }
   ],
   "globals": {
     "JSX": true
-  }
+  },
+  "rules": {},
+  "extends": []
 }
