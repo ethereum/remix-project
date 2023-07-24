@@ -15,6 +15,7 @@ import { RemixReferenceProvider } from './providers/referenceProvider'
 import { RemixCompletionProvider } from './providers/completionProvider'
 import { RemixHighLightProvider } from './providers/highlightProvider'
 import { RemixDefinitionProvider } from './providers/definitionProvider'
+import { RemixCodeActionProvider } from './providers/codeActionProvider'
 import './remix-ui-editor.css'
 
 
@@ -565,7 +566,7 @@ export const EditorUI = (props: EditorUIProps) => {
     })
 
     editor.onDidPaste((e) => {
-       if (!pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
+      if (!pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
         const modalContent: AlertModal = {
           id: 'newCodePasted',
           title: 'Pasted Code Alert',
@@ -749,6 +750,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
     monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
     monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
+    monaco.languages.registerCodeActionProvider("remix-solidity", new RemixCodeActionProvider(props, monaco))
 
     loadTypes(monacoRef.current)
   }
@@ -767,7 +769,7 @@ export const EditorUI = (props: EditorUIProps) => {
       {editorModelsState[props.currentFile]?.readOnly && <span className='pl-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0'>
         <i className="fas fa-lock-alt p-2"></i>
           The file is opened in <b>read-only</b> mode.
-        </span>
+      </span>
       }
     </div>
   )

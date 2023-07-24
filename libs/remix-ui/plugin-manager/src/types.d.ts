@@ -107,30 +107,30 @@ declare class LocalPlugin {
         profile: any
     }>
 
-    profile: any
-    /**
+  profile: any
+  /**
      * Create the object to add to the plugin-list
      */
-    create(): any
-    updateName({ target }: {
+  create(): any
+  updateName({ target }: {
         target: any
     }): void
 
-    updateUrl({ target }: {
+  updateUrl({ target }: {
         target: any
     }): void
 
-    updateDisplayName({ target }: {
+  updateDisplayName({ target }: {
         target: any
     }): void
 
-    updateProfile(key: any, e: any): void
-    updateMethods({ target }: {
+  updateProfile(key: any, e: any): void
+  updateMethods({ target }: {
         target: any
     }): void
 
-    /** The form to create a local plugin */
-    form(): any
+  /** The form to create a local plugin */
+  form(): any
 }
 
 export interface PluginManagerContextProviderProps {
@@ -148,11 +148,11 @@ export interface RemixUiPluginManagerProps {
  **/
 declare class PluginLoader {
   get currentLoader(): any
-    donotAutoReload: string[]
-    loaders: Record<any, any>
-    current: string
-    set(plugin: any, actives: any): void
-    get(): any
+  donotAutoReload: string[]
+  loaders: Record<any, any>
+  current: string
+  set(plugin: any, actives: any): void
+  get(): any
 }
 // eslint-disable-next-line no-redeclare
 export type PluginManagerSettings = {

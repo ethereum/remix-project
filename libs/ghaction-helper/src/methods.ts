@@ -198,7 +198,7 @@ const getContractAt = async (contractNameOrABI: ethers.ContractInterface, addres
     if (result) {
       return new ethers.Contract(address, result.abi, signer || provider.getSigner())
     } else {
-            throw new Error('Contract artifacts not found')
+      throw new Error('Contract artifacts not found')
     }
   } else {
     return new ethers.Contract(address, contractNameOrABI, signer || provider.getSigner())

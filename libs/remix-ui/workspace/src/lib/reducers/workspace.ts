@@ -123,614 +123,614 @@ export const browserInitialState: BrowserState = {
 
 export const browserReducer = (state = browserInitialState, action: Action) => {
   switch (action.type) {
-    case 'SET_CURRENT_WORKSPACE': {
-      const payload = action.payload as { name: string; isGitRepo: boolean; branches?: { remote: any; name: string; }[], currentBranch?: string }
-      const workspaces = state.browser.workspaces.find(({ name }) => name === payload.name) ? state.browser.workspaces : [...state.browser.workspaces, action.payload]
+  case 'SET_CURRENT_WORKSPACE': {
+    const payload = action.payload as { name: string; isGitRepo: boolean; branches?: { remote: any; name: string; }[], currentBranch?: string }
+    const workspaces = state.browser.workspaces.find(({ name }) => name === payload.name) ? state.browser.workspaces : [...state.browser.workspaces, action.payload]
 
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          currentWorkspace: payload.name,
-          workspaces: workspaces.filter(workspace => workspace)
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        currentWorkspace: payload.name,
+        workspaces: workspaces.filter(workspace => workspace)
+      }
+    }
+  }
+
+  case 'SET_WORKSPACES': {
+    const payload = action.payload as { name: string; isGitRepo: boolean; branches?: { remote: any; name: string; }[], currentBranch?: string }[]
+
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        workspaces: payload.filter(workspace => workspace)
+      }
+    }
+  }
+
+  case 'SET_MODE': {
+    const payload = action.payload as 'browser' | 'localhost'
+
+    return {
+      ...state,
+      mode: payload
+    }
+  }
+
+  case 'FETCH_DIRECTORY_REQUEST': {
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        isRequestingDirectory: state.mode === 'browser',
+        isSuccessfulDirectory: false,
+        error: null
+      },
+      localhost: {
+        ...state.localhost,
+        isRequestingDirectory: state.mode === 'localhost',
+        isSuccessfulDirectory: false,
+        error: null
+      }
+    }
+  }
+
+  case 'FETCH_DIRECTORY_SUCCESS': {
+    const payload = action.payload as { path: string, fileTree }
+
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        files: state.mode === 'browser' ? fetchDirectoryContent(state, payload) : state.browser.files,
+        isRequestingDirectory: false,
+        isSuccessfulDirectory: true,
+        error: null
+      },
+      localhost: {
+        ...state.localhost,
+        files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload) : state.localhost.files,
+        isRequestingDirectory: false,
+        isSuccessfulDirectory: true,
+        error: null
+      }
+    }
+  }
+
+  case 'FETCH_DIRECTORY_ERROR': {
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        isRequestingDirectory: false,
+        isSuccessfulDirectory: false,
+        error: state.mode === 'browser' ? action.payload : null
+      },
+      localhost: {
+        ...state.localhost,
+        isRequestingDirectory: false,
+        isSuccessfulDirectory: false,
+        error: state.mode === 'localhost' ? action.payload : null
+      }
+    }
+  }
+
+  case 'FETCH_WORKSPACE_DIRECTORY_REQUEST': {
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        isRequestingWorkspace: state.mode === 'browser',
+        isSuccessfulWorkspace: false,
+        error: null
+      },
+      localhost: {
+        ...state.localhost,
+        isRequestingWorkspace: state.mode === 'localhost',
+        isSuccessfulWorkspace: false,
+        error: null
+      }
+    }
+  }
+
+  case 'FETCH_WORKSPACE_DIRECTORY_SUCCESS': {
+    const payload = action.payload as { path: string, fileTree }
+
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        files: state.mode === 'browser' ? fetchWorkspaceDirectoryContent(state, payload) : state.browser.files,
+        isRequestingWorkspace: false,
+        isSuccessfulWorkspace: true,
+        error: null
+      },
+      localhost: {
+        ...state.localhost,
+        files: state.mode === 'localhost' ? fetchWorkspaceDirectoryContent(state, payload) : state.localhost.files,
+        isRequestingWorkspace: false,
+        isSuccessfulWorkspace: true,
+        error: null,
+        sharedFolder: null
+      }
+    }
+  }
+
+  case 'FETCH_WORKSPACE_DIRECTORY_ERROR': {
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        isRequestingWorkspace: false,
+        isSuccessfulWorkspace: false,
+        error: state.mode === 'browser' ? action.payload : null
+      },
+      localhost: {
+        ...state.localhost,
+        isRequestingWorkspace: false,
+        isSuccessfulWorkspace: false,
+        error: state.mode === 'localhost' ? action.payload : null
+      }
+    }
+  }
+
+  case 'DISPLAY_NOTIFICATION': {
+    const payload = action.payload as { title: string, message: string, actionOk: () => void, actionCancel: () => void, labelOk: string, labelCancel: string }
+
+    return {
+      ...state,
+      notification: {
+        title: payload.title,
+        message: payload.message,
+        actionOk: payload.actionOk || browserInitialState.notification.actionOk,
+        actionCancel: payload.actionCancel || browserInitialState.notification.actionCancel,
+        labelOk: payload.labelOk,
+        labelCancel: payload.labelCancel
+      }
+    }
+  }
+
+  case 'HIDE_NOTIFICATION': {
+    return {
+      ...state,
+      notification: browserInitialState.notification
+    }
+  }
+
+  case 'FILE_ADDED_SUCCESS': {
+    const payload = action.payload as string
+
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        files: state.mode === 'browser' ? fileAdded(state, payload) : state.browser.files,
+        expandPath: state.mode === 'browser' ? [...new Set([...state.browser.expandPath, payload])] : state.browser.expandPath
+      },
+      localhost: {
+        ...state.localhost,
+        files: state.mode === 'localhost' ? fileAdded(state, payload) : state.localhost.files,
+        expandPath: state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload])] : state.localhost.expandPath
+      }
+    }
+  }
+
+  case 'FOLDER_ADDED_SUCCESS': {
+    const payload = action.payload as { path: string, folderPath: string, fileTree }
+
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        files: state.mode === 'browser' ? fetchDirectoryContent(state, payload) : state.browser.files,
+        expandPath: state.mode === 'browser' ? [...new Set([...state.browser.expandPath, payload.folderPath])] : state.browser.expandPath
+      },
+      localhost: {
+        ...state.localhost,
+        files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload) : state.localhost.files,
+        expandPath: state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload.folderPath])] : state.localhost.expandPath
+      }
+    }
+  }
+
+  case 'FILE_REMOVED_SUCCESS': {
+    const payload = action.payload as string
+
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        files: state.mode === 'browser' ? fileRemoved(state, payload) : state.browser.files,
+        expandPath: state.mode === 'browser' ? [...(state.browser.expandPath.filter(path => path !== payload))] : state.browser.expandPath
+      },
+      localhost: {
+        ...state.localhost,
+        files: state.mode === 'localhost' ? fileRemoved(state, payload) : state.localhost.files,
+        expandPath: state.mode === 'localhost' ? [...(state.browser.expandPath.filter(path => path !== payload))] : state.localhost.expandPath
+      }
+    }
+  }
+
+  case 'ROOT_FOLDER_CHANGED': {
+    const payload = action.payload as string
+    return {
+      ...state,
+      localhost: {
+        ...state.localhost,
+        sharedFolder: payload,
+        files: {}
+      }
+    }
+  }
+
+  case 'ADD_INPUT_FIELD': {
+    const payload = action.payload as { path: string, fileTree, type: 'file' | 'folder' }
+
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        files: state.mode === 'browser' ? fetchDirectoryContent(state, payload) : state.browser.files
+      },
+      localhost: {
+        ...state.localhost,
+        files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload) : state.localhost.files
+      },
+      focusEdit: payload.path + '/' + 'blank'
+    }
+  }
+
+  case 'REMOVE_INPUT_FIELD': {
+    const payload = action.payload as { path: string, fileTree }
+
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        files: state.mode === 'browser' ? removeInputField(state, payload.path) : state.browser.files
+      },
+      localhost: {
+        ...state.localhost,
+        files: state.mode === 'localhost' ? removeInputField(state, payload.path) : state.localhost.files
+      },
+      focusEdit: null
+    }
+  }
+
+  case 'SET_READ_ONLY_MODE': {
+    const payload = action.payload as boolean
+
+    return {
+      ...state,
+      readonly: payload
+    }
+  }
+
+  case 'FILE_RENAMED_SUCCESS': {
+    const payload = action.payload as { path: string, oldPath: string, fileTree }
+
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        files: state.mode === 'browser' ? fetchDirectoryContent(state, payload, payload.oldPath) : state.browser.files
+      },
+      localhost: {
+        ...state.localhost,
+        files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload, payload.oldPath) : state.localhost.files
+      }
+    }
+  }
+
+  case 'CREATE_WORKSPACE_REQUEST': {
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        isRequestingWorkspace: true,
+        isSuccessfulWorkspace: false,
+        error: null
+      }
+    }
+  }
+
+  case 'CREATE_WORKSPACE_SUCCESS': {
+    const payload = action.payload as { name: string; isGitRepo: boolean; branches?: { remote: any; name: string; }[], currentBranch?: string }
+    const workspaces = state.browser.workspaces.find(({ name }) => name === payload.name) ? state.browser.workspaces : [...state.browser.workspaces, action.payload]
+
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        currentWorkspace: payload.name,
+        workspaces: workspaces.filter(workspace => workspace),
+        isRequestingWorkspace: false,
+        isSuccessfulWorkspace: true,
+        error: null
+      }
+    }
+  }
+
+  case 'CREATE_WORKSPACE_ERROR': {
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        isRequestingWorkspace: false,
+        isSuccessfulWorkspace: false,
+        error: action.payload
+      }
+    }
+  }
+
+  case 'RENAME_WORKSPACE': {
+    const payload = action.payload as { oldName: string, workspaceName: string }
+    let renamedWorkspace
+    const workspaces = state.browser.workspaces.filter(({ name, isGitRepo, branches, currentBranch }) => {
+      if (name && (name !== payload.oldName)) {
+        return true
+      } else {
+        renamedWorkspace = {
+          name: payload.workspaceName,
+          isGitRepo,
+          branches,
+          currentBranch
         }
+        return false
+      }
+    })
+
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        currentWorkspace: payload.workspaceName,
+        workspaces: [...workspaces, renamedWorkspace],
+        expandPath: []
       }
     }
+  }
 
-    case 'SET_WORKSPACES': {
-      const payload = action.payload as { name: string; isGitRepo: boolean; branches?: { remote: any; name: string; }[], currentBranch?: string }[]
+  case 'DELETE_WORKSPACE': {
+    const payload = action.payload as string
+    const workspaces = state.browser.workspaces.filter(({ name }) => name && (name !== payload))
 
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          workspaces: payload.filter(workspace => workspace)
-        }
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        workspaces: workspaces
       }
     }
+  }
 
-    case 'SET_MODE': {
-      const payload = action.payload as 'browser' | 'localhost'
+  case 'DISPLAY_POPUP_MESSAGE': {
+    const payload = action.payload as string
 
-      return {
-        ...state,
-        mode: payload
+    return {
+      ...state,
+      popup: payload
+    }
+  }
+
+  case 'HIDE_POPUP_MESSAGE': {
+    return {
+      ...state,
+      popup: ''
+    }
+  }
+
+  case 'SET_FOCUS_ELEMENT': {
+    const payload = action.payload as { key: string, type: 'file' | 'folder' | 'gist' }[]
+
+    return {
+      ...state,
+      focusElement: payload
+    }
+  }
+
+  case 'REMOVE_FOCUS_ELEMENT': {
+    const payload: string = action.payload
+
+    return {
+      ...state,
+      focusElement: state.focusElement.filter(element => element.key !== payload)
+    }
+  }
+
+  case 'SET_CONTEXT_MENU_ITEM': {
+    const payload = action.payload as action
+
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        contextMenu: addContextMenuItem(state, payload)
+      },
+      localhost: {
+        ...state.localhost,
+        contextMenu: addContextMenuItem(state, payload)
       }
     }
+  }
 
-    case 'FETCH_DIRECTORY_REQUEST': {
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          isRequestingDirectory: state.mode === 'browser',
-          isSuccessfulDirectory: false,
-          error: null
-        },
-        localhost: {
-          ...state.localhost,
-          isRequestingDirectory: state.mode === 'localhost',
-          isSuccessfulDirectory: false,
-          error: null
-        }
+  case 'REMOVE_CONTEXT_MENU_ITEM': {
+    const payload = action.payload
+
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        contextMenu: removeContextMenuItem(state, payload)
+      },
+      localhost: {
+        ...state.localhost,
+        contextMenu: removeContextMenuItem(state, payload)
       }
     }
+  }
 
-    case 'FETCH_DIRECTORY_SUCCESS': {
-      const payload = action.payload as { path: string, fileTree }
+  case 'SET_EXPAND_PATH': {
+    const payload = action.payload as string[]
 
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          files: state.mode === 'browser' ? fetchDirectoryContent(state, payload) : state.browser.files,
-          isRequestingDirectory: false,
-          isSuccessfulDirectory: true,
-          error: null
-        },
-        localhost: {
-          ...state.localhost,
-          files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload) : state.localhost.files,
-          isRequestingDirectory: false,
-          isSuccessfulDirectory: true,
-          error: null
-        }
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        expandPath: payload
+      },
+      localhost: {
+        ...state.localhost,
+        expandPath: payload
       }
     }
+  }
 
-    case 'FETCH_DIRECTORY_ERROR': {
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          isRequestingDirectory: false,
-          isSuccessfulDirectory: false,
-          error: state.mode === 'browser' ? action.payload : null
-        },
-        localhost: {
-          ...state.localhost,
-          isRequestingDirectory: false,
-          isSuccessfulDirectory: false,
-          error: state.mode === 'localhost' ? action.payload : null
-        }
+  case 'LOAD_LOCALHOST_REQUEST': {
+    return {
+      ...state,
+      localhost: {
+        ...state.localhost,
+        isRequestingLocalhost: true,
+        isSuccessfulLocalhost: false,
+        error: null
       }
     }
+  }
 
-    case 'FETCH_WORKSPACE_DIRECTORY_REQUEST': {
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          isRequestingWorkspace: state.mode === 'browser',
-          isSuccessfulWorkspace: false,
-          error: null
-        },
-        localhost: {
-          ...state.localhost,
-          isRequestingWorkspace: state.mode === 'localhost',
-          isSuccessfulWorkspace: false,
-          error: null
-        }
+  case 'LOAD_LOCALHOST_SUCCESS': {
+    return {
+      ...state,
+      localhost: {
+        ...state.localhost,
+        isRequestingLocalhost: false,
+        isSuccessfulLocalhost: true,
+        error: null
       }
     }
+  }
 
-    case 'FETCH_WORKSPACE_DIRECTORY_SUCCESS': {
-      const payload = action.payload as { path: string, fileTree }
+  case 'LOAD_LOCALHOST_ERROR': {
+    const payload = action.payload as string
 
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          files: state.mode === 'browser' ? fetchWorkspaceDirectoryContent(state, payload) : state.browser.files,
-          isRequestingWorkspace: false,
-          isSuccessfulWorkspace: true,
-          error: null
-        },
-        localhost: {
-          ...state.localhost,
-          files: state.mode === 'localhost' ? fetchWorkspaceDirectoryContent(state, payload) : state.localhost.files,
-          isRequestingWorkspace: false,
-          isSuccessfulWorkspace: true,
-          error: null,
-          sharedFolder: null
-        }
+    return {
+      ...state,
+      localhost: {
+        ...state.localhost,
+        isRequestingLocalhost: false,
+        isSuccessfulLocalhost: false,
+        error: payload
       }
     }
+  }
 
-    case 'FETCH_WORKSPACE_DIRECTORY_ERROR': {
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          isRequestingWorkspace: false,
-          isSuccessfulWorkspace: false,
-          error: state.mode === 'browser' ? action.payload : null
-        },
-        localhost: {
-          ...state.localhost,
-          isRequestingWorkspace: false,
-          isSuccessfulWorkspace: false,
-          error: state.mode === 'localhost' ? action.payload : null
-        }
+  case 'CLONE_REPOSITORY_REQUEST': {
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        isRequestingCloning: true,
+        isSuccessfulCloning: false
       }
     }
+  }
 
-    case 'DISPLAY_NOTIFICATION': {
-      const payload = action.payload as { title: string, message: string, actionOk: () => void, actionCancel: () => void, labelOk: string, labelCancel: string }
-
-      return {
-        ...state,
-        notification: {
-          title: payload.title,
-          message: payload.message,
-          actionOk: payload.actionOk || browserInitialState.notification.actionOk,
-          actionCancel: payload.actionCancel || browserInitialState.notification.actionCancel,
-          labelOk: payload.labelOk,
-          labelCancel: payload.labelCancel
-        }
+  case 'CLONE_REPOSITORY_SUCCESS': {
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        isRequestingCloning: false,
+        isSuccessfulCloning: true
       }
     }
+  }
 
-    case 'HIDE_NOTIFICATION': {
-      return {
-        ...state,
-        notification: browserInitialState.notification
+  case 'CLONE_REPOSITORY_FAILED': {
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        isRequestingCloning: false,
+        isSuccessfulCloning: false
       }
     }
+  }
 
-    case 'FILE_ADDED_SUCCESS': {
-      const payload = action.payload as string
+  case 'FS_INITIALIZATION_COMPLETED': {
+    return {
+      ...state,
+      initializingFS: false
+    }
+  }
 
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          files: state.mode === 'browser' ? fileAdded(state, payload) : state.browser.files,
-          expandPath: state.mode === 'browser' ? [...new Set([...state.browser.expandPath, payload])] : state.browser.expandPath
-        },
-        localhost: {
-          ...state.localhost,
-          files: state.mode === 'localhost' ? fileAdded(state, payload) : state.localhost.files,
-          expandPath: state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload])] : state.localhost.expandPath
-        }
+  case 'SET_FILE_DECORATION_SUCCESS': {
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        fileState: action.payload
       }
     }
+  }
 
-    case 'FOLDER_ADDED_SUCCESS': {
-      const payload = action.payload as { path: string, folderPath: string, fileTree }
+  case 'SET_CURRENT_WORKSPACE_BRANCHES': {
+    const payload: { remote: any, name: string }[] = action.payload
 
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          files: state.mode === 'browser' ? fetchDirectoryContent(state, payload) : state.browser.files,
-          expandPath: state.mode === 'browser' ? [...new Set([...state.browser.expandPath, payload.folderPath])] : state.browser.expandPath
-        },
-        localhost: {
-          ...state.localhost,
-          files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload) : state.localhost.files,
-          expandPath: state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload.folderPath])] : state.localhost.expandPath
-        }
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        workspaces: state.browser.workspaces.map((workspace) => {
+          if (workspace.name === state.browser.currentWorkspace) workspace.branches = payload
+          return workspace
+        })
       }
     }
+  }
 
-    case 'FILE_REMOVED_SUCCESS': {
-      const payload = action.payload as string
+  case 'SET_CURRENT_WORKSPACE_CURRENT_BRANCH': {
+    const payload: string = action.payload
 
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          files: state.mode === 'browser' ? fileRemoved(state, payload) : state.browser.files,
-          expandPath: state.mode === 'browser' ? [...(state.browser.expandPath.filter(path => path !== payload))] : state.browser.expandPath
-        },
-        localhost: {
-          ...state.localhost,
-          files: state.mode === 'localhost' ? fileRemoved(state, payload) : state.localhost.files,
-          expandPath: state.mode === 'localhost' ? [...(state.browser.expandPath.filter(path => path !== payload))] : state.localhost.expandPath
-        }
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        workspaces: state.browser.workspaces.map((workspace) => {
+          if (workspace.name === state.browser.currentWorkspace) workspace.currentBranch = payload
+          return workspace
+        })
       }
     }
+  }
 
-    case 'ROOT_FOLDER_CHANGED': {
-      const payload = action.payload as string
-      return {
-        ...state,
-        localhost: {
-          ...state.localhost,
-          sharedFolder: payload,
-          files: {}
-        }
+  case 'SET_CURRENT_WORKSPACE_IS_GITREPO': {
+    const payload: boolean = action.payload
+
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        workspaces: state.browser.workspaces.map((workspace) => {
+          if (workspace.name === state.browser.currentWorkspace) workspace.isGitRepo = payload
+          return workspace
+        })
       }
     }
+  }
 
-    case 'ADD_INPUT_FIELD': {
-      const payload = action.payload as { path: string, fileTree, type: 'file' | 'folder' }
-
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          files: state.mode === 'browser' ? fetchDirectoryContent(state, payload) : state.browser.files
-        },
-        localhost: {
-          ...state.localhost,
-          files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload) : state.localhost.files
-        },
-        focusEdit: payload.path + '/' + 'blank'
-      }
+  case 'SET_GIT_CONFIG' : {
+    const payload: { username: string, token: string, email: string } = action.payload
+    return {
+      ...state,
+      gitConfig: payload
     }
-
-    case 'REMOVE_INPUT_FIELD': {
-      const payload = action.payload as { path: string, fileTree }
-
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          files: state.mode === 'browser' ? removeInputField(state, payload.path) : state.browser.files
-        },
-        localhost: {
-          ...state.localhost,
-          files: state.mode === 'localhost' ? removeInputField(state, payload.path) : state.localhost.files
-        },
-        focusEdit: null
-      }
-    }
-
-    case 'SET_READ_ONLY_MODE': {
-      const payload = action.payload as boolean
-
-      return {
-        ...state,
-        readonly: payload
-      }
-    }
-
-    case 'FILE_RENAMED_SUCCESS': {
-      const payload = action.payload as { path: string, oldPath: string, fileTree }
-
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          files: state.mode === 'browser' ? fetchDirectoryContent(state, payload, payload.oldPath) : state.browser.files
-        },
-        localhost: {
-          ...state.localhost,
-          files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload, payload.oldPath) : state.localhost.files
-        }
-      }
-    }
-
-    case 'CREATE_WORKSPACE_REQUEST': {
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          isRequestingWorkspace: true,
-          isSuccessfulWorkspace: false,
-          error: null
-        }
-      }
-    }
-
-    case 'CREATE_WORKSPACE_SUCCESS': {
-      const payload = action.payload as { name: string; isGitRepo: boolean; branches?: { remote: any; name: string; }[], currentBranch?: string }
-      const workspaces = state.browser.workspaces.find(({ name }) => name === payload.name) ? state.browser.workspaces : [...state.browser.workspaces, action.payload]
-
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          currentWorkspace: payload.name,
-          workspaces: workspaces.filter(workspace => workspace),
-          isRequestingWorkspace: false,
-          isSuccessfulWorkspace: true,
-          error: null
-        }
-      }
-    }
-
-    case 'CREATE_WORKSPACE_ERROR': {
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          isRequestingWorkspace: false,
-          isSuccessfulWorkspace: false,
-          error: action.payload
-        }
-      }
-    }
-
-    case 'RENAME_WORKSPACE': {
-      const payload = action.payload as { oldName: string, workspaceName: string }
-      let renamedWorkspace
-      const workspaces = state.browser.workspaces.filter(({ name, isGitRepo, branches, currentBranch }) => {
-        if (name && (name !== payload.oldName)) {
-          return true
-        } else {
-          renamedWorkspace = {
-            name: payload.workspaceName,
-            isGitRepo,
-            branches,
-            currentBranch
-          }
-          return false
-        }
-      })
-
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          currentWorkspace: payload.workspaceName,
-          workspaces: [...workspaces, renamedWorkspace],
-          expandPath: []
-        }
-      }
-    }
-
-    case 'DELETE_WORKSPACE': {
-      const payload = action.payload as string
-      const workspaces = state.browser.workspaces.filter(({ name }) => name && (name !== payload))
-
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          workspaces: workspaces
-        }
-      }
-    }
-
-    case 'DISPLAY_POPUP_MESSAGE': {
-      const payload = action.payload as string
-
-      return {
-        ...state,
-        popup: payload
-      }
-    }
-
-    case 'HIDE_POPUP_MESSAGE': {
-      return {
-        ...state,
-        popup: ''
-      }
-    }
-
-    case 'SET_FOCUS_ELEMENT': {
-      const payload = action.payload as { key: string, type: 'file' | 'folder' | 'gist' }[]
-
-      return {
-        ...state,
-        focusElement: payload
-      }
-    }
-
-    case 'REMOVE_FOCUS_ELEMENT': {
-      const payload: string = action.payload
-
-      return {
-        ...state,
-        focusElement: state.focusElement.filter(element => element.key !== payload)
-      }
-    }
-
-    case 'SET_CONTEXT_MENU_ITEM': {
-      const payload = action.payload as action
-
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          contextMenu: addContextMenuItem(state, payload)
-        },
-        localhost: {
-          ...state.localhost,
-          contextMenu: addContextMenuItem(state, payload)
-        }
-      }
-    }
-
-    case 'REMOVE_CONTEXT_MENU_ITEM': {
-      const payload = action.payload
-
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          contextMenu: removeContextMenuItem(state, payload)
-        },
-        localhost: {
-          ...state.localhost,
-          contextMenu: removeContextMenuItem(state, payload)
-        }
-      }
-    }
-
-    case 'SET_EXPAND_PATH': {
-      const payload = action.payload as string[]
-
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          expandPath: payload
-        },
-        localhost: {
-          ...state.localhost,
-          expandPath: payload
-        }
-      }
-    }
-
-    case 'LOAD_LOCALHOST_REQUEST': {
-      return {
-        ...state,
-        localhost: {
-          ...state.localhost,
-          isRequestingLocalhost: true,
-          isSuccessfulLocalhost: false,
-          error: null
-        }
-      }
-    }
-
-    case 'LOAD_LOCALHOST_SUCCESS': {
-      return {
-        ...state,
-        localhost: {
-          ...state.localhost,
-          isRequestingLocalhost: false,
-          isSuccessfulLocalhost: true,
-          error: null
-        }
-      }
-    }
-
-    case 'LOAD_LOCALHOST_ERROR': {
-      const payload = action.payload as string
-
-      return {
-        ...state,
-        localhost: {
-          ...state.localhost,
-          isRequestingLocalhost: false,
-          isSuccessfulLocalhost: false,
-          error: payload
-        }
-      }
-    }
-
-    case 'CLONE_REPOSITORY_REQUEST': {
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          isRequestingCloning: true,
-          isSuccessfulCloning: false
-        }
-      }
-    }
-
-    case 'CLONE_REPOSITORY_SUCCESS': {
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          isRequestingCloning: false,
-          isSuccessfulCloning: true
-        }
-      }
-    }
-
-    case 'CLONE_REPOSITORY_FAILED': {
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          isRequestingCloning: false,
-          isSuccessfulCloning: false
-        }
-      }
-    }
-
-    case 'FS_INITIALIZATION_COMPLETED': {
-      return {
-        ...state,
-        initializingFS: false
-      }
-    }
-
-    case 'SET_FILE_DECORATION_SUCCESS': {
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          fileState: action.payload
-        }
-      }
-    }
-
-    case 'SET_CURRENT_WORKSPACE_BRANCHES': {
-      const payload: { remote: any, name: string }[] = action.payload
-
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          workspaces: state.browser.workspaces.map((workspace) => {
-            if (workspace.name === state.browser.currentWorkspace) workspace.branches = payload
-            return workspace
-          })
-        }
-      }
-    }
-
-    case 'SET_CURRENT_WORKSPACE_CURRENT_BRANCH': {
-      const payload: string = action.payload
-
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          workspaces: state.browser.workspaces.map((workspace) => {
-            if (workspace.name === state.browser.currentWorkspace) workspace.currentBranch = payload
-            return workspace
-          })
-        }
-      }
-    }
-
-    case 'SET_CURRENT_WORKSPACE_IS_GITREPO': {
-      const payload: boolean = action.payload
-
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          workspaces: state.browser.workspaces.map((workspace) => {
-            if (workspace.name === state.browser.currentWorkspace) workspace.isGitRepo = payload
-            return workspace
-          })
-        }
-      }
-    }
-
-    case 'SET_GIT_CONFIG' : {
-      const payload: { username: string, token: string, email: string } = action.payload
-      return {
-        ...state,
-        gitConfig: payload
-      }
-    }
+  }
         
 
-    default:
-      throw new Error()
+  default:
+    throw new Error()
   }
 }
 

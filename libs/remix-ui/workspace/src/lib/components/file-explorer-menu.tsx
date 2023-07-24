@@ -86,13 +86,13 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                   className={icon + ' mb-0 px-1 remixui_newFile'}
                   key={`index-${action}-${placement}-${icon}`}
                 >
-                    <input id="fileUpload" data-id="fileExplorerFileUpload" type="file" onChange={(e) => {
-                      e.stopPropagation()
-                      _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
-                      props.uploadFile(e.target)
-                      e.target.value = null
-                    }}
-                    multiple />
+                  <input id="fileUpload" data-id="fileExplorerFileUpload" type="file" onChange={(e) => {
+                    e.stopPropagation()
+                    _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
+                    props.uploadFile(e.target)
+                    e.target.value = null
+                  }}
+                  multiple />
                 </label>
               </CustomTooltip>
             )
@@ -111,13 +111,13 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                   className={icon + ' mb-0 px-1 remixui_newFile'}
                   key={`index-${action}-${placement}-${icon}`}
                 >
-                    <input id="folderUpload" data-id="fileExplorerFolderUpload" type="file" onChange={(e) => {
-                      e.stopPropagation()
-                      _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
-                      props.uploadFolder(e.target)
-                      e.target.value = null
-                    }}
-                    {...enableDirUpload} multiple />
+                  <input id="folderUpload" data-id="fileExplorerFolderUpload" type="file" onChange={(e) => {
+                    e.stopPropagation()
+                    _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
+                    props.uploadFolder(e.target)
+                    e.target.value = null
+                  }}
+                  {...enableDirUpload} multiple />
                 </label>
               </CustomTooltip>
             )
