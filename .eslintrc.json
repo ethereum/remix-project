@@ -4,7 +4,8 @@
     "**/node_modules/**"
   ],
   "plugins": [
-    "@nrwl/nx"
+    "@nrwl/nx",
+    "prettier"
   ],
   "overrides": [
     {
@@ -38,7 +39,8 @@
         "*.tsx"
       ],
       "extends": [
-        "plugin:@nrwl/nx/typescript"
+        "plugin:@nrwl/nx/typescript",
+        "plugin:pretttier/recommended"
       ],
       "rules": {
         "@typescript-eslint/ban-ts-comment": "off",
