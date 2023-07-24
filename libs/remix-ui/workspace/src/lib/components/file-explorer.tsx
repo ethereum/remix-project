@@ -232,50 +232,50 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   return (
     <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
-    <div ref={treeRef} tabIndex={0} style={{ outline: "none" }}>
-      <TreeView id='treeView'>
-        <TreeViewItem id="treeViewItem"
-          controlBehaviour={true}
-          label={
-            <div onClick={handleFileExplorerMenuClick}>
-              <FileExplorerMenu
-                title={''}
-                menuItems={props.menuItems}
-                createNewFile={handleNewFileInput}
-                createNewFolder={handleNewFolderInput}
-                publishToGist={publishToGist}
-                uploadFile={uploadFile}
-                uploadFolder={uploadFolder}
-              />
+      <div ref={treeRef} tabIndex={0} style={{ outline: "none" }}>
+        <TreeView id='treeView'>
+          <TreeViewItem id="treeViewItem"
+            controlBehaviour={true}
+            label={
+              <div onClick={handleFileExplorerMenuClick}>
+                <FileExplorerMenu
+                  title={''}
+                  menuItems={props.menuItems}
+                  createNewFile={handleNewFileInput}
+                  createNewFolder={handleNewFolderInput}
+                  publishToGist={publishToGist}
+                  uploadFile={uploadFile}
+                  uploadFolder={uploadFolder}
+                />
+              </div>
+            }
+            expand={true}>
+            <div className='pb-4 mb-4'>
+              <TreeView id='treeViewMenu'>
+                {
+                  files[ROOT_PATH] && Object.keys(files[ROOT_PATH]).map((key, index) => <FileRender
+                    file={files[ROOT_PATH][key]}
+                    fileDecorations={fileState}
+                    index={index}
+                    focusContext={state.focusContext}
+                    focusEdit={state.focusEdit}
+                    focusElement={props.focusElement}
+                    ctrlKey={state.ctrlKey}
+                    expandPath={props.expandPath}
+                    editModeOff={editModeOff}
+                    handleClickFile={handleClickFile}
+                    handleClickFolder={handleClickFolder}
+                    handleContextMenu={handleContextMenu}
+                    key={index}
+                    showIconsMenu={props.showIconsMenu}
+                    hideIconsMenu={props.hideIconsMenu}
+                  />)
+                }
+              </TreeView>
             </div>
-          }
-          expand={true}>
-          <div className='pb-4 mb-4'>
-            <TreeView id='treeViewMenu'>
-              {
-                files[ROOT_PATH] && Object.keys(files[ROOT_PATH]).map((key, index) => <FileRender
-                file={files[ROOT_PATH][key]}
-                fileDecorations={fileState}
-                index={index}
-                focusContext={state.focusContext}
-                focusEdit={state.focusEdit}
-                focusElement={props.focusElement}
-                ctrlKey={state.ctrlKey}
-                expandPath={props.expandPath}
-                editModeOff={editModeOff}
-                handleClickFile={handleClickFile}
-                handleClickFolder={handleClickFolder}
-                handleContextMenu={handleContextMenu}
-                key={index}
-                showIconsMenu={props.showIconsMenu}
-                hideIconsMenu={props.hideIconsMenu}
-              />)
-              }
-            </TreeView>
-          </div>
-        </TreeViewItem>
-      </TreeView>
-    </div>
+          </TreeViewItem>
+        </TreeView>
+      </div>
     </Drag>
   )
 }
