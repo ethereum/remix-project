@@ -42,19 +42,19 @@ const initialTabsState: ITabsState = {
 
 const tabsReducer = (state: ITabsState, action: ITabsAction) => {
   switch (action.type) {
-    case 'SELECT_INDEX':
-      return {
-        ...state,
-        currentExt: action.ext,
-        selectedIndex: action.payload,
-      }
-    case 'SET_FILE_DECORATIONS':
-      return {
-        ...state,
-        fileDecorations: action.payload as fileDecoration[],
-      }
-    default:
-      return state
+  case 'SELECT_INDEX':
+    return {
+      ...state,
+      currentExt: action.ext,
+      selectedIndex: action.payload,
+    }
+  case 'SET_FILE_DECORATIONS':
+    return {
+      ...state,
+      fileDecorations: action.payload as fileDecoration[],
+    }
+  default:
+    return state
   }
 }
 
@@ -84,7 +84,7 @@ export const TabsUI = (props: TabsUIProps) => {
     return <FileDecorationIcons file={{path: tab.name}} fileDecorations={tabsState.fileDecorations} />
   }
 
-   const renderTab = (tab, index) => {
+  const renderTab = (tab, index) => {
     const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
     const classNameTab = 'nav-item nav-link d-flex justify-content-center align-items-center px-2 py-1 tab' + (index === currentIndexRef.current ? ' active' : '')
     const invert = props.themeQuality === 'dark' ? 'invert(1)' : 'invert(0)'
@@ -177,9 +177,9 @@ export const TabsUI = (props: TabsUIProps) => {
               placement="bottom"
               tooltipId="overlay-tooltip-run-script"
               tooltipText={<span>
-                  {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') ? "Run script (CTRL + SHIFT + S)" :
-                    tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul'? "Compile CTRL + S" : "Select .sol or .yul file to compile or a .ts or .js file and run it"}
-                </span>}
+                {(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') ? "Run script (CTRL + SHIFT + S)" :
+                  tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul'? "Compile CTRL + S" : "Select .sol or .yul file to compile or a .ts or .js file and run it"}
+              </span>}
             >
               <i className="fad fa-play"></i>
             </CustomTooltip>

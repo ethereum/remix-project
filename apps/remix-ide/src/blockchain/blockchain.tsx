@@ -312,52 +312,52 @@ export class Blockchain extends Plugin {
   }
 
   async saveDeployedContractStorageLayout (contractObject, proxyAddress, networkInfo) {
-      const { contractName, implementationAddress } = contractObject
-      const networkName = networkInfo.name === 'custom' ? networkInfo.name + '-' + networkInfo.id : networkInfo.name
-      const hasPreviousDeploys = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`)
-      // TODO: make deploys folder read only.
-      if (hasPreviousDeploys) {
-        const deployments = await this.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`)
-        const parsedDeployments = JSON.parse(deployments)
-        const proxyDeployment = parsedDeployments.deployments[proxyAddress]
+    const { contractName, implementationAddress } = contractObject
+    const networkName = networkInfo.name === 'custom' ? networkInfo.name + '-' + networkInfo.id : networkInfo.name
+    const hasPreviousDeploys = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`)
+    // TODO: make deploys folder read only.
+    if (hasPreviousDeploys) {
+      const deployments = await this.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`)
+      const parsedDeployments = JSON.parse(deployments)
+      const proxyDeployment = parsedDeployments.deployments[proxyAddress]
 
-        if (proxyDeployment) {
-          const oldImplementationAddress = proxyDeployment.implementationAddress
-          const hasPreviousBuild = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkName}/solc-${oldImplementationAddress}.json`)
+      if (proxyDeployment) {
+        const oldImplementationAddress = proxyDeployment.implementationAddress
+        const hasPreviousBuild = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkName}/solc-${oldImplementationAddress}.json`)
 
-          if (hasPreviousBuild) await this.call('fileManager', 'remove', `.deploys/upgradeable-contracts/${networkName}/solc-${oldImplementationAddress}.json`)
-        }
-        parsedDeployments.deployments[proxyAddress] = {
-          date: new Date().toISOString(),
-          contractName: contractName,
-          fork: networkInfo.currentFork,
-          implementationAddress: implementationAddress,
-          solcOutput: contractObject.compiler.data,
-          solcInput: contractObject.compiler.source
-        }
-        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/solc-${implementationAddress}.json`, JSON.stringify({
-          solcInput: contractObject.compiler.source,
-          solcOutput: contractObject.compiler.data
-        }, null, 2))
-        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`, JSON.stringify(parsedDeployments, null, 2))
-      } else {
-        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/solc-${implementationAddress}.json`, JSON.stringify({
-          solcInput: contractObject.compiler.source,
-          solcOutput: contractObject.compiler.data
-        }, null, 2))
-        await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`, JSON.stringify({
-          id: networkInfo.id,
-          network: networkInfo.name,
-          deployments: {
-            [proxyAddress]: {
-              date: new Date().toISOString(),
-              contractName: contractName,
-              fork: networkInfo.currentFork,
-              implementationAddress: implementationAddress
-            }
-          }
-        }, null, 2))
+        if (hasPreviousBuild) await this.call('fileManager', 'remove', `.deploys/upgradeable-contracts/${networkName}/solc-${oldImplementationAddress}.json`)
       }
+      parsedDeployments.deployments[proxyAddress] = {
+        date: new Date().toISOString(),
+        contractName: contractName,
+        fork: networkInfo.currentFork,
+        implementationAddress: implementationAddress,
+        solcOutput: contractObject.compiler.data,
+        solcInput: contractObject.compiler.source
+      }
+      await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/solc-${implementationAddress}.json`, JSON.stringify({
+        solcInput: contractObject.compiler.source,
+        solcOutput: contractObject.compiler.data
+      }, null, 2))
+      await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`, JSON.stringify(parsedDeployments, null, 2))
+    } else {
+      await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/solc-${implementationAddress}.json`, JSON.stringify({
+        solcInput: contractObject.compiler.source,
+        solcOutput: contractObject.compiler.data
+      }, null, 2))
+      await this.call('fileManager', 'writeFile', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`, JSON.stringify({
+        id: networkInfo.id,
+        network: networkInfo.name,
+        deployments: {
+          [proxyAddress]: {
+            date: new Date().toISOString(),
+            contractName: contractName,
+            fork: networkInfo.currentFork,
+            implementationAddress: implementationAddress
+          }
+        }
+      }, null, 2))
+    }
   }
 
   async getEncodedFunctionHex (args, funABI) {
@@ -601,9 +601,9 @@ export class Blockchain extends Plugin {
 
         if (viewEtherScanLink) {
           this.call('terminal', 'logHtml',
-          (<a href={etherScanLink(network.name, txhash)} target="_blank">
+            (<a href={etherScanLink(network.name, txhash)} target="_blank">
             view on etherscan
-          </a>))        
+            </a>))        
         }
       })
     })
@@ -808,20 +808,20 @@ export class Blockchain extends Plugin {
 
         if (hhlogs && hhlogs.length) {
           const finalLogs = <div><div><b>console.log:</b></div>
-          {
-            hhlogs.map((log) => {
-              let formattedLog
-              // Hardhat implements the same formatting options that can be found in Node.js' console.log,
-              // which in turn uses util.format: https://nodejs.org/dist/latest-v12.x/docs/api/util.html#util_util_format_format_args
-              // For example: console.log("Name: %s, Age: %d", remix, 6) will log 'Name: remix, Age: 6'
-              // We check first arg to determine if 'util.format' is needed
-              if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
-                formattedLog = format(log[0], ...log.slice(1))
-              } else {
-                formattedLog = log.join(' ')
-              }
-              return <div>{formattedLog}</div>
-          })}
+            {
+              hhlogs.map((log) => {
+                let formattedLog
+                // Hardhat implements the same formatting options that can be found in Node.js' console.log,
+                // which in turn uses util.format: https://nodejs.org/dist/latest-v12.x/docs/api/util.html#util_util_format_format_args
+                // For example: console.log("Name: %s, Age: %d", remix, 6) will log 'Name: remix, Age: 6'
+                // We check first arg to determine if 'util.format' is needed
+                if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
+                  formattedLog = format(log[0], ...log.slice(1))
+                } else {
+                  formattedLog = log.join(' ')
+                }
+                return <div>{formattedLog}</div>
+              })}
           </div>          
           _paq.push(['trackEvent', 'udapp', 'hardhat', 'console.log'])
           this.call('terminal', 'logHtml', finalLogs)

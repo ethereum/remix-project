@@ -127,13 +127,13 @@ export function RemixUiSolidityUmlGen ({ updatedSvg, loading, fileName, themeDar
             </TransformWrapper>
           </MagnifierContainer>
         ) : loading ? <div className="justify-content-center align-items-center d-flex  mx-auto my-auto">
-            <i className="fas fa-spinner fa-spin fa-4x"></i>
-          </div> : <DefaultInfo />}
+          <i className="fas fa-spinner fa-spin fa-4x"></i>
+        </div> : <DefaultInfo />}
       </div>
-  )}
+    )}
   return (<>
     { <Display /> }
-    </>
+  </>
   )
 }
 

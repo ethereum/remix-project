@@ -74,10 +74,10 @@ const ModalWrapper = (props: ModalWrapperProps) => {
   const createForm = (validation: ValidationResult) => {
     return (
       <>
-         <form onChange={onFormChanged} ref={formRef}>
+        <form onChange={onFormChanged} ref={formRef}>
           {props.message}
-          </form>
-          {validation && !validation.valid && <span className='text-warning'>{validation.message}</span>}
+        </form>
+        {validation && !validation.valid && <span className='text-warning'>{validation.message}</span>}
       </>
     )
   }
@@ -86,30 +86,30 @@ const ModalWrapper = (props: ModalWrapperProps) => {
     data.current = props.data
     if (props.modalType) {
       switch (props.modalType) {
-        case ModalTypes.prompt:
-        case ModalTypes.password:
-          setState({
-            ...props,
-            okFn: onFinishPrompt,
-            cancelFn: onCancelFn,
-            message: createModalMessage(props.defaultValue, { valid: true })
-          })
-          break
-        case ModalTypes.form:
-          setState({
-            ...props,
-            okFn: onFinishPrompt,
-            cancelFn: onCancelFn,
-            message: createForm({ valid: true })
-          })
-          break
-        default:
-          setState({
-            ...props,
-            okFn: onOkFn,
-            cancelFn: onCancelFn
-          })
-          break
+      case ModalTypes.prompt:
+      case ModalTypes.password:
+        setState({
+          ...props,
+          okFn: onFinishPrompt,
+          cancelFn: onCancelFn,
+          message: createModalMessage(props.defaultValue, { valid: true })
+        })
+        break
+      case ModalTypes.form:
+        setState({
+          ...props,
+          okFn: onFinishPrompt,
+          cancelFn: onCancelFn,
+          message: createForm({ valid: true })
+        })
+        break
+      default:
+        setState({
+          ...props,
+          okFn: onOkFn,
+          cancelFn: onCancelFn
+        })
+        break
       }
     } else {
       setState({

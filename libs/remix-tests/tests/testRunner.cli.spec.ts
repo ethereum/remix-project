@@ -3,35 +3,35 @@ import { resolve } from 'path'
 import { expect } from 'chai';
 
 describe('testRunner: remix-tests CLI', function(){
-    this.timeout(120000)
-    // remix-tests binary, after build, is used as executable 
+  this.timeout(120000)
+  // remix-tests binary, after build, is used as executable 
     
-    const executablePath = resolve(__dirname + '/../../../dist/libs/remix-tests/bin/remix-tests')
+  const executablePath = resolve(__dirname + '/../../../dist/libs/remix-tests/bin/remix-tests')
     
-    const result = spawnSync('ls', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
-    if(result) {
-        const dirContent = result.stdout.toString()
-        // Install dependencies if 'node_modules' is not already present
-        if(!dirContent.includes('node_modules')) {
-          execSync('yarn add @remix-project/remix-lib ../../libs/remix-lib', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
-          execSync('yarn add @remix-project/remix-url-resolver ../../libs/remix-url-resolver', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
-          execSync('yarn add @remix-project/remix-solidity ../../libs/remix-solidity', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
-          execSync('yarn add @remix-project/remix-simulator ../../libs/remix-simulator', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
-          execSync('yarn install', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
-        }
+  const result = spawnSync('ls', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
+  if(result) {
+    const dirContent = result.stdout.toString()
+    // Install dependencies if 'node_modules' is not already present
+    if(!dirContent.includes('node_modules')) {
+      execSync('yarn add @remix-project/remix-lib ../../libs/remix-lib', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
+      execSync('yarn add @remix-project/remix-url-resolver ../../libs/remix-url-resolver', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
+      execSync('yarn add @remix-project/remix-solidity ../../libs/remix-solidity', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
+      execSync('yarn add @remix-project/remix-simulator ../../libs/remix-simulator', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
+      execSync('yarn install', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
     }
+  }
     
 
-    describe('test various CLI options', function() {
-      it('remix-tests version', () => {
-        const res = spawnSync(executablePath, ['-V'])
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        expect(res.stdout.toString().trim()).to.equal(require('../package.json').version)
-      })
+  describe('test various CLI options', function() {
+    it('remix-tests version', () => {
+      const res = spawnSync(executablePath, ['-V'])
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      expect(res.stdout.toString().trim()).to.equal(require('../package.json').version)
+    })
 
-      it('remix-tests help', () => {
-        const res = spawnSync(executablePath, ['-h'])
-        const expectedHelp = `Usage: remix-tests [options] [command] <file_path>
+    it('remix-tests help', () => {
+      const res = spawnSync(executablePath, ['-h'])
+      const expectedHelp = `Usage: remix-tests [options] [command] <file_path>
 
 Arguments:
   file_path                   path to test file or directory
@@ -55,8 +55,8 @@ Options:
 Commands:
   version                     output the version number
   help                        output usage information`
-        expect(res.stdout.toString().trim()).to.equal(expectedHelp)
-      })
+      expect(res.stdout.toString().trim()).to.equal(expectedHelp)
+    })
 
     it('remix-tests running a test file', function() {
       const res = spawnSync(executablePath, [resolve(__dirname + '/examples_0/assert_ok_test.sol')])

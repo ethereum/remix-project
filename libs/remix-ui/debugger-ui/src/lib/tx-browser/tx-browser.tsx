@@ -52,17 +52,17 @@ export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, t
   }
   const customJSX = (
     <div id="debuggerTransactionStartButtonContainer" data-id="debuggerTransactionStartButton" onClick={handleSubmit} className="btn btn-primary btn-sm btn-block text-decoration-none">
-              <button
-                className='btn btn-link btn-sm btn-block h-75 p-0 m-0 text-decoration-none'
-                id='load'
-                onClick={handleSubmit}
-                data-id='debuggerTransactionStartButton'
-                disabled={!state.txNumber }
-                style={{ pointerEvents: 'none', color: 'white' }}
-              >
-                  <span><FormattedMessage id={`debugger.${debugging ? 'stopDebugging' : 'startDebugging'}`} /></span>
-              </button>
-            </div>
+      <button
+        className='btn btn-link btn-sm btn-block h-75 p-0 m-0 text-decoration-none'
+        id='load'
+        onClick={handleSubmit}
+        data-id='debuggerTransactionStartButton'
+        disabled={!state.txNumber }
+        style={{ pointerEvents: 'none', color: 'white' }}
+      >
+        <span><FormattedMessage id={`debugger.${debugging ? 'stopDebugging' : 'startDebugging'}`} /></span>
+      </button>
+    </div>
   )
   return (
     <div className='pb-2 container px-0'>
