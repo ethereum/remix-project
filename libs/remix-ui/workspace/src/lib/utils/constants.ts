@@ -74,11 +74,11 @@ jobs:
 `
 
 export const TEMPLATE_NAMES = {
-  'remixDefault': 'Basic',
-  'blank': 'Blank',
-  'ozerc20': 'OpenZeppelin ERC20',
-  'ozerc721': 'OpenZeppelin ERC721',
-  'ozerc1155': 'OpenZeppelin ERC1155',
-  'zeroxErc20': '0xProject ERC20',
-  'gnosisSafeMultisig': 'Gnosis Safe'
+ 'remixDefault': 'Basic',
+ 'blank': 'Blank',
+ 'ozerc20': 'OpenZeppelin ERC20',
+ 'ozerc721': 'OpenZeppelin ERC721',
+ 'ozerc1155': 'OpenZeppelin ERC1155',
+ 'zeroxErc20': '0xProject ERC20',
+ 'gnosisSafeMultisig': 'Gnosis Safe'
 }

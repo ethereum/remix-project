@@ -10,424 +10,424 @@ import { title } from 'process'
 const _paq = window._paq = window._paq || []
 
 export function ContractDropdownUI (props: ContractDropdownProps) {
-  const intl = useIntl()
-  const [abiLabel, setAbiLabel] = useState<{
+ const intl = useIntl()
+ const [abiLabel, setAbiLabel] = useState<{
     display: string,
     content: string
   }>({
-    display: '',
-    content: ''
+   display: '',
+   content: ''
   })
-  const [atAddressOptions, setAtAddressOptions] = useState<{ title: string | JSX.Element, disabled: boolean }>({
-    title: <FormattedMessage id='udapp.atAddressOptionsTitle1' />,
-    disabled: true
+ const [atAddressOptions, setAtAddressOptions] = useState<{ title: string | JSX.Element, disabled: boolean }>({
+  title: <FormattedMessage id='udapp.atAddressOptionsTitle1' />,
+  disabled: true
+ })
+ const [loadedAddress, setLoadedAddress] = useState<string>('')
+ const [contractOptions, setContractOptions] = useState<{ title: string | JSX.Element, disabled: boolean }>({
+  title: <FormattedMessage id='udapp.contractOptionsTitle1' />,
+  disabled: true
+ })
+ const [loadedContractData, setLoadedContractData] = useState<ContractData>(null)
+ const [constructorInterface, setConstructorInterface] = useState<FuncABI>(null)
+ const [constructorInputs, setConstructorInputs] = useState(null)
+ const [addressIsValid, setaddressIsValid] = useState(true)
+ const [compilerName, setCompilerName] = useState<string>('')
+ const contractsRef = useRef<HTMLSelectElement>(null)
+ const atAddressValue = useRef<HTMLInputElement>(null)
+ const { contractList, loadType, currentFile, compilationSource, currentContract, compilationCount, deployOptions } = props.contracts
+
+ useEffect(() => {
+  enableContractNames(Object.keys(props.contracts.contractList).length > 0)
+ }, [Object.keys(props.contracts.contractList).length])
+
+ useEffect(() => {
+  enableAtAddress(false)
+  setAbiLabel({
+   display: 'none',
+   content: 'ABI file selected'
   })
-  const [loadedAddress, setLoadedAddress] = useState<string>('')
-  const [contractOptions, setContractOptions] = useState<{ title: string | JSX.Element, disabled: boolean }>({
-    title: <FormattedMessage id='udapp.contractOptionsTitle1' />,
-    disabled: true
-  })
-  const [loadedContractData, setLoadedContractData] = useState<ContractData>(null)
-  const [constructorInterface, setConstructorInterface] = useState<FuncABI>(null)
-  const [constructorInputs, setConstructorInputs] = useState(null)
-  const [addressIsValid, setaddressIsValid] = useState(true)
-  const [compilerName, setCompilerName] = useState<string>('')
-  const contractsRef = useRef<HTMLSelectElement>(null)
-  const atAddressValue = useRef<HTMLInputElement>(null)
-  const { contractList, loadType, currentFile, compilationSource, currentContract, compilationCount, deployOptions } = props.contracts
+ }, [])
 
-  useEffect(() => {
-    enableContractNames(Object.keys(props.contracts.contractList).length > 0)
-  }, [Object.keys(props.contracts.contractList).length])
-
-  useEffect(() => {
-    enableAtAddress(false)
-    setAbiLabel({
-      display: 'none',
-      content: 'ABI file selected'
-    })
-  }, [])
-
-  useEffect(() => {
-    if (props.exEnvironment && props.networkName) {
-      const savedConfig = window.localStorage.getItem(`ipfs/${props.exEnvironment}/${props.networkName}`)
+ useEffect(() => {
+  if (props.exEnvironment && props.networkName) {
+   const savedConfig = window.localStorage.getItem(`ipfs/${props.exEnvironment}/${props.networkName}`)
       const isCheckedIPFS = savedConfig === 'true' ? true : false // eslint-disable-line
 
-      props.setIpfsCheckedState(isCheckedIPFS)
-    }
-  }, [props.exEnvironment, props.networkName])
-
-  useEffect(() => {
-    if (!loadFromAddress || !ethJSUtil.isValidAddress(loadedAddress)) enableAtAddress(false)
-  }, [loadedAddress])
-
-  useEffect(() => {
-    if (/.(.abi)$/.exec(currentFile) && "" !== atAddressValue.current.value) {
-      setAbiLabel({
-        display: 'block',
-        content: currentFile
-      })
-      enableAtAddress(true)
-    } else if (isContractFile(currentFile)) {
-      setAbiLabel({
-        display: 'none',
-        content: ''
-      })
-      if (!currentContract) enableAtAddress(false)
-    } else {
-      setAbiLabel({
-        display: 'none',
-        content: ''
-      })
-      if (!currentContract) enableAtAddress(false)
-    }
-    initSelectedContract()
-  }, [loadType, currentFile, compilationCount])
-
-  useEffect(() => {
-    if (currentContract && contractList[currentFile]) {
-      const contract = contractList[currentFile].find(contract => contract.alias === currentContract)
-
-      if (contract) {
-        const loadedContractData = props.getSelectedContract(currentContract, contract.compiler)
-
-        if (loadedContractData) {
-          setLoadedContractData(loadedContractData)
-          setConstructorInterface(loadedContractData.getConstructorInterface())
-          setConstructorInputs(loadedContractData.getConstructorInputs())
-        }
-      }
-    }
-  }, [currentContract, compilationCount])
-
-  useEffect(() => {
-    initSelectedContract()
-    updateCompilerName()
-  }, [contractList])
-
-  useEffect(() => {
-    // if the file change the ui is already feed with another bunch of contracts.
-    // we also need to update the state
-    const contracts = contractList[currentFile]
-    if (contracts && contracts.length > 0) {
-      props.setSelectedContract(contracts[0].alias)
-    }
-    updateCompilerName()
-  }, [currentFile])
-
-  const initSelectedContract = () => {
-    const contracts = contractList[currentFile]
-
-    if (contracts && contracts.length > 0) {
-      const contract = contracts.find(contract => contract.alias === currentContract)
-
-      if (!currentContract) props.setSelectedContract(contracts[0].alias)
-      else if (!contract) props.setSelectedContract(currentContract)
-      // TODO highlight contractlist box with css.
-    }
+   props.setIpfsCheckedState(isCheckedIPFS)
   }
+ }, [props.exEnvironment, props.networkName])
 
-  const isContractFile = (file) => {
-    return /.(.sol)$/.exec(file) ||
+ useEffect(() => {
+  if (!loadFromAddress || !ethJSUtil.isValidAddress(loadedAddress)) enableAtAddress(false)
+ }, [loadedAddress])
+
+ useEffect(() => {
+  if (/.(.abi)$/.exec(currentFile) && "" !== atAddressValue.current.value) {
+   setAbiLabel({
+    display: 'block',
+    content: currentFile
+   })
+   enableAtAddress(true)
+  } else if (isContractFile(currentFile)) {
+   setAbiLabel({
+    display: 'none',
+    content: ''
+   })
+   if (!currentContract) enableAtAddress(false)
+  } else {
+   setAbiLabel({
+    display: 'none',
+    content: ''
+   })
+   if (!currentContract) enableAtAddress(false)
+  }
+  initSelectedContract()
+ }, [loadType, currentFile, compilationCount])
+
+ useEffect(() => {
+  if (currentContract && contractList[currentFile]) {
+   const contract = contractList[currentFile].find(contract => contract.alias === currentContract)
+
+   if (contract) {
+    const loadedContractData = props.getSelectedContract(currentContract, contract.compiler)
+
+    if (loadedContractData) {
+     setLoadedContractData(loadedContractData)
+     setConstructorInterface(loadedContractData.getConstructorInterface())
+     setConstructorInputs(loadedContractData.getConstructorInputs())
+    }
+   }
+  }
+ }, [currentContract, compilationCount])
+
+ useEffect(() => {
+  initSelectedContract()
+  updateCompilerName()
+ }, [contractList])
+
+ useEffect(() => {
+  // if the file change the ui is already feed with another bunch of contracts.
+  // we also need to update the state
+  const contracts = contractList[currentFile]
+  if (contracts && contracts.length > 0) {
+   props.setSelectedContract(contracts[0].alias)
+  }
+  updateCompilerName()
+ }, [currentFile])
+
+ const initSelectedContract = () => {
+  const contracts = contractList[currentFile]
+
+  if (contracts && contracts.length > 0) {
+   const contract = contracts.find(contract => contract.alias === currentContract)
+
+   if (!currentContract) props.setSelectedContract(contracts[0].alias)
+   else if (!contract) props.setSelectedContract(currentContract)
+   // TODO highlight contractlist box with css.
+  }
+ }
+
+ const isContractFile = (file) => {
+  return /.(.sol)$/.exec(file) ||
       /.(.vy)$/.exec(file) || // vyper
       /.(.lex)$/.exec(file) || // lexon
       /.(.contract)$/.exec(file)
+ }
+
+ const enableAtAddress = (enable: boolean) => {
+  if (enable) {
+   setAtAddressOptions({
+    disabled: false,
+    title: <span className="text-start"><FormattedMessage id='udapp.atAddressOptionsTitle2' values={{ br: <br /> }} /></span>
+   })
+  } else {
+   setAtAddressOptions({
+    disabled: true,
+    title: loadedAddress ? <FormattedMessage id='udapp.atAddressOptionsTitle3' /> : <span className="text-start"><FormattedMessage id='udapp.atAddressOptionsTitle4' values={{ br: <br /> }} /></span>
+   })
   }
+ }
 
-  const enableAtAddress = (enable: boolean) => {
-    if (enable) {
-      setAtAddressOptions({
-        disabled: false,
-        title: <span className="text-start"><FormattedMessage id='udapp.atAddressOptionsTitle2' values={{ br: <br /> }} /></span>
-      })
-    } else {
-      setAtAddressOptions({
-        disabled: true,
-        title: loadedAddress ? <FormattedMessage id='udapp.atAddressOptionsTitle3' /> : <span className="text-start"><FormattedMessage id='udapp.atAddressOptionsTitle4' values={{ br: <br /> }} /></span>
-      })
-    }
+ const enableContractNames = (enable: boolean) => {
+  if (enable) {
+   setContractOptions({
+    disabled: false,
+    title: <FormattedMessage id='udapp.contractOptionsTitle2' />
+   })
+  } else {
+   setContractOptions({
+    disabled: true,
+    title: loadType === 'sol' ? <FormattedMessage id='udapp.contractOptionsTitle3' /> : <span className="text-start"><FormattedMessage id='udapp.contractOptionsTitle4' values={{ br: <br /> }} /></span>
+   })
   }
+ }
 
-  const enableContractNames = (enable: boolean) => {
-    if (enable) {
-      setContractOptions({
-        disabled: false,
-        title: <FormattedMessage id='udapp.contractOptionsTitle2' />
-      })
-    } else {
-      setContractOptions({
-        disabled: true,
-        title: loadType === 'sol' ? <FormattedMessage id='udapp.contractOptionsTitle3' /> : <span className="text-start"><FormattedMessage id='udapp.contractOptionsTitle4' values={{ br: <br /> }} /></span>
-      })
-    }
+ const clickCallback = (inputs, value, deployMode?: DeployMode[]) => {
+  createInstance(loadedContractData, value, deployMode)
+ }
+
+ const createInstance = (selectedContract, args, deployMode?: DeployMode[]) => {
+  if (selectedContract.bytecodeObject.length === 0) {
+   return props.modal(intl.formatMessage({ id: 'udapp.alert' }), intl.formatMessage({ id: 'udapp.thisContractMayBeAbstract' }), intl.formatMessage({ id: 'udapp.ok' }), () => { })
   }
+  if ((selectedContract.name !== currentContract) && (selectedContract.name === 'ERC1967Proxy')) selectedContract.name = currentContract
+  const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
+  const isContractUpgrade = (deployMode || []).find(mode => mode === 'Upgrade with Proxy')
 
-  const clickCallback = (inputs, value, deployMode?: DeployMode[]) => {
-    createInstance(loadedContractData, value, deployMode)
+  if (isProxyDeployment) {
+   props.modal('Deploy Implementation & Proxy (ERC1967)', deployWithProxyMsg(), intl.formatMessage({ id: 'udapp.proceed' }), () => {
+    props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
+   }, intl.formatMessage({ id: 'udapp.cancel' }), () => { })
+  } else if (isContractUpgrade) {
+   props.modal('Deploy Implementation & Update Proxy', upgradeWithProxyMsg(), intl.formatMessage({ id: 'udapp.proceed' }), () => {
+    props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
+   }, intl.formatMessage({ id: 'udapp.cancel' }), () => { })
+  } else {
+   props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
   }
+ }
 
-  const createInstance = (selectedContract, args, deployMode?: DeployMode[]) => {
-    if (selectedContract.bytecodeObject.length === 0) {
-      return props.modal(intl.formatMessage({ id: 'udapp.alert' }), intl.formatMessage({ id: 'udapp.thisContractMayBeAbstract' }), intl.formatMessage({ id: 'udapp.ok' }), () => { })
-    }
-    if ((selectedContract.name !== currentContract) && (selectedContract.name === 'ERC1967Proxy')) selectedContract.name = currentContract
-    const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
-    const isContractUpgrade = (deployMode || []).find(mode => mode === 'Upgrade with Proxy')
-
-    if (isProxyDeployment) {
-      props.modal('Deploy Implementation & Proxy (ERC1967)', deployWithProxyMsg(), intl.formatMessage({ id: 'udapp.proceed' }), () => {
-        props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
-      }, intl.formatMessage({ id: 'udapp.cancel' }), () => { })
-    } else if (isContractUpgrade) {
-      props.modal('Deploy Implementation & Update Proxy', upgradeWithProxyMsg(), intl.formatMessage({ id: 'udapp.proceed' }), () => {
-        props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
-      }, intl.formatMessage({ id: 'udapp.cancel' }), () => { })
-    } else {
-      props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode)
-    }
+ const atAddressChanged = (event) => {
+  const value = event.target.value
+  if (!value) {
+   enableAtAddress(false)
+  } else {
+   if (loadType === 'sol' || loadType === 'abi') {
+    enableAtAddress(true)
+   } else {
+    enableAtAddress(false)
+   }
   }
+  setLoadedAddress(value)
+ }
 
-  const atAddressChanged = (event) => {
-    const value = event.target.value
-    if (!value) {
-      enableAtAddress(false)
-    } else {
-      if (loadType === 'sol' || loadType === 'abi') {
-        enableAtAddress(true)
-      } else {
-        enableAtAddress(false)
-      }
-    }
-    setLoadedAddress(value)
-  }
-
-  const loadFromAddress = () => {
-    let address = loadedAddress
-    if (address == '') return
-    try {
-      if (!ethJSUtil.isValidChecksumAddress(address)) {
-        props.tooltip(checkSumWarning())
-        address = ethJSUtil.toChecksumAddress(address)
-      }
-      props.loadAddress(loadedContractData, address)
-    } catch(e) {
-      console.log("Invalid Address input: ", e)
-      setaddressIsValid(false)
-      return
-    }
-    setaddressIsValid(true)
-  }
-
-  const handleCheckedIPFS = () => {
-    const checkedState = !props.ipfsCheckedState
-
-    props.setIpfsCheckedState(checkedState)
-    window.localStorage.setItem(`ipfs/${props.exEnvironment}/${props.networkName}`, checkedState.toString())
-  }
-
-  const updateCompilerName = () => {
-    if (contractsRef.current.value) {
-      contractList[currentFile].forEach(contract => {
-        if (contract.alias === contractsRef.current.value) {
-          setCompilerName(contract.compilerName)
-          setContractOptions({
-            disabled: false,
-            title: <FormattedMessage id='udapp.contractOptionsTitle2' />
-          })
-        }
-      })
-    } else{
-      setCompilerName('')
-      setContractOptions({title: <FormattedMessage id='udapp.contractOptionsTitle1' />, disabled: true})
-    }
-  }
-
-  const handleContractChange = (e) => {
-    const value = e.target.value
-    updateCompilerName()
-    props.setSelectedContract(value)
-  }
-
-  const isValidProxyUpgrade = (proxyAddress: string) => {
-    return props.isValidProxyUpgrade(proxyAddress, loadedContractData.contractName || loadedContractData.name, loadedContractData.compiler.source, loadedContractData.compiler.data)
-  }
-
-  const checkSumWarning = () => {
-    return (
-      <span className="text-start">
-        <FormattedMessage id='udapp.checkSumWarning' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-55" target="_blank" rel="noreferrer">EIP-55</a> }} />
-      </span>
-    )
-  }
-
-  const isOverSizePrompt = (values: OverSizeLimit) => {
-    return (
-      <div>
-        { 
-          values.overSizeEip170 && <div>
-            <FormattedMessage id='udapp.isOverSizePromptEip170' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-170" target="_blank" rel="noreferrer">eip-170</a> }} />
-          </div>
-        }
-        { 
-          values.overSizeEip3860 && <div>
-            <FormattedMessage id='udapp.isOverSizePromptEip3860' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-3860" target="_blank" rel="noreferrer">eip-3860</a> }} />
-          </div>
-        }
-      </div>
-    )
-  }
-
-  let evmVersion = null
+ const loadFromAddress = () => {
+  let address = loadedAddress
+  if (address == '') return
   try {
-    evmVersion = JSON.parse(loadedContractData.metadata).settings.evmVersion
-  } catch (err) {}
+   if (!ethJSUtil.isValidChecksumAddress(address)) {
+    props.tooltip(checkSumWarning())
+    address = ethJSUtil.toChecksumAddress(address)
+   }
+   props.loadAddress(loadedContractData, address)
+  } catch(e) {
+   console.log("Invalid Address input: ", e)
+   setaddressIsValid(false)
+   return
+  }
+  setaddressIsValid(true)
+ }
+
+ const handleCheckedIPFS = () => {
+  const checkedState = !props.ipfsCheckedState
+
+  props.setIpfsCheckedState(checkedState)
+  window.localStorage.setItem(`ipfs/${props.exEnvironment}/${props.networkName}`, checkedState.toString())
+ }
+
+ const updateCompilerName = () => {
+  if (contractsRef.current.value) {
+   contractList[currentFile].forEach(contract => {
+    if (contract.alias === contractsRef.current.value) {
+     setCompilerName(contract.compilerName)
+     setContractOptions({
+      disabled: false,
+      title: <FormattedMessage id='udapp.contractOptionsTitle2' />
+     })
+    }
+   })
+  } else{
+   setCompilerName('')
+   setContractOptions({title: <FormattedMessage id='udapp.contractOptionsTitle1' />, disabled: true})
+  }
+ }
+
+ const handleContractChange = (e) => {
+  const value = e.target.value
+  updateCompilerName()
+  props.setSelectedContract(value)
+ }
+
+ const isValidProxyUpgrade = (proxyAddress: string) => {
+  return props.isValidProxyUpgrade(proxyAddress, loadedContractData.contractName || loadedContractData.name, loadedContractData.compiler.source, loadedContractData.compiler.data)
+ }
+
+ const checkSumWarning = () => {
   return (
-    <div className="udapp_container mb-2" data-id="contractDropdownContainer">
-      <div className='d-flex justify-content-between'>
-        <div className="d-flex justify-content-between align-items-end">
-          <label className="udapp_settingsLabel pr-1">
-            <FormattedMessage id='udapp.contract' />
-          </label>
-          { compilerName && compilerName !== '' && compilerName !== 'remix' &&
-            <label className='udapp_settingsCompiledBy badge badge-secondary' data-id="udappCompiledBy">
-              <FormattedMessage id='udapp.compiledBy' values={{ compilerName: <span className="text-capitalize">{compilerName}</span> }} />
-            </label>
-          }
-        </div>
-        { props.remixdActivated ?
-          (<CustomTooltip
-            placement={'right'}
-            tooltipClasses="text-wrap text-left"
-            tooltipId="info-sync-compiled-contract"
-            tooltipText={<span className="text-left">
-              <FormattedMessage id='udapp.infoSyncCompiledContractTooltip' values={{ br: <br /> }} />
-            </span>}
-          >
-            <button className="btn d-flex py-0" onClick={_ => {
-              props.syncContracts()
-              _paq.push(['trackEvent', 'udapp', 'syncContracts', compilationSource ? compilationSource : 'compilationSourceNotYetSet'])
-            }}>
-              <i style={{ cursor: 'pointer' }} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
-            </button>
-          </CustomTooltip>)
-          : null }
-      </div>
-      <div className="udapp_subcontainer">
-        <CustomTooltip
-          placement={"right"}
-          tooltipClasses="text-nowrap text-left"
-          tooltipId="remixUdappContractNamesTooltip"
-          tooltipText={contractOptions.title}
-        >
-          <select ref={contractsRef}
-            value={currentContract}
-            name={contractOptions.title.toString()}
-            onChange={handleContractChange}
-            className="udapp_contractNames w-100 custom-select"
-            disabled={contractOptions.disabled}
-            style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block', pointerEvents: contractOptions.disabled ? 'none' : 'auto' }}
-          >
-            <option value='' disabled hidden>No compiled contracts</option>
-            {(contractList[currentFile] || []).map((contract, index) => {
-              return <option key={index} value={contract.alias}>
-                {contract.alias} - {contract.file}
-              </option>
-            })}
-          </select>
-        </CustomTooltip>
-        <span className="py-1" style={{ display: abiLabel.display }}>{abiLabel.content}</span>
-      </div>
-      { evmVersion && loadedContractData && <CustomTooltip
-        placement={'right'}
-        tooltipClasses="text-wrap text-left"
-        tooltipId="info-evm-version-warn"
-        tooltipText={<span className="text-left">
-          <FormattedMessage id='udapp.warningEvmVersion' values={{ evmVersion }}/>
-        </span>
-        }
-      >
-        <span className='udapp_evmVersion badge alert-warning'>evm version: {evmVersion}</span>
-      </CustomTooltip>
-      }
-      <div>
-        <div className="udapp_deployDropdown">
-          { (((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length > 0 && loadedContractData) &&
-            <div>
-              <ContractGUI
-                title={intl.formatMessage({ id: 'udapp.deploy' })}
-                isDeploy={true}
-                deployOption={deployOptions[currentFile] && deployOptions[currentFile][currentContract] ? deployOptions[currentFile][currentContract].options : null}
-                initializerOptions={deployOptions[currentFile] && deployOptions[currentFile][currentContract] ? deployOptions[currentFile][currentContract].initializeOptions : null}
-                funcABI={constructorInterface}
-                clickCallBack={clickCallback}
-                inputs={constructorInputs}
-                widthClass='w-50'
-                evmBC={loadedContractData.bytecodeObject}
-                lookupOnly={false}
-                proxy={props.proxy}
-                isValidProxyAddress={props.isValidProxyAddress}
-                isValidProxyUpgrade={isValidProxyUpgrade}
-                modal={props.modal}
-                disabled={props.selectedAccount === ''}
-              />
-              <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
-                <input
-                  id="deployAndRunPublishToIPFS"
-                  data-id="contractDropdownIpfsCheckbox"
-                  className="form-check-input custom-control-input"
-                  type="checkbox"
-                  onChange={handleCheckedIPFS}
-                  checked={props.ipfsCheckedState}
-                />
-                <CustomTooltip
-                  placement={'right'}
-                  tooltipClasses="text-wrap text-left"
-                  tooltipId="remixIpfsUdappTooltip"
-                  tooltipText={<span className="text-start"><FormattedMessage id='udapp.remixIpfsUdappTooltip' values={{ br: <br /> }} /></span>}
-                >
-                  <label
-                    htmlFor="deployAndRunPublishToIPFS"
-                    data-id="contractDropdownIpfsCheckboxLabel"
-                    className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
-                  >
-                    <FormattedMessage id='udapp.publishTo' /> IPFS
-                  </label>
-                </CustomTooltip>
-              </div>
-            </div>
-          }
-        </div>
-        <div className="pt-2 d-flex flex-column sudapp_button udapp_atAddressSect">
-          <div className='d-flex flex-row'>
-            <CustomTooltip
-              placement={'top-end'}
-              tooltipClasses="text-wrap text-left"
-              tooltipId="runAndDeployAddresstooltip"
-              tooltipText={atAddressOptions.title}
-            >
-              <div id="runAndDeployAtAdressButtonContainer" onClick={loadFromAddress} data-title={atAddressOptions.title}>
-                <button className="udapp_atAddress btn-sm py-2 btn-primary" id="runAndDeployAtAdressButton" disabled={atAddressOptions.disabled} style={{ pointerEvents: 'none', border: 'none' }} onClick={loadFromAddress} data-title={atAddressOptions.title}>
-                  <FormattedMessage id='udapp.atAddress' />
-                </button>
-              </div>
-            </CustomTooltip>
-            <CustomTooltip
-              placement={'top-end'}
-              tooltipClasses="text-wrap text-left"
-              tooltipId="runAndDeployAddressInputtooltip"
-              tooltipText={<FormattedMessage id='udapp.addressOfContract' />}
-            >
-              <input
-                ref={atAddressValue}
-                className={(!addressIsValid ? "border border-danger" : "border-0") + " h-100 udapp_input udapp_ataddressinput ataddressinput form-control"}
-                placeholder={intl.formatMessage({ id: 'udapp.loadContractFromAddress' })}
-                onChange={atAddressChanged}
-              />
-            </CustomTooltip>
-          </div>
-          { !addressIsValid && <span className='text-danger text-right'>The address is not valid</span> }
-        </div>
-      </div>
-    </div>
+   <span className="text-start">
+    <FormattedMessage id='udapp.checkSumWarning' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-55" target="_blank" rel="noreferrer">EIP-55</a> }} />
+   </span>
   )
+ }
+
+ const isOverSizePrompt = (values: OverSizeLimit) => {
+  return (
+   <div>
+    { 
+     values.overSizeEip170 && <div>
+      <FormattedMessage id='udapp.isOverSizePromptEip170' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-170" target="_blank" rel="noreferrer">eip-170</a> }} />
+     </div>
+    }
+    { 
+     values.overSizeEip3860 && <div>
+      <FormattedMessage id='udapp.isOverSizePromptEip3860' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-3860" target="_blank" rel="noreferrer">eip-3860</a> }} />
+     </div>
+    }
+   </div>
+  )
+ }
+
+ let evmVersion = null
+ try {
+  evmVersion = JSON.parse(loadedContractData.metadata).settings.evmVersion
+ } catch (err) {}
+ return (
+  <div className="udapp_container mb-2" data-id="contractDropdownContainer">
+   <div className='d-flex justify-content-between'>
+    <div className="d-flex justify-content-between align-items-end">
+     <label className="udapp_settingsLabel pr-1">
+      <FormattedMessage id='udapp.contract' />
+     </label>
+     { compilerName && compilerName !== '' && compilerName !== 'remix' &&
+            <label className='udapp_settingsCompiledBy badge badge-secondary' data-id="udappCompiledBy">
+             <FormattedMessage id='udapp.compiledBy' values={{ compilerName: <span className="text-capitalize">{compilerName}</span> }} />
+            </label>
+     }
+    </div>
+    { props.remixdActivated ?
+     (<CustomTooltip
+      placement={'right'}
+      tooltipClasses="text-wrap text-left"
+      tooltipId="info-sync-compiled-contract"
+      tooltipText={<span className="text-left">
+       <FormattedMessage id='udapp.infoSyncCompiledContractTooltip' values={{ br: <br /> }} />
+      </span>}
+     >
+      <button className="btn d-flex py-0" onClick={_ => {
+       props.syncContracts()
+       _paq.push(['trackEvent', 'udapp', 'syncContracts', compilationSource ? compilationSource : 'compilationSourceNotYetSet'])
+      }}>
+       <i style={{ cursor: 'pointer' }} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
+      </button>
+     </CustomTooltip>)
+     : null }
+   </div>
+   <div className="udapp_subcontainer">
+    <CustomTooltip
+     placement={"right"}
+     tooltipClasses="text-nowrap text-left"
+     tooltipId="remixUdappContractNamesTooltip"
+     tooltipText={contractOptions.title}
+    >
+     <select ref={contractsRef}
+      value={currentContract}
+      name={contractOptions.title.toString()}
+      onChange={handleContractChange}
+      className="udapp_contractNames w-100 custom-select"
+      disabled={contractOptions.disabled}
+      style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block', pointerEvents: contractOptions.disabled ? 'none' : 'auto' }}
+     >
+      <option value='' disabled hidden>No compiled contracts</option>
+      {(contractList[currentFile] || []).map((contract, index) => {
+       return <option key={index} value={contract.alias}>
+        {contract.alias} - {contract.file}
+       </option>
+      })}
+     </select>
+    </CustomTooltip>
+    <span className="py-1" style={{ display: abiLabel.display }}>{abiLabel.content}</span>
+   </div>
+   { evmVersion && loadedContractData && <CustomTooltip
+    placement={'right'}
+    tooltipClasses="text-wrap text-left"
+    tooltipId="info-evm-version-warn"
+    tooltipText={<span className="text-left">
+     <FormattedMessage id='udapp.warningEvmVersion' values={{ evmVersion }}/>
+    </span>
+    }
+   >
+    <span className='udapp_evmVersion badge alert-warning'>evm version: {evmVersion}</span>
+   </CustomTooltip>
+   }
+   <div>
+    <div className="udapp_deployDropdown">
+     { (((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length > 0 && loadedContractData) &&
+            <div>
+             <ContractGUI
+              title={intl.formatMessage({ id: 'udapp.deploy' })}
+              isDeploy={true}
+              deployOption={deployOptions[currentFile] && deployOptions[currentFile][currentContract] ? deployOptions[currentFile][currentContract].options : null}
+              initializerOptions={deployOptions[currentFile] && deployOptions[currentFile][currentContract] ? deployOptions[currentFile][currentContract].initializeOptions : null}
+              funcABI={constructorInterface}
+              clickCallBack={clickCallback}
+              inputs={constructorInputs}
+              widthClass='w-50'
+              evmBC={loadedContractData.bytecodeObject}
+              lookupOnly={false}
+              proxy={props.proxy}
+              isValidProxyAddress={props.isValidProxyAddress}
+              isValidProxyUpgrade={isValidProxyUpgrade}
+              modal={props.modal}
+              disabled={props.selectedAccount === ''}
+             />
+             <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
+              <input
+               id="deployAndRunPublishToIPFS"
+               data-id="contractDropdownIpfsCheckbox"
+               className="form-check-input custom-control-input"
+               type="checkbox"
+               onChange={handleCheckedIPFS}
+               checked={props.ipfsCheckedState}
+              />
+              <CustomTooltip
+               placement={'right'}
+               tooltipClasses="text-wrap text-left"
+               tooltipId="remixIpfsUdappTooltip"
+               tooltipText={<span className="text-start"><FormattedMessage id='udapp.remixIpfsUdappTooltip' values={{ br: <br /> }} /></span>}
+              >
+               <label
+                htmlFor="deployAndRunPublishToIPFS"
+                data-id="contractDropdownIpfsCheckboxLabel"
+                className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
+               >
+                <FormattedMessage id='udapp.publishTo' /> IPFS
+               </label>
+              </CustomTooltip>
+             </div>
+            </div>
+     }
+    </div>
+    <div className="pt-2 d-flex flex-column sudapp_button udapp_atAddressSect">
+     <div className='d-flex flex-row'>
+      <CustomTooltip
+       placement={'top-end'}
+       tooltipClasses="text-wrap text-left"
+       tooltipId="runAndDeployAddresstooltip"
+       tooltipText={atAddressOptions.title}
+      >
+       <div id="runAndDeployAtAdressButtonContainer" onClick={loadFromAddress} data-title={atAddressOptions.title}>
+        <button className="udapp_atAddress btn-sm py-2 btn-primary" id="runAndDeployAtAdressButton" disabled={atAddressOptions.disabled} style={{ pointerEvents: 'none', border: 'none' }} onClick={loadFromAddress} data-title={atAddressOptions.title}>
+         <FormattedMessage id='udapp.atAddress' />
+        </button>
+       </div>
+      </CustomTooltip>
+      <CustomTooltip
+       placement={'top-end'}
+       tooltipClasses="text-wrap text-left"
+       tooltipId="runAndDeployAddressInputtooltip"
+       tooltipText={<FormattedMessage id='udapp.addressOfContract' />}
+      >
+       <input
+        ref={atAddressValue}
+        className={(!addressIsValid ? "border border-danger" : "border-0") + " h-100 udapp_input udapp_ataddressinput ataddressinput form-control"}
+        placeholder={intl.formatMessage({ id: 'udapp.loadContractFromAddress' })}
+        onChange={atAddressChanged}
+       />
+      </CustomTooltip>
+     </div>
+     { !addressIsValid && <span className='text-danger text-right'>The address is not valid</span> }
+    </div>
+   </div>
+  </div>
+ )
 }

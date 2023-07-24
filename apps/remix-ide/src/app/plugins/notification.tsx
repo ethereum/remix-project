@@ -14,31 +14,31 @@ interface INotificationApi {
 }
 
 const profile:LibraryProfile<INotificationApi> = {
-  name: 'notification',
-  displayName: 'Notification',
-  description: 'Displays notifications',
-  methods: ['modal', 'alert', 'toast']
+ name: 'notification',
+ displayName: 'Notification',
+ description: 'Displays notifications',
+ methods: ['modal', 'alert', 'toast']
 }
 
 export class NotificationPlugin extends Plugin implements MethodApi<INotificationApi> {
-  dispatcher: dispatchModalInterface
-  constructor () {
-    super(profile)
-  }
+ dispatcher: dispatchModalInterface
+ constructor () {
+  super(profile)
+ }
 
-  setDispatcher (dispatcher: dispatchModalInterface) {
-    this.dispatcher = dispatcher
-  }
+ setDispatcher (dispatcher: dispatchModalInterface) {
+  this.dispatcher = dispatcher
+ }
 
-  async modal (args: AppModal) {
-    return this.dispatcher.modal(args)
-  }
+ async modal (args: AppModal) {
+  return this.dispatcher.modal(args)
+ }
 
-  async alert (args: AlertModal) {
-    return this.dispatcher.alert(args)
-  }
+ async alert (args: AlertModal) {
+  return this.dispatcher.alert(args)
+ }
 
-  async toast (message: string | JSX.Element) {
-    this.dispatcher.toast(message)
-  }
+ async toast (message: string | JSX.Element) {
+  this.dispatcher.toast(message)
+ }
 }

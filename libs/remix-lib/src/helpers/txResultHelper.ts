@@ -3,12 +3,12 @@ import { bufferToHex } from '@ethereumjs/util'
 import { isHexString } from 'ethjs-util'
 
 function convertToPrefixedHex (input) {
-  if (input === undefined || input === null || isHexString(input)) {
-    return input
-  } else if (Buffer.isBuffer(input)) {
-    return bufferToHex(input)
-  }
-  return '0x' + input.toString(16)
+ if (input === undefined || input === null || isHexString(input)) {
+  return input
+ } else if (Buffer.isBuffer(input)) {
+  return bufferToHex(input)
+ }
+ return '0x' + input.toString(16)
 }
 
 /*
@@ -21,23 +21,23 @@ function convertToPrefixedHex (input) {
  So we need to normalize the values to prefixed hex strings
 */
 export function resultToRemixTx (txResult, execResult?) {
-  const { receipt, transactionHash, result } = txResult
-  const { status, gasUsed, contractAddress } = receipt
-  let returnValue, errorMessage
+ const { receipt, transactionHash, result } = txResult
+ const { status, gasUsed, contractAddress } = receipt
+ let returnValue, errorMessage
 
-  if (isHexString(result)) {
-    returnValue = result
-  } else if (execResult !== undefined) {
-    returnValue = execResult.returnValue
-    errorMessage = execResult.exceptionError
-  }
+ if (isHexString(result)) {
+  returnValue = result
+ } else if (execResult !== undefined) {
+  returnValue = execResult.returnValue
+  errorMessage = execResult.exceptionError
+ }
 
-  return {
-    transactionHash,
-    status,
-    gasUsed: convertToPrefixedHex(gasUsed),
-    error: errorMessage,
-    return: convertToPrefixedHex(returnValue),
-    createdAddress: convertToPrefixedHex(contractAddress)
-  }
+ return {
+  transactionHash,
+  status,
+  gasUsed: convertToPrefixedHex(gasUsed),
+  error: errorMessage,
+  return: convertToPrefixedHex(returnValue),
+  createdAddress: convertToPrefixedHex(contractAddress)
+ }
 }

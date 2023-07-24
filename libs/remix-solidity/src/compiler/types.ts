@@ -379,10 +379,10 @@ export interface CompiledContract {
 export type ABIDescription = FunctionDescription | EventDescription
 
 export const isFunctionDescription = (item: ABIDescription): item is FunctionDescription =>
-  (item as FunctionDescription).stateMutability !== undefined
+ (item as FunctionDescription).stateMutability !== undefined
 
 export const isEventDescription = (item: ABIDescription): item is EventDescription =>
-  (item as EventDescription).type === 'event'
+ (item as EventDescription).type === 'event'
 
 export interface FunctionDescription {
     /** Type of the method. default is 'function' */

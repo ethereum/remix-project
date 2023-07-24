@@ -9,26 +9,26 @@ import { computeOffsets } from './decodeInfo'
   * @return {Map} - decoded state variable
   */
 export async function decodeState (stateVars, storageResolver) {
-  const ret = {}
-  for (const k in stateVars) {
-    const stateVar = stateVars[k]
-    try {
-      const decoded = await stateVar.type.decodeFromStorage(stateVar.storagelocation, storageResolver)
-      decoded.constant = stateVar.constant
-      decoded.immutable = stateVar.immutable
-      if (decoded.constant) {
-        decoded.value = '<constant>'
-      }
-      if (decoded.immutable) {
-        decoded.value = '<immutable>'
-      }
-      ret[stateVar.name] = decoded
-    } catch (e) {
-      console.log(e)
-      ret[stateVar.name] = { error: '<decoding failed - ' + e.message + '>' }
-    }
+ const ret = {}
+ for (const k in stateVars) {
+  const stateVar = stateVars[k]
+  try {
+   const decoded = await stateVar.type.decodeFromStorage(stateVar.storagelocation, storageResolver)
+   decoded.constant = stateVar.constant
+   decoded.immutable = stateVar.immutable
+   if (decoded.constant) {
+    decoded.value = '<constant>'
+   }
+   if (decoded.immutable) {
+    decoded.value = '<immutable>'
+   }
+   ret[stateVar.name] = decoded
+  } catch (e) {
+   console.log(e)
+   ret[stateVar.name] = { error: '<decoding failed - ' + e.message + '>' }
   }
-  return ret
+ }
+ return ret
 }
 
 /**
@@ -39,16 +39,16 @@ export async function decodeState (stateVars, storageResolver) {
   * @return {Object} - return the location of all contract variables in the storage
   */
 export function extractStateVariables (contractName, sourcesList) {
-  const states = extractStatesDefinitions(sourcesList, null)
-  if (!states[contractName]) {
-    return []
-  }
-  const types = states[contractName].stateVariables
-  const offsets = computeOffsets(types, states, contractName, 'storage')
-  if (!offsets) {
-    return [] // TODO should maybe return an error
-  }
-  return offsets.typesOffsets
+ const states = extractStatesDefinitions(sourcesList, null)
+ if (!states[contractName]) {
+  return []
+ }
+ const types = states[contractName].stateVariables
+ const offsets = computeOffsets(types, states, contractName, 'storage')
+ if (!offsets) {
+  return [] // TODO should maybe return an error
+ }
+ return offsets.typesOffsets
 }
 
 /**
@@ -60,10 +60,10 @@ export function extractStateVariables (contractName, sourcesList) {
   * @return {Map} - return the state of the contract
   */
 export async function solidityState (storageResolver, astList, contractName) {
-  const stateVars = extractStateVariables(contractName, astList)
-  try {
-    return await decodeState(stateVars, storageResolver)
-  } catch (e) {
-    return { error: '<decoding failed - ' + e.message + '>' }
-  }
+ const stateVars = extractStateVariables(contractName, astList)
+ try {
+  return await decodeState(stateVars, storageResolver)
+ } catch (e) {
+  return { error: '<decoding failed - ' + e.message + '>' }
+ }
 }

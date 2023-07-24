@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-  contract: `
+ contract: `
 contract proxy {
     struct testStruct {
         int one;

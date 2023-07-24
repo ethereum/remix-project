@@ -12,16 +12,16 @@ import solidityUnitTestingJson from './solidityUnitTesting.json';
 import permissionHandlerJson from './permissionHandler.json';
 
 export default {
-  ...debuggerJson,
-  ...filePanelJson,
-  ...homeJson,
-  ...panelJson,
-  ...pluginManagerJson,
-  ...searchJson,
-  ...settingsJson,
-  ...solidityJson,
-  ...terminalJson,
-  ...udappJson,
-  ...solidityUnitTestingJson,
-  ...permissionHandlerJson,
+ ...debuggerJson,
+ ...filePanelJson,
+ ...homeJson,
+ ...panelJson,
+ ...pluginManagerJson,
+ ...searchJson,
+ ...settingsJson,
+ ...solidityJson,
+ ...terminalJson,
+ ...udappJson,
+ ...solidityUnitTestingJson,
+ ...permissionHandlerJson,
 }

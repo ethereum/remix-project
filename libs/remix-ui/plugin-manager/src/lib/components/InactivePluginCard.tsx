@@ -12,87 +12,87 @@ interface PluginCardProps {
 }
 
 function InactivePluginCard ({
-  profile,
-  buttonText,
-  activatePlugin
+ profile,
+ buttonText,
+ activatePlugin
 }: PluginCardProps) {
-  return (
-    <div className="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
-      <article className="list-group-item py-1 mb-1 plugins-list-group-item">
-        <div className="remixui_row justify-content-between align-items-center mb-2">
-          <h6 className="remixui_displayName plugin-name">
-            <div>
-              { profile.displayName || profile.name }
-              { profile?.maintainedBy?.toLowerCase() == "remix" &&
+ return (
+  <div className="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
+   <article className="list-group-item py-1 mb-1 plugins-list-group-item">
+    <div className="remixui_row justify-content-between align-items-center mb-2">
+     <h6 className="remixui_displayName plugin-name">
+      <div>
+       { profile.displayName || profile.name }
+       { profile?.maintainedBy?.toLowerCase() == "remix" &&
                 <CustomTooltip
-                  placement="right"
-                  tooltipId="pluginManagerInactiveTitleByRemix"
-                  tooltipClasses="text-nowrap"
-                  tooltipText="Maintained by Remix"
+                 placement="right"
+                 tooltipId="pluginManagerInactiveTitleByRemix"
+                 tooltipClasses="text-nowrap"
+                 tooltipText="Maintained by Remix"
                 >
-                  <i aria-hidden="true" className="px-1 text-success fas fa-check"></i>
+                 <i aria-hidden="true" className="px-1 text-success fas fa-check"></i>
                 </CustomTooltip>
-              }
-              { profile.documentation &&
+       }
+       { profile.documentation &&
                 <CustomTooltip
-                  placement="right"
-                  tooltipId="pluginManagerInactiveTitleLinkToDoc"
-                  tooltipClasses="text-nowrap"
-                  tooltipText="Link to documentation"
+                 placement="right"
+                 tooltipId="pluginManagerInactiveTitleLinkToDoc"
+                 tooltipClasses="text-nowrap"
+                 tooltipText="Link to documentation"
                 >
-                  <a href={profile.documentation} className="px-1" target="_blank" rel="noreferrer">
-                    <i aria-hidden="true" className="fas fa-book"/>
-                  </a>
+                 <a href={profile.documentation} className="px-1" target="_blank" rel="noreferrer">
+                  <i aria-hidden="true" className="fas fa-book"/>
+                 </a>
                 </CustomTooltip>
-              }
-              { profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)
-                ? <CustomTooltip
-                  placement="right"
-                  tooltipId="pluginManagerActiveVersionAlpha"
-                  tooltipClasses="text-nowrap"
-                  tooltipText="Version Alpha"
-                >
-                  <small className="remixui_versionWarning plugin-version">alpha</small>
-                </CustomTooltip>
-                : profile.version && profile.version.match(/\b(\w*beta\w*)\b/g)
-                  ? <CustomTooltip
-                    placement="right"
-                    tooltipId="pluginManagerActiveVersionBeta"
-                    tooltipClasses="text-nowrap"
-                    tooltipText="Version Beta"
-                  >
-                    <small className="remixui_versionWarning plugin-version">beta</small>
-                  </CustomTooltip>
-                  : null
-              }
-            </div>
-            {
-              <CustomTooltip
-                placement="right"
-                tooltipId={`pluginManagerInactiveActiveBtn${profile.name}`}
-                tooltipClasses="text-nowrap"
-                tooltipText={`Activate ${profile.displayName || profile.name}`}
-              >
-                <button
-                  onClick={() => {
-                    activatePlugin(profile.name)
-                  }}
-                  className="btn btn-success btn-sm"
-                  data-id={`pluginManagerComponentActivateButton${profile.name}`}
-                >
-                  {buttonText}
-                </button>
-              </CustomTooltip>
-            }
-          </h6>
-        </div>
-        <div className="remixui_description d-flex text-body plugin-text mb-2">
-          { profile.icon ? <img src={profile.icon} className="mr-1 mt-1 remixui_pluginIcon" alt="profile icon"/> : null }
-          <span className="remixui_descriptiontext">{profile.description}</span>
-        </div>
-      </article>
+       }
+       { profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g)
+        ? <CustomTooltip
+         placement="right"
+         tooltipId="pluginManagerActiveVersionAlpha"
+         tooltipClasses="text-nowrap"
+         tooltipText="Version Alpha"
+        >
+         <small className="remixui_versionWarning plugin-version">alpha</small>
+        </CustomTooltip>
+        : profile.version && profile.version.match(/\b(\w*beta\w*)\b/g)
+         ? <CustomTooltip
+          placement="right"
+          tooltipId="pluginManagerActiveVersionBeta"
+          tooltipClasses="text-nowrap"
+          tooltipText="Version Beta"
+         >
+          <small className="remixui_versionWarning plugin-version">beta</small>
+         </CustomTooltip>
+         : null
+       }
+      </div>
+      {
+       <CustomTooltip
+        placement="right"
+        tooltipId={`pluginManagerInactiveActiveBtn${profile.name}`}
+        tooltipClasses="text-nowrap"
+        tooltipText={`Activate ${profile.displayName || profile.name}`}
+       >
+        <button
+         onClick={() => {
+          activatePlugin(profile.name)
+         }}
+         className="btn btn-success btn-sm"
+         data-id={`pluginManagerComponentActivateButton${profile.name}`}
+        >
+         {buttonText}
+        </button>
+       </CustomTooltip>
+      }
+     </h6>
     </div>
-  )
+    <div className="remixui_description d-flex text-body plugin-text mb-2">
+     { profile.icon ? <img src={profile.icon} className="mr-1 mt-1 remixui_pluginIcon" alt="profile icon"/> : null }
+     <span className="remixui_descriptiontext">{profile.description}</span>
+    </div>
+   </article>
+  </div>
+ )
 }
 
 export default InactivePluginCard

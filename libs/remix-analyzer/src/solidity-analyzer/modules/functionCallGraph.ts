@@ -2,8 +2,8 @@
 
 import { FunctionHLAst, ContractHLAst, FunctionCallGraph, ContractCallGraph, Context, FunctionCallAstNode } from '../../types'
 import {
-  isLocalCallGraphRelevantNode, isExternalDirectCall, getFullQualifiedFunctionCallIdent,
-  getFullQuallyfiedFuncDefinitionIdent, getContractName
+ isLocalCallGraphRelevantNode, isExternalDirectCall, getFullQualifiedFunctionCallIdent,
+ getFullQuallyfiedFuncDefinitionIdent, getContractName
 } from './staticAnalysisCommon'
 
 type filterNodesFunction = (node: FunctionCallAstNode) => boolean
@@ -11,16 +11,16 @@ type NodeIdentFunction = (node: FunctionCallAstNode) => string
 type FunDefIdentFunction = (node: FunctionHLAst) => string
 
 function buildLocalFuncCallGraphInternal (functions: FunctionHLAst[], nodeFilter: filterNodesFunction, extractNodeIdent: NodeIdentFunction, extractFuncDefIdent: FunDefIdentFunction): Record<string, FunctionCallGraph> {
-  const callGraph: Record<string, FunctionCallGraph> = {}
-  functions.forEach((func: FunctionHLAst) => {
-    const calls: string[] = func.relevantNodes
-      .filter(nodeFilter)
-      .map(extractNodeIdent)
-      .filter((name: string) => name !== extractFuncDefIdent(func)) // filter self recursive call
+ const callGraph: Record<string, FunctionCallGraph> = {}
+ functions.forEach((func: FunctionHLAst) => {
+  const calls: string[] = func.relevantNodes
+   .filter(nodeFilter)
+   .map(extractNodeIdent)
+   .filter((name: string) => name !== extractFuncDefIdent(func)) // filter self recursive call
 
-    callGraph[extractFuncDefIdent(func)] = { node: func, calls: calls }
-  })
-  return callGraph
+  callGraph[extractFuncDefIdent(func)] = { node: func, calls: calls }
+ })
+ return callGraph
 }
 
 /**
@@ -48,15 +48,15 @@ function buildLocalFuncCallGraphInternal (functions: FunctionHLAst[], nodeFilter
  * @return {map (string -> Contract Call Graph)} returns map from contract name to contract call graph
  */
 export function buildGlobalFuncCallGraph (contracts: ContractHLAst[]): Record<string, ContractCallGraph> {
-  const callGraph: Record<string, ContractCallGraph> = {}
-  contracts.forEach((contract: ContractHLAst) => {
-    const filterNodes: filterNodesFunction = (node: FunctionCallAstNode) => { return isLocalCallGraphRelevantNode(node) || isExternalDirectCall(node) }
-    const getNodeIdent: NodeIdentFunction = (node: FunctionCallAstNode) => { return getFullQualifiedFunctionCallIdent(contract.node, node) }
-    const getFunDefIdent: FunDefIdentFunction = (funcDef: FunctionHLAst) => { return getFullQuallyfiedFuncDefinitionIdent(contract.node, funcDef.node, funcDef.parameters) }
+ const callGraph: Record<string, ContractCallGraph> = {}
+ contracts.forEach((contract: ContractHLAst) => {
+  const filterNodes: filterNodesFunction = (node: FunctionCallAstNode) => { return isLocalCallGraphRelevantNode(node) || isExternalDirectCall(node) }
+  const getNodeIdent: NodeIdentFunction = (node: FunctionCallAstNode) => { return getFullQualifiedFunctionCallIdent(contract.node, node) }
+  const getFunDefIdent: FunDefIdentFunction = (funcDef: FunctionHLAst) => { return getFullQuallyfiedFuncDefinitionIdent(contract.node, funcDef.node, funcDef.parameters) }
 
-    callGraph[getContractName(contract.node)] = { contract: contract, functions: buildLocalFuncCallGraphInternal(contract.functions, filterNodes, getNodeIdent, getFunDefIdent) }
-  })
-  return callGraph
+  callGraph[getContractName(contract.node)] = { contract: contract, functions: buildLocalFuncCallGraphInternal(contract.functions, filterNodes, getNodeIdent, getFunDefIdent) }
+ })
+ return callGraph
 }
 
 /**
@@ -68,47 +68,47 @@ export function buildGlobalFuncCallGraph (contracts: ContractHLAst[]): Record<st
  * @return {bool} returns map from contract name to contract call graph
  */
 export function analyseCallGraph (callGraph: Record<string, ContractCallGraph>, funcName: string, context: Context, nodeCheck: ((node: any, context: Context) => boolean)): boolean {
-  return analyseCallGraphInternal(callGraph, funcName, context, (a, b) => a || b, nodeCheck, {})
+ return analyseCallGraphInternal(callGraph, funcName, context, (a, b) => a || b, nodeCheck, {})
 }
 
 function analyseCallGraphInternal (callGraph: Record<string, ContractCallGraph>, funcName: string, context: Context, combinator, nodeCheck: ((node: any, context: Context) => boolean), visited : Record<string, boolean>): boolean {
-  const current: FunctionCallGraph | undefined = resolveCallGraphSymbol(callGraph, funcName)
+ const current: FunctionCallGraph | undefined = resolveCallGraphSymbol(callGraph, funcName)
 
-  if (current === undefined || visited[funcName] === true) return true
-  visited[funcName] = true
+ if (current === undefined || visited[funcName] === true) return true
+ visited[funcName] = true
 
-  return combinator(current.node.relevantNodes.reduce((acc, val) => combinator(acc, nodeCheck(val, context)), false),
-    current.calls.reduce((acc, val) => combinator(acc, analyseCallGraphInternal(callGraph, val, context, combinator, nodeCheck, visited)), false))
+ return combinator(current.node.relevantNodes.reduce((acc, val) => combinator(acc, nodeCheck(val, context)), false),
+  current.calls.reduce((acc, val) => combinator(acc, analyseCallGraphInternal(callGraph, val, context, combinator, nodeCheck, visited)), false))
 }
 
 export function resolveCallGraphSymbol (callGraph: Record<string, ContractCallGraph>, funcName: string): FunctionCallGraph | undefined {
-  return resolveCallGraphSymbolInternal(callGraph, funcName, false)
+ return resolveCallGraphSymbolInternal(callGraph, funcName, false)
 }
 
 function resolveCallGraphSymbolInternal (callGraph: Record<string, ContractCallGraph>, funcName: string, silent: boolean): FunctionCallGraph | undefined {
-  let current: FunctionCallGraph | null = null
-  if (funcName.includes('.')) {
-    const parts: string[] = funcName.split('.')
-    const contractPart: string = parts[0]
-    const functionPart: string = parts[1]
-    const currentContract: ContractCallGraph = callGraph[contractPart]
-    if (!(currentContract === undefined)) {
-      current = currentContract.functions[funcName]
-      // resolve inheritance hierarchy
-      if (current === undefined) {
-        // resolve inheritance lookup in linearized fashion
-        const inheritsFromNames: string[] = currentContract.contract.inheritsFrom.reverse()
-        for (let i = 0; i < inheritsFromNames.length; i++) {
-          const res: FunctionCallGraph | undefined = resolveCallGraphSymbolInternal(callGraph, inheritsFromNames[i] + '.' + functionPart, true)
-          if (!(res === undefined)) return res
-        }
-      }
-    } else {
-      if (!silent) console.log(`static analysis functionCallGraph.js: Contract ${contractPart} not found in function call graph.`)
+ let current: FunctionCallGraph | null = null
+ if (funcName.includes('.')) {
+  const parts: string[] = funcName.split('.')
+  const contractPart: string = parts[0]
+  const functionPart: string = parts[1]
+  const currentContract: ContractCallGraph = callGraph[contractPart]
+  if (!(currentContract === undefined)) {
+   current = currentContract.functions[funcName]
+   // resolve inheritance hierarchy
+   if (current === undefined) {
+    // resolve inheritance lookup in linearized fashion
+    const inheritsFromNames: string[] = currentContract.contract.inheritsFrom.reverse()
+    for (let i = 0; i < inheritsFromNames.length; i++) {
+     const res: FunctionCallGraph | undefined = resolveCallGraphSymbolInternal(callGraph, inheritsFromNames[i] + '.' + functionPart, true)
+     if (!(res === undefined)) return res
     }
+   }
   } else {
-    throw new Error('functionCallGraph.js: function does not have full qualified name.')
+   if (!silent) console.log(`static analysis functionCallGraph.js: Contract ${contractPart} not found in function call graph.`)
   }
-  if (current === undefined && !silent) console.log(`static analysis functionCallGraph.js: ${funcName} not found in function call graph.`)
-  if (current !== null) { return current }
+ } else {
+  throw new Error('functionCallGraph.js: function does not have full qualified name.')
+ }
+ if (current === undefined && !silent) console.log(`static analysis functionCallGraph.js: ${funcName} not found in function call graph.`)
+ if (current !== null) { return current }
 }

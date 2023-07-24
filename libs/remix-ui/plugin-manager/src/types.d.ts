@@ -12,9 +12,9 @@ interface SetPluginOptionType {
 }
 
 export class RemixEngine extends Engine {
-  event: EventEmitter
-  setPluginOption ({ name, kind }) : SetPluginOptionType
-  onRegistration (plugin) : void
+ event: EventEmitter
+ setPluginOption ({ name, kind }) : SetPluginOptionType
+ onRegistration (plugin) : void
 }
 
 export function isNative(name: any): any
@@ -30,31 +30,31 @@ export function isNative(name: any): any
  */
 export function canActivate(from: any, to: any): boolean
 export class RemixAppManager extends PluginManager {
-  constructor()
-  event: EventEmitter
-  pluginsDirectory: string
-  pluginLoader: PluginLoader // eslint-disable-line no-use-before-define
-  permissionHandler: PermissionHandler
-  getAll(): import('@remixproject/plugin-utils').Profile<any>[]
-  getIds(): string[]
-  isDependent(name: any): any
-  isRequired(name: any): any
-  registeredPlugins(): Promise<any>
-  turnPluginOn(name: string | string[])
-  turnPluginOff(name: string)
+ constructor()
+ event: EventEmitter
+ pluginsDirectory: string
+ pluginLoader: PluginLoader // eslint-disable-line no-use-before-define
+ permissionHandler: PermissionHandler
+ getAll(): import('@remixproject/plugin-utils').Profile<any>[]
+ getIds(): string[]
+ isDependent(name: any): any
+ isRequired(name: any): any
+ registeredPlugins(): Promise<any>
+ turnPluginOn(name: string | string[])
+ turnPluginOff(name: string)
 }
 
 export class PluginManagerSettings {
-  openDialog(): void
-  permissions: any
-  currentSetting: any
-  onValidation(): void
-  /** Clear one permission from a plugin */
-  clearPersmission(from: string, to: string, method: string): void
-  /** Clear all persmissions from a plugin */
-  clearAllPersmission(to: string): void
-  settings(): any
-  render(): any
+ openDialog(): void
+ permissions: any
+ currentSetting: any
+ onValidation(): void
+ /** Clear one permission from a plugin */
+ clearPersmission(from: string, to: string, method: string): void
+ /** Clear all persmissions from a plugin */
+ clearAllPersmission(to: string): void
+ settings(): any
+ render(): any
 }
 
 export type PluginPermissions = {
@@ -68,69 +68,69 @@ export type PluginPermissions = {
 }
 
 export class PluginManagerComponent extends ViewPlugin extends Plugin implements PluginBase {
-  constructor(appManager: RemixAppManager, engine: Engine)
-  appManager: RemixAppManager
-  pluginSettings: PluginManagerSettings
-  app: PluginApi<any> // eslint-disable-line no-undef
-  engine: Engine
-  htmlElement: HTMLDivElement
-  views: { root: null, items: Record<any, any> }
-  localPlugin: LocalPlugin // eslint-disable-line no-use-before-define
-  pluginNames: string[]
-  inactivePlugins: Profile[]
-  activePlugins: Profile[]
-  filter: string
-  isActive(name: string): boolean
-  activateP(name: string): void
-  deactivateP(name: string): void
-  onActivation(): void
-  renderComponent(): void
-  openLocalPlugin(): Promise<void>
-  render(): HTMLDivElement
-  getAndFilterPlugins: (filter?: string, profiles?: Profile[]) => void
-  triggerEngineEventListener: () => void
-  activateAndRegisterLocalPlugin: (localPlugin: IframePlugin | IframeReactPlugin | WebsocketPlugin) => Promise<void>
-  activeProfiles: string[]
-  _paq: any
+ constructor(appManager: RemixAppManager, engine: Engine)
+ appManager: RemixAppManager
+ pluginSettings: PluginManagerSettings
+ app: PluginApi<any> // eslint-disable-line no-undef
+ engine: Engine
+ htmlElement: HTMLDivElement
+ views: { root: null, items: Record<any, any> }
+ localPlugin: LocalPlugin // eslint-disable-line no-use-before-define
+ pluginNames: string[]
+ inactivePlugins: Profile[]
+ activePlugins: Profile[]
+ filter: string
+ isActive(name: string): boolean
+ activateP(name: string): void
+ deactivateP(name: string): void
+ onActivation(): void
+ renderComponent(): void
+ openLocalPlugin(): Promise<void>
+ render(): HTMLDivElement
+ getAndFilterPlugins: (filter?: string, profiles?: Profile[]) => void
+ triggerEngineEventListener: () => void
+ activateAndRegisterLocalPlugin: (localPlugin: IframePlugin | IframeReactPlugin | WebsocketPlugin) => Promise<void>
+ activeProfiles: string[]
+ _paq: any
 }
 
 // eslint-disable-next-line no-use-before-define
 export = LocalPlugin
 declare class LocalPlugin {
-  /**
+ /**
      * Open a modal to create a local plugin
      * @param {Profile[]} plugins The list of the plugins in the store
      * @returns {Promise<{api: any, profile: any}>} A promise with the new plugin profile
      */
-  open(plugins: any[]): Promise<{
+ open(plugins: any[]): Promise<{
         api: any
         profile: any
     }>
 
-  profile: any
-  /**
+ profile: any
+ /**
      * Create the object to add to the plugin-list
      */
-  create(): any
-  updateName({ target }: {
+ create(): any
+ updateName({ target }: {
         target: any
     }): void
 
-  updateUrl({ target }: {
+ updateUrl({ target }: {
         target: any
     }): void
 
-  updateDisplayName({ target }: {
+ updateDisplayName({ target }: {
         target: any
     }): void
 
-  updateProfile(key: any, e: any): void
-  updateMethods({ target }: {
+ updateProfile(key: any, e: any): void
+ updateMethods({ target }: {
         target: any
     }): void
 
-  /** The form to create a local plugin */
-  form(): any
+ /** The form to create a local plugin */
+ form(): any
 }
 
 export interface PluginManagerContextProviderProps {
@@ -147,12 +147,12 @@ export interface RemixUiPluginManagerProps {
  *  (localStorage, queryParams)
  **/
 declare class PluginLoader {
-  get currentLoader(): any
-  donotAutoReload: string[]
-  loaders: Record<any, any>
-  current: string
-  set(plugin: any, actives: any): void
-  get(): any
+ get currentLoader(): any
+ donotAutoReload: string[]
+ loaders: Record<any, any>
+ current: string
+ set(plugin: any, actives: any): void
+ get(): any
 }
 // eslint-disable-next-line no-redeclare
 export type PluginManagerSettings = {

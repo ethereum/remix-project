@@ -11,8 +11,8 @@ import * as sourceMappingDecoder from './source/sourceMappingDecoder'
 import * as traceHelper from './trace/traceHelper'
 
 const storage = {
-  StorageViewer: StorageViewer,
-  StorageResolver: StorageResolver
+ StorageViewer: StorageViewer,
+ StorageResolver: StorageResolver
 }
 /*
   Use of breakPointManager :
@@ -23,19 +23,19 @@ const storage = {
   this.debugger.setBreakpointManager(breakPointManager)
 */
 export {
-  init,
-  traceHelper,
-  sourceMappingDecoder,
-  EthDebugger,
-  TransactionDebugger,
-  /**
+ init,
+ traceHelper,
+ sourceMappingDecoder,
+ EthDebugger,
+ TransactionDebugger,
+ /**
    * constructor
    *
    * @param {Object} _debugger - type of EthDebugger
    * @return {Function} _locationToRowConverter - function implemented by editor which return a column/line position for a char source location
    */
-  BreakpointManager,
-  SolidityDecoder,
-  storage,
-  CmdLine
+ BreakpointManager,
+ SolidityDecoder,
+ storage,
+ CmdLine
 }

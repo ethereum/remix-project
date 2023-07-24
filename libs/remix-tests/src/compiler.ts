@@ -10,23 +10,23 @@ const logger = new Log()
 const log = logger.logger
 
 function regexIndexOf (inputString: string, regex: RegExp, startpos = 0) {
-  const indexOf = inputString.substring(startpos).search(regex)
-  return (indexOf >= 0) ? (indexOf + (startpos)) : indexOf
+ const indexOf = inputString.substring(startpos).search(regex)
+ return (indexOf >= 0) ? (indexOf + (startpos)) : indexOf
 }
 
 export function writeTestAccountsContract (accounts: string[]) {
   const testAccountContract = require('../sol/tests_accounts.sol') // eslint-disable-line
-  let body = ''
-  if (accounts.length) {
-    body = `address[${accounts.length}] memory accounts;`
-    accounts.map((address, index) => {
-      body += `\n\t\taccounts[${index}] = ${address};\n`
-    })
-    body += `return accounts[index];`
-  } else {
-    body = `return address(0);`
-  }  
-  return testAccountContract.replace('>accounts<', body)
+ let body = ''
+ if (accounts.length) {
+  body = `address[${accounts.length}] memory accounts;`
+  accounts.map((address, index) => {
+   body += `\n\t\taccounts[${index}] = ${address};\n`
+  })
+  body += `return accounts[index];`
+ } else {
+  body = `return address(0);`
+ }  
+ return testAccountContract.replace('>accounts<', body)
 }
 
 /**
@@ -35,7 +35,7 @@ export function writeTestAccountsContract (accounts: string[]) {
  */
 
 function isRemixTestFile (path: string) {
-  return ['tests.sol', 'remix_tests.sol', 'remix_accounts.sol'].some(name => path.includes(name))
+ return ['tests.sol', 'remix_tests.sol', 'remix_accounts.sol'].some(name => path.includes(name))
 }
 
 /**
@@ -50,21 +50,21 @@ function isRemixTestFile (path: string) {
  */
 
 function processFile (filePath: string, sources: SrcIfc, isRoot = false) {
-  const importRegEx = /import ['"](.+?)['"];/g
-  const isFileAlreadyInSources: boolean = Object.keys(sources).includes(filePath)
+ const importRegEx = /import ['"](.+?)['"];/g
+ const isFileAlreadyInSources: boolean = Object.keys(sources).includes(filePath)
 
-  // Return if file is a remix test file or already processed
-  if (isRemixTestFile(filePath) || isFileAlreadyInSources) { return }
+ // Return if file is a remix test file or already processed
+ if (isRemixTestFile(filePath) || isFileAlreadyInSources) { return }
 
-  let content: string = fs.readFileSync(filePath, { encoding: 'utf-8' })
-  const testFileImportRegEx = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
+ let content: string = fs.readFileSync(filePath, { encoding: 'utf-8' })
+ const testFileImportRegEx = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
 
-  // import 'remix_tests.sol', if file is a root test contract file and doesn't already have it
-  if (isRoot && filePath.endsWith('_test.sol') && regexIndexOf(content, testFileImportRegEx) < 0) {
-    const includeTestLibs = '\nimport \'remix_tests.sol\';\n'
-    content = includeTestLibs.concat(content)
-  }
-  sources[filePath] = { content }
+ // import 'remix_tests.sol', if file is a root test contract file and doesn't already have it
+ if (isRoot && filePath.endsWith('_test.sol') && regexIndexOf(content, testFileImportRegEx) < 0) {
+  const includeTestLibs = '\nimport \'remix_tests.sol\';\n'
+  content = includeTestLibs.concat(content)
+ }
+ sources[filePath] = { content }
 }
 
 const userAgent = (typeof (navigator) !== 'undefined') && navigator.userAgent ? navigator.userAgent.toLowerCase() : '-'
@@ -81,92 +81,92 @@ const isBrowser = !(typeof (window) === 'undefined' || userAgent.indexOf(' elect
  */
 
 export function compileFileOrFiles (filename: string, isDirectory: boolean, opts: any, compilerConfig: CompilerConfiguration, cb): void {
-  let compiler: any
-  const accounts: string[] = opts.accounts || []
-  const sources: SrcIfc = {
-    'tests.sol': { content: require('../sol/tests.sol') },
-    'remix_tests.sol': { content: require('../sol/tests.sol') },
-    'remix_accounts.sol': { content: writeTestAccountsContract(accounts) }
-  }
-  const filepath: string = (isDirectory ? filename : path.dirname(filename))
-  const importsCallback = (url, cb) => {
-    try {
-      if(fs.existsSync(url)) cb(null, fs.readFileSync(url, 'utf-8'))
-      else {
-        const urlResolver = new RemixURLResolver()
-        urlResolver.resolve(url).then((result) => cb(null, result.content)).catch((error) => cb(error.message))
-      }
-    } catch (e) {
-      cb(e.message)
-    }
-  }
+ let compiler: any
+ const accounts: string[] = opts.accounts || []
+ const sources: SrcIfc = {
+  'tests.sol': { content: require('../sol/tests.sol') },
+  'remix_tests.sol': { content: require('../sol/tests.sol') },
+  'remix_accounts.sol': { content: writeTestAccountsContract(accounts) }
+ }
+ const filepath: string = (isDirectory ? filename : path.dirname(filename))
+ const importsCallback = (url, cb) => {
   try {
-    if (!isDirectory && fs.existsSync(filename)) {
-      if (filename.split('.').pop() === 'sol') {
-        processFile(filename, sources, true)
-      } else {
-        throw new Error('Not a solidity file')
-      }
-    } else {
-      // walkSync only if it is a directory
-      let testFileCount = 0
-      fs.walkSync(filepath, (foundpath: string) => {
-        // only process .sol files
-        if (foundpath.split('.').pop() === 'sol' && foundpath.endsWith('_test.sol')) {
-          testFileCount++
-          processFile(foundpath, sources, true)
-        }
-      })
-      if (testFileCount > 0) {
-        log.info(`${testFileCount} Solidity test file${testFileCount === 1 ? '' : 's'} found`)
-      } else {
-        log.error('No Solidity test file found. Make sure your test file ends with \'_test.sol\'')
-        process.exit()
-      }
-    }
-  } catch (e) { // eslint-disable-line no-useless-catch
-    throw e
-  } finally {
-    async.waterfall([
-      function loadCompiler (next) {
-        compiler = new RemixCompiler(importsCallback)
-        if (compilerConfig) {
-          const { currentCompilerUrl, evmVersion, optimize, runs } = compilerConfig
-          if (evmVersion) compiler.set('evmVersion', evmVersion)
-          if (optimize) compiler.set('optimize', optimize)
-          if (runs) compiler.set('runs', runs)
-          if (currentCompilerUrl) {
-            compiler.loadRemoteVersion(currentCompilerUrl)
-            compiler.event.register('compilerLoaded', this, function (version, license) {
-              next()
-            })
-          } else {
-            compiler.onInternalCompilerLoaded()
-            next()
-          }
-        } else {
-          compiler.onInternalCompilerLoaded()
-          next()
-        }
-      },
-      function doCompilation (next) {
-        // @ts-ignore
-        compiler.event.register('compilationFinished', this, (success, data, source, input, version) => {
-          next(null, data)
-        })
-        compiler.compile(sources, filepath)
-      }
-    ], function (err: Error | null | undefined, result: any) {
-      const error: Error[] = []
-      if (result.error) error.push(result.error)
-      const errors = (result.errors || error).filter((e) => e.type === 'Error' || e.severity === 'error')
-      if (errors.length > 0) {
-        if (!isBrowser) require('signale').fatal(errors) // eslint-disable-line
-        return cb(new CompilationErrors(errors))
-      }
-      cb(err, result.contracts, result.sources) // return callback with contract details & ASTs
-    })
+   if(fs.existsSync(url)) cb(null, fs.readFileSync(url, 'utf-8'))
+   else {
+    const urlResolver = new RemixURLResolver()
+    urlResolver.resolve(url).then((result) => cb(null, result.content)).catch((error) => cb(error.message))
+   }
+  } catch (e) {
+   cb(e.message)
   }
+ }
+ try {
+  if (!isDirectory && fs.existsSync(filename)) {
+   if (filename.split('.').pop() === 'sol') {
+    processFile(filename, sources, true)
+   } else {
+    throw new Error('Not a solidity file')
+   }
+  } else {
+   // walkSync only if it is a directory
+   let testFileCount = 0
+   fs.walkSync(filepath, (foundpath: string) => {
+    // only process .sol files
+    if (foundpath.split('.').pop() === 'sol' && foundpath.endsWith('_test.sol')) {
+     testFileCount++
+     processFile(foundpath, sources, true)
+    }
+   })
+   if (testFileCount > 0) {
+    log.info(`${testFileCount} Solidity test file${testFileCount === 1 ? '' : 's'} found`)
+   } else {
+    log.error('No Solidity test file found. Make sure your test file ends with \'_test.sol\'')
+    process.exit()
+   }
+  }
+ } catch (e) { // eslint-disable-line no-useless-catch
+  throw e
+ } finally {
+  async.waterfall([
+   function loadCompiler (next) {
+    compiler = new RemixCompiler(importsCallback)
+    if (compilerConfig) {
+     const { currentCompilerUrl, evmVersion, optimize, runs } = compilerConfig
+     if (evmVersion) compiler.set('evmVersion', evmVersion)
+     if (optimize) compiler.set('optimize', optimize)
+     if (runs) compiler.set('runs', runs)
+     if (currentCompilerUrl) {
+      compiler.loadRemoteVersion(currentCompilerUrl)
+      compiler.event.register('compilerLoaded', this, function (version, license) {
+       next()
+      })
+     } else {
+      compiler.onInternalCompilerLoaded()
+      next()
+     }
+    } else {
+     compiler.onInternalCompilerLoaded()
+     next()
+    }
+   },
+   function doCompilation (next) {
+    // @ts-ignore
+    compiler.event.register('compilationFinished', this, (success, data, source, input, version) => {
+     next(null, data)
+    })
+    compiler.compile(sources, filepath)
+   }
+  ], function (err: Error | null | undefined, result: any) {
+   const error: Error[] = []
+   if (result.error) error.push(result.error)
+   const errors = (result.errors || error).filter((e) => e.type === 'Error' || e.severity === 'error')
+   if (errors.length > 0) {
+        if (!isBrowser) require('signale').fatal(errors) // eslint-disable-line
+    return cb(new CompilationErrors(errors))
+   }
+   cb(err, result.contracts, result.sources) // return callback with contract details & ASTs
+  })
+ }
 }
 
 /**
@@ -178,57 +178,57 @@ export function compileFileOrFiles (filename: string, isDirectory: boolean, opts
  * @param cb Callback
  */
 export function compileContractSources (sources: SrcIfc, newCompConfig: any, importFileCb, UTRunner, opts: any, cb): void {
-  let compiler
-  const filepath = opts.testFilePath || ''
-  const testFileImportRegEx = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
+ let compiler
+ const filepath = opts.testFilePath || ''
+ const testFileImportRegEx = /^(import)\s['"](remix_tests.sol|tests.sol)['"];/gm
 
-  const includeTestLibs = '\nimport \'remix_tests.sol\';\n'
-  for (const file in sources) {
-    const c: string = sources[file].content
-    if (file.endsWith('_test.sol') && c && regexIndexOf(c, testFileImportRegEx) < 0) {
-      sources[file].content = includeTestLibs.concat(c)
-    }
+ const includeTestLibs = '\nimport \'remix_tests.sol\';\n'
+ for (const file in sources) {
+  const c: string = sources[file].content
+  if (file.endsWith('_test.sol') && c && regexIndexOf(c, testFileImportRegEx) < 0) {
+   sources[file].content = includeTestLibs.concat(c)
   }
+ }
 
-  async.waterfall([
-    (next) => {
-      if (!compiler || !deepequal(UTRunner.compilerConfig, newCompConfig)) {
-        UTRunner.compilerConfig = newCompConfig
-        const { currentCompilerUrl, evmVersion, optimize, runs, usingWorker } = newCompConfig
-        compiler = new RemixCompiler(importFileCb)
-        compiler.set('evmVersion', evmVersion)
-        compiler.set('optimize', optimize)
-        compiler.set('runs', runs)
-        compiler.loadVersion(usingWorker, currentCompilerUrl)
-        // @ts-ignore
-        compiler.event.register('compilerLoaded', this, (version, license) => {
-          next()
-        })
-      } else {
-        compiler = UTRunner.compiler
-        next()
-      }
-    },
-    (next) => {
-      const compilationFinishedCb = (success, data, source, input, version) => {
-        // data.error usually exists for exceptions like worker error etc.
-        if (!data.error) UTRunner.compiler = compiler
-        if (opts && opts.event) opts.event.emit('compilationFinished', success, data, source, input, version)
-        next(null, data)
-      }
-      compiler.event.unregister('compilationFinished', compilationFinishedCb)
-      // @ts-ignore
-      compiler.event.register('compilationFinished', compilationFinishedCb)
-      compiler.compile(sources, filepath)
-    }
-  ], function (err: Error | null | undefined, result: any) {
-    const error: Error[] = []
-    if (result.error) error.push(result.error)
-    const errors = (result.errors || error).filter((e) => e.type === 'Error' || e.severity === 'error')
-    if (errors.length > 0) {
+ async.waterfall([
+  (next) => {
+   if (!compiler || !deepequal(UTRunner.compilerConfig, newCompConfig)) {
+    UTRunner.compilerConfig = newCompConfig
+    const { currentCompilerUrl, evmVersion, optimize, runs, usingWorker } = newCompConfig
+    compiler = new RemixCompiler(importFileCb)
+    compiler.set('evmVersion', evmVersion)
+    compiler.set('optimize', optimize)
+    compiler.set('runs', runs)
+    compiler.loadVersion(usingWorker, currentCompilerUrl)
+    // @ts-ignore
+    compiler.event.register('compilerLoaded', this, (version, license) => {
+     next()
+    })
+   } else {
+    compiler = UTRunner.compiler
+    next()
+   }
+  },
+  (next) => {
+   const compilationFinishedCb = (success, data, source, input, version) => {
+    // data.error usually exists for exceptions like worker error etc.
+    if (!data.error) UTRunner.compiler = compiler
+    if (opts && opts.event) opts.event.emit('compilationFinished', success, data, source, input, version)
+    next(null, data)
+   }
+   compiler.event.unregister('compilationFinished', compilationFinishedCb)
+   // @ts-ignore
+   compiler.event.register('compilationFinished', compilationFinishedCb)
+   compiler.compile(sources, filepath)
+  }
+ ], function (err: Error | null | undefined, result: any) {
+  const error: Error[] = []
+  if (result.error) error.push(result.error)
+  const errors = (result.errors || error).filter((e) => e.type === 'Error' || e.severity === 'error')
+  if (errors.length > 0) {
       if (!isBrowser) require('signale').fatal(errors) // eslint-disable-line
-      return cb(new CompilationErrors(errors))
-    }
-    cb(err, result.contracts, result.sources) // return callback with contract details & ASTs
-  })
+   return cb(new CompilationErrors(errors))
+  }
+  cb(err, result.contracts, result.sources) // return callback with contract details & ASTs
+ })
 }

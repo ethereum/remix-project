@@ -11,23 +11,23 @@ import { Modal, Network, RunTabProps, Tx } from './types'
 import { ContractData } from '@remix-project/core-plugin'
 import { runTabInitialState, runTabReducer } from './reducers/runTab'
 import {
-  initRunTab, setAccountAddress,
-  setUnitValue, setGasFeeAmount,
-  setExecutionEnvironment,
-  hideToaster, createNewAddress,
-  setPassphraseModal, setMatchPassphraseModal,
-  signMessage, fetchSelectedContract,
-  createNewInstance, setSendValue,
-  setBaseFeePerGas, setConfirmSettings,
-  setGasPrice, setGasPriceStatus,
-  setMaxFee, setMaxPriorityFee,
-  removeInstances,
-  removeSingleInstance, getExecutionContext,
-  executeTransactions, loadFromAddress,
-  storeNewScenario, runScenario,
-  setScenarioPath, getFuncABIValues,
-  setNetworkName, updateSelectedContract,
-  syncContracts, isValidProxyAddress, isValidProxyUpgrade
+ initRunTab, setAccountAddress,
+ setUnitValue, setGasFeeAmount,
+ setExecutionEnvironment,
+ hideToaster, createNewAddress,
+ setPassphraseModal, setMatchPassphraseModal,
+ signMessage, fetchSelectedContract,
+ createNewInstance, setSendValue,
+ setBaseFeePerGas, setConfirmSettings,
+ setGasPrice, setGasPriceStatus,
+ setMaxFee, setMaxPriorityFee,
+ removeInstances,
+ removeSingleInstance, getExecutionContext,
+ executeTransactions, loadFromAddress,
+ storeNewScenario, runScenario,
+ setScenarioPath, getFuncABIValues,
+ setNetworkName, updateSelectedContract,
+ syncContracts, isValidProxyAddress, isValidProxyUpgrade
 } from './actions'
 import './css/run-tab.css'
 import { PublishToStorage } from '@remix-ui/publish-to-storage'
@@ -37,244 +37,244 @@ import { ScenarioPrompt } from './components/scenario'
 import { setIpfsCheckedState, setRemixDActivated } from './actions/payload'
 
 export function RunTabUI (props: RunTabProps) {
-  const { plugin } = props
-  const [focusModal, setFocusModal] = useState<Modal>({
-    hide: true,
-    title: '',
-    message: '',
-    okLabel: '',
-    okFn: () => {},
-    cancelLabel: '',
-    cancelFn: () => {}
-  })
-  const [modals, setModals] = useState<Modal[]>([])
-  const [focusToaster, setFocusToaster] = useState<string>('')
-  const [toasters, setToasters] = useState<string[]>([])
-  const [publishData, setPublishData] = useState<{
+ const { plugin } = props
+ const [focusModal, setFocusModal] = useState<Modal>({
+  hide: true,
+  title: '',
+  message: '',
+  okLabel: '',
+  okFn: () => {},
+  cancelLabel: '',
+  cancelFn: () => {}
+ })
+ const [modals, setModals] = useState<Modal[]>([])
+ const [focusToaster, setFocusToaster] = useState<string>('')
+ const [toasters, setToasters] = useState<string[]>([])
+ const [publishData, setPublishData] = useState<{
     storage: 'ipfs' | 'swarm',
     contract: ContractData
   }>({
-    storage: null,
-    contract: null
+   storage: null,
+   contract: null
   })
-  runTabInitialState.selectExEnv = plugin.blockchain.getProvider()
-  const [runTab, dispatch] = useReducer(runTabReducer, runTabInitialState)
-  const REACT_API = { runTab }
-  const currentfile = plugin.config.get('currentFile')
+ runTabInitialState.selectExEnv = plugin.blockchain.getProvider()
+ const [runTab, dispatch] = useReducer(runTabReducer, runTabInitialState)
+ const REACT_API = { runTab }
+ const currentfile = plugin.config.get('currentFile')
 
-  useEffect(() => {
-    initRunTab(plugin)(dispatch)
-    plugin.onInitDone()
-  }, [plugin])
+ useEffect(() => {
+  initRunTab(plugin)(dispatch)
+  plugin.onInitDone()
+ }, [plugin])
 
-  useEffect(() => {
-    plugin.onReady(runTab)
-  }, [REACT_API])
+ useEffect(() => {
+  plugin.onReady(runTab)
+ }, [REACT_API])
 
-  useEffect(() => {
-    if (modals.length > 0) {
-      setFocusModal(() => {
-        const focusModal = {
-          hide: false,
-          title: modals[0].title,
-          message: modals[0].message,
-          okLabel: modals[0].okLabel,
-          okFn: modals[0].okFn,
-          cancelLabel: modals[0].cancelLabel,
-          cancelFn: modals[0].cancelFn,
-          okBtnClass: modals[0].okBtnClass,
-          cancelBtnClass: modals[0].cancelBtnClass
-        }
-        return focusModal
-      })
-      const modalList = modals.slice()
-
-      modalList.shift()
-      setModals(modalList)
+ useEffect(() => {
+  if (modals.length > 0) {
+   setFocusModal(() => {
+    const focusModal = {
+     hide: false,
+     title: modals[0].title,
+     message: modals[0].message,
+     okLabel: modals[0].okLabel,
+     okFn: modals[0].okFn,
+     cancelLabel: modals[0].cancelLabel,
+     cancelFn: modals[0].cancelFn,
+     okBtnClass: modals[0].okBtnClass,
+     cancelBtnClass: modals[0].cancelBtnClass
     }
-  }, [modals])
+    return focusModal
+   })
+   const modalList = modals.slice()
 
-  useEffect(() => {
-    if (runTab.notification.title) {
-      modal(runTab.notification.title, runTab.notification.message, runTab.notification.labelOk, runTab.notification.actionOk, runTab.notification.labelCancel, runTab.notification.actionCancel)
-    }
-  }, [runTab.notification])
-
-  useEffect(() => {
-    if (toasters.length > 0) {
-      setFocusToaster(() => {
-        return toasters[0]
-      })
-      const toasterList = toasters.slice()
-
-      toasterList.shift()
-      setToasters(toasterList)
-    }
-  }, [toasters])
-
-  useEffect(() => {
-    if (runTab.popup) {
-      toast(runTab.popup)
-    }
-  }, [runTab.popup])
-
-  const setCheckIpfs = (value: boolean) => {
-    dispatch(setIpfsCheckedState(value))
+   modalList.shift()
+   setModals(modalList)
   }
+ }, [modals])
 
-  const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, okBtnClass?: string, cancelBtnClass?: string) => {
-    setModals(modals => {
-      modals.push({ message, title, okLabel, okFn, cancelLabel, cancelFn, okBtnClass, cancelBtnClass })
-      return [...modals]
-    })
+ useEffect(() => {
+  if (runTab.notification.title) {
+   modal(runTab.notification.title, runTab.notification.message, runTab.notification.labelOk, runTab.notification.actionOk, runTab.notification.labelCancel, runTab.notification.actionCancel)
   }
+ }, [runTab.notification])
 
-  const handleHideModal = () => {
-    setFocusModal(modal => {
-      return { ...modal, hide: true, message: null }
-    })
+ useEffect(() => {
+  if (toasters.length > 0) {
+   setFocusToaster(() => {
+    return toasters[0]
+   })
+   const toasterList = toasters.slice()
+
+   toasterList.shift()
+   setToasters(toasterList)
   }
+ }, [toasters])
 
-  const handleToaster = () => {
-    setFocusToaster('')
-    hideToaster()
+ useEffect(() => {
+  if (runTab.popup) {
+   toast(runTab.popup)
   }
+ }, [runTab.popup])
 
-  const toast = (toasterMsg: string) => {
-    setToasters(messages => {
-      messages.push(toasterMsg)
-      return [...messages]
-    })
-  }
+ const setCheckIpfs = (value: boolean) => {
+  dispatch(setIpfsCheckedState(value))
+ }
 
-  const resetStorage = () => {
-    setPublishData({
-      storage: null,
-      contract: null
-    })
-  }
+ const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, okBtnClass?: string, cancelBtnClass?: string) => {
+  setModals(modals => {
+   modals.push({ message, title, okLabel, okFn, cancelLabel, cancelFn, okBtnClass, cancelBtnClass })
+   return [...modals]
+  })
+ }
 
-  const publishToStorage = (storage: 'ipfs' | 'swarm', contract: ContractData) => {
-    setPublishData({
-      storage,
-      contract
-    })
-  }
+ const handleHideModal = () => {
+  setFocusModal(modal => {
+   return { ...modal, hide: true, message: null }
+  })
+ }
 
-  const gasEstimationPrompt = (msg: string) => {
-    return (
-      <div>Gas estimation errored with the following message (see below). The transaction execution will likely fail. Do you want to force sending? <br />
-        {msg}
-      </div>
-    )
-  }
+ const handleToaster = () => {
+  setFocusToaster('')
+  hideToaster()
+ }
 
-  const passphrasePrompt = (message: string) => {
-    return <PassphrasePrompt message={message} setPassphrase={setPassphraseModal} defaultValue={runTab.passphrase} />
-  }
+ const toast = (toasterMsg: string) => {
+  setToasters(messages => {
+   messages.push(toasterMsg)
+   return [...messages]
+  })
+ }
 
-  const scenarioPrompt = (message: string, defaultValue) => {
-    return <ScenarioPrompt message={message} setScenarioPath={setScenarioPath} defaultValue={defaultValue} />
-  }
+ const resetStorage = () => {
+  setPublishData({
+   storage: null,
+   contract: null
+  })
+ }
 
-  const mainnetPrompt = (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => {
-    return <MainnetPrompt
-      init={determineGasPrice}
-      network={network}
-      tx={tx}
-      amount={amount}
-      gasEstimation={gasEstimation}
-      setNewGasPrice={gasFees}
-      updateBaseFeePerGas={setBaseFeePerGas}
-      updateConfirmSettings={setConfirmSettings}
-      updateGasPrice={setGasPrice}
-      updateGasPriceStatus={setGasPriceStatus}
-      updateMaxFee={setMaxFee}
-      updateMaxPriorityFee={setMaxPriorityFee}
-      maxFee={runTab.maxFee}
-      maxPriorityFee={runTab.maxPriorityFee}
-    />
-  }
+ const publishToStorage = (storage: 'ipfs' | 'swarm', contract: ContractData) => {
+  setPublishData({
+   storage,
+   contract
+  })
+ }
 
+ const gasEstimationPrompt = (msg: string) => {
   return (
-    <Fragment>
-      <div className="udapp_runTabView run-tab" id="runTabView" data-id="runTabView">
-        <div className="list-group list-group-flush">
-          <SettingsUI
-            networkName={runTab.networkName}
-            personalMode={runTab.personalMode}
-            selectExEnv={runTab.selectExEnv}
-            accounts={runTab.accounts}
-            setAccount={setAccountAddress}
-            setUnit={setUnitValue}
-            sendValue={runTab.sendValue}
-            setSendValue={setSendValue}
-            sendUnit={runTab.sendUnit}
-            gasLimit={runTab.gasLimit}
-            setGasFee={setGasFeeAmount}
-            providers={runTab.providers}
-            setExecutionContext={setExecutionEnvironment}
-            createNewBlockchainAccount={createNewAddress}
-            setPassphrase={setPassphraseModal}
-            setMatchPassphrase={setMatchPassphraseModal}
-            modal={modal}
-            tooltip={toast}
-            signMessageWithAddress={signMessage}
-            passphrase={runTab.passphrase}
-          />
-          <ContractDropdownUI
-            selectedAccount={runTab.accounts.selectedAccount}
-            syncContracts={syncContracts}
-            exEnvironment={runTab.selectExEnv}
-            contracts={runTab.contracts}
-            getSelectedContract={fetchSelectedContract}
-            modal={modal}
-            passphrase={runTab.passphrase}
-            setPassphrase={setPassphraseModal}
-            createInstance={createNewInstance}
-            ipfsCheckedState={runTab.ipfsChecked}
-            setIpfsCheckedState={setCheckIpfs}
-            publishToStorage={publishToStorage}
-            gasEstimationPrompt={gasEstimationPrompt}
-            passphrasePrompt={passphrasePrompt}
-            mainnetPrompt={mainnetPrompt}
-            tooltip={toast}
-            loadAddress={loadFromAddress}
-            networkName={runTab.networkName}
-            setNetworkName={setNetworkName}
-            setSelectedContract={updateSelectedContract}
-            remixdActivated={runTab.remixdActivated}
-            isValidProxyAddress={isValidProxyAddress}
-            isValidProxyUpgrade={isValidProxyUpgrade}
-            proxy={runTab.proxy}
-          />
-          <RecorderUI
-            gasEstimationPrompt={gasEstimationPrompt}
-            passphrasePrompt={passphrasePrompt}
-            mainnetPrompt={mainnetPrompt}
-            storeScenario={storeNewScenario}
-            runCurrentScenario={runScenario}
-            scenarioPrompt={scenarioPrompt}
-            count={runTab.recorder.transactionCount}
-            currentFile={currentfile}
-          />
-          <InstanceContainerUI
-            instances={runTab.instances}
-            clearInstances={removeInstances}
-            removeInstance={removeSingleInstance}
-            getContext={getExecutionContext}
-            gasEstimationPrompt={gasEstimationPrompt}
-            passphrasePrompt={passphrasePrompt}
-            mainnetPrompt={mainnetPrompt}
-            runTransactions={executeTransactions}
-            sendValue={runTab.sendValue}
-            getFuncABIInputs={getFuncABIValues}
-          />
-        </div>
-      </div>
-      <ModalDialog id='udappNotify' { ...focusModal } handleHide={ handleHideModal } />
-      <Toaster message={focusToaster} handleHide={handleToaster} />
-      <PublishToStorage id='udapp' api={plugin} resetStorage={resetStorage} storage={publishData.storage} contract={publishData.contract} />
-    </Fragment>
+   <div>Gas estimation errored with the following message (see below). The transaction execution will likely fail. Do you want to force sending? <br />
+    {msg}
+   </div>
   )
+ }
+
+ const passphrasePrompt = (message: string) => {
+  return <PassphrasePrompt message={message} setPassphrase={setPassphraseModal} defaultValue={runTab.passphrase} />
+ }
+
+ const scenarioPrompt = (message: string, defaultValue) => {
+  return <ScenarioPrompt message={message} setScenarioPath={setScenarioPath} defaultValue={defaultValue} />
+ }
+
+ const mainnetPrompt = (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => {
+  return <MainnetPrompt
+   init={determineGasPrice}
+   network={network}
+   tx={tx}
+   amount={amount}
+   gasEstimation={gasEstimation}
+   setNewGasPrice={gasFees}
+   updateBaseFeePerGas={setBaseFeePerGas}
+   updateConfirmSettings={setConfirmSettings}
+   updateGasPrice={setGasPrice}
+   updateGasPriceStatus={setGasPriceStatus}
+   updateMaxFee={setMaxFee}
+   updateMaxPriorityFee={setMaxPriorityFee}
+   maxFee={runTab.maxFee}
+   maxPriorityFee={runTab.maxPriorityFee}
+  />
+ }
+
+ return (
+  <Fragment>
+   <div className="udapp_runTabView run-tab" id="runTabView" data-id="runTabView">
+    <div className="list-group list-group-flush">
+     <SettingsUI
+      networkName={runTab.networkName}
+      personalMode={runTab.personalMode}
+      selectExEnv={runTab.selectExEnv}
+      accounts={runTab.accounts}
+      setAccount={setAccountAddress}
+      setUnit={setUnitValue}
+      sendValue={runTab.sendValue}
+      setSendValue={setSendValue}
+      sendUnit={runTab.sendUnit}
+      gasLimit={runTab.gasLimit}
+      setGasFee={setGasFeeAmount}
+      providers={runTab.providers}
+      setExecutionContext={setExecutionEnvironment}
+      createNewBlockchainAccount={createNewAddress}
+      setPassphrase={setPassphraseModal}
+      setMatchPassphrase={setMatchPassphraseModal}
+      modal={modal}
+      tooltip={toast}
+      signMessageWithAddress={signMessage}
+      passphrase={runTab.passphrase}
+     />
+     <ContractDropdownUI
+      selectedAccount={runTab.accounts.selectedAccount}
+      syncContracts={syncContracts}
+      exEnvironment={runTab.selectExEnv}
+      contracts={runTab.contracts}
+      getSelectedContract={fetchSelectedContract}
+      modal={modal}
+      passphrase={runTab.passphrase}
+      setPassphrase={setPassphraseModal}
+      createInstance={createNewInstance}
+      ipfsCheckedState={runTab.ipfsChecked}
+      setIpfsCheckedState={setCheckIpfs}
+      publishToStorage={publishToStorage}
+      gasEstimationPrompt={gasEstimationPrompt}
+      passphrasePrompt={passphrasePrompt}
+      mainnetPrompt={mainnetPrompt}
+      tooltip={toast}
+      loadAddress={loadFromAddress}
+      networkName={runTab.networkName}
+      setNetworkName={setNetworkName}
+      setSelectedContract={updateSelectedContract}
+      remixdActivated={runTab.remixdActivated}
+      isValidProxyAddress={isValidProxyAddress}
+      isValidProxyUpgrade={isValidProxyUpgrade}
+      proxy={runTab.proxy}
+     />
+     <RecorderUI
+      gasEstimationPrompt={gasEstimationPrompt}
+      passphrasePrompt={passphrasePrompt}
+      mainnetPrompt={mainnetPrompt}
+      storeScenario={storeNewScenario}
+      runCurrentScenario={runScenario}
+      scenarioPrompt={scenarioPrompt}
+      count={runTab.recorder.transactionCount}
+      currentFile={currentfile}
+     />
+     <InstanceContainerUI
+      instances={runTab.instances}
+      clearInstances={removeInstances}
+      removeInstance={removeSingleInstance}
+      getContext={getExecutionContext}
+      gasEstimationPrompt={gasEstimationPrompt}
+      passphrasePrompt={passphrasePrompt}
+      mainnetPrompt={mainnetPrompt}
+      runTransactions={executeTransactions}
+      sendValue={runTab.sendValue}
+      getFuncABIInputs={getFuncABIValues}
+     />
+    </div>
+   </div>
+   <ModalDialog id='udappNotify' { ...focusModal } handleHide={ handleHideModal } />
+   <Toaster message={focusToaster} handleHide={handleToaster} />
+   <PublishToStorage id='udapp' api={plugin} resetStorage={resetStorage} storage={publishData.storage} contract={publishData.contract} />
+  </Fragment>
+ )
 }

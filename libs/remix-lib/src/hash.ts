@@ -9,24 +9,24 @@ import { toBuffer, setLengthLeft, isHexString } from '@ethereumjs/util'
  * @param bits (number = 256) The Keccak width
  */
 export const keccak = function(a: Buffer, bits: number = 256): Buffer {
-  assertIsBuffer(a)
-  switch (bits) {
-  case 224: {
-    return toBuffer(keccak224(a))
-  }
-  case 256: {
-    return toBuffer(k256(a))
-  }
-  case 384: {
-    return toBuffer(keccak384(a))
-  }
-  case 512: {
-    return toBuffer(keccak512(a))
-  }
-  default: {
-    throw new Error(`Invald algorithm: keccak${bits}`)
-  }
-  }
+ assertIsBuffer(a)
+ switch (bits) {
+ case 224: {
+  return toBuffer(keccak224(a))
+ }
+ case 256: {
+  return toBuffer(k256(a))
+ }
+ case 384: {
+  return toBuffer(keccak384(a))
+ }
+ case 512: {
+  return toBuffer(keccak512(a))
+ }
+ default: {
+  throw new Error(`Invald algorithm: keccak${bits}`)
+ }
+ }
 }
 
 /**
@@ -34,7 +34,7 @@ export const keccak = function(a: Buffer, bits: number = 256): Buffer {
  * @param a The input data (Buffer)
  */
 export const keccak256 = function(a: Buffer): Buffer {
-  return keccak(a)
+ return keccak(a)
 }
 
 /**
@@ -43,9 +43,9 @@ export const keccak256 = function(a: Buffer): Buffer {
  * @param bits (number = 256) The Keccak width
  */
 export const keccakFromString = function(a: string, bits: number = 256) {
-  assertIsString(a)
-  const buf = Buffer.from(a, 'utf8')
-  return keccak(buf, bits)
+ assertIsString(a)
+ const buf = Buffer.from(a, 'utf8')
+ return keccak(buf, bits)
 }
 
 /**
@@ -54,8 +54,8 @@ export const keccakFromString = function(a: string, bits: number = 256) {
  * @param bits (number = 256) The Keccak width
  */
 export const keccakFromHexString = function(a: string, bits: number = 256) {
-  assertIsHexString(a)
-  return keccak(toBuffer(a), bits)
+ assertIsHexString(a)
+ return keccak(toBuffer(a), bits)
 }
 
 /**
@@ -64,8 +64,8 @@ export const keccakFromHexString = function(a: string, bits: number = 256) {
  * @param bits (number = 256) The Keccak width
  */
 export const keccakFromArray = function(a: number[], bits: number = 256) {
-  assertIsArray(a)
-  return keccak(toBuffer(a), bits)
+ assertIsArray(a)
+ return keccak(toBuffer(a), bits)
 }
 
 /**
@@ -73,10 +73,10 @@ export const keccakFromArray = function(a: number[], bits: number = 256) {
  * @param  a The input data (Buffer|Array|String)
  */
 const _sha256 = function(a: any): Buffer {
-  a = toBuffer(a)
-  return createHash('sha256')
-    .update(a)
-    .digest()
+ a = toBuffer(a)
+ return createHash('sha256')
+  .update(a)
+  .digest()
 }
 
 /**
@@ -84,8 +84,8 @@ const _sha256 = function(a: any): Buffer {
  * @param a The input data (Buffer)
  */
 export const sha256 = function(a: Buffer): Buffer {
-  assertIsBuffer(a)
-  return _sha256(a)
+ assertIsBuffer(a)
+ return _sha256(a)
 }
 
 /**
@@ -93,8 +93,8 @@ export const sha256 = function(a: Buffer): Buffer {
  * @param a The input data (string)
  */
 export const sha256FromString = function(a: string): Buffer {
-  assertIsString(a)
-  return _sha256(a)
+ assertIsString(a)
+ return _sha256(a)
 }
 
 /**
@@ -102,8 +102,8 @@ export const sha256FromString = function(a: string): Buffer {
  * @param a The input data (number[])
  */
 export const sha256FromArray = function(a: number[]): Buffer {
-  assertIsArray(a)
-  return _sha256(a)
+ assertIsArray(a)
+ return _sha256(a)
 }
 
 /**
@@ -112,15 +112,15 @@ export const sha256FromArray = function(a: number[]): Buffer {
  * @param padded Whether it should be padded to 256 bits or not
  */
 const _ripemd160 = function(a: any, padded: boolean): Buffer {
-  a = toBuffer(a)
-  const hash = createHash('rmd160')
-    .update(a)
-    .digest()
-  if (padded === true) {
-    return setLengthLeft(hash, 32)
-  } else {
-    return hash
-  }
+ a = toBuffer(a)
+ const hash = createHash('rmd160')
+  .update(a)
+  .digest()
+ if (padded === true) {
+  return setLengthLeft(hash, 32)
+ } else {
+  return hash
+ }
 }
 
 /**
@@ -129,8 +129,8 @@ const _ripemd160 = function(a: any, padded: boolean): Buffer {
  * @param padded Whether it should be padded to 256 bits or not
  */
 export const ripemd160 = function(a: Buffer, padded: boolean): Buffer {
-  assertIsBuffer(a)
-  return _ripemd160(a, padded)
+ assertIsBuffer(a)
+ return _ripemd160(a, padded)
 }
 
 /**
@@ -139,8 +139,8 @@ export const ripemd160 = function(a: Buffer, padded: boolean): Buffer {
  * @param padded Whether it should be padded to 256 bits or not
  */
 export const ripemd160FromString = function(a: string, padded: boolean): Buffer {
-  assertIsString(a)
-  return _ripemd160(a, padded)
+ assertIsString(a)
+ return _ripemd160(a, padded)
 }
 
 /**
@@ -149,8 +149,8 @@ export const ripemd160FromString = function(a: string, padded: boolean): Buffer 
  * @param padded Whether it should be padded to 256 bits or not
  */
 export const ripemd160FromArray = function(a: number[], padded: boolean): Buffer {
-  assertIsArray(a)
-  return _ripemd160(a, padded)
+ assertIsArray(a)
+ return _ripemd160(a, padded)
 }
 
 /**
@@ -158,7 +158,7 @@ export const ripemd160FromArray = function(a: number[], padded: boolean): Buffer
  * @param a The input data
  */
 export const rlphash = function(a: Input): Buffer {
-  return keccak(encode(a))
+ return keccak(encode(a))
 }
 
 /**
@@ -166,10 +166,10 @@ export const rlphash = function(a: Input): Buffer {
  * @param {string} input string to check hex prefix of
  */
 export const assertIsHexString = function(input: string): void {
-  if (!isHexString(input)) {
-    const msg = `This method only supports 0x-prefixed hex strings but input was: ${input}`
-    throw new Error(msg)
-  }
+ if (!isHexString(input)) {
+  const msg = `This method only supports 0x-prefixed hex strings but input was: ${input}`
+  throw new Error(msg)
+ }
 }
 
 /**
@@ -177,10 +177,10 @@ export const assertIsHexString = function(input: string): void {
  * @param {Buffer} input value to check
  */
 export const assertIsBuffer = function(input: Buffer): void {
-  if (!Buffer.isBuffer(input)) {
-    const msg = `This method only supports Buffer but input was: ${input}`
-    throw new Error(msg)
-  }
+ if (!Buffer.isBuffer(input)) {
+  const msg = `This method only supports Buffer but input was: ${input}`
+  throw new Error(msg)
+ }
 }
 
 /**
@@ -188,10 +188,10 @@ export const assertIsBuffer = function(input: Buffer): void {
  * @param {number[]} input value to check
  */
 export const assertIsArray = function(input: number[]): void {
-  if (!Array.isArray(input)) {
-    const msg = `This method only supports number arrays but input was: ${input}`
-    throw new Error(msg)
-  }
+ if (!Array.isArray(input)) {
+  const msg = `This method only supports number arrays but input was: ${input}`
+  throw new Error(msg)
+ }
 }
 
 /**
@@ -199,8 +199,8 @@ export const assertIsArray = function(input: number[]): void {
  * @param {string} input value to check
  */
 export const assertIsString = function(input: string): void {
-  if (typeof input !== 'string') {
-    const msg = `This method only supports strings but input was: ${input}`
-    throw new Error(msg)
-  }
+ if (typeof input !== 'string') {
+  const msg = `This method only supports strings but input was: ${input}`
+  throw new Error(msg)
+ }
 }

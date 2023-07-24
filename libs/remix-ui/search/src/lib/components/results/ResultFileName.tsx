@@ -7,28 +7,28 @@ interface ResultItemProps {
 }
 
 export const ResultFileName = (props: ResultItemProps) => {
-  const [icon, setIcon] = useState<string>('')
+ const [icon, setIcon] = useState<string>('')
 
-  useEffect(() => {
-    if (props.file && props.file.path) {
-      setIcon(getPathIcon(props.file.path))
-    }
-  }, [props.file])
+ useEffect(() => {
+  if (props.file && props.file.path) {
+   setIcon(getPathIcon(props.file.path))
+  }
+ }, [props.file])
 
-  return (
-    <>
-      {icon ? <div className={`${icon} caret caret_tv`}></div> : null}
-      <CustomTooltip
-        tooltipText={props.file.filename}
-        tooltipClasses="text-nowrap"
-        tooltipId="resultFileNameTooltip"
-        placement="top-start"
-      >
-        <div title={props.file.filename} className="search_plugin_search_file_name ml-2">
-          {path.basename(props.file.path)}
-          <span className='pl-1 text-muted text-lowercase'>{path.dirname(props.file.path)}</span>
-        </div>
-      </CustomTooltip>
-    </>
-  )
+ return (
+  <>
+   {icon ? <div className={`${icon} caret caret_tv`}></div> : null}
+   <CustomTooltip
+    tooltipText={props.file.filename}
+    tooltipClasses="text-nowrap"
+    tooltipId="resultFileNameTooltip"
+    placement="top-start"
+   >
+    <div title={props.file.filename} className="search_plugin_search_file_name ml-2">
+     {path.basename(props.file.path)}
+     <span className='pl-1 text-muted text-lowercase'>{path.dirname(props.file.path)}</span>
+    </div>
+   </CustomTooltip>
+  </>
+ )
 }

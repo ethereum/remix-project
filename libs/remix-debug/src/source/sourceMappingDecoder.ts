@@ -14,14 +14,14 @@ import { util } from '@remix-project/remix-lib'
  * @return {Object} returns the decompressed source mapping {start, length, file}
  */
 export function decode (value) {
-  if (value) {
-    value = value.split(':')
-    return {
-      start: parseInt(value[0]),
-      length: parseInt(value[1]),
-      file: parseInt(value[2])
-    }
+ if (value) {
+  value = value.split(':')
+  return {
+   start: parseInt(value[0]),
+   length: parseInt(value[1]),
+   file: parseInt(value[2])
   }
+ }
 }
 
 /**
@@ -31,19 +31,19 @@ export function decode (value) {
  * @return {Array} returns the decompressed source mapping. Array of {start, length, file, jump}
  */
 export function decompressAll (mapping) {
-  const map = mapping.split(';')
-  const ret = []
-  for (const k in map) {
-    const compressed = map[k].split(':')
-    const sourceMap = {
-      start: compressed[0] ? parseInt(compressed[0]) : ret[ret.length - 1].start,
-      length: compressed[1] ? parseInt(compressed[1]) : ret[ret.length - 1].length,
-      file: compressed[2] ? parseInt(compressed[2]) : ret[ret.length - 1].file,
-      jump: compressed[3] ? compressed[3] : ret[ret.length - 1].jump
-    }
-    ret.push(sourceMap)
+ const map = mapping.split(';')
+ const ret = []
+ for (const k in map) {
+  const compressed = map[k].split(':')
+  const sourceMap = {
+   start: compressed[0] ? parseInt(compressed[0]) : ret[ret.length - 1].start,
+   length: compressed[1] ? parseInt(compressed[1]) : ret[ret.length - 1].length,
+   file: compressed[2] ? parseInt(compressed[2]) : ret[ret.length - 1].file,
+   jump: compressed[3] ? compressed[3] : ret[ret.length - 1].jump
   }
-  return ret
+  ret.push(sourceMap)
+ }
+ return ret
 }
 
 /**
@@ -53,11 +53,11 @@ export function decompressAll (mapping) {
   * @return {Array} returns an array containing offset of line breaks
   */
 export function getLinebreakPositions (source) {
-  const ret = []
-  for (let pos = source.indexOf('\n'); pos >= 0; pos = source.indexOf('\n', pos + 1)) {
-    ret.push(pos)
-  }
-  return ret
+ const ret = []
+ for (let pos = source.indexOf('\n'); pos >= 0; pos = source.indexOf('\n', pos + 1)) {
+  ret.push(pos)
+ }
+ return ret
 }
 
 /**
@@ -68,35 +68,35 @@ export function getLinebreakPositions (source) {
  * @return {Object} returns an object {start: {line, column}, end: {line, column}} (line/column count start at 0)
  */
 export function convertOffsetToLineColumn (sourceLocation, lineBreakPositions) {
-  if (sourceLocation.start >= 0 && sourceLocation.length >= 0) {
-    return {
-      start: convertFromCharPosition(sourceLocation.start, lineBreakPositions),
-      end: convertFromCharPosition(sourceLocation.start + sourceLocation.length, lineBreakPositions)
-    }
+ if (sourceLocation.start >= 0 && sourceLocation.length >= 0) {
+  return {
+   start: convertFromCharPosition(sourceLocation.start, lineBreakPositions),
+   end: convertFromCharPosition(sourceLocation.start + sourceLocation.length, lineBreakPositions)
   }
-  return { start: null, end: null }
+ }
+ return { start: null, end: null }
 }
 
 function convertFromCharPosition (pos, lineBreakPositions) {
-  let line = util.findLowerBound(pos, lineBreakPositions)
-  if (lineBreakPositions[line] !== pos) {
-    line = line + 1
-  }
-  const beginColumn = line === 0 ? 0 : (lineBreakPositions[line - 1] + 1)
-  const column = pos - beginColumn
-  return { line, column }
+ let line = util.findLowerBound(pos, lineBreakPositions)
+ if (lineBreakPositions[line] !== pos) {
+  line = line + 1
+ }
+ const beginColumn = line === 0 ? 0 : (lineBreakPositions[line - 1] + 1)
+ const column = pos - beginColumn
+ return { line, column }
 }
 
 function sourceLocationFromAstNode (astNode) {
-  if (astNode.src) {
-    const split = astNode.src.split(':')
-    return {
-      start: parseInt(split[0]),
-      length: parseInt(split[1]),
-      file: parseInt(split[2])
-    }
+ if (astNode.src) {
+  const split = astNode.src.split(':')
+  return {
+   start: parseInt(split[0]),
+   length: parseInt(split[1]),
+   file: parseInt(split[2])
   }
-  return null
+ }
+ return null
 }
 
 /**
@@ -108,26 +108,26 @@ function sourceLocationFromAstNode (astNode) {
  * @param {Object} ast - ast given by the compilation result
  */
 export function findNodeAtInstructionIndex (astNodeType, instIndex, sourceMap, ast) {
-  const sourceLocation = atIndex(instIndex, sourceMap)
-  return findNodeAtSourceLocation(astNodeType, sourceLocation, ast)
+ const sourceLocation = atIndex(instIndex, sourceMap)
+ return findNodeAtSourceLocation(astNodeType, sourceLocation, ast)
 }
 
 function findNodeAtSourceLocation (astNodeType, sourceLocation, ast) {
-  const astWalker = new AstWalker()
-  let found = null
-  const callback = function (node) {
-    const nodeLocation = sourceLocationFromAstNode(node)
-    if (!nodeLocation) {
-      return
-    }
-    if (nodeLocation.start <= sourceLocation.start && nodeLocation.start + nodeLocation.length >= sourceLocation.start + sourceLocation.length) {
-      if (astNodeType === node.nodeType) {
-        found = node
-      }
-    }
+ const astWalker = new AstWalker()
+ let found = null
+ const callback = function (node) {
+  const nodeLocation = sourceLocationFromAstNode(node)
+  if (!nodeLocation) {
+   return
   }
-  astWalker.walkFull(ast.ast, callback)
-  return found
+  if (nodeLocation.start <= sourceLocation.start && nodeLocation.start + nodeLocation.length >= sourceLocation.start + sourceLocation.length) {
+   if (astNodeType === node.nodeType) {
+    found = node
+   }
+  }
+ }
+ astWalker.walkFull(ast.ast, callback)
+ return found
 }
 
 /**
@@ -139,21 +139,21 @@ function findNodeAtSourceLocation (astNodeType, sourceLocation, ast) {
  */
 
 export function nodesAtPosition (astNodeType, position, ast) {
-  const astWalker = new AstWalker()
-  const found = []
-  const callback = function (node) {
-    const nodeLocation = sourceLocationFromAstNode(node)
-    if (!nodeLocation) {
-      return
-    }
-    if (nodeLocation.start <= position && nodeLocation.start + nodeLocation.length >= position) {
-      if (!astNodeType || astNodeType === node.nodeType) {
-        found.push(node)
-      }
-    }
+ const astWalker = new AstWalker()
+ const found = []
+ const callback = function (node) {
+  const nodeLocation = sourceLocationFromAstNode(node)
+  if (!nodeLocation) {
+   return
   }
-  astWalker.walkFull(ast.ast, callback)
-  return found
+  if (nodeLocation.start <= position && nodeLocation.start + nodeLocation.length >= position) {
+   if (!astNodeType || astNodeType === node.nodeType) {
+    found.push(node)
+   }
+  }
+ }
+ astWalker.walkFull(ast.ast, callback)
+ return found
 }
 
 /**
@@ -172,32 +172,32 @@ export function nodesAtPosition (astNodeType, position, ast) {
  *  @return Object { start, length, file, jump }
  */
 export function atIndex (index, mapping) {
-  const ret = {}
-  const map = mapping.split(';')
-  if (index >= map.length) {
-    index = map.length - 1
+ const ret = {}
+ const map = mapping.split(';')
+ if (index >= map.length) {
+  index = map.length - 1
+ }
+ for (let k = index; k >= 0; k--) {
+  let current = map[k]
+  if (!current.length) {
+   continue
   }
-  for (let k = index; k >= 0; k--) {
-    let current = map[k]
-    if (!current.length) {
-      continue
-    }
-    current = current.split(':')
-    if (ret['start'] === undefined && current[0] && current[0] !== '-1' && current[0].length) {
-      ret['start'] = parseInt(current[0])
-    }
-    if (ret['length'] === undefined && current[1] && current[1] !== '-1' && current[1].length) {
-      ret['length'] = parseInt(current[1])
-    }
-    if (ret['file'] === undefined && current[2] && current[2].length) {
-      ret['file'] = parseInt(current[2])
-    }
-    if (ret['jump'] === undefined && current[3] && current[3].length) {
-      ret['jump'] = current[3]
-    }
-    if (ret['start'] !== undefined && ret['length'] !== undefined && ret['file'] !== undefined && ret['jump'] !== undefined) {
-      break
-    }
+  current = current.split(':')
+  if (ret['start'] === undefined && current[0] && current[0] !== '-1' && current[0].length) {
+   ret['start'] = parseInt(current[0])
   }
-  return ret
+  if (ret['length'] === undefined && current[1] && current[1] !== '-1' && current[1].length) {
+   ret['length'] = parseInt(current[1])
+  }
+  if (ret['file'] === undefined && current[2] && current[2].length) {
+   ret['file'] = parseInt(current[2])
+  }
+  if (ret['jump'] === undefined && current[3] && current[3].length) {
+   ret['jump'] = current[3]
+  }
+  if (ret['start'] !== undefined && ret['length'] !== undefined && ret['file'] !== undefined && ret['jump'] !== undefined) {
+   break
+  }
+ }
+ return ret
 }

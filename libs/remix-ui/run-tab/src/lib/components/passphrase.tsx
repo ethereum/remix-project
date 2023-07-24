@@ -8,15 +8,15 @@ interface PromptProps {
 }
 
 export function PassphrasePrompt (props: PromptProps) {
-  const handleSignPassphrase = (e) => {
-    props.setPassphrase(e.target.value)
-  }
+ const handleSignPassphrase = (e) => {
+  props.setPassphrase(e.target.value)
+ }
 
-  return (
-    <div> { props.message }
-      <div>
-        <input id="prompt_text" type="password" name='prompt_text' className="form-control" style={{ width: '100%' }} onInput={handleSignPassphrase} data-id='modalDialogCustomPromptText' defaultValue={props.defaultValue} />
-      </div>
-    </div>
-  )
+ return (
+  <div> { props.message }
+   <div>
+    <input id="prompt_text" type="password" name='prompt_text' className="form-control" style={{ width: '100%' }} onInput={handleSignPassphrase} data-id='modalDialogCustomPromptText' defaultValue={props.defaultValue} />
+   </div>
+  </div>
+ )
 }

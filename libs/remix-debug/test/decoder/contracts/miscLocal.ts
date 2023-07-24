@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-  contract: `
+ contract: `
 contract miscLocal {
         enum enumDef {
             one,

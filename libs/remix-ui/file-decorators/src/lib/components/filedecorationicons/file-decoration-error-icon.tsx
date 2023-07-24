@@ -6,9 +6,9 @@ import { fileDecoration } from '../../types'
 const FileDecorationErrorIcon = (props: {
     fileDecoration: fileDecoration
 }) => {
-  return <>
-    <span data-id={`file-decoration-error-${props.fileDecoration.path}`} className={`${props.fileDecoration.fileStateIconClass} text-danger pr-2`}>{props.fileDecoration.text}</span>
-  </>
+ return <>
+  <span data-id={`file-decoration-error-${props.fileDecoration.path}`} className={`${props.fileDecoration.fileStateIconClass} text-danger pr-2`}>{props.fileDecoration.text}</span>
+ </>
 }
 
 export default FileDecorationErrorIcon

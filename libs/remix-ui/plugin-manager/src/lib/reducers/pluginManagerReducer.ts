@@ -5,10 +5,10 @@ export type localPluginReducerActionType = {
 }
 
 export function localPluginToastReducer (currentState: string, toastAction: localPluginReducerActionType) {
-  switch (toastAction.type) {
-  case 'show':
-    return `Cannot create Plugin : ${toastAction.payload!}`
-  default:
-    return currentState
-  }
+ switch (toastAction.type) {
+ case 'show':
+  return `Cannot create Plugin : ${toastAction.payload!}`
+ default:
+  return currentState
+ }
 }

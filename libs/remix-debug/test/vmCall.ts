@@ -6,32 +6,32 @@ const Web3 = require('web3')
 
 
 async function getWeb3 () {
-  const remixSimulatorProvider = new Provider({ fork: 'berlin' })
-  await remixSimulatorProvider.init()
-  await remixSimulatorProvider.Accounts.resetAccounts()
-  const web3 = new Web3(remixSimulatorProvider)
-  extendWeb3(web3)
-  return web3
+ const remixSimulatorProvider = new Provider({ fork: 'berlin' })
+ await remixSimulatorProvider.init()
+ await remixSimulatorProvider.Accounts.resetAccounts()
+ const web3 = new Web3(remixSimulatorProvider)
+ extendWeb3(web3)
+ return web3
 }
 
 async function sendTx (web3, from, to, value, data, cb) {
-  try {
-    cb = cb || (() => {})
-    const receipt = await web3.eth.sendTransaction({
-      from: Address.fromPrivateKey(from.privateKey).toString(),
-      to,
-      value,
-      data,
-      gas: 7000000
-    })
-    cb(null, receipt.transactionHash)
-    return receipt.transactionHash
-  } catch (e) {
-    cb(e)
-  }
+ try {
+  cb = cb || (() => {})
+  const receipt = await web3.eth.sendTransaction({
+   from: Address.fromPrivateKey(from.privateKey).toString(),
+   to,
+   value,
+   data,
+   gas: 7000000
+  })
+  cb(null, receipt.transactionHash)
+  return receipt.transactionHash
+ } catch (e) {
+  cb(e)
+ }
 }
 
 module.exports = {
-  sendTx,
-  getWeb3
+ sendTx,
+ getWeb3
 }

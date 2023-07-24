@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-  contract: `
+ contract: `
   pragma experimental ABIEncoderV2;
   contract calldataLocal {
     constructor () public {     

@@ -8,20 +8,20 @@ export interface ChevronProps {
 }
 
 function Chevron (props: ChevronProps) {
-  const click = () => {
-    if (props.direction === 'down') {
-      props.divElementRef.current.scrollBy({ top: 40, behavior: 'smooth' })
-    } else {
-      props.divElementRef.current.scrollBy({ top: -40, behavior: 'smooth' })
-    }
+ const click = () => {
+  if (props.direction === 'down') {
+   props.divElementRef.current.scrollBy({ top: 40, behavior: 'smooth' })
+  } else {
+   props.divElementRef.current.scrollBy({ top: -40, behavior: 'smooth' })
   }
+ }
 
-  return (
-    <>
-      { props.divElementRef.current && props.divElementRef.current.scrollHeight > props.divElementRef.current.clientHeight
-        ? <i onClick={click} className={props.cssRule}></i> : null }
-    </>
-  )
+ return (
+  <>
+   { props.divElementRef.current && props.divElementRef.current.scrollHeight > props.divElementRef.current.clientHeight
+    ? <i onClick={click} className={props.cssRule}></i> : null }
+  </>
+ )
 }
 
 export { Chevron }

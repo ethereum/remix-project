@@ -31,93 +31,93 @@ interface MenuProps {
 }
 
 const VerticalIconsContextMenu = (props: VerticalIconsContextMenuProps) =>{
-  const menuRef = useRef(null)
-  ClickOutside(menuRef, props.hideContextMenu)
-  useEffect(() => {
-    // @ts-ignore
-    menuRef.current.focus()
-  }, [])
-  return (
-    <div
-      id="menuItemsContainer"
-      className="p-1 remixui_verticalIconContextcontainer bg-light shadow border"
-      style={{
-        left: props.pageX,
-        top: props.pageY,
-        display: 'block'
+ const menuRef = useRef(null)
+ ClickOutside(menuRef, props.hideContextMenu)
+ useEffect(() => {
+  // @ts-ignore
+  menuRef.current.focus()
+ }, [])
+ return (
+  <div
+   id="menuItemsContainer"
+   className="p-1 remixui_verticalIconContextcontainer bg-light shadow border"
+   style={{
+    left: props.pageX,
+    top: props.pageY,
+    display: 'block'
 
-      }}
-      ref={menuRef}
-      tabIndex={1}
-    >
-      <ul id="menuitems">
-        <MenuForLinks
-          hide={props.hideContextMenu}
-          listItems={props.links}
-          profileName={props.profileName}
-          canBeDeactivated={props.canBeDeactivated}
-          verticalIconPlugin={props.verticalIconPlugin}
-          toggle={props.verticalIconPlugin.toggle}
-          contextMenuAction={props.contextMenuAction}
-        />
-      </ul>
-    </div>
-  )
+   }}
+   ref={menuRef}
+   tabIndex={1}
+  >
+   <ul id="menuitems">
+    <MenuForLinks
+     hide={props.hideContextMenu}
+     listItems={props.links}
+     profileName={props.profileName}
+     canBeDeactivated={props.canBeDeactivated}
+     verticalIconPlugin={props.verticalIconPlugin}
+     toggle={props.verticalIconPlugin.toggle}
+     contextMenuAction={props.contextMenuAction}
+    />
+   </ul>
+  </div>
+ )
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const MenuForLinks = ({
-  listItems,
-  hide,
-  profileName,
-  contextMenuAction
+ listItems,
+ hide,
+ profileName,
+ contextMenuAction
 }: MenuLinksProps) => {
-  return (
-    <Fragment>
-      {listItems.CanDeactivate
-        ? <li
-          id="menuitemdeactivate"
-          onClick={(evt) => {
-            contextMenuAction(evt, profileName, listItems.Documentation)
-            hide()
-          }}
-          className="remixui_liitem"
-          key="menuitemdeactivate"
-        >
+ return (
+  <Fragment>
+   {listItems.CanDeactivate
+    ? <li
+     id="menuitemdeactivate"
+     onClick={(evt) => {
+      contextMenuAction(evt, profileName, listItems.Documentation)
+      hide()
+     }}
+     className="remixui_liitem"
+     key="menuitemdeactivate"
+    >
           Deactivate
-        </li>
-        : null
-      }
-      {(listItems.Documentation && listItems.Documentation.length > 0) &&
+    </li>
+    : null
+   }
+   {(listItems.Documentation && listItems.Documentation.length > 0) &&
             <li
-              id="menuitemdocumentation"
-              className="remixui_liitem"
-              key="menuitemdocumentation"
+             id="menuitemdocumentation"
+             className="remixui_liitem"
+             key="menuitemdocumentation"
             >
-              <a
-                onClick={hide}
-                href={listItems.Documentation}
-                target="_blank"
-              >
+             <a
+              onClick={hide}
+              href={listItems.Documentation}
+              target="_blank"
+             >
                 Documentation
-              </a>
+             </a>
             </li>}
-    </Fragment>
-  )
+  </Fragment>
+ )
 }
 
 function ClickOutside(ref: React.MutableRefObject<HTMLElement>, hideFn: () => void) {
-  useEffect(() => {
-    function handleClickOutside(event: any) {
-      if (ref.current && !ref.current.contains(event.target)) {
-        hideFn()
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [ref]);
+ useEffect(() => {
+  function handleClickOutside(event: any) {
+   if (ref.current && !ref.current.contains(event.target)) {
+    hideFn()
+   }
+  }
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+   document.removeEventListener("mousedown", handleClickOutside);
+  };
+ }, [ref]);
 }
 
 export default VerticalIconsContextMenu

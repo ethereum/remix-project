@@ -10,10 +10,10 @@ import * as pathModule from 'path'
  * @return {String} platform dependent absolute path (/home/user1/.../... for unix, c:\user\...\... for windows)
  */
 function absolutePath (path: string, sharedFolder:string): string {
-  path = normalizePath(path)
-  path = pathModule.resolve(sharedFolder, path)
-  if (!isSubDirectory(pathModule.resolve(process.cwd(), sharedFolder), path)) throw new Error('Cannot read/write to path outside shared folder.')
-  return path
+ path = normalizePath(path)
+ path = pathModule.resolve(sharedFolder, path)
+ if (!isSubDirectory(pathModule.resolve(process.cwd(), sharedFolder), path)) throw new Error('Cannot read/write to path outside shared folder.')
+ return path
 }
 
 /**
@@ -24,11 +24,11 @@ function absolutePath (path: string, sharedFolder:string): string {
  * @return {Boolean}
  */
 function isSubDirectory (parent: string, child: string) {
-  if (!parent) return false
-  if (parent === child) return true
-  const relative = pathModule.relative(parent, child)
+ if (!parent) return false
+ if (parent === child) return true
+ const relative = pathModule.relative(parent, child)
 
-  return !!relative && relative.split(pathModule.sep)[0] !== '..'
+ return !!relative && relative.split(pathModule.sep)[0] !== '..'
 }
 
 /**
@@ -39,70 +39,70 @@ function isSubDirectory (parent: string, child: string) {
  * @return {String} relative path (Unix style which is the one used by Remix IDE)
  */
 function relativePath (path: string, sharedFolder: string): string {
-  const relative: string = pathModule.relative(sharedFolder, path)
+ const relative: string = pathModule.relative(sharedFolder, path)
 
-  return convertPathToPosix(normalizePath(relative))
+ return convertPathToPosix(normalizePath(relative))
 }
 
 const convertPathToPosix = (pathName: string): string => {
-  return pathName.split(pathModule.sep).join(pathModule.posix.sep)
+ return pathName.split(pathModule.sep).join(pathModule.posix.sep)
 }
 
 function normalizePath (path) {
-  if (path === '/') path = './'
-  if (process.platform === 'win32') {
-    return path.replace(/\//g, '\\')
-  }
-  return path
+ if (path === '/') path = './'
+ if (process.platform === 'win32') {
+  return path.replace(/\//g, '\\')
+ }
+ return path
 }
 
 function walkSync (dir: string, filelist: Filelist, sharedFolder: string): Filelist {
-  const files: string[] = fs.readdirSync(dir)
+ const files: string[] = fs.readdirSync(dir)
 
-  filelist = filelist || {}
-  files.forEach(function (file) {
-    const subElement = pathModule.join(dir, file)
-    let isSymbolicLink
+ filelist = filelist || {}
+ files.forEach(function (file) {
+  const subElement = pathModule.join(dir, file)
+  let isSymbolicLink
 
-    try {
-      isSymbolicLink = !fs.lstatSync(subElement).isSymbolicLink()
-    } catch (error) {
-      isSymbolicLink = false
-    }
+  try {
+   isSymbolicLink = !fs.lstatSync(subElement).isSymbolicLink()
+  } catch (error) {
+   isSymbolicLink = false
+  }
 
-    if (isSymbolicLink) {
-      if (fs.statSync(subElement).isDirectory()) {
-        filelist = walkSync(subElement, filelist, sharedFolder)
-      } else {
-        const relative = relativePath(subElement, sharedFolder)
+  if (isSymbolicLink) {
+   if (fs.statSync(subElement).isDirectory()) {
+    filelist = walkSync(subElement, filelist, sharedFolder)
+   } else {
+    const relative = relativePath(subElement, sharedFolder)
 
-        filelist[relative] = isbinaryfile.sync(subElement)
-      }
-    }
-  })
-  return filelist
+    filelist[relative] = isbinaryfile.sync(subElement)
+   }
+  }
+ })
+ return filelist
 }
 
 function resolveDirectory (dir: string, sharedFolder: string): ResolveDirectory {
-  const ret: ResolveDirectory = {}
-  const files: string[] = fs.readdirSync(dir)
+ const ret: ResolveDirectory = {}
+ const files: string[] = fs.readdirSync(dir)
 
-  files.forEach(function (file) {
-    const subElement = pathModule.join(dir, file)
-    let isSymbolicLink
+ files.forEach(function (file) {
+  const subElement = pathModule.join(dir, file)
+  let isSymbolicLink
 
-    try {
-      isSymbolicLink = !fs.lstatSync(subElement).isSymbolicLink()
-    } catch (error) {
-      isSymbolicLink = false
-    }
-    if (isSymbolicLink) {
-      const relative: string = relativePath(subElement, sharedFolder)
+  try {
+   isSymbolicLink = !fs.lstatSync(subElement).isSymbolicLink()
+  } catch (error) {
+   isSymbolicLink = false
+  }
+  if (isSymbolicLink) {
+   const relative: string = relativePath(subElement, sharedFolder)
 
-      ret[relative] = { isDirectory: fs.statSync(subElement).isDirectory() }
-    }
-  })
-  return ret
+   ret[relative] = { isDirectory: fs.statSync(subElement).isDirectory() }
+  }
+ })
+ return ret
 }
 
 /**
@@ -112,10 +112,10 @@ function resolveDirectory (dir: string, sharedFolder: string): ResolveDirectory 
  * @return {String} extracted domain name from url
  */
 function getDomain (url: string) {
-  // eslint-disable-next-line
+ // eslint-disable-next-line
   const domainMatch = url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/img)
 
-  return domainMatch ? domainMatch[0] : null
+ return domainMatch ? domainMatch[0] : null
 }
 
 export { absolutePath, relativePath, walkSync, resolveDirectory, getDomain, normalizePath }

@@ -11,22 +11,22 @@ export const pathToURL = {}
  * @param version is the version of compiler with or without 'soljson-v' prefix and .js postfix
  */
 export function urlFromVersion (version) {
-  let url
-  if (version === 'builtin') {
-    let location: string | Location = window.document.location
-    let path = location.pathname
-    if (!path.startsWith('/')) path = '/' + path
-    location = `${location.protocol}//${location.host}${path}`
-    if (location.endsWith('index.html')) location = location.substring(0, location.length - 10)
-    if (!location.endsWith('/')) location += '/'
-    url = `${location}assets/js/soljson.js`
-  } else {
-    version = version.replace('.Emscripten.clang', '')
-    if (!version.startsWith('soljson-v')) version = 'soljson-v' + version
-    if (!version.endsWith('.js')) version = version + '.js'
-    url = `${pathToURL[version]}/${version}`
-  }
-  return url
+ let url
+ if (version === 'builtin') {
+  let location: string | Location = window.document.location
+  let path = location.pathname
+  if (!path.startsWith('/')) path = '/' + path
+  location = `${location.protocol}//${location.host}${path}`
+  if (location.endsWith('index.html')) location = location.substring(0, location.length - 10)
+  if (!location.endsWith('/')) location += '/'
+  url = `${location}assets/js/soljson.js`
+ } else {
+  version = version.replace('.Emscripten.clang', '')
+  if (!version.startsWith('soljson-v')) version = 'soljson-v' + version
+  if (!version.endsWith('.js')) version = version + '.js'
+  url = `${pathToURL[version]}/${version}`
+ }
+ return url
 }
 
 /**
@@ -34,23 +34,23 @@ export function urlFromVersion (version) {
  * checks a compiler whitelist, browser support and OS.
  */
 export function canUseWorker (selectedVersion) {
-  if (selectedVersion.startsWith('http')) {
-    return browserSupportWorker()
-  }
-  const version = semver.coerce(selectedVersion)
-  if (!version) {
-    return browserSupportWorker()
-  }
-  const isNightly = selectedVersion.includes('nightly')
-  return browserSupportWorker() && (
-    // All compiler versions (including nightlies) after 0.6.3 are wasm compiled
-    semver.gt(version, '0.6.3') ||
+ if (selectedVersion.startsWith('http')) {
+  return browserSupportWorker()
+ }
+ const version = semver.coerce(selectedVersion)
+ if (!version) {
+  return browserSupportWorker()
+ }
+ const isNightly = selectedVersion.includes('nightly')
+ return browserSupportWorker() && (
+ // All compiler versions (including nightlies) after 0.6.3 are wasm compiled
+  semver.gt(version, '0.6.3') ||
     // Only releases are wasm compiled starting with 0.3.6
     (semver.gte(version, '0.3.6') && !isNightly)
-  )
+ )
 }
 
 function browserSupportWorker () {
-  return document ? document.location.protocol !== 'file:' && Worker !== undefined : false
+ return document ? document.location.protocol !== 'file:' && Worker !== undefined : false
 }
 

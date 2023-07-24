@@ -8,13 +8,13 @@ import Websocket from './websocket'
 import * as utils from './utils'
 
 module.exports = {
-  Websocket,
-  utils,
-  services: {
-    sharedFolder,
-    GitClient,
-    HardhatClient,
-    TruffleClient,
-    SlitherClient
-  }
+ Websocket,
+ utils,
+ services: {
+  sharedFolder,
+  GitClient,
+  HardhatClient,
+  TruffleClient,
+  SlitherClient
+ }
 }

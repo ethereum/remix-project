@@ -4,22 +4,22 @@ import tape from 'tape'
 const disassemble = require('../src/code/disassembler').disassemble
 
 tape('Disassembler', function (t) {
-  t.test('empty', function (st) {
-    st.plan(1)
-    st.equal(disassemble(''), '')
-  })
-  t.test('add', function (st) {
-    st.plan(1)
-    st.equal(disassemble('0x01'), 'add')
-  })
-  t.test('push', function (st) {
-    st.plan(1)
-    st.equal(disassemble('0x640203'), '0x0203000000')
-  })
-  t.test('complexcode', function (st) {
-    st.plan(1)
-    const code = '60606040526009600060005055607e8060186000396000f360606040526000357c0100000000000000000000000000000000000000000000000000000000900480630dbe671f146039576035565b6002565b3460025760486004805050604a565b005b6000600090505b600a811015607a5760006000818150548092919060010191905055505b80806001019150506051565b5b5056'
-    const asm = `mstore(0x40, 0x60)
+ t.test('empty', function (st) {
+  st.plan(1)
+  st.equal(disassemble(''), '')
+ })
+ t.test('add', function (st) {
+  st.plan(1)
+  st.equal(disassemble('0x01'), 'add')
+ })
+ t.test('push', function (st) {
+  st.plan(1)
+  st.equal(disassemble('0x640203'), '0x0203000000')
+ })
+ t.test('complexcode', function (st) {
+  st.plan(1)
+  const code = '60606040526009600060005055607e8060186000396000f360606040526000357c0100000000000000000000000000000000000000000000000000000000900480630dbe671f146039576035565b6002565b3460025760486004805050604a565b005b6000600090505b600a811015607a5760006000818150548092919060010191905055505b80806001019150506051565b5b5056'
+  const asm = `mstore(0x40, 0x60)
 0x09
 0x00
 pop(0x00)
@@ -96,6 +96,6 @@ label7:
 label8:
 pop
 jump`
-    st.equal(disassemble(code), asm)
-  })
+  st.equal(disassemble(code), asm)
+ })
 })

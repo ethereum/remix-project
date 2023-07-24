@@ -4,8 +4,8 @@ import { RunTab } from '../types/run-tab'
 import { resetAndInit, setupEvents } from './events'
 import { createNewBlockchainAccount, setExecutionContext, signMessageWithAddress } from './account'
 import { clearInstances, clearPopUp, removeInstance, setAccount, setGasFee, setMatchPassphrasePrompt, 
-  setNetworkNameFromProvider, setPassphrasePrompt, setSelectedContract, setSendTransactionValue, setUnit, 
-  updateBaseFeePerGas, updateConfirmSettings, updateGasPrice, updateGasPriceStatus, updateMaxFee, updateMaxPriorityFee, updateScenarioPath } from './actions'
+ setNetworkNameFromProvider, setPassphrasePrompt, setSelectedContract, setSendTransactionValue, setUnit, 
+ updateBaseFeePerGas, updateConfirmSettings, updateGasPrice, updateGasPriceStatus, updateMaxFee, updateMaxPriorityFee, updateScenarioPath } from './actions'
 import { createInstance, getContext, getFuncABIInputs, getSelectedContract, loadAddress, runTransactions, updateInstanceBalance, syncContractsInternal, isValidContractAddress, isValidContractUpgrade } from './deploy'
 import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity'
 import { ContractData, FuncABI, OverSizeLimit } from "@remix-project/core-plugin"
@@ -23,10 +23,10 @@ const _paq = window._paq = window._paq || []  //eslint-disable-line
 let plugin: RunTab, dispatch: React.Dispatch<any>
 
 export const initRunTab = (udapp: RunTab) => async (reducerDispatch: React.Dispatch<any>) => {
-  plugin = udapp
-  dispatch = reducerDispatch
-  setupEvents(plugin, dispatch)  
-  resetAndInit(plugin)
+ plugin = udapp
+ dispatch = reducerDispatch
+ setupEvents(plugin, dispatch)  
+ resetAndInit(plugin)
 }
 
 export const setAccountAddress = (account: string) => setAccount(dispatch, account)

@@ -13,28 +13,28 @@ interface InactivePluginCardContainerProps {
 }
 
 function InactivePluginCardContainer ({ pluginComponent }: InactivePluginCardContainerProps) {
-  const activatePlugin = (pluginName: string) => {
-    pluginComponent.activateP(pluginName)
-  }
+ const activatePlugin = (pluginName: string) => {
+  pluginComponent.activateP(pluginName)
+ }
 
-  const intl = useIntl();
+ const intl = useIntl();
 
-  return (
-    <React.Fragment>
-      {(pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length) ? <ModuleHeading headingLabel={intl.formatMessage({ id: 'pluginManager.inactiveModules' })} count={pluginComponent.inactivePlugins.length} /> : null}
-      {pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.map((profile, idx) => {
-        return (
-          <InactivePluginCard
-            buttonText={intl.formatMessage({ id: 'pluginManager.activate' })}
-            profile={profile}
-            key={idx}
-            activatePlugin={activatePlugin}
-          />
-        )
-      })
-      }
-    </React.Fragment>
-  )
+ return (
+  <React.Fragment>
+   {(pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.length) ? <ModuleHeading headingLabel={intl.formatMessage({ id: 'pluginManager.inactiveModules' })} count={pluginComponent.inactivePlugins.length} /> : null}
+   {pluginComponent.inactivePlugins && pluginComponent.inactivePlugins.map((profile, idx) => {
+    return (
+     <InactivePluginCard
+      buttonText={intl.formatMessage({ id: 'pluginManager.activate' })}
+      profile={profile}
+      key={idx}
+      activatePlugin={activatePlugin}
+     />
+    )
+   })
+   }
+  </React.Fragment>
+ )
 }
 
 export default InactivePluginCardContainer

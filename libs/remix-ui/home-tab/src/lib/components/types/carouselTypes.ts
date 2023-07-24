@@ -9,9 +9,9 @@ export interface ResponsiveType {
   };
 }
 export function isMouseMoveEvent(
-  e: React.MouseEvent | React.TouchEvent
+ e: React.MouseEvent | React.TouchEvent
 ): e is React.MouseEvent {
-  return "clientX" && "clientY" in e;
+ return "clientX" && "clientY" in e;
 }
 export interface CarouselProps {
   responsive: ResponsiveType;
@@ -99,18 +99,18 @@ export interface CarouselInternalState {
 }
 
 export default class Carousel extends React.Component<CarouselProps> {
-  previous: (slidesHavePassed: number) => void;
-  next: (slidesHavePassed: number) => void;
-  goToSlide: (slide: number, skipCallbacks?: SkipCallbackOptions) => void;
-  state: CarouselInternalState;
-  setClones: (
+ previous: (slidesHavePassed: number) => void;
+ next: (slidesHavePassed: number) => void;
+ goToSlide: (slide: number, skipCallbacks?: SkipCallbackOptions) => void;
+ state: CarouselInternalState;
+ setClones: (
     slidesToShow: number,
     itemWidth?: number,
     forResizing?: boolean
   ) => void; // reset carousel in infinite mode.
-  setItemsToShow: (shouldCorrectItemPosition?: boolean) => void; // reset carousel in non-infinite mode.
-  correctClonesPosition: ({ domLoaded }: { domLoaded: boolean }) => void;
-  onMove: boolean;
-  direction: Direction;
-  containerRef: React.RefObject<HTMLDivElement>;
+ setItemsToShow: (shouldCorrectItemPosition?: boolean) => void; // reset carousel in non-infinite mode.
+ correctClonesPosition: ({ domLoaded }: { domLoaded: boolean }) => void;
+ onMove: boolean;
+ direction: Direction;
+ containerRef: React.RefObject<HTMLDivElement>;
 }

@@ -8,15 +8,15 @@ interface ScenarioProps {
 }
 
 export function ScenarioPrompt (props: ScenarioProps) {
-  const handleScenarioPath = (e) => {
-    props.setScenarioPath(e.target.value)
-  }
+ const handleScenarioPath = (e) => {
+  props.setScenarioPath(e.target.value)
+ }
 
-  return (
-    <div> { props.message }
-      <div>
-        <input id="prompt_text" type="text" name='prompt_text' className="form-control" style={{ width: '100%' }} onInput={handleScenarioPath} data-id='modalDialogCustomPromptText' defaultValue={props.defaultValue} />
-      </div>
-    </div>
-  )
+ return (
+  <div> { props.message }
+   <div>
+    <input id="prompt_text" type="text" name='prompt_text' className="form-control" style={{ width: '100%' }} onInput={handleScenarioPath} data-id='modalDialogCustomPromptText' defaultValue={props.defaultValue} />
+   </div>
+  </div>
+ )
 }

@@ -9,68 +9,68 @@ type ModuleObj = {
 }
 
 export default class staticAnalysisRunner {
-  /**
+ /**
    * Run analysis (Used by IDE)
    * @param compilationResult contract compilation result
    * @param toRun module indexes (compiled from remix IDE)
    * @param callback callback
    */
-  run (compilationResult: CompilationResult, toRun: number[]): AnalysisReport[] {
-    const modules: ModuleObj[] = toRun.map((i) => {
-      const Module = this.modules()[i]
-      const m = new Module()
-      return { name: m.name, mod: m }
-    })
-    return this.runWithModuleList(compilationResult, modules)
-  }
+ run (compilationResult: CompilationResult, toRun: number[]): AnalysisReport[] {
+  const modules: ModuleObj[] = toRun.map((i) => {
+   const Module = this.modules()[i]
+   const m = new Module()
+   return { name: m.name, mod: m }
+  })
+  return this.runWithModuleList(compilationResult, modules)
+ }
 
-  /**
+ /**
    * Run analysis passing list of modules to run
    * @param compilationResult contract compilation result
    * @param modules analysis module
    * @param callback callback
    */
-  runWithModuleList (compilationResult: CompilationResult, modules: ModuleObj[]): AnalysisReport[] {
-    let reports: AnalysisReport[] = []
-    // Also provide convenience analysis via the AST walker.
-    const walker = new AstWalker()
-    for (const k in compilationResult.sources) {
-      walker.walkFull(compilationResult.sources[k].ast,
-        (node: any) => {
-          modules.map((item: ModuleObj) => {
-            if (item.mod.visit !== undefined) {
-              try {
-                item.mod.visit(node)
-              } catch (e) {
-                reports.push({
-                  name: item.name, report: [{ warning: 'INTERNAL ERROR in module ' + item.name + ' ' + e.message, error: e.stack }]
-                })
-              }
-            }
-          })
-          return true
-        }
-      )
-    }
-
-    // Here, modules can just collect the results from the AST walk,
-    // but also perform new analysis.
-    reports = reports.concat(modules.map((item: ModuleObj) => {
-      let report: AnalysisReportObj[] | null = null
-      try {
-        report = item.mod.report(compilationResult)
-      } catch (e) {
-        report = [{ warning: 'INTERNAL ERROR in module ' + item.name + ' ' + e.message, error: e.stack }]
+ runWithModuleList (compilationResult: CompilationResult, modules: ModuleObj[]): AnalysisReport[] {
+  let reports: AnalysisReport[] = []
+  // Also provide convenience analysis via the AST walker.
+  const walker = new AstWalker()
+  for (const k in compilationResult.sources) {
+   walker.walkFull(compilationResult.sources[k].ast,
+    (node: any) => {
+     modules.map((item: ModuleObj) => {
+      if (item.mod.visit !== undefined) {
+       try {
+        item.mod.visit(node)
+       } catch (e) {
+        reports.push({
+         name: item.name, report: [{ warning: 'INTERNAL ERROR in module ' + item.name + ' ' + e.message, error: e.stack }]
+        })
+       }
       }
-      return { name: item.name, report: report }
-    }))
-    return reports
+     })
+     return true
+    }
+   )
   }
 
-  /**
+  // Here, modules can just collect the results from the AST walk,
+  // but also perform new analysis.
+  reports = reports.concat(modules.map((item: ModuleObj) => {
+   let report: AnalysisReportObj[] | null = null
+   try {
+    report = item.mod.report(compilationResult)
+   } catch (e) {
+    report = [{ warning: 'INTERNAL ERROR in module ' + item.name + ' ' + e.message, error: e.stack }]
+   }
+   return { name: item.name, report: report }
+  }))
+  return reports
+ }
+
+ /**
    * Get list of all analysis modules
    */
-  modules (): any[] {
-    return list
-  }
+ modules (): any[] {
+  return list
+ }
 }

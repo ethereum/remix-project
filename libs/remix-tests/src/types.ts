@@ -67,12 +67,12 @@ export interface CompilationErrors {
 }
 // eslint-disable-next-line no-redeclare
 export class CompilationErrors extends Error {
-  constructor (errors: Array<any>) {
-    const mapError = errors.map((e) => { return e.formattedMessage || e.message })
-    super(mapError.join('\n'))
-    this.errors = errors
-    this.name = 'CompilationErrors'
-  }
+ constructor (errors: Array<any>) {
+  const mapError = errors.map((e) => { return e.formattedMessage || e.message })
+  super(mapError.join('\n'))
+  this.errors = errors
+  this.name = 'CompilationErrors'
+ }
 }
 
 /** sources object with name of the file and content **/

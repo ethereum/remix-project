@@ -20,34 +20,34 @@ type WarningResultType = {
 }
 
 export function calculateWarningStateEntries(entries: [string, any][]) {
-  let warninglength = 0
-  entries.forEach((entry) => {
-    warninglength += entry[1].length
-  })
-  let errors = []
-  entries.forEach((entry) => {
-    errors = entry[1].filter(x => x.options.type === 'error')
-  })
-  return { length: warninglength, errors }
+ let warninglength = 0
+ entries.forEach((entry) => {
+  warninglength += entry[1].length
+ })
+ let errors = []
+ entries.forEach((entry) => {
+  errors = entry[1].filter(x => x.options.type === 'error')
+ })
+ return { length: warninglength, errors }
 }
 
 export function BasicTitle(props: BasicTitleProps) {
-  const [filteredTotal, setFilteredTotal] = useState(0)
+ const [filteredTotal, setFilteredTotal] = useState(0)
 
-  useEffect(() => {
-    setFilteredTotal(props.ssaWarnings.filter(x => !x.options.isLibrary && x.hasWarning).length)
-  }, [props, props.ssaWarnings.filter(x => !x.options.isLibrary && x.hasWarning).length])
+ useEffect(() => {
+  setFilteredTotal(props.ssaWarnings.filter(x => !x.options.isLibrary && x.hasWarning).length)
+ }, [props, props.ssaWarnings.filter(x => !x.options.isLibrary && x.hasWarning).length])
 
-  return (
-    <span id="ssaRemixtab">Remix{props.ssaWarnings.length > 0 ? !props.hideWarnings ? !props.showLibsWarnings ? <span data-id="RemixStaticAnalysisErrorCount" className={`badge ${props.ssaWarnings.filter(x => x.hasWarning).length > 0 ? 'badge-warning' : props.ssaWarnings.filter(x => x.options.type === 'errors').length > 0 ? 'badge-danger' : 'badge-info'} badge-pill mx-1 ml-1 text-center`}>
-      {filteredTotal}
-    </span>: (
-      <span data-id="RemixStaticAnalysisErrorCount" className={`badge ${props.ssaWarnings.filter(x => x.options.type !== 'warning' && x.options.type !== 'error').length > 0 ? 'badge-info' : props.ssaWarnings.filter(x => x.options.type === 'errors').length > 0 ? 'badge-danger' : 'badge-warning'} badge-pill mx-1 ml-1 text-center`}>
-        {
-          props.ssaWarnings.length
-        }
-      </span>
-    ) : null : null}
-    </span>
-  )
+ return (
+  <span id="ssaRemixtab">Remix{props.ssaWarnings.length > 0 ? !props.hideWarnings ? !props.showLibsWarnings ? <span data-id="RemixStaticAnalysisErrorCount" className={`badge ${props.ssaWarnings.filter(x => x.hasWarning).length > 0 ? 'badge-warning' : props.ssaWarnings.filter(x => x.options.type === 'errors').length > 0 ? 'badge-danger' : 'badge-info'} badge-pill mx-1 ml-1 text-center`}>
+   {filteredTotal}
+  </span>: (
+   <span data-id="RemixStaticAnalysisErrorCount" className={`badge ${props.ssaWarnings.filter(x => x.options.type !== 'warning' && x.options.type !== 'error').length > 0 ? 'badge-info' : props.ssaWarnings.filter(x => x.options.type === 'errors').length > 0 ? 'badge-danger' : 'badge-warning'} badge-pill mx-1 ml-1 text-center`}>
+    {
+     props.ssaWarnings.length
+    }
+   </span>
+  ) : null : null}
+  </span>
+ )
 }

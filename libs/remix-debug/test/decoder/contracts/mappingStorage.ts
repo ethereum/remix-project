@@ -1,5 +1,5 @@
 module.exports = {
-  contract: `
+ contract: `
 contract SimpleMappingState {
     uint _num;
     mapping(string => uint) _iBreakSolidityState;

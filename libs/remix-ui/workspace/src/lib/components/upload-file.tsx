@@ -7,25 +7,25 @@ type UploadFileProps = {
 };
 
 const UploadFile = (props: UploadFileProps) => {
-  const ref = useRef<HTMLInputElement>();
+ const ref = useRef<HTMLInputElement>();
 
-  useEffect(() => {
-    ref.current.click();
-    ref.current.onchange= (event)=>{
-      //@ts-ignore
-      props.onUpload(event.target, event.target.files);
-    }
-  }, []);
+ useEffect(() => {
+  ref.current.click();
+  ref.current.onchange= (event)=>{
+   //@ts-ignore
+   props.onUpload(event.target, event.target.files);
+  }
+ }, []);
 
-  return (
-    <input
-      ref={ref}
-      style={{ display: "none" }}
-      accept={props.accept}
-      multiple={props.multiple}
-      type="file"
-    />
-  );
+ return (
+  <input
+   ref={ref}
+   style={{ display: "none" }}
+   accept={props.accept}
+   multiple={props.multiple}
+   type="file"
+  />
+ );
 };
 
 export default UploadFile;

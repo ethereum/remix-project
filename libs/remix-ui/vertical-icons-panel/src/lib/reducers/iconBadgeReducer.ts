@@ -15,28 +15,28 @@ export type IconBadgeReducerAction = {
    */
 
 function setIconStatus(name: string, status: IconStatus) {
-  if (status.key === 'none') return { ...status, text: '' } // remove status
+ if (status.key === 'none') return { ...status, text: '' } // remove status
 
-  let text = ''
-  let key = ''
-  if (typeof status.key === 'number') {
-    key = status.key
-    text = key
-  } else key = checkSpecialChars(status.key) ? bleach.sanitize(status.key) : status.key
+ let text = ''
+ let key = ''
+ if (typeof status.key === 'number') {
+  key = status.key
+  text = key
+ } else key = checkSpecialChars(status.key) ? bleach.sanitize(status.key) : status.key
 
-  let thisType = ''
-  if (status.type === 'error') {
-    thisType = 'danger' // to use with bootstrap
-  } else thisType = checkSpecialChars(status.type) ? bleach.sanitize(status.type) : status.type
-  const title = checkSpecialChars(status.title) ? bleach.sanitize(status.title) : status.title
-  const pluginName = status.pluginName
-  return { title, type: thisType, key, text, pluginName }
+ let thisType = ''
+ if (status.type === 'error') {
+  thisType = 'danger' // to use with bootstrap
+ } else thisType = checkSpecialChars(status.type) ? bleach.sanitize(status.type) : status.type
+ const title = checkSpecialChars(status.title) ? bleach.sanitize(status.title) : status.title
+ const pluginName = status.pluginName
+ return { title, type: thisType, key, text, pluginName }
 }
 
 export function iconBadgeReducer(state: BadgeStatus, action: IconBadgeReducerAction) {
-  const { status } = action.payload
+ const { status } = action.payload
 
-  const setStatus = setIconStatus(action.type, status)
-  return setStatus
+ const setStatus = setIconStatus(action.type, status)
+ return setStatus
 
 }

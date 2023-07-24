@@ -48,7 +48,7 @@
         "no-empty": "off",
         "jsx-a11y/anchor-is-valid": "off",
         "@typescript-eslint/no-inferrable-types": "off",
-        "indent": ["error", 2]
+        "indent": ["error", 1]
       }
     },
     {
@@ -60,7 +60,7 @@
         "plugin:@nrwl/nx/javascript"
       ],
       "rules": {
-        "indent": ["error", 2]
+        "indent": ["error", 1]
       }
     }
   ],

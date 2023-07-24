@@ -4,37 +4,37 @@ var remixLib = require('@remix-project/remix-lib')
 var EventsDecoder = remixLib.execution.EventsDecoder
 
 export function makeUdapp (blockchain, compilersArtefacts, logHtmlCallback) {
-  // ----------------- Tx listener -----------------
-  const _transactionReceipts = {}
-  const transactionReceiptResolver = (tx, cb) => {
-    if (_transactionReceipts[tx.hash]) {
-      return cb(null, _transactionReceipts[tx.hash])
-    }
-    blockchain.web3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
-      if (error) {
-        return cb(error)
-      }
-      _transactionReceipts[tx.hash] = receipt
-      cb(null, receipt)
-    })
+ // ----------------- Tx listener -----------------
+ const _transactionReceipts = {}
+ const transactionReceiptResolver = (tx, cb) => {
+  if (_transactionReceipts[tx.hash]) {
+   return cb(null, _transactionReceipts[tx.hash])
   }
-
-  const txlistener = blockchain.getTxListener({
-    api: {
-      contracts: function () {
-        if (compilersArtefacts.__last) return compilersArtefacts.getAllContractDatas()
-        return null
-      },
-      resolveReceipt: transactionReceiptResolver
-    }
+  blockchain.web3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
+   if (error) {
+    return cb(error)
+   }
+   _transactionReceipts[tx.hash] = receipt
+   cb(null, receipt)
   })
+ }
 
-  Registry.getInstance().put({ api: txlistener, name: 'txlistener' })
-  blockchain.startListening(txlistener)
+ const txlistener = blockchain.getTxListener({
+  api: {
+   contracts: function () {
+    if (compilersArtefacts.__last) return compilersArtefacts.getAllContractDatas()
+    return null
+   },
+   resolveReceipt: transactionReceiptResolver
+  }
+ })
 
-  const eventsDecoder = new EventsDecoder({
-    resolveReceipt: transactionReceiptResolver
-  })
-  txlistener.startListening()
-  Registry.getInstance().put({ api: eventsDecoder, name: 'eventsDecoder' })
+ Registry.getInstance().put({ api: txlistener, name: 'txlistener' })
+ blockchain.startListening(txlistener)
+
+ const eventsDecoder = new EventsDecoder({
+  resolveReceipt: transactionReceiptResolver
+ })
+ txlistener.startListening()
+ Registry.getInstance().put({ api: eventsDecoder, name: 'eventsDecoder' })
 }

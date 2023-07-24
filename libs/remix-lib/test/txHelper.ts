@@ -3,35 +3,35 @@ import tape from 'tape'
 import * as txHelper from '../src/execution/txHelper'
 
 tape('getFunction', function (st) {
-  st.plan(11)
-  let fn = txHelper.getFunction(JSON.parse(abi), 'o((address,uint256))')
-  st.equal(fn.name, 'o')
+ st.plan(11)
+ let fn = txHelper.getFunction(JSON.parse(abi), 'o((address,uint256))')
+ st.equal(fn.name, 'o')
 
-  fn = txHelper.getFunction(JSON.parse(abi), 'i(bytes32)')
-  st.equal(fn.name, 'i')
+ fn = txHelper.getFunction(JSON.parse(abi), 'i(bytes32)')
+ st.equal(fn.name, 'i')
 
-  fn = txHelper.getFunction(JSON.parse(abi), 'o1(string,(address,uint256),int256,int256[][3],(address,uint256)[3][])')
-  st.equal(fn.name, 'o1')
+ fn = txHelper.getFunction(JSON.parse(abi), 'o1(string,(address,uint256),int256,int256[][3],(address,uint256)[3][])')
+ st.equal(fn.name, 'o1')
 
-  fn = txHelper.getConstructorInterface(JSON.parse(abi))
-  st.equal(fn.type, 'constructor')
+ fn = txHelper.getConstructorInterface(JSON.parse(abi))
+ st.equal(fn.type, 'constructor')
 
-  fn = txHelper.getFallbackInterface(JSON.parse(abi))
-  st.equal(fn.type, 'fallback')
+ fn = txHelper.getFallbackInterface(JSON.parse(abi))
+ st.equal(fn.type, 'fallback')
 
-  fn = txHelper.getReceiveInterface(JSON.parse(abi))
-  st.equal(fn.type, 'receive')
+ fn = txHelper.getReceiveInterface(JSON.parse(abi))
+ st.equal(fn.type, 'receive')
 
-  fn = txHelper.getFunction(testTupleAbi, 'setUser(tuple)') // some compiler version might resolve to tuple.
-  st.equal(fn.name, 'setUser')
-  st.equal(fn.inputs[0].type, 'tuple')
-  st.equal(fn.inputs[0].name, 'user')
+ fn = txHelper.getFunction(testTupleAbi, 'setUser(tuple)') // some compiler version might resolve to tuple.
+ st.equal(fn.name, 'setUser')
+ st.equal(fn.inputs[0].type, 'tuple')
+ st.equal(fn.inputs[0].name, 'user')
 
-  fn = txHelper.getFunctionLiner(testTupleAbi[0], true)
-  st.equal(fn, 'setUser((string,uint256))')
+ fn = txHelper.getFunctionLiner(testTupleAbi[0], true)
+ st.equal(fn, 'setUser((string,uint256))')
   
-  fn = txHelper.getFunctionLiner(testTupleAbi[0], false)
-  st.equal(fn, 'setUser(tuple)')
+ fn = txHelper.getFunctionLiner(testTupleAbi[0], false)
+ st.equal(fn, 'setUser(tuple)')
 })
 
 const abi = `[

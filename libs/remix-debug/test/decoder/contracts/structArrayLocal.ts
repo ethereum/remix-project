@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-  contract: `
+ contract: `
 contract structArrayLocal {
     struct teststruct {
         string a;

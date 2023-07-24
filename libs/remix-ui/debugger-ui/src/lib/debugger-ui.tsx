@@ -13,429 +13,429 @@ import './debugger-ui.css'
 const _paq = (window as any)._paq = (window as any)._paq || []
 
 export const DebuggerUI = (props: DebuggerUIProps) => {
-  const debuggerModule = props.debuggerAPI
-  const [state, setState] = useState({
+ const debuggerModule = props.debuggerAPI
+ const [state, setState] = useState({
+  isActive: false,
+  debugger: null,
+  currentReceipt: {
+   contractAddress: null,
+   to: null
+  },
+  currentBlock: null,
+  currentTransaction: null,
+  blockNumber: null,
+  txNumber: '',
+  debugging: false,
+  opt: {
+   debugWithGeneratedSources: false,
+   debugWithLocalNode: false
+  },
+  toastMessage: '',
+  validationError: '',
+  txNumberIsEmpty: true,
+  isLocalNodeUsed: false,
+  sourceLocationStatus: ''
+ })
+
+ if (props.onReady) {
+  props.onReady({
+   globalContext: () => {
+    return {
+     block: state.currentBlock,
+     tx: state.currentTransaction,
+     receipt: state.currentReceipt
+    }
+   }
+  })
+ }
+
+ const panelsRef = useRef<HTMLDivElement>(null)
+ const debuggerTopRef = useRef(null)
+
+ const handleResize = () => {
+  if (panelsRef.current && debuggerTopRef.current) {
+   panelsRef.current.style.height = (window.innerHeight - debuggerTopRef.current.clientHeight) - debuggerTopRef.current.offsetTop - 7 +'px'
+  }
+ }
+
+ useEffect(() => {
+  handleResize()
+ }, [])
+
+ useEffect(() => {
+  window.addEventListener('resize', handleResize)
+  // TODO: not a good way to wait on the ref doms element to be rendered of course
+  setTimeout(() =>
+   handleResize(), 2000)
+  return () => window.removeEventListener('resize', handleResize)
+ }, [state.debugging, state.isActive])
+
+ useEffect(() => {
+  return unLoad()
+ }, [])
+
+ debuggerModule.onDebugRequested((hash, web3?) => {
+  if (hash) return debug(hash, web3)
+ })
+
+ debuggerModule.onRemoveHighlights(async () => {
+  await debuggerModule.discardHighlight()
+ })
+
+ useEffect(() => {
+  const setEditor = () => {
+   debuggerModule.onBreakpointCleared((fileName, row) => {
+    if (state.debugger) state.debugger.breakPointManager.remove({ fileName: fileName, row: row })
+   })
+
+   debuggerModule.onBreakpointAdded((fileName, row) => {
+    if (state.debugger) state.debugger.breakPointManager.add({ fileName: fileName, row: row })
+   })
+
+   debuggerModule.onEditorContentChanged(() => {
+    if (state.debugger) unLoad()
+   })
+  }
+
+  setEditor()
+
+  const providerChanged = () => {
+   debuggerModule.onEnvChanged((provider) => {
+    setState(prevState => {
+     const isLocalNodeUsed = !provider.startsWith('vm') && provider !== 'injected'
+     return { ...prevState, isLocalNodeUsed: isLocalNodeUsed }
+    })
+   })
+  }
+
+  providerChanged()
+ }, [state.debugger])
+
+ const listenToEvents = (debuggerInstance, currentReceipt) => {
+  if (!debuggerInstance) return
+
+  debuggerInstance.event.register('debuggerStatus', async (isActive) => {
+   await debuggerModule.discardHighlight()
+   setState(prevState => {
+    return { ...prevState, isActive }
+   })
+  })
+
+  debuggerInstance.event.register('locatingBreakpoint', async (isActive) => {
+   setState(prevState => {
+    return { ...prevState, sourceLocationStatus: 'Locating breakpoint, this might take a while...' }
+   })
+  })
+
+  debuggerInstance.event.register('noBreakpointHit', async (isActive) => {
+   setState(prevState => {
+    return { ...prevState, sourceLocationStatus: '' }
+   })
+  })
+
+  debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation, generatedSources, address, stepDetail, lineGasCost) => {
+   if (!lineColumnPos) {
+    await debuggerModule.discardHighlight()
+    setState(prevState => {
+     return { ...prevState, sourceLocationStatus: 'Source location not available, neither in Sourcify nor in Etherscan. Please make sure the Etherscan api key is provided in the settings.' }
+    })
+    return
+   }
+   const contracts = await debuggerModule.fetchContractAndCompile(
+    address || currentReceipt.contractAddress || currentReceipt.to,
+    currentReceipt)
+   if (contracts) {
+    let path = contracts.getSourceName(rawLocation.file)
+    if (!path) {
+     // check in generated sources
+     for (const source of generatedSources) {
+      if (source.id === rawLocation.file) {
+       path = `browser/.debugger/generated-sources/${source.name}`
+       let content
+       try {
+        content = await debuggerModule.getFile(path)
+       } catch (e) {
+        const message = 'Unable to fetch generated sources, the file probably doesn\'t exist yet.'
+        console.log(message, ' ', e)
+       }
+       if (content !== source.contents) {
+        await debuggerModule.setFile(path, source.contents)
+       }
+       break
+      }
+     }
+    }
+    if (path) {
+     setState(prevState => {
+      return { ...prevState, sourceLocationStatus: '' }
+     })
+     await debuggerModule.discardHighlight()
+     await debuggerModule.highlight(lineColumnPos, path, rawLocation, stepDetail, lineGasCost)
+    }
+   }
+  })
+
+  debuggerInstance.event.register('debuggerUnloaded', () => unLoad())
+ }
+
+ const requestDebug = (blockNumber, txNumber, tx) => {
+  startDebugging(blockNumber, txNumber, tx)
+ }
+
+ const updateTxNumberFlag = (empty: boolean) => {
+  setState(prevState => {
+   return {
+    ...prevState,
+    txNumberIsEmpty: empty,
+    validationError: ''
+   }
+  })
+ }
+
+ const unloadRequested = (blockNumber, txIndex, tx) => {
+  unLoad()
+  setState(prevState => {
+   return {
+    ...prevState,
+    sourceLocationStatus: ''
+   }
+  })
+ }
+
+ const unLoad = () => {
+  debuggerModule.onStopDebugging()
+  if (state.debugger) state.debugger.unload()
+  setState(prevState => {
+   return {
+    ...prevState,
     isActive: false,
     debugger: null,
     currentReceipt: {
-      contractAddress: null,
-      to: null
+     contractAddress: null,
+     to: null
     },
     currentBlock: null,
     currentTransaction: null,
     blockNumber: null,
-    txNumber: '',
-    debugging: false,
-    opt: {
-      debugWithGeneratedSources: false,
-      debugWithLocalNode: false
+    ready: {
+     vmDebugger: false,
+     vmDebuggerHead: false
     },
-    toastMessage: '',
-    validationError: '',
-    txNumberIsEmpty: true,
-    isLocalNodeUsed: false,
+    debugging: false
+   }
+  })
+ }
+ const startDebugging = async (blockNumber, txNumber, tx, optWeb3?) => {
+  if (state.debugger) {
+   unLoad()
+   await (new Promise((resolve) => setTimeout(() => resolve({}), 1000)))    
+  }
+  if (!txNumber) return
+  setState(prevState => {
+   return {
+    ...prevState,
+    txNumber: txNumber,
     sourceLocationStatus: ''
+   }
   })
-
-  if (props.onReady) {
-    props.onReady({
-      globalContext: () => {
-        return {
-          block: state.currentBlock,
-          tx: state.currentTransaction,
-          receipt: state.currentReceipt
-        }
-      }
-    })
-  }
-
-  const panelsRef = useRef<HTMLDivElement>(null)
-  const debuggerTopRef = useRef(null)
-
-  const handleResize = () => {
-    if (panelsRef.current && debuggerTopRef.current) {
-      panelsRef.current.style.height = (window.innerHeight - debuggerTopRef.current.clientHeight) - debuggerTopRef.current.offsetTop - 7 +'px'
+  if (!isValidHash(txNumber)) {
+   setState(prevState => {
+    return {
+     ...prevState,
+     validationError: 'Invalid transaction hash.'
     }
+   })
+   return
   }
 
-  useEffect(() => {
-    handleResize()
-  }, [])
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize)
-    // TODO: not a good way to wait on the ref doms element to be rendered of course
-    setTimeout(() =>
-      handleResize(), 2000)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [state.debugging, state.isActive])
-
-  useEffect(() => {
-    return unLoad()
-  }, [])
-
-  debuggerModule.onDebugRequested((hash, web3?) => {
-    if (hash) return debug(hash, web3)
-  })
-
-  debuggerModule.onRemoveHighlights(async () => {
-    await debuggerModule.discardHighlight()
-  })
-
-  useEffect(() => {
-    const setEditor = () => {
-      debuggerModule.onBreakpointCleared((fileName, row) => {
-        if (state.debugger) state.debugger.breakPointManager.remove({ fileName: fileName, row: row })
-      })
-
-      debuggerModule.onBreakpointAdded((fileName, row) => {
-        if (state.debugger) state.debugger.breakPointManager.add({ fileName: fileName, row: row })
-      })
-
-      debuggerModule.onEditorContentChanged(() => {
-        if (state.debugger) unLoad()
-      })
-    }
-
-    setEditor()
-
-    const providerChanged = () => {
-      debuggerModule.onEnvChanged((provider) => {
-        setState(prevState => {
-          const isLocalNodeUsed = !provider.startsWith('vm') && provider !== 'injected'
-          return { ...prevState, isLocalNodeUsed: isLocalNodeUsed }
-        })
-      })
-    }
-
-    providerChanged()
-  }, [state.debugger])
-
-  const listenToEvents = (debuggerInstance, currentReceipt) => {
-    if (!debuggerInstance) return
-
-    debuggerInstance.event.register('debuggerStatus', async (isActive) => {
-      await debuggerModule.discardHighlight()
-      setState(prevState => {
-        return { ...prevState, isActive }
-      })
-    })
-
-    debuggerInstance.event.register('locatingBreakpoint', async (isActive) => {
-      setState(prevState => {
-        return { ...prevState, sourceLocationStatus: 'Locating breakpoint, this might take a while...' }
-      })
-    })
-
-    debuggerInstance.event.register('noBreakpointHit', async (isActive) => {
-      setState(prevState => {
-        return { ...prevState, sourceLocationStatus: '' }
-      })
-    })
-
-    debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation, generatedSources, address, stepDetail, lineGasCost) => {
-      if (!lineColumnPos) {
-        await debuggerModule.discardHighlight()
-        setState(prevState => {
-          return { ...prevState, sourceLocationStatus: 'Source location not available, neither in Sourcify nor in Etherscan. Please make sure the Etherscan api key is provided in the settings.' }
-        })
-        return
-      }
-      const contracts = await debuggerModule.fetchContractAndCompile(
-        address || currentReceipt.contractAddress || currentReceipt.to,
-        currentReceipt)
-      if (contracts) {
-        let path = contracts.getSourceName(rawLocation.file)
-        if (!path) {
-          // check in generated sources
-          for (const source of generatedSources) {
-            if (source.id === rawLocation.file) {
-              path = `browser/.debugger/generated-sources/${source.name}`
-              let content
-              try {
-                content = await debuggerModule.getFile(path)
-              } catch (e) {
-                const message = 'Unable to fetch generated sources, the file probably doesn\'t exist yet.'
-                console.log(message, ' ', e)
-              }
-              if (content !== source.contents) {
-                await debuggerModule.setFile(path, source.contents)
-              }
-              break
-            }
-          }
-        }
-        if (path) {
-          setState(prevState => {
-            return { ...prevState, sourceLocationStatus: '' }
-          })
-          await debuggerModule.discardHighlight()
-          await debuggerModule.highlight(lineColumnPos, path, rawLocation, stepDetail, lineGasCost)
-        }
-      }
-    })
-
-    debuggerInstance.event.register('debuggerUnloaded', () => unLoad())
-  }
-
-  const requestDebug = (blockNumber, txNumber, tx) => {
-    startDebugging(blockNumber, txNumber, tx)
-  }
-
-  const updateTxNumberFlag = (empty: boolean) => {
+  const web3 = optWeb3 || (state.opt.debugWithLocalNode ? await debuggerModule.web3() : await debuggerModule.getDebugWeb3())
+  try {
+   const networkId = await web3.eth.net.getId()
+   _paq.push(['trackEvent', 'debugger', 'startDebugging', networkId])
+   if (networkId === 42) {
     setState(prevState => {
-      return {
-        ...prevState,
-        txNumberIsEmpty: empty,
-        validationError: ''
-      }
+     return {
+      ...prevState,
+      validationError: 'Unfortunately, the Kovan network is not supported.'
+     }
     })
+    return
+   }
+  } catch (e) {
+   console.error(e)
+  }
+  let currentReceipt
+  let currentBlock
+  let currentTransaction
+  try {
+   currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
+   currentBlock = await web3.eth.getBlock(currentReceipt.blockHash)
+   currentTransaction = await web3.eth.getTransaction(txNumber)
+  } catch (e) {
+   setState(prevState => {
+    return {
+     ...prevState,
+     validationError: e.message
+    }
+   })
+   console.log(e.message)
   }
 
-  const unloadRequested = (blockNumber, txIndex, tx) => {
+  const localCache = {}
+  const debuggerInstance = new Debugger({
+   web3,
+   offsetToLineColumnConverter: debuggerModule.offsetToLineColumnConverter,
+   compilationResult: async (address) => {
+    try {
+     if (!localCache[address]) localCache[address] = await debuggerModule.fetchContractAndCompile(address, currentReceipt)
+     return localCache[address]
+    } catch (e) {
+     // debuggerModule.showMessage('Debugging error', 'Unable to fetch a transaction.')
+     console.error(e)
+    }
+    return null
+   },
+   debugWithGeneratedSources: state.opt.debugWithGeneratedSources
+  })
+
+  setTimeout(async() => {
+   debuggerModule.onStartDebugging(debuggerInstance)
+   try {
+    await debuggerInstance.debug(blockNumber, txNumber, tx, () => {
+     listenToEvents(debuggerInstance, currentReceipt)
+     setState(prevState => {
+      return {
+       ...prevState,
+       blockNumber,
+       txNumber,
+       debugging: true,
+       currentReceipt,
+       currentBlock,
+       currentTransaction,
+       debugger: debuggerInstance,
+       toastMessage: `debugging ${txNumber}`,
+       validationError: ''
+      }
+     })
+    })
+   } catch (error) {
     unLoad()
     setState(prevState => {
-      return {
-        ...prevState,
-        sourceLocationStatus: ''
-      }
+     let errorMsg = error.message || error
+     if (typeof errorMsg !== 'string') {
+      errorMsg = JSON.stringify(errorMsg) + '. Possible error: the current endpoint does not support retrieving the trace of a transaction.'
+     }
+     return {
+      ...prevState,
+      validationError: errorMsg
+     }
     })
-  }
+   }
+  }, 300)
+  handleResize()
 
-  const unLoad = () => {
-    debuggerModule.onStopDebugging()
-    if (state.debugger) state.debugger.unload()
+  return debuggerInstance
+ }
+
+ const debug = (txHash, web3?) => {
+  setState(prevState => {
+   return {
+    ...prevState,
+    validationError: '',
+    txNumber: txHash,
+    sourceLocationStatus: ''
+   }
+  })
+  return startDebugging(null, txHash, null, web3)
+ }
+
+ const stepManager = {
+  jumpTo: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpTo.bind(state.debugger.step_manager) : null,
+  stepOverBack: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepOverBack.bind(state.debugger.step_manager) : null,
+  stepIntoBack: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepIntoBack.bind(state.debugger.step_manager) : null,
+  stepIntoForward: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepIntoForward.bind(state.debugger.step_manager) : null,
+  stepOverForward: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepOverForward.bind(state.debugger.step_manager) : null,
+  jumpOut: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpOut.bind(state.debugger.step_manager) : null,
+  jumpPreviousBreakpoint: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpPreviousBreakpoint.bind(state.debugger.step_manager) : null,
+  jumpNextBreakpoint: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpNextBreakpoint.bind(state.debugger.step_manager) : null,
+  jumpToException: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpToException.bind(state.debugger.step_manager) : null,
+  traceLength: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.traceLength : null,
+  registerEvent: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.event.register.bind(state.debugger.step_manager.event) : null
+ }
+
+ const vmDebugger = {
+  registerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.register.bind(state.debugger.vmDebuggerLogic.event) : null,
+  triggerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.trigger.bind(state.debugger.vmDebuggerLogic.event) : null
+ }
+
+ const customJSX = (
+  <span className="p-0 m-0">
+   <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={({ target: { checked } }) => {
     setState(prevState => {
-      return {
-        ...prevState,
-        isActive: false,
-        debugger: null,
-        currentReceipt: {
-          contractAddress: null,
-          to: null
-        },
-        currentBlock: null,
-        currentTransaction: null,
-        blockNumber: null,
-        ready: {
-          vmDebugger: false,
-          vmDebuggerHead: false
-        },
-        debugging: false
-      }
+     return { ...prevState, opt: { ...prevState.opt, debugWithGeneratedSources: checked } }
     })
-  }
-  const startDebugging = async (blockNumber, txNumber, tx, optWeb3?) => {
-    if (state.debugger) {
-      unLoad()
-      await (new Promise((resolve) => setTimeout(() => resolve({}), 1000)))    
-    }
-    if (!txNumber) return
-    setState(prevState => {
-      return {
-        ...prevState,
-        txNumber: txNumber,
-        sourceLocationStatus: ''
-      }
-    })
-    if (!isValidHash(txNumber)) {
-      setState(prevState => {
-        return {
-          ...prevState,
-          validationError: 'Invalid transaction hash.'
-        }
-      })
-      return
-    }
-
-    const web3 = optWeb3 || (state.opt.debugWithLocalNode ? await debuggerModule.web3() : await debuggerModule.getDebugWeb3())
-    try {
-      const networkId = await web3.eth.net.getId()
-      _paq.push(['trackEvent', 'debugger', 'startDebugging', networkId])
-      if (networkId === 42) {
-        setState(prevState => {
-          return {
-            ...prevState,
-            validationError: 'Unfortunately, the Kovan network is not supported.'
-          }
-        })
-        return
-      }
-    } catch (e) {
-      console.error(e)
-    }
-    let currentReceipt
-    let currentBlock
-    let currentTransaction
-    try {
-      currentReceipt = await web3.eth.getTransactionReceipt(txNumber)
-      currentBlock = await web3.eth.getBlock(currentReceipt.blockHash)
-      currentTransaction = await web3.eth.getTransaction(txNumber)
-    } catch (e) {
-      setState(prevState => {
-        return {
-          ...prevState,
-          validationError: e.message
-        }
-      })
-      console.log(e.message)
-    }
-
-    const localCache = {}
-    const debuggerInstance = new Debugger({
-      web3,
-      offsetToLineColumnConverter: debuggerModule.offsetToLineColumnConverter,
-      compilationResult: async (address) => {
-        try {
-          if (!localCache[address]) localCache[address] = await debuggerModule.fetchContractAndCompile(address, currentReceipt)
-          return localCache[address]
-        } catch (e) {
-          // debuggerModule.showMessage('Debugging error', 'Unable to fetch a transaction.')
-          console.error(e)
-        }
-        return null
-      },
-      debugWithGeneratedSources: state.opt.debugWithGeneratedSources
-    })
-
-    setTimeout(async() => {
-      debuggerModule.onStartDebugging(debuggerInstance)
-      try {
-        await debuggerInstance.debug(blockNumber, txNumber, tx, () => {
-          listenToEvents(debuggerInstance, currentReceipt)
-          setState(prevState => {
-            return {
-              ...prevState,
-              blockNumber,
-              txNumber,
-              debugging: true,
-              currentReceipt,
-              currentBlock,
-              currentTransaction,
-              debugger: debuggerInstance,
-              toastMessage: `debugging ${txNumber}`,
-              validationError: ''
-            }
-          })
-        })
-      } catch (error) {
-        unLoad()
-        setState(prevState => {
-          let errorMsg = error.message || error
-          if (typeof errorMsg !== 'string') {
-            errorMsg = JSON.stringify(errorMsg) + '. Possible error: the current endpoint does not support retrieving the trace of a transaction.'
-          }
-          return {
-            ...prevState,
-            validationError: errorMsg
-          }
-        })
-      }
-    }, 300)
-    handleResize()
-
-    return debuggerInstance
-  }
-
-  const debug = (txHash, web3?) => {
-    setState(prevState => {
-      return {
-        ...prevState,
-        validationError: '',
-        txNumber: txHash,
-        sourceLocationStatus: ''
-      }
-    })
-    return startDebugging(null, txHash, null, web3)
-  }
-
-  const stepManager = {
-    jumpTo: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpTo.bind(state.debugger.step_manager) : null,
-    stepOverBack: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepOverBack.bind(state.debugger.step_manager) : null,
-    stepIntoBack: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepIntoBack.bind(state.debugger.step_manager) : null,
-    stepIntoForward: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepIntoForward.bind(state.debugger.step_manager) : null,
-    stepOverForward: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepOverForward.bind(state.debugger.step_manager) : null,
-    jumpOut: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpOut.bind(state.debugger.step_manager) : null,
-    jumpPreviousBreakpoint: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpPreviousBreakpoint.bind(state.debugger.step_manager) : null,
-    jumpNextBreakpoint: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpNextBreakpoint.bind(state.debugger.step_manager) : null,
-    jumpToException: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpToException.bind(state.debugger.step_manager) : null,
-    traceLength: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.traceLength : null,
-    registerEvent: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.event.register.bind(state.debugger.step_manager.event) : null
-  }
-
-  const vmDebugger = {
-    registerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.register.bind(state.debugger.vmDebuggerLogic.event) : null,
-    triggerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.trigger.bind(state.debugger.vmDebuggerLogic.event) : null
-  }
-
-  const customJSX = (
-    <span className="p-0 m-0">
-      <input className="custom-control-input" id="debugGeneratedSourcesInput" onChange={({ target: { checked } }) => {
-        setState(prevState => {
-          return { ...prevState, opt: { ...prevState.opt, debugWithGeneratedSources: checked } }
-        })
-      }} type="checkbox" />
-      <label
-        data-id="debugGeneratedSourcesLabel"
-        className="form-check-label custom-control-label"
-        htmlFor="debugGeneratedSourcesInput">
-        <FormattedMessage id='debugger.useGeneratedSources' />(Solidity {'>='} v0.7.2)
-      </label>
-    </span>
-  )
-  return (
+   }} type="checkbox" />
+   <label
+    data-id="debugGeneratedSourcesLabel"
+    className="form-check-label custom-control-label"
+    htmlFor="debugGeneratedSourcesInput">
+    <FormattedMessage id='debugger.useGeneratedSources' />(Solidity {'>='} v0.7.2)
+   </label>
+  </span>
+ )
+ return (
+  <div>
+   <Toaster message={state.toastMessage} />
+   <div className="px-2" ref={debuggerTopRef}>
     <div>
-      <Toaster message={state.toastMessage} />
-      <div className="px-2" ref={debuggerTopRef}>
-        <div>
-          <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
-            <CustomTooltip
-              tooltipId="debuggerGenSourceCheckbox"
-              tooltipText={<FormattedMessage id='debugger.debugWithGeneratedSources' />}
-              placement="bottom-start"
-            >
-              {customJSX}
-            </CustomTooltip>
-          </div>
-          { state.isLocalNodeUsed && <div className="mb-2 debuggerConfig custom-control custom-checkbox">
-            <CustomTooltip
-              tooltipId="debuggerGenSourceInput"
-              tooltipText="Force the debugger to use the current local node"
-              placement='right'
-            >
-              <input
-                className="custom-control-input"
-                id="debugWithLocalNodeInput"
-                onChange={({ target: { checked } }) => {
-                  setState(prevState => {
-                    return { ...prevState, opt: { ...prevState.opt, debugWithLocalNode: checked } }
-                  })
-                }}
-                type="checkbox"
-              />
-            </CustomTooltip>
-            <label data-id="debugLocaNodeLabel" className="form-check-label custom-control-label" htmlFor="debugWithLocalNodeInput"><FormattedMessage id='debugger.debugLocaNodeLabel' /></label>
-          </div>
-          }
-          { state.validationError && <span className="w-100 py-1 text-danger validationError">{state.validationError}</span> }
-        </div>
-        <TxBrowser requestDebug={ requestDebug } unloadRequested={ unloadRequested } updateTxNumberFlag={ updateTxNumberFlag } transactionNumber={ state.txNumber } debugging={ state.debugging } />
-        { state.debugging && state.sourceLocationStatus && <div className="text-warning"><i className="fas fa-exclamation-triangle" aria-hidden="true"></i> {state.sourceLocationStatus}</div> }
-        { !state.debugging &&
-        <div>
-          <i className="fas fa-info-triangle" aria-hidden="true"></i>
-          <span>
-            <FormattedMessage id='debugger.introduction' />: <a href="https://docs.sourcify.dev/docs/chains/" target="__blank" >Sourcify docs</a> & <a href="https://etherscan.io/contractsVerified" target="__blank">https://etherscan.io/contractsVerified</a>
-          </span>
-        </div> }
-        { state.debugging && <StepManager stepManager={ stepManager } /> }
-      </div>
-      <div className="debuggerPanels" ref={panelsRef}>
-        { state.debugging && <VmDebuggerHead debugging={state.debugging} vmDebugger={ vmDebugger } /> }
-        { state.debugging && <VmDebugger debugging={state.debugging} vmDebugger={ vmDebugger } currentBlock={ state.currentBlock } currentReceipt={ state.currentReceipt } currentTransaction={ state.currentTransaction } /> }
-      </div>
+     <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
+      <CustomTooltip
+       tooltipId="debuggerGenSourceCheckbox"
+       tooltipText={<FormattedMessage id='debugger.debugWithGeneratedSources' />}
+       placement="bottom-start"
+      >
+       {customJSX}
+      </CustomTooltip>
+     </div>
+     { state.isLocalNodeUsed && <div className="mb-2 debuggerConfig custom-control custom-checkbox">
+      <CustomTooltip
+       tooltipId="debuggerGenSourceInput"
+       tooltipText="Force the debugger to use the current local node"
+       placement='right'
+      >
+       <input
+        className="custom-control-input"
+        id="debugWithLocalNodeInput"
+        onChange={({ target: { checked } }) => {
+         setState(prevState => {
+          return { ...prevState, opt: { ...prevState.opt, debugWithLocalNode: checked } }
+         })
+        }}
+        type="checkbox"
+       />
+      </CustomTooltip>
+      <label data-id="debugLocaNodeLabel" className="form-check-label custom-control-label" htmlFor="debugWithLocalNodeInput"><FormattedMessage id='debugger.debugLocaNodeLabel' /></label>
+     </div>
+     }
+     { state.validationError && <span className="w-100 py-1 text-danger validationError">{state.validationError}</span> }
     </div>
-  )
+    <TxBrowser requestDebug={ requestDebug } unloadRequested={ unloadRequested } updateTxNumberFlag={ updateTxNumberFlag } transactionNumber={ state.txNumber } debugging={ state.debugging } />
+    { state.debugging && state.sourceLocationStatus && <div className="text-warning"><i className="fas fa-exclamation-triangle" aria-hidden="true"></i> {state.sourceLocationStatus}</div> }
+    { !state.debugging &&
+        <div>
+         <i className="fas fa-info-triangle" aria-hidden="true"></i>
+         <span>
+          <FormattedMessage id='debugger.introduction' />: <a href="https://docs.sourcify.dev/docs/chains/" target="__blank" >Sourcify docs</a> & <a href="https://etherscan.io/contractsVerified" target="__blank">https://etherscan.io/contractsVerified</a>
+         </span>
+        </div> }
+    { state.debugging && <StepManager stepManager={ stepManager } /> }
+   </div>
+   <div className="debuggerPanels" ref={panelsRef}>
+    { state.debugging && <VmDebuggerHead debugging={state.debugging} vmDebugger={ vmDebugger } /> }
+    { state.debugging && <VmDebugger debugging={state.debugging} vmDebugger={ vmDebugger } currentBlock={ state.currentBlock } currentReceipt={ state.currentReceipt } currentTransaction={ state.currentTransaction } /> }
+   </div>
+  </div>
+ )
 }
 
 export default DebuggerUI

@@ -100,5 +100,5 @@ contract Ballot {
 }
 `
 if (typeof (module) !== 'undefined' && typeof (module.exports) !== 'undefined') {
-  module.exports = sourceRuntimeMapping
+ module.exports = sourceRuntimeMapping
 }

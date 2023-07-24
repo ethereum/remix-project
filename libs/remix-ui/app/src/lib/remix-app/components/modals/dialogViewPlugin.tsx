@@ -3,13 +3,13 @@ import { AppContext } from '../../context/context'
 import { useDialogDispatchers } from '../../context/provider'
 
 const DialogViewPlugin = () => {
-  const { modal, alert, toast } = useDialogDispatchers()
-  const app = useContext(AppContext)
+ const { modal, alert, toast } = useDialogDispatchers()
+ const app = useContext(AppContext)
 
-  useEffect(() => {
-    app.modal.setDispatcher({ modal, alert, toast })
-  }, [])
-  return <></>
+ useEffect(() => {
+  app.modal.setDispatcher({ modal, alert, toast })
+ }, [])
+ return <></>
 }
 
 export default DialogViewPlugin
