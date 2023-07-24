@@ -10,5 +10,6 @@ module.exports = {
   jsxBracketSameLine: false,
   arrowParens: 'always',
   singleAttributePerLine: false,
-  ignorePath: '.prettierignore'
+  ignorePath: '.prettierignore',
+  arrowParens: 'always'
 }
