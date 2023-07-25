@@ -1,6 +1,5 @@
 import React from "react"
 import { PluginClient } from "@remixproject/plugin"
-
 import { Receipt, ThemeType } from "./types"
 
 export interface AppContextProps {
