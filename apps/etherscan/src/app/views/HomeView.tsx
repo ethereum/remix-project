@@ -1,10 +1,7 @@
 import React from "react"
-
 import { Navigate } from "react-router-dom"
-
 import { AppContext } from "../AppContext"
 import { Receipt } from "../types"
-
 import { VerifyView } from "./VerifyView"
 
 export const HomeView: React.FC = () => {
@@ -12,8 +9,8 @@ export const HomeView: React.FC = () => {
     <AppContext.Consumer>
       {({ apiKey, clientInstance, setReceipts, receipts, contracts }) => {
         if (!apiKey && clientInstance && clientInstance.call) {
-          clientInstance.call('sidePanel' as any, 'currentFocus').then((current) => {
-            if (current === 'etherscan') clientInstance.call('notification' as any, 'toast', 'Please add API key to continue')
+          clientInstance.call('sidePanel', 'currentFocus').then((current) => {
+            if (current === 'etherscan') clientInstance.call('notification', 'toast', 'Please add API key to continue')
           })
         }
         return !apiKey ? (

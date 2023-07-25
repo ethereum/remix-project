@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import Web3 from 'web3'
-
 import {
   PluginClient,
 } from "@remixproject/plugin"
@@ -39,24 +38,8 @@ export const VerifyView: React.FC<Props> = ({
   const [constructorInputs, setConstructorInputs] = useState([])
   const verificationResult = useRef({})
 
-  useEffect(() => {
-    if (client && client.on) {
-      client.on("blockchain" as any, 'networkStatus', (result) => {
-        setNetworkName(`${result.network.name} ${result.network.id !== '-' ? `(Chain id: ${result.network.id})` : '(Not supported)'}`)
-      })
-    }
-    return () => {
-      // To fix memory leak
-      if (client && client.off) client.off("blockchain" as any, 'networkStatus')
-    }
-  }, [client])
-
-  useEffect(() => {
-    if (contracts.includes(selectedContract)) updateConsFields(selectedContract)
-  }, [contracts])
-
-  const updateConsFields = (contractName) => {
-    client.call("compilerArtefacts" as any, "getArtefactsByContractName", contractName).then((result) => {
+  const updateConsFields = useCallback((contractName) => {
+    client.call('compilerArtefacts' as any, "getArtefactsByContractName", contractName).then((result) => {
       const { artefact } = result
       if (artefact && artefact.abi && artefact.abi[0] && artefact.abi[0].type && artefact.abi[0].type === 'constructor' && artefact.abi[0].inputs.length > 0) {
         setConstructorInputs(artefact.abi[0].inputs)
@@ -66,7 +49,7 @@ export const VerifyView: React.FC<Props> = ({
         setShowConstructorArgs(false)
       }
     })
-  }
+  }, [client])
 
   const onVerifyContract = async (values: FormValues) => {
     const compilationResult = (await client.call(
@@ -84,8 +67,8 @@ export const VerifyView: React.FC<Props> = ({
     }
     const web3 = new Web3()
     const constructorTypes = constructorInputs.map(e => e.type)
-    let contractArguments = web3.eth.abi.encodeParameters(constructorTypes, constructorValues)   
-    contractArguments = contractArguments.replace("0x", "")    
+    let contractArguments = web3.eth.abi.encodeParameters(constructorTypes, constructorValues)
+    contractArguments = contractArguments.replace("0x", "")
 
     verificationResult.current = await verify(
       apiKey,
@@ -103,6 +86,22 @@ export const VerifyView: React.FC<Props> = ({
     setResults(verificationResult.current['message'])
   }
 
+  useEffect(() => {
+    if (client && client.on) {
+      client.on("blockchain" as any, 'networkStatus', (result) => {
+        setNetworkName(`${result.network.name} ${result.network.id !== '-' ? `(Chain id: ${result.network.id})` : '(Not supported)'}`)
+      })
+    }
+    return () => {
+      // To fix memory leak
+      if (client && client.off) client.off("blockchain" as any, 'networkStatus')
+    }
+  }, [client])
+
+  useEffect(() => {
+    if (contracts.includes(selectedContract)) updateConsFields(selectedContract)
+  }, [contracts, selectedContract, updateConsFields])
+
   return (
     <div>
       <Formik
@@ -118,7 +117,7 @@ export const VerifyView: React.FC<Props> = ({
           if (!values.contractAddress) {
             errors.contractAddress = "Required"
           }
-          if (values.contractAddress.trim() === "" || !values.contractAddress.startsWith('0x') 
+          if (values.contractAddress.trim() === "" || !values.contractAddress.startsWith('0x')
               || values.contractAddress.length !== 42) {
             errors.contractAddress = "Please enter a valid contract address"
           }
@@ -141,12 +140,12 @@ export const VerifyView: React.FC<Props> = ({
                   name="network"
                   value={networkName}
                   disabled={true}
-                /> 
-              </CustomTooltip> 
+                />
+              </CustomTooltip>
             </div>
 
             <div className="form-group">
-              <label htmlFor="contractName">Contract Name</label>              
+              <label htmlFor="contractName">Contract Name</label>
               <Field
                 as="select"
                 className={
@@ -206,7 +205,7 @@ export const VerifyView: React.FC<Props> = ({
                     </div>
                   )}
                 )}
-              
+
             </div>
 
             <div className="form-group">
@@ -260,15 +259,15 @@ export const VerifyView: React.FC<Props> = ({
               <label> &nbsp;Make sure contract is already verified on Etherscan</label>
             </div>
 
-            <SubmitButton dataId="verify-contract" text="Verify" 
-              isSubmitting={isSubmitting} 
-              disable={ !contracts.length || 
+            <SubmitButton dataId="verify-contract" text="Verify"
+              isSubmitting={isSubmitting}
+              disable={ !contracts.length ||
                 !touched.contractName ||
                 !touched.contractAddress ||
                 (touched.contractName && errors.contractName) ||
                 (touched.contractAddress && errors.contractAddress) ||
                 (networkName === 'VM (Not supported)')
-              ? true 
+              ? true
               : false}
             />
             <br/>
