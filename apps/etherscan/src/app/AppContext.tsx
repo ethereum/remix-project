@@ -2,10 +2,12 @@ import React from "react"
 import { PluginClient } from "@remixproject/plugin"
 import { Receipt, ThemeType } from "./types"
 
+
+export type ClientInstanceProps = typeof PluginClient & PluginClient
 export interface AppContextProps {
   apiKey: string
   setAPIKey: (value: string) => void
-  clientInstance: typeof PluginClient & PluginClient
+  clientInstance:  ClientInstanceProps
   receipts: Receipt[]
   setReceipts: (receipts: Receipt[]) => void
   contracts: string[]
@@ -13,7 +15,6 @@ export interface AppContextProps {
   themeType: ThemeType
   setThemeType: (themeType: ThemeType) => void
 }
-
 
 export const AppContext = React.createContext({
   apiKey: "",
