@@ -1,4 +1,4 @@
-import { toHex, toDecimal } from 'web3-utils'
+import { toHex, toNumber } from 'web3-utils'
 import BN from 'bn.js'
 import { toChecksumAddress, Address, bigIntToHex } from '@ethereumjs/util'
 import { processTx } from './txProcess'
@@ -292,7 +292,7 @@ export class Transactions {
     const txIndex = payload.params[1]
 
     const txBlock = this.vmContext.blocks[payload.params[0]]
-    const txHash = '0x' + txBlock.transactions[toDecimal(txIndex)].hash().toString('hex')
+    const txHash = '0x' + txBlock.transactions[toNumber(txIndex) as number].hash().toString('hex')
 
     this.vmContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
       if (error) {
@@ -337,7 +337,7 @@ export class Transactions {
     const txIndex = payload.params[1]
 
     const txBlock = this.vmContext.blocks[payload.params[0]]
-    const txHash = '0x' + txBlock.transactions[toDecimal(txIndex)].hash().toString('hex')
+    const txHash = '0x' + txBlock.transactions[toNumber(txIndex) as number].hash().toString('hex')
 
     this.vmContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
       if (error) {
