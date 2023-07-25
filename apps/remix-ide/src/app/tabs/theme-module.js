@@ -72,9 +72,7 @@ export class ThemeModule extends Plugin {
    * @return {{ name: string, quality: string, url: string }} - The active theme
   */
   currentTheme () {
-    const current = this.themes[this.active]
-    console.log({ current })
-    return current
+    return this.themes[this.active]
   }
 
   /** Returns all themes as an array */
