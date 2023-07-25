@@ -62,7 +62,7 @@
     "string-similarity": "^4.0.4",
     "time-stamp": "^2.2.0",
     "tslib": "^2.3.0",
-    "web3": "^1.5.1",
+    "web3": "^4.0.3",
     "winston": "^3.0.0"
   },
   "devDependencies": {
