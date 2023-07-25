@@ -62,10 +62,12 @@ export function runTestFiles (filepath: string, isDirectory: boolean, web3: Web3
   async.waterfall([
     function getAccountList (next) {
       if (accounts) return next(null)
-      web3.eth.getAccounts((_err: Error | null | undefined, _accounts) => {
-        accounts = _accounts
-        next(null)
-      })
+      web3.eth.getAccounts()
+        .then(_accounts => {
+          accounts = _accounts
+          next(null)
+        })
+        .catch((_err: Error | null | undefined) => next(null))
     },
     function compile (next) {
       compileFileOrFiles(filepath, isDirectory, { accounts }, compilerConfig, next)

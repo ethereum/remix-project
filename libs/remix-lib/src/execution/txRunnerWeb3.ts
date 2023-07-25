@@ -95,12 +95,11 @@ export class TxRunnerWeb3 {
     if (useCall) {
       tx['gas'] = gasLimit
       if (this._api && this._api.isVM()) tx['timestamp'] = timestamp
-      return this.getWeb3().eth.call(tx, function (error, result: any) {
-        if (error) return callback(error)
-        callback(null, {
+      this.getWeb3().eth.call(tx)
+        .then((result: any) => callback(null, {
           result: result
-        })
-      })
+        }))
+        .catch(error => callback(error))
     }
     this._api.detectNetwork((errNetWork, network) => {
       if (errNetWork) {
@@ -118,43 +117,44 @@ export class TxRunnerWeb3 {
           txCopy.type = '0x1'
           txCopy.gasPrice = network.lastBlock.baseFeePerGas
         }
-      }      
-      this.getWeb3().eth.estimateGas(txCopy, (err, gasEstimation) => {
-        if (err && err.message.indexOf('Invalid JSON RPC response') !== -1) {
-          // // @todo(#378) this should be removed when https://github.com/WalletConnect/walletconnect-monorepo/issues/334 is fixed
-          callback(new Error('Gas estimation failed because of an unknown internal error. This may indicated that the transaction will fail.'))
-        }
-        err = network.name === 'VM' ? null : err // just send the tx if "VM"
-        gasEstimationForceSend(err, () => {
-          // callback is called whenever no error
-          tx['gas'] = !gasEstimation ? gasLimit : gasEstimation
+      }
+      this.getWeb3().eth.estimateGas(txCopy)
+        .then(gasEstimation => {
+          gasEstimationForceSend(null, () => {
+            // callback is called whenever no error
+            tx['gas'] = !gasEstimation ? gasLimit : gasEstimation
+    
+            if (this._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
+              return this._executeTx(tx, network, null, this._api, promptCb, callback)
+            }
   
-          if (this._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
-            return this._executeTx(tx, network, null, this._api, promptCb, callback)
-          }
-
-          confirmCb(network, tx, tx['gas'], (txFee) => {
-            return this._executeTx(tx, network, txFee, this._api, promptCb, callback)
-          }, (error) => {
-            callback(error)
+            confirmCb(network, tx, tx['gas'], (txFee) => {
+              return this._executeTx(tx, network, txFee, this._api, promptCb, callback)
+            }, (error) => {
+              callback(error)
+            })
           })
-        }, () => {
-          const blockGasLimit = this.currentblockGasLimit()
-          // NOTE: estimateGas very likely will return a large limit if execution of the code failed
-          //       we want to be able to run the code in order to debug and find the cause for the failure
-          if (err) return callback(err)
-  
-          let warnEstimation = ' An important gas estimation might also be the sign of a problem in the contract code. Please check loops and be sure you did not sent value to a non payable function (that\'s also the reason of strong gas estimation). '
-          warnEstimation += ' ' + err
-  
-          if (gasEstimation > gasLimit) {
-            return callback('Gas required exceeds limit: ' + gasLimit + '. ' + warnEstimation)
-          }
-          if (gasEstimation > blockGasLimit) {
-            return callback('Gas required exceeds block gas limit: ' + gasLimit + '. ' + warnEstimation)
-          }
         })
-      })
+        .catch(err => {
+          if (err && err.message.indexOf('Invalid JSON RPC response') !== -1) {
+            // // @todo(#378) this should be removed when https://github.com/WalletConnect/walletconnect-monorepo/issues/334 is fixed
+            callback(new Error('Gas estimation failed because of an unknown internal error. This may indicated that the transaction will fail.'))
+          }
+          err = network.name === 'VM' ? null : err // just send the tx if "VM"
+          gasEstimationForceSend(err, () => {
+            tx['gas'] = gasLimit
+    
+            if (this._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
+              return this._executeTx(tx, network, null, this._api, promptCb, callback)
+            }
+  
+            confirmCb(network, tx, tx['gas'], (txFee) => {
+              return this._executeTx(tx, network, txFee, this._api, promptCb, callback)
+            }, (error) => {
+              callback(error)
+            })
+          })
+        })
     })
   }
 }
