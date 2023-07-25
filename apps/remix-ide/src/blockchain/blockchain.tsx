@@ -1,6 +1,7 @@
 
 import React from 'react' // eslint-disable-line
 import Web3 from 'web3'
+import { fromWei, toBN, toWei } from 'web3-utils-legacy'
 import { Plugin } from '@remixproject/engine'
 import { toBuffer, addHexPrefix } from '@ethereumjs/util'
 import { EventEmitter } from 'events'
@@ -422,17 +423,17 @@ export class Blockchain extends Plugin {
 
   fromWei (value, doTypeConversion, unit) {
     if (doTypeConversion) {
-      return Web3.utils.fromWei(typeConversion.toInt(value), unit || 'ether')
+      return fromWei(typeConversion.toInt(value), unit || 'ether')
     }
-    return Web3.utils.fromWei(value.toString(10), unit || 'ether')
+    return fromWei(value.toString(10), unit || 'ether')
   }
 
   toWei (value, unit) {
-    return Web3.utils.toWei(value, unit || 'gwei')
+    return toWei(value, unit || 'gwei')
   }
 
   calculateFee (gas, gasPrice, unit?) {
-    return Web3.utils.toBN(gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10) as string, unit || 'gwei')))
+    return toBN(gas).mul(toBN(toWei(gasPrice.toString(10) as string, unit || 'gwei')))
   }
 
   determineGasFees (tx) {

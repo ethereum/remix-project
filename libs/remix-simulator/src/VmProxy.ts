@@ -6,6 +6,7 @@ import { ConsoleLogs, hash } from '@remix-project/remix-lib'
 import BN from 'bn.js'
 import { toChecksumAddress, bufferToHex, Address, toBuffer } from '@ethereumjs/util'
 import utils from 'web3-utils'
+import { toBN } from 'web3-utils-legacy'
 import { ethers } from 'ethers'
 import { VMContext } from './vm-context'
 import type { StateManager } from '@ethereumjs/statemanager'
@@ -83,8 +84,7 @@ export class VmProxy {
     this.fromDecimal = (...args) => utils.fromDecimal.apply(this, args)
     this.fromWei = (...args) => utils.fromWei.apply(this, args)
     this.toWei = (...args) => utils.toWei.apply(this, args)
-    // TODO Is this still needed?
-    // this.toBigNumber = (...args) => utils.toBN.apply(this, args)
+    this.toBigNumber = (...args) => toBN.apply(this, args)
     this.isAddress = (...args) => utils.isAddress.apply(this, args)
     this.utils = utils
     this.txsMapBlock = {}

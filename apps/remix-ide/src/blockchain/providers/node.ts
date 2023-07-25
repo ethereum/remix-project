@@ -46,9 +46,9 @@ export class NodeProvider {
     const messageHash = hashPersonalMessage(Buffer.from(message))
     try {
       const personal = new Personal(this.executionContext.web3().currentProvider)
-      personal.sign(message, account, passphrase, (error, signedData) => {
-        cb(error, '0x' + messageHash.toString('hex'), signedData)
-      })
+      personal.sign(message, account, passphrase)
+        .then(signedData => cb(undefined, '0x' + messageHash.toString('hex'), signedData))
+        .catch(error => cb(error, '0x' + messageHash.toString('hex'), undefined))
     } catch (e) {
       cb(e.message)
     }

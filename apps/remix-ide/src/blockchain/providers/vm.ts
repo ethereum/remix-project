@@ -1,4 +1,5 @@
-import Web3 from 'web3'
+import Web3, { FMT_BYTES, FMT_NUMBER, LegacySendAsyncProvider } from 'web3'
+import { fromWei } from 'web3-utils-legacy'
 import { privateToAddress, hashPersonalMessage } from '@ethereumjs/util'
 import BN from 'bn.js'
 import { extend, JSONRPCRequestPayload, JSONRPCResponseCallback } from '@remix-project/remix-simulator'
@@ -21,12 +22,9 @@ export class VMProvider {
   }
 
   getAccounts (cb) {
-    this.web3.eth.getAccounts((err, accounts) => {
-      if (err) {
-        return cb('No accounts?')
-      }
-      return cb(null, accounts)
-    })
+    this.web3.eth.getAccounts()
+      .then(accounts => cb(null, accounts))
+      .catch(err => cb('No accounts?'))
   }
 
   async resetEnvironment () {
@@ -51,7 +49,7 @@ export class VMProvider {
                 this.worker.postMessage({ cmd: 'sendAsync', query, stamp })
               }
             }
-            this.web3 = new Web3(this.provider)
+            this.web3 = new Web3(this.provider as LegacySendAsyncProvider)
             extend(this.web3)
             this.executionContext.setWeb3(this.executionContext.getProvider(), this.web3)
             resolve({})
@@ -85,8 +83,8 @@ export class VMProvider {
   }
 
   async getBalanceInEther (address) {
-    const balance = await this.web3.eth.getBalance(address)
-    return Web3.utils.fromWei(new BN(balance).toString(10), 'ether')
+    const balance = await this.web3.eth.getBalance(address, undefined, { number: FMT_NUMBER.HEX, bytes: FMT_BYTES.HEX })
+    return fromWei(new BN(balance).toString(10), 'ether')
   }
 
   getGasPrice (cb) {
@@ -95,12 +93,9 @@ export class VMProvider {
 
   signMessage (message, account, _passphrase, cb) {
     const messageHash = hashPersonalMessage(Buffer.from(message))
-    this.web3.eth.sign(message, account, (error, signedData) => {
-      if (error) {
-        return cb(error)
-      }
-      cb(null, '0x' + messageHash.toString('hex'), signedData)
-    })
+    this.web3.eth.sign(message, account)
+      .then(signedData => cb(null, '0x' + messageHash.toString('hex'), signedData))
+      .catch(error => cb(error))
   }
 
   getProvider () {
