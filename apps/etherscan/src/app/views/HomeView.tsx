@@ -31,7 +31,7 @@ export const HomeView: React.FC = () => {
           />
         )
       }
-    }
+      }
     </AppContext.Consumer>
   )
 }

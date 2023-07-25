@@ -84,20 +84,20 @@ export class SolidityScript extends Plugin {
 
     if (hhlogs && hhlogs.length) {
       const finalLogs = <div><div><b>console.log:</b></div>
-      {
-        hhlogs.map((log) => {
-          let formattedLog
-          // Hardhat implements the same formatting options that can be found in Node.js' console.log,
-          // which in turn uses util.format: https://nodejs.org/dist/latest-v12.x/docs/api/util.html#util_util_format_format_args
-          // For example: console.log("Name: %s, Age: %d", remix, 6) will log 'Name: remix, Age: 6'
-          // We check first arg to determine if 'util.format' is needed
-          if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
-            formattedLog = format(log[0], ...log.slice(1))
-          } else {
-            formattedLog = log.join(' ')
-          }
-          return <div>{formattedLog}</div>
-      })}
+        {
+          hhlogs.map((log) => {
+            let formattedLog
+            // Hardhat implements the same formatting options that can be found in Node.js' console.log,
+            // which in turn uses util.format: https://nodejs.org/dist/latest-v12.x/docs/api/util.html#util_util_format_format_args
+            // For example: console.log("Name: %s, Age: %d", remix, 6) will log 'Name: remix, Age: 6'
+            // We check first arg to determine if 'util.format' is needed
+            if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
+              formattedLog = format(log[0], ...log.slice(1))
+            } else {
+              formattedLog = log.join(' ')
+            }
+            return <div>{formattedLog}</div>
+          })}
       </div>          
       _paq.push(['trackEvent', 'udapp', 'hardhat', 'console.log'])
       this.call('terminal', 'logHtml', finalLogs)

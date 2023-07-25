@@ -36,18 +36,18 @@ function RootView ({ pluginComponent, children }: RootViewProps) {
   return (
     <Fragment>
       <div id="pluginManager" data-id="pluginManagerComponentPluginManager">
-        <header className="form-group remixui_pluginSearch plugins-header pt-3 pb-0 px-4 border-bottom" data-id="pluginManagerComponentPluginManagerHeader">
+        <header className="form-group mb-0 d-flex flex-column align-items-center bg-light plugins-header pt-3 pb-0 px-3" data-id="pluginManagerComponentPluginManagerHeader">
           <input
             type="text"
             onChange={(event) => {
               setFilterPlugin(event.target.value.toLowerCase())
             }}
             value={filterPlugins}
-            className="form-control"
+            className="mb-2 form-control"
             placeholder="Search"
             data-id="pluginManagerComponentSearchInput"
           />
-          <button onClick={openModal} className="remixui_pluginSearchButton btn bg-transparent text-dark border-0 mt-2 text-underline" data-id="pluginManagerComponentPluginSearchButton">
+          <button onClick={openModal} className="py-1 btn bg-transparent text-dark border-0 mt-2 text-underline" data-id="pluginManagerComponentPluginSearchButton">
             <FormattedMessage id='pluginManager.connectLocal' />
           </button>
         </header>

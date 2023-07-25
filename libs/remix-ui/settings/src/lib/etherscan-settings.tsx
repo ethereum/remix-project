@@ -58,8 +58,8 @@ export function EtherscanSettings (props: EtherscanSettingsProps) {
                 placement="left-start"
               >
                 <button className="btn btn-sm btn-secondary ml-2" id="removeetherscantoken" data-id="settingsTabRemoveEtherscanToken" title="Delete Etherscan token" onClick={removeToken}>
-                <FormattedMessage id='settings.remove' />
-              </button></CustomTooltip>
+                  <FormattedMessage id='settings.remove' />
+                </button></CustomTooltip>
             </div>
           </div>
         </div>

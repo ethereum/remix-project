@@ -133,7 +133,7 @@ export const verify = async (
       const returnValue = {
         guid: result,
         status: receiptStatus.result,
-        message: `Verification process started correctly. Receipt GUID ${result}`,
+        message: `Verification request submitted successfully. Use this receipt GUID ${result} to track the status of your submission`,
         succeed: true,
         isProxyContract
       }

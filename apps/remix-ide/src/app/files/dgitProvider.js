@@ -110,7 +110,7 @@ class DGitProvider extends Plugin {
       ...cmd
     })
     if (refresh) {
-        setTimeout(async () => {
+      setTimeout(async () => {
         await this.call('fileManager', 'refresh')
       }, 1000)
     }
@@ -141,7 +141,7 @@ class DGitProvider extends Plugin {
       ...cmd
     })
     if (refresh) {
-        setTimeout(async () => {
+      setTimeout(async () => {
         await this.call('fileManager', 'refresh')
       }, 1000)
     }

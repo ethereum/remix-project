@@ -6,6 +6,7 @@ import { ContractData, FuncABI, OverSizeLimit} from '@remix-project/core-plugin'
 import * as ethJSUtil from '@ethereumjs/util'
 import { ContractGUI } from './contractGUI'
 import { CustomTooltip, deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
+import { title } from 'process'
 const _paq = window._paq = window._paq || []
 
 export function ContractDropdownUI (props: ContractDropdownProps) {
@@ -29,6 +30,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
   const [loadedContractData, setLoadedContractData] = useState<ContractData>(null)
   const [constructorInterface, setConstructorInterface] = useState<FuncABI>(null)
   const [constructorInputs, setConstructorInputs] = useState(null)
+  const [addressIsValid, setaddressIsValid] = useState(true)
   const [compilerName, setCompilerName] = useState<string>('')
   const contractsRef = useRef<HTMLSelectElement>(null)
   const atAddressValue = useRef<HTMLInputElement>(null)
@@ -201,12 +203,19 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   const loadFromAddress = () => {
     let address = loadedAddress
-
-    if (!ethJSUtil.isValidChecksumAddress(address)) {
-      props.tooltip(checkSumWarning())
-      address = ethJSUtil.toChecksumAddress(address)
+    if (address == '') return
+    try {
+      if (!ethJSUtil.isValidChecksumAddress(address)) {
+        props.tooltip(checkSumWarning())
+        address = ethJSUtil.toChecksumAddress(address)
+      }
+      props.loadAddress(loadedContractData, address)
+    } catch(e) {
+      console.log("Invalid Address input: ", e)
+      setaddressIsValid(false)
+      return
     }
-    props.loadAddress(loadedContractData, address)
+    setaddressIsValid(true)
   }
 
   const handleCheckedIPFS = () => {
@@ -221,10 +230,15 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       contractList[currentFile].forEach(contract => {
         if (contract.alias === contractsRef.current.value) {
           setCompilerName(contract.compilerName)
+          setContractOptions({
+            disabled: false,
+            title: <FormattedMessage id='udapp.contractOptionsTitle2' />
+          })
         }
       })
     } else{
       setCompilerName('')
+      setContractOptions({title: <FormattedMessage id='udapp.contractOptionsTitle1' />, disabled: true})
     }
   }
 
@@ -250,14 +264,14 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     return (
       <div>
         { 
-        values.overSizeEip170 && <div>
-          <FormattedMessage id='udapp.isOverSizePromptEip170' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-170" target="_blank" rel="noreferrer">eip-170</a> }} />
-        </div>
+          values.overSizeEip170 && <div>
+            <FormattedMessage id='udapp.isOverSizePromptEip170' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-170" target="_blank" rel="noreferrer">eip-170</a> }} />
+          </div>
         }
         { 
-        values.overSizeEip3860 && <div>
-          <FormattedMessage id='udapp.isOverSizePromptEip3860' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-3860" target="_blank" rel="noreferrer">eip-3860</a> }} />
-        </div>
+          values.overSizeEip3860 && <div>
+            <FormattedMessage id='udapp.isOverSizePromptEip3860' values={{ br: <br />, a: <a href="https://eips.ethereum.org/EIPS/eip-3860" target="_blank" rel="noreferrer">eip-3860</a> }} />
+          </div>
         }
       </div>
     )
@@ -268,15 +282,19 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     evmVersion = JSON.parse(loadedContractData.metadata).settings.evmVersion
   } catch (err) {}
   return (
-    <div className="udapp_container" data-id="contractDropdownContainer">
+    <div className="udapp_container mb-2" data-id="contractDropdownContainer">
       <div className='d-flex justify-content-between'>
         <div className="d-flex justify-content-between align-items-end">
           <label className="udapp_settingsLabel pr-1">
             <FormattedMessage id='udapp.contract' />
           </label>
-          {compilerName && compilerName !== '' && <label className='udapp_settingsCompiledBy badge badge-secondary' data-id="udappCompiledBy"><FormattedMessage id='udapp.compiledBy' values={{ compilerName: <span className="text-capitalize"> {compilerName}</span> }} /></label>}
+          { compilerName && compilerName !== '' && compilerName !== 'remix' &&
+            <label className='udapp_settingsCompiledBy badge badge-secondary' data-id="udappCompiledBy">
+              <FormattedMessage id='udapp.compiledBy' values={{ compilerName: <span className="text-capitalize">{compilerName}</span> }} />
+            </label>
+          }
         </div>
-        {props.remixdActivated ?
+        { props.remixdActivated ?
           (<CustomTooltip
             placement={'right'}
             tooltipClasses="text-wrap text-left"
@@ -292,7 +310,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
               <i style={{ cursor: 'pointer' }} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
             </button>
           </CustomTooltip>)
-          : null}
+          : null }
       </div>
       <div className="udapp_subcontainer">
         <CustomTooltip
@@ -301,32 +319,40 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
           tooltipId="remixUdappContractNamesTooltip"
           tooltipText={contractOptions.title}
         >
-          <div id="udappcontractNamesWrapper" className="w-100">
-            <select ref={contractsRef} value={currentContract} onChange={handleContractChange} className="udapp_contractNames custom-select" disabled={contractOptions.disabled} style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block', pointerEvents: contractOptions.disabled ? 'none' : 'auto' }}>
-              {(contractList[currentFile] || []).map((contract, index) => {
-                return <option key={index} value={contract.alias}>
-                  {contract.alias} - {contract.file}
-                </option>
-              })}
-            </select>
-          </div>
+          <select ref={contractsRef}
+            value={currentContract}
+            name={contractOptions.title.toString()}
+            onChange={handleContractChange}
+            className="udapp_contractNames w-100 custom-select"
+            disabled={contractOptions.disabled}
+            style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block', pointerEvents: contractOptions.disabled ? 'none' : 'auto' }}
+          >
+            <option value='' disabled hidden>No compiled contracts</option>
+            {(contractList[currentFile] || []).map((contract, index) => {
+              return <option key={index} value={contract.alias}>
+                {contract.alias} - {contract.file}
+              </option>
+            })}
+          </select>
         </CustomTooltip>
         <span className="py-1" style={{ display: abiLabel.display }}>{abiLabel.content}</span>
       </div>
       { evmVersion && loadedContractData && <CustomTooltip
-            placement={'right'}
-            tooltipClasses="text-wrap text-left"
-            tooltipId="info-evm-version-warn"
-            tooltipText={<span className="text-left">
-              <FormattedMessage id='udapp.warningEvmVersion' values={{ evmVersion }}/>
-            </span>}
-          >
-            <span className='udapp_evmVersion badge badge-secondary'>evm version: {evmVersion}</span>
-          </CustomTooltip> }
+        placement={'right'}
+        tooltipClasses="text-wrap text-left"
+        tooltipId="info-evm-version-warn"
+        tooltipText={<span className="text-left">
+          <FormattedMessage id='udapp.warningEvmVersion' values={{ evmVersion }}/>
+        </span>
+        }
+      >
+        <span className='udapp_evmVersion badge alert-warning'>evm version: {evmVersion}</span>
+      </CustomTooltip>
+      }
       <div>
         <div className="udapp_deployDropdown">
-          {((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length <= 0 ? intl.formatMessage({ id: 'udapp.noCompiledContracts' })
-            : loadedContractData ? <div>
+          { (((contractList[currentFile] && contractList[currentFile].filter(contract => contract)) || []).length > 0 && loadedContractData) &&
+            <div>
               <ContractGUI
                 title={intl.formatMessage({ id: 'udapp.deploy' })}
                 isDeploy={true}
@@ -368,38 +394,38 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
                   </label>
                 </CustomTooltip>
               </div>
-            </div> : ''
+            </div>
           }
         </div>
-        <div className="udapp_orLabel mt-2" style={{ display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block' }}>
-          <FormattedMessage id='udapp.or' />
-        </div>
-        <div className="udapp_button udapp_atAddressSect ">
-          <CustomTooltip
-            placement={'top-end'}
-            tooltipClasses="text-wrap text-left"
-            tooltipId="runAndDeployAddresstooltip"
-            tooltipText={atAddressOptions.title}
+        <div className="pt-2 d-flex flex-column sudapp_button udapp_atAddressSect">
+          <div className='d-flex flex-row'>
+            <CustomTooltip
+              placement={'top-end'}
+              tooltipClasses="text-wrap text-left"
+              tooltipId="runAndDeployAddresstooltip"
+              tooltipText={atAddressOptions.title}
             >
               <div id="runAndDeployAtAdressButtonContainer" onClick={loadFromAddress} data-title={atAddressOptions.title}>
-                <button className="udapp_atAddress btn btn-sm btn-primary" id="runAndDeployAtAdressButton" disabled={atAddressOptions.disabled} style={{ pointerEvents: 'none' }} onClick={loadFromAddress} data-title={atAddressOptions.title}>
+                <button className="udapp_atAddress btn-sm py-2 btn-primary" id="runAndDeployAtAdressButton" disabled={atAddressOptions.disabled} style={{ pointerEvents: 'none', border: 'none' }} onClick={loadFromAddress} data-title={atAddressOptions.title}>
                   <FormattedMessage id='udapp.atAddress' />
                 </button>
               </div>
-          </CustomTooltip>
-          <CustomTooltip
-            placement={'top-end'}
-            tooltipClasses="text-wrap text-left"
-            tooltipId="runAndDeployAddressInputtooltip"
-            tooltipText={<FormattedMessage id='udapp.addressOfContract' />}
-          >
-            <input
-              ref={atAddressValue}
-              className="udapp_input udapp_ataddressinput ataddressinput form-control"
-              placeholder={intl.formatMessage({ id: 'udapp.loadContractFromAddress' })}
-              onChange={atAddressChanged}
-            />
-          </CustomTooltip>
+            </CustomTooltip>
+            <CustomTooltip
+              placement={'top-end'}
+              tooltipClasses="text-wrap text-left"
+              tooltipId="runAndDeployAddressInputtooltip"
+              tooltipText={<FormattedMessage id='udapp.addressOfContract' />}
+            >
+              <input
+                ref={atAddressValue}
+                className={(!addressIsValid ? "border border-danger" : "border-0") + " h-100 udapp_input udapp_ataddressinput ataddressinput form-control"}
+                placeholder={intl.formatMessage({ id: 'udapp.loadContractFromAddress' })}
+                onChange={atAddressChanged}
+              />
+            </CustomTooltip>
+          </div>
+          { !addressIsValid && <span className='text-danger text-right'>The address is not valid</span> }
         </div>
       </div>
     </div>

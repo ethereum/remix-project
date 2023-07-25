@@ -28,7 +28,7 @@ export function InstanceContainerUI (props: InstanceContainerProps) {
           </label>
         </CustomTooltip>
         { instanceList.length > 0
-            ? (
+          ? (
             <CustomTooltip
               placement="right"
               tooltipClasses="text-nowrap"
@@ -38,8 +38,8 @@ export function InstanceContainerUI (props: InstanceContainerProps) {
               <i className="mr-2 udapp_icon far fa-trash-alt" data-id="deployAndRunClearInstances" onClick={clearInstance} aria-hidden="true">
               </i>
             </CustomTooltip>
-            ) : null
-          }
+          ) : null
+        }
       </div>
       { instanceList.length > 0
         ? <div> { props.instances.instanceList.map((instance, index) => {

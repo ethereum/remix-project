@@ -39,7 +39,7 @@ export class ThemeModule extends Plugin {
     this.themes = {}
     themes.map((theme) => {
       this.themes[theme.name.toLocaleLowerCase()] = {
-       ...theme,
+        ...theme,
         url: window.location.origin + ( window.location.pathname.startsWith('/address/') || window.location.pathname.endsWith('.sol') ? '/' : window.location.pathname ) + theme.url
       }
     })

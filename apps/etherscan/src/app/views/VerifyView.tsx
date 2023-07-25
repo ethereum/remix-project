@@ -118,7 +118,7 @@ export const VerifyView: React.FC<Props> = ({
             errors.contractAddress = "Required"
           }
           if (values.contractAddress.trim() === "" || !values.contractAddress.startsWith('0x')
-              || values.contractAddress.length !== 42) {
+            || values.contractAddress.length !== 42) {
             errors.contractAddress = "Please enter a valid contract address"
           }
           return errors
@@ -143,7 +143,6 @@ export const VerifyView: React.FC<Props> = ({
                 />
               </CustomTooltip>
             </div>
-
             <div className="form-group">
               <label htmlFor="contractName">Contract Name</label>
               <Field
@@ -175,39 +174,37 @@ export const VerifyView: React.FC<Props> = ({
                 component="div"
               />
             </div>
-
             <div className={ showConstructorArgs ? 'form-group d-block': 'form-group d-none' } >
               <label>Constructor Arguments</label>
-                {constructorInputs.map((item, index) => {
-                  return (
-                    <div className="d-flex">
+              {constructorInputs.map((item, index) => {
+                return (
+                  <div className="d-flex">
+                    <Field
+                      className="form-control m-1"
+                      type="text"
+                      key={`contractArgName${index}`}
+                      name={`contractArgName${index}`}
+                      value={item.name}
+                      disabled={true}
+                    />
+                    <CustomTooltip
+                      tooltipText={`value of ${item.name}`}
+                      tooltipId={`etherscan-constructor-value${index}`}
+                      placement='top'
+                    >
                       <Field
                         className="form-control m-1"
                         type="text"
-                        key={`contractArgName${index}`}
-                        name={`contractArgName${index}`}
-                        value={item.name}
-                        disabled={true}
+                        key={`contractArgValue${index}`}
+                        name={`contractArgValue${index}`}
+                        placeholder={item.type}
                       />
-                      <CustomTooltip
-                        tooltipText={`value of ${item.name}`}
-                        tooltipId={`etherscan-constructor-value${index}`}
-                        placement='top'
-                      >
-                        <Field
-                          className="form-control m-1"
-                          type="text"
-                          key={`contractArgValue${index}`}
-                          name={`contractArgValue${index}`}
-                          placeholder={item.type}
-                        />
-                      </CustomTooltip>
-                    </div>
-                  )}
+                    </CustomTooltip>
+                  </div>
                 )}
+              )}
 
             </div>
-
             <div className="form-group">
               <label htmlFor="contractAddress">Contract Address</label>
               <Field
@@ -235,12 +232,11 @@ export const VerifyView: React.FC<Props> = ({
                     handleChange(e)
                     if (e.target.checked) setIsProxyContract(true)
                     else setIsProxyContract(false)
-                }}
+                  }}
                 />
-              <label className="form-check-label custom-control-label" htmlFor="isProxy">It's a proxy contract address</label>
+                <label className="form-check-label custom-control-label" htmlFor="isProxy">It's a proxy contract address</label>
+              </div>
             </div>
-            </div>
-
             <div className={ isProxyContract ? 'form-group d-block': 'form-group d-none' }>
               <label htmlFor="expectedImplAddress">Expected Implementation Address</label>
               <CustomTooltip
@@ -258,7 +254,6 @@ export const VerifyView: React.FC<Props> = ({
               <i style={{ fontSize: 'x-small' }} className={'ml-1 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
               <label> &nbsp;Make sure contract is already verified on Etherscan</label>
             </div>
-
             <SubmitButton dataId="verify-contract" text="Verify"
               isSubmitting={isSubmitting}
               disable={ !contracts.length ||
@@ -267,8 +262,8 @@ export const VerifyView: React.FC<Props> = ({
                 (touched.contractName && errors.contractName) ||
                 (touched.contractAddress && errors.contractAddress) ||
                 (networkName === 'VM (Not supported)')
-              ? true
-              : false}
+                ? true
+                : false}
             />
             <br/>
             <CustomTooltip
@@ -282,23 +277,19 @@ export const VerifyView: React.FC<Props> = ({
                 onClick={async () => {
                   etherscanScripts(client)
                 }}
-                >
+              >
                   Generate Verification Scripts
-                </button>
-              </CustomTooltip>
-          </form>
-          )
-        }
-        }
+              </button>
+            </CustomTooltip>
+          </form>)
+        }}
       </Formik>
-
       <div
         data-id="verify-result"
         className={verificationResult.current['succeed'] ? "text-success mt-4 text-center" : "text-danger mt-4 text-center"}
         style={{fontSize: "0.8em"}}
         dangerouslySetInnerHTML={{ __html: results }}
       />
-
       {/* <div style={{ display: "block", textAlign: "center", marginTop: "1em" }}>
         <Link to="/receipts">View Receipts</Link>
       </div> */}

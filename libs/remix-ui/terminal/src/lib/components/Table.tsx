@@ -68,6 +68,36 @@ const showTable = (opts, showTableHash) => {
             </td>
           </tr>
         ) : null}
+        {opts.blockHash ? (
+          <tr className="remix_ui_terminal_tr">
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
+              block hash
+            </td>
+            <td
+              className="remix_ui_terminal_td"
+              data-id={`txLoggerTableContractAddress${opts.hash}`}
+              data-shared={`pair_${opts.hash}`}
+            >
+              {opts.blockHash}
+              <CopyToClipboard content={opts.blockHash} />
+            </td>
+          </tr>
+        ) : null}
+        {opts.blockNumber ? (
+          <tr className="remix_ui_terminal_tr">
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
+              block number
+            </td>
+            <td
+              className="remix_ui_terminal_td"
+              data-id={`txLoggerTableContractAddress${opts.hash}`}
+              data-shared={`pair_${opts.hash}`}
+            >
+              {opts.blockNumber}
+              <CopyToClipboard content={opts.blockNumber} />
+            </td>
+          </tr>
+        ) : null}
         {opts.contractAddress ? (
           <tr className="remix_ui_terminal_tr">
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
@@ -85,7 +115,7 @@ const showTable = (opts, showTableHash) => {
         ) : null}
         {opts.from ? (
           <tr className="remix_ui_terminal_tr">
-            <td className="td tableTitle" data-shared={`key_${opts.hash}`}>
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               from
             </td>
             <td

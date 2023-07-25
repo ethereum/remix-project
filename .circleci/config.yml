@@ -5,7 +5,7 @@ parameters:
     type: boolean
     default: false
 orbs:
-  browser-tools: circleci/browser-tools@1.4.1
+  browser-tools: circleci/browser-tools@1.4.3
 jobs:
   build:
     docker:

@@ -10,88 +10,88 @@ export const UUPSRuns = 0
 export const UUPSEvmVersion = null
 export const UUPSABI = [
   {
-      "inputs": [
-          {
-              "internalType": "address",
-              "name": "_logic",
-              "type": "address"
-          },
-          {
-              "internalType": "bytes",
-              "name": "_data",
-              "type": "bytes"
-          }
-      ],
-      "stateMutability": "payable",
-      "type": "constructor"
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_logic",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "constructor"
   },
   {
-      "anonymous": false,
-      "inputs": [
-          {
-              "indexed": false,
-              "internalType": "address",
-              "name": "previousAdmin",
-              "type": "address"
-          },
-          {
-              "indexed": false,
-              "internalType": "address",
-              "name": "newAdmin",
-              "type": "address"
-          }
-      ],
-      "name": "AdminChanged",
-      "type": "event"
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "previousAdmin",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newAdmin",
+        "type": "address"
+      }
+    ],
+    "name": "AdminChanged",
+    "type": "event"
   },
   {
-      "anonymous": false,
-      "inputs": [
-          {
-              "indexed": true,
-              "internalType": "address",
-              "name": "beacon",
-              "type": "address"
-          }
-      ],
-      "name": "BeaconUpgraded",
-      "type": "event"
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "beacon",
+        "type": "address"
+      }
+    ],
+    "name": "BeaconUpgraded",
+    "type": "event"
   },
   {
-      "anonymous": false,
-      "inputs": [
-          {
-              "indexed": true,
-              "internalType": "address",
-              "name": "implementation",
-              "type": "address"
-          }
-      ],
-      "name": "Upgraded",
-      "type": "event"
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "implementation",
+        "type": "address"
+      }
+    ],
+    "name": "Upgraded",
+    "type": "event"
   },
   {
-      "stateMutability": "payable",
-      "type": "fallback"
+    "stateMutability": "payable",
+    "type": "fallback"
   },
   {
-      "stateMutability": "payable",
-      "type": "receive"
+    "stateMutability": "payable",
+    "type": "receive"
   }
 ]
 export const UUPSfunAbi = {
   name: "",
   inputs: [
-      {
-          "internalType": "address",
-          "name": "_logic",
-          "type": "address"
-      },
-      {
-          "internalType": "bytes",
-          "name": "_data",
-          "type": "bytes"
-      }
+    {
+      "internalType": "address",
+      "name": "_logic",
+      "type": "address"
+    },
+    {
+      "internalType": "bytes",
+      "name": "_data",
+      "type": "bytes"
+    }
   ],
   type: "constructor",
   outputs: [],
@@ -99,17 +99,17 @@ export const UUPSfunAbi = {
 }
 
 export const UUPSupgradeAbi = {
-    "inputs": [
-        {
-            "internalType": "address",
-            "name": "newImplementation",
-            "type": "address"
-        }
-    ],
-    "name": "upgradeTo",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+  "inputs": [
+    {
+      "internalType": "address",
+      "name": "newImplementation",
+      "type": "address"
+    }
+  ],
+  "name": "upgradeTo",
+  "outputs": [],
+  "stateMutability": "nonpayable",
+  "type": "function"
 }
 export const EnableProxyURLParam = 'deployProxy'
 export const EnableUpgradeURLParam = 'upgradeProxy'
