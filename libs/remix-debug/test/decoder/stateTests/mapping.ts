@@ -23,23 +23,23 @@ module.exports = async function testMappingStorage (st, cb) {
   }
   const compilationResults = new CompilerAbstract('json', output, sources)
   const web3 = await (vmCall as any).getWeb3();
-  (vmCall as any).sendTx(web3, {nonce: 0, privateKey: privateKey}, null, 0, output.contracts['test.sol']['SimpleMappingState'].evm.bytecode.object, function (error, hash) {
+  (vmCall as any).sendTx(web3, {nonce: 0, privateKey: privateKey}, undefined, 0, output.contracts['test.sol']['SimpleMappingState'].evm.bytecode.object, function (error, hash) {
     if (error) {
       console.log(error)
       st.end(error)
     } else {
-      web3.eth.getTransactionReceipt(hash, (error, tx) => {
-        if (error) {
-          console.log(error)
-          st.end(error)
-        } else {
+      web3.eth.getTransactionReceipt(hash)
+        .then(tx =>
           // const storage = await this.vm.stateManager.dumpStorage(data.to)
           // (vmCall as any).web3().eth.getCode(tx.contractAddress).then((code) => console.log('code:', code))
           // (vmCall as any).web3().debug.traceTransaction(hash).then((code) => console.log('trace:', code))
           testMapping(st, privateKey, tx.contractAddress, output, compilationResults, web3, cb)
           // st.end()
-        }
-      })
+        )
+        .catch(error => {
+          console.log(error)
+          st.end(error)
+        })
     }
   })
 }
@@ -50,12 +50,9 @@ function testMapping (st, privateKey, contractAddress, output, compilationResult
       if (error) {
         console.log(error)
         st.end(error)
-      } else {            
-        web3.eth.getTransaction(hash, (error, tx) => {
-          if (error) {
-            console.log(error)
-            st.end(error)
-          } else {
+      } else {   
+        web3.eth.getTransaction(hash)
+          .then(tx => {
             const traceManager = new TraceManager({ web3 })
             const codeManager = new CodeManager(traceManager)
             codeManager.clear()
@@ -101,8 +98,11 @@ function testMapping (st, privateKey, contractAddress, output, compilationResult
             }).catch((error) => {
               st.fail(error)
             })
-          }
-        })
+          })
+          .catch(error => {
+            console.log(error)
+            st.end(error)
+          })
       }
     })
 }
