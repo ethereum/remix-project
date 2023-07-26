@@ -10,6 +10,7 @@ import { methods as netMethods } from './methods/net'
 import { Transactions } from './methods/transactions'
 import { Debug } from './methods/debug'
 import { VMContext } from './vm-context'
+import { Web3PluginBase } from 'web3'
 
 export interface JSONRPCRequestPayload {
   params: any[];
@@ -117,43 +118,30 @@ export class Provider {
 }
 
 export function extend (web3) {
-  if (!web3.extend) {
-    return
-  }
-  // DEBUG
-  const methods = []
-  if (!(web3.eth && web3.eth.getExecutionResultFromSimulator)) {
-    methods.push(new web3.extend.Method({
-      name: 'getExecutionResultFromSimulator',
-      call: 'eth_getExecutionResultFromSimulator',
-      inputFormatter: [null],
-      params: 1
-    }))
+  web3.registerPlugin(new Web3TestPlugin())
+}
+
+class Web3TestPlugin extends Web3PluginBase {
+  public pluginNamespace = 'testPlugin'
+
+  public getExecutionResultFromSimulator(transactionHash) {
+    return this.requestManager.send({
+      method: 'eth_getExecutionResultFromSimulator',
+      params: [transactionHash]
+    })
   }
 
-  if (!(web3.eth && web3.eth.getHHLogsForTx)) {
-    methods.push(new web3.extend.Method({
-      name: 'getHHLogsForTx',
-      call: 'eth_getHHLogsForTx',
-      inputFormatter: [null],
-      params: 1
-    }))
+  public getHHLogsForTx(transactionHash) {
+    return this.requestManager.send({
+      method: 'eth_getHHLogsForTx',
+      params: [transactionHash]
+    })
   }
 
-  if (!(web3.eth && web3.eth.getHashFromTagBySimulator)) {
-    methods.push(new web3.extend.Method({
-      name: 'getHashFromTagBySimulator',
-      call: 'eth_getHashFromTagBySimulator',
-      inputFormatter: [null],
-      params: 1
-    }))
-  }
-
-  if (methods.length > 0) {
-    web3.extend({
-      property: 'eth',
-      methods: methods,
-      properties: []
+  public getHashFromTagBySimulator(timestamp) {
+    return this.requestManager.send({
+      method: 'eth_getHashFromTagBySimulator',
+      params: [timestamp]
     })
   }
 }

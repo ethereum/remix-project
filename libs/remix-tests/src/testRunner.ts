@@ -253,8 +253,8 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
       method.call(sendParams).then(async (result) => {
         const time = (Date.now() - startTime) / 1000.0
         let tagTxHash
-        if (web3.eth && web3.eth.getHashFromTagBySimulator) tagTxHash = await web3.eth.getHashFromTagBySimulator(tagTimestamp)
-        if (web3.eth && web3.eth.getHHLogsForTx) hhLogs = await web3.eth.getHHLogsForTx(tagTxHash)
+        if (web3.testPlugin && web3.testPlugin.getHashFromTagBySimulator) tagTxHash = await web3.testPlugin.getHashFromTagBySimulator(tagTimestamp)
+        if (web3.testPlugin && web3.testPlugin.getHHLogsForTx) hhLogs = await web3.testPlugin.getHHLogsForTx(tagTxHash)
         debugTxHash = tagTxHash
         if (result) {
           const resp: TestResultInterface = {
@@ -301,7 +301,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
       method.send(sendParams).on('receipt', async (receipt) => {
         try {
           debugTxHash = receipt.transactionHash
-          if (web3.eth && web3.eth.getHHLogsForTx) hhLogs = await web3.eth.getHHLogsForTx(receipt.transactionHash)
+          if (web3.testPlugin && web3.testPlugin.getHHLogsForTx) hhLogs = await web3.testPlugin.getHHLogsForTx(receipt.transactionHash)
           const time: number = (Date.now() - startTime) / 1000.0
           const assertionEventHashes = assertionEvents.map(e => Web3.utils.sha3(e.name + '(' + e.params.join() + ')'))
           let testPassed = false
@@ -394,7 +394,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
         else if (err.message.includes('Transaction has been reverted by the EVM')) {
           txHash = JSON.parse(err.message.replace('Transaction has been reverted by the EVM:', '')).transactionHash
         }
-        if (web3.eth && web3.eth.getHHLogsForTx && txHash) hhLogs = await web3.eth.getHHLogsForTx(txHash)
+        if (web3.testPlugin && web3.testPlugin.getHHLogsForTx && txHash) hhLogs = await web3.testPlugin.getHHLogsForTx(txHash)
         if (hhLogs && hhLogs.length) resp.hhLogs = hhLogs
         resp.debugTxHash = txHash
         testCallback(undefined, resp)
