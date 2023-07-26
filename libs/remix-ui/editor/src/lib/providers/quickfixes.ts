@@ -12,5 +12,9 @@ export default {
       startColumn: 1,
       endColumn: 1
     }
+  },
+  "SyntaxError: No visibility specified. Did you intend to add \"public\"": {
+    "title": "Add public visibility",
+    "message": "public",
   }
 }
