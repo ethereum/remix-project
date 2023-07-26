@@ -5,12 +5,12 @@ export function loadWeb3 (url) {
   if (!url) url = 'http://localhost:8545'
   const web3 = new Web3()
   web3.setProvider(new Web3.providers.HttpProvider(url))
-  web3.registerPlugin(new Web3DebugPlugin(web3))
+  web3.registerPlugin(new Web3DebugPlugin())
   return web3
 }
 
 export function extendWeb3 (web3) {
-  web3.registerPlugin(new Web3DebugPlugin(web3))
+  web3.registerPlugin(new Web3DebugPlugin())
 }
 
 export function setProvider (web3, url) {
@@ -34,15 +34,8 @@ export function web3DebugNode (network) {
 class Web3DebugPlugin extends Web3PluginBase {
   public pluginNamespace = 'debug'
 
-  private _web3;
-
-  constructor(web3) {
-    super()
-    this._web3 = web3;
-  }
-
   public preimage(key, cb) {
-    this._web3.requestManager.send({
+    this.requestManager.send({
       method: 'debug_preimage',
       params: [key]
     })
@@ -51,7 +44,7 @@ class Web3DebugPlugin extends Web3PluginBase {
   }
 
   public traceTransaction(txHash, options, cb) {
-    this._web3.requestManager.send({
+    this.requestManager.send({
       method: 'debug_traceTransaction',
       params: [txHash, options]
     })
@@ -60,7 +53,7 @@ class Web3DebugPlugin extends Web3PluginBase {
   }
 
   public storageRangeAt(txBlockHash, txIndex, address, start, maxSize, cb) {
-    this._web3.requestManager.send({
+    this.requestManager.send({
       method: 'debug_storageRangeAt',
       params: [txBlockHash, txIndex, address, start, maxSize]
     })

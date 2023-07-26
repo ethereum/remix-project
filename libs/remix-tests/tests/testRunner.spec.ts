@@ -53,11 +53,13 @@ async function compileAndDeploy(filename: string, callback: any) {
   let compilationData: any
   async.waterfall([
     function getAccountList(next: any): void {
-      web3.eth.getAccounts((_err: Error | null | undefined, _accounts: string[]) => {
-        accounts = _accounts
-        web3.eth.defaultAccount = accounts[0]
-        next(_err)
-      })
+      web3.eth.getAccounts()
+        .then(( _accounts: string[]) => {
+          accounts = _accounts
+          web3.eth.defaultAccount = accounts[0]
+          next(undefined)
+        })
+        .catch((_err: Error | null | undefined) => next(_err))
     },
     function compile(next: any): void {
       compileFileOrFiles(filename, false, { accounts }, null, next)
