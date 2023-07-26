@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState, useCallback } from "react"
 import Web3 from 'web3'
 
 import {
@@ -51,11 +51,7 @@ export const VerifyView: React.FC<Props> = ({
     }
   }, [client])
 
-  useEffect(() => {
-    if (contracts.includes(selectedContract)) updateConsFields(selectedContract)
-  }, [contracts])
-
-  const updateConsFields = (contractName) => {
+  const updateConsFields = useCallback((contractName) => {
     client.call("compilerArtefacts" as any, "getArtefactsByContractName", contractName).then((result) => {
       const { artefact } = result
       if (artefact && artefact.abi && artefact.abi[0] && artefact.abi[0].type && artefact.abi[0].type === 'constructor' && artefact.abi[0].inputs.length > 0) {
@@ -66,7 +62,11 @@ export const VerifyView: React.FC<Props> = ({
         setShowConstructorArgs(false)
       }
     })
-  }
+  }, [client, setShowConstructorArgs, setConstructorInputs]);
+
+  useEffect(() => {
+    if (contracts.includes(selectedContract)) updateConsFields(selectedContract)
+  }, [contracts, updateConsFields, selectedContract])
 
   const onVerifyContract = async (values: FormValues) => {
     const compilationResult = (await client.call(
