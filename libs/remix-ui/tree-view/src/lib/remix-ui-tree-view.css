@@ -5,6 +5,7 @@
     -webkit-margin-start: 0px;
     -webkit-margin-end: 0px;
     -webkit-padding-start: 0px;
+    cursor: pointer;
   }
   .ul_tv {
     list-style-type: none;
