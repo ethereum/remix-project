@@ -29,39 +29,51 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
         const cursorPosition = this.props.editorAPI.getHoverPosition({lineNumber: error.startLineNumber, column: error.startColumn})
         const nodeAtPosition = await this.props.plugin.call('codeParser', 'definitionAtPosition', cursorPosition)
         if (nodeAtPosition && nodeAtPosition.nodeType === "FunctionDefinition") {
-          if (nodeAtPosition.parameters && nodeAtPosition.parameters && nodeAtPosition.parameters.length > 0) {
+          if (nodeAtPosition.parameters) {
             const paramNodes = nodeAtPosition.parameters
-            const lastParamNode = paramNodes[paramNodes.length - 1]
-            const lastParamEndLoc = lastParamNode.loc.end
-            const lineContent = model.getLineContent(lastParamEndLoc.line)
-            msg = lineContent.substring(0, lastParamEndLoc.column + 10) + fix.message + lineContent.substring(lastParamEndLoc.column + 10, lineContent.length)
-            fix.range = {
-              startLineNumber: lastParamEndLoc.line,
-              endLineNumber: lastParamEndLoc.line,
-              startColumn: 0,
-              endColumn: error.startColumn + msg.length
-            }
-          }
-        }
-
-        actions.push({
-          title: fix.title,
-          diagnostics: [error],
-          kind: "quickfix",
-          edit: {
-            edits: [
-              {
-                resource: model.uri,
-                edit: {
-                  range: fix.range || error,
-                  text: msg || fix.message
+            if (paramNodes.length) {
+              const lastParamNode = paramNodes[paramNodes.length - 1]
+              const lastParamEndLoc = lastParamNode.loc.end
+              const lineContent = model.getLineContent(lastParamEndLoc.line)
+              msg = lineContent.substring(0, lastParamEndLoc.column + 10) + fix.message + lineContent.substring(lastParamEndLoc.column + 10, lineContent.length)
+              fix.range = {
+                startLineNumber: lastParamEndLoc.line,
+                endLineNumber: lastParamEndLoc.line,
+                startColumn: 0,
+                endColumn: error.startColumn + msg.length
+              } 
+            } else {
+                const lineContent = model.getLineContent(nodeAtPosition.loc.start.line)
+                const i = lineContent.indexOf('()')
+                msg = lineContent.substring(0, i + 3) + fix.message + lineContent.substring(i + 3, lineContent.length)
+                fix.range = {
+                  startLineNumber: nodeAtPosition.loc.start.line,
+                  endLineNumber: nodeAtPosition.loc.start.line,
+                  startColumn: 0,
+                  endColumn: error.startColumn + msg.length
                 }
               }
-            ]
-          },
-          isPreferred: true
-        })
+          }
+        }
       }
+
+      actions.push({
+        title: fix.title,
+        diagnostics: [error],
+        kind: "quickfix",
+        edit: {
+          edits: [
+            {
+              resource: model.uri,
+              edit: {
+                range: fix.range || error,
+                text: msg || fix.message
+              }
+            }
+          ]
+        },
+        isPreferred: true
+      })
     }
 
     return {
