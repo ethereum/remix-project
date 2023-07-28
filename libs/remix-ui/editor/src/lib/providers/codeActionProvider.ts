@@ -29,11 +29,20 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
         const cursorPosition = this.props.editorAPI.getHoverPosition({lineNumber: error.startLineNumber, column: error.startColumn})
         const nodeAtPosition = await this.props.plugin.call('codeParser', 'definitionAtPosition', cursorPosition)
         if (nodeAtPosition && nodeAtPosition.nodeType === "FunctionDefinition") {
+          console.log('nodeAtPosition--->', nodeAtPosition)
           if (nodeAtPosition.parameters) {
-            const paramNodes = nodeAtPosition.parameters
+            const paramNodes = !Array.isArray(nodeAtPosition.parameters) ? nodeAtPosition.parameters.parameters : nodeAtPosition.parameters
+            console.log('paramNodes------->', paramNodes)
             if (paramNodes.length) {
               const lastParamNode = paramNodes[paramNodes.length - 1]
-              const lastParamEndLoc = lastParamNode.loc.end
+              console.log('lastParamNode------->', lastParamNode)
+              let loccc 
+              if (!Array.isArray(nodeAtPosition.parameters)) {
+                loccc = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', lastParamNode)
+                console.log('locccc---->', loccc)
+                loccc.end.line += 1
+              }
+              const lastParamEndLoc = loccc ? loccc.end : lastParamNode.loc.end
               const lineContent = model.getLineContent(lastParamEndLoc.line)
               msg = lineContent.substring(0, lastParamEndLoc.column + 10) + fix.message + lineContent.substring(lastParamEndLoc.column + 10, lineContent.length)
               fix.range = {
