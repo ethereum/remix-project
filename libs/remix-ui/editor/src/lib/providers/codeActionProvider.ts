@@ -20,29 +20,30 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
   ) {
     const actions = []
     for (const error of context.markers) {
-      console.log('error----->', error)
+      let fix
+      let msg
       const errStrings = Object.keys(fixes)
       const errStr = errStrings.find(es => error.message.includes(es))
       if (errStr) {
-        let fix = fixes[errStr]
+        fix = fixes[errStr]
         const cursorPosition = this.props.editorAPI.getHoverPosition({lineNumber: error.startLineNumber, column: error.startColumn})
         const nodeAtPosition = await this.props.plugin.call('codeParser', 'definitionAtPosition', cursorPosition)
         if (nodeAtPosition && nodeAtPosition.nodeType === "FunctionDefinition") {
-          console.log('nodeAtPosition---->', nodeAtPosition)
-          if (nodeAtPosition.parameters && nodeAtPosition.parameters.length > 0) {
+          if (nodeAtPosition.parameters && nodeAtPosition.parameters && nodeAtPosition.parameters.length > 0) {
             const paramNodes = nodeAtPosition.parameters
             const lastParamNode = paramNodes[paramNodes.length - 1]
-            console.log('lastParamNode---->', lastParamNode)
             const lastParamEndLoc = lastParamNode.loc.end
-            console.log('lastParamEndLoc---->', lastParamEndLoc)
+            const lineContent = model.getLineContent(lastParamEndLoc.line)
+            msg = lineContent.substring(0, lastParamEndLoc.column + 10) + fix.message + lineContent.substring(lastParamEndLoc.column + 10, lineContent.length)
             fix.range = {
               startLineNumber: lastParamEndLoc.line,
               endLineNumber: lastParamEndLoc.line,
-              startColumn: lastParamEndLoc.column + 11,
-              endColumn: lastParamEndLoc.column + 19
+              startColumn: 0,
+              endColumn: error.startColumn + msg.length
             }
           }
         }
+
         actions.push({
           title: fix.title,
           diagnostics: [error],
@@ -53,7 +54,7 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
                 resource: model.uri,
                 edit: {
                   range: fix.range || error,
-                  text: fix.message
+                  text: msg || fix.message
                 }
               }
             ]
