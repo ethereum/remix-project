@@ -15,6 +15,6 @@ export default {
   },
   "SyntaxError: No visibility specified. Did you intend to add \"public\"": {
     "title": "Add public visibility",
-    "message": "public",
+    "message": "public ",
   }
 }
