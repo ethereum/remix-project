@@ -43,37 +43,36 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
                 endColumn: error.startColumn + msg.length
               } 
             } else {
-                const lineContent = model.getLineContent(nodeAtPosition.loc.start.line)
-                const i = lineContent.indexOf('()')
-                msg = lineContent.substring(0, i + 3) + fix.message + lineContent.substring(i + 3, lineContent.length)
-                fix.range = {
-                  startLineNumber: nodeAtPosition.loc.start.line,
-                  endLineNumber: nodeAtPosition.loc.start.line,
-                  startColumn: 0,
-                  endColumn: error.startColumn + msg.length
-                }
-              }
-          }
-        }
-      }
-
-      actions.push({
-        title: fix.title,
-        diagnostics: [error],
-        kind: "quickfix",
-        edit: {
-          edits: [
-            {
-              resource: model.uri,
-              edit: {
-                range: fix.range || error,
-                text: msg || fix.message
+              const lineContent = model.getLineContent(nodeAtPosition.loc.start.line)
+              const i = lineContent.indexOf('()')
+              msg = lineContent.substring(0, i + 3) + fix.message + lineContent.substring(i + 3, lineContent.length)
+              fix.range = {
+                startLineNumber: nodeAtPosition.loc.start.line,
+                endLineNumber: nodeAtPosition.loc.start.line,
+                startColumn: 0,
+                endColumn: error.startColumn + msg.length
               }
             }
-          ]
-        },
-        isPreferred: true
-      })
+          }
+        }
+        actions.push({
+          title: fix.title,
+          diagnostics: [error],
+          kind: "quickfix",
+          edit: {
+            edits: [
+              {
+                resource: model.uri,
+                edit: {
+                  range: fix.range || error,
+                  text: msg || fix.message
+                }
+              }
+            ]
+          },
+          isPreferred: true
+        })
+      }
     }
 
     return {
