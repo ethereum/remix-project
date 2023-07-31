@@ -36,7 +36,7 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
               const location = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', lastParamNode)
               const lastParamEndLoc = location.end
               const lineContent = model.getLineContent(lastParamEndLoc.line + 1)
-              msg = lineContent.substring(0, lastParamEndLoc.column + 10) + fix.message + lineContent.substring(lastParamEndLoc.column + 10, lineContent.length)
+              msg = lineContent.substring(0, lastParamEndLoc.column + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + 1, lineContent.length)
               fix.range = {
                 startLineNumber: lastParamEndLoc.line + 1,
                 endLineNumber: lastParamEndLoc.line + 1,
@@ -61,7 +61,7 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
               const lastParamNode = paramNodes[paramNodes.length - 1]
               const lastParamEndLoc = lastParamNode.loc.end
               const lineContent = model.getLineContent(lastParamEndLoc.line)
-              msg = lineContent.substring(0, lastParamEndLoc.column + 10) + fix.message + lineContent.substring(lastParamEndLoc.column + 10, lineContent.length)
+              msg = lineContent.substring(0, lastParamEndLoc.column + lastParamNode.name.length + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + lastParamNode.name.length + 1, lineContent.length)
               fix.range = {
                 startLineNumber: lastParamEndLoc.line,
                 endLineNumber: lastParamEndLoc.line,
