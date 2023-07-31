@@ -29,20 +29,37 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
         const cursorPosition = this.props.editorAPI.getHoverPosition({lineNumber: error.startLineNumber, column: error.startColumn})
         const nodeAtPosition = await this.props.plugin.call('codeParser', 'definitionAtPosition', cursorPosition)
         if (nodeAtPosition && nodeAtPosition.nodeType === "FunctionDefinition") {
-          console.log('nodeAtPosition--->', nodeAtPosition)
-          if (nodeAtPosition.parameters) {
-            const paramNodes = !Array.isArray(nodeAtPosition.parameters) ? nodeAtPosition.parameters.parameters : nodeAtPosition.parameters
-            console.log('paramNodes------->', paramNodes)
+          if (nodeAtPosition.parameters && !Array.isArray(nodeAtPosition.parameters) && Array.isArray(nodeAtPosition.parameters.parameters)) {
+            const paramNodes = nodeAtPosition.parameters.parameters
             if (paramNodes.length) {
               const lastParamNode = paramNodes[paramNodes.length - 1]
-              console.log('lastParamNode------->', lastParamNode)
-              let loccc 
-              if (!Array.isArray(nodeAtPosition.parameters)) {
-                loccc = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', lastParamNode)
-                console.log('locccc---->', loccc)
-                loccc.end.line += 1
+              const location = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', lastParamNode)
+              const lastParamEndLoc = location.end
+              const lineContent = model.getLineContent(lastParamEndLoc.line + 1)
+              msg = lineContent.substring(0, lastParamEndLoc.column + 10) + fix.message + lineContent.substring(lastParamEndLoc.column + 10, lineContent.length)
+              fix.range = {
+                startLineNumber: lastParamEndLoc.line + 1,
+                endLineNumber: lastParamEndLoc.line + 1,
+                startColumn: 0,
+                endColumn: error.startColumn + msg.length
+              } 
+            } else {
+              const location = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', nodeAtPosition)
+              const lineContent = model.getLineContent(location.start.line + 1)
+              const i = lineContent.indexOf('()')
+              msg = lineContent.substring(0, i + 3) + fix.message + lineContent.substring(i + 3, lineContent.length)
+              fix.range = {
+                startLineNumber: location.start.line + 1,
+                endLineNumber: location.start.line + 1,
+                startColumn: 0,
+                endColumn: error.startColumn + msg.length
               }
-              const lastParamEndLoc = loccc ? loccc.end : lastParamNode.loc.end
+            }
+          } else {
+            const paramNodes = nodeAtPosition.parameters
+            if (paramNodes.length) {
+              const lastParamNode = paramNodes[paramNodes.length - 1]
+              const lastParamEndLoc = lastParamNode.loc.end
               const lineContent = model.getLineContent(lastParamEndLoc.line)
               msg = lineContent.substring(0, lastParamEndLoc.column + 10) + fix.message + lineContent.substring(lastParamEndLoc.column + 10, lineContent.length)
               fix.range = {
@@ -50,7 +67,7 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
                 endLineNumber: lastParamEndLoc.line,
                 startColumn: 0,
                 endColumn: error.startColumn + msg.length
-              } 
+              }
             } else {
               const lineContent = model.getLineContent(nodeAtPosition.loc.start.line)
               const i = lineContent.indexOf('()')
@@ -62,6 +79,7 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
                 endColumn: error.startColumn + msg.length
               }
             }
+
           }
         }
         actions.push({
