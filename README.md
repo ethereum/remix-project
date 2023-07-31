@@ -287,4 +287,3 @@ parameters:
 - Curated list of Remix resources, tutorials etc.: https://github.com/ethereum/awesome-remix
 - Medium: https://medium.com/remix-ide
 - Twitter: https://twitter.com/ethereumremix
-test
