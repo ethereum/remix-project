@@ -4,9 +4,9 @@ import { helpers } from '@remix-project/remix-lib'
 const  { normalizeHexAddress } = helpers.ui
 import { ConsoleLogs, hash } from '@remix-project/remix-lib'
 import BN from 'bn.js'
-import { isBigNumber } from 'web3-utils'
 import { toChecksumAddress, bufferToHex, Address, toBuffer } from '@ethereumjs/util'
 import utils from 'web3-utils'
+import { toBN } from 'web3-utils-legacy'
 import { ethers } from 'ethers'
 import { VMContext } from './vm-context'
 import type { StateManager } from '@ethereumjs/statemanager'
@@ -84,7 +84,7 @@ export class VmProxy {
     this.fromDecimal = (...args) => utils.fromDecimal.apply(this, args)
     this.fromWei = (...args) => utils.fromWei.apply(this, args)
     this.toWei = (...args) => utils.toWei.apply(this, args)
-    this.toBigNumber = (...args) => utils.toBN.apply(this, args)
+    this.toBigNumber = (...args) => toBN.apply(this, args)
     this.isAddress = (...args) => utils.isAddress.apply(this, args)
     this.utils = utils
     this.txsMapBlock = {}
@@ -278,7 +278,8 @@ export class VmProxy {
         }
         let consoleArgs = iface.decodeFunctionData(functionDesc, payload)
         consoleArgs = consoleArgs.map((value) => {
-          if (isBigNumber(value)) {
+          // Copied from: https://github.com/web3/web3.js/blob/e68194bdc590d811d4bf66dde12f99659861a110/packages/web3-utils/src/utils.js#L48C10-L48C10
+          if (value && value.constructor && value.constructor.name === 'BigNumber') {
             return value.toString()
           }
           return value

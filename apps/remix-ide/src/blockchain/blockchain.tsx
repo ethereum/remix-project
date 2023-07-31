@@ -1,6 +1,7 @@
 
 import React from 'react' // eslint-disable-line
 import Web3 from 'web3'
+import { fromWei, toBN, toWei } from 'web3-utils-legacy'
 import { Plugin } from '@remixproject/engine'
 import { toBuffer, addHexPrefix } from '@ethereumjs/util'
 import { EventEmitter } from 'events'
@@ -422,17 +423,17 @@ export class Blockchain extends Plugin {
 
   fromWei (value, doTypeConversion, unit) {
     if (doTypeConversion) {
-      return Web3.utils.fromWei(typeConversion.toInt(value), unit || 'ether')
+      return fromWei(typeConversion.toInt(value), unit || 'ether')
     }
-    return Web3.utils.fromWei(value.toString(10), unit || 'ether')
+    return fromWei(value.toString(10), unit || 'ether')
   }
 
   toWei (value, unit) {
-    return Web3.utils.toWei(value, unit || 'gwei')
+    return toWei(value, unit || 'gwei')
   }
 
   calculateFee (gas, gasPrice, unit?) {
-    return Web3.utils.toBN(gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10) as string, unit || 'gwei')))
+    return toBN(gas).mul(toBN(toWei(gasPrice.toString(10) as string, unit || 'gwei')))
   }
 
   determineGasFees (tx) {
@@ -665,7 +666,7 @@ export class Blockchain extends Plugin {
             if (error) return reject(error)
             try {
               if (this.executionContext.isVM()) {
-                const execResult = await this.web3().eth.getExecutionResultFromSimulator(result.transactionHash)
+                const execResult = await this.web3().testPlugin.getExecutionResultFromSimulator(result.transactionHash)
                 resolve(resultToRemixTx(result, execResult))
               } else
                 resolve(resultToRemixTx(result))              
@@ -766,7 +767,7 @@ export class Blockchain extends Plugin {
               const isVM = this.executionContext.isVM()
               if (isVM && tx.useCall) {
                 try {
-                  result.transactionHash = await this.web3().eth.getHashFromTagBySimulator(timestamp)
+                  result.transactionHash = await this.web3().testPlugin.getHashFromTagBySimulator(timestamp)
                 } catch (e) {
                   console.log('unable to retrieve back the "call" hash', e)
                 }
@@ -804,7 +805,7 @@ export class Blockchain extends Plugin {
       let execResult
       let returnValue = null
       if (isVM) {
-        const hhlogs = await this.web3().eth.getHHLogsForTx(txResult.transactionHash)
+        const hhlogs = await this.web3().testPlugin.getHHLogsForTx(txResult.transactionHash)
 
         if (hhlogs && hhlogs.length) {
           const finalLogs = <div><div><b>console.log:</b></div>
@@ -826,7 +827,7 @@ export class Blockchain extends Plugin {
           _paq.push(['trackEvent', 'udapp', 'hardhat', 'console.log'])
           this.call('terminal', 'logHtml', finalLogs)
         }
-        execResult = await this.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
+        execResult = await this.web3().testPlugin.getExecutionResultFromSimulator(txResult.transactionHash)
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
           returnValue = execResult ? toBuffer(execResult.returnValue) : toBuffer(addHexPrefix(txResult.result) || '0x0000000000000000000000000000000000000000000000000000000000000000')
