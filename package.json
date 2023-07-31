@@ -112,7 +112,8 @@
     "watch": "watchify apps/remix-ide/src/index.js -dv -p browserify-reload -o apps/remix-ide/build/app.js --exclude solc",
     "reinstall": "rm ./node-modules/ -rf && rm yarn.lock && rm ./build/ -rf && yarn install & yarn run build",
     "ganache-cli": "npx ganache-cli",
-    "build-contracts": "find ./node_modules/@openzeppelin/contracts | grep -i '.sol' > libs/remix-ui/editor/src/lib/providers/completion/contracts/contracts.txt && find ./node_modules/@uniswap/v3-core/contracts | grep -i '.sol' >> libs/remix-ui/editor/src/lib/providers/completion/contracts/contracts.txt"
+    "build-contracts": "find ./node_modules/@openzeppelin/contracts | grep -i '.sol' > libs/remix-ui/editor/src/lib/providers/completion/contracts/contracts.txt && find ./node_modules/@uniswap/v3-core/contracts | grep -i '.sol' >> libs/remix-ui/editor/src/lib/providers/completion/contracts/contracts.txt",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.16.0",
@@ -313,6 +314,7 @@
     "gulp": "^4.0.2",
     "hardhat": "^2.14.0",
     "https-browserify": "^1.0.0",
+    "husky": "^8.0.3",
     "ipfs-http-client": "^47.0.1",
     "ipfs-mini": "^1.1.5",
     "is-electron": "^2.2.0",
@@ -320,10 +322,12 @@
     "js-base64": "^2.1.9",
     "js-beautify": "1.6.14",
     "lerna": "^3.22.1",
+    "lint-staged": "^13.2.3",
     "minixhr": "^4.0.0",
     "mkdirp": "^0.5.1",
     "mocha": "^8.0.1",
     "monaco-editor": "^0.30.1",
+    "mrm": "^4.1.17",
     "nanohtml": "^1.6.3",
     "nightwatch": "^2.3",
     "nodemon": "^2.0.4",
