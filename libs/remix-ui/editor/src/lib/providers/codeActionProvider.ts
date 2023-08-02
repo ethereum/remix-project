@@ -28,12 +28,17 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
         fix = fixes[errStr]
         const cursorPosition = this.props.editorAPI.getHoverPosition({lineNumber: error.startLineNumber, column: error.startColumn})
         const nodeAtPosition = await this.props.plugin.call('codeParser', 'definitionAtPosition', cursorPosition)
+        // Check if a function is hovered
         if (nodeAtPosition && nodeAtPosition.nodeType === "FunctionDefinition") {
+          // Identify type of AST node
           if (nodeAtPosition.parameters && !Array.isArray(nodeAtPosition.parameters) && Array.isArray(nodeAtPosition.parameters.parameters)) {
             const paramNodes = nodeAtPosition.parameters.parameters
+            // If method has parameters
             if (paramNodes.length) {
+              // Get last function parameter node
               const lastParamNode = paramNodes[paramNodes.length - 1]
               const location = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', lastParamNode)
+              // Get end location of last function parameter, it returns end column of parameter name
               const lastParamEndLoc = location.end
               const lineContent = model.getLineContent(lastParamEndLoc.line + 1)
               msg = lineContent.substring(0, lastParamEndLoc.column + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + 1, lineContent.length)
@@ -44,6 +49,7 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
                 endColumn: error.startColumn + msg.length
               } 
             } else {
+              // If method has no parameters
               const location = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', nodeAtPosition)
               const lineContent = model.getLineContent(location.start.line + 1)
               const i = lineContent.indexOf('()')
@@ -57,8 +63,11 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
             }
           } else {
             const paramNodes = nodeAtPosition.parameters
+            // If method has parameters
             if (paramNodes.length) {
+              // Get last function parameter node
               const lastParamNode = paramNodes[paramNodes.length - 1]
+              // Get end location of last function parameter, it returns start column of parameter name
               const lastParamEndLoc = lastParamNode.loc.end
               const lineContent = model.getLineContent(lastParamEndLoc.line)
               msg = lineContent.substring(0, lastParamEndLoc.column + lastParamNode.name.length + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + lastParamNode.name.length + 1, lineContent.length)
