@@ -41,7 +41,10 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
               // Get end location of last function parameter, it returns end column of parameter name
               const lastParamEndLoc = location.end
               const lineContent = model.getLineContent(lastParamEndLoc.line + 1)
-              msg = lineContent.substring(0, lastParamEndLoc.column + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + 1, lineContent.length)
+              if (fix.id === 5 && lineContent.includes(' view ')) {
+                msg = lineContent.replace('view', 'pure')
+              } else
+                msg = lineContent.substring(0, lastParamEndLoc.column + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + 1, lineContent.length)
               fix.range = {
                 startLineNumber: lastParamEndLoc.line + 1,
                 endLineNumber: lastParamEndLoc.line + 1,
@@ -53,7 +56,10 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
               const location = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', nodeAtPosition)
               const lineContent = model.getLineContent(location.start.line + 1)
               const i = lineContent.indexOf('()')
-              msg = lineContent.substring(0, i + 3) + fix.message + lineContent.substring(i + 3, lineContent.length)
+              if (fix.id === 5 && lineContent.includes(' view ')) {
+                msg = lineContent.replace('view', 'pure')
+              } else
+                msg = lineContent.substring(0, i + 3) + fix.message + lineContent.substring(i + 3, lineContent.length)
               fix.range = {
                 startLineNumber: location.start.line + 1,
                 endLineNumber: location.start.line + 1,
@@ -70,7 +76,10 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
               // Get end location of last function parameter, it returns start column of parameter name
               const lastParamEndLoc = lastParamNode.loc.end
               const lineContent = model.getLineContent(lastParamEndLoc.line)
-              msg = lineContent.substring(0, lastParamEndLoc.column + lastParamNode.name.length + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + lastParamNode.name.length + 1, lineContent.length)
+              if (fix.id === 5 && lineContent.includes(' view ')) {
+                msg = lineContent.replace('view', 'pure')
+              } else
+                msg = lineContent.substring(0, lastParamEndLoc.column + lastParamNode.name.length + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + lastParamNode.name.length + 1, lineContent.length)
               fix.range = {
                 startLineNumber: lastParamEndLoc.line,
                 endLineNumber: lastParamEndLoc.line,
@@ -80,7 +89,10 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
             } else {
               const lineContent = model.getLineContent(nodeAtPosition.loc.start.line)
               const i = lineContent.indexOf('()')
-              msg = lineContent.substring(0, i + 3) + fix.message + lineContent.substring(i + 3, lineContent.length)
+              if (fix.id === 5 && lineContent.includes(' view ')) {
+                msg = lineContent.replace('view', 'pure')
+              } else
+                msg = lineContent.substring(0, i + 3) + fix.message + lineContent.substring(i + 3, lineContent.length)
               fix.range = {
                 startLineNumber: nodeAtPosition.loc.start.line,
                 endLineNumber: nodeAtPosition.loc.start.line,

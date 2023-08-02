@@ -28,5 +28,11 @@ export default {
     "title": "Add mutability 'view'",
     "message": "view ",
     "nodeType": "FunctionDefinition"
+  },
+  "Warning: Function state mutability can be restricted to pure": {
+    "id": 5,
+    "title": "Add mutability 'pure'",
+    "message": "pure ",
+    "nodeType": "FunctionDefinition"
   }
 }
