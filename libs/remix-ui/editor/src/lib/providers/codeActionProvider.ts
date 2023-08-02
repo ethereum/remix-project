@@ -104,23 +104,45 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
           }
         } else if (fix && nodeAtPosition && fix.nodeType !== nodeAtPosition.nodeType) return
 
-        actions.push({
-          title: fix.title,
-          diagnostics: [error],
-          kind: "quickfix",
-          edit: {
-            edits: [
-              {
-                resource: model.uri,
-                edit: {
-                  range: fix.range || error,
-                  text: msg || fix.message
+        if (Array.isArray(fix)) {
+          for (const element of fix) {
+            actions.push({
+              title: element.title,
+              diagnostics: [error],
+              kind: "quickfix",
+              edit: {
+                edits: [
+                  {
+                    resource: model.uri,
+                    edit: {
+                      range: element.range || error,
+                      text: msg || element.message
+                    }
+                  }
+                ]
+              },
+              isPreferred: true
+            })
+          }
+        } else
+          actions.push({
+            title: fix.title,
+            diagnostics: [error],
+            kind: "quickfix",
+            edit: {
+              edits: [
+                {
+                  resource: model.uri,
+                  edit: {
+                    range: fix.range || error,
+                    text: msg || fix.message
+                  }
                 }
-              }
-            ]
-          },
-          isPreferred: true
-        })
+              ]
+            },
+            isPreferred: true
+          })
+
       }
     }
 
