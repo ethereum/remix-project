@@ -81,7 +81,7 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
             }
 
           }
-        } else if (fix && fix.nodeType !== nodeAtPosition.nodeType) return
+        } else if (fix && nodeAtPosition && fix.nodeType !== nodeAtPosition.nodeType) return
 
         actions.push({
           title: fix.title,
