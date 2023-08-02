@@ -104,7 +104,7 @@ module.exports = {
     })
       .addFile('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'])
       .clickLaunchIcon('solidity')
-      .setSolidityCompilerVersion('soljson-v0.8.19+commit.7dd6d404.js') // open-zeppelin moved to pragma ^0.8.0
+      .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js') // open-zeppelin moved to pragma ^0.8.20
       .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
   },
   'Static Analysis run with remixd #group3': '' + function (browser) {
