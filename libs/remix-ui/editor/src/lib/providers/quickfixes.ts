@@ -16,8 +16,13 @@ export default {
     }
   },
   "SyntaxError: No visibility specified. Did you intend to add \"public\"": {
-    "title": "Add public visibility",
+    "title": "Add visibility 'public'",
     "message": "public ",
+    "nodeType": "FunctionDefinition"
+  },
+  "Warning: Function state mutability can be restricted to view": {
+    "title": "Add mutability 'view'",
+    "message": "view ",
     "nodeType": "FunctionDefinition"
   }
 }
