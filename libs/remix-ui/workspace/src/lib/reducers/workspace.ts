@@ -1065,6 +1065,7 @@ const normalize = (
       }
     }
   })
+  // do sorting here.
 
   if (newInputType === 'folder') {
     const path = directory + '/blank'
