@@ -34,24 +34,9 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
           if (nodeAtPosition.parameters && !Array.isArray(nodeAtPosition.parameters) && Array.isArray(nodeAtPosition.parameters.parameters)) {
             const paramNodes = nodeAtPosition.parameters.parameters
             // If method has parameters
-            if (paramNodes.length) {
-              // Get last function parameter node
-              const lastParamNode = paramNodes[paramNodes.length - 1]
-              const location = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', lastParamNode)
-              // Get end location of last function parameter, it returns end column of parameter name
-              const lastParamEndLoc = location.end
-              const lineContent = model.getLineContent(lastParamEndLoc.line + 1)
-              if (fix.id === 5 && lineContent.includes(' view ')) {
-                msg = lineContent.replace('view', 'pure')
-              } else
-                msg = lineContent.substring(0, lastParamEndLoc.column + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + 1, lineContent.length)
-              fix.range = {
-                startLineNumber: lastParamEndLoc.line + 1,
-                endLineNumber: lastParamEndLoc.line + 1,
-                startColumn: 0,
-                endColumn: error.startColumn + msg.length
-              } 
-            } else {
+            if (paramNodes.length)
+              msg = await this.fnWithParamsQFMsg(model, paramNodes, fix, error, true) 
+            else {
               // If method has no parameters
               const location = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', nodeAtPosition)
               const lineContent = model.getLineContent(location.start.line + 1)
@@ -70,23 +55,9 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
           } else {
             const paramNodes = nodeAtPosition.parameters
             // If method has parameters
-            if (paramNodes.length) {
-              // Get last function parameter node
-              const lastParamNode = paramNodes[paramNodes.length - 1]
-              // Get end location of last function parameter, it returns start column of parameter name
-              const lastParamEndLoc = lastParamNode.loc.end
-              const lineContent = model.getLineContent(lastParamEndLoc.line)
-              if (fix.id === 5 && lineContent.includes(' view ')) {
-                msg = lineContent.replace('view', 'pure')
-              } else
-                msg = lineContent.substring(0, lastParamEndLoc.column + lastParamNode.name.length + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + lastParamNode.name.length + 1, lineContent.length)
-              fix.range = {
-                startLineNumber: lastParamEndLoc.line,
-                endLineNumber: lastParamEndLoc.line,
-                startColumn: 0,
-                endColumn: error.startColumn + msg.length
-              }
-            } else {
+            if (paramNodes.length)
+              msg = await this.fnWithParamsQFMsg(model, paramNodes, fix, error, false)
+            else {
               const lineContent = model.getLineContent(nodeAtPosition.loc.start.line)
               const i = lineContent.indexOf('()')
               if (fix.id === 5 && lineContent.includes(' view ')) {
@@ -103,7 +74,6 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
 
           }
         } else if (fix && nodeAtPosition && fix.nodeType !== nodeAtPosition.nodeType) return
-
         if (Array.isArray(fix)) 
           for (const element of fix)
             this.addQuickFix(actions, error, model.uri, {title: element.title, range: element.range || error, text: msg || element.message})
@@ -133,5 +103,36 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
       },
       isPreferred: true
     })
+  }
+
+  async fnWithParamsQFMsg(model, paramNodes, fix, error, isOldAST) {
+    // Get last function parameter node
+    const lastParamNode = paramNodes[paramNodes.length - 1]
+    let lastParamEndLoc, fixLineNumber, msg
+    if (isOldAST) {
+      const location = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', lastParamNode)
+      // Get end location of last function parameter, it returns end column of parameter name
+      lastParamEndLoc = location.end
+      fixLineNumber = lastParamEndLoc.line + 1
+    } else {
+      // Get end location of last function parameter, it returns start column of parameter name
+      lastParamEndLoc = lastParamNode.loc.end
+      fixLineNumber = lastParamEndLoc.line
+    }
+    const lineContent = model.getLineContent(fixLineNumber)
+    if (fix.id === 5 && lineContent.includes(' view '))
+      msg = lineContent.replace('view', 'pure')
+    else if (isOldAST)
+      msg = lineContent.substring(0, lastParamEndLoc.column + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + 1, lineContent.length)
+    else 
+      msg = lineContent.substring(0, lastParamEndLoc.column + lastParamNode.name.length + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + lastParamNode.name.length + 1, lineContent.length)
+
+    fix.range = {
+      startLineNumber: fixLineNumber,
+      endLineNumber: fixLineNumber,
+      startColumn: 0,
+      endColumn: error.startColumn + msg.length
+    }
+    return msg
   }
 }
