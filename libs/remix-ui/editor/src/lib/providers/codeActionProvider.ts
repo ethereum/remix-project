@@ -104,45 +104,10 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
           }
         } else if (fix && nodeAtPosition && fix.nodeType !== nodeAtPosition.nodeType) return
 
-        if (Array.isArray(fix)) {
-          for (const element of fix) {
-            actions.push({
-              title: element.title,
-              diagnostics: [error],
-              kind: "quickfix",
-              edit: {
-                edits: [
-                  {
-                    resource: model.uri,
-                    edit: {
-                      range: element.range || error,
-                      text: msg || element.message
-                    }
-                  }
-                ]
-              },
-              isPreferred: true
-            })
-          }
-        } else
-          actions.push({
-            title: fix.title,
-            diagnostics: [error],
-            kind: "quickfix",
-            edit: {
-              edits: [
-                {
-                  resource: model.uri,
-                  edit: {
-                    range: fix.range || error,
-                    text: msg || fix.message
-                  }
-                }
-              ]
-            },
-            isPreferred: true
-          })
-
+        if (Array.isArray(fix)) 
+          for (const element of fix)
+            this.addQuickFix(actions, error, model.uri, {title: element.title, range: element.range || error, text: msg || element.message})
+        else this.addQuickFix(actions, error, model.uri, {title: fix.title, range: fix.range || error, text: msg || fix.message})
       }
     }
 
@@ -150,5 +115,23 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
       actions: actions,
       dispose: () => {}
     }
+  }
+
+  addQuickFix(actions, error, uri, fixDetails) {
+    const {title, range, text} = fixDetails
+    actions.push({
+      title,
+      diagnostics: [error],
+      kind: "quickfix",
+      edit: {
+        edits: [
+          {
+            resource: uri,
+            edit: { range, text }
+          }
+        ]
+      },
+      isPreferred: true
+    })
   }
 }
