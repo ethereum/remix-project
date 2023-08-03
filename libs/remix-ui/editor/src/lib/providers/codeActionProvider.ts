@@ -2,7 +2,6 @@ import { Monaco } from "@monaco-editor/react"
 import monaco from "../../types/monaco"
 import { EditorUIProps } from "../remix-ui-editor"
 import { default as fixes } from "./quickfixes"
-import { monacoTypes } from "@remix-ui/editor"
 
 export class RemixCodeActionProvider implements monaco.languages.CodeActionProvider {
   props: EditorUIProps
@@ -34,44 +33,13 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
           if (nodeAtPosition.parameters && !Array.isArray(nodeAtPosition.parameters) && Array.isArray(nodeAtPosition.parameters.parameters)) {
             const paramNodes = nodeAtPosition.parameters.parameters
             // If method has parameters
-            if (paramNodes.length)
-              msg = await this.fnWithParamsQFMsg(model, paramNodes, fix, error, true) 
-            else {
-              // If method has no parameters
-              const location = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', nodeAtPosition)
-              const lineContent = model.getLineContent(location.start.line + 1)
-              const i = lineContent.indexOf('()')
-              if (fix.id === 5 && lineContent.includes(' view ')) {
-                msg = lineContent.replace('view', 'pure')
-              } else
-                msg = lineContent.substring(0, i + 3) + fix.message + lineContent.substring(i + 3, lineContent.length)
-              fix.range = {
-                startLineNumber: location.start.line + 1,
-                endLineNumber: location.start.line + 1,
-                startColumn: 0,
-                endColumn: error.startColumn + msg.length
-              }
-            }
+            if (paramNodes.length) msg = await this.fnWithParamsQFMsg(model, paramNodes, fix, error, true) 
+            else msg = await this.fnWithoutParamsQFMsg(model, nodeAtPosition, fix, error, true)
           } else {
             const paramNodes = nodeAtPosition.parameters
             // If method has parameters
-            if (paramNodes.length)
-              msg = await this.fnWithParamsQFMsg(model, paramNodes, fix, error, false)
-            else {
-              const lineContent = model.getLineContent(nodeAtPosition.loc.start.line)
-              const i = lineContent.indexOf('()')
-              if (fix.id === 5 && lineContent.includes(' view ')) {
-                msg = lineContent.replace('view', 'pure')
-              } else
-                msg = lineContent.substring(0, i + 3) + fix.message + lineContent.substring(i + 3, lineContent.length)
-              fix.range = {
-                startLineNumber: nodeAtPosition.loc.start.line,
-                endLineNumber: nodeAtPosition.loc.start.line,
-                startColumn: 0,
-                endColumn: error.startColumn + msg.length
-              }
-            }
-
+            if (paramNodes.length) msg = await this.fnWithParamsQFMsg(model, paramNodes, fix, error, false)
+            else msg = await this.fnWithoutParamsQFMsg(model, nodeAtPosition, fix, error, false) 
           }
         } else if (fix && nodeAtPosition && fix.nodeType !== nodeAtPosition.nodeType) return
         if (Array.isArray(fix)) 
@@ -106,9 +74,9 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
   }
 
   async fnWithParamsQFMsg(model, paramNodes, fix, error, isOldAST) {
+    let lastParamEndLoc, fixLineNumber, msg
     // Get last function parameter node
     const lastParamNode = paramNodes[paramNodes.length - 1]
-    let lastParamEndLoc, fixLineNumber, msg
     if (isOldAST) {
       const location = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', lastParamNode)
       // Get end location of last function parameter, it returns end column of parameter name
@@ -127,6 +95,30 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
     else 
       msg = lineContent.substring(0, lastParamEndLoc.column + lastParamNode.name.length + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + lastParamNode.name.length + 1, lineContent.length)
 
+    fix.range = {
+      startLineNumber: fixLineNumber,
+      endLineNumber: fixLineNumber,
+      startColumn: 0,
+      endColumn: error.startColumn + msg.length
+    }
+    return msg
+  }
+
+  async fnWithoutParamsQFMsg(model, nodeAtPosition, fix, error, isOldAST) {
+    let fixLineNumber, msg
+    if (isOldAST) {
+      const location = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', nodeAtPosition)
+      fixLineNumber = location.start.line + 1
+    } else fixLineNumber = nodeAtPosition.loc.start.line
+
+    const lineContent = model.getLineContent(fixLineNumber)
+    const i = lineContent.indexOf('()')
+    
+    if (fix.id === 5 && lineContent.includes(' view ')) {
+      msg = lineContent.replace('view', 'pure')
+    } else
+      msg = lineContent.substring(0, i + 3) + fix.message + lineContent.substring(i + 3, lineContent.length)
+    
     fix.range = {
       startLineNumber: fixLineNumber,
       endLineNumber: fixLineNumber,
