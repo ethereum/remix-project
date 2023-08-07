@@ -33,13 +33,13 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
           if (nodeAtPosition.parameters && !Array.isArray(nodeAtPosition.parameters) && Array.isArray(nodeAtPosition.parameters.parameters)) {
             const paramNodes = nodeAtPosition.parameters.parameters
             // If method has parameters
-            if (paramNodes.length) msg = await this.fnWithParamsQFMsg(model, paramNodes, fix, error, true) 
-            else msg = await this.fnWithoutParamsQFMsg(model, nodeAtPosition, fix, error, true)
+            if (paramNodes.length) msg = await this.fixForMethodWithParams(model, paramNodes, fix, error, true) 
+            else msg = await this.fixForMethodWithoutParams(model, nodeAtPosition, fix, error, true)
           } else {
             const paramNodes = nodeAtPosition.parameters
             // If method has parameters
-            if (paramNodes.length) msg = await this.fnWithParamsQFMsg(model, paramNodes, fix, error, false)
-            else msg = await this.fnWithoutParamsQFMsg(model, nodeAtPosition, fix, error, false) 
+            if (paramNodes.length) msg = await this.fixForMethodWithParams(model, paramNodes, fix, error, false)
+            else msg = await this.fixForMethodWithoutParams(model, nodeAtPosition, fix, error, false) 
           }
         } else if (fix && nodeAtPosition && fix.nodeType !== nodeAtPosition.nodeType) return
         if (Array.isArray(fix)) 
@@ -55,8 +55,15 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
     }
   }
 
-  addQuickFix(actions, error, uri, fixDetails) {
-    const {title, range, text} = fixDetails
+  /**
+   * Add quick fix to code actions
+   * @param actions code actions array
+   * @param error editor error object
+   * @param uri model URI
+   * @param fix details of quick fix to apply
+   */
+  addQuickFix(actions, error, uri, fix) {
+    const {title, range, text} = fix
     actions.push({
       title,
       diagnostics: [error],
@@ -73,7 +80,16 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
     })
   }
 
-  async fnWithParamsQFMsg(model, paramNodes, fix, error, isOldAST) {
+  /**
+   * Returns message for various quick fixes related to a method with parameters
+   * @param model Model
+   * @param paramNodes function parameters AST nodes
+   * @param fix details of quick fix to apply
+   * @param error editor error object
+   * @param isOldAST true, if AST node contains legacy fields
+   * @returns message to be placed as quick fix
+   */
+  async fixForMethodWithParams(model, paramNodes, fix, error, isOldAST): Promise<string> {
     let lastParamEndLoc, fixLineNumber, msg
     // Get last function parameter node
     const lastParamNode = paramNodes[paramNodes.length - 1]
@@ -104,7 +120,16 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
     return msg
   }
 
-  async fnWithoutParamsQFMsg(model, nodeAtPosition, fix, error, isOldAST) {
+  /**
+   * Returns message for various quick fixes related to a method without parameters
+   * @param model Model
+   * @param paramNodes function parameters AST nodes
+   * @param fix details of quick fix to apply
+   * @param error editor error object
+   * @param isOldAST true, if AST node contains legacy fields
+   * @returns message to be placed as quick fix
+   */
+  async fixForMethodWithoutParams(model, nodeAtPosition, fix, error, isOldAST): Promise<string> {
     let fixLineNumber, msg
     if (isOldAST) {
       const location = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', nodeAtPosition)
