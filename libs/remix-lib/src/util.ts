@@ -190,7 +190,7 @@ export function swarmHashExtractionPOC32 () {
   * @return {RegEx}
   */
 export function cborEncodedValueExtraction () {
-  return /64697066735822[0-9a-f]{68}64736f6c6343([0-9a-f]{6})0033$/
+  return /64697066735822([0-9a-f]{68})64736f6c6343([0-9a-f]{6})0033$/
 }
 
 /**
@@ -204,7 +204,7 @@ export function inputParametersExtraction () {
 
 export function extractcborMetadata (value) {
   const cbor = value.match(cborEncodedValueExtraction())
-  if (cbor && cbor[1]) value = value.replace(cbor[1], '')
+  if (cbor && cbor[0]) value = value.replace(cbor[0], '')
   return value
 }
 
