@@ -177,10 +177,6 @@ export const TabsUI = (props: TabsUIProps) => {
               } else if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul') {
                 await props.plugin.call('solidity', 'compile', path)
                 _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
-              } else if (tabsState.currentExt === 'circom') {
-                await props.plugin.call('circuit-compiler', 'compile', path)
-                console.log('called cricuit compiler: ', path)
-                _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
               }
             }}
           >

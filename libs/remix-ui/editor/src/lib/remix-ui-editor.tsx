@@ -17,7 +17,9 @@ import {RemixHighLightProvider} from './providers/highlightProvider'
 import {RemixDefinitionProvider} from './providers/definitionProvider'
 import {RemixCodeActionProvider} from './providers/codeActionProvider'
 import './remix-ui-editor.css'
-import {circomLanguageConfig, circomTokensProvider} from './syntaxes/circom'
+import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
+import { IPosition } from 'monaco-editor'
+
 
 enum MarkerSeverity {
   Hint = 1,
@@ -107,7 +109,8 @@ export type EditorAPIType = {
   clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
   keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
   addErrorMarker: (errors: errorMarker[], from: string) => void
-  clearErrorMarkers: (sources: string[] | {[fileName: string]: any}, from: string) => void
+  clearErrorMarkers: (sources: string[] | {[fileName: string]: any}, from: string) => void,
+  getPositionAt: (offset: number) => monacoTypes.IPosition
 }
 
 /* eslint-disable-next-line */
@@ -550,7 +553,11 @@ export const EditorUI = (props: EditorUIProps) => {
     if (!editorRef.current) return
     return editorRef.current.getOption(43).fontSize
   }
-  ;(window as any).addRemixBreakpoint = (position) => {
+props.editorAPI.getPositionAt = (offset: number): IPosition => {
+  return editorRef.current.getModel().getPositionAt(offset);
+}  
+
+;(window as any).addRemixBreakpoint = (position) => {
     // make it available from e2e testing...
     const model = editorRef.current.getModel()
     if (model) {
