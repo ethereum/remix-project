@@ -16,16 +16,16 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
     range: monaco.Range /**Range*/,
     context: monaco.languages.CodeActionContext /**CodeActionContext*/,
     token: monaco.CancellationToken /**CancellationToken*/
-  ) {
-    const actions = []
+  ): Promise<monaco.languages.CodeActionList> {
+    const actions: monaco.languages.CodeAction[] = []
     for (const error of context.markers) {
-      let fix
-      let msg
-      const errStrings = Object.keys(fixes)
-      const errStr = errStrings.find(es => error.message.includes(es))
+      let fix: Record<string, any>
+      let msg: string
+      const errStrings: string[] = Object.keys(fixes)
+      const errStr:string = errStrings.find(es => error.message.includes(es))
       if (errStr) {
         fix = fixes[errStr]
-        const cursorPosition = this.props.editorAPI.getHoverPosition({lineNumber: error.startLineNumber, column: error.startColumn})
+        const cursorPosition: number = this.props.editorAPI.getHoverPosition({lineNumber: error.startLineNumber, column: error.startColumn})
         const nodeAtPosition = await this.props.plugin.call('codeParser', 'definitionAtPosition', cursorPosition)
         // Check if a function is hovered
         if (nodeAtPosition && nodeAtPosition.nodeType === "FunctionDefinition") {
@@ -62,7 +62,7 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
    * @param uri model URI
    * @param fix details of quick fix to apply
    */
-  addQuickFix(actions, error, uri, fix) {
+  addQuickFix(actions: monaco.languages.CodeAction[], error: monaco.editor.IMarkerData, uri: monaco.Uri, fix: Record<string, any>) {
     const {title, range, text} = fix
     actions.push({
       title,
@@ -89,12 +89,12 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
    * @param isOldAST true, if AST node contains legacy fields
    * @returns message to be placed as quick fix
    */
-  async fixForMethodWithParams(model, paramNodes, fix, error, isOldAST): Promise<string> {
-    let lastParamEndLoc, fixLineNumber, msg
+  async fixForMethodWithParams(model: monaco.editor.ITextModel, paramNodes: Record<string, any>[], fix: Record<string, any>, error: monaco.editor.IMarkerData, isOldAST: boolean): Promise<string> {
+    let lastParamEndLoc: Record<string, any>, fixLineNumber: number, msg: string
     // Get last function parameter node
-    const lastParamNode = paramNodes[paramNodes.length - 1]
+    const lastParamNode: Record<string, any> = paramNodes[paramNodes.length - 1]
     if (isOldAST) {
-      const location = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', lastParamNode)
+      const location: Record<string, any> = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', lastParamNode)
       // Get end location of last function parameter, it returns end column of parameter name
       lastParamEndLoc = location.end
       fixLineNumber = lastParamEndLoc.line + 1
@@ -103,7 +103,7 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
       lastParamEndLoc = lastParamNode.loc.end
       fixLineNumber = lastParamEndLoc.line
     }
-    const lineContent = model.getLineContent(fixLineNumber)
+    const lineContent: string = model.getLineContent(fixLineNumber)
     if (fix.id === 5 && lineContent.includes(' view '))
       msg = lineContent.replace('view', 'pure')
     else if (isOldAST)
@@ -129,15 +129,15 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
    * @param isOldAST true, if AST node contains legacy fields
    * @returns message to be placed as quick fix
    */
-  async fixForMethodWithoutParams(model, nodeAtPosition, fix, error, isOldAST): Promise<string> {
-    let fixLineNumber, msg
+  async fixForMethodWithoutParams(model: monaco.editor.ITextModel, nodeAtPosition: Record<string, any>, fix: Record<string, any>, error: monaco.editor.IMarkerData, isOldAST: boolean): Promise<string> {
+    let fixLineNumber: number, msg: string
     if (isOldAST) {
-      const location = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', nodeAtPosition)
+      const location: Record<string, any> = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', nodeAtPosition)
       fixLineNumber = location.start.line + 1
     } else fixLineNumber = nodeAtPosition.loc.start.line
 
-    const lineContent = model.getLineContent(fixLineNumber)
-    const i = lineContent.indexOf('()')
+    const lineContent: string = model.getLineContent(fixLineNumber)
+    const i: number = lineContent.indexOf('()')
     
     if (fix.id === 5 && lineContent.includes(' view ')) {
       msg = lineContent.replace('view', 'pure')
