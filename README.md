@@ -66,10 +66,8 @@ git clone https://github.com/ethereum/remix-project.git
 * Build `remix-project`:
 ```bash
 cd remix-project
-yarn install
-yarn run build:libs // Build remix libs
-nx build
-nx serve
+yarn
+yarn run build
 ```
 
 Open `http://127.0.0.1:8080` in your browser to load Remix IDE locally.
