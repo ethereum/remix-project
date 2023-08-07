@@ -106,7 +106,8 @@ export class TraceCache {
     const stack = trace[index].stack
     const offset = 2 * parseInt(toHexPaddedString(stack[stack.length - 2]), 16)
     const size = 2 * parseInt(toHexPaddedString(stack[stack.length - 3]), 16)
-    this.contractCreation[token] = '0x' + memory.join('').substr(offset, size)
+    const memoryHex = Buffer.from(memory).toString('hex')
+    this.contractCreation[token] = '0x' + memoryHex.substr(offset, size)
   }
 
   pushContractCreation (token, code) {
