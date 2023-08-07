@@ -4,7 +4,7 @@
   "displayName": "Circuit Compiler",
   "events": [],
   "version": "2.0.0",
-  "methods": ["init", "compile"],
+  "methods": ["init", "parse"],
   "canActivate": [],
   "url": "",
   "description": "Enables circuit compilation and computing a witness for ZK proofs",
