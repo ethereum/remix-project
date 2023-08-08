@@ -1,7 +1,7 @@
 import { Monaco } from "@monaco-editor/react"
 import monaco from "../../types/monaco"
 import { EditorUIProps } from "../remix-ui-editor"
-import { default as fixes } from "./quickfixes"
+import { default as fixesList } from "./quickfixes"
 
 export class RemixCodeActionProvider implements monaco.languages.CodeActionProvider {
   props: EditorUIProps
@@ -19,12 +19,12 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
   ): Promise<monaco.languages.CodeActionList> {
     const actions: monaco.languages.CodeAction[] = []
     for (const error of context.markers) {
-      let fix: Record<string, any>
+      let fixes: Record<string, any>[]
       let msg: string
-      const errStrings: string[] = Object.keys(fixes)
+      const errStrings: string[] = Object.keys(fixesList)
       const errStr:string = errStrings.find(es => error.message.includes(es))
       if (errStr) {
-        fix = fixes[errStr]
+        fixes = fixesList[errStr]
         const cursorPosition: number = this.props.editorAPI.getHoverPosition({lineNumber: error.startLineNumber, column: error.startColumn})
         const nodeAtPosition = await this.props.plugin.call('codeParser', 'definitionAtPosition', cursorPosition)
         // Check if a function is hovered
@@ -33,20 +33,39 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
           if (nodeAtPosition.parameters && !Array.isArray(nodeAtPosition.parameters) && Array.isArray(nodeAtPosition.parameters.parameters)) {
             const paramNodes = nodeAtPosition.parameters.parameters
             // If method has parameters
-            if (paramNodes.length) msg = await this.fixForMethodWithParams(model, paramNodes, fix, error, true) 
-            else msg = await this.fixForMethodWithoutParams(model, nodeAtPosition, fix, error, true)
+            if (paramNodes.length) {
+              for (const fix of fixes) {
+                msg = await this.fixForMethodWithParams(model, paramNodes, fix, error, true)
+                this.addQuickFix(actions, error, model.uri, {title: fix.title, range: fix.range, text: msg})
+              }
+            } else {
+              for (const fix of fixes) {
+                msg = await this.fixForMethodWithoutParams(model, nodeAtPosition, fix, error, true)
+                this.addQuickFix(actions, error, model.uri, {title: fix.title, range: fix.range, text: msg})
+              }
+            }
           } else {
             const paramNodes = nodeAtPosition.parameters
             // If method has parameters
-            if (paramNodes.length) msg = await this.fixForMethodWithParams(model, paramNodes, fix, error, false)
-            else msg = await this.fixForMethodWithoutParams(model, nodeAtPosition, fix, error, false) 
+            if (paramNodes.length) {
+              for (const fix of fixes) {
+                msg = await this.fixForMethodWithParams(model, paramNodes, fix, error, false)
+                this.addQuickFix(actions, error, model.uri, {title: fix.title, range: fix.range, text: msg})
+              }
+            } else {
+              for (const fix of fixes) {
+                msg = await this.fixForMethodWithoutParams(model, nodeAtPosition, fix, error, false)
+                this.addQuickFix(actions, error, model.uri, {title: fix.title, range: fix.range, text: msg})
+              }
+            }
           }
-        } else if (fix && nodeAtPosition && fix.nodeType !== nodeAtPosition.nodeType) return
-        if (Array.isArray(fix)) 
-          for (const element of fix)
-            this.addQuickFix(actions, error, model.uri, {title: element.title, range: element.range || error, text: msg || element.message})
-        else this.addQuickFix(actions, error, model.uri, {title: fix.title, range: fix.range || error, text: msg || fix.message})
-      }
+        } else {
+            for (const fix of fixes) {
+              if (fix && nodeAtPosition && fix.nodeType !== nodeAtPosition.nodeType) continue
+              else this.addQuickFix(actions, error, model.uri, {title: fix.title, range: fix.range || error, text: fix.message})
+            }
+          }
+        }
     }
 
     return {
