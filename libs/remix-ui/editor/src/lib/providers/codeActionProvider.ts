@@ -12,15 +12,15 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
   }
 
   async provideCodeActions (
-    model: monaco.editor.ITextModel /**ITextModel*/,
-    range: monaco.Range /**Range*/,
-    context: monaco.languages.CodeActionContext /**CodeActionContext*/,
-    token: monaco.CancellationToken /**CancellationToken*/
+    model: monaco.editor.ITextModel,
+    range: monaco.Range,
+    context: monaco.languages.CodeActionContext,
+    token: monaco.CancellationToken
   ): Promise<monaco.languages.CodeActionList> {
     const actions: monaco.languages.CodeAction[] = []
     for (const error of context.markers) {
-      let fixes: Record<string, any>[]
-      let msg: string
+      let fixes: Record<string, any>[], msg: string
+      let isOldAST: boolean = false
       const errStrings: string[] = Object.keys(fixesList)
       const errStr:string = errStrings.find(es => error.message.includes(es))
       if (errStr) {
@@ -30,34 +30,14 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
         // Check if a function is hovered
         if (nodeAtPosition && nodeAtPosition.nodeType === "FunctionDefinition") {
           // Identify type of AST node
-          if (nodeAtPosition.parameters && !Array.isArray(nodeAtPosition.parameters) && Array.isArray(nodeAtPosition.parameters.parameters)) {
-            const paramNodes = nodeAtPosition.parameters.parameters
-            // If method has parameters
-            if (paramNodes.length) {
-              for (const fix of fixes) {
-                msg = await this.fixForMethodWithParams(model, paramNodes, fix, error, true)
-                this.addQuickFix(actions, error, model.uri, {title: fix.title, range: fix.range, text: msg})
-              }
-            } else {
-              for (const fix of fixes) {
-                msg = await this.fixForMethodWithoutParams(model, nodeAtPosition, fix, error, true)
-                this.addQuickFix(actions, error, model.uri, {title: fix.title, range: fix.range, text: msg})
-              }
-            }
-          } else {
-            const paramNodes = nodeAtPosition.parameters
-            // If method has parameters
-            if (paramNodes.length) {
-              for (const fix of fixes) {
-                msg = await this.fixForMethodWithParams(model, paramNodes, fix, error, false)
-                this.addQuickFix(actions, error, model.uri, {title: fix.title, range: fix.range, text: msg})
-              }
-            } else {
-              for (const fix of fixes) {
-                msg = await this.fixForMethodWithoutParams(model, nodeAtPosition, fix, error, false)
-                this.addQuickFix(actions, error, model.uri, {title: fix.title, range: fix.range, text: msg})
-              }
-            }
+          if (nodeAtPosition.parameters && !Array.isArray(nodeAtPosition.parameters) && Array.isArray(nodeAtPosition.parameters.parameters))
+            isOldAST = true
+          const paramNodes = isOldAST ? nodeAtPosition.parameters.parameters : nodeAtPosition.parameters
+          for (const fix of fixes) {
+            msg = paramNodes.length 
+              ? await this.fixForMethodWithParams(model, paramNodes, fix, error, isOldAST)
+              : await this.fixForMethodWithoutParams(model, nodeAtPosition, fix, error, isOldAST) 
+            this.addQuickFix(actions, error, model.uri, {title: fix.title, range: fix.range, text: msg})
           }
         } else {
           for (const fix of fixes) {
