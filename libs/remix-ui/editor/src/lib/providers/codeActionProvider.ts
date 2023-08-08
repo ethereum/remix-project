@@ -60,12 +60,12 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
             }
           }
         } else {
-            for (const fix of fixes) {
-              if (fix && nodeAtPosition && fix.nodeType !== nodeAtPosition.nodeType) continue
-              else this.addQuickFix(actions, error, model.uri, {title: fix.title, range: fix.range || error, text: fix.message})
-            }
+          for (const fix of fixes) {
+            if (fix && nodeAtPosition && fix.nodeType !== nodeAtPosition.nodeType) continue
+            else this.addQuickFix(actions, error, model.uri, {title: fix.title, range: fix.range || error, text: fix.message})
           }
         }
+      }
     }
 
     return {
