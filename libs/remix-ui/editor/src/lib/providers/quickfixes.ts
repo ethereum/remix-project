@@ -23,9 +23,24 @@ export default {
     }
   }],
   "SyntaxError: No visibility specified. Did you intend to add \"public\"": [{
-    "id": 3,
+    "id": 3.1,
     "title": "Add visibility 'public'",
     "message": "public ",
+    "nodeType": "FunctionDefinition"
+  },{
+    "id": 3.2,
+    "title": "Add visibility 'private'",
+    "message": "private ",
+    "nodeType": "FunctionDefinition"
+  },{
+    "id": 3.3,
+    "title": "Add visibility 'internal'",
+    "message": "internal ",
+    "nodeType": "FunctionDefinition"
+  },{
+    "id": 3.4,
+    "title": "Add visibility 'external'",
+    "message": "external ",
     "nodeType": "FunctionDefinition"
   }],
   "Warning: Function state mutability can be restricted to view": [{
