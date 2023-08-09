@@ -67,7 +67,6 @@ git clone https://github.com/ethereum/remix-project.git
 ```bash
 cd remix-project
 yarn
-yarn run build
 yarn serve
 ```
 
