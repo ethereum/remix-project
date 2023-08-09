@@ -274,12 +274,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         setShowFilePathInput(false)
       } else {
         modal(
-          'New configuration file',
-          `The file "${configFilePathInput.current.value}" you entered does not exist. Do you want to create a new one?`,
-          'Create',
+          intl.formatMessage({id: 'solidity.newConfigFileTitle'}),
+          intl.formatMessage({id: 'solidity.newConfigFileMessage'}, {configFilePathInput: configFilePathInput.current.value}),
+          intl.formatMessage({id: 'solidity.create'}),
           async () => await createNewConfigFile(),
           false,
-          'Cancel',
+          intl.formatMessage({id: 'solidity.cancel'}),
           () => {
             setShowFilePathInput(false)
           }
@@ -337,9 +337,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         allVersionsWasm = wasmRes.data.builds.slice().reverse()
       }
     } catch (e) {
-      tooltip(
-        'Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload. Error: ' + e
-      )
+      tooltip(intl.formatMessage({id: 'solidity.tooltipText5'}) + e)
     }
     // replace in allVersions those compiler builds which exist in allVersionsWasm with new once
     if (allVersionsWasm && allVersions) {
@@ -399,7 +397,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           const compilerPath = state.allversions.filter((obj) => !obj.prerelease && obj.version === compilerToLoad)[0].path
           if (state.selectedVersion !== compilerPath) {
             // @ts-ignore
-            api.call('notification', 'toast', `Updating compiler version to match current contract file pragma i.e ${_retrieveVersion(compilerPath)}`)
+            api.call('notification', 'toast', intl.formatMessage({id: 'solidity.toastMessage'}, {version: _retrieveVersion(compilerPath)}))
             setState((prevState) => {
               return {...prevState, selectedVersion: compilerPath}
             })
@@ -443,12 +441,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   const loadingCompiler = () => {
     if (!compileIcon.current) return
-    compileIcon.current.setAttribute('title', 'compiler is loading, please wait a few moments.')
+    compileIcon.current.setAttribute('title', intl.formatMessage({id: 'solidity.compileIconAttribute'}))
     compileIcon.current.classList.add('remixui_spinningIcon')
     setState((prevState) => {
       return {
         ...prevState,
-        compilerLicense: 'Compiler is loading. License will be displayed once compiler is loaded'
+        compilerLicense: intl.formatMessage({id: 'solidity.compilerLicenseMsg1'})
       }
     })
     _updateLanguageSelector()
@@ -462,7 +460,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     setState((prevState) => {
       return {
         ...prevState,
-        compilerLicense: license ? license : 'Could not retreive license for selected compiler version'
+        compilerLicense: license ? license : intl.formatMessage({id: 'solidity.compilerLicenseMsg2'})
       }
     })
     if (state.autoCompile) compile()
@@ -592,16 +590,21 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         id: 'solidity.addACustomCompiler'
       }),
       promptMessage('URL'),
-      'OK',
+      intl.formatMessage({id: 'solidity.ok'}),
       addCustomCompiler,
       false,
-      'Cancel',
+      intl.formatMessage({id: 'solidity.cancel'}),
       () => {}
     )
   }
 
   const showCompilerLicense = () => {
-    modal('Compiler License', state.compilerLicense ? state.compilerLicense : 'License not available', 'OK', () => {})
+    modal(
+      intl.formatMessage({id: 'solidity.compilerLicense'}),
+      state.compilerLicense ? state.compilerLicense : intl.formatMessage({id: 'solidity.compilerLicenseMsg3'}),
+      intl.formatMessage({id: 'solidity.ok'}),
+      () => {}
+    )
   }
 
   const promptMessage = (message) => {
@@ -766,7 +769,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             >
               <span className="far fa-plus border-0 p-0 ml-3" onClick={() => promptCompiler()}></span>
             </CustomTooltip>
-            <CustomTooltip placement="top" tooltipId="showCompilerTooltip" tooltipClasses="text-nowrap" tooltipText={'See compiler license'}>
+            <CustomTooltip placement="top" tooltipId="showCompilerTooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="solidity.seeCompilerLicense" />}>
               <span className="fa fa-file-text-o border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
             </CustomTooltip>
             <select
@@ -928,7 +931,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 placement="right"
                 tooltipId="compilerLabelTooltip"
                 tooltipClasses="text-nowrap"
-                tooltipText={<span>{'Language specification available from   Compiler >= v0.5.7'}</span>}
+                tooltipText={
+                  <span>
+                    <FormattedMessage id="solidity.tooltipText6" />
+                  </span>
+                }
               >
                 <div id="compilerLanguageSelectorWrapper">
                   <select
@@ -991,7 +998,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   placeholder="200"
                   value={state.runs}
                   type="number"
-                  title="Estimated number of times each opcode of the deployed code will be executed across the life-time of the contract."
+                  title={intl.formatMessage({id: 'solidity.inputTitle2'})}
                   onChange={(e) => onChangeRuns(e.target.value)}
                   disabled={!state.optimize || state.useFileConfiguration}
                 />
@@ -1014,7 +1021,16 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           </div>
           <div className={`pt-2 ml-4 ml-2 align-items-start justify-content-between d-flex`}>
             {!showFilePathInput && state.useFileConfiguration && (
-              <CustomTooltip placement="bottom" tooltipId="configfileTooltip" tooltipClasses="text-nowrap" tooltipText={<span>Click to open the config file</span>}>
+              <CustomTooltip
+                placement="bottom"
+                tooltipId="configfileTooltip"
+                tooltipClasses="text-nowrap"
+                tooltipText={
+                  <span>
+                    <FormattedMessage id="solidity.tooltipText4" />
+                  </span>
+                }
+              >
                 <span
                   onClick={
                     configFilePath === ''
@@ -1025,7 +1041,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   }
                   className="py-2 remixui_compilerConfigPath"
                 >
-                  {configFilePath === '' ? 'No file selected.' : configFilePath}
+                  {configFilePath === '' ? intl.formatMessage({id: 'solidity.noFileSelected1'}) : configFilePath}
                 </span>
               </CustomTooltip>
             )}
@@ -1034,7 +1050,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               ref={configFilePathInput}
               className={`py-0 my-0 form-control ${showFilePathInput ? 'd-flex' : 'd-none'}`}
               placeholder={'/folder_path/file_name.json'}
-              title="If the file you entered does not exist you will be able to create one in the next step."
+              title={intl.formatMessage({id: 'solidity.inputTitle1'})}
               disabled={!state.useFileConfiguration}
               data-id="scConfigFilePathInput"
               onKeyPress={(event) => {
@@ -1072,10 +1088,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 <div className="text-left">
                   {!(configFilePath === '' && state.useFileConfiguration) && (
                     <div>
-                      <b>Ctrl+S</b> to compile {state.compiledFileName.endsWith('.sol') ? state.compiledFileName : null}{' '}
+                      <b>Ctrl+S</b> <FormattedMessage id="solidity.toCompile" /> {state.compiledFileName.endsWith('.sol') ? state.compiledFileName : null}{' '}
                     </div>
                   )}
-                  {configFilePath === '' && state.useFileConfiguration && <div> No config file selected</div>}
+                  {configFilePath === '' && state.useFileConfiguration && <div> <FormattedMessage id="solidity.noConfigFileSelected" /></div>}
                 </div>
               }
             >
@@ -1114,10 +1130,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   <div className="text-left">
                     {!(configFilePath === '' && state.useFileConfiguration) && (
                       <div>
-                        <b>Ctrl+Shift+S</b> for compiling and script execution
+                        <b>Ctrl+Shift+S</b> <FormattedMessage id="solidity.tooltipText3" />
                       </div>
                     )}
-                    {configFilePath === '' && state.useFileConfiguration && <div> No config file selected</div>}
+                    {configFilePath === '' && state.useFileConfiguration && <div> <FormattedMessage id="solidity.noConfigFileSelected" /></div>}
                   </div>
                 }
               >
@@ -1131,7 +1147,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               tooltipId="overlay-tooltip-compile-run-doc"
               tooltipText={
                 <div className="text-left p-2">
-                  <div>Choose the script to execute right after compilation by adding the `dev-run-script` natspec tag, as in:</div>
+                  <div><FormattedMessage id="solidity.tooltipText1" /></div>
                   <pre>
                     <code>
                       /**
@@ -1148,7 +1164,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                       <br />
                     </code>
                   </pre>
-                  Click the "i" icon to learn more
+                  <FormattedMessage id="solidity.tooltipText2" />
                 </div>
               }
             >
@@ -1156,7 +1172,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 <i className="pl-2 ml-2 fas fa-info text-dark"></i>
               </a>
             </CustomTooltip>
-            <CopyToClipboard tip="Click to copy the custom NatSpec tag" getContent={() => '@custom:dev-run-script file_path'} direction="top">
+            <CopyToClipboard tip={intl.formatMessage({id: 'solidity.copyNatSpecTag'})} getContent={() => '@custom:dev-run-script file_path'} direction="top">
               <button className="btn remixui_copyButton  ml-2 my-1 text-dark">
                 <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
               </button>
