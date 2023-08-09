@@ -78,13 +78,13 @@
     padding-right: 5px;
   }
   
-  .remixui_verticalIconContextcontainer {
+  /* .remixui_verticalIconContextcontainer {
     display: block;
     position: fixed;
     border-radius: 2px;
     z-index: 1000;
     box-shadow: 0 0 4px var(--dark);
-  }
+  } */
   .remixui_verticalIconContextcontainer:focus {
     outline: 0;
   }
