@@ -1,5 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-use-before-define
 import React from 'react'
+import {FormattedMessage} from 'react-intl'
 import '../remix-ui-plugin-manager.css'
 import {CustomTooltip} from '@remix-ui/helper'
 interface PluginCardProps {
@@ -17,23 +18,43 @@ function ActivePluginCard({profile, buttonText, deactivatePlugin}: PluginCardPro
             <div>
               {profile.displayName || profile.name}
               {profile?.maintainedBy?.toLowerCase() == 'remix' && (
-                <CustomTooltip placement="right" tooltipId="pluginManagerActiveTitleByRemix" tooltipClasses="text-nowrap" tooltipText="Maintained by Remix">
+                <CustomTooltip
+                  placement="right"
+                  tooltipId="pluginManagerActiveTitleByRemix"
+                  tooltipClasses="text-nowrap"
+                  tooltipText={<FormattedMessage id="pluginManager.maintainedByRemix" />}
+                >
                   <i aria-hidden="true" className="px-1 text-success fas fa-check"></i>
                 </CustomTooltip>
               )}
               {profile.documentation && (
-                <CustomTooltip placement="right" tooltipId="pluginManagerActiveLinkToDoc" tooltipClasses="text-nowrap" tooltipText="Link to documentation">
+                <CustomTooltip
+                  placement="right"
+                  tooltipId="pluginManagerActiveLinkToDoc"
+                  tooltipClasses="text-nowrap"
+                  tooltipText={<FormattedMessage id="pluginManager.linkToDoc" />}
+                >
                   <a href={profile.documentation} className="px-1" target="_blank" rel="noreferrer">
                     <i aria-hidden="true" className="fas fa-book" />
                   </a>
                 </CustomTooltip>
               )}
               {profile.version && profile.version.match(/\b(\w*alpha\w*)\b/g) ? (
-                <CustomTooltip placement="right" tooltipId="pluginManagerActiveVersionAlpha" tooltipClasses="text-nowrap" tooltipText="Version Alpha">
+                <CustomTooltip
+                  placement="right"
+                  tooltipId="pluginManagerActiveVersionAlpha"
+                  tooltipClasses="text-nowrap"
+                  tooltipText={<FormattedMessage id="pluginManager.versionAlpha" />}
+                >
                   <small className="remixui_versionWarning plugin-version">alpha</small>
                 </CustomTooltip>
               ) : profile.version && profile.version.match(/\b(\w*beta\w*)\b/g) ? (
-                <CustomTooltip placement="right" tooltipId="pluginManagerActiveVersionBeta" tooltipClasses="text-nowrap" tooltipText="Version Beta">
+                <CustomTooltip
+                  placement="right"
+                  tooltipId="pluginManagerActiveVersionBeta"
+                  tooltipClasses="text-nowrap"
+                  tooltipText={<FormattedMessage id="pluginManager.versionBeta" />}
+                >
                   <small className="remixui_versionWarning plugin-version">beta</small>
                 </CustomTooltip>
               ) : null}
@@ -43,7 +64,7 @@ function ActivePluginCard({profile, buttonText, deactivatePlugin}: PluginCardPro
                 placement="right"
                 tooltipId={`pluginManagerInactiveActiveBtn${profile.name}`}
                 tooltipClasses="text-nowrap"
-                tooltipText={`Deactivate ${profile.displayName || profile.name}`}
+                tooltipText={<FormattedMessage id="pluginManager.deactivatePlugin" values={{pluginName: profile.displayName || profile.name}} />}
               >
                 <button
                   onClick={() => {
