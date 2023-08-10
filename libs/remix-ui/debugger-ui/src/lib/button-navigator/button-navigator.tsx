@@ -1,5 +1,6 @@
 import {CustomTooltip} from '@remix-ui/helper'
 import React, {useState, useEffect} from 'react' // eslint-disable-line
+import {useIntl} from 'react-intl'
 import './button-navigator.css'
 
 export const ButtonNavigation = ({
@@ -15,6 +16,7 @@ export const ButtonNavigation = ({
   stepState,
   jumpOutDisabled
 }) => {
+  const intl = useIntl()
   const [state, setState] = useState({
     intoBackDisabled: true,
     overBackDisabled: true,
@@ -90,7 +92,7 @@ export const ButtonNavigation = ({
       ),
       placement: 'top-start',
       tagId: 'overbackTooltip',
-      tooltipMsg: 'Step over back'
+      tooltipMsg: intl.formatMessage({id: 'debugger.stepOverBack'})
     },
     stepBackJSX: {
       markup: (
@@ -118,7 +120,7 @@ export const ButtonNavigation = ({
       ),
       placement: 'top-start',
       tagId: 'intobackTooltip',
-      tooltipMsg: 'Step back'
+      tooltipMsg: intl.formatMessage({id: 'debugger.stepBack'})
     },
 
     stepIntoJSX: {
@@ -147,7 +149,7 @@ export const ButtonNavigation = ({
       ),
       placement: 'top-start',
       tagId: 'intoforwardTooltip',
-      tooltipMsg: 'Step into'
+      tooltipMsg: intl.formatMessage({id: 'debugger.stepInto'})
     },
     stepOverForwardJSX: {
       markup: (
@@ -174,7 +176,7 @@ export const ButtonNavigation = ({
       ),
       placement: 'top-end',
       tagId: 'overbackTooltip',
-      tooltipMsg: 'Step over forward'
+      tooltipMsg: intl.formatMessage({id: 'debugger.stepOverForward'})
     }
   }
   const jumpMarkupStructure = {
@@ -208,7 +210,7 @@ export const ButtonNavigation = ({
       ),
       placement: 'bottom-start',
       tagId: 'jumppreviousbreakpointTooltip',
-      tooltipMsg: 'Jump to the previous breakpoint'
+      tooltipMsg: intl.formatMessage({id: 'debugger.jumpPreviousBreakpoint'})
     },
     jumpOutJSX: {
       markup: (
@@ -240,7 +242,7 @@ export const ButtonNavigation = ({
       ),
       placement: 'bottom-end',
       tagId: 'jumpoutTooltip',
-      tooltipMsg: 'Jump out'
+      tooltipMsg: intl.formatMessage({id: 'debugger.jumpOut'})
     },
     jumpNextBreakpointJSX: {
       markup: (
@@ -268,7 +270,7 @@ export const ButtonNavigation = ({
       ),
       placement: 'bottom-end',
       tagId: 'jumpnextbreakpointTooltip',
-      tooltipMsg: 'Jump to the next breakpoint'
+      tooltipMsg: intl.formatMessage({id: 'debugger.jumpNextBreakpoint'})
     }
   }
 

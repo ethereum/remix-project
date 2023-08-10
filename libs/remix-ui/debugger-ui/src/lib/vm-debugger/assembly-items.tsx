@@ -1,4 +1,5 @@
 import React, {useState, useRef, useEffect, useReducer} from 'react' // eslint-disable-line
+import {FormattedMessage} from 'react-intl'
 import {initialState, reducer} from '../../reducers/assembly-items'
 import './styles/assembly-items.css'
 
@@ -145,7 +146,11 @@ export const AssemblyItems = ({registerEvent}) => {
     <div className="h-100 border rounded px-1 mt-1 bg-light">
       <div className="dropdownpanel">
         <div className="dropdowncontent pb-2">
-          {assemblyItems.display.length == 0 && <div>No data available</div>}
+          {assemblyItems.display.length == 0 && (
+            <div>
+              <FormattedMessage id="debugger.noDataAvailable" />
+            </div>
+          )}
           <div className="pl-2 my-1 small instructions" data-id="asmitems" id="asmitems" ref={asmItemsRef}>
             {assemblyItems.display.map((item, i) => {
               return (
