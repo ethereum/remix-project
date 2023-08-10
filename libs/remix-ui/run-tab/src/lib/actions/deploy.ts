@@ -155,14 +155,14 @@ export const createInstance = async (
     return terminalLogger(plugin, log)
   }
 
-  const finalCb = (error, contractObject, address) => {
+  const finalCb = async (error, contractObject, address) => {
     if (error) {
       const log = logBuilder(error)
 
       return terminalLogger(plugin, log)
     }
     addInstance(dispatch, { contractData: contractObject, address, name: contractObject.name })
-    const data = plugin.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
+    const data = await plugin.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
 
     plugin.compilersArtefacts.addResolvedContract(addressToString(address), data)
     if (plugin.REACT_API.ipfsChecked) {

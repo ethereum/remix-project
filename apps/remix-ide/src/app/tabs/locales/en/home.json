@@ -18,7 +18,7 @@
   "home.betaTestingText2": "Help us beta test releases now and get a handle on new features!",
   "home.betaTestingMore": "Sign up",
   "home.featuredPlugins": "Featured Plugins",
-  "home.solidityPluginDesc": "Compile, test and analyse smart contract.",
+  "home.solidityPluginDesc": "Compile, test, and analyze smart contracts.",
   "home.cookbookDesc": "Find smart contracts, solidity libraries, and discover protocols.",
   "home.codeAnalyizerPluginDesc": "Analyze your code using Remix, Solhint and Slither.",
   "home.starkNetPluginDesc": "Compile and deploy contracts with Cairo, a native language for StarkNet.",

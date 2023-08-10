@@ -1,8 +1,7 @@
 import { Monaco } from "@monaco-editor/react"
 import monaco from "../../types/monaco"
 import { EditorUIProps } from "../remix-ui-editor"
-import { default as fixes } from "./quickfixes"
-import { monacoTypes } from "@remix-ui/editor"
+import { default as fixesList } from "./quickfixes"
 
 export class RemixCodeActionProvider implements monaco.languages.CodeActionProvider {
   props: EditorUIProps
@@ -13,114 +12,39 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
   }
 
   async provideCodeActions (
-    model: monaco.editor.ITextModel /**ITextModel*/,
-    range: monaco.Range /**Range*/,
-    context: monaco.languages.CodeActionContext /**CodeActionContext*/,
-    token: monaco.CancellationToken /**CancellationToken*/
-  ) {
-    const actions = []
+    model: monaco.editor.ITextModel,
+    range: monaco.Range,
+    context: monaco.languages.CodeActionContext,
+    token: monaco.CancellationToken
+  ): Promise<monaco.languages.CodeActionList> {
+    const actions: monaco.languages.CodeAction[] = []
     for (const error of context.markers) {
-      let fix
-      let msg
-      const errStrings = Object.keys(fixes)
-      const errStr = errStrings.find(es => error.message.includes(es))
+      let fixes: Record<string, any>[], msg: string
+      let isOldAST: boolean = false
+      const errStrings: string[] = Object.keys(fixesList)
+      const errStr:string = errStrings.find(es => error.message.includes(es))
       if (errStr) {
-        fix = fixes[errStr]
-        const cursorPosition = this.props.editorAPI.getHoverPosition({lineNumber: error.startLineNumber, column: error.startColumn})
+        fixes = fixesList[errStr]
+        const cursorPosition: number = this.props.editorAPI.getHoverPosition({lineNumber: error.startLineNumber, column: error.startColumn})
         const nodeAtPosition = await this.props.plugin.call('codeParser', 'definitionAtPosition', cursorPosition)
         // Check if a function is hovered
         if (nodeAtPosition && nodeAtPosition.nodeType === "FunctionDefinition") {
           // Identify type of AST node
-          if (nodeAtPosition.parameters && !Array.isArray(nodeAtPosition.parameters) && Array.isArray(nodeAtPosition.parameters.parameters)) {
-            const paramNodes = nodeAtPosition.parameters.parameters
-            // If method has parameters
-            if (paramNodes.length) {
-              // Get last function parameter node
-              const lastParamNode = paramNodes[paramNodes.length - 1]
-              const location = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', lastParamNode)
-              // Get end location of last function parameter, it returns end column of parameter name
-              const lastParamEndLoc = location.end
-              const lineContent = model.getLineContent(lastParamEndLoc.line + 1)
-              if (fix.id === 5 && lineContent.includes(' view ')) {
-                msg = lineContent.replace('view', 'pure')
-              } else
-                msg = lineContent.substring(0, lastParamEndLoc.column + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + 1, lineContent.length)
-              fix.range = {
-                startLineNumber: lastParamEndLoc.line + 1,
-                endLineNumber: lastParamEndLoc.line + 1,
-                startColumn: 0,
-                endColumn: error.startColumn + msg.length
-              } 
-            } else {
-              // If method has no parameters
-              const location = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', nodeAtPosition)
-              const lineContent = model.getLineContent(location.start.line + 1)
-              const i = lineContent.indexOf('()')
-              if (fix.id === 5 && lineContent.includes(' view ')) {
-                msg = lineContent.replace('view', 'pure')
-              } else
-                msg = lineContent.substring(0, i + 3) + fix.message + lineContent.substring(i + 3, lineContent.length)
-              fix.range = {
-                startLineNumber: location.start.line + 1,
-                endLineNumber: location.start.line + 1,
-                startColumn: 0,
-                endColumn: error.startColumn + msg.length
-              }
-            }
-          } else {
-            const paramNodes = nodeAtPosition.parameters
-            // If method has parameters
-            if (paramNodes.length) {
-              // Get last function parameter node
-              const lastParamNode = paramNodes[paramNodes.length - 1]
-              // Get end location of last function parameter, it returns start column of parameter name
-              const lastParamEndLoc = lastParamNode.loc.end
-              const lineContent = model.getLineContent(lastParamEndLoc.line)
-              if (fix.id === 5 && lineContent.includes(' view ')) {
-                msg = lineContent.replace('view', 'pure')
-              } else
-                msg = lineContent.substring(0, lastParamEndLoc.column + lastParamNode.name.length + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + lastParamNode.name.length + 1, lineContent.length)
-              fix.range = {
-                startLineNumber: lastParamEndLoc.line,
-                endLineNumber: lastParamEndLoc.line,
-                startColumn: 0,
-                endColumn: error.startColumn + msg.length
-              }
-            } else {
-              const lineContent = model.getLineContent(nodeAtPosition.loc.start.line)
-              const i = lineContent.indexOf('()')
-              if (fix.id === 5 && lineContent.includes(' view ')) {
-                msg = lineContent.replace('view', 'pure')
-              } else
-                msg = lineContent.substring(0, i + 3) + fix.message + lineContent.substring(i + 3, lineContent.length)
-              fix.range = {
-                startLineNumber: nodeAtPosition.loc.start.line,
-                endLineNumber: nodeAtPosition.loc.start.line,
-                startColumn: 0,
-                endColumn: error.startColumn + msg.length
-              }
-            }
-
+          if (nodeAtPosition.parameters && !Array.isArray(nodeAtPosition.parameters) && Array.isArray(nodeAtPosition.parameters.parameters))
+            isOldAST = true
+          const paramNodes = isOldAST ? nodeAtPosition.parameters.parameters : nodeAtPosition.parameters
+          for (const fix of fixes) {
+            msg = paramNodes.length 
+              ? await this.fixForMethodWithParams(model, paramNodes, fix, error, isOldAST)
+              : await this.fixForMethodWithoutParams(model, nodeAtPosition, fix, error, isOldAST) 
+            this.addQuickFix(actions, error, model.uri, {title: fix.title, range: fix.range, text: msg})
           }
-        } else if (fix && nodeAtPosition && fix.nodeType !== nodeAtPosition.nodeType) return
-
-        actions.push({
-          title: fix.title,
-          diagnostics: [error],
-          kind: "quickfix",
-          edit: {
-            edits: [
-              {
-                resource: model.uri,
-                edit: {
-                  range: fix.range || error,
-                  text: msg || fix.message
-                }
-              }
-            ]
-          },
-          isPreferred: true
-        })
+        } else {
+          for (const fix of fixes) {
+            if (fix && nodeAtPosition && fix.nodeType !== nodeAtPosition.nodeType) continue
+            else this.addQuickFix(actions, error, model.uri, {title: fix.title, range: fix.range || error, text: fix.message})
+          }
+        }
       }
     }
 
@@ -128,5 +52,103 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
       actions: actions,
       dispose: () => {}
     }
+  }
+
+  /**
+   * Add quick fix to code actions
+   * @param actions code actions array
+   * @param error editor error object
+   * @param uri model URI
+   * @param fix details of quick fix to apply
+   */
+  addQuickFix(actions: monaco.languages.CodeAction[], error: monaco.editor.IMarkerData, uri: monaco.Uri, fix: Record<string, any>) {
+    const {title, range, text} = fix
+    actions.push({
+      title,
+      diagnostics: [error],
+      kind: "quickfix",
+      edit: {
+        edits: [
+          {
+            resource: uri,
+            edit: { range, text }
+          }
+        ]
+      },
+      isPreferred: true
+    })
+  }
+
+  /**
+   * Returns message for various quick fixes related to a method with parameters
+   * @param model Model
+   * @param paramNodes function parameters AST nodes
+   * @param fix details of quick fix to apply
+   * @param error editor error object
+   * @param isOldAST true, if AST node contains legacy fields
+   * @returns message to be placed as quick fix
+   */
+  async fixForMethodWithParams(model: monaco.editor.ITextModel, paramNodes: Record<string, any>[], fix: Record<string, any>, error: monaco.editor.IMarkerData, isOldAST: boolean): Promise<string> {
+    let lastParamEndLoc: Record<string, any>, fixLineNumber: number, msg: string
+    // Get last function parameter node
+    const lastParamNode: Record<string, any> = paramNodes[paramNodes.length - 1]
+    if (isOldAST) {
+      const location: Record<string, any> = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', lastParamNode)
+      // Get end location of last function parameter, it returns end column of parameter name
+      lastParamEndLoc = location.end
+      fixLineNumber = lastParamEndLoc.line + 1
+    } else {
+      // Get end location of last function parameter, it returns start column of parameter name
+      lastParamEndLoc = lastParamNode.loc.end
+      fixLineNumber = lastParamEndLoc.line
+    }
+    const lineContent: string = model.getLineContent(fixLineNumber)
+    if (fix.id === 5 && lineContent.includes(' view '))
+      msg = lineContent.replace('view', 'pure')
+    else if (isOldAST)
+      msg = lineContent.substring(0, lastParamEndLoc.column + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + 1, lineContent.length)
+    else 
+      msg = lineContent.substring(0, lastParamEndLoc.column + lastParamNode.name.length + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + lastParamNode.name.length + 1, lineContent.length)
+
+    fix.range = {
+      startLineNumber: fixLineNumber,
+      endLineNumber: fixLineNumber,
+      startColumn: 0,
+      endColumn: error.startColumn + msg.length
+    }
+    return msg
+  }
+
+  /**
+   * Returns message for various quick fixes related to a method without parameters
+   * @param model Model
+   * @param paramNodes function parameters AST nodes
+   * @param fix details of quick fix to apply
+   * @param error editor error object
+   * @param isOldAST true, if AST node contains legacy fields
+   * @returns message to be placed as quick fix
+   */
+  async fixForMethodWithoutParams(model: monaco.editor.ITextModel, nodeAtPosition: Record<string, any>, fix: Record<string, any>, error: monaco.editor.IMarkerData, isOldAST: boolean): Promise<string> {
+    let fixLineNumber: number, msg: string
+    if (isOldAST) {
+      const location: Record<string, any> = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', nodeAtPosition)
+      fixLineNumber = location.start.line + 1
+    } else fixLineNumber = nodeAtPosition.loc.start.line
+
+    const lineContent: string = model.getLineContent(fixLineNumber)
+    const i: number = lineContent.indexOf('()')
+    
+    if (fix.id === 5 && lineContent.includes(' view ')) {
+      msg = lineContent.replace('view', 'pure')
+    } else
+      msg = lineContent.substring(0, i + 3) + fix.message + lineContent.substring(i + 3, lineContent.length)
+    
+    fix.range = {
+      startLineNumber: fixLineNumber,
+      endLineNumber: fixLineNumber,
+      startColumn: 0,
+      endColumn: error.startColumn + msg.length
+    }
+    return msg
   }
 }
