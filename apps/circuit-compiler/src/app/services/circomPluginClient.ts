@@ -48,9 +48,6 @@ export class CircomPluginClient extends PluginClient {
             // @ts-ignore
             const endPosition: { lineNumber: number, column: number } = await this.call('editor', 'getPositionAt', report.labels[label].range.end)
 
-
-            console.log('startPosition: ', startPosition)
-            console.log('endPosition: ', endPosition)
             markers.push({
               message: report.message,
               severity: report.type.toLowerCase(),
