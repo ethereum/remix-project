@@ -1,7 +1,7 @@
 {
   "solidity.displayName": "Solidity compiler",
 
-  "solidity._comment_path1": "libs/remix-ui/solidity-compiler/src/lib/compiler-container.tsx",
+  "solidity._comment_compiler-container.tsx": "libs/remix-ui/solidity-compiler/src/lib/compiler-container.tsx",
   "solidity.compiler": "Compiler",
   "solidity.addACustomCompiler": "Add a custom compiler",
   "solidity.addACustomCompilerWithURL": "Add a custom compiler with URL",
@@ -48,7 +48,7 @@
   "solidity.compilerLicenseMsg3": "License not available",
   "solidity.seeCompilerLicense": "See compiler license",
 
-  "solidity._comment_path2": "libs/remix-ui/solidity-compiler/src/lib/contract-selection.tsx",
+  "solidity._comment_contract-selection.tsx": "libs/remix-ui/solidity-compiler/src/lib/contract-selection.tsx",
   "solidity.publishOn": "Publish on",
   "solidity.flatten": "Flatten contracts before UML generation.",
   "solidity.generateUML": "Generate a UML diagram of your contract.",
