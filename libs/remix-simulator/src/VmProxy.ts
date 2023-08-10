@@ -47,7 +47,7 @@ export class VmProxy {
   stateCopy: StateManager
   flagDoNotRecordEVMSteps: boolean
   lastMemoryUpdate: Array<string>
-  
+
   constructor (vmContext: VMContext) {
     this.vmContext = vmContext
     this.stateCopy
@@ -176,6 +176,7 @@ export class VmProxy {
       const topics = []
       if (log[1].length > 0) {
         for (const k in log[1]) {
+          // @ts-ignore
           topics.push('0x' + log[1][k].toString('hex'))
         }
       } else {
@@ -348,7 +349,7 @@ export class VmProxy {
   getStorageAt (address: string, position: string, blockNumber: string, cb) {
     // we don't use the range params here
     address = toChecksumAddress(address)
-    
+
     blockNumber = blockNumber === 'latest' ? this.vmContext.latestBlockNumber : blockNumber
 
     const block = this.vmContext.blocks[blockNumber]
