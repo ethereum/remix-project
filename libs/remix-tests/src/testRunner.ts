@@ -305,13 +305,13 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
           const time: number = (Date.now() - startTime) / 1000.0
           const assertionEventHashes = assertionEvents.map(e => Web3.utils.sha3(e.name + '(' + e.params.join() + ')'))
           let testPassed = false
-          for (const i in receipt.events) {
-            let events = receipt.events[i]
+          for (const i in receipt.logs) {
+            let events = receipt.logs[i]
             if (!Array.isArray(events)) events = [events]
             for (const event of events) {
-              const eIndex = assertionEventHashes.indexOf(event.raw.topics[0]) // event name topic will always be at index 0
+              const eIndex = assertionEventHashes.indexOf(event.topics[0]) // event name topic will always be at index 0
               if (eIndex >= 0) {
-                const testEvent = web3.eth.abi.decodeParameters(assertionEvents[eIndex].params, event.raw.data)
+                const testEvent = web3.eth.abi.decodeParameters(assertionEvents[eIndex].params, event.data)
                 if (!testEvent[0]) {
                   const assertMethod = testEvent[2]
                   if (assertMethod === 'ok') { // for 'Assert.ok' method
@@ -380,7 +380,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
         const time: number = (Date.now() - startTime) / 1000.0
         let errMsg = err.message
         let txHash
-        if (err.reason) errMsg = `transaction reverted with the reason: ${err.reason}` 
+        if (err.reason) errMsg = `transaction reverted with the reason: ${err.reason}`
         const resp: TestResultInterface = {
           type: 'testFailure',
           value: changeCase.sentenceCase(func.name),
