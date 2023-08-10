@@ -176,7 +176,7 @@ class Editor extends Plugin {
 
     this.saveTimeout = window.setTimeout(() => {
       this.triggerEvent('contentChanged', [currentFile, input])
-      this.triggerEvent('requiringToSaveCurrentfile', [])
+      this.triggerEvent('requiringToSaveCurrentfile', [currentFile])
     }, 500)
   }
 
