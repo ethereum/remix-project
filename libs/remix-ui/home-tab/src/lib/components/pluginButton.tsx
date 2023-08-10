@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, {useContext} from 'react'
+import {FormattedMessage} from 'react-intl'
 import {ThemeContext} from '../themeContext'
 import {CustomTooltip} from '@remix-ui/helper'
 interface PluginButtonProps {
@@ -30,7 +31,7 @@ function PluginButton({imgPath, envID, envText, callback, l2, description, remix
       </button>
       {l2 && <label className="bg-light mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_l2Label">L2</label>}
       {remixMaintained && (
-        <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-by-remix" tooltipText={'Maintained by Remix'}>
+        <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-by-remix" tooltipText={<FormattedMessage id="home.maintainedByRemix" />}>
           <i className="bg-light text-success mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel fas fa-check"></i>
         </CustomTooltip>
       )}
