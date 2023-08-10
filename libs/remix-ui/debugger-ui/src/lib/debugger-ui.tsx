@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react' // eslint-disable-line
-import {FormattedMessage} from 'react-intl'
+import {FormattedMessage, useIntl} from 'react-intl'
 import TxBrowser from './tx-browser/tx-browser' // eslint-disable-line
 import StepManager from './step-manager/step-manager' // eslint-disable-line
 import VmDebugger from './vm-debugger/vm-debugger' // eslint-disable-line
@@ -13,6 +13,7 @@ import './debugger-ui.css'
 const _paq = ((window as any)._paq = (window as any)._paq || [])
 
 export const DebuggerUI = (props: DebuggerUIProps) => {
+  const intl = useIntl()
   const debuggerModule = props.debuggerAPI
   const [state, setState] = useState({
     isActive: false,
@@ -128,7 +129,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       setState((prevState) => {
         return {
           ...prevState,
-          sourceLocationStatus: 'Locating breakpoint, this might take a while...'
+          sourceLocationStatus: intl.formatMessage({id: 'debugger.sourceLocationStatus1'})
         }
       })
     })
@@ -145,7 +146,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         setState((prevState) => {
           return {
             ...prevState,
-            sourceLocationStatus: 'Source location not available, neither in Sourcify nor in Etherscan. Please make sure the Etherscan api key is provided in the settings.'
+            sourceLocationStatus: intl.formatMessage({id: 'debugger.sourceLocationStatus2'})
           }
         })
         return
@@ -408,7 +409,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           </div>
           {state.isLocalNodeUsed && (
             <div className="mb-2 debuggerConfig custom-control custom-checkbox">
-              <CustomTooltip tooltipId="debuggerGenSourceInput" tooltipText="Force the debugger to use the current local node" placement="right">
+              <CustomTooltip tooltipId="debuggerGenSourceInput" tooltipText={<FormattedMessage id="debugger.forceToUseCurrentLocalNode" />} placement="right">
                 <input
                   className="custom-control-input"
                   id="debugWithLocalNodeInput"
@@ -448,7 +449,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
             <span>
               <FormattedMessage id="debugger.introduction" />:{' '}
               <a href="https://docs.sourcify.dev/docs/chains/" target="__blank">
-                Sourcify docs
+                <FormattedMessage id="debugger.sourcifyDocs" />
               </a>{' '}
               &{' '}
               <a href="https://etherscan.io/contractsVerified" target="__blank">
