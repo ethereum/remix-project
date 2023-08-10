@@ -56,7 +56,7 @@ function HomeTabLearn({plugin}: HomeTabLearnProps) {
           placement={'top'}
           tooltipId="overlay-tooltip"
           tooltipClasses="text-nowrap"
-          tooltipText={'See all tutorials'}
+          tooltipText={<FormattedMessage id="home.seeAllTutorials" />}
           tooltipTextClasses="border bg-light text-dark p-1 pr-3"
         >
           <button

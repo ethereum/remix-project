@@ -129,7 +129,7 @@ function HomeTabTitle() {
             placement={'top'}
             tooltipId="overlay-tooltip"
             tooltipClasses="text-nowrap"
-            tooltipText={<FormattedMessage id="home.remixGitterChannel" />}
+            tooltipText={<FormattedMessage id="home.joinUsOnDiscord" />}
             tooltipTextClasses="border bg-light text-dark p-1 pr-3"
           >
             <button
