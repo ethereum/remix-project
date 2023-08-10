@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, {Fragment, ReactNode, useEffect, useState} from 'react' // eslint-disable-line no-use-before-define
-import {FormattedMessage} from 'react-intl'
+import {FormattedMessage, useIntl} from 'react-intl'
 import {PluginManagerComponent, PluginManagerSettings} from '../../types'
 import PermisssionsSettings from './permissionsSettings'
 import {Profile} from '@remixproject/plugin-utils'
@@ -22,6 +22,7 @@ export interface pluginActivated {
 }
 
 function RootView({pluginComponent, children}: RootViewProps) {
+  const intl = useIntl()
   const [visible, setVisible] = useState<boolean>(true)
   const [filterPlugins, setFilterPlugin] = useState<string>('')
 
@@ -44,7 +45,7 @@ function RootView({pluginComponent, children}: RootViewProps) {
             }}
             value={filterPlugins}
             className="mb-2 form-control"
-            placeholder="Search"
+            placeholder={intl.formatMessage({id: 'pluginManager.search'})}
             data-id="pluginManagerComponentSearchInput"
           />
           <button onClick={openModal} className="py-1 btn bg-transparent text-dark border-0 mt-2 text-underline" data-id="pluginManagerComponentPluginSearchButton">
