@@ -8,7 +8,7 @@ import {AppProvider} from './context/provider'
 import AppDialogs from './components/modals/dialogs'
 import DialogViewPlugin from './components/modals/dialogViewPlugin'
 import {AppContext} from './context/context'
-import {IntlProvider} from 'react-intl'
+import {IntlProvider, FormattedMessage} from 'react-intl'
 import {CustomTooltip} from '@remix-ui/helper'
 
 interface IRemixAppUi {
@@ -104,7 +104,7 @@ const RemixApp = (props: IRemixAppUi) => {
           ></DragBar>
           <div id="main-panel" data-id="remixIdeMainPanel" className="mainpanel d-flex">
             <RemixUIMainPanel Context={AppContext}></RemixUIMainPanel>
-            <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-all-tabs" tooltipText="Scroll to see all tabs">
+            <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-all-tabs" tooltipText={<FormattedMessage id="remixApp.scrollToSeeAllTabs" />}>
               <div className="remix-ui-tabs_end remix-bg-opacity position-absolute position-fixed"></div>
             </CustomTooltip>
           </div>
