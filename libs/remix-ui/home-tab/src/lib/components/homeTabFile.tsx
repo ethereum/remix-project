@@ -203,11 +203,11 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
             placement={'top'}
             tooltipId="overlay-tooltip"
             tooltipClasses="text-nowrap"
-            tooltipText={'Connect to Localhost'}
+            tooltipText={<FormattedMessage id="home.connectToLocalhost" />}
             tooltipTextClasses="border bg-light text-dark p-1 pr-3"
           >
             <button className="btn p-2 border my-1" style={{width: 'fit-content'}} onClick={() => connectToLocalhost()}>
-              <FormattedMessage id="home.connectToLocalhost" />
+              <FormattedMessage id="home.accessFileSystem" />
             </button>
           </CustomTooltip>
         </div>
