@@ -10,6 +10,7 @@ import terminalJson from './terminal.json';
 import udappJson from './udapp.json';
 import solidityUnitTestingJson from './solidityUnitTesting.json';
 import permissionHandlerJson from './permissionHandler.json';
+import remixAppJson from './remixApp.json'
 import enJson from '../en';
 
 // There may have some un-translated content. Always fill in the gaps with EN JSON.
@@ -27,4 +28,5 @@ export default Object.assign({}, enJson, {
   ...udappJson,
   ...solidityUnitTestingJson,
   ...permissionHandlerJson,
+  ...remixAppJson,
 })
