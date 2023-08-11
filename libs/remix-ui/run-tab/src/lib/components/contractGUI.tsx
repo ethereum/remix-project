@@ -87,7 +87,7 @@ export function ContractGUI(props: ContractGUIProps) {
     const multiString = getMultiValsString(multiFields.current)
     // copy-to-clipboard icon is only visible for method requiring input params
     if (!multiString) {
-      return 'cannot encode empty arguments'
+      return intl.formatMessage({id: 'udapp.getEncodedCallError'})
     }
     const multiJSON = JSON.parse('[' + multiString + ']')
 
@@ -106,7 +106,7 @@ export function ContractGUI(props: ContractGUIProps) {
       const multiString = getMultiValsString(multiFields.current)
       // copy-to-clipboard icon is only visible for method requiring input params
       if (!multiString) {
-        return 'cannot encode empty arguments'
+        return intl.formatMessage({id: 'udapp.getEncodedCallError'})
       }
       const multiJSON = JSON.parse('[' + multiString + ']')
       return txHelper.encodeParams(props.funcABI, multiJSON)
@@ -178,7 +178,7 @@ export function ContractGUI(props: ContractGUIProps) {
       props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
     } else if (deployState.upgrade) {
       if (proxyAddress === '') {
-        setProxyAddressError('proxy address cannot be empty')
+        setProxyAddressError(intl.formatMessage({id: 'udapp.proxyAddressError1'}))
       } else {
         const isValidProxyAddress = await props.isValidProxyAddress(proxyAddress)
         if (isValidProxyAddress) {
@@ -216,7 +216,7 @@ export function ContractGUI(props: ContractGUIProps) {
             }
           }
         } else {
-          setProxyAddressError('not a valid contract address')
+          setProxyAddressError(intl.formatMessage({id: 'udapp.proxyAddressError2'}))
         }
       }
     } else {
@@ -288,7 +288,13 @@ export function ContractGUI(props: ContractGUIProps) {
           placement={'right'}
           tooltipClasses="text-wrap"
           tooltipId="remixUdappInstanceButtonTooltip"
-          tooltipText={toggleUpgradeImp && !proxyAddress ? 'Proxy address cannot be empty' : props.inputs !== '' && basicInput === '' ? 'Input required' : buttonOptions.title}
+          tooltipText={
+            toggleUpgradeImp && !proxyAddress
+              ? intl.formatMessage({id: 'udapp.tooltipText11'})
+              : props.inputs !== '' && basicInput === ''
+                ? intl.formatMessage({id: 'udapp.tooltipText12'})
+                : buttonOptions.title
+          }
         >
           <div className="d-flex wrapperElement" onClick={handleActionClick} data-id={buttonOptions.dataId} data-title={buttonOptions.title}>
             <button
@@ -462,7 +468,7 @@ export function ContractGUI(props: ContractGUIProps) {
                         placement={'right'}
                         tooltipClasses="text-nowrap"
                         tooltipId={`proxyAddressTooltip${index}`}
-                        tooltipText={'Deployed ' + shortenDate(deployment.date)}
+                        tooltipText={<FormattedMessage id="udapp.tooltipText13" values={{date: shortenDate(deployment.date)}} />}
                         key={index}
                       >
                         <Dropdown.Item

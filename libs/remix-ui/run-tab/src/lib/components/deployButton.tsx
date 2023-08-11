@@ -1,10 +1,11 @@
 import React, {useState} from 'react'
-import {FormattedMessage} from 'react-intl'
+import {FormattedMessage, useIntl} from 'react-intl'
 import {DeployButtonProps} from '../types'
 import {ButtonGroup, Dropdown} from 'react-bootstrap'
 import {CustomTooltip} from '@remix-ui/helper'
 
 export function DeployButton(props: DeployButtonProps) {
+  const intl = useIntl()
   const [showOptions, setShowOptions] = useState<boolean>(false)
 
   const toggleOptions = () => {
@@ -21,7 +22,7 @@ export function DeployButton(props: DeployButtonProps) {
             className={`udapp_instanceButton ${props.buttonOptions.widthClass} btn btn-sm ${props.buttonOptions.classList}`}
             data-id={props.buttonOptions.dataId}
           >
-            {props.deployOptions[props.selectedIndex] ? props.deployOptions[props.selectedIndex].title : 'Deploy'}
+            {props.deployOptions[props.selectedIndex] ? props.deployOptions[props.selectedIndex].title : intl.formatMessage({id: 'udapp.deploy'})}
           </button>
           <Dropdown.Toggle
             split
