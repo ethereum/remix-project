@@ -1,4 +1,5 @@
 import React, {Fragment, useCallback, useEffect, useState} from 'react'
+import {FormattedMessage} from 'react-intl'
 import {TransformComponent, TransformWrapper} from 'react-zoom-pan-pinch'
 import {GlassMagnifier, MagnifierContainer} from 'react-image-magnifiers'
 import {ThemeSummary} from '../types'
@@ -75,18 +76,25 @@ export function RemixUiSolidityUmlGen({updatedSvg, loading, fileName, themeDark}
   const DefaultInfo = () => (
     <div className="d-flex flex-column justify-content-center align-items-center mt-5 ml-5">
       <h3 className="h3 align-self-start text-dark">
-        <p>To view your contract as a UML Diagram</p>
+        <p>
+          <FormattedMessage id="solUmlGen.text1" />
+        </p>
       </h3>
       <ul className="ml-3 justify-content-start align-self-start">
         <li>
           <h5 className="h5 align-self-start text-dark">
-            <p>Right click on your contract file</p>
+            <p>
+              <FormattedMessage id="solUmlGen.text2" />
+            </p>
           </h5>
         </li>
         <li>
           <h5 className="h5 align-self-start text-dark">
             <p>
-              Click on <b>Generate UML</b>
+              <FormattedMessage id="solUmlGen.clickOn" />{' '}
+              <b>
+                <FormattedMessage id="solUmlGen.generateUML" />
+              </b>
             </p>
           </h5>
         </li>

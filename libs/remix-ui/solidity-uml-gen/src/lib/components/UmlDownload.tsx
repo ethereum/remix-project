@@ -1,5 +1,6 @@
 import {CustomTooltip} from '@remix-ui/helper'
 import React, {Fragment, Ref} from 'react'
+import {FormattedMessage} from 'react-intl'
 import {Dropdown} from 'react-bootstrap'
 import {UmlFileType} from '../utilities/UmlDownloadStrategy'
 
@@ -76,25 +77,39 @@ export default function UmlDownload(props: UmlDownloadProps) {
             }}
             data-id="umlPngDownload"
           >
-            <CustomTooltip placement="left-start" tooltipId="solUmlgenDownloadAsPngTooltip" tooltipClasses="text-nowrap" tooltipText={'Download UML diagram as a PNG file'}>
+            <CustomTooltip
+              placement="left-start"
+              tooltipId="solUmlgenDownloadAsPngTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={<FormattedMessage id="solUmlGen.pngDownloadTooltip" />}
+            >
               <div data-id="umlPngDownload">
                 <span id="umlPngDownloadBtn" data-id="umlPngDownload" className="far fa-image pl-2"></span>
-                <span className="pl-1">Download as PNG</span>
+                <span className="pl-1">
+                  <FormattedMessage id="solUmlGen.pngDownload" />
+                </span>
               </div>
             </CustomTooltip>
           </Dropdown.Item>
           <Dropdown.Divider />
           <Dropdown.Item
             onClick={() => {
-              _paq.push(['trackEvent', 'solUmlgen', 'umlpdfdownload', 'downloadAsPdf'])
+              _paq.push(['trackEvent', 'solUmlGen', 'umlpdfdownload', 'downloadAsPdf'])
               props.download('pdf')
             }}
             data-id="umlPdfDownload"
           >
-            <CustomTooltip placement="left-start" tooltipId="solUmlgenDownloadAsPdfTooltip" tooltipClasses="text-nowrap" tooltipText={'Download UML diagram as a PDF file'}>
+            <CustomTooltip
+              placement="left-start"
+              tooltipId="solUmlgenDownloadAsPdfTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={<FormattedMessage id="solUmlGen.pdfDownloadTooltip" />}
+            >
               <div data-id="umlPdfDownload">
                 <span id="umlPdfDownloadBtn" data-id="umlPdfDownload" className="far fa-file-pdf pl-2"></span>
-                <span className="pl-2">Download as PDF</span>
+                <span className="pl-2">
+                  <FormattedMessage id="solUmlGen.pdfDownload" />
+                </span>
               </div>
             </CustomTooltip>
           </Dropdown.Item>
