@@ -232,7 +232,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   return (
     <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
-      <div ref={treeRef} tabIndex={0} style={{ outline: "none" }}>
+      <div ref={treeRef} className="pb-4" tabIndex={0} style={{ outline: "none" }}>
         <TreeView id='treeView'>
           <TreeViewItem id="treeViewItem"
             controlBehaviour={true}
