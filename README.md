@@ -63,12 +63,13 @@ yarn global add nx
 ```bash
 git clone https://github.com/ethereum/remix-project.git
 ```
-* Build `remix-project`:
-```bash
-cd remix-project
-yarn
-yarn serve
-```
+* Build and Run `remix-project`:
+
+1. Move to project directory: `cd remix-project`
+2. Install dependencies: `yarn install` or simply run `yarn`
+3. Build Remix libraries: `yarn run build:libs`
+3. Build Remix project: `yarn build`
+4. Build and run project server: `yarn serve`
 
 Open `http://127.0.0.1:8080` in your browser to load Remix IDE locally.
 
@@ -149,7 +150,7 @@ To run the Selenium tests via Nightwatch:
 
  - Install Selenium for the first time: `yarn run selenium-install`
  - Run a selenium server: `yarn run selenium`
- - Build & Serve Remix: `nx serve`
+ - Build & Serve Remix: `yarn serve`
  - Run all the end-to-end tests:
 
     for Firefox: `yarn run nightwatch_local_firefox`, or 
