@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, {Fragment, useEffect, useReducer, useState} from 'react'
+import {FormattedMessage} from 'react-intl'
 import {ModalDialog} from '@remix-ui/modal-dialog'
 // eslint-disable-next-line no-unused-vars
 import {Toaster} from '@remix-ui/toaster'
@@ -205,7 +206,7 @@ export function RunTabUI(props: RunTabProps) {
   const gasEstimationPrompt = (msg: string) => {
     return (
       <div>
-        Gas estimation errored with the following message (see below). The transaction execution will likely fail. Do you want to force sending? <br />
+        <FormattedMessage id="udapp.gasEstimationPromptText" /> <br />
         {msg}
       </div>
     )

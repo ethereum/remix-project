@@ -24,12 +24,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
       <label id="selectExEnv" className="udapp_settingsLabel">
         <FormattedMessage id="udapp.environment" />
 
-        <CustomTooltip
-          placement={'right'}
-          tooltipClasses="text-nowrap"
-          tooltipId="info-recorder"
-          tooltipText="Open chainlist.org and get the connection specs of the chain you want to interact with."
-        >
+        <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText2" />}>
           <a href="https://chainlist.org/" target="_blank">
             <i style={{fontSize: 'medium'}} className={'ml-2 fad fa-plug'} aria-hidden="true"></i>
           </a>
@@ -41,12 +36,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
             {isL2(currentProvider) && 'L2 - '}
             {currentProvider && currentProvider.content}
             {currentProvider && bridges[currentProvider.value] && (
-              <CustomTooltip
-                placement={'right'}
-                tooltipClasses="text-nowrap"
-                tooltipId="info-recorder"
-                tooltipText="Click to open a bridge for converting L1 mainnet ETH to the selected network currency."
-              >
+              <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText3" />}>
                 <i
                   style={{fontSize: 'medium'}}
                   className={'ml-2 fa fa-rocket-launch'}
