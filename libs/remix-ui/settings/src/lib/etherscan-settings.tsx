@@ -48,7 +48,9 @@ export function EtherscanSettings(props: EtherscanSettingsProps) {
           </a>
         </p>
         <div>
-          <label className="mb-0 pb-0">TOKEN:</label>
+          <label className="mb-0 pb-0">
+            <FormattedMessage id="settings.token" />:
+          </label>
           <div className="input-group text-secondary mb-0 h6">
             <input
               id="etherscanAccessToken"
@@ -59,7 +61,13 @@ export function EtherscanSettings(props: EtherscanSettingsProps) {
               value={etherscanToken}
             />
             <div className="input-group-append">
-              <CopyToClipboard content={etherscanToken} data-id="copyToClipboardCopyIcon" className="far fa-copy ml-1 p-2 mt-1" direction={'top'} />
+              <CopyToClipboard
+                tip={intl.formatMessage({id: 'settings.copy'})}
+                content={etherscanToken}
+                data-id="copyToClipboardCopyIcon"
+                className="far fa-copy ml-1 p-2 mt-1"
+                direction={'top'}
+              />
             </div>
           </div>
         </div>
@@ -75,7 +83,12 @@ export function EtherscanSettings(props: EtherscanSettingsProps) {
                 type="button"
                 disabled={etherscanToken === ''}
               ></input>
-              <CustomTooltip tooltipText="Delete Etherscan token" tooltipClasses="text-nowrap" tooltipId="removeetherscantokenTooltip" placement="left-start">
+              <CustomTooltip
+                tooltipText={<FormattedMessage id="settings.deleteEtherscanToken" />}
+                tooltipClasses="text-nowrap"
+                tooltipId="removeetherscantokenTooltip"
+                placement="left-start"
+              >
                 <button
                   className="btn btn-sm btn-secondary ml-2"
                   id="removeetherscantoken"

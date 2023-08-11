@@ -66,7 +66,9 @@ export function GithubSettings(props: GithubSettingsProps) {
           </a>
         </p>
         <div>
-          <label className="mb-0 pb-0">TOKEN:</label>
+          <label className="mb-0 pb-0">
+            <FormattedMessage id="settings.token" />:
+          </label>
           <div className="input-group text-secondary mb-0 h6">
             <input
               id="gistaccesstoken"
@@ -77,12 +79,20 @@ export function GithubSettings(props: GithubSettingsProps) {
               value={githubToken}
             />
             <div className="input-group-append">
-              <CopyToClipboard content={githubToken} data-id="copyToClipboardCopyIcon" className="far fa-copy ml-1 p-2 mt-1" direction={'top'} />
+              <CopyToClipboard
+                tip={intl.formatMessage({id: 'settings.copy'})}
+                content={githubToken}
+                data-id="copyToClipboardCopyIcon"
+                className="far fa-copy ml-1 p-2 mt-1"
+                direction={'top'}
+              />
             </div>
           </div>
         </div>
         <div>
-          <label className="pt-2 mb-0 pb-0">USERNAME:</label>
+          <label className="pt-2 mb-0 pb-0">
+            <FormattedMessage id="settings.username" />:
+          </label>
           <div className="text-secondary mb-0 h6">
             <input
               id="githubusername"
@@ -95,7 +105,9 @@ export function GithubSettings(props: GithubSettingsProps) {
           </div>
         </div>
         <div>
-          <label className="pt-2 mb-0 pb-0">EMAIL:</label>
+          <label className="pt-2 mb-0 pb-0">
+            <FormattedMessage id="settings.email" />:
+          </label>
           <div className="text-secondary mb-0 h6">
             <input id="githubemail" data-id="settingsTabGithubEmail" type="text" className="form-control" onChange={(e) => handleChangeEmailState(e)} value={githubEmail} />
             <div className="d-flex justify-content-end pt-2">
@@ -107,7 +119,12 @@ export function GithubSettings(props: GithubSettingsProps) {
                 value={intl.formatMessage({id: 'settings.save'})}
                 type="button"
               ></input>
-              <CustomTooltip tooltipText="Delete Github Credentials" tooltipClasses="text-nowrap" tooltipId="removegisttokenTooltip" placement="top-start">
+              <CustomTooltip
+                tooltipText={<FormattedMessage id="settings.deleteGithubCredentials" />}
+                tooltipClasses="text-nowrap"
+                tooltipId="removegisttokenTooltip"
+                placement="top-start"
+              >
                 <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" onClick={removeToken}>
                   <FormattedMessage id="settings.remove" />
                 </button>
