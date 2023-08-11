@@ -1,6 +1,7 @@
 import {useDialogDispatchers} from '@remix-ui/app'
 import React from 'react'
 import {useContext} from 'react'
+import {FormattedMessage} from 'react-intl'
 import {SearchContext} from '../context/context'
 import * as path from 'path'
 
@@ -30,7 +31,7 @@ export const Undo = () => {
           className="undo-button btn btn-secondary btn-block my-3"
         >
           <div className="fas fa-undo mr-2"></div>
-          Undo changes to {path.basename(state.undoBuffer[`${state.workspace}/${state.currentFile}`].path)}
+          <FormattedMessage id="search.undoChanges" values={{path: path.basename(state.undoBuffer[`${state.workspace}/${state.currentFile}`].path)}} />
         </button>
       ) : null}
     </>

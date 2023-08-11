@@ -1,6 +1,6 @@
 import {useDialogDispatchers} from '@remix-ui/app'
 import React, {useContext, useEffect, useRef, useState} from 'react'
-import {FormattedMessage} from 'react-intl'
+import {FormattedMessage, useIntl} from 'react-intl'
 import {SearchContext} from '../../context/context'
 import {SearchResult, SearchResultLine} from '../../types'
 import {ResultFileName} from './ResultFileName'
@@ -12,6 +12,7 @@ interface ResultItemProps {
 }
 
 export const ResultItem = (props: ResultItemProps) => {
+  const intl = useIntl()
   const {state, findText, disableForceReload, updateCount, replaceAllInFile} = useContext(SearchContext)
   const [loading, setLoading] = useState<boolean>(false)
   const [lines, setLines] = useState<SearchResultLine[]>([])
@@ -72,11 +73,18 @@ export const ResultItem = (props: ResultItemProps) => {
     } else {
       modal({
         id: 'confirmreplace',
-        title: 'Replace',
-        message: `Are you sure you want to replace '${state.find}' by '${state.replace}' in ${props.file.filename}?`,
-        okLabel: 'Yes',
+        title: intl.formatMessage({id: 'search.replace'}),
+        message: intl.formatMessage(
+          {id: 'search.confirmreplaceMsg'},
+          {
+            find: state.find,
+            replace: state.replace,
+            filename: props.file.filename
+          }
+        ),
+        okLabel: intl.formatMessage({id: 'search.yes'}),
         okFn: confirmReplace,
-        cancelLabel: 'No',
+        cancelLabel: intl.formatMessage({id: 'search.no'}),
         cancelFn: () => {},
         data: null
       })
@@ -122,7 +130,12 @@ export const ResultItem = (props: ResultItemProps) => {
               <div className="search_plugin_result_count_number badge badge-pill badge-secondary">{props.file.count}</div>
             </div>
           </div>
-          {loading ? <div className="loading">Loading...</div> : null}
+          {loading ? (
+            <div className="loading">
+              <FormattedMessage id="search.loading" />
+              ...
+            </div>
+          ) : null}
           {!toggleExpander && !loading ? (
             <div className="search_plugin_wrap_summary">
               {state.replaceEnabled ? (
