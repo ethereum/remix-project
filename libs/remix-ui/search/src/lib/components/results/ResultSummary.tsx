@@ -1,6 +1,7 @@
 import {useDialogDispatchers} from '@remix-ui/app'
 import {CustomTooltip} from '@remix-ui/helper'
 import React, {useContext} from 'react'
+import {FormattedMessage, useIntl} from 'react-intl'
 import {SearchContext} from '../../context/context'
 import {SearchResult, SearchResultLine, SearchResultLineLine} from '../../types'
 
@@ -11,6 +12,7 @@ interface ResultSummaryProps {
 }
 
 export const ResultSummary = (props: ResultSummaryProps) => {
+  const intl = useIntl()
   const {hightLightInPath, replaceText, state} = useContext(SearchContext)
   const {modal} = useDialogDispatchers()
   const selectLine = async (line: SearchResultLineLine) => {
@@ -32,11 +34,18 @@ export const ResultSummary = (props: ResultSummaryProps) => {
     } else {
       modal({
         id: 'confirmreplace',
-        title: 'Replace',
-        message: `Are you sure you want to replace '${line.center}' by '${state.replace}' in ${props.searchResult.filename}?`,
-        okLabel: 'Yes',
+        title: intl.formatMessage({id: 'search.replace'}),
+        message: intl.formatMessage(
+          {id: 'search.confirmreplaceMsg'},
+          {
+            find: line.center,
+            replace: state.replace,
+            filename: props.searchResult.filename
+          }
+        ),
+        okLabel: intl.formatMessage({id: 'search.yes'}),
         okFn: confirmReplace,
-        cancelLabel: 'No',
+        cancelLabel: intl.formatMessage({id: 'search.no'}),
         cancelFn: () => {},
         data: line
       })
@@ -62,7 +71,7 @@ export const ResultSummary = (props: ResultSummaryProps) => {
           </div>
           {state.replaceEnabled ? (
             <div className="search_plugin_search_control">
-              <CustomTooltip tooltipText="Replace" tooltipClasses="text-nowrap" tooltipId="replaceTooltip" placement="top-start">
+              <CustomTooltip tooltipText={<FormattedMessage id="search.replace" />} tooltipClasses="text-nowrap" tooltipId="replaceTooltip" placement="top-start">
                 <div
                   data-id={`replace-${props.searchResult.filename}-${lineItem.position.start.line}-${lineItem.position.start.column}`}
                   onClick={async () => {
