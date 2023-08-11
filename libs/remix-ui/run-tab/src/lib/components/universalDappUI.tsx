@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, {useEffect, useState} from 'react'
+import {FormattedMessage, useIntl} from 'react-intl'
 import {UdappProps} from '../types'
 import {FuncABI} from '@remix-project/core-plugin'
 import {CopyToClipboard} from '@remix-ui/clipboard'
@@ -13,6 +14,7 @@ import {CustomTooltip, is0XPrefixed, isHexadecimal, isNumeric, shortenAddress} f
 const txHelper = remixLib.execution.txHelper
 
 export function UniversalDappUI(props: UdappProps) {
+  const intl = useIntl()
   const [toggleExpander, setToggleExpander] = useState<boolean>(true)
   const [contractABI, setContractABI] = useState<FuncABI[]>(null)
   const [address, setAddress] = useState<string>('')
@@ -68,30 +70,30 @@ export function UniversalDappUI(props: UdappProps) {
     if (amount !== '0') {
       // check for numeric and receive/fallback
       if (!isNumeric(amount)) {
-        return setLlIError('Value to send should be a number')
+        return setLlIError(intl.formatMessage({id: 'udapp.llIError1'}))
       } else if (!receive && !(fallback && fallback.stateMutability === 'payable')) {
-        return setLlIError("In order to receive Ether transfer the contract should have either 'receive' or payable 'fallback' function")
+        return setLlIError(intl.formatMessage({id: 'udapp.llIError2'}))
       }
     }
     let calldata = calldataValue
 
     if (calldata) {
       if (calldata.length < 4 && is0XPrefixed(calldata)) {
-        return setLlIError('The calldata should be a valid hexadecimal value with size of at least one byte.')
+        return setLlIError(intl.formatMessage({id: 'udapp.llIError3'}))
       } else {
         if (is0XPrefixed(calldata)) {
           calldata = calldata.substr(2, calldata.length)
         }
         if (!isHexadecimal(calldata)) {
-          return setLlIError('The calldata should be a valid hexadecimal value.')
+          return setLlIError(intl.formatMessage({id: 'udapp.llIError4'}))
         }
       }
       if (!fallback) {
-        return setLlIError("'Fallback' function is not defined")
+        return setLlIError(intl.formatMessage({id: 'udapp.llIError5'}))
       }
     }
 
-    if (!receive && !fallback) return setLlIError("Both 'receive' and 'fallback' functions are not defined")
+    if (!receive && !fallback) return setLlIError(intl.formatMessage({id: 'udapp.llIError6'}))
 
     // we have to put the right function ABI:
     // if receive is defined and that there is no calldata => receive function is called
@@ -99,7 +101,7 @@ export function UniversalDappUI(props: UdappProps) {
     if (receive && !calldata) args.funcABI = receive
     else if (fallback) args.funcABI = fallback
 
-    if (!args.funcABI) return setLlIError("Please define a 'Fallback' function to send calldata and a either 'Receive' or payable 'Fallback' to send ethers")
+    if (!args.funcABI) return setLlIError(intl.formatMessage({id: 'udapp.llIError7'}))
     runTransaction(false, args.funcABI, null, calldataValue)
   }
 
@@ -224,17 +226,19 @@ export function UniversalDappUI(props: UdappProps) {
             </span>
           </div>
           <div className="btn">
-            <CopyToClipboard content={address} direction={'top'} />
+            <CopyToClipboard tip={intl.formatMessage({id: 'udapp.copy'})} content={address} direction={'top'} />
           </div>
         </div>
-        <CustomTooltip placement="right" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText="Remove from the list">
+        <CustomTooltip placement="right" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText7" />}>
           <i className="udapp_closeIcon m-1 fas fa-times align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
         </CustomTooltip>
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">
           <div className="d-flex" data-id="instanceContractBal">
-            <label>Balance: {instanceBalance} ETH</label>
+            <label>
+              <FormattedMessage id="udapp.balance" />: {instanceBalance} ETH
+            </label>
           </div>
           {contractABI &&
             contractABI.map((funcABI, index) => {
@@ -277,8 +281,10 @@ export function UniversalDappUI(props: UdappProps) {
         </div>
         <div className="d-flex flex-column">
           <div className="d-flex flex-row justify-content-between mt-2">
-            <div className="py-2 border-top d-flex justify-content-start flex-grow-1">Low level interactions</div>
-            <CustomTooltip placement={'bottom-end'} tooltipClasses="text-wrap" tooltipId="receiveEthDocstoolTip" tooltipText={"Click for docs about using 'receive'/'fallback'"}>
+            <div className="py-2 border-top d-flex justify-content-start flex-grow-1">
+              <FormattedMessage id="udapp.lowLevelInteractions" />
+            </div>
+            <CustomTooltip placement={'bottom-end'} tooltipClasses="text-wrap" tooltipId="receiveEthDocstoolTip" tooltipText={<FormattedMessage id="udapp.tooltipText8" />}>
               <a href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function" target="_blank" rel="noreferrer">
                 <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
               </a>
@@ -291,11 +297,11 @@ export function UniversalDappUI(props: UdappProps) {
                 placement="bottom"
                 tooltipClasses="text-nowrap"
                 tooltipId="deployAndRunLLTxCalldataInputTooltip"
-                tooltipText="The Calldata to send to fallback function of the contract."
+                tooltipText={<FormattedMessage id="udapp.tooltipText9" />}
               >
                 <input id="deployAndRunLLTxCalldata" onChange={handleCalldataChange} className="udapp_calldataInput form-control" />
               </CustomTooltip>
-              <CustomTooltip placement="right" tooltipClasses="text-nowrap" tooltipId="deployAndRunLLTxCalldataTooltip" tooltipText="Send data to contract.">
+              <CustomTooltip placement="right" tooltipClasses="text-nowrap" tooltipId="deployAndRunLLTxCalldataTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText10" />}>
                 <button
                   id="deployAndRunLLTxSendTransaction"
                   data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"

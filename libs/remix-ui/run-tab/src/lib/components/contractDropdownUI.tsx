@@ -50,7 +50,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
     enableAtAddress(false)
     setAbiLabel({
       display: 'none',
-      content: 'ABI file selected',
+      content: intl.formatMessage({ id: 'udapp.abiFileSelected' }),
     })
   }, [])
 
@@ -427,7 +427,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
             }}
           >
             <option value="" disabled hidden>
-              No compiled contracts
+              {intl.formatMessage({ id: 'udapp.noCompiledContracts' })}
             </option>
             {(contractList[currentFile] || []).map((contract, index) => {
               return (
@@ -453,7 +453,9 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
             </span>
           }
         >
-          <span className="udapp_evmVersion badge alert-warning">evm version: {evmVersion}</span>
+          <span className="udapp_evmVersion badge alert-warning">
+            <FormattedMessage id="udapp.evmVersion" />: {evmVersion}
+          </span>
         </CustomTooltip>
       )}
       <div>
@@ -538,7 +540,11 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
               />
             </CustomTooltip>
           </div>
-          {!addressIsValid && <span className="text-danger text-right">The address is not valid</span>}
+          {!addressIsValid && (
+            <span className="text-danger text-right">
+              <FormattedMessage id="udapp.addressNotValid" />
+            </span>
+          )}
         </div>
       </div>
     </div>
