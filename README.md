@@ -68,8 +68,8 @@ git clone https://github.com/ethereum/remix-project.git
 1. Move to project directory: `cd remix-project`
 2. Install dependencies: `yarn install` or simply run `yarn`
 3. Build Remix libraries: `yarn run build:libs`
-3. Build Remix project: `yarn build`
-4. Build and run project server: `yarn serve`
+4. Build Remix project: `yarn build`
+5. Build and run project server: `yarn serve`. Optionally, run `yarn serve:hot` to enable hot module reload for frontend updates.
 
 Open `http://127.0.0.1:8080` in your browser to load Remix IDE locally.
 
