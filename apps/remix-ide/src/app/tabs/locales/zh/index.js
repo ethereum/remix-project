@@ -10,6 +10,7 @@ import terminalJson from './terminal.json';
 import udappJson from './udapp.json';
 import solidityUnitTestingJson from './solidityUnitTesting.json';
 import permissionHandlerJson from './permissionHandler.json';
+import solUmlGenJson from './solUmlGen.json'
 import remixAppJson from './remixApp.json'
 import enJson from '../en';
 
@@ -28,5 +29,6 @@ export default Object.assign({}, enJson, {
   ...udappJson,
   ...solidityUnitTestingJson,
   ...permissionHandlerJson,
+  ...solUmlGenJson,
   ...remixAppJson,
 })
