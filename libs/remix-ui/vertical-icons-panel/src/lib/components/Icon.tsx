@@ -1,6 +1,7 @@
 import VerticalIconsContextMenu from '../vertical-icons-context-menu'
 // eslint-disable-next-line no-use-before-define
 import React, {Fragment, SyntheticEvent, useEffect, useReducer, useRef, useState} from 'react'
+import {useIntl} from 'react-intl'
 import Badge from './Badge'
 import {iconBadgeReducer, IconBadgeReducerAction} from '../reducers/iconBadgeReducer'
 import {Plugin} from '@remixproject/engine'
@@ -34,9 +35,10 @@ const initialState = {
 }
 
 const Icon = ({iconRecord, verticalIconPlugin, contextMenuAction, theme}: IconProps) => {
+  const intl = useIntl()
   const {displayName, name, icon, documentation} = iconRecord.profile
   const [title] = useState(() => {
-    const temp = null || displayName || name
+    const temp = name ? intl.formatMessage({id: `${name}.displayName`, defaultMessage: displayName || name}) : null
     return temp.replace(/^\w/, (word: string) => word.toUpperCase())
   })
   const [links, setLinks] = useState<{
