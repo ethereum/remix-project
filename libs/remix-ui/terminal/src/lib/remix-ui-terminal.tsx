@@ -371,7 +371,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   const modal = (title: string, message: string, okLabel: string, hide: boolean, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
-    setModalState(prevState => ({ ...prevState, message, okLabel, okFn, cancelLabel, cancelFn, hide }))
+    setModalState(prevState => ({ ...prevState, title, message, okLabel, okFn, cancelLabel, cancelFn, hide }))
   }
 
   const handleHideModal = () => {
