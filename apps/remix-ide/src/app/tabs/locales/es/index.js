@@ -12,6 +12,7 @@ import solidityUnitTestingJson from './solidityUnitTesting.json';
 import permissionHandlerJson from './permissionHandler.json';
 import solUmlGenJson from './solUmlGen.json'
 import remixAppJson from './remixApp.json'
+import remixUiTabsJson from './remixUiTabs.json'
 import enJson from '../en';
 
 // There may have some un-translated content. Always fill in the gaps with EN JSON.
@@ -31,4 +32,5 @@ export default Object.assign({}, enJson, {
   ...permissionHandlerJson,
   ...solUmlGenJson,
   ...remixAppJson,
+  ...remixUiTabsJson,
 })
