@@ -1,20 +1,21 @@
 import React, {useState} from 'react' // eslint-disable-line
-import {FormattedMessage} from 'react-intl'
+import {FormattedMessage, useIntl} from 'react-intl'
 import CheckTxStatus from './ChechTxStatus' // eslint-disable-line
 import Context from './Context' // eslint-disable-line
 import showTable from './Table'
 
 const RenderUnKnownTransactions = ({tx, receipt, index, plugin, showTableHash, txDetails, modal, provider}) => {
+  const intl = useIntl()
   const debug = (event, tx) => {
     event.stopPropagation()
     if (tx.isCall && !tx.envMode.startsWith('vm')) {
       modal(
-        'VM mode',
-        'Cannot debug this call. Debugging calls is only possible in Remix VM mode.',
-        'Ok',
+        intl.formatMessage({id: 'terminal.vmMode'}),
+        intl.formatMessage({id: 'terminal.vmModeMsg'}),
+        intl.formatMessage({id: 'terminal.ok'}),
         false,
         () => {},
-        'Cancel',
+        intl.formatMessage({id: 'terminal.cancel'}),
         () => {}
       )
     } else {
