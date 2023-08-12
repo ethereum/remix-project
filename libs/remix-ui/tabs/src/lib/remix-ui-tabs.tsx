@@ -2,6 +2,7 @@ import {fileDecoration, FileDecorationIcons} from '@remix-ui/file-decorators'
 import {CustomTooltip} from '@remix-ui/helper'
 import {Plugin} from '@remixproject/engine'
 import React, {useState, useRef, useEffect, useReducer} from 'react' // eslint-disable-line
+import {FormattedMessage} from 'react-intl'
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs'
 import './remix-ui-tabs.css'
 const _paq = (window._paq = window._paq || [])
@@ -185,21 +186,23 @@ export const TabsUI = (props: TabsUIProps) => {
               tooltipId="overlay-tooltip-run-script"
               tooltipText={
                 <span>
-                  {tabsState.currentExt === 'js' || tabsState.currentExt === 'ts'
-                    ? 'Run script (CTRL + SHIFT + S)'
-                    : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul'
-                      ? 'Compile CTRL + S'
-                      : 'Select .sol or .yul file to compile or a .ts or .js file and run it'}
+                  {tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' ? (
+                    <FormattedMessage id="remixUiTabs.tooltipText1" />
+                  ) : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' ? (
+                    <FormattedMessage id="remixUiTabs.tooltipText2" />
+                  ) : (
+                    <FormattedMessage id="remixUiTabs.tooltipText3" />
+                  )}
                 </span>
               }
             >
               <i className="fad fa-play"></i>
             </CustomTooltip>
           </button>
-          <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText="Zoom out">
+          <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText={<FormattedMessage id="remixUiTabs.zoomOut" />}>
             <span data-id="tabProxyZoomOut" className="btn btn-sm px-2 fas fa-search-minus text-dark" onClick={() => props.onZoomOut()}></span>
           </CustomTooltip>
-          <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-run-zoom-in" tooltipText="Zoom in">
+          <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-run-zoom-in" tooltipText={<FormattedMessage id="remixUiTabs.zoomIn" />}>
             <span data-id="tabProxyZoomIn" className="btn btn-sm px-2 fas fa-search-plus text-dark" onClick={() => props.onZoomIn()}></span>
           </CustomTooltip>
         </div>

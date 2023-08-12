@@ -12,6 +12,7 @@ import solidityUnitTestingJson from './solidityUnitTesting.json';
 import permissionHandlerJson from './permissionHandler.json';
 import solUmlGenJson from './solUmlGen.json'
 import remixAppJson from './remixApp.json'
+import remixUiTabsJson from './remixUiTabs.json'
 
 export default {
   ...debuggerJson,
@@ -28,4 +29,5 @@ export default {
   ...permissionHandlerJson,
   ...solUmlGenJson,
   ...remixAppJson,
+  ...remixUiTabsJson,
 }
