@@ -414,7 +414,7 @@ export function Workspace() {
       return {...prevState, copyElement: [{key: path, type}]}
     })
     setCanPaste(true)
-    global.toast(`Copied to clipboard ${path}`)
+    global.toast(intl.formatMessage({id: 'filePanel.copiedToClipboard'}, {path}))
   }
 
   const handlePasteClick = (dest: string, destType: string) => {
@@ -428,7 +428,12 @@ export function Workspace() {
     try {
       global.dispatchDownloadPath(path)
     } catch (error) {
-      global.modal('Download Failed', 'Unexpected error while downloading: ' + typeof error === 'string' ? error : error.message, 'Close', async () => {})
+      global.modal(
+        intl.formatMessage({id: 'filePanel.downloadFailed'}),
+        intl.formatMessage({id: 'filePanel.copiedToClipboard'}, {error: typeof error === 'string' ? error : error.message}),
+        intl.formatMessage({id: 'filePanel.close'}),
+        async () => {}
+      )
     }
   }
 
@@ -436,7 +441,12 @@ export function Workspace() {
     try {
       global.dispatchCopyFile(src, dest)
     } catch (error) {
-      global.modal('Copy File Failed', 'Unexpected error while copying file: ' + src, 'Close', async () => {})
+      global.modal(
+        intl.formatMessage({id: 'filePanel.copyFileFailed'}),
+        intl.formatMessage({id: 'filePanel.copyFileFailedMsg'}, {src}),
+        intl.formatMessage({id: 'filePanel.close'}),
+        async () => {}
+      )
     }
   }
 
@@ -444,7 +454,12 @@ export function Workspace() {
     try {
       global.dispatchCopyFolder(src, dest)
     } catch (error) {
-      global.modal('Copy Folder Failed', 'Unexpected error while copying folder: ' + src, 'Close', async () => {})
+      global.modal(
+        intl.formatMessage({id: 'filePanel.copyFolderFailed'}),
+        intl.formatMessage({id: 'filePanel.copyFolderFailedMsg'}, {src}),
+        intl.formatMessage({id: 'filePanel.close'}),
+        async () => {}
+      )
     }
   }
 
@@ -510,7 +525,7 @@ export function Workspace() {
     try {
       global.dispatchRunScript(path)
     } catch (error) {
-      global.toast('Run script failed')
+      global.toast(intl.formatMessage({id: 'filePanel.runScriptFailed'}))
     }
   }
 
@@ -524,33 +539,33 @@ export function Workspace() {
 
   const pushChangesToGist = (path?: string, type?: string) => {
     global.modal(
-      'Create a public gist',
-      'Are you sure you want to push changes to remote gist file on github.com?',
-      'OK',
+      intl.formatMessage({id: 'filePanel.createPublicGist'}),
+      intl.formatMessage({id: 'filePanel.createPublicGistMsg1'}),
+      intl.formatMessage({id: 'filePanel.ok'}),
       () => toGist(path, type),
-      'Cancel',
+      intl.formatMessage({id: 'filePanel.cancel'}),
       () => {}
     )
   }
 
   const publishFolderToGist = (path?: string, type?: string) => {
     global.modal(
-      'Create a public gist',
-      `Are you sure you want to anonymously publish all your files in the ${path} folder as a public gist on github.com?`,
-      'OK',
+      intl.formatMessage({id: 'filePanel.createPublicGist'}),
+      intl.formatMessage({id: 'filePanel.createPublicGistMsg2'}, {path}),
+      intl.formatMessage({id: 'filePanel.ok'}),
       () => toGist(path, type),
-      'Cancel',
+      intl.formatMessage({id: 'filePanel.cancel'}),
       () => {}
     )
   }
 
   const publishFileToGist = (path?: string, type?: string) => {
     global.modal(
-      'Create a public gist',
-      `Are you sure you want to anonymously publish ${path} file as a public gist on github.com?`,
-      'OK',
+      intl.formatMessage({id: 'filePanel.createPublicGist'}),
+      intl.formatMessage({id: 'filePanel.createPublicGistMsg3'}, {path}),
+      intl.formatMessage({id: 'filePanel.ok'}),
       () => toGist(path, type),
-      'Cancel',
+      intl.formatMessage({id: 'filePanel.cancel'}),
       () => {}
     )
   }
@@ -558,7 +573,9 @@ export function Workspace() {
   const deleteMessage = (path: string[]) => {
     return (
       <div>
-        <div>Are you sure you want to delete {path.length > 1 ? 'these items' : 'this item'}?</div>
+        <div>
+          <FormattedMessage id="filePanel.deleteMsg" /> {path.length > 1 ? <FormattedMessage id="filePanel.theseItems" /> : <FormattedMessage id="filePanel.thisItem" />}?
+        </div>
         {path.map((item, i) => (
           <li key={i}>{item}</li>
         ))}
@@ -571,13 +588,13 @@ export function Workspace() {
     if (!Array.isArray(path)) path = [path]
 
     global.modal(
-      `Delete ${path.length > 1 ? 'items' : 'item'}`,
+      path.length > 1 ? intl.formatMessage({id: 'filePanel.deleteItems'}) : intl.formatMessage({id: 'filePanel.deleteItem'}),
       deleteMessage(path),
-      'OK',
+      intl.formatMessage({id: 'filePanel.ok'}),
       () => {
         global.dispatchDeletePath(path)
       },
-      'Cancel',
+      intl.formatMessage({id: 'filePanel.cancel'}),
       () => {}
     )
   }
@@ -587,7 +604,7 @@ export function Workspace() {
   }
 
   const editModeOn = (path: string, type: string, isNew = false) => {
-    if (global.fs.readonly) return global.toast('Cannot write/modify file system in read only mode.')
+    if (global.fs.readonly) return global.toast(intl.formatMessage({id: 'filePanel.globalToast'}))
     setState((prevState) => {
       return {
         ...prevState,
@@ -685,10 +702,10 @@ export function Workspace() {
         >
           <optgroup style={{fontSize: 'medium'}} label="General">
             <option style={{fontSize: 'small'}} value="remixDefault">
-              Basic
+              {intl.formatMessage({id: 'filePanel.basic'})}
             </option>
             <option style={{fontSize: 'small'}} value="blank">
-              Blank
+              {intl.formatMessage({id: 'filePanel.blank'})}
             </option>
           </optgroup>
           <optgroup style={{fontSize: 'medium'}} label="OpenZeppelin">
@@ -709,7 +726,7 @@ export function Workspace() {
           </optgroup>
           <optgroup style={{fontSize: 'medium'}} label="GnosisSafe">
             <option style={{fontSize: 'small'}} value="gnosisSafeMultisig">
-              MultiSig Wallet
+              {intl.formatMessage({id: 'filePanel.multiSigWallet'})}
             </option>
           </optgroup>
         </select>
@@ -726,19 +743,19 @@ export function Workspace() {
             <div className="d-flex ml-2 custom-control custom-checkbox">
               <input className="custom-control-input" type="checkbox" name="feature" value="mintable" id="mintable" ref={mintableCheckboxRef} />
               <label className="form-check-label custom-control-label" htmlFor="mintable" data-id="featureTypeMintable">
-                Mintable
+                <FormattedMessage id="filePanel.mintable" />
               </label>
             </div>
             <div className="d-flex ml-2 custom-control custom-checkbox">
               <input className="custom-control-input" type="checkbox" name="feature" value="burnable" id="burnable" ref={burnableCheckboxRef} />
               <label className="form-check-label custom-control-label" htmlFor="burnable" data-id="featureTypeBurnable">
-                Burnable
+                <FormattedMessage id="filePanel.burnable" />
               </label>
             </div>
             <div className="d-flex ml-2 custom-control custom-checkbox">
               <input className="custom-control-input" type="checkbox" name="feature" value="pausable" id="pausable" ref={pausableCheckboxRef} />
               <label className="form-check-label custom-control-label" htmlFor="pausable" data-id="featureTypePausable">
-                Pausable
+                <FormattedMessage id="filePanel.pausable" />
               </label>
             </div>
           </div>
@@ -750,7 +767,7 @@ export function Workspace() {
             <div className="d-flex ml-2 custom-control custom-radio">
               <input className="custom-control-input" type="radio" name="upgradeability" value="transparent" id="transparent" ref={transparentRadioRef} />
               <label className="form-check-label custom-control-label" htmlFor="transparent" data-id="upgradeTypeTransparent">
-                Transparent
+                <FormattedMessage id="filePanel.transparent" />
               </label>
             </div>
             <div className="d-flex ml-2 custom-control custom-radio">
@@ -787,7 +804,7 @@ export function Workspace() {
             htmlFor="initGitRepository"
             data-id="initGitRepositoryLabel"
             className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
-            title="Check option to initialize workspace as a new git repository"
+            title={intl.formatMessage({id: 'filePanel.initGitRepoTitle'})}
           >
             <FormattedMessage id="filePanel.initGitRepositoryLabel" />
           </label>
@@ -812,7 +829,7 @@ export function Workspace() {
   }
 
   const formatNameForReadonly = (name: string) => {
-    return global.fs.readonly ? name + ' (read-only)' : name
+    return global.fs.readonly ? name + ` (${intl.formatMessage({id: 'filePanel.readOnly'})})` : name
   }
 
   const cloneModalMessage = () => {
@@ -903,14 +920,26 @@ export function Workspace() {
                         createWorkspace()
                       }}
                     >
-                      {<span className="pl-3"> - create a new workspace - </span>}
+                      {
+                        <span className="pl-3">
+                          {' '}
+                          - <FormattedMessage id="filePanel.createNewWorkspace" /> -{' '}
+                        </span>
+                      }
                     </Dropdown.Item>
                     <Dropdown.Item
                       onClick={() => {
                         switchWorkspace(LOCALHOST)
                       }}
                     >
-                      {currentWorkspace === LOCALHOST ? <span>&#10003; localhost </span> : <span className="pl-3"> {LOCALHOST} </span>}
+                      {currentWorkspace === LOCALHOST ? (
+                        <span>&#10003; localhost </span>
+                      ) : (
+                        <span className="pl-3">
+                          {' '}
+                          <FormattedMessage id="filePanel.connectToLocalhost" />{' '}
+                        </span>
+                      )}
                     </Dropdown.Item>
                     {global.fs.browser.workspaces.map(({name, isGitRepo}, index) => (
                       <Dropdown.Item
@@ -1121,7 +1150,7 @@ export function Workspace() {
                               onClick={() => {
                                 switchToBranch(branch)
                               }}
-                              title={branch.remote ? 'Checkout new branch from remote branch' : 'Checkout to local branch'}
+                              title={intl.formatMessage({id: `filePanel.switchToBranch${branch.remote ? 'Title1' : 'Title2'}`})}
                             >
                               <div data-id={`workspaceGit-${branch.remote ? `${branch.remote}/${branch.name}` : branch.name}`}>
                                 {currentBranch === branch.name && !branch.remote ? (
