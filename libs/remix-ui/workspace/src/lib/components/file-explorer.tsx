@@ -1,4 +1,5 @@
 import React, {useEffect, useState, useRef, SyntheticEvent} from 'react' // eslint-disable-line
+import {useIntl} from 'react-intl'
 import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-line
 import {FileExplorerMenu} from './file-explorer-menu' // eslint-disable-line
 import {FileExplorerContextMenu} from './file-explorer-context-menu' // eslint-disable-line
@@ -12,6 +13,7 @@ import {Drag} from '@remix-ui/drag-n-drop'
 import {ROOT_PATH} from '../utils/constants'
 
 export const FileExplorer = (props: FileExplorerProps) => {
+  const intl = useIntl()
   const {
     name,
     contextMenuItems,
@@ -100,7 +102,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       props.dispatchCreateNewFile(newFilePath, ROOT_PATH)
     } catch (error) {
-      return props.modal('File Creation Failed', typeof error === 'string' ? error : error.message, 'Close', async () => {})
+      return props.modal(
+        intl.formatMessage({id: 'filePanel.fileCreationFailed'}),
+        typeof error === 'string' ? error : error.message,
+        intl.formatMessage({id: 'filePanel.close'}),
+        async () => {}
+      )
     }
   }
 
@@ -108,7 +115,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       props.dispatchCreateNewFolder(newFolderPath, ROOT_PATH)
     } catch (e) {
-      return props.modal('Folder Creation Failed', typeof e === 'string' ? e : e.message, 'Close', async () => {})
+      return props.modal(
+        intl.formatMessage({id: 'filePanel.folderCreationFailed'}),
+        typeof e === 'string' ? e : e.message,
+        intl.formatMessage({id: 'filePanel.close'}),
+        async () => {}
+      )
     }
   }
 
@@ -116,17 +128,22 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       props.dispatchRenamePath(oldPath, newPath)
     } catch (error) {
-      props.modal('Rename File Failed', 'Unexpected error while renaming: ' + typeof error === 'string' ? error : error.message, 'Close', async () => {})
+      props.modal(
+        intl.formatMessage({id: 'filePanel.renameFileFailed'}),
+        intl.formatMessage({id: 'filePanel.renameFileFailedMsg'}, {error: typeof error === 'string' ? error : error.message}),
+        intl.formatMessage({id: 'filePanel.close'}),
+        async () => {}
+      )
     }
   }
 
   const publishToGist = (path?: string, type?: string) => {
     props.modal(
-      'Create a public gist',
-      `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com?`,
-      'OK',
+      intl.formatMessage({id: 'filePanel.createPublicGist'}),
+      intl.formatMessage({id: 'filePanel.createPublicGistMsg4'}, {name}),
+      intl.formatMessage({id: 'filePanel.ok'}),
       () => toGist(path, type),
-      'Cancel',
+      intl.formatMessage({id: 'filePanel.cancel'}),
       () => {}
     )
   }
@@ -210,19 +227,34 @@ export const FileExplorer = (props: FileExplorerProps) => {
         })
       }
       if (checkSpecialChars(content)) {
-        props.modal('Validation Error', 'Special characters are not allowed', 'OK', () => {})
+        props.modal(
+          intl.formatMessage({id: 'filePanel.validationError'}),
+          intl.formatMessage({id: 'filePanel.validationErrorMsg'}),
+          intl.formatMessage({id: 'filePanel.ok'}),
+          () => {}
+        )
       } else {
         if (state.focusEdit.isNew) {
           if (hasReservedKeyword(content)) {
             props.dispatchRemoveInputField(parentFolder)
-            props.modal('Reserved Keyword', `File name contains Remix reserved keywords. '${content}'`, 'Close', () => {})
+            props.modal(
+              intl.formatMessage({id: 'filePanel.reservedKeyword'}),
+              intl.formatMessage({id: 'filePanel.reservedKeywordMsg'}, {content}),
+              intl.formatMessage({id: 'filePanel.close'}),
+              () => {}
+            )
           } else {
             state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
             props.dispatchRemoveInputField(parentFolder)
           }
         } else {
           if (hasReservedKeyword(content)) {
-            props.modal('Reserved Keyword', `File name contains Remix reserved keywords. '${content}'`, 'Close', () => {})
+            props.modal(
+              intl.formatMessage({id: 'filePanel.reservedKeyword'}),
+              intl.formatMessage({id: 'filePanel.reservedKeywordMsg'}, {content}),
+              intl.formatMessage({id: 'filePanel.close'}),
+              () => {}
+            )
           } else {
             if (state.focusEdit.element) {
               const oldPath: string = state.focusEdit.element
@@ -261,7 +293,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       props.dispatchMoveFile(src, dest)
     } catch (error) {
-      props.modal('Moving File Failed', 'Unexpected error while moving file: ' + src, 'Close', async () => {})
+      props.modal(
+        intl.formatMessage({id: 'filePanel.movingFileFailed'}),
+        intl.formatMessage({id: 'filePanel.movingFileFailedMsg'}, {src}),
+        intl.formatMessage({id: 'filePanel.close'}),
+        async () => {}
+      )
     }
   }
 
@@ -269,7 +306,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       props.dispatchMoveFolder(src, dest)
     } catch (error) {
-      props.modal('Moving Folder Failed', 'Unexpected error while moving folder: ' + src, 'Close', async () => {})
+      props.modal(
+        intl.formatMessage({id: 'filePanel.movingFolderFailed'}),
+        intl.formatMessage({id: 'filePanel.movingFolderFailedMsg'}, {src}),
+        intl.formatMessage({id: 'filePanel.close'}),
+        async () => {}
+      )
     }
   }
 
