@@ -1,5 +1,6 @@
 import {Plugin} from '@remixproject/engine'
 import React, {Fragment, useEffect, useRef} from 'react'
+import {FormattedMessage} from 'react-intl'
 
 export interface VerticalIconsContextMenuProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   pageX: number
@@ -78,13 +79,13 @@ const MenuForLinks = ({listItems, hide, profileName, contextMenuAction}: MenuLin
           className="remixui_liitem"
           key="menuitemdeactivate"
         >
-          Deactivate
+          <FormattedMessage id="pluginManager.deactivate" />
         </li>
       ) : null}
       {listItems.Documentation && listItems.Documentation.length > 0 && (
         <li id="menuitemdocumentation" className="remixui_liitem" key="menuitemdocumentation">
           <a onClick={hide} href={listItems.Documentation} target="_blank">
-            Documentation
+            <FormattedMessage id="home.documentation" />
           </a>
         </li>
       )}
