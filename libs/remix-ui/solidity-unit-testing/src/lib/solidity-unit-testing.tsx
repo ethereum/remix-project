@@ -234,7 +234,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     if (inputPath === '') inputPath = defaultPath
     setInputPathValue(path)
     await testTabLogic.generateTestFolder(inputPath)
-    setToasterMsg('Folder created successfully')
+    setToasterMsg(intl.formatMessage({ id: 'solidityUnitTesting.toasterMsg' }))
     setDisableCreateButton(true)
     setDisableGenerateButton(false)
     testTabLogic.setCurrentPath(inputPath)
@@ -309,15 +309,19 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     if (index > -1) {
       const className = 'alert-danger d-inline-block mb-1 mr-1 p-1 failed_' + runningTestFileName
       label = (
-        <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText="At least one contract test failed">
-          <div className={className}>FAIL</div>
+        <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="solidityUnitTesting.tooltipText1" />}>
+          <div className={className}>
+            <FormattedMessage id="solidityUnitTesting.fail" />
+          </div>
         </CustomTooltip>
       )
     } else {
       const className = 'alert-success d-inline-block mb-1 mr-1 p-1 passed_' + runningTestFileName
       label = (
-        <CustomTooltip placement={'top-end'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText="All contract tests passed">
-          <div className={className}>PASS</div>
+        <CustomTooltip placement={'top-end'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="solidityUnitTesting.tooltipText2" />}>
+          <div className={className}>
+            <FormattedMessage id="solidityUnitTesting.pass" />
+          </div>
         </CustomTooltip>
       )
     }
@@ -349,7 +353,12 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
           const { web3, debugTxHash } = test
           debugBtn = (
             <div id={test.value.replaceAll(' ', '_')} className="btn border btn btn-sm ml-1" style={{ cursor: 'pointer' }} onClick={() => startDebug(debugTxHash, web3)}>
-              <CustomTooltip placement={'top-start'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText="Start debugging">
+              <CustomTooltip
+                placement={'top-start'}
+                tooltipClasses="text-nowrap"
+                tooltipId="info-recorder"
+                tooltipText={<FormattedMessage id="solidityUnitTesting.tooltipText3" />}
+              >
                 <i className="fas fa-bug"></i>
               </CustomTooltip>
             </div>
@@ -387,7 +396,9 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
                   <span> ✘ {test.value}</span>
                   {debugBtn}
                 </div>
-                <span className="text-dark">Error Message:</span>
+                <span className="text-dark">
+                  <FormattedMessage id="solidityUnitTesting.errorMessage" />:
+                </span>
                 <span className="pb-2 text-break">"{test.errMsg}"</span>
               </div>
             )
