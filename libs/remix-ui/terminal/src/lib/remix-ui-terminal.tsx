@@ -686,7 +686,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                   })
                 } else if (Array.isArray(x.message)) {
                   return x.message.map((msg, i) => {
-                    if (!msg) msg = 'null'
+                    // strictly check condition on 0, false, except undefined, NaN.
+                  // undefined: automatically throw "undefined" is not valid JSON
+                  // NaN: read value from msg is `null`
+                    if (msg === false || isNaN(msg) || msg === 0) msg = msg.toString()
+                    else if (!msg) msg = 'null'
                     if (React.isValidElement(msg)) {
                       return (
                         <div className="px-4 block" data-id="block" key={i}>
