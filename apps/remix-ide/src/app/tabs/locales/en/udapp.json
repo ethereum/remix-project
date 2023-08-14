@@ -128,6 +128,24 @@
   "udapp.maxTransactionFee": "Max transaction fee",
   "udapp.mainnetText3": "Do not show this warning again.",
 
-  "udapp._comment_run-tab.tsx": "/libs/remix-ui/run-tab/src/lib/run-tab.tsx",
-  "udapp.gasEstimationPromptText": "Gas estimation errored with the following message (see below). The transaction execution will likely fail. Do you want to force sending?"
+  "udapp._comment_run-tab.tsx": "libs/remix-ui/run-tab/src/lib/run-tab.tsx",
+  "udapp.gasEstimationPromptText": "Gas estimation errored with the following message (see below). The transaction execution will likely fail. Do you want to force sending?",
+
+  "udapp._comment_custom-dropdown.tsx": "libs/remix-ui/helper/src/lib/components/custom-dropdown.tsx",
+  "udapp.enterProxyAddress": "Enter Proxy Address",
+
+  "udapp._comment_provider": "apps/remix-ide/src/app/providers",
+  "udapp.customVmForkProviderText": "Please provide information about the custom fork. If the node URL is not provided, the VM will start with an empty state.",
+  "udapp.nodeUrl": "Node URL",
+  "udapp.blockNumber": "Block number (or \"latest\")",
+  "udapp.externalHttpProviderText1": "Note: To use Geth & https://remix.ethereum.org, configure it to allow requests from Remix:(see <a>Geth Docs on rpc server</a>)",
+  "udapp.externalHttpProviderText2": "To run Remix & a local Geth test node, use this command: (see <a>Geth Docs on Dev mode</a>)",
+  "udapp.externalHttpProviderText3": "<b>WARNING:</b> It is not safe to use the --http.corsdomain flag with a wildcard: <b>--http.corsdomain *</b>",
+  "udapp.externalHttpProviderText4": "For more info: <a>Remix Docs on External HTTP Provider</a>",
+  "udapp.foundryProviderText1": "Note: To run Anvil on your system, run:",
+  "udapp.foundryProviderText2": "For more info, visit: <a>Foundry Documentation</a>",
+  "udapp.ganacheProviderText1": "Note: To run Ganache on your system, run:",
+  "udapp.ganacheProviderText2": "For more info, visit: <a>Ganache Documentation</a>",
+  "udapp.hardhatProviderText1": "Note: To run Hardhat network node on your system, go to hardhat project folder and run command:",
+  "udapp.hardhatProviderText2": "For more info, visit: <a>Hardhat Documentation</a>"
 }
