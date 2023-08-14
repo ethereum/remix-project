@@ -47,7 +47,7 @@ function HomeTabFeatured() {
                     className="remixui_home_text btn-sm btn-secondary mt-2 text-decoration-none mb-3"
                     onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'jumpIntoWeb3'])}
                     target="__blank"
-                    href="https://remix-project.org"
+                    href="https://us8.list-manage.com/survey?u=5a84beb6d688fe180c0da482a&id=1148d10f8c"
                   >
                     <FormattedMessage id='home.jumpIntoWeb3More'/>
                   </a>

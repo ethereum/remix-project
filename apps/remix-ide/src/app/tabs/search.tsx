@@ -11,7 +11,7 @@ const profile = {
   description: 'Find and replace in file explorer',
   kind: '',
   location: 'sidePanel',
-  documentation: '',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/search_in_fe.html',
   version: packageJson.version,
   maintainedBy: 'Remix'
 }

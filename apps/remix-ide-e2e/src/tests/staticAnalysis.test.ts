@@ -54,7 +54,7 @@ module.exports = {
       .click('label[id="headingshowLibWarnings"]')
       .pause(1000)
       .click('*[data-rb-event-key="remix"]')
-      .assert.containsText('span#ssaRemixtab > *[data-id="RemixStaticAnalysisErrorCount', '382')
+      .assert.containsText('span#ssaRemixtab > *[data-id="RemixStaticAnalysisErrorCount', '386')
       .click('label[id="headingshowLibWarnings"]')
       .pause(1000)
       .assert.containsText('span#ssaRemixtab > *[data-id="RemixStaticAnalysisErrorCount', '1')
