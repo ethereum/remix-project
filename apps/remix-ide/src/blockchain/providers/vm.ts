@@ -1,7 +1,6 @@
 import Web3, { FMT_BYTES, FMT_NUMBER, LegacySendAsyncProvider } from 'web3'
-import { fromWei } from 'web3-utils-legacy'
+import { fromWei } from 'web3-utils'
 import { privateToAddress, hashPersonalMessage } from '@ethereumjs/util'
-import BN from 'bn.js'
 import { extend, JSONRPCRequestPayload, JSONRPCResponseCallback } from '@remix-project/remix-simulator'
 import { ExecutionContext } from '../execution-context'
 
@@ -34,8 +33,8 @@ export class VMProvider {
 
     let incr = 0
     const stamps = {}
-    
-    return new Promise((resolve, reject) => { 
+
+    return new Promise((resolve, reject) => {
       this.worker.addEventListener('message', (msg) => {
         if (msg.data.cmd === 'sendAsyncResult' && stamps[msg.data.stamp]) {
           stamps[msg.data.stamp](msg.data.error, msg.data.result)
@@ -84,7 +83,7 @@ export class VMProvider {
 
   async getBalanceInEther (address) {
     const balance = await this.web3.eth.getBalance(address, undefined, { number: FMT_NUMBER.HEX, bytes: FMT_BYTES.HEX })
-    return fromWei(new BN(balance).toString(10), 'ether')
+    return fromWei(BigInt(balance).toString(10), 'ether')
   }
 
   getGasPrice (cb) {

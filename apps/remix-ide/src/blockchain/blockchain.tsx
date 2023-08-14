@@ -1,7 +1,5 @@
-
 import React from 'react' // eslint-disable-line
-import Web3 from 'web3'
-import { fromWei, toBN, toWei } from 'web3-utils-legacy'
+import { fromWei, toBigInt, toWei } from 'web3-utils'
 import { Plugin } from '@remixproject/engine'
 import { toBuffer, addHexPrefix } from '@ethereumjs/util'
 import { EventEmitter } from 'events'
@@ -57,7 +55,7 @@ export class Blockchain extends Plugin {
   networkStatus: {
     network: {
       name: string,
-      id: string      
+      id: string
     }
     error?: string
   }
@@ -223,7 +221,7 @@ export class Blockchain extends Plugin {
     const proxyModal = {
       id: 'confirmProxyDeployment',
       title: 'Confirm Deploy Proxy (ERC1967)',
-      message: `Confirm you want to deploy an ERC1967 proxy contract that is connected to your implementation.           
+      message: `Confirm you want to deploy an ERC1967 proxy contract that is connected to your implementation.
       For more info on ERC1967, see: https://docs.openzeppelin.com/contracts/4.x/api/proxy#ERC1967Proxy`,
       modalType: 'modal',
       okLabel: 'OK',
@@ -254,7 +252,7 @@ export class Blockchain extends Plugin {
     const finalCb = async (error, txResult, address, returnValue) => {
       if (error) {
         const log = logBuilder(error)
-  
+
         _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment failed: ' + error])
         return this.call('terminal', 'logHtml', log)
       }
@@ -433,7 +431,7 @@ export class Blockchain extends Plugin {
   }
 
   calculateFee (gas, gasPrice, unit?) {
-    return toBN(gas).mul(toBN(toWei(gasPrice.toString(10) as string, unit || 'gwei')))
+    return toBigInt(gas) * toBigInt(toWei(gasPrice.toString(10) as string, unit || 'gwei'))
   }
 
   determineGasFees (tx) {
@@ -593,7 +591,7 @@ export class Blockchain extends Plugin {
         return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
       }
     }, _ => this.executionContext.web3(), _ => this.executionContext.currentblockGasLimit())
-    
+
     web3Runner.event.register('transactionBroadcasted', (txhash) => {
       this.executionContext.detectNetwork((error, network) => {
         if (error || !network) return
@@ -604,7 +602,7 @@ export class Blockchain extends Plugin {
           this.call('terminal', 'logHtml',
             (<a href={etherScanLink(network.name, txhash)} target="_blank">
             view on etherscan
-            </a>))        
+            </a>))
         }
       })
     })
@@ -669,7 +667,7 @@ export class Blockchain extends Plugin {
                 const execResult = await this.web3().testPlugin.getExecutionResultFromSimulator(result.transactionHash)
                 resolve(resultToRemixTx(result, execResult))
               } else
-                resolve(resultToRemixTx(result))              
+                resolve(resultToRemixTx(result))
             } catch (e) {
               reject(e)
             }
@@ -763,7 +761,7 @@ export class Blockchain extends Plugin {
                 }
                 return reject(error)
               }
-  
+
               const isVM = this.executionContext.isVM()
               if (isVM && tx.useCall) {
                 try {
@@ -823,7 +821,7 @@ export class Blockchain extends Plugin {
                 }
                 return <div>{formattedLog}</div>
               })}
-          </div>          
+          </div>
           _paq.push(['trackEvent', 'udapp', 'hardhat', 'console.log'])
           this.call('terminal', 'logHtml', finalLogs)
         }
@@ -838,16 +836,16 @@ export class Blockchain extends Plugin {
           }
         }
       }
-  
+
       if (!isVM && tx && tx.useCall) {
         returnValue = toBuffer(addHexPrefix(txResult.result))
       }
-  
+
       let address = null
       if (txResult && txResult.receipt) {
         address = txResult.receipt.contractAddress
       }
-  
+
       cb(null, txResult, address, returnValue)
     } catch (error) {
       cb(error)

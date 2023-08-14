@@ -1,8 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect, useState } from 'react'
 import { CopyToClipboard } from '@remix-ui/clipboard'
-import Web3 from 'web3'
-import { fromWei, toBN, toWei } from 'web3-utils-legacy'
+import { fromWei, toBigInt, toWei } from 'web3-utils'
 import { MainnetProps } from '../types'
 
 export function MainnetPrompt (props: MainnetProps) {
@@ -14,7 +13,7 @@ export function MainnetPrompt (props: MainnetProps) {
       if (txFeeText) setTransactionFee(txFeeText)
       if (gasPriceValue) onGasPriceChange(gasPriceValue)
       if (props.network && props.network.lastBlock && props.network.lastBlock.baseFeePerGas) {
-        const baseFee = fromWei(toBN(props.network.lastBlock.baseFeePerGas), 'Gwei')
+        const baseFee = fromWei(toBigInt(props.network.lastBlock.baseFeePerGas), 'Gwei')
 
         setBaseFee(baseFee)
         onMaxFeeChange(baseFee)
@@ -107,7 +106,7 @@ export function MainnetPrompt (props: MainnetProps) {
               </div>
               <div className="align-items-center my-1" title="Represents the maximum amount of fee that you will pay for this transaction. The minimun needs to be set to base fee.">
                 <div className='d-flex'>
-                  <span className="text-dark mr-2 text-nowrap">Max fee (Not less than base fee {fromWei(toBN(props.network.lastBlock.baseFeePerGas), 'Gwei')} Gwei):</span>
+                  <span className="text-dark mr-2 text-nowrap">Max fee (Not less than base fee {fromWei(toBigInt(props.network.lastBlock.baseFeePerGas), 'Gwei')} Gwei):</span>
                   <input className="form-control mr-1 text-right" style={{ height: '1.2rem', width: '6rem' }} id='maxfee' onInput={(e: any) => onMaxFeeChange(e.target.value)} defaultValue={baseFee} />
                   <span>Gwei</span>
                   <span className="text-dark ml-2"></span>

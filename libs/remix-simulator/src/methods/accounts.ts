@@ -1,6 +1,6 @@
 import { privateToAddress, toChecksumAddress, isValidPrivate, Address } from '@ethereumjs/util'
-import BN from 'bn.js'
 import { privateKeyToAccount } from 'web3-eth-accounts'
+import { toBigInt } from 'web3-utils'
 import * as crypto from 'crypto'
 
 export class Web3Accounts {
@@ -46,7 +46,7 @@ export class Web3Accounts {
 
       const stateManager = this.vmContext.vm().stateManager
       stateManager.getAccount(Address.fromString(addressStr)).then((account) => {
-        account.balance = new BN(balance.replace('0x', '') || 'f00000000000000001', 16)
+        account.balance = toBigInt(balance || '0xf00000000000000001')
         stateManager.putAccount(Address.fromString(addressStr), account).catch((error) => {
           reject(error)
         }).then(() => {
@@ -83,7 +83,7 @@ export class Web3Accounts {
     const address = payload.params[0]
 
     this.vmContext.vm().stateManager.getAccount(Address.fromString(address)).then((account) => {
-      cb(null, new BN(account.balance).toString(10))
+      cb(null, toBigInt(account.balance).toString(10))
     }).catch((error) => {
       cb(error)
     })
