@@ -38,7 +38,7 @@ module.exports = {
 
   'Test GitHub Import - from master branch #group1': function (browser: NightwatchBrowser) {
     browser
-      .setSolidityCompilerVersion('soljson-v0.8.19+commit.7dd6d404.js') // open-zeppelin moved to pragma ^0.8.19 (master branch)
+      .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js') // open-zeppelin moved to pragma ^0.8.20 (master branch)
       .addFile('Untitled4.sol', sources[3]['Untitled4.sol'])
       .clickLaunchIcon('filePanel')
       .verifyContracts(['test7', 'ERC20'], { wait: 10000 })
@@ -54,7 +54,7 @@ module.exports = {
 
   'Test GitHub Import - no branch specified #group2': function (browser: NightwatchBrowser) {
     browser
-      .setSolidityCompilerVersion('soljson-v0.8.19+commit.7dd6d404.js') // open-zeppelin moved to pragma ^0.8.19 (master branch)
+      .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js') // open-zeppelin moved to pragma ^0.8.20 (master branch)
       .clickLaunchIcon('filePanel')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('Untitled6.sol', sources[5]['Untitled6.sol'])
@@ -64,7 +64,7 @@ module.exports = {
 
   'Test GitHub Import - raw URL #group4': function (browser: NightwatchBrowser) {
     browser
-      .setSolidityCompilerVersion('soljson-v0.8.19+commit.7dd6d404.js') // open-zeppelin moved to pragma ^0.8.0 (master branch)
+      .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js') // open-zeppelin moved to pragma ^0.8.20 (master branch)
       .clickLaunchIcon('filePanel')
       .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
       .addFile('Untitled7.sol', sources[6]['Untitled7.sol'])

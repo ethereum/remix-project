@@ -17,6 +17,7 @@ import { RemixHighLightProvider } from './providers/highlightProvider'
 import { RemixDefinitionProvider } from './providers/definitionProvider'
 import { RemixCodeActionProvider } from './providers/codeActionProvider'
 import './remix-ui-editor.css'
+import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
 
 
 enum MarkerSeverity {
@@ -322,6 +323,8 @@ export const EditorUI = (props: EditorUIProps) => {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-zokrates')
     } else if (file.language === 'move') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-move')
+    } else if (file.language === 'circom') {
+      monacoRef.current.editor.setModelLanguage(file.model, 'remix-circom')
     }
   }, [props.currentFile])
 
@@ -731,6 +734,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.register({ id: 'remix-cairo' })
     monacoRef.current.languages.register({ id: 'remix-zokrates' })
     monacoRef.current.languages.register({ id: 'remix-move' })
+    monacoRef.current.languages.register({ id: 'remix-circom' })
 
     // Register a tokens provider for the language
     monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider as any)
@@ -744,6 +748,9 @@ export const EditorUI = (props: EditorUIProps) => {
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-move', moveTokenProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-move', moveLanguageConfig as any)
+
+    monacoRef.current.languages.setMonarchTokensProvider('remix-circom', circomTokensProvider as any)
+    monacoRef.current.languages.setLanguageConfiguration('remix-circom', circomLanguageConfig(monacoRef.current) as any)
 
     monacoRef.current.languages.registerDefinitionProvider('remix-solidity', new RemixDefinitionProvider(props, monaco))
     monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', new RemixHighLightProvider(props, monaco))

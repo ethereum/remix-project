@@ -24,33 +24,6 @@ const profile = {
   events: [],
 }
 
-const themeCollection = [
-  { themeName: 'HackerOwl', backgroundColor: '#011628', textColor: '#babbcc',
-    shapeColor: '#8694a1',fillColor: '#011C32'},
-  { themeName: 'Cerulean', backgroundColor: '#ffffff', textColor: '#343a40',
-    shapeColor: '#343a40',fillColor: '#f8f9fa'},
-  { themeName: 'Cyborg', backgroundColor: '#060606', textColor: '#adafae',
-    shapeColor: '#adafae', fillColor: '#222222'},
-  { themeName: 'Dark', backgroundColor: '#222336', textColor: '#babbcc',
-    shapeColor: '#babbcc',fillColor: '#2a2c3f'},
-  { themeName: 'Flatly', backgroundColor: '#ffffff', textColor: '#343a40',
-    shapeColor: '#7b8a8b',fillColor: '#ffffff'},
-  { themeName: 'Black', backgroundColor: '#1a1a1a', textColor: '#babbcc',
-    shapeColor: '#b5b4bc',fillColor: '#1f2020'},
-  { themeName: 'Light', backgroundColor: '#eef1f6', textColor: '#3b445e',
-    shapeColor: '#343a40',fillColor: '#ffffff'},
-  { themeName: 'Midcentury', backgroundColor: '#DBE2E0', textColor: '#11556c',
-    shapeColor: '#343a40',fillColor: '#eeede9'},
-  { themeName: 'Spacelab', backgroundColor: '#ffffff', textColor: '#343a40',
-    shapeColor: '#333333', fillColor: '#eeeeee'},
-  { themeName: 'Candy', backgroundColor: '#d5efff', textColor: '#11556c',
-    shapeColor: '#343a40',fillColor: '#fbe7f8' },
-  { themeName: 'Violet', backgroundColor: '#f1eef6', textColor: '#3b445e',
-    shapeColor: '#343a40',fillColor: '#f8fafe' },
-  { themeName: 'Unicorn', backgroundColor: '#f1eef6', textColor: '#343a40',
-    shapeColor: '#343a40',fillColor: '#f8fafe' },
-]
-
 /**
  * add context menu which will offer download as pdf and download png.
  * add menu under the first download button to download
@@ -81,8 +54,8 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     this.currentlySelectedTheme = ''
     this.themeName = ''
 
-    this.themeCollection = themeCollection
-    this.activeTheme = themeCollection.find(t => t.themeName === 'Dark')
+
+    this.activeTheme = {} as ThemeSummary
     this.appManager = appManager
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'sol-uml-gen')
@@ -106,7 +79,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         const ast = result.length > 1 ? parser.parse(result) : parser.parse(source.sources[file].content)
         this.umlClasses = convertAST2UmlClasses(ast, this.currentFile)
         let umlDot = ''
-        this.activeTheme = themeCollection.find(theme => theme.themeName === currentTheme.name)
+        this.activeTheme = await this.call('theme', 'currentTheme')
         umlDot = convertUmlClasses2Dot(this.umlClasses, false, { backColor: this.activeTheme.backgroundColor, textColor: this.activeTheme.textColor, shapeColor: this.activeTheme.shapeColor, fillColor: this.activeTheme.fillColor })
         const payload = vizRenderStringSync(umlDot)
         this.updatedSvg = payload
@@ -127,33 +100,13 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
   private handleThemeChange() {
     this.on('theme', 'themeChanged', async (theme) => {
       this.currentlySelectedTheme = theme.quality
-      const themeQuality: ThemeQualityType = await this.call('theme', 'currentTheme')
-      themeCollection.forEach((theme) => {
-        if (theme.themeName === themeQuality.name) {
-          this.themeDark = theme.backgroundColor
-          this.activeTheme = theme
-          const umlDot = convertUmlClasses2Dot(this.umlClasses, false, { backColor: this.activeTheme.backgroundColor, textColor: this.activeTheme.textColor, shapeColor: this.activeTheme.shapeColor, fillColor: this.activeTheme.fillColor })
-          this.updatedSvg = vizRenderStringSync(umlDot)
-          this.renderComponent()
-        }
-      })
+      this.activeTheme = theme
+      this.themeDark = theme.backgroundColor
+      const umlDot = convertUmlClasses2Dot(this.umlClasses, false, { backColor: this.activeTheme.backgroundColor, textColor: this.activeTheme.textColor, shapeColor: this.activeTheme.shapeColor, fillColor: this.activeTheme.fillColor })
+      this.updatedSvg = vizRenderStringSync(umlDot)
+      this.renderComponent()
       await this.call('tabs', 'focus', 'solidityumlgen')
     })
-  }
-
-  async mangleSvgPayload(svgPayload: string) : Promise<string> {
-    const parser = new DOMParser()
-    const themeQuality: ThemeQualityType = await this.call('theme', 'currentTheme')
-    const parsedDocument = parser.parseFromString(svgPayload, 'image/svg+xml')
-    const element = parsedDocument.getElementsByTagName('svg')
-    themeCollection.forEach((theme) => {
-      if (theme.themeName === themeQuality.name) {
-        parsedDocument.documentElement.setAttribute('style', `background-color: var(${this.getThemeCssVariables('--body-bg')})`)
-        element[0].setAttribute('fill', theme.backgroundColor)
-      }
-    })
-    const stringifiedSvg = new XMLSerializer().serializeToString(parsedDocument)
-    return stringifiedSvg
   }
 
   onDeactivation(): void {
