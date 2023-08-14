@@ -182,8 +182,8 @@ export class RunTab extends ViewPlugin {
     return this.call('fileManager', 'readFile', fileName)
   }
 
-  resolveContractAndAddInstance (contractObject, address) {
-    const data = this.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
+  async resolveContractAndAddInstance (contractObject, address) {
+    const data = await this.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
 
     this.compilersArtefacts.addResolvedContract(addressToString(address), data)
     this.addInstance(address, contractObject.abi, contractObject.name)

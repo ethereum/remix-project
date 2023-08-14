@@ -1,71 +1,71 @@
-import { extractNameFromKey } from '@remix-ui/helper'
-import { action, FileType } from '../types'
+import {extractNameFromKey} from '@remix-ui/helper'
+import {action, FileType} from '../types'
 import * as _ from 'lodash'
-import { fileDecoration } from '@remix-ui/file-decorators'
-import { ROOT_PATH } from '../utils/constants'
+import {fileDecoration} from '@remix-ui/file-decorators'
+import {ROOT_PATH} from '../utils/constants'
 interface Action {
   type: string
   payload: any
 }
 export interface BrowserState {
   browser: {
-    currentWorkspace: string,
+    currentWorkspace: string
     workspaces: {
-      name: string;
-      isGitRepo: boolean;
+      name: string
+      isGitRepo: boolean
       branches?: {
-        remote: any;
-        name: string;
-      }[],
+        remote: any
+        name: string
+      }[]
       currentBranch?: string
-    }[],
-    files: { [x: string]: Record<string, FileType> },
+    }[]
+    files: {[x: string]: Record<string, FileType>}
     expandPath: string[]
-    isRequestingDirectory: boolean,
-    isSuccessfulDirectory: boolean,
-    isRequestingWorkspace: boolean,
-    isSuccessfulWorkspace: boolean,
-    isRequestingCloning: boolean,
-    isSuccessfulCloning: boolean,
-    error: string,
+    isRequestingDirectory: boolean
+    isSuccessfulDirectory: boolean
+    isRequestingWorkspace: boolean
+    isSuccessfulWorkspace: boolean
+    isRequestingCloning: boolean
+    isSuccessfulCloning: boolean
+    error: string
     contextMenu: {
-      registeredMenuItems: action[],
-      removedMenuItems: action[],
+      registeredMenuItems: action[]
+      removedMenuItems: action[]
       error: string
-    },
+    }
     fileState: fileDecoration[]
-  },
+  }
   localhost: {
-    sharedFolder: string,
-    files: { [x: string]: Record<string, FileType> },
-    expandPath: string[],
-    isRequestingDirectory: boolean,
-    isSuccessfulDirectory: boolean,
-    isRequestingLocalhost: boolean,
-    isSuccessfulLocalhost: boolean,
-    error: string,
+    sharedFolder: string
+    files: {[x: string]: Record<string, FileType>}
+    expandPath: string[]
+    isRequestingDirectory: boolean
+    isSuccessfulDirectory: boolean
+    isRequestingLocalhost: boolean
+    isSuccessfulLocalhost: boolean
+    error: string
     contextMenu: {
-      registeredMenuItems: action[],
-      removedMenuItems: action[],
+      registeredMenuItems: action[]
+      removedMenuItems: action[]
       error: string
-    },
+    }
     fileState: []
-  },
-  mode: 'browser' | 'localhost',
+  }
+  mode: 'browser' | 'localhost'
   notification: {
-    title: string,
-    message: string,
-    actionOk: () => void,
-    actionCancel: (() => void) | null,
-    labelOk: string,
+    title: string
+    message: string
+    actionOk: () => void
+    actionCancel: (() => void) | null
+    labelOk: string
     labelCancel: string
-  },
-  readonly: boolean,
-  popup: string,
-  focusEdit: string,
-  focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[],
-  initializingFS: boolean,
-  gitConfig: { username: string, email: string, token: string },
+  }
+  readonly: boolean
+  popup: string
+  focusEdit: string
+  focusElement: {key: string; type: 'file' | 'folder' | 'gist'}[]
+  initializingFS: boolean
+  gitConfig: {username: string; email: string; token: string}
 }
 
 export const browserInitialState: BrowserState = {
@@ -108,8 +108,8 @@ export const browserInitialState: BrowserState = {
   notification: {
     title: '',
     message: '',
-    actionOk: () => { },
-    actionCancel: () => { },
+    actionOk: () => {},
+    actionCancel: () => {},
     labelOk: '',
     labelCancel: ''
   },
@@ -118,33 +118,47 @@ export const browserInitialState: BrowserState = {
   focusEdit: '',
   focusElement: [],
   initializingFS: true,
-  gitConfig: { username: '', email: '', token: '' }
+  gitConfig: {username: '', email: '', token: ''}
 }
 
 export const browserReducer = (state = browserInitialState, action: Action) => {
   switch (action.type) {
   case 'SET_CURRENT_WORKSPACE': {
-    const payload = action.payload as { name: string; isGitRepo: boolean; branches?: { remote: any; name: string; }[], currentBranch?: string }
-    const workspaces = state.browser.workspaces.find(({ name }) => name === payload.name) ? state.browser.workspaces : [...state.browser.workspaces, action.payload]
+    const payload = action.payload as {
+        name: string
+        isGitRepo: boolean
+        branches?: {remote: any; name: string}[]
+        currentBranch?: string
+      }
+    const workspaces = state.browser.workspaces.find(
+      ({name}) => name === payload.name
+    )
+      ? state.browser.workspaces
+      : [...state.browser.workspaces, action.payload]
 
     return {
       ...state,
       browser: {
         ...state.browser,
         currentWorkspace: payload.name,
-        workspaces: workspaces.filter(workspace => workspace)
+        workspaces: workspaces.filter((workspace) => workspace)
       }
     }
   }
 
   case 'SET_WORKSPACES': {
-    const payload = action.payload as { name: string; isGitRepo: boolean; branches?: { remote: any; name: string; }[], currentBranch?: string }[]
+    const payload = action.payload as {
+        name: string
+        isGitRepo: boolean
+        branches?: {remote: any; name: string}[]
+        currentBranch?: string
+      }[]
 
     return {
       ...state,
       browser: {
         ...state.browser,
-        workspaces: payload.filter(workspace => workspace)
+        workspaces: payload.filter((workspace) => workspace)
       }
     }
   }
@@ -177,20 +191,26 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'FETCH_DIRECTORY_SUCCESS': {
-    const payload = action.payload as { path: string, fileTree }
+    const payload = action.payload as {path: string; fileTree}
 
     return {
       ...state,
       browser: {
         ...state.browser,
-        files: state.mode === 'browser' ? fetchDirectoryContent(state, payload) : state.browser.files,
+        files:
+            state.mode === 'browser'
+              ? fetchDirectoryContent(state, payload)
+              : state.browser.files,
         isRequestingDirectory: false,
         isSuccessfulDirectory: true,
         error: null
       },
       localhost: {
         ...state.localhost,
-        files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload) : state.localhost.files,
+        files:
+            state.mode === 'localhost'
+              ? fetchDirectoryContent(state, payload)
+              : state.localhost.files,
         isRequestingDirectory: false,
         isSuccessfulDirectory: true,
         error: null
@@ -235,20 +255,26 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'FETCH_WORKSPACE_DIRECTORY_SUCCESS': {
-    const payload = action.payload as { path: string, fileTree }
+    const payload = action.payload as {path: string; fileTree}
 
     return {
       ...state,
       browser: {
         ...state.browser,
-        files: state.mode === 'browser' ? fetchWorkspaceDirectoryContent(state, payload) : state.browser.files,
+        files:
+            state.mode === 'browser'
+              ? fetchWorkspaceDirectoryContent(state, payload)
+              : state.browser.files,
         isRequestingWorkspace: false,
         isSuccessfulWorkspace: true,
         error: null
       },
       localhost: {
         ...state.localhost,
-        files: state.mode === 'localhost' ? fetchWorkspaceDirectoryContent(state, payload) : state.localhost.files,
+        files:
+            state.mode === 'localhost'
+              ? fetchWorkspaceDirectoryContent(state, payload)
+              : state.localhost.files,
         isRequestingWorkspace: false,
         isSuccessfulWorkspace: true,
         error: null,
@@ -276,15 +302,25 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'DISPLAY_NOTIFICATION': {
-    const payload = action.payload as { title: string, message: string, actionOk: () => void, actionCancel: () => void, labelOk: string, labelCancel: string }
+    const payload = action.payload as {
+        title: string
+        message: string
+        actionOk: () => void
+        actionCancel: () => void
+        labelOk: string
+        labelCancel: string
+      }
 
     return {
       ...state,
       notification: {
         title: payload.title,
         message: payload.message,
-        actionOk: payload.actionOk || browserInitialState.notification.actionOk,
-        actionCancel: payload.actionCancel || browserInitialState.notification.actionCancel,
+        actionOk:
+            payload.actionOk || browserInitialState.notification.actionOk,
+        actionCancel:
+            payload.actionCancel ||
+            browserInitialState.notification.actionCancel,
         labelOk: payload.labelOk,
         labelCancel: payload.labelCancel
       }
@@ -305,31 +341,64 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       ...state,
       browser: {
         ...state.browser,
-        files: state.mode === 'browser' ? fileAdded(state, payload) : state.browser.files,
-        expandPath: state.mode === 'browser' ? [...new Set([...state.browser.expandPath, payload])] : state.browser.expandPath
+        files:
+            state.mode === 'browser'
+              ? fileAdded(state, payload)
+              : state.browser.files,
+        expandPath:
+            state.mode === 'browser'
+              ? [...new Set([...state.browser.expandPath, payload])]
+              : state.browser.expandPath
       },
       localhost: {
         ...state.localhost,
-        files: state.mode === 'localhost' ? fileAdded(state, payload) : state.localhost.files,
-        expandPath: state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload])] : state.localhost.expandPath
+        files:
+            state.mode === 'localhost'
+              ? fileAdded(state, payload)
+              : state.localhost.files,
+        expandPath:
+            state.mode === 'localhost'
+              ? [...new Set([...state.localhost.expandPath, payload])]
+              : state.localhost.expandPath
       }
     }
   }
 
   case 'FOLDER_ADDED_SUCCESS': {
-    const payload = action.payload as { path: string, folderPath: string, fileTree }
+    const payload = action.payload as {
+        path: string
+        folderPath: string
+        fileTree
+      }
 
     return {
       ...state,
       browser: {
         ...state.browser,
-        files: state.mode === 'browser' ? fetchDirectoryContent(state, payload) : state.browser.files,
-        expandPath: state.mode === 'browser' ? [...new Set([...state.browser.expandPath, payload.folderPath])] : state.browser.expandPath
+        files:
+            state.mode === 'browser'
+              ? fetchDirectoryContent(state, payload)
+              : state.browser.files,
+        expandPath:
+            state.mode === 'browser'
+              ? [...new Set([...state.browser.expandPath, payload.folderPath])]
+              : state.browser.expandPath
       },
       localhost: {
         ...state.localhost,
-        files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload) : state.localhost.files,
-        expandPath: state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload.folderPath])] : state.localhost.expandPath
+        files:
+            state.mode === 'localhost'
+              ? fetchDirectoryContent(state, payload)
+              : state.localhost.files,
+        expandPath:
+            state.mode === 'localhost'
+              ? [
+                ...new Set([
+                  ...state.localhost.expandPath,
+                  payload.folderPath
+                ])
+              ]
+              : state.localhost.expandPath
       }
     }
   }
@@ -341,13 +410,25 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       ...state,
       browser: {
         ...state.browser,
-        files: state.mode === 'browser' ? fileRemoved(state, payload) : state.browser.files,
-        expandPath: state.mode === 'browser' ? [...(state.browser.expandPath.filter(path => path !== payload))] : state.browser.expandPath
+        files:
+            state.mode === 'browser'
+              ? fileRemoved(state, payload)
+              : state.browser.files,
+        expandPath:
+            state.mode === 'browser'
+              ? [...state.browser.expandPath.filter((path) => path !== payload)]
+              : state.browser.expandPath
       },
       localhost: {
         ...state.localhost,
-        files: state.mode === 'localhost' ? fileRemoved(state, payload) : state.localhost.files,
-        expandPath: state.mode === 'localhost' ? [...(state.browser.expandPath.filter(path => path !== payload))] : state.localhost.expandPath
+        files:
+            state.mode === 'localhost'
+              ? fileRemoved(state, payload)
+              : state.localhost.files,
+        expandPath:
+            state.mode === 'localhost'
+              ? [...state.browser.expandPath.filter((path) => path !== payload)]
+              : state.localhost.expandPath
       }
     }
   }
@@ -365,34 +446,50 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'ADD_INPUT_FIELD': {
-    const payload = action.payload as { path: string, fileTree, type: 'file' | 'folder' }
+    const payload = action.payload as {
+        path: string
+        fileTree
+        type: 'file' | 'folder'
+      }
 
     return {
       ...state,
       browser: {
         ...state.browser,
-        files: state.mode === 'browser' ? fetchDirectoryContent(state, payload) : state.browser.files
+        files:
+            state.mode === 'browser'
+              ? fetchDirectoryContent(state, payload)
+              : state.browser.files
       },
       localhost: {
         ...state.localhost,
-        files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload) : state.localhost.files
+        files:
+            state.mode === 'localhost'
+              ? fetchDirectoryContent(state, payload)
+              : state.localhost.files
       },
       focusEdit: payload.path + '/' + 'blank'
     }
   }
 
   case 'REMOVE_INPUT_FIELD': {
-    const payload = action.payload as { path: string, fileTree }
+    const payload = action.payload as {path: string; fileTree}
 
     return {
       ...state,
       browser: {
         ...state.browser,
-        files: state.mode === 'browser' ? removeInputField(state, payload.path) : state.browser.files
+        files:
+            state.mode === 'browser'
+              ? removeInputField(state, payload.path)
+              : state.browser.files
       },
       localhost: {
         ...state.localhost,
-        files: state.mode === 'localhost' ? removeInputField(state, payload.path) : state.localhost.files
+        files:
+            state.mode === 'localhost'
+              ? removeInputField(state, payload.path)
+              : state.localhost.files
       },
       focusEdit: null
     }
@@ -408,17 +505,27 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'FILE_RENAMED_SUCCESS': {
-    const payload = action.payload as { path: string, oldPath: string, fileTree }
+    const payload = action.payload as {
+        path: string
+        oldPath: string
+        fileTree
+      }
 
     return {
       ...state,
       browser: {
         ...state.browser,
-        files: state.mode === 'browser' ? fetchDirectoryContent(state, payload, payload.oldPath) : state.browser.files
+        files:
+            state.mode === 'browser'
+              ? fetchDirectoryContent(state, payload, payload.oldPath)
+              : state.browser.files
       },
       localhost: {
         ...state.localhost,
-        files: state.mode === 'localhost' ? fetchDirectoryContent(state, payload, payload.oldPath) : state.localhost.files
+        files:
+            state.mode === 'localhost'
+              ? fetchDirectoryContent(state, payload, payload.oldPath)
+              : state.localhost.files
       }
     }
   }
@@ -436,15 +543,24 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'CREATE_WORKSPACE_SUCCESS': {
-    const payload = action.payload as { name: string; isGitRepo: boolean; branches?: { remote: any; name: string; }[], currentBranch?: string }
-    const workspaces = state.browser.workspaces.find(({ name }) => name === payload.name) ? state.browser.workspaces : [...state.browser.workspaces, action.payload]
+    const payload = action.payload as {
+        name: string
+        isGitRepo: boolean
+        branches?: {remote: any; name: string}[]
+        currentBranch?: string
+      }
+    const workspaces = state.browser.workspaces.find(
+      ({name}) => name === payload.name
+    )
+      ? state.browser.workspaces
+      : [...state.browser.workspaces, action.payload]
 
     return {
       ...state,
       browser: {
         ...state.browser,
         currentWorkspace: payload.name,
-        workspaces: workspaces.filter(workspace => workspace),
+        workspaces: workspaces.filter((workspace) => workspace),
         isRequestingWorkspace: false,
         isSuccessfulWorkspace: true,
         error: null
@@ -465,21 +581,23 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'RENAME_WORKSPACE': {
-    const payload = action.payload as { oldName: string, workspaceName: string }
+    const payload = action.payload as {oldName: string; workspaceName: string}
     let renamedWorkspace
-    const workspaces = state.browser.workspaces.filter(({ name, isGitRepo, branches, currentBranch }) => {
-      if (name && (name !== payload.oldName)) {
-        return true
-      } else {
-        renamedWorkspace = {
-          name: payload.workspaceName,
-          isGitRepo,
-          branches,
-          currentBranch
+    const workspaces = state.browser.workspaces.filter(
+      ({name, isGitRepo, branches, currentBranch}) => {
+        if (name && name !== payload.oldName) {
+          return true
+        } else {
+          renamedWorkspace = {
+            name: payload.workspaceName,
+            isGitRepo,
+            branches,
+            currentBranch
+          }
+          return false
         }
-        return false
       }
-    })
+    )
 
     return {
       ...state,
@@ -494,7 +612,9 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
 
   case 'DELETE_WORKSPACE': {
     const payload = action.payload as string
-    const workspaces = state.browser.workspaces.filter(({ name }) => name && (name !== payload))
+    const workspaces = state.browser.workspaces.filter(
+      ({name}) => name && name !== payload
+    )
 
     return {
       ...state,
@@ -522,7 +642,10 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'SET_FOCUS_ELEMENT': {
-    const payload = action.payload as { key: string, type: 'file' | 'folder' | 'gist' }[]
+    const payload = action.payload as {
+        key: string
+        type: 'file' | 'folder' | 'gist'
+      }[]
 
     return {
       ...state,
@@ -535,7 +658,9 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
 
     return {
       ...state,
-      focusElement: state.focusElement.filter(element => element.key !== payload)
+      focusElement: state.focusElement.filter(
+        (element) => element.key !== payload
+      )
     }
   }
 
@@ -676,14 +801,15 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'SET_CURRENT_WORKSPACE_BRANCHES': {
-    const payload: { remote: any, name: string }[] = action.payload
+    const payload: {remote: any; name: string}[] = action.payload
 
     return {
       ...state,
       browser: {
         ...state.browser,
         workspaces: state.browser.workspaces.map((workspace) => {
-          if (workspace.name === state.browser.currentWorkspace) workspace.branches = payload
+          if (workspace.name === state.browser.currentWorkspace)
+            workspace.branches = payload
           return workspace
         })
       }
@@ -698,7 +824,8 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       browser: {
         ...state.browser,
         workspaces: state.browser.workspaces.map((workspace) => {
-          if (workspace.name === state.browser.currentWorkspace) workspace.currentBranch = payload
+          if (workspace.name === state.browser.currentWorkspace)
+            workspace.currentBranch = payload
           return workspace
         })
       }
@@ -713,50 +840,68 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
       browser: {
         ...state.browser,
         workspaces: state.browser.workspaces.map((workspace) => {
-          if (workspace.name === state.browser.currentWorkspace) workspace.isGitRepo = payload
+          if (workspace.name === state.browser.currentWorkspace)
+            workspace.isGitRepo = payload
           return workspace
         })
       }
     }
   }
 
-  case 'SET_GIT_CONFIG' : {
-    const payload: { username: string, token: string, email: string } = action.payload
+  case 'SET_GIT_CONFIG': {
+    const payload: {username: string; token: string; email: string} =
+        action.payload
     return {
       ...state,
       gitConfig: payload
     }
   }
-        
 
   default:
     throw new Error()
   }
 }
 
-const fileAdded = (state: BrowserState, path: string): { [x: string]: Record<string, FileType> } => {
-  let files = state.mode === 'browser' ? state.browser.files : state.localhost.files
+const fileAdded = (
+  state: BrowserState,
+  path: string
+): {[x: string]: Record<string, FileType>} => {
+  let files =
+    state.mode === 'browser' ? state.browser.files : state.localhost.files
   const _path = splitPath(state, path)
 
-  files = _.setWith(files, _path, {
-    path: path,
-    name: extractNameFromKey(path),
-    isDirectory: false,
-    type: 'file'
-  }, Object)
+  files = _.setWith(
+    files,
+    _path,
+    {
+      path: path,
+      name: extractNameFromKey(path),
+      isDirectory: false,
+      type: 'file'
+    },
+    Object
+  )
   return files
 }
 
-const fileRemoved = (state: BrowserState, path: string): { [x: string]: Record<string, FileType> } => {
-  const files = state.mode === 'browser' ? state.browser.files : state.localhost.files
+const fileRemoved = (
+  state: BrowserState,
+  path: string
+): {[x: string]: Record<string, FileType>} => {
+  const files =
+    state.mode === 'browser' ? state.browser.files : state.localhost.files
   const _path = splitPath(state, path)
 
   _.unset(files, _path)
   return files
 }
 
-const removeInputField = (state: BrowserState, path: string): { [x: string]: Record<string, FileType> } => {
-  let files = state.mode === 'browser' ? state.browser.files : state.localhost.files
+const removeInputField = (
+  state: BrowserState,
+  path: string
+): {[x: string]: Record<string, FileType>} => {
+  let files =
+    state.mode === 'browser' ? state.browser.files : state.localhost.files
   const root = state.mode === 'browser' ? ROOT_PATH : state.mode
 
   if (path === root) {
@@ -767,35 +912,51 @@ const removeInputField = (state: BrowserState, path: string): { [x: string]: Rec
   const prevFiles = _.get(files, _path)
 
   if (prevFiles) {
-    prevFiles.child && prevFiles.child[path + '/' + 'blank'] && delete prevFiles.child[path + '/' + 'blank']
-    files = _.setWith(files, _path, {
-      isDirectory: true,
-      path,
-      name: extractNameFromKey(path),
-      type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
-      child: prevFiles ? prevFiles.child : {}
-    }, Object)
+    prevFiles.child &&
+      prevFiles.child[path + '/' + 'blank'] &&
+      delete prevFiles.child[path + '/' + 'blank']
+    files = _.setWith(
+      files,
+      _path,
+      {
+        isDirectory: true,
+        path,
+        name: extractNameFromKey(path),
+        type:
+          extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
+        child: prevFiles ? prevFiles.child : {}
+      },
+      Object
+    )
   }
 
   return files
 }
 
 // IDEA: Modify function to remove blank input field without fetching content
-const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: string, type?: 'file' | 'folder' }, deletePath?: string): { [x: string]: Record<string, FileType> } => {
-  if (!payload.fileTree) return state.mode === 'browser' ? state.browser.files : state[state.mode].files
+const fetchDirectoryContent = (
+  state: BrowserState,
+  payload: {fileTree; path: string; type?: 'file' | 'folder'},
+  deletePath?: string
+): {[x: string]: Record<string, FileType>} => {
+  if (!payload.fileTree)
+    return state.mode === 'browser'
+      ? state.browser.files
+      : state[state.mode].files
   if (state.mode === 'browser') {
     if (payload.path === ROOT_PATH) {
       let files = normalize(payload.fileTree, ROOT_PATH, payload.type)
       files = _.merge(files, state.browser.files[ROOT_PATH])
       if (deletePath) delete files[deletePath]
-      return { [ROOT_PATH]: files }
+      return {[ROOT_PATH]: files}
     } else {
       let files = state.browser.files
       const _path = splitPath(state, payload.path)
       let prevFiles = _.get(files, _path)
 
       if (!prevFiles) {
-        const object = {}; let o = object
+        const object = {}
+        let o = object
         for (const pa of _path) {
           o = o[pa] = {}
         }
@@ -804,7 +965,10 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
       }
 
       if (prevFiles) {
-        prevFiles.child = _.merge(normalize(payload.fileTree, payload.path, payload.type), prevFiles.child)
+        prevFiles.child = _.merge(
+          normalize(payload.fileTree, payload.path, payload.type),
+          prevFiles.child
+        )
         if (deletePath) {
           if (deletePath.endsWith('/blank')) delete prevFiles.child[deletePath]
           else {
@@ -814,7 +978,13 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
         }
         files = _.setWith(files, _path, prevFiles, Object)
       } else if (payload.fileTree && payload.path) {
-        files = { [payload.path]: normalize(payload.fileTree, payload.path, payload.type) }
+        files = {
+          [payload.path]: normalize(
+            payload.fileTree,
+            payload.path,
+            payload.type
+          )
+        }
       }
       return files
     }
@@ -823,14 +993,17 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
       let files = normalize(payload.fileTree, ROOT_PATH, payload.type)
       files = _.merge(files, state.localhost.files[ROOT_PATH])
       if (deletePath) delete files[deletePath]
-      return { [ROOT_PATH]: files }
+      return {[ROOT_PATH]: files}
     } else {
       let files = state.localhost.files
       const _path = splitPath(state, payload.path)
       const prevFiles = _.get(files, _path)
 
       if (prevFiles) {
-        prevFiles.child = _.merge(normalize(payload.fileTree, payload.path, payload.type), prevFiles.child)
+        prevFiles.child = _.merge(
+          normalize(payload.fileTree, payload.path, payload.type),
+          prevFiles.child
+        )
         if (deletePath) {
           if (deletePath.endsWith('/blank')) delete prevFiles.child[deletePath]
           else {
@@ -840,24 +1013,37 @@ const fetchDirectoryContent = (state: BrowserState, payload: { fileTree, path: s
         }
         files = _.setWith(files, _path, prevFiles, Object)
       } else {
-        files = { [payload.path]: normalize(payload.fileTree, payload.path, payload.type) }
+        files = {
+          [payload.path]: normalize(
+            payload.fileTree,
+            payload.path,
+            payload.type
+          )
+        }
       }
       return files
     }
   }
 }
 
-const fetchWorkspaceDirectoryContent = (state: BrowserState, payload: { fileTree, path: string }): { [x: string]: Record<string, FileType> } => {
+const fetchWorkspaceDirectoryContent = (
+  state: BrowserState,
+  payload: {fileTree; path: string}
+): {[x: string]: Record<string, FileType>} => {
   const files = normalize(payload.fileTree, ROOT_PATH)
 
-  return { [ROOT_PATH]: files }
+  return {[ROOT_PATH]: files}
 }
 
-const normalize = (filesList, directory?: string, newInputType?: 'folder' | 'file'): Record<string, FileType> => {
+const normalize = (
+  filesList,
+  directory?: string,
+  newInputType?: 'folder' | 'file'
+): Record<string, FileType> => {
   const folders = {}
   const files = {}
 
-  Object.keys(filesList || {}).forEach(key => {
+  Object.keys(filesList || {}).forEach((key) => {
     key = key.replace(/^\/|\/$/g, '') // remove first and last slash
     let path = key
     path = path.replace(/^\/|\/$/g, '') // remove first and last slash
@@ -867,7 +1053,8 @@ const normalize = (filesList, directory?: string, newInputType?: 'folder' | 'fil
         path,
         name: extractNameFromKey(path),
         isDirectory: filesList[key].isDirectory,
-        type: extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder'
+        type:
+          extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder'
       }
     } else {
       files[extractNameFromKey(key)] = {
@@ -904,24 +1091,35 @@ const normalize = (filesList, directory?: string, newInputType?: 'folder' | 'fil
 
 const splitPath = (state: BrowserState, path: string): string[] | string => {
   const root = ROOT_PATH
-  const pathArr: string[] = (path || '').split('/').filter(value => value)
+  const pathArr: string[] = (path || '').split('/').filter((value) => value)
 
   if (pathArr[0] !== root) pathArr.unshift(root)
-  const _path = pathArr.map((key, index) => index > 1 ? ['child', key] : key).reduce((acc: string[], cur) => {
-    return Array.isArray(cur) ? [...acc, ...cur] : [...acc, cur]
-  }, [])
+  const _path = pathArr
+    .map((key, index) => (index > 1 ? ['child', key] : key))
+    .reduce((acc: string[], cur) => {
+      return Array.isArray(cur) ? [...acc, ...cur] : [...acc, cur]
+    }, [])
 
   return _path
 }
 
-const addContextMenuItem = (state: BrowserState, item: action): { registeredMenuItems: action[], removedMenuItems: action[], error: string } => {
+const addContextMenuItem = (
+  state: BrowserState,
+  item: action
+): {
+  registeredMenuItems: action[]
+  removedMenuItems: action[]
+  error: string
+} => {
   let registeredItems = state[state.mode].contextMenu.registeredMenuItems
   let removedItems = state[state.mode].contextMenu.removedMenuItems
   let error = null
 
-  if (registeredItems.filter((o) => {
-    return o.id === item.id && o.name === item.name
-  }).length) {
+  if (
+    registeredItems.filter((o) => {
+      return o.id === item.id && o.name === item.name
+    }).length
+  ) {
     error = `Action ${item.name} already exists on ${item.id}`
     return {
       registeredMenuItems: registeredItems,
@@ -930,7 +1128,7 @@ const addContextMenuItem = (state: BrowserState, item: action): { registeredMenu
     }
   }
   registeredItems = [...registeredItems, item]
-  removedItems = removedItems.filter(menuItem => item.id !== menuItem.id)
+  removedItems = removedItems.filter((menuItem) => item.id !== menuItem.id)
   return {
     registeredMenuItems: registeredItems,
     removedMenuItems: removedItems,
@@ -938,7 +1136,14 @@ const addContextMenuItem = (state: BrowserState, item: action): { registeredMenu
   }
 }
 
-const removeContextMenuItem = (state: BrowserState, plugin): { registeredMenuItems: action[], removedMenuItems: action[], error: string } => {
+const removeContextMenuItem = (
+  state: BrowserState,
+  plugin
+): {
+  registeredMenuItems: action[]
+  removedMenuItems: action[]
+  error: string
+} => {
   let registeredItems = state[state.mode].contextMenu.registeredMenuItems
   const removedItems = state[state.mode].contextMenu.removedMenuItems
   const error = null
