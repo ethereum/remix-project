@@ -4,7 +4,7 @@ import { helpers } from '@remix-project/remix-lib'
 const  { normalizeHexAddress } = helpers.ui
 import { ConsoleLogs, hash } from '@remix-project/remix-lib'
 import { toChecksumAddress, bufferToHex, Address, toBuffer } from '@ethereumjs/util'
-import utils from 'web3-utils'
+import utils, {toBigInt} from 'web3-utils'
 import {isBigInt} from 'web3-validator'
 import { ethers } from 'ethers'
 import { VMContext } from './vm-context'
@@ -83,7 +83,7 @@ export class VmProxy {
     this.fromDecimal = (...args) => utils.fromDecimal.apply(this, args)
     this.fromWei = (...args) => utils.fromWei.apply(this, args)
     this.toWei = (...args) => utils.toWei.apply(this, args)
-    this.toBigNumber = (...args) => utils.toBigInt.apply(this, args)
+    this.toBigNumber = (...args) => toBigInt.apply(this, args)
     this.isAddress = (...args) => utils.isAddress.apply(this, args)
     this.utils = utils
     this.txsMapBlock = {}
@@ -426,9 +426,9 @@ export class VmProxy {
   getSha3Input (stack, memory) {
     const memoryStart = toHexPaddedString(stack[stack.length - 1])
     const memoryLength = toHexPaddedString(stack[stack.length - 2])
-    const memStartDec = utils.toBigInt(memoryStart).toString(10)
+    const memStartDec = toBigInt(memoryStart).toString(10)
     const memoryStartInt = parseInt(memStartDec) * 2
-    const memLengthDec = utils.toBigInt(memoryLength).toString(10)
+    const memLengthDec = toBigInt(memoryLength).toString(10)
     const memoryLengthInt = parseInt(memLengthDec.toString()) * 2
 
     let i = Math.floor(memoryStartInt / 32)
