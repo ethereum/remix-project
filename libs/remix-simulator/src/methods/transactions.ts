@@ -1,5 +1,4 @@
-import { toHex, toNumber } from 'web3-utils'
-import BN from 'bn.js'
+import { toHex, toNumber, toBigInt } from 'web3-utils'
 import { toChecksumAddress, Address, bigIntToHex } from '@ethereumjs/util'
 import { processTx } from './txProcess'
 import { execution } from '@remix-project/remix-lib'
@@ -156,7 +155,7 @@ export class Transactions {
     payload.params[0].gas = 10000000 * 10
 
     this.vmContext.web3().flagNextAsDoNotRecordEvmSteps()
-    processTx(this.txRunnerInstance, payload, true, (error, value: VMexecutionResult) => {      
+    processTx(this.txRunnerInstance, payload, true, (error, value: VMexecutionResult) => {
       if (error) return cb(error)
       const result: RunTxResult = value.result
       if ((result as any).receipt?.status === '0x0' || (result as any).receipt?.status === 0) {
@@ -234,7 +233,7 @@ export class Transactions {
     const address = payload.params[0]
 
     this.vmContext.vm().stateManager.getAccount(Address.fromString(address)).then((account) => {
-      const nonce = new BN(account.nonce).toString(10)
+      const nonce = toBigInt(account.nonce).toString(10)
       cb(null, nonce)
     }).catch((error) => {
       cb(error)
