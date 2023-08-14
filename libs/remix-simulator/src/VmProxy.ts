@@ -4,7 +4,8 @@ import { helpers } from '@remix-project/remix-lib'
 const  { normalizeHexAddress } = helpers.ui
 import { ConsoleLogs, hash } from '@remix-project/remix-lib'
 import { toChecksumAddress, bufferToHex, Address, toBuffer } from '@ethereumjs/util'
-import utils, {toBigInt} from 'web3-utils'
+import utils from 'web3-utils'
+import {isBigInt} from 'web3-validator'
 import { ethers } from 'ethers'
 import { VMContext } from './vm-context'
 import type { StateManager } from '@ethereumjs/statemanager'
@@ -278,7 +279,7 @@ export class VmProxy {
         let consoleArgs = iface.decodeFunctionData(functionDesc, payload)
         consoleArgs = consoleArgs.map((value) => {
           // Copied from: https://github.com/web3/web3.js/blob/e68194bdc590d811d4bf66dde12f99659861a110/packages/web3-utils/src/utils.js#L48C10-L48C10
-          if (value && value.constructor && value.constructor.name === 'BigNumber') {
+          if (value && ((value.constructor && value.constructor.name === 'BigNumber') || isBigInt(value))) {
             return value.toString()
           }
           return value
@@ -425,9 +426,9 @@ export class VmProxy {
   getSha3Input (stack, memory) {
     const memoryStart = toHexPaddedString(stack[stack.length - 1])
     const memoryLength = toHexPaddedString(stack[stack.length - 2])
-    const memStartDec = toBigInt(memoryStart).toString(10)
+    const memStartDec = utils.toBigInt(memoryStart).toString(10)
     const memoryStartInt = parseInt(memStartDec) * 2
-    const memLengthDec = toBigInt(memoryLength).toString(10)
+    const memLengthDec = utils.toBigInt(memoryLength).toString(10)
     const memoryLengthInt = parseInt(memLengthDec.toString()) * 2
 
     let i = Math.floor(memoryStartInt / 32)
