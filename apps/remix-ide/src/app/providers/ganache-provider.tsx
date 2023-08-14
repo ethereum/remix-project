@@ -1,5 +1,6 @@
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
+import {FormattedMessage} from 'react-intl'
 import {AbstractProvider} from './abstract-provider'
 
 const profile = {
@@ -20,7 +21,7 @@ export class GanacheProvider extends AbstractProvider {
     return (
       <div>
         {' '}
-        Note: To run Ganache on your system, run:
+        <FormattedMessage id="udapp.ganacheProviderText1" />
         <div className="p-1 pl-3">
           <b>yarn global add ganache</b>
         </div>
@@ -28,10 +29,16 @@ export class GanacheProvider extends AbstractProvider {
           <b>ganache</b>
         </div>
         <div className="pt-2 pb-4">
-          For more info, visit:{' '}
-          <a href="https://github.com/trufflesuite/ganache" target="_blank">
-            Ganache Documentation
-          </a>
+          <FormattedMessage
+            id="udapp.ganacheProviderText2"
+            values={{
+              a: (chunks) => (
+                <a href="https://github.com/trufflesuite/ganache" target="_blank">
+                  {chunks}
+                </a>
+              )
+            }}
+          />
         </div>
         <div>Ganache JSON-RPC Endpoint:</div>
       </div>
