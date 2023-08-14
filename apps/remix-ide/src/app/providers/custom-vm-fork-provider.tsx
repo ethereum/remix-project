@@ -1,4 +1,5 @@
 import React, {useRef} from 'react' // eslint-disable-line
+import {FormattedMessage} from 'react-intl'
 import * as packageJson from '../../../../../package.json'
 import {AppModal, ModalTypes} from '@remix-ui/app'
 import {BasicVMProvider} from './vm-provider'
@@ -32,13 +33,19 @@ export class CustomForkVMProvider extends BasicVMProvider {
     const body = () => {
       return (
         <div>
-          <span>Please provide information about the custom fork. If the node URL is not provided, the VM will start with an empty state.</span>
+          <span>
+            <FormattedMessage id="udapp.customVmForkProviderText" />
+          </span>
           <div>
-            <label className="mt-3 mb-1">Node URL</label>
+            <label className="mt-3 mb-1">
+              <FormattedMessage id="udapp.nodeUrl" />
+            </label>
             <input data-id="CustomForkNodeUrl" name="nodeUrl" type="text" className="border form-control border-right-0" />
           </div>
           <div>
-            <label className="mt-3 mb-1">Block number (or "latest")</label>
+            <label className="mt-3 mb-1">
+              <FormattedMessage id="udapp.blockNumber" />
+            </label>
             <input
               data-id="CustomForkBlockNumber"
               name="blockNumber"
