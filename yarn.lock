@@ -9897,10 +9897,10 @@ cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
 
-circom_wasm@circom_wasm:
-  version "0.0.0-alpha.1"
-  resolved "https://registry.yarnpkg.com/circom_wasm/-/circom_wasm-0.0.0-alpha.1.tgz#9578c82d78c5e02527ae3d65c9a57d98c3e9a53d"
-  integrity sha512-z1QKPvqhdLdfUw1hy/WBmi4wDj2UHN7o9Mq9QptGZkpKC9PzB5HCRj3v3uTI1ZJPH6IR6L1ytbrptM7VV3O0fA==
+circom_wasm@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/circom_wasm/-/circom_wasm-0.0.2.tgz#9d24866b8289a5778999270823a4cb06e64145b5"
+  integrity sha512-SCMP6cxHHL7MLedDrTl+nGYyE6+kE5GepbxtZm65GlR0wUMD9eNOD1shwScWaDnmBOZTrImmNeTYZA5DWCmIww==
 
 circular-json@^0.3.0:
   version "0.3.3"
