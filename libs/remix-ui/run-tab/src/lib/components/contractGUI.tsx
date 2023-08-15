@@ -323,7 +323,7 @@ export function ContractGUI(props: ContractGUIProps) {
 
     setProxyAddress(address)
   }
-  console.log({dataId: buttonOptions.dataId})
+
   return (
     <div
       className={`udapp_contractProperty ${

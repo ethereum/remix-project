@@ -197,6 +197,7 @@
     "regenerator-runtime": "0.13.7",
     "remark-gfm": "^3.0.1",
     "rss-parser": "^3.12.0",
+    "selenium-standalone": "^8.2.3",
     "signale": "^1.4.0",
     "sol2uml": "^2.4.3",
     "string-similarity": "^4.0.4",
