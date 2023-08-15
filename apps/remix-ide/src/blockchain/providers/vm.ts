@@ -14,6 +14,7 @@ export class VMProvider {
   newAccountCallback: {[stamp: number]: (error: Error, address: string) => void}
 
   constructor (executionContext: ExecutionContext) {
+
     this.executionContext = executionContext
     this.worker = null
     this.provider = null
@@ -23,7 +24,10 @@ export class VMProvider {
   getAccounts (cb) {
     this.web3.eth.getAccounts()
       .then(accounts => cb(null, accounts))
-      .catch(err => cb('No accounts?'))
+      .catch(err => {
+        console.log('err',err)
+        cb('No accounts?')
+      })
   }
 
   async resetEnvironment () {
@@ -42,6 +46,8 @@ export class VMProvider {
           if (!msg.data.error) {
             this.provider = {
               sendAsync: (query, callback) => {
+                console.log('query',query)
+                console.log('callback',callback)
                 const stamp = Date.now() + incr
                 incr++
                 stamps[stamp] = callback
