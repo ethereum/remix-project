@@ -352,7 +352,7 @@ export function ContractGUI(props: ContractGUIProps) {
           }
         >
           <div
-            className="d-flex"
+            className="d-flex wrapperElement"
             onClick={handleActionClick}
             data-id={buttonOptions.dataId}
             data-title={buttonOptions.title}
