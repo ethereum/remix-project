@@ -39,8 +39,8 @@ class Web3DebugPlugin extends Web3PluginBase {
       method: 'debug_preimage',
       params: [key]
     })
-    .then(result => cb(null, result))
-    .catch(error => cb(error))
+      .then(result => cb(null, result))
+      .catch(error => cb(error))
   }
 
   public traceTransaction(txHash, options, cb) {
@@ -48,8 +48,8 @@ class Web3DebugPlugin extends Web3PluginBase {
       method: 'debug_traceTransaction',
       params: [txHash, options]
     })
-    .then(result => cb(null, result))
-    .catch(error => cb(error))
+      .then(result => cb(null, result))
+      .catch(error => cb(error))
   }
 
   public storageRangeAt(txBlockHash, txIndex, address, start, maxSize, cb) {
@@ -57,7 +57,7 @@ class Web3DebugPlugin extends Web3PluginBase {
       method: 'debug_storageRangeAt',
       params: [txBlockHash, txIndex, address, start, maxSize]
     })
-    .then(result => cb(null, result))
-    .catch(error => cb(error))
+      .then(result => cb(null, result))
+      .catch(error => cb(error))
   }
 }
