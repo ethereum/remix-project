@@ -52,6 +52,7 @@ export class CircomPluginClient extends PluginClient {
               const startPosition: {lineNumber: number; column: number} =
                 await this.call(
                   'editor',
+                  // @ts-ignore
                   'getPositionAt',
                   report.labels[label].range.start
                 )
@@ -59,6 +60,7 @@ export class CircomPluginClient extends PluginClient {
               const endPosition: {lineNumber: number; column: number} =
                 await this.call(
                   'editor',
+                  // @ts-ignore
                   'getPositionAt',
                   report.labels[label].range.end
                 )
@@ -124,9 +126,9 @@ export class CircomPluginClient extends PluginClient {
           )
           if (relativePath.indexOf('/') === 0)
             relativePath = relativePath.slice(1)
-          // @ts-ignore
           const relativePathExists = await this.call(
             'fileManager',
+            // @ts-ignore
             'exists',
             relativePath
           )
