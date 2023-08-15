@@ -323,7 +323,7 @@ export function ContractGUI(props: ContractGUIProps) {
 
     setProxyAddress(address)
   }
-
+  console.log({dataId: buttonOptions.dataId})
   return (
     <div
       className={`udapp_contractProperty ${
@@ -351,7 +351,12 @@ export function ContractGUI(props: ContractGUIProps) {
                 : buttonOptions.title
           }
         >
-          <div className="d-flex" onClick={handleActionClick}>
+          <div
+            className="d-flex"
+            onClick={handleActionClick}
+            data-id={buttonOptions.dataId}
+            data-title={buttonOptions.title}
+          >
             <button
               className={`udapp_instanceButton text-nowrap overflow-hidden text-truncate ${props.widthClass} btn btn-sm ${buttonOptions.classList}`}
               data-id={buttonOptions.dataId}
