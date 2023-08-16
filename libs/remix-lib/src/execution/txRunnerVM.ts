@@ -56,7 +56,7 @@ export class TxRunnerVM {
 
   execute (args: InternalTransaction, confirmationCb, gasEstimationForceSend, promptCb, callback: VMExecutionCallBack) {
     let data = args.data
-    if (data && data.slice(0, 2) !== '0x') {
+    if (data.slice(0, 2) !== '0x') {
       data = '0x' + data
     }
 

@@ -60,7 +60,7 @@ Commands:
 
     it('remix-tests running a test file', function() {
       const res = spawnSync(executablePath, [resolve(__dirname + '/examples_0/assert_ok_test.sol')])
-      // console.log(res.stdout.toString())
+      console.log(res.stdout.toString())
       // match initial lines
       expect(res.stdout.toString().trim()).to.match(/:: Running tests using remix-tests ::/)
       expect(res.stdout.toString().trim()).to.match(/creation of library remix_tests.sol:Assert pending.../)
