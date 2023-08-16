@@ -4,55 +4,49 @@ export default {
       {
         id: 1.1,
         nodeType: 'SourceUnit',
-        title: 'Add open-source license',
-        message: '// SPDX-License-Identifier: GPL-3.0-only'
-      },
-      {
-        id: 1.2,
-        nodeType: 'SourceUnit',
         title: 'Add non-open-source license',
         message: '// SPDX-License-Identifier: UNLICENSED'
       },
       {
+        id: 1.2,
+        nodeType: 'SourceUnit',
+        title: 'Add Apache-1.1 license',
+        message: '// SPDX-License-Identifier: Apache-1.1'
+      },
+      {
         id: 1.3,
         nodeType: 'SourceUnit',
-        title: 'Apache-1.1',
-        message: '// SPDX-License-Identifier: Apache-1.1'
+        title: 'Add Apache-2.0 license',
+        message: '// SPDX-License-Identifier: Apache-2.0'
       },
       {
         id: 1.4,
         nodeType: 'SourceUnit',
-        title: 'Apache-2.0',
-        message: '// SPDX-License-Identifier: Apache-2.0'
+        title: 'Add MIT license',
+        message: '// SPDX-License-Identifier: MIT'
       },
       {
         id: 1.5,
         nodeType: 'SourceUnit',
-        title: 'MIT',
-        message: '// SPDX-License-Identifier: MIT'
+        title: 'Add EPL-1.0 (Eclipse) license',
+        message: '// SPDX-License-Identifier: EPL-1.0'
       },
       {
         id: 1.6,
         nodeType: 'SourceUnit',
-        title: 'EPL-1.0 (Eclipse)',
-        message: '// SPDX-License-Identifier: EPL-1.0'
+        title: 'Add EPL-2.0 (Eclipse) license',
+        message: '// SPDX-License-Identifier: EPL-2.0'
       },
       {
         id: 1.7,
         nodeType: 'SourceUnit',
-        title: 'EPL-2.0 (Eclipse)',
-        message: '// SPDX-License-Identifier: EPL-2.0'
+        title: 'Add GPL-3.0-only license',
+        message: '// SPDX-License-Identifier: GPL-3.0-only'
       },
       {
         id: 1.8,
         nodeType: 'SourceUnit',
-        title: 'GPL-3.0-only',
-        message: '// SPDX-License-Identifier: GPL-3.0-only'
-      },
-      {
-        id: 1.9,
-        nodeType: 'SourceUnit',
-        title: 'GPL-3.0-or-later',
+        title: 'Add GPL-3.0-or-later license',
         message: '// SPDX-License-Identifier: GPL-3.0-or-later'
       }
     ],
