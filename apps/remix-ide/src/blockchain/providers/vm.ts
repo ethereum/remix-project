@@ -1,5 +1,5 @@
-import Web3, { FMT_BYTES, FMT_NUMBER, LegacySendAsyncProvider } from 'web3'
-import { fromWei, toBigInt } from 'web3-utils'
+import Web3, { LegacySendAsyncProvider } from 'web3'
+import { fromWei } from 'web3-utils'
 import { privateToAddress, hashPersonalMessage } from '@ethereumjs/util'
 import { extend, JSONRPCRequestPayload, JSONRPCResponseCallback } from '@remix-project/remix-simulator'
 import { ExecutionContext } from '../execution-context'
@@ -22,12 +22,7 @@ export class VMProvider {
   }
 
   getAccounts (cb) {
-    this.web3.eth.getAccounts()
-      .then(accounts => cb(null, accounts))
-      .catch(err => {
-        console.log('err',err)
-        cb('No accounts?')
-      })
+    this.web3.eth.getAccounts().then(accounts => cb(null, accounts)).catch(err => cb('No accounts?'))
   }
 
   async resetEnvironment () {
@@ -46,8 +41,6 @@ export class VMProvider {
           if (!msg.data.error) {
             this.provider = {
               sendAsync: (query, callback) => {
-                console.log('query',query)
-                console.log('callback',callback)
                 const stamp = Date.now() + incr
                 incr++
                 stamps[stamp] = callback
@@ -88,12 +81,12 @@ export class VMProvider {
   }
 
   async getBalanceInEther (address) {
-    const balance = await this.web3.eth.getBalance(address, undefined, { number: FMT_NUMBER.HEX, bytes: FMT_BYTES.HEX })
-    return fromWei(toBigInt(balance).toString(10), 'ether')
+    const balance = await this.web3.eth.getBalance(address)
+    return fromWei(balance.toString(10), 'ether')
   }
 
   getGasPrice (cb) {
-    this.web3.eth.getGasPrice(cb)
+    this.web3.eth.getGasPrice().then(res => cb(null, res)).catch(err => cb(err))
   }
 
   signMessage (message, account, _passphrase, cb) {

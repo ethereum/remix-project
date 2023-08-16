@@ -36,7 +36,7 @@ export class ExecutionContext {
   init (config) {
     this.executionContext = 'vm-shanghai'
     this.event.trigger('contextChanged', [this.executionContext])
-  }  
+  }
 
   getProvider () {
     return this.executionContext
@@ -117,7 +117,7 @@ export class ExecutionContext {
   internalWeb3 () {
     return web3
   }
-  
+
   setContext (context, endPointUrl, confirmCb, infoCb) {
     this.executionContext = context
     this.executionContextChange(context, endPointUrl, confirmCb, infoCb, null)
@@ -128,9 +128,9 @@ export class ExecutionContext {
     const context = value.context
     if (!cb) cb = () => { /* Do nothing. */ }
     if (!confirmCb) confirmCb = () => { /* Do nothing. */ }
-    if (!infoCb) infoCb = () => { /* Do nothing. */ }    
+    if (!infoCb) infoCb = () => { /* Do nothing. */ }
     if (this.customNetWorks[context]) {
-      var network = this.customNetWorks[context]      
+      var network = this.customNetWorks[context]
       await network.init()
       this.currentFork = network.fork
       this.executionContext = context
@@ -156,7 +156,7 @@ export class ExecutionContext {
       try {
         const block = await web3.eth.getBlock('latest')
         // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
-        this.blockGasLimit = (block && block.gasLimit) ? Math.floor(block.gasLimit - (5 * block.gasLimit) / 1024) : this.blockGasLimitDefault
+        this.blockGasLimit = (block && block.gasLimit) ? Math.floor(web3.utils.toNumber(block.gasLimit) - (5 * web3.utils.toNumber(block.gasLimit) / 1024)) : web3.utils.toNumber(this.blockGasLimitDefault)
         this.lastBlock = block
         try {
           this.currentFork = execution.forkAt(await web3.eth.net.getId(), block.number)
