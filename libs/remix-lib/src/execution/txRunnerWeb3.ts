@@ -82,7 +82,7 @@ export class TxRunnerWeb3 {
 
   execute (args: InternalTransaction, confirmationCb, gasEstimationForceSend, promptCb, callback) {
     let data = args.data
-    if (data.slice(0, 2) !== '0x') {
+    if (data && data.slice(0, 2) !== '0x') {
       data = '0x' + data
     }
 
@@ -123,11 +123,11 @@ export class TxRunnerWeb3 {
           gasEstimationForceSend(null, () => {
             // callback is called whenever no error
             tx['gas'] = !gasEstimation ? gasLimit : gasEstimation
-    
+
             if (this._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
               return this._executeTx(tx, network, null, this._api, promptCb, callback)
             }
-  
+
             confirmCb(network, tx, tx['gas'], (txFee) => {
               return this._executeTx(tx, network, txFee, this._api, promptCb, callback)
             }, (error) => {
@@ -143,11 +143,11 @@ export class TxRunnerWeb3 {
           err = network.name === 'VM' ? null : err // just send the tx if "VM"
           gasEstimationForceSend(err, () => {
             tx['gas'] = gasLimit
-    
+
             if (this._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
               return this._executeTx(tx, network, null, this._api, promptCb, callback)
             }
-  
+
             confirmCb(network, tx, tx['gas'], (txFee) => {
               return this._executeTx(tx, network, txFee, this._api, promptCb, callback)
             }, (error) => {
