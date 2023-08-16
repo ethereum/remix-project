@@ -16,8 +16,8 @@ jobs:
     steps:
       - browser-tools/install-browser-tools:
           install-firefox: false
-          install-chrome: true
           chrome-version: "115.0.5790.170"
+          install-chrome: true
           install-geckodriver: false
           install-chromedriver: true
       - run: google-chrome --version
