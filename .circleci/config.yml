@@ -23,6 +23,7 @@ jobs:
       - run: yarn init -y
       - run: yarn add selenium-standalone
       - run: yarn run selenium-standalone install
+      - run: cat package.json
 
   build:
     docker:
