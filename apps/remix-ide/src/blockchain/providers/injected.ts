@@ -10,12 +10,12 @@ export class InjectedProvider {
   }
 
   getAccounts (cb) {
-    return this.executionContext.web3().eth.getAccounts().then(res => cb(null, res)).catch(err => cb(err))
+    return this.executionContext.web3().eth.getAccounts(cb)
   }
 
   newAccount (passwordPromptCb, cb) {
     passwordPromptCb((passphrase) => {
-      this.executionContext.web3().eth.personal.newAccount(passphrase).then(res => cb(null, res)).catch(err => cb(err))
+      this.executionContext.web3().eth.personal.newAccount(passphrase, cb)
     })
   }
 
@@ -29,15 +29,15 @@ export class InjectedProvider {
   }
 
   getGasPrice (cb) {
-    this.executionContext.web3().eth.getGasPrice().then(res => cb(null, res)).catch(err => cb(err))
+    this.executionContext.web3().eth.getGasPrice(cb)
   }
 
   signMessage (message, account, _passphrase, cb) {
     const messageHash = hashPersonalMessage(Buffer.from(message))
     try {
-      this.executionContext.web3().eth.personal.sign(message, account)
-        .then(signedData=>cb(null, '0x' + messageHash.toString('hex'), signedData))
-        .catch(error=>cb(error, '0x' + messageHash.toString('hex')))
+      this.executionContext.web3().eth.personal.sign(message, account, (error, signedData) => {
+        cb(error, '0x' + messageHash.toString('hex'), signedData)
+      })
     } catch (e) {
       cb(e.message)
     }
