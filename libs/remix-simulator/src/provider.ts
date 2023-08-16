@@ -70,7 +70,7 @@ export class Provider {
     }
   }
 
-  sendAsync (payload: JSONRPCRequestPayload, callback: (err: Error, result?: JSONRPCResponsePayload) =>  void) {
+  _send(payload: JSONRPCRequestPayload, callback: (err: Error, result?: JSONRPCResponsePayload) =>  void) {
     // log.info('payload method is ', payload.method) // commented because, this floods the IDE console
     if (!this.initialized) {
       this.pendingRequests.push({ payload, callback })
@@ -96,8 +96,24 @@ export class Provider {
     callback(new Error('unknown method ' + payload.method))
   }
 
+  sendAsync (payload: JSONRPCRequestPayload, callback: (err: Error, result?: JSONRPCResponsePayload) =>  void) {
+    return new Promise((resolve,reject)=>{
+      const cb = (err, result) => {
+        if(typeof callback==='function'){
+          callback(err,result)
+        }
+        if(err){
+          console.log('err',err)
+          return reject(err)
+        }
+        return resolve(result)
+      }
+      this._send(payload, cb)
+    })
+  }
+
   send (payload, callback) {
-    this.sendAsync(payload, callback || function () {})
+    return this.sendAsync(payload,callback)
   }
 
   isConnected () {
