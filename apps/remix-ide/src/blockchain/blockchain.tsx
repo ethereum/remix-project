@@ -175,8 +175,10 @@ export class Blockchain extends Plugin {
   /** Return the list of accounts */
   // note: the dual promise/callback is kept for now as it was before
   getAccounts (cb) {
+    console.log('getAccounts')
     return new Promise((resolve, reject) => {
       this.getCurrentProvider().getAccounts((error, accounts) => {
+        console.log('get accounts res',error, accounts)
         if (cb) {
           return cb(error, accounts)
         }
