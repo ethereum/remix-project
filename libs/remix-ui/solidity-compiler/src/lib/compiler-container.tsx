@@ -179,21 +179,21 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   useEffect(() => {
     if (compilerContainer.compiler.mode) {
       switch (compilerContainer.compiler.mode) {
-        case 'startingCompilation':
-          startingCompilation()
-          break
-        case 'compilationDuration':
-          compilationDuration(compilerContainer.compiler.args[0])
-          break
-        case 'loadingCompiler':
-          loadingCompiler()
-          break
-        case 'compilerLoaded':
-          compilerLoaded(compilerContainer.compiler.args[1])
-          break
-        case 'compilationFinished':
-          compilationFinished()
-          break
+      case 'startingCompilation':
+        startingCompilation()
+        break
+      case 'compilationDuration':
+        compilationDuration(compilerContainer.compiler.args[0])
+        break
+      case 'loadingCompiler':
+        loadingCompiler()
+        break
+      case 'compilerLoaded':
+        compilerLoaded(compilerContainer.compiler.args[1])
+        break
+      case 'compilationFinished':
+        compilationFinished()
+        break
       }
     }
   }, [compilerContainer.compiler.mode])
@@ -201,14 +201,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   useEffect(() => {
     if (compilerContainer.editor.mode) {
       switch (compilerContainer.editor.mode) {
-        case 'sessionSwitched':
-          sessionSwitched()
-          resetEditorMode()(dispatch)
-          break
-        case 'contentChanged':
-          contentChanged()
-          resetEditorMode()(dispatch)
-          break
+      case 'sessionSwitched':
+        sessionSwitched()
+        resetEditorMode()(dispatch)
+        break
+      case 'contentChanged':
+        contentChanged()
+        resetEditorMode()(dispatch)
+        break
       }
     }
   }, [compilerContainer.editor.mode])
@@ -800,8 +800,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   tooltipClasses="text-nowrap"
                   tooltipId="overlay-tooltip-hardhat"
                   tooltipText={<span className="border bg-light text-dark p-1 pr-3" style={{ minWidth: '230px' }}>
-                      <FormattedMessage id='solidity.learnHardhat' />
-                    </span>}
+                    <FormattedMessage id='solidity.learnHardhat' />
+                  </span>}
                 >
                   <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
                 </CustomTooltip>
@@ -821,8 +821,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   tooltipClasses="text-nowrap"
                   tooltipId="overlay-tooltip-truffle"
                   tooltipText={<span className="border bg-light text-dark p-1 pr-3" style={{ minWidth: '230px' }}>
-                      <FormattedMessage id='solidity.learnTruffle' />
-                    </span>}
+                    <FormattedMessage id='solidity.learnTruffle' />
+                  </span>}
                 >
                   <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
                 </CustomTooltip>
@@ -904,18 +904,18 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           </div>
           <div className={`pt-2 ml-4 ml-2 align-items-start justify-content-between d-flex`}>
             {(!showFilePathInput && state.useFileConfiguration) && <CustomTooltip
-                placement="bottom"
-                tooltipId="configfileTooltip"
-                tooltipClasses="text-nowrap"
-                tooltipText={<span>
+              placement="bottom"
+              tooltipId="configfileTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={<span>
                       Click to open the config file
-                    </span>}
-              >
-                <span
-                  onClick={configFilePath === '' ? () => { } : async () => { await openFile() }}
-                  className="py-2 remixui_compilerConfigPath"
-                >{configFilePath === '' ? 'No file selected.' : configFilePath}</span>
-              </CustomTooltip>}
+              </span>}
+            >
+              <span
+                onClick={configFilePath === '' ? () => { } : async () => { await openFile() }}
+                className="py-2 remixui_compilerConfigPath"
+              >{configFilePath === '' ? 'No file selected.' : configFilePath}</span>
+            </CustomTooltip>}
             {(!showFilePathInput && !state.useFileConfiguration) && <span className="py-2 text-secondary">{configFilePath}</span>}
             <input
               ref={configFilePathInput}
@@ -941,9 +941,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               placement="auto"
               tooltipId="overlay-tooltip-compile"
               tooltipText={<div className="text-left">
-                  {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+S</b> to compile {state.compiledFileName.endsWith('.sol') ? state.compiledFileName : null} </div>}
-                  {(configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div>}
-                </div>}
+                {!(configFilePath === '' && state.useFileConfiguration) && <div><b>Ctrl+S</b> to compile {state.compiledFileName.endsWith('.sol') ? state.compiledFileName : null} </div>}
+                {(configFilePath === '' && state.useFileConfiguration) && <div> No config file selected</div>}
+              </div>}
             >
               <div className="d-flex align-items-center justify-content-center">
                 { <i ref={compileIcon} className="fas fa-sync mr-2" aria-hidden="true"></i> }
@@ -959,8 +959,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                           id: 'solidity.noFileSelected',
                         })}>`
                       : `<${intl.formatMessage({
-                          id: 'solidity.noFileSelected',
-                        })}>`}
+                        id: 'solidity.noFileSelected',
+                      })}>`}
                   </span>
                 </div>
               </div>

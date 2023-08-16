@@ -88,10 +88,10 @@ export class CompilerMetadata extends Plugin {
       const buildData = {id, _format: format, solcVersion, solcLongVersion, input, output}
       await this.call('fileManager', 'writeFile', buildFilename, JSON.stringify(buildData, null, '\t'))
     } else if (this.buildInfoNames[filePath] && this.buildInfoNames[filePath] !== buildFilename) {
-        await this.call('fileManager', 'remove', this.buildInfoNames[filePath])
-        this.buildInfoNames[filePath] = buildFilename
-        const buildData = {id, _format: format, solcVersion, solcLongVersion, input, output}
-        await this.call('fileManager', 'writeFile', buildFilename, JSON.stringify(buildData, null, '\t'))
+      await this.call('fileManager', 'remove', this.buildInfoNames[filePath])
+      this.buildInfoNames[filePath] = buildFilename
+      const buildData = {id, _format: format, solcVersion, solcLongVersion, input, output}
+      await this.call('fileManager', 'writeFile', buildFilename, JSON.stringify(buildData, null, '\t'))
     }
   }
 

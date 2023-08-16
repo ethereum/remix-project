@@ -43,7 +43,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
                 tooltipId="maintainedByTooltip"
                 tooltipClasses="text-nowrap"
                 tooltipText="Maintained by Remix"
-                >
+              >
                 <i aria-hidden="true" className="text-success mt-1 px-1 fas fa-check"></i>
               </CustomTooltip>
             )}

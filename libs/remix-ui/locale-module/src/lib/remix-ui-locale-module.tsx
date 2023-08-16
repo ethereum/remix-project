@@ -11,7 +11,7 @@ export function RemixUiLocaleModule({ localeModule }: RemixUiLocaleModuleProps) 
   const [localeCode, setLocaleCode] = useState('')
 
   useEffect(() => {
-      localeModule.switchLocale()
+    localeModule.switchLocale()
   }, [localeCode, localeModule])
 
   return (
@@ -23,31 +23,31 @@ export function RemixUiLocaleModule({ localeModule }: RemixUiLocaleModuleProps) 
         <div className="card-text locales-container">
           {localeModule.getLocales()
             ? localeModule.getLocales().map((locale, idx) => (
-                <div
-                  className="radio custom-control custom-radio mb-1 form-check"
-                  key={idx}
+              <div
+                className="radio custom-control custom-radio mb-1 form-check"
+                key={idx}
+              >
+                <input
+                  type="radio"
+                  onChange={event => {
+                    localeModule.switchLocale(locale.code);
+                    setLocaleCode(locale.code);
+                  }}
+                  className="align-middle custom-control-input"
+                  name="locale"
+                  id={locale.code}
+                  data-id={`settingsTabLocale${locale.code}`}
+                  checked={localeModule.active === locale.code.toLocaleLowerCase()}
+                />
+                <label
+                  className="form-check-label custom-control-label"
+                  data-id={`settingsTabLocaleLabel${locale.code}`}
+                  htmlFor={locale.code}
                 >
-                  <input
-                    type="radio"
-                    onChange={event => {
-                      localeModule.switchLocale(locale.code);
-                      setLocaleCode(locale.code);
-                    }}
-                    className="align-middle custom-control-input"
-                    name="locale"
-                    id={locale.code}
-                    data-id={`settingsTabLocale${locale.code}`}
-                    checked={localeModule.active === locale.code.toLocaleLowerCase()}
-                  />
-                  <label
-                    className="form-check-label custom-control-label"
-                    data-id={`settingsTabLocaleLabel${locale.code}`}
-                    htmlFor={locale.code}
-                  >
-                    {locale.name.toLocaleUpperCase()}-{locale.localeName}
-                  </label>
-                </div>
-              ))
+                  {locale.name.toLocaleUpperCase()}-{locale.localeName}
+                </label>
+              </div>
+            ))
             : null}
         </div>
       </div>

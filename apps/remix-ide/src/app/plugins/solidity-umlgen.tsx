@@ -16,40 +16,13 @@ const parser = (window as any).SolidityParser
 const _paq = window._paq = window._paq || []
 
 const profile = {
-    name: 'solidityumlgen',
-    displayName: 'Solidity UML Generator',
-    description: 'Generates UML diagram in svg format from last compiled contract',
-    location: 'mainPanel',
-    methods: ['showUmlDiagram', 'generateUml', 'generateCustomAction'],
-    events: [],
+  name: 'solidityumlgen',
+  displayName: 'Solidity UML Generator',
+  description: 'Generates UML diagram in svg format from last compiled contract',
+  location: 'mainPanel',
+  methods: ['showUmlDiagram', 'generateUml', 'generateCustomAction'],
+  events: [],
 }
-
-const themeCollection = [
-  { themeName: 'HackerOwl', backgroundColor: '#011628', textColor: '#babbcc',
-  shapeColor: '#8694a1',fillColor: '#011C32'},
-  { themeName: 'Cerulean', backgroundColor: '#ffffff', textColor: '#343a40',
-  shapeColor: '#343a40',fillColor: '#f8f9fa'},
-  { themeName: 'Cyborg', backgroundColor: '#060606', textColor: '#adafae',
-  shapeColor: '#adafae', fillColor: '#222222'},
-  { themeName: 'Dark', backgroundColor: '#222336', textColor: '#babbcc',
-  shapeColor: '#babbcc',fillColor: '#2a2c3f'},
-  { themeName: 'Flatly', backgroundColor: '#ffffff', textColor: '#343a40',
-  shapeColor: '#7b8a8b',fillColor: '#ffffff'},
-  { themeName: 'Black', backgroundColor: '#1a1a1a', textColor: '#babbcc',
-  shapeColor: '#b5b4bc',fillColor: '#1f2020'},
-  { themeName: 'Light', backgroundColor: '#eef1f6', textColor: '#3b445e',
-  shapeColor: '#343a40',fillColor: '#ffffff'},
-  { themeName: 'Midcentury', backgroundColor: '#DBE2E0', textColor: '#11556c',
-  shapeColor: '#343a40',fillColor: '#eeede9'},
-  { themeName: 'Spacelab', backgroundColor: '#ffffff', textColor: '#343a40',
-  shapeColor: '#333333', fillColor: '#eeeeee'},
-  { themeName: 'Candy', backgroundColor: '#d5efff', textColor: '#11556c',
-  shapeColor: '#343a40',fillColor: '#fbe7f8' },
-  { themeName: 'Violet', backgroundColor: '#f1eef6', textColor: '#3b445e',
-  shapeColor: '#343a40',fillColor: '#f8fafe' },
-  { themeName: 'Unicorn', backgroundColor: '#f1eef6', textColor: '#343a40',
-  shapeColor: '#343a40',fillColor: '#f8fafe' },
-]
 
 /**
  * add context menu which will offer download as pdf and download png.
@@ -81,8 +54,8 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     this.currentlySelectedTheme = ''
     this.themeName = ''
 
-    this.themeCollection = themeCollection
-    this.activeTheme = themeCollection.find(t => t.themeName === 'Dark')
+
+    this.activeTheme = {} as ThemeSummary
     this.appManager = appManager
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'sol-uml-gen')
@@ -106,7 +79,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
         const ast = result.length > 1 ? parser.parse(result) : parser.parse(source.sources[file].content)
         this.umlClasses = convertAST2UmlClasses(ast, this.currentFile)
         let umlDot = ''
-        this.activeTheme = themeCollection.find(theme => theme.themeName === currentTheme.name)
+        this.activeTheme = await this.call('theme', 'currentTheme')
         umlDot = convertUmlClasses2Dot(this.umlClasses, false, { backColor: this.activeTheme.backgroundColor, textColor: this.activeTheme.textColor, shapeColor: this.activeTheme.shapeColor, fillColor: this.activeTheme.fillColor })
         const payload = vizRenderStringSync(umlDot)
         this.updatedSvg = payload
@@ -121,39 +94,19 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
 
   getThemeCssVariables(cssVars: string) {
     return window.getComputedStyle(document.documentElement)
-    .getPropertyValue(cssVars)
+      .getPropertyValue(cssVars)
   }
 
   private handleThemeChange() {
     this.on('theme', 'themeChanged', async (theme) => {
       this.currentlySelectedTheme = theme.quality
-      const themeQuality: ThemeQualityType = await this.call('theme', 'currentTheme')
-      themeCollection.forEach((theme) => {
-        if (theme.themeName === themeQuality.name) {
-          this.themeDark = theme.backgroundColor
-          this.activeTheme = theme
-          const umlDot = convertUmlClasses2Dot(this.umlClasses, false, { backColor: this.activeTheme.backgroundColor, textColor: this.activeTheme.textColor, shapeColor: this.activeTheme.shapeColor, fillColor: this.activeTheme.fillColor })
-          this.updatedSvg = vizRenderStringSync(umlDot)
-          this.renderComponent()
-        }
-      })
+      this.activeTheme = theme
+      this.themeDark = theme.backgroundColor
+      const umlDot = convertUmlClasses2Dot(this.umlClasses, false, { backColor: this.activeTheme.backgroundColor, textColor: this.activeTheme.textColor, shapeColor: this.activeTheme.shapeColor, fillColor: this.activeTheme.fillColor })
+      this.updatedSvg = vizRenderStringSync(umlDot)
+      this.renderComponent()
       await this.call('tabs', 'focus', 'solidityumlgen')
     })
-  }
-
-  async mangleSvgPayload(svgPayload: string) : Promise<string> {
-    const parser = new DOMParser()
-    const themeQuality: ThemeQualityType = await this.call('theme', 'currentTheme')
-    const parsedDocument = parser.parseFromString(svgPayload, 'image/svg+xml')
-    const element = parsedDocument.getElementsByTagName('svg')
-    themeCollection.forEach((theme) => {
-      if (theme.themeName === themeQuality.name) {
-        parsedDocument.documentElement.setAttribute('style', `background-color: var(${this.getThemeCssVariables('--body-bg')})`)
-        element[0].setAttribute('fill', theme.backgroundColor)
-      }
-    })
-    const stringifiedSvg = new XMLSerializer().serializeToString(parsedDocument)
-    return stringifiedSvg
   }
 
   onDeactivation(): void {
@@ -246,10 +199,10 @@ interface Sol2umlClassOptions extends ClassOptions {
 import { dirname } from 'path'
 import { convertClass2Dot } from 'sol2uml/lib/converterClass2Dot'
 import {
-    Association,
-    ClassStereotype,
-    ReferenceType,
-    UmlClass,
+  Association,
+  ClassStereotype,
+  ReferenceType,
+  UmlClass,
 } from 'sol2uml/lib/umlClass'
 import { findAssociatedClass } from 'sol2uml/lib/associations'
 
@@ -264,11 +217,11 @@ import { findAssociatedClass } from 'sol2uml/lib/associations'
  * @return dotString Graphviz's DOT format for defining nodes, edges and clusters.
  */
 export function convertUmlClasses2Dot(
-    umlClasses: UmlClass[],
-    clusterFolders: boolean = false,
-    classOptions: Sol2umlClassOptions = {}
+  umlClasses: UmlClass[],
+  clusterFolders: boolean = false,
+  classOptions: Sol2umlClassOptions = {}
 ): string {
-    let dotString: string = `
+  let dotString: string = `
 digraph UmlClassDiagram {
 rankdir=BT
 arrowhead=open
@@ -276,124 +229,124 @@ bgcolor="${classOptions.backColor}"
 edge [color="${classOptions.shapeColor}"]
 node [shape=record, style=filled, color="${classOptions.shapeColor}", fillcolor="${classOptions.fillColor}", fontcolor="${classOptions.textColor}"]`
 
-    // Sort UML Classes by folder of source file
-    const umlClassesSortedByCodePath = sortUmlClassesByCodePath(umlClasses)
+  // Sort UML Classes by folder of source file
+  const umlClassesSortedByCodePath = sortUmlClassesByCodePath(umlClasses)
 
-    let currentCodeFolder = ''
-    for (const umlClass of umlClassesSortedByCodePath) {
-        const codeFolder = dirname(umlClass.relativePath)
-        if (currentCodeFolder !== codeFolder) {
-            // Need to close off the last subgraph if not the first
-            if (currentCodeFolder != '') {
-                dotString += '\n}'
-            }
+  let currentCodeFolder = ''
+  for (const umlClass of umlClassesSortedByCodePath) {
+    const codeFolder = dirname(umlClass.relativePath)
+    if (currentCodeFolder !== codeFolder) {
+      // Need to close off the last subgraph if not the first
+      if (currentCodeFolder != '') {
+        dotString += '\n}'
+      }
 
-            dotString += `
+      dotString += `
 subgraph ${getSubGraphName(clusterFolders)} {
 label="${codeFolder}"`
 
-            currentCodeFolder = codeFolder
-        }
-        dotString += convertClass2Dot(umlClass, classOptions)
+      currentCodeFolder = codeFolder
     }
+    dotString += convertClass2Dot(umlClass, classOptions)
+  }
 
-    // Need to close off the last subgraph if not the first
-    if (currentCodeFolder != '') {
-        dotString += '\n}'
-    }
-
-    dotString += addAssociationsToDot(umlClasses, classOptions)
-
-    // Need to close off the last the digraph
+  // Need to close off the last subgraph if not the first
+  if (currentCodeFolder != '') {
     dotString += '\n}'
+  }
 
-    // debug(dotString)
+  dotString += addAssociationsToDot(umlClasses, classOptions)
 
-    return dotString
+  // Need to close off the last the digraph
+  dotString += '\n}'
+
+  // debug(dotString)
+
+  return dotString
 }
 
 let subGraphCount = 0
 function getSubGraphName(clusterFolders: boolean = false) {
-    if (clusterFolders) {
-        return ` cluster_${subGraphCount++}`
-    }
-    return ` graph_${subGraphCount++}`
+  if (clusterFolders) {
+    return ` cluster_${subGraphCount++}`
+  }
+  return ` graph_${subGraphCount++}`
 }
 
 function sortUmlClassesByCodePath(umlClasses: UmlClass[]): UmlClass[] {
-    return umlClasses.sort((a, b) => {
-        if (a.relativePath < b.relativePath) {
-            return -1
-        }
-        if (a.relativePath > b.relativePath) {
-            return 1
-        }
-        return 0
-    })
+  return umlClasses.sort((a, b) => {
+    if (a.relativePath < b.relativePath) {
+      return -1
+    }
+    if (a.relativePath > b.relativePath) {
+      return 1
+    }
+    return 0
+  })
 }
 
 export function addAssociationsToDot(
-    umlClasses: UmlClass[],
-    classOptions: ClassOptions = {}
+  umlClasses: UmlClass[],
+  classOptions: ClassOptions = {}
 ): string {
-    let dotString: string = ''
+  let dotString: string = ''
 
-    // for each class
-    for (const sourceUmlClass of umlClasses) {
-        if (!classOptions.hideEnums) {
-            // for each enum in the class
-            sourceUmlClass.enums.forEach((enumId) => {
-                // Has the enum been filtered out? eg depth limited
-                const targetUmlClass = umlClasses.find((c) => c.id === enumId)
-                if (targetUmlClass) {
-                    // Draw aggregated link from contract to contract level Enum
-                    dotString += `\n${enumId} -> ${sourceUmlClass.id} [arrowhead=diamond, weight=2]`
-                }
-            })
+  // for each class
+  for (const sourceUmlClass of umlClasses) {
+    if (!classOptions.hideEnums) {
+      // for each enum in the class
+      sourceUmlClass.enums.forEach((enumId) => {
+        // Has the enum been filtered out? eg depth limited
+        const targetUmlClass = umlClasses.find((c) => c.id === enumId)
+        if (targetUmlClass) {
+          // Draw aggregated link from contract to contract level Enum
+          dotString += `\n${enumId} -> ${sourceUmlClass.id} [arrowhead=diamond, weight=2]`
         }
-        if (!classOptions.hideStructs) {
-            // for each struct in the class
-            sourceUmlClass.structs.forEach((structId) => {
-                // Has the struct been filtered out? eg depth limited
-                const targetUmlClass = umlClasses.find((c) => c.id === structId)
-                if (targetUmlClass) {
-                    // Draw aggregated link from contract to contract level Struct
-                    dotString += `\n${structId} -> ${sourceUmlClass.id} [arrowhead=diamond, weight=2]`
-                }
-            })
+      })
+    }
+    if (!classOptions.hideStructs) {
+      // for each struct in the class
+      sourceUmlClass.structs.forEach((structId) => {
+        // Has the struct been filtered out? eg depth limited
+        const targetUmlClass = umlClasses.find((c) => c.id === structId)
+        if (targetUmlClass) {
+          // Draw aggregated link from contract to contract level Struct
+          dotString += `\n${structId} -> ${sourceUmlClass.id} [arrowhead=diamond, weight=2]`
         }
-
-        // for each association in that class
-        for (const association of Object.values(sourceUmlClass.associations)) {
-            const targetUmlClass = findAssociatedClass(
-                association,
-                sourceUmlClass,
-                umlClasses
-            )
-            if (targetUmlClass) {
-                dotString += addAssociationToDot(
-                    sourceUmlClass,
-                    targetUmlClass,
-                    association,
-                    classOptions
-                )
-            }
-        }
+      })
     }
 
-    return dotString
+    // for each association in that class
+    for (const association of Object.values(sourceUmlClass.associations)) {
+      const targetUmlClass = findAssociatedClass(
+        association,
+        sourceUmlClass,
+        umlClasses
+      )
+      if (targetUmlClass) {
+        dotString += addAssociationToDot(
+          sourceUmlClass,
+          targetUmlClass,
+          association,
+          classOptions
+        )
+      }
+    }
+  }
+
+  return dotString
 }
 
 function addAssociationToDot(
-    sourceUmlClass: UmlClass,
-    targetUmlClass: UmlClass,
-    association: Association,
-    classOptions: ClassOptions = {}
+  sourceUmlClass: UmlClass,
+  targetUmlClass: UmlClass,
+  association: Association,
+  classOptions: ClassOptions = {}
 ): string {
-    // do not include library or interface associations if hidden
-    // Or associations to Structs, Enums or Constants if they are hidden
-    if (
-        (classOptions.hideLibraries &&
+  // do not include library or interface associations if hidden
+  // Or associations to Structs, Enums or Constants if they are hidden
+  if (
+    (classOptions.hideLibraries &&
             (sourceUmlClass.stereotype === ClassStereotype.Library ||
                 targetUmlClass.stereotype === ClassStereotype.Library)) ||
         (classOptions.hideInterfaces &&
@@ -408,28 +361,28 @@ function addAssociationToDot(
             targetUmlClass.stereotype === ClassStereotype.Enum) ||
         (classOptions.hideConstants &&
             targetUmlClass.stereotype === ClassStereotype.Constant)
-    ) {
-        return ''
-    }
+  ) {
+    return ''
+  }
 
-    let dotString = `\n${sourceUmlClass.id} -> ${targetUmlClass.id} [`
+  let dotString = `\n${sourceUmlClass.id} -> ${targetUmlClass.id} [`
 
-    if (
-        association.referenceType == ReferenceType.Memory ||
+  if (
+    association.referenceType == ReferenceType.Memory ||
         (association.realization &&
             targetUmlClass.stereotype === ClassStereotype.Interface)
-    ) {
-        dotString += 'style=dashed, '
-    }
+  ) {
+    dotString += 'style=dashed, '
+  }
 
-    if (association.realization) {
-        dotString += 'arrowhead=empty, arrowsize=3, '
-        if (!targetUmlClass.stereotype) {
-            dotString += 'weight=4, '
-        } else {
-            dotString += 'weight=3, '
-        }
+  if (association.realization) {
+    dotString += 'arrowhead=empty, arrowsize=3, '
+    if (!targetUmlClass.stereotype) {
+      dotString += 'weight=4, '
+    } else {
+      dotString += 'weight=3, '
     }
+  }
 
-    return dotString + ']'
+  return dotString + ']'
 }

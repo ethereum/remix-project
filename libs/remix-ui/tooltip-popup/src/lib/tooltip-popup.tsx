@@ -6,9 +6,9 @@ import './tooltip-popup.module.css'
 const popover = (title?: string, content?: string | React.ReactNode) => (
   <Popover id="popover-basic" className='bg-danger border-danger'>
     <Popover.Title as="h3" className='bg-warning border-0'>{ title || 'Tooltip' }</Popover.Title>
-      <Popover.Content className='bg-danger border-info'>
-        { content }
-      </Popover.Content>
+    <Popover.Content className='bg-danger border-info'>
+      { content }
+    </Popover.Content>
   </Popover>
 )
 

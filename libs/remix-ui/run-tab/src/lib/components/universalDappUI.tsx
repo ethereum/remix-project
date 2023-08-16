@@ -312,7 +312,7 @@ export function UniversalDappUI (props: UdappProps) {
                                 );
                               }
                             )
-                          : null;
+                            : null;
                         }
                       )}
                     </TreeView>
