@@ -20,6 +20,9 @@ jobs:
           install-geckodriver: false
       - run: google-chrome --version
       - run: chromedriver --version
+      - run: yarn init -y
+      - run: yarn add selenium-standalone
+      - run: yarn run selenium-standalone install
 
   build:
     docker:
