@@ -22,7 +22,7 @@
     "@openzeppelin/contracts": "^4.7.3",
     "@openzeppelin/wizard": "^0.1.1",
     "ethers": "^5.4.2",
-    "web3": "^4.0.3"
+    "web3": "^4.1.0"
   },
   "gitHead": "b11b11623729f741a5ccd387bc60dc5db41f28ab"
 }

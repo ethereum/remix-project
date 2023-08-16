@@ -31,7 +31,7 @@
     "ethers": "^5.4.2",
     "ethjs-util": "^0.1.6",
     "string-similarity": "^4.0.4",
-    "web3": "^4.0.3"
+    "web3": "^4.1.0"
   },
   "publishConfig": {
     "access": "public"
