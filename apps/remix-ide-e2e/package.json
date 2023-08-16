@@ -13,7 +13,7 @@
     "@remix-project/remixd": "../../dist/libs/remixd",
     "deep-equal": "^1.0.1",
     "ganache-cli": "^6.8.1",
-    "selenium-standalone": "^8.2.3",
+    "selenium-standalone": "^9.0.3",
     "tree-kill": "^1.2.2"
   },
   "devDependencies": {
