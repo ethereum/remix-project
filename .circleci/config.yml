@@ -7,6 +7,22 @@ parameters:
 orbs:
   browser-tools: circleci/browser-tools@1.4.3
 jobs:
+  browserinstaller:
+    docker:
+      - image: cimg/node:20.0.0-browsers
+    resource_class:
+      xlarge
+    working_directory: ~/remix-project
+    steps:
+      - browser-tools/install-browser-tools:
+          install-firefox: false
+          install-chrome: true
+          chrome-version: "115"
+          install-geckodriver: false
+          install-chromedriver: true
+      - run: google-chrome --version
+      - run: chromedriver --version
+
   build:
     docker:
       - image: cimg/node:20.0.0-browsers
@@ -288,6 +304,7 @@ workflows:
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
+      - browserinstaller
       - build
       - build-plugin:
           matrix:
