@@ -7,24 +7,6 @@ parameters:
 orbs:
   browser-tools: circleci/browser-tools@1.4.3
 jobs:
-  browserinstaller:
-    docker:
-      - image: cimg/node:20.0.0-browsers
-    resource_class:
-      xlarge
-    working_directory: ~/remix-project
-    steps:
-      - browser-tools/install-browser-tools:
-          install-firefox: false
-          chrome-version: "latest"
-          install-geckodriver: false
-      - run: google-chrome --version
-      - run: chromedriver --version
-      - run: yarn init -y
-      - run: yarn add selenium-standalone
-      - run: yarn run selenium-standalone install
-      - run: cat package.json
-
   build:
     docker:
       - image: cimg/node:20.0.0-browsers
@@ -304,7 +286,6 @@ workflows:
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
-      - browserinstaller
       - build
       - build-plugin:
           matrix:
