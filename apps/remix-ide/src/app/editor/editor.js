@@ -51,7 +51,8 @@ class Editor extends Plugin {
       rs: 'rust',
       cairo: 'cairo',
       ts: 'typescript',
-      move: 'move'
+      move: 'move',
+      circom: 'circom'
     }
 
     this.activated = false
@@ -99,8 +100,8 @@ class Editor extends Plugin {
       this.ref.clearDecorationsByPlugin = (filePath, plugin, typeOfDecoration) => this.clearDecorationsByPlugin(filePath, plugin, typeOfDecoration)      
       this.ref.keepDecorationsFor = (name, typeOfDecoration) => this.keepDecorationsFor(name, typeOfDecoration)
     }} id='editorView'>
-        <PluginViewWrapper plugin={this} />
-      </div>
+      <PluginViewWrapper plugin={this} />
+    </div>
   }
 
   renderComponent () {
@@ -293,7 +294,7 @@ class Editor extends Plugin {
    * Get the text in the current session, if any.
    * @param {string} url Address of the content to retrieve.
    */
-   getText (url) {
+  getText (url) {
     if (this.sessions[url]) {
       return this.sessions[url].getValue()
     }

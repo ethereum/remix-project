@@ -20,7 +20,7 @@ export class InjectedProvider {
   }
 
   async resetEnvironment () {
-     /* Do nothing. */ 
+    /* Do nothing. */ 
   }
 
   async getBalanceInEther (address) {

@@ -55,9 +55,9 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
     </article>
     <article className='remember'>
       { <div className='form-check'>
-          <input type="checkbox" onChange={switchMode} className='form-check-input' id='rememberSwitchCheck' data-id={remember ? 'permissionHandlerRememberChecked' : 'permissionHandlerRememberUnchecked'}/>
-          <label htmlFor='rememberSwitchCheck' className="form-check-label" data-id="permissionHandlerRememberChoice"><FormattedMessage id='permissionHandler.rememberThisChoice' /></label>
-        </div>
+        <input type="checkbox" onChange={switchMode} className='form-check-input' id='rememberSwitchCheck' data-id={remember ? 'permissionHandlerRememberChecked' : 'permissionHandlerRememberUnchecked'}/>
+        <label htmlFor='rememberSwitchCheck' className="form-check-label" data-id="permissionHandlerRememberChoice"><FormattedMessage id='permissionHandler.rememberThisChoice' /></label>
+      </div>
       }
       <button className="btn-secondary btn-sm" onClick={reset}><FormattedMessage id='permissionHandler.resetAllPermissions' /></button>
     </article>

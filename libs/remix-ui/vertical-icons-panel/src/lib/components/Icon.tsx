@@ -106,9 +106,9 @@ const Icon = ({
           ref={iconRef}
         >
           <img data-id={iconRecord.active ? `selected`: ''} className={`${theme === 'dark' ? 'invert' : ''} ${theme} remixui_image ${iconRecord.active ? `selected-${theme}`:''}`} src={icon} alt={name} />
-            <Badge
-              badgeStatus={badgeStatus}
-            />
+          <Badge
+            badgeStatus={badgeStatus}
+          />
         </div>
       </CustomTooltip>
       {showContext ? (

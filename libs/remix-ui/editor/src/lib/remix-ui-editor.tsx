@@ -15,7 +15,9 @@ import { RemixReferenceProvider } from './providers/referenceProvider'
 import { RemixCompletionProvider } from './providers/completionProvider'
 import { RemixHighLightProvider } from './providers/highlightProvider'
 import { RemixDefinitionProvider } from './providers/definitionProvider'
+import { RemixCodeActionProvider } from './providers/codeActionProvider'
 import './remix-ui-editor.css'
+import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
 
 
 enum MarkerSeverity {
@@ -321,6 +323,8 @@ export const EditorUI = (props: EditorUIProps) => {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-zokrates')
     } else if (file.language === 'move') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-move')
+    } else if (file.language === 'circom') {
+      monacoRef.current.editor.setModelLanguage(file.model, 'remix-circom')
     }
   }, [props.currentFile])
 
@@ -565,7 +569,7 @@ export const EditorUI = (props: EditorUIProps) => {
     })
 
     editor.onDidPaste((e) => {
-       if (!pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
+      if (!pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
         const modalContent: AlertModal = {
           id: 'newCodePasted',
           title: 'Pasted Code Alert',
@@ -730,6 +734,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.register({ id: 'remix-cairo' })
     monacoRef.current.languages.register({ id: 'remix-zokrates' })
     monacoRef.current.languages.register({ id: 'remix-move' })
+    monacoRef.current.languages.register({ id: 'remix-circom' })
 
     // Register a tokens provider for the language
     monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider as any)
@@ -744,11 +749,15 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.setMonarchTokensProvider('remix-move', moveTokenProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-move', moveLanguageConfig as any)
 
+    monacoRef.current.languages.setMonarchTokensProvider('remix-circom', circomTokensProvider as any)
+    monacoRef.current.languages.setLanguageConfiguration('remix-circom', circomLanguageConfig(monacoRef.current) as any)
+
     monacoRef.current.languages.registerDefinitionProvider('remix-solidity', new RemixDefinitionProvider(props, monaco))
     monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', new RemixHighLightProvider(props, monaco))
     monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
     monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
     monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
+    monaco.languages.registerCodeActionProvider("remix-solidity", new RemixCodeActionProvider(props, monaco))
 
     loadTypes(monacoRef.current)
   }
@@ -767,7 +776,7 @@ export const EditorUI = (props: EditorUIProps) => {
       {editorModelsState[props.currentFile]?.readOnly && <span className='pl-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0'>
         <i className="fas fa-lock-alt p-2"></i>
           The file is opened in <b>read-only</b> mode.
-        </span>
+      </span>
       }
     </div>
   )
