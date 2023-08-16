@@ -113,19 +113,14 @@ export class RunTab extends ViewPlugin {
         title,
         init: async function () {
           const options = await udapp.call(name, 'init')
-          if (options) { 
+          if (options) {
             this.options = options
             if (options['fork']) this.fork = options['fork']
           }
         },
         provider: {
-          async sendAsync (payload, callback) {
-            try {
-              const result = await udapp.call(name, 'sendAsync', payload)
-              callback(null, result)
-            } catch (e) {
-              callback(e)
-            }
+          async sendAsync (payload) {
+              return udapp.call(name, 'sendAsync', payload)
           }
         }
       })
@@ -145,10 +140,10 @@ export class RunTab extends ViewPlugin {
     }
 
     if (window && window.trustwallet) {
-      const displayNameInjected = `Injected Provider - TrustWallet`    
+      const displayNameInjected = `Injected Provider - TrustWallet`
       await addProvider('injected-trustwallet', displayNameInjected, true, false)
     }
-    
+
     // VM
     const titleVM = 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.'
     await addProvider('vm-shanghai', 'Remix VM (Shanghai)', false, true, 'shanghai', 'settingsVMShanghaiMode', titleVM)
@@ -167,9 +162,9 @@ export class RunTab extends ViewPlugin {
     await addProvider('basic-http-provider', 'Custom - External Http Provider', false, false)
     await addProvider('hardhat-provider', 'Dev - Hardhat Provider', false, false)
     await addProvider('ganache-provider', 'Dev - Ganache Provider', false, false)
-    await addProvider('foundry-provider', 'Dev - Foundry Provider', false, false)    
-    
-    // injected provider    
+    await addProvider('foundry-provider', 'Dev - Foundry Provider', false, false)
+
+    // injected provider
     await addProvider('injected-optimism-provider', 'L2 - Optimism Provider', true, false)
     await addProvider('injected-arbitrum-one-provider', 'L2 - Arbitrum One Provider', true, false)
   }

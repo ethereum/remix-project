@@ -15,9 +15,9 @@ export class NodeProvider {
 
   getAccounts (cb) {
     if (this.config.get('settings/personal-mode')) {
-      return this.executionContext.web3().eth.personal.getAccounts(cb)
+      return this.executionContext.web3().eth.personal.getAccounts().then(res => cb(null, res)).catch(err => cb(err))
     }
-    return this.executionContext.web3().eth.getAccounts(cb)
+    return this.executionContext.web3().eth.getAccounts().then(res => cb(null, res)).catch(err => cb(err))
   }
 
   newAccount (passwordPromptCb, cb) {
@@ -25,7 +25,7 @@ export class NodeProvider {
       return cb('Not running in personal mode')
     }
     passwordPromptCb((passphrase) => {
-      this.executionContext.web3().eth.personal.newAccount(passphrase, cb)
+      this.executionContext.web3().eth.personal.newAccount(passphrase).then(res => cb(null, res)).catch(err => cb(err))
     })
   }
 
@@ -39,7 +39,7 @@ export class NodeProvider {
   }
 
   getGasPrice (cb) {
-    this.executionContext.web3().eth.getGasPrice(cb)
+    this.executionContext.web3().eth.getGasPrice().then(res => cb(null, res)).catch(err => cb(err))
   }
 
   signMessage (message, account, passphrase, cb) {
