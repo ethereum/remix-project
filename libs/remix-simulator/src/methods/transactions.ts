@@ -153,7 +153,6 @@ export class Transactions {
     }
 
     payload.params[0].gas = 10000000 * 10
-
     this.vmContext.web3().flagNextAsDoNotRecordEvmSteps()
     processTx(this.txRunnerInstance, payload, true, (error, value: VMexecutionResult) => {
       if (error) return cb(error)
@@ -168,12 +167,12 @@ export class Transactions {
           return cb(e.message)
         }
       }
-      let gasUsed = result.execResult.executionGasUsed
+      let gasUsed = Number(toNumber(result.execResult.executionGasUsed))
       if (result.execResult.gasRefund) {
-        gasUsed += result.execResult.gasRefund
+        gasUsed += Number(toNumber(result.execResult.gasRefund))
       }
-      gasUsed = gasUsed + value.tx.getBaseFee()
-      cb(null, Math.ceil(Number(gasUsed) + (15 * Number(gasUsed)) / 100))
+      gasUsed = gasUsed + Number(toNumber(value.tx.getBaseFee()))
+      cb(null, Math.ceil(gasUsed + (15 * gasUsed) / 100))
     })
   }
 
