@@ -32,6 +32,10 @@ export class TxRunner {
   }
 
   execute (args: Transaction, confirmationCb, gasEstimationForceSend, promptCb, callback) {
+    let data = args.data
+    if (data.slice(0, 2) !== '0x') {
+      data = '0x' + data
+    }
     this.internalRunner.execute(args, confirmationCb, gasEstimationForceSend, promptCb, callback)
   }
 }

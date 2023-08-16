@@ -33,7 +33,7 @@ export class TxListener {
   _listenOnNetwork:boolean
   _loopId
   blocks
-  
+
   constructor (opt, executionContext) {
     this.event = new EventManager()
     // has a default for now for backwards compatability
@@ -94,9 +94,7 @@ export class TxListener {
       // in web3 mode && listen remix txs only
       if (!this._isListening) return // we don't listen
       if (this._loopId) return // we seems to already listen on a "web3" network
-      this.executionContext.web3().eth.getTransaction(txResult.transactionHash, async (error, tx) => {
-        if (error) return console.log(error)
-
+      this.executionContext.web3().eth.getTransaction(txResult.transactionHash).then(async tx=>{
         let execResult
         if (this.executionContext.isVM()) {
           execResult = await this.executionContext.web3().testPlugin.getExecutionResultFromSimulator(txResult.transactionHash)
@@ -106,7 +104,7 @@ export class TxListener {
         tx.envMode = this.executionContext.getProvider()
         tx.status = txResult.receipt.status
         this._resolve([tx])
-      })
+      }).catch(error=>console.log(error))
     })
   }
 
@@ -204,7 +202,7 @@ export class TxListener {
   async _manageBlock (blockNumber) {
     try {
       const result = await this.executionContext.web3().eth.getBlock(blockNumber, true)
-      return await this._newBlock(Object.assign({ type: 'web3' }, result))  
+      return await this._newBlock(Object.assign({ type: 'web3' }, result))
     } catch (e) {}
   }
 
@@ -285,8 +283,7 @@ export class TxListener {
       // first check known contract, resolve against the `runtimeBytecode` if not known
       contract = this._resolvedContracts[tx.to]
       if (!contract) {
-        this.executionContext.web3().eth.getCode(tx.to, (error, code) => {
-          if (error) return cb(error)
+        this.executionContext.web3().eth.getCode(tx.to).then(code=>{
           if (code) {
             const contract = this._tryResolveContract(code, contracts, false)
             if (contract) {
@@ -296,7 +293,7 @@ export class TxListener {
             }
           }
           return cb()
-        })
+        }).catch(error=>cb(error))
         return
       }
       if (contract) {
