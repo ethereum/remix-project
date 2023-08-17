@@ -47,9 +47,9 @@ export class WalletConnectRemixClient extends PluginClient {
   async initClient() {
     try {
       this.chains = [
+        mainnet,
         arbitrum,
         arbitrumGoerli,
-        mainnet,
         polygon,
         polygonMumbai,
         optimism,
