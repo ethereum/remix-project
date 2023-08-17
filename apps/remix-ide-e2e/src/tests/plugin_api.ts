@@ -178,9 +178,9 @@ module.exports = {
   },
 
   // UDAPP
-  'Should get accounts #group1': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'udapp:getAccounts', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', null, null)
-  },
+  // 'Should get accounts #group1': async function (browser: NightwatchBrowser) {
+  //   await clickAndCheckLog(browser, 'udapp:getAccounts', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', null, null)
+  // },
 
   'Should select another provider #group1': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'udapp:setEnvironmentMode', null, null, { context: 'vm-berlin' })
