@@ -93,3 +93,21 @@ But in some cases, the `id` prop may not be static. For example,
 </h6>
 ```
 You can't be sure there is a match key in locale file or not. So it will be better to provide a `defaultMessage` prop.
+
+### Should I update the non-english locale json files?
+You probably will have this question when you are updating the english locale json files. 
+
+Well, that depends.
+
+If you update an old json file, then you don't need to update it in other languages, because crowdin will do it for you.
+
+But if you add a new json file, then you have to add it in other languages, and import it in `index.js` of all languages. Because crowdin will not update `index.js`, you have to do it manually.
+
+### How to contribute on translations?
+Remix is using crowdin to manage translations. If you want to contribute on that, you can do it on crowdin. Check the link below. 
+
+https://crowdin.com/project/remix-translation
+
+There are many languages, just get into your language, and you will see a folder named `Remix UI`, where you can do the translations. 
+
+Not only can you do the translations, you can also review it. If you agree or disagree with some translations, you can vote yes or no. If you vote no, you can comment to explain why you vote no, and give your translation.
