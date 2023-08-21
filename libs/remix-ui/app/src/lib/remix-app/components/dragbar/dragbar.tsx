@@ -19,9 +19,7 @@ const DragBar = (props: IRemixDragBarUi) => {
   const nodeRef = React.useRef(null) // fix for strictmode
 
   useEffect(() => {
-    setDragBarPosX(
-      offset + (props.hidden ? 0 : props.refObject.current.offsetWidth)
-    )
+    setDragBarPosX(offset + (props.hidden ? 0 : props.refObject.current.offsetWidth))
   }, [props.hidden, offset])
 
   useEffect(() => {
@@ -49,9 +47,7 @@ const DragBar = (props: IRemixDragBarUi) => {
   const handleResize = () => {
     if (!props.refObject.current) return
     setOffSet(props.refObject.current.offsetLeft)
-    setDragBarPosX(
-      props.refObject.current.offsetLeft + props.refObject.current.offsetWidth
-    )
+    setDragBarPosX(props.refObject.current.offsetLeft + props.refObject.current.offsetWidth)
   }
 
   useEffect(() => {
@@ -81,17 +77,8 @@ const DragBar = (props: IRemixDragBarUi) => {
   return (
     <>
       <div className={`overlay ${dragState ? '' : 'd-none'}`}></div>
-      <Draggable
-        nodeRef={nodeRef}
-        position={{x: dragBarPosX, y: 0}}
-        onStart={startDrag}
-        onStop={stopDrag}
-        axis="x"
-      >
-        <div
-          ref={nodeRef}
-          className={`dragbar ${dragState ? 'ondrag' : ''}`}
-        ></div>
+      <Draggable nodeRef={nodeRef} position={{x: dragBarPosX, y: 0}} onStart={startDrag} onStop={stopDrag} axis="x">
+        <div ref={nodeRef} className={`dragbar ${dragState ? 'ondrag' : ''}`}></div>
       </Draggable>
     </>
   )

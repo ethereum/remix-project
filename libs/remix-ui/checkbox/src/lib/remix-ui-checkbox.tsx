@@ -40,11 +40,7 @@ export const RemixUiCheckbox = ({
   tooltipPlacement = 'right'
 }: RemixUiCheckboxProps) => {
   const childJSXWithTooltip = (
-    <CustomTooltip
-      tooltipText={title}
-      tooltipId={`${name}Tooltip`}
-      placement={tooltipPlacement}
-    >
+    <CustomTooltip tooltipText={title} tooltipId={`${name}Tooltip`} placement={tooltipPlacement}>
       <div
         className={`listenOnNetwork_2A0YE0 custom-control custom-checkbox ${optionalClassName}`}
         style={
@@ -56,22 +52,8 @@ export const RemixUiCheckbox = ({
         }
         onClick={onClick}
       >
-        <input
-          id={id}
-          type={inputType}
-          onChange={onChange}
-          style={{verticalAlign: 'bottom'}}
-          name={name}
-          className="custom-control-input"
-          checked={checked}
-          disabled={disabled}
-        />
-        <label
-          className="form-check-label custom-control-label"
-          id={`heading${categoryId}`}
-          style={{paddingTop: '0.15rem'}}
-          aria-disabled={disabled}
-        >
+        <input id={id} type={inputType} onChange={onChange} style={{verticalAlign: 'bottom'}} name={name} className="custom-control-input" checked={checked} disabled={disabled} />
+        <label className="form-check-label custom-control-label" id={`heading${categoryId}`} style={{paddingTop: '0.15rem'}} aria-disabled={disabled}>
           {name ? <div className="font-weight-bold">{itemName}</div> : ''}
           {label}
         </label>
@@ -90,20 +72,8 @@ export const RemixUiCheckbox = ({
       }
       onClick={onClick}
     >
-      <input
-        id={id}
-        type={inputType}
-        onChange={onChange}
-        style={{verticalAlign: 'bottom'}}
-        name={name}
-        className="custom-control-input"
-        checked={checked}
-      />
-      <label
-        className="form-check-label custom-control-label"
-        id={`heading${categoryId}`}
-        style={{paddingTop: '0.15rem'}}
-      >
+      <input id={id} type={inputType} onChange={onChange} style={{verticalAlign: 'bottom'}} name={name} className="custom-control-input" checked={checked} />
+      <label className="form-check-label custom-control-label" id={`heading${categoryId}`} style={{paddingTop: '0.15rem'}}>
         {name ? <div className="font-weight-bold">{itemName}</div> : ''}
         {label}
       </label>

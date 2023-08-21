@@ -4,16 +4,7 @@ import CheckTxStatus from './ChechTxStatus' // eslint-disable-line
 import Context from './Context' // eslint-disable-line
 import showTable from './Table'
 
-const RenderUnKnownTransactions = ({
-  tx,
-  receipt,
-  index,
-  plugin,
-  showTableHash,
-  txDetails,
-  modal,
-  provider
-}) => {
+const RenderUnKnownTransactions = ({tx, receipt, index, plugin, showTableHash, txDetails, modal, provider}) => {
   const debug = (event, tx) => {
     event.stopPropagation()
     if (tx.isCall && !tx.envMode.startsWith('vm')) {
@@ -37,10 +28,7 @@ const RenderUnKnownTransactions = ({
   const options = {from, to, tx}
   return (
     <span id={`tx${tx.hash}`} key={index}>
-      <div
-        className="remix_ui_terminal_log"
-        onClick={(event) => txDetails(event, tx)}
-      >
+      <div className="remix_ui_terminal_log" onClick={(event) => txDetails(event, tx)}>
         <CheckTxStatus tx={receipt || tx} type={txType} />
         <Context opts={options} provider={provider} />
         <div className="remix_ui_terminal_buttons">
@@ -53,11 +41,7 @@ const RenderUnKnownTransactions = ({
             <FormattedMessage id="terminal.debug" />
           </div>
         </div>
-        <i
-          className={`remix_ui_terminal_arrow fas ${
-            showTableHash.includes(tx.hash) ? 'fa-angle-up' : 'fa-angle-down'
-          }`}
-        ></i>
+        <i className={`remix_ui_terminal_arrow fas ${showTableHash.includes(tx.hash) ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
       </div>
       {showTableHash.includes(tx.hash)
         ? showTable(

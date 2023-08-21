@@ -16,12 +16,7 @@ export const FileDecorationIcons = (props: fileDecorationProps) => {
   const [states, setStates] = useState<fileDecoration[]>([])
   useEffect(() => {
     setStates(
-      props.fileDecorations.filter(
-        (fileDecoration) =>
-          fileDecoration.path === props.file.path ||
-          `${fileDecoration.workspace.name}/${fileDecoration.path}` ===
-            props.file.path
-      )
+      props.fileDecorations.filter((fileDecoration) => fileDecoration.path === props.file.path || `${fileDecoration.workspace.name}/${fileDecoration.path}` === props.file.path)
     )
   }, [props.fileDecorations])
 
@@ -32,46 +27,13 @@ export const FileDecorationIcons = (props: fileDecorationProps) => {
       for (const [index, state] of states.entries()) {
         switch (state.fileStateType) {
         case fileDecorationType.Error:
-          elements.push(
-            <FileDecorationTooltip
-              key={index}
-              index={index}
-              fileDecoration={state}
-              icon={
-                <FileDecorationErrorIcon fileDecoration={state} key={index} />
-              }
-            />
-          )
+          elements.push(<FileDecorationTooltip key={index} index={index} fileDecoration={state} icon={<FileDecorationErrorIcon fileDecoration={state} key={index} />} />)
           break
         case fileDecorationType.Warning:
-          elements.push(
-            <FileDecorationTooltip
-              key={index}
-              index={index}
-              fileDecoration={state}
-              icon={
-                <FileDecorationWarningIcon
-                  fileDecoration={state}
-                  key={index}
-                />
-              }
-            />
-          )
+          elements.push(<FileDecorationTooltip key={index} index={index} fileDecoration={state} icon={<FileDecorationWarningIcon fileDecoration={state} key={index} />} />)
           break
         case fileDecorationType.Custom:
-          elements.push(
-            <FileDecorationTooltip
-              key={index}
-              index={index}
-              fileDecoration={state}
-              icon={
-                <FileDecorationCustomIcon
-                  fileDecoration={state}
-                  key={index}
-                />
-              }
-            />
-          )
+          elements.push(<FileDecorationTooltip key={index} index={index} fileDecoration={state} icon={<FileDecorationCustomIcon fileDecoration={state} key={index} />} />)
           break
         }
       }

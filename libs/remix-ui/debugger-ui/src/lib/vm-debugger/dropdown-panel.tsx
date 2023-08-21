@@ -61,29 +61,21 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
             <span>
               <span className="m-0 label_value">0x</span>
               <span className="m-0 label_value">{split[1]}</span>
-              {split[2] && (
-                <span className="m-0 label_value font-weight-bold text-dark">
-                  {split[2]}
-                </span>
-              )}
+              {split[2] && <span className="m-0 label_value font-weight-bold text-dark">{split[2]}</span>}
             </span>
           )
         } else
           value = (
             <span>
               <span className="m-0 label_value">0x</span>
-              <span className="m-0 label_value font-weight-bold text-dark">
-                {data.self.replace('0x', '')}
-              </span>
+              <span className="m-0 label_value font-weight-bold text-dark">{data.self.replace('0x', '')}</span>
             </span>
           )
       } else value = <span className="m-0 label_value">{data.self}</span>
     } else value = <span className="m-0 label_value">{data.self}</span>
     return (
       <div className="d-flex mr-1 flex-row label_item">
-        <label className="small font-weight-bold mb-0 pr-1 label_key">
-          {key}:
-        </label>
+        <label className="small font-weight-bold mb-0 pr-1 label_key">{key}:</label>
         <label className="m-0 label_value">{value}</label>
       </div>
     )
@@ -145,9 +137,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     if (!state.expandPath.includes(keyPath)) {
       state.expandPath.push(keyPath)
     } else {
-      state.expandPath = state.expandPath.filter(
-        (path) => !path.startsWith(keyPath)
-      )
+      state.expandPath = state.expandPath.filter((path) => !path.startsWith(keyPath))
     }
   }
 
@@ -186,14 +176,8 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
   const update = function (calldata) {
     let isEmpty = !calldata
 
-    if (calldata && Array.isArray(calldata) && calldata.length === 0)
-      isEmpty = true
-    else if (
-      calldata &&
-      Object.keys(calldata).length === 0 &&
-      calldata.constructor === Object
-    )
-      isEmpty = true
+    if (calldata && Array.isArray(calldata) && calldata.length === 0) isEmpty = true
+    else if (calldata && Object.keys(calldata).length === 0 && calldata.constructor === Object) isEmpty = true
 
     setState((prevState) => {
       return {
@@ -203,10 +187,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
           display: 'block'
         },
         // replace 0xNaN with 0x0
-        copiableContent: JSON.stringify(calldata, null, '\t').replace(
-          /0xNaN/g,
-          '0x0'
-        ),
+        copiableContent: JSON.stringify(calldata, null, '\t').replace(/0xNaN/g, '0x0'),
         message: {
           innerText: isEmpty ? 'No data available' : '',
           display: isEmpty ? 'block' : 'none'
@@ -218,15 +199,8 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     })
   }
 
-  const renderData = (
-    item: ExtractData,
-    parent,
-    key: string | number,
-    keyPath: string
-  ) => {
-    const data = extractFunc
-      ? extractFunc(item, parent)
-      : extractDataDefault(item, parent)
+  const renderData = (item: ExtractData, parent, key: string | number, keyPath: string) => {
+    const data = extractFunc ? extractFunc(item, parent) : extractDataDefault(item, parent)
     const children = (data.children || []).map((child) => {
       return renderData(child.value, data, child.key, keyPath + '/' + child.key)
     })
@@ -236,11 +210,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
         <TreeViewItem
           id={`treeViewItem${key}`}
           key={keyPath}
-          label={
-            formatSelfFunc
-              ? formatSelfFunc(key, data)
-              : formatSelfDefault(key, data)
-          }
+          label={formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data)}
           onClick={() => handleExpand(keyPath)}
           expand={state.expandPath.includes(keyPath)}
         >
@@ -265,11 +235,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
         <TreeViewItem
           id={key.toString()}
           key={keyPath}
-          label={
-            formatSelfFunc
-              ? formatSelfFunc(key, data)
-              : formatSelfDefault(key, data)
-          }
+          label={formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data)}
           onClick={() => handleExpand(keyPath)}
           expand={state.expandPath.includes(keyPath)}
         />
@@ -282,49 +248,19 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
   return (
     <div className={className + ' border rounded px-1 mt-1 bg-light'}>
       <div className="py-0 px-1 title" style={headStyle}>
-        <div
-          className={
-            state.toggleDropdown
-              ? 'icon fas fa-caret-down'
-              : 'icon fas fa-caret-right'
-          }
-          onClick={handleToggle}
-        ></div>
-        <div
-          className="name"
-          data-id={`dropdownPanel${uniquePanelName}`}
-          onClick={handleToggle}
-        >
+        <div className={state.toggleDropdown ? 'icon fas fa-caret-down' : 'icon fas fa-caret-right'} onClick={handleToggle}></div>
+        <div className="name" data-id={`dropdownPanel${uniquePanelName}`} onClick={handleToggle}>
           {dropdownName}
         </div>
         <span className="nameDetail" onClick={handleToggle}>
           {header}
         </span>
-        <CopyToClipboard
-          content={state.copiableContent}
-          data-id={`dropdownPanelCopyToClipboard${uniquePanelName}`}
-        />
+        <CopyToClipboard content={state.copiableContent} data-id={`dropdownPanelCopyToClipboard${uniquePanelName}`} />
       </div>
-      <div
-        className="dropdownpanel"
-        style={{display: state.toggleDropdown ? 'block' : 'none'}}
-      >
-        <i
-          className="refresh fas fa-sync"
-          style={{display: state.updating ? 'inline-block' : 'none'}}
-          aria-hidden="true"
-        ></i>
-        <div
-          className="dropdowncontent pb-2"
-          style={{display: state.dropdownContent.display, ...bodyStyle}}
-        >
-          {state.data && (
-            <TreeView id="treeView">
-              {Object.keys(state.data).map((innerkey) =>
-                renderData(state.data[innerkey], state.data, innerkey, innerkey)
-              )}
-            </TreeView>
-          )}
+      <div className="dropdownpanel" style={{display: state.toggleDropdown ? 'block' : 'none'}}>
+        <i className="refresh fas fa-sync" style={{display: state.updating ? 'inline-block' : 'none'}} aria-hidden="true"></i>
+        <div className="dropdowncontent pb-2" style={{display: state.dropdownContent.display, ...bodyStyle}}>
+          {state.data && <TreeView id="treeView">{Object.keys(state.data).map((innerkey) => renderData(state.data[innerkey], state.data, innerkey, innerkey))}</TreeView>}
         </div>
         <div className="dropdownrawcontent" hidden={true}>
           {state.copiableContent}

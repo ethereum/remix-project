@@ -18,11 +18,9 @@ function Chevron(props: ChevronProps) {
 
   return (
     <>
-      {props.divElementRef.current &&
-      props.divElementRef.current.scrollHeight >
-        props.divElementRef.current.clientHeight ? (
-          <i onClick={click} className={props.cssRule}></i>
-        ) : null}
+      {props.divElementRef.current && props.divElementRef.current.scrollHeight > props.divElementRef.current.clientHeight ? (
+        <i onClick={click} className={props.cssRule}></i>
+      ) : null}
     </>
   )
 }

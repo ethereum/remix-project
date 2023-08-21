@@ -12,8 +12,7 @@ interface ResultItemProps {
 }
 
 export const ResultItem = (props: ResultItemProps) => {
-  const {state, findText, disableForceReload, updateCount, replaceAllInFile} =
-    useContext(SearchContext)
+  const {state, findText, disableForceReload, updateCount, replaceAllInFile} = useContext(SearchContext)
   const [loading, setLoading] = useState<boolean>(false)
   const [lines, setLines] = useState<SearchResultLine[]>([])
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
@@ -114,23 +113,13 @@ export const ResultItem = (props: ResultItemProps) => {
     <>
       {lines && lines.length ? (
         <>
-          <div
-            onClick={toggleClass}
-            className="search_plugin_search_result_item_title"
-          >
+          <div onClick={toggleClass} className="search_plugin_search_result_item_title">
             <button className="btn">
-              <i
-                className={`fas ${
-                  toggleExpander ? 'fa-angle-right' : 'fa-angle-down'
-                }`}
-                aria-hidden="true"
-              ></i>
+              <i className={`fas ${toggleExpander ? 'fa-angle-right' : 'fa-angle-down'}`} aria-hidden="true"></i>
             </button>{' '}
             <ResultFileName file={props.file} />
             <div className="search_plugin_result_count">
-              <div className="search_plugin_result_count_number badge badge-pill badge-secondary">
-                {props.file.count}
-              </div>
+              <div className="search_plugin_result_count_number badge badge-pill badge-secondary">{props.file.count}</div>
             </div>
           </div>
           {loading ? <div className="loading">Loading...</div> : null}
@@ -138,22 +127,13 @@ export const ResultItem = (props: ResultItemProps) => {
             <div className="search_plugin_wrap_summary">
               {state.replaceEnabled ? (
                 <div className="search_plugin_wrap_summary_replace">
-                  <div
-                    data-id={`replace-all-${props.file.filename}`}
-                    onClick={async () => replace()}
-                    className="btn btn-secondary mb-2 btn-sm"
-                  >
+                  <div data-id={`replace-all-${props.file.filename}`} onClick={async () => replace()} className="btn btn-secondary mb-2 btn-sm">
                     <FormattedMessage id="search.replaceAll" />
                   </div>
                 </div>
               ) : null}
               {lines.map((line, index) => (
-                <ResultSummary
-                  setLoading={setLoading}
-                  key={index}
-                  searchResult={props.file}
-                  line={line}
-                />
+                <ResultSummary setLoading={setLoading} key={index} searchResult={props.file} line={line} />
               ))}
             </div>
           ) : null}

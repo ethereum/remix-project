@@ -1,20 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react'
 import {createContext, useReducer} from 'react'
-import {
-  findLinesInStringWithMatch,
-  getDirectory,
-  replaceAllInFile,
-  replaceTextInLine
-} from '../components/results/SearchHelper'
+import {findLinesInStringWithMatch, getDirectory, replaceAllInFile, replaceTextInLine} from '../components/results/SearchHelper'
 import {SearchReducer} from '../reducers/Reducer'
-import {
-  SearchState,
-  SearchResult,
-  SearchResultLine,
-  SearchResultLineLine,
-  SearchingInitialState,
-  undoBufferRecord
-} from '../types'
+import {SearchState, SearchResult, SearchResultLine, SearchResultLineLine, SearchingInitialState, undoBufferRecord} from '../types'
 import {filePathFilter} from '@jsdevtools/file-path-filter'
 import {escapeRegExp} from 'lodash'
 
@@ -31,10 +19,7 @@ export interface SearchingStateInterface {
   setSearchResults: (value: SearchResult[]) => void
   findText: (path: string) => Promise<SearchResultLine[]>
   hightLightInPath: (result: SearchResult, line: SearchResultLineLine) => void
-  replaceText: (
-    result: SearchResult,
-    line: SearchResultLineLine
-  ) => Promise<void>
+  replaceText: (result: SearchResult, line: SearchResultLineLine) => Promise<void>
   reloadFile: (file: string) => void
   toggleCaseSensitive: () => void
   toggleMatchWholeWord: () => void
@@ -51,12 +36,7 @@ export interface SearchingStateInterface {
 
 export const SearchContext = createContext<SearchingStateInterface>(null)
 
-export const SearchProvider = ({
-  children = [],
-  reducer = SearchReducer,
-  initialState = SearchingInitialState,
-  plugin = undefined
-} = {}) => {
+export const SearchProvider = ({children = [], reducer = SearchReducer, initialState = SearchingInitialState, plugin = undefined} = {}) => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const [files, setFiles] = useState([])
   const clearSearchingTimeout = useRef(null)
@@ -198,15 +178,9 @@ export const SearchProvider = ({
         if (state.find.length < 1) return
         value.setSearching(path)
         const text = await plugin.call('fileManager', 'readFile', path)
-        const result: SearchResultLine[] = findLinesInStringWithMatch(
-          text,
-          createRegExFromFind()
-        )
+        const result: SearchResultLine[] = findLinesInStringWithMatch(text, createRegExFromFind())
         clearTimeout(clearSearchingTimeout.current)
-        clearSearchingTimeout.current = setTimeout(
-          () => value.setSearching(null),
-          500
-        )
+        clearSearchingTimeout.current = setTimeout(() => value.setSearching(null), 500)
         return result
       } catch (e) {
         console.log(e)
@@ -214,30 +188,16 @@ export const SearchProvider = ({
         // do nothing
       }
     },
-    hightLightInPath: async (
-      result: SearchResult,
-      line: SearchResultLineLine
-    ) => {
+    hightLightInPath: async (result: SearchResult, line: SearchResultLineLine) => {
       await plugin.call('editor', 'discardHighlight')
       await plugin.call('editor', 'highlight', line.position, result.path)
-      await plugin.call(
-        'editor',
-        'revealRange',
-        line.position.start.line,
-        line.position.start.column,
-        line.position.end.line,
-        line.position.end.column
-      )
+      await plugin.call('editor', 'revealRange', line.position.start.line, line.position.start.column, line.position.end.line, line.position.end.column)
     },
     replaceText: async (result: SearchResult, line: SearchResultLineLine) => {
       try {
         await plugin.call('editor', 'discardHighlight')
         await plugin.call('editor', 'highlight', line.position, result.path)
-        const content = await plugin.call(
-          'fileManager',
-          'readFile',
-          result.path
-        )
+        const content = await plugin.call('fileManager', 'readFile', result.path)
         const replaced = replaceTextInLine(content, line, state.replace)
         await plugin.call('fileManager', 'setFile', result.path, replaced)
         setUndoState(content, replaced, result.path)
@@ -248,11 +208,7 @@ export const SearchProvider = ({
     replaceAllInFile: async (result: SearchResult) => {
       await plugin.call('editor', 'discardHighlight')
       const content = await plugin.call('fileManager', 'readFile', result.path)
-      const replaced = replaceAllInFile(
-        content,
-        createRegExFromFind(),
-        state.replace
-      )
+      const replaced = replaceAllInFile(content, createRegExFromFind(), state.replace)
       await plugin.call('fileManager', 'setFile', result.path, replaced)
       await plugin.call('fileManager', 'open', result.path)
       setUndoState(content, replaced, result.path)
@@ -272,12 +228,7 @@ export const SearchProvider = ({
       if (buffer.newContent !== content) {
         throw new Error('Can not undo replace, file has been changed.')
       }
-      await plugin.call(
-        'fileManager',
-        'setFile',
-        buffer.path,
-        buffer.oldContent
-      )
+      await plugin.call('fileManager', 'setFile', buffer.path, buffer.oldContent)
       await plugin.call('fileManager', 'open', buffer.path)
     },
     clearUndo: () => {
@@ -365,8 +316,7 @@ export const SearchProvider = ({
     paths.split(',').forEach((path) => {
       path = path.trim()
       if (path.startsWith('*.')) path = path.replace(/(\*\.)/g, '**/*.')
-      if (path.endsWith('/*') && !path.endsWith('/**/*'))
-        path = path.replace(/(\*)/g, '**/*.*')
+      if (path.endsWith('/*') && !path.endsWith('/**/*')) path = path.replace(/(\*)/g, '**/*.*')
       results.push(path)
     })
     return results
@@ -383,11 +333,7 @@ export const SearchProvider = ({
     }
   }
 
-  const setUndoState = async (
-    oldContent: string,
-    newContent: string,
-    path: string
-  ) => {
+  const setUndoState = async (oldContent: string, newContent: string, path: string) => {
     const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
     const undo = {
       oldContent,
@@ -429,19 +375,17 @@ export const SearchProvider = ({
           if (state.exclude) {
             pathFilter.exclude = setGlobalExpression(state.exclude)
           }
-          const filteredFiles = files
-            .filter(filePathFilter(pathFilter))
-            .map((file) => {
-              const r: SearchResult = {
-                filename: file,
-                lines: [],
-                path: file,
-                timeStamp: Date.now(),
-                forceReload: false,
-                count: 0
-              }
-              return r
-            })
+          const filteredFiles = files.filter(filePathFilter(pathFilter)).map((file) => {
+            const r: SearchResult = {
+              filename: file,
+              lines: [],
+              path: file,
+              timeStamp: Date.now(),
+              forceReload: false,
+              count: 0
+            }
+            return r
+          })
           value.setSearchResults(filteredFiles)
         } catch (e) {
           console.log(e)

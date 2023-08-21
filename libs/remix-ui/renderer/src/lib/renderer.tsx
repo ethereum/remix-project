@@ -15,9 +15,7 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
     type: '',
     errFile: ''
   })
-  const [classList, setClassList] = useState(
-    opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning'
-  )
+  const [classList, setClassList] = useState(opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning')
   const [close, setClose] = useState(false)
 
   useEffect(() => {
@@ -37,26 +35,18 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
 
     opt.errLine = positionDetails.errLine
     opt.errCol = positionDetails.errCol
-    opt.errFile = positionDetails.errFile
-      ? (positionDetails.errFile as string).trim()
-      : ''
+    opt.errFile = positionDetails.errFile ? (positionDetails.errFile as string).trim() : ''
 
     setMessageText(text)
     setEditorOptions(opt)
     setClose(false)
-    setClassList(
-      opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning'
-    )
+    setClassList(opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning')
   }, [message, opt])
 
   const handleErrorClick = (opt) => {
     if (opt.click) {
       opt.click(message)
-    } else if (
-      opt.errFile !== undefined &&
-      opt.errLine !== undefined &&
-      opt.errCol !== undefined
-    ) {
+    } else if (opt.errFile !== undefined && opt.errLine !== undefined && opt.errCol !== undefined) {
       _errorClick(opt.errFile, opt.errLine, opt.errCol)
     }
   }
@@ -66,10 +56,7 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
   }
 
   const _errorClick = async (errFile, errLine, errCol) => {
-    if (
-      errFile !==
-      (await plugin.call('config', 'getAppParameter', 'currentFile'))
-    ) {
+    if (errFile !== (await plugin.call('config', 'getAppParameter', 'currentFile'))) {
       // TODO: refactor with this._components.contextView.jumpTo
       if (await plugin.call('fileManager', 'exists', errFile)) {
         await plugin.call('fileManager', 'open', errFile)
@@ -83,11 +70,7 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
   return (
     <>
       {messageText && !close && (
-        <div
-          className={`remixui_sol ${editorOptions.type} ${classList}`}
-          data-id={editorOptions.errFile}
-          onClick={() => handleErrorClick(editorOptions)}
-        >
+        <div className={`remixui_sol ${editorOptions.type} ${classList}`} data-id={editorOptions.errFile} onClick={() => handleErrorClick(editorOptions)}>
           {editorOptions.useSpan ? (
             <span> {messageText} </span>
           ) : (
@@ -98,11 +81,7 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
           <div className="close" data-id="renderer" onClick={handleClose}>
             <i className="fas fa-times"></i>
           </div>
-          <CopyToClipboard
-            content={messageText}
-            className={` p-0 m-0 far fa-copy ${classList}`}
-            direction={'top'}
-          />
+          <CopyToClipboard content={messageText} className={` p-0 m-0 far fa-copy ${classList}`} direction={'top'} />
         </div>
       )}
     </>

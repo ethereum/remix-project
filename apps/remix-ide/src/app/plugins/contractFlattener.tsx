@@ -1,11 +1,7 @@
 import React from 'react'
 import {Plugin} from '@remixproject/engine'
 import {customAction} from '@remixproject/plugin-api'
-import {
-  concatSourceFiles,
-  getDependencyGraph,
-  normalizeContractPath
-} from '@remix-ui/solidity-compiler'
+import {concatSourceFiles, getDependencyGraph, normalizeContractPath} from '@remix-ui/solidity-compiler'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -25,18 +21,14 @@ export class ContractFlattener extends Plugin {
   }
 
   onActivation(): void {
-    this.on(
-      'solidity',
-      'compilationFinished',
-      async (file, source, languageVersion, data, input, version) => {
-        if (data.sources && Object.keys(data.sources).length > 1) {
-          if (this.triggerFlattenContract) {
-            this.triggerFlattenContract = false
-            await this.flattenContract(source, file, data)
-          }
+    this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
+      if (data.sources && Object.keys(data.sources).length > 1) {
+        if (this.triggerFlattenContract) {
+          this.triggerFlattenContract = false
+          await this.flattenContract(source, file, data)
         }
       }
-    )
+    })
     _paq.push(['trackEvent', 'plugin', 'activated', 'contractFlattener'])
   }
 
@@ -55,11 +47,7 @@ export class ContractFlattener extends Plugin {
    * Takes the flattened result, writes it to a file and returns the result.
    * @returns {Promise<string>}
    */
-  async flattenContract(
-    source: {sources: any; target: string},
-    filePath: string,
-    data: {contracts: any; sources: any}
-  ): Promise<string> {
+  async flattenContract(source: {sources: any; target: string}, filePath: string, data: {contracts: any; sources: any}): Promise<string> {
     const appendage = '_flattened.sol'
     const normalized = normalizeContractPath(filePath)
     const path = `${normalized[normalized.length - 2]}${appendage}`
@@ -70,9 +58,7 @@ export class ContractFlattener extends Plugin {
     let sources
     try {
       dependencyGraph = getDependencyGraph(ast, filePath)
-      sorted = dependencyGraph.isEmpty()
-        ? [filePath]
-        : dependencyGraph.sort().reverse()
+      sorted = dependencyGraph.isEmpty() ? [filePath] : dependencyGraph.sort().reverse()
       sources = source.sources
       result = concatSourceFiles(sorted, sources)
     } catch (err) {

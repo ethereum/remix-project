@@ -47,12 +47,7 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
       let nextSlide = 0
       if (e.wheelDelta < 0) {
         nextSlide = carouselRef.current.state.currentSlide + 1
-        if (
-          Math.abs(carouselRef.current.state.transform) >=
-          carouselRef.current.containerRef.current.scrollWidth -
-            carouselRef.current.state.containerWidth
-        )
-          return
+        if (Math.abs(carouselRef.current.state.transform) >= carouselRef.current.containerRef.current.scrollWidth - carouselRef.current.state.containerWidth) return
         carouselRef.current.goToSlide(nextSlide)
       } else {
         nextSlide = carouselRef.current.state.currentSlide - 1
@@ -66,17 +61,8 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
     await plugin.appManager.activatePlugin('filePanel')
     const timeStamp = Date.now()
     let templateDisplayName = TEMPLATE_NAMES[templateName]
-    templateDisplayName = await plugin.call(
-      'filePanel',
-      'getAvailableWorkspaceName',
-      templateDisplayName
-    )
-    await plugin.call(
-      'filePanel',
-      'createWorkspace',
-      templateDisplayName,
-      templateName
-    )
+    templateDisplayName = await plugin.call('filePanel', 'getAvailableWorkspaceName', templateDisplayName)
+    await plugin.call('filePanel', 'createWorkspace', templateDisplayName, templateName)
     await plugin.call('filePanel', 'setWorkspace', templateDisplayName)
     plugin.verticalIcons.select('filePanel')
     _paq.push(['trackEvent', 'hometab', 'homeGetStarted', templateName])
@@ -95,14 +81,7 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
           <Carousel
             ref={carouselRef}
             focusOnSelect={true}
-            customButtonGroup={
-              <CustomNavButtons
-                next={undefined}
-                previous={undefined}
-                goToSlide={undefined}
-                parent={carouselRef}
-              />
-            }
+            customButtonGroup={<CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} parent={carouselRef} />}
             arrows={false}
             swipeable={false}
             draggable={true}

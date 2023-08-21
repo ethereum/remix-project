@@ -76,10 +76,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await fetchDirectory(path)
   }
 
-  const dispatchAddInputField = async (
-    path: string,
-    type: 'file' | 'folder'
-  ) => {
+  const dispatchAddInputField = async (path: string, type: 'file' | 'folder') => {
     await addInputField(type, path)
   }
 
@@ -87,20 +84,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await removeInputField(path)
   }
 
-  const dispatchCreateWorkspace = async (
-    workspaceName: string,
-    workspaceTemplateName: WorkspaceTemplate,
-    opts?,
-    initGitRepo?: boolean
-  ) => {
-    await createWorkspace(
-      workspaceName,
-      workspaceTemplateName,
-      opts,
-      null,
-      null,
-      initGitRepo
-    )
+  const dispatchCreateWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate, opts?, initGitRepo?: boolean) => {
+    await createWorkspace(workspaceName, workspaceTemplateName, opts, null, null, initGitRepo)
   }
 
   const dispatchFetchWorkspaceDirectory = async (path: string) => {
@@ -111,10 +96,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await switchToWorkspace(name)
   }
 
-  const dispatchRenameWorkspace = async (
-    oldName: string,
-    workspaceName: string
-  ) => {
+  const dispatchRenameWorkspace = async (oldName: string, workspaceName: string) => {
     await renameWorkspace(oldName, workspaceName)
   }
 
@@ -130,17 +112,11 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await publishToGist(path, type)
   }
 
-  const dispatchUploadFile = async (
-    target?: SyntheticEvent,
-    targetFolder?: string
-  ) => {
+  const dispatchUploadFile = async (target?: SyntheticEvent, targetFolder?: string) => {
     await uploadFile(target, targetFolder)
   }
 
-  const dispatchUploadFolder = async (
-    target?: SyntheticEvent,
-    targetFolder?: string
-  ) => {
+  const dispatchUploadFolder = async (target?: SyntheticEvent, targetFolder?: string) => {
     await uploadFolder(target, targetFolder)
   }
 
@@ -148,9 +124,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await createNewFile(path, rootDir)
   }
 
-  const dispatchSetFocusElement = async (
-    elements: {key: string; type: 'file' | 'folder' | 'gist'}[]
-  ) => {
+  const dispatchSetFocusElement = async (elements: {key: string; type: 'file' | 'folder' | 'gist'}[]) => {
     await setFocusElement(elements)
   }
 
@@ -186,10 +160,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await emitContextMenuEvent(cmd)
   }
 
-  const dispatchHandleClickFile = async (
-    path: string,
-    type: 'file' | 'folder' | 'gist'
-  ) => {
+  const dispatchHandleClickFile = async (path: string, type: 'file' | 'folder' | 'gist') => {
     await handleClickFile(path, type)
   }
 
@@ -233,10 +204,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await createNewBranch(branch)
   }
 
-  const dispatchCheckoutRemoteBranch = async (
-    branch: string,
-    remote: string
-  ) => {
+  const dispatchCheckoutRemoteBranch = async (branch: string, remote: string) => {
     await checkoutRemoteBranch(branch, remote)
   }
 
@@ -295,14 +263,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   useEffect(() => {
     if (fs.notification.title) {
-      modal(
-        fs.notification.title,
-        fs.notification.message,
-        fs.notification.labelOk,
-        fs.notification.actionOk,
-        fs.notification.labelCancel,
-        fs.notification.actionCancel
-      )
+      modal(fs.notification.title, fs.notification.message, fs.notification.labelOk, fs.notification.actionOk, fs.notification.labelCancel, fs.notification.actionCancel)
     }
   }, [fs.notification])
 
@@ -318,14 +279,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     })
   }
 
-  const modal = (
-    title: string,
-    message: string | JSX.Element,
-    okLabel: string,
-    okFn: () => void,
-    cancelLabel?: string,
-    cancelFn?: () => void
-  ) => {
+  const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
     setModals((modals) => {
       modals.push({message, title, okLabel, okFn, cancelLabel, cancelFn})
       return [...modals]
@@ -397,11 +351,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
         </div>
       )}
       {!fs.initializingFS && <Workspace />}
-      <ModalDialog
-        id="fileSystem"
-        {...focusModal}
-        handleHide={handleHideModal}
-      />
+      <ModalDialog id="fileSystem" {...focusModal} handleHide={handleHideModal} />
       <Toaster message={focusToaster} handleHide={handleToaster} />
     </FileSystemContext.Provider>
   )

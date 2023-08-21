@@ -58,27 +58,19 @@ export const ButtonNavigation = ({
         intoForwardDisabled: stepState === 'end',
         overForwardDisabled: stepState === 'end',
         jumpNextBreakpointDisabled: stepState === 'end',
-        jumpOutDisabled:
-          jumpOutDisabled !== null && jumpOutDisabled !== undefined
-            ? jumpOutDisabled
-            : true
+        jumpOutDisabled: jumpOutDisabled !== null && jumpOutDisabled !== undefined ? jumpOutDisabled : true
       }
     })
   }
 
-  const stepBtnStyle =
-    'd-flex align-items-center justify-content-center btn btn-primary btn-sm stepButton h-75 m-0 p-1'
+  const stepBtnStyle = 'd-flex align-items-center justify-content-center btn btn-primary btn-sm stepButton h-75 m-0 p-1'
   const disableStepBtnStyle = 'stepButtonDisabled'
   const disableJumpBtnStyle = 'jumpButtonDisabled'
   const stepMarkupStructure = {
     stepOverBackJSX: {
       markup: (
         <div
-          className={
-            state.overBackDisabled
-              ? `${stepBtnStyle} ${disableStepBtnStyle}`
-              : `${stepBtnStyle}`
-          }
+          className={state.overBackDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}` : `${stepBtnStyle}`}
           onClick={() => {
             stepOverBack && stepOverBack()
           }}
@@ -103,11 +95,7 @@ export const ButtonNavigation = ({
     stepBackJSX: {
       markup: (
         <div
-          className={
-            state.intoBackDisabled
-              ? `${stepBtnStyle} ${disableStepBtnStyle}`
-              : `${stepBtnStyle}`
-          }
+          className={state.intoBackDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}` : `${stepBtnStyle}`}
           onClick={() => {
             stepIntoBack && stepIntoBack()
           }}
@@ -136,11 +124,7 @@ export const ButtonNavigation = ({
     stepIntoJSX: {
       markup: (
         <div
-          className={
-            state.intoForwardDisabled
-              ? `${stepBtnStyle} ${disableStepBtnStyle}`
-              : `${stepBtnStyle}`
-          }
+          className={state.intoForwardDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}` : `${stepBtnStyle}`}
           onClick={() => {
             stepIntoForward && stepIntoForward()
           }}
@@ -168,11 +152,7 @@ export const ButtonNavigation = ({
     stepOverForwardJSX: {
       markup: (
         <div
-          className={
-            state.overForwardDisabled
-              ? `${stepBtnStyle} ${disableStepBtnStyle}`
-              : `${stepBtnStyle}`
-          }
+          className={state.overForwardDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}` : `${stepBtnStyle}`}
           onClick={() => {
             stepOverForward && stepOverForward()
           }}
@@ -201,11 +181,7 @@ export const ButtonNavigation = ({
     jumpPreviousBreakpointJSX: {
       markup: (
         <div
-          className={
-            state.jumpPreviousBreakpointDisabled
-              ? `${stepBtnStyle} ${disableJumpBtnStyle}`
-              : `${stepBtnStyle}`
-          }
+          className={state.jumpPreviousBreakpointDisabled ? `${stepBtnStyle} ${disableJumpBtnStyle}` : `${stepBtnStyle}`}
           id="buttonNavigatorJumpPreviousBreakpointContainer"
           onClick={() => {
             jumpPreviousBreakpoint && jumpPreviousBreakpoint()
@@ -237,11 +213,7 @@ export const ButtonNavigation = ({
     jumpOutJSX: {
       markup: (
         <div
-          className={
-            state.jumpOutDisabled
-              ? `${stepBtnStyle} ${disableStepBtnStyle}`
-              : `${stepBtnStyle}`
-          }
+          className={state.jumpOutDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}` : `${stepBtnStyle}`}
           onClick={() => {
             jumpOut && jumpOut()
           }}
@@ -273,11 +245,7 @@ export const ButtonNavigation = ({
     jumpNextBreakpointJSX: {
       markup: (
         <div
-          className={
-            state.jumpNextBreakpointDisabled
-              ? `${stepBtnStyle} ${disableStepBtnStyle}`
-              : `${stepBtnStyle}`
-          }
+          className={state.jumpNextBreakpointDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}` : `${stepBtnStyle}`}
           onClick={() => {
             jumpNextBreakpoint && jumpNextBreakpoint()
           }}
@@ -331,19 +299,9 @@ export const ButtonNavigation = ({
           </CustomTooltip>
         ))}
       </div>
-      <div
-        id="reverted"
-        style={{display: revertedReason === '' ? 'none' : 'block'}}
-      >
-        <span className="text-warning">
-          This call has reverted, state changes made during the call will be
-          reverted.
-        </span>
-        <span
-          className="text-warning"
-          id="outofgas"
-          style={{display: revertedReason === 'outofgas' ? 'inline' : 'none'}}
-        >
+      <div id="reverted" style={{display: revertedReason === '' ? 'none' : 'block'}}>
+        <span className="text-warning">This call has reverted, state changes made during the call will be reverted.</span>
+        <span className="text-warning" id="outofgas" style={{display: revertedReason === 'outofgas' ? 'inline' : 'none'}}>
           This call will run out of gas.
         </span>
         <span

@@ -21,9 +21,7 @@ export function DeployButton(props: DeployButtonProps) {
             className={`udapp_instanceButton ${props.buttonOptions.widthClass} btn btn-sm ${props.buttonOptions.classList}`}
             data-id={props.buttonOptions.dataId}
           >
-            {props.deployOptions[props.selectedIndex]
-              ? props.deployOptions[props.selectedIndex].title
-              : 'Deploy'}
+            {props.deployOptions[props.selectedIndex] ? props.deployOptions[props.selectedIndex].title : 'Deploy'}
           </button>
           <Dropdown.Toggle
             split
@@ -41,22 +39,13 @@ export function DeployButton(props: DeployButtonProps) {
                 key={index}
               >
                 {' '}
-                {props.selectedIndex === index ? (
-                  <span>&#10003; {title} </span>
-                ) : (
-                  <span className="pl-3">{title}</span>
-                )}
+                {props.selectedIndex === index ? <span>&#10003; {title} </span> : <span className="pl-3">{title}</span>}
               </Dropdown.Item>
             ))}
           </Dropdown.Menu>
         </Dropdown>
       ) : (
-        <CustomTooltip
-          placement="top"
-          tooltipId="deployButtonTooltip"
-          tooltipClasses="text-nowrap"
-          tooltipText={props.buttonOptions.title}
-        >
+        <CustomTooltip placement="top" tooltipId="deployButtonTooltip" tooltipClasses="text-nowrap" tooltipText={props.buttonOptions.title}>
           <button
             onClick={props.handleActionClick}
             className={`udapp_instanceButton ${props.buttonOptions.widthClass} btn btn-sm ${props.buttonOptions.classList}`}

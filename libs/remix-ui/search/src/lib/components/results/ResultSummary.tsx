@@ -55,35 +55,14 @@ export const ResultSummary = (props: ResultSummaryProps) => {
             key={props.searchResult.filename}
             className="search_plugin_search_line  pb-1"
           >
-            <div className="search_plugin_summary_left">
-              {lineItem.left.substring(lineItem.left.length - 20).trimStart()}
-            </div>
-            <mark
-              className={`search_plugin_summary_center ${
-                state.replace && state.replaceEnabled
-                  ? 'search_plugin_replace_strike'
-                  : ''
-              }`}
-            >
-              {lineItem.center}
-            </mark>
-            {state.replace && state.replaceEnabled ? (
-              <mark className="search_plugin_replacement">{state.replace}</mark>
-            ) : (
-              <></>
-            )}
-            <div className="search_plugin_summary_right">
-              {lineItem.right.substring(0, 100)}
-            </div>
+            <div className="search_plugin_summary_left">{lineItem.left.substring(lineItem.left.length - 20).trimStart()}</div>
+            <mark className={`search_plugin_summary_center ${state.replace && state.replaceEnabled ? 'search_plugin_replace_strike' : ''}`}>{lineItem.center}</mark>
+            {state.replace && state.replaceEnabled ? <mark className="search_plugin_replacement">{state.replace}</mark> : <></>}
+            <div className="search_plugin_summary_right">{lineItem.right.substring(0, 100)}</div>
           </div>
           {state.replaceEnabled ? (
             <div className="search_plugin_search_control">
-              <CustomTooltip
-                tooltipText="Replace"
-                tooltipClasses="text-nowrap"
-                tooltipId="replaceTooltip"
-                placement="top-start"
-              >
+              <CustomTooltip tooltipText="Replace" tooltipClasses="text-nowrap" tooltipId="replaceTooltip" placement="top-start">
                 <div
                   data-id={`replace-${props.searchResult.filename}-${lineItem.position.start.line}-${lineItem.position.start.column}`}
                   onClick={async () => {

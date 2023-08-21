@@ -1,9 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react'
-import {
-  ModalDialog,
-  ModalDialogProps,
-  ValidationResult
-} from '@remix-ui/modal-dialog'
+import {ModalDialog, ModalDialogProps, ValidationResult} from '@remix-ui/modal-dialog'
 import {ModalTypes} from '../../types'
 
 interface ModalWrapperProps extends ModalDialogProps {
@@ -34,10 +30,11 @@ const ModalWrapper = (props: ModalWrapperProps) => {
     } else if (formRef.current) {
       props.okFn ? props.okFn(getFormData()) : props.resolve(getFormData())
     } else if (ref.current) {
-      // @ts-ignore: Object is possibly 'null'.
       props.okFn
-        ? props.okFn(ref.current.value)
-        : props.resolve(ref.current.value)
+        ? // @ts-ignore: Object is possibly 'null'.
+        props.okFn(ref.current.value)
+        : // @ts-ignore: Object is possibly 'null'.
+        props.resolve(ref.current.value)
     }
   }
 
@@ -62,10 +59,7 @@ const ModalWrapper = (props: ModalWrapperProps) => {
     }
   }
 
-  const createModalMessage = (
-    defaultValue: string,
-    validation: ValidationResult
-  ) => {
+  const createModalMessage = (defaultValue: string, validation: ValidationResult) => {
     return (
       <>
         {props.message}
@@ -77,9 +71,7 @@ const ModalWrapper = (props: ModalWrapperProps) => {
           ref={ref}
           className="form-control"
         />
-        {validation && !validation.valid && (
-          <span className="text-warning">{validation.message}</span>
-        )}
+        {validation && !validation.valid && <span className="text-warning">{validation.message}</span>}
       </>
     )
   }
@@ -99,9 +91,7 @@ const ModalWrapper = (props: ModalWrapperProps) => {
         <form onChange={onFormChanged} ref={formRef}>
           {props.message}
         </form>
-        {validation && !validation.valid && (
-          <span className="text-warning">{validation.message}</span>
-        )}
+        {validation && !validation.valid && <span className="text-warning">{validation.message}</span>}
       </>
     )
   }

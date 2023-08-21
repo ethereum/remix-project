@@ -27,13 +27,7 @@ function App() {
   return (
     <div className="App">
       <h4 className="mt-1">WalletConnect</h4>
-      {ethereumClient && wagmiConfig && (
-        <WalletConnectUI
-          wagmiConfig={wagmiConfig}
-          ethereumClient={ethereumClient}
-          theme={theme}
-        />
-      )}
+      {ethereumClient && wagmiConfig && <WalletConnectUI wagmiConfig={wagmiConfig} ethereumClient={ethereumClient} theme={theme} />}
     </div>
   )
 }

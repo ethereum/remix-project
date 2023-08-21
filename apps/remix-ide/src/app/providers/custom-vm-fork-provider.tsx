@@ -32,18 +32,10 @@ export class CustomForkVMProvider extends BasicVMProvider {
     const body = () => {
       return (
         <div>
-          <span>
-            Please provide information about the custom fork. If the node URL is
-            not provided, the VM will start with an empty state.
-          </span>
+          <span>Please provide information about the custom fork. If the node URL is not provided, the VM will start with an empty state.</span>
           <div>
             <label className="mt-3 mb-1">Node URL</label>
-            <input
-              data-id="CustomForkNodeUrl"
-              name="nodeUrl"
-              type="text"
-              className="border form-control border-right-0"
-            />
+            <input data-id="CustomForkNodeUrl" name="nodeUrl" type="text" className="border form-control border-right-0" />
           </div>
           <div>
             <label className="mt-3 mb-1">Block number (or "latest")</label>
@@ -58,12 +50,7 @@ export class CustomForkVMProvider extends BasicVMProvider {
           </div>
           <div>
             <label className="mt-3 mb-1">EVM</label>
-            <select
-              data-id="CustomForkEvmType"
-              name="evmType"
-              defaultValue="merge"
-              className="border form-control border-right-0"
-            >
+            <select data-id="CustomForkEvmType" name="evmType" defaultValue="merge" className="border form-control border-right-0">
               {Object.keys(Hardfork).map((value, index) => {
                 return (
                   <option value={Hardfork[value]} key={index}>

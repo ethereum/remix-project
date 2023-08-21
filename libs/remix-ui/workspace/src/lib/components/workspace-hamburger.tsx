@@ -1,9 +1,6 @@
 import React from 'react'
 import {Dropdown} from 'react-bootstrap'
-import {
-  HamburgerMenuItem,
-  HamburgerSubMenuItem
-} from './workspace-hamburger-item'
+import {HamburgerMenuItem, HamburgerSubMenuItem} from './workspace-hamburger-item'
 
 export interface HamburgerMenuProps {
   createWorkspace: () => void
@@ -73,10 +70,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
           props.hideIconsMenu(!showIconsMenu)
         }}
       ></HamburgerMenuItem>
-      <Dropdown.Divider
-        className="border mb-0 mt-0 remixui_menuhr"
-        style={{pointerEvents: 'none'}}
-      />
+      <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{pointerEvents: 'none'}} />
       <HamburgerMenuItem
         kind="deleteAll"
         fa="far fa-trash-alt"
@@ -104,10 +98,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
           props.hideIconsMenu(!showIconsMenu)
         }}
       ></HamburgerMenuItem>
-      <Dropdown.Divider
-        className="border mt-0 mb-0 remixui_menuhr"
-        style={{pointerEvents: 'none'}}
-      />
+      <Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{pointerEvents: 'none'}} />
       <HamburgerMenuItem
         kind="solghaction"
         fa="fak fa-solidity-mono"
@@ -135,10 +126,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
           props.hideIconsMenu(!showIconsMenu)
         }}
       ></HamburgerMenuItem>
-      <Dropdown.Divider
-        className="border mb-0 mt-0 remixui_menuhr"
-        style={{pointerEvents: 'none'}}
-      />
+      <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{pointerEvents: 'none'}} />
       <HamburgerMenuItem
         kind="addscriptetherscan"
         fa="fak fa-ts-logo"

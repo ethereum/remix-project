@@ -75,39 +75,23 @@ export const TabsUI = (props: TabsUIProps) => {
   }, [tabsState.selectedIndex])
 
   const getFileDecorationClasses = (tab: any) => {
-    const fileDecoration = tabsState.fileDecorations.find(
-      (fileDecoration: fileDecoration) => {
-        if (
-          `${fileDecoration.workspace.name}/${fileDecoration.path}` === tab.name
-        )
-          return true
-      }
-    )
+    const fileDecoration = tabsState.fileDecorations.find((fileDecoration: fileDecoration) => {
+      if (`${fileDecoration.workspace.name}/${fileDecoration.path}` === tab.name) return true
+    })
     return fileDecoration && fileDecoration.fileStateLabelClass
   }
 
   const getFileDecorationIcons = (tab: any) => {
-    return (
-      <FileDecorationIcons
-        file={{path: tab.name}}
-        fileDecorations={tabsState.fileDecorations}
-      />
-    )
+    return <FileDecorationIcons file={{path: tab.name}} fileDecorations={tabsState.fileDecorations} />
   }
 
   const renderTab = (tab, index) => {
     const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
-    const classNameTab =
-      'nav-item nav-link d-flex justify-content-center align-items-center px-2 py-1 tab' +
-      (index === currentIndexRef.current ? ' active' : '')
+    const classNameTab = 'nav-item nav-link d-flex justify-content-center align-items-center px-2 py-1 tab' + (index === currentIndexRef.current ? ' active' : '')
     const invert = props.themeQuality === 'dark' ? 'invert(1)' : 'invert(0)'
 
     return (
-      <CustomTooltip
-        tooltipId="tabsActive"
-        tooltipText={tab.tooltip}
-        placement="bottom-start"
-      >
+      <CustomTooltip tooltipId="tabsActive" tooltipText={tab.tooltip} placement="bottom-start">
         <div
           ref={(el) => {
             tabsRef.current[index] = el
@@ -116,18 +100,8 @@ export const TabsUI = (props: TabsUIProps) => {
           data-id={index === currentIndexRef.current ? 'tab-active' : ''}
           data-path={tab.name}
         >
-          {tab.icon ? (
-            <img
-              className="my-1 mr-1 iconImage"
-              style={{filter: invert}}
-              src={tab.icon}
-            />
-          ) : (
-            <i className={classNameImg}></i>
-          )}
-          <span className={`title-tabs ${getFileDecorationClasses(tab)}`}>
-            {tab.title}
-          </span>
+          {tab.icon ? <img className="my-1 mr-1 iconImage" style={{filter: invert}} src={tab.icon} /> : <i className={classNameImg}></i>}
+          <span className={`title-tabs ${getFileDecorationClasses(tab)}`}>{tab.title}</span>
           {getFileDecorationIcons(tab)}
           <span
             className="close-tabs"
@@ -187,62 +161,22 @@ export const TabsUI = (props: TabsUIProps) => {
   }
 
   return (
-    <div
-      className="remix-ui-tabs d-flex justify-content-between border-0 header nav-tabs"
-      data-id="tabs-component"
-    >
-      <div
-        className="d-flex flex-row"
-        style={{maxWidth: 'fit-content', width: '99%'}}
-      >
+    <div className="remix-ui-tabs d-flex justify-content-between border-0 header nav-tabs" data-id="tabs-component">
+      <div className="d-flex flex-row" style={{maxWidth: 'fit-content', width: '99%'}}>
         <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-1">
           <button
             data-id="play-editor"
             className="btn text-success py-0"
-            disabled={
-              !(
-                tabsState.currentExt === 'js' ||
-                tabsState.currentExt === 'ts' ||
-                tabsState.currentExt === 'sol'
-              )
-            }
+            disabled={!(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' || tabsState.currentExt === 'sol')}
             onClick={async () => {
-              const path = active().substr(
-                active().indexOf('/') + 1,
-                active().length
-              )
-              const content = await props.plugin.call(
-                'fileManager',
-                'readFile',
-                path
-              )
-              if (
-                tabsState.currentExt === 'js' ||
-                tabsState.currentExt === 'ts'
-              ) {
-                await props.plugin.call(
-                  'scriptRunner',
-                  'execute',
-                  content,
-                  path
-                )
-                _paq.push([
-                  'trackEvent',
-                  'editor',
-                  'clickRunFromEditor',
-                  tabsState.currentExt
-                ])
-              } else if (
-                tabsState.currentExt === 'sol' ||
-                tabsState.currentExt === 'yul'
-              ) {
+              const path = active().substr(active().indexOf('/') + 1, active().length)
+              const content = await props.plugin.call('fileManager', 'readFile', path)
+              if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
+                await props.plugin.call('scriptRunner', 'execute', content, path)
+                _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
+              } else if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul') {
                 await props.plugin.call('solidity', 'compile', path)
-                _paq.push([
-                  'trackEvent',
-                  'editor',
-                  'clickRunFromEditor',
-                  tabsState.currentExt
-                ])
+                _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
               }
             }}
           >
@@ -251,11 +185,9 @@ export const TabsUI = (props: TabsUIProps) => {
               tooltipId="overlay-tooltip-run-script"
               tooltipText={
                 <span>
-                  {tabsState.currentExt === 'js' ||
-                  tabsState.currentExt === 'ts'
+                  {tabsState.currentExt === 'js' || tabsState.currentExt === 'ts'
                     ? 'Run script (CTRL + SHIFT + S)'
-                    : tabsState.currentExt === 'sol' ||
-                      tabsState.currentExt === 'yul'
+                    : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul'
                       ? 'Compile CTRL + S'
                       : 'Select .sol or .yul file to compile or a .ts or .js file and run it'}
                 </span>
@@ -264,27 +196,11 @@ export const TabsUI = (props: TabsUIProps) => {
               <i className="fad fa-play"></i>
             </CustomTooltip>
           </button>
-          <CustomTooltip
-            placement="bottom"
-            tooltipId="overlay-tooltip-zoom-out"
-            tooltipText="Zoom out"
-          >
-            <span
-              data-id="tabProxyZoomOut"
-              className="btn btn-sm px-2 fas fa-search-minus text-dark"
-              onClick={() => props.onZoomOut()}
-            ></span>
+          <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText="Zoom out">
+            <span data-id="tabProxyZoomOut" className="btn btn-sm px-2 fas fa-search-minus text-dark" onClick={() => props.onZoomOut()}></span>
           </CustomTooltip>
-          <CustomTooltip
-            placement="bottom"
-            tooltipId="overlay-tooltip-run-zoom-in"
-            tooltipText="Zoom in"
-          >
-            <span
-              data-id="tabProxyZoomIn"
-              className="btn btn-sm px-2 fas fa-search-plus text-dark"
-              onClick={() => props.onZoomIn()}
-            ></span>
+          <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-run-zoom-in" tooltipText="Zoom in">
+            <span data-id="tabProxyZoomIn" className="btn btn-sm px-2 fas fa-search-plus text-dark" onClick={() => props.onZoomIn()}></span>
           </CustomTooltip>
         </div>
         <Tabs
@@ -311,10 +227,7 @@ export const TabsUI = (props: TabsUIProps) => {
                 {renderTab(tab, i)}
               </Tab>
             ))}
-            <div
-              style={{minWidth: '4rem', height: '1rem'}}
-              id="dummyElForLastXVisibility"
-            ></div>
+            <div style={{minWidth: '4rem', height: '1rem'}} id="dummyElForLastXVisibility"></div>
           </TabList>
           {props.tabs.map((tab) => (
             <TabPanel key={tab.name}></TabPanel>

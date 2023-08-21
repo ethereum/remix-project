@@ -20,23 +20,11 @@ const HomeIcon: React.FC<IconProps> = ({from}: IconProps) => {
       to={{
         pathname: '/'
       }}
-      className={({isActive}) =>
-        isActive
-          ? 'border border-secondary shadow-none btn p-1 m-0'
-          : 'border-0 shadow-none btn p-1 m-0'
-      }
-      style={({isActive}) =>
-        !isActive
-          ? {width: '1.8rem', filter: 'contrast(0.5)'}
-          : {width: '1.8rem'}
-      }
+      className={({isActive}) => (isActive ? 'border border-secondary shadow-none btn p-1 m-0' : 'border-0 shadow-none btn p-1 m-0')}
+      style={({isActive}) => (!isActive ? {width: '1.8rem', filter: 'contrast(0.5)'} : {width: '1.8rem'})}
       state={from}
     >
-      <CustomTooltip
-        tooltipText="Home"
-        tooltipId="etherscan-nav-home"
-        placement="bottom"
-      >
+      <CustomTooltip tooltipText="Home" tooltipId="etherscan-nav-home" placement="bottom">
         <i className="fas fa-home"></i>
       </CustomTooltip>
     </NavLink>
@@ -50,23 +38,11 @@ const ReceiptsIcon: React.FC<IconProps> = ({from}: IconProps) => {
       to={{
         pathname: '/receipts'
       }}
-      className={({isActive}) =>
-        isActive
-          ? 'border border-secondary shadow-none btn p-1 m-0'
-          : 'border-0 shadow-none btn p-1 m-0'
-      }
-      style={({isActive}) =>
-        !isActive
-          ? {width: '1.8rem', filter: 'contrast(0.5)'}
-          : {width: '1.8rem'}
-      }
+      className={({isActive}) => (isActive ? 'border border-secondary shadow-none btn p-1 m-0' : 'border-0 shadow-none btn p-1 m-0')}
+      style={({isActive}) => (!isActive ? {width: '1.8rem', filter: 'contrast(0.5)'} : {width: '1.8rem'})}
       state={from}
     >
-      <CustomTooltip
-        tooltipText="Receipts"
-        tooltipId="etherscan-nav-receipts"
-        placement="bottom"
-      >
+      <CustomTooltip tooltipText="Receipts" tooltipId="etherscan-nav-receipts" placement="bottom">
         <i className="fas fa-receipt"></i>
       </CustomTooltip>
     </NavLink>
@@ -80,23 +56,11 @@ const SettingsIcon: React.FC<IconProps> = ({from}: IconProps) => {
       to={{
         pathname: '/settings'
       }}
-      className={({isActive}) =>
-        isActive
-          ? 'border border-secondary shadow-none btn p-1 m-0'
-          : 'border-0 shadow-none btn p-1 m-0'
-      }
-      style={({isActive}) =>
-        !isActive
-          ? {width: '1.8rem', filter: 'contrast(0.5)'}
-          : {width: '1.8rem'}
-      }
+      className={({isActive}) => (isActive ? 'border border-secondary shadow-none btn p-1 m-0' : 'border-0 shadow-none btn p-1 m-0')}
+      style={({isActive}) => (!isActive ? {width: '1.8rem', filter: 'contrast(0.5)'} : {width: '1.8rem'})}
       state={from}
     >
-      <CustomTooltip
-        tooltipText="Settings"
-        tooltipId="etherscan-nav-settings"
-        placement="bottom"
-      >
+      <CustomTooltip tooltipText="Settings" tooltipId="etherscan-nav-settings" placement="bottom">
         <i className="fas fa-cog"></i>
       </CustomTooltip>
     </NavLink>

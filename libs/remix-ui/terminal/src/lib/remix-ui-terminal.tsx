@@ -1,12 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {
-  useState,
-  useEffect,
-  useReducer,
-  useRef,
-  SyntheticEvent,
-  MouseEvent
-} from 'react' // eslint-disable-line
+import React, {useState, useEffect, useReducer, useRef, SyntheticEvent, MouseEvent} from 'react' // eslint-disable-line
 import {FormattedMessage, useIntl} from 'react-intl'
 import {
   registerCommandAction,
@@ -17,12 +10,7 @@ import {
   listenOnNetworkAction,
   initListeningOnNetwork
 } from './actions/terminalAction'
-import {
-  initialState,
-  registerCommandReducer,
-  addCommandHistoryReducer,
-  registerScriptRunnerReducer
-} from './reducers/terminalReducer'
+import {initialState, registerCommandReducer, addCommandHistoryReducer, registerScriptRunnerReducer} from './reducers/terminalReducer'
 import {getKeyOf, getValueOf, Objectfilter, matched} from './utils/utils'
 import {allCommands, allPrograms} from './commands' // eslint-disable-line
 import TerminalWelcomeMessage from './terminalWelcome' // eslint-disable-line
@@ -38,12 +26,7 @@ import RenderUnKnownTransactions from './components/RenderUnknownTransactions' /
 import RenderCall from './components/RenderCall' // eslint-disable-line
 import RenderKnownTransactions from './components/RenderKnownTransactions' // eslint-disable-line
 import parse from 'html-react-parser'
-import {
-  EMPTY_BLOCK,
-  KNOWN_TRANSACTION,
-  RemixUiTerminalProps,
-  UNKNOWN_TRANSACTION
-} from './types/terminalTypes'
+import {EMPTY_BLOCK, KNOWN_TRANSACTION, RemixUiTerminalProps, UNKNOWN_TRANSACTION} from './types/terminalTypes'
 import {wrapScript} from './utils/wrapScript'
 
 /* eslint-disable-next-line */
@@ -57,14 +40,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [_cmdTemp, setCmdTemp] = useState('')
   const [isOpen, setIsOpen] = useState<boolean>(true)
   const [newstate, dispatch] = useReducer(registerCommandReducer, initialState)
-  const [cmdHistory, cmdHistoryDispatch] = useReducer(
-    addCommandHistoryReducer,
-    initialState
-  )
-  const [, scriptRunnerDispatch] = useReducer(
-    registerScriptRunnerReducer,
-    initialState
-  )
+  const [cmdHistory, cmdHistoryDispatch] = useReducer(addCommandHistoryReducer, initialState)
+  const [, scriptRunnerDispatch] = useReducer(registerScriptRunnerReducer, initialState)
   const [toaster, setToaster] = useState(false)
   const [toastProvider, setToastProvider] = useState({
     show: false,
@@ -147,70 +124,23 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   // events
   useEffect(() => {
     initListeningOnNetwork(props.plugin, scriptRunnerDispatch)
-    registerLogScriptRunnerAction(
-      on,
-      'log',
-      newstate.commands,
-      scriptRunnerDispatch
-    )
-    registerInfoScriptRunnerAction(
-      on,
-      'info',
-      newstate.commands,
-      scriptRunnerDispatch
-    )
-    registerWarnScriptRunnerAction(
-      on,
-      'warn',
-      newstate.commands,
-      scriptRunnerDispatch
-    )
-    registerErrorScriptRunnerAction(
-      on,
-      'error',
-      newstate.commands,
-      scriptRunnerDispatch
-    )
-    registerCommandAction(
-      'html',
-      _blocksRenderer('html'),
-      {activate: true},
-      dispatch
-    )
-    registerCommandAction(
-      'log',
-      _blocksRenderer('log'),
-      {activate: true},
-      dispatch
-    )
-    registerCommandAction(
-      'info',
-      _blocksRenderer('info'),
-      {activate: true},
-      dispatch
-    )
-    registerCommandAction(
-      'warn',
-      _blocksRenderer('warn'),
-      {activate: true},
-      dispatch
-    )
-    registerCommandAction(
-      'error',
-      _blocksRenderer('error'),
-      {activate: true},
-      dispatch
-    )
+    registerLogScriptRunnerAction(on, 'log', newstate.commands, scriptRunnerDispatch)
+    registerInfoScriptRunnerAction(on, 'info', newstate.commands, scriptRunnerDispatch)
+    registerWarnScriptRunnerAction(on, 'warn', newstate.commands, scriptRunnerDispatch)
+    registerErrorScriptRunnerAction(on, 'error', newstate.commands, scriptRunnerDispatch)
+    registerCommandAction('html', _blocksRenderer('html'), {activate: true}, dispatch)
+    registerCommandAction('log', _blocksRenderer('log'), {activate: true}, dispatch)
+    registerCommandAction('info', _blocksRenderer('info'), {activate: true}, dispatch)
+    registerCommandAction('warn', _blocksRenderer('warn'), {activate: true}, dispatch)
+    registerCommandAction('error', _blocksRenderer('error'), {activate: true}, dispatch)
 
     registerCommandAction(
       'script',
       function execute(args, scopedCommands) {
         const script = String(args[0])
         _shell(script, scopedCommands, function (error, output) {
-          if (error)
-            scriptRunnerDispatch({type: 'error', payload: {message: error}})
-          if (output)
-            scriptRunnerDispatch({type: 'script', payload: {message: '5'}})
+          if (error) scriptRunnerDispatch({type: 'error', payload: {message: error}})
+          if (output) scriptRunnerDispatch({type: 'script', payload: {message: '5'}})
         })
       },
       {activate: true},
@@ -268,10 +198,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const _shell = async (script, scopedCommands, done) => {
     // default shell
     if (script.indexOf('remix:') === 0) {
-      return done(
-        null,
-        'This type of command has been deprecated and is not functionning anymore. Please run remix.help() to list available commands.'
-      )
+      return done(null, 'This type of command has been deprecated and is not functionning anymore. Please run remix.help() to list available commands.')
     }
     if (script.indexOf('remix.') === 0) {
       // we keep the old feature. This will basically only be called when the command is querying the "remix" object.
@@ -316,20 +243,14 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const handleKeyDown = (event) => {
     const suggestionCount = autoCompletState.activeSuggestion
-    if (
-      autoCompletState.userInput !== '' &&
-      (event.which === 27 || event.which === 8 || event.which === 46)
-    ) {
+    if (autoCompletState.userInput !== '' && (event.which === 27 || event.which === 8 || event.which === 46)) {
       // backspace or any key that should remove the autocompletion
       setAutoCompleteState((prevState) => ({
         ...prevState,
         showSuggestions: false
       }))
     }
-    if (
-      autoCompletState.showSuggestions &&
-      (event.which === 13 || event.which === 9)
-    ) {
+    if (autoCompletState.showSuggestions && (event.which === 13 || event.which === 9)) {
       if (autoCompletState.userInput.length === 1) {
         setAutoCompleteState((prevState) => ({
           ...prevState,
@@ -338,22 +259,13 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           userInput: Object.keys(autoCompletState.data._options[0]).toString()
         }))
       } else {
-        if (
-          autoCompletState.showSuggestions &&
-          (event.which === 13 || event.which === 9)
-        ) {
+        if (autoCompletState.showSuggestions && (event.which === 13 || event.which === 9)) {
           setAutoCompleteState((prevState) => ({
             ...prevState,
             activeSuggestion: 0,
             showSuggestions: false,
-            userInput: autoCompletState.data._options[
-              autoCompletState.activeSuggestion
-            ]
-              ? Object.keys(
-                autoCompletState.data._options[
-                  autoCompletState.activeSuggestion
-                ]
-              ).toString()
+            userInput: autoCompletState.data._options[autoCompletState.activeSuggestion]
+              ? Object.keys(autoCompletState.data._options[autoCompletState.activeSuggestion]).toString()
               : inputEl.current.value
           }))
         } else {
@@ -361,10 +273,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             ...prevState,
             activeSuggestion: 0,
             showSuggestions: false,
-            userInput:
-              autoCompletState.data._options.length === 1
-                ? Object.keys(autoCompletState.data._options[0]).toString()
-                : inputEl.current.value
+            userInput: autoCompletState.data._options.length === 1 ? Object.keys(autoCompletState.data._options[0]).toString() : inputEl.current.value
           }))
         }
       }
@@ -392,12 +301,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           showSuggestions: false
         }))
       }
-    } else if (
-      newstate._commandHistory.length &&
-      event.which === 38 &&
-      !autoCompletState.showSuggestions &&
-      autoCompletState.userInput === ''
-    ) {
+    } else if (newstate._commandHistory.length && event.which === 38 && !autoCompletState.showSuggestions && autoCompletState.userInput === '') {
       event.preventDefault()
       setAutoCompleteState((prevState) => ({
         ...prevState,
@@ -411,9 +315,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       setAutoCompleteState((prevState) => ({
         ...prevState,
         activeSuggestion: suggestionCount - 1,
-        userInput: Object.keys(
-          autoCompletState.data._options[autoCompletState.activeSuggestion]
-        ).toString()
+        userInput: Object.keys(autoCompletState.data._options[autoCompletState.activeSuggestion]).toString()
       }))
     } else if (event.which === 38 && !autoCompletState.showSuggestions) {
       // <arrowUp>
@@ -424,25 +326,19 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       inputEl.current.focus()
     } else if (event.which === 40 && autoCompletState.showSuggestions) {
       event.preventDefault()
-      if (
-        autoCompletState.activeSuggestion + 1 ===
-        autoCompletState.data._options.length
-      ) {
+      if (autoCompletState.activeSuggestion + 1 === autoCompletState.data._options.length) {
         return
       }
       setAutoCompleteState((prevState) => ({
         ...prevState,
         activeSuggestion: suggestionCount + 1,
-        userInput: Object.keys(
-          autoCompletState.data._options[autoCompletState.activeSuggestion + 1]
-        ).toString()
+        userInput: Object.keys(autoCompletState.data._options[autoCompletState.activeSuggestion + 1]).toString()
       }))
     } else if (event.which === 40 && !autoCompletState.showSuggestions) {
       if (_cmdIndex > -1) {
         setCmdIndex((prevState) => prevState--)
       }
-      inputEl.current.innerText =
-        _cmdIndex >= 0 ? cmdHistory[_cmdIndex] : _cmdTemp
+      inputEl.current.innerText = _cmdIndex >= 0 ? cmdHistory[_cmdIndex] : _cmdTemp
       inputEl.current.focus()
     } else {
       setCmdTemp(inputEl.current.innerText)
@@ -470,18 +366,16 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       const filterUndefined = (el) => el !== undefined && el !== null
       return function logger(args) {
         const types = args.filter(filterUndefined).map((type) => type)
-        const values = javascriptserialize
-          .apply(null, args.filter(filterUndefined))
-          .map(function (val, idx) {
-            // eslint-disable-line
-            if (typeof args[idx] === 'string') {
-              const el = document.createElement('div')
-              el.innerHTML = args[idx].replace(/(\r\n|\n|\r)/gm, '<br>')
-              val = el.children.length === 0 ? el.firstChild : el
-            }
-            if (types[idx] === 'element') val = jsbeautify.html(val)
-            return val
-          })
+        const values = javascriptserialize.apply(null, args.filter(filterUndefined)).map(function (val, idx) {
+          // eslint-disable-line
+          if (typeof args[idx] === 'string') {
+            const el = document.createElement('div')
+            el.innerHTML = args[idx].replace(/(\r\n|\n|\r)/gm, '<br>')
+            val = el.children.length === 0 ? el.firstChild : el
+          }
+          if (types[idx] === 'element') val = jsbeautify.html(val)
+          return val
+        })
         if (values.length) {
           return values
         }
@@ -555,8 +449,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   const handleClickSelect = (item: string) => {
-    const result: string =
-      (getKeyOf(item) as string) || (getValueOf(item) as string)
+    const result: string = (getKeyOf(item) as string) || (getValueOf(item) as string)
     setAutoCompleteState((prevState) => ({
       ...prevState,
       showSuggestions: false,
@@ -576,10 +469,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         activeSuggestion: suggestionCount - 1
       }))
     } else if (event.keyCode === 40) {
-      if (
-        autoCompletState.activeSuggestion - 1 ===
-        autoCompletState.data._options.length
-      ) {
+      if (autoCompletState.activeSuggestion - 1 === autoCompletState.data._options.length) {
         return
       }
       setAutoCompleteState((prevState) => ({
@@ -589,15 +479,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
-  const modal = (
-    title: string,
-    message: string,
-    okLabel: string,
-    hide: boolean,
-    okFn: () => void,
-    cancelLabel?: string,
-    cancelFn?: () => void
-  ) => {
+  const modal = (title: string, message: string, okLabel: string, hide: boolean, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
     setModalState((prevState) => ({
       ...prevState,
       title,
@@ -631,10 +513,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       className="remix_ui_terminal_popup bg-light ml-4 p-2 position-absolute text-left "
       style={{
         display:
-          autoCompletState.showSuggestions &&
-          autoCompletState.userInput !== '' &&
-          autoCompletState.userInput.length > 0 &&
-          autoCompletState.data._options.length > 0
+          autoCompletState.showSuggestions && autoCompletState.userInput !== '' && autoCompletState.userInput.length > 0 && autoCompletState.data._options.length > 0
             ? 'block'
             : 'none'
       }}
@@ -645,13 +524,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             <div
               key={index}
               data-id="autoCompletePopUpAutoCompleteItem"
-              className={`remix_ui_terminal_autoCompleteItem item ${
-                autoCompletState.data._options[
-                  autoCompletState.activeSuggestion
-                ] === item
-                  ? 'border border-primary '
-                  : ''
-              }`}
+              className={`remix_ui_terminal_autoCompleteItem item ${autoCompletState.data._options[autoCompletState.activeSuggestion] === item ? 'border border-primary ' : ''}`}
               onKeyDown={handleSelect}
               onClick={() => handleClickSelect(item)}
             >
@@ -683,11 +556,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   useEffect(() => {
     ;(async () => {
-      const storage = await props.plugin.call(
-        'storage',
-        'formatString',
-        await props.plugin.call('storage', 'getStorage')
-      )
+      const storage = await props.plugin.call('storage', 'formatString', await props.plugin.call('storage', 'getStorage'))
       setStorage(storage)
     })()
 
@@ -703,88 +572,36 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const classNameBlock = 'remix_ui_terminal_block px-4 py-1 text-break'
 
   return (
-    <div
-      style={{flexGrow: 1}}
-      className="remix_ui_terminal_panel"
-      ref={panelRef}
-    >
+    <div style={{flexGrow: 1}} className="remix_ui_terminal_panel" ref={panelRef}>
       <div className="remix_ui_terminal_bar d-flex">
-        <div
-          className="remix_ui_terminal_menu d-flex w-100 align-items-center position-relative border-top border-dark bg-light"
-          ref={terminalMenu}
-          data-id="terminalToggleMenu"
-        >
-          <CustomTooltip
-            placement="top"
-            tooltipId="terminalToggle"
-            tooltipClasses="text-nowrap"
-            tooltipText={isOpen ? 'Hide Terminal' : 'Show Terminal'}
-          >
+        <div className="remix_ui_terminal_menu d-flex w-100 align-items-center position-relative border-top border-dark bg-light" ref={terminalMenu} data-id="terminalToggleMenu">
+          <CustomTooltip placement="top" tooltipId="terminalToggle" tooltipClasses="text-nowrap" tooltipText={isOpen ? 'Hide Terminal' : 'Show Terminal'}>
             <i
-              className={`mx-2 remix_ui_terminal_toggleTerminal fas ${
-                isOpen ? 'fa-angle-double-down' : 'fa-angle-double-up'
-              }`}
+              className={`mx-2 remix_ui_terminal_toggleTerminal fas ${isOpen ? 'fa-angle-double-down' : 'fa-angle-double-up'}`}
               data-id="terminalToggleIcon"
               onClick={handleToggleTerminal}
             ></i>
           </CustomTooltip>
-          <div
-            className="mx-2 remix_ui_terminal_console"
-            id="clearConsole"
-            data-id="terminalClearConsole"
-            onClick={handleClearConsole}
-          >
-            <CustomTooltip
-              placement="top"
-              tooltipId="terminalClear"
-              tooltipClasses="text-nowrap"
-              tooltipText="Clear console"
-            >
+          <div className="mx-2 remix_ui_terminal_console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole}>
+            <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText="Clear console">
               <i className="fas fa-ban" aria-hidden="true"></i>
             </CustomTooltip>
           </div>
-          <CustomTooltip
-            placement="top"
-            tooltipId="terminalClear"
-            tooltipClasses="text-nowrap"
-            tooltipText="Pending Transactions"
-          >
+          <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText="Pending Transactions">
             <div className="mx-2">0</div>
           </CustomTooltip>
           <div className="pt-1 h-80 mx-3 align-items-center remix_ui_terminal_listenOnNetwork custom-control custom-checkbox">
-            <CustomTooltip
-              placement="top"
-              tooltipId="terminalClear"
-              tooltipClasses="text-nowrap"
-              tooltipText={intl.formatMessage({id: 'terminal.listenTitle'})}
-            >
-              <input
-                className="custom-control-input"
-                id="listenNetworkCheck"
-                onChange={listenOnNetwork}
-                type="checkbox"
-              />
+            <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={intl.formatMessage({id: 'terminal.listenTitle'})}>
+              <input className="custom-control-input" id="listenNetworkCheck" onChange={listenOnNetwork} type="checkbox" />
             </CustomTooltip>
-            <CustomTooltip
-              placement="top"
-              tooltipId="terminalClear"
-              tooltipClasses="text-nowrap"
-              tooltipText={intl.formatMessage({id: 'terminal.listenTitle'})}
-            >
-              <label
-                className="pt-1 form-check-label custom-control-label text-nowrap"
-                htmlFor="listenNetworkCheck"
-                data-id="listenNetworkCheckInput"
-              >
+            <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={intl.formatMessage({id: 'terminal.listenTitle'})}>
+              <label className="pt-1 form-check-label custom-control-label text-nowrap" htmlFor="listenNetworkCheck" data-id="listenNetworkCheckInput">
                 <FormattedMessage id="terminal.listen" />
               </label>
             </CustomTooltip>
           </div>
           <div className="remix_ui_terminal_search d-flex align-items-center h-100">
-            <i
-              className="remix_ui_terminal_searchIcon d-flex align-items-center justify-content-center fas fa-search bg-light"
-              aria-hidden="true"
-            ></i>
+            <i className="remix_ui_terminal_searchIcon d-flex align-items-center justify-content-center fas fa-search bg-light" aria-hidden="true"></i>
             <input
               onChange={(event) => setSearchInput(event.target.value.trim())}
               type="text"
@@ -796,21 +613,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           </div>
         </div>
       </div>
-      <div
-        tabIndex={-1}
-        className="remix_ui_terminal_container d-flex h-100 m-0 flex-column"
-        data-id="terminalContainer"
-      >
+      <div tabIndex={-1} className="remix_ui_terminal_container d-flex h-100 m-0 flex-column" data-id="terminalContainer">
         {handleAutoComplete()}
         <div className="position-relative d-flex flex-column-reverse h-100">
-          <div
-            id="journal"
-            className="remix_ui_terminal_journal d-flex flex-column pt-3 pb-4 px-2 mx-2 mr-0"
-            data-id="terminalJournal"
-          >
-            {!clearConsole && (
-              <TerminalWelcomeMessage storage={storage} packageJson={version} />
-            )}
+          <div id="journal" className="remix_ui_terminal_journal d-flex flex-column pt-3 pb-4 px-2 mx-2 mr-0" data-id="terminalJournal">
+            {!clearConsole && <TerminalWelcomeMessage storage={storage} packageJson={version} />}
             {newstate.journalBlocks &&
               newstate.journalBlocks.map((x, index) => {
                 if (x.name === EMPTY_BLOCK) {
@@ -818,30 +625,17 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                     <div className={classNameBlock} data-id="block" key={index}>
                       <span className="remix_ui_terminal_tx">
                         <div className="remix_ui_terminal_txItem">
-                          [
-                          <span className="remix_ui_terminal_txItemTitle">
-                            block:{x.message} -{' '}
-                          </span>{' '}
-                          0 {'transactions'} ]
+                          [<span className="remix_ui_terminal_txItemTitle">block:{x.message} - </span> 0 {'transactions'} ]
                         </div>
                       </span>
                     </div>
                   )
                 } else if (x.name === UNKNOWN_TRANSACTION) {
                   return x.message
-                    .filter(
-                      (x) =>
-                        x.tx.hash.includes(searchInput) ||
-                        x.tx.from.includes(searchInput) ||
-                        x.tx.to.includes(searchInput)
-                    )
+                    .filter((x) => x.tx.hash.includes(searchInput) || x.tx.from.includes(searchInput) || x.tx.to.includes(searchInput))
                     .map((trans) => {
                       return (
-                        <div
-                          className={classNameBlock}
-                          data-id={`block_tx${trans.tx.hash}`}
-                          key={index}
-                        >
+                        <div className={classNameBlock} data-id={`block_tx${trans.tx.hash}`} key={index}>
                           {' '}
                           {
                             <RenderUnKnownTransactions
@@ -861,11 +655,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 } else if (x.name === KNOWN_TRANSACTION) {
                   return x.message.map((trans) => {
                     return (
-                      <div
-                        className={classNameBlock}
-                        data-id={`block_tx${trans.tx.hash}`}
-                        key={index}
-                      >
+                      <div className={classNameBlock} data-id={`block_tx${trans.tx.hash}`} key={index}>
                         {trans.tx.isCall ? (
                           <RenderCall
                             tx={trans.tx}
@@ -906,11 +696,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                     } else if (typeof msg === 'object') {
                       if (msg.value && isHtml(msg.value)) {
                         return (
-                          <div
-                            className={classNameBlock}
-                            data-id="block"
-                            key={i}
-                          >
+                          <div className={classNameBlock} data-id="block" key={i}>
                             <span className={x.style}>{parse(msg.value)} </span>
                           </div>
                         )
@@ -930,9 +716,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                     } else {
                       return (
                         <div className={classNameBlock} data-id="block" key={i}>
-                          <span className={x.style}>
-                            {msg ? msg.toString() : null}
-                          </span>
+                          <span className={x.style}>{msg ? msg.toString() : null}</span>
                         </div>
                       )
                     }
@@ -940,11 +724,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 } else {
                   if (typeof x.message !== 'function') {
                     return (
-                      <div
-                        className={classNameBlock}
-                        data-id="block"
-                        key={index}
-                      >
+                      <div className={classNameBlock} data-id="block" key={index}>
                         {' '}
                         <span className={x.style}> {x.message}</span>
                       </div>
@@ -955,15 +735,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             <div ref={messagesEndRef} />
           </div>
           {isOpen && (
-            <div
-              id="terminalCli"
-              data-id="terminalCli"
-              className="remix_ui_terminal_cli position-absolute w-100"
-              onClick={focusinput}
-            >
-              <span className="remix_ui_terminal_prompt blink mx-1 font-weight-bold text-dark">
-                {'>'}
-              </span>
+            <div id="terminalCli" data-id="terminalCli" className="remix_ui_terminal_cli position-absolute w-100" onClick={focusinput}>
+              <span className="remix_ui_terminal_prompt blink mx-1 font-weight-bold text-dark">{'>'}</span>
               <input
                 className="remix_ui_terminal_input ml-1 text-dark text-break border-0"
                 ref={inputEl}
@@ -991,24 +764,14 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         handleHide={handleHideModal}
       />
       {toaster && <Toaster message="no content to execute" />}
-      {toastProvider.show && (
-        <Toaster
-          message={`provider for path ${toastProvider.fileName} not found`}
-        />
-      )}
+      {toastProvider.show && <Toaster message={`provider for path ${toastProvider.fileName} not found`} />}
     </div>
   )
 }
 
 function isHtml(value) {
   if (!value.indexOf) return false
-  return (
-    value.indexOf('<div') !== -1 ||
-    value.indexOf('<span') !== -1 ||
-    value.indexOf('<p') !== -1 ||
-    value.indexOf('<label') !== -1 ||
-    value.indexOf('<b') !== -1
-  )
+  return value.indexOf('<div') !== -1 || value.indexOf('<span') !== -1 || value.indexOf('<p') !== -1 || value.indexOf('<label') !== -1 || value.indexOf('<b') !== -1
 }
 
 export default RemixUiTerminal

@@ -19,11 +19,7 @@ export class SolidityScript extends Plugin {
 
   async execute(path: string, functionName: string = 'run') {
     _paq.push(['trackEvent', 'SolidityScript', 'execute', 'script'])
-    this.call(
-      'terminal',
-      'log',
-      `Running free function '${functionName}' from ${path}...`
-    )
+    this.call('terminal', 'log', `Running free function '${functionName}' from ${path}...`)
     let content = await this.call('fileManager', 'readFile', path)
     const params = await this.call('solidity', 'getCompilerParameters')
 
@@ -99,10 +95,7 @@ export class SolidityScript extends Plugin {
             // which in turn uses util.format: https://nodejs.org/dist/latest-v12.x/docs/api/util.html#util_util_format_format_args
             // For example: console.log("Name: %s, Age: %d", remix, 6) will log 'Name: remix, Age: 6'
             // We check first arg to determine if 'util.format' is needed
-            if (
-              typeof log[0] === 'string' &&
-              (log[0].includes('%s') || log[0].includes('%d'))
-            ) {
+            if (typeof log[0] === 'string' && (log[0].includes('%s') || log[0].includes('%d'))) {
               formattedLog = format(log[0], ...log.slice(1))
             } else {
               formattedLog = log.join(' ')

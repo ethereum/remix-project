@@ -1,9 +1,5 @@
 import React, {useState} from 'react'
-import {
-  VyperCompilationResult,
-  VyperCompilationOutput,
-  isCompilationError
-} from '../utils'
+import {VyperCompilationResult, VyperCompilationOutput, isCompilationError} from '../utils'
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
 import Button from 'react-bootstrap/Button'
@@ -49,11 +45,7 @@ function VyperResult({output}: VyperResultProps) {
   }
 
   return (
-    <Tabs
-      id="result"
-      activeKey={active}
-      onSelect={(key: any) => setActive(key)}
-    >
+    <Tabs id="result" activeKey={active} onSelect={(key: any) => setActive(key)}>
       <Tab eventKey="abi" title="ABI">
         <CopyToClipboard getContent={() => JSON.stringify(output.abi)}>
           <Button variant="info" className="copy" data-id="copy-abi">

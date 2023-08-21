@@ -1,10 +1,4 @@
-import React, {
-  ChangeEventHandler,
-  useContext,
-  useEffect,
-  useRef,
-  useState
-} from 'react' // eslint-disable-line
+import React, {ChangeEventHandler, useContext, useEffect, useRef, useState} from 'react' // eslint-disable-line
 import {FormattedMessage, useIntl} from 'react-intl'
 import {PermissionHandlerProps} from '../interface'
 import './permission-dialog.css'
@@ -21,30 +15,14 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
 
   const reset = () => {
     props.plugin.clear()
-    setFeedback(
-      intl.formatMessage({id: 'permissionHandler.allPermissionsReset'})
-    )
+    setFeedback(intl.formatMessage({id: 'permissionHandler.allPermissionsReset'}))
   }
 
   const imgFrom = () => {
-    return (
-      <img
-        className={`${theme === 'dark' ? 'invert' : ''}`}
-        alt=""
-        id="permissionModalImagesFrom"
-        src={from.icon}
-      />
-    )
+    return <img className={`${theme === 'dark' ? 'invert' : ''}`} alt="" id="permissionModalImagesFrom" src={from.icon} />
   }
   const imgTo = () => {
-    return (
-      <img
-        className={`${theme === 'dark' ? 'invert' : ''}`}
-        alt=""
-        id="permissionModalImagesTo"
-        src={to.icon}
-      />
-    )
+    return <img className={`${theme === 'dark' ? 'invert' : ''}`} alt="" id="permissionModalImagesTo" src={to.icon} />
   }
   const pluginsImages = () => {
     return (
@@ -64,9 +42,7 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
           from: from.displayName,
           to: to.displayName,
           method,
-          rememberText: remember
-            ? intl.formatMessage({id: 'permissionHandler.rememberText'})
-            : ''
+          rememberText: remember ? intl.formatMessage({id: 'permissionHandler.rememberText'}) : ''
         }}
       />
     )
@@ -109,10 +85,7 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
         {pluginMessage()}
         {sensitiveCall ? (
           <p className="text-warning">
-            <i
-              className="fas fa-exclamation-triangle mr-2"
-              aria-hidden="true"
-            ></i>
+            <i className="fas fa-exclamation-triangle mr-2" aria-hidden="true"></i>
             <FormattedMessage id="permissionHandler.makeSureYouTrustThisPlugin" />
           </p>
         ) : (
@@ -127,17 +100,9 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
               onChange={switchMode}
               className="form-check-input"
               id="rememberSwitchCheck"
-              data-id={
-                remember
-                  ? 'permissionHandlerRememberChecked'
-                  : 'permissionHandlerRememberUnchecked'
-              }
+              data-id={remember ? 'permissionHandlerRememberChecked' : 'permissionHandlerRememberUnchecked'}
             />
-            <label
-              htmlFor="rememberSwitchCheck"
-              className="form-check-label"
-              data-id="permissionHandlerRememberChoice"
-            >
+            <label htmlFor="rememberSwitchCheck" className="form-check-label" data-id="permissionHandlerRememberChoice">
               <FormattedMessage id="permissionHandler.rememberThisChoice" />
             </label>
           </div>

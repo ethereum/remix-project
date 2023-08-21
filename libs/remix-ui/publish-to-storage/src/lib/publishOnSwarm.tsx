@@ -6,8 +6,7 @@ import type {UploadResult} from '@ethersphere/bee-js'
 const publicBeeNode = new Bee('https://api.gateway.ethswarm.org/')
 
 // on the public gateway the postage stamp id is not relevant, so we use all zeroes
-const defaultPostageStampId =
-  '0000000000000000000000000000000000000000000000000000000000000000'
+const defaultPostageStampId = '0000000000000000000000000000000000000000000000000000000000000000'
 
 export const publishToSwarm = async (contract, api) => {
   // gather list of files to publish
@@ -44,9 +43,7 @@ export const publishToSwarm = async (contract, api) => {
             })
           }
         } catch (e) {
-          return reject(
-            new Error('Error while extracting the hash from metadata.json')
-          )
+          return reject(new Error('Error while extracting the hash from metadata.json'))
         }
 
         api
@@ -75,8 +72,7 @@ export const publishToSwarm = async (contract, api) => {
   const beeNodes = [publicBeeNode]
 
   // add custom private Bee node to the list
-  const postageStampId =
-    api.config.get('settings/swarm-postage-stamp-id') || defaultPostageStampId
+  const postageStampId = api.config.get('settings/swarm-postage-stamp-id') || defaultPostageStampId
   const privateBeeAddress = api.config.get('settings/swarm-private-bee-address')
   if (privateBeeAddress) {
     const privateBee = new Bee(privateBeeAddress)
@@ -87,13 +83,7 @@ export const publishToSwarm = async (contract, api) => {
   await Promise.all(
     sources.map(async (item) => {
       try {
-        const result = await swarmVerifiedPublish(
-          beeNodes,
-          postageStampId,
-          item.content,
-          item.hash,
-          api
-        )
+        const result = await swarmVerifiedPublish(beeNodes, postageStampId, item.content, item.hash, api)
 
         try {
           item.hash = result.url.match('bzz-raw://(.+)')[1]
@@ -113,13 +103,7 @@ export const publishToSwarm = async (contract, api) => {
 
   const metadataContent = JSON.stringify(metadata, null, '\t')
   try {
-    const result = await swarmVerifiedPublish(
-      beeNodes,
-      postageStampId,
-      metadataContent,
-      '',
-      api
-    )
+    const result = await swarmVerifiedPublish(beeNodes, postageStampId, metadataContent, '', api)
 
     try {
       contract.metadataHash = result.url.match('bzz-raw://(.+)')[1]
@@ -142,21 +126,14 @@ export const publishToSwarm = async (contract, api) => {
   return {uploaded, item}
 }
 
-const swarmVerifiedPublish = async (
-  beeNodes: Bee[],
-  postageStampId: string,
-  content,
-  expectedHash,
-  api
-): Promise<Record<string, any>> => {
+const swarmVerifiedPublish = async (beeNodes: Bee[], postageStampId: string, content, expectedHash, api): Promise<Record<string, any>> => {
   try {
     const results = await uploadToBeeNodes(beeNodes, postageStampId, content)
     const hash = hashFromResults(results)
 
     if (expectedHash && hash !== expectedHash) {
       return {
-        message:
-          'hash mismatch between solidity bytecode and uploaded content.',
+        message: 'hash mismatch between solidity bytecode and uploaded content.',
         url: 'bzz-raw://' + hash,
         hash
       }
@@ -191,7 +168,5 @@ const uploadToBee = async (bee: Bee, postageStampId: string, content) => {
 }
 
 const uploadToBeeNodes = (beeNodes: Bee[], postageBatchId: string, content) => {
-  return Promise.all(
-    beeNodes.map((node) => uploadToBee(node, postageBatchId, content))
-  )
+  return Promise.all(beeNodes.map((node) => uploadToBee(node, postageBatchId, content)))
 }

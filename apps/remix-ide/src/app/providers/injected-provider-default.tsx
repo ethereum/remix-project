@@ -9,17 +9,8 @@ export class InjectedProviderDefaultBase extends InjectedProvider {
 
   async init() {
     const injectedProvider = this.getInjectedProvider()
-    if (
-      injectedProvider &&
-      injectedProvider._metamask &&
-      injectedProvider._metamask.isUnlocked
-    ) {
-      if (!(await injectedProvider._metamask.isUnlocked()))
-        this.call(
-          'notification',
-          'toast',
-          'Please make sure the injected provider is unlocked (e.g Metamask).'
-        )
+    if (injectedProvider && injectedProvider._metamask && injectedProvider._metamask.isUnlocked) {
+      if (!(await injectedProvider._metamask.isUnlocked())) this.call('notification', 'toast', 'Please make sure the injected provider is unlocked (e.g Metamask).')
     }
     return super.init()
   }

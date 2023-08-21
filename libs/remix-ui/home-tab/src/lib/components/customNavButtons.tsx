@@ -7,29 +7,15 @@ const CustomNavButtons = ({parent, next, previous, goToSlide, ...rest}) => {
   } = rest
   return (
     <div className="mt-1 d-flex justify-content-end carousel-button-group">
-      <button
-        className={
-          currentSlide === 0 ? 'disable py-1 border btn' : 'py-1 border btn'
-        }
-        disabled={currentSlide === 0}
-        onClick={() => previous()}
-      >
+      <button className={currentSlide === 0 ? 'disable py-1 border btn' : 'py-1 border btn'} disabled={currentSlide === 0} onClick={() => previous()}>
         <i className="fas fa-angle-left"></i>
       </button>
       <button
-        className={
-          Math.abs(transform) >=
-          parent?.current?.containerRef?.current?.scrollWidth - containerWidth
-            ? 'disable py-1 border btn'
-            : 'py-1 border btn'
-        }
+        className={Math.abs(transform) >= parent?.current?.containerRef?.current?.scrollWidth - containerWidth ? 'disable py-1 border btn' : 'py-1 border btn'}
         onClick={() => {
           if (currentSlide + 1 < totalItems) goToSlide(currentSlide + 1)
         }}
-        disabled={
-          Math.abs(transform) >=
-          parent?.current?.containerRef?.current?.scrollWidth - containerWidth
-        }
+        disabled={Math.abs(transform) >= parent?.current?.containerRef?.current?.scrollWidth - containerWidth}
       >
         <i className="fas fa-angle-right"></i>
       </button>

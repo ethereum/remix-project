@@ -43,13 +43,7 @@ function App() {
 
   useEffect(() => {
     client.onload(async () => {
-      const customProfiles = [
-        'menuicons',
-        'tabs',
-        'solidityUnitTesting',
-        'hardhat-provider',
-        'notification'
-      ]
+      const customProfiles = ['menuicons', 'tabs', 'solidityUnitTesting', 'hardhat-provider', 'notification']
 
       client.testCommand = async (data: any) => {
         console.log(data)
@@ -122,24 +116,11 @@ function App() {
       <Logger id="methods" log={log}></Logger>
       <label>events</label>
       <Logger id="events" log={events}></Logger>
-      <input
-        className="form-control w-100"
-        type="text"
-        id="payload"
-        placeholder="Enter payload here..."
-        value={payload}
-        onChange={handleChange}
-        data-id="payload-input"
-      />
+      <input className="form-control w-100" type="text" id="payload" placeholder="Enter payload here..." value={payload} onChange={handleChange} data-id="payload-input" />
       {profiles.map((profile: Profile) => {
         const methods = profile.methods.map((method: string) => {
           return (
-            <button
-              data-id={`${profile.name}:${method}`}
-              key={method}
-              className="btn btn-primary btn-sm ml-1 mb-1"
-              onClick={async () => await clientMethod(profile, method)}
-            >
+            <button data-id={`${profile.name}:${method}`} key={method} className="btn btn-primary btn-sm ml-1 mb-1" onClick={async () => await clientMethod(profile, method)}>
               {method}
             </button>
           )

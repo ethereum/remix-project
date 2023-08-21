@@ -17,12 +17,7 @@ export function RemixPluginPanel(props: RemixPanelProps) {
       <div className="pluginsContainer">
         <div className="plugins" id="plugins">
           {Object.values(props.plugins).map((pluginRecord) => {
-            return (
-              <RemixUIPanelPlugin
-                key={pluginRecord.profile.name}
-                pluginRecord={pluginRecord}
-              />
-            )
+            return <RemixUIPanelPlugin key={pluginRecord.profile.name} pluginRecord={pluginRecord} />
           })}
         </div>
       </div>

@@ -38,18 +38,13 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   })
   const [currentVersion, setCurrentVersion] = useState('')
   const [hideWarnings, setHideWarnings] = useState<boolean>(false)
-  const [compileErrors, setCompileErrors] = useState<
-    Record<string, CompileErrors>
-  >({[currentFile]: api.compileErrors})
-  const [badgeStatus, setBadgeStatus] = useState<
-    Record<string, {key: string; title?: string; type?: string}>
-  >({})
+  const [compileErrors, setCompileErrors] = useState<Record<string, CompileErrors>>({[currentFile]: api.compileErrors})
+  const [badgeStatus, setBadgeStatus] = useState<Record<string, {key: string; title?: string; type?: string}>>({})
   const [contractsFile, setContractsFile] = useState<ContractsFile>({})
 
   useEffect(() => {
     ;(async () => {
-      const hide =
-        ((await api.getAppParameter('hideWarnings')) as boolean) || false
+      const hide = ((await api.getAppParameter('hideWarnings')) as boolean) || false
       setHideWarnings(hide)
     })()
   }, [compileErrors])
@@ -191,17 +186,12 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
 
   const panicMessage = (message: string) => (
     <div>
-      <i
-        className="fas fa-exclamation-circle remixui_panicError"
-        aria-hidden="true"
-      ></i>
+      <i className="fas fa-exclamation-circle remixui_panicError" aria-hidden="true"></i>
       The compiler returned with the following internal error: <br />{' '}
       <b>
         {message}.<br />
-        The compiler might be in a non-sane state, please be careful and do not
-        use further compilation data to deploy to mainnet. It is heavily
-        recommended to use another browser not affected by this issue (Firefox
-        is known to not be affected).
+        The compiler might be in a non-sane state, please be careful and do not use further compilation data to deploy to mainnet. It is heavily recommended to use another browser
+        not affected by this issue (Firefox is known to not be affected).
       </b>
       <br />
       Please join{' '}
@@ -231,8 +221,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
           setConfigFilePath={setConfigFilePath}
         />
 
-        {contractsFile[currentFile] &&
-          contractsFile[currentFile].contractsDetails && (
+        {contractsFile[currentFile] && contractsFile[currentFile].contractsDetails && (
           <ContractSelection
             api={api}
             compiledFileName={currentFile}
@@ -245,15 +234,10 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
         {compileErrors[currentFile] && (
           <div className="remixui_errorBlobs p-4" data-id="compiledErrors">
             <>
-              <span
-                data-id={`compilationFinishedWith_${currentVersion}`}
-              ></span>
+              <span data-id={`compilationFinishedWith_${currentVersion}`}></span>
               {compileErrors[currentFile].error && (
                 <Renderer
-                  message={
-                    compileErrors[currentFile].error.formattedMessage ||
-                    compileErrors[currentFile].error
-                  }
+                  message={compileErrors[currentFile].error.formattedMessage || compileErrors[currentFile].error}
                   plugin={api}
                   opt={{
                     type: compileErrors[currentFile].error.severity || 'error',
@@ -263,38 +247,16 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
               )}
               {compileErrors[currentFile].error &&
                 compileErrors[currentFile].error.mode === 'panic' &&
-                modal(
-                  'Error',
-                  panicMessage(
-                    compileErrors[currentFile].error.formattedMessage
-                  ),
-                  'Close',
-                  null,
-                  false
-                )}
+                modal('Error', panicMessage(compileErrors[currentFile].error.formattedMessage), 'Close', null, false)}
               {compileErrors[currentFile].errors &&
                 compileErrors[currentFile].errors.length &&
                 compileErrors[currentFile].errors.map((err, index) => {
                   if (hideWarnings) {
                     if (err.severity !== 'warning') {
-                      return (
-                        <Renderer
-                          key={index}
-                          message={err.formattedMessage}
-                          plugin={api}
-                          opt={{type: err.severity, errorType: err.type}}
-                        />
-                      )
+                      return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{type: err.severity, errorType: err.type}} />
                     }
                   } else {
-                    return (
-                      <Renderer
-                        key={index}
-                        message={err.formattedMessage}
-                        plugin={api}
-                        opt={{type: err.severity, errorType: err.type}}
-                      />
-                    )
+                    return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{type: err.severity, errorType: err.type}} />
                   }
                 })}
             </>

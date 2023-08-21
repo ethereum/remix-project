@@ -5,12 +5,7 @@ import {FileExplorerContextMenu} from './file-explorer-context-menu' // eslint-d
 import {FileExplorerProps, WorkSpaceState} from '../types'
 
 import '../css/file-explorer.css'
-import {
-  checkSpecialChars,
-  extractNameFromKey,
-  extractParentFromKey,
-  joinPath
-} from '@remix-ui/helper'
+import {checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath} from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {FileRender} from './file-render'
 import {Drag} from '@remix-ui/drag-n-drop'
@@ -97,11 +92,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [treeRef.current])
 
   const hasReservedKeyword = (content: string): boolean => {
-    if (
-      state.reservedKeywords.findIndex((value) => content.startsWith(value)) !==
-      -1
-    )
-      return true
+    if (state.reservedKeywords.findIndex((value) => content.startsWith(value)) !== -1) return true
     else return false
   }
 
@@ -109,12 +100,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       props.dispatchCreateNewFile(newFilePath, ROOT_PATH)
     } catch (error) {
-      return props.modal(
-        'File Creation Failed',
-        typeof error === 'string' ? error : error.message,
-        'Close',
-        async () => {}
-      )
+      return props.modal('File Creation Failed', typeof error === 'string' ? error : error.message, 'Close', async () => {})
     }
   }
 
@@ -122,12 +108,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       props.dispatchCreateNewFolder(newFolderPath, ROOT_PATH)
     } catch (e) {
-      return props.modal(
-        'Folder Creation Failed',
-        typeof e === 'string' ? e : e.message,
-        'Close',
-        async () => {}
-      )
+      return props.modal('Folder Creation Failed', typeof e === 'string' ? e : e.message, 'Close', async () => {})
     }
   }
 
@@ -135,14 +116,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       props.dispatchRenamePath(oldPath, newPath)
     } catch (error) {
-      props.modal(
-        'Rename File Failed',
-        'Unexpected error while renaming: ' + typeof error === 'string'
-          ? error
-          : error.message,
-        'Close',
-        async () => {}
-      )
+      props.modal('Rename File Failed', 'Unexpected error while renaming: ' + typeof error === 'string' ? error : error.message, 'Close', async () => {})
     }
   }
 
@@ -162,9 +136,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       props.dispatchHandleClickFile(path, type)
     } else {
       if (props.focusElement.findIndex((item) => item.key === path) !== -1) {
-        const focusElement = props.focusElement.filter(
-          (item) => item.key !== path
-        )
+        const focusElement = props.focusElement.filter((item) => item.key !== path)
 
         props.dispatchSetFocusElement(focusElement)
       } else {
@@ -178,15 +150,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const handleClickFolder = async (
-    path: string,
-    type: 'folder' | 'file' | 'gist'
-  ) => {
+  const handleClickFolder = async (path: string, type: 'folder' | 'file' | 'gist') => {
     if (state.ctrlKey) {
       if (props.focusElement.findIndex((item) => item.key === path) !== -1) {
-        const focusElement = props.focusElement.filter(
-          (item) => item.key !== path
-        )
+        const focusElement = props.focusElement.filter((item) => item.key !== path)
 
         props.dispatchSetFocusElement(focusElement)
       } else {
@@ -204,13 +171,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         expandPath = [...new Set([...props.expandPath, path])]
         props.dispatchFetchDirectory(path)
       } else {
-        expandPath = [
-          ...new Set(
-            props.expandPath.filter(
-              (key) => key && typeof key === 'string' && !key.startsWith(path)
-            )
-          )
-        ]
+        expandPath = [...new Set(props.expandPath.filter((key) => key && typeof key === 'string' && !key.startsWith(path)))]
       }
 
       props.dispatchSetFocusElement([{key: path, type}])
@@ -249,36 +210,19 @@ export const FileExplorer = (props: FileExplorerProps) => {
         })
       }
       if (checkSpecialChars(content)) {
-        props.modal(
-          'Validation Error',
-          'Special characters are not allowed',
-          'OK',
-          () => {}
-        )
+        props.modal('Validation Error', 'Special characters are not allowed', 'OK', () => {})
       } else {
         if (state.focusEdit.isNew) {
           if (hasReservedKeyword(content)) {
             props.dispatchRemoveInputField(parentFolder)
-            props.modal(
-              'Reserved Keyword',
-              `File name contains Remix reserved keywords. '${content}'`,
-              'Close',
-              () => {}
-            )
+            props.modal('Reserved Keyword', `File name contains Remix reserved keywords. '${content}'`, 'Close', () => {})
           } else {
-            state.focusEdit.type === 'file'
-              ? createNewFile(joinPath(parentFolder, content))
-              : createNewFolder(joinPath(parentFolder, content))
+            state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
             props.dispatchRemoveInputField(parentFolder)
           }
         } else {
           if (hasReservedKeyword(content)) {
-            props.modal(
-              'Reserved Keyword',
-              `File name contains Remix reserved keywords. '${content}'`,
-              'Close',
-              () => {}
-            )
+            props.modal('Reserved Keyword', `File name contains Remix reserved keywords. '${content}'`, 'Close', () => {})
           } else {
             if (state.focusEdit.element) {
               const oldPath: string = state.focusEdit.element
@@ -301,27 +245,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const handleFileExplorerMenuClick = (e: SyntheticEvent) => {
     e.stopPropagation()
-    if (
-      e &&
-      (e.target as any).getAttribute('data-id') ===
-        'fileExplorerUploadFileuploadFile'
-    )
-      return // we don't want to let propagate the input of type file
-    if (
-      e &&
-      (e.target as any).getAttribute('data-id') === 'fileExplorerFileUpload'
-    )
-      return // we don't want to let propagate the input of type file
+    if (e && (e.target as any).getAttribute('data-id') === 'fileExplorerUploadFileuploadFile') return // we don't want to let propagate the input of type file
+    if (e && (e.target as any).getAttribute('data-id') === 'fileExplorerFileUpload') return // we don't want to let propagate the input of type file
     let expandPath = []
 
     if (!props.expandPath.includes(ROOT_PATH)) {
       expandPath = [ROOT_PATH, ...new Set([...props.expandPath])]
     } else {
-      expandPath = [
-        ...new Set(
-          props.expandPath.filter((key) => key && typeof key === 'string')
-        )
-      ]
+      expandPath = [...new Set(props.expandPath.filter((key) => key && typeof key === 'string'))]
     }
     props.dispatchHandleExpandPath(expandPath)
   }
@@ -330,12 +261,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       props.dispatchMoveFile(src, dest)
     } catch (error) {
-      props.modal(
-        'Moving File Failed',
-        'Unexpected error while moving file: ' + src,
-        'Close',
-        async () => {}
-      )
+      props.modal('Moving File Failed', 'Unexpected error while moving file: ' + src, 'Close', async () => {})
     }
   }
 
@@ -343,12 +269,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       props.dispatchMoveFolder(src, dest)
     } catch (error) {
-      props.modal(
-        'Moving Folder Failed',
-        'Unexpected error while moving folder: ' + src,
-        'Close',
-        async () => {}
-      )
+      props.modal('Moving Folder Failed', 'Unexpected error while moving folder: ' + src, 'Close', async () => {})
     }
   }
 

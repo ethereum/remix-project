@@ -44,17 +44,8 @@ const DragBar = (props: IRemixDragBarUi) => {
   return (
     <>
       <div className={`overlay ${dragState ? '' : 'd-none'}`}></div>
-      <Draggable
-        nodeRef={nodeRef}
-        position={{x: 0, y: dragBarPosY}}
-        onStart={startDrag}
-        onStop={stopDrag}
-        axis="y"
-      >
-        <div
-          ref={nodeRef}
-          className={`dragbar_terminal ${dragState ? 'ondrag' : ''}`}
-        ></div>
+      <Draggable nodeRef={nodeRef} position={{x: 0, y: dragBarPosY}} onStart={startDrag} onStop={stopDrag} axis="y">
+        <div ref={nodeRef} className={`dragbar_terminal ${dragState ? 'ondrag' : ''}`}></div>
       </Draggable>
     </>
   )

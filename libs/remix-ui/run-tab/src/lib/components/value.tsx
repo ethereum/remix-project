@@ -16,12 +16,7 @@ export function ValueUI(props: ValueProps) {
   const validateInputKey = (e) => {
     // preventing not numeric keys
     // preventing 000 case
-    if (
-      !isNumeric(e.key) ||
-      (e.key === '0' &&
-        !parseInt(inputValue.current.value) &&
-        inputValue.current.value.length > 0)
-    ) {
+    if (!isNumeric(e.key) || (e.key === '0' && !parseInt(inputValue.current.value) && inputValue.current.value.length > 0)) {
       e.preventDefault()
     }
   }
@@ -56,12 +51,7 @@ export function ValueUI(props: ValueProps) {
         <FormattedMessage id="udapp.value" />
       </label>
       <div className="udapp_gasValueContainer">
-        <CustomTooltip
-          placement={'top-start'}
-          tooltipClasses="text-nowrap"
-          tooltipId="remixValueTooltip"
-          tooltipText="Enter an amount and choose its unit"
-        >
+        <CustomTooltip placement={'top-start'} tooltipClasses="text-nowrap" tooltipId="remixValueTooltip" tooltipText="Enter an amount and choose its unit">
           <input
             ref={inputValue}
             type="number"

@@ -1,11 +1,7 @@
 /* global ethereum */
 import React from 'react' // eslint-disable-line
 import {Plugin} from '@remixproject/engine'
-import {
-  JsonDataRequest,
-  RejectRequest,
-  SuccessRequest
-} from '../providers/abstract-provider'
+import {JsonDataRequest, RejectRequest, SuccessRequest} from '../providers/abstract-provider'
 import {IProvider} from './abstract-provider'
 
 export abstract class InjectedProvider extends Plugin implements IProvider {
@@ -39,10 +35,7 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
   onDeactivation(): void {
     try {
       const web3Provider = this.getInjectedProvider()
-      web3Provider.removeListener(
-        'accountsChanged',
-        this.listenerAccountsChanged
-      )
+      web3Provider.removeListener('accountsChanged', this.listenerAccountsChanged)
       web3Provider.removeListener('chainChanged', this.listenerChainChanged)
     } catch (error) {
       console.log('unable to remove listener on context changed')
@@ -51,10 +44,7 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
 
   askPermission(throwIfNoInjectedProvider) {
     const web3Provider = this.getInjectedProvider()
-    if (
-      typeof web3Provider !== 'undefined' &&
-      typeof web3Provider.request === 'function'
-    ) {
+    if (typeof web3Provider !== 'undefined' && typeof web3Provider.request === 'function') {
       web3Provider.request({method: 'eth_requestAccounts'})
     } else if (throwIfNoInjectedProvider) {
       throw new Error(this.notFound())
@@ -82,20 +72,12 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
     })
   }
 
-  private async sendAsyncInternal(
-    data: JsonDataRequest,
-    resolve: SuccessRequest,
-    reject: RejectRequest
-  ): Promise<void> {
+  private async sendAsyncInternal(data: JsonDataRequest, resolve: SuccessRequest, reject: RejectRequest): Promise<void> {
     // Check the case where current environment is VM on UI and it still sends RPC requests
     // This will be displayed on UI tooltip as 'cannot get account list: Environment Updated !!'
     const web3Provider = this.getInjectedProvider()
     if (!web3Provider) {
-      this.call(
-        'notification',
-        'toast',
-        'No injected provider (e.g Metamask) has been found.'
-      )
+      this.call('notification', 'toast', 'No injected provider (e.g Metamask) has been found.')
       return resolve({
         jsonrpc: '2.0',
         error: 'no injected provider found',
@@ -104,8 +86,7 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
     }
     try {
       let resultData
-      if (web3Provider.send)
-        resultData = await web3Provider.send(data.method, data.params)
+      if (web3Provider.send) resultData = await web3Provider.send(data.method, data.params)
       else if (web3Provider.request)
         resultData = await web3Provider.request({
           method: data.method,
@@ -126,8 +107,7 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
     } catch (error) {
       resolve({
         jsonrpc: '2.0',
-        error:
-          error.data && error.data.message ? error.data.message : error.message,
+        error: error.data && error.data.message ? error.data.message : error.message,
         id: data.id
       })
     }

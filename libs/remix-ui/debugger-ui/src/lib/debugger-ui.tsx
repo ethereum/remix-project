@@ -54,12 +54,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
 
   const handleResize = () => {
     if (panelsRef.current && debuggerTopRef.current) {
-      panelsRef.current.style.height =
-        window.innerHeight -
-        debuggerTopRef.current.clientHeight -
-        debuggerTopRef.current.offsetTop -
-        7 +
-        'px'
+      panelsRef.current.style.height = window.innerHeight - debuggerTopRef.current.clientHeight - debuggerTopRef.current.offsetTop - 7 + 'px'
     }
   }
 
@@ -97,8 +92,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       })
 
       debuggerModule.onBreakpointAdded((fileName, row) => {
-        if (state.debugger)
-          state.debugger.breakPointManager.add({fileName: fileName, row: row})
+        if (state.debugger) state.debugger.breakPointManager.add({fileName: fileName, row: row})
       })
 
       debuggerModule.onEditorContentChanged(() => {
@@ -111,8 +105,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     const providerChanged = () => {
       debuggerModule.onEnvChanged((provider) => {
         setState((prevState) => {
-          const isLocalNodeUsed =
-            !provider.startsWith('vm') && provider !== 'injected'
+          const isLocalNodeUsed = !provider.startsWith('vm') && provider !== 'injected'
           return {...prevState, isLocalNodeUsed: isLocalNodeUsed}
         })
       })
@@ -135,8 +128,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       setState((prevState) => {
         return {
           ...prevState,
-          sourceLocationStatus:
-            'Locating breakpoint, this might take a while...'
+          sourceLocationStatus: 'Locating breakpoint, this might take a while...'
         }
       })
     })
@@ -147,69 +139,48 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       })
     })
 
-    debuggerInstance.event.register(
-      'newSourceLocation',
-      async (
-        lineColumnPos,
-        rawLocation,
-        generatedSources,
-        address,
-        stepDetail,
-        lineGasCost
-      ) => {
-        if (!lineColumnPos) {
-          await debuggerModule.discardHighlight()
-          setState((prevState) => {
-            return {
-              ...prevState,
-              sourceLocationStatus:
-                'Source location not available, neither in Sourcify nor in Etherscan. Please make sure the Etherscan api key is provided in the settings.'
-            }
-          })
-          return
-        }
-        const contracts = await debuggerModule.fetchContractAndCompile(
-          address || currentReceipt.contractAddress || currentReceipt.to,
-          currentReceipt
-        )
-        if (contracts) {
-          let path = contracts.getSourceName(rawLocation.file)
-          if (!path) {
-            // check in generated sources
-            for (const source of generatedSources) {
-              if (source.id === rawLocation.file) {
-                path = `browser/.debugger/generated-sources/${source.name}`
-                let content
-                try {
-                  content = await debuggerModule.getFile(path)
-                } catch (e) {
-                  const message =
-                    "Unable to fetch generated sources, the file probably doesn't exist yet."
-                  console.log(message, ' ', e)
-                }
-                if (content !== source.contents) {
-                  await debuggerModule.setFile(path, source.contents)
-                }
-                break
+    debuggerInstance.event.register('newSourceLocation', async (lineColumnPos, rawLocation, generatedSources, address, stepDetail, lineGasCost) => {
+      if (!lineColumnPos) {
+        await debuggerModule.discardHighlight()
+        setState((prevState) => {
+          return {
+            ...prevState,
+            sourceLocationStatus: 'Source location not available, neither in Sourcify nor in Etherscan. Please make sure the Etherscan api key is provided in the settings.'
+          }
+        })
+        return
+      }
+      const contracts = await debuggerModule.fetchContractAndCompile(address || currentReceipt.contractAddress || currentReceipt.to, currentReceipt)
+      if (contracts) {
+        let path = contracts.getSourceName(rawLocation.file)
+        if (!path) {
+          // check in generated sources
+          for (const source of generatedSources) {
+            if (source.id === rawLocation.file) {
+              path = `browser/.debugger/generated-sources/${source.name}`
+              let content
+              try {
+                content = await debuggerModule.getFile(path)
+              } catch (e) {
+                const message = "Unable to fetch generated sources, the file probably doesn't exist yet."
+                console.log(message, ' ', e)
               }
+              if (content !== source.contents) {
+                await debuggerModule.setFile(path, source.contents)
+              }
+              break
             }
           }
-          if (path) {
-            setState((prevState) => {
-              return {...prevState, sourceLocationStatus: ''}
-            })
-            await debuggerModule.discardHighlight()
-            await debuggerModule.highlight(
-              lineColumnPos,
-              path,
-              rawLocation,
-              stepDetail,
-              lineGasCost
-            )
-          }
+        }
+        if (path) {
+          setState((prevState) => {
+            return {...prevState, sourceLocationStatus: ''}
+          })
+          await debuggerModule.discardHighlight()
+          await debuggerModule.highlight(lineColumnPos, path, rawLocation, stepDetail, lineGasCost)
         }
       }
-    )
+    })
 
     debuggerInstance.event.register('debuggerUnloaded', () => unLoad())
   }
@@ -284,11 +255,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       return
     }
 
-    const web3 =
-      optWeb3 ||
-      (state.opt.debugWithLocalNode
-        ? await debuggerModule.web3()
-        : await debuggerModule.getDebugWeb3())
+    const web3 = optWeb3 || (state.opt.debugWithLocalNode ? await debuggerModule.web3() : await debuggerModule.getDebugWeb3())
     try {
       const networkId = await web3.eth.net.getId()
       _paq.push(['trackEvent', 'debugger', 'startDebugging', networkId])
@@ -296,8 +263,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         setState((prevState) => {
           return {
             ...prevState,
-            validationError:
-              'Unfortunately, the Kovan network is not supported.'
+            validationError: 'Unfortunately, the Kovan network is not supported.'
           }
         })
         return
@@ -328,11 +294,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       offsetToLineColumnConverter: debuggerModule.offsetToLineColumnConverter,
       compilationResult: async (address) => {
         try {
-          if (!localCache[address])
-            localCache[address] = await debuggerModule.fetchContractAndCompile(
-              address,
-              currentReceipt
-            )
+          if (!localCache[address]) localCache[address] = await debuggerModule.fetchContractAndCompile(address, currentReceipt)
           return localCache[address]
         } catch (e) {
           // debuggerModule.showMessage('Debugging error', 'Unable to fetch a transaction.')
@@ -368,9 +330,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         setState((prevState) => {
           let errorMsg = error.message || error
           if (typeof errorMsg !== 'string') {
-            errorMsg =
-              JSON.stringify(errorMsg) +
-              '. Possible error: the current endpoint does not support retrieving the trace of a transaction.'
+            errorMsg = JSON.stringify(errorMsg) + '. Possible error: the current endpoint does not support retrieving the trace of a transaction.'
           }
           return {
             ...prevState,
@@ -397,81 +357,22 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
   }
 
   const stepManager = {
-    jumpTo:
-      state.debugger && state.debugger.step_manager
-        ? state.debugger.step_manager.jumpTo.bind(state.debugger.step_manager)
-        : null,
-    stepOverBack:
-      state.debugger && state.debugger.step_manager
-        ? state.debugger.step_manager.stepOverBack.bind(
-          state.debugger.step_manager
-        )
-        : null,
-    stepIntoBack:
-      state.debugger && state.debugger.step_manager
-        ? state.debugger.step_manager.stepIntoBack.bind(
-          state.debugger.step_manager
-        )
-        : null,
-    stepIntoForward:
-      state.debugger && state.debugger.step_manager
-        ? state.debugger.step_manager.stepIntoForward.bind(
-          state.debugger.step_manager
-        )
-        : null,
-    stepOverForward:
-      state.debugger && state.debugger.step_manager
-        ? state.debugger.step_manager.stepOverForward.bind(
-          state.debugger.step_manager
-        )
-        : null,
-    jumpOut:
-      state.debugger && state.debugger.step_manager
-        ? state.debugger.step_manager.jumpOut.bind(state.debugger.step_manager)
-        : null,
-    jumpPreviousBreakpoint:
-      state.debugger && state.debugger.step_manager
-        ? state.debugger.step_manager.jumpPreviousBreakpoint.bind(
-          state.debugger.step_manager
-        )
-        : null,
-    jumpNextBreakpoint:
-      state.debugger && state.debugger.step_manager
-        ? state.debugger.step_manager.jumpNextBreakpoint.bind(
-          state.debugger.step_manager
-        )
-        : null,
-    jumpToException:
-      state.debugger && state.debugger.step_manager
-        ? state.debugger.step_manager.jumpToException.bind(
-          state.debugger.step_manager
-        )
-        : null,
-    traceLength:
-      state.debugger && state.debugger.step_manager
-        ? state.debugger.step_manager.traceLength
-        : null,
-    registerEvent:
-      state.debugger && state.debugger.step_manager
-        ? state.debugger.step_manager.event.register.bind(
-          state.debugger.step_manager.event
-        )
-        : null
+    jumpTo: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpTo.bind(state.debugger.step_manager) : null,
+    stepOverBack: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepOverBack.bind(state.debugger.step_manager) : null,
+    stepIntoBack: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepIntoBack.bind(state.debugger.step_manager) : null,
+    stepIntoForward: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepIntoForward.bind(state.debugger.step_manager) : null,
+    stepOverForward: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.stepOverForward.bind(state.debugger.step_manager) : null,
+    jumpOut: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpOut.bind(state.debugger.step_manager) : null,
+    jumpPreviousBreakpoint: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpPreviousBreakpoint.bind(state.debugger.step_manager) : null,
+    jumpNextBreakpoint: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpNextBreakpoint.bind(state.debugger.step_manager) : null,
+    jumpToException: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpToException.bind(state.debugger.step_manager) : null,
+    traceLength: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.traceLength : null,
+    registerEvent: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.event.register.bind(state.debugger.step_manager.event) : null
   }
 
   const vmDebugger = {
-    registerEvent:
-      state.debugger && state.debugger.vmDebuggerLogic
-        ? state.debugger.vmDebuggerLogic.event.register.bind(
-          state.debugger.vmDebuggerLogic.event
-        )
-        : null,
-    triggerEvent:
-      state.debugger && state.debugger.vmDebuggerLogic
-        ? state.debugger.vmDebuggerLogic.event.trigger.bind(
-          state.debugger.vmDebuggerLogic.event
-        )
-        : null
+    registerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.register.bind(state.debugger.vmDebuggerLogic.event) : null,
+    triggerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.trigger.bind(state.debugger.vmDebuggerLogic.event) : null
   }
 
   const customJSX = (
@@ -489,11 +390,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         }}
         type="checkbox"
       />
-      <label
-        data-id="debugGeneratedSourcesLabel"
-        className="form-check-label custom-control-label"
-        htmlFor="debugGeneratedSourcesInput"
-      >
+      <label data-id="debugGeneratedSourcesLabel" className="form-check-label custom-control-label" htmlFor="debugGeneratedSourcesInput">
         <FormattedMessage id="debugger.useGeneratedSources" />
         (Solidity {'>='} v0.7.2)
       </label>
@@ -505,23 +402,13 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       <div className="px-2" ref={debuggerTopRef}>
         <div>
           <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
-            <CustomTooltip
-              tooltipId="debuggerGenSourceCheckbox"
-              tooltipText={
-                <FormattedMessage id="debugger.debugWithGeneratedSources" />
-              }
-              placement="bottom-start"
-            >
+            <CustomTooltip tooltipId="debuggerGenSourceCheckbox" tooltipText={<FormattedMessage id="debugger.debugWithGeneratedSources" />} placement="bottom-start">
               {customJSX}
             </CustomTooltip>
           </div>
           {state.isLocalNodeUsed && (
             <div className="mb-2 debuggerConfig custom-control custom-checkbox">
-              <CustomTooltip
-                tooltipId="debuggerGenSourceInput"
-                tooltipText="Force the debugger to use the current local node"
-                placement="right"
-              >
+              <CustomTooltip tooltipId="debuggerGenSourceInput" tooltipText="Force the debugger to use the current local node" placement="right">
                 <input
                   className="custom-control-input"
                   id="debugWithLocalNodeInput"
@@ -536,20 +423,12 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
                   type="checkbox"
                 />
               </CustomTooltip>
-              <label
-                data-id="debugLocaNodeLabel"
-                className="form-check-label custom-control-label"
-                htmlFor="debugWithLocalNodeInput"
-              >
+              <label data-id="debugLocaNodeLabel" className="form-check-label custom-control-label" htmlFor="debugWithLocalNodeInput">
                 <FormattedMessage id="debugger.debugLocaNodeLabel" />
               </label>
             </div>
           )}
-          {state.validationError && (
-            <span className="w-100 py-1 text-danger validationError">
-              {state.validationError}
-            </span>
-          )}
+          {state.validationError && <span className="w-100 py-1 text-danger validationError">{state.validationError}</span>}
         </div>
         <TxBrowser
           requestDebug={requestDebug}
@@ -560,8 +439,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         />
         {state.debugging && state.sourceLocationStatus && (
           <div className="text-warning">
-            <i className="fas fa-exclamation-triangle" aria-hidden="true"></i>{' '}
-            {state.sourceLocationStatus}
+            <i className="fas fa-exclamation-triangle" aria-hidden="true"></i> {state.sourceLocationStatus}
           </div>
         )}
         {!state.debugging && (
@@ -582,9 +460,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         {state.debugging && <StepManager stepManager={stepManager} />}
       </div>
       <div className="debuggerPanels" ref={panelsRef}>
-        {state.debugging && (
-          <VmDebuggerHead debugging={state.debugging} vmDebugger={vmDebugger} />
-        )}
+        {state.debugging && <VmDebuggerHead debugging={state.debugging} vmDebugger={vmDebugger} />}
         {state.debugging && (
           <VmDebugger
             debugging={state.debugging}

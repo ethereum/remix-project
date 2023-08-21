@@ -12,14 +12,12 @@ export interface dispatchModalInterface {
   handleToaster: () => void
 }
 
-export const dispatchModalContext = React.createContext<dispatchModalInterface>(
-  {
-    modal: (data: AppModal) => {},
-    toast: (message: string | JSX.Element) => {},
-    alert: (data: AlertModal) => {},
-    handleHideModal: () => {},
-    handleToaster: () => {}
-  }
-)
+export const dispatchModalContext = React.createContext<dispatchModalInterface>({
+  modal: (data: AppModal) => {},
+  toast: (message: string | JSX.Element) => {},
+  alert: (data: AlertModal) => {},
+  handleHideModal: () => {},
+  handleToaster: () => {}
+})
 
 export const modalContext = React.createContext(ModalInitialState)

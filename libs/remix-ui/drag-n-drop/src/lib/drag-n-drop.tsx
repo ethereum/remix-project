@@ -4,9 +4,7 @@ import {MoveContext} from './context/moveContext'
 import {DraggableType, DragType} from './types'
 
 export const Drag = (props: DragType) => {
-  const [dragged, setDragged] = useState<{path: string; isDirectory: boolean}>(
-    {} as {path: string; isDirectory: boolean}
-  )
+  const [dragged, setDragged] = useState<{path: string; isDirectory: boolean}>({} as {path: string; isDirectory: boolean})
 
   return (
     <MoveContext.Provider
@@ -52,10 +50,7 @@ export const Draggable = (props: DraggableType) => {
   const handleDragover = (event: React.DragEvent<HTMLSpanElement>) => {
     //Checks if the folder is opened
     event.preventDefault()
-    if (
-      destination.isDirectory &&
-      !props.expandedPath.includes(destination.path)
-    ) {
+    if (destination.isDirectory && !props.expandedPath.includes(destination.path)) {
       props.handleClickFolder(destination.path, destination.type)
     }
   }

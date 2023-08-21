@@ -10,11 +10,7 @@ export function WalletConnectUI({ethereumClient, wagmiConfig, theme}) {
           <Web3Button label="Connect to a wallet" />
         </WagmiConfig>
       </div>
-      <Web3Modal
-        projectId={PROJECT_ID}
-        ethereumClient={ethereumClient}
-        themeMode={theme}
-      />
+      <Web3Modal projectId={PROJECT_ID} ethereumClient={ethereumClient} themeMode={theme} />
     </div>
   )
 }

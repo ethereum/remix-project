@@ -18,19 +18,12 @@ export const GlobalVariables = ({block, receipt, tx, className}) => {
     'tx.origin': tx && tx.from
   }
   if (block && block.baseFeePerGas) {
-    globals['block.basefee'] =
-      Web3.utils.toBN(block.baseFeePerGas).toString(10) +
-      ` Wei (${block.baseFeePerGas})`
+    globals['block.basefee'] = Web3.utils.toBN(block.baseFeePerGas).toString(10) + ` Wei (${block.baseFeePerGas})`
   }
 
   return (
     <div id="globalvariable" data-id="globalvariable" className={className}>
-      <DropdownPanel
-        hexHighlight={false}
-        bodyStyle={{fontFamily: 'monospace'}}
-        dropdownName="Global Variables"
-        calldata={globals || {}}
-      />
+      <DropdownPanel hexHighlight={false} bodyStyle={{fontFamily: 'monospace'}} dropdownName="Global Variables" calldata={globals || {}} />
     </div>
   )
 }

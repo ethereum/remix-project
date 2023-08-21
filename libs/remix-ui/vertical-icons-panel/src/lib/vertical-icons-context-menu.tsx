@@ -1,11 +1,7 @@
 import {Plugin} from '@remixproject/engine'
 import React, {Fragment, useEffect, useRef} from 'react'
 
-export interface VerticalIconsContextMenuProps
-  extends React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLDivElement>,
-    HTMLDivElement
-  > {
+export interface VerticalIconsContextMenuProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   pageX: number
   pageY: number
   profileName: string
@@ -13,11 +9,7 @@ export interface VerticalIconsContextMenuProps
   canBeDeactivated: boolean
   verticalIconPlugin: any
   hideContextMenu: () => void
-  contextMenuAction: (
-    evt: any,
-    profileName: string,
-    documentation: string
-  ) => void
+  contextMenuAction: (evt: any, profileName: string, documentation: string) => void
 }
 
 interface MenuLinksProps {
@@ -28,11 +20,7 @@ interface MenuLinksProps {
   verticalIconPlugin: any
   ref?: React.MutableRefObject<any>
   toggle: (name: string) => void
-  contextMenuAction: (
-    evt: any,
-    profileName: string,
-    documentation: string
-  ) => void
+  contextMenuAction: (evt: any, profileName: string, documentation: string) => void
 }
 
 interface MenuProps {
@@ -77,12 +65,7 @@ const VerticalIconsContextMenu = (props: VerticalIconsContextMenuProps) => {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const MenuForLinks = ({
-  listItems,
-  hide,
-  profileName,
-  contextMenuAction
-}: MenuLinksProps) => {
+const MenuForLinks = ({listItems, hide, profileName, contextMenuAction}: MenuLinksProps) => {
   return (
     <Fragment>
       {listItems.CanDeactivate ? (
@@ -99,11 +82,7 @@ const MenuForLinks = ({
         </li>
       ) : null}
       {listItems.Documentation && listItems.Documentation.length > 0 && (
-        <li
-          id="menuitemdocumentation"
-          className="remixui_liitem"
-          key="menuitemdocumentation"
-        >
+        <li id="menuitemdocumentation" className="remixui_liitem" key="menuitemdocumentation">
           <a onClick={hide} href={listItems.Documentation} target="_blank">
             Documentation
           </a>
@@ -113,10 +92,7 @@ const MenuForLinks = ({
   )
 }
 
-function ClickOutside(
-  ref: React.MutableRefObject<HTMLElement>,
-  hideFn: () => void
-) {
+function ClickOutside(ref: React.MutableRefObject<HTMLElement>, hideFn: () => void) {
   useEffect(() => {
     function handleClickOutside(event: any) {
       if (ref.current && !ref.current.contains(event.target)) {

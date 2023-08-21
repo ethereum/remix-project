@@ -195,10 +195,7 @@ export function RunTabUI(props: RunTabProps) {
     })
   }
 
-  const publishToStorage = (
-    storage: 'ipfs' | 'swarm',
-    contract: ContractData
-  ) => {
+  const publishToStorage = (storage: 'ipfs' | 'swarm', contract: ContractData) => {
     setPublishData({
       storage,
       contract
@@ -208,32 +205,18 @@ export function RunTabUI(props: RunTabProps) {
   const gasEstimationPrompt = (msg: string) => {
     return (
       <div>
-        Gas estimation errored with the following message (see below). The
-        transaction execution will likely fail. Do you want to force sending?{' '}
-        <br />
+        Gas estimation errored with the following message (see below). The transaction execution will likely fail. Do you want to force sending? <br />
         {msg}
       </div>
     )
   }
 
   const passphrasePrompt = (message: string) => {
-    return (
-      <PassphrasePrompt
-        message={message}
-        setPassphrase={setPassphraseModal}
-        defaultValue={runTab.passphrase}
-      />
-    )
+    return <PassphrasePrompt message={message} setPassphrase={setPassphraseModal} defaultValue={runTab.passphrase} />
   }
 
   const scenarioPrompt = (message: string, defaultValue) => {
-    return (
-      <ScenarioPrompt
-        message={message}
-        setScenarioPath={setScenarioPath}
-        defaultValue={defaultValue}
-      />
-    )
+    return <ScenarioPrompt message={message} setScenarioPath={setScenarioPath} defaultValue={defaultValue} />
   }
 
   const mainnetPrompt = (
@@ -241,17 +224,8 @@ export function RunTabUI(props: RunTabProps) {
     network: Network,
     amount: string,
     gasEstimation: string,
-    gasFees: (
-      maxFee: string,
-      cb: (txFeeText: string, priceStatus: boolean) => void
-    ) => void,
-    determineGasPrice: (
-      cb: (
-        txFeeText: string,
-        gasPriceValue: string,
-        gasPriceStatus: boolean
-      ) => void
-    ) => void
+    gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void,
+    determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void
   ) => {
     return (
       <MainnetPrompt
@@ -275,11 +249,7 @@ export function RunTabUI(props: RunTabProps) {
 
   return (
     <Fragment>
-      <div
-        className="udapp_runTabView run-tab"
-        id="runTabView"
-        data-id="runTabView"
-      >
+      <div className="udapp_runTabView run-tab" id="runTabView" data-id="runTabView">
         <div className="list-group list-group-flush">
           <SettingsUI
             networkName={runTab.networkName}
@@ -353,19 +323,9 @@ export function RunTabUI(props: RunTabProps) {
           />
         </div>
       </div>
-      <ModalDialog
-        id="udappNotify"
-        {...focusModal}
-        handleHide={handleHideModal}
-      />
+      <ModalDialog id="udappNotify" {...focusModal} handleHide={handleHideModal} />
       <Toaster message={focusToaster} handleHide={handleToaster} />
-      <PublishToStorage
-        id="udapp"
-        api={plugin}
-        resetStorage={resetStorage}
-        storage={publishData.storage}
-        contract={publishData.contract}
-      />
+      <PublishToStorage id="udapp" api={plugin} resetStorage={resetStorage} storage={publishData.storage} contract={publishData.contract} />
     </Fragment>
   )
 }

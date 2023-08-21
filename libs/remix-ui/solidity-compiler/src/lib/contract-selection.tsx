@@ -11,14 +11,7 @@ import {CustomTooltip} from '@remix-ui/helper'
 const _paq = (window._paq = window._paq || [])
 
 export const ContractSelection = (props: ContractSelectionProps) => {
-  const {
-    api,
-    compiledFileName,
-    contractsDetails,
-    contractList,
-    compilerInput,
-    modal
-  } = props
+  const {api, compiledFileName, contractsDetails, contractList, compilerInput, modal} = props
   const [selectedContract, setSelectedContract] = useState('')
   const [storage, setStorage] = useState(null)
 
@@ -28,11 +21,8 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     if (contractList.length) {
       const compiledPathArr = compiledFileName.split('/')
       const compiledFile = compiledPathArr[compiledPathArr.length - 1]
-      const contractsInCompiledFile = contractList.filter(
-        (obj) => obj.file === compiledFile
-      )
-      if (contractsInCompiledFile.length)
-        setSelectedContract(contractsInCompiledFile[0].name)
+      const contractsInCompiledFile = contractList.filter((obj) => obj.file === compiledFile)
+      if (contractsInCompiledFile.length) setSelectedContract(contractsInCompiledFile[0].name)
       else setSelectedContract(contractList[0].name)
     }
   }, [contractList])
@@ -72,16 +62,13 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     if (!selectedContract) throw new Error('No contract compiled yet')
     const contractProperties = contractsDetails[selectedContract]
 
-    if (contractProperties && contractProperties[property])
-      return contractProperties[property]
+    if (contractProperties && contractProperties[property]) return contractProperties[property]
     return null
   }
 
   const renderData = (item, key: string | number, keyPath: string) => {
     const data = extractData(item)
-    const children = (data.children || []).map((child) =>
-      renderData(child.value, child.key, keyPath + '/' + child.key)
-    )
+    const children = (data.children || []).map((child) => renderData(child.value, child.key, keyPath + '/' + child.key))
 
     if (children && children.length > 0) {
       return (
@@ -90,12 +77,8 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           key={keyPath}
           label={
             <div className="d-flex mt-2 flex-row remixui_label_item">
-              <label className="small font-weight-bold pr-1 remixui_label_key">
-                {key}:
-              </label>
-              <label className="m-0 remixui_label_value">
-                {typeof data.self === 'boolean' ? `${data.self}` : data.self}
-              </label>
+              <label className="small font-weight-bold pr-1 remixui_label_key">{key}:</label>
+              <label className="m-0 remixui_label_value">{typeof data.self === 'boolean' ? `${data.self}` : data.self}</label>
             </div>
           }
         >
@@ -111,12 +94,8 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           key={keyPath}
           label={
             <div className="d-flex mt-2 flex-row remixui_label_item">
-              <label className="small font-weight-bold pr-1 remixui_label_key">
-                {key}:
-              </label>
-              <label className="m-0 remixui_label_value">
-                {typeof data.self === 'boolean' ? `${data.self}` : data.self}
-              </label>
+              <label className="small font-weight-bold pr-1 remixui_label_key">{key}:</label>
+              <label className="m-0 remixui_label_value">{typeof data.self === 'boolean' ? `${data.self}` : data.self}</label>
             </div>
           }
         />
@@ -145,42 +124,18 @@ export const ContractSelection = (props: ContractSelectionProps) => {
 
   const insertValue = (details, propertyName) => {
     let node
-    if (
-      propertyName === 'web3Deploy' ||
-      propertyName === 'name' ||
-      propertyName === 'Assembly'
-    ) {
+    if (propertyName === 'web3Deploy' || propertyName === 'name' || propertyName === 'Assembly') {
       node = <pre>{details[propertyName]}</pre>
-    } else if (
-      details[propertyName] &&
-      (propertyName === 'abi' ||
-        propertyName === 'metadata' ||
-        propertyName === 'compilerInput')
-    ) {
+    } else if (details[propertyName] && (propertyName === 'abi' || propertyName === 'metadata' || propertyName === 'compilerInput')) {
       if (details[propertyName] !== '') {
         try {
           node = (
             <div>
               {typeof details[propertyName] === 'object' ? (
-                <TreeView id="treeView">
-                  {Object.keys(details[propertyName]).map((innerkey) =>
-                    renderData(
-                      details[propertyName][innerkey],
-                      innerkey,
-                      innerkey
-                    )
-                  )}
-                </TreeView>
+                <TreeView id="treeView">{Object.keys(details[propertyName]).map((innerkey) => renderData(details[propertyName][innerkey], innerkey, innerkey))}</TreeView>
               ) : (
                 <TreeView id="treeView">
-                  {Object.keys(JSON.parse(details[propertyName])).map(
-                    (innerkey) =>
-                      renderData(
-                        JSON.parse(details[propertyName])[innerkey],
-                        innerkey,
-                        innerkey
-                      )
-                  )}
+                  {Object.keys(JSON.parse(details[propertyName])).map((innerkey) => renderData(JSON.parse(details[propertyName])[innerkey], innerkey, innerkey))}
                 </TreeView>
               )}
             </div>
@@ -206,43 +161,31 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     if (!selectedContract) throw new Error('No contract compiled yet')
 
     const help = {
-      'Assembly':
-        'Assembly opcodes describing the contract including corresponding solidity source code',
+      'Assembly': 'Assembly opcodes describing the contract including corresponding solidity source code',
       'Opcodes': 'Assembly opcodes describing the contract',
-      'Runtime Bytecode':
-        'Bytecode storing the state and being executed during normal contract call',
+      'Runtime Bytecode': 'Bytecode storing the state and being executed during normal contract call',
       'bytecode': 'Bytecode being executed during contract creation',
       'compilerInput': 'Input to the Solidity compiler',
-      'functionHashes':
-        'List of declared function and their corresponding hash',
+      'functionHashes': 'List of declared function and their corresponding hash',
       'gasEstimates': 'Gas estimation for each function call',
       'metadata': 'Contains all informations related to the compilation',
       'metadataHash': 'Hash representing all metadata information',
-      'abi':
-        'ABI: describing all the functions (input/output params, scope, ...)',
+      'abi': 'ABI: describing all the functions (input/output params, scope, ...)',
       'name': 'Name of the compiled contract',
-      'swarmLocation':
-        'Swarm url where all metadata information can be found (contract needs to be published first)',
-      'web3Deploy':
-        'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
+      'swarmLocation': 'Swarm url where all metadata information can be found (contract needs to be published first)',
+      'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
     }
     let contractProperties: any = {}
     // Make 'compilerInput' first field to display it as first item in 'Compilation Details' modal
     if (compilerInput) contractProperties.compilerInput = compilerInput
-    contractProperties = Object.assign(
-      contractProperties,
-      contractsDetails[selectedContract]
-    )
+    contractProperties = Object.assign(contractProperties, contractsDetails[selectedContract])
     const log = (
       <div className="remixui_detailsJSON">
         <TreeView>
           {Object.keys(contractProperties).map((propertyName, index) => {
             const copyDetails = (
               <span className="remixui_copyDetails">
-                <CopyToClipboard
-                  content={contractProperties[propertyName]}
-                  direction="top"
-                />
+                <CopyToClipboard content={contractProperties[propertyName]} direction="top" />
               </span>
             )
             const questionMark = (
@@ -262,10 +205,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               <div className="remixui_log" key={index}>
                 <TreeViewItem
                   label={
-                    <div
-                      data-id={`remixui_treeviewitem_${propertyName}`}
-                      className="remixui_key"
-                    >
+                    <div data-id={`remixui_treeviewitem_${propertyName}`} className="remixui_key">
                       {propertyName} {copyDetails} {questionMark}
                     </div>
                   }
@@ -280,10 +220,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     )
     const downloadFn = () => {
       _paq.push(['trackEvent', 'compiler', 'compilerDetails', 'download'])
-      saveAs(
-        new Blob([JSON.stringify(contractProperties, null, '\t')]),
-        `${selectedContract}_compData.json`
-      )
+      saveAs(new Blob([JSON.stringify(contractProperties, null, '\t')]), `${selectedContract}_compData.json`)
     }
     modal(selectedContract, log, 'Download', downloadFn, true, 'Close', null)
   }
@@ -300,19 +237,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
         <section className="remixui_compilerSection pt-3">
           {/* Select Compiler Version */}
           <div className="mb-3">
-            <label
-              className="remixui_compilerLabel form-check-label"
-              htmlFor="compiledContracts"
-            >
+            <label className="remixui_compilerLabel form-check-label" htmlFor="compiledContracts">
               Contract
             </label>
-            <select
-              onChange={(e) => handleContractChange(e.target.value)}
-              value={selectedContract}
-              data-id="compiledContracts"
-              id="compiledContracts"
-              className="custom-select"
-            >
+            <select onChange={(e) => handleContractChange(e.target.value)} value={selectedContract} data-id="compiledContracts" id="compiledContracts" className="custom-select">
               {contractList.map(({name, file}, index) => (
                 <option value={name} key={index}>
                   {name} ({file})
@@ -340,11 +268,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                   <span>
                     <FormattedMessage id="solidity.publishOn" /> Ipfs
                   </span>
-                  <img
-                    id="ipfsLogo"
-                    className="remixui_storageLogo ml-2"
-                    src="assets/img/ipfs.webp"
-                  />
+                  <img id="ipfsLogo" className="remixui_storageLogo ml-2" src="assets/img/ipfs.webp" />
                 </span>
               </CustomTooltip>
             </button>
@@ -367,11 +291,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                   <span>
                     <FormattedMessage id="solidity.publishOn" /> Swarm
                   </span>
-                  <img
-                    id="swarmLogo"
-                    className="remixui_storageLogo ml-2"
-                    src="assets/img/swarm.webp"
-                  />
+                  <img id="swarmLogo" className="remixui_storageLogo ml-2" src="assets/img/swarm.webp" />
                 </span>
               </CustomTooltip>
             </button>
@@ -382,12 +302,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 details()
               }}
             >
-              <CustomTooltip
-                placement="right"
-                tooltipId="CompilationDetailsTooltip"
-                tooltipClasses="text-nowrap"
-                tooltipText="Display Contract Details"
-              >
+              <CustomTooltip placement="right" tooltipId="CompilationDetailsTooltip" tooltipClasses="text-nowrap" tooltipText="Display Contract Details">
                 <span>
                   <FormattedMessage id="solidity.compilationDetails" />
                 </span>
@@ -396,34 +311,16 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             {/* Copy to Clipboard */}
             <div className="remixui_contractHelperButtons">
               <div className="input-group">
-                <div
-                  className="btn-group"
-                  role="group"
-                  aria-label="Copy to Clipboard"
-                >
-                  <CopyToClipboard
-                    tip="Copy ABI to clipboard"
-                    getContent={copyABI}
-                    direction="top"
-                  >
+                <div className="btn-group" role="group" aria-label="Copy to Clipboard">
+                  <CopyToClipboard tip="Copy ABI to clipboard" getContent={copyABI} direction="top">
                     <button className="btn remixui_copyButton">
-                      <i
-                        className="remixui_copyIcon far fa-copy"
-                        aria-hidden="true"
-                      ></i>
+                      <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
                       <span>ABI</span>
                     </button>
                   </CopyToClipboard>
-                  <CopyToClipboard
-                    tip="Copy Bytecode to clipboard"
-                    getContent={copyBytecode}
-                    direction="top"
-                  >
+                  <CopyToClipboard tip="Copy Bytecode to clipboard" getContent={copyBytecode} direction="top">
                     <button className="btn remixui_copyButton">
-                      <i
-                        className="remixui_copyIcon far fa-copy"
-                        aria-hidden="true"
-                      ></i>
+                      <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
                       <span>Bytecode</span>
                     </button>
                   </CopyToClipboard>
@@ -441,12 +338,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           </article>
         </section>
       )}
-      <PublishToStorage
-        api={api}
-        storage={storage}
-        contract={contractsDetails[selectedContract]}
-        resetStorage={resetStorage}
-      />
+      <PublishToStorage api={api} storage={storage} contract={contractsDetails[selectedContract]} resetStorage={resetStorage} />
     </>
   )
 }

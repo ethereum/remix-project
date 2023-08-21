@@ -19,17 +19,7 @@ const inputJson = {
     outputSelection: {
       '*': {
         '': ['ast'],
-        '*': [
-          'abi',
-          'metadata',
-          'devdoc',
-          'userdoc',
-          'evm.legacyAssembly',
-          'evm.bytecode',
-          'evm.deployedBytecode',
-          'evm.methodIdentifiers',
-          'evm.gasEstimates'
-        ]
+        '*': ['abi', 'metadata', 'devdoc', 'userdoc', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates']
       }
     }
   }
@@ -43,9 +33,7 @@ console.dir(inputJson)
 
 console.log('compiling...')
 
-const compilationData = JSON.parse(
-  solc.compileStandardWrapper(JSON.stringify(inputJson))
-)
+const compilationData = JSON.parse(solc.compileStandardWrapper(JSON.stringify(inputJson)))
 console.dir(Object.keys(compilationData))
 const compilation = {}
 compilation['data'] = compilationData

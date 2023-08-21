@@ -5,12 +5,7 @@ export class InjectedL2Provider extends InjectedProviderDefaultBase {
   chainId: string
   rpcUrls: Array<string>
 
-  constructor(
-    profile: any,
-    chainName: string,
-    chainId: string,
-    rpcUrls: Array<string>
-  ) {
+  constructor(profile: any, chainName: string, chainId: string, rpcUrls: Array<string>) {
     super(profile)
     this.chainName = chainName
     this.chainId = chainId
@@ -19,18 +14,13 @@ export class InjectedL2Provider extends InjectedProviderDefaultBase {
 
   async init() {
     await super.init()
-    if (this.chainName && this.rpcUrls && this.rpcUrls.length > 0)
-      await addL2Network(this.chainName, this.chainId, this.rpcUrls)
+    if (this.chainName && this.rpcUrls && this.rpcUrls.length > 0) await addL2Network(this.chainName, this.chainId, this.rpcUrls)
     else throw new Error('Cannot add the L2 network to main injected provider')
     return {}
   }
 }
 
-export const addL2Network = async (
-  chainName: string,
-  chainId: string,
-  rpcUrls: Array<string>
-) => {
+export const addL2Network = async (chainName: string, chainId: string, rpcUrls: Array<string>) => {
   try {
     await (window as any).ethereum.request({
       method: 'wallet_switchEthereumChain',

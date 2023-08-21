@@ -60,10 +60,7 @@ export class MainPanel extends AbstractPanel {
 
   render() {
     return (
-      <div
-        style={{height: '100%', width: '100%'}}
-        data-id="mainPanelPluginsContainer"
-      >
+      <div style={{height: '100%', width: '100%'}} data-id="mainPanelPluginsContainer">
         <PluginViewWrapper plugin={this} />
       </div>
     )

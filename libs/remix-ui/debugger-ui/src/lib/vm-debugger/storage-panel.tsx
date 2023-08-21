@@ -4,11 +4,7 @@ import DropdownPanel from './dropdown-panel' // eslint-disable-line
 export const StoragePanel = ({calldata, header, className}) => {
   return (
     <div id="storagepanel" className={className}>
-      <DropdownPanel
-        dropdownName="Storage"
-        calldata={calldata || {}}
-        header={header}
-      />
+      <DropdownPanel dropdownName="Storage" calldata={calldata || {}} header={header} />
     </div>
   )
 }
