@@ -6,9 +6,7 @@ import {CompilationResult} from '@remix-project/remix-solidity'
 import CodeParserGasService from './services/code-parser-gas-service'
 import CodeParserCompiler from './services/code-parser-compiler'
 import CodeParserAntlrService from './services/code-parser-antlr-service'
-import CodeParserImports, {
-  CodeParserImportsData
-} from './services/code-parser-imports'
+import CodeParserImports, {CodeParserImportsData} from './services/code-parser-imports'
 import React from 'react'
 import {Profile} from '@remixproject/plugin-utils'
 import {
@@ -138,32 +136,15 @@ export class CodeParser extends Plugin {
   }
 
   async handleChangeEvents() {
-    const completionSettings = await this.call(
-      'config',
-      'getAppParameter',
-      'auto-completion'
-    )
+    const completionSettings = await this.call('config', 'getAppParameter', 'auto-completion')
     if (completionSettings) {
       this.antlrService.enableWorker()
     } else {
       this.antlrService.disableWorker()
     }
-    const showGasSettings = await this.call(
-      'config',
-      'getAppParameter',
-      'show-gas'
-    )
-    const showErrorSettings = await this.call(
-      'config',
-      'getAppParameter',
-      'display-errors'
-    )
-    if (
-      showGasSettings ||
-      showErrorSettings ||
-      completionSettings ||
-      this.debuggerIsOn
-    ) {
+    const showGasSettings = await this.call('config', 'getAppParameter', 'show-gas')
+    const showErrorSettings = await this.call('config', 'getAppParameter', 'display-errors')
+    if (showGasSettings || showErrorSettings || completionSettings || this.debuggerIsOn) {
       await this.compilerService.compile()
     }
   }
@@ -175,15 +156,10 @@ export class CodeParser extends Plugin {
     this.importService = new CodeParserImports(this)
 
     this.parseSolidity = this.antlrService.parseSolidity.bind(this.antlrService)
-    this.getLastNodeInLine = this.antlrService.getLastNodeInLine.bind(
-      this.antlrService
-    )
+    this.getLastNodeInLine = this.antlrService.getLastNodeInLine.bind(this.antlrService)
     this.listAstNodes = this.antlrService.listAstNodes.bind(this.antlrService)
-    this.getANTLRBlockAtPosition =
-      this.antlrService.getANTLRBlockAtPosition.bind(this.antlrService)
-    this.setCurrentFileAST = this.antlrService.setCurrentFileAST.bind(
-      this.antlrService
-    )
+    this.getANTLRBlockAtPosition = this.antlrService.getANTLRBlockAtPosition.bind(this.antlrService)
+    this.setCurrentFileAST = this.antlrService.setCurrentFileAST.bind(this.antlrService)
     this.getImports = this.importService.getImports.bind(this.importService)
 
     this.on('editor', 'didChangeFile', async (file) => {
@@ -205,11 +181,7 @@ export class CodeParser extends Plugin {
 
     this.on('fileManager', 'currentFileChanged', async () => {
       await this.call('editor', 'discardLineTexts')
-      const completionSettings = await this.call(
-        'config',
-        'getAppParameter',
-        'auto-completion'
-      )
+      const completionSettings = await this.call('config', 'getAppParameter', 'auto-completion')
       if (completionSettings) {
         this.antlrService.setCurrentFileAST()
       }
@@ -271,11 +243,7 @@ export class CodeParser extends Plugin {
   _buildIndex(compilationResult: CompilationResult, source) {
     if (compilationResult && compilationResult.sources) {
       const callback = (node: genericASTNode) => {
-        if (
-          node &&
-          'referencedDeclaration' in node &&
-          node.referencedDeclaration
-        ) {
+        if (node && 'referencedDeclaration' in node && node.referencedDeclaration) {
           if (!this.nodeIndex.declarations[node.referencedDeclaration]) {
             this.nodeIndex.declarations[node.referencedDeclaration] = []
           }
@@ -305,32 +273,14 @@ export class CodeParser extends Plugin {
     return '(' + params.toString() + ')'
   }
 
-  _flatNodeList(
-    contractNode: ContractDefinitionAstNode,
-    fileName: string,
-    inScope: boolean,
-    compilatioResult: any
-  ) {
+  _flatNodeList(contractNode: ContractDefinitionAstNode, fileName: string, inScope: boolean, compilatioResult: any) {
     const index = {}
     const contractName: string = contractNode.name
     const callback = (node) => {
-      if (
-        inScope &&
-        node.scope !== contractNode.id &&
-        !(
-          node.nodeType === 'EnumDefinition' ||
-          node.nodeType === 'EventDefinition' ||
-          node.nodeType === 'ModifierDefinition'
-        )
-      )
+      if (inScope && node.scope !== contractNode.id && !(node.nodeType === 'EnumDefinition' || node.nodeType === 'EventDefinition' || node.nodeType === 'ModifierDefinition'))
         return
       if (inScope) node.isClassNode = true
-      node.gasEstimate = this._getContractGasEstimate(
-        node,
-        contractName,
-        fileName,
-        compilatioResult
-      )
+      node.gasEstimate = this._getContractGasEstimate(node, contractName, fileName, compilatioResult)
       node.functionName = node.name + this._getInputParams(node)
       node.contractName = contractName
       node.contractId = contractNode.id
@@ -340,33 +290,16 @@ export class CodeParser extends Plugin {
     return index
   }
 
-  _extractFileNodes(
-    fileName: string,
-    compilationResult: lastCompilationResult
-  ) {
-    if (
-      compilationResult &&
-      compilationResult.data.sources &&
-      compilationResult.data.sources[fileName]
-    ) {
+  _extractFileNodes(fileName: string, compilationResult: lastCompilationResult) {
+    if (compilationResult && compilationResult.data.sources && compilationResult.data.sources[fileName]) {
       const source = compilationResult.data.sources[fileName]
       const nodesByContract: any = {}
       nodesByContract.imports = {}
       nodesByContract.contracts = {}
       this.astWalker.walkFull(source.ast, async (node) => {
         if (node.nodeType === 'ContractDefinition') {
-          const flatNodes = this._flatNodeList(
-            node,
-            fileName,
-            false,
-            compilationResult
-          )
-          node.gasEstimate = this._getContractGasEstimate(
-            node,
-            node.name,
-            fileName,
-            compilationResult
-          )
+          const flatNodes = this._flatNodeList(node, fileName, false, compilationResult)
+          node.gasEstimate = this._getContractGasEstimate(node, node.name, fileName, compilationResult)
           nodesByContract.contracts[node.name] = {
             contractDefinition: node,
             contractNodes: flatNodes
@@ -382,11 +315,7 @@ export class CodeParser extends Plugin {
                   node.contractId = (baseContract as any).id
                   node.isBaseNode = true
                   baseNodes[node.id] = node
-                  if (
-                    (node.scope && node.scope === baseContract.id) ||
-                    node.nodeType === 'EnumDefinition' ||
-                    node.nodeType === 'EventDefinition'
-                  ) {
+                  if ((node.scope && node.scope === baseContract.id) || node.nodeType === 'EnumDefinition' || node.nodeType === 'EventDefinition') {
                     baseNodesWithBaseContractScope[node.id] = node
                   }
                   if (node.members) {
@@ -402,10 +331,8 @@ export class CodeParser extends Plugin {
             }
           }
           nodesByContract.contracts[node.name].baseNodes = baseNodes
-          nodesByContract.contracts[node.name].baseNodesWithBaseContractScope =
-            baseNodesWithBaseContractScope
-          nodesByContract.contracts[node.name].contractScopeNodes =
-            this._flatNodeList(node, fileName, true, compilationResult)
+          nodesByContract.contracts[node.name].baseNodesWithBaseContractScope = baseNodesWithBaseContractScope
+          nodesByContract.contracts[node.name].contractScopeNodes = this._flatNodeList(node, fileName, true, compilationResult)
         }
         if (node.nodeType === 'ImportDirective') {
           const imported = await this.resolveImports(node, {})
@@ -422,15 +349,8 @@ export class CodeParser extends Plugin {
     }
   }
 
-  _getContractGasEstimate(
-    node: ContractDefinitionAstNode | FunctionDefinitionAstNode,
-    contractName: string,
-    fileName: string,
-    compilationResult: lastCompilationResult
-  ) {
-    const contracts =
-      compilationResult.data.contracts &&
-      compilationResult.data.contracts[this.currentFile]
+  _getContractGasEstimate(node: ContractDefinitionAstNode | FunctionDefinitionAstNode, contractName: string, fileName: string, compilationResult: lastCompilationResult) {
+    const contracts = compilationResult.data.contracts && compilationResult.data.contracts[this.currentFile]
     for (const name in contracts) {
       if (name === contractName) {
         const contract = contracts[name]
@@ -444,21 +364,15 @@ export class CodeParser extends Plugin {
             const fn = fnName + this._getInputParams(node)
 
             if (visibility === 'public' || visibility === 'external') {
-              executionCost =
-                estimationObj === null ? '-' : estimationObj.external[fn]
+              executionCost = estimationObj === null ? '-' : estimationObj.external[fn]
             } else if (visibility === 'private' || visibility === 'internal') {
-              executionCost =
-                estimationObj === null ? '-' : estimationObj.internal[fn]
+              executionCost = estimationObj === null ? '-' : estimationObj.internal[fn]
             }
             return {executionCost}
           } else {
             return {
-              creationCost:
-                estimationObj === null ? '-' : estimationObj.creation.totalCost,
-              codeDepositCost:
-                estimationObj === null
-                  ? '-'
-                  : estimationObj.creation.codeDepositCost
+              creationCost: estimationObj === null ? '-' : estimationObj.creation.totalCost,
+              codeDepositCost: estimationObj === null ? '-' : estimationObj.creation.codeDepositCost
             }
           }
         }
@@ -472,25 +386,14 @@ export class CodeParser extends Plugin {
    * @param type
    * @returns
    */
-  async nodesAtPosition(
-    position: number,
-    type = ''
-  ): Promise<genericASTNode[]> {
+  async nodesAtPosition(position: number, type = ''): Promise<genericASTNode[]> {
     let lastCompilationResult = this.compilerAbstract
     if (this.debuggerIsOn) {
-      lastCompilationResult = await this.call(
-        'compilerArtefacts',
-        'get',
-        '__last'
-      )
+      lastCompilationResult = await this.call('compilerArtefacts', 'get', '__last')
       this.currentFile = await this.call('fileManager', 'file')
     }
     if (!lastCompilationResult) return []
-    const urlFromPath = await this.call(
-      'fileManager',
-      'getUrlFromPath',
-      this.currentFile
-    )
+    const urlFromPath = await this.call('fileManager', 'getUrlFromPath', this.currentFile)
     if (
       lastCompilationResult &&
       lastCompilationResult.languageversion.indexOf('soljson') === 0 &&
@@ -501,8 +404,7 @@ export class CodeParser extends Plugin {
       const nodes: genericASTNode[] = sourceMappingDecoder.nodesAtPosition(
         type,
         position,
-        lastCompilationResult.data.sources[this.currentFile] ||
-          lastCompilationResult.data.sources[urlFromPath.file]
+        lastCompilationResult.data.sources[this.currentFile] || lastCompilationResult.data.sources[urlFromPath.file]
       )
       return nodes
     }
@@ -528,8 +430,7 @@ export class CodeParser extends Plugin {
    * @returns
    */
   async getDeclaration(id: number) {
-    if (this.nodeIndex.declarations && this.nodeIndex.declarations[id])
-      return this.nodeIndex.declarations[id]
+    if (this.nodeIndex.declarations && this.nodeIndex.declarations[id]) return this.nodeIndex.declarations[id]
   }
 
   /**
@@ -603,11 +504,7 @@ export class CodeParser extends Plugin {
             if (!nodeDefinition) nodeDefinition = node
           }
         }
-        if (
-          nodeDefinition &&
-          nodeDefinition.type &&
-          nodeDefinition.type === 'Identifier'
-        ) {
+        if (nodeDefinition && nodeDefinition.type && nodeDefinition.type === 'Identifier') {
           const nodeForIdentifier = await this.findIdentifier(nodeDefinition)
           if (nodeForIdentifier) nodeDefinition = nodeForIdentifier
         }
@@ -621,21 +518,15 @@ export class CodeParser extends Plugin {
       this.nodeIndex.nodesPerFile &&
       this.nodeIndex.nodesPerFile[this.currentFile] &&
       this.nodeIndex.nodesPerFile[this.currentFile].contracts[contractName] &&
-      this.nodeIndex.nodesPerFile[this.currentFile].contracts[contractName]
-        .contractNodes
+      this.nodeIndex.nodesPerFile[this.currentFile].contracts[contractName].contractNodes
     ) {
-      return this.nodeIndex.nodesPerFile[this.currentFile].contracts[
-        contractName
-      ]
+      return this.nodeIndex.nodesPerFile[this.currentFile].contracts[contractName]
     }
     return false
   }
 
   async getCurrentFileNodes() {
-    if (
-      this.nodeIndex.nodesPerFile &&
-      this.nodeIndex.nodesPerFile[this.currentFile]
-    ) {
+    if (this.nodeIndex.nodesPerFile && this.nodeIndex.nodesPerFile[this.currentFile]) {
       return this.nodeIndex.nodesPerFile[this.currentFile]
     }
     return false
@@ -750,9 +641,7 @@ export class CodeParser extends Plugin {
     const position = await this.positionOfDefinition(node)
     if (this.compilerAbstract && this.compilerAbstract.source && position) {
       const fileName = this.compilerAbstract.getSourceName(position.file)
-      return lineColumn
-        ? `${fileName} ${lineColumn.start.line}:${lineColumn.start.column}`
-        : null
+      return lineColumn ? `${fileName} ${lineColumn.start.line}:${lineColumn.start.column}` : null
     }
     return ''
   }
@@ -771,13 +660,8 @@ export class CodeParser extends Plugin {
   async getLineColumnOfPosition(position: any) {
     if (position) {
       const fileName = this.compilerAbstract.getSourceName(position.file)
-      const lineBreaks = sourceMappingDecoder.getLinebreakPositions(
-        this.compilerAbstract.source.sources[fileName].content
-      )
-      const lineColumn = sourceMappingDecoder.convertOffsetToLineColumn(
-        position,
-        lineBreaks
-      )
+      const lineBreaks = sourceMappingDecoder.getLinebreakPositions(this.compilerAbstract.source.sources[fileName].content)
+      const lineColumn = sourceMappingDecoder.convertOffsetToLineColumn(position, lineBreaks)
       return lineColumn
     }
   }
@@ -788,11 +672,7 @@ export class CodeParser extends Plugin {
    * @returns
    */
   async getNodeDocumentation(node: genericASTNode) {
-    if (
-      'documentation' in node &&
-      node.documentation &&
-      (node.documentation as any).text
-    ) {
+    if ('documentation' in node && node.documentation && (node.documentation as any).text) {
       let text = ''
       ;(node.documentation as any).text.split('\n').forEach((line) => {
         text += `${line.trim()}\n`
@@ -807,8 +687,7 @@ export class CodeParser extends Plugin {
    * @returns
    */
   async getVariableDeclaration(node: any) {
-    const nodeVisibility =
-      node.visibility && node.visibility.length ? node.visibility + ' ' : ''
+    const nodeVisibility = node.visibility && node.visibility.length ? node.visibility + ' ' : ''
     const nodeName = node.name && node.name.length ? node.name : ''
     if (node.typeDescriptions && node.typeDescriptions.typeString) {
       return `${node.typeDescriptions.typeString} ${nodeVisibility}${nodeName}`
@@ -829,8 +708,7 @@ export class CodeParser extends Plugin {
    * @returns
    */
   async getFunctionParamaters(node: any) {
-    const localParam =
-      (node.parameters && node.parameters.parameters) || node.parameters
+    const localParam = (node.parameters && node.parameters.parameters) || node.parameters
     if (localParam) {
       const params = []
       for (const param of localParam) {

@@ -88,19 +88,13 @@ export const ModalDialog = (props: ModalDialogProps) => {
         <div
           ref={modal}
           tabIndex={-1}
-          className={
-            'modal-content remixModalContent ' +
-            (props.modalClass ? props.modalClass : '')
-          }
+          className={'modal-content remixModalContent ' + (props.modalClass ? props.modalClass : '')}
           onKeyDown={({keyCode}) => {
             modalKeyEvent(keyCode)
           }}
         >
           <div className="modal-header">
-            <h6
-              className="modal-title"
-              data-id={`${props.id}ModalDialogModalTitle-react`}
-            >
+            <h6 className="modal-title" data-id={`${props.id}ModalDialogModalTitle-react`}>
               {props.title && props.title}
             </h6>
             {!props.showCancelIcon && (
@@ -109,34 +103,20 @@ export const ModalDialog = (props: ModalDialogProps) => {
               </span>
             )}
           </div>
-          <div
-            className="modal-body text-break remixModalBody"
-            data-id={`${props.id}ModalDialogModalBody-react`}
-          >
+          <div className="modal-body text-break remixModalBody" data-id={`${props.id}ModalDialogModalBody-react`}>
             {props.children ? props.children : props.message}
           </div>
-          <div
-            className="modal-footer"
-            data-id={`${props.id}ModalDialogModalFooter-react`}
-          >
+          <div className="modal-footer" data-id={`${props.id}ModalDialogModalFooter-react`}>
             {/* todo add autofocus ^^ */}
             {props.okLabel && (
               <button
                 data-id={`${props.id}-modal-footer-ok-react`}
-                className={
-                  'modal-ok btn btn-sm ' +
-                  (props.okBtnClass
-                    ? props.okBtnClass
-                    : state.toggleBtn
-                      ? 'border-primary'
-                      : 'border-secondary')
-                }
+                className={'modal-ok btn btn-sm ' + (props.okBtnClass ? props.okBtnClass : state.toggleBtn ? 'border-primary' : 'border-secondary')}
                 disabled={props.validation && !props.validation.valid}
                 onClick={() => {
                   if (props.validation && !props.validation.valid) return
                   if (props.okFn) props.okFn()
-                  if (props.donotHideOnOkClick)
-                    calledHideFunctionOnce.current = false
+                  if (props.donotHideOnOkClick) calledHideFunctionOnce.current = false
                   else handleHide()
                 }}
               >
@@ -146,14 +126,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
             {props.cancelLabel && (
               <button
                 data-id={`${props.id}-modal-footer-cancel-react`}
-                className={
-                  'modal-cancel btn btn-sm ' +
-                  (props.cancelBtnClass
-                    ? props.cancelBtnClass
-                    : state.toggleBtn
-                      ? 'border-secondary'
-                      : 'border-primary')
-                }
+                className={'modal-cancel btn btn-sm ' + (props.cancelBtnClass ? props.cancelBtnClass : state.toggleBtn ? 'border-secondary' : 'border-primary')}
                 data-dismiss="modal"
                 onClick={() => {
                   if (props.cancelFn) props.cancelFn()

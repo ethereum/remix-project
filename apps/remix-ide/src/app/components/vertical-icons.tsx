@@ -3,10 +3,7 @@ import React from 'react'
 import packageJson from '../../../../../package.json'
 import {Plugin} from '@remixproject/engine'
 import {EventEmitter} from 'events'
-import {
-  IconRecord,
-  RemixUiVerticalIconsPanel
-} from '@remix-ui/vertical-icons-panel'
+import {IconRecord, RemixUiVerticalIconsPanel} from '@remix-ui/vertical-icons-panel'
 import {Profile} from '@remixproject/plugin-utils'
 import {PluginViewWrapper} from '@remix-ui/helper'
 
@@ -32,16 +29,7 @@ export class VerticalIcons extends Plugin {
   }
 
   renderComponent() {
-    const fixedOrder = [
-      'filePanel',
-      'search',
-      'solidity',
-      'udapp',
-      'debugger',
-      'solidityStaticAnalysis',
-      'solidityUnitTesting',
-      'pluginManager'
-    ]
+    const fixedOrder = ['filePanel', 'search', 'solidity', 'udapp', 'debugger', 'solidityStaticAnalysis', 'solidityUnitTesting', 'pluginManager']
 
     const divived = Object.values(this.icons)
       .map((value) => {
@@ -57,10 +45,7 @@ export class VerticalIcons extends Plugin {
     const required = divived
       .filter((value) => value.isRequired)
       .sort((a, b) => {
-        return (
-          fixedOrder.indexOf(a.profile.name) -
-          fixedOrder.indexOf(b.profile.name)
-        )
+        return fixedOrder.indexOf(a.profile.name) - fixedOrder.indexOf(b.profile.name)
       })
 
     const sorted: IconRecord[] = [
@@ -97,12 +82,7 @@ export class VerticalIcons extends Plugin {
     this.icons[profile.name] = {
       profile: profile,
       active: false,
-      canbeDeactivated: await this.call(
-        'manager',
-        'canDeactivate',
-        this.profile,
-        profile
-      ),
+      canbeDeactivated: await this.call('manager', 'canDeactivate', this.profile, profile),
       timestamp: Date.now()
     }
     this.renderComponent()
@@ -139,12 +119,7 @@ export class VerticalIcons extends Plugin {
   }
 
   updateComponent(state: any) {
-    return (
-      <RemixUiVerticalIconsPanel
-        verticalIconsPlugin={state.verticalIconsPlugin}
-        icons={state.icons}
-      />
-    )
+    return <RemixUiVerticalIconsPanel verticalIconsPlugin={state.verticalIconsPlugin} icons={state.icons} />
   }
 
   render() {

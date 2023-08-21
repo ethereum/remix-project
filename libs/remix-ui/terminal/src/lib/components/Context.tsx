@@ -11,10 +11,7 @@ const Context = ({opts, provider}: {opts; provider: string}) => {
   const val = data.value
   let hash = data.hash ? shortenHexData(data.hash) : ''
   const input = data.input ? shortenHexData(data.input) : ''
-  const logs =
-    opts.logs && opts.logs.decoded && opts.logs.decoded.length
-      ? opts.logs.decoded.length
-      : 0
+  const logs = opts.logs && opts.logs.decoded && opts.logs.decoded.length ? opts.logs.decoded.length : 0
   const block = data.receipt ? data.receipt.blockNumber : data.blockNumber || ''
   const i = data.receipt ? data.transactionIndex : data.transactionIndex
   const value = val ? typeConversion.toInt(val) : 0
@@ -31,8 +28,7 @@ const Context = ({opts, provider}: {opts; provider: string}) => {
             <span className="remix_ui_terminal_txItemTitle">to:</span> {to}
           </div>
           <div className="remix_ui_terminal_txItem">
-            <span className="remix_ui_terminal_txItemTitle">value:</span>{' '}
-            {value} wei
+            <span className="remix_ui_terminal_txItemTitle">value:</span> {value} wei
           </div>
           <div className="remix_ui_terminal_txItem">
             <span className="remix_ui_terminal_txItemTitle">data:</span> {input}
@@ -60,8 +56,7 @@ const Context = ({opts, provider}: {opts; provider: string}) => {
             <span className="remix_ui_terminal_txItemTitle">to:</span> {to}
           </div>
           <div className="remix_ui_terminal_txItem">
-            <span className="remix_ui_terminal_txItemTitle">value:</span>{' '}
-            {value} wei
+            <span className="remix_ui_terminal_txItemTitle">value:</span> {value} wei
           </div>
           <div className="remix_ui_terminal_txItem">
             <span className="remix_ui_terminal_txItemTitle">data:</span> {input}
@@ -90,8 +85,7 @@ const Context = ({opts, provider}: {opts; provider: string}) => {
             <span className="remix_ui_terminal_txItemTitle">to:</span> {to}
           </div>
           <div className="remix_ui_terminal_txItem">
-            <span className="remix_ui_terminal_txItemTitle">value:</span>{' '}
-            {value} wei
+            <span className="remix_ui_terminal_txItemTitle">value:</span> {value} wei
           </div>
           <div className="remix_ui_terminal_txItem">
             <span className="remix_ui_terminal_txItemTitle">data:</span> {input}

@@ -56,8 +56,7 @@ export class SidePanel extends AbstractPanel {
   }
 
   removeView(profile) {
-    if (this.plugins[profile.name].active)
-      this.call('menuicons', 'select', 'filePanel')
+    if (this.plugins[profile.name].active) this.call('menuicons', 'select', 'filePanel')
     super.removeView(profile)
     this.emit('pluginDisabled', profile.name)
     this.call('menuicons', 'unlinkContent', profile)
@@ -94,14 +93,7 @@ export class SidePanel extends AbstractPanel {
   }
 
   updateComponent(state: any) {
-    return (
-      <RemixPluginPanel
-        header={
-          <RemixUIPanelHeader plugins={state.plugins}></RemixUIPanelHeader>
-        }
-        plugins={state.plugins}
-      />
-    )
+    return <RemixPluginPanel header={<RemixUIPanelHeader plugins={state.plugins}></RemixUIPanelHeader>} plugins={state.plugins} />
   }
 
   renderComponent() {

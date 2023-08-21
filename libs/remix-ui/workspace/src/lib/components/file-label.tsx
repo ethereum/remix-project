@@ -29,12 +29,7 @@ export const FileLabel = (props: FileLabelProps) => {
   useEffect(() => {
     const state = props.fileDecorations.find((state: fileDecoration) => {
       if (state.path === props.file.path) return true
-      if (
-        state.bubble &&
-        props.file.isDirectory &&
-        state.path.startsWith(props.file.path)
-      )
-        return true
+      if (state.bubble && props.file.isDirectory && state.path.startsWith(props.file.path)) return true
     })
     if (state && state.fileStateLabelClass) {
       setFileStateClasses(state.fileStateLabelClass)
@@ -74,13 +69,7 @@ export const FileLabel = (props: FileLabelProps) => {
       onKeyDown={handleEditInput}
       onBlur={handleEditBlur}
     >
-      <span
-        className={
-          `text-nowrap remixui_label ${fileStateClasses} ` +
-          (file.isDirectory ? 'folder' : 'remixui_leaf')
-        }
-        data-path={file.path}
-      >
+      <span className={`text-nowrap remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder' : 'remixui_leaf')} data-path={file.path}>
         {file.name}
       </span>
     </div>

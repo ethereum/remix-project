@@ -7,27 +7,17 @@ export function MultiDeployInput(props: MultiDeployInputProps) {
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
 
   return (
-    <div
-      className="udapp_contractActionsContainerMulti"
-      style={{display: 'flex'}}
-    >
+    <div className="udapp_contractActionsContainerMulti" style={{display: 'flex'}}>
       <div className="udapp_contractActionsContainerMultiInner text-dark">
         <div className="pt-2 udapp_multiHeader">
-          <div className="udapp_multiTitle run-instance-multi-title">
-            Deploy
-          </div>
+          <div className="udapp_multiTitle run-instance-multi-title">Deploy</div>
         </div>
         <div>
           {props.inputs.map((inp, index) => {
             return (
               <div className="udapp_multiArg" key={index}>
                 <label htmlFor={inp.name}> {inp.name}: </label>
-                <CustomTooltip
-                  placement="left-end"
-                  tooltipId="udappMultiArgTooltip"
-                  tooltipClasses="text-nowrap"
-                  tooltipText={inp.name}
-                >
+                <CustomTooltip placement="left-end" tooltipId="udappMultiArgTooltip" tooltipClasses="text-nowrap" tooltipText={inp.name}>
                   <input
                     ref={(el) => {
                       multiFields.current[index] = el

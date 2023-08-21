@@ -1,11 +1,6 @@
 import {PluginClient} from '@remixproject/plugin'
 import {verify, EtherScanReturn} from './utils/verify'
-import {
-  getReceiptStatus,
-  getEtherScanApi,
-  getNetworkName,
-  getProxyContractReceiptStatus
-} from './utils'
+import {getReceiptStatus, getEtherScanApi, getNetworkName, getProxyContractReceiptStatus} from './utils'
 
 export class RemixClient extends PluginClient {
   loaded() {
@@ -38,33 +33,17 @@ export class RemixClient extends PluginClient {
     return result
   }
 
-  async receiptStatus(
-    receiptGuid: string,
-    apiKey: string,
-    isProxyContract: boolean
-  ) {
+  async receiptStatus(receiptGuid: string, apiKey: string, isProxyContract: boolean) {
     try {
       const {network, networkId} = await getNetworkName(this)
       if (network === 'vm') {
-        throw new Error(
-          'Cannot check the receipt status in the selected network'
-        )
+        throw new Error('Cannot check the receipt status in the selected network')
       }
       const etherscanApi = getEtherScanApi(networkId)
       let receiptStatus
 
-      if (isProxyContract)
-        receiptStatus = await getProxyContractReceiptStatus(
-          receiptGuid,
-          apiKey,
-          etherscanApi
-        )
-      else
-        receiptStatus = await getReceiptStatus(
-          receiptGuid,
-          apiKey,
-          etherscanApi
-        )
+      if (isProxyContract) receiptStatus = await getProxyContractReceiptStatus(receiptGuid, apiKey, etherscanApi)
+      else receiptStatus = await getReceiptStatus(receiptGuid, apiKey, etherscanApi)
       return {
         message: receiptStatus.result,
         succeed: receiptStatus.status === '0' ? false : true

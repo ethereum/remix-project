@@ -47,12 +47,7 @@ function HomeTabFeaturedPlugins({plugin}: HomeTabFeaturedPluginsProps) {
       let nextSlide = 0
       if (e.wheelDelta < 0) {
         nextSlide = carouselRef.current.state.currentSlide + 1
-        if (
-          Math.abs(carouselRef.current.state.transform) >=
-          carouselRef.current.containerRef.current.scrollWidth -
-            carouselRef.current.state.containerWidth
-        )
-          return
+        if (Math.abs(carouselRef.current.state.transform) >= carouselRef.current.containerRef.current.scrollWidth - carouselRef.current.state.containerWidth) return
         carouselRef.current.goToSlide(nextSlide)
       } else {
         nextSlide = carouselRef.current.state.currentSlide - 1
@@ -63,27 +58,14 @@ function HomeTabFeaturedPlugins({plugin}: HomeTabFeaturedPluginsProps) {
   }
 
   const startSolidity = async () => {
-    await plugin.appManager.activatePlugin([
-      'solidity',
-      'udapp',
-      'solidityStaticAnalysis',
-      'solidityUnitTesting'
-    ])
+    await plugin.appManager.activatePlugin(['solidity', 'udapp', 'solidityStaticAnalysis', 'solidityUnitTesting'])
     plugin.verticalIcons.select('solidity')
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solidity'])
   }
   const startCodeAnalyzer = async () => {
-    await plugin.appManager.activatePlugin([
-      'solidity',
-      'solidityStaticAnalysis'
-    ])
+    await plugin.appManager.activatePlugin(['solidity', 'solidityStaticAnalysis'])
     plugin.verticalIcons.select('solidityStaticAnalysis')
-    _paq.push([
-      'trackEvent',
-      'hometabActivate',
-      'userActivate',
-      'solidityStaticAnalysis'
-    ])
+    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solidityStaticAnalysis'])
   }
   const startSourceVerify = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'sourcify'])
@@ -98,12 +80,7 @@ function HomeTabFeaturedPlugins({plugin}: HomeTabFeaturedPluginsProps) {
   const startSolidityUnitTesting = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'solidityUnitTesting'])
     plugin.verticalIcons.select('solidityUnitTesting')
-    _paq.push([
-      'trackEvent',
-      'hometabActivate',
-      'userActivate',
-      'solidityUnitTesting'
-    ])
+    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solidityUnitTesting'])
   }
 
   return (
@@ -116,14 +93,7 @@ function HomeTabFeaturedPlugins({plugin}: HomeTabFeaturedPluginsProps) {
           <Carousel
             ref={carouselRef}
             focusOnSelect={true}
-            customButtonGroup={
-              <CustomNavButtons
-                next={undefined}
-                previous={undefined}
-                goToSlide={undefined}
-                parent={carouselRef}
-              />
-            }
+            customButtonGroup={<CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} parent={carouselRef} />}
             arrows={false}
             swipeable={false}
             draggable={true}

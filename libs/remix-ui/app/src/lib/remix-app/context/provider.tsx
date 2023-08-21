@@ -6,15 +6,8 @@ import {ModalInitialState} from '../state/modals'
 import {ModalTypes} from '../types'
 import {AppContext, dispatchModalContext, modalContext} from './context'
 
-export const ModalProvider = ({
-  children = [],
-  reducer = modalReducer,
-  initialState = ModalInitialState
-} = {}) => {
-  const [{modals, toasters, focusModal, focusToaster}, dispatch] = useReducer(
-    reducer,
-    initialState
-  )
+export const ModalProvider = ({children = [], reducer = modalReducer, initialState = ModalInitialState} = {}) => {
+  const [{modals, toasters, focusModal, focusToaster}, dispatch] = useReducer(reducer, initialState)
 
   const onNextFn = async () => {
     dispatch({
@@ -23,20 +16,7 @@ export const ModalProvider = ({
   }
 
   const modal = (modalData: AppModal) => {
-    const {
-      id,
-      title,
-      message,
-      validationFn,
-      okLabel,
-      okFn,
-      cancelLabel,
-      cancelFn,
-      modalType,
-      defaultValue,
-      hideFn,
-      data
-    } = modalData
+    const {id, title, message, validationFn, okLabel, okFn, cancelLabel, cancelFn, modalType, defaultValue, hideFn, data} = modalData
     return new Promise((resolve, reject) => {
       dispatch({
         type: modalActionTypes.setModal,
@@ -94,14 +74,8 @@ export const ModalProvider = ({
   }
 
   return (
-    <dispatchModalContext.Provider
-      value={{modal, toast, alert, handleHideModal, handleToaster}}
-    >
-      <modalContext.Provider
-        value={{modals, toasters, focusModal, focusToaster}}
-      >
-        {children}
-      </modalContext.Provider>
+    <dispatchModalContext.Provider value={{modal, toast, alert, handleHideModal, handleToaster}}>
+      <modalContext.Provider value={{modals, toasters, focusModal, focusToaster}}>{children}</modalContext.Provider>
     </dispatchModalContext.Provider>
   )
 }

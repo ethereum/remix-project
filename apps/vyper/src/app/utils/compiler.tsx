@@ -23,14 +23,10 @@ export interface VyperCompilationError {
   message: string
 }
 
-export type VyperCompilationOutput =
-  | VyperCompilationResult
-  | VyperCompilationError
+export type VyperCompilationOutput = VyperCompilationResult | VyperCompilationError
 
 /** Check if the output is an error */
-export function isCompilationError(
-  output: VyperCompilationOutput
-): output is VyperCompilationError {
+export function isCompilationError(output: VyperCompilationOutput): output is VyperCompilationError {
   return output.status === 'failed'
 }
 
@@ -39,10 +35,7 @@ export function isCompilationError(
  * @param url The url of the compiler
  * @param contract The name and content of the contract
  */
-export async function compile(
-  url: string,
-  contract: Contract
-): Promise<VyperCompilationOutput> {
+export async function compile(url: string, contract: Contract): Promise<VyperCompilationOutput> {
   if (!contract.name) {
     throw new Error('Set your Vyper contract file.')
   }
@@ -70,14 +63,9 @@ export async function compile(
  * @param name Name of the contract file
  * @param compilationResult Result returned by the compiler
  */
-export function toStandardOutput(
-  fileName: string,
-  compilationResult: VyperCompilationResult
-): CompilationResult {
+export function toStandardOutput(fileName: string, compilationResult: VyperCompilationResult): CompilationResult {
   const contractName = fileName.split('/').slice(-1)[0].split('.')[0]
-  const methodIdentifiers = JSON.parse(
-    JSON.stringify(compilationResult['method_identifiers']).replace(/0x/g, '')
-  )
+  const methodIdentifiers = JSON.parse(JSON.stringify(compilationResult['method_identifiers']).replace(/0x/g, ''))
   return {
     sources: {
       [fileName]: {

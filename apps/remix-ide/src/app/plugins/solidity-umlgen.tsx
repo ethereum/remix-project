@@ -3,11 +3,7 @@ import {ViewPlugin} from '@remixproject/engine-web'
 import React from 'react'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import {RemixUiSolidityUmlGen} from '@remix-ui/solidity-uml-gen'
-import {
-  ISolidityUmlGen,
-  ThemeQualityType,
-  ThemeSummary
-} from 'libs/remix-ui/solidity-uml-gen/src/types'
+import {ISolidityUmlGen, ThemeQualityType, ThemeSummary} from 'libs/remix-ui/solidity-uml-gen/src/types'
 import {RemixAppManager} from 'libs/remix-ui/plugin-manager/src/types'
 import {normalizeContractPath} from 'libs/remix-ui/solidity-compiler/src/lib/logic/flattenerUtilities'
 import {convertAST2UmlClasses} from 'sol2uml/lib/converterAST2Classes'
@@ -22,8 +18,7 @@ const _paq = (window._paq = window._paq || [])
 const profile = {
   name: 'solidityumlgen',
   displayName: 'Solidity UML Generator',
-  description:
-    'Generates UML diagram in svg format from last compiled contract',
+  description: 'Generates UML diagram in svg format from last compiled contract',
   location: 'mainPanel',
   methods: ['showUmlDiagram', 'generateUml', 'generateCustomAction'],
   events: []
@@ -67,55 +62,43 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
 
   onActivation(): void {
     this.handleThemeChange()
-    this.on(
-      'solidity',
-      'compilationFinished',
-      async (file: string, source, languageVersion, data, input, version) => {
-        if (!this.triggerGenerateUml) return
-        this.triggerGenerateUml = false
-        const currentTheme: ThemeQualityType = await this.call(
-          'theme',
-          'currentTheme'
-        )
-        this.currentlySelectedTheme = currentTheme.quality
-        this.themeName = currentTheme.name
-        let result = ''
-        const normalized = normalizeContractPath(file)
-        this.currentFile = normalized[normalized.length - 1]
-        try {
-          if (data.sources && Object.keys(data.sources).length > 1) {
-            // we should flatten first as there are multiple asts
-            result = await this.flattenContract(source, file, data)
-          }
-          const ast =
-            result.length > 1
-              ? parser.parse(result)
-              : parser.parse(source.sources[file].content)
-          this.umlClasses = convertAST2UmlClasses(ast, this.currentFile)
-          let umlDot = ''
-          this.activeTheme = await this.call('theme', 'currentTheme')
-          umlDot = convertUmlClasses2Dot(this.umlClasses, false, {
-            backColor: this.activeTheme.backgroundColor,
-            textColor: this.activeTheme.textColor,
-            shapeColor: this.activeTheme.shapeColor,
-            fillColor: this.activeTheme.fillColor
-          })
-          const payload = vizRenderStringSync(umlDot)
-          this.updatedSvg = payload
-          _paq.push(['trackEvent', 'solidityumlgen', 'umlgenerated'])
-          this.renderComponent()
-          await this.call('tabs', 'focus', 'solidityumlgen')
-        } catch (error) {
-          console.log('error', error)
+    this.on('solidity', 'compilationFinished', async (file: string, source, languageVersion, data, input, version) => {
+      if (!this.triggerGenerateUml) return
+      this.triggerGenerateUml = false
+      const currentTheme: ThemeQualityType = await this.call('theme', 'currentTheme')
+      this.currentlySelectedTheme = currentTheme.quality
+      this.themeName = currentTheme.name
+      let result = ''
+      const normalized = normalizeContractPath(file)
+      this.currentFile = normalized[normalized.length - 1]
+      try {
+        if (data.sources && Object.keys(data.sources).length > 1) {
+          // we should flatten first as there are multiple asts
+          result = await this.flattenContract(source, file, data)
         }
+        const ast = result.length > 1 ? parser.parse(result) : parser.parse(source.sources[file].content)
+        this.umlClasses = convertAST2UmlClasses(ast, this.currentFile)
+        let umlDot = ''
+        this.activeTheme = await this.call('theme', 'currentTheme')
+        umlDot = convertUmlClasses2Dot(this.umlClasses, false, {
+          backColor: this.activeTheme.backgroundColor,
+          textColor: this.activeTheme.textColor,
+          shapeColor: this.activeTheme.shapeColor,
+          fillColor: this.activeTheme.fillColor
+        })
+        const payload = vizRenderStringSync(umlDot)
+        this.updatedSvg = payload
+        _paq.push(['trackEvent', 'solidityumlgen', 'umlgenerated'])
+        this.renderComponent()
+        await this.call('tabs', 'focus', 'solidityumlgen')
+      } catch (error) {
+        console.log('error', error)
       }
-    )
+    })
   }
 
   getThemeCssVariables(cssVars: string) {
-    return window
-      .getComputedStyle(document.documentElement)
-      .getPropertyValue(cssVars)
+    return window.getComputedStyle(document.documentElement).getPropertyValue(cssVars)
   }
 
   private handleThemeChange() {
@@ -160,13 +143,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
    * @returns {Promise<string>}
    */
   async flattenContract(source: any, filePath: string, data: any) {
-    const result = await this.call(
-      'contractflattener',
-      'flattenContract',
-      source,
-      filePath,
-      data
-    )
+    const result = await this.call('contractflattener', 'flattenContract', source, filePath, data)
     return result
   }
 
@@ -231,12 +208,7 @@ interface Sol2umlClassOptions extends ClassOptions {
 
 import {dirname} from 'path'
 import {convertClass2Dot} from 'sol2uml/lib/converterClass2Dot'
-import {
-  Association,
-  ClassStereotype,
-  ReferenceType,
-  UmlClass
-} from 'sol2uml/lib/umlClass'
+import {Association, ClassStereotype, ReferenceType, UmlClass} from 'sol2uml/lib/umlClass'
 import {findAssociatedClass} from 'sol2uml/lib/associations'
 
 // const debug = require('debug')('sol2uml')
@@ -249,11 +221,7 @@ import {findAssociatedClass} from 'sol2uml/lib/associations'
  * @param classOptions command line options for the `class` command
  * @return dotString Graphviz's DOT format for defining nodes, edges and clusters.
  */
-export function convertUmlClasses2Dot(
-  umlClasses: UmlClass[],
-  clusterFolders: boolean = false,
-  classOptions: Sol2umlClassOptions = {}
-): string {
+export function convertUmlClasses2Dot(umlClasses: UmlClass[], clusterFolders: boolean = false, classOptions: Sol2umlClassOptions = {}): string {
   let dotString: string = `
 digraph UmlClassDiagram {
 rankdir=BT
@@ -318,10 +286,7 @@ function sortUmlClassesByCodePath(umlClasses: UmlClass[]): UmlClass[] {
   })
 }
 
-export function addAssociationsToDot(
-  umlClasses: UmlClass[],
-  classOptions: ClassOptions = {}
-): string {
+export function addAssociationsToDot(umlClasses: UmlClass[], classOptions: ClassOptions = {}): string {
   let dotString: string = ''
 
   // for each class
@@ -351,18 +316,9 @@ export function addAssociationsToDot(
 
     // for each association in that class
     for (const association of Object.values(sourceUmlClass.associations)) {
-      const targetUmlClass = findAssociatedClass(
-        association,
-        sourceUmlClass,
-        umlClasses
-      )
+      const targetUmlClass = findAssociatedClass(association, sourceUmlClass, umlClasses)
       if (targetUmlClass) {
-        dotString += addAssociationToDot(
-          sourceUmlClass,
-          targetUmlClass,
-          association,
-          classOptions
-        )
+        dotString += addAssociationToDot(sourceUmlClass, targetUmlClass, association, classOptions)
       }
     }
   }
@@ -370,41 +326,23 @@ export function addAssociationsToDot(
   return dotString
 }
 
-function addAssociationToDot(
-  sourceUmlClass: UmlClass,
-  targetUmlClass: UmlClass,
-  association: Association,
-  classOptions: ClassOptions = {}
-): string {
+function addAssociationToDot(sourceUmlClass: UmlClass, targetUmlClass: UmlClass, association: Association, classOptions: ClassOptions = {}): string {
   // do not include library or interface associations if hidden
   // Or associations to Structs, Enums or Constants if they are hidden
   if (
-    (classOptions.hideLibraries &&
-      (sourceUmlClass.stereotype === ClassStereotype.Library ||
-        targetUmlClass.stereotype === ClassStereotype.Library)) ||
-    (classOptions.hideInterfaces &&
-      (targetUmlClass.stereotype === ClassStereotype.Interface ||
-        sourceUmlClass.stereotype === ClassStereotype.Interface)) ||
-    (classOptions.hideAbstracts &&
-      (targetUmlClass.stereotype === ClassStereotype.Abstract ||
-        sourceUmlClass.stereotype === ClassStereotype.Abstract)) ||
-    (classOptions.hideStructs &&
-      targetUmlClass.stereotype === ClassStereotype.Struct) ||
-    (classOptions.hideEnums &&
-      targetUmlClass.stereotype === ClassStereotype.Enum) ||
-    (classOptions.hideConstants &&
-      targetUmlClass.stereotype === ClassStereotype.Constant)
+    (classOptions.hideLibraries && (sourceUmlClass.stereotype === ClassStereotype.Library || targetUmlClass.stereotype === ClassStereotype.Library)) ||
+    (classOptions.hideInterfaces && (targetUmlClass.stereotype === ClassStereotype.Interface || sourceUmlClass.stereotype === ClassStereotype.Interface)) ||
+    (classOptions.hideAbstracts && (targetUmlClass.stereotype === ClassStereotype.Abstract || sourceUmlClass.stereotype === ClassStereotype.Abstract)) ||
+    (classOptions.hideStructs && targetUmlClass.stereotype === ClassStereotype.Struct) ||
+    (classOptions.hideEnums && targetUmlClass.stereotype === ClassStereotype.Enum) ||
+    (classOptions.hideConstants && targetUmlClass.stereotype === ClassStereotype.Constant)
   ) {
     return ''
   }
 
   let dotString = `\n${sourceUmlClass.id} -> ${targetUmlClass.id} [`
 
-  if (
-    association.referenceType == ReferenceType.Memory ||
-    (association.realization &&
-      targetUmlClass.stereotype === ClassStereotype.Interface)
-  ) {
+  if (association.referenceType == ReferenceType.Memory || (association.realization && targetUmlClass.stereotype === ClassStereotype.Interface)) {
     dotString += 'style=dashed, '
   }
 

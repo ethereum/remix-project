@@ -4,10 +4,7 @@ import {ModalDialog} from '@remix-ui/modal-dialog'
 import {Toaster} from '@remix-ui/toaster'
 import {IframePlugin, WebsocketPlugin} from '@remixproject/engine-web'
 import {FormattedMessage, useIntl} from 'react-intl'
-import {
-  localPluginReducerActionType,
-  localPluginToastReducer
-} from '../reducers/pluginManagerReducer'
+import {localPluginReducerActionType, localPluginToastReducer} from '../reducers/pluginManagerReducer'
 import {canActivate, FormStateProps, PluginManagerComponent} from '../../types'
 
 interface LocalPluginFormProps {
@@ -37,41 +34,25 @@ const defaultProfile = {
   hash: ''
 }
 
-function LocalPluginForm({
-  closeModal,
-  visible,
-  pluginManager
-}: LocalPluginFormProps) {
+function LocalPluginForm({closeModal, visible, pluginManager}: LocalPluginFormProps) {
   const [errorMsg, dispatchToastMsg] = useReducer(localPluginToastReducer, '')
   const [name, setName] = useState<string>('')
   const [displayName, setDisplayName] = useState<string>('')
   const [url, setUrl] = useState<string>('')
   const [type, setType] = useState<'iframe' | 'ws'>('iframe')
-  const [location, setLocation] = useState<'sidePanel' | 'mainPanel' | 'none'>(
-    'sidePanel'
-  )
+  const [location, setLocation] = useState<'sidePanel' | 'mainPanel' | 'none'>('sidePanel')
   const [methods, setMethods] = useState<string>('')
   const [canactivate, setCanactivate] = useState<string>('')
 
   useEffect(() => {
-    const storagePlugin: FormStateProps = localStorage.getItem('plugins/local')
-      ? JSON.parse(localStorage.getItem('plugins/local'))
-      : defaultProfile
+    const storagePlugin: FormStateProps = localStorage.getItem('plugins/local') ? JSON.parse(localStorage.getItem('plugins/local')) : defaultProfile
     setName(storagePlugin.name)
     setUrl(storagePlugin.url)
     setLocation(storagePlugin.location as 'sidePanel' | 'mainPanel' | 'none')
-    setMethods(
-      Array.isArray(storagePlugin.methods)
-        ? storagePlugin.methods.join(',')
-        : storagePlugin.methods
-    )
+    setMethods(Array.isArray(storagePlugin.methods) ? storagePlugin.methods.join(',') : storagePlugin.methods)
     setType(storagePlugin.type)
     setDisplayName(storagePlugin.displayName)
-    setCanactivate(
-      Array.isArray(storagePlugin.canActivate)
-        ? storagePlugin.canActivate.join(',')
-        : storagePlugin.canActivate || ''
-    )
+    setCanactivate(Array.isArray(storagePlugin.canActivate) ? storagePlugin.canActivate.join(',') : storagePlugin.canActivate || '')
   }, [])
 
   const handleModalOkClick = async () => {
@@ -114,21 +95,11 @@ function LocalPluginForm({
               })
             : []
       }
-      const localPlugin =
-        type === 'iframe'
-          ? new IframePlugin(initialState)
-          : new WebsocketPlugin(initialState)
+      const localPlugin = type === 'iframe' ? new IframePlugin(initialState) : new WebsocketPlugin(initialState)
       localPlugin.profile.hash = `local-${name}`
-      targetPlugin.description =
-        localPlugin.profile.description !== undefined
-          ? localPlugin.profile.description
-          : ''
-      targetPlugin.events =
-        localPlugin.profile.events !== undefined
-          ? localPlugin.profile.events
-          : []
-      targetPlugin.kind =
-        localPlugin.profile.kind !== undefined ? localPlugin.profile.kind : ''
+      targetPlugin.description = localPlugin.profile.description !== undefined ? localPlugin.profile.description : ''
+      targetPlugin.events = localPlugin.profile.events !== undefined ? localPlugin.profile.events : []
+      targetPlugin.kind = localPlugin.profile.kind !== undefined ? localPlugin.profile.kind : ''
       localPlugin.profile = {...localPlugin.profile, ...targetPlugin}
       pluginManager.activateAndRegisterLocalPlugin(localPlugin)
     } catch (error) {
@@ -193,8 +164,7 @@ function LocalPluginForm({
           <div className="form-group">
             <label htmlFor="plugin-methods">
               Api&nbsp; (
-              <FormattedMessage id="pluginManager.localForm.commaSeparatedMethod" />
-              )
+              <FormattedMessage id="pluginManager.localForm.commaSeparatedMethod" />)
             </label>
             <input
               className="form-control"
@@ -209,8 +179,7 @@ function LocalPluginForm({
             <label htmlFor="plugin-methods">
               <FormattedMessage id="pluginManager.localForm.pluginsItCanActivate" />
               &nbsp; (
-              <FormattedMessage id="pluginManager.localForm.commaSeparatedPlugin" />
-              )
+              <FormattedMessage id="pluginManager.localForm.commaSeparatedPlugin" />)
             </label>
             <input
               className="form-control"
@@ -294,11 +263,7 @@ function LocalPluginForm({
                 id="localPluginRadioButtonsidePanelSidePanel"
                 data-id="localPluginRadioButtonsidePanel"
                 checked={location === 'sidePanel'}
-                onChange={(e) =>
-                  setLocation(
-                    e.target.value as 'sidePanel' | 'mainPanel' | 'none'
-                  )
-                }
+                onChange={(e) => setLocation(e.target.value as 'sidePanel' | 'mainPanel' | 'none')}
               />
               <label className="form-check-label" htmlFor="sidePanel">
                 <FormattedMessage id="pluginManager.localForm.sidePanel" />
@@ -313,11 +278,7 @@ function LocalPluginForm({
                 id="localPluginRadioButtonsidePanelMainPanel"
                 data-id="localPluginRadioButtonmainPanel"
                 checked={location === 'mainPanel'}
-                onChange={(e) =>
-                  setLocation(
-                    e.target.value as 'sidePanel' | 'mainPanel' | 'none'
-                  )
-                }
+                onChange={(e) => setLocation(e.target.value as 'sidePanel' | 'mainPanel' | 'none')}
               />
               <label className="form-check-label" htmlFor="mainPanel">
                 <FormattedMessage id="pluginManager.localForm.mainPanel" />
@@ -332,11 +293,7 @@ function LocalPluginForm({
                 id="localPluginRadioButtonsidePanelNone"
                 data-id="localPluginRadioButtonnone"
                 checked={location === 'none'}
-                onChange={(e) =>
-                  setLocation(
-                    e.target.value as 'sidePanel' | 'mainPanel' | 'none'
-                  )
-                }
+                onChange={(e) => setLocation(e.target.value as 'sidePanel' | 'mainPanel' | 'none')}
               />
               <label className="form-check-label" htmlFor="none">
                 <FormattedMessage id="pluginManager.localForm.none" />

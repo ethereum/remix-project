@@ -10,9 +10,7 @@ const TerminalWelcomeMessage = ({packageJson, storage}) => {
       </div>
       <br />
       <div className="">
-        <FormattedMessage id="terminal.welcomeText2" />{' '}
-        {(window as any).remixFileSystem.name}, {storage}{' '}
-        <FormattedMessage id="terminal.used" />
+        <FormattedMessage id="terminal.welcomeText2" /> {(window as any).remixFileSystem.name}, {storage} <FormattedMessage id="terminal.used" />
       </div>
       <br />
       <div>

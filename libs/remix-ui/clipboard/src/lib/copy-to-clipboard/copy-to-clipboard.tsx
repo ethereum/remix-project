@@ -16,14 +16,7 @@ interface ICopyToClipboard {
   getContent?: () => any
 }
 export const CopyToClipboard = (props: ICopyToClipboard) => {
-  const {
-    tip = 'Copy',
-    icon = 'fa-copy',
-    direction = 'right',
-    getContent,
-    children,
-    ...otherProps
-  } = props
+  const {tip = 'Copy', icon = 'fa-copy', direction = 'right', getContent, children, ...otherProps} = props
   let {content} = props
   const [message, setMessage] = useState(tip)
 
@@ -58,21 +51,11 @@ export const CopyToClipboard = (props: ICopyToClipboard) => {
     setTimeout(() => setMessage(tip), 500)
   }
 
-  const childJSX = children || (
-    <i
-      className={`far ${icon} ml-1 p-2`}
-      aria-hidden="true"
-      {...otherProps}
-    ></i>
-  )
+  const childJSX = children || <i className={`far ${icon} ml-1 p-2`} aria-hidden="true" {...otherProps}></i>
 
   return (
     <a href="#" onClick={handleClick} onMouseLeave={reset}>
-      <CustomTooltip
-        tooltipText={message}
-        tooltipId="overlay-tooltip"
-        placement={direction}
-      >
+      <CustomTooltip tooltipText={message} tooltipId="overlay-tooltip" placement={direction}>
         {childJSX}
       </CustomTooltip>
     </a>

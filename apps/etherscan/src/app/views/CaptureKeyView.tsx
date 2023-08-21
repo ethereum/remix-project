@@ -40,39 +40,22 @@ export const CaptureKeyView: React.FC = () => {
                   <div className="form-group mb-2">
                     <label htmlFor="apikey">API Key</label>
                     <Field
-                      className={
-                        errors.apiKey && touched.apiKey
-                          ? 'form-control form-control-sm is-invalid'
-                          : 'form-control form-control-sm'
-                      }
+                      className={errors.apiKey && touched.apiKey ? 'form-control form-control-sm is-invalid' : 'form-control form-control-sm'}
                       type="password"
                       name="apiKey"
                       placeholder="e.g. GM1T20XY6JGSAPWKDCYZ7B2FJXKTJRFVGZ"
                     />
-                    <ErrorMessage
-                      className="invalid-feedback"
-                      name="apiKey"
-                      component="div"
-                    />
+                    <ErrorMessage className="invalid-feedback" name="apiKey" component="div" />
                   </div>
 
                   <div>
-                    <SubmitButton
-                      text="Save"
-                      dataId="save-api-key"
-                      disable={errors && errors.apiKey ? true : false}
-                    />
+                    <SubmitButton text="Save" dataId="save-api-key" disable={errors && errors.apiKey ? true : false} />
                   </div>
                 </form>
               )}
             </Formik>
 
-            <div
-              data-id="api-key-result"
-              className="text-primary mt-4 text-center"
-              style={{fontSize: '0.8em'}}
-              dangerouslySetInnerHTML={{__html: msg}}
-            />
+            <div data-id="api-key-result" className="text-primary mt-4 text-center" style={{fontSize: '0.8em'}} dangerouslySetInnerHTML={{__html: msg}} />
           </div>
         )
       }}

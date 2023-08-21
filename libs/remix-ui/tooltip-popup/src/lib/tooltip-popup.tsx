@@ -8,9 +8,7 @@ const popover = (title?: string, content?: string | React.ReactNode) => (
     <Popover.Title as="h3" className="bg-warning border-0">
       {title || 'Tooltip'}
     </Popover.Title>
-    <Popover.Content className="bg-danger border-info">
-      {content}
-    </Popover.Content>
+    <Popover.Content className="bg-danger border-info">{content}</Popover.Content>
   </Popover>
 )
 

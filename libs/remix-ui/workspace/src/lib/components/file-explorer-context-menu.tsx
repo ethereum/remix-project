@@ -13,9 +13,7 @@ declare global {
 }
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
-export const FileExplorerContextMenu = (
-  props: FileExplorerContextMenuProps
-) => {
+export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
   const {
     actions,
     createNewFile,
@@ -53,10 +51,7 @@ export const FileExplorerContextMenu = (
     const menuItemsContainer = contextMenuRef.current
     const boundary = menuItemsContainer.getBoundingClientRect()
 
-    if (
-      boundary.bottom >
-      (window.innerHeight || document.documentElement.clientHeight)
-    ) {
+    if (boundary.bottom > (window.innerHeight || document.documentElement.clientHeight)) {
       menuItemsContainer.style.position = 'fixed'
       menuItemsContainer.style.bottom = '10px'
       menuItemsContainer.style.top = null
@@ -86,36 +81,11 @@ export const FileExplorerContextMenu = (
     }
   }
 
-  const itemMatchesCondition = (
-    item: action,
-    itemType: string,
-    itemPath: string
-  ) => {
-    if (
-      item.type &&
-      Array.isArray(item.type) &&
-      item.type.findIndex((name) => name === itemType) !== -1
-    )
-      return true
-    else if (
-      item.path &&
-      Array.isArray(item.path) &&
-      item.path.findIndex((key) => key === itemPath) !== -1
-    )
-      return true
-    else if (
-      item.extension &&
-      Array.isArray(item.extension) &&
-      item.extension.findIndex((ext) => itemPath.endsWith(ext)) !== -1
-    )
-      return true
-    else if (
-      item.pattern &&
-      Array.isArray(item.pattern) &&
-      item.pattern.filter((value) => itemPath.match(new RegExp(value))).length >
-        0
-    )
-      return true
+  const itemMatchesCondition = (item: action, itemType: string, itemPath: string) => {
+    if (item.type && Array.isArray(item.type) && item.type.findIndex((name) => name === itemType) !== -1) return true
+    else if (item.path && Array.isArray(item.path) && item.path.findIndex((key) => key === itemPath) !== -1) return true
+    else if (item.extension && Array.isArray(item.extension) && item.extension.findIndex((ext) => itemPath.endsWith(ext)) !== -1) return true
+    else if (item.pattern && Array.isArray(item.pattern) && item.pattern.filter((value) => itemPath.match(new RegExp(value))).length > 0) return true
     else return false
   }
 
@@ -141,9 +111,7 @@ export const FileExplorerContextMenu = (
     return groupedActions.map((groupItem, groupIndex) =>
       groupItem.map((item, index) => {
         key++
-        const className = `remixui_liitem ${
-          group !== item.group ? 'border-top' : ''
-        }`
+        const className = `remixui_liitem ${group !== item.group ? 'border-top' : ''}`
         group = item.group
         if (item.name === 'Upload File') {
           return (
@@ -152,12 +120,7 @@ export const FileExplorerContextMenu = (
               key={key}
               className={className}
               onClick={() => {
-                _paq.push([
-                  'trackEvent',
-                  'fileExplorer',
-                  'contextMenu',
-                  'uploadFile'
-                ])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'uploadFile'])
                 setShowFileExplorer(true)
               }}
             >
@@ -176,12 +139,7 @@ export const FileExplorerContextMenu = (
               key={key}
               className={className}
               onClick={() => {
-                _paq.push([
-                  'trackEvent',
-                  'fileExplorer',
-                  'contextMenu',
-                  'uploadFile'
-                ])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'uploadFile'])
                 setShowFileExplorer(true)
               }}
             >
@@ -202,146 +160,66 @@ export const FileExplorerContextMenu = (
               switch (item.name) {
               case 'New File':
                 createNewFile(path)
-                _paq.push([
-                  'trackEvent',
-                  'fileExplorer',
-                  'contextMenu',
-                  'newFile'
-                ])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'newFile'])
                 break
               case 'New Folder':
                 createNewFolder(path)
-                _paq.push([
-                  'trackEvent',
-                  'fileExplorer',
-                  'contextMenu',
-                  'newFolder'
-                ])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'newFolder'])
                 break
               case 'Rename':
                 renamePath(path, type)
-                _paq.push([
-                  'trackEvent',
-                  'fileExplorer',
-                  'contextMenu',
-                  'rename'
-                ])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'rename'])
                 break
               case 'Delete':
                 deletePath(getPath())
-                _paq.push([
-                  'trackEvent',
-                  'fileExplorer',
-                  'contextMenu',
-                  'delete'
-                ])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'delete'])
                 break
               case 'Download':
                 downloadPath(path)
-                _paq.push([
-                  'trackEvent',
-                  'fileExplorer',
-                  'contextMenu',
-                  'download'
-                ])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'download'])
                 break
               case 'Push changes to gist':
-                _paq.push([
-                  'trackEvent',
-                  'fileExplorer',
-                  'contextMenu',
-                  'pushToChangesoGist'
-                ])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'pushToChangesoGist'])
                 pushChangesToGist(path, type)
                 break
               case 'Publish folder to gist':
-                _paq.push([
-                  'trackEvent',
-                  'fileExplorer',
-                  'contextMenu',
-                  'publishFolderToGist'
-                ])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishFolderToGist'])
                 publishFolderToGist(path, type)
                 break
               case 'Publish file to gist':
-                _paq.push([
-                  'trackEvent',
-                  'fileExplorer',
-                  'contextMenu',
-                  'publishFileToGist'
-                ])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishFileToGist'])
                 publishFileToGist(path, type)
                 break
               case 'Run':
-                _paq.push([
-                  'trackEvent',
-                  'fileExplorer',
-                  'contextMenu',
-                  'runScript'
-                ])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'runScript'])
                 runScript(path)
                 break
               case 'Copy':
                 copy(path, type)
-                _paq.push([
-                  'trackEvent',
-                  'fileExplorer',
-                  'contextMenu',
-                  'copy'
-                ])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copy'])
                 break
               case 'Copy name':
                 copyFileName(path, type)
-                _paq.push([
-                  'trackEvent',
-                  'fileExplorer',
-                  'contextMenu',
-                  'copy'
-                ])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copy'])
                 break
               case 'Copy path':
                 copyPath(path, type)
-                _paq.push([
-                  'trackEvent',
-                  'fileExplorer',
-                  'contextMenu',
-                  'copy'
-                ])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copy'])
                 break
               case 'Paste':
                 paste(path, type)
-                _paq.push([
-                  'trackEvent',
-                  'fileExplorer',
-                  'contextMenu',
-                  'paste'
-                ])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'paste'])
                 break
               case 'Delete All':
                 deletePath(getPath())
-                _paq.push([
-                  'trackEvent',
-                  'fileExplorer',
-                  'contextMenu',
-                  'deleteAll'
-                ])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'deleteAll'])
                 break
               case 'Publish Workspace to Gist':
-                _paq.push([
-                  'trackEvent',
-                  'fileExplorer',
-                  'contextMenu',
-                  'publishWorkspace'
-                ])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishWorkspace'])
                 publishFolderToGist(path, type)
                 break
               default:
-                _paq.push([
-                  'trackEvent',
-                  'fileExplorer',
-                  'contextMenu',
-                  `${item.id}/${item.name}`
-                ])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', `${item.id}/${item.name}`])
                 emit && emit({...item, path: [path]} as customAction)
                 break
               }

@@ -1,12 +1,7 @@
 import React, {useState} from 'react'
 
 import {Formik, ErrorMessage, Field} from 'formik'
-import {
-  getEtherScanApi,
-  getNetworkName,
-  getReceiptStatus,
-  getProxyContractReceiptStatus
-} from '../utils'
+import {getEtherScanApi, getNetworkName, getReceiptStatus, getProxyContractReceiptStatus} from '../utils'
 import {Receipt} from '../types'
 import {AppContext} from '../AppContext'
 import {SubmitButton} from '../components'
@@ -22,11 +17,7 @@ export const ReceiptsView: React.FC = () => {
   const [results, setResults] = useState({succeed: false, message: ''})
   const [isProxyContractReceipt, setIsProxyContractReceipt] = useState(false)
 
-  const onGetReceiptStatus = async (
-    values: FormValues,
-    clientInstance: any,
-    apiKey: string
-  ) => {
+  const onGetReceiptStatus = async (values: FormValues, clientInstance: any, apiKey: string) => {
     try {
       const {network, networkId} = await getNetworkName(clientInstance)
       if (network === 'vm') {
@@ -39,26 +30,15 @@ export const ReceiptsView: React.FC = () => {
       const etherscanApi = getEtherScanApi(networkId)
       let result
       if (isProxyContractReceipt) {
-        result = await getProxyContractReceiptStatus(
-          values.receiptGuid,
-          apiKey,
-          etherscanApi
-        )
+        result = await getProxyContractReceiptStatus(values.receiptGuid, apiKey, etherscanApi)
         if (result.status === '1') {
           result.message = result.result
           result.result = 'Successfully Updated'
         }
-      } else
-        result = await getReceiptStatus(
-          values.receiptGuid,
-          apiKey,
-          etherscanApi
-        )
+      } else result = await getReceiptStatus(values.receiptGuid, apiKey, etherscanApi)
       setResults({
         succeed: result.status === '1' ? true : false,
-        message:
-          result.result ||
-          (result.status === '0' ? 'Verification failed' : result.message)
+        message: result.result || (result.status === '0' ? 'Verification failed' : result.message)
       })
     } catch (error: any) {
       setResults({
@@ -88,28 +68,18 @@ export const ReceiptsView: React.FC = () => {
                 }
                 return errors
               }}
-              onSubmit={(values) =>
-                onGetReceiptStatus(values, clientInstance, apiKey)
-              }
+              onSubmit={(values) => onGetReceiptStatus(values, clientInstance, apiKey)}
             >
               {({errors, touched, handleSubmit, handleChange}) => (
                 <form onSubmit={handleSubmit}>
                   <div className="form-group mb-2">
                     <label htmlFor="receiptGuid">Receipt GUID</label>
                     <Field
-                      className={
-                        errors.receiptGuid && touched.receiptGuid
-                          ? 'form-control form-control-sm is-invalid'
-                          : 'form-control form-control-sm'
-                      }
+                      className={errors.receiptGuid && touched.receiptGuid ? 'form-control form-control-sm is-invalid' : 'form-control form-control-sm'}
                       type="text"
                       name="receiptGuid"
                     />
-                    <ErrorMessage
-                      className="invalid-feedback"
-                      name="receiptGuid"
-                      component="div"
-                    />
+                    <ErrorMessage className="invalid-feedback" name="receiptGuid" component="div" />
                   </div>
 
                   <div className="d-flex mb-2 custom-control custom-checkbox">
@@ -124,32 +94,17 @@ export const ReceiptsView: React.FC = () => {
                         else setIsProxyContractReceipt(false)
                       }}
                     />
-                    <label
-                      className="form-check-label custom-control-label"
-                      htmlFor="isProxyReceipt"
-                    >
+                    <label className="form-check-label custom-control-label" htmlFor="isProxyReceipt">
                       It's a proxy contract GUID
                     </label>
                   </div>
-                  <SubmitButton
-                    text="Check"
-                    disable={
-                      !touched.receiptGuid ||
-                      (touched.receiptGuid && errors.receiptGuid)
-                        ? true
-                        : false
-                    }
-                  />
+                  <SubmitButton text="Check" disable={!touched.receiptGuid || (touched.receiptGuid && errors.receiptGuid) ? true : false} />
                 </form>
               )}
             </Formik>
 
             <div
-              className={
-                results['succeed']
-                  ? 'text-success mt-3 text-center'
-                  : 'text-danger mt-3 text-center'
-              }
+              className={results['succeed'] ? 'text-success mt-3 text-center' : 'text-danger mt-3 text-center'}
               dangerouslySetInnerHTML={{
                 __html: results.message ? results.message : ''
               }}
@@ -157,11 +112,7 @@ export const ReceiptsView: React.FC = () => {
 
             <ReceiptsTable receipts={receipts} />
             <br />
-            <CustomTooltip
-              tooltipText="Clear the list of receipts"
-              tooltipId="etherscan-clear-receipts"
-              placement="bottom"
-            >
+            <CustomTooltip tooltipText="Clear the list of receipts" tooltipId="etherscan-clear-receipts" placement="bottom">
               <Button
                 className="btn-sm"
                 onClick={() => {
@@ -197,8 +148,7 @@ const ReceiptsTable: React.FC<{receipts: Receipt[]}> = ({receipts}) => {
                 <tr key={item.guid}>
                   <td
                     className={
-                      item.status === 'Pass - Verified' ||
-                      item.status === 'Successfully Updated'
+                      item.status === 'Pass - Verified' || item.status === 'Successfully Updated'
                         ? 'text-success'
                         : item.status === 'Pending in queue'
                           ? 'text-warning'
@@ -209,19 +159,8 @@ const ReceiptsTable: React.FC<{receipts: Receipt[]}> = ({receipts}) => {
                   >
                     {item.status}
                     {item.status === 'Successfully Updated' && (
-                      <CustomTooltip
-                        placement={'bottom'}
-                        tooltipClasses="text-wrap"
-                        tooltipId="etherscan-receipt-proxy-status"
-                        tooltipText={item.message}
-                      >
-                        <i
-                          style={{fontSize: 'small'}}
-                          className={
-                            'ml-1 fal fa-info-circle align-self-center'
-                          }
-                          aria-hidden="true"
-                        ></i>
+                      <CustomTooltip placement={'bottom'} tooltipClasses="text-wrap" tooltipId="etherscan-receipt-proxy-status" tooltipText={item.message}>
+                        <i style={{fontSize: 'small'}} className={'ml-1 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
                       </CustomTooltip>
                     )}
                   </td>

@@ -14,17 +14,10 @@ export const FindContainer = (props) => {
   }, [expanded])
   return (
     <div className="search_plugin_find_container">
-      <CustomTooltip
-        tooltipText="Toggle Replace"
-        tooltipClasses="text-nowrap"
-        tooltipId="toggleReplaceTooltip"
-        placement="left-start"
-      >
+      <CustomTooltip tooltipText="Toggle Replace" tooltipClasses="text-nowrap" tooltipId="toggleReplaceTooltip" placement="left-start">
         <div
           data-id="toggle_replace"
-          className={`codicon codicon-find-${
-            expanded ? 'expanded' : 'collapsed'
-          } search_plugin_find_container_arrow`}
+          className={`codicon codicon-find-${expanded ? 'expanded' : 'collapsed'} search_plugin_find_container_arrow`}
           role="button"
           onClick={toggleExpand}
           aria-label="Toggle Replace"

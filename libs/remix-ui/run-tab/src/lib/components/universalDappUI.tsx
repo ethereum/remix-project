@@ -8,13 +8,7 @@ import * as ethJSUtil from '@ethereumjs/util'
 import {ContractGUI} from './contractGUI'
 import {TreeView, TreeViewItem} from '@remix-ui/tree-view'
 import {BN} from 'bn.js'
-import {
-  CustomTooltip,
-  is0XPrefixed,
-  isHexadecimal,
-  isNumeric,
-  shortenAddress
-} from '@remix-ui/helper'
+import {CustomTooltip, is0XPrefixed, isHexadecimal, isNumeric, shortenAddress} from '@remix-ui/helper'
 
 const txHelper = remixLib.execution.txHelper
 
@@ -37,9 +31,9 @@ export function UniversalDappUI(props: UdappProps) {
       setContractABI(props.instance.abi)
     }
     if (props.instance.address) {
-      // @ts-ignore
       let address =
         (props.instance.address.slice(0, 2) === '0x' ? '' : '0x') +
+        // @ts-ignore
         props.instance.address.toString('hex')
 
       address = ethJSUtil.toChecksumAddress(address)
@@ -75,30 +69,21 @@ export function UniversalDappUI(props: UdappProps) {
       // check for numeric and receive/fallback
       if (!isNumeric(amount)) {
         return setLlIError('Value to send should be a number')
-      } else if (
-        !receive &&
-        !(fallback && fallback.stateMutability === 'payable')
-      ) {
-        return setLlIError(
-          "In order to receive Ether transfer the contract should have either 'receive' or payable 'fallback' function"
-        )
+      } else if (!receive && !(fallback && fallback.stateMutability === 'payable')) {
+        return setLlIError("In order to receive Ether transfer the contract should have either 'receive' or payable 'fallback' function")
       }
     }
     let calldata = calldataValue
 
     if (calldata) {
       if (calldata.length < 4 && is0XPrefixed(calldata)) {
-        return setLlIError(
-          'The calldata should be a valid hexadecimal value with size of at least one byte.'
-        )
+        return setLlIError('The calldata should be a valid hexadecimal value with size of at least one byte.')
       } else {
         if (is0XPrefixed(calldata)) {
           calldata = calldata.substr(2, calldata.length)
         }
         if (!isHexadecimal(calldata)) {
-          return setLlIError(
-            'The calldata should be a valid hexadecimal value.'
-          )
+          return setLlIError('The calldata should be a valid hexadecimal value.')
         }
       }
       if (!fallback) {
@@ -106,10 +91,7 @@ export function UniversalDappUI(props: UdappProps) {
       }
     }
 
-    if (!receive && !fallback)
-      return setLlIError(
-        "Both 'receive' and 'fallback' functions are not defined"
-      )
+    if (!receive && !fallback) return setLlIError("Both 'receive' and 'fallback' functions are not defined")
 
     // we have to put the right function ABI:
     // if receive is defined and that there is no calldata => receive function is called
@@ -117,10 +99,7 @@ export function UniversalDappUI(props: UdappProps) {
     if (receive && !calldata) args.funcABI = receive
     else if (fallback) args.funcABI = fallback
 
-    if (!args.funcABI)
-      return setLlIError(
-        "Please define a 'Fallback' function to send calldata and a either 'Receive' or payable 'Fallback' to send ethers"
-      )
+    if (!args.funcABI) return setLlIError("Please define a 'Fallback' function to send calldata and a either 'Receive' or payable 'Fallback' to send ethers")
     runTransaction(false, args.funcABI, null, calldataValue)
   }
 
@@ -132,18 +111,9 @@ export function UniversalDappUI(props: UdappProps) {
     props.removeInstance(props.index)
   }
 
-  const runTransaction = (
-    lookupOnly,
-    funcABI: FuncABI,
-    valArr,
-    inputsValues,
-    funcIndex?: number
-  ) => {
-    const functionName =
-      funcABI.type === 'function' ? funcABI.name : `(${funcABI.type})`
-    const logMsg = `${lookupOnly ? 'call' : 'transact'} to ${
-      props.instance.name
-    }.${functionName}`
+  const runTransaction = (lookupOnly, funcABI: FuncABI, valArr, inputsValues, funcIndex?: number) => {
+    const functionName = funcABI.type === 'function' ? funcABI.name : `(${funcABI.type})`
+    const logMsg = `${lookupOnly ? 'call' : 'transact'} to ${props.instance.name}.${functionName}`
 
     props.runTransactions(
       props.index,
@@ -212,9 +182,7 @@ export function UniversalDappUI(props: UdappProps) {
   const label = (key: string | number, value: string) => {
     return (
       <div className="d-flex mt-2 flex-row label_item">
-        <label className="small font-weight-bold mb-0 pr-1 label_key">
-          {key}:
-        </label>
+        <label className="small font-weight-bold mb-0 pr-1 label_key">{key}:</label>
         <label className="m-0 label_value">{value}</label>
       </div>
     )
@@ -228,81 +196,42 @@ export function UniversalDappUI(props: UdappProps) {
 
     if (children && children.length > 0) {
       return (
-        <TreeViewItem
-          id={`treeViewItem${key}`}
-          key={keyPath}
-          label={label(key, data.self)}
-          onClick={() => handleExpand(keyPath)}
-          expand={expandPath.includes(keyPath)}
-        >
+        <TreeViewItem id={`treeViewItem${key}`} key={keyPath} label={label(key, data.self)} onClick={() => handleExpand(keyPath)} expand={expandPath.includes(keyPath)}>
           <TreeView id={`treeView${key}`} key={keyPath}>
             {children}
           </TreeView>
         </TreeViewItem>
       )
     } else {
-      return (
-        <TreeViewItem
-          id={key.toString()}
-          key={keyPath}
-          label={label(key, data.self)}
-          onClick={() => handleExpand(keyPath)}
-          expand={expandPath.includes(keyPath)}
-        />
-      )
+      return <TreeViewItem id={key.toString()} key={keyPath} label={label(key, data.self)} onClick={() => handleExpand(keyPath)} expand={expandPath.includes(keyPath)} />
     }
   }
 
   return (
     <div
-      className={`instance udapp_instance udapp_run-instance border-dark ${
-        toggleExpander ? 'udapp_hidesub' : 'bg-light'
-      }`}
+      className={`instance udapp_instance udapp_run-instance border-dark ${toggleExpander ? 'udapp_hidesub' : 'bg-light'}`}
       id={`instance${address}`}
       data-shared="universalDappUiInstance"
     >
       <div className="udapp_title pb-0 alert alert-secondary">
-        <span
-          data-id={`universalDappUiTitleExpander${props.index}`}
-          className="btn udapp_titleExpander"
-          onClick={toggleClass}
-        >
-          <i
-            className={`fas ${
-              toggleExpander ? 'fa-angle-right' : 'fa-angle-down'
-            }`}
-            aria-hidden="true"
-          ></i>
+        <span data-id={`universalDappUiTitleExpander${props.index}`} className="btn udapp_titleExpander" onClick={toggleClass}>
+          <i className={`fas ${toggleExpander ? 'fa-angle-right' : 'fa-angle-down'}`} aria-hidden="true"></i>
         </span>
         <div className="input-group udapp_nameNbuts">
           <div className="udapp_titleText input-group-prepend">
             <span className="input-group-text udapp_spanTitleText">
-              {props.instance.name} at {shortenAddress(address)} (
-              {props.context})
+              {props.instance.name} at {shortenAddress(address)} ({props.context})
             </span>
           </div>
           <div className="btn">
             <CopyToClipboard content={address} direction={'top'} />
           </div>
         </div>
-        <CustomTooltip
-          placement="right"
-          tooltipClasses="text-nowrap"
-          tooltipId="udapp_udappCloseTooltip"
-          tooltipText="Remove from the list"
-        >
-          <i
-            className="udapp_closeIcon m-1 fas fa-times align-self-center"
-            aria-hidden="true"
-            data-id="universalDappUiUdappClose"
-            onClick={remove}
-          ></i>
+        <CustomTooltip placement="right" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText="Remove from the list">
+          <i className="udapp_closeIcon m-1 fas fa-times align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
         </CustomTooltip>
       </div>
-      <div
-        className="udapp_cActionsWrapper"
-        data-id="universalDappUiContractActionWrapper"
-      >
+      <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">
           <div className="d-flex" data-id="instanceContractBal">
             <label>Balance: {instanceBalance} ETH</label>
@@ -310,29 +239,16 @@ export function UniversalDappUI(props: UdappProps) {
           {contractABI &&
             contractABI.map((funcABI, index) => {
               if (funcABI.type !== 'function') return null
-              const isConstant =
-                funcABI.constant !== undefined ? funcABI.constant : false
-              const lookupOnly =
-                funcABI.stateMutability === 'view' ||
-                funcABI.stateMutability === 'pure' ||
-                isConstant
+              const isConstant = funcABI.constant !== undefined ? funcABI.constant : false
+              const lookupOnly = funcABI.stateMutability === 'view' || funcABI.stateMutability === 'pure' || isConstant
               const inputs = props.getFuncABIInputs(funcABI)
 
               return (
                 <div key={index}>
                   <ContractGUI
                     funcABI={funcABI}
-                    clickCallBack={(
-                      valArray: {name: string; type: string}[],
-                      inputsValues: string
-                    ) => {
-                      runTransaction(
-                        lookupOnly,
-                        funcABI,
-                        valArray,
-                        inputsValues,
-                        index
-                      )
+                    clickCallBack={(valArray: {name: string; type: string}[], inputsValues: string) => {
+                      runTransaction(lookupOnly, funcABI, valArray, inputsValues, index)
                     }}
                     inputs={inputs}
                     evmBC={evmBC}
@@ -342,27 +258,16 @@ export function UniversalDappUI(props: UdappProps) {
                   {lookupOnly && (
                     <div className="udapp_value" data-id="udapp_value">
                       <TreeView id="treeView">
-                        {Object.keys(props.instance.decodedResponse || {}).map(
-                          (key) => {
-                            const funcIndex = index.toString()
-                            const response = props.instance.decodedResponse[key]
+                        {Object.keys(props.instance.decodedResponse || {}).map((key) => {
+                          const funcIndex = index.toString()
+                          const response = props.instance.decodedResponse[key]
 
-                            return key === funcIndex
-                              ? Object.keys(response || {}).map(
-                                (innerkey, index) => {
-                                  return renderData(
-                                    props.instance.decodedResponse[key][
-                                      innerkey
-                                    ],
-                                    response,
-                                    innerkey,
-                                    innerkey
-                                  )
-                                }
-                              )
-                              : null
-                          }
-                        )}
+                          return key === funcIndex
+                            ? Object.keys(response || {}).map((innerkey, index) => {
+                              return renderData(props.instance.decodedResponse[key][innerkey], response, innerkey, innerkey)
+                            })
+                            : null
+                        })}
                       </TreeView>
                     </div>
                   )}
@@ -372,20 +277,9 @@ export function UniversalDappUI(props: UdappProps) {
         </div>
         <div className="d-flex flex-column">
           <div className="d-flex flex-row justify-content-between mt-2">
-            <div className="py-2 border-top d-flex justify-content-start flex-grow-1">
-              Low level interactions
-            </div>
-            <CustomTooltip
-              placement={'bottom-end'}
-              tooltipClasses="text-wrap"
-              tooltipId="receiveEthDocstoolTip"
-              tooltipText={"Click for docs about using 'receive'/'fallback'"}
-            >
-              <a
-                href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function"
-                target="_blank"
-                rel="noreferrer"
-              >
+            <div className="py-2 border-top d-flex justify-content-start flex-grow-1">Low level interactions</div>
+            <CustomTooltip placement={'bottom-end'} tooltipClasses="text-wrap" tooltipId="receiveEthDocstoolTip" tooltipText={"Click for docs about using 'receive'/'fallback'"}>
+              <a href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function" target="_blank" rel="noreferrer">
                 <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
               </a>
             </CustomTooltip>
@@ -399,18 +293,9 @@ export function UniversalDappUI(props: UdappProps) {
                 tooltipId="deployAndRunLLTxCalldataInputTooltip"
                 tooltipText="The Calldata to send to fallback function of the contract."
               >
-                <input
-                  id="deployAndRunLLTxCalldata"
-                  onChange={handleCalldataChange}
-                  className="udapp_calldataInput form-control"
-                />
+                <input id="deployAndRunLLTxCalldata" onChange={handleCalldataChange} className="udapp_calldataInput form-control" />
               </CustomTooltip>
-              <CustomTooltip
-                placement="right"
-                tooltipClasses="text-nowrap"
-                tooltipId="deployAndRunLLTxCalldataTooltip"
-                tooltipText="Send data to contract."
-              >
+              <CustomTooltip placement="right" tooltipClasses="text-nowrap" tooltipId="deployAndRunLLTxCalldataTooltip" tooltipText="Send data to contract.">
                 <button
                   id="deployAndRunLLTxSendTransaction"
                   data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"

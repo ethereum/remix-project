@@ -1,8 +1,4 @@
-import {
-  HighlightPosition,
-  CompilationResult,
-  RemixApi
-} from '@remixproject/plugin-api'
+import {HighlightPosition, CompilationResult, RemixApi} from '@remixproject/plugin-api'
 import {Api, Status} from '@remixproject/plugin-utils'
 import {createClient} from '@remixproject/plugin-webview'
 import {PluginClient} from '@remixproject/plugin'
@@ -18,13 +14,9 @@ export class RemixClient extends PluginClient {
 
   /** Emit an event when file changed */
   async onFileChange(cb: (contract: string) => any) {
-    this.client.on(
-      'fileManager',
-      'currentFileChanged',
-      async (name: string) => {
-        cb(name)
-      }
-    )
+    this.client.on('fileManager', 'currentFileChanged', async (name: string) => {
+      cb(name)
+    })
   }
 
   /** Emit an event when file changed */
@@ -37,17 +29,8 @@ export class RemixClient extends PluginClient {
   /** Load Ballot contract example into the file manager */
   async loadContract({name, address}: ExampleContract) {
     try {
-      const content = await this.client.call(
-        'contentImport',
-        'resolve',
-        address
-      )
-      await this.client.call(
-        'fileManager',
-        'setFile',
-        content.cleanUrl,
-        content.content
-      )
+      const content = await this.client.call('contentImport', 'resolve', address)
+      await this.client.call('fileManager', 'setFile', content.cleanUrl, content.content)
       await this.client.call('fileManager', 'switchFile', content.cleanUrl)
     } catch (err) {
       console.log(err)
@@ -59,15 +42,15 @@ export class RemixClient extends PluginClient {
       // @ts-ignore
       this.call('notification', 'toast', 'cloning Vyper repository...')
       await this.call('manager', 'activatePlugin', 'dGitProvider')
-      // @ts-ignore
       await this.call(
         'dGitProvider',
         'clone',
         {url: 'https://github.com/vyperlang/vyper', token: null},
+        // @ts-ignore
         'vyper-lang'
       )
-      // @ts-ignore
       this.call(
+        // @ts-ignore
         'notification',
         'toast',
         'Vyper repository cloned, the workspace Vyper has been created.'
@@ -84,11 +67,7 @@ export class RemixClient extends PluginClient {
   }
 
   /** Highlight a part of the editor */
-  async highlight(
-    lineColumnPos: HighlightPosition,
-    name: string,
-    message: string
-  ) {
+  async highlight(lineColumnPos: HighlightPosition, name: string, message: string) {
     await this.client.call('editor', 'highlight', lineColumnPos, name)
     /*
     column: -1

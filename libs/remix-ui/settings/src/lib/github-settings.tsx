@@ -24,9 +24,7 @@ export function GithubSettings(props: GithubSettingsProps) {
   }, [props.config])
 
   const handleChangeTokenState = (event) => {
-    const token = event.target.value
-      ? event.target.value.trim()
-      : event.target.value
+    const token = event.target.value ? event.target.value.trim() : event.target.value
     setGithubToken(token)
   }
 
@@ -79,12 +77,7 @@ export function GithubSettings(props: GithubSettingsProps) {
               value={githubToken}
             />
             <div className="input-group-append">
-              <CopyToClipboard
-                content={githubToken}
-                data-id="copyToClipboardCopyIcon"
-                className="far fa-copy ml-1 p-2 mt-1"
-                direction={'top'}
-              />
+              <CopyToClipboard content={githubToken} data-id="copyToClipboardCopyIcon" className="far fa-copy ml-1 p-2 mt-1" direction={'top'} />
             </div>
           </div>
         </div>
@@ -104,14 +97,7 @@ export function GithubSettings(props: GithubSettingsProps) {
         <div>
           <label className="pt-2 mb-0 pb-0">EMAIL:</label>
           <div className="text-secondary mb-0 h6">
-            <input
-              id="githubemail"
-              data-id="settingsTabGithubEmail"
-              type="text"
-              className="form-control"
-              onChange={(e) => handleChangeEmailState(e)}
-              value={githubEmail}
-            />
+            <input id="githubemail" data-id="settingsTabGithubEmail" type="text" className="form-control" onChange={(e) => handleChangeEmailState(e)} value={githubEmail} />
             <div className="d-flex justify-content-end pt-2">
               <input
                 className="btn btn-sm btn-primary ml-2"
@@ -121,18 +107,8 @@ export function GithubSettings(props: GithubSettingsProps) {
                 value={intl.formatMessage({id: 'settings.save'})}
                 type="button"
               ></input>
-              <CustomTooltip
-                tooltipText="Delete Github Credentials"
-                tooltipClasses="text-nowrap"
-                tooltipId="removegisttokenTooltip"
-                placement="top-start"
-              >
-                <button
-                  className="btn btn-sm btn-secondary ml-2"
-                  id="removegisttoken"
-                  data-id="settingsTabRemoveGistToken"
-                  onClick={removeToken}
-                >
+              <CustomTooltip tooltipText="Delete Github Credentials" tooltipClasses="text-nowrap" tooltipId="removegisttokenTooltip" placement="top-start">
+                <button className="btn btn-sm btn-secondary ml-2" id="removegisttoken" data-id="settingsTabRemoveGistToken" onClick={removeToken}>
                   <FormattedMessage id="settings.remove" />
                 </button>
               </CustomTooltip>

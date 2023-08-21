@@ -3,13 +3,7 @@ import React, {useState, useEffect, useRef} from 'react' //eslint-disable-line
 import {useIntl, FormattedMessage} from 'react-intl'
 import './tx-browser.css'
 
-export const TxBrowser = ({
-  requestDebug,
-  updateTxNumberFlag,
-  unloadRequested,
-  transactionNumber,
-  debugging
-}) => {
+export const TxBrowser = ({requestDebug, updateTxNumberFlag, unloadRequested, transactionNumber, debugging}) => {
   const [state, setState] = useState({
     txNumber: ''
   })
@@ -72,9 +66,7 @@ export const TxBrowser = ({
         style={{pointerEvents: 'none', color: 'white'}}
       >
         <span>
-          <FormattedMessage
-            id={`debugger.${debugging ? 'stopDebugging' : 'startDebugging'}`}
-          />
+          <FormattedMessage id={`debugger.${debugging ? 'stopDebugging' : 'startDebugging'}`} />
         </span>
       </button>
     </div>
@@ -99,13 +91,7 @@ export const TxBrowser = ({
         <div className="d-flex justify-content-center w-100 btn-group py-1">
           <CustomTooltip
             placement="bottom"
-            tooltipText={
-              <FormattedMessage
-                id={`debugger.${
-                  debugging ? 'stopDebugging' : 'startDebugging'
-                }`}
-              />
-            }
+            tooltipText={<FormattedMessage id={`debugger.${debugging ? 'stopDebugging' : 'startDebugging'}`} />}
             tooltipId={'debuggingButtontooltip'}
             tooltipClasses="text-nowrap"
           >

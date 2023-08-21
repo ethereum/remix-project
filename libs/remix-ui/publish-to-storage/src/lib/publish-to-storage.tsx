@@ -31,15 +31,9 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
           try {
             const result = await publishToSwarm(contract, api)
 
-            modal(
-              `Published ${contract.name}'s Metadata and Sources`,
-              publishMessage(result.uploaded)
-            )
+            modal(`Published ${contract.name}'s Metadata and Sources`, publishMessage(result.uploaded))
           } catch (err) {
-            modal(
-              'Swarm Publish Failed',
-              publishMessageFailed(storage, err.message)
-            )
+            modal('Swarm Publish Failed', publishMessageFailed(storage, err.message))
           }
         } else {
           if (!api.config.get('settings/ipfs-url') && !modalShown) {
@@ -48,29 +42,18 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
               <div>
                 You have not set your own custom IPFS settings.<br></br>
                 <br></br>
-                We won’t be providing a public endpoint anymore for publishing
-                your contracts to IPFS.<br></br>Instead of that, 4 options are
-                now available:<br></br>
+                We won’t be providing a public endpoint anymore for publishing your contracts to IPFS.<br></br>Instead of that, 4 options are now available:<br></br>
                 <br></br>
                 <ul className="pl-3">
-                  <li key="ipfs-default">
-                    DEFAULT OPTION: Use the public INFURA node. This will not
-                    guarantee your data will persist.
-                  </li>
+                  <li key="ipfs-default">DEFAULT OPTION: Use the public INFURA node. This will not guarantee your data will persist.</li>
                   <li key="infura-options">
                     Use your own INFURA IPFS node. This requires a subscription.{' '}
                     <a href="https://infura.io/product/ipfs" target={'_blank'}>
                       Learn more
                     </a>
                   </li>
-                  <li key="ipfs-external">
-                    Use any external IPFS which doesn’t require any
-                    authentification.
-                  </li>
-                  <li key="ipfs-local">
-                    Use your own local ipfs node (which usually runs under
-                    http://localhost:5001)
-                  </li>
+                  <li key="ipfs-external">Use any external IPFS which doesn’t require any authentification.</li>
+                  <li key="ipfs-local">Use your own local ipfs node (which usually runs under http://localhost:5001)</li>
                 </ul>
                 You can update your IPFS settings in the SETTINGS tab.
                 <br></br>
@@ -93,10 +76,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
   const ipfs = async (contract, api) => {
     try {
       const result = await publishToIPFS(contract, api)
-      modal(
-        `Published ${contract.name}'s Metadata and Sources`,
-        publishMessage(result.uploaded)
-      )
+      modal(`Published ${contract.name}'s Metadata and Sources`, publishMessage(result.uploaded))
     } catch (err) {
       modal('IPFS Publish Failed', publishMessageFailed(storage, err.message))
     }
@@ -106,8 +86,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
   const publishMessage = (uploaded) => (
     <span>
       {' '}
-      Metadata and sources of "{contract.name.toLowerCase()}" were published
-      successfully. <br />
+      Metadata and sources of "{contract.name.toLowerCase()}" were published successfully. <br />
       <pre>
         <div>
           {uploaded.map((value, index) => (
@@ -122,8 +101,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
 
   const publishMessageFailed = (storage, err) => (
     <span>
-      Failed to publish metadata file and sources to {storage}, please check the{' '}
-      {storage} gateways is available. <br />
+      Failed to publish metadata file and sources to {storage}, please check the {storage} gateways is available. <br />
       {err}
     </span>
   )
@@ -138,11 +116,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
     resetStorage()
   }
 
-  const modal = async (
-    title: string,
-    message: string | JSX.Element,
-    okFn: any = () => {}
-  ) => {
+  const modal = async (title: string, message: string | JSX.Element, okFn: any = () => {}) => {
     await setState((prevState) => {
       return {
         ...prevState,

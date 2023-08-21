@@ -11,13 +11,7 @@ interface ErrorRendererProps {
   ssaState: RemixUiStaticAnalyserState
 }
 
-const ErrorRenderer = ({
-  message,
-  opt,
-  editor,
-  name,
-  ssaState
-}: ErrorRendererProps) => {
+const ErrorRenderer = ({message, opt, editor, name, ssaState}: ErrorRendererProps) => {
   const getPositionDetails = (msg: any) => {
     const result = {} as Record<string, number | string>
 
@@ -44,10 +38,7 @@ const ErrorRenderer = ({
 
   if (!message) return
   let position = getPositionDetails(message)
-  if (
-    !position.errFile ||
-    (opt.errorType && opt.errorType === position.errFile)
-  ) {
+  if (!position.errFile || (opt.errorType && opt.errorType === position.errFile)) {
     // Updated error reported includes '-->' before file details
     const errorDetails = message.split('-->')
     // errorDetails[1] will have file details
@@ -56,17 +47,14 @@ const ErrorRenderer = ({
   opt.errLine = position.errLine
   opt.errCol = position.errCol
   opt.errFile = position.errFile.trim()
-  const classList =
-    opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning'
+  const classList = opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning'
   return (
     <div>
       <div className={`sol ${opt.type} ${classList}`}>
         <div
           className="d-flex flex-column"
           data-id={`${name}Button`}
-          onClick={async () =>
-            await handlePointToErrorOnClick(opt.location, opt.fileName)
-          }
+          onClick={async () => await handlePointToErrorOnClick(opt.location, opt.fileName)}
           style={{
             cursor: 'pointer',
             overflow: 'hidden',
@@ -85,12 +73,7 @@ const ErrorRenderer = ({
             <span> </span>
           )}
           <div>
-            <CustomTooltip
-              placement="right"
-              tooltipId="errorTooltip"
-              tooltipText={`Position in ${ssaState.file}`}
-              tooltipClasses="text-nowrap"
-            >
+            <CustomTooltip placement="right" tooltipId="errorTooltip" tooltipText={`Position in ${ssaState.file}`} tooltipClasses="text-nowrap">
               <span>Pos: {opt.locationString}</span>
             </CustomTooltip>
           </div>

@@ -20,10 +20,7 @@ module.exports = {
         on_failure: true,
         on_error: true
       },
-      exclude: [
-        'dist/apps/remix-ide-e2e/src/tests/runAndDeploy.test.js',
-        'dist/apps/remix-ide-e2e/src/tests/pluginManager.test.ts'
-      ]
+      exclude: ['dist/apps/remix-ide-e2e/src/tests/runAndDeploy.test.js', 'dist/apps/remix-ide-e2e/src/tests/pluginManager.test.ts']
     },
 
     'chrome': {
@@ -61,13 +58,7 @@ module.exports = {
         'javascriptEnabled': true,
         'acceptSslCerts': true,
         'goog:chromeOptions': {
-          args: [
-            'window-size=2560,1440',
-            'start-fullscreen',
-            '--no-sandbox',
-            '--headless',
-            '--verbose'
-          ]
+          args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox', '--headless', '--verbose']
         }
       }
     },

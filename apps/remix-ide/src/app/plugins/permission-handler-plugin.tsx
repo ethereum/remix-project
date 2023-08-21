@@ -2,10 +2,7 @@ import React from 'react' // eslint-disable-line
 import {FormattedMessage} from 'react-intl'
 import {Plugin} from '@remixproject/engine'
 import {AppModal} from '@remix-ui/app'
-import {
-  PermissionHandlerDialog,
-  PermissionHandlerValue
-} from '@remix-ui/permission-handler'
+import {PermissionHandlerDialog, PermissionHandlerValue} from '@remix-ui/permission-handler'
 import {Profile} from '@remixproject/plugin-utils'
 
 const profile = {
@@ -49,21 +46,11 @@ export class PermissionHandlerPlugin extends Plugin {
     }
   }
 
-  switchMode(
-    from: Profile,
-    to: Profile,
-    method: string,
-    set: boolean,
-    sensitiveCall: boolean
-  ) {
+  switchMode(from: Profile, to: Profile, method: string, set: boolean, sensitiveCall: boolean) {
     if (sensitiveCall) {
-      set
-        ? (this.sessionPermissions[to.name][method][from.name] = {})
-        : delete this.sessionPermissions[to.name][method][from.name]
+      set ? (this.sessionPermissions[to.name][method][from.name] = {}) : delete this.sessionPermissions[to.name][method][from.name]
     } else {
-      set
-        ? (this.permissions[to.name][method][from.name] = {})
-        : delete this.permissions[to.name][method][from.name]
+      set ? (this.permissions[to.name][method][from.name] = {}) : delete this.permissions[to.name][method][from.name]
     }
   }
 
@@ -74,9 +61,7 @@ export class PermissionHandlerPlugin extends Plugin {
   }
 
   notAllowWarning(from: Profile, to: Profile, method: string) {
-    return `${
-      from.displayName || from.name
-    } is not allowed to call ${method} method of ${to.displayName || to.name}.`
+    return `${from.displayName || from.name} is not allowed to call ${method} method of ${to.displayName || to.name}.`
   }
 
   async getTheme() {
@@ -91,33 +76,20 @@ export class PermissionHandlerPlugin extends Plugin {
    * @param {string} message from the caller plugin to add more details if needed
    * @returns {Promise<boolean>}
    */
-  async askPermission(
-    from: Profile,
-    to: Profile,
-    method: string,
-    message: string,
-    sensitiveCall: boolean
-  ) {
+  async askPermission(from: Profile, to: Profile, method: string, message: string, sensitiveCall: boolean) {
     try {
       if (sensitiveCall) {
-        if (!this.sessionPermissions[to.name])
-          this.sessionPermissions[to.name] = {}
-        if (!this.sessionPermissions[to.name][method])
-          this.sessionPermissions[to.name][method] = {}
-        if (!this.sessionPermissions[to.name][method][from.name])
-          return this.openPermission(from, to, method, message, sensitiveCall)
+        if (!this.sessionPermissions[to.name]) this.sessionPermissions[to.name] = {}
+        if (!this.sessionPermissions[to.name][method]) this.sessionPermissions[to.name][method] = {}
+        if (!this.sessionPermissions[to.name][method][from.name]) return this.openPermission(from, to, method, message, sensitiveCall)
       } else {
         this.permissions = this._getFromLocal()
         if (!this.permissions[to.name]) this.permissions[to.name] = {}
-        if (!this.permissions[to.name][method])
-          this.permissions[to.name][method] = {}
-        if (!this.permissions[to.name][method][from.name])
-          return this.openPermission(from, to, method, message, sensitiveCall)
+        if (!this.permissions[to.name][method]) this.permissions[to.name][method] = {}
+        if (!this.permissions[to.name][method][from.name]) return this.openPermission(from, to, method, message, sensitiveCall)
       }
 
-      const {allow, hash} = sensitiveCall
-        ? this.sessionPermissions[to.name][method][from.name]
-        : this.permissions[to.name][method][from.name]
+      const {allow, hash} = sensitiveCall ? this.sessionPermissions[to.name][method][from.name] : this.permissions[to.name][method][from.name]
       if (!allow) {
         const warning = this.notAllowWarning(from, to, method)
         this.call('notification', 'toast', warning)
@@ -131,13 +103,7 @@ export class PermissionHandlerPlugin extends Plugin {
     }
   }
 
-  async openPermission(
-    from: Profile,
-    to: Profile,
-    method: string,
-    message: string,
-    sensitiveCall: boolean
-  ) {
+  async openPermission(from: Profile, to: Profile, method: string, message: string, sensitiveCall: boolean) {
     let remember
     if (sensitiveCall) {
       remember = this.sessionPermissions[to.name][method][from.name]
@@ -154,19 +120,8 @@ export class PermissionHandlerPlugin extends Plugin {
     }
     const modal: AppModal = {
       id: 'PermissionHandler',
-      title: (
-        <FormattedMessage
-          id="permissionHandler.permissionNeededFor"
-          values={{to: to.displayName || to.name}}
-        />
-      ),
-      message: (
-        <PermissionHandlerDialog
-          plugin={this}
-          theme={await this.getTheme()}
-          value={value}
-        ></PermissionHandlerDialog>
-      ),
+      title: <FormattedMessage id="permissionHandler.permissionNeededFor" values={{to: to.displayName || to.name}} />,
+      message: <PermissionHandlerDialog plugin={this} theme={await this.getTheme()} value={value}></PermissionHandlerDialog>,
       okLabel: <FormattedMessage id="permissionHandler.accept" />,
       cancelLabel: <FormattedMessage id="permissionHandler.decline" />
     }

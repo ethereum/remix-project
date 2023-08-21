@@ -70,8 +70,7 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
             } else {
               return {
                 valid: false,
-                message:
-                  'the provided value should contain the protocol ( e.g starts with http:// or https:// )'
+                message: 'the provided value should contain the protocol ( e.g starts with http:// or https:// )'
               }
             }
           },
@@ -119,22 +118,13 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
     return
   }
 
-  private async sendAsyncInternal(
-    data: JsonDataRequest,
-    resolve: SuccessRequest,
-    reject: RejectRequest
-  ): Promise<void> {
+  private async sendAsyncInternal(data: JsonDataRequest, resolve: SuccessRequest, reject: RejectRequest): Promise<void> {
     if (this.provider) {
       try {
         const result = await this.provider.send(data.method, data.params)
         resolve({jsonrpc: '2.0', result, id: data.id})
       } catch (error) {
-        if (
-          error &&
-          error.message &&
-          error.message.includes('net_version') &&
-          error.message.includes('SERVER_ERROR')
-        ) {
+        if (error && error.message && error.message.includes('net_version') && error.message.includes('SERVER_ERROR')) {
           this.switchAway(true)
         }
         reject(error)

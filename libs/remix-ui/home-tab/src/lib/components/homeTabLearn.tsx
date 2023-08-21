@@ -28,22 +28,10 @@ function HomeTabLearn({plugin}: HomeTabLearnProps) {
 
   const themeFilter = useContext(ThemeContext)
 
-  const startLearnEthTutorial = async (
-    tutorial: 'basics' | 'soliditybeginner' | 'deploylibraries'
-  ) => {
-    await plugin.appManager.activatePlugin([
-      'solidity',
-      'LearnEth',
-      'solidityUnitTesting'
-    ])
+  const startLearnEthTutorial = async (tutorial: 'basics' | 'soliditybeginner' | 'deploylibraries') => {
+    await plugin.appManager.activatePlugin(['solidity', 'LearnEth', 'solidityUnitTesting'])
     plugin.verticalIcons.select('LearnEth')
-    plugin.call(
-      'LearnEth',
-      'startTutorial',
-      'ethereum/remix-workshops',
-      'master',
-      tutorial
-    )
+    plugin.call('LearnEth', 'startTutorial', 'ethereum/remix-workshops', 'master', tutorial)
     _paq.push(['trackEvent', 'hometab', 'startLearnEthTutorial', tutorial])
   }
 
@@ -52,26 +40,16 @@ function HomeTabLearn({plugin}: HomeTabLearnProps) {
       plugin.verticalIcons.select('LearnEth')
       await plugin.call('LearnEth', 'home')
     } else {
-      await plugin.appManager.activatePlugin([
-        'LearnEth',
-        'solidity',
-        'solidityUnitTesting'
-      ])
+      await plugin.appManager.activatePlugin(['LearnEth', 'solidity', 'solidityUnitTesting'])
       plugin.verticalIcons.select('LearnEth')
       await plugin.call('LearnEth', 'home')
     }
   }
 
   return (
-    <div
-      className="d-flex px-2 pb-2 pt-2 d-flex flex-column"
-      id="hTLearnSection"
-    >
+    <div className="d-flex px-2 pb-2 pt-2 d-flex flex-column" id="hTLearnSection">
       <div className="d-flex justify-content-between">
-        <label
-          className="py-2 pt-3 align-self-center m-0"
-          style={{fontSize: '1.2rem'}}
-        >
+        <label className="py-2 pt-3 align-self-center m-0" style={{fontSize: '1.2rem'}}>
           <FormattedMessage id="home.learn" />
         </label>
         <CustomTooltip
@@ -109,10 +87,7 @@ function HomeTabLearn({plugin}: HomeTabLearnProps) {
             })
           }
         >
-          <label
-            className="card-title align-self-start m-0 float-left"
-            style={{fontSize: '1rem'}}
-          >
+          <label className="card-title align-self-start m-0 float-left" style={{fontSize: '1rem'}}>
             <FormattedMessage id="home.learnEth1" />
           </label>
           {state.visibleTutorial === VisibleTutorial.Basics && (
@@ -120,11 +95,7 @@ function HomeTabLearn({plugin}: HomeTabLearnProps) {
               <span className="py-1" style={{fontSize: '0.8rem'}}>
                 <FormattedMessage id="home.learnEth1Desc" />
               </span>
-              <button
-                className="btn btn-sm btn-secondary mt-2"
-                style={{width: 'fit-content'}}
-                onClick={() => startLearnEthTutorial('basics')}
-              >
+              <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('basics')}>
                 <FormattedMessage id="home.getStarted" />
               </button>
             </div>
@@ -141,10 +112,7 @@ function HomeTabLearn({plugin}: HomeTabLearnProps) {
             })
           }
         >
-          <label
-            className="card-title align-self-start m-0 float-left"
-            style={{fontSize: '1rem'}}
-          >
+          <label className="card-title align-self-start m-0 float-left" style={{fontSize: '1rem'}}>
             <FormattedMessage id="home.learnEth2" />
           </label>
           {state.visibleTutorial === VisibleTutorial.Intermediate && (
@@ -152,11 +120,7 @@ function HomeTabLearn({plugin}: HomeTabLearnProps) {
               <span className="py-1" style={{fontSize: '0.8rem'}}>
                 <FormattedMessage id="home.learnEth2Desc" />
               </span>
-              <button
-                className="btn btn-sm btn-secondary mt-2"
-                style={{width: 'fit-content'}}
-                onClick={() => startLearnEthTutorial('soliditybeginner')}
-              >
+              <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('soliditybeginner')}>
                 <FormattedMessage id="home.getStarted" />
               </button>
             </div>
@@ -170,10 +134,7 @@ function HomeTabLearn({plugin}: HomeTabLearnProps) {
             })
           }
         >
-          <label
-            className="card-title align-self-start m-0 float-left"
-            style={{fontSize: '1rem'}}
-          >
+          <label className="card-title align-self-start m-0 float-left" style={{fontSize: '1rem'}}>
             <FormattedMessage id="home.remixAdvanced" />
           </label>
           {state.visibleTutorial === VisibleTutorial.Advanced && (
@@ -181,11 +142,7 @@ function HomeTabLearn({plugin}: HomeTabLearnProps) {
               <span className="py-1" style={{fontSize: '0.8rem'}}>
                 <FormattedMessage id="home.remixAdvancedDesc" />
               </span>
-              <button
-                className="btn btn-sm btn-secondary mt-2"
-                style={{width: 'fit-content'}}
-                onClick={() => startLearnEthTutorial('deploylibraries')}
-              >
+              <button className="btn btn-sm btn-secondary mt-2" style={{width: 'fit-content'}} onClick={() => startLearnEthTutorial('deploylibraries')}>
                 <FormattedMessage id="home.getStarted" />
               </button>
             </div>

@@ -26,14 +26,8 @@ const RemixUIMainPanel = (props: RemixUIMainPanelProps) => {
         pluginPanels.push({
           profile: panel.plugin.profile,
           active: panel.active,
-          view:
-            panel.plugin.profile.name === 'tabs'
-              ? panel.plugin.renderTabsbar()
-              : panel.plugin.render(),
-          class:
-            panel.plugin.profile.name +
-            '-wrap ' +
-            (panel.minimized ? 'minimized' : ''),
+          view: panel.plugin.profile.name === 'tabs' ? panel.plugin.renderTabsbar() : panel.plugin.render(),
+          class: panel.plugin.profile.name + '-wrap ' + (panel.minimized ? 'minimized' : ''),
           minimized: panel.minimized
         })
       })
@@ -64,18 +58,9 @@ const RemixUIMainPanel = (props: RemixUIMainPanelProps) => {
         return (
           <React.Fragment key={`mainView${i}`}>
             {pluginRecord.profile.name === 'terminal' ? (
-              <DragBar
-                key="dragbar-terminal"
-                hidden={pluginRecord.minimized || false}
-                setHideStatus={showTerminal}
-                refObject={terminalRef}
-              ></DragBar>
+              <DragBar key="dragbar-terminal" hidden={pluginRecord.minimized || false} setHideStatus={showTerminal} refObject={terminalRef}></DragBar>
             ) : null}
-            <RemixUIPanelPlugin
-              ref={refs[i]}
-              key={pluginRecord.profile.name}
-              pluginRecord={pluginRecord}
-            />
+            <RemixUIPanelPlugin ref={refs[i]} key={pluginRecord.profile.name} pluginRecord={pluginRecord} />
           </React.Fragment>
         )
       })}

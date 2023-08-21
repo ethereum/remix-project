@@ -20,8 +20,7 @@ function Badge({badgeStatus}: BadgeProps) {
     let classes = 'remixui_status'
     switch (key) {
     case 'succeed':
-      classes +=
-          ' fas fa-check-circle text-' + type + ' ' + 'remixui_statusCheck'
+      classes += ' fas fa-check-circle text-' + type + ' ' + 'remixui_statusCheck'
       break
     case 'edited':
       classes += ' fas fa-sync text-' + type + ' ' + 'remixui_statusCheck'
@@ -30,11 +29,7 @@ function Badge({badgeStatus}: BadgeProps) {
       classes += ' fas fa-spinner text-' + type + ' ' + 'remixui_statusCheck'
       break
     case 'failed':
-      classes +=
-          ' fas fa-exclamation-triangle text-' +
-          type +
-          ' ' +
-          'remixui_statusCheck'
+      classes += ' fas fa-exclamation-triangle text-' + type + ' ' + 'remixui_statusCheck'
       break
     default: {
       classes += ' badge badge-pill badge-' + type
@@ -64,30 +59,19 @@ function Badge({badgeStatus}: BadgeProps) {
   return (
     <>
       {badgeStatus && checkStatusKeyValue(badgeStatus.key, badgeStatus.type) ? (
-        <CustomTooltip
-          placement={'right'}
-          tooltipClasses="text-nowrap"
-          tooltipId="verticalItemsbadge"
-          tooltipText={badgeStatus.title}
-        >
-          <i
-            className={`${resolveClasses(badgeStatus.key, badgeStatus.type!)}`}
-            aria-hidden="true"
-          >
-            {badgeStatus.pluginName &&
-            badgeStatus.pluginName === 'solidityStaticAnalysis' ? (
-                badgeStatus.type === 'warning' ||
-              badgeStatus.type === 'error' ||
-              badgeStatus.type === 'danger' ? (
-                    <span>
-                      <i className="far fa-exclamation-triangle"></i>
-                    </span>
-                  ) : (
-                    <span>&nbsp;</span>
-                  )
+        <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="verticalItemsbadge" tooltipText={badgeStatus.title}>
+          <i className={`${resolveClasses(badgeStatus.key, badgeStatus.type!)}`} aria-hidden="true">
+            {badgeStatus.pluginName && badgeStatus.pluginName === 'solidityStaticAnalysis' ? (
+              badgeStatus.type === 'warning' || badgeStatus.type === 'error' || badgeStatus.type === 'danger' ? (
+                <span>
+                  <i className="far fa-exclamation-triangle"></i>
+                </span>
               ) : (
-                badgeStatus.text
-              )}
+                <span>&nbsp;</span>
+              )
+            ) : (
+              badgeStatus.text
+            )}
           </i>
         </CustomTooltip>
       ) : null}

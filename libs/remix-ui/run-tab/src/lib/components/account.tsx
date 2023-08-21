@@ -63,8 +63,7 @@ export function AccountUI(props: AccountProps) {
       if (!props.personalMode) {
         setPlusOpt({
           classList: 'disableMouseEvents',
-          title:
-              'Creating an account is possible only in Personal mode. Please go to Settings to enable it.'
+          title: 'Creating an account is possible only in Personal mode. Please go to Settings to enable it.'
         })
       } else {
         setPlusOpt({
@@ -89,18 +88,13 @@ export function AccountUI(props: AccountProps) {
 
   const signMessage = () => {
     if (!accounts[0]) {
-      return props.tooltip(
-        'Account list is empty, please make sure the current provider is properly connected to remix'
-      )
+      return props.tooltip('Account list is empty, please make sure the current provider is properly connected to remix')
     }
 
     if (props.selectExEnv === 'web3') {
       return props.modal(
         'Passphrase to sign a message',
-        <PassphrasePrompt
-          message="Enter your passphrase for this account to sign the message"
-          setPassphrase={props.setPassphrase}
-        />,
+        <PassphrasePrompt message="Enter your passphrase for this account to sign the message" setPassphrase={props.setPassphrase} />,
         'OK',
         () => {
           props.modal(
@@ -108,12 +102,7 @@ export function AccountUI(props: AccountProps) {
             signMessagePrompt(),
             'OK',
             () => {
-              props.signMessageWithAddress(
-                selectedAccount,
-                messageRef.current,
-                signedMessagePrompt,
-                props.passphrase
-              )
+              props.signMessageWithAddress(selectedAccount, messageRef.current, signedMessagePrompt, props.passphrase)
               props.setPassphrase('')
             },
             'Cancel',
@@ -132,11 +121,7 @@ export function AccountUI(props: AccountProps) {
       signMessagePrompt(),
       'OK',
       () => {
-        props.signMessageWithAddress(
-          selectedAccount,
-          messageRef.current,
-          signedMessagePrompt
-        )
+        props.signMessageWithAddress(selectedAccount, messageRef.current, signedMessagePrompt)
       },
       'Cancel',
       null
@@ -159,20 +144,8 @@ export function AccountUI(props: AccountProps) {
     return (
       <div className="d-flex flex-column">
         Please provide a Passphrase for the account creation
-        <input
-          id="prompt1"
-          type="password"
-          name="prompt_text"
-          className="w-100 py-2"
-          onInput={handlePassphrase}
-        />
-        <input
-          id="prompt2"
-          type="password"
-          name="prompt_text"
-          className="w-100"
-          onInput={handleMatchPassphrase}
-        />
+        <input id="prompt1" type="password" name="prompt_text" className="w-100 py-2" onInput={handlePassphrase} />
+        <input id="prompt2" type="password" name="prompt_text" className="w-100" onInput={handleMatchPassphrase} />
       </div>
     )
   }
@@ -207,10 +180,7 @@ export function AccountUI(props: AccountProps) {
         <label className="pt-2 text-uppercase">
           <FormattedMessage id="udapp.signature" />
         </label>
-        <span
-          id="remixRunSignMsgSignature"
-          data-id="settingsRemixRunSignMsgSignature"
-        >
+        <span id="remixRunSignMsgSignature" data-id="settingsRemixRunSignMsgSignature">
           {signedData}
         </span>
       </div>
@@ -221,24 +191,12 @@ export function AccountUI(props: AccountProps) {
     <div className="udapp_crow">
       <label className="udapp_settingsLabel">
         <FormattedMessage id="udapp.account" />
-        <CustomTooltip
-          placement={'top-start'}
-          tooltipClasses="text-wrap"
-          tooltipId="remixPlusWrapperTooltip"
-          tooltipText={plusOpt.title}
-        >
+        <CustomTooltip placement={'top-start'} tooltipClasses="text-wrap" tooltipId="remixPlusWrapperTooltip" tooltipText={plusOpt.title}>
           <span id="remixRunPlusWraper">
-            <i
-              id="remixRunPlus"
-              className={`fas fa-plus-circle udapp_icon ${plusOpt.classList}`}
-              aria-hidden="true"
-              onClick={newAccount}
-            ></i>
+            <i id="remixRunPlus" className={`fas fa-plus-circle udapp_icon ${plusOpt.classList}`} aria-hidden="true" onClick={newAccount}></i>
           </span>
         </CustomTooltip>
-        {props.accounts.isRequesting && (
-          <i className="fa fa-spinner fa-pulse ml-2" aria-hidden="true"></i>
-        )}
+        {props.accounts.isRequesting && <i className="fa fa-spinner fa-pulse ml-2" aria-hidden="true"></i>}
       </label>
       <div className="udapp_account">
         <select
@@ -258,25 +216,10 @@ export function AccountUI(props: AccountProps) {
           ))}
         </select>
         <div style={{marginLeft: -5}}>
-          <CopyToClipboard
-            tip="Copy account to clipboard"
-            content={selectedAccount}
-            direction="top"
-          />
+          <CopyToClipboard tip="Copy account to clipboard" content={selectedAccount} direction="top" />
         </div>
-        <CustomTooltip
-          placement={'top-start'}
-          tooltipClasses="text-nowrap"
-          tooltipId="remixSignMsgTooltip"
-          tooltipText={'Sign a message using this account'}
-        >
-          <i
-            id="remixRunSignMsg"
-            data-id="settingsRemixRunSignMsg"
-            className="mx-1 fas fa-edit udapp_icon"
-            aria-hidden="true"
-            onClick={signMessage}
-          ></i>
+        <CustomTooltip placement={'top-start'} tooltipClasses="text-nowrap" tooltipId="remixSignMsgTooltip" tooltipText={'Sign a message using this account'}>
+          <i id="remixRunSignMsg" data-id="settingsRemixRunSignMsg" className="mx-1 fas fa-edit udapp_icon" aria-hidden="true" onClick={signMessage}></i>
         </CustomTooltip>
       </div>
     </div>

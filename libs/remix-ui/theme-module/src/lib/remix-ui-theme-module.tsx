@@ -25,10 +25,7 @@ export function RemixUiThemeModule({themeModule}: RemixUiThemeModuleProps) {
         <div className="card-text themes-container">
           {themeModule.getThemes()
             ? themeModule.getThemes().map((theme, idx) => (
-              <div
-                className="radio custom-control custom-radio mb-1 form-check"
-                key={idx}
-              >
+              <div className="radio custom-control custom-radio mb-1 form-check" key={idx}>
                 <input
                   type="radio"
                   onChange={(event) => {
@@ -39,15 +36,9 @@ export function RemixUiThemeModule({themeModule}: RemixUiThemeModuleProps) {
                   name="theme"
                   id={theme.name}
                   data-id={`settingsTabTheme${theme.name}`}
-                  checked={
-                    themeModule.active === theme.name.toLocaleLowerCase()
-                  }
+                  checked={themeModule.active === theme.name.toLocaleLowerCase()}
                 />
-                <label
-                  className="form-check-label custom-control-label"
-                  data-id={`settingsTabThemeLabel${theme.name}`}
-                  htmlFor={theme.name}
-                >
+                <label className="form-check-label custom-control-label" data-id={`settingsTabThemeLabel${theme.name}`} htmlFor={theme.name}>
                   {theme.name} ({theme.quality})
                 </label>
               </div>

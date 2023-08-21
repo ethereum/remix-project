@@ -1,9 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react'
 
-import {
-  CompilationFileSources,
-  CompilationResult
-} from '@remixproject/plugin-api'
+import {CompilationFileSources, CompilationResult} from '@remixproject/plugin-api'
 
 import {RemixClient} from './RemixPlugin'
 import {createClient} from '@remixproject/plugin-webview'
@@ -13,12 +10,7 @@ import {DisplayRoutes} from './routes'
 
 import {useLocalStorage} from './hooks/useLocalStorage'
 
-import {
-  getReceiptStatus,
-  getEtherScanApi,
-  getNetworkName,
-  getProxyContractReceiptStatus
-} from './utils'
+import {getReceiptStatus, getEtherScanApi, getNetworkName, getProxyContractReceiptStatus} from './utils'
 import {Receipt, ThemeType} from './types'
 
 import './App.css'
@@ -54,27 +46,15 @@ const App = () => {
     const loadClient = async () => {
       await client.onload()
       setClientInstance(client)
-      client.on(
-        'solidity',
-        'compilationFinished',
-        (
-          fileName: string,
-          source: CompilationFileSources,
-          languageVersion: string,
-          data: CompilationResult
-        ) => {
-          const newContractsNames = getNewContractNames(data)
+      client.on('solidity', 'compilationFinished', (fileName: string, source: CompilationFileSources, languageVersion: string, data: CompilationResult) => {
+        const newContractsNames = getNewContractNames(data)
 
-          const newContractsToSave: string[] = [
-            ...contractsRef.current,
-            ...newContractsNames
-          ]
+        const newContractsToSave: string[] = [...contractsRef.current, ...newContractsNames]
 
-          const uniqueContracts: string[] = [...new Set(newContractsToSave)]
+        const uniqueContracts: string[] = [...new Set(newContractsToSave)]
 
-          setContracts(uniqueContracts)
-        }
-      )
+        setContracts(uniqueContracts)
+      })
 
       //const currentTheme = await client.call("theme", "currentTheme")
       //setThemeType(currentTheme.quality)
@@ -88,10 +68,7 @@ const App = () => {
 
   useEffect(() => {
     let receiptsNotVerified: Receipt[] = receipts.filter((item: Receipt) => {
-      return (
-        item.status === 'Pending in queue' ||
-        item.status === 'Max rate limit reached'
-      )
+      return item.status === 'Pending in queue' || item.status === 'Max rate limit reached'
     })
 
     if (receiptsNotVerified.length > 0) {
@@ -100,9 +77,7 @@ const App = () => {
         timer.current = null
       }
       timer.current = setInterval(async () => {
-        const {network, networkId} = await getNetworkName(
-          clientInstanceRef.current
-        )
+        const {network, networkId} = await getNetworkName(clientInstanceRef.current)
         if (!clientInstanceRef.current) {
           return
         }
@@ -115,26 +90,13 @@ const App = () => {
           await new Promise((r) => setTimeout(r, 500)) // avoid api rate limit exceed.
           let status
           if (item.isProxyContract) {
-            status = await getProxyContractReceiptStatus(
-              item.guid,
-              apiKey,
-              getEtherScanApi(networkId)
-            )
+            status = await getProxyContractReceiptStatus(item.guid, apiKey, getEtherScanApi(networkId))
             if (status.status === '1') {
               status.message = status.result
               status.result = 'Successfully Updated'
             }
-          } else
-            status = await getReceiptStatus(
-              item.guid,
-              apiKey,
-              getEtherScanApi(networkId)
-            )
-          if (
-            status.result === 'Pass - Verified' ||
-            status.result === 'Already Verified' ||
-            status.result === 'Successfully Updated'
-          ) {
+          } else status = await getReceiptStatus(item.guid, apiKey, getEtherScanApi(networkId))
+          if (status.result === 'Pass - Verified' || status.result === 'Already Verified' || status.result === 'Successfully Updated') {
             newReceipts = newReceipts.map((currentReceipt: Receipt) => {
               if (currentReceipt.guid === item.guid) {
                 const res = {
@@ -149,10 +111,7 @@ const App = () => {
           }
         }
         receiptsNotVerified = newReceipts.filter((item: Receipt) => {
-          return (
-            item.status === 'Pending in queue' ||
-            item.status === 'Max rate limit reached'
-          )
+          return item.status === 'Pending in queue' || item.status === 'Max rate limit reached'
         })
         if (timer.current && receiptsNotVerified.length === 0) {
           clearInterval(timer.current)

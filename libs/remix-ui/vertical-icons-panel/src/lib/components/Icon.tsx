@@ -1,18 +1,8 @@
 import VerticalIconsContextMenu from '../vertical-icons-context-menu'
 // eslint-disable-next-line no-use-before-define
-import React, {
-  Fragment,
-  SyntheticEvent,
-  useEffect,
-  useReducer,
-  useRef,
-  useState
-} from 'react'
+import React, {Fragment, SyntheticEvent, useEffect, useReducer, useRef, useState} from 'react'
 import Badge from './Badge'
-import {
-  iconBadgeReducer,
-  IconBadgeReducerAction
-} from '../reducers/iconBadgeReducer'
+import {iconBadgeReducer, IconBadgeReducerAction} from '../reducers/iconBadgeReducer'
 import {Plugin} from '@remixproject/engine'
 import {IconRecord} from '../types'
 import {CustomTooltip} from '@remix-ui/helper'
@@ -31,11 +21,7 @@ export interface BadgeStatus extends IconStatus {
 interface IconProps {
   verticalIconPlugin: Plugin
   iconRecord: IconRecord
-  contextMenuAction: (
-    evt: any,
-    profileName: string,
-    documentation: string
-  ) => void
+  contextMenuAction: (evt: any, profileName: string, documentation: string) => void
   theme: string
 }
 
@@ -47,12 +33,7 @@ const initialState = {
   pluginName: ''
 }
 
-const Icon = ({
-  iconRecord,
-  verticalIconPlugin,
-  contextMenuAction,
-  theme
-}: IconProps) => {
+const Icon = ({iconRecord, verticalIconPlugin, contextMenuAction, theme}: IconProps) => {
   const {displayName, name, icon, documentation} = iconRecord.profile
   const [title] = useState(() => {
     const temp = null || displayName || name
@@ -62,10 +43,7 @@ const Icon = ({
     Documentation: string
     CanDeactivate: boolean
   }>({} as {Documentation: string; CanDeactivate: boolean})
-  const [badgeStatus, dispatchStatusUpdate] = useReducer(
-    iconBadgeReducer,
-    initialState
-  )
+  const [badgeStatus, dispatchStatusUpdate] = useReducer(iconBadgeReducer, initialState)
   // @ts-ignore
   const [pageX, setPageX] = useState<number>(null)
   // @ts-ignore
@@ -106,19 +84,7 @@ const Icon = ({
 
   return (
     <>
-      <CustomTooltip
-        placement={
-          name === 'settings'
-            ? 'right'
-            : name === 'search'
-              ? 'top'
-              : name === 'udapp'
-                ? 'bottom'
-                : 'top'
-        }
-        tooltipText={title}
-        delay={{show: 1000, hide: 0}}
-      >
+      <CustomTooltip placement={name === 'settings' ? 'right' : name === 'search' ? 'top' : name === 'udapp' ? 'bottom' : 'top'} tooltipText={title} delay={{show: 1000, hide: 0}}>
         <div
           className={`remixui_icon m-2  pt-1`}
           onClick={() => {
@@ -136,11 +102,7 @@ const Icon = ({
         >
           <img
             data-id={iconRecord.active ? `selected` : ''}
-            className={`${
-              theme === 'dark' ? 'invert' : ''
-            } ${theme} remixui_image ${
-              iconRecord.active ? `selected-${theme}` : ''
-            }`}
+            className={`${theme === 'dark' ? 'invert' : ''} ${theme} remixui_image ${iconRecord.active ? `selected-${theme}` : ''}`}
             src={icon}
             alt={name}
           />

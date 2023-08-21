@@ -6,31 +6,16 @@ import {IconRecord} from '../types'
 import Icon from './Icon'
 interface OtherIconsProps {
   verticalIconsPlugin: Plugin<any, any>
-  itemContextAction: (
-    e: any,
-    name: string,
-    documentation: string
-  ) => Promise<void>
+  itemContextAction: (e: any, name: string, documentation: string) => Promise<void>
   icons: IconRecord[]
   theme: string
 }
 
-function IconList({
-  verticalIconsPlugin,
-  itemContextAction,
-  icons,
-  theme
-}: OtherIconsProps) {
+function IconList({verticalIconsPlugin, itemContextAction, icons, theme}: OtherIconsProps) {
   return (
     <div id="otherIcons" className="position-relative">
       {icons.map((p) => (
-        <Icon
-          theme={theme}
-          iconRecord={p}
-          verticalIconPlugin={verticalIconsPlugin}
-          contextMenuAction={itemContextAction}
-          key={p.profile.name}
-        />
+        <Icon theme={theme} iconRecord={p} verticalIconPlugin={verticalIconsPlugin} contextMenuAction={itemContextAction} key={p.profile.name} />
       ))}
     </div>
   )

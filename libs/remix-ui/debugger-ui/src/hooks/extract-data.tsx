@@ -1,28 +1,23 @@
 import React, {useState, useEffect} from 'react' // eslint-disable-line
 import {ExtractData, ExtractFunc} from '../types' // eslint-disable-line
 
-export const useExtractData = (
-  json,
-  extractFunc?: ExtractFunc
-): Array<{key: string; data: ExtractData}> => {
+export const useExtractData = (json, extractFunc?: ExtractFunc): Array<{key: string; data: ExtractData}> => {
   const [data, setData] = useState([])
 
   useEffect(() => {
-    const data: Array<{key: string; data: ExtractData}> = Object.keys(json).map(
-      (innerKey) => {
-        if (extractFunc) {
-          return {
-            key: innerKey,
-            data: extractFunc(json[innerKey], json)
-          }
-        } else {
-          return {
-            key: innerKey,
-            data: extractDataDefault(json[innerKey], json)
-          }
+    const data: Array<{key: string; data: ExtractData}> = Object.keys(json).map((innerKey) => {
+      if (extractFunc) {
+        return {
+          key: innerKey,
+          data: extractFunc(json[innerKey], json)
+        }
+      } else {
+        return {
+          key: innerKey,
+          data: extractDataDefault(json[innerKey], json)
         }
       }
-    )
+    })
 
     setData(data)
 

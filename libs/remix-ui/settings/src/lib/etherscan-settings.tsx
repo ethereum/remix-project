@@ -11,8 +11,7 @@ export function EtherscanSettings(props: EtherscanSettingsProps) {
 
   useEffect(() => {
     if (props.config) {
-      const etherscanToken =
-        props.config.get('settings/etherscan-access-token') || ''
+      const etherscanToken = props.config.get('settings/etherscan-access-token') || ''
       setEtherscanToken(etherscanToken)
     }
   }, [props.config])
@@ -60,12 +59,7 @@ export function EtherscanSettings(props: EtherscanSettingsProps) {
               value={etherscanToken}
             />
             <div className="input-group-append">
-              <CopyToClipboard
-                content={etherscanToken}
-                data-id="copyToClipboardCopyIcon"
-                className="far fa-copy ml-1 p-2 mt-1"
-                direction={'top'}
-              />
+              <CopyToClipboard content={etherscanToken} data-id="copyToClipboardCopyIcon" className="far fa-copy ml-1 p-2 mt-1" direction={'top'} />
             </div>
           </div>
         </div>
@@ -81,12 +75,7 @@ export function EtherscanSettings(props: EtherscanSettingsProps) {
                 type="button"
                 disabled={etherscanToken === ''}
               ></input>
-              <CustomTooltip
-                tooltipText="Delete Etherscan token"
-                tooltipClasses="text-nowrap"
-                tooltipId="removeetherscantokenTooltip"
-                placement="left-start"
-              >
+              <CustomTooltip tooltipText="Delete Etherscan token" tooltipClasses="text-nowrap" tooltipId="removeetherscantokenTooltip" placement="left-start">
                 <button
                   className="btn btn-sm btn-secondary ml-2"
                   id="removeetherscantoken"

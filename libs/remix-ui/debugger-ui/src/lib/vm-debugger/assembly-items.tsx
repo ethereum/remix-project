@@ -8,49 +8,34 @@ export const AssemblyItems = ({registerEvent}) => {
   const [selectedItem, setSelectedItem] = useState(0)
   const [nextSelectedItems, setNextSelectedItems] = useState([1])
   const [returnInstructionIndexes, setReturnInstructionIndexes] = useState([])
-  const [outOfGasInstructionIndexes, setOutOfGasInstructionIndexes] = useState(
-    []
-  )
+  const [outOfGasInstructionIndexes, setOutOfGasInstructionIndexes] = useState([])
   const [opcodeTooltipText, setOpcodeTooltipText] = useState('')
   const refs = useRef({})
   const asmItemsRef = useRef(null)
 
   useEffect(() => {
     registerEvent &&
-      registerEvent(
-        'codeManagerChanged',
-        (
-          code,
-          address,
-          index,
-          nextIndexes,
-          returnInstructionIndexes,
-          outOfGasInstructionIndexes
-        ) => {
-          dispatch({
-            type: 'FETCH_OPCODES_SUCCESS',
-            payload: {
-              code,
-              address,
-              index,
-              nextIndexes,
-              returnInstructionIndexes,
-              outOfGasInstructionIndexes
-            }
-          })
-        }
-      )
+      registerEvent('codeManagerChanged', (code, address, index, nextIndexes, returnInstructionIndexes, outOfGasInstructionIndexes) => {
+        dispatch({
+          type: 'FETCH_OPCODES_SUCCESS',
+          payload: {
+            code,
+            address,
+            index,
+            nextIndexes,
+            returnInstructionIndexes,
+            outOfGasInstructionIndexes
+          }
+        })
+      })
 
     registerEvent &&
-      registerEvent(
-        'lineGasCostChanged',
-        (instructionsIndexes: number[], line: []) => {
-          dispatch({
-            type: 'FETCH_INDEXES_FOR_NEW_LINE',
-            payload: {currentLineIndexes: instructionsIndexes || [], line}
-          })
-        }
-      )
+      registerEvent('lineGasCostChanged', (instructionsIndexes: number[], line: []) => {
+        dispatch({
+          type: 'FETCH_INDEXES_FOR_NEW_LINE',
+          payload: {currentLineIndexes: instructionsIndexes || [], line}
+        })
+      })
   }, [])
 
   useEffect(() => {
@@ -161,12 +146,7 @@ export const AssemblyItems = ({registerEvent}) => {
       <div className="dropdownpanel">
         <div className="dropdowncontent pb-2">
           {assemblyItems.display.length == 0 && <div>No data available</div>}
-          <div
-            className="pl-2 my-1 small instructions"
-            data-id="asmitems"
-            id="asmitems"
-            ref={asmItemsRef}
-          >
+          <div className="pl-2 my-1 small instructions" data-id="asmitems" id="asmitems" ref={asmItemsRef}>
             {assemblyItems.display.map((item, i) => {
               return (
                 <div

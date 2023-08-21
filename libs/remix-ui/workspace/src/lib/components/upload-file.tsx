@@ -17,15 +17,7 @@ const UploadFile = (props: UploadFileProps) => {
     }
   }, [])
 
-  return (
-    <input
-      ref={ref}
-      style={{display: 'none'}}
-      accept={props.accept}
-      multiple={props.multiple}
-      type="file"
-    />
-  )
+  return <input ref={ref} style={{display: 'none'}} accept={props.accept} multiple={props.multiple} type="file" />
 }
 
 export default UploadFile

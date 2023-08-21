@@ -127,41 +127,24 @@ export const Toaster = (props: ToasterProps) => {
 
   return (
     <>
-      <ModalDialog
-        id="toaster"
-        message={props.message}
-        cancelLabel="Close"
-        cancelFn={() => {}}
-        hide={!state.showModal}
-        handleHide={hideFullMessage}
-      />
+      <ModalDialog id="toaster" message={props.message} cancelLabel="Close" cancelFn={() => {}} hide={!state.showModal} handleHide={hideFullMessage} />
       {!state.hide && (
         <div
           data-shared="tooltipPopup"
-          className={`remixui_tooltip alert alert-info p-2 ${
-            state.hiding ? 'remixui_animateTop' : 'remixui_animateBottom'
-          }`}
+          className={`remixui_tooltip alert alert-info p-2 ${state.hiding ? 'remixui_animateTop' : 'remixui_animateBottom'}`}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
           <span className="px-2">
             {state.message}
             {state.showFullBtn && (
-              <button
-                className="btn btn-secondary btn-sm mx-3"
-                style={{whiteSpace: 'nowrap'}}
-                onClick={showFullMessage}
-              >
+              <button className="btn btn-secondary btn-sm mx-3" style={{whiteSpace: 'nowrap'}} onClick={showFullMessage}>
                 Show full message
               </button>
             )}
           </span>
           <span style={{alignSelf: 'baseline'}}>
-            <button
-              data-id="tooltipCloseButton"
-              className="fas fa-times btn-info mx-1 p-0"
-              onClick={closeTheToaster}
-            ></button>
+            <button data-id="tooltipCloseButton" className="fas fa-times btn-info mx-1 p-0" onClick={closeTheToaster}></button>
           </span>
         </div>
       )}

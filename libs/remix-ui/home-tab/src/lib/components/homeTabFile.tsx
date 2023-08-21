@@ -55,11 +55,7 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
     const workspace = plugin.fileManager.getProvider('workspace')
     const startsWith = state.importSource.substring(0, 4)
 
-    if (
-      (type === 'ipfs' || type === 'IPFS') &&
-      startsWith !== 'ipfs' &&
-      startsWith !== 'IPFS'
-    ) {
+    if ((type === 'ipfs' || type === 'IPFS') && startsWith !== 'ipfs' && startsWith !== 'IPFS') {
       setState((prevState) => {
         return {...prevState, importSource: startsWith + state.importSource}
       })
@@ -72,8 +68,7 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
           toast(error.message || error)
         } else {
           try {
-            if (await workspace.exists(type + '/' + cleanUrl))
-              toast('File already exists in workspace')
+            if (await workspace.exists(type + '/' + cleanUrl)) toast('File already exists in workspace')
             else {
               workspace.addExternal(type + '/' + cleanUrl, content, url)
               plugin.call('menuicons', 'select', 'filePanel')
@@ -116,12 +111,7 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
     plugin.verticalIcons.select('filePanel')
   }
 
-  const showFullMessage = (
-    title: string,
-    loadItem: string,
-    examples: Array<string>,
-    prefix = ''
-  ) => {
+  const showFullMessage = (title: string, loadItem: string, examples: Array<string>, prefix = '') => {
     setState((prevState) => {
       return {
         ...prevState,
@@ -160,11 +150,7 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
         okFn={() => processLoading(state.modalInfo.title)}
       >
         <div className="p-2 user-select-auto">
-          {state.modalInfo.loadItem !== '' && (
-            <span>
-              Enter the {state.modalInfo.loadItem} you would like to load.
-            </span>
-          )}
+          {state.modalInfo.loadItem !== '' && <span>Enter the {state.modalInfo.loadItem} you would like to load.</span>}
           {state.modalInfo.examples.length !== 0 && (
             <>
               <div>e.g</div>
@@ -172,11 +158,7 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
             </>
           )}
           <div className="d-flex flex-row">
-            {state.modalInfo.prefix && (
-              <span className="text-nowrap align-self-center mr-2">
-                ipfs://
-              </span>
-            )}
+            {state.modalInfo.prefix && <span className="text-nowrap align-self-center mr-2">ipfs://</span>}
             <input
               ref={inputValue}
               type="text"
@@ -195,27 +177,15 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
         </div>
       </ModalDialog>
       <Toaster message={state.toasterMsg} />
-      <div
-        className="justify-content-start mt-1 p-2 d-flex flex-column"
-        id="hTFileSection"
-      >
+      <div className="justify-content-start mt-1 p-2 d-flex flex-column" id="hTFileSection">
         <label style={{fontSize: '1.2rem'}}>
           <FormattedMessage id="home.files" />
         </label>
         <div className="dflex">
-          <button
-            className="btn btn-primary p-2 mr-2 border my-1"
-            data-id="homeTabNewFile"
-            style={{width: 'fit-content'}}
-            onClick={() => createNewFile()}
-          >
+          <button className="btn btn-primary p-2 mr-2 border my-1" data-id="homeTabNewFile" style={{width: 'fit-content'}} onClick={() => createNewFile()}>
             <FormattedMessage id="home.newFile" />
           </button>
-          <label
-            className="btn p-2 mr-2 border my-1"
-            style={{width: 'fit-content', cursor: 'pointer'}}
-            htmlFor="openFileInput"
-          >
+          <label className="btn p-2 mr-2 border my-1" style={{width: 'fit-content', cursor: 'pointer'}} htmlFor="openFileInput">
             <FormattedMessage id="home.openFile" />
           </label>
           <input
@@ -236,11 +206,7 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
             tooltipText={'Connect to Localhost'}
             tooltipTextClasses="border bg-light text-dark p-1 pr-3"
           >
-            <button
-              className="btn p-2 border my-1"
-              style={{width: 'fit-content'}}
-              onClick={() => connectToLocalhost()}
-            >
+            <button className="btn p-2 border my-1" style={{width: 'fit-content'}} onClick={() => connectToLocalhost()}>
               <FormattedMessage id="home.connectToLocalhost" />
             </button>
           </CustomTooltip>
@@ -261,32 +227,16 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
           >
             GitHub
           </button>
-          <button
-            className="btn p-2 border mr-2"
-            data-id="landingPageImportFromGistButton"
-            onClick={() => importFromGist()}
-          >
+          <button className="btn p-2 border mr-2" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
             Gist
           </button>
-          <button
-            className="btn p-2 border mr-2"
-            onClick={() =>
-              showFullMessage(
-                'Ipfs',
-                'ipfs hash',
-                ['ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH'],
-                'ipfs://'
-              )
-            }
-          >
+          <button className="btn p-2 border mr-2" onClick={() => showFullMessage('Ipfs', 'ipfs hash', ['ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH'], 'ipfs://')}>
             IPFS
           </button>
           <button
             className="btn p-2 border"
             onClick={() =>
-              showFullMessage('Https', 'http/https raw content', [
-                'https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'
-              ])
+              showFullMessage('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])
             }
           >
             HTTPS

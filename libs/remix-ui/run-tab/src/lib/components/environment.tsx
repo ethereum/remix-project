@@ -7,25 +7,18 @@ import {CustomMenu, CustomToggle, CustomTooltip} from '@remix-ui/helper'
 
 export function EnvironmentUI(props: EnvironmentProps) {
   const handleChangeExEnv = (env: string) => {
-    const provider = props.providers.providerList.find(
-      (exEnv) => exEnv.value === env
-    )
+    const provider = props.providers.providerList.find((exEnv) => exEnv.value === env)
     const context = provider.value
     props.setExecutionContext({context})
   }
 
-  const currentProvider = props.providers.providerList.find(
-    (exEnv) => exEnv.value === props.selectedEnv
-  )
+  const currentProvider = props.providers.providerList.find((exEnv) => exEnv.value === props.selectedEnv)
   const bridges = {
     'injected-optimism-provider': 'https://www.optimism.io/apps/bridges',
     'injected-arbitrum-one-provider': 'https://bridge.arbitrum.io/'
   }
 
-  const isL2 = (provider) =>
-    provider &&
-    (provider.value === 'Optimism Provider' ||
-      provider.value === 'Arbitrum One Provider')
+  const isL2 = (provider) => provider && (provider.value === 'Optimism Provider' || provider.value === 'Arbitrum One Provider')
   return (
     <div className="udapp_crow">
       <label id="selectExEnv" className="udapp_settingsLabel">
@@ -38,26 +31,13 @@ export function EnvironmentUI(props: EnvironmentProps) {
           tooltipText="Open chainlist.org and get the connection specs of the chain you want to interact with."
         >
           <a href="https://chainlist.org/" target="_blank">
-            <i
-              style={{fontSize: 'medium'}}
-              className={'ml-2 fad fa-plug'}
-              aria-hidden="true"
-            ></i>
+            <i style={{fontSize: 'medium'}} className={'ml-2 fad fa-plug'} aria-hidden="true"></i>
           </a>
         </CustomTooltip>
       </label>
       <div className="udapp_environment">
-        <Dropdown
-          id="selectExEnvOptions"
-          data-id="settingsSelectEnvOptions"
-          className="udapp_selectExEnvOptions"
-        >
-          <Dropdown.Toggle
-            as={CustomToggle}
-            id="dropdown-custom-components"
-            className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control"
-            icon={null}
-          >
+        <Dropdown id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className="udapp_selectExEnvOptions">
+          <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={null}>
             {isL2(currentProvider) && 'L2 - '}
             {currentProvider && currentProvider.content}
             {currentProvider && bridges[currentProvider.value] && (
@@ -78,11 +58,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
               </CustomTooltip>
             )}
           </Dropdown.Toggle>
-          <Dropdown.Menu
-            as={CustomMenu}
-            className="w-100 custom-dropdown-items"
-            data-id="custom-dropdown-items"
-          >
+          <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
             {props.providers.providerList.map(({content, value}, index) => (
               <Dropdown.Item
                 key={index}
@@ -100,17 +76,8 @@ export function EnvironmentUI(props: EnvironmentProps) {
           </Dropdown.Menu>
         </Dropdown>
 
-        <CustomTooltip
-          placement={'right-start'}
-          tooltipClasses="text-wrap"
-          tooltipId="runAndDeployAddresstooltip"
-          tooltipText={<FormattedMessage id="udapp.environmentDocs" />}
-        >
-          <a
-            href="https://remix-ide.readthedocs.io/en/latest/run.html#environment"
-            target="_blank"
-            rel="noreferrer"
-          >
+        <CustomTooltip placement={'right-start'} tooltipClasses="text-wrap" tooltipId="runAndDeployAddresstooltip" tooltipText={<FormattedMessage id="udapp.environmentDocs" />}>
+          <a href="https://remix-ide.readthedocs.io/en/latest/run.html#environment" target="_blank" rel="noreferrer">
             <i className="udapp_infoDeployAction ml-2 fas fa-info"></i>
           </a>
         </CustomTooltip>

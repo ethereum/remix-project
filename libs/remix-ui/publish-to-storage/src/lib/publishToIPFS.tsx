@@ -3,17 +3,10 @@ import IpfsHttpClient from 'ipfs-http-client'
 let ipfsNodes = []
 
 export const publishToIPFS = async (contract, api) => {
-  ipfsNodes = [
-    IpfsHttpClient({host: 'ipfs.infura.io', port: 5001, protocol: 'https'})
-  ]
+  ipfsNodes = [IpfsHttpClient({host: 'ipfs.infura.io', port: 5001, protocol: 'https'})]
   if (api.config.get('settings/ipfs-url')) {
     const auth = api.config.get('settings/ipfs-project-id')
-      ? 'Basic ' +
-        Buffer.from(
-          api.config.get('settings/ipfs-project-id') +
-            ':' +
-            api.config.get('settings/ipfs-project-secret')
-        ).toString('base64')
+      ? 'Basic ' + Buffer.from(api.config.get('settings/ipfs-project-id') + ':' + api.config.get('settings/ipfs-project-secret')).toString('base64')
       : null
     const ipfs = IpfsHttpClient({
       host: api.config.get('settings/ipfs-url'),
@@ -60,9 +53,7 @@ export const publishToIPFS = async (contract, api) => {
             })
           }
         } catch (e) {
-          return reject(
-            new Error('Error while extracting the hash from metadata.json')
-          )
+          return reject(new Error('Error while extracting the hash from metadata.json'))
         }
 
         api
@@ -133,8 +124,7 @@ const ipfsVerifiedPublish = async (content, expectedHash, api) => {
     const hash: any = (results as any).path
     if (expectedHash && hash !== expectedHash) {
       return {
-        message:
-          'hash mismatch between solidity bytecode and uploaded content.',
+        message: 'hash mismatch between solidity bytecode and uploaded content.',
         url: 'dweb:/ipfs/' + hash,
         hash
       }
@@ -148,8 +138,7 @@ const ipfsVerifiedPublish = async (content, expectedHash, api) => {
 }
 
 const severalGatewaysPush = (content) => {
-  const invert = (p) =>
-    new Promise((resolve, reject) => p.then(reject).catch(resolve)) // Invert res and rej
+  const invert = (p) => new Promise((resolve, reject) => p.then(reject).catch(resolve)) // Invert res and rej
   const promises = ipfsNodes.map((node) => invert(node.add(content)))
 
   return invert(Promise.all(promises))
