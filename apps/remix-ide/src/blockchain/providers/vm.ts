@@ -25,7 +25,6 @@ export class VMProvider {
     this.web3.eth.getAccounts()
       .then(accounts => cb(null, accounts))
       .catch(err => {
-        console.log('err',err)
         cb('No accounts?')
       })
   }
@@ -46,8 +45,6 @@ export class VMProvider {
           if (!msg.data.error) {
             this.provider = {
               sendAsync: (query, callback) => {
-                console.log('query',query)
-                console.log('callback',callback)
                 const stamp = Date.now() + incr
                 incr++
                 stamps[stamp] = callback

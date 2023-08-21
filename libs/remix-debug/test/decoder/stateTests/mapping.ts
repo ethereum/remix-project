@@ -37,7 +37,6 @@ module.exports = async function testMappingStorage (st, cb) {
           // st.end()
         )
         .catch(error => {
-          console.log(error)
           st.end(error)
         })
     }
@@ -50,15 +49,15 @@ function testMapping (st, privateKey, contractAddress, output, compilationResult
       if (error) {
         console.log(error)
         st.end(error)
-      } else {   
+      } else {
         web3.eth.getTransaction(hash)
           .then(tx => {
             const traceManager = new TraceManager({ web3 })
             const codeManager = new CodeManager(traceManager)
             codeManager.clear()
             console.log(compilationResults)
-            const solidityProxy = new SolidityProxy({ 
-              getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), 
+            const solidityProxy = new SolidityProxy({
+              getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager),
               getCode: codeManager.getCode.bind(codeManager),
               compilationResult: () => compilationResults
             })

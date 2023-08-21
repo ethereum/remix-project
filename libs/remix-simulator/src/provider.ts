@@ -103,7 +103,6 @@ export class Provider {
           callback(err,result)
         }
         if(err){
-          console.log('err',err)
           return reject(err)
         }
         return resolve(result)

@@ -181,10 +181,8 @@ export class Blockchain extends Plugin {
   /** Return the list of accounts */
   // note: the dual promise/callback is kept for now as it was before
   getAccounts(cb) {
-    console.log('getAccounts')
     return new Promise((resolve, reject) => {
       this.getCurrentProvider().getAccounts((error, accounts) => {
-        console.log('get accounts res', error, accounts)
         if (cb) {
           return cb(error, accounts)
         }
@@ -662,13 +660,6 @@ export class Blockchain extends Plugin {
           return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
         }
       },
-
-      //   isVM: () => { return this.executionContext.isVM() },
-      //   personalMode: () => {
-      //     return this.getProvider() === 'web3' ? this.config.get('settings/personal-mode') : false
-      //   }
-      // }, _ => this.executionContext.web3(), _ => this.executionContext.currentblockGasLimit())
-
       (_) => this.executionContext.web3(),
       (_) => this.executionContext.currentblockGasLimit()
     )
