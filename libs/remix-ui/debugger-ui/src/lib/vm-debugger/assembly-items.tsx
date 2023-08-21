@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
-import { initialState, reducer } from '../../reducers/assembly-items'
+import React, {useState, useRef, useEffect, useReducer} from 'react' // eslint-disable-line
+import {initialState, reducer} from '../../reducers/assembly-items'
 import './styles/assembly-items.css'
 
-export const AssemblyItems = ({ registerEvent }) => {
+export const AssemblyItems = ({registerEvent}) => {
   const [assemblyItems, dispatch] = useReducer(reducer, initialState)
   const [absoluteSelectedIndex, setAbsoluteSelectedIndex] = useState(0)
   const [selectedItem, setSelectedItem] = useState(0)
@@ -14,13 +14,15 @@ export const AssemblyItems = ({ registerEvent }) => {
   const asmItemsRef = useRef(null)
 
   useEffect(() => {
-    registerEvent && registerEvent('codeManagerChanged', (code, address, index, nextIndexes, returnInstructionIndexes, outOfGasInstructionIndexes) => {
-      dispatch({ type: 'FETCH_OPCODES_SUCCESS', payload: { code, address, index, nextIndexes, returnInstructionIndexes, outOfGasInstructionIndexes } })
-    })
+    registerEvent &&
+      registerEvent('codeManagerChanged', (code, address, index, nextIndexes, returnInstructionIndexes, outOfGasInstructionIndexes) => {
+        dispatch({type: 'FETCH_OPCODES_SUCCESS', payload: {code, address, index, nextIndexes, returnInstructionIndexes, outOfGasInstructionIndexes}})
+      })
 
-    registerEvent && registerEvent('lineGasCostChanged', (instructionsIndexes: number[], line: []) => {
-      dispatch({ type: 'FETCH_INDEXES_FOR_NEW_LINE', payload: { currentLineIndexes: instructionsIndexes || [], line } })
-    })
+    registerEvent &&
+      registerEvent('lineGasCostChanged', (instructionsIndexes: number[], line: []) => {
+        dispatch({type: 'FETCH_INDEXES_FOR_NEW_LINE', payload: {currentLineIndexes: instructionsIndexes || [], line}})
+      })
   }, [])
 
   useEffect(() => {
@@ -128,17 +130,32 @@ export const AssemblyItems = ({ registerEvent }) => {
 
   return (
     <div className="h-100 border rounded px-1 mt-1 bg-light">
-      <div className='dropdownpanel'>
-        <div className='dropdowncontent pb-2'>
-          { assemblyItems.display.length == 0 && <div>No data available</div> }
-          <div className="pl-2 my-1 small instructions" data-id="asmitems" id='asmitems' ref={asmItemsRef}>
-            {
-              assemblyItems.display.map((item, i) => {
-                return <div className="px-1" key={i} ref={ref => { refs.current[i] = ref }}>
-                  <span>{item}</span>{assemblyItems.currentLineIndexes.includes(i) ? <span><i><b> - LINE {assemblyItems.line + 1}</b></i></span> : ' - '}
+      <div className="dropdownpanel">
+        <div className="dropdowncontent pb-2">
+          {assemblyItems.display.length == 0 && <div>No data available</div>}
+          <div className="pl-2 my-1 small instructions" data-id="asmitems" id="asmitems" ref={asmItemsRef}>
+            {assemblyItems.display.map((item, i) => {
+              return (
+                <div
+                  className="px-1"
+                  key={i}
+                  ref={(ref) => {
+                    refs.current[i] = ref
+                  }}
+                >
+                  <span>{item}</span>
+                  {assemblyItems.currentLineIndexes.includes(i) ? (
+                    <span>
+                      <i>
+                        <b> - LINE {assemblyItems.line + 1}</b>
+                      </i>
+                    </span>
+                  ) : (
+                    ' - '
+                  )}
                 </div>
-              })
-            }
+              )
+            })}
           </div>
         </div>
       </div>

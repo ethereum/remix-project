@@ -1,6 +1,6 @@
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
-import { AbstractProvider } from './abstract-provider'
+import {AbstractProvider} from './abstract-provider'
 
 const profile = {
   name: 'ganache-provider',
@@ -12,17 +12,26 @@ const profile = {
 }
 
 export class GanacheProvider extends AbstractProvider {
-  constructor (blockchain) {
+  constructor(blockchain) {
     super(profile, blockchain, 'http://127.0.0.1:8545')
   }
 
-  body (): JSX.Element {
+  body(): JSX.Element {
     return (
-      <div> Note: To run Ganache on your system, run:
-        <div className="p-1 pl-3"><b>yarn global add ganache</b></div> 
-        <div className="p-1 pl-3"><b>ganache</b></div>       
+      <div>
+        {' '}
+        Note: To run Ganache on your system, run:
+        <div className="p-1 pl-3">
+          <b>yarn global add ganache</b>
+        </div>
+        <div className="p-1 pl-3">
+          <b>ganache</b>
+        </div>
         <div className="pt-2 pb-4">
-          For more info, visit: <a href="https://github.com/trufflesuite/ganache" target="_blank">Ganache Documentation</a>
+          For more info, visit:{' '}
+          <a href="https://github.com/trufflesuite/ganache" target="_blank">
+            Ganache Documentation
+          </a>
         </div>
         <div>Ganache JSON-RPC Endpoint:</div>
       </div>
