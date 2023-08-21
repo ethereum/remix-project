@@ -36,7 +36,8 @@
     "merge": "^1.2.0",
     "string-similarity": "^4.0.4",
     "time-stamp": "^2.0.0",
-    "web3": "^4.1.0"
+    "web3": "^4.1.1",
+    "web3-utils": "^4.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",

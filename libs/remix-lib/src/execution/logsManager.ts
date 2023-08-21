@@ -19,11 +19,10 @@ export class LogsManager {
   checkBlock (blockNumber, block, web3) {
     eachOf(block.transactions, (tx: any, i, next) => {
       const txHash = '0x' + tx.hash().toString('hex')
-      const cb = (_error, receipt) => {
+      web3.eth.getTransactionReceipt(txHash, (_error, receipt) => {
         for (const log of receipt.logs) {
           this.oldLogs.push({ type: 'block', blockNumber, block, tx, log, txNumber: i })
           const subscriptions = this.getSubscriptionsFor({ type: 'block', blockNumber, block, tx, log })
-
           for (const subscriptionId of subscriptions) {
             const result = {
               logIndex: '0x1', // 1
@@ -45,11 +44,7 @@ export class LogsManager {
             this.transmit(response)
           }
         }
-      }
-      const res = web3.eth.getTransactionReceipt(txHash,cb)
-      if(res && typeof res.then === 'function'){
-        res.then((receipt) => cb(null, receipt)).catch(err => cb(err,null))
-      }
+      })
     }, (_err) => {
     })
   }
