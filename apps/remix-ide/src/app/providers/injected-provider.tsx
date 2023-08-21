@@ -29,7 +29,7 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
       web3Provider.on('chainChanged', this.listenerChainChanged);
     } catch (error) {
       console.log('unable to listen on context changed')
-    }    
+    }
   }
 
   onDeactivation(): void {
@@ -39,7 +39,7 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
       web3Provider.removeListener('chainChanged', this.listenerChainChanged)
     } catch (error) {
       console.log('unable to remove listener on context changed')
-    }    
+    }
   }
 
   askPermission (throwIfNoInjectedProvider) {
@@ -84,8 +84,8 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
     }
     try {
       let resultData
-      if (web3Provider.send) resultData = await web3Provider.send(data.method, data.params)
-      else if (web3Provider.request) resultData = await web3Provider.request({ method: data.method, params: data.params})
+      if (web3Provider.request) resultData = await web3Provider.request({ method: data.method, params: data.params})
+      else if (web3Provider.send) resultData = await web3Provider.send(data.method, data.params)
       else {
         resolve({ jsonrpc: '2.0', error: 'provider not valid', id: data.id })
         return
