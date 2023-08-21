@@ -74,7 +74,7 @@ export class ExecutionContext {
       if (!web3.currentProvider) {
         return callback('No provider set')
       }
-      web3.eth.net.getId((err, id) => {
+      const cb = (err, id) => {
         let name = null
         if (err) name = 'Unknown'
         // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
@@ -95,7 +95,11 @@ export class ExecutionContext {
         } else {
           callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
         }
-      })
+      }
+      const res = web3.eth.net.getId(cb)
+      if(res && typeof res.then ==='function'){
+        res.then(id=>cb(null,id)).catch(err=>cb(err))
+      }
     }
   }
 
