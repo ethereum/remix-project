@@ -67,17 +67,8 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
 
   return (
     <>
-      <CustomTooltip
-        placement="top"
-        tooltipId="remixuilabelTooltip"
-        tooltipClasses="text-nowrap"
-        tooltipText={props.title}
-      >
-        <span
-          className="remixui_label"
-          data-path={props.title}
-          style={{fontWeight: 'bold'}}
-        >
+      <CustomTooltip placement="top" tooltipId="remixuilabelTooltip" tooltipClasses="text-nowrap" tooltipText={props.title}>
+        <span className="remixui_label" data-path={props.title} style={{fontWeight: 'bold'}}>
           {props.title}
         </span>
       </CustomTooltip>
@@ -89,32 +80,17 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 placement={placement as Placement}
                 tooltipId="uploadFileTooltip"
                 tooltipClasses="text-nowrap"
-                tooltipText={
-                  <FormattedMessage
-                    id={`filePanel.${action}`}
-                    defaultMessage={title}
-                  />
-                }
+                tooltipText={<FormattedMessage id={`filePanel.${action}`} defaultMessage={title} />}
                 key={`index-${action}-${placement}-${icon}`}
               >
-                <label
-                  id={action}
-                  data-id={'fileExplorerUploadFile' + action}
-                  className={icon + ' mb-0 px-1 remixui_newFile'}
-                  key={`index-${action}-${placement}-${icon}`}
-                >
+                <label id={action} data-id={'fileExplorerUploadFile' + action} className={icon + ' mb-0 px-1 remixui_newFile'} key={`index-${action}-${placement}-${icon}`}>
                   <input
                     id="fileUpload"
                     data-id="fileExplorerFileUpload"
                     type="file"
                     onChange={(e) => {
                       e.stopPropagation()
-                      _paq.push([
-                        'trackEvent',
-                        'fileExplorer',
-                        'fileAction',
-                        action
-                      ])
+                      _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
                       props.uploadFile(e.target)
                       e.target.value = null
                     }}
@@ -129,32 +105,17 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 placement={placement as Placement}
                 tooltipId="uploadFolderTooltip"
                 tooltipClasses="text-nowrap"
-                tooltipText={
-                  <FormattedMessage
-                    id={`filePanel.${action}`}
-                    defaultMessage={title}
-                  />
-                }
+                tooltipText={<FormattedMessage id={`filePanel.${action}`} defaultMessage={title} />}
                 key={`index-${action}-${placement}-${icon}`}
               >
-                <label
-                  id={action}
-                  data-id={'fileExplorerUploadFolder' + action}
-                  className={icon + ' mb-0 px-1 remixui_newFile'}
-                  key={`index-${action}-${placement}-${icon}`}
-                >
+                <label id={action} data-id={'fileExplorerUploadFolder' + action} className={icon + ' mb-0 px-1 remixui_newFile'} key={`index-${action}-${placement}-${icon}`}>
                   <input
                     id="folderUpload"
                     data-id="fileExplorerFolderUpload"
                     type="file"
                     onChange={(e) => {
                       e.stopPropagation()
-                      _paq.push([
-                        'trackEvent',
-                        'fileExplorer',
-                        'fileAction',
-                        action
-                      ])
+                      _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
                       props.uploadFolder(e.target)
                       e.target.value = null
                     }}
@@ -170,12 +131,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 placement={placement as Placement}
                 tooltipId={`${action}-${title}-${icon}-${index}`}
                 tooltipClasses="text-nowrap"
-                tooltipText={
-                  <FormattedMessage
-                    id={`filePanel.${action}`}
-                    defaultMessage={title}
-                  />
-                }
+                tooltipText={<FormattedMessage id={`filePanel.${action}`} defaultMessage={title} />}
                 key={`${action}-${title}-${index}`}
               >
                 <span
@@ -183,12 +139,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                   data-id={'fileExplorerNewFile' + action}
                   onClick={(e) => {
                     e.stopPropagation()
-                    _paq.push([
-                      'trackEvent',
-                      'fileExplorer',
-                      'fileAction',
-                      action
-                    ])
+                    _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
                     if (action === 'createNewFile') {
                       props.createNewFile()
                     } else if (action === 'createNewFolder') {

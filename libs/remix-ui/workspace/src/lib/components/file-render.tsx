@@ -22,13 +22,7 @@ export interface RenderFileProps {
   editModeOff: (content: string) => void
   handleClickFolder: (path: string, type: string) => void
   handleClickFile: (path: string, type: string) => void
-  handleContextMenu: (
-    pageX: number,
-    pageY: number,
-    path: string,
-    content: string,
-    type: string
-  ) => void
+  handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
   fileDecorations: fileDecoration[]
 }
 
@@ -51,8 +45,7 @@ export const FileRender = (props: RenderFileProps) => {
         ? 'bg-secondary'
         : hover
           ? 'bg-light border-no-shift'
-          : props.focusContext.element === file.path &&
-        props.focusEdit.element !== file.path
+          : props.focusContext.element === file.path && props.focusEdit.element !== file.path
             ? 'bg-light border-no-shift'
             : ''
 
@@ -62,28 +55,20 @@ export const FileRender = (props: RenderFileProps) => {
 
   const handleFolderClick = (event: SyntheticEvent) => {
     event.stopPropagation()
-    if (props.focusEdit.element !== file.path)
-      props.handleClickFolder(file.path, file.type)
+    if (props.focusEdit.element !== file.path) props.handleClickFolder(file.path, file.type)
     if (props.showIconsMenu === true) props.hideIconsMenu(!props.showIconsMenu)
   }
 
   const handleFileClick = (event: SyntheticEvent) => {
     event.stopPropagation()
-    if (props.focusEdit.element !== file.path)
-      props.handleClickFile(file.path, file.type)
+    if (props.focusEdit.element !== file.path) props.handleClickFile(file.path, file.type)
     if (props.showIconsMenu === true) props.hideIconsMenu(!props.showIconsMenu)
   }
 
   const handleContextMenu = (event: PointerEvent) => {
     event.preventDefault()
     event.stopPropagation()
-    props.handleContextMenu(
-      event.pageX,
-      event.pageY,
-      file.path,
-      (event.target as HTMLElement).textContent,
-      file.type
-    )
+    props.handleContextMenu(event.pageX, event.pageY, file.path, (event.target as HTMLElement).textContent, file.type)
   }
 
   const handleMouseOut = (event: SyntheticEvent) => {
@@ -101,31 +86,14 @@ export const FileRender = (props: RenderFileProps) => {
       <TreeViewItem
         id={`treeViewItem${file.path}`}
         iconX="pr-3 fa fa-folder"
-        iconY={
-          props.expandPath.includes(file.path)
-            ? 'pr-0 fa fa-folder-open'
-            : 'pr-3 fa fa-folder'
-        }
+        iconY={props.expandPath.includes(file.path) ? 'pr-0 fa fa-folder-open' : 'pr-3 fa fa-folder'}
         key={`${file.path + props.index}`}
         label={
           <>
-            <Draggable
-              isDraggable={props.focusEdit.element !== null}
-              file={file}
-              expandedPath={props.expandPath}
-              handleClickFolder={props.handleClickFolder}
-            >
+            <Draggable isDraggable={props.focusEdit.element !== null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}>
               <div className="d-flex flex-row">
-                <FileLabel
-                  fileDecorations={props.fileDecorations}
-                  file={file}
-                  focusEdit={props.focusEdit}
-                  editModeOff={props.editModeOff}
-                />
-                <FileDecorationIcons
-                  file={file}
-                  fileDecorations={props.fileDecorations}
-                />
+                <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
+                <FileDecorationIcons file={file} fileDecorations={props.fileDecorations} />
               </div>
             </Draggable>
           </>
@@ -139,11 +107,7 @@ export const FileRender = (props: RenderFileProps) => {
         onMouseOut={handleMouseOut}
       >
         {file.child ? (
-          <TreeView
-            id={`treeView${file.path}`}
-            key={`treeView${file.path}`}
-            {...spreadProps}
-          >
+          <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps}>
             {Object.keys(file.child).map((key, index) => (
               <FileRender
                 file={file.child[key]}
@@ -163,11 +127,7 @@ export const FileRender = (props: RenderFileProps) => {
             ))}
           </TreeView>
         ) : (
-          <TreeView
-            id={`treeView${file.path}`}
-            key={`treeView${file.path}`}
-            {...spreadProps}
-          />
+          <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps} />
         )}
       </TreeViewItem>
     )
@@ -178,23 +138,10 @@ export const FileRender = (props: RenderFileProps) => {
         key={`treeView${file.path}`}
         label={
           <>
-            <Draggable
-              isDraggable={props.focusEdit.element !== null}
-              file={file}
-              expandedPath={props.expandPath}
-              handleClickFolder={props.handleClickFolder}
-            >
+            <Draggable isDraggable={props.focusEdit.element !== null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}>
               <div className="d-flex flex-row">
-                <FileLabel
-                  fileDecorations={props.fileDecorations}
-                  file={file}
-                  focusEdit={props.focusEdit}
-                  editModeOff={props.editModeOff}
-                />
-                <FileDecorationIcons
-                  file={file}
-                  fileDecorations={props.fileDecorations}
-                />
+                <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
+                <FileDecorationIcons file={file} fileDecorations={props.fileDecorations} />
               </div>
             </Draggable>
           </>

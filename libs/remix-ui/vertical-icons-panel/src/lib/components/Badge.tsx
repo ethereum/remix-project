@@ -1,22 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useEffect } from 'react'
-import { BadgeStatus } from './Icon'
-import { CustomTooltip } from '@remix-ui/helper'
-import { FormattedMessage } from 'react-intl'
+import React, {useEffect} from 'react'
+import {BadgeStatus} from './Icon'
+import {CustomTooltip} from '@remix-ui/helper'
+import {FormattedMessage} from 'react-intl'
 interface BadgeProps {
   badgeStatus?: BadgeStatus
 }
 
 // eslint-disable-next-line no-undef
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function Badge ({ badgeStatus }: BadgeProps) {
+function Badge({badgeStatus}: BadgeProps) {
   /**
    * resolve a classes list for @arg key
    * @param {Object} key
    * @param {Object} type
    */
-  function resolveClasses (key: string, type: string) {
+  function resolveClasses(key: string, type: string) {
     let classes = 'remixui_status'
     switch (key) {
     case 'succeed':
@@ -38,9 +38,19 @@ function Badge ({ badgeStatus }: BadgeProps) {
     return classes
   }
 
-  function checkStatusKeyValue (value: any, type: string) {
-    if (value === 'succeed' || value === 'edited' || value === 'loading' || value === 'failed' ||
-      typeof value === 'number' || type === 'warning' || type === 'error' || type === 'success' || type === 'info' || type === 'danger') {
+  function checkStatusKeyValue(value: any, type: string) {
+    if (
+      value === 'succeed' ||
+      value === 'edited' ||
+      value === 'loading' ||
+      value === 'failed' ||
+      typeof value === 'number' ||
+      type === 'warning' ||
+      type === 'error' ||
+      type === 'success' ||
+      type === 'info' ||
+      type === 'danger'
+    ) {
       return true
     }
     return false
@@ -49,28 +59,19 @@ function Badge ({ badgeStatus }: BadgeProps) {
   return (
     <>
       {badgeStatus && checkStatusKeyValue(badgeStatus.key, badgeStatus.type) ? (
-        <CustomTooltip
-          placement={"right"}
-          tooltipClasses="text-nowrap"
-          tooltipId="verticalItemsbadge"
-          tooltipText={badgeStatus.title}
-        >
-          <i
-            className={`${resolveClasses(badgeStatus.key, badgeStatus.type!)}`}
-            aria-hidden="true"
-          >
-            {badgeStatus.pluginName &&
-              badgeStatus.pluginName === "solidityStaticAnalysis" ? (
-                badgeStatus.type === "warning" || badgeStatus.type === "error" || badgeStatus.type === "danger" ? (
-                  <span>
-                    <i className="far fa-exclamation-triangle"></i>
-                  </span>
-                ) : (
-                  <span>&nbsp;</span>
-                )
+        <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="verticalItemsbadge" tooltipText={badgeStatus.title}>
+          <i className={`${resolveClasses(badgeStatus.key, badgeStatus.type!)}`} aria-hidden="true">
+            {badgeStatus.pluginName && badgeStatus.pluginName === 'solidityStaticAnalysis' ? (
+              badgeStatus.type === 'warning' || badgeStatus.type === 'error' || badgeStatus.type === 'danger' ? (
+                <span>
+                  <i className="far fa-exclamation-triangle"></i>
+                </span>
               ) : (
-                badgeStatus.text
-              )}
+                <span>&nbsp;</span>
+              )
+            ) : (
+              badgeStatus.text
+            )}
           </i>
         </CustomTooltip>
       ) : null}
