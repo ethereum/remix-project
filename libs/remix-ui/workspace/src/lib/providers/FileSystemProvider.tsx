@@ -1,22 +1,59 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useReducer, useState, useEffect, SyntheticEvent } from 'react'
-import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
-import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
+import React, {useReducer, useState, useEffect, SyntheticEvent} from 'react'
+import {ModalDialog} from '@remix-ui/modal-dialog' // eslint-disable-line
+import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FileSystemContext } from '../contexts'
-import { browserReducer, browserInitialState } from '../reducers/workspace'
-import { initWorkspace, fetchDirectory, removeInputField, deleteWorkspace, deleteAllWorkspaces, clearPopUp, publishToGist, createNewFile, setFocusElement, createNewFolder,
-  deletePath, renamePath, downloadPath, copyFile, copyFolder, runScript, emitContextMenuEvent, handleClickFile, handleExpandPath, addInputField, createWorkspace,
-  fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile, uploadFolder, handleDownloadWorkspace, handleDownloadFiles, restoreBackupZip, cloneRepository, moveFile, moveFolder,
-  showAllBranches, switchBranch, createNewBranch, checkoutRemoteBranch, createSolidityGithubAction, createTsSolGithubAction, createSlitherGithubAction, createHelperScripts
+import {FileSystemContext} from '../contexts'
+import {browserReducer, browserInitialState} from '../reducers/workspace'
+import {
+  initWorkspace,
+  fetchDirectory,
+  removeInputField,
+  deleteWorkspace,
+  deleteAllWorkspaces,
+  clearPopUp,
+  publishToGist,
+  createNewFile,
+  setFocusElement,
+  createNewFolder,
+  deletePath,
+  renamePath,
+  downloadPath,
+  copyFile,
+  copyFolder,
+  runScript,
+  emitContextMenuEvent,
+  handleClickFile,
+  handleExpandPath,
+  addInputField,
+  createWorkspace,
+  fetchWorkspaceDirectory,
+  renameWorkspace,
+  switchToWorkspace,
+  uploadFile,
+  uploadFolder,
+  handleDownloadWorkspace,
+  handleDownloadFiles,
+  restoreBackupZip,
+  cloneRepository,
+  moveFile,
+  moveFolder,
+  showAllBranches,
+  switchBranch,
+  createNewBranch,
+  checkoutRemoteBranch,
+  createSolidityGithubAction,
+  createTsSolGithubAction,
+  createSlitherGithubAction,
+  createHelperScripts
 } from '../actions'
-import { Modal, WorkspaceProps, WorkspaceTemplate } from '../types'
+import {Modal, WorkspaceProps, WorkspaceTemplate} from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Workspace } from '../remix-ui-workspace'
-import { customAction } from '@remixproject/plugin-api'
+import {Workspace} from '../remix-ui-workspace'
+import {customAction} from '@remixproject/plugin-api'
 
 export const FileSystemProvider = (props: WorkspaceProps) => {
-  const { plugin } = props
+  const {plugin} = props
   const [fs, fsDispatch] = useReducer(browserReducer, browserInitialState)
   const [focusModal, setFocusModal] = useState<Modal>({
     hide: true,
@@ -39,7 +76,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await fetchDirectory(path)
   }
 
-  const dispatchAddInputField = async (path: string, type: 'file' | 'folder') => {
+  const dispatchAddInputField = async (
+    path: string,
+    type: 'file' | 'folder'
+  ) => {
     await addInputField(type, path)
   }
 
@@ -47,8 +87,20 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await removeInputField(path)
   }
 
-  const dispatchCreateWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate, opts?, initGitRepo?: boolean) => {
-    await createWorkspace(workspaceName, workspaceTemplateName, opts, null, null, initGitRepo)
+  const dispatchCreateWorkspace = async (
+    workspaceName: string,
+    workspaceTemplateName: WorkspaceTemplate,
+    opts?,
+    initGitRepo?: boolean
+  ) => {
+    await createWorkspace(
+      workspaceName,
+      workspaceTemplateName,
+      opts,
+      null,
+      null,
+      initGitRepo
+    )
   }
 
   const dispatchFetchWorkspaceDirectory = async (path: string) => {
@@ -59,7 +111,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await switchToWorkspace(name)
   }
 
-  const dispatchRenameWorkspace = async (oldName: string, workspaceName: string) => {
+  const dispatchRenameWorkspace = async (
+    oldName: string,
+    workspaceName: string
+  ) => {
     await renameWorkspace(oldName, workspaceName)
   }
 
@@ -75,11 +130,17 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await publishToGist(path, type)
   }
 
-  const dispatchUploadFile = async (target?: SyntheticEvent, targetFolder?: string) => {
+  const dispatchUploadFile = async (
+    target?: SyntheticEvent,
+    targetFolder?: string
+  ) => {
     await uploadFile(target, targetFolder)
   }
 
-  const dispatchUploadFolder = async (target?: SyntheticEvent, targetFolder?: string) => {
+  const dispatchUploadFolder = async (
+    target?: SyntheticEvent,
+    targetFolder?: string
+  ) => {
     await uploadFolder(target, targetFolder)
   }
 
@@ -87,7 +148,9 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await createNewFile(path, rootDir)
   }
 
-  const dispatchSetFocusElement = async (elements: { key: string, type: 'file' | 'folder' | 'gist' }[]) => {
+  const dispatchSetFocusElement = async (
+    elements: {key: string; type: 'file' | 'folder' | 'gist'}[]
+  ) => {
     await setFocusElement(elements)
   }
 
@@ -123,7 +186,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await emitContextMenuEvent(cmd)
   }
 
-  const dispatchHandleClickFile = async (path: string, type: 'file' | 'folder' | 'gist') => {
+  const dispatchHandleClickFile = async (
+    path: string,
+    type: 'file' | 'folder' | 'gist'
+  ) => {
     await handleClickFile(path, type)
   }
 
@@ -154,7 +220,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   const dispatchMoveFolder = async (src: string, dest: string) => {
     await moveFolder(src, dest)
   }
-  
+
   const dispatchShowAllBranches = async () => {
     await showAllBranches()
   }
@@ -167,7 +233,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await createNewBranch(branch)
   }
 
-  const dispatchCheckoutRemoteBranch = async (branch: string, remote: string) => {
+  const dispatchCheckoutRemoteBranch = async (
+    branch: string,
+    remote: string
+  ) => {
     await checkoutRemoteBranch(branch, remote)
   }
 
@@ -226,7 +295,14 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   useEffect(() => {
     if (fs.notification.title) {
-      modal(fs.notification.title, fs.notification.message, fs.notification.labelOk, fs.notification.actionOk, fs.notification.labelCancel, fs.notification.actionCancel)
+      modal(
+        fs.notification.title,
+        fs.notification.message,
+        fs.notification.labelOk,
+        fs.notification.actionOk,
+        fs.notification.labelCancel,
+        fs.notification.actionCancel
+      )
     }
   }, [fs.notification])
 
@@ -237,14 +313,21 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   }, [fs.popup])
 
   const handleHideModal = () => {
-    setFocusModal(modal => {
-      return { ...modal, hide: true, message: null }
+    setFocusModal((modal) => {
+      return {...modal, hide: true, message: null}
     })
   }
 
-  const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
-    setModals(modals => {
-      modals.push({ message, title, okLabel, okFn, cancelLabel, cancelFn })
+  const modal = (
+    title: string,
+    message: string | JSX.Element,
+    okLabel: string,
+    okFn: () => void,
+    cancelLabel?: string,
+    cancelFn?: () => void
+  ) => {
+    setModals((modals) => {
+      modals.push({message, title, okLabel, okFn, cancelLabel, cancelFn})
       return [...modals]
     })
   }
@@ -255,7 +338,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   }
 
   const toast = (toasterMsg: string) => {
-    setToasters(messages => {
+    setToasters((messages) => {
       messages.push(toasterMsg)
       return [...messages]
     })
@@ -308,13 +391,20 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   }
   return (
     <FileSystemContext.Provider value={value}>
-      { fs.initializingFS && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div> }
-      { !fs.initializingFS && <Workspace /> }
-      <ModalDialog id='fileSystem' { ...focusModal } handleHide={ handleHideModal } />
+      {fs.initializingFS && (
+        <div className="text-center py-5">
+          <i className="fas fa-spinner fa-pulse fa-2x"></i>
+        </div>
+      )}
+      {!fs.initializingFS && <Workspace />}
+      <ModalDialog
+        id="fileSystem"
+        {...focusModal}
+        handleHide={handleHideModal}
+      />
       <Toaster message={focusToaster} handleHide={handleToaster} />
     </FileSystemContext.Provider>
   )
 }
 
 export default FileSystemProvider
-

@@ -1,15 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import './style/remix-app.css'
-import { RemixUIMainPanel } from '@remix-ui/panel'
+import {RemixUIMainPanel} from '@remix-ui/panel'
 import MatomoDialog from './components/modals/matomo'
 import OriginWarning from './components/modals/origin-warning'
 import DragBar from './components/dragbar/dragbar'
-import { AppProvider } from './context/provider'
+import {AppProvider} from './context/provider'
 import AppDialogs from './components/modals/dialogs'
 import DialogViewPlugin from './components/modals/dialogViewPlugin'
-import { AppContext } from './context/context'
-import { IntlProvider } from 'react-intl'
-import { CustomTooltip } from '@remix-ui/helper';
+import {AppContext} from './context/context'
+import {IntlProvider} from 'react-intl'
+import {CustomTooltip} from '@remix-ui/helper'
 
 interface IRemixAppUi {
   app: any
@@ -20,11 +20,14 @@ const RemixApp = (props: IRemixAppUi) => {
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
   const [maximiseTrigger, setMaximiseTrigger] = useState<number>(0)
   const [resetTrigger, setResetTrigger] = useState<number>(0)
-  const [locale, setLocale] = useState<{ code:string; messages:any }>({ code:'en', messages:{} });
+  const [locale, setLocale] = useState<{code: string; messages: any}>({
+    code: 'en',
+    messages: {}
+  })
   const sidePanelRef = useRef(null)
 
   useEffect(() => {
-    async function activateApp () {
+    async function activateApp() {
       props.app.themeModule.initTheme(() => {
         setAppReady(true)
         props.app.activate()
@@ -37,9 +40,9 @@ const RemixApp = (props: IRemixAppUi) => {
     }
   }, [])
 
-  function setListeners () {
+  function setListeners() {
     props.app.sidePanel.events.on('toggle', () => {
-      setHideSidePanel(prev => {
+      setHideSidePanel((prev) => {
         return !prev
       })
     })
@@ -55,13 +58,13 @@ const RemixApp = (props: IRemixAppUi) => {
     })
 
     props.app.layout.event.on('maximisesidepanel', () => {
-      setMaximiseTrigger(prev => {
+      setMaximiseTrigger((prev) => {
         return prev + 1
       })
     })
 
     props.app.layout.event.on('resetsidepanel', () => {
-      setResetTrigger(prev => {
+      setResetTrigger((prev) => {
         return prev + 1
       })
     })
@@ -84,18 +87,47 @@ const RemixApp = (props: IRemixAppUi) => {
       <AppProvider value={value}>
         <OriginWarning></OriginWarning>
         <MatomoDialog hide={!appReady}></MatomoDialog>
-        <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
-          <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light">{props.app.menuicons.render()}</div>
-          <div ref={sidePanelRef} id="side-panel" data-id="remixIdeSidePanel" className={`sidepanel border-right border-left ${hideSidePanel ? 'd-none' : ''}`}>{props.app.sidePanel.render()}</div>
-          <DragBar resetTrigger={resetTrigger} maximiseTrigger={maximiseTrigger} minWidth={285} refObject={sidePanelRef} hidden={hideSidePanel} setHideStatus={setHideSidePanel}></DragBar>
-          <div id="main-panel" data-id="remixIdeMainPanel" className='mainpanel d-flex'>
+        <div
+          className={`remixIDE ${appReady ? '' : 'd-none'}`}
+          data-id="remixIDE"
+        >
+          <div
+            id="icon-panel"
+            data-id="remixIdeIconPanel"
+            className="custom_icon_panel iconpanel bg-light"
+          >
+            {props.app.menuicons.render()}
+          </div>
+          <div
+            ref={sidePanelRef}
+            id="side-panel"
+            data-id="remixIdeSidePanel"
+            className={`sidepanel border-right border-left ${
+              hideSidePanel ? 'd-none' : ''
+            }`}
+          >
+            {props.app.sidePanel.render()}
+          </div>
+          <DragBar
+            resetTrigger={resetTrigger}
+            maximiseTrigger={maximiseTrigger}
+            minWidth={285}
+            refObject={sidePanelRef}
+            hidden={hideSidePanel}
+            setHideStatus={setHideSidePanel}
+          ></DragBar>
+          <div
+            id="main-panel"
+            data-id="remixIdeMainPanel"
+            className="mainpanel d-flex"
+          >
             <RemixUIMainPanel Context={AppContext}></RemixUIMainPanel>
             <CustomTooltip
               placement="bottom"
               tooltipId="overlay-tooltip-all-tabs"
               tooltipText="Scroll to see all tabs"
             >
-              <div className='remix-ui-tabs_end remix-bg-opacity position-absolute position-fixed'></div>
+              <div className="remix-ui-tabs_end remix-bg-opacity position-absolute position-fixed"></div>
             </CustomTooltip>
           </div>
         </div>

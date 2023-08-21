@@ -1,9 +1,15 @@
-import React, { useState, useEffect } from 'react' // eslint-disable-line
+import React, {useState, useEffect} from 'react' // eslint-disable-line
 import DropdownPanel from './dropdown-panel' // eslint-disable-line
-import { extractData } from '../../utils/solidityTypeFormatter' // eslint-disable-line
-import { ExtractData } from '../../types' // eslint-disable-line
+import {extractData} from '../../utils/solidityTypeFormatter' // eslint-disable-line
+import {ExtractData} from '../../types' // eslint-disable-line
 
-export const SolidityLocals = ({ data, message, registerEvent, triggerEvent, className = "" }) => {
+export const SolidityLocals = ({
+  data,
+  message,
+  registerEvent,
+  triggerEvent,
+  className = ''
+}) => {
   const [calldata, setCalldata] = useState(null)
 
   useEffect(() => {
@@ -23,19 +29,26 @@ export const SolidityLocals = ({ data, message, registerEvent, triggerEvent, cla
       color = 'var(--green)'
     } else if (data.type === 'string') {
       color = 'var(--teal)'
-    } else if (data.self == 0x0) { // eslint-disable-line
+    } else if (data.self == 0x0) {
+      // eslint-disable-line
       color = 'var(--gray)'
     }
     if (data.type === 'string') {
       data.self = JSON.stringify(data.self)
     }
     return (
-      <label className='mb-0' style={{ color: data.isProperty ? 'var(--info)' : '', whiteSpace: 'pre-wrap' }}>
+      <label
+        className="mb-0"
+        style={{
+          color: data.isProperty ? 'var(--info)' : '',
+          whiteSpace: 'pre-wrap'
+        }}
+      >
         {' ' + key}:
-        <label className='mb-0' style={{ color }}>
+        <label className="mb-0" style={{color}}>
           {' ' + data.self}
         </label>
-        <label style={{ fontStyle: 'italic' }}>
+        <label style={{fontStyle: 'italic'}}>
           {data.isProperty || !data.type ? '' : ' ' + data.type}
         </label>
       </label>
@@ -43,17 +56,17 @@ export const SolidityLocals = ({ data, message, registerEvent, triggerEvent, cla
   }
 
   return (
-    <div className={className} id='soliditylocals' data-id="solidityLocals">
+    <div className={className} id="soliditylocals" data-id="solidityLocals">
       <DropdownPanel
-        dropdownName='Solidity Locals'
+        dropdownName="Solidity Locals"
         dropdownMessage={message}
         calldata={calldata || {}}
         extractFunc={extractData}
         formatSelfFunc={formatSelf}
         registerEvent={registerEvent}
         triggerEvent={triggerEvent}
-        loadMoreEvent='solidityLocalsLoadMore'
-        loadMoreCompletedEvent='solidityLocalsLoadMoreCompleted'
+        loadMoreEvent="solidityLocalsLoadMore"
+        loadMoreCompletedEvent="solidityLocalsLoadMoreCompleted"
       />
     </div>
   )

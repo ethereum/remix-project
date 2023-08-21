@@ -9,6 +9,5 @@
   "trailingComma": "none",
   "jsxBracketSameLine": false,
   "arrowParens": "always",
-  "singleAttributePerLine": false,
-  "ignorePath": ".prettierignore"
+  "singleAttributePerLine": false
 }

@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
-import React, { useRef, useState, useEffect } from 'react' // eslint-disable-line
+import React, {useRef, useState, useEffect} from 'react' // eslint-disable-line
 import isElectron from 'is-electron'
-import { WebsocketPlugin } from '@remixproject/engine-web'
+import {WebsocketPlugin} from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { version as remixdVersion } from '../../../../../libs/remixd/package.json'
-import { PluginManager } from '@remixproject/engine'
-import { AppModal, AlertModal } from '@remix-ui/app'
+import {version as remixdVersion} from '../../../../../libs/remixd/package.json'
+import {PluginManager} from '@remixproject/engine'
+import {AppModal, AlertModal} from '@remix-ui/app'
 
 const LOCALHOST = ' - connect to localhost - '
 
@@ -14,15 +14,27 @@ const profile = {
   name: 'remixd',
   displayName: 'RemixD',
   url: 'ws://127.0.0.1:65520',
-  methods: ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'rename', 'remove', 'isDirectory', 'list', 'createDir'],
+  methods: [
+    'folderIsReadOnly',
+    'resolveDirectory',
+    'get',
+    'exists',
+    'isFile',
+    'set',
+    'rename',
+    'remove',
+    'isDirectory',
+    'list',
+    'createDir'
+  ],
   events: [],
   description: 'Using Remixd daemon, allow to access file system',
   kind: 'other',
   version: packageJson.version,
-  repo: "https://github.com/ethereum/remix-project/tree/master/libs/remixd",
-  maintainedBy: "Remix",
-  documentation: "https://remix-ide.readthedocs.io/en/latest/remixd.html",
-  authorContact: ""
+  repo: 'https://github.com/ethereum/remix-project/tree/master/libs/remixd',
+  maintainedBy: 'Remix',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/remixd.html',
+  authorContact: ''
 }
 
 export class RemixdHandle extends WebsocketPlugin {
@@ -62,7 +74,6 @@ export class RemixdHandle extends WebsocketPlugin {
     }
 
     await this.appManager.deactivatePlugin('remixd')
-
   }
 
   async callPluginMethod(key: string, payload?: any[]) {
@@ -74,36 +85,44 @@ export class RemixdHandle extends WebsocketPlugin {
   }
 
   /**
-    * connect to localhost if no connection and render the explorer
-    * disconnect from localhost if connected and remove the explorer
-    *
-    * @param {String} txHash - hash of the transaction
-    */
+   * connect to localhost if no connection and render the explorer
+   * disconnect from localhost if connected and remove the explorer
+   *
+   * @param {String} txHash - hash of the transaction
+   */
   async connectToLocalhost() {
     const connection = async (error?: any) => {
       if (error) {
         console.log(error)
         const alert: AlertModal = {
           id: 'connectionAlert',
-          message: 'Cannot connect to the remixd daemon. Please make sure you have the remixd running in the background.'
+          message:
+            'Cannot connect to the remixd daemon. Please make sure you have the remixd running in the background.'
         }
         this.call('notification', 'alert', alert)
         this.canceled()
       } else {
         const intervalId = setInterval(() => {
-          if (!this.socket || (this.socket && this.socket.readyState === 3)) { // 3 means connection closed
+          if (!this.socket || (this.socket && this.socket.readyState === 3)) {
+            // 3 means connection closed
             clearInterval(intervalId)
             const alert: AlertModal = {
               id: 'connectionAlert',
-              message: 'Connection to remixd terminated. Please make sure remixd is still running in the background.'
+              message:
+                'Connection to remixd terminated. Please make sure remixd is still running in the background.'
             }
             this.call('notification', 'alert', alert)
             this.canceled()
           }
         }, 3000)
         this.localhostProvider.init(() => {
-          this.call('filePanel', 'setWorkspace', { name: LOCALHOST, isLocalhost: true }, true)
-        });
+          this.call(
+            'filePanel',
+            'setWorkspace',
+            {name: LOCALHOST, isLocalhost: true},
+            true
+          )
+        })
         for (const plugin of this.dependentPlugins) {
           await this.appManager.activatePlugin(plugin)
         }
@@ -118,7 +137,7 @@ export class RemixdHandle extends WebsocketPlugin {
         title: 'Access file system using remixd',
         message: remixdDialog(),
         okLabel: 'Connect',
-        cancelLabel: 'Cancel',
+        cancelLabel: 'Cancel'
       }
       const result = await this.call('notification', 'modal', mod)
       if (result) {
@@ -126,7 +145,8 @@ export class RemixdHandle extends WebsocketPlugin {
           this.localhostProvider.preInit()
           super.activate()
           setTimeout(() => {
-            if (!this.socket || (this.socket && this.socket.readyState === 3)) { // 3 means connection closed
+            if (!this.socket || (this.socket && this.socket.readyState === 3)) {
+              // 3 means connection closed
               connection(new Error('Connection with daemon failed.'))
             } else {
               connection()
@@ -135,14 +155,15 @@ export class RemixdHandle extends WebsocketPlugin {
         } catch (error) {
           connection(error)
         }
-      }
-      else {
+      } else {
         await this.canceled()
       }
     } else {
       try {
         super.activate()
-        setTimeout(() => { connection() }, 2000)
+        setTimeout(() => {
+          connection()
+        }, 2000)
       } catch (error) {
         connection(error)
       }
@@ -152,38 +173,73 @@ export class RemixdHandle extends WebsocketPlugin {
 
 function remixdDialog() {
   const commandText = 'remixd'
-  const fullCommandText = 'remixd -s <path-to-the-shared-folder> -u <remix-ide-instance-URL>'
-  return (<>
-    <div className=''>
-      <div className='mb-2 text-break'>
-        Access your local file system from Remix IDE using <a target="_blank" href="https://www.npmjs.com/package/@remix-project/remixd">Remixd NPM package</a>.
+  const fullCommandText =
+    'remixd -s <path-to-the-shared-folder> -u <remix-ide-instance-URL>'
+  return (
+    <>
+      <div className="">
+        <div className="mb-2 text-break">
+          Access your local file system from Remix IDE using{' '}
+          <a
+            target="_blank"
+            href="https://www.npmjs.com/package/@remix-project/remixd"
+          >
+            Remixd NPM package
+          </a>
+          .
+        </div>
+        <div className="mb-2 text-break">
+          Remixd{' '}
+          <a
+            target="_blank"
+            href="https://remix-ide.readthedocs.io/en/latest/remixd.html"
+          >
+            documentation
+          </a>
+          .
+        </div>
+        <div className="mb-2 text-break">
+          The remixd command is:
+          <br />
+          <b>{commandText}</b>
+        </div>
+        <div className="mb-2 text-break">
+          The remixd command without options uses the terminal's current
+          directory as the shared directory and the shared Remix domain can only
+          be https://remix.ethereum.org, https://remix-alpha.ethereum.org, or
+          https://remix-beta.ethereum.org
+        </div>
+        <div className="mb-2 text-break">
+          Example command with flags: <br />
+          <b>{fullCommandText}</b>
+        </div>
+        <div className="mb-2 text-break">
+          For info about ports, see{' '}
+          <a
+            target="_blank"
+            href="https://remix-ide.readthedocs.io/en/latest/remixd.html#ports-usage"
+          >
+            Remixd ports usage
+          </a>
+        </div>
+        <div className="mb-2 text-break">
+          This feature is still in Alpha. We recommend to keep a backup of the
+          shared folder.
+        </div>
+        <div className="mb-2 text-break">
+          <h6 className="text-danger">
+            Before using, make sure remixd version is latest i.e.{' '}
+            <b>v{remixdVersion}</b>
+            <br></br>
+            <a
+              target="_blank"
+              href="https://remix-ide.readthedocs.io/en/latest/remixd.html#update-to-the-latest-remixd"
+            >
+              Read here how to update it
+            </a>
+          </h6>
+        </div>
       </div>
-      <div className='mb-2 text-break'>
-        Remixd <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html">documentation</a>.
-      </div>
-      <div className='mb-2 text-break'>
-        The remixd command is:
-        <br /><b>{commandText}</b>
-      </div>
-      <div className='mb-2 text-break'>
-        The remixd command without options uses the terminal's current directory as the shared directory and the shared Remix domain can only be https://remix.ethereum.org, https://remix-alpha.ethereum.org, or https://remix-beta.ethereum.org
-      </div>
-      <div className='mb-2 text-break'>
-        Example command with flags: <br />
-        <b>{fullCommandText}</b>
-      </div>
-      <div className='mb-2 text-break'>
-        For info about ports, see <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#ports-usage">Remixd ports usage</a>
-      </div>
-      <div className='mb-2 text-break'>
-        This feature is still in Alpha. We recommend to keep a backup of the shared folder.
-      </div>
-      <div className='mb-2 text-break'>
-        <h6 className="text-danger">
-          Before using, make sure remixd version is latest i.e. <b>v{remixdVersion}</b>
-          <br></br><a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/remixd.html#update-to-the-latest-remixd">Read here how to update it</a>
-        </h6>
-      </div>
-    </div>
-  </>)
+    </>
+  )
 }

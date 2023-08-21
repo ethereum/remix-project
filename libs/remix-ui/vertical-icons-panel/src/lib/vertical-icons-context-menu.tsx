@@ -1,36 +1,48 @@
-import { Plugin } from '@remixproject/engine'
-import React, { Fragment, useEffect, useRef } from 'react'
+import {Plugin} from '@remixproject/engine'
+import React, {Fragment, useEffect, useRef} from 'react'
 
-export interface VerticalIconsContextMenuProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+export interface VerticalIconsContextMenuProps
+  extends React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLDivElement>,
+    HTMLDivElement
+  > {
   pageX: number
   pageY: number
   profileName: string
-  links: { Documentation: string, CanDeactivate: boolean }
+  links: {Documentation: string; CanDeactivate: boolean}
   canBeDeactivated: boolean
   verticalIconPlugin: any
   hideContextMenu: () => void
-  contextMenuAction: (evt: any, profileName: string, documentation: string) => void
+  contextMenuAction: (
+    evt: any,
+    profileName: string,
+    documentation: string
+  ) => void
 }
 
 interface MenuLinksProps {
-  listItems: { Documentation: string, CanDeactivate: boolean }
+  listItems: {Documentation: string; CanDeactivate: boolean}
   hide: () => void
   profileName: string
   canBeDeactivated: boolean
   verticalIconPlugin: any
   ref?: React.MutableRefObject<any>
   toggle: (name: string) => void
-  contextMenuAction: (evt: any, profileName: string, documentation: string) => void
+  contextMenuAction: (
+    evt: any,
+    profileName: string,
+    documentation: string
+  ) => void
 }
 
 interface MenuProps {
   verticalIconsPlugin: Plugin
   profileName: string
-  listItems: { Documentation: string, CanDeactivate: boolean }
+  listItems: {Documentation: string; CanDeactivate: boolean}
   hide: () => void
 }
 
-const VerticalIconsContextMenu = (props: VerticalIconsContextMenuProps) =>{
+const VerticalIconsContextMenu = (props: VerticalIconsContextMenuProps) => {
   const menuRef = useRef(null)
   ClickOutside(menuRef, props.hideContextMenu)
   useEffect(() => {
@@ -45,7 +57,6 @@ const VerticalIconsContextMenu = (props: VerticalIconsContextMenuProps) =>{
         left: props.pageX,
         top: props.pageY,
         display: 'block'
-
       }}
       ref={menuRef}
       tabIndex={1}
@@ -74,8 +85,8 @@ const MenuForLinks = ({
 }: MenuLinksProps) => {
   return (
     <Fragment>
-      {listItems.CanDeactivate
-        ? <li
+      {listItems.CanDeactivate ? (
+        <li
           id="menuitemdeactivate"
           onClick={(evt) => {
             contextMenuAction(evt, profileName, listItems.Documentation)
@@ -86,38 +97,37 @@ const MenuForLinks = ({
         >
           Deactivate
         </li>
-        : null
-      }
-      {(listItems.Documentation && listItems.Documentation.length > 0) &&
-            <li
-              id="menuitemdocumentation"
-              className="remixui_liitem"
-              key="menuitemdocumentation"
-            >
-              <a
-                onClick={hide}
-                href={listItems.Documentation}
-                target="_blank"
-              >
-                Documentation
-              </a>
-            </li>}
+      ) : null}
+      {listItems.Documentation && listItems.Documentation.length > 0 && (
+        <li
+          id="menuitemdocumentation"
+          className="remixui_liitem"
+          key="menuitemdocumentation"
+        >
+          <a onClick={hide} href={listItems.Documentation} target="_blank">
+            Documentation
+          </a>
+        </li>
+      )}
     </Fragment>
   )
 }
 
-function ClickOutside(ref: React.MutableRefObject<HTMLElement>, hideFn: () => void) {
+function ClickOutside(
+  ref: React.MutableRefObject<HTMLElement>,
+  hideFn: () => void
+) {
   useEffect(() => {
     function handleClickOutside(event: any) {
       if (ref.current && !ref.current.contains(event.target)) {
         hideFn()
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside)
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [ref]);
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [ref])
 }
 
 export default VerticalIconsContextMenu

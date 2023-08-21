@@ -1,23 +1,28 @@
-import React, { useState, useEffect } from 'react' // eslint-disable-line
-import { ExtractData, ExtractFunc } from '../types' // eslint-disable-line
+import React, {useState, useEffect} from 'react' // eslint-disable-line
+import {ExtractData, ExtractFunc} from '../types' // eslint-disable-line
 
-export const useExtractData = (json, extractFunc?: ExtractFunc): Array<{ key: string, data: ExtractData }> => {
+export const useExtractData = (
+  json,
+  extractFunc?: ExtractFunc
+): Array<{key: string; data: ExtractData}> => {
   const [data, setData] = useState([])
 
   useEffect(() => {
-    const data: Array<{ key: string, data: ExtractData }> = Object.keys(json).map((innerKey) => {
-      if (extractFunc) {
-        return {
-          key: innerKey,
-          data: extractFunc(json[innerKey], json)
-        }
-      } else {
-        return {
-          key: innerKey,
-          data: extractDataDefault(json[innerKey], json)
+    const data: Array<{key: string; data: ExtractData}> = Object.keys(json).map(
+      (innerKey) => {
+        if (extractFunc) {
+          return {
+            key: innerKey,
+            data: extractFunc(json[innerKey], json)
+          }
+        } else {
+          return {
+            key: innerKey,
+            data: extractDataDefault(json[innerKey], json)
+          }
         }
       }
-    })
+    )
 
     setData(data)
 
@@ -31,14 +36,14 @@ export const useExtractData = (json, extractFunc?: ExtractFunc): Array<{ key: st
 
     if (item instanceof Array) {
       ret.children = item.map((item, index) => {
-        return { key: index, value: item }
+        return {key: index, value: item}
       })
       ret.self = 'Array'
       ret.isNode = true
       ret.isLeaf = false
     } else if (item instanceof Object) {
       ret.children = Object.keys(item).map((key) => {
-        return { key: key, value: item[key] }
+        return {key: key, value: item[key]}
       })
       ret.self = 'Object'
       ret.isNode = true
