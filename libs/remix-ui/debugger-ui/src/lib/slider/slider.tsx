@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react' // eslint-disable-line
+import React, {useState, useEffect, useRef} from 'react' // eslint-disable-line
 
-export const Slider = ({ jumpTo, sliderValue, traceLength }) => {
+export const Slider = ({jumpTo, sliderValue, traceLength}) => {
   const onChangeId = useRef(null)
   const slider = useRef(null)
 
@@ -9,13 +9,13 @@ export const Slider = ({ jumpTo, sliderValue, traceLength }) => {
   }, [sliderValue])
 
   const setValue = (value) => {
-    if (value < 0) return 
+    if (value < 0) return
     if (value === slider.current.value) return
     slider.current.value = value
     if (onChangeId.current) {
       clearTimeout(onChangeId.current)
     }
-    ((value) => {
+    ;((value) => {
       onChangeId.current = setTimeout(() => {
         jumpTo && jumpTo(value)
       }, 100)
@@ -30,11 +30,12 @@ export const Slider = ({ jumpTo, sliderValue, traceLength }) => {
 
   return (
     <div>
-      <input id='slider'
+      <input
+        id="slider"
         data-id="slider"
-        className='w-100 my-0'
+        className="w-100 my-0"
         ref={slider}
-        type='range'
+        type="range"
         min={0}
         max={traceLength ? traceLength - 1 : 0}
         onMouseUp={handleChange}

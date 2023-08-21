@@ -1,22 +1,27 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, {useState, useEffect, useRef} from 'react'
 
 import {
   CompilationFileSources,
-  CompilationResult,
-} from "@remixproject/plugin-api"
+  CompilationResult
+} from '@remixproject/plugin-api'
 
-import { RemixClient } from "./RemixPlugin";
-import { createClient } from "@remixproject/plugin-webview";
+import {RemixClient} from './RemixPlugin'
+import {createClient} from '@remixproject/plugin-webview'
 
-import { AppContext } from "./AppContext"
-import { DisplayRoutes } from "./routes"
+import {AppContext} from './AppContext'
+import {DisplayRoutes} from './routes'
 
-import { useLocalStorage } from "./hooks/useLocalStorage"
+import {useLocalStorage} from './hooks/useLocalStorage'
 
-import { getReceiptStatus, getEtherScanApi, getNetworkName, getProxyContractReceiptStatus } from "./utils"
-import { Receipt, ThemeType } from "./types"
+import {
+  getReceiptStatus,
+  getEtherScanApi,
+  getNetworkName,
+  getProxyContractReceiptStatus
+} from './utils'
+import {Receipt, ThemeType} from './types'
 
-import "./App.css"
+import './App.css'
 
 export const getNewContractNames = (compilationResult: CompilationResult) => {
   const compiledContracts = compilationResult.contracts
@@ -31,11 +36,11 @@ export const getNewContractNames = (compilationResult: CompilationResult) => {
 }
 
 const App = () => {
-  const [apiKey, setAPIKey] = useLocalStorage("apiKey", "")
+  const [apiKey, setAPIKey] = useLocalStorage('apiKey', '')
   const [clientInstance, setClientInstance] = useState(undefined as any)
-  const [receipts, setReceipts] = useLocalStorage("receipts", [])
+  const [receipts, setReceipts] = useLocalStorage('receipts', [])
   const [contracts, setContracts] = useState([] as string[])
-  const [themeType, setThemeType] = useState("dark" as ThemeType)
+  const [themeType, setThemeType] = useState('dark' as ThemeType)
   const timer = useRef(null)
 
   const clientInstanceRef = useRef(clientInstance)
@@ -49,8 +54,9 @@ const App = () => {
     const loadClient = async () => {
       await client.onload()
       setClientInstance(client)
-      client.on("solidity",
-        "compilationFinished",
+      client.on(
+        'solidity',
+        'compilationFinished',
         (
           fileName: string,
           source: CompilationFileSources,
@@ -61,7 +67,7 @@ const App = () => {
 
           const newContractsToSave: string[] = [
             ...contractsRef.current,
-            ...newContractsNames,
+            ...newContractsNames
           ]
 
           const uniqueContracts: string[] = [...new Set(newContractsToSave)]
@@ -82,7 +88,10 @@ const App = () => {
 
   useEffect(() => {
     let receiptsNotVerified: Receipt[] = receipts.filter((item: Receipt) => {
-      return item.status === "Pending in queue" || item.status === "Max rate limit reached"
+      return (
+        item.status === 'Pending in queue' ||
+        item.status === 'Max rate limit reached'
+      )
     })
 
     if (receiptsNotVerified.length > 0) {
@@ -91,17 +100,19 @@ const App = () => {
         timer.current = null
       }
       timer.current = setInterval(async () => {
-        const { network, networkId } = await getNetworkName(clientInstanceRef.current)
+        const {network, networkId} = await getNetworkName(
+          clientInstanceRef.current
+        )
         if (!clientInstanceRef.current) {
           return
         }
-        
-        if (network === "vm") {
+
+        if (network === 'vm') {
           return
         }
         let newReceipts = receipts
-        for (const item of receiptsNotVerified) {          
-          await new Promise(r => setTimeout(r, 500)) // avoid api rate limit exceed.
+        for (const item of receiptsNotVerified) {
+          await new Promise((r) => setTimeout(r, 500)) // avoid api rate limit exceed.
           let status
           if (item.isProxyContract) {
             status = await getProxyContractReceiptStatus(
@@ -113,29 +124,35 @@ const App = () => {
               status.message = status.result
               status.result = 'Successfully Updated'
             }
-          } else 
+          } else
             status = await getReceiptStatus(
               item.guid,
               apiKey,
               getEtherScanApi(networkId)
             )
-          if (status.result === "Pass - Verified" || status.result === "Already Verified" || 
-              status.result === "Successfully Updated") {
+          if (
+            status.result === 'Pass - Verified' ||
+            status.result === 'Already Verified' ||
+            status.result === 'Successfully Updated'
+          ) {
             newReceipts = newReceipts.map((currentReceipt: Receipt) => {
               if (currentReceipt.guid === item.guid) {
-                let res = {
+                const res = {
                   ...currentReceipt,
-                  status: status.result,
+                  status: status.result
                 }
                 if (currentReceipt.isProxyContract) res.message = status.message
                 return res
               }
               return currentReceipt
-            })                      
-          }          
+            })
+          }
         }
         receiptsNotVerified = newReceipts.filter((item: Receipt) => {
-          return item.status === "Pending in queue" || item.status === "Max rate limit reached"
+          return (
+            item.status === 'Pending in queue' ||
+            item.status === 'Max rate limit reached'
+          )
         })
         if (timer.current && receiptsNotVerified.length === 0) {
           clearInterval(timer.current)
@@ -157,7 +174,7 @@ const App = () => {
         contracts,
         setContracts,
         themeType,
-        setThemeType,
+        setThemeType
       }}
     >
       <DisplayRoutes />

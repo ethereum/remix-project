@@ -1,18 +1,24 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect, useState } from 'react'
-import { UdappProps } from '../types'
-import { FuncABI } from '@remix-project/core-plugin'
-import { CopyToClipboard } from '@remix-ui/clipboard'
+import React, {useEffect, useState} from 'react'
+import {UdappProps} from '../types'
+import {FuncABI} from '@remix-project/core-plugin'
+import {CopyToClipboard} from '@remix-ui/clipboard'
 import * as remixLib from '@remix-project/remix-lib'
 import * as ethJSUtil from '@ethereumjs/util'
-import { ContractGUI } from './contractGUI'
-import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
-import { BN } from 'bn.js'
-import { CustomTooltip, is0XPrefixed, isHexadecimal, isNumeric, shortenAddress } from '@remix-ui/helper'
+import {ContractGUI} from './contractGUI'
+import {TreeView, TreeViewItem} from '@remix-ui/tree-view'
+import {BN} from 'bn.js'
+import {
+  CustomTooltip,
+  is0XPrefixed,
+  isHexadecimal,
+  isNumeric,
+  shortenAddress
+} from '@remix-ui/helper'
 
 const txHelper = remixLib.execution.txHelper
 
-export function UniversalDappUI (props: UdappProps) {
+export function UniversalDappUI(props: UdappProps) {
   const [toggleExpander, setToggleExpander] = useState<boolean>(true)
   const [contractABI, setContractABI] = useState<FuncABI[]>(null)
   const [address, setAddress] = useState<string>('')
@@ -32,7 +38,9 @@ export function UniversalDappUI (props: UdappProps) {
     }
     if (props.instance.address) {
       // @ts-ignore
-      let address = (props.instance.address.slice(0, 2) === '0x' ? '' : '0x') + props.instance.address.toString('hex')
+      let address =
+        (props.instance.address.slice(0, 2) === '0x' ? '' : '0x') +
+        props.instance.address.toString('hex')
 
       address = ethJSUtil.toChecksumAddress(address)
       setAddress(address)
@@ -67,21 +75,30 @@ export function UniversalDappUI (props: UdappProps) {
       // check for numeric and receive/fallback
       if (!isNumeric(amount)) {
         return setLlIError('Value to send should be a number')
-      } else if (!receive && !(fallback && fallback.stateMutability === 'payable')) {
-        return setLlIError("In order to receive Ether transfer the contract should have either 'receive' or payable 'fallback' function")
+      } else if (
+        !receive &&
+        !(fallback && fallback.stateMutability === 'payable')
+      ) {
+        return setLlIError(
+          "In order to receive Ether transfer the contract should have either 'receive' or payable 'fallback' function"
+        )
       }
     }
     let calldata = calldataValue
 
     if (calldata) {
       if (calldata.length < 4 && is0XPrefixed(calldata)) {
-        return setLlIError('The calldata should be a valid hexadecimal value with size of at least one byte.')
+        return setLlIError(
+          'The calldata should be a valid hexadecimal value with size of at least one byte.'
+        )
       } else {
         if (is0XPrefixed(calldata)) {
           calldata = calldata.substr(2, calldata.length)
         }
         if (!isHexadecimal(calldata)) {
-          return setLlIError('The calldata should be a valid hexadecimal value.')
+          return setLlIError(
+            'The calldata should be a valid hexadecimal value.'
+          )
         }
       }
       if (!fallback) {
@@ -89,7 +106,10 @@ export function UniversalDappUI (props: UdappProps) {
       }
     }
 
-    if (!receive && !fallback) return setLlIError('Both \'receive\' and \'fallback\' functions are not defined')
+    if (!receive && !fallback)
+      return setLlIError(
+        "Both 'receive' and 'fallback' functions are not defined"
+      )
 
     // we have to put the right function ABI:
     // if receive is defined and that there is no calldata => receive function is called
@@ -97,7 +117,10 @@ export function UniversalDappUI (props: UdappProps) {
     if (receive && !calldata) args.funcABI = receive
     else if (fallback) args.funcABI = fallback
 
-    if (!args.funcABI) return setLlIError('Please define a \'Fallback\' function to send calldata and a either \'Receive\' or payable \'Fallback\' to send ethers')
+    if (!args.funcABI)
+      return setLlIError(
+        "Please define a 'Fallback' function to send calldata and a either 'Receive' or payable 'Fallback' to send ethers"
+      )
     runTransaction(false, args.funcABI, null, calldataValue)
   }
 
@@ -109,9 +132,18 @@ export function UniversalDappUI (props: UdappProps) {
     props.removeInstance(props.index)
   }
 
-  const runTransaction = (lookupOnly, funcABI: FuncABI, valArr, inputsValues, funcIndex?: number) => {
-    const functionName = funcABI.type === 'function' ? funcABI.name : `(${funcABI.type})`
-    const logMsg = `${lookupOnly ? 'call' : 'transact'} to ${props.instance.name}.${functionName}`
+  const runTransaction = (
+    lookupOnly,
+    funcABI: FuncABI,
+    valArr,
+    inputsValues,
+    funcIndex?: number
+  ) => {
+    const functionName =
+      funcABI.type === 'function' ? funcABI.name : `(${funcABI.type})`
+    const logMsg = `${lookupOnly ? 'call' : 'transact'} to ${
+      props.instance.name
+    }.${functionName}`
 
     props.runTransactions(
       props.index,
@@ -126,7 +158,8 @@ export function UniversalDappUI (props: UdappProps) {
       props.mainnetPrompt,
       props.gasEstimationPrompt,
       props.passphrasePrompt,
-      funcIndex)
+      funcIndex
+    )
   }
 
   const extractDataDefault = (item, parent?) => {
@@ -138,14 +171,14 @@ export function UniversalDappUI (props: UdappProps) {
     } else {
       if (item instanceof Array) {
         ret.children = item.map((item, index) => {
-          return { key: index, value: item }
+          return {key: index, value: item}
         })
         ret.self = 'Array'
         ret.isNode = true
         ret.isLeaf = false
       } else if (item instanceof Object) {
         ret.children = Object.keys(item).map((key) => {
-          return { key: key, value: item[key] }
+          return {key: key, value: item[key]}
         })
         ret.self = 'Object'
         ret.isNode = true
@@ -162,7 +195,7 @@ export function UniversalDappUI (props: UdappProps) {
 
   const handleExpand = (path: string) => {
     if (expandPath.includes(path)) {
-      const filteredPath = expandPath.filter(value => value !== path)
+      const filteredPath = expandPath.filter((value) => value !== path)
 
       setExpandPath(filteredPath)
     } else {
@@ -179,7 +212,9 @@ export function UniversalDappUI (props: UdappProps) {
   const label = (key: string | number, value: string) => {
     return (
       <div className="d-flex mt-2 flex-row label_item">
-        <label className="small font-weight-bold mb-0 pr-1 label_key">{key}:</label>
+        <label className="small font-weight-bold mb-0 pr-1 label_key">
+          {key}:
+        </label>
         <label className="m-0 label_value">{value}</label>
       </div>
     )
@@ -188,28 +223,40 @@ export function UniversalDappUI (props: UdappProps) {
   const renderData = (item, parent, key: string | number, keyPath: string) => {
     const data = extractDataDefault(item, parent)
     const children = (data.children || []).map((child, index) => {
-      return (
-        renderData(child.value, data, child.key, keyPath + '/' + child.key)
-      )
+      return renderData(child.value, data, child.key, keyPath + '/' + child.key)
     })
 
     if (children && children.length > 0) {
       return (
-        <TreeViewItem id={`treeViewItem${key}`} key={keyPath} label={label(key, data.self)} onClick={() => handleExpand(keyPath)} expand={expandPath.includes(keyPath)}>
+        <TreeViewItem
+          id={`treeViewItem${key}`}
+          key={keyPath}
+          label={label(key, data.self)}
+          onClick={() => handleExpand(keyPath)}
+          expand={expandPath.includes(keyPath)}
+        >
           <TreeView id={`treeView${key}`} key={keyPath}>
             {children}
           </TreeView>
         </TreeViewItem>
       )
     } else {
-      return <TreeViewItem id={key.toString()} key={keyPath} label={label(key, data.self)} onClick={() => handleExpand(keyPath)} expand={expandPath.includes(keyPath)} />
+      return (
+        <TreeViewItem
+          id={key.toString()}
+          key={keyPath}
+          label={label(key, data.self)}
+          onClick={() => handleExpand(keyPath)}
+          expand={expandPath.includes(keyPath)}
+        />
+      )
     }
   }
 
   return (
     <div
       className={`instance udapp_instance udapp_run-instance border-dark ${
-        toggleExpander ? "udapp_hidesub" : "bg-light"
+        toggleExpander ? 'udapp_hidesub' : 'bg-light'
       }`}
       id={`instance${address}`}
       data-shared="universalDappUiInstance"
@@ -222,7 +269,7 @@ export function UniversalDappUI (props: UdappProps) {
         >
           <i
             className={`fas ${
-              toggleExpander ? "fa-angle-right" : "fa-angle-down"
+              toggleExpander ? 'fa-angle-right' : 'fa-angle-down'
             }`}
             aria-hidden="true"
           ></i>
@@ -235,7 +282,7 @@ export function UniversalDappUI (props: UdappProps) {
             </span>
           </div>
           <div className="btn">
-            <CopyToClipboard content={address} direction={"top"} />
+            <CopyToClipboard content={address} direction={'top'} />
           </div>
         </div>
         <CustomTooltip
@@ -262,21 +309,21 @@ export function UniversalDappUI (props: UdappProps) {
           </div>
           {contractABI &&
             contractABI.map((funcABI, index) => {
-              if (funcABI.type !== "function") return null;
+              if (funcABI.type !== 'function') return null
               const isConstant =
-                funcABI.constant !== undefined ? funcABI.constant : false;
+                funcABI.constant !== undefined ? funcABI.constant : false
               const lookupOnly =
-                funcABI.stateMutability === "view" ||
-                funcABI.stateMutability === "pure" ||
-                isConstant;
-              const inputs = props.getFuncABIInputs(funcABI);
+                funcABI.stateMutability === 'view' ||
+                funcABI.stateMutability === 'pure' ||
+                isConstant
+              const inputs = props.getFuncABIInputs(funcABI)
 
               return (
                 <div key={index}>
                   <ContractGUI
                     funcABI={funcABI}
                     clickCallBack={(
-                      valArray: { name: string; type: string }[],
+                      valArray: {name: string; type: string}[],
                       inputsValues: string
                     ) => {
                       runTransaction(
@@ -285,40 +332,42 @@ export function UniversalDappUI (props: UdappProps) {
                         valArray,
                         inputsValues,
                         index
-                      );
+                      )
                     }}
                     inputs={inputs}
                     evmBC={evmBC}
                     lookupOnly={lookupOnly}
                     key={index}
                   />
-                  { lookupOnly && <div className="udapp_value" data-id="udapp_value">
-                    <TreeView id="treeView">
-                      {Object.keys(props.instance.decodedResponse || {}).map(
-                        (key) => {
-                          const funcIndex = index.toString();
-                          const response = props.instance.decodedResponse[key];
+                  {lookupOnly && (
+                    <div className="udapp_value" data-id="udapp_value">
+                      <TreeView id="treeView">
+                        {Object.keys(props.instance.decodedResponse || {}).map(
+                          (key) => {
+                            const funcIndex = index.toString()
+                            const response = props.instance.decodedResponse[key]
 
-                          return key === funcIndex
-                            ? Object.keys(response || {}).map(
-                              (innerkey, index) => {
-                                return renderData(
-                                  props.instance.decodedResponse[key][
+                            return key === funcIndex
+                              ? Object.keys(response || {}).map(
+                                (innerkey, index) => {
+                                  return renderData(
+                                    props.instance.decodedResponse[key][
+                                      innerkey
+                                    ],
+                                    response,
+                                    innerkey,
                                     innerkey
-                                  ],
-                                  response,
-                                  innerkey,
-                                  innerkey
-                                );
-                              }
-                            )
-                            : null;
-                        }
-                      )}
-                    </TreeView>
-                  </div> }
+                                  )
+                                }
+                              )
+                              : null
+                          }
+                        )}
+                      </TreeView>
+                    </div>
+                  )}
                 </div>
-              );
+              )
             })}
         </div>
         <div className="d-flex flex-column">
@@ -327,7 +376,7 @@ export function UniversalDappUI (props: UdappProps) {
               Low level interactions
             </div>
             <CustomTooltip
-              placement={"bottom-end"}
+              placement={'bottom-end'}
               tooltipClasses="text-wrap"
               tooltipId="receiveEthDocstoolTip"
               tooltipText={"Click for docs about using 'receive'/'fallback'"}
@@ -381,5 +430,5 @@ export function UniversalDappUI (props: UdappProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }

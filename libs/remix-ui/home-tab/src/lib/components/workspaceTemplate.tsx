@@ -1,14 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useContext } from 'react'
+import React, {useContext} from 'react'
 interface WorkspaceTemplateProps {
-  gsID: string,
-  workspaceTitle: string,
-  callback: any,
-  description: string,
+  gsID: string
+  workspaceTitle: string
+  callback: any
+  description: string
 }
 
-function WorkspaceTemplate ({ gsID, workspaceTitle, description, callback }: WorkspaceTemplateProps) {
-
+function WorkspaceTemplate({
+  gsID,
+  workspaceTitle,
+  description,
+  callback
+}: WorkspaceTemplateProps) {
   return (
     <div className="d-flex remixui_home_workspaceTemplate">
       <button
@@ -17,7 +21,9 @@ function WorkspaceTemplate ({ gsID, workspaceTitle, description, callback }: Wor
         onClick={() => callback()}
       >
         <div className="mb-2 w-100 p-2 h-100 align-items-start d-flex flex-column">
-          <label className="h6 pb-1 text-uppercase text-dark remixui_home_cursorStyle">{workspaceTitle}</label>
+          <label className="h6 pb-1 text-uppercase text-dark remixui_home_cursorStyle">
+            {workspaceTitle}
+          </label>
           <div className="remixui_home_gtDescription">{description}</div>
         </div>
       </button>

@@ -10,8 +10,7 @@ const shortFilename = 'simple_storage.sol'
 
 const inputJson = {
   language: 'Solidity',
-  sources: {
-  },
+  sources: {},
   settings: {
     optimizer: {
       enabled: true,
@@ -19,24 +18,38 @@ const inputJson = {
     },
     outputSelection: {
       '*': {
-        '': [ 'ast' ],
-        '*': [ 'abi', 'metadata', 'devdoc', 'userdoc', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates' ]
+        '': ['ast'],
+        '*': [
+          'abi',
+          'metadata',
+          'devdoc',
+          'userdoc',
+          'evm.legacyAssembly',
+          'evm.bytecode',
+          'evm.deployedBytecode',
+          'evm.methodIdentifiers',
+          'evm.gasEstimates'
+        ]
       }
     }
   }
 }
 
-inputJson.sources[shortFilename] = {content: fs.readFileSync(filename).toString()}
+inputJson.sources[shortFilename] = {
+  content: fs.readFileSync(filename).toString()
+}
 
 console.dir(inputJson)
 
 console.log('compiling...')
 
-const compilationData = JSON.parse(solc.compileStandardWrapper(JSON.stringify(inputJson)))
+const compilationData = JSON.parse(
+  solc.compileStandardWrapper(JSON.stringify(inputJson))
+)
 console.dir(Object.keys(compilationData))
 const compilation = {}
 compilation['data'] = compilationData
-compilation['source'] = { sources: inputJson.sources }
+compilation['source'] = {sources: inputJson.sources}
 console.dir(compilation)
 console.dir(compilation['data'].errors)
 
@@ -106,4 +119,3 @@ repl.start({
 })
 
 module.exports = cmdLine
-

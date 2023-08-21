@@ -1,6 +1,6 @@
 /* global ethereum */
 import * as packageJson from '../../../../../package.json'
-import { InjectedProvider } from './injected-provider'
+import {InjectedProvider} from './injected-provider'
 
 const profile = {
   name: 'injected-trustwallet',
@@ -11,16 +11,16 @@ const profile = {
   version: packageJson.version
 }
 
-export class InjectedProviderTrustWallet extends InjectedProvider { 
-  constructor () {
+export class InjectedProviderTrustWallet extends InjectedProvider {
+  constructor() {
     super(profile)
   }
 
-  getInjectedProvider () {
+  getInjectedProvider() {
     return (window as any).trustwallet
   }
 
-  notFound () {
+  notFound() {
     return 'Could not find Trust Wallet provider. Please make sure the Trust Wallet extension is active. Download the latest version from https://trustwallet.com/browser-extension'
   }
 }

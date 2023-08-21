@@ -1,9 +1,9 @@
 import React from 'react'
-import { CustomTooltip, CustomMenu, CustomIconsToggle } from '@remix-ui/helper'
-import { Dropdown, NavDropdown} from 'react-bootstrap'
-import { FormattedMessage } from 'react-intl'
+import {CustomTooltip, CustomMenu, CustomIconsToggle} from '@remix-ui/helper'
+import {Dropdown, NavDropdown} from 'react-bootstrap'
+import {FormattedMessage} from 'react-intl'
 
-const _paq = window._paq = window._paq || []
+const _paq = (window._paq = window._paq || [])
 
 export interface HamburgerMenuItemProps {
   hideOption: boolean
@@ -12,17 +12,19 @@ export interface HamburgerMenuItemProps {
   fa: string
 }
 
-export function HamburgerMenuItem (props: HamburgerMenuItemProps) {
-  const { hideOption } = props
+export function HamburgerMenuItem(props: HamburgerMenuItemProps) {
+  const {hideOption} = props
   const uid = 'workspace' + props.kind
   return (
     <>
       <Dropdown.Item>
         <CustomTooltip
           placement="right"
-          tooltipId={uid + "Tooltip"}
+          tooltipId={uid + 'Tooltip'}
           tooltipClasses="text-nowrap"
-          tooltipText={<FormattedMessage id={'filePanel.workspace.' + props.kind} />}
+          tooltipText={
+            <FormattedMessage id={'filePanel.workspace.' + props.kind} />
+          }
         >
           <div
             data-id={uid}
@@ -38,10 +40,9 @@ export function HamburgerMenuItem (props: HamburgerMenuItemProps) {
               data-id={uid}
               className={props.fa + ' pl-2'}
               style={{width: '1.4rem'}}
-            >
-            </span>
+            ></span>
             <span className="px-2">
-              <FormattedMessage id={'filePanel.' + props.kind } />
+              <FormattedMessage id={'filePanel.' + props.kind} />
             </span>
           </div>
         </CustomTooltip>
@@ -51,17 +52,19 @@ export function HamburgerMenuItem (props: HamburgerMenuItemProps) {
 }
 
 // keeping the following for a later use:
-export function NavHamburgerMenuItem (props: HamburgerMenuItemProps) {
-  const { hideOption } = props
+export function NavHamburgerMenuItem(props: HamburgerMenuItemProps) {
+  const {hideOption} = props
   const uid = 'workspace' + props.kind
   return (
     <>
       <NavDropdown.Item>
         <CustomTooltip
           placement="right"
-          tooltipId={uid + "Tooltip"}
+          tooltipId={uid + 'Tooltip'}
           tooltipClasses="text-nowrap"
-          tooltipText={<FormattedMessage id={'filePanel.workspace.' + props.kind} />}
+          tooltipText={
+            <FormattedMessage id={'filePanel.workspace.' + props.kind} />
+          }
         >
           <div
             data-id={uid}
@@ -77,10 +80,9 @@ export function NavHamburgerMenuItem (props: HamburgerMenuItemProps) {
               data-id={uid}
               className={props.fa + ' pl-2'}
               style={{width: '1.4rem'}}
-            >
-            </span>
+            ></span>
             <span className="px-2">
-              <FormattedMessage id={'filePanel.' + props.kind } />
+              <FormattedMessage id={'filePanel.' + props.kind} />
             </span>
           </div>
         </CustomTooltip>
@@ -90,12 +92,12 @@ export function NavHamburgerMenuItem (props: HamburgerMenuItemProps) {
 }
 
 export interface HamburgerSubMenuItemProps {
-    id: string
-    title: string
-    subMenus: Array<HamburgerMenuItemProps>
-  }
+  id: string
+  title: string
+  subMenus: Array<HamburgerMenuItemProps>
+}
 
-export function HamburgerSubMenuItem (props: HamburgerSubMenuItemProps) {
+export function HamburgerSubMenuItem(props: HamburgerSubMenuItemProps) {
   return (
     <>
       <NavDropdown
@@ -103,10 +105,16 @@ export function HamburgerSubMenuItem (props: HamburgerSubMenuItemProps) {
         as={CustomMenu}
         key={props.id}
         id={props.id}
-        drop='right'
-
+        drop="right"
       >
-        {props.subMenus.map(item => <NavHamburgerMenuItem kind={item.kind} fa={item.fa} hideOption={item.hideOption} actionOnClick={item.actionOnClick} />)}
+        {props.subMenus.map((item) => (
+          <NavHamburgerMenuItem
+            kind={item.kind}
+            fa={item.fa}
+            hideOption={item.hideOption}
+            actionOnClick={item.actionOnClick}
+          />
+        ))}
       </NavDropdown>
     </>
   )

@@ -1,4 +1,4 @@
-import React from "react"
+import React from 'react'
 
 export const ErrorView: React.FC = () => {
   return (
@@ -11,7 +11,7 @@ export const ErrorView: React.FC = () => {
       />
       <h5>Sorry, something unexpected happened.</h5>
       <h5>
-        Please raise an issue:{" "}
+        Please raise an issue:{' '}
         <a
           className="text-danger"
           href="https://github.com/ethereum/remix-project/issues"

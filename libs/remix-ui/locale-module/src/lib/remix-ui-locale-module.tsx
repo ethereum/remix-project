@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl'
-import { LocaleModule } from '../../types/locale-module';
-import './remix-ui-locale-module.module.css';
+import React, {useEffect, useState} from 'react'
+import {FormattedMessage} from 'react-intl'
+import {LocaleModule} from '../../types/locale-module'
+import './remix-ui-locale-module.module.css'
 
 export interface RemixUiLocaleModuleProps {
-  localeModule: LocaleModule;
+  localeModule: LocaleModule
 }
 
-export function RemixUiLocaleModule({ localeModule }: RemixUiLocaleModuleProps) {
+export function RemixUiLocaleModule({localeModule}: RemixUiLocaleModuleProps) {
   const [localeCode, setLocaleCode] = useState('')
 
   useEffect(() => {
@@ -18,7 +18,7 @@ export function RemixUiLocaleModule({ localeModule }: RemixUiLocaleModuleProps) 
     <div className="border-top mb-4">
       <div className="card-body pt-3 pb-2">
         <h6 className="card-title">
-          <FormattedMessage id='settings.locales' />
+          <FormattedMessage id="settings.locales" />
         </h6>
         <div className="card-text locales-container">
           {localeModule.getLocales()
@@ -29,15 +29,17 @@ export function RemixUiLocaleModule({ localeModule }: RemixUiLocaleModuleProps) 
               >
                 <input
                   type="radio"
-                  onChange={event => {
-                    localeModule.switchLocale(locale.code);
-                    setLocaleCode(locale.code);
+                  onChange={(event) => {
+                    localeModule.switchLocale(locale.code)
+                    setLocaleCode(locale.code)
                   }}
                   className="align-middle custom-control-input"
                   name="locale"
                   id={locale.code}
                   data-id={`settingsTabLocale${locale.code}`}
-                  checked={localeModule.active === locale.code.toLocaleLowerCase()}
+                  checked={
+                    localeModule.active === locale.code.toLocaleLowerCase()
+                  }
                 />
                 <label
                   className="form-check-label custom-control-label"
@@ -55,4 +57,4 @@ export function RemixUiLocaleModule({ localeModule }: RemixUiLocaleModuleProps) 
   )
 }
 
-export default RemixUiLocaleModule;
+export default RemixUiLocaleModule

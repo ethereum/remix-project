@@ -1,27 +1,32 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
-import { ViewPlugin } from '@remixproject/engine-web'
+import {ViewPlugin} from '@remixproject/engine-web'
 import React from 'react'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { RemixUiSolidityUmlGen } from '@remix-ui/solidity-uml-gen'
-import { ISolidityUmlGen, ThemeQualityType, ThemeSummary } from 'libs/remix-ui/solidity-uml-gen/src/types'
-import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
-import { normalizeContractPath } from 'libs/remix-ui/solidity-compiler/src/lib/logic/flattenerUtilities'
-import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
+import {RemixUiSolidityUmlGen} from '@remix-ui/solidity-uml-gen'
+import {
+  ISolidityUmlGen,
+  ThemeQualityType,
+  ThemeSummary
+} from 'libs/remix-ui/solidity-uml-gen/src/types'
+import {RemixAppManager} from 'libs/remix-ui/plugin-manager/src/types'
+import {normalizeContractPath} from 'libs/remix-ui/solidity-compiler/src/lib/logic/flattenerUtilities'
+import {convertAST2UmlClasses} from 'sol2uml/lib/converterAST2Classes'
 import vizRenderStringSync from '@aduh95/viz.js/sync'
-import { PluginViewWrapper } from '@remix-ui/helper'
-import { customAction } from '@remixproject/plugin-api'
-import { ClassOptions } from 'sol2uml/lib/converterClass2Dot'
+import {PluginViewWrapper} from '@remix-ui/helper'
+import {customAction} from '@remixproject/plugin-api'
+import {ClassOptions} from 'sol2uml/lib/converterClass2Dot'
 const parser = (window as any).SolidityParser
 
-const _paq = window._paq = window._paq || []
+const _paq = (window._paq = window._paq || [])
 
 const profile = {
   name: 'solidityumlgen',
   displayName: 'Solidity UML Generator',
-  description: 'Generates UML diagram in svg format from last compiled contract',
+  description:
+    'Generates UML diagram in svg format from last compiled contract',
   location: 'mainPanel',
   methods: ['showUmlDiagram', 'generateUml', 'generateCustomAction'],
-  events: [],
+  events: []
 }
 
 /**
@@ -54,7 +59,6 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     this.currentlySelectedTheme = ''
     this.themeName = ''
 
-
     this.activeTheme = {} as ThemeSummary
     this.appManager = appManager
     this.element = document.createElement('div')
@@ -63,37 +67,54 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
 
   onActivation(): void {
     this.handleThemeChange()
-    this.on('solidity', 'compilationFinished', async (file: string, source, languageVersion, data, input, version) => {
-      if(!this.triggerGenerateUml) return
-      this.triggerGenerateUml = false
-      const currentTheme: ThemeQualityType = await this.call('theme', 'currentTheme')
-      this.currentlySelectedTheme = currentTheme.quality
-      this.themeName = currentTheme.name
-      let result = ''
-      const normalized = normalizeContractPath(file)
-      this.currentFile = normalized[normalized.length - 1]
-      try {
-        if (data.sources && Object.keys(data.sources).length > 1) { // we should flatten first as there are multiple asts
-          result = await this.flattenContract(source, file, data)
+    this.on(
+      'solidity',
+      'compilationFinished',
+      async (file: string, source, languageVersion, data, input, version) => {
+        if (!this.triggerGenerateUml) return
+        this.triggerGenerateUml = false
+        const currentTheme: ThemeQualityType = await this.call(
+          'theme',
+          'currentTheme'
+        )
+        this.currentlySelectedTheme = currentTheme.quality
+        this.themeName = currentTheme.name
+        let result = ''
+        const normalized = normalizeContractPath(file)
+        this.currentFile = normalized[normalized.length - 1]
+        try {
+          if (data.sources && Object.keys(data.sources).length > 1) {
+            // we should flatten first as there are multiple asts
+            result = await this.flattenContract(source, file, data)
+          }
+          const ast =
+            result.length > 1
+              ? parser.parse(result)
+              : parser.parse(source.sources[file].content)
+          this.umlClasses = convertAST2UmlClasses(ast, this.currentFile)
+          let umlDot = ''
+          this.activeTheme = await this.call('theme', 'currentTheme')
+          umlDot = convertUmlClasses2Dot(this.umlClasses, false, {
+            backColor: this.activeTheme.backgroundColor,
+            textColor: this.activeTheme.textColor,
+            shapeColor: this.activeTheme.shapeColor,
+            fillColor: this.activeTheme.fillColor
+          })
+          const payload = vizRenderStringSync(umlDot)
+          this.updatedSvg = payload
+          _paq.push(['trackEvent', 'solidityumlgen', 'umlgenerated'])
+          this.renderComponent()
+          await this.call('tabs', 'focus', 'solidityumlgen')
+        } catch (error) {
+          console.log('error', error)
         }
-        const ast = result.length > 1 ? parser.parse(result) : parser.parse(source.sources[file].content)
-        this.umlClasses = convertAST2UmlClasses(ast, this.currentFile)
-        let umlDot = ''
-        this.activeTheme = await this.call('theme', 'currentTheme')
-        umlDot = convertUmlClasses2Dot(this.umlClasses, false, { backColor: this.activeTheme.backgroundColor, textColor: this.activeTheme.textColor, shapeColor: this.activeTheme.shapeColor, fillColor: this.activeTheme.fillColor })
-        const payload = vizRenderStringSync(umlDot)
-        this.updatedSvg = payload
-        _paq.push(['trackEvent', 'solidityumlgen', 'umlgenerated'])
-        this.renderComponent()
-        await this.call('tabs', 'focus', 'solidityumlgen')
-      } catch (error) {
-        console.log('error', error)
       }
-    })
+    )
   }
 
   getThemeCssVariables(cssVars: string) {
-    return window.getComputedStyle(document.documentElement)
+    return window
+      .getComputedStyle(document.documentElement)
       .getPropertyValue(cssVars)
   }
 
@@ -102,7 +123,12 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       this.currentlySelectedTheme = theme.quality
       this.activeTheme = theme
       this.themeDark = theme.backgroundColor
-      const umlDot = convertUmlClasses2Dot(this.umlClasses, false, { backColor: this.activeTheme.backgroundColor, textColor: this.activeTheme.textColor, shapeColor: this.activeTheme.shapeColor, fillColor: this.activeTheme.fillColor })
+      const umlDot = convertUmlClasses2Dot(this.umlClasses, false, {
+        backColor: this.activeTheme.backgroundColor,
+        textColor: this.activeTheme.textColor,
+        shapeColor: this.activeTheme.shapeColor,
+        fillColor: this.activeTheme.fillColor
+      })
       this.updatedSvg = vizRenderStringSync(umlDot)
       this.renderComponent()
       await this.call('tabs', 'focus', 'solidityumlgen')
@@ -133,12 +159,16 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
    * and assigns to a local property
    * @returns {Promise<string>}
    */
-  async flattenContract (source: any, filePath: string, data: any) {
-    const result = await this.call('contractflattener', 'flattenContract', source, filePath, data)
+  async flattenContract(source: any, filePath: string, data: any) {
+    const result = await this.call(
+      'contractflattener',
+      'flattenContract',
+      source,
+      filePath,
+      data
+    )
     return result
   }
-
-
 
   async showUmlDiagram(svgPayload: string) {
     this.updatedSvg = svgPayload
@@ -150,18 +180,20 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
     this.renderComponent()
   }
 
-  setDispatch (dispatch: React.Dispatch<any>) {
+  setDispatch(dispatch: React.Dispatch<any>) {
     this.dispatch = dispatch
     this.renderComponent()
   }
 
   render() {
-    return <div id='sol-uml-gen'>
-      <PluginViewWrapper plugin={this} />
-    </div>
+    return (
+      <div id="sol-uml-gen">
+        <PluginViewWrapper plugin={this} />
+      </div>
+    )
   }
 
-  renderComponent () {
+  renderComponent() {
     this.dispatch({
       ...this,
       updatedSvg: this.updatedSvg,
@@ -171,23 +203,24 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       themeDark: this.themeDark,
       fileName: this.currentFile,
       themeCollection: this.themeCollection,
-      activeTheme: this.activeTheme,
+      activeTheme: this.activeTheme
     })
   }
 
   updateComponent(state: any) {
-    return <RemixUiSolidityUmlGen
-      updatedSvg={state.updatedSvg}
-      loading={state.loading}
-      themeSelected={state.currentlySelectedTheme}
-      themeName={state.themeName}
-      fileName={state.fileName}
-      themeCollection={state.themeCollection}
-      themeDark={state.themeDark}
-    />
+    return (
+      <RemixUiSolidityUmlGen
+        updatedSvg={state.updatedSvg}
+        loading={state.loading}
+        themeSelected={state.currentlySelectedTheme}
+        themeName={state.themeName}
+        fileName={state.fileName}
+        themeCollection={state.themeCollection}
+        themeDark={state.themeDark}
+      />
+    )
   }
 }
-
 
 interface Sol2umlClassOptions extends ClassOptions {
   backColor?: string
@@ -196,15 +229,15 @@ interface Sol2umlClassOptions extends ClassOptions {
   textColor?: string
 }
 
-import { dirname } from 'path'
-import { convertClass2Dot } from 'sol2uml/lib/converterClass2Dot'
+import {dirname} from 'path'
+import {convertClass2Dot} from 'sol2uml/lib/converterClass2Dot'
 import {
   Association,
   ClassStereotype,
   ReferenceType,
-  UmlClass,
+  UmlClass
 } from 'sol2uml/lib/umlClass'
-import { findAssociatedClass } from 'sol2uml/lib/associations'
+import {findAssociatedClass} from 'sol2uml/lib/associations'
 
 // const debug = require('debug')('sol2uml')
 
@@ -347,20 +380,20 @@ function addAssociationToDot(
   // Or associations to Structs, Enums or Constants if they are hidden
   if (
     (classOptions.hideLibraries &&
-            (sourceUmlClass.stereotype === ClassStereotype.Library ||
-                targetUmlClass.stereotype === ClassStereotype.Library)) ||
-        (classOptions.hideInterfaces &&
-            (targetUmlClass.stereotype === ClassStereotype.Interface ||
-                sourceUmlClass.stereotype === ClassStereotype.Interface)) ||
-        (classOptions.hideAbstracts &&
-            (targetUmlClass.stereotype === ClassStereotype.Abstract ||
-                sourceUmlClass.stereotype === ClassStereotype.Abstract)) ||
-        (classOptions.hideStructs &&
-            targetUmlClass.stereotype === ClassStereotype.Struct) ||
-        (classOptions.hideEnums &&
-            targetUmlClass.stereotype === ClassStereotype.Enum) ||
-        (classOptions.hideConstants &&
-            targetUmlClass.stereotype === ClassStereotype.Constant)
+      (sourceUmlClass.stereotype === ClassStereotype.Library ||
+        targetUmlClass.stereotype === ClassStereotype.Library)) ||
+    (classOptions.hideInterfaces &&
+      (targetUmlClass.stereotype === ClassStereotype.Interface ||
+        sourceUmlClass.stereotype === ClassStereotype.Interface)) ||
+    (classOptions.hideAbstracts &&
+      (targetUmlClass.stereotype === ClassStereotype.Abstract ||
+        sourceUmlClass.stereotype === ClassStereotype.Abstract)) ||
+    (classOptions.hideStructs &&
+      targetUmlClass.stereotype === ClassStereotype.Struct) ||
+    (classOptions.hideEnums &&
+      targetUmlClass.stereotype === ClassStereotype.Enum) ||
+    (classOptions.hideConstants &&
+      targetUmlClass.stereotype === ClassStereotype.Constant)
   ) {
     return ''
   }
@@ -369,8 +402,8 @@ function addAssociationToDot(
 
   if (
     association.referenceType == ReferenceType.Memory ||
-        (association.realization &&
-            targetUmlClass.stereotype === ClassStereotype.Interface)
+    (association.realization &&
+      targetUmlClass.stereotype === ClassStereotype.Interface)
   ) {
     dotString += 'style=dashed, '
   }

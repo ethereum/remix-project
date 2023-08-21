@@ -1,7 +1,7 @@
-import { CustomTooltip } from '@remix-ui/helper'
-import React, { useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
-import { SearchContext } from '../context/context'
+import {CustomTooltip} from '@remix-ui/helper'
+import React, {useContext, useEffect, useState} from 'react'
+import {useIntl} from 'react-intl'
+import {SearchContext} from '../context/context'
 
 export const Find = () => {
   const {
@@ -11,7 +11,7 @@ export const Find = () => {
     state,
     toggleCaseSensitive,
     toggleMatchWholeWord,
-    toggleUseRegex,
+    toggleUseRegex
   } = useContext(SearchContext)
 
   const intl = useIntl()
@@ -40,7 +40,7 @@ export const Find = () => {
           <input
             id="search_input"
             placeholder={intl.formatMessage({
-              id: 'search.placeholder1',
+              id: 'search.placeholder1'
             })}
             className="form-control"
             value={inputValue}
@@ -50,7 +50,7 @@ export const Find = () => {
           <div className="search_plugin_controls">
             <CustomTooltip
               tooltipText={intl.formatMessage({
-                id: 'search.matchCase',
+                id: 'search.matchCase'
               })}
               tooltipClasses="text-nowrap"
               tooltipId="searchCaseSensitiveTooltip"
@@ -72,7 +72,7 @@ export const Find = () => {
             </CustomTooltip>
             <CustomTooltip
               tooltipText={intl.formatMessage({
-                id: 'search.matchWholeWord',
+                id: 'search.matchWholeWord'
               })}
               tooltipClasses="text-nowrap"
               tooltipId="searchWholeWordTooltip"
@@ -94,7 +94,7 @@ export const Find = () => {
             </CustomTooltip>
             <CustomTooltip
               tooltipText={intl.formatMessage({
-                id: 'search.useRegularExpression',
+                id: 'search.useRegularExpression'
               })}
               tooltipClasses="text-nowrap"
               tooltipId="useRegularExpressionTooltip"

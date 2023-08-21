@@ -1,7 +1,7 @@
-import { CustomTooltip } from '@remix-ui/helper'
-import React, { Fragment, Ref } from 'react'
-import { Dropdown } from 'react-bootstrap'
-import { UmlFileType } from '../utilities/UmlDownloadStrategy'
+import {CustomTooltip} from '@remix-ui/helper'
+import React, {Fragment, Ref} from 'react'
+import {Dropdown} from 'react-bootstrap'
+import {UmlFileType} from '../utilities/UmlDownloadStrategy'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -11,7 +11,7 @@ export const Markup = React.forwardRef(
       children,
       onClick,
       icon,
-      className = "",
+      className = ''
     }: {
       children: React.ReactNode
       onClick: (e) => void
@@ -26,7 +26,7 @@ export const Markup = React.forwardRef(
         e.preventDefault()
         onClick(e)
       }}
-      className={className.replace("dropdown-toggle", "")}
+      className={className.replace('dropdown-toggle', '')}
     >
       <i className={icon}></i>
     </button>
@@ -39,12 +39,12 @@ export const UmlCustomMenu = React.forwardRef(
       children,
       style,
       className,
-      "aria-labelledby": labeledBy,
+      'aria-labelledby': labeledBy
     }: {
-      children: React.ReactNode
-      style?: React.CSSProperties
-      className: string
-      "aria-labelledby"?: string
+      'children': React.ReactNode
+      'style'?: React.CSSProperties
+      'className': string
+      'aria-labelledby'?: string
     },
     ref: Ref<HTMLDivElement>
   ) => {
@@ -58,7 +58,7 @@ export const UmlCustomMenu = React.forwardRef(
       >
         <ul
           className="overflow-auto list-unstyled mb-0"
-          style={{ maxHeight: height + "px" }}
+          style={{maxHeight: height + 'px'}}
         >
           {children}
         </ul>
@@ -84,12 +84,12 @@ export default function UmlDownload(props: UmlDownloadProps) {
           <Dropdown.Item
             onClick={() => {
               _paq.push([
-                "trackEvent",
-                "solidityumlgen",
-                "umlpngdownload",
-                "downloadAsPng",
-              ]);
-              props.download("png")
+                'trackEvent',
+                'solidityumlgen',
+                'umlpngdownload',
+                'downloadAsPng'
+              ])
+              props.download('png')
             }}
             data-id="umlPngDownload"
           >
@@ -97,7 +97,7 @@ export default function UmlDownload(props: UmlDownloadProps) {
               placement="left-start"
               tooltipId="solUmlgenDownloadAsPngTooltip"
               tooltipClasses="text-nowrap"
-              tooltipText={"Download UML diagram as a PNG file"}
+              tooltipText={'Download UML diagram as a PNG file'}
             >
               <div data-id="umlPngDownload">
                 <span
@@ -113,12 +113,12 @@ export default function UmlDownload(props: UmlDownloadProps) {
           <Dropdown.Item
             onClick={() => {
               _paq.push([
-                "trackEvent",
-                "solUmlgen",
-                "umlpdfdownload",
-                "downloadAsPdf",
-              ]);
-              props.download("pdf")
+                'trackEvent',
+                'solUmlgen',
+                'umlpdfdownload',
+                'downloadAsPdf'
+              ])
+              props.download('pdf')
             }}
             data-id="umlPdfDownload"
           >
@@ -126,7 +126,7 @@ export default function UmlDownload(props: UmlDownloadProps) {
               placement="left-start"
               tooltipId="solUmlgenDownloadAsPdfTooltip"
               tooltipClasses="text-nowrap"
-              tooltipText={"Download UML diagram as a PDF file"}
+              tooltipText={'Download UML diagram as a PDF file'}
             >
               <div data-id="umlPdfDownload">
                 <span

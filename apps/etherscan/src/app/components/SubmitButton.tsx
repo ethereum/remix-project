@@ -1,5 +1,5 @@
-import React from "react"
-import { CustomTooltip } from '@remix-ui/helper'
+import React from 'react'
+import {CustomTooltip} from '@remix-ui/helper'
 
 interface Props {
   text: string
@@ -23,10 +23,14 @@ export const SubmitButton: React.FC<Props> = ({
         disabled={disable}
       >
         <CustomTooltip
-          tooltipText={disable ? "Fill in the valid value(s) and select a supported network" : "Click to proceed"}
-          tooltipId={'etherscan-submit-button-'+ dataId}
+          tooltipText={
+            disable
+              ? 'Fill in the valid value(s) and select a supported network'
+              : 'Click to proceed'
+          }
+          tooltipId={'etherscan-submit-button-' + dataId}
           tooltipTextClasses="border bg-light text-dark p-1 pr-3"
-          placement='bottom'
+          placement="bottom"
         >
           <div>
             {!isSubmitting && text}

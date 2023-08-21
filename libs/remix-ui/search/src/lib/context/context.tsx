@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { createContext, useReducer } from 'react'
+import React, {useEffect, useRef, useState} from 'react'
+import {createContext, useReducer} from 'react'
 import {
   findLinesInStringWithMatch,
   getDirectory,
   replaceAllInFile,
   replaceTextInLine
 } from '../components/results/SearchHelper'
-import { SearchReducer } from '../reducers/Reducer'
+import {SearchReducer} from '../reducers/Reducer'
 import {
   SearchState,
   SearchResult,
@@ -15,8 +15,8 @@ import {
   SearchingInitialState,
   undoBufferRecord
 } from '../types'
-import { filePathFilter } from '@jsdevtools/file-path-filter'
-import { escapeRegExp } from 'lodash'
+import {filePathFilter} from '@jsdevtools/file-path-filter'
+import {escapeRegExp} from 'lodash'
 
 export interface SearchingStateInterface {
   state: SearchState
@@ -168,7 +168,7 @@ export const SearchProvider = ({
     updateCount: (count: number, file: string) => {
       dispatch({
         type: 'UPDATE_COUNT',
-        payload: { count, file }
+        payload: {count, file}
       })
     },
     setSearching(file: string) {
@@ -203,7 +203,10 @@ export const SearchProvider = ({
           createRegExFromFind()
         )
         clearTimeout(clearSearchingTimeout.current)
-        clearSearchingTimeout.current = setTimeout(() => value.setSearching(null), 500)
+        clearSearchingTimeout.current = setTimeout(
+          () => value.setSearching(null),
+          500
+        )
         return result
       } catch (e) {
         console.log(e)
@@ -311,27 +314,27 @@ export const SearchProvider = ({
   }
 
   useEffect(() => {
-    plugin.on('filePanel', 'setWorkspace', async workspace => {
+    plugin.on('filePanel', 'setWorkspace', async (workspace) => {
       value.setSearchResults(null)
       value.clearUndo()
       value.setCurrentWorkspace(workspace.name)
       setFiles(await getDirectory('/', plugin))
     })
-    plugin.on('fileManager', 'fileSaved', async file => {
+    plugin.on('fileManager', 'fileSaved', async (file) => {
       await reloadStateForFile(file)
       await checkUndoState(file)
     })
-    plugin.on('fileManager', 'rootFolderChanged', async file => {
+    plugin.on('fileManager', 'rootFolderChanged', async (file) => {
       const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
       if (workspace) value.setCurrentWorkspace(workspace.name)
       setFiles(await getDirectory('/', plugin))
     })
 
-    plugin.on('fileManager', 'fileAdded', async file => {
+    plugin.on('fileManager', 'fileAdded', async (file) => {
       setFiles(await getDirectory('/', plugin))
       await reloadStateForFile(file)
     })
-    plugin.on('fileManager', 'currentFileChanged', async file => {
+    plugin.on('fileManager', 'currentFileChanged', async (file) => {
       value.setCurrentFile(file)
       await checkUndoState(file)
     })
@@ -350,7 +353,6 @@ export const SearchProvider = ({
       await fetchWorkspace()
     }, 500)
 
-
     return () => {
       plugin.off('fileManager', 'fileChanged')
       plugin.off('filePanel', 'setWorkspace')
@@ -360,7 +362,7 @@ export const SearchProvider = ({
   //*.sol, **/*.txt, contracts/*
   const setGlobalExpression = (paths: string) => {
     const results = []
-    paths.split(',').forEach(path => {
+    paths.split(',').forEach((path) => {
       path = path.trim()
       if (path.startsWith('*.')) path = path.replace(/(\*\.)/g, '**/*.')
       if (path.endsWith('/*') && !path.endsWith('/**/*'))
@@ -418,7 +420,7 @@ export const SearchProvider = ({
 
   useEffect(() => {
     if (state.find) {
-      (async () => {
+      ;(async () => {
         try {
           const pathFilter: any = {}
           if (state.include) {
@@ -429,7 +431,7 @@ export const SearchProvider = ({
           }
           const filteredFiles = files
             .filter(filePathFilter(pathFilter))
-            .map(file => {
+            .map((file) => {
               const r: SearchResult = {
                 filename: file,
                 lines: [],

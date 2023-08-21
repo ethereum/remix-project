@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, {useState, useEffect} from 'react'
 
-import { VyperCompilationOutput, remixClient } from './utils'
-import { CompilationResult } from '@remixproject/plugin-api'
+import {VyperCompilationOutput, remixClient} from './utils'
+import {CompilationResult} from '@remixproject/plugin-api'
 
 // Components
 import CompilerButton from './components/CompilerButton'
@@ -38,7 +38,7 @@ const App: React.FC = () => {
     async function start() {
       try {
         await remixClient.loaded()
-        remixClient.onFileChange(name => setContract(name))        
+        remixClient.onFileChange((name) => setContract(name))
         remixClient.onNoFileSelected(() => setContract(''))
       } catch (err) {
         console.log(err)
@@ -53,11 +53,11 @@ const App: React.FC = () => {
 
   /** Update the environment state value */
   function setEnvironment(environment: 'local' | 'remote') {
-    setState({ ...state, environment })
+    setState({...state, environment})
   }
 
   function setLocalUrl(url: string) {
-    setState({ ...state, localUrl: url })
+    setState({...state, localUrl: url})
   }
 
   function compilerUrl() {
@@ -78,12 +78,16 @@ const App: React.FC = () => {
           href="https://github.com/ethereum/remix-project/tree/master/apps/vyper"
           target="_blank"
         >
-        <i className="fab fa-github"></i>
+          <i className="fab fa-github"></i>
         </a>
       </header>
       <section>
         <div className="px-4 w-100">
-          <Button data-id="add-repository" className="w-100 text-dark w-100 bg-light btn-outline-primary " onClick={() => remixClient.cloneVyperRepo()}>
+          <Button
+            data-id="add-repository"
+            className="w-100 text-dark w-100 bg-light btn-outline-primary "
+            onClick={() => remixClient.cloneVyperRepo()}
+          >
             Clone Vyper examples repository
           </Button>
         </div>
@@ -93,10 +97,20 @@ const App: React.FC = () => {
           type="radio"
           value={state.environment}
         >
-          <ToggleButton data-id="remote-compiler" variant="secondary" name="remote" value="remote">
+          <ToggleButton
+            data-id="remote-compiler"
+            variant="secondary"
+            name="remote"
+            value="remote"
+          >
             Remote Compiler v0.2.16
           </ToggleButton>
-          <ToggleButton data-id="local-compiler" variant="secondary" name="local" value="local">
+          <ToggleButton
+            data-id="local-compiler"
+            variant="secondary"
+            name="local"
+            value="local"
+          >
             Local Compiler
           </ToggleButton>
         </ToggleButtonGroup>
@@ -110,9 +124,7 @@ const App: React.FC = () => {
           <CompilerButton
             compilerUrl={compilerUrl()}
             contract={contract}
-            setOutput={(name, update) =>
-              setOutput({ ...output, [name]: update })
-            }
+            setOutput={(name, update) => setOutput({...output, [name]: update})}
           />
         </div>
         <article id="result" className="px-2">

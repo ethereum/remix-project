@@ -1,13 +1,18 @@
-import React, { useState } from "react"
+import React, {useState} from 'react'
 
-import { Formik, ErrorMessage, Field } from "formik"
-import { getEtherScanApi, getNetworkName, getReceiptStatus, getProxyContractReceiptStatus } from "../utils"
-import { Receipt } from "../types"
-import { AppContext } from "../AppContext"
-import { SubmitButton } from "../components"
-import { Navigate } from "react-router-dom"
-import { Button } from "react-bootstrap"
-import { CustomTooltip } from '@remix-ui/helper'
+import {Formik, ErrorMessage, Field} from 'formik'
+import {
+  getEtherScanApi,
+  getNetworkName,
+  getReceiptStatus,
+  getProxyContractReceiptStatus
+} from '../utils'
+import {Receipt} from '../types'
+import {AppContext} from '../AppContext'
+import {SubmitButton} from '../components'
+import {Navigate} from 'react-router-dom'
+import {Button} from 'react-bootstrap'
+import {CustomTooltip} from '@remix-ui/helper'
 
 interface FormValues {
   receiptGuid: string
@@ -23,11 +28,11 @@ export const ReceiptsView: React.FC = () => {
     apiKey: string
   ) => {
     try {
-      const { network, networkId } = await getNetworkName(clientInstance)
-      if (network === "vm") {
+      const {network, networkId} = await getNetworkName(clientInstance)
+      if (network === 'vm') {
         setResults({
           succeed: false,
-          message: "Cannot verify in the selected network"
+          message: 'Cannot verify in the selected network'
         })
         return
       }
@@ -51,7 +56,9 @@ export const ReceiptsView: React.FC = () => {
         )
       setResults({
         succeed: result.status === '1' ? true : false,
-        message: result.result || (result.status === '0' ? 'Verification failed' : result.message)
+        message:
+          result.result ||
+          (result.status === '0' ? 'Verification failed' : result.message)
       })
     } catch (error: any) {
       setResults({
@@ -63,21 +70,21 @@ export const ReceiptsView: React.FC = () => {
 
   return (
     <AppContext.Consumer>
-      {({ apiKey, clientInstance, receipts, setReceipts }) => {
+      {({apiKey, clientInstance, receipts, setReceipts}) => {
         return !apiKey ? (
           <Navigate
             to={{
-              pathname: "/settings"
+              pathname: '/settings'
             }}
           />
         ) : (
           <div>
             <Formik
-              initialValues={{ receiptGuid: "" }}
+              initialValues={{receiptGuid: ''}}
               validate={(values) => {
                 const errors = {} as any
                 if (!values.receiptGuid) {
-                  errors.receiptGuid = "Required"
+                  errors.receiptGuid = 'Required'
                 }
                 return errors
               }}
@@ -85,15 +92,15 @@ export const ReceiptsView: React.FC = () => {
                 onGetReceiptStatus(values, clientInstance, apiKey)
               }
             >
-              {({ errors, touched, handleSubmit, handleChange }) => (
+              {({errors, touched, handleSubmit, handleChange}) => (
                 <form onSubmit={handleSubmit}>
                   <div className="form-group mb-2">
                     <label htmlFor="receiptGuid">Receipt GUID</label>
                     <Field
                       className={
                         errors.receiptGuid && touched.receiptGuid
-                          ? "form-control form-control-sm is-invalid"
-                          : "form-control form-control-sm"
+                          ? 'form-control form-control-sm is-invalid'
+                          : 'form-control form-control-sm'
                       }
                       type="text"
                       name="receiptGuid"
@@ -115,37 +122,63 @@ export const ReceiptsView: React.FC = () => {
                         handleChange(e)
                         if (e.target.checked) setIsProxyContractReceipt(true)
                         else setIsProxyContractReceipt(false)
-                    }}
+                      }}
                     />
-                    <label className="form-check-label custom-control-label" htmlFor="isProxyReceipt">It's a proxy contract GUID</label>
+                    <label
+                      className="form-check-label custom-control-label"
+                      htmlFor="isProxyReceipt"
+                    >
+                      It's a proxy contract GUID
+                    </label>
                   </div>
-                  <SubmitButton text="Check" disable = {!touched.receiptGuid || (touched.receiptGuid && errors.receiptGuid) ? true : false} />
+                  <SubmitButton
+                    text="Check"
+                    disable={
+                      !touched.receiptGuid ||
+                      (touched.receiptGuid && errors.receiptGuid)
+                        ? true
+                        : false
+                    }
+                  />
                 </form>
               )}
             </Formik>
 
             <div
-              className={results['succeed'] ? "text-success mt-3 text-center" : "text-danger mt-3 text-center"}
-              dangerouslySetInnerHTML={{ __html: results.message ? results.message : '' }}
+              className={
+                results['succeed']
+                  ? 'text-success mt-3 text-center'
+                  : 'text-danger mt-3 text-center'
+              }
+              dangerouslySetInnerHTML={{
+                __html: results.message ? results.message : ''
+              }}
             />
 
-            <ReceiptsTable receipts={receipts} /><br/>
+            <ReceiptsTable receipts={receipts} />
+            <br />
             <CustomTooltip
               tooltipText="Clear the list of receipts"
-              tooltipId='etherscan-clear-receipts'
-              placement='bottom'
+              tooltipId="etherscan-clear-receipts"
+              placement="bottom"
             >
-              <Button className="btn-sm" onClick={() => { setReceipts([]) }} >Clear</Button>
+              <Button
+                className="btn-sm"
+                onClick={() => {
+                  setReceipts([])
+                }}
+              >
+                Clear
+              </Button>
             </CustomTooltip>
           </div>
         )
-      }
-      }
+      }}
     </AppContext.Consumer>
   )
 }
 
-const ReceiptsTable: React.FC<{ receipts: Receipt[] }> = ({ receipts }) => {
+const ReceiptsTable: React.FC<{receipts: Receipt[]}> = ({receipts}) => {
   return (
     <div className="table-responsive">
       <h6>Receipts</h6>
@@ -162,20 +195,35 @@ const ReceiptsTable: React.FC<{ receipts: Receipt[] }> = ({ receipts }) => {
             receipts.map((item: Receipt, index) => {
               return (
                 <tr key={item.guid}>
-                  <td className={(item.status === 'Pass - Verified' || item.status === 'Successfully Updated')
-                  ? 'text-success' : (item.status === 'Pending in queue' 
-                  ? 'text-warning' : (item.status === 'Already Verified'
-                  ? 'text-info': 'text-secondary'))}>
-                    {item.status}
-                    {item.status === 'Successfully Updated' && <CustomTooltip
-                      placement={'bottom'}
-                      tooltipClasses="text-wrap"
-                      tooltipId="etherscan-receipt-proxy-status"
-                      tooltipText={item.message}
-                    >
-                      <i style={{ fontSize: 'small' }} className={'ml-1 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
-                    </CustomTooltip>
+                  <td
+                    className={
+                      item.status === 'Pass - Verified' ||
+                      item.status === 'Successfully Updated'
+                        ? 'text-success'
+                        : item.status === 'Pending in queue'
+                          ? 'text-warning'
+                          : item.status === 'Already Verified'
+                            ? 'text-info'
+                            : 'text-secondary'
                     }
+                  >
+                    {item.status}
+                    {item.status === 'Successfully Updated' && (
+                      <CustomTooltip
+                        placement={'bottom'}
+                        tooltipClasses="text-wrap"
+                        tooltipId="etherscan-receipt-proxy-status"
+                        tooltipText={item.message}
+                      >
+                        <i
+                          style={{fontSize: 'small'}}
+                          className={
+                            'ml-1 fal fa-info-circle align-self-center'
+                          }
+                          aria-hidden="true"
+                        ></i>
+                      </CustomTooltip>
+                    )}
                   </td>
                   <td>{item.guid}</td>
                 </tr>

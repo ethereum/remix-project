@@ -1,11 +1,11 @@
-import React, { useContext } from 'react'
-import { FormattedMessage } from 'react-intl'
-import { SearchContext } from '../context/context'
+import React, {useContext} from 'react'
+import {FormattedMessage} from 'react-intl'
+import {SearchContext} from '../context/context'
 
-export const OverWriteCheck = props => {
-  const { setReplaceWithoutConfirmation, state } = useContext(SearchContext)
+export const OverWriteCheck = (props) => {
+  const {setReplaceWithoutConfirmation, state} = useContext(SearchContext)
 
-  const change = e => {
+  const change = (e) => {
     setReplaceWithoutConfirmation(e.target.checked)
   }
 
@@ -25,7 +25,7 @@ export const OverWriteCheck = props => {
               data-id="confirm_replace_label"
               className="form-check-label custom-control-label"
             >
-              <FormattedMessage id='search.replaceWithoutConfirmation' />
+              <FormattedMessage id="search.replaceWithoutConfirmation" />
             </label>
           </div>
         </div>

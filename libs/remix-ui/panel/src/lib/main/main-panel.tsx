@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-expressions */
-import React, { useContext, useEffect, useRef, useState } from 'react' // eslint-disable-line
+import React, {useContext, useEffect, useRef, useState} from 'react' // eslint-disable-line
 import DragBar from '../dragbar/dragbar'
 import RemixUIPanelPlugin from '../plugins/panel-plugin'
-import { PluginRecord } from '../types'
+import {PluginRecord} from '../types'
 import './main-panel.css'
 
 export type RemixUIMainPanelProps = {
@@ -26,8 +26,14 @@ const RemixUIMainPanel = (props: RemixUIMainPanelProps) => {
         pluginPanels.push({
           profile: panel.plugin.profile,
           active: panel.active,
-          view: panel.plugin.profile.name === 'tabs' ? panel.plugin.renderTabsbar() : panel.plugin.render(),
-          class: panel.plugin.profile.name + '-wrap ' + (panel.minimized ? 'minimized' : ''),
+          view:
+            panel.plugin.profile.name === 'tabs'
+              ? panel.plugin.renderTabsbar()
+              : panel.plugin.render(),
+          class:
+            panel.plugin.profile.name +
+            '-wrap ' +
+            (panel.minimized ? 'minimized' : ''),
           minimized: panel.minimized
         })
       })
@@ -57,7 +63,14 @@ const RemixUIMainPanel = (props: RemixUIMainPanelProps) => {
       {Object.values(plugins).map((pluginRecord, i) => {
         return (
           <React.Fragment key={`mainView${i}`}>
-            {(pluginRecord.profile.name === 'terminal') ? <DragBar key='dragbar-terminal' hidden={pluginRecord.minimized || false} setHideStatus={showTerminal} refObject={terminalRef}></DragBar> : null}
+            {pluginRecord.profile.name === 'terminal' ? (
+              <DragBar
+                key="dragbar-terminal"
+                hidden={pluginRecord.minimized || false}
+                setHideStatus={showTerminal}
+                refObject={terminalRef}
+              ></DragBar>
+            ) : null}
             <RemixUIPanelPlugin
               ref={refs[i]}
               key={pluginRecord.profile.name}
