@@ -104,6 +104,7 @@ export class CircomPluginClient extends PluginClient {
     depPath: string = '',
     blackPath: string[] = []
   ): Promise<Record<string, string>> {
+    // extract all includes
     const includes = (fileContent.match(/include ['"].*['"]/g) || []).map(
       (include) => include.replace(/include ['"]/g, '').replace(/['"]/g, '')
     )
@@ -118,8 +119,10 @@ export class CircomPluginClient extends PluginClient {
         const pathExists = await this.call('fileManager', 'exists', path)
 
         if (pathExists) {
+          // fetch file content if include import (path) exists within same level as current file opened in editor
           dependencyContent = await this.call('fileManager', 'readFile', path)
         } else {
+          // if include import (path) does not exist, try to construct relative path using the original file path (current file opened in editor)
           let relativePath = pathModule.resolve(
             filePath.slice(0, filePath.lastIndexOf('/')),
             include
@@ -134,6 +137,7 @@ export class CircomPluginClient extends PluginClient {
           )
 
           if (relativePathExists) {
+            // fetch file content if include import exists as a relative path
             dependencyContent = await this.call(
               'fileManager',
               'readFile',
@@ -141,6 +145,7 @@ export class CircomPluginClient extends PluginClient {
             )
           } else {
             if (depPath) {
+              // if depPath is provided, try to resolve include import from './deps' folder in remix
               path = pathModule.resolve(
                 depPath.slice(0, depPath.lastIndexOf('/')),
                 include
@@ -154,6 +159,7 @@ export class CircomPluginClient extends PluginClient {
               )
             } else {
               if (include.startsWith('circomlib')) {
+                // try to resolve include import from github if it is a circomlib dependency
                 const splitInclude = include.split('/')
                 const version = splitInclude[1].match(/v[0-9]+.[0-9]+.[0-9]+/g)
 
@@ -179,6 +185,7 @@ export class CircomPluginClient extends PluginClient {
                   )
                 }
               } else {
+                // If all import cases are not true, use the default import to try fetching from node_modules and unpkg
                 dependencyContent = await this.call(
                   'contentImport',
                   'resolveAndSave',
@@ -189,6 +196,7 @@ export class CircomPluginClient extends PluginClient {
             }
           }
         }
+        // extract all includes from the dependency content
         const dependencyIncludes = (
           dependencyContent.match(/include ['"].*['"]/g) || []
         ).map((include) =>
@@ -196,6 +204,7 @@ export class CircomPluginClient extends PluginClient {
         )
 
         blackPath.push(include)
+        // recursively resolve all dependencies of the dependency
         if (dependencyIncludes.length > 0) {
           await this.resolveDependencies(
             filePath,
