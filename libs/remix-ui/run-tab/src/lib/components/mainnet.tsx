@@ -1,10 +1,10 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect, useState } from 'react'
-import { CopyToClipboard } from '@remix-ui/clipboard'
-import { fromWei, toBigInt, toWei } from 'web3-utils'
-import { MainnetProps } from '../types'
+import React, {useEffect, useState} from 'react'
+import {CopyToClipboard} from '@remix-ui/clipboard'
+import {fromWei, toBigInt, toWei} from 'web3-utils'
+import {MainnetProps} from '../types'
 
-export function MainnetPrompt (props: MainnetProps) {
+export function MainnetPrompt(props: MainnetProps) {
   const [baseFee, setBaseFee] = useState<string>('')
   const [transactionFee, setTransactionFee] = useState<string>('')
 
@@ -64,8 +64,10 @@ export function MainnetPrompt (props: MainnetProps) {
 
   return (
     <div>
-      <div className="text-dark">You are about to create a transaction on {props.network.name} Network. Confirm the details to send the info to your provider.
-        <br />The provider for many users is MetaMask. The provider will ask you to sign the transaction before it is sent to {props.network.name} Network.
+      <div className="text-dark">
+        You are about to create a transaction on {props.network.name} Network. Confirm the details to send the info to your provider.
+        <br />
+        The provider for many users is MetaMask. The provider will ask you to sign the transaction before it is sent to {props.network.name} Network.
       </div>
       <div className="mt-3">
         <div>
@@ -78,7 +80,8 @@ export function MainnetPrompt (props: MainnetProps) {
         </div>
         <div className="d-flex align-items-center">
           <span className="text-dark mr-2">Data:</span>
-          <pre className="udapp_wrapword mb-0">{props.tx.data && props.tx.data.length > 50 ? props.tx.data.substring(0, 49) + '...' : props.tx.data}
+          <pre className="udapp_wrapword mb-0">
+            {props.tx.data && props.tx.data.length > 50 ? props.tx.data.substring(0, 49) + '...' : props.tx.data}
             <CopyToClipboard content={props.tx.data} />
           </pre>
         </div>
@@ -94,39 +97,61 @@ export function MainnetPrompt (props: MainnetProps) {
           <span className="text-dark mr-2">Gas limit:</span>
           <span>{props.tx.gas}</span>
         </div>
-        {
-          props.network.lastBlock.baseFeePerGas
-            ? <div>
-              <div className="align-items-center my-1" title="Represents the part of the tx fee that goes to the miner.">
-                <div className='d-flex'>
-                  <span className="text-dark mr-2 text-nowrap">Max Priority fee:</span>
-                  <input className="form-control mr-1 text-right" style={{ height: '1.2rem', width: '6rem' }} id='maxpriorityfee' onInput={(e: any) => onMaxPriorityFeeChange(e.target.value)} defaultValue={props.maxPriorityFee} />
-                  <span title="visit https://ethgasstation.info for current gas price info.">Gwei</span>
-                </div>
-              </div>
-              <div className="align-items-center my-1" title="Represents the maximum amount of fee that you will pay for this transaction. The minimun needs to be set to base fee.">
-                <div className='d-flex'>
-                  <span className="text-dark mr-2 text-nowrap">Max fee (Not less than base fee {fromWei(toBigInt(props.network.lastBlock.baseFeePerGas), 'Gwei')} Gwei):</span>
-                  <input className="form-control mr-1 text-right" style={{ height: '1.2rem', width: '6rem' }} id='maxfee' onInput={(e: any) => onMaxFeeChange(e.target.value)} defaultValue={baseFee} />
-                  <span>Gwei</span>
-                  <span className="text-dark ml-2"></span>
-                </div>
+        {props.network.lastBlock.baseFeePerGas ? (
+          <div>
+            <div className="align-items-center my-1" title="Represents the part of the tx fee that goes to the miner.">
+              <div className="d-flex">
+                <span className="text-dark mr-2 text-nowrap">Max Priority fee:</span>
+                <input
+                  className="form-control mr-1 text-right"
+                  style={{height: '1.2rem', width: '6rem'}}
+                  id="maxpriorityfee"
+                  onInput={(e: any) => onMaxPriorityFeeChange(e.target.value)}
+                  defaultValue={props.maxPriorityFee}
+                />
+                <span title="visit https://ethgasstation.info for current gas price info.">Gwei</span>
               </div>
             </div>
-            : <div className="d-flex align-items-center my-1">
-              <span className="text-dark mr-2 text-nowrap">Gas price:</span>
-              <input className="form-control mr-1 text-right" style={{ width: '40px', height: '28px' }} id='gasprice' onInput={(e: any) => onGasPriceChange(e.target.value)} />
-              <span>Gwei (visit <a target='_blank' href='https://ethgasstation.info' rel="noreferrer">ethgasstation.info</a> for current gas price info.)</span>
+            <div className="align-items-center my-1" title="Represents the maximum amount of fee that you will pay for this transaction. The minimun needs to be set to base fee.">
+              <div className="d-flex">
+                <span className="text-dark mr-2 text-nowrap">Max fee (Not less than base fee {fromWei(toBigInt(props.network.lastBlock.baseFeePerGas), 'Gwei')} Gwei):</span>
+                <input
+                  className="form-control mr-1 text-right"
+                  style={{height: '1.2rem', width: '6rem'}}
+                  id="maxfee"
+                  onInput={(e: any) => onMaxFeeChange(e.target.value)}
+                  defaultValue={baseFee}
+                />
+                <span>Gwei</span>
+                <span className="text-dark ml-2"></span>
+              </div>
             </div>
-        }
+          </div>
+        ) : (
+          <div className="d-flex align-items-center my-1">
+            <span className="text-dark mr-2 text-nowrap">Gas price:</span>
+            <input className="form-control mr-1 text-right" style={{width: '40px', height: '28px'}} id="gasprice" onInput={(e: any) => onGasPriceChange(e.target.value)} />
+            <span>
+              Gwei (visit{' '}
+              <a target="_blank" href="https://ethgasstation.info" rel="noreferrer">
+                ethgasstation.info
+              </a>{' '}
+              for current gas price info.)
+            </span>
+          </div>
+        )}
         <div className="mb-3">
           <span className="text-dark mr-2">Max transaction fee:</span>
-          <span className="text-warning" id='txfee'>{ transactionFee }</span>
+          <span className="text-warning" id="txfee">
+            {transactionFee}
+          </span>
         </div>
       </div>
       <div className="d-flex py-1 align-items-center custom-control custom-checkbox remixui_checkbox">
         <input className="form-check-input custom-control-input" id="confirmsetting" type="checkbox" />
-        <label className="m-0 form-check-label custom-control-label" htmlFor="confirmsetting">Do not show this warning again.</label>
+        <label className="m-0 form-check-label custom-control-label" htmlFor="confirmsetting">
+          Do not show this warning again.
+        </label>
       </div>
     </div>
   )
