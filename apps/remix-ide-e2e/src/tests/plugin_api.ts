@@ -31,12 +31,7 @@ const debugValues = async function (browser: NightwatchBrowser, field: string, e
       return
     }
     browser.waitForElementVisible(`//*[@id="${field}"]`).getText(`//*[@id="${field}"]`, (result) => {
-      console.log(result)
       if (!result.value.toString().includes(expected)) {
-        console.log('Actual result:')
-        console.log(result.value.toString())
-        console.log('Expected result:')
-        console.log(expected)
         getBrowserLogs(browser)
         browser.assert.ok(false, 'Returned value from call does not match expected value.')
       } else {
@@ -178,9 +173,9 @@ module.exports = {
   },
 
   // UDAPP
-  // 'Should get accounts #group1': async function (browser: NightwatchBrowser) {
-  //   await clickAndCheckLog(browser, 'udapp:getAccounts', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', null, null)
-  // },
+  'Should get accounts #group1': async function (browser: NightwatchBrowser) {
+    await clickAndCheckLog(browser, 'udapp:getAccounts', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4', null, null)
+  },
 
   'Should select another provider #group1': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'udapp:setEnvironmentMode', null, null, { context: 'vm-berlin' })
