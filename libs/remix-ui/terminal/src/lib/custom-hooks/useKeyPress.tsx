@@ -1,16 +1,16 @@
-import React, {useEffect, useState}  from "react" // eslint-disable-line
+import React, {useEffect, useState} from 'react' // eslint-disable-line
 
 export const useKeyPress = (targetKey: string): boolean => {
-// State for keeping track of whether key is pressed
+  // State for keeping track of whether key is pressed
   const [keyPressed, setKeyPressed] = useState(false)
   // If pressed key is our target key then set to true
-  function downHandler ({ key }): void {
+  function downHandler({key}): void {
     if (key === targetKey) {
       setKeyPressed(true)
     }
   }
   // If released key is our target key then set to false
-  const upHandler = ({ key }): void => {
+  const upHandler = ({key}): void => {
     if (key === targetKey) {
       setKeyPressed(false)
     }

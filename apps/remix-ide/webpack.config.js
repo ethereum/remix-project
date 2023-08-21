@@ -1,11 +1,11 @@
-const { composePlugins, withNx } = require('@nrwl/webpack')
-const { withReact } = require('@nrwl/react')
+const {composePlugins, withNx} = require('@nrwl/webpack')
+const {withReact} = require('@nrwl/react')
 const webpack = require('webpack')
-const CopyPlugin = require("copy-webpack-plugin")
+const CopyPlugin = require('copy-webpack-plugin')
 const version = require('../../package.json').version
 const fs = require('fs')
-const TerserPlugin = require("terser-webpack-plugin")
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
+const TerserPlugin = require('terser-webpack-plugin')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const axios = require('axios')
 
 const versionData = {
@@ -16,7 +16,7 @@ const versionData = {
 
 const loadLocalSolJson = async () => {
   // execute apps/remix-ide/ci/downloadsoljson.sh
-  const child = require('child_process').execSync('bash ./apps/remix-ide/ci/downloadsoljson.sh', { encoding: 'utf8', cwd: process.cwd(), shell: true })
+  const child = require('child_process').execSync('bash ./apps/remix-ide/ci/downloadsoljson.sh', {encoding: 'utf8', cwd: process.cwd(), shell: true})
   // show output
   console.log(child)
 }
@@ -32,9 +32,8 @@ const implicitDependencies = JSON.parse(project).implicitDependencies
 const copyPatterns = implicitDependencies.map((dep) => {
   try {
     fs.statSync(__dirname + `/../../dist/apps/${dep}`).isDirectory()
-    return { from: `../../dist/apps/${dep}`, to: `plugins/${dep}` }
-  }
-  catch (e) {
+    return {from: `../../dist/apps/${dep}`, to: `plugins/${dep}`}
+  } catch (e) {
     console.log('error', e)
     return false
   }
@@ -50,30 +49,29 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   // add fallback for node modules
   config.resolve.fallback = {
     ...config.resolve.fallback,
-    "crypto": require.resolve("crypto-browserify"),
-    "stream": require.resolve("stream-browserify"),
-    "path": require.resolve("path-browserify"),
-    "http": require.resolve("stream-http"),
-    "https": require.resolve("https-browserify"),
-    "constants": require.resolve("constants-browserify"),
-    "os": false, //require.resolve("os-browserify/browser"),
-    "timers": false, // require.resolve("timers-browserify"),
-    "zlib": require.resolve("browserify-zlib"),
-    "fs": false,
-    "module": false,
-    "tls": false,
-    "net": false,
-    "readline": false,
-    "child_process": false,
-    "buffer": require.resolve("buffer/"),
-    "vm": require.resolve('vm-browserify'),
+    crypto: require.resolve('crypto-browserify'),
+    stream: require.resolve('stream-browserify'),
+    path: require.resolve('path-browserify'),
+    http: require.resolve('stream-http'),
+    https: require.resolve('https-browserify'),
+    constants: require.resolve('constants-browserify'),
+    os: false, //require.resolve("os-browserify/browser"),
+    timers: false, // require.resolve("timers-browserify"),
+    zlib: require.resolve('browserify-zlib'),
+    fs: false,
+    module: false,
+    tls: false,
+    net: false,
+    readline: false,
+    child_process: false,
+    buffer: require.resolve('buffer/'),
+    vm: require.resolve('vm-browserify')
   }
-
 
   // add externals
   config.externals = {
     ...config.externals,
-    solc: 'solc',
+    solc: 'solc'
   }
 
   // add public path
@@ -83,12 +81,14 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   config.output.filename = `[name].${versionData.version}.${versionData.timestamp}.js`
   config.output.chunkFilename = `[name].${versionData.version}.${versionData.timestamp}.js`
 
-
   // add copy & provide plugin
   config.plugins.push(
     new CopyPlugin({
       patterns: [
-        { from: '../../node_modules/monaco-editor/min/vs', to: 'assets/js/monaco-editor/min/vs' },
+        {
+          from: '../../node_modules/monaco-editor/min/vs',
+          to: 'assets/js/monaco-editor/min/vs'
+        },
         ...copyPatterns
       ].filter(Boolean)
     }),
@@ -96,15 +96,15 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     new webpack.ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
       url: ['url', 'URL'],
-      process: 'process/browser',
+      process: 'process/browser'
     })
   )
 
   // souce-map loader
   config.module.rules.push({
     test: /\.js$/,
-    use: ["source-map-loader"],
-    enforce: "pre"
+    use: ['source-map-loader'],
+    enforce: 'pre'
   })
 
   config.ignoreWarnings = [/Failed to parse source map/, /require function/] // ignore source-map-loader warnings & AST warnings
@@ -118,23 +118,23 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
         compress: false,
         mangle: false,
         format: {
-          comments: false,
-        },
+          comments: false
+        }
       },
-      extractComments: false,
+      extractComments: false
     }),
-    new CssMinimizerPlugin(),
-  ];
+    new CssMinimizerPlugin()
+  ]
 
   config.watchOptions = {
     ignored: /node_modules/
   }
 
-  return config;
-});
+  return config
+})
 
 class CopyFileAfterBuild {
-  apply(compiler) {   
+  apply(compiler) {
     const onEnd = async () => {
       try {
         console.log('runnning CopyFileAfterBuild')
@@ -142,17 +142,15 @@ class CopyFileAfterBuild {
         // This is needed because by default the etherscan resources are served from the /plugins/etherscan/ folder,
         // but the raw-loader try to access the resources from the root folder.
         const files = fs.readdirSync('./dist/apps/etherscan')
-        files.forEach(file => {
+        files.forEach((file) => {
           if (file.includes('plugin-etherscan')) {
             fs.copyFileSync('./dist/apps/etherscan/' + file, './dist/apps/remix-ide/' + file)
-          }        
+          }
         })
       } catch (e) {
         console.error('running CopyFileAfterBuild failed with error: ' + e.message)
-      }      
+      }
     }
-    compiler.hooks.afterEmit.tapPromise('FileManagerPlugin', onEnd);
+    compiler.hooks.afterEmit.tapPromise('FileManagerPlugin', onEnd)
   }
 }
-
-

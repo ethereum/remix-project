@@ -1,13 +1,8 @@
-import React from "react"
-import {
-  HashRouter as Router,
-  Route,
-  Routes,
-  RouteProps,
-} from "react-router-dom"
+import React from 'react'
+import {HashRouter as Router, Route, Routes, RouteProps} from 'react-router-dom'
 
-import { ErrorView, HomeView, ReceiptsView, CaptureKeyView } from "./views"
-import { DefaultLayout } from "./layouts"
+import {ErrorView, HomeView, ReceiptsView, CaptureKeyView} from './views'
+import {DefaultLayout} from './layouts'
 
 interface Props extends RouteProps {
   component: any // TODO: new (props: any) => React.Component
@@ -16,7 +11,7 @@ interface Props extends RouteProps {
 
 export const DisplayRoutes = () => (
   <Router>
-    <Routes>    
+    <Routes>
       <Route
         path="/"
         element={
@@ -25,8 +20,7 @@ export const DisplayRoutes = () => (
           </DefaultLayout>
         }
       />
-      <Route path="/error"
-      element={<ErrorView />} />
+      <Route path="/error" element={<ErrorView />} />
       <Route
         path="/receipts"
         element={

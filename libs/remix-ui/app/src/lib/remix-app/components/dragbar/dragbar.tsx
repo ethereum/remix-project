@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import Draggable from 'react-draggable'
 import './dragbar.css'
 
 interface IRemixDragBarUi {
-  refObject: React.MutableRefObject<any>;
-  setHideStatus: (hide: boolean) => void;
+  refObject: React.MutableRefObject<any>
+  setHideStatus: (hide: boolean) => void
   hidden: boolean
   minWidth: number
   maximiseTrigger: number
@@ -53,8 +53,7 @@ const DragBar = (props: IRemixDragBarUi) => {
   useEffect(() => {
     window.addEventListener('resize', handleResize)
     // TODO: not a good way to wait on the ref doms element to be rendered of course
-    setTimeout(() =>
-      handleResize(), 2000)
+    setTimeout(() => handleResize(), 2000)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
@@ -64,7 +63,7 @@ const DragBar = (props: IRemixDragBarUi) => {
       setDragBarPosX(offset)
       props.setHideStatus(true)
     } else {
-      props.refObject.current.style.width = (data.x - offset) + 'px'
+      props.refObject.current.style.width = data.x - offset + 'px'
       setTimeout(() => {
         props.setHideStatus(false)
         setDragBarPosX(offset + props.refObject.current.offsetWidth)
@@ -75,12 +74,14 @@ const DragBar = (props: IRemixDragBarUi) => {
   function startDrag() {
     setDragState(true)
   }
-  return <>
-    <div className={`overlay ${dragState ? '' : 'd-none'}`} ></div>
-    <Draggable nodeRef={nodeRef} position={{ x: dragBarPosX, y: 0 }} onStart={startDrag} onStop={stopDrag} axis="x">
-      <div ref={nodeRef} className={`dragbar ${dragState ? 'ondrag' : ''}`}></div>
-    </Draggable>
-  </>
+  return (
+    <>
+      <div className={`overlay ${dragState ? '' : 'd-none'}`}></div>
+      <Draggable nodeRef={nodeRef} position={{x: dragBarPosX, y: 0}} onStart={startDrag} onStop={stopDrag} axis="x">
+        <div ref={nodeRef} className={`dragbar ${dragState ? 'ondrag' : ''}`}></div>
+      </Draggable>
+    </>
+  )
 }
 
 export default DragBar
