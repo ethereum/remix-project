@@ -1,5 +1,5 @@
 import * as packageJson from '../../../../../package.json'
-import { InjectedL2Provider } from './injected-L2-provider'
+import {InjectedL2Provider} from './injected-L2-provider'
 
 const profile = {
   name: 'injected-optimism-provider',
@@ -11,8 +11,7 @@ const profile = {
 }
 
 export class Injected0ptimismProvider extends InjectedL2Provider {
-    
-  constructor () {
+  constructor() {
     super(profile, 'Optimism', '0xa', ['https://mainnet.optimism.io'])
   }
 }

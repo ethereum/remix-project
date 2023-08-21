@@ -1,7 +1,7 @@
 import React from 'react' // eslint-disable-line
-import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
-import { shortenHexData } from '@remix-ui/helper'
-import { execution } from '@remix-project/remix-lib'
+import {CopyToClipboard} from '@remix-ui/clipboard' // eslint-disable-line
+import {shortenHexData} from '@remix-ui/helper'
+import {execution} from '@remix-project/remix-lib'
 const typeConversion = execution.typeConversion
 
 const showTable = (opts, showTableHash) => {
@@ -35,22 +35,14 @@ const showTable = (opts, showTableHash) => {
   }
   const val = opts.val != null ? typeConversion.toInt(opts.val) : 0
   return (
-    <table
-      className={`mt-1 mb-2 mr-4  align-self-center ${showTableHash.includes(opts.hash) ? 'active' : ''}`}
-      id="txTable"
-      data-id={`txLoggerTable${opts.hash}`}
-    >
+    <table className={`mt-1 mb-2 mr-4  align-self-center ${showTableHash.includes(opts.hash) ? 'active' : ''}`} id="txTable" data-id={`txLoggerTable${opts.hash}`}>
       <tbody>
         {opts.status !== undefined ? (
           <tr className="remix_ui_terminal_tr">
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               status
             </td>
-            <td
-              className="remix_ui_terminal_td"
-              data-id={`txLoggerTableStatus${opts.hash}`}
-              data-shared={`pair_${opts.hash}`}
-            >{`${opts.status} ${msg}`}</td>
+            <td className="remix_ui_terminal_td" data-id={`txLoggerTableStatus${opts.hash}`} data-shared={`pair_${opts.hash}`}>{`${opts.status} ${msg}`}</td>
           </tr>
         ) : null}
         {opts.hash && !opts.isCall ? (
@@ -58,11 +50,7 @@ const showTable = (opts, showTableHash) => {
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               transaction hash
             </td>
-            <td
-              className="remix_ui_terminal_td"
-              data-id={`txLoggerTableHash${opts.hash}`}
-              data-shared={`pair_${opts.hash}`}
-            >
+            <td className="remix_ui_terminal_td" data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>
               {opts.hash}
               <CopyToClipboard content={opts.hash} />
             </td>
@@ -73,11 +61,7 @@ const showTable = (opts, showTableHash) => {
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               block hash
             </td>
-            <td
-              className="remix_ui_terminal_td"
-              data-id={`txLoggerTableContractAddress${opts.hash}`}
-              data-shared={`pair_${opts.hash}`}
-            >
+            <td className="remix_ui_terminal_td" data-id={`txLoggerTableContractAddress${opts.hash}`} data-shared={`pair_${opts.hash}`}>
               {opts.blockHash}
               <CopyToClipboard content={opts.blockHash} />
             </td>
@@ -88,11 +72,7 @@ const showTable = (opts, showTableHash) => {
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               block number
             </td>
-            <td
-              className="remix_ui_terminal_td"
-              data-id={`txLoggerTableContractAddress${opts.hash}`}
-              data-shared={`pair_${opts.hash}`}
-            >
+            <td className="remix_ui_terminal_td" data-id={`txLoggerTableContractAddress${opts.hash}`} data-shared={`pair_${opts.hash}`}>
               {opts.blockNumber}
               <CopyToClipboard content={opts.blockNumber} />
             </td>
@@ -103,11 +83,7 @@ const showTable = (opts, showTableHash) => {
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               contract address
             </td>
-            <td
-              className="remix_ui_terminal_td"
-              data-id={`txLoggerTableContractAddress${opts.hash}`}
-              data-shared={`pair_${opts.hash}`}
-            >
+            <td className="remix_ui_terminal_td" data-id={`txLoggerTableContractAddress${opts.hash}`} data-shared={`pair_${opts.hash}`}>
               {opts.contractAddress}
               <CopyToClipboard content={opts.contractAddress} />
             </td>
@@ -118,11 +94,7 @@ const showTable = (opts, showTableHash) => {
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               from
             </td>
-            <td
-              className="remix_ui_terminal_td"
-              data-id={`txLoggerTableFrom${opts.hash}`}
-              data-shared={`pair_${opts.hash}`}
-            >
+            <td className="remix_ui_terminal_td" data-id={`txLoggerTableFrom${opts.hash}`} data-shared={`pair_${opts.hash}`}>
               {opts.from}
               <CopyToClipboard content={opts.from} />
             </td>
@@ -133,11 +105,7 @@ const showTable = (opts, showTableHash) => {
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               to
             </td>
-            <td
-              className="remix_ui_terminal_td"
-              data-id={`txLoggerTableTo${opts.hash}`}
-              data-shared={`pair_${opts.hash}`}
-            >
+            <td className="remix_ui_terminal_td" data-id={`txLoggerTableTo${opts.hash}`} data-shared={`pair_${opts.hash}`}>
               {toHash}
               <CopyToClipboard content={data.to ? data.to : toHash} />
             </td>
@@ -148,11 +116,7 @@ const showTable = (opts, showTableHash) => {
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               gas
             </td>
-            <td
-              className="remix_ui_terminal_td"
-              data-id={`txLoggerTableGas${opts.hash}`}
-              data-shared={`pair_${opts.hash}`}
-            >
+            <td className="remix_ui_terminal_td" data-id={`txLoggerTableGas${opts.hash}`} data-shared={`pair_${opts.hash}`}>
               {opts.gas} gas
               <CopyToClipboard content={opts.gas} />
             </td>
@@ -163,11 +127,7 @@ const showTable = (opts, showTableHash) => {
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               transaction cost
             </td>
-            <td
-              className="remix_ui_terminal_td"
-              data-id={`txLoggerTableTransactionCost${opts.hash}`}
-              data-shared={`pair_${opts.hash}`}
-            >
+            <td className="remix_ui_terminal_td" data-id={`txLoggerTableTransactionCost${opts.hash}`} data-shared={`pair_${opts.hash}`}>
               {opts.transactionCost} gas {callWarning}
               <CopyToClipboard content={opts.transactionCost} />
             </td>
@@ -178,11 +138,7 @@ const showTable = (opts, showTableHash) => {
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               execution cost
             </td>
-            <td
-              className="remix_ui_terminal_td"
-              data-id={`txLoggerTableExecutionHash${opts.hash}`}
-              data-shared={`pair_${opts.hash}`}
-            >
+            <td className="remix_ui_terminal_td" data-id={`txLoggerTableExecutionHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>
               {opts.executionCost} gas {callWarning}
               <CopyToClipboard content={opts.executionCost} />
             </td>
@@ -193,11 +149,7 @@ const showTable = (opts, showTableHash) => {
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               input
             </td>
-            <td
-              className="remix_ui_terminal_td"
-              data-id={`txLoggerTableHash${opts.hash}`}
-              data-shared={`pair_${opts.hash}`}
-            >
+            <td className="remix_ui_terminal_td" data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>
               {shortenHexData(opts.input)}
               <CopyToClipboard content={opts.input} />
             </td>
@@ -208,11 +160,7 @@ const showTable = (opts, showTableHash) => {
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               decoded input
             </td>
-            <td
-              className="remix_ui_terminal_td"
-              data-id={`txLoggerTableHash${opts.hash}`}
-              data-shared={`pair_${opts.hash}`}
-            >
+            <td className="remix_ui_terminal_td" data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>
               {opts['decoded input'].trim()}
               <CopyToClipboard content={opts['decoded input']} />
             </td>
@@ -223,11 +171,7 @@ const showTable = (opts, showTableHash) => {
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               decoded output
             </td>
-            <td
-              className="remix_ui_terminal_td"
-              data-id={`txLoggerTableHash${opts.hash}`}
-              data-shared={`pair_${opts.hash}`}
-            >
+            <td className="remix_ui_terminal_td" data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>
               {opts['decoded output']}
               <CopyToClipboard content={opts['decoded output']} />
             </td>
@@ -238,15 +182,9 @@ const showTable = (opts, showTableHash) => {
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               logs
             </td>
-            <td
-              className="remix_ui_terminal_td"
-              data-id={`txLoggerTableHash${opts.hash}`}
-              data-shared={`pair_${opts.hash}`}
-            >
+            <td className="remix_ui_terminal_td" data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>
               {JSON.stringify(stringified, null, '\t')}
-              <CopyToClipboard
-                content={JSON.stringify(stringified, null, '\t')}
-              />
+              <CopyToClipboard content={JSON.stringify(stringified, null, '\t')} />
               <CopyToClipboard content={JSON.stringify(opts.logs.raw || '0')} />
             </td>
           </tr>
@@ -256,11 +194,7 @@ const showTable = (opts, showTableHash) => {
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
               val
             </td>
-            <td
-              className="remix_ui_terminal_td"
-              data-id={`txLoggerTableHash${opts.hash}`}
-              data-shared={`pair_${opts.hash}`}
-            >
+            <td className="remix_ui_terminal_td" data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>
               {val} wei
               <CopyToClipboard content={`${val} wei`} />
             </td>
