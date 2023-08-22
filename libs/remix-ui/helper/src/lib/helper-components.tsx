@@ -134,3 +134,11 @@ export const upgradeReportMsg = (report: LayoutCompatibilityReport) => (
     <div className="pl-4 text-danger">{report.explain()}</div>
   </div>
 )
+
+export function RenderIf({ condition, children }: { condition: boolean, children: JSX.Element }) {
+  return condition ? children : null
+}
+
+export function RenderIfNot({ condition, children }: { condition: boolean, children: JSX.Element }) {
+  return condition ? null : children
+}
