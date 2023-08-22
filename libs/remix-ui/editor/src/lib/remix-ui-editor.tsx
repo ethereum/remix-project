@@ -672,9 +672,6 @@ export const EditorUI = (props: EditorUIProps) => {
     return editorRef.current.getOption(51)
   }
 
-  props.editorAPI.getPositionAt = (offset: number): IPosition => {
-    return editorRef.current.getModel().getPositionAt(offset)
-  }
   ;(window as any).addRemixBreakpoint = (position) => {
     // make it available from e2e testing...
     const model = editorRef.current.getModel()
