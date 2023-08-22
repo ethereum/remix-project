@@ -689,7 +689,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                     // strictly check condition on 0, false, except undefined, NaN.
                   // undefined: automatically throw "undefined" is not valid JSON
                   // NaN: read value from msg is `null`
-                    if (msg === false || isNaN(msg) || msg === 0) msg = msg.toString()
+                    if (msg === false || msg === 0) msg = msg.toString()
                     else if (!msg) msg = 'null'
                     if (React.isValidElement(msg)) {
                       return (
