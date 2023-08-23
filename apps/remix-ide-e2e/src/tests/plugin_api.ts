@@ -4,7 +4,9 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 declare global {
-  interface Window { testmode: boolean; }
+  interface Window {
+    testmode: boolean
+  }
 }
 
 const localPluginData: Profile & LocationProfile & ExternalProfile = {
@@ -50,9 +52,12 @@ const debugValues = async function (browser: NightwatchBrowser, field: string, e
 const setPayload = async (browser: NightwatchBrowser, payload: any) => {
   return new Promise((resolve) => {
     if (typeof payload !== 'string') payload = JSON.stringify(payload)
-    browser.clearValue('//*[@id="payload"]').pause(500).setValue('//*[@id="payload"]', payload, (result) => {
-      resolve(result)
-    })
+    browser
+      .clearValue('//*[@id="payload"]')
+      .pause(500)
+      .setValue('//*[@id="payload"]', payload, (result) => {
+        resolve(result)
+      })
   })
 }
 
@@ -64,9 +69,13 @@ const clearPayLoad = async (browser: NightwatchBrowser) => {
   })
 }
 
-const clickButton = async (browser: NightwatchBrowser, buttonText: string, waitResult: boolean = true) => { // eslint-disable-line
+const clickButton = async (browser: NightwatchBrowser, buttonText: string, waitResult: boolean = true) => {
+  // eslint-disable-line
   return new Promise((resolve) => {
-    browser.useXpath().waitForElementVisible(`//*[@data-id='${buttonText}']`).pause(100)
+    browser
+      .useXpath()
+      .waitForElementVisible(`//*[@data-id='${buttonText}']`)
+      .pause(100)
       .click(`//*[@data-id='${buttonText}']`, async () => {
         await checkForAcceptAndRemember(browser)
         if (waitResult) {
@@ -83,38 +92,41 @@ const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
     browser.frameParent(() => {
       browser.pause(1000).element('xpath', '//*[@data-id="permissionHandlerRememberUnchecked"]', (visible: any) => {
         if (visible.status && visible.status === -1) {
-
           browser.pause(1000).element('xpath', '//*[@data-id="PermissionHandler-modal-footer-ok-react"]', (okPresent: any) => {
             if ((okPresent.status && okPresent.status === -1) || okPresent.value === false) {
               // @ts-ignore
-              browser.frame(0, () => { resolve(true) })
+              browser.frame(0, () => {
+                resolve(true)
+              })
             } else {
-              browser
-              .useXpath()
-              .isVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', (okVisible: any) => {
+              browser.useXpath().isVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', (okVisible: any) => {
                 if (okVisible.value) {
                   browser.click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', () => {
                     // @ts-ignore
-                    browser.frame(0, () => { resolve(true) })
+                    browser.frame(0, () => {
+                      resolve(true)
+                    })
                   })
                 } else {
                   // @ts-ignore
-                  browser.frame(0, () => { resolve(true) })
+                  browser.frame(0, () => {
+                    resolve(true)
+                  })
                 }
               })
             }
           })
-
-
-
         } else {
-          browser.waitForElementVisible('//*[@data-id="permissionHandlerRememberUnchecked"]')
-          .click('//*[@data-id="permissionHandlerRememberUnchecked"]')
-          .waitForElementVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]')
-          .click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', () => {
-            // @ts-ignore
-            browser.frame(0, () => { resolve(true) })
-          })
+          browser
+            .waitForElementVisible('//*[@data-id="permissionHandlerRememberUnchecked"]')
+            .click('//*[@data-id="permissionHandlerRememberUnchecked"]')
+            .waitForElementVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]')
+            .click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', () => {
+              // @ts-ignore
+              browser.frame(0, () => {
+                resolve(true)
+              })
+            })
         }
       })
     })
@@ -132,14 +144,19 @@ const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
  * @return {Promise}
  */
 
-const clickAndCheckLog = async (browser: NightwatchBrowser, buttonText: string, methodResult: any, eventResult: any, payload: any, waitResult: boolean = true) => { // eslint-disable-line
+const clickAndCheckLog = async (browser: NightwatchBrowser, buttonText: string, methodResult: any, eventResult: any, payload: any, waitResult: boolean = true) => {
+  // eslint-disable-line
   if (payload) {
     await setPayload(browser, payload)
   } else {
     await clearPayLoad(browser)
   }
-  if (methodResult && typeof methodResult !== 'string') { methodResult = JSON.stringify(methodResult) }
-  if (eventResult && typeof eventResult !== 'string') { eventResult = JSON.stringify(eventResult) }
+  if (methodResult && typeof methodResult !== 'string') {
+    methodResult = JSON.stringify(methodResult)
+  }
+  if (eventResult && typeof eventResult !== 'string') {
+    eventResult = JSON.stringify(eventResult)
+  }
   if (buttonText) {
     await clickButton(browser, buttonText, waitResult)
   }
@@ -161,20 +178,22 @@ const assertPluginIsActive = function (browser: NightwatchBrowser, id: string, s
 
 module.exports = {
   '@disabled': true,
-  before: function (browser: NightwatchBrowser, done: VoidFunction) {
+  'before': function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done) // , 'http://localhost:8080', false)
   },
 
-  afterEach: function (browser: NightwatchBrowser) {
+  'afterEach': function (browser: NightwatchBrowser) {
     browser.getLog('browser', (logEntries) => {
       console.log(logEntries)
     })
   },
 
   'Should connect a local plugin': function (browser: NightwatchBrowser) {
-    browser.addLocalPlugin(localPluginData)
+    browser
+      .addLocalPlugin(localPluginData)
       // @ts-ignore
-      .frame(0).useXpath()
+      .frame(0)
+      .useXpath()
   },
 
   // UDAPP
@@ -207,17 +226,29 @@ module.exports = {
       pattern: []
     })
     await browser.useXpath().frameParent(async () => {
-      browser.useCss().clickLaunchIcon('filePanel')
-        .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts"]').element('css selector', '[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', (visible: any) => {
+      browser
+        .useCss()
+        .clickLaunchIcon('filePanel')
+        .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts"]')
+        .element('css selector', '[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', (visible: any) => {
           if (visible.status && visible.status === -1) {
             browser.click('[data-id="treeViewLitreeViewItemcontracts"]')
           }
         })
         .waitForElementVisible('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
-        .rightClickCustom('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]').useXpath().waitForElementVisible('//*[@id="menuitemtestcommand"]').click('//*[@id="menuitemtestcommand"]', async () => {
+        .rightClickCustom('[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
+        .useXpath()
+        .waitForElementVisible('//*[@id="menuitemtestcommand"]')
+        .click('//*[@id="menuitemtestcommand"]', async () => {
           // @ts-ignore
           browser.click('//*[@data-id="verticalIconsKindlocalPlugin"]').frame(0, async () => {
-            await clickAndCheckLog(browser, null, { id: 'localPlugin', name: 'testCommand', label: 'testCommand', type: [], extension: ['.sol'], path: ['contracts/1_Storage.sol'], pattern: [], group: 99 }, null, null)
+            await clickAndCheckLog(
+              browser,
+              null,
+              { id: 'localPlugin', name: 'testCommand', label: 'testCommand', type: [], extension: ['.sol'], path: ['contracts/1_Storage.sol'], pattern: [], group: 99 },
+              null,
+              null
+            )
           })
         })
     })
@@ -230,13 +261,19 @@ module.exports = {
   },
 
   'Should get current files #group7': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'fileManager:readdir', {
-      contracts: { isDirectory: true },
-      scripts: { isDirectory: true },
-      tests: { isDirectory: true },
-      'README.txt': { isDirectory: false },
-      '.prettierrc.json': { isDirectory: false },
-    }, null, '/')
+    await clickAndCheckLog(
+      browser,
+      'fileManager:readdir',
+      {
+        'contracts': { isDirectory: true },
+        'scripts': { isDirectory: true },
+        'tests': { isDirectory: true },
+        'README.txt': { isDirectory: false },
+        '.prettierrc.json': { isDirectory: false }
+      },
+      null,
+      '/'
+    )
   },
   'Should throw error on current file #group7': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'fileManager:getCurrentFile', 'Error from IDE : Error: No such file or directory No file selected', null, null)
@@ -291,46 +328,126 @@ module.exports = {
   'Should create workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, 'testspace')
     await clickAndCheckLog(browser, 'filePanel:getCurrentWorkspace', { name: 'testspace', isLocalhost: false, absolutePath: '.workspaces/testspace' }, null, null)
-    await clickAndCheckLog(browser, 'fileManager:readdir', {
-      contracts: { isDirectory: true },
-      scripts: { isDirectory: true },
-      tests: { isDirectory: true },
-      'README.txt': { isDirectory: false },
-      '.prettierrc.json': { isDirectory: false }
-    }, null, '/')
+    await clickAndCheckLog(
+      browser,
+      'fileManager:readdir',
+      {
+        'contracts': { isDirectory: true },
+        'scripts': { isDirectory: true },
+        'tests': { isDirectory: true },
+        'README.txt': { isDirectory: false },
+        '.prettierrc.json': { isDirectory: false }
+      },
+      null,
+      '/'
+    )
   },
   'Should get all workspaces #group2': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{name:"default_workspace",isGitRepo:false}, {name:"emptyworkspace",isGitRepo:false}, {name:"testspace",isGitRepo:false}], null, null)
+    await clickAndCheckLog(
+      browser,
+      'filePanel:getWorkspaces',
+      [
+        { name: 'default_workspace', isGitRepo: false },
+        { name: 'emptyworkspace', isGitRepo: false },
+        { name: 'testspace', isGitRepo: false }
+      ],
+      null,
+      null
+    )
   },
   'Should have set workspace event #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, { event: 'setWorkspace', args: [{ name: 'newspace', isLocalhost: false }] }, 'newspace')
   },
   'Should have event when switching workspace #group2': async function (browser: NightwatchBrowser) {
     // @ts-ignore
-    browser.frameParent().useCss().clickLaunchIcon('filePanel').switchWorkspace('default_workspace').useXpath().click('//*[@data-id="verticalIconsKindlocalPlugin"]').frame(0, async () => {
-      await clickAndCheckLog(browser, null, null, { event: 'setWorkspace', args: [{ name: 'default_workspace', isLocalhost: false }] }, null)
-    })
+    browser
+      .frameParent()
+      .useCss()
+      .clickLaunchIcon('filePanel')
+      .switchWorkspace('default_workspace')
+      .useXpath()
+      .click('//*[@data-id="verticalIconsKindlocalPlugin"]')
+      .frame(0, async () => {
+        await clickAndCheckLog(browser, null, null, { event: 'setWorkspace', args: [{ name: 'default_workspace', isLocalhost: false }] }, null)
+      })
   },
 
   'Should rename workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:renameWorkspace', null, null, ['default_workspace', 'renamed'])
-    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{name:"emptyworkspace",isGitRepo:false},{name:"testspace",isGitRepo:false},{name:"newspace",isGitRepo:false},{name:"renamed",isGitRepo:false}], null, null)
+    await clickAndCheckLog(
+      browser,
+      'filePanel:getWorkspaces',
+      [
+        { name: 'emptyworkspace', isGitRepo: false },
+        { name: 'testspace', isGitRepo: false },
+        { name: 'newspace', isGitRepo: false },
+        { name: 'renamed', isGitRepo: false }
+      ],
+      null,
+      null
+    )
   },
   'Should delete workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:deleteWorkspace', null, null, ['testspace'])
-    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{name:"emptyworkspace",isGitRepo:false},{name:"newspace",isGitRepo:false},{name:"renamed",isGitRepo:false}], null, null)
+    await clickAndCheckLog(
+      browser,
+      'filePanel:getWorkspaces',
+      [
+        { name: 'emptyworkspace', isGitRepo: false },
+        { name: 'newspace', isGitRepo: false },
+        { name: 'renamed', isGitRepo: false }
+      ],
+      null,
+      null
+    )
   },
   // DGIT
   'Should have changes on new workspace #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, null, 'dgit')
-    await clickAndCheckLog(browser, 'dGitProvider:status', [[".prettierrc.json",0,2,0], ["README.txt",0,2,0],["contracts/1_Storage.sol",0,2,0],["contracts/2_Owner.sol",0,2,0],["contracts/3_Ballot.sol",0,2,0],["scripts/deploy_with_ethers.ts",0,2,0],["scripts/deploy_with_web3.ts",0,2,0],["scripts/ethers-lib.ts",0,2,0],["scripts/web3-lib.ts",0,2,0],["tests/Ballot_test.sol",0,2,0],["tests/storage.test.js",0,2,0]], null, null)
+    await clickAndCheckLog(
+      browser,
+      'dGitProvider:status',
+      [
+        ['.prettierrc.json', 0, 2, 0],
+        ['README.txt', 0, 2, 0],
+        ['contracts/1_Storage.sol', 0, 2, 0],
+        ['contracts/2_Owner.sol', 0, 2, 0],
+        ['contracts/3_Ballot.sol', 0, 2, 0],
+        ['scripts/deploy_with_ethers.ts', 0, 2, 0],
+        ['scripts/deploy_with_web3.ts', 0, 2, 0],
+        ['scripts/ethers-lib.ts', 0, 2, 0],
+        ['scripts/web3-lib.ts', 0, 2, 0],
+        ['tests/Ballot_test.sol', 0, 2, 0],
+        ['tests/storage.test.js', 0, 2, 0]
+      ],
+      null,
+      null
+    )
   },
 
   'Should stage contract #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'dGitProvider:add', null, null, {
       filepath: 'contracts/1_Storage.sol'
     })
-    await clickAndCheckLog(browser, 'dGitProvider:status', [[".prettierrc.json",0,2,0],["README.txt",0,2,0],["contracts/1_Storage.sol",0,2,2],["contracts/2_Owner.sol",0,2,0],["contracts/3_Ballot.sol",0,2,0],["scripts/deploy_with_ethers.ts",0,2,0],["scripts/deploy_with_web3.ts",0,2,0],["scripts/ethers-lib.ts",0,2,0],["scripts/web3-lib.ts",0,2,0],["tests/Ballot_test.sol",0,2,0],["tests/storage.test.js",0,2,0]], null, null)
+    await clickAndCheckLog(
+      browser,
+      'dGitProvider:status',
+      [
+        ['.prettierrc.json', 0, 2, 0],
+        ['README.txt', 0, 2, 0],
+        ['contracts/1_Storage.sol', 0, 2, 2],
+        ['contracts/2_Owner.sol', 0, 2, 0],
+        ['contracts/3_Ballot.sol', 0, 2, 0],
+        ['scripts/deploy_with_ethers.ts', 0, 2, 0],
+        ['scripts/deploy_with_web3.ts', 0, 2, 0],
+        ['scripts/ethers-lib.ts', 0, 2, 0],
+        ['scripts/web3-lib.ts', 0, 2, 0],
+        ['tests/Ballot_test.sol', 0, 2, 0],
+        ['tests/storage.test.js', 0, 2, 0]
+      ],
+      null,
+      null
+    )
   },
   'Should commit changes #group3': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'dGitProvider:commit', null, null, { author: { name: 'Remix', email: 'Remix' }, message: 'commit-message' })
@@ -347,7 +464,13 @@ module.exports = {
     await clickAndCheckLog(browser, 'contentImport:resolve', '# Remix Project', null, 'https://github.com/ethereum/remix-project/blob/master/README.md')
   },
   'Should resolve and save url #group4': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'contentImport:resolveAndSave', '# Remix Project', { event: 'fileAdded', args: ['.deps/github/ethereum/remix-project/README.md'] }, 'https://github.com/ethereum/remix-project/blob/master/README.md')
+    await clickAndCheckLog(
+      browser,
+      'contentImport:resolveAndSave',
+      '# Remix Project',
+      { event: 'fileAdded', args: ['.deps/github/ethereum/remix-project/README.md'] },
+      'https://github.com/ethereum/remix-project/blob/master/README.md'
+    )
   },
   // UNIT TESTING
   'Should activate solidityUnitTesting #group5': async function (browser: NightwatchBrowser) {
@@ -419,7 +542,7 @@ module.exports = {
       .frameParent()
       .useCss()
       .addFile('test_modal.js', { content: testModalToasterApi })
-      .executeScriptInTerminal('remix.execute(\'test_modal.js\')')
+      .executeScriptInTerminal("remix.execute('test_modal.js')")
       .useCss()
       .waitForElementVisible('*[data-id="test_id_1_ModalDialogModalBody-react"]', 65000)
       .assert.containsText('*[data-id="test_id_1_ModalDialogModalBody-react"]', 'message 1')
@@ -434,7 +557,6 @@ module.exports = {
       .waitForElementVisible('*[data-shared="tooltipPopup"]')
       .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a toast')
       .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a re-toast')
-
   },
   'Should open 2 alerts from localplugin #group9': function (browser: NightwatchBrowser) {
     browser

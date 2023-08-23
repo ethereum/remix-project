@@ -1,7 +1,7 @@
 .hover-row {
     white-space: pre;
     margin-left : 10px;
-    background : var(--light);    
+    background : var(--light);
     font-weight : bold;
     font-family : monospace;
     padding : 10px;

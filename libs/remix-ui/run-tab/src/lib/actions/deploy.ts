@@ -1,15 +1,15 @@
-import { ContractData, FuncABI, NetworkDeploymentFile, SolcBuildFile, OverSizeLimit } from "@remix-project/core-plugin"
-import { RunTab } from "../types/run-tab"
+import { ContractData, FuncABI, NetworkDeploymentFile, SolcBuildFile, OverSizeLimit } from '@remix-project/core-plugin'
+import { RunTab } from '../types/run-tab'
 import { CompilerAbstract as CompilerAbstractType } from '@remix-project/remix-solidity'
 import * as remixLib from '@remix-project/remix-lib'
-import { SolcInput, SolcOutput } from "@openzeppelin/upgrades-core"
+import { SolcInput, SolcOutput } from '@openzeppelin/upgrades-core'
 // Used direct path to UpgradeableContract class to fix cyclic dependency error from @openzeppelin/upgrades-core library
 import { UpgradeableContract } from '../../../../../../node_modules/@openzeppelin/upgrades-core/dist/standalone'
-import { DeployMode, MainnetPrompt } from "../types"
-import { displayNotification, displayPopUp, fetchProxyDeploymentsSuccess, setDecodedResponse, updateInstancesBalance } from "./payload"
-import { addInstance } from "./actions"
-import { addressToString, logBuilder } from "@remix-ui/helper"
-import Web3 from "web3"
+import { DeployMode, MainnetPrompt } from '../types'
+import { displayNotification, displayPopUp, fetchProxyDeploymentsSuccess, setDecodedResponse, updateInstancesBalance } from './payload'
+import { addInstance } from './actions'
+import { addressToString, logBuilder } from '@remix-ui/helper'
+import Web3 from 'web3'
 
 declare global {
   interface Window {
@@ -17,7 +17,7 @@ declare global {
   }
 }
 
-const _paq = window._paq = window._paq || []  //eslint-disable-line
+const _paq = (window._paq = window._paq || []) //eslint-disable-line
 const txHelper = remixLib.execution.txHelper
 const txFormat = remixLib.execution.txFormat
 
@@ -30,7 +30,7 @@ const loadContractFromAddress = (plugin: RunTab, address, confirmCb, cb) => {
       } catch (e) {
         return cb('Failed to parse the current file as JSON ABI.')
       }
-      _paq.push(['trackEvent', 'udapp', 'useAtAddress' , 'AtAddressLoadWithABI'])
+      _paq.push(['trackEvent', 'udapp', 'useAtAddress', 'AtAddressLoadWithABI'])
       cb(null, 'abi', abi)
     })
   } else {
@@ -68,11 +68,11 @@ export const getSelectedContract = (contractName: string, compiler: CompilerAbst
       const encodedParams = await txFormat.encodeParams(args, txHelper.getConstructorInterface(contract.object.abi))
       const bytecode = contract.object.evm.bytecode.object + (encodedParams as any).dataHex
       // https://eips.ethereum.org/EIPS/eip-3860
-      const initCodeOversize = bytecode && (bytecode.length / 2 > 2 * 24576)
+      const initCodeOversize = bytecode && bytecode.length / 2 > 2 * 24576
 
       const deployedBytecode = contract.object.evm.deployedBytecode
       // https://eips.ethereum.org/EIPS/eip-170
-      const deployedBytecodeOversize = deployedBytecode && (deployedBytecode.object.length / 2 > 24576)
+      const deployedBytecodeOversize = deployedBytecode && deployedBytecode.object.length / 2 > 24576
       return {
         overSizeEip3860: initCodeOversize,
         overSizeEip170: deployedBytecodeOversize
@@ -90,24 +90,47 @@ export const terminalLogger = (plugin: RunTab, view: JSX.Element) => {
   plugin.call('terminal', 'logHtml', view)
 }
 
-export const confirmationHandler = (plugin: RunTab, dispatch: React.Dispatch<any>, confirmDialogContent: MainnetPrompt, network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+export const confirmationHandler = (
+  plugin: RunTab,
+  dispatch: React.Dispatch<any>,
+  confirmDialogContent: MainnetPrompt,
+  network,
+  tx,
+  gasEstimation,
+  continueTxExecution,
+  cancelCb
+) => {
   if (network.name !== 'Main') {
     return continueTxExecution(null)
   }
   const amount = plugin.blockchain.fromWei(tx.value, true, 'ether')
   const content = confirmDialogContent(tx, network, amount, gasEstimation, plugin.blockchain.determineGasFees(tx), plugin.blockchain.determineGasPrice.bind(plugin.blockchain))
 
-  dispatch(displayNotification('Confirm transaction', content, 'Confirm', 'Cancel', () => {
-    plugin.blockchain.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', plugin.REACT_API.confirmSettings)
-    // TODO: check if this is check is still valid given the refactor
-    if (!plugin.REACT_API.gasPriceStatus) {
-      cancelCb('Given transaction fee is not correct')
-    } else {
-      continueTxExecution({ maxFee: plugin.REACT_API.maxFee, maxPriorityFee: plugin.REACT_API.maxPriorityFee, baseFeePerGas: plugin.REACT_API.baseFeePerGas, gasPrice: plugin.REACT_API.gasPrice })
-    }
-  }, () => {
-    return cancelCb('Transaction canceled by user.')
-  }))
+  dispatch(
+    displayNotification(
+      'Confirm transaction',
+      content,
+      'Confirm',
+      'Cancel',
+      () => {
+        plugin.blockchain.config.setUnpersistedProperty('doNotShowTransactionConfirmationAgain', plugin.REACT_API.confirmSettings)
+        // TODO: check if this is check is still valid given the refactor
+        if (!plugin.REACT_API.gasPriceStatus) {
+          cancelCb('Given transaction fee is not correct')
+        } else {
+          continueTxExecution({
+            maxFee: plugin.REACT_API.maxFee,
+            maxPriorityFee: plugin.REACT_API.maxPriorityFee,
+            baseFeePerGas: plugin.REACT_API.baseFeePerGas,
+            gasPrice: plugin.REACT_API.gasPrice
+          })
+        }
+      },
+      () => {
+        return cancelCb('Transaction canceled by user.')
+      }
+    )
+  )
 }
 
 const getConfirmationCb = (plugin: RunTab, dispatch: React.Dispatch<any>, confirmDialogContent: MainnetPrompt) => {
@@ -121,11 +144,20 @@ export const continueHandler = (dispatch: React.Dispatch<any>, gasEstimationProm
   if (error) {
     const msg = typeof error !== 'string' ? error.message : error
 
-    dispatch(displayNotification('Gas estimation failed', gasEstimationPrompt(msg), 'Send Transaction', 'Cancel Transaction', () => {
-      continueTxExecution()
-    }, () => {
-      cancelCb()
-    }))
+    dispatch(
+      displayNotification(
+        'Gas estimation failed',
+        gasEstimationPrompt(msg),
+        'Send Transaction',
+        'Cancel Transaction',
+        () => {
+          continueTxExecution()
+        },
+        () => {
+          cancelCb()
+        }
+      )
+    )
   } else {
     continueTxExecution()
   }
@@ -141,14 +173,14 @@ export const createInstance = async (
   selectedContract: ContractData,
   gasEstimationPrompt: (msg: string) => JSX.Element,
   passphrasePrompt: (msg: string) => JSX.Element,
-  publishToStorage: (storage: 'ipfs' | 'swarm',
-  contract: ContractData) => void,
+  publishToStorage: (storage: 'ipfs' | 'swarm', contract: ContractData) => void,
   mainnetPrompt: MainnetPrompt,
   isOverSizePrompt: (values: OverSizeLimit) => JSX.Element,
   args,
-  deployMode: DeployMode[]) => {
-  const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
-  const isContractUpgrade = (deployMode || []).find(mode => mode === 'Upgrade with Proxy')
+  deployMode: DeployMode[]
+) => {
+  const isProxyDeployment = (deployMode || []).find((mode) => mode === 'Deploy with Proxy')
+  const isContractUpgrade = (deployMode || []).find((mode) => mode === 'Upgrade with Proxy')
   const statusCb = (msg: string) => {
     const log = logBuilder(msg)
 
@@ -172,7 +204,7 @@ export const createInstance = async (
       _paq.push(['trackEvent', 'udapp', 'DeployOnly', plugin.REACT_API.networkName])
     }
     if (isProxyDeployment) {
-      const initABI = contractObject.abi.find(abi => abi.name === 'initialize')
+      const initABI = contractObject.abi.find((abi) => abi.name === 'initialize')
 
       plugin.call('openzeppelin-proxy', 'executeUUPSProxy', addressToString(address), args, initABI, contractObject)
     } else if (isContractUpgrade) {
@@ -198,33 +230,58 @@ export const createInstance = async (
     return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
   }
   if (overSize && (overSize.overSizeEip170 || overSize.overSizeEip3860)) {
-    return dispatch(displayNotification('Contract code size over limit', isOverSizePrompt(overSize), 'Force Send', 'Cancel', () => {
-      deployContract(plugin, selectedContract, currentParams, contractMetadata, compilerContracts, {
-        continueCb: (error, continueTxExecution, cancelCb) => {
-          continueHandler(dispatch, gasEstimationPrompt, error, continueTxExecution, cancelCb)
+    return dispatch(
+      displayNotification(
+        'Contract code size over limit',
+        isOverSizePrompt(overSize),
+        'Force Send',
+        'Cancel',
+        () => {
+          deployContract(
+            plugin,
+            selectedContract,
+            currentParams,
+            contractMetadata,
+            compilerContracts,
+            {
+              continueCb: (error, continueTxExecution, cancelCb) => {
+                continueHandler(dispatch, gasEstimationPrompt, error, continueTxExecution, cancelCb)
+              },
+              promptCb: (okCb, cancelCb) => {
+                promptHandler(dispatch, passphrasePrompt, okCb, cancelCb)
+              },
+              statusCb,
+              finalCb
+            },
+            confirmationCb
+          )
         },
-        promptCb: (okCb, cancelCb) => {
-          promptHandler(dispatch, passphrasePrompt, okCb, cancelCb)
-        },
-        statusCb,
-        finalCb
-      }, confirmationCb)
-    }, () => {
-      const log = logBuilder(`creation of ${selectedContract.name} canceled by user.`)
+        () => {
+          const log = logBuilder(`creation of ${selectedContract.name} canceled by user.`)
 
-      return terminalLogger(plugin, log)
-    }))
+          return terminalLogger(plugin, log)
+        }
+      )
+    )
   }
-  deployContract(plugin, selectedContract, currentParams, contractMetadata, compilerContracts, {
-    continueCb: (error, continueTxExecution, cancelCb) => {
-      continueHandler(dispatch, gasEstimationPrompt, error, continueTxExecution, cancelCb)
+  deployContract(
+    plugin,
+    selectedContract,
+    currentParams,
+    contractMetadata,
+    compilerContracts,
+    {
+      continueCb: (error, continueTxExecution, cancelCb) => {
+        continueHandler(dispatch, gasEstimationPrompt, error, continueTxExecution, cancelCb)
+      },
+      promptCb: (okCb, cancelCb) => {
+        promptHandler(dispatch, passphrasePrompt, okCb, cancelCb)
+      },
+      statusCb,
+      finalCb
     },
-    promptCb: (okCb, cancelCb) => {
-      promptHandler(dispatch, passphrasePrompt, okCb, cancelCb)
-    },
-    statusCb,
-    finalCb
-  }, confirmationCb)
+    confirmationCb
+  )
 }
 
 const deployContract = (plugin: RunTab, selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) => {
@@ -234,12 +291,15 @@ const deployContract = (plugin: RunTab, selectedContract, args, contractMetadata
   if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
     return plugin.blockchain.deployContractAndLibraries(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
   }
-  if (Object.keys(selectedContract.bytecodeLinkReferences).length) statusCb(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
+  if (Object.keys(selectedContract.bytecodeLinkReferences).length)
+    statusCb(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
   plugin.blockchain.deployContractWithLibrary(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
 }
 
 export const loadAddress = (plugin: RunTab, dispatch: React.Dispatch<any>, contract: ContractData, address: string) => {
-  loadContractFromAddress(plugin, address,
+  loadContractFromAddress(
+    plugin,
+    address,
     (cb) => {
       dispatch(displayNotification('At Address', `Do you really want to interact with ${address} using the current ABI definition?`, 'OK', 'Cancel', cb, null))
     },
@@ -252,7 +312,7 @@ export const loadAddress = (plugin: RunTab, dispatch: React.Dispatch<any>, contr
       } else if (loadType === 'instance') {
         if (!contract) return dispatch(displayPopUp('No compiled contracts found.'))
         const currentFile = plugin.REACT_API.contracts.currentFile
-        const compiler = plugin.REACT_API.contracts.contractList[currentFile].find(item => item.alias === contract.name)
+        const compiler = plugin.REACT_API.contracts.contractList[currentFile].find((item) => item.alias === contract.name)
         const contractData = getSelectedContract(contract.name, compiler.compiler)
         return addInstance(dispatch, { contractData, address, name: contract.name })
       }
@@ -270,7 +330,7 @@ export const syncContractsInternal = async (plugin: RunTab) => {
   }
   if (await plugin.call('manager', 'isActive', 'hardhat')) {
     plugin.call('hardhat', 'sync')
-  } 
+  }
   if (await plugin.call('manager', 'isActive', 'foundry')) {
     plugin.call('foundry', 'sync')
   }
@@ -284,13 +344,15 @@ export const runTransactions = (
   funcABI: FuncABI,
   inputsValues: string,
   contractName: string,
-  contractABI, contract,
+  contractABI,
+  contract,
   address,
-  logMsg:string,
+  logMsg: string,
   mainnetPrompt: MainnetPrompt,
   gasEstimationPrompt: (msg: string) => JSX.Element,
   passphrasePrompt: (msg: string) => JSX.Element,
-  funcIndex?: number) => {
+  funcIndex?: number
+) => {
   let callinfo = ''
   if (lookupOnly) callinfo = 'call'
   else if (funcABI.type === 'fallback' || funcABI.type === 'receive') callinfo = 'lowLevelInteracions'
@@ -342,7 +404,7 @@ export const updateInstanceBalance = async (plugin: RunTab, dispatch: React.Disp
       instance.balance = balInEth
     }
     dispatch(updateInstanceBalance(instances, dispatch))
-  } 
+  }
 }
 
 export const isValidContractAddress = async (plugin: RunTab, address: string) => {
@@ -350,7 +412,7 @@ export const isValidContractAddress = async (plugin: RunTab, address: string) =>
     return false
   } else {
     if (Web3.utils.isAddress(address)) {
-      return await plugin.blockchain.web3().eth.getCode(address) !== '0x'
+      return (await plugin.blockchain.web3().eth.getCode(address)) !== '0x'
     } else {
       return false
     }
@@ -369,9 +431,18 @@ export const getNetworkProxyAddresses = async (plugin: RunTab, dispatch: React.D
 
     for (const proxyAddress in Object.keys(parsedNetworkFile.deployments)) {
       if (parsedNetworkFile.deployments[proxyAddress] && parsedNetworkFile.deployments[proxyAddress].implementationAddress) {
-        const solcBuildExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
+        const solcBuildExists = await plugin.call(
+          'fileManager',
+          'exists',
+          `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`
+        )
 
-        if (solcBuildExists) deployments.push({ address: proxyAddress, date: parsedNetworkFile.deployments[proxyAddress].date, contractName: parsedNetworkFile.deployments[proxyAddress].contractName })
+        if (solcBuildExists)
+          deployments.push({
+            address: proxyAddress,
+            date: parsedNetworkFile.deployments[proxyAddress].date,
+            contractName: parsedNetworkFile.deployments[proxyAddress].contractName
+          })
       }
     }
     dispatch(fetchProxyDeploymentsSuccess(deployments))
@@ -391,10 +462,18 @@ export const isValidContractUpgrade = async (plugin: RunTab, proxyAddress: strin
     const parsedNetworkFile: NetworkDeploymentFile = JSON.parse(networkFile)
 
     if (parsedNetworkFile.deployments[proxyAddress] && parsedNetworkFile.deployments[proxyAddress].implementationAddress) {
-      const solcBuildExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
-        
+      const solcBuildExists = await plugin.call(
+        'fileManager',
+        'exists',
+        `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`
+      )
+
       if (solcBuildExists) {
-        const solcFile: string = await plugin.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
+        const solcFile: string = await plugin.call(
+          'fileManager',
+          'readFile',
+          `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`
+        )
         const parsedSolcFile: SolcBuildFile = JSON.parse(solcFile)
         const oldImpl = new UpgradeableContract(parsedNetworkFile.deployments[proxyAddress].contractName, parsedSolcFile.solcInput, parsedSolcFile.solcOutput, { kind: 'uups' })
         const newImpl = new UpgradeableContract(newContractName, solcInput, solcOutput, { kind: 'uups' })

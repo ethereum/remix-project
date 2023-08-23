@@ -4,7 +4,7 @@ import init from '../helpers/init'
 
 module.exports = {
   '@disabled': true,
-  before: function (browser: NightwatchBrowser, done: VoidFunction) {
+  'before': function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
 
@@ -199,7 +199,7 @@ const executeRemove = `
 `
 
 const executeRemoveOnFolder = `(async () => {
-  try {      
+  try {
       await remix.call('fileManager', 'remove', 'contracts')
   } catch (e) {
       console.log(e.message)

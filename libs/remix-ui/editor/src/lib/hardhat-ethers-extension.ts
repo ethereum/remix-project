@@ -1,5 +1,4 @@
-export const hardhatEthersExtension = 
-`
+export const hardhatEthersExtension = `
 interface Libraries {
     [libraryName: string]: string;
 }
@@ -31,4 +30,3 @@ export declare function getContractFactoryFromArtifact(artifact: Artifact, facto
 
 export declare function getContractAtFromArtifact(artifact: Artifact, address: string, signer?: Signer): Promise<Contract>;
 `
-

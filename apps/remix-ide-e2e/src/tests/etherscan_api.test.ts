@@ -3,17 +3,20 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 declare global {
-  interface Window { testplugin: { name: string, url: string }; }
+  interface Window {
+    testplugin: { name: string; url: string }
+  }
 }
 
 module.exports = {
   '@disabled': true,
-  before: function (browser: NightwatchBrowser, done: VoidFunction) {
+  'before': function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, null)
   },
 
   'Should load etherscan plugin #group1': function (browser: NightwatchBrowser) {
-    browser.clickLaunchIcon('pluginManager')
+    browser
+      .clickLaunchIcon('pluginManager')
       .scrollAndClick('[data-id="pluginManagerComponentActivateButtonetherscan"]')
       .clickLaunchIcon('etherscan')
       .pause(5000)
@@ -30,9 +33,13 @@ module.exports = {
       .clickLaunchIcon('udapp') // switch to Goerli
       .switchEnvironment('basic-http-provider')
       .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
-      .execute(() => {
-        (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
-      }, [], () => {})
+      .execute(
+        () => {
+          ;(document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
+        },
+        [],
+        () => {}
+      )
       .setValue('[data-id="modalDialogCustomPromp"]', 'https://remix-goerli.ethdevops.io')
       .modalFooterOKClick('basic-http-provider')
       .clickLaunchIcon('solidity') // compile
@@ -46,16 +53,16 @@ module.exports = {
       .click('[data-id="verify-contract"]')
       .waitForElementVisible('[data-id="verify-result"]')
       .waitForElementContainsText('[data-id="verify-result"]', 'Contract source code already verified')
-    },
+  },
 
-    'Should call the etherscan plugin api #group1': function (browser: NightwatchBrowser) {
-      browser
-        .frameParent()
-        .clickLaunchIcon('filePanel')
-        .addFile('receiptStatusScript.ts', { content: receiptStatusScript })
-        .click('*[data-id="play-editor"]') // run the script
-        .waitForElementContainsText('*[data-id="terminalJournal"]', 'Already Verified', 60000)
-      }
+  'Should call the etherscan plugin api #group1': function (browser: NightwatchBrowser) {
+    browser
+      .frameParent()
+      .clickLaunchIcon('filePanel')
+      .addFile('receiptStatusScript.ts', { content: receiptStatusScript })
+      .click('*[data-id="play-editor"]') // run the script
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Already Verified', 60000)
+  }
 }
 
 const verifiedContract = `
@@ -70,10 +77,10 @@ pragma solidity >=0.7.0 <0.9.0;
 contract Owner {
 
     address private owner;
-    
+
     // event for EVM logging
     event OwnerSet(address indexed oldOwner, address indexed newOwner);
-    
+
     // modifier to check if caller is owner
     modifier isOwner() {
         // If the first argument of 'require' evaluates to 'false', execution terminates and all
@@ -88,7 +95,7 @@ contract Owner {
     function getInt() public returns (uint) {
         return 123498;
     }
-    
+
     /**
      * @dev Set contract deployer as owner
      */
@@ -107,7 +114,7 @@ contract Owner {
     }
 
     /**
-     * @dev Return owner address 
+     * @dev Return owner address
      * @return address of owner
      */
     function getOwner() external view returns (address) {

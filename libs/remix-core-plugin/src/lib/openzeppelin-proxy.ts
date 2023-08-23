@@ -7,7 +7,7 @@ const proxyProfile = {
   displayName: 'openzeppelin-proxy',
   description: 'openzeppelin-proxy',
   methods: ['isConcerned', 'executeUUPSProxy', 'executeUUPSContractUpgrade', 'getProxyOptions', 'getUpgradeOptions']
-};
+}
 export class OpenZeppelinProxy extends Plugin {
   blockchain: any
   kind: 'UUPS' | 'Transparent'
@@ -30,46 +30,54 @@ export class OpenZeppelinProxy extends Plugin {
     return false
   }
 
-  async getProxyOptions (data: ContractSources, file: string): Promise<{ [name: string]: DeployOptions }> {
+  async getProxyOptions(data: ContractSources, file: string): Promise<{ [name: string]: DeployOptions }> {
     const contracts = data.contracts[file]
     const ast = data.sources[file].ast
 
     if (this.kind === 'UUPS') {
-      const options = await (this.getUUPSContractOptions(contracts, ast, file))
+      const options = await this.getUUPSContractOptions(contracts, ast, file)
 
       return options
     }
   }
 
-  async getUUPSContractOptions (contracts, ast, file) {
+  async getUUPSContractOptions(contracts, ast, file) {
     const options = {}
 
-    await Promise.all(Object.keys(contracts).map(async (name) => {
-      if (ast) {
-        const UUPSSymbol = ast.exportedSymbols[UUPS] ? ast.exportedSymbols[UUPS][0] : null
+    await Promise.all(
+      Object.keys(contracts).map(async (name) => {
+        if (ast) {
+          const UUPSSymbol = ast.exportedSymbols[UUPS] ? ast.exportedSymbols[UUPS][0] : null
 
-        await Promise.all(ast.absolutePath === file && ast.nodes.map(async (node) => {
-          if (node.name === name && node.linearizedBaseContracts.includes(UUPSSymbol)) {
-            const abi = contracts[name].abi
-            const initializeInput = abi.find(node => node.name === 'initialize')
-            const isDeployWithProxyEnabled: boolean = await this.call('config', 'getAppParameter', EnableProxyURLParam) || false
-            const isDeployWithUpgradeEnabled: boolean = await this.call('config', 'getAppParameter', EnableUpgradeURLParam) || false
-    
-            options[name] = {
-              options: [{ title: 'Deploy with Proxy', active: isDeployWithProxyEnabled }, { title: 'Upgrade with Proxy', active: isDeployWithUpgradeEnabled }],
-              initializeOptions: {
-                inputs: initializeInput,
-                initializeInputs: initializeInput ? this.blockchain.getInputs(initializeInput) : null
-              }
-            }
-          }
-        }))
-      }
-    }))
+          await Promise.all(
+            ast.absolutePath === file &&
+              ast.nodes.map(async (node) => {
+                if (node.name === name && node.linearizedBaseContracts.includes(UUPSSymbol)) {
+                  const abi = contracts[name].abi
+                  const initializeInput = abi.find((node) => node.name === 'initialize')
+                  const isDeployWithProxyEnabled: boolean = (await this.call('config', 'getAppParameter', EnableProxyURLParam)) || false
+                  const isDeployWithUpgradeEnabled: boolean = (await this.call('config', 'getAppParameter', EnableUpgradeURLParam)) || false
+
+                  options[name] = {
+                    options: [
+                      { title: 'Deploy with Proxy', active: isDeployWithProxyEnabled },
+                      { title: 'Upgrade with Proxy', active: isDeployWithUpgradeEnabled }
+                    ],
+                    initializeOptions: {
+                      inputs: initializeInput,
+                      initializeInputs: initializeInput ? this.blockchain.getInputs(initializeInput) : null
+                    }
+                  }
+                }
+              })
+          )
+        }
+      })
+    )
     return options
   }
 
-  async executeUUPSProxy(implAddress: string, args: string | string [] = '', initializeABI, implementationContractObject): Promise<void> {
+  async executeUUPSProxy(implAddress: string, args: string | string[] = '', initializeABI, implementationContractObject): Promise<void> {
     // deploy the proxy, or use an existing one
     if (!initializeABI) throw new Error('Cannot deploy proxy: Missing initialize ABI')
     args = args === '' ? [] : args
@@ -78,14 +86,14 @@ export class OpenZeppelinProxy extends Plugin {
     if (this.kind === 'UUPS') this.deployUUPSProxy(implAddress, _data, implementationContractObject)
   }
 
-  async executeUUPSContractUpgrade (proxyAddress: string, newImplAddress: string, newImplementationContractObject): Promise<void> {
+  async executeUUPSContractUpgrade(proxyAddress: string, newImplAddress: string, newImplementationContractObject): Promise<void> {
     if (!newImplAddress) throw new Error('Cannot upgrade: Missing implementation address')
     if (!proxyAddress) throw new Error('Cannot upgrade: Missing proxy address')
 
     if (this.kind === 'UUPS') this.upgradeUUPSProxy(proxyAddress, newImplAddress, newImplementationContractObject)
   }
 
-  async deployUUPSProxy (implAddress: string, _data: string, implementationContractObject): Promise<void> {
+  async deployUUPSProxy(implAddress: string, _data: string, implementationContractObject): Promise<void> {
     const args = [implAddress, _data]
     const constructorData = await this.blockchain.getEncodedParams(args, UUPSfunAbi)
     const proxyName = 'ERC1967Proxy'
@@ -106,7 +114,7 @@ export class OpenZeppelinProxy extends Plugin {
     this.blockchain.deployProxy(data, implementationContractObject)
   }
 
-  async upgradeUUPSProxy (proxyAddress: string, newImplAddress: string, newImplementationContractObject): Promise<void> {
+  async upgradeUUPSProxy(proxyAddress: string, newImplAddress: string, newImplementationContractObject): Promise<void> {
     const fnData = await this.blockchain.getEncodedFunctionHex([newImplAddress], UUPSupgradeAbi)
     const proxyName = 'ERC1967Proxy'
     const data = {

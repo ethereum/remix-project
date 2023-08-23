@@ -1,17 +1,31 @@
-import { envChangeNotification } from "@remix-ui/helper"
-import { RunTab } from "../types/run-tab"
-import { setExecutionContext, setFinalContext, updateAccountBalances, fillAccountsList } from "./account"
-import { addExternalProvider, addInstance, addNewProxyDeployment, removeExternalProvider, setNetworkNameFromProvider } from "./actions"
-import { addDeployOption, clearAllInstances, clearRecorderCount, fetchContractListSuccess, resetProxyDeployments, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setRecorderCount, setRemixDActivated, setSendValue, fetchAccountsListSuccess } from "./payload"
+import { envChangeNotification } from '@remix-ui/helper'
+import { RunTab } from '../types/run-tab'
+import { setExecutionContext, setFinalContext, updateAccountBalances, fillAccountsList } from './account'
+import { addExternalProvider, addInstance, addNewProxyDeployment, removeExternalProvider, setNetworkNameFromProvider } from './actions'
+import {
+  addDeployOption,
+  clearAllInstances,
+  clearRecorderCount,
+  fetchContractListSuccess,
+  resetProxyDeployments,
+  resetUdapp,
+  setCurrentContract,
+  setCurrentFile,
+  setLoadType,
+  setRecorderCount,
+  setRemixDActivated,
+  setSendValue,
+  fetchAccountsListSuccess
+} from './payload'
 import { updateInstanceBalance } from './deploy'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import BN from 'bn.js'
 import Web3 from 'web3'
-import { Plugin } from "@remixproject/engine"
-import { getNetworkProxyAddresses } from "./deploy"
-import { shortenAddress } from "@remix-ui/helper"
+import { Plugin } from '@remixproject/engine'
+import { getNetworkProxyAddresses } from './deploy'
+import { shortenAddress } from '@remix-ui/helper'
 
-const _paq = window._paq = window._paq || []
+const _paq = (window._paq = window._paq || [])
 
 export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   plugin.blockchain.events.on('newTransaction', (tx, receipt) => {
@@ -29,7 +43,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     dispatch(resetProxyDeployments())
     if (!context.startsWith('vm')) getNetworkProxyAddresses(plugin, dispatch)
     if (context !== 'walletconnect') {
-      (await plugin.call('manager', 'isActive', 'walletconnect')) && plugin.call('manager', 'deactivatePlugin', 'walletconnect')
+      ;(await plugin.call('manager', 'isActive', 'walletconnect')) && plugin.call('manager', 'deactivatePlugin', 'walletconnect')
     }
     setFinalContext(plugin, dispatch)
     fillAccountsList(plugin, dispatch)
@@ -38,7 +52,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
 
   plugin.blockchain.event.register('networkStatus', ({ error, network }) => {
     if (error) {
-      const netUI = 'can\'t detect network'
+      const netUI = "can't detect network"
       setNetworkNameFromProvider(dispatch, netUI)
 
       return
@@ -49,13 +63,15 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     setNetworkNameFromProvider(dispatch, netUI)
   })
 
-  plugin.blockchain.event.register('addProvider', provider => addExternalProvider(dispatch, provider))
+  plugin.blockchain.event.register('addProvider', (provider) => addExternalProvider(dispatch, provider))
 
-  plugin.blockchain.event.register('removeProvider', name => removeExternalProvider(dispatch, name))
+  plugin.blockchain.event.register('removeProvider', (name) => removeExternalProvider(dispatch, name))
 
   plugin.blockchain.events.on('newProxyDeployment', (address, date, contractName) => addNewProxyDeployment(dispatch, address, date, contractName))
 
-  plugin.on('solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) => broadcastCompilationResult('remix', plugin, dispatch, file, source, languageVersion, data, input))
+  plugin.on('solidity', 'compilationFinished', (file, source, languageVersion, data, input, version) =>
+    broadcastCompilationResult('remix', plugin, dispatch, file, source, languageVersion, data, input)
+  )
 
   plugin.on('vyper', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('vyper', plugin, dispatch, file, source, languageVersion, data))
 
@@ -63,7 +79,9 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
 
   plugin.on('yulp', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('yulp', plugin, dispatch, file, source, languageVersion, data))
 
-  plugin.on('nahmii-compiler', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('nahmii', plugin, dispatch, file, source, languageVersion, data))
+  plugin.on('nahmii-compiler', 'compilationFinished', (file, source, languageVersion, data) =>
+    broadcastCompilationResult('nahmii', plugin, dispatch, file, source, languageVersion, data)
+  )
 
   plugin.on('hardhat', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('hardhat', plugin, dispatch, file, source, languageVersion, data))
 
@@ -71,7 +89,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
 
   plugin.on('truffle', 'compilationFinished', (file, source, languageVersion, data) => broadcastCompilationResult('truffle', plugin, dispatch, file, source, languageVersion, data))
 
-  plugin.on('udapp', 'setEnvironmentModeReducer', (env: { context: string, fork: string }, from: string) => {
+  plugin.on('udapp', 'setEnvironmentModeReducer', (env: { context: string; fork: string }, from: string) => {
     plugin.call('notification', 'toast', envChangeNotification(env, from))
     setExecutionContext(plugin, dispatch, env)
   })
@@ -107,10 +125,12 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   plugin.fileManager.events.on('currentFileChanged', (currentFile: string) => {
     if (/.(.abi)$/.exec(currentFile)) {
       dispatch(setLoadType('abi'))
-    } else if (/.(.sol)$/.exec(currentFile) ||
-        /.(.vy)$/.exec(currentFile) || // vyper
-        /.(.lex)$/.exec(currentFile) || // lexon
-        /.(.contract)$/.exec(currentFile)) {
+    } else if (
+      /.(.sol)$/.exec(currentFile) ||
+      /.(.vy)$/.exec(currentFile) || // vyper
+      /.(.lex)$/.exec(currentFile) || // lexon
+      /.(.contract)$/.exec(currentFile)
+    ) {
       dispatch(setLoadType('sol'))
     } else {
       dispatch(setLoadType('other'))
@@ -128,32 +148,38 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
 
   plugin.on('injected', 'accountsChanged', (accounts: Array<string>) => {
     const accountsMap = {}
-    accounts.map(account => { accountsMap[account] = shortenAddress(account, '0')})
+    accounts.map((account) => {
+      accountsMap[account] = shortenAddress(account, '0')
+    })
     dispatch(fetchAccountsListSuccess(accountsMap))
   })
 
   plugin.on('injected-trustwallet', 'accountsChanged', (accounts: Array<string>) => {
     const accountsMap = {}
-    accounts.map(account => { accountsMap[account] = shortenAddress(account, '0')})
+    accounts.map((account) => {
+      accountsMap[account] = shortenAddress(account, '0')
+    })
     dispatch(fetchAccountsListSuccess(accountsMap))
   })
 
   plugin.on('walletconnect', 'accountsChanged', async (accounts: Array<string>) => {
     const accountsMap = {}
 
-    await Promise.all(accounts.map(async (account) => {
-      const balance = await plugin.blockchain.getBalanceInEther(account)
-      const updated = shortenAddress(account, balance)
+    await Promise.all(
+      accounts.map(async (account) => {
+        const balance = await plugin.blockchain.getBalanceInEther(account)
+        const updated = shortenAddress(account, balance)
 
-      accountsMap[account] = updated
-    }))
+        accountsMap[account] = updated
+      })
+    )
     dispatch(fetchAccountsListSuccess(accountsMap))
   })
 
   setInterval(() => {
     fillAccountsList(plugin, dispatch)
     updateInstanceBalance(plugin, dispatch)
-  }, 30000)  
+  }, 30000)
 }
 
 const broadcastCompilationResult = async (compilerName: string, plugin: RunTab, dispatch: React.Dispatch<any>, file, source, languageVersion, data, input?) => {
@@ -166,8 +192,8 @@ const broadcastCompilationResult = async (compilerName: string, plugin: RunTab, 
   const contracts = getCompiledContracts(compiler).map((contract) => {
     return { name: languageVersion, alias: contract.name, file: contract.file, compiler, compilerName }
   })
-  if ((contracts.length > 0)) {
-    const contractsInCompiledFile = contracts.filter(obj => obj.file === file)
+  if (contracts.length > 0) {
+    const contractsInCompiledFile = contracts.filter((obj) => obj.file === file)
     let currentContract
     if (contractsInCompiledFile.length) currentContract = contractsInCompiledFile[0].alias
     else currentContract = contracts[0].alias
@@ -177,7 +203,7 @@ const broadcastCompilationResult = async (compilerName: string, plugin: RunTab, 
 
   if (isUpgradeable) {
     const options = await plugin.call('openzeppelin-proxy', 'getProxyOptions', data, file)
-  
+
     dispatch(addDeployOption({ [file]: options }))
   } else {
     dispatch(addDeployOption({ [file]: {} }))
@@ -192,7 +218,7 @@ const getCompiledContracts = (compiler) => {
 
   compiler.visitContracts((contract) => {
     contracts.push(contract)
-  }) 
+  })
   return contracts
 }
 

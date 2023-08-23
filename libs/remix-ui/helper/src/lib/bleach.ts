@@ -6,16 +6,9 @@
 import * as he from 'he'
 
 export const bleach = {
+  matcher: /<\/?([a-zA-Z0-9]+)*(.*?)\/?>/gim,
 
-  matcher: /<\/?([a-zA-Z0-9]+)*(.*?)\/?>/igm,
-
-  whitelist: [
-    'a',
-    'b',
-    'p',
-    'em',
-    'strong'
-  ],
+  whitelist: ['a', 'b', 'p', 'em', 'strong'],
 
   analyze: function (html) {
     html = String(html) || ''
@@ -57,21 +50,19 @@ export const bleach = {
     return matches
   },
 
-  sanitize: function (html, options = { mode: 'white', list: bleach.whitelist, encode_entities: false}) {
+  sanitize: function (html, options = { mode: 'white', list: bleach.whitelist, encode_entities: false }) {
     html = String(html) || ''
-    
+
     const mode = options.mode || 'white'
     const list = options.list || bleach.whitelist
 
     const matches = bleach.analyze(html)
 
-    if ((mode === 'white' && list.indexOf('script') === -1) ||
-       (mode === 'black' && list.indexOf('script') !== -1)) {
+    if ((mode === 'white' && list.indexOf('script') === -1) || (mode === 'black' && list.indexOf('script') !== -1)) {
       html = html.replace(/<script(.*?)>(.*?[\r\n])*?(.*?)(.*?[\r\n])*?<\/script>/gim, '')
     }
 
-    if ((mode === 'white' && list.indexOf('style') === -1) ||
-       (mode === 'black' && list.indexOf('style') !== -1)) {
+    if ((mode === 'white' && list.indexOf('style') === -1) || (mode === 'black' && list.indexOf('style') !== -1)) {
       html = html.replace(/<style(.*?)>(.*?[\r\n])*?(.*?)(.*?[\r\n])*?<\/style>/gim, '')
     }
 

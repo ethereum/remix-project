@@ -1,4 +1,4 @@
-import { EditorAPIType, PluginType } from "../remix-ui-editor"
+import { EditorAPIType, PluginType } from '../remix-ui-editor'
 
 export const retrieveNodesAtPosition = async (editorAPI: EditorAPIType, plugin: PluginType) => {
   const cursorPosition = editorAPI.getCursorPosition()

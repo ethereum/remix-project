@@ -13,16 +13,16 @@ export default class inlineAssembly implements AnalyzerModule {
     start: '0.4.12'
   }
 
-  visit (node: InlineAssemblyAstNode): void {
+  visit(node: InlineAssemblyAstNode): void {
     if (node.nodeType === 'InlineAssembly') this.inlineAssNodes.push(node)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  report (compilationResults: CompilationResult): ReportObj[] {
+  report(compilationResults: CompilationResult): ReportObj[] {
     const version = getCompilerVersion(compilationResults.contracts)
     return this.inlineAssNodes.map((node) => {
       return {
-        warning: `The Contract uses inline assembly, this is only advised in rare cases. 
+        warning: `The Contract uses inline assembly, this is only advised in rare cases.
                   Additionally static analysis modules do not parse inline Assembly, this can lead to wrong analysis results.`,
         location: node.src,
         more: `https://solidity.readthedocs.io/en/${version}/assembly.html`

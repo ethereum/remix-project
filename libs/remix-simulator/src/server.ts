@@ -10,19 +10,22 @@ class Server {
   provider
   rpcOnly
 
-  constructor (options) {
+  constructor(options) {
     this.provider = new Provider(options)
-    this.provider.init().then(() => {
-      log('Provider initiated')
-    }).catch((error) => {
-      log(error)
-    })
+    this.provider
+      .init()
+      .then(() => {
+        log('Provider initiated')
+      })
+      .catch((error) => {
+        log(error)
+      })
     this.rpcOnly = options.rpc
   }
 
-  start (host, port) {
+  start(host, port) {
     const wsApp = expressWs(app)
-    
+
     app.use(cors())
     app.use(bodyParser.urlencoded({ extended: true }))
     app.use(bodyParser.json())

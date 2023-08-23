@@ -1,6 +1,6 @@
-import { Monaco } from "@monaco-editor/react"
-import monaco from "../../types/monaco"
-import { EditorUIProps } from "../remix-ui-editor"
+import { Monaco } from '@monaco-editor/react'
+import monaco from '../../types/monaco'
+import { EditorUIProps } from '../remix-ui-editor'
 
 export class RemixDefinitionProvider implements monaco.languages.DefinitionProvider {
   props: EditorUIProps
@@ -11,12 +11,19 @@ export class RemixDefinitionProvider implements monaco.languages.DefinitionProvi
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async provideDefinition(model: monaco.editor.ITextModel, position: monaco.Position, token: monaco.CancellationToken): Promise<monaco.languages.Definition | monaco.languages.LocationLink[]> {
+  async provideDefinition(
+    model: monaco.editor.ITextModel,
+    position: monaco.Position,
+    token: monaco.CancellationToken
+  ): Promise<monaco.languages.Definition | monaco.languages.LocationLink[]> {
     const cursorPosition = this.props.editorAPI.getCursorPosition()
     let jumpLocation = await this.jumpToDefinition(cursorPosition)
     if (!jumpLocation || !jumpLocation.fileName) {
       const line = model.getLineContent(position.lineNumber)
-      const lastpart = line.substring(0, position.column - 1).split(';').pop()
+      const lastpart = line
+        .substring(0, position.column - 1)
+        .split(';')
+        .pop()
       if (lastpart.startsWith('import')) {
         const importPath = line.substring(lastpart.indexOf('"') + 1)
         const importPath2 = importPath.substring(0, importPath.indexOf('"'))
@@ -30,15 +37,17 @@ export class RemixDefinitionProvider implements monaco.languages.DefinitionProvi
       }
     }
     if (jumpLocation && jumpLocation.fileName) {
-      return [{
-        uri: this.monaco.Uri.parse(jumpLocation.fileName),
-        range: {
-          startLineNumber: jumpLocation.startLineNumber,
-          startColumn: jumpLocation.startColumn,
-          endLineNumber: jumpLocation.endLineNumber,
-          endColumn: jumpLocation.endColumn
+      return [
+        {
+          uri: this.monaco.Uri.parse(jumpLocation.fileName),
+          range: {
+            startLineNumber: jumpLocation.startLineNumber,
+            startColumn: jumpLocation.startColumn,
+            endLineNumber: jumpLocation.endLineNumber,
+            endColumn: jumpLocation.endColumn
+          }
         }
-      }]
+      ]
     }
     return []
   }
@@ -52,19 +61,17 @@ export class RemixDefinitionProvider implements monaco.languages.DefinitionProvi
   }
 
   /*
-    * onClick jump to position of ast node in the editor
-    */
+   * onClick jump to position of ast node in the editor
+   */
   async jumpToPosition(position: any) {
     const jumpToLine = async (fileName: string, lineColumn: any) => {
       const fileTarget = await this.props.plugin.call('fileManager', 'getPathFromUrl', fileName)
-      if (fileName !== await this.props.plugin.call('fileManager', 'file')) {
+      if (fileName !== (await this.props.plugin.call('fileManager', 'file'))) {
         await this.props.plugin.call('contentImport', 'resolveAndSave', fileName, null)
         const fileContent = await this.props.plugin.call('fileManager', 'readFile', fileName)
         try {
           await this.props.plugin.call('editor', 'addModel', fileTarget.file, fileContent)
-        } catch (e) {
-
-        }
+        } catch (e) {}
       }
       if (lineColumn.start && lineColumn.start.line >= 0 && lineColumn.start.column >= 0) {
         const pos = {
@@ -77,9 +84,8 @@ export class RemixDefinitionProvider implements monaco.languages.DefinitionProvi
         return pos
       }
     }
-    const lastCompilationResult = await this.props.plugin.call('codeParser', 'getLastCompilationResult')  // await this.props.plugin.call('compilerArtefacts', 'getLastCompilationResult')
+    const lastCompilationResult = await this.props.plugin.call('codeParser', 'getLastCompilationResult') // await this.props.plugin.call('compilerArtefacts', 'getLastCompilationResult')
     if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data) {
-
       const lineColumn = await this.props.plugin.call('codeParser', 'getLineColumnOfPosition', position)
       const filename = lastCompilationResult.getSourceName(position.file)
       return await jumpToLine(filename, lineColumn)

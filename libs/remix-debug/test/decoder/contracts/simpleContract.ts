@@ -1,6 +1,6 @@
 'use strict'
 module.exports = `
-   contract simpleContract {       
+   contract simpleContract {
         struct structDef {
             uint8 ui;
             string str;
@@ -14,7 +14,7 @@ module.exports = `
         structDef[3] array;
         enumDef enumDec;
     }
-    
+
     contract test1 {
         struct str {
             uint8 ui;

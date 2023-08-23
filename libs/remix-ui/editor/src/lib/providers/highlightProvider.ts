@@ -1,7 +1,7 @@
-import { Monaco } from "@monaco-editor/react"
-import { sourceMappingDecoder } from "@remix-project/remix-debug"
-import monaco from "../../types/monaco"
-import { EditorUIProps } from "../remix-ui-editor"
+import { Monaco } from '@monaco-editor/react'
+import { sourceMappingDecoder } from '@remix-project/remix-debug'
+import monaco from '../../types/monaco'
+import { EditorUIProps } from '../remix-ui-editor'
 
 export class RemixHighLightProvider implements monaco.languages.DocumentHighlightProvider {
   props: EditorUIProps
@@ -27,7 +27,7 @@ export class RemixHighLightProvider implements monaco.languages.DocumentHighligh
             const lineColumn = await this.props.plugin.call('codeParser', 'getLineColumnOfPosition', position)
             const range = new this.monaco.Range(lineColumn.start.line + 1, lineColumn.start.column + 1, lineColumn.end.line + 1, lineColumn.end.column + 1)
             highlights.push({
-              range,
+              range
             })
           }
         }

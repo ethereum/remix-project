@@ -1,11 +1,10 @@
 'use strict'
-import { extendWeb3 } from '../src/init' 
+import { extendWeb3 } from '../src/init'
 import { Address } from '@ethereumjs/util'
 const { Provider } = require('@remix-project/remix-simulator')
 const Web3 = require('web3')
 
-
-async function getWeb3 () {
+async function getWeb3() {
   const remixSimulatorProvider = new Provider({ fork: 'berlin' })
   await remixSimulatorProvider.init()
   await remixSimulatorProvider.Accounts.resetAccounts()
@@ -14,7 +13,7 @@ async function getWeb3 () {
   return web3
 }
 
-async function sendTx (web3, from, to, value, data, cb) {
+async function sendTx(web3, from, to, value, data, cb) {
   try {
     cb = cb || (() => {})
     const receipt = await web3.eth.sendTransaction({

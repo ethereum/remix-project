@@ -7,7 +7,7 @@ const password = process.env.account_password
 
 module.exports = {
   '@disabled': true,
-  before: function (browser: NightwatchBrowser, done: VoidFunction) {
+  'before': function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
 
@@ -16,14 +16,16 @@ module.exports = {
   },
 
   'Should load run and deploy tab #group1 #group2': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    browser
+      .waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="sidePanelSwapitTitle"]')
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN TRANSACTIONS')
   },
 
   'Should load run and deploy tab and check value validation #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    browser
+      .waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN TRANSACTIONS')
       .validateValueInput('#value', '0000', '0')
       .validateValueInput('#value', '', '0')
@@ -31,7 +33,8 @@ module.exports = {
   },
 
   'Should sign message using account key #group2': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="settingsRemixRunSignMsg"]')
+    browser
+      .waitForElementVisible('*[data-id="settingsRemixRunSignMsg"]')
       .switchEnvironment('vm-merge')
       .pause(2000)
       .click('*[data-id="settingsRemixRunSignMsg"]')
@@ -52,7 +55,8 @@ module.exports = {
   },
 
   'Should deploy contract on JavascriptVM #group3': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
+    browser
+      .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('filePanel')
       .addFile('Greet.sol', sources[0]['Greet.sol'])
       .clickLaunchIcon('udapp')
@@ -67,7 +71,8 @@ module.exports = {
 
   'Should show and update balance for deployed contract on JavascriptVM #group3': function (browser: NightwatchBrowser) {
     let instanceAddress
-    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
+    browser
+      .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('filePanel')
       .addFile('checkBalance.sol', sources[0]['checkBalance.sol'])
       .clickLaunchIcon('udapp')
@@ -80,16 +85,17 @@ module.exports = {
       .getAddressAtPosition(1, (address) => {
         instanceAddress = address
         browser
-        .waitForElementVisible(`#instance${instanceAddress} [data-id="instanceContractBal"]`)
-        .assert.containsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000111 ETH')
-        .clickFunction('sendSomeEther - transact (not payable)', { types: 'uint256 num', values: '2' })
-        .pause(1000)
-        .assert.containsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000109 ETH')
+          .waitForElementVisible(`#instance${instanceAddress} [data-id="instanceContractBal"]`)
+          .assert.containsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000111 ETH')
+          .clickFunction('sendSomeEther - transact (not payable)', { types: 'uint256 num', values: '2' })
+          .pause(1000)
+          .assert.containsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000109 ETH')
       })
   },
 
   'Should run low level interaction (fallback function) #group3': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    browser
+      .waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .clickInstance(0)
       .waitForElementPresent('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
       .click('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
@@ -104,11 +110,14 @@ module.exports = {
   },
 
   'Should connect to Goerli Test Network using MetaMask': !function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    browser
+      .waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .setupMetamask(passphrase, password)
       .click('.network-indicator__down-arrow')
-      .useXpath().click("//span[text()='Goerli Test Network']")
-      .useCss().switchBrowserTab(0)
+      .useXpath()
+      .click("//span[text()='Goerli Test Network']")
+      .useCss()
+      .switchBrowserTab(0)
       .refreshPage()
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .click('*[data-id="landingPageStartSolidity"]')
@@ -125,7 +134,8 @@ module.exports = {
   },
 
   'Should deploy contract on Goerli Test Network using MetaMask': !function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
+    browser
+      .waitForElementPresent('*[data-id="runTabSelectAccount"] option')
       .clickLaunchIcon('filePanel')
       .openFile('Greet.sol')
       .clickLaunchIcon('udapp')
@@ -142,7 +152,8 @@ module.exports = {
   },
 
   'Should run low level interaction (fallback function) on Goerli Test Network using MetaMask': !function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    browser
+      .waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
       .click('*[data-id="universalDappUiTitleExpander"]')
       .waitForElementPresent('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
@@ -159,12 +170,15 @@ module.exports = {
   },
 
   'Should connect to Ethereum Main Network using MetaMask': !function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    browser
+      .waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .switchBrowserTab(2)
       .waitForElementPresent('.network-indicator__down-arrow')
       .click('.network-indicator__down-arrow')
-      .useXpath().click("//span[text()='Main Ethereum Network']")
-      .useCss().switchBrowserTab(0)
+      .useXpath()
+      .click("//span[text()='Main Ethereum Network']")
+      .useCss()
+      .switchBrowserTab(0)
       .refreshPage()
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .click('*[data-id="landingPageStartSolidity"]')
@@ -177,7 +191,8 @@ module.exports = {
   },
 
   'Should deploy contract on Ethereum Main Network using MetaMask': !function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
+    browser
+      .waitForElementPresent('*[data-id="runTabSelectAccount"] option')
       .clickLaunchIcon('filePanel')
       .openFile('Greet.sol')
       .clickLaunchIcon('udapp')
@@ -197,17 +212,20 @@ module.exports = {
    *
    */
   'Should debug Ropsten transaction with source highlighting using the source verifier service and MetaMask': !function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+    browser
+      .waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .switchBrowserTab(2)
       .waitForElementPresent('.network-indicator__down-arrow')
       .click('.network-indicator__down-arrow')
-      .useXpath().click("//span[text()='Ropsten Test Network']") // switch to Ropsten
-      .useCss().switchBrowserTab(0)
+      .useXpath()
+      .click("//span[text()='Ropsten Test Network']") // switch to Ropsten
+      .useCss()
+      .switchBrowserTab(0)
       .refreshPage()
       .clickLaunchIcon('pluginManager') // load debugger and source verification
-    // .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_sourcify"] button')
-    // debugger already activated .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
+      // .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_sourcify"] button')
+      // debugger already activated .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="settingsSelectEnvOptions"]')
       .click('*[data-id="settingsSelectEnvOptions"] option[id="injected-mode"]') // switch to Ropsten in udapp
@@ -222,26 +240,22 @@ module.exports = {
   },
 
   'Call web3.eth.getAccounts() using Injected Provider (Metamask)': !function (browser: NightwatchBrowser) {
-    browser
-      .executeScriptInTerminal('web3.eth.getAccounts()')
-      .journalLastChildIncludes('[ "0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f" ]')
-      .end()
+    browser.executeScriptInTerminal('web3.eth.getAccounts()').journalLastChildIncludes('[ "0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f" ]').end()
   }
 }
 
 const sources = [
   {
     'Greet.sol': {
-      content:
-      `
+      content: `
       pragma solidity ^0.8.0;
       contract helloWorld {
           string public message;
-          
+
           fallback () external {
               message = 'Hello World!';
           }
-          
+
           function greet(string memory _message) public {
               message = _message;
           }
@@ -255,7 +269,7 @@ const sources = [
         function sendSomeEther(uint256 num) public {
             payable(msg.sender).transfer(num);
         }
-    
+
     }`
     }
   }

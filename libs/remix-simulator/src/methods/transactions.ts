@@ -27,18 +27,16 @@ export class Transactions {
   txRunnerInstance
   TX_INDEX = '0x0' // currently there's always only 1 tx per block, so the transaction index will always be 0x0
 
-  constructor (vmContext) {
+  constructor(vmContext) {
     this.vmContext = vmContext
     this.tags = {}
   }
 
-  init (accounts) {
+  init(accounts) {
     this.accounts = accounts
     const api = {
-      logMessage: (msg) => {
-      },
-      logHtmlMessage: (msg) => {
-      },
+      logMessage: (msg) => {},
+      logHtmlMessage: (msg) => {},
       config: {
         getUnpersistedProperty: (key) => {
           return true
@@ -55,12 +53,12 @@ export class Transactions {
       }
     }
 
-    this.txRunnerVMInstance = new TxRunnerVM(accounts, api, _ => this.vmContext.vmObject())
+    this.txRunnerVMInstance = new TxRunnerVM(accounts, api, (_) => this.vmContext.vmObject())
     this.txRunnerInstance = new TxRunner(this.txRunnerVMInstance, {})
     this.txRunnerInstance.vmaccounts = accounts
   }
 
-  methods () {
+  methods() {
     return {
       eth_sendTransaction: this.eth_sendTransaction.bind(this),
       eth_getTransactionReceipt: this.eth_getTransactionReceipt.bind(this),
@@ -77,7 +75,7 @@ export class Transactions {
     }
   }
 
-  eth_sendTransaction (payload, cb) {
+  eth_sendTransaction(payload, cb) {
     // from might be lowercased address (web3)
     if (payload.params && payload.params.length > 0 && payload.params[0].from) {
       payload.params[0].from = toChecksumAddress(payload.params[0].from)
@@ -103,17 +101,17 @@ export class Transactions {
     })
   }
 
-  eth_getExecutionResultFromSimulator (payload, cb) {
+  eth_getExecutionResultFromSimulator(payload, cb) {
     const txHash = payload.params[0]
     cb(null, this.vmContext.exeResults[txHash])
   }
 
-  eth_getHHLogsForTx (payload, cb) {
+  eth_getHHLogsForTx(payload, cb) {
     const txHash = payload.params[0]
     cb(null, this.vmContext.currentVm.web3vm.hhLogs[txHash] ? this.vmContext.currentVm.web3vm.hhLogs[txHash] : [])
   }
 
-  eth_getTransactionReceipt (payload, cb) {
+  eth_getTransactionReceipt(payload, cb) {
     this.vmContext.web3().eth.getTransactionReceipt(payload.params[0], (error, receipt) => {
       if (error) {
         return cb(error)
@@ -123,7 +121,7 @@ export class Transactions {
 
       const logs = this.vmContext.logsManager.getLogsByTxHash(receipt.hash)
 
-      const r: Record <string, unknown> = {
+      const r: Record<string, unknown> = {
         transactionHash: receipt.hash,
         transactionIndex: this.TX_INDEX,
         blockHash: '0x' + txBlock.hash().toString('hex'),
@@ -144,7 +142,7 @@ export class Transactions {
     })
   }
 
-  eth_estimateGas (payload, cb) {
+  eth_estimateGas(payload, cb) {
     // from might be lowercased address (web3)
     if (payload.params && payload.params.length > 0 && payload.params[0].from) {
       payload.params[0].from = toChecksumAddress(payload.params[0].from)
@@ -156,7 +154,7 @@ export class Transactions {
     payload.params[0].gas = 10000000 * 10
 
     this.vmContext.web3().flagNextAsDoNotRecordEvmSteps()
-    processTx(this.txRunnerInstance, payload, true, (error, value: VMexecutionResult) => {      
+    processTx(this.txRunnerInstance, payload, true, (error, value: VMexecutionResult) => {
       if (error) return cb(error)
       const result: RunTxResult = value.result
       if ((result as any).receipt?.status === '0x0' || (result as any).receipt?.status === 0) {
@@ -178,7 +176,7 @@ export class Transactions {
     })
   }
 
-  eth_getCode (payload, cb) {
+  eth_getCode(payload, cb) {
     const address = payload.params[0]
 
     this.vmContext.web3().eth.getCode(address, (error, result) => {
@@ -190,7 +188,7 @@ export class Transactions {
     })
   }
 
-  eth_call (payload, cb) {
+  eth_call(payload, cb) {
     // from might be lowercased address (web3)
     if (payload.params && payload.params.length > 0 && payload.params[0].from) {
       payload.params[0].from = toChecksumAddress(payload.params[0].from)
@@ -226,22 +224,26 @@ export class Transactions {
     })
   }
 
-  eth_getHashFromTagBySimulator (payload, cb) {
+  eth_getHashFromTagBySimulator(payload, cb) {
     return cb(null, this.tags[payload.params[0]])
   }
 
-  eth_getTransactionCount (payload, cb) {
+  eth_getTransactionCount(payload, cb) {
     const address = payload.params[0]
 
-    this.vmContext.vm().stateManager.getAccount(Address.fromString(address)).then((account) => {
-      const nonce = new BN(account.nonce).toString(10)
-      cb(null, nonce)
-    }).catch((error) => {
-      cb(error)
-    })
+    this.vmContext
+      .vm()
+      .stateManager.getAccount(Address.fromString(address))
+      .then((account) => {
+        const nonce = new BN(account.nonce).toString(10)
+        cb(null, nonce)
+      })
+      .catch((error) => {
+        cb(error)
+      })
   }
 
-  eth_getTransactionByHash (payload, cb) {
+  eth_getTransactionByHash(payload, cb) {
     const address = payload.params[0]
 
     this.vmContext.web3().eth.getTransactionReceipt(address, (error, receipt) => {
@@ -288,7 +290,7 @@ export class Transactions {
     })
   }
 
-  eth_getTransactionByBlockHashAndIndex (payload, cb) {
+  eth_getTransactionByBlockHashAndIndex(payload, cb) {
     const txIndex = payload.params[1]
 
     const txBlock = this.vmContext.blocks[payload.params[0]]
@@ -333,7 +335,7 @@ export class Transactions {
     })
   }
 
-  eth_getTransactionByBlockNumberAndIndex (payload, cb) {
+  eth_getTransactionByBlockNumberAndIndex(payload, cb) {
     const txIndex = payload.params[1]
 
     const txBlock = this.vmContext.blocks[payload.params[0]]

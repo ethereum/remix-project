@@ -1,6 +1,58 @@
 import { ContractData } from '@remix-project/core-plugin'
 import { ContractList, DeployOptions, RunTabState } from '../types'
-import { ADD_INSTANCE, UPDATE_INSTANCES_BALANCE, ADD_PROVIDER, CLEAR_INSTANCES, CLEAR_RECORDER_COUNT, DISPLAY_NOTIFICATION, DISPLAY_POPUP_MESSAGE, FETCH_ACCOUNTS_LIST_FAILED, FETCH_ACCOUNTS_LIST_REQUEST, FETCH_ACCOUNTS_LIST_SUCCESS, FETCH_CONTRACT_LIST_FAILED, FETCH_CONTRACT_LIST_REQUEST, FETCH_CONTRACT_LIST_SUCCESS, FETCH_PROVIDER_LIST_FAILED, FETCH_PROVIDER_LIST_REQUEST, FETCH_PROVIDER_LIST_SUCCESS, HIDE_NOTIFICATION, HIDE_POPUP_MESSAGE, REMOVE_INSTANCE, REMOVE_PROVIDER, RESET_STATE, SET_BASE_FEE_PER_GAS, SET_CONFIRM_SETTINGS, SET_CURRENT_CONTRACT, SET_CURRENT_FILE, SET_DECODED_RESPONSE, SET_DEPLOY_OPTIONS, SET_EXECUTION_ENVIRONMENT, SET_EXTERNAL_WEB3_ENDPOINT, SET_GAS_LIMIT, SET_GAS_PRICE, SET_GAS_PRICE_STATUS, SET_IPFS_CHECKED_STATE, SET_LOAD_TYPE, SET_MATCH_PASSPHRASE, SET_MAX_FEE, SET_MAX_PRIORITY_FEE, SET_NETWORK_NAME, SET_PASSPHRASE, SET_PATH_TO_SCENARIO, SET_PERSONAL_MODE, SET_RECORDER_COUNT, SET_SELECTED_ACCOUNT, SET_SEND_UNIT, SET_SEND_VALUE, ADD_DEPLOY_OPTION, REMOVE_DEPLOY_OPTION, SET_REMIXD_ACTIVATED, FETCH_PROXY_DEPLOYMENTS, NEW_PROXY_DEPLOYMENT, RESET_PROXY_DEPLOYMENTS } from '../constants'
+import {
+  ADD_INSTANCE,
+  UPDATE_INSTANCES_BALANCE,
+  ADD_PROVIDER,
+  CLEAR_INSTANCES,
+  CLEAR_RECORDER_COUNT,
+  DISPLAY_NOTIFICATION,
+  DISPLAY_POPUP_MESSAGE,
+  FETCH_ACCOUNTS_LIST_FAILED,
+  FETCH_ACCOUNTS_LIST_REQUEST,
+  FETCH_ACCOUNTS_LIST_SUCCESS,
+  FETCH_CONTRACT_LIST_FAILED,
+  FETCH_CONTRACT_LIST_REQUEST,
+  FETCH_CONTRACT_LIST_SUCCESS,
+  FETCH_PROVIDER_LIST_FAILED,
+  FETCH_PROVIDER_LIST_REQUEST,
+  FETCH_PROVIDER_LIST_SUCCESS,
+  HIDE_NOTIFICATION,
+  HIDE_POPUP_MESSAGE,
+  REMOVE_INSTANCE,
+  REMOVE_PROVIDER,
+  RESET_STATE,
+  SET_BASE_FEE_PER_GAS,
+  SET_CONFIRM_SETTINGS,
+  SET_CURRENT_CONTRACT,
+  SET_CURRENT_FILE,
+  SET_DECODED_RESPONSE,
+  SET_DEPLOY_OPTIONS,
+  SET_EXECUTION_ENVIRONMENT,
+  SET_EXTERNAL_WEB3_ENDPOINT,
+  SET_GAS_LIMIT,
+  SET_GAS_PRICE,
+  SET_GAS_PRICE_STATUS,
+  SET_IPFS_CHECKED_STATE,
+  SET_LOAD_TYPE,
+  SET_MATCH_PASSPHRASE,
+  SET_MAX_FEE,
+  SET_MAX_PRIORITY_FEE,
+  SET_NETWORK_NAME,
+  SET_PASSPHRASE,
+  SET_PATH_TO_SCENARIO,
+  SET_PERSONAL_MODE,
+  SET_RECORDER_COUNT,
+  SET_SELECTED_ACCOUNT,
+  SET_SEND_UNIT,
+  SET_SEND_VALUE,
+  ADD_DEPLOY_OPTION,
+  REMOVE_DEPLOY_OPTION,
+  SET_REMIXD_ACTIVATED,
+  FETCH_PROXY_DEPLOYMENTS,
+  NEW_PROXY_DEPLOYMENT,
+  RESET_PROXY_DEPLOYMENTS
+} from '../constants'
 
 declare const window: any
 interface Action {
@@ -74,10 +126,10 @@ export const runTabInitialState: RunTabState = {
 }
 
 type AddProvider = {
-  name: string,
-  displayName: string,
-  provider: any,
-  title?: string,
+  name: string
+  displayName: string
+  provider: any
+  title?: string
   dataId?: string
 }
 
@@ -209,7 +261,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
   }
 
   case FETCH_PROVIDER_LIST_SUCCESS: {
-    const payload: { id?: string, dataId?: string, title?: string, value: string, fork?: string, content: string }[] = action.payload
+    const payload: { id?: string; dataId?: string; title?: string; value: string; fork?: string; content: string }[] = action.payload
 
     return {
       ...state,
@@ -269,7 +321,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
   }
 
   case DISPLAY_NOTIFICATION: {
-    const payload = action.payload as { title: string, message: string, actionOk: () => void, actionCancel: () => void, labelOk: string, labelCancel: string }
+    const payload = action.payload as { title: string; message: string; actionOk: () => void; actionCancel: () => void; labelOk: string; labelCancel: string }
 
     return {
       ...state,
@@ -411,7 +463,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       }
     }
   }
-    
+
   case SET_IPFS_CHECKED_STATE: {
     const payload: boolean = action.payload
 
@@ -476,7 +528,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
   }
 
   case ADD_INSTANCE: {
-    const payload: { contractData: ContractData, address: string, name: string, abi?: any, decodedResponse?: Record<number, any> } = action.payload
+    const payload: { contractData: ContractData; address: string; name: string; abi?: any; decodedResponse?: Record<number, any> } = action.payload
 
     return {
       ...state,
@@ -488,7 +540,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
   }
 
   case UPDATE_INSTANCES_BALANCE: {
-    const payload: Array<{ contractData: ContractData, address: string, balance: number, name: string, abi?: any, decodedResponse?: Record<number, any> }> = action.payload
+    const payload: Array<{ contractData: ContractData; address: string; balance: number; name: string; abi?: any; decodedResponse?: Record<number, any> }> = action.payload
 
     return {
       ...state,
@@ -522,7 +574,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
   }
 
   case SET_DECODED_RESPONSE: {
-    const payload: { instanceIndex: number, funcIndex: number, response: any } = action.payload
+    const payload: { instanceIndex: number; funcIndex: number; response: any } = action.payload
 
     return {
       ...state,
@@ -584,7 +636,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       ...state,
       contracts: {
         ...state.contracts,
-        deployOptions: {...state.contracts.deployOptions, ...payload }
+        deployOptions: { ...state.contracts.deployOptions, ...payload }
       }
     }
   }
@@ -624,7 +676,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
   }
 
   case FETCH_PROXY_DEPLOYMENTS: {
-    const payload: { address: string, date: string, contractName: string }[] = action.payload
+    const payload: { address: string; date: string; contractName: string }[] = action.payload
 
     return {
       ...state,
@@ -636,7 +688,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
   }
 
   case NEW_PROXY_DEPLOYMENT: {
-    const payload: { address: string, date: string, contractName: string } = action.payload
+    const payload: { address: string; date: string; contractName: string } = action.payload
 
     return {
       ...state,

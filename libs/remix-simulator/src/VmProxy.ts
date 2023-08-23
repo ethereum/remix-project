@@ -1,7 +1,7 @@
-import {  util } from '@remix-project/remix-lib'
+import { util } from '@remix-project/remix-lib'
 const { toHexPaddedString, formatMemory } = util
 import { helpers } from '@remix-project/remix-lib'
-const  { normalizeHexAddress } = helpers.ui
+const { normalizeHexAddress } = helpers.ui
 import { ConsoleLogs, hash } from '@remix-project/remix-lib'
 import BN from 'bn.js'
 import { isBigNumber } from 'web3-utils'
@@ -47,8 +47,8 @@ export class VmProxy {
   stateCopy: StateManager
   flagDoNotRecordEVMSteps: boolean
   lastMemoryUpdate: Array<string>
-  
-  constructor (vmContext: VMContext) {
+
+  constructor(vmContext: VMContext) {
     this.vmContext = vmContext
     this.stateCopy
     this.vm = null
@@ -92,7 +92,7 @@ export class VmProxy {
     this.lastMemoryUpdate = []
   }
 
-  setVM (vm) {
+  setVM(vm) {
     if (this.vm === vm) return
     this.vm = vm
     this.vm.evm.events.on('step', async (data: InterpreterStep) => {
@@ -108,17 +108,17 @@ export class VmProxy {
     })
   }
 
-  releaseCurrentHash () {
+  releaseCurrentHash() {
     const ret = this.processingHash
     this.processingHash = undefined
     return ret
   }
 
-  flagNextAsDoNotRecordEvmSteps () {
+  flagNextAsDoNotRecordEvmSteps() {
     this.flagDoNotRecordEVMSteps = true
   }
 
-  async txWillProcess (data: TypedTransaction) {
+  async txWillProcess(data: TypedTransaction) {
     if (this.flagDoNotRecordEVMSteps) return
     this.lastMemoryUpdate = []
     this.stateCopy = await this.vm.stateManager.copy()
@@ -146,7 +146,7 @@ export class VmProxy {
     this.storageCache[this.processingHash] = {}
     this.storageCache['after_' + this.processingHash] = {}
     if (data.to) {
-      (async (processingHash, processingAccount, processingAddress, self) => {
+      ;(async (processingHash, processingAccount, processingAddress, self) => {
         try {
           const storage = await self.stateCopy.dumpStorage(processingAccount)
           self.storageCache[processingHash][processingAddress] = storage
@@ -158,7 +158,7 @@ export class VmProxy {
     this.processingIndex = 0
   }
 
-  async txProcessed (data: AfterTxEvent) {
+  async txProcessed(data: AfterTxEvent) {
     if (this.flagDoNotRecordEVMSteps) {
       this.flagDoNotRecordEVMSteps = false
       return
@@ -226,7 +226,7 @@ export class VmProxy {
     this.stateCopy = null
   }
 
-  async pushTrace (data: InterpreterStep) {
+  async pushTrace(data: InterpreterStep) {
     if (this.flagDoNotRecordEVMSteps) return
     try {
       const depth = data.depth + 1 // geth starts the depth from 1
@@ -253,7 +253,15 @@ export class VmProxy {
       }
       step.stack.length = Object.keys(data.stack).length
 
-      if (previousOpcode && (previousOpcode.op === 'CALLDATACOPY' || previousOpcode.op === 'CODECOPY' || previousOpcode.op === 'EXTCODECOPY' || previousOpcode.op === 'RETURNDATACOPY' || previousOpcode.op === 'MSTORE' || previousOpcode.op === 'MSTORE8')) {
+      if (
+        previousOpcode &&
+        (previousOpcode.op === 'CALLDATACOPY' ||
+          previousOpcode.op === 'CODECOPY' ||
+          previousOpcode.op === 'EXTCODECOPY' ||
+          previousOpcode.op === 'RETURNDATACOPY' ||
+          previousOpcode.op === 'MSTORE' ||
+          previousOpcode.op === 'MSTORE8')
+      ) {
         step.memory = new Uint8Array(data.memory)
         this.lastMemoryUpdate = step.memory
       }
@@ -295,7 +303,7 @@ export class VmProxy {
           this.processingAddress = normalizeHexAddress(toHexPaddedString(step.stack[step.stack.length - 2]))
           this.processingAddress = toChecksumAddress(this.processingAddress)
           if (!this.storageCache[this.processingHash][this.processingAddress]) {
-            (async (processingHash, processingAddress, self) => {
+            ;(async (processingHash, processingAddress, self) => {
               try {
                 const account = Address.fromString(processingAddress)
                 const storage = await self.stateCopy.dumpStorage(account)
@@ -321,18 +329,21 @@ export class VmProxy {
     }
   }
 
-  getCode (address, cb) {
+  getCode(address, cb) {
     address = toChecksumAddress(address)
-    this.vm.stateManager.getContractCode(Address.fromString(address)).then((result) => {
-      cb(null, bufferToHex(result))
-    }).catch((error) => {
-      cb(error)
-    })
+    this.vm.stateManager
+      .getContractCode(Address.fromString(address))
+      .then((result) => {
+        cb(null, bufferToHex(result))
+      })
+      .catch((error) => {
+        cb(error)
+      })
   }
 
-  setProvider (provider) {}
+  setProvider(provider) {}
 
-  traceTransaction (txHash, options, cb) {
+  traceTransaction(txHash, options, cb) {
     if (this.vmTraces[txHash]) {
       if (cb) {
         cb(null, this.vmTraces[txHash])
@@ -344,10 +355,10 @@ export class VmProxy {
     }
   }
 
-  getStorageAt (address: string, position: string, blockNumber: string, cb) {
+  getStorageAt(address: string, position: string, blockNumber: string, cb) {
     // we don't use the range params here
     address = toChecksumAddress(address)
-    
+
     blockNumber = blockNumber === 'latest' ? this.vmContext.latestBlockNumber : blockNumber
 
     const block = this.vmContext.blocks[blockNumber]
@@ -363,7 +374,7 @@ export class VmProxy {
     cb(null, '0x0')
   }
 
-  storageRangeAt (blockNumber, txIndex, address, start, maxLength, cb) {
+  storageRangeAt(blockNumber, txIndex, address, start, maxLength, cb) {
     // we don't use the range params here
     address = toChecksumAddress(address)
 
@@ -382,9 +393,11 @@ export class VmProxy {
     cb(null, { storage: {} })
   }
 
-  getBlockNumber (cb) { cb(null, 'vm provider') }
+  getBlockNumber(cb) {
+    cb(null, 'vm provider')
+  }
 
-  getTransaction (txHash, cb) {
+  getTransaction(txHash, cb) {
     if (this.txs[txHash]) {
       if (cb) {
         cb(null, this.txs[txHash])
@@ -396,7 +409,7 @@ export class VmProxy {
     }
   }
 
-  getTransactionReceipt (txHash, cb) {
+  getTransactionReceipt(txHash, cb) {
     // same as getTransaction but return the created address also
     if (this.txsReceipt[txHash]) {
       if (cb) {
@@ -409,7 +422,7 @@ export class VmProxy {
     }
   }
 
-  getTransactionFromBlock (blockNumber, txIndex, cb) {
+  getTransactionFromBlock(blockNumber, txIndex, cb) {
     const mes = 'not supposed to be needed by remix in vmmode'
     console.log(mes)
     if (cb) {
@@ -417,17 +430,17 @@ export class VmProxy {
     }
   }
 
-  preimage (hashedKey, cb) {
+  preimage(hashedKey, cb) {
     hashedKey = hashedKey.replace('0x', '')
     cb(null, this.sha3Preimages[hashedKey] !== undefined ? this.sha3Preimages[hashedKey].preimage : null)
   }
 
-  getSha3Input (stack, memory) {
+  getSha3Input(stack, memory) {
     const memoryStart = toHexPaddedString(stack[stack.length - 1])
     const memoryLength = toHexPaddedString(stack[stack.length - 2])
-    const memStartDec = (new BN(memoryStart.replace('0x', ''), 16)).toString(10)
+    const memStartDec = new BN(memoryStart.replace('0x', ''), 16).toString(10)
     const memoryStartInt = parseInt(memStartDec) * 2
-    const memLengthDec = (new BN(memoryLength.replace('0x', ''), 16).toString(10))
+    const memLengthDec = new BN(memoryLength.replace('0x', ''), 16).toString(10)
     const memoryLengthInt = parseInt(memLengthDec) * 2
 
     let i = Math.floor(memoryStartInt / 32)
@@ -448,7 +461,7 @@ export class VmProxy {
     return sha3Input
   }
 
-  emptyFill (size) {
-    return (new Array(size)).join('0')
+  emptyFill(size) {
+    return new Array(size).join('0')
   }
 }

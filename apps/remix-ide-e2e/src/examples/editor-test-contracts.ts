@@ -4,7 +4,7 @@ const testContract = {
   content: `
   // SPDX-License-Identifier: GPL-3.0
   pragma solidity >=0.7.0 <0.9.0;
-  
+
   import "contracts/base.sol";
   import "contracts/import1.sol";
 
@@ -12,8 +12,8 @@ const testContract = {
       string public publicstring;
       string private privatestring;
       string internal internalstring;
-  
-      struct TestBookDefinition { 
+
+      struct TestBookDefinition {
         string title;
         string author;
         uint book_id;
@@ -22,33 +22,33 @@ const testContract = {
       enum MyEnum{ SMALL, MEDIUM, LARGE }
       event MyEvent(uint abc);
       importcontract importedcontract;
-  
+
      modifier costs(uint price) {
         if (msg.value >= price) {
            _;
         }
      }
-      constructor(){        
-          
-      }
-  
-      function testing() public view {
-          
-      }
-  
-      function myprivatefunction() private   {
-          
-      }
-  
-      function myinternalfunction() internal    {
-          
-      }
-  
-      function myexternalfunction() external    {
-          
-      }
-  }`}
+      constructor(){
 
+      }
+
+      function testing() public view {
+
+      }
+
+      function myprivatefunction() private   {
+
+      }
+
+      function myinternalfunction() internal    {
+
+      }
+
+      function myexternalfunction() external    {
+
+      }
+  }`
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const baseContract = {
@@ -56,19 +56,20 @@ const baseContract = {
   content: `
   // SPDX-License-Identifier: GPL-3.0
   pragma solidity >=0.7.0 <0.9.0;
-  
+
   import "contracts/baseofbase.sol";
-  
+
   contract base is baseofbase {
       event BaseEvent(address indexed _from, uint _value);
       enum BaseEnum{ SMALL, MEDIUM, LARGE }
-      struct Book { 
+      struct Book {
           string title;
           string author;
           uint book_id;
       }
       Book public book;
-  }`}
+  }`
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const baseOfBaseContract = {
@@ -76,33 +77,34 @@ const baseOfBaseContract = {
   content: `
   // SPDX-License-Identifier: GPL-3.0
   pragma solidity >=0.7.0 <0.9.0;
-  
+
   contract baseofbase {
-    
-      struct BaseBook { 
+
+      struct BaseBook {
           string title;
           string author;
           uint book_id;
       }
       BaseBook public basebook;
-  
+
       string private basestring;
       string internal internalbasestring;
-  
+
       function privatebase() private {
-          
+
       }
-  
+
       function internalbasefunction() internal {
-  
+
       }
-  
+
       function publicbasefunction() public {
-  
+
       }
       function externalbasefunction() external  {
       }
-  }`}
+  }`
+}
 
 const import1Contract = {
   name: 'contracts/import1.sol',
@@ -114,7 +116,7 @@ const import1Contract = {
     import "contracts/secondimport.sol";
 
 contract importcontract is importbase {
-    struct ImportedBook { 
+    struct ImportedBook {
         string title;
         string author;
         uint book_id;
@@ -126,11 +128,11 @@ contract importcontract is importbase {
     string public importpublicstring;
 
     function privateimport() private {
-        
+
     }
 
     function internalimport() internal {
-        
+
     }
 
     function publicimport() public {
@@ -139,7 +141,8 @@ contract importcontract is importbase {
 
     function externalimport() external  {
     }
-}`}
+}`
+}
 
 const importbase = {
   name: 'contracts/importbase.sol',
@@ -150,7 +153,8 @@ pragma solidity >=0.7.0 <0.9.0;
 contract importbase {
     string public importbasestring;
 }
-`}
+`
+}
 
 const secondimport = {
   name: 'contracts/secondimport.sol',
@@ -161,7 +165,8 @@ pragma solidity >=0.7.0 <0.9.0;
 contract secondimport {
     string public secondimportstring;
 }
-`}
+`
+}
 
 export default {
   testContract,

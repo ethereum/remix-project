@@ -5,8 +5,8 @@ module.exports = {
 contract miscLocal {
         enum enumDef {
             one,
-            two, 
-            three, 
+            two,
+            three,
             four
         }
         constructor () public {
@@ -36,4 +36,5 @@ contract miscLocal {
            string memory smallstring = "test_test_test";
         }
   }
-`}
+`
+}

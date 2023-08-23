@@ -1,4 +1,4 @@
-import { Action, SearchingInitialState, SearchState, undoBufferRecord } from "../types"
+import { Action, SearchingInitialState, SearchState, undoBufferRecord } from '../types'
 
 export const SearchReducer = (state: SearchState = SearchingInitialState, action: Action) => {
   switch (action.type) {
@@ -17,25 +17,25 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
   case 'SET_REPLACE':
     return {
       ...state,
-      replace: action.payload,
+      replace: action.payload
     }
 
   case 'SET_REPLACE_ENABLED':
     return {
       ...state,
-      replaceEnabled: action.payload,
+      replaceEnabled: action.payload
     }
-            
+
   case 'SET_INCLUDE':
     return {
       ...state,
-      include: action.payload,
+      include: action.payload
     }
 
   case 'SET_EXCLUDE':
     return {
       ...state,
-      exclude: action.payload,
+      exclude: action.payload
     }
 
   case 'SET_SEARCH_RESULTS':
@@ -46,16 +46,18 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
       run: true
     }
   case 'SET_UNDO_ENABLED':
-    if(action.payload.workspace && state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`]){
-      state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].enabled = (action.payload.content === state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].newContent)
-      state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].visible = (action.payload.content !== state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].oldContent)
+    if (action.payload.workspace && state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`]) {
+      state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].enabled =
+          action.payload.content === state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].newContent
+      state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].visible =
+          action.payload.content !== state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].oldContent
     }
     return {
-      ...state,
+      ...state
     }
   case 'SET_UNDO': {
     const undoState = {
-      newContent : action.payload.newContent,
+      newContent: action.payload.newContent,
       oldContent: action.payload.oldContent,
       path: action.payload.path,
       workspace: action.payload.workspace,
@@ -65,8 +67,8 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
     }
     state.undoBuffer[`${undoState.workspace}/${undoState.path}`] = undoState
     return {
-      ...state,
-    }    
+      ...state
+    }
   }
   case 'CLEAR_STATS':
     return {
@@ -80,27 +82,27 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
   case 'SET_SEARCHING':
     return {
       ...state,
-      searching: action.payload,
+      searching: action.payload
     }
-            
+
   case 'CLEAR_UNDO': {
     state.undoBuffer = []
     return {
-      ...state,
+      ...state
     }
   }
   case 'UPDATE_COUNT':
     if (state.searchResults) {
-      const findFile = state.searchResults.find(file => file.filename === action.payload.file)
+      const findFile = state.searchResults.find((file) => file.filename === action.payload.file)
       let count = 0
       let fileCount = 0
       const clipped = false
       if (findFile) {
         findFile.count = action.payload.count
       }
-      state.searchResults.forEach(file => {
-        if (file.count) {          
-          count += file.count    
+      state.searchResults.forEach((file) => {
+        if (file.count) {
+          count += file.count
           fileCount++
         }
       })
@@ -145,37 +147,37 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
   case 'SET_REPLACE_WITHOUT_CONFIRMATION':
     return {
       ...state,
-      replaceWithOutConfirmation: action.payload,
+      replaceWithOutConfirmation: action.payload
     }
   case 'DISABLE_FORCE_RELOAD':
     if (state.searchResults) {
-      const findFile = state.searchResults.find(file => file.filename === action.payload)
+      const findFile = state.searchResults.find((file) => file.filename === action.payload)
       if (findFile) findFile.forceReload = false
     }
     return {
-      ...state,
+      ...state
     }
   case 'SET_CURRENT_FILE':
     return {
       ...state,
-      currentFile: action.payload,
+      currentFile: action.payload
     }
   case 'SET_CURRENT_WORKSPACE':
     return {
       ...state,
-      workspace: action.payload,
-    }            
+      workspace: action.payload
+    }
   case 'RELOAD_FILE':
     if (state.searchResults) {
-      const findFile = state.searchResults.find(file => file.filename === action.payload)
+      const findFile = state.searchResults.find((file) => file.filename === action.payload)
       if (findFile) findFile.forceReload = true
     }
     return {
-      ...state,
+      ...state
     }
   default:
     return {
-      ...state,
+      ...state
     }
   }
 }

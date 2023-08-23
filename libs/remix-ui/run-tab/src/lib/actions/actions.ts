@@ -1,5 +1,31 @@
-import { ContractData } from "@remix-project/core-plugin"
-import { addNewInstance, addProvider, clearAllInstances, clearRecorderCount, hidePopUp, newProxyDeployment, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentContract, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setSelectedAccount, setSendUnit, setSendValue } from "./payload"
+import { ContractData } from '@remix-project/core-plugin'
+import {
+  addNewInstance,
+  addProvider,
+  clearAllInstances,
+  clearRecorderCount,
+  hidePopUp,
+  newProxyDeployment,
+  removeExistingInstance,
+  removeProvider,
+  setBaseFeePerGas,
+  setConfirmSettings,
+  setCurrentContract,
+  setExecutionEnvironment,
+  setExternalEndpoint,
+  setGasLimit,
+  setGasPrice,
+  setGasPriceStatus,
+  setMatchPassphrase,
+  setMaxFee,
+  setMaxPriorityFee,
+  setNetworkName,
+  setPassphrase,
+  setPathToScenario,
+  setSelectedAccount,
+  setSendUnit,
+  setSendValue
+} from './payload'
 
 export const setAccount = (dispatch: React.Dispatch<any>, account: string) => {
   dispatch(setSelectedAccount(account))
@@ -65,7 +91,10 @@ export const updateGasPrice = (dispatch: React.Dispatch<any>, price: string) => 
   dispatch(setGasPrice(price))
 }
 
-export const addInstance = (dispatch: React.Dispatch<any>, instance: { contractData?: ContractData, address: string, name: string, abi?: any, decodedResponse?: Record<number, any> }) => {
+export const addInstance = (
+  dispatch: React.Dispatch<any>,
+  instance: { contractData?: ContractData; address: string; name: string; abi?: any; decodedResponse?: Record<number, any> }
+) => {
   instance.decodedResponse = {}
   dispatch(addNewInstance(instance))
 }

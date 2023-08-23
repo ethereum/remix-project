@@ -13,19 +13,19 @@ const defaultCompilerParameters = {
   evmVersion: null, // compiler default
   language: 'Solidity',
   useFileConfiguration: false,
-  configFilePath: "compiler_config.json"
+  configFilePath: 'compiler_config.json'
 }
 export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements ICompilerApi {
-  constructor () {
+  constructor() {
     super()
     createClient(this as any)
     this.compileTabLogic = new CompileTabLogic(this, this.contentImport)
     this.compiler = this.compileTabLogic.compiler
     this.compileTabLogic.init()
-    this.initCompilerApi()    
+    this.initCompilerApi()
   }
 
-  getCompilerParameters () {
+  getCompilerParameters() {
     const params = {
       runs: localStorage.getItem('runs') || defaultCompilerParameters.runs,
       optimize: localStorage.getItem('optimize') === 'true',
@@ -38,21 +38,21 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
     return params
   }
 
-  setCompilerParameters (params) {
+  setCompilerParameters(params) {
     for (const key of Object.keys(params)) {
       localStorage.setItem(key, params[key])
     }
   }
 
-  async getAppParameter (name) {
+  async getAppParameter(name) {
     return await PluginClient.call('config', 'getAppParameter', name)
   }
 
-  async setAppParameter (name, value) {
+  async setAppParameter(name, value) {
     await PluginClient.call('config', 'setAppParameter', name, value)
   }
 
-  getFileManagerMode () {
+  getFileManagerMode() {
     return 'browser'
   }
 }

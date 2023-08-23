@@ -1,9 +1,9 @@
 // @ts-ignore
-import { ethers } from "ethers"
+import { ethers } from 'ethers'
 import { Provider } from '@remix-project/remix-simulator'
 import { getArtifactsByContractName } from './artifacts-helper'
 import { SignerWithAddress } from './signer'
-import Web3 from "web3"
+import Web3 from 'web3'
 
 const providerConfig = {
   fork: global.fork || null,
@@ -24,22 +24,14 @@ const isFactoryOptions = (signerOrOptions: any) => {
 }
 
 const isArtifact = (artifact: any) => {
-  const {
-    contractName,
-    sourceName,
-    abi,
-    bytecode,
-    deployedBytecode,
-    linkReferences,
-    deployedLinkReferences,
-  } = artifact
+  const { contractName, sourceName, abi, bytecode, deployedBytecode, linkReferences, deployedLinkReferences } = artifact
 
   return (
-    typeof contractName === "string" &&
-    typeof sourceName === "string" &&
+    typeof contractName === 'string' &&
+    typeof sourceName === 'string' &&
     Array.isArray(abi) &&
-    typeof bytecode === "string" &&
-    typeof deployedBytecode === "string" &&
+    typeof bytecode === 'string' &&
+    typeof deployedBytecode === 'string' &&
     linkReferences !== undefined &&
     deployedLinkReferences !== undefined
   )
@@ -52,10 +44,7 @@ function linkBytecode(artifact: any, libraries: any) {
     const linkReferences = artifact.linkReferences[sourceName][libraryName]
 
     for (const { start, length } of linkReferences) {
-      bytecode =
-        bytecode.substr(0, 2 + start * 2) +
-        address.substr(2) +
-        bytecode.substr(2 + (start + length) * 2)
+      bytecode = bytecode.substr(0, 2 + start * 2) + address.substr(2) + bytecode.substr(2 + (start + length) * 2)
     }
   }
 
@@ -75,16 +64,11 @@ const collectLibrariesAndLink = async (artifact: any, libraries: any) => {
   for (const [linkedLibraryName, linkedLibraryAddress] of Object.entries(libraries)) {
     // @ts-ignore
     if (!ethers.utils.isAddress(linkedLibraryAddress)) {
-      throw new Error(
-        `You tried to link the contract ${artifact.contractName} with the library ${linkedLibraryName}, but provided this invalid address: ${linkedLibraryAddress}`
-      )
+      throw new Error(`You tried to link the contract ${artifact.contractName} with the library ${linkedLibraryName}, but provided this invalid address: ${linkedLibraryAddress}`)
     }
 
     const matchingNeededLibraries = neededLibraries.filter((lib) => {
-      return (
-        lib.libName === linkedLibraryName ||
-        `${lib.sourceName}:${lib.libName}` === linkedLibraryName
-      )
+      return lib.libName === linkedLibraryName || `${lib.sourceName}:${lib.libName}` === linkedLibraryName
     })
 
     if (matchingNeededLibraries.length === 0) {
@@ -93,7 +77,7 @@ const collectLibrariesAndLink = async (artifact: any, libraries: any) => {
         const libraryFQNames = neededLibraries
           .map((lib) => `${lib.sourceName}:${lib.libName}`)
           .map((x) => `* ${x}`)
-          .join("\n")
+          .join('\n')
         detailedMessage = `The libraries needed are:
       ${libraryFQNames}`
       } else {
@@ -109,7 +93,7 @@ const collectLibrariesAndLink = async (artifact: any, libraries: any) => {
       const matchingNeededLibrariesFQNs = matchingNeededLibraries
         .map(({ sourceName, libName }) => `${sourceName}:${libName}`)
         .map((x) => `* ${x}`)
-        .join("\n")
+        .join('\n')
       throw new Error(
         `The library name ${linkedLibraryName} is ambiguous for the contract ${artifact.contractName}.
         It may resolve to one of the following libraries:
@@ -135,7 +119,7 @@ const collectLibrariesAndLink = async (artifact: any, libraries: any) => {
     linksToApply.set(neededLibraryFQN, {
       sourceName: neededLibrary.sourceName,
       libraryName: neededLibrary.libName,
-      address: linkedLibraryAddress,
+      address: linkedLibraryAddress
     })
   }
 
@@ -144,7 +128,7 @@ const collectLibrariesAndLink = async (artifact: any, libraries: any) => {
       .map((lib) => `${lib.sourceName}:${lib.libName}`)
       .filter((libFQName) => !linksToApply.has(libFQName))
       .map((x) => `* ${x}`)
-      .join("\n")
+      .join('\n')
 
     throw new Error(
       `The contract ${artifact.contractName} is missing links for the following libraries:
@@ -192,9 +176,9 @@ const getContractAt = async (contractNameOrABI: ethers.ContractInterface, addres
   //@ts-ignore
   const provider = web3Provider
 
-  if(typeof contractNameOrABI === 'string') {
+  if (typeof contractNameOrABI === 'string') {
     const result = await getArtifactsByContractName(contractNameOrABI)
-    
+
     if (result) {
       return new ethers.Contract(address, result.abi, signer || provider.getSigner())
     } else {
@@ -218,27 +202,25 @@ const getSigners = async () => {
   const provider = web3Provider
   const accounts = await provider.listAccounts()
 
-  return await Promise.all( accounts.map((account: any) => getSigner(account)))
+  return await Promise.all(accounts.map((account: any) => getSigner(account)))
 }
 
-const getContractFactoryFromArtifact = async (artifact: any, signerOrOptions: { signer: any, libraries: any }) => {
+const getContractFactoryFromArtifact = async (artifact: any, signerOrOptions: { signer: any; libraries: any }) => {
   let libraries = {}
   let signer
 
   if (!isArtifact(artifact)) {
-    throw new Error(
-      `You are trying to create a contract factory from an artifact, but you have not passed a valid artifact parameter.`
-    )
+    throw new Error(`You are trying to create a contract factory from an artifact, but you have not passed a valid artifact parameter.`)
   }
 
   if (isFactoryOptions(signerOrOptions)) {
-    signer = signerOrOptions.signer;
-    libraries = signerOrOptions.libraries ?? {};
+    signer = signerOrOptions.signer
+    libraries = signerOrOptions.libraries ?? {}
   } else {
-    signer = signerOrOptions;
+    signer = signerOrOptions
   }
 
-  if (artifact.bytecode === "0x") {
+  if (artifact.bytecode === '0x') {
     throw new Error(
       `You are trying to create a contract factory for the contract ${artifact.contractName}, which is abstract and can't be deployed.
 If you want to call a contract using ${artifact.contractName} as its interface use the "getContractAt" function instead.`
@@ -252,9 +234,7 @@ If you want to call a contract using ${artifact.contractName} as its interface u
 
 const getContractAtFromArtifact = async (artifact: any, address: string, signerOrOptions = null) => {
   if (!isArtifact(artifact)) {
-    throw new Error(
-      `You are trying to create a contract factory from an artifact, but you have not passed a valid artifact parameter.`
-    )
+    throw new Error(`You are trying to create a contract factory from an artifact, but you have not passed a valid artifact parameter.`)
   }
 
   return await getContractAt(artifact.abi, address, signerOrOptions)

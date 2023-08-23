@@ -57,10 +57,10 @@ const sources = [
 
 module.exports = {
   '@disabled': true,
-  before: function (browser, done) {
+  'before': function (browser, done) {
     init(browser, done)
   },
-  after: function (browser) {
+  'after': function (browser) {
     browser.perform((done) => {
       console.log('remixd', remixd.pid)
       kill(remixd.pid)
@@ -72,11 +72,12 @@ module.exports = {
     return sources
   },
   'run Remixd tests #group4': function (browser) {
-    browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
-      console.log('working directory', process.cwd())
-      connectRemixd(browser, done)
-    })
+    browser
+      .perform(async (done) => {
+        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+        console.log('working directory', process.cwd())
+        connectRemixd(browser, done)
+      })
       .perform((done) => {
         runTests(browser, done)
       })
@@ -86,31 +87,37 @@ module.exports = {
       when a relative import is used (i.e import "openzeppelin-solidity/contracts/math/SafeMath.sol")
       remix (as well as truffle) try to resolve it against the node_modules and installed_contracts folder.
     */
-    browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
-      console.log('working directory', process.cwd())
-      connectRemixd(browser, done)
-    })
+    browser
+      .perform(async (done) => {
+        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+        console.log('working directory', process.cwd())
+        connectRemixd(browser, done)
+      })
       .addFile('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'])
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js')
       .testContracts('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'], ['SafeMath'])
   },
   'Import from node_modules and reference a github import #group2': function (browser) {
-    browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
-      console.log('working directory', process.cwd())
-      connectRemixd(browser, done)
-    })
+    browser
+      .perform(async (done) => {
+        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+        console.log('working directory', process.cwd())
+        connectRemixd(browser, done)
+      })
       .addFile('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'])
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js') // open-zeppelin moved to pragma ^0.8.20
       .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
   },
-  'Static Analysis run with remixd #group3': '' + function (browser) {
-    browser.testContracts('test_static_analysis_with_remixd_and_hardhat.sol', sources[5]['test_static_analysis_with_remixd_and_hardhat.sol'], ['test5']).pause(2000)
-      .clickLaunchIcon('solidityStaticAnalysis')
-    /*
+  'Static Analysis run with remixd #group3':
+    '' +
+    function (browser) {
+      browser
+        .testContracts('test_static_analysis_with_remixd_and_hardhat.sol', sources[5]['test_static_analysis_with_remixd_and_hardhat.sol'], ['test5'])
+        .pause(2000)
+        .clickLaunchIcon('solidityStaticAnalysis')
+      /*
     .click('#staticanalysisButton button').pause(4000)
     .waitForElementPresent('#staticanalysisresult .warning', 2000, true, function () {
       browser
@@ -124,28 +131,27 @@ module.exports = {
         })
     })
     */
-  },
+    },
 
-  'Run git status': '' + function (browser) {
-    browser
-      .executeScriptInTerminal('git status')
-      .pause(3000)
-      .journalLastChildIncludes('On branch ')
-  },
+  'Run git status':
+    '' +
+    function (browser) {
+      browser.executeScriptInTerminal('git status').pause(3000).journalLastChildIncludes('On branch ')
+    },
 
-  'Close Remixd #group3': '' + function (browser) {
-    browser
-      .clickLaunchIcon('pluginManager')
-      .scrollAndClick('#pluginManager *[data-id="pluginManagerComponentDeactivateButtonremixd"]')
-  },
+  'Close Remixd #group3':
+    '' +
+    function (browser) {
+      browser.clickLaunchIcon('pluginManager').scrollAndClick('#pluginManager *[data-id="pluginManagerComponentDeactivateButtonremixd"]')
+    },
 
   'Should listen on compilation result from hardhat #group5': function (browser: NightwatchBrowser) {
-
-    browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
-      console.log('working directory', process.cwd())
-      connectRemixd(browser, done)
-    })
+    browser
+      .perform(async (done) => {
+        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
+        console.log('working directory', process.cwd())
+        connectRemixd(browser, done)
+      })
       .perform((done) => {
         console.log('generating compilation result')
         writeFileSync('./apps/remix-ide/contracts/hardhat/artifacts/build-info/7839ba878952cc00ff316061405f273a.json', JSON.stringify(hardhatCompilation))
@@ -153,17 +159,20 @@ module.exports = {
         writeFileSync('./apps/remix-ide/contracts/hardhat/artifacts/contracts/Lock.sol/Lock.dbg.json', JSON.stringify(hardhat_compilation_Lock_dbg))
         done()
       })
-      .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Hardhat').before(60000)
+      .expect.element('*[data-id="terminalJournal"]')
+      .text.to.contain('receiving compilation result from Hardhat')
+      .before(60000)
 
-    browser.clickLaunchIcon('filePanel')
+    browser
+      .clickLaunchIcon('filePanel')
       .openFile('contracts')
       .openFile('contracts/Lock.sol')
       .clickLaunchIcon('udapp')
       .selectContract('Lock')
       .createContract('1')
-      .expect.element('*[data-id="terminalJournal"]').text.to.contain('Unlock time should be in the future').before(60000)
-
-
+      .expect.element('*[data-id="terminalJournal"]')
+      .text.to.contain('Unlock time should be in the future')
+      .before(60000)
   },
 
   'Should load compilation result from hardhat when remixd connects #group6': function (browser: NightwatchBrowser) {
@@ -181,34 +190,40 @@ module.exports = {
         console.log('working directory', process.cwd())
         connectRemixd(browser, done)
       })
-      .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Hardhat').before(60000)
+      .expect.element('*[data-id="terminalJournal"]')
+      .text.to.contain('receiving compilation result from Hardhat')
+      .before(60000)
 
-    browser.clickLaunchIcon('filePanel')
+    browser
+      .clickLaunchIcon('filePanel')
       .openFile('contracts')
       .openFile('contracts/Lock.sol')
       .clickLaunchIcon('udapp')
       .selectContract('Lock')
       .createContract('1')
-      .expect.element('*[data-id="terminalJournal"]').text.to.contain('Unlock time should be in the future').before(60000)
-
-
+      .expect.element('*[data-id="terminalJournal"]')
+      .text.to.contain('Unlock time should be in the future')
+      .before(60000)
   },
 
   'Should listen on compilation result from foundry #group7': function (browser: NightwatchBrowser) {
-
-    browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/foundry'))
-      console.log('working directory', process.cwd())
-      connectRemixd(browser, done)
-    })
+    browser
+      .perform(async (done) => {
+        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/foundry'))
+        console.log('working directory', process.cwd())
+        connectRemixd(browser, done)
+      })
       .perform((done) => {
         writeFileSync('./apps/remix-ide/contracts/foundry/out/Counter.sol/Counter.json', JSON.stringify(foundryCompilation))
         done()
       })
-      .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Foundry').before(60000)
+      .expect.element('*[data-id="terminalJournal"]')
+      .text.to.contain('receiving compilation result from Foundry')
+      .before(60000)
 
     let contractAaddress
-    browser.clickLaunchIcon('filePanel')
+    browser
+      .clickLaunchIcon('filePanel')
       .openFile('src')
       .openFile('src/Counter.sol')
       .clickLaunchIcon('udapp')
@@ -225,41 +240,40 @@ module.exports = {
           done()
         })
       })
-
-
   },
 
   'Should listen on compilation result from truffle #group8': function (browser: NightwatchBrowser) {
-
-    browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/truffle'))
-      console.log('working directory', process.cwd())
-      connectRemixd(browser, done)
-    })
+    browser
+      .perform(async (done) => {
+        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/truffle'))
+        console.log('working directory', process.cwd())
+        connectRemixd(browser, done)
+      })
       .perform((done) => {
         writeFileSync('./apps/remix-ide/contracts/truffle/build/contracts/Migrations.json', JSON.stringify(truffle_compilation))
         done()
       })
-      .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Truffle').before(60000)
+      .expect.element('*[data-id="terminalJournal"]')
+      .text.to.contain('receiving compilation result from Truffle')
+      .before(60000)
 
-    browser.clickLaunchIcon('filePanel')
+    browser
+      .clickLaunchIcon('filePanel')
       .openFile('contracts')
       .openFile('contracts/Migrations.sol')
       .clickLaunchIcon('udapp')
       .selectContract('Migrations')
       .createContract('')
-      .testFunction('last',
-        {
-          status: 'true Transaction mined and execution succeed'
-        })
-
-
+      .testFunction('last', {
+        status: 'true Transaction mined and execution succeed'
+      })
   }
 }
 
 function runTests(browser: NightwatchBrowser, done: any) {
   const browserName = browser.options.desiredCapabilities.browserName
-  browser.clickLaunchIcon('filePanel')
+  browser
+    .clickLaunchIcon('filePanel')
     .waitForElementVisible('[data-path="folder1"]')
     .click('[data-path="folder1"]')
     .waitForElementVisible('[data-path="contract1.sol"]')
@@ -281,7 +295,9 @@ function runTests(browser: NightwatchBrowser, done: any) {
     .pause(1000)
     .removeFile('folder1/contract_' + browserName + '_toremove.sol', 'localhost')
     .perform(function (done) {
-      testImportFromRemixd(browser, () => { done() })
+      testImportFromRemixd(browser, () => {
+        done()
+      })
     })
     .clickLaunchIcon('filePanel')
     .waitForElementVisible('[data-path="folder1"]')
@@ -303,18 +319,20 @@ function testImportFromRemixd(browser: NightwatchBrowser, callback: VoidFunction
     .click('[data-path="src/gmbh/company.sol"]')
     .pause(1000)
     .verifyContracts(['Assets', 'gmbh'])
-    .perform(() => { callback() })
+    .perform(() => {
+      callback()
+    })
 }
 
 async function spawnRemixd(path: string): Promise<ChildProcess> {
-  const remixd = spawn('chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080', [`-s ${path}`], { cwd: process.cwd(), shell: true, detached: true })
+  const remixd = spawn('chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080', [`-s ${path}`], {
+    cwd: process.cwd(),
+    shell: true,
+    detached: true
+  })
   return new Promise((resolve, reject) => {
     remixd.stdout.on('data', function (data) {
-      if(
-        data.toString().includes('is listening') 
-        || data.toString().includes('There is already a client running')
-        ) {
-        
+      if (data.toString().includes('is listening') || data.toString().includes('There is already a client running')) {
         resolve(remixd)
       }
     })
@@ -327,7 +345,7 @@ async function spawnRemixd(path: string): Promise<ChildProcess> {
 function connectRemixd(browser: NightwatchBrowser, done: any) {
   const browserName = browser.options.desiredCapabilities.browserName
   if (browserName === 'safari' || browserName === 'internet explorer') {
-    console.log('do not run remixd test for ' + browserName + ': sauce labs doesn\'t seems to handle websocket')
+    console.log('do not run remixd test for ' + browserName + ": sauce labs doesn't seems to handle websocket")
     browser.end()
     done()
     return
@@ -345,4 +363,3 @@ function connectRemixd(browser: NightwatchBrowser, done: any) {
     .pause(5000)
     .perform(() => done())
 }
-
