@@ -7,7 +7,5 @@
   "quoteProps": "consistent",
   "jsxSingleQuote": false,
   "trailingComma": "none",
-  "jsxBracketSameLine": false,
-  "arrowParens": "always",
-  "singleAttributePerLine": false
+  "arrowParens": "always"
 }
