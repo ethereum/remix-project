@@ -10,7 +10,7 @@ export const contractDeployerScripts = async (plugin) => {
   )
 
   await plugin.call('fileManager', 'open', 'scripts/contract-deployer/create2-factory-deploy.ts')
-
+  // fix formatting issue
   await plugin.call(
     'fileManager',
     'writeFile',
