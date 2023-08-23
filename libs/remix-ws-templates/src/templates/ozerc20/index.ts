@@ -12,18 +12,12 @@ export default async (opts) => {
       ...erc20.defaults,
       upgradeable: opts && opts.upgradeable ? opts.upgradeable : false,
     }),
-    // @ts-ignore
-    "scripts/deploy_with_ethers.ts": (
-      await import("!!raw-loader!./scripts/deploy_with_ethers.ts")
-    ).default,
-    // @ts-ignore
-    "scripts/deploy_with_web3.ts": (
-      await import("!!raw-loader!./scripts/deploy_with_web3.ts")
-    ).default,
-    // @ts-ignore
-    "scripts/ethers-lib.ts": (
-      await import("!!raw-loader!./scripts/ethers-lib.ts")
-    ).default,
+    "scripts/deploy_with_ethers.ts": // @ts-ignore
+    (await import("!!raw-loader!./scripts/deploy_with_ethers.ts")).default,
+    "scripts/deploy_with_web3.ts": // @ts-ignore
+    (await import("!!raw-loader!./scripts/deploy_with_web3.ts")).default,
+    "scripts/ethers-lib.ts": // @ts-ignore
+    (await import("!!raw-loader!./scripts/ethers-lib.ts")).default,
     // @ts-ignore
     "scripts/web3-lib.ts": (await import("!!raw-loader!./scripts/web3-lib.ts"))
       .default,
@@ -35,16 +29,12 @@ export default async (opts) => {
   // We do not show test file for upgradeable contract
 
   if (!opts || opts.upgradeable === undefined || !opts.upgradeable) {
-    // @ts-ignore
     if (erc20.defaults.mintable)
-      filesObj["tests/MyToken_test.sol"] = (
-        await import("raw-loader!./tests/MyToken_mintable_test.sol")
-      ).default;
-    // @ts-ignore
+      filesObj["tests/MyToken_test.sol"] = // @ts-ignore
+      (await import("raw-loader!./tests/MyToken_mintable_test.sol")).default;
     else
-      filesObj["tests/MyToken_test.sol"] = (
-        await import("raw-loader!./tests/MyToken_test.sol")
-      ).default;
+      filesObj["tests/MyToken_test.sol"] = // @ts-ignore
+      (await import("raw-loader!./tests/MyToken_test.sol")).default;
   }
   return filesObj;
 };
