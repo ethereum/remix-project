@@ -38,11 +38,11 @@ module.exports = {
       .setEditorValue(storageContractWithError + 'error')
       .pause(2000)
       .waitForElementVisible('.glyph-margin-widgets .fa-exclamation-square', 120000)
-      .checkAnnotations('fa-exclamation-square', 29) // error
+      .checkAnnotations('fa-exclamation-square') // error
       .clickLaunchIcon('udapp')
       .checkAnnotationsNotPresent('fa-exclamation-square') // error
       .clickLaunchIcon('solidity')
-      .checkAnnotations('fa-exclamation-square', 29) // error
+      .checkAnnotations('fa-exclamation-square') // error
   },
 
   'Should minimize and maximize codeblock in editor #group1':
