@@ -1,3 +1,4 @@
+//@ts-nocheck
 export const etherscanScripts = async (plugin) => {
   await plugin.call(
     'fileManager',
