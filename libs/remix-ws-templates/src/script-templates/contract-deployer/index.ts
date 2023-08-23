@@ -1,3 +1,4 @@
+//@ts-nocheck
 export const contractDeployerScripts = async (plugin) => {
   await plugin.call(
     'fileManager',
