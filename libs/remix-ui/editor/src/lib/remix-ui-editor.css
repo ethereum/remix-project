@@ -26,3 +26,7 @@
     filter: opacity(0.5);
     font-weight: bolder;
 }
+
+div.monaco-list-row > span.title {
+    margin-top: 12px;
+}
