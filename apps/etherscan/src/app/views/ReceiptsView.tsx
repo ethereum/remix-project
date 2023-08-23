@@ -1,25 +1,25 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 
-import {Formik, ErrorMessage, Field} from 'formik'
-import {getEtherScanApi, getNetworkName, getReceiptStatus, getProxyContractReceiptStatus} from '../utils'
-import {Receipt} from '../types'
-import {AppContext} from '../AppContext'
-import {SubmitButton} from '../components'
-import {Navigate} from 'react-router-dom'
-import {Button} from 'react-bootstrap'
-import {CustomTooltip} from '@remix-ui/helper'
+import { Formik, ErrorMessage, Field } from 'formik'
+import { getEtherScanApi, getNetworkName, getReceiptStatus, getProxyContractReceiptStatus } from '../utils'
+import { Receipt } from '../types'
+import { AppContext } from '../AppContext'
+import { SubmitButton } from '../components'
+import { Navigate } from 'react-router-dom'
+import { Button } from 'react-bootstrap'
+import { CustomTooltip } from '@remix-ui/helper'
 
 interface FormValues {
   receiptGuid: string
 }
 
 export const ReceiptsView: React.FC = () => {
-  const [results, setResults] = useState({succeed: false, message: ''})
+  const [results, setResults] = useState({ succeed: false, message: '' })
   const [isProxyContractReceipt, setIsProxyContractReceipt] = useState(false)
 
   const onGetReceiptStatus = async (values: FormValues, clientInstance: any, apiKey: string) => {
     try {
-      const {network, networkId} = await getNetworkName(clientInstance)
+      const { network, networkId } = await getNetworkName(clientInstance)
       if (network === 'vm') {
         setResults({
           succeed: false,
@@ -50,7 +50,7 @@ export const ReceiptsView: React.FC = () => {
 
   return (
     <AppContext.Consumer>
-      {({apiKey, clientInstance, receipts, setReceipts}) => {
+      {({ apiKey, clientInstance, receipts, setReceipts }) => {
         return !apiKey ? (
           <Navigate
             to={{
@@ -60,7 +60,7 @@ export const ReceiptsView: React.FC = () => {
         ) : (
           <div>
             <Formik
-              initialValues={{receiptGuid: ''}}
+              initialValues={{ receiptGuid: '' }}
               validate={(values) => {
                 const errors = {} as any
                 if (!values.receiptGuid) {
@@ -70,7 +70,7 @@ export const ReceiptsView: React.FC = () => {
               }}
               onSubmit={(values) => onGetReceiptStatus(values, clientInstance, apiKey)}
             >
-              {({errors, touched, handleSubmit, handleChange}) => (
+              {({ errors, touched, handleSubmit, handleChange }) => (
                 <form onSubmit={handleSubmit}>
                   <div className="form-group mb-2">
                     <label htmlFor="receiptGuid">Receipt GUID</label>
@@ -129,7 +129,7 @@ export const ReceiptsView: React.FC = () => {
   )
 }
 
-const ReceiptsTable: React.FC<{receipts: Receipt[]}> = ({receipts}) => {
+const ReceiptsTable: React.FC<{ receipts: Receipt[] }> = ({ receipts }) => {
   return (
     <div className="table-responsive">
       <h6>Receipts</h6>
@@ -160,7 +160,7 @@ const ReceiptsTable: React.FC<{receipts: Receipt[]}> = ({receipts}) => {
                     {item.status}
                     {item.status === 'Successfully Updated' && (
                       <CustomTooltip placement={'bottom'} tooltipClasses="text-wrap" tooltipId="etherscan-receipt-proxy-status" tooltipText={item.message}>
-                        <i style={{fontSize: 'small'}} className={'ml-1 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
+                        <i style={{ fontSize: 'small' }} className={'ml-1 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
                       </CustomTooltip>
                     )}
                   </td>
