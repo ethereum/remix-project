@@ -1,10 +1,10 @@
-import React, {useState} from 'react'
-import {VyperCompilationResult, VyperCompilationOutput, isCompilationError} from '../utils'
+import React, { useState } from 'react'
+import { VyperCompilationResult, VyperCompilationOutput, isCompilationError } from '../utils'
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
 import Button from 'react-bootstrap/Button'
 import JSONTree from 'react-json-view'
-import {CopyToClipboard} from '@remix-ui/clipboard'
+import { CopyToClipboard } from '@remix-ui/clipboard'
 
 interface VyperResultProps {
   output?: VyperCompilationOutput
@@ -15,7 +15,7 @@ export type ExampleContract = {
   address: string
 }
 
-function VyperResult({output}: VyperResultProps) {
+function VyperResult({ output }: VyperResultProps) {
   const [active, setActive] = useState<keyof VyperCompilationResult>('abi')
 
   if (!output)

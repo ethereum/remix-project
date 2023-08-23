@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 
-import {DebuggerUI} from '@remix-ui/debugger-ui' // eslint-disable-line
+import { DebuggerUI } from '@remix-ui/debugger-ui' // eslint-disable-line
 
-import {DebuggerClientApi} from './debugger'
+import { DebuggerClientApi } from './debugger'
 
 const remix = new DebuggerClientApi()
 

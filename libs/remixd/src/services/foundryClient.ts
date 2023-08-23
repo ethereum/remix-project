@@ -50,9 +50,9 @@ export class FoundryClient extends PluginClient {
   }
 
   listenOnFoundryFolder() {
-    console.log('Foundry out folder doesn\'t exist... waiting for the compilation.')
+    console.log("Foundry out folder doesn't exist... waiting for the compilation.")
     try {
-      if(this.watcher) this.watcher.close()
+      if (this.watcher) this.watcher.close()
       this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
       // watch for new folders
       this.watcher.on('addDir', () => {
@@ -119,16 +119,22 @@ export class FoundryClient extends PluginClient {
           compilationTarget: null
         }
         await this.readContract(path, compilationResult, cache)
-        this.emit('compilationFinished', compilationResult.compilationTarget, { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)
+        this.emit(
+          'compilationFinished',
+          compilationResult.compilationTarget,
+          { sources: compilationResult.input },
+          'soljson',
+          compilationResult.output,
+          compilationResult.solcVersion
+        )
       }
 
       clearTimeout(this.logTimeout)
       this.logTimeout = setTimeout(() => {
         // @ts-ignore
         this.call('terminal', 'log', { type: 'log', value: `receiving compilation result from Foundry` })
-        console.log('Syncing compilation result from Foundry')  
+        console.log('Syncing compilation result from Foundry')
       }, 1000)
-
     } catch (e) {
       console.log(e)
     }
@@ -142,7 +148,7 @@ export class FoundryClient extends PluginClient {
 
   listenOnFoundryCompilation() {
     try {
-      if(this.watcher) this.watcher.close()
+      if (this.watcher) this.watcher.close()
       this.watcher = chokidar.watch(this.cachePath, { depth: 0, ignorePermissionErrors: true, ignoreInitial: true })
       this.watcher.on('change', async () => await this.triggerProcessArtifact())
       this.watcher.on('add', async () => await this.triggerProcessArtifact())
@@ -192,7 +198,6 @@ export class FoundryClient extends PluginClient {
     } else {
       console.log('\x1b[32m%s\x1b[0m', 'sources input not found, please update Foundry to the latest version.')
     }
-
 
     compilationResultPart.compilationTarget = contentJSON.ast.absolutePath
     // extract data

@@ -1,10 +1,10 @@
-import {useDialogDispatchers} from '@remix-ui/app'
-import React, {useContext, useEffect, useRef, useState} from 'react'
-import {FormattedMessage} from 'react-intl'
-import {SearchContext} from '../../context/context'
-import {SearchResult, SearchResultLine} from '../../types'
-import {ResultFileName} from './ResultFileName'
-import {ResultSummary} from './ResultSummary'
+import { useDialogDispatchers } from '@remix-ui/app'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
+import { SearchContext } from '../../context/context'
+import { SearchResult, SearchResultLine } from '../../types'
+import { ResultFileName } from './ResultFileName'
+import { ResultSummary } from './ResultSummary'
 
 interface ResultItemProps {
   file: SearchResult
@@ -12,14 +12,14 @@ interface ResultItemProps {
 }
 
 export const ResultItem = (props: ResultItemProps) => {
-  const {state, findText, disableForceReload, updateCount, replaceAllInFile} = useContext(SearchContext)
+  const { state, findText, disableForceReload, updateCount, replaceAllInFile } = useContext(SearchContext)
   const [loading, setLoading] = useState<boolean>(false)
   const [lines, setLines] = useState<SearchResultLine[]>([])
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
   const reloadTimeOut = useRef(null)
   const loadTimeout = useRef(null)
   const subscribed = useRef(true)
-  const {modal} = useDialogDispatchers()
+  const { modal } = useDialogDispatchers()
 
   useEffect(() => {
     reload()

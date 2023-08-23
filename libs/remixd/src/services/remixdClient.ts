@@ -14,24 +14,24 @@ export class RemixdClient extends PluginClient {
   watcher: chokidar.FSWatcher
   trackDownStreamUpdate: Record<string, string> = {}
 
-  constructor (private readOnly = false) {
+  constructor(private readOnly = false) {
     super()
     this.methods = ['folderIsReadOnly', 'resolveDirectory', 'get', 'exists', 'isFile', 'set', 'rename', 'remove', 'isDirectory', 'list', 'createDir', 'canDeactivate']
   }
 
-  setWebSocket (websocket: WS): void {
+  setWebSocket(websocket: WS): void {
     this.websocket = websocket
     this.websocket.addEventListener('close', () => {
       if (this.watcher) this.watcher.close()
     })
   }
 
-  sharedFolder (currentSharedFolder: string): void {
+  sharedFolder(currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
     if (this.isLoaded) this.emit('rootFolderChanged', this.currentSharedFolder)
   }
 
-  list (): Filelist {
+  list(): Filelist {
     try {
       return utils.walkSync(this.currentSharedFolder, {}, this.currentSharedFolder)
     } catch (e) {
@@ -39,7 +39,7 @@ export class RemixdClient extends PluginClient {
     }
   }
 
-  resolveDirectory (args: SharedFolderArgs): ResolveDirectory {
+  resolveDirectory(args: SharedFolderArgs): ResolveDirectory {
     try {
       const path = utils.absolutePath(args.path, this.currentSharedFolder)
       const result = utils.resolveDirectory(path, this.currentSharedFolder)
@@ -50,11 +50,11 @@ export class RemixdClient extends PluginClient {
     }
   }
 
-  folderIsReadOnly (): boolean {
+  folderIsReadOnly(): boolean {
     return this.readOnly
   }
 
-  get (args: SharedFolderArgs): Promise<FileContent> {
+  get(args: SharedFolderArgs): Promise<FileContent> {
     try {
       return new Promise((resolve, reject) => {
         const path = utils.absolutePath(args.path, this.currentSharedFolder)
@@ -80,7 +80,7 @@ export class RemixdClient extends PluginClient {
     }
   }
 
-  exists (args: SharedFolderArgs): boolean {
+  exists(args: SharedFolderArgs): boolean {
     try {
       const path = utils.absolutePath(args.path, this.currentSharedFolder)
 
@@ -90,7 +90,7 @@ export class RemixdClient extends PluginClient {
     }
   }
 
-  set (args: SharedFolderArgs) {
+  set(args: SharedFolderArgs) {
     try {
       return new Promise((resolve, reject) => {
         if (this.readOnly) return reject(new Error('Cannot write file: read-only mode selected'))
@@ -98,7 +98,8 @@ export class RemixdClient extends PluginClient {
         const exists = fs.existsSync(path)
 
         if (exists && !isRealPath(path)) return reject(new Error(''))
-        if (args.content === 'undefined') { // no !!!!!
+        if (args.content === 'undefined') {
+          // no !!!!!
           console.log('trying to write "undefined" ! stopping.')
           return reject(new Error('trying to write "undefined" ! stopping.'))
         }
@@ -129,11 +130,11 @@ export class RemixdClient extends PluginClient {
     }
   }
 
-  createDir (args: SharedFolderArgs) {
+  createDir(args: SharedFolderArgs) {
     try {
       return new Promise((resolve, reject) => {
         if (this.readOnly) return reject(new Error('Cannot create folder: read-only mode selected'))
-        const paths = args.path.split('/').filter(value => value)
+        const paths = args.path.split('/').filter((value) => value)
         if (paths.length && paths[0] === '') paths.shift()
         let currentCheck = ''
         paths.forEach((value) => {
@@ -151,7 +152,7 @@ export class RemixdClient extends PluginClient {
     }
   }
 
-  rename (args: SharedFolderArgs): Promise<boolean> {
+  rename(args: SharedFolderArgs): Promise<boolean> {
     try {
       return new Promise((resolve, reject) => {
         if (this.readOnly) return reject(new Error('Cannot rename file: read-only mode selected'))
@@ -177,7 +178,7 @@ export class RemixdClient extends PluginClient {
     }
   }
 
-  remove (args: SharedFolderArgs): Promise<boolean> {
+  remove(args: SharedFolderArgs): Promise<boolean> {
     try {
       return new Promise((resolve, reject) => {
         if (this.readOnly) return reject(new Error('Cannot remove file: read-only mode selected'))
@@ -191,7 +192,7 @@ export class RemixdClient extends PluginClient {
           const resolveList = (path) => {
             if (!this._isFile(path)) {
               const list = utils.resolveDirectory(path, this.currentSharedFolder)
-              Object.keys(list).forEach(itemPath => {
+              Object.keys(list).forEach((itemPath) => {
                 if (list[itemPath].isDirectory) {
                   resolveList(`${this.currentSharedFolder}/${itemPath}`)
                 }
@@ -221,7 +222,7 @@ export class RemixdClient extends PluginClient {
     }
   }
 
-  _isFile (path: string): boolean {
+  _isFile(path: string): boolean {
     try {
       return fs.statSync(path).isFile()
     } catch (error) {
@@ -229,7 +230,7 @@ export class RemixdClient extends PluginClient {
     }
   }
 
-  isDirectory (args: SharedFolderArgs): boolean {
+  isDirectory(args: SharedFolderArgs): boolean {
     try {
       const path = utils.absolutePath(args.path, this.currentSharedFolder)
       return fs.statSync(path).isDirectory()
@@ -238,7 +239,7 @@ export class RemixdClient extends PluginClient {
     }
   }
 
-  isFile (args: SharedFolderArgs): boolean {
+  isFile(args: SharedFolderArgs): boolean {
     try {
       const path = utils.absolutePath(args.path, this.currentSharedFolder)
       return fs.statSync(path).isFile()
@@ -247,7 +248,7 @@ export class RemixdClient extends PluginClient {
     }
   }
 
-  setupNotifications (path: string): void {
+  setupNotifications(path: string): void {
     const absPath = utils.absolutePath('./', path)
 
     if (!isRealPath(absPath)) return
@@ -275,18 +276,18 @@ export class RemixdClient extends PluginClient {
     })
     this.watcher.on('unlink', async (f: string) => {
       if (this.isLoaded) {
-        this.emit('removed', utils.relativePath(f, this.currentSharedFolder), false)    
+        this.emit('removed', utils.relativePath(f, this.currentSharedFolder), false)
       }
     })
     this.watcher.on('unlinkDir', async (f: string) => {
       if (this.isLoaded) {
-        this.emit('removed', utils.relativePath(f, this.currentSharedFolder), true)    
+        this.emit('removed', utils.relativePath(f, this.currentSharedFolder), true)
       }
     })
   }
 }
 
-function isRealPath (path: string): boolean {
+function isRealPath(path: string): boolean {
   const realPath = fs.realpathSync(path)
   const isRealPath = path === realPath
   const mes = '[WARN] Symbolic link modification not allowed : ' + path + ' | ' + realPath

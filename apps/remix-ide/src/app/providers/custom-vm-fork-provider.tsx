@@ -1,8 +1,8 @@
-import React, {useRef} from 'react' // eslint-disable-line
+import React, { useRef } from 'react' // eslint-disable-line
 import * as packageJson from '../../../../../package.json'
-import {AppModal, ModalTypes} from '@remix-ui/app'
-import {BasicVMProvider} from './vm-provider'
-import {Hardfork} from '@ethereumjs/common'
+import { AppModal, ModalTypes } from '@remix-ui/app'
+import { BasicVMProvider } from './vm-provider'
+import { Hardfork } from '@ethereumjs/common'
 
 export class CustomForkVMProvider extends BasicVMProvider {
   nodeUrl: string

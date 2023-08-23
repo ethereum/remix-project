@@ -1,6 +1,5 @@
-import { HelperOptions, Utils } from 'handlebars';
-
-export * from '../../common/helpers';
+import { HelperOptions, Utils } from 'handlebars'
+export * from '../../common/helpers'
 
 /**
  * Returns a Markdown heading marker. An optional number increases the heading level.
@@ -9,12 +8,12 @@ export * from '../../common/helpers';
  *    {{h}} {{name}}         # Name
  *    {{h 2}} {{name}}       ## Name
  */
-export function h(opts: HelperOptions): string;
-export function h(hsublevel: number, opts: HelperOptions): string;
+export function h(opts: HelperOptions): string
+export function h(hsublevel: number, opts: HelperOptions): string
 export function h(hsublevel: number | HelperOptions, opts?: HelperOptions) {
-  const { hlevel } = getHLevel(hsublevel, opts);
-  return new Array(hlevel).fill('#').join('');
-};
+  const { hlevel } = getHLevel(hsublevel, opts)
+  return new Array(hlevel).fill('#').join('')
+}
 
 /**
  * Delineates a section where headings should be increased by 1 or a custom number.
@@ -23,14 +22,14 @@ export function h(hsublevel: number | HelperOptions, opts?: HelperOptions) {
  *    {{>partial-with-headings}}
  *    {{/hsection}}
  */
-export function hsection(opts: HelperOptions): string;
-export function hsection(hsublevel: number, opts: HelperOptions): string;
+export function hsection(opts: HelperOptions): string
+export function hsection(hsublevel: number, opts: HelperOptions): string
 export function hsection(this: unknown, hsublevel: number | HelperOptions, opts?: HelperOptions) {
-  let hlevel;
-  ({ hlevel, opts } = getHLevel(hsublevel, opts));
-  opts.data = Utils.createFrame(opts.data);
-  opts.data.hlevel = hlevel;
-  return opts.fn(this as unknown, opts);
+  let hlevel
+  ;({ hlevel, opts } = getHLevel(hsublevel, opts))
+  opts.data = Utils.createFrame(opts.data)
+  opts.data.hlevel = hlevel
+  return opts.fn(this as unknown, opts)
 }
 
 /**
@@ -40,23 +39,23 @@ export function hsection(this: unknown, hsublevel: number | HelperOptions, opts?
  *    {{h}} {{name}}         # Name
  *    {{h 2}} {{name}}       ## Name
  */
-export function s(opts: HelperOptions): string;
-export function s(hsublevel: number, opts: HelperOptions): string;
+export function s(opts: HelperOptions): string
+export function s(hsublevel: number, opts: HelperOptions): string
 export function s(hsublevel: number | HelperOptions, opts?: HelperOptions) {
   return ' --- '
-};
+}
 
 /**
  * Helper for dealing with the optional hsublevel argument.
  */
 function getHLevel(hsublevel: number | HelperOptions, opts?: HelperOptions) {
   if (typeof hsublevel === 'number') {
-    opts = opts!;
-    hsublevel = Math.max(1, hsublevel);
+    opts = opts!
+    hsublevel = Math.max(1, hsublevel)
   } else {
-    opts = hsublevel;
-    hsublevel = 1;
+    opts = hsublevel
+    hsublevel = 1
   }
-  const contextHLevel: number = opts.data?.hlevel ?? 0;
-  return { opts, hlevel: contextHLevel + hsublevel };
+  const contextHLevel: number = opts.data?.hlevel ?? 0
+  return { opts, hlevel: contextHLevel + hsublevel }
 }

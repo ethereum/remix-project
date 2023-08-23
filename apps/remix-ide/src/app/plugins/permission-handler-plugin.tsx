@@ -1,9 +1,9 @@
 import React from 'react' // eslint-disable-line
-import {FormattedMessage} from 'react-intl'
-import {Plugin} from '@remixproject/engine'
-import {AppModal} from '@remix-ui/app'
-import {PermissionHandlerDialog, PermissionHandlerValue} from '@remix-ui/permission-handler'
-import {Profile} from '@remixproject/plugin-utils'
+import { FormattedMessage } from 'react-intl'
+import { Plugin } from '@remixproject/engine'
+import { AppModal } from '@remix-ui/app'
+import { PermissionHandlerDialog, PermissionHandlerValue } from '@remix-ui/permission-handler'
+import { Profile } from '@remixproject/plugin-utils'
 
 const profile = {
   name: 'permissionhandler',
@@ -89,7 +89,7 @@ export class PermissionHandlerPlugin extends Plugin {
         if (!this.permissions[to.name][method][from.name]) return this.openPermission(from, to, method, message, sensitiveCall)
       }
 
-      const {allow, hash} = sensitiveCall ? this.sessionPermissions[to.name][method][from.name] : this.permissions[to.name][method][from.name]
+      const { allow, hash } = sensitiveCall ? this.sessionPermissions[to.name][method][from.name] : this.permissions[to.name][method][from.name]
       if (!allow) {
         const warning = this.notAllowWarning(from, to, method)
         this.call('notification', 'toast', warning)
@@ -120,7 +120,7 @@ export class PermissionHandlerPlugin extends Plugin {
     }
     const modal: AppModal = {
       id: 'PermissionHandler',
-      title: <FormattedMessage id="permissionHandler.permissionNeededFor" values={{to: to.displayName || to.name}} />,
+      title: <FormattedMessage id="permissionHandler.permissionNeededFor" values={{ to: to.displayName || to.name }} />,
       message: <PermissionHandlerDialog plugin={this} theme={await this.getTheme()} value={value}></PermissionHandlerDialog>,
       okLabel: <FormattedMessage id="permissionHandler.accept" />,
       cancelLabel: <FormattedMessage id="permissionHandler.decline" />

@@ -1,5 +1,5 @@
-const {composePlugins, withNx} = require('@nrwl/webpack')
-const {withReact} = require('@nrwl/react')
+const { composePlugins, withNx } = require('@nrwl/webpack')
+const { withReact } = require('@nrwl/react')
 const webpack = require('webpack')
 const version = require('../../package.json').version
 const fs = require('fs')

@@ -1,20 +1,20 @@
 // eslint-disable-next-line no-use-before-define
-import React, {SyntheticEvent, useEffect, useState} from 'react'
-import {FileType} from '../types'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
+import { FileType } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import {TreeView, TreeViewItem} from '@remix-ui/tree-view'
-import {getPathIcon} from '@remix-ui/helper'
+import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
+import { getPathIcon } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import {FileLabel} from './file-label'
-import {fileDecoration, FileDecorationIcons} from '@remix-ui/file-decorators'
-import {Draggable} from '@remix-ui/drag-n-drop'
+import { FileLabel } from './file-label'
+import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators'
+import { Draggable } from '@remix-ui/drag-n-drop'
 
 export interface RenderFileProps {
   file: FileType
   index: number
-  focusEdit: {element: string; type: string; isNew: boolean; lastEdit: string}
-  focusElement: {key: string; type: 'file' | 'folder' | 'gist'}[]
-  focusContext: {element: string; x: number; y: number; type: string}
+  focusEdit: { element: string; type: string; isNew: boolean; lastEdit: string }
+  focusElement: { key: string; type: 'file' | 'folder' | 'gist' }[]
+  focusContext: { element: string; x: number; y: number; type: string }
   ctrlKey: boolean
   expandPath: string[]
   hideIconsMenu?: React.Dispatch<React.SetStateAction<boolean>>

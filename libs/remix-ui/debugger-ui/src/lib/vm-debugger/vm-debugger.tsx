@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react' // eslint-disable-line
+import React, { useState, useEffect } from 'react' // eslint-disable-line
 import CalldataPanel from './calldata-panel' // eslint-disable-line
 import MemoryPanel from './memory-panel' // eslint-disable-line
 import CallstackPanel from './callstack-panel' // eslint-disable-line
@@ -8,7 +8,7 @@ import ReturnValuesPanel from './dropdown-panel' // eslint-disable-line
 import FullStoragesChangesPanel from './full-storages-changes' // eslint-disable-line
 import GlobalVariables from './global-variables' // eslint-disable-line
 
-export const VmDebugger = ({vmDebugger: {registerEvent}, currentBlock, currentReceipt, currentTransaction, debugging}) => {
+export const VmDebugger = ({ vmDebugger: { registerEvent }, currentBlock, currentReceipt, currentTransaction, debugging }) => {
   const [calldataPanel, setCalldataPanel] = useState(null)
   const [memoryPanel, setMemoryPanel] = useState(null)
   const [callStackPanel, setCallStackPanel] = useState(null)
@@ -40,7 +40,7 @@ export const VmDebugger = ({vmDebugger: {registerEvent}, currentBlock, currentRe
     registerEvent &&
       registerEvent('traceManagerStorageUpdate', (calldata, header) => {
         setStoragePanel(() => {
-          return {calldata, header}
+          return { calldata, header }
         })
       })
     registerEvent &&

@@ -1,18 +1,18 @@
-import React, {useEffect, useState} from 'react'
-import {RemixPlugin} from './Client'
-import {Logger} from './logger'
-import {filePanelProfile} from '@remixproject/plugin-api'
-import {filSystemProfile} from '@remixproject/plugin-api'
-import {dGitProfile} from '@remixproject/plugin-api'
-import {editorProfile} from '@remixproject/plugin-api'
-import {settingsProfile} from '@remixproject/plugin-api'
-import {networkProfile} from '@remixproject/plugin-api'
-import {udappProfile} from '@remixproject/plugin-api'
-import {compilerProfile} from '@remixproject/plugin-api'
-import {contentImportProfile} from '@remixproject/plugin-api'
-import {windowProfile} from '@remixproject/plugin-api'
-import {pluginManagerProfile} from '@remixproject/plugin-api'
-import {Profile} from '@remixproject/plugin-utils'
+import React, { useEffect, useState } from 'react'
+import { RemixPlugin } from './Client'
+import { Logger } from './logger'
+import { filePanelProfile } from '@remixproject/plugin-api'
+import { filSystemProfile } from '@remixproject/plugin-api'
+import { dGitProfile } from '@remixproject/plugin-api'
+import { editorProfile } from '@remixproject/plugin-api'
+import { settingsProfile } from '@remixproject/plugin-api'
+import { networkProfile } from '@remixproject/plugin-api'
+import { udappProfile } from '@remixproject/plugin-api'
+import { compilerProfile } from '@remixproject/plugin-api'
+import { contentImportProfile } from '@remixproject/plugin-api'
+import { windowProfile } from '@remixproject/plugin-api'
+import { pluginManagerProfile } from '@remixproject/plugin-api'
+import { Profile } from '@remixproject/plugin-utils'
 
 import './app.css'
 
@@ -37,7 +37,7 @@ function App() {
     windowProfile
   ])
 
-  const handleChange = ({target}: any) => {
+  const handleChange = ({ target }: any) => {
     setPayload(target.value)
   }
 

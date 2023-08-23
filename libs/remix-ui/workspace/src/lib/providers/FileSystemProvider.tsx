@@ -1,10 +1,10 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useReducer, useState, useEffect, SyntheticEvent} from 'react'
-import {ModalDialog} from '@remix-ui/modal-dialog' // eslint-disable-line
-import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
+import React, { useReducer, useState, useEffect, SyntheticEvent } from 'react'
+import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
+import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import {FileSystemContext} from '../contexts'
-import {browserReducer, browserInitialState} from '../reducers/workspace'
+import { FileSystemContext } from '../contexts'
+import { browserReducer, browserInitialState } from '../reducers/workspace'
 import {
   initWorkspace,
   fetchDirectory,
@@ -47,13 +47,13 @@ import {
   createSlitherGithubAction,
   createHelperScripts
 } from '../actions'
-import {Modal, WorkspaceProps, WorkspaceTemplate} from '../types'
+import { Modal, WorkspaceProps, WorkspaceTemplate } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import {Workspace} from '../remix-ui-workspace'
-import {customAction} from '@remixproject/plugin-api'
+import { Workspace } from '../remix-ui-workspace'
+import { customAction } from '@remixproject/plugin-api'
 
 export const FileSystemProvider = (props: WorkspaceProps) => {
-  const {plugin} = props
+  const { plugin } = props
   const [fs, fsDispatch] = useReducer(browserReducer, browserInitialState)
   const [focusModal, setFocusModal] = useState<Modal>({
     hide: true,
@@ -124,7 +124,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await createNewFile(path, rootDir)
   }
 
-  const dispatchSetFocusElement = async (elements: {key: string; type: 'file' | 'folder' | 'gist'}[]) => {
+  const dispatchSetFocusElement = async (elements: { key: string; type: 'file' | 'folder' | 'gist' }[]) => {
     await setFocusElement(elements)
   }
 
@@ -275,13 +275,13 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const handleHideModal = () => {
     setFocusModal((modal) => {
-      return {...modal, hide: true, message: null}
+      return { ...modal, hide: true, message: null }
     })
   }
 
   const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
     setModals((modals) => {
-      modals.push({message, title, okLabel, okFn, cancelLabel, cancelFn})
+      modals.push({ message, title, okLabel, okFn, cancelLabel, cancelFn })
       return [...modals]
     })
   }

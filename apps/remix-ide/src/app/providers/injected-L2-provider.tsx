@@ -1,4 +1,4 @@
-import {InjectedProviderDefaultBase} from './injected-provider-default'
+import { InjectedProviderDefaultBase } from './injected-provider-default'
 
 export class InjectedL2Provider extends InjectedProviderDefaultBase {
   chainName: string
@@ -24,7 +24,7 @@ export const addL2Network = async (chainName: string, chainId: string, rpcUrls: 
   try {
     await (window as any).ethereum.request({
       method: 'wallet_switchEthereumChain',
-      params: [{chainId: chainId}]
+      params: [{ chainId: chainId }]
     })
   } catch (switchError) {
     // This error code indicates that the chain has not been added to MetaMask.
@@ -43,7 +43,7 @@ export const addL2Network = async (chainName: string, chainId: string, rpcUrls: 
 
         await (window as any).ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{chainId: chainId}]
+          params: [{ chainId: chainId }]
         })
       } catch (addError) {
         // handle "add" error

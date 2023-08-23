@@ -37,20 +37,18 @@ export class TruffleClient extends PluginClient {
   sharedFolder(currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
     this.buildPath = utils.absolutePath('build/contracts', this.currentSharedFolder)
-
   }
 
   startListening() {
     if (fs.existsSync(this.buildPath)) {
       this.listenOnTruffleCompilation()
-    }
-    else {
+    } else {
       this.listenOnTruffleFolder()
     }
   }
 
   listenOnTruffleFolder() {
-    console.log('Truffle build folder doesn\'t exist... waiting for the compilation.')
+    console.log("Truffle build folder doesn't exist... waiting for the compilation.")
     try {
       if (this.watcher) this.watcher.close()
       this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 2, ignorePermissionErrors: true, ignoreInitial: true })
@@ -100,11 +98,10 @@ export class TruffleClient extends PluginClient {
     return true
   }
 
-
   private async processArtifact() {
     if (!this.checkPath()) return
     const folderFiles = await fs.readdir(this.buildPath)
-    const filesFound = folderFiles.filter(file => file.endsWith('.json'))
+    const filesFound = folderFiles.filter((file) => file.endsWith('.json'))
     // name of folders are file names
     for (const file of folderFiles) {
       if (file.endsWith('.json')) {
@@ -119,7 +116,14 @@ export class TruffleClient extends PluginClient {
         }
         const content = await fs.readFile(join(this.buildPath, file), { encoding: 'utf-8' })
         await this.feedContractArtifactFile(file, content, compilationResult)
-        this.emit('compilationFinished', compilationResult.compilationTarget, { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)
+        this.emit(
+          'compilationFinished',
+          compilationResult.compilationTarget,
+          { sources: compilationResult.input },
+          'soljson',
+          compilationResult.output,
+          compilationResult.solcVersion
+        )
       }
     }
     clearTimeout(this.logTimeout)

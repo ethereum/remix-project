@@ -1,6 +1,6 @@
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
-import {AbstractProvider} from './abstract-provider'
+import { AbstractProvider } from './abstract-provider'
 
 const profile = {
   name: 'hardhat-provider',

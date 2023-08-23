@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react' // eslint-disable-line
+import React, { useState, useEffect } from 'react' // eslint-disable-line
 
 import './remix-ui-home-tab.css'
-import {ThemeContext, themes} from './themeContext'
+import { ThemeContext, themes } from './themeContext'
 import HomeTabTitle from './components/homeTabTitle'
 import HomeTabFile from './components/homeTabFile'
 import HomeTabLearn from './components/homeTabLearn'
@@ -21,10 +21,10 @@ export interface RemixUiHomeTabProps {
 }
 
 export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
-  const {plugin} = props
+  const { plugin } = props
 
   const [state, setState] = useState<{
-    themeQuality: {filter: string; name: string}
+    themeQuality: { filter: string; name: string }
   }>({
     themeQuality: themes.light
   })
@@ -54,12 +54,12 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     <div className="d-flex flex-column w-100" data-id="remixUIHTAll">
       <ThemeContext.Provider value={state.themeQuality}>
         <div className="d-flex flex-row w-100 custom_home_bg">
-          <div className="px-2 pl-3 justify-content-start d-flex border-right flex-column" id="remixUIHTLeft" style={{width: 'inherit'}}>
+          <div className="px-2 pl-3 justify-content-start d-flex border-right flex-column" id="remixUIHTLeft" style={{ width: 'inherit' }}>
             <HomeTabTitle />
             <HomeTabFile plugin={plugin} />
             <HomeTabLearn plugin={plugin} />
           </div>
-          <div className="pl-2 pr-3 justify-content-start d-flex flex-column" style={{width: '65%'}} id="remixUIHTRight">
+          <div className="pl-2 pr-3 justify-content-start d-flex flex-column" style={{ width: '65%' }} id="remixUIHTRight">
             <HomeTabFeatured></HomeTabFeatured>
             <HomeTabGetStarted plugin={plugin}></HomeTabGetStarted>
             <HomeTabFeaturedPlugins plugin={plugin}></HomeTabFeaturedPlugins>

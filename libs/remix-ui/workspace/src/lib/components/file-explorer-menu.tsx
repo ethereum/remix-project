@@ -1,8 +1,8 @@
-import {CustomTooltip} from '@remix-ui/helper'
-import React, {useState, useEffect} from 'react' //eslint-disable-line
-import {FormattedMessage} from 'react-intl'
-import {Placement} from 'react-bootstrap/esm/Overlay'
-import {FileExplorerMenuProps} from '../types'
+import { CustomTooltip } from '@remix-ui/helper'
+import React, { useState, useEffect } from 'react' //eslint-disable-line
+import { FormattedMessage } from 'react-intl'
+import { Placement } from 'react-bootstrap/esm/Overlay'
+import { FileExplorerMenuProps } from '../types'
 const _paq = (window._paq = window._paq || [])
 
 export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
@@ -53,7 +53,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
     ),
     actions: {}
   })
-  const enableDirUpload = {directory: '', webkitdirectory: ''}
+  const enableDirUpload = { directory: '', webkitdirectory: '' }
 
   useEffect(() => {
     const actions = {
@@ -61,19 +61,19 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
     }
 
     setState((prevState) => {
-      return {...prevState, actions}
+      return { ...prevState, actions }
     })
   }, [])
 
   return (
     <>
       <CustomTooltip placement="top" tooltipId="remixuilabelTooltip" tooltipClasses="text-nowrap" tooltipText={props.title}>
-        <span className="remixui_label" data-path={props.title} style={{fontWeight: 'bold'}}>
+        <span className="remixui_label" data-path={props.title} style={{ fontWeight: 'bold' }}>
           {props.title}
         </span>
       </CustomTooltip>
       <span className="pl-0 pb-1">
-        {state.menuItems.map(({action, title, icon, placement}, index) => {
+        {state.menuItems.map(({ action, title, icon, placement }, index) => {
           if (action === 'uploadFile') {
             return (
               <CustomTooltip

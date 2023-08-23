@@ -1,24 +1,24 @@
-import React, {useState, useRef, useEffect, useReducer} from 'react' // eslint-disable-line
-import {isArray} from 'lodash'
-import Editor, {loader, Monaco} from '@monaco-editor/react'
-import {AlertModal} from '@remix-ui/app'
-import {reducerActions, reducerListener, initialState} from './actions/editor'
-import {solidityTokensProvider, solidityLanguageConfig} from './syntaxes/solidity'
-import {cairoTokensProvider, cairoLanguageConfig} from './syntaxes/cairo'
-import {zokratesTokensProvider, zokratesLanguageConfig} from './syntaxes/zokrates'
-import {moveTokenProvider, moveLanguageConfig} from './syntaxes/move'
-import {monacoTypes} from '@remix-ui/editor'
-import {loadTypes} from './web-types'
-import {retrieveNodesAtPosition} from './helpers/retrieveNodesAtPosition'
-import {RemixHoverProvider} from './providers/hoverProvider'
-import {RemixReferenceProvider} from './providers/referenceProvider'
-import {RemixCompletionProvider} from './providers/completionProvider'
-import {RemixHighLightProvider} from './providers/highlightProvider'
-import {RemixDefinitionProvider} from './providers/definitionProvider'
-import {RemixCodeActionProvider} from './providers/codeActionProvider'
+import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
+import { isArray } from 'lodash'
+import Editor, { loader, Monaco } from '@monaco-editor/react'
+import { AlertModal } from '@remix-ui/app'
+import { reducerActions, reducerListener, initialState } from './actions/editor'
+import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solidity'
+import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
+import { zokratesTokensProvider, zokratesLanguageConfig } from './syntaxes/zokrates'
+import { moveTokenProvider, moveLanguageConfig } from './syntaxes/move'
+import { monacoTypes } from '@remix-ui/editor'
+import { loadTypes } from './web-types'
+import { retrieveNodesAtPosition } from './helpers/retrieveNodesAtPosition'
+import { RemixHoverProvider } from './providers/hoverProvider'
+import { RemixReferenceProvider } from './providers/referenceProvider'
+import { RemixCompletionProvider } from './providers/completionProvider'
+import { RemixHighLightProvider } from './providers/highlightProvider'
+import { RemixDefinitionProvider } from './providers/definitionProvider'
+import { RemixCodeActionProvider } from './providers/codeActionProvider'
 import './remix-ui-editor.css'
-import {circomLanguageConfig, circomTokensProvider} from './syntaxes/circom'
-import {IPosition} from 'monaco-editor'
+import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
+import { IPosition } from 'monaco-editor'
 
 enum MarkerSeverity {
   Hint = 1,
@@ -86,7 +86,7 @@ type errorMarker = {
   file: string
 }
 
-loader.config({paths: {vs: 'assets/js/monaco-editor/min/vs'}})
+loader.config({ paths: { vs: 'assets/js/monaco-editor/min/vs' } })
 
 export type DecorationsReturn = {
   currentDecorations: Array<string>
@@ -108,7 +108,7 @@ export type EditorAPIType = {
   clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
   keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
   addErrorMarker: (errors: errorMarker[], from: string) => void
-  clearErrorMarkers: (sources: string[] | {[fileName: string]: any}, from: string) => void
+  clearErrorMarkers: (sources: string[] | { [fileName: string]: any }, from: string) => void
   getPositionAt: (offset: number) => monacoTypes.IPosition
 }
 
@@ -195,88 +195,88 @@ export const EditorUI = (props: EditorUIProps) => {
       base: themeType,
       inherit: true, // can also be false to completely replace the builtin rules
       rules: [
-        {background: darkColor.replace('#', '')},
-        {foreground: textColor.replace('#', '')},
+        { background: darkColor.replace('#', '') },
+        { foreground: textColor.replace('#', '') },
 
         // global variables
-        {token: 'keyword.abi', foreground: blueColor},
-        {token: 'keyword.block', foreground: blueColor},
-        {token: 'keyword.bytes', foreground: blueColor},
-        {token: 'keyword.msg', foreground: blueColor},
-        {token: 'keyword.tx', foreground: blueColor},
+        { token: 'keyword.abi', foreground: blueColor },
+        { token: 'keyword.block', foreground: blueColor },
+        { token: 'keyword.bytes', foreground: blueColor },
+        { token: 'keyword.msg', foreground: blueColor },
+        { token: 'keyword.tx', foreground: blueColor },
 
         // global functions
-        {token: 'keyword.assert', foreground: blueColor},
-        {token: 'keyword.require', foreground: blueColor},
-        {token: 'keyword.revert', foreground: blueColor},
-        {token: 'keyword.blockhash', foreground: blueColor},
-        {token: 'keyword.keccak256', foreground: blueColor},
-        {token: 'keyword.sha256', foreground: blueColor},
-        {token: 'keyword.ripemd160', foreground: blueColor},
-        {token: 'keyword.ecrecover', foreground: blueColor},
-        {token: 'keyword.addmod', foreground: blueColor},
-        {token: 'keyword.mulmod', foreground: blueColor},
-        {token: 'keyword.selfdestruct', foreground: blueColor},
-        {token: 'keyword.type ', foreground: blueColor},
-        {token: 'keyword.gasleft', foreground: blueColor},
+        { token: 'keyword.assert', foreground: blueColor },
+        { token: 'keyword.require', foreground: blueColor },
+        { token: 'keyword.revert', foreground: blueColor },
+        { token: 'keyword.blockhash', foreground: blueColor },
+        { token: 'keyword.keccak256', foreground: blueColor },
+        { token: 'keyword.sha256', foreground: blueColor },
+        { token: 'keyword.ripemd160', foreground: blueColor },
+        { token: 'keyword.ecrecover', foreground: blueColor },
+        { token: 'keyword.addmod', foreground: blueColor },
+        { token: 'keyword.mulmod', foreground: blueColor },
+        { token: 'keyword.selfdestruct', foreground: blueColor },
+        { token: 'keyword.type ', foreground: blueColor },
+        { token: 'keyword.gasleft', foreground: blueColor },
 
         // specials
-        {token: 'keyword.super', foreground: infoColor},
-        {token: 'keyword.this', foreground: infoColor},
-        {token: 'keyword.virtual', foreground: infoColor},
+        { token: 'keyword.super', foreground: infoColor },
+        { token: 'keyword.this', foreground: infoColor },
+        { token: 'keyword.virtual', foreground: infoColor },
 
         // for state variables
-        {token: 'keyword.constants', foreground: grayColor},
-        {token: 'keyword.override', foreground: grayColor},
-        {token: 'keyword.immutable', foreground: grayColor},
+        { token: 'keyword.constants', foreground: grayColor },
+        { token: 'keyword.override', foreground: grayColor },
+        { token: 'keyword.immutable', foreground: grayColor },
 
         // data location
-        {token: 'keyword.memory', foreground: locationColor},
-        {token: 'keyword.storage', foreground: locationColor},
-        {token: 'keyword.calldata', foreground: locationColor},
+        { token: 'keyword.memory', foreground: locationColor },
+        { token: 'keyword.storage', foreground: locationColor },
+        { token: 'keyword.calldata', foreground: locationColor },
 
         // for Events
-        {token: 'keyword.indexed', foreground: yellowColor},
-        {token: 'keyword.anonymous', foreground: yellowColor},
+        { token: 'keyword.indexed', foreground: yellowColor },
+        { token: 'keyword.anonymous', foreground: yellowColor },
 
         // for functions
-        {token: 'keyword.external', foreground: successColor},
-        {token: 'keyword.internal', foreground: successColor},
-        {token: 'keyword.private', foreground: successColor},
-        {token: 'keyword.public', foreground: successColor},
-        {token: 'keyword.view', foreground: successColor},
-        {token: 'keyword.pure', foreground: successColor},
-        {token: 'keyword.payable', foreground: successColor},
-        {token: 'keyword.nonpayable', foreground: successColor},
+        { token: 'keyword.external', foreground: successColor },
+        { token: 'keyword.internal', foreground: successColor },
+        { token: 'keyword.private', foreground: successColor },
+        { token: 'keyword.public', foreground: successColor },
+        { token: 'keyword.view', foreground: successColor },
+        { token: 'keyword.pure', foreground: successColor },
+        { token: 'keyword.payable', foreground: successColor },
+        { token: 'keyword.nonpayable', foreground: successColor },
 
         // Errors
-        {token: 'keyword.Error', foreground: dangerColor},
-        {token: 'keyword.Panic', foreground: dangerColor},
+        { token: 'keyword.Error', foreground: dangerColor },
+        { token: 'keyword.Panic', foreground: dangerColor },
 
         // special functions
-        {token: 'keyword.fallback', foreground: pinkColor},
-        {token: 'keyword.receive', foreground: pinkColor},
-        {token: 'keyword.constructor', foreground: pinkColor},
+        { token: 'keyword.fallback', foreground: pinkColor },
+        { token: 'keyword.receive', foreground: pinkColor },
+        { token: 'keyword.constructor', foreground: pinkColor },
 
         // identifiers
-        {token: 'keyword.identifier', foreground: warningColor},
-        {token: 'keyword.for', foreground: warningColor},
-        {token: 'keyword.break', foreground: warningColor},
-        {token: 'keyword.continue', foreground: warningColor},
-        {token: 'keyword.while', foreground: warningColor},
-        {token: 'keyword.do', foreground: warningColor},
-        {token: 'keyword.delete', foreground: warningColor},
+        { token: 'keyword.identifier', foreground: warningColor },
+        { token: 'keyword.for', foreground: warningColor },
+        { token: 'keyword.break', foreground: warningColor },
+        { token: 'keyword.continue', foreground: warningColor },
+        { token: 'keyword.while', foreground: warningColor },
+        { token: 'keyword.do', foreground: warningColor },
+        { token: 'keyword.delete', foreground: warningColor },
 
-        {token: 'keyword.if', foreground: yellowColor},
-        {token: 'keyword.else', foreground: yellowColor},
+        { token: 'keyword.if', foreground: yellowColor },
+        { token: 'keyword.else', foreground: yellowColor },
 
-        {token: 'keyword.throw', foreground: orangeColor},
-        {token: 'keyword.catch', foreground: orangeColor},
-        {token: 'keyword.try', foreground: orangeColor},
+        { token: 'keyword.throw', foreground: orangeColor },
+        { token: 'keyword.catch', foreground: orangeColor },
+        { token: 'keyword.try', foreground: orangeColor },
 
         // returns
-        {token: 'keyword.returns', foreground: greenColor},
-        {token: 'keyword.return', foreground: greenColor}
+        { token: 'keyword.returns', foreground: greenColor },
+        { token: 'keyword.return', foreground: greenColor }
       ],
       colors: {
         // see https://code.visualstudio.com/api/references/theme-color for more settings
@@ -454,11 +454,11 @@ export const EditorUI = (props: EditorUIProps) => {
 
   const addDecoration = (decoration: sourceAnnotation | sourceMarker, filePath: string, typeOfDecoration: string) => {
     const model = editorModelsState[filePath]?.model
-    if (!model) return {currentDecorations: []}
+    if (!model) return { currentDecorations: [] }
     const monacoDecoration = convertToMonacoDecoration(decoration, typeOfDecoration)
     return {
       currentDecorations: model.deltaDecorations([], [monacoDecoration]),
-      registeredDecorations: [{value: decoration, type: typeOfDecoration}]
+      registeredDecorations: [{ value: decoration, type: typeOfDecoration }]
     }
   }
 
@@ -504,7 +504,7 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
-  props.editorAPI.clearErrorMarkers = async (sources: string[] | {[fileName: string]: any}, from: string) => {
+  props.editorAPI.clearErrorMarkers = async (sources: string[] | { [fileName: string]: any }, from: string) => {
     if (sources) {
       for (const source of Array.isArray(sources) ? sources : Object.keys(sources)) {
         const filePath = source
@@ -639,10 +639,10 @@ export const EditorUI = (props: EditorUIProps) => {
 
     // zoomin zoomout
     editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | (monacoRef.current.KeyCode as any).US_EQUAL, () => {
-      editor.updateOptions({fontSize: editor.getOption(43).fontSize + 1})
+      editor.updateOptions({ fontSize: editor.getOption(43).fontSize + 1 })
     })
     editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | (monacoRef.current.KeyCode as any).US_MINUS, () => {
-      editor.updateOptions({fontSize: editor.getOption(43).fontSize - 1})
+      editor.updateOptions({ fontSize: editor.getOption(43).fontSize - 1 })
     })
 
     // add context menu items
@@ -656,7 +656,7 @@ export const EditorUI = (props: EditorUIProps) => {
         monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Equal
       ],
       run: () => {
-        editor.updateOptions({fontSize: editor.getOption(43).fontSize + 1})
+        editor.updateOptions({ fontSize: editor.getOption(43).fontSize + 1 })
       }
     }
     const zoomOutAction = {
@@ -669,7 +669,7 @@ export const EditorUI = (props: EditorUIProps) => {
         monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Minus
       ],
       run: () => {
-        editor.updateOptions({fontSize: editor.getOption(43).fontSize - 1})
+        editor.updateOptions({ fontSize: editor.getOption(43).fontSize - 1 })
       }
     }
     const formatAction = {
@@ -700,7 +700,7 @@ export const EditorUI = (props: EditorUIProps) => {
         monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyR
       ],
       run: async () => {
-        const {nodesAtPosition} = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
+        const { nodesAtPosition } = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
         // find the contract and get the nodes of the contract and the base contracts and imports
         if (nodesAtPosition && isArray(nodesAtPosition) && nodesAtPosition.length) {
           const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
@@ -735,7 +735,7 @@ export const EditorUI = (props: EditorUIProps) => {
         freeFunctionCondition.set(false)
         return
       }
-      const {nodesAtPosition} = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
+      const { nodesAtPosition } = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
       const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
       if (freeFunctionNode) {
         executeFreeFunctionAction.label = `Run the free function "${freeFunctionNode.name}" in the Remix VM`
@@ -779,11 +779,11 @@ export const EditorUI = (props: EditorUIProps) => {
   function handleEditorWillMount(monaco) {
     monacoRef.current = monaco
     // Register a new language
-    monacoRef.current.languages.register({id: 'remix-solidity'})
-    monacoRef.current.languages.register({id: 'remix-cairo'})
-    monacoRef.current.languages.register({id: 'remix-zokrates'})
-    monacoRef.current.languages.register({id: 'remix-move'})
-    monacoRef.current.languages.register({id: 'remix-circom'})
+    monacoRef.current.languages.register({ id: 'remix-solidity' })
+    monacoRef.current.languages.register({ id: 'remix-cairo' })
+    monacoRef.current.languages.register({ id: 'remix-zokrates' })
+    monacoRef.current.languages.register({ id: 'remix-move' })
+    monacoRef.current.languages.register({ id: 'remix-circom' })
 
     // Register a tokens provider for the language
     monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider as any)

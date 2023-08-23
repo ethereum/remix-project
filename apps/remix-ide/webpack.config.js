@@ -1,5 +1,5 @@
-const {composePlugins, withNx} = require('@nrwl/webpack')
-const {withReact} = require('@nrwl/react')
+const { composePlugins, withNx } = require('@nrwl/webpack')
+const { withReact } = require('@nrwl/react')
 const webpack = require('webpack')
 const CopyPlugin = require('copy-webpack-plugin')
 const version = require('../../package.json').version
@@ -16,7 +16,7 @@ const versionData = {
 
 const loadLocalSolJson = async () => {
   // execute apps/remix-ide/ci/downloadsoljson.sh
-  const child = require('child_process').execSync('bash ./apps/remix-ide/ci/downloadsoljson.sh', {encoding: 'utf8', cwd: process.cwd(), shell: true})
+  const child = require('child_process').execSync('bash ./apps/remix-ide/ci/downloadsoljson.sh', { encoding: 'utf8', cwd: process.cwd(), shell: true })
   // show output
   console.log(child)
 }
@@ -32,7 +32,7 @@ const implicitDependencies = JSON.parse(project).implicitDependencies
 const copyPatterns = implicitDependencies.map((dep) => {
   try {
     fs.statSync(__dirname + `/../../dist/apps/${dep}`).isDirectory()
-    return {from: `../../dist/apps/${dep}`, to: `plugins/${dep}`}
+    return { from: `../../dist/apps/${dep}`, to: `plugins/${dep}` }
   } catch (e) {
     console.log('error', e)
     return false

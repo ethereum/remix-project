@@ -89,7 +89,8 @@ export class HardhatClient extends PluginClient {
     const folderFiles = await fs.readdir(this.buildPath)
     const targetsSynced = []
     // name of folders are file names
-    for (const file of folderFiles) { // ["artifacts/contracts/Greeter.sol/"]
+    for (const file of folderFiles) {
+      // ["artifacts/contracts/Greeter.sol/"]
       const contractFilePath = join(this.buildPath, file)
       const stat = await fs.stat(contractFilePath)
       if (!stat.isDirectory()) continue
@@ -104,7 +105,8 @@ export class HardhatClient extends PluginClient {
         target: null
       }
       for (const file of files) {
-        if (file.endsWith('.dbg.json')) { // "artifacts/contracts/Greeter.sol/Greeter.dbg.json"
+        if (file.endsWith('.dbg.json')) {
+          // "artifacts/contracts/Greeter.sol/Greeter.dbg.json"
           const stdFile = file.replace('.dbg.json', '.json')
           const contentStd = await fs.readFile(join(contractFilePath, stdFile), { encoding: 'utf-8' })
           const contentDbg = await fs.readFile(join(contractFilePath, file), { encoding: 'utf-8' })
@@ -142,14 +144,12 @@ export class HardhatClient extends PluginClient {
         this.call('terminal', 'log', { type: 'log', value: 'No artifacts from Hardhat to process' })
       }
     }, 1000)
-
-
   }
 
   listenOnHardHatFolder() {
-    console.log('Hardhat artifacts folder doesn\'t exist... waiting for the compilation.')
+    console.log("Hardhat artifacts folder doesn't exist... waiting for the compilation.")
     try {
-      if(this.watcher) this.watcher.close()
+      if (this.watcher) this.watcher.close()
       this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 2, ignorePermissionErrors: true, ignoreInitial: true })
       // watch for new folders
       this.watcher.on('addDir', () => {
@@ -171,7 +171,7 @@ export class HardhatClient extends PluginClient {
   listenOnHardhatCompilation() {
     try {
       console.log('listening on Hardhat compilation...')
-      if(this.watcher) this.watcher.close()
+      if (this.watcher) this.watcher.close()
       this.watcher = chokidar.watch(this.buildPath, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
       this.watcher.on('change', async () => await this.triggerProcessArtifact())
       this.watcher.on('add', async () => await this.triggerProcessArtifact())
@@ -193,14 +193,15 @@ export class HardhatClient extends PluginClient {
     for (const file in contentJSON.input.sources) {
       const source = contentJSON.input.sources[file]
       const absPath = join(this.currentSharedFolder, file)
-      if (fs.existsSync(absPath)) { // if not that is a lib
+      if (fs.existsSync(absPath)) {
+        // if not that is a lib
         const contentOnDisk = await fs.readFile(absPath, { encoding: 'utf-8' })
         if (contentOnDisk === source.content) {
           compilationResultPart.input[file] = source
           compilationResultPart.output['sources'][file] = contentJSON.output.sources[file]
           compilationResultPart.output['contracts'][file] = contentJSON.output.contracts[file]
           if (contentJSON.output.errors && contentJSON.output.errors.length) {
-            compilationResultPart.output['errors'] = contentJSON.output.errors.filter(error => error.sourceLocation.file === file)
+            compilationResultPart.output['errors'] = contentJSON.output.errors.filter((error) => error.sourceLocation.file === file)
           }
         }
       }

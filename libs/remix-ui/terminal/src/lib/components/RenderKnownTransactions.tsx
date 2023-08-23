@@ -1,12 +1,12 @@
 import React from 'react' // eslint-disable-line
-import {FormattedMessage} from 'react-intl'
+import { FormattedMessage } from 'react-intl'
 import CheckTxStatus from './ChechTxStatus' // eslint-disable-line
 import Context from './Context' // eslint-disable-line
 import showTable from './Table'
-import {execution} from '@remix-project/remix-lib'
+import { execution } from '@remix-project/remix-lib'
 const typeConversion = execution.typeConversion
 
-const RenderKnownTransactions = ({tx, receipt, resolvedData, logs, index, plugin, showTableHash, txDetails, modal, provider}) => {
+const RenderKnownTransactions = ({ tx, receipt, resolvedData, logs, index, plugin, showTableHash, txDetails, modal, provider }) => {
   const debug = (event, tx) => {
     event.stopPropagation()
     if (tx.isCall && !tx.envMode.startsWith('vm')) {
@@ -27,7 +27,7 @@ const RenderKnownTransactions = ({tx, receipt, resolvedData, logs, index, plugin
   const from = tx.from
   const to = resolvedData.contractName + '.' + resolvedData.fn
   const txType = 'knownTx'
-  const options = {from, to, tx, logs}
+  const options = { from, to, tx, logs }
   return (
     <span id={`tx${tx.hash}`} key={index}>
       <div className="remix_ui_terminal_log" onClick={(event) => txDetails(event, tx)}>

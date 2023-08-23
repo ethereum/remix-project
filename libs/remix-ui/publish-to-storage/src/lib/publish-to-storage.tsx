@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react' // eslint-disable-line
-import {ModalDialog} from '@remix-ui/modal-dialog' // eslint-disable-line
-import {RemixUiPublishToStorageProps} from './types' // eslint-disable-line
-import {publishToIPFS} from './publishToIPFS'
-import {publishToSwarm} from './publishOnSwarm'
+import React, { useEffect, useState } from 'react' // eslint-disable-line
+import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
+import { RemixUiPublishToStorageProps } from './types' // eslint-disable-line
+import { publishToIPFS } from './publishToIPFS'
+import { publishToSwarm } from './publishOnSwarm'
 
 export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
-  const {api, storage, contract, resetStorage} = props
+  const { api, storage, contract, resetStorage } = props
   const [modalShown, setModalShown] = useState(false)
   const [state, setState] = useState({
     modal: {
@@ -110,7 +110,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
     setState((prevState) => {
       return {
         ...prevState,
-        modal: {...prevState.modal, hide: true, message: null}
+        modal: { ...prevState.modal, hide: true, message: null }
       }
     })
     resetStorage()

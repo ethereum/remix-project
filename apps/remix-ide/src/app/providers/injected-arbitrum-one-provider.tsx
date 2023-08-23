@@ -1,5 +1,5 @@
 import * as packageJson from '../../../../../package.json'
-import {InjectedL2Provider} from './injected-L2-provider'
+import { InjectedL2Provider } from './injected-L2-provider'
 
 const profile = {
   name: 'injected-arbitrum-one-provider',

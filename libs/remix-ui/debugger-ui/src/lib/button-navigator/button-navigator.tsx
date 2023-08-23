@@ -1,5 +1,5 @@
-import {CustomTooltip} from '@remix-ui/helper'
-import React, {useState, useEffect} from 'react' // eslint-disable-line
+import { CustomTooltip } from '@remix-ui/helper'
+import React, { useState, useEffect } from 'react' // eslint-disable-line
 import './button-navigator.css'
 
 export const ButtonNavigation = ({
@@ -82,7 +82,7 @@ export const ButtonNavigation = ({
               stepOverBack && stepOverBack()
             }}
             disabled={state.overBackDisabled}
-            style={{pointerEvents: 'none', color: 'white'}}
+            style={{ pointerEvents: 'none', color: 'white' }}
           >
             <span className="fas fa-reply"></span>
           </button>
@@ -110,7 +110,7 @@ export const ButtonNavigation = ({
               stepIntoBack && stepIntoBack()
             }}
             disabled={state.intoBackDisabled}
-            style={{pointerEvents: 'none', color: 'white'}}
+            style={{ pointerEvents: 'none', color: 'white' }}
           >
             <span className="fas fa-level-up-alt"></span>
           </button>
@@ -139,7 +139,7 @@ export const ButtonNavigation = ({
               stepIntoForward && stepIntoForward()
             }}
             disabled={state.intoForwardDisabled}
-            style={{pointerEvents: 'none', color: 'white'}}
+            style={{ pointerEvents: 'none', color: 'white' }}
           >
             <span className="fas fa-level-down-alt"></span>
           </button>
@@ -166,7 +166,7 @@ export const ButtonNavigation = ({
               stepOverForward && stepOverForward()
             }}
             disabled={state.overForwardDisabled}
-            style={{pointerEvents: 'none', color: 'white'}}
+            style={{ pointerEvents: 'none', color: 'white' }}
           >
             <span className="fas fa-share"></span>
           </button>
@@ -260,7 +260,7 @@ export const ButtonNavigation = ({
               jumpNextBreakpoint && jumpNextBreakpoint()
             }}
             disabled={state.jumpNextBreakpointDisabled}
-            style={{pointerEvents: 'none', color: 'white'}}
+            style={{ pointerEvents: 'none', color: 'white' }}
           >
             <span className="fas fa-step-forward"></span>
           </button>
@@ -299,9 +299,9 @@ export const ButtonNavigation = ({
           </CustomTooltip>
         ))}
       </div>
-      <div id="reverted" style={{display: revertedReason === '' ? 'none' : 'block'}}>
+      <div id="reverted" style={{ display: revertedReason === '' ? 'none' : 'block' }}>
         <span className="text-warning">This call has reverted, state changes made during the call will be reverted.</span>
-        <span className="text-warning" id="outofgas" style={{display: revertedReason === 'outofgas' ? 'inline' : 'none'}}>
+        <span className="text-warning" id="outofgas" style={{ display: revertedReason === 'outofgas' ? 'inline' : 'none' }}>
           This call will run out of gas.
         </span>
         <span

@@ -1,11 +1,11 @@
 import VerticalIconsContextMenu from '../vertical-icons-context-menu'
 // eslint-disable-next-line no-use-before-define
-import React, {Fragment, SyntheticEvent, useEffect, useReducer, useRef, useState} from 'react'
+import React, { Fragment, SyntheticEvent, useEffect, useReducer, useRef, useState } from 'react'
 import Badge from './Badge'
-import {iconBadgeReducer, IconBadgeReducerAction} from '../reducers/iconBadgeReducer'
-import {Plugin} from '@remixproject/engine'
-import {IconRecord} from '../types'
-import {CustomTooltip} from '@remix-ui/helper'
+import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeReducer'
+import { Plugin } from '@remixproject/engine'
+import { IconRecord } from '../types'
+import { CustomTooltip } from '@remix-ui/helper'
 
 export interface IconStatus {
   key: string
@@ -33,8 +33,8 @@ const initialState = {
   pluginName: ''
 }
 
-const Icon = ({iconRecord, verticalIconPlugin, contextMenuAction, theme}: IconProps) => {
-  const {displayName, name, icon, documentation} = iconRecord.profile
+const Icon = ({ iconRecord, verticalIconPlugin, contextMenuAction, theme }: IconProps) => {
+  const { displayName, name, icon, documentation } = iconRecord.profile
   const [title] = useState(() => {
     const temp = null || displayName || name
     return temp.replace(/^\w/, (word: string) => word.toUpperCase())
@@ -42,7 +42,7 @@ const Icon = ({iconRecord, verticalIconPlugin, contextMenuAction, theme}: IconPr
   const [links, setLinks] = useState<{
     Documentation: string
     CanDeactivate: boolean
-  }>({} as {Documentation: string; CanDeactivate: boolean})
+  }>({} as { Documentation: string; CanDeactivate: boolean })
   const [badgeStatus, dispatchStatusUpdate] = useReducer(iconBadgeReducer, initialState)
   // @ts-ignore
   const [pageX, setPageX] = useState<number>(null)
@@ -55,9 +55,9 @@ const Icon = ({iconRecord, verticalIconPlugin, contextMenuAction, theme}: IconPr
   const handleContextMenu = (e: SyntheticEvent & PointerEvent) => {
     const deactivationState = iconRecord.canbeDeactivated
     if (documentation && documentation.length > 0 && deactivationState) {
-      setLinks({Documentation: documentation, CanDeactivate: deactivationState})
+      setLinks({ Documentation: documentation, CanDeactivate: deactivationState })
     } else {
-      setLinks({Documentation: documentation, CanDeactivate: deactivationState})
+      setLinks({ Documentation: documentation, CanDeactivate: deactivationState })
     }
     setShowContext(false)
     setPageX(e.pageX)
@@ -73,7 +73,7 @@ const Icon = ({iconRecord, verticalIconPlugin, contextMenuAction, theme}: IconPr
       iconStatus.pluginName = name
       const action: IconBadgeReducerAction = {
         type: name,
-        payload: {status: iconStatus, verticalIconPlugin: verticalIconPlugin}
+        payload: { status: iconStatus, verticalIconPlugin: verticalIconPlugin }
       }
       dispatchStatusUpdate(action)
     })
@@ -84,13 +84,17 @@ const Icon = ({iconRecord, verticalIconPlugin, contextMenuAction, theme}: IconPr
 
   return (
     <>
-      <CustomTooltip placement={name === 'settings' ? 'right' : name === 'search' ? 'top' : name === 'udapp' ? 'bottom' : 'top'} tooltipText={title} delay={{show: 1000, hide: 0}}>
+      <CustomTooltip
+        placement={name === 'settings' ? 'right' : name === 'search' ? 'top' : name === 'udapp' ? 'bottom' : 'top'}
+        tooltipText={title}
+        delay={{ show: 1000, hide: 0 }}
+      >
         <div
           className={`remixui_icon m-2  pt-1`}
           onClick={() => {
             ;(verticalIconPlugin as any).toggle(name)
           }}
-          {...{plugin: name}}
+          {...{ plugin: name }}
           onContextMenu={(e: any) => {
             e.preventDefault()
             e.stopPropagation()

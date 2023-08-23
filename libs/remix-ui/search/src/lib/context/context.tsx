@@ -1,10 +1,10 @@
-import React, {useEffect, useRef, useState} from 'react'
-import {createContext, useReducer} from 'react'
-import {findLinesInStringWithMatch, getDirectory, replaceAllInFile, replaceTextInLine} from '../components/results/SearchHelper'
-import {SearchReducer} from '../reducers/Reducer'
-import {SearchState, SearchResult, SearchResultLine, SearchResultLineLine, SearchingInitialState, undoBufferRecord} from '../types'
-import {filePathFilter} from '@jsdevtools/file-path-filter'
-import {escapeRegExp} from 'lodash'
+import React, { useEffect, useRef, useState } from 'react'
+import { createContext, useReducer } from 'react'
+import { findLinesInStringWithMatch, getDirectory, replaceAllInFile, replaceTextInLine } from '../components/results/SearchHelper'
+import { SearchReducer } from '../reducers/Reducer'
+import { SearchState, SearchResult, SearchResultLine, SearchResultLineLine, SearchingInitialState, undoBufferRecord } from '../types'
+import { filePathFilter } from '@jsdevtools/file-path-filter'
+import { escapeRegExp } from 'lodash'
 
 export interface SearchingStateInterface {
   state: SearchState
@@ -36,7 +36,7 @@ export interface SearchingStateInterface {
 
 export const SearchContext = createContext<SearchingStateInterface>(null)
 
-export const SearchProvider = ({children = [], reducer = SearchReducer, initialState = SearchingInitialState, plugin = undefined} = {}) => {
+export const SearchProvider = ({ children = [], reducer = SearchReducer, initialState = SearchingInitialState, plugin = undefined } = {}) => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const [files, setFiles] = useState([])
   const clearSearchingTimeout = useRef(null)
@@ -148,7 +148,7 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
     updateCount: (count: number, file: string) => {
       dispatch({
         type: 'UPDATE_COUNT',
-        payload: {count, file}
+        payload: { count, file }
       })
     },
     setSearching(file: string) {

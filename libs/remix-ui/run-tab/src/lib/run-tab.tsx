@@ -1,15 +1,15 @@
 // eslint-disable-next-line no-use-before-define
-import React, {Fragment, useEffect, useReducer, useState} from 'react'
-import {ModalDialog} from '@remix-ui/modal-dialog'
+import React, { Fragment, useEffect, useReducer, useState } from 'react'
+import { ModalDialog } from '@remix-ui/modal-dialog'
 // eslint-disable-next-line no-unused-vars
-import {Toaster} from '@remix-ui/toaster'
-import {ContractDropdownUI} from './components/contractDropdownUI'
-import {InstanceContainerUI} from './components/instanceContainerUI'
-import {RecorderUI} from './components/recorderCardUI'
-import {SettingsUI} from './components/settingsUI'
-import {Modal, Network, RunTabProps, Tx} from './types'
-import {ContractData} from '@remix-project/core-plugin'
-import {runTabInitialState, runTabReducer} from './reducers/runTab'
+import { Toaster } from '@remix-ui/toaster'
+import { ContractDropdownUI } from './components/contractDropdownUI'
+import { InstanceContainerUI } from './components/instanceContainerUI'
+import { RecorderUI } from './components/recorderCardUI'
+import { SettingsUI } from './components/settingsUI'
+import { Modal, Network, RunTabProps, Tx } from './types'
+import { ContractData } from '@remix-project/core-plugin'
+import { runTabInitialState, runTabReducer } from './reducers/runTab'
 import {
   initRunTab,
   setAccountAddress,
@@ -46,14 +46,14 @@ import {
   isValidProxyUpgrade
 } from './actions'
 import './css/run-tab.css'
-import {PublishToStorage} from '@remix-ui/publish-to-storage'
-import {PassphrasePrompt} from './components/passphrase'
-import {MainnetPrompt} from './components/mainnet'
-import {ScenarioPrompt} from './components/scenario'
-import {setIpfsCheckedState, setRemixDActivated} from './actions/payload'
+import { PublishToStorage } from '@remix-ui/publish-to-storage'
+import { PassphrasePrompt } from './components/passphrase'
+import { MainnetPrompt } from './components/mainnet'
+import { ScenarioPrompt } from './components/scenario'
+import { setIpfsCheckedState, setRemixDActivated } from './actions/payload'
 
 export function RunTabUI(props: RunTabProps) {
-  const {plugin} = props
+  const { plugin } = props
   const [focusModal, setFocusModal] = useState<Modal>({
     hide: true,
     title: '',
@@ -75,7 +75,7 @@ export function RunTabUI(props: RunTabProps) {
   })
   runTabInitialState.selectExEnv = plugin.blockchain.getProvider()
   const [runTab, dispatch] = useReducer(runTabReducer, runTabInitialState)
-  const REACT_API = {runTab}
+  const REACT_API = { runTab }
   const currentfile = plugin.config.get('currentFile')
 
   useEffect(() => {
@@ -172,7 +172,7 @@ export function RunTabUI(props: RunTabProps) {
 
   const handleHideModal = () => {
     setFocusModal((modal) => {
-      return {...modal, hide: true, message: null}
+      return { ...modal, hide: true, message: null }
     })
   }
 

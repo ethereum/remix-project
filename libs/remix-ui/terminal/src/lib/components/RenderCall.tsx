@@ -1,12 +1,12 @@
 import React from 'react' // eslint-disable-line
-import {shortenHexData} from '@remix-ui/helper'
+import { shortenHexData } from '@remix-ui/helper'
 import CheckTxStatus from './ChechTxStatus' // eslint-disable-line
 import showTable from './Table'
-import {execution} from '@remix-project/remix-lib'
+import { execution } from '@remix-project/remix-lib'
 
 const typeConversion = execution.typeConversion
 
-const RenderCall = ({tx, resolvedData, logs, index, plugin, showTableHash, txDetails, modal}) => {
+const RenderCall = ({ tx, resolvedData, logs, index, plugin, showTableHash, txDetails, modal }) => {
   const to = resolvedData.contractName + '.' + resolvedData.fn
   const from = tx.from ? tx.from : ' - '
   const input = tx.input ? shortenHexData(tx.input) : ''

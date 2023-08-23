@@ -10,15 +10,15 @@ export default class WebSocket {
   opt: WebsocketOpt
   getclient: () => ServiceClient
 
-  constructor (port: number, opt: WebsocketOpt, getclient: () => ServiceClient) {
+  constructor(port: number, opt: WebsocketOpt, getclient: () => ServiceClient) {
     this.port = port
     this.opt = opt
     this.getclient = getclient
   } //eslint-disable-line
 
-  start (callback?: (ws: WS, client: ServiceClient, error?: Error) => void): void {
+  start(callback?: (ws: WS, client: ServiceClient, error?: Error) => void): void {
     this.server = http.createServer((request, response) => {
-      console.log((new Date()) + ' Received request for ' + request.url)
+      console.log(new Date() + ' Received request for ' + request.url)
       response.writeHead(404)
       response.end()
     })
@@ -33,7 +33,7 @@ export default class WebSocket {
     }
 
     this.server.on('error', (error: Error) => {
-      if (callback)callback(null, null, error)
+      if (callback) callback(null, null, error)
     })
 
     this.server.listen(this.port, loopback, () => {
@@ -59,7 +59,7 @@ export default class WebSocket {
     })
   }
 
-  close (): void {
+  close(): void {
     if (this.wsServer) {
       this.wsServer.close(() => {
         this.server.close()
@@ -68,7 +68,7 @@ export default class WebSocket {
   }
 }
 
-function originIsAllowed (origin: string, self: WebSocket): boolean {
+function originIsAllowed(origin: string, self: WebSocket): boolean {
   if (self.opt.remixIdeUrl) {
     if (self.opt.remixIdeUrl.endsWith('/')) self.opt.remixIdeUrl = self.opt.remixIdeUrl.slice(0, -1)
     return origin === self.opt.remixIdeUrl || origin === getDomain(self.opt.remixIdeUrl)

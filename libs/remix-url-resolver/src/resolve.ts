@@ -4,9 +4,9 @@ import semver from 'semver'
 import { BzzNode as Bzz } from '@erebos/bzz-node'
 
 export interface Imported {
-  content: string;
-  cleanUrl: string;
-  type: string;
+  content: string
+  cleanUrl: string
+  type: string
 }
 
 interface PreviouslyHandledImports {
@@ -14,13 +14,13 @@ interface PreviouslyHandledImports {
 }
 
 interface Handler {
-  type: string;
-  match(url: string): any;
-  handle(match: any): any;
+  type: string
+  match(url: string): any
+  handle(match: any): any
 }
 
 interface HandlerResponse {
-  content: any;
+  content: any
   cleanUrl: string
 }
 
@@ -32,26 +32,26 @@ export class RemixURLResolver {
   protocol: string
   getDependencies: getPackages
 
-  constructor (getDependencies?: getPackages, gistToken?: string, protocol = 'http:') {
+  constructor(getDependencies?: getPackages, gistToken?: string, protocol = 'http:') {
     this.previouslyHandled = {}
     this.getDependencies = getDependencies
     this.setGistToken(gistToken, protocol)
   }
 
-  async setGistToken (gistToken?: string, protocol = 'http:') {
+  async setGistToken(gistToken?: string, protocol = 'http:') {
     this.gistAccessToken = gistToken || ''
     this.protocol = protocol
   }
 
-  clearCache () {
+  clearCache() {
     this.previouslyHandled = {}
   }
 
   /**
-  * Handle an import statement based on github
-  * @param root The root of the github import statement
-  * @param filePath path of the file in github
-  */
+   * Handle an import statement based on github
+   * @param root The root of the github import statement
+   * @param filePath path of the file in github
+   */
   async handleGithubCall(root: string, filePath: string): Promise<HandlerResponse> {
     const regex = filePath.match(/blob\/([^/]+)\/(.*)/)
     let reference = 'master'
@@ -61,6 +61,7 @@ export class RemixURLResolver {
       reference = regex[1]
       filePath = filePath.replace(`blob/${reference}/`, '')
     }
+
     // eslint-disable-next-line no-useless-catch
     try {
       const req = `https://raw.githubusercontent.com/${root}/${reference}/${filePath}`
@@ -72,10 +73,10 @@ export class RemixURLResolver {
   }
 
   /**
-  * Handle an import statement based on http
-  * @param url The url of the import statement
-  * @param cleanUrl
-  */
+   * Handle an import statement based on http
+   * @param url The url of the import statement
+   * @param cleanUrl
+   */
   async handleHttp(url: string, cleanUrl: string): Promise<HandlerResponse> {
     // eslint-disable-next-line no-useless-catch
     try {
@@ -87,10 +88,10 @@ export class RemixURLResolver {
   }
 
   /**
-  * Handle an import statement based on https
-  * @param url The url of the import statement
-  * @param cleanUrl
-  */
+   * Handle an import statement based on https
+   * @param url The url of the import statement
+   * @param cleanUrl
+   */
   async handleHttps(url: string, cleanUrl: string): Promise<HandlerResponse> {
     // eslint-disable-next-line no-useless-catch
     try {
@@ -114,9 +115,9 @@ export class RemixURLResolver {
   }
 
   /**
-  * Handle an import statement based on IPFS
-  * @param url The url of the IPFS import statement
-  */
+   * Handle an import statement based on IPFS
+   * @param url The url of the IPFS import statement
+   */
   async handleIPFS(url: string): Promise<HandlerResponse> {
     // replace ipfs:// with /ipfs/
     url = url.replace(/^ipfs:\/\/?/, 'ipfs/')
@@ -133,9 +134,9 @@ export class RemixURLResolver {
   }
 
   /**
-  * Handle an import statement based on NPM
-  * @param url The url of the NPM import statement
-  */
+   * Handle an import statement based on NPM
+   * @param url The url of the NPM import statement
+   */
 
   async handleNpmImport(url: string): Promise<HandlerResponse> {
     if (!url) throw new Error('url is empty')
@@ -183,7 +184,7 @@ export class RemixURLResolver {
       }
     }
 
-    const npm_urls = ["https://cdn.jsdelivr.net/npm/", "https://unpkg.com/"]
+    const npm_urls = ['https://cdn.jsdelivr.net/npm/', 'https://unpkg.com/']
     process && process.env && process.env['NPM_URL'] && npm_urls.unshift(process.env['NPM_URL'])
     let content = null
     // get response from all urls
@@ -196,56 +197,66 @@ export class RemixURLResolver {
       } catch (e) {
         // try next url
       }
-
     }
     if (!content) throw new Error('Unable to load ' + url)
     return { content, cleanUrl: url }
   }
-  
 
-  getHandlers (): Handler[] {
+  getHandlers(): Handler[] {
     return [
       {
         type: 'github',
-        match: (url) => { return /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/.exec(url) },
+        match: (url) => {
+          return /^(https?:\/\/)?(www.)?github.com\/([^/]*\/[^/]*)\/(.*)/.exec(url)
+        },
         handle: (match) => this.handleGithubCall(match[3], match[4])
       },
       {
         type: 'http',
-        match: (url) => { return /^(http?:\/\/?(.*))$/.exec(url) },
+        match: (url) => {
+          return /^(http?:\/\/?(.*))$/.exec(url)
+        },
         handle: (match) => this.handleHttp(match[1], match[2])
       },
       {
         type: 'https',
-        match: (url) => { return /^(https?:\/\/?(.*))$/.exec(url) },
+        match: (url) => {
+          return /^(https?:\/\/?(.*))$/.exec(url)
+        },
         handle: (match) => this.handleHttps(match[1], match[2])
       },
       {
         type: 'swarm',
-        match: (url) => { return /^(bzz-raw?:\/\/?(.*))$/.exec(url) },
+        match: (url) => {
+          return /^(bzz-raw?:\/\/?(.*))$/.exec(url)
+        },
         handle: (match) => this.handleSwarm(match[1], match[2])
       },
       {
         type: 'ipfs',
-        match: (url) => { return /^(ipfs:\/\/?.+)/.exec(url) },
+        match: (url) => {
+          return /^(ipfs:\/\/?.+)/.exec(url)
+        },
         handle: (match) => this.handleIPFS(match[1])
       },
       {
         type: 'npm',
-        match: (url) => { return /^[^/][^\n"?:*<>|]*$/g.exec(url) }, // match a typical relative path
+        match: (url) => {
+          return /^[^/][^\n"?:*<>|]*$/g.exec(url)
+        }, // match a typical relative path
         handle: (match) => this.handleNpmImport(match[0])
       }
     ]
   }
 
-  public async resolve (filePath: string, customHandlers?: Handler[], force?: boolean): Promise<Imported> {
+  public async resolve(filePath: string, customHandlers?: Handler[], force?: boolean): Promise<Imported> {
     let imported: Imported = this.previouslyHandled[filePath]
     if (!force && imported) {
       return imported
     }
     const builtinHandlers: Handler[] = this.getHandlers()
     const handlers: Handler[] = customHandlers ? [...builtinHandlers, ...customHandlers] : [...builtinHandlers]
-    const matchedHandler = handlers.filter(handler => handler.match(filePath))
+    const matchedHandler = handlers.filter((handler) => handler.match(filePath))
     const handler: Handler = matchedHandler[0]
     const match = handler.match(filePath)
     const { content, cleanUrl } = await handler.handle(match)
@@ -261,5 +272,5 @@ export class RemixURLResolver {
 
 // see npm semver-regex
 function semverRegex() {
-  return /(?<=^v?|\sv?)(?:(?:0|[1-9]\d{0,9}?)\.){2}(?:0|[1-9]\d{0,9})(?:-(?:--+)?(?:0|[1-9]\d*|\d*[a-z]+\d*)){0,100}(?=$| |\+|\.)(?:(?<=-\S+)(?:\.(?:--?|[\da-z-]*[a-z-]\d*|0|[1-9]\d*)){1,100}?)?(?!\.)(?:\+(?:[\da-z]\.?-?){1,100}?(?!\w))?(?!\+)/gi;
+  return /(?<=^v?|\sv?)(?:(?:0|[1-9]\d{0,9}?)\.){2}(?:0|[1-9]\d{0,9})(?:-(?:--+)?(?:0|[1-9]\d*|\d*[a-z]+\d*)){0,100}(?=$| |\+|\.)(?:(?<=-\S+)(?:\.(?:--?|[\da-z-]*[a-z-]\d*|0|[1-9]\d*)){1,100}?)?(?!\.)(?:\+(?:[\da-z]\.?-?){1,100}?(?!\w))?(?!\+)/gi
 }

@@ -1,11 +1,11 @@
-import {RemixApp} from '@remix-ui/app'
-import React, {useEffect, useRef, useState} from 'react'
-import {render} from 'react-dom'
+import { RemixApp } from '@remix-ui/app'
+import React, { useEffect, useRef, useState } from 'react'
+import { render } from 'react-dom'
 import * as packageJson from '../../../../../package.json'
-import {fileSystem, fileSystems} from '../files/fileSystem'
-import {indexedDBFileSystem} from '../files/filesystems/indexedDB'
-import {localStorageFS} from '../files/filesystems/localStorage'
-import {fileSystemUtility, migrationTestData} from '../files/filesystems/fileSystemUtility'
+import { fileSystem, fileSystems } from '../files/fileSystem'
+import { indexedDBFileSystem } from '../files/filesystems/indexedDB'
+import { localStorageFS } from '../files/filesystems/localStorage'
+import { fileSystemUtility, migrationTestData } from '../files/filesystems/fileSystemUtility'
 import './styles/preload.css'
 const _paq = (window._paq = window._paq || [])
 

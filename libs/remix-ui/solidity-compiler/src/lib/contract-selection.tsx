@@ -1,17 +1,17 @@
-import React, {useState, useEffect} from 'react' // eslint-disable-line
-import {FormattedMessage, useIntl} from 'react-intl'
-import {ContractSelectionProps} from './types'
-import {PublishToStorage} from '@remix-ui/publish-to-storage' // eslint-disable-line
-import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-line
-import {CopyToClipboard} from '@remix-ui/clipboard' // eslint-disable-line
-import {saveAs} from 'file-saver'
+import React, { useState, useEffect } from 'react' // eslint-disable-line
+import { FormattedMessage, useIntl } from 'react-intl'
+import { ContractSelectionProps } from './types'
+import { PublishToStorage } from '@remix-ui/publish-to-storage' // eslint-disable-line
+import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
+import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
+import { saveAs } from 'file-saver'
 
 import './css/style.css'
-import {CustomTooltip} from '@remix-ui/helper'
+import { CustomTooltip } from '@remix-ui/helper'
 const _paq = (window._paq = window._paq || [])
 
 export const ContractSelection = (props: ContractSelectionProps) => {
-  const {api, compiledFileName, contractsDetails, contractList, compilerInput, modal} = props
+  const { api, compiledFileName, contractsDetails, contractList, compilerInput, modal } = props
   const [selectedContract, setSelectedContract] = useState('')
   const [storage, setStorage] = useState(null)
 
@@ -104,10 +104,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   }
 
   const extractData = (item) => {
-    const ret = {children: null, self: null}
+    const ret = { children: null, self: null }
 
     if (item instanceof Array) {
-      ret.children = item.map((item, index) => ({key: index, value: item}))
+      ret.children = item.map((item, index) => ({ key: index, value: item }))
       ret.self = ''
     } else if (item instanceof Object) {
       ret.children = Object.keys(item).map((key) => ({
@@ -241,7 +241,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               Contract
             </label>
             <select onChange={(e) => handleContractChange(e.target.value)} value={selectedContract} data-id="compiledContracts" id="compiledContracts" className="custom-select">
-              {contractList.map(({name, file}, index) => (
+              {contractList.map(({ name, file }, index) => (
                 <option value={name} key={index}>
                   {name} ({file})
                 </option>

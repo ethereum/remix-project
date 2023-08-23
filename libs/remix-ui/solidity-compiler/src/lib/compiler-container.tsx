@@ -1,16 +1,16 @@
-import React, {useEffect, useState, useRef, useReducer} from 'react' // eslint-disable-line
-import {FormattedMessage, useIntl} from 'react-intl'
+import React, { useEffect, useState, useRef, useReducer } from 'react' // eslint-disable-line
+import { FormattedMessage, useIntl } from 'react-intl'
 import semver from 'semver'
-import {CompilerContainerProps} from './types'
-import {ConfigurationSettings} from '@remix-project/remix-lib'
-import {checkSpecialChars, CustomTooltip, extractNameFromKey} from '@remix-ui/helper'
-import {canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL} from '@remix-project/remix-solidity'
-import {compilerReducer, compilerInitialState} from './reducers/compiler'
-import {resetEditorMode, listenToEvents} from './actions/compiler'
-import {getValidLanguage} from '@remix-project/remix-solidity'
-import {CopyToClipboard} from '@remix-ui/clipboard'
-import {configFileContent} from './compilerConfiguration'
-import axios, {AxiosResponse} from 'axios'
+import { CompilerContainerProps } from './types'
+import { ConfigurationSettings } from '@remix-project/remix-lib'
+import { checkSpecialChars, CustomTooltip, extractNameFromKey } from '@remix-ui/helper'
+import { canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL } from '@remix-project/remix-solidity'
+import { compilerReducer, compilerInitialState } from './reducers/compiler'
+import { resetEditorMode, listenToEvents } from './actions/compiler'
+import { getValidLanguage } from '@remix-project/remix-solidity'
+import { CopyToClipboard } from '@remix-ui/clipboard'
+import { configFileContent } from './compilerConfiguration'
+import axios, { AxiosResponse } from 'axios'
 
 import './css/style.css'
 const defaultPath = 'compiler_config.json'
@@ -114,12 +114,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   useEffect(() => {
     fetchAllVersion((allversions, selectedVersion, isURL) => {
       setState((prevState) => {
-        return {...prevState, allversions}
+        return { ...prevState, allversions }
       })
       if (isURL) _updateVersionSelector(state.defaultVersion, selectedVersion)
       else {
         setState((prevState) => {
-          return {...prevState, selectedVersion}
+          return { ...prevState, selectedVersion }
         })
         updateCurrentVersion(selectedVersion)
         _updateVersionSelector(selectedVersion)
@@ -171,7 +171,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
     setDisableCompileButton(isDisabled)
     setState((prevState) => {
-      return {...prevState, compiledFileName}
+      return { ...prevState, compiledFileName }
     })
   }, [compiledFileName])
 
@@ -230,13 +230,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           if (!exists || state.useFileConfiguration) createNewConfigFile()
         })
         setState((prevState) => {
-          return {...prevState, createFileOnce: false}
+          return { ...prevState, createFileOnce: false }
         })
       }
 
     setState((prevState) => {
       api.setAppParameter('useFileConfiguration', !state.useFileConfiguration)
-      return {...prevState, useFileConfiguration: !state.useFileConfiguration}
+      return { ...prevState, useFileConfiguration: !state.useFileConfiguration }
     })
   }
 
@@ -370,7 +370,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const compiledFileName = name.split('/').pop()
 
     setState((prevState) => {
-      return {...prevState, compiledFileName}
+      return { ...prevState, compiledFileName }
     })
   }
 
@@ -401,7 +401,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             // @ts-ignore
             api.call('notification', 'toast', `Updating compiler version to match current contract file pragma i.e ${_retrieveVersion(compilerPath)}`)
             setState((prevState) => {
-              return {...prevState, selectedVersion: compilerPath}
+              return { ...prevState, selectedVersion: compilerPath }
             })
             _updateVersionSelector(compilerPath)
           }
@@ -493,7 +493,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       _paq.push(['trackEvent', 'compiler', 'compiled', 'with_version_' + _retrieveVersion()])
       if (state.autoCompile && state.matomoAutocompileOnce) {
         setState((prevState) => {
-          return {...prevState, matomoAutocompileOnce: false}
+          return { ...prevState, matomoAutocompileOnce: false }
         })
       }
     }
@@ -507,7 +507,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     }, state.timeout)
 
     setState((prevState) => {
-      return {...prevState, compileTimeout}
+      return { ...prevState, compileTimeout }
     })
   }
 
@@ -540,11 +540,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (!selectedVersion || !_shouldBeAdded(selectedVersion)) {
       selectedVersion = state.defaultVersion
       setState((prevState) => {
-        return {...prevState, selectedVersion}
+        return { ...prevState, selectedVersion }
       })
     }
     updateCurrentVersion(selectedVersion)
-    api.setCompilerParameters({version: selectedVersion})
+    api.setCompilerParameters({ version: selectedVersion })
     let url
 
     if (customUrl !== '') {
@@ -558,7 +558,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       })
       updateCurrentVersion(selectedVersion)
       url = customUrl
-      api.setCompilerParameters({version: selectedVersion})
+      api.setCompilerParameters({ version: selectedVersion })
     } else {
       if (checkSpecialChars(selectedVersion)) {
         return console.log('loading ' + selectedVersion + ' not allowed, special chars not allowed.')
@@ -617,14 +617,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const url = promptMessageInput.current.value
 
     setState((prevState) => {
-      return {...prevState, selectedVersion: url}
+      return { ...prevState, selectedVersion: url }
     })
     _updateVersionSelector(state.defaultVersion, url)
   }
 
   const handleLoadVersion = (value) => {
     setState((prevState) => {
-      return {...prevState, selectedVersion: value, matomoAutocompileOnce: true}
+      return { ...prevState, selectedVersion: value, matomoAutocompileOnce: true }
     })
     updateCurrentVersion(value)
     _updateVersionSelector(value)
@@ -665,7 +665,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     }
     state.autoCompile && compile()
     setState((prevState) => {
-      return {...prevState, optimize: checked}
+      return { ...prevState, optimize: checked }
     })
   }
 
@@ -675,7 +675,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileTabLogic.setRuns(parseInt(runs))
     state.autoCompile && compile()
     setState((prevState) => {
-      return {...prevState, runs}
+      return { ...prevState, runs }
     })
   }
 
@@ -685,7 +685,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     api.setAppParameter('hideWarnings', checked)
     state.autoCompile && compile()
     setState((prevState) => {
-      return {...prevState, hideWarnings: checked}
+      return { ...prevState, hideWarnings: checked }
     })
   }
 
@@ -695,7 +695,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (!checked) handleLoadVersion(state.defaultVersion)
     api.setAppParameter('includeNightlies', checked)
     setState((prevState) => {
-      return {...prevState, includeNightlies: checked}
+      return { ...prevState, includeNightlies: checked }
     })
   }
 
@@ -703,7 +703,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileTabLogic.setLanguage(value)
     state.autoCompile && compile()
     setState((prevState) => {
-      return {...prevState, language: value}
+      return { ...prevState, language: value }
     })
   }
 
@@ -716,7 +716,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileTabLogic.setEvmVersion(v)
     state.autoCompile && compile()
     setState((prevState) => {
-      return {...prevState, evmVersion: value}
+      return { ...prevState, evmVersion: value }
     })
   }
 
@@ -852,12 +852,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   tooltipClasses="text-nowrap"
                   tooltipId="overlay-tooltip-hardhat"
                   tooltipText={
-                    <span className="border bg-light text-dark p-1 pr-3" style={{minWidth: '230px'}}>
+                    <span className="border bg-light text-dark p-1 pr-3" style={{ minWidth: '230px' }}>
                       <FormattedMessage id="solidity.learnHardhat" />
                     </span>
                   }
                 >
-                  <i style={{fontSize: 'medium'}} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
+                  <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
                 </CustomTooltip>
               </a>
             </div>
@@ -881,12 +881,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   tooltipClasses="text-nowrap"
                   tooltipId="overlay-tooltip-truffle"
                   tooltipText={
-                    <span className="border bg-light text-dark p-1 pr-3" style={{minWidth: '230px'}}>
+                    <span className="border bg-light text-dark p-1 pr-3" style={{ minWidth: '230px' }}>
                       <FormattedMessage id="solidity.learnTruffle" />
                     </span>
                   }
                 >
-                  <i style={{fontSize: 'medium'}} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
+                  <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
                 </CustomTooltip>
               </a>
             </div>

@@ -1,4 +1,4 @@
-import {CompilationResult, ABIDescription} from '@remixproject/plugin-api'
+import { CompilationResult, ABIDescription } from '@remixproject/plugin-api'
 
 export interface Contract {
   name: string
@@ -45,8 +45,8 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
   }
   const response = await fetch(url, {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({code: contract.content})
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code: contract.content })
   })
 
   if (response.status === 404) {

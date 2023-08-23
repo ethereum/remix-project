@@ -1,14 +1,14 @@
 'use strict'
-import {Plugin} from '@remixproject/engine'
-import {sourceMappingDecoder} from '@remix-project/remix-debug'
-import {CompilerAbstract} from '@remix-project/remix-solidity'
-import {CompilationResult} from '@remix-project/remix-solidity'
+import { Plugin } from '@remixproject/engine'
+import { sourceMappingDecoder } from '@remix-project/remix-debug'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
+import { CompilationResult } from '@remix-project/remix-solidity'
 import CodeParserGasService from './services/code-parser-gas-service'
 import CodeParserCompiler from './services/code-parser-compiler'
 import CodeParserAntlrService from './services/code-parser-antlr-service'
-import CodeParserImports, {CodeParserImportsData} from './services/code-parser-imports'
+import CodeParserImports, { CodeParserImportsData } from './services/code-parser-imports'
 import React from 'react'
-import {Profile} from '@remixproject/plugin-utils'
+import { Profile } from '@remixproject/plugin-utils'
 import {
   ContractDefinitionAstNode,
   EventDefinitionAstNode,
@@ -21,9 +21,9 @@ import {
   StructDefinitionAstNode,
   VariableDeclarationAstNode
 } from '@remix-project/remix-analyzer'
-import {lastCompilationResult, RemixApi} from '@remixproject/plugin-api'
-import {antlr} from './types'
-import {ParseResult} from './types/antlr-types'
+import { lastCompilationResult, RemixApi } from '@remixproject/plugin-api'
+import { antlr } from './types'
+import { ParseResult } from './types/antlr-types'
 
 const profile: Profile = {
   name: 'codeParser',
@@ -368,7 +368,7 @@ export class CodeParser extends Plugin {
             } else if (visibility === 'private' || visibility === 'internal') {
               executionCost = estimationObj === null ? '-' : estimationObj.internal[fn]
             }
-            return {executionCost}
+            return { executionCost }
           } else {
             return {
               creationCost: estimationObj === null ? '-' : estimationObj.creation.totalCost,

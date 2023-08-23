@@ -1,7 +1,7 @@
 import React from 'react' // eslint-disable-line
-import {CopyToClipboard} from '@remix-ui/clipboard' // eslint-disable-line
-import {shortenHexData} from '@remix-ui/helper'
-import {execution} from '@remix-project/remix-lib'
+import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
+import { shortenHexData } from '@remix-ui/helper'
+import { execution } from '@remix-project/remix-lib'
 const typeConversion = execution.typeConversion
 
 const showTable = (opts, showTableHash) => {

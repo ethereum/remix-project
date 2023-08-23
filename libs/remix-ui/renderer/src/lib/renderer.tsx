@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react' //eslint-disable-line
-import {CopyToClipboard} from '@remix-ui/clipboard'
-import {helper} from '@remix-project/remix-solidity'
+import React, { useEffect, useState } from 'react' //eslint-disable-line
+import { CopyToClipboard } from '@remix-ui/clipboard'
+import { helper } from '@remix-project/remix-solidity'
 import './renderer.css'
 interface RendererProps {
   message: any
@@ -8,7 +8,7 @@ interface RendererProps {
   plugin: any
 }
 
-export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
+export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
   const [messageText, setMessageText] = useState(null)
   const [editorOptions, setEditorOptions] = useState({
     useSpan: false,

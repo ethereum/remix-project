@@ -1,6 +1,6 @@
 import React from 'react'
-import {AlertModal, AppModal} from '../interface'
-import {ModalInitialState} from '../state/modals'
+import { AlertModal, AppModal } from '../interface'
+import { ModalInitialState } from '../state/modals'
 
 export const AppContext = React.createContext<any>(null)
 

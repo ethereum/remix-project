@@ -1,8 +1,8 @@
-import React, {useState} from 'react'
-import {FormattedMessage} from 'react-intl'
-import {DeployButtonProps} from '../types'
-import {ButtonGroup, Dropdown} from 'react-bootstrap'
-import {CustomTooltip} from '@remix-ui/helper'
+import React, { useState } from 'react'
+import { FormattedMessage } from 'react-intl'
+import { DeployButtonProps } from '../types'
+import { ButtonGroup, Dropdown } from 'react-bootstrap'
+import { CustomTooltip } from '@remix-ui/helper'
 
 export function DeployButton(props: DeployButtonProps) {
   const [showOptions, setShowOptions] = useState<boolean>(false)
@@ -27,10 +27,10 @@ export function DeployButton(props: DeployButtonProps) {
             split
             id="dropdown-split-basic"
             className={`btn btn-sm dropdown-toggle dropdown-toggle-split ${props.buttonOptions.classList}`}
-            style={{maxWidth: 25, minWidth: 0, height: 32}}
+            style={{ maxWidth: 25, minWidth: 0, height: 32 }}
           />
           <Dropdown.Menu className="deploy-items border-0">
-            {props.deployOptions.map(({title, active}, index) => (
+            {props.deployOptions.map(({ title, active }, index) => (
               <Dropdown.Item
                 onClick={() => {
                   props.setSelectedIndex(index)

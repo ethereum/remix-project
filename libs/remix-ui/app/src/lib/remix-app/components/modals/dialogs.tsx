@@ -1,11 +1,11 @@
 import React from 'react'
-import {useDialogDispatchers, useDialogs} from '../../context/provider'
-import {Toaster} from '@remix-ui/toaster'
+import { useDialogDispatchers, useDialogs } from '../../context/provider'
+import { Toaster } from '@remix-ui/toaster'
 import ModalWrapper from './modal-wrapper'
 
 const AppDialogs = () => {
-  const {handleHideModal, handleToaster} = useDialogDispatchers()
-  const {focusModal, focusToaster} = useDialogs()
+  const { handleHideModal, handleToaster } = useDialogDispatchers()
+  const { focusModal, focusToaster } = useDialogs()
 
   return (
     <>

@@ -8,11 +8,11 @@ import { getDomain, absolutePath } from '../utils'
 import Axios from 'axios'
 import { writeJSON, existsSync } from 'fs-extra'
 import * as path from 'path'
-import { Command } from 'commander';
+import { Command } from 'commander'
 
-const program = new Command();
+const program = new Command()
 
-async function warnLatestVersion () {
+async function warnLatestVersion() {
   const latest = await latestVersion('@remix-project/remixd')
   const pjson = require('../../package.json') // eslint-disable-line
   if (semver.eq(latest, pjson.version)) {
@@ -44,14 +44,17 @@ const ports = {
 }
 
 const killCallBack: Array<any> = [] // any is function
-function startService<S extends 'git' | 'hardhat' | 'truffle' | 'slither' | 'folder' | 'foundry'> (service: S, callback: (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error?:Error) => void) {
-  const options = program.opts();
+function startService<S extends 'git' | 'hardhat' | 'truffle' | 'slither' | 'folder' | 'foundry'>(
+  service: S,
+  callback: (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error?: Error) => void
+) {
+  const options = program.opts()
   const socket = new WebSocket(ports[service], { remixIdeUrl: options.remixIde }, () => services[service](options.readOnly || false))
   socket.start(callback)
   killCallBack.push(socket.close.bind(socket))
 }
 
-function errorHandler (error: any, service: string) {
+function errorHandler(error: any, service: string) {
   const port = ports[service]
   if (error.code && error.code === 'EADDRINUSE') {
     console.log('\x1b[31m%s\x1b[0m', `[ERR] There is already a client running on port ${port}!`)
@@ -60,7 +63,7 @@ function errorHandler (error: any, service: string) {
   }
 }
 
-(async () => {
+;(async () => {
   const { version } = require('../../package.json') // eslint-disable-line
   program.version(version, '-v, --version')
 
@@ -72,12 +75,13 @@ function errorHandler (error: any, service: string) {
     .option('-r, --read-only', 'Treat shared folder as read-only (experimental)')
     .on('--help', function () {
       console.log('\nExample:\n\n    remixd -s ./shared_project -u http://localhost:8080')
-    }).parse(process.argv)
+    })
+    .parse(process.argv)
   // eslint-disable-next-line
-  const options = program.opts();
+  const options = program.opts()
   await warnLatestVersion()
 
-  if(options.install && !options.readOnly) {
+  if (options.install && !options.readOnly) {
     if (options.install.toLowerCase() === 'slither') require('./../scripts/installSlither')
     process.exit(0)
   }
@@ -128,7 +132,7 @@ function errorHandler (error: any, service: string) {
       }
       // Run hardhat service if a hardhat project is shared as folder
       const hardhatConfigFilePath = absolutePath('./', options.sharedFolder)
-      const isHardhatProject = existsSync(hardhatConfigFilePath  + '/hardhat.config.js') || existsSync(hardhatConfigFilePath  + '/hardhat.config.ts')
+      const isHardhatProject = existsSync(hardhatConfigFilePath + '/hardhat.config.js') || existsSync(hardhatConfigFilePath + '/hardhat.config.ts')
       if (isHardhatProject) {
         startService('hardhat', (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error: Error) => {
           if (error) {
@@ -141,7 +145,7 @@ function errorHandler (error: any, service: string) {
       }
       // Run foundry service if a founndry project is shared as folder
       const foundryConfigFilePath = absolutePath('./', options.sharedFolder)
-      const isFoundryProject = existsSync(foundryConfigFilePath  + '/foundry.toml')
+      const isFoundryProject = existsSync(foundryConfigFilePath + '/foundry.toml')
       if (isFoundryProject) {
         startService('foundry', (ws: WS, sharedFolderClient: servicesList.Sharedfolder, error: Error) => {
           if (error) {
@@ -166,7 +170,7 @@ function errorHandler (error: any, service: string) {
   }
 
   // kill
-  function kill () {
+  function kill() {
     for (const k in killCallBack) {
       try {
         killCallBack[k]()
@@ -181,7 +185,7 @@ function errorHandler (error: any, service: string) {
   process.on('SIGTERM', kill) // catch kill
   process.on('exit', kill)
 
-  async function isValidOrigin (origin: string): Promise<any> {
+  async function isValidOrigin(origin: string): Promise<any> {
     if (!origin) return false
     const domain = getDomain(origin)
     const gistUrl = 'https://gist.githubusercontent.com/EthereumRemix/091ccc57986452bbb33f57abfb13d173/raw/59cedab38ae94cc72b68854b3706f11819e4a0af/origins.json'
@@ -195,7 +199,7 @@ function errorHandler (error: any, service: string) {
         console.error(e)
       }
 
-      const dataArray:string[] = data
+      const dataArray: string[] = data
       return dataArray.includes(origin) ? dataArray.includes(origin) : dataArray.includes(domain)
     } catch (e) {
       try {

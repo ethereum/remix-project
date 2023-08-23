@@ -1,13 +1,13 @@
-import React, {useState, useEffect, useRef} from 'react' // eslint-disable-line
-import {FormattedMessage} from 'react-intl'
+import React, { useState, useEffect, useRef } from 'react' // eslint-disable-line
+import { FormattedMessage } from 'react-intl'
 import TxBrowser from './tx-browser/tx-browser' // eslint-disable-line
 import StepManager from './step-manager/step-manager' // eslint-disable-line
 import VmDebugger from './vm-debugger/vm-debugger' // eslint-disable-line
 import VmDebuggerHead from './vm-debugger/vm-debugger-head' // eslint-disable-line
-import {TransactionDebugger as Debugger} from '@remix-project/remix-debug' // eslint-disable-line
-import {DebuggerUIProps} from './idebugger-api' // eslint-disable-line
-import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
-import {CustomTooltip, isValidHash} from '@remix-ui/helper'
+import { TransactionDebugger as Debugger } from '@remix-project/remix-debug' // eslint-disable-line
+import { DebuggerUIProps } from './idebugger-api' // eslint-disable-line
+import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
+import { CustomTooltip, isValidHash } from '@remix-ui/helper'
 /* eslint-disable-next-line */
 import './debugger-ui.css'
 const _paq = ((window as any)._paq = (window as any)._paq || [])
@@ -92,7 +92,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       })
 
       debuggerModule.onBreakpointAdded((fileName, row) => {
-        if (state.debugger) state.debugger.breakPointManager.add({fileName: fileName, row: row})
+        if (state.debugger) state.debugger.breakPointManager.add({ fileName: fileName, row: row })
       })
 
       debuggerModule.onEditorContentChanged(() => {
@@ -106,7 +106,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       debuggerModule.onEnvChanged((provider) => {
         setState((prevState) => {
           const isLocalNodeUsed = !provider.startsWith('vm') && provider !== 'injected'
-          return {...prevState, isLocalNodeUsed: isLocalNodeUsed}
+          return { ...prevState, isLocalNodeUsed: isLocalNodeUsed }
         })
       })
     }
@@ -120,7 +120,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     debuggerInstance.event.register('debuggerStatus', async (isActive) => {
       await debuggerModule.discardHighlight()
       setState((prevState) => {
-        return {...prevState, isActive}
+        return { ...prevState, isActive }
       })
     })
 
@@ -135,7 +135,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
 
     debuggerInstance.event.register('noBreakpointHit', async (isActive) => {
       setState((prevState) => {
-        return {...prevState, sourceLocationStatus: ''}
+        return { ...prevState, sourceLocationStatus: '' }
       })
     })
 
@@ -174,7 +174,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         }
         if (path) {
           setState((prevState) => {
-            return {...prevState, sourceLocationStatus: ''}
+            return { ...prevState, sourceLocationStatus: '' }
           })
           await debuggerModule.discardHighlight()
           await debuggerModule.highlight(lineColumnPos, path, rawLocation, stepDetail, lineGasCost)
@@ -380,11 +380,11 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       <input
         className="custom-control-input"
         id="debugGeneratedSourcesInput"
-        onChange={({target: {checked}}) => {
+        onChange={({ target: { checked } }) => {
           setState((prevState) => {
             return {
               ...prevState,
-              opt: {...prevState.opt, debugWithGeneratedSources: checked}
+              opt: { ...prevState.opt, debugWithGeneratedSources: checked }
             }
           })
         }}
@@ -412,11 +412,11 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
                 <input
                   className="custom-control-input"
                   id="debugWithLocalNodeInput"
-                  onChange={({target: {checked}}) => {
+                  onChange={({ target: { checked } }) => {
                     setState((prevState) => {
                       return {
                         ...prevState,
-                        opt: {...prevState.opt, debugWithLocalNode: checked}
+                        opt: { ...prevState.opt, debugWithLocalNode: checked }
                       }
                     })
                   }}

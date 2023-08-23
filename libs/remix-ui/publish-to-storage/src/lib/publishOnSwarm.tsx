@@ -1,6 +1,6 @@
-import {Bee} from '@ethersphere/bee-js'
+import { Bee } from '@ethersphere/bee-js'
 // eslint-disable-next-line no-unused-vars
-import type {UploadResult} from '@ethersphere/bee-js'
+import type { UploadResult } from '@ethersphere/bee-js'
 
 // public gateway node address
 const publicBeeNode = new Bee('https://api.gateway.ethswarm.org/')
@@ -12,7 +12,7 @@ export const publishToSwarm = async (contract, api) => {
   // gather list of files to publish
   const sources = []
   let metadata
-  const item = {content: null, hash: null}
+  const item = { content: null, hash: null }
   const uploaded = []
 
   try {
@@ -123,7 +123,7 @@ export const publishToSwarm = async (contract, api) => {
     throw new Error(error)
   }
 
-  return {uploaded, item}
+  return { uploaded, item }
 }
 
 const swarmVerifiedPublish = async (beeNodes: Bee[], postageStampId: string, content, expectedHash, api): Promise<Record<string, any>> => {
@@ -139,7 +139,7 @@ const swarmVerifiedPublish = async (beeNodes: Bee[], postageStampId: string, con
       }
     } else {
       api.writeFile('swarm/' + hash, content)
-      return {message: 'ok', url: 'bzz-raw://' + hash, hash}
+      return { message: 'ok', url: 'bzz-raw://' + hash, hash }
     }
   } catch (error) {
     throw new Error(error)

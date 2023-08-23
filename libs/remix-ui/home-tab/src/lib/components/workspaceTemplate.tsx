@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {useContext} from 'react'
+import React, { useContext } from 'react'
 interface WorkspaceTemplateProps {
   gsID: string
   workspaceTitle: string
@@ -7,7 +7,7 @@ interface WorkspaceTemplateProps {
   description: string
 }
 
-function WorkspaceTemplate({gsID, workspaceTitle, description, callback}: WorkspaceTemplateProps) {
+function WorkspaceTemplate({ gsID, workspaceTitle, description, callback }: WorkspaceTemplateProps) {
   return (
     <div className="d-flex remixui_home_workspaceTemplate">
       <button

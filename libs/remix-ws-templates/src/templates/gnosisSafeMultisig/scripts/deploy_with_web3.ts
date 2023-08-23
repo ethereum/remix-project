@@ -1,10 +1,10 @@
-import { deploy } from './web3-lib'
+import { deploy } from "./web3-lib";
 
 (async () => {
   try {
-    const result = await deploy('MultisigWallet', [])
-    console.log(`address: ${result.address}`)
+    const result = await deploy("MultisigWallet", []);
+    console.log(`address: ${result.address}`);
   } catch (e) {
-    console.log(e.message)
+    console.log(e.message);
   }
-})()
+})();

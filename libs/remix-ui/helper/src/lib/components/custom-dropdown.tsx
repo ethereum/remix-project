@@ -1,7 +1,7 @@
 // The forwardRef is important!!
 
-import React, {Ref} from 'react'
-import {CustomTooltip} from '@remix-ui/helper'
+import React, { Ref } from 'react'
+import { CustomTooltip } from '@remix-ui/helper'
 
 // Dropdown needs access to the DOM node in order to position the Menu
 export const CustomToggle = React.forwardRef(
@@ -67,7 +67,7 @@ export const CustomIconsToggle = React.forwardRef(
     >
       {icon && (
         <CustomTooltip placement={'top'} tooltipClasses="text-nowrap text-left" tooltipId="remixHamburgerTooltip" tooltipText="Workspace actions">
-          <i style={{fontSize: 'large'}} className={`${icon}`} data-id="workspaceDropdownMenuIcon"></i>
+          <i style={{ fontSize: 'large' }} className={`${icon}`} data-id="workspaceDropdownMenuIcon"></i>
         </CustomTooltip>
       )}
     </span>
@@ -96,7 +96,7 @@ export const CustomMenu = React.forwardRef(
     const height = window.innerHeight * 0.6
     return (
       <div ref={ref} style={style} className={className} aria-labelledby={labeledBy} data-id={dataId}>
-        <ul className="overflow-auto list-unstyled mb-0" style={{maxHeight: height + 'px'}}>
+        <ul className="overflow-auto list-unstyled mb-0" style={{ maxHeight: height + 'px' }}>
           {children}
         </ul>
       </div>
@@ -136,7 +136,7 @@ export const ProxyAddressToggle = React.forwardRef(
         className="udapp_input form-control"
         value={address}
         placeholder="Enter Proxy Address"
-        style={{width: '100%'}}
+        style={{ width: '100%' }}
         data-id="ERC1967AddressInput"
       />
     </div>

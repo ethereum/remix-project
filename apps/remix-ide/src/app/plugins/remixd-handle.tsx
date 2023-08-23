@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
-import React, {useRef, useState, useEffect} from 'react' // eslint-disable-line
+import React, { useRef, useState, useEffect } from 'react' // eslint-disable-line
 import isElectron from 'is-electron'
-import {WebsocketPlugin} from '@remixproject/engine-web'
+import { WebsocketPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import {version as remixdVersion} from '../../../../../libs/remixd/package.json'
-import {PluginManager} from '@remixproject/engine'
-import {AppModal, AlertModal} from '@remix-ui/app'
+import { version as remixdVersion } from '../../../../../libs/remixd/package.json'
+import { PluginManager } from '@remixproject/engine'
+import { AppModal, AlertModal } from '@remix-ui/app'
 
 const LOCALHOST = ' - connect to localhost - '
 
@@ -102,7 +102,7 @@ export class RemixdHandle extends WebsocketPlugin {
           }
         }, 3000)
         this.localhostProvider.init(() => {
-          this.call('filePanel', 'setWorkspace', {name: LOCALHOST, isLocalhost: true}, true)
+          this.call('filePanel', 'setWorkspace', { name: LOCALHOST, isLocalhost: true }, true)
         })
         for (const plugin of this.dependentPlugins) {
           await this.appManager.activatePlugin(plugin)

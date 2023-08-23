@@ -1,12 +1,12 @@
 // eslint-disable-next-line no-use-before-define
-import {CustomTooltip} from '@remix-ui/helper'
+import { CustomTooltip } from '@remix-ui/helper'
 import React from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {InstanceContainerProps} from '../types'
-import {UniversalDappUI} from './universalDappUI'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { InstanceContainerProps } from '../types'
+import { UniversalDappUI } from './universalDappUI'
 
 export function InstanceContainerUI(props: InstanceContainerProps) {
-  const {instanceList} = props.instances
+  const { instanceList } = props.instances
 
   const clearInstance = () => {
     props.clearInstances()

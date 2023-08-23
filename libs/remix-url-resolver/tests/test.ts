@@ -62,8 +62,9 @@ describe('testRunner', () => {
         const fileName: string = 'github.com/ethential/solidity-examples/solidity-features-check/greeter.sol'
         let results: object = {}
 
-        before(done => {
-          urlResolver.resolve(fileName)
+        before((done) => {
+          urlResolver
+            .resolve(fileName)
             .then((sources: object) => {
               results = sources
               done()
@@ -79,7 +80,8 @@ describe('testRunner', () => {
         it('should return contract content of given github path', () => {
           const expt: object = {
             cleanUrl: 'ethential/solidity-examples/solidity-features-check/greeter.sol',
-            content: 'pragma solidity >=0.7.0;\nimport "./mortal.sol";\n// SPDX-License-Identifier: GPL-3.0\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}\n\n// 0x37aA58B2cE3Bb9576EEBCD51315070eA8806b7c4\n',
+            content:
+              'pragma solidity >=0.7.0;\nimport "./mortal.sol";\n// SPDX-License-Identifier: GPL-3.0\n\ncontract Greeter is Mortal {\n    /* Define variable greeting of the type string */\n    string greeting;\n\n    /* This runs when the contract is executed */\n    constructor(string memory _greeting) {\n        greeting = _greeting;\n    }\n\n    /* Main function */\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n}\n\n// 0x37aA58B2cE3Bb9576EEBCD51315070eA8806b7c4\n',
             type: 'github'
           }
           assert.deepEqual(results, expt)
@@ -92,8 +94,9 @@ describe('testRunner', () => {
         const fileName: string = 'https://github.com/ethereum/remix-project/blob/remix_beta/libs/remix-url-resolver/tests/example_1/greeter.sol'
         let results: object = {}
 
-        before(done => {
-          urlResolver.resolve(fileName)
+        before((done) => {
+          urlResolver
+            .resolve(fileName)
             .then((sources: object) => {
               results = sources
               done()
@@ -109,7 +112,7 @@ describe('testRunner', () => {
         it('should return contract content of given github path', () => {
           const expt: object = {
             cleanUrl: 'ethereum/remix-project/libs/remix-url-resolver/tests/example_1/greeter.sol',
-            content: fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8'}),
+            content: fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8' }),
             type: 'github'
           }
           assert.deepEqual(results, expt)
@@ -122,8 +125,9 @@ describe('testRunner', () => {
         const fileName: string = 'https://github.com/ethereum/remix-project/blob/v0.10.7/libs/remix-url-resolver/tests/example_1/greeter.sol'
         let results: object = {}
 
-        before(done => {
-          urlResolver.resolve(fileName)
+        before((done) => {
+          urlResolver
+            .resolve(fileName)
             .then((sources: object) => {
               results = sources
               done()
@@ -139,7 +143,7 @@ describe('testRunner', () => {
         it('should return contract content of given github path', () => {
           const expt: object = {
             cleanUrl: 'ethereum/remix-project/libs/remix-url-resolver/tests/example_1/greeter.sol',
-            content: fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8'}) + '\n',
+            content: fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8' }) + '\n',
             type: 'github'
           }
           assert.deepEqual(results, expt)
@@ -152,8 +156,9 @@ describe('testRunner', () => {
         const fileName: string = 'https://github.com/ethereum/remix-project/blob/d95b20d77bb3d41da4a86f3ff486879edb386a5b/libs/remix-url-resolver/tests/example_1/greeter.sol'
         let results: object = {}
 
-        before(done => {
-          urlResolver.resolve(fileName)
+        before((done) => {
+          urlResolver
+            .resolve(fileName)
             .then((sources: object) => {
               results = sources
               done()
@@ -169,7 +174,7 @@ describe('testRunner', () => {
         it('should return contract content of given github path', () => {
           const expt: object = {
             cleanUrl: 'ethereum/remix-project/libs/remix-url-resolver/tests/example_1/greeter.sol',
-            content: fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8'}),
+            content: fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8' }),
             type: 'github'
           }
           assert.deepEqual(results, expt)
@@ -182,8 +187,9 @@ describe('testRunner', () => {
         const fileName: string = 'https://gist.githubusercontent.com/roneilr/7901633d7c2f52957d22/raw/d9b9d54760f6e4f4cfbac4b321bee6a6983a1048/greeter.sol'
         let results: object = {}
 
-        before(done => {
-          urlResolver.resolve(fileName)
+        before((done) => {
+          urlResolver
+            .resolve(fileName)
             .then((sources: object) => {
               results = sources
               done()
@@ -198,7 +204,8 @@ describe('testRunner', () => {
         })
         it('should return contract content from raw github url', () => {
           const expt: object = {
-            content: 'contract mortal {\n    /* Define variable owner of the type address*/\n    address owner;\n\n    /* this function is executed at initialization and sets the owner of the contract */\n    function mortal() { owner = msg.sender; }\n\n    /* Function to recover the funds on the contract */\n    function kill() { if (msg.sender == owner) suicide(owner); }\n}\n\ncontract greeter is mortal {\n    /* define variable greeting of the type string */\n    string greeting;\n\n    /* this runs when the contract is executed */\n    function greeter(string _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* main function */\n    function greet() constant returns (string) {\n        return greeting;\n    }\n}',
+            content:
+              'contract mortal {\n    /* Define variable owner of the type address*/\n    address owner;\n\n    /* this function is executed at initialization and sets the owner of the contract */\n    function mortal() { owner = msg.sender; }\n\n    /* Function to recover the funds on the contract */\n    function kill() { if (msg.sender == owner) suicide(owner); }\n}\n\ncontract greeter is mortal {\n    /* define variable greeting of the type string */\n    string greeting;\n\n    /* this runs when the contract is executed */\n    function greeter(string _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* main function */\n    function greet() constant returns (string) {\n        return greeting;\n    }\n}',
             cleanUrl: 'gist.githubusercontent.com/roneilr/7901633d7c2f52957d22/raw/d9b9d54760f6e4f4cfbac4b321bee6a6983a1048/greeter.sol',
             type: 'https'
           }
@@ -212,8 +219,9 @@ describe('testRunner', () => {
         const fileName: string = 'http://gist.githubusercontent.com/roneilr/7901633d7c2f52957d22/raw/d9b9d54760f6e4f4cfbac4b321bee6a6983a1048/greeter.sol'
         let results: object = {}
 
-        before(done => {
-          urlResolver.resolve(fileName)
+        before((done) => {
+          urlResolver
+            .resolve(fileName)
             .then((sources: object) => {
               results = sources
               done()
@@ -228,7 +236,8 @@ describe('testRunner', () => {
         })
         it('should return contract content from raw github url', () => {
           const expt: object = {
-            content: 'contract mortal {\n    /* Define variable owner of the type address*/\n    address owner;\n\n    /* this function is executed at initialization and sets the owner of the contract */\n    function mortal() { owner = msg.sender; }\n\n    /* Function to recover the funds on the contract */\n    function kill() { if (msg.sender == owner) suicide(owner); }\n}\n\ncontract greeter is mortal {\n    /* define variable greeting of the type string */\n    string greeting;\n\n    /* this runs when the contract is executed */\n    function greeter(string _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* main function */\n    function greet() constant returns (string) {\n        return greeting;\n    }\n}',
+            content:
+              'contract mortal {\n    /* Define variable owner of the type address*/\n    address owner;\n\n    /* this function is executed at initialization and sets the owner of the contract */\n    function mortal() { owner = msg.sender; }\n\n    /* Function to recover the funds on the contract */\n    function kill() { if (msg.sender == owner) suicide(owner); }\n}\n\ncontract greeter is mortal {\n    /* define variable greeting of the type string */\n    string greeting;\n\n    /* this runs when the contract is executed */\n    function greeter(string _greeting) public {\n        greeting = _greeting;\n    }\n\n    /* main function */\n    function greet() constant returns (string) {\n        return greeting;\n    }\n}',
             cleanUrl: 'gist.githubusercontent.com/roneilr/7901633d7c2f52957d22/raw/d9b9d54760f6e4f4cfbac4b321bee6a6983a1048/greeter.sol',
             type: 'http'
           }
@@ -242,8 +251,9 @@ describe('testRunner', () => {
         const fileName = 'ipfs://QmcuCKyokk9Z6f65ADAADNiS2R2xCjfRkv7mYBSWDwtA7M'
         let results: object = {}
 
-        before(done => {
-          urlResolver.resolve(fileName)
+        before((done) => {
+          urlResolver
+            .resolve(fileName)
             .then((sources: object) => {
               results = sources
               done()
@@ -257,7 +267,7 @@ describe('testRunner', () => {
           assert.equal(Object.keys(results).length, 3)
         })
         it('should return contract content from IPFS url', () => {
-          const content = fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8'})
+          const content = fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8' })
           const expt: object = {
             content: content,
             cleanUrl: 'QmcuCKyokk9Z6f65ADAADNiS2R2xCjfRkv7mYBSWDwtA7M',

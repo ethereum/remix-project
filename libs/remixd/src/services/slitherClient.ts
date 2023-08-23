@@ -12,20 +12,20 @@ export class SlitherClient extends PluginClient {
   websocket: WS
   currentSharedFolder: string
 
-  constructor (private readOnly = false) {
+  constructor(private readOnly = false) {
     super()
     this.methods = ['analyse']
   }
 
-  setWebSocket (websocket: WS): void {
+  setWebSocket(websocket: WS): void {
     this.websocket = websocket
   }
 
-  sharedFolder (currentSharedFolder: string): void {
+  sharedFolder(currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
   }
 
-  mapNpmDepsDir (list) {
+  mapNpmDepsDir(list) {
     const remixNpmDepsPath = utils.absolutePath('.deps/npm', this.currentSharedFolder)
     const localNpmDepsPath = utils.absolutePath('node_modules', this.currentSharedFolder)
     const npmDepsExists = existsSync(remixNpmDepsPath)
@@ -52,7 +52,7 @@ export class SlitherClient extends PluginClient {
     return { remapString, allowPathString }
   }
 
-  transform (detectors: Record<string, any>[]): OutputStandard[] {
+  transform(detectors: Record<string, any>[]): OutputStandard[] {
     const standardReport: OutputStandard[] = []
     for (const e of detectors) {
       const obj = {} as OutputStandard
@@ -70,7 +70,7 @@ export class SlitherClient extends PluginClient {
     return standardReport
   }
 
-  analyse (filePath: string, compilerConfig: Record<string, any>) {
+  analyse(filePath: string, compilerConfig: Record<string, any>) {
     return new Promise((resolve, reject) => {
       if (this.readOnly) {
         const errMsg = '[Slither Analysis]: Cannot analyse in read-only mode'

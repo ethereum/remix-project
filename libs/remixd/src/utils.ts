@@ -9,7 +9,7 @@ import * as pathModule from 'path'
  * @param {String} sharedFolder - absolute shared path. platform dependent representation.
  * @return {String} platform dependent absolute path (/home/user1/.../... for unix, c:\user\...\... for windows)
  */
-function absolutePath (path: string, sharedFolder:string): string {
+function absolutePath(path: string, sharedFolder: string): string {
   path = normalizePath(path)
   path = pathModule.resolve(sharedFolder, path)
   if (!isSubDirectory(pathModule.resolve(process.cwd(), sharedFolder), path)) throw new Error('Cannot read/write to path outside shared folder.')
@@ -23,7 +23,7 @@ function absolutePath (path: string, sharedFolder:string): string {
  * @param {String} child - child path
  * @return {Boolean}
  */
-function isSubDirectory (parent: string, child: string) {
+function isSubDirectory(parent: string, child: string) {
   if (!parent) return false
   if (parent === child) return true
   const relative = pathModule.relative(parent, child)
@@ -38,7 +38,7 @@ function isSubDirectory (parent: string, child: string) {
  * @param {String} sharedFolder - absolute shared path. platform dependent representation
  * @return {String} relative path (Unix style which is the one used by Remix IDE)
  */
-function relativePath (path: string, sharedFolder: string): string {
+function relativePath(path: string, sharedFolder: string): string {
   const relative: string = pathModule.relative(sharedFolder, path)
 
   return convertPathToPosix(normalizePath(relative))
@@ -48,7 +48,7 @@ const convertPathToPosix = (pathName: string): string => {
   return pathName.split(pathModule.sep).join(pathModule.posix.sep)
 }
 
-function normalizePath (path) {
+function normalizePath(path) {
   if (path === '/') path = './'
   if (process.platform === 'win32') {
     return path.replace(/\//g, '\\')
@@ -56,7 +56,7 @@ function normalizePath (path) {
   return path
 }
 
-function walkSync (dir: string, filelist: Filelist, sharedFolder: string): Filelist {
+function walkSync(dir: string, filelist: Filelist, sharedFolder: string): Filelist {
   const files: string[] = fs.readdirSync(dir)
 
   filelist = filelist || {}
@@ -83,7 +83,7 @@ function walkSync (dir: string, filelist: Filelist, sharedFolder: string): Filel
   return filelist
 }
 
-function resolveDirectory (dir: string, sharedFolder: string): ResolveDirectory {
+function resolveDirectory(dir: string, sharedFolder: string): ResolveDirectory {
   const ret: ResolveDirectory = {}
   const files: string[] = fs.readdirSync(dir)
 
@@ -111,9 +111,9 @@ function resolveDirectory (dir: string, sharedFolder: string): ResolveDirectory 
  * @param {String} url - Remix-IDE URL instance
  * @return {String} extracted domain name from url
  */
-function getDomain (url: string) {
+function getDomain(url: string) {
   // eslint-disable-next-line
-  const domainMatch = url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/img)
+  const domainMatch = url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/gim)
 
   return domainMatch ? domainMatch[0] : null
 }

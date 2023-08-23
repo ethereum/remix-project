@@ -7,20 +7,20 @@ export class GitClient extends PluginClient {
   websocket: WS
   currentSharedFolder: string
 
-  constructor (private readOnly = false) {
+  constructor(private readOnly = false) {
     super()
     this.methods = ['execute']
   }
 
-  setWebSocket (websocket: WS): void {
+  setWebSocket(websocket: WS): void {
     this.websocket = websocket
   }
 
-  sharedFolder (currentSharedFolder: string): void {
+  sharedFolder(currentSharedFolder: string): void {
     this.currentSharedFolder = currentSharedFolder
   }
 
-  execute (cmd: string) {
+  execute(cmd: string) {
     assertCommand(cmd)
     const options = { cwd: this.currentSharedFolder, shell: true }
     const child = spawn(cmd, options)
@@ -45,9 +45,10 @@ export class GitClient extends PluginClient {
  * Validate that command can be run by service
  * @param cmd
  */
-function assertCommand (cmd) {
+function assertCommand(cmd) {
   const regex = '^git\\s[^&|;]*$'
-  if (!RegExp(regex).test(cmd)) { // git then space and then everything else
+  if (!RegExp(regex).test(cmd)) {
+    // git then space and then everything else
     throw new Error('Invalid command for service!')
   }
 }

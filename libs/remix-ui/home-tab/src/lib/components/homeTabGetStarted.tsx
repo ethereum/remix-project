@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {useEffect, useRef, useContext} from 'react'
-import {useIntl, FormattedMessage} from 'react-intl'
-import {TEMPLATE_NAMES} from '@remix-ui/workspace'
-import {ThemeContext} from '../themeContext'
+import React, { useEffect, useRef, useContext } from 'react'
+import { useIntl, FormattedMessage } from 'react-intl'
+import { TEMPLATE_NAMES } from '@remix-ui/workspace'
+import { ThemeContext } from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import WorkspaceTemplate from './workspaceTemplate'
 import 'react-multi-carousel/lib/styles.css'
@@ -17,7 +17,7 @@ interface HomeTabGetStartedProps {
   plugin: any
 }
 
-function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
+function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
   const themeFilter = useContext(ThemeContext)
   const carouselRef = useRef<any>({})
   const carouselRefDiv = useRef(null)
@@ -70,7 +70,7 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
 
   return (
     <div className="pl-2" id="hTGetStartedSection">
-      <label style={{fontSize: '1.2rem'}}>
+      <label style={{ fontSize: '1.2rem' }}>
         <span className="mr-2">
           <FormattedMessage id="home.getStarted" />
         </span>
@@ -88,11 +88,11 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
             showDots={false}
             responsive={{
               superLargeDesktop: {
-                breakpoint: {max: 4000, min: 3000},
+                breakpoint: { max: 4000, min: 3000 },
                 items: 5
               },
               desktop: {
-                breakpoint: {max: 3000, min: 1024},
+                breakpoint: { max: 3000, min: 1024 },
                 items: 5,
                 partialVisibilityGutter: 0
               }
@@ -123,7 +123,7 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
             <WorkspaceTemplate
               gsID="sourcifyLogo"
               workspaceTitle="OpenZeppelin ERC20"
-              description={intl.formatMessage({id: 'home.ozerc20TemplateDesc'})}
+              description={intl.formatMessage({ id: 'home.ozerc20TemplateDesc' })}
               callback={() => createWorkspace('ozerc20')}
             />
             <WorkspaceTemplate

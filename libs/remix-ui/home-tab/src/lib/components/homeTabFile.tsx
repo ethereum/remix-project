@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {useState, useRef, useReducer} from 'react'
-import {FormattedMessage} from 'react-intl'
-import {ModalDialog} from '@remix-ui/modal-dialog' // eslint-disable-line
-import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
+import React, { useState, useRef, useReducer } from 'react'
+import { FormattedMessage } from 'react-intl'
+import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
+import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
-import {CustomTooltip} from '@remix-ui/helper'
+import { CustomTooltip } from '@remix-ui/helper'
 
 interface HomeTabFileProps {
   plugin: any
@@ -25,7 +25,7 @@ const loadingReducer = (state = loadingInitialState, action) => {
   }
 }
 
-function HomeTabFile({plugin}: HomeTabFileProps) {
+function HomeTabFile({ plugin }: HomeTabFileProps) {
   const [state, setState] = useState<{
     searchInput: string
     showModalDialog: boolean
@@ -40,7 +40,7 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
   }>({
     searchInput: '',
     showModalDialog: false,
-    modalInfo: {title: '', loadItem: '', examples: [], prefix: ''},
+    modalInfo: { title: '', loadItem: '', examples: [], prefix: '' },
     importSource: '',
     toasterMsg: ''
   })
@@ -57,12 +57,12 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
 
     if ((type === 'ipfs' || type === 'IPFS') && startsWith !== 'ipfs' && startsWith !== 'IPFS') {
       setState((prevState) => {
-        return {...prevState, importSource: startsWith + state.importSource}
+        return { ...prevState, importSource: startsWith + state.importSource }
       })
     }
     contentImport.import(
       state.modalInfo.prefix + state.importSource,
-      (loadingMsg) => dispatch({tooltip: loadingMsg}),
+      (loadingMsg) => dispatch({ tooltip: loadingMsg }),
       async (error, content, cleanUrl, type, url) => {
         if (error) {
           toast(error.message || error)
@@ -80,13 +80,13 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
       }
     )
     setState((prevState) => {
-      return {...prevState, showModalDialog: false, importSource: ''}
+      return { ...prevState, showModalDialog: false, importSource: '' }
     })
   }
 
   const toast = (message: string) => {
     setState((prevState) => {
-      return {...prevState, toasterMsg: message}
+      return { ...prevState, toasterMsg: message }
     })
   }
 
@@ -129,7 +129,7 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
   const hideFullMessage = () => {
     //eslint-disable-line
     setState((prevState) => {
-      return {...prevState, showModalDialog: false, importSource: ''}
+      return { ...prevState, showModalDialog: false, importSource: '' }
     })
   }
 
@@ -169,7 +169,7 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
               value={state.importSource}
               onInput={(e) => {
                 setState((prevState) => {
-                  return {...prevState, importSource: inputValue.current.value}
+                  return { ...prevState, importSource: inputValue.current.value }
                 })
               }}
             />
@@ -178,14 +178,14 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
       </ModalDialog>
       <Toaster message={state.toasterMsg} />
       <div className="justify-content-start mt-1 p-2 d-flex flex-column" id="hTFileSection">
-        <label style={{fontSize: '1.2rem'}}>
+        <label style={{ fontSize: '1.2rem' }}>
           <FormattedMessage id="home.files" />
         </label>
         <div className="dflex">
-          <button className="btn btn-primary p-2 mr-2 border my-1" data-id="homeTabNewFile" style={{width: 'fit-content'}} onClick={() => createNewFile()}>
+          <button className="btn btn-primary p-2 mr-2 border my-1" data-id="homeTabNewFile" style={{ width: 'fit-content' }} onClick={() => createNewFile()}>
             <FormattedMessage id="home.newFile" />
           </button>
-          <label className="btn p-2 mr-2 border my-1" style={{width: 'fit-content', cursor: 'pointer'}} htmlFor="openFileInput">
+          <label className="btn p-2 mr-2 border my-1" style={{ width: 'fit-content', cursor: 'pointer' }} htmlFor="openFileInput">
             <FormattedMessage id="home.openFile" />
           </label>
           <input
@@ -206,12 +206,12 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
             tooltipText={'Connect to Localhost'}
             tooltipTextClasses="border bg-light text-dark p-1 pr-3"
           >
-            <button className="btn p-2 border my-1" style={{width: 'fit-content'}} onClick={() => connectToLocalhost()}>
+            <button className="btn p-2 border my-1" style={{ width: 'fit-content' }} onClick={() => connectToLocalhost()}>
               <FormattedMessage id="home.connectToLocalhost" />
             </button>
           </CustomTooltip>
         </div>
-        <label style={{fontSize: '0.8rem'}} className="pt-2">
+        <label style={{ fontSize: '0.8rem' }} className="pt-2">
           <FormattedMessage id="home.loadFrom" />
         </label>
         <div className="d-flex">

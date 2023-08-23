@@ -1,5 +1,5 @@
 import React from 'react'
-import {fileDecoration} from '../types'
+import { fileDecoration } from '../types'
 
 export const getComments = function (fileDecoration: fileDecoration) {
   if (fileDecoration.comment) {
