@@ -1,35 +1,123 @@
-import { PluginManager } from '@remixproject/engine'
-import { EventEmitter } from 'events'
-import { QueryParams } from '@remix-project/remix-lib'
-import { IframePlugin } from '@remixproject/engine-web'
-const _paq = window._paq = window._paq || []
+import {PluginManager} from '@remixproject/engine'
+import {EventEmitter} from 'events'
+import {QueryParams} from '@remix-project/remix-lib'
+import {IframePlugin} from '@remixproject/engine-web'
+const _paq = (window._paq = window._paq || [])
 
 // requiredModule removes the plugin from the plugin manager list on UI
-const requiredModules = [ // services + layout views + system views
-  'manager', 'config', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme', 'locale',
-  'fileManager', 'contentImport', 'blockchain', 'web3Provider', 'scriptRunner', 'fetchAndCompile', 'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons',
-  'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity', 'solidity-logic', 'gistHandler', 'layout',
-  'notification', 'permissionhandler', 'walkthrough', 'storage', 'restorebackupzip', 'link-libraries', 'deploy-libraries', 'openzeppelin-proxy',
-  'hardhat-provider', 'ganache-provider', 'foundry-provider', 'basic-http-provider', 'injected', 'injected-trustwallet', 'injected-optimism-provider', 'injected-arbitrum-one-provider', 'vm-custom-fork', 'vm-goerli-fork', 'vm-mainnet-fork', 'vm-sepolia-fork', 'vm-merge', 'vm-london', 'vm-berlin',
+const requiredModules = [
+  // services + layout views + system views
+  'manager',
+  'config',
+  'compilerArtefacts',
+  'compilerMetadata',
+  'contextualListener',
+  'editor',
+  'offsetToLineColumnConverter',
+  'network',
+  'theme',
+  'locale',
+  'fileManager',
+  'contentImport',
+  'blockchain',
+  'web3Provider',
+  'scriptRunner',
+  'fetchAndCompile',
+  'mainPanel',
+  'hiddenPanel',
+  'sidePanel',
+  'menuicons',
+  'filePanel',
+  'terminal',
+  'settings',
+  'pluginManager',
+  'tabs',
+  'udapp',
+  'dGitProvider',
+  'solidity',
+  'solidity-logic',
+  'gistHandler',
+  'layout',
+  'notification',
+  'permissionhandler',
+  'walkthrough',
+  'storage',
+  'restorebackupzip',
+  'link-libraries',
+  'deploy-libraries',
+  'openzeppelin-proxy',
+  'hardhat-provider',
+  'ganache-provider',
+  'foundry-provider',
+  'basic-http-provider',
+  'injected',
+  'injected-trustwallet',
+  'injected-optimism-provider',
+  'injected-ephemery-testnet-provider',
+  'injected-arbitrum-one-provider',
+  'vm-custom-fork',
+  'vm-goerli-fork',
+  'vm-mainnet-fork',
+  'vm-sepolia-fork',
+  'vm-merge',
+  'vm-london',
+  'vm-berlin',
   'vm-shanghai',
-  'compileAndRun', 'search', 'recorder', 'fileDecorator', 'codeParser', 'codeFormatter', 'solidityumlgen', 'contractflattener', 'solidity-script']
+  'compileAndRun',
+  'search',
+  'recorder',
+  'fileDecorator',
+  'codeParser',
+  'codeFormatter',
+  'solidityumlgen',
+  'contractflattener',
+  'solidity-script'
+]
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
 const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither']
 
-const loadLocalPlugins = ["doc-gen", "doc-viewer", "etherscan", "vyper", 'solhint', 'walletconnect']
+const loadLocalPlugins = [
+  'doc-gen',
+  'doc-viewer',
+  'etherscan',
+  'vyper',
+  'solhint',
+  'walletconnect'
+]
 
 const sensitiveCalls = {
-  'fileManager': ['writeFile', 'copyFile', 'rename', 'copyDir'],
-  'contentImport': ['resolveAndSave'],
-  'web3Provider': ['sendAsync'],
+  fileManager: ['writeFile', 'copyFile', 'rename', 'copyDir'],
+  contentImport: ['resolveAndSave'],
+  web3Provider: ['sendAsync']
 }
 
 export function isNative(name) {
   // nativePlugin allows to bypass the permission request
-  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'solidity-logic', 'solidityStaticAnalysis', 'solidityUnitTesting',
-    'layout', 'notification', 'hardhat-provider', 'ganache-provider', 'foundry-provider', 'basic-http-provider', 'injected-optimism-provider',
-    'tabs', 'injected-arbitrum-one-provider', 'injected', 'doc-gen', 'doc-viewer']
+  const nativePlugins = [
+    'vyper',
+    'workshops',
+    'debugger',
+    'remixd',
+    'menuicons',
+    'solidity',
+    'solidity-logic',
+    'solidityStaticAnalysis',
+    'solidityUnitTesting',
+    'layout',
+    'notification',
+    'hardhat-provider',
+    'ganache-provider',
+    'foundry-provider',
+    'basic-http-provider',
+    'injected-optimism-provider',
+    'injected-ephemery-testnet-provider',
+    'tabs',
+    'injected-arbitrum-one-provider',
+    'injected',
+    'doc-gen',
+    'doc-viewer'
+  ]
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
@@ -44,16 +132,19 @@ export function isNative(name) {
  * @returns {boolean}
  */
 export function canActivate(from, to) {
-  return ['ethdoc'].includes(from.name) ||
+  return (
+    ['ethdoc'].includes(from.name) ||
     isNative(from.name) ||
     (to && from && from.canActivate && from.canActivate.includes(to.name))
+  )
 }
 
 export class RemixAppManager extends PluginManager {
   constructor() {
     super()
     this.event = new EventEmitter()
-    this.pluginsDirectory = 'https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json'
+    this.pluginsDirectory =
+      'https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json'
     this.pluginLoader = new PluginLoader()
   }
 
@@ -72,10 +163,7 @@ export class RemixAppManager extends PluginManager {
 
   async deactivatePlugin(name) {
     const profile = await this.getProfile(name)
-    const [to, from] = [
-      profile,
-      await this.getProfile(this.requestFrom)
-    ]
+    const [to, from] = [profile, await this.getProfile(this.requestFrom)]
     if (this.canDeactivatePlugin(from, to)) {
       if (profile.methods.includes('deactivate')) {
         try {
@@ -89,7 +177,8 @@ export class RemixAppManager extends PluginManager {
   }
 
   async canCall(from, to, method, message) {
-    const isSensitiveCall = sensitiveCalls[to] && sensitiveCalls[to].includes(method)
+    const isSensitiveCall =
+      sensitiveCalls[to] && sensitiveCalls[to].includes(method)
     // Make sure the caller of this methods is the target plugin
     if (to !== this.currentRequest.from) {
       return false
@@ -100,14 +189,26 @@ export class RemixAppManager extends PluginManager {
     }
 
     // ask the user for permission
-    return await this.call('permissionhandler', 'askPermission', this.profiles[from], this.profiles[to], method, message, isSensitiveCall)
+    return await this.call(
+      'permissionhandler',
+      'askPermission',
+      this.profiles[from],
+      this.profiles[to],
+      method,
+      message,
+      isSensitiveCall
+    )
   }
 
   onPluginActivated(plugin) {
-    this.pluginLoader.set(plugin, this.actives.filter((plugin) => !this.isDependent(plugin)))
+    this.pluginLoader.set(
+      plugin,
+      this.actives.filter((plugin) => !this.isDependent(plugin))
+    )
     this.event.emit('activate', plugin)
     this.emit('activate', plugin)
-    if (!requiredModules.includes(plugin.name)) _paq.push(['trackEvent', 'pluginManager', 'activate', plugin.name])
+    if (!requiredModules.includes(plugin.name))
+      _paq.push(['trackEvent', 'pluginManager', 'activate', plugin.name])
   }
 
   getAll() {
@@ -121,7 +222,10 @@ export class RemixAppManager extends PluginManager {
   }
 
   onPluginDeactivated(plugin) {
-    this.pluginLoader.set(plugin, this.actives.filter((plugin) => !this.isDependent(plugin)))
+    this.pluginLoader.set(
+      plugin,
+      this.actives.filter((plugin) => !this.isDependent(plugin))
+    )
     this.event.emit('deactivate', plugin)
     _paq.push(['trackEvent', 'pluginManager', 'deactivate', plugin.name])
   }
@@ -141,8 +245,12 @@ export class RemixAppManager extends PluginManager {
       const res = await fetch(this.pluginsDirectory)
       plugins = await res.json()
       plugins = plugins.filter((plugin) => {
-        if (plugin.targets && Array.isArray(plugin.targets) && plugin.targets.length > 0) {
-          return (plugin.targets.includes('remix'))
+        if (
+          plugin.targets &&
+          Array.isArray(plugin.targets) &&
+          plugin.targets.length > 0
+        ) {
+          return plugin.targets.includes('remix')
         }
         return true
       })
@@ -167,7 +275,11 @@ export class RemixAppManager extends PluginManager {
         const profile = await fetch(`plugins/${plugin}/profile.json`)
         const profileJson = await profile.json()
         // remove duplicates
-        plugins = plugins.filter((p) => p.name !== profileJson.name && p.displayName !== profileJson.displayName)
+        plugins = plugins.filter(
+          (p) =>
+            p.name !== profileJson.name &&
+            p.displayName !== profileJson.displayName
+        )
         // change url
         profileJson.url = `plugins/${plugin}/index.html`
         // add the local plugin
@@ -177,7 +289,7 @@ export class RemixAppManager extends PluginManager {
       }
     }
 
-    return plugins.map(plugin => {
+    return plugins.map((plugin) => {
       if (plugin.name === testPluginName) plugin.url = testPluginUrl
       return new IframePlugin(plugin)
     })
@@ -246,16 +358,22 @@ class PluginLoader {
     this.loaders = {}
     this.loaders.localStorage = {
       set: (plugin, actives) => {
-        const saved = actives.filter((name) => !this.donotAutoReload.includes(name))
+        const saved = actives.filter(
+          (name) => !this.donotAutoReload.includes(name)
+        )
         localStorage.setItem('workspace', JSON.stringify(saved))
       },
-      get: () => { return JSON.parse(localStorage.getItem('workspace')) }
+      get: () => {
+        return JSON.parse(localStorage.getItem('workspace'))
+      }
     }
 
     this.loaders.queryParams = {
-      set: () => {  /* Do nothing. */ },
+      set: () => {
+        /* Do nothing. */
+      },
       get: () => {
-        const { activate } = queryParams.get()
+        const {activate} = queryParams.get()
         if (!activate) return []
         return activate.split(',')
       }
