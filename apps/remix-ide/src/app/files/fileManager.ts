@@ -229,7 +229,7 @@ class FileManager extends Plugin {
     try {
       let alert = true
       for (let i = 0; i < filePaths.length; i++) {
-        let installPath = folderPath + "/" + filePaths[i]
+        const installPath = folderPath + "/" + filePaths[i]
 
         let path = this.normalize(installPath)
         path = this.limitPluginScope(path)
