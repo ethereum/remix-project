@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {Fragment, ReactNode, useEffect, useState} from 'react' // eslint-disable-line no-use-before-define
-import {FormattedMessage} from 'react-intl'
-import {PluginManagerComponent, PluginManagerSettings} from '../../types'
+import React, { Fragment, ReactNode, useEffect, useState } from 'react' // eslint-disable-line no-use-before-define
+import { FormattedMessage } from 'react-intl'
+import { PluginManagerComponent, PluginManagerSettings } from '../../types'
 import PermisssionsSettings from './permissionsSettings'
-import {Profile} from '@remixproject/plugin-utils'
+import { Profile } from '@remixproject/plugin-utils'
 import LocalPluginForm from './LocalPluginForm'
 
 interface RootViewProps {
@@ -21,7 +21,7 @@ export interface pluginActivated {
   profile: Profile
 }
 
-function RootView({pluginComponent, children}: RootViewProps) {
+function RootView({ pluginComponent, children }: RootViewProps) {
   const [visible, setVisible] = useState<boolean>(true)
   const [filterPlugins, setFilterPlugin] = useState<string>('')
 

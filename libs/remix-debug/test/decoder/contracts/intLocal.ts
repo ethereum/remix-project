@@ -24,13 +24,13 @@ contract intLocal {
       int64 i64 = -35566;
       int128 i128 = -444444;
       int256 i256 = 3434343;
-      int i = -32432423423;    
-      int32 ishrink = 2;   
+      int i = -32432423423;
+      int32 ishrink = 2;
       level11(123);
       level12(12);
       level11(123);
     }
-    
+
     function level11(uint8 foo) public {
       uint8 ui8 = foo;
       level12(12);
@@ -39,4 +39,5 @@ contract intLocal {
       uint8 ui81 = asd;
     }
   }
-`}
+`,
+}

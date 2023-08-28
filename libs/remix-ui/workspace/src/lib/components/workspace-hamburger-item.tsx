@@ -1,7 +1,7 @@
 import React from 'react'
-import {CustomTooltip, CustomMenu, CustomIconsToggle} from '@remix-ui/helper'
-import {Dropdown, NavDropdown} from 'react-bootstrap'
-import {FormattedMessage} from 'react-intl'
+import { CustomTooltip, CustomMenu, CustomIconsToggle } from '@remix-ui/helper'
+import { Dropdown, NavDropdown } from 'react-bootstrap'
+import { FormattedMessage } from 'react-intl'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -13,7 +13,7 @@ export interface HamburgerMenuItemProps {
 }
 
 export function HamburgerMenuItem(props: HamburgerMenuItemProps) {
-  const {hideOption} = props
+  const { hideOption } = props
   const uid = 'workspace' + props.kind
   return (
     <>
@@ -27,7 +27,7 @@ export function HamburgerMenuItem(props: HamburgerMenuItemProps) {
               _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', uid])
             }}
           >
-            <span hidden={hideOption} id={uid} data-id={uid} className={props.fa + ' pl-2'} style={{width: '1.4rem'}}></span>
+            <span hidden={hideOption} id={uid} data-id={uid} className={props.fa + ' pl-2'} style={{ width: '1.4rem' }}></span>
             <span className="px-2">
               <FormattedMessage id={'filePanel.' + props.kind} />
             </span>
@@ -40,7 +40,7 @@ export function HamburgerMenuItem(props: HamburgerMenuItemProps) {
 
 // keeping the following for a later use:
 export function NavHamburgerMenuItem(props: HamburgerMenuItemProps) {
-  const {hideOption} = props
+  const { hideOption } = props
   const uid = 'workspace' + props.kind
   return (
     <>
@@ -54,7 +54,7 @@ export function NavHamburgerMenuItem(props: HamburgerMenuItemProps) {
               _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', uid])
             }}
           >
-            <span hidden={hideOption} id={uid} data-id={uid} className={props.fa + ' pl-2'} style={{width: '1.4rem'}}></span>
+            <span hidden={hideOption} id={uid} data-id={uid} className={props.fa + ' pl-2'} style={{ width: '1.4rem' }}></span>
             <span className="px-2">
               <FormattedMessage id={'filePanel.' + props.kind} />
             </span>

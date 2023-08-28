@@ -9,24 +9,34 @@ var format = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
 import { addressToString } from '@remix-ui/helper'
 
-const _paq = window._paq = window._paq || []  //eslint-disable-line
+const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
 const profile = {
   name: 'recorder',
   displayName: 'Recorder',
   description: 'Records transactions to save and run',
   version: packageJson.version,
-  methods: [  ]
+  methods: [],
 }
 /**
-  * Record transaction as long as the user create them.
-  */
+ * Record transaction as long as the user create them.
+ */
 class Recorder extends Plugin {
-  constructor (blockchain) {
+  constructor(blockchain) {
     super(profile)
     this.event = new EventManager()
     this.blockchain = blockchain
-    this.data = { _listen: true, _replay: false, journal: [], _createdContracts: {}, _createdContractsReverse: {}, _usedAccounts: {}, _abis: {}, _contractABIReferences: {}, _linkReferences: {} }
+    this.data = {
+      _listen: true,
+      _replay: false,
+      journal: [],
+      _createdContracts: {},
+      _createdContractsReverse: {},
+      _usedAccounts: {},
+      _abis: {},
+      _contractABIReferences: {},
+      _linkReferences: {},
+    }
 
     this.blockchain.event.register('initiatingTransaction', (timestamp, tx, payLoad) => {
       if (tx.useCall) return
@@ -34,12 +44,12 @@ class Recorder extends Plugin {
 
       // convert to and from to tokens
       if (this.data._listen) {
-        var record = { 
+        var record = {
           value,
           inputs: txHelper.serializeInputs(payLoad.funAbi),
           parameters: payLoad.funArgs,
-          name: payLoad.funAbi.name,          
-          type: payLoad.funAbi.type
+          name: payLoad.funAbi.name,
+          type: payLoad.funAbi.type,
         }
         if (!to) {
           var abi = payLoad.contractABI
@@ -62,7 +72,7 @@ class Recorder extends Plugin {
           var creationTimestamp = this.data._createdContracts[to]
           record.to = `created{${creationTimestamp}}`
           record.abi = this.data._contractABIReferences[creationTimestamp]
-        }        
+        }
         for (var p in record.parameters) {
           var thisarg = record.parameters[p]
           var thistimestamp = this.data._createdContracts[thisarg]
@@ -98,16 +108,16 @@ class Recorder extends Plugin {
   }
 
   /**
-    * stop/start saving txs. If not listenning, is basically in replay mode
-    *
-    * @param {Bool} listen
-    */
-  setListen (listen) {
+   * stop/start saving txs. If not listenning, is basically in replay mode
+   *
+   * @param {Bool} listen
+   */
+  setListen(listen) {
     this.data._listen = listen
     this.data._replay = !listen
   }
 
-  extractTimestamp (value) {
+  extractTimestamp(value) {
     var stamp = /created{(.*)}/g.exec(value)
     if (stamp) {
       return stamp[1]
@@ -116,14 +126,14 @@ class Recorder extends Plugin {
   }
 
   /**
-    * convert back from/to from tokens to real addresses
-    *
-    * @param {Object} record
-    * @param {Object} accounts
-    * @param {Object} options
-    *
-    */
-  resolveAddress (record, accounts, options) {
+   * convert back from/to from tokens to real addresses
+   *
+   * @param {Object} record
+   * @param {Object} accounts
+   * @param {Object} options
+   *
+   */
+  resolveAddress(record, accounts, options) {
     if (record.to) {
       var stamp = this.extractTimestamp(record.to)
       if (stamp) {
@@ -136,22 +146,22 @@ class Recorder extends Plugin {
   }
 
   /**
-    * save the given @arg record
-    *
-    * @param {Number/String} timestamp
-    * @param {Object} record
-    *
-    */
-  append (timestamp, record) {
+   * save the given @arg record
+   *
+   * @param {Number/String} timestamp
+   * @param {Object} record
+   *
+   */
+  append(timestamp, record) {
     this.data.journal.push({ timestamp, record })
     this.event.trigger('newTxRecorded', [this.data.journal.length])
   }
 
   /**
-    * basically return the records + associate values (like abis / accounts)
-    *
-    */
-  getAll () {
+   * basically return the records + associate values (like abis / accounts)
+   *
+   */
+  getAll() {
     var records = [].concat(this.data.journal)
     return {
       accounts: this.data._usedAccounts,
@@ -161,15 +171,15 @@ class Recorder extends Plugin {
         var stampB = B.timestamp
         return stampA - stampB
       }),
-      abis: this.data._abis
+      abis: this.data._abis,
     }
   }
 
   /**
-    * delete the seen transactions
-    *
-    */
-  clearAll () {
+   * delete the seen transactions
+   *
+   */
+  clearAll() {
     this.data._listen = true
     this.data._replay = false
     this.data.journal = []
@@ -183,96 +193,104 @@ class Recorder extends Plugin {
   }
 
   /**
-    * run the list of records
-    *
-    * @param {Object} records
-    * @param {Object} accounts
-    * @param {Object} options
-    * @param {Object} abis
-    * @param {Object} linkReferences
-    * @param {Function} confirmationCb
-    * @param {Function} continueCb
-    * @param {Function} promptCb
-    * @param {Function} alertCb
-    * @param {Function} logCallBack
-    * @param {Function} liveMode
-    * @param {Function} newContractFn
-    *
-    */
-  run (records, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, liveMode, newContractFn) {
+   * run the list of records
+   *
+   * @param {Object} records
+   * @param {Object} accounts
+   * @param {Object} options
+   * @param {Object} abis
+   * @param {Object} linkReferences
+   * @param {Function} confirmationCb
+   * @param {Function} continueCb
+   * @param {Function} promptCb
+   * @param {Function} alertCb
+   * @param {Function} logCallBack
+   * @param {Function} liveMode
+   * @param {Function} newContractFn
+   *
+   */
+  run(records, accounts, options, abis, linkReferences, confirmationCb, continueCb, promptCb, alertCb, logCallBack, liveMode, newContractFn) {
     this.setListen(false)
     const liveMsg = liveMode ? ' with updated contracts' : ''
     logCallBack(`Running ${records.length} transaction(s)${liveMsg} ...`)
-    async.eachOfSeries(records, async (tx, index, cb) => {
-      if (liveMode && tx.record.type === 'constructor') {
-        // resolve the bytecode and ABI using the contract name, this ensure getting the last compiled one.
-        const data = await this.call('compilerArtefacts', 'getArtefactsByContractName', tx.record.contractName)
-        tx.record.bytecode = data.artefact.evm.bytecode.object
-        const updatedABIKeccak = bufferToHex(hash.keccakFromString(JSON.stringify(data.artefact.abi)))
-        abis[updatedABIKeccak] = data.artefact.abi
-        tx.record.abi = updatedABIKeccak
-      }
-      var record = this.resolveAddress(tx.record, accounts, options)
-      var abi = abis[tx.record.abi]
-      if (!abi) {
-        return alertCb('cannot find ABI for ' + tx.record.abi + '.  Execution stopped at ' + index)
-      }
-      /* Resolve Library */
-      if (record.linkReferences && Object.keys(record.linkReferences).length) {
-        for (var k in linkReferences) {
-          var link = linkReferences[k]
-          var timestamp = this.extractTimestamp(link)
-          if (timestamp && this.data._createdContractsReverse[timestamp]) {
-            link = this.data._createdContractsReverse[timestamp]
+    async.eachOfSeries(
+      records,
+      async (tx, index, cb) => {
+        if (liveMode && tx.record.type === 'constructor') {
+          // resolve the bytecode and ABI using the contract name, this ensure getting the last compiled one.
+          const data = await this.call('compilerArtefacts', 'getArtefactsByContractName', tx.record.contractName)
+          tx.record.bytecode = data.artefact.evm.bytecode.object
+          const updatedABIKeccak = bufferToHex(hash.keccakFromString(JSON.stringify(data.artefact.abi)))
+          abis[updatedABIKeccak] = data.artefact.abi
+          tx.record.abi = updatedABIKeccak
+        }
+        var record = this.resolveAddress(tx.record, accounts, options)
+        var abi = abis[tx.record.abi]
+        if (!abi) {
+          return alertCb('cannot find ABI for ' + tx.record.abi + '.  Execution stopped at ' + index)
+        }
+        /* Resolve Library */
+        if (record.linkReferences && Object.keys(record.linkReferences).length) {
+          for (var k in linkReferences) {
+            var link = linkReferences[k]
+            var timestamp = this.extractTimestamp(link)
+            if (timestamp && this.data._createdContractsReverse[timestamp]) {
+              link = this.data._createdContractsReverse[timestamp]
+            }
+            tx.record.bytecode = format.linkLibraryStandardFromlinkReferences(k, link.replace('0x', ''), tx.record.bytecode, tx.record.linkReferences)
           }
-          tx.record.bytecode = format.linkLibraryStandardFromlinkReferences(k, link.replace('0x', ''), tx.record.bytecode, tx.record.linkReferences)
         }
-      }
-      /* Encode params */
-      var fnABI
-      if (tx.record.type === 'constructor') {
-        fnABI = txHelper.getConstructorInterface(abi)
-      } else if (tx.record.type === 'fallback') {
-        fnABI = txHelper.getFallbackInterface(abi)
-      } else if (tx.record.type === 'receive') {
-        fnABI = txHelper.getReceiveInterface(abi)
-      } else {
-        fnABI = txHelper.getFunction(abi, record.name + record.inputs)
-      }
-      if (!fnABI) {
-        alertCb('cannot resolve abi of ' + JSON.stringify(record, null, '\t') + '. Execution stopped at ' + index)
-        return cb('cannot resolve abi')
-      }
-      if (tx.record.parameters) {
-        /* check if we have some params to resolve */
-        try {
-          tx.record.parameters.forEach((value, index) => {
-            var isString = true
-            if (typeof value !== 'string') {
-              isString = false
-              value = JSON.stringify(value)
-            }
-            for (var timestamp in this.data._createdContractsReverse) {
-              value = value.replace(new RegExp('created\\{' + timestamp + '\\}', 'g'), this.data._createdContractsReverse[timestamp])
-            }
-            if (!isString) value = JSON.parse(value)
-            tx.record.parameters[index] = value
-          })
-        } catch (e) {
-          return alertCb('cannot resolve input parameters ' + JSON.stringify(tx.record.parameters) + '. Execution stopped at ' + index)
+        /* Encode params */
+        var fnABI
+        if (tx.record.type === 'constructor') {
+          fnABI = txHelper.getConstructorInterface(abi)
+        } else if (tx.record.type === 'fallback') {
+          fnABI = txHelper.getFallbackInterface(abi)
+        } else if (tx.record.type === 'receive') {
+          fnABI = txHelper.getReceiveInterface(abi)
+        } else {
+          fnABI = txHelper.getFunction(abi, record.name + record.inputs)
         }
-      }
-      var data = format.encodeData(fnABI, tx.record.parameters, tx.record.bytecode)
-      if (data.error) {
-        alertCb(data.error + '. Record:' + JSON.stringify(record, null, '\t') + '. Execution stopped at ' + index)
-        return cb(data.error)
-      }
-      logCallBack(`(${index}) ${JSON.stringify(record, null, '\t')}`)
-      logCallBack(`(${index}) data: ${data.data}`)
-      record.data = { dataHex: data.data, funArgs: tx.record.parameters, funAbi: fnABI, contractBytecode: tx.record.bytecode, contractName: tx.record.contractName, timestamp: tx.timestamp }
+        if (!fnABI) {
+          alertCb('cannot resolve abi of ' + JSON.stringify(record, null, '\t') + '. Execution stopped at ' + index)
+          return cb('cannot resolve abi')
+        }
+        if (tx.record.parameters) {
+          /* check if we have some params to resolve */
+          try {
+            tx.record.parameters.forEach((value, index) => {
+              var isString = true
+              if (typeof value !== 'string') {
+                isString = false
+                value = JSON.stringify(value)
+              }
+              for (var timestamp in this.data._createdContractsReverse) {
+                value = value.replace(new RegExp('created\\{' + timestamp + '\\}', 'g'), this.data._createdContractsReverse[timestamp])
+              }
+              if (!isString) value = JSON.parse(value)
+              tx.record.parameters[index] = value
+            })
+          } catch (e) {
+            return alertCb('cannot resolve input parameters ' + JSON.stringify(tx.record.parameters) + '. Execution stopped at ' + index)
+          }
+        }
+        var data = format.encodeData(fnABI, tx.record.parameters, tx.record.bytecode)
+        if (data.error) {
+          alertCb(data.error + '. Record:' + JSON.stringify(record, null, '\t') + '. Execution stopped at ' + index)
+          return cb(data.error)
+        }
+        logCallBack(`(${index}) ${JSON.stringify(record, null, '\t')}`)
+        logCallBack(`(${index}) data: ${data.data}`)
+        record.data = {
+          dataHex: data.data,
+          funArgs: tx.record.parameters,
+          funAbi: fnABI,
+          contractBytecode: tx.record.bytecode,
+          contractName: tx.record.contractName,
+          timestamp: tx.timestamp,
+        }
 
-      this.blockchain.runTx(record, confirmationCb, continueCb, promptCb,
-        (err, txResult, rawAddress) => {
+        this.blockchain.runTx(record, confirmationCb, continueCb, promptCb, (err, txResult, rawAddress) => {
           if (err) {
             console.error(err)
             return logCallBack(err + '. Execution failed at ' + index)
@@ -285,12 +303,15 @@ class Recorder extends Plugin {
             newContractFn(abi, address, record.contractName)
           }
           cb(err)
-        }
-      )
-    }, () => { this.setListen(true) })
+        })
+      },
+      () => {
+        this.setListen(true)
+      }
+    )
   }
 
-  runScenario (liveMode, json, continueCb, promptCb, alertCb, confirmationCb, logCallBack, cb) {
+  runScenario(liveMode, json, continueCb, promptCb, alertCb, confirmationCb, logCallBack, cb) {
     _paq.push(['trackEvent', 'run', 'recorder', 'start'])
     if (!json) {
       _paq.push(['trackEvent', 'run', 'recorder', 'wrong-json'])

@@ -1,16 +1,16 @@
 interface Action {
-  type: string;
-  payload: Record<string, any>;
+  type: string
+  payload: Record<string, any>
 }
 
 export const compilerInitialState = {
   compiler: {
     mode: '',
-    args: null
+    args: null,
   },
   editor: {
-    mode: ''
-  }
+    mode: '',
+  },
 }
 
 export const compilerReducer = (state = compilerInitialState, action: Action) => {
@@ -21,8 +21,8 @@ export const compilerReducer = (state = compilerInitialState, action: Action) =>
       compiler: {
         ...state.compiler,
         mode: action.payload.mode,
-        args: action.payload.args || null
-      }
+        args: action.payload.args || null,
+      },
     }
   }
 
@@ -32,8 +32,8 @@ export const compilerReducer = (state = compilerInitialState, action: Action) =>
       compiler: {
         ...state.compiler,
         mode: '',
-        args: null
-      }
+        args: null,
+      },
     }
   }
 
@@ -42,8 +42,8 @@ export const compilerReducer = (state = compilerInitialState, action: Action) =>
       ...state,
       editor: {
         ...state.editor,
-        mode: action.payload
-      }
+        mode: action.payload,
+      },
     }
   }
 
@@ -52,8 +52,8 @@ export const compilerReducer = (state = compilerInitialState, action: Action) =>
       ...state,
       editor: {
         ...state.editor,
-        mode: ''
-      }
+        mode: '',
+      },
     }
   }
 

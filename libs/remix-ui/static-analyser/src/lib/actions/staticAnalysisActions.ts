@@ -9,8 +9,7 @@ import { RemixUiStaticAnalyserProps } from '@remix-ui/static-analyser'
  * @param analysisModule { AnalysisTab } AnalysisTab ViewPlugin
  * @param dispatch { React.Dispatch<any> } analysisReducer function's dispatch method
  */
-export const compilation = (analysisModule: AnalysisTab,
-  dispatch: React.Dispatch<RemixUiStaticAnalyserReducerActionType>) => {
+export const compilation = (analysisModule: AnalysisTab, dispatch: React.Dispatch<RemixUiStaticAnalyserReducerActionType>) => {
   if (analysisModule) {
     analysisModule.on(
       'solidity',
@@ -43,8 +42,33 @@ export const compilation = (analysisModule: AnalysisTab,
  * @returns {Promise<void>}
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function run (lastCompilationResult, lastCompilationSource, currentFile: string, state: RemixUiStaticAnalyserState, props: RemixUiStaticAnalyserProps, isSupportedVersion, showSlither, categoryIndex: number[], groupedModules, runner, _paq, message, showWarnings, allWarnings: React.RefObject<any>, warningContainer: React.RefObject<any>, calculateWarningStateEntries: (e:[string, any][]) => {length: number, errors: any[] }, warningState, setHints: React.Dispatch<React.SetStateAction<SolHintReport[]>>, hints: SolHintReport[], setSlitherWarnings: React.Dispatch<React.SetStateAction<any[]>>, setSsaWarnings: React.Dispatch<React.SetStateAction<any[]>>,
-  slitherEnabled: boolean, setStartAnalysis: React.Dispatch<React.SetStateAction<boolean>>, solhintEnabled: boolean, basicEnabled: boolean) {
+export async function run(
+  lastCompilationResult,
+  lastCompilationSource,
+  currentFile: string,
+  state: RemixUiStaticAnalyserState,
+  props: RemixUiStaticAnalyserProps,
+  isSupportedVersion,
+  showSlither,
+  categoryIndex: number[],
+  groupedModules,
+  runner,
+  _paq,
+  message,
+  showWarnings,
+  allWarnings: React.RefObject<any>,
+  warningContainer: React.RefObject<any>,
+  calculateWarningStateEntries: (e: [string, any][]) => { length: number; errors: any[] },
+  warningState,
+  setHints: React.Dispatch<React.SetStateAction<SolHintReport[]>>,
+  hints: SolHintReport[],
+  setSlitherWarnings: React.Dispatch<React.SetStateAction<any[]>>,
+  setSsaWarnings: React.Dispatch<React.SetStateAction<any[]>>,
+  slitherEnabled: boolean,
+  setStartAnalysis: React.Dispatch<React.SetStateAction<boolean>>,
+  solhintEnabled: boolean,
+  basicEnabled: boolean
+) {
   setStartAnalysis(true)
   setHints([])
   setSsaWarnings([])
@@ -71,8 +95,8 @@ export async function run (lastCompilationResult, lastCompilationSource, current
         const results = runner.run(lastCompilationResult, categoryIndex)
         for (const result of results) {
           let moduleName
-          Object.keys(groupedModules).map(key => {
-            groupedModules[key].forEach(el => {
+          Object.keys(groupedModules).map((key) => {
+            groupedModules[key].forEach((el) => {
               if (el.name === result.name) {
                 moduleName = groupedModules[key][0].categoryDisplayName
               }
@@ -92,7 +116,7 @@ export async function run (lastCompilationResult, lastCompilationSource, current
               const file = split[2]
               location = {
                 start: parseInt(split[0]),
-                length: parseInt(split[1])
+                length: parseInt(split[1]),
               }
               location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
                 location,
@@ -122,7 +146,7 @@ export async function run (lastCompilationResult, lastCompilationSource, current
               name: result.name,
               locationString,
               more: item.more,
-              location: location
+              location: location,
             }
             warningErrors.push(options)
             warningMessage.push({ msg, options, hasWarning: true, warningModuleName: moduleName })
@@ -162,7 +186,7 @@ export async function run (lastCompilationResult, lastCompilationSource, current
                 if (fileIndex >= 0) {
                   location = {
                     start: item.sourceMap[0].source_mapping.start,
-                    length: item.sourceMap[0].source_mapping.length
+                    length: item.sourceMap[0].source_mapping.length,
                   }
                   location = props.analysisModule._deps.offsetToLineColumnConverter.offsetToLineColumn(
                     location,
@@ -176,9 +200,9 @@ export async function run (lastCompilationResult, lastCompilationSource, current
                   fileName = Object.keys(lastCompilationResult.sources)[fileIndex]
                 }
               }
-              if(fileName !== currentFile) {
-                const {file, provider} = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
-                if (file.startsWith('.deps') || (file.includes('.deps')) || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
+              if (fileName !== currentFile) {
+                const { file, provider } = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
+                if (file.startsWith('.deps') || file.includes('.deps') || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
               }
               const msg = message(item.title, item.description, item.more ?? '', fileName, locationString)
               const options = {
@@ -193,7 +217,7 @@ export async function run (lastCompilationResult, lastCompilationSource, current
                 name: item.title,
                 locationString,
                 more: item.more ?? '',
-                location: location
+                location: location,
               }
 
               setSlitherWarnings((prev) => {
@@ -203,7 +227,7 @@ export async function run (lastCompilationResult, lastCompilationSource, current
             }
             showWarnings(warningMessage, 'warningModuleName')
           }
-        } catch(error) {
+        } catch (error) {
           props.analysisModule.call('terminal', 'log', { type: 'error', value: '[Slither Analysis]: Error occured! See remixd console for details.' })
           showWarnings(warningMessage, 'warningModuleName')
         }
@@ -217,4 +241,3 @@ export async function run (lastCompilationResult, lastCompilationSource, current
     }
   }
 }
-

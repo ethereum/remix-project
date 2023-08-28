@@ -1,13 +1,13 @@
-import React, {useState, useEffect, useRef} from 'react' // eslint-disable-line
-import {FormattedMessage} from 'react-intl'
+import React, { useState, useEffect, useRef } from 'react' // eslint-disable-line
+import { FormattedMessage } from 'react-intl'
 import TxBrowser from './tx-browser/tx-browser' // eslint-disable-line
 import StepManager from './step-manager/step-manager' // eslint-disable-line
 import VmDebugger from './vm-debugger/vm-debugger' // eslint-disable-line
 import VmDebuggerHead from './vm-debugger/vm-debugger-head' // eslint-disable-line
-import {TransactionDebugger as Debugger} from '@remix-project/remix-debug' // eslint-disable-line
-import {DebuggerUIProps} from './idebugger-api' // eslint-disable-line
-import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
-import {CustomTooltip, isValidHash} from '@remix-ui/helper'
+import { TransactionDebugger as Debugger } from '@remix-project/remix-debug' // eslint-disable-line
+import { DebuggerUIProps } from './idebugger-api' // eslint-disable-line
+import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
+import { CustomTooltip, isValidHash } from '@remix-ui/helper'
 /* eslint-disable-next-line */
 import './debugger-ui.css'
 const _paq = ((window as any)._paq = (window as any)._paq || [])
@@ -19,7 +19,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     debugger: null,
     currentReceipt: {
       contractAddress: null,
-      to: null
+      to: null,
     },
     currentBlock: null,
     currentTransaction: null,
@@ -28,13 +28,13 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     debugging: false,
     opt: {
       debugWithGeneratedSources: false,
-      debugWithLocalNode: false
+      debugWithLocalNode: false,
     },
     toastMessage: '',
     validationError: '',
     txNumberIsEmpty: true,
     isLocalNodeUsed: false,
-    sourceLocationStatus: ''
+    sourceLocationStatus: '',
   })
 
   if (props.onReady) {
@@ -43,9 +43,9 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         return {
           block: state.currentBlock,
           tx: state.currentTransaction,
-          receipt: state.currentReceipt
+          receipt: state.currentReceipt,
         }
-      }
+      },
     })
   }
 
@@ -87,12 +87,12 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         if (state.debugger)
           state.debugger.breakPointManager.remove({
             fileName: fileName,
-            row: row
+            row: row,
           })
       })
 
       debuggerModule.onBreakpointAdded((fileName, row) => {
-        if (state.debugger) state.debugger.breakPointManager.add({fileName: fileName, row: row})
+        if (state.debugger) state.debugger.breakPointManager.add({ fileName: fileName, row: row })
       })
 
       debuggerModule.onEditorContentChanged(() => {
@@ -106,7 +106,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       debuggerModule.onEnvChanged((provider) => {
         setState((prevState) => {
           const isLocalNodeUsed = !provider.startsWith('vm') && provider !== 'injected'
-          return {...prevState, isLocalNodeUsed: isLocalNodeUsed}
+          return { ...prevState, isLocalNodeUsed: isLocalNodeUsed }
         })
       })
     }
@@ -120,7 +120,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     debuggerInstance.event.register('debuggerStatus', async (isActive) => {
       await debuggerModule.discardHighlight()
       setState((prevState) => {
-        return {...prevState, isActive}
+        return { ...prevState, isActive }
       })
     })
 
@@ -128,14 +128,14 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       setState((prevState) => {
         return {
           ...prevState,
-          sourceLocationStatus: 'Locating breakpoint, this might take a while...'
+          sourceLocationStatus: 'Locating breakpoint, this might take a while...',
         }
       })
     })
 
     debuggerInstance.event.register('noBreakpointHit', async (isActive) => {
       setState((prevState) => {
-        return {...prevState, sourceLocationStatus: ''}
+        return { ...prevState, sourceLocationStatus: '' }
       })
     })
 
@@ -145,7 +145,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         setState((prevState) => {
           return {
             ...prevState,
-            sourceLocationStatus: 'Source location not available, neither in Sourcify nor in Etherscan. Please make sure the Etherscan api key is provided in the settings.'
+            sourceLocationStatus: 'Source location not available, neither in Sourcify nor in Etherscan. Please make sure the Etherscan api key is provided in the settings.',
           }
         })
         return
@@ -174,7 +174,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         }
         if (path) {
           setState((prevState) => {
-            return {...prevState, sourceLocationStatus: ''}
+            return { ...prevState, sourceLocationStatus: '' }
           })
           await debuggerModule.discardHighlight()
           await debuggerModule.highlight(lineColumnPos, path, rawLocation, stepDetail, lineGasCost)
@@ -194,7 +194,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       return {
         ...prevState,
         txNumberIsEmpty: empty,
-        validationError: ''
+        validationError: '',
       }
     })
   }
@@ -204,7 +204,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     setState((prevState) => {
       return {
         ...prevState,
-        sourceLocationStatus: ''
+        sourceLocationStatus: '',
       }
     })
   }
@@ -219,16 +219,16 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         debugger: null,
         currentReceipt: {
           contractAddress: null,
-          to: null
+          to: null,
         },
         currentBlock: null,
         currentTransaction: null,
         blockNumber: null,
         ready: {
           vmDebugger: false,
-          vmDebuggerHead: false
+          vmDebuggerHead: false,
         },
-        debugging: false
+        debugging: false,
       }
     })
   }
@@ -242,14 +242,14 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       return {
         ...prevState,
         txNumber: txNumber,
-        sourceLocationStatus: ''
+        sourceLocationStatus: '',
       }
     })
     if (!isValidHash(txNumber)) {
       setState((prevState) => {
         return {
           ...prevState,
-          validationError: 'Invalid transaction hash.'
+          validationError: 'Invalid transaction hash.',
         }
       })
       return
@@ -263,7 +263,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         setState((prevState) => {
           return {
             ...prevState,
-            validationError: 'Unfortunately, the Kovan network is not supported.'
+            validationError: 'Unfortunately, the Kovan network is not supported.',
           }
         })
         return
@@ -282,7 +282,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       setState((prevState) => {
         return {
           ...prevState,
-          validationError: e.message
+          validationError: e.message,
         }
       })
       console.log(e.message)
@@ -302,7 +302,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         }
         return null
       },
-      debugWithGeneratedSources: state.opt.debugWithGeneratedSources
+      debugWithGeneratedSources: state.opt.debugWithGeneratedSources,
     })
 
     setTimeout(async () => {
@@ -321,7 +321,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
               currentTransaction,
               debugger: debuggerInstance,
               toastMessage: `debugging ${txNumber}`,
-              validationError: ''
+              validationError: '',
             }
           })
         })
@@ -334,7 +334,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
           }
           return {
             ...prevState,
-            validationError: errorMsg
+            validationError: errorMsg,
           }
         })
       }
@@ -350,7 +350,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         ...prevState,
         validationError: '',
         txNumber: txHash,
-        sourceLocationStatus: ''
+        sourceLocationStatus: '',
       }
     })
     return startDebugging(null, txHash, null, web3)
@@ -367,12 +367,12 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     jumpNextBreakpoint: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpNextBreakpoint.bind(state.debugger.step_manager) : null,
     jumpToException: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.jumpToException.bind(state.debugger.step_manager) : null,
     traceLength: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.traceLength : null,
-    registerEvent: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.event.register.bind(state.debugger.step_manager.event) : null
+    registerEvent: state.debugger && state.debugger.step_manager ? state.debugger.step_manager.event.register.bind(state.debugger.step_manager.event) : null,
   }
 
   const vmDebugger = {
     registerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.register.bind(state.debugger.vmDebuggerLogic.event) : null,
-    triggerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.trigger.bind(state.debugger.vmDebuggerLogic.event) : null
+    triggerEvent: state.debugger && state.debugger.vmDebuggerLogic ? state.debugger.vmDebuggerLogic.event.trigger.bind(state.debugger.vmDebuggerLogic.event) : null,
   }
 
   const customJSX = (
@@ -380,11 +380,11 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
       <input
         className="custom-control-input"
         id="debugGeneratedSourcesInput"
-        onChange={({target: {checked}}) => {
+        onChange={({ target: { checked } }) => {
           setState((prevState) => {
             return {
               ...prevState,
-              opt: {...prevState.opt, debugWithGeneratedSources: checked}
+              opt: { ...prevState.opt, debugWithGeneratedSources: checked },
             }
           })
         }}
@@ -412,11 +412,11 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
                 <input
                   className="custom-control-input"
                   id="debugWithLocalNodeInput"
-                  onChange={({target: {checked}}) => {
+                  onChange={({ target: { checked } }) => {
                     setState((prevState) => {
                       return {
                         ...prevState,
-                        opt: {...prevState.opt, debugWithLocalNode: checked}
+                        opt: { ...prevState.opt, debugWithLocalNode: checked },
                       }
                     })
                   }}

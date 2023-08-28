@@ -1,9 +1,9 @@
-import React, {useContext, useEffect, useRef, useState} from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {SearchContext} from '../context/context'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { SearchContext } from '../context/context'
 
 export const Exclude = (props) => {
-  const {setExclude, cancelSearch, startSearch} = useContext(SearchContext)
+  const { setExclude, cancelSearch, startSearch } = useContext(SearchContext)
   const [excludeInput, setExcludeInput] = useState<string>('.*/**/*')
 
   const intl = useIntl()
@@ -32,7 +32,7 @@ export const Exclude = (props) => {
         </label>
         <input
           id="search_exclude"
-          placeholder={intl.formatMessage({id: 'search.placeholder3'})}
+          placeholder={intl.formatMessage({ id: 'search.placeholder3' })}
           className="form-control"
           onKeyUp={handleKeypress}
           onChange={async (e) => change(e)}

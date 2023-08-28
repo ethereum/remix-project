@@ -1,7 +1,7 @@
-import {CustomTooltip} from '@remix-ui/helper'
-import React, {Fragment, Ref} from 'react'
-import {Dropdown} from 'react-bootstrap'
-import {UmlFileType} from '../utilities/UmlDownloadStrategy'
+import { CustomTooltip } from '@remix-ui/helper'
+import React, { Fragment, Ref } from 'react'
+import { Dropdown } from 'react-bootstrap'
+import { UmlFileType } from '../utilities/UmlDownloadStrategy'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -11,7 +11,7 @@ export const Markup = React.forwardRef(
       children,
       onClick,
       icon,
-      className = ''
+      className = '',
     }: {
       children: React.ReactNode
       onClick: (e) => void
@@ -39,11 +39,11 @@ export const UmlCustomMenu = React.forwardRef(
       children,
       style,
       className,
-      'aria-labelledby': labeledBy
+      'aria-labelledby': labeledBy,
     }: {
-      'children': React.ReactNode
-      'style'?: React.CSSProperties
-      'className': string
+      children: React.ReactNode
+      style?: React.CSSProperties
+      className: string
       'aria-labelledby'?: string
     },
     ref: Ref<HTMLDivElement>
@@ -51,7 +51,7 @@ export const UmlCustomMenu = React.forwardRef(
     const height = window.innerHeight * 0.6
     return (
       <div ref={ref} style={style} className={className} aria-labelledby={labeledBy}>
-        <ul className="overflow-auto list-unstyled mb-0" style={{maxHeight: height + 'px'}}>
+        <ul className="overflow-auto list-unstyled mb-0" style={{ maxHeight: height + 'px' }}>
           {children}
         </ul>
       </div>

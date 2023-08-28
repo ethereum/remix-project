@@ -21,42 +21,42 @@ tape('solidity', function (t) {
   })
 })
 
-async function test (st, privateKey) {
+async function test(st, privateKey) {
   let output = compiler.compile(compilerInput(intLocal.contract))
   output = JSON.parse(output)
   let sources = {
     target: 'test.sol',
-    sources: { 'test.sol': { content: intLocal.contract } }
+    sources: { 'test.sol': { content: intLocal.contract } },
   }
   let compilationResults = new CompilerAbstract('json', output, sources)
   console.log('intLocalTest')
   await intLocalTest(st, privateKey, output.contracts['test.sol']['intLocal'].evm.bytecode.object, compilationResults, intLocal.contract)
-  
+
   output = compiler.compile(compilerInput(miscLocal.contract))
   output = JSON.parse(output)
   sources = {
     target: 'test.sol',
-    sources: { 'test.sol': { content: miscLocal.contract } }
+    sources: { 'test.sol': { content: miscLocal.contract } },
   }
   compilationResults = new CompilerAbstract('json', output, sources)
   console.log('miscLocalTest')
   await miscLocalTest(st, privateKey, output.contracts['test.sol']['miscLocal'].evm.bytecode.object, compilationResults, miscLocal.contract)
-  
+
   output = compiler.compile(compilerInput(miscLocal.contract))
   output = JSON.parse(output)
   sources = {
     target: 'test.sol',
-    sources: { 'test.sol': { content: miscLocal.contract } }
+    sources: { 'test.sol': { content: miscLocal.contract } },
   }
   compilationResults = new CompilerAbstract('json', output, sources)
   console.log('misc2LocalTest')
   await misc2LocalTest(st, privateKey, output.contracts['test.sol']['miscLocal2'].evm.bytecode.object, compilationResults, miscLocal.contract)
-  
+
   output = compiler.compile(compilerInput(structArrayLocal.contract))
   output = JSON.parse(output)
   sources = {
     target: 'test.sol',
-    sources: { 'test.sol': { content: structArrayLocal.contract } }
+    sources: { 'test.sol': { content: structArrayLocal.contract } },
   }
   compilationResults = new CompilerAbstract('json', output, sources)
   console.log('structArrayLocalTest')
@@ -66,7 +66,7 @@ async function test (st, privateKey) {
   output = JSON.parse(output)
   sources = {
     target: 'test.sol',
-    sources: { 'test.sol': { content: calldataLocal.contract } }
+    sources: { 'test.sol': { content: calldataLocal.contract } },
   }
   compilationResults = new CompilerAbstract('json', output, sources)
   console.log('calldataLocalTest')

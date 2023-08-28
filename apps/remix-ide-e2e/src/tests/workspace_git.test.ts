@@ -1,7 +1,7 @@
 'use strict'
-import { NightwatchBrowser } from "nightwatch"
-import init from "../helpers/init"
-import sauce from "./sauce"
+import { NightwatchBrowser } from 'nightwatch'
+import init from '../helpers/init'
+import sauce from './sauce'
 
 module.exports = {
   '@disabled': true,
@@ -17,16 +17,20 @@ module.exports = {
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       .waitForElementVisible({
         selector: "//*[@class='text-warning' and contains(.,'add username and email')]",
-        locateStrategy: 'xpath'
+        locateStrategy: 'xpath',
       })
       .waitForElementPresent({
         selector: '//*[@data-id="initGitRepository"][@disabled]',
-        locateStrategy: 'xpath'
+        locateStrategy: 'xpath',
       })
-      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank' })
+      .execute(function () {
+        document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank'
+      })
       .click('[data-id="initGitRepositoryLabel"]')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .execute(function () {
+        ;(document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click()
+      })
       .pause(100)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItem.git"]')
@@ -49,12 +53,16 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation
-      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank' })
+      .execute(function () {
+        document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank'
+      })
       .click('select[id="wstemplate"]')
       .click('select[id="wstemplate"] option[value=blank]')
       .click('[data-id="initGitRepositoryLabel"]')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .execute(function () {
+        ;(document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click()
+      })
       .pause(100)
       .waitForElementVisible('[data-id="workspaceGitPanel"]')
       .waitForElementContainsText('[data-id="workspaceGitBranchesDropdown"]', 'main')
@@ -89,42 +97,44 @@ module.exports = {
       .waitForElementVisible('[data-id="workspacesSelect"] .fa-code-branch')
   },
 
-  'Should display non-clashing names for duplicate clone #group2': '' + function (browser: NightwatchBrowser) {
-    browser
-      .click('[data-id="workspaceMenuDropdown"]')
-      .waitForElementVisible('[data-id="workspaceclone"]')
-      .click('[data-id="workspaceclone"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
-      .click('[data-id="fileSystemModalDialogModalBody-react"]')
-      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
-      .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
-      .click('[data-id="fileSystem-modal-footer-ok-react"]')
-      .pause(5000)
-      .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix1')
-      .click('[data-id="workspaceMenuDropdown"]')
-      .waitForElementVisible('[data-id="workspaceclone"]')
-      .click('[data-id="workspaceclone"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
-      .click('[data-id="fileSystemModalDialogModalBody-react"]')
-      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
-      .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
-      .click('[data-id="fileSystem-modal-footer-ok-react"]')
-      .pause(5000)
-      .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix2')
-      .click('[data-id="workspaceMenuDropdown"]')
-      .waitForElementVisible('[data-id="workspaceDropdownMenuIcon]"')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
-      .click('[data-id="fileSystemModalDialogModalBody-react"]')
-      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
-      .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
-      .click('[data-id="fileSystem-modal-footer-ok-react"]')
-      .pause(5000)
-      .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix3')
-      .switchWorkspace('awesome-remix')
-      .switchWorkspace('awesome-remix1')
-      .switchWorkspace('awesome-remix2')
-      .switchWorkspace('awesome-remix3')
-  },
+  'Should display non-clashing names for duplicate clone #group2':
+    '' +
+    function (browser: NightwatchBrowser) {
+      browser
+        .click('[data-id="workspaceMenuDropdown"]')
+        .waitForElementVisible('[data-id="workspaceclone"]')
+        .click('[data-id="workspaceclone"]')
+        .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
+        .click('[data-id="fileSystemModalDialogModalBody-react"]')
+        .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
+        .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
+        .click('[data-id="fileSystem-modal-footer-ok-react"]')
+        .pause(5000)
+        .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix1')
+        .click('[data-id="workspaceMenuDropdown"]')
+        .waitForElementVisible('[data-id="workspaceclone"]')
+        .click('[data-id="workspaceclone"]')
+        .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
+        .click('[data-id="fileSystemModalDialogModalBody-react"]')
+        .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
+        .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
+        .click('[data-id="fileSystem-modal-footer-ok-react"]')
+        .pause(5000)
+        .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix2')
+        .click('[data-id="workspaceMenuDropdown"]')
+        .waitForElementVisible('[data-id="workspaceDropdownMenuIcon]"')
+        .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
+        .click('[data-id="fileSystemModalDialogModalBody-react"]')
+        .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
+        .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ethereum/awesome-remix')
+        .click('[data-id="fileSystem-modal-footer-ok-react"]')
+        .pause(5000)
+        .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix3')
+        .switchWorkspace('awesome-remix')
+        .switchWorkspace('awesome-remix1')
+        .switchWorkspace('awesome-remix2')
+        .switchWorkspace('awesome-remix3')
+    },
 
   'Should display error message in modal for failed clone #group2': function (browser: NightwatchBrowser) {
     browser
@@ -139,7 +149,10 @@ module.exports = {
       .click('[data-id="fileSystem-modal-footer-ok-react"]')
       .pause(5000)
       .waitForElementVisible('[data-id="cloneGitRepositoryModalDialogModalBody-react"]')
-      .waitForElementContainsText('[data-id="cloneGitRepositoryModalDialogModalBody-react"]', 'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in Settings plugin')
+      .waitForElementContainsText(
+        '[data-id="cloneGitRepositoryModalDialogModalBody-react"]',
+        'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in Settings plugin'
+      )
       .click('[data-id="cloneGitRepository-modal-footer-ok-react"]')
   },
 
@@ -168,7 +181,8 @@ module.exports = {
       .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/dev')
       .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/production')
       .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/setup')
-      .expect.element('[data-id="workspaceGit-main"]').text.to.contain('✓ ')
+      .expect.element('[data-id="workspaceGit-main"]')
+      .text.to.contain('✓ ')
   },
 
   'Should a checkout to a remote branch #group3': function (browser: NightwatchBrowser) {
@@ -180,7 +194,8 @@ module.exports = {
       .pause(5000)
       .waitForElementPresent('[data-id="treeViewDivtreeViewItemdev.ts"]')
       .click('[data-id="workspaceGitBranchesDropdown"]')
-      .expect.element('[data-id="workspaceGit-dev"]').text.to.contain('✓ ')
+      .expect.element('[data-id="workspaceGit-dev"]')
+      .text.to.contain('✓ ')
   },
 
   'Should search for a branch (local and remote) #group3': function (browser: NightwatchBrowser) {
@@ -206,7 +221,8 @@ module.exports = {
       .pause(2000)
       .click('[data-id="workspaceGitBranchesDropdown"]')
       .waitForElementVisible('[data-id="custom-dropdown-menu"]')
-      .expect.element('[data-id="workspaceGit-newLocalBranch"]').text.to.contain('✓ ')
+      .expect.element('[data-id="workspaceGit-newLocalBranch"]')
+      .text.to.contain('✓ ')
   },
 
   'Should checkout to an exisiting local branch #group3': function (browser: NightwatchBrowser) {
@@ -221,7 +237,8 @@ module.exports = {
       .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemdev.ts"]')
       .waitForElementPresent('[data-id="treeViewDivtreeViewItemmain.ts"]')
       .click('[data-id="workspaceGitBranchesDropdown"]')
-      .expect.element('[data-id="workspaceGit-main"]').text.to.contain('✓ ')
+      .expect.element('[data-id="workspaceGit-main"]')
+      .text.to.contain('✓ ')
   },
 
   'Should prevent checkout to a branch if local changes exists #group3': function (browser: NightwatchBrowser) {
@@ -237,7 +254,8 @@ module.exports = {
       .click('[data-id="switchBranch-modal-footer-cancel-react"]')
       .pause(2000)
       .click('[data-id="workspaceGitBranchesDropdown"]')
-      .expect.element('[data-id="workspaceGit-main"]').text.to.contain('✓ ')
+      .expect.element('[data-id="workspaceGit-main"]')
+      .text.to.contain('✓ ')
   },
 
   'Should force checkout to a branch with exisiting local changes #group3': function (browser: NightwatchBrowser) {
@@ -250,10 +268,11 @@ module.exports = {
       .click('[data-id="switchBranch-modal-footer-ok-react"]')
       .pause(2000)
       .click('[data-id="workspaceGitBranchesDropdown"]')
-      .expect.element('[data-id="workspaceGit-dev"]').text.to.contain('✓ ')
+      .expect.element('[data-id="workspaceGit-dev"]')
+      .text.to.contain('✓ ')
   },
 
   // GIT BRANCHES E2E END
 
-  tearDown: sauce
+  tearDown: sauce,
 }

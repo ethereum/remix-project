@@ -1,9 +1,9 @@
-import {CopyToClipboard} from '@remix-ui/clipboard'
-import {CustomTooltip} from '@remix-ui/helper'
-import React, {useEffect, useState} from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {EtherscanSettingsProps} from '../types'
-import {etherscanTokenLink} from './constants'
+import { CopyToClipboard } from '@remix-ui/clipboard'
+import { CustomTooltip } from '@remix-ui/helper'
+import React, { useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { EtherscanSettingsProps } from '../types'
+import { etherscanTokenLink } from './constants'
 
 export function EtherscanSettings(props: EtherscanSettingsProps) {
   const [etherscanToken, setEtherscanToken] = useState<string>('')
@@ -71,7 +71,7 @@ export function EtherscanSettings(props: EtherscanSettingsProps) {
                 id="saveetherscantoken"
                 data-id="settingsTabSaveEtherscanToken"
                 onClick={saveEtherscanToken}
-                value={intl.formatMessage({id: 'settings.save'})}
+                value={intl.formatMessage({ id: 'settings.save' })}
                 type="button"
                 disabled={etherscanToken === ''}
               ></input>

@@ -3,7 +3,9 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 declare global {
-  interface Window { testplugin: { name: string, url: string }; }
+  interface Window {
+    testplugin: { name: string; url: string }
+  }
 }
 
 module.exports = {
@@ -13,7 +15,8 @@ module.exports = {
   },
 
   'Should connect to vyper plugin #group1': function (browser: NightwatchBrowser) {
-    browser.clickLaunchIcon('pluginManager')
+    browser
+      .clickLaunchIcon('pluginManager')
       .scrollAndClick('[data-id="pluginManagerComponentActivateButtonvyper"]')
       .clickLaunchIcon('vyper')
       .pause(5000)
@@ -22,19 +25,20 @@ module.exports = {
   },
 
   'Should clone the Vyper repo #group1': function (browser: NightwatchBrowser) {
-    browser.click('button[data-id="add-repository"]')
+    browser
+      .click('button[data-id="add-repository"]')
       .frameParent()
       .clickLaunchIcon('filePanel')
       .waitForElementVisible({
         selector: "//*[@data-id='workspacesSelect' and contains(.,'vyper-lang')]",
         locateStrategy: 'xpath',
-        timeout: 60000
+        timeout: 60000,
       })
       .currentWorkspaceIs('vyper-lang')
       .waitForElementVisible({
         selector: "//*[@data-id='treeViewLitreeViewItemexamples' and contains(.,'examples')]",
         locateStrategy: 'xpath',
-        timeout: 60000
+        timeout: 60000,
       })
       .openFile('examples')
       .openFile('examples/auctions')
@@ -42,26 +46,28 @@ module.exports = {
   },
 
   'Compile blind_auction should success #group1': function (browser: NightwatchBrowser) {
-    browser.clickLaunchIcon('vyper')
+    browser
+      .clickLaunchIcon('vyper')
       // @ts-ignore
       .frame(0)
       .click('[data-id="remote-compiler"]')
       .click('[data-id="compile"]')
-      .isVisible({
-        selector: '[data-id="copy-abi"]',
-        timeout: 4000,
-        abortOnFailure: false,
-        suppressNotFoundErrors: true
-      }, (okVisible) => {
-        if (okVisible.value === null) {
-          console.log('retrying compilation...')
-          browser.click('[data-id="compile"]').waitForElementVisible('[data-id="copy-abi"]')
-        } else{
-          browser.assert.ok(okVisible.value === true, 'ABI should be visible')
+      .isVisible(
+        {
+          selector: '[data-id="copy-abi"]',
+          timeout: 4000,
+          abortOnFailure: false,
+          suppressNotFoundErrors: true,
+        },
+        (okVisible) => {
+          if (okVisible.value === null) {
+            console.log('retrying compilation...')
+            browser.click('[data-id="compile"]').waitForElementVisible('[data-id="copy-abi"]')
+          } else {
+            browser.assert.ok(okVisible.value === true, 'ABI should be visible')
+          }
         }
-      })
-      
-
+      )
   },
 
   'Compile test contract and deploy to remix VM #group1': function (browser: NightwatchBrowser) {
@@ -75,19 +81,22 @@ module.exports = {
       // @ts-ignore
       .frame(0)
       .click('[data-id="compile"]')
-      .isVisible({
-        selector: '[data-id="copy-abi"]',
-        timeout: 4000,
-        abortOnFailure: false,
-        suppressNotFoundErrors: true
-      }, (okVisible) => {
-        if (okVisible.value === null) {
-          console.log('retrying compilation...')
-          browser.click('[data-id="compile"]').waitForElementVisible('[data-id="copy-abi"]')
-        } else{
-          browser.assert.ok(okVisible.value === true, 'ABI should be visible')
+      .isVisible(
+        {
+          selector: '[data-id="copy-abi"]',
+          timeout: 4000,
+          abortOnFailure: false,
+          suppressNotFoundErrors: true,
+        },
+        (okVisible) => {
+          if (okVisible.value === null) {
+            console.log('retrying compilation...')
+            browser.click('[data-id="compile"]').waitForElementVisible('[data-id="copy-abi"]')
+          } else {
+            browser.assert.ok(okVisible.value === true, 'ABI should be visible')
+          }
         }
-      })
+      )
       .frameParent()
       .clickLaunchIcon('udapp')
       .createContract('')
@@ -98,10 +107,9 @@ module.exports = {
         contractAddress = address
       })
       .perform((done) => {
-        browser.verifyCallReturnValue(contractAddress, ['0:uint256: 0'])
-          .perform(() => done())
+        browser.verifyCallReturnValue(contractAddress, ['0:uint256: 0']).perform(() => done())
       })
-  }
+  },
 }
 
 const testContract = `

@@ -7,7 +7,7 @@ const pathModule = require('path')
 const Storage = remixLib.Storage
 
 class FileProvider {
-  constructor (name) {
+  constructor(name) {
     this.event = new EventManager()
     this.type = name
     this.providerExternalsStorage = new Storage('providerExternals:')
@@ -15,48 +15,50 @@ class FileProvider {
     this.reverseKey = this.type + '-reverse-'
   }
 
-  addNormalizedName (path, url) {
+  addNormalizedName(path, url) {
     if (this.type) path = this.type + '/' + path
     this.providerExternalsStorage.set(path, url)
     this.providerExternalsStorage.set(this.reverseKey + url, path)
   }
 
-  removeNormalizedName (path) {
+  removeNormalizedName(path) {
     const value = this.providerExternalsStorage.get(path)
     this.providerExternalsStorage.remove(path)
     this.providerExternalsStorage.remove(this.reverseKey + value)
   }
 
-  normalizedNameExists (path) {
+  normalizedNameExists(path) {
     return this.providerExternalsStorage.exists(path)
   }
 
-  getNormalizedName (path) {
+  getNormalizedName(path) {
     return this.providerExternalsStorage.get(path)
   }
 
-  getPathFromUrl (url) {
+  getPathFromUrl(url) {
     return this.providerExternalsStorage.get(this.reverseKey + url)
   }
 
-  getUrlFromPath (path) {
+  getUrlFromPath(path) {
     if (!path.startsWith(this.type)) path = this.type + '/' + path
     return this.providerExternalsStorage.get(path)
   }
 
-  isExternalFolder (path) {
+  isExternalFolder(path) {
     return this.externalFolders.includes(path)
   }
 
-  async discardChanges (path, toastCb, modalCb) {
+  async discardChanges(path, toastCb, modalCb) {
     this.remove(path)
     const compilerImport = new CompilerImports()
-    this.providerExternalsStorage.keys().map(value => {
+    this.providerExternalsStorage.keys().map((value) => {
       if (value.indexOf(path) === 0) {
         compilerImport.import(
           this.getNormalizedName(value),
           true,
-          (loadingMsg) => { toastCb(loadingMsg) },
+          (loadingMsg) => {
+            toastCb(loadingMsg)
+          },
           async (error, content, cleanUrl, type, url) => {
             if (error) {
               modalCb(error)
@@ -69,7 +71,7 @@ class FileProvider {
     })
   }
 
-  async exists (path) {
+  async exists(path) {
     // todo check the type (directory/file) as well #2386
     // currently it is not possible to have a file and folder with same path
     const ret = await this._exists(path)
@@ -77,18 +79,22 @@ class FileProvider {
     return ret
   }
 
-  async _exists (path) {
+  async _exists(path) {
     path = this.getPathFromUrl(path) || path // ensure we actually use the normalized path from here
     var unprefixedpath = this.removePrefix(path)
     return path === this.type ? true : await window.remixFileSystem.exists(unprefixedpath)
   }
 
-  init (cb) {
+  init(cb) {
     cb()
   }
 
-  async get (path, cb) {
-    cb = cb || function () { /* do nothing. */ }
+  async get(path, cb) {
+    cb =
+      cb ||
+      function () {
+        /* do nothing. */
+      }
     path = this.getPathFromUrl(path) || path // ensure we actually use the normalized path from here
     var unprefixedpath = this.removePrefix(path)
     try {
@@ -101,11 +107,15 @@ class FileProvider {
     }
   }
 
-  async set (path, content, cb) {
-    cb = cb || function () { /* do nothing. */ }
+  async set(path, content, cb) {
+    cb =
+      cb ||
+      function () {
+        /* do nothing. */
+      }
     var unprefixedpath = this.removePrefix(path)
     const exists = await window.remixFileSystem.exists(unprefixedpath)
-    if (exists && await window.remixFileSystem.readFile(unprefixedpath, 'utf8') === content) {
+    if (exists && (await window.remixFileSystem.readFile(unprefixedpath, 'utf8')) === content) {
       if (cb) cb()
       return null
     }
@@ -125,20 +135,20 @@ class FileProvider {
     return true
   }
 
-  async createDir (path, cb) {
+  async createDir(path, cb) {
     const unprefixedpath = this.removePrefix(path)
 
     await this.forceCreateDir(unprefixedpath)
     if (cb) cb()
   }
 
-  async forceCreateDir (path) {
+  async forceCreateDir(path) {
     const paths = path.split('/')
     if (paths.length && paths[0] === '') paths.shift()
     let currentCheck = ''
     for (const value of paths) {
       currentCheck = currentCheck + '/' + value
-      if (!await window.remixFileSystem.exists(currentCheck)) {
+      if (!(await window.remixFileSystem.exists(currentCheck))) {
         try {
           await window.remixFileSystem.mkdir(currentCheck)
           this.event.emit('folderAdded', this._normalizePath(currentCheck))
@@ -150,21 +160,21 @@ class FileProvider {
   }
 
   // this will not add a folder as readonly but keep the original url to be able to restore it later
-  async addExternal (path, content, url) {
+  async addExternal(path, content, url) {
     if (url) this.addNormalizedName(path, url)
     return await this.set(path, content)
   }
 
-  isReadOnly (path) {
+  isReadOnly(path) {
     return false
   }
 
-  async isDirectory (path) {
+  async isDirectory(path) {
     const unprefixedpath = this.removePrefix(path)
     return path === this.type ? true : (await window.remixFileSystem.stat(unprefixedpath)).isDirectory()
   }
 
-  async isFile (path) {
+  async isFile(path) {
     path = this.getPathFromUrl(path) || path // ensure we actually use the normalized path from here
     path = this.removePrefix(path)
     return (await window.remixFileSystem.stat(path)).isFile()
@@ -174,7 +184,7 @@ class FileProvider {
    * Removes the folder recursively
    * @param {*} path is the folder to be removed
    */
-  async remove (path) {
+  async remove(path) {
     path = this.removePrefix(path)
     if (await window.remixFileSystem.exists(path)) {
       const stat = await window.remixFileSystem.stat(path)
@@ -186,9 +196,11 @@ class FileProvider {
           if (items.length !== 0) {
             for (const item of items) {
               const curPath = `${path}${path.endsWith('/') ? '' : '/'}${item}`
-              if ((await window.remixFileSystem.stat(curPath)).isDirectory()) { // delete folder
+              if ((await window.remixFileSystem.stat(curPath)).isDirectory()) {
+                // delete folder
                 await this.remove(curPath)
-              } else { // delete file
+              } else {
+                // delete file
                 await this.removeFile(curPath)
               }
             }
@@ -198,7 +210,7 @@ class FileProvider {
             // folder is empty
             await window.remixFileSystem.rmdir(path)
             this.event.emit('fileRemoved', this._normalizePath(path))
-          }          
+          }
         }
       } catch (e) {
         console.log(e)
@@ -213,9 +225,17 @@ class FileProvider {
    * @param {Function} visitFile is a function called for each visited files
    * @param {Function} visitFolder is a function called for each visited folders
    */
-  async _copyFolderToJsonInternal (path, visitFile, visitFolder) {
-    visitFile = visitFile || function () { /* do nothing. */ }
-    visitFolder = visitFolder || function () { /* do nothing. */ }
+  async _copyFolderToJsonInternal(path, visitFile, visitFolder) {
+    visitFile =
+      visitFile ||
+      function () {
+        /* do nothing. */
+      }
+    visitFolder =
+      visitFolder ||
+      function () {
+        /* do nothing. */
+      }
 
     const json = {}
     path = this.removePrefix(path)
@@ -250,37 +270,41 @@ class FileProvider {
    * @param {Function} visitFile is a function called for each visited files
    * @param {Function} visitFolder is a function called for each visited folders
    */
-  async copyFolderToJson (path, visitFile, visitFolder) {
-    visitFile = visitFile || function () { /* do nothing. */ }
-    visitFolder = visitFolder || function () { /* do nothing. */ }
+  async copyFolderToJson(path, visitFile, visitFolder) {
+    visitFile =
+      visitFile ||
+      function () {
+        /* do nothing. */
+      }
+    visitFolder =
+      visitFolder ||
+      function () {
+        /* do nothing. */
+      }
     return await this._copyFolderToJsonInternal(path, visitFile, visitFolder)
   }
 
-  async removeFile (path) {
+  async removeFile(path) {
     path = this.removePrefix(path)
-    if (await window.remixFileSystem.exists(path) && !(await window.remixFileSystem.stat(path)).isDirectory()) {
+    if ((await window.remixFileSystem.exists(path)) && !(await window.remixFileSystem.stat(path)).isDirectory()) {
       await window.remixFileSystem.unlink(path)
       this.event.emit('fileRemoved', this._normalizePath(path))
       return true
     } else return false
   }
 
-  async rename (oldPath, newPath, isFolder) {
+  async rename(oldPath, newPath, isFolder) {
     var unprefixedoldPath = this.removePrefix(oldPath)
     var unprefixednewPath = this.removePrefix(newPath)
     if (await this._exists(unprefixedoldPath)) {
       await window.remixFileSystem.rename(unprefixedoldPath, unprefixednewPath)
-      this.event.emit('fileRenamed',
-        this._normalizePath(unprefixedoldPath),
-        this._normalizePath(unprefixednewPath),
-        isFolder
-      )
+      this.event.emit('fileRenamed', this._normalizePath(unprefixedoldPath), this._normalizePath(unprefixednewPath), isFolder)
       return true
     }
     return false
   }
 
-  async resolveDirectory (path, cb) {
+  async resolveDirectory(path, cb) {
     path = this.removePrefix(path)
     if (path.indexOf('/') !== 0) path = '/' + path
     try {
@@ -302,17 +326,17 @@ class FileProvider {
     }
   }
 
-  removePrefix (path) {
+  removePrefix(path) {
     path = path.indexOf(this.type) === 0 ? path.replace(this.type, '') : path
     if (path === '') return '/'
     return path
   }
 
-  _normalizePath (path) {
+  _normalizePath(path) {
     return this.type + path
   }
 
-  isSubDirectory (parent, child) {
+  isSubDirectory(parent, child) {
     if (!parent) return false
     if (parent === child) return true
     const relative = pathModule.relative(parent, child)

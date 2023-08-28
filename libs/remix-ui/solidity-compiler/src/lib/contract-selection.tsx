@@ -1,17 +1,16 @@
-import React, {useState, useEffect} from 'react' // eslint-disable-line
-import {FormattedMessage, useIntl} from 'react-intl'
-import {ContractSelectionProps} from './types'
-import {PublishToStorage} from '@remix-ui/publish-to-storage' // eslint-disable-line
-import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-line
-import {CopyToClipboard} from '@remix-ui/clipboard' // eslint-disable-line
-import {saveAs} from 'file-saver'
-
+import React, { useState, useEffect } from 'react' // eslint-disable-line
+import { FormattedMessage, useIntl } from 'react-intl'
+import { ContractSelectionProps } from './types'
+import { PublishToStorage } from '@remix-ui/publish-to-storage' // eslint-disable-line
+import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
+import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
+import { saveAs } from 'file-saver'
 import './css/style.css'
-import {CustomTooltip} from '@remix-ui/helper'
+import { CustomTooltip } from '@remix-ui/helper'
 const _paq = (window._paq = window._paq || [])
 
 export const ContractSelection = (props: ContractSelectionProps) => {
-  const {api, compiledFileName, contractsDetails, contractList, compilerInput, modal} = props
+  const { api, compiledFileName, contractsDetails, contractList, compilerInput, modal } = props
   const [selectedContract, setSelectedContract] = useState('')
   const [storage, setStorage] = useState(null)
 
@@ -104,15 +103,15 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   }
 
   const extractData = (item) => {
-    const ret = {children: null, self: null}
+    const ret = { children: null, self: null }
 
     if (item instanceof Array) {
-      ret.children = item.map((item, index) => ({key: index, value: item}))
+      ret.children = item.map((item, index) => ({ key: index, value: item }))
       ret.self = ''
     } else if (item instanceof Object) {
       ret.children = Object.keys(item).map((key) => ({
         key: key,
-        value: item[key]
+        value: item[key],
       }))
       ret.self = ''
     } else {
@@ -161,19 +160,19 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     if (!selectedContract) throw new Error('No contract compiled yet')
 
     const help = {
-      'Assembly': 'Assembly opcodes describing the contract including corresponding solidity source code',
-      'Opcodes': 'Assembly opcodes describing the contract',
+      Assembly: 'Assembly opcodes describing the contract including corresponding solidity source code',
+      Opcodes: 'Assembly opcodes describing the contract',
       'Runtime Bytecode': 'Bytecode storing the state and being executed during normal contract call',
-      'bytecode': 'Bytecode being executed during contract creation',
-      'compilerInput': 'Input to the Solidity compiler',
-      'functionHashes': 'List of declared function and their corresponding hash',
-      'gasEstimates': 'Gas estimation for each function call',
-      'metadata': 'Contains all informations related to the compilation',
-      'metadataHash': 'Hash representing all metadata information',
-      'abi': 'ABI: describing all the functions (input/output params, scope, ...)',
-      'name': 'Name of the compiled contract',
-      'swarmLocation': 'Swarm url where all metadata information can be found (contract needs to be published first)',
-      'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
+      bytecode: 'Bytecode being executed during contract creation',
+      compilerInput: 'Input to the Solidity compiler',
+      functionHashes: 'List of declared function and their corresponding hash',
+      gasEstimates: 'Gas estimation for each function call',
+      metadata: 'Contains all informations related to the compilation',
+      metadataHash: 'Hash representing all metadata information',
+      abi: 'ABI: describing all the functions (input/output params, scope, ...)',
+      name: 'Name of the compiled contract',
+      swarmLocation: 'Swarm url where all metadata information can be found (contract needs to be published first)',
+      web3Deploy: 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract',
     }
     let contractProperties: any = {}
     // Make 'compilerInput' first field to display it as first item in 'Compilation Details' modal
@@ -193,7 +192,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 <i
                   title={intl.formatMessage({
                     id: `solidity.${propertyName}`,
-                    defaultMessage: help[propertyName]
+                    defaultMessage: help[propertyName],
                   })}
                   className="fas fa-question-circle"
                   aria-hidden="true"
@@ -241,7 +240,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               Contract
             </label>
             <select onChange={(e) => handleContractChange(e.target.value)} value={selectedContract} data-id="compiledContracts" id="compiledContracts" className="custom-select">
-              {contractList.map(({name, file}, index) => (
+              {contractList.map(({ name, file }, index) => (
                 <option value={name} key={index}>
                   {name} ({file})
                 </option>
@@ -261,7 +260,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 tooltipId="publishOnIpfsTooltip"
                 tooltipClasses="text-nowrap"
                 tooltipText={`${intl.formatMessage({
-                  id: 'solidity.publishOn'
+                  id: 'solidity.publishOn',
                 })} Ipfs`}
               >
                 <span>
@@ -284,7 +283,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 tooltipId="publishOnSwarmTooltip"
                 tooltipClasses="text-nowrap"
                 tooltipText={`${intl.formatMessage({
-                  id: 'solidity.publishOn'
+                  id: 'solidity.publishOn',
                 })} Swarm`}
               >
                 <span>

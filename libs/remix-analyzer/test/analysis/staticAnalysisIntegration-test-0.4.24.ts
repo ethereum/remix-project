@@ -1,11 +1,11 @@
-import test from "tape"
+import test from 'tape'
 import { helpers } from '@remix-project/remix-lib'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { default as StatRunner } from '../../src/solidity-analyzer'
 import * as modules from '../../src/solidity-analyzer/modules/'
 import { CompilationResult, AnalysisReportObj, AnalysisReport } from '../../src/types'
-import solcOrg from 'solc';
+import solcOrg from 'solc'
 const { compilerInput } = helpers.compiler
 const folder: string = 'solidity-v0.4.24'
 
@@ -35,7 +35,7 @@ const testFiles: string[] = [
   'ERC20.sol',
   'stringBytesLength.sol',
   'etherTransferInLoop.sol',
-  'forLoopIteratesOverDynamicArray.sol'
+  'forLoopIteratesOverDynamicArray.sol',
 ]
 
 const compilationResults: Record<string, CompilationResult> = {}
@@ -46,13 +46,13 @@ test('setup', function (t: test.Test) {
 
     testFiles.forEach((fileName) => {
       const content: string = readFileSync(join(__dirname, 'test-contracts/' + folder, fileName), 'utf8')
-      // Latest AST is available under 'compileStandardWrapper' under solc for, 0.4.12 <= version < 0.5.0 
+      // Latest AST is available under 'compileStandardWrapper' under solc for, 0.4.12 <= version < 0.5.0
       compilationResults[fileName] = JSON.parse(compiler.compile(compilerInput(content)))
     })
 
     t.end()
   })
-});
+})
 
 test('Integration test thisLocal module', function (t: test.Test) {
   t.plan(testFiles.length)
@@ -83,7 +83,7 @@ test('Integration test thisLocal module', function (t: test.Test) {
     'ERC20.sol': 0,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of thisLocal warnings`)
@@ -119,7 +119,7 @@ test('Integration test checksEffectsInteraction module', function (t: test.Test)
     'ERC20.sol': 0,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of checksEffectsInteraction warnings`)
@@ -155,7 +155,7 @@ test('Integration test constantFunctions module', function (t: test.Test) {
     'ERC20.sol': 0,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of constantFunctions warnings`)
@@ -191,7 +191,7 @@ test('Integration test inlineAssembly module', function (t: test.Test) {
     'ERC20.sol': 0,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of inlineAssembly warnings`)
@@ -227,7 +227,7 @@ test('Integration test txOrigin module', function (t: test.Test) {
     'ERC20.sol': 0,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of txOrigin warnings`)
@@ -263,7 +263,7 @@ test('Integration test gasCosts module', function (t: test.Test) {
     'ERC20.sol': 2,
     'stringBytesLength.sol': 1,
     'etherTransferInLoop.sol': 3,
-    'forLoopIteratesOverDynamicArray.sol': 2
+    'forLoopIteratesOverDynamicArray.sol': 2,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of gasCosts warnings`)
@@ -299,7 +299,7 @@ test('Integration test similarVariableNames module', function (t: test.Test) {
     'ERC20.sol': 0,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of similarVariableNames warnings`)
@@ -335,7 +335,7 @@ test('Integration test blockTimestamp module', function (t: test.Test) {
     'ERC20.sol': 0,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of blockTimestamp warnings`)
@@ -371,7 +371,7 @@ test('Integration test lowLevelCalls module', function (t: test.Test) {
     'ERC20.sol': 0,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of lowLevelCalls warnings`)
@@ -407,7 +407,7 @@ test('Integration test blockBlockhash module', function (t: test.Test) {
     'ERC20.sol': 0,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of blockBlockhash warnings`)
@@ -443,7 +443,7 @@ test('Integration test noReturn module', function (t: test.Test) {
     'ERC20.sol': 0,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of noReturn warnings`)
@@ -479,7 +479,7 @@ test('Integration test selfdestruct module', function (t: test.Test) {
     'intDivisionTruncate.sol': 5,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of selfdestruct warnings`)
@@ -515,7 +515,7 @@ test('Integration test guardConditions module', function (t: test.Test) {
     'ERC20.sol': 0,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of guardConditions warnings`)
@@ -551,7 +551,7 @@ test('Integration test deleteDynamicArrays module', function (t: test.Test) {
     'ERC20.sol': 0,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of deleteDynamicArrays warnings`)
@@ -587,7 +587,7 @@ test('Integration test deleteFromDynamicArray module', function (t) {
     'ERC20.sol': 0,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of deleteFromDynamicArray warnings`)
@@ -623,7 +623,7 @@ test('Integration test assignAndCompare module', function (t: test.Test) {
     'ERC20.sol': 0,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of assignAndCompare warnings`)
@@ -659,7 +659,7 @@ test('Integration test intDivisionTruncate module', function (t: test.Test) {
     'ERC20.sol': 0,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of intDivisionTruncate warnings`)
@@ -695,7 +695,7 @@ test('Integration test erc20Decimal module', function (t: test.Test) {
     'ERC20.sol': 1,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of erc20Decimals warnings`)
@@ -731,7 +731,7 @@ test('Integration test stringBytesLength module', function (t: test.Test) {
     'ERC20.sol': 0,
     'stringBytesLength.sol': 1,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of stringBytesLength warnings`)
@@ -767,7 +767,7 @@ test('Integration test etherTransferInLoop module', function (t: test.Test) {
     'ERC20.sol': 0,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 3,
-    'forLoopIteratesOverDynamicArray.sol': 0
+    'forLoopIteratesOverDynamicArray.sol': 0,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of etherTransferInLoop warnings`)
@@ -803,7 +803,7 @@ test('Integration test forLoopIteratesOverDynamicArray module', function (t: tes
     'ERC20.sol': 0,
     'stringBytesLength.sol': 0,
     'etherTransferInLoop.sol': 0,
-    'forLoopIteratesOverDynamicArray.sol': 2
+    'forLoopIteratesOverDynamicArray.sol': 2,
   }
   runModuleOnFiles(module, t, (file: string, report: AnalysisReportObj[]) => {
     t.equal(report.length, lengthCheck[file], `${file} has right amount of forLoopIteratesOverDynamicArray warnings`)
@@ -811,7 +811,7 @@ test('Integration test forLoopIteratesOverDynamicArray module', function (t: tes
 })
 
 // #################### Helpers
-function runModuleOnFiles (Module: any, t: test.Test, cb: ((fname: string, report: AnalysisReportObj[]) => void)): void {
+function runModuleOnFiles(Module: any, t: test.Test, cb: (fname: string, report: AnalysisReportObj[]) => void): void {
   const statRunner: StatRunner = new StatRunner()
   testFiles.forEach((fileName: string) => {
     const reports = statRunner.runWithModuleList(compilationResults[fileName], [{ name: new Module().name, mod: new Module() }])
@@ -820,5 +820,5 @@ function runModuleOnFiles (Module: any, t: test.Test, cb: ((fname: string, repor
       t.comment('Error while executing Module: ' + JSON.stringify(report))
     }
     cb(fileName, report)
-  })      
+  })
 }

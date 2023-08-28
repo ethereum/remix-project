@@ -12,9 +12,9 @@ import * as helper from './helper'
 
 module.exports = function (st, privateKey, contractBytecode, compilationResult, contractCode) {
   // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve) => {    
-    const web3 = await (vmCall as any).getWeb3();
-    (vmCall as any).sendTx(web3, { nonce: 0, privateKey: privateKey }, null, 0, contractBytecode, function (error, hash) {      
+  return new Promise(async (resolve) => {
+    const web3 = await (vmCall as any).getWeb3()
+    ;(vmCall as any).sendTx(web3, { nonce: 0, privateKey: privateKey }, null, 0, contractBytecode, function (error, hash) {
       if (error) {
         return st.fail(error)
       }
@@ -26,10 +26,10 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
         const traceManager = new TraceManager({ web3 })
         const codeManager = new CodeManager(traceManager)
         codeManager.clear()
-        const solidityProxy = new SolidityProxy({ 
-          getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), 
+        const solidityProxy = new SolidityProxy({
+          getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager),
           getCode: codeManager.getCode.bind(codeManager),
-          compilationResult: () => compilationResult 
+          compilationResult: () => compilationResult,
         })
         const debuggerEvent = new EventManager()
         const offsetToLineColumnConverter = {
@@ -38,7 +38,7 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
               const lineBreaks = sourceMappingDecoder.getLinebreakPositions(contractCode)
               resolve(sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, lineBreaks))
             })
-          }
+          },
         }
         const callTree = new InternalCallTree(debuggerEvent, traceManager, solidityProxy, codeManager, { includeLocalVariables: true }, offsetToLineColumnConverter)
         callTree.event.register('callTreeBuildFailed', (error) => {
@@ -49,11 +49,10 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
         })
         callTree.event.register('callTreeReady', async (scopes, scopeStarts) => {
           try {
-
             // test gas cost per line
             st.equals((await callTree.getGasCostPerLine(0, 16)).gasCost, 11)
             st.equals((await callTree.getGasCostPerLine(0, 32)).gasCost, 84)
-            
+
             const functions1 = callTree.retrieveFunctionsStack(103)
             const functions2 = callTree.retrieveFunctionsStack(116)
             const functions3 = callTree.retrieveFunctionsStack(13)
@@ -63,7 +62,7 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
             st.equals(functions3.length, 1)
 
             st.equal(functions1[0].gasCost, 54)
-  
+
             st.equals(Object.keys(functions1[0])[0], 'functionDefinition')
             st.equals(Object.keys(functions1[0])[1], 'inputs')
             st.equals(functions1[0].inputs[0], 'foo')
@@ -73,11 +72,11 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
             st.equals(Object.keys(functions2[1])[1], 'inputs')
             st.equals(functions2[0].inputs[0], 'asd')
             st.equals(functions2[1].inputs[0], 'foo')
-  
+
             st.equals(functions1[0].functionDefinition.name, 'level11')
             st.equals(functions2[0].functionDefinition.name, 'level12')
             st.equals(functions2[1].functionDefinition.name, 'level11')
-            
+
             st.equals(scopeStarts[0], '1')
             st.equals(scopeStarts[10], '1.1')
             st.equals(scopeStarts[102], '1.1.1')
@@ -108,7 +107,7 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
           } catch (e) {
             st.fail(e.message)
           }
-  
+
           helper.decodeLocals(st, 95, traceManager, callTree, function (locals) {
             st.equals(Object.keys(locals).length, 16)
             st.equals(locals['ui8'].value, '130')
@@ -127,7 +126,7 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
             st.equals(locals['i'].value, '-32432423423')
             st.equals(locals['ishrink'].value, '2')
           })
-  
+
           helper.decodeLocals(st, 106, traceManager, callTree, function (locals) {
             try {
               st.equals(locals['ui8'].value, '123')
@@ -138,13 +137,15 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
             resolve({})
           })
         })
-        traceManager.resolveTrace(tx).then(() => {
-          debuggerEvent.trigger('newTraceLoaded', [traceManager.trace])
-        }).catch((error) => {
-          st.fail(error)
-        })
+        traceManager
+          .resolveTrace(tx)
+          .then(() => {
+            debuggerEvent.trigger('newTraceLoaded', [traceManager.trace])
+          })
+          .catch((error) => {
+            st.fail(error)
+          })
       })
     })
   })
 }
-

@@ -12,11 +12,11 @@ import miscellaneous from 'solhint/lib/rules/miscellaneous'
 import { customAction } from '@remixproject/plugin-api'
 
 type Report = {
-  line: number,
-  column: number,
-  severity: string,
-  message: string,
-  ruleId: string,
+  line: number
+  column: number
+  severity: string
+  message: string
+  ruleId: string
   fix: string
 }
 
@@ -39,12 +39,12 @@ export class SolHint extends PluginClient {
       await this.lintOnCompilation()
     })
   }
-  async createConfigFile () {
+  async createConfigFile() {
     await this.call('fileManager', 'writeFile', '.solhint.json', Config)
   }
 
   async lintOnCompilation() {
-    if(!this.triggerLinter) return
+    if (!this.triggerLinter) return
     this.on('solidity', 'compilationFinished', async (fileName, source, languageVersion, data) => {
       const hints = await this.lint(fileName)
       console.log('after compile', { hints })
@@ -92,7 +92,7 @@ export class SolHint extends PluginClient {
         message: report.message,
         ruleId: report.ruleId,
         severity: report.severity,
-        fix: report.fix
+        fix: report.fix,
       }
     })
 
@@ -102,13 +102,13 @@ export class SolHint extends PluginClient {
 
   severity = {
     2: 'error',
-    3: 'warning'
+    3: 'warning',
   }
 
   rules = {
     'solhint:recommended': () => {
       const enabledRules = {}
-      this.coreRules().forEach(rule => {
+      this.coreRules().forEach((rule) => {
         if (!rule.meta.deprecated && rule.meta.recommended) {
           enabledRules[rule.ruleId] = rule.meta.defaultSetup
         }
@@ -117,7 +117,7 @@ export class SolHint extends PluginClient {
     },
     'solhint:all': () => {
       const enabledRules = {}
-      this.coreRules().forEach(rule => {
+      this.coreRules().forEach((rule) => {
         if (!rule.meta.deprecated) {
           enabledRules[rule.ruleId] = rule.meta.defaultSetup
         }
@@ -126,25 +126,16 @@ export class SolHint extends PluginClient {
     },
     'solhint:default': () => {
       const enabledRules = {}
-      this.coreRules().forEach(rule => {
+      this.coreRules().forEach((rule) => {
         if (!rule.meta.deprecated && rule.meta.isDefault) {
           enabledRules[rule.ruleId] = rule.meta.defaultSetup
         }
       })
       return enabledRules
-    }
+    },
   }
 
   coreRules() {
-    return [
-      ...bestPractises(),
-      ...deprecations(),
-      ...miscellaneous(),
-      ...naming(),
-      ...order(),
-      ...security()
-    ]
+    return [...bestPractises(), ...deprecations(), ...miscellaneous(), ...naming(), ...order(), ...security()]
   }
-
 }
-

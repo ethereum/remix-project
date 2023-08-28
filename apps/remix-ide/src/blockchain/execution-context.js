@@ -3,7 +3,7 @@
 import Web3 from 'web3'
 import { execution } from '@remix-project/remix-lib'
 import EventManager from '../lib/events'
-const _paq = window._paq = window._paq || []
+const _paq = (window._paq = window._paq || [])
 
 let web3
 
@@ -18,7 +18,7 @@ if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
   trigger contextChanged, web3EndpointChanged
 */
 export class ExecutionContext {
-  constructor () {
+  constructor() {
     this.event = new EventManager()
     this.executionContext = 'vm-shanghai'
     this.lastBlock = null
@@ -33,41 +33,41 @@ export class ExecutionContext {
     this.customWeb3 = {} // mapping between a context name and a web3.js instance
   }
 
-  init (config) {
+  init(config) {
     this.executionContext = 'vm-shanghai'
     this.event.trigger('contextChanged', [this.executionContext])
-  }  
+  }
 
-  getProvider () {
+  getProvider() {
     return this.executionContext
   }
 
-  getProviderObject () {
+  getProviderObject() {
     return this.customNetWorks[this.executionContext]
   }
 
-  getSelectedAddress () {
+  getSelectedAddress() {
     return injectedProvider ? injectedProvider.selectedAddress : null
   }
 
-  getCurrentFork () {
+  getCurrentFork() {
     return this.currentFork
   }
 
-  isVM () {
+  isVM() {
     return this.executionContext.startsWith('vm')
   }
 
-  setWeb3 (context, web3) {
+  setWeb3(context, web3) {
     this.customWeb3[context] = web3
   }
 
-  web3 () {
+  web3() {
     if (this.customWeb3[this.executionContext]) return this.customWeb3[this.executionContext]
     return web3
   }
 
-  detectNetwork (callback) {
+  detectNetwork(callback) {
     if (this.isVM()) {
       callback(null, { id: '-', name: 'VM' })
     } else {
@@ -99,7 +99,7 @@ export class ExecutionContext {
     }
   }
 
-  removeProvider (name) {
+  removeProvider(name) {
     if (name && this.customNetWorks[name]) {
       if (this.executionContext === name) this.setContext('vm-merge', null, null, null)
       delete this.customNetWorks[name]
@@ -107,30 +107,39 @@ export class ExecutionContext {
     }
   }
 
-  addProvider (network) {
+  addProvider(network) {
     if (network && network.name && !this.customNetWorks[network.name]) {
       this.customNetWorks[network.name] = network
       this.event.trigger('addProvider', [network])
     }
   }
 
-  internalWeb3 () {
+  internalWeb3() {
     return web3
   }
-  
-  setContext (context, endPointUrl, confirmCb, infoCb) {
+
+  setContext(context, endPointUrl, confirmCb, infoCb) {
     this.executionContext = context
     this.executionContextChange(context, endPointUrl, confirmCb, infoCb, null)
   }
 
-  async executionContextChange (value, endPointUrl, confirmCb, infoCb, cb) {
+  async executionContextChange(value, endPointUrl, confirmCb, infoCb, cb) {
     _paq.push(['trackEvent', 'udapp', 'providerChanged', value.context])
     const context = value.context
-    if (!cb) cb = () => { /* Do nothing. */ }
-    if (!confirmCb) confirmCb = () => { /* Do nothing. */ }
-    if (!infoCb) infoCb = () => { /* Do nothing. */ }    
+    if (!cb)
+      cb = () => {
+        /* Do nothing. */
+      }
+    if (!confirmCb)
+      confirmCb = () => {
+        /* Do nothing. */
+      }
+    if (!infoCb)
+      infoCb = () => {
+        /* Do nothing. */
+      }
     if (this.customNetWorks[context]) {
-      var network = this.customNetWorks[context]      
+      var network = this.customNetWorks[context]
       await network.init()
       this.currentFork = network.fork
       this.executionContext = context
@@ -142,21 +151,21 @@ export class ExecutionContext {
     }
   }
 
-  currentblockGasLimit () {
+  currentblockGasLimit() {
     return this.blockGasLimit
   }
 
-  stopListenOnLastBlock () {
+  stopListenOnLastBlock() {
     if (this.listenOnLastBlockId) clearInterval(this.listenOnLastBlockId)
     this.listenOnLastBlockId = null
   }
 
-  async _updateChainContext () {
+  async _updateChainContext() {
     if (!this.isVM()) {
       try {
         const block = await web3.eth.getBlock('latest')
         // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
-        this.blockGasLimit = (block && block.gasLimit) ? Math.floor(block.gasLimit - (5 * block.gasLimit) / 1024) : this.blockGasLimitDefault
+        this.blockGasLimit = block && block.gasLimit ? Math.floor(block.gasLimit - (5 * block.gasLimit) / 1024) : this.blockGasLimitDefault
         this.lastBlock = block
         try {
           this.currentFork = execution.forkAt(await web3.eth.net.getId(), block.number)
@@ -172,20 +181,20 @@ export class ExecutionContext {
     }
   }
 
-  listenOnLastBlock () {
+  listenOnLastBlock() {
     this.listenOnLastBlockId = setInterval(() => {
       this._updateChainContext()
     }, 15000)
   }
 
-  txDetailsLink (network, hash) {
+  txDetailsLink(network, hash) {
     const transactionDetailsLinks = {
       Main: 'https://www.etherscan.io/tx/',
       Rinkeby: 'https://rinkeby.etherscan.io/tx/',
       Ropsten: 'https://ropsten.etherscan.io/tx/',
       Sepolia: 'https://sepolia.etherscan.io/tx/',
       Kovan: 'https://kovan.etherscan.io/tx/',
-      Goerli: 'https://goerli.etherscan.io/tx/'
+      Goerli: 'https://goerli.etherscan.io/tx/',
     }
 
     if (transactionDetailsLinks[network]) {

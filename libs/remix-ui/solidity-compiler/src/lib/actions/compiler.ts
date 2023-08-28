@@ -1,28 +1,29 @@
 import React from 'react'
 import { CompileTabLogic } from '../logic/compileTabLogic'
+
 export const setEditorMode = (mode: string) => {
   return {
     type: 'SET_EDITOR_MODE',
-    payload: mode
+    payload: mode,
   }
 }
 
 export const resetEditorMode = () => (dispatch: React.Dispatch<any>) => {
   dispatch({
-    type: 'RESET_EDITOR_MODE'
+    type: 'RESET_EDITOR_MODE',
   })
 }
 
 export const setCompilerMode = (mode: string, ...args) => {
   return {
     type: 'SET_COMPILER_MODE',
-    payload: { mode, args }
+    payload: { mode, args },
   }
 }
 
 export const resetCompilerMode = () => (dispatch: React.Dispatch<any>) => {
   dispatch({
-    type: 'RESET_COMPILER_MODE'
+    type: 'RESET_COMPILER_MODE',
   })
 }
 

@@ -17,26 +17,30 @@ export class Debugger {
   currentFile = -1
   currentLine = -1
 
-  constructor (options) {
+  constructor(options) {
     this.event = new EventManager()
     this.offsetToLineColumnConverter = options.offsetToLineColumnConverter
     /*
       Returns a compilation result for a given address or the last one available if none are found
     */
-    this.compilationResult = options.compilationResult || function (contractAddress) { return null }
+    this.compilationResult =
+      options.compilationResult ||
+      function (contractAddress) {
+        return null
+      }
 
     this.debugger = new Ethdebugger({
       web3: options.web3,
       debugWithGeneratedSources: options.debugWithGeneratedSources,
       compilationResult: this.compilationResult,
-      offsetToLineColumnConverter: this.offsetToLineColumnConverter
+      offsetToLineColumnConverter: this.offsetToLineColumnConverter,
     })
 
     const { traceManager, callTree, solidityProxy } = this.debugger
     this.breakPointManager = new BreakpointManager({
       traceManager,
       callTree,
-      solidityProxy
+      solidityProxy,
     })
 
     this.breakPointManager.event.register('breakpointStep', (step) => {
@@ -62,7 +66,7 @@ export class Debugger {
     })
   }
 
-  async registerAndHighlightCodeItem (index) {
+  async registerAndHighlightCodeItem(index) {
     // register selected code item, highlight the corresponding source location
     // this.debugger.traceManager.getCurrentCalledAddressAt(index, async (error, address) => {
 
@@ -77,43 +81,47 @@ export class Debugger {
         return
       }
 
-      this.debugger.callTree.getValidSourceLocationFromVMTraceIndexFromCache(address, index, compilationResultForAddress.data.contracts).then(async (rawLocationAndOpcode) => {
-        if (compilationResultForAddress && compilationResultForAddress.data) {
-          const rawLocation = rawLocationAndOpcode.sourceLocation
-          const stepDetail = rawLocationAndOpcode.stepDetail
-          const generatedSources = this.debugger.callTree.sourceLocationTracker.getGeneratedSourcesFromAddress(address)
+      this.debugger.callTree
+        .getValidSourceLocationFromVMTraceIndexFromCache(address, index, compilationResultForAddress.data.contracts)
+        .then(async (rawLocationAndOpcode) => {
+          if (compilationResultForAddress && compilationResultForAddress.data) {
+            const rawLocation = rawLocationAndOpcode.sourceLocation
+            const stepDetail = rawLocationAndOpcode.stepDetail
+            const generatedSources = this.debugger.callTree.sourceLocationTracker.getGeneratedSourcesFromAddress(address)
 
-          const lineColumnPos = rawLocationAndOpcode.lineColumnPos
-          
-          let lineGasCostObj = null
-          try {
-            lineGasCostObj = await this.debugger.callTree.getGasCostPerLine(rawLocation.file, lineColumnPos.start.line)  
-          } catch (e) {
-            console.log(e)
+            const lineColumnPos = rawLocationAndOpcode.lineColumnPos
+
+            let lineGasCostObj = null
+            try {
+              lineGasCostObj = await this.debugger.callTree.getGasCostPerLine(rawLocation.file, lineColumnPos.start.line)
+            } catch (e) {
+              console.log(e)
+            }
+            this.event.trigger('newSourceLocation', [lineColumnPos, rawLocation, generatedSources, address, stepDetail, (lineGasCostObj && lineGasCostObj.gasCost) || -1])
+            this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [rawLocation])
+            if (this.currentFile !== rawLocation.file || this.currentLine !== lineColumnPos.start.line) {
+              const instructionIndexes = lineGasCostObj.indexes.map((index) => {
+                // translate from vmtrace index to instruction index
+                return this.debugger.codeManager.getInstructionIndex(address, index)
+              })
+              this.vmDebuggerLogic.event.trigger('lineGasCostChanged', [instructionIndexes, lineColumnPos.start.line])
+              this.currentFile = rawLocation.file
+              this.currentLine = lineColumnPos.start.line
+            }
+          } else {
+            this.event.trigger('newSourceLocation', [null])
+            this.currentFile = -1
+            this.currentLine = -1
+            this.vmDebuggerLogic.event.trigger('lineGasCostChanged', [null])
           }
-          this.event.trigger('newSourceLocation', [lineColumnPos, rawLocation, generatedSources, address, stepDetail, (lineGasCostObj && lineGasCostObj.gasCost) || -1])
-          this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [rawLocation])
-          if (this.currentFile !== rawLocation.file || this.currentLine !== lineColumnPos.start.line) {
-            const instructionIndexes = lineGasCostObj.indexes.map((index) => { // translate from vmtrace index to instruction index
-              return this.debugger.codeManager.getInstructionIndex(address, index)
-            })
-            this.vmDebuggerLogic.event.trigger('lineGasCostChanged', [instructionIndexes, lineColumnPos.start.line ])
-            this.currentFile = rawLocation.file
-            this.currentLine = lineColumnPos.start.line       
-          }
-        } else {
+        })
+        .catch((_error) => {
           this.event.trigger('newSourceLocation', [null])
+          this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [null])
           this.currentFile = -1
           this.currentLine = -1
           this.vmDebuggerLogic.event.trigger('lineGasCostChanged', [null])
-        }
-      }).catch((_error) => {
-        this.event.trigger('newSourceLocation', [null])
-        this.vmDebuggerLogic.event.trigger('sourceLocationChanged', [null])
-        this.currentFile = -1
-        this.currentLine = -1
-        this.vmDebuggerLogic.event.trigger('lineGasCostChanged', [null])
-      })
+        })
       // })
     } catch (error) {
       this.event.trigger('newSourceLocation', [null])
@@ -125,11 +133,11 @@ export class Debugger {
     }
   }
 
-  updateWeb3 (web3) {
+  updateWeb3(web3) {
     this.debugger.web3 = web3
   }
 
-  async debug (blockNumber, txNumber, tx, loadingCb) {
+  async debug(blockNumber, txNumber, tx, loadingCb) {
     const web3 = this.debugger.web3
 
     if (this.debugger.traceManager.isLoading) {
@@ -153,10 +161,18 @@ export class Debugger {
     return await this.debugTx(tx, loadingCb)
   }
 
-  async debugTx (tx, loadingCb) {
+  async debugTx(tx, loadingCb) {
     this.step_manager = new DebuggerStepManager(this.debugger, this.debugger.traceManager)
 
-    this.vmDebuggerLogic = new VmDebuggerLogic(this.debugger, tx, this.step_manager, this.debugger.traceManager, this.debugger.codeManager, this.debugger.solidityProxy, this.debugger.callTree)
+    this.vmDebuggerLogic = new VmDebuggerLogic(
+      this.debugger,
+      tx,
+      this.step_manager,
+      this.debugger.traceManager,
+      this.debugger.codeManager,
+      this.debugger.solidityProxy,
+      this.debugger.callTree
+    )
     this.vmDebuggerLogic.start()
 
     this.step_manager.event.register('stepChanged', this, (stepIndex) => {
@@ -175,7 +191,7 @@ export class Debugger {
     await this.debugger.debug(tx)
   }
 
-  unload () {
+  unload() {
     this.debugger.unLoad()
     this.event.trigger('debuggerUnloaded')
   }

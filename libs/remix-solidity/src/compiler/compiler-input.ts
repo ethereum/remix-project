@@ -9,17 +9,29 @@ export default (sources: Source, opts: CompilerInputOptions): string => {
     settings: {
       optimizer: {
         enabled: opts.optimize === true || opts.optimize === 1,
-        runs: opts.runs > -1 ? opts.runs : 200
+        runs: opts.runs > -1 ? opts.runs : 200,
       },
       libraries: opts.libraries,
       outputSelection: {
         '*': {
           '': ['ast'],
-          '*': ['abi', 'metadata', 'devdoc', 'userdoc', 'storageLayout', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates', 'evm.assembly']
-        }
-      }
-    }
-  }  
+          '*': [
+            'abi',
+            'metadata',
+            'devdoc',
+            'userdoc',
+            'storageLayout',
+            'evm.legacyAssembly',
+            'evm.bytecode',
+            'evm.deployedBytecode',
+            'evm.methodIdentifiers',
+            'evm.gasEstimates',
+            'evm.assembly',
+          ],
+        },
+      },
+    },
+  }
   if (opts.evmVersion) {
     if (opts.evmVersion.toLowerCase() == 'default') {
       opts.evmVersion = null
@@ -31,7 +43,9 @@ export default (sources: Source, opts: CompilerInputOptions): string => {
     o.language = opts.language
   }
   if (opts.language === 'Yul' && o.settings.optimizer.enabled) {
-    if (!o.settings.optimizer.details) { o.settings.optimizer.details = {} }
+    if (!o.settings.optimizer.details) {
+      o.settings.optimizer.details = {}
+    }
     o.settings.optimizer.details.yul = true
   }
   return JSON.stringify(o)
@@ -39,16 +53,15 @@ export default (sources: Source, opts: CompilerInputOptions): string => {
 
 export const Languages = ['Solidity', 'Yul']
 
-export function getValidLanguage (val: string): Language {
+export function getValidLanguage(val: string): Language {
   if (val !== undefined && val !== null && val) {
     const lang = val.slice(0, 1).toUpperCase() + val.slice(1).toLowerCase()
-    return Languages.indexOf(lang) > -1 ? lang as Language : null
+    return Languages.indexOf(lang) > -1 ? (lang as Language) : null
   }
   return null
 }
 
-export function compilerInputForConfigFile(sources: Source, opts)
-{
+export function compilerInputForConfigFile(sources: Source, opts) {
   opts.sources = sources
   return JSON.stringify(opts)
 }

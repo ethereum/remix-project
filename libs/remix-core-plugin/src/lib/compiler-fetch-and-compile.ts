@@ -9,13 +9,13 @@ import { UUPSDeployedByteCode, UUPSCompilerVersion, UUPSOptimize, UUPSRuns, UUPS
 const profile = {
   name: 'fetchAndCompile',
   methods: ['resolve', 'clearCache'],
-  version: '0.0.1'
+  version: '0.0.1',
 }
 
 export class FetchAndCompile extends Plugin {
   unresolvedAddresses: any[]
   sourceVerifierNetWork: string[]
-  constructor () {
+  constructor() {
     super(profile)
     this.unresolvedAddresses = []
     this.sourceVerifierNetWork = ['Main', 'Rinkeby', 'Ropsten', 'Goerli']
@@ -25,7 +25,7 @@ export class FetchAndCompile extends Plugin {
    * Clear the cache
    *
    */
-  async clearCache () {
+  async clearCache() {
     this.unresolvedAddresses = []
   }
 
@@ -40,46 +40,44 @@ export class FetchAndCompile extends Plugin {
    * @param {string} targetPath - Folder where to save the compilation arfefacts
    * @return {CompilerAbstract} - compilation data targeting the given @arg contractAddress
    */
-  async resolve (contractAddress, codeAtAddress, targetPath) {
+  async resolve(contractAddress, codeAtAddress, targetPath) {
     contractAddress = toChecksumAddress(contractAddress)
 
     const localCompilation = async () => {
       const contractData = await this.call('compilerArtefacts', 'getContractDataFromByteCode', codeAtAddress)
       if (contractData) {
         return await this.call('compilerArtefacts', 'getCompilerAbstract', contractData.file)
-      }
-      else
-        return await this.call('compilerArtefacts', 'get', '__last')
+      } else return await this.call('compilerArtefacts', 'get', '__last')
     }
 
     const resolved = await this.call('compilerArtefacts', 'get', contractAddress)
     if (resolved) return resolved
     if (this.unresolvedAddresses.includes(contractAddress)) return localCompilation()
 
-    if (codeAtAddress === '0x' + UUPSDeployedByteCode) { // proxy
+    if (codeAtAddress === '0x' + UUPSDeployedByteCode) {
+      // proxy
       const settings = {
         version: UUPSCompilerVersion,
         language: UUPSLanguage,
         evmVersion: UUPSEvmVersion,
         optimize: UUPSOptimize,
-        runs: UUPSRuns
+        runs: UUPSRuns,
       }
       const proxyUrl = 'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.8.0/contracts/proxy/ERC1967/ERC1967Proxy.sol'
       const compilationTargets = {
-        'proxy.sol': { content: `import "${proxyUrl}";` }
+        'proxy.sol': { content: `import "${proxyUrl}";` },
       }
-      const compData = await compile(
-        compilationTargets,
-        settings,
-        async (url, cb) => {
-          // we first try to resolve the content from the compilation target using a more appropiate path
-          const path = `${targetPath}/${url}`
-          if (compilationTargets[path] && compilationTargets[path].content) {
-            return cb(null, compilationTargets[path].content)
-          } else {
-            await this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message))
-          }
-        })
+      const compData = await compile(compilationTargets, settings, async (url, cb) => {
+        // we first try to resolve the content from the compilation target using a more appropiate path
+        const path = `${targetPath}/${url}`
+        if (compilationTargets[path] && compilationTargets[path].content) {
+          return cb(null, compilationTargets[path].content)
+        } else {
+          await this.call('contentImport', 'resolveAndSave', url)
+            .then((result) => cb(null, result))
+            .catch((error) => cb(error.message))
+        }
+      })
       await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compData)
       return compData
     }
@@ -125,14 +123,14 @@ export class FetchAndCompile extends Plugin {
         data = await fetchContractFromEtherscan(this, network, contractAddress, targetPath)
       } catch (e) {
         this.call('notification', 'toast', e.message)
-        setTimeout(_ => this.emit('notFound', contractAddress), 0) // plugin framework returns a time out error although it actually didn't find the source...
+        setTimeout((_) => this.emit('notFound', contractAddress), 0) // plugin framework returns a time out error although it actually didn't find the source...
         this.unresolvedAddresses.push(contractAddress)
-        return localCompilation()    
+        return localCompilation()
       }
     }
 
     if (!data) {
-      setTimeout(_ => this.emit('notFound', contractAddress), 0)
+      setTimeout((_) => this.emit('notFound', contractAddress), 0)
       this.unresolvedAddresses.push(contractAddress)
       const compilation = await localCompilation()
       if (compilation) {
@@ -148,26 +146,25 @@ export class FetchAndCompile extends Plugin {
       }
     }
     const { settings, compilationTargets } = data
-   
+
     try {
-      setTimeout(_ => this.emit('compiling', settings), 0)
-      const compData = await compile(
-        compilationTargets,
-        settings,
-        async (url, cb) => {
-          // we first try to resolve the content from the compilation target using a more appropiate path
-          const path = `${targetPath}/${url}`
-          if (compilationTargets[path] && compilationTargets[path].content) {
-            return cb(null, compilationTargets[path].content)
-          } else {
-            await this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message))
-          }
-        })
+      setTimeout((_) => this.emit('compiling', settings), 0)
+      const compData = await compile(compilationTargets, settings, async (url, cb) => {
+        // we first try to resolve the content from the compilation target using a more appropiate path
+        const path = `${targetPath}/${url}`
+        if (compilationTargets[path] && compilationTargets[path].content) {
+          return cb(null, compilationTargets[path].content)
+        } else {
+          await this.call('contentImport', 'resolveAndSave', url)
+            .then((result) => cb(null, result))
+            .catch((error) => cb(error.message))
+        }
+      })
       await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compData)
       return compData
     } catch (e) {
       this.unresolvedAddresses.push(contractAddress)
-      setTimeout(_ => this.emit('compilationFailed'), 0)
+      setTimeout((_) => this.emit('compilationFailed'), 0)
       return localCompilation()
     }
   }

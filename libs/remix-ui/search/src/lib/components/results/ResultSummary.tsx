@@ -1,8 +1,8 @@
-import {useDialogDispatchers} from '@remix-ui/app'
-import {CustomTooltip} from '@remix-ui/helper'
-import React, {useContext} from 'react'
-import {SearchContext} from '../../context/context'
-import {SearchResult, SearchResultLine, SearchResultLineLine} from '../../types'
+import { useDialogDispatchers } from '@remix-ui/app'
+import { CustomTooltip } from '@remix-ui/helper'
+import React, { useContext } from 'react'
+import { SearchContext } from '../../context/context'
+import { SearchResult, SearchResultLine, SearchResultLineLine } from '../../types'
 
 interface ResultSummaryProps {
   searchResult: SearchResult
@@ -11,8 +11,8 @@ interface ResultSummaryProps {
 }
 
 export const ResultSummary = (props: ResultSummaryProps) => {
-  const {hightLightInPath, replaceText, state} = useContext(SearchContext)
-  const {modal} = useDialogDispatchers()
+  const { hightLightInPath, replaceText, state } = useContext(SearchContext)
+  const { modal } = useDialogDispatchers()
   const selectLine = async (line: SearchResultLineLine) => {
     await hightLightInPath(props.searchResult, line)
   }
@@ -38,7 +38,7 @@ export const ResultSummary = (props: ResultSummaryProps) => {
         okFn: confirmReplace,
         cancelLabel: 'No',
         cancelFn: () => {},
-        data: line
+        data: line,
       })
     }
   }

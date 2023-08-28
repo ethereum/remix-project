@@ -14,7 +14,7 @@ export class DebuggerSolidityState {
   tx
   decodeTimeout
 
-  constructor (tx, _stepManager, _traceManager, _codeManager, _solidityProxy) {
+  constructor(tx, _stepManager, _traceManager, _codeManager, _solidityProxy) {
     this.event = new EventManager()
     this.storageResolver = null
     this.stepManager = _stepManager
@@ -26,13 +26,13 @@ export class DebuggerSolidityState {
     this.decodeTimeout = null
   }
 
-  init (index) {
+  init(index) {
     if (index < 0) {
       return this.event.trigger('solidityStateMessage', ['invalid step index'])
     }
 
     if (this.stepManager.currentStepIndex !== index) return
-    
+
     if (!this.storageResolver) {
       return
     }
@@ -50,28 +50,31 @@ export class DebuggerSolidityState {
     }, 1000)
   }
 
-  reset () {
+  reset() {
     this.stateVariablesByAddresses = {}
   }
 
-  decode (index) {
+  decode(index) {
     try {
       const address = this.traceManager.getCurrentCalledAddressAt(this.stepManager.currentStepIndex)
       if (this.stateVariablesByAddresses[address]) {
         return this.extractStateVariables(this.stateVariablesByAddresses[address], address)
       }
-      this.solidityProxy.extractStateVariablesAt(index).then((stateVars) => {
-        this.stateVariablesByAddresses[address] = stateVars
-        this.extractStateVariables(stateVars, address)
-      }).catch((_error) => {
-        this.event.trigger('solidityState', [{}])
-      })
+      this.solidityProxy
+        .extractStateVariablesAt(index)
+        .then((stateVars) => {
+          this.stateVariablesByAddresses[address] = stateVars
+          this.extractStateVariables(stateVars, address)
+        })
+        .catch((_error) => {
+          this.event.trigger('solidityState', [{}])
+        })
     } catch (error) {
       return this.event.trigger('solidityState', [{}])
     }
   }
 
-  extractStateVariables (stateVars, address) {
+  extractStateVariables(stateVars, address) {
     const storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
     decodeState(stateVars, storageViewer).then((result) => {
       this.event.trigger('solidityStateMessage', [''])

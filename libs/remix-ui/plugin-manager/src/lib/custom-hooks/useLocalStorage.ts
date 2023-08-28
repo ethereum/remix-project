@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 type SetValue<T> = Dispatch<SetStateAction<T>>
 
-function useLocalStorage<T> (key: string, initialValue: T): [T, SetValue<T>] {
+function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T>] {
   // Get from local storage then
   // parse stored json or return initialValue
   const readValue = (): T => {
@@ -26,12 +26,10 @@ function useLocalStorage<T> (key: string, initialValue: T): [T, SetValue<T>] {
 
   // Return a wrapped version of useState's setter function that ...
   // ... persists the new value to localStorage.
-  const setValue: SetValue<T> = value => {
+  const setValue: SetValue<T> = (value) => {
     // Prevent build error "window is undefined" but keeps working
     if (typeof window === 'undefined') {
-      console.warn(
-        `Tried setting localStorage key “${key}” even though environment is not a client`
-      )
+      console.warn(`Tried setting localStorage key “${key}” even though environment is not a client`)
     }
 
     try {

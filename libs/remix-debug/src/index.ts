@@ -12,7 +12,7 @@ import * as traceHelper from './trace/traceHelper'
 
 const storage = {
   StorageViewer: StorageViewer,
-  StorageResolver: StorageResolver
+  StorageResolver: StorageResolver,
 }
 /*
   Use of breakPointManager :
@@ -37,5 +37,5 @@ export {
   BreakpointManager,
   SolidityDecoder,
   storage,
-  CmdLine
+  CmdLine,
 }

@@ -1,7 +1,7 @@
-import { Monaco } from "@monaco-editor/react"
-import monaco from "../../types/monaco"
-import { EditorUIProps } from "../remix-ui-editor"
-import { default as fixesList } from "./quickfixes"
+import { Monaco } from '@monaco-editor/react'
+import monaco from '../../types/monaco'
+import { EditorUIProps } from '../remix-ui-editor'
+import { default as fixesList } from './quickfixes'
 
 export class RemixCodeActionProvider implements monaco.languages.CodeActionProvider {
   props: EditorUIProps
@@ -11,7 +11,7 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
     this.monaco = monaco
   }
 
-  async provideCodeActions (
+  async provideCodeActions(
     model: monaco.editor.ITextModel,
     range: monaco.Range,
     context: monaco.languages.CodeActionContext,
@@ -22,27 +22,26 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
       let fixes: Record<string, any>[], msg: string
       let isOldAST: boolean = false
       const errStrings: string[] = Object.keys(fixesList)
-      const errStr:string = errStrings.find(es => error.message.includes(es))
+      const errStr: string = errStrings.find((es) => error.message.includes(es))
       if (errStr) {
         fixes = fixesList[errStr]
-        const cursorPosition: number = this.props.editorAPI.getHoverPosition({lineNumber: error.startLineNumber, column: error.startColumn})
+        const cursorPosition: number = this.props.editorAPI.getHoverPosition({ lineNumber: error.startLineNumber, column: error.startColumn })
         const nodeAtPosition = await this.props.plugin.call('codeParser', 'definitionAtPosition', cursorPosition)
         // Check if a function is hovered
-        if (nodeAtPosition && nodeAtPosition.nodeType === "FunctionDefinition") {
+        if (nodeAtPosition && nodeAtPosition.nodeType === 'FunctionDefinition') {
           // Identify type of AST node
-          if (nodeAtPosition.parameters && !Array.isArray(nodeAtPosition.parameters) && Array.isArray(nodeAtPosition.parameters.parameters))
-            isOldAST = true
+          if (nodeAtPosition.parameters && !Array.isArray(nodeAtPosition.parameters) && Array.isArray(nodeAtPosition.parameters.parameters)) isOldAST = true
           const paramNodes = isOldAST ? nodeAtPosition.parameters.parameters : nodeAtPosition.parameters
           for (const fix of fixes) {
-            msg = paramNodes.length 
+            msg = paramNodes.length
               ? await this.fixForMethodWithParams(model, paramNodes, fix, error, isOldAST)
-              : await this.fixForMethodWithoutParams(model, nodeAtPosition, fix, error, isOldAST) 
-            this.addQuickFix(actions, error, model.uri, {title: fix.title, range: fix.range, text: msg})
+              : await this.fixForMethodWithoutParams(model, nodeAtPosition, fix, error, isOldAST)
+            this.addQuickFix(actions, error, model.uri, { title: fix.title, range: fix.range, text: msg })
           }
         } else {
           for (const fix of fixes) {
             if (fix && nodeAtPosition && fix.nodeType !== nodeAtPosition.nodeType) continue
-            else this.addQuickFix(actions, error, model.uri, {title: fix.title, range: fix.range || error, text: fix.message})
+            else this.addQuickFix(actions, error, model.uri, { title: fix.title, range: fix.range || error, text: fix.message })
           }
         }
       }
@@ -50,7 +49,7 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
 
     return {
       actions: actions,
-      dispose: () => {}
+      dispose: () => {},
     }
   }
 
@@ -62,20 +61,20 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
    * @param fix details of quick fix to apply
    */
   addQuickFix(actions: monaco.languages.CodeAction[], error: monaco.editor.IMarkerData, uri: monaco.Uri, fix: Record<string, any>) {
-    const {title, range, text} = fix
+    const { title, range, text } = fix
     actions.push({
       title,
       diagnostics: [error],
-      kind: "quickfix",
+      kind: 'quickfix',
       edit: {
         edits: [
           {
             resource: uri,
-            edit: { range, text }
-          }
-        ]
+            edit: { range, text },
+          },
+        ],
       },
-      isPreferred: true
+      isPreferred: true,
     })
   }
 
@@ -88,7 +87,13 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
    * @param isOldAST true, if AST node contains legacy fields
    * @returns message to be placed as quick fix
    */
-  async fixForMethodWithParams(model: monaco.editor.ITextModel, paramNodes: Record<string, any>[], fix: Record<string, any>, error: monaco.editor.IMarkerData, isOldAST: boolean): Promise<string> {
+  async fixForMethodWithParams(
+    model: monaco.editor.ITextModel,
+    paramNodes: Record<string, any>[],
+    fix: Record<string, any>,
+    error: monaco.editor.IMarkerData,
+    isOldAST: boolean
+  ): Promise<string> {
     let lastParamEndLoc: Record<string, any>, fixLineNumber: number, msg: string
     // Get last function parameter node
     const lastParamNode: Record<string, any> = paramNodes[paramNodes.length - 1]
@@ -103,18 +108,19 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
       fixLineNumber = lastParamEndLoc.line
     }
     const lineContent: string = model.getLineContent(fixLineNumber)
-    if (fix.id === 5 && lineContent.includes(' view '))
-      msg = lineContent.replace('view', 'pure')
-    else if (isOldAST)
-      msg = lineContent.substring(0, lastParamEndLoc.column + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + 1, lineContent.length)
-    else 
-      msg = lineContent.substring(0, lastParamEndLoc.column + lastParamNode.name.length + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + lastParamNode.name.length + 1, lineContent.length)
+    if (fix.id === 5 && lineContent.includes(' view ')) msg = lineContent.replace('view', 'pure')
+    else if (isOldAST) msg = lineContent.substring(0, lastParamEndLoc.column + 2) + fix.message + lineContent.substring(lastParamEndLoc.column + 1, lineContent.length)
+    else
+      msg =
+        lineContent.substring(0, lastParamEndLoc.column + lastParamNode.name.length + 2) +
+        fix.message +
+        lineContent.substring(lastParamEndLoc.column + lastParamNode.name.length + 1, lineContent.length)
 
     fix.range = {
       startLineNumber: fixLineNumber,
       endLineNumber: fixLineNumber,
       startColumn: 0,
-      endColumn: error.startColumn + msg.length
+      endColumn: error.startColumn + msg.length,
     }
     return msg
   }
@@ -128,7 +134,13 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
    * @param isOldAST true, if AST node contains legacy fields
    * @returns message to be placed as quick fix
    */
-  async fixForMethodWithoutParams(model: monaco.editor.ITextModel, nodeAtPosition: Record<string, any>, fix: Record<string, any>, error: monaco.editor.IMarkerData, isOldAST: boolean): Promise<string> {
+  async fixForMethodWithoutParams(
+    model: monaco.editor.ITextModel,
+    nodeAtPosition: Record<string, any>,
+    fix: Record<string, any>,
+    error: monaco.editor.IMarkerData,
+    isOldAST: boolean
+  ): Promise<string> {
     let fixLineNumber: number, msg: string
     if (isOldAST) {
       const location: Record<string, any> = await this.props.plugin.call('codeParser', 'getLineColumnOfNode', nodeAtPosition)
@@ -137,17 +149,16 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
 
     const lineContent: string = model.getLineContent(fixLineNumber)
     const i: number = lineContent.indexOf('()')
-    
+
     if (fix.id === 5 && lineContent.includes(' view ')) {
       msg = lineContent.replace('view', 'pure')
-    } else
-      msg = lineContent.substring(0, i + 3) + fix.message + lineContent.substring(i + 3, lineContent.length)
-    
+    } else msg = lineContent.substring(0, i + 3) + fix.message + lineContent.substring(i + 3, lineContent.length)
+
     fix.range = {
       startLineNumber: fixLineNumber,
       endLineNumber: fixLineNumber,
       startColumn: 0,
-      endColumn: error.startColumn + msg.length
+      endColumn: error.startColumn + msg.length,
     }
     return msg
   }

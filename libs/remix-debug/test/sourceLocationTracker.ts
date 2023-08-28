@@ -10,106 +10,104 @@ import { compilerInput } from './helpers/compilerHelper'
 
 tape('SourceLocationTracker', function (t) {
   t.test('SourceLocationTracker.getSourceLocationFromVMTraceIndex - simple contract', async function (st) {
-
-    const traceManager = new TraceManager({web3: web3Test})
-    const codeManager = new CodeManager(traceManager)     
+    const traceManager = new TraceManager({ web3: web3Test })
+    const codeManager = new CodeManager(traceManager)
 
     let output = compiler.compile(compilerInput(contracts))
     output = JSON.parse(output)
-    
+
     codeManager.codeResolver.cacheExecutingCode('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', '0x' + output.contracts['test.sol']['test'].evm.deployedBytecode.object)
-    
+
     const tx = web3Test.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd52')
 
-    traceManager.resolveTrace(tx).then(async () => {     
+    traceManager
+      .resolveTrace(tx)
+      .then(async () => {
+        const sourceLocationTracker = new SourceLocationTracker(codeManager, { debugWithGeneratedSources: false })
 
-      const sourceLocationTracker = new SourceLocationTracker(codeManager, {debugWithGeneratedSources: false})
-      
-      try {
-        const map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 0, output.contracts)
-        st.equal(map['file'], 0)
-        st.equal(map['start'], 0)
-      } catch (e) {
-        console.log(e)
-      }
-      st.end()
-
-    }).catch((e) => {
-      t.fail(' - traceManager.resolveTrace - failed ')
-      console.error(e)
-    })
+        try {
+          const map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 0, output.contracts)
+          st.equal(map['file'], 0)
+          st.equal(map['start'], 0)
+        } catch (e) {
+          console.log(e)
+        }
+        st.end()
+      })
+      .catch((e) => {
+        t.fail(' - traceManager.resolveTrace - failed ')
+        console.error(e)
+      })
   })
 
   t.test('SourceLocationTracker.getSourceLocationFromVMTraceIndex - ABIEncoder V2 contract', async function (st) {
-
-    const traceManager = new TraceManager({web3: web3Test})
-    const codeManager = new CodeManager(traceManager)     
+    const traceManager = new TraceManager({ web3: web3Test })
+    const codeManager = new CodeManager(traceManager)
 
     let output = compiler.compile(compilerInput(ABIEncoderV2))
     output = JSON.parse(output)
-    
+
     codeManager.codeResolver.cacheExecutingCode('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', '0x' + output.contracts['test.sol']['test'].evm.deployedBytecode.object)
-    
+
     const tx = web3Test.eth.getTransaction('0x20ef65b8b186ca942fcccd634f37074dde49b541c27994fc7596740ef44cfd53')
 
-    traceManager.resolveTrace(tx).then(async () => {     
+    traceManager
+      .resolveTrace(tx)
+      .then(async () => {
+        try {
+          // with debugWithGeneratedSources: false
+          const sourceLocationTracker = new SourceLocationTracker(codeManager, { debugWithGeneratedSources: false })
 
-      
-      
-      try {
-        // with debugWithGeneratedSources: false
-        const sourceLocationTracker = new SourceLocationTracker(codeManager, { debugWithGeneratedSources: false })
+          let map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 0, output.contracts)
+          console.log(map)
+          st.equal(map['file'], 0)
+          st.equal(map['start'], 35)
 
-        let map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 0, output.contracts)
-        console.log(map)
-        st.equal(map['file'], 0)
-        st.equal(map['start'], 35)
+          map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 45, output.contracts)
+          st.equal(map['file'], 1) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
 
-        map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 45, output.contracts)
-        st.equal(map['file'], 1) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
-        
-        map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 45, output.contracts)
-        st.equal(map['file'], 0) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
-        st.equal(map['start'], 303)
-        st.equal(map['length'], 448)
+          map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 45, output.contracts)
+          st.equal(map['file'], 0) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
+          st.equal(map['start'], 303)
+          st.equal(map['length'], 448)
 
-        map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 36, output.contracts)
-        st.equal(map['file'], 0) // 0 refers to the initial solidity code. see source below (ABIEncoderV2)
-        st.equal(map['start'], 303)
-        st.equal(map['length'], 448)
-      } catch (e) {
-        console.log(e)
-      }
+          map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 36, output.contracts)
+          st.equal(map['file'], 0) // 0 refers to the initial solidity code. see source below (ABIEncoderV2)
+          st.equal(map['start'], 303)
+          st.equal(map['length'], 448)
+        } catch (e) {
+          console.log(e)
+        }
 
-      try {
-        // with debugWithGeneratedSources: true
-        const sourceLocationTracker = new SourceLocationTracker(codeManager, { debugWithGeneratedSources: true })
-        
-        let map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 0, output.contracts)
-        console.log(map)
-        st.equal(map['file'], 0)
-        st.equal(map['start'], 35)
+        try {
+          // with debugWithGeneratedSources: true
+          const sourceLocationTracker = new SourceLocationTracker(codeManager, { debugWithGeneratedSources: true })
 
-        map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 45, output.contracts)
-        st.equal(map['file'], 1) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
+          let map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 0, output.contracts)
+          console.log(map)
+          st.equal(map['file'], 0)
+          st.equal(map['start'], 35)
 
-        map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 45, output.contracts)
-        st.equal(map['file'], 1) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
-        st.equal(map['start'], 1297)
-        st.equal(map['length'], 32)
+          map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 45, output.contracts)
+          st.equal(map['file'], 1) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
 
-        map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 36, output.contracts)
-        st.equal(map['file'], 0) // 0 refers to the initial solidity code. see source below (ABIEncoderV2)
-        st.equal(map['start'], 303)
-        st.equal(map['length'], 448)
-      } catch (e) {
-        console.log(e)
-      }
-      st.end()
+          map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 45, output.contracts)
+          st.equal(map['file'], 1) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
+          st.equal(map['start'], 1297)
+          st.equal(map['length'], 32)
 
-    }).catch(() => {
-      t.fail(' - traceManager.resolveTrace - failed ')
-    })
+          map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 36, output.contracts)
+          st.equal(map['file'], 0) // 0 refers to the initial solidity code. see source below (ABIEncoderV2)
+          st.equal(map['start'], 303)
+          st.equal(map['length'], 448)
+        } catch (e) {
+          console.log(e)
+        }
+        st.end()
+      })
+      .catch(() => {
+        t.fail(' - traceManager.resolveTrace - failed ')
+      })
   })
 })
 
@@ -118,9 +116,9 @@ const contracts = `contract test {
         uint t = 4;
         return t;
     }
-    
+
     function f2() public {
-        
+
     }
 }
 `
@@ -133,12 +131,12 @@ contract test {
     function testg (bytes calldata userData) external returns (bytes memory, bytes32, bytes32, uint) {
         bytes32 idAsk = abi.decode(userData[:33], (bytes32));
         bytes32 idOffer = abi.decode(userData[32:64], (bytes32));
-        // bytes4 sellerAddress = abi.decode(userData[:4], (bytes4));       
+        // bytes4 sellerAddress = abi.decode(userData[:4], (bytes4));
         bytes memory ro  = abi.encodePacked(msg.sender, msg.sender, idAsk, idOffer);
         return (ro, idAsk, idOffer, userData.length);
     }
-    
-    
+
+
     function testgp (bytes calldata userData) external returns (bytes4) {
         return  abi.decode(userData[:4], (bytes4));
     }

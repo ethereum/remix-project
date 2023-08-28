@@ -1,15 +1,15 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './style/remix-app.css'
-import {RemixUIMainPanel} from '@remix-ui/panel'
+import { RemixUIMainPanel } from '@remix-ui/panel'
 import MatomoDialog from './components/modals/matomo'
 import OriginWarning from './components/modals/origin-warning'
 import DragBar from './components/dragbar/dragbar'
-import {AppProvider} from './context/provider'
+import { AppProvider } from './context/provider'
 import AppDialogs from './components/modals/dialogs'
 import DialogViewPlugin from './components/modals/dialogViewPlugin'
-import {AppContext} from './context/context'
-import {IntlProvider} from 'react-intl'
-import {CustomTooltip} from '@remix-ui/helper'
+import { AppContext } from './context/context'
+import { IntlProvider } from 'react-intl'
+import { CustomTooltip } from '@remix-ui/helper'
 
 interface IRemixAppUi {
   app: any
@@ -20,9 +20,9 @@ const RemixApp = (props: IRemixAppUi) => {
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
   const [maximiseTrigger, setMaximiseTrigger] = useState<number>(0)
   const [resetTrigger, setResetTrigger] = useState<number>(0)
-  const [locale, setLocale] = useState<{code: string; messages: any}>({
+  const [locale, setLocale] = useState<{ code: string; messages: any }>({
     code: 'en',
-    messages: {}
+    messages: {},
   })
   const sidePanelRef = useRef(null)
 
@@ -78,7 +78,7 @@ const RemixApp = (props: IRemixAppUi) => {
     showMatamo: props.app.showMatamo,
     appManager: props.app.appManager,
     modal: props.app.notification,
-    layout: props.app.layout
+    layout: props.app.layout,
   }
 
   return (

@@ -2,8 +2,15 @@ import category from './categories'
 import algorithm from './algorithmCategories'
 import { getFunctionDefinitionName, helpers, isVariableTurnedIntoGetter, getMethodParamsSplittedTypeDesc } from './staticAnalysisCommon'
 import {
-  ModuleAlgorithm, ModuleCategory, ReportObj, CompilationResult, CompiledContract, AnalyzerModule,
-  FunctionDefinitionAstNode, VariableDeclarationAstNode, SupportedVersion
+  ModuleAlgorithm,
+  ModuleCategory,
+  ReportObj,
+  CompilationResult,
+  CompiledContract,
+  AnalyzerModule,
+  FunctionDefinitionAstNode,
+  VariableDeclarationAstNode,
+  SupportedVersion,
 } from './../../types'
 
 export default class gasCosts implements AnalyzerModule {
@@ -12,28 +19,34 @@ export default class gasCosts implements AnalyzerModule {
   category: ModuleCategory = category.GAS
   algorithm: ModuleAlgorithm = algorithm.EXACT
   version: SupportedVersion = {
-    start: '0.4.12'
+    start: '0.4.12',
   }
 
   warningNodes: any[] = []
-  visit (node: FunctionDefinitionAstNode | VariableDeclarationAstNode): void {
-    if ((node.nodeType === 'FunctionDefinition' && node.kind !== 'constructor' && node.implemented) ||
-    (node.nodeType === 'VariableDeclaration' && isVariableTurnedIntoGetter(node))) { this.warningNodes.push(node) }
+  visit(node: FunctionDefinitionAstNode | VariableDeclarationAstNode): void {
+    if (
+      (node.nodeType === 'FunctionDefinition' && node.kind !== 'constructor' && node.implemented) ||
+      (node.nodeType === 'VariableDeclaration' && isVariableTurnedIntoGetter(node))
+    ) {
+      this.warningNodes.push(node)
+    }
   }
 
-  report (compilationResults: CompilationResult): ReportObj[] {
+  report(compilationResults: CompilationResult): ReportObj[] {
     const report: ReportObj[] = []
-    const methodsWithSignature: Record<string, string>[] = this.warningNodes.map(node => {
+    const methodsWithSignature: Record<string, string>[] = this.warningNodes.map((node) => {
       let signature: string
       if (node.nodeType === 'FunctionDefinition') {
         const functionName: string = getFunctionDefinitionName(node)
         signature = helpers.buildAbiSignature(functionName, getMethodParamsSplittedTypeDesc(node, compilationResults.contracts))
-      } else { signature = node.name + '()' }
+      } else {
+        signature = node.name + '()'
+      }
 
       return {
         name: node.name,
         src: node.src,
-        signature: signature
+        signature: signature,
       }
     })
     for (const method of methodsWithSignature) {
@@ -44,17 +57,17 @@ export default class gasCosts implements AnalyzerModule {
           if (methodGas && methodGas.isInfinite) {
             if (methodGas.isFallback) {
               report.push({
-                warning: `Fallback function of contract ${contractName} requires too much gas (${methodGas.msg}). 
+                warning: `Fallback function of contract ${contractName} requires too much gas (${methodGas.msg}).
                 If the fallback function requires more than 2300 gas, the contract cannot receive Ether.`,
-                location: method.src
+                location: method.src,
               })
             } else {
               report.push({
-                warning: `Gas requirement of function ${contractName}.${method.name} ${methodGas.msg}: 
+                warning: `Gas requirement of function ${contractName}.${method.name} ${methodGas.msg}:
                 If the gas requirement of a function is higher than the block gas limit, it cannot be executed.
                 Please avoid loops in your functions or actions that modify large areas of storage
                 (this includes clearing or copying arrays in storage)`,
-                location: method.src
+                location: method.src,
               })
             }
           } else continue
@@ -64,7 +77,7 @@ export default class gasCosts implements AnalyzerModule {
     return report
   }
 
-  private checkMethodGas (contract: CompiledContract, methodSignature: string): Record<string, any> | undefined {
+  private checkMethodGas(contract: CompiledContract, methodSignature: string): Record<string, any> | undefined {
     if (contract.evm && contract.evm.gasEstimates && contract.evm.gasEstimates.external) {
       if (methodSignature === '()') {
         const fallback: string = contract.evm.gasEstimates.external['']
@@ -72,7 +85,7 @@ export default class gasCosts implements AnalyzerModule {
           return {
             isInfinite: true,
             isFallback: true,
-            msg: fallback
+            msg: fallback,
           }
         }
       } else {
@@ -82,7 +95,7 @@ export default class gasCosts implements AnalyzerModule {
           return {
             isInfinite: true,
             isFallback: false,
-            msg: gasString
+            msg: gasString,
           }
         }
       }

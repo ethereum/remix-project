@@ -1,9 +1,9 @@
 /* eslint-disable */
-ace.define("ace/theme/remixDark",["require","exports","module","ace/lib/dom"], function(acequire, exports, module) {
-
-  exports.isDark = true;
-  exports.cssClass = "ace-remixDark";
-  exports.cssText = ".ace-remixDark .ace_gutter {\
+ace.define('ace/theme/remixDark', ['require', 'exports', 'module', 'ace/lib/dom'], function (acequire, exports, module) {
+  exports.isDark = true
+  exports.cssClass = 'ace-remixDark'
+  exports.cssText =
+    ".ace-remixDark .ace_gutter {\
   background: #2a2c3f;\
   color: #8789a1;\
   border-right: 1px solid #282828;\
@@ -173,9 +173,8 @@ ace.define("ace/theme/remixDark",["require","exports","module","ace/lib/dom"], f
   background: #CCC; \
   color: #000;\
   }\
-  ";
-  
-  var dom = acequire("../lib/dom");
-  dom.importCssString(exports.cssText, exports.cssClass);
-  
-  });
+  "
+
+  var dom = acequire('../lib/dom')
+  dom.importCssString(exports.cssText, exports.cssClass)
+})

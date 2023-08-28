@@ -1,17 +1,17 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useEffect, useState, useRef} from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {CopyToClipboard} from '@remix-ui/clipboard'
-import {AccountProps} from '../types'
-import {PassphrasePrompt} from './passphrase'
-import {CustomTooltip} from '@remix-ui/helper'
+import React, { useEffect, useState, useRef } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { CopyToClipboard } from '@remix-ui/clipboard'
+import { AccountProps } from '../types'
+import { PassphrasePrompt } from './passphrase'
+import { CustomTooltip } from '@remix-ui/helper'
 
 export function AccountUI(props: AccountProps) {
-  const {selectedAccount, loadedAccounts} = props.accounts
+  const { selectedAccount, loadedAccounts } = props.accounts
   const accounts = Object.keys(loadedAccounts)
   const [plusOpt, setPlusOpt] = useState({
     classList: '',
-    title: ''
+    title: '',
   })
   const messageRef = useRef('')
 
@@ -27,35 +27,35 @@ export function AccountUI(props: AccountProps) {
       setPlusOpt({
         classList: 'udapp_disableMouseEvents',
         title:
-            "Unfortunately it's not possible to create an account using injected provider. Please create the account directly from your provider (i.e metamask or other of the same type)."
+            "Unfortunately it's not possible to create an account using injected provider. Please create the account directly from your provider (i.e metamask or other of the same type).",
       })
       break
 
     case 'vm-merge':
       setPlusOpt({
         classList: '',
-        title: 'Create a new account'
+        title: 'Create a new account',
       })
       break
 
     case 'vm-london':
       setPlusOpt({
         classList: '',
-        title: 'Create a new account'
+        title: 'Create a new account',
       })
       break
 
     case 'vm-berlin':
       setPlusOpt({
         classList: '',
-        title: 'Create a new account'
+        title: 'Create a new account',
       })
       break
 
     case 'vm-shanghai':
       setPlusOpt({
         classList: '',
-        title: 'Create a new account'
+        title: 'Create a new account',
       })
       break
 
@@ -63,12 +63,12 @@ export function AccountUI(props: AccountProps) {
       if (!props.personalMode) {
         setPlusOpt({
           classList: 'disableMouseEvents',
-          title: 'Creating an account is possible only in Personal mode. Please go to Settings to enable it.'
+          title: 'Creating an account is possible only in Personal mode. Please go to Settings to enable it.',
         })
       } else {
         setPlusOpt({
           classList: '',
-          title: 'Create a new account'
+          title: 'Create a new account',
         })
       }
       break
@@ -76,7 +76,7 @@ export function AccountUI(props: AccountProps) {
     default:
       setPlusOpt({
         classList: 'disableMouseEvents',
-        title: `Unfortunately it's not possible to create an account using an external wallet (${props.selectExEnv}).`
+        title: `Unfortunately it's not possible to create an account using an external wallet (${props.selectExEnv}).`,
       })
     }
     // this._deps.config.get('settings/personal-mode')
@@ -98,7 +98,7 @@ export function AccountUI(props: AccountProps) {
         'OK',
         () => {
           props.modal(
-            intl.formatMessage({id: 'udapp.signAMessage'}),
+            intl.formatMessage({ id: 'udapp.signAMessage' }),
             signMessagePrompt(),
             'OK',
             () => {
@@ -117,7 +117,7 @@ export function AccountUI(props: AccountProps) {
     }
 
     props.modal(
-      intl.formatMessage({id: 'udapp.signAMessage'}),
+      intl.formatMessage({ id: 'udapp.signAMessage' }),
       signMessagePrompt(),
       'OK',
       () => {
@@ -158,7 +158,7 @@ export function AccountUI(props: AccountProps) {
           id="prompt_text"
           className="bg-light text-light"
           data-id="signMessageTextarea"
-          style={{width: '100%'}}
+          style={{ width: '100%' }}
           rows={4}
           cols={50}
           onInput={handleMessageInput}
@@ -215,7 +215,7 @@ export function AccountUI(props: AccountProps) {
             </option>
           ))}
         </select>
-        <div style={{marginLeft: -5}}>
+        <div style={{ marginLeft: -5 }}>
           <CopyToClipboard tip="Copy account to clipboard" content={selectedAccount} direction="top" />
         </div>
         <CustomTooltip placement={'top-start'} tooltipClasses="text-nowrap" tooltipId="remixSignMsgTooltip" tooltipText={'Sign a message using this account'}>

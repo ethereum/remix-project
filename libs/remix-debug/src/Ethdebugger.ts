@@ -10,17 +10,17 @@ import { SolidityProxy, stateDecoder, localDecoder, InternalCallTree } from './s
 import { extractStateVariables } from './solidity-decoder/stateDecoder'
 
 /**
-  * Ethdebugger is a wrapper around a few classes that helps debugging a transaction
-  *
-  * - TraceManager - Load / Analyze the trace and retrieve details of specific test
-  * - CodeManager - Retrieve loaded byte code and help to resolve AST item from vmtrace index
-  * - SolidityProxy - Basically used to extract state variable from AST
-  * - Breakpoint Manager - Used to add / remove / jumpto breakpoint
-  * - InternalCallTree - Used to retrieved local variables
-  * - StorageResolver - Help resolving the storage accross different steps
-  *
-  * @param {Map} opts  -  { function compilationResult } //
-  */
+ * Ethdebugger is a wrapper around a few classes that helps debugging a transaction
+ *
+ * - TraceManager - Load / Analyze the trace and retrieve details of specific test
+ * - CodeManager - Retrieve loaded byte code and help to resolve AST item from vmtrace index
+ * - SolidityProxy - Basically used to extract state variable from AST
+ * - Breakpoint Manager - Used to add / remove / jumpto breakpoint
+ * - InternalCallTree - Used to retrieved local variables
+ * - StorageResolver - Help resolving the storage accross different steps
+ *
+ * @param {Map} opts  -  { function compilationResult } //
+ */
 export class Ethdebugger {
   compilationResult
   web3
@@ -35,8 +35,12 @@ export class Ethdebugger {
   breakpointManager
   offsetToLineColumnConverter
 
-  constructor (opts) {
-    this.compilationResult = opts.compilationResult || function (contractAddress) { return null }
+  constructor(opts) {
+    this.compilationResult =
+      opts.compilationResult ||
+      function (contractAddress) {
+        return null
+      }
     this.offsetToLineColumnConverter = opts.offsetToLineColumnConverter
     this.web3 = opts.web3
     this.opts = opts
@@ -44,71 +48,68 @@ export class Ethdebugger {
     this.event = new EventManager()
     this.traceManager = new TraceManager({ web3: this.web3 })
     this.codeManager = new CodeManager(this.traceManager)
-    this.solidityProxy = new SolidityProxy({ 
-      getCurrentCalledAddressAt: this.traceManager.getCurrentCalledAddressAt.bind(this.traceManager), 
+    this.solidityProxy = new SolidityProxy({
+      getCurrentCalledAddressAt: this.traceManager.getCurrentCalledAddressAt.bind(this.traceManager),
       getCode: this.codeManager.getCode.bind(this.codeManager),
-      compilationResult: this.compilationResult 
+      compilationResult: this.compilationResult,
     })
     this.storageResolver = null
 
     const includeLocalVariables = true
-    this.callTree = new InternalCallTree(this.event,
-      this.traceManager,
-      this.solidityProxy,
-      this.codeManager,
-      { ...opts, includeLocalVariables },
-      this.offsetToLineColumnConverter)
+    this.callTree = new InternalCallTree(this.event, this.traceManager, this.solidityProxy, this.codeManager, { ...opts, includeLocalVariables }, this.offsetToLineColumnConverter)
   }
 
-  setManagers () {
+  setManagers() {
     this.traceManager = new TraceManager({ web3: this.web3 })
     this.codeManager = new CodeManager(this.traceManager)
-    this.solidityProxy = new SolidityProxy({ 
-      getCurrentCalledAddressAt: this.traceManager.getCurrentCalledAddressAt.bind(this.traceManager), 
+    this.solidityProxy = new SolidityProxy({
+      getCurrentCalledAddressAt: this.traceManager.getCurrentCalledAddressAt.bind(this.traceManager),
       getCode: this.codeManager.getCode.bind(this.codeManager),
-      compilationResult: this.compilationResult
+      compilationResult: this.compilationResult,
     })
     this.storageResolver = null
     const includeLocalVariables = true
 
-    this.callTree = new InternalCallTree(this.event,
+    this.callTree = new InternalCallTree(
+      this.event,
       this.traceManager,
       this.solidityProxy,
       this.codeManager,
       { ...this.opts, includeLocalVariables },
-      this.offsetToLineColumnConverter)
+      this.offsetToLineColumnConverter
+    )
   }
 
-  resolveStep (index) {
+  resolveStep(index) {
     this.codeManager.resolveStep(index, this.tx)
   }
 
-  async sourceLocationFromVMTraceIndex (address, stepIndex) {
+  async sourceLocationFromVMTraceIndex(address, stepIndex) {
     const compilationResult = await this.compilationResult(address)
     return this.callTree.sourceLocationTracker.getSourceLocationFromVMTraceIndex(address, stepIndex, compilationResult.data.contracts)
   }
 
-  async getValidSourceLocationFromVMTraceIndex (address, stepIndex) {
+  async getValidSourceLocationFromVMTraceIndex(address, stepIndex) {
     const compilationResult = await this.compilationResult(address)
     return this.callTree.sourceLocationTracker.getValidSourceLocationFromVMTraceIndex(address, stepIndex, compilationResult.data.contracts)
   }
 
-  async sourceLocationFromInstructionIndex (address, instIndex, callback) {
+  async sourceLocationFromInstructionIndex(address, instIndex, callback) {
     const compilationResult = await this.compilationResult(address)
     return this.callTree.sourceLocationTracker.getSourceLocationFromInstructionIndex(address, instIndex, compilationResult.data.contracts)
   }
 
   /* breakpoint */
-  setBreakpointManager (breakpointManager) {
+  setBreakpointManager(breakpointManager) {
     this.breakpointManager = breakpointManager
   }
 
   /* decode locals */
-  extractLocalsAt (step) {
+  extractLocalsAt(step) {
     return this.callTree.findScope(step)
   }
 
-  async decodeLocalVariableByIdAtCurrentStep (step: number, id: number) {
+  async decodeLocalVariableByIdAtCurrentStep(step: number, id: number) {
     const variable = this.callTree.getLocalVariableById(id)
     if (!variable) return null
     const stack = this.traceManager.getStackAt(step)
@@ -119,7 +120,7 @@ export class Ethdebugger {
     return await variable.type.decodeFromStack(variable.stackDepth, stack, memory, storageViewer, calldata, null, variable)
   }
 
-  async decodeStateVariableByIdAtCurrentStep (step: number, id: number) {
+  async decodeStateVariableByIdAtCurrentStep(step: number, id: number) {
     const stateVars = await this.solidityProxy.extractStateVariablesAt(step)
     const variable = stateVars.filter((el) => el.variable.id === id)
     if (variable && variable.length) {
@@ -129,7 +130,7 @@ export class Ethdebugger {
     return null
   }
 
-  async decodeLocalsAt (step, sourceLocation, callback) {
+  async decodeLocalsAt(step, sourceLocation, callback) {
     try {
       const stack = this.traceManager.getStackAt(step)
       const memory = this.traceManager.getMemoryAt(step)
@@ -151,11 +152,11 @@ export class Ethdebugger {
   }
 
   /* decode state */
-  async extractStateAt (step) {
+  async extractStateAt(step) {
     return await this.solidityProxy.extractStateVariablesAt(step)
   }
 
-  async decodeStateAt (step, stateVars, callback?) {
+  async decodeStateAt(step, stateVars, callback?) {
     try {
       callback = callback || (() => {})
       const address = this.traceManager.getCurrentCalledAddressAt(step)
@@ -168,23 +169,23 @@ export class Ethdebugger {
     }
   }
 
-  storageViewAt (step, address) {
+  storageViewAt(step, address) {
     return new StorageViewer({ stepIndex: step, tx: this.tx, address: address }, this.storageResolver, this.traceManager)
   }
 
-  updateWeb3 (web3) {
+  updateWeb3(web3) {
     this.web3 = web3
     this.setManagers()
   }
 
-  unLoad () {
+  unLoad() {
     this.traceManager.init()
     this.codeManager.clear()
     this.solidityProxy.reset()
     this.event.trigger('traceUnloaded')
   }
 
-  async debug (tx) {
+  async debug(tx) {
     if (this.traceManager.isLoading) {
       return
     }

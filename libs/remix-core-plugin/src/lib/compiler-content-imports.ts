@@ -6,18 +6,18 @@ const profile = {
   name: 'contentImport',
   displayName: 'content import',
   version: '0.0.1',
-  methods: ['resolve', 'resolveAndSave', 'isExternalUrl']
+  methods: ['resolve', 'resolveAndSave', 'isExternalUrl'],
 }
 
 export type ResolvedImport = {
-  content: string,
+  content: string
   cleanUrl: string
   type: string
 }
 
 export class CompilerImports extends Plugin {
   urlResolver: any
-  constructor () {
+  constructor() {
     super(profile)
     this.urlResolver = new RemixURLResolver(async () => {
       try {
@@ -44,7 +44,6 @@ export class CompilerImports extends Plugin {
         return {}
       }
     })
-    
   }
 
   onActivation(): void {
@@ -62,7 +61,7 @@ export class CompilerImports extends Plugin {
     })
   }
 
-  async setToken () {
+  async setToken() {
     try {
       const protocol = typeof window !== 'undefined' && window.location.protocol
       const token = await this.call('settings', 'get', 'settings/gist-access-token')
@@ -73,32 +72,37 @@ export class CompilerImports extends Plugin {
     }
   }
 
-  isRelativeImport (url) {
+  isRelativeImport(url) {
     return /^([^/]+)/.exec(url)
   }
 
-  isExternalUrl (url) {
+  isExternalUrl(url) {
     const handlers = this.urlResolver.getHandlers()
     // we filter out "npm" because this will be recognized as internal url although it's not the case.
-    return handlers.filter((handler) => handler.type !== 'npm').some(handler => handler.match(url))
+    return handlers.filter((handler) => handler.type !== 'npm').some((handler) => handler.match(url))
   }
 
   /**
-    * resolve the content of @arg url. This only resolves external URLs.
-    *
-    * @param {String} url  - external URL of the content. can be basically anything like raw HTTP, ipfs URL, github address etc...
-    * @returns {Promise} - { content, cleanUrl, type, url }
-    */
-  resolve (url) {
+   * resolve the content of @arg url. This only resolves external URLs.
+   *
+   * @param {String} url  - external URL of the content. can be basically anything like raw HTTP, ipfs URL, github address etc...
+   * @returns {Promise} - { content, cleanUrl, type, url }
+   */
+  resolve(url) {
     return new Promise((resolve, reject) => {
-      this.import(url, null, (error, content, cleanUrl, type, url) => {
-        if (error) return reject(error)
-        resolve({ content, cleanUrl, type, url })
-      }, null)
+      this.import(
+        url,
+        null,
+        (error, content, cleanUrl, type, url) => {
+          if (error) return reject(error)
+          resolve({ content, cleanUrl, type, url })
+        },
+        null
+      )
     })
   }
 
-  async import (url, force, loadingCb, cb) {
+  async import(url, force, loadingCb, cb) {
     if (typeof force !== 'boolean') {
       const temp = loadingCb
       loadingCb = force
@@ -121,11 +125,14 @@ export class CompilerImports extends Plugin {
     }
   }
 
-  importExternal (url, targetPath) {
+  importExternal(url, targetPath) {
     return new Promise((resolve, reject) => {
-      this.import(url,
+      this.import(
+        url,
         // TODO: handle this event
-        (loadingMsg) => { this.emit('message', loadingMsg) },
+        (loadingMsg) => {
+          this.emit('message', loadingMsg)
+        },
         async (error, content, cleanUrl, type, url) => {
           if (error) return reject(error)
           try {
@@ -136,26 +143,28 @@ export class CompilerImports extends Plugin {
             console.error(err)
           }
           resolve(content)
-        }, null)
+        },
+        null
+      )
     })
   }
 
   /**
-    * import the content of @arg url.
-    * first look in the browser localstorage (browser explorer) or locahost explorer. if the url start with `browser/*` or  `localhost/*`
-    * then check if the @arg url is located in the localhost, in the node_modules or installed_contracts folder
-    * then check if the @arg url match any external url
-    *
-    * @param {String} url - URL of the content. can be basically anything like file located in the browser explorer, in the localhost explorer, raw HTTP, github address etc...
-    * @param {String} targetPath - (optional) internal path where the content should be saved to
-    * @returns {Promise} - string content
-    */
-  async resolveAndSave (url, targetPath) {
+   * import the content of @arg url.
+   * first look in the browser localstorage (browser explorer) or locahost explorer. if the url start with `browser/*` or  `localhost/*`
+   * then check if the @arg url is located in the localhost, in the node_modules or installed_contracts folder
+   * then check if the @arg url match any external url
+   *
+   * @param {String} url - URL of the content. can be basically anything like file located in the browser explorer, in the localhost explorer, raw HTTP, github address etc...
+   * @param {String} targetPath - (optional) internal path where the content should be saved to
+   * @returns {Promise} - string content
+   */
+  async resolveAndSave(url, targetPath) {
     try {
       if (targetPath && this.currentRequest) {
         const canCall = await this.askUserPermission('resolveAndSave', 'This action will update the path ' + targetPath)
         if (!canCall) throw new Error('No permission to update ' + targetPath)
-      }      
+      }
       const provider = await this.call('fileManager', 'getProviderOf', url)
       if (provider) {
         if (provider.type === 'localhost' && !provider.isConnected()) {

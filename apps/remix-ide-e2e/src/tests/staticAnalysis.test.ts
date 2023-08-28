@@ -16,9 +16,9 @@ contract TooMuchGas {
     uint test;
     uint test1;
   }
-}`
-    }
-  }
+}`,
+    },
+  },
 ]
 
 module.exports = {
@@ -59,10 +59,10 @@ module.exports = {
       .pause(1000)
       .assert.containsText('span#ssaRemixtab > *[data-id="RemixStaticAnalysisErrorCount', '1')
       .end()
-  }
+  },
 }
 
-function runTests (browser: NightwatchBrowser) {
+function runTests(browser: NightwatchBrowser) {
   browser
     .waitForElementVisible('#icon-panel', 10000)
     .clickLaunchIcon('solidity')
@@ -71,29 +71,36 @@ function runTests (browser: NightwatchBrowser) {
     .clickLaunchIcon('solidityStaticAnalysis')
     .click('#staticanalysisButton button')
     .waitForElementPresent('#staticanalysisresult .warning', 2000, 500, true, function () {
-      listSelectorContains(['Use of tx.origin',
-        'Fallback function of contract TooMuchGas requires too much gas',
-        'TooMuchGas.() : Variables have very similar names "test" and "test1".',
-        'TooMuchGas.() : Variables have very similar names "test" and "test1".'],
+      listSelectorContains(
+        [
+          'Use of tx.origin',
+          'Fallback function of contract TooMuchGas requires too much gas',
+          'TooMuchGas.() : Variables have very similar names "test" and "test1".',
+          'TooMuchGas.() : Variables have very similar names "test" and "test1".',
+        ],
         '#staticanalysisresult .warning',
         browser
       )
     })
 }
 
-function listSelectorContains (textsToFind: string[], selector: string, browser: NightwatchBrowser) {
-  browser.execute(function (selector) {
-    const items = document.querySelectorAll(selector)
-    const ret = []
-    for (let k = 0; k < items.length; k++) {
-      ret.push(items[k].innerText)
+function listSelectorContains(textsToFind: string[], selector: string, browser: NightwatchBrowser) {
+  browser.execute(
+    function (selector) {
+      const items = document.querySelectorAll(selector)
+      const ret = []
+      for (let k = 0; k < items.length; k++) {
+        ret.push(items[k].innerText)
+      }
+      return ret
+    },
+    [selector],
+    function (result) {
+      console.log(result.value)
+      for (const k in textsToFind) {
+        console.log('testing `' + result.value[k] + '` against `' + textsToFind[k] + '`')
+        browser.assert.equal(result.value[k].indexOf(textsToFind[k]) !== -1, true)
+      }
     }
-    return ret
-  }, [selector], function (result) {
-    console.log(result.value)
-    for (const k in textsToFind) {
-      console.log('testing `' + result.value[k] + '` against `' + textsToFind[k] + '`')
-      browser.assert.equal(result.value[k].indexOf(textsToFind[k]) !== -1, true)
-    }
-  })
+  )
 }

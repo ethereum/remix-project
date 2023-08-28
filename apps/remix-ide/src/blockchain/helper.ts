@@ -4,10 +4,10 @@ const transactionDetailsLinks = {
   Ropsten: 'https://ropsten.etherscan.io/tx/',
   Kovan: 'https://kovan.etherscan.io/tx/',
   Goerli: 'https://goerli.etherscan.io/tx/',
-  Sepolia: 'https://sepolia.etherscan.io/tx/'
+  Sepolia: 'https://sepolia.etherscan.io/tx/',
 }
-  
-export function etherScanLink (network: string, hash: string): string {
+
+export function etherScanLink(network: string, hash: string): string {
   if (transactionDetailsLinks[network]) {
     return transactionDetailsLinks[network] + hash
   }

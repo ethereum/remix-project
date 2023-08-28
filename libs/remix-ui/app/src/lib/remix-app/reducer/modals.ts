@@ -22,7 +22,7 @@ export const modalReducer = (state: ModalState = ModalInitialState, action: Moda
       hideFn: action.payload.hideFn,
       resolve: action.payload.resolve,
       next: action.payload.next,
-      data: action.payload.data
+      data: action.payload.data,
     }
 
     const modalList: AppModal[] = state.modals.slice()

@@ -19,11 +19,11 @@ const profile = {
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/debugger.html',
   version: packageJson.version,
-  maintainedBy: 'Remix'
+  maintainedBy: 'Remix',
 }
 
 export class DebuggerTab extends DebuggerApiMixin(ViewPlugin) {
-  constructor () {
+  constructor() {
     super(profile)
     this.el = document.createElement('div')
     this.el.setAttribute('id', 'debugView')
@@ -31,7 +31,7 @@ export class DebuggerTab extends DebuggerApiMixin(ViewPlugin) {
     this.initDebuggerApi()
   }
 
-  render () {
+  render() {
     this.on('fetchAndCompile', 'compiling', (settings) => {
       settings = JSON.stringify(settings, null, '\t')
       this.call('notification', 'toast', compilingToastMsg(settings))
@@ -48,66 +48,72 @@ export class DebuggerTab extends DebuggerApiMixin(ViewPlugin) {
     this.on('fetchAndCompile', 'sourceVerificationNotAvailable', () => {
       this.call('notification', 'toast', sourceVerificationNotAvailableToastMsg())
     })
-    const onReady = (api) => { this.api = api }
-    return <div className="overflow-hidden px-1" id='debugView'><DebuggerUI debuggerAPI={this} onReady={onReady} /></div>
+    const onReady = (api) => {
+      this.api = api
+    }
+    return (
+      <div className="overflow-hidden px-1" id="debugView">
+        <DebuggerUI debuggerAPI={this} onReady={onReady} />
+      </div>
+    )
   }
 
-  showMessage (title, message) {
+  showMessage(title, message) {
     try {
       this.call('notification', 'alert', {
         id: 'debuggerTabShowMessage',
         title,
-        message: bleach.sanitize(message)
+        message: bleach.sanitize(message),
       })
     } catch (e) {
       console.log(e)
     }
   }
 
-  async decodeLocalVariable (variableId) {
+  async decodeLocalVariable(variableId) {
     if (!this.debuggerBackend) return null
     return await this.debuggerBackend.debugger.decodeLocalVariableByIdAtCurrentStep(this.debuggerBackend.step_manager.currentStepIndex, variableId)
   }
 
-  async decodeStateVariable (variableId) {
+  async decodeStateVariable(variableId) {
     if (!this.debuggerBackend) return null
     return await this.debuggerBackend.debugger.decodeStateVariableByIdAtCurrentStep(this.debuggerBackend.step_manager.currentStepIndex, variableId)
   }
 
-  async globalContext () {
+  async globalContext() {
     if (this.api?.globalContext) {
       const { tx, block } = await this.api.globalContext()
       const blockContext = {
-        'chainid': tx.chainId,
-        'coinbase': block.miner,
-        'difficulty': block.difficulty,
-        'gaslimit': block.gasLimit,
-        'number': block.number,
-        'timestamp': block.timestamp,
+        chainid: tx.chainId,
+        coinbase: block.miner,
+        difficulty: block.difficulty,
+        gaslimit: block.gasLimit,
+        number: block.number,
+        timestamp: block.timestamp,
       }
       if (block.baseFeePerGas) {
         blockContext['basefee'] = Web3.utils.toBN(block.baseFeePerGas).toString(10) + ` Wei (${block.baseFeePerGas})`
       }
-      const msg = {     
-        'sender': tx.from,
-        'sig': tx.input.substring(0, 10),
-        'value': tx.value + ' Wei'
+      const msg = {
+        sender: tx.from,
+        sig: tx.input.substring(0, 10),
+        value: tx.value + ' Wei',
       }
 
       const txOrigin = {
-        'origin': tx.from
+        origin: tx.from,
       }
-      
+
       return {
         block: blockContext,
         msg,
-        tx: txOrigin
+        tx: txOrigin,
       }
     } else {
       return {
         block: null,
         msg: null,
-        tx: null
+        tx: null,
       }
     }
   }

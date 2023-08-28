@@ -1,22 +1,22 @@
 'use strict'
 
-import { AstNode } from "@remix-project/remix-solidity"
-import { CodeParser } from "../code-parser"
+import { AstNode } from '@remix-project/remix-solidity'
+import { CodeParser } from '../code-parser'
 import { antlr } from '../types'
 import { pathToFileURL } from 'url'
 
-const SolidityParser = (window as any).SolidityParser = (window as any).SolidityParser || []
+const SolidityParser = ((window as any).SolidityParser = (window as any).SolidityParser || [])
 
 interface BlockDefinition {
-    end: number
-    endColumn: number
-    endLine: number
-    name: string
-    parent: string
-    start: number
-    startColumn: number
-    startLine: number
-    type: string
+  end: number
+  endColumn: number
+  endLine: number
+  name: string
+  parent: string
+  start: number
+  startColumn: number
+  startLine: number
+  type: string
 }
 
 export default class CodeParserAntlrService {
@@ -27,15 +27,15 @@ export default class CodeParserAntlrService {
   parserThreshold: number = 10
   parserThresholdSampleAmount = 3
   cache: {
-        [name: string]: {
-            text: string,
-            ast: antlr.ParseResult | null,
-            duration?: number,
-            parsingEnabled?: boolean,
-            blocks?: BlockDefinition[],
-            blockDurations?: number[]
-        }
-    } = {};
+    [name: string]: {
+      text: string
+      ast: antlr.ParseResult | null
+      duration?: number
+      parsingEnabled?: boolean
+      blocks?: BlockDefinition[]
+      blockDurations?: number[]
+    }
+  } = {}
   constructor(plugin: CodeParser) {
     this.plugin = plugin
     this.createWorker()
@@ -46,7 +46,7 @@ export default class CodeParserAntlrService {
     this.worker.postMessage({
       cmd: 'load',
       url: document.location.protocol + '//' + document.location.host + '/assets/js/parser/antlr.js',
-    });
+    })
     const self = this
 
     this.worker.addEventListener('message', function (ev) {
@@ -59,14 +59,15 @@ export default class CodeParserAntlrService {
             ast: ev.data.ast,
             duration: ev.data.duration,
             blocks: ev.data.blocks,
-            blockDurations: self.cache[ev.data.file].blockDurations? [...self.cache[ev.data.file].blockDurations.slice(-self.parserThresholdSampleAmount), ev.data.blockDuration]: [ev.data.blockDuration]
+            blockDurations: self.cache[ev.data.file].blockDurations
+              ? [...self.cache[ev.data.file].blockDurations.slice(-self.parserThresholdSampleAmount), ev.data.blockDuration]
+              : [ev.data.blockDuration],
           }
           self.setFileParsingState(ev.data.file)
         }
-        break;
+        break
       }
-
-    });
+    })
   }
 
   setFileParsingState(file: string) {
@@ -79,7 +80,7 @@ export default class CodeParserAntlrService {
           this.cache[file].parsingEnabled = false
         } else {
           this.cache[file].parsingEnabled = true
-        }              
+        }
       }
     }
   }
@@ -96,7 +97,6 @@ export default class CodeParserAntlrService {
     clearInterval(this.workerTimer)
   }
 
-
   async parseWithWorker(text: string, file: string) {
     this.parserStartTime = Date.now()
     this.worker.postMessage({
@@ -104,9 +104,8 @@ export default class CodeParserAntlrService {
       text,
       timestamp: this.parserStartTime,
       file,
-      parsingEnabled: (this.cache[file] && this.cache[file].parsingEnabled) || true
-    });
-
+      parsingEnabled: (this.cache[file] && this.cache[file].parsingEnabled) || true,
+    })
   }
 
   async parseSolidity(text: string) {
@@ -115,22 +114,22 @@ export default class CodeParserAntlrService {
   }
 
   /**
-     * Tries to parse the current file or the given text and returns the AST
-     * If the parsing fails it returns the last successful AST for this file
-     * @param text 
-     * @returns 
-     */
+   * Tries to parse the current file or the given text and returns the AST
+   * If the parsing fails it returns the last successful AST for this file
+   * @param text
+   * @returns
+   */
   async setCurrentFileAST(text: string | null = null) {
     try {
       this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
       if (this.plugin.currentFile && this.plugin.currentFile.endsWith('.sol')) {
-        const fileContent = text || await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile)
+        const fileContent = text || (await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile))
         if (!this.cache[this.plugin.currentFile]) {
           this.cache[this.plugin.currentFile] = {
             text: '',
             ast: null,
             parsingEnabled: true,
-            blockDurations: []
+            blockDurations: [],
           }
         }
         if (this.cache[this.plugin.currentFile] && this.cache[this.plugin.currentFile].text !== fileContent) {
@@ -147,15 +146,15 @@ export default class CodeParserAntlrService {
   }
 
   /**
-    * Lists the AST nodes from the current file parser
-    * These nodes need to be changed to match the node types returned by the compiler
-    * @returns 
-    */
+   * Lists the AST nodes from the current file parser
+   * These nodes need to be changed to match the node types returned by the compiler
+   * @returns
+   */
   async listAstNodes() {
     this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
     if (!this.cache[this.plugin.currentFile]) return
-    const nodes: AstNode[] = [];
-    (SolidityParser as any).visit(this.cache[this.plugin.currentFile].ast, {
+    const nodes: AstNode[] = []
+    ;(SolidityParser as any).visit(this.cache[this.plugin.currentFile].ast, {
       StateVariableDeclaration: (node: antlr.StateVariableDeclaration) => {
         if (node.variables) {
           for (const variable of node.variables) {
@@ -195,18 +194,16 @@ export default class CodeParserAntlrService {
       },
       StructDefinition: function (node: antlr.StructDefinition) {
         nodes.push({ ...node, nodeType: node.type, id: null, src: null })
-      }
-
+      },
     })
     return nodes
   }
 
-
   /**
-     * 
-     * @param ast 
-     * @returns 
-     */
+   *
+   * @param ast
+   * @returns
+   */
   async getLastNodeInLine(ast: string) {
     let lastNode: any
     const checkLastNode = (node: antlr.MemberAccess | antlr.Identifier) => {
@@ -219,13 +216,13 @@ export default class CodeParserAntlrService {
       }
     }
 
-    (SolidityParser as any).visit(ast, {
+    ;(SolidityParser as any).visit(ast, {
       MemberAccess: function (node: antlr.MemberAccess) {
         checkLastNode(node)
       },
       Identifier: function (node: antlr.Identifier) {
         checkLastNode(node)
-      }
+      },
     })
     if (lastNode && lastNode.expression) {
       return lastNode.expression
@@ -233,8 +230,8 @@ export default class CodeParserAntlrService {
     return lastNode
   }
   /*
-    * get the code blocks of the current file
-    */
+   * get the code blocks of the current file
+   */
   async getCurrentFileBlocks(text: string | null = null) {
     this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
     if (this.cache[this.plugin.currentFile]) {
@@ -243,12 +240,15 @@ export default class CodeParserAntlrService {
       }
     }
     if (this.plugin.currentFile && this.plugin.currentFile.endsWith('.sol')) {
-      const fileContent = text || await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile)
+      const fileContent = text || (await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile))
       try {
         const startTime = Date.now()
         const blocks = (SolidityParser as any).parseBlock(fileContent, { loc: true, range: true, tolerant: true })
-        if(this.cache[this.plugin.currentFile] && this.cache[this.plugin.currentFile].blockDurations){
-          this.cache[this.plugin.currentFile].blockDurations = [...this.cache[this.plugin.currentFile].blockDurations.slice(-this.parserThresholdSampleAmount), Date.now() - startTime]
+        if (this.cache[this.plugin.currentFile] && this.cache[this.plugin.currentFile].blockDurations) {
+          this.cache[this.plugin.currentFile].blockDurations = [
+            ...this.cache[this.plugin.currentFile].blockDurations.slice(-this.parserThresholdSampleAmount),
+            Date.now() - startTime,
+          ]
           this.setFileParsingState(this.plugin.currentFile)
         }
         if (blocks) this.cache[this.plugin.currentFile].blocks = blocks
@@ -260,12 +260,12 @@ export default class CodeParserAntlrService {
   }
 
   /**
-    * Returns the block surrounding the given position
-    * For example if the position is in the middle of a function, it will return the function
-    * @param {position} position
-    * @param {string} text // optional
-    * @return {any}
-    * */
+   * Returns the block surrounding the given position
+   * For example if the position is in the middle of a function, it will return the function
+   * @param {position} position
+   * @param {string} text // optional
+   * @return {any}
+   * */
   async getANTLRBlockAtPosition(position: any, text: string = null) {
     const blocks: any[] = await this.getCurrentFileBlocks(text)
 
@@ -284,5 +284,4 @@ export default class CodeParserAntlrService {
     const block = walkAst(blocks)
     return block
   }
-
 }

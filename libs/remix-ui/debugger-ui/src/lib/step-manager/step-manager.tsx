@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react' // eslint-disable-line
+import React, { useState, useEffect } from 'react' // eslint-disable-line
 import Slider from '../slider/slider' // eslint-disable-line
 import ButtonNavigator from '../button-navigator/button-navigator' // eslint-disable-line
 
@@ -14,14 +14,14 @@ export const StepManager = ({
     jumpNextBreakpoint,
     jumpPreviousBreakpoint,
     jumpToException,
-    registerEvent
-  }
+    registerEvent,
+  },
 }) => {
   const [state, setState] = useState({
     sliderValue: -1,
     revertWarning: '',
     stepState: '',
-    jumpOutDisabled: true
+    jumpOutDisabled: true,
   })
 
   useEffect(() => {
@@ -31,16 +31,16 @@ export const StepManager = ({
 
   const setRevertWarning = (warning) => {
     setState((prevState) => {
-      return {...prevState, revertWarning: warning}
+      return { ...prevState, revertWarning: warning }
     })
   }
 
   const updateStep = (step, stepState, jumpOutDisabled) => {
     setState((prevState) => {
-      return {...prevState, sliderValue: step, stepState, jumpOutDisabled}
+      return { ...prevState, sliderValue: step, stepState, jumpOutDisabled }
     })
   }
-  const {sliderValue, revertWarning, stepState, jumpOutDisabled} = state
+  const { sliderValue, revertWarning, stepState, jumpOutDisabled } = state
 
   return (
     <div className="py-1">

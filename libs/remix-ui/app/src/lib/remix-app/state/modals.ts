@@ -8,11 +8,13 @@ export const ModalInitialState: ModalState = {
     hide: true,
     title: '',
     message: '',
-    validationFn: () => { return { valid: true, message: '' } },
+    validationFn: () => {
+      return { valid: true, message: '' }
+    },
     okLabel: '',
-    okFn: () => { },
+    okFn: () => {},
     cancelLabel: '',
-    cancelFn: () => { }
+    cancelFn: () => {},
   },
-  focusToaster: { message: '', timestamp: 0 }
+  focusToaster: { message: '', timestamp: 0 },
 }

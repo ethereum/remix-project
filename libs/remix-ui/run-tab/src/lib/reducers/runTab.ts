@@ -1,6 +1,58 @@
 import { ContractData } from '@remix-project/core-plugin'
 import { ContractList, DeployOptions, RunTabState } from '../types'
-import { ADD_INSTANCE, UPDATE_INSTANCES_BALANCE, ADD_PROVIDER, CLEAR_INSTANCES, CLEAR_RECORDER_COUNT, DISPLAY_NOTIFICATION, DISPLAY_POPUP_MESSAGE, FETCH_ACCOUNTS_LIST_FAILED, FETCH_ACCOUNTS_LIST_REQUEST, FETCH_ACCOUNTS_LIST_SUCCESS, FETCH_CONTRACT_LIST_FAILED, FETCH_CONTRACT_LIST_REQUEST, FETCH_CONTRACT_LIST_SUCCESS, FETCH_PROVIDER_LIST_FAILED, FETCH_PROVIDER_LIST_REQUEST, FETCH_PROVIDER_LIST_SUCCESS, HIDE_NOTIFICATION, HIDE_POPUP_MESSAGE, REMOVE_INSTANCE, REMOVE_PROVIDER, RESET_STATE, SET_BASE_FEE_PER_GAS, SET_CONFIRM_SETTINGS, SET_CURRENT_CONTRACT, SET_CURRENT_FILE, SET_DECODED_RESPONSE, SET_DEPLOY_OPTIONS, SET_EXECUTION_ENVIRONMENT, SET_EXTERNAL_WEB3_ENDPOINT, SET_GAS_LIMIT, SET_GAS_PRICE, SET_GAS_PRICE_STATUS, SET_IPFS_CHECKED_STATE, SET_LOAD_TYPE, SET_MATCH_PASSPHRASE, SET_MAX_FEE, SET_MAX_PRIORITY_FEE, SET_NETWORK_NAME, SET_PASSPHRASE, SET_PATH_TO_SCENARIO, SET_PERSONAL_MODE, SET_RECORDER_COUNT, SET_SELECTED_ACCOUNT, SET_SEND_UNIT, SET_SEND_VALUE, ADD_DEPLOY_OPTION, REMOVE_DEPLOY_OPTION, SET_REMIXD_ACTIVATED, FETCH_PROXY_DEPLOYMENTS, NEW_PROXY_DEPLOYMENT, RESET_PROXY_DEPLOYMENTS } from '../constants'
+import {
+  ADD_INSTANCE,
+  UPDATE_INSTANCES_BALANCE,
+  ADD_PROVIDER,
+  CLEAR_INSTANCES,
+  CLEAR_RECORDER_COUNT,
+  DISPLAY_NOTIFICATION,
+  DISPLAY_POPUP_MESSAGE,
+  FETCH_ACCOUNTS_LIST_FAILED,
+  FETCH_ACCOUNTS_LIST_REQUEST,
+  FETCH_ACCOUNTS_LIST_SUCCESS,
+  FETCH_CONTRACT_LIST_FAILED,
+  FETCH_CONTRACT_LIST_REQUEST,
+  FETCH_CONTRACT_LIST_SUCCESS,
+  FETCH_PROVIDER_LIST_FAILED,
+  FETCH_PROVIDER_LIST_REQUEST,
+  FETCH_PROVIDER_LIST_SUCCESS,
+  HIDE_NOTIFICATION,
+  HIDE_POPUP_MESSAGE,
+  REMOVE_INSTANCE,
+  REMOVE_PROVIDER,
+  RESET_STATE,
+  SET_BASE_FEE_PER_GAS,
+  SET_CONFIRM_SETTINGS,
+  SET_CURRENT_CONTRACT,
+  SET_CURRENT_FILE,
+  SET_DECODED_RESPONSE,
+  SET_DEPLOY_OPTIONS,
+  SET_EXECUTION_ENVIRONMENT,
+  SET_EXTERNAL_WEB3_ENDPOINT,
+  SET_GAS_LIMIT,
+  SET_GAS_PRICE,
+  SET_GAS_PRICE_STATUS,
+  SET_IPFS_CHECKED_STATE,
+  SET_LOAD_TYPE,
+  SET_MATCH_PASSPHRASE,
+  SET_MAX_FEE,
+  SET_MAX_PRIORITY_FEE,
+  SET_NETWORK_NAME,
+  SET_PASSPHRASE,
+  SET_PATH_TO_SCENARIO,
+  SET_PERSONAL_MODE,
+  SET_RECORDER_COUNT,
+  SET_SELECTED_ACCOUNT,
+  SET_SEND_UNIT,
+  SET_SEND_VALUE,
+  ADD_DEPLOY_OPTION,
+  REMOVE_DEPLOY_OPTION,
+  SET_REMIXD_ACTIVATED,
+  FETCH_PROXY_DEPLOYMENTS,
+  NEW_PROXY_DEPLOYMENT,
+  RESET_PROXY_DEPLOYMENTS,
+} from '../constants'
 
 declare const window: any
 interface Action {
@@ -14,7 +66,7 @@ export const runTabInitialState: RunTabState = {
     isRequesting: false,
     isSuccessful: false,
     error: null,
-    selectedAccount: ''
+    selectedAccount: '',
   },
   sendValue: '0',
   sendUnit: 'wei',
@@ -26,7 +78,7 @@ export const runTabInitialState: RunTabState = {
     providerList: [],
     isRequesting: false,
     isSuccessful: false,
-    error: null
+    error: null,
   },
   notification: {
     title: '',
@@ -34,7 +86,7 @@ export const runTabInitialState: RunTabState = {
     actionOk: () => {},
     actionCancel: () => {},
     labelOk: '',
-    labelCancel: ''
+    labelCancel: '',
   },
   externalEndpoint: 'http://127.0.0.1:8545',
   popup: '',
@@ -50,7 +102,7 @@ export const runTabInitialState: RunTabState = {
     compilationCount: 0,
     isRequesting: false,
     isSuccessful: false,
-    error: null
+    error: null,
   },
   ipfsChecked: false,
   gasPriceStatus: false,
@@ -61,23 +113,23 @@ export const runTabInitialState: RunTabState = {
   gasPrice: '',
   instances: {
     instanceList: [],
-    error: null
+    error: null,
   },
   recorder: {
     pathToScenario: 'scenario.json',
-    transactionCount: 0
+    transactionCount: 0,
   },
   remixdActivated: false,
   proxy: {
-    deployments: []
-  }
+    deployments: [],
+  },
 }
 
 type AddProvider = {
-  name: string,
-  displayName: string,
-  provider: any,
-  title?: string,
+  name: string
+  displayName: string
+  provider: any
+  title?: string
   dataId?: string
 }
 
@@ -90,8 +142,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         ...state.accounts,
         isRequesting: true,
         isSuccessful: false,
-        error: null
-      }
+        error: null,
+      },
     }
   }
 
@@ -105,8 +157,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         loadedAccounts: payload,
         isSuccessful: true,
         isRequesting: false,
-        error: null
-      }
+        error: null,
+      },
     }
   }
 
@@ -119,8 +171,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         ...state.accounts,
         isRequesting: false,
         isSuccessful: false,
-        error: payload
-      }
+        error: payload,
+      },
     }
   }
 
@@ -129,7 +181,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
     return {
       ...state,
-      sendValue: payload
+      sendValue: payload,
     }
   }
 
@@ -140,8 +192,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       ...state,
       accounts: {
         ...state.accounts,
-        selectedAccount: payload
-      }
+        selectedAccount: payload,
+      },
     }
   }
 
@@ -150,7 +202,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
     return {
       ...state,
-      sendUnit: payload
+      sendUnit: payload,
     }
   }
 
@@ -159,7 +211,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
     return {
       ...state,
-      gasLimit: payload
+      gasLimit: payload,
     }
   }
 
@@ -173,8 +225,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       accounts: {
         ...state.accounts,
         selectedAccount: '',
-        loadedAccounts: {}
-      }
+        loadedAccounts: {},
+      },
     }
   }
 
@@ -183,7 +235,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
     return {
       ...state,
-      personalMode: payload
+      personalMode: payload,
     }
   }
 
@@ -192,7 +244,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
     return {
       ...state,
-      networkName: payload
+      networkName: payload,
     }
   }
 
@@ -203,13 +255,13 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         ...state.providers,
         isRequesting: true,
         isSuccessful: false,
-        error: null
-      }
+        error: null,
+      },
     }
   }
 
   case FETCH_PROVIDER_LIST_SUCCESS: {
-    const payload: { id?: string, dataId?: string, title?: string, value: string, fork?: string, content: string }[] = action.payload
+    const payload: { id?: string; dataId?: string; title?: string; value: string; fork?: string; content: string }[] = action.payload
 
     return {
       ...state,
@@ -218,8 +270,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         providerList: payload,
         isSuccessful: true,
         isRequesting: false,
-        error: null
-      }
+        error: null,
+      },
     }
   }
 
@@ -232,8 +284,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         ...state.providers,
         isRequesting: false,
         isSuccessful: false,
-        error: payload
-      }
+        error: payload,
+      },
     }
   }
 
@@ -245,14 +297,14 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       dataId: payload.dataId,
       id,
       title: payload.title,
-      value: id
+      value: id,
     })
     return {
       ...state,
       providers: {
         ...state.providers,
-        providerList: state.providers.providerList
-      }
+        providerList: state.providers.providerList,
+      },
     }
   }
 
@@ -263,13 +315,13 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       ...state,
       providers: {
         ...state.providers,
-        providerList: providers
-      }
+        providerList: providers,
+      },
     }
   }
 
   case DISPLAY_NOTIFICATION: {
-    const payload = action.payload as { title: string, message: string, actionOk: () => void, actionCancel: () => void, labelOk: string, labelCancel: string }
+    const payload = action.payload as { title: string; message: string; actionOk: () => void; actionCancel: () => void; labelOk: string; labelCancel: string }
 
     return {
       ...state,
@@ -279,15 +331,15 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         actionOk: payload.actionOk || runTabInitialState.notification.actionOk,
         actionCancel: payload.actionCancel || runTabInitialState.notification.actionCancel,
         labelOk: payload.labelOk,
-        labelCancel: payload.labelCancel
-      }
+        labelCancel: payload.labelCancel,
+      },
     }
   }
 
   case HIDE_NOTIFICATION: {
     return {
       ...state,
-      notification: runTabInitialState.notification
+      notification: runTabInitialState.notification,
     }
   }
 
@@ -296,7 +348,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
     return {
       ...state,
-      externalEndpoint: payload
+      externalEndpoint: payload,
     }
   }
 
@@ -305,14 +357,14 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
     return {
       ...state,
-      popup: payload
+      popup: payload,
     }
   }
 
   case HIDE_POPUP_MESSAGE: {
     return {
       ...state,
-      popup: ''
+      popup: '',
     }
   }
 
@@ -321,7 +373,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
     return {
       ...state,
-      passphrase
+      passphrase,
     }
   }
 
@@ -330,7 +382,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
     return {
       ...state,
-      matchPassphrase: passphrase
+      matchPassphrase: passphrase,
     }
   }
 
@@ -341,8 +393,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         ...state.contracts,
         isRequesting: true,
         isSuccessful: false,
-        error: null
-      }
+        error: null,
+      },
     }
   }
 
@@ -356,8 +408,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         contractList: { ...state.contracts.contractList, ...payload },
         isSuccessful: true,
         isRequesting: false,
-        error: null
-      }
+        error: null,
+      },
     }
   }
 
@@ -370,8 +422,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         ...state.contracts,
         isRequesting: false,
         isSuccessful: false,
-        error: payload
-      }
+        error: payload,
+      },
     }
   }
 
@@ -382,8 +434,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       ...state,
       contracts: {
         ...state.contracts,
-        currentContract: payload
-      }
+        currentContract: payload,
+      },
     }
   }
 
@@ -394,8 +446,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       ...state,
       contracts: {
         ...state.contracts,
-        loadType: payload
-      }
+        loadType: payload,
+      },
     }
   }
 
@@ -407,17 +459,17 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       contracts: {
         ...state.contracts,
         currentFile: payload,
-        compilationCount: state.contracts.compilationCount + 1
-      }
+        compilationCount: state.contracts.compilationCount + 1,
+      },
     }
   }
-    
+
   case SET_IPFS_CHECKED_STATE: {
     const payload: boolean = action.payload
 
     return {
       ...state,
-      ipfsChecked: payload
+      ipfsChecked: payload,
     }
   }
 
@@ -426,7 +478,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
     return {
       ...state,
-      gasPriceStatus: payload
+      gasPriceStatus: payload,
     }
   }
 
@@ -435,7 +487,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
     return {
       ...state,
-      confirmSettings: payload
+      confirmSettings: payload,
     }
   }
 
@@ -444,7 +496,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
     return {
       ...state,
-      maxFee: payload
+      maxFee: payload,
     }
   }
 
@@ -453,7 +505,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
     return {
       ...state,
-      maxPriorityFee: payload
+      maxPriorityFee: payload,
     }
   }
 
@@ -462,7 +514,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
     return {
       ...state,
-      baseFeePerGas: payload
+      baseFeePerGas: payload,
     }
   }
 
@@ -471,31 +523,31 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
 
     return {
       ...state,
-      gasPrice: payload
+      gasPrice: payload,
     }
   }
 
   case ADD_INSTANCE: {
-    const payload: { contractData: ContractData, address: string, name: string, abi?: any, decodedResponse?: Record<number, any> } = action.payload
+    const payload: { contractData: ContractData; address: string; name: string; abi?: any; decodedResponse?: Record<number, any> } = action.payload
 
     return {
       ...state,
       instances: {
         ...state.instances,
-        instanceList: [...state.instances.instanceList, payload]
-      }
+        instanceList: [...state.instances.instanceList, payload],
+      },
     }
   }
 
   case UPDATE_INSTANCES_BALANCE: {
-    const payload: Array<{ contractData: ContractData, address: string, balance: number, name: string, abi?: any, decodedResponse?: Record<number, any> }> = action.payload
+    const payload: Array<{ contractData: ContractData; address: string; balance: number; name: string; abi?: any; decodedResponse?: Record<number, any> }> = action.payload
 
     return {
       ...state,
       instances: {
         ...state.instances,
-        instanceList: payload
-      }
+        instanceList: payload,
+      },
     }
   }
 
@@ -506,8 +558,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       ...state,
       instances: {
         ...state.instances,
-        instanceList: state.instances.instanceList.filter((_, index) => index !== payload)
-      }
+        instanceList: state.instances.instanceList.filter((_, index) => index !== payload),
+      },
     }
   }
 
@@ -516,13 +568,13 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       ...state,
       instances: {
         instanceList: [],
-        error: null
-      }
+        error: null,
+      },
     }
   }
 
   case SET_DECODED_RESPONSE: {
-    const payload: { instanceIndex: number, funcIndex: number, response: any } = action.payload
+    const payload: { instanceIndex: number; funcIndex: number; response: any } = action.payload
 
     return {
       ...state,
@@ -531,8 +583,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         instanceList: state.instances.instanceList.map((instance, index) => {
           if (payload.instanceIndex === index) instance.decodedResponse[payload.funcIndex] = payload.response
           return instance
-        })
-      }
+        }),
+      },
     }
   }
 
@@ -543,8 +595,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       ...state,
       recorder: {
         ...state.recorder,
-        pathToScenario: payload
-      }
+        pathToScenario: payload,
+      },
     }
   }
 
@@ -555,8 +607,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       ...state,
       recorder: {
         ...state.recorder,
-        transactionCount: payload
-      }
+        transactionCount: payload,
+      },
     }
   }
 
@@ -565,15 +617,15 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       ...state,
       recorder: {
         ...state.recorder,
-        transactionCount: 0
-      }
+        transactionCount: 0,
+      },
     }
   }
 
   case RESET_STATE: {
     return {
       ...runTabInitialState,
-      ipfsChecked: state.ipfsChecked
+      ipfsChecked: state.ipfsChecked,
     }
   }
 
@@ -584,8 +636,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       ...state,
       contracts: {
         ...state.contracts,
-        deployOptions: {...state.contracts.deployOptions, ...payload }
-      }
+        deployOptions: { ...state.contracts.deployOptions, ...payload },
+      },
     }
   }
 
@@ -598,8 +650,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       ...state,
       contracts: {
         ...state.contracts,
-        deployOptions: options
-      }
+        deployOptions: options,
+      },
     }
   }
 
@@ -610,8 +662,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       ...state,
       contracts: {
         ...state.contracts,
-        deployOptions: payload
-      }
+        deployOptions: payload,
+      },
     }
   }
 
@@ -619,31 +671,31 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
     const payload: boolean = action.payload
     return {
       ...state,
-      remixdActivated: payload
+      remixdActivated: payload,
     }
   }
 
   case FETCH_PROXY_DEPLOYMENTS: {
-    const payload: { address: string, date: string, contractName: string }[] = action.payload
+    const payload: { address: string; date: string; contractName: string }[] = action.payload
 
     return {
       ...state,
       proxy: {
         ...state.proxy,
-        deployments: payload
-      }
+        deployments: payload,
+      },
     }
   }
 
   case NEW_PROXY_DEPLOYMENT: {
-    const payload: { address: string, date: string, contractName: string } = action.payload
+    const payload: { address: string; date: string; contractName: string } = action.payload
 
     return {
       ...state,
       proxy: {
         ...state.proxy,
-        deployments: [...state.proxy.deployments, payload]
-      }
+        deployments: [...state.proxy.deployments, payload],
+      },
     }
   }
 
@@ -652,8 +704,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       ...state,
       proxy: {
         ...state.proxy,
-        deployments: []
-      }
+        deployments: [],
+      },
     }
   }
 

@@ -5,146 +5,145 @@ export const initialState = {
     {
       name: 'contractMetadata',
       isChecked: false,
-      textClass: textSecondary
+      textClass: textSecondary,
     },
     {
       name: 'ethereumVM',
       isChecked: false,
-      textClass: textSecondary
+      textClass: textSecondary,
     },
     {
       name: 'textWrap',
       isChecked: false,
-      textClass: textSecondary
+      textClass: textSecondary,
     },
     {
       name: 'personal',
       isChecked: false,
-      textClass: textSecondary
+      textClass: textSecondary,
     },
     {
       name: 'useMatomoAnalytics',
       isChecked: false,
-      textClass: textSecondary
+      textClass: textSecondary,
     },
     {
       name: 'useAutoCompletion',
       isChecked: true,
-      textClass: textSecondary
+      textClass: textSecondary,
     },
     {
       name: 'useShowGasInEditor',
       isChecked: true,
-      textClass: textSecondary
+      textClass: textSecondary,
     },
     {
       name: 'displayErrors',
       isChecked: true,
-      textClass: textSecondary
-    }
-  ]
+      textClass: textSecondary,
+    },
+  ],
 }
 
 export const settingReducer = (state, action) => {
   switch (action.type) {
   case 'contractMetadata':
-    state.elementState.map(element => {
+    state.elementState.map((element) => {
       if (element.name === 'contractMetadata') {
         element.isChecked = action.payload.isChecked
         element.textClass = action.payload.textClass
       }
     })
     return {
-      ...state
+      ...state,
     }
   case 'ethereumVM':
-    state.elementState.map(element => {
+    state.elementState.map((element) => {
       if (element.name === 'ethereumVM') {
         element.isChecked = action.payload.isChecked
         element.textClass = action.payload.textClass
       }
     })
     return {
-      ...state
+      ...state,
     }
   case 'textWrap':
-    state.elementState.map(element => {
+    state.elementState.map((element) => {
       if (element.name === 'textWrap') {
         element.isChecked = action.payload.isChecked
         element.textClass = action.payload.textClass
       }
     })
     return {
-      ...state
+      ...state,
     }
   case 'personal':
-    state.elementState.map(element => {
+    state.elementState.map((element) => {
       if (element.name === 'personal') {
         element.isChecked = action.payload.isChecked
         element.textClass = action.payload.textClass
       }
     })
     return {
-      ...state
+      ...state,
     }
   case 'useMatomoAnalytics':
-    state.elementState.map(element => {
+    state.elementState.map((element) => {
       if (element.name === 'useMatomoAnalytics') {
         element.isChecked = action.payload.isChecked
         element.textClass = action.payload.textClass
       }
     })
     return {
-      ...state
+      ...state,
     }
-    
+
   case 'useAutoCompletion':
-    state.elementState.map(element => {
+    state.elementState.map((element) => {
       if (element.name === 'useAutoCompletion') {
         element.isChecked = action.payload.isChecked
         element.textClass = action.payload.textClass
       }
     })
     return {
-      ...state
+      ...state,
     }
   case 'displayErrors':
-    state.elementState.map(element => {
+    state.elementState.map((element) => {
       if (element.name === 'displayErrors') {
         element.isChecked = action.payload.isChecked
         element.textClass = action.payload.textClass
       }
     })
     return {
-      ...state
+      ...state,
     }
   case 'useShowGasInEditor':
-    state.elementState.map(element => {
+    state.elementState.map((element) => {
       if (element.name === 'useShowGasInEditor') {
         element.isChecked = action.payload.isChecked
         element.textClass = action.payload.textClass
       }
     })
     return {
-      ...state
+      ...state,
     }
   default:
     return initialState
   }
-  
 }
 
 export const toastInitialState = {
-  message: ''
+  message: '',
 }
 
 export const toastReducer = (state, action) => {
   switch (action.type) {
-  case 'save' :
+  case 'save':
     return { ...state, message: action.payload.message }
-  case 'removed' :
+  case 'removed':
     return { ...state, message: action.payload.message }
-  default :
+  default:
     return { ...state, message: '' }
   }
 }

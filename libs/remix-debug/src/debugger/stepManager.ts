@@ -11,7 +11,7 @@ export class DebuggerStepManager {
   revertionPoint
   currentCall
 
-  constructor (_debugger, traceManager) {
+  constructor(_debugger, traceManager) {
     this.event = new EventManager()
     this.debugger = _debugger
     this.traceManager = traceManager
@@ -23,7 +23,7 @@ export class DebuggerStepManager {
     this.listenToEvents()
   }
 
-  listenToEvents () {
+  listenToEvents() {
     this.debugger.event.register('newTraceLoaded', this, () => {
       this.traceManager.getLength((error, newLength) => {
         if (error) {
@@ -71,31 +71,34 @@ export class DebuggerStepManager {
       if (index < 0) return
       if (this.currentStepIndex !== index) return
 
-      this.traceManager.buildCallPath(index).then((callsPath) => {
-        this.currentCall = callsPath[callsPath.length - 1]
-        if (this.currentCall.reverted) {
-          const revertedReason = this.currentCall.outofgas ? 'outofgas' : 'reverted'
-          this.revertionPoint = this.currentCall.return
-          this.event.trigger('revertWarning', [revertedReason])
-          return 
-        }
-        for (let k = callsPath.length - 2; k >= 0; k--) {
-          const parent = callsPath[k]
-          if (parent.reverted) {
-            this.revertionPoint = parent.return
-            this.event.trigger('revertWarning', ['parenthasthrown'])
+      this.traceManager
+        .buildCallPath(index)
+        .then((callsPath) => {
+          this.currentCall = callsPath[callsPath.length - 1]
+          if (this.currentCall.reverted) {
+            const revertedReason = this.currentCall.outofgas ? 'outofgas' : 'reverted'
+            this.revertionPoint = this.currentCall.return
+            this.event.trigger('revertWarning', [revertedReason])
             return
           }
-        }
-        this.event.trigger('revertWarning', [''])
-      }).catch((error) => {
-        console.log(error)
-        this.event.trigger('revertWarning', [''])
-      })
+          for (let k = callsPath.length - 2; k >= 0; k--) {
+            const parent = callsPath[k]
+            if (parent.reverted) {
+              this.revertionPoint = parent.return
+              this.event.trigger('revertWarning', ['parenthasthrown'])
+              return
+            }
+          }
+          this.event.trigger('revertWarning', [''])
+        })
+        .catch((error) => {
+          console.log(error)
+          this.event.trigger('revertWarning', [''])
+        })
     })
   }
 
-  triggerStepChanged (step) {
+  triggerStepChanged(step) {
     this.traceManager.getLength((error, length) => {
       let stepState = 'valid'
 
@@ -107,12 +110,12 @@ export class DebuggerStepManager {
         stepState = 'end'
       }
 
-      const jumpOutDisabled = (step === this.traceManager.findStepOut(step))
+      const jumpOutDisabled = step === this.traceManager.findStepOut(step)
       this.event.trigger('stepChanged', [step, stepState, jumpOutDisabled])
     })
   }
 
-  stepIntoBack (solidityMode) {
+  stepIntoBack(solidityMode) {
     if (!this.traceManager.isLoaded()) return
     let step = this.currentStepIndex - 1
     this.currentStepIndex = step
@@ -125,7 +128,7 @@ export class DebuggerStepManager {
     this.triggerStepChanged(step)
   }
 
-  stepIntoForward (solidityMode) {
+  stepIntoForward(solidityMode) {
     if (!this.traceManager.isLoaded()) return
     let step = this.currentStepIndex + 1
     this.currentStepIndex = step
@@ -138,7 +141,7 @@ export class DebuggerStepManager {
     this.triggerStepChanged(step)
   }
 
-  stepOverBack (solidityMode) {
+  stepOverBack(solidityMode) {
     if (!this.traceManager.isLoaded()) return
     let step = this.traceManager.findStepOverBack(this.currentStepIndex)
     if (solidityMode) {
@@ -149,7 +152,7 @@ export class DebuggerStepManager {
     this.triggerStepChanged(step)
   }
 
-  stepOverForward (solidityMode) {
+  stepOverForward(solidityMode) {
     if (!this.traceManager.isLoaded()) return
     if (this.currentStepIndex >= this.traceLength - 1) return
     let step = this.currentStepIndex + 1
@@ -165,7 +168,7 @@ export class DebuggerStepManager {
     this.triggerStepChanged(step)
   }
 
-  jumpOut (solidityMode) {
+  jumpOut(solidityMode) {
     if (!this.traceManager.isLoaded()) return
     let step = this.traceManager.findStepOut(this.currentStepIndex)
     if (solidityMode) {
@@ -176,31 +179,31 @@ export class DebuggerStepManager {
     this.triggerStepChanged(step)
   }
 
-  jumpTo (step) {
+  jumpTo(step) {
     if (!this.traceManager.inRange(step)) return
     if (this.currentStepIndex === step) return
     this.currentStepIndex = step
     this.triggerStepChanged(step)
   }
 
-  jumpToException () {
+  jumpToException() {
     this.jumpTo(this.revertionPoint)
   }
 
-  jumpNextBreakpoint () {
+  jumpNextBreakpoint() {
     this.debugger.breakpointManager.jumpNextBreakpoint(this.currentStepIndex, true)
   }
 
-  jumpPreviousBreakpoint () {
+  jumpPreviousBreakpoint() {
     this.debugger.breakpointManager.jumpPreviousBreakpoint(this.currentStepIndex, true)
   }
 
-  calculateFirstStep () {
+  calculateFirstStep() {
     const step = this.resolveToReducedTrace(0, 1)
     return this.resolveToReducedTrace(step, 1)
   }
 
-  calculateCodeStepList () {
+  calculateCodeStepList() {
     let step = 0
     let steps = []
     while (step < this.traceLength) {
@@ -209,24 +212,26 @@ export class DebuggerStepManager {
       steps.push(_step)
       step += 1
     }
-    steps = steps.filter((item, pos, self) => { return steps.indexOf(item) === pos })
+    steps = steps.filter((item, pos, self) => {
+      return steps.indexOf(item) === pos
+    })
     return steps
   }
 
-  calculateCodeLength () {
+  calculateCodeLength() {
     this.calculateCodeStepList().reverse()
     return this.calculateCodeStepList().reverse()[1] || this.traceLength
   }
 
-  nextStep () {
+  nextStep() {
     return this.resolveToReducedTrace(this.currentStepIndex, 1)
   }
 
-  previousStep () {
+  previousStep() {
     return this.resolveToReducedTrace(this.currentStepIndex, -1)
   }
 
-  resolveToReducedTrace (value, incr) {
+  resolveToReducedTrace(value, incr) {
     if (!this.debugger.callTree.reducedTrace.length) {
       return value
     }

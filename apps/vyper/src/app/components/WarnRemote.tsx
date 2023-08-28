@@ -4,7 +4,7 @@ interface Props {
   environment: 'remote' | 'local'
 }
 
-function WarnRemoteLabel({environment}: Props) {
+function WarnRemoteLabel({ environment }: Props) {
   if (environment === 'local') {
     return <></>
   }

@@ -21,17 +21,44 @@ const profile = {
   icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-  methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir',
-    'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh',
-    'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles', 'isGitRepo'],
-  kind: 'file-system'
+  methods: [
+    'closeAllFiles',
+    'closeFile',
+    'file',
+    'exists',
+    'open',
+    'writeFile',
+    'readFile',
+    'copyFile',
+    'copyDir',
+    'rename',
+    'mkdir',
+    'readdir',
+    'dirList',
+    'fileList',
+    'remove',
+    'getCurrentFile',
+    'getFile',
+    'getFolder',
+    'setFile',
+    'switchFile',
+    'refresh',
+    'getProviderOf',
+    'getProviderByName',
+    'getPathFromUrl',
+    'getUrlFromPath',
+    'saveCurrentFile',
+    'setBatchFiles',
+    'isGitRepo',
+  ],
+  kind: 'file-system',
 }
 const errorMsg = {
   ENOENT: 'No such file or directory',
   EISDIR: 'Path is a directory',
   ENOTDIR: 'Path is not on a directory',
   EEXIST: 'File already exists',
-  EPERM: 'Permission denied'
+  EPERM: 'Permission denied',
 }
 const createError = (err) => {
   return new Error(`${errorMsg[err.code]} ${err.message || ''}`)
@@ -148,8 +175,8 @@ class FileManager extends Plugin {
   }
 
   /*
-  * refresh the file explorer
-  */
+   * refresh the file explorer
+   */
   refresh() {
     const provider = this.fileProviderOf('/')
     // emit rootFolderChanged so that File Explorer reloads the file tree
@@ -325,7 +352,7 @@ class FileManager extends Plugin {
         if (newPathExists) {
           this.call('notification', 'alert', {
             id: 'fileManagerAlert',
-            message: 'File already exists'
+            message: 'File already exists',
           })
           return
         }
@@ -334,7 +361,7 @@ class FileManager extends Plugin {
         if (newPathExists) {
           this.call('notification', 'alert', {
             id: 'fileManagerAlert',
-            message: 'Directory already exists'
+            message: 'Directory already exists',
           })
           return
         }
@@ -347,7 +374,7 @@ class FileManager extends Plugin {
 
   async zipDir(dirPath, zip) {
     const filesAndFolders = await this.readdir(dirPath)
-    for(let path in filesAndFolders) {
+    for (let path in filesAndFolders) {
       if (filesAndFolders[path].isDirectory) await this.zipDir(path, zip)
       else {
         path = this.normalize(path)
@@ -363,7 +390,7 @@ class FileManager extends Plugin {
       if (await this.isDirectory(path)) {
         const zip = new JSZip()
         await this.zipDir(path, zip)
-        const content = await zip.generateAsync({type: 'blob'})
+        const content = await zip.generateAsync({ type: 'blob' })
         saveAs(content, `${downloadFileName}.zip`)
       } else {
         path = this.normalize(path)
@@ -442,23 +469,47 @@ class FileManager extends Plugin {
       browserExplorer: this._components.registry.get('fileproviders/browser').api,
       localhostExplorer: this._components.registry.get('fileproviders/localhost').api,
       workspaceExplorer: this._components.registry.get('fileproviders/workspace').api,
-      filesProviders: this._components.registry.get('fileproviders').api
+      filesProviders: this._components.registry.get('fileproviders').api,
     }
 
     this._deps.config.set('currentFile', '') // make sure we remove the current file from the previous session
 
-    this._deps.browserExplorer.event.on('fileChanged', (path) => { this.fileChangedEvent(path) })
-    this._deps.browserExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
-    this._deps.localhostExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
-    this._deps.browserExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
-    this._deps.browserExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
-    this._deps.localhostExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
-    this._deps.localhostExplorer.event.on('errored', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
-    this._deps.localhostExplorer.event.on('closed', (event) => { this.removeTabsOf(this._deps.localhostExplorer) })
-    this._deps.workspaceExplorer.event.on('fileChanged', (path) => { this.fileChangedEvent(path) })
-    this._deps.workspaceExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
-    this._deps.workspaceExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
-    this._deps.workspaceExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
+    this._deps.browserExplorer.event.on('fileChanged', (path) => {
+      this.fileChangedEvent(path)
+    })
+    this._deps.browserExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => {
+      this.fileRenamedEvent(oldName, newName, isFolder)
+    })
+    this._deps.localhostExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => {
+      this.fileRenamedEvent(oldName, newName, isFolder)
+    })
+    this._deps.browserExplorer.event.on('fileRemoved', (path) => {
+      this.fileRemovedEvent(path)
+    })
+    this._deps.browserExplorer.event.on('fileAdded', (path) => {
+      this.fileAddedEvent(path)
+    })
+    this._deps.localhostExplorer.event.on('fileRemoved', (path) => {
+      this.fileRemovedEvent(path)
+    })
+    this._deps.localhostExplorer.event.on('errored', (event) => {
+      this.removeTabsOf(this._deps.localhostExplorer)
+    })
+    this._deps.localhostExplorer.event.on('closed', (event) => {
+      this.removeTabsOf(this._deps.localhostExplorer)
+    })
+    this._deps.workspaceExplorer.event.on('fileChanged', (path) => {
+      this.fileChangedEvent(path)
+    })
+    this._deps.workspaceExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => {
+      this.fileRenamedEvent(oldName, newName, isFolder)
+    })
+    this._deps.workspaceExplorer.event.on('fileRemoved', (path) => {
+      this.fileRemovedEvent(path)
+    })
+    this._deps.workspaceExplorer.event.on('fileAdded', (path) => {
+      this.fileAddedEvent(path)
+    })
 
     this.getCurrentFile = this.file
     this.getFile = this.readFile
@@ -599,7 +650,7 @@ class FileManager extends Plugin {
     if (!provider) throw new Error(`no provider for ${file}`)
     return {
       file: provider.getPathFromUrl(file) || file, // in case an external URL is given as input, we resolve it to the right internal path
-      provider
+      provider,
     }
   }
 
@@ -613,7 +664,7 @@ class FileManager extends Plugin {
     if (!provider) throw new Error(`no provider for ${file}`)
     return {
       file: provider.getUrlFromPath(file) || file, // in case an external URL is given as input, we resolve it to the right internal path
-      provider
+      provider,
     }
   }
 
@@ -655,7 +706,7 @@ class FileManager extends Plugin {
       file = resolved.file
       await this.saveCurrentFile()
       if (this.currentFile() === file) return
-      
+
       const provider = resolved.provider
       this._deps.config.set('currentFile', file)
       this.openedFiles[file] = file
@@ -663,15 +714,19 @@ class FileManager extends Plugin {
       let content = ''
       try {
         content = await provider.get(file)
-        
       } catch (error) {
         console.log(error)
         throw error
       }
       try {
         // This make sure dependencies are loaded in the editor context.
-        // This ensure monaco is aware of deps artifacts, so it can provide basic features like "go to" symbols.   
-        await this.editor.handleTypeScriptDependenciesOf(file, content, path => this.readFile(path), path => this.exists(path))
+        // This ensure monaco is aware of deps artifacts, so it can provide basic features like "go to" symbols.
+        await this.editor.handleTypeScriptDependenciesOf(
+          file,
+          content,
+          (path) => this.readFile(path),
+          (path) => this.exists(path)
+        )
       } catch (e) {
         console.log('unable to handle TypeScript dependencies of', file)
       }
@@ -683,15 +738,15 @@ class FileManager extends Plugin {
       // TODO: Only keep `this.emit` (issue#2210)
       this.emit('currentFileChanged', file)
       this.events.emit('currentFileChanged', file)
-      return true      
+      return true
     }
   }
 
   /**
-  * Async API method getProviderOf
-  * @param {string} file
-  *
-  */
+   * Async API method getProviderOf
+   * @param {string} file
+   *
+   */
 
   async getProviderOf(file) {
     const cancall = await this.askUserPermission('getProviderByName')
@@ -701,10 +756,10 @@ class FileManager extends Plugin {
   }
 
   /**
-  * Async API method getProviderByName
-  * @param {string} name
-  *
-  */
+   * Async API method getProviderByName
+   * @param {string} name
+   *
+   */
 
   async getProviderByName(name) {
     const cancall = await this.askUserPermission('getProviderByName')
@@ -738,23 +793,26 @@ class FileManager extends Plugin {
               dirPaths.push(item)
               resolve(dirPaths)
             }
-            return new Promise((resolve, reject) => { resolve(true) })
+            return new Promise((resolve, reject) => {
+              resolve(true)
+            })
           })
-          Promise.all(promises).then(() => { resolve(dirPaths) })
+          Promise.all(promises).then(() => {
+            resolve(dirPaths)
+          })
         })
       })
     }
     return collectList(path)
   }
 
-  async fileList (dirPath) {
+  async fileList(dirPath) {
     const paths: any = await this.readdir(dirPath)
-    for( const path in paths)
-      if(paths[path].isDirectory) delete paths[path]
+    for (const path in paths) if (paths[path].isDirectory) delete paths[path]
     return Object.keys(paths)
   }
 
-  isRemixDActive () {
+  isRemixDActive() {
     return this.appManager.isActive('remixd')
   }
 
@@ -762,18 +820,14 @@ class FileManager extends Plugin {
     const currentFile = this._deps.config.get('currentFile')
     if (currentFile && this.editor.current()) {
       const input = this.editor.get(currentFile)
-      if ((input !== null) && (input !== undefined)) {
+      if (input !== null && input !== undefined) {
         const provider = this.fileProviderOf(currentFile)
         if (provider) {
           // use old content as default if save operation fails.
           provider.get(currentFile, (error, oldContent) => {
             provider.set(currentFile, input, (error) => {
               if (error) {
-                if (error.message ) this.call('notification', 'toast', 
-                  error.message.indexOf(
-                    'LocalStorage is full') !== -1 ? storageFullMessage()
-                    : error.message
-                )
+                if (error.message) this.call('notification', 'toast', error.message.indexOf('LocalStorage is full') !== -1 ? storageFullMessage() : error.message)
                 provider.set(currentFile, oldContent)
                 return console.error(error)
               } else {
@@ -793,10 +847,10 @@ class FileManager extends Plugin {
     if (path !== currentFile) return
     const provider = this.fileProviderOf(currentFile)
     if (provider) {
-      try{
+      try {
         const content = await provider.get(currentFile)
-        if(content) this.editor.setText(currentFile, content)
-      }catch(error){
+        if (content) this.editor.setText(currentFile, content)
+      } catch (error) {
         console.log(error)
       }
     } else {
@@ -817,12 +871,12 @@ class FileManager extends Plugin {
         }
         await self.syncEditor(fileProvider + file)
       } else {
-        try{
+        try {
           const name = await helper.createNonClashingNameAsync(file, self._deps.filesProviders[fileProvider])
           if (helper.checkSpecialChars(name)) {
             this.call('notification', 'alert', {
               id: 'fileManagerAlert',
-              message: 'Special characters are not allowed in file names.'
+              message: 'Special characters are not allowed in file names.',
             })
           } else {
             try {
@@ -832,11 +886,11 @@ class FileManager extends Plugin {
             }
             self.syncEditor(fileProvider + name)
           }
-        }catch(error){
+        } catch (error) {
           if (error) {
             this.call('notification', 'alert', {
               id: 'fileManagerAlert',
-              message: 'Unexpected error loading file ' + file + ': ' + error
+              message: 'Unexpected error loading file ' + file + ': ' + error,
             })
           }
         }
@@ -854,7 +908,7 @@ class FileManager extends Plugin {
     }
   }
 
-  async isGitRepo (): Promise<boolean> {
+  async isGitRepo(): Promise<boolean> {
     const path = '.git'
     const exists = await this.exists(path)
 
@@ -867,7 +921,7 @@ class FileManager extends Plugin {
    * @param {string} dest path of the destrination file
    * @returns {void}
    */
-  
+
   async moveFile(src: string, dest: string) {
     try {
       src = this.normalize(src)
@@ -879,9 +933,9 @@ class FileManager extends Plugin {
       await this._handleIsFile(src, `Cannot move ${src}. Path is not a file.`)
       await this._handleIsDir(dest, `Cannot move content into ${dest}. Path is not directory.`)
       const fileName = helper.extractNameFromKey(src)
-      
+
       if (await this.exists(dest + '/' + fileName)) {
-        throw createError({ code: 'EEXIST', message: `Cannot move ${src}. File already exists at destination ${dest}`})
+        throw createError({ code: 'EEXIST', message: `Cannot move ${src}. File already exists at destination ${dest}` })
       }
       await this.copyFile(src, dest, fileName)
       await this.remove(src)
@@ -896,7 +950,7 @@ class FileManager extends Plugin {
    * @param {string} dest path of the destination folder
    * @returns {void}
    */
-  
+
   async moveDir(src: string, dest: string) {
     try {
       src = this.normalize(src)
@@ -908,12 +962,11 @@ class FileManager extends Plugin {
       await this._handleIsDir(src, `Cannot move ${src}. Path is not directory.`)
       await this._handleIsDir(dest, `Cannot move content into ${dest}. Path is not directory.`)
       const dirName = helper.extractNameFromKey(src)
-      if (await this.exists(dest + '/' + dirName) || src === dest) {
-        throw createError({ code: 'EEXIST', message: `Cannot move ${src}. Folder already exists at destination ${dest}`})
+      if ((await this.exists(dest + '/' + dirName)) || src === dest) {
+        throw createError({ code: 'EEXIST', message: `Cannot move ${src}. Folder already exists at destination ${dest}` })
       }
       await this.copyDir(src, dest, dirName)
       await this.remove(src)
-
     } catch (e) {
       throw new Error(e)
     }

@@ -1,11 +1,11 @@
-import {Plugin} from '@remixproject/engine'
-import React, {Fragment, useEffect, useRef} from 'react'
+import { Plugin } from '@remixproject/engine'
+import React, { Fragment, useEffect, useRef } from 'react'
 
 export interface VerticalIconsContextMenuProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   pageX: number
   pageY: number
   profileName: string
-  links: {Documentation: string; CanDeactivate: boolean}
+  links: { Documentation: string; CanDeactivate: boolean }
   canBeDeactivated: boolean
   verticalIconPlugin: any
   hideContextMenu: () => void
@@ -13,7 +13,7 @@ export interface VerticalIconsContextMenuProps extends React.DetailedHTMLProps<R
 }
 
 interface MenuLinksProps {
-  listItems: {Documentation: string; CanDeactivate: boolean}
+  listItems: { Documentation: string; CanDeactivate: boolean }
   hide: () => void
   profileName: string
   canBeDeactivated: boolean
@@ -26,7 +26,7 @@ interface MenuLinksProps {
 interface MenuProps {
   verticalIconsPlugin: Plugin
   profileName: string
-  listItems: {Documentation: string; CanDeactivate: boolean}
+  listItems: { Documentation: string; CanDeactivate: boolean }
   hide: () => void
 }
 
@@ -44,7 +44,7 @@ const VerticalIconsContextMenu = (props: VerticalIconsContextMenuProps) => {
       style={{
         left: props.pageX,
         top: props.pageY,
-        display: 'block'
+        display: 'block',
       }}
       ref={menuRef}
       tabIndex={1}
@@ -65,7 +65,7 @@ const VerticalIconsContextMenu = (props: VerticalIconsContextMenuProps) => {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const MenuForLinks = ({listItems, hide, profileName, contextMenuAction}: MenuLinksProps) => {
+const MenuForLinks = ({ listItems, hide, profileName, contextMenuAction }: MenuLinksProps) => {
   return (
     <Fragment>
       {listItems.CanDeactivate ? (

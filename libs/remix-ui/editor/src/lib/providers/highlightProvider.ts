@@ -1,7 +1,7 @@
-import { Monaco } from "@monaco-editor/react"
-import { sourceMappingDecoder } from "@remix-project/remix-debug"
-import monaco from "../../types/monaco"
-import { EditorUIProps } from "../remix-ui-editor"
+import { Monaco } from '@monaco-editor/react'
+import { sourceMappingDecoder } from '@remix-project/remix-debug'
+import monaco from '../../types/monaco'
+import { EditorUIProps } from '../remix-ui-editor'
 
 export class RemixHighLightProvider implements monaco.languages.DocumentHighlightProvider {
   props: EditorUIProps

@@ -1,14 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-use-before-define
 import React from 'react'
 import '../remix-ui-plugin-manager.css'
-import {CustomTooltip} from '@remix-ui/helper'
+import { CustomTooltip } from '@remix-ui/helper'
 interface PluginCardProps {
   profile: any
   buttonText: string
   deactivatePlugin: (pluginName: string) => void
 }
 
-function ActivePluginCard({profile, buttonText, deactivatePlugin}: PluginCardProps) {
+function ActivePluginCard({ profile, buttonText, deactivatePlugin }: PluginCardProps) {
   return (
     <div className="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
       <article className="list-group-item py-1 mb-1 plugins-list-group-item">

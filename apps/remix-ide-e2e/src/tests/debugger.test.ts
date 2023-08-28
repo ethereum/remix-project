@@ -13,10 +13,12 @@ module.exports = {
   },
 
   'Should launch debugger #group1': function (browser: NightwatchBrowser) {
-    browser.addFile('blah.sol', sources[0]['blah.sol'])
+    browser
+      .addFile('blah.sol', sources[0]['blah.sol'])
       .pause(4000)
       // on autocompile sometimes the compiler returns invalid source, so we need to recompile to make sure the source is valid
-      .clickLaunchIcon('solidity').click('*[data-id="compilerContainerCompileBtn"]')
+      .clickLaunchIcon('solidity')
+      .click('*[data-id="compilerContainerCompileBtn"]')
       .pause(4000)
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-title="Deploy - transact (not payable)"]', 60000)
@@ -27,7 +29,8 @@ module.exports = {
   },
 
   'Should debug failing transaction #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
+    browser
+      .waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .clickLaunchIcon('udapp')
       .clickInstance(0)
       .scrollAndClick('*[data-title="string name, uint256 goal"]')
@@ -41,7 +44,8 @@ module.exports = {
   },
 
   'Should debug transaction using slider #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
+    browser
+      .waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .waitForElementVisible('*[data-id="slider"]')
       .goToVMTraceStep(51)
       .waitForElementContainsText('*[data-id="solidityLocals"]', 'toast', 60000)
@@ -50,7 +54,8 @@ module.exports = {
   },
 
   'Should step back and forward transaction #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
+    browser
+      .waitForElementVisible('*[data-id="verticalIconsKindudapp"]')
       .waitForElementPresent('*[data-id="buttonNavigatorIntoBack"]')
       .scrollAndClick('*[data-id="buttonNavigatorIntoBack"]')
       .pause(2000)
@@ -63,13 +68,22 @@ module.exports = {
   },
 
   'Should jump through breakpoints #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('#editorView')
-      .execute(() => {
-        (window as any).addRemixBreakpoint(11)
-      }, [], () => { })
-      .execute(() => {
-        (window as any).addRemixBreakpoint(21)
-      }, [], () => { })
+    browser
+      .waitForElementVisible('#editorView')
+      .execute(
+        () => {
+          ;(window as any).addRemixBreakpoint(11)
+        },
+        [],
+        () => {}
+      )
+      .execute(
+        () => {
+          ;(window as any).addRemixBreakpoint(21)
+        },
+        [],
+        () => {}
+      )
       .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
       .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
       .pause(2000)
@@ -98,11 +112,13 @@ module.exports = {
         selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"531")]',
       })
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(`constructor (string memory name_, string memory symbol_) {
+        browser.assert.ok(
+          content.indexOf(`constructor (string memory name_, string memory symbol_) {
         _name = name_;
         _symbol = symbol_;
     }`) !== -1,
-          'current displayed content is not from the ERC20 source code')
+          'current displayed content is not from the ERC20 source code'
+        )
       })
       .goToVMTraceStep(10)
       .waitForElementVisible({
@@ -118,7 +134,8 @@ module.exports = {
       This is still an issue @todo(https://github.com/ethereum/remix-project/issues/481), so this test will fail when this issue is fixed
     */
     browser
-      .clearConsole().clearTransactions()
+      .clearConsole()
+      .clearTransactions()
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('soljson-v0.6.12+commit.27d51765.js')
       .clickLaunchIcon('filePanel')
@@ -129,7 +146,11 @@ module.exports = {
       .createContract('')
       .clearConsole()
       .clickInstance(0)
-      .clickFunction('test1 - transact (not payable)', { types: 'bytes userData', values: '0x000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000015b38da6a701c568545dcfcb03fcb875f56beddc4' })
+      .clickFunction('test1 - transact (not payable)', {
+        types: 'bytes userData',
+        values:
+          '0x000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000015b38da6a701c568545dcfcb03fcb875f56beddc4',
+      })
       .debugTransaction(0)
       .waitForElementVisible('#stepdetail')
       .waitForElementVisible({
@@ -180,7 +201,8 @@ module.exports = {
       .waitForElementContainsText('*[data-id="solidityLocals"]', '9: 9 uint256', 60000)
       .notContainsText('*[data-id="solidityLocals"]', '10: 10 uint256')
       .clearTransactions()
-      .clearConsole().pause(2000)
+      .clearConsole()
+      .pause(2000)
   },
 
   'Should debug using generated sources #group4': function (browser: NightwatchBrowser) {
@@ -210,7 +232,11 @@ module.exports = {
       .addFile('test_jsGetTrace.js', { content: jsGetTrace })
       .executeScriptInTerminal('remix.exeCurrent()')
       .pause(3000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '{"gas":"0x575f","return":"0x0000000000000000000000000000000000000000000000000000000000000000","structLogs":', 60000)
+      .waitForElementContainsText(
+        '*[data-id="terminalJournal"]',
+        '{"gas":"0x575f","return":"0x0000000000000000000000000000000000000000000000000000000000000000","structLogs":',
+        60000
+      )
   },
   // depends on Should debug using generated sources
   'Should call the debugger api: debug #group4': function (browser: NightwatchBrowser) {
@@ -225,27 +251,29 @@ module.exports = {
       .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n154', 60000)
   },
 
-  'Should start debugging using remix debug nodes (rinkeby) #group4': '' + function (browser: NightwatchBrowser) {
-    browser
-      .clickLaunchIcon('solidity')
-      .setSolidityCompilerVersion('soljson-v0.8.7+commit.e28d00a7.js')
-      .addFile('useDebugNodes.sol', sources[5]['useDebugNodes.sol']) // compile contract
-      .clickLaunchIcon('udapp')
-      .switchEnvironment('basic-http-provider') // select web3 provider with debug nodes URL
-      .clearValue('*[data-id="modalDialogCustomPromptText"]')
-      .setValue('*[data-id="modalDialogCustomPromptText"]', 'https://remix-rinkeby.ethdevops.io')
-      .modalFooterOKClick()
-      .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 65000) // wait for the compilation to succeed
-      .clickLaunchIcon('debugger')
-      .clearValue('*[data-id="debuggerTransactionInput"]')
-      .setValue('*[data-id="debuggerTransactionInput"]', '0x156dbf7d0f9b435dd900cfc8f3264d523dd25733418ddbea1ce53e294f421013')
-      .click('*[data-id="debugGeneratedSourcesLabel"]') // unselect debug with generated sources
-      .click('*[data-id="debuggerTransactionStartButton"]')
-      .waitForElementVisible('*[data-id="solidityLocals"]', 60000)
-      .pause(10000)
-      .checkVariableDebug('soliditylocals', { num: { value: '2', type: 'uint256' } })
-      .checkVariableDebug('soliditystate', { number: { value: '0', type: 'uint256', constant: false, immutable: false } })
-  },
+  'Should start debugging using remix debug nodes (rinkeby) #group4':
+    '' +
+    function (browser: NightwatchBrowser) {
+      browser
+        .clickLaunchIcon('solidity')
+        .setSolidityCompilerVersion('soljson-v0.8.7+commit.e28d00a7.js')
+        .addFile('useDebugNodes.sol', sources[5]['useDebugNodes.sol']) // compile contract
+        .clickLaunchIcon('udapp')
+        .switchEnvironment('basic-http-provider') // select web3 provider with debug nodes URL
+        .clearValue('*[data-id="modalDialogCustomPromptText"]')
+        .setValue('*[data-id="modalDialogCustomPromptText"]', 'https://remix-rinkeby.ethdevops.io')
+        .modalFooterOKClick()
+        .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 65000) // wait for the compilation to succeed
+        .clickLaunchIcon('debugger')
+        .clearValue('*[data-id="debuggerTransactionInput"]')
+        .setValue('*[data-id="debuggerTransactionInput"]', '0x156dbf7d0f9b435dd900cfc8f3264d523dd25733418ddbea1ce53e294f421013')
+        .click('*[data-id="debugGeneratedSourcesLabel"]') // unselect debug with generated sources
+        .click('*[data-id="debuggerTransactionStartButton"]')
+        .waitForElementVisible('*[data-id="solidityLocals"]', 60000)
+        .pause(10000)
+        .checkVariableDebug('soliditylocals', { num: { value: '2', type: 'uint256' } })
+        .checkVariableDebug('soliditystate', { number: { value: '0', type: 'uint256', constant: false, immutable: false } })
+    },
 
   'Should debug reverted transactions #group5': function (browser: NightwatchBrowser) {
     browser
@@ -262,7 +290,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="debugGoToRevert"]', 60000)
       .click('*[data-id="debugGoToRevert"]')
       .waitForElementContainsText('*[data-id="asmitems"] div[selected="selected"]', '117 REVERT')
-  }
+  },
 }
 
 const sources = [
@@ -296,11 +324,11 @@ const sources = [
             project.goal = goal;
         }
     }
-        `
-    }
+        `,
+    },
   },
   {
-    'externalImport.sol': { content: 'import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v4.1/contracts/token/ERC20/ERC20.sol"; contract test7 {}' }
+    'externalImport.sol': { content: 'import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v4.1/contracts/token/ERC20/ERC20.sol"; contract test7 {}' },
   },
   {
     'withABIEncoderV2.sol': {
@@ -323,8 +351,8 @@ const sources = [
         return  abi.decode(userData[:4], (bytes4));
     }
 }
-    `
-    }
+    `,
+    },
   },
   {
     'locals.sol': {
@@ -338,8 +366,8 @@ const sources = [
             }
         }
       }
-        `
-    }
+        `,
+    },
   },
   {
     'withGeneratedSources.sol': {
@@ -349,8 +377,8 @@ const sources = [
       contract A {
         function f(uint[] memory) public returns (uint256) { }
       }
-      `
-    }
+      `,
+    },
   },
   {
     'useDebugNodes.sol': {
@@ -383,8 +411,8 @@ const sources = [
               return number;
           }
       }
-      `
-    }
+      `,
+    },
   },
   {
     'reverted.sol': {
@@ -423,74 +451,80 @@ const sources = [
         function callC() public {
             p = 125;
         }
-    }`
-    }
-  }
+    }`,
+    },
+  },
 ]
 
-const localVariable_step266_ABIEncoder = { // eslint-disable-line
+const localVariable_step266_ABIEncoder = {
+  // eslint-disable-line
   '<1>': {
     length: '0x0',
     type: 'bytes',
-    value: '0x'
+    value: '0x',
   },
   '<2>': {
     type: 'bytes32',
-    value: '0x0000000000000000000000000000000000000000000000000000000000000000'
+    value: '0x0000000000000000000000000000000000000000000000000000000000000000',
   },
   '<3>': {
     type: 'bytes32',
-    value: '0x0000000000000000000000000000000000000000000000000000000000000000'
+    value: '0x0000000000000000000000000000000000000000000000000000000000000000',
   },
   '<4>': {
     type: 'uint256',
-    value: '0'
+    value: '0',
   },
   idAsk: {
     type: 'bytes32',
-    value: '0x0000000000000000000000000000000000000000000000000000000000000002'
+    value: '0x0000000000000000000000000000000000000000000000000000000000000002',
   },
   userData: {
-    value: '0x000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000015b38da6a701c568545dcfcb03fcb875f56beddc4',
-    type: 'bytes'
-  }
+    value:
+      '0x000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000015b38da6a701c568545dcfcb03fcb875f56beddc4',
+    type: 'bytes',
+  },
 }
 
-const localVariable_step717_ABIEncoder = { // eslint-disable-line
+const localVariable_step717_ABIEncoder = {
+  // eslint-disable-line
   '<1>': {
     length: '0xd0',
     type: 'bytes',
-    value: '0x5b38da6a701c568545dcfcb03fcb875f56beddc45b38da6a701c568545dcfcb03fcb875f56beddc400000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001'
+    value:
+      '0x5b38da6a701c568545dcfcb03fcb875f56beddc45b38da6a701c568545dcfcb03fcb875f56beddc400000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001',
   },
   '<2>': {
     type: 'bytes32',
-    value: '0x0000000000000000000000000000000000000000000000000000000000000002'
+    value: '0x0000000000000000000000000000000000000000000000000000000000000002',
   },
   '<3>': {
     type: 'bytes32',
-    value: '0x0000000000000000000000000000000000000000000000000000000000000001'
+    value: '0x0000000000000000000000000000000000000000000000000000000000000001',
   },
   '<4>': {
     type: 'uint256',
-    value: '84'
+    value: '84',
   },
   idAsk: {
     type: 'bytes32',
-    value: '0x0000000000000000000000000000000000000000000000000000000000000002'
+    value: '0x0000000000000000000000000000000000000000000000000000000000000002',
   },
   idOffer: {
     type: 'bytes32',
-    value: '0x0000000000000000000000000000000000000000000000000000000000000001'
+    value: '0x0000000000000000000000000000000000000000000000000000000000000001',
   },
   ro: {
     length: '0xd0',
     type: 'bytes',
-    value: '0x5b38da6a701c568545dcfcb03fcb875f56beddc45b38da6a701c568545dcfcb03fcb875f56beddc400000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001'
+    value:
+      '0x5b38da6a701c568545dcfcb03fcb875f56beddc45b38da6a701c568545dcfcb03fcb875f56beddc400000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001',
   },
   userData: {
-    value: '0x000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000015b38da6a701c568545dcfcb03fcb875f56beddc4',
-    type: 'bytes'
-  }
+    value:
+      '0x000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000015b38da6a701c568545dcfcb03fcb875f56beddc4',
+    type: 'bytes',
+  },
 }
 
 const jsGetTrace = `(async () => {

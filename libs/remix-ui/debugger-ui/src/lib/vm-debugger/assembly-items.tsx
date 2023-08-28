@@ -1,8 +1,8 @@
-import React, {useState, useRef, useEffect, useReducer} from 'react' // eslint-disable-line
-import {initialState, reducer} from '../../reducers/assembly-items'
+import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
+import { initialState, reducer } from '../../reducers/assembly-items'
 import './styles/assembly-items.css'
 
-export const AssemblyItems = ({registerEvent}) => {
+export const AssemblyItems = ({ registerEvent }) => {
   const [assemblyItems, dispatch] = useReducer(reducer, initialState)
   const [absoluteSelectedIndex, setAbsoluteSelectedIndex] = useState(0)
   const [selectedItem, setSelectedItem] = useState(0)
@@ -24,8 +24,8 @@ export const AssemblyItems = ({registerEvent}) => {
             index,
             nextIndexes,
             returnInstructionIndexes,
-            outOfGasInstructionIndexes
-          }
+            outOfGasInstructionIndexes,
+          },
         })
       })
 
@@ -33,7 +33,7 @@ export const AssemblyItems = ({registerEvent}) => {
       registerEvent('lineGasCostChanged', (instructionsIndexes: number[], line: []) => {
         dispatch({
           type: 'FETCH_INDEXES_FOR_NEW_LINE',
-          payload: {currentLineIndexes: instructionsIndexes || [], line}
+          payload: { currentLineIndexes: instructionsIndexes || [], line },
         })
       })
   }, [])

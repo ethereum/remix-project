@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {useState, useEffect, useReducer, useRef, SyntheticEvent, MouseEvent} from 'react' // eslint-disable-line
-import {FormattedMessage, useIntl} from 'react-intl'
+import React, { useState, useEffect, useReducer, useRef, SyntheticEvent, MouseEvent } from 'react' // eslint-disable-line
+import { FormattedMessage, useIntl } from 'react-intl'
 import {
   registerCommandAction,
   registerLogScriptRunnerAction,
@@ -8,16 +8,15 @@ import {
   registerErrorScriptRunnerAction,
   registerWarnScriptRunnerAction,
   listenOnNetworkAction,
-  initListeningOnNetwork
+  initListeningOnNetwork,
 } from './actions/terminalAction'
-import {initialState, registerCommandReducer, addCommandHistoryReducer, registerScriptRunnerReducer} from './reducers/terminalReducer'
-import {getKeyOf, getValueOf, Objectfilter, matched} from './utils/utils'
-import {allCommands, allPrograms} from './commands' // eslint-disable-line
+import { initialState, registerCommandReducer, addCommandHistoryReducer, registerScriptRunnerReducer } from './reducers/terminalReducer'
+import { getKeyOf, getValueOf, Objectfilter, matched } from './utils/utils'
+import { allCommands, allPrograms } from './commands' // eslint-disable-line
 import TerminalWelcomeMessage from './terminalWelcome' // eslint-disable-line
-import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
-import {ModalDialog} from '@remix-ui/modal-dialog' // eslint-disable-line
-import {CustomTooltip} from '@remix-ui/helper'
-
+import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
+import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
+import { CustomTooltip } from '@remix-ui/helper'
 import './remix-ui-terminal.css'
 import vm from 'vm'
 import javascriptserialize from 'javascript-serialize'
@@ -26,8 +25,8 @@ import RenderUnKnownTransactions from './components/RenderUnknownTransactions' /
 import RenderCall from './components/RenderCall' // eslint-disable-line
 import RenderKnownTransactions from './components/RenderKnownTransactions' // eslint-disable-line
 import parse from 'html-react-parser'
-import {EMPTY_BLOCK, KNOWN_TRANSACTION, RemixUiTerminalProps, UNKNOWN_TRANSACTION} from './types/terminalTypes'
-import {wrapScript} from './utils/wrapScript'
+import { EMPTY_BLOCK, KNOWN_TRANSACTION, RemixUiTerminalProps, UNKNOWN_TRANSACTION } from './types/terminalTypes'
+import { wrapScript } from './utils/wrapScript'
 
 /* eslint-disable-next-line */
 export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
@@ -35,7 +34,7 @@ export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
 }
 
 export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
-  const {call, _deps, on, config, event, version} = props.plugin
+  const { call, _deps, on, config, event, version } = props.plugin
   const [_cmdIndex, setCmdIndex] = useState(-1)
   const [_cmdTemp, setCmdTemp] = useState('')
   const [isOpen, setIsOpen] = useState<boolean>(true)
@@ -45,7 +44,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [toaster, setToaster] = useState(false)
   const [toastProvider, setToastProvider] = useState({
     show: false,
-    fileName: ''
+    fileName: '',
   })
   const [modalState, setModalState] = useState({
     message: '',
@@ -54,7 +53,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     cancelLabel: '',
     hide: true,
     cancelFn: () => {},
-    handleHide: () => {}
+    handleHide: () => {},
   })
 
   const [clearConsole, setClearConsole] = useState(false)
@@ -63,7 +62,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [autoCompletState, setAutoCompleteState] = useState({
     activeSuggestion: 0,
     data: {
-      _options: []
+      _options: [],
     },
     _startingElement: 0,
     autoCompleteSelectedItem: {},
@@ -75,7 +74,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     text: '',
     userInput: '',
     extraCommands: [],
-    commandHistoryIndex: 0
+    commandHistoryIndex: 0,
   })
 
   const [searchInput, setSearchInput] = useState('')
@@ -92,7 +91,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const intl = useIntl()
 
   const scrollToBottom = () => {
-    messagesEndRef.current.scrollIntoView({behavior: 'smooth'})
+    messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
   }
 
   useEffect(() => {
@@ -101,8 +100,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         scriptRunnerDispatch({
           type: 'html',
           payload: {
-            message: [html ? (html.innerText ? html.innerText : html) : null]
-          }
+            message: [html ? (html.innerText ? html.innerText : html) : null],
+          },
         })
       },
 
@@ -110,14 +109,14 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         if (typeof message === 'string') {
           message = {
             value: message,
-            type: 'log'
+            type: 'log',
           }
         }
         scriptRunnerDispatch({
           type: message.type ? message.type : 'log',
-          payload: {message: [message.value]}
+          payload: { message: [message.value] },
         })
-      }
+      },
     })
   }, [])
 
@@ -128,22 +127,22 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     registerInfoScriptRunnerAction(on, 'info', newstate.commands, scriptRunnerDispatch)
     registerWarnScriptRunnerAction(on, 'warn', newstate.commands, scriptRunnerDispatch)
     registerErrorScriptRunnerAction(on, 'error', newstate.commands, scriptRunnerDispatch)
-    registerCommandAction('html', _blocksRenderer('html'), {activate: true}, dispatch)
-    registerCommandAction('log', _blocksRenderer('log'), {activate: true}, dispatch)
-    registerCommandAction('info', _blocksRenderer('info'), {activate: true}, dispatch)
-    registerCommandAction('warn', _blocksRenderer('warn'), {activate: true}, dispatch)
-    registerCommandAction('error', _blocksRenderer('error'), {activate: true}, dispatch)
+    registerCommandAction('html', _blocksRenderer('html'), { activate: true }, dispatch)
+    registerCommandAction('log', _blocksRenderer('log'), { activate: true }, dispatch)
+    registerCommandAction('info', _blocksRenderer('info'), { activate: true }, dispatch)
+    registerCommandAction('warn', _blocksRenderer('warn'), { activate: true }, dispatch)
+    registerCommandAction('error', _blocksRenderer('error'), { activate: true }, dispatch)
 
     registerCommandAction(
       'script',
       function execute(args, scopedCommands) {
         const script = String(args[0])
         _shell(script, scopedCommands, function (error, output) {
-          if (error) scriptRunnerDispatch({type: 'error', payload: {message: error}})
-          if (output) scriptRunnerDispatch({type: 'script', payload: {message: '5'}})
+          if (error) scriptRunnerDispatch({ type: 'error', payload: { message: error } })
+          if (output) scriptRunnerDispatch({ type: 'script', payload: { message: '5' } })
         })
       },
-      {activate: true},
+      { activate: true },
       dispatch
     )
   }, [autoCompletState.text])
@@ -169,16 +168,16 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
 
     const provider = _deps.fileManager.fileProviderOf(file)
-    console.log({provider})
+    console.log({ provider })
 
     if (!provider) {
       // toolTip(`provider for path ${file} not found`)
-      setToastProvider({show: true, fileName: file})
+      setToastProvider({ show: true, fileName: file })
       if (cb) cb()
       return
     }
     provider.get(file, (error, content) => {
-      console.log({content})
+      console.log({ content })
       if (error) {
         // toolTip(error)
         // TODO: pop up
@@ -213,13 +212,13 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           },
           execute: (fileName, callback) => {
             return execute(fileName, callback)
-          }
-        }
+          },
+        },
       }
       try {
         const cmds = vm.createContext(context)
         const result = vm.runInContext(script, cmds) // eslint-disable-line
-        console.log({result})
+        console.log({ result })
         return done(null, result)
       } catch (error) {
         return done(error.message)
@@ -247,7 +246,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       // backspace or any key that should remove the autocompletion
       setAutoCompleteState((prevState) => ({
         ...prevState,
-        showSuggestions: false
+        showSuggestions: false,
       }))
     }
     if (autoCompletState.showSuggestions && (event.which === 13 || event.which === 9)) {
@@ -256,7 +255,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           ...prevState,
           activeSuggestion: 0,
           showSuggestions: false,
-          userInput: Object.keys(autoCompletState.data._options[0]).toString()
+          userInput: Object.keys(autoCompletState.data._options[0]).toString(),
         }))
       } else {
         if (autoCompletState.showSuggestions && (event.which === 13 || event.which === 9)) {
@@ -266,14 +265,14 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             showSuggestions: false,
             userInput: autoCompletState.data._options[autoCompletState.activeSuggestion]
               ? Object.keys(autoCompletState.data._options[autoCompletState.activeSuggestion]).toString()
-              : inputEl.current.value
+              : inputEl.current.value,
           }))
         } else {
           setAutoCompleteState((prevState) => ({
             ...prevState,
             activeSuggestion: 0,
             showSuggestions: false,
-            userInput: autoCompletState.data._options.length === 1 ? Object.keys(autoCompletState.data._options[0]).toString() : inputEl.current.value
+            userInput: autoCompletState.data._options.length === 1 ? Object.keys(autoCompletState.data._options[0]).toString() : inputEl.current.value,
           }))
         }
       }
@@ -290,22 +289,22 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         setCmdTemp('')
         const script = autoCompletState.userInput.trim() // inputEl.current.innerText.trim()
         if (script.length) {
-          cmdHistoryDispatch({type: 'cmdHistory', payload: {script}})
+          cmdHistoryDispatch({ type: 'cmdHistory', payload: { script } })
           newstate.commands.script(wrapScript(script))
         }
-        setAutoCompleteState((prevState) => ({...prevState, userInput: ''}))
+        setAutoCompleteState((prevState) => ({ ...prevState, userInput: '' }))
         inputEl.current.innerText = ''
         inputEl.current.focus()
         setAutoCompleteState((prevState) => ({
           ...prevState,
-          showSuggestions: false
+          showSuggestions: false,
         }))
       }
     } else if (newstate._commandHistory.length && event.which === 38 && !autoCompletState.showSuggestions && autoCompletState.userInput === '') {
       event.preventDefault()
       setAutoCompleteState((prevState) => ({
         ...prevState,
-        userInput: newstate._commandHistory[0]
+        userInput: newstate._commandHistory[0],
       }))
     } else if (event.which === 38 && autoCompletState.showSuggestions) {
       event.preventDefault()
@@ -315,7 +314,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       setAutoCompleteState((prevState) => ({
         ...prevState,
         activeSuggestion: suggestionCount - 1,
-        userInput: Object.keys(autoCompletState.data._options[autoCompletState.activeSuggestion]).toString()
+        userInput: Object.keys(autoCompletState.data._options[autoCompletState.activeSuggestion]).toString(),
       }))
     } else if (event.which === 38 && !autoCompletState.showSuggestions) {
       // <arrowUp>
@@ -332,7 +331,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       setAutoCompleteState((prevState) => ({
         ...prevState,
         activeSuggestion: suggestionCount + 1,
-        userInput: Object.keys(autoCompletState.data._options[autoCompletState.activeSuggestion + 1]).toString()
+        userInput: Object.keys(autoCompletState.data._options[autoCompletState.activeSuggestion + 1]).toString(),
       }))
     } else if (event.which === 40 && !autoCompletState.showSuggestions) {
       if (_cmdIndex > -1) {
@@ -359,7 +358,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       log: 'text-log',
       info: 'text-log',
       warn: 'text-warning',
-      error: 'text-danger'
+      error: 'text-danger',
     }[mode] // defaults
 
     if (mode) {
@@ -389,7 +388,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const handleClearConsole = () => {
     setClearConsole(true)
-    dispatch({type: 'clearconsole', payload: []})
+    dispatch({ type: 'clearconsole', payload: [] })
     inputEl.current.focus()
   }
   /* start of autoComplete */
@@ -408,42 +407,42 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         setAutoCompleteState((prevState) => ({
           ...prevState,
           showSuggestions: false,
-          userInput: inputString
+          userInput: inputString,
         }))
       } else {
         setAutoCompleteState((prevState) => ({
           ...prevState,
           showSuggestions: true,
-          userInput: inputString
+          userInput: inputString,
         }))
       }
       const textList = inputString.split('.')
       if (textList.length === 1) {
         setAutoCompleteState((prevState) => ({
           ...prevState,
-          data: {_options: []}
+          data: { _options: [] },
         }))
         const result = Objectfilter(allPrograms, autoCompletState.userInput)
         setAutoCompleteState((prevState) => ({
           ...prevState,
-          data: {_options: result}
+          data: { _options: result },
         }))
       } else {
         setAutoCompleteState((prevState) => ({
           ...prevState,
-          data: {_options: []}
+          data: { _options: [] },
         }))
         const result = Objectfilter(allCommands, autoCompletState.userInput)
         setAutoCompleteState((prevState) => ({
           ...prevState,
-          data: {_options: result}
+          data: { _options: result },
         }))
       }
     } else {
       setAutoCompleteState((prevState) => ({
         ...prevState,
         showSuggestions: false,
-        userInput: inputString
+        userInput: inputString,
       }))
     }
   }
@@ -453,7 +452,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     setAutoCompleteState((prevState) => ({
       ...prevState,
       showSuggestions: false,
-      userInput: result
+      userInput: result,
     }))
     inputEl.current.focus()
   }
@@ -466,7 +465,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       }
       setAutoCompleteState((prevState) => ({
         ...prevState,
-        activeSuggestion: suggestionCount - 1
+        activeSuggestion: suggestionCount - 1,
       }))
     } else if (event.keyCode === 40) {
       if (autoCompletState.activeSuggestion - 1 === autoCompletState.data._options.length) {
@@ -474,7 +473,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       }
       setAutoCompleteState((prevState) => ({
         ...prevState,
-        activeSuggestion: suggestionCount + 1
+        activeSuggestion: suggestionCount + 1,
       }))
     }
   }
@@ -488,12 +487,12 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       okFn,
       cancelLabel,
       cancelFn,
-      hide
+      hide,
     }))
   }
 
   const handleHideModal = () => {
-    setModalState((prevState) => ({...prevState, hide: true}))
+    setModalState((prevState) => ({ ...prevState, hide: true }))
   }
 
   const txDetails = (event, tx) => {
@@ -515,7 +514,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         display:
           autoCompletState.showSuggestions && autoCompletState.userInput !== '' && autoCompletState.userInput.length > 0 && autoCompletState.data._options.length > 0
             ? 'block'
-            : 'none'
+            : 'none',
       }}
     >
       <div>
@@ -545,7 +544,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     setAutoCompleteState((prevState) => ({
       ...prevState,
       activeSuggestion: 0,
-      showSuggestions: false
+      showSuggestions: false,
     }))
   }
 
@@ -572,7 +571,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const classNameBlock = 'remix_ui_terminal_block px-4 py-1 text-break'
 
   return (
-    <div style={{flexGrow: 1}} className="remix_ui_terminal_panel" ref={panelRef}>
+    <div style={{ flexGrow: 1 }} className="remix_ui_terminal_panel" ref={panelRef}>
       <div className="remix_ui_terminal_bar d-flex">
         <div className="remix_ui_terminal_menu d-flex w-100 align-items-center position-relative border-top border-dark bg-light" ref={terminalMenu} data-id="terminalToggleMenu">
           <CustomTooltip placement="top" tooltipId="terminalToggle" tooltipClasses="text-nowrap" tooltipText={isOpen ? 'Hide Terminal' : 'Show Terminal'}>
@@ -591,10 +590,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             <div className="mx-2">0</div>
           </CustomTooltip>
           <div className="pt-1 h-80 mx-3 align-items-center remix_ui_terminal_listenOnNetwork custom-control custom-checkbox">
-            <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={intl.formatMessage({id: 'terminal.listenTitle'})}>
+            <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={intl.formatMessage({ id: 'terminal.listenTitle' })}>
               <input className="custom-control-input" id="listenNetworkCheck" onChange={listenOnNetwork} type="checkbox" />
             </CustomTooltip>
-            <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={intl.formatMessage({id: 'terminal.listenTitle'})}>
+            <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={intl.formatMessage({ id: 'terminal.listenTitle' })}>
               <label className="pt-1 form-check-label custom-control-label text-nowrap" htmlFor="listenNetworkCheck" data-id="listenNetworkCheckInput">
                 <FormattedMessage id="terminal.listen" />
               </label>
@@ -607,7 +606,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
               type="text"
               className="remix_ui_terminal_filter border form-control"
               id="searchInput"
-              placeholder={intl.formatMessage({id: 'terminal.search'})}
+              placeholder={intl.formatMessage({ id: 'terminal.search' })}
               data-id="terminalInputSearch"
             />
           </div>

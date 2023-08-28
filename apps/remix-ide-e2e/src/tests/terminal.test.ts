@@ -35,14 +35,17 @@ module.exports = {
   'Call Remix File Manager from a script #group2': function (browser: NightwatchBrowser) {
     browser
       .addFile('asyncAwaitWithFileManagerAccess.js', { content: asyncAwaitWithFileManagerAccess })
-      .executeScriptInTerminal('remix.execute(\'asyncAwaitWithFileManagerAccess.js\')')
+      .executeScriptInTerminal("remix.execute('asyncAwaitWithFileManagerAccess.js')")
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'contract Ballot {', 60000)
   },
 
   'Call web3.eth.getAccounts() using Remix VM #group2': function (browser: NightwatchBrowser) {
     browser
       .executeScriptInTerminal('web3.eth.getAccounts()')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '["0x5B38Da6a701c568545dCfcB03FcB875f56beddC4","0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2","0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db","0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB","0x617F2E2fD72FD9D5503197092aC168c91465E7f2","0x17F6AD8Ef982297579C203069C1DbfFE4348c372","0x5c6B0f7Bf3E7ce046039Bd8FABdfD3f9F5021678","0x03C6FcED478cBbC9a4FAB34eF9f40767739D1Ff7","0x1aE0EA34a72D944a8C7603FfB3eC30a6669E454C","0x0A098Eda01Ce92ff4A4CCb7A4fFFb5A43EBC70DC","0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c","0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C","0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB","0x583031D1113aD414F02576BD6afaBfb302140225","0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]')
+      .waitForElementContainsText(
+        '*[data-id="terminalJournal"]',
+        '["0x5B38Da6a701c568545dCfcB03FcB875f56beddC4","0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2","0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db","0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB","0x617F2E2fD72FD9D5503197092aC168c91465E7f2","0x17F6AD8Ef982297579C203069C1DbfFE4348c372","0x5c6B0f7Bf3E7ce046039Bd8FABdfD3f9F5021678","0x03C6FcED478cBbC9a4FAB34eF9f40767739D1Ff7","0x1aE0EA34a72D944a8C7603FfB3eC30a6669E454C","0x0A098Eda01Ce92ff4A4CCb7A4fFFb5A43EBC70DC","0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c","0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C","0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB","0x583031D1113aD414F02576BD6afaBfb302140225","0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]'
+      )
   },
 
   'Call web3.eth.getAccounts() using External Http Provider #group5': function (browser: NightwatchBrowser) {
@@ -63,7 +66,7 @@ module.exports = {
       .addFile('resolveExternalUrlAndSave.js', { content: resolveExternalUrlAndSave })
       .openFile('resolveExternalUrlAndSave.js')
       .pause(1000)
-      .executeScriptInTerminal('remix.execute(\'resolveExternalUrlAndSave.js\')')
+      .executeScriptInTerminal("remix.execute('resolveExternalUrlAndSave.js')")
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Implementation of the {IERC20} interface.', 60000)
       .openFile('.deps/github/OpenZeppelin/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol')
   },
@@ -74,7 +77,7 @@ module.exports = {
       .addFile('resolveUrl.js', { content: resolveUrl })
       .openFile('resolveUrl.js')
       .pause(1000)
-      .executeScriptInTerminal('remix.execute(\'resolveUrl.js\')')
+      .executeScriptInTerminal("remix.execute('resolveUrl.js')")
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'contract Ballot {', 60000)
   },
 
@@ -84,10 +87,9 @@ module.exports = {
       .addFile('resolveExternalUrlAndSaveToaPath.js', { content: resolveExternalUrlAndSaveToaPath })
       .openFile('resolveExternalUrlAndSaveToaPath.js')
       .pause(1000)
-      .executeScriptInTerminal('remix.execute(\'resolveExternalUrlAndSaveToaPath.js\')')
+      .executeScriptInTerminal("remix.execute('resolveExternalUrlAndSaveToaPath.js')")
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'abstract contract ERC20Burnable', 60000)
       .openFile('.deps/github/newFile.sol')
-
   },
 
   'Deploy "Owner" using an ether.js script, listen to event and check event are logged in the terminal #group4': function (browser: NightwatchBrowser) {
@@ -104,8 +106,9 @@ module.exports = {
       .click('[data-id="treeViewDivtreeViewItemcontracts"]')
       .openFile('contracts/2_Owner.sol')
       .clickLaunchIcon('solidity')
-      .click('*[data-id="compilerContainerCompileBtn"]').pause(5000) // compile Owner
-      .executeScriptInTerminal('remix.execute(\'deployWithEthersJs.js\')')
+      .click('*[data-id="compilerContainerCompileBtn"]')
+      .pause(5000) // compile Owner
+      .executeScriptInTerminal("remix.execute('deployWithEthersJs.js')")
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Contract Address:', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deployment successful.', 60000)
@@ -127,7 +130,7 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]')
       .pause(1000) // compile Storage
-      .executeScriptInTerminal('remix.execute(\'scripts/storage.test.js\')')
+      .executeScriptInTerminal("remix.execute('scripts/storage.test.js')")
       .pause(1000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'RUNS scripts/script.ts....')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'storage contract Address:')
@@ -150,7 +153,7 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]')
       .pause(1000) // compile StorageWithLib
-      .executeScriptInTerminal('remix.execute(\'scripts/storageWithLib.test.js\')')
+      .executeScriptInTerminal("remix.execute('scripts/storageWithLib.test.js')")
       .pause(1000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'RUNS scripts/script.ts....')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Storage')
@@ -158,13 +161,13 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '✘ test library integration by calling a lib method')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Expected: 34')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Received: 14')
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Message: expected \'14\' to equal \'34\'')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', "Message: expected '14' to equal '34'")
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Passed: 0')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Failed: 1')
   },
   'Should print hardhat logs #group4': function (browser: NightwatchBrowser) {
     browser
-      .addFile('printHardhatlog.sol',  { content: hardhatLog })
+      .addFile('printHardhatlog.sol', { content: hardhatLog })
       .clickLaunchIcon('solidity')
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .waitForElementVisible('[for="autoCompile"]')
@@ -210,20 +213,32 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .switchEnvironment('basic-http-provider')
       .waitForElementPresent('[data-id="basic-http-provider-modal-footer-ok-react"]')
-      .execute(() => {
-        (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
-      }, [], () => { })
+      .execute(
+        () => {
+          ;(document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
+        },
+        [],
+        () => {}
+      )
       .setValue('[data-id="modalDialogCustomPromp"]', 'https://remix-goerli.ethdevops.io')
       .modalFooterOKClick('basic-http-provider')
       .clickLaunchIcon('filePanel')
       .openFile('README.txt')
       .addFile('scripts/log_tx_block.js', { content: scriptBlockAndTransaction })
       .pause(1000)
-      .executeScriptInTerminal('remix.execute(\'scripts/log_tx_block.js\')')
+      .executeScriptInTerminal("remix.execute('scripts/log_tx_block.js')")
       // check if the input of the transaction is being logged (web3 call)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '0x775526410000000000000000000000000000000000000000000000000000000000000060464c0335b2f1609abd9de25141c0a3b49db516fc7375970dc737c32b986e88e3000000000000000000000000000000000000000000000000000000000000039e000000000000000000000000000000000000000000000000000000000000000602926b30b10e7a514d92bc71e085f5bff2687fac2856ae43ef7621bf1756fa370516d310bec5727543089be9a4d5f68471174ee528e95a2520b0ca36c2b6c6eb0000000000000000000000000000000000000000000000000000000000046f49036f5e4ea4dd042801c8841e3db8e654124305da0f11824fc1db60c405dbb39f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000', 120000)
+      .waitForElementContainsText(
+        '*[data-id="terminalJournal"]',
+        '0x775526410000000000000000000000000000000000000000000000000000000000000060464c0335b2f1609abd9de25141c0a3b49db516fc7375970dc737c32b986e88e3000000000000000000000000000000000000000000000000000000000000039e000000000000000000000000000000000000000000000000000000000000000602926b30b10e7a514d92bc71e085f5bff2687fac2856ae43ef7621bf1756fa370516d310bec5727543089be9a4d5f68471174ee528e95a2520b0ca36c2b6c6eb0000000000000000000000000000000000000000000000000000000000046f49036f5e4ea4dd042801c8841e3db8e654124305da0f11824fc1db60c405dbb39f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
+        120000
+      )
       // check if the logsBloom is being logged (web3 call)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '0x00000000000000000000000000100000000000000000020000000000002000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000040000000060000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000100000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000001', 120000)
+      .waitForElementContainsText(
+        '*[data-id="terminalJournal"]',
+        '0x00000000000000000000000000100000000000000000020000000000002000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000040000000060000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000100000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000001',
+        120000
+      )
       // check if the logsBloom is being logged (ethers.js call)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '"hex":"0x025cd8"', 120000)
   },
@@ -244,7 +259,7 @@ module.exports = {
       .waitForElementNotPresent({
         locateStrategy: 'xpath',
         selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
-        timeout: 120000
+        timeout: 120000,
       })
       .click({
         selector: '[data-id="listenNetworkCheckInput"]',
@@ -258,33 +273,32 @@ module.exports = {
           locateStrategy: 'xpath',
           selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
           timeout: 120000,
-        }
-        , async (result) => {
+        },
+        async (result) => {
           if (Array.isArray(result.value) && result.value.length > 0) {
             console.log('Found ' + result.value.length + ' transactions')
             browser
-            .click({
-              selector: '[data-id="listenNetworkCheckInput"]',
-            })
-            .click({
-              selector: '*[data-id="terminalClearConsole"]',
-            })
-            .click({
-              selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
-            })
-            .pause(10000)
-            .waitForElementNotPresent({
-              locateStrategy: 'xpath',
-              selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
-              timeout: 120000
-            })
-            .end()
-          } else {
-            browser
-              .assert.fail('No transaction found')
+              .click({
+                selector: '[data-id="listenNetworkCheckInput"]',
+              })
+              .click({
+                selector: '*[data-id="terminalClearConsole"]',
+              })
+              .click({
+                selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
+              })
+              .pause(10000)
+              .waitForElementNotPresent({
+                locateStrategy: 'xpath',
+                selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
+                timeout: 120000,
+              })
               .end()
+          } else {
+            browser.assert.fail('No transaction found').end()
           }
-        })
+        }
+      )
   },
 
   'Should connect to mainnet fork and run web3.eth.getCode in the terminal #group9': function (browser: NightwatchBrowser) {
@@ -292,24 +306,43 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .switchEnvironment('vm-mainnet-fork')
       .executeScriptInTerminal(`web3.eth.getCode('0x180587b00c8642e2c7ac3a758712d97e6f7bdcc7')`) // mainnet contract
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '0x608060405260043610601f5760003560e01c80635c60da1b14603157602b565b36602b576029605f565b005b6029605f565b348015603c57600080fd5b5060436097565b6040516001600160a01b03909116815260200160405180910390f35b609560917f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc546001600160a01b031690565b60d1565b565b600060c97f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc546001600160a01b031690565b905090565b90565b3660008037600080366000845af43d6000803e80801560ef573d6000f35b3d6000fdfea2646970667358221220969dbb4b1d8aec2bb348e26488dc1a33b6bcf0190f567d161312ab7ca9193d8d64736f6c63430008110033', 120000)
+      .waitForElementContainsText(
+        '*[data-id="terminalJournal"]',
+        '0x608060405260043610601f5760003560e01c80635c60da1b14603157602b565b36602b576029605f565b005b6029605f565b348015603c57600080fd5b5060436097565b6040516001600160a01b03909116815260200160405180910390f35b609560917f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc546001600160a01b031690565b60d1565b565b600060c97f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc546001600160a01b031690565b905090565b90565b3660008037600080366000845af43d6000803e80801560ef573d6000f35b3d6000fdfea2646970667358221220969dbb4b1d8aec2bb348e26488dc1a33b6bcf0190f567d161312ab7ca9193d8d64736f6c63430008110033',
+        120000
+      )
   },
 
   'Should connect to the sepolia fork and run web3.eth.getCode in the terminal #group9': function (browser: NightwatchBrowser) {
     browser
       .switchEnvironment('vm-custom-fork')
       .waitForElementPresent('[data-id="vm-custom-fork-modal-footer-ok-react"]')
-      .execute(() => {
-          (document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkNodeUrl"]') as any).focus()
-      }, [], () => { })
-      .clearValue('*[data-id="CustomForkNodeUrl"]').pause(1000).setValue('*[data-id="CustomForkNodeUrl"]', 'https://remix-sepolia.ethdevops.io')
-      .execute(() => {
-        (document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkBlockNumber"]') as any).focus()
-      }, [], () => { })
-      .clearValue('*[data-id="CustomForkBlockNumber"]').setValue('*[data-id="CustomForkBlockNumber"]', 'latest')
-      .execute(() => {
-        (document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkEvmType"]') as any).focus()
-      }, [], () => { })
+      .execute(
+        () => {
+          ;(document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkNodeUrl"]') as any).focus()
+        },
+        [],
+        () => {}
+      )
+      .clearValue('*[data-id="CustomForkNodeUrl"]')
+      .pause(1000)
+      .setValue('*[data-id="CustomForkNodeUrl"]', 'https://remix-sepolia.ethdevops.io')
+      .execute(
+        () => {
+          ;(document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkBlockNumber"]') as any).focus()
+        },
+        [],
+        () => {}
+      )
+      .clearValue('*[data-id="CustomForkBlockNumber"]')
+      .setValue('*[data-id="CustomForkBlockNumber"]', 'latest')
+      .execute(
+        () => {
+          ;(document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkEvmType"]') as any).focus()
+        },
+        [],
+        () => {}
+      )
       .click('*[data-id="CustomForkEvmType"] [value="merge"]')
       .pause(5000)
       .modalFooterOKClick('vm-custom-fork')
@@ -317,37 +350,30 @@ module.exports = {
       .executeScriptInTerminal(`web3.eth.getCode('0x75F509A4eDA030470272DfBAf99A47D587E76709')`) // sepolia contract
       .waitForElementContainsText('*[data-id="terminalJournal"]', byteCodeInSepolia, 120000)
   },
-  
+
   'Should run free function which logs in the terminal #group10': function (browser: NightwatchBrowser) {
     const script = `import "hardhat/console.sol";
 
     function runSomething () view {
         console.log("test running free function");
-    } 
+    }
     `
+    browser.addFile('test.sol', { content: script }).scrollToLine(3)
+    const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"
+    //const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething" in the Remix VM']`
     browser
-      .addFile('test.sol', { content: script })
-      .scrollToLine(3)
-    const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"    
-    const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething" in the Remix VM']`
-    browser.waitForElementVisible('#editorView')
+      .waitForElementVisible('#editorView')
       .useXpath()
       .click(path)
       .pause(3000) // the parser need to parse the code
       .perform(function () {
-        const actions = this.actions({ async: true });
-        return actions
-            .keyDown(this.Keys.SHIFT)
-            .keyDown(this.Keys.ALT)
-            .sendKeys('r')
+        const actions = this.actions({ async: true })
+        return actions.keyDown(this.Keys.SHIFT).keyDown(this.Keys.ALT).sendKeys('r')
       })
       .useCss()
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'test running free function', 120000)
-  }
+  },
 }
-
-
-
 
 const asyncAwait = `
   var p = function () {
@@ -356,7 +382,7 @@ const asyncAwait = `
             resolve("Promise Resolved")
         }, 5000)
     })
-  } 
+  }
 
   var run = async () => {
     console.log('Waiting Promise')
@@ -394,7 +420,7 @@ const resolveExternalUrlAndSave = `
   } catch (e) {
       console.log(e.message)
   }
-})()  
+})()
 `
 
 const resolveExternalUrlAndSaveToaPath = `
@@ -405,7 +431,7 @@ const resolveExternalUrlAndSaveToaPath = `
   } catch (e) {
       console.log(e.message)
   }
-})()  
+})()
 `
 
 const resolveUrl = `
@@ -416,7 +442,7 @@ const resolveUrl = `
   } catch (e) {
       console.log(e.message)
   }
-})()  
+})()
 `
 
 const deployWithEthersJs = `
@@ -424,32 +450,32 @@ const deployWithEthersJs = `
 (async () => {
     try {
         console.log('Running deployWithEthers script...')
-    
+
         const constructorArgs = []    // Put constructor args (if any) here for your contract
 
         // Note that the script needs the ABI which is generated from the compilation artifact.
         // Make sure contract is compiled and artifacts are generated
         const artifactsPath = 'contracts/artifacts/Owner.json' // Change this for different path
-    
+
         const metadata = JSON.parse(await remix.call('fileManager', 'getFile', artifactsPath))
         // 'web3Provider' is a remix global variable object
         const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
-    
+
         let factory = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
-    
+
         let contract = await factory.deploy(...constructorArgs);
-    
+
         console.log('Contract Address: ', contract.address);
-    
+
         // The contract is NOT deployed yet; we must wait until it is mined
         await contract.deployed()
         console.log('Deployment successful.')
-        
+
         contract.on('OwnerSet', (previousOwner, newOwner) => {
             console.log('previousOwner' , previousOwner)
             console.log('newOwner' , newOwner)
         })
-       
+
         console.log('ok')
     } catch (e) {
         console.log(e.message)
@@ -516,12 +542,12 @@ contract StorageWithLib {
      * @dev Store valrue in variable
      * @param num value to store
      */
-    function store(uint256 num) public {        
-        number = num;        
+    function store(uint256 num) public {
+        number = num;
     }
 
     /**
-     * @dev Return value 
+     * @dev Return value
      * @return value of 'number'
      */
     function retrieve() public view returns (uint256){
@@ -568,11 +594,11 @@ describe("Storage", function () {
             deployedLinkReferences: metadata.data.deployedBytecode.linkReferences,
         }
         const options = {
-            libraries: { 
+            libraries: {
                 'Lib': lib.address
             }
         }
-        
+
         const factory = await ethers.getContractFactoryFromArtifact(artifact, options)
         const storage = await factory.deploy();
         await storage.deployed()
@@ -596,10 +622,10 @@ import "hardhat/console.sol";
 contract OwnerTest {
 
     address private owner;
-    
+
     // event for EVM logging
     event OwnerSet(address indexed oldOwner, address indexed newOwner);
-    
+
     // modifier to check if caller is owner
     modifier isOwner() {
         // If the first argument of 'require' evaluates to 'false', execution terminates and all
@@ -610,7 +636,7 @@ contract OwnerTest {
         require(msg.sender == owner, "Caller is not owner");
         _;
     }
-    
+
     /**
      * @dev Set contract deployer as owner
      */
@@ -631,7 +657,7 @@ contract OwnerTest {
     }
 
     /**
-     * @dev Return owner address 
+     * @dev Return owner address
      * @return address of owner
      */
     function getOwner() external view returns (address) {
@@ -644,39 +670,39 @@ const scriptAutoExec = {
   contract: `// SPDX-License-Identifier: GPL-3.0
 
   pragma solidity >=0.8.2 <0.9.0;
-  
+
   library lib {
       function test () public view returns (uint) {
-  
+
           return 147;
       }
   }
-  
+
   /**
    * @title Storage
    * @dev Store & retrieve value inr a variable
    * @custom:dev-run-script ./scripts/deploy_storage.js
    */
   contract Storage {
-  
+
       uint256 number;
-  
+
       /**
        * @dev Store valrue in variable
        * @param num value to store
        */
       function store(uint256 num) public {
-          number = num;        
+          number = num;
       }
-  
+
       /**
-       * @dev Return value 
+       * @dev Return value
        * @return value of 'number'
        */
       function retrieve() public view returns (uint256){
           return number;
       }
-  
+
       function getFromLib() public view returns (uint) {
           return lib.test();
       }
@@ -686,16 +712,16 @@ const scriptAutoExec = {
   // Right click on the script name and hit "Run" to execute
   const { expect } = require("chai");
   const { ethers } = require("hardhat");
-  
+
   (async () => {
       try {
           // function getContractFactoryFromArtifact(artifact: Artifact, signer?: ethers.Signer): Promise<ethers.ContractFactory>;
-  
+
           // function getContractFactoryFromArtifact(artifact: Artifact, factoryOptions: FactoryOptions): Promise<ethers.ContractFactory>;
-          
+
           const metadataLib = JSON.parse(await remix.call('fileManager', 'readFile', 'contracts/artifacts/lib.json'))
           console.log('deploying lib:')
-          
+
           const artifactLib  = {
               contractName: 'Lib',
               sourceName: 'contracts/1_Storage.sol',
@@ -706,15 +732,15 @@ const scriptAutoExec = {
               deployedLinkReferences: metadataLib.data.deployedBytecode.linkReferences,
           }
           const optionsLib = {}
-          
+
           const factoryLib = await ethers.getContractFactoryFromArtifact(artifactLib, optionsLib)
-          
+
           const lib = await factoryLib.deploy();
-  
+
           await lib.deployed()
-  
+
           console.log('lib deployed', lib.address)
-  
+
           const metadata = JSON.parse(await remix.call('fileManager', 'readFile', 'contracts/artifacts/Storage.json'))
           const artifact  = {
               contractName: 'Storage',
@@ -726,30 +752,30 @@ const scriptAutoExec = {
               deployedLinkReferences: metadata.data.deployedBytecode.linkReferences,
           }
           const options = {
-              libraries: { 
+              libraries: {
                   'lib': lib.address
               }
           }
-          
+
           const factory = await ethers.getContractFactoryFromArtifact(artifact, options)
-  
+
           const storage = await factory.deploy();
-          
+
           await storage.deployed()
-  
+
           const storeValue = await storage.store(333);
-  
+
           // wait until the transaction is mined
           await storeValue.wait();
-  
+
           console.log((await storage.getFromLib()).toString())
           // expect((await storage.getFromLib()).toString()).to.equal('34');
-  
+
       } catch (e) {
           console.error(e.message)
       }
     })()
-  `
+  `,
 }
 
 const scriptBlockAndTransaction = `

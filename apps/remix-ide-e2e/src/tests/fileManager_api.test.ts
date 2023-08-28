@@ -99,7 +99,7 @@ module.exports = {
       .pause(2000)
       .waitForElementNotPresent('[data-id="treeViewLitreeViewItemcontracts"]', 60000)
       .end()
-  }
+  },
 }
 
 const executeFile = `
@@ -199,7 +199,7 @@ const executeRemove = `
 `
 
 const executeRemoveOnFolder = `(async () => {
-  try {      
+  try {
       await remix.call('fileManager', 'remove', 'contracts')
   } catch (e) {
       console.log(e.message)

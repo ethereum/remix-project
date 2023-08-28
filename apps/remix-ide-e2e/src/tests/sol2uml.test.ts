@@ -4,35 +4,38 @@ import init from '../helpers/init'
 
 module.exports = {
   '@disabled': true,
-  before: function (browser: NightwatchBrowser, done: VoidFunction) { 
+  before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
   '@sources': () => sources,
-  'Generate uml diagram from contract #group1': function (browser: NightwatchBrowser) { 
-    browser.addFile('TestBallot.sol', sources[0]['TestBallot.sol'])
+  'Generate uml diagram from contract #group1': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('TestBallot.sol', sources[0]['TestBallot.sol'])
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemTestBallot.sol"')
       .rightClick('*[data-id="treeViewLitreeViewItemTestBallot.sol"]')
       .click('*[id="menuitemgeneratecustomaction"')
       .waitForElementVisible('*[id="sol-uml-gen"]')
-    },
-    'Generate uml for contracts with imports #group1': function (browser: NightwatchBrowser) {
-        browser.addFile('secondContract.sol', sources[1]['secondContract.sol'])
-            .waitForElementVisible('*[data-id="treeViewLitreeViewItemsecondContract.sol"')
-            .pause(3000)
-            .rightClick('*[data-id="treeViewLitreeViewItemsecondContract.sol"]')
-            .click('*[id="menuitemgeneratecustomaction"')
-            .waitForElementVisible('*[id="sol-uml-gen"]')
-            .isVisible('*[data-id="treeViewLitreeViewItemsecondContract_flattened.sol"]')
-    },
-    'Zoom into uml diagram #group1': function (browser: NightwatchBrowser) {
-        browser.addFile('secondContract.sol', sources[1]['secondContract.sol'])
-            .waitForElementVisible('*[data-id="treeViewLitreeViewItemsecondContract.sol"')
-            .pause(3000)
-            .rightClick('*[data-id="treeViewLitreeViewItemsecondContract.sol"]')
-            .click('*[id="menuitemgeneratecustomaction"')
-            .waitForElementVisible('*[id="sol-uml-gen"]')
-            .click('*[data-id="umlZoominbtn"]')
-    }
+  },
+  'Generate uml for contracts with imports #group1': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('secondContract.sol', sources[1]['secondContract.sol'])
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemsecondContract.sol"')
+      .pause(3000)
+      .rightClick('*[data-id="treeViewLitreeViewItemsecondContract.sol"]')
+      .click('*[id="menuitemgeneratecustomaction"')
+      .waitForElementVisible('*[id="sol-uml-gen"]')
+      .isVisible('*[data-id="treeViewLitreeViewItemsecondContract_flattened.sol"]')
+  },
+  'Zoom into uml diagram #group1': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('secondContract.sol', sources[1]['secondContract.sol'])
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemsecondContract.sol"')
+      .pause(3000)
+      .rightClick('*[data-id="treeViewLitreeViewItemsecondContract.sol"]')
+      .click('*[id="menuitemgeneratecustomaction"')
+      .waitForElementVisible('*[id="sol-uml-gen"]')
+      .click('*[data-id="umlZoominbtn"]')
+  },
 }
 
 const sources = [
@@ -43,7 +46,7 @@ const sources = [
 
 pragma solidity >=0.7.0 <0.9.0;
 
-/** 
+/**
  * @title Ballot
  * @dev Implements voting process along with vote delegation
  */
@@ -57,7 +60,7 @@ contract Ballot {
     }
 
     struct Proposal {
-        // If you can limit the length to a certain number of bytes, 
+        // If you can limit the length to a certain number of bytes,
         // always use one of bytes1 to bytes32 because they are much cheaper
         bytes32 name;   // short name (up to 32 bytes)
         uint voteCount; // number of accumulated votes
@@ -69,7 +72,7 @@ contract Ballot {
 
     Proposal[] public proposals;
 
-    /** 
+    /**
      * @dev Create a new ballot to choose one of 'proposalNames'.
      * @param proposalNames names of proposals
      */
@@ -88,7 +91,7 @@ contract Ballot {
         }
     }
 
-    /** 
+    /**
      * @dev Give 'voter' the right to vote on this ballot. May only be called by 'chairperson'.
      * @param voter address of voter
      */
@@ -151,7 +154,7 @@ contract Ballot {
         proposals[proposal].voteCount += sender.weight;
     }
 
-    /** 
+    /**
      * @dev Computes the winning proposal taking all previous votes into account.
      * @return winningProposal_ index of winning proposal in the proposals array
      */
@@ -167,7 +170,7 @@ contract Ballot {
         }
     }
 
-    /** 
+    /**
      * @dev Calls winningProposal() function to get the index of the winner contained in the proposals array and then
      * @return winnerName_ the name of the winner
      */
@@ -177,7 +180,8 @@ contract Ballot {
         winnerName_ = proposals[winningProposal()].name;
     }
 }
-`}
+`,
+    },
   },
   {
     'secondContract.sol': {
@@ -213,6 +217,7 @@ contract MyToken is Initializable, ERC721Upgradeable, OwnableUpgradeable, UUPSUp
         override
     {}
 }
-`}
-}
+`,
+    },
+  },
 ]

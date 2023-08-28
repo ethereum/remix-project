@@ -11,15 +11,15 @@ module.exports = {
         int32 i32;
     }
     intStruct intStructDec;
-    
+
     int64[7] i5;
-    
+
     int64[] idyn5;
-    
+
     int32[][4] dyn1;
-    
+
     int32[][4][] dyn2;
-    
+
     struct simpleStruct {
         int8 i8;
         string str;
@@ -32,7 +32,7 @@ module.exports = {
         intStructDec.i256 = -1243565465756;
         intStructDec.ui16 = 34556;
         intStructDec.i32 = -345446546;
-        
+
         i5[0] = -2134;
         i5[1] = 345;
         i5[2] = -3246;
@@ -40,7 +40,7 @@ module.exports = {
         i5[4] = 324;
         i5[5] = -2344;
         i5[6] = 3254;
-        
+
         idyn5.push(-2134);
         idyn5.push(345);
         idyn5.push(-3246);
@@ -50,12 +50,12 @@ module.exports = {
         idyn5.push(3254);
         idyn5.push(-254);
         idyn5.push(-2354);
-        
+
         dyn1[0].push(3);
         dyn1[1].push(12);
         dyn1[1].push(-12);
         dyn1[1].push(-1234);
-        
+
         dyn1[2].push(1);
         dyn1[2].push(12);
         dyn1[2].push(1235);
@@ -68,84 +68,84 @@ module.exports = {
         dyn1[2].push(232432);
         dyn1[3].push(232432);
         dyn1[3].push(232432);
-        
+
         int32[][4] memory e1;
         e1[0] = new int32[](3);
         e1[1] = new int32[](3);
         e1[2] = new int32[](3);
         e1[3] = new int32[](3);
-        
+
         e1[0][0] = 23;
         e1[0][1] = -23;
         e1[0][2] = -28;
-        
+
         e1[1][0] = 23;
         e1[1][1] = -23;
         e1[1][2] = -28;
-        
+
         e1[2][0] = 23;
         e1[2][1] = -23;
         e1[2][2] = -28;
-        
+
         e1[3][0] = 23;
         e1[3][1] = -23;
         e1[3][2] = -28;
-        
+
         dyn2.push(e1);
-        
+
         int32[][4] memory e2;
         e2[0] = new int32[](3);
         e2[1] = new int32[](3);
         e2[2] = new int32[](3);
         e2[3] = new int32[](3);
-        
+
         e2[0][0] = 23;
         e2[0][1] = -23;
         e2[0][2] = -28;
-        
+
         e2[1][0] = 23;
         e2[1][1] = -23;
         e2[1][2] = -28;
-        
+
         e2[2][0] = 23;
         e2[2][1] = -23;
         e2[2][2] = -28;
-        
+
         e2[3][0] = 23;
         e2[3][1] = -23;
         e2[3][2] = -28;
-        
+
         dyn2.push(e2);
-        
+
         simpleStruct memory s1;
         s1.i8 = 34;
         s1.str = 'test_str_short';
-        
+
         simpleStruct memory s2;
         s1.i8 = -123;
         s1.str = 'test_str_long test_str_lo ngtest_str_longtest_str_ longtest_str_longtest_ str_longtest_str_l ongtest_str_long';
-       
+
         arrayStruct[0].push(s1);
         arrayStruct[0].push(s2);
-        
+
         simpleStruct memory s3;
         s3.i8 = 50;
         s3.str = 'test_str_short';
-        
+
         arrayStruct[1].push(s3);
-        
+
         simpleStruct memory s4;
         s4.i8 = 60;
         s4.str = 'test_str_short';
-        
+
         simpleStruct memory s5;
         s5.i8 = 84;
         s5.str = 'test_str_long test_str_lo ngtest_str_longtest_str_ longtest_str_longtest_ str_longtest_str_l ongtest_str_long';
-       
+
         simpleStruct memory s6;
         s5.i8 = -34;
         s5.str = 'test_str_short';
-        
+
         arrayStruct[2].push(s4);
         arrayStruct[2].push(s5);
         arrayStruct[2].push(s6);
@@ -210,6 +210,6 @@ module.exports = {
     '0x87466a1ae97409dd9d9cd9368751b439509d8b3f8fc2bb47a4264e5d6fd4d326': '0x6c6f6e67746573745f207374725f6c6f6e67746573745f7374725f6c206f6e67',
     '0x87466a1ae97409dd9d9cd9368751b439509d8b3f8fc2bb47a4264e5d6fd4d327': '0x746573745f7374725f6c6f6e6700000000000000000000000000000000000000',
     '0xd7b6990105719101dabeb77144f2a3385c8033acd3af97e9423a695e81ad1eb9': '0x00000000000000000000000000000000000000000000000000000000000000de',
-    '0xd7b6990105719101dabeb77144f2a3385c8033acd3af97e9423a695e81ad1eba': '0x746573745f7374725f73686f727400000000000000000000000000000000001c'
-  }
+    '0xd7b6990105719101dabeb77144f2a3385c8033acd3af97e9423a695e81ad1eba': '0x746573745f7374725f73686f727400000000000000000000000000000000001c',
+  },
 }

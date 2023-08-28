@@ -1,10 +1,10 @@
-import React, {useEffect, useRef, useState} from 'react'
-import {createContext, useReducer} from 'react'
-import {findLinesInStringWithMatch, getDirectory, replaceAllInFile, replaceTextInLine} from '../components/results/SearchHelper'
-import {SearchReducer} from '../reducers/Reducer'
-import {SearchState, SearchResult, SearchResultLine, SearchResultLineLine, SearchingInitialState, undoBufferRecord} from '../types'
-import {filePathFilter} from '@jsdevtools/file-path-filter'
-import {escapeRegExp} from 'lodash'
+import React, { useEffect, useRef, useState } from 'react'
+import { createContext, useReducer } from 'react'
+import { findLinesInStringWithMatch, getDirectory, replaceAllInFile, replaceTextInLine } from '../components/results/SearchHelper'
+import { SearchReducer } from '../reducers/Reducer'
+import { SearchState, SearchResult, SearchResultLine, SearchResultLineLine, SearchingInitialState, undoBufferRecord } from '../types'
+import { filePathFilter } from '@jsdevtools/file-path-filter'
+import { escapeRegExp } from 'lodash'
 
 export interface SearchingStateInterface {
   state: SearchState
@@ -36,7 +36,7 @@ export interface SearchingStateInterface {
 
 export const SearchContext = createContext<SearchingStateInterface>(null)
 
-export const SearchProvider = ({children = [], reducer = SearchReducer, initialState = SearchingInitialState, plugin = undefined} = {}) => {
+export const SearchProvider = ({ children = [], reducer = SearchReducer, initialState = SearchingInitialState, plugin = undefined } = {}) => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const [files, setFiles] = useState([])
   const clearSearchingTimeout = useRef(null)
@@ -46,129 +46,129 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
       plugin.cancel('fileManager')
       dispatch({
         type: 'SET_FIND',
-        payload: value
+        payload: value,
       })
     },
     setReplace: (value: string) => {
       dispatch({
         type: 'SET_REPLACE',
-        payload: value
+        payload: value,
       })
     },
     setReplaceEnabled: (value: boolean) => {
       dispatch({
         type: 'SET_REPLACE_ENABLED',
-        payload: value
+        payload: value,
       })
     },
     setInclude: (value: string) => {
       dispatch({
         type: 'SET_INCLUDE',
-        payload: value
+        payload: value,
       })
     },
     setExclude(value: string) {
       dispatch({
         type: 'SET_EXCLUDE',
-        payload: value
+        payload: value,
       })
     },
     setCaseSensitive(value: boolean) {
       dispatch({
         type: 'SET_CASE_SENSITIVE',
-        payload: value
+        payload: value,
       })
     },
     setWholeWord(value: boolean) {
       dispatch({
         type: 'SET_WHOLE_WORD',
-        payload: value
+        payload: value,
       })
     },
     setRegex(value: boolean) {
       dispatch({
         type: 'SET_REGEX',
-        payload: value
+        payload: value,
       })
     },
     setSearchResults(value: SearchResult[]) {
       dispatch({
         type: 'SET_SEARCH_RESULTS',
-        payload: value
+        payload: value,
       })
     },
     reloadFile: async (file: string) => {
       dispatch({
         type: 'RELOAD_FILE',
-        payload: file
+        payload: file,
       })
     },
     toggleUseRegex: () => {
       dispatch({
         type: 'TOGGLE_USE_REGEX',
-        payload: undefined
+        payload: undefined,
       })
     },
     toggleCaseSensitive: () => {
       dispatch({
         type: 'TOGGLE_CASE_SENSITIVE',
-        payload: undefined
+        payload: undefined,
       })
     },
     toggleMatchWholeWord: () => {
       dispatch({
         type: 'TOGGLE_MATCH_WHOLE_WORD',
-        payload: undefined
+        payload: undefined,
       })
     },
     setReplaceWithoutConfirmation: (value: boolean) => {
       dispatch({
         type: 'SET_REPLACE_WITHOUT_CONFIRMATION',
-        payload: value
+        payload: value,
       })
     },
     disableForceReload: (file: string) => {
       dispatch({
         type: 'DISABLE_FORCE_RELOAD',
-        payload: file
+        payload: file,
       })
     },
     setCurrentFile: (file: string) => {
       dispatch({
         type: 'SET_CURRENT_FILE',
-        payload: file
+        payload: file,
       })
     },
     setCurrentWorkspace: (workspace: any) => {
       dispatch({
         type: 'SET_CURRENT_WORKSPACE',
-        payload: workspace
+        payload: workspace,
       })
     },
     updateCount: (count: number, file: string) => {
       dispatch({
         type: 'UPDATE_COUNT',
-        payload: {count, file}
+        payload: { count, file },
       })
     },
     setSearching(file: string) {
       dispatch({
         type: 'SET_SEARCHING',
-        payload: file
+        payload: file,
       })
     },
 
     startSearch: () => {
       dispatch({
         type: 'START_SEARCH',
-        payload: undefined
+        payload: undefined,
       })
     },
 
     setRun(value: boolean) {
       dispatch({
         type: 'SET_RUN',
-        payload: value
+        payload: value,
       })
     },
 
@@ -219,8 +219,8 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
         payload: {
           path,
           workspace,
-          content
-        }
+          content,
+        },
       })
     },
     undoReplace: async (buffer: undoBufferRecord) => {
@@ -234,7 +234,7 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
     clearUndo: () => {
       dispatch({
         type: 'CLEAR_UNDO',
-        payload: undefined
+        payload: undefined,
       })
     },
 
@@ -242,7 +242,7 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
       plugin.call('editor', 'discardHighlight')
       dispatch({
         type: 'CLEAR_STATS',
-        payload: undefined
+        payload: undefined,
       })
     },
 
@@ -255,9 +255,9 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
     setClipped: (value: boolean) => {
       dispatch({
         type: 'SET_CLIPPED',
-        payload: value
+        payload: value,
       })
-    }
+    },
   }
 
   const reloadStateForFile = async (file: string) => {
@@ -339,11 +339,11 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
       oldContent,
       newContent,
       path,
-      workspace: workspace.name
+      workspace: workspace.name,
     }
     dispatch({
       type: 'SET_UNDO',
-      payload: undo
+      payload: undo,
     })
   }
 
@@ -382,7 +382,7 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
               path: file,
               timeStamp: Date.now(),
               forceReload: false,
-              count: 0
+              count: 0,
             }
             return r
           })

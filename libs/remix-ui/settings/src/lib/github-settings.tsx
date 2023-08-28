@@ -1,9 +1,9 @@
-import {CopyToClipboard} from '@remix-ui/clipboard'
-import {CustomTooltip} from '@remix-ui/helper'
-import React, {useEffect, useState} from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {GithubSettingsProps} from '../types'
-import {gitAccessTokenLink} from './constants'
+import { CopyToClipboard } from '@remix-ui/clipboard'
+import { CustomTooltip } from '@remix-ui/helper'
+import React, { useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { GithubSettingsProps } from '../types'
+import { gitAccessTokenLink } from './constants'
 
 export function GithubSettings(props: GithubSettingsProps) {
   const [githubToken, setGithubToken] = useState<string>('')
@@ -104,7 +104,7 @@ export function GithubSettings(props: GithubSettingsProps) {
                 id="savegisttoken"
                 data-id="settingsTabSaveGistToken"
                 onClick={saveGithubToken}
-                value={intl.formatMessage({id: 'settings.save'})}
+                value={intl.formatMessage({ id: 'settings.save' })}
                 type="button"
               ></input>
               <CustomTooltip tooltipText="Delete Github Credentials" tooltipClasses="text-nowrap" tooltipId="removegisttokenTooltip" placement="top-start">

@@ -1,15 +1,15 @@
 import { default as deepEqual } from 'deep-equal' // eslint-disable-line
 
 interface Action {
-    type: string;
-    payload: { [key: string]: any };
+  type: string
+  payload: { [key: string]: any }
 }
 
 export const initialState = {
   opCodes: {
     code: [],
     index: 0,
-    address: ''
+    address: '',
   },
   display: [],
   index: 0,
@@ -24,7 +24,7 @@ export const initialState = {
   hasError: null,
   absoluteCurrentLineIndexes: [],
   currentLineIndexes: [],
-  line: -1
+  line: -1,
 }
 
 const reducedOpcode = (opCodes, payload) => {
@@ -34,11 +34,11 @@ const reducedOpcode = (opCodes, payload) => {
   const top = bottom + length
   return {
     index: opCodes.index - bottom,
-    nextIndexes: opCodes.nextIndexes ? opCodes.nextIndexes.map(index => index - bottom) : [],
-    currentLineIndexes: (opCodes.absoluteCurrentLineIndexes && opCodes.absoluteCurrentLineIndexes.map(index => index - bottom)) || [],
+    nextIndexes: opCodes.nextIndexes ? opCodes.nextIndexes.map((index) => index - bottom) : [],
+    currentLineIndexes: (opCodes.absoluteCurrentLineIndexes && opCodes.absoluteCurrentLineIndexes.map((index) => index - bottom)) || [],
     display: opCodes.code.slice(bottom, top),
     returnInstructionIndexes: payload.returnInstructionIndexes.map((index) => index.instructionIndex - bottom),
-    outOfGasInstructionIndexes: payload.outOfGasInstructionIndexes.map((index) => index.instructionIndex - bottom)
+    outOfGasInstructionIndexes: payload.outOfGasInstructionIndexes.map((index) => index.instructionIndex - bottom),
   }
 }
 
@@ -49,13 +49,21 @@ export const reducer = (state = initialState, action: Action) => {
       ...state,
       isRequesting: true,
       isSuccessful: false,
-      hasError: null
+      hasError: null,
     }
   }
   case 'FETCH_OPCODES_SUCCESS': {
-    const opCodes = action.payload.address === state.opCodes.address ? {
-      ...state.opCodes, index: action.payload.index, nextIndexes: action.payload.nextIndexes, absoluteCurrentLineIndexes: state.absoluteCurrentLineIndexes
-    } : deepEqual(action.payload.code, state.opCodes.code) ? state.opCodes : action.payload
+    const opCodes =
+        action.payload.address === state.opCodes.address
+          ? {
+            ...state.opCodes,
+            index: action.payload.index,
+            nextIndexes: action.payload.nextIndexes,
+            absoluteCurrentLineIndexes: state.absoluteCurrentLineIndexes,
+          }
+          : deepEqual(action.payload.code, state.opCodes.code)
+            ? state.opCodes
+            : action.payload
 
     const reduced = reducedOpcode(opCodes, action.payload)
     return {
@@ -70,7 +78,7 @@ export const reducer = (state = initialState, action: Action) => {
       hasError: null,
       returnInstructionIndexes: reduced.returnInstructionIndexes,
       outOfGasInstructionIndexes: reduced.outOfGasInstructionIndexes,
-      currentLineIndexes: reduced.currentLineIndexes
+      currentLineIndexes: reduced.currentLineIndexes,
     }
   }
   case 'FETCH_OPCODES_ERROR': {
@@ -78,7 +86,7 @@ export const reducer = (state = initialState, action: Action) => {
       ...state,
       isRequesting: false,
       isSuccessful: false,
-      hasError: action.payload
+      hasError: action.payload,
     }
   }
   case 'FETCH_INDEXES_FOR_NEW_LINE': {
@@ -87,8 +95,8 @@ export const reducer = (state = initialState, action: Action) => {
     return {
       ...state,
       absoluteCurrentLineIndexes: action.payload.currentLineIndexes,
-      currentLineIndexes: action.payload.currentLineIndexes.map(index => index - bottom),
-      line: action.payload.line
+      currentLineIndexes: action.payload.currentLineIndexes.map((index) => index - bottom),
+      line: action.payload.line,
     }
   }
   default:

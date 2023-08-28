@@ -9,9 +9,19 @@ tape('sourceMappingDecoder', function (t) {
   t.test('sourceMappingDecoder.findNodeAtInstructionIndex', function (st) {
     let output = compiler.compile(compilerInput(contracts))
     output = JSON.parse(output)
-    let node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 2, output.contracts['test.sol']['test'].evm.deployedBytecode.sourceMap, output.sources['test.sol'])
+    let node = sourceMappingDecoder.findNodeAtInstructionIndex(
+      'FunctionDefinition',
+      2,
+      output.contracts['test.sol']['test'].evm.deployedBytecode.sourceMap,
+      output.sources['test.sol']
+    )
     st.equal(node, null)
-    node = sourceMappingDecoder.findNodeAtInstructionIndex('FunctionDefinition', 80, output.contracts['test.sol']['test'].evm.deployedBytecode.sourceMap, output.sources['test.sol'])
+    node = sourceMappingDecoder.findNodeAtInstructionIndex(
+      'FunctionDefinition',
+      80,
+      output.contracts['test.sol']['test'].evm.deployedBytecode.sourceMap,
+      output.sources['test.sol']
+    )
     st.notEqual(node, null)
     if (node) {
       st.equal(node.name, 'f1')
@@ -105,11 +115,12 @@ tape('sourceMappingDecoder', function (t) {
     st.equal(result.end.line, 7)
     st.equal(result.end.column, 14)
 
-    const res = { // point to \n
+    const res = {
+      // point to \n
       start: 103,
       length: 4,
       file: 4,
-      jump: '-'
+      jump: '-',
     }
     // case: 'file' is not yet assigned, while processing the srcmap (reverse looping) to find 'start', 'length' (etc..), we tumble on -1 for the file.
     // in that case the step has to be discarded
@@ -126,9 +137,9 @@ const contracts = `contract test {
         uint t = 4;
         return t;
     }
-    
+
     function f2() public {
-        
+
     }
 }
 `

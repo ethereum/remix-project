@@ -1,12 +1,12 @@
-import {useDialogDispatchers} from '@remix-ui/app'
+import { useDialogDispatchers } from '@remix-ui/app'
 import React from 'react'
-import {useContext} from 'react'
-import {SearchContext} from '../context/context'
+import { useContext } from 'react'
+import { SearchContext } from '../context/context'
 import * as path from 'path'
 
 export const Undo = () => {
-  const {state, undoReplace} = useContext(SearchContext)
-  const {alert} = useDialogDispatchers()
+  const { state, undoReplace } = useContext(SearchContext)
+  const { alert } = useDialogDispatchers()
 
   const undo = async () => {
     try {
@@ -15,7 +15,7 @@ export const Undo = () => {
       alert({
         id: 'undo_error',
         title: 'Cannot undo this change',
-        message: e.message
+        message: e.message,
       })
     }
   }

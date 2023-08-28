@@ -11,12 +11,12 @@ const vmCall = require('./vmCall')
 
 const ballot = `pragma solidity >=0.4.22;
 
-/** 
+/**
  * @title Ballot
  * @dev Implements voting process along with vote delegation
  */
 contract Ballot {
-   
+
     struct Voter {
         uint weight; // weight is accumulated by delegation
         bool voted;  // if true, that person already voted
@@ -25,7 +25,7 @@ contract Ballot {
     }
 
     struct Proposal {
-        // If you can limit the length to a certain number of bytes, 
+        // If you can limit the length to a certain number of bytes,
         // always use one of bytes1 to bytes32 because they are much cheaper
         bytes32 name;   // short name (up to 32 bytes)
         uint voteCount; // number of accumulated votes
@@ -37,7 +37,7 @@ contract Ballot {
 
     Proposal[] public proposals;
 
-    /** 
+    /**
      * @dev Create a new ballot to choose one of 'proposalNames'.
      * @param proposalNames names of proposals
      */
@@ -56,10 +56,10 @@ contract Ballot {
                 voteCount: 0
             }));
         }
-        Proposal[] storage proposalsLocals = proposals; // copy of state variable        
+        Proposal[] storage proposalsLocals = proposals; // copy of state variable
     }
-    
-    /** 
+
+    /**
      * @dev Give 'voter' the right to vote on this ballot. May only be called by 'chairperson'.
      * @param voter address of voter
      */
@@ -122,7 +122,7 @@ contract Ballot {
         proposals[proposal].voteCount += sender.weight;
     }
 
-    /** 
+    /**
      * @dev Computes the winning proposal taking all previous votes into account.
      * @return winningProposal_ index of winning proposal in the proposals array
      */
@@ -138,7 +138,7 @@ contract Ballot {
         }
     }
 
-    /** 
+    /**
      * @dev Calls winningProposal() function to get the index of the winner contained in the proposals array and then
      * @return winnerName_ the name of the winner
      */
@@ -148,15 +148,16 @@ contract Ballot {
         winnerName_ = proposals[winningProposal()].name;
     }
 }
-`;
+`
 
-(async () => {
+;(async () => {
   const privateKey = Buffer.from('503f38a9c967ed597e47fe25643985f032b072db8075426a92110f82df48dfcb', 'hex')
   let output = compiler.compile(compilerInput(ballot))
   output = JSON.parse(output)
-  const param = '0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000148656c6c6f20576f726c64210000000000000000000000000000000000000000'
+  const param =
+    '0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000148656c6c6f20576f726c64210000000000000000000000000000000000000000'
   const web3 = await vmCall.getWeb3()
-  vmCall.sendTx(web3, {nonce: 0, privateKey: privateKey}, null, 0, output.contracts['test.sol']['Ballot'].evm.bytecode.object + param, (error, hash) => {
+  vmCall.sendTx(web3, { nonce: 0, privateKey: privateKey }, null, 0, output.contracts['test.sol']['Ballot'].evm.bytecode.object + param, (error, hash) => {
     console.log(error, hash)
     if (error) {
       throw error
@@ -167,7 +168,7 @@ contract Ballot {
         } else {
           const sources = {
             target: 'test.sol',
-            sources: { 'test.sol': { content: ballot } }
+            sources: { 'test.sol': { content: ballot } },
           }
           const compilationResults = new CompilerAbstract('json', output, sources)
           const debugManager = new Debugger({
@@ -176,10 +177,10 @@ contract Ballot {
             offsetToLineColumnConverter: {
               offsetToLineColumn: async (rawLocation) => {
                 return sourceMappingDecoder.convertOffsetToLineColumn(rawLocation, sourceMappingDecoder.getLinebreakPositions(ballot))
-              }
-            }
+              },
+            },
           })
-  
+
           debugManager.callTree.event.register('callTreeReady', () => {
             testDebugging(debugManager)
           })
@@ -191,7 +192,7 @@ contract Ballot {
             console.error(error)
             throw error
           })
-  
+
           debugManager.debug(tx)
         }
       })
@@ -199,7 +200,7 @@ contract Ballot {
   })
 })()
 
-function testDebugging (debugManager) {
+function testDebugging(debugManager) {
   // stack
   tape('traceManager.getStackAt 4', (t) => {
     t.plan(1)
@@ -215,12 +216,16 @@ function testDebugging (debugManager) {
     t.plan(1)
     try {
       const callstack = debugManager.traceManager.getStackAt(41)
-      t.equal(JSON.stringify(callstack), JSON.stringify([
-        '0x0000000000000000000000000000000000000000000000000000000000000080',
-        '0x0000000000000000000000000000000000000000000000000000000000000020',
-        '0x0000000000000000000000000000000000000000000000000000000000000080',
-        '0x00000000000000000000000000000000000000000000000000000000000000e0',
-        '0x00000000000000000000000000000000000000000000000000000000000000e0']))
+      t.equal(
+        JSON.stringify(callstack),
+        JSON.stringify([
+          '0x0000000000000000000000000000000000000000000000000000000000000080',
+          '0x0000000000000000000000000000000000000000000000000000000000000020',
+          '0x0000000000000000000000000000000000000000000000000000000000000080',
+          '0x00000000000000000000000000000000000000000000000000000000000000e0',
+          '0x00000000000000000000000000000000000000000000000000000000000000e0',
+        ])
+      )
     } catch (error) {
       return t.end(error)
     }
@@ -235,11 +240,22 @@ function testDebugging (debugManager) {
       console.log(address)
       const storageView = debugManager.storageViewAt(196, address)
 
-      storageView.storageRange().then((storage) => {
-        t.equal(JSON.stringify(storage), JSON.stringify({ '0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563': { key: '0x0000000000000000000000000000000000000000000000000000000000000000', value: '0x0000000000000000000000005b38da6a701c568545dcfcb03fcb875f56beddc4' } }))
-      }).catch((error) => {
-        if (error) return t.end(error)
-      })
+      storageView
+        .storageRange()
+        .then((storage) => {
+          t.equal(
+            JSON.stringify(storage),
+            JSON.stringify({
+              '0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563': {
+                key: '0x0000000000000000000000000000000000000000000000000000000000000000',
+                value: '0x0000000000000000000000005b38da6a701c568545dcfcb03fcb875f56beddc4',
+              },
+            })
+          )
+        })
+        .catch((error) => {
+          if (error) return t.end(error)
+        })
     } catch (error) {
       return t.end(error)
     }
@@ -265,7 +281,9 @@ function testDebugging (debugManager) {
 
   tape('traceManager.decodeLocalsAt', async (t) => {
     t.plan(1)
-    const tested = JSON.parse('{"proposalNames":{"value":[{"value":"0x48656C6C6F20576F726C64210000000000000000000000000000000000000000","type":"bytes32"}],"length":"0x1","type":"bytes32[]","cursor":1,"hasNext":false},"p":{"value":"45","type":"uint256"},"addressLocal":{"value":"0x5B38DA6A701C568545DCFCB03FCB875F56BEDDC4","type":"address"},"i":{"value":"2","type":"uint256"},"proposalsLocals":{"value":[{"value":{"name":{"value":"0x48656C6C6F20576F726C64210000000000000000000000000000000000000000","type":"bytes32"},"voteCount":{"value":"0","type":"uint256"}},"type":"struct Ballot.Proposal"}],"length":"0x1","type":"struct Ballot.Proposal[]"}}')
+    const tested = JSON.parse(
+      '{"proposalNames":{"value":[{"value":"0x48656C6C6F20576F726C64210000000000000000000000000000000000000000","type":"bytes32"}],"length":"0x1","type":"bytes32[]","cursor":1,"hasNext":false},"p":{"value":"45","type":"uint256"},"addressLocal":{"value":"0x5B38DA6A701C568545DCFCB03FCB875F56BEDDC4","type":"address"},"i":{"value":"2","type":"uint256"},"proposalsLocals":{"value":[{"value":{"name":{"value":"0x48656C6C6F20576F726C64210000000000000000000000000000000000000000","type":"bytes32"},"voteCount":{"value":"0","type":"uint256"}},"type":"struct Ballot.Proposal"}],"length":"0x1","type":"struct Ballot.Proposal[]"}}'
+    )
     try {
       const address = debugManager.traceManager.getCurrentCalledAddressAt(327)
       const location = await debugManager.sourceLocationFromVMTraceIndex(address, 327)
@@ -281,10 +299,10 @@ function testDebugging (debugManager) {
 
   tape('breakPointManager', (t) => {
     t.plan(2)
-    const {traceManager, callTree, solidityProxy} = debugManager
-    const breakPointManager = new BreakpointManager({traceManager, callTree, solidityProxy})
+    const { traceManager, callTree, solidityProxy } = debugManager
+    const breakPointManager = new BreakpointManager({ traceManager, callTree, solidityProxy })
 
-    breakPointManager.add({fileName: 'test.sol', row: 39})
+    breakPointManager.add({ fileName: 'test.sol', row: 39 })
 
     breakPointManager.event.register('breakpointHit', function (sourceLocation, step) {
       t.equal(JSON.stringify(sourceLocation), JSON.stringify({ start: 1146, length: 6, file: 0, jump: '-' }))

@@ -1,4 +1,4 @@
-/* global Node, requestAnimationFrame */   // eslint-disable-line
+/* global Node, requestAnimationFrame */ // eslint-disable-line
 import React from 'react' // eslint-disable-line
 import { RemixUiTerminal } from '@remix-ui/terminal' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
@@ -10,10 +10,11 @@ const EventManager = require('../../lib/events')
 
 import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line
 
-
 const KONSOLES = []
 
-function register (api) { KONSOLES.push(api) }
+function register(api) {
+  KONSOLES.push(api)
+}
 
 const profile = {
   displayName: 'Terminal',
@@ -21,11 +22,11 @@ const profile = {
   methods: ['log', 'logHtml'],
   events: [],
   description: 'Remix IDE terminal',
-  version: packageJson.version
+  version: packageJson.version,
 }
 
 class Terminal extends Plugin {
-  constructor (opts, api) {
+  constructor(opts, api) {
     super(profile)
     this.fileImport = new CompilerImports()
     this.event = new EventManager()
@@ -40,14 +41,14 @@ class Terminal extends Plugin {
       fileManager: this.globalRegistry.get('filemanager').api,
       editor: this.globalRegistry.get('editor').api,
       compilersArtefacts: this.globalRegistry.get('compilersartefacts').api,
-      offsetToLineColumnConverter: this.globalRegistry.get('offsettolinecolumnconverter').api
+      offsetToLineColumnConverter: this.globalRegistry.get('offsettolinecolumnconverter').api,
     }
     this.commandHelp = {
       'remix.loadgist(id)': 'Load a gist in the file explorer.',
       'remix.loadurl(url)': 'Load the given url in the file explorer. The url can be of type github, swarm, ipfs or raw http',
       'remix.execute(filepath)': 'Run the script specified by file path. If filepath is empty, script currently displayed in the editor is executed.',
       'remix.exeCurrent()': 'Run the script currently displayed in the editor',
-      'remix.help()': 'Display this help message'
+      'remix.help()': 'Display this help message',
     }
     this.blockchain = opts.blockchain
     this.vm = vm
@@ -59,7 +60,7 @@ class Terminal extends Plugin {
       lineLength: opts.lineLength || 80, // ????
       session: [],
       activeFilters: { commands: {}, input: '' },
-      filterFns: {}
+      filterFns: {},
     }
     this._view = { el: null, bar: null, input: null, term: null, journal: null, cli: null }
     this._components = {}
@@ -76,31 +77,29 @@ class Terminal extends Plugin {
     register(this)
     this.event.register('debuggingRequested', async (hash) => {
       // TODO should probably be in the run module
-      if (!await this._opts.appManager.isActive('debugger')) await this._opts.appManager.activatePlugin('debugger')
+      if (!(await this._opts.appManager.isActive('debugger'))) await this._opts.appManager.activatePlugin('debugger')
       this.call('menuicons', 'select', 'debugger')
       this.call('debugger', 'debug', hash)
     })
     this.dispatch = null
-    
   }
-  
 
   onActivation() {
     this.renderComponent()
   }
 
-  onDeactivation () {
+  onDeactivation() {
     this.off('scriptRunner', 'log')
     this.off('scriptRunner', 'info')
     this.off('scriptRunner', 'warn')
     this.off('scriptRunner', 'error')
   }
 
-  logHtml (html) {
+  logHtml(html) {
     this.terminalApi.logHtml(html)
   }
 
-  log (message, type) {
+  log(message, type) {
     this.terminalApi.log(message, type)
   }
 
@@ -108,26 +107,29 @@ class Terminal extends Plugin {
     this.dispatch = dispatch
   }
 
-  render () {
-    return <div id='terminal-view' className='panel' data-id='terminalContainer-view'><PluginViewWrapper plugin={this}/></div>
+  render() {
+    return (
+      <div id="terminal-view" className="panel" data-id="terminalContainer-view">
+        <PluginViewWrapper plugin={this} />
+      </div>
+    )
   }
 
   updateComponent(state) {
-    return <RemixUiTerminal
-      plugin={state.plugin}
-      onReady={state.onReady}
-    />
+    return <RemixUiTerminal plugin={state.plugin} onReady={state.onReady} />
   }
 
-  renderComponent () {
-    const onReady = (api) => { this.terminalApi = api }
+  renderComponent() {
+    const onReady = (api) => {
+      this.terminalApi = api
+    }
     this.dispatch({
       plugin: this,
-      onReady: onReady
+      onReady: onReady,
     })
   }
 
-  scroll2bottom () {
+  scroll2bottom() {
     setTimeout(function () {
       // do nothing.
     }, 0)

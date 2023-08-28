@@ -1,5 +1,5 @@
-import { CompilationResult, SourceWithTarget } from "@remixproject/plugin-api"
-import { RemixUiStaticAnalyserReducerActionType, RemixUiStaticAnalyserState } from "../../staticanalyser"
+import { CompilationResult, SourceWithTarget } from '@remixproject/plugin-api'
+import { RemixUiStaticAnalyserReducerActionType, RemixUiStaticAnalyserState } from '../../staticanalyser'
 
 export const initialState: RemixUiStaticAnalyserState = {
   file: '',
@@ -7,11 +7,10 @@ export const initialState: RemixUiStaticAnalyserState = {
   languageVersion: '',
   data: null,
   input: '',
-  version: ''
+  version: '',
 }
 
-export const analysisReducer = (state: RemixUiStaticAnalyserState,
-  action: RemixUiStaticAnalyserReducerActionType) => {
+export const analysisReducer = (state: RemixUiStaticAnalyserState, action: RemixUiStaticAnalyserReducerActionType) => {
   switch (action.type) {
   case 'compilationFinished':
     return {
@@ -21,7 +20,7 @@ export const analysisReducer = (state: RemixUiStaticAnalyserState,
       languageVersion: action.payload.languageVersion,
       data: action.payload.data,
       input: action.payload.input,
-      version: action.payload.version
+      version: action.payload.version,
     }
   default:
     return initialState
@@ -33,6 +32,5 @@ type someReducerState = {
   basicEnabled?: boolean
   slitherEnabled?: boolean
   isSupportedVersion?: boolean
-  compiledState?: { data: CompilationResult, langVersion: string, fileName: string, source: SourceWithTarget, input: string }
+  compiledState?: { data: CompilationResult; langVersion: string; fileName: string; source: SourceWithTarget; input: string }
 }
-

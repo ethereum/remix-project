@@ -7,11 +7,11 @@ const EventEmitter = require('events')
 const profile = {
   name: 'tabs',
   methods: ['focus'],
-  kind: 'other'
+  kind: 'other',
 }
 
 export class TabProxy extends Plugin {
-  constructor (fileManager, editor) {
+  constructor(fileManager, editor) {
     super(profile)
     this.event = new EventEmitter()
     this.fileManager = fileManager
@@ -24,7 +24,7 @@ export class TabProxy extends Plugin {
     this.themeQuality = 'dark'
   }
 
-  async onActivation () {
+  async onActivation() {
     this.on('theme', 'themeChanged', (theme) => {
       this.themeQuality = theme.quality
       // update invert for all icons
@@ -58,15 +58,15 @@ export class TabProxy extends Plugin {
       const workspace = this.fileManager.currentWorkspace()
       if (this.fileManager.mode === 'browser') {
         name = name.startsWith(workspace + '/') ? name : workspace + '/' + name
-        let tabIndex = this.loadedTabs.findIndex(tab => tab.name === name)
+        let tabIndex = this.loadedTabs.findIndex((tab) => tab.name === name)
 
         // If tab doesn't exist, check if tab is opened because of abrupt disconnection with remixd
         if (tabIndex === -1) {
           const nameArray = name.split('/')
           nameArray.shift()
           name = 'localhost' + '/' + nameArray.join('/')
-          tabIndex = this.loadedTabs.findIndex(tab => tab.name === name)
-          if(tabIndex !== -1) this.removeTab(name)
+          tabIndex = this.loadedTabs.findIndex((tab) => tab.name === name)
+          if (tabIndex !== -1) this.removeTab(name)
         } else this.removeTab(name)
       } else {
         name = name.startsWith(this.fileManager.mode + '/') ? name : this.fileManager.mode + '/' + name
@@ -84,16 +84,20 @@ export class TabProxy extends Plugin {
           this.tabsApi.activateTab(workspacePath)
           return
         }
-        this.addTab(workspacePath, '', async () => {
-          await this.fileManager.open(file)
-          this.event.emit('openFile', file)
-          this.emit('openFile', file)
-        },
-        async () => {
-          await this.fileManager.closeFile(file)
-          this.event.emit('closeFile', file)
-          this.emit('closeFile', file)
-        })
+        this.addTab(
+          workspacePath,
+          '',
+          async () => {
+            await this.fileManager.open(file)
+            this.event.emit('openFile', file)
+            this.emit('openFile', file)
+          },
+          async () => {
+            await this.fileManager.closeFile(file)
+            this.event.emit('closeFile', file)
+            this.emit('closeFile', file)
+          }
+        )
         this.tabsApi.activateTab(workspacePath)
       } else {
         const path = file.startsWith(this.fileManager.mode + '/') ? file : this.fileManager.mode + '/' + file
@@ -102,16 +106,20 @@ export class TabProxy extends Plugin {
           this.tabsApi.activateTab(path)
           return
         }
-        this.addTab(path, '', async () => {
-          await this.fileManager.open(file)
-          this.event.emit('openFile', file)
-          this.emit('openFile', file)
-        },
-        async () => {
-          await this.fileManager.closeFile(file)
-          this.event.emit('closeFile', file)
-          this.emit('closeFile', file)
-        })
+        this.addTab(
+          path,
+          '',
+          async () => {
+            await this.fileManager.open(file)
+            this.event.emit('openFile', file)
+            this.emit('openFile', file)
+          },
+          async () => {
+            await this.fileManager.closeFile(file)
+            this.event.emit('closeFile', file)
+            this.emit('closeFile', file)
+          }
+        )
         this.tabsApi.activateTab(path)
       }
     })
@@ -153,9 +161,9 @@ export class TabProxy extends Plugin {
           displayName,
           () => this.emit('switchApp', name),
           () => {
-            if (name === 'home' && this.loadedTabs.length === 1 && this.loadedTabs[0].id === "home") {
+            if (name === 'home' && this.loadedTabs.length === 1 && this.loadedTabs[0].id === 'home') {
               const files = Object.keys(this.editor.sessions)
-              files.forEach(filepath => this.editor.discard(filepath))
+              files.forEach((filepath) => this.editor.discard(filepath))
             }
             this.emit('closeApp', name)
             this.call('manager', 'deactivatePlugin', name)
@@ -174,28 +182,28 @@ export class TabProxy extends Plugin {
     this.on('fileDecorator', 'fileDecoratorsChanged', async (items) => {
       this.tabsApi.setFileDecorations(items)
     })
-    
+
     try {
-      this.themeQuality = (await this.call('theme', 'currentTheme') ).quality
+      this.themeQuality = (await this.call('theme', 'currentTheme')).quality
     } catch (e) {
       console.log('theme plugin has an issue: ', e)
     }
     this.renderComponent()
   }
 
-  focus (name) {
+  focus(name) {
     this.emit('switchApp', name)
     this.tabsApi.activateTab(name)
   }
 
-  switchTab (tabName) {
+  switchTab(tabName) {
     if (this._handlers[tabName]) {
       this._handlers[tabName].switchTo()
       this.tabsApi.activateTab(tabName)
     }
   }
 
-  switchNextTab () {
+  switchNextTab() {
     const active = this.tabsApi.active()
     if (active && this._handlers[active]) {
       const handlers = Object.keys(this._handlers)
@@ -207,7 +215,7 @@ export class TabProxy extends Plugin {
     }
   }
 
-  switchPreviousTab () {
+  switchPreviousTab() {
     const active = this.tabsApi.active()
     if (active && this._handlers[active]) {
       const handlers = Object.keys(this._handlers)
@@ -219,12 +227,12 @@ export class TabProxy extends Plugin {
     }
   }
 
-  renameTab (oldName, newName) {
+  renameTab(oldName, newName) {
     // The new tab is being added by FileManager
     this.removeTab(oldName)
   }
 
-  addTab (name, title, switchTo, close, icon, description = '') {
+  addTab(name, title, switchTo, close, icon, description = '') {
     if (this._handlers[name]) return this.renderComponent()
 
     var slash = name.split('/')
@@ -246,7 +254,7 @@ export class TabProxy extends Plugin {
             title,
             icon,
             tooltip: name,
-            iconClass: getPathIcon(name)
+            iconClass: getPathIcon(name),
           })
           formatPath.shift()
           if (formatPath.length > 0) {
@@ -263,7 +271,7 @@ export class TabProxy extends Plugin {
                 title: duplicateTabTitle,
                 icon,
                 tooltip: duplicateTabTooltip || duplicateTabTitle,
-                iconClass: getPathIcon(duplicateTabName)
+                iconClass: getPathIcon(duplicateTabName),
               }
             }
           }
@@ -277,7 +285,7 @@ export class TabProxy extends Plugin {
         title,
         icon,
         tooltip: description || title,
-        iconClass: getPathIcon(name)
+        iconClass: getPathIcon(name),
       })
     }
 
@@ -285,15 +293,13 @@ export class TabProxy extends Plugin {
     this._handlers[name] = { switchTo, close }
   }
 
-  removeTab (name, currentFileTab) {
+  removeTab(name, currentFileTab) {
     delete this._handlers[name]
     let previous = currentFileTab
     this.loadedTabs = this.loadedTabs.filter((tab, index) => {
       if (!previous && tab.name === name) {
-        if(index - 1  >= 0 && this.loadedTabs[index - 1])
-          previous = this.loadedTabs[index - 1]
-        else if (index + 1 && this.loadedTabs[index + 1]) 
-          previous = this.loadedTabs[index + 1]
+        if (index - 1 >= 0 && this.loadedTabs[index - 1]) previous = this.loadedTabs[index - 1]
+        else if (index + 1 && this.loadedTabs[index + 1]) previous = this.loadedTabs[index + 1]
       }
       return tab.name !== name
     })
@@ -301,29 +307,31 @@ export class TabProxy extends Plugin {
     if (previous) this.switchTab(previous.name)
   }
 
-  addHandler (type, fn) {
+  addHandler(type, fn) {
     this.handlers[type] = fn
   }
 
-  setDispatch (dispatch) {
+  setDispatch(dispatch) {
     this.dispatch = dispatch
     this.renderComponent()
   }
 
   updateComponent(state) {
-    return <TabsUI
-      plugin={state.plugin}
-      tabs={state.loadedTabs}
-      onSelect={state.onSelect}
-      onClose={state.onClose}
-      onZoomIn={state.onZoomIn}
-      onZoomOut={state.onZoomOut}
-      onReady={state.onReady}
-      themeQuality={state.themeQuality}
-    />
+    return (
+      <TabsUI
+        plugin={state.plugin}
+        tabs={state.loadedTabs}
+        onSelect={state.onSelect}
+        onClose={state.onClose}
+        onZoomIn={state.onZoomIn}
+        onZoomOut={state.onZoomOut}
+        onReady={state.onReady}
+        themeQuality={state.themeQuality}
+      />
+    )
   }
 
-  renderComponent () {
+  renderComponent() {
     const onSelect = (index) => {
       if (this.loadedTabs[index]) {
         const name = this.loadedTabs[index].name
@@ -343,7 +351,9 @@ export class TabProxy extends Plugin {
     const onZoomIn = () => this.editor.editorFontSize(1)
     const onZoomOut = () => this.editor.editorFontSize(-1)
 
-    const onReady = (api) => { this.tabsApi = api }
+    const onReady = (api) => {
+      this.tabsApi = api
+    }
 
     this.dispatch({
       plugin: this,
@@ -353,11 +363,15 @@ export class TabProxy extends Plugin {
       onZoomIn,
       onZoomOut,
       onReady,
-      themeQuality: this.themeQuality
+      themeQuality: this.themeQuality,
     })
   }
 
-  renderTabsbar () {
-    return <div><PluginViewWrapper plugin={this} /></div>
+  renderTabsbar() {
+    return (
+      <div>
+        <PluginViewWrapper plugin={this} />
+      </div>
+    )
   }
 }

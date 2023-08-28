@@ -1,7 +1,6 @@
 import { EOL } from 'os'
 import { SearchResultLineLine } from '../../types'
 
-
 export const getDirectory = async (dir: string, plugin: any) => {
   let result = []
   const files = await plugin.call('fileManager', 'readdir', dir)
@@ -19,19 +18,19 @@ export const getDirectory = async (dir: string, plugin: any) => {
   return result
 }
 
-const normalize = filesList => {
+const normalize = (filesList) => {
   const folders = []
   const files = []
-  Object.keys(filesList || {}).forEach(key => {
+  Object.keys(filesList || {}).forEach((key) => {
     if (filesList[key].isDirectory) {
       folders.push({
         filename: key,
-        data: filesList[key]
+        data: filesList[key],
       })
     } else {
       files.push({
         filename: key,
-        data: filesList[key]
+        data: filesList[key],
       })
     }
   })
@@ -54,20 +53,20 @@ export const findLinesInStringWithMatch = (str: string, re: RegExp) => {
 
 const matchesInString = (str: string, re: RegExp) => {
   let a: RegExpExecArray
-  const results:RegExpExecArray[] = [];
+  const results: RegExpExecArray[] = []
   while ((a = re.exec(str || '')) !== null) {
-    results.push(a);
+    results.push(a)
   }
   return results
 }
 
 const splitLines = (matchResult: RegExpExecArray[], lineNumber: number) => {
   return matchResult.map((matchResultPart, i) => {
-    const result:SearchResultLineLine = {
+    const result: SearchResultLineLine = {
       left: matchResultPart.input.substring(0, matchResultPart.index),
       right: matchResultPart.input.substring(matchResultPart.index + matchResultPart[0].length),
       center: matchResultPart[0],
-      position : {
+      position: {
         start: {
           line: lineNumber,
           column: matchResultPart.index,
@@ -83,16 +82,16 @@ const splitLines = (matchResult: RegExpExecArray[], lineNumber: number) => {
 }
 
 function getEOL(text) {
-  const m = text.match(/\r\n|\n/g);
-  const u = m && m.filter(a => a === '\n').length;
-  const w = m && m.length - u;
+  const m = text.match(/\r\n|\n/g)
+  const u = m && m.filter((a) => a === '\n').length
+  const w = m && m.length - u
   if (u === w) {
-    return EOL; // use the OS default
+    return EOL // use the OS default
   }
-  return u > w ? '\n' : '\r\n';
+  return u > w ? '\n' : '\r\n'
 }
 
-export const replaceAllInFile = (string: string, re:RegExp, newText: string) => {
+export const replaceAllInFile = (string: string, re: RegExp, newText: string) => {
   return string.replace(re, newText)
 }
 
@@ -104,8 +103,6 @@ export const replaceTextInLine = (str: string, searchResultLine: SearchResultLin
         return searchResultLine.left + newText + searchResultLine.right
       }
       return line
-    }).join(getEOL(str))
+    })
+    .join(getEOL(str))
 }
-
-
-

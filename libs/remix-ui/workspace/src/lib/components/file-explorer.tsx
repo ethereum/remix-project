@@ -1,15 +1,14 @@
-import React, {useEffect, useState, useRef, SyntheticEvent} from 'react' // eslint-disable-line
-import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-line
-import {FileExplorerMenu} from './file-explorer-menu' // eslint-disable-line
-import {FileExplorerContextMenu} from './file-explorer-context-menu' // eslint-disable-line
-import {FileExplorerProps, WorkSpaceState} from '../types'
-
+import React, { useEffect, useState, useRef, SyntheticEvent } from 'react' // eslint-disable-line
+import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
+import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
+import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
+import { FileExplorerProps, WorkSpaceState } from '../types'
 import '../css/file-explorer.css'
-import {checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath} from '@remix-ui/helper'
+import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import {FileRender} from './file-render'
-import {Drag} from '@remix-ui/drag-n-drop'
-import {ROOT_PATH} from '../utils/constants'
+import { FileRender } from './file-render'
+import { Drag } from '@remix-ui/drag-n-drop'
+import { ROOT_PATH } from '../utils/constants'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const {
@@ -26,7 +25,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     handleNewFolderInput,
     uploadFile,
     uploadFolder,
-    fileState
+    fileState,
   } = props
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
   const treeRef = useRef<HTMLDivElement>(null)
@@ -52,8 +51,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
             element: props.focusEdit,
             type: 'file',
             isNew: true,
-            lastEdit: null
-          }
+            lastEdit: null,
+          },
         }
       })
     }
@@ -68,7 +67,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const keyPressHandler = (e: KeyboardEvent) => {
         if (e.shiftKey) {
           setState((prevState) => {
-            return {...prevState, ctrlKey: true}
+            return { ...prevState, ctrlKey: true }
           })
         }
       }
@@ -76,7 +75,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const keyUpHandler = (e: KeyboardEvent) => {
         if (!e.shiftKey) {
           setState((prevState) => {
-            return {...prevState, ctrlKey: false}
+            return { ...prevState, ctrlKey: false }
           })
         }
       }
@@ -144,7 +143,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           return !(el.key === '' && el.type === 'folder')
         })
 
-        nonRootFocus.push({key: path, type})
+        nonRootFocus.push({ key: path, type })
         props.dispatchSetFocusElement(nonRootFocus)
       }
     }
@@ -161,7 +160,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           return !(el.key === '' && el.type === 'folder')
         })
 
-        nonRootFocus.push({key: path, type})
+        nonRootFocus.push({ key: path, type })
         props.dispatchSetFocusElement(nonRootFocus)
       }
     } else {
@@ -174,7 +173,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         expandPath = [...new Set(props.expandPath.filter((key) => key && typeof key === 'string' && !key.startsWith(path)))]
       }
 
-      props.dispatchSetFocusElement([{key: path, type}])
+      props.dispatchSetFocusElement([{ key: path, type }])
       props.dispatchHandleExpandPath(expandPath)
     }
   }
@@ -189,14 +188,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
         setState((prevState) => {
           return {
             ...prevState,
-            focusEdit: {element: null, isNew: false, type: '', lastEdit: ''}
+            focusEdit: { element: null, isNew: false, type: '', lastEdit: '' },
           }
         })
       } else {
         setState((prevState) => {
           return {
             ...prevState,
-            focusEdit: {element: null, isNew: false, type: '', lastEdit: ''}
+            focusEdit: { element: null, isNew: false, type: '', lastEdit: '' },
           }
         })
       }
@@ -205,7 +204,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         return setState((prevState) => {
           return {
             ...prevState,
-            focusEdit: {element: null, isNew: false, type: '', lastEdit: ''}
+            focusEdit: { element: null, isNew: false, type: '', lastEdit: '' },
           }
         })
       }
@@ -236,7 +235,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         setState((prevState) => {
           return {
             ...prevState,
-            focusEdit: {element: null, isNew: false, type: '', lastEdit: ''}
+            focusEdit: { element: null, isNew: false, type: '', lastEdit: '' },
           }
         })
       }
@@ -275,7 +274,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   return (
     <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
-      <div ref={treeRef} tabIndex={0} style={{outline: 'none'}}>
+      <div ref={treeRef} tabIndex={0} style={{ outline: 'none' }}>
         <TreeView id="treeView">
           <TreeViewItem
             id="treeViewItem"

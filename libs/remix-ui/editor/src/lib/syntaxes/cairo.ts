@@ -1,82 +1,82 @@
 /* eslint-disable */
 export const cairoLanguageConfig = {
   comments: {
-    lineComment: "#",
+    lineComment: '#',
   },
   brackets: [
-    ["{", "}"],
-    ["[", "]"],
-    ["(", ")"],
-    ["%{", "%}"],
+    ['{', '}'],
+    ['[', ']'],
+    ['(', ')'],
+    ['%{', '%}'],
   ],
   autoClosingPairs: [
-    { open: "{", close: "}" },
-    { open: "[", close: "]" },
-    { open: "(", close: ")" },
-    { open: "%{", close: "%}" },
-    { open: "'", close: "'", notIn: ["string", "comment"] },
+    { open: '{', close: '}' },
+    { open: '[', close: ']' },
+    { open: '(', close: ')' },
+    { open: '%{', close: '%}' },
+    { open: "'", close: "'", notIn: ['string', 'comment'] },
   ],
   surroundingPairs: [
-    { open: "{", close: "}" },
-    { open: "[", close: "]" },
-    { open: "(", close: ")" },
-    { open: "%{", close: "%}" },
+    { open: '{', close: '}' },
+    { open: '[', close: ']' },
+    { open: '(', close: ')' },
+    { open: '%{', close: '%}' },
     { open: "'", close: "'" },
   ],
 }
 
 export const cairoTokensProvider = {
-  defaultToken: "",
-  tokenPostfix: ".cairo",
+  defaultToken: '',
+  tokenPostfix: '.cairo',
 
   brackets: [
-    { token: "delimiter.curly", open: "{", close: "}" },
-    { token: "delimiter.parenthesis", open: "(", close: ")" },
-    { token: "delimiter.square", open: "[", close: "]" },
-    { token: "delimiter.curly", open: "%{", close: "%}" },
+    { token: 'delimiter.curly', open: '{', close: '}' },
+    { token: 'delimiter.parenthesis', open: '(', close: ')' },
+    { token: 'delimiter.square', open: '[', close: ']' },
+    { token: 'delimiter.curly', open: '%{', close: '%}' },
   ],
 
   keywords: [
     // control
-    "if",
-    "else",
-    "end",
+    'if',
+    'else',
+    'end',
 
     // meta
-    "alloc_locals",
-    "as",
-    "assert",
-    "cast",
-    "const",
-    "dw",
-    "felt",
-    "from",
-    "func",
-    "import",
-    "let",
-    "local",
-    "member",
-    "nondet",
-    "return",
-    "static_assert",
-    "struct",
-    "tempvar",
-    "with_attr",
-    "with",
+    'alloc_locals',
+    'as',
+    'assert',
+    'cast',
+    'const',
+    'dw',
+    'felt',
+    'from',
+    'func',
+    'import',
+    'let',
+    'local',
+    'member',
+    'nondet',
+    'return',
+    'static_assert',
+    'struct',
+    'tempvar',
+    'with_attr',
+    'with',
 
     // register
-    "ap",
-    "fp",
+    'ap',
+    'fp',
 
     // opcode
-    "call",
-    "jmp",
-    "ret",
-    "abs",
-    "rel",
+    'call',
+    'jmp',
+    'ret',
+    'abs',
+    'rel',
   ],
 
-  operators: ["=", ":", "==", "++", "+", "-", "*", "**", "/", "&", "%", "_"],
+  operators: ['=', ':', '==', '++', '+', '-', '*', '**', '/', '&', '%', '_'],
 
   // we include these common regular expressions
   symbols: /[=><!~?:&|+\-*\/\^%]+/,
@@ -91,42 +91,42 @@ export const cairoTokensProvider = {
         /[a-zA-Z_]\w*/,
         {
           cases: {
-            "@keywords": { token: "keyword.$0" },
-            "@default": "identifier",
+            '@keywords': { token: 'keyword.$0' },
+            '@default': 'identifier',
           },
         },
       ],
 
       // whitespace
-      { include: "@whitespace" },
+      { include: '@whitespace' },
 
       // directives
-      [/^%[a-zA-Z]\w*/, "tag"],
+      [/^%[a-zA-Z]\w*/, 'tag'],
 
       // delimiters and operators
-      [/[{}()\[\]]/, "@brackets"],
-      [/[<>](?!@symbols)/, "@brackets"],
+      [/[{}()\[\]]/, '@brackets'],
+      [/[<>](?!@symbols)/, '@brackets'],
       [
         /@symbols/,
         {
           cases: {
-            "@operators": "delimiter",
-            "@default": "",
+            '@operators': 'delimiter',
+            '@default': '',
           },
         },
       ],
 
       // numbers
-      [/(@numberHex)/, "number.hex"],
-      [/(@numberDecimal)/, "number"],
+      [/(@numberHex)/, 'number.hex'],
+      [/(@numberDecimal)/, 'number'],
 
       // strings
-      [/'[^']*'/, "string"],
+      [/'[^']*'/, 'string'],
     ],
 
     whitespace: [
-      [/\s+/, "white"],
-      [/(^#.*$)/, "comment"],
+      [/\s+/, 'white'],
+      [/(^#.*$)/, 'comment'],
     ],
   },
 }

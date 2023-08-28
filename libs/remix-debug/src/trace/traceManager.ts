@@ -16,7 +16,7 @@ export class TraceManager {
   traceStepManager
   tx
 
-  constructor (options) {
+  constructor(options) {
     this.web3 = options.web3
     this.isLoading = false
     this.trace = null
@@ -26,7 +26,7 @@ export class TraceManager {
   }
 
   // init section
-  async resolveTrace (tx) {
+  async resolveTrace(tx) {
     this.tx = tx
     this.init()
     if (!this.web3) throw new Error('web3 not loaded')
@@ -60,13 +60,13 @@ export class TraceManager {
     }
   }
 
-  getTrace (txHash) {
+  getTrace(txHash) {
     return new Promise((resolve, reject) => {
       const options = {
         disableStorage: true,
         enableMemory: true,
         disableStack: false,
-        fullStorage: false
+        fullStorage: false,
       }
       this.web3.debug.traceTransaction(txHash, options, function (error, result) {
         if (error) return reject(error)
@@ -75,25 +75,25 @@ export class TraceManager {
     })
   }
 
-  init () {
+  init() {
     this.trace = null
     this.traceCache.init()
   }
 
-  getCurrentFork () {
+  getCurrentFork() {
     return this.fork
   }
 
   // API section
-  inRange (step) {
+  inRange(step) {
     return this.isLoaded() && step >= 0 && step < this.trace.length
   }
 
-  isLoaded () {
+  isLoaded() {
     return !this.isLoading && this.trace !== null
   }
 
-  getLength (callback) {
+  getLength(callback) {
     if (!this.trace) {
       callback(new Error('no trace available'), null)
     } else {
@@ -101,15 +101,15 @@ export class TraceManager {
     }
   }
 
-  accumulateStorageChanges (index, address, storageOrigin) {
+  accumulateStorageChanges(index, address, storageOrigin) {
     return this.traceCache.accumulateStorageChanges(index, address, storageOrigin)
   }
 
-  getAddresses () {
+  getAddresses() {
     return this.traceCache.addresses
   }
 
-  getCallDataAt (stepIndex) {
+  getCallDataAt(stepIndex) {
     try {
       this.checkRequestedStep(stepIndex)
     } catch (check) {
@@ -122,7 +122,7 @@ export class TraceManager {
     return [this.traceCache.callsData[callDataChange]]
   }
 
-  async buildCallPath (stepIndex) {
+  async buildCallPath(stepIndex) {
     try {
       this.checkRequestedStep(stepIndex)
     } catch (check) {
@@ -133,7 +133,7 @@ export class TraceManager {
     return callsPath
   }
 
-  getCallStackAt (stepIndex) {
+  getCallStackAt(stepIndex) {
     try {
       this.checkRequestedStep(stepIndex)
     } catch (check) {
@@ -146,16 +146,17 @@ export class TraceManager {
     return call.callStack
   }
 
-  getStackAt (stepIndex) {
+  getStackAt(stepIndex) {
     this.checkRequestedStep(stepIndex)
-    if (this.trace[stepIndex] && this.trace[stepIndex].stack) { // there's always a stack
+    if (this.trace[stepIndex] && this.trace[stepIndex].stack) {
+      // there's always a stack
       if (Array.isArray(this.trace[stepIndex].stack)) {
         const stack = this.trace[stepIndex].stack.slice(0)
         stack.reverse()
-        return stack.map(el => toHexPaddedString(el))
+        return stack.map((el) => toHexPaddedString(el))
       } else {
         // it's an object coming from the VM.
-        // for performance reasons, 
+        // for performance reasons,
         // we don't turn the stack coming from the VM into an array when the tx is executed
         // but now when the app needs it.
         const stack = []
@@ -172,7 +173,7 @@ export class TraceManager {
     }
   }
 
-  getLastCallChangeSince (stepIndex) {
+  getLastCallChangeSince(stepIndex) {
     try {
       this.checkRequestedStep(stepIndex)
     } catch (check) {
@@ -186,7 +187,7 @@ export class TraceManager {
     return callChange
   }
 
-  getCurrentCalledAddressAt (stepIndex) {
+  getCurrentCalledAddressAt(stepIndex) {
     try {
       this.checkRequestedStep(stepIndex)
       const resp = this.getLastCallChangeSince(stepIndex)
@@ -199,14 +200,14 @@ export class TraceManager {
     }
   }
 
-  getContractCreationCode (token) {
+  getContractCreationCode(token) {
     if (!this.traceCache.contractCreation[token]) {
       throw new Error('no contract creation named ' + token)
     }
     return this.traceCache.contractCreation[token]
   }
 
-  getMemoryAt (stepIndex, format = true) {
+  getMemoryAt(stepIndex, format = true) {
     this.checkRequestedStep(stepIndex)
     const lastChanges = util.findLowerBoundValue(stepIndex, this.traceCache.memoryChanges)
     if (lastChanges === null) {
@@ -223,7 +224,7 @@ export class TraceManager {
     return memory
   }
 
-  getCurrentPC (stepIndex) {
+  getCurrentPC(stepIndex) {
     try {
       this.checkRequestedStep(stepIndex)
     } catch (check) {
@@ -232,15 +233,15 @@ export class TraceManager {
     return this.trace[stepIndex].pc
   }
 
-  getAllStopIndexes () {
+  getAllStopIndexes() {
     return this.traceCache.stopIndexes
   }
 
-  getAllOutofGasIndexes () {
+  getAllOutofGasIndexes() {
     return this.traceCache.outofgasIndexes
   }
 
-  getReturnValue (stepIndex) {
+  getReturnValue(stepIndex) {
     try {
       this.checkRequestedStep(stepIndex)
     } catch (check) {
@@ -252,7 +253,7 @@ export class TraceManager {
     return this.traceCache.returnValues[stepIndex]
   }
 
-  getCurrentStep (stepIndex) {
+  getCurrentStep(stepIndex) {
     try {
       this.checkRequestedStep(stepIndex)
     } catch (check) {
@@ -261,19 +262,19 @@ export class TraceManager {
     return this.traceCache.steps[stepIndex]
   }
 
-  getMemExpand (stepIndex) {
-    return (this.getStepProperty(stepIndex, 'memexpand') || '')
+  getMemExpand(stepIndex) {
+    return this.getStepProperty(stepIndex, 'memexpand') || ''
   }
 
-  getStepCost (stepIndex) {
+  getStepCost(stepIndex) {
     return this.getStepProperty(stepIndex, 'gasCost')
   }
 
-  getRemainingGas (stepIndex) {
+  getRemainingGas(stepIndex) {
     return this.getStepProperty(stepIndex, 'gas')
   }
 
-  getStepProperty (stepIndex, property) {
+  getStepProperty(stepIndex, property) {
     try {
       this.checkRequestedStep(stepIndex)
     } catch (check) {
@@ -282,28 +283,28 @@ export class TraceManager {
     return this.trace[stepIndex][property]
   }
 
-  isCreationStep (stepIndex) {
+  isCreationStep(stepIndex) {
     return isCreateInstruction(this.trace[stepIndex])
   }
 
   // step section
-  findStepOverBack (currentStep) {
+  findStepOverBack(currentStep) {
     return this.traceStepManager.findStepOverBack(currentStep)
   }
 
-  findStepOverForward (currentStep) {
+  findStepOverForward(currentStep) {
     return this.traceStepManager.findStepOverForward(currentStep)
   }
 
-  findNextCall (currentStep) {
+  findNextCall(currentStep) {
     return this.traceStepManager.findNextCall(currentStep)
   }
 
-  findStepOut (currentStep) {
+  findStepOut(currentStep) {
     return this.traceStepManager.findStepOut(currentStep)
   }
 
-  checkRequestedStep (stepIndex) {
+  checkRequestedStep(stepIndex) {
     if (!this.trace) {
       throw new Error('trace not loaded')
     } else if (stepIndex >= this.trace.length) {
@@ -311,14 +312,17 @@ export class TraceManager {
     }
   }
 
-  waterfall (calls, stepindex, cb) {
+  waterfall(calls, stepindex, cb) {
     const ret = []
     let retError = null
     for (const call in calls) {
-      calls[call].apply(this, [stepindex, function (error, result) {
-        retError = error
-        ret.push({ error: error, value: result })
-      }])
+      calls[call].apply(this, [
+        stepindex,
+        function (error, result) {
+          retError = error
+          ret.push({ error: error, value: result })
+        },
+      ])
     }
     cb(retError, ret)
   }

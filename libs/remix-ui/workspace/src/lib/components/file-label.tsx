@@ -1,7 +1,8 @@
 // eslint-disable-next-line no-use-before-define
-import {fileDecoration} from '@remix-ui/file-decorators'
-import React, {useEffect, useRef, useState} from 'react'
-import {FileType} from '../types'
+import { fileDecoration } from '@remix-ui/file-decorators'
+import React, { useEffect, useRef, useState } from 'react'
+import { FileType } from '../types'
+
 export interface FileLabelProps {
   file: FileType
   focusEdit: {
@@ -15,7 +16,7 @@ export interface FileLabelProps {
 }
 
 export const FileLabel = (props: FileLabelProps) => {
-  const {file, focusEdit, editModeOff, fileDecorations} = props
+  const { file, focusEdit, editModeOff, fileDecorations } = props
   const [isEditable, setIsEditable] = useState<boolean>(false)
   const [fileStateClasses, setFileStateClasses] = useState<string>('')
   const labelRef = useRef(null)

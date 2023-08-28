@@ -4,12 +4,10 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 import examples from '../examples/example-contracts'
 
-const sources = [
-  { 'Untitled.sol': { content: examples.ballot.content } }
-]
+const sources = [{ 'Untitled.sol': { content: examples.ballot.content } }]
 
 module.exports = {
-  "@disabled": true,
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
@@ -17,8 +15,7 @@ module.exports = {
     return sources
   },
   'Add Ballot #group2': function (browser: NightwatchBrowser) {
-    browser
-      .addFile('Untitled.sol', sources[0]['Untitled.sol'])
+    browser.addFile('Untitled.sol', sources[0]['Untitled.sol'])
   },
   'Deploy Ballot #group1': function (browser: NightwatchBrowser) {
     browser
@@ -32,28 +29,27 @@ module.exports = {
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
       .clickInstance(0)
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
-      .testFunction('last',
-        {
-          status: 'true Transaction mined and execution succeed',
-          'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
-        })
+      .testFunction('last', {
+        status: 'true Transaction mined and execution succeed',
+        'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' },
+      })
   },
 
   'Call method from Ballot to check return value #group1': function (browser: NightwatchBrowser) {
     browser
       .clickFunction('winnerName - call')
       // Test in terminal
-      .testFunction('last',
-        {
-          to: 'Ballot.winnerName() 0x692a70D2e424a56D2C6C27aA97D1a86395877b3A',
-          'decoded output': { 0: 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000' }
-        })
+      .testFunction('last', {
+        to: 'Ballot.winnerName() 0x692a70D2e424a56D2C6C27aA97D1a86395877b3A',
+        'decoded output': { 0: 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000' },
+      })
       // Test in Udapp UI , treeViewDiv0 shows returned value on method click
       .assert.containsText('*[data-id="treeViewDiv0"]', 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000')
   },
 
   'Debug Ballot / delegate #group1': function (browser: NightwatchBrowser) {
-    browser.pause(500)
+    browser
+      .pause(500)
       .debugTransaction(1)
       .waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
       .click('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]')
@@ -66,7 +62,8 @@ module.exports = {
   },
 
   'Access Ballot via at address #group1': function (browser: NightwatchBrowser) {
-    browser.clickLaunchIcon('udapp')
+    browser
+      .clickLaunchIcon('udapp')
       .click('*[data-id="universalDappUiUdappClose"]')
       .addFile('ballot.abi', { content: ballotABI })
       .clickLaunchIcon('udapp')
@@ -81,15 +78,14 @@ module.exports = {
       .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3A', true, true)
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: "//*[@id='instance0x692a70D2e424a56D2C6C27aA97D1a86395877b3A']"
+        selector: "//*[@id='instance0x692a70D2e424a56D2C6C27aA97D1a86395877b3A']",
       })
       .clickInstance(0)
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
-      .testFunction('last',
-        {
-          status: 'false Transaction mined but execution failed',
-          'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
-        })
+      .testFunction('last', {
+        status: 'false Transaction mined but execution failed',
+        'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' },
+      })
   },
 
   'Deploy and use Ballot using external web3  #group2': function (browser: NightwatchBrowser) {
@@ -115,10 +111,9 @@ module.exports = {
       .clickFunction('winnerName - call')
       // Test in terminal
       .journalLastChildIncludes('Ballot.winnerName()')
-      .testFunction('last',
-        {
-          'decoded output': { 0: 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000' }
-        })
+      .testFunction('last', {
+        'decoded output': { 0: 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000' },
+      })
       // Test in Udapp UI , treeViewDiv0 shows returned value on method click
       .assert.containsText('*[data-id="treeViewDiv0"]', 'bytes32: winnerName_ 0x48656c6c6f20576f726c64210000000000000000000000000000000000000000')
   },
@@ -132,95 +127,112 @@ module.exports = {
       .waitForElementVisible('*[data-id="scFileConfiguration"]', 10000)
       .click('*[data-id="scFileConfiguration"]')
       // the input field behaves badly, it would often not receive the value, so retrying it a few times for now is the best thing to do
-      .waitForElementVisible({
-        selector: '*[data-id="scConfigChangeFilePath"]',
-        abortOnFailure: false
-      }, 10000)
+      .waitForElementVisible(
+        {
+          selector: '*[data-id="scConfigChangeFilePath"]',
+          abortOnFailure: false,
+        },
+        10000
+      )
       .click({
         selector: '*[data-id="scConfigChangeFilePath"]',
         suppressNotFoundErrors: true,
-        timeout: 1000
+        timeout: 1000,
       })
       .click({
         selector: '*[data-id="scConfigChangeFilePath"]',
         suppressNotFoundErrors: true,
-        timeout: 1000
+        timeout: 1000,
       })
       .click({
         selector: '*[data-id="scConfigChangeFilePath"]',
         suppressNotFoundErrors: true,
-        timeout: 1000
+        timeout: 1000,
       })
-      
+
       .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
       .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
       .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
 
-      .isVisible({
-        selector:"//*[@class='py-2 remixui_compilerConfigPath' and contains(.,'cf.json')]",
-        suppressNotFoundErrors: true,
-        locateStrategy: 'xpath'
-      }, (okVisible) => {
-        // if it's not there yet, try again
-        if (!okVisible.value) {
-          browser.waitForElementVisible({
-            selector: '*[data-id="scConfigChangeFilePath"]',
-            abortOnFailure: false
-          }, 10000)
-          .click({
-            selector: '*[data-id="scConfigChangeFilePath"]',
-            suppressNotFoundErrors: true,
-            timeout: 1000
-          })
-          .click({
-            selector: '*[data-id="scConfigChangeFilePath"]',
-            suppressNotFoundErrors: true,
-            timeout: 1000
-          })
-          .click({
-            selector: '*[data-id="scConfigChangeFilePath"]',
-            suppressNotFoundErrors: true,
-            timeout: 1000
-          })
-          
-          .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
-          .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
-          .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
-        }
-      })
+      .isVisible(
+        {
+          selector: "//*[@class='py-2 remixui_compilerConfigPath' and contains(.,'cf.json')]",
+          suppressNotFoundErrors: true,
+          locateStrategy: 'xpath',
+        },
+        (okVisible) => {
+          // if it's not there yet, try again
+          if (!okVisible.value) {
+            browser
+              .waitForElementVisible(
+                {
+                  selector: '*[data-id="scConfigChangeFilePath"]',
+                  abortOnFailure: false,
+                },
+                10000
+              )
+              .click({
+                selector: '*[data-id="scConfigChangeFilePath"]',
+                suppressNotFoundErrors: true,
+                timeout: 1000,
+              })
+              .click({
+                selector: '*[data-id="scConfigChangeFilePath"]',
+                suppressNotFoundErrors: true,
+                timeout: 1000,
+              })
+              .click({
+                selector: '*[data-id="scConfigChangeFilePath"]',
+                suppressNotFoundErrors: true,
+                timeout: 1000,
+              })
 
-      .isVisible({
-        selector:"//*[@class='py-2 remixui_compilerConfigPath' and contains(.,'cf.json')]",
-        suppressNotFoundErrors: true,
-        locateStrategy: 'xpath'
-      }, (okVisible) => {
-        if (!okVisible.value) {
-          // if it's still not there, try again
-          browser.waitForElementVisible({
-            selector: '*[data-id="scConfigChangeFilePath"]',
-            abortOnFailure: false
-          }, 10000)
-          .click({
-            selector: '*[data-id="scConfigChangeFilePath"]',
-            suppressNotFoundErrors: true,
-            timeout: 1000
-          })
-          .click({
-            selector: '*[data-id="scConfigChangeFilePath"]',
-            suppressNotFoundErrors: true,
-            timeout: 1000
-          })
-          .click({
-            selector: '*[data-id="scConfigChangeFilePath"]',
-            suppressNotFoundErrors: true,
-            timeout: 1000
-          })
-          
-          .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
-          .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
-          .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
+              .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
+              .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
+              .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
+          }
         }
-      })
+      )
+
+      .isVisible(
+        {
+          selector: "//*[@class='py-2 remixui_compilerConfigPath' and contains(.,'cf.json')]",
+          suppressNotFoundErrors: true,
+          locateStrategy: 'xpath',
+        },
+        (okVisible) => {
+          if (!okVisible.value) {
+            // if it's still not there, try again
+            browser
+              .waitForElementVisible(
+                {
+                  selector: '*[data-id="scConfigChangeFilePath"]',
+                  abortOnFailure: false,
+                },
+                10000
+              )
+              .click({
+                selector: '*[data-id="scConfigChangeFilePath"]',
+                suppressNotFoundErrors: true,
+                timeout: 1000,
+              })
+              .click({
+                selector: '*[data-id="scConfigChangeFilePath"]',
+                suppressNotFoundErrors: true,
+                timeout: 1000,
+              })
+              .click({
+                selector: '*[data-id="scConfigChangeFilePath"]',
+                suppressNotFoundErrors: true,
+                timeout: 1000,
+              })
+
+              .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
+              .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
+              .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
+          }
+        }
+      )
 
       .pause(5000)
       .openFile('Untitled.sol')
@@ -243,14 +255,14 @@ module.exports = {
       .journalLastChildIncludes('Contract.(constructor)')
       .journalLastChildIncludes('data: 0x602...0565b')
       .end()
-  }
+  },
 }
 
 const localsCheck = {
   to: {
     value: '0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB',
-    type: 'address'
-  }
+    type: 'address',
+  },
 }
 
 const stateCheck = {
@@ -258,7 +270,7 @@ const stateCheck = {
     value: '0xCA35B7D915458EF540ADE6068DFE2F44E8FA733C',
     type: 'address',
     constant: false,
-    immutable: false
+    immutable: false,
   },
   voters: {
     value: {
@@ -266,27 +278,27 @@ const stateCheck = {
         value: {
           weight: {
             value: '1',
-            type: 'uint256'
+            type: 'uint256',
           },
           voted: {
             value: false,
-            type: 'bool'
+            type: 'bool',
           },
           delegate: {
             value: '0x0000000000000000000000000000000000000000',
-            type: 'address'
+            type: 'address',
           },
           vote: {
             value: '0',
-            type: 'uint256'
-          }
+            type: 'uint256',
+          },
         },
-        type: 'struct Ballot.Voter'
-      }
+        type: 'struct Ballot.Voter',
+      },
     },
     type: 'mapping(address => struct Ballot.Voter)',
     constant: false,
-    immutable: false
+    immutable: false,
   },
   proposals: {
     value: [
@@ -294,21 +306,21 @@ const stateCheck = {
         value: {
           name: {
             value: '0x48656C6C6F20576F726C64210000000000000000000000000000000000000000',
-            type: 'bytes32'
+            type: 'bytes32',
           },
           voteCount: {
             value: '0',
-            type: 'uint256'
-          }
+            type: 'uint256',
+          },
         },
-        type: 'struct Ballot.Proposal'
-      }
+        type: 'struct Ballot.Proposal',
+      },
     ],
     length: '0x1',
     type: 'struct Ballot.Proposal[]',
     constant: false,
-    immutable: false
-  }
+    immutable: false,
+  },
 }
 
 const ballotABI = `[

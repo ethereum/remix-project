@@ -1,17 +1,17 @@
-import React, {useEffect, useState} from 'react' // eslint-disable-line
-import {CompileErrors, ContractsFile, SolidityCompilerProps} from './types'
-import {CompilerContainer} from './compiler-container' // eslint-disable-line
-import {ContractSelection} from './contract-selection' // eslint-disable-line
-import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
-import {ModalDialog} from '@remix-ui/modal-dialog' // eslint-disable-line
-import {Renderer} from '@remix-ui/renderer' // eslint-disable-line
+import React, { useEffect, useState } from 'react' // eslint-disable-line
+import { CompileErrors, ContractsFile, SolidityCompilerProps } from './types'
+import { CompilerContainer } from './compiler-container' // eslint-disable-line
+import { ContractSelection } from './contract-selection' // eslint-disable-line
+import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
+import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
+import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 
 import './css/style.css'
 
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
   const {
     api,
-    api: {currentFile, compileTabLogic, configurationSettings}
+    api: { currentFile, compileTabLogic, configurationSettings },
   } = props
   const [state, setState] = useState({
     isHardhatProject: false,
@@ -33,13 +33,13 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       donotHideOnOkClick: false,
       cancelLabel: '',
       cancelFn: () => {},
-      handleHide: null
-    }
+      handleHide: null,
+    },
   })
   const [currentVersion, setCurrentVersion] = useState('')
   const [hideWarnings, setHideWarnings] = useState<boolean>(false)
-  const [compileErrors, setCompileErrors] = useState<Record<string, CompileErrors>>({[currentFile]: api.compileErrors})
-  const [badgeStatus, setBadgeStatus] = useState<Record<string, {key: string; title?: string; type?: string}>>({})
+  const [compileErrors, setCompileErrors] = useState<Record<string, CompileErrors>>({ [currentFile]: api.compileErrors })
+  const [badgeStatus, setBadgeStatus] = useState<Record<string, { key: string; title?: string; type?: string }>>({})
   const [contractsFile, setContractsFile] = useState<ContractsFile>({})
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     if (badgeStatus[currentFile]) {
       api.emit('statusChanged', badgeStatus[currentFile])
     } else {
-      api.emit('statusChanged', {key: 'none'})
+      api.emit('statusChanged', { key: 'none' })
     }
   }, [badgeStatus[currentFile], currentFile])
 
@@ -66,7 +66,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
 
   api.onCurrentFileChanged = (currentFile: string) => {
     setState((prevState) => {
-      return {...prevState, currentFile}
+      return { ...prevState, currentFile }
     })
   }
 
@@ -81,7 +81,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
         isHardhatProject: isHardhat,
         workspaceName: workspaceName,
         isTruffleProject: isTruffle,
-        isFoundryProject: isFoundry
+        isFoundryProject: isFoundry,
       }
     })
   }
@@ -89,66 +89,66 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   api.onFileRemoved = (path: string) => {
     if (path === state.configFilePath)
       setState((prevState) => {
-        return {...prevState, configFilePath: ''}
+        return { ...prevState, configFilePath: '' }
       })
   }
 
   api.onNoFileSelected = () => {
     setState((prevState) => {
-      return {...prevState, currentFile: ''}
+      return { ...prevState, currentFile: '' }
     })
     setCompileErrors({} as Record<string, CompileErrors>)
   }
 
   api.onCompilationFinished = (compilationDetails: {
-    contractMap: {file: string} | Record<string, any>
+    contractMap: { file: string } | Record<string, any>
     contractsDetails: Record<string, any>
     target?: string
     input?: Record<string, any>
   }) => {
-    const {contractMap, contractsDetails, target, input} = compilationDetails
+    const { contractMap, contractsDetails, target, input } = compilationDetails
     const contractList = contractMap
       ? Object.keys(contractMap).map((key) => {
         return {
           name: key,
-          file: getFileName(contractMap[key].file)
+          file: getFileName(contractMap[key].file),
         }
       })
       : []
 
     setContractsFile({
       ...contractsFile,
-      [target]: {contractList, contractsDetails, input}
+      [target]: { contractList, contractsDetails, input },
     })
-    setCompileErrors({...compileErrors, [currentFile]: api.compileErrors})
+    setCompileErrors({ ...compileErrors, [currentFile]: api.compileErrors })
   }
 
   api.onFileClosed = (name) => {
     if (name === currentFile) {
-      setCompileErrors({...compileErrors, [currentFile]: {} as CompileErrors})
-      setBadgeStatus({...badgeStatus, [currentFile]: {key: 'none'}})
+      setCompileErrors({ ...compileErrors, [currentFile]: {} as CompileErrors })
+      setBadgeStatus({ ...badgeStatus, [currentFile]: { key: 'none' } })
     }
   }
 
-  api.statusChanged = (data: {key: string; title?: string; type?: string}) => {
-    setBadgeStatus({...badgeStatus, [currentFile]: data})
+  api.statusChanged = (data: { key: string; title?: string; type?: string }) => {
+    setBadgeStatus({ ...badgeStatus, [currentFile]: data })
   }
 
   const setConfigFilePath = (path: string) => {
     setState((prevState) => {
-      return {...prevState, configFilePath: path}
+      return { ...prevState, configFilePath: path }
     })
   }
 
   const toast = (message: string) => {
     setState((prevState) => {
-      return {...prevState, toasterMsg: message}
+      return { ...prevState, toasterMsg: message }
     })
   }
 
   const updateCurrentVersion = (value) => {
     setCurrentVersion(value)
-    api.setCompilerParameters({version: value})
+    api.setCompilerParameters({ version: value })
   }
 
   const modal = async (
@@ -172,15 +172,15 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
           okFn,
           donotHideOnOkClick,
           cancelLabel,
-          cancelFn
-        }
+          cancelFn,
+        },
       }
     })
   }
 
   const handleHideModal = () => {
     setState((prevState) => {
-      return {...prevState, modal: {...state.modal, hide: true, message: null}}
+      return { ...prevState, modal: { ...state.modal, hide: true, message: null } }
     })
   }
 
@@ -241,7 +241,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
                   plugin={api}
                   opt={{
                     type: compileErrors[currentFile].error.severity || 'error',
-                    errorType: compileErrors[currentFile].error.type
+                    errorType: compileErrors[currentFile].error.type,
                   }}
                 />
               )}
@@ -253,10 +253,10 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
                 compileErrors[currentFile].errors.map((err, index) => {
                   if (hideWarnings) {
                     if (err.severity !== 'warning') {
-                      return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{type: err.severity, errorType: err.type}} />
+                      return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{ type: err.severity, errorType: err.type }} />
                     }
                   } else {
-                    return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{type: err.severity, errorType: err.type}} />
+                    return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{ type: err.severity, errorType: err.type }} />
                   }
                 })}
             </>

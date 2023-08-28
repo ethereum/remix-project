@@ -1,11 +1,20 @@
-import { AstNode } from "@remix-project/remix-solidity"
-import { isArray } from "lodash"
-import { EditorUIProps } from "../remix-ui-editor"
-import { GeCompletionUnits, GetCompletionKeywords, getCompletionSnippets, GetCompletionTypes, getContextualAutoCompleteBTypeName, getContextualAutoCompleteByGlobalVariable, GetGlobalFunctions, GetGlobalVariable, GetImports } from "./completion/completionGlobals"
-import { monacoTypes } from '@remix-ui/editor';
-import { retrieveNodesAtPosition } from "../helpers/retrieveNodesAtPosition";
+import { AstNode } from '@remix-project/remix-solidity'
+import { isArray } from 'lodash'
+import { EditorUIProps } from '../remix-ui-editor'
+import {
+  GeCompletionUnits,
+  GetCompletionKeywords,
+  getCompletionSnippets,
+  GetCompletionTypes,
+  getContextualAutoCompleteBTypeName,
+  getContextualAutoCompleteByGlobalVariable,
+  GetGlobalFunctions,
+  GetGlobalVariable,
+  GetImports,
+} from './completion/completionGlobals'
+import { monacoTypes } from '@remix-ui/editor'
+import { retrieveNodesAtPosition } from '../helpers/retrieveNodesAtPosition'
 export class RemixCompletionProvider implements monacoTypes.languages.CompletionItemProvider {
-
   props: EditorUIProps
   monaco: any
   maximumItemsForContractCompletion = 100
@@ -16,41 +25,41 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
   }
 
   triggerCharacters = ['.', '', '"', '@', '/']
-  async provideCompletionItems(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, context: monacoTypes.languages.CompletionContext): Promise<monacoTypes.languages.CompletionList | undefined> {
-
+  async provideCompletionItems(
+    model: monacoTypes.editor.ITextModel,
+    position: monacoTypes.Position,
+    context: monacoTypes.languages.CompletionContext
+  ): Promise<monacoTypes.languages.CompletionList | undefined> {
     const completionSettings = await this.props.plugin.call('config', 'getAppParameter', 'settings/auto-completion')
     if (!completionSettings) return
 
-    const word = model.getWordUntilPosition(position);
+    const word = model.getWordUntilPosition(position)
     const range = {
       startLineNumber: position.lineNumber,
       endLineNumber: position.lineNumber,
       startColumn: word.startColumn,
-      endColumn: word.endColumn
-    };
+      endColumn: word.endColumn,
+    }
 
     const line = model.getLineContent(position.lineNumber)
     let nodes: AstNode[] = []
     let suggestions: monacoTypes.languages.CompletionItem[] = []
     if (context.triggerCharacter === '"' || context.triggerCharacter === '@' || context.triggerCharacter === '/') {
-
-      const lastpart = line.substring(0, position.column - 1).split(';').pop()
+      const lastpart = line
+        .substring(0, position.column - 1)
+        .split(';')
+        .pop()
       if (lastpart.startsWith('import')) {
         const imports = await this.props.plugin.call('codeParser', 'getImports')
         if (context.triggerCharacter === '"' || context.triggerCharacter === '@') {
-          suggestions = [...suggestions,
-            ...GetImports(range, this.monaco, imports, context.triggerCharacter),
-          ]
+          suggestions = [...suggestions, ...GetImports(range, this.monaco, imports, context.triggerCharacter)]
         } else if (context.triggerCharacter === '/') {
           const word = line.split('"')[1]
-          suggestions = [...suggestions,
-            ...GetImports(range, this.monaco, imports, word),
-          ]
+          suggestions = [...suggestions, ...GetImports(range, this.monaco, imports, word)]
         } else {
           return
         }
       }
-
     } else if (context.triggerCharacter === '.') {
       const lineTextBeforeCursor: string = line.substring(0, position.column - 1)
       const lastNodeInExpression = await this.getLastNodeInExpression(lineTextBeforeCursor)
@@ -59,7 +68,8 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
       let dotCompleted = false
 
       // handles completion from for builtin types
-      if (lastNodeInExpression.memberName === 'sender') { // exception for this member
+      if (lastNodeInExpression.memberName === 'sender') {
+        // exception for this member
         lastNodeInExpression.name = 'sender'
       }
       const globalCompletion = getContextualAutoCompleteByGlobalVariable(lastNodeInExpression.name, range, this.monaco)
@@ -70,20 +80,19 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
       // handle completion for global THIS.
       if (lastNodeInExpression.name === 'this') {
         dotCompleted = true
-        nodes = [...nodes, ...await this.getThisCompletions()]
+        nodes = [...nodes, ...(await this.getThisCompletions())]
       }
       // handle completion for other dot completions
       if (expressionElements.length > 1 && !dotCompleted) {
-
         const nameOfLastTypedExpression = lastNodeInExpression.name || lastNodeInExpression.memberName
         const dotCompletions = await this.getDotCompletions(nameOfLastTypedExpression, range)
         nodes = [...nodes, ...dotCompletions.nodes]
         suggestions = [...suggestions, ...dotCompletions.suggestions]
       }
     } else {
-
       // handles contract completions and other suggestions
-      suggestions = [...suggestions,
+      suggestions = [
+        ...suggestions,
         ...GetGlobalVariable(range, this.monaco),
         ...getCompletionSnippets(range, this.monaco),
         ...GetCompletionTypes(range, this.monaco),
@@ -95,7 +104,7 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
       let contractCompletions = await this.getContractCompletions()
 
       // we can't have external nodes without using this.
-      contractCompletions = contractCompletions.filter(node => {
+      contractCompletions = contractCompletions.filter((node) => {
         if (node.visibility && node.visibility === 'external') {
           return false
         }
@@ -103,20 +112,19 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
       })
 
       nodes = [...nodes, ...contractCompletions]
-
     }
 
     // remove duplicates
-    const nodeIds = {};
+    const nodeIds = {}
     let filteredNodes = nodes.filter((node) => {
       if (node.id) {
         if (nodeIds[node.id]) {
-          return false;
+          return false
         }
-        nodeIds[node.id] = true;
+        nodeIds[node.id] = true
       }
-      return true;
-    });
+      return true
+    })
 
     // truncate for performance
     if (filteredNodes.length > this.maximumItemsForContractCompletion) {
@@ -137,7 +145,7 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
     }
 
     const completeParameters = async (parameters: any) => {
-      const localParam = (parameters && parameters.parameters) || (parameters)
+      const localParam = (parameters && parameters.parameters) || parameters
       if (localParam) {
         const params = []
         for (const key in localParam) {
@@ -158,7 +166,6 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
       return variableDeclaration
     }
 
-
     for (const node of Object.values(filteredNodes) as any[]) {
       if (!node.name) continue
       if (node.nodeType === 'VariableDeclaration') {
@@ -167,7 +174,7 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
           kind: this.monaco.languages.CompletionItemKind.Variable,
           insertText: node.name,
           range: range,
-          documentation: await getDocs(node)
+          documentation: await getDocs(node),
         }
         suggestions.push(completion)
       } else if (node.nodeType === 'FunctionDefinition') {
@@ -177,76 +184,69 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
           insertText: `${node.name}${await completeParameters(node.parameters)};`,
           insertTextRules: this.monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
           range: range,
-          documentation: await getDocs(node)
+          documentation: await getDocs(node),
         }
         suggestions.push(completion)
-      } else if
-      (node.nodeType === 'ContractDefinition') {
+      } else if (node.nodeType === 'ContractDefinition') {
         const completion = {
           label: { label: `"${node.name}"`, description: await getNodeLink(node), detail: ` ${node.name}` },
           kind: this.monaco.languages.CompletionItemKind.Interface,
           insertText: node.name,
           range: range,
-          documentation: await getDocs(node)
+          documentation: await getDocs(node),
         }
         suggestions.push(completion)
-      } else if
-      (node.nodeType === 'StructDefinition') {
+      } else if (node.nodeType === 'StructDefinition') {
         const completion = {
           label: { label: `"${node.name}"`, description: await getNodeLink(node), detail: ` ${node.name}` },
           kind: this.monaco.languages.CompletionItemKind.Struct,
           insertText: node.name,
           range: range,
-          documentation: await getDocs(node)
+          documentation: await getDocs(node),
         }
         suggestions.push(completion)
-      } else if
-      (node.nodeType === 'EnumDefinition') {
+      } else if (node.nodeType === 'EnumDefinition') {
         const completion = {
           label: { label: `"${node.name}"`, description: await getNodeLink(node), detail: ` ${node.name}` },
           kind: this.monaco.languages.CompletionItemKind.Enum,
           insertText: node.name,
           range: range,
-          documentation: await getDocs(node)
+          documentation: await getDocs(node),
         }
         suggestions.push(completion)
-      } else if
-      (node.nodeType === 'EventDefinition') {
+      } else if (node.nodeType === 'EventDefinition') {
         const completion = {
           label: { label: `"${node.name}"`, description: await getNodeLink(node), detail: ` -> ${node.name} ${await getParamaters(node)}` },
           kind: this.monaco.languages.CompletionItemKind.Event,
           insertText: `${node.name}${await completeParameters(node.parameters)};`,
           insertTextRules: this.monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
           range: range,
-          documentation: await getDocs(node)
+          documentation: await getDocs(node),
         }
         suggestions.push(completion)
-      } else if
-      (node.nodeType === 'ModifierDefinition') {
+      } else if (node.nodeType === 'ModifierDefinition') {
         const completion = {
           label: { label: `"${node.name}"`, description: await getNodeLink(node), detail: ` ${node.name}` },
           kind: this.monaco.languages.CompletionItemKind.Method,
           insertText: node.name,
           range: range,
-          documentation: await getDocs(node)
+          documentation: await getDocs(node),
         }
         suggestions.push(completion)
-      } else if
-      (node.nodeType === 'EnumValue' || node.type === 'EnumValue') {
+      } else if (node.nodeType === 'EnumValue' || node.type === 'EnumValue') {
         const completion = {
           label: { label: `"${node.name}"` },
           kind: this.monaco.languages.CompletionItemKind.EnumMember,
           insertText: node.name,
           range: range,
-          documentation: null
+          documentation: null,
         }
         suggestions.push(completion)
-
       }
     }
 
     return {
-      suggestions
+      suggestions,
     }
   }
 
@@ -268,9 +268,7 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
           if (block && block.name) {
             const contractNodes = fileNodes.contracts[node.name].contractNodes
             for (const contractNode of Object.values(contractNodes)) {
-              if (contractNode['name'] === block.name
-                                || (contractNode['kind'] === 'constructor' && block.name === 'constructor')
-              ) {
+              if (contractNode['name'] === block.name || (contractNode['kind'] === 'constructor' && block.name === 'constructor')) {
                 let nodeOfScope = await this.props.plugin.call('codeParser', 'getNodesWithScope', (contractNode as any).id)
                 nodes = [...nodes, ...nodeOfScope]
                 if (contractNode['body']) {
@@ -279,17 +277,18 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
                 }
               }
             }
-          } else { // we use the block info from the nodesAtPosition
+          } else {
+            // we use the block info from the nodesAtPosition
             const contractNodes = fileNodes.contracts[node.name].contractNodes
             for (const contractNode of Object.values(contractNodes)) {
-              if((contractNode as any).nodeType === 'Block'){
+              if ((contractNode as any).nodeType === 'Block') {
                 const nodeOfScope = await this.props.plugin.call('codeParser', 'getNodesWithScope', (contractNode as any).id)
                 nodes = [...nodes, ...nodeOfScope]
               }
             }
           }
           // filter private nodes, only allow them when contract ID is the same as the current contract
-          nodes = nodes.filter(node => {
+          nodes = nodes.filter((node) => {
             if (node.visibility) {
               if (node.visibility === 'private') {
                 return (node.contractId ? node.contractId === contractNode.id : false) || false
@@ -297,9 +296,8 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
             }
             return true
           })
-          break;
+          break
         }
-
       }
     } else {
       // get all the nodes from a simple code parser which only parses the current file
@@ -316,7 +314,7 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
     let thisCompletionNodes = await this.getContractCompletions()
     const allowedTypesForThisCompletion = ['VariableDeclaration', 'FunctionDefinition']
     // with this. you can't have internal nodes and no contractDefinitions
-    thisCompletionNodes = thisCompletionNodes.filter(node => {
+    thisCompletionNodes = thisCompletionNodes.filter((node) => {
       if (node.visibility && (node.visibility === 'internal' || node.visibility === 'private')) {
         return false
       }
@@ -335,27 +333,27 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
     let suggestions: monacoTypes.languages.CompletionItem[] = []
 
     const filterNodes = (nodes: any[], parentNode: any, declarationOf: any = null) => {
-      return nodes && nodes.filter(node => {
-        if (node.visibility) {
-          if (declarationOf && declarationOf.nodeType && declarationOf.nodeType === 'StructDefinition') {
-            return true
+      return (
+        nodes &&
+        nodes.filter((node) => {
+          if (node.visibility) {
+            if (declarationOf && declarationOf.nodeType && declarationOf.nodeType === 'StructDefinition') {
+              return true
+            }
+            if ((node.visibility === 'internal' && !parentNode.isBaseNode) || node.visibility === 'private') {
+              return false
+            }
           }
-          if ((node.visibility === 'internal' && !parentNode.isBaseNode) || node.visibility === 'private') {
-            return false
-          }
-        }
-        return true
-      })
+          return true
+        })
+      )
     }
-
 
     for (const nodeOfScope of contractCompletions) {
       if (nodeOfScope.name === nameOfLastTypedExpression) {
         if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'UserDefinedTypeName') {
           const declarationOf: AstNode = await this.props.plugin.call('codeParser', 'declarationOf', nodeOfScope.typeName)
-          nodes = [...nodes,
-            ...filterNodes(declarationOf.nodes, nodeOfScope, declarationOf)
-                    || filterNodes(declarationOf.members, nodeOfScope, declarationOf)]
+          nodes = [...nodes, ...(filterNodes(declarationOf.nodes, nodeOfScope, declarationOf) || filterNodes(declarationOf.members, nodeOfScope, declarationOf))]
           const baseContracts = await this.getlinearizedBaseContracts(declarationOf)
           for (const baseContract of baseContracts) {
             nodes = [...nodes, ...filterNodes(baseContract.nodes, nodeOfScope)]
@@ -370,10 +368,7 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
           suggestions = [...suggestions, ...getContextualAutoCompleteBTypeName('address', range, this.monaco)]
         }
       }
-
     }
-
-
 
     return { nodes, suggestions }
   }
@@ -392,12 +387,11 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
   }
 
   /**
-     * 
-     * @param lineTextBeforeCursor 
-     * @returns 
-     */
+   *
+   * @param lineTextBeforeCursor
+   * @returns
+   */
   private async getLastNodeInExpression(lineTextBeforeCursor: string) {
-
     const wrapLineInFunction = async (text: string) => {
       return `function() {
                 ${text}
@@ -406,17 +400,16 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
 
     let lastNodeInExpression
 
-    const linesToCheck =
-            [
-              lineTextBeforeCursor.substring(0, lineTextBeforeCursor.lastIndexOf('.')) + ".lastnode;",
-              lineTextBeforeCursor.substring(0, lineTextBeforeCursor.lastIndexOf('.')) + ".lastnode;}",
-              lineTextBeforeCursor.substring(0, lineTextBeforeCursor.lastIndexOf('.')) + ".lastnode);",
-              await wrapLineInFunction(lineTextBeforeCursor.substring(0, lineTextBeforeCursor.lastIndexOf('.')) + ".lastnode;"),
-              await wrapLineInFunction(lineTextBeforeCursor.substring(0, lineTextBeforeCursor.lastIndexOf('.')) + ".lastnode;}"),
-              await wrapLineInFunction(lineTextBeforeCursor.substring(0, lineTextBeforeCursor.lastIndexOf('.')) + ".lastnode;)"),
-              await wrapLineInFunction(lineTextBeforeCursor.substring(0, lineTextBeforeCursor.lastIndexOf('.')) + ".lastnode)"),
-              await wrapLineInFunction(lineTextBeforeCursor.substring(0, lineTextBeforeCursor.lastIndexOf('.')) + ".lastnode);"),
-            ]
+    const linesToCheck = [
+      lineTextBeforeCursor.substring(0, lineTextBeforeCursor.lastIndexOf('.')) + '.lastnode;',
+      lineTextBeforeCursor.substring(0, lineTextBeforeCursor.lastIndexOf('.')) + '.lastnode;}',
+      lineTextBeforeCursor.substring(0, lineTextBeforeCursor.lastIndexOf('.')) + '.lastnode);',
+      await wrapLineInFunction(lineTextBeforeCursor.substring(0, lineTextBeforeCursor.lastIndexOf('.')) + '.lastnode;'),
+      await wrapLineInFunction(lineTextBeforeCursor.substring(0, lineTextBeforeCursor.lastIndexOf('.')) + '.lastnode;}'),
+      await wrapLineInFunction(lineTextBeforeCursor.substring(0, lineTextBeforeCursor.lastIndexOf('.')) + '.lastnode;)'),
+      await wrapLineInFunction(lineTextBeforeCursor.substring(0, lineTextBeforeCursor.lastIndexOf('.')) + '.lastnode)'),
+      await wrapLineInFunction(lineTextBeforeCursor.substring(0, lineTextBeforeCursor.lastIndexOf('.')) + '.lastnode);'),
+    ]
 
     for (const line of linesToCheck) {
       try {
@@ -426,10 +419,7 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
           lastNodeInExpression = lastNode
           break
         }
-
-      } catch (e) {
-
-      }
+      } catch (e) {}
     }
     return lastNodeInExpression
   }

@@ -1,9 +1,8 @@
-
-import { monacoTypes } from '@remix-ui/editor';
+import { monacoTypes } from '@remix-ui/editor'
 export interface Action {
-  type: string;
+  type: string
   payload: Record<string, any>
-  monaco: any,
+  monaco: any
   editor: any
 }
 
@@ -24,9 +23,7 @@ export const reducerActions = (models = initialState, action: Action) => {
     let model
     try {
       model = monaco.editor.createModel(value, language, monaco.Uri.parse(uri))
-    } catch (e) {
-
-    }
+    } catch (e) {}
     models[uri].model = model
     model.onDidChangeContent(() => action.payload.events.onDidChangeContent(uri))
     return models
@@ -62,7 +59,7 @@ export const reducerActions = (models = initialState, action: Action) => {
       startLineNumber: action.payload.startLineNumber + 1,
       startColumn: action.payload.startColumn,
       endLineNumber: action.payload.endLineNumber + 1,
-      endColumn: action.payload.endColumn
+      endColumn: action.payload.endColumn,
     }
     // reset to start of line
     if (action.payload.startColumn < 100) {
@@ -70,7 +67,7 @@ export const reducerActions = (models = initialState, action: Action) => {
         startLineNumber: range.startLineNumber,
         startColumn: 1,
         endLineNumber: range.endLineNumber,
-        endColumn: 1
+        endColumn: 1,
       })
     } else {
       editor.revealRangeInCenter(range)
@@ -103,7 +100,7 @@ export const reducerListener = (plugin, dispatch, monaco, editor, events) => {
       type: 'ADD_MODEL',
       payload: { uri, value, language, readOnly, events },
       monaco,
-      editor
+      editor,
     })
   })
 
@@ -112,7 +109,7 @@ export const reducerListener = (plugin, dispatch, monaco, editor, events) => {
       type: 'DISPOSE_MODEL',
       payload: { uri },
       monaco,
-      editor
+      editor,
     })
   })
 
@@ -121,7 +118,7 @@ export const reducerListener = (plugin, dispatch, monaco, editor, events) => {
       type: 'SET_VALUE',
       payload: { uri, value },
       monaco,
-      editor
+      editor,
     })
   })
 
@@ -130,7 +127,7 @@ export const reducerListener = (plugin, dispatch, monaco, editor, events) => {
       type: 'REVEAL_LINE',
       payload: { line, column },
       monaco,
-      editor
+      editor,
     })
   })
 
@@ -141,10 +138,10 @@ export const reducerListener = (plugin, dispatch, monaco, editor, events) => {
         startLineNumber,
         startColumn,
         endLineNumber,
-        endColumn
+        endColumn,
       },
       monaco,
-      editor
+      editor,
     })
   })
 
@@ -153,7 +150,7 @@ export const reducerListener = (plugin, dispatch, monaco, editor, events) => {
       type: 'FOCUS',
       payload: {},
       monaco,
-      editor
+      editor,
     })
   })
 
@@ -162,7 +159,7 @@ export const reducerListener = (plugin, dispatch, monaco, editor, events) => {
       type: 'SET_FONTSIZE',
       payload: { size },
       monaco,
-      editor
+      editor,
     })
   })
 
@@ -171,7 +168,7 @@ export const reducerListener = (plugin, dispatch, monaco, editor, events) => {
       type: 'SET_WORDWRAP',
       payload: { wrap },
       monaco,
-      editor
+      editor,
     })
   })
 }

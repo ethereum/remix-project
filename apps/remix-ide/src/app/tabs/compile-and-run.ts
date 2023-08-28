@@ -5,7 +5,7 @@ declare global {
     _paq: any
   }
 }
-const _paq = window._paq = window._paq || []
+const _paq = (window._paq = window._paq || [])
 
 export const profile = {
   name: 'compileAndRun',
@@ -13,7 +13,7 @@ export const profile = {
   description: 'After each compilation, run the script defined in Natspec.',
   methods: ['runScriptAfterCompilation'],
   version: packageJson.version,
-  kind: 'none'
+  kind: 'none',
 }
 
 type listener = (event: KeyboardEvent) => void
@@ -22,11 +22,11 @@ export class CompileAndRun extends Plugin {
   executionListener: listener
   targetFileName: string
 
-  constructor () {
+  constructor() {
     super(profile)
     this.executionListener = async (e) => {
       // ctrl+e or command+e
-      
+
       if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.keyCode === 83) {
         const file = await this.call('fileManager', 'file')
         if (file) {
@@ -45,17 +45,17 @@ export class CompileAndRun extends Plugin {
     }
   }
 
-  runScriptAfterCompilation (fileName: string) {
+  runScriptAfterCompilation(fileName: string) {
     this.targetFileName = fileName
     _paq.push(['trackEvent', 'ScriptExecutor', 'CompileAndRun', 'request_run_script'])
   }
 
-  async runScript (fileName, clearAllInstances) {
-    await this.call('terminal', 'log', { value: `running ${fileName} ...`, type: 'info'  })
+  async runScript(fileName, clearAllInstances) {
+    await this.call('terminal', 'log', { value: `running ${fileName} ...`, type: 'info' })
     try {
       const exists = await this.call('fileManager', 'exists', fileName)
       if (!exists) {
-        await this.call('terminal', 'log', { value: `${fileName} does not exist.`, type: 'info' } )
+        await this.call('terminal', 'log', { value: `${fileName} does not exist.`, type: 'info' })
         return
       }
       const content = await this.call('fileManager', 'readFile', fileName)
@@ -65,10 +65,10 @@ export class CompileAndRun extends Plugin {
       await this.call('scriptRunner', 'execute', content, fileName)
     } catch (e) {
       this.call('notification', 'toast', e.message || e)
-    }    
+    }
   }
 
-  onActivation () {
+  onActivation() {
     window.document.addEventListener('keydown', this.executionListener)
 
     this.on('compilerMetadata', 'artefactsUpdated', async (fileName, contract) => {
@@ -89,7 +89,7 @@ export class CompileAndRun extends Plugin {
     })
   }
 
-  onDeactivation () {
+  onDeactivation() {
     window.document.removeEventListener('keydown', this.executionListener)
     this.off('compilerMetadata', 'artefactsUpdated')
   }

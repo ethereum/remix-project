@@ -3,7 +3,7 @@ export class fileSystem {
   enabled: boolean
   available: boolean
   fs: any
-  fsCallBack: any;
+  fsCallBack: any
   hasWorkSpaces: boolean
   loaded: boolean
   load: () => Promise<unknown>
@@ -20,13 +20,11 @@ export class fileSystem {
     try {
       await this.fs.stat('.workspaces')
       this.hasWorkSpaces = true
-    } catch (e) {
-
-    }
+    } catch (e) {}
   }
 
   set = async () => {
-    const w = (window as any)
+    const w = window as any
     if (!this.loaded) return false
     w.remixFileSystem = this.fs
     w.remixFileSystem.name = this.name
@@ -44,7 +42,7 @@ export class fileSystems {
   addFileSystem = async (fs: fileSystem): Promise<boolean> => {
     try {
       this.fileSystems[fs.name] = fs
-      await fs.test() && await fs.load()
+      ;(await fs.test()) && (await fs.load())
       console.log(fs.name + ' is loaded...')
       return true
     } catch (e) {
@@ -53,10 +51,10 @@ export class fileSystems {
     }
   }
   /**
-     * sets filesystem using list as fallback
-     * @param {string[]} names
-     * @returns {Promise}
-     */
+   * sets filesystem using list as fallback
+   * @param {string[]} names
+   * @returns {Promise}
+   */
   setFileSystem = async (filesystems?: fileSystem[]): Promise<fileSystem> => {
     for (const fs of filesystems) {
       if (fs && this.fileSystems[fs.name]) {
@@ -66,7 +64,4 @@ export class fileSystems {
     }
     return null
   }
-
-    
 }
-

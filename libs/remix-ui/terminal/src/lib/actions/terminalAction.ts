@@ -8,13 +8,13 @@ export const registerCommandAction = (name: string, command, activate, dispatch:
   const data: any = {
     session: [],
     activeFilters: { commands: {}, input: '' },
-    filterFns: {}
+    filterFns: {},
   }
   const _INDEX = {
     all: [],
     allMain: [],
     commands: {},
-    commandsMain: {}
+    commandsMain: {},
   }
 
   const registerFilter = (commandName, filterFn) => {
@@ -28,10 +28,12 @@ export const registerCommandAction = (name: string, command, activate, dispatch:
     const ITEM = { root, cmd: name }
     root.gidx = _INDEX.allMain.push(ITEM) - 1
     let item
-    function append (cmd, params, el) {
-      if (cmd) { // subcommand
+    function append(cmd, params, el) {
+      if (cmd) {
+        // subcommand
         item = { el, cmd, root }
-      } else { // command
+      } else {
+        // command
         item = ITEM
         item.el = el
         cmd = name
@@ -42,12 +44,12 @@ export const registerCommandAction = (name: string, command, activate, dispatch:
       item.args = params
     }
     const scopedCommands = _scopeCommands(append)
-    command(args, scopedCommands, el => append(null, args, el))
+    command(args, scopedCommands, (el) => append(null, args, el))
   }
-  const help = typeof command.help === 'string' ? command.help : [
-    '// no help available for:', `terminal.command.${name}`
-  ].join('\n')
-  commands[name].toString = () => { return help }
+  const help = typeof command.help === 'string' ? command.help : ['// no help available for:', `terminal.command.${name}`].join('\n')
+  commands[name].toString = () => {
+    return help
+  }
   commands[name].help = help
   data.activeFilters.commands[name] = activate && activate.activate
   if (activate.filterFn) {
@@ -59,11 +61,11 @@ export const registerCommandAction = (name: string, command, activate, dispatch:
 
   const _scopeCommands = (append) => {
     const scopedCommands = {}
-    Object.keys(commands).forEach(function makeScopedCommand (cmd) {
+    Object.keys(commands).forEach(function makeScopedCommand(cmd) {
       const command = _commands[cmd]
-      scopedCommands[cmd] = function _command () {
+      scopedCommands[cmd] = function _command() {
         const args = [...arguments] // eslint-disable-line
-        command(args, scopedCommands, el => append(cmd, args, el))
+        command(args, scopedCommands, (el) => append(cmd, args, el))
       }
     })
     return scopedCommands
@@ -72,7 +74,7 @@ export const registerCommandAction = (name: string, command, activate, dispatch:
 
 export const filterFnAction = (name: string, filterFn, dispatch: React.Dispatch<any>) => {
   const data: any = {
-    filterFns: {}
+    filterFns: {},
   }
   data.filterFns[name] = filterFn
   dispatch({ type: name, payload: { data: data } })
@@ -118,8 +120,7 @@ export const initListeningOnNetwork = (plugins, dispatch: React.Dispatch<any>) =
       dispatch({ type: EMPTY_BLOCK, payload: { message: block.number, provider } })
     }
   })
-  plugins.txListener.event.register(KNOWN_TRANSACTION, () => {
-  })
+  plugins.txListener.event.register(KNOWN_TRANSACTION, () => {})
   plugins.txListener.event.register(NEW_CALL, (tx, receipt) => {
     log(plugins, tx, receipt, dispatch)
     // log(this, tx, null)
@@ -131,7 +132,7 @@ export const initListeningOnNetwork = (plugins, dispatch: React.Dispatch<any>) =
   const log = async (plugins, tx, receipt, dispatch: React.Dispatch<any>) => {
     const resolvedTransaction = await plugins.txListener.resolvedTransaction(tx.hash)
     const provider = plugins.blockchain.getProvider()
-  
+
     if (resolvedTransaction) {
       let compiledContracts = null
       try {
@@ -166,7 +167,7 @@ export const initListeningOnNetwork = (plugins, dispatch: React.Dispatch<any>) =
 
   plugins.txListener.event.register('debuggingRequested', async (hash) => {
     // TODO should probably be in the run module
-    if (!await plugins.options.appManager.isActive('debugger')) await plugins.options.appManager.activatePlugin('debugger')
+    if (!(await plugins.options.appManager.isActive('debugger'))) await plugins.options.appManager.activatePlugin('debugger')
     plugins.call('menuicons', 'select', 'debugger')
     plugins.call('debugger', 'debug', hash)
   })

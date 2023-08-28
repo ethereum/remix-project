@@ -14,10 +14,11 @@ module.exports = {
 
   'Run Scenario #group1': function (browser: NightwatchBrowser) {
     let addressRef
-    browser.addFile('scenario.json', { content: records })
+    browser
+      .addFile('scenario.json', { content: records })
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: "//*[contains(@class, 'view-lines') and contains(.,'0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')]"
+        selector: "//*[contains(@class, 'view-lines') and contains(.,'0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')]",
       })
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
@@ -34,14 +35,13 @@ module.exports = {
         addressRef = address
       })
       .perform((done) => {
-        browser.verifyCallReturnValue(addressRef, ['0:uint256: 1', '0:uint256: 3456', '0:address: 0xbBF289D846208c16EDc8474705C748aff07732dB'])
-          .perform(() => done())
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 1', '0:uint256: 3456', '0:address: 0xbBF289D846208c16EDc8474705C748aff07732dB']).perform(() => done())
       })
       .click('*[data-id="deployAndRunClearInstances"]')
-
-    },
-    'Save scenario #group1': function (browser: NightwatchBrowser) {
-      browser.testContracts('testRecorder.sol', sources[0]['testRecorder.sol'], ['testRecorder'])
+  },
+  'Save scenario #group1': function (browser: NightwatchBrowser) {
+    browser
+      .testContracts('testRecorder.sol', sources[0]['testRecorder.sol'], ['testRecorder'])
       .clickLaunchIcon('udapp')
       .createContract('12')
       .clickInstance(0)
@@ -52,7 +52,8 @@ module.exports = {
         const modalOk = document.querySelector('[data-id="udappNotify-modal-footer-ok-react"]') as any
 
         modalOk.click()
-      }).pause(1000)
+      })
+      .pause(1000)
       .getEditorValue(function (result) {
         const parsed = JSON.parse(result)
         browser.assert.equal(JSON.stringify(parsed.transactions[0].record.parameters), JSON.stringify(scenario.transactions[0].record.parameters))
@@ -97,13 +98,14 @@ module.exports = {
       .clickFunction('set2 - transact (not payable)', { types: 'uint256 _po', values: '10' })
       .testFunction('last', {
         status: 'true Transaction mined and execution succeed',
-        'decoded input': { 'uint256 _po': '10' }
+        'decoded input': { 'uint256 _po': '10' },
       })
   },
 
   'Run with live "mode" #group2': function (browser: NightwatchBrowser) {
     let addressRef: string
-    browser.addFile('scenario_live_mode.json', { content: JSON.stringify(liveModeScenario, null, '\t') })
+    browser
+      .addFile('scenario_live_mode.json', { content: JSON.stringify(liveModeScenario, null, '\t') })
       .addFile('scenario_live_mode_storage.sol', { content: testStorageForLiveMode })
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]')
@@ -119,8 +121,7 @@ module.exports = {
       })
       .clickFunction('retrieve - call')
       .perform((done) => {
-        browser.verifyCallReturnValue(addressRef, ['0:uint256: 350'])
-          .perform(() => done())
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 350']).perform(() => done())
       })
       // change the init state and recompile the same contract.
       .openFile('scenario_live_mode_storage.sol')
@@ -139,35 +140,35 @@ module.exports = {
       })
       .clickFunction('retrieve - call')
       .perform((done) => {
-        browser.verifyCallReturnValue(addressRef, ['0:uint256: 300'])
-          .perform(() => done())
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 300']).perform(() => done())
       })
       .end()
-  }
+  },
 }
 
-const sources = [{
-  'testRecorder.sol': {
-    content: `contract testRecorder {
+const sources = [
+  {
+    'testRecorder.sol': {
+      content: `contract testRecorder {
   constructor(uint p) public {
-      
+
   }
   function set (uint _p) public {
-          
+
   }
-}`
-  }
-},
-{
-  'multipleContracts.sol': {
-    content: `contract t1est {
+}`,
+    },
+  },
+  {
+    'multipleContracts.sol': {
+      content: `contract t1est {
   uint p;
   t2est t;
   constructor () public {
       t = new t2est();
       t.set2(34);
   }
-  
+
   function set(uint _p) public {
       p = _p;
       t.set2(12);
@@ -179,9 +180,9 @@ contract t2est {
   function set2(uint _po) public {
       p = _po;
   }
-}`
-  }
-}
+}`,
+    },
+  },
 ]
 
 const records = `{
@@ -201,7 +202,7 @@ const records = `{
         "contractName": "testLib",
         "bytecode": "60606040523415600e57600080fd5b60968061001c6000396000f300606060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680636d4ce63c146044575b600080fd5b604a6060565b6040518082815260200191505060405180910390f35b6000610d809050905600a165627a7a7230582022d123b15248b8176151f8d45c2dc132063bcc9bb8d5cd652aea7efae362c8050029",
         "linkReferences": {},
-        "inputs": "()",  
+        "inputs": "()",
         "type": "constructor",
         "from": "account{10}"
       }
@@ -344,7 +345,7 @@ const records = `{
 
 const scenario = {
   accounts: {
-    'account{10}': '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'
+    'account{10}': '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c',
   },
   linkReferences: {},
   transactions: [
@@ -353,33 +354,34 @@ const scenario = {
       record: {
         value: '0',
         parameters: [
-          "12" // eslint-disable-line
+          '12', // eslint-disable-line
         ],
         abi: '0x54a8c0ab653c15bfb48b47fd011ba2b9617af01cb45cab344acd57c924d56798',
         contractName: 'testRecorder',
-        bytecode: '6060604052341561000f57600080fd5b6040516020806100cd833981016040528080519060200190919050505060938061003a6000396000f300606060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806360fe47b1146044575b600080fd5b3415604e57600080fd5b606260048080359060200190919050506064565b005b505600a165627a7a723058204839660366b94f5f3c8c6da233a2c5fe95ad5635b5c8a2bb630a8b845d68ecdd0029',
+        bytecode:
+          '6060604052341561000f57600080fd5b6040516020806100cd833981016040528080519060200190919050505060938061003a6000396000f300606060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806360fe47b1146044575b600080fd5b3415604e57600080fd5b606260048080359060200190919050506064565b005b505600a165627a7a723058204839660366b94f5f3c8c6da233a2c5fe95ad5635b5c8a2bb630a8b845d68ecdd0029',
         linkReferences: {},
         name: '',
         type: 'constructor',
         inputs: '(uint256)',
-        from: 'account{10}'
-      }
+        from: 'account{10}',
+      },
     },
     {
       timestamp: 1512912696128,
       record: {
         value: '0',
         parameters: [
-          "34" // eslint-disable-line
+          '34', // eslint-disable-line
         ],
         to: 'created{1512912691086}',
         abi: '0x54a8c0ab653c15bfb48b47fd011ba2b9617af01cb45cab344acd57c924d56798',
         name: 'set',
         inputs: '(uint256)',
         type: 'function',
-        from: 'account{10}'
-      }
-    }
+        from: 'account{10}',
+      },
+    },
   ],
   abis: {
     '0x54a8c0ab653c15bfb48b47fd011ba2b9617af01cb45cab344acd57c924d56798': [
@@ -388,82 +390,83 @@ const scenario = {
         inputs: [
           {
             name: '_p',
-            type: 'uint256'
-          }
+            type: 'uint256',
+          },
         ],
         name: 'set',
         outputs: [],
         payable: false,
         stateMutability: 'nonpayable',
-        type: 'function'
+        type: 'function',
       },
       {
         inputs: [
           {
             name: 'p',
-            type: 'uint256'
-          }
+            type: 'uint256',
+          },
         ],
         payable: false,
         stateMutability: 'nonpayable',
-        type: 'constructor'
-      }
-    ]
-  }
+        type: 'constructor',
+      },
+    ],
+  },
 }
 
 const liveModeScenario = {
-  "accounts": {
-    "account{0}": "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4"
+  accounts: {
+    'account{0}': '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4',
   },
-  "linkReferences": {},
-  "transactions": [
+  linkReferences: {},
+  transactions: [
     {
-      "timestamp": 1656329164297,
-      "record": {
-        "value": "0",
-        "parameters": [],
-        "abi": "0x8b8c9c14c8e1442e90dd6ff82bb9889ccfe5a54d88ef30776f11047ecce5fedb",
-        "contractName": "Storage",
-        "bytecode": "608060405234801561001057600080fd5b5060c88061001f6000396000f3fe6080604052348015600f57600080fd5b5060043610604e577c010000000000000000000000000000000000000000000000000000000060003504632e64cec1811460535780636057361d146068575b600080fd5b60005460405190815260200160405180910390f35b60786073366004607a565b600055565b005b600060208284031215608b57600080fd5b503591905056fea264697066735822122091f1bc250ccda7caf2b0d9f67b0314d92233fdb5952b72cece72bd2a5d43cfc264736f6c63430008070033",
-        "linkReferences": {},
-        "name": "",
-        "inputs": "()",
-        "type": "constructor",
-        "from": "account{0}"
-      }
-    }
+      timestamp: 1656329164297,
+      record: {
+        value: '0',
+        parameters: [],
+        abi: '0x8b8c9c14c8e1442e90dd6ff82bb9889ccfe5a54d88ef30776f11047ecce5fedb',
+        contractName: 'Storage',
+        bytecode:
+          '608060405234801561001057600080fd5b5060c88061001f6000396000f3fe6080604052348015600f57600080fd5b5060043610604e577c010000000000000000000000000000000000000000000000000000000060003504632e64cec1811460535780636057361d146068575b600080fd5b60005460405190815260200160405180910390f35b60786073366004607a565b600055565b005b600060208284031215608b57600080fd5b503591905056fea264697066735822122091f1bc250ccda7caf2b0d9f67b0314d92233fdb5952b72cece72bd2a5d43cfc264736f6c63430008070033',
+        linkReferences: {},
+        name: '',
+        inputs: '()',
+        type: 'constructor',
+        from: 'account{0}',
+      },
+    },
   ],
-  "abis": {
-    "0x8b8c9c14c8e1442e90dd6ff82bb9889ccfe5a54d88ef30776f11047ecce5fedb": [
+  abis: {
+    '0x8b8c9c14c8e1442e90dd6ff82bb9889ccfe5a54d88ef30776f11047ecce5fedb': [
       {
-        "inputs": [
+        inputs: [
           {
-            "internalType": "uint256",
-            "name": "num",
-            "type": "uint256"
-          }
+            internalType: 'uint256',
+            name: 'num',
+            type: 'uint256',
+          },
         ],
-        "name": "store",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
+        name: 'store',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
       },
       {
-        "inputs": [],
-        "name": "retrieve",
-        "outputs": [
+        inputs: [],
+        name: 'retrieve',
+        outputs: [
           {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
+            internalType: 'uint256',
+            name: '',
+            type: 'uint256',
+          },
         ],
-        "stateMutability": "view",
-        "type": "function"
-      }
-    ]
-  }
+        stateMutability: 'view',
+        type: 'function',
+      },
+    ],
+  },
 }
 
 const testStorageForLiveMode = `// SPDX-License-Identifier: GPL-3.0
@@ -492,7 +495,7 @@ contract Storage {
     }
 
     /**
-     * @dev Return value 
+     * @dev Return value
      * @return value of 'number'
      */
     function retrieve() public view returns (uint256){

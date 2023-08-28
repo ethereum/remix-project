@@ -14,6 +14,6 @@ export const compile = (compilationTargets, settings, contentResolverCallback): 
     compiler.event.register('compilationFinished', (success, compilationData, source, input, version) => {
       resolve(new CompilerAbstract(settings.version, compilationData, source, input))
     })
-    compiler.event.register('compilerLoaded', _ => compiler.compile(compilationTargets, ''))
+    compiler.event.register('compilerLoaded', (_) => compiler.compile(compilationTargets, ''))
   })
 }

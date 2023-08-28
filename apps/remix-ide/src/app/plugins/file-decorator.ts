@@ -10,7 +10,7 @@ const profile = {
   desciption: 'Keeps decorators of the files',
   methods: ['setFileDecorators', 'clearFileDecorators', 'clearAllFileDecorators'],
   events: ['fileDecoratorsChanged'],
-  version: '0.0.1'
+  version: '0.0.1',
 }
 export class FileDecorator extends Plugin {
   private _fileStates: fileDecoration[] = []
@@ -25,8 +25,8 @@ export class FileDecorator extends Plugin {
   }
 
   /**
-     * @param fileStates Array of file states
-     */
+   * @param fileStates Array of file states
+   */
   async setFileDecorators(fileStates: fileDecoration[] | fileDecoration) {
     const { from } = this.currentRequest
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
@@ -55,8 +55,8 @@ export class FileDecorator extends Plugin {
     if (!from) return
 
     const filteredState = this._fileStates.filter((state) => {
-      if(state.owner != from) return true
-      if(path && state.path != path) return true
+      if (state.owner != from) return true
+      if (path && state.path != path) return true
     })
     const newState = [...filteredState].sort(sortByPath)
 
@@ -64,7 +64,6 @@ export class FileDecorator extends Plugin {
       this._fileStates = newState
       this.emit('fileDecoratorsChanged', this._fileStates)
     }
-
   }
 
   async clearAllFileDecorators() {
@@ -75,10 +74,10 @@ export class FileDecorator extends Plugin {
 
 const sortByPath = (a: fileDecoration, b: fileDecoration) => {
   if (a.path < b.path) {
-    return -1;
+    return -1
   }
   if (a.path > b.path) {
-    return 1;
+    return 1
   }
-  return 0;
+  return 0
 }

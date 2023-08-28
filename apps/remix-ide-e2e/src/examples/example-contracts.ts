@@ -19,7 +19,7 @@ contract Storage {
     }
 
     /**
-     * @dev Return value 
+     * @dev Return value
      * @return value of 'number'
      */
     function retreive() public view returns (uint256){
@@ -36,10 +36,10 @@ const owner = `pragma solidity >=0.7.0 <0.9.0;
 contract Owner {
 
     address private owner;
-    
+
     // event for EVM logging
     event OwnerSet(address indexed oldOwner, address indexed newOwner);
-    
+
     // modifier to check if caller is owner
     modifier isOwner() {
         // If the first argument of 'require' evaluates to 'false', execution terminates and all
@@ -50,7 +50,7 @@ contract Owner {
         require(msg.sender == owner, "Caller is not owner");
         _;
     }
-    
+
     /**
      * @dev Set contract deployer as owner
      */
@@ -69,7 +69,7 @@ contract Owner {
     }
 
     /**
-     * @dev Return owner address 
+     * @dev Return owner address
      * @return address of owner
      */
     function getOwner() external view returns (address) {
@@ -79,12 +79,12 @@ contract Owner {
 
 const ballot = `pragma solidity >=0.7.0 <0.9.0;
 
-/** 
+/**
  * @title Ballot
  * @dev Implements voting process along with vote delegation
  */
 contract Ballot {
-   
+
     struct Voter {
         uint weight; // weight is accumulated by delegation
         bool voted;  // if true, that person already voted
@@ -93,7 +93,7 @@ contract Ballot {
     }
 
     struct Proposal {
-        // If you can limit the length to a certain number of bytes, 
+        // If you can limit the length to a certain number of bytes,
         // always use one of bytes1 to bytes32 because they are much cheaper
         bytes32 name;   // short name (up to 32 bytes)
         uint voteCount; // number of accumulated votes
@@ -105,7 +105,7 @@ contract Ballot {
 
     Proposal[] public proposals;
 
-    /** 
+    /**
      * @dev Create a new ballot to choose one of 'proposalNames'.
      * @param proposalNames names of proposals
      */
@@ -123,8 +123,8 @@ contract Ballot {
             }));
         }
     }
-    
-    /** 
+
+    /**
      * @dev Give 'voter' the right to vote on this ballot. May only be called by 'chairperson'.
      * @param voter address of voter
      */
@@ -187,7 +187,7 @@ contract Ballot {
         proposals[proposal].voteCount += sender.weight;
     }
 
-    /** 
+    /**
      * @dev Computes the winning proposal taking all previous votes into account.
      * @return winningProposal_ index of winning proposal in the proposals array
      */
@@ -203,7 +203,7 @@ contract Ballot {
         }
     }
 
-    /** 
+    /**
      * @dev Calls winningProposal() function to get the index of the winner contained in the proposals array and then
      * @return winnerName_ the name of the winner
      */
@@ -286,21 +286,21 @@ import "remix_tests.sol"; // this import is automatically injected by Remix.
 import "../3_Ballot.sol";
 
 contract BallotTest {
-   
+
     bytes32[] proposalNames;
-   
+
     Ballot ballotToTest;
     function beforeAll () public {
         proposalNames.push(bytes32("candidate1"));
         ballotToTest = new Ballot(proposalNames);
     }
-    
+
     function checkWinningProposal () public {
         ballotToTest.vote(0);
         Assert.equal(ballotToTest.winningProposal(), uint(0), "proposal at index 0 should be the winning proposal");
         Assert.equal(ballotToTest.winnerName(), bytes32("candidate1"), "candidate1 should be the winner name");
     }
-    
+
     function checkWinninProposalWithReturnValue () public view returns (bool) {
         return ballotToTest.winningProposal() == 0;
     }
@@ -312,5 +312,5 @@ export default {
   owner: { name: '2_Owner.sol', content: owner },
   ballot: { name: '3_Ballot.sol', content: ballot },
   ballot_0_4_11: { name: 'ballot_0_4_11.sol', content: ballot_0_4_11 },
-  ballot_test: { name: 'tests/4_Ballot_test.sol', content: ballotTest }
+  ballot_test: { name: 'tests/4_Ballot_test.sol', content: ballotTest },
 }

@@ -8,13 +8,13 @@ import { isContractCreation, isCallInstruction, isCreateInstruction, isJumpDestI
 import { extractLocationFromAstVariable } from './types/util'
 
 export type StepDetail = {
-  depth: number,
-  gas: number | string,
-  gasCost: number,
-  memory: number[],
-  op: string,
-  pc: number,
-  stack: number[],
+  depth: number
+  gas: number | string
+  gasCost: number
+  memory: number[]
+  op: string
+  pc: number
+  stack: number[]
 }
 
 /**
@@ -51,15 +51,15 @@ export class InternalCallTree {
   }
 
   /**
-    * constructor
-    *
-    * @param {Object} debuggerEvent  - event declared by the debugger (EthDebugger)
-    * @param {Object} traceManager  - trace manager
-    * @param {Object} solidityProxy  - solidity proxy
-    * @param {Object} codeManager  - code manager
-    * @param {Object} opts  - { includeLocalVariables, debugWithGeneratedSources }
-    */
-  constructor (debuggerEvent, traceManager, solidityProxy, codeManager, opts, offsetToLineColumnConverter?) {
+   * constructor
+   *
+   * @param {Object} debuggerEvent  - event declared by the debugger (EthDebugger)
+   * @param {Object} traceManager  - trace manager
+   * @param {Object} solidityProxy  - solidity proxy
+   * @param {Object} codeManager  - code manager
+   * @param {Object} opts  - { includeLocalVariables, debugWithGeneratedSources }
+   */
+  constructor(debuggerEvent, traceManager, solidityProxy, codeManager, opts, offsetToLineColumnConverter?) {
     this.includeLocalVariables = opts.includeLocalVariables
     this.debugWithGeneratedSources = opts.debugWithGeneratedSources
     this.event = new EventManager()
@@ -83,30 +83,33 @@ export class InternalCallTree {
         this.event.trigger('noCallTreeAvailable', [])
       } else {
         try {
-          buildTree(this, 0, scopeId, isCreation).then((result) => {
-            if (result.error) {
-              this.event.trigger('callTreeBuildFailed', [result.error])
-            } else {
-              createReducedTrace(this, traceManager.trace.length - 1)
-              console.log('call tree build lasts ', (Date.now() - time) / 1000)
-              this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
+          buildTree(this, 0, scopeId, isCreation).then(
+            (result) => {
+              if (result.error) {
+                this.event.trigger('callTreeBuildFailed', [result.error])
+              } else {
+                createReducedTrace(this, traceManager.trace.length - 1)
+                console.log('call tree build lasts ', (Date.now() - time) / 1000)
+                this.event.trigger('callTreeReady', [this.scopes, this.scopeStarts])
+              }
+            },
+            (reason) => {
+              console.log('analyzing trace falls ' + reason)
+              this.event.trigger('callTreeNotReady', [reason])
             }
-          }, (reason) => {
-            console.log('analyzing trace falls ' + reason)
-            this.event.trigger('callTreeNotReady', [reason])
-          })
+          )
         } catch (e) {
           console.log(e)
-        }        
+        }
       }
     })
   }
 
   /**
-    * reset tree
-    *
-    */
-  reset () {
+   * reset tree
+   *
+   */
+  reset() {
     /*
       scopes: map of scopes defined by range in the vmtrace {firstStep, lastStep, locals}.
       Keys represent the level of deepness (scopeId)
@@ -134,11 +137,11 @@ export class InternalCallTree {
   }
 
   /**
-    * find the scope given @arg vmTraceIndex
-    *
-    * @param {Int} vmtraceIndex  - index on the vm trace
-    */
-  findScope (vmtraceIndex) {
+   * find the scope given @arg vmTraceIndex
+   *
+   * @param {Int} vmtraceIndex  - index on the vm trace
+   */
+  findScope(vmtraceIndex) {
     let scopeId = this.findScopeId(vmtraceIndex)
     if (scopeId !== '' && !scopeId) return null
     let scope = this.scopes[scopeId]
@@ -149,19 +152,19 @@ export class InternalCallTree {
     return scope
   }
 
-  parentScope (scopeId) {
+  parentScope(scopeId) {
     if (scopeId.indexOf('.') === -1) return ''
     return scopeId.replace(/(\.\d+)$/, '')
   }
 
-  findScopeId (vmtraceIndex) {
+  findScopeId(vmtraceIndex) {
     const scopes = Object.keys(this.scopeStarts)
     if (!scopes.length) return null
     const scopeStart = util.findLowerBoundValue(vmtraceIndex, scopes)
     return this.scopeStarts[scopeStart]
   }
 
-  retrieveFunctionsStack (vmtraceIndex) {
+  retrieveFunctionsStack(vmtraceIndex) {
     const scope = this.findScope(vmtraceIndex)
     if (!scope) return []
     let scopeId = this.scopeStarts[scope.firstStep]
@@ -184,7 +187,7 @@ export class InternalCallTree {
     return functions
   }
 
-  async extractSourceLocation (step: number, address?: string) {
+  async extractSourceLocation(step: number, address?: string) {
     try {
       if (!address) address = this.traceManager.getCurrentCalledAddressAt(step)
       const compilationResult = await this.solidityProxy.compilationResult(address)
@@ -194,7 +197,7 @@ export class InternalCallTree {
     }
   }
 
-  async extractValidSourceLocation (step: number, address?: string) {
+  async extractValidSourceLocation(step: number, address?: string) {
     try {
       if (!address) address = this.traceManager.getCurrentCalledAddressAt(step)
       const compilationResult = await this.solidityProxy.compilationResult(address)
@@ -204,7 +207,7 @@ export class InternalCallTree {
     }
   }
 
-  async getValidSourceLocationFromVMTraceIndexFromCache (address: string, step: number, contracts: any) {
+  async getValidSourceLocationFromVMTraceIndexFromCache(address: string, step: number, contracts: any) {
     return await this.sourceLocationTracker.getValidSourceLocationFromVMTraceIndexFromCache(address, step, contracts, this.locationAndOpcodePerVMTraceIndex)
   }
 
@@ -214,33 +217,35 @@ export class InternalCallTree {
     }
     throw new Error('Could not find gas cost per line')
   }
-  
-  getLocalVariableById (id: number) {
+
+  getLocalVariableById(id: number) {
     return this.variables[id]
   }
 }
 
-async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, contractObj?, sourceLocation?, validSourceLocation?) {
+async function buildTree(tree, step, scopeId, isCreation, functionDefinition?, contractObj?, sourceLocation?, validSourceLocation?) {
   let subScope = 1
   if (functionDefinition) {
     const address = tree.traceManager.getCurrentCalledAddressAt(step)
     await registerFunctionParameters(tree, functionDefinition, step, scopeId, contractObj, validSourceLocation, address)
   }
-  
-  function callDepthChange (step, trace) {
+
+  function callDepthChange(step, trace) {
     if (step + 1 < trace.length) {
       return trace[step].depth !== trace[step + 1].depth
     }
     return false
   }
 
-  function includedSource (source, included) {
-    return (included.start !== -1 &&
+  function includedSource(source, included) {
+    return (
+      included.start !== -1 &&
       included.length !== -1 &&
       included.file !== -1 &&
       included.start >= source.start &&
       included.start + included.length <= source.start + source.length &&
-      included.file === source.file)
+      included.file === source.file
+    )
   }
 
   let currentSourceLocation = sourceLocation || { start: -1, length: -1, file: -1, jump: '-' }
@@ -252,11 +257,11 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
     let sourceLocation
     let validSourceLocation
     let address
-    
+
     try {
       address = tree.traceManager.getCurrentCalledAddressAt(step)
       sourceLocation = await tree.extractSourceLocation(step, address)
-      
+
       if (!includedSource(sourceLocation, currentSourceLocation)) {
         tree.reducedTrace.push(step)
         currentSourceLocation = sourceLocation
@@ -266,11 +271,10 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
         currentAddress = address
       }
       const amountOfSources = tree.sourceLocationTracker.getTotalAmountOfSources(address, compilationResult.data.contracts)
-      if (tree.sourceLocationTracker.isInvalidSourceLocation(currentSourceLocation, amountOfSources)) { // file is -1 or greater than amount of sources
+      if (tree.sourceLocationTracker.isInvalidSourceLocation(currentSourceLocation, amountOfSources)) {
+        // file is -1 or greater than amount of sources
         validSourceLocation = previousValidSourceLocation
-      } else
-        validSourceLocation = currentSourceLocation
-    
+      } else validSourceLocation = currentSourceLocation
     } catch (e) {
       return { outStep: step, error: 'InternalCallTree - Error resolving source location. ' + step + ' ' + e }
     }
@@ -282,7 +286,7 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
     if (stepDetail && nextStepDetail) {
       stepDetail.gasCost = parseInt(stepDetail.gas as string) - parseInt(nextStepDetail.gas as string)
     }
-        
+
     // gas per line
     let lineColumnPos
     if (tree.offsetToLineColumnConverter) {
@@ -296,13 +300,13 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
             sources[genSource.name] = { content: genSource.contents }
           }
         }
-        
+
         lineColumnPos = await tree.offsetToLineColumnConverter.offsetToLineColumn(validSourceLocation, validSourceLocation.file, sources, astSources)
         if (!tree.gasCostPerLine[validSourceLocation.file]) tree.gasCostPerLine[validSourceLocation.file] = {}
         if (!tree.gasCostPerLine[validSourceLocation.file][lineColumnPos.start.line]) {
           tree.gasCostPerLine[validSourceLocation.file][lineColumnPos.start.line] = {
             gasCost: 0,
-            indexes: []
+            indexes: [],
           }
         }
         tree.gasCostPerLine[validSourceLocation.file][lineColumnPos.start.line].gasCost += stepDetail.gasCost
@@ -375,18 +379,18 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
 }
 
 // the reduced trace contain an entry only if that correspond to a new source location
-function createReducedTrace (tree, index) {
+function createReducedTrace(tree, index) {
   tree.reducedTrace.push(index)
 }
 
-function getGeneratedSources (tree, scopeId, contractObj) {
+function getGeneratedSources(tree, scopeId, contractObj) {
   if (tree.debugWithGeneratedSources && contractObj && tree.scopes[scopeId]) {
     return tree.scopes[scopeId].isCreation ? contractObj.contract.evm.bytecode.generatedSources : contractObj.contract.evm.deployedBytecode.generatedSources
   }
   return null
 }
 
-async function registerFunctionParameters (tree, functionDefinition, step, scopeId, contractObj, sourceLocation, address) {
+async function registerFunctionParameters(tree, functionDefinition, step, scopeId, contractObj, sourceLocation, address) {
   tree.functionCallStack.push(step)
   const functionDefinitionAndInputs = { functionDefinition, inputs: [] }
   // means: the previous location was a function definition && JUMPDEST
@@ -411,7 +415,7 @@ async function registerFunctionParameters (tree, functionDefinition, step, scope
   tree.functionDefinitionsByScope[scopeId] = functionDefinitionAndInputs
 }
 
-async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, contractObj, generatedSources, address) {
+async function includeVariableDeclaration(tree, step, sourceLocation, scopeId, contractObj, generatedSources, address) {
   let states = null
   const variableDeclarations = await resolveVariableDeclaration(tree, sourceLocation, generatedSources, address)
   // using the vm trace step, the current source location and the ast,
@@ -433,7 +437,7 @@ async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, 
               name: variableDeclaration.name,
               type: parseType(variableDeclaration.typeDescriptions.typeString, states, contractObj.name, location),
               stackDepth: stack.length,
-              sourceLocation: sourceLocation
+              sourceLocation: sourceLocation,
             }
             tree.scopes[scopeId].locals[variableDeclaration.name] = newVar
             tree.variables[variableDeclaration.id] = newVar
@@ -448,7 +452,7 @@ async function includeVariableDeclaration (tree, step, sourceLocation, scopeId, 
 
 // this extract all the variable declaration for a given ast and file
 // and keep this in a cache
-async function resolveVariableDeclaration (tree, sourceLocation, generatedSources, address) {
+async function resolveVariableDeclaration(tree, sourceLocation, generatedSources, address) {
   if (!tree.variableDeclarationByFile[sourceLocation.file]) {
     const ast = await tree.solidityProxy.ast(sourceLocation, generatedSources, address)
     if (ast) {
@@ -462,7 +466,7 @@ async function resolveVariableDeclaration (tree, sourceLocation, generatedSource
 
 // this extract all the function definition for a given ast and file
 // and keep this in a cache
-async function resolveFunctionDefinition (tree, sourceLocation, generatedSources, address) {
+async function resolveFunctionDefinition(tree, sourceLocation, generatedSources, address) {
   if (!tree.functionDefinitionByFile[sourceLocation.file]) {
     const ast = await tree.solidityProxy.ast(sourceLocation, generatedSources, address)
     if (ast) {
@@ -474,7 +478,7 @@ async function resolveFunctionDefinition (tree, sourceLocation, generatedSources
   return tree.functionDefinitionByFile[sourceLocation.file][sourceLocation.start + ':' + sourceLocation.length + ':' + sourceLocation.file]
 }
 
-function extractVariableDeclarations (ast, astWalker) {
+function extractVariableDeclarations(ast, astWalker) {
   const ret = {}
   astWalker.walkFull(ast, (node) => {
     if (node.nodeType === 'VariableDeclaration' || node.nodeType === 'YulVariableDeclaration') {
@@ -486,7 +490,7 @@ function extractVariableDeclarations (ast, astWalker) {
   return ret
 }
 
-function extractFunctionDefinitions (ast, astWalker) {
+function extractFunctionDefinitions(ast, astWalker) {
   const ret = {}
   astWalker.walkFull(ast, (node) => {
     if (node.nodeType === 'FunctionDefinition' || node.nodeType === 'YulFunctionDefinition') {
@@ -496,12 +500,12 @@ function extractFunctionDefinitions (ast, astWalker) {
   return ret
 }
 
-function addParams (parameterList, tree, scopeId, states, contractObj, sourceLocation, stackLength, stackPosition, dir) {
+function addParams(parameterList, tree, scopeId, states, contractObj, sourceLocation, stackLength, stackPosition, dir) {
   const contractName = contractObj.name
   const params = []
   for (const inputParam in parameterList.parameters) {
     const param = parameterList.parameters[inputParam]
-    const stackDepth = stackLength + (dir * stackPosition)
+    const stackDepth = stackLength + dir * stackPosition
     if (stackDepth >= 0) {
       let location = extractLocationFromAstVariable(param)
       location = location === 'default' ? 'memory' : location
@@ -512,7 +516,7 @@ function addParams (parameterList, tree, scopeId, states, contractObj, sourceLoc
         stackDepth: stackDepth,
         sourceLocation: sourceLocation,
         abi: contractObj.contract.abi,
-        isParameter: true
+        isParameter: true,
       }
       tree.scopes[scopeId].locals[attributesName] = newParam
       params.push(attributesName)

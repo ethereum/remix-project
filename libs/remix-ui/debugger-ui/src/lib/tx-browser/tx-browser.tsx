@@ -1,11 +1,11 @@
-import {CustomTooltip} from '@remix-ui/helper'
-import React, {useState, useEffect, useRef} from 'react' //eslint-disable-line
-import {useIntl, FormattedMessage} from 'react-intl'
+import { CustomTooltip } from '@remix-ui/helper'
+import React, { useState, useEffect, useRef } from 'react' //eslint-disable-line
+import { useIntl, FormattedMessage } from 'react-intl'
 import './tx-browser.css'
 
-export const TxBrowser = ({requestDebug, updateTxNumberFlag, unloadRequested, transactionNumber, debugging}) => {
+export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, transactionNumber, debugging }) => {
   const [state, setState] = useState({
-    txNumber: ''
+    txNumber: '',
   })
 
   const inputValue = useRef(null)
@@ -16,7 +16,7 @@ export const TxBrowser = ({requestDebug, updateTxNumberFlag, unloadRequested, tr
     setState((prevState) => {
       return {
         ...prevState,
-        txNumber: transactionNumber
+        txNumber: transactionNumber,
       }
     })
   }, [transactionNumber])
@@ -42,7 +42,7 @@ export const TxBrowser = ({requestDebug, updateTxNumberFlag, unloadRequested, tr
     setState((prevState) => {
       return {
         ...prevState,
-        txNumber: value
+        txNumber: value,
       }
     })
   }
@@ -63,7 +63,7 @@ export const TxBrowser = ({requestDebug, updateTxNumberFlag, unloadRequested, tr
         onClick={handleSubmit}
         data-id="debuggerTransactionStartButton"
         disabled={!state.txNumber}
-        style={{pointerEvents: 'none', color: 'white'}}
+        style={{ pointerEvents: 'none', color: 'white' }}
       >
         <span>
           <FormattedMessage id={`debugger.${debugging ? 'stopDebugging' : 'startDebugging'}`} />
@@ -81,9 +81,9 @@ export const TxBrowser = ({requestDebug, updateTxNumberFlag, unloadRequested, tr
             className="form-control m-0 txinput"
             id="txinput"
             type="text"
-            onChange={({target: {value}}) => txInputChanged(value)}
+            onChange={({ target: { value } }) => txInputChanged(value)}
             onInput={txInputOnInput}
-            placeholder={intl.formatMessage({id: 'debugger.placeholder'})}
+            placeholder={intl.formatMessage({ id: 'debugger.placeholder' })}
             data-id="debuggerTransactionInput"
             disabled={debugging}
           />

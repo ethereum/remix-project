@@ -1,6 +1,6 @@
-import {Bee} from '@ethersphere/bee-js'
+import { Bee } from '@ethersphere/bee-js'
 // eslint-disable-next-line no-unused-vars
-import type {UploadResult} from '@ethersphere/bee-js'
+import type { UploadResult } from '@ethersphere/bee-js'
 
 // public gateway node address
 const publicBeeNode = new Bee('https://api.gateway.ethswarm.org/')
@@ -12,7 +12,7 @@ export const publishToSwarm = async (contract, api) => {
   // gather list of files to publish
   const sources = []
   let metadata
-  const item = {content: null, hash: null}
+  const item = { content: null, hash: null }
   const uploaded = []
 
   try {
@@ -52,12 +52,12 @@ export const publishToSwarm = async (contract, api) => {
             sources.push({
               content: content,
               hash: hash,
-              filename: fileName
+              filename: fileName,
             })
             resolve({
               content: content,
               hash: hash,
-              filename: fileName
+              filename: fileName,
             })
           })
           .catch((error) => {
@@ -116,14 +116,14 @@ export const publishToSwarm = async (contract, api) => {
       content: contract.metadata,
       hash: contract.metadataHash,
       filename: 'metadata.json',
-      output: result
+      output: result,
     })
   } catch (error) {
     console.error(error)
     throw new Error(error)
   }
 
-  return {uploaded, item}
+  return { uploaded, item }
 }
 
 const swarmVerifiedPublish = async (beeNodes: Bee[], postageStampId: string, content, expectedHash, api): Promise<Record<string, any>> => {
@@ -135,11 +135,11 @@ const swarmVerifiedPublish = async (beeNodes: Bee[], postageStampId: string, con
       return {
         message: 'hash mismatch between solidity bytecode and uploaded content.',
         url: 'bzz-raw://' + hash,
-        hash
+        hash,
       }
     } else {
       api.writeFile('swarm/' + hash, content)
-      return {message: 'ok', url: 'bzz-raw://' + hash, hash}
+      return { message: 'ok', url: 'bzz-raw://' + hash, hash }
     }
   } catch (error) {
     throw new Error(error)

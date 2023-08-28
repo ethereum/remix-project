@@ -2,17 +2,16 @@ import { checkSpecialChars } from '@remix-ui/helper'
 import { BadgeStatus, IconStatus } from '../components/Icon'
 import { bleach } from '@remix-ui/helper'
 
-
 export type IconBadgeReducerAction = {
   readonly type: string
   readonly payload: any
 }
 
 /**
-   * Set a new status for the @arg name
-   * @param {String} name
-   * @param {Object} status
-   */
+ * Set a new status for the @arg name
+ * @param {String} name
+ * @param {Object} status
+ */
 
 function setIconStatus(name: string, status: IconStatus) {
   if (status.key === 'none') return { ...status, text: '' } // remove status
@@ -38,5 +37,4 @@ export function iconBadgeReducer(state: BadgeStatus, action: IconBadgeReducerAct
 
   const setStatus = setIconStatus(action.type, status)
   return setStatus
-
 }

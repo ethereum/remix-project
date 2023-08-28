@@ -1,19 +1,19 @@
-import { getNetworkName, getEtherScanApi, getReceiptStatus, getProxyContractReceiptStatus } from "../utils"
-import { CompilationResult } from "@remixproject/plugin-api"
+import { getNetworkName, getEtherScanApi, getReceiptStatus, getProxyContractReceiptStatus } from '../utils'
+import { CompilationResult } from '@remixproject/plugin-api'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import axios from 'axios'
-import { PluginClient } from "@remixproject/plugin"
+import { PluginClient } from '@remixproject/plugin'
 
 const resetAfter10Seconds = (client: PluginClient, setResults: (value: string) => void) => {
   setTimeout(() => {
-    client.emit("statusChanged", { key: "none" })
-    setResults("")
+    client.emit('statusChanged', { key: 'none' })
+    setResults('')
   }, 10000)
 }
 
 export type EtherScanReturn = {
-  guid: any,
-  status: any,
+  guid: any
+  status: any
 }
 export const verify = async (
   apiKeyParam: string,
@@ -23,7 +23,7 @@ export const verify = async (
   compilationResultParam: CompilerAbstract,
   chainRef: number | string,
   isProxyContract: boolean,
-  expectedImplAddress: string, 
+  expectedImplAddress: string,
   client: PluginClient,
   onVerifiedContract: (value: EtherScanReturn) => void,
   setResults: (value: string) => void
@@ -37,17 +37,17 @@ export const verify = async (
     } else if (typeof chainRef === 'string') etherscanApi = chainRef
   } else {
     const { network, networkId } = await getNetworkName(client)
-    if (network === "vm") {
+    if (network === 'vm') {
       return {
         succeed: false,
-        message: "Cannot verify in the selected network"
+        message: 'Cannot verify in the selected network',
       }
     } else {
       networkChainId = networkId
       etherscanApi = getEtherScanApi(networkChainId)
     }
   }
-  
+
   try {
     const contractMetadata = getContractMetadata(
       // cast from the remix-plugin interface to the solidity one. Should be fixed when remix-plugin move to the remix-project repository
@@ -58,10 +58,10 @@ export const verify = async (
     if (!contractMetadata) {
       return {
         succeed: false,
-        message: "Please recompile contract"
+        message: 'Please recompile contract',
       }
     }
-    
+
     const contractMetadataParsed = JSON.parse(contractMetadata)
 
     const fileName = getContractFileName(
@@ -76,16 +76,16 @@ export const verify = async (
       settings: {
         optimizer: {
           enabled: contractMetadataParsed.settings.optimizer.enabled,
-          runs: contractMetadataParsed.settings.optimizer.runs
-        }
-      }
+          runs: contractMetadataParsed.settings.optimizer.runs,
+        },
+      },
     }
 
     const data: { [key: string]: string | any } = {
       apikey: apiKeyParam, // A valid API-Key is required
-      module: "contract", // Do not change
-      action: "verifysourcecode", // Do not change
-      codeformat: "solidity-standard-json-input",
+      module: 'contract', // Do not change
+      action: 'verifysourcecode', // Do not change
+      codeformat: 'solidity-standard-json-input',
       sourceCode: JSON.stringify(jsonInput),
       contractname: fileName + ':' + contractName,
       compilerversion: `v${contractMetadataParsed.compiler.version}`, // see http://etherscan.io/solcversions for list of support versions
@@ -93,7 +93,7 @@ export const verify = async (
     }
 
     if (isProxyContract) {
-      data.action = "verifyproxycontract"
+      data.action = 'verifyproxycontract'
       data.expectedimplementation = expectedImplAddress
       data.address = contractAddress
     } else {
@@ -103,76 +103,65 @@ export const verify = async (
     const body = new FormData()
     Object.keys(data).forEach((key) => body.append(key, data[key]))
 
-    client.emit("statusChanged", {
-      key: "loading",
-      type: "info",
-      title: "Verifying ...",
+    client.emit('statusChanged', {
+      key: 'loading',
+      type: 'info',
+      title: 'Verifying ...',
     })
     const response = await axios.post(etherscanApi, body)
     const { message, result, status } = await response.data
 
-    if (message === "OK" && status === "1") {
+    if (message === 'OK' && status === '1') {
       resetAfter10Seconds(client, setResults)
       let receiptStatus
       if (isProxyContract) {
-        receiptStatus = await getProxyContractReceiptStatus(
-          result,
-          apiKeyParam,
-          etherscanApi
-        )
+        receiptStatus = await getProxyContractReceiptStatus(result, apiKeyParam, etherscanApi)
         if (receiptStatus.status === '1') {
           receiptStatus.message = receiptStatus.result
           receiptStatus.result = 'Successfully Updated'
         }
-      } else receiptStatus = await getReceiptStatus(
-        result,
-        apiKeyParam,
-        etherscanApi
-      )
+      } else receiptStatus = await getReceiptStatus(result, apiKeyParam, etherscanApi)
 
       const returnValue = {
         guid: result,
         status: receiptStatus.result,
         message: `Verification request submitted successfully. Use this receipt GUID ${result} to track the status of your submission`,
         succeed: true,
-        isProxyContract
+        isProxyContract,
       }
       onVerifiedContract(returnValue)
       return returnValue
-    } else if (message === "NOTOK") {
-      client.emit("statusChanged", {
-        key: "failed",
-        type: "error",
+    } else if (message === 'NOTOK') {
+      client.emit('statusChanged', {
+        key: 'failed',
+        type: 'error',
         title: result,
       })
       const returnValue = {
-          message: result,
-          succeed: false,
-          isProxyContract
+        message: result,
+        succeed: false,
+        isProxyContract,
       }
       resetAfter10Seconds(client, setResults)
       return returnValue
     }
     return {
       message: 'unknown reason ' + result,
-      succeed: false
+      succeed: false,
     }
   } catch (error: any) {
     console.error(error)
-    setResults("Something wrong happened, try again")
+    setResults('Something wrong happened, try again')
     return {
       message: error.message,
-      succeed: false
+      succeed: false,
     }
   }
 }
 
-export const getContractFileName = (
-  compilationResult: CompilationResult,
-  contractName: string
-) => {
+export const getContractFileName = (compilationResult: CompilationResult, contractName: string) => {
   const compiledContracts = compilationResult.contracts
-  let fileName = ""
+  let fileName = ''
 
   for (const file of Object.keys(compiledContracts)) {
     for (const contract of Object.keys(compiledContracts[file])) {
@@ -184,13 +173,10 @@ export const getContractFileName = (
   }
   return fileName
 }
-  
-export const getContractMetadata = (
-  compilationResult: CompilationResult,
-  contractName: string
-) => {
+
+export const getContractMetadata = (compilationResult: CompilationResult, contractName: string) => {
   const compiledContracts = compilationResult.contracts
-  let contractMetadata = ""
+  let contractMetadata = ''
 
   for (const file of Object.keys(compiledContracts)) {
     for (const contract of Object.keys(compiledContracts[file])) {

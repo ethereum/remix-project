@@ -6,7 +6,7 @@ declare global {
   }
 }
 
-const _paq = window._paq = window._paq || [] //eslint-disable-line
+const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
 export const generateContractMetadat = (config, checked, dispatch) => {
   config.set('settings/generate-contract-metadata', checked)

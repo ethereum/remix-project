@@ -1,29 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {useEffect, useState, useReducer, useRef, Fragment} from 'react' // eslint-disable-line
+import React, { useEffect, useState, useReducer, useRef, Fragment } from 'react' // eslint-disable-line
 import Button from './Button/StaticAnalyserButton' // eslint-disable-line
-import {util} from '@remix-project/remix-lib'
+import { util } from '@remix-project/remix-lib'
 import _ from 'lodash'
 import * as semver from 'semver'
-import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-line
-import {RemixUiCheckbox} from '@remix-ui/checkbox' // eslint-disable-line
+import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
+import { RemixUiCheckbox } from '@remix-ui/checkbox' // eslint-disable-line
 import ErrorRenderer from './ErrorRenderer' // eslint-disable-line
-import {compilation} from './actions/staticAnalysisActions'
-import {initialState, analysisReducer} from './reducers/staticAnalysisReducer'
-import {CodeAnalysis} from '@remix-project/remix-analyzer'
+import { compilation } from './actions/staticAnalysisActions'
+import { initialState, analysisReducer } from './reducers/staticAnalysisReducer'
+import { CodeAnalysis } from '@remix-project/remix-analyzer'
 import Tab from 'react-bootstrap/Tab'
 import Tabs from 'react-bootstrap/Tabs'
-import {AnalysisTab, SolHintReport} from '../staticanalyser'
-import {run} from './actions/staticAnalysisActions'
-import {BasicTitle, calculateWarningStateEntries} from './components/BasicTitle'
-import {Nav, TabContainer} from 'react-bootstrap'
-import {CustomTooltip} from '@remix-ui/helper'
+import { AnalysisTab, SolHintReport } from '../staticanalyser'
+import { run } from './actions/staticAnalysisActions'
+import { BasicTitle, calculateWarningStateEntries } from './components/BasicTitle'
+import { Nav, TabContainer } from 'react-bootstrap'
+import { CustomTooltip } from '@remix-ui/helper'
 
 declare global {
   interface Window {
     _paq: any
   }
 }
+
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
 /* eslint-disable-next-line */
@@ -51,7 +52,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const groupedModules = util.groupBy(preProcessModules(runner.modules()), 'categoryId')
 
   const getIndex = (modules, array) => {
-    Object.values(modules).map((value: {_index}) => {
+    Object.values(modules).map((value: { _index }) => {
       if (Array.isArray(value)) {
         value.forEach((x) => {
           array.push(x._index.toString())
@@ -147,7 +148,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       // Reset badge
 
       // Reset state
-      dispatch({type: '', payload: initialState})
+      dispatch({ type: '', payload: initialState })
       setHints([])
       setSlitherWarnings([])
       setSsaWarnings([])
@@ -175,7 +176,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         // Reset badge
         props.event.trigger('staticAnalysisWarning', [-1])
         // Reset state
-        dispatch({type: '', payload: initialState})
+        dispatch({ type: '', payload: initialState })
         setShowSlither(false)
       }
     })
@@ -319,7 +320,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               label={
                 <label
                   htmlFor={`heading${categoryId}`}
-                  style={{cursor: 'pointer'}}
+                  style={{ cursor: 'pointer' }}
                   className="pl-3 card-header h6 d-flex justify-content-between font-weight-bold px-1 py-2 w-100"
                   data-bs-toggle="collapse"
                   data-bs-expanded="false"
@@ -362,7 +363,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       const ssaTotal = ssaWarnings && state.data && state.source !== null ? ssaWarnings.filter((x) => !x.options.isLibrary && x.hasWarning).length : 0
       const hintsTotal = hints && state.data && state.source !== null ? hints.length : 0
       props.event.trigger('staticAnaysisWarning', [
-        slitherTotal + ssaTotal + hintsTotal === 0 ? -1 : !solhintEnabled && !basicEnabled && !slitherEnabled ? -1 : slitherTotal + ssaTotal + hintsTotal
+        slitherTotal + ssaTotal + hintsTotal === 0 ? -1 : !solhintEnabled && !basicEnabled && !slitherEnabled ? -1 : slitherTotal + ssaTotal + hintsTotal,
       ])
     }
     if (!hideWarnings && showLibsWarning) {
@@ -371,7 +372,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           ? -1
           : !solhintEnabled && !basicEnabled && !slitherEnabled
             ? -1
-            : slitherWarnings.length + ssaWarnings.length + hints.length
+            : slitherWarnings.length + ssaWarnings.length + hints.length,
       ])
     }
     if (hideWarnings) {
@@ -504,7 +505,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                         style={{
                           cursor: 'pointer',
                           overflow: 'hidden',
-                          textOverflow: 'ellipsis'
+                          textOverflow: 'ellipsis',
                         }}
                         onClick={async () => {
                           await props.analysisModule.call('editor', 'discardHighlight')
@@ -514,16 +515,16 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                             {
                               end: {
                                 line: hint.line,
-                                column: hint.column + 1
+                                column: hint.column + 1,
                               },
                               start: {
                                 line: hint.line,
-                                column: hint.column
-                              }
+                                column: hint.column,
+                              },
                             },
                             state.file,
                             '',
-                            {focus: true}
+                            { focus: true }
                           )
                         }}
                       >
@@ -544,7 +545,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                           style={{
                             cursor: 'pointer',
                             overflow: 'hidden',
-                            textOverflow: 'ellipsis'
+                            textOverflow: 'ellipsis',
                           }}
                           onClick={async () => {
                             await props.analysisModule.call('editor', 'discardHighlight')
@@ -554,16 +555,16 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                               {
                                 end: {
                                   line: hint.line,
-                                  column: hint.column + 1
+                                  column: hint.column + 1,
                                 },
                                 start: {
                                   line: hint.line,
-                                  column: hint.column
-                                }
+                                  column: hint.column,
+                                },
                               },
                               state.file,
                               '',
-                              {focus: true}
+                              { focus: true }
                             )
                           }}
                         >
@@ -583,7 +584,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                           style={{
                             cursor: 'pointer',
                             overflow: 'hidden',
-                            textOverflow: 'ellipsis'
+                            textOverflow: 'ellipsis',
                           }}
                           onClick={async () => {
                             await props.analysisModule.call('editor', 'discardHighlight')
@@ -593,16 +594,16 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                               {
                                 end: {
                                   line: hint.line,
-                                  column: hint.column + 1
+                                  column: hint.column + 1,
                                 },
                                 start: {
                                   line: hint.line,
-                                  column: hint.column
-                                }
+                                  column: hint.column,
+                                },
                               },
                               state.file,
                               '',
-                              {focus: true}
+                              { focus: true }
                             )
                           }}
                         >
@@ -611,7 +612,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                               className="text-wrap"
                               style={{
                                 overflow: 'hidden',
-                                textOverflow: 'ellipsis'
+                                textOverflow: 'ellipsis',
                               }}
                             >
                               {hint.formattedMessage}
@@ -646,7 +647,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             )
           ) : null}
         </span>
-      )
+      ),
     },
     {
       tabKey: 'remix',
@@ -711,7 +712,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             <span className="display-6 text-center"></span>
           )}
         </>
-      )
+      ),
     },
     {
       tabKey: 'slither',
@@ -785,8 +786,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
             <span className="display-6 text-center"></span>
           )}
         </>
-      )
-    }
+      ),
+    },
   ]
 
   const checkBasicStatus = () => {

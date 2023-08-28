@@ -7,8 +7,9 @@ module.exports = {
     init(browser, done)
   },
   '@sources': () => sources,
-  'Should flatten contract after creation': function (browser: NightwatchBrowser) { 
-    browser.addFile('TestContract.sol', sources[0]['TestContract.sol'])
+  'Should flatten contract after creation': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('TestContract.sol', sources[0]['TestContract.sol'])
       .pause(10000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemTestContract.sol"]')
       .pause(3000)
@@ -18,7 +19,8 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemTestContract_flattened.sol"]')
   },
   'Should not be able to flatten contract without imports': function (browser: NightwatchBrowser) {
-    browser.click('*[data-id="treeViewLitreeViewItemcontracts"]')
+    browser
+      .click('*[data-id="treeViewLitreeViewItemcontracts"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
       .pause(1000)
       .click('*[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
@@ -27,14 +29,15 @@ module.exports = {
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemcontracts/3_Ballot_flattened.sol"]')
   },
   'Should not flatten contract with errors in syntax': function (browser: NightwatchBrowser) {
-    browser.addFile('samplecontract.sol', { content })
+    browser
+      .addFile('samplecontract.sol', { content })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemsamplecontract.sol"]')
       .click('*[data-id="treeViewLitreeViewItemsamplecontract.sol"]')
       .pause(1000)
       .rightClick('*[data-id="treeViewLitreeViewItemsamplecontract.sol"]')
       .click('*[id="menuitemflattenacontract"]')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemsamplecontract_flattened.sol"]')
-  }
+  },
 }
 
 const sources = [
@@ -73,9 +76,9 @@ const sources = [
               override
           {}
       }
-      `
+      `,
     },
-}
+  },
 ]
 
 const content = `
@@ -83,7 +86,7 @@ const content = `
 
         pragma solidity >=0.7.0 <0.9.0;
 
-        /** 
+        /**
          * @title Ballot
          * @dev Implements voting process along with vote delegation
          */
@@ -97,7 +100,7 @@ const content = `
             }
 
             struct Proposal {
-                // If you can limit the length to a certain number of bytes, 
+                // If you can limit the length to a certain number of bytes,
                 // always use one of bytes1 to bytes32 because they are much cheaper
                 bytes32 name;   // short name (up to 32 bytes)
                 uint voteCount; // number of accumulated votes
@@ -109,7 +112,7 @@ const content = `
 
             Proposal[] public proposals;
 
-            /** 
+            /**
              * @dev Create a new ballot to choose one of 'proposalNames'.
              * @param proposalNames names of proposals
              */
@@ -128,7 +131,7 @@ const content = `
                 }
             }
 
-            /** 
+            /**
              * @dev Give 'voter' the right to vote on this ballot. May only be called by 'chairperson'.
              * @param voter address of voter
              */
@@ -191,7 +194,7 @@ const content = `
                 proposals[proposal].voteCount += sender.weight;
             }
 
-            /** 
+            /**
              * @dev Computes the winning proposal taking all previous votes into account.
              * @return winningProposal_ index of winning proposal in the proposals array
              */
@@ -207,7 +210,7 @@ const content = `
                 }
             }
 
-            /** 
+            /**
              * @dev Calls winningProposal() function to get the index of the winner contained in the proposals array and then
              * @return winnerName_ the name of the winner
              */

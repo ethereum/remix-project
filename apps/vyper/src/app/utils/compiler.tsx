@@ -1,4 +1,4 @@
-import {CompilationResult, ABIDescription} from '@remixproject/plugin-api'
+import { CompilationResult, ABIDescription } from '@remixproject/plugin-api'
 
 export interface Contract {
   name: string
@@ -45,8 +45,8 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
   }
   const response = await fetch(url, {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({code: contract.content})
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code: contract.content }),
   })
 
   if (response.status === 404) {
@@ -71,8 +71,8 @@ export function toStandardOutput(fileName: string, compilationResult: VyperCompi
       [fileName]: {
         id: 1,
         ast: {} as any,
-        legacyAST: {} as any
-      }
+        legacyAST: {} as any,
+      },
     },
     contracts: {
       [fileName]: {
@@ -85,18 +85,18 @@ export function toStandardOutput(fileName: string, compilationResult: VyperCompi
             bytecode: {
               linkReferences: {},
               object: compilationResult['bytecode'].replace('0x', ''),
-              opcodes: ''
+              opcodes: '',
             },
             deployedBytecode: {
               linkReferences: {},
               object: compilationResult['bytecode_runtime'].replace('0x', ''),
-              opcodes: ''
+              opcodes: '',
             },
-            methodIdentifiers: methodIdentifiers
-          }
-        }
-      } as any
-    }
+            methodIdentifiers: methodIdentifiers,
+          },
+        },
+      } as any,
+    },
   }
 }
 

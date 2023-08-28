@@ -1,9 +1,9 @@
-import React, {useRef, useEffect, useState} from 'react' // eslint-disable-line
-import {useIntl} from 'react-intl'
-import {action, FileExplorerContextMenuProps} from '../types'
+import React, { useRef, useEffect, useState } from 'react' // eslint-disable-line
+import { useIntl } from 'react-intl'
+import { action, FileExplorerContextMenuProps } from '../types'
 
 import '../css/file-explorer-context-menu.css'
-import {customAction} from '@remixproject/plugin-api'
+import { customAction } from '@remixproject/plugin-api'
 import UploadFile from './upload-file'
 
 declare global {
@@ -11,6 +11,7 @@ declare global {
     _paq: any
   }
 }
+
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
@@ -126,7 +127,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
             >
               {intl.formatMessage({
                 id: `filePanel.${item.id}`,
-                defaultMessage: item.label || item.name
+                defaultMessage: item.label || item.name,
               })}
             </li>
           )
@@ -145,7 +146,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
             >
               {intl.formatMessage({
                 id: `filePanel.${item.id}`,
-                defaultMessage: item.label || item.name
+                defaultMessage: item.label || item.name,
               })}
             </li>
           )
@@ -220,7 +221,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
                 break
               default:
                 _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', `${item.id}/${item.name}`])
-                emit && emit({...item, path: [path]} as customAction)
+                emit && emit({ ...item, path: [path] } as customAction)
                 break
               }
               hideContextMenu()
@@ -228,7 +229,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
           >
             {intl.formatMessage({
               id: `filePanel.${item.id}`,
-              defaultMessage: item.label || item.name
+              defaultMessage: item.label || item.name,
             })}
           </li>
         )
@@ -240,7 +241,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
     <div
       id="menuItemsContainer"
       className="p-1 remixui_contextContainer bg-light shadow border"
-      style={{left: pageX, top: pageY}}
+      style={{ left: pageX, top: pageY }}
       ref={contextMenuRef}
       onBlur={hideContextMenu}
       tabIndex={500}

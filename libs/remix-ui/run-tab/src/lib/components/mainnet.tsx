@@ -1,8 +1,8 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useEffect, useState} from 'react'
-import {CopyToClipboard} from '@remix-ui/clipboard'
+import React, { useEffect, useState } from 'react'
+import { CopyToClipboard } from '@remix-ui/clipboard'
 import Web3 from 'web3'
-import {MainnetProps} from '../types'
+import { MainnetProps } from '../types'
 
 export function MainnetPrompt(props: MainnetProps) {
   const [baseFee, setBaseFee] = useState<string>('')
@@ -104,7 +104,7 @@ export function MainnetPrompt(props: MainnetProps) {
                 <span className="text-dark mr-2 text-nowrap">Max Priority fee:</span>
                 <input
                   className="form-control mr-1 text-right"
-                  style={{height: '1.2rem', width: '6rem'}}
+                  style={{ height: '1.2rem', width: '6rem' }}
                   id="maxpriorityfee"
                   onInput={(e: any) => onMaxPriorityFeeChange(e.target.value)}
                   defaultValue={props.maxPriorityFee}
@@ -119,7 +119,7 @@ export function MainnetPrompt(props: MainnetProps) {
                 </span>
                 <input
                   className="form-control mr-1 text-right"
-                  style={{height: '1.2rem', width: '6rem'}}
+                  style={{ height: '1.2rem', width: '6rem' }}
                   id="maxfee"
                   onInput={(e: any) => onMaxFeeChange(e.target.value)}
                   defaultValue={baseFee}
@@ -132,7 +132,7 @@ export function MainnetPrompt(props: MainnetProps) {
         ) : (
           <div className="d-flex align-items-center my-1">
             <span className="text-dark mr-2 text-nowrap">Gas price:</span>
-            <input className="form-control mr-1 text-right" style={{width: '40px', height: '28px'}} id="gasprice" onInput={(e: any) => onGasPriceChange(e.target.value)} />
+            <input className="form-control mr-1 text-right" style={{ width: '40px', height: '28px' }} id="gasprice" onInput={(e: any) => onGasPriceChange(e.target.value)} />
             <span>
               Gwei (visit{' '}
               <a target="_blank" href="https://ethgasstation.info" rel="noreferrer">

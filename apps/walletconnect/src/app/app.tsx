@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import '../css/app.css'
 import '@fortawesome/fontawesome-free/css/all.css'
-import type {EthereumClient} from '@web3modal/ethereum'
-import {WalletConnectRemixClient} from '../services/WalletConnectRemixClient'
-import {WalletConnectUI} from './walletConnectUI'
+import type { EthereumClient } from '@web3modal/ethereum'
+import { WalletConnectRemixClient } from '../services/WalletConnectRemixClient'
+import { WalletConnectUI } from './walletConnectUI'
 
 const remix = new WalletConnectRemixClient()
 

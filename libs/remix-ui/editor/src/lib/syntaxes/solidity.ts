@@ -2,21 +2,21 @@
 export const solidityLanguageConfig = {
   comments: {
     lineComment: '//',
-    blockComment: ['/*', '*/']
+    blockComment: ['/*', '*/'],
   },
   brackets: [
     ['{', '}'],
     ['[', ']'],
     ['(', ')'],
-    ['<', '>']
+    ['<', '>'],
   ],
   autoClosingPairs: [
     { open: '"', close: '"', notIn: ['string', 'comment'] },
     { open: "'", close: "'", notIn: ['string', 'comment'] },
     { open: '{', close: '}', notIn: ['string', 'comment'] },
     { open: '[', close: ']', notIn: ['string', 'comment'] },
-    { open: '(', close: ')', notIn: ['string', 'comment'] }
-  ]
+    { open: '(', close: ')', notIn: ['string', 'comment'] },
+  ],
 }
 
 export const solidityTokensProvider = {
@@ -27,7 +27,7 @@ export const solidityTokensProvider = {
     { token: 'delimiter.curly', open: '{', close: '}' },
     { token: 'delimiter.parenthesis', open: '(', close: ')' },
     { token: 'delimiter.square', open: '[', close: ']' },
-    { token: 'delimiter.angle', open: '<', close: '>' }
+    { token: 'delimiter.angle', open: '<', close: '>' },
   ],
 
   keywords: [
@@ -1283,7 +1283,7 @@ export const solidityTokensProvider = {
     'this',
     'super',
     'try',
-    'catch'
+    'catch',
   ],
 
   operators: [
@@ -1323,7 +1323,7 @@ export const solidityTokensProvider = {
     '%=',
     '<<=',
     '>>=',
-    '>>>='
+    '>>>=',
   ],
 
   // we include these common regular expressions
@@ -1341,9 +1341,9 @@ export const solidityTokensProvider = {
         {
           cases: {
             '@keywords': { token: 'keyword.$0' },
-            '@default': 'identifier'
-          }
-        }
+            '@default': 'identifier',
+          },
+        },
       ],
 
       // whitespace
@@ -1366,9 +1366,9 @@ export const solidityTokensProvider = {
         {
           cases: {
             '@operators': 'delimiter',
-            '@default': ''
-          }
-        }
+            '@default': '',
+          },
+        },
       ],
 
       // numbers
@@ -1390,33 +1390,33 @@ export const solidityTokensProvider = {
       // characters
       [/'[^\\']'/, 'string'],
       [/(')(@escapes)(')/, ['string', 'string.escape', 'string']],
-      [/'/, 'string.invalid']
+      [/'/, 'string.invalid'],
     ],
 
     whitespace: [
       [/[ \t\r\n]+/, ''],
       [/\/\*\*(?!\/)/, 'comment.doc', '@doccomment'],
       [/\/\*/, 'comment', '@comment'],
-      [/\/\/.*$/, 'comment']
+      [/\/\/.*$/, 'comment'],
     ],
 
     comment: [
       [/[^\/*]+/, 'comment'],
       [/\*\//, 'comment', '@pop'],
-      [/[\/*]/, 'comment']
+      [/[\/*]/, 'comment'],
     ],
     // Identical copy of comment above, except for the addition of .doc
     doccomment: [
       [/[^\/*]+/, 'comment.doc'],
       [/\*\//, 'comment.doc', '@pop'],
-      [/[\/*]/, 'comment.doc']
+      [/[\/*]/, 'comment.doc'],
     ],
 
     string: [
       [/[^\\"]+/, 'string'],
       [/@escapes/, 'string.escape'],
       [/\\./, 'string.escape.invalid'],
-      [/"/, 'string', '@pop']
-    ]
-  }
+      [/"/, 'string', '@pop'],
+    ],
+  },
 }

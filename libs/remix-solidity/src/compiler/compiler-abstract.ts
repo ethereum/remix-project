@@ -7,38 +7,39 @@ export class CompilerAbstract {
   data: CompilationResult
   source: CompilationSourceCode
   input: CompilerInput
-  constructor (languageversion: string, data: CompilationResult, source: CompilationSourceCode, input?: CompilerInput) {
+
+  constructor(languageversion: string, data: CompilationResult, source: CompilationSourceCode, input?: CompilerInput) {
     this.languageversion = languageversion
     this.data = data
     this.source = source // source code
     this.input = input
   }
 
-  getContracts () {
+  getContracts() {
     return this.data.contracts || {}
   }
 
-  getContract (name) {
+  getContract(name) {
     return helper.getContract(name, this.data.contracts)
   }
 
-  visitContracts (calllback) {
+  visitContracts(calllback) {
     return helper.visitContracts(this.data.contracts, calllback)
   }
 
-  getData () {
+  getData() {
     return this.data
   }
 
-  getInput () {
+  getInput() {
     return this.input
   }
 
-  getAsts () {
+  getAsts() {
     return this.data.sources // ast
   }
 
-  getSourceName (fileIndex) {
+  getSourceName(fileIndex) {
     if (this.data && this.data.sources) {
       return Object.keys(this.data.sources)[fileIndex]
     } else if (Object.keys(this.source.sources).length === 1) {
@@ -49,7 +50,7 @@ export class CompilerAbstract {
     return null
   }
 
-  getSourceCode () {
+  getSourceCode() {
     return this.source
   }
 }

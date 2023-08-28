@@ -1,7 +1,7 @@
-import { Monaco } from "@monaco-editor/react"
-import { sourceMappingDecoder } from "@remix-project/remix-debug"
-import monaco from "../../types/monaco"
-import { EditorUIProps } from "../remix-ui-editor"
+import { Monaco } from '@monaco-editor/react'
+import { sourceMappingDecoder } from '@remix-project/remix-debug'
+import monaco from '../../types/monaco'
+import { EditorUIProps } from '../remix-ui-editor'
 
 export class RemixReferenceProvider implements monaco.languages.ReferenceProvider {
   props: EditorUIProps
@@ -13,7 +13,6 @@ export class RemixReferenceProvider implements monaco.languages.ReferenceProvide
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async provideReferences(model: monaco.editor.ITextModel, position: monaco.Position, context: monaco.languages.ReferenceContext, token: monaco.CancellationToken) {
-
     const cursorPosition = this.props.editorAPI.getCursorPosition()
     const nodes = await this.props.plugin.call('codeParser', 'referrencesAtPosition', cursorPosition)
     const references = []
@@ -31,13 +30,11 @@ export class RemixReferenceProvider implements monaco.languages.ReferenceProvide
 
           try {
             this.props.plugin.call('editor', 'addModel', fileTarget, fileContent)
-          } catch (e) {
-
-          }
+          } catch (e) {}
           const range = new this.monaco.Range(lineColumn.start.line + 1, lineColumn.start.column + 1, lineColumn.end.line + 1, lineColumn.end.column + 1)
           references.push({
             range,
-            uri: this.monaco.Uri.parse(fileTarget)
+            uri: this.monaco.Uri.parse(fileTarget),
           })
         }
       }

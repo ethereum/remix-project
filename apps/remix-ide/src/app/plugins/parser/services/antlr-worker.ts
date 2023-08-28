@@ -2,11 +2,10 @@ let parser: any
 self.onmessage = (e: MessageEvent) => {
   const data: any = e.data
   switch (data.cmd) {
-  case 'load':
-  {
-    (self as any).importScripts(e.data.url)
+  case 'load': {
+    ;(self as any).importScripts(e.data.url)
     // @ts-ignore
-    parser = SolidityParser as any;
+    parser = SolidityParser as any
 
     self.postMessage({
       cmd: 'loaded',
@@ -16,7 +15,6 @@ self.onmessage = (e: MessageEvent) => {
 
   case 'parse':
     if (data.text && parser) {
-
       try {
         let startTime = performance.now()
         const blocks = parser.parseBlock(data.text, { loc: true, range: true, tolerant: true })
@@ -33,12 +31,11 @@ self.onmessage = (e: MessageEvent) => {
           file: data.file,
           duration: endTime - startTime,
           blockDuration,
-          blocks
+          blocks,
         })
       } catch (e) {
         // do nothing
       }
-
     }
     break
   }

@@ -5,8 +5,7 @@ import init from '../helpers/init'
 const sources = [
   {
     'basic.sol': {
-      content:
-    `pragma solidity >=0.2.0 <0.7.0;
+      content: `pragma solidity >=0.2.0 <0.7.0;
 
     /**
      * @title Basic contract
@@ -14,9 +13,9 @@ const sources = [
     contract Basic {
         uint someVar;
         constructor() public {}
-    }`
-    }
-  }
+    }`,
+    },
+  },
 ]
 
 module.exports = {
@@ -34,7 +33,7 @@ module.exports = {
       .click('[for="autoCompile"]')
       .waitForElementVisible('[data-id="compilerNightliesBuild"]')
       .click('[data-id="compilerNightliesBuild"]')
-      .addFile('basic.sol', sources[0]['basic.sol'])      
+      .addFile('basic.sol', sources[0]['basic.sol'])
       .clickLaunchIcon('solidity')
       .noWorkerErrorFor('soljson-v0.6.5+commit.f956cc89.js')
       .noWorkerErrorFor('soljson-v0.6.8-nightly.2020.5.14+commit.a6d0067b.js')
@@ -46,5 +45,5 @@ module.exports = {
         elem.checked = false
       })
       .end()
-  }
+  },
 }

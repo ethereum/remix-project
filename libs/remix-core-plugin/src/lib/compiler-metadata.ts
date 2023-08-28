@@ -7,43 +7,43 @@ const profile = {
   name: 'compilerMetadata',
   methods: ['deployMetadataOf'],
   events: [],
-  version: '0.0.1'
+  version: '0.0.1',
 }
 
 export class CompilerMetadata extends Plugin {
   networks: string[]
   innerPath: string
   buildInfoNames: Record<string, string>
-  constructor () {
+  constructor() {
     super(profile)
     this.networks = ['VM:-', 'main:1', 'ropsten:3', 'rinkeby:4', 'kovan:42', 'goerli:5', 'Custom']
     this.innerPath = 'artifacts'
     this.buildInfoNames = {}
   }
 
-  _JSONFileName (path, contractName) {
+  _JSONFileName(path, contractName) {
     return this.joinPath(path, this.innerPath, contractName + '.json')
   }
 
-  _MetadataFileName (path, contractName) {
+  _MetadataFileName(path, contractName) {
     return this.joinPath(path, this.innerPath, contractName + '_metadata.json')
   }
 
-  onActivation () {
+  onActivation() {
     const self = this
     this.on('filePanel', 'setWorkspace', () => {
       this.buildInfoNames = {}
     })
     this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
-      if (!await this.call('settings', 'get', 'settings/generate-contract-metadata')) return
+      if (!(await this.call('settings', 'get', 'settings/generate-contract-metadata'))) return
       const compiler = new CompilerAbstract(languageVersion, data, source, input)
       const path = self._extractPathOf(source.target)
       await this.setBuildInfo(version, input, data, path, file)
       compiler.visitContracts((contract) => {
         if (contract.file !== source.target) return
-        (async () => {
+        ;(async () => {
           const fileName = self._JSONFileName(path, contract.name)
-          const content = await this.call('fileManager', 'exists', fileName) ? await this.call('fileManager', 'readFile', fileName) : null
+          const content = (await this.call('fileManager', 'exists', fileName)) ? await this.call('fileManager', 'readFile', fileName) : null
           await this._setArtefacts(content, contract, path)
         })()
       })
@@ -52,7 +52,7 @@ export class CompilerMetadata extends Plugin {
 
   // Access each file in build-info, check the input sources
   // If they are all same as in current compiled file and sources includes the path of compiled file, remove old build file
-  async removeStoredBuildInfo (currentInput, path, filePath) {
+  async removeStoredBuildInfo(currentInput, path, filePath) {
     const buildDir = this.joinPath(path, this.innerPath, 'build-info/')
     if (await this.call('fileManager', 'exists', buildDir)) {
       const allBuildFiles = await this.call('fileManager', 'fileList', buildDir)
@@ -61,13 +61,13 @@ export class CompilerMetadata extends Plugin {
         let fileContent = await this.call('fileManager', 'readFile', fileName)
         fileContent = JSON.parse(fileContent)
         const inputFiles = Object.keys(fileContent.input.sources)
-        const inputIntersection = currentInputFileNames.filter(element => !inputFiles.includes(element))
+        const inputIntersection = currentInputFileNames.filter((element) => !inputFiles.includes(element))
         if (inputIntersection.length === 0 && inputFiles.includes(filePath)) await this.call('fileManager', 'remove', fileName)
       }
     }
   }
 
-  async setBuildInfo (version, input, output, path, filePath) {
+  async setBuildInfo(version, input, output, path, filePath) {
     input = JSON.parse(input)
     const solcLongVersion = version.replace('.Emscripten.clang', '')
     const solcVersion = solcLongVersion.substring(0, solcLongVersion.indexOf('+commit'))
@@ -76,32 +76,32 @@ export class CompilerMetadata extends Plugin {
       _format: format,
       solcVersion,
       solcLongVersion,
-      input
+      input,
     })
-    const id =  createHash('md5').update(Buffer.from(json)).digest().toString('hex')
-    const buildFilename = this.joinPath(path, this.innerPath, 'build-info/' +  id + '.json')
+    const id = createHash('md5').update(Buffer.from(json)).digest().toString('hex')
+    const buildFilename = this.joinPath(path, this.innerPath, 'build-info/' + id + '.json')
     // If there are no file in buildInfoNames,it means compilation is running first time after loading Remix
     if (!this.buildInfoNames[filePath]) {
       // Check the existing build-info and delete all the previous build files for compiled file
       await this.removeStoredBuildInfo(input, path, filePath)
       this.buildInfoNames[filePath] = buildFilename
-      const buildData = {id, _format: format, solcVersion, solcLongVersion, input, output}
+      const buildData = { id, _format: format, solcVersion, solcLongVersion, input, output }
       await this.call('fileManager', 'writeFile', buildFilename, JSON.stringify(buildData, null, '\t'))
     } else if (this.buildInfoNames[filePath] && this.buildInfoNames[filePath] !== buildFilename) {
       await this.call('fileManager', 'remove', this.buildInfoNames[filePath])
       this.buildInfoNames[filePath] = buildFilename
-      const buildData = {id, _format: format, solcVersion, solcLongVersion, input, output}
+      const buildData = { id, _format: format, solcVersion, solcLongVersion, input, output }
       await this.call('fileManager', 'writeFile', buildFilename, JSON.stringify(buildData, null, '\t'))
     }
   }
 
-  _extractPathOf (file) {
+  _extractPathOf(file) {
     const reg = /(.*)(\/).*/
     const path = reg.exec(file)
     return path ? path[1] : '/'
   }
 
-  async _setArtefacts (content, contract, path) {
+  async _setArtefacts(content, contract, path) {
     content = content || '{}'
     const fileName = this._JSONFileName(path, contract.name)
     const metadataFileName = this._MetadataFileName(path, contract.name)
@@ -132,15 +132,15 @@ export class CompilerMetadata extends Plugin {
         bytecode: contract.object.evm.bytecode,
         deployedBytecode: contract.object.evm.deployedBytecode,
         gasEstimates: contract.object.evm.gasEstimates,
-        methodIdentifiers: contract.object.evm.methodIdentifiers
+        methodIdentifiers: contract.object.evm.methodIdentifiers,
       },
-      abi: contract.object.abi
+      abi: contract.object.abi,
     }
-    await this.call('fileManager', 'writeFile', fileName, JSON.stringify(data, null, '\t'))    
+    await this.call('fileManager', 'writeFile', fileName, JSON.stringify(data, null, '\t'))
     this.emit('artefactsUpdated', fileName, contract)
   }
 
-  _syncContext (contract, metadata) {
+  _syncContext(contract, metadata) {
     let linkReferences = metadata.linkReferences
     let autoDeployLib = metadata.autoDeployLib
     if (!linkReferences) linkReferences = {}
@@ -159,7 +159,7 @@ export class CompilerMetadata extends Plugin {
     return metadata
   }
 
-  async deployMetadataOf (contractName, fileLocation) {
+  async deployMetadataOf(contractName, fileLocation) {
     let path
     if (fileLocation) {
       path = fileLocation.split('/')
@@ -191,7 +191,7 @@ export class CompilerMetadata extends Plugin {
     }
   }
 
-  joinPath (...paths) {
+  joinPath(...paths) {
     paths = paths.filter((value) => value !== '').map((path) => path.replace(/^\/|\/$/g, '')) // remove first and last slash)
     if (paths.length === 1) return paths[0]
     return paths.join('/')
