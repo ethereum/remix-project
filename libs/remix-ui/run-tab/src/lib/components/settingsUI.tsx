@@ -1,18 +1,24 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
-import {SettingsProps} from '../types'
-import {EnvironmentUI} from './environment'
-import {NetworkUI} from './network'
-import {AccountUI} from './account'
-import {GasPriceUI} from './gasPrice'
-import {ValueUI} from './value'
+import { SettingsProps } from '../types'
+import { EnvironmentUI } from './environment'
+import { NetworkUI } from './network'
+import { AccountUI } from './account'
+import { GasPriceUI } from './gasPrice'
+import { ValueUI } from './value'
 
 export function SettingsUI(props: SettingsProps) {
   //   this._deps.config.events.on('settings/personal-mode_changed', this.onPersonalChange.bind(this))
 
   return (
     <div className="udapp_settings">
-      <EnvironmentUI selectedEnv={props.selectExEnv} providers={props.providers} setExecutionContext={props.setExecutionContext} />
+      <EnvironmentUI
+        selectedAccount={props.accounts.selectedAccount}
+        selectedEnv={props.selectExEnv}
+        providers={props.providers}
+        setExecutionContext={props.setExecutionContext}
+        callFaucet={props.callFaucet}
+      />
       <NetworkUI networkName={props.networkName} />
       <AccountUI
         personalMode={props.personalMode}

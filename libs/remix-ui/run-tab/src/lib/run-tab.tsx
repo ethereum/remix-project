@@ -1,15 +1,15 @@
 // eslint-disable-next-line no-use-before-define
-import React, {Fragment, useEffect, useReducer, useState} from 'react'
-import {ModalDialog} from '@remix-ui/modal-dialog'
+import React, { Fragment, useEffect, useReducer, useState } from 'react'
+import { ModalDialog } from '@remix-ui/modal-dialog'
 // eslint-disable-next-line no-unused-vars
-import {Toaster} from '@remix-ui/toaster'
-import {ContractDropdownUI} from './components/contractDropdownUI'
-import {InstanceContainerUI} from './components/instanceContainerUI'
-import {RecorderUI} from './components/recorderCardUI'
-import {SettingsUI} from './components/settingsUI'
-import {Modal, Network, RunTabProps, Tx} from './types'
-import {ContractData} from '@remix-project/core-plugin'
-import {runTabInitialState, runTabReducer} from './reducers/runTab'
+import { Toaster } from '@remix-ui/toaster'
+import { ContractDropdownUI } from './components/contractDropdownUI'
+import { InstanceContainerUI } from './components/instanceContainerUI'
+import { RecorderUI } from './components/recorderCardUI'
+import { SettingsUI } from './components/settingsUI'
+import { Modal, Network, RunTabProps, Tx } from './types'
+import { ContractData } from '@remix-project/core-plugin'
+import { runTabInitialState, runTabReducer } from './reducers/runTab'
 import {
   initRunTab,
   setAccountAddress,
@@ -43,17 +43,18 @@ import {
   updateSelectedContract,
   syncContracts,
   isValidProxyAddress,
-  isValidProxyUpgrade
+  isValidProxyUpgrade,
+  callFaucet,
 } from './actions'
 import './css/run-tab.css'
-import {PublishToStorage} from '@remix-ui/publish-to-storage'
-import {PassphrasePrompt} from './components/passphrase'
-import {MainnetPrompt} from './components/mainnet'
-import {ScenarioPrompt} from './components/scenario'
-import {setIpfsCheckedState, setRemixDActivated} from './actions/payload'
+import { PublishToStorage } from '@remix-ui/publish-to-storage'
+import { PassphrasePrompt } from './components/passphrase'
+import { MainnetPrompt } from './components/mainnet'
+import { ScenarioPrompt } from './components/scenario'
+import { setIpfsCheckedState, setRemixDActivated } from './actions/payload'
 
 export function RunTabUI(props: RunTabProps) {
-  const {plugin} = props
+  const { plugin } = props
   const [focusModal, setFocusModal] = useState<Modal>({
     hide: true,
     title: '',
@@ -61,7 +62,7 @@ export function RunTabUI(props: RunTabProps) {
     okLabel: '',
     okFn: () => {},
     cancelLabel: '',
-    cancelFn: () => {}
+    cancelFn: () => {},
   })
   const [modals, setModals] = useState<Modal[]>([])
   const [focusToaster, setFocusToaster] = useState<string>('')
@@ -71,11 +72,11 @@ export function RunTabUI(props: RunTabProps) {
     contract: ContractData
   }>({
     storage: null,
-    contract: null
+    contract: null,
   })
   runTabInitialState.selectExEnv = plugin.blockchain.getProvider()
   const [runTab, dispatch] = useReducer(runTabReducer, runTabInitialState)
-  const REACT_API = {runTab}
+  const REACT_API = { runTab }
   const currentfile = plugin.config.get('currentFile')
 
   useEffect(() => {
@@ -99,7 +100,7 @@ export function RunTabUI(props: RunTabProps) {
           cancelLabel: modals[0].cancelLabel,
           cancelFn: modals[0].cancelFn,
           okBtnClass: modals[0].okBtnClass,
-          cancelBtnClass: modals[0].cancelBtnClass
+          cancelBtnClass: modals[0].cancelBtnClass,
         }
         return focusModal
       })
@@ -164,7 +165,7 @@ export function RunTabUI(props: RunTabProps) {
         cancelLabel,
         cancelFn,
         okBtnClass,
-        cancelBtnClass
+        cancelBtnClass,
       })
       return [...modals]
     })
@@ -172,7 +173,7 @@ export function RunTabUI(props: RunTabProps) {
 
   const handleHideModal = () => {
     setFocusModal((modal) => {
-      return {...modal, hide: true, message: null}
+      return { ...modal, hide: true, message: null }
     })
   }
 
@@ -191,14 +192,14 @@ export function RunTabUI(props: RunTabProps) {
   const resetStorage = () => {
     setPublishData({
       storage: null,
-      contract: null
+      contract: null,
     })
   }
 
   const publishToStorage = (storage: 'ipfs' | 'swarm', contract: ContractData) => {
     setPublishData({
       storage,
-      contract
+      contract,
     })
   }
 
@@ -265,6 +266,7 @@ export function RunTabUI(props: RunTabProps) {
             setGasFee={setGasFeeAmount}
             providers={runTab.providers}
             setExecutionContext={setExecutionEnvironment}
+            callFaucet={callFaucet}
             createNewBlockchainAccount={createNewAddress}
             setPassphrase={setPassphraseModal}
             setMatchPassphrase={setMatchPassphraseModal}
