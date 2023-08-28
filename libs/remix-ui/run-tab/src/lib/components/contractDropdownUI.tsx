@@ -1,12 +1,12 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useEffect, useRef, useState} from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {ContractDropdownProps, DeployMode} from '../types'
-import {ContractData, FuncABI, OverSizeLimit} from '@remix-project/core-plugin'
+import React, { useEffect, useRef, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { ContractDropdownProps, DeployMode } from '../types'
+import { ContractData, FuncABI, OverSizeLimit } from '@remix-project/core-plugin'
 import * as ethJSUtil from '@ethereumjs/util'
-import {ContractGUI} from './contractGUI'
-import {CustomTooltip, deployWithProxyMsg, upgradeWithProxyMsg} from '@remix-ui/helper'
-import {title} from 'process'
+import { ContractGUI } from './contractGUI'
+import { CustomTooltip, deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
+import { title } from 'process'
 const _paq = (window._paq = window._paq || [])
 
 export function ContractDropdownUI(props: ContractDropdownProps) {
@@ -16,14 +16,14 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
     content: string
   }>({
     display: '',
-    content: ''
+    content: '',
   })
   const [atAddressOptions, setAtAddressOptions] = useState<{
     title: string | JSX.Element
     disabled: boolean
   }>({
     title: <FormattedMessage id="udapp.atAddressOptionsTitle1" />,
-    disabled: true
+    disabled: true,
   })
   const [loadedAddress, setLoadedAddress] = useState<string>('')
   const [contractOptions, setContractOptions] = useState<{
@@ -31,7 +31,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
     disabled: boolean
   }>({
     title: <FormattedMessage id="udapp.contractOptionsTitle1" />,
-    disabled: true
+    disabled: true,
   })
   const [loadedContractData, setLoadedContractData] = useState<ContractData>(null)
   const [constructorInterface, setConstructorInterface] = useState<FuncABI>(null)
@@ -40,7 +40,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
   const [compilerName, setCompilerName] = useState<string>('')
   const contractsRef = useRef<HTMLSelectElement>(null)
   const atAddressValue = useRef<HTMLInputElement>(null)
-  const {contractList, loadType, currentFile, compilationSource, currentContract, compilationCount, deployOptions} = props.contracts
+  const { contractList, loadType, currentFile, compilationSource, currentContract, compilationCount, deployOptions } = props.contracts
 
   useEffect(() => {
     enableContractNames(Object.keys(props.contracts.contractList).length > 0)
@@ -50,7 +50,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
     enableAtAddress(false)
     setAbiLabel({
       display: 'none',
-      content: 'ABI file selected'
+      content: 'ABI file selected',
     })
   }, [])
 
@@ -71,19 +71,19 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
     if (/.(.abi)$/.exec(currentFile) && '' !== atAddressValue.current.value) {
       setAbiLabel({
         display: 'block',
-        content: currentFile
+        content: currentFile,
       })
       enableAtAddress(true)
     } else if (isContractFile(currentFile)) {
       setAbiLabel({
         display: 'none',
-        content: ''
+        content: '',
       })
       if (!currentContract) enableAtAddress(false)
     } else {
       setAbiLabel({
         display: 'none',
-        content: ''
+        content: '',
       })
       if (!currentContract) enableAtAddress(false)
     }
@@ -148,9 +148,9 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
         disabled: false,
         title: (
           <span className="text-start">
-            <FormattedMessage id="udapp.atAddressOptionsTitle2" values={{br: <br />}} />
+            <FormattedMessage id="udapp.atAddressOptionsTitle2" values={{ br: <br /> }} />
           </span>
-        )
+        ),
       })
     } else {
       setAtAddressOptions({
@@ -159,9 +159,9 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
           <FormattedMessage id="udapp.atAddressOptionsTitle3" />
         ) : (
           <span className="text-start">
-            <FormattedMessage id="udapp.atAddressOptionsTitle4" values={{br: <br />}} />
+            <FormattedMessage id="udapp.atAddressOptionsTitle4" values={{ br: <br /> }} />
           </span>
-        )
+        ),
       })
     }
   }
@@ -170,7 +170,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
     if (enable) {
       setContractOptions({
         disabled: false,
-        title: <FormattedMessage id="udapp.contractOptionsTitle2" />
+        title: <FormattedMessage id="udapp.contractOptionsTitle2" />,
       })
     } else {
       setContractOptions({
@@ -180,9 +180,9 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
             <FormattedMessage id="udapp.contractOptionsTitle3" />
           ) : (
             <span className="text-start">
-              <FormattedMessage id="udapp.contractOptionsTitle4" values={{br: <br />}} />
+              <FormattedMessage id="udapp.contractOptionsTitle4" values={{ br: <br /> }} />
             </span>
-          )
+          ),
       })
     }
   }
@@ -193,7 +193,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
 
   const createInstance = (selectedContract, args, deployMode?: DeployMode[]) => {
     if (selectedContract.bytecodeObject.length === 0) {
-      return props.modal(intl.formatMessage({id: 'udapp.alert'}), intl.formatMessage({id: 'udapp.thisContractMayBeAbstract'}), intl.formatMessage({id: 'udapp.ok'}), () => {})
+      return props.modal(intl.formatMessage({ id: 'udapp.alert' }), intl.formatMessage({ id: 'udapp.thisContractMayBeAbstract' }), intl.formatMessage({ id: 'udapp.ok' }), () => {})
     }
     if (selectedContract.name !== currentContract && selectedContract.name === 'ERC1967Proxy') selectedContract.name = currentContract
     const isProxyDeployment = (deployMode || []).find((mode) => mode === 'Deploy with Proxy')
@@ -203,7 +203,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
       props.modal(
         'Deploy Implementation & Proxy (ERC1967)',
         deployWithProxyMsg(),
-        intl.formatMessage({id: 'udapp.proceed'}),
+        intl.formatMessage({ id: 'udapp.proceed' }),
         () => {
           props.createInstance(
             loadedContractData,
@@ -216,14 +216,14 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
             deployMode
           )
         },
-        intl.formatMessage({id: 'udapp.cancel'}),
+        intl.formatMessage({ id: 'udapp.cancel' }),
         () => {}
       )
     } else if (isContractUpgrade) {
       props.modal(
         'Deploy Implementation & Update Proxy',
         upgradeWithProxyMsg(),
-        intl.formatMessage({id: 'udapp.proceed'}),
+        intl.formatMessage({ id: 'udapp.proceed' }),
         () => {
           props.createInstance(
             loadedContractData,
@@ -236,7 +236,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
             deployMode
           )
         },
-        intl.formatMessage({id: 'udapp.cancel'}),
+        intl.formatMessage({ id: 'udapp.cancel' }),
         () => {}
       )
     } else {
@@ -289,7 +289,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
           setCompilerName(contract.compilerName)
           setContractOptions({
             disabled: false,
-            title: <FormattedMessage id="udapp.contractOptionsTitle2" />
+            title: <FormattedMessage id="udapp.contractOptionsTitle2" />,
           })
         }
       })
@@ -297,7 +297,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
       setCompilerName('')
       setContractOptions({
         title: <FormattedMessage id="udapp.contractOptionsTitle1" />,
-        disabled: true
+        disabled: true,
       })
     }
   }
@@ -323,7 +323,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
               <a href="https://eips.ethereum.org/EIPS/eip-55" target="_blank" rel="noreferrer">
                 EIP-55
               </a>
-            )
+            ),
           }}
         />
       </span>
@@ -343,7 +343,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                   <a href="https://eips.ethereum.org/EIPS/eip-170" target="_blank" rel="noreferrer">
                     eip-170
                   </a>
-                )
+                ),
               }}
             />
           </div>
@@ -358,7 +358,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                   <a href="https://eips.ethereum.org/EIPS/eip-3860" target="_blank" rel="noreferrer">
                     eip-3860
                   </a>
-                )
+                ),
               }}
             />
           </div>
@@ -383,7 +383,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
               <FormattedMessage
                 id="udapp.compiledBy"
                 values={{
-                  compilerName: <span className="text-capitalize">{compilerName}</span>
+                  compilerName: <span className="text-capitalize">{compilerName}</span>,
                 }}
               />
             </label>
@@ -396,7 +396,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
             tooltipId="info-sync-compiled-contract"
             tooltipText={
               <span className="text-left">
-                <FormattedMessage id="udapp.infoSyncCompiledContractTooltip" values={{br: <br />}} />
+                <FormattedMessage id="udapp.infoSyncCompiledContractTooltip" values={{ br: <br /> }} />
               </span>
             }
           >
@@ -407,7 +407,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                 _paq.push(['trackEvent', 'udapp', 'syncContracts', compilationSource ? compilationSource : 'compilationSourceNotYetSet'])
               }}
             >
-              <i style={{cursor: 'pointer'}} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
+              <i style={{ cursor: 'pointer' }} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
             </button>
           </CustomTooltip>
         ) : null}
@@ -423,7 +423,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
             disabled={contractOptions.disabled}
             style={{
               display: loadType === 'abi' && !isContractFile(currentFile) ? 'none' : 'block',
-              pointerEvents: contractOptions.disabled ? 'none' : 'auto'
+              pointerEvents: contractOptions.disabled ? 'none' : 'auto',
             }}
           >
             <option value="" disabled hidden>
@@ -438,7 +438,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
             })}
           </select>
         </CustomTooltip>
-        <span className="py-1" style={{display: abiLabel.display}}>
+        <span className="py-1" style={{ display: abiLabel.display }}>
           {abiLabel.content}
         </span>
       </div>
@@ -449,7 +449,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
           tooltipId="info-evm-version-warn"
           tooltipText={
             <span className="text-left">
-              <FormattedMessage id="udapp.warningEvmVersion" values={{evmVersion}} />
+              <FormattedMessage id="udapp.warningEvmVersion" values={{ evmVersion }} />
             </span>
           }
         >
@@ -461,7 +461,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
           {((contractList[currentFile] && contractList[currentFile].filter((contract) => contract)) || []).length > 0 && loadedContractData && (
             <div>
               <ContractGUI
-                title={intl.formatMessage({id: 'udapp.deploy'})}
+                title={intl.formatMessage({ id: 'udapp.deploy' })}
                 isDeploy={true}
                 deployOption={deployOptions[currentFile] && deployOptions[currentFile][currentContract] ? deployOptions[currentFile][currentContract].options : null}
                 initializerOptions={
@@ -494,7 +494,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                   tooltipId="remixIpfsUdappTooltip"
                   tooltipText={
                     <span className="text-start">
-                      <FormattedMessage id="udapp.remixIpfsUdappTooltip" values={{br: <br />}} />
+                      <FormattedMessage id="udapp.remixIpfsUdappTooltip" values={{ br: <br /> }} />
                     </span>
                   }
                 >
@@ -509,12 +509,17 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
         <div className="pt-2 d-flex flex-column sudapp_button udapp_atAddressSect">
           <div className="d-flex flex-row">
             <CustomTooltip placement={'top-end'} tooltipClasses="text-wrap text-left" tooltipId="runAndDeployAddresstooltip" tooltipText={atAddressOptions.title}>
-              <div id="runAndDeployAtAdressButtonContainer" onClick={loadFromAddress} data-title={atAddressOptions.title}>
+              <div
+                style={!atAddressOptions.disabled ? { cursor: 'pointer' } : { cursor: 'default' }}
+                id="runAndDeployAtAdressButtonContainer"
+                onClick={loadFromAddress}
+                data-title={atAddressOptions.title}
+              >
                 <button
                   className="udapp_atAddress btn-sm py-2 btn-primary"
                   id="runAndDeployAtAdressButton"
                   disabled={atAddressOptions.disabled}
-                  style={{pointerEvents: 'none', border: 'none'}}
+                  style={{ pointerEvents: 'none', border: 'none' }}
                   onClick={loadFromAddress}
                   data-title={atAddressOptions.title}
                 >
@@ -532,7 +537,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                 ref={atAddressValue}
                 className={(!addressIsValid ? 'border border-danger' : 'border-0') + ' h-100 udapp_input udapp_ataddressinput ataddressinput form-control'}
                 placeholder={intl.formatMessage({
-                  id: 'udapp.loadContractFromAddress'
+                  id: 'udapp.loadContractFromAddress',
                 })}
                 onChange={atAddressChanged}
               />
