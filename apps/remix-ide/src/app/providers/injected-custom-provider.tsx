@@ -1,6 +1,6 @@
 import {InjectedProviderDefaultBase} from './injected-provider-default'
 
-export class InjectedL2Provider extends InjectedProviderDefaultBase {
+export class InjectedCustomProvider extends InjectedProviderDefaultBase {
   chainName: string
   chainId: string
   rpcUrls: Array<string>
@@ -14,13 +14,13 @@ export class InjectedL2Provider extends InjectedProviderDefaultBase {
 
   async init() {
     await super.init()
-    if (this.chainName && this.rpcUrls && this.rpcUrls.length > 0) await addL2Network(this.chainName, this.chainId, this.rpcUrls)
-    else throw new Error('Cannot add the L2 network to main injected provider')
+    if (this.chainName && this.rpcUrls && this.rpcUrls.length > 0) await addCustomNetwork(this.chainName, this.chainId, this.rpcUrls)
+    else throw new Error('Cannot add the custom network to main injected provider')
     return {}
   }
 }
 
-export const addL2Network = async (chainName: string, chainId: string, rpcUrls: Array<string>) => {
+export const addCustomNetwork = async (chainName: string, chainId: string, rpcUrls: Array<string>) => {
   try {
     await (window as any).ethereum.request({
       method: 'wallet_switchEthereumChain',
