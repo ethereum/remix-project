@@ -706,7 +706,7 @@ export const EditorUI = (props: EditorUIProps) => {
     const executegptExplainFunctionAction = {
       id: "generateDocumentation",
       label: "Explain this function",
-      contextMenuOrder: 0, // choose the order
+      contextMenuOrder: 1, // choose the order
       contextMenuGroupId: "gtp", // create a new grouping
       keybindings: [],
       run: async () => {
