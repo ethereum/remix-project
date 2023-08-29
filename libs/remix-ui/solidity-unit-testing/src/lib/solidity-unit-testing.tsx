@@ -867,11 +867,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
                     type="checkbox"
                     checked={testFileObj.checked}
                   />
-                  <label
-                    className="singleTestLabel text-nowrap mb-0 form-check-label mb-0 ml-4 custom-control-label text-nowrap"
-                    htmlFor={elemId}
-                    style={{ paddingTop: '0.125rem' }}
-                  >
+                  <label className="singleTestLabel text-nowrap mb-0 form-check-label ml-4 custom-control-label text-nowrap" htmlFor={elemId} style={{ paddingTop: '0.125rem' }}>
                     {testFileObj.fileName}
                   </label>
                 </div>
