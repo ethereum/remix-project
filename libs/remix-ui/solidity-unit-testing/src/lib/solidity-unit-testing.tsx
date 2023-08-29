@@ -838,7 +838,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             </button>
           </CustomTooltip>
         </div>
-        <div className="d-flex align-items-center mx-3 pb-2 mt-2 border-bottom">
+        <div className="d-flex align-items-center ml-1 mr-3 pl-1  pb-2 mt-2 border-bottom">
           <input
             id="checkAllTests"
             className="custom-control-input"
@@ -853,12 +853,12 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             <FormattedMessage id="solidityUnitTesting.selectAll" />{' '}
           </label>
         </div>
-        <div className="testList py-2 mt-0 border-bottom">
+        <div className="testList ml-1 pr-2 mt-0 border-bottom py-2">
           {testFiles.length
             ? testFiles.map((testFileObj: TestObject, index) => {
               const elemId = `singleTest${testFileObj.fileName}`
               return (
-                <div className="d-flex align-items-center pl-0 custom-control custom-checkbox" key={index}>
+                <div className="d-flex align-items-center pl-1 custom-control custom-checkbox" key={index}>
                   <input
                     data-id="singleTest"
                     className="singleTest custom-control-input"
