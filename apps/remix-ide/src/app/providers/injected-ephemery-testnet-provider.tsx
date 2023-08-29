@@ -1,5 +1,6 @@
 import * as packageJson from '../../../../../package.json'
 import { InjectedCustomProvider } from './injected-custom-provider'
+import Web3 from 'web3'
 
 const profile = {
   name: 'injected-ephemery-testnet-provider',
@@ -12,7 +13,16 @@ const profile = {
 
 export class InjectedEphemeryTestnetProvider extends InjectedCustomProvider {
   constructor() {
-    super(profile, 'Ephemery Testnet', '0x259C709', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'])
+    super(profile, 'Ephemery Testnet', '', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'])
+  }
+
+  async init() {
+    const chainId = await new Web3(this.rpcUrls[0]).eth.getChainId()
+    this.chainId = `0x${chainId.toString(16)}`
+    this.chainName = `Ephemery Testnet ${chainId}`
+    console.log('ephemeral chainid', chainId, this.chainId)
+    await super.init()
+    return {}
   }
 
   async useFaucet(recipient: string, value: number) {
