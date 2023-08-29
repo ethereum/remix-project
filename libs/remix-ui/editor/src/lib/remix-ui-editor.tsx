@@ -1,30 +1,30 @@
-import React, {useState, useRef, useEffect, useReducer} from 'react' // eslint-disable-line
-import {isArray} from 'lodash'
-import Editor, {loader, Monaco} from '@monaco-editor/react'
-import {AlertModal} from '@remix-ui/app'
-import {reducerActions, reducerListener, initialState} from './actions/editor'
-import {solidityTokensProvider, solidityLanguageConfig} from './syntaxes/solidity'
-import {cairoTokensProvider, cairoLanguageConfig} from './syntaxes/cairo'
-import {zokratesTokensProvider, zokratesLanguageConfig} from './syntaxes/zokrates'
-import {moveTokenProvider, moveLanguageConfig} from './syntaxes/move'
-import {monacoTypes} from '@remix-ui/editor'
-import {loadTypes} from './web-types'
-import {retrieveNodesAtPosition} from './helpers/retrieveNodesAtPosition'
-import {RemixHoverProvider} from './providers/hoverProvider'
-import {RemixReferenceProvider} from './providers/referenceProvider'
-import {RemixCompletionProvider} from './providers/completionProvider'
-import {RemixHighLightProvider} from './providers/highlightProvider'
-import {RemixDefinitionProvider} from './providers/definitionProvider'
-import {RemixCodeActionProvider} from './providers/codeActionProvider'
+import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
+import { isArray } from 'lodash'
+import Editor, { loader, Monaco } from '@monaco-editor/react'
+import { AlertModal } from '@remix-ui/app'
+import { reducerActions, reducerListener, initialState } from './actions/editor'
+import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solidity'
+import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
+import { zokratesTokensProvider, zokratesLanguageConfig } from './syntaxes/zokrates'
+import { moveTokenProvider, moveLanguageConfig } from './syntaxes/move'
+import { monacoTypes } from '@remix-ui/editor'
+import { loadTypes } from './web-types'
+import { retrieveNodesAtPosition } from './helpers/retrieveNodesAtPosition'
+import { RemixHoverProvider } from './providers/hoverProvider'
+import { RemixReferenceProvider } from './providers/referenceProvider'
+import { RemixCompletionProvider } from './providers/completionProvider'
+import { RemixHighLightProvider } from './providers/highlightProvider'
+import { RemixDefinitionProvider } from './providers/definitionProvider'
+import { RemixCodeActionProvider } from './providers/codeActionProvider'
 import './remix-ui-editor.css'
-import {circomLanguageConfig, circomTokensProvider} from './syntaxes/circom'
-import {IPosition} from 'monaco-editor'
+import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
+import { IPosition } from 'monaco-editor'
 
 enum MarkerSeverity {
   Hint = 1,
   Info = 2,
   Warning = 4,
-  Error = 8
+  Error = 8,
 }
 
 type sourceAnnotation = {
@@ -86,7 +86,7 @@ type errorMarker = {
   file: string
 }
 
-loader.config({paths: {vs: 'assets/js/monaco-editor/min/vs'}})
+loader.config({ paths: { vs: 'assets/js/monaco-editor/min/vs' } })
 
 export type DecorationsReturn = {
   currentDecorations: Array<string>
@@ -108,7 +108,8 @@ export type EditorAPIType = {
   clearDecorationsByPlugin: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
   keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
   addErrorMarker: (errors: errorMarker[], from: string) => void
-  clearErrorMarkers: (sources: string[] | {[fileName: string]: any}, from: string) => void
+  clearErrorMarkers: (sources: string[] | { [fileName: string]: any }, from: string) => void
+  getPositionAt: (offset: number) => monacoTypes.IPosition
 }
 
 /* eslint-disable-next-line */
@@ -195,88 +196,88 @@ export const EditorUI = (props: EditorUIProps) => {
       base: themeType,
       inherit: true, // can also be false to completely replace the builtin rules
       rules: [
-        {background: darkColor.replace('#', '')},
-        {foreground: textColor.replace('#', '')},
+        { background: darkColor.replace('#', '') },
+        { foreground: textColor.replace('#', '') },
 
         // global variables
-        {token: 'keyword.abi', foreground: blueColor},
-        {token: 'keyword.block', foreground: blueColor},
-        {token: 'keyword.bytes', foreground: blueColor},
-        {token: 'keyword.msg', foreground: blueColor},
-        {token: 'keyword.tx', foreground: blueColor},
+        { token: 'keyword.abi', foreground: blueColor },
+        { token: 'keyword.block', foreground: blueColor },
+        { token: 'keyword.bytes', foreground: blueColor },
+        { token: 'keyword.msg', foreground: blueColor },
+        { token: 'keyword.tx', foreground: blueColor },
 
         // global functions
-        {token: 'keyword.assert', foreground: blueColor},
-        {token: 'keyword.require', foreground: blueColor},
-        {token: 'keyword.revert', foreground: blueColor},
-        {token: 'keyword.blockhash', foreground: blueColor},
-        {token: 'keyword.keccak256', foreground: blueColor},
-        {token: 'keyword.sha256', foreground: blueColor},
-        {token: 'keyword.ripemd160', foreground: blueColor},
-        {token: 'keyword.ecrecover', foreground: blueColor},
-        {token: 'keyword.addmod', foreground: blueColor},
-        {token: 'keyword.mulmod', foreground: blueColor},
-        {token: 'keyword.selfdestruct', foreground: blueColor},
-        {token: 'keyword.type ', foreground: blueColor},
-        {token: 'keyword.gasleft', foreground: blueColor},
+        { token: 'keyword.assert', foreground: blueColor },
+        { token: 'keyword.require', foreground: blueColor },
+        { token: 'keyword.revert', foreground: blueColor },
+        { token: 'keyword.blockhash', foreground: blueColor },
+        { token: 'keyword.keccak256', foreground: blueColor },
+        { token: 'keyword.sha256', foreground: blueColor },
+        { token: 'keyword.ripemd160', foreground: blueColor },
+        { token: 'keyword.ecrecover', foreground: blueColor },
+        { token: 'keyword.addmod', foreground: blueColor },
+        { token: 'keyword.mulmod', foreground: blueColor },
+        { token: 'keyword.selfdestruct', foreground: blueColor },
+        { token: 'keyword.type ', foreground: blueColor },
+        { token: 'keyword.gasleft', foreground: blueColor },
 
         // specials
-        {token: 'keyword.super', foreground: infoColor},
-        {token: 'keyword.this', foreground: infoColor},
-        {token: 'keyword.virtual', foreground: infoColor},
+        { token: 'keyword.super', foreground: infoColor },
+        { token: 'keyword.this', foreground: infoColor },
+        { token: 'keyword.virtual', foreground: infoColor },
 
         // for state variables
-        {token: 'keyword.constants', foreground: grayColor},
-        {token: 'keyword.override', foreground: grayColor},
-        {token: 'keyword.immutable', foreground: grayColor},
+        { token: 'keyword.constants', foreground: grayColor },
+        { token: 'keyword.override', foreground: grayColor },
+        { token: 'keyword.immutable', foreground: grayColor },
 
         // data location
-        {token: 'keyword.memory', foreground: locationColor},
-        {token: 'keyword.storage', foreground: locationColor},
-        {token: 'keyword.calldata', foreground: locationColor},
+        { token: 'keyword.memory', foreground: locationColor },
+        { token: 'keyword.storage', foreground: locationColor },
+        { token: 'keyword.calldata', foreground: locationColor },
 
         // for Events
-        {token: 'keyword.indexed', foreground: yellowColor},
-        {token: 'keyword.anonymous', foreground: yellowColor},
+        { token: 'keyword.indexed', foreground: yellowColor },
+        { token: 'keyword.anonymous', foreground: yellowColor },
 
         // for functions
-        {token: 'keyword.external', foreground: successColor},
-        {token: 'keyword.internal', foreground: successColor},
-        {token: 'keyword.private', foreground: successColor},
-        {token: 'keyword.public', foreground: successColor},
-        {token: 'keyword.view', foreground: successColor},
-        {token: 'keyword.pure', foreground: successColor},
-        {token: 'keyword.payable', foreground: successColor},
-        {token: 'keyword.nonpayable', foreground: successColor},
+        { token: 'keyword.external', foreground: successColor },
+        { token: 'keyword.internal', foreground: successColor },
+        { token: 'keyword.private', foreground: successColor },
+        { token: 'keyword.public', foreground: successColor },
+        { token: 'keyword.view', foreground: successColor },
+        { token: 'keyword.pure', foreground: successColor },
+        { token: 'keyword.payable', foreground: successColor },
+        { token: 'keyword.nonpayable', foreground: successColor },
 
         // Errors
-        {token: 'keyword.Error', foreground: dangerColor},
-        {token: 'keyword.Panic', foreground: dangerColor},
+        { token: 'keyword.Error', foreground: dangerColor },
+        { token: 'keyword.Panic', foreground: dangerColor },
 
         // special functions
-        {token: 'keyword.fallback', foreground: pinkColor},
-        {token: 'keyword.receive', foreground: pinkColor},
-        {token: 'keyword.constructor', foreground: pinkColor},
+        { token: 'keyword.fallback', foreground: pinkColor },
+        { token: 'keyword.receive', foreground: pinkColor },
+        { token: 'keyword.constructor', foreground: pinkColor },
 
         // identifiers
-        {token: 'keyword.identifier', foreground: warningColor},
-        {token: 'keyword.for', foreground: warningColor},
-        {token: 'keyword.break', foreground: warningColor},
-        {token: 'keyword.continue', foreground: warningColor},
-        {token: 'keyword.while', foreground: warningColor},
-        {token: 'keyword.do', foreground: warningColor},
-        {token: 'keyword.delete', foreground: warningColor},
+        { token: 'keyword.identifier', foreground: warningColor },
+        { token: 'keyword.for', foreground: warningColor },
+        { token: 'keyword.break', foreground: warningColor },
+        { token: 'keyword.continue', foreground: warningColor },
+        { token: 'keyword.while', foreground: warningColor },
+        { token: 'keyword.do', foreground: warningColor },
+        { token: 'keyword.delete', foreground: warningColor },
 
-        {token: 'keyword.if', foreground: yellowColor},
-        {token: 'keyword.else', foreground: yellowColor},
+        { token: 'keyword.if', foreground: yellowColor },
+        { token: 'keyword.else', foreground: yellowColor },
 
-        {token: 'keyword.throw', foreground: orangeColor},
-        {token: 'keyword.catch', foreground: orangeColor},
-        {token: 'keyword.try', foreground: orangeColor},
+        { token: 'keyword.throw', foreground: orangeColor },
+        { token: 'keyword.catch', foreground: orangeColor },
+        { token: 'keyword.try', foreground: orangeColor },
 
         // returns
-        {token: 'keyword.returns', foreground: greenColor},
-        {token: 'keyword.return', foreground: greenColor}
+        { token: 'keyword.returns', foreground: greenColor },
+        { token: 'keyword.return', foreground: greenColor },
       ],
       colors: {
         // see https://code.visualstudio.com/api/references/theme-color for more settings
@@ -295,8 +296,8 @@ export const EditorUI = (props: EditorUIProps) => {
         'menu.background': textbackground,
         'menu.selectionBackground': secondaryColor,
         'menu.selectionForeground': textColor,
-        'menu.selectionBorder': secondaryColor
-      }
+        'menu.selectionBorder': secondaryColor,
+      },
     })
     monacoRef.current.editor.setTheme(themeName)
   }
@@ -314,7 +315,7 @@ export const EditorUI = (props: EditorUIProps) => {
     const file = editorModelsState[props.currentFile]
     editorRef.current.setModel(file.model)
     editorRef.current.updateOptions({
-      readOnly: editorModelsState[props.currentFile].readOnly
+      readOnly: editorModelsState[props.currentFile].readOnly,
     })
     if (file.language === 'sol') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-solidity')
@@ -338,10 +339,10 @@ export const EditorUI = (props: EditorUIProps) => {
         options: {
           isWholeLine: false,
           glyphMarginHoverMessage: {
-            value: (decoration.from ? `from ${decoration.from}:\n` : '') + decoration.text
+            value: (decoration.from ? `from ${decoration.from}:\n` : '') + decoration.text,
           },
-          glyphMarginClassName: `fal fa-exclamation-square text-${decoration.type === 'error' ? 'danger' : decoration.type === 'warning' ? 'warning' : 'info'}`
-        }
+          glyphMarginClassName: `fal fa-exclamation-square text-${decoration.type === 'error' ? 'danger' : decoration.type === 'warning' ? 'warning' : 'info'}`,
+        },
       }
     }
     if (typeOfDecoration === 'markerPerFile') {
@@ -364,8 +365,8 @@ export const EditorUI = (props: EditorUIProps) => {
         ),
         options: {
           isWholeLine,
-          inlineClassName: `${isWholeLine ? 'alert-info' : 'inline-class'}  border-0 highlightLine${decoration.position.start.line + 1}`
-        }
+          inlineClassName: `${isWholeLine ? 'alert-info' : 'inline-class'}  border-0 highlightLine${decoration.position.start.line + 1}`,
+        },
       }
     }
     if (typeOfDecoration === 'lineTextPerFile') {
@@ -381,11 +382,11 @@ export const EditorUI = (props: EditorUIProps) => {
         options: {
           after: {
             content: ` ${lineTextDecoration.content}`,
-            inlineClassName: `${lineTextDecoration.className}`
+            inlineClassName: `${lineTextDecoration.className}`,
           },
           afterContentClassName: `${lineTextDecoration.afterContentClassName}`,
-          hoverMessage: lineTextDecoration.hoverMessage
-        }
+          hoverMessage: lineTextDecoration.hoverMessage,
+        },
       }
     }
     if (typeOfDecoration === 'lineTextPerFile') {
@@ -401,11 +402,11 @@ export const EditorUI = (props: EditorUIProps) => {
         options: {
           after: {
             content: ` ${lineTextDecoration.content}`,
-            inlineClassName: `${lineTextDecoration.className}`
+            inlineClassName: `${lineTextDecoration.className}`,
           },
           afterContentClassName: `${lineTextDecoration.afterContentClassName}`,
-          hoverMessage: lineTextDecoration.hoverMessage
-        }
+          hoverMessage: lineTextDecoration.hoverMessage,
+        },
       }
     }
   }
@@ -415,7 +416,7 @@ export const EditorUI = (props: EditorUIProps) => {
     if (!model)
       return {
         currentDecorations: [],
-        registeredDecorations: []
+        registeredDecorations: [],
       }
     const decorations = []
     const newRegisteredDecorations = []
@@ -429,7 +430,7 @@ export const EditorUI = (props: EditorUIProps) => {
     }
     return {
       currentDecorations: model.deltaDecorations(currentDecorations, decorations),
-      registeredDecorations: newRegisteredDecorations
+      registeredDecorations: newRegisteredDecorations,
     }
   }
 
@@ -437,7 +438,7 @@ export const EditorUI = (props: EditorUIProps) => {
     const model = editorModelsState[filePath]?.model
     if (!model)
       return {
-        currentDecorations: []
+        currentDecorations: [],
       }
     const decorations = []
     if (registeredDecorations) {
@@ -448,17 +449,17 @@ export const EditorUI = (props: EditorUIProps) => {
       }
     }
     return {
-      currentDecorations: model.deltaDecorations(currentDecorations, decorations)
+      currentDecorations: model.deltaDecorations(currentDecorations, decorations),
     }
   }
 
   const addDecoration = (decoration: sourceAnnotation | sourceMarker, filePath: string, typeOfDecoration: string) => {
     const model = editorModelsState[filePath]?.model
-    if (!model) return {currentDecorations: []}
+    if (!model) return { currentDecorations: [] }
     const monacoDecoration = convertToMonacoDecoration(decoration, typeOfDecoration)
     return {
       currentDecorations: model.deltaDecorations([], [monacoDecoration]),
-      registeredDecorations: [{value: decoration, type: typeOfDecoration}]
+      registeredDecorations: [{ value: decoration, type: typeOfDecoration }],
     }
   }
 
@@ -479,7 +480,7 @@ export const EditorUI = (props: EditorUIProps) => {
       const errorServerityMap = {
         error: MarkerSeverity.Error,
         warning: MarkerSeverity.Warning,
-        info: MarkerSeverity.Info
+        info: MarkerSeverity.Info,
       }
       if (model) {
         const markerData: monacoTypes.editor.IMarkerData = {
@@ -488,7 +489,7 @@ export const EditorUI = (props: EditorUIProps) => {
           startColumn: (error.position.start && error.position.start.column) || 0,
           endLineNumber: (error.position.end && error.position.end.line) || 0,
           endColumn: (error.position.end && error.position.end.column) || 0,
-          message: error.message
+          message: error.message,
         }
         if (!allMarkersPerfile[filePath]) {
           allMarkersPerfile[filePath] = []
@@ -504,7 +505,7 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
-  props.editorAPI.clearErrorMarkers = async (sources: string[] | {[fileName: string]: any}, from: string) => {
+  props.editorAPI.clearErrorMarkers = async (sources: string[] | { [fileName: string]: any }, from: string) => {
     if (sources) {
       for (const source of Array.isArray(sources) ? sources : Object.keys(sources)) {
         const filePath = source
@@ -573,9 +574,9 @@ export const EditorUI = (props: EditorUIProps) => {
                 range: new monacoRef.current.Range(position.lineNumber, 1, position.lineNumber, 1),
                 options: {
                   isWholeLine: false,
-                  glyphMarginClassName: 'fas fa-circle text-info'
-                }
-              }
+                  glyphMarginClassName: 'fas fa-circle text-info',
+                },
+              },
             ]
           )
           prevState[currentFile][position.lineNumber] = decorationIds[0]
@@ -627,7 +628,7 @@ export const EditorUI = (props: EditorUIProps) => {
                 </div>
               </div>
             </div>
-          )
+          ),
         }
         props.plugin.call('notification', 'alert', modalContent)
         pasteCodeRef.current = true
@@ -650,7 +651,7 @@ export const EditorUI = (props: EditorUIProps) => {
       contextMenuGroupId: 'zooming', // create a new grouping
       keybindings: [
         // eslint-disable-next-line no-bitwise
-        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Equal
+        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Equal,
       ],
       run: () => {
         editor.updateOptions({fontSize: editor.getOption(51) + 1})
@@ -663,7 +664,7 @@ export const EditorUI = (props: EditorUIProps) => {
       contextMenuGroupId: 'zooming', // create a new grouping
       keybindings: [
         // eslint-disable-next-line no-bitwise
-        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Minus
+        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Minus,
       ],
       run: () => {
         editor.updateOptions({fontSize: editor.getOption(51) - 1})
@@ -676,20 +677,20 @@ export const EditorUI = (props: EditorUIProps) => {
       contextMenuGroupId: 'formatting', // create a new grouping
       keybindings: [
         // eslint-disable-next-line no-bitwise
-        monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyF
+        monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyF,
       ],
       run: async () => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         await props.plugin.call('codeFormatter', 'format', file)
-      }
+      },
     }
 
     let gptGenerateDocumentationAction
     const executeGptGenerateDocumentationAction = {
-      id: "generateDocumentation",
-      label: "Generate documentation for this function",
+      id: 'generateDocumentation',
+      label: 'Generate documentation for this function',
       contextMenuOrder: 0, // choose the order
-      contextMenuGroupId: "gtp", // create a new grouping
+      contextMenuGroupId: 'gtp', // create a new grouping
       keybindings: [],
       run: async () => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
@@ -704,10 +705,10 @@ export const EditorUI = (props: EditorUIProps) => {
 
     let gptExplainFunctionAction
     const executegptExplainFunctionAction = {
-      id: "generateDocumentation",
-      label: "Explain this function",
+      id: 'explainFunction',
+      label: 'Explain this function',
       contextMenuOrder: 1, // choose the order
-      contextMenuGroupId: "gtp", // create a new grouping
+      contextMenuGroupId: 'gtp', // create a new grouping
       keybindings: [],
       run: async () => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
@@ -720,7 +721,7 @@ export const EditorUI = (props: EditorUIProps) => {
       },
     }
 
-    const freeFunctionCondition = editor.createContextKey('freeFunctionCondition', false);
+    const freeFunctionCondition = editor.createContextKey('freeFunctionCondition', false)
     let freeFunctionAction
     const executeFreeFunctionAction = {
       id: 'executeFreeFunction',
@@ -730,10 +731,10 @@ export const EditorUI = (props: EditorUIProps) => {
       precondition: 'freeFunctionCondition',
       keybindings: [
         // eslint-disable-next-line no-bitwise
-        monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyR
+        monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyR,
       ],
-      run: async () => { 
-        const {nodesAtPosition} = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
+      run: async () => {
+        const { nodesAtPosition } = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
         // find the contract and get the nodes of the contract and the base contracts and imports
         if (nodesAtPosition && isArray(nodesAtPosition) && nodesAtPosition.length) {
           const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
@@ -746,7 +747,7 @@ export const EditorUI = (props: EditorUIProps) => {
         } else {
           props.plugin.call('notification', 'toast', 'Please go to Remix settings and activate the code editor features or wait that the current editor context is loaded.')
         }
-      }
+      },
     }
     editor.addAction(formatAction)
     editor.addAction(zoomOutAction)
@@ -779,13 +780,13 @@ export const EditorUI = (props: EditorUIProps) => {
         freeFunctionCondition.set(false)
         return
       }
-      const {nodesAtPosition} = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
+      const { nodesAtPosition } = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
       const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
       if (freeFunctionNode) {
         executeFreeFunctionAction.label = `Run the free function "${freeFunctionNode.name}" in the Remix VM`
         freeFunctionAction = editor.addAction(executeFreeFunctionAction)
       }
-      const functionImpl = nodesAtPosition.find((node) => node.kind === 'function')      
+      const functionImpl = nodesAtPosition.find((node) => node.kind === 'function')
       if (functionImpl) {
         currentFunction.current = functionImpl.name
         executeGptGenerateDocumentationAction.label = `Generate documentation for the function "${functionImpl.name}"`
@@ -813,7 +814,7 @@ export const EditorUI = (props: EditorUIProps) => {
             editor.revealRange(input.options.selection)
             editor.setPosition({
               column: input.options.selection.startColumn,
-              lineNumber: input.options.selection.startLineNumber
+              lineNumber: input.options.selection.startLineNumber,
             })
           }
         } catch (e) {
@@ -831,11 +832,11 @@ export const EditorUI = (props: EditorUIProps) => {
   function handleEditorWillMount(monaco) {
     monacoRef.current = monaco
     // Register a new language
-    monacoRef.current.languages.register({id: 'remix-solidity'})
-    monacoRef.current.languages.register({id: 'remix-cairo'})
-    monacoRef.current.languages.register({id: 'remix-zokrates'})
-    monacoRef.current.languages.register({id: 'remix-move'})
-    monacoRef.current.languages.register({id: 'remix-circom'})
+    monacoRef.current.languages.register({ id: 'remix-solidity' })
+    monacoRef.current.languages.register({ id: 'remix-cairo' })
+    monacoRef.current.languages.register({ id: 'remix-zokrates' })
+    monacoRef.current.languages.register({ id: 'remix-move' })
+    monacoRef.current.languages.register({ id: 'remix-circom' })
 
     // Register a tokens provider for the language
     monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider as any)
@@ -873,7 +874,7 @@ export const EditorUI = (props: EditorUIProps) => {
         beforeMount={handleEditorWillMount}
         options={{
           glyphMargin: true,
-          readOnly: (!editorRef.current || !props.currentFile) && editorModelsState[props.currentFile]?.readOnly
+          readOnly: (!editorRef.current || !props.currentFile) && editorModelsState[props.currentFile]?.readOnly,
         }}
         defaultValue={defaultEditorValue}
       />
