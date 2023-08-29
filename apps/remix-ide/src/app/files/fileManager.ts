@@ -248,8 +248,6 @@ class FileManager extends Plugin {
     }
   }
 
-
-
   /**
    * Return the content of a specific file
    * @param {string} path path of the file
