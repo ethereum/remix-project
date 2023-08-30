@@ -374,5 +374,5 @@ commands:
     steps:
       - run:
           command: |
-            CHROMEDRIVER_VERSION=$(curl -s 'https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions.json' | python3 -c "import sys, json; print(json.load(sys.stdin)['channels']['Stable']['version'])")
-            echo $CHROMEDRIVER_VERSION
+            CHROMEDRIVER_URL=$(curl -s 'https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json' | jq '.channels.Stable.downloads.chromedriver[] | select(.platform == "linux64") | .url')
+            echo $CHROMEDRIVER_URL
