@@ -375,7 +375,8 @@ commands:
     description: Custom script to install chromedriver with better version support for linux
     steps:
       - run:
-          command: >
+          name: install-chromedriver-custom-linux
+          command: |
             CHROMEDRIVER_URL=$(curl -s 'https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json' | jq '.channels.Stable.downloads.chromedriver[] | select(.platform == "linux64") | .url' | tr -d '"')
             echo $CHROMEDRIVER_URL
             ZIPFILEPATH="/tmp/chromedriver.zip"
