@@ -30,6 +30,7 @@ tape('sourceMappingDecoder', function (t) {
   })
 
   const testSourceMapping = {}
+  // test
   t.test('sourceMappingDecoder', function (st) {
     st.plan(36)
     console.log('test decompressAll')
