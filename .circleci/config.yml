@@ -380,7 +380,7 @@ commands:
             echo "Downloading from $CHROMEDRIVER_URL"
             curl -f --silent $CHROMEDRIVER_URL > "$ZIPFILEPATH"
 
-            BINFILEPATH="$HOME/bin/chromedriver-$VERSION"
+            BINFILEPATH="$HOME/bin/chromedriver-linux"
             echo "Extracting to $BINFILEPATH"
             unzip -p "$ZIPFILEPATH" chromedriver > "$BINFILEPATH"
 
