@@ -139,7 +139,7 @@ jobs:
           condition:
               equal: [ "chrome", << parameters.browser >> ]
           steps:
-            - browser-tools/install-browser-tools:
+            - install-browser-tools:
                 install-firefox: false
                 install-chrome: true
                 install-chromedriver: false
@@ -151,7 +151,7 @@ jobs:
           condition:
               equal: [ "firefox", << parameters.browser >> ]
           steps:
-            - browser-tools/install-browser-tools:
+            - install-browser-tools:
                 install-firefox: true
                 install-chrome: false
                 install-geckodriver: true
@@ -196,7 +196,7 @@ jobs:
         default: 1
     parallelism: << parameters.parallelism >>
     steps:
-      - browser-tools/install-browser-tools:
+      - install-browser-tools:
           install-firefox: false
           install-chrome: true
           install-geckodriver: false
