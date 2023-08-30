@@ -15,6 +15,7 @@ jobs:
       xlarge
     working_directory: ~/remix-project
     steps:
+      - install-chromedriver-custom-linux
       - checkout
       - restore_cache:
           keys:
@@ -367,3 +368,12 @@ workflows:
               only: remix_beta
 
 # VS Code Extension Version: 1.5.1
+commands:
+  install-chromedriver-custom-linux:
+    description: Custom script to install chromedriver with better version support for linux
+    steps:
+      - run:
+          command: >
+            #!/bin/bash
+            curl -s 'https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions.json' | python3 -c "import sys, json; print(json.load(sys.stdin)['channels']['Stable']['version'])"
+      
