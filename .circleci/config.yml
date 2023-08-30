@@ -375,5 +375,5 @@ commands:
       - run:
           command: >
             #!/bin/bash
-            curl -s 'https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions.json' | python3 -c "import sys, json; print(json.load(sys.stdin)['channels']['Stable']['version'])"
-      
+            CHROMEDRIVER_VERSION=$(curl -s 'https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions.json' | python3 -c "import sys, json; print(json.load(sys.stdin)['channels']['Stable']['version'])")
+            echo $CHROMEDRIVER_VERSION
