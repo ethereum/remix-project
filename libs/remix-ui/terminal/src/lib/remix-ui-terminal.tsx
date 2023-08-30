@@ -686,7 +686,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                   })
                 } else if (Array.isArray(x.message)) {
                   return x.message.map((msg, i) => {
-                    if (!msg) msg = 'null'
+                    // strictly check condition on 0, false, except undefined, NaN.
+                    // if you type `undefined`, terminal automatically throws error, it's error message: "undefined" is not valid JSON
+                    // if you type `NaN`, terminal would give `null`
+                    if (msg === false || msg === 0) msg = msg.toString()
+                    else if (!msg) msg = 'null'
                     if (React.isValidElement(msg)) {
                       return (
                         <div className="px-4 block" data-id="block" key={i}>
