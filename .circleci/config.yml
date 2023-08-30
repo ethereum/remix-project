@@ -382,7 +382,7 @@ commands:
 
             BINFILEPATH="$HOME/bin/chromedriver-linux"
             echo "Extracting to $BINFILEPATH"
-            unzip -p "$ZIPFILEPATH" chromedriver > "$BINFILEPATH"
+            unzip -p "$ZIPFILEPATH" chromedriver-linux64/chromedriver > "$BINFILEPATH"
 
             echo Setting execute flag
             chmod +x "$BINFILEPATH"
