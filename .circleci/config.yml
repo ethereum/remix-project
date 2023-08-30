@@ -142,7 +142,7 @@ jobs:
               equal: [ "chrome", << parameters.browser >> ]
           steps:
             - browser-tools/install-browser-tools:
-                chrome-version: 116.0.5845.96
+                chromedriver-version: 116.0.5845.96
                 install-firefox: false
                 install-chrome: true
                 install-geckodriver: false
@@ -155,7 +155,7 @@ jobs:
               equal: [ "firefox", << parameters.browser >> ]
           steps:
             - browser-tools/install-browser-tools:
-                chrome-version: 116.0.5845.96
+                chromedriver-version: 116.0.5845.96
                 install-firefox: true
                 install-chrome: false
                 install-geckodriver: true
@@ -201,7 +201,7 @@ jobs:
     parallelism: << parameters.parallelism >>
     steps:
       - browser-tools/install-browser-tools:
-          chrome-version: 116.0.5845.96
+          chromedriver-version: 116.0.5845.96
           install-firefox: false
           install-chrome: true
           install-geckodriver: false
