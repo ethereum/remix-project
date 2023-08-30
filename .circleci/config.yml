@@ -15,7 +15,6 @@ jobs:
       xlarge
     working_directory: ~/remix-project
     steps:
-      - install-chromedriver-custom-linux
       - checkout
       - restore_cache:
           keys:
