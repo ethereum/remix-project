@@ -144,7 +144,7 @@ jobs:
             - browser-tools/install-browser-tools:
                 install-firefox: false
                 install-chrome: true
-                chrome-version: 116.0.5845.110
+                chrome-version: 116.0.5845.96
                 install-geckodriver: false
                 install-chromedriver: true
             - run: google-chrome --version
