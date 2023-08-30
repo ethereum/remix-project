@@ -73,7 +73,7 @@ function HomeTabFeaturedPlugins({plugin}: HomeTabFeaturedPluginsProps) {
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'sourcify'])
   }
   const startCookbook = async () => {
-    await plugin.appManager.activatePlugin(['cookbook.dev'])
+    await plugin.appManager.activatePlugin(['cookbookdev'])
     plugin.verticalIcons.select('cookbook.dev')
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'cookbook.dev'])
   }
