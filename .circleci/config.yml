@@ -202,7 +202,7 @@ jobs:
           install-firefox: false
           install-chrome: true
           install-geckodriver: false
-          install-chromedriver: true
+          install-chromedriver: false
       - run: google-chrome --version
       - run: chromedriver --version
       - run: rm LICENSE.chromedriver 2> /dev/null || true
