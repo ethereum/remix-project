@@ -15,7 +15,6 @@ jobs:
       xlarge
     working_directory: ~/remix-project
     steps:
-      - install-chromedriver-custom-linux
       - checkout
       - restore_cache:
           keys:
@@ -147,6 +146,7 @@ jobs:
                 install-chrome: true
                 install-chromedriver: false
                 install-geckodriver: false
+            - install-chromedriver-custom-linux
             - run: google-chrome --version
             - run: chromedriver --version
             - run: rm LICENSE.chromedriver 2> /dev/null || true
@@ -204,6 +204,7 @@ jobs:
           install-chrome: true
           install-geckodriver: false
           install-chromedriver: false
+      - install-chromedriver-custom-linux
       - run: google-chrome --version
       - run: chromedriver --version
       - run: rm LICENSE.chromedriver 2> /dev/null || true
