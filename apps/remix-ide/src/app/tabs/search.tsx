@@ -1,7 +1,7 @@
-import { ViewPlugin } from '@remixproject/engine-web'
+import {ViewPlugin} from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
-import { SearchTab } from '@remix-ui/search'
+import {SearchTab} from '@remix-ui/search'
 const profile = {
   name: 'search',
   displayName: 'Search in files',
@@ -11,23 +11,21 @@ const profile = {
   description: 'Find and replace in file explorer',
   kind: '',
   location: 'sidePanel',
-  documentation: '',
+  documentation: 'https://remix-ide.readthedocs.io/en/latest/search_in_fe.html',
   version: packageJson.version,
   maintainedBy: 'Remix'
 }
 
 export class SearchPlugin extends ViewPlugin {
-
-  constructor () {
+  constructor() {
     super(profile)
   }
 
   render() {
     return (
-      <div id='searchTab'>
+      <div id="searchTab">
         <SearchTab plugin={this}></SearchTab>
       </div>
-    );
+    )
   }
-
 }
