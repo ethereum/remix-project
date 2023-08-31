@@ -1,53 +1,55 @@
 'use strict'
-import { NightwatchBrowser } from 'nightwatch'
+import {NightwatchBrowser} from 'nightwatch'
 import init from '../helpers/init'
 
 const openReferences = (browser: NightwatchBrowser, path: string) => {
-    (browser as any).useXpath()
-        .useXpath()
-        .waitForElementVisible(path)
-        .click(path)
-        .perform(function () {
-            const actions = this.actions({ async: true });
-            return actions.
-                keyDown(this.Keys.SHIFT).
-                sendKeys(this.Keys.F12)
-        })
+  ;(browser as any)
+    .useXpath()
+    .useXpath()
+    .waitForElementVisible(path)
+    .click(path)
+    .perform(function () {
+      const actions = this.actions({async: true})
+      return actions.keyDown(this.Keys.SHIFT).sendKeys(this.Keys.F12)
+    })
 }
 
 module.exports = {
-    before: function (browser: NightwatchBrowser, done: VoidFunction) {
-        init(browser, done, 'http://127.0.0.1:8080', false)
-    },
+  'before': function (browser: NightwatchBrowser, done: VoidFunction) {
+    init(browser, done, 'http://127.0.0.1:8080', false)
+  },
 
-    'Should load the test file': function (browser: NightwatchBrowser) {
-        browser.openFile('contracts')
-            .openFile('contracts/3_Ballot.sol')
-            .waitForElementVisible('#editorView')
-            .setEditorValue(BallotWithARefToOwner)
-            .pause(10000) // wait for the compiler to finish
-            .scrollToLine(37)
-    },
-    'Should show local references': function (browser: NightwatchBrowser) {
-        browser.scrollToLine(48)
-        const path = "//*[@class='view-line' and contains(.,'length') and contains(.,'proposalNames')]//span//span[contains(.,'proposalNames')]"
-        openReferences(browser, path)
-        browser.waitForElementVisible("//*[@class='monaco-highlighted-label referenceMatch']//span[contains(.,'length; i++')]")
-        .waitForElementVisible("//*[@class='monaco-highlighted-label referenceMatch']//span[contains(.,'name:')]")
-        .waitForElementVisible("//*[@class='monaco-highlighted-label referenceMatch']//span[contains(.,'constructor')]")
-        .keys(browser.Keys.ESCAPE)
-    },
-    'Should show references of getOwner': function (browser: NightwatchBrowser) {
-        browser.scrollToLine(39)
-        const path = "//*[@class='view-line' and contains(.,'getOwner') and contains(.,'cowner')]//span//span[contains(.,'getOwner')]"
-        openReferences(browser, path)
-        browser.useXpath()
-        .waitForElementVisible("//*[@class='monaco-highlighted-label']//span[contains(.,'2_Owner.sol')]")
-        .waitForElementVisible("//*[@class='monaco-highlighted-label']//span[contains(.,'3_Ballot.sol')]")
-        .waitForElementVisible("//*[@class='monaco-highlighted-label referenceMatch']//span[contains(.,'cowner.getOwner')]")
-        .waitForElementVisible("//*[contains(@class, 'results-loaded') and contains(., 'References (2)')]")
-        .keys(browser.Keys.ESCAPE)
-    }
+  'Should load the test file': function (browser: NightwatchBrowser) {
+    browser
+      .openFile('contracts')
+      .openFile('contracts/3_Ballot.sol')
+      .waitForElementVisible('#editorView')
+      .setEditorValue(BallotWithARefToOwner)
+      .pause(10000) // wait for the compiler to finish
+      .scrollToLine(37)
+  },
+  'Should show local references': function (browser: NightwatchBrowser) {
+    browser.scrollToLine(48)
+    const path = "//*[@class='view-line' and contains(.,'length') and contains(.,'proposalNames')]//span//span[contains(.,'proposalNames')]"
+    openReferences(browser, path)
+    browser
+      .waitForElementVisible("//*[@class='monaco-highlighted-label referenceMatch'][contains(.,'length; i++')]")
+      .waitForElementVisible("//*[@class='monaco-highlighted-label referenceMatch'][contains(.,'name:')]")
+      .waitForElementVisible("//*[@class='monaco-highlighted-label referenceMatch'][contains(.,'constructor')]")
+      .keys(browser.Keys.ESCAPE)
+  },
+  'Should show references of getOwner': function (browser: NightwatchBrowser) {
+    browser.scrollToLine(39)
+    const path = "//*[@class='view-line' and contains(.,'getOwner') and contains(.,'cowner')]//span//span[contains(.,'getOwner')]"
+    openReferences(browser, path)
+    browser
+      .useXpath()
+      .waitForElementVisible("//*[@class='monaco-highlighted-label'][contains(.,'2_Owner.sol')]")
+      .waitForElementVisible("//*[@class='monaco-highlighted-label'][contains(.,'3_Ballot.sol')]")
+      .waitForElementVisible("//*[@class='monaco-highlighted-label referenceMatch'][contains(.,'cowner.getOwner')]")
+      .waitForElementVisible("//*[contains(@class, 'results-loaded') and contains(., 'References (2)')]")
+      .keys(browser.Keys.ESCAPE)
+  }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

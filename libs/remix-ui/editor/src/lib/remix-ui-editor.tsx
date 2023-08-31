@@ -109,7 +109,6 @@ export type EditorAPIType = {
   keepDecorationsFor: (filePath: string, plugin: string, typeOfDecoration: string, registeredDecorations: any, currentDecorations: any) => DecorationsReturn
   addErrorMarker: (errors: errorMarker[], from: string) => void
   clearErrorMarkers: (sources: string[] | {[fileName: string]: any}, from: string) => void
-  getPositionAt: (offset: number) => monacoTypes.IPosition
 }
 
 /* eslint-disable-next-line */
@@ -286,7 +285,7 @@ export const EditorUI = (props: EditorUIProps) => {
         'editorSuggestWidget.selectedForeground': textColor,
         'editorSuggestWidget.highlightForeground': primaryColor,
         'editorSuggestWidget.focusHighlightForeground': infoColor,
-        'editor.lineHighlightBorder': secondaryColor,
+        'editor.lineHighlightBorder': textbackground,
         'editor.lineHighlightBackground': textbackground === darkColor ? lightColor : secondaryColor,
         'editorGutter.background': lightColor,
         //'editor.selectionHighlightBackground': secondaryColor,
@@ -550,10 +549,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
   props.editorAPI.getFontSize = () => {
     if (!editorRef.current) return
-    return editorRef.current.getOption(43).fontSize
-  }
-  props.editorAPI.getPositionAt = (offset: number): IPosition => {
-    return editorRef.current.getModel().getPositionAt(offset)
+    return editorRef.current.getOption(51)
   }
   ;(window as any).addRemixBreakpoint = (position) => {
     // make it available from e2e testing...
@@ -639,10 +635,10 @@ export const EditorUI = (props: EditorUIProps) => {
 
     // zoomin zoomout
     editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | (monacoRef.current.KeyCode as any).US_EQUAL, () => {
-      editor.updateOptions({fontSize: editor.getOption(43).fontSize + 1})
+      editor.updateOptions({fontSize: editor.getOption(51) + 1})
     })
     editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | (monacoRef.current.KeyCode as any).US_MINUS, () => {
-      editor.updateOptions({fontSize: editor.getOption(43).fontSize - 1})
+      editor.updateOptions({fontSize: editor.getOption(51) - 1})
     })
 
     // add context menu items
@@ -656,7 +652,7 @@ export const EditorUI = (props: EditorUIProps) => {
         monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Equal
       ],
       run: () => {
-        editor.updateOptions({fontSize: editor.getOption(43).fontSize + 1})
+        editor.updateOptions({fontSize: editor.getOption(51) + 1})
       }
     }
     const zoomOutAction = {
@@ -669,7 +665,7 @@ export const EditorUI = (props: EditorUIProps) => {
         monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Minus
       ],
       run: () => {
-        editor.updateOptions({fontSize: editor.getOption(43).fontSize - 1})
+        editor.updateOptions({fontSize: editor.getOption(51) - 1})
       }
     }
     const formatAction = {
