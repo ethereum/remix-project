@@ -30,6 +30,8 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
           column: error.startColumn
         })
         const nodeAtPosition = await this.props.plugin.call('codeParser', 'definitionAtPosition', cursorPosition)
+        console.log('nodeAtPosition------>', nodeAtPosition)
+        console.log('error------>', error)
         // Check if a function is hovered
         if (nodeAtPosition && nodeAtPosition.nodeType === 'FunctionDefinition') {
           // Identify type of AST node
@@ -44,6 +46,15 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
               title: fix.title,
               range: fix.range,
               text: msg
+            })
+          }
+        } else if (nodeAtPosition && nodeAtPosition.nodeType === 'ContractDefinition') {
+          for (const fix of fixes) {
+            const lineContent: string = model.getValueInRange(error)
+            this.addQuickFix(actions, error, model.uri, {
+              title: fix.title,
+              range: error,
+              text: fix.message + lineContent
             })
           }
         } else {
