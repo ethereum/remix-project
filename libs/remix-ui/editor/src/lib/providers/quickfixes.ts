@@ -55,7 +55,6 @@ export default {
       {
         id: 2,
         title: 'Add Solidity pragma',
-        message: 'pragma solidity ^0.*.*;',
         nodeType: 'PragmaDirective',
         range: {
           startLineNumber: 2,
