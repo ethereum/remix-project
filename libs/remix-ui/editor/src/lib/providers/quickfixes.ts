@@ -106,5 +106,13 @@ export default {
       message: 'pure ',
       nodeType: 'FunctionDefinition'
     }
+  ],
+  'should be marked as abstract': [
+    {
+      id: 6,
+      title: "Add 'abstract' to contract",
+      message: 'abstract ',
+      nodeType: 'ContractDefinition'
+    }
   ]
 }
