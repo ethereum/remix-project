@@ -60,7 +60,17 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
         } else {
           for (const fix of fixes) {
             if (fix && nodeAtPosition && fix.nodeType !== nodeAtPosition.nodeType) continue
-            else
+            if (fix.id === 2) {
+              // To add specific pragma based on error
+              const startIndex = error.message.indexOf('pragma')
+              const endIndex = error.message.indexOf(';')
+              const msg = error.message.substring(startIndex, endIndex + 1)
+              this.addQuickFix(actions, error, model.uri, {
+                title: fix.title,
+                range: fix.range,
+                text: msg
+              })
+            } else
               this.addQuickFix(actions, error, model.uri, {
                 title: fix.title,
                 range: fix.range || error,
