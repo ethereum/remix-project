@@ -19,19 +19,28 @@ export class OpenAIGpt extends Plugin {
 
   async message(prompt): Promise<CreateChatCompletionResponse> {
     this.call('terminal', 'log', 'Waiting for GPT answer...')
-    const result = await (
-      await fetch('https://openai-gpt.remixproject.org', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prompt }),
-      })
-    ).json()
-
-    console.log(result)
-    this.call('terminal', 'log', { type: 'typewritersuccess', value: result.choices[0].message.content })
+    let result
+    try {
+      result = await (
+        await fetch('https://openai-gpt.remixproject.org', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ prompt }),
+        })
+      ).json()
+    } catch (e) {
+      this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
+      return
+    }
+    
+    if (result && result.choices && result.choices.length) {
+      this.call('terminal', 'log', { type: 'typewritersuccess', value: result.choices[0].message.content })    
+    } else {
+      this.call('terminal', 'log', { type: 'typewritersuccess', value: 'No response...' })
+    }
     return result.data
   }
 }
