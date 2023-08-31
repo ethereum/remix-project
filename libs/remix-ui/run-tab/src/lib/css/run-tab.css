@@ -111,6 +111,10 @@
   border-bottom-right-radius: 0;
   border-right: 0;
 }
+.udapp_atAddress:focus {
+  outline: none;
+  box-shadow: none;
+}
 .udapp_atAddressSect {
   margin-top: 8px;
   height: 32px;

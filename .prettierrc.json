@@ -1,14 +1,7 @@
 {
   "tabWidth": 2,
   "useTabs": false,
+  "printWidth": 180,
   "semi": false,
-  "singleQuote": true,
-  "quoteProps": "consistent",
-  "jsxSingleQuote": false,
-  "bracketSpacing": false,
-  "trailingComma": "none",
-  "jsxBracketSameLine": false,
-  "arrowParens": "always",
-  "singleAttributePerLine": false,
-  "ignorePath": ".prettierignore"
+  "singleQuote": true
 }
