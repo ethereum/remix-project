@@ -733,7 +733,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                             typewrite(element, msg ? msg.toString() : null)
                           }} className={x.style}></span></div>
                         )
-                    } else {
+                      } else {
                         return (
                           <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{msg ? msg.toString() : null}</span></div>
                         )
