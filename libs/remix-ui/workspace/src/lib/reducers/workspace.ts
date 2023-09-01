@@ -933,12 +933,29 @@ const removeInputField = (
   return files
 }
 
+const sortDirectoriesFetched = (folderStructure: any) => {
+  if(!folderStructure) return
+
+}
+
+const sortFilesFetched = (folderStructure: any) => {
+  // eslint-disable-next-line prefer-const
+  let newResult = _.fromPairs(_.sortBy(_.toPairs(folderStructure[ROOT_PATH]), (x: any) => x[1].name))
+  let target = {}
+  Object.assign(target, newResult)
+  const result = { '/': target }
+  target = null
+  newResult = null
+  return result
+}
+
 // IDEA: Modify function to remove blank input field without fetching content
 const fetchDirectoryContent = (
   state: BrowserState,
   payload: {fileTree; path: string; type?: 'file' | 'folder'},
   deletePath?: string
 ): {[x: string]: Record<string, FileType>} => {
+
   if (!payload.fileTree)
     return state.mode === 'browser'
       ? state.browser.files
@@ -986,6 +1003,7 @@ const fetchDirectoryContent = (
           )
         }
       }
+      files = sortFilesFetched(files)
       return files
     }
   } else {
@@ -993,6 +1011,7 @@ const fetchDirectoryContent = (
       let files = normalize(payload.fileTree, ROOT_PATH, payload.type)
       files = _.merge(files, state.localhost.files[ROOT_PATH])
       if (deletePath) delete files[deletePath]
+
       return {[ROOT_PATH]: files}
     } else {
       let files = state.localhost.files
@@ -1012,6 +1031,8 @@ const fetchDirectoryContent = (
           }
         }
         files = _.setWith(files, _path, prevFiles, Object)
+        const newFiles = sortFilesFetched(files)
+        console.log({ newFiles })
       } else {
         files = {
           [payload.path]: normalize(
@@ -1021,7 +1042,8 @@ const fetchDirectoryContent = (
           )
         }
       }
-      return files
+      const newFiles = sortFilesFetched(files)
+      return newFiles
     }
   }
 }
