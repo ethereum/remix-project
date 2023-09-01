@@ -27,15 +27,20 @@ export const FileLabel = (props: FileLabelProps) => {
   }, [file.path, focusEdit])
 
   useEffect(() => {
-    const state = props.fileDecorations.find((state: fileDecoration) => {
+
+    const states = props.fileDecorations.filter((state: fileDecoration) => {
       if (state.path === props.file.path) return true
       if (state.bubble && props.file.isDirectory && state.path.startsWith(props.file.path)) return true
     })
-    if (state && state.fileStateLabelClass) {
-      setFileStateClasses(state.fileStateLabelClass)
-    } else {
-      setFileStateClasses('')
+    let fileStateClass = ''
+    for (const state of states) {
+      if (state && state.fileStateLabelClass) {
+        fileStateClass += state.fileStateLabelClass + ' '
+      }
+
+
     }
+    setFileStateClasses(fileStateClass)
   }, [fileDecorations])
 
   useEffect(() => {

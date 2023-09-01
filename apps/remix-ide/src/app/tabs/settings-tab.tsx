@@ -24,6 +24,7 @@ const profile = {
 module.exports = class SettingsTab extends ViewPlugin {
   config: any = {}
   editor: any
+  timeStamp: number
   private _deps: {
     themeModule: any
     localeModule: any
@@ -36,6 +37,8 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.config = config
     this.config.events.on('configChanged', (changedConfig) => {
       this.emit('configChanged', changedConfig)
+      this.timeStamp = Date.now()
+      this.renderComponent()
     })
     this.editor = editor
     this._deps = {
@@ -60,21 +63,20 @@ module.exports = class SettingsTab extends ViewPlugin {
     )
   }
 
-  updateComponent(state: any) {
-    return (
-      <RemixUiSettings
-        config={state.config}
-        editor={state.editor}
-        _deps={state._deps}
-        useMatomoAnalytics={state.useMatomoAnalytics}
-        themeModule={state._deps.themeModule}
-        localeModule={state._deps.localeModule}
-      />
-    )
+  updateComponent(state: any){
+    return <RemixUiSettings
+      config={state.config}
+      editor={state.editor}
+      _deps={state._deps}
+      useMatomoAnalytics={state.useMatomoAnalytics}
+      themeModule = {state._deps.themeModule}
+      localeModule={state._deps.localeModule}
+      timeStamp={state.timeStamp}
+    />
   }
 
-  renderComponent() {
-    this.dispatch(this)
+  renderComponent () {
+    this.dispatch({...this})
   }
 
   get(key) {

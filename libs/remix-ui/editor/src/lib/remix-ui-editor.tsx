@@ -1,24 +1,22 @@
-import React, {useState, useRef, useEffect, useReducer} from 'react' // eslint-disable-line
-import {isArray} from 'lodash'
-import Editor, {loader, Monaco} from '@monaco-editor/react'
-import {AlertModal} from '@remix-ui/app'
-import {reducerActions, reducerListener, initialState} from './actions/editor'
-import {solidityTokensProvider, solidityLanguageConfig} from './syntaxes/solidity'
-import {cairoTokensProvider, cairoLanguageConfig} from './syntaxes/cairo'
-import {zokratesTokensProvider, zokratesLanguageConfig} from './syntaxes/zokrates'
-import {moveTokenProvider, moveLanguageConfig} from './syntaxes/move'
-import {monacoTypes} from '@remix-ui/editor'
-import {loadTypes} from './web-types'
-import {retrieveNodesAtPosition} from './helpers/retrieveNodesAtPosition'
-import {RemixHoverProvider} from './providers/hoverProvider'
-import {RemixReferenceProvider} from './providers/referenceProvider'
-import {RemixCompletionProvider} from './providers/completionProvider'
-import {RemixHighLightProvider} from './providers/highlightProvider'
-import {RemixDefinitionProvider} from './providers/definitionProvider'
-import {RemixCodeActionProvider} from './providers/codeActionProvider'
+import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
+import { isArray } from "lodash"
+import Editor, { loader, Monaco } from '@monaco-editor/react'
+import { AlertModal } from '@remix-ui/app'
+import { reducerActions, reducerListener, initialState } from './actions/editor'
+import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solidity'
+import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
+import { zokratesTokensProvider, zokratesLanguageConfig } from './syntaxes/zokrates'
+import { moveTokenProvider, moveLanguageConfig } from './syntaxes/move'
+import { monacoTypes } from '@remix-ui/editor';
+import { loadTypes } from './web-types'
+import { retrieveNodesAtPosition } from './helpers/retrieveNodesAtPosition'
+import { RemixHoverProvider } from './providers/hoverProvider'
+import { RemixReferenceProvider } from './providers/referenceProvider'
+import { RemixCompletionProvider } from './providers/completionProvider'
+import { RemixHighLightProvider } from './providers/highlightProvider'
+import { RemixDefinitionProvider } from './providers/definitionProvider'
 import './remix-ui-editor.css'
 import {circomLanguageConfig, circomTokensProvider} from './syntaxes/circom'
-import {IPosition} from 'monaco-editor'
 
 enum MarkerSeverity {
   Hint = 1,
@@ -27,71 +25,13 @@ enum MarkerSeverity {
   Error = 8
 }
 
-type sourceAnnotation = {
-  row: number
-  column: number
-  text: string
-  type: 'error' | 'warning' | 'info'
-  hide: boolean
-  from: string // plugin name
-}
 
-type sourceMarker = {
-  position: {
-    start: {
-      line: number
-      column: number
-    }
-    end: {
-      line: number
-      column: number
-    }
-  }
-  from: string // plugin name
-  hide: boolean
-}
-
-export type lineText = {
-  position: {
-    start: {
-      line: number
-      column: number
-    }
-    end: {
-      line: number
-      column: number
-    }
-  }
-  from?: string // plugin name
-  content: string
-  className: string
-  afterContentClassName: string
-  hide: boolean
-  hoverMessage: monacoTypes.IMarkdownString | monacoTypes.IMarkdownString[]
-}
-
-type errorMarker = {
-  message: string
-  severity: monacoTypes.MarkerSeverity | 'warning' | 'info' | 'error' | 'hint'
-  position: {
-    start: {
-      line: number
-      column: number
-    }
-    end: {
-      line: number
-      column: number
-    }
-  }
-  file: string
-}
 
 loader.config({paths: {vs: 'assets/js/monaco-editor/min/vs'}})
 
-export type DecorationsReturn = {
-  currentDecorations: Array<string>
-  registeredDecorations?: Array<any>
-}
+loader.config({ paths: { vs: 'assets/js/monaco-editor/min/vs' } })
+
+
 
 export type PluginType = {
   on: (plugin: string, event: string, listener: any) => void
@@ -112,46 +52,15 @@ export type EditorAPIType = {
 }
 
 /* eslint-disable-next-line */
-export interface EditorUIProps {
-  contextualListener: any
-  activated: boolean
-  themeType: string
-  currentFile: string
-  events: {
-    onBreakPointAdded: (file: string, line: number) => void
-    onBreakPointCleared: (file: string, line: number) => void
-    onDidChangeContent: (file: string) => void
-    onEditorMounted: () => void
-  }
-  plugin: PluginType
-  editorAPI: EditorAPIType
-}
 export const EditorUI = (props: EditorUIProps) => {
   const [, setCurrentBreakpoints] = useState({})
-  const defaultEditorValue = `
-  \t\t\t\t\t\t\t ____    _____   __  __   ___  __  __   ___   ____    _____ 
-  \t\t\t\t\t\t\t|  _ \\  | ____| |  \\/  | |_ _| \\ \\/ /  |_ _| |  _ \\  | ____|
-  \t\t\t\t\t\t\t| |_) | |  _|   | |\\/| |  | |   \\  /    | |  | | | | |  _|  
-  \t\t\t\t\t\t\t|  _ <  | |___  | |  | |  | |   /  \\    | |  | |_| | | |___ 
-  \t\t\t\t\t\t\t|_| \\_\\ |_____| |_|  |_| |___| /_/\\_\\  |___| |____/  |_____|\n\n
-  \t\t\t\t\t\t\tKeyboard Shortcuts:\n
-  \t\t\t\t\t\t\t\tCTRL + S: Compile the current contract\n
-  \t\t\t\t\t\t\t\tCTRL + Shift + F : Open the File Explorer\n
-  \t\t\t\t\t\t\t\tCTRL + Shift + A : Open the Plugin Manager\n
-  \t\t\t\t\t\t\t\tCTRL + SHIFT + S: Compile the current contract & Run an associated script\n
-  \t\t\t\t\t\t\tEditor Keyboard Shortcuts:\n
-  \t\t\t\t\t\t\t\tCTRL + Alt + F : Format the code in the current file\n
-  \t\t\t\t\t\t\tImportant Links:\n
-  \t\t\t\t\t\t\t\tOfficial website about the Remix Project: https://remix-project.org/\n
-  \t\t\t\t\t\t\t\tOfficial documentation: https://remix-ide.readthedocs.io/en/latest/\n
-  \t\t\t\t\t\t\t\tGithub: https://github.com/ethereum/remix-project\n
-  \t\t\t\t\t\t\t\tGitter: https://gitter.im/ethereum/remix\n
-  \t\t\t\t\t\t\t\tMedium: https://medium.com/remix-ide\n
-  \t\t\t\t\t\t\t\tTwitter: https://twitter.com/ethereumremix\n
-  `
+  const [isDiff, setIsDiff] = useState(false)
+  const [isSplit, setIsSplit] = useState(true)
+
   const pasteCodeRef = useRef(false)
-  const editorRef = useRef(null)
-  const monacoRef = useRef<Monaco>(null)
+  props.editorAPI.editorRef = useRef<any>(null)
+  props.editorAPI.diffEditorRef = useRef<any>(null)
+  props.editorAPI.monacoRef = useRef<Monaco>(null)
   const currentFileRef = useRef('')
   const currentUrlRef = useRef('')
   // const currentDecorations = useRef({ sourceAnnotationsPerFile: {}, markerPerFile: {} }) // decorations that are currently in use by the editor
@@ -159,174 +68,39 @@ export const EditorUI = (props: EditorUIProps) => {
 
   const [editorModelsState, dispatch] = useReducer(reducerActions, initialState)
 
-  const formatColor = (name) => {
-    let color = window.getComputedStyle(document.documentElement).getPropertyValue(name).trim()
-    if (color.length === 4) {
-      color = color.concat(color.substr(1))
-    }
-    return color
-  }
-  const defineAndSetTheme = (monaco) => {
-    const themeType = props.themeType === 'dark' ? 'vs-dark' : 'vs'
-    const themeName = props.themeType === 'dark' ? 'remix-dark' : 'remix-light'
-    // see https://microsoft.github.io/monaco-editor/playground.html#customizing-the-appearence-exposed-colors
-    const lightColor = formatColor('--light')
-    const infoColor = formatColor('--info')
-    const darkColor = formatColor('--dark')
-    const secondaryColor = formatColor('--secondary')
-    const primaryColor = formatColor('--primary')
-    const textColor = formatColor('--text') || darkColor
-    const textbackground = formatColor('--text-background') || lightColor
-
-    const blueColor = formatColor('--blue')
-    const successColor = formatColor('--success')
-    const warningColor = formatColor('--warning')
-    const yellowColor = formatColor('--yellow')
-    const pinkColor = formatColor('--pink')
-    const locationColor = '#9e7e08'
-    // const purpleColor = formatColor('--purple')
-    const dangerColor = formatColor('--danger')
-    const greenColor = formatColor('--green')
-    const orangeColor = formatColor('--orange')
-    const grayColor = formatColor('--gray')
-
-    monaco.editor.defineTheme(themeName, {
-      base: themeType,
-      inherit: true, // can also be false to completely replace the builtin rules
-      rules: [
-        {background: darkColor.replace('#', '')},
-        {foreground: textColor.replace('#', '')},
-
-        // global variables
-        {token: 'keyword.abi', foreground: blueColor},
-        {token: 'keyword.block', foreground: blueColor},
-        {token: 'keyword.bytes', foreground: blueColor},
-        {token: 'keyword.msg', foreground: blueColor},
-        {token: 'keyword.tx', foreground: blueColor},
-
-        // global functions
-        {token: 'keyword.assert', foreground: blueColor},
-        {token: 'keyword.require', foreground: blueColor},
-        {token: 'keyword.revert', foreground: blueColor},
-        {token: 'keyword.blockhash', foreground: blueColor},
-        {token: 'keyword.keccak256', foreground: blueColor},
-        {token: 'keyword.sha256', foreground: blueColor},
-        {token: 'keyword.ripemd160', foreground: blueColor},
-        {token: 'keyword.ecrecover', foreground: blueColor},
-        {token: 'keyword.addmod', foreground: blueColor},
-        {token: 'keyword.mulmod', foreground: blueColor},
-        {token: 'keyword.selfdestruct', foreground: blueColor},
-        {token: 'keyword.type ', foreground: blueColor},
-        {token: 'keyword.gasleft', foreground: blueColor},
-
-        // specials
-        {token: 'keyword.super', foreground: infoColor},
-        {token: 'keyword.this', foreground: infoColor},
-        {token: 'keyword.virtual', foreground: infoColor},
-
-        // for state variables
-        {token: 'keyword.constants', foreground: grayColor},
-        {token: 'keyword.override', foreground: grayColor},
-        {token: 'keyword.immutable', foreground: grayColor},
-
-        // data location
-        {token: 'keyword.memory', foreground: locationColor},
-        {token: 'keyword.storage', foreground: locationColor},
-        {token: 'keyword.calldata', foreground: locationColor},
-
-        // for Events
-        {token: 'keyword.indexed', foreground: yellowColor},
-        {token: 'keyword.anonymous', foreground: yellowColor},
-
-        // for functions
-        {token: 'keyword.external', foreground: successColor},
-        {token: 'keyword.internal', foreground: successColor},
-        {token: 'keyword.private', foreground: successColor},
-        {token: 'keyword.public', foreground: successColor},
-        {token: 'keyword.view', foreground: successColor},
-        {token: 'keyword.pure', foreground: successColor},
-        {token: 'keyword.payable', foreground: successColor},
-        {token: 'keyword.nonpayable', foreground: successColor},
-
-        // Errors
-        {token: 'keyword.Error', foreground: dangerColor},
-        {token: 'keyword.Panic', foreground: dangerColor},
-
-        // special functions
-        {token: 'keyword.fallback', foreground: pinkColor},
-        {token: 'keyword.receive', foreground: pinkColor},
-        {token: 'keyword.constructor', foreground: pinkColor},
-
-        // identifiers
-        {token: 'keyword.identifier', foreground: warningColor},
-        {token: 'keyword.for', foreground: warningColor},
-        {token: 'keyword.break', foreground: warningColor},
-        {token: 'keyword.continue', foreground: warningColor},
-        {token: 'keyword.while', foreground: warningColor},
-        {token: 'keyword.do', foreground: warningColor},
-        {token: 'keyword.delete', foreground: warningColor},
-
-        {token: 'keyword.if', foreground: yellowColor},
-        {token: 'keyword.else', foreground: yellowColor},
-
-        {token: 'keyword.throw', foreground: orangeColor},
-        {token: 'keyword.catch', foreground: orangeColor},
-        {token: 'keyword.try', foreground: orangeColor},
-
-        // returns
-        {token: 'keyword.returns', foreground: greenColor},
-        {token: 'keyword.return', foreground: greenColor}
-      ],
-      colors: {
-        // see https://code.visualstudio.com/api/references/theme-color for more settings
-        'editor.background': textbackground,
-        'editorSuggestWidget.background': lightColor,
-        'editorSuggestWidget.selectedBackground': secondaryColor,
-        'editorSuggestWidget.selectedForeground': textColor,
-        'editorSuggestWidget.highlightForeground': primaryColor,
-        'editorSuggestWidget.focusHighlightForeground': infoColor,
-        'editor.lineHighlightBorder': textbackground,
-        'editor.lineHighlightBackground': textbackground === darkColor ? lightColor : secondaryColor,
-        'editorGutter.background': lightColor,
-        //'editor.selectionHighlightBackground': secondaryColor,
-        'minimap.background': lightColor,
-        'menu.foreground': textColor,
-        'menu.background': textbackground,
-        'menu.selectionBackground': secondaryColor,
-        'menu.selectionForeground': textColor,
-        'menu.selectionBorder': secondaryColor
-      }
-    })
-    monacoRef.current.editor.setTheme(themeName)
-  }
-
   useEffect(() => {
-    if (!monacoRef.current) return
-    defineAndSetTheme(monacoRef.current)
+    if (!props.editorAPI.monacoRef.current) return
+    defineAndSetTheme(props.editorAPI.monacoRef, props.themeType)
   })
 
   useEffect(() => {
-    if (!editorRef.current || !props.currentFile) return
+    if (!(props.editorAPI.editorRef.current || props.editorAPI.diffEditorRef.current) || !props.currentFile) return
     currentFileRef.current = props.currentFile
     props.plugin.call('fileManager', 'getUrlFromPath', currentFileRef.current).then((url) => (currentUrlRef.current = url.file))
 
     const file = editorModelsState[props.currentFile]
-    editorRef.current.setModel(file.model)
-    editorRef.current.updateOptions({
-      readOnly: editorModelsState[props.currentFile].readOnly
+    props.editorAPI.editorRef && props.editorAPI.editorRef.current && props.editorAPI.editorRef.current.setModel(file.model)
+    props.isDiff && props.editorAPI.diffEditorRef && props.editorAPI.diffEditorRef.current && props.editorAPI.diffEditorRef.current.setModel({
+      original: editorModelsState[props.currentDiffFile].model,
+      modified: file.model
     })
+
+    props.isDiff && props.editorAPI.diffEditorRef.current.getModifiedEditor().updateOptions({ readOnly: editorModelsState[props.currentFile].readOnly })
+
+    getEditor().updateOptions({ readOnly: editorModelsState[props.currentFile].readOnly })
+
     if (file.language === 'sol') {
-      monacoRef.current.editor.setModelLanguage(file.model, 'remix-solidity')
+      props.editorAPI.monacoRef.current.editor.setModelLanguage(file.model, 'remix-solidity')
     } else if (file.language === 'cairo') {
-      monacoRef.current.editor.setModelLanguage(file.model, 'remix-cairo')
+      props.editorAPI.monacoRef.current.editor.setModelLanguage(file.model, 'remix-cairo')
     } else if (file.language === 'zokrates') {
-      monacoRef.current.editor.setModelLanguage(file.model, 'remix-zokrates')
+      props.editorAPI.monacoRef.current.editor.setModelLanguage(file.model, 'remix-zokrates')
     } else if (file.language === 'move') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-move')
     } else if (file.language === 'circom') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-circom')
     }
-  }, [props.currentFile])
+  }, [props.currentFile, props.isDiff])
 
   const convertToMonacoDecoration = (decoration: lineText | sourceAnnotation | sourceMarker, typeOfDecoration: string) => {
     if (typeOfDecoration === 'sourceAnnotationsPerFile') {
@@ -336,31 +110,22 @@ export const EditorUI = (props: EditorUIProps) => {
         range: new monacoRef.current.Range(decoration.row + 1, 1, decoration.row + 1, 1),
         options: {
           isWholeLine: false,
-          glyphMarginHoverMessage: {
-            value: (decoration.from ? `from ${decoration.from}:\n` : '') + decoration.text
-          },
-          glyphMarginClassName: `fal fa-exclamation-square text-${decoration.type === 'error' ? 'danger' : decoration.type === 'warning' ? 'warning' : 'info'}`
+          glyphMarginHoverMessage: { value: (decoration.from ? `from ${decoration.from}:\n` : '') + decoration.text },
+          glyphMarginClassName: `fal fa-exclamation-square text-${decoration.type === 'error' ? 'danger' : (decoration.type === 'warning' ? 'warning' : 'info')}`
         }
       }
     }
     if (typeOfDecoration === 'markerPerFile') {
       decoration = decoration as sourceMarker
       let isWholeLine = false
-      if (
-        (decoration.position.start.line === decoration.position.end.line && decoration.position.end.column - decoration.position.start.column < 2) ||
-        decoration.position.start.line !== decoration.position.end.line
-      ) {
+      if ((decoration.position.start.line === decoration.position.end.line && decoration.position.end.column - decoration.position.start.column < 2) ||
+        (decoration.position.start.line !== decoration.position.end.line)) {
         // in this case we force highlighting the whole line (doesn't make sense to highlight 2 chars)
         isWholeLine = true
       }
       return {
         type: typeOfDecoration,
-        range: new monacoRef.current.Range(
-          decoration.position.start.line + 1,
-          decoration.position.start.column + 1,
-          decoration.position.end.line + 1,
-          decoration.position.end.column + 1
-        ),
+        range: new monacoRef.current.Range(decoration.position.start.line + 1, decoration.position.start.column + 1, decoration.position.end.line + 1, decoration.position.end.column + 1),
         options: {
           isWholeLine,
           inlineClassName: `${isWholeLine ? 'alert-info' : 'inline-class'}  border-0 highlightLine${decoration.position.start.line + 1}`
@@ -371,40 +136,25 @@ export const EditorUI = (props: EditorUIProps) => {
       const lineTextDecoration = decoration as lineText
       return {
         type: typeOfDecoration,
-        range: new monacoRef.current.Range(
-          lineTextDecoration.position.start.line + 1,
-          lineTextDecoration.position.start.column + 1,
-          lineTextDecoration.position.start.line + 1,
-          1024
-        ),
+        range: new monacoRef.current.Range(lineTextDecoration.position.start.line + 1, lineTextDecoration.position.start.column + 1, lineTextDecoration.position.start.line + 1, 1024),
         options: {
-          after: {
-            content: ` ${lineTextDecoration.content}`,
-            inlineClassName: `${lineTextDecoration.className}`
-          },
+          after: { content: ` ${lineTextDecoration.content}`, inlineClassName: `${lineTextDecoration.className}` },
           afterContentClassName: `${lineTextDecoration.afterContentClassName}`,
-          hoverMessage: lineTextDecoration.hoverMessage
-        }
+          hoverMessage : lineTextDecoration.hoverMessage
+        },
+
       }
     }
     if (typeOfDecoration === 'lineTextPerFile') {
       const lineTextDecoration = decoration as lineText
       return {
         type: typeOfDecoration,
-        range: new monacoRef.current.Range(
-          lineTextDecoration.position.start.line + 1,
-          lineTextDecoration.position.start.column + 1,
-          lineTextDecoration.position.start.line + 1,
-          1024
-        ),
+        range: new monacoRef.current.Range(lineTextDecoration.position.start.line + 1, lineTextDecoration.position.start.column + 1, lineTextDecoration.position.start.line + 1, 1024),
         options: {
-          after: {
-            content: ` ${lineTextDecoration.content}`,
-            inlineClassName: `${lineTextDecoration.className}`
-          },
+          after: { content: ` ${lineTextDecoration.content}`, inlineClassName: `${lineTextDecoration.className}` },
           afterContentClassName: `${lineTextDecoration.afterContentClassName}`,
-          hoverMessage: lineTextDecoration.hoverMessage
-        }
+          hoverMessage : lineTextDecoration.hoverMessage
+        },
       }
     }
   }
@@ -421,7 +171,7 @@ export const EditorUI = (props: EditorUIProps) => {
     if (registeredDecorations) {
       for (const decoration of registeredDecorations) {
         if (decoration.type === typeOfDecoration && decoration.value.from !== plugin) {
-          decorations.push(convertToMonacoDecoration(decoration.value, typeOfDecoration))
+          decorations.push(convertToMonacoDecoration(decoration.value, typeOfDecoration, props.editorAPI.monacoRef))
           newRegisteredDecorations.push(decoration)
         }
       }
@@ -442,7 +192,7 @@ export const EditorUI = (props: EditorUIProps) => {
     if (registeredDecorations) {
       for (const decoration of registeredDecorations) {
         if (decoration.value.from === plugin) {
-          decorations.push(convertToMonacoDecoration(decoration.value, typeOfDecoration))
+          decorations.push(convertToMonacoDecoration(decoration.value, typeOfDecoration, props.editorAPI.monacoRef))
         }
       }
     }
@@ -453,7 +203,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
   const addDecoration = (decoration: sourceAnnotation | sourceMarker, filePath: string, typeOfDecoration: string) => {
     const model = editorModelsState[filePath]?.model
-    if (!model) return {currentDecorations: []}
+    if (!model) return { currentDecorations: [] }
     const monacoDecoration = convertToMonacoDecoration(decoration, typeOfDecoration)
     return {
       currentDecorations: model.deltaDecorations([], [monacoDecoration]),
@@ -498,47 +248,47 @@ export const EditorUI = (props: EditorUIProps) => {
     for (const filePath in allMarkersPerfile) {
       const model = editorModelsState[filePath]?.model
       if (model) {
-        monacoRef.current.editor.setModelMarkers(model, from, allMarkersPerfile[filePath])
+        props.editorAPI.monacoRef.current.editor.setModelMarkers(model, from, allMarkersPerfile[filePath])
       }
     }
   }
 
-  props.editorAPI.clearErrorMarkers = async (sources: string[] | {[fileName: string]: any}, from: string) => {
+  props.editorAPI.clearErrorMarkers = async (sources: string[] | { [fileName: string]: any }, from: string) => {
     if (sources) {
       for (const source of Array.isArray(sources) ? sources : Object.keys(sources)) {
         const filePath = source
         const model = editorModelsState[filePath]?.model
         if (model) {
-          monacoRef.current.editor.setModelMarkers(model, from, [])
+          props.editorAPI.monacoRef.current.editor.setModelMarkers(model, from, [])
         }
       }
     }
   }
 
   props.editorAPI.findMatches = (uri: string, value: string) => {
-    if (!editorRef.current) return
+    if (!getEditor()) return
     const model = editorModelsState[uri]?.model
     if (model) return model.findMatches(value)
   }
 
   props.editorAPI.getValue = (uri: string) => {
-    if (!editorRef.current) return
+    if (!getEditor()) return
     const model = editorModelsState[uri]?.model
     if (model) {
       return model.getValue()
     }
   }
 
-  props.editorAPI.getCursorPosition = (offset: boolean = true) => {
+  props.editorAPI.getCursorPosition = (offset:boolean = true) => {
     if (!monacoRef.current) return
     const model = editorModelsState[currentFileRef.current]?.model
     if (model) {
-      return offset ? model.getOffsetAt(editorRef.current.getPosition()) : editorRef.current.getPosition()
+      return offset? model.getOffsetAt(editorRef.current.getPosition()): editorRef.current.getPosition()
     }
   }
 
   props.editorAPI.getHoverPosition = (position: monacoTypes.Position) => {
-    if (!monacoRef.current) return
+    if (!props.editorAPI.monacoRef.current) return
     const model = editorModelsState[currentFileRef.current]?.model
     if (model) {
       return model.getOffsetAt(position)
@@ -549,10 +299,10 @@ export const EditorUI = (props: EditorUIProps) => {
 
   props.editorAPI.getFontSize = () => {
     if (!editorRef.current) return
-    return editorRef.current.getOption(51)
+    return editorRef.current.getOption(43).fontSize
   }
-  ;(window as any).addRemixBreakpoint = (position) => {
-    // make it available from e2e testing...
+
+  (window as any).addRemixBreakpoint = (position) => { // make it available from e2e testing...
     const model = editorRef.current.getModel()
     if (model) {
       setCurrentBreakpoints((prevState) => {
@@ -584,11 +334,20 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
-  function handleEditorDidMount(editor) {
-    editorRef.current = editor
-    defineAndSetTheme(monacoRef.current)
-    reducerListener(props.plugin, dispatch, monacoRef.current, editorRef.current, props.events)
+  function handleDiffEditorDidMount(editor: any) {
+    props.editorAPI.diffEditorRef.current = editor
+    defineAndSetTheme(props.editorAPI.monacoRef, props.themeType)
+    reducerListener(props.plugin, dispatch, props.editorAPI.monacoRef.current, props.editorAPI.diffEditorRef.current.getModifiedEditor(), props.events)
     props.events.onEditorMounted()
+  }
+
+  function handleEditorDidMount(editor: any) {
+    props.editorAPI.editorRef.current = editor
+    defineAndSetTheme(props.editorAPI.monacoRef, props.themeType)
+    reducerListener(props.plugin, dispatch, props.editorAPI.monacoRef.current, props.editorAPI.editorRef.current, props.events)
+    props.events.onEditorMounted()
+
+
     editor.onMouseUp((e) => {
       // see https://microsoft.github.io/monaco-editor/typedoc/enums/editor.MouseTargetType.html
       // 2 is GUTTER_GLYPH_MARGIN
@@ -597,6 +356,7 @@ export const EditorUI = (props: EditorUIProps) => {
         ;(window as any).addRemixBreakpoint(e.target.position)
       }
     })
+
 
     editor.onDidPaste((e) => {
       if (!pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
@@ -614,15 +374,9 @@ export const EditorUI = (props: EditorUIProps) => {
                   Running untrusted code can put your wallet <span className="text-warning"> at risk </span>. In a worst-case scenario, you could{' '}
                   <span className="text-warning">lose all your money</span>.
                 </div>
-                <div className="text-warning  mt-2">If you don't fully understand it, please don't run this code.</div>
-                <div className="mt-2">If you are not a smart contract developer, ask someone you trust who has the skills to determine if this code is safe to use.</div>
-                <div className="mt-2">
-                  See{' '}
-                  <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/security.html">
-                    {' '}
-                    these recommendations{' '}
-                  </a>{' '}
-                  for more information.
+                <div className='text-warning  mt-2'>If you don't fully understand it, please don't run this code.</div>
+                <div className='mt-2'>
+                If you are not a smart contract developer, ask someone you trust who has the skills to determine if this code is safe to use.
                 </div>
               </div>
             </div>
@@ -633,12 +387,14 @@ export const EditorUI = (props: EditorUIProps) => {
       }
     })
 
+
+
     // zoomin zoomout
     editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | (monacoRef.current.KeyCode as any).US_EQUAL, () => {
-      editor.updateOptions({fontSize: editor.getOption(51) + 1})
+      editor.updateOptions({ fontSize: editor.getOption(43).fontSize + 1 })
     })
     editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | (monacoRef.current.KeyCode as any).US_MINUS, () => {
-      editor.updateOptions({fontSize: editor.getOption(51) - 1})
+      editor.updateOptions({ fontSize: editor.getOption(43).fontSize - 1 })
     })
 
     // add context menu items
@@ -649,7 +405,7 @@ export const EditorUI = (props: EditorUIProps) => {
       contextMenuGroupId: 'zooming', // create a new grouping
       keybindings: [
         // eslint-disable-next-line no-bitwise
-        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Equal
+        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Equal,
       ],
       run: () => {
         editor.updateOptions({fontSize: editor.getOption(51) + 1})
@@ -662,7 +418,7 @@ export const EditorUI = (props: EditorUIProps) => {
       contextMenuGroupId: 'zooming', // create a new grouping
       keybindings: [
         // eslint-disable-next-line no-bitwise
-        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Minus
+        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Minus,
       ],
       run: () => {
         editor.updateOptions({fontSize: editor.getOption(51) - 1})
@@ -675,7 +431,7 @@ export const EditorUI = (props: EditorUIProps) => {
       contextMenuGroupId: 'formatting', // create a new grouping
       keybindings: [
         // eslint-disable-next-line no-bitwise
-        monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyF
+        monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyF,
       ],
       run: async () => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
@@ -714,10 +470,11 @@ export const EditorUI = (props: EditorUIProps) => {
     editor.addAction(formatAction)
     editor.addAction(zoomOutAction)
     editor.addAction(zoominAction)
+    const editorService = (editor as any)._codeEditorService;
     freeFunctionAction = editor.addAction(executeFreeFunctionAction)
 
     // we have to add the command because the menu action isn't always available (see onContextMenuHandlerForFreeFunction)
-    editor.addCommand(monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyR, () => executeFreeFunctionAction.run())
+    editor.addCommand(props.editorAPI.monacoRef.current.KeyMod.Shift | props.editorAPI.monacoRef.current.KeyMod.Alt | props.editorAPI.monacoRef.current.KeyCode.KeyR, () => executeFreeFunctionAction.run())
 
     const contextmenu = editor.getContribution('editor.contrib.contextmenu')
     const orgContextMenuMethod = contextmenu._onContextMenu
@@ -773,7 +530,7 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   function handleEditorWillMount(monaco) {
-    monacoRef.current = monaco
+    props.editorAPI.monacoRef.current = monaco
     // Register a new language
     monacoRef.current.languages.register({id: 'remix-solidity'})
     monacoRef.current.languages.register({id: 'remix-cairo'})
@@ -785,11 +542,11 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-solidity', solidityLanguageConfig as any)
 
-    monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoTokensProvider as any)
-    monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoLanguageConfig as any)
+    props.editorAPI.monacoRef.current.languages.setMonarchTokensProvider('remix-cairo', cairoTokensProvider as any)
+    props.editorAPI.monacoRef.current.languages.setLanguageConfiguration('remix-cairo', cairoLanguageConfig as any)
 
-    monacoRef.current.languages.setMonarchTokensProvider('remix-zokrates', zokratesTokensProvider as any)
-    monacoRef.current.languages.setLanguageConfiguration('remix-zokrates', zokratesLanguageConfig as any)
+    props.editorAPI.monacoRef.current.languages.setMonarchTokensProvider('remix-zokrates', zokratesTokensProvider as any)
+    props.editorAPI.monacoRef.current.languages.setLanguageConfiguration('remix-zokrates', zokratesLanguageConfig as any)
 
     monacoRef.current.languages.setMonarchTokensProvider('remix-move', moveTokenProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-move', moveLanguageConfig as any)
@@ -804,13 +561,30 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
     monaco.languages.registerCodeActionProvider('remix-solidity', new RemixCodeActionProvider(props, monaco))
 
-    loadTypes(monacoRef.current)
+    loadTypes(props.editorAPI.monacoRef.current)
   }
+
+
 
   return (
     <div className="w-100 h-100 d-flex flex-column-reverse">
+
+      <DiffEditor
+        originalLanguage={'remix-solidity'}
+        modifiedLanguage={'remix-solidity'}
+        original={''}
+        modified={''}
+        onMount={handleDiffEditorDidMount}
+        beforeMount={handleEditorWillMount}
+        options={{ readOnly: false, renderSideBySide: isSplit }}
+        width='100%'
+        height={props.isDiff ? '100%' : '0%'}
+        className={props.isDiff ? "d-block" : "d-none"}
+      />
+
       <Editor
         width="100%"
+        height={props.isDiff ? '0%' : '100%'}
         path={props.currentFile}
         language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
         onMount={handleEditorDidMount}
@@ -820,6 +594,7 @@ export const EditorUI = (props: EditorUIProps) => {
           readOnly: (!editorRef.current || !props.currentFile) && editorModelsState[props.currentFile]?.readOnly
         }}
         defaultValue={defaultEditorValue}
+        className={props.isDiff ? "d-none" : "d-block"}
       />
       {editorModelsState[props.currentFile]?.readOnly && (
         <span className="pl-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0">
@@ -832,3 +607,9 @@ export const EditorUI = (props: EditorUIProps) => {
 }
 
 export default EditorUI
+
+/*
+
+
+
+      */

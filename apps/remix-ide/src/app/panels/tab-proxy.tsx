@@ -2,7 +2,9 @@ import React from 'react' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import { TabsUI } from '@remix-ui/tabs'
 import { PluginViewWrapper, getPathIcon } from '@remix-ui/helper'
-const EventEmitter = require('events')
+import EventEmitter from 'events'
+import { commitChange } from '@remix-ui/git'
+
 
 const profile = {
   name: 'tabs',
@@ -10,7 +12,29 @@ const profile = {
   kind: 'other'
 }
 
+interface tab {
+  id: string
+  name: string
+  title: string
+  icon: string
+  tooltip: string
+  iconClass: string
+  description?: string
+}
+
 export class TabProxy extends Plugin {
+  event: any
+  fileManager: any
+  editor: any
+  data: any
+  _view: any
+  _handlers: any
+  loadedTabs: tab[]
+  dispatch: any
+  themeQuality: string
+  tabsApi: any
+  handlers: any
+
   constructor (fileManager, editor) {
     super(profile)
     this.event = new EventEmitter()
@@ -116,6 +140,23 @@ export class TabProxy extends Plugin {
       }
     })
 
+    this.on('fileManager', 'openDiff', (commit: commitChange) => {
+      const hash = commit.hashModified? commit.hashModified.substring(0,6): 'Working Tree'
+      const name =  `${commit.path} (${hash})`
+      this.addTab(name, name, async () => {
+        await this.fileManager.diff(commit)
+        this.event.emit('openDiff', commit)
+        this.emit('openDiff', commit)
+      },
+      async () => {
+        this.removeTab(name)
+        await this.fileManager.closeDiff(commit)
+        this.event.emit('closeDiff', commit)
+        this.emit('closeDiff', commit)
+      })
+      this.tabsApi.activateTab(name)
+    })
+
     this.on('fileManager', 'fileRenamed', (oldName, newName, isFolder) => {
       const workspace = this.fileManager.currentWorkspace()
 
@@ -123,7 +164,7 @@ export class TabProxy extends Plugin {
         if (isFolder) {
           for (const tab of this.loadedTabs) {
             if (tab.name.indexOf(workspace + '/' + oldName + '/') === 0) {
-              const newTabName = workspace + '/' + newName + tab.name.slice(workspace + '/' + oldName.length, tab.name.length)
+              const newTabName = workspace + '/' + newName + tab.name.slice((workspace + '/' + oldName).length, tab.name.length)
               this.renameTab(tab.name, newTabName)
             }
           }
@@ -135,7 +176,7 @@ export class TabProxy extends Plugin {
         if (isFolder) {
           for (const tab of this.loadedTabs) {
             if (tab.name.indexOf(this.fileManager.mode + '/' + oldName + '/') === 0) {
-              const newTabName = this.fileManager.mode + '/' + newName + tab.name.slice(this.fileManager.mode + '/' + oldName.length, tab.name.length)
+              const newTabName = this.fileManager.mode + '/' + newName + tab.name.slice((this.fileManager.mode + '/' + oldName).length, tab.name.length)
               this.renameTab(tab.name, newTabName)
             }
           }
@@ -224,10 +265,10 @@ export class TabProxy extends Plugin {
     this.removeTab(oldName)
   }
 
-  addTab (name, title, switchTo, close, icon, description = '') {
+  addTab (name, title, switchTo, close, icon?, description = '') {
     if (this._handlers[name]) return this.renderComponent()
 
-    var slash = name.split('/')
+    const slash = name.split('/')
     const tabPath = slash.reverse()
     const tempTitle = []
 
@@ -285,7 +326,7 @@ export class TabProxy extends Plugin {
     this._handlers[name] = { switchTo, close }
   }
 
-  removeTab (name, currentFileTab) {
+  removeTab (name, currentFileTab?) {
     delete this._handlers[name]
     let previous = currentFileTab
     this.loadedTabs = this.loadedTabs.filter((tab, index) => {
@@ -324,6 +365,7 @@ export class TabProxy extends Plugin {
   }
 
   renderComponent () {
+
     const onSelect = (index) => {
       if (this.loadedTabs[index]) {
         const name = this.loadedTabs[index].name

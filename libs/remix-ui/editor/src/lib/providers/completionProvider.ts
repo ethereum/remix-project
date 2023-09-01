@@ -1,6 +1,6 @@
 import { AstNode } from "@remix-project/remix-solidity"
 import { isArray } from "lodash"
-import { EditorUIProps } from "../remix-ui-editor"
+import { EditorUIProps } from "../types"
 import { GeCompletionUnits, GetCompletionKeywords, getCompletionSnippets, GetCompletionTypes, getContextualAutoCompleteBTypeName, getContextualAutoCompleteByGlobalVariable, GetGlobalFunctions, GetGlobalVariable, GetImports } from "./completion/completionGlobals"
 import { monacoTypes } from '@remix-ui/editor';
 import { retrieveNodesAtPosition } from "../helpers/retrieveNodesAtPosition";

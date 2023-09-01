@@ -7,7 +7,10 @@ import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
 import { EventEmitter } from 'events'
 import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from '@remix-ui/helper'
+import { commitChange } from '@remix-ui/git'
 import helper from '../../lib/helper.js'
+import { Editor } from '../editor/editor'
+import { IEditorFile } from '@remix-ui/editor'
 import { RemixAppManager } from '../../remixAppManager'
 
 /*
@@ -24,7 +27,7 @@ const profile = {
   version: packageJson.version,
   methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'writeMultipleFiles', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir',
     'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh',
-    'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles', 'isGitRepo'],
+    'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'diff'],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -42,7 +45,7 @@ class FileManager extends Plugin {
   mode: string
   openedFiles: any
   events: EventEmitter
-  editor: any
+  editor: Editor
   _components: any
   appManager: RemixAppManager
   _deps: any
@@ -183,16 +186,23 @@ class FileManager extends Plugin {
 
   /**
    * Open the content of the file in the context (eg: Editor)
-   * @param {string} path path of the file
+   * @param {string | IEditorFile} path path of the file
    * @returns {void}
    */
-  async open(path) {
+  async open(file: string | IEditorFile): Promise<void> {
+    let path
+    if (typeof file === 'string') {
+      path = file
+    } else {
+      path = file.path
+    }
     path = this.normalize(path)
     path = this.limitPluginScope(path)
     path = this.getPathFromUrl(path).file
     await this._handleExists(path, `Cannot open file ${path}`)
     await this._handleIsFile(path, `Cannot open file ${path}`)
     await this.openFile(path)
+
   }
 
   /**
@@ -553,19 +563,6 @@ class FileManager extends Plugin {
     }
   }
 
-  async closeFile(name) {
-    delete this.openedFiles[name]
-    if (!Object.keys(this.openedFiles).length) {
-      this._deps.config.set('currentFile', '')
-      // TODO: Only keep `this.emit` (issue#2210)
-      this.emit('noFileSelected')
-      this.events.emit('noFileSelected')
-    }
-    // TODO: Only keep `this.emit` (issue#2210)
-    this.emit('fileClosed', name)
-    this.events.emit('fileClosed', name)
-  }
-
   currentPath() {
     const currentFile = this._deps.config.get('currentFile')
     return this.extractPathOf(currentFile)
@@ -688,6 +685,42 @@ class FileManager extends Plugin {
     this.events.emit('noFileSelected')
   }
 
+  async diff(change: commitChange) {
+    await this.saveCurrentFile()
+    this._deps.config.set('currentFile', '')
+    // TODO: Only keep `this.emit` (issue#2210)
+    this.emit('noFileSelected')
+    this.events.emit('noFileSelected')
+
+    if(!change.readonly){
+      let file = this.normalize(change.path)
+      const resolved = this.getPathFromUrl(file)
+      file = resolved.file
+      this._deps.config.set('currentFile', file)
+      this.openedFiles[file] = file
+    }
+
+    await this.editor.openDiff(change)
+    this.emit('openDiff', change)
+    this.events.emit('openDiff', change)
+  }
+
+  async closeDiff(change: commitChange) {
+    if(!change.readonly){
+      let file = this.normalize(change.path)
+      delete this.openedFiles[file]
+      if (!Object.keys(this.openedFiles).length) {
+        this._deps.config.set('currentFile', '')
+        // TODO: Only keep `this.emit` (issue#2210)
+        this.emit('noFileSelected')
+        this.events.emit('noFileSelected')
+      }
+    }
+    this.emit('closeDiff', change)
+    this.events.emit('closeDiff', change)
+  }
+
+
   async openFile(file?: string) {
     if (!file) {
       this.emit('noFileSelected')
@@ -697,16 +730,18 @@ class FileManager extends Plugin {
       const resolved = this.getPathFromUrl(file)
       file = resolved.file
       await this.saveCurrentFile()
-      if (this.currentFile() === file) return
-
+      // we always open the file in the editor, even if it's the same as the current one if the editor is in diff mode
+      if (this.currentFile() === file && !this.editor.isDiff) return
+      
       const provider = resolved.provider
       this._deps.config.set('currentFile', file)
+
       this.openedFiles[file] = file
+
 
       let content = ''
       try {
         content = await provider.get(file)
-
       } catch (error) {
         console.log(error)
         throw error
@@ -728,6 +763,19 @@ class FileManager extends Plugin {
       this.events.emit('currentFileChanged', file)
       return true
     }
+  }
+
+  async closeFile(name) {
+    delete this.openedFiles[name]
+    if (!Object.keys(this.openedFiles).length) {
+      this._deps.config.set('currentFile', '')
+      // TODO: Only keep `this.emit` (issue#2210)
+      this.emit('noFileSelected')
+      this.events.emit('noFileSelected')
+    }
+    // TODO: Only keep `this.emit` (issue#2210)
+    this.emit('fileClosed', name)
+    this.events.emit('fileClosed', name)
   }
 
   /**

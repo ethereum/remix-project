@@ -1,18 +1,18 @@
 import { Monaco } from "@monaco-editor/react"
 import { sourceMappingDecoder } from "@remix-project/remix-debug"
-import monaco from "../../types/monaco"
-import { EditorUIProps } from "../remix-ui-editor"
+import { EditorUIProps } from "../types"
+import { monacoTypes } from '@remix-ui/editor';
 
-export class RemixReferenceProvider implements monaco.languages.ReferenceProvider {
-  props: EditorUIProps
-  monaco: Monaco
-  constructor(props: any, monaco: any) {
-    this.props = props
-    this.monaco = monaco
-  }
+export class RemixReferenceProvider implements monacoTypes.languages.ReferenceProvider {
+    props: EditorUIProps
+    monaco: Monaco
+    constructor(props: any, monaco: any) {
+        this.props = props
+        this.monaco = monaco
+    }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async provideReferences(model: monaco.editor.ITextModel, position: monaco.Position, context: monaco.languages.ReferenceContext, token: monaco.CancellationToken) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async provideReferences(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, context: monacoTypes.languages.ReferenceContext, token: monacoTypes.CancellationToken) {
 
     const cursorPosition = this.props.editorAPI.getCursorPosition()
     const nodes = await this.props.plugin.call('codeParser', 'referrencesAtPosition', cursorPosition)

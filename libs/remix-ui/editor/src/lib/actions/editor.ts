@@ -1,9 +1,11 @@
+import { Monaco } from "@monaco-editor/react";
+import { commitChange } from "@remix-ui/git";
 
 import { monacoTypes } from '@remix-ui/editor';
 export interface Action {
   type: string;
   payload: Record<string, any>
-  monaco: any,
+  monaco: Monaco,
   editor: any
 }
 
@@ -26,74 +28,80 @@ export const reducerActions = (models = initialState, action: Action) => {
       model = monaco.editor.createModel(value, language, monaco.Uri.parse(uri))
     } catch (e) {
 
+      }
+      models[uri].model = model
+      model.onDidChangeContent(() => action.payload.events.onDidChangeContent(uri))
+      return models
     }
-    models[uri].model = model
-    model.onDidChangeContent(() => action.payload.events.onDidChangeContent(uri))
-    return models
-  }
-  case 'DISPOSE_MODEL': {
-    const uri = action.payload.uri
-    const model = models[uri]?.model
-    if (model) model.dispose()
-    delete models[uri]
-    return models
-  }
-  case 'SET_VALUE': {
-    if (!editor) return models
-    const uri = action.payload.uri
-    const value = action.payload.value
-    const model = models[uri]?.model
-    if (model) {
-      model.setValue(value)
+    case 'DISPOSE_MODEL': {
+      const uri = action.payload.uri
+      const model = models[uri]?.model
+      if (model) model.dispose()
+      delete models[uri]
+      return models
     }
-    return models
-  }
-  case 'REVEAL_LINE': {
-    if (!editor) return models
-    const line = action.payload.line
-    const column = action.payload.column
-    editor.revealLine(line)
-    editor.setPosition({ column, lineNumber: line })
-    return models
-  }
-  case 'REVEAL_RANGE': {
-    if (!editor) return models
-    const range: monacoTypes.IRange = {
-      startLineNumber: action.payload.startLineNumber + 1,
-      startColumn: action.payload.startColumn,
-      endLineNumber: action.payload.endLineNumber + 1,
-      endColumn: action.payload.endColumn
+
+    case 'ADD_DIFF': {
+      if (!editor) return models
+      return models
     }
-    // reset to start of line
-    if (action.payload.startColumn < 100) {
-      editor.revealRange({
-        startLineNumber: range.startLineNumber,
-        startColumn: 1,
-        endLineNumber: range.endLineNumber,
-        endColumn: 1
-      })
-    } else {
-      editor.revealRangeInCenter(range)
+
+    case 'SET_VALUE': {
+      if (!editor) return models
+      const uri = action.payload.uri
+      const value = action.payload.value
+      const model = models[uri]?.model
+      if (model) {
+        model.setValue(value)
+      }
+      return models
     }
-    return models
-  }
-  case 'FOCUS': {
-    if (!editor) return models
-    editor.focus()
-    return models
-  }
-  case 'SET_FONTSIZE': {
-    if (!editor) return models
-    const size = action.payload.size
-    editor.updateOptions({ fontSize: size })
-    return models
-  }
-  case 'SET_WORDWRAP': {
-    if (!editor) return models
-    const wrap = action.payload.wrap
-    editor.updateOptions({ wordWrap: wrap ? 'on' : 'off' })
-    return models
-  }
+    case 'REVEAL_LINE': {
+      if (!editor) return models
+      const line = action.payload.line
+      const column = action.payload.column
+      editor.revealLine(line)
+      editor.setPosition({ column, lineNumber: line })
+      return models
+    }
+    case 'REVEAL_RANGE': {
+      if (!editor) return models
+      const range: monacoTypes.IRange = {
+        startLineNumber: action.payload.startLineNumber + 1,
+        startColumn: action.payload.startColumn,
+        endLineNumber: action.payload.endLineNumber + 1,
+        endColumn: action.payload.endColumn
+      }
+      // reset to start of line
+      if (action.payload.startColumn < 100) {
+        editor.revealRange({
+          startLineNumber: range.startLineNumber,
+          startColumn: 1,
+          endLineNumber: range.endLineNumber,
+          endColumn: 1
+        })
+      } else {
+        editor.revealRangeInCenter(range)
+      }
+      return models
+    }
+    case 'FOCUS': {
+      if (!editor) return models
+      editor.focus()
+      return models
+    }
+    case 'SET_FONTSIZE': {
+      if (!editor) return models
+      const size = action.payload.size
+      editor.updateOptions({ fontSize: size })
+      return models
+    }
+    case 'SET_WORDWRAP': {
+      if (!editor) return models
+      const wrap = action.payload.wrap
+      editor.updateOptions({ wordWrap: wrap ? 'on' : 'off' })
+      return models
+    }
   }
 }
 
@@ -102,6 +110,15 @@ export const reducerListener = (plugin, dispatch, monaco, editor, events) => {
     dispatch({
       type: 'ADD_MODEL',
       payload: { uri, value, language, readOnly, events },
+      monaco,
+      editor
+    })
+  })
+
+  plugin.on('editor', 'addDiff', (value: commitChange) => {
+    dispatch({
+      type: 'ADD_DIFF',
+      payload: { value },
       monaco,
       editor
     })
