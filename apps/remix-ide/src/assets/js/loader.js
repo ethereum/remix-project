@@ -5,9 +5,18 @@ const domains = {
   '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
 }
 
+const domainsSecondaryTracker = {
+  'remix-alpha.ethereum.org': 27,
+  'remix-beta.ethereum.org': 25,
+  'remix.ethereum.org': 23,
+  '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
+}
+
 if (domains[window.location.hostname]) {
   var _paq = window._paq = window._paq || []
   /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(["setExcludedQueryParams", ["code","gist"]]);
+  _paq.push(["setExcludedReferrers", ["etherscan.io"]]);
   _paq.push(['disableCookies']);
   _paq.push(['enableJSErrorTracking']);
   _paq.push(['trackPageView']);
@@ -18,17 +27,11 @@ if (domains[window.location.hostname]) {
     _paq.push(['optUserOut'])
   }
   (function () {
-    var u = "https://matomo.ethereum.org/";
-    _paq.push(['setTrackerUrl', u + 'matomo.php'])
-    _paq.push(['setSiteId', domains[window.location.hostname]])
-    // Send all of the Remix live tracking data to the secondary Matomo server
-    if (window.location.hostname === 'remix.ethereum.org') {
-      var secondaryTracker = 'https://remix-ethereum.matomo.cloud/matomo.php';
-      var secondaryWebsiteId = 1;
-      _paq.push(['addTracker', secondaryTracker, secondaryWebsiteId]);
-    }
-    var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0]
-    g.type = 'text/javascript'; g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s)
+    var u = "https://ethereumfoundation.matomo.cloud/";
+    _paq.push(['setTrackerUrl', u + 'matomo.php']);
+    _paq.push(['setSiteId', domains[window.location.hostname]]);
+    var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+    g.async = true; g.src = '//cdn.matomo.cloud/ethereumfoundation.matomo.cloud/matomo.js'; s.parentNode.insertBefore(g,s);
   })()
 }
 

@@ -1,9 +1,9 @@
 import React from 'react' // eslint-disable-line
 import DropdownPanel from './dropdown-panel' // eslint-disable-line
-import { BN } from 'bn.js'
+import {BN} from 'bn.js'
 import Web3 from 'web3'
 
-export const GlobalVariables = ({ block, receipt, tx, className }) => {
+export const GlobalVariables = ({block, receipt, tx, className}) => {
   // see https://docs.soliditylang.org/en/latest/units-and-global-variables.html#block-and-transaction-properties
   const globals = {
     'block.chainid': tx && tx.chainId,
@@ -14,7 +14,7 @@ export const GlobalVariables = ({ block, receipt, tx, className }) => {
     'block.timestamp': block && block.timestamp,
     'msg.sender': tx && tx.from,
     'msg.sig': tx && tx.input && tx.input.substring(0, 10),
-    'msg.value': tx && (tx.value + ' Wei'),
+    'msg.value': tx && tx.value + ' Wei',
     'tx.origin': tx && tx.from
   }
   if (block && block.baseFeePerGas) {
@@ -22,8 +22,8 @@ export const GlobalVariables = ({ block, receipt, tx, className }) => {
   }
 
   return (
-    <div id='globalvariable' data-id='globalvariable' className={className}>
-      <DropdownPanel hexHighlight={false} bodyStyle={{ fontFamily: 'monospace' }} dropdownName='Global Variables' calldata={globals || {}} />
+    <div id="globalvariable" data-id="globalvariable" className={className}>
+      <DropdownPanel hexHighlight={false} bodyStyle={{fontFamily: 'monospace'}} dropdownName="Global Variables" calldata={globals || {}} />
     </div>
   )
 }

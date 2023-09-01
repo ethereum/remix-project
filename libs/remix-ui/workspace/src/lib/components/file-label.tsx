@@ -1,21 +1,21 @@
 // eslint-disable-next-line no-use-before-define
-import { fileDecoration } from '@remix-ui/file-decorators'
-import React, { useEffect, useRef, useState } from 'react'
-import { FileType } from '../types'
+import {fileDecoration} from '@remix-ui/file-decorators'
+import React, {useEffect, useRef, useState} from 'react'
+import {FileType} from '../types'
 export interface FileLabelProps {
-  file: FileType,
+  file: FileType
   focusEdit: {
     element: string
     type: string
     isNew: boolean
     lastEdit: string
   }
-  fileDecorations: fileDecoration[],
+  fileDecorations: fileDecoration[]
   editModeOff: (content: string) => void
 }
 
 export const FileLabel = (props: FileLabelProps) => {
-  const { file, focusEdit, editModeOff, fileDecorations } = props
+  const {file, focusEdit, editModeOff, fileDecorations} = props
   const [isEditable, setIsEditable] = useState<boolean>(false)
   const [fileStateClasses, setFileStateClasses] = useState<string>('')
   const labelRef = useRef(null)
@@ -27,6 +27,7 @@ export const FileLabel = (props: FileLabelProps) => {
   }, [file.path, focusEdit])
 
   useEffect(() => {
+
     const states = props.fileDecorations.filter((state: fileDecoration) => {
       if (state.path === props.file.path) return true
       if (state.bubble && props.file.isDirectory && state.path.startsWith(props.file.path)) return true
@@ -36,6 +37,8 @@ export const FileLabel = (props: FileLabelProps) => {
       if (state && state.fileStateLabelClass) {
         fileStateClass += state.fileStateLabelClass + ' '
       }
+
+
     }
     setFileStateClasses(fileStateClass)
   }, [fileDecorations])
@@ -64,17 +67,14 @@ export const FileLabel = (props: FileLabelProps) => {
 
   return (
     <div
-      className='remixui_items d-inline-block w-100 text-break'
+      className="remixui_items d-inline-block w-100 text-break"
       ref={isEditable ? labelRef : null}
       suppressContentEditableWarning={true}
       contentEditable={isEditable}
       onKeyDown={handleEditInput}
       onBlur={handleEditBlur}
     >
-      <span
-        className={`text-nowrap remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder' : 'remixui_leaf')}
-        data-path={file.path}
-      >
+      <span className={`text-nowrap remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder' : 'remixui_leaf')} data-path={file.path}>
         {file.name}
       </span>
     </div>

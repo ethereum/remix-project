@@ -15,7 +15,7 @@ module.exports = {
     browser.testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['TestContract'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('.udapp_contractActionsContainerSingle > button')
+      .click('.udapp_contractActionsContainerSingle > div')
       .clickInstance(0)
       .clickFunction('f - transact (not payable)')
       .testFunction('last',
@@ -40,7 +40,7 @@ module.exports = {
   'Test Complex Return Values #group1': function (browser: NightwatchBrowser) {
     browser.testContracts('returnValues.sol', sources[1]['returnValues.sol'], ['testReturnValues'])
       .clickLaunchIcon('udapp')
-      .click('.udapp_contractActionsContainerSingle > button')
+      .click('.udapp_contractActionsContainerSingle > div')
       .clickInstance(0)
       .clickFunction('retunValues1 - transact (not payable)')
       .testFunction('last',
@@ -84,7 +84,7 @@ module.exports = {
   'Test Complex Input Values #group2': function (browser: NightwatchBrowser) {
     browser.testContracts('inputValues.sol', sources[2]['inputValues.sol'], ['test'])
       .clickLaunchIcon('udapp')
-      .click('.udapp_contractActionsContainerSingle > button')
+      .click('.udapp_contractActionsContainerSingle > div')
       .clickInstance(0)
       .clickFunction('inputValue1 - transact (not payable)', { types: 'uint256 _u, int256 _i, string _str', values: '"2343242", "-4324324", "string _ string _  string _  string _  string _  string _  string _  string _  string _  string _"' })
       .testFunction('last',
@@ -129,7 +129,7 @@ module.exports = {
     browser.testContracts('eventFunctionInput.sol', sources[3]['eventFunctionInput.sol'], ['C'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('.udapp_contractActionsContainerSingle > button')
+      .click('.udapp_contractActionsContainerSingle > div')
       .clickInstance(0)
       .click('*[data-id="deployAndRunClearInstances"]')
   },
@@ -137,7 +137,7 @@ module.exports = {
   'Should use scientific notation as parameters #group2': function (browser: NightwatchBrowser) {
     browser.testContracts('scientific_notation.sol', sources[8]['scientific_notation.sol'], ['test'])
       .clickLaunchIcon('udapp')
-      .click('.udapp_contractActionsContainerSingle > button')
+      .click('.udapp_contractActionsContainerSingle > div')
       .clickInstance(0)
       .clickFunction('inputValue1 - transact (not payable)', { types: 'uint256 _u, int256 _i', values: '"101e3", "-1.13e4"' })
       .waitForElementContainsText('*[data-id="terminalJournal"]', '101000', 60000)
@@ -154,7 +154,7 @@ module.exports = {
     browser.testContracts('customError.sol', sources[4]['customError.sol'], ['C'])
       .clickLaunchIcon('udapp')
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('.udapp_contractActionsContainerSingle > button')
+      .click('.udapp_contractActionsContainerSingle > div')
       .clickInstance(0)
       .clickFunction('g - transact (not payable)')
       .journalLastChildIncludes('Error provided by the contract:')
@@ -176,7 +176,7 @@ module.exports = {
       .clearTransactions()
       .switchEnvironment('vm-london') // switch to London fork
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
-      .click('.udapp_contractActionsContainerSingle > button')
+      .click('.udapp_contractActionsContainerSingle > div')
       .clickInstance(0)
       .clickFunction('g - transact (not payable)')
       .journalLastChildIncludes('Error provided by the contract:')
@@ -194,7 +194,7 @@ module.exports = {
   'Should Compile and Deploy a contract which define a custom error in a library, the error should be logged in the terminal #group3': function (browser: NightwatchBrowser) {
     browser.testContracts('customErrorLib.sol', sources[5]['customErrorLib.sol'], ['D'])
       .clickLaunchIcon('udapp')
-      .click('.udapp_contractActionsContainerSingle > button')
+      .click('.udapp_contractActionsContainerSingle > div')
       .clickInstance(1)
       .clickFunction('h - transact (not payable)')
       .journalLastChildIncludes('Error provided by the contract:')
@@ -247,6 +247,51 @@ module.exports = {
       .clickFunction('resolve - call')
       .perform((done) => {
         browser.verifyCallReturnValue(addressRef, ['0:address: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'])
+          .perform(() => done())
+      })
+  },
+
+  'Should stay connected in the mainnet VM fork and execute state changing operations and non state changing operations #group5': function (browser: NightwatchBrowser) {
+    let addressRef
+    browser
+      .click('*[data-id="deployAndRunClearInstances"]') // clear udapp instances
+      .clickLaunchIcon('filePanel')
+      .testContracts('basic_state.sol', sources[9]['basic_state.sol'], ['BasicState'])
+      .clickLaunchIcon('udapp')
+      .selectContract('BasicState')
+      .createContract('')
+      .clickInstance(0)
+      .getAddressAtPosition(0, (address) => {
+        addressRef = address
+      })
+      .clickFunction('cake - call')
+      .pause(500)
+      .perform((done) => {
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 0'])
+          .perform(() => done())
+      })
+      .clickFunction('up - transact (payable)')
+      .pause(500)
+      .clickFunction('cake - call')
+      .pause(1000)
+      .perform((done) => {
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 1'])
+          .perform(() => done())
+      })
+      .clickFunction('up - transact (payable)')
+      .pause(500)
+      .clickFunction('cake - call')
+      .pause(1000)
+      .perform((done) => {
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 2'])
+          .perform(() => done())
+      })
+      .clickFunction('up - transact (payable)')
+      .pause(500)
+      .clickFunction('cake - call')
+      .pause(1000)
+      .perform((done) => {
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 3'])
           .perform(() => done())
       })
   }
@@ -510,6 +555,19 @@ contract C {
         }
       }
       `
+    }
+  },
+  {
+    'basic_state.sol': {
+      content:
+        `
+        contract BasicState {
+          uint public cake;
+          function up() public payable {
+             cake++;
+          }
+      }
+        `      
     }
   }
 ]

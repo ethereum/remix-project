@@ -1,7 +1,7 @@
 {
   "name": "etherscan",
-  "displayName": "Etherscan - Contract verification",
-  "description": "Verify Solidity contract code using Etherscan API",
+  "displayName": "Contract verification - Etherscan",
+  "description": "Verify Solidity contract code using Etherscan, BscScan, PolygonScan etc. APIs",
   "version": "0.1.0",
   "events": [],
   "methods": ["verify", "receiptStatus"],
@@ -10,7 +10,7 @@
   "location": "sidePanel",
   "url": "https://ipfs-cluster.ethdevops.io/ipfs/QmQsZbBSYCVBVpz2mVRbPRVTrcz59oJEpuuoxiT9otu3mh",
   "repo": "https://github.com/ethereum/remix-project/tree/master/apps/etherscan",
-  "documentation": "https://remix-etherscan-plugin.readthedocs.io/en/latest",
+  "documentation": "https://remix-ide.readthedocs.io/en/latest/contract_verification.html#etherscan",
   "maintainedBy": "Remix",
   "authorContact": "remix@ethereum.org"
 }

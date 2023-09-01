@@ -95,7 +95,7 @@ export class CompilerArtefacts extends Plugin {
    * filter compilation output for contracts compiled during a session of Remix IDE
    * @returns compilatin output
    */
-   filterAllContractDatas (filter) {
+  filterAllContractDatas (filter) {
     const contractsData = {}
     Object.keys(this.compilersArtefactsPerFile).map((targetFile) => {
       const artefact = this.compilersArtefactsPerFile[targetFile]

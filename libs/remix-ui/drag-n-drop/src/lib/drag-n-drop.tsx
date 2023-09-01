@@ -1,10 +1,10 @@
-import { extractParentFromKey } from "@remix-ui/helper"
-import React, { useContext, useRef, useState } from "react"
-import { MoveContext } from "./context/moveContext"
-import { DraggableType, DragType } from "./types"
+import {extractParentFromKey} from '@remix-ui/helper'
+import React, {useContext, useRef, useState} from 'react'
+import {MoveContext} from './context/moveContext'
+import {DraggableType, DragType} from './types'
 
 export const Drag = (props: DragType) => {
-  const [dragged, setDragged] = useState<{ path: string, isDirectory: boolean }>({} as { path: string, isDirectory: boolean })
+  const [dragged, setDragged] = useState<{path: string; isDirectory: boolean}>({} as {path: string; isDirectory: boolean})
 
   return (
     <MoveContext.Provider
@@ -14,7 +14,7 @@ export const Drag = (props: DragType) => {
         moveFolder: props.onFolderMoved,
         currentlyMoved: (path) => {
           setDragged(() => path)
-        },
+        }
       }}
     >
       {props.children}
@@ -54,7 +54,7 @@ export const Draggable = (props: DraggableType) => {
       props.handleClickFolder(destination.path, destination.type)
     }
   }
-  
+
   const handleDrag = () => {
     if (context.dragged.path !== destination.path) {
       context.currentlyMoved({
@@ -66,8 +66,9 @@ export const Draggable = (props: DraggableType) => {
 
   return (
     <>
-      {
-        props.isDraggable ? props.children :
+      {props.isDraggable ? (
+        props.children
+      ) : (
         <span
           ref={dragRef}
           draggable
@@ -87,7 +88,7 @@ export const Draggable = (props: DraggableType) => {
         >
           {props.children}
         </span>
-      }
+      )}
     </>
   )
 }

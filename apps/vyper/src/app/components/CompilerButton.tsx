@@ -1,22 +1,14 @@
 import React from 'react'
-import {
-  isVyper,
-  compile,
-  toStandardOutput,
-  VyperCompilationOutput,
-  isCompilationError,
-  remixClient
-} from '../utils'
+import {isVyper, compile, toStandardOutput, VyperCompilationOutput, isCompilationError, remixClient} from '../utils'
 import Button from 'react-bootstrap/Button'
 
 interface Props {
   compilerUrl: string
-  contract?: string,
+  contract?: string
   setOutput: (name: string, output: VyperCompilationOutput) => void
 }
 
-function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
-
+function CompilerButton({contract, setOutput, compilerUrl}: Props) {
   if (!contract || !contract) {
     return <Button disabled>No contract selected</Button>
   }
@@ -33,9 +25,9 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
       try {
         _contract = await remixClient.getContract()
       } catch (e: any) {
-        setOutput('', { status: 'failed', message: e.message})
+        setOutput('', {status: 'failed', message: e.message})
         return
-      }      
+      }
       remixClient.changeStatus({
         key: 'loading',
         type: 'info',
@@ -45,17 +37,17 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
       try {
         output = await compile(compilerUrl, _contract)
       } catch (e: any) {
-        setOutput(_contract.name, { status: 'failed', message: e.message})
+        setOutput(_contract.name, {status: 'failed', message: e.message})
         return
-      }      
+      }
       setOutput(_contract.name, output)
       // ERROR
       if (isCompilationError(output)) {
         const line = output.line
         if (line) {
           const lineColumnPos = {
-            start: { line: line - 1, column: 10 },
-            end: { line: line - 1,  column: 10 }
+            start: {line: line - 1, column: 10},
+            end: {line: line - 1, column: 10}
           }
           remixClient.highlight(lineColumnPos as any, _contract.name, '#e0b4b4')
         } else {
@@ -70,12 +62,12 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
               if (message && message.split('\n\n').length > 0) {
                 try {
                   message = message.split('\n\n')[message.split('\n\n').length - 1]
-                } catch (e) {}                
+                } catch (e) {}
               }
               if (location.length > 0) {
                 const lineColumnPos = {
-                  start: { line: parseInt(location[0]) - 1, column: 10 },
-                  end: { line: parseInt(location[0]) - 1, column: 10 }
+                  start: {line: parseInt(location[0]) - 1, column: 10},
+                  end: {line: parseInt(location[0]) - 1, column: 10}
                 }
                 remixClient.highlight(lineColumnPos as any, _contract.name, message)
               }
@@ -105,7 +97,7 @@ function CompilerButton({ contract, setOutput, compilerUrl }: Props) {
   return (
     <Button data-id="compile" onClick={compileContract} variant="primary" title={contract} className="d-flex flex-column">
       <span>Compile</span>
-      <span className="overflow-hidden text-truncate text-nowrap" >{contract}</span>
+      <span className="overflow-hidden text-truncate text-nowrap">{contract}</span>
     </Button>
   )
 }

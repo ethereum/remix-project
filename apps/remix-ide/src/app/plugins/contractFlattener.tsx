@@ -1,9 +1,9 @@
 import React from 'react'
-import { Plugin } from '@remixproject/engine'
-import { customAction } from '@remixproject/plugin-api'
-import { concatSourceFiles, getDependencyGraph, normalizeContractPath } from '@remix-ui/solidity-compiler'
+import {Plugin} from '@remixproject/engine'
+import {customAction} from '@remixproject/plugin-api'
+import {concatSourceFiles, getDependencyGraph, normalizeContractPath} from '@remix-ui/solidity-compiler'
 
-const _paq = window._paq = window._paq || []
+const _paq = (window._paq = window._paq || [])
 
 const profile = {
   name: 'contractflattener',
@@ -11,11 +11,10 @@ const profile = {
   description: 'Flatten solidity contracts',
   methods: ['flattenAContract', 'flattenContract'],
   events: [],
-  maintainedBy: 'Remix',
+  maintainedBy: 'Remix'
 }
 
 export class ContractFlattener extends Plugin {
-
   triggerFlattenContract: boolean = false
   constructor() {
     super(profile)
@@ -23,13 +22,13 @@ export class ContractFlattener extends Plugin {
 
   onActivation(): void {
     this.on('solidity', 'compilationFinished', async (file, source, languageVersion, data, input, version) => {
-      if(data.sources && Object.keys(data.sources).length > 1) {
-        if(this.triggerFlattenContract) {
+      if (data.sources && Object.keys(data.sources).length > 1) {
+        if (this.triggerFlattenContract) {
           this.triggerFlattenContract = false
           await this.flattenContract(source, file, data)
         }
       }
-    })  
+    })
     _paq.push(['trackEvent', 'plugin', 'activated', 'contractFlattener'])
   }
 
@@ -48,8 +47,7 @@ export class ContractFlattener extends Plugin {
    * Takes the flattened result, writes it to a file and returns the result.
    * @returns {Promise<string>}
    */
-  async flattenContract (source: { sources: any, target: string },
-    filePath: string, data: { contracts: any, sources: any }): Promise<string> {
+  async flattenContract(source: {sources: any; target: string}, filePath: string, data: {contracts: any; sources: any}): Promise<string> {
     const appendage = '_flattened.sol'
     const normalized = normalizeContractPath(filePath)
     const path = `${normalized[normalized.length - 2]}${appendage}`
@@ -58,17 +56,15 @@ export class ContractFlattener extends Plugin {
     let sorted
     let result
     let sources
-    try{
+    try {
       dependencyGraph = getDependencyGraph(ast, filePath)
-      sorted = dependencyGraph.isEmpty()
-      ? [filePath]
-      : dependencyGraph.sort().reverse()
+      sorted = dependencyGraph.isEmpty() ? [filePath] : dependencyGraph.sort().reverse()
       sources = source.sources
       result = concatSourceFiles(sorted, sources)
-    }catch(err){
+    } catch (err) {
       console.warn(err)
     }
-    await this.call('fileManager', 'writeFile', path , result)
+    await this.call('fileManager', 'writeFile', path, result)
     _paq.push(['trackEvent', 'plugin', 'contractFlattener', 'flattenAContract'])
     // clean up memory references & return result
     sorted = null

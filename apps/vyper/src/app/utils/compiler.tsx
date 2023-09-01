@@ -1,16 +1,16 @@
-import { CompilationResult, ABIDescription } from "@remixproject/plugin-api";
+import {CompilationResult, ABIDescription} from '@remixproject/plugin-api'
 
 export interface Contract {
-  name: string;
-  content: string;
+  name: string
+  content: string
 }
 
 export interface VyperCompilationResult {
-  status: 'success',
-  bytecode: string,
-  bytecode_runtime: string,
-  abi: ABIDescription[],
-  ir: string,
+  status: 'success'
+  bytecode: string
+  bytecode_runtime: string
+  abi: ABIDescription[]
+  ir: string
   method_identifiers: {
     [method: string]: string
   }
@@ -32,7 +32,7 @@ export function isCompilationError(output: VyperCompilationOutput): output is Vy
 
 /**
  * Compile the a contract
- * @param url The url of the compiler 
+ * @param url The url of the compiler
  * @param contract The name and content of the contract
  */
 export async function compile(url: string, contract: Contract): Promise<VyperCompilationOutput> {
@@ -45,8 +45,8 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
   }
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ code: contract.content })
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({code: contract.content})
   })
 
   if (response.status === 404) {
@@ -64,8 +64,8 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
  * @param compilationResult Result returned by the compiler
  */
 export function toStandardOutput(fileName: string, compilationResult: VyperCompilationResult): CompilationResult {
-  const contractName = fileName.split('/').slice(-1)[0].split('.')[0];
-  const methodIdentifiers = JSON.parse(JSON.stringify(compilationResult['method_identifiers']).replace(/0x/g,''));
+  const contractName = fileName.split('/').slice(-1)[0].split('.')[0]
+  const methodIdentifiers = JSON.parse(JSON.stringify(compilationResult['method_identifiers']).replace(/0x/g, ''))
   return {
     sources: {
       [fileName]: {
@@ -84,22 +84,21 @@ export function toStandardOutput(fileName: string, compilationResult: VyperCompi
           evm: {
             bytecode: {
               linkReferences: {},
-              object: compilationResult['bytecode'].replace('0x',''),
-              opcodes: ""
+              object: compilationResult['bytecode'].replace('0x', ''),
+              opcodes: ''
             },
             deployedBytecode: {
               linkReferences: {},
-              object: compilationResult['bytecode_runtime'].replace('0x',''),
-              opcodes: ""
+              object: compilationResult['bytecode_runtime'].replace('0x', ''),
+              opcodes: ''
             },
             methodIdentifiers: methodIdentifiers
           }
         }
       } as any
     }
-  };
+  }
 }
-
 
 /*
 export function createCompilationResultMessage(name: string, result: any) {

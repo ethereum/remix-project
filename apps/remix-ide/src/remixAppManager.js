@@ -1,35 +1,116 @@
-import { PluginManager } from '@remixproject/engine'
-import { EventEmitter } from 'events'
-import { QueryParams } from '@remix-project/remix-lib'
-import { IframePlugin } from '@remixproject/engine-web'
-const _paq = window._paq = window._paq || []
+import {PluginManager} from '@remixproject/engine'
+import {EventEmitter} from 'events'
+import {QueryParams} from '@remix-project/remix-lib'
+import {IframePlugin} from '@remixproject/engine-web'
+const _paq = (window._paq = window._paq || [])
 
 // requiredModule removes the plugin from the plugin manager list on UI
-const requiredModules = [ // services + layout views + system views
-  'manager', 'config', 'compilerArtefacts', 'compilerMetadata', 'contextualListener', 'editor', 'offsetToLineColumnConverter', 'network', 'theme', 'locale',
-  'fileManager', 'contentImport', 'blockchain', 'web3Provider', 'scriptRunner', 'fetchAndCompile', 'mainPanel', 'hiddenPanel', 'sidePanel', 'menuicons',
-  'filePanel', 'terminal', 'settings', 'pluginManager', 'tabs', 'udapp', 'dGitProvider', 'solidity', 'solidity-logic', 'gistHandler', 'layout',
-  'notification', 'permissionhandler', 'walkthrough', 'storage', 'restorebackupzip', 'link-libraries', 'deploy-libraries', 'openzeppelin-proxy',
-  'hardhat-provider', 'ganache-provider', 'foundry-provider', 'basic-http-provider', 'injected', 'injected-trustwallet', 'injected-optimism-provider', 'injected-arbitrum-one-provider', 'vm-custom-fork', 'vm-goerli-fork', 'vm-mainnet-fork', 'vm-sepolia-fork', 'vm-merge', 'vm-london', 'vm-berlin',
+const requiredModules = [
+  // services + layout views + system views
+  'manager',
+  'config',
+  'compilerArtefacts',
+  'compilerMetadata',
+  'contextualListener',
+  'editor',
+  'offsetToLineColumnConverter',
+  'network',
+  'theme',
+  'locale',
+  'fileManager',
+  'contentImport',
+  'blockchain',
+  'web3Provider',
+  'scriptRunner',
+  'fetchAndCompile',
+  'mainPanel',
+  'hiddenPanel',
+  'sidePanel',
+  'menuicons',
+  'filePanel',
+  'terminal',
+  'settings',
+  'pluginManager',
+  'tabs',
+  'udapp',
+  'dGitProvider',
+  'solidity',
+  'solidity-logic',
+  'gistHandler',
+  'layout',
+  'notification',
+  'permissionhandler',
+  'walkthrough',
+  'storage',
+  'restorebackupzip',
+  'link-libraries',
+  'deploy-libraries',
+  'openzeppelin-proxy',
+  'hardhat-provider',
+  'ganache-provider',
+  'foundry-provider',
+  'basic-http-provider',
+  'injected',
+  'injected-trustwallet',
+  'injected-optimism-provider',
+  'injected-arbitrum-one-provider',
+  'injected-ephemery-testnet-provider',
+  'vm-custom-fork',
+  'vm-goerli-fork',
+  'vm-mainnet-fork',
+  'vm-sepolia-fork',
+  'vm-merge',
+  'vm-london',
+  'vm-berlin',
   'vm-shanghai',
-  'compileAndRun', 'search', 'recorder', 'fileDecorator', 'codeParser', 'codeFormatter', 'solidityumlgen', 'contractflattener', 'solidity-script']
+  'compileAndRun',
+  'search',
+  'recorder',
+  'fileDecorator',
+  'codeParser',
+  'codeFormatter',
+  'solidityumlgen',
+  'contractflattener',
+  'solidity-script'
+]
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
 const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither']
 
-const loadLocalPlugins = ["doc-gen", "doc-viewer", "etherscan", "vyper", "walletconnect"]
+const loadLocalPlugins = ['doc-gen', 'doc-viewer', 'etherscan', 'vyper', 'solhint', 'walletconnect', 'circuit-compiler']
 
 const sensitiveCalls = {
-  'fileManager': ['writeFile', 'copyFile', 'rename', 'copyDir'],
-  'contentImport': ['resolveAndSave'],
-  'web3Provider': ['sendAsync'],
+  fileManager: ['writeFile', 'copyFile', 'rename', 'copyDir'],
+  contentImport: ['resolveAndSave'],
+  web3Provider: ['sendAsync']
 }
 
 export function isNative(name) {
   // nativePlugin allows to bypass the permission request
-  const nativePlugins = ['vyper', 'workshops', 'debugger', 'remixd', 'menuicons', 'solidity', 'solidity-logic', 'solidityStaticAnalysis', 'solidityUnitTesting',
-    'layout', 'notification', 'hardhat-provider', 'ganache-provider', 'foundry-provider', 'basic-http-provider', 'injected-optimism-provider',
-    'tabs', 'injected-arbitrum-one-provider', 'injected', 'doc-gen', 'doc-viewer']
+  const nativePlugins = [
+    'vyper',
+    'workshops',
+    'debugger',
+    'remixd',
+    'menuicons',
+    'solidity',
+    'solidity-logic',
+    'solidityStaticAnalysis',
+    'solidityUnitTesting',
+    'layout',
+    'notification',
+    'hardhat-provider',
+    'ganache-provider',
+    'foundry-provider',
+    'basic-http-provider',
+    'injected-optimism-provider',
+    'tabs',
+    'injected-arbitrum-one-provider',
+    'injected-ephemery-testnet-provider',
+    'injected',
+    'doc-gen',
+    'doc-viewer'
+  ]
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
 
@@ -44,9 +125,7 @@ export function isNative(name) {
  * @returns {boolean}
  */
 export function canActivate(from, to) {
-  return ['ethdoc'].includes(from.name) ||
-    isNative(from.name) ||
-    (to && from && from.canActivate && from.canActivate.includes(to.name))
+  return ['ethdoc'].includes(from.name) || isNative(from.name) || (to && from && from.canActivate && from.canActivate.includes(to.name))
 }
 
 export class RemixAppManager extends PluginManager {
@@ -71,11 +150,16 @@ export class RemixAppManager extends PluginManager {
   }
 
   async deactivatePlugin(name) {
-    const [to, from] = [
-      await this.getProfile(name),
-      await this.getProfile(this.requestFrom)
-    ]
+    const profile = await this.getProfile(name)
+    const [to, from] = [profile, await this.getProfile(this.requestFrom)]
     if (this.canDeactivatePlugin(from, to)) {
+      if (profile.methods.includes('deactivate')) {
+        try {
+          await this.call(name, 'deactivate')
+        } catch (e) {
+          console.log(e)
+        }
+      }
       await this.toggleActive(name)
     }
   }
@@ -96,7 +180,10 @@ export class RemixAppManager extends PluginManager {
   }
 
   onPluginActivated(plugin) {
-    this.pluginLoader.set(plugin, this.actives.filter((plugin) => !this.isDependent(plugin)))
+    this.pluginLoader.set(
+      plugin,
+      this.actives.filter((plugin) => !this.isDependent(plugin))
+    )
     this.event.emit('activate', plugin)
     this.emit('activate', plugin)
     if (!requiredModules.includes(plugin.name)) _paq.push(['trackEvent', 'pluginManager', 'activate', plugin.name])
@@ -113,7 +200,10 @@ export class RemixAppManager extends PluginManager {
   }
 
   onPluginDeactivated(plugin) {
-    this.pluginLoader.set(plugin, this.actives.filter((plugin) => !this.isDependent(plugin)))
+    this.pluginLoader.set(
+      plugin,
+      this.actives.filter((plugin) => !this.isDependent(plugin))
+    )
     this.event.emit('deactivate', plugin)
     _paq.push(['trackEvent', 'pluginManager', 'deactivate', plugin.name])
   }
@@ -135,7 +225,7 @@ export class RemixAppManager extends PluginManager {
       plugins = plugins.filter((plugin) => {
         if (plugin.name === 'dgit') return false
         if (plugin.targets && Array.isArray(plugin.targets) && plugin.targets.length > 0) {
-          return (plugin.targets.includes('remix'))
+          return plugin.targets.includes('remix')
         }
         return true
       })
@@ -170,7 +260,7 @@ export class RemixAppManager extends PluginManager {
       }
     }
 
-    return plugins.map(plugin => {
+    return plugins.map((plugin) => {
       if (plugin.name === testPluginName) plugin.url = testPluginUrl
       return new IframePlugin(plugin)
     })
@@ -185,7 +275,8 @@ export class RemixAppManager extends PluginManager {
       extension: ['.sol'],
       path: [],
       pattern: [],
-      sticky: true
+      sticky: true,
+      group: 5
     })
     await this.call('filePanel', 'registerContextMenuItem', {
       id: 'nahmii-compiler',
@@ -195,7 +286,8 @@ export class RemixAppManager extends PluginManager {
       extension: ['.sol'],
       path: [],
       pattern: [],
-      sticky: true
+      sticky: true,
+      group: 6
     })
     await this.call('filePanel', 'registerContextMenuItem', {
       id: 'solidityumlgen',
@@ -205,7 +297,8 @@ export class RemixAppManager extends PluginManager {
       extension: ['.sol'],
       path: [],
       pattern: [],
-      sticky: true
+      sticky: true,
+      group: 7
     })
     await this.call('filePanel', 'registerContextMenuItem', {
       id: 'doc-gen',
@@ -215,7 +308,8 @@ export class RemixAppManager extends PluginManager {
       extension: ['.sol'],
       path: [],
       pattern: [],
-      sticky: true
+      sticky: true,
+      group: 7
     })
   }
 }
@@ -238,13 +332,17 @@ class PluginLoader {
         const saved = actives.filter((name) => !this.donotAutoReload.includes(name))
         localStorage.setItem('workspace', JSON.stringify(saved))
       },
-      get: () => { return JSON.parse(localStorage.getItem('workspace')) }
+      get: () => {
+        return JSON.parse(localStorage.getItem('workspace'))
+      }
     }
 
     this.loaders.queryParams = {
-      set: () => {  /* Do nothing. */ },
+      set: () => {
+        /* Do nothing. */
+      },
       get: () => {
-        const { activate } = queryParams.get()
+        const {activate} = queryParams.get()
         if (!activate) return []
         return activate.split(',')
       }

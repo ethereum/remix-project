@@ -1809,7 +1809,7 @@ pre code {
   box-shadow: 0px 0px 5px #00bbff;
 }
 .form-control::placeholder {
-  color: #1b1d24;
+  color: #747B90;
   opacity: 1;
 }
 .form-control:disabled,
@@ -3161,9 +3161,9 @@ input[type="button"].btn-block {
 }
 .dropdown-item:hover,
 .dropdown-item:focus {
-  color: #16181b;
+  color: var(--text);
   text-decoration: none;
-  background-color: #f8f9fa;
+  background-color: var(--secondary);
 }
 .dropdown-item.active,
 .dropdown-item:active {
@@ -6217,6 +6217,10 @@ button.bg-dark:focus {
 
 .bg-transparent {
   background-color: transparent !important;
+}
+
+.border-no-shift {
+  box-shadow: inset 0 0 0 1px #d6d8e3;
 }
 
 .border {
@@ -9496,7 +9500,7 @@ a.text-dark:focus {
   border: none !important;
 }
 .remix-bg-opacity {
-  background: rgba(248, 250, 254, 0.80) !important; 
+  background: rgba(248, 250, 254, 0.80) !important;
 }
 
 .plugins-list-header {

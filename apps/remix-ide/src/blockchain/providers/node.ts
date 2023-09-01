@@ -30,7 +30,7 @@ export class NodeProvider {
   }
 
   async resetEnvironment () {
-     /* Do nothing. */
+    /* Do nothing. */
   }
 
   async getBalanceInEther (address) {

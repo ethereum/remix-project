@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useRef, useContext } from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
+import React, {useEffect, useRef, useContext} from 'react'
+import {FormattedMessage, useIntl} from 'react-intl'
 import PluginButton from './pluginButton'
-import { ThemeContext } from '../themeContext'
+import {ThemeContext} from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 import CustomNavButtons from './customNavButtons'
@@ -12,34 +12,33 @@ declare global {
     _paq: any
   }
 }
-const _paq = window._paq = window._paq || [] //eslint-disable-line
-interface  HomeTabFeaturedPluginsProps {
+const _paq = (window._paq = window._paq || []) //eslint-disable-line
+interface HomeTabFeaturedPluginsProps {
   plugin: any
 }
 
-function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
-
+function HomeTabFeaturedPlugins({plugin}: HomeTabFeaturedPluginsProps) {
   const themeFilter = useContext(ThemeContext)
   const carouselRef = useRef<any>({})
   const carouselRefDiv = useRef(null)
   const intl = useIntl()
 
   useEffect(() => {
-    document.addEventListener("wheel", handleScroll)
+    document.addEventListener('wheel', handleScroll)
     return () => {
-      document.removeEventListener("wheel", handleScroll)
+      document.removeEventListener('wheel', handleScroll)
     }
   }, [])
 
   function isDescendant(parent, child) {
-    let node = child.parentNode;
+    let node = child.parentNode
     while (node != null) {
       if (node === parent) {
-        return true;
+        return true
       }
-      node = node.parentNode;
+      node = node.parentNode
     }
-    return false;
+    return false
   }
 
   const handleScroll = (e) => {
@@ -47,11 +46,11 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
       e.stopPropagation()
       let nextSlide = 0
       if (e.wheelDelta < 0) {
-        nextSlide = carouselRef.current.state.currentSlide + 1;
+        nextSlide = carouselRef.current.state.currentSlide + 1
         if (Math.abs(carouselRef.current.state.transform) >= carouselRef.current.containerRef.current.scrollWidth - carouselRef.current.state.containerWidth) return
         carouselRef.current.goToSlide(nextSlide)
       } else {
-        nextSlide = carouselRef.current.state.currentSlide - 1;
+        nextSlide = carouselRef.current.state.currentSlide - 1
         if (nextSlide < 0) nextSlide = 0
         carouselRef.current.goToSlide(nextSlide)
       }
@@ -63,20 +62,20 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
     plugin.verticalIcons.select('solidity')
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solidity'])
   }
-  const startOneClickDapp = async () => {
-    await plugin.appManager.activatePlugin('oneClickDapp')
-    plugin.verticalIcons.select('oneClickDapp')
-    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'oneClickDapp'])
-  }
-  const startSolhint = async () => {
-    await plugin.appManager.activatePlugin(['solidity', 'solhint'])
-    plugin.verticalIcons.select('solhint')
-    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solhint'])
+  const startCodeAnalyzer = async () => {
+    await plugin.appManager.activatePlugin(['solidity', 'solidityStaticAnalysis'])
+    plugin.verticalIcons.select('solidityStaticAnalysis')
+    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solidityStaticAnalysis'])
   }
   const startSourceVerify = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'sourcify'])
     plugin.verticalIcons.select('sourcify')
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'sourcify'])
+  }
+  const startCookbook = async () => {
+    await plugin.appManager.activatePlugin(['cookbookdev'])
+    plugin.verticalIcons.select('cookbook.dev')
+    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'cookbook.dev'])
   }
   const startSolidityUnitTesting = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'solidityUnitTesting'])
@@ -84,87 +83,77 @@ function HomeTabFeaturedPlugins ({plugin}: HomeTabFeaturedPluginsProps) {
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solidityUnitTesting'])
   }
 
-  const startDgit = async () => {
-    await plugin.appManager.activatePlugin('dgit')
-    plugin.verticalIcons.select('dgit')
-    _paq.push(['tracEvent', 'hometabActivate', 'userActivate', 'dgit'])
-  }
-
   return (
     <div className="pl-2 w-100" id="hTFeaturedPlugins">
-      <label className="" style={{fontSize: "1.2rem"}}><FormattedMessage id='home.featuredPlugins' /></label>
+      <label className="" style={{fontSize: '1.2rem'}}>
+        <FormattedMessage id="home.featuredPlugins" />
+      </label>
       <div ref={carouselRefDiv} className="w-100 d-flex flex-column">
-        <ThemeContext.Provider value={ themeFilter }>
+        <ThemeContext.Provider value={themeFilter}>
           <Carousel
             ref={carouselRef}
             focusOnSelect={true}
-            customButtonGroup={
-              <CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} parent={carouselRef} />
-            }
+            customButtonGroup={<CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} parent={carouselRef} />}
             arrows={false}
             swipeable={false}
             draggable={true}
             showDots={false}
-            responsive={
-              {
-                superLargeDesktop: {
-                  breakpoint: { max: 4000, min: 3000 },
-                  items: itemsToShow
-                },
-                desktop: {
-                  breakpoint: { max: 3000, min: 1024 },
-                  items: itemsToShow
-                }
+            responsive={{
+              superLargeDesktop: {
+                breakpoint: {max: 4000, min: 3000},
+                items: itemsToShow
+              },
+              desktop: {
+                breakpoint: {max: 3000, min: 1024},
+                items: itemsToShow
               }
-            }
+            }}
             renderButtonGroupOutside={true}
             ssr={true} // means to render carousel on server-side.
             keyBoardControl={true}
             containerClass="carousel-container"
-            deviceType={"desktop"}
+            deviceType={'desktop'}
             itemClass="w-100"
           >
+            <PluginButton
+              imgPath="assets/img/staticAnalysis.webp"
+              envID="staticAnalysisLogo"
+              envText="Solidity Analyzers"
+              description={intl.formatMessage({
+                id: 'home.codeAnalyizerPluginDesc'
+              })}
+              remixMaintained={true}
+              callback={() => startCodeAnalyzer()}
+            />
+            <PluginButton
+              imgPath="assets/img/cookbook.webp"
+              envID="cookbookLogo"
+              envText="Cookbook"
+              description={intl.formatMessage({id: 'home.cookbookDesc'})}
+              remixMaintained={false}
+              callback={() => startCookbook()}
+            />
             <PluginButton
               imgPath="assets/img/solidityLogo.webp"
               envID="solidityLogo"
               envText="Solidity"
-              description={intl.formatMessage({ id: 'home.solidityPluginDesc' })}
+              description={intl.formatMessage({id: 'home.solidityPluginDesc'})}
               remixMaintained={true}
               callback={() => startSolidity()}
-            />
-            <PluginButton
-              imgPath="assets/img/solhintLogo.webp"
-              envID="solhintLogo" envText="Solhint linter"
-              description={intl.formatMessage({ id: 'home.solhintPluginDesc' })}
-              callback={() => startSolhint()}
             />
             <PluginButton
               imgPath="assets/img/sourcifyNewLogo.webp"
               envID="sourcifyLogo"
               envText="Sourcify"
-              description={intl.formatMessage({ id: 'home.sourcifyPluginDesc' })}
+              description={intl.formatMessage({id: 'home.sourcifyPluginDesc'})}
               callback={() => startSourceVerify()}
-            />
-            <PluginButton
-              imgPath="assets/img/dgit.webp"
-              envID="dgitLogo"
-              envText="Dgit"
-              description={intl.formatMessage({ id: 'home.dgitPluginDesc' })}
-              remixMaintained={true}
-              callback={() => startDgit()}
-            />
-            <PluginButton
-              imgPath="assets/img/oneclickdapp.webp"
-              envID="oneClickDappLogo"
-              envText="OneClickDapp"
-              description={intl.formatMessage({ id: 'home.oneClickDappDesc' })}
-              callback={() => startOneClickDapp()}
             />
             <PluginButton
               imgPath="assets/img/unitTesting.webp"
               envID="sUTLogo"
               envText="Solidity unit testing"
-              description={intl.formatMessage({ id: 'home.unitTestPluginDesc' })}
+              description={intl.formatMessage({id: 'home.unitTestPluginDesc'})}
+              remixMaintained={true}
               callback={() => startSolidityUnitTesting()}
             />
           </Carousel>

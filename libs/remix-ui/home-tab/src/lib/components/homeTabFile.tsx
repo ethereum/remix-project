@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useRef, useReducer } from 'react'
-import { FormattedMessage } from 'react-intl'
-import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
-import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
-const _paq = window._paq = window._paq || [] // eslint-disable-line
-import { CustomTooltip } from '@remix-ui/helper';
+import React, {useState, useRef, useReducer} from 'react'
+import {FormattedMessage} from 'react-intl'
+import {ModalDialog} from '@remix-ui/modal-dialog' // eslint-disable-line
+import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
+const _paq = (window._paq = window._paq || []) // eslint-disable-line
+import {CustomTooltip} from '@remix-ui/helper'
 
-interface  HomeTabFileProps {
+interface HomeTabFileProps {
   plugin: any
 }
 
@@ -17,20 +17,30 @@ const loadingInitialState = {
 }
 
 const loadingReducer = (state = loadingInitialState, action) => {
-  return { ...state, tooltip: action.tooltip, showModalDialog: false, importSource: '' }
+  return {
+    ...state,
+    tooltip: action.tooltip,
+    showModalDialog: false,
+    importSource: ''
+  }
 }
 
-function HomeTabFile ({plugin}: HomeTabFileProps) {
+function HomeTabFile({plugin}: HomeTabFileProps) {
   const [state, setState] = useState<{
-    searchInput: string,
-    showModalDialog: boolean,
-    modalInfo: { title: string, loadItem: string, examples: Array<string>, prefix?: string },
-    importSource: string,
+    searchInput: string
+    showModalDialog: boolean
+    modalInfo: {
+      title: string
+      loadItem: string
+      examples: Array<string>
+      prefix?: string
+    }
+    importSource: string
     toasterMsg: string
   }>({
     searchInput: '',
     showModalDialog: false,
-    modalInfo: { title: '', loadItem: '', examples: [], prefix: '' },
+    modalInfo: {title: '', loadItem: '', examples: [], prefix: ''},
     importSource: '',
     toasterMsg: ''
   })
@@ -45,14 +55,14 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
     const workspace = plugin.fileManager.getProvider('workspace')
     const startsWith = state.importSource.substring(0, 4)
 
-    if ((type === 'ipfs' || type === 'IPFS') && (startsWith !== 'ipfs' && startsWith !== "IPFS")) {
-      setState(prevState => {
-        return { ...prevState, importSource: startsWith + state.importSource}
+    if ((type === 'ipfs' || type === 'IPFS') && startsWith !== 'ipfs' && startsWith !== 'IPFS') {
+      setState((prevState) => {
+        return {...prevState, importSource: startsWith + state.importSource}
       })
     }
     contentImport.import(
       state.modalInfo.prefix + state.importSource,
-      (loadingMsg) => dispatch({ tooltip: loadingMsg }),
+      (loadingMsg) => dispatch({tooltip: loadingMsg}),
       async (error, content, cleanUrl, type, url) => {
         if (error) {
           toast(error.message || error)
@@ -69,14 +79,14 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
         }
       }
     )
-    setState(prevState => {
-      return { ...prevState, showModalDialog: false, importSource: '' }
+    setState((prevState) => {
+      return {...prevState, showModalDialog: false, importSource: ''}
     })
   }
 
   const toast = (message: string) => {
-    setState(prevState => {
-      return { ...prevState, toasterMsg: message }
+    setState((prevState) => {
+      return {...prevState, toasterMsg: message}
     })
   }
 
@@ -102,90 +112,135 @@ function HomeTabFile ({plugin}: HomeTabFileProps) {
   }
 
   const showFullMessage = (title: string, loadItem: string, examples: Array<string>, prefix = '') => {
-    setState(prevState => {
-      return { ...prevState, showModalDialog: true, modalInfo: { title: title, loadItem: loadItem, examples: examples, prefix } }
+    setState((prevState) => {
+      return {
+        ...prevState,
+        showModalDialog: true,
+        modalInfo: {
+          title: title,
+          loadItem: loadItem,
+          examples: examples,
+          prefix
+        }
+      }
     })
   }
 
-  const hideFullMessage = () => { //eslint-disable-line
-    setState(prevState => {
-      return { ...prevState, showModalDialog: false, importSource: '' }
+  const hideFullMessage = () => {
+    //eslint-disable-line
+    setState((prevState) => {
+      return {...prevState, showModalDialog: false, importSource: ''}
     })
   }
 
-  const examples = state.modalInfo.examples.map((urlEl, key) => (<div key={key} className="p-1 user-select-auto"><a>{urlEl}</a></div>))
+  const examples = state.modalInfo.examples.map((urlEl, key) => (
+    <div key={key} className="p-1 user-select-auto">
+      <a>{urlEl}</a>
+    </div>
+  ))
 
   return (
     <>
       <ModalDialog
-        id='homeTab'
-        title={ 'Import from ' + state.modalInfo.title }
-        okLabel='Import'
-        hide={ !state.showModalDialog }
-        handleHide={ () => hideFullMessage() }
-        okFn={ () => processLoading(state.modalInfo.title) }
+        id="homeTab"
+        title={'Import from ' + state.modalInfo.title}
+        okLabel="Import"
+        hide={!state.showModalDialog}
+        handleHide={() => hideFullMessage()}
+        okFn={() => processLoading(state.modalInfo.title)}
       >
         <div className="p-2 user-select-auto">
-          { state.modalInfo.loadItem !== '' && <span>Enter the { state.modalInfo.loadItem } you would like to load.</span> }
-          { state.modalInfo.examples.length !== 0 &&
-          <>
-            <div>e.g</div>
-            <div>
-              { examples }
-            </div>
-          </> }
+          {state.modalInfo.loadItem !== '' && <span>Enter the {state.modalInfo.loadItem} you would like to load.</span>}
+          {state.modalInfo.examples.length !== 0 && (
+            <>
+              <div>e.g</div>
+              <div>{examples}</div>
+            </>
+          )}
           <div className="d-flex flex-row">
-            { state.modalInfo.prefix && <span className='text-nowrap align-self-center mr-2'>ipfs://</span> }
+            {state.modalInfo.prefix && <span className="text-nowrap align-self-center mr-2">ipfs://</span>}
             <input
-            ref={inputValue}
-            type='text'
-            name='prompt_text'
-            id='inputPrompt_text'
-            className="w-100 mt-1 form-control"
-            data-id="homeTabModalDialogCustomPromptText"
-            value={state.importSource}
-            onInput={(e) => {
-              setState(prevState => {
-                return { ...prevState, importSource: inputValue.current.value }
-              })
-            }}
-          />
+              ref={inputValue}
+              type="text"
+              name="prompt_text"
+              id="inputPrompt_text"
+              className="w-100 mt-1 form-control"
+              data-id="homeTabModalDialogCustomPromptText"
+              value={state.importSource}
+              onInput={(e) => {
+                setState((prevState) => {
+                  return {...prevState, importSource: inputValue.current.value}
+                })
+              }}
+            />
           </div>
         </div>
       </ModalDialog>
       <Toaster message={state.toasterMsg} />
       <div className="justify-content-start mt-1 p-2 d-flex flex-column" id="hTFileSection">
-        <label style={{fontSize: "1.2rem"}}><FormattedMessage id='home.files' /></label>
+        <label style={{fontSize: '1.2rem'}}>
+          <FormattedMessage id="home.files" />
+        </label>
         <div className="dflex">
-          <button className="btn btn-primary p-2 mr-2 border my-1" data-id="homeTabNewFile" style={{width: 'fit-content'}} onClick={() => createNewFile()}><FormattedMessage id='home.newFile' /></button>
-          <label className="btn p-2 mr-2 border my-1" style={{width: 'fit-content', cursor: 'pointer'}} htmlFor="openFileInput"><FormattedMessage id='home.openFile' /></label>
-          <input title="open file" type="file" id="openFileInput" onChange={(event) => {
-            event.stopPropagation()
-            plugin.verticalIcons.select('filePanel')
-            uploadFile(event.target)
-          }} multiple />
+          <button className="btn btn-primary p-2 mr-2 border my-1" data-id="homeTabNewFile" style={{width: 'fit-content'}} onClick={() => createNewFile()}>
+            <FormattedMessage id="home.newFile" />
+          </button>
+          <label className="btn p-2 mr-2 border my-1" style={{width: 'fit-content', cursor: 'pointer'}} htmlFor="openFileInput">
+            <FormattedMessage id="home.openFile" />
+          </label>
+          <input
+            title="open file"
+            type="file"
+            id="openFileInput"
+            onChange={(event) => {
+              event.stopPropagation()
+              plugin.verticalIcons.select('filePanel')
+              uploadFile(event.target)
+            }}
+            multiple
+          />
           <CustomTooltip
             placement={'top'}
             tooltipId="overlay-tooltip"
             tooltipClasses="text-nowrap"
-            tooltipText={"Connect to Localhost"}
+            tooltipText={'Connect to Localhost'}
             tooltipTextClasses="border bg-light text-dark p-1 pr-3"
           >
-            <button className="btn p-2 border my-1" style={{width: 'fit-content'}} onClick={() => connectToLocalhost()}><FormattedMessage id='home.connectToLocalhost' /></button>
+            <button className="btn p-2 border my-1" style={{width: 'fit-content'}} onClick={() => connectToLocalhost()}>
+              <FormattedMessage id="home.connectToLocalhost" />
+            </button>
           </CustomTooltip>
         </div>
-        <label style={{fontSize: "0.8rem"}} className="pt-2"><FormattedMessage id='home.loadFrom' /></label>
+        <label style={{fontSize: '0.8rem'}} className="pt-2">
+          <FormattedMessage id="home.loadFrom" />
+        </label>
         <div className="d-flex">
           <button
             className="btn p-2 border mr-2"
             data-id="landingPageImportFromGitHubButton"
-            onClick={() => showFullMessage('GitHub', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}
+            onClick={() =>
+              showFullMessage('GitHub', 'github URL', [
+                'https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol',
+                'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'
+              ])
+            }
           >
             GitHub
           </button>
-          <button className="btn p-2 border mr-2" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>Gist</button>
-          <button className="btn p-2 border mr-2" onClick={() => showFullMessage('Ipfs', 'ipfs hash', ['ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH'], "ipfs://")}>IPFS</button> 
-          <button className="btn p-2 border" onClick={() => showFullMessage('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])}>HTTPS</button>
+          <button className="btn p-2 border mr-2" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
+            Gist
+          </button>
+          <button className="btn p-2 border mr-2" onClick={() => showFullMessage('Ipfs', 'ipfs hash', ['ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH'], 'ipfs://')}>
+            IPFS
+          </button>
+          <button
+            className="btn p-2 border"
+            onClick={() =>
+              showFullMessage('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])
+            }
+          >
+            HTTPS
+          </button>
         </div>
       </div>
     </>

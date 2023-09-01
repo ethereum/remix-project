@@ -295,27 +295,27 @@ export class Compiler {
         return
       }
       switch (data.cmd) {
-        case 'versionLoaded':
-          if (data.data) this.onCompilerLoaded(data.data, data.license)
-          break
-        case 'compiled':
-          {
-            let result: CompilationResult
-            if (data.data && data.job !== undefined && data.job >= 0) {
-              try {
-                result = JSON.parse(data.data)
-              } catch (exception) {
-                result = { error: { formattedMessage: 'Invalid JSON output from the compiler: ' + exception } }
-              }
-              let sources: SourceWithTarget = {}
-              if (data.job in jobs !== undefined) {
-                sources = jobs[data.job].sources
-                delete jobs[data.job]
-              }
-              this.onCompilationFinished(result, data.missingInputs, sources, data.input, this.state.currentVersion)
-            }
-            break
+      case 'versionLoaded':
+        if (data.data) this.onCompilerLoaded(data.data, data.license)
+        break
+      case 'compiled':
+      {
+        let result: CompilationResult
+        if (data.data && data.job !== undefined && data.job >= 0) {
+          try {
+            result = JSON.parse(data.data)
+          } catch (exception) {
+            result = { error: { formattedMessage: 'Invalid JSON output from the compiler: ' + exception } }
           }
+          let sources: SourceWithTarget = {}
+          if (data.job in jobs !== undefined) {
+            sources = jobs[data.job].sources
+            delete jobs[data.job]
+          }
+          this.onCompilationFinished(result, data.missingInputs, sources, data.input, this.state.currentVersion)
+        }
+        break
+      }
       }
 
     })
@@ -367,20 +367,6 @@ export class Compiler {
 
   gatherImports(files: Source, importHints?: string[], cb?: gatherImportsCallbackInterface): void {
     importHints = importHints || []
-    // FIXME: This will only match imports if the file begins with one '.'
-    // It should tokenize by lines and check each.
-    const importRegex = /^\s*import\s*['"]([^'"]+)['"];/g
-    for (const fileName in files) {
-      let match: RegExpExecArray | null
-      while ((match = importRegex.exec(files[fileName].content))) {
-        let importFilePath = match[1]
-        if (importFilePath.startsWith('./')) {
-          const path: RegExpExecArray | null = /(.*\/).*/.exec(fileName)
-          importFilePath = path ? importFilePath.replace('./', path[1]) : importFilePath.slice(2)
-        }
-        if (!importHints.includes(importFilePath)) importHints.push(importFilePath)
-      }
-    }
     while (importHints.length > 0) {
       const m: string = importHints.pop() as string
       if (m && m in files) continue

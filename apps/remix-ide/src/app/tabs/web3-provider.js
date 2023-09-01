@@ -60,8 +60,8 @@ export class Web3ProviderModule extends Plugin {
             reject(new Error('User denied permission'))
           }
         }).catch((e) => {
-          reject(e)
-        })
+        reject(e)
+      })
     })
   }
 
