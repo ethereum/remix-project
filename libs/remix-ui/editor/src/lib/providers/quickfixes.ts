@@ -113,5 +113,11 @@ export default {
       message: 'abstract ',
       nodeType: 'ContractDefinition'
     }
+  ],
+  'ParserError: Source file requires different compiler version (current compiler' : [
+    {
+      id: 7,
+      nodeType: 'PragmaDirective'
+    }
   ]
 }
