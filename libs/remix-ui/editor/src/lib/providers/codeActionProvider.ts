@@ -78,7 +78,7 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
                 const endIndex = error.message.indexOf('+')
                 const msg = error.message.substring(startIndex + 2, endIndex)
                 this.addQuickFix(actions, error, model.uri, {
-                  title: `update pragma to ${msg}`,
+                  title: `Update pragma to ${msg}`,
                   range: error,
                   text: 'pragma solidity' + msg + ';'
                 })
