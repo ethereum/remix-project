@@ -55,7 +55,6 @@ export default {
       {
         id: 2,
         title: 'Add Solidity pragma',
-        message: 'pragma solidity ^0.*.*;',
         nodeType: 'PragmaDirective',
         range: {
           startLineNumber: 2,
@@ -105,6 +104,14 @@ export default {
       title: "Add mutability 'pure'",
       message: 'pure ',
       nodeType: 'FunctionDefinition'
+    }
+  ],
+  'should be marked as abstract': [
+    {
+      id: 6,
+      title: "Add 'abstract' to contract",
+      message: 'abstract ',
+      nodeType: 'ContractDefinition'
     }
   ]
 }
