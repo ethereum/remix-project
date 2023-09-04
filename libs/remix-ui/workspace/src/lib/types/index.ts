@@ -5,16 +5,27 @@ import { fileDecoration } from '@remix-ui/file-decorators'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
 import { ViewPlugin } from '@remixproject/engine-web'
 
-export type action = { name: string, type?: Array<'folder' | 'gist' | 'file' | 'workspace'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean, group: number }
+export type action = {
+  name: string
+  type?: Array<'folder' | 'gist' | 'file' | 'workspace'>
+  path?: string[]
+  extension?: string[]
+  pattern?: string[]
+  id: string
+  multiselect: boolean
+  label: string
+  sticky?: boolean
+  group: number
+}
 export interface JSONStandardInput {
-  language: "Solidity";
-  settings?: any,
+  language: 'Solidity'
+  settings?: any
   sources: {
     [globalName: string]: {
-      keccak256?: string;
-      content: string;
-    },
-  };
+      keccak256?: string
+      content: string
+    }
+  }
 }
 export type MenuItems = action[]
 export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721'
@@ -38,161 +49,161 @@ export interface Modal {
 }
 
 export interface FileType {
-  path: string,
-  name: string,
-  isDirectory: boolean,
-  type: 'folder' | 'file' | 'gist',
+  path: string
+  name: string
+  isDirectory: boolean
+  type: 'folder' | 'file' | 'gist'
   child?: File[]
 }
 
 export interface FilePanelType extends ViewPlugin {
-    setWorkspace: ({ name, isLocalhost }, setEvent: boolean) => void,
-    createWorkspace: (name: string, workspaceTemplateName: string) => void,
-    renameWorkspace: (oldName: string, newName: string) => void
-    compileContractForUml: (path: string) => void
-    workspaceRenamed: ({ name }) => void,
-    workspaceCreated: ({ name }) => void,
-    workspaceDeleted: ({ name }) => void,
-    workspace?: any // workspace provider,
-    browser?: any // browser provider
-    localhost?: any // localhost provider
-    fileManager? : any
-    appManager: RemixAppManager
-    registry?: any // registry
-    pluginApi?: any
-    request: {
-      createWorkspace: () => void,
-      setWorkspace: (workspaceName: string) => void,
-      createNewFile: () => void,
-      uploadFile: (target: EventTarget & HTMLInputElement) => void,
-      getCurrentWorkspace: () => void
-    } // api request,
-    workspaces: any,
-    registeredMenuItems: MenuItems // menu items
-    removedMenuItems: MenuItems
-    initialWorkspace: string,
-    resetNewFile: () => void,
-    getWorkspaces: () => string[]
-  }
+  setWorkspace: ({ name, isLocalhost }, setEvent: boolean) => void
+  createWorkspace: (name: string, workspaceTemplateName: string) => void
+  renameWorkspace: (oldName: string, newName: string) => void
+  compileContractForUml: (path: string) => void
+  workspaceRenamed: ({ name }) => void
+  workspaceCreated: ({ name }) => void
+  workspaceDeleted: ({ name }) => void
+  workspace?: any // workspace provider,
+  browser?: any // browser provider
+  localhost?: any // localhost provider
+  fileManager?: any
+  appManager: RemixAppManager
+  registry?: any // registry
+  pluginApi?: any
+  request: {
+    createWorkspace: () => void
+    setWorkspace: (workspaceName: string) => void
+    createNewFile: () => void
+    uploadFile: (target: EventTarget & HTMLInputElement) => void
+    getCurrentWorkspace: () => void
+  } // api request,
+  workspaces: any
+  registeredMenuItems: MenuItems // menu items
+  removedMenuItems: MenuItems
+  initialWorkspace: string
+  resetNewFile: () => void
+  getWorkspaces: () => string[]
+}
 
 /* eslint-disable-next-line */
 export interface FileExplorerProps {
-    name: string,
-    menuItems?: string[],
-    contextMenuItems: MenuItems,
-    removedContextMenuItems: MenuItems,
-    files: { [x: string]: Record<string, FileType> },
-    workspaceState: WorkSpaceState,
-    fileState: fileDecoration[],
-    expandPath: string[],
-    focusEdit: string,
-    hideIconsMenu: React.Dispatch<React.SetStateAction<boolean>>,
-    showIconsMenu: boolean,
-    focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[],
-    dispatchCreateNewFile: (path: string, rootDir: string) => Promise<void>,
-    // eslint-disable-next-line no-undef
-    modal:(title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
-    dispatchCreateNewFolder: (path: string, rootDir: string) => Promise<void>,
-    readonly: boolean,
-    toast: (toasterMsg: string) => void,
-    dispatchDeletePath: (path: string[]) => Promise<void>,
-    dispatchRenamePath: (oldPath: string, newPath: string) => Promise<void>,
-    dispatchDownloadPath: (path: string) => Promise<void>,
-    dispatchUploadFile: (target?: React.SyntheticEvent, targetFolder?: string) => Promise<void>,
-    dispatchUploadFolder: (target?: React.SyntheticEvent, targetFolder?: string) => Promise<void>,
-    dispatchCopyFile: (src: string, dest: string) => Promise<void>,
-    dispatchCopyFolder: (src: string, dest: string) => Promise<void>,
-    dispatchRunScript: (path: string) => Promise<void>,
-    dispatchPublishToGist: (path?: string, type?: string) => Promise<void>,
-    dispatchEmitContextMenuEvent: (cmd: customAction) => Promise<void>,
-    dispatchHandleClickFile: (path: string, type: 'file' | 'folder' | 'gist') => Promise<void>,
-    dispatchSetFocusElement: (elements: { key: string, type: 'file' | 'folder' | 'gist' }[]) => Promise<void>,
-    dispatchFetchDirectory:(path: string) => Promise<void>,
-    dispatchRemoveInputField:(path: string) => Promise<void>,
-    dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,
-    dispatchHandleExpandPath: (paths: string[]) => Promise<void>,
-    dispatchMoveFile: (src: string, dest: string) => Promise<void>,
-    dispatchMoveFolder: (src: string, dest: string) => Promise<void>,
-    handlePasteClick: (dest: string, destType: string) => void
-    handleCopyClick: (path: string, type: 'folder' | 'gist' | 'file' | 'workspace') => void
-    addMenuItems: (items: MenuItems) => void
-    removeMenuItems: (items: MenuItems) => void
-    handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
-    uploadFile: (target) => void
-    uploadFolder: (target) => void
-    getFocusedFolder: () => string
-    editModeOn: (path: string, type: string, isNew: boolean) => void
-    toGist: (path?: string, type?: string) => void
-    handleNewFileInput: (parentFolder?: string) => Promise<void>
-    handleNewFolderInput: (parentFolder?: string) => Promise<void>
+  name: string
+  menuItems?: string[]
+  contextMenuItems: MenuItems
+  removedContextMenuItems: MenuItems
+  files: { [x: string]: Record<string, FileType> }
+  workspaceState: WorkSpaceState
+  fileState: fileDecoration[]
+  expandPath: string[]
+  focusEdit: string
+  hideIconsMenu: React.Dispatch<React.SetStateAction<boolean>>
+  showIconsMenu: boolean
+  focusElement: { key: string; type: 'file' | 'folder' | 'gist' }[]
+  dispatchCreateNewFile: (path: string, rootDir: string) => Promise<void>
+  // eslint-disable-next-line no-undef
+  modal: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void
+  dispatchCreateNewFolder: (path: string, rootDir: string) => Promise<void>
+  readonly: boolean
+  toast: (toasterMsg: string) => void
+  dispatchDeletePath: (path: string[]) => Promise<void>
+  dispatchRenamePath: (oldPath: string, newPath: string) => Promise<void>
+  dispatchDownloadPath: (path: string) => Promise<void>
+  dispatchUploadFile: (target?: React.SyntheticEvent, targetFolder?: string) => Promise<void>
+  dispatchUploadFolder: (target?: React.SyntheticEvent, targetFolder?: string) => Promise<void>
+  dispatchCopyFile: (src: string, dest: string) => Promise<void>
+  dispatchCopyFolder: (src: string, dest: string) => Promise<void>
+  dispatchRunScript: (path: string) => Promise<void>
+  dispatchPublishToGist: (path?: string, type?: string) => Promise<void>
+  dispatchEmitContextMenuEvent: (cmd: customAction) => Promise<void>
+  dispatchHandleClickFile: (path: string, type: 'file' | 'folder' | 'gist') => Promise<void>
+  dispatchSetFocusElement: (elements: { key: string; type: 'file' | 'folder' | 'gist' }[]) => Promise<void>
+  dispatchFetchDirectory: (path: string) => Promise<void>
+  dispatchRemoveInputField: (path: string) => Promise<void>
+  dispatchAddInputField: (path: string, type: 'file' | 'folder') => Promise<void>
+  dispatchHandleExpandPath: (paths: string[]) => Promise<void>
+  dispatchMoveFile: (src: string, dest: string) => Promise<void>
+  dispatchMoveFolder: (src: string, dest: string) => Promise<void>
+  handlePasteClick: (dest: string, destType: string) => void
+  handleCopyClick: (path: string, type: 'folder' | 'gist' | 'file' | 'workspace') => void
+  addMenuItems: (items: MenuItems) => void
+  removeMenuItems: (items: MenuItems) => void
+  handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
+  uploadFile: (target) => void
+  uploadFolder: (target) => void
+  getFocusedFolder: () => string
+  editModeOn: (path: string, type: string, isNew: boolean) => void
+  toGist: (path?: string, type?: string) => void
+  handleNewFileInput: (parentFolder?: string) => Promise<void>
+  handleNewFolderInput: (parentFolder?: string) => Promise<void>
 }
 type Placement = import('react-overlays/usePopper').Placement
 export interface FileExplorerMenuProps {
-    title: string,
-    menuItems: string[],
-    createNewFile: (folder?: string) => void,
-    createNewFolder: (parentFolder?: string) => void,
-    publishToGist: (path?: string) => void,
-    uploadFile: (target: EventTarget & HTMLInputElement) => void
-    uploadFolder: (target: EventTarget & HTMLInputElement) => void
-    tooltipPlacement?: Placement
+  title: string
+  menuItems: string[]
+  createNewFile: (folder?: string) => void
+  createNewFolder: (parentFolder?: string) => void
+  publishToGist: (path?: string) => void
+  uploadFile: (target: EventTarget & HTMLInputElement) => void
+  uploadFolder: (target: EventTarget & HTMLInputElement) => void
+  tooltipPlacement?: Placement
 }
 export interface FileExplorerContextMenuProps {
-    actions: action[],
-    createNewFile: (folder?: string) => void,
-    createNewFolder: (parentFolder?: string) => void,
-    deletePath: (path: string | string[]) => void,
-    renamePath: (path: string, type: string) => void,
-    downloadPath: (path: string) => void,
-    hideContextMenu: () => void,
-    publishToGist?: (path?: string, type?: string) => void,
-    pushChangesToGist?: (path?: string, type?: string) => void,
-    publishFolderToGist?: (path?: string, type?: string) => void,
-    publishFileToGist?: (path?: string, type?: string) => void,
-    runScript?: (path: string) => void,
-    emit?: (cmd: customAction) => void,
-    pageX: number,
-    pageY: number,
-    path: string,
-    type: string,
-    focus: {key:string, type:string}[],
-    onMouseOver?: (...args) => void,
-    copy?: (path: string, type: string) => void,
-    paste?: (destination: string, type: string) => void
-    copyFileName?: (path: string, type: string) => void
-    copyPath?: (path: string, type: string) => void
-    generateUml?: (path: string) => Promise<void>
-    uploadFile?: (target: EventTarget & HTMLInputElement) => void
+  actions: action[]
+  createNewFile: (folder?: string) => void
+  createNewFolder: (parentFolder?: string) => void
+  deletePath: (path: string | string[]) => void
+  renamePath: (path: string, type: string) => void
+  downloadPath: (path: string) => void
+  hideContextMenu: () => void
+  publishToGist?: (path?: string, type?: string) => void
+  pushChangesToGist?: (path?: string, type?: string) => void
+  publishFolderToGist?: (path?: string, type?: string) => void
+  publishFileToGist?: (path?: string, type?: string) => void
+  runScript?: (path: string) => void
+  emit?: (cmd: customAction) => void
+  pageX: number
+  pageY: number
+  path: string
+  type: string
+  focus: { key: string; type: string }[]
+  onMouseOver?: (...args) => void
+  copy?: (path: string, type: string) => void
+  paste?: (destination: string, type: string) => void
+  copyFileName?: (path: string, type: string) => void
+  copyPath?: (path: string, type: string) => void
+  generateUml?: (path: string) => Promise<void>
+  uploadFile?: (target: EventTarget & HTMLInputElement) => void
 }
 
 export interface WorkSpaceState {
-    ctrlKey: boolean
-    newFileName: string
-    actions: {
-      id: string
-      name: string
-      type?: Array<'folder' | 'gist' | 'file' | 'workspace'>
-      path?: string[]
-      extension?: string[]
-      pattern?: string[]
-      multiselect: boolean
-      label: string,
-      group: number
-    }[]
-    focusContext: FileFocusContextType
-    focusEdit: {
-      element: string
-      type: string
-      isNew: boolean
-      lastEdit: string
-    }
-    mouseOverElement: string
-    showContextMenu: boolean
-    reservedKeywords: string[]
-    copyElement: CopyElementType[]
+  ctrlKey: boolean
+  newFileName: string
+  actions: {
+    id: string
+    name: string
+    type?: Array<'folder' | 'gist' | 'file' | 'workspace'>
+    path?: string[]
+    extension?: string[]
+    pattern?: string[]
+    multiselect: boolean
+    label: string
+    group: number
+  }[]
+  focusContext: FileFocusContextType
+  focusEdit: {
+    element: string
+    type: string
+    isNew: boolean
+    lastEdit: string
   }
+  mouseOverElement: string
+  showContextMenu: boolean
+  reservedKeywords: string[]
+  copyElement: CopyElementType[]
+}
 
-export type  FileFocusContextType = {
+export type FileFocusContextType = {
   element: string
   x: number
   y: number
