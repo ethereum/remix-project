@@ -29,6 +29,7 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
           lineNumber: error.startLineNumber,
           column: error.startColumn
         })
+        console.log('cursorPosition------>', cursorPosition)
         const nodeAtPosition = await this.props.plugin.call('codeParser', 'definitionAtPosition', cursorPosition)
         console.log('nodeAtPosition------>', nodeAtPosition)
         console.log('error------>', error)
@@ -69,6 +70,16 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
                 title: fix.title,
                 range: fix.range,
                 text: msg
+              })
+            } else if (fix.id === 7) {
+              // To update pragma same as selected compiler version
+              const startIndex = error.message.indexOf('is')
+              const endIndex = error.message.indexOf('+')
+              const msg = error.message.substring(startIndex + 2, endIndex)
+              this.addQuickFix(actions, error, model.uri, {
+                title: `update pragma to ${msg}`,
+                range: error,
+                text: 'pragma solidity' + msg + ';'
               })
             } else
               this.addQuickFix(actions, error, model.uri, {
