@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {useState, useRef, useReducer, useEffect} from 'react'
-import {FormattedMessage} from 'react-intl'
-import {ModalDialog} from '@remix-ui/modal-dialog' // eslint-disable-line
-import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
-const _paq = window._paq = window._paq || [] // eslint-disable-line
-import {CustomTooltip} from '@remix-ui/helper';
-import {TEMPLATE_NAMES} from '@remix-ui/workspace'
+import React, { useState, useRef, useReducer, useEffect } from 'react'
+import { FormattedMessage } from 'react-intl'
+import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
+import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
+const _paq = (window._paq = window._paq || []) // eslint-disable-line
+import { CustomTooltip } from '@remix-ui/helper'
+import { TEMPLATE_NAMES } from '@remix-ui/workspace'
 
-interface  HomeTabFileProps {
+interface HomeTabFileProps {
   plugin: any
 }
 
 const loadingInitialState = {
   tooltip: '',
   showModalDialog: false,
-  importSource: ''
+  importSource: '',
 }
 
 const loadingReducer = (state = loadingInitialState, action) => {
@@ -22,34 +22,34 @@ const loadingReducer = (state = loadingInitialState, action) => {
     ...state,
     tooltip: action.tooltip,
     showModalDialog: false,
-    importSource: ''
+    importSource: '',
   }
 }
 
-function HomeTabFile({plugin}: HomeTabFileProps) {
+function HomeTabFile({ plugin }: HomeTabFileProps) {
   const [state, setState] = useState<{
-    searchInput: string,
-    showModalDialog: boolean,
+    searchInput: string
+    showModalDialog: boolean
     modalInfo: {
-      title: string,
-      loadItem: string,
-      examples: Array<string>,
+      title: string
+      loadItem: string
+      examples: Array<string>
       prefix?: string
-    },
-    importSource: string,
-    toasterMsg: string,
+    }
+    importSource: string
+    toasterMsg: string
     recentWorkspaces: {
-      first: string,
-      second: string,
+      first: string
+      second: string
       third: string
     }
   }>({
     searchInput: '',
     showModalDialog: false,
-    modalInfo: {title: '', loadItem: '', examples: [], prefix: ''},
+    modalInfo: { title: '', loadItem: '', examples: [], prefix: '' },
     importSource: '',
     toasterMsg: '',
-    recentWorkspaces: {first: '', second: '', third: ''}
+    recentWorkspaces: { first: '', second: '', third: '' },
   })
 
   const [, dispatch] = useReducer(loadingReducer, loadingInitialState)
@@ -60,37 +60,36 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
     plugin.on('filePanel', 'setWorkspace', async () => {
       let recents = JSON.parse(localStorage.getItem('recentWorkspaces'))
 
-      if (!recents) recents = {first:'', second: '', third: ''}
-      setState(prevState => {
+      if (!recents) recents = { first: '', second: '', third: '' }
+      setState((prevState) => {
         return { ...prevState, recentWorkspaces: { first: recents.first, second: recents.second, third: recents.third } }
       })
     })
 
-    const updateWorkspaceName = (name, newName = '') => {
+    const deleteSavedWorkspace = (name) => {
+      console.log('deleted ', name)
       let recents = JSON.parse(localStorage.getItem('recentWorkspaces'))
       const newRecents = recents
       if (!recents) {
-        recents = {first:'', second: '', third: ''}
+        recents = { first: '', second: '', third: '' }
       } else {
-        Object.keys(recents).map(key => {
-          if (recents[key] === name) newRecents[key] = newName
+        Object.keys(recents).map((key) => {
+          if (recents[key] === name) newRecents[key] = ''
         })
+        localStorage.setItem('recentWorkspaces', JSON.stringify(newRecents))
       }
-      setState(prevState => {
+      setState((prevState) => {
         return { ...prevState, recentWorkspaces: { first: newRecents.first, second: newRecents.second, third: newRecents.third } }
       })
     }
     plugin.on('filePanel', 'workspaceDeleted', async (deletedName) => {
-      updateWorkspaceName(deletedName)
-    })
-    plugin.on('filePanel', 'workspaceRenamed', async (name, newName) => {
-      updateWorkspaceName(name, newName)
+      deleteSavedWorkspace(deletedName)
     })
     return () => {
       plugin.off('filePanel', 'setWorkspace')
       plugin.off('filePanel', 'workspaceDeleted')
     }
-  }, [state.recentWorkspaces])
+  }, [plugin])
 
   const processLoading = (type: string) => {
     _paq.push(['trackEvent', 'hometab', 'filesSection', 'importFrom' + type])
@@ -100,12 +99,12 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
 
     if ((type === 'ipfs' || type === 'IPFS') && startsWith !== 'ipfs' && startsWith !== 'IPFS') {
       setState((prevState) => {
-        return {...prevState, importSource: startsWith + state.importSource}
+        return { ...prevState, importSource: startsWith + state.importSource }
       })
     }
     contentImport.import(
       state.modalInfo.prefix + state.importSource,
-      (loadingMsg) => dispatch({tooltip: loadingMsg}),
+      (loadingMsg) => dispatch({ tooltip: loadingMsg }),
       async (error, content, cleanUrl, type, url) => {
         if (error) {
           toast(error.message || error)
@@ -123,13 +122,13 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
       }
     )
     setState((prevState) => {
-      return {...prevState, showModalDialog: false, importSource: ''}
+      return { ...prevState, showModalDialog: false, importSource: '' }
     })
   }
 
   const toast = (message: string) => {
     setState((prevState) => {
-      return {...prevState, toasterMsg: message}
+      return { ...prevState, toasterMsg: message }
     })
   }
 
@@ -139,7 +138,7 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
 
     const wName = 'Playground'
     const workspaces = await plugin.call('filePanel', 'getWorkspaces')
-    if (!workspaces.find(workspace => workspace.name === wName)) {
+    if (!workspaces.find((workspace) => workspace.name === wName)) {
       await plugin.call('filePanel', 'createWorkspace', wName, 'remixDefault')
     }
     await plugin.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
@@ -154,7 +153,7 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
       }
     }
     `
-    const {newPath} = await plugin.call('fileManager', 'writeFileNoRewrite', '/contracts/helloWorld.sol', content)
+    const { newPath } = await plugin.call('fileManager', 'writeFileNoRewrite', '/contracts/helloWorld.sol', content)
     await plugin.call('fileManager', 'open', newPath)
   }
   const uploadFile = async (target) => {
@@ -181,8 +180,8 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
           title: title,
           loadItem: loadItem,
           examples: examples,
-          prefix
-        }
+          prefix,
+        },
       }
     })
   }
@@ -190,19 +189,20 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
   const hideFullMessage = () => {
     //eslint-disable-line
     setState((prevState) => {
-      return {...prevState, showModalDialog: false, importSource: ''}
+      return { ...prevState, showModalDialog: false, importSource: '' }
     })
   }
 
   const handleSwichToRecentWorkspace = async (e, workspaceName) => {
-    e.preventDefault();
+    e.preventDefault()
     await plugin.call('filePanel', 'switchToWorkspace', { name: workspaceName, isLocalhost: false })
   }
 
   const examples = state.modalInfo.examples.map((urlEl, key) => (
     <div key={key} className="p-1 user-select-auto">
       <a>{urlEl}</a>
-    </div>))
+    </div>
+  ))
 
   return (
     <>
@@ -233,7 +233,7 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
               data-id="homeTabModalDialogCustomPromptText"
               value={state.importSource}
               onInput={(e) => {
-                setState(prevState => {
+                setState((prevState) => {
                   return { ...prevState, importSource: inputValue.current.value }
                 })
               }}
@@ -243,16 +243,28 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
       </ModalDialog>
       <Toaster message={state.toasterMsg} />
       <div className="justify-content-start mt-1 p-2 d-flex flex-column" id="hTFileSection">
-        <label style={{fontSize: "1.2rem"}}><FormattedMessage id='home.files' /></label>
+        <label style={{ fontSize: '1.2rem' }}>
+          <FormattedMessage id="home.files" />
+        </label>
         <div className="d-flex flex-column">
-          <div className='d-flex flex-row'>
-            <button className="btn btn-primary p-2 mr-2 border my-1" data-id="homeTabStartCoding" style={{width: 'fit-content'}} onClick={() => startCoding()}><FormattedMessage id='home.startCoding' /></button>
-            <label className="btn text-nowrap p-2 mr-2 border my-1" style={{width: 'fit-content', cursor: 'pointer'}} htmlFor="openFileInput"><FormattedMessage id='home.openFile' /></label>
-            <input title="open file" type="file" id="openFileInput" onChange={(event) => {
-              event.stopPropagation()
-              plugin.verticalIcons.select('filePanel')
-              uploadFile(event.target)
-            }} multiple />
+          <div className="d-flex flex-row">
+            <button className="btn btn-primary text-nowrap p-2 mr-2 border my-1" data-id="homeTabStartCoding" style={{ width: 'fit-content' }} onClick={() => startCoding()}>
+              <FormattedMessage id="home.startCoding" />
+            </button>
+            <label className="btn text-nowrap p-2 mr-2 border my-1" style={{ width: 'fit-content', cursor: 'pointer' }} htmlFor="openFileInput">
+              <FormattedMessage id="home.openFile" />
+            </label>
+            <input
+              title="open file"
+              type="file"
+              id="openFileInput"
+              onChange={(event) => {
+                event.stopPropagation()
+                plugin.verticalIcons.select('filePanel')
+                uploadFile(event.target)
+              }}
+              multiple
+            />
             <CustomTooltip
               placement={'top'}
               tooltipId="overlay-tooltip"
@@ -290,30 +302,32 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
               </button>
             </CustomTooltip>
           </div>
-          { !(state.recentWorkspaces.first == '' &&
-              state.recentWorkspaces.second == '' &&
-              state.recentWorkspaces.third == '') && 
-            <div className='d-flex flex-column'>
-            <label style={{fontSize: "0.8rem"}} className='mt-3'>Recent workspaces</label>
-            {(state.recentWorkspaces.first !== 'undefined' && state.recentWorkspaces.first !== '') && <a
-              className='cursor-pointer mb-1 ml-2'
-              href="#"
-              onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces.first)}>{state.recentWorkspaces.first}
-            </a> }
-            {(state.recentWorkspaces.second !== 'undefined' && state.recentWorkspaces.second !== '') && <a
-              className='cursor-pointer mb-1 ml-2'
-              href="#"
-              onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces.second)}>{state.recentWorkspaces.second}
-            </a> }
-            {(state.recentWorkspaces.third !== 'undefined' && state.recentWorkspaces.third !== '') && <a
-              className='cursor-pointer ml-2'
-              href="#"
-              onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces.third)}>{state.recentWorkspaces.third}
-            </a> }
+          {!(state.recentWorkspaces.first == '' && state.recentWorkspaces.second == '' && state.recentWorkspaces.third == '') && (
+            <div className="d-flex flex-column">
+              <label style={{ fontSize: '0.8rem' }} className="mt-3">
+                Recent workspaces
+              </label>
+              {state.recentWorkspaces.first !== 'undefined' && state.recentWorkspaces.first !== '' && (
+                <a className="cursor-pointer mb-1 ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces.first)}>
+                  {state.recentWorkspaces.first}
+                </a>
+              )}
+              {state.recentWorkspaces.second !== 'undefined' && state.recentWorkspaces.second !== '' && (
+                <a className="cursor-pointer mb-1 ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces.second)}>
+                  {state.recentWorkspaces.second}
+                </a>
+              )}
+              {state.recentWorkspaces.third !== 'undefined' && state.recentWorkspaces.third !== '' && (
+                <a className="cursor-pointer ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces.third)}>
+                  {state.recentWorkspaces.third}
+                </a>
+              )}
             </div>
-          }
+          )}
         </div>
-        <label style={{fontSize: "0.8rem"}} className="pt-3"><FormattedMessage id='home.loadFrom' /></label>
+        <label style={{ fontSize: '0.8rem' }} className="pt-3">
+          <FormattedMessage id="home.loadFrom" />
+        </label>
         <div className="d-flex">
           <button
             className="btn p-2 border mr-2"
@@ -321,7 +335,7 @@ function HomeTabFile({plugin}: HomeTabFileProps) {
             onClick={() =>
               showFullMessage('GitHub', 'github URL', [
                 'https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol',
-                'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'
+                'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol',
               ])
             }
           >
