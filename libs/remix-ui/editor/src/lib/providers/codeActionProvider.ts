@@ -29,10 +29,7 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
           lineNumber: error.startLineNumber,
           column: error.startColumn
         })
-        console.log('cursorPosition------>', cursorPosition)
         const nodeAtPosition = await this.props.plugin.call('codeParser', 'definitionAtPosition', cursorPosition)
-        console.log('nodeAtPosition------>', nodeAtPosition)
-        console.log('error------>', error)
         // Check if a function is hovered
         if (nodeAtPosition && nodeAtPosition.nodeType === 'FunctionDefinition') {
           // Identify type of AST node
@@ -49,18 +46,9 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
               text: msg
             })
           }
-        } else if (nodeAtPosition && nodeAtPosition.nodeType === 'ContractDefinition') {
-          for (const fix of fixes) {
-            const lineContent: string = model.getValueInRange(error)
-            this.addQuickFix(actions, error, model.uri, {
-              title: fix.title,
-              range: error,
-              text: fix.message + lineContent
-            })
-          }
         } else {
           for (const fix of fixes) {
-            if (fix && nodeAtPosition && fix.nodeType !== nodeAtPosition.nodeType) continue
+            if (fix && nodeAtPosition && fix.nodeType && fix.nodeType !== nodeAtPosition.nodeType) continue
             if (fix.id === 2) {
               // To add specific pragma based on error
               const startIndex = error.message.indexOf('pragma')
@@ -70,6 +58,13 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
                 title: fix.title,
                 range: fix.range,
                 text: msg
+              })
+            } else if (fix.id === 6) {
+              const lineContent: string = model.getValueInRange(error)
+              this.addQuickFix(actions, error, model.uri, {
+                title: fix.title,
+                range: error,
+                text: fix.message + lineContent
               })
             } else if (fix.id === 7) {
               // To update pragma same as selected compiler version
