@@ -49,39 +49,48 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
         } else {
           for (const fix of fixes) {
             if (fix && nodeAtPosition && fix.nodeType && fix.nodeType !== nodeAtPosition.nodeType) continue
-            if (fix.id === 2) {
-              // To add specific pragma based on error
-              const startIndex = error.message.indexOf('pragma')
-              const endIndex = error.message.indexOf(';')
-              const msg = error.message.substring(startIndex, endIndex + 1)
-              this.addQuickFix(actions, error, model.uri, {
-                title: fix.title,
-                range: fix.range,
-                text: msg
-              })
-            } else if (fix.id === 6) {
-              const lineContent: string = model.getValueInRange(error)
-              this.addQuickFix(actions, error, model.uri, {
-                title: fix.title,
-                range: error,
-                text: fix.message + lineContent
-              })
-            } else if (fix.id === 7) {
-              // To update pragma same as selected compiler version
-              const startIndex = error.message.indexOf('is')
-              const endIndex = error.message.indexOf('+')
-              const msg = error.message.substring(startIndex + 2, endIndex)
-              this.addQuickFix(actions, error, model.uri, {
-                title: `update pragma to ${msg}`,
-                range: error,
-                text: 'pragma solidity' + msg + ';'
-              })
-            } else
-              this.addQuickFix(actions, error, model.uri, {
-                title: fix.title,
-                range: fix.range || error,
-                text: fix.message
-              })
+            switch (fix.id) {
+              case 2: {
+                // To add specific pragma based on error
+                const startIndex = error.message.indexOf('pragma')
+                const endIndex = error.message.indexOf(';')
+                const msg = error.message.substring(startIndex, endIndex + 1)
+                this.addQuickFix(actions, error, model.uri, {
+                  title: fix.title,
+                  range: fix.range,
+                  text: msg
+                })
+                break
+              }
+              case 6: {
+                // To add `abstract` in the contract
+                const lineContent: string = model.getValueInRange(error)
+                this.addQuickFix(actions, error, model.uri, {
+                  title: fix.title,
+                  range: error,
+                  text: fix.message + lineContent
+                })
+                break
+              }
+              case 7: {
+                // To update pragma same as selected compiler version
+                const startIndex = error.message.indexOf('is')
+                const endIndex = error.message.indexOf('+')
+                const msg = error.message.substring(startIndex + 2, endIndex)
+                this.addQuickFix(actions, error, model.uri, {
+                  title: `update pragma to ${msg}`,
+                  range: error,
+                  text: 'pragma solidity' + msg + ';'
+                })
+                break
+              }
+              default:
+                this.addQuickFix(actions, error, model.uri, {
+                  title: fix.title,
+                  range: fix.range || error,
+                  text: fix.message
+                })
+            }
           }
         }
       }
