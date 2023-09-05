@@ -106,9 +106,25 @@ export default {
       nodeType: 'FunctionDefinition'
     }
   ],
-  'should be marked as abstract': [
+  'TypeError: Trying to override non-virtual function. Did you forget to add "virtual"':[
     {
       id: 6,
+      title: "Add 'virtual' to function",
+      message: 'virtual ',
+      nodeType: 'FunctionDefinition'
+    }
+  ],
+  'TypeError: Overriding function is missing "override" specifier':[
+    {
+      id: 7,
+      title: "Add 'override' to function",
+      message: 'override ',
+      nodeType: 'FunctionDefinition'
+    }
+  ],
+  'should be marked as abstract': [
+    {
+      id: 8,
       title: "Add 'abstract' to contract",
       message: 'abstract ',
       nodeType: 'ContractDefinition'
