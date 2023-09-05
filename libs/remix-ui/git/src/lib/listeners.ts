@@ -145,13 +145,13 @@ export const loadFiles = async (filepaths: string[] = null) => {
         console.error(e);
     }
     try {
-        //await gitlog();
+        await gitlog();
     } catch (e) { }
     try {
-        //await getBranches();
+        await getBranches();
     } catch (e) { }
     try {
-        //await getRemotes();
+        await getRemotes();
     } catch (e) { }
     try {
         //await getStorageUsed();

@@ -1,6 +1,6 @@
 import {Monaco} from '@monaco-editor/react'
 import monaco from '../../types/monaco'
-import {EditorUIProps} from '../remix-ui-editor'
+import {EditorUIProps} from '../types'
 import {default as fixesList} from './quickfixes'
 
 export class RemixCodeActionProvider implements monaco.languages.CodeActionProvider {

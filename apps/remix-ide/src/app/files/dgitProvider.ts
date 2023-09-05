@@ -141,12 +141,12 @@ class DGitProvider extends Plugin {
   }
 
   async log(cmd) {
-    //console.log(cmd)
+    console.log('log', cmd)
     const status = await git.log({
       ...await this.getGitConfig(),
       ...cmd,
     })
-    //console.log(status)
+    console.log('log', status)
     //const tree = await git.readTree({
     //  ...await this.getGitConfig(),
     //  oid: status[0].oid
@@ -236,10 +236,12 @@ class DGitProvider extends Plugin {
   }
 
   async currentbranch(config): Promise<branch> {
+    console.log('currentbranch', config)
     try {
       const defaultConfig = await this.getGitConfig()
       const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
       const name = await git.currentBranch(cmd)
+      console.log('current branch', name)
       let remote: remote = undefined
       try {
         const remoteName = await git.getConfig({
@@ -269,6 +271,7 @@ class DGitProvider extends Plugin {
   }
 
   async branches(config): Promise<branch[]> {
+    console.log('branches', config)
     try {
       const defaultConfig = await this.getGitConfig()
       const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig

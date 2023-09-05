@@ -56,6 +56,7 @@ export const GitUI = (props: IGitUi) => {
             await plugin.call('fileDecorator', 'clearFileDecorators')
             await setModifiedDecorator(gitState.modified)
             await setUntrackedDecorator(gitState.untracked)
+            await getGitHubUser()
         }
 
         setTimeout(() => {

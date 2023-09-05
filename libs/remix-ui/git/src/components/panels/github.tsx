@@ -13,7 +13,8 @@ export const GitHubAuth = () => {
   const [gitHubResponse, setGitHubResponse] = React.useState<any>(null)
   const [authorized, setAuthorized] = React.useState<boolean>(false)
 
-
+  
+  
   const getDeviceCodeFromGitHub = async () => {
 
     setAuthorized(false)
@@ -79,13 +80,17 @@ export const GitHubAuth = () => {
   }
 
   useEffect(() => {
+
+  },[])
+
+  useEffect(() => {
     console.log('context.rateLimit', context.rateLimit)
   }, [context.rateLimit])
 
 
   return (
     <>
-      {(!gitHubResponse) &&
+      {(context.gitHubUser && context.gitHubUser.login) ? null :
         <button className='btn btn-primary mt-1 w-100' onClick={async () => {
           getDeviceCodeFromGitHub();
         }}>Login in with github</button>
@@ -110,18 +115,16 @@ export const GitHubAuth = () => {
           }}>Connect</button>
         </div>
       }
-      {false &&
+      {
+        (context.gitHubUser && context.gitHubUser.login) ?
         <div className="pt-2">
           <button className='btn btn-primary mt-1 w-100' onClick={async () => {
             disconnect()
           }}>Disconnect</button>
-          <button className='btn btn-primary mt-1 w-100' onClick={async () => {
-            checkConnection()
-          }}>Check GitHub Connection</button>
-        </div>
+        </div>: null
       }
       {
-        context.gitHubUser && context.gitHubUser.login &&
+        (context.gitHubUser && context.gitHubUser.login) ?
         <div className="pt-2">
           <Card>
             <Card.Body>
@@ -132,7 +135,7 @@ export const GitHubAuth = () => {
               </Card.Text>
             </Card.Body>
           </Card>
-        </div>
+        </div>: null
       }
 
 

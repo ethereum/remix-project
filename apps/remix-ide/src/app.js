@@ -410,7 +410,8 @@ class AppComponent {
       'blockchain',
       'fetchAndCompile',
       'contentImport',
-      'gistHandler'
+      'gistHandler',
+      'dGitProvider'
     ])
     await this.appManager.activatePlugin(['settings'])
     await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder', 'dgit'])

@@ -42,10 +42,13 @@ export const setPlugin = (p: ViewPlugin, dispatcher: React.Dispatch<gitActionDis
 }
 
 export const getBranches = async () => {
+    console.log('getBranches')
     const branches = await plugin.call("dGitProvider", "branches");
+    console.log('branches :>>', branches)
     dispatch(setBranches(branches));
 }
 export const getRemotes = async () => {
+    console.log('getRemotes')
     const remotes = await plugin.call("dGitProvider", "remotes" as any);
     console.log('remotes :>>', remotes)
     dispatch(setRemotes(remotes));
@@ -76,6 +79,7 @@ export const getFileStatusMatrix = async (filepaths: string[]) => {
 
 export const getCommits = async () => {
     //Utils.log("get commits");
+    console.log('getCommits')
     try {
         const commits: ReadCommitResult[] = await plugin.call(
             "dGitProvider",
