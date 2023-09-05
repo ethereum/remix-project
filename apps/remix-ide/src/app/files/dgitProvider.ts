@@ -29,7 +29,7 @@ const profile = {
   description: 'Decentralized git provider',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
-  methods: ['init', 'localStorageUsed', 'getCommitChanges', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'repositories', 'remotebranches', 'getGitHubUser'],
+  methods: ['init', 'localStorageUsed', 'getCommitChanges', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'repositories', 'remotebranches', 'remotecommits', 'getGitHubUser'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
@@ -493,10 +493,26 @@ class DGitProvider extends Plugin {
     console.log('rate limit', localResetTimeString)
 
     const user = await octokit.request('GET /user')
+
     return {
       user: user.data,
       ratelimit: ratelimit.data
     }
+  }
+
+  async remotecommits(input: { owner: string, repo: string, token: string, branch: string }): Promise<Endpoints["GET /repos/{owner}/{repo}/commits"]["response"]["data"]> {
+    const octokit = new Octokit({
+      auth: input.token
+    })
+
+    const data = await octokit.request('GET /repos/{owner}/{repo}/commits', {
+      owner: input.owner,
+      repo: input.repo,
+      sha: input.branch,
+      per_page: 100
+    })
+
+    return data.data
   }
 
 

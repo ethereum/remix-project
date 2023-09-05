@@ -32,143 +32,142 @@ export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 export const loaderContext = React.createContext<loaderState>(defaultLoaderState)
 
 interface IGitUi {
-    plugin: ViewPlugin
+  plugin: ViewPlugin
 }
 
 export const GitUI = (props: IGitUi) => {
-    const plugin = props.plugin
-    const [gitState, gitDispatch] = useReducer(gitReducer, defaultGitState)
-    const [loaderState, loaderDispatch] = useReducer(loaderReducer, defaultLoaderState)
-    const [activePanel, setActivePanel] = useState<string>("0");
-    const [timeOut, setTimeOut] = useState<number>(null)
+  const plugin = props.plugin
+  const [gitState, gitDispatch] = useReducer(gitReducer, defaultGitState)
+  const [loaderState, loaderDispatch] = useReducer(loaderReducer, defaultLoaderState)
+  const [activePanel, setActivePanel] = useState<string>("0");
+  const [timeOut, setTimeOut] = useState<number>(null)
 
-    useEffect(() => {
-        setCallBacks(plugin, gitDispatch, loaderDispatch)
-        setPlugin(plugin, gitDispatch, loaderDispatch)
-        console.log(props)
-    }, [])
+  useEffect(() => {
+    setCallBacks(plugin, gitDispatch, loaderDispatch)
+    setPlugin(plugin, gitDispatch, loaderDispatch)
+    console.log(props)
+  }, [])
 
-    useEffect(() => {
-        
-
-        async function setDecorators(gitState: gitState)  {
-            console.log(gitState.fileStatusResult)
-            await plugin.call('fileDecorator', 'clearFileDecorators')
-            await setModifiedDecorator(gitState.modified)
-            await setUntrackedDecorator(gitState.untracked)
-            await getGitHubUser()
-        }
-
-        setTimeout(() => {
-            setDecorators(gitState), timeOut
-        })
+  useEffect(() => {
 
 
-    }, [gitState.fileStatusResult])
-
-
-    const gitActionsProviderValue = {
-        commit,
-        addall,
-        add,
-        checkoutfile,
-        rm,
-        checkout,
-        createBranch,
-        clone,
-        repositories,
-        remoteBranches,
-        getCommitChanges,
-        getBranchCommits,
-        diff,
-        resolveRef,
-        setUpstreamRemote,
-        getGitHubUser,
-        getBranches,
-        getRemotes
+    async function setDecorators(gitState: gitState) {
+      console.log(gitState.fileStatusResult)
+      await plugin.call('fileDecorator', 'clearFileDecorators')
+      await setModifiedDecorator(gitState.modified)
+      await setUntrackedDecorator(gitState.untracked)
     }
 
-    const pluginActionsProviderValue = {
-        statusChanged,
-        loadFiles,
-        openFile,
-        openDiff,
-        saveToken
-    }
-
-    return (
-        <div className="m-1">
-            <gitPluginContext.Provider value={gitState}>
-                <loaderContext.Provider value={loaderState}>
-                    <gitActionsContext.Provider value={gitActionsProviderValue}>
-                        <pluginActionsContext.Provider value={pluginActionsProviderValue}>
-                            {gitState.loading && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>}
-                            {!gitState.loading &&
-                                <Accordion activeKey={activePanel} defaultActiveKey="0">
-                                    <SourceControlNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
-
-                                    <Accordion.Collapse className='bg-light' eventKey="0">
-                                        <>
-                                            <CommitMessage />
-                                            <SourceControl />
-                                        </>
-                                    </Accordion.Collapse>
-                                    <hr></hr>
-                                    <CommandsNavigation eventKey="1" activePanel={activePanel} callback={setActivePanel} />
-                                    <Accordion.Collapse className='bg-light' eventKey="1">
-                                        <>
-                                            <Commands></Commands>
-                                        </>
-                                    </Accordion.Collapse>
-                                    <hr></hr>
-                                    <CommitslNavigation eventKey="3" activePanel={activePanel} callback={setActivePanel} />
-                                    <Accordion.Collapse className='bg-light' eventKey="3">
-                                        <>
-                                            <Commits />
-                                        </>
-                                    </Accordion.Collapse>
-                                    <hr></hr>
-                                    <BranchesNavigation eventKey="2" activePanel={activePanel} callback={setActivePanel} />
-                                    <Accordion.Collapse className='bg-light' eventKey="2">
-                                        <>
-                                            <Branches /></>
-                                    </Accordion.Collapse>
-                                    <hr></hr>
-                                    <CloneNavigation eventKey="4" activePanel={activePanel} callback={setActivePanel} />
-                                    <Accordion.Collapse className='bg-light' eventKey="4">
-                                        <>
-                                            <Clone /></>
-                                    </Accordion.Collapse>
-                                    <hr></hr>
-                                    <RemotesNavigation eventKey="5" activePanel={activePanel} callback={setActivePanel} />
-                                    <Accordion.Collapse className='bg-light' eventKey="5">
-                                        <>
-                                            <Remotes></Remotes>
-                                        </>
-                                    </Accordion.Collapse>
-                                    <hr></hr>
-                                    <SettingsNavigation eventKey="6" activePanel={activePanel} callback={setActivePanel} />
-                                    <Accordion.Collapse className='bg-light' eventKey="6">
-                                        <>
-                                            <Settings></Settings>
-                                        </>
-                                    </Accordion.Collapse>
-                                    <hr></hr>
-                                    <GitHubNavigation eventKey="7" activePanel={activePanel} callback={setActivePanel} />
-                                    <Accordion.Collapse className='bg-light' eventKey="7">
-                                        <>
-                                            <GitHubAuth></GitHubAuth>
-                                            <GitHubCredentials></GitHubCredentials>
-                                        </>
-                                    </Accordion.Collapse>
+    setTimeout(() => {
+      setDecorators(gitState), timeOut
+    })
 
 
+  }, [gitState.fileStatusResult])
 
-                                </Accordion>}
-                        </pluginActionsContext.Provider>
-                    </gitActionsContext.Provider>
-                </loaderContext.Provider>
-            </gitPluginContext.Provider>
-        </div>
-    )
+
+  const gitActionsProviderValue = {
+    commit,
+    addall,
+    add,
+    checkoutfile,
+    rm,
+    checkout,
+    createBranch,
+    clone,
+    repositories,
+    remoteBranches,
+    getCommitChanges,
+    getBranchCommits,
+    diff,
+    resolveRef,
+    setUpstreamRemote,
+    getGitHubUser,
+    getBranches,
+    getRemotes
+  }
+
+  const pluginActionsProviderValue = {
+    statusChanged,
+    loadFiles,
+    openFile,
+    openDiff,
+    saveToken
+  }
+
+  return (
+    <div className="m-1">
+      <gitPluginContext.Provider value={gitState}>
+        <loaderContext.Provider value={loaderState}>
+          <gitActionsContext.Provider value={gitActionsProviderValue}>
+            <pluginActionsContext.Provider value={pluginActionsProviderValue}>
+              {gitState.loading && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>}
+              {!gitState.loading &&
+                <Accordion activeKey={activePanel} defaultActiveKey="0">
+                  <SourceControlNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
+
+                  <Accordion.Collapse className='bg-light' eventKey="0">
+                    <>
+                      <CommitMessage />
+                      <SourceControl />
+                    </>
+                  </Accordion.Collapse>
+                  <hr></hr>
+                  <CommandsNavigation eventKey="1" activePanel={activePanel} callback={setActivePanel} />
+                  <Accordion.Collapse className='bg-light' eventKey="1">
+                    <>
+                      <Commands></Commands>
+                    </>
+                  </Accordion.Collapse>
+                  <hr></hr>
+                  <CommitslNavigation eventKey="3" activePanel={activePanel} callback={setActivePanel} />
+                  <Accordion.Collapse className='bg-light' eventKey="3">
+                    <>
+                      <Commits />
+                    </>
+                  </Accordion.Collapse>
+                  <hr></hr>
+                  <BranchesNavigation eventKey="2" activePanel={activePanel} callback={setActivePanel} />
+                  <Accordion.Collapse className='bg-light' eventKey="2">
+                    <>
+                      <Branches /></>
+                  </Accordion.Collapse>
+                  <hr></hr>
+                  <CloneNavigation eventKey="4" activePanel={activePanel} callback={setActivePanel} />
+                  <Accordion.Collapse className='bg-light' eventKey="4">
+                    <>
+                      <Clone /></>
+                  </Accordion.Collapse>
+                  <hr></hr>
+                  <RemotesNavigation eventKey="5" activePanel={activePanel} callback={setActivePanel} />
+                  <Accordion.Collapse className='bg-light' eventKey="5">
+                    <>
+                      <Remotes></Remotes>
+                    </>
+                  </Accordion.Collapse>
+                  <hr></hr>
+                  <SettingsNavigation eventKey="6" activePanel={activePanel} callback={setActivePanel} />
+                  <Accordion.Collapse className='bg-light' eventKey="6">
+                    <>
+                      <Settings></Settings>
+                    </>
+                  </Accordion.Collapse>
+                  <hr></hr>
+                  <GitHubNavigation eventKey="7" activePanel={activePanel} callback={setActivePanel} />
+                  <Accordion.Collapse className='bg-light' eventKey="7">
+                    <>
+                      <GitHubAuth></GitHubAuth>
+                      <GitHubCredentials></GitHubCredentials>
+                    </>
+                  </Accordion.Collapse>
+
+
+
+                </Accordion>}
+            </pluginActionsContext.Provider>
+          </gitActionsContext.Provider>
+        </loaderContext.Provider>
+      </gitPluginContext.Provider>
+    </div>
+  )
 }
