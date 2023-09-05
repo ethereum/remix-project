@@ -72,18 +72,6 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
               })
               break
             }
-            case 7: {
-              // To update pragma same as selected compiler version
-              const startIndex = error.message.indexOf('is')
-              const endIndex = error.message.indexOf('+')
-              const msg = error.message.substring(startIndex + 2, endIndex)
-              this.addQuickFix(actions, error, model.uri, {
-                title: `Update pragma to ${msg}`,
-                range: error,
-                text: 'pragma solidity' + msg + ';'
-              })
-              break
-            }
             default:
               this.addQuickFix(actions, error, model.uri, {
                 title: fix.title,
