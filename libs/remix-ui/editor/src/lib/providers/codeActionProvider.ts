@@ -62,7 +62,7 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
               })
               break
             }
-            case 6: {
+            case 8: {
               // To add `abstract` in the contract
               const lineContent: string = model.getValueInRange(error)
               this.addQuickFix(actions, error, model.uri, {
