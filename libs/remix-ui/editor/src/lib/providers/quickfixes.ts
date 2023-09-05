@@ -109,16 +109,16 @@ export default {
   'TypeError: Trying to override non-virtual function. Did you forget to add "virtual"':[
     {
       id: 6,
-      title: "Add 'virtual' to function",
-      message: 'virtual ',
+      title: "Add 'virtual' specifier",
+      message: 'virtual',
       nodeType: 'FunctionDefinition'
     }
   ],
   'TypeError: Overriding function is missing "override" specifier':[
     {
       id: 7,
-      title: "Add 'override' to function",
-      message: 'override ',
+      title: "Add 'override' specifier",
+      message: 'override',
       nodeType: 'FunctionDefinition'
     }
   ],
