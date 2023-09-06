@@ -838,7 +838,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             </button>
           </CustomTooltip>
         </div>
-        <div className="d-flex align-items-center ml-1 mr-3 pl-1  pb-2 mt-2 border-bottom">
+        <div className="d-flex align-items-center ml-1 mr-3 pl-1  pb-2 mt-2 border-bottom custom-control custom-checkbox">
           <input
             id="checkAllTests"
             className="custom-control-input"
