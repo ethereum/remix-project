@@ -145,16 +145,28 @@ export default {
   'TypeError: Data location must be "storage", "memory" or "calldata" for variable, but none was given.': [
     {
       id: 10.1,
-      title: "Add 'storage' to param",
+      title: "Add 'storage' to variable",
       message: ' storage '
     },
     {
       id: 10.2,
-      title: "Add 'memory' to param",
+      title: "Add 'memory' to variable",
       message: ' memory '
     },
     {
       id: 10.3,
+      title: "Add 'calldata' to variable",
+      message: ' calldata '
+    }
+  ],
+  'TypeError: Data location must be "memory" or "calldata" for parameter in function, but none was given.': [
+    {
+      id: 11.1,
+      title: "Add 'memory' to param",
+      message: ' memory '
+    },
+    {
+      id: 11.2,
       title: "Add 'calldata' to param",
       message: ' calldata '
     }
