@@ -12,7 +12,7 @@
 [![GitHub contributors](https://img.shields.io/github/contributors/ethereum/remix-project?style=flat&logo=github)](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md)
 [![Awesome Remix](https://img.shields.io/badge/Awesome--Remix-resources-green?logo=awesomelists)](https://github.com/ethereum/awesome-remix)
 ![GitHub](https://img.shields.io/github/license/ethereum/remix-project)
-[![Discord](https://img.shields.io/badge/discord-join%20chat-green.svg?style=flat&logo=discord)](https://discord.gg/q4vS2GVn)
+[![Discord](https://img.shields.io/badge/join-discord-brightgreen.svg?style=flat&logo=discord)](https://discord.gg/q4vS2GVn)
 [![Twitter Follow](https://img.shields.io/twitter/follow/ethereumremix?style=flat&logo=twitter&color=green)](https://twitter.com/ethereumremix)
 
 </div>
