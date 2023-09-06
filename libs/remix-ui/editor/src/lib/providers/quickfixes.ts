@@ -134,14 +134,29 @@ export default {
     {
       id: 9.1,
       title: "Add 'storage' to param",
-      message: ' storage ',
-      nodeType: 'ElementaryTypeName'
+      message: ' storage '
     },
     {
       id: 9.2,
       title: "Add 'memory' to param",
-      message: ' memory ',
-      nodeType: 'ElementaryTypeName'
+      message: ' memory '
+    }
+  ],
+  'TypeError: Data location must be "storage", "memory" or "calldata" for variable, but none was given.': [
+    {
+      id: 10.1,
+      title: "Add 'storage' to param",
+      message: ' storage '
+    },
+    {
+      id: 10.2,
+      title: "Add 'memory' to param",
+      message: ' memory '
+    },
+    {
+      id: 10.3,
+      title: "Add 'calldata' to param",
+      message: ' calldata '
     }
   ]
 }

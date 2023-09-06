@@ -75,7 +75,11 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
               break
             }
             case 9.1:
-            case 9.2: {
+            case 9.2:
+            case 10.1:
+            case 10.2: 
+            case 10.3: {
+              console.log('sssss')
               const lineContent: string = model.getValueInRange(error)
               const words = lineContent.split(' ')
               this.addQuickFix(actions, error, model.uri, {
