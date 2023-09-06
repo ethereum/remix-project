@@ -24,12 +24,14 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
       const errStrings: string[] = Object.keys(fixesList)
       const errStr: string = errStrings.find((es) => error.message.includes(es))
       if (errStr) {
+        console.log('error=========>', error)
         fixes = fixesList[errStr]
         const cursorPosition: number = this.props.editorAPI.getHoverPosition({
           lineNumber: error.startLineNumber,
           column: error.startColumn
         })
         const nodeAtPosition = await this.props.plugin.call('codeParser', 'definitionAtPosition', cursorPosition)
+        console.log('nodeAtPosition=========>', nodeAtPosition)
         // Check if a function is hovered
         if (nodeAtPosition && nodeAtPosition.nodeType === 'FunctionDefinition') {
           // Identify type of AST node
@@ -69,6 +71,17 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
                 title: fix.title,
                 range: error,
                 text: fix.message + lineContent
+              })
+              break
+            }
+            case 9.1:
+            case 9.2: {
+              const lineContent: string = model.getValueInRange(error)
+              const words = lineContent.split(' ')
+              this.addQuickFix(actions, error, model.uri, {
+                title: fix.title,
+                range: error,
+                text: words[0] + fix.message + words[1]
               })
               break
             }

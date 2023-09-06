@@ -129,5 +129,19 @@ export default {
       message: 'abstract ',
       nodeType: 'ContractDefinition'
     }
+  ],
+  'TypeError: Data location must be "storage" or "memory" for constructor parameter, but none was given.': [
+    {
+      id: 9.1,
+      title: "Add 'storage' to param",
+      message: ' storage ',
+      nodeType: 'ElementaryTypeName'
+    },
+    {
+      id: 9.2,
+      title: "Add 'memory' to param",
+      message: ' memory ',
+      nodeType: 'ElementaryTypeName'
+    }
   ]
 }
