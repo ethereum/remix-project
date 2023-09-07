@@ -872,6 +872,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
                   />
                   <label
                     data-id="singleTest"
+                    id={"id" + elemId}
                     className="singleTestLabel text-nowrap mb-0 form-check-label ml-4 custom-control-label text-nowrap"
                     htmlFor={elemId}
                     style={{ paddingTop: '0.125rem' }}
