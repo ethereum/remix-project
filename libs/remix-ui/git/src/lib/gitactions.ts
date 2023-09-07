@@ -419,11 +419,23 @@ export const remoteBranches = async (owner: string, repo: string) => {
   }
 }
 
-export const remoteCommits = async (owner: string, repo: string, branch: string) => {
+export const remoteCommits = async (url: string, branch: string, length: number) => {
+  const urlParts = url.split("/");
+  
+  console.log(urlParts, 'urlParts')
+  // check if it's github
+  if(!urlParts[urlParts.length - 3].includes('github')) {
+    return
+  }
+  
+  const owner = urlParts[urlParts.length - 2];
+  const repo = urlParts[urlParts.length - 1].split(".")[0];
+  
   try {
     const token = await tokenWarning();
     if (token) {
-      const commits = await plugin.call('dGitProvider' as any, 'remotecommits', { token, owner, repo, branch });
+      console.log(token, owner, repo, branch, length)
+      const commits = await plugin.call('dGitProvider' as any, 'remotecommits', { token, owner, repo, branch, length });
       console.log(commits, 'remote commits')
     }
   } catch (e) {

@@ -500,7 +500,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async remotecommits(input: { owner: string, repo: string, token: string, branch: string }): Promise<Endpoints["GET /repos/{owner}/{repo}/commits"]["response"]["data"]> {
+  async remotecommits(input: { owner: string, repo: string, token: string, branch: string, length: number }): Promise<Endpoints["GET /repos/{owner}/{repo}/commits"]["response"]["data"]> {
     const octokit = new Octokit({
       auth: input.token
     })
@@ -509,8 +509,9 @@ class DGitProvider extends Plugin {
       owner: input.owner,
       repo: input.repo,
       sha: input.branch,
-      per_page: 100
+      per_page: input.length
     })
+
 
     return data.data
   }

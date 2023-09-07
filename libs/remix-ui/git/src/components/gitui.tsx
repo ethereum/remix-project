@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState } from 'react'
-import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, getGitHubUser, getBranches, getRemotes } from '../lib/gitactions'
+import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, getGitHubUser, getBranches, getRemotes, remoteCommits } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
 import { openDiff, openFile, saveToken, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
@@ -52,18 +52,34 @@ export const GitUI = (props: IGitUi) => {
 
 
     async function setDecorators(gitState: gitState) {
-      console.log(gitState.fileStatusResult)
       await plugin.call('fileDecorator', 'clearFileDecorators')
       await setModifiedDecorator(gitState.modified)
       await setUntrackedDecorator(gitState.untracked)
     }
 
+    console.log('gitState.fileStatusResult', gitState.fileStatusResult)
+
     setTimeout(() => {
-      setDecorators(gitState), timeOut
+      setDecorators(gitState)
     })
 
 
   }, [gitState.fileStatusResult])
+
+  useEffect(() => {
+
+
+    async function updatestate(){
+      console.log('updatestate', gitState)
+      if(gitState.currentBranch.remote.url){
+        remoteCommits(gitState.currentBranch.remote.url, gitState.currentBranch.name, 1)
+      }
+    }
+    setTimeout(() => {
+      updatestate()
+    })
+    
+  }, [gitState.gitHubUser, gitState.currentBranch, gitState.remotes])
 
 
   const gitActionsProviderValue = {
