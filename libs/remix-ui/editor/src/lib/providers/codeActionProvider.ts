@@ -72,6 +72,23 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
               })
               break
             }
+            case 9.1:
+            case 9.2:
+            case 10.1:
+            case 10.2: 
+            case 10.3:
+            case 11.1:
+            case 11.2: {
+              // To add data location in constructor params, function params and variables
+              const lineContent: string = model.getValueInRange(error)
+              const words = lineContent.split(' ')
+              this.addQuickFix(actions, error, model.uri, {
+                title: fix.title,
+                range: error,
+                text: words[0] + fix.message + words[1]
+              })
+              break
+            }
             default:
               this.addQuickFix(actions, error, model.uri, {
                 title: fix.title,
