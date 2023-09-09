@@ -522,6 +522,20 @@ export function GetGlobalVariable(range: monacoTypes.IRange, monaco): monacoType
 export function GetGlobalFunctions(range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
   return [
     {
+      label: 'fallback',
+      kind: monaco.languages.CompletionItemKind.Function,
+      insertText: 'fallback() ${1:external} ${2:payable} { }',
+      insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+      range
+    },
+    {
+      label: 'receive',
+      kind: monaco.languages.CompletionItemKind.Function,
+      insertText: 'receive() ${1:external} ${2:payable} { }',
+      insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+      range
+    },
+    {
       detail: 'assert(bool condition): throws if the condition is not met - to be used for internal errors.',
       insertText: 'assert(${1:condition});',
       kind: monaco.languages.CompletionItemKind.Function,
