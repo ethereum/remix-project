@@ -477,7 +477,7 @@ export class CodeParser extends Plugin {
    */
   async definitionAtPosition(position: number) {
     const nodes = await this.nodesAtPosition(position)
-    let nodeDefinition = {
+    const nodeDefinition = {
       'ast': null,
       'parser': null
     }
@@ -528,7 +528,7 @@ export class CodeParser extends Plugin {
     }
 
     if (nodeDefinition.ast && !nodeDefinition.parser) {
-        return nodeDefinition.ast
+      return nodeDefinition.ast
     }
 
 
