@@ -482,7 +482,7 @@ export class CodeParser extends Plugin {
       'parser': null
     }
     let node: genericASTNode
-    if (nodes && nodes.length && !this.errorState) {
+    if (nodes && nodes.length) {
       node = nodes[nodes.length - 1]
       let astNodeDefinition = node
       if (!isNodeDefinition(node)) {
@@ -524,6 +524,11 @@ export class CodeParser extends Plugin {
     if (nodeDefinition.ast && nodeDefinition.parser) {
       if (nodeDefinition.ast.name === nodeDefinition.parser.name && nodeDefinition.ast.nodeType === nodeDefinition.parser.type) {
         return nodeDefinition.ast
+      }else{
+        // if there is a difference and the compiler has compiled correctly assume the ast node is the definition
+        if(this.compilerService.errorState === false){
+          return nodeDefinition.ast
+        }
       }
     }
 
