@@ -126,7 +126,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       }else{
         _paq.push(['trackEvent', 'Storage', 'error', `Workspace in localstorage not found: ${localStorage.getItem("currentWorkspace")}`])
         await basicWorkspaceInit(workspaces, workspaceProvider)
-      } 
+      }
     } else {
       await basicWorkspaceInit(workspaces, workspaceProvider)
     }
@@ -142,9 +142,11 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
 }
 
 export const fetchDirectory = async (path: string) => {
+  console.trace()
   const provider = plugin.fileManager.currentFileProvider()
   const promise = new Promise((resolve) => {
     provider.resolveDirectory(path, (error, fileTree) => {
+      console.log({ fileTree })
       if (error) console.error(error)
 
       resolve(fileTree)

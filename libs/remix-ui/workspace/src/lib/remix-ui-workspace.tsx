@@ -1020,6 +1020,7 @@ export function Workspace() {
                     dispatchHandleClickFile={global.dispatchHandleClickFile}
                     dispatchSetFocusElement={global.dispatchSetFocusElement}
                     dispatchFetchDirectory={global.dispatchFetchDirectory}
+                    dispatchDirectoriesSort={global.dispatchDirectoriesSort}
                     dispatchRemoveInputField={global.dispatchRemoveInputField}
                     dispatchAddInputField={global.dispatchAddInputField}
                     dispatchHandleExpandPath={global.dispatchHandleExpandPath}
@@ -1078,6 +1079,7 @@ export function Workspace() {
                     dispatchHandleClickFile={global.dispatchHandleClickFile}
                     dispatchSetFocusElement={global.dispatchSetFocusElement}
                     dispatchFetchDirectory={global.dispatchFetchDirectory}
+                    dispatchDirectoriesSort={global.dispatchDirectoriesSort}
                     dispatchRemoveInputField={global.dispatchRemoveInputField}
                     dispatchAddInputField={global.dispatchAddInputField}
                     dispatchHandleExpandPath={global.dispatchHandleExpandPath}

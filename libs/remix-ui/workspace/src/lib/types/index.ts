@@ -108,6 +108,7 @@ export interface FileExplorerProps {
     dispatchHandleClickFile: (path: string, type: 'file' | 'folder' | 'gist') => Promise<void>,
     dispatchSetFocusElement: (elements: { key: string, type: 'file' | 'folder' | 'gist' }[]) => Promise<void>,
     dispatchFetchDirectory:(path: string) => Promise<void>,
+    dispatchDirectoriesSort: (files: { [x: string]: Record<string, FileType> } | any, direction?: 'asc' | 'desc') => Promise<any>,
     dispatchRemoveInputField:(path: string) => Promise<void>,
     dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,
     dispatchHandleExpandPath: (paths: string[]) => Promise<void>,
