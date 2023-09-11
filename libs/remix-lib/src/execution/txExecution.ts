@@ -173,3 +173,77 @@ export function checkVMError (execResult, compiledContracts) {
   ret.message = `${error}\n${exceptionError}\n${msg}\nDebug the transaction to get more information.`
   return ret
 }
+
+export function checkInjectedError (errorObj, compiledContracts) {
+  if (errorObj.error === 'execution reverted') {
+    const returnData = errorObj.errorData
+    const returnDataHex = returnData.slice(2, 10)
+    let customError
+    let msg = errorObj.error
+    if (compiledContracts) {
+      let decodedCustomErrorInputsClean
+      for (const file of Object.keys(compiledContracts)) {
+        for (const contractName of Object.keys(compiledContracts[file])) {
+          const contract = compiledContracts[file][contractName]
+          for (const item of contract.abi) {
+            if (item.type === 'error') {
+              // ethers doesn't crash anymore if "error" type is specified, but it doesn't extract the errors. see:
+              // https://github.com/ethers-io/ethers.js/commit/bd05aed070ac9e1421a3e2bff2ceea150bedf9b7
+              // we need here to fake the type, so the "getSighash" function works properly
+              const fn = getFunctionFragment({ ...item, type: 'function', stateMutability: 'nonpayable' })
+              if (!fn) continue
+              const sign = fn.getSighash(item.name)
+              if (!sign) continue
+              if (returnDataHex === sign.replace('0x', '')) {
+                customError = item.name
+                const functionDesc = fn.getFunction(item.name)
+                // decoding error parameters
+                const decodedCustomErrorInputs = fn.decodeFunctionData(functionDesc, returnData)
+                decodedCustomErrorInputsClean = {}
+                let devdoc = {}
+                // "contract" reprensents the compilation result containing the NATSPEC documentation
+                if (contract && fn.functions && Object.keys(fn.functions).length) {
+                  const functionSignature = Object.keys(fn.functions)[0]
+                  // we check in the 'devdoc' if there's a developer documentation for this error
+                  try {
+                    devdoc = (contract.devdoc.errors && contract.devdoc.errors[functionSignature][0]) || {}
+                  } catch (e) {
+                    console.error(e.message)
+                  }
+                  // we check in the 'userdoc' if there's an user documentation for this error
+                  try {
+                    const userdoc = (contract.userdoc.errors && contract.userdoc.errors[functionSignature][0]) || {}
+                    if (userdoc && (userdoc as any).notice) customError += ' : ' + (userdoc as any).notice // we append the user doc if any
+                  } catch (e) {
+                    console.error(e.message)
+                  }
+                }
+                let inputIndex = 0
+                for (const input of functionDesc.inputs) {
+                  const inputKey = input.name || inputIndex
+                  const v = decodedCustomErrorInputs[inputKey]
+
+                  decodedCustomErrorInputsClean[inputKey] = {
+                    value: v.toString ? v.toString() : v
+                  }
+                  if (devdoc && (devdoc as any).params) {
+                    decodedCustomErrorInputsClean[input.name].documentation = (devdoc as any).params[inputKey] // we add the developer documentation for this input parameter if any
+                  }
+                  inputIndex++
+                }
+                break
+              }
+            }
+          }
+        }
+      }
+      if (decodedCustomErrorInputsClean) {
+        msg += '\tThe transaction has been reverted to the initial state.\nError provided by the contract:'
+        msg += `\n${customError}`
+        msg += '\nParameters:'
+        msg += `\n${JSON.stringify(decodedCustomErrorInputsClean, null, ' ')}`
+      }
+    }
+  return msg
+  }
+}

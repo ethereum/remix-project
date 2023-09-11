@@ -950,7 +950,6 @@ export class Blockchain extends Plugin {
           }
         }
       }
-
       if (!isVM && tx && tx.useCall) {
         returnValue = toBuffer(addHexPrefix(txResult.result))
       }
@@ -962,6 +961,16 @@ export class Blockchain extends Plugin {
 
       cb(null, txResult, address, returnValue)
     } catch (error) {
+      if (this.isInjectedWeb3()) {
+        let errorObj = error.replace('Returned error: ', '')
+        errorObj = JSON.parse(errorObj)
+        if (errorObj.errorData) {
+          const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
+          const injectedError = txExecution.checkInjectedError(errorObj, compiledContracts)
+          cb(injectedError)
+        } else 
+        cb(error)
+      } else 
       cb(error)
     }
   }
