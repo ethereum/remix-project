@@ -105,6 +105,14 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
         resolve({jsonrpc: '2.0', error: 'no return data provided', id: data.id})
       }
     } catch (error) {
+      if (error.data.originalError && error.data.originalError.data) {
+        resolve({
+          jsonrpc: '2.0',
+          error: error.data.originalError.message,
+          errorData: error.data.originalError.data,
+          id: data.id
+        })
+      } else
       resolve({
         jsonrpc: '2.0',
         error: error.data && error.data.message ? error.data.message : error.message,
