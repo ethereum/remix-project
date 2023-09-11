@@ -15,6 +15,7 @@ export type JsonDataResult = {
   jsonrpc: string // version
   result?: any
   error?: any
+  errorData?: any
 }
 
 export type RejectRequest = (error: Error) => void
