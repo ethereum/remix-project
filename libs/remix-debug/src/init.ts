@@ -19,7 +19,7 @@ export function setProvider (web3, url) {
 
 export function web3DebugNode (network) {
   const web3DebugNodes = {
-    Main: 'https://rpc.archivenode.io/e50zmkroshle2e2e50zm0044i7ao04ym',
+    Main: 'https://eth.getblock.io/68069907-1d3c-466e-a533-a943afd935c6/mainnet',
     Rinkeby: 'https://remix-rinkeby.ethdevops.io',
     Ropsten: 'https://remix-ropsten.ethdevops.io',
     Goerli: 'https://remix-goerli.ethdevops.io',
