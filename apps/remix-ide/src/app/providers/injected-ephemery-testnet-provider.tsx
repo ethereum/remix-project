@@ -28,6 +28,7 @@ export class InjectedEphemeryTestnetProvider extends InjectedCustomProvider {
   async useFaucet(recipient: string, value: number) {
     try {
       await fetch('https://api-faucet.bordel.wtf/send-eth', {
+        mode: 'cors',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ to_address: recipient, amount_eth: value }),
