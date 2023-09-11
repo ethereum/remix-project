@@ -31,7 +31,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
     uploadFolder,
     fileState
   } = props
+  const sortIconDesc = 'fa fa-sort-alpha-desc justify-end'
+  const sortIconAsc = 'fa fa-sort-alpha-up justify-end'
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
+  const [sortIcon, setSortIcon] = useState(sortIconDesc)
   const treeRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -343,7 +346,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
                     tooltipClasses="text-nowrap"
                     tooltipText={<FormattedMessage id="filePanel.sort" defaultMessage="Sort" />}
                   >
-                    <span className="fa fa-sort-alpha-desc justify-end" onClick={() => console.log('sorting clicked')}></span>
+                    <span className={sortIcon} onClick={() => {
+                      console.log('sorting clicked')
+                      sortIcon === sortIconDesc ? setSortIcon(sortIconAsc) : setSortIcon(sortIconDesc)
+                    }}></span>
                   </CustomTooltip>
                 </span>
               </div>
