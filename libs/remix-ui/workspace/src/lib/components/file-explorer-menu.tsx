@@ -72,7 +72,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
           {props.title}
         </span>
       </CustomTooltip>
-      <span className="pl-0 pb-1">
+      <span className="pl-0 pb-1 w-50">
         {state.menuItems.map(({action, title, icon, placement}, index) => {
           if (action === 'uploadFile') {
             return (
@@ -160,6 +160,6 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
       </span>
     </>
   )
-}
+}// add tooltip to sort icon. then wireup logic to sort files by name ascending/descending
 
 export default FileExplorerMenu

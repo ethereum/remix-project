@@ -933,11 +933,6 @@ const removeInputField = (
   return files
 }
 
-const sortDirectoriesFetched = (folderStructure: any) => {
-  if(!folderStructure) return
-
-}
-
 const sortFilesFetched = (folderStructure: any) => {
   // eslint-disable-next-line prefer-const
   let newResult = _.fromPairs(_.sortBy(_.toPairs(folderStructure[ROOT_PATH]), (x: any) => x[1].name))
@@ -955,7 +950,7 @@ const fetchDirectoryContent = (
   payload: {fileTree; path: string; type?: 'file' | 'folder'},
   deletePath?: string
 ): {[x: string]: Record<string, FileType>} => {
-
+  console.trace()
   if (!payload.fileTree)
     return state.mode === 'browser'
       ? state.browser.files
@@ -1003,7 +998,6 @@ const fetchDirectoryContent = (
           )
         }
       }
-      files = sortFilesFetched(files)
       return files
     }
   } else {

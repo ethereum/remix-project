@@ -6,11 +6,12 @@ import {FileExplorerContextMenu} from './file-explorer-context-menu' // eslint-d
 import {FileExplorerProps, WorkSpaceState} from '../types'
 
 import '../css/file-explorer.css'
-import {checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath} from '@remix-ui/helper'
+import {CustomTooltip, checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath} from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {FileRender} from './file-render'
 import {Drag} from '@remix-ui/drag-n-drop'
 import {ROOT_PATH} from '../utils/constants'
+import { FormattedMessage } from 'react-intl'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const intl = useIntl()
@@ -323,7 +324,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             id="treeViewItem"
             controlBehaviour={true}
             label={
-              <div onClick={handleFileExplorerMenuClick}>
+              <div className="d-flex flex-row align-items-center justify-content-center" onClick={handleFileExplorerMenuClick}>
                 <FileExplorerMenu
                   title={''}
                   menuItems={props.menuItems}
@@ -333,6 +334,18 @@ export const FileExplorer = (props: FileExplorerProps) => {
                   uploadFile={uploadFile}
                   uploadFolder={uploadFolder}
                 />
+                <span className="pr-2 w-50 d-flex justify-content-end">
+                  <span></span>
+                  <span></span>
+                  <CustomTooltip
+                    placement="right"
+                    tooltipId="remixuiSortTooltip"
+                    tooltipClasses="text-nowrap"
+                    tooltipText={<FormattedMessage id="filePanel.sort" defaultMessage="Sort" />}
+                  >
+                    <span className="fa fa-sort-alpha-desc justify-end" onClick={() => console.log('sorting clicked')}></span>
+                  </CustomTooltip>
+                </span>
               </div>
             }
             expand={true}
