@@ -36,6 +36,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
   const [sortIcon, setSortIcon] = useState(sortIconDesc)
   const treeRef = useRef<HTMLDivElement>(null)
+  console.log({ props })
 
   useEffect(() => {
     if (contextMenuItems) {
@@ -172,6 +173,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleClickFolder = async (path: string, type: 'folder' | 'file' | 'gist') => {
+    console.log({ state, props })
     if (state.ctrlKey) {
       if (props.focusElement.findIndex((item) => item.key === path) !== -1) {
         const focusElement = props.focusElement.filter((item) => item.key !== path)
@@ -349,6 +351,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                     <span className={sortIcon} onClick={() => {
                       console.log('sorting clicked')
                       sortIcon === sortIconDesc ? setSortIcon(sortIconAsc) : setSortIcon(sortIconDesc)
+                      props.dispatchDirectoriesSort(files[ROOT_PATH])
                     }}></span>
                   </CustomTooltip>
                 </span>

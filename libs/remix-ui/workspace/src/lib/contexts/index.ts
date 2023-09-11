@@ -1,6 +1,7 @@
 import { customAction } from '@remixproject/plugin-api'
 import { createContext, SyntheticEvent } from 'react'
 import { BrowserState } from '../reducers/workspace'
+import { FileType } from '../types'
 
 export const FileSystemContext = createContext<{
   fs: BrowserState,
@@ -13,6 +14,7 @@ export const FileSystemContext = createContext<{
   dispatchCreateWorkspace: (workspaceName: string, workspaceTemplateName: string, opts?, initGitRepo?: boolean) => Promise<void>,
   toast: (toasterMsg: string) => void,
   dispatchFetchWorkspaceDirectory: (path: string) => Promise<void>,
+  dispatchDirectoriesSort: (files: { [x: string]: Record<string, FileType> } | any, direction?: 'asc' | 'desc') => Promise<any>,
   dispatchSwitchToWorkspace: (name: string) => Promise<void>,
   dispatchRenameWorkspace: (oldName: string, workspaceName: string) => Promise<void>,
   dispatchDeleteWorkspace: (workspaceName: string) => Promise<void>,
@@ -47,5 +49,4 @@ export const FileSystemContext = createContext<{
   dispatchCreateSlitherGithubAction: () => Promise<void>
   dispatchCreateHelperScripts: (script: string) => Promise<void>
     }>(null)
-  
-    
+

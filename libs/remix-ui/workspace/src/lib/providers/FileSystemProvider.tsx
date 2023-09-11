@@ -76,6 +76,11 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await fetchDirectory(path)
   }
 
+  const dispatchDirectoriesSort = async (files: any, path?: string, direction?: 'asc' | 'desc') => {
+    const result = await fetchDirectory(files.path ?? path)
+    console.log(result)
+  }
+
   const dispatchAddInputField = async (path: string, type: 'file' | 'folder') => {
     await addInputField(type, path)
   }
@@ -305,6 +310,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     toast,
     dispatchInitWorkspace,
     dispatchFetchDirectory,
+    dispatchDirectoriesSort,
     dispatchAddInputField,
     dispatchRemoveInputField,
     dispatchCreateWorkspace,

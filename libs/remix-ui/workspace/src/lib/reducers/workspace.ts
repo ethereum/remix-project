@@ -951,7 +951,7 @@ const fetchDirectoryContent = (
   payload: {fileTree; path: string; type?: 'file' | 'folder'},
   deletePath?: string
 ): {[x: string]: Record<string, FileType>} => {
-  console.trace()
+  // console.trace()
   if (!payload.fileTree)
     return state.mode === 'browser'
       ? state.browser.files
@@ -1026,8 +1026,6 @@ const fetchDirectoryContent = (
           }
         }
         files = _.setWith(files, _path, prevFiles, Object)
-        const newFiles = sortFilesFetched(files)
-        console.log({ newFiles })
       } else {
         files = {
           [payload.path]: normalize(
@@ -1037,8 +1035,7 @@ const fetchDirectoryContent = (
           )
         }
       }
-      const newFiles = sortFilesFetched(files)
-      return newFiles
+      return files
     }
   }
 }
