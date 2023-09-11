@@ -23,3 +23,10 @@
    It is activated by adding the `autorebase` label.
  
    For more [information](https://github.com/marketplace/actions/rebase-pull-requests)
+- isim: Shipa Bulut
+  # Tam işlemi veya sürümü sabitleyebilirsiniz.
+  # kullanımlar: shipa-corp/shipa-gh-action@4633febbc36b24abb54f10b848c4aaca8a5b5745
+  kullanım alanları: shipa-corp/shipa-gh-action@0.0.2
+  ile:
+    # Shipa eylem yml dosyasının dosya yolu
+    shipa eylemi:
