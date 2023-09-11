@@ -18,6 +18,7 @@ export class OpenAIGpt extends Plugin {
   }
 
   async message(prompt): Promise<CreateChatCompletionResponse> {
+    this.call('layout', 'maximizeTerminal')
     this.call('terminal', 'log', 'Waiting for GPT answer...')
     let result
     try {
