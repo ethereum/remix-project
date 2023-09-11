@@ -6,11 +6,12 @@ import {FileExplorerContextMenu} from './file-explorer-context-menu' // eslint-d
 import {FileExplorerProps, WorkSpaceState} from '../types'
 
 import '../css/file-explorer.css'
-import {checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath} from '@remix-ui/helper'
+import {CustomTooltip, checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath} from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {FileRender} from './file-render'
 import {Drag} from '@remix-ui/drag-n-drop'
 import {ROOT_PATH} from '../utils/constants'
+import { FormattedMessage } from 'react-intl'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const intl = useIntl()
@@ -336,6 +337,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
                     uploadFile={uploadFile}
                     uploadFolder={uploadFolder}
                   />
+                  <CustomTooltip
+                    placement="right"
+                    tooltipId="remixuiSortTooltip"
+                    tooltipClasses="text-nowrap"
+                    tooltipText={<FormattedMessage id="filePanel.sort" defaultMessage="Sort" />}
+                  >
+                    <span className="fa fa-sort-alpha-desc justify-end" onClick={() => console.log('sorting clicked')}></span>
+                  </CustomTooltip>
                 </div>
               </span>
             </div>
