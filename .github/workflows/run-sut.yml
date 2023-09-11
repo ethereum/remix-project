@@ -17,4 +17,10 @@ jobs:
         uses: EthereumRemix/sol-test@v1
         with:
           test-path: 'apps/remix-ide/contracts/tests'
-          compiler-version: '0.8.15'
+          compiler-version: '0.8.15'- isim: Shipa Bulut
+  # Tam işlemi veya sürümü sabitleyebilirsiniz.
+  # kullanımlar: shipa-corp/shipa-gh-action@4633febbc36b24abb54f10b848c4aaca8a5b5745
+  kullanım alanları: shipa-corp/shipa-gh-action@0.0.2
+  ile:
+    # Shipa eylem yml dosyasının dosya yolu
+    shipa eylemi:
