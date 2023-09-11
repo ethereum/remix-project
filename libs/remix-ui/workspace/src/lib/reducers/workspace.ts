@@ -933,9 +933,10 @@ const removeInputField = (
   return files
 }
 
-const sortFilesFetched = (folderStructure: any) => {
+const sortFilesFetched = (folderStructure: any, direction?: 'asc' | 'desc') => {
   // eslint-disable-next-line prefer-const
-  let newResult = _.fromPairs(_.sortBy(_.toPairs(folderStructure[ROOT_PATH]), (x: any) => x[1].name))
+  let newResult = _.fromPairs(
+    direction && direction === 'desc' ? _.sortBy(_.toPairs(folderStructure[ROOT_PATH]), (x: any) => x[1].name).reverse() : _.sortBy(_.toPairs(folderStructure[ROOT_PATH]), (x: any) => x[1].name))
   let target = {}
   Object.assign(target, newResult)
   const result = { '/': target }
