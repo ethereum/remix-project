@@ -244,6 +244,6 @@ export function checkInjectedError (errorObj, compiledContracts) {
         msg += `\n${JSON.stringify(decodedCustomErrorInputsClean, null, ' ')}`
       }
     }
-  return msg
+    return msg
   }
 }
