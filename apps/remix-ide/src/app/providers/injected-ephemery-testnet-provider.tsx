@@ -12,6 +12,19 @@ const profile = {
 
 export class InjectedEphemeryTestnetProvider extends InjectedCustomProvider {
   constructor() {
-    super(profile, 'Ephemery Testnet', '0x259C709', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'])
+    super(profile, 
+      'Ephemery Testnet',
+      '',
+      ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'],
+      {
+        "name": "Ephemery ETH",
+        "symbol": "ETH",
+        "decimals": 18
+      },
+      [
+        'https://otter.bordel.wtf/',
+        'https://explorer.ephemery.dev/'
+      ] 
+    )
   }
 }
