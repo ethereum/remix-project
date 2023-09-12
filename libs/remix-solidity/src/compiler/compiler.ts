@@ -49,6 +49,7 @@ export class Compiler {
       if (success && this.state.compilationStartTime) {
         this.event.trigger('compilationDuration', [(new Date().getTime()) - this.state.compilationStartTime])
       }
+      console.log('compilationStartTime to null', this.state.compilationStartTime, data)
       this.state.compilationStartTime = null
     })
 
@@ -81,12 +82,16 @@ export class Compiler {
    * @param missingInputs missing import file path list
    */
 
-  internalCompile(files: Source, missingInputs?: string[]): void {
+  internalCompile(files: Source, missingInputs?: string[], timeStamp?: number): void {
+    if(timeStamp != this.state.compilationStartTime && this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger ) {
+      console.log('aborting compilation', timeStamp, this.state.compilationStartTime)
+      return
+    }
     this.gatherImports(files, missingInputs, (error, input) => {
       if (error) {
         this.state.lastCompilationResult = null
         this.event.trigger('compilationFinished', [false, { error: { formattedMessage: error, severity: 'error' } }, files, input, this.state.currentVersion])
-      } else if (this.state.compileJSON && input) { this.state.compileJSON(input) }
+      } else if (this.state.compileJSON && input) { this.state.compileJSON(input, timeStamp) }
     })
   }
 
@@ -99,8 +104,9 @@ export class Compiler {
   compile(files: Source, target: string): void {
     this.state.target = target
     this.state.compilationStartTime = new Date().getTime()
+    console.log('compiling ' + target + '...', files, this.state.compilationStartTime)
     this.event.trigger('compilationStarted', [])
-    this.internalCompile(files)
+    this.internalCompile(files, null, this.state.compilationStartTime)
   }
 
   /**
@@ -157,7 +163,7 @@ export class Compiler {
    * @param source Source
    */
 
-  onCompilationFinished(data: CompilationResult, missingInputs?: string[], source?: SourceWithTarget, input?: string, version?: string): void {
+  onCompilationFinished(data: CompilationResult, missingInputs?: string[], source?: SourceWithTarget, input?: string, version?: string, timeStamp?: number): void {
     let noFatalErrors = true // ie warnings are ok
 
     const checkIfFatalError = (error: CompilationError) => {
@@ -173,7 +179,7 @@ export class Compiler {
       this.event.trigger('compilationFinished', [false, data, source, input, version])
     } else if (missingInputs !== undefined && missingInputs.length > 0 && source && source.sources) {
       // try compiling again with the new set of inputs
-      this.internalCompile(source.sources, missingInputs)
+      this.internalCompile(source.sources, missingInputs, timeStamp)
     } else {
       data = this.updateInterface(data)
       if (source) {
@@ -183,6 +189,7 @@ export class Compiler {
           source: source
         }
       }
+      console.log('compilationFinished ', timeStamp, this.state.compilationStartTime)
       this.event.trigger('compilationFinished', [true, data, source, input, version])
     }
   }
@@ -291,7 +298,9 @@ export class Compiler {
 
     this.state.worker.addEventListener('message', (msg: Record<'data', MessageFromWorker>) => {
       const data: MessageFromWorker = msg.data
+      console.log('incoming message', data.timestamp, data)
       if (this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger && data.timestamp !== this.state.compilationStartTime) {
+        console.log('dropping message', data.timestamp, this.state.compilationStartTime)
         return
       }
       switch (data.cmd) {
@@ -312,7 +321,7 @@ export class Compiler {
             sources = jobs[data.job].sources
             delete jobs[data.job]
           }
-          this.onCompilationFinished(result, data.missingInputs, sources, data.input, this.state.currentVersion)
+          this.onCompilationFinished(result, data.missingInputs, sources, data.input, this.state.currentVersion, data.timestamp)
         }
         break
       }
@@ -325,7 +334,7 @@ export class Compiler {
       this.onCompilationFinished({ error: { formattedMessage } })
     })
 
-    this.state.compileJSON = (source: SourceWithTarget) => {
+    this.state.compileJSON = (source: SourceWithTarget, timeStamp: number) => {
       if (source && source.sources) {
         const { optimize, runs, evmVersion, language, useFileConfiguration, configFileContent } = this.state
         jobs.push({ sources: source })
@@ -342,12 +351,12 @@ export class Compiler {
           return
         }
 
-
+        console.log('posting message with timestamp ', this.state.compilationStartTime, source)
         this.state.worker.postMessage({
           cmd: 'compile',
           job: jobs.length - 1,
           input: input,
-          timestamp: this.state.compilationStartTime
+          timestamp: timeStamp
         })
       }
     }

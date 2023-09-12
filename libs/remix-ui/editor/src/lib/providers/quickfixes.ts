@@ -170,5 +170,21 @@ export default {
       title: "Add 'calldata' to param",
       message: ' calldata '
     }
+  ],
+  'SyntaxError: No visibility specified. Did you intend to add "external': [
+    {
+      id: 12,
+      title: "Add visibility 'external'",
+      message: 'external ',
+      nodeType: 'FunctionDefinition'
+    }
+  ],
+  'DeclarationError: Receive ether function must be payable, but is "nonpayable".': [
+    {
+      id: 13,
+      title: "Make function 'payable'",
+      message: 'payable ',
+      nodeType: 'FunctionDefinition'
+    }
   ]
 }
