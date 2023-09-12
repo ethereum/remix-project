@@ -113,11 +113,11 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
           id: data.id
         })
       } else
-      resolve({
-        jsonrpc: '2.0',
-        error: error.data && error.data.message ? error.data.message : error.message,
-        id: data.id
-      })
+        resolve({
+          jsonrpc: '2.0',
+          error: error.data && error.data.message ? error.data.message : error.message,
+          id: data.id
+        })
     }
   }
 }
