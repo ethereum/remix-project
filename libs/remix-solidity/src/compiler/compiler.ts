@@ -49,7 +49,6 @@ export class Compiler {
       if (success && this.state.compilationStartTime) {
         this.event.trigger('compilationDuration', [(new Date().getTime()) - this.state.compilationStartTime])
       }
-      console.log('compilationStartTime to null', this.state.compilationStartTime, data)
       this.state.compilationStartTime = null
     })
 
@@ -84,7 +83,6 @@ export class Compiler {
 
   internalCompile(files: Source, missingInputs?: string[], timeStamp?: number): void {
     if(timeStamp != this.state.compilationStartTime && this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger ) {
-      console.log('aborting compilation', timeStamp, this.state.compilationStartTime)
       return
     }
     this.gatherImports(files, missingInputs, (error, input) => {
@@ -104,7 +102,6 @@ export class Compiler {
   compile(files: Source, target: string): void {
     this.state.target = target
     this.state.compilationStartTime = new Date().getTime()
-    console.log('compiling ' + target + '...', files, this.state.compilationStartTime)
     this.event.trigger('compilationStarted', [])
     this.internalCompile(files, null, this.state.compilationStartTime)
   }
@@ -189,7 +186,6 @@ export class Compiler {
           source: source
         }
       }
-      console.log('compilationFinished ', timeStamp, this.state.compilationStartTime)
       this.event.trigger('compilationFinished', [true, data, source, input, version])
     }
   }
@@ -298,9 +294,8 @@ export class Compiler {
 
     this.state.worker.addEventListener('message', (msg: Record<'data', MessageFromWorker>) => {
       const data: MessageFromWorker = msg.data
-      console.log('incoming message', data.timestamp, data)
       if (this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger && data.timestamp !== this.state.compilationStartTime) {
-        console.log('dropping message', data.timestamp, this.state.compilationStartTime)
+        // drop message from previous compilation
         return
       }
       switch (data.cmd) {
@@ -351,7 +346,6 @@ export class Compiler {
           return
         }
 
-        console.log('posting message with timestamp ', this.state.compilationStartTime, source)
         this.state.worker.postMessage({
           cmd: 'compile',
           job: jobs.length - 1,
