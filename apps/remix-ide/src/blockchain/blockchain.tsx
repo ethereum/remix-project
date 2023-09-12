@@ -969,9 +969,9 @@ export class Blockchain extends Plugin {
           const injectedError = txExecution.checkInjectedError(errorObj, compiledContracts)
           cb(injectedError)
         } else 
-        cb(error)
+          cb(error)
       } else 
-      cb(error)
+        cb(error)
     }
   }
 }
