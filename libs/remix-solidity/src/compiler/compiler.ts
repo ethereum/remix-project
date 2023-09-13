@@ -81,12 +81,15 @@ export class Compiler {
    * @param missingInputs missing import file path list
    */
 
-  internalCompile(files: Source, missingInputs?: string[]): void {
+  internalCompile(files: Source, missingInputs?: string[], timeStamp?: number): void {
+    if(timeStamp != this.state.compilationStartTime && this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger ) {
+      return
+    }
     this.gatherImports(files, missingInputs, (error, input) => {
       if (error) {
         this.state.lastCompilationResult = null
         this.event.trigger('compilationFinished', [false, { error: { formattedMessage: error, severity: 'error' } }, files, input, this.state.currentVersion])
-      } else if (this.state.compileJSON && input) { this.state.compileJSON(input) }
+      } else if (this.state.compileJSON && input) { this.state.compileJSON(input, timeStamp) }
     })
   }
 
@@ -100,7 +103,7 @@ export class Compiler {
     this.state.target = target
     this.state.compilationStartTime = new Date().getTime()
     this.event.trigger('compilationStarted', [])
-    this.internalCompile(files)
+    this.internalCompile(files, null, this.state.compilationStartTime)
   }
 
   /**
@@ -157,7 +160,7 @@ export class Compiler {
    * @param source Source
    */
 
-  onCompilationFinished(data: CompilationResult, missingInputs?: string[], source?: SourceWithTarget, input?: string, version?: string): void {
+  onCompilationFinished(data: CompilationResult, missingInputs?: string[], source?: SourceWithTarget, input?: string, version?: string, timeStamp?: number): void {
     let noFatalErrors = true // ie warnings are ok
 
     const checkIfFatalError = (error: CompilationError) => {
@@ -173,7 +176,7 @@ export class Compiler {
       this.event.trigger('compilationFinished', [false, data, source, input, version])
     } else if (missingInputs !== undefined && missingInputs.length > 0 && source && source.sources) {
       // try compiling again with the new set of inputs
-      this.internalCompile(source.sources, missingInputs)
+      this.internalCompile(source.sources, missingInputs, timeStamp)
     } else {
       data = this.updateInterface(data)
       if (source) {
@@ -292,6 +295,7 @@ export class Compiler {
     this.state.worker.addEventListener('message', (msg: Record<'data', MessageFromWorker>) => {
       const data: MessageFromWorker = msg.data
       if (this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger && data.timestamp !== this.state.compilationStartTime) {
+        // drop message from previous compilation
         return
       }
       switch (data.cmd) {
@@ -312,7 +316,7 @@ export class Compiler {
             sources = jobs[data.job].sources
             delete jobs[data.job]
           }
-          this.onCompilationFinished(result, data.missingInputs, sources, data.input, this.state.currentVersion)
+          this.onCompilationFinished(result, data.missingInputs, sources, data.input, this.state.currentVersion, data.timestamp)
         }
         break
       }
@@ -325,7 +329,7 @@ export class Compiler {
       this.onCompilationFinished({ error: { formattedMessage } })
     })
 
-    this.state.compileJSON = (source: SourceWithTarget) => {
+    this.state.compileJSON = (source: SourceWithTarget, timeStamp: number) => {
       if (source && source.sources) {
         const { optimize, runs, evmVersion, language, useFileConfiguration, configFileContent } = this.state
         jobs.push({ sources: source })
@@ -342,12 +346,11 @@ export class Compiler {
           return
         }
 
-
         this.state.worker.postMessage({
           cmd: 'compile',
           job: jobs.length - 1,
           input: input,
-          timestamp: this.state.compilationStartTime
+          timestamp: timeStamp
         })
       }
     }
