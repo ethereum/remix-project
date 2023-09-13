@@ -34,7 +34,7 @@ export const addCustomNetwork = async (chainName: string, chainId: string, rpcUr
     // This error code indicates that the chain has not been added to MetaMask.
     if (switchError.code === 4902) {
       try {
-        let paramsObj: Record<string, any> = {
+        const paramsObj: Record<string, any> = {
           chainId: chainId,
           chainName: chainName,
           rpcUrls: rpcUrls,
