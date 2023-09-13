@@ -186,6 +186,7 @@ export class RunTab extends ViewPlugin {
 
     // testnet
     await addProvider('injected-ephemery-testnet-provider', 'Ephemery Testnet', true, false)
+    await addProvider('injected-skale-chaos-testnet-provider', 'SKALE Chaos Testnet', true, false)
 
     // external provider
     await addProvider('basic-http-provider', 'Custom - External Http Provider', false, false)
