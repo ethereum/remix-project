@@ -515,7 +515,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const currentFile = api.currentFile
 
     if (!isSolFileSelected()) return
-
     _setCompilerVersionFromPragma(currentFile)
     let externalCompType
     if (hhCompilation) externalCompType = 'hardhat'
@@ -527,7 +526,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const currentFile = api.currentFile
 
     if (!isSolFileSelected()) return
-
     _setCompilerVersionFromPragma(currentFile)
     let externalCompType
     if (hhCompilation) externalCompType = 'hardhat'

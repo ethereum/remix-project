@@ -5,7 +5,7 @@ parameters:
     type: boolean
     default: false
 orbs:
-  browser-tools: circleci/browser-tools@1.4.3
+  browser-tools: circleci/browser-tools@1.4.4
 jobs:
   build:
     docker:
@@ -144,8 +144,9 @@ jobs:
             - browser-tools/install-browser-tools:
                 install-firefox: false
                 install-chrome: true
+                install-chromedriver: false
                 install-geckodriver: false
-                install-chromedriver: true
+            - install-chromedriver-custom-linux
             - run: google-chrome --version
             - run: chromedriver --version
             - run: rm LICENSE.chromedriver 2> /dev/null || true
@@ -202,7 +203,8 @@ jobs:
           install-firefox: false
           install-chrome: true
           install-geckodriver: false
-          install-chromedriver: true
+          install-chromedriver: false
+      - install-chromedriver-custom-linux
       - run: google-chrome --version
       - run: chromedriver --version
       - run: rm LICENSE.chromedriver 2> /dev/null || true
@@ -367,3 +369,31 @@ workflows:
               only: remix_beta
 
 # VS Code Extension Version: 1.5.1
+commands:
+  install-chromedriver-custom-linux:
+    description: Custom script to install chromedriver with better version support for linux
+    steps:
+      - run:
+          name: install-chromedriver-custom-linux
+          command: |
+            CHROMEDRIVER_URL=$(curl -s 'https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json' | jq '.channels.Stable.downloads.chromedriver[] | select(.platform == "linux64") | .url' | tr -d '"')
+            echo $CHROMEDRIVER_URL
+            ZIPFILEPATH="/tmp/chromedriver.zip"
+            echo "Downloading from $CHROMEDRIVER_URL"
+            curl -f --silent $CHROMEDRIVER_URL > "$ZIPFILEPATH"
+
+            BINFILEPATH="$HOME/bin/chromedriver-linux"
+            echo "Extracting to $BINFILEPATH"
+            unzip -p "$ZIPFILEPATH" chromedriver-linux64/chromedriver > "$BINFILEPATH"
+
+            echo Setting execute flag
+            chmod +x "$BINFILEPATH"
+
+            echo Updating symlink
+            ln -nfs "$BINFILEPATH" ~/bin/chromedriver
+
+            echo Removing ZIP file
+            rm "$ZIPFILEPATH"
+
+            echo Done
+            chromedriver -v

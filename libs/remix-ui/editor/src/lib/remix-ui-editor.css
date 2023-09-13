@@ -1,9 +1,9 @@
 .hover-row {
     white-space: pre;
-    margin-left : 10px;
     background : var(--light);    
     font-weight : bold;
     font-family : monospace;
+    font-size: smaller;
     padding : 10px;
     border-radius : 10px;
     height: auto;
@@ -25,4 +25,8 @@
     color: var(--white) !important;
     filter: opacity(0.5);
     font-weight: bolder;
+}
+
+div.monaco-list-row > span.title {
+    margin-top: 12px;
 }
