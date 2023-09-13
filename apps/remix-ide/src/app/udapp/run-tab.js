@@ -1,12 +1,12 @@
 import React from 'react' // eslint-disable-line
-import { RunTabUI } from '@remix-ui/run-tab'
-import { ViewPlugin } from '@remixproject/engine-web'
-import { addressToString } from '@remix-ui/helper'
+import {RunTabUI} from '@remix-ui/run-tab'
+import {ViewPlugin} from '@remixproject/engine-web'
+import {addressToString} from '@remix-ui/helper'
 import * as packageJson from '../../../../../package.json'
 
 const EventManager = require('../../lib/events')
 const Recorder = require('../tabs/runTab/model/recorder.js')
-const _paq = window._paq = window._paq || []
+const _paq = (window._paq = window._paq || [])
 
 const profile = {
   name: 'udapp',
@@ -20,11 +20,21 @@ const profile = {
   maintainedBy: 'Remix',
   permission: true,
   events: ['newTransaction'],
-  methods: ['createVMAccount', 'sendTransaction', 'getAccounts', 'pendingTransactionsCount', 'getSettings', 'setEnvironmentMode', 'clearAllInstances', 'addInstance', 'resolveContractAndAddInstance']
+  methods: [
+    'createVMAccount',
+    'sendTransaction',
+    'getAccounts',
+    'pendingTransactionsCount',
+    'getSettings',
+    'setEnvironmentMode',
+    'clearAllInstances',
+    'addInstance',
+    'resolveContractAndAddInstance'
+  ]
 }
 
 export class RunTab extends ViewPlugin {
-  constructor (blockchain, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, fileProvider) {
+  constructor(blockchain, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, fileProvider) {
     super(profile)
     this.event = new EventManager()
     this.config = config
@@ -41,13 +51,13 @@ export class RunTab extends ViewPlugin {
     this.el = document.createElement('div')
   }
 
-  setupEvents () {
+  setupEvents() {
     this.blockchain.events.on('newTransaction', (tx, receipt) => {
       this.emit('newTransaction', tx, receipt)
     })
   }
 
-  getSettings () {
+  getSettings() {
     return new Promise((resolve, reject) => {
       resolve({
         selectedAccount: this.REACT_API.accounts.selectedAccount,
@@ -57,48 +67,52 @@ export class RunTab extends ViewPlugin {
     })
   }
 
-  async setEnvironmentMode (env) {
+  async setEnvironmentMode(env) {
     const canCall = await this.askUserPermission('setEnvironmentMode', 'change the environment used')
     if (canCall) {
-      env = typeof env === 'string' ? { context: env } : env
+      env = typeof env === 'string' ? {context: env} : env
       this.emit('setEnvironmentModeReducer', env, this.currentRequest.from)
     }
   }
 
-  clearAllInstances () {
+  clearAllInstances() {
     this.emit('clearAllInstancesReducer')
   }
 
-  addInstance (address, abi, name) {
+  addInstance(address, abi, name) {
     this.emit('addInstanceReducer', address, abi, name)
   }
 
-  createVMAccount (newAccount) {
+  createVMAccount(newAccount) {
     return this.blockchain.createVMAccount(newAccount)
   }
 
-  sendTransaction (tx) {
+  sendTransaction(tx) {
     _paq.push(['trackEvent', 'udapp', 'sendTx', 'udappTransaction'])
     return this.blockchain.sendTransaction(tx)
   }
 
-  getAccounts (cb) {
+  getAccounts(cb) {
     return this.blockchain.getAccounts(cb)
   }
 
-  pendingTransactionsCount () {
+  pendingTransactionsCount() {
     return this.blockchain.pendingTransactionsCount()
   }
 
-  render () {
-    return  <div><RunTabUI plugin={this} /></div>
+  render() {
+    return (
+      <div>
+        <RunTabUI plugin={this} />
+      </div>
+    )
   }
 
-  onReady (api) {
+  onReady(api) {
     this.REACT_API = api
   }
 
-  async onInitDone () {
+  async onInitDone() {
     const udapp = this // eslint-disable-line
 
     const addProvider = async (name, displayName, isInjected, isVM, fork = '', dataId = '', title = '') => {
@@ -119,6 +133,7 @@ export class RunTab extends ViewPlugin {
           }
         },
         provider: {
+
           async sendAsync (payload) {
             return udapp.call(name, 'sendAsync', payload)
           }
@@ -129,10 +144,17 @@ export class RunTab extends ViewPlugin {
     // basic injected
     // if it's the trust wallet provider, we have a specific provider for that, see below
     if (window && window.ethereum && !(window.ethereum.isTrustWallet || window.ethereum.selectedProvider?.isTrustWallet)) {
-      const displayNameInjected = `Injected Provider${(window && window.ethereum && !(window.ethereum.providers && !window.ethereum.selectedProvider)) ?
-        window.ethereum.isCoinbaseWallet || window.ethereum.selectedProvider?.isCoinbaseWallet ? ' - Coinbase' :
-          window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet ? ' - Brave' :
-            window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask ? ' - MetaMask' : '' : ''}`
+      const displayNameInjected = `Injected Provider${
+        window && window.ethereum && !(window.ethereum.providers && !window.ethereum.selectedProvider)
+          ? window.ethereum.isCoinbaseWallet || window.ethereum.selectedProvider?.isCoinbaseWallet
+            ? ' - Coinbase'
+            : window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet
+              ? ' - Brave'
+              : window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask
+                ? ' - MetaMask'
+                : ''
+          : ''
+      }`
       await addProvider('injected', displayNameInjected, true, false)
     } else if (window && !window.ethereum) {
       // we still add "injected" if there's no provider (just so it's visible to the user).
@@ -158,6 +180,10 @@ export class RunTab extends ViewPlugin {
     // wallet connect
     await addProvider('walletconnect', 'WalletConnect', false, false)
 
+    // testnet
+    await addProvider('injected-ephemery-testnet-provider', 'Ephemery Testnet', true, false)
+    await addProvider('injected-skale-chaos-testnet-provider', 'SKALE Chaos Testnet', true, false)
+
     // external provider
     await addProvider('basic-http-provider', 'Custom - External Http Provider', false, false)
     await addProvider('hardhat-provider', 'Dev - Hardhat Provider', false, false)
@@ -169,15 +195,15 @@ export class RunTab extends ViewPlugin {
     await addProvider('injected-arbitrum-one-provider', 'L2 - Arbitrum One Provider', true, false)
   }
 
-  writeFile (fileName, content) {
+  writeFile(fileName, content) {
     return this.call('fileManager', 'writeFile', fileName, content)
   }
 
-  readFile (fileName) {
+  readFile(fileName) {
     return this.call('fileManager', 'readFile', fileName)
   }
 
-  async resolveContractAndAddInstance (contractObject, address) {
+  async resolveContractAndAddInstance(contractObject, address) {
     const data = await this.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
 
     this.compilersArtefacts.addResolvedContract(addressToString(address), data)

@@ -13,7 +13,7 @@ const profile = {
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel','addErrorMarker', 'clearErrorMarkers', 'getText'],
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel','addErrorMarker', 'clearErrorMarkers', 'getText', 'getPositionAt'],
 }
 
 class Editor extends Plugin {
@@ -175,8 +175,8 @@ class Editor extends Plugin {
     }
 
     this.saveTimeout = window.setTimeout(() => {
-      this.triggerEvent('contentChanged', [])
-      this.triggerEvent('requiringToSaveCurrentfile', [])
+      this.triggerEvent('contentChanged', [currentFile, input])
+      this.triggerEvent('requiringToSaveCurrentfile', [currentFile])
     }, 500)
   }
 
@@ -578,6 +578,10 @@ class Editor extends Plugin {
     for (const session in this.sessions) {
       this.clearDecorationsByPlugin(session, from, 'lineTextPerFile', this.registeredDecorations, this.currentDecorations)
     }
+  }
+
+  getPositionAt(offset) {
+    return this.api.getPositionAt(offset)
   }
 }
 

@@ -67,6 +67,21 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
     }
   }
 
+  const askGtp = async () => {
+    try {
+      const content = await plugin.call('fileManager', 'readFile', editorOptions.errFile)
+      const message = `
+      solidity code: ${content}
+      error message: ${messageText}
+      explain why the error occurred and how to fix it.
+      `
+      await plugin.call('openaigpt', 'message', message)
+    } catch (err) {
+      console.error('unable to askGtp')
+      console.error(err)
+    }
+  }
+
   return (
     <>
       {messageText && !close && (
@@ -82,6 +97,7 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
             <i className="fas fa-times"></i>
           </div>
           <CopyToClipboard content={messageText} className={` p-0 m-0 far fa-copy ${classList}`} direction={'top'} />
+          <span onClick={() => { askGtp() }}>ASK GPT</span>
         </div>
       )}
     </>

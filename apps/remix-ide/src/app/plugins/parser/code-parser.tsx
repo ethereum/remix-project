@@ -477,40 +477,68 @@ export class CodeParser extends Plugin {
    */
   async definitionAtPosition(position: number) {
     const nodes = await this.nodesAtPosition(position)
-    let nodeDefinition: any
+    const nodeDefinition = {
+      'ast': null,
+      'parser': null
+    }
     let node: genericASTNode
-    if (nodes && nodes.length && !this.errorState) {
+    if (nodes && nodes.length) {
       node = nodes[nodes.length - 1]
-      nodeDefinition = node
+      let astNodeDefinition = node
       if (!isNodeDefinition(node)) {
-        nodeDefinition = (await this.declarationOf(node)) || node
+        astNodeDefinition = (await this.declarationOf(node)) || node
       }
       if (node.nodeType === 'ImportDirective') {
         for (const key in this.nodeIndex.flatReferences) {
           if (this.nodeIndex.flatReferences[key].id === node.sourceUnit) {
-            nodeDefinition = this.nodeIndex.flatReferences[key]
+            astNodeDefinition = this.nodeIndex.flatReferences[key]
           }
         }
       }
-      return nodeDefinition
-    } else {
-      const astNodes = await this.antlrService.listAstNodes()
-      if (astNodes && astNodes.length) {
-        for (const node of astNodes) {
-          if (node.range[0] <= position && node.range[1] >= position) {
-            if (nodeDefinition && nodeDefinition.range[0] < node.range[0]) {
-              nodeDefinition = node
-            }
-            if (!nodeDefinition) nodeDefinition = node
+
+      nodeDefinition.ast = astNodeDefinition
+    }
+    const astNodes = await this.antlrService.listAstNodes()
+    let parserNodeDefinition = null
+    if (astNodes && astNodes.length) {
+      for (const node of astNodes) {
+        if (node.range[0] <= position && node.range[1] >= position) {
+          if (parserNodeDefinition && parserNodeDefinition.range[0] < node.range[0]) {
+            parserNodeDefinition = node
           }
+          if (!parserNodeDefinition) parserNodeDefinition = node
         }
-        if (nodeDefinition && nodeDefinition.type && nodeDefinition.type === 'Identifier') {
-          const nodeForIdentifier = await this.findIdentifier(nodeDefinition)
-          if (nodeForIdentifier) nodeDefinition = nodeForIdentifier
+      }
+      if (parserNodeDefinition && parserNodeDefinition.type && parserNodeDefinition.type === 'Identifier') {
+        const nodeForIdentifier = await this.findIdentifier(parserNodeDefinition)
+        if (nodeForIdentifier) parserNodeDefinition = nodeForIdentifier
+      }
+      nodeDefinition.parser = parserNodeDefinition
+    }
+
+    /* if the AST node name & type is the same as the parser node name & type, 
+    / then we can assume that the AST node is the definition, 
+    / because the parser will always return most nodes it can find even with an error in the code
+    */
+
+    if (nodeDefinition.ast && nodeDefinition.parser) {
+      if (nodeDefinition.ast.name === nodeDefinition.parser.name && nodeDefinition.ast.nodeType === nodeDefinition.parser.type) {
+        return nodeDefinition.ast
+      }else{
+        // if there is a difference and the compiler has compiled correctly assume the ast node is the definition
+        if(this.compilerService.errorState === false){
+          return nodeDefinition.ast
         }
-        return nodeDefinition
       }
     }
+
+    if (nodeDefinition.ast && !nodeDefinition.parser) {
+      return nodeDefinition.ast
+    }
+
+
+    return nodeDefinition.parser
+
   }
 
   async getContractNodes(contractName: string) {

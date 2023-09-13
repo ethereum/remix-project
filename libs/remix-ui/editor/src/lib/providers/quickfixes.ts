@@ -55,7 +55,6 @@ export default {
       {
         id: 2,
         title: 'Add Solidity pragma',
-        message: 'pragma solidity ^0.*.*;',
         nodeType: 'PragmaDirective',
         range: {
           startLineNumber: 2,
@@ -104,6 +103,87 @@ export default {
       id: 5,
       title: "Add mutability 'pure'",
       message: 'pure ',
+      nodeType: 'FunctionDefinition'
+    }
+  ],
+  'TypeError: Trying to override non-virtual function. Did you forget to add "virtual"':[
+    {
+      id: 6,
+      title: "Add 'virtual' specifier",
+      message: 'virtual',
+      nodeType: 'FunctionDefinition'
+    }
+  ],
+  'TypeError: Overriding function is missing "override" specifier':[
+    {
+      id: 7,
+      title: "Add 'override' specifier",
+      message: 'override',
+      nodeType: 'FunctionDefinition'
+    }
+  ],
+  'should be marked as abstract': [
+    {
+      id: 8,
+      title: "Add 'abstract' to contract",
+      message: 'abstract ',
+      nodeType: 'ContractDefinition'
+    }
+  ],
+  'TypeError: Data location must be "storage" or "memory" for constructor parameter, but none was given.': [
+    {
+      id: 9.1,
+      title: "Add 'storage' to param",
+      message: ' storage '
+    },
+    {
+      id: 9.2,
+      title: "Add 'memory' to param",
+      message: ' memory '
+    }
+  ],
+  'TypeError: Data location must be "storage", "memory" or "calldata" for variable, but none was given.': [
+    {
+      id: 10.1,
+      title: "Add 'storage' to variable",
+      message: ' storage '
+    },
+    {
+      id: 10.2,
+      title: "Add 'memory' to variable",
+      message: ' memory '
+    },
+    {
+      id: 10.3,
+      title: "Add 'calldata' to variable",
+      message: ' calldata '
+    }
+  ],
+  'TypeError: Data location must be "memory" or "calldata" for parameter in function, but none was given.': [
+    {
+      id: 11.1,
+      title: "Add 'memory' to param",
+      message: ' memory '
+    },
+    {
+      id: 11.2,
+      title: "Add 'calldata' to param",
+      message: ' calldata '
+    }
+  ],
+  'SyntaxError: No visibility specified. Did you intend to add "external': [
+    {
+      id: 12,
+      title: "Add visibility 'external'",
+      message: 'external ',
+      nodeType: 'FunctionDefinition'
+    }
+  ],
+  'DeclarationError: Receive ether function must be payable, but is "nonpayable".': [
+    {
+      id: 13,
+      title: "Make function 'payable'",
+      message: 'payable ',
       nodeType: 'FunctionDefinition'
     }
   ]
