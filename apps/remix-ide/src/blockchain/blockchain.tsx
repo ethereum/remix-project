@@ -596,7 +596,6 @@ export class Blockchain extends Plugin {
         }
         const useCall = funABI.stateMutability === 'view' || funABI.stateMutability === 'pure'
         this.runTx({to: address, data, useCall}, confirmationCb, continueCb, promptCb, (error, txResult, _address, returnValue) => {
-          console.log('error-in runTX--->', error)
           if (error) {
             return logCallback(`${logMsg} errored: ${error.message ? error.message : error}`)
           }
@@ -968,7 +967,6 @@ export class Blockchain extends Plugin {
         if (errorObj.errorData) {
           const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
           const injectedError = txExecution.checkError(errorObj, compiledContracts, true)
-          console.log('injectedError---->', injectedError)
           cb(injectedError.message)
         } else 
           cb(error)
