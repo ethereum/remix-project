@@ -22,6 +22,6 @@ export class InjectedSKALEChaosTestnetProvider extends InjectedCustomProvider {
         "symbol": "sFUEL",
         "decimals": 18
       }
-      )
+    )
   }
 }
