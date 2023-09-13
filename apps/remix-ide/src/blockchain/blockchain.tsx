@@ -938,6 +938,7 @@ export class Blockchain extends Plugin {
           this.call('terminal', 'logHtml', finalLogs)
         }
         execResult = await this.web3().testPlugin.getExecutionResultFromSimulator(txResult.transactionHash)
+        
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
           returnValue = execResult
