@@ -17,7 +17,6 @@ module.exports = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         init(browser, done, 'http://127.0.0.1:8080', false)
     },
-
     'Should load the test file': function (browser: NightwatchBrowser) {
         browser.openFile('contracts')
             .openFile('contracts/3_Ballot.sol')
@@ -86,7 +85,47 @@ module.exports = {
         const path = "//*[@class='view-line' and contains(.,'Voter') and contains(.,'struct')]//span//span[contains(.,'Voter')]"
         const expectedContent = 'StructDefinition'
         checkEditorHoverContent(browser, path, expectedContent)
-    }
+    },
+    'Add token file': function (browser: NightwatchBrowser) {
+        browser.addFile('contracts/mytoken.sol', {
+            content: myToken
+        }).useXpath().waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
+    },
+    // here we change quickly between files to test the files being parsed correctly when switching between them
+    'Should show ERC20 hover over contract in editor #group1': function (browser: NightwatchBrowser) {
+        browser.scrollToLine(10)
+        const path = "//*[@class='view-line' and contains(.,'MyToken') and contains(.,'Pausable')]//span//span[contains(.,'ERC20Burnable')]"
+        const expectedContent = 'contract ERC20Burnable is ERC20Burnable, ERC20, IERC20Metadata, IERC20, Context'
+        checkEditorHoverContent(browser, path, expectedContent, 25)
+    },
+    'Go back to ballot file': function (browser: NightwatchBrowser) {
+        browser.openFile('contracts/3_Ballot.sol')
+            .useXpath().waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
+    },
+    'Should show hover over function in editor again #group1': function (browser: NightwatchBrowser) {
+        browser
+            .scrollToLine(58)
+        const path: string = "//*[@class='view-line' and contains(.,'giveRightToVote(address') and contains(.,'function') and contains(.,'public')]//span//span[contains(.,'giveRightToVote')]"
+        let expectedContent = 'Estimated execution cost'
+        checkEditorHoverContent(browser, path, expectedContent)
+        expectedContent = 'function giveRightToVote (address internal voter) public nonpayable returns ()'
+        checkEditorHoverContent(browser, path, expectedContent)
+        expectedContent = "@dev Give 'voter' the right to vote on this ballot. May only be called by 'chairperson'"
+        checkEditorHoverContent(browser, path, expectedContent)
+    },
+    'Open token file': function (browser: NightwatchBrowser) {
+        browser.openFile('contracts/mytoken.sol')
+            .useXpath().waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
+    },
+    'Should show ERC20 hover over contract in editor again #group1': function (browser: NightwatchBrowser) {
+        browser.scrollToLine(10)
+        const path = "//*[@class='view-line' and contains(.,'MyToken') and contains(.,'Pausable')]//span//span[contains(.,'ERC20Burnable')]"
+        const expectedContent = 'contract ERC20Burnable is ERC20Burnable, ERC20, IERC20Metadata, IERC20, Context'
+        checkEditorHoverContent(browser, path, expectedContent, 25)
+    },
+    
+
+
 }
 
 
@@ -231,6 +270,40 @@ contract BallotHoverTest {
             returns (bytes32 winnerName_)
     {
         winnerName_ = proposals[winningProposal()].name;
+    }
+}
+`
+
+const myToken = `
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.9;
+
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract MyToken is ERC20, ERC20Burnable, Pausable, Ownable {
+    constructor() ERC20("MyToken", "MTK") {}
+
+    function pause() public onlyOwner {
+        _pause();
+    }
+
+    function unpause() public onlyOwner {
+        _unpause();
+    }
+
+    function mint(address to, uint256 amount) public onlyOwner {
+        _mint(to, amount);
+    }
+
+    function _beforeTokenTransfer(address from, address to, uint256 amount)
+        internal
+        whenNotPaused
+        override
+    {
+        super._beforeTokenTransfer(from, to, amount);
     }
 }
 `
