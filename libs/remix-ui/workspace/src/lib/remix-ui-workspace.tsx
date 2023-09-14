@@ -8,10 +8,13 @@ import './css/remix-ui-workspace.css'
 import {ROOT_PATH, TEMPLATE_NAMES} from './utils/constants'
 import {HamburgerMenu} from './components/workspace-hamburger'
 
-import {MenuItems, WorkSpaceState} from './types'
+import {FileType, MenuItems, WorkSpaceState} from './types'
 import {contextMenuActions} from './utils'
 import FileExplorerContextMenu from './components/file-explorer-context-menu'
 import {customAction} from '@remixproject/plugin-api'
+import * as _ from 'lodash'
+
+
 
 const _paq = (window._paq = window._paq || [])
 
@@ -46,9 +49,11 @@ export function Workspace() {
   const initGitRepoRef = useRef<HTMLInputElement>()
   const filteredBranches = selectedWorkspace ? (selectedWorkspace.branches || []).filter((branch) => branch.name.includes(branchFilter) && branch.name !== 'HEAD').slice(0, 20) : []
   const currentBranch = selectedWorkspace ? selectedWorkspace.currentBranch : null
-
+  const sortIconDesc = 'fa fa-sort-alpha-desc justify-end'
+  const sortIconAsc = 'fa fa-sort-alpha-up justify-end'
+  const [sortIcon, setSortIcon] = useState(sortIconDesc)
+  const [triggerSort, setTriggerSort] = useState<'asc' | 'desc'>(null)
   const [canPaste, setCanPaste] = useState(false)
-
   const [state, setState] = useState<WorkSpaceState>({
     ctrlKey: false,
     newFileName: '',
@@ -125,6 +130,10 @@ export function Workspace() {
       setCurrentWorkspace(LOCALHOST)
     }
   }, [global.fs.browser.currentWorkspace, global.fs.localhost.sharedFolder, global.fs.mode])
+
+  useEffect(() => {
+    global.dispatchFetchWorkspaceDirectory(ROOT_PATH, triggerSort)
+  }, [triggerSort])
 
   useEffect(() => {
     if (global.fs.browser.currentWorkspace && !global.fs.browser.workspaces.find(({name}) => name === global.fs.browser.currentWorkspace)) {
@@ -996,6 +1005,12 @@ export function Workspace() {
                     contextMenuItems={global.fs.browser.contextMenu.registeredMenuItems}
                     removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
                     files={global.fs.browser.files}
+                    triggerSort={triggerSort}
+                    setTriggerSort={setTriggerSort}
+                    sortIcon={sortIcon}
+                    sortIconAsc={sortIconAsc}
+                    sortIconDesc={sortIconDesc}
+                    setSortIcon={setSortIcon}
                     workspaceState={state}
                     expandPath={global.fs.browser.expandPath}
                     focusEdit={global.fs.focusEdit}
@@ -1020,7 +1035,6 @@ export function Workspace() {
                     dispatchHandleClickFile={global.dispatchHandleClickFile}
                     dispatchSetFocusElement={global.dispatchSetFocusElement}
                     dispatchFetchDirectory={global.dispatchFetchDirectory}
-                    dispatchDirectoriesSort={global.dispatchDirectoriesSort}
                     dispatchRemoveInputField={global.dispatchRemoveInputField}
                     dispatchAddInputField={global.dispatchAddInputField}
                     dispatchHandleExpandPath={global.dispatchHandleExpandPath}
@@ -1054,6 +1068,12 @@ export function Workspace() {
                     contextMenuItems={global.fs.localhost.contextMenu.registeredMenuItems}
                     removedContextMenuItems={global.fs.localhost.contextMenu.removedMenuItems}
                     files={global.fs.localhost.files}
+                    triggerSort={triggerSort}
+                    setTriggerSort={setTriggerSort}
+                    sortIcon={sortIcon}
+                    sortIconAsc={sortIconAsc}
+                    sortIconDesc={sortIconDesc}
+                    setSortIcon={setSortIcon}
                     fileState={[]}
                     workspaceState={state}
                     expandPath={global.fs.localhost.expandPath}
@@ -1079,7 +1099,6 @@ export function Workspace() {
                     dispatchHandleClickFile={global.dispatchHandleClickFile}
                     dispatchSetFocusElement={global.dispatchSetFocusElement}
                     dispatchFetchDirectory={global.dispatchFetchDirectory}
-                    dispatchDirectoriesSort={global.dispatchDirectoriesSort}
                     dispatchRemoveInputField={global.dispatchRemoveInputField}
                     dispatchAddInputField={global.dispatchAddInputField}
                     dispatchHandleExpandPath={global.dispatchHandleExpandPath}
