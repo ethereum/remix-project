@@ -10,6 +10,7 @@ interface Action {
 export interface BrowserState {
   browser: {
     currentWorkspace: string
+    sort?: 'asc' | 'desc',
     workspaces: {
       name: string
       isGitRepo: boolean
@@ -71,6 +72,7 @@ export interface BrowserState {
 export const browserInitialState: BrowserState = {
   browser: {
     currentWorkspace: '',
+    sort: null,
     workspaces: [],
     files: {},
     expandPath: [],
@@ -255,12 +257,13 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'FETCH_WORKSPACE_DIRECTORY_SUCCESS': {
-    const payload = action.payload as {path: string; fileTree}
+    const payload = action.payload as {path: string; fileTree, direction?: 'asc' | 'desc'}
 
     return {
       ...state,
       browser: {
         ...state.browser,
+        sort: payload.direction ?? 'asc',
         files:
             state.mode === 'browser'
               ? fetchWorkspaceDirectoryContent(state, payload)
@@ -934,15 +937,9 @@ const removeInputField = (
 }
 
 const sortFilesFetched = (folderStructure: any, direction?: 'asc' | 'desc') => {
-  // eslint-disable-next-line prefer-const
-  let newResult = _.fromPairs(
-    direction && direction === 'desc' ? _.sortBy(_.toPairs(folderStructure[ROOT_PATH]), (x: any) => x[1].name).reverse() : _.sortBy(_.toPairs(folderStructure[ROOT_PATH]), (x: any) => x[1].name))
-  let target = {}
-  Object.assign(target, newResult)
-  const result = { '/': target }
-  target = null
-  newResult = null
-  return result
+  const newResult = direction && direction === 'desc' ? _.fromPairs(_.sortBy(_.toPairs(folderStructure), (x: any) => x[0]).reverse())
+    : _.fromPairs(_.sortBy(_.toPairs(folderStructure), (x: any) => x[0]))
+  return Object.assign({}, newResult)
 }
 
 // IDEA: Modify function to remove blank input field without fetching content
@@ -951,14 +948,13 @@ const fetchDirectoryContent = (
   payload: {fileTree; path: string; type?: 'file' | 'folder'},
   deletePath?: string
 ): {[x: string]: Record<string, FileType>} => {
-  // console.trace()
   if (!payload.fileTree)
     return state.mode === 'browser'
       ? state.browser.files
       : state[state.mode].files
   if (state.mode === 'browser') {
     if (payload.path === ROOT_PATH) {
-      let files = normalize(payload.fileTree, ROOT_PATH, payload.type)
+      let files = normalize(payload.fileTree, ROOT_PATH, payload.type, state)
       files = _.merge(files, state.browser.files[ROOT_PATH])
       if (deletePath) delete files[deletePath]
       return {[ROOT_PATH]: files}
@@ -979,7 +975,7 @@ const fetchDirectoryContent = (
 
       if (prevFiles) {
         prevFiles.child = _.merge(
-          normalize(payload.fileTree, payload.path, payload.type),
+          normalize(payload.fileTree, payload.path, payload.type, state),
           prevFiles.child
         )
         if (deletePath) {
@@ -995,7 +991,8 @@ const fetchDirectoryContent = (
           [payload.path]: normalize(
             payload.fileTree,
             payload.path,
-            payload.type
+            payload.type,
+            state
           )
         }
       }
@@ -1015,7 +1012,7 @@ const fetchDirectoryContent = (
 
       if (prevFiles) {
         prevFiles.child = _.merge(
-          normalize(payload.fileTree, payload.path, payload.type),
+          normalize(payload.fileTree, payload.path, payload.type, state),
           prevFiles.child
         )
         if (deletePath) {
@@ -1031,7 +1028,8 @@ const fetchDirectoryContent = (
           [payload.path]: normalize(
             payload.fileTree,
             payload.path,
-            payload.type
+            payload.type,
+            state
           )
         }
       }
@@ -1044,7 +1042,7 @@ const fetchWorkspaceDirectoryContent = (
   state: BrowserState,
   payload: {fileTree; path: string}
 ): {[x: string]: Record<string, FileType>} => {
-  const files = normalize(payload.fileTree, ROOT_PATH)
+  const files = normalize(payload.fileTree, ROOT_PATH, null, state)
 
   return {[ROOT_PATH]: files}
 }
@@ -1052,10 +1050,11 @@ const fetchWorkspaceDirectoryContent = (
 const normalize = (
   filesList,
   directory?: string,
-  newInputType?: 'folder' | 'file'
+  newInputType?: 'folder' | 'file',
+  state?: BrowserState
 ): Record<string, FileType> => {
-  const folders = {}
-  const files = {}
+  let folders = {}
+  let files = {}
 
   Object.keys(filesList || {}).forEach((key) => {
     key = key.replace(/^\/|\/$/g, '') // remove first and last slash
@@ -1099,7 +1098,8 @@ const normalize = (
       type: 'file'
     }
   }
-
+  folders = sortFilesFetched(folders, state.browser.sort)
+  files = sortFilesFetched(files, state.browser.sort)
   return Object.assign({}, folders, files)
 }
 

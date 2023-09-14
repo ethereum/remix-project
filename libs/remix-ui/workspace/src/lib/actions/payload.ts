@@ -140,17 +140,17 @@ export const fetchWorkspaceDirectoryError = (error: any) => {
   }
 }
 
-export const fetchWorkspaceDirectoryRequest = (promise: Promise<any>) => {
+export const fetchWorkspaceDirectoryRequest = (promise: Promise<any>, direction?: 'asc' | 'desc') => {
   return {
     type: 'FETCH_WORKSPACE_DIRECTORY_REQUEST',
-    payload: promise
+    payload: { promise, direction }
   }
 }
 
-export const fetchWorkspaceDirectorySuccess = (path: string, fileTree) => {
+export const fetchWorkspaceDirectorySuccess = (path: string, fileTree, direction?: 'asc' | 'desc') => {
   return {
     type: 'FETCH_WORKSPACE_DIRECTORY_SUCCESS',
-    payload: { path, fileTree }
+    payload: { path, fileTree, direction }
   }
 }
 

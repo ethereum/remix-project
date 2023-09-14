@@ -142,7 +142,6 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
 }
 
 export const fetchDirectory = async (path: string) => {
-  console.trace()
   const provider = plugin.fileManager.currentFileProvider()
   const promise = new Promise((resolve) => {
     provider.resolveDirectory(path, (error, fileTree) => {

@@ -266,7 +266,7 @@ export const workspaceExists = async (name: string) => {
   return await browserProvider.exists(workspacePath)
 }
 
-export const fetchWorkspaceDirectory = async (path: string) => {
+export const fetchWorkspaceDirectory = async (path: string, direction?: 'asc' | 'desc') => {
   if (!path) return
   const provider = plugin.fileManager.currentFileProvider()
   const promise = new Promise((resolve) => {
@@ -277,9 +277,9 @@ export const fetchWorkspaceDirectory = async (path: string) => {
     })
   })
 
-  dispatch(fetchWorkspaceDirectoryRequest(promise))
+  dispatch(fetchWorkspaceDirectoryRequest(promise, direction))
   promise.then((fileTree) => {
-    dispatch(fetchWorkspaceDirectorySuccess(path, fileTree))
+    dispatch(fetchWorkspaceDirectorySuccess(path, fileTree, direction))
   }).catch((error) => {
     dispatch(fetchWorkspaceDirectoryError({ error }))
   })
@@ -683,7 +683,7 @@ const scriptsRef = {
   'etherscan': etherscanScripts
 }
 export const createHelperScripts = async (script: string) => {
-  
+
   if (!scriptsRef[script]) return
   await scriptsRef[script](plugin)
   plugin.call('notification', 'toast', 'scripts added in the "scripts" folder')
