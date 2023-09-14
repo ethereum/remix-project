@@ -55,6 +55,8 @@ export function callFunction (from, to, data, value, gasLimit, funAbi, txRunner,
   * check if the vm has errored
   *
   * @param {Object} execResult    - execution result given by the VM
+  * @param {Object} compiledContracts - Object containing contract compilation details
+  * @param {boolean} isInjectedWeb3 - If true, provider is set to injected web3
   * @return {Object} -  { error: true/false, message: DOMNode }
   */
 export function checkError (execResult, compiledContracts, isInjectedWeb3) {
