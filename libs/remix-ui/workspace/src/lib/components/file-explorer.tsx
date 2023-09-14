@@ -20,6 +20,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
     contextMenuItems,
     removedContextMenuItems,
     files,
+    sortIconDesc,
+    sortIconAsc,
+    sortIcon,
+    setSortIcon,
     workspaceState,
     toGist,
     addMenuItems,
@@ -31,12 +35,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     uploadFolder,
     fileState
   } = props
-  const sortIconDesc = 'fa fa-sort-alpha-desc justify-end'
-  const sortIconAsc = 'fa fa-sort-alpha-up justify-end'
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
-  const [sortIcon, setSortIcon] = useState(sortIconDesc)
   const treeRef = useRef<HTMLDivElement>(null)
-  console.log({ props })
 
   useEffect(() => {
     if (contextMenuItems) {
@@ -349,9 +349,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
                     tooltipText={<FormattedMessage id="filePanel.sort" defaultMessage="Sort" />}
                   >
                     <span className={sortIcon} onClick={() => {
-                      console.log('sorting clicked')
-                      sortIcon === sortIconDesc ? setSortIcon(sortIconAsc) : setSortIcon(sortIconDesc)
-                      props.dispatchDirectoriesSort(files[ROOT_PATH])
+                      if(sortIcon === sortIconAsc) {
+                        setSortIcon(sortIconDesc)
+                        props.setTriggerSort('desc')
+                      } else {
+                        setSortIcon(sortIconAsc)
+                        props.setTriggerSort('asc')
+                      }
                     }}></span>
                   </CustomTooltip>
                 </span>

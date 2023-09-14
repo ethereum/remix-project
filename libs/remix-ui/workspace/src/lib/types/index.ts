@@ -89,6 +89,12 @@ export interface FileExplorerProps {
     hideIconsMenu: React.Dispatch<React.SetStateAction<boolean>>,
     showIconsMenu: boolean,
     focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[],
+    setSortIcon: React.Dispatch<React.SetStateAction<string>>,
+    triggerSort: 'asc' | 'desc' | null,
+    setTriggerSort: React.Dispatch<React.SetStateAction<'asc' | 'desc' | null>>,
+    sortIcon: string,
+    sortIconAsc: string,
+    sortIconDesc: string,
     dispatchCreateNewFile: (path: string, rootDir: string) => Promise<void>,
     // eslint-disable-next-line no-undef
     modal:(title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
@@ -108,7 +114,6 @@ export interface FileExplorerProps {
     dispatchHandleClickFile: (path: string, type: 'file' | 'folder' | 'gist') => Promise<void>,
     dispatchSetFocusElement: (elements: { key: string, type: 'file' | 'folder' | 'gist' }[]) => Promise<void>,
     dispatchFetchDirectory:(path: string) => Promise<void>,
-    dispatchDirectoriesSort: (files: { [x: string]: Record<string, FileType> } | any, direction?: 'asc' | 'desc') => Promise<any>,
     dispatchRemoveInputField:(path: string) => Promise<void>,
     dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,
     dispatchHandleExpandPath: (paths: string[]) => Promise<void>,
@@ -203,4 +208,4 @@ export type  FileFocusContextType = {
 export type CopyElementType = {
   key: string
   type: 'folder' | 'gist' | 'file' | 'workspace'
-}
+    }
