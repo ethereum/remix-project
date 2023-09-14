@@ -944,7 +944,7 @@ export class Blockchain extends Plugin {
             ? toBuffer(execResult.returnValue)
             : toBuffer(addHexPrefix(txResult.result) || '0x0000000000000000000000000000000000000000000000000000000000000000')
           const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
-          const vmError = txExecution.checkError(execResult, compiledContracts, false)
+          const vmError = txExecution.checkError({ errorMessage: execResult.exceptionError, errorData: execResult.returnValue }, compiledContracts)
           if (vmError.error) {
             return cb(vmError.message)
           }
@@ -966,7 +966,7 @@ export class Blockchain extends Plugin {
         errorObj = JSON.parse(errorObj)
         if (errorObj.errorData) {
           const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
-          const injectedError = txExecution.checkError(errorObj, compiledContracts, true)
+          const injectedError = txExecution.checkError({ errorMessage: errorObj.error, errorData: errorObj.errorData }, compiledContracts)
           cb(injectedError.message)
         } else 
           cb(error)
