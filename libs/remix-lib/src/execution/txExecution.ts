@@ -54,12 +54,11 @@ export function callFunction (from, to, data, value, gasLimit, funAbi, txRunner,
 /**
   * check if the vm has errored
   *
-  * @param {Object} execResult    - execution result given by the VM
+  * @param {Object} execResult    - execution result given by the VM, contain errorMessage and errorDate
   * @param {Object} compiledContracts - Object containing contract compilation details
-  * @param {boolean} isInjectedWeb3 - If true, provider is set to injected web3
   * @return {Object} -  { error: true/false, message: DOMNode }
   */
-export function checkError (execResult, compiledContracts, isInjectedWeb3) {
+export function checkError (execResult, compiledContracts) {
   const errorCode = {
     OUT_OF_GAS: 'out of gas',
     STACK_UNDERFLOW: 'stack underflow',
@@ -77,11 +76,11 @@ export function checkError (execResult, compiledContracts, isInjectedWeb3) {
     error: false,
     message: ''
   }
-  if (!execResult.exceptionError && !isInjectedWeb3) {
+  if (!execResult.errorMessage) {
     return ret
   }
-  const exceptionError = (execResult.exceptionError && execResult.exceptionError.error) || ''
-  const error = `Error occured: ${isInjectedWeb3 ? execResult.error : exceptionError}.\n`
+  const exceptionError = execResult.errorMessage || ''
+  const error = `Error occured: ${execResult.errorMessage}.\n`
   let msg
   if (exceptionError === errorCode.INVALID_OPCODE) {
     msg = '\t\n\tThe execution might have thrown.\n'
@@ -89,8 +88,8 @@ export function checkError (execResult, compiledContracts, isInjectedWeb3) {
   } else if (exceptionError === errorCode.OUT_OF_GAS) {
     msg = '\tThe transaction ran out of gas. Please increase the Gas Limit.\n'
     ret.error = true
-  } else if (exceptionError === errorCode.REVERT || (isInjectedWeb3 && execResult.error === 'execution reverted')) {
-    const returnData = isInjectedWeb3 ? execResult.errorData : execResult.returnValue
+  } else if (exceptionError === errorCode.REVERT || exceptionError === 'execution reverted') {
+    const returnData = execResult.errorData
     const returnDataHex = returnData.slice(2, 10)
     let customError
     if (compiledContracts) {
