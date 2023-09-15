@@ -144,9 +144,10 @@ jobs:
           steps:
             - browser-tools/install-browser-tools:
                 install-firefox: false
-                install-chrome: true
+                install-chrome: false
                 install-chromedriver: false
                 install-geckodriver: false
+            - install-chrome-custom-linux
             - install-chromedriver-custom-linux
             - run: google-chrome --version
             - run: chromedriver --version
@@ -402,7 +403,7 @@ commands:
     description: Custom script to install chrome with better version support for linux
     steps:
       - run:
-          name: install-custom-linux
+          name: install-custom-chrome-linux
           command: |
             CHROME_URL=$(curl -s 'https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json' | jq '.channels.Stable.downloads.chrome[] | select(.platform == "linux64") | .url' | tr -d '"')
             echo $CHROME_URL
