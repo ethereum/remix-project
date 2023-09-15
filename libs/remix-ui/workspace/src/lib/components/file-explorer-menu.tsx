@@ -72,7 +72,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
           {props.title}
         </span>
       </CustomTooltip>
-      <span className="pl-0 pb-1 w-50">
+      <span data-id="spanContaining" className="pl-0 pb-1 w-50">
         {state.menuItems.map(({action, title, icon, placement}, index) => {
           if (action === 'uploadFile') {
             return (
