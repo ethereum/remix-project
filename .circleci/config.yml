@@ -16,7 +16,7 @@ jobs:
     working_directory: ~/remix-project
     steps:
       - checkout
-      - run: wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+      - install-chrome-custom-linux
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
@@ -398,3 +398,30 @@ commands:
 
             echo Done
             chromedriver -v
+  install-chrome-custom-linux:
+    description: Custom script to install chrome with better version support for linux
+    steps:
+      - run:
+          name: install-custom-linux
+          command: |
+            CHROME_URL=$(curl -s 'https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json' | jq '.channels.Stable.downloads.chrome[] | select(.platform == "linux64") | .url' | tr -d '"')
+            echo $CHROME_URL
+            ZIPFILEPATH="/tmp/chrome.zip"
+            echo "Downloading from $CHROME_URL"
+            curl -f --silent $CHROME_URL > "$ZIPFILEPATH"
+
+            BINFILEPATH="$HOME/bin/chrome-linux"
+            echo "Extracting to $BINFILEPATH"
+            unzip -p "$ZIPFILEPATH" chrome-linux64/chrome > "$BINFILEPATH"
+
+            echo Setting execute flag
+            chmod +x "$BINFILEPATH"
+
+            echo Updating symlink
+            ln -nfs "$BINFILEPATH" ~/bin/chrome
+
+            echo Removing ZIP file
+            rm "$ZIPFILEPATH"
+
+            echo Done
+            chrome -v
