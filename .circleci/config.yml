@@ -14,9 +14,14 @@ jobs:
     resource_class:
       xlarge
     working_directory: ~/remix-project
-    steps:
+  steps:
+      - browser-tools/install-browser-tools:
+          install-firefox: false
+          install-chrome: true
+          install-chromedriver: false
+          install-geckodriver: false
       - checkout
-      - install-chrome-custom-linux
+
       - restore_cache:
           keys:
             - v1-deps-{{ checksum "yarn.lock" }}
