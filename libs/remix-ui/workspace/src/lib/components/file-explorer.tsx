@@ -339,7 +339,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                   uploadFile={uploadFile}
                   uploadFolder={uploadFolder}
                 />
-                <span className="pr-2 w-50 d-flex justify-content-end">
+                <span className="pr-4 w-50 d-flex justify-content-end">
                   <span></span>
                   <span></span>
                   <CustomTooltip
