@@ -418,10 +418,10 @@ commands:
             chmod +x "$BINFILEPATH"
 
             echo Updating symlink
-            ln -nfs "$BINFILEPATH" ~/bin/chrome
+            ln -nfs "$BINFILEPATH" ~/bin/google-chrome
 
             echo Removing ZIP file
             rm "$ZIPFILEPATH"
 
             echo Done
-            chrome -v
+            google-chrome --version
