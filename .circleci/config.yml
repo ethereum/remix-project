@@ -214,7 +214,7 @@ jobs:
       - run: unzip ./persist/dist.zip
       - run: unzip ./persist/plugin-<< parameters.plugin >>.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
-      - run: yarn run selenium-install || yarn run selenium-install
+      - run: yarn selenium-standalone install --singleDriverInstall=chrome --drivers.chrome.version=116.0.5845.96 
       - run:
           name: Start Selenium
           command: yarn run selenium
