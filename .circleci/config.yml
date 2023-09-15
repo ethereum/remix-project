@@ -378,7 +378,7 @@ commands:
           command: |
             google-chrome --version > version.txt
             VERSION=$(grep -Eo '[0-9]+\.' < version.txt | head -1)
-            CHROMEDRIVER_URL=$(curl -s 'https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json' | jq '.channels.Stable.downloads.chromedriver[] | select(.platform == "linux64") | .url' | tr -d '"')
+            # CHROMEDRIVER_URL=$(curl -s 'https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json' | jq '.channels.Stable.downloads.chromedriver[] | select(.platform == "linux64") | .url' | tr -d '"')
             CHROMEDRIVER_URL=$(curl -s 'https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json' | jq --arg v "$VERSION" '.versions[] | select(.version | startswith($v)) | .downloads.chromedriver[] | select(.platform == "linux64") | .url' | tail -n1 | tr -d '"')
             echo $CHROMEDRIVER_URL
             ZIPFILEPATH="/tmp/chromedriver.zip"
@@ -397,6 +397,7 @@ commands:
 
             echo Removing ZIP file
             rm "$ZIPFILEPATH"
+            rm version.txt
 
             echo Done
             chromedriver -v
