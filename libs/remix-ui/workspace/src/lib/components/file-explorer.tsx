@@ -329,7 +329,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             id="treeViewItem"
             controlBehaviour={true}
             label={
-              <div className="d-flex flex-row align-items-center justify-content-center" onClick={handleFileExplorerMenuClick}>
+              <div data-id="fileExplorerMenuContainer" className="d-flex flex-row align-items-center justify-content-center" onClick={handleFileExplorerMenuClick}>
                 <FileExplorerMenu
                   title={''}
                   menuItems={props.menuItems}
