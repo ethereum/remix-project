@@ -14,10 +14,10 @@ jobs:
     resource_class:
       xlarge
     working_directory: ~/remix-project
-  steps:
+    steps:
       - browser-tools/install-browser-tools:
           install-firefox: false
-          install-chrome: true
+          install-chrome: false
           install-chromedriver: false
           install-geckodriver: false
       - checkout
