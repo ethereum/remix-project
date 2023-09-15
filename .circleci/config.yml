@@ -169,6 +169,11 @@ jobs:
 
       - run: ls -la ./dist/apps/remix-ide/assets/js
       - run: yarn run selenium-install || yarn run selenium-install
+      - when:
+          condition:
+              equal: [ "chrome", << parameters.browser >> ]
+          steps:
+            - run: cp ~/bin/chromedriver /home/circleci/remix-project/node_modules/selenium-standalone/.selenium/chromedriver/latest-x64/
       - run:
           name: Start Selenium
           command: yarn run selenium
@@ -215,6 +220,7 @@ jobs:
       - run: unzip ./persist/plugin-<< parameters.plugin >>.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       - run: yarn run selenium-install || yarn run selenium-install
+      - run: cp ~/bin/chromedriver /home/circleci/remix-project/node_modules/selenium-standalone/.selenium/chromedriver/latest-x64/
       - run:
           name: Start Selenium
           command: yarn run selenium
@@ -376,7 +382,10 @@ commands:
       - run:
           name: install-chromedriver-custom-linux
           command: |
-            CHROMEDRIVER_URL=$(curl -s 'https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json' | jq '.channels.Stable.downloads.chromedriver[] | select(.platform == "linux64") | .url' | tr -d '"')
+            google-chrome --version > version.txt
+            VERSION=$(grep -Eo '[0-9]+\.' < version.txt | head -1)
+            # CHROMEDRIVER_URL=$(curl -s 'https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json' | jq '.channels.Stable.downloads.chromedriver[] | select(.platform == "linux64") | .url' | tr -d '"')
+            CHROMEDRIVER_URL=$(curl -s 'https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json' | jq --arg v "$VERSION" '.versions[] | select(.version | startswith($v)) | .downloads.chromedriver[] | select(.platform == "linux64") | .url' | tail -n1 | tr -d '"')
             echo $CHROMEDRIVER_URL
             ZIPFILEPATH="/tmp/chromedriver.zip"
             echo "Downloading from $CHROMEDRIVER_URL"
@@ -394,6 +403,7 @@ commands:
 
             echo Removing ZIP file
             rm "$ZIPFILEPATH"
+            rm version.txt
 
             echo Done
             chromedriver -v
