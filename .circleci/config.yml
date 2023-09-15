@@ -17,7 +17,7 @@ jobs:
     steps:
       - browser-tools/install-browser-tools:
           install-firefox: false
-          install-chrome: false
+          install-chrome: true
           install-chromedriver: false
           install-geckodriver: false
       - checkout
