@@ -214,7 +214,8 @@ jobs:
       - run: unzip ./persist/dist.zip
       - run: unzip ./persist/plugin-<< parameters.plugin >>.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
-      - run: yarn selenium-standalone install --singleDriverInstall=chrome --drivers.chrome.version=116.0.5845.96 
+      - run: yarn run selenium-install || yarn run selenium-install
+      - run: cp ~/bin/chromedriver /home/circleci/remix-project/node_modules/selenium-standalone/.selenium/chromedriver/latest-x64/
       - run:
           name: Start Selenium
           command: yarn run selenium
