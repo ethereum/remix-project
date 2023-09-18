@@ -43,7 +43,8 @@ function addFile(browser: NightwatchBrowser, name: string, content: NightwatchCo
             done()
           })
       } else {
-        browser.click('span[data-id="fileExplorerNewFilecreateNewFile"]')
+        // browser.click('span[data-id="fileExplorerNewFilecreateNewFile"]')
+        browser.click('#fileExplorerMenuContainer > span#createNewFile')
           .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
           .sendKeys('*[data-id$="/blank"] .remixui_items', name)
           .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
