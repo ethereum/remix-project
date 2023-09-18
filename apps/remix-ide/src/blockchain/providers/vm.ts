@@ -40,15 +40,25 @@ export class VMProvider {
     return new Promise((resolve, reject) => {
       this.worker.addEventListener('message', (msg) => {
         if (msg.data.cmd === 'sendAsyncResult' && stamps[msg.data.stamp]) {
-          stamps[msg.data.stamp](msg.data.error, msg.data.result)
+          if (stamps[msg.data.stamp].callback) {
+            stamps[msg.data.stamp].callback(msg.data.error, msg.data.result)
+            return
+          }
+          if (msg.data.error) {
+            stamps[msg.data.stamp].reject(msg.data.error)
+          } else {
+            stamps[msg.data.stamp].resolve(msg.data.result)
+          }          
         } else if (msg.data.cmd === 'initiateResult') {
           if (!msg.data.error) {
             this.provider = {
               sendAsync: (query, callback) => {
-                const stamp = Date.now() + incr
-                incr++
-                stamps[stamp] = callback
-                this.worker.postMessage({ cmd: 'sendAsync', query, stamp })
+                return new Promise((resolve, reject) => {
+                  const stamp = Date.now() + incr
+                  incr++
+                  stamps[stamp] = { callback, resolve, reject }
+                  this.worker.postMessage({ cmd: 'sendAsync', query, stamp })              
+                })
               }
             }
             this.web3 = new Web3(this.provider as LegacySendAsyncProvider)
