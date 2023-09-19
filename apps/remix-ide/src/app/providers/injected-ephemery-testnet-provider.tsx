@@ -1,5 +1,6 @@
 import * as packageJson from '../../../../../package.json'
 import {InjectedCustomProvider} from './injected-custom-provider'
+import Web3 from 'web3'
 
 const profile = {
   name: 'injected-ephemery-testnet-provider',
@@ -27,4 +28,13 @@ export class InjectedEphemeryTestnetProvider extends InjectedCustomProvider {
       ] 
     )
   }
+
+  async init() {
+    const chainId = await new Web3(this.rpcUrls[0]).eth.getChainId()
+    this.chainId = `0x${chainId.toString(16)}`
+    this.chainName = `Ephemery Testnet ${chainId}`
+    await super.init()
+    return {}
+  }
+
 }
