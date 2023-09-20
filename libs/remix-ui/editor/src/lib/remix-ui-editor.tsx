@@ -539,6 +539,14 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
+  props.editorAPI.getPositionAt = (offset: number) => {
+    if (!monacoRef.current) return
+    const model = editorModelsState[currentFileRef.current]?.model
+    if (model) {
+      return model.getPositionAt(offset)
+    }
+  }
+
   props.editorAPI.getHoverPosition = (position: monacoTypes.Position) => {
     if (!monacoRef.current) return
     const model = editorModelsState[currentFileRef.current]?.model
