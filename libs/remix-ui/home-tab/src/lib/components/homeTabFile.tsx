@@ -135,22 +135,11 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
     const wName = 'Playground'
     const workspaces = await plugin.call('filePanel', 'getWorkspaces')
     if (!workspaces.find((workspace) => workspace.name === wName)) {
-      await plugin.call('filePanel', 'createWorkspace', wName, 'remixDefault')
+      await plugin.call('filePanel', 'createWorkspace', wName, 'playground')
     }
     await plugin.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
     await plugin.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false }) // calling once is not working.
-
-    const content = `// SPDX-License-Identifier: MIT
-    pragma solidity >=0.7.0 <0.9.0;
-
-    contract HelloWorld {
-      function print() public pure returns (string memory) {
-        return "Hello World!";
-      }
-    }
-    `
-    const { newPath } = await plugin.call('fileManager', 'writeFileNoRewrite', '/contracts/helloWorld.sol', content)
-    await plugin.call('fileManager', 'open', newPath)
+    await plugin.call('fileManager', 'open', '/contracts/helloWorld.sol')
   }
   const uploadFile = async (target) => {
     _paq.push(['trackEvent', 'hometab', 'filesSection', 'uploadFile'])
