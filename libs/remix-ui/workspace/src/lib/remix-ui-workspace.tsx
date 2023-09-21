@@ -899,7 +899,7 @@ export function Workspace() {
                     </span>
                   ) : null}
                   <span className="d-flex">
-                    <label className="pl-2 form-check-label" htmlFor="workspacesSelect" style={{wordBreak: 'keep-all'}}>
+                    <label className="pl-2 form-check-label" style={{wordBreak: 'keep-all'}}>
                       <FormattedMessage id='filePanel.workspace' />
                     </label>
                   </span>                  

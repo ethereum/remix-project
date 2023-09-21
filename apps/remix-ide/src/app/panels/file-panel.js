@@ -181,17 +181,16 @@ module.exports = class Filepanel extends ViewPlugin {
 
   saveRecent(workspaceName) {
     if (!localStorage.getItem('recentWorkspaces')) {
-      localStorage.setItem('recentWorkspaces', JSON.stringify({ first: workspaceName, second: '', third: '' }))
+      localStorage.setItem('recentWorkspaces', JSON.stringify([ workspaceName ]))
     } else {
-      const recents = JSON.parse(localStorage.getItem('recentWorkspaces'))
+      let recents = JSON.parse(localStorage.getItem('recentWorkspaces'))
       // checking if we have a duplication
-      if (recents.first !== workspaceName && recents.second !== workspaceName && recents.third !== workspaceName) {
-        // filtering removed records
-        const firstW = workspaceName
-        const secondW = recents.first != '' ? recents.first : recents.second != '' ? recents.second : recents.third
-        const thirdW = recents.second != '' ? recents.second : recents.third
-        const newResents = JSON.stringify({ first: firstW, second: secondW, third: thirdW })
-        localStorage.setItem('recentWorkspaces', newResents)
+      if (!recents.find((el) => {
+        return el === workspaceName
+      })) {
+        recents = ([workspaceName, ...recents])
+        recents.filter((el) => { return el != "" })
+        localStorage.setItem('recentWorkspaces', JSON.stringify(recents))
       }
     }
   }
