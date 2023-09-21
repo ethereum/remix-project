@@ -736,7 +736,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                         return (
                           <div className={classNameBlock} data-id="block" key={index}>
                             <span ref={(element) => {
-                              typewrite(element, msg ? msg.toString() : null)
+                              typewrite(element, msg ? msg.toString() : null, () => scrollToBottom()
+                              )
                             }} className={x.style}>
                             </span>
                           </div>
@@ -754,7 +755,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                     typeWriterIndexes.current.push(index)
                     return (
                       <div className={classNameBlock} data-id="block" key={index}> <span ref={(element) => {
-                        typewrite(element, x.message)
+                        typewrite(element, x.message, () => scrollToBottom())
                       }} className={x.style}></span></div>
                     )
                   } else {
@@ -803,14 +804,21 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   )
 }
 
-const typewrite = (elementsRef, message) => {  
+const typewrite = (elementsRef, message, callback) => {  
   (() => {
     let count = 0
     const id = setInterval(() => {
       if (!elementsRef) return
       count++
       elementsRef.innerText = message.substr(0, count)
-      if (message === count) clearInterval(id)  
+      // scroll when new line ` <br>
+      if (elementsRef.lastChild.tagName === `BR`) {
+        callback()
+      }
+      if (message.length === count) {
+        clearInterval(id)
+        callback()
+      }
     }, 5)
   })()
 }
