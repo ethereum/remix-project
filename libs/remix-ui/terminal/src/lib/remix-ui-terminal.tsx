@@ -812,9 +812,7 @@ const typewrite = (elementsRef, message, callback) => {
       count++
       elementsRef.innerText = message.substr(0, count)
       // scroll when new line ` <br>
-      if (elementsRef.lastChild.tagName === `BR`) {
-        callback()
-      }
+      if (elementsRef.lastChild.tagName === `BR`) callback()
       if (message.length === count) {
         clearInterval(id)
         callback()
