@@ -96,8 +96,12 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
           <div className="close" data-id="renderer" onClick={handleClose}>
             <i className="fas fa-times"></i>
           </div>
-          <CopyToClipboard content={messageText} className={` p-0 m-0 far fa-copy ${classList}`} direction={'top'} />
-          <span onClick={() => { askGtp() }}>ASK GPT</span>
+          <div className="d-flex flex-row-reverse">
+            <span className="ml-2 pt-1 p-1" >
+              <CopyToClipboard content={messageText} className={` p-0 m-0 far fa-copy ${classList}`} direction={'top'} />
+            </span>
+            <span className="btn btn-success btn-sm" onClick={() => { askGtp() }}>ASK GPT</span>
+          </div>
         </div>
       )}
     </>

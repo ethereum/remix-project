@@ -734,9 +734,12 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                       if (x.typewriter && !typeWriterIndexes.current.includes(index)) {
                         typeWriterIndexes.current.push(index)
                         return (
-                          <div className={classNameBlock} data-id="block" key={index}> <span ref={(element) => {
-                            typewrite(element, msg ? msg.toString() : null)
-                          }} className={x.style}></span></div>
+                          <div className={classNameBlock} data-id="block" key={index}>
+                            <span ref={(element) => {
+                              typewrite(element, msg ? msg.toString() : null)
+                            }} className={x.style}>
+                            </span>
+                          </div>
                         )
                       } else {
                         return (
@@ -804,6 +807,7 @@ const typewrite = (elementsRef, message) => {
   (() => {
     let count = 0
     const id = setInterval(() => {
+      if (!elementsRef) return
       count++
       elementsRef.innerText = message.substr(0, count)
       if (message === count) clearInterval(id)  
