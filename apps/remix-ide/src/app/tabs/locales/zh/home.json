@@ -55,7 +55,9 @@
   "home.files": "文件",
   "home.newFile": "新建文件",
   "home.startCoding": "Start Coding",
+  "home.startCodingPlayground": "Open a playground for prototyping and simply learning",
   "home.openFile": "打开本地文件",
+  "home.openFileTooltip": "Open a File from you File System",
   "home.connectToLocalhost": "连接本地主机",
   "home.loadFrom": "从以下来源导入",
   "home.resources": "资源"
