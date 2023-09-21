@@ -38,18 +38,14 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
     }
     importSource: string
     toasterMsg: string
-    recentWorkspaces: {
-      first: string
-      second: string
-      third: string
-    }
+    recentWorkspaces: Array<string>
   }>({
     searchInput: '',
     showModalDialog: false,
     modalInfo: { title: '', loadItem: '', examples: [], prefix: '' },
     importSource: '',
     toasterMsg: '',
-    recentWorkspaces: { first: '', second: '', third: '' },
+    recentWorkspaces: [],
   })
 
   const [, dispatch] = useReducer(loadingReducer, loadingInitialState)
@@ -60,26 +56,26 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
     plugin.on('filePanel', 'setWorkspace', async () => {
       let recents = JSON.parse(localStorage.getItem('recentWorkspaces'))
 
-      if (!recents) recents = { first: '', second: '', third: '' }
-      setState((prevState) => {
-        return { ...prevState, recentWorkspaces: { first: recents.first, second: recents.second, third: recents.third } }
-      })
+      if (!recents) {
+        recents = []
+      } else {
+        setState((prevState) => {
+          return { ...prevState, recentWorkspaces: recents.slice(0, recents.length <= 3 ? recents.length : 3) }
+        })
+      }
     })
 
     const deleteSavedWorkspace = (name) => {
-      console.log('deleted ', name)
-      let recents = JSON.parse(localStorage.getItem('recentWorkspaces'))
-      const newRecents = recents
+      const recents = JSON.parse(localStorage.getItem('recentWorkspaces'))
+      let newRecents = recents
       if (!recents) {
-        recents = { first: '', second: '', third: '' }
+        newRecents = []
       } else {
-        Object.keys(recents).map((key) => {
-          if (recents[key] === name) newRecents[key] = ''
-        })
+        newRecents = recents.filter((el) => { return el !== name})
         localStorage.setItem('recentWorkspaces', JSON.stringify(newRecents))
       }
       setState((prevState) => {
-        return { ...prevState, recentWorkspaces: { first: newRecents.first, second: newRecents.second, third: newRecents.third } }
+        return { ...prevState, recentWorkspaces: newRecents.slice(0, newRecents.length <= 3 ? newRecents.length : 3) }
       })
     }
     plugin.on('filePanel', 'workspaceDeleted', async (deletedName) => {
@@ -302,24 +298,24 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
               </button>
             </CustomTooltip>
           </div>
-          {!(state.recentWorkspaces.first == '' && state.recentWorkspaces.second == '' && state.recentWorkspaces.third == '') && (
+          {(state.recentWorkspaces[0] || state.recentWorkspaces[1] || state.recentWorkspaces[2]) && (
             <div className="d-flex flex-column">
               <label style={{ fontSize: '0.8rem' }} className="mt-3">
                 Recent workspaces
               </label>
-              {state.recentWorkspaces.first !== 'undefined' && state.recentWorkspaces.first !== '' && (
-                <a className="cursor-pointer mb-1 ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces.first)}>
-                  {state.recentWorkspaces.first}
+              {state.recentWorkspaces[0] && state.recentWorkspaces[0] !== '' && (
+                <a className="cursor-pointer mb-1 ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces[0])}>
+                  {state.recentWorkspaces[0]}
                 </a>
               )}
-              {state.recentWorkspaces.second !== 'undefined' && state.recentWorkspaces.second !== '' && (
-                <a className="cursor-pointer mb-1 ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces.second)}>
-                  {state.recentWorkspaces.second}
+              {state.recentWorkspaces[1] && state.recentWorkspaces[1] !== '' && (
+                <a className="cursor-pointer mb-1 ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces[1])}>
+                  {state.recentWorkspaces[1]}
                 </a>
               )}
-              {state.recentWorkspaces.third !== 'undefined' && state.recentWorkspaces.third !== '' && (
-                <a className="cursor-pointer ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces.third)}>
-                  {state.recentWorkspaces.third}
+              {state.recentWorkspaces[2] && state.recentWorkspaces[2] !== '' && (
+                <a className="cursor-pointer ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces[2])}>
+                  {state.recentWorkspaces[2]}
                 </a>
               )}
             </div>
