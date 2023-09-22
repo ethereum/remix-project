@@ -1,10 +1,10 @@
 // eslint-disable-next-line no-use-before-define
 import React, {useEffect, useState, useRef} from 'react'
 import {FormattedMessage, useIntl} from 'react-intl'
-import {CopyToClipboard} from '@remix-ui/clipboard'
 import {AccountProps} from '../types'
 import {PassphrasePrompt} from './passphrase'
 import {CustomTooltip} from '@remix-ui/helper'
+import CopyIcon from './copyToClipboard'
 
 export function AccountUI(props: AccountProps) {
   const {selectedAccount, loadedAccounts} = props.accounts
@@ -214,9 +214,10 @@ export function AccountUI(props: AccountProps) {
             </option>
           ))}
         </select>
-        <div style={{marginLeft: -5}}>
-          <CopyToClipboard tip={intl.formatMessage({id: 'udapp.copyAccount'})} content={selectedAccount} direction="top" />
-        </div>
+        <CopyIcon
+          selectedAccount={selectedAccount}
+          intl={intl}
+        />
         <CustomTooltip placement={'top-start'} tooltipClasses="text-nowrap" tooltipId="remixSignMsgTooltip" tooltipText={<FormattedMessage id="udapp.signMsgUsingAccount" />}>
           <i id="remixRunSignMsg" data-id="settingsRemixRunSignMsg" className="mx-1 fas fa-edit udapp_icon" aria-hidden="true" onClick={signMessage}></i>
         </CustomTooltip>
