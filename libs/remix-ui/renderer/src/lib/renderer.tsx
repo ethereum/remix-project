@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react' //eslint-disable-line
 import {CopyToClipboard} from '@remix-ui/clipboard'
 import {helper} from '@remix-project/remix-solidity'
 import './renderer.css'
+const _paq = (window._paq = window._paq || [])
+
 interface RendererProps {
   message: any
   opt?: any
@@ -76,6 +78,7 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
       explain why the error occurred and how to fix it.
       `
       await plugin.call('openaigpt', 'message', message)
+      _paq.push(['trackEvent', 'GPTSupport', 'askGPT'])
     } catch (err) {
       console.error('unable to askGtp')
       console.error(err)
