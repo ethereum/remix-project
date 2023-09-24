@@ -296,7 +296,7 @@ export function getAbiCompletionItems(range: monacoTypes.IRange, monaco): monaco
     {
       label: 'decode',
       kind: monaco.languages.CompletionItemKind.Method,
-      insertText: 'decode(${1:arg});',
+      insertText: 'decode(${1:arg}, ${2:arg});',
       insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
       detail: 'decode(bytes encodedData, (...)) returns (...): ABI-decodes the given arguments from the given encodedData',
       range
