@@ -54,7 +54,8 @@ export const FileLabel = (props: FileLabelProps) => {
     }
     if (event.which === 27) {
       event.preventDefault()
-      editModeOff(labelRef.current.innerText)
+      // don't change it
+      editModeOff(file.name)
     }
   }
 
