@@ -1,5 +1,6 @@
 import { eachOf } from 'async'
 import { randomBytes } from 'crypto'
+import { toChecksumAddress } from '@ethereumjs/util'
 
 export class LogsManager {
   notificationCallbacks
@@ -22,8 +23,8 @@ export class LogsManager {
 
       web3.eth.getTransactionReceipt(txHash, (_error, receipt) => {
         for (const log of receipt.logs) {
-          this.oldLogs.push({ type: 'block', blockNumber, block, tx, log, txNumber: i })
-          const subscriptions = this.getSubscriptionsFor({ type: 'block', blockNumber, block, tx, log })
+          this.oldLogs.push({ type: 'block', blockNumber, block, tx, log, txNumber: i, receipt })
+          const subscriptions = this.getSubscriptionsFor({ type: 'block', blockNumber, block, tx, log, receipt})
 
           for (const subscriptionId of subscriptions) {
             const result = {
@@ -57,13 +58,14 @@ export class LogsManager {
     if (queryType === 'logs') {
       const fromBlock = queryFilter.fromBlock || '0x0'
       const toBlock = queryFilter.toBlock || this.oldLogs.length ? this.oldLogs[this.oldLogs.length - 1].blockNumber : '0x0'
-      if ((queryFilter.address === (changeEvent.tx.to || '').toString()) || queryFilter.address === (changeEvent.tx.getSenderAddress().toString())) {
-        if ((parseInt(toBlock) >= parseInt(changeEvent.blockNumber)) && (parseInt(fromBlock) <= parseInt(changeEvent.blockNumber))) {
+      const targetAddress = toChecksumAddress(queryFilter.address)
+      if ((parseInt(toBlock) >= parseInt(changeEvent.blockNumber)) && (parseInt(fromBlock) <= parseInt(changeEvent.blockNumber))) {
+        if (changeEvent.log && changeEvent.log.address === targetAddress) {
           return true
         }
       }
+      return false
     }
-
     return false
   }
 
