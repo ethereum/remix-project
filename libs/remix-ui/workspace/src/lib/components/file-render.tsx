@@ -86,7 +86,7 @@ export const FileRender = (props: RenderFileProps) => {
       <TreeViewItem
         id={`treeViewItem${file.path}`}
         iconX="pr-3 fa fa-folder"
-        iconY={props.expandPath.includes(file.path) ? 'pr-3 fa fa-folder-open' : 'pr-3 fa fa-folder'}
+        iconY={props.expandPath.includes(file.path) ? 'pr-0 fa fa-folder-open' : 'pr-0 fa fa-folder'}
         key={`${file.path + props.index}`}
         label={
           <>
