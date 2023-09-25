@@ -290,41 +290,40 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleFileMove = (dest: string, src: string) => {
-    try{
-    props.modal(
-      intl.formatMessage({id: 'filePanel.moveFile'}),
-      intl.formatMessage({id: 'filePanel.moveFileMsg1'}, {src, dest}),
-      intl.formatMessage({id: 'filePanel.yes'}),
-      () => props.dispatchMoveFile(src, dest),
-      intl.formatMessage({id: 'filePanel.cancel'}),
-      () => {}
-    )
+    try {
+      props.modal(
+        intl.formatMessage({ id: 'filePanel.moveFile' }),
+        intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src, dest }),
+        intl.formatMessage({ id: 'filePanel.yes' }),
+        () => props.dispatchMoveFile(src, dest),
+        intl.formatMessage({ id: 'filePanel.cancel' }),
+        () => {}
+      )
     } catch (error) {
       props.modal(
-        intl.formatMessage({id: 'filePanel.movingFileFailed'}),
-        intl.formatMessage({id: 'filePanel.movingFileFailedMsg'}, {src}),
-        intl.formatMessage({id: 'filePanel.close'}),
+        intl.formatMessage({ id: 'filePanel.movingFileFailed' }),
+        intl.formatMessage({ id: 'filePanel.movingFileFailedMsg' }, { src }),
+        intl.formatMessage({ id: 'filePanel.close' }),
         async () => {}
       )
     }
-
   }
 
   const handleFolderMove = (dest: string, src: string) => {
     try {
       props.modal(
-        intl.formatMessage({id: 'filePanel.moveFile'}),
-        intl.formatMessage({id: 'filePanel.moveFileMsg1'}, {src, dest}),
-        intl.formatMessage({id: 'filePanel.yes'}),
+        intl.formatMessage({ id: 'filePanel.moveFile' }),
+        intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src, dest }),
+        intl.formatMessage({ id: 'filePanel.yes' }),
         () => props.dispatchMoveFolder(src, dest),
-        intl.formatMessage({id: 'filePanel.cancel'}),
+        intl.formatMessage({ id: 'filePanel.cancel' }),
         () => {}
       )
     } catch (error) {
       props.modal(
-        intl.formatMessage({id: 'filePanel.movingFolderFailed'}),
-        intl.formatMessage({id: 'filePanel.movingFolderFailedMsg'}, {src}),
-        intl.formatMessage({id: 'filePanel.close'}),
+        intl.formatMessage({ id: 'filePanel.movingFolderFailed' }),
+        intl.formatMessage({ id: 'filePanel.movingFolderFailedMsg' }, { src }),
+        intl.formatMessage({ id: 'filePanel.close' }),
         async () => {}
       )
     }
