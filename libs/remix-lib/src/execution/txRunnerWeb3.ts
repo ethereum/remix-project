@@ -2,6 +2,7 @@
 import { EventManager } from '../eventManager'
 import type { Transaction as InternalTransaction } from './txRunner'
 import Web3 from 'web3'
+import {toBigInt} from 'web3-utils'
 
 export class TxRunnerWeb3 {
   event
@@ -33,21 +34,6 @@ export class TxRunnerWeb3 {
       }
     }
 
-    if (api.personalMode()) {
-      promptCb(
-        (value) => {
-          this._sendTransaction((this.getWeb3() as any).personal.sendTransaction, tx, value, callback)
-        },
-        () => {
-          return callback('Canceled by user.')
-        }
-      )
-    } else {
-      this._sendTransaction(this.getWeb3().eth.sendTransaction, tx, null, callback)
-    }
-  }
-
-  _sendTransaction (sendTx, tx, pass, callback) {
     let currentDateTime = new Date();
     const start = currentDateTime.getTime() / 1000
     const cb = (err, resp) => {
@@ -72,11 +58,18 @@ export class TxRunnerWeb3 {
       }
       listenOnResponse().then((txData) => { callback(null, txData) }).catch((error) => { callback(error) })
     }
-    const args = pass !== null ? [tx, pass, cb] : [tx, cb]
-    try {
-      sendTx.apply({}, args)
-    } catch (e) {
-      return callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
+
+    if (api.personalMode()) {
+      promptCb(
+        (value) => {
+          (this.getWeb3() as any).eth.personal.sendTransaction({...tx, value}).then((res)=>cb(null,res.transactionHash)).catch((e)=>callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `))
+        },
+        () => {
+          return callback('Canceled by user.')
+        }
+      )
+    } else {
+      this.getWeb3().eth.sendTransaction(tx).then((res)=>cb(null,res.transactionHash)).catch((e)=>callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `))
     }
   }
 
@@ -112,10 +105,10 @@ export class TxRunnerWeb3 {
           // the sending stack (web3.js / metamask need to have the type defined)
           // this is to avoid the following issue: https://github.com/MetaMask/metamask-extension/issues/11824
           txCopy.type = '0x2'
-          txCopy.maxFeePerGas = Math.ceil(network.lastBlock.baseFeePerGas + network.lastBlock.baseFeePerGas / 3)
+          txCopy.maxFeePerGas = Math.ceil(Number((toBigInt(network.lastBlock.baseFeePerGas) + toBigInt(network.lastBlock.baseFeePerGas) / BigInt(3)).toString()))
         } else {
           txCopy.type = '0x1'
-          txCopy.gasPrice = network.lastBlock.baseFeePerGas
+          txCopy.gasPrice = toBigInt(network.lastBlock.baseFeePerGas).toString()
         }
       }
       this.getWeb3().eth.estimateGas(txCopy)
