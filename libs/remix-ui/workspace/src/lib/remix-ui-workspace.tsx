@@ -469,7 +469,7 @@ export function Workspace() {
       return {
         ...prevState,
         focusContext: {element: path, x: pageX, y: pageY, type},
-        focusEdit: {...prevState.focusEdit, lastEdit: content},
+        focusEdit: {...prevState.focusEdit, element: null, lastEdit: content},
         showContextMenu: prevState.focusEdit.element !== path
       }
     })
