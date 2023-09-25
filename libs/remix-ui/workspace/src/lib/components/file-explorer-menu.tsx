@@ -151,7 +151,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                       state.actions[action]()
                     }
                   }}
-                  className={'newFile ' + icon + ' px-1 remixui_newFile'}
+                  className={'newFile ' + icon + ' pr-2 pl-1 remixui_newFile'}
                   key={`${action}-${title}-${index}`}
                 ></label>
               </CustomTooltip>
