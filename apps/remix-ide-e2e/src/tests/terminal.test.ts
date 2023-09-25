@@ -546,8 +546,8 @@ describe("Storage", function () {
             contractName: 'Lib',
             sourceName: 'contracts/StorageWithLib.sol',
             abi: metadataLib.abi,
-            bytecode: '0x' + metadataLib.data.bytecode.object,
-            deployedBytecode:  '0x' + metadataLib.data.deployedBytecode.object,
+            bytecode: metadataLib.data.bytecode.object,
+            deployedBytecode:  metadataLib.data.deployedBytecode.object,
             linkReferences: metadataLib.data.bytecode.linkReferences,
             deployedLinkReferences: metadataLib.data.deployedBytecode.linkReferences,
         }
@@ -562,8 +562,8 @@ describe("Storage", function () {
             contractName: 'StorageWithLib',
             sourceName: 'contracts/StorageWithLib.sol',
             abi: metadata.abi,
-            bytecode: '0x' + metadata.data.bytecode.object,
-            deployedBytecode:  '0x' + metadata.data.deployedBytecode.object,
+            bytecode: metadata.data.bytecode.object,
+            deployedBytecode: metadata.data.deployedBytecode.object,
             linkReferences: metadata.data.bytecode.linkReferences,
             deployedLinkReferences: metadata.data.deployedBytecode.linkReferences,
         }
@@ -700,8 +700,8 @@ const scriptAutoExec = {
               contractName: 'Lib',
               sourceName: 'contracts/1_Storage.sol',
               abi: metadataLib.abi,
-              bytecode: '0x' + metadataLib.data.bytecode.object,
-              deployedBytecode:  '0x' + metadataLib.data.deployedBytecode.object,
+              bytecode: metadataLib.data.bytecode.object,
+              deployedBytecode: metadataLib.data.deployedBytecode.object,
               linkReferences: metadataLib.data.bytecode.linkReferences,
               deployedLinkReferences: metadataLib.data.deployedBytecode.linkReferences,
           }
@@ -720,8 +720,8 @@ const scriptAutoExec = {
               contractName: 'Storage',
               sourceName: 'contracts/1_Storage.sol',
               abi: metadata.abi,
-              bytecode: '0x' + metadata.data.bytecode.object,
-              deployedBytecode:  '0x' + metadata.data.deployedBytecode.object,
+              bytecode: metadata.data.bytecode.object,
+              deployedBytecode: metadata.data.deployedBytecode.object,
               linkReferences: metadata.data.bytecode.linkReferences,
               deployedLinkReferences: metadata.data.deployedBytecode.linkReferences,
           }
