@@ -1,5 +1,6 @@
 import React from 'react'
 import {useContext} from 'react'
+import {FormattedMessage} from 'react-intl'
 import {SearchContext} from '../context/context'
 
 export const StopSearch = () => {
@@ -9,7 +10,7 @@ export const StopSearch = () => {
   }
   return (
     <a className="badge badge-danger search_plugin_stop" onClick={async () => await cancel()}>
-      stop
+      <FormattedMessage id="search.stop" />
     </a>
   )
 }

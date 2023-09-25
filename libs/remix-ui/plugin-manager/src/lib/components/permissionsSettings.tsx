@@ -144,7 +144,13 @@ function PermisssionsSettings() {
         </form>
       </ModalDialog>
       <footer className="bg-light remixui_permissions remix-bg-opacity">
-        <CustomTooltip placement={'top'} tooltipId="pmPermissions" tooltipClasses="text-nowrap" tooltipText={'Manage plugins Permissions'} key={'keypmPermissions'}>
+        <CustomTooltip
+          placement={'top'}
+          tooltipId="pmPermissions"
+          tooltipClasses="text-nowrap"
+          tooltipText={<FormattedMessage id="pluginManager.managePluginsPermissions" />}
+          key={'keypmPermissions'}
+        >
           <button onClick={openModal} className="btn btn-primary settings-button" data-id="pluginManagerPermissionsButton">
             <FormattedMessage id="pluginManager.Permissions" />
           </button>

@@ -121,9 +121,9 @@ function LocalPluginForm({closeModal, visible, pluginManager}: LocalPluginFormPr
         id="pluginManagerLocalPluginModalDialog"
         hide={visible}
         title={intl.formatMessage({id: 'pluginManager.localForm.title'})}
-        okLabel="OK"
+        okLabel={intl.formatMessage({id: 'pluginManager.localForm.ok'})}
         okFn={handleModalOkClick}
-        cancelLabel="Cancel"
+        cancelLabel={intl.formatMessage({id: 'pluginManager.localForm.cancel'})}
         cancelFn={closeModal}
       >
         <form id="local-plugin-form">
@@ -172,7 +172,7 @@ function LocalPluginForm({closeModal, visible, pluginManager}: LocalPluginFormPr
               value={methods || ''}
               id="plugin-methods"
               data-id="localPluginMethods"
-              placeholder="Methods"
+              placeholder={intl.formatMessage({id: 'pluginManager.localForm.methods'})}
             />
           </div>
           <div className="form-group">
@@ -187,7 +187,7 @@ function LocalPluginForm({closeModal, visible, pluginManager}: LocalPluginFormPr
               value={canactivate || ''}
               id="plugin-canactivate"
               data-id="localPluginCanActivate"
-              placeholder="Plugin names"
+              placeholder={intl.formatMessage({id: 'pluginManager.localForm.pluginNames'})}
             />
           </div>
 

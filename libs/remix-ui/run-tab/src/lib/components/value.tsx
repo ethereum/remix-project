@@ -51,7 +51,7 @@ export function ValueUI(props: ValueProps) {
         <FormattedMessage id="udapp.value" />
       </label>
       <div className="udapp_gasValueContainer">
-        <CustomTooltip placement={'top-start'} tooltipClasses="text-nowrap" tooltipId="remixValueTooltip" tooltipText="Enter an amount and choose its unit">
+        <CustomTooltip placement={'top-start'} tooltipClasses="text-nowrap" tooltipId="remixValueTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText5" />}>
           <input
             ref={inputValue}
             type="number"

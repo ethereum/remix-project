@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react' //eslint-disable-line
 import {CopyToClipboard} from '@remix-ui/clipboard'
 import {helper} from '@remix-project/remix-solidity'
 import './renderer.css'
+const _paq = (window._paq = window._paq || [])
+
 interface RendererProps {
   message: any
   opt?: any
@@ -76,6 +78,7 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
       explain why the error occurred and how to fix it.
       `
       await plugin.call('openaigpt', 'message', message)
+      _paq.push(['trackEvent', 'GPTSupport', 'askGPT'])
     } catch (err) {
       console.error('unable to askGtp')
       console.error(err)
@@ -96,8 +99,12 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
           <div className="close" data-id="renderer" onClick={handleClose}>
             <i className="fas fa-times"></i>
           </div>
-          <CopyToClipboard content={messageText} className={` p-0 m-0 far fa-copy ${classList}`} direction={'top'} />
-          <span onClick={() => { askGtp() }}>ASK GPT</span>
+          <div className="d-flex pt-1 flex-row-reverse">
+            <span className="ml-3 pt-1 py-1" >
+              <CopyToClipboard content={messageText} className={` p-0 m-0 far fa-copy ${classList}`} direction={'top'} />
+            </span>
+            <span className="border border-success text-success btn-sm" onClick={() => { askGtp() }}>ASK GPT</span>
+          </div>
         </div>
       )}
     </>

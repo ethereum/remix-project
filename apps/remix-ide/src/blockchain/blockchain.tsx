@@ -945,13 +945,12 @@ export class Blockchain extends Plugin {
             ? toBuffer(execResult.returnValue)
             : toBuffer(addHexPrefix(txResult.result) || '0x0000000000000000000000000000000000000000000000000000000000000000')
           const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
-          const vmError = txExecution.checkVMError(execResult, compiledContracts)
+          const vmError = txExecution.checkError({ errorMessage: execResult.exceptionError ? execResult.exceptionError.error : '', errorData: execResult.returnValue }, compiledContracts)
           if (vmError.error) {
             return cb(vmError.message)
           }
         }
       }
-
       if (!isVM && tx && tx.useCall) {
         returnValue = toBuffer(addHexPrefix(txResult.result))
       }
@@ -963,7 +962,17 @@ export class Blockchain extends Plugin {
 
       cb(null, txResult, address, returnValue)
     } catch (error) {
-      cb(error)
+      if (this.isInjectedWeb3()) {
+        let errorObj = error.replace('Returned error: ', '')
+        errorObj = JSON.parse(errorObj)
+        if (errorObj.errorData) {
+          const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
+          const injectedError = txExecution.checkError({ errorMessage: errorObj.error, errorData: errorObj.errorData }, compiledContracts)
+          cb(injectedError.message)
+        } else 
+          cb(error)
+      } else 
+        cb(error)
     }
   }
 }

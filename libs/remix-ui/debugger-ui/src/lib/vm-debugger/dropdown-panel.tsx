@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useReducer} from 'react' // eslint-disable-line
+import {useIntl} from 'react-intl'
 import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-line
 import {DropdownPanelProps, ExtractData, ExtractFunc} from '../../types' // eslint-disable-line
 import {CopyToClipboard} from '@remix-ui/clipboard' // eslint-disable-line
@@ -6,6 +7,7 @@ import {initialState, reducer} from '../../reducers/calldata'
 import './styles/dropdown-panel.css'
 
 export const DropdownPanel = (props: DropdownPanelProps) => {
+  const intl = useIntl()
   const [calldataObj, dispatch] = useReducer(reducer, initialState)
   const {
     dropdownName,
@@ -84,7 +86,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     header: '',
     toggleDropdown: true,
     message: {
-      innerText: 'No data available.',
+      innerText: intl.formatMessage({id: 'debugger.noDataAvailable'}),
       display: 'block'
     },
     dropdownContent: {
@@ -189,7 +191,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
         // replace 0xNaN with 0x0
         copiableContent: JSON.stringify(calldata, null, '\t').replace(/0xNaN/g, '0x0'),
         message: {
-          innerText: isEmpty ? 'No data available' : '',
+          innerText: isEmpty ? intl.formatMessage({id: 'debugger.noDataAvailable'}) : '',
           display: isEmpty ? 'block' : 'none'
         },
         updating: false,
@@ -221,7 +223,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
                 id={'treeViewLoadMore'}
                 data-id={'treeViewLoadMore'}
                 className="cursor_pointer"
-                label="Load more"
+                label={intl.formatMessage({id: 'debugger.loadMore'})}
                 onClick={() => {
                   triggerEvent(loadMoreEvent, [data.cursor])
                 }}
@@ -255,7 +257,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
         <span className="nameDetail" onClick={handleToggle}>
           {header}
         </span>
-        <CopyToClipboard content={state.copiableContent} data-id={`dropdownPanelCopyToClipboard${uniquePanelName}`} />
+        <CopyToClipboard tip={intl.formatMessage({id: 'debugger.copy'})} content={state.copiableContent} data-id={`dropdownPanelCopyToClipboard${uniquePanelName}`} />
       </div>
       <div className="dropdownpanel" style={{display: state.toggleDropdown ? 'block' : 'none'}}>
         <i className="refresh fas fa-sync" style={{display: state.updating ? 'inline-block' : 'none'}} aria-hidden="true"></i>
