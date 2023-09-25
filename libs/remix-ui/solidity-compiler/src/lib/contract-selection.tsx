@@ -143,7 +143,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
         } catch (e) {
           node = (
             <div>
-              Unable to display "${propertyName}": ${e.message}
+              <FormattedMessage id="solidity.unableToDisplay" /> "${propertyName}": ${e.message}
             </div>
           )
         }
@@ -173,6 +173,9 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       'abi': 'ABI: describing all the functions (input/output params, scope, ...)',
       'name': 'Name of the compiled contract',
       'swarmLocation': 'Swarm url where all metadata information can be found (contract needs to be published first)',
+      'storageLayout': 'See the Storage Layout documentation.',
+      'devdoc': 'Developer documentation (natspec)',
+      'userdoc': 'User documentation (natspec)',
       'web3Deploy': 'Copy/paste this code to any JavaScript/Web3 console to deploy this contract'
     }
     let contractProperties: any = {}
@@ -185,7 +188,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           {Object.keys(contractProperties).map((propertyName, index) => {
             const copyDetails = (
               <span className="remixui_copyDetails">
-                <CopyToClipboard content={contractProperties[propertyName]} direction="top" />
+                <CopyToClipboard tip={intl.formatMessage({id: 'solidity.copy'})} content={contractProperties[propertyName]} direction="top" />
               </span>
             )
             const questionMark = (
@@ -222,7 +225,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       _paq.push(['trackEvent', 'compiler', 'compilerDetails', 'download'])
       saveAs(new Blob([JSON.stringify(contractProperties, null, '\t')]), `${selectedContract}_compData.json`)
     }
-    modal(selectedContract, log, 'Download', downloadFn, true, 'Close', null)
+    modal(selectedContract, log, intl.formatMessage({id: 'solidity.download'}), downloadFn, true, intl.formatMessage({id: 'solidity.close'}), null)
   }
 
   const copyBytecode = () => {
@@ -238,7 +241,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           {/* Select Compiler Version */}
           <div className="mb-3">
             <label className="remixui_compilerLabel form-check-label" htmlFor="compiledContracts">
-              Contract
+              <FormattedMessage id="solidity.contract" />
             </label>
             <select onChange={(e) => handleContractChange(e.target.value)} value={selectedContract} data-id="compiledContracts" id="compiledContracts" className="custom-select">
               {contractList.map(({name, file}, index) => (
@@ -302,7 +305,12 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 details()
               }}
             >
-              <CustomTooltip placement="right" tooltipId="CompilationDetailsTooltip" tooltipClasses="text-nowrap" tooltipText="Display Contract Details">
+              <CustomTooltip
+                placement="right"
+                tooltipId="CompilationDetailsTooltip"
+                tooltipClasses="text-nowrap"
+                tooltipText={<FormattedMessage id="solidity.displayContractDetails" />}
+              >
                 <span>
                   <FormattedMessage id="solidity.compilationDetails" />
                 </span>
@@ -312,13 +320,13 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             <div className="remixui_contractHelperButtons">
               <div className="input-group">
                 <div className="btn-group" role="group" aria-label="Copy to Clipboard">
-                  <CopyToClipboard tip="Copy ABI to clipboard" getContent={copyABI} direction="top">
+                  <CopyToClipboard tip={intl.formatMessage({id: 'solidity.copyABI'})} getContent={copyABI} direction="top">
                     <button className="btn remixui_copyButton">
                       <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
                       <span>ABI</span>
                     </button>
                   </CopyToClipboard>
-                  <CopyToClipboard tip="Copy Bytecode to clipboard" getContent={copyBytecode} direction="top">
+                  <CopyToClipboard tip={intl.formatMessage({id: 'solidity.copyBytecode'})} getContent={copyBytecode} direction="top">
                     <button className="btn remixui_copyButton">
                       <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
                       <span>Bytecode</span>
@@ -333,7 +341,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
         <section className="remixui_container clearfix">
           <article className="px-2 mt-2 pb-0 d-flex w-100">
             <span className="mt-2 mx-3 w-100 alert alert-warning" role="alert">
-              No Contract Compiled Yet
+              <FormattedMessage id="solidity.noContractCompiled" />
             </span>
           </article>
         </section>

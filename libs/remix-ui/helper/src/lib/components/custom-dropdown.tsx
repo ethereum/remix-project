@@ -1,6 +1,7 @@
 // The forwardRef is important!!
 
 import React, {Ref} from 'react'
+import {FormattedMessage, useIntl} from 'react-intl'
 import {CustomTooltip} from '@remix-ui/helper'
 
 // Dropdown needs access to the DOM node in order to position the Menu
@@ -66,7 +67,12 @@ export const CustomIconsToggle = React.forwardRef(
       data-id="workspaceMenuDropdown"
     >
       {icon && (
-        <CustomTooltip placement={'top'} tooltipClasses="text-nowrap text-left" tooltipId="remixHamburgerTooltip" tooltipText="Workspace actions">
+        <CustomTooltip
+          placement={'top'}
+          tooltipClasses="text-nowrap text-left"
+          tooltipId="remixHamburgerTooltip"
+          tooltipText={<FormattedMessage id="filePanel.workspaceActions" />}
+        >
           <i style={{fontSize: 'large'}} className={`${icon}`} data-id="workspaceDropdownMenuIcon"></i>
         </CustomTooltip>
       )}
@@ -118,29 +124,32 @@ export const ProxyAddressToggle = React.forwardRef(
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
     },
     ref: Ref<HTMLDivElement>
-  ) => (
-    <div
-      ref={ref}
-      onClick={(e) => {
-        e.preventDefault()
-        onClick(e)
-      }}
-      className={'d-flex ' + className.replace('dropdown-toggle', '')}
-      data-id="toggleProxyAddressDropdown"
-    >
-      <input
-        onChange={(e) => {
+  ) => {
+    const intl = useIntl()
+    return (
+      <div
+        ref={ref}
+        onClick={(e) => {
           e.preventDefault()
-          onChange(e)
+          onClick(e)
         }}
-        className="udapp_input form-control"
-        value={address}
-        placeholder="Enter Proxy Address"
-        style={{width: '100%'}}
-        data-id="ERC1967AddressInput"
-      />
-    </div>
-  )
+        className={'d-flex ' + className.replace('dropdown-toggle', '')}
+        data-id="toggleProxyAddressDropdown"
+      >
+        <input
+          onChange={(e) => {
+            e.preventDefault()
+            onChange(e)
+          }}
+          className="udapp_input form-control"
+          value={address}
+          placeholder={intl.formatMessage({id: 'udapp.enterProxyAddress'})}
+          style={{width: '100%'}}
+          data-id="ERC1967AddressInput"
+        />
+      </div>
+    )
+  }
 )
 
 export const ProxyDropdownMenu = React.forwardRef(

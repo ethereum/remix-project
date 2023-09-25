@@ -1,0 +1,10 @@
+{
+  "solUmlGen.pngDownload": "下载 PNG",
+  "solUmlGen.pdfDownload": "下载 PDF",
+  "solUmlGen.pngDownloadTooltip": "将 UML 图下载为 PNG 文件",
+  "solUmlGen.pdfDownloadTooltip": "将 UML 图下载为 PDF 文件",
+  "solUmlGen.text1": "以 UML 图查看您的合约",
+  "solUmlGen.text2": "右键单击您的合约文件",
+  "solUmlGen.clickOn": "点击",
+  "solUmlGen.generateUML": "生成 UML"
+}

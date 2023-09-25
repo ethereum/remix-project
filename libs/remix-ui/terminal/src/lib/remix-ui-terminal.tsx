@@ -199,7 +199,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const _shell = async (script, scopedCommands, done) => {
     // default shell
     if (script.indexOf('remix:') === 0) {
-      return done(null, 'This type of command has been deprecated and is not functionning anymore. Please run remix.help() to list available commands.')
+      return done(null, intl.formatMessage({id: 'terminal.text1'}))
     }
     if (script.indexOf('remix.') === 0) {
       // we keep the old feature. This will basically only be called when the command is querying the "remix" object.
@@ -577,7 +577,12 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     <div style={{ flexGrow: 1 }} className="remix_ui_terminal_panel" ref={panelRef}>
       <div className="remix_ui_terminal_bar d-flex">
         <div className="remix_ui_terminal_menu d-flex w-100 align-items-center position-relative border-top border-dark bg-light" ref={terminalMenu} data-id="terminalToggleMenu">
-          <CustomTooltip placement="top" tooltipId="terminalToggle" tooltipClasses="text-nowrap" tooltipText={isOpen ? 'Hide Terminal' : 'Show Terminal'}>
+          <CustomTooltip
+            placement="top"
+            tooltipId="terminalToggle"
+            tooltipClasses="text-nowrap"
+            tooltipText={isOpen ? <FormattedMessage id="terminal.hideTerminal" /> : <FormattedMessage id="terminal.showTerminal" />}
+          >
             <i
               className={`mx-2 remix_ui_terminal_toggleTerminal fas ${isOpen ? 'fa-angle-double-down' : 'fa-angle-double-up'}`}
               data-id="terminalToggleIcon"
@@ -585,11 +590,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             ></i>
           </CustomTooltip>
           <div className="mx-2 remix_ui_terminal_console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole}>
-            <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText="Clear console">
+            <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.clearConsole" />}>
               <i className="fas fa-ban" aria-hidden="true"></i>
             </CustomTooltip>
           </div>
-          <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText="Pending Transactions">
+          <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.pendingTransactions" />}>
             <div className="mx-2">0</div>
           </CustomTooltip>
           <div className="h-80 mx-3 align-items-center remix_ui_terminal_listenOnNetwork custom-control custom-checkbox">
@@ -729,9 +734,13 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                       if (x.typewriter && !typeWriterIndexes.current.includes(index)) {
                         typeWriterIndexes.current.push(index)
                         return (
-                          <div className={classNameBlock} data-id="block" key={index}> <span ref={(element) => {
-                            typewrite(element, msg ? msg.toString() : null)
-                          }} className={x.style}></span></div>
+                          <div className={classNameBlock} data-id="block" key={index}>
+                            <span ref={(element) => {
+                              typewrite(element, msg ? msg.toString() : null, () => scrollToBottom()
+                              )
+                            }} className={x.style}>
+                            </span>
+                          </div>
                         )
                       } else {
                         return (
@@ -746,7 +755,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                     typeWriterIndexes.current.push(index)
                     return (
                       <div className={classNameBlock} data-id="block" key={index}> <span ref={(element) => {
-                        typewrite(element, x.message)
+                        typewrite(element, x.message, () => scrollToBottom())
                       }} className={x.style}></span></div>
                     )
                   } else {
@@ -789,19 +798,25 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         cancelFn={modalState.cancelFn}
         handleHide={handleHideModal}
       />
-      {toaster && <Toaster message="no content to execute" />}
-      {toastProvider.show && <Toaster message={`provider for path ${toastProvider.fileName} not found`} />}
+      {toaster && <Toaster message={intl.formatMessage({id: 'terminal.toasterMsg1'})} />}
+      {toastProvider.show && <Toaster message={intl.formatMessage({id: 'terminal.toasterMsg2'}, {fileName: toastProvider.fileName})} />}
     </div>
   )
 }
 
-const typewrite = (elementsRef, message) => {  
+const typewrite = (elementsRef, message, callback) => {  
   (() => {
     let count = 0
     const id = setInterval(() => {
+      if (!elementsRef) return
       count++
       elementsRef.innerText = message.substr(0, count)
-      if (message === count) clearInterval(id)  
+      // scroll when new line ` <br>
+      if (elementsRef.lastChild.tagName === `BR`) callback()
+      if (message.length === count) {
+        clearInterval(id)
+        callback()
+      }
     }, 5)
   })()
 }

@@ -36,13 +36,13 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
         <div className="d-flex flex-row">
           <div className="d-flex flex-row">
             {plugin?.profile?.maintainedBy?.toLowerCase() === 'remix' && (
-              <CustomTooltip placement="right-end" tooltipId="maintainedByTooltip" tooltipClasses="text-nowrap" tooltipText="Maintained by Remix">
+              <CustomTooltip placement="right-end" tooltipId="maintainedByTooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.maintainedByRemix" />}>
                 <i aria-hidden="true" className="text-success mt-1 px-1 fas fa-check"></i>
               </CustomTooltip>
             )}
           </div>
           <div className="swapitHeaderInfoSection d-flex justify-content-between" data-id="swapitHeaderInfoSectionId" onClick={toggleClass}>
-            <CustomTooltip placement="right-end" tooltipText="Plugin info" tooltipId="pluginInfoTooltip" tooltipClasses="text-nowrap">
+            <CustomTooltip placement="right-end" tooltipText={<FormattedMessage id="panel.pluginInfo" />} tooltipId="pluginInfoTooltip" tooltipClasses="text-nowrap">
               {tooltipChild}
             </CustomTooltip>
           </div>
@@ -71,7 +71,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
               <FormattedMessage id="panel.documentation" />:
             </label>
             <span>
-              <CustomTooltip placement="right-end" tooltipId="linkToDocsTooltip" tooltipClasses=" text-nowrap " tooltipText="Link to documentation">
+              <CustomTooltip placement="right-end" tooltipId="linkToDocsTooltip" tooltipClasses=" text-nowrap " tooltipText={<FormattedMessage id="panel.linkToDoc" />}>
                 <a href={plugin?.profile?.documentation} className="titleInfo p-0 mb-2" target="_blank" rel="noreferrer">
                   <i aria-hidden="true" className="fas fa-book"></i>
                 </a>
@@ -90,7 +90,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
         {plugin?.profile?.repo && (
           <span className="d-flex flex-row align-items-center">
             <a href={plugin?.profile?.repo} target="_blank" rel="noreferrer">
-              Make an issue
+              <FormattedMessage id="panel.makeAnissue" />
             </a>
           </span>
         )}

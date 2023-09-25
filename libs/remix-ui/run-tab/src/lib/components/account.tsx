@@ -26,36 +26,35 @@ export function AccountUI(props: AccountProps) {
     case 'injected':
       setPlusOpt({
         classList: 'udapp_disableMouseEvents',
-        title:
-            "Unfortunately it's not possible to create an account using injected provider. Please create the account directly from your provider (i.e metamask or other of the same type)."
+        title: intl.formatMessage({id: 'udapp.injectedTitle'})
       })
       break
 
     case 'vm-merge':
       setPlusOpt({
         classList: '',
-        title: 'Create a new account'
+        title: intl.formatMessage({id: 'udapp.createNewAccount'})
       })
       break
 
     case 'vm-london':
       setPlusOpt({
         classList: '',
-        title: 'Create a new account'
+        title: intl.formatMessage({id: 'udapp.createNewAccount'})
       })
       break
 
     case 'vm-berlin':
       setPlusOpt({
         classList: '',
-        title: 'Create a new account'
+        title: intl.formatMessage({id: 'udapp.createNewAccount'})
       })
       break
 
     case 'vm-shanghai':
       setPlusOpt({
         classList: '',
-        title: 'Create a new account'
+        title: intl.formatMessage({id: 'udapp.createNewAccount'})
       })
       break
 
@@ -63,12 +62,12 @@ export function AccountUI(props: AccountProps) {
       if (!props.personalMode) {
         setPlusOpt({
           classList: 'disableMouseEvents',
-          title: 'Creating an account is possible only in Personal mode. Please go to Settings to enable it.'
+          title: intl.formatMessage({id: 'udapp.web3Title'})
         })
       } else {
         setPlusOpt({
           classList: '',
-          title: 'Create a new account'
+          title: intl.formatMessage({id: 'udapp.createNewAccount'})
         })
       }
       break
@@ -76,7 +75,7 @@ export function AccountUI(props: AccountProps) {
     default:
       setPlusOpt({
         classList: 'disableMouseEvents',
-        title: `Unfortunately it's not possible to create an account using an external wallet (${props.selectExEnv}).`
+        title: intl.formatMessage({id: 'udapp.defaultTitle'}, {selectExEnv: props.selectExEnv})
       })
     }
     // this._deps.config.get('settings/personal-mode')
@@ -88,28 +87,28 @@ export function AccountUI(props: AccountProps) {
 
   const signMessage = () => {
     if (!accounts[0]) {
-      return props.tooltip('Account list is empty, please make sure the current provider is properly connected to remix')
+      return props.tooltip(intl.formatMessage({id: 'udapp.tooltipText1'}))
     }
 
     if (props.selectExEnv === 'web3') {
       return props.modal(
-        'Passphrase to sign a message',
-        <PassphrasePrompt message="Enter your passphrase for this account to sign the message" setPassphrase={props.setPassphrase} />,
-        'OK',
+        intl.formatMessage({id: 'udapp.modalTitle1'}),
+        <PassphrasePrompt message={intl.formatMessage({id: 'udapp.modalMessage1'})} setPassphrase={props.setPassphrase} />,
+        intl.formatMessage({id: 'udapp.ok'}),
         () => {
           props.modal(
             intl.formatMessage({id: 'udapp.signAMessage'}),
             signMessagePrompt(),
-            'OK',
+            intl.formatMessage({id: 'udapp.ok'}),
             () => {
               props.signMessageWithAddress(selectedAccount, messageRef.current, signedMessagePrompt, props.passphrase)
               props.setPassphrase('')
             },
-            'Cancel',
+            intl.formatMessage({id: 'udapp.cancel'}),
             null
           )
         },
-        'Cancel',
+        intl.formatMessage({id: 'udapp.cancel'}),
         () => {
           props.setPassphrase('')
         }
@@ -119,11 +118,11 @@ export function AccountUI(props: AccountProps) {
     props.modal(
       intl.formatMessage({id: 'udapp.signAMessage'}),
       signMessagePrompt(),
-      'OK',
+      intl.formatMessage({id: 'udapp.ok'}),
       () => {
         props.signMessageWithAddress(selectedAccount, messageRef.current, signedMessagePrompt)
       },
-      'Cancel',
+      intl.formatMessage({id: 'udapp.cancel'}),
       null
     )
   }
@@ -143,7 +142,7 @@ export function AccountUI(props: AccountProps) {
   const passphraseCreationPrompt = () => {
     return (
       <div className="d-flex flex-column">
-        Please provide a Passphrase for the account creation
+        <FormattedMessage id="udapp.text1" />
         <input id="prompt1" type="password" name="prompt_text" className="w-100 py-2" onInput={handlePassphrase} />
         <input id="prompt2" type="password" name="prompt_text" className="w-100" onInput={handleMatchPassphrase} />
       </div>
@@ -216,9 +215,9 @@ export function AccountUI(props: AccountProps) {
           ))}
         </select>
         <div style={{marginLeft: -5}}>
-          <CopyToClipboard tip="Copy account to clipboard" content={selectedAccount} direction="top" />
+          <CopyToClipboard tip={intl.formatMessage({id: 'udapp.copyAccount'})} content={selectedAccount} direction="top" />
         </div>
-        <CustomTooltip placement={'top-start'} tooltipClasses="text-nowrap" tooltipId="remixSignMsgTooltip" tooltipText={'Sign a message using this account'}>
+        <CustomTooltip placement={'top-start'} tooltipClasses="text-nowrap" tooltipId="remixSignMsgTooltip" tooltipText={<FormattedMessage id="udapp.signMsgUsingAccount" />}>
           <i id="remixRunSignMsg" data-id="settingsRemixRunSignMsg" className="mx-1 fas fa-edit udapp_icon" aria-hidden="true" onClick={signMessage}></i>
         </CustomTooltip>
       </div>
