@@ -9,7 +9,7 @@ import '../css/file-explorer.css'
 import {checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath} from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {FileRender} from './file-render'
-import {Drag} from '@remix-ui/drag-n-drop'
+import {Drag, Draggable} from '@remix-ui/drag-n-drop'
 import {ROOT_PATH} from '../utils/constants'
 
 export const FileExplorer = (props: FileExplorerProps) => {
@@ -290,8 +290,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleFileMove = (dest: string, src: string) => {
-    try {
-      props.dispatchMoveFile(src, dest)
+    try{
+    props.modal(
+      intl.formatMessage({id: 'filePanel.moveFile'}),
+      intl.formatMessage({id: 'filePanel.moveFileMsg1'}, {src, dest}),
+      intl.formatMessage({id: 'filePanel.yes'}),
+      () => props.dispatchMoveFile(src, dest),
+      intl.formatMessage({id: 'filePanel.cancel'}),
+      () => {}
+    )
     } catch (error) {
       props.modal(
         intl.formatMessage({id: 'filePanel.movingFileFailed'}),
@@ -300,11 +307,19 @@ export const FileExplorer = (props: FileExplorerProps) => {
         async () => {}
       )
     }
+
   }
 
   const handleFolderMove = (dest: string, src: string) => {
     try {
-      props.dispatchMoveFolder(src, dest)
+      props.modal(
+        intl.formatMessage({id: 'filePanel.moveFile'}),
+        intl.formatMessage({id: 'filePanel.moveFileMsg1'}, {src, dest}),
+        intl.formatMessage({id: 'filePanel.yes'}),
+        () => props.dispatchMoveFolder(src, dest),
+        intl.formatMessage({id: 'filePanel.cancel'}),
+        () => {}
+      )
     } catch (error) {
       props.modal(
         intl.formatMessage({id: 'filePanel.movingFolderFailed'}),
@@ -337,7 +352,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             }
             expand={true}
           >
-            <div className="pb-4 mb-4">
+            <div className="">
               <TreeView id="treeViewMenu">
                 {files[ROOT_PATH] &&
                   Object.keys(files[ROOT_PATH]).map((key, index) => (
@@ -362,6 +377,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
               </TreeView>
             </div>
           </TreeViewItem>
+          <Draggable isDraggable={false} file={{ name: '/', path: '/', type: 'folder', isDirectory: true }} expandedPath={props.expandPath} handleClickFolder={null}>
+            <div className='d-block w-100 pb-4 mb-4'></div>
+          </Draggable>
         </TreeView>
       </div>
     </Drag>
