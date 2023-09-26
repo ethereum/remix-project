@@ -125,7 +125,7 @@ export function MainnetPrompt(props: MainnetProps) {
             <div className="align-items-center my-1" title={intl.formatMessage({id: 'udapp.title2'})}>
               <div className="d-flex">
                 <span className="text-dark mr-2 text-nowrap">
-                  <FormattedMessage id="udapp.maxFee" values={{baseFeePerGas: fromWei(toBigInt(props.network.lastBlock.baseFeePerGas), 'Gwei'), 'Gwei')}} />:
+                  <FormattedMessage id="udapp.maxFee" values={{baseFeePerGas: fromWei(toBigInt(props.network.lastBlock.baseFeePerGas), 'Gwei')}} />:
                 </span>
                 <input
                   className="form-control mr-1 text-right"
