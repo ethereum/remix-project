@@ -1,15 +1,17 @@
 'use strict'
 import Web3, { Web3PluginBase } from 'web3'
 
+export function extendWeb3 (web3) {
+  if(!web3.debug){
+    web3.registerPlugin(new Web3DebugPlugin())
+  }
+}
+
 export function loadWeb3 (url = 'http://localhost:8545') {
   const web3 = new Web3()
   web3.setProvider(new Web3.providers.HttpProvider(url))
-  web3.registerPlugin(new Web3DebugPlugin())
+  extendWeb3(web3)
   return web3
-}
-
-export function extendWeb3 (web3) {
-  web3.registerPlugin(new Web3DebugPlugin())
 }
 
 class Web3DebugPlugin extends Web3PluginBase {
