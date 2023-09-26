@@ -133,7 +133,9 @@ export class Provider {
 }
 
 export function extend (web3) {
-  web3.registerPlugin(new Web3TestPlugin())
+  if(!web3.testPlugin){
+    web3.registerPlugin(new Web3TestPlugin())
+  }
 }
 
 class Web3TestPlugin extends Web3PluginBase {
