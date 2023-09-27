@@ -1,4 +1,4 @@
 import {createContext} from 'react'
-import {IAppContext} from '../types'
+import {ICircuitAppContext} from '../types'
 
-export const AppContext = createContext<IAppContext>({} as IAppContext)
+export const CircuitAppContext = createContext<ICircuitAppContext>({} as ICircuitAppContext)

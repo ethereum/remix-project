@@ -2,10 +2,17 @@ import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
 import EventManager from 'events'
 import pathModule from 'path'
-import { parse, compile } from 'circom_wasm'
+// @ts-ignore
+import { parse, compile, generate_witness, generate_r1cs, compiler_list } from '../../../pkg'
+import { extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
+import { CompilationConfig } from '../types'
 
 export class CircomPluginClient extends PluginClient {
   public internalEvents: EventManager
+  private _compilationConfig: CompilationConfig = {
+    version: "2.1.5",
+    prime: "bn128"
+  }
 
   constructor() {
     super()
@@ -26,6 +33,8 @@ export class CircomPluginClient extends PluginClient {
         this.parse(path, fileContent)
       }
     })
+
+    this.internalEvents.emit('activated')
   }
 
   async parse(path: string, fileContent: string): Promise<void> {
@@ -38,6 +47,8 @@ export class CircomPluginClient extends PluginClient {
 
     try {
       const result = JSON.parse(parsedOutput)
+
+      console.log('result: ', result)
 
       if (result.length === 0) {
         // @ts-ignore
@@ -95,16 +106,128 @@ export class CircomPluginClient extends PluginClient {
     }
   }
 
-  async compile(path: string): Promise<void> {
+  async compile(path: string, compilationConfig?: CompilationConfig): Promise<void> {
+    if (compilationConfig) {
+      const { prime, version } = compilationConfig
+
+      if ((prime !== "bn128") && (prime !== "bls12381") && (prime !== "goldilocks")) throw new Error('Invalid prime value')
+      if (!compiler_list.versions.includes(version)) throw new Error("Unsupported compiler version")
+      this._compilationConfig.prime = prime
+      this._compilationConfig.version = version
+    }
     const fileContent = await this.call('fileManager', 'readFile', path)
     let buildFiles = {
-      [path]: fileContent,
+      [path]: fileContent
     }
 
     buildFiles = await this.resolveDependencies(path, fileContent, buildFiles)
-    const compiledOutput = compile(path, buildFiles, { prime: 'bn128' })
+    const compiledOutput = compile(path, buildFiles, { prime: this._compilationConfig.prime })
 
-    console.log('compiled wasm binaries: ', compiledOutput)
+    console.log('compiledOutput: ', compiledOutput)
+    console.log('compiledOutput.program: ', compiledOutput.program())
+    console.log('compiledOutput.input_signals: ', compiledOutput.input_signals("Semaphore"))
+
+    // if (compiledOutput.length < 1) {
+    //   throw new Error("Compilation failed! See parsing errors.")
+    // } else {
+    //   const fileName = extractNameFromKey(path)
+    //   const writePath = extractParentFromKey(path) + "/.bin/" + fileName.replace('circom', 'wasm')
+  
+    //   // @ts-ignore
+    //   await this.call('fileManager', 'writeFile', writePath, new Uint8Array(compiledOutput), true)
+    //   console.log('compilation successful!')
+    // }
+    // @ts-ignore
+    // const buffer = await this.call('fileManager', 'readFile', writePath, true)
+    // // @ts-ignore
+    // const dataRead = new Uint8Array(buffer)
+    // const witness = await generate_witness(dataRead, '{ "a": "5", "b": "77" }')
+    // const witness = await generate_witness(compiledOutput, '{ "identityTrapdoor": "12656283236575022300303467601783819380815431272685589718060054649894766174337", "identityNullifier": "15178877681550417450385541477607788220584140707925739215609273992582659710290", "treePathIndices": "0", "treeSiblings": "1", "externalNullifier": "5df6e0e3480d6fbc32925076897ec6b9b935d75ae8f4d9f4858a426f8f6a4ab": "signalHash": "[85, 139, 239, 32, 221, 194, 165, 19, 20, 52, 104, 144, 41, 16, 40, 204, 171, 245, 198, 77, 94, 143, 30, 112, 105, 165, 33, 15, 62, 156, 18, 118]"}')
+
+    // const ptau_final = "https://ipfs-cluster.ethdevops.io/ipfs/QmTiT4eiYz5KF7gQrDsgfCSTRv3wBPYJ4bRN1MmTRshpnW";
+    // const r1cs_ipfs = "http://127.0.0.1:8081/ipfs/QmVzKPbmyuaTUjoLqWEA5wPAMkUqe4t6WYKHeeC9Dot4ds";
+    // const r1cs_ipfs1 = "http://127.0.0.1:8081/ipfs/QmXP1BC2bc8n1zPnexPoRpFCEDoG9QZc3yZn5Wik5w2TAm";
+
+    // const buff = await fetch(r1cs_ipfs1).then( function(res) {
+    //   return res.arrayBuffer();
+    // }).then(function (ab) {
+    //   return new Uint8Array(ab);
+    // });
+
+    // console.log('r1cs_buff: ', buff)
+    // // const wasm = "http://127.0.0.1:8081/ipfs/QmUbpEvHHKaHEqYLjhn93S8rEsUGeqiTYgRjGPk7g8tBbz";
+    // const zkey_0 = { type: "mem" };
+    // const zkey_1 = { type: "mem" };
+    // const zkey_final = { type: "mem" };
+
+    // console.log('newZkey')
+    // // @ts-ignore
+    // await snarkjs.zKey.newZKey(r1cs, ptau_final, zkey_0);
+
+    // console.log('contribute')
+    // // @ts-ignore
+    // await snarkjs.zKey.contribute(zkey_0, zkey_1, "first_contribution", "entropy_QmbMk4ksBYLQzJ6TiZfzaALF8W11xvB8Wz6a2GrG9oDrXW");
+
+    // console.log('beacon')
+    // // @ts-ignore
+    // await snarkjs.zKey.beacon(zkey_1, zkey_final, "B3", "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20", 10);
+
+    // console.log('verifyFromR1cs')
+    // // @ts-ignore
+    // const verifyFromR1csResult = await snarkjs.zKey.verifyFromR1cs(r1cs, ptau_final, zkey_final);
+    // console.assert(verifyFromR1csResult);
+
+    // console.log('verifyFromInit')
+    // // @ts-ignore
+    // const verifyFromInit = await snarkjs.zKey.verifyFromInit(zkey_0, ptau_final, zkey_final);
+    // console.assert(verifyFromInit);
+
+    // console.log('exportVerificationKey')
+    // // @ts-ignore
+    // const vKey = await snarkjs.zKey.exportVerificationKey(zkey_final)
+
+    // console.log('vKey: ', vKey)
+    
+    // const templates = {
+    //   groth16: await remix.call('fileManager', 'readFile', './zk/templates/groth16_verifier.sol.ejs')
+    // }
+    // const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates)
+    
+    // await remix.call('fileManager', 'writeFile', './zk/build/zk_verifier.sol', solidityContract)
+    
+    // console.log('buffer', (zkey_final as any).data.length)
+    // await remix.call('fileManager', 'writeFile', './zk/build/zk_setup.txt', JSON.stringify(Array.from(((zkey_final as any).data))))
+    
+    // console.log('setup done.')
+  }
+
+  async generateR1cs (path: string, compilationConfig?: CompilationConfig): Promise<void> {
+    if (compilationConfig) {
+      const { prime, version } = compilationConfig
+
+      if ((prime !== "bn128") && (prime !== "bls12381") && (prime !== "goldilocks")) throw new Error('Invalid prime value')
+      if (!compiler_list.versions.includes(version)) throw new Error("Unsupported compiler version")
+      this._compilationConfig.prime = prime
+      this._compilationConfig.version = version
+    }
+    const fileContent = await this.call('fileManager', 'readFile', path)
+    let buildFiles = {
+      [path]: fileContent
+    }
+
+    buildFiles = await this.resolveDependencies(path, fileContent, buildFiles)
+    const r1cs = generate_r1cs(path, buildFiles, { prime: this._compilationConfig.prime })
+
+    if (r1cs.length < 1) {
+      throw new Error("R1cs generation failed! See parsing errors.")
+    } else {
+      const fileName = extractNameFromKey(path)
+      const writePath = extractParentFromKey(path) + "/.bin/" + fileName.replace('circom', 'r1cs')
+  
+      // @ts-ignore
+      await this.call('fileManager', 'writeFile', writePath, new Uint8Array(r1cs), true)
+      console.log('R1CS generation successful!')
+    }
   }
 
   async resolveDependencies(filePath: string, fileContent: string, output = {}, depPath: string = '', blackPath: string[] = []): Promise<Record<string, string>> {
@@ -138,24 +261,24 @@ export class CircomPluginClient extends PluginClient {
             // fetch file content if include import exists as a relative path
             dependencyContent = await this.call('fileManager', 'readFile', relativePath)
           } else {
-            if (depPath) {
-              // if depPath is provided, try to resolve include import from './deps' folder in remix
-              path = pathModule.resolve(depPath.slice(0, depPath.lastIndexOf('/')), include)
-              if (path.indexOf('/') === 0) path = path.slice(1)
-              dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
-            } else {
-              if (include.startsWith('circomlib')) {
-                // try to resolve include import from github if it is a circomlib dependency
-                const splitInclude = include.split('/')
-                const version = splitInclude[1].match(/v[0-9]+.[0-9]+.[0-9]+/g)
+            if (include.startsWith('circomlib')) {
+              // try to resolve include import from github if it is a circomlib dependency
+              const splitInclude = include.split('/')
+              const version = splitInclude[1].match(/v[0-9]+.[0-9]+.[0-9]+/g)
 
-                if (version && version[0]) {
-                  path = `https://raw.githubusercontent.com/iden3/circomlib/${version[0]}/circuits/${splitInclude.slice(2).join('/')}`
-                  dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
-                } else {
-                  path = `https://raw.githubusercontent.com/iden3/circomlib/master/circuits/${splitInclude.slice(1).join('/')}`
-                  dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
-                }
+              if (version && version[0]) {
+                path = `https://raw.githubusercontent.com/iden3/circomlib/${version[0]}/circuits/${splitInclude.slice(2).join('/')}`
+                dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
+              } else {
+                path = `https://raw.githubusercontent.com/iden3/circomlib/master/circuits/${splitInclude.slice(1).join('/')}`
+                dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
+              }
+            } else {
+              if (depPath) {
+                // if depPath is provided, try to resolve include import from './deps' folder in remix
+                path = pathModule.resolve(depPath.slice(0, depPath.lastIndexOf('/')), include)
+                if (path.indexOf('/') === 0) path = path.slice(1)
+                dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
               } else {
                 // If all import cases are not true, use the default import to try fetching from node_modules and unpkg
                 dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)

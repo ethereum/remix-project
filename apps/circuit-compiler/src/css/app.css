@@ -1,0 +1,38 @@
+body {
+    font-size          : .8rem;
+}
+.circuit_section {
+    padding: 12px 24px 16px;
+}
+.circuit_label {
+    margin-bottom: 2px;
+    font-size: 11px;
+    line-height: 12px;
+    text-transform: uppercase;
+}
+.circuit_warnings_box {
+    display: flex;
+    align-items: center;
+}
+.circuit_warnings_box label {
+    margin: 0;
+}
+.circuit_config_section:hover {
+    cursor: pointer;
+}
+.circuit_config_section {
+    font-size: 1rem;
+}
+.circuit_config {
+    display: flex;
+    align-items: center;
+}
+.circuit_config label {
+    margin: 0;
+}
+.circuit_inner_label {
+    margin-bottom: 2px;
+    font-size: 11px;
+    line-height: 12px;
+    text-transform: uppercase;
+  }
