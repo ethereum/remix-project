@@ -11,6 +11,7 @@ import {checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath} f
 import {FileRender} from './file-render'
 import {Drag, Draggable} from '@remix-ui/drag-n-drop'
 import {ROOT_PATH} from '../utils/constants'
+import { moveFileIsAllowed, moveFolderIsAllowed } from '../actions'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const intl = useIntl()
@@ -289,7 +290,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     props.dispatchHandleExpandPath(expandPath)
   }
 
-  const handleFileMove = (dest: string, src: string) => {
+  const handleFileMove = async (dest: string, src: string) => {
+    if(await moveFileIsAllowed(src, dest) === false) return
     try {
       props.modal(
         intl.formatMessage({ id: 'filePanel.moveFile' }),
@@ -309,7 +311,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const handleFolderMove = (dest: string, src: string) => {
+  const handleFolderMove = async (dest: string, src: string) => {
+    if(await moveFolderIsAllowed(src, dest) === false) return
     try {
       props.modal(
         intl.formatMessage({ id: 'filePanel.moveFile' }),
@@ -354,7 +357,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               </span>
             </div>
           </li>
-          <div className="pb-4 mb-4">
+          <div>
             <TreeView id="treeViewMenu">
               {files[ROOT_PATH] &&
                 Object.keys(files[ROOT_PATH]).map((key, index) => (
@@ -378,6 +381,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
                 ))}
             </TreeView>
           </div>
+          <Draggable isDraggable={false} file={{ name: '/', path: '/', type: 'folder', isDirectory: true }} expandedPath={props.expandPath} handleClickFolder={null}>
+            <div className='d-block w-100 pb-4 mb-4'></div>
+          </Draggable>
         </TreeView>
       </div>
     </Drag>
