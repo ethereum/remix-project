@@ -88,10 +88,10 @@ export const Draggable = (props: DraggableType) => {
             handleDrop(event)
           }}
           onDragStart={(event) => {
-            if(destination && destination.path === '/'){
+            if (destination && destination.path === '/'){
               event.preventDefault()
               event.stopPropagation
-            }else
+            } else
 
             if (destination) {
               handleDrag()
