@@ -182,7 +182,7 @@ export class VmProxy {
         topics.push('0x')
       }
       logs.push({
-        address: '0x' + log[0].toString('hex'),
+        address: toChecksumAddress('0x' + log[0].toString('hex')),
         data: '0x' + log[2].toString('hex'),
         topics: topics,
         rawVMResponse: log
