@@ -41,14 +41,16 @@ export const FileRender = (props: RenderFileProps) => {
   }, [props.file])
 
   useEffect(() => {
-    
-    if(file.child){
-      const children: FileType[] = file.child as any
-      setChildrenKeys(fileKeySort(children))
+    if (file.child) {
+      try {
+        const children: FileType[] = file.child as any
+        setChildrenKeys(fileKeySort(children))
+      } catch (e) {
+        setChildrenKeys(Object.keys(file.child))
+      }
     } else {
       setChildrenKeys([])
     }
-
   }, [file.child, props.expandPath, props.file])
 
   const labelClass =
