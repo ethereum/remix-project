@@ -9,9 +9,10 @@ import '../css/file-explorer.css'
 import {checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath} from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {FileRender} from './file-render'
-import {Drag} from '@remix-ui/drag-n-drop'
+import {Drag, Draggable} from '@remix-ui/drag-n-drop'
 import {ROOT_PATH} from '../utils/constants'
 import { fileKeySort } from '../utils'
+import { moveFileIsAllowed, moveFolderIsAllowed } from '../actions'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const intl = useIntl()
@@ -291,27 +292,43 @@ export const FileExplorer = (props: FileExplorerProps) => {
     props.dispatchHandleExpandPath(expandPath)
   }
 
-  const handleFileMove = (dest: string, src: string) => {
+  const handleFileMove = async (dest: string, src: string) => {
+    if(await moveFileIsAllowed(src, dest) === false) return
     try {
-      props.dispatchMoveFile(src, dest)
+      props.modal(
+        intl.formatMessage({ id: 'filePanel.moveFile' }),
+        intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src, dest }),
+        intl.formatMessage({ id: 'filePanel.yes' }),
+        () => props.dispatchMoveFile(src, dest),
+        intl.formatMessage({ id: 'filePanel.cancel' }),
+        () => {}
+      )
     } catch (error) {
       props.modal(
-        intl.formatMessage({id: 'filePanel.movingFileFailed'}),
-        intl.formatMessage({id: 'filePanel.movingFileFailedMsg'}, {src}),
-        intl.formatMessage({id: 'filePanel.close'}),
+        intl.formatMessage({ id: 'filePanel.movingFileFailed' }),
+        intl.formatMessage({ id: 'filePanel.movingFileFailedMsg' }, { src }),
+        intl.formatMessage({ id: 'filePanel.close' }),
         async () => {}
       )
     }
   }
 
-  const handleFolderMove = (dest: string, src: string) => {
+  const handleFolderMove = async (dest: string, src: string) => {
+    if(await moveFolderIsAllowed(src, dest) === false) return
     try {
-      props.dispatchMoveFolder(src, dest)
+      props.modal(
+        intl.formatMessage({ id: 'filePanel.moveFile' }),
+        intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src, dest }),
+        intl.formatMessage({ id: 'filePanel.yes' }),
+        () => props.dispatchMoveFolder(src, dest),
+        intl.formatMessage({ id: 'filePanel.cancel' }),
+        () => {}
+      )
     } catch (error) {
       props.modal(
-        intl.formatMessage({id: 'filePanel.movingFolderFailed'}),
-        intl.formatMessage({id: 'filePanel.movingFolderFailedMsg'}, {src}),
-        intl.formatMessage({id: 'filePanel.close'}),
+        intl.formatMessage({ id: 'filePanel.movingFolderFailed' }),
+        intl.formatMessage({ id: 'filePanel.movingFolderFailedMsg' }, { src }),
+        intl.formatMessage({ id: 'filePanel.close' }),
         async () => {}
       )
     }
@@ -356,7 +373,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               </span>
             </div>
           </li>
-          <div className="pb-4 mb-4">
+          <div>
             <TreeView id="treeViewMenu">
               {files[ROOT_PATH] &&
                 childrenKeys.map((key, index) => (
@@ -380,6 +397,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
                 ))}
             </TreeView>
           </div>
+          <Draggable isDraggable={false} file={{ name: '/', path: '/', type: 'folder', isDirectory: true }} expandedPath={props.expandPath} handleClickFolder={null}>
+            <div className='d-block w-100 pb-4 mb-4'></div>
+          </Draggable>
         </TreeView>
       </div>
     </Drag>
