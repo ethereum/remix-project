@@ -1,8 +1,7 @@
 import React, {useEffect, useState, useRef, SyntheticEvent} from 'react' // eslint-disable-line
 import {useIntl} from 'react-intl'
-import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-line
+import {TreeView} from '@remix-ui/tree-view' // eslint-disable-line
 import {FileExplorerMenu} from './file-explorer-menu' // eslint-disable-line
-import {FileExplorerContextMenu} from './file-explorer-context-menu' // eslint-disable-line
 import {FileExplorerProps, WorkSpaceState} from '../types'
 
 import '../css/file-explorer.css'
@@ -325,7 +324,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               data-id={`treeViewDivMenu`}
               className={`d-flex flex-row align-items-center`}
             >
-              <span className="w-100 pl-2">
+              <span className="w-100 pl-2 mt-1">
                 <div onClick={handleFileExplorerMenuClick}>
                   <FileExplorerMenu
                     title={''}
@@ -361,7 +360,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
                     showIconsMenu={props.showIconsMenu}
                     hideIconsMenu={props.hideIconsMenu}
                   />
-                ))}
+                ))
+              }
             </TreeView>
           </div>
         </TreeView>
