@@ -87,12 +87,12 @@ class FileProvider {
     cb()
   }
 
-  async get (path, cb) {
+  async get (path, cb, isBuffer = false) {
     cb = cb || function () { /* do nothing. */ }
     path = this.getPathFromUrl(path) || path // ensure we actually use the normalized path from here
     var unprefixedpath = this.removePrefix(path)
     try {
-      const content = await window.remixFileSystem.readFile(unprefixedpath, 'utf8')
+      const content = await window.remixFileSystem.readFile(unprefixedpath, isBuffer ? undefined : 'utf8')
       if (cb) cb(null, content)
       return content
     } catch (err) {
@@ -101,17 +101,17 @@ class FileProvider {
     }
   }
 
-  async set (path, content, cb) {
+  async set (path, content, cb, isBuffer = false) {
     cb = cb || function () { /* do nothing. */ }
     var unprefixedpath = this.removePrefix(path)
     const exists = await window.remixFileSystem.exists(unprefixedpath)
-    if (exists && await window.remixFileSystem.readFile(unprefixedpath, 'utf8') === content) {
+    if (exists && await window.remixFileSystem.readFile(unprefixedpath, isBuffer ? undefined : 'utf8') === content) {
       if (cb) cb()
       return null
     }
     await this.createDir(path.substr(0, path.lastIndexOf('/')))
     try {
-      await window.remixFileSystem.writeFile(unprefixedpath, content, 'utf8')
+      await window.remixFileSystem.writeFile(unprefixedpath, content, isBuffer ? undefined : 'utf8')
     } catch (e) {
       if (cb) cb(e)
       return false

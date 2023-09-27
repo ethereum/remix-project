@@ -1,0 +1,13 @@
+{
+  "circuit.compiler": "Compiler",
+  "circuit.autoCompile": "Auto compile",
+  "circuit.hideWarnings": "Hide warnings",
+  "circuit.advancedConfigurations": "Advanced Configurations",
+  "circuit.compilerConfiguration": "Compiler configuration",
+  "circuit.prime": "Prime",
+  "circuit.useConfigurationFile": "Use configuration file",
+  "circuit.compile": "Compile",
+  "circuit.noFileSelected": "no file selected",
+  "circuit.generateR1cs": "Generate R1CS",
+  "circuit.computeWitness": "Compute Witness"
+}
