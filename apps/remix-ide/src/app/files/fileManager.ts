@@ -938,16 +938,9 @@ class FileManager extends Plugin {
       await this._handleIsDir(src, `Cannot move ${src}. Path is not directory.`)
       await this._handleIsDir(dest, `Cannot move content into ${dest}. Path is not directory.`)
       const dirName = helper.extractNameFromKey(src)
-      const provider = this.fileProviderOf(src)
-
       if (await this.exists(dest + '/' + dirName) || src === dest) {
         return false
       }
-
-      if (provider.isSubDirectory(src, dest)) {
-        this.call('notification', 'toast', recursivePasteToastMsg())
-        return false
-      } 
       return true
     } catch (e) {
       console.log(e)
@@ -1005,13 +998,7 @@ class FileManager extends Plugin {
       if (await this.exists(dest + '/' + dirName) || src === dest) {
         throw createError({ code: 'EEXIST', message: `Cannot move ${src}. Folder already exists at destination ${dest}` })
       }
-      const provider = this.fileProviderOf(src)
-
-      if (provider.isSubDirectory(src, dest)) {
-        this.call('notification', 'toast', recursivePasteToastMsg())
-        return false
-      } 
-      await this.inDepthCopy(src, dest, dirName)
+      await this.copyDir(src, dest, dirName)
       await this.remove(src)
 
     } catch (e) {
