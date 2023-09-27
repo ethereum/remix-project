@@ -56,10 +56,12 @@ export class LogsManager {
     if (queryFilter.topics.filter((logTopic) => changeEvent.log.topics.indexOf(logTopic) >= 0).length === 0) return false
 
     if (queryType === 'logs') {
-      const fromBlock = queryFilter.fromBlock || '0x0'
-      const toBlock = queryFilter.toBlock || this.oldLogs.length ? this.oldLogs[this.oldLogs.length - 1].blockNumber : '0x0'
+      const fromBlock = parseInt(queryFilter.fromBlock || '0x0')
+      let toBlock
+      if (queryFilter.toBlock === 'latest' || !queryFilter.toBlock) toBlock = Number.MAX_VALUE
+      else toBlock = parseInt(queryFilter.toBlock)
       const targetAddress = toChecksumAddress(queryFilter.address)
-      if ((parseInt(toBlock) >= parseInt(changeEvent.blockNumber)) && (parseInt(fromBlock) <= parseInt(changeEvent.blockNumber))) {
+      if ((toBlock >= parseInt(changeEvent.blockNumber)) && (fromBlock <= parseInt(changeEvent.blockNumber))) {
         if (changeEvent.log && changeEvent.log.address === targetAddress) {
           return true
         }
