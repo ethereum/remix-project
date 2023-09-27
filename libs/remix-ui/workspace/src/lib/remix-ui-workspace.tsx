@@ -49,8 +49,8 @@ export function Workspace() {
   const initGitRepoRef = useRef<HTMLInputElement>()
   const filteredBranches = selectedWorkspace ? (selectedWorkspace.branches || []).filter((branch) => branch.name.includes(branchFilter) && branch.name !== 'HEAD').slice(0, 20) : []
   const currentBranch = selectedWorkspace ? selectedWorkspace.currentBranch : null
-  const sortIconDesc = 'fa fa-sort-alpha-desc justify-end'
-  const sortIconAsc = 'fa fa-sort-alpha-up justify-end'
+  const sortIconDesc = 'far fa-sort-alpha-down-alt justify-end pr-3'
+  const sortIconAsc = 'far fa-sort-alpha-up-alt justify-end pr-3'
   const [sortIcon, setSortIcon] = useState(sortIconDesc)
   const [triggerSort, setTriggerSort] = useState<'asc' | 'desc'>(null)
   const [canPaste, setCanPaste] = useState(false)
