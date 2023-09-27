@@ -156,6 +156,6 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
       </span>
     </>
   )
-}
+}// add tooltip to sort icon. then wireup logic to sort files by name ascending/descending
 
 export default FileExplorerMenu

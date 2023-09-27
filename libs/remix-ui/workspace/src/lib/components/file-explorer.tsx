@@ -325,6 +325,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
       <div ref={treeRef} tabIndex={0} style={{outline: 'none'}}>
         <TreeView id="treeView">
+<TreeView id="treeView">
           <li key={`treeViewLiMenu`} data-id={`treeViewLiMenu`} className="li_tv">
             <div
               key={`treeViewDivMenu`}
