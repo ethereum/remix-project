@@ -904,6 +904,50 @@ class FileManager extends Plugin {
     return exists
   }
 
+
+  async moveFileIsAllowed (src: string, dest: string) {
+    try {
+      src = this.normalize(src)
+      dest = this.normalize(dest)
+      src = this.limitPluginScope(src)
+      dest = this.limitPluginScope(dest)
+      await this._handleExists(src, `Cannot move ${src}. Path does not exist.`)
+      await this._handleExists(dest, `Cannot move content into ${dest}. Path does not exist.`)
+      await this._handleIsFile(src, `Cannot move ${src}. Path is not a file.`)
+      await this._handleIsDir(dest, `Cannot move content into ${dest}. Path is not directory.`)
+      const fileName = helper.extractNameFromKey(src)
+
+      if (await this.exists(dest + '/' + fileName)) {
+        return false
+      }
+      return true
+    } catch (e) {
+      console.log(e)
+      return false
+    }
+  }
+
+  async moveDirIsAllowed (src: string, dest: string) {
+    try {
+      src = this.normalize(src)
+      dest = this.normalize(dest)
+      src = this.limitPluginScope(src)
+      dest = this.limitPluginScope(dest)
+      await this._handleExists(src, `Cannot move ${src}. Path does not exist.`)
+      await this._handleExists(dest, `Cannot move content into ${dest}. Path does not exist.`)
+      await this._handleIsDir(src, `Cannot move ${src}. Path is not directory.`)
+      await this._handleIsDir(dest, `Cannot move content into ${dest}. Path is not directory.`)
+      const dirName = helper.extractNameFromKey(src)
+      if (await this.exists(dest + '/' + dirName) || src === dest) {
+        return false
+      }
+      return true
+    } catch (e) {
+      console.log(e)
+      return false
+    }
+  }
+
   /**
    * Moves a file to a new folder
    * @param {string} src path of the source file
