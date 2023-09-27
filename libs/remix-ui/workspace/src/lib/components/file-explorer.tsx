@@ -318,8 +318,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   useEffect(() => {
-    if(files[ROOT_PATH]){
-      
+    if (files[ROOT_PATH]){
       try {
         const children: FileType[] = files[ROOT_PATH] as any
         setChildrenKeys(fileKeySort(children))
