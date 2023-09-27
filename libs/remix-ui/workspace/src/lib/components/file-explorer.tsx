@@ -3,7 +3,7 @@ import {useIntl} from 'react-intl'
 import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-line
 import {FileExplorerMenu} from './file-explorer-menu' // eslint-disable-line
 import {FileExplorerContextMenu} from './file-explorer-context-menu' // eslint-disable-line
-import {FileExplorerProps, WorkSpaceState} from '../types'
+import {FileExplorerProps, FileType, WorkSpaceState} from '../types'
 
 import '../css/file-explorer.css'
 import {checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath} from '@remix-ui/helper'
@@ -11,6 +11,7 @@ import {checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath} f
 import {FileRender} from './file-render'
 import {Drag} from '@remix-ui/drag-n-drop'
 import {ROOT_PATH} from '../utils/constants'
+import { fileKeySort } from '../utils'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const intl = useIntl()
@@ -32,6 +33,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   } = props
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
   const treeRef = useRef<HTMLDivElement>(null)
+  const [childrenKeys, setChildrenKeys] = useState<string[]>([])
 
   useEffect(() => {
     if (contextMenuItems) {
@@ -315,6 +317,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
+  useEffect(() => {
+    if(files[ROOT_PATH]){
+      const children: FileType[] = files[ROOT_PATH] as any
+      setChildrenKeys(fileKeySort(children))
+    } else{
+      setChildrenKeys([])
+    }
+  }, [props])
+
+
   return (
     <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
       <div ref={treeRef} tabIndex={0} style={{outline: 'none'}}>
@@ -343,7 +355,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           <div className="pb-4 mb-4">
             <TreeView id="treeViewMenu">
               {files[ROOT_PATH] &&
-                Object.keys(files[ROOT_PATH]).map((key, index) => (
+                childrenKeys.map((key, index) => (
                   <FileRender
                     file={files[ROOT_PATH][key]}
                     fileDecorations={fileState}

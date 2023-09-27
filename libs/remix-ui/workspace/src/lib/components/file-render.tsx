@@ -8,6 +8,7 @@ import {getPathIcon} from '@remix-ui/helper'
 import {FileLabel} from './file-label'
 import {fileDecoration, FileDecorationIcons} from '@remix-ui/file-decorators'
 import {Draggable} from '@remix-ui/drag-n-drop'
+import { fileKeySort } from '../utils'
 
 export interface RenderFileProps {
   file: FileType
@@ -30,6 +31,7 @@ export const FileRender = (props: RenderFileProps) => {
   const [file, setFile] = useState<FileType>({} as FileType)
   const [hover, setHover] = useState<boolean>(false)
   const [icon, setIcon] = useState<string>('')
+  const [childrenKeys, setChildrenKeys] = useState<string[]>([])
 
   useEffect(() => {
     if (props.file && props.file.path && props.file.type) {
@@ -37,6 +39,17 @@ export const FileRender = (props: RenderFileProps) => {
       setIcon(getPathIcon(props.file.path))
     }
   }, [props.file])
+
+  useEffect(() => {
+    
+    if(file.child){
+      const children: FileType[] = file.child as any
+      setChildrenKeys(fileKeySort(children))
+    } else {
+      setChildrenKeys([])
+    }
+
+  }, [file.child, props.expandPath, props.file])
 
   const labelClass =
     props.focusEdit.element === file.path
@@ -85,8 +98,8 @@ export const FileRender = (props: RenderFileProps) => {
     return (
       <TreeViewItem
         id={`treeViewItem${file.path}`}
-        iconX="mr-2 fa fa-folder"
-        iconY={props.expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder'}
+        iconX="pr-3 fa fa-folder"
+        iconY={props.expandPath.includes(file.path) ? 'pr-0 fa fa-folder-open' : 'pr-3 fa fa-folder'}
         key={`${file.path + props.index}`}
         label={
           <>
@@ -108,7 +121,7 @@ export const FileRender = (props: RenderFileProps) => {
       >
         {file.child ? (
           <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps}>
-            {Object.keys(file.child).map((key, index) => (
+            {childrenKeys.map((key, index) => (
               <FileRender
                 file={file.child[key]}
                 fileDecorations={props.fileDecorations}

@@ -1,3 +1,4 @@
+import { FileType } from '@remix-ui/file-decorators'
 import { WorkspaceProps, MenuItems } from '../types'
 
 export const contextMenuActions: MenuItems = [{
@@ -114,3 +115,20 @@ export const contextMenuActions: MenuItems = [{
   label: '',
   group: 4
 }]
+
+export const fileKeySort = (children: FileType[]): string[] => {
+  const directories = Object.keys(children).filter((key: string) => children[key].isDirectory && children[key].name !== '')
+
+  // sort case insensitive
+  directories.sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()))
+
+  const fileKeys = Object.keys(children).filter((key: string) => !children[key].isDirectory && children[key].name !== '')
+  // sort case insensitive
+  fileKeys.sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()))
+
+  // find the children with a blank name
+  const blankChildren = Object.keys(children).filter((key: string) => children[key].name === '')
+
+  const keys = [...directories, ...fileKeys, ...blankChildren]
+  return keys
+}
