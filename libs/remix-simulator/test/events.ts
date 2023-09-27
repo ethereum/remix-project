@@ -12,7 +12,7 @@ describe('Events', () => {
   })
 
   describe('eth_getLogs', () => {
-    it('should deploy 2 contracts which emit events and retrieve these events using different block frame', async function () {
+    it('should deploy 2 contracts which emit events and retrieve these events using different block ranges', async function () {
       const accounts: string[] = await web3.eth.getAccounts()
       // deploy the contract "test".
       const receiptTest = await web3.eth.sendTransaction({
