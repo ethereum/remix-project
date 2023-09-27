@@ -325,31 +325,32 @@ export const FileExplorer = (props: FileExplorerProps) => {
     <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
       <div ref={treeRef} tabIndex={0} style={{outline: 'none'}}>
         <TreeView id="treeView">
-          <TreeViewItem
-            id="treeViewItem"
-            controlBehaviour={true}
-            label={
-              <div id="fileExplorerMenuContainer" className="d-flex flex-row align-items-center justify-content-center" onClick={handleFileExplorerMenuClick}>
-                <FileExplorerMenu
-                  title={''}
-                  menuItems={props.menuItems}
-                  createNewFile={handleNewFileInput}
-                  createNewFolder={handleNewFolderInput}
-                  publishToGist={publishToGist}
-                  uploadFile={uploadFile}
-                  uploadFolder={uploadFolder}
-                />
-                <span className="pr-4 w-50 d-flex justify-content-end">
-                  <span></span>
-                  <span></span>
+<TreeView id="treeView">
+          <li key={`treeViewLiMenu`} data-id={`treeViewLiMenu`} className="li_tv">
+            <div
+              key={`treeViewDivMenu`}
+              data-id={`treeViewDivMenu`}
+              className={`d-flex flex-row align-items-center`}
+            >
+              <span className="w-100 pl-2">
+                <div className="d-flex justify-content-between" onClick={handleFileExplorerMenuClick}>
+                  <FileExplorerMenu
+                    title={''}
+                    menuItems={props.menuItems}
+                    createNewFile={handleNewFileInput}
+                    createNewFolder={handleNewFolderInput}
+                    publishToGist={publishToGist}
+                    uploadFile={uploadFile}
+                    uploadFolder={uploadFolder}
+                  />
                   <CustomTooltip
                     placement="right"
                     tooltipId="remixuiSortTooltip"
                     tooltipClasses="text-nowrap"
-                    tooltipText={<FormattedMessage id="filePanel.sort" defaultMessage="Sort" />}
+                    tooltipText={<FormattedMessage id="filePanel.sort" defaultMessage="Reverse sort direction" />}
                   >
-                    <span className={sortIcon} onClick={() => {
-                      if(sortIcon === sortIconAsc) {
+                    <span className={sortIcon} style={{fontSize: '1.2rem'}} onClick={() => {
+                      if (sortIcon === sortIconAsc) {
                         setSortIcon(sortIconDesc)
                         props.setTriggerSort('desc')
                       } else {
@@ -358,36 +359,34 @@ export const FileExplorer = (props: FileExplorerProps) => {
                       }
                     }}></span>
                   </CustomTooltip>
-                </span>
-              </div>
-            }
-            expand={true}
-          >
-            <div className="pb-4 mb-4">
-              <TreeView id="treeViewMenu">
-                {files[ROOT_PATH] &&
-                  Object.keys(files[ROOT_PATH]).map((key, index) => (
-                    <FileRender
-                      file={files[ROOT_PATH][key]}
-                      fileDecorations={fileState}
-                      index={index}
-                      focusContext={state.focusContext}
-                      focusEdit={state.focusEdit}
-                      focusElement={props.focusElement}
-                      ctrlKey={state.ctrlKey}
-                      expandPath={props.expandPath}
-                      editModeOff={editModeOff}
-                      handleClickFile={handleClickFile}
-                      handleClickFolder={handleClickFolder}
-                      handleContextMenu={handleContextMenu}
-                      key={index}
-                      showIconsMenu={props.showIconsMenu}
-                      hideIconsMenu={props.hideIconsMenu}
-                    />
-                  ))}
-              </TreeView>
+                </div>
+              </span>
             </div>
-          </TreeViewItem>
+          </li>
+          <div className="pb-4 mb-4">
+            <TreeView id="treeViewMenu">
+              {files[ROOT_PATH] &&
+                Object.keys(files[ROOT_PATH]).map((key, index) => (
+                  <FileRender
+                    file={files[ROOT_PATH][key]}
+                    fileDecorations={fileState}
+                    index={index}
+                    focusContext={state.focusContext}
+                    focusEdit={state.focusEdit}
+                    focusElement={props.focusElement}
+                    ctrlKey={state.ctrlKey}
+                    expandPath={props.expandPath}
+                    editModeOff={editModeOff}
+                    handleClickFile={handleClickFile}
+                    handleClickFolder={handleClickFolder}
+                    handleContextMenu={handleContextMenu}
+                    key={index}
+                    showIconsMenu={props.showIconsMenu}
+                    hideIconsMenu={props.hideIconsMenu}
+                  />
+                ))}
+            </TreeView>
+          </div>
         </TreeView>
       </div>
     </Drag>
