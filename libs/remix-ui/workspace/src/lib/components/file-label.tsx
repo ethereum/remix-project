@@ -52,6 +52,11 @@ export const FileLabel = (props: FileLabelProps) => {
       editModeOff(labelRef.current.innerText)
       labelRef.current.innerText = file.name
     }
+    if (event.which === 27) {
+      event.preventDefault()
+      // don't change it
+      editModeOff(file.name)
+    }
   }
 
   const handleEditBlur = (event: React.SyntheticEvent) => {
