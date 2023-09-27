@@ -62,7 +62,7 @@ export const Draggable = (props: DraggableType) => {
         setTimeout(() => {
           props.handleClickFolder(destination.path, destination.type)
           setFolderToOpen(null)
-        }, 500)
+        }, 600)
       )
     }
   }
