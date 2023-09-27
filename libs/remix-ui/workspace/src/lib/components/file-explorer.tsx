@@ -332,7 +332,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               className={`d-flex flex-row align-items-center`}
             >
               <span className="w-100 pl-2">
-                <div onClick={handleFileExplorerMenuClick}>
+                <div className="d-flex justify-content-between" onClick={handleFileExplorerMenuClick}>
                   <FileExplorerMenu
                     title={''}
                     menuItems={props.menuItems}
@@ -346,10 +346,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
                     placement="right"
                     tooltipId="remixuiSortTooltip"
                     tooltipClasses="text-nowrap"
-                    tooltipText={<FormattedMessage id="filePanel.sort" defaultMessage="Sort" />}
+                    tooltipText={<FormattedMessage id="filePanel.sort" defaultMessage="Reverse sort direction" />}
                   >
-                    <span className={sortIcon} onClick={() => {
-                      if(sortIcon === sortIconAsc) {
+                    <span className={sortIcon} style={{fontSize: '1.2rem'}} onClick={() => {
+                      if (sortIcon === sortIconAsc) {
                         setSortIcon(sortIconDesc)
                         props.setTriggerSort('desc')
                       } else {

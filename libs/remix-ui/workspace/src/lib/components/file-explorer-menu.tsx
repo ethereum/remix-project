@@ -67,11 +67,6 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
 
   return (
     <>
-      <CustomTooltip placement="top" tooltipId="remixuilabelTooltip" tooltipClasses="text-nowrap" tooltipText={props.title}>
-        <span className="remixui_label" data-path={props.title} style={{fontWeight: 'bold'}}>
-          {props.title}
-        </span>
-      </CustomTooltip>
       <span data-id="spanContaining" className="pl-0 pb-1 w-50">
         {state.menuItems.map(({action, title, icon, placement}, index) => {
           if (action === 'uploadFile') {
@@ -161,6 +156,6 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
       </span>
     </>
   )
-}// add tooltip to sort icon. then wireup logic to sort files by name ascending/descending
+}
 
 export default FileExplorerMenu
