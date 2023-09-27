@@ -78,7 +78,13 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 tooltipText={<FormattedMessage id={`filePanel.${action}`} defaultMessage={title} />}
                 key={`index-${action}-${placement}-${icon}`}
               >
-                <label id={action} style={{fontSize: '1.1rem', cursor: 'pointer'}} data-id={'fileExplorerUploadFile' + action} className={icon + ' mb-0 px-1 remixui_newFile'} key={`index-${action}-${placement}-${icon}`}>
+                <label
+                  id={action}
+                  style={{fontSize: '1.1rem', cursor: 'pointer'}}
+                  data-id={'fileExplorerUploadFile' + action}
+                  className={icon + ' pr-2 pl-1 remixui_menuItem'}
+                  key={`index-${action}-${placement}-${icon}`}
+                >
                   <input
                     id="fileUpload"
                     data-id="fileExplorerFileUpload"
@@ -103,7 +109,13 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 tooltipText={<FormattedMessage id={`filePanel.${action}`} defaultMessage={title} />}
                 key={`index-${action}-${placement}-${icon}`}
               >
-                <label id={action} style={{fontSize: '1.1rem', cursor: 'pointer'}} data-id={'fileExplorerUploadFolder' + action} className={icon + ' mb-0 px-1 remixui_newFile'} key={`index-${action}-${placement}-${icon}`}>
+                <label
+                  id={action}
+                  style={{fontSize: '1.1rem', cursor: 'pointer'}}
+                  data-id={'fileExplorerUploadFolder' + action}
+                  className={icon + ' pr-2 pl-1 remixui_menuItem'}
+                  key={`index-${action}-${placement}-${icon}`}
+                >
                   <input
                     id="folderUpload"
                     data-id="fileExplorerFolderUpload"
@@ -146,7 +158,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                       state.actions[action]()
                     }
                   }}
-                  className={'newFile ' + icon + ' pr-2 pl-1 remixui_newFile'}
+                  className={icon + ' pr-2 pl-1 remixui_menuItem'}
                   key={`${action}-${title}-${index}`}
                 ></label>
               </CustomTooltip>

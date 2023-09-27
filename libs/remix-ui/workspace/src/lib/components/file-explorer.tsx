@@ -325,14 +325,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
     <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
       <div ref={treeRef} tabIndex={0} style={{outline: 'none'}}>
         <TreeView id="treeView">
-<TreeView id="treeView">
           <li key={`treeViewLiMenu`} data-id={`treeViewLiMenu`} className="li_tv">
             <div
               key={`treeViewDivMenu`}
               data-id={`treeViewDivMenu`}
               className={`d-flex flex-row align-items-center`}
             >
-              <span className="w-100 pl-2">
+              <span className="w-100 pl-2 mt-1">
                 <div className="d-flex justify-content-between" onClick={handleFileExplorerMenuClick}>
                   <FileExplorerMenu
                     title={''}
@@ -344,12 +343,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
                     uploadFolder={uploadFolder}
                   />
                   <CustomTooltip
-                    placement="right"
+                    placement="top"
                     tooltipId="remixuiSortTooltip"
                     tooltipClasses="text-nowrap"
                     tooltipText={<FormattedMessage id="filePanel.sort" defaultMessage="Reverse sort direction" />}
                   >
-                    <span className={sortIcon} style={{fontSize: '1.2rem'}} onClick={() => {
+                    <label className={sortIcon} style={{fontSize: '1.2rem', cursor: 'pointer'}} onClick={() => {
                       if (sortIcon === sortIconAsc) {
                         setSortIcon(sortIconDesc)
                         props.setTriggerSort('desc')
@@ -357,7 +356,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                         setSortIcon(sortIconAsc)
                         props.setTriggerSort('asc')
                       }
-                    }}></span>
+                    }}></label>
                   </CustomTooltip>
                 </div>
               </span>
@@ -384,7 +383,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
                     showIconsMenu={props.showIconsMenu}
                     hideIconsMenu={props.hideIconsMenu}
                   />
-                ))}
+                ))
+              }
             </TreeView>
           </div>
         </TreeView>
