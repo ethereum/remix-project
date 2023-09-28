@@ -23,10 +23,10 @@ input[type="file"] {
 .remixui_file               {
     padding           : 4px;
 }
-.remixui_newFile i {
+.remixui_menuItem i {
     cursor            : pointer;
 }
-.remixui_newFile:hover {
+.remixui_menuItem:hover {
     transform         : scale(1.3);
 }
 .remixui_menu {
