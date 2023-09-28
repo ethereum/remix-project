@@ -467,6 +467,7 @@ export const EditorUI = (props: EditorUIProps) => {
     return addDecoration(marker, filePath, typeOfDecoration)
   }
 
+  
   props.editorAPI.addErrorMarker = async (errors: errorMarker[], from: string) => {
     const allMarkersPerfile: Record<string, Array<monacoTypes.editor.IMarkerData>> = {}
 
@@ -548,8 +549,10 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   props.editorAPI.getHoverPosition = (position: monacoTypes.Position) => {
+    
     if (!monacoRef.current) return
     const model = editorModelsState[currentFileRef.current]?.model
+    console.log(model._commandManager._undoRedoService.canUndo(model))
     if (model) {
       return model.getOffsetAt(position)
     } else {
