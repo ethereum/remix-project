@@ -24,7 +24,7 @@ const profile = {
   version: packageJson.version,
   methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'writeMultipleFiles', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir',
     'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh',
-    'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles', 'isGitRepo'],
+    'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory'],
   kind: 'file-system'
 }
 const errorMsg = {
