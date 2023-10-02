@@ -1,16 +1,18 @@
 import React, {useEffect, useState, useRef, SyntheticEvent} from 'react' // eslint-disable-line
 import {useIntl} from 'react-intl'
-import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-line
+import {TreeView} from '@remix-ui/tree-view' // eslint-disable-line
 import {FileExplorerMenu} from './file-explorer-menu' // eslint-disable-line
 import {FileExplorerContextMenu} from './file-explorer-context-menu' // eslint-disable-line
-import {FileExplorerProps, WorkSpaceState} from '../types'
+import {FileExplorerProps, FileType, WorkSpaceState} from '../types'
 
 import '../css/file-explorer.css'
 import {checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath} from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {FileRender} from './file-render'
-import {Drag} from '@remix-ui/drag-n-drop'
+import {Drag, Draggable} from '@remix-ui/drag-n-drop'
 import {ROOT_PATH} from '../utils/constants'
+import { fileKeySort } from '../utils'
+import { moveFileIsAllowed, moveFolderIsAllowed } from '../actions'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const intl = useIntl()
@@ -32,6 +34,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   } = props
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
   const treeRef = useRef<HTMLDivElement>(null)
+  const [childrenKeys, setChildrenKeys] = useState<string[]>([])
 
   useEffect(() => {
     if (contextMenuItems) {
@@ -289,31 +292,61 @@ export const FileExplorer = (props: FileExplorerProps) => {
     props.dispatchHandleExpandPath(expandPath)
   }
 
-  const handleFileMove = (dest: string, src: string) => {
+  const handleFileMove = async (dest: string, src: string) => {
+    if(await moveFileIsAllowed(src, dest) === false) return
     try {
-      props.dispatchMoveFile(src, dest)
+      props.modal(
+        intl.formatMessage({ id: 'filePanel.moveFile' }),
+        intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src, dest }),
+        intl.formatMessage({ id: 'filePanel.yes' }),
+        () => props.dispatchMoveFile(src, dest),
+        intl.formatMessage({ id: 'filePanel.cancel' }),
+        () => {}
+      )
     } catch (error) {
       props.modal(
-        intl.formatMessage({id: 'filePanel.movingFileFailed'}),
-        intl.formatMessage({id: 'filePanel.movingFileFailedMsg'}, {src}),
-        intl.formatMessage({id: 'filePanel.close'}),
+        intl.formatMessage({ id: 'filePanel.movingFileFailed' }),
+        intl.formatMessage({ id: 'filePanel.movingFileFailedMsg' }, { src }),
+        intl.formatMessage({ id: 'filePanel.close' }),
         async () => {}
       )
     }
   }
 
-  const handleFolderMove = (dest: string, src: string) => {
+  const handleFolderMove = async (dest: string, src: string) => {
+    if(await moveFolderIsAllowed(src, dest) === false) return
     try {
-      props.dispatchMoveFolder(src, dest)
+      props.modal(
+        intl.formatMessage({ id: 'filePanel.moveFile' }),
+        intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src, dest }),
+        intl.formatMessage({ id: 'filePanel.yes' }),
+        () => props.dispatchMoveFolder(src, dest),
+        intl.formatMessage({ id: 'filePanel.cancel' }),
+        () => {}
+      )
     } catch (error) {
       props.modal(
-        intl.formatMessage({id: 'filePanel.movingFolderFailed'}),
-        intl.formatMessage({id: 'filePanel.movingFolderFailedMsg'}, {src}),
-        intl.formatMessage({id: 'filePanel.close'}),
+        intl.formatMessage({ id: 'filePanel.movingFolderFailed' }),
+        intl.formatMessage({ id: 'filePanel.movingFolderFailedMsg' }, { src }),
+        intl.formatMessage({ id: 'filePanel.close' }),
         async () => {}
       )
     }
   }
+
+  useEffect(() => {
+    if (files[ROOT_PATH]){
+      try {
+        const children: FileType[] = files[ROOT_PATH] as any
+        setChildrenKeys(fileKeySort(children))
+      } catch (error) {
+        setChildrenKeys(Object.keys(files[ROOT_PATH]))
+      }
+    } else{
+      setChildrenKeys([])
+    }
+  }, [props])
+
 
   return (
     <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
@@ -325,7 +358,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               data-id={`treeViewDivMenu`}
               className={`d-flex flex-row align-items-center`}
             >
-              <span className="w-100 pl-2">
+              <span className="w-100 pl-2 mt-1">
                 <div onClick={handleFileExplorerMenuClick}>
                   <FileExplorerMenu
                     title={''}
@@ -340,10 +373,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
               </span>
             </div>
           </li>
-          <div className="pb-4 mb-4">
+          <div>
             <TreeView id="treeViewMenu">
               {files[ROOT_PATH] &&
-                Object.keys(files[ROOT_PATH]).map((key, index) => (
+                childrenKeys.map((key, index) => (
                   <FileRender
                     file={files[ROOT_PATH][key]}
                     fileDecorations={fileState}
@@ -361,9 +394,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
                     showIconsMenu={props.showIconsMenu}
                     hideIconsMenu={props.hideIconsMenu}
                   />
-                ))}
+                ))
+              }
             </TreeView>
           </div>
+          <Draggable isDraggable={false} file={{ name: '/', path: '/', type: 'folder', isDirectory: true }} expandedPath={props.expandPath} handleClickFolder={null}>
+            <div className='d-block w-100 pb-4 mb-4'></div>
+          </Draggable>
         </TreeView>
       </div>
     </Drag>
