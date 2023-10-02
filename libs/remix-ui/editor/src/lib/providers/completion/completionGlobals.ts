@@ -189,6 +189,7 @@ export function getCompletionSnippets(range: monacoTypes.IRange, monaco): monaco
       insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
       range
     },
+    /* eslint-disable */
     {
       label: 'erc20',
       kind: monaco.languages.CompletionItemKind.Snippet,
@@ -198,6 +199,7 @@ export function getCompletionSnippets(range: monacoTypes.IRange, monaco): monaco
       insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
       range
     }
+    /* eslint-enable */
   ]
 }
 
