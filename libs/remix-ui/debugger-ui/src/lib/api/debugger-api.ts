@@ -14,9 +14,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     const self = this
     this.web3Provider = {
       sendAsync (payload, callback) {
-        self.call('web3Provider', 'sendAsync', payload)
-          .then(result => callback(null, result))
-          .catch(e => callback(e))
+        return self.call('web3Provider', 'sendAsync', payload)
       }
     }
     this._web3 = new Web3(this.web3Provider)
