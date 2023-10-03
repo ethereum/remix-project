@@ -203,7 +203,7 @@ export class Transactions {
 
     processTx(this.txRunnerInstance, payload, true, (error, result: VMexecutionResult) => {
       if (!error && result) {
-        this.vmContext.addBlock(result.block)
+        this.vmContext.addBlock(result.block, null, true)
         const hash = '0x' + result.tx.hash().toString('hex')
         this.vmContext.trackTx(hash, result.block, result.tx)
         const returnValue = `0x${result.result.execResult.returnValue.toString('hex') || '0'}`
