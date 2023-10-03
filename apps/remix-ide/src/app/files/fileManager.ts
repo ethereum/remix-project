@@ -227,22 +227,21 @@ class FileManager extends Plugin {
   */
   async writeMultipleFiles(filePaths, fileData, folderPath) {
     try {
-      let alert = true
-      for (let i = 0; i < filePaths.length; i++) {
-        const installPath = folderPath + "/" + filePaths[i]
+      filePaths.forEach(async (filePath, index) => {
+        const installPath = folderPath + "/" + filePath
+        const alert = !index
 
         let path = this.normalize(installPath)
         path = this.limitPluginScope(path)
 
         if (await this.exists(path)) {
           await this._handleIsFile(path, `Cannot write file ${path}`)
-          await this.setMultipleFileContent(path, fileData[i], folderPath, alert)
+          await this.setMultipleFileContent(path, fileData[index], folderPath, alert)
         } else {
-          await this.setMultipleFileContent(path, fileData[i], folderPath, alert)
+          await this.setMultipleFileContent(path, fileData[index], folderPath, alert)
           this.emit('fileAdded', path)
         }
-        alert = false
-      }
+      });
     } catch (e) {
       throw new Error(e)
     }
@@ -605,8 +604,8 @@ class FileManager extends Plugin {
 
   async setMultipleFileContent(path, content, folderPath, alert) {
     if (this.currentRequest) {
-      const canCall = await this.askUserPermission(`writeFile`, `modifying ${folderPath} ...`)
-      const required = this.appManager.isRequired(this.currentRequest.from)
+      const canCall = !alert ? true : await this.askUserPermission(`writeFile`, `modifying ${folderPath} ...`)
+      const required = !alert ? true : this.appManager.isRequired(this.currentRequest.from)
       if (canCall && !required && alert) {
         // inform the user about modification after permission is granted and even if permission was saved before
         this.call('notification', 'toast', fileChangedToastMsg(this.currentRequest.from, folderPath))
