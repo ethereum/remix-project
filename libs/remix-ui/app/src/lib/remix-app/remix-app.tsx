@@ -14,7 +14,6 @@ import {CustomTooltip} from '@remix-ui/helper'
 interface IRemixAppUi {
   app: any
 }
-
 const RemixApp = (props: IRemixAppUi) => {
   const [appReady, setAppReady] = useState<boolean>(false)
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
