@@ -74,18 +74,18 @@ module.exports = {
 
   'Test switch to a GitHub import from a solidity warning #group3': function (browser: NightwatchBrowser) {
     browser
-      .setSolidityCompilerVersion('soljson-v0.7.4+commit.3f05b770.js')
-      .clickLaunchIcon('filePanel')
-      .click('li[data-id="treeViewLitreeViewItemREADME.txt"')
-      .addFile('Untitled8.sol', sources[7]['Untitled8.sol'])
-      .clickLaunchIcon('filePanel')
-      .clickLaunchIcon('solidity')
-      .waitForElementVisible('[data-id="https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol"]', 120000)
-      .scrollAndClick('[data-id="https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol"]') // click on error which point to ERC20 code
-      .pause(5000)
-      .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf('contract ERC20 is Context, IERC20') !== -1, 'content does not contain "contract ERC20 is Context, IERC20"')
-      })
+          .setSolidityCompilerVersion('soljson-v0.7.4+commit.3f05b770.js')
+          .addFile('Untitled8.sol', sources[7]['browser/Untitled8.sol'])
+          .clickLaunchIcon('fileExplorers')
+          .clickLaunchIcon('solidity')
+          .waitForElementPresent('[data-id="compiledErrors"] div:nth-child(4)')
+          .click('[data-id="compiledErrors"] div:nth-child(4)') // select the second warning which point to ERC20 code
+          .pause(5000)
+          .getEditorValue((content) => {
+            browser.assert.ok(content.indexOf(`contract ERC20 is Context, IERC20`) != -1, 
+          'current displayed content should be from the ERC20 source code')
+          })     
+          .end()          
   },
 
   'Test NPM Import (with unpkg.com) #group3': function (browser: NightwatchBrowser) {

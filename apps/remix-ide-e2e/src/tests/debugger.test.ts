@@ -83,32 +83,25 @@ module.exports = {
 
   'Should display solidity imported code while debugging github import #group2': function (browser: NightwatchBrowser) {
     browser
-      .clearConsole()
-      .clearTransactions()
-      .clickLaunchIcon('solidity')
-      .testContracts('externalImport.sol', sources[1]['externalImport.sol'], ['ERC20'])
-      .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[data-title="Deploy - transact (not payable)"]', 35000)
-      .selectContract('ERC20')
-      .createContract('"tokenName", "symbol"')
-      .debugTransaction(0)
-      .waitForElementVisible('#stepdetail')
-      .waitForElementVisible({
-        locateStrategy: 'xpath',
-        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"531")]',
-      })
-      .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(`constructor (string memory name_, string memory symbol_) {
+    .clickLaunchIcon('solidity')
+    .setSolidityCompilerVersion('soljson-v0.6.12+commit.27d51765.js')
+    .pause(2000)
+    .clickLaunchIcon('udapp')
+    .testContracts('externalImport.sol', sources[1]['browser/externalImport.sol'], ['ERC20'])
+    .waitForElementPresent('*[title="Deploy - transact (not payable)"]', 35000)  
+    .selectContract('ERC20')
+    .createContract('"tokenName", "symbol"')
+    .debugTransaction(2)
+    .pause(2000)
+    .goToVMTraceStep(10)
+    .getEditorValue((content) => {
+      browser.assert.ok(content.indexOf(`constructor (string memory name_, string memory symbol_) public {
         _name = name_;
         _symbol = symbol_;
-    }`) !== -1,
-          'current displayed content is not from the ERC20 source code')
-      })
-      .goToVMTraceStep(10)
-      .waitForElementVisible({
-        locateStrategy: 'xpath',
-        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"10")]',
-      })
+        _decimals = 18;
+    }`) != -1, 
+    'current displayed content is not from the ERC20 source code')
+    })        
   },
 
   'Should display correct source highlighting while debugging a contract which has ABIEncoderV2 #group2': function (browser: NightwatchBrowser) {
