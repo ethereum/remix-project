@@ -5,11 +5,15 @@ import * as packageJson from '../../../../../package.json'
 import Registry from '../state/registry'
 import enJson from './locales/en'
 import zhJson from './locales/zh'
+import esJson from './locales/es'
+import frJson from './locales/fr'
 const _paq = window._paq = window._paq || []
 
 const locales = [
   { code: 'en', name: 'English', localeName: 'English', messages: enJson },
   { code: 'zh', name: 'Chinese Simplified', localeName: '简体中文', messages: zhJson },
+  { code: 'es', name: 'Spanish', localeName: 'Español', messages: esJson },
+  { code: 'fr', name: 'French', localeName: 'Français', messages: frJson }
 ]
 
 const profile = {
