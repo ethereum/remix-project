@@ -1,21 +1,26 @@
-import {RemixApp} from '@remix-ui/app'
-import React, {useEffect, useRef, useState} from 'react'
-import {render} from 'react-dom'
+import { RemixApp } from '@remix-ui/app'
+import React, { useEffect, useRef, useState } from 'react'
+import { render } from 'react-dom'
 import * as packageJson from '../../../../../package.json'
-import {fileSystem, fileSystems} from '../files/fileSystem'
-import {indexedDBFileSystem} from '../files/filesystems/indexedDB'
-import {localStorageFS} from '../files/filesystems/localStorage'
-import {fileSystemUtility, migrationTestData} from '../files/filesystems/fileSystemUtility'
+import { fileSystem, fileSystems } from '../files/fileSystem'
+import { indexedDBFileSystem } from '../files/filesystems/indexedDB'
+import { localStorageFS } from '../files/filesystems/localStorage'
+import { fileSystemUtility, migrationTestData } from '../files/filesystems/fileSystemUtility'
 import './styles/preload.css'
 const _paq = (window._paq = window._paq || [])
+
+let netWorkTimeToLoad = 0
+let netWorkLoadTestTimer = undefined
 
 export const Preload = () => {
   const [supported, setSupported] = useState<boolean>(true)
   const [error, setError] = useState<boolean>(false)
+  const [slowNetWorkTimeout, setSlowNetWorkTimeout] = useState<boolean>()
   const [showDownloader, setShowDownloader] = useState<boolean>(false)
   const remixFileSystems = useRef<fileSystems>(new fileSystems())
   const remixIndexedDB = useRef<fileSystem>(new indexedDBFileSystem())
   const localStorageFileSystem = useRef<fileSystem>(new localStorageFS())
+
   // url parameters to e2e test the fallbacks and error warnings
   const testmigrationFallback = useRef<boolean>(
     window.location.hash.includes('e2e_testmigration_fallback=true') && window.location.host === '127.0.0.1:8080' && window.location.protocol === 'http:'
@@ -27,9 +32,21 @@ export const Preload = () => {
     window.location.hash.includes('e2e_testblock_storage=true') && window.location.host === '127.0.0.1:8080' && window.location.protocol === 'http:'
   )
 
+  function startDetectSlowNetwork() {
+    netWorkLoadTestTimer = setInterval(() => {
+      netWorkTimeToLoad += 1000
+      if (netWorkTimeToLoad > 5000) {
+        setSlowNetWorkTimeout(true)
+      }
+    }, 1000)
+
+  }
+
   function loadAppComponent() {
+    startDetectSlowNetwork()
     import('../../app')
       .then((AppComponent) => {
+        clearInterval(netWorkLoadTestTimer)
         const appComponent = new AppComponent.default()
         appComponent.run().then(() => {
           render(
@@ -86,8 +103,8 @@ export const Preload = () => {
 
   useEffect(() => {
     async function loadStorage() {
-      ;(await remixFileSystems.current.addFileSystem(remixIndexedDB.current)) || _paq.push(['trackEvent', 'Storage', 'error', 'indexedDB not supported'])
-      ;(await remixFileSystems.current.addFileSystem(localStorageFileSystem.current)) || _paq.push(['trackEvent', 'Storage', 'error', 'localstorage not supported'])
+      ; (await remixFileSystems.current.addFileSystem(remixIndexedDB.current)) || _paq.push(['trackEvent', 'Storage', 'error', 'indexedDB not supported'])
+        ; (await remixFileSystems.current.addFileSystem(localStorageFileSystem.current)) || _paq.push(['trackEvent', 'Storage', 'error', 'localstorage not supported'])
       await testmigration()
       remixIndexedDB.current.loaded && (await remixIndexedDB.current.checkWorkspaces())
       localStorageFileSystem.current.loaded && (await localStorageFileSystem.current.checkWorkspaces())
@@ -128,6 +145,13 @@ export const Preload = () => {
             <div className="pt-2">
               Linux:<br></br>- Chrome & FireFox: CTRL + SHIFT + R<br></br>
             </div>
+          </div>
+        ) : null}
+        {slowNetWorkTimeout ? (
+          <div className="preload-info-container alert alert-danger text-left">
+            Your network is very slow! 
+            <br></br>
+            You may encounter problems loading the application...
           </div>
         ) : null}
         {showDownloader ? (

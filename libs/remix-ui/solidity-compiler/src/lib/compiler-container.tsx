@@ -303,11 +303,20 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         longVersion: 'latest local version - ' + state.defaultVersion
       }
     ]
-    // fetch normal builds
-    const binRes: AxiosResponse = await axios(`${baseURLBin}/list.json`)
-    // fetch wasm builds
-    const wasmRes: AxiosResponse = await axios(`${baseURLWasm}/list.json`)
-    if (binRes.status !== 200 && wasmRes.status !== 200) {
+    let binRes: AxiosResponse, wasmRes: AxiosResponse
+    try{
+      // fetch normal builds
+      binRes = await axios(`${baseURLBin}/list.json`)
+      // fetch wasm builds
+      wasmRes = await axios(`${baseURLWasm}/list.json`)
+    }catch(e){
+      console.log('Could not fetch the remote solidity compilers')
+      // @ts-ignore
+      api.call('notification', 'toast',
+        'The remote solidity compilers could not be loaded. Please check your network. Only the local compiler will be available'
+      )
+    } 
+    if ((!binRes || !wasmRes) || (binRes && binRes.status !== 200 && wasmRes.status !== 200)) {
       selectedVersion = 'builtin'
       return callback(allVersions, selectedVersion)
     }
