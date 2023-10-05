@@ -1,15 +1,15 @@
-import { RemixApp } from '@remix-ui/app'
-import React, { useEffect, useRef, useState } from 'react'
-import { render } from 'react-dom'
+import {RemixApp} from '@remix-ui/app'
+import React, {useEffect, useRef, useState} from 'react'
+import {render} from 'react-dom'
 import * as packageJson from '../../../../../package.json'
-import { fileSystem, fileSystems } from '../files/fileSystem'
-import { indexedDBFileSystem } from '../files/filesystems/indexedDB'
-import { localStorageFS } from '../files/filesystems/localStorage'
-import { fileSystemUtility, migrationTestData } from '../files/filesystems/fileSystemUtility'
+import {fileSystem, fileSystems} from '../files/fileSystem'
+import {indexedDBFileSystem} from '../files/filesystems/indexedDB'
+import {localStorageFS} from '../files/filesystems/localStorage'
+import {fileSystemUtility, migrationTestData} from '../files/filesystems/fileSystemUtility'
 import './styles/preload.css'
 const _paq = (window._paq = window._paq || [])
 
-let netWorkLoadTestTimer = undefined
+let netWorkLoadTestTimer: NodeJS.Timeout
 
 export const Preload = () => {
   const [supported, setSupported] = useState<boolean>(true)
@@ -100,8 +100,8 @@ export const Preload = () => {
 
   useEffect(() => {
     async function loadStorage() {
-      ; (await remixFileSystems.current.addFileSystem(remixIndexedDB.current)) || _paq.push(['trackEvent', 'Storage', 'error', 'indexedDB not supported'])
-        ; (await remixFileSystems.current.addFileSystem(localStorageFileSystem.current)) || _paq.push(['trackEvent', 'Storage', 'error', 'localstorage not supported'])
+      ;(await remixFileSystems.current.addFileSystem(remixIndexedDB.current)) || _paq.push(['trackEvent', 'Storage', 'error', 'indexedDB not supported'])
+      ;(await remixFileSystems.current.addFileSystem(localStorageFileSystem.current)) || _paq.push(['trackEvent', 'Storage', 'error', 'localstorage not supported'])
       await testmigration()
       remixIndexedDB.current.loaded && (await remixIndexedDB.current.checkWorkspaces())
       localStorageFileSystem.current.loaded && (await localStorageFileSystem.current.checkWorkspaces())
