@@ -9,7 +9,6 @@ import { fileSystemUtility, migrationTestData } from '../files/filesystems/fileS
 import './styles/preload.css'
 const _paq = (window._paq = window._paq || [])
 
-let netWorkTimeToLoad = 0
 let netWorkLoadTestTimer = undefined
 
 export const Preload = () => {
@@ -33,12 +32,10 @@ export const Preload = () => {
   )
 
   function startDetectSlowNetwork() {
-    netWorkLoadTestTimer = setInterval(() => {
-      netWorkTimeToLoad += 1000
-      if (netWorkTimeToLoad > 5000) {
+    netWorkLoadTestTimer = setTimeout(() => {
         setSlowNetWorkTimeout(true)
-      }
-    }, 1000)
+        clearTimeout(netWorkLoadTestTimer)
+    }, 5000)
 
   }
 
@@ -46,7 +43,7 @@ export const Preload = () => {
     startDetectSlowNetwork()
     import('../../app')
       .then((AppComponent) => {
-        clearInterval(netWorkLoadTestTimer)
+        clearTimeout(netWorkLoadTestTimer)
         const appComponent = new AppComponent.default()
         appComponent.run().then(() => {
           render(
