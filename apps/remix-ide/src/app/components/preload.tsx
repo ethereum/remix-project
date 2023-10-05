@@ -148,7 +148,7 @@ export const Preload = () => {
           </div>
         ) : null}
         {slowNetWorkTimeout ? (
-          <div className="preload-info-container alert alert-danger text-left">
+          <div className="preload-info-container alert alert-warning text-left">
             Your network is very slow! 
             <br></br>
             You may encounter problems loading the application...
