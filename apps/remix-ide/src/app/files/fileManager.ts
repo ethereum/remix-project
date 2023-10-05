@@ -227,13 +227,11 @@ class FileManager extends Plugin {
   */
   async writeMultipleFiles(filePaths, fileData, folderPath) {
     try {
-      filePaths.forEach(async (filePath, index) => {
+      let filePromises = filePaths.map(async (filePath, index) => {
         const installPath = folderPath + "/" + filePath
         const alert = !index
-
         let path = this.normalize(installPath)
         path = this.limitPluginScope(path)
-
         if (await this.exists(path)) {
           await this._handleIsFile(path, `Cannot write file ${path}`)
           await this.setMultipleFileContent(path, fileData[index], folderPath, alert)
@@ -242,6 +240,7 @@ class FileManager extends Plugin {
           this.emit('fileAdded', path)
         }
       });
+      await Promise.all(filePromises)
     } catch (e) {
       throw new Error(e)
     }
@@ -904,7 +903,7 @@ class FileManager extends Plugin {
   }
 
 
-  async moveFileIsAllowed (src: string, dest: string) {
+  async moveFileIsAllowed(src: string, dest: string) {
     try {
       src = this.normalize(src)
       dest = this.normalize(dest)
@@ -926,7 +925,7 @@ class FileManager extends Plugin {
     }
   }
 
-  async moveDirIsAllowed (src: string, dest: string) {
+  async moveDirIsAllowed(src: string, dest: string) {
     try {
       src = this.normalize(src)
       dest = this.normalize(dest)
@@ -946,7 +945,7 @@ class FileManager extends Plugin {
       if (provider.isSubDirectory(src, dest)) {
         this.call('notification', 'toast', recursivePasteToastMsg())
         return false
-      } 
+      }
       return true
     } catch (e) {
       console.log(e)
@@ -1009,7 +1008,7 @@ class FileManager extends Plugin {
       if (provider.isSubDirectory(src, dest)) {
         this.call('notification', 'toast', recursivePasteToastMsg())
         return false
-      } 
+      }
       await this.inDepthCopy(src, dest, dirName)
       await this.remove(src)
 
