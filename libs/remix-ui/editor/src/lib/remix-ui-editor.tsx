@@ -19,6 +19,7 @@ import { RemixCodeActionProvider } from './providers/codeActionProvider'
 import './remix-ui-editor.css'
 import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
 import { IPosition } from 'monaco-editor'
+import { RemixInLineCompletionProvider } from './providers/inlineCompletionProvider'
 
 enum MarkerSeverity {
   Hint = 1,
@@ -867,6 +868,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
     monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
     monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
+    monacoRef.current.languages.registerInlineCompletionsProvider('remix-solidity', new RemixInLineCompletionProvider(props, monaco))
     monaco.languages.registerCodeActionProvider('remix-solidity', new RemixCodeActionProvider(props, monaco))
 
     loadTypes(monacoRef.current)
