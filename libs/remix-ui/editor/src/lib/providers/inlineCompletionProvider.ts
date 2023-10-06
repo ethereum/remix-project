@@ -1,4 +1,5 @@
 import { EditorUIProps, monacoTypes } from '@remix-ui/editor';
+import axios from 'axios';
 const controller = new AbortController();
 const { signal } = controller;
 const result: string = ''
@@ -21,35 +22,25 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     });
 
     // abort if there is a signal
-    
+    if (token.isCancellationRequested) {
+      console.log('aborted')
+      return { items: [] };
+    }    
 
-    const url = 'http://localhost:9090/infer'
+    const url = 'http://localhost:8000/infer'
     const data  = {'prefix': 'contract test', 'max_token': 20}
 
-    const response = await fetch(url, {
-      method: "POST", 
-      mode: "no-cors", 
-      cache: "no-cache", 
-      headers: {
-        "Content-Type": "application/json",
-      },
-      signal,
-      redirect: "follow", 
-      referrerPolicy: "no-referrer", 
-      body: JSON.stringify(data), 
-    });
-  
-
+    const response = await axios.post(url, data, {signal})
  
     
-    console.log(response.body)
+    console.log(response.data.data)
     console.log('word', word)
 
    
 
     const item: monacoTypes.languages.InlineCompletion = {
       insertText: {
-        snippet: 'hello world\nhuman readable',
+        snippet: response.data.data,
       }      
     };
     
