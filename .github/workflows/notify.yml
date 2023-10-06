@@ -1,0 +1,82 @@
+name: Notify on Multiple Platform
+
+on:
+  push:
+      branches:
+          - master # Trigger the workflow on push to master branch
+
+jobs:
+  release:
+    name: Notification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+            node-version: 20.6.1
+
+      - name: Get version from package.json
+        id: version
+        run: echo "::set-output name=version::$(node -p "require('./package.json').version")"
+
+      - name: Send Email Notification
+        if: success() # Only send email if the previous steps were successful
+        uses: dawidd6/action-send-mail@v2
+        with:
+            server_address: smtp.gmail.com
+            server_port: 465
+            username: ${{ secrets.EMAIL_USERNAME }}
+            password: ${{ secrets.EMAIL_PASSWORD }}
+            subject: New Release Published for ${{ github.repository }}
+            body: |
+                <h1>New Release Published</h1>
+                <p>A new release has been published on <a href="${{ github.event.repository.html_url }}/releases/tag/v${{ steps.version.outputs.version }}">GitHub</a>.</p>
+                <p>Here are the details:</p>
+                <ul>
+                  <li><b>Tag:</b> v${{ steps.version.outputs.version }}</li>
+                  <li><b>Name:</b> Operculum</li>
+                </ul>
+                <p>You can view the full changelog <a href="${{ github.event.repository.html_url }}/blob/master/CHANGELOG.md">here</a>.</p>
+            to: ${{ secrets.EMAIL_TO }}
+            from: ${{ secrets.EMAIL_FROM }}
+            content_type: text/html
+            attachments: |
+                ./CHANGELOG.md
+
+      - name: Notify on Discord
+        if: success()
+        run: |
+            DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL }}
+            MESSAGE="Operculum: NEW Release: ${{ steps.version.outputs.version }} is published! Check it out at ${{ github.event.repository.html_url }}/blob/master/CHANGELOG.md\n NPM: https://www.npmjs.com/package/operculum"
+            curl -H "Content-Type: application/json" -X POST -d '{"content": "'"$MESSAGE"'"}' $DISCORD_WEBHOOK_URL
+
+      - name: Notify on Telegram
+        if: success()
+        uses: appleboy/telegram-action@master
+        with:
+            to: ${{ secrets.TELEGRAM_ID }}
+            token: ${{ secrets.TELEGRAM_OPERCULUMN_TOKEN }}
+            message: |
+                🚀 Workflow ${{ github.workflow }} in ${{ github.repository }}:
+                  New Release version: ${{ steps.version.outputs.version }}
+                  Check it out at ${{ github.event.repository.html_url }}/blob/master/CHANGELOG.md
+
+      - name: Notify on Telegram Group
+        if: success()
+        run: |
+            curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_OPERCULUMN_TOKEN }}/sendMessage -d chat_id=${{ secrets.TELEGRAM_GROUP_ID }} -d text="🚀 Workflow ${{ github.workflow }} in ${{ github.repository }}: New Release version: ${{ steps.version.outputs.version }} Check it out at ${{ github.event.repository.html_url }}/blob/master/CHANGELOG.md"
+
+      - name: Notify on Slack or Discord # Optionally notify team members on release, customize as per your needs
+        if: success() # Only notify if the previous steps were successful
+        uses: 8398a7/action-slack@v3
+        with:
+            status: custom
+            fields: job,ref
+        env:
+            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+            SLACK_USERNAME: ${{ secrets.SLACK_USERNAME }}
+            SLACK_ICON_EMOJI: ${{ secrets.SLACK_ICON_EMOJI }}
+
