@@ -250,11 +250,11 @@ const sources = [
     'myTokenV1.sol': {
       content: `
       // SPDX-License-Identifier: MIT
-      pragma solidity ^0.8.4;
+      pragma solidity ^0.8.20;
       
       import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
-      import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
       import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+      import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
       import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
       
       contract MyToken is Initializable, ERC721Upgradeable, OwnableUpgradeable, UUPSUpgradeable {
@@ -263,9 +263,9 @@ const sources = [
               _disableInitializers();
           }
       
-          function initialize() initializer public {
+          function initialize(address initialOwner) initializer public {
               __ERC721_init("MyToken", "MTK");
-              __Ownable_init();
+              __Ownable_init(initialOwner);
               __UUPSUpgradeable_init();
           }
       
@@ -293,11 +293,11 @@ const sources = [
     'initializeProxy.sol': {
       content: `
       // SPDX-License-Identifier: MIT
-      pragma solidity ^0.8.4;
+      pragma solidity ^0.8.20;
       
       import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
-      import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
       import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+      import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
       import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
       
       contract MyInitializedToken is Initializable, ERC721Upgradeable, OwnableUpgradeable, UUPSUpgradeable {
@@ -306,9 +306,9 @@ const sources = [
               _disableInitializers();
           }
       
-          function initialize(string memory tokenName, string memory tokenSymbol) initializer public {
+          function initialize(string memory tokenName, string memory tokenSymbol, address initialOwner) initializer public {
               __ERC721_init(tokenName, tokenSymbol);
-              __Ownable_init();
+              __Ownable_init(initialOwner);
               __UUPSUpgradeable_init();
           }
       
