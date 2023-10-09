@@ -87,7 +87,10 @@ module.exports = {
         checkEditorHoverContent(browser, path, expectedContent)
     },
     'Add token file': function (browser: NightwatchBrowser) {
-        browser.addFile('contracts/mytoken.sol', {
+        browser
+        .clickLaunchIcon('solidity')
+        .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js')
+        .addFile('contracts/mytoken.sol', {
             content: myToken
         }).useXpath().waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
     },
@@ -95,7 +98,7 @@ module.exports = {
     'Should show ERC20 hover over contract in editor #group1': function (browser: NightwatchBrowser) {
         browser.scrollToLine(10)
         const path = "//*[@class='view-line' and contains(.,'MyToken') and contains(.,'Pausable')]//span//span[contains(.,'ERC20Burnable')]"
-        const expectedContent = 'contract ERC20Burnable is ERC20Burnable, ERC20, IERC20Metadata, IERC20, Context'
+        const expectedContent = 'contract ERC20Burnable is ERC20Burnable, ERC20, IERC20Errors, IERC20Metadata, IERC20, Context'
         checkEditorHoverContent(browser, path, expectedContent, 25)
     },
     'Go back to ballot file': function (browser: NightwatchBrowser) {
@@ -120,7 +123,7 @@ module.exports = {
     'Should show ERC20 hover over contract in editor again #group1': function (browser: NightwatchBrowser) {
         browser.scrollToLine(10)
         const path = "//*[@class='view-line' and contains(.,'MyToken') and contains(.,'Pausable')]//span//span[contains(.,'ERC20Burnable')]"
-        const expectedContent = 'contract ERC20Burnable is ERC20Burnable, ERC20, IERC20Metadata, IERC20, Context'
+        const expectedContent = 'contract ERC20Burnable is ERC20Burnable, ERC20, IERC20Errors, IERC20Metadata, IERC20, Context'
         checkEditorHoverContent(browser, path, expectedContent, 25)
     },
 
