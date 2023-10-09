@@ -4,6 +4,7 @@ import { customAction } from '@remixproject/plugin-api'
 import { fileDecoration } from '@remix-ui/file-decorators'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
 import { ViewPlugin } from '@remixproject/engine-web'
+import { Placement } from 'react-bootstrap/esm/types'
 
 export type action = { name: string, type?: Array<'folder' | 'gist' | 'file' | 'workspace'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean, group: number }
 export interface JSONStandardInput {
@@ -126,7 +127,6 @@ export interface FileExplorerProps {
     handleNewFileInput: (parentFolder?: string) => Promise<void>
     handleNewFolderInput: (parentFolder?: string) => Promise<void>
 }
-type Placement = import('react-overlays/usePopper').Placement
 export interface FileExplorerMenuProps {
     title: string,
     menuItems: string[],

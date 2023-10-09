@@ -1,7 +1,7 @@
 import {CustomTooltip} from '@remix-ui/helper'
 import React, {useState, useEffect} from 'react' //eslint-disable-line
+import { Placement } from 'react-bootstrap/esm/types'
 import {FormattedMessage} from 'react-intl'
-import {Placement} from 'react-bootstrap/esm/Overlay'
 import {FileExplorerMenuProps} from '../types'
 const _paq = (window._paq = window._paq || [])
 

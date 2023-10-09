@@ -74,7 +74,7 @@ export interface HamburgerSubMenuItemProps {
 export function HamburgerSubMenuItem(props: HamburgerSubMenuItemProps) {
   return (
     <>
-      <NavDropdown title={props.title} as={CustomMenu} key={props.id} id={props.id} drop="right">
+      <NavDropdown title={props.title} as={CustomMenu} key={props.id} id={props.id}>
         {props.subMenus.map((item) => (
           <NavHamburgerMenuItem kind={item.kind} fa={item.fa} hideOption={item.hideOption} actionOnClick={item.actionOnClick} />
         ))}

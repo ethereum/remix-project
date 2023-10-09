@@ -31,7 +31,7 @@ export class HardhatProvider extends AbstractProvider {
             values={{
               a: (chunks) => (
                 <a href="https://hardhat.org/getting-started/#connecting-a-wallet-or-dapp-to-hardhat-network" target="_blank">
-                  {chunks}
+                  <>{chunks}</>
                 </a>
               )
             }}

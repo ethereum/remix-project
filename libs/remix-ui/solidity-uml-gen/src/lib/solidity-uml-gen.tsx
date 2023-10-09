@@ -105,18 +105,8 @@ export function RemixUiSolidityUmlGen({updatedSvg, loading, fileName, themeDark}
     return (
       <div id="umlImageHolder" className="w-100 px-2 py-2 d-flex">
         {validSvg && showViewer ? (
-          <MagnifierContainer>
-            <TransformWrapper initialScale={1}>
-              {({zoomIn, zoomOut, resetTransform}) => (
-                <Fragment>
-                  <ActionButtons actions={{zoomIn, zoomOut, resetTransform}} />
-                  <TransformComponent contentStyle={{zIndex: 2}}>
-                    <GlassMagnifier imageSrc={`data:image/svg+xml;base64,${final}`} magnifierSize={300} magnifierBorderSize={3} magnifierBorderColor={themeDark} square />
-                  </TransformComponent>
-                </Fragment>
-              )}
-            </TransformWrapper>
-          </MagnifierContainer>
+          
+          <></>
         ) : loading ? (
           <div className="justify-content-center align-items-center d-flex  mx-auto my-auto">
             <i className="fas fa-spinner fa-spin fa-4x"></i>

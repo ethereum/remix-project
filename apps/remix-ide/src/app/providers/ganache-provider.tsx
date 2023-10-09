@@ -34,7 +34,7 @@ export class GanacheProvider extends AbstractProvider {
             values={{
               a: (chunks) => (
                 <a href="https://github.com/trufflesuite/ganache" target="_blank">
-                  {chunks}
+                  <>{chunks}</>
                 </a>
               )
             }}

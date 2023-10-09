@@ -4,7 +4,7 @@ import {HashRouter as Router, Route, Routes, RouteProps} from 'react-router-dom'
 import {ErrorView, HomeView, ReceiptsView, CaptureKeyView} from './views'
 import {DefaultLayout} from './layouts'
 
-interface Props extends RouteProps {
+interface Props {
   component: any // TODO: new (props: any) => React.Component
   from: string
 }

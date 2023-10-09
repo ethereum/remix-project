@@ -22,9 +22,9 @@ const FileDecorationTooltip = (props: {fileDecoration: fileDecoration; icon: JSX
       placement="auto"
       overlay={
         <Popover id={`popover-positioned-auto}`}>
-          <Popover.Content id={`error-tooltip-${props.fileDecoration.path}`} style={{minWidth: 'fit-content'}} className={'text-wrap bg-secondary w-100 p-1 m-0'}>
+          <Popover.Body id={`error-tooltip-${props.fileDecoration.path}`} style={{minWidth: 'fit-content'}} className={'text-wrap bg-secondary w-100 p-1 m-0'}>
             <pre>{getComments(props.fileDecoration)}</pre>
-          </Popover.Content>
+          </Popover.Body>
         </Popover>
       }
     >

@@ -34,7 +34,7 @@ export class FoundryProvider extends AbstractProvider {
             values={{
               a: (chunks) => (
                 <a href="https://github.com/foundry-rs/foundry" target="_blank">
-                  {chunks}
+                  <>{chunks}</>
                 </a>
               )
             }}

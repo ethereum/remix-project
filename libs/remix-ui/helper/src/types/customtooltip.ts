@@ -1,5 +1,5 @@
-import { Placement } from 'react-bootstrap/esm/Overlay'
-import { OverlayDelay, OverlayTriggerRenderProps } from 'react-bootstrap/esm/OverlayTrigger'
+import { OverlayTriggerRenderProps, OverlayDelay } from 'react-bootstrap/esm/OverlayTrigger';
+import { Placement } from 'react-bootstrap/esm/types';
 
 export type CustomTooltipType = {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>> | ((props: OverlayTriggerRenderProps) => React.ReactNode),
