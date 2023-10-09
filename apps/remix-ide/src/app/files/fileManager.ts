@@ -588,7 +588,6 @@ class FileManager extends Plugin {
         if(editorContent) resolve(editorContent)
       }
       provider.get(path, (err, content) => {
-        console.log(err, content)
         if (err) reject(err)
         resolve(content)
       })
