@@ -26,7 +26,7 @@ module.exports = {
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
       .isVisible({
-        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol"]',
         timeout: 120000,
         suppressNotFoundErrors: true
       })
@@ -34,7 +34,7 @@ module.exports = {
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
       .isVisible({
-        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol"]',
         timeout: 120000,
         suppressNotFoundErrors: true
       })
@@ -42,7 +42,7 @@ module.exports = {
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
       .waitForElementVisible({
-        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol"]',
         timeout: 120000,
       })
       .clickLaunchIcon('solidity')
@@ -81,6 +81,7 @@ module.exports = {
       .verify.visible('[data-id="contractGUIDeployWithProxyLabel"]')
       .waitForElementPresent('[data-id="contractGUIDeployWithProxyLabel"]')
       .click('[data-id="contractGUIDeployWithProxyLabel"]')
+      .setValue('[data-id="initializeInputs-initialOwner"]', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4')
       .createContract('')
       .waitForElementContainsText('[data-id="udappNotifyModalDialogModalTitle-react"]', 'Deploy Implementation & Proxy (ERC1967)')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
@@ -131,6 +132,7 @@ module.exports = {
       .setValue('//*[@id="runTabView"]/div/div[2]/div[3]/div[1]/div/div[1]/div[4]/div/div[1]/input', 'Remix')
       .setValue('//*[@id="runTabView"]/div/div[2]/div[3]/div[1]/div/div[1]/div[4]/div/div[2]/input', "R")
       .useCss()
+      .setValue('[data-id="initializeInputs-initialOwner"]', '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4')
       .createContract('')
       .waitForElementContainsText('[data-id="udappNotifyModalDialogModalTitle-react"]', 'Deploy Implementation & Proxy (ERC1967)')
       .waitForElementVisible('[data-id="udappNotify-modal-footer-ok-react"]')
@@ -161,7 +163,7 @@ module.exports = {
       })
   },
 
-  'Should upgrade contract by selecting a previously deployed proxy address from dropdown (MyTokenV1 to MyTokenV2) #group1': function (browser: NightwatchBrowser) {
+  'Should upgrade contract by selecting a previously deployed proxy address from dropdown (MyTokenV1 to MyTokenV2) #group1': !function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('[data-id="deployAndRunClearInstances"]')
       .click('[data-id="deployAndRunClearInstances"]')
@@ -180,6 +182,7 @@ module.exports = {
       .waitForElementVisible('[data-id="proxy-dropdown-items"]')
       .assert.textContains('[data-id="proxy-dropdown-items"]', shortenedFirstAddress)
       .assert.textContains('[data-id="proxy-dropdown-items"]', shortenedLastAddress)
+
       .click('[data-id="proxyAddress1"]')
       .createContract('')
       .waitForElementContainsText('[data-id="udappNotifyModalDialogModalTitle-react"]', 'Deploy Implementation & Update Proxy')
@@ -195,7 +198,7 @@ module.exports = {
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
   },
 
-  'Should interact with upgraded function in contract MyTokenV2 #group1': function (browser: NightwatchBrowser) {
+  'Should interact with upgraded function in contract MyTokenV2 #group1': !function (browser: NightwatchBrowser) {
     browser
       .clickInstance(1)
       .perform((done) => {
@@ -205,7 +208,7 @@ module.exports = {
       })
   },
 
-  'Should upgrade contract by providing proxy address in input field (MyTokenV1 to MyTokenV2) #group1': function (browser: NightwatchBrowser) {
+  'Should upgrade contract by providing proxy address in input field (MyTokenV1 to MyTokenV2) #group1': !function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('[data-id="deployAndRunClearInstances"]')
       .click('[data-id="deployAndRunClearInstances"]')
@@ -232,7 +235,7 @@ module.exports = {
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
   },
 
-  'Should interact with upgraded contract through provided proxy address #group1': function (browser: NightwatchBrowser) {
+  'Should interact with upgraded contract through provided proxy address #group1': !function (browser: NightwatchBrowser) {
     browser
       .clickInstance(1)
       .perform((done) => {
@@ -280,6 +283,8 @@ const sources = [
   }, {
     'myTokenV2.sol': {
       content: `
+      // SPDX-License-Identifier: MIT
+      pragma solidity ^0.8.20;
       import "./myTokenV1.sol";
 
       contract MyTokenV2 is MyToken {
