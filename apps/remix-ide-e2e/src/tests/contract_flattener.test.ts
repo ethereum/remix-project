@@ -51,28 +51,8 @@ const sources = [
       import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
       import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-      contract MyToken is Initializable, ERC721Upgradeable, ERC721BurnableUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
-          /// @custom:oz-upgrades-unsafe-allow constructor
-          constructor() {
-              _disableInitializers();
-          }
+      abstract contract MyToken is Initializable, ERC721Upgradeable, ERC721BurnableUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
 
-          function initialize() initializer public {
-              __ERC721_init("MyToken", "MTK");
-              __ERC721Burnable_init();
-              __Ownable_init();
-              __UUPSUpgradeable_init();
-          }
-
-          function safeMint(address to, uint256 tokenId) public onlyOwner {
-              _safeMint(to, tokenId);
-          }
-
-          function _authorizeUpgrade(address newImplementation)
-              internal
-              onlyOwner
-              override
-          {}
       }
       `
     },
