@@ -126,6 +126,7 @@ export class OpenZeppelinProxy extends Plugin {
     newImplementationContractObject.contractName = newImplementationContractObject.name
     newImplementationContractObject.implementationAddress = newImplAddress
     newImplementationContractObject.name = proxyName
+    
     await this.blockchain.runTx(args, () => { }, () => { }, () => { }, async (error, txResult, _address, returnValue) => {
       if (error) {
         throw new Error(`error: ${error.message ? error.message : error}`)
