@@ -1,7 +1,9 @@
 import { Plugin } from '@remixproject/engine'
 import { ContractAST, ContractSources, DeployOptions } from '../types/contract'
-import { EnableProxyURLParam, EnableUpgradeURLParam, UUPS, UUPSABI, UUPSBytecode, UUPSfunAbi, UUPSupgradeAbi } from './constants/uups'
-
+import { EnableProxyURLParam, EnableUpgradeURLParam, GETUUPSProxyVersionAbi, UUPS, UUPSABI, UUPSBytecode, UUPSBytecodeV5, UUPSfunAbi, UUPSupgradeAbi, UUPSupgradeToAndCallAbi } from './constants/uups'
+import * as remixLib from '@remix-project/remix-lib'
+import * as semver from 'semver'
+const txFormat = remixLib.execution.txFormat
 const proxyProfile = {
   name: 'openzeppelin-proxy',
   displayName: 'openzeppelin-proxy',
@@ -91,12 +93,12 @@ export class OpenZeppelinProxy extends Plugin {
     const proxyName = 'ERC1967Proxy'
     const data = {
       contractABI: UUPSABI,
-      contractByteCode: UUPSBytecode,
+      contractByteCode: UUPSBytecodeV5,
       contractName: proxyName,
       funAbi: UUPSfunAbi,
       funArgs: args,
       linkReferences: {},
-      dataHex: UUPSBytecode + constructorData.replace('0x', '')
+      dataHex: UUPSBytecodeV5 + constructorData.replace('0x', '')
     }
 
     // re-use implementation contract's ABI for UI display in udapp and change name to proxy name.
@@ -107,20 +109,63 @@ export class OpenZeppelinProxy extends Plugin {
   }
 
   async upgradeUUPSProxy (proxyAddress: string, newImplAddress: string, newImplementationContractObject): Promise<void> {
-    const fnData = await this.blockchain.getEncodedFunctionHex([newImplAddress], UUPSupgradeAbi)
     const proxyName = 'ERC1967Proxy'
-    const data = {
-      contractABI: UUPSABI,
-      contractName: proxyName,
-      funAbi: UUPSupgradeAbi,
-      funArgs: [newImplAddress],
-      linkReferences: {},
-      dataHex: fnData.replace('0x', '')
+    const dataHex = await this.blockchain.getEncodedFunctionHex([], GETUUPSProxyVersionAbi)
+    const args = {
+      to: proxyAddress,
+      data: {
+        contractABI: undefined,
+        dataHex: dataHex,
+        funAbi: GETUUPSProxyVersionAbi,
+        contractName: proxyName,
+        funArgs: []
+      },
+      useCall : true
     }
-    // re-use implementation contract's ABI for UI display in udapp and change name to proxy name.
-    newImplementationContractObject.contractName = newImplementationContractObject.name
-    newImplementationContractObject.implementationAddress = newImplAddress
-    newImplementationContractObject.name = proxyName
-    this.blockchain.upgradeProxy(proxyAddress, newImplAddress, data, newImplementationContractObject)
+
+    await this.blockchain.runTx(args, () => {},  () => {},  () => {}, async (error, txResult, _address, returnValue) => {
+      if (error) {
+        throw new Error(`error: ${error.message ? error.message : error}`)
+      }
+      const response = txFormat.decodeResponse(returnValue, GETUUPSProxyVersionAbi)
+      const version = response[0].split('string: ')[1]
+      // check if version is >= 5.0.0
+      if(semver.gte(version, '5.0.0')){
+        const fnData = await this.blockchain.getEncodedFunctionHex([newImplAddress, "0x"], UUPSupgradeToAndCallAbi)
+
+        const data = {
+          contractABI: UUPSABI,
+          contractName: proxyName,
+          funAbi: UUPSupgradeToAndCallAbi,
+          funArgs: [newImplAddress, "0x"],
+          linkReferences: {},
+          dataHex: fnData.replace('0x', '')
+        }
+    
+        // re-use implementation contract's ABI for UI display in udapp and change name to proxy name.
+        newImplementationContractObject.contractName = newImplementationContractObject.name
+        newImplementationContractObject.implementationAddress = newImplAddress
+        newImplementationContractObject.name = proxyName
+        this.blockchain.upgradeProxy(proxyAddress, newImplAddress, data, newImplementationContractObject)
+      } else {
+        const fnData = await this.blockchain.getEncodedFunctionHex([newImplAddress], UUPSupgradeAbi)
+        const proxyName = 'ERC1967Proxy'
+        const data = {
+          contractABI: UUPSABI,
+          contractName: proxyName,
+          funAbi: UUPSupgradeAbi,
+          funArgs: [newImplAddress],
+          linkReferences: {},
+          dataHex: fnData.replace('0x', '')
+        }
+        // re-use implementation contract's ABI for UI display in udapp and change name to proxy name.
+        newImplementationContractObject.contractName = newImplementationContractObject.name
+        newImplementationContractObject.implementationAddress = newImplAddress
+        newImplementationContractObject.name = proxyName
+        this.blockchain.upgradeProxy(proxyAddress, newImplAddress, data, newImplementationContractObject)
+      }
+    })
+
+
   }
 }
