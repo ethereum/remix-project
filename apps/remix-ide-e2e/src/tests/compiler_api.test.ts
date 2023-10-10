@@ -34,7 +34,15 @@ module.exports = {
       .click('*[data-id="terminalClearConsole"]')
   },
 
-  'Should compile using "compileWithParamaters" API with optimization off check default runs #group3': function (browser: NightwatchBrowser) {
+  'Should compile using "compileWithParamaters" API with optimization off check default runs': function (browser: NightwatchBrowser) {
+    browser
+    .addFile('test_jsCompileWithOptimizationDefault.js', { content: jsCompileWithOptimizationDefault })
+    .executeScript('remix.exeCurrent()')
+    .pause(10000)
+    .journalChildIncludes(`\\"optimizer\\":{\\"enabled\\":false,\\"runs\\":200}`)
+  },
+
+  'Should update the compiler configuration with "setCompilerConfig" API': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsCompileWithOptimizationDefault.js', { content: jsCompileWithOptimizationDefault })
       .executeScriptInTerminal('remix.exeCurrent()')
@@ -145,6 +153,7 @@ const jsCompileWithOptimizationDefault = `(async () => {
       console.log(e.message)   
   }
 })()`
+
 
 const updateConfiguration = `(async () => {
   try {    
