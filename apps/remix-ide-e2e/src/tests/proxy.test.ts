@@ -163,7 +163,7 @@ module.exports = {
       })
   },
 
-  'Should upgrade contract by selecting a previously deployed proxy address from dropdown (MyTokenV1 to MyTokenV2) #group1': !function (browser: NightwatchBrowser) {
+  'Should upgrade contract by selecting a previously deployed proxy address from dropdown (MyTokenV1 to MyTokenV2) #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('[data-id="deployAndRunClearInstances"]')
       .click('[data-id="deployAndRunClearInstances"]')
@@ -198,7 +198,7 @@ module.exports = {
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
   },
 
-  'Should interact with upgraded function in contract MyTokenV2 #group1': !function (browser: NightwatchBrowser) {
+  'Should interact with upgraded function in contract MyTokenV2 #group1': function (browser: NightwatchBrowser) {
     browser
       .clickInstance(1)
       .perform((done) => {
@@ -208,7 +208,7 @@ module.exports = {
       })
   },
 
-  'Should upgrade contract by providing proxy address in input field (MyTokenV1 to MyTokenV2) #group1': !function (browser: NightwatchBrowser) {
+  'Should upgrade contract by providing proxy address in input field (MyTokenV1 to MyTokenV2) #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('[data-id="deployAndRunClearInstances"]')
       .click('[data-id="deployAndRunClearInstances"]')
@@ -235,7 +235,7 @@ module.exports = {
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
   },
 
-  'Should interact with upgraded contract through provided proxy address #group1': !function (browser: NightwatchBrowser) {
+  'Should interact with upgraded contract through provided proxy address #group1': function (browser: NightwatchBrowser) {
     browser
       .clickInstance(1)
       .perform((done) => {
