@@ -35,6 +35,7 @@ const sources = [
               override
           {}
       }
+          
         `
     }
   }
@@ -166,7 +167,7 @@ module.exports = {
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
       .isVisible({
-        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol"]',
         timeout: 120000,
         suppressNotFoundErrors: true
       })
@@ -174,7 +175,7 @@ module.exports = {
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
       .isVisible({
-        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol"]',
         timeout: 120000,
         suppressNotFoundErrors: true
       })
@@ -182,7 +183,7 @@ module.exports = {
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
       .waitForElementVisible({
-        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol"]',
         timeout: 120000,
       })
       .clickLaunchIcon('solidity')
