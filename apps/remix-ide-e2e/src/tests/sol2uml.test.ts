@@ -22,15 +22,10 @@ module.exports = {
             .rightClick('*[data-id="treeViewLitreeViewItemsecondContract.sol"]')
             .click('*[id="menuitemgeneratecustomaction"')
             .waitForElementVisible('*[id="sol-uml-gen"]')
-            .isVisible('*[data-id="treeViewLitreeViewItemsecondContract_flattened.sol"]')
+            .waitForElementVisible('*[data-id="treeViewLitreeViewItemsecondContract_flattened.sol"]')
     },
     'Zoom into uml diagram #group1': function (browser: NightwatchBrowser) {
-        browser.addFile('secondContract.sol', sources[1]['secondContract.sol'])
-            .waitForElementVisible('*[data-id="treeViewLitreeViewItemsecondContract.sol"')
-            .pause(3000)
-            .rightClick('*[data-id="treeViewLitreeViewItemsecondContract.sol"]')
-            .click('*[id="menuitemgeneratecustomaction"')
-            .waitForElementVisible('*[id="sol-uml-gen"]')
+        browser
             .click('*[data-id="umlZoominbtn"]')
     }
 }
@@ -182,43 +177,37 @@ contract Ballot {
   {
     'secondContract.sol': {
       content: `
-      // SPDX-License-Identifier: MIT
-      pragma solidity ^0.8.20;
-      
-      import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-      import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-      import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
-      import "@openzeppelin/contracts/access/Ownable.sol";
-      import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
-      
-      contract MyToken is ERC20, ERC20Burnable, ERC20Pausable, Ownable, ERC20Permit {
-          constructor(address initialOwner)
-              ERC20("MyToken", "MTK")
-              Ownable(initialOwner)
-              ERC20Permit("MyToken")
-          {}
-      
-          function pause() public onlyOwner {
-              _pause();
-          }
-      
-          function unpause() public onlyOwner {
-              _unpause();
-          }
-      
-          function mint(address to, uint256 amount) public onlyOwner {
-              _mint(to, amount);
-          }
-      
-          // The following functions are overrides required by Solidity.
-      
-          function _update(address from, address to, uint256 value)
-              internal
-              override(ERC20, ERC20Pausable)
-          {
-              super._update(from, to, value);
-          }
-      }
+      // SPDX-License-Identifier: GPL-3.0
+
+pragma solidity ^0.5.9;
+
+import "@0x/contracts-erc20/contracts/src/ERC20Token.sol";
+
+/**
+ * @title SampleERC20
+ * @dev Create a sample ERC20 standard token
+ */
+contract SampleERC20 is ERC20Token {
+
+    string public name;
+    string public symbol;
+    uint256 public decimals;
+
+    constructor (
+        string memory _name,
+        string memory _symbol,
+        uint256 _decimals,
+        uint256 _totalSupply
+    )
+        public
+    {
+        name = _name;
+        symbol = _symbol;
+        decimals = _decimals;
+        _totalSupply = _totalSupply;
+        balances[msg.sender] = _totalSupply;
+    }
+}
       
 `}
 }
