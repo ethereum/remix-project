@@ -4371,6 +4371,7 @@ input[type="button"].btn-block {
 
 .card-title {
   margin-bottom: 0.75rem;
+  color: var(--text);
 }
 
 .card-subtitle {
