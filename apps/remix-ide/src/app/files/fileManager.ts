@@ -225,7 +225,7 @@ class FileManager extends Plugin {
   * @param {string} folderPath base folder path
   * @returns {void}
   */
-  async writeMultipleFiles(filePaths, fileData, folderPath) {
+  async writeMultipleFiles(filePaths: string[], fileData: string[], folderPath: string) {
     if (this.currentRequest) {
       const canCall = await this.askUserPermission(`writeFile`, `will write multiple files to ${folderPath}...`)
       const required = this.appManager.isRequired(this.currentRequest.from)
