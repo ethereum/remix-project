@@ -9,14 +9,12 @@ module.exports = {
   '@sources': () => sources,
   'Should flatten contract after creation': function (browser: NightwatchBrowser) { 
     browser.addFile('TestContract.sol', sources[0]['TestContract.sol'])
-      .pause()
+      .pause(10000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemTestContract.sol"]')
       .pause(3000)
       .click('*[data-id="treeViewLitreeViewItemTestContract.sol"]')
       .rightClick('*[data-id="treeViewLitreeViewItemTestContract.sol"]')
-      .pause()
       .click('*[id="menuitemflattenacontract"]')
-      .pause()
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemTestContract_flattened.sol"]')
   },
   'Should not be able to flatten contract without imports': function (browser: NightwatchBrowser) {
@@ -43,9 +41,8 @@ const sources = [
   {
     'TestContract.sol': {
       content: `
-
       // SPDX-License-Identifier: MIT
-      pragma solidity ^0.8.20;
+      pragma solidity ^0.8.9;
 
       import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
       import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
@@ -53,9 +50,29 @@ const sources = [
       import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
       import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-      abstract contract MyToken is Initializable, ERC721Upgradeable, ERC721BurnableUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
+      contract MyToken is Initializable, ERC721Upgradeable, ERC721BurnableUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
+          /// @custom:oz-upgrades-unsafe-allow constructor
+          constructor() {
+              _disableInitializers();
+          }
+
+          function initialize() initializer public {
+              __ERC721_init("MyToken", "MTK");
+              __ERC721Burnable_init();
+              __Ownable_init();
+              __UUPSUpgradeable_init();
+          }
+
+          function safeMint(address to, uint256 tokenId) public onlyOwner {
+              _safeMint(to, tokenId);
+          }
+
+          function _authorizeUpgrade(address newImplementation)
+              internal
+              onlyOwner
+              override
+          {}
       }
-      
       `
     },
 }
