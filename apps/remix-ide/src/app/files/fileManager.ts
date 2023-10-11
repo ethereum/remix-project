@@ -225,22 +225,24 @@ class FileManager extends Plugin {
   * @param {string} folderPath base folder path
   * @returns {void}
   */
-  async writeMultipleFiles(filePaths, fileData, folderPath) {
+  async writeMultipleFiles(filePaths: string[], fileData: string[], folderPath: string) {
+    if (this.currentRequest) {
+      const canCall = await this.askUserPermission(`writeFile`, `will write multiple files to ${folderPath}...`)
+      const required = this.appManager.isRequired(this.currentRequest.from)
+      if (canCall && !required) {
+        this.call('notification', 'toast', fileChangedToastMsg(this.currentRequest.from, folderPath))
+      }
+    }
     try {
-      let filePromises = filePaths.map(async (filePath, index) => {
-        const installPath = folderPath + "/" + filePath
-        const alert = !index
+      for (let i = 0; i < filePaths.length; i++) {
+        const installPath = folderPath + "/" + filePaths[i]
         let path = this.normalize(installPath)
         path = this.limitPluginScope(path)
-        if (await this.exists(path)) {
-          await this._handleIsFile(path, `Cannot write file ${path}`)
-          await this.setMultipleFileContent(path, fileData[index], folderPath, alert)
-        } else {
-          await this.setMultipleFileContent(path, fileData[index], folderPath, alert)
+        if (!await this.exists(path)) {
+          await this._setFileInternal(path, fileData[i])
           this.emit('fileAdded', path)
         }
-      });
-      await Promise.all(filePromises)
+      }
     } catch (e) {
       throw new Error(e)
     }
@@ -601,18 +603,6 @@ class FileManager extends Plugin {
     return await this._setFileInternal(path, content)
   }
 
-  async setMultipleFileContent(path, content, folderPath, alert) {
-    if (this.currentRequest) {
-      const canCall = !alert ? true : await this.askUserPermission(`writeFile`, `modifying ${folderPath} ...`)
-      const required = !alert ? true : this.appManager.isRequired(this.currentRequest.from)
-      if (canCall && !required && alert) {
-        // inform the user about modification after permission is granted and even if permission was saved before
-        this.call('notification', 'toast', fileChangedToastMsg(this.currentRequest.from, folderPath))
-      }
-    }
-    return await this._setFileInternal(path, content)
-  }
-
   _setFileInternal(path, content) {
     const provider = this.fileProviderOf(path)
     if (!provider) throw createError({ code: 'ENOENT', message: `${path} not available` })
@@ -903,7 +893,7 @@ class FileManager extends Plugin {
   }
 
 
-  async moveFileIsAllowed (src: string, dest: string) {
+  async moveFileIsAllowed(src: string, dest: string) {
     try {
       src = this.normalize(src)
       dest = this.normalize(dest)
@@ -925,7 +915,7 @@ class FileManager extends Plugin {
     }
   }
 
-  async moveDirIsAllowed (src: string, dest: string) {
+  async moveDirIsAllowed(src: string, dest: string) {
     try {
       src = this.normalize(src)
       dest = this.normalize(dest)
@@ -945,7 +935,7 @@ class FileManager extends Plugin {
       if (provider.isSubDirectory(src, dest)) {
         this.call('notification', 'toast', recursivePasteToastMsg())
         return false
-      } 
+      }
       return true
     } catch (e) {
       console.log(e)
@@ -1008,7 +998,7 @@ class FileManager extends Plugin {
       if (provider.isSubDirectory(src, dest)) {
         this.call('notification', 'toast', recursivePasteToastMsg())
         return false
-      } 
+      }
       await this.inDepthCopy(src, dest, dirName)
       await this.remove(src)
 
