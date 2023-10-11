@@ -234,7 +234,6 @@ class FileManager extends Plugin {
       }
     }
     try {
-      let alert = true
       for (let i = 0; i < filePaths.length; i++) {
         const installPath = folderPath + "/" + filePaths[i]
 
