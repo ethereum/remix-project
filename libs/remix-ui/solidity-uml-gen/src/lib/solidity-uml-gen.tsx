@@ -1,7 +1,6 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react'
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
-import { GlassMagnifier, MagnifierContainer } from 'react-image-magnifiers'
 import { ThemeSummary } from '../types'
 import UmlDownload from './components/UmlDownload'
 import './css/solidity-uml-gen.css'
@@ -25,10 +24,15 @@ interface ActionButtonsProps {
 }
 
 let umlCopy = ''
+let zoomin = () => {}
+let zoomout = () => {}
+
 export function RemixUiSolidityUmlGen({ updatedSvg, loading, fileName, themeDark }: RemixUiSolidityUmlGenProps) {
   const [showViewer, setShowViewer] = useState(false)
   const [validSvg, setValidSvg] = useState(false)
+  const image = useRef(null)
   const umlDownloader = new UmlDownloadContext()
+
 
   useEffect(() => {
     if (updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg')) {
@@ -36,6 +40,14 @@ export function RemixUiSolidityUmlGen({ updatedSvg, loading, fileName, themeDark
     }
     setValidSvg(updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg'))
     setShowViewer(updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg'))
+    // hack to center the image horizontally on load, but not vertically
+    setTimeout(() => {
+      if (image.current) {
+        zoomin()
+        zoomout()
+      }
+    }, 50)
+
   }, [updatedSvg])
 
   const encoder = new TextEncoder()
@@ -53,6 +65,8 @@ export function RemixUiSolidityUmlGen({ updatedSvg, loading, fileName, themeDark
   )
 
   function ActionButtons({ actions: { zoomIn, zoomOut, resetTransform } }: ActionButtonsProps) {
+    zoomin = zoomIn
+    zoomout = zoomOut
     return (
       <>
         <div className="position-absolute bg-transparent mt-2" id="buttons" style={{ zIndex: 3, top: '10', right: '2em' }}>
@@ -114,7 +128,7 @@ export function RemixUiSolidityUmlGen({ updatedSvg, loading, fileName, themeDark
                   <TransformComponent
                     wrapperStyle={{ width: '100%', height: '100%' }}
                     contentStyle={{ zIndex: 2 }}>
-                    <img src={`data:image/svg+xml;base64,${final}`} />
+                    <img ref={image} src={`data:image/svg+xml;base64,${final}`} />
                   </TransformComponent>
                 </Fragment>
               )}
