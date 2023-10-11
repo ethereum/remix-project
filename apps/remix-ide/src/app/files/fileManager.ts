@@ -225,23 +225,25 @@ class FileManager extends Plugin {
   * @param {string} folderPath base folder path
   * @returns {void}
   */
-  async writeMultipleFiles(filePaths, fileData, folderPath) {
+  async writeMultipleFiles(filePaths: string[], fileData: string[], folderPath: string) {
+    if (this.currentRequest) {
+      const canCall = await this.askUserPermission(`writeFile`, `will write multiple files to ${folderPath}...`)
+      const required = this.appManager.isRequired(this.currentRequest.from)
+      if (canCall && !required) {
+        this.call('notification', 'toast', fileChangedToastMsg(this.currentRequest.from, folderPath))
+      }
+    }
     try {
-      let alert = true
       for (let i = 0; i < filePaths.length; i++) {
         const installPath = folderPath + "/" + filePaths[i]
 
         let path = this.normalize(installPath)
         path = this.limitPluginScope(path)
 
-        if (await this.exists(path)) {
-          await this._handleIsFile(path, `Cannot write file ${path}`)
-          await this.setMultipleFileContent(path, fileData[i], folderPath, alert)
-        } else {
-          await this.setMultipleFileContent(path, fileData[i], folderPath, alert)
+        if (!await this.exists(path)) {
+          await this._setFileInternal(path, fileData[i])
           this.emit('fileAdded', path)
         }
-        alert = false
       }
     } catch (e) {
       throw new Error(e)
@@ -598,18 +600,6 @@ class FileManager extends Plugin {
       if (canCall && !required) {
         // inform the user about modification after permission is granted and even if permission was saved before
         this.call('notification', 'toast', fileChangedToastMsg(this.currentRequest.from, path))
-      }
-    }
-    return await this._setFileInternal(path, content)
-  }
-
-  async setMultipleFileContent(path, content, folderPath, alert) {
-    if (this.currentRequest) {
-      const canCall = await this.askUserPermission(`writeFile`, `modifying ${folderPath} ...`)
-      const required = this.appManager.isRequired(this.currentRequest.from)
-      if (canCall && !required && alert) {
-        // inform the user about modification after permission is granted and even if permission was saved before
-        this.call('notification', 'toast', fileChangedToastMsg(this.currentRequest.from, folderPath))
       }
     }
     return await this._setFileInternal(path, content)
