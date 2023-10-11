@@ -419,6 +419,7 @@ export function ContractGUI(props: ContractGUIProps) {
                         {inp.name}:{' '}
                       </label>
                       <input
+                        data-id={`initializeInputs-${inp.name}`}
                         ref={(el) => {
                           initializeFields.current[index] = el
                         }}

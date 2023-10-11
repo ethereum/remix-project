@@ -22,15 +22,10 @@ module.exports = {
             .rightClick('*[data-id="treeViewLitreeViewItemsecondContract.sol"]')
             .click('*[id="menuitemgeneratecustomaction"')
             .waitForElementVisible('*[id="sol-uml-gen"]')
-            .isVisible('*[data-id="treeViewLitreeViewItemsecondContract_flattened.sol"]')
+            .waitForElementVisible('*[data-id="treeViewLitreeViewItemsecondContract_flattened.sol"]')
     },
     'Zoom into uml diagram #group1': function (browser: NightwatchBrowser) {
-        browser.addFile('secondContract.sol', sources[1]['secondContract.sol'])
-            .waitForElementVisible('*[data-id="treeViewLitreeViewItemsecondContract.sol"')
-            .pause(3000)
-            .rightClick('*[data-id="treeViewLitreeViewItemsecondContract.sol"]')
-            .click('*[id="menuitemgeneratecustomaction"')
-            .waitForElementVisible('*[id="sol-uml-gen"]')
+        browser
             .click('*[data-id="umlZoominbtn"]')
     }
 }
@@ -182,37 +177,38 @@ contract Ballot {
   {
     'secondContract.sol': {
       content: `
-  // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+      // SPDX-License-Identifier: GPL-3.0
 
-import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+pragma solidity ^0.5.9;
 
-contract MyToken is Initializable, ERC721Upgradeable, OwnableUpgradeable, UUPSUpgradeable {
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
+import "@0x/contracts-erc20/contracts/src/ERC20Token.sol";
+
+/**
+ * @title SampleERC20
+ * @dev Create a sample ERC20 standard token
+ */
+contract SampleERC20 is ERC20Token {
+
+    string public name;
+    string public symbol;
+    uint256 public decimals;
+
+    constructor (
+        string memory _name,
+        string memory _symbol,
+        uint256 _decimals,
+        uint256 _totalSupply
+    )
+        public
+    {
+        name = _name;
+        symbol = _symbol;
+        decimals = _decimals;
+        _totalSupply = _totalSupply;
+        balances[msg.sender] = _totalSupply;
     }
-
-    function initialize() initializer public {
-        __ERC721_init("MyToken", "MTK");
-        __Ownable_init();
-        __UUPSUpgradeable_init();
-    }
-
-    function safeMint(address to, uint256 tokenId) public onlyOwner {
-        _safeMint(to, tokenId);
-        1 + 1;
-    }
-
-    function _authorizeUpgrade(address newImplementation)
-        internal
-        onlyOwner
-        override
-    {}
 }
+      
 `}
 }
 ]

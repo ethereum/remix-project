@@ -58,6 +58,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     os: false, //require.resolve("os-browserify/browser"),
     timers: false, // require.resolve("timers-browserify"),
     zlib: require.resolve('browserify-zlib'),
+    'assert/strict': require.resolve('assert/'),
     fs: false,
     module: false,
     tls: false,
@@ -96,7 +97,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     new webpack.ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
       url: ['url', 'URL'],
-      process: 'process/browser'
+      process: 'process/browser',
     })
   )
 
