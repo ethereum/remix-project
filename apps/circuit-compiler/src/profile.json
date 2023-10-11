@@ -9,7 +9,7 @@
   "url": "",
   "description": "Enables circuit compilation and computing a witness for ZK proofs",
   "icon": "https://docs.circom.io/assets/images/favicon.png",
-  "location": "hiddenPanel",
+  "location": "sidePanel",
   "documentation": "",
   "repo": "https://github.com/ethereum/remix-project/tree/master/apps/circuit-compiler",
   "maintainedBy": "Remix",

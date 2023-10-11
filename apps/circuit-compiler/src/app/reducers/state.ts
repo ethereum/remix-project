@@ -7,7 +7,8 @@ export const appInitialState: AppState = {
   filePath: "",
   status: "idle",
   primeValue: "bn128",
-  autoCompile: false
+  autoCompile: false,
+  signalInputs: []
 }
 
 export const appReducer = (state = appInitialState, action: Actions): AppState => {
@@ -41,6 +42,12 @@ export const appReducer = (state = appInitialState, action: Actions): AppState =
     return {
       ...state,
       autoCompile: action.payload
+    }
+
+  case 'SET_SIGNAL_INPUTS':
+    return {
+      ...state,
+      signalInputs: action.payload
     }
 
   default:

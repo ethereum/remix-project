@@ -2,7 +2,7 @@ import { compiler_list } from 'circom_wasm'
 import {Dispatch} from 'react'
 import { CircomPluginClient } from '../services/circomPluginClient'
 
-export type CompilerStatus = "compiling" | "generating" | "idle" | "errored"
+export type CompilerStatus = "compiling" | "generating" | "computing" | "idle" | "errored"
 export interface ICircuitAppContext {
   appState: AppState
   dispatch: Dispatch<Actions>,
@@ -14,7 +14,8 @@ export interface ActionPayloadTypes {
   SET_FILE_PATH: string,
   SET_COMPILER_STATUS: CompilerStatus,
   SET_PRIME_VALUE: PrimeValue,
-  SET_AUTO_COMPILE: boolean
+  SET_AUTO_COMPILE: boolean,
+  SET_SIGNAL_INPUTS: string[]
 }
 export interface Action<T extends keyof ActionPayloadTypes> {
   type: T
@@ -29,7 +30,8 @@ export interface AppState {
   filePath: string,
   status: CompilerStatus,
   primeValue: PrimeValue,
-  autoCompile: boolean
+  autoCompile: boolean,
+  signalInputs: string[]
 }
 
 export type CompilationConfig = {

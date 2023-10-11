@@ -9,5 +9,7 @@
   "circuit.compile": "Compile",
   "circuit.noFileSelected": "no file selected",
   "circuit.generateR1cs": "Generate R1CS",
-  "circuit.computeWitness": "Compute Witness"
+  "circuit.computeWitness": "Compute Witness",
+  "circuit.signalInput": "Signal Input",
+  "circuit.compute": "Compute"
 }
