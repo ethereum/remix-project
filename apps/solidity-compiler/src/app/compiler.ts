@@ -9,7 +9,7 @@ import { CompileTabLogic } from '@remix-ui/solidity-compiler'
 const defaultCompilerParameters = {
   runs: '200',
   optimize: false,
-  version: 'soljson-v0.8.18+commit.87f61d96',
+  version: 'soljson-v0.8.21+commit.d9974bed',
   evmVersion: null, // compiler default
   language: 'Solidity',
   useFileConfiguration: false,
