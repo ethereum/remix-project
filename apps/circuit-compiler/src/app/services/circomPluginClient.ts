@@ -2,8 +2,7 @@ import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
 import EventManager from 'events'
 import pathModule from 'path'
-// @ts-ignore
-import { parse, compile, generate_witness, generate_r1cs, compiler_list } from '../../../pkg'
+import { parse, compile, generate_witness, generate_r1cs, compiler_list } from 'circom_wasm'
 import { extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
 import { CompilationConfig } from '../types'
 
@@ -13,6 +12,7 @@ export class CircomPluginClient extends PluginClient {
     version: "2.1.5",
     prime: "bn128"
   }
+  public lastCompiledCircuitPath: string = ''
 
   constructor() {
     super()
@@ -34,7 +34,7 @@ export class CircomPluginClient extends PluginClient {
       }
     })
 
-    this.internalEvents.emit('activated')
+    this.internalEvents.emit('circom_activated')
   }
 
   async parse(path: string, fileContent: string): Promise<void> {
@@ -107,6 +107,7 @@ export class CircomPluginClient extends PluginClient {
   }
 
   async compile(path: string, compilationConfig?: CompilationConfig): Promise<void> {
+    this.internalEvents.emit('circuit_compiling')
     if (compilationConfig) {
       const { prime, version } = compilationConfig
 
@@ -121,27 +122,31 @@ export class CircomPluginClient extends PluginClient {
     }
 
     buildFiles = await this.resolveDependencies(path, fileContent, buildFiles)
-    const compiledOutput = compile(path, buildFiles, { prime: this._compilationConfig.prime })
+    const circuitApi = compile(path, buildFiles, { prime: this._compilationConfig.prime })
+    const circuitProgram = circuitApi.program()
 
-    console.log('compiledOutput: ', compiledOutput)
-    console.log('compiledOutput.program: ', compiledOutput.program())
-    console.log('compiledOutput.input_signals: ', compiledOutput.input_signals("Semaphore"))
+    if (circuitProgram.length < 1) {
+      const circuitErrors = circuitApi.report()
 
-    // if (compiledOutput.length < 1) {
-    //   throw new Error("Compilation failed! See parsing errors.")
-    // } else {
-    //   const fileName = extractNameFromKey(path)
-    //   const writePath = extractParentFromKey(path) + "/.bin/" + fileName.replace('circom', 'wasm')
-  
-    //   // @ts-ignore
-    //   await this.call('fileManager', 'writeFile', writePath, new Uint8Array(compiledOutput), true)
-    //   console.log('compilation successful!')
-    // }
-    // @ts-ignore
-    // const buffer = await this.call('fileManager', 'readFile', writePath, true)
-    // // @ts-ignore
-    // const dataRead = new Uint8Array(buffer)
-    // const witness = await generate_witness(dataRead, '{ "a": "5", "b": "77" }')
+      this.internalEvents.emit('circuit_errored', circuitErrors)
+      throw new Error(circuitErrors)
+    } else {
+      const fileName = extractNameFromKey(path)
+      
+      this.lastCompiledCircuitPath = extractParentFromKey(path) + "/.bin/" + fileName.replace('circom', 'wasm')
+      // @ts-ignore
+      await this.call('fileManager', 'writeFile', this.lastCompiledCircuitPath, circuitProgram, true)
+      const searchComponentName = fileContent.match(/component\s+main\s*(?:{[^{}]*})?\s*=\s*([A-Za-z_]\w*)\s*\(.*\)/)
+
+      if (searchComponentName) {
+        const componentName = searchComponentName[1]
+        const signals = circuitApi.input_signals(componentName)
+
+        this.internalEvents.emit('circuit_done', signals)
+      } else {
+        this.internalEvents.emit('circuit_done', [])
+      }
+    }
     // const witness = await generate_witness(compiledOutput, '{ "identityTrapdoor": "12656283236575022300303467601783819380815431272685589718060054649894766174337", "identityNullifier": "15178877681550417450385541477607788220584140707925739215609273992582659710290", "treePathIndices": "0", "treeSiblings": "1", "externalNullifier": "5df6e0e3480d6fbc32925076897ec6b9b935d75ae8f4d9f4858a426f8f6a4ab": "signalHash": "[85, 139, 239, 32, 221, 194, 165, 19, 20, 52, 104, 144, 41, 16, 40, 204, 171, 245, 198, 77, 94, 143, 30, 112, 105, 165, 33, 15, 62, 156, 18, 118]"}')
 
     // const ptau_final = "https://ipfs-cluster.ethdevops.io/ipfs/QmTiT4eiYz5KF7gQrDsgfCSTRv3wBPYJ4bRN1MmTRshpnW";
@@ -202,6 +207,7 @@ export class CircomPluginClient extends PluginClient {
   }
 
   async generateR1cs (path: string, compilationConfig?: CompilationConfig): Promise<void> {
+    this.internalEvents.emit('circuit_generating')
     if (compilationConfig) {
       const { prime, version } = compilationConfig
 
@@ -216,18 +222,33 @@ export class CircomPluginClient extends PluginClient {
     }
 
     buildFiles = await this.resolveDependencies(path, fileContent, buildFiles)
-    const r1cs = generate_r1cs(path, buildFiles, { prime: this._compilationConfig.prime })
+    const r1csApi = generate_r1cs(path, buildFiles, { prime: this._compilationConfig.prime })
+    const r1csProgram = r1csApi.program()
 
-    if (r1cs.length < 1) {
-      throw new Error("R1cs generation failed! See parsing errors.")
+    if (r1csProgram.length < 1) {
+      const r1csErrors = r1csApi.report()
+
+      this.internalEvents.emit('circuit_errored', r1csErrors)
+      throw new Error(r1csErrors)
     } else {
+      this.internalEvents.emit('circuit_done')
       const fileName = extractNameFromKey(path)
       const writePath = extractParentFromKey(path) + "/.bin/" + fileName.replace('circom', 'r1cs')
   
       // @ts-ignore
-      await this.call('fileManager', 'writeFile', writePath, new Uint8Array(r1cs), true)
-      console.log('R1CS generation successful!')
+      await this.call('fileManager', 'writeFile', writePath, r1csProgram, true)
     }
+  }
+
+  async computeWitness (input: string, wasmPath?: string): Promise<void> {
+    this.internalEvents.emit('circuit_computing')
+    if (!wasmPath) wasmPath = this.lastCompiledCircuitPath
+    if (!wasmPath) throw new Error('No wasm file found')
+
+    // @ts-ignore
+    const buffer: any = await this.call('fileManager', 'readFile', wasmPath, true)
+    const dataRead = new Uint8Array(buffer)
+    const witness = await generate_witness(dataRead, input)
   }
 
   async resolveDependencies(filePath: string, fileContent: string, output = {}, depPath: string = '', blackPath: string[] = []): Promise<Record<string, string>> {
