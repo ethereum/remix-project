@@ -1,11 +1,11 @@
-import React, {Fragment, useCallback, useEffect, useState} from 'react'
-import {FormattedMessage} from 'react-intl'
-import {TransformComponent, TransformWrapper} from 'react-zoom-pan-pinch'
-import {GlassMagnifier, MagnifierContainer} from 'react-image-magnifiers'
-import {ThemeSummary} from '../types'
+import React, { Fragment, useCallback, useEffect, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
+import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
+import { GlassMagnifier, MagnifierContainer } from 'react-image-magnifiers'
+import { ThemeSummary } from '../types'
 import UmlDownload from './components/UmlDownload'
 import './css/solidity-uml-gen.css'
-import {UmlDownloadContext, UmlFileType} from './utilities/UmlDownloadStrategy'
+import { UmlDownloadContext, UmlFileType } from './utilities/UmlDownloadStrategy'
 export interface RemixUiSolidityUmlGenProps {
   updatedSvg?: string
   loading?: boolean
@@ -25,7 +25,7 @@ interface ActionButtonsProps {
 }
 
 let umlCopy = ''
-export function RemixUiSolidityUmlGen({updatedSvg, loading, fileName, themeDark}: RemixUiSolidityUmlGenProps) {
+export function RemixUiSolidityUmlGen({ updatedSvg, loading, fileName, themeDark }: RemixUiSolidityUmlGenProps) {
   const [showViewer, setShowViewer] = useState(false)
   const [validSvg, setValidSvg] = useState(false)
   const umlDownloader = new UmlDownloadContext()
@@ -52,10 +52,10 @@ export function RemixUiSolidityUmlGen({updatedSvg, loading, fileName, themeDark}
     [updatedSvg, fileName]
   )
 
-  function ActionButtons({actions: {zoomIn, zoomOut, resetTransform}}: ActionButtonsProps) {
+  function ActionButtons({ actions: { zoomIn, zoomOut, resetTransform } }: ActionButtonsProps) {
     return (
       <>
-        <div className="position-absolute bg-transparent mt-2" id="buttons" style={{zIndex: 3, top: '10', right: '2em'}}>
+        <div className="position-absolute bg-transparent mt-2" id="buttons" style={{ zIndex: 3, top: '10', right: '2em' }}>
           <div className="py-2 px-2 d-flex justify-content-center align-items-center">
             <UmlDownload download={download} />
             <button data-id="umlZoominbtn" className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2" onClick={() => zoomIn()}>
@@ -103,10 +103,23 @@ export function RemixUiSolidityUmlGen({updatedSvg, loading, fileName, themeDark}
   )
   const Display = () => {
     return (
-      <div id="umlImageHolder" className="w-100 px-2 py-2 d-flex">
+      <div id="umlImageHolder" className="w-100 h-100 px-2 py-2 d-flex">
         {validSvg && showViewer ? (
-          
-          <></>
+          <>
+            <TransformWrapper
+              initialScale={1}>
+              {({ zoomIn, zoomOut, resetTransform }) => (
+                <Fragment>
+                  <ActionButtons actions={{ zoomIn, zoomOut, resetTransform }} />
+                  <TransformComponent
+                    wrapperStyle={{ width: '100%', height: '100%' }}
+                    contentStyle={{ zIndex: 2 }}>
+                    <img src={`data:image/svg+xml;base64,${final}`} />
+                  </TransformComponent>
+                </Fragment>
+              )}
+            </TransformWrapper>
+          </>
         ) : loading ? (
           <div className="justify-content-center align-items-center d-flex  mx-auto my-auto">
             <i className="fas fa-spinner fa-spin fa-4x"></i>
