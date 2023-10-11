@@ -9993,7 +9993,7 @@ circom_runtime@0.1.22:
 
 "circom_wasm@https://github.com/ioedeveloper/circom_wasm.git":
   version "0.0.0-alpha.7"
-  resolved "https://github.com/ioedeveloper/circom_wasm.git#24d26dec739297a1bd3e61f74ca3b95b20f66a25"
+  resolved "https://github.com/ioedeveloper/circom_wasm.git#a8c53a02e97fa5e8533618a070d1b7fdb655fdc5"
 
 circular-json@^0.3.0:
   version "0.3.3"

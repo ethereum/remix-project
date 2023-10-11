@@ -10,5 +10,7 @@
   "circuit.compile": "编译",
   "circuit.noFileSelected": "未选中文件",
   "circuit.generateR1cs": "生成R1CS",
-  "circuit.computeWitness": "证人计算器"
+  "circuit.computeWitness": "证人计算器",
+  "circuit.signalInput": "输入信号",
+  "circuit.compute": "计算"
 }

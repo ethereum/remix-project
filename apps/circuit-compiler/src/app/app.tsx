@@ -21,7 +21,7 @@ function App() {
   useEffect(() => {
     const plugin = new CircomPluginClient()
 
-    plugin.internalEvents.on('activated', () => {
+    plugin.internalEvents.on('circom_activated', () => {
       // @ts-ignore
       plugin.on('locale', 'localeChanged', (locale: any) => {
         setLocale(locale)
@@ -40,6 +40,13 @@ function App() {
       })
       setPlugin(plugin)
     })
+    plugin.internalEvents.on('circuit_compiling', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'compiling' }))
+    plugin.internalEvents.on('circuit_done', (signalInputs) => {
+      signalInputs = (signalInputs || []).filter(input => input)
+      dispatch({ type: 'SET_SIGNAL_INPUTS', payload: signalInputs })
+      dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
+    })
+    plugin.internalEvents.on('circuit_errored', (err) => dispatch({ type: 'SET_COMPILER_STATUS', payload: err.message }))
   }, [])
 
   useEffect(() => {
@@ -48,7 +55,6 @@ function App() {
         if (appState.autoCompile) await compileCircuit(plugin, appState, dispatch)
       })()
       setIsContentChanged(false)
-      setSignalInput()
     }
   }, [appState.autoCompile, isContentChanged])
 
@@ -58,18 +64,19 @@ function App() {
     }
   }, [plugin])
 
+  useEffect(() => {
+    if (appState.filePath) {
+      (async () => {
+        if (appState.autoCompile) await compileCircuit(plugin, appState, dispatch)
+      })()
+    }
+  }, [appState.filePath])
+
   const setCurrentLocale = async () => {
     // @ts-ignore
     const currentLocale = await plugin.call('locale', 'currentLocale')
 
     setLocale(currentLocale)
-  }
-
-  const setSignalInput = () => {
-    const signalMatcher = /([a-z$_][a-z0-9$_]*)(\.[a-z$_][a-z0-9$_]*)*(\[\d+\])?/g
-    const signals = content.match(signalMatcher)
-
-    console.log('signals: ', signals)
   }
 
   const value = {
