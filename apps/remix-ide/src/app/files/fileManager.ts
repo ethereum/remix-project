@@ -244,7 +244,6 @@ class FileManager extends Plugin {
           await this._setFileInternal(path, fileData[i])
           this.emit('fileAdded', path)
         }
-        alert = false
       }
     } catch (e) {
       throw new Error(e)
