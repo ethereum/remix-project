@@ -47,7 +47,7 @@ module.exports = {
       .addFile('writeMultipleFiles.js', { content: executeWriteMultipleFiles })
       .executeScriptInTerminal('remix.exeCurrent()')
       .pause(2000)
-      .openFile('new_contract_1.sol')
+      .openFile('contracts/new_contract_1.sol')
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('pragma solidity ^0.6.0') !== -1, 'content does not contain "pragma solidity ^0.6.0"')
       })
@@ -164,7 +164,7 @@ const executeWriteFile = `
 
 const executeWriteMultipleFiles = `
   const run = async () => {
-    await remix.call('fileManager', 'writeMultipleFiles', ['new_contract_1.sol', 'new_contract_2.sol', 'testing.txt'], ['pragma solidity ^0.6.0', 'pragma solidity ^0.80', 'test'], '/')
+    await remix.call('fileManager', 'writeMultipleFiles', ['contracts/new_contract_1.sol', 'new_contract_2.sol', 'testing.txt'], ['pragma solidity ^0.6.0', 'pragma solidity ^0.8.0', 'test'], '/')
   }
 
   run()
