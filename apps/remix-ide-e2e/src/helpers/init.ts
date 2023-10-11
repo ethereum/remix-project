@@ -36,16 +36,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
           }
 
           addStyle(`
-            .bs-popover-right {
-              display:none !important;
-            }
-            .bs-popover-top {
-              display:none !important;
-            }
-            .bs-popover-left {
-              display:none !important;
-            }
-            .bs-popover-bottom {
+            .popover {
               display:none !important;
             }
           `);

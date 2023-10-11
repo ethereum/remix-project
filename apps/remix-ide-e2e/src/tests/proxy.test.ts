@@ -9,7 +9,7 @@ let shortenedLastAddress: string
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    init(browser, done)
+    init(browser, done, null, true, null, true)
   },
 
   '@sources': function () {
