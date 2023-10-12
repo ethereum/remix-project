@@ -5,14 +5,12 @@ import { FormattedMessage } from "react-intl";
 import { compileCircuit } from "../actions";
 
 export function CompileBtn () {
-  const { plugin, appState, dispatch } = useContext(CircuitAppContext)
-
-
+  const { plugin, appState } = useContext(CircuitAppContext)
 
   return (
     <button
       className="btn btn-primary btn-block d-block w-100 text-break mb-1 mt-3"
-      onClick={() => { compileCircuit(plugin, appState, dispatch) }}
+      onClick={() => { compileCircuit(plugin, appState) }}
       disabled={(appState.filePath === "") || (appState.status === "compiling") || (appState.status === "generating")}
     >
       <CustomTooltip
