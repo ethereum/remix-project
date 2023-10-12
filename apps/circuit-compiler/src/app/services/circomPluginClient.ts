@@ -107,7 +107,7 @@ export class CircomPluginClient extends PluginClient {
   }
 
   async compile(path: string, compilationConfig?: CompilationConfig): Promise<void> {
-    this.internalEvents.emit('circuit_compiling')
+    this.internalEvents.emit('circuit_compiling_start')
     if (compilationConfig) {
       const { prime, version } = compilationConfig
 
@@ -128,7 +128,6 @@ export class CircomPluginClient extends PluginClient {
     if (circuitProgram.length < 1) {
       const circuitErrors = circuitApi.report()
 
-      this.internalEvents.emit('circuit_errored', circuitErrors)
       throw new Error(circuitErrors)
     } else {
       const fileName = extractNameFromKey(path)
@@ -142,9 +141,9 @@ export class CircomPluginClient extends PluginClient {
         const componentName = searchComponentName[1]
         const signals = circuitApi.input_signals(componentName)
 
-        this.internalEvents.emit('circuit_done', signals)
+        this.internalEvents.emit('circuit_compiling_done', signals)
       } else {
-        this.internalEvents.emit('circuit_done', [])
+        this.internalEvents.emit('circuit_compiling_done', [])
       }
     }
     // const witness = await generate_witness(compiledOutput, '{ "identityTrapdoor": "12656283236575022300303467601783819380815431272685589718060054649894766174337", "identityNullifier": "15178877681550417450385541477607788220584140707925739215609273992582659710290", "treePathIndices": "0", "treeSiblings": "1", "externalNullifier": "5df6e0e3480d6fbc32925076897ec6b9b935d75ae8f4d9f4858a426f8f6a4ab": "signalHash": "[85, 139, 239, 32, 221, 194, 165, 19, 20, 52, 104, 144, 41, 16, 40, 204, 171, 245, 198, 77, 94, 143, 30, 112, 105, 165, 33, 15, 62, 156, 18, 118]"}')
@@ -207,7 +206,7 @@ export class CircomPluginClient extends PluginClient {
   }
 
   async generateR1cs (path: string, compilationConfig?: CompilationConfig): Promise<void> {
-    this.internalEvents.emit('circuit_generating')
+    this.internalEvents.emit('circuit_generating_r1cs_start')
     if (compilationConfig) {
       const { prime, version } = compilationConfig
 
@@ -228,10 +227,9 @@ export class CircomPluginClient extends PluginClient {
     if (r1csProgram.length < 1) {
       const r1csErrors = r1csApi.report()
 
-      this.internalEvents.emit('circuit_errored', r1csErrors)
       throw new Error(r1csErrors)
     } else {
-      this.internalEvents.emit('circuit_done')
+      this.internalEvents.emit('circuit_generating_r1cs_done')
       const fileName = extractNameFromKey(path)
       const writePath = extractParentFromKey(path) + "/.bin/" + fileName.replace('circom', 'r1cs')
   
@@ -240,15 +238,18 @@ export class CircomPluginClient extends PluginClient {
     }
   }
 
-  async computeWitness (input: string, wasmPath?: string): Promise<void> {
-    this.internalEvents.emit('circuit_computing')
-    if (!wasmPath) wasmPath = this.lastCompiledCircuitPath
-    if (!wasmPath) throw new Error('No wasm file found')
+  async computeWitness (input: string): Promise<void> {
+    this.internalEvents.emit('circuit_computing_witness_start')
+    const wasmPath = this.lastCompiledCircuitPath
 
+    if (!wasmPath) throw new Error('No wasm file found')
     // @ts-ignore
     const buffer: any = await this.call('fileManager', 'readFile', wasmPath, true)
     const dataRead = new Uint8Array(buffer)
     const witness = await generate_witness(dataRead, input)
+    // @ts-ignore
+    await this.call('fileManager', 'writeFile', wasmPath.replace('.wasm', '.wtn'), witness, true)
+    this.internalEvents.emit('circuit_computing_witness_done')
   }
 
   async resolveDependencies(filePath: string, fileContent: string, output = {}, depPath: string = '', blackPath: string[] = []): Promise<Record<string, string>> {

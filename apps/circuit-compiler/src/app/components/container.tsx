@@ -37,7 +37,7 @@ export function Container () {
             <CircuitActions />
             <RenderIf condition={circuitApp.appState.signalInputs.length > 0}>
               <WitnessToggler>
-                <WitnessSection signalInputs={circuitApp.appState.signalInputs} status={circuitApp.appState.status} />
+                <WitnessSection plugin={circuitApp.plugin} signalInputs={circuitApp.appState.signalInputs} status={circuitApp.appState.status} />
               </WitnessToggler>
             </RenderIf>
           </div>

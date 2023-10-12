@@ -16,7 +16,6 @@ function App() {
     messages: null
   })
   const [isContentChanged, setIsContentChanged] = useState<boolean>(false)
-  const [content, setNewContent] = useState<string>("")
 
   useEffect(() => {
     const plugin = new CircomPluginClient()
@@ -34,25 +33,36 @@ function App() {
         }
       })
       // @ts-ignore
-      plugin.on('editor', 'contentChanged', async (filePath, content) => {
+      plugin.on('editor', 'contentChanged', async () => {
         setIsContentChanged(true)
-        setNewContent(content)
       })
       setPlugin(plugin)
     })
-    plugin.internalEvents.on('circuit_compiling', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'compiling' }))
-    plugin.internalEvents.on('circuit_done', (signalInputs) => {
+
+    // compiling events
+    plugin.internalEvents.on('circuit_compiling_start', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'compiling' }))
+    plugin.internalEvents.on('circuit_compiling_done', (signalInputs) => {
       signalInputs = (signalInputs || []).filter(input => input)
       dispatch({ type: 'SET_SIGNAL_INPUTS', payload: signalInputs })
       dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
     })
-    plugin.internalEvents.on('circuit_errored', (err) => dispatch({ type: 'SET_COMPILER_STATUS', payload: err.message }))
+    plugin.internalEvents.on('circuit_compiling_errored', (err) => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'errored' }))
+
+    // r1cs events
+    plugin.internalEvents.on('circuit_generating_r1cs_start', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'generating' }))
+    plugin.internalEvents.on('circuit_generating_r1cs_done', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' }))
+    plugin.internalEvents.on('circuit_generating_r1cs_errored', (err) => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'errored' }))
+
+    // witness events
+    plugin.internalEvents.on('circuit_computing_witness_start', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'computing' }))
+    plugin.internalEvents.on('circuit_computing_witness_done', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' }))
+    plugin.internalEvents.on('circuit_computing_witness_errored', (err) => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'errored' }))
   }, [])
 
   useEffect(() => {
     if (isContentChanged) {
       (async () => {
-        if (appState.autoCompile) await compileCircuit(plugin, appState, dispatch)
+        if (appState.autoCompile) await compileCircuit(plugin, appState)
       })()
       setIsContentChanged(false)
     }
@@ -67,7 +77,7 @@ function App() {
   useEffect(() => {
     if (appState.filePath) {
       (async () => {
-        if (appState.autoCompile) await compileCircuit(plugin, appState, dispatch)
+        if (appState.autoCompile) await compileCircuit(plugin, appState)
       })()
     }
   }, [appState.filePath])
