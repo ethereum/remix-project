@@ -67,14 +67,14 @@ export const FileLabel = (props: FileLabelProps) => {
 
   return (
     <div
-      className="remixui_items d-inline-block w-100 text-break"
+      className="remixui_items d-inline-block w-100"
       ref={isEditable ? labelRef : null}
       suppressContentEditableWarning={true}
       contentEditable={isEditable}
       onKeyDown={handleEditInput}
       onBlur={handleEditBlur}
     >
-      <span className={`text-nowrap remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder' : 'remixui_leaf')} data-path={file.path}>
+      <span className={`remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder' : 'remixui_leaf')} data-path={file.path}>
         {file.name}
       </span>
     </div>
