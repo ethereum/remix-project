@@ -63,7 +63,7 @@ export function ValueUI(props: ValueProps) {
             data-id="dandrValue"
             onKeyPress={validateInputKey}
             onChange={validateValue}
-            value={props.sendValue}
+            value={sendValue}
           />
         </CustomTooltip>
 
