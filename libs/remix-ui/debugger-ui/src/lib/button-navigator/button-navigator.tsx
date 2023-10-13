@@ -66,8 +66,6 @@ export const ButtonNavigation = ({
   }
 
   const stepBtnStyle = 'd-flex align-items-center justify-content-center btn btn-primary btn-sm stepButton h-75 m-0 p-1'
-  const disableStepBtnStyle = 'disabled'
-  const disableJumpBtnStyle = 'disabled'
   const stepMarkupStructure = {
     stepOverBackJSX: {
       markup: (
@@ -276,7 +274,7 @@ export const ButtonNavigation = ({
 
   return (
     <div className="buttons">
-      <div className="stepButtons btn-group py-1">
+      <div className="w-100 btn-group py-1">
         {Object.keys(stepMarkupStructure).map((x) => (
           <CustomTooltip
             placement={stepMarkupStructure[x].placement}
@@ -289,7 +287,7 @@ export const ButtonNavigation = ({
         ))}
       </div>
 
-      <div className="jumpButtons btn-group py-1">
+      <div className="w-100 btn-group py-1">
         {Object.keys(jumpMarkupStructure).map((x) => (
           <CustomTooltip
             placement={jumpMarkupStructure[x].placement}
