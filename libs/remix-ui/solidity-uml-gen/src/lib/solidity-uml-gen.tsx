@@ -1,10 +1,11 @@
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react'
-import { FormattedMessage } from 'react-intl'
-import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
-import { ThemeSummary } from '../types'
+import React, {Fragment, useCallback, useEffect, useState} from 'react'
+import {FormattedMessage} from 'react-intl'
+import {TransformComponent, TransformWrapper} from 'react-zoom-pan-pinch'
+import {GlassMagnifier, MagnifierContainer} from 'react-image-magnifiers'
+import {ThemeSummary} from '../types'
 import UmlDownload from './components/UmlDownload'
 import './css/solidity-uml-gen.css'
-import { UmlDownloadContext, UmlFileType } from './utilities/UmlDownloadStrategy'
+import {UmlDownloadContext, UmlFileType} from './utilities/UmlDownloadStrategy'
 export interface RemixUiSolidityUmlGenProps {
   updatedSvg?: string
   loading?: boolean
@@ -24,15 +25,10 @@ interface ActionButtonsProps {
 }
 
 let umlCopy = ''
-let zoomin = () => {}
-let zoomout = () => {}
-
-export function RemixUiSolidityUmlGen({ updatedSvg, loading, fileName, themeDark }: RemixUiSolidityUmlGenProps) {
+export function RemixUiSolidityUmlGen({updatedSvg, loading, fileName, themeDark}: RemixUiSolidityUmlGenProps) {
   const [showViewer, setShowViewer] = useState(false)
   const [validSvg, setValidSvg] = useState(false)
-  const image = useRef(null)
   const umlDownloader = new UmlDownloadContext()
-
 
   useEffect(() => {
     if (updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg')) {
@@ -40,14 +36,6 @@ export function RemixUiSolidityUmlGen({ updatedSvg, loading, fileName, themeDark
     }
     setValidSvg(updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg'))
     setShowViewer(updatedSvg.startsWith('<?xml') && updatedSvg.includes('<svg'))
-    // hack to center the image horizontally on load, but not vertically
-    setTimeout(() => {
-      if (image.current) {
-        zoomin()
-        zoomout()
-      }
-    }, 50)
-
   }, [updatedSvg])
 
   const encoder = new TextEncoder()
@@ -64,12 +52,10 @@ export function RemixUiSolidityUmlGen({ updatedSvg, loading, fileName, themeDark
     [updatedSvg, fileName]
   )
 
-  function ActionButtons({ actions: { zoomIn, zoomOut, resetTransform } }: ActionButtonsProps) {
-    zoomin = zoomIn
-    zoomout = zoomOut
+  function ActionButtons({actions: {zoomIn, zoomOut, resetTransform}}: ActionButtonsProps) {
     return (
       <>
-        <div className="position-absolute bg-transparent mt-2" id="buttons" style={{ zIndex: 3, top: '10', right: '2em' }}>
+        <div className="position-absolute bg-transparent mt-2" id="buttons" style={{zIndex: 3, top: '10', right: '2em'}}>
           <div className="py-2 px-2 d-flex justify-content-center align-items-center">
             <UmlDownload download={download} />
             <button data-id="umlZoominbtn" className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2" onClick={() => zoomIn()}>
@@ -117,23 +103,20 @@ export function RemixUiSolidityUmlGen({ updatedSvg, loading, fileName, themeDark
   )
   const Display = () => {
     return (
-      <div id="umlImageHolder" className="w-100 h-100 px-2 py-2 d-flex">
+      <div id="umlImageHolder" className="w-100 px-2 py-2 d-flex">
         {validSvg && showViewer ? (
-          <>
-            <TransformWrapper
-              initialScale={1}>
-              {({ zoomIn, zoomOut, resetTransform }) => (
+          <MagnifierContainer>
+            <TransformWrapper initialScale={1}>
+              {({zoomIn, zoomOut, resetTransform}) => (
                 <Fragment>
-                  <ActionButtons actions={{ zoomIn, zoomOut, resetTransform }} />
-                  <TransformComponent
-                    wrapperStyle={{ width: '100%', height: '100%' }}
-                    contentStyle={{ zIndex: 2 }}>
-                    <img ref={image} src={`data:image/svg+xml;base64,${final}`} />
+                  <ActionButtons actions={{zoomIn, zoomOut, resetTransform}} />
+                  <TransformComponent contentStyle={{zIndex: 2}}>
+                    <GlassMagnifier imageSrc={`data:image/svg+xml;base64,${final}`} magnifierSize={300} magnifierBorderSize={3} magnifierBorderColor={themeDark} square />
                   </TransformComponent>
                 </Fragment>
               )}
             </TransformWrapper>
-          </>
+          </MagnifierContainer>
         ) : loading ? (
           <div className="justify-content-center align-items-center d-flex  mx-auto my-auto">
             <i className="fas fa-spinner fa-spin fa-4x"></i>
