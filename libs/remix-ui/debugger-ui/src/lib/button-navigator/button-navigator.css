@@ -9,8 +9,6 @@
     align-items: center;
     color: #fff;
 }
-.stepButton {
-}
 
 .stepButtonDisabled {
     background-color: #005573;
@@ -29,11 +27,9 @@
     align-items: center;
     color: #fff;
 }
-.jumpButton {
-}
 
 .jumpButtonDisabled {
-    background-color: var(--grey);
+    background-color: var(--gray);
     border-color: #005573;
 }
 
@@ -41,10 +37,6 @@
     color: #fff;
     background-color: #005573;
     border-color: #005573;
-}
-.navigator {
-}
-.navigator:hover {
 }
 
 .cursorPointerRemixDebugger {

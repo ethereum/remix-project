@@ -2121,6 +2121,7 @@ textarea.form-control {
 
 }
 .btn {
+  cursor: pointer;
 	display:inline-block;
 	font-weight:400;
 	color:#212529;
@@ -2152,7 +2153,8 @@ textarea.form-control {
 	box-shadow:0 0 0 .2rem rgba(44,62,80,.25)
 }
 .btn.disabled,.btn:disabled {
-	opacity:.65
+	opacity:.65;
+  cursor: not-allowed;
 }
 .btn:not(:disabled):not(.disabled) {
 	cursor:pointer
