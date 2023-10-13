@@ -402,10 +402,7 @@ class Editor extends Plugin {
    */
   editorFontSize (incr) {
     if (!this.activated) return
-    const newSize = this.api.getFontSize() + incr
-    if (newSize >= 6) {
-      this.emit('setFontSize', newSize)
-    }
+    this.emit('setFontSize', incr)
   }
 
   /**

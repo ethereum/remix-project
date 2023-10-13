@@ -197,16 +197,11 @@ module.exports = {
       .testContracts('notSpecial.sol', sources[5]['notSpecial.sol'], ['CheckSpecials'])
       .clickLaunchIcon('udapp')
       .selectContract('CheckSpecials')
-      .waitForElementVisible('#value')
-      .clearValue('#value')
-      .setValue('#value', '0').pause(2000)
       .createContract('')
       .clickInstance(0)
-      .pause(1000)
       .perform((done) => {
         browser.getAddressAtPosition(0, (address) => {
           browser.sendLowLevelTx(address, '0', '')
-            .pause(1000)
             .waitForElementVisible(`#instance${address} label[id="deployAndRunLLTxError"]`)
             .assert.containsText(`#instance${address} label[id="deployAndRunLLTxError"]`, 'Both \'receive\' and \'fallback\' functions are not defined')
             .perform(done())

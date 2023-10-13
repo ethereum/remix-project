@@ -76,15 +76,13 @@ module.exports = {
       .click('*[data-id="Deploy - transact (payable)"]')
       .pause(1000)
       .clickInstance(1)
-      .pause(1000)
       .getAddressAtPosition(1, (address) => {
         instanceAddress = address
         browser
         .waitForElementVisible(`#instance${instanceAddress} [data-id="instanceContractBal"]`)
-        .assert.containsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000111 ETH')
+        .waitForElementContainsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000111 ETH', 10000)
         .clickFunction('sendSomeEther - transact (not payable)', { types: 'uint256 num', values: '2' })
-        .pause(1000)
-        .assert.containsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000109 ETH')
+        .waitForElementContainsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000109 ETH', 10000)
       })
   },
 

@@ -46,6 +46,7 @@ const RemixApp = (props: IRemixAppUi) => {
         return !prev
       })
     })
+       
     props.app.sidePanel.events.on('showing', () => {
       setHideSidePanel(false)
     })

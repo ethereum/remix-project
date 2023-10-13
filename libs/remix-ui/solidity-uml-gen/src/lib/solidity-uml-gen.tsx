@@ -1,7 +1,7 @@
 import React, {Fragment, useCallback, useEffect, useState} from 'react'
 import {FormattedMessage} from 'react-intl'
 import {TransformComponent, TransformWrapper} from 'react-zoom-pan-pinch'
-import {GlassMagnifier, MagnifierContainer} from 'react-image-magnifiers'
+import {GlassMagnifier, MagnifierContainer} from '@ricarso/react-image-magnifiers'
 import {ThemeSummary} from '../types'
 import UmlDownload from './components/UmlDownload'
 import './css/solidity-uml-gen.css'

@@ -318,22 +318,37 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', byteCodeInSepolia, 120000)
   },
   
-  'Should run free function which logs in the terminal #group10': function (browser: NightwatchBrowser) {
-    const script = `import "hardhat/console.sol";
-
-    function runSomething () view {
-        console.log("test running free function");
-    } 
+  'Should run free function which logs in the terminal #group9': function (browser: NightwatchBrowser) {
+    const script = `// SPDX-License-Identifier: MIT
+    pragma solidity ^0.8.18;
+    
+    import "hardhat/console.sol";
+    
+        function runSomething () view {
+            console.log("test running free function");
+        } 
+    
+    
+    contract Storage {
+    
+        function store(uint256 num) public {
+        }
+    
+    }
     `
+    const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"    
+    const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething" in the Remix VM']`
     browser
       .addFile('test.sol', { content: script })
       .scrollToLine(3)
-    const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"    
-    const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething" in the Remix VM']`
-    browser.waitForElementVisible('#editorView')
       .useXpath()
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: "//*[@class='view-line' and contains(.,'gas')]",
+        timeout: 120000
+      })
+      .waitForElementVisible(path)
       .click(path)
-      .pause(3000) // the parser need to parse the code
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions

@@ -434,7 +434,6 @@ module.exports = {
       .waitForElementVisible('*[data-shared="tooltipPopup"]')
       .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a toast')
       .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a re-toast')
-
   },
   'Should open 2 alerts from localplugin #group9': function (browser: NightwatchBrowser) {
     browser
@@ -448,13 +447,14 @@ module.exports = {
       })
       .frameParent()
       .useCss()
+      // check the toasters
+      .waitForElementVisible('*[data-shared="tooltipPopup"]')
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'message toast from local plugin')
       // check the local plugin notifications
       .waitForElementVisible('*[data-id="test_id_1_local_pluginModalDialogModalBody-react"]')
       .assert.containsText('*[data-id="test_id_1_local_pluginModalDialogModalBody-react"]', 'message from local plugin')
       .modalFooterOKClick('test_id_1_local_plugin')
-      // check the toasters
-      .waitForElementVisible('*[data-shared="tooltipPopup"]')
-      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'message toast from local plugin')
+
   }
 }
 
