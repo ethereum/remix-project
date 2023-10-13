@@ -2,6 +2,7 @@
   "debugger.displayName": "Debugger",
   "debugger.debuggerConfiguration": "Debugger Configuration",
   "debugger.stopDebugging": "Stop debugging",
+  "debugger.provideTxNumber": "Please provide a valid transaction hash",
   "debugger.startDebugging": "Start debugging",
   "debugger.placeholder": "Transaction hash, should start with 0x",
   "debugger.debugLocaNodeLabel": "Force using local node",
