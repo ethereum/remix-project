@@ -9,7 +9,7 @@ class sendLowLevelTx extends EventEmitter {
       .sendKeys(`#instance${address} #deployAndRunLLTxCalldata`, ['_', this.api.Keys.BACK_SPACE, callData])
       .waitForElementVisible('#value')
       .clearValue('#value')
-      .sendKeys('#value', ['1', this.api.Keys.BACK_SPACE, value])
+      .sendKeys('#value', value)
       .pause(2000)
       .scrollAndClick(`#instance${address} #deployAndRunLLTxSendTransaction`)
       .perform(() => {
