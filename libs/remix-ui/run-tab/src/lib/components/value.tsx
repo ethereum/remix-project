@@ -10,12 +10,13 @@ export function ValueUI(props: ValueProps) {
   const inputValue = useRef<HTMLInputElement>({} as HTMLInputElement)
 
   useEffect(() => {
-    console.log('sendValue', sendValue, props.sendValue)
     sendValue !== props.sendValue && props.setSendValue(sendValue)
   }, [sendValue])
 
   useEffect(() => {
-    console.log('props.sendValue', props.sendValue)
+    if(props.sendValue !== sendValue) {
+      setSendValue(props.sendValue)
+    }
   },[props.sendValue])
 
   const validateInputKey = (e) => {
