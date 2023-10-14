@@ -11,7 +11,7 @@ const localPluginData: Profile & LocationProfile & ExternalProfile = {
   name: 'localPlugin',
   displayName: 'Local Plugin',
   canActivate: ['dGitProvider', 'flattener', 'solidityUnitTesting', 'udapp', 'hardhat-provider'],
-  url: 'http://localhost:9999',
+  url: 'http://localhost:2020',
   location: 'sidePanel'
 }
 
@@ -434,7 +434,7 @@ module.exports = {
       .waitForElementVisible('*[data-shared="tooltipPopup"]')
       .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a toast')
       .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a re-toast')
-
+      .pause(5000)
   },
   'Should open 2 alerts from localplugin #group9': function (browser: NightwatchBrowser) {
     browser
@@ -442,19 +442,21 @@ module.exports = {
       .useXpath()
       // @ts-ignore
       .frame(0)
+      .pause()
       .perform(async () => {
         await clickAndCheckLog(browser, 'notification:toast', null, null, 'message toast from local plugin', false) // create a toast on behalf of the localplugin
         await clickAndCheckLog(browser, 'notification:alert', null, null, { message: 'message from local plugin', id: 'test_id_1_local_plugin' }, false) // create an alert on behalf of the localplugin
       })
       .frameParent()
       .useCss()
+      // check the toasters
+      .waitForElementVisible('*[data-shared="tooltipPopup"]')
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'message toast from local plugin')
       // check the local plugin notifications
       .waitForElementVisible('*[data-id="test_id_1_local_pluginModalDialogModalBody-react"]')
       .assert.containsText('*[data-id="test_id_1_local_pluginModalDialogModalBody-react"]', 'message from local plugin')
       .modalFooterOKClick('test_id_1_local_plugin')
-      // check the toasters
-      .waitForElementVisible('*[data-shared="tooltipPopup"]')
-      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'message toast from local plugin')
+
   }
 }
 
