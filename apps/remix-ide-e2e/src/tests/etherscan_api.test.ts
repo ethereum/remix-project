@@ -46,11 +46,13 @@ module.exports = {
       .click('[data-id="verify-contract"]')
       .waitForElementVisible('[data-id="verify-result"]')
       .waitForElementContainsText('[data-id="verify-result"]', 'Contract source code already verified')
+      .saveScreenshot('./reports/screenshots/eth1.png')
     },
 
     'Should call the etherscan plugin api #group1': function (browser: NightwatchBrowser) {
       browser
         .frameParent()
+        .saveScreenshot('./reports/screenshots/eth2.png')
         .clickLaunchIcon('filePanel')
         .addFile('receiptStatusScript.ts', { content: receiptStatusScript })
         .click('*[data-id="play-editor"]') // run the script
