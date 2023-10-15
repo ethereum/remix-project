@@ -55,6 +55,7 @@ module.exports = {
         .saveScreenshot('./reports/screenshots/eth2.png')
         .clickLaunchIcon('filePanel')
         .addFile('receiptStatusScript.ts', { content: receiptStatusScript })
+        .pause(5000)
         .click('*[data-id="play-editor"]') // run the script
         .waitForElementContainsText('*[data-id="terminalJournal"]', 'Already Verified', 60000)
       }
