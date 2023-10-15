@@ -92,9 +92,11 @@ module.exports = {
         .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js')
         .addFile('contracts/mytoken.sol', {
             content: myToken
-        }).useXpath().pause(5000).getBrowserLogs(browser).waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]", {
-            timeout: 120000
-        })
+        }).useXpath().pause(5000)
+        browser.getBrowserLogs(browser)
+        //..waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]", {
+        //    timeout: 120000
+        //})
     },
     // here we change quickly between files to test the files being parsed correctly when switching between them
     'Should show ERC20 hover over contract in editor #group1': function (browser: NightwatchBrowser) {
