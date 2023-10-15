@@ -5,9 +5,10 @@ import {HeaderWithSettings} from '../components'
 interface Props {
   from: string
   title?: string
+  children: any
 }
 
-export const DefaultLayout: React.FC<PropsWithChildren<Props>> = ({children, from, title}) => {
+export const DefaultLayout = ({children, from, title}: Props) => {
   return (
     <div>
       <HeaderWithSettings from={from} title={title} />

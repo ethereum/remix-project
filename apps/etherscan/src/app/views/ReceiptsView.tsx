@@ -13,7 +13,7 @@ interface FormValues {
   receiptGuid: string
 }
 
-export const ReceiptsView: React.FC = () => {
+export const ReceiptsView = () => {
   const [results, setResults] = useState({ succeed: false, message: '' })
   const [isProxyContractReceipt, setIsProxyContractReceipt] = useState(false)
   const context = React.useContext(AppContext)
@@ -97,7 +97,7 @@ export const ReceiptsView: React.FC = () => {
                   It's a proxy contract GUID
                 </label>
               </div>
-              <SubmitButton text="Check" disable={!touched.receiptGuid || (touched.receiptGuid && errors.receiptGuid) ? true : false} />
+              <SubmitButton dataId={'receiptsview'} text="Check" disable={!touched.receiptGuid || (touched.receiptGuid && errors.receiptGuid) ? true : false} />
             </form>
           )}
         </Formik>
@@ -126,7 +126,7 @@ export const ReceiptsView: React.FC = () => {
     ))
 }
 
-const ReceiptsTable: React.FC<{ receipts: Receipt[] }> = ({ receipts }) => {
+const ReceiptsTable = ({ receipts }) => {
   return (
     <div className="table-responsive">
       <h6>Receipts</h6>

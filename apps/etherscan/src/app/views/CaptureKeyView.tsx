@@ -6,12 +6,12 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { AppContext } from '../AppContext'
 import { SubmitButton } from '../components'
 
-export const CaptureKeyView: React.FC = () => {
+export const CaptureKeyView = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const context = React.useContext(AppContext)
   const [msg, setMsg] = useState('')
-  
+
   useEffect(() => {
     if (!context.apiKey) setMsg('Please provide a 34-character API key to continue')
   }, [context.apiKey])

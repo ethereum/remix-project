@@ -25,7 +25,7 @@ interface OutputMap {
   [fileName: string]: VyperCompilationOutput
 }
 
-const App: React.FC = () => {
+const App = () => {
   const [contract, setContract] = useState<string>()
   const [output, setOutput] = useState<OutputMap>({})
   const [state, setState] = useState<AppState>({
