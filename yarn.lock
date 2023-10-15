@@ -14083,18 +14083,19 @@ form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
-formik@^2.2.9:
-  version "2.2.9"
-  resolved "https://registry.yarnpkg.com/formik/-/formik-2.2.9.tgz#8594ba9c5e2e5cf1f42c5704128e119fc46232d0"
-  integrity sha512-LQLcISMmf1r5at4/gyJigGn0gOwFbeEAlji+N9InZF6LIMXnFNkO42sCI8Jt84YZggpD4cPWObAZaxpEFtSzNA==
+formik@^2.4.5:
+  version "2.4.5"
+  resolved "https://registry.yarnpkg.com/formik/-/formik-2.4.5.tgz#f899b5b7a6f103a8fabb679823e8fafc7e0ee1b4"
+  integrity sha512-Gxlht0TD3vVdzMDHwkiNZqJ7Mvg77xQNfmBRrNtvzcHZs72TJppSTDKHpImCMJZwcWPBJ8jSQQ95GJzXFf1nAQ==
   dependencies:
+    "@types/hoist-non-react-statics" "^3.3.1"
     deepmerge "^2.1.1"
     hoist-non-react-statics "^3.3.0"
     lodash "^4.17.21"
     lodash-es "^4.17.21"
     react-fast-compare "^2.0.1"
     tiny-warning "^1.0.2"
-    tslib "^1.10.0"
+    tslib "^2.0.0"
 
 forwarded@0.2.0:
   version "0.2.0"
@@ -23307,14 +23308,6 @@ react-fast-compare@^2.0.1:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-2.0.4.tgz#e84b4d455b0fec113e0402c329352715196f81f9"
   integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
-
-react-image-magnifiers@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/react-image-magnifiers/-/react-image-magnifiers-1.4.0.tgz#0472e93491d5a199a278d4efc855f03542214601"
-  integrity sha512-ZszHusdsYteccKGysHXUOgLRGtHqfRYuG1koHh3VAvuhrzF4BEs1Ot5tSe1WA2v+EsjAEfYcrRyi/Is4QDD61A==
-  dependencies:
-    prop-types "^15.7.2"
-    react-input-position "^1.3.1"
 
 react-input-position@^1.3.1:
   version "1.3.2"
