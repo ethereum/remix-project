@@ -46,7 +46,7 @@ const RemixApp = (props: IRemixAppUi) => {
         return !prev
       })
     })
-    props.app.sidePanel.call('terminal', 'logHTML', JSON.stringify(process.env, null, '\t'))
+       
     props.app.sidePanel.events.on('showing', () => {
       setHideSidePanel(false)
     })
