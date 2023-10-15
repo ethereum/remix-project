@@ -47,6 +47,7 @@ module.exports = {
       .waitForElementVisible('[data-id="verify-result"]')
       .waitForElementContainsText('[data-id="verify-result"]', 'Contract source code already verified')
       .saveScreenshot('./reports/screenshots/eth1.png')
+      .frameParent()
       .addFile('receiptStatusScript.ts', { content: receiptStatusScript })
       .pause(5000)
       .click('*[data-id="play-editor"]') // run the script
