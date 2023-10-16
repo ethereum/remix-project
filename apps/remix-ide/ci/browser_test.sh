@@ -7,7 +7,7 @@ set -e
 BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
-npx ganache &
+yarn run ganache &
 npx http-server -p 9090 --cors='*' ./node_modules &
 yarn run serve:production &
 sleep 5
