@@ -332,14 +332,13 @@ module.exports = {
   
   }
     `
+    const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"    
+    const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething" in the Remix VM']`
     browser
       .addFile('test.sol', { content: script })
       .scrollToLine(3)
-    const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"    
-    const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething" in the Remix VM']`
-    browser.waitForElementVisible('#editorView')
-      .waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
       .useXpath()
+      .waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
       .waitForElementVisible(path)
       .click(path)
       .saveScreenshot('./reports/screenshots/term.png')
