@@ -13,6 +13,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     api,
     api: {currentFile, compileTabLogic, configurationSettings}
   } = props
+  console.log({ props })
   const [state, setState] = useState({
     isHardhatProject: false,
     isTruffleProject: false,
@@ -207,6 +208,8 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       <div id="compileTabView">
         <CompilerContainer
           api={api}
+          //@ts-ignore
+          pluginProps={props}
           isHardhatProject={state.isHardhatProject}
           workspaceName={state.workspaceName}
           isTruffleProject={state.isTruffleProject}

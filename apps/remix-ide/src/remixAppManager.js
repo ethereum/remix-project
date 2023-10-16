@@ -71,6 +71,7 @@ const requiredModules = [
   'codeParser',
   'codeFormatter',
   'solidityumlgen',
+  'compilationDetails',
   'contractflattener',
   'solidity-script',
   'openaigpt'

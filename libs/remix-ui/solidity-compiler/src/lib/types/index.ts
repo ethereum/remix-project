@@ -8,6 +8,7 @@ export interface SolidityCompilerProps {
 
 export interface CompilerContainerProps {
   api: ICompilerApi,
+  pluginProps: SolidityCompilerProps,
   compileTabLogic: CompileTabLogic,
   isHardhatProject: boolean,
   isTruffleProject: boolean,
