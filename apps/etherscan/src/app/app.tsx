@@ -44,10 +44,8 @@ const App = () => {
   
   useEffect(() => {
     client.onload().then(() => {
-      console.log('Remix Plugin Loaded')
       setClientInstance(client)
       client.on('solidity', 'compilationFinished', (fileName: string, source: CompilationFileSources, languageVersion: string, data: CompilationResult) => {
-        console.log('Compilation Finished')
         const newContractsNames = getNewContractNames(data)
         const newContractsToSave: string[] = [...contractsRef.current, ...newContractsNames]
         const uniqueContracts: string[] = [...new Set(newContractsToSave)]
