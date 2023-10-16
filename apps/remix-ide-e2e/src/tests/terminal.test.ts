@@ -335,6 +335,7 @@ module.exports = {
       .useXpath()
       .waitForElementVisible(path)
       .click(path)
+      .pause(3000)
       .saveScreenshot('./reports/screenshots/term.png')
       .rightClick(path)
       .saveScreenshot('./reports/screenshots/term2.png')
