@@ -320,7 +320,7 @@ module.exports = {
   
   'Should run free function which logs in the terminal #group10 #flaky': function (browser: NightwatchBrowser) {
     const script = `// SPDX-License-Identifier: MIT
-    pragma solidity ^0.8.21;
+    pragma solidity ^0.8.20;
     
     import "hardhat/console.sol";
     
@@ -344,10 +344,10 @@ module.exports = {
       .addFile('test.sol', { content: script })
       .scrollToLine(3)
       .clickLaunchIcon('solidity')
-      .saveScreenshot('./reports/screenshots/term4.png')
       .click('[data-id="compilerContainerCompileBtn"]')
       .pause(2000)
       .click('[data-id="compilerContainerCompileBtn"]')
+      .getBrowserLogs()
       .useXpath()
       .waitForElementVisible({
         locateStrategy: 'xpath',
@@ -356,10 +356,6 @@ module.exports = {
       })
       .waitForElementVisible(path)
       .click(path)
-      .saveScreenshot('./reports/screenshots/term.png')
-      .rightClick(path)
-      .saveScreenshot('./reports/screenshots/term2.png')
-      
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions
