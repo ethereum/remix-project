@@ -128,13 +128,19 @@ export class OpenZeppelinProxy extends Plugin {
     newImplementationContractObject.name = proxyName
     
     await this.blockchain.runTx(args, () => { }, () => { }, () => { }, async (error, txResult, _address, returnValue) => {
+      let version  = '4.8.3'
       if (error) {
-        throw new Error(`error: ${error.message ? error.message : error}`)
+        console.log(`error: ${error.message ? error.message : error}`)
+        console.log(`Will use old version of the proxy...`)
+      }else{
+        const response = txFormat.decodeResponse(returnValue, GETUUPSProxyVersionAbi)
+        version = response[0].split('string: ')[1]
+        // check if version is >= 5.0.0
+        console.log('version', response)
       }
-      const response = txFormat.decodeResponse(returnValue, GETUUPSProxyVersionAbi)
-      const version = response[0].split('string: ')[1]
-      // check if version is >= 5.0.0
+
       if (semver.gte(version, '5.0.0')) {
+
         const fnData = await this.blockchain.getEncodedFunctionHex([newImplAddress, "0x"], UUPSupgradeToAndCallAbi)
 
         const data = {
