@@ -17,7 +17,7 @@ module.exports = {
   },
 
 
-  'Should show deploy proxy option for UUPS upgradeable contract #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should show deploy proxy option for UUPS upgradeable contract #group1': function (browser: NightwatchBrowser) {
     browser
       .addFile('myTokenV1.sol', sources[0]['myTokenV1.sol'])
       .clickLaunchIcon('solidity')
@@ -26,7 +26,7 @@ module.exports = {
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
       .isVisible({
-        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable@4.8.3/proxy/beacon/IBeaconUpgradeable.sol"]',
         timeout: 120000,
         suppressNotFoundErrors: true
       })
@@ -34,7 +34,7 @@ module.exports = {
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
       .isVisible({
-        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable@4.8.3/proxy/beacon/IBeaconUpgradeable.sol"]',
         timeout: 120000,
         suppressNotFoundErrors: true
       })
@@ -42,7 +42,7 @@ module.exports = {
       .click('[data-id="compilerContainerCompileBtn"]')
       .clickLaunchIcon('filePanel')
       .waitForElementVisible({
-        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol"]',
+        selector: '*[data-id="treeViewDivtreeViewItem.deps/npm/@openzeppelin/contracts-upgradeable@4.8.3/proxy/beacon/IBeaconUpgradeable.sol"]',
         timeout: 120000,
       })
       .clickLaunchIcon('solidity')
