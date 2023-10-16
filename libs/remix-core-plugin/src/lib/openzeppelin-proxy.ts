@@ -131,7 +131,7 @@ export class OpenZeppelinProxy extends Plugin {
       let version  = '4.8.3'
       if (error) {
         console.log(`error: ${error.message ? error.message : error}`)
-        console.log(`Will use old version of the proxy...`)
+        console.log(`Will use version 4.8.3 of the proxy...`)
       }else{
         const response = txFormat.decodeResponse(returnValue, GETUUPSProxyVersionAbi)
         version = response[0].split('string: ')[1]
