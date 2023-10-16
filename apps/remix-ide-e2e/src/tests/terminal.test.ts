@@ -319,18 +319,22 @@ module.exports = {
   },
   
   'Should run free function which logs in the terminal #group10 #flaky': function (browser: NightwatchBrowser) {
-    const script = `import "hardhat/console.sol";
-
-    function runSomething () view {
-        console.log("test running free function");
-    }
+    const script = `// SPDX-License-Identifier: MIT
+    pragma solidity ^0.8.21;
+    
+    import "hardhat/console.sol";
+    
+        function runSomething () view {
+            console.log("test running free function");
+        } 
+    
     
     contract Storage {
-
-      function store(uint256 num) public {
-      }
-  
-  }
+    
+        function store(uint256 num) public {
+        }
+    
+    }
     `
     const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"    
     const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething" in the Remix VM']`
