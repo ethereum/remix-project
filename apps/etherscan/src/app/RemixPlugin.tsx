@@ -1,10 +1,17 @@
-import {PluginClient} from '@remixproject/plugin'
 import {verify, EtherScanReturn} from './utils/verify'
 import {getReceiptStatus, getEtherScanApi, getNetworkName, getProxyContractReceiptStatus} from './utils'
+import { PluginClient } from '@remixproject/plugin'
+import { createClient } from '@remixproject/plugin-webview'
+import { CompilationFileSources, CompilationResult } from '@remixproject/plugin-api'
+import { getNewContractNames } from './app'
 
 export class RemixClient extends PluginClient {
-  loaded() {
-    return this.onload()
+  constructor() {
+    super()
+    createClient(this)
+    this.onload().then(async () => {
+      // do nothing
+    })
   }
 
   async verify(

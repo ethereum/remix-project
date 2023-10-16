@@ -3,7 +3,6 @@ import React, {useState, useEffect, useRef} from 'react'
 import {CompilationFileSources, CompilationResult} from '@remixproject/plugin-api'
 
 import {RemixClient} from './RemixPlugin'
-import {createClient} from '@remixproject/plugin-webview'
 
 import {AppContext} from './AppContext'
 import {DisplayRoutes} from './routes'
@@ -27,6 +26,8 @@ export const getNewContractNames = (compilationResult: CompilationResult) => {
   return result
 }
 
+const client = new RemixClient()
+
 const App = () => {
   const [apiKey, setAPIKey] = useLocalStorage('apiKey', '')
   const [clientInstance, setClientInstance] = useState(undefined as any)
@@ -40,31 +41,21 @@ const App = () => {
   const contractsRef = useRef(contracts)
   contractsRef.current = contracts
 
+  
   useEffect(() => {
-    const client = new RemixClient()
-    createClient(client)
-    const loadClient = async () => {
-      await client.onload()
+    client.onload().then(() => {
+      console.log('Remix Plugin Loaded')
       setClientInstance(client)
       client.on('solidity', 'compilationFinished', (fileName: string, source: CompilationFileSources, languageVersion: string, data: CompilationResult) => {
+        console.log('Compilation Finished')
         const newContractsNames = getNewContractNames(data)
-
         const newContractsToSave: string[] = [...contractsRef.current, ...newContractsNames]
-
         const uniqueContracts: string[] = [...new Set(newContractsToSave)]
-
         setContracts(uniqueContracts)
       })
-
-      //const currentTheme = await client.call("theme", "currentTheme")
-      //setThemeType(currentTheme.quality)
-      //client.on("theme", "themeChanged", (theme) => {
-      //  setThemeType(theme.quality)
-      //})
-    }
-
-    loadClient()
+    })
   }, [])
+
 
   useEffect(() => {
     let receiptsNotVerified: Receipt[] = receipts.filter((item: Receipt) => {
