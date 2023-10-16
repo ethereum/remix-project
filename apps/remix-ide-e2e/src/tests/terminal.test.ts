@@ -323,7 +323,14 @@ module.exports = {
 
     function runSomething () view {
         console.log("test running free function");
-    } 
+    }
+    
+    contract Storage {
+
+      function store(uint256 num) public {
+      }
+  
+  }
     `
     browser
       .addFile('test.sol', { content: script })
@@ -331,11 +338,10 @@ module.exports = {
     const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"    
     const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething" in the Remix VM']`
     browser.waitForElementVisible('#editorView')
-      .pause(3000) // the parser need to parse the code
+      .waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
       .useXpath()
       .waitForElementVisible(path)
       .click(path)
-      .pause(3000)
       .saveScreenshot('./reports/screenshots/term.png')
       .rightClick(path)
       .saveScreenshot('./reports/screenshots/term2.png')
