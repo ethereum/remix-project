@@ -320,7 +320,7 @@ module.exports = {
   
   'Should run free function which logs in the terminal #group10 #flaky': function (browser: NightwatchBrowser) {
     const script = `// SPDX-License-Identifier: MIT
-    pragma solidity ^0.8.20;
+    pragma solidity ^0.8.21;
     
     import "hardhat/console.sol";
     
@@ -347,7 +347,7 @@ module.exports = {
       .click('[data-id="compilerContainerCompileBtn"]')
       .pause(2000)
       .click('[data-id="compilerContainerCompileBtn"]')
-      .getBrowserLogs()
+
       .useXpath()
       .waitForElementVisible({
         locateStrategy: 'xpath',
