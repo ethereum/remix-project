@@ -346,7 +346,7 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .saveScreenshot('./reports/screenshots/term4.png')
       .click('[data-id="compilerContainerCompileBtn"]')
-      .pause()
+      .pause(2000)
       .click('[data-id="compilerContainerCompileBtn"]')
       .getBrowserLogs()
       .useXpath()
