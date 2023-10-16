@@ -54,9 +54,13 @@ module.exports = {
       */
       .addFile('receiptStatusScript.ts', { content: receiptStatusScript })
       .pause(5000)
+      .saveScreenshot('./reports/screenshots/eth1.png')
       .click('*[data-id="play-editor"]').pause(5000)
       .getBrowserLogs()
+      .saveScreenshot('./reports/screenshots/eth2.png')
       .clickLaunchIcon('etherscan')
+      .saveScreenshot('./reports/screenshots/eth3.png')
+      .getBrowserLogs()
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Already Verified', 60000)
     },
 
