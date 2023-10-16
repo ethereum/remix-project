@@ -336,6 +336,8 @@ module.exports = {
       .waitForElementVisible(path)
       .click(path)
       .saveScreenshot('./reports/screenshots/term.png')
+      .rightClick(path)
+      .saveScreenshot('./reports/screenshots/term2.png')
       
       .perform(function () {
         const actions = this.actions({ async: true });
