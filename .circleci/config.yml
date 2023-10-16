@@ -3,7 +3,7 @@ version: 2.1
 parameters:
   run_flaky_tests:
     type: boolean
-    default: false
+    default: true
 orbs:
   browser-tools: circleci/browser-tools@1.4.4
 jobs:
@@ -166,6 +166,7 @@ jobs:
           at: .
       - run: unzip ./persist/dist.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
+      - run: wget https://unpkg.com/hardhat/console.sol -O node_modules/hardhat/console.sol
 
       - run: ls -la ./dist/apps/remix-ide/assets/js
       - run: yarn run selenium-install || yarn run selenium-install

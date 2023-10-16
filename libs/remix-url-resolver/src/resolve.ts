@@ -184,7 +184,6 @@ export class RemixURLResolver {
     }
 
     const npm_urls = ["https://cdn.jsdelivr.net/npm/", "https://unpkg.com/"]
-    console.log('npm url', JSON.stringify(process.env))
     process && process.env && process.env['NX_NPM_URL'] && npm_urls.unshift(process.env['NX_NPM_URL'])
     let content = null
     // get response from all urls

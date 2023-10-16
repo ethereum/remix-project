@@ -318,7 +318,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', byteCodeInSepolia, 120000)
   },
   
-  'Should run free function which logs in the terminal #group10': function (browser: NightwatchBrowser) {
+  'Should run free function which logs in the terminal #group10 #flaky': function (browser: NightwatchBrowser) {
     const script = `import "hardhat/console.sol";
 
     function runSomething () view {
