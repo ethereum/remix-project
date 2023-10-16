@@ -11,7 +11,6 @@
     "@openzeppelin/upgrades-core": "^1.30.0",
     "@openzeppelin/wizard": "^0.4.0",
     "@remix-project/remixd": "../../dist/libs/remixd",
-    "hardhat": "^2.14.0",
     "deep-equal": "^1.0.1",
     "ganache-cli": "^6.8.1",
     "selenium-standalone": "^9.0.3",
