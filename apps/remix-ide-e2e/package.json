@@ -16,6 +16,7 @@
     "tree-kill": "^1.2.2"
   },
   "devDependencies": {
+    "ganache": "^7.9.1",
     "http-server": "^14.1.1",
     "nightwatch": "2.3"
   }

@@ -15,7 +15,7 @@ BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
 
-npx ganache &
+yarn run ganache &
 yarn run serve &
 setupRemixd
 
