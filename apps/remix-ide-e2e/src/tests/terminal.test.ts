@@ -342,6 +342,7 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .saveScreenshot('./reports/screenshots/term4.png')
       .click('[data-id="compilerContainerCompileBtn"]')
+      .getBrowserLogs()
       .useXpath()
       .waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
       .waitForElementVisible(path)
