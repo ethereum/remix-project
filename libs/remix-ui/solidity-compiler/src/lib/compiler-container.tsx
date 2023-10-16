@@ -37,8 +37,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     isFoundryProject,
     workspaceName,
     configFilePath,
-    setConfigFilePath
+    setConfigFilePath,
+    //@ts-ignore
+    pluginProps
   } = props // eslint-disable-line
+  console.log({ props })
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
@@ -1179,6 +1182,15 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </CopyToClipboard>
           </div>
         </div>
+        <button className="btn btn-primary btn-block" onClick={async () => {
+          // console.log('activatePlugin')
+
+          (pluginProps.api as any).call('compilationDetails', 'showDetails')
+        }}>
+          <span>
+            Show Details
+          </span>
+        </button>
       </article>
     </section>
   )
