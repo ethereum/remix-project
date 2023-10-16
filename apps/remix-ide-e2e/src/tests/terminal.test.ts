@@ -344,7 +344,11 @@ module.exports = {
       .click('[data-id="compilerContainerCompileBtn"]')
       .getBrowserLogs()
       .useXpath()
-      .waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: "//*[@class='view-line' and contains(.,'gas')]",
+        timeout: 120000
+      })
       .waitForElementVisible(path)
       .click(path)
       .saveScreenshot('./reports/screenshots/term.png')
