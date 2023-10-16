@@ -331,9 +331,12 @@ module.exports = {
     const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"    
     const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething" in the Remix VM']`
     browser.waitForElementVisible('#editorView')
-      .useXpath()
-      .click(path)
       .pause(3000) // the parser need to parse the code
+      .useXpath()
+      .waitForElementVisible(path)
+      .click(path)
+      .saveScreenshot('./reports/screenshots/term.png')
+      
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions
