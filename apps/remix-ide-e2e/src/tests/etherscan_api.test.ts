@@ -54,8 +54,9 @@ module.exports = {
       */
       .addFile('receiptStatusScript.ts', { content: receiptStatusScript })
       .pause(5000)
-      .click('*[data-id="play-editor"]').pause(2000)
+      .click('*[data-id="play-editor"]').pause(5000)
       .getBrowserLogs()
+      .clickLaunchIcon('etherscan')
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Already Verified', 60000)
     },
 
