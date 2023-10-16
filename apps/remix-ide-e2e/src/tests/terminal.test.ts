@@ -335,6 +335,8 @@ module.exports = {
     const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"    
     const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething" in the Remix VM']`
     browser
+      .clickLaunchIcon('solidity')
+      .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js')
       .addFile('test.sol', { content: script })
       .scrollToLine(3)
       .useXpath()
