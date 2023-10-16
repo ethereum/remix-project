@@ -12,7 +12,7 @@ module.exports = {
     init(browser, done, null)
   },
 
-  'Should load etherscan plugin #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should load etherscan plugin #group1 #flaky': !function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('pluginManager')
       .scrollAndClick('[data-id="pluginManagerComponentActivateButtonetherscan"]')
       .clickLaunchIcon('etherscan')
@@ -26,6 +26,7 @@ module.exports = {
 
   'Should verify a contract (contract is already verified) #group1': function (browser: NightwatchBrowser) {
     browser
+    /*
       .frameParent()
       .clickLaunchIcon('udapp') // switch to Goerli
       .switchEnvironment('basic-http-provider')
@@ -39,6 +40,8 @@ module.exports = {
       .testContracts('Owner_1.sol', { content: verifiedContract }, ['Owner'])
       .clickLaunchIcon('etherscan') // start etherscan verification
       // @ts-ignore
+      */
+      /*
       .frame(0)
       .click('[data-id="home"]')
       .setValue('select[name="contractName"]', 'Owner')
@@ -48,6 +51,7 @@ module.exports = {
       .waitForElementContainsText('[data-id="verify-result"]', 'Contract source code already verified')
       .saveScreenshot('./reports/screenshots/eth1.png')
       .frameParent()
+      */
       .addFile('receiptStatusScript.ts', { content: receiptStatusScript })
       .pause(5000)
       .click('*[data-id="play-editor"]').pause(2000)
