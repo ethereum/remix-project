@@ -81,7 +81,7 @@ export const FileLabel = (props: FileLabelProps) => {
       <CustomTooltip
         placement="top"
         delay={{show: 1000, hide: 0}}
-        tooltipText={`${file.name}`}
+        tooltipText={`${file.path}`}
         tooltipId={`fileExplorer.${file.path}`}
         tooltipClasses="text-nowrap"
       >
