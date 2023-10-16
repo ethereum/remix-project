@@ -3,7 +3,7 @@ version: 2.1
 parameters:
   run_flaky_tests:
     type: boolean
-    default: false
+    default: true
 orbs:
   browser-tools: circleci/browser-tools@1.4.4
 jobs:

@@ -12,7 +12,7 @@ module.exports = {
     init(browser, done, null)
   },
 
-  'Should load etherscan plugin #group1': function (browser: NightwatchBrowser) {
+  'Should load etherscan plugin #group1 #flaky': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('pluginManager')
       .scrollAndClick('[data-id="pluginManagerComponentActivateButtonetherscan"]')
       .clickLaunchIcon('etherscan')
