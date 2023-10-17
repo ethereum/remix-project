@@ -54,7 +54,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     customVersions: [],
     compilerLicense: null,
     selectedVersion: null,
-    defaultVersion: 'soljson-v0.8.20+commit.a1b79de6', // this default version is defined: in makeMockCompiler (for browser test)
+    defaultVersion: 'soljson-v0.8.18+commit.87f61d96.js', // this default version is defined: in makeMockCompiler (for browser test)
     runs: '',
     compiledFileName: '',
     includeNightlies: false,
@@ -116,6 +116,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   useEffect(() => {
     fetchAllVersion((allversions, selectedVersion, isURL) => {
+      console.log('allversions', allversions, selectedVersion, isURL)
       setState((prevState) => {
         return {...prevState, allversions}
       })
