@@ -92,7 +92,11 @@ module.exports = {
         .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js')
         .addFile('contracts/mytoken.sol', {
             content: myToken
-        }).useXpath()
+        })
+        .getBrowserLogs()
+        .pause(2000)
+        .getBrowserLogs()
+        .useXpath()
         .waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
     },
     // here we change quickly between files to test the files being parsed correctly when switching between them
