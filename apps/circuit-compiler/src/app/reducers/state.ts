@@ -5,10 +5,12 @@ export const appInitialState: AppState = {
   version: compiler_list.latest,
   versionList: compiler_list.wasm_builds,
   filePath: "",
+  filePathToId: {},
   status: "idle",
   primeValue: "bn128",
   autoCompile: false,
-  signalInputs: []
+  signalInputs: [],
+  feedback: null
 }
 
 export const appReducer = (state = appInitialState, action: Actions): AppState => {
@@ -48,6 +50,18 @@ export const appReducer = (state = appInitialState, action: Actions): AppState =
     return {
       ...state,
       signalInputs: action.payload
+    }
+
+  case 'SET_COMPILER_FEEDBACK':
+    return {
+      ...state,
+      feedback: action.payload
+    }
+
+  case 'SET_FILE_PATH_TO_ID':
+    return {
+      ...state,
+      filePathToId: action.payload
     }
 
   default:
