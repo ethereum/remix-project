@@ -7,7 +7,7 @@ import { RemixUiCompileDetails } from '@remix-ui/solidity-compile-details'
 const _paq = (window._paq = window._paq || [])
 
 const profile = {
-  name: 'compilationdetails',
+  name: 'compilationDetails',
   displayName: 'Solidity Compile Details',
   description: 'Displays details from solidity compiler',
   location: 'mainPanel',
@@ -28,7 +28,8 @@ export class CompilationDetailsPlugin extends ViewPlugin {
 
   async onActivation() {
     this.renderComponent()
-    await this.call('tabs', 'focus', 'compilationdetails')
+    // await this.call('tabs', 'focus', 'compilationdetails')
+    _paq.push(['trackEvent', 'plugin', 'activated', 'compilationDetails'])
   }
 
   onDeactivation(): void {
