@@ -86,7 +86,7 @@ module.exports = {
         const expectedContent = 'StructDefinition'
         checkEditorHoverContent(browser, path, expectedContent)
     },
-    'Add token file': function (browser: NightwatchBrowser) {
+    'Add token file #flaky': function (browser: NightwatchBrowser) {
         browser
         .clickLaunchIcon('solidity')
         .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js')
