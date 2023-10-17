@@ -121,7 +121,7 @@ module.exports = {
         expectedContent = "@dev Give 'voter' the right to vote on this ballot. May only be called by 'chairperson'"
         checkEditorHoverContent(browser, path, expectedContent)
     },
-    'Open token file': function (browser: NightwatchBrowser) {
+    'Open token file #group1': function (browser: NightwatchBrowser) {
         browser.openFile('contracts/mytoken.sol')
             .useXpath().waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
     },
