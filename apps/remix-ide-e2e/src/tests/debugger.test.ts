@@ -261,7 +261,7 @@ module.exports = {
       .goToVMTraceStep(79)
       .waitForElementVisible('*[data-id="debugGoToRevert"]', 60000)
       .click('*[data-id="debugGoToRevert"]')
-      .waitForElementContainsText('*[data-id="asmitems"] div[selected="selected"]', '117 REVERT')
+      .waitForElementContainsText('*[data-id="asmitems"] div[selected="selected"]', '114 REVERT')
   }
 }
 
