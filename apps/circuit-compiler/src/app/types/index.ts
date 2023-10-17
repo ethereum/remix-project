@@ -2,7 +2,7 @@ import { compiler_list } from 'circom_wasm'
 import {Dispatch} from 'react'
 import { CircomPluginClient } from '../services/circomPluginClient'
 
-export type CompilerStatus = "compiling" | "generating" | "computing" | "idle" | "errored"
+export type CompilerStatus = "compiling" | "generating" | "computing" | "idle" | "errored" | "warning"
 export interface ICircuitAppContext {
   appState: AppState
   dispatch: Dispatch<Actions>,
