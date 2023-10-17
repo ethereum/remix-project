@@ -35,4 +35,54 @@ body {
     font-size: 11px;
     line-height: 12px;
     text-transform: uppercase;
-  }
+}
+.circuit_errors_box {
+    padding-left: 5px;
+    padding-right: 5px;
+    word-break: break-word;
+}
+.circuit_feedback.success,
+.circuit_feedback.error,
+.circuit_feedback.warning {
+  white-space: pre-line;
+  word-wrap: break-word;
+  cursor: pointer;
+  position: relative;
+  margin: 0.5em 0 1em 0;
+  border-radius: 5px;
+  line-height: 20px;
+  padding: 8px 15px;
+}
+
+.circuit_feedback.success pre,
+.circuit_feedback.error pre,
+.circuit_feedback.warning pre {
+  white-space: pre-line;
+  overflow-y: hidden;
+  background-color: transparent;
+  margin: 0;
+  font-size: 12px;
+  border: 0 none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.circuit_feedback.success .close,
+.circuit_feedback.error .close,
+.circuit_feedback.warning .close {
+  visibility: hidden;
+  white-space: pre-line;
+  font-weight: bold;
+  position: absolute;
+  color: hsl(0, 0%, 0%); /* black in style-guide.js */
+  top: 0;
+  right: 0;
+  padding: 0.5em;
+}
+
+.circuit_feedback.success a,
+.circuit_feedback.error a,
+.circuit_feedback.warning a {
+  bottom: 0;
+  right: 0;
+}

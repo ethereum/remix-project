@@ -1,28 +1,21 @@
 import { RenderIf } from "@remix-ui/helper";
-import { useContext } from "react";
-import { CircuitAppContext } from "../contexts";
+import { AppState } from "../types";
 
-export function VersionList () {
-  const { appState, dispatch } = useContext(CircuitAppContext)
-
-  const handleVersionSelect = (version: string) => {
-    dispatch({ type: 'SET_COMPILER_VERSION', payload: version })
-  }
-  
-  const versionList = Object.keys(appState.versionList)
+export function VersionList ({ currentVersion, versionList, setVersion }: { versionList: AppState['versionList'], currentVersion: string, setVersion: (version: string) => void }) {
+  const versionListKeys = Object.keys(versionList)
   
   return (
     <select
-      value={appState.version}
-      onChange={(e) => handleVersionSelect(e.target.value)}
+      value={currentVersion}
+      onChange={(e) => setVersion(e.target.value)}
       className="custom-select"
     >
-      <RenderIf condition={versionList.length > 0}>
+      <RenderIf condition={versionListKeys.length > 0}>
         <>
           {
-            versionList.map((version, index) => (
+            versionListKeys.map((version, index) => (
               <option value={version} key={index}>
-                { appState.versionList[version].name }
+                { versionList[version].name }
               </option>
             ))
           }

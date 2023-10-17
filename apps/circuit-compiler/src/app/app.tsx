@@ -28,35 +28,42 @@ function App() {
       plugin.on('fileManager', 'currentFileChanged', (filePath) => {
         if (filePath.endsWith('.circom')) {
           dispatch({ type: 'SET_FILE_PATH', payload: filePath })
+          plugin.parse(filePath)
         } else {
           dispatch({ type: 'SET_FILE_PATH', payload: '' })
         }
       })
       // @ts-ignore
-      plugin.on('editor', 'contentChanged', async () => {
+      plugin.on('editor', 'contentChanged', async (path: string, content: string) => {
         setIsContentChanged(true)
+        if (path.endsWith('.circom')) {
+          plugin.parse(path, content)
+        }
       })
       setPlugin(plugin)
     })
 
     // compiling events
     plugin.internalEvents.on('circuit_compiling_start', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'compiling' }))
-    plugin.internalEvents.on('circuit_compiling_done', (signalInputs) => {
+    plugin.internalEvents.on('circuit_compiling_done', (signalInputs: string[]) => {
       signalInputs = (signalInputs || []).filter(input => input)
       dispatch({ type: 'SET_SIGNAL_INPUTS', payload: signalInputs })
-      dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
+      compilerSuccess()
     })
-    plugin.internalEvents.on('circuit_compiling_errored', (err) => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'errored' }))
+    plugin.internalEvents.on('circuit_compiling_errored', compilerErrored)
 
     // r1cs events
     plugin.internalEvents.on('circuit_generating_r1cs_start', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'generating' }))
-    plugin.internalEvents.on('circuit_generating_r1cs_done', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' }))
-    plugin.internalEvents.on('circuit_generating_r1cs_errored', (err) => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'errored' }))
+    plugin.internalEvents.on('circuit_generating_r1cs_done', compilerSuccess)
+    plugin.internalEvents.on('circuit_generating_r1cs_errored', compilerErrored)
 
     // witness events
     plugin.internalEvents.on('circuit_computing_witness_start', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'computing' }))
-    plugin.internalEvents.on('circuit_computing_witness_done', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' }))
-    plugin.internalEvents.on('circuit_computing_witness_errored', (err) => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'errored' }))
+    plugin.internalEvents.on('circuit_computing_witness_done', compilerSuccess)
+    plugin.internalEvents.on('circuit_computing_witness_errored', compilerErrored)
+
+    // parsing events
+    plugin.internalEvents.on('circuit_parsing_done', (_, filePathToId) => dispatch({ type: 'SET_FILE_PATH_TO_ID', payload: filePathToId }))
   }, [])
 
   useEffect(() => {
@@ -87,6 +94,22 @@ function App() {
     const currentLocale = await plugin.call('locale', 'currentLocale')
 
     setLocale(currentLocale)
+  }
+
+  const compilerErrored = (err: ErrorEvent) => {
+    dispatch({ type: 'SET_COMPILER_STATUS', payload: 'errored' })
+    try {
+      const report = JSON.parse(err.message)
+
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: report })
+    } catch (e) {
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: err.message })
+    }
+  }
+
+  const compilerSuccess = () => {
+    dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
+    dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
   }
 
   const value = {
