@@ -48,22 +48,33 @@ function App() {
     plugin.internalEvents.on('circuit_compiling_done', (signalInputs: string[]) => {
       signalInputs = (signalInputs || []).filter(input => input)
       dispatch({ type: 'SET_SIGNAL_INPUTS', payload: signalInputs })
-      compilerSuccess()
+      dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
     })
     plugin.internalEvents.on('circuit_compiling_errored', compilerErrored)
 
     // r1cs events
     plugin.internalEvents.on('circuit_generating_r1cs_start', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'generating' }))
-    plugin.internalEvents.on('circuit_generating_r1cs_done', compilerSuccess)
+    plugin.internalEvents.on('circuit_generating_r1cs_done', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' }))
     plugin.internalEvents.on('circuit_generating_r1cs_errored', compilerErrored)
 
     // witness events
     plugin.internalEvents.on('circuit_computing_witness_start', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'computing' }))
-    plugin.internalEvents.on('circuit_computing_witness_done', compilerSuccess)
+    plugin.internalEvents.on('circuit_computing_witness_done', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' }))
     plugin.internalEvents.on('circuit_computing_witness_errored', compilerErrored)
 
     // parsing events
-    plugin.internalEvents.on('circuit_parsing_done', (_, filePathToId) => dispatch({ type: 'SET_FILE_PATH_TO_ID', payload: filePathToId }))
+    plugin.internalEvents.on('circuit_parsing_done', (_, filePathToId) => {
+      dispatch({ type: 'SET_FILE_PATH_TO_ID', payload: filePathToId })
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
+    })
+    plugin.internalEvents.on('circuit_parsing_errored', (report) => {
+      dispatch({ type: 'SET_COMPILER_STATUS', payload: 'errored' })
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: report })
+    })
+    plugin.internalEvents.on('circuit_parsing_warning', (report) => {
+      dispatch({ type: 'SET_COMPILER_STATUS', payload: 'warning' })
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: report })
+    })
   }, [])
 
   useEffect(() => {
@@ -105,11 +116,6 @@ function App() {
     } catch (e) {
       dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: err.message })
     }
-  }
-
-  const compilerSuccess = () => {
-    dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
-    dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
   }
 
   const value = {

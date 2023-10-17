@@ -4,7 +4,7 @@ import EventManager from 'events'
 import pathModule from 'path'
 import { parse, compile, generate_witness, generate_r1cs, compiler_list } from 'circom_wasm'
 import { extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
-import { CompilationConfig } from '../types'
+import { CompilationConfig, CompilerReport } from '../types'
 
 export class CircomPluginClient extends PluginClient {
   public internalEvents: EventManager
@@ -31,7 +31,7 @@ export class CircomPluginClient extends PluginClient {
     this.internalEvents.emit('circom_activated')
   }
 
-  async parse(path: string, fileContent?: string): Promise<string> {
+  async parse(path: string, fileContent?: string): Promise<CompilerReport[]> {
     if (!fileContent) {
       // @ts-ignore
       fileContent = await this.call('fileManager', 'readFile', path)
@@ -43,7 +43,7 @@ export class CircomPluginClient extends PluginClient {
     const parsedOutput = parse(path, this.lastParsedFiles)
 
     try {
-      const result = JSON.parse(parsedOutput)
+      const result: CompilerReport[] = JSON.parse(parsedOutput)
 
       if (result.length === 0) {
         // @ts-ignore
@@ -96,25 +96,32 @@ export class CircomPluginClient extends PluginClient {
           await this.call('editor', 'clearErrorMarkers', [path])
         }
       }
+      const mapFilePathToId = {}
+      const filePaths = Object.keys(this.lastParsedFiles)
+  
+      for (let index = 0; index < filePaths.length; index++) {
+        mapFilePathToId[index.toString()] = filePaths[index]
+      }
+  
+      this.internalEvents.emit('circuit_parsing_done', result, mapFilePathToId)
+      return result
     } catch (e) {
-      console.log(e)
+      throw new Error(e)
     }
-    const mapFilePathToId = {}
-    const filePaths = Object.keys(this.lastParsedFiles)
-
-    for (let index = 0; index < filePaths.length; index++) {
-      mapFilePathToId[index.toString()] = filePaths[index]
-    }
-
-    this.internalEvents.emit('circuit_parsing_done', parsedOutput, mapFilePathToId)
-    return parsedOutput
   }
 
   async compile(path: string, compilationConfig?: CompilationConfig): Promise<void> {
     this.internalEvents.emit('circuit_compiling_start')
     const parseErrors = await this.parse(path)
 
-    if (parseErrors) throw new Error(parseErrors)
+    if (parseErrors && (parseErrors.length > 0)) {
+      if (parseErrors[0].type === 'Error') {
+        this.internalEvents.emit('circuit_parsing_errored', parseErrors)
+        return
+      } else if (parseErrors[0].type === 'Warning') {
+        this.internalEvents.emit('circuit_parsing_warning', parseErrors)
+      }
+    }
     if (compilationConfig) {
       const { prime, version } = compilationConfig
 
@@ -211,7 +218,14 @@ export class CircomPluginClient extends PluginClient {
     this.internalEvents.emit('circuit_generating_r1cs_start')
     const parseErrors = await this.parse(path)
 
-    if (parseErrors) throw new Error(parseErrors)
+    if (parseErrors && (parseErrors.length > 0)) {
+      if (parseErrors[0].type === 'Error') {
+        this.internalEvents.emit('circuit_parsing_errored', parseErrors)
+        return
+      } else if (parseErrors[0].type === 'Warning') {
+        this.internalEvents.emit('circuit_parsing_warning', parseErrors)
+      }
+    }
     if (compilationConfig) {
       const { prime, version } = compilationConfig
 
