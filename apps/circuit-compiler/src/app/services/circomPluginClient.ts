@@ -13,6 +13,7 @@ export class CircomPluginClient extends PluginClient {
     prime: "bn128"
   }
   public lastCompiledCircuitPath: string = ''
+  public lastParsedFiles: Record<string, string> = {}
 
   constructor() {
     super()
@@ -27,28 +28,22 @@ export class CircomPluginClient extends PluginClient {
   }
 
   onActivation(): void {
-    // @ts-ignore
-    this.on('editor', 'contentChanged', (path: string, fileContent) => {
-      if (path.endsWith('.circom')) {
-        this.parse(path, fileContent)
-      }
-    })
-
     this.internalEvents.emit('circom_activated')
   }
 
-  async parse(path: string, fileContent: string): Promise<void> {
-    let buildFiles = {
+  async parse(path: string, fileContent?: string): Promise<string> {
+    if (!fileContent) {
+      // @ts-ignore
+      fileContent = await this.call('fileManager', 'readFile', path)
+    }
+    this.lastParsedFiles = {
       [path]: fileContent,
     }
-
-    buildFiles = await this.resolveDependencies(path, fileContent, buildFiles)
-    const parsedOutput = parse(path, buildFiles)
+    this.lastParsedFiles = await this.resolveDependencies(path, fileContent, this.lastParsedFiles)
+    const parsedOutput = parse(path, this.lastParsedFiles)
 
     try {
       const result = JSON.parse(parsedOutput)
-
-      console.log('result: ', result)
 
       if (result.length === 0) {
         // @ts-ignore
@@ -104,10 +99,22 @@ export class CircomPluginClient extends PluginClient {
     } catch (e) {
       console.log(e)
     }
+    const mapFilePathToId = {}
+    const filePaths = Object.keys(this.lastParsedFiles)
+
+    for (let index = 0; index < filePaths.length; index++) {
+      mapFilePathToId[index.toString()] = filePaths[index]
+    }
+
+    this.internalEvents.emit('circuit_parsing_done', parsedOutput, mapFilePathToId)
+    return parsedOutput
   }
 
   async compile(path: string, compilationConfig?: CompilationConfig): Promise<void> {
     this.internalEvents.emit('circuit_compiling_start')
+    const parseErrors = await this.parse(path)
+
+    if (parseErrors) throw new Error(parseErrors)
     if (compilationConfig) {
       const { prime, version } = compilationConfig
 
@@ -116,13 +123,7 @@ export class CircomPluginClient extends PluginClient {
       this._compilationConfig.prime = prime
       this._compilationConfig.version = version
     }
-    const fileContent = await this.call('fileManager', 'readFile', path)
-    let buildFiles = {
-      [path]: fileContent
-    }
-
-    buildFiles = await this.resolveDependencies(path, fileContent, buildFiles)
-    const circuitApi = compile(path, buildFiles, { prime: this._compilationConfig.prime })
+    const circuitApi = compile(path, this.lastParsedFiles, { prime: this._compilationConfig.prime })
     const circuitProgram = circuitApi.program()
 
     if (circuitProgram.length < 1) {
@@ -135,6 +136,7 @@ export class CircomPluginClient extends PluginClient {
       this.lastCompiledCircuitPath = extractParentFromKey(path) + "/.bin/" + fileName.replace('circom', 'wasm')
       // @ts-ignore
       await this.call('fileManager', 'writeFile', this.lastCompiledCircuitPath, circuitProgram, true)
+      const fileContent = this.lastParsedFiles[path]
       const searchComponentName = fileContent.match(/component\s+main\s*(?:{[^{}]*})?\s*=\s*([A-Za-z_]\w*)\s*\(.*\)/)
 
       if (searchComponentName) {
@@ -207,6 +209,9 @@ export class CircomPluginClient extends PluginClient {
 
   async generateR1cs (path: string, compilationConfig?: CompilationConfig): Promise<void> {
     this.internalEvents.emit('circuit_generating_r1cs_start')
+    const parseErrors = await this.parse(path)
+
+    if (parseErrors) throw new Error(parseErrors)
     if (compilationConfig) {
       const { prime, version } = compilationConfig
 
@@ -215,13 +220,7 @@ export class CircomPluginClient extends PluginClient {
       this._compilationConfig.prime = prime
       this._compilationConfig.version = version
     }
-    const fileContent = await this.call('fileManager', 'readFile', path)
-    let buildFiles = {
-      [path]: fileContent
-    }
-
-    buildFiles = await this.resolveDependencies(path, fileContent, buildFiles)
-    const r1csApi = generate_r1cs(path, buildFiles, { prime: this._compilationConfig.prime })
+    const r1csApi = generate_r1cs(path, this.lastParsedFiles, { prime: this._compilationConfig.prime })
     const r1csProgram = r1csApi.program()
 
     if (r1csProgram.length < 1) {
