@@ -17,7 +17,7 @@ module.exports = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         init(browser, done, 'http://127.0.0.1:8080', false)
     },
-    'Should load the test file': function (browser: NightwatchBrowser) {
+    'Should load the test file #group1': function (browser: NightwatchBrowser) {
         browser.openFile('contracts')
             .openFile('contracts/3_Ballot.sol')
             .waitForElementVisible('#editorView')
@@ -106,7 +106,7 @@ module.exports = {
         const expectedContent = 'contract ERC20Burnable is ERC20Burnable, ERC20, IERC20Errors, IERC20Metadata, IERC20, Context'
         checkEditorHoverContent(browser, path, expectedContent, 25)
     },
-    'Go back to ballot file': function (browser: NightwatchBrowser) {
+    'Go back to ballot file #group1': function (browser: NightwatchBrowser) {
         browser.openFile('contracts/3_Ballot.sol')
             .useXpath().waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
     },

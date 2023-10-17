@@ -510,6 +510,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const compile = () => {
+    console.log('compile')
     const currentFile = api.currentFile
 
     if (!isSolFileSelected()) return
