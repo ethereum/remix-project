@@ -163,7 +163,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     else this._web3 = this.initialWeb3
     init.extendWeb3(this._web3)
     if (this.onDebugRequestedListener) {
-      this.onDebugRequestedListener(hash, web3).then((debuggerBackend) => {
+      this.onDebugRequestedListener(hash, this._web3).then((debuggerBackend) => {
         this.debuggerBackend = debuggerBackend
       })
     }
