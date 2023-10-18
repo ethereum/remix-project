@@ -264,7 +264,6 @@ class FileManager extends Plugin {
       if (await this.exists(path)) {
         const newPath = await helper.createNonClashingNameAsync(path, this)
         const content = await this.setFileContent(newPath, data)
-        console.log("newp in write ", newPath)
         return {newContent: content, newPath}
       } else {
         const ret = await this.setFileContent(path, data)
