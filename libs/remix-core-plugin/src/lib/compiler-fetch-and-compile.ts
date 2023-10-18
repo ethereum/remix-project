@@ -41,7 +41,6 @@ export class FetchAndCompile extends Plugin {
    * @return {CompilerAbstract} - compilation data targeting the given @arg contractAddress
    */
   async resolve (contractAddress, codeAtAddress, targetPath) {
-    console.log('resolve', contractAddress, codeAtAddress, targetPath)
     contractAddress = toChecksumAddress(contractAddress)
 
     const localCompilation = async () => {
