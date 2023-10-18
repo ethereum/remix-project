@@ -115,9 +115,9 @@ export class OpenZeppelinProxy extends Plugin {
     if (!hasUpgradeVersionCall) {
       data.contractByteCode = UUPSBytecode
       data.dataHex = UUPSBytecode + constructorData.replace('0x', '')
-      this.call('terminal', 'logHtml', `Using ERC1967 < 5.0.0 for proxy deployment...`)
+      this.call('terminal', 'logHtml', `Deploying ERC1967 < 5.0.0 as proxy...`)
     }else{
-      this.call('terminal', 'logHtml', `Using ERC1967 >= 5.0.0 for proxy deployment...`)
+      this.call('terminal', 'logHtml', `Deploying ERC1967 >= 5.0.0 as proxy...`)
     }
     // re-use implementation contract's ABI for UI display in udapp and change name to proxy name.
     implementationContractObject.contractName = implementationContractObject.name
@@ -154,7 +154,6 @@ export class OpenZeppelinProxy extends Plugin {
         let version = '4.8.3'
         if (error) {
           console.log(`error: ${error.message ? error.message : error}`)
-          console.log(`Will use version 4.8.3 of the proxy...`)
         } else {
           const response = txFormat.decodeResponse(returnValue, GETUUPSProxyVersionAbi)
           version = response[0].split('string: ')[1]
@@ -173,7 +172,7 @@ export class OpenZeppelinProxy extends Plugin {
             linkReferences: {},
             dataHex: fnData.replace('0x', ''),
           }
-          this.call('terminal', 'logHtml', `Using ERC1967 >= 5.0.0 for proxy upgrade...`)
+          this.call('terminal', 'logHtml', `Using ERC1967 >= 5.0.0 for the proxy upgrade...`)
           this.blockchain.upgradeProxy(proxyAddress, newImplAddress, data, newImplementationContractObject)
         } else {
           const fnData = await this.blockchain.getEncodedFunctionHex([newImplAddress], UUPSupgradeAbi)
@@ -186,7 +185,7 @@ export class OpenZeppelinProxy extends Plugin {
             linkReferences: {},
             dataHex: fnData.replace('0x', ''),
           }
-          this.call('terminal', 'logHtml', `Using ERC1967 < 5.0.0 for proxy upgrade...`)
+          this.call('terminal', 'logHtml', `Using ERC1967 < 5.0.0 for the proxy upgrade...`)
           this.blockchain.upgradeProxy(proxyAddress, newImplAddress, data, newImplementationContractObject)
         }
       }
