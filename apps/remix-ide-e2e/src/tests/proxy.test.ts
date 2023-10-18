@@ -167,6 +167,7 @@ module.exports = {
 
   'Should upgrade contract by selecting a previously deployed proxy address from dropdown (MyTokenV1 to MyTokenV2) #group1': function (browser: NightwatchBrowser) {
     browser
+      .click('*[data-id="terminalClearConsole"]') 
       .waitForElementPresent('[data-id="deployAndRunClearInstances"]')
       .click('[data-id="deployAndRunClearInstances"]')
       .openFile('myTokenV2.sol')
@@ -213,6 +214,7 @@ module.exports = {
 
   'Should upgrade contract by providing proxy address in input field (MyTokenV1 to MyTokenV2) #group1': function (browser: NightwatchBrowser) {
     browser
+      .click('*[data-id="terminalClearConsole"]') 
       .waitForElementPresent('[data-id="deployAndRunClearInstances"]')
       .click('[data-id="deployAndRunClearInstances"]')
       .openFile('myTokenV2.sol')
