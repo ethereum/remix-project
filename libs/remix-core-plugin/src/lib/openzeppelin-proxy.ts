@@ -1,6 +1,6 @@
 import { Plugin } from '@remixproject/engine'
 import { ContractAST, ContractSources, DeployOptions } from '../types/contract'
-import { EnableProxyURLParam, EnableUpgradeURLParam, GETUUPSProxyVersionAbi, UUPS, UUPSABI, UUPSBytecode, UUPSBytecodeV5, UUPSfunAbi, UUPSupgradeAbi, UUPSupgradeToAndCallAbi } from './constants/uups'
+import { EnableProxyURLParam, EnableUpgradeURLParam, GETUUPSProxyVersionAbi, UUPS, UUPSABI, UUPSBytecode, UUPSBytecodeV5, UUPSfunAbi, UUPSfunAbiV5, UUPSupgradeAbi, UUPSupgradeToAndCallAbi } from './constants/uups'
 import * as remixLib from '@remix-project/remix-lib'
 import * as semver from 'semver'
 const txFormat = remixLib.execution.txFormat
@@ -104,7 +104,7 @@ export class OpenZeppelinProxy extends Plugin {
       contractABI: UUPSABI,
       contractByteCode: UUPSBytecodeV5,
       contractName: proxyName,
-      funAbi: UUPSfunAbi,
+      funAbi: UUPSfunAbiV5,
       funArgs: args,
       linkReferences: {},
       dataHex: UUPSBytecodeV5 + constructorData.replace('0x', ''),
@@ -115,6 +115,7 @@ export class OpenZeppelinProxy extends Plugin {
     if (!hasUpgradeVersionCall) {
       data.contractByteCode = UUPSBytecode
       data.dataHex = UUPSBytecode + constructorData.replace('0x', '')
+      data.funAbi = UUPSfunAbi
       this.call('terminal', 'logHtml', `Deploying ERC1967 < 5.0.0 as proxy...`)
     }else{
       this.call('terminal', 'logHtml', `Deploying ERC1967 >= 5.0.0 as proxy...`)
@@ -158,7 +159,6 @@ export class OpenZeppelinProxy extends Plugin {
           const response = txFormat.decodeResponse(returnValue, GETUUPSProxyVersionAbi)
           version = response[0].split('string: ')[1]
           // check if version is >= 5.0.0
-          console.log('version', response)
         }
 
         if (semver.gte(version, '5.0.0')) {
