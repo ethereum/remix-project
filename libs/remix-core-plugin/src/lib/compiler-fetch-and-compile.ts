@@ -58,7 +58,6 @@ export class FetchAndCompile extends Plugin {
     if (this.unresolvedAddresses.includes(contractAddress)) return localCompilation()
 
     if (codeAtAddress === '0x' + UUPSDeployedByteCode) { // proxy
-      console.log('proxy')
       const settings = {
         version: UUPSCompilerVersion,
         language: UUPSLanguage,
@@ -87,7 +86,6 @@ export class FetchAndCompile extends Plugin {
     }
 
     if (codeAtAddress === '0x' + UUPSDeployedByteCodeV5) { // proxy
-      console.log('UUPSDeployedByteCodeV5')
       const settings = {
         version: UUPSCompilerVersionV5,
         language: UUPSLanguage,
