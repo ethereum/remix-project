@@ -111,7 +111,6 @@ export class FetchAndCompile extends Plugin {
             await this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message))
           }
         })
-      console.log('compData', compData)
       await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compData)
       return compData
     }
