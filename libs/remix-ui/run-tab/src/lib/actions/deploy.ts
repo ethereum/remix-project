@@ -172,6 +172,7 @@ export const createInstance = async (
       _paq.push(['trackEvent', 'udapp', 'DeployOnly', plugin.REACT_API.networkName])
     }
     if (isProxyDeployment) {
+      console.log('isProxyDeployment', contractObject.abi)
       const initABI = contractObject.abi.find(abi => abi.name === 'initialize')
 
       plugin.call('openzeppelin-proxy', 'executeUUPSProxy', addressToString(address), args, initABI, contractObject)
