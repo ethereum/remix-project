@@ -16,6 +16,9 @@ module.exports = {
     return sources
   },
 
+  'Should set the compiler version to 8.19': function(browser: NightwatchBrowser) {
+    browser.setSolidityCompilerVersion('soljson-v0.8.19+commit.7dd6d404.js')
+  },
 
   'Should show deploy proxy option for UUPS upgradeable contract #group1': function (browser: NightwatchBrowser) {
     browser
@@ -90,6 +93,7 @@ module.exports = {
       .click('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deploying ERC1967 < 5.0.0 as proxy...', 60000)
   },
 
   'Should interact with deployed contract via ERC1967 (proxy) #group1': function (browser: NightwatchBrowser) {
@@ -140,6 +144,7 @@ module.exports = {
       .click('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deploying ERC1967 < 5.0.0 as proxy...', 60000)
   },
 
   'Should interact with initialized contract to verify parameters #group1': function (browser: NightwatchBrowser) {
@@ -193,6 +198,7 @@ module.exports = {
         })
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Using ERC1967 < 5.0.0 for the proxy upgrade..', 60000)
   },
 
   'Should interact with upgraded function in contract MyTokenV2 #group1': function (browser: NightwatchBrowser) {
@@ -230,6 +236,7 @@ module.exports = {
       .click('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Using ERC1967 < 5.0.0 for the proxy upgrade..', 60000)
   },
 
   'Should interact with upgraded contract through provided proxy address #group1': function (browser: NightwatchBrowser) {
