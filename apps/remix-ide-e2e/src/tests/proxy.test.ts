@@ -91,6 +91,7 @@ module.exports = {
       .click('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deploying ERC1967 >= 5.0.0 as proxy...')
   },
 
   'Should interact with deployed contract via ERC1967 (proxy) #group1': function (browser: NightwatchBrowser) {
@@ -142,6 +143,7 @@ module.exports = {
       .click('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deploying ERC1967 >= 5.0.0 as proxy...')
   },
 
   'Should interact with initialized contract to verify parameters #group1': function (browser: NightwatchBrowser) {
@@ -196,6 +198,7 @@ module.exports = {
         })
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Using ERC1967 >= 5.0.0 for the proxy upgrade...')
   },
 
   'Should interact with upgraded function in contract MyTokenV2 #group1': function (browser: NightwatchBrowser) {
@@ -233,6 +236,7 @@ module.exports = {
       .click('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Using ERC1967 >= 5.0.0 for the proxy upgrade...')
   },
 
   'Should interact with upgraded contract through provided proxy address #group1': function (browser: NightwatchBrowser) {
