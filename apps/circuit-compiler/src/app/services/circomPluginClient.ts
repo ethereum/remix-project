@@ -2,7 +2,8 @@ import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
 import EventManager from 'events'
 import pathModule from 'path'
-import { parse, compile, generate_witness, generate_r1cs, compiler_list } from 'circom_wasm'
+// @ts-ignore
+import { parse, compile, generate_witness, generate_r1cs, compiler_list } from '../../../pkg'
 import { extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
 import { CompilationConfig, CompilerReport } from '../types'
 
@@ -42,8 +43,10 @@ export class CircomPluginClient extends PluginClient {
     this.lastParsedFiles = await this.resolveDependencies(path, fileContent, this.lastParsedFiles)
     const parsedOutput = parse(path, this.lastParsedFiles)
 
+    console.log('parsedOutput: ', parsedOutput)
     try {
-      const result: CompilerReport[] = JSON.parse(parsedOutput)
+      const result: CompilerReport[] = JSON.parse(parsedOutput.report())
+      const mapReportFilePathToId = {}
 
       if (result.length === 0) {
         // @ts-ignore
@@ -53,7 +56,10 @@ export class CircomPluginClient extends PluginClient {
 
         for (const report of result) {
           for (const label in report.labels) {
-            if (report.labels[label].file_id === '0') {
+            const file_id = report.labels[label].file_id
+
+            mapReportFilePathToId[file_id] = parsedOutput.get_report_name(parseInt(file_id))
+            if (file_id === '0') {
               // @ts-ignore
               const startPosition: { lineNumber: number; column: number } = await this.call(
                 'editor',
@@ -96,14 +102,9 @@ export class CircomPluginClient extends PluginClient {
           await this.call('editor', 'clearErrorMarkers', [path])
         }
       }
-      const mapFilePathToId = {}
-      const filePaths = Object.keys(this.lastParsedFiles)
+      
   
-      for (let index = 0; index < filePaths.length; index++) {
-        mapFilePathToId[index.toString()] = filePaths[index]
-      }
-  
-      this.internalEvents.emit('circuit_parsing_done', result, mapFilePathToId)
+      this.internalEvents.emit('circuit_parsing_done', result, mapReportFilePathToId)
       return result
     } catch (e) {
       throw new Error(e)
