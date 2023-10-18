@@ -296,7 +296,7 @@ export function ContractGUI(props: ContractGUIProps) {
                 : buttonOptions.title
           }
         >
-          <div className="d-flex wrapperElement" onClick={handleActionClick} data-id={buttonOptions.dataId} data-title={buttonOptions.title}>
+          <div className="d-flex btn p-0 wrapperElement" onClick={handleActionClick} data-id={buttonOptions.dataId} data-title={buttonOptions.title}>
             <button
               className={`udapp_instanceButton text-nowrap overflow-hidden text-truncate ${props.widthClass} btn btn-sm ${buttonOptions.classList}`}
               data-id={buttonOptions.dataId}
