@@ -4,7 +4,7 @@ import { util } from '@remix-project/remix-lib'
 import { toChecksumAddress } from '@ethereumjs/util'
 import { fetchContractFromEtherscan } from './helpers/fetch-etherscan'
 import { fetchContractFromSourcify } from './helpers/fetch-sourcify'
-import { UUPSDeployedByteCode, UUPSCompilerVersion, UUPSOptimize, UUPSRuns, UUPSEvmVersion, UUPSLanguage } from './constants/uups'
+import { UUPSDeployedByteCode, UUPSCompilerVersion, UUPSOptimize, UUPSRuns, UUPSEvmVersion, UUPSLanguage, UUPSDeployedByteCodeV5, UUPSCompilerVersionV5 } from './constants/uups'
 
 const profile = {
   name: 'fetchAndCompile',
@@ -41,6 +41,7 @@ export class FetchAndCompile extends Plugin {
    * @return {CompilerAbstract} - compilation data targeting the given @arg contractAddress
    */
   async resolve (contractAddress, codeAtAddress, targetPath) {
+    console.log('resolve', contractAddress, codeAtAddress, targetPath)
     contractAddress = toChecksumAddress(contractAddress)
 
     const localCompilation = async () => {
@@ -57,6 +58,7 @@ export class FetchAndCompile extends Plugin {
     if (this.unresolvedAddresses.includes(contractAddress)) return localCompilation()
 
     if (codeAtAddress === '0x' + UUPSDeployedByteCode) { // proxy
+      console.log('proxy')
       const settings = {
         version: UUPSCompilerVersion,
         language: UUPSLanguage,
@@ -80,6 +82,36 @@ export class FetchAndCompile extends Plugin {
             await this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message))
           }
         })
+      await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compData)
+      return compData
+    }
+
+    if (codeAtAddress === '0x' + UUPSDeployedByteCodeV5) { // proxy
+      console.log('UUPSDeployedByteCodeV5')
+      const settings = {
+        version: UUPSCompilerVersionV5,
+        language: UUPSLanguage,
+        evmVersion: UUPSEvmVersion,
+        optimize: UUPSOptimize,
+        runs: UUPSRuns
+      }
+      const proxyUrl = 'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v5.0.0/contracts/proxy/ERC1967/ERC1967Proxy.sol'
+      const compilationTargets = {
+        'proxy.sol': { content: `import "${proxyUrl}";` }
+      }
+      const compData = await compile(
+        compilationTargets,
+        settings,
+        async (url, cb) => {
+          // we first try to resolve the content from the compilation target using a more appropiate path
+          const path = `${targetPath}/${url}`
+          if (compilationTargets[path] && compilationTargets[path].content) {
+            return cb(null, compilationTargets[path].content)
+          } else {
+            await this.call('contentImport', 'resolveAndSave', url).then((result) => cb(null, result)).catch((error) => cb(error.message))
+          }
+        })
+      console.log('compData', compData)
       await this.call('compilerArtefacts', 'addResolvedContract', contractAddress, compData)
       return compData
     }
