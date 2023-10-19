@@ -90,12 +90,14 @@ module.exports = {
         browser
         .clickLaunchIcon('solidity')
         .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js')
+        .waitForElementVisible('[for="autoCompile"]')
+        .click('[for="autoCompile"]')
         .addFile('contracts/mytoken.sol', {
             content: storageContract
         })
-        .getBrowserLogs()
+        //.getBrowserLogs()
         .pause(2000)
-        .getBrowserLogs()
+        //.getBrowserLogs()
         .clickLaunchIcon('solidity')
         .useXpath()
         .waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
