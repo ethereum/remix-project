@@ -88,10 +88,6 @@ module.exports = {
     },
     'Add token file #group11 #flaky': function (browser: NightwatchBrowser) {
         browser
-        .captureBrowserConsoleLogs((event) => {
-      
-            console.log(' Console message type: ' + event.type, '; timestamp: ' + event.timestamp, '; message: ' + event.args);
-          })
         .clickLaunchIcon('solidity')
         .waitForElementVisible('[for="autoCompile"]')
         .click('[for="autoCompile"]')
@@ -105,6 +101,14 @@ module.exports = {
         .clickLaunchIcon('solidity')
         .click('*[data-id="compilerContainerCompileBtn"]')
         .useXpath()
+        .pause(5000)
+        .perform(() => {
+           browser.execute(function () {
+            return (window as any).logs
+           },[], function (result) {
+            console.log(result)
+           })
+        })
         .waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
         .pause()
     },

@@ -46,6 +46,14 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
         })
     }})
     .perform(() => {
+      browser.execute(function () { 
+        (window as any).logs = []
+        console.log = function () {
+          (window as any).logs.push(arguments)
+        }
+      })
+    })
+    .perform(() => {
       if (preloadPlugins) {
         initModules(browser, () => {
           browser
