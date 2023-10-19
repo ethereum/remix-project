@@ -99,6 +99,7 @@ module.exports = {
         .pause(2000)
         //.getBrowserLogs()
         .clickLaunchIcon('solidity')
+        .click('*[data-id="compilerContainerCompileBtn"]')
         .useXpath()
         .waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
     },
