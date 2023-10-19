@@ -23,6 +23,18 @@ export function Container () {
     circuitApp.dispatch({ type: 'SET_COMPILER_VERSION', payload: version })
   }
 
+  const handleOpenErrorLocation = async (location: string, startRange: string) => {
+    if (location) {
+      const fullPathLocation = await circuitApp.plugin.resolveReportPath(location)
+
+      await circuitApp.plugin.call('fileManager', 'open', fullPathLocation)
+      // @ts-ignore
+      const startPosition: { lineNumber: number; column: number } = await circuitApp.plugin.call('editor', 'getPositionAt', startRange)
+      // @ts-ignore
+      await circuitApp.plugin.call('editor', 'gotoLine', startPosition.lineNumber - 1, startPosition.column)
+    }
+  }
+
   return (
     <section>
       <article>
@@ -46,7 +58,7 @@ export function Container () {
               </WitnessToggler>
             </RenderIf>
             <RenderIf condition={circuitApp.appState.status !== 'compiling' && circuitApp.appState.status !== 'computing' && circuitApp.appState.status !== 'generating'}>
-              <CompilerFeedback feedback={circuitApp.appState.feedback} filePathToId={circuitApp.appState.filePathToId} />
+              <CompilerFeedback feedback={circuitApp.appState.feedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} />
             </RenderIf>
           </div>
         </div>
