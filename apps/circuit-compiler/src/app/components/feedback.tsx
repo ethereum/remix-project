@@ -4,7 +4,7 @@ import { RenderIf } from '@remix-ui/helper'
 import {CopyToClipboard} from '@remix-ui/clipboard'
 import { FeedbackAlert } from './feedbackAlert'
 
-export function CompilerFeedback ({ feedback, filePathToId, openErrorLocation }: CompilerFeedbackProps) {
+export function CompilerFeedback ({ feedback, filePathToId, hideWarnings, openErrorLocation }: CompilerFeedbackProps) {
   const [ showException, setShowException ] = useState<boolean>(true)
 
   const handleCloseException = () => {
@@ -43,7 +43,7 @@ export function CompilerFeedback ({ feedback, filePathToId, openErrorLocation }:
                       <FeedbackAlert message={response.message} location={ response.labels[0] ? response.labels[0].message + ` ${filePathToId[response.labels[0].file_id]}:${response.labels[0].range.start}:${response.labels[0].range.end}` : null} />
                     </div>
                   </RenderIf>
-                  <RenderIf condition={response.type === 'Warning'}>
+                  <RenderIf condition={(response.type === 'Warning') && !hideWarnings}>
                     <div className={`circuit_feedback ${response.type.toLowerCase()} alert alert-warning`}>
                       <FeedbackAlert message={response.message} location={null} />
                     </div>

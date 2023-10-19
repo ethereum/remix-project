@@ -7,6 +7,9 @@ export function CompileOptions () {
   const handleCircuitAutoCompile = (value: boolean) => {
     dispatch({ type: 'SET_AUTO_COMPILE', payload: value })
   }
+  const handleCircuitHideWarnings = (value: boolean) => {
+    dispatch({ type: 'SET_HIDE_WARNINGS', payload: value })
+  }
 
   return (
     <div className='pb-2'>
@@ -26,11 +29,11 @@ export function CompileOptions () {
       <div className="mt-1 mb-2 circuit_warnings_box custom-control custom-checkbox">
         <input
           className="custom-control-input"
-          // onChange={handleHideWarningsChange}
+          onChange={(e) => handleCircuitHideWarnings(e.target.checked)}
           id="hideCircuitWarnings"
           type="checkbox"
           title="Hide warnings"
-          // checked={state.hideWarnings}
+          checked={appState.hideWarnings}
         />
         <label className="form-check-label custom-control-label" htmlFor="hideCircuitWarnings">
           <FormattedMessage id="solidity.hideWarnings" />
