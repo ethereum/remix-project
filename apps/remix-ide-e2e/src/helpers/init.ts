@@ -8,12 +8,12 @@ type LoadPlugin = {
 }
 
 export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true, loadPlugin?: LoadPlugin, hideToolTips: boolean = true): void {
+  console.log('hideToolTips', hideToolTips)
   browser
     .url(url || 'http://127.0.0.1:8080')
     //.switchBrowserTab(0)
     .waitForElementVisible('[id="remixTourSkipbtn"]')
     .click('[id="remixTourSkipbtn"]')
-
     .perform((done) => {
       if (!loadPlugin) return done()
       browser
@@ -27,9 +27,12 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
     })
     .verifyLoad()
     .perform(() => {
+
       if (hideToolTips) {
+        
         browser.execute(function () { // hide tooltips
           function addStyle(styleString) {
+            
             const style = document.createElement('style');
             style.textContent = styleString;
             document.head.append(style);
@@ -41,7 +44,8 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
             }
           `);
         })
-      }
+    }})
+    .perform(() => {
       if (preloadPlugins) {
         initModules(browser, () => {
           browser

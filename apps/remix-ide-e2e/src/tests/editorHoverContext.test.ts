@@ -15,7 +15,7 @@ const checkEditorHoverContent = (browser: NightwatchBrowser, path: string, expec
 module.exports = {
     '@disabled': true,
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
-        init(browser, done, 'http://127.0.0.1:8080', false)
+        init(browser, done, 'http://127.0.0.1:8080', false, null, true)
     },
     'Should load the test file #group1': function (browser: NightwatchBrowser) {
         browser.openFile('contracts')
@@ -89,9 +89,9 @@ module.exports = {
     'Add token file #group11 #flaky': function (browser: NightwatchBrowser) {
         browser
         .clickLaunchIcon('solidity')
-        .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js')
         .waitForElementVisible('[for="autoCompile"]')
         .click('[for="autoCompile"]')
+        .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js')
         .addFile('contracts/mytoken.sol', {
             content: storageContract
         })
