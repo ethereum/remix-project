@@ -9,6 +9,7 @@ export const appInitialState: AppState = {
   status: "idle",
   primeValue: "bn128",
   autoCompile: false,
+  hideWarnings: false,
   signalInputs: [],
   feedback: null
 }
@@ -44,6 +45,12 @@ export const appReducer = (state = appInitialState, action: Actions): AppState =
     return {
       ...state,
       autoCompile: action.payload
+    }
+
+  case 'SET_HIDE_WARNINGS':
+    return {
+      ...state,
+      hideWarnings: action.payload
     }
 
   case 'SET_SIGNAL_INPUTS':
