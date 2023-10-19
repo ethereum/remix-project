@@ -47,7 +47,8 @@ export type PrimeValue = "bn128" | "bls12381" | "goldilocks"
 
 export type CompilerFeedbackProps = {
   feedback: string | CompilerReport[],
-  filePathToId: Record<string, string>
+  filePathToId: Record<string, string>,
+  openErrorLocation: (location: string, startRange: string) => void
 }
 
 export type CompilerReport = {
