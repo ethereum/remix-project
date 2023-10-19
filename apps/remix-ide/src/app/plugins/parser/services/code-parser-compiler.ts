@@ -165,8 +165,10 @@ export default class CodeParserCompiler {
 
         this.compiler.set('configFileContent', JSON.stringify(configFileContent))
         this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
+        console.log('this.plugin.currentFile', this.plugin.currentFile)
         if (!this.plugin.currentFile) return
         const content = await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile)
+        console.log('content', content)
         const sources = { [this.plugin.currentFile]: { content } }
         this.compiler.compile(sources, this.plugin.currentFile)
       }
