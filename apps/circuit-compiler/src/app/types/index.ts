@@ -15,6 +15,7 @@ export interface ActionPayloadTypes {
   SET_COMPILER_STATUS: CompilerStatus,
   SET_PRIME_VALUE: PrimeValue,
   SET_AUTO_COMPILE: boolean,
+  SET_HIDE_WARNINGS: boolean,
   SET_SIGNAL_INPUTS: string[],
   SET_COMPILER_FEEDBACK: string | CompilerReport[]
   SET_FILE_PATH_TO_ID: Record<number, string>
@@ -34,6 +35,7 @@ export interface AppState {
   status: CompilerStatus,
   primeValue: PrimeValue,
   autoCompile: boolean,
+  hideWarnings: boolean,
   signalInputs: string[],
   feedback: string | CompilerReport[]
 }
@@ -48,7 +50,8 @@ export type PrimeValue = "bn128" | "bls12381" | "goldilocks"
 export type CompilerFeedbackProps = {
   feedback: string | CompilerReport[],
   filePathToId: Record<string, string>,
-  openErrorLocation: (location: string, startRange: string) => void
+  openErrorLocation: (location: string, startRange: string) => void,
+  hideWarnings: boolean
 }
 
 export type CompilerReport = {
