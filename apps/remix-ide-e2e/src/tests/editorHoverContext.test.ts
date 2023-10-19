@@ -91,7 +91,7 @@ module.exports = {
         .clickLaunchIcon('solidity')
         .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js')
         .addFile('contracts/mytoken.sol', {
-            content: myToken
+            content: storageContract
         })
         .getBrowserLogs()
         .pause(2000)
@@ -322,3 +322,34 @@ contract MyToken is ERC20, ERC20Burnable, ERC20Pausable, Ownable, ERC20Permit {
 }
 
 `
+
+const storageContract = `
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >=0.8.2 <0.9.0;
+
+/**
+ * @title Storage
+ * @dev Store & retrieve value in a variable
+ * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
+ */
+contract Storage {
+
+    uint256 number;
+
+    /**
+     * @dev Store value in variable
+     * @param num value to store
+     */
+    function store(uint256 num) public {
+        number = num;
+    }
+
+    /**
+     * @dev Return value 
+     * @return value of 'number'
+     */
+    function retrieve() public view returns (uint256){
+        return number;
+    }
+}`
