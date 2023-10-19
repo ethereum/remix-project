@@ -51,6 +51,9 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
         console.log = function () {
           (window as any).logs.push(arguments)
         }
+        console.error = function () {
+          (window as any).logs.push(arguments)
+        }
       })
     })
     .perform(() => {
