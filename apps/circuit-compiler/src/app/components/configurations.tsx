@@ -1,16 +1,8 @@
 import { CustomTooltip } from "@remix-ui/helper"
-import { useContext } from "react"
 import { FormattedMessage } from "react-intl"
-import { CircuitAppContext } from "../contexts"
-import { PrimeValue } from "../types"
+import { ConfigurationsProps, PrimeValue } from "../types"
 
-export function Configurations () {
-  const { appState, dispatch } = useContext(CircuitAppContext)
-
-  const handlePrimeChange = (value: string) => {
-    dispatch({ type: 'SET_PRIME_VALUE', payload: value as PrimeValue })
-  }
-
+export function Configurations ({primeValue, setPrimeValue}: ConfigurationsProps) {
   return (
     <div className="pb-2 border-bottom flex-column">
       <div className="flex-column d-flex">
@@ -26,8 +18,8 @@ export function Configurations () {
           >
             <div>
               <select
-                onChange={(e) => handlePrimeChange(e.target.value)}
-                value={appState.primeValue}
+                onChange={(e) => setPrimeValue(e.target.value as PrimeValue)}
+                value={primeValue}
                 className="custom-select"
                 style={{
                   pointerEvents: 'auto'

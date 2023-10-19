@@ -1,15 +1,7 @@
-import { useContext } from 'react'
 import {FormattedMessage} from 'react-intl'
-import { CircuitAppContext } from '../contexts'
+import { CompileOptionsProps } from '../types'
 
-export function CompileOptions () {
-  const { appState, dispatch } = useContext(CircuitAppContext)
-  const handleCircuitAutoCompile = (value: boolean) => {
-    dispatch({ type: 'SET_AUTO_COMPILE', payload: value })
-  }
-  const handleCircuitHideWarnings = (value: boolean) => {
-    dispatch({ type: 'SET_HIDE_WARNINGS', payload: value })
-  }
+export function CompileOptions ({autoCompile, hideWarnings, setCircuitAutoCompile, setCircuitHideWarnings}: CompileOptionsProps) {
 
   return (
     <div className='pb-2'>
@@ -17,9 +9,9 @@ export function CompileOptions () {
         <input
           className="custom-control-input"
           type="checkbox"
-          onChange={(e) => handleCircuitAutoCompile(e.target.checked)}
+          onChange={(e) => setCircuitAutoCompile(e.target.checked)}
           title="Auto compile"
-          checked={appState.autoCompile}
+          checked={autoCompile}
           id="autoCompileCircuit"
         />
         <label className="form-check-label custom-control-label" htmlFor="autoCompileCircuit">
@@ -29,11 +21,11 @@ export function CompileOptions () {
       <div className="mt-1 mb-2 circuit_warnings_box custom-control custom-checkbox">
         <input
           className="custom-control-input"
-          onChange={(e) => handleCircuitHideWarnings(e.target.checked)}
+          onChange={(e) => setCircuitHideWarnings(e.target.checked)}
           id="hideCircuitWarnings"
           type="checkbox"
           title="Hide warnings"
-          checked={appState.hideWarnings}
+          checked={hideWarnings}
         />
         <label className="form-check-label custom-control-label" htmlFor="hideCircuitWarnings">
           <FormattedMessage id="solidity.hideWarnings" />
