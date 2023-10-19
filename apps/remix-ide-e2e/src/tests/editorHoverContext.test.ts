@@ -88,6 +88,10 @@ module.exports = {
     },
     'Add token file #group11 #flaky': function (browser: NightwatchBrowser) {
         browser
+        .captureBrowserConsoleLogs((event) => {
+      
+            console.log(' Console message type: ' + event.type, '; timestamp: ' + event.timestamp, '; message: ' + event.args);
+          })
         .clickLaunchIcon('solidity')
         .waitForElementVisible('[for="autoCompile"]')
         .click('[for="autoCompile"]')
@@ -102,6 +106,7 @@ module.exports = {
         .click('*[data-id="compilerContainerCompileBtn"]')
         .useXpath()
         .waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
+        .pause()
     },
     // here we change quickly between files to test the files being parsed correctly when switching between them
     'Should show ERC20 hover over contract in editor #group1': function (browser: NightwatchBrowser) {
