@@ -73,3 +73,15 @@ export type FeedbackAlertProps = {
   message: string,
   location: string
 }
+
+export type ConfigurationsProps = {
+  setPrimeValue: (prime: PrimeValue) => void,
+  primeValue: PrimeValue
+}
+
+export type CompileOptionsProps = {
+  setCircuitAutoCompile: (value: boolean) => void,
+  setCircuitHideWarnings: (value: boolean) => void,
+  autoCompile: boolean,
+  hideWarnings: boolean
+}
