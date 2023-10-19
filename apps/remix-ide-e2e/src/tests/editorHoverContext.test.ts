@@ -96,6 +96,7 @@ module.exports = {
         .getBrowserLogs()
         .pause(2000)
         .getBrowserLogs()
+        .clickLaunchIcon('solidity')
         .useXpath()
         .waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
     },
