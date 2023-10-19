@@ -10,6 +10,7 @@ import { CircuitActions } from './actions'
 import { WitnessToggler } from './witnessToggler'
 import { WitnessSection } from './witness'
 import { CompilerFeedback } from './feedback'
+import { PrimeValue } from '../types'
 
 export function Container () {
   const circuitApp = useContext(CircuitAppContext)
@@ -35,6 +36,18 @@ export function Container () {
     }
   }
 
+  const handlePrimeChange = (value: string) => {
+    circuitApp.dispatch({ type: 'SET_PRIME_VALUE', payload: value as PrimeValue })
+  }
+
+  const handleCircuitAutoCompile = (value: boolean) => {
+    circuitApp.dispatch({ type: 'SET_AUTO_COMPILE', payload: value })
+  }
+  
+  const handleCircuitHideWarnings = (value: boolean) => {
+    circuitApp.dispatch({ type: 'SET_HIDE_WARNINGS', payload: value })
+  }
+
   return (
     <section>
       <article>
@@ -47,9 +60,9 @@ export function Container () {
               <span className="fa fa-file-text-o border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
             </CustomTooltip>
             <VersionList setVersion={handleVersionSelect} versionList={circuitApp.appState.versionList} currentVersion={circuitApp.appState.version} />
-            <CompileOptions />
+            <CompileOptions setCircuitAutoCompile={handleCircuitAutoCompile} setCircuitHideWarnings={handleCircuitHideWarnings} autoCompile={circuitApp.appState.autoCompile} hideWarnings={circuitApp.appState.hideWarnings} />
             <ConfigToggler>
-              <Configurations />
+              <Configurations setPrimeValue={handlePrimeChange} primeValue={circuitApp.appState.primeValue} />
             </ConfigToggler>
             <CircuitActions />
             <RenderIf condition={circuitApp.appState.signalInputs.length > 0}>
