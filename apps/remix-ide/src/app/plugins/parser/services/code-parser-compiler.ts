@@ -64,7 +64,7 @@ export default class CodeParserCompiler {
             allErrors = [...allErrors, errorMarker]
           }
         } else {
-          console.log('data.errors', data.errors)
+          console.log('data.errors', JSON.stringify(data.errors))
           for (const error of data.errors) {
             if (!error.sourceLocation) {
               // mark this file as error
