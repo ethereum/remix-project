@@ -46,28 +46,36 @@ export class OpenZeppelinProxy extends Plugin {
   async getUUPSContractOptions(contracts, ast, file) {
     const options = {}
 
-    await Promise.all(Object.keys(contracts).map(async (name) => {
-      if (ast) {
-        const UUPSSymbol = ast.exportedSymbols[UUPS] ? ast.exportedSymbols[UUPS][0] : null
+    await Promise.all(
+      Object.keys(contracts).map(async (name) => {
+        if (ast) {
+          const UUPSSymbol = ast.exportedSymbols[UUPS] ? ast.exportedSymbols[UUPS][0] : null
 
-        await Promise.all(ast.absolutePath === file && ast.nodes.map(async (node) => {
-          if (node.name === name && node.linearizedBaseContracts.includes(UUPSSymbol)) {
-            const abi = contracts[name].abi
-            const initializeInput = abi.find(node => node.name === 'initialize')
-            const isDeployWithProxyEnabled: boolean = await this.call('config', 'getAppParameter', EnableProxyURLParam) || false
-            const isDeployWithUpgradeEnabled: boolean = await this.call('config', 'getAppParameter', EnableUpgradeURLParam) || false
+          await Promise.all(
+            ast.absolutePath === file &&
+              ast.nodes.map(async (node) => {
+                if (node.name === name && node.linearizedBaseContracts.includes(UUPSSymbol)) {
+                  const abi = contracts[name].abi
+                  const initializeInput = abi.find((node) => node.name === 'initialize')
+                  const isDeployWithProxyEnabled: boolean = (await this.call('config', 'getAppParameter', EnableProxyURLParam)) || false
+                  const isDeployWithUpgradeEnabled: boolean = (await this.call('config', 'getAppParameter', EnableUpgradeURLParam)) || false
 
-            options[name] = {
-              options: [{ title: 'Deploy with Proxy', active: isDeployWithProxyEnabled }, { title: 'Upgrade with Proxy', active: isDeployWithUpgradeEnabled }],
-              initializeOptions: {
-                inputs: initializeInput,
-                initializeInputs: initializeInput ? this.blockchain.getInputs(initializeInput) : null
-              }
-            }
-          }
-        }))
-      }
-    }))
+                  options[name] = {
+                    options: [
+                      { title: 'Deploy with Proxy', active: isDeployWithProxyEnabled },
+                      { title: 'Upgrade with Proxy', active: isDeployWithUpgradeEnabled },
+                    ],
+                    initializeOptions: {
+                      inputs: initializeInput,
+                      initializeInputs: initializeInput ? this.blockchain.getInputs(initializeInput) : null,
+                    },
+                  }
+                }
+              })
+          )
+        }
+      })
+    )
     return options
   }
 
