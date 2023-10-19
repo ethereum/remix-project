@@ -48,6 +48,7 @@ export default class CodeParserCompiler {
   init() {
 
     this.onAstFinished = async (success, data: CompilationResult, source: CompilationSourceCode, input: any, version) => {
+      console.log('onAstFinished')
       this.plugin.call('editor', 'clearAnnotations')
       this.errorState = true
       const result = new CompilerAbstract('soljson', data, source, input)
@@ -132,6 +133,7 @@ export default class CodeParserCompiler {
      * @returns 
      */
   async compile() {
+    console.log('compile')
     try {
       this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
       if (this.plugin.currentFile && this.plugin.currentFile.endsWith('.sol')) {
