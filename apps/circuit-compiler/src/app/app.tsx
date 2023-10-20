@@ -59,7 +59,10 @@ function App() {
 
     // witness events
     plugin.internalEvents.on('circuit_computing_witness_start', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'computing' }))
-    plugin.internalEvents.on('circuit_computing_witness_done', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' }))
+    plugin.internalEvents.on('circuit_computing_witness_done', () => {
+      dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
+    })
     plugin.internalEvents.on('circuit_computing_witness_errored', compilerErrored)
 
     // parsing events
