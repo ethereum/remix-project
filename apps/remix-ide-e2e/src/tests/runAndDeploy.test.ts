@@ -80,11 +80,11 @@ module.exports = {
       .getAddressAtPosition(1, (address) => {
         instanceAddress = address
         browser
-        .waitForElementVisible(`#instance${instanceAddress} [data-id="instanceContractBal"]`)
-        .assert.containsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000111 ETH')
-        .clickFunction('sendSomeEther - transact (not payable)', { types: 'uint256 num', values: '2' })
-        .pause(1000)
-        .assert.containsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000109 ETH')
+          .waitForElementVisible(`#instance${instanceAddress} [data-id="instanceContractBal"]`)
+          .assert.containsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000111 ETH')
+          .clickFunction('sendSomeEther - transact (not payable)', { types: 'uint256 num', values: '2' })
+          .pause(1000)
+          .assert.containsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000109 ETH')
       })
   },
 
@@ -237,11 +237,11 @@ const sources = [
       pragma solidity ^0.8.0;
       contract helloWorld {
           string public message;
-          
+
           fallback () external {
               message = 'Hello World!';
           }
-          
+
           function greet(string memory _message) public {
               message = _message;
           }
@@ -255,7 +255,7 @@ const sources = [
         function sendSomeEther(uint256 num) public {
             payable(msg.sender).transfer(num);
         }
-    
+
     }`
     }
   }

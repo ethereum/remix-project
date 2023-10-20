@@ -1,5 +1,5 @@
-import {CustomTooltip} from '@remix-ui/helper'
-import React, {CSSProperties} from 'react' //eslint-disable-line
+import { CustomTooltip } from '@remix-ui/helper'
+import React, { CSSProperties } from 'react' //eslint-disable-line
 import './remix-ui-checkbox.css'
 type Placement = import('react-overlays/usePopper').Placement
 
@@ -37,7 +37,7 @@ export const RemixUiCheckbox = ({
   optionalClassName = '',
   display = 'flex',
   disabled,
-  tooltipPlacement = 'right'
+  tooltipPlacement = 'right',
 }: RemixUiCheckboxProps) => {
   const childJSXWithTooltip = (
     <CustomTooltip tooltipText={title} tooltipId={`${name}Tooltip`} placement={tooltipPlacement}>
@@ -47,13 +47,22 @@ export const RemixUiCheckbox = ({
           {
             display: display,
             alignItems: 'center',
-            visibility: visibility
+            visibility: visibility,
           } as CSSProperties
         }
         onClick={onClick}
       >
-        <input id={id} type={inputType} onChange={onChange} style={{verticalAlign: 'bottom'}} name={name} className="custom-control-input" checked={checked} disabled={disabled} />
-        <label className="form-check-label custom-control-label" id={`heading${categoryId}`} style={{paddingTop: '0.15rem'}} aria-disabled={disabled}>
+        <input
+          id={id}
+          type={inputType}
+          onChange={onChange}
+          style={{ verticalAlign: 'bottom' }}
+          name={name}
+          className="custom-control-input"
+          checked={checked}
+          disabled={disabled}
+        />
+        <label className="form-check-label custom-control-label" id={`heading${categoryId}`} style={{ paddingTop: '0.15rem' }} aria-disabled={disabled}>
           {name ? <div className="font-weight-bold">{itemName}</div> : ''}
           {label}
         </label>
@@ -67,13 +76,13 @@ export const RemixUiCheckbox = ({
         {
           display: display,
           alignItems: 'center',
-          visibility: visibility
+          visibility: visibility,
         } as CSSProperties
       }
       onClick={onClick}
     >
-      <input id={id} type={inputType} onChange={onChange} style={{verticalAlign: 'bottom'}} name={name} className="custom-control-input" checked={checked} />
-      <label className="form-check-label custom-control-label" id={`heading${categoryId}`} style={{paddingTop: '0.15rem'}}>
+      <input id={id} type={inputType} onChange={onChange} style={{ verticalAlign: 'bottom' }} name={name} className="custom-control-input" checked={checked} />
+      <label className="form-check-label custom-control-label" id={`heading${categoryId}`} style={{ paddingTop: '0.15rem' }}>
         {name ? <div className="font-weight-bold">{itemName}</div> : ''}
         {label}
       </label>

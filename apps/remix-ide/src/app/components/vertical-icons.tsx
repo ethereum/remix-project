@@ -1,11 +1,11 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
 import packageJson from '../../../../../package.json'
-import {Plugin} from '@remixproject/engine'
-import {EventEmitter} from 'events'
-import {IconRecord, RemixUiVerticalIconsPanel} from '@remix-ui/vertical-icons-panel'
-import {Profile} from '@remixproject/plugin-utils'
-import {PluginViewWrapper} from '@remix-ui/helper'
+import { Plugin } from '@remixproject/engine'
+import { EventEmitter } from 'events'
+import { IconRecord, RemixUiVerticalIconsPanel } from '@remix-ui/vertical-icons-panel'
+import { Profile } from '@remixproject/plugin-utils'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 const profile = {
   name: 'menuicons',
@@ -13,7 +13,7 @@ const profile = {
   description: 'Remix IDE vertical icons',
   version: packageJson.version,
   methods: ['select', 'unlinkContent', 'linkContent'],
-  events: ['toggleContent', 'showContent']
+  events: ['toggleContent', 'showContent'],
 }
 
 export class VerticalIcons extends Plugin {
@@ -35,7 +35,7 @@ export class VerticalIcons extends Plugin {
       .map((value) => {
         return {
           ...value,
-          isRequired: fixedOrder.indexOf(value.profile.name) > -1
+          isRequired: fixedOrder.indexOf(value.profile.name) > -1,
         }
       })
       .sort((a, b) => {
@@ -52,12 +52,12 @@ export class VerticalIcons extends Plugin {
       ...required,
       ...divived.filter((value) => {
         return !value.isRequired
-      })
+      }),
     ]
 
     this.dispatch({
       verticalIconsPlugin: this,
-      icons: sorted
+      icons: sorted,
     })
   }
 
@@ -83,7 +83,7 @@ export class VerticalIcons extends Plugin {
       profile: profile,
       active: false,
       canbeDeactivated: await this.call('manager', 'canDeactivate', this.profile, profile),
-      timestamp: Date.now()
+      timestamp: Date.now(),
     }
     this.renderComponent()
   }

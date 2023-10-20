@@ -1,9 +1,9 @@
-import React, {useState, useEffect, useReducer} from 'react' // eslint-disable-line
-import {useIntl} from 'react-intl'
-import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-line
-import {DropdownPanelProps, ExtractData, ExtractFunc} from '../../types' // eslint-disable-line
-import {CopyToClipboard} from '@remix-ui/clipboard' // eslint-disable-line
-import {initialState, reducer} from '../../reducers/calldata'
+import React, { useState, useEffect, useReducer } from 'react' // eslint-disable-line
+import { useIntl } from 'react-intl'
+import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
+import { DropdownPanelProps, ExtractData, ExtractFunc } from '../../types' // eslint-disable-line
+import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
+import { initialState, reducer } from '../../reducers/calldata'
 import './styles/dropdown-panel.css'
 
 export const DropdownPanel = (props: DropdownPanelProps) => {
@@ -24,21 +24,21 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     loadMoreCompletedEvent,
     headStyle,
     bodyStyle,
-    hexHighlight
+    hexHighlight,
   } = props
   const extractDataDefault: ExtractFunc = (item, parent?) => {
     const ret: ExtractData = {}
 
     if (item instanceof Array) {
       ret.children = item.map((item, index) => {
-        return {key: index, value: item}
+        return { key: index, value: item }
       })
       ret.self = 'Array'
       ret.isNode = true
       ret.isLeaf = false
     } else if (item instanceof Object) {
       ret.children = Object.keys(item).map((key) => {
-        return {key: key, value: item[key]}
+        return { key: key, value: item[key] }
       })
       ret.self = 'Object'
       ret.isNode = true
@@ -86,32 +86,32 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     header: '',
     toggleDropdown: true,
     message: {
-      innerText: intl.formatMessage({id: 'debugger.noDataAvailable'}),
-      display: 'block'
+      innerText: intl.formatMessage({ id: 'debugger.noDataAvailable' }),
+      display: 'block',
     },
     dropdownContent: {
       innerText: '',
-      display: 'none'
+      display: 'none',
     },
     title: {
       innerText: '',
-      display: 'none'
+      display: 'none',
     },
     copiableContent: '',
     updating: false,
     expandPath: [],
-    data: null
+    data: null,
   })
 
   useEffect(() => {
     registerEvent &&
       registerEvent(loadMoreCompletedEvent, (updatedCalldata) => {
-        dispatch({type: 'UPDATE_CALLDATA_SUCCESS', payload: updatedCalldata})
+        dispatch({ type: 'UPDATE_CALLDATA_SUCCESS', payload: updatedCalldata })
       })
   }, [])
 
   useEffect(() => {
-    dispatch({type: 'FETCH_CALLDATA_SUCCESS', payload: calldata})
+    dispatch({ type: 'FETCH_CALLDATA_SUCCESS', payload: calldata })
   }, [calldata])
 
   useEffect(() => {
@@ -130,7 +130,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     setState((prevState) => {
       return {
         ...prevState,
-        toggleDropdown: !prevState.toggleDropdown
+        toggleDropdown: !prevState.toggleDropdown,
       }
     })
   }
@@ -150,9 +150,9 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
         ...prevState,
         message: {
           innerText: message,
-          display: message ? 'block' : ''
+          display: message ? 'block' : '',
         },
-        updating: false
+        updating: false,
       }
     })
   }
@@ -163,14 +163,14 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
         ...prevState,
         message: {
           innerText: '',
-          display: 'none'
+          display: 'none',
         },
         dropdownContent: {
           ...prevState.dropdownContent,
-          display: 'none'
+          display: 'none',
         },
         copiableContent: '',
-        updating: true
+        updating: true,
       }
     })
   }
@@ -186,17 +186,17 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
         ...prevState,
         dropdownContent: {
           ...prevState.dropdownContent,
-          display: 'block'
+          display: 'block',
         },
         // replace 0xNaN with 0x0
         copiableContent: JSON.stringify(calldata, null, '\t').replace(/0xNaN/g, '0x0'),
         message: {
-          innerText: isEmpty ? intl.formatMessage({id: 'debugger.noDataAvailable'}) : '',
-          display: isEmpty ? 'block' : 'none'
+          innerText: isEmpty ? intl.formatMessage({ id: 'debugger.noDataAvailable' }) : '',
+          display: isEmpty ? 'block' : 'none',
         },
         updating: false,
         toggleDropdown: true,
-        data: calldata
+        data: calldata,
       }
     })
   }
@@ -223,7 +223,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
                 id={'treeViewLoadMore'}
                 data-id={'treeViewLoadMore'}
                 className="cursor_pointer"
-                label={intl.formatMessage({id: 'debugger.loadMore'})}
+                label={intl.formatMessage({ id: 'debugger.loadMore' })}
                 onClick={() => {
                   triggerEvent(loadMoreEvent, [data.cursor])
                 }}
@@ -257,17 +257,17 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
         <span className="nameDetail" onClick={handleToggle}>
           {header}
         </span>
-        <CopyToClipboard tip={intl.formatMessage({id: 'debugger.copy'})} content={state.copiableContent} data-id={`dropdownPanelCopyToClipboard${uniquePanelName}`} />
+        <CopyToClipboard tip={intl.formatMessage({ id: 'debugger.copy' })} content={state.copiableContent} data-id={`dropdownPanelCopyToClipboard${uniquePanelName}`} />
       </div>
-      <div className="dropdownpanel" style={{display: state.toggleDropdown ? 'block' : 'none'}}>
-        <i className="refresh fas fa-sync" style={{display: state.updating ? 'inline-block' : 'none'}} aria-hidden="true"></i>
-        <div className="dropdowncontent pb-2" style={{display: state.dropdownContent.display, ...bodyStyle}}>
+      <div className="dropdownpanel" style={{ display: state.toggleDropdown ? 'block' : 'none' }}>
+        <i className="refresh fas fa-sync" style={{ display: state.updating ? 'inline-block' : 'none' }} aria-hidden="true"></i>
+        <div className="dropdowncontent pb-2" style={{ display: state.dropdownContent.display, ...bodyStyle }}>
           {state.data && <TreeView id="treeView">{Object.keys(state.data).map((innerkey) => renderData(state.data[innerkey], state.data, innerkey, innerkey))}</TreeView>}
         </div>
         <div className="dropdownrawcontent" hidden={true}>
           {state.copiableContent}
         </div>
-        <div className="message" style={{display: state.message.display}}>
+        <div className="message" style={{ display: state.message.display }}>
           {state.message.innerText}
         </div>
       </div>

@@ -1,11 +1,11 @@
-import React, {Fragment, useEffect, useReducer, useRef, useState} from 'react'
-import {Plugin} from '@remixproject/engine'
+import React, { Fragment, useEffect, useReducer, useRef, useState } from 'react'
+import { Plugin } from '@remixproject/engine'
 import './remix-ui-vertical-icons-panel.css'
 import IconList from './components/IconList'
 import Home from './components/Home'
-import {verticalScrollReducer} from './reducers/verticalScrollReducer'
-import {Chevron} from './components/Chevron'
-import {IconRecord} from './types'
+import { verticalScrollReducer } from './reducers/verticalScrollReducer'
+import { Chevron } from './components/Chevron'
+import { IconRecord } from './types'
 export interface RemixUiVerticalIconsPanelProps {
   verticalIconsPlugin: Plugin
   icons: IconRecord[]
@@ -14,10 +14,10 @@ export interface RemixUiVerticalIconsPanelProps {
 const initialState = {
   scrollHeight: 0,
   clientHeight: 0,
-  scrollState: false
+  scrollState: false,
 }
 
-const RemixUiVerticalIconsPanel = ({verticalIconsPlugin, icons}: RemixUiVerticalIconsPanelProps) => {
+const RemixUiVerticalIconsPanel = ({ verticalIconsPlugin, icons }: RemixUiVerticalIconsPanelProps) => {
   const scrollableRef = useRef<any>()
   const iconPanelRef = useRef<any>()
   const [activateScroll, dispatchScrollAction] = useReducer(verticalScrollReducer, initialState)
@@ -29,8 +29,8 @@ const RemixUiVerticalIconsPanel = ({verticalIconsPlugin, icons}: RemixUiVertical
       payload: {
         scrollHeight: scrollableRef.current?.scrollHeight,
         clientHeight: scrollableRef.current?.clientHeight,
-        scrollState: false
-      }
+        scrollState: false,
+      },
     })
   }
 
@@ -71,8 +71,8 @@ const RemixUiVerticalIconsPanel = ({verticalIconsPlugin, icons}: RemixUiVertical
             scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight
               ? 'remixui_default-icons-container remixui_requiredSection'
               : activateScroll && activateScroll.scrollState
-                ? 'remixui_default-icons-container remixui_requiredSection'
-                : 'remixui_requiredSection'
+              ? 'remixui_default-icons-container remixui_requiredSection'
+              : 'remixui_requiredSection'
           }
         >
           <IconList
@@ -91,8 +91,8 @@ const RemixUiVerticalIconsPanel = ({verticalIconsPlugin, icons}: RemixUiVertical
             scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight
               ? 'remixui_default-icons-container remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'
               : activateScroll && activateScroll.scrollState
-                ? 'remixui_default-icons-container remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'
-                : 'remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'
+              ? 'remixui_default-icons-container remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'
+              : 'remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'
           }
           ref={scrollableRef}
         >

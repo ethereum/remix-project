@@ -1,15 +1,15 @@
 import React from 'react' // eslint-disable-line
-import {AbstractPanel} from './panel'
-import {RemixPluginPanel} from '@remix-ui/panel'
+import { AbstractPanel } from './panel'
+import { RemixPluginPanel } from '@remix-ui/panel'
 import packageJson from '../../../../../package.json'
-import {PluginViewWrapper} from '@remix-ui/helper'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 const profile = {
   name: 'mainPanel',
   displayName: 'Main Panel',
   description: 'Remix IDE main panel',
   version: packageJson.version,
-  methods: ['addView', 'removeView', 'showContent']
+  methods: ['addView', 'removeView', 'showContent'],
 }
 
 export class MainPanel extends AbstractPanel {
@@ -54,13 +54,13 @@ export class MainPanel extends AbstractPanel {
 
   renderComponent() {
     this.dispatch({
-      plugins: this.plugins
+      plugins: this.plugins,
     })
   }
 
   render() {
     return (
-      <div style={{height: '100%', width: '100%'}} data-id="mainPanelPluginsContainer">
+      <div style={{ height: '100%', width: '100%' }} data-id="mainPanelPluginsContainer">
         <PluginViewWrapper plugin={this} />
       </div>
     )

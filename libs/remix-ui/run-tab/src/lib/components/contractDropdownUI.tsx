@@ -310,7 +310,13 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
 
   const isValidProxyUpgrade = (proxyAddress: string) => {
     const solcVersion = loadedContractData.metadata ? JSON.parse(loadedContractData.metadata).compiler.version : ''
-    return props.isValidProxyUpgrade(proxyAddress, loadedContractData.contractName || loadedContractData.name, loadedContractData.compiler.source, loadedContractData.compiler.data, solcVersion)
+    return props.isValidProxyUpgrade(
+      proxyAddress,
+      loadedContractData.contractName || loadedContractData.name,
+      loadedContractData.compiler.source,
+      loadedContractData.compiler.data,
+      solcVersion
+    )
   }
 
   const checkSumWarning = () => {

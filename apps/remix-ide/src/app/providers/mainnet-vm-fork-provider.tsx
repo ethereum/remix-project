@@ -1,5 +1,5 @@
 import * as packageJson from '../../../../../package.json'
-import {BasicVMProvider} from './vm-provider'
+import { BasicVMProvider } from './vm-provider'
 
 export class MainnetForkVMProvider extends BasicVMProvider {
   nodeUrl: string
@@ -12,7 +12,7 @@ export class MainnetForkVMProvider extends BasicVMProvider {
         kind: 'provider',
         description: 'Remix VM (London)',
         methods: ['sendAsync', 'init'],
-        version: packageJson.version
+        version: packageJson.version,
       },
       blockchain
     )
@@ -26,7 +26,7 @@ export class MainnetForkVMProvider extends BasicVMProvider {
     return {
       fork: this.fork,
       nodeUrl: this.nodeUrl,
-      blockNumber: this.blockNumber
+      blockNumber: this.blockNumber,
     }
   }
 }

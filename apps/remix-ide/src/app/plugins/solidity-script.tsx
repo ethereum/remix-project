@@ -1,15 +1,15 @@
 import React from 'react' // eslint-disable-line
-import {format} from 'util'
-import {Plugin} from '@remixproject/engine'
-import {compile} from '@remix-project/remix-solidity'
-import {TransactionConfig} from 'web3-core'
+import { format } from 'util'
+import { Plugin } from '@remixproject/engine'
+import { compile } from '@remix-project/remix-solidity'
+import { TransactionConfig } from 'web3-core'
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
 const profile = {
   name: 'solidity-script',
   displayName: 'solidity-script',
   description: 'solidity-script',
-  methods: ['execute']
+  methods: ['execute'],
 }
 
 export class SolidityScript extends Plugin {
@@ -37,7 +37,7 @@ export class SolidityScript extends Plugin {
               ${functionName}();
           }
       }`
-    const targets = {'script.sol': {content}}
+    const targets = { 'script.sol': { content } }
 
     // compile
     const compilation = await compile(targets, params, async (url, cb) => {
@@ -71,13 +71,13 @@ export class SolidityScript extends Plugin {
     // deploy the contract
     let tx: TransactionConfig = {
       from: accounts[0],
-      data: bytecode
+      data: bytecode,
     }
     const receipt = await web3.eth.sendTransaction(tx)
     tx = {
       from: accounts[0],
       to: receipt.contractAddress,
-      data: '0x69d4394b' // function remixRun() public
+      data: '0x69d4394b', // function remixRun() public
     }
     const receiptCall = await web3.eth.sendTransaction(tx)
 

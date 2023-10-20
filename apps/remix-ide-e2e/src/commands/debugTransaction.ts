@@ -26,13 +26,13 @@ function checkStyle(browser: NightwatchBrowser, index: number, callback: VoidFun
     })
     return elementsFound > index
   }, 60000)
-  .execute(function (index: number) {
-    const debugBtn = document.querySelectorAll('*[data-shared="txLoggerDebugButton"]')[index] as HTMLInputElement
+    .execute(function (index: number) {
+      const debugBtn = document.querySelectorAll('*[data-shared="txLoggerDebugButton"]')[index] as HTMLInputElement
 
-    debugBtn && debugBtn.click()
-  }, [index], function () {
-    browser.waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]', 60000).perform(() => callback())
-  })
+      debugBtn && debugBtn.click()
+    }, [index], function () {
+      browser.waitForElementVisible('*[data-id="buttonNavigatorJumpPreviousBreakpoint"]', 60000).perform(() => callback())
+    })
 
 }
 

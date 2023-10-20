@@ -1,8 +1,8 @@
-import {CustomTooltip} from '@remix-ui/helper'
-import React, {useState, useEffect} from 'react' //eslint-disable-line
-import {FormattedMessage} from 'react-intl'
-import {Placement} from 'react-bootstrap/esm/Overlay'
-import {FileExplorerMenuProps} from '../types'
+import { CustomTooltip } from '@remix-ui/helper'
+import React, { useState, useEffect } from 'react' //eslint-disable-line
+import { FormattedMessage } from 'react-intl'
+import { Placement } from 'react-bootstrap/esm/Overlay'
+import { FileExplorerMenuProps } from '../types'
 const _paq = (window._paq = window._paq || [])
 
 export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
@@ -12,38 +12,38 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
         action: 'createNewFile',
         title: 'Create new file',
         icon: 'far fa-file',
-        placement: 'top'
+        placement: 'top',
       },
       {
         action: 'createNewFolder',
         title: 'Create new folder',
         icon: 'far fa-folder',
-        placement: 'top'
+        placement: 'top',
       },
       {
         action: 'publishToGist',
         title: 'Publish current workspace to GitHub gist',
         icon: 'fab fa-github',
-        placement: 'top'
+        placement: 'top',
       },
       {
         action: 'uploadFile',
         title: 'Upload files into current workspace',
         icon: 'far fa-upload',
-        placement: 'top'
+        placement: 'top',
       },
       {
         action: 'uploadFolder',
         title: 'Upload folder into current workspace',
         icon: 'far fa-folder-upload',
-        placement: 'top'
+        placement: 'top',
       },
       {
         action: 'updateGist',
         title: 'Update the current [gist] explorer',
         icon: 'fab fa-github',
-        placement: 'bottom-start'
-      }
+        placement: 'bottom-start',
+      },
     ].filter(
       (item) =>
         props.menuItems &&
@@ -51,24 +51,24 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
           return name === item.action
         })
     ),
-    actions: {}
+    actions: {},
   })
-  const enableDirUpload = {directory: '', webkitdirectory: ''}
+  const enableDirUpload = { directory: '', webkitdirectory: '' }
 
   useEffect(() => {
     const actions = {
-      updateGist: () => {}
+      updateGist: () => {},
     }
 
     setState((prevState) => {
-      return {...prevState, actions}
+      return { ...prevState, actions }
     })
   }, [])
 
   return (
     <>
       <span data-id="spanContaining" className="pl-0 pb-1 w-50">
-        {state.menuItems.map(({action, title, icon, placement}, index) => {
+        {state.menuItems.map(({ action, title, icon, placement }, index) => {
           if (action === 'uploadFile') {
             return (
               <CustomTooltip
@@ -80,7 +80,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
               >
                 <label
                   id={action}
-                  style={{fontSize: '1.1rem', cursor: 'pointer'}}
+                  style={{ fontSize: '1.1rem', cursor: 'pointer' }}
                   data-id={'fileExplorerUploadFile' + action}
                   className={icon + ' mx-1 remixui_menuItem'}
                   key={`index-${action}-${placement}-${icon}`}
@@ -111,7 +111,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
               >
                 <label
                   id={action}
-                  style={{fontSize: '1.1rem', cursor: 'pointer'}}
+                  style={{ fontSize: '1.1rem', cursor: 'pointer' }}
                   data-id={'fileExplorerUploadFolder' + action}
                   className={icon + ' mx-1 remixui_menuItem'}
                   key={`index-${action}-${placement}-${icon}`}
@@ -143,7 +143,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
               >
                 <label
                   id={action}
-                  style={{fontSize: '1.1rem', cursor: 'pointer'}}
+                  style={{ fontSize: '1.1rem', cursor: 'pointer' }}
                   data-id={'fileExplorerNewFile' + action}
                   onClick={(e) => {
                     e.stopPropagation()

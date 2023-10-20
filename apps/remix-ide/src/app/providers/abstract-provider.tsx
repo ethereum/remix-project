@@ -1,7 +1,7 @@
-import {Plugin} from '@remixproject/engine'
-import {AppModal, AlertModal, ModalTypes} from '@remix-ui/app'
-import {Blockchain} from '../../blockchain/blockchain'
-import {ethers} from 'ethers'
+import { Plugin } from '@remixproject/engine'
+import { AppModal, AlertModal, ModalTypes } from '@remix-ui/app'
+import { Blockchain } from '../../blockchain/blockchain'
+import { ethers } from 'ethers'
 
 export type JsonDataRequest = {
   id: number
@@ -22,8 +22,8 @@ export type RejectRequest = (error: Error) => void
 export type SuccessRequest = (data: JsonDataResult) => void
 
 export interface IProvider {
-  options: {[id: string]: any}
-  init(): Promise<{[id: string]: any}>
+  options: { [id: string]: any }
+  init(): Promise<{ [id: string]: any }>
   body(): JSX.Element
   sendAsync(data: JsonDataRequest): Promise<JsonDataResult>
 }
@@ -34,7 +34,7 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
   defaultUrl: string
   connected: boolean
   nodeUrl: string
-  options: {[id: string]: any} = {}
+  options: { [id: string]: any } = {}
 
   constructor(profile, blockchain, defaultUrl) {
     super(profile)
@@ -62,16 +62,16 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
           okLabel: 'OK',
           cancelLabel: 'Cancel',
           validationFn: (value) => {
-            if (!value) return {valid: false, message: 'value is empty'}
+            if (!value) return { valid: false, message: 'value is empty' }
             if (value.startsWith('https://') || value.startsWith('http://')) {
               return {
                 valid: true,
-                message: ''
+                message: '',
               }
             } else {
               return {
                 valid: false,
-                message: 'the provided value should contain the protocol ( e.g starts with http:// or https:// )'
+                message: 'the provided value should contain the protocol ( e.g starts with http:// or https:// )',
               }
             }
           },
@@ -84,14 +84,14 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
           hideFn: () => {
             setTimeout(() => reject(new Error('Hide')), 0)
           },
-          defaultValue: this.defaultUrl
+          defaultValue: this.defaultUrl,
         }
         this.call('notification', 'modal', modalContent)
       })
     })()
     this.provider = new ethers.providers.JsonRpcProvider(this.nodeUrl)
     return {
-      nodeUrl: this.nodeUrl
+      nodeUrl: this.nodeUrl,
     }
   }
 
@@ -111,11 +111,11 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
       const modalContent: AlertModal = {
         id: this.profile.name,
         title: this.profile.displayName,
-        message: `Error while connecting to the provider, provider not connected`
+        message: `Error while connecting to the provider, provider not connected`,
       }
       this.call('notification', 'alert', modalContent)
     }
-    await this.call('udapp', 'setEnvironmentMode', {context: 'vm-merge'})
+    await this.call('udapp', 'setEnvironmentMode', { context: 'vm-merge' })
     return
   }
 
@@ -123,7 +123,7 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
     if (this.provider) {
       try {
         const result = await this.provider.send(data.method, data.params)
-        resolve({jsonrpc: '2.0', result, id: data.id})
+        resolve({ jsonrpc: '2.0', result, id: data.id })
       } catch (error) {
         if (error && error.message && error.message.includes('net_version') && error.message.includes('SERVER_ERROR')) {
           this.switchAway(true)
@@ -132,7 +132,7 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
       }
     } else {
       const result = data.method === 'net_listening' ? 'canceled' : []
-      resolve({jsonrpc: '2.0', result: result, id: data.id})
+      resolve({ jsonrpc: '2.0', result: result, id: data.id })
     }
   }
 }

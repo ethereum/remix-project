@@ -1,4 +1,4 @@
-const {composePlugins, withNx} = require('@nrwl/webpack')
+const { composePlugins, withNx } = require('@nrwl/webpack')
 const webpack = require('webpack')
 const TerserPlugin = require('terser-webpack-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
@@ -26,13 +26,13 @@ module.exports = composePlugins(withNx(), (config) => {
     readline: false,
     child_process: false,
     buffer: require.resolve('buffer/'),
-    vm: require.resolve('vm-browserify')
+    vm: require.resolve('vm-browserify'),
   }
 
   // add externals
   config.externals = {
     ...config.externals,
-    solc: 'solc'
+    solc: 'solc',
   }
 
   // add public path
@@ -43,14 +43,14 @@ module.exports = composePlugins(withNx(), (config) => {
     new webpack.ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
       url: ['url', 'URL'],
-      process: 'process/browser'
+      process: 'process/browser',
     })
   )
 
   // set the define plugin to load the WALLET_CONNECT_PROJECT_ID
   config.plugins.push(
     new webpack.DefinePlugin({
-      WALLET_CONNECT_PROJECT_ID: JSON.stringify(process.env.WALLET_CONNECT_PROJECT_ID)
+      WALLET_CONNECT_PROJECT_ID: JSON.stringify(process.env.WALLET_CONNECT_PROJECT_ID),
     })
   )
 
@@ -58,7 +58,7 @@ module.exports = composePlugins(withNx(), (config) => {
   config.module.rules.push({
     test: /\.js$/,
     use: ['source-map-loader'],
-    enforce: 'pre'
+    enforce: 'pre',
   })
 
   config.ignoreWarnings = [/Failed to parse source map/] // ignore source-map-loader warnings
@@ -72,16 +72,16 @@ module.exports = composePlugins(withNx(), (config) => {
         compress: false,
         mangle: false,
         format: {
-          comments: false
-        }
+          comments: false,
+        },
       },
-      extractComments: false
+      extractComments: false,
     }),
-    new CssMinimizerPlugin()
+    new CssMinimizerPlugin(),
   ]
 
   config.watchOptions = {
-    ignored: /node_modules/
+    ignored: /node_modules/,
   }
 
   return config

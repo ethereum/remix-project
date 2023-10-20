@@ -39,9 +39,9 @@ module.exports = {
       })
       .click('*[data-id="deployAndRunClearInstances"]')
 
-    },
-    'Save scenario #group1': function (browser: NightwatchBrowser) {
-      browser.testContracts('testRecorder.sol', sources[0]['testRecorder.sol'], ['testRecorder'])
+  },
+  'Save scenario #group1': function (browser: NightwatchBrowser) {
+    browser.testContracts('testRecorder.sol', sources[0]['testRecorder.sol'], ['testRecorder'])
       .clickLaunchIcon('udapp')
       .createContract('12')
       .clickInstance(0)
@@ -150,10 +150,10 @@ const sources = [{
   'testRecorder.sol': {
     content: `contract testRecorder {
   constructor(uint p) public {
-      
+
   }
   function set (uint _p) public {
-          
+
   }
 }`
   }
@@ -167,7 +167,7 @@ const sources = [{
       t = new t2est();
       t.set2(34);
   }
-  
+
   function set(uint _p) public {
       p = _p;
       t.set2(12);
@@ -201,7 +201,7 @@ const records = `{
         "contractName": "testLib",
         "bytecode": "60606040523415600e57600080fd5b60968061001c6000396000f300606060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680636d4ce63c146044575b600080fd5b604a6060565b6040518082815260200191505060405180910390f35b6000610d809050905600a165627a7a7230582022d123b15248b8176151f8d45c2dc132063bcc9bb8d5cd652aea7efae362c8050029",
         "linkReferences": {},
-        "inputs": "()",  
+        "inputs": "()",
         "type": "constructor",
         "from": "account{10}"
       }
@@ -492,7 +492,7 @@ contract Storage {
     }
 
     /**
-     * @dev Return value 
+     * @dev Return value
      * @return value of 'number'
      */
     function retrieve() public view returns (uint256){

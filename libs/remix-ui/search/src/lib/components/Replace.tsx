@@ -1,9 +1,9 @@
-import React, {useContext, useRef} from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {SearchContext} from '../context/context'
+import React, { useContext, useRef } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { SearchContext } from '../context/context'
 
 export const Replace = (props) => {
-  const {setReplace} = useContext(SearchContext)
+  const { setReplace } = useContext(SearchContext)
   const timeOutId = useRef(null)
   const change = (e) => {
     clearTimeout(timeOutId.current)
@@ -18,7 +18,7 @@ export const Replace = (props) => {
         <label className="d-none">
           <FormattedMessage id="search.replaceInFiles" />
         </label>
-        <input id="search_replace" placeholder={intl.formatMessage({id: 'search.replace'})} className="form-control" onChange={change}></input>
+        <input id="search_replace" placeholder={intl.formatMessage({ id: 'search.replace' })} className="form-control" onChange={change}></input>
       </div>
     </>
   )

@@ -1,20 +1,20 @@
 import React from 'react'
 
-import {Navigate} from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 
-import {AppContext} from '../AppContext'
-import {Receipt} from '../types'
+import { AppContext } from '../AppContext'
+import { Receipt } from '../types'
 
-import {VerifyView} from './VerifyView'
+import { VerifyView } from './VerifyView'
 
 export const HomeView: React.FC = () => {
   return (
     <AppContext.Consumer>
-      {({apiKey, clientInstance, setReceipts, receipts, contracts}) => {
+      {({ apiKey, clientInstance, setReceipts, receipts, contracts }) => {
         return !apiKey ? (
           <Navigate
             to={{
-              pathname: '/settings'
+              pathname: '/settings',
             }}
           />
         ) : (

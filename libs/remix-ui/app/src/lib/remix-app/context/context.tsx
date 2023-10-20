@@ -1,6 +1,6 @@
 import React from 'react'
-import {AlertModal, AppModal} from '../interface'
-import {ModalInitialState} from '../state/modals'
+import { AlertModal, AppModal } from '../interface'
+import { ModalInitialState } from '../state/modals'
 
 export const AppContext = React.createContext<any>(null)
 
@@ -17,7 +17,7 @@ export const dispatchModalContext = React.createContext<dispatchModalInterface>(
   toast: (message: string | JSX.Element) => {},
   alert: (data: AlertModal) => {},
   handleHideModal: () => {},
-  handleToaster: () => {}
+  handleToaster: () => {},
 })
 
 export const modalContext = React.createContext(ModalInitialState)

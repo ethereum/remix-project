@@ -1,7 +1,7 @@
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
-import {FormattedMessage} from 'react-intl'
-import {AbstractProvider} from './abstract-provider'
+import { FormattedMessage } from 'react-intl'
+import { AbstractProvider } from './abstract-provider'
 
 const profile = {
   name: 'ganache-provider',
@@ -9,7 +9,7 @@ const profile = {
   kind: 'provider',
   description: 'Truffle Ganache provider',
   methods: ['sendAsync', 'init'],
-  version: packageJson.version
+  version: packageJson.version,
 }
 
 export class GanacheProvider extends AbstractProvider {
@@ -36,7 +36,7 @@ export class GanacheProvider extends AbstractProvider {
                 <a href="https://github.com/trufflesuite/ganache" target="_blank">
                   {chunks}
                 </a>
-              )
+              ),
             }}
           />
         </div>

@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
-import React, {useRef, useState, useEffect} from 'react' // eslint-disable-line
+import React, { useRef, useState, useEffect } from 'react' // eslint-disable-line
 import isElectron from 'is-electron'
-import {WebsocketPlugin} from '@remixproject/engine-web'
+import { WebsocketPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import {version as remixdVersion} from '../../../../../libs/remixd/package.json'
-import {PluginManager} from '@remixproject/engine'
-import {AppModal, AlertModal} from '@remix-ui/app'
+import { version as remixdVersion } from '../../../../../libs/remixd/package.json'
+import { PluginManager } from '@remixproject/engine'
+import { AppModal, AlertModal } from '@remix-ui/app'
 
 const LOCALHOST = ' - connect to localhost - '
 
@@ -22,7 +22,7 @@ const profile = {
   repo: 'https://github.com/ethereum/remix-project/tree/master/libs/remixd',
   maintainedBy: 'Remix',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/remixd.html',
-  authorContact: ''
+  authorContact: '',
 }
 
 export class RemixdHandle extends WebsocketPlugin {
@@ -84,7 +84,7 @@ export class RemixdHandle extends WebsocketPlugin {
         console.log(error)
         const alert: AlertModal = {
           id: 'connectionAlert',
-          message: 'Cannot connect to the remixd daemon. Please make sure you have the remixd running in the background.'
+          message: 'Cannot connect to the remixd daemon. Please make sure you have the remixd running in the background.',
         }
         this.call('notification', 'alert', alert)
         this.canceled()
@@ -95,14 +95,14 @@ export class RemixdHandle extends WebsocketPlugin {
             clearInterval(intervalId)
             const alert: AlertModal = {
               id: 'connectionAlert',
-              message: 'Connection to remixd terminated. Please make sure remixd is still running in the background.'
+              message: 'Connection to remixd terminated. Please make sure remixd is still running in the background.',
             }
             this.call('notification', 'alert', alert)
             this.canceled()
           }
         }, 3000)
         this.localhostProvider.init(() => {
-          this.call('filePanel', 'setWorkspace', {name: LOCALHOST, isLocalhost: true}, true)
+          this.call('filePanel', 'setWorkspace', { name: LOCALHOST, isLocalhost: true }, true)
         })
         for (const plugin of this.dependentPlugins) {
           await this.appManager.activatePlugin(plugin)
@@ -118,7 +118,7 @@ export class RemixdHandle extends WebsocketPlugin {
         title: 'Access file system using remixd',
         message: remixdDialog(),
         okLabel: 'Connect',
-        cancelLabel: 'Cancel'
+        cancelLabel: 'Cancel',
       }
       const result = await this.call('notification', 'modal', mod)
       if (result) {

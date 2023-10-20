@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react'
-import {DocViewer} from './docviewer'
+import React, { useEffect, useState } from 'react'
+import { DocViewer } from './docviewer'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 

@@ -60,9 +60,9 @@ module.exports = {
       .selectContract('MyToken')
       .createContract('')
       .testFunction('last',
-      {
-        status: 'true Transaction mined and execution succeed',
-        'decoded input': {}
-      }).end()
+        {
+          status: 'true Transaction mined and execution succeed',
+          'decoded input': {}
+        }).end()
   }
 }

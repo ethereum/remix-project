@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react'
-import {ErrorRendererOptions} from '../../staticanalyser'
+import React, { useEffect, useState } from 'react'
+import { ErrorRendererOptions } from '../../staticanalyser'
 
 type BasicTitleProps = {
   warningStateEntries: any
@@ -28,7 +28,7 @@ export function calculateWarningStateEntries(entries: [string, any][]) {
   entries.forEach((entry) => {
     errors = entry[1].filter((x) => x.options.type === 'error')
   })
-  return {length: warninglength, errors}
+  return { length: warninglength, errors }
 }
 
 export function BasicTitle(props: BasicTitleProps) {
@@ -50,8 +50,8 @@ export function BasicTitle(props: BasicTitleProps) {
                 props.ssaWarnings.filter((x) => x.hasWarning).length > 0
                   ? 'badge-warning'
                   : props.ssaWarnings.filter((x) => x.options.type === 'errors').length > 0
-                    ? 'badge-danger'
-                    : 'badge-info'
+                  ? 'badge-danger'
+                  : 'badge-info'
               } badge-pill mx-1 ml-1 text-center`}
             >
               {filteredTotal}
@@ -63,8 +63,8 @@ export function BasicTitle(props: BasicTitleProps) {
                 props.ssaWarnings.filter((x) => x.options.type !== 'warning' && x.options.type !== 'error').length > 0
                   ? 'badge-info'
                   : props.ssaWarnings.filter((x) => x.options.type === 'errors').length > 0
-                    ? 'badge-danger'
-                    : 'badge-warning'
+                  ? 'badge-danger'
+                  : 'badge-warning'
               } badge-pill mx-1 ml-1 text-center`}
             >
               {props.ssaWarnings.length}

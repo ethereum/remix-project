@@ -1,6 +1,6 @@
-import {CustomTooltip} from '@remix-ui/helper'
-import React, {useState, useEffect} from 'react' // eslint-disable-line
-import {useIntl} from 'react-intl'
+import { CustomTooltip } from '@remix-ui/helper'
+import React, { useState, useEffect } from 'react' // eslint-disable-line
+import { useIntl } from 'react-intl'
 import './button-navigator.css'
 
 export const ButtonNavigation = ({
@@ -14,7 +14,7 @@ export const ButtonNavigation = ({
   jumpToException,
   revertedReason,
   stepState,
-  jumpOutDisabled
+  jumpOutDisabled,
 }) => {
   const intl = useIntl()
   const [state, setState] = useState({
@@ -24,7 +24,7 @@ export const ButtonNavigation = ({
     overForwardDisabled: true,
     jumpOutDisabled: true,
     jumpNextBreakpointDisabled: true,
-    jumpPreviousBreakpointDisabled: true
+    jumpPreviousBreakpointDisabled: true,
   })
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export const ButtonNavigation = ({
         overForwardDisabled: true,
         jumpOutDisabled: true,
         jumpNextBreakpointDisabled: true,
-        jumpPreviousBreakpointDisabled: true
+        jumpPreviousBreakpointDisabled: true,
       }
     })
   }
@@ -60,7 +60,7 @@ export const ButtonNavigation = ({
         intoForwardDisabled: stepState === 'end',
         overForwardDisabled: stepState === 'end',
         jumpNextBreakpointDisabled: stepState === 'end',
-        jumpOutDisabled: jumpOutDisabled !== null && jumpOutDisabled !== undefined ? jumpOutDisabled : true
+        jumpOutDisabled: jumpOutDisabled !== null && jumpOutDisabled !== undefined ? jumpOutDisabled : true,
       }
     })
   }
@@ -82,7 +82,7 @@ export const ButtonNavigation = ({
               stepOverBack && stepOverBack()
             }}
             disabled={state.overBackDisabled}
-            style={{pointerEvents: 'none', color: 'white'}}
+            style={{ pointerEvents: 'none', color: 'white' }}
           >
             <span className="fas fa-reply"></span>
           </button>
@@ -90,7 +90,7 @@ export const ButtonNavigation = ({
       ),
       placement: 'top-start',
       tagId: 'overbackTooltip',
-      tooltipMsg: intl.formatMessage({id: 'debugger.stepOverBack'})
+      tooltipMsg: intl.formatMessage({ id: 'debugger.stepOverBack' }),
     },
     stepBackJSX: {
       markup: (
@@ -110,7 +110,7 @@ export const ButtonNavigation = ({
               stepIntoBack && stepIntoBack()
             }}
             disabled={state.intoBackDisabled}
-            style={{pointerEvents: 'none', color: 'white'}}
+            style={{ pointerEvents: 'none', color: 'white' }}
           >
             <span className="fas fa-level-up-alt"></span>
           </button>
@@ -118,7 +118,7 @@ export const ButtonNavigation = ({
       ),
       placement: 'top-start',
       tagId: 'intobackTooltip',
-      tooltipMsg: intl.formatMessage({id: 'debugger.stepBack'})
+      tooltipMsg: intl.formatMessage({ id: 'debugger.stepBack' }),
     },
 
     stepIntoJSX: {
@@ -139,7 +139,7 @@ export const ButtonNavigation = ({
               stepIntoForward && stepIntoForward()
             }}
             disabled={state.intoForwardDisabled}
-            style={{pointerEvents: 'none', color: 'white'}}
+            style={{ pointerEvents: 'none', color: 'white' }}
           >
             <span className="fas fa-level-down-alt"></span>
           </button>
@@ -147,7 +147,7 @@ export const ButtonNavigation = ({
       ),
       placement: 'top-start',
       tagId: 'intoforwardTooltip',
-      tooltipMsg: intl.formatMessage({id: 'debugger.stepInto'})
+      tooltipMsg: intl.formatMessage({ id: 'debugger.stepInto' }),
     },
     stepOverForwardJSX: {
       markup: (
@@ -166,7 +166,7 @@ export const ButtonNavigation = ({
               stepOverForward && stepOverForward()
             }}
             disabled={state.overForwardDisabled}
-            style={{pointerEvents: 'none', color: 'white'}}
+            style={{ pointerEvents: 'none', color: 'white' }}
           >
             <span className="fas fa-share"></span>
           </button>
@@ -174,8 +174,8 @@ export const ButtonNavigation = ({
       ),
       placement: 'top-end',
       tagId: 'overbackTooltip',
-      tooltipMsg: intl.formatMessage({id: 'debugger.stepOverForward'})
-    }
+      tooltipMsg: intl.formatMessage({ id: 'debugger.stepOverForward' }),
+    },
   }
   const jumpMarkupStructure = {
     jumpPreviousBreakpointJSX: {
@@ -199,7 +199,7 @@ export const ButtonNavigation = ({
             style={{
               pointerEvents: 'none',
               backgroundColor: 'inherit',
-              color: 'white'
+              color: 'white',
             }}
           >
             <span className="fas fa-step-backward"></span>
@@ -208,7 +208,7 @@ export const ButtonNavigation = ({
       ),
       placement: 'bottom-start',
       tagId: 'jumppreviousbreakpointTooltip',
-      tooltipMsg: intl.formatMessage({id: 'debugger.jumpPreviousBreakpoint'})
+      tooltipMsg: intl.formatMessage({ id: 'debugger.jumpPreviousBreakpoint' }),
     },
     jumpOutJSX: {
       markup: (
@@ -230,7 +230,7 @@ export const ButtonNavigation = ({
             style={{
               pointerEvents: 'none',
               backgroundColor: 'inherit',
-              color: 'white'
+              color: 'white',
             }}
             data-id="buttonNavigatorJumpOut"
           >
@@ -240,7 +240,7 @@ export const ButtonNavigation = ({
       ),
       placement: 'bottom-end',
       tagId: 'jumpoutTooltip',
-      tooltipMsg: intl.formatMessage({id: 'debugger.jumpOut'})
+      tooltipMsg: intl.formatMessage({ id: 'debugger.jumpOut' }),
     },
     jumpNextBreakpointJSX: {
       markup: (
@@ -260,7 +260,7 @@ export const ButtonNavigation = ({
               jumpNextBreakpoint && jumpNextBreakpoint()
             }}
             disabled={state.jumpNextBreakpointDisabled}
-            style={{pointerEvents: 'none', color: 'white'}}
+            style={{ pointerEvents: 'none', color: 'white' }}
           >
             <span className="fas fa-step-forward"></span>
           </button>
@@ -268,8 +268,8 @@ export const ButtonNavigation = ({
       ),
       placement: 'bottom-end',
       tagId: 'jumpnextbreakpointTooltip',
-      tooltipMsg: intl.formatMessage({id: 'debugger.jumpNextBreakpoint'})
-    }
+      tooltipMsg: intl.formatMessage({ id: 'debugger.jumpNextBreakpoint' }),
+    },
   }
 
   return (
@@ -299,16 +299,16 @@ export const ButtonNavigation = ({
           </CustomTooltip>
         ))}
       </div>
-      <div id="reverted" style={{display: revertedReason === '' ? 'none' : 'block'}}>
+      <div id="reverted" style={{ display: revertedReason === '' ? 'none' : 'block' }}>
         <span className="text-warning">This call has reverted, state changes made during the call will be reverted.</span>
-        <span className="text-warning" id="outofgas" style={{display: revertedReason === 'outofgas' ? 'inline' : 'none'}}>
+        <span className="text-warning" id="outofgas" style={{ display: revertedReason === 'outofgas' ? 'inline' : 'none' }}>
           This call will run out of gas.
         </span>
         <span
           className="text-warning"
           id="parenthasthrown"
           style={{
-            display: revertedReason === 'parenthasthrown' ? 'inline' : 'none'
+            display: revertedReason === 'parenthasthrown' ? 'inline' : 'none',
           }}
         >
           The parent call will throw an exception

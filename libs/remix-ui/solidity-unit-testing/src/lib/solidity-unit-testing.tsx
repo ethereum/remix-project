@@ -858,12 +858,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             checked={checkSelectAll}
             onChange={() => {}} // eslint-disable-line
           />
-          <label 
-            data-id="testTabCheckAllTests"
-            htmlFor="checkAllTests"
-            className="form-check-label mb-0 ml-4 custom-control-label text-nowrap"
-            style={{ paddingTop: '0.125rem' }}
-          >
+          <label data-id="testTabCheckAllTests" htmlFor="checkAllTests" className="form-check-label mb-0 ml-4 custom-control-label text-nowrap" style={{ paddingTop: '0.125rem' }}>
             {' '}
             <FormattedMessage id="solidityUnitTesting.selectAll" />{' '}
           </label>
@@ -871,28 +866,28 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
         <div className="testList ml-1 pr-2 mt-0 border-bottom py-2">
           {testFiles.length
             ? testFiles.map((testFileObj: TestObject, index) => {
-              const elemId = `singleTest${testFileObj.fileName}`
-              return (
-                <div className="d-flex align-items-center pl-1 custom-control custom-checkbox" key={index}>
-                  <input
-                    className="singleTest custom-control-input"
-                    id={elemId}
-                    onChange={(e) => toggleCheckbox(e.target.checked, index)}
-                    type="checkbox"
-                    checked={testFileObj.checked}
-                  />
-                  <label
-                    data-id="singleTest"
-                    id={"id" + elemId}
-                    className="singleTestLabel text-nowrap mb-0 form-check-label ml-4 custom-control-label text-nowrap"
-                    htmlFor={elemId}
-                    style={{ paddingTop: '0.125rem' }}
-                  >
-                    {testFileObj.fileName}
-                  </label>
-                </div>
-              )
-            })
+                const elemId = `singleTest${testFileObj.fileName}`
+                return (
+                  <div className="d-flex align-items-center pl-1 custom-control custom-checkbox" key={index}>
+                    <input
+                      className="singleTest custom-control-input"
+                      id={elemId}
+                      onChange={(e) => toggleCheckbox(e.target.checked, index)}
+                      type="checkbox"
+                      checked={testFileObj.checked}
+                    />
+                    <label
+                      data-id="singleTest"
+                      id={'id' + elemId}
+                      className="singleTestLabel text-nowrap mb-0 form-check-label ml-4 custom-control-label text-nowrap"
+                      htmlFor={elemId}
+                      style={{ paddingTop: '0.125rem' }}
+                    >
+                      {testFileObj.fileName}
+                    </label>
+                  </div>
+                )
+              })
             : 'No test file available'}{' '}
         </div>
         <div className="align-items-start flex-column mt-2 mx-3 mb-0">

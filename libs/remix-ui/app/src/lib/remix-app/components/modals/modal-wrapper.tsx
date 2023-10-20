@@ -1,6 +1,6 @@
-import React, {useEffect, useRef, useState} from 'react'
-import {ModalDialog, ModalDialogProps, ValidationResult} from '@remix-ui/modal-dialog'
-import {ModalTypes} from '../../types'
+import React, { useEffect, useRef, useState } from 'react'
+import { ModalDialog, ModalDialogProps, ValidationResult } from '@remix-ui/modal-dialog'
+import { ModalTypes } from '../../types'
 
 interface ModalWrapperProps extends ModalDialogProps {
   modalType?: ModalTypes
@@ -32,9 +32,9 @@ const ModalWrapper = (props: ModalWrapperProps) => {
     } else if (ref.current) {
       props.okFn
         ? // @ts-ignore: Object is possibly 'null'.
-        props.okFn(ref.current.value)
+          props.okFn(ref.current.value)
         : // @ts-ignore: Object is possibly 'null'.
-        props.resolve(ref.current.value)
+          props.resolve(ref.current.value)
     }
   }
 
@@ -53,7 +53,7 @@ const ModalWrapper = (props: ModalWrapperProps) => {
         return {
           ...prevState,
           message: createModalMessage(props.defaultValue, validation),
-          validation
+          validation,
         }
       })
     }
@@ -80,7 +80,7 @@ const ModalWrapper = (props: ModalWrapperProps) => {
     if (props.validationFn) {
       const validation = props.validationFn(getFormData())
       setState((prevState) => {
-        return {...prevState, message: createForm(validation), validation}
+        return { ...prevState, message: createForm(validation), validation }
       })
     }
   }
@@ -100,36 +100,36 @@ const ModalWrapper = (props: ModalWrapperProps) => {
     data.current = props.data
     if (props.modalType) {
       switch (props.modalType) {
-      case ModalTypes.prompt:
-      case ModalTypes.password:
-        setState({
-          ...props,
-          okFn: onFinishPrompt,
-          cancelFn: onCancelFn,
-          message: createModalMessage(props.defaultValue, {valid: true})
-        })
-        break
-      case ModalTypes.form:
-        setState({
-          ...props,
-          okFn: onFinishPrompt,
-          cancelFn: onCancelFn,
-          message: createForm({valid: true})
-        })
-        break
-      default:
-        setState({
-          ...props,
-          okFn: onOkFn,
-          cancelFn: onCancelFn
-        })
-        break
+        case ModalTypes.prompt:
+        case ModalTypes.password:
+          setState({
+            ...props,
+            okFn: onFinishPrompt,
+            cancelFn: onCancelFn,
+            message: createModalMessage(props.defaultValue, { valid: true }),
+          })
+          break
+        case ModalTypes.form:
+          setState({
+            ...props,
+            okFn: onFinishPrompt,
+            cancelFn: onCancelFn,
+            message: createForm({ valid: true }),
+          })
+          break
+        default:
+          setState({
+            ...props,
+            okFn: onOkFn,
+            cancelFn: onCancelFn,
+          })
+          break
       }
     } else {
       setState({
         ...props,
         okFn: onOkFn,
-        cancelFn: onCancelFn
+        cancelFn: onCancelFn,
       })
     }
   }, [props])
@@ -137,7 +137,7 @@ const ModalWrapper = (props: ModalWrapperProps) => {
   // reset the message and input if any, so when the modal is shown again it doesn't show the previous value.
   const handleHide = () => {
     setState((prevState) => {
-      return {...prevState, message: ''}
+      return { ...prevState, message: '' }
     })
     props.handleHide()
   }

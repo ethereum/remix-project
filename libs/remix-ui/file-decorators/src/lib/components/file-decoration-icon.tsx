@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 
-import {fileDecoration, fileDecorationType, FileType} from '../types'
+import { fileDecoration, fileDecorationType, FileType } from '../types'
 import FileDecorationCustomIcon from './filedecorationicons/file-decoration-custom-icon'
 import FileDecorationErrorIcon from './filedecorationicons/file-decoration-error-icon'
 import FileDecorationTooltip from './filedecorationicons/file-decoration-tooltip'
@@ -26,15 +26,15 @@ export const FileDecorationIcons = (props: fileDecorationProps) => {
 
       for (const [index, state] of states.entries()) {
         switch (state.fileStateType) {
-        case fileDecorationType.Error:
-          elements.push(<FileDecorationTooltip key={index} index={index} fileDecoration={state} icon={<FileDecorationErrorIcon fileDecoration={state} key={index} />} />)
-          break
-        case fileDecorationType.Warning:
-          elements.push(<FileDecorationTooltip key={index} index={index} fileDecoration={state} icon={<FileDecorationWarningIcon fileDecoration={state} key={index} />} />)
-          break
-        case fileDecorationType.Custom:
-          elements.push(<FileDecorationTooltip key={index} index={index} fileDecoration={state} icon={<FileDecorationCustomIcon fileDecoration={state} key={index} />} />)
-          break
+          case fileDecorationType.Error:
+            elements.push(<FileDecorationTooltip key={index} index={index} fileDecoration={state} icon={<FileDecorationErrorIcon fileDecoration={state} key={index} />} />)
+            break
+          case fileDecorationType.Warning:
+            elements.push(<FileDecorationTooltip key={index} index={index} fileDecoration={state} icon={<FileDecorationWarningIcon fileDecoration={state} key={index} />} />)
+            break
+          case fileDecorationType.Custom:
+            elements.push(<FileDecorationTooltip key={index} index={index} fileDecoration={state} icon={<FileDecorationCustomIcon fileDecoration={state} key={index} />} />)
+            break
         }
       }
       return elements

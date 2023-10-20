@@ -1,9 +1,9 @@
 // eslint-disable-next-line no-use-before-define
-import {fileDecoration} from '@remix-ui/file-decorators'
-import {CustomTooltip} from '@remix-ui/helper'
-import {FormattedMessage} from 'react-intl'
-import React, {useEffect, useRef, useState} from 'react'
-import {FileType} from '../types'
+import { fileDecoration } from '@remix-ui/file-decorators'
+import { CustomTooltip } from '@remix-ui/helper'
+import { FormattedMessage } from 'react-intl'
+import React, { useEffect, useRef, useState } from 'react'
+import { FileType } from '../types'
 export interface FileLabelProps {
   file: FileType
   focusEdit: {
@@ -17,7 +17,7 @@ export interface FileLabelProps {
 }
 
 export const FileLabel = (props: FileLabelProps) => {
-  const {file, focusEdit, editModeOff, fileDecorations} = props
+  const { file, focusEdit, editModeOff, fileDecorations } = props
   const [isEditable, setIsEditable] = useState<boolean>(false)
   const [fileStateClasses, setFileStateClasses] = useState<string>('')
   const labelRef = useRef(null)
@@ -78,13 +78,7 @@ export const FileLabel = (props: FileLabelProps) => {
       onKeyDown={handleEditInput}
       onBlur={handleEditBlur}
     >
-      <CustomTooltip
-        placement="top"
-        delay={{show: 1000, hide: 0}}
-        tooltipText={`${file.path}`}
-        tooltipId={`fileExplorer.${file.path}`}
-        tooltipClasses="text-nowrap"
-      >
+      <CustomTooltip placement="top" delay={{ show: 1000, hide: 0 }} tooltipText={`${file.path}`} tooltipId={`fileExplorer.${file.path}`} tooltipClasses="text-nowrap">
         <span className={`remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder' : 'remixui_leaf')} data-path={file.path}>
           {file.name}
         </span>

@@ -1,9 +1,9 @@
-import {fileDecoration, FileDecorationIcons} from '@remix-ui/file-decorators'
-import {CustomTooltip} from '@remix-ui/helper'
-import {Plugin} from '@remixproject/engine'
-import React, {useState, useRef, useEffect, useReducer} from 'react' // eslint-disable-line
-import {FormattedMessage} from 'react-intl'
-import {Tab, Tabs, TabList, TabPanel} from 'react-tabs'
+import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators'
+import { CustomTooltip } from '@remix-ui/helper'
+import { Plugin } from '@remixproject/engine'
+import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
+import { FormattedMessage } from 'react-intl'
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import './remix-ui-tabs.css'
 const _paq = (window._paq = window._paq || [])
 
@@ -36,24 +36,24 @@ interface ITabsAction {
 const initialTabsState: ITabsState = {
   selectedIndex: -1,
   fileDecorations: [],
-  currentExt: ''
+  currentExt: '',
 }
 
 const tabsReducer = (state: ITabsState, action: ITabsAction) => {
   switch (action.type) {
-  case 'SELECT_INDEX':
-    return {
-      ...state,
-      currentExt: action.ext,
-      selectedIndex: action.payload
-    }
-  case 'SET_FILE_DECORATIONS':
-    return {
-      ...state,
-      fileDecorations: action.payload as fileDecoration[]
-    }
-  default:
-    return state
+    case 'SELECT_INDEX':
+      return {
+        ...state,
+        currentExt: action.ext,
+        selectedIndex: action.payload,
+      }
+    case 'SET_FILE_DECORATIONS':
+      return {
+        ...state,
+        fileDecorations: action.payload as fileDecoration[],
+      }
+    default:
+      return state
   }
 }
 
@@ -70,7 +70,7 @@ export const TabsUI = (props: TabsUIProps) => {
     if (props.tabs[tabsState.selectedIndex]) {
       tabsRef.current[tabsState.selectedIndex].scrollIntoView({
         behavior: 'smooth',
-        block: 'center'
+        block: 'center',
       })
     }
   }, [tabsState.selectedIndex])
@@ -83,7 +83,7 @@ export const TabsUI = (props: TabsUIProps) => {
   }
 
   const getFileDecorationIcons = (tab: any) => {
-    return <FileDecorationIcons file={{path: tab.name}} fileDecorations={tabsState.fileDecorations} />
+    return <FileDecorationIcons file={{ path: tab.name }} fileDecorations={tabsState.fileDecorations} />
   }
 
   const renderTab = (tab, index) => {
@@ -101,7 +101,7 @@ export const TabsUI = (props: TabsUIProps) => {
           data-id={index === currentIndexRef.current ? 'tab-active' : ''}
           data-path={tab.name}
         >
-          {tab.icon ? <img className="my-1 mr-1 iconImage" style={{filter: invert}} src={tab.icon} /> : <i className={classNameImg}></i>}
+          {tab.icon ? <img className="my-1 mr-1 iconImage" style={{ filter: invert }} src={tab.icon} /> : <i className={classNameImg}></i>}
           <span className={`title-tabs ${getFileDecorationClasses(tab)}`}>{tab.title}</span>
           {getFileDecorationIcons(tab)}
           <span
@@ -126,11 +126,11 @@ export const TabsUI = (props: TabsUIProps) => {
   const activateTab = (name: string) => {
     const index = tabs.current.findIndex((tab) => tab.name === name)
     currentIndexRef.current = index
-    dispatch({type: 'SELECT_INDEX', payload: index, ext: getExt(name)})
+    dispatch({ type: 'SELECT_INDEX', payload: index, ext: getExt(name) })
   }
 
   const setFileDecorations = (fileStates: fileDecoration[]) => {
-    dispatch({type: 'SET_FILE_DECORATIONS', payload: fileStates})
+    dispatch({ type: 'SET_FILE_DECORATIONS', payload: fileStates })
   }
 
   const transformScroll = (event) => {
@@ -146,7 +146,7 @@ export const TabsUI = (props: TabsUIProps) => {
     props.onReady({
       activateTab,
       active,
-      setFileDecorations
+      setFileDecorations,
     })
 
     return () => {
@@ -163,7 +163,7 @@ export const TabsUI = (props: TabsUIProps) => {
 
   return (
     <div className="remix-ui-tabs d-flex justify-content-between border-0 header nav-tabs" data-id="tabs-component">
-      <div className="d-flex flex-row" style={{maxWidth: 'fit-content', width: '99%'}}>
+      <div className="d-flex flex-row" style={{ maxWidth: 'fit-content', width: '99%' }}>
         <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-1">
           <button
             data-id="play-editor"
@@ -220,7 +220,7 @@ export const TabsUI = (props: TabsUIProps) => {
             dispatch({
               type: 'SELECT_INDEX',
               payload: index,
-              ext: getExt(props.tabs[currentIndexRef.current].name)
+              ext: getExt(props.tabs[currentIndexRef.current].name),
             })
           }}
         >
@@ -230,7 +230,7 @@ export const TabsUI = (props: TabsUIProps) => {
                 {renderTab(tab, i)}
               </Tab>
             ))}
-            <div style={{minWidth: '4rem', height: '1rem'}} id="dummyElForLastXVisibility"></div>
+            <div style={{ minWidth: '4rem', height: '1rem' }} id="dummyElForLastXVisibility"></div>
           </TabList>
           {props.tabs.map((tab) => (
             <TabPanel key={tab.name}></TabPanel>

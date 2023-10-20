@@ -1,8 +1,8 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useRef, useState, useEffect} from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {RecorderProps} from '../types'
-import {CustomTooltip} from '@remix-ui/helper'
+import React, { useRef, useState, useEffect } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { RecorderProps } from '../types'
+import { CustomTooltip } from '@remix-ui/helper'
 
 export function RecorderUI(props: RecorderProps) {
   const inputLive = useRef<HTMLInputElement>()
@@ -51,11 +51,11 @@ export function RecorderUI(props: RecorderProps) {
             tooltipId="info-recorder"
             tooltipText={
               <span>
-                <FormattedMessage id="udapp.infoRecorderTooltip" values={{br: <br />}} />
+                <FormattedMessage id="udapp.infoRecorderTooltip" values={{ br: <br /> }} />
               </span>
             }
           >
-            <i style={{fontSize: 'medium'}} className={'ml-2 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
+            <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
           </CustomTooltip>
         </div>
         <div className="p-3">
@@ -73,7 +73,7 @@ export function RecorderUI(props: RecorderProps) {
             tooltipId="tooltip-livemode-recorder"
             tooltipText={
               <span>
-                <FormattedMessage id="udapp.livemodeRecorderTooltip" values={{br: <br />}} />
+                <FormattedMessage id="udapp.livemodeRecorderTooltip" values={{ br: <br /> }} />
               </span>
             }
           >
@@ -89,10 +89,10 @@ export function RecorderUI(props: RecorderProps) {
             tooltipId="remixUdappTransactionSavetooltip"
             tooltipText={
               props.count === 0
-                ? intl.formatMessage({id: 'udapp.transactionSaveTooltip1'})
+                ? intl.formatMessage({ id: 'udapp.transactionSaveTooltip1' })
                 : props.count === 1
-                  ? intl.formatMessage({id: 'udapp.transactionSaveTooltip2'}, {count: props.count})
-                  : intl.formatMessage({id: 'udapp.transactionSaveTooltip3'}, {count: props.count})
+                ? intl.formatMessage({ id: 'udapp.transactionSaveTooltip2' }, { count: props.count })
+                : intl.formatMessage({ id: 'udapp.transactionSaveTooltip3' }, { count: props.count })
             }
           >
             <span>
@@ -100,7 +100,7 @@ export function RecorderUI(props: RecorderProps) {
                 className="btn btn-sm btn-info savetransaction udapp_recorder"
                 disabled={props.count === 0 ? true : false}
                 onClick={triggerRecordButton}
-                style={{pointerEvents: props.count === 0 ? 'none' : 'auto'}}
+                style={{ pointerEvents: props.count === 0 ? 'none' : 'auto' }}
               >
                 <FormattedMessage id="udapp.save" />
               </button>
@@ -113,7 +113,7 @@ export function RecorderUI(props: RecorderProps) {
                 data-id="runtransaction"
                 disabled={enableRunButton}
                 onClick={handleClickRunButton}
-                style={{pointerEvents: enableRunButton ? 'none' : 'auto'}}
+                style={{ pointerEvents: enableRunButton ? 'none' : 'auto' }}
               >
                 <FormattedMessage id="udapp.run" />
               </button>

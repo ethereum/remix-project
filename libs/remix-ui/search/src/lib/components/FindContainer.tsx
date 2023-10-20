@@ -1,13 +1,13 @@
-import {CustomTooltip} from '@remix-ui/helper'
-import React, {useContext, useEffect, useState} from 'react'
-import {FormattedMessage} from 'react-intl'
-import {SearchContext} from '../context/context'
-import {Find} from './Find'
-import {OverWriteCheck} from './OverWriteCheck'
-import {Replace} from './Replace'
+import { CustomTooltip } from '@remix-ui/helper'
+import React, { useContext, useEffect, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
+import { SearchContext } from '../context/context'
+import { Find } from './Find'
+import { OverWriteCheck } from './OverWriteCheck'
+import { Replace } from './Replace'
 
 export const FindContainer = (props) => {
-  const {setReplaceEnabled} = useContext(SearchContext)
+  const { setReplaceEnabled } = useContext(SearchContext)
   const [expanded, setExpanded] = useState<boolean>(false)
   const toggleExpand = () => setExpanded(!expanded)
   useEffect(() => {

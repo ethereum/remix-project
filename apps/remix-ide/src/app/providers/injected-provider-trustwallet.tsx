@@ -1,6 +1,6 @@
 /* global ethereum */
 import * as packageJson from '../../../../../package.json'
-import {InjectedProvider} from './injected-provider'
+import { InjectedProvider } from './injected-provider'
 
 const profile = {
   name: 'injected-trustwallet',
@@ -8,7 +8,7 @@ const profile = {
   kind: 'provider',
   description: 'Trust wallet',
   methods: ['sendAsync', 'init'],
-  version: packageJson.version
+  version: packageJson.version,
 }
 
 export class InjectedProviderTrustWallet extends InjectedProvider {

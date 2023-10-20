@@ -1,17 +1,17 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
-import {CompilationFileSources, CompilationResult} from '@remixproject/plugin-api'
+import { CompilationFileSources, CompilationResult } from '@remixproject/plugin-api'
 
-import {RemixClient} from './RemixPlugin'
-import {createClient} from '@remixproject/plugin-webview'
+import { RemixClient } from './RemixPlugin'
+import { createClient } from '@remixproject/plugin-webview'
 
-import {AppContext} from './AppContext'
-import {DisplayRoutes} from './routes'
+import { AppContext } from './AppContext'
+import { DisplayRoutes } from './routes'
 
-import {useLocalStorage} from './hooks/useLocalStorage'
+import { useLocalStorage } from './hooks/useLocalStorage'
 
-import {getReceiptStatus, getEtherScanApi, getNetworkName, getProxyContractReceiptStatus} from './utils'
-import {Receipt, ThemeType} from './types'
+import { getReceiptStatus, getEtherScanApi, getNetworkName, getProxyContractReceiptStatus } from './utils'
+import { Receipt, ThemeType } from './types'
 
 import './App.css'
 
@@ -77,7 +77,7 @@ const App = () => {
         timer.current = null
       }
       timer.current = setInterval(async () => {
-        const {network, networkId} = await getNetworkName(clientInstanceRef.current)
+        const { network, networkId } = await getNetworkName(clientInstanceRef.current)
         if (!clientInstanceRef.current) {
           return
         }
@@ -101,7 +101,7 @@ const App = () => {
               if (currentReceipt.guid === item.guid) {
                 const res = {
                   ...currentReceipt,
-                  status: status.result
+                  status: status.result,
                 }
                 if (currentReceipt.isProxyContract) res.message = status.message
                 return res
@@ -133,7 +133,7 @@ const App = () => {
         contracts,
         setContracts,
         themeType,
-        setThemeType
+        setThemeType,
       }}
     >
       <DisplayRoutes />

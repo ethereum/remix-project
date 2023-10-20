@@ -21,7 +21,7 @@ function openFile (browser: NightwatchBrowser, name: string, done: VoidFunction)
         // if side panel is shown, check this is the file panel
         browser.element('css selector', '[data-id="verticalIconsKindfilePanel"] img[data-id="selected"]', (result) => {
           if (result.status === 0) {
-              done()
+            done()
           } else browser.clickLaunchIcon('filePanel').perform(() => {
             done()
           })
@@ -31,15 +31,15 @@ function openFile (browser: NightwatchBrowser, name: string, done: VoidFunction)
           done()
         })
       }
-      
-    })    
+
+    })
   })
-  .waitForElementVisible('li[data-id="treeViewLitreeViewItem' + name + '"', 60000)
-  .click('li[data-id="treeViewLitreeViewItem' + name + '"')
-  .pause(2000)
-  .perform(() => {
-    done()
-  })
+    .waitForElementVisible('li[data-id="treeViewLitreeViewItem' + name + '"', 60000)
+    .click('li[data-id="treeViewLitreeViewItem' + name + '"')
+    .pause(2000)
+    .perform(() => {
+      done()
+    })
 }
 
 module.exports = OpenFile

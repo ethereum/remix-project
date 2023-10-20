@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 
-import {VyperCompilationOutput, remixClient} from './utils'
-import {CompilationResult} from '@remixproject/plugin-api'
+import { VyperCompilationOutput, remixClient } from './utils'
+import { CompilationResult } from '@remixproject/plugin-api'
 
 // Components
 import CompilerButton from './components/CompilerButton'
@@ -31,7 +31,7 @@ const App: React.FC = () => {
   const [state, setState] = useState<AppState>({
     status: 'idle',
     environment: 'local',
-    localUrl: 'http://localhost:8000/compile'
+    localUrl: 'http://localhost:8000/compile',
   })
 
   useEffect(() => {
@@ -53,11 +53,11 @@ const App: React.FC = () => {
 
   /** Update the environment state value */
   function setEnvironment(environment: 'local' | 'remote') {
-    setState({...state, environment})
+    setState({ ...state, environment })
   }
 
   function setLocalUrl(url: string) {
-    setState({...state, localUrl: url})
+    setState({ ...state, localUrl: url })
   }
 
   function compilerUrl() {
@@ -92,7 +92,7 @@ const App: React.FC = () => {
         <LocalUrlInput url={state.localUrl} setUrl={setLocalUrl} environment={state.environment} />
         <WarnRemote environment={state.environment} />
         <div className="px-4" id="compile-btn">
-          <CompilerButton compilerUrl={compilerUrl()} contract={contract} setOutput={(name, update) => setOutput({...output, [name]: update})} />
+          <CompilerButton compilerUrl={compilerUrl()} contract={contract} setOutput={(name, update) => setOutput({ ...output, [name]: update })} />
         </div>
         <article id="result" className="px-2">
           <VyperResult output={contract ? output[contract] : undefined} />

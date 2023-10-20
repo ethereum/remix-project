@@ -1,6 +1,6 @@
 /* global ethereum */
 import * as packageJson from '../../../../../package.json'
-import {InjectedProvider} from './injected-provider'
+import { InjectedProvider } from './injected-provider'
 
 export class InjectedProviderDefaultBase extends InjectedProvider {
   constructor(profile) {
@@ -30,7 +30,7 @@ const profile = {
   kind: 'provider',
   description: 'injected Provider',
   methods: ['sendAsync', 'init'],
-  version: packageJson.version
+  version: packageJson.version,
 }
 
 export class InjectedProviderDefault extends InjectedProviderDefaultBase {

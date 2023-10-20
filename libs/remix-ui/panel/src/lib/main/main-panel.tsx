@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-expressions */
-import React, {useContext, useEffect, useRef, useState} from 'react' // eslint-disable-line
+import React, { useContext, useEffect, useRef, useState } from 'react' // eslint-disable-line
 import DragBar from '../dragbar/dragbar'
 import RemixUIPanelPlugin from '../plugins/panel-plugin'
-import {PluginRecord} from '../types'
+import { PluginRecord } from '../types'
 import './main-panel.css'
 
 export type RemixUIMainPanelProps = {
@@ -28,7 +28,7 @@ const RemixUIMainPanel = (props: RemixUIMainPanelProps) => {
           active: panel.active,
           view: panel.plugin.profile.name === 'tabs' ? panel.plugin.renderTabsbar() : panel.plugin.render(),
           class: panel.plugin.profile.name + '-wrap ' + (panel.minimized ? 'minimized' : ''),
-          minimized: panel.minimized
+          minimized: panel.minimized,
         })
       })
       setPlugins(pluginPanels)

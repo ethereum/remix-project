@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react' //eslint-disable-line
-import {CopyToClipboard} from '@remix-ui/clipboard'
-import {helper} from '@remix-project/remix-solidity'
+import React, { useEffect, useState } from 'react' //eslint-disable-line
+import { CopyToClipboard } from '@remix-ui/clipboard'
+import { helper } from '@remix-project/remix-solidity'
 import './renderer.css'
 const _paq = (window._paq = window._paq || [])
 
@@ -10,12 +10,12 @@ interface RendererProps {
   plugin: any
 }
 
-export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
+export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
   const [messageText, setMessageText] = useState(null)
   const [editorOptions, setEditorOptions] = useState({
     useSpan: false,
     type: '',
-    errFile: ''
+    errFile: '',
   })
   const [classList, setClassList] = useState(opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning')
   const [close, setClose] = useState(false)
@@ -100,10 +100,17 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
             <i className="fas fa-times"></i>
           </div>
           <div className="d-flex pt-1 flex-row-reverse">
-            <span className="ml-3 pt-1 py-1" >
+            <span className="ml-3 pt-1 py-1">
               <CopyToClipboard content={messageText} className={` p-0 m-0 far fa-copy ${classList}`} direction={'top'} />
             </span>
-            <span className="border border-success text-success btn-sm" onClick={() => { askGtp() }}>ASK GPT</span>
+            <span
+              className="border border-success text-success btn-sm"
+              onClick={() => {
+                askGtp()
+              }}
+            >
+              ASK GPT
+            </span>
           </div>
         </div>
       )}

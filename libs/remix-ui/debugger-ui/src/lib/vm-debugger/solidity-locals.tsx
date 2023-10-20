@@ -1,9 +1,9 @@
-import React, {useState, useEffect} from 'react' // eslint-disable-line
+import React, { useState, useEffect } from 'react' // eslint-disable-line
 import DropdownPanel from './dropdown-panel' // eslint-disable-line
-import {extractData} from '../../utils/solidityTypeFormatter' // eslint-disable-line
-import {ExtractData} from '../../types' // eslint-disable-line
+import { extractData } from '../../utils/solidityTypeFormatter' // eslint-disable-line
+import { ExtractData } from '../../types' // eslint-disable-line
 
-export const SolidityLocals = ({data, message, registerEvent, triggerEvent, className = ''}) => {
+export const SolidityLocals = ({ data, message, registerEvent, triggerEvent, className = '' }) => {
   const [calldata, setCalldata] = useState(null)
 
   useEffect(() => {
@@ -30,14 +30,14 @@ export const SolidityLocals = ({data, message, registerEvent, triggerEvent, clas
         className="mb-0"
         style={{
           color: data.isProperty ? 'var(--info)' : '',
-          whiteSpace: 'pre-wrap'
+          whiteSpace: 'pre-wrap',
         }}
       >
         {' ' + key}:
-        <label className="mb-0" style={{color}}>
+        <label className="mb-0" style={{ color }}>
           {' ' + data.self}
         </label>
-        <label style={{fontStyle: 'italic'}}>{data.isProperty || !data.type ? '' : ' ' + data.type}</label>
+        <label style={{ fontStyle: 'italic' }}>{data.isProperty || !data.type ? '' : ' ' + data.type}</label>
       </label>
     )
   }

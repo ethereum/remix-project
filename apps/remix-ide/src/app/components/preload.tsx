@@ -1,11 +1,11 @@
-import {RemixApp} from '@remix-ui/app'
-import React, {useEffect, useRef, useState} from 'react'
-import {render} from 'react-dom'
+import { RemixApp } from '@remix-ui/app'
+import React, { useEffect, useRef, useState } from 'react'
+import { render } from 'react-dom'
 import * as packageJson from '../../../../../package.json'
-import {fileSystem, fileSystems} from '../files/fileSystem'
-import {indexedDBFileSystem} from '../files/filesystems/indexedDB'
-import {localStorageFS} from '../files/filesystems/localStorage'
-import {fileSystemUtility, migrationTestData} from '../files/filesystems/fileSystemUtility'
+import { fileSystem, fileSystems } from '../files/fileSystem'
+import { indexedDBFileSystem } from '../files/filesystems/indexedDB'
+import { localStorageFS } from '../files/filesystems/localStorage'
+import { fileSystemUtility, migrationTestData } from '../files/filesystems/fileSystemUtility'
 import './styles/preload.css'
 const _paq = (window._paq = window._paq || [])
 
@@ -65,7 +65,7 @@ export const Preload = () => {
   const setFileSystems = async () => {
     const fsLoaded = await remixFileSystems.current.setFileSystem([
       testmigrationFallback.current || testBlockStorage.current ? null : remixIndexedDB.current,
-      testBlockStorage.current ? null : localStorageFileSystem.current
+      testBlockStorage.current ? null : localStorageFileSystem.current,
     ])
     if (fsLoaded) {
       console.log(fsLoaded.name + ' activated')

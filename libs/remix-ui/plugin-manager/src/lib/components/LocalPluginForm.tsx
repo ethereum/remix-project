@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {useEffect, useReducer, useState} from 'react' // eslint-disable-line no-use-before-define
-import {ModalDialog} from '@remix-ui/modal-dialog'
-import {Toaster} from '@remix-ui/toaster'
-import {IframePlugin, WebsocketPlugin} from '@remixproject/engine-web'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {localPluginReducerActionType, localPluginToastReducer} from '../reducers/pluginManagerReducer'
-import {canActivate, FormStateProps, PluginManagerComponent} from '../../types'
+import React, { useEffect, useReducer, useState } from 'react' // eslint-disable-line no-use-before-define
+import { ModalDialog } from '@remix-ui/modal-dialog'
+import { Toaster } from '@remix-ui/toaster'
+import { IframePlugin, WebsocketPlugin } from '@remixproject/engine-web'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { localPluginReducerActionType, localPluginToastReducer } from '../reducers/pluginManagerReducer'
+import { canActivate, FormStateProps, PluginManagerComponent } from '../../types'
 
 interface LocalPluginFormProps {
   closeModal: () => void
@@ -21,7 +21,7 @@ const initialState: FormStateProps = {
   hash: '',
   methods: [],
   location: 'sidePanel',
-  canActivate: []
+  canActivate: [],
 }
 
 const defaultProfile = {
@@ -31,10 +31,10 @@ const defaultProfile = {
   name: '',
   displayName: '',
   url: '',
-  hash: ''
+  hash: '',
 }
 
-function LocalPluginForm({closeModal, visible, pluginManager}: LocalPluginFormProps) {
+function LocalPluginForm({ closeModal, visible, pluginManager }: LocalPluginFormProps) {
   const [errorMsg, dispatchToastMsg] = useReducer(localPluginToastReducer, '')
   const [name, setName] = useState<string>('')
   const [displayName, setDisplayName] = useState<string>('')
@@ -66,11 +66,11 @@ function LocalPluginForm({closeModal, visible, pluginManager}: LocalPluginFormPr
       const newMethods =
         typeof methods === 'string'
           ? methods
-            .split(',')
-            .filter((val) => val)
-            .map((val) => {
-              return val.trim()
-            })
+              .split(',')
+              .filter((val) => val)
+              .map((val) => {
+                return val.trim()
+              })
           : []
       const targetPlugin = {
         name: name,
@@ -88,24 +88,24 @@ function LocalPluginForm({closeModal, visible, pluginManager}: LocalPluginFormPr
         canActivate:
           typeof canactivate === 'string'
             ? canactivate
-              .split(',')
-              .filter((val) => val)
-              .map((val) => {
-                return val.trim()
-              })
-            : []
+                .split(',')
+                .filter((val) => val)
+                .map((val) => {
+                  return val.trim()
+                })
+            : [],
       }
       const localPlugin = type === 'iframe' ? new IframePlugin(initialState) : new WebsocketPlugin(initialState)
       localPlugin.profile.hash = `local-${name}`
       targetPlugin.description = localPlugin.profile.description !== undefined ? localPlugin.profile.description : ''
       targetPlugin.events = localPlugin.profile.events !== undefined ? localPlugin.profile.events : []
       targetPlugin.kind = localPlugin.profile.kind !== undefined ? localPlugin.profile.kind : ''
-      localPlugin.profile = {...localPlugin.profile, ...targetPlugin}
+      localPlugin.profile = { ...localPlugin.profile, ...targetPlugin }
       pluginManager.activateAndRegisterLocalPlugin(localPlugin)
     } catch (error) {
       const action: localPluginReducerActionType = {
         type: 'show',
-        payload: `${error.message}`
+        payload: `${error.message}`,
       }
       dispatchToastMsg(action)
       console.log(error)
@@ -120,10 +120,10 @@ function LocalPluginForm({closeModal, visible, pluginManager}: LocalPluginFormPr
         handleHide={closeModal}
         id="pluginManagerLocalPluginModalDialog"
         hide={visible}
-        title={intl.formatMessage({id: 'pluginManager.localForm.title'})}
-        okLabel={intl.formatMessage({id: 'pluginManager.localForm.ok'})}
+        title={intl.formatMessage({ id: 'pluginManager.localForm.title' })}
+        okLabel={intl.formatMessage({ id: 'pluginManager.localForm.ok' })}
         okFn={handleModalOkClick}
-        cancelLabel={intl.formatMessage({id: 'pluginManager.localForm.cancel'})}
+        cancelLabel={intl.formatMessage({ id: 'pluginManager.localForm.cancel' })}
         cancelFn={closeModal}
       >
         <form id="local-plugin-form">
@@ -142,7 +142,7 @@ function LocalPluginForm({closeModal, visible, pluginManager}: LocalPluginFormPr
               id="plugin-name"
               data-id="localPluginName"
               placeholder={intl.formatMessage({
-                id: 'pluginManager.localForm.shouldBeCamelCase'
+                id: 'pluginManager.localForm.shouldBeCamelCase',
               })}
             />
           </div>
@@ -157,7 +157,7 @@ function LocalPluginForm({closeModal, visible, pluginManager}: LocalPluginFormPr
               id="plugin-displayname"
               data-id="localPluginDisplayName"
               placeholder={intl.formatMessage({
-                id: 'pluginManager.localForm.nameInTheHeader'
+                id: 'pluginManager.localForm.nameInTheHeader',
               })}
             />
           </div>
@@ -172,7 +172,7 @@ function LocalPluginForm({closeModal, visible, pluginManager}: LocalPluginFormPr
               value={methods || ''}
               id="plugin-methods"
               data-id="localPluginMethods"
-              placeholder={intl.formatMessage({id: 'pluginManager.localForm.methods'})}
+              placeholder={intl.formatMessage({ id: 'pluginManager.localForm.methods' })}
             />
           </div>
           <div className="form-group">
@@ -187,7 +187,7 @@ function LocalPluginForm({closeModal, visible, pluginManager}: LocalPluginFormPr
               value={canactivate || ''}
               id="plugin-canactivate"
               data-id="localPluginCanActivate"
-              placeholder={intl.formatMessage({id: 'pluginManager.localForm.pluginNames'})}
+              placeholder={intl.formatMessage({ id: 'pluginManager.localForm.pluginNames' })}
             />
           </div>
 

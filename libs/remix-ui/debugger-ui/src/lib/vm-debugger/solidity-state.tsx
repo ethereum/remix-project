@@ -1,9 +1,9 @@
 import React from 'react' // eslint-disable-line
 import DropdownPanel from './dropdown-panel' // eslint-disable-line
-import {extractData} from '../../utils/solidityTypeFormatter'
-import {ExtractData} from '../../types' // eslint-disable-line
+import { extractData } from '../../utils/solidityTypeFormatter'
+import { ExtractData } from '../../types' // eslint-disable-line
 
-export const SolidityState = ({calldata, message, className}) => {
+export const SolidityState = ({ calldata, message, className }) => {
   const formatSelf = (key: string, data: ExtractData) => {
     try {
       let color = 'var(--primary)'
@@ -22,14 +22,14 @@ export const SolidityState = ({calldata, message, className}) => {
           className="mb-0"
           style={{
             color: data.isProperty ? 'var(--info)' : '',
-            whiteSpace: 'pre-wrap'
+            whiteSpace: 'pre-wrap',
           }}
         >
           {' ' + key}:
-          <label className="mb-0" style={{color}}>
+          <label className="mb-0" style={{ color }}>
             {' ' + data.self}
           </label>
-          <label style={{fontStyle: 'italic'}}>{data.isProperty || !data.type ? '' : ' ' + data.type}</label>
+          <label style={{ fontStyle: 'italic' }}>{data.isProperty || !data.type ? '' : ' ' + data.type}</label>
         </label>
       )
     } catch (e) {

@@ -1,7 +1,7 @@
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
-import {FormattedMessage} from 'react-intl'
-import {AbstractProvider} from './abstract-provider'
+import { FormattedMessage } from 'react-intl'
+import { AbstractProvider } from './abstract-provider'
 
 const profile = {
   name: 'hardhat-provider',
@@ -9,7 +9,7 @@ const profile = {
   kind: 'provider',
   description: 'Hardhat provider',
   methods: ['sendAsync', 'init'],
-  version: packageJson.version
+  version: packageJson.version,
 }
 
 export class HardhatProvider extends AbstractProvider {
@@ -33,7 +33,7 @@ export class HardhatProvider extends AbstractProvider {
                 <a href="https://hardhat.org/getting-started/#connecting-a-wallet-or-dapp-to-hardhat-network" target="_blank">
                   {chunks}
                 </a>
-              )
+              ),
             }}
           />
         </div>

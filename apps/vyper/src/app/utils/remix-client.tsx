@@ -1,9 +1,9 @@
-import {HighlightPosition, CompilationResult, RemixApi} from '@remixproject/plugin-api'
-import {Api, Status} from '@remixproject/plugin-utils'
-import {createClient} from '@remixproject/plugin-webview'
-import {PluginClient} from '@remixproject/plugin'
-import {Contract} from './compiler'
-import {ExampleContract} from '../components/VyperResult'
+import { HighlightPosition, CompilationResult, RemixApi } from '@remixproject/plugin-api'
+import { Api, Status } from '@remixproject/plugin-utils'
+import { createClient } from '@remixproject/plugin-webview'
+import { PluginClient } from '@remixproject/plugin'
+import { Contract } from './compiler'
+import { ExampleContract } from '../components/VyperResult'
 
 export class RemixClient extends PluginClient {
   private client = createClient<Api, Readonly<RemixApi>>(this)
@@ -27,7 +27,7 @@ export class RemixClient extends PluginClient {
   }
 
   /** Load Ballot contract example into the file manager */
-  async loadContract({name, address}: ExampleContract) {
+  async loadContract({ name, address }: ExampleContract) {
     try {
       const content = await this.client.call('contentImport', 'resolve', address)
       await this.client.call('fileManager', 'setFile', content.cleanUrl, content.content)
@@ -45,7 +45,7 @@ export class RemixClient extends PluginClient {
       await this.call(
         'dGitProvider',
         'clone',
-        {url: 'https://github.com/vyperlang/vyper', token: null},
+        { url: 'https://github.com/vyperlang/vyper', token: null },
         // @ts-ignore
         'vyper-lang'
       )
@@ -79,7 +79,7 @@ export class RemixClient extends PluginClient {
       column: 0,
       row: lineColumnPos.start.line,
       type: 'error',
-      text: message
+      text: message,
     }
     await this.client.call('editor', 'addAnnotation', annotation, name)
   }
@@ -103,7 +103,7 @@ export class RemixClient extends PluginClient {
     const content = await this.client.call('fileManager', 'getFile', name)
     return {
       name,
-      content
+      content,
     }
   }
 

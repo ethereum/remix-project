@@ -36,9 +36,9 @@ export class OpenAIGpt extends Plugin {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
       return
     }
-    
+
     if (result && result.choices && result.choices.length) {
-      this.call('terminal', 'log', { type: 'typewritersuccess', value: result.choices[0].message.content })    
+      this.call('terminal', 'log', { type: 'typewritersuccess', value: result.choices[0].message.content })
     } else {
       this.call('terminal', 'log', { type: 'typewritersuccess', value: 'No response...' })
     }

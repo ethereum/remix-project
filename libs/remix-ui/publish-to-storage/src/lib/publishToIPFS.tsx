@@ -3,7 +3,7 @@ import IpfsHttpClient from 'ipfs-http-client'
 let ipfsNodes = []
 
 export const publishToIPFS = async (contract, api) => {
-  ipfsNodes = [IpfsHttpClient({host: 'ipfs.infura.io', port: 5001, protocol: 'https'})]
+  ipfsNodes = [IpfsHttpClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })]
   if (api.config.get('settings/ipfs-url')) {
     const auth = api.config.get('settings/ipfs-project-id')
       ? 'Basic ' + Buffer.from(api.config.get('settings/ipfs-project-id') + ':' + api.config.get('settings/ipfs-project-secret')).toString('base64')
@@ -13,8 +13,8 @@ export const publishToIPFS = async (contract, api) => {
       port: api.config.get('settings/ipfs-port'),
       protocol: api.config.get('settings/ipfs-protocol'),
       headers: {
-        Authorization: auth
-      }
+        Authorization: auth,
+      },
     })
     ipfsNodes.push(ipfs)
   }
@@ -22,7 +22,7 @@ export const publishToIPFS = async (contract, api) => {
   // gather list of files to publish
   const sources = []
   let metadata
-  const item = {content: null, hash: null}
+  const item = { content: null, hash: null }
   const uploaded = []
 
   try {
@@ -62,12 +62,12 @@ export const publishToIPFS = async (contract, api) => {
             sources.push({
               content: content,
               hash: hash,
-              filename: fileName
+              filename: fileName,
             })
             resolve({
               content: content,
               hash: hash,
-              filename: fileName
+              filename: fileName,
             })
           })
           .catch((error) => {
@@ -109,13 +109,13 @@ export const publishToIPFS = async (contract, api) => {
       content: contract.metadata,
       hash: contract.metadataHash,
       filename: 'metadata.json',
-      output: result
+      output: result,
     })
   } catch (error) {
     throw new Error(error)
   }
 
-  return {uploaded, item}
+  return { uploaded, item }
 }
 
 const ipfsVerifiedPublish = async (content, expectedHash, api) => {
@@ -126,11 +126,11 @@ const ipfsVerifiedPublish = async (content, expectedHash, api) => {
       return {
         message: 'hash mismatch between solidity bytecode and uploaded content.',
         url: 'dweb:/ipfs/' + hash,
-        hash
+        hash,
       }
     } else {
       api.writeFile('ipfs/' + hash, content)
-      return {message: 'ok', url: 'dweb:/ipfs/' + hash, hash}
+      return { message: 'ok', url: 'dweb:/ipfs/' + hash, hash }
     }
   } catch (error) {
     throw new Error(error)

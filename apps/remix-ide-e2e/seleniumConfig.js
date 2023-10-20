@@ -6,7 +6,7 @@ module.exports = {
     chrome: {
       version: '96.0.4664.35',
       arch: process.arch,
-      baseURL: 'https://chromedriver.storage.googleapis.com'
-    }
-  }
+      baseURL: 'https://chromedriver.storage.googleapis.com',
+    },
+  },
 }

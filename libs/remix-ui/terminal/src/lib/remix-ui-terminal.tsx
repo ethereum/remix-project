@@ -199,7 +199,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const _shell = async (script, scopedCommands, done) => {
     // default shell
     if (script.indexOf('remix:') === 0) {
-      return done(null, intl.formatMessage({id: 'terminal.text1'}))
+      return done(null, intl.formatMessage({ id: 'terminal.text1' }))
     }
     if (script.indexOf('remix.') === 0) {
       // we keep the old feature. This will basically only be called when the command is querying the "remix" object.
@@ -735,16 +735,19 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                         typeWriterIndexes.current.push(index)
                         return (
                           <div className={classNameBlock} data-id="block" key={index}>
-                            <span ref={(element) => {
-                              typewrite(element, msg ? msg.toString() : null, () => scrollToBottom()
-                              )
-                            }} className={x.style}>
-                            </span>
+                            <span
+                              ref={(element) => {
+                                typewrite(element, msg ? msg.toString() : null, () => scrollToBottom())
+                              }}
+                              className={x.style}
+                            ></span>
                           </div>
                         )
                       } else {
                         return (
-                          <div className={classNameBlock} data-id="block" key={i}><span className={x.style}>{msg ? msg.toString() : null}</span></div>
+                          <div className={classNameBlock} data-id="block" key={i}>
+                            <span className={x.style}>{msg ? msg.toString() : null}</span>
+                          </div>
                         )
                       }
                     }
@@ -754,14 +757,23 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                   if (x.typewriter && !typeWriterIndexes.current.includes(index)) {
                     typeWriterIndexes.current.push(index)
                     return (
-                      <div className={classNameBlock} data-id="block" key={index}> <span ref={(element) => {
-                        typewrite(element, x.message, () => scrollToBottom())
-                      }} className={x.style}></span></div>
+                      <div className={classNameBlock} data-id="block" key={index}>
+                        {' '}
+                        <span
+                          ref={(element) => {
+                            typewrite(element, x.message, () => scrollToBottom())
+                          }}
+                          className={x.style}
+                        ></span>
+                      </div>
                     )
                   } else {
                     if (typeof x.message !== 'function') {
                       return (
-                        <div className={classNameBlock} data-id="block" key={index}> <span className={x.style}> {x.message}</span></div>
+                        <div className={classNameBlock} data-id="block" key={index}>
+                          {' '}
+                          <span className={x.style}> {x.message}</span>
+                        </div>
                       )
                     }
                   }
@@ -798,14 +810,14 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         cancelFn={modalState.cancelFn}
         handleHide={handleHideModal}
       />
-      {toaster && <Toaster message={intl.formatMessage({id: 'terminal.toasterMsg1'})} />}
-      {toastProvider.show && <Toaster message={intl.formatMessage({id: 'terminal.toasterMsg2'}, {fileName: toastProvider.fileName})} />}
+      {toaster && <Toaster message={intl.formatMessage({ id: 'terminal.toasterMsg1' })} />}
+      {toastProvider.show && <Toaster message={intl.formatMessage({ id: 'terminal.toasterMsg2' }, { fileName: toastProvider.fileName })} />}
     </div>
   )
 }
 
-const typewrite = (elementsRef, message, callback) => {  
-  (() => {
+const typewrite = (elementsRef, message, callback) => {
+  ;(() => {
     let count = 0
     const id = setInterval(() => {
       if (!elementsRef) return
@@ -821,7 +833,7 @@ const typewrite = (elementsRef, message, callback) => {
   })()
 }
 
-function isHtml (value) {
+function isHtml(value) {
   if (!value.indexOf) return false
   return value.indexOf('<div') !== -1 || value.indexOf('<span') !== -1 || value.indexOf('<p') !== -1 || value.indexOf('<label') !== -1 || value.indexOf('<b') !== -1
 }

@@ -14,19 +14,19 @@ const inputJson = {
   settings: {
     optimizer: {
       enabled: true,
-      runs: 200
+      runs: 200,
     },
     outputSelection: {
       '*': {
         '': ['ast'],
-        '*': ['abi', 'metadata', 'devdoc', 'userdoc', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates']
-      }
-    }
-  }
+        '*': ['abi', 'metadata', 'devdoc', 'userdoc', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates'],
+      },
+    },
+  },
 }
 
 inputJson.sources[shortFilename] = {
-  content: fs.readFileSync(filename).toString()
+  content: fs.readFileSync(filename).toString(),
 }
 
 console.dir(inputJson)
@@ -37,7 +37,7 @@ const compilationData = JSON.parse(solc.compileStandardWrapper(JSON.stringify(in
 console.dir(Object.keys(compilationData))
 const compilation = {}
 compilation['data'] = compilationData
-compilation['source'] = {sources: inputJson.sources}
+compilation['source'] = { sources: inputJson.sources }
 console.dir(compilation)
 console.dir(compilation['data'].errors)
 
@@ -103,7 +103,7 @@ repl.start({
       cmdLine.jumpTo(stepIndex)
     }
     cb(null, '')
-  }
+  },
 })
 
 module.exports = cmdLine

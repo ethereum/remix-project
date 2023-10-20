@@ -1,10 +1,10 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 
-import {Formik, ErrorMessage, Field} from 'formik'
-import {useNavigate, useLocation} from 'react-router-dom'
+import { Formik, ErrorMessage, Field } from 'formik'
+import { useNavigate, useLocation } from 'react-router-dom'
 
-import {AppContext} from '../AppContext'
-import {SubmitButton} from '../components'
+import { AppContext } from '../AppContext'
+import { SubmitButton } from '../components'
 
 export const CaptureKeyView: React.FC = () => {
   const location = useLocation()
@@ -12,12 +12,12 @@ export const CaptureKeyView: React.FC = () => {
   const [msg, setMsg] = useState('')
   return (
     <AppContext.Consumer>
-      {({apiKey, clientInstance, setAPIKey}) => {
+      {({ apiKey, clientInstance, setAPIKey }) => {
         if (!apiKey) setMsg('Please provide a 34-character API key to continue')
         return (
           <div>
             <Formik
-              initialValues={{apiKey}}
+              initialValues={{ apiKey }}
               validate={(values) => {
                 const errors = {} as any
                 if (!values.apiKey) {
@@ -35,7 +35,7 @@ export const CaptureKeyView: React.FC = () => {
                 }
               }}
             >
-              {({errors, touched, handleSubmit}) => (
+              {({ errors, touched, handleSubmit }) => (
                 <form onSubmit={handleSubmit}>
                   <div className="form-group mb-2">
                     <label htmlFor="apikey">API Key</label>
@@ -55,7 +55,7 @@ export const CaptureKeyView: React.FC = () => {
               )}
             </Formik>
 
-            <div data-id="api-key-result" className="text-primary mt-4 text-center" style={{fontSize: '0.8em'}} dangerouslySetInnerHTML={{__html: msg}} />
+            <div data-id="api-key-result" className="text-primary mt-4 text-center" style={{ fontSize: '0.8em' }} dangerouslySetInnerHTML={{ __html: msg }} />
           </div>
         )
       }}

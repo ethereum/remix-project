@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react' // eslint-disable-line
-import {ViewPlugin} from '@remixproject/engine-web'
+import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
-import {RemixUiSettings} from '@remix-ui/settings' //eslint-disable-line
+import { RemixUiSettings } from '@remix-ui/settings' //eslint-disable-line
 import Registry from '../state/registry'
-import {PluginViewWrapper} from '@remix-ui/helper'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 const profile = {
   name: 'settings',
@@ -18,7 +18,7 @@ const profile = {
   documentation: 'https://remix-ide.readthedocs.io/en/latest/settings.html',
   version: packageJson.version,
   permission: true,
-  maintainedBy: 'Remix'
+  maintainedBy: 'Remix',
 }
 
 module.exports = class SettingsTab extends ViewPlugin {
@@ -40,7 +40,7 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.editor = editor
     this._deps = {
       themeModule: Registry.getInstance().get('themeModule').api,
-      localeModule: Registry.getInstance().get('localeModule').api
+      localeModule: Registry.getInstance().get('localeModule').api,
     }
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'settingsTab')
@@ -85,7 +85,7 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.config.set('settings/matomo-analytics', isChecked)
     this.useMatomoAnalytics = isChecked
     this.dispatch({
-      ...this
+      ...this,
     })
   }
 }

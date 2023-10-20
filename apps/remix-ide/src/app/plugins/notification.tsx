@@ -1,8 +1,8 @@
-import {Plugin} from '@remixproject/engine'
-import {LibraryProfile, MethodApi, StatusEvents} from '@remixproject/plugin-utils'
-import {AppModal} from '@remix-ui/app'
-import {AlertModal} from '@remix-ui/app'
-import {dispatchModalInterface} from '@remix-ui/app'
+import { Plugin } from '@remixproject/engine'
+import { LibraryProfile, MethodApi, StatusEvents } from '@remixproject/plugin-utils'
+import { AppModal } from '@remix-ui/app'
+import { AlertModal } from '@remix-ui/app'
+import { dispatchModalInterface } from '@remix-ui/app'
 
 interface INotificationApi {
   events: StatusEvents
@@ -17,7 +17,7 @@ const profile: LibraryProfile<INotificationApi> = {
   name: 'notification',
   displayName: 'Notification',
   description: 'Displays notifications',
-  methods: ['modal', 'alert', 'toast']
+  methods: ['modal', 'alert', 'toast'],
 }
 
 export class NotificationPlugin extends Plugin implements MethodApi<INotificationApi> {

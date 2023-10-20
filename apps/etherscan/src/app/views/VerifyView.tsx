@@ -1,14 +1,14 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Web3 from 'web3'
 
-import {PluginClient} from '@remixproject/plugin'
-import {CustomTooltip} from '@remix-ui/helper'
-import {Formik, ErrorMessage, Field} from 'formik'
+import { PluginClient } from '@remixproject/plugin'
+import { CustomTooltip } from '@remix-ui/helper'
+import { Formik, ErrorMessage, Field } from 'formik'
 
-import {SubmitButton} from '../components'
-import {Receipt} from '../types'
-import {verify} from '../utils/verify'
-import {etherscanScripts} from '@remix-project/remix-ws-templates'
+import { SubmitButton } from '../components'
+import { Receipt } from '../types'
+import { verify } from '../utils/verify'
+import { etherscanScripts } from '@remix-project/remix-ws-templates'
 
 interface Props {
   client: PluginClient
@@ -23,7 +23,7 @@ interface FormValues {
   expectedImplAddress?: string
 }
 
-export const VerifyView: React.FC<Props> = ({apiKey, client, contracts, onVerifiedContract}) => {
+export const VerifyView: React.FC<Props> = ({ apiKey, client, contracts, onVerifiedContract }) => {
   const [results, setResults] = useState('')
   const [networkName, setNetworkName] = useState('Loading...')
   const [selectedContract, setSelectedContract] = useState('')
@@ -50,7 +50,7 @@ export const VerifyView: React.FC<Props> = ({apiKey, client, contracts, onVerifi
 
   const updateConsFields = (contractName) => {
     client.call('compilerArtefacts' as any, 'getArtefactsByContractName', contractName).then((result) => {
-      const {artefact} = result
+      const { artefact } = result
       if (artefact && artefact.abi && artefact.abi[0] && artefact.abi[0].type && artefact.abi[0].type === 'constructor' && artefact.abi[0].inputs.length > 0) {
         setConstructorInputs(artefact.abi[0].inputs)
         setShowConstructorArgs(true)
@@ -98,7 +98,7 @@ export const VerifyView: React.FC<Props> = ({apiKey, client, contracts, onVerifi
       <Formik
         initialValues={{
           contractName: '',
-          contractAddress: ''
+          contractAddress: '',
         }}
         validate={(values) => {
           const errors = {} as any
@@ -115,7 +115,7 @@ export const VerifyView: React.FC<Props> = ({apiKey, client, contracts, onVerifi
         }}
         onSubmit={(values) => onVerifyContract(values)}
       >
-        {({errors, touched, handleSubmit, handleChange, isSubmitting}) => {
+        {({ errors, touched, handleSubmit, handleChange, isSubmitting }) => {
           return (
             <form onSubmit={handleSubmit}>
               <div className="form-group">
@@ -199,7 +199,7 @@ export const VerifyView: React.FC<Props> = ({apiKey, client, contracts, onVerifi
                 >
                   <Field className="form-control" type="text" name="expectedImplAddress" placeholder="verified implementation contract address" />
                 </CustomTooltip>
-                <i style={{fontSize: 'x-small'}} className={'ml-1 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
+                <i style={{ fontSize: 'x-small' }} className={'ml-1 fal fa-info-circle align-self-center'} aria-hidden="true"></i>
                 <label> &nbsp;Make sure contract is already verified on Etherscan</label>
               </div>
               <SubmitButton
@@ -236,8 +236,8 @@ export const VerifyView: React.FC<Props> = ({apiKey, client, contracts, onVerifi
       <div
         data-id="verify-result"
         className={verificationResult.current['succeed'] ? 'text-success mt-4 text-center' : 'text-danger mt-4 text-center'}
-        style={{fontSize: '0.8em'}}
-        dangerouslySetInnerHTML={{__html: results}}
+        style={{ fontSize: '0.8em' }}
+        dangerouslySetInnerHTML={{ __html: results }}
       />
       {/* <div style={{ display: "block", textAlign: "center", marginTop: "1em" }}>
         <Link to="/receipts">View Receipts</Link>

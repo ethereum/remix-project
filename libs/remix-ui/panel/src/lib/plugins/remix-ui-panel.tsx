@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
-import React, {useEffect, useState} from 'react' // eslint-disable-line
+import React, { useEffect, useState } from 'react' // eslint-disable-line
 import './panel.css'
 import RemixUIPanelPlugin from './panel-plugin'
-import {PluginRecord} from '../types'
+import { PluginRecord } from '../types'
 
 /* eslint-disable-next-line */
 export interface RemixPanelProps {

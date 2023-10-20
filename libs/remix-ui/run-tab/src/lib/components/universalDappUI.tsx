@@ -1,15 +1,15 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useEffect, useState} from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {UdappProps} from '../types'
-import {FuncABI} from '@remix-project/core-plugin'
-import {CopyToClipboard} from '@remix-ui/clipboard'
+import React, { useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { UdappProps } from '../types'
+import { FuncABI } from '@remix-project/core-plugin'
+import { CopyToClipboard } from '@remix-ui/clipboard'
 import * as remixLib from '@remix-project/remix-lib'
 import * as ethJSUtil from '@ethereumjs/util'
-import {ContractGUI} from './contractGUI'
-import {TreeView, TreeViewItem} from '@remix-ui/tree-view'
-import {BN} from 'bn.js'
-import {CustomTooltip, is0XPrefixed, isHexadecimal, isNumeric, shortenAddress} from '@remix-ui/helper'
+import { ContractGUI } from './contractGUI'
+import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
+import { BN } from 'bn.js'
+import { CustomTooltip, is0XPrefixed, isHexadecimal, isNumeric, shortenAddress } from '@remix-ui/helper'
 
 const txHelper = remixLib.execution.txHelper
 
@@ -63,37 +63,37 @@ export function UniversalDappUI(props: UdappProps) {
       funcABI: fallback || receive,
       address: address,
       contractName: props.instance.name,
-      contractABI: contractABI
+      contractABI: contractABI,
     }
     const amount = props.sendValue
 
     if (amount !== '0') {
       // check for numeric and receive/fallback
       if (!isNumeric(amount)) {
-        return setLlIError(intl.formatMessage({id: 'udapp.llIError1'}))
+        return setLlIError(intl.formatMessage({ id: 'udapp.llIError1' }))
       } else if (!receive && !(fallback && fallback.stateMutability === 'payable')) {
-        return setLlIError(intl.formatMessage({id: 'udapp.llIError2'}))
+        return setLlIError(intl.formatMessage({ id: 'udapp.llIError2' }))
       }
     }
     let calldata = calldataValue
 
     if (calldata) {
       if (calldata.length < 4 && is0XPrefixed(calldata)) {
-        return setLlIError(intl.formatMessage({id: 'udapp.llIError3'}))
+        return setLlIError(intl.formatMessage({ id: 'udapp.llIError3' }))
       } else {
         if (is0XPrefixed(calldata)) {
           calldata = calldata.substr(2, calldata.length)
         }
         if (!isHexadecimal(calldata)) {
-          return setLlIError(intl.formatMessage({id: 'udapp.llIError4'}))
+          return setLlIError(intl.formatMessage({ id: 'udapp.llIError4' }))
         }
       }
       if (!fallback) {
-        return setLlIError(intl.formatMessage({id: 'udapp.llIError5'}))
+        return setLlIError(intl.formatMessage({ id: 'udapp.llIError5' }))
       }
     }
 
-    if (!receive && !fallback) return setLlIError(intl.formatMessage({id: 'udapp.llIError6'}))
+    if (!receive && !fallback) return setLlIError(intl.formatMessage({ id: 'udapp.llIError6' }))
 
     // we have to put the right function ABI:
     // if receive is defined and that there is no calldata => receive function is called
@@ -101,7 +101,7 @@ export function UniversalDappUI(props: UdappProps) {
     if (receive && !calldata) args.funcABI = receive
     else if (fallback) args.funcABI = fallback
 
-    if (!args.funcABI) return setLlIError(intl.formatMessage({id: 'udapp.llIError7'}))
+    if (!args.funcABI) return setLlIError(intl.formatMessage({ id: 'udapp.llIError7' }))
     runTransaction(false, args.funcABI, null, calldataValue)
   }
 
@@ -143,14 +143,14 @@ export function UniversalDappUI(props: UdappProps) {
     } else {
       if (item instanceof Array) {
         ret.children = item.map((item, index) => {
-          return {key: index, value: item}
+          return { key: index, value: item }
         })
         ret.self = 'Array'
         ret.isNode = true
         ret.isLeaf = false
       } else if (item instanceof Object) {
         ret.children = Object.keys(item).map((key) => {
-          return {key: key, value: item[key]}
+          return { key: key, value: item[key] }
         })
         ret.self = 'Object'
         ret.isNode = true
@@ -226,7 +226,7 @@ export function UniversalDappUI(props: UdappProps) {
             </span>
           </div>
           <div className="btn">
-            <CopyToClipboard tip={intl.formatMessage({id: 'udapp.copy'})} content={address} direction={'top'} />
+            <CopyToClipboard tip={intl.formatMessage({ id: 'udapp.copy' })} content={address} direction={'top'} />
           </div>
         </div>
         <CustomTooltip placement="right" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText7" />}>
@@ -251,7 +251,7 @@ export function UniversalDappUI(props: UdappProps) {
                 <div key={index}>
                   <ContractGUI
                     funcABI={funcABI}
-                    clickCallBack={(valArray: {name: string; type: string}[], inputsValues: string) => {
+                    clickCallBack={(valArray: { name: string; type: string }[], inputsValues: string) => {
                       runTransaction(lookupOnly, funcABI, valArray, inputsValues, index)
                     }}
                     inputs={inputs}
@@ -268,8 +268,8 @@ export function UniversalDappUI(props: UdappProps) {
 
                           return key === funcIndex
                             ? Object.keys(response || {}).map((innerkey, index) => {
-                              return renderData(props.instance.decodedResponse[key][innerkey], response, innerkey, innerkey)
-                            })
+                                return renderData(props.instance.decodedResponse[key][innerkey], response, innerkey, innerkey)
+                              })
                             : null
                         })}
                       </TreeView>

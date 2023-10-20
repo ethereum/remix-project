@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react'
-import {SolHint} from './SolhintPluginClient'
+import React, { useEffect, useState } from 'react'
+import { SolHint } from './SolhintPluginClient'
 
 const client = new SolHint()
 

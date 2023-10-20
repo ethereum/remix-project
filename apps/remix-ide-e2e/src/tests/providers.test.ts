@@ -26,31 +26,31 @@ module.exports = {
 
   'Should switch to ganache provider, use the default ganache URL and succeed to connect': function (browser: NightwatchBrowser) {
     browser.switchEnvironment('ganache-provider')
-    .waitForElementVisible('*[data-id="ganache-providerModalDialogModalBody-react"]')
-    .modalFooterOKClick('ganache-provider')
-    .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (')
+      .waitForElementVisible('*[data-id="ganache-providerModalDialogModalBody-react"]')
+      .modalFooterOKClick('ganache-provider')
+      .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (')
   },
 
   'Should switch to foundry provider, set a custom URL and fail to connect': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
-    .switchEnvironment('foundry-provider')
-    .waitForElementVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
-    .execute(() => {
-      (document.querySelector('*[data-id="foundry-providerModalDialogModalBody-react"] input') as any).focus()
-    }, [], () => {})
-    .clearValue('*[data-id="foundry-providerModalDialogModalBody-react"] input')
-    .setValue('*[data-id="foundry-providerModalDialogModalBody-react"] input', 'http://127.0.0.1:8084')
-    .modalFooterOKClick('foundry-provider')
-    .waitForElementContainsText('*[data-id="foundry-providerModalDialogModalBody-react"]', 'Error while connecting to the provider')
-    .modalFooterOKClick('foundry-provider')
-    .waitForElementNotVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
-    .pause(1000)
+      .switchEnvironment('foundry-provider')
+      .waitForElementVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
+      .execute(() => {
+        (document.querySelector('*[data-id="foundry-providerModalDialogModalBody-react"] input') as any).focus()
+      }, [], () => {})
+      .clearValue('*[data-id="foundry-providerModalDialogModalBody-react"] input')
+      .setValue('*[data-id="foundry-providerModalDialogModalBody-react"] input', 'http://127.0.0.1:8084')
+      .modalFooterOKClick('foundry-provider')
+      .waitForElementContainsText('*[data-id="foundry-providerModalDialogModalBody-react"]', 'Error while connecting to the provider')
+      .modalFooterOKClick('foundry-provider')
+      .waitForElementNotVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
+      .pause(1000)
 
-},
+  },
   'Should switch to foundry provider, use the default foundry URL and succeed to connect': function (browser: NightwatchBrowser) {
     browser.switchEnvironment('foundry-provider')
-    .waitForElementVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
-    .modalFooterOKClick('foundry-provider')
-    .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (')
+      .waitForElementVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
+      .modalFooterOKClick('foundry-provider')
+      .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (')
   }
 }

@@ -1,5 +1,5 @@
 import * as packageJson from '../../../../../package.json'
-import {InjectedCustomProvider} from './injected-custom-provider'
+import { InjectedCustomProvider } from './injected-custom-provider'
 
 const profile = {
   name: 'injected-arbitrum-one-provider',
@@ -7,7 +7,7 @@ const profile = {
   kind: 'provider',
   description: 'injected Arbitrum One Provider',
   methods: ['sendAsync', 'init'],
-  version: packageJson.version
+  version: packageJson.version,
 }
 
 export class InjectedArbitrumOneProvider extends InjectedCustomProvider {

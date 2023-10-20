@@ -1,17 +1,17 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useEffect, useState, useRef} from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {CopyToClipboard} from '@remix-ui/clipboard'
-import {AccountProps} from '../types'
-import {PassphrasePrompt} from './passphrase'
-import {CustomTooltip} from '@remix-ui/helper'
+import React, { useEffect, useState, useRef } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { CopyToClipboard } from '@remix-ui/clipboard'
+import { AccountProps } from '../types'
+import { PassphrasePrompt } from './passphrase'
+import { CustomTooltip } from '@remix-ui/helper'
 
 export function AccountUI(props: AccountProps) {
-  const {selectedAccount, loadedAccounts} = props.accounts
+  const { selectedAccount, loadedAccounts } = props.accounts
   const accounts = Object.keys(loadedAccounts)
   const [plusOpt, setPlusOpt] = useState({
     classList: '',
-    title: ''
+    title: '',
   })
   const messageRef = useRef('')
 
@@ -23,60 +23,60 @@ export function AccountUI(props: AccountProps) {
 
   useEffect(() => {
     switch (props.selectExEnv) {
-    case 'injected':
-      setPlusOpt({
-        classList: 'udapp_disableMouseEvents',
-        title: intl.formatMessage({id: 'udapp.injectedTitle'})
-      })
-      break
-
-    case 'vm-merge':
-      setPlusOpt({
-        classList: '',
-        title: intl.formatMessage({id: 'udapp.createNewAccount'})
-      })
-      break
-
-    case 'vm-london':
-      setPlusOpt({
-        classList: '',
-        title: intl.formatMessage({id: 'udapp.createNewAccount'})
-      })
-      break
-
-    case 'vm-berlin':
-      setPlusOpt({
-        classList: '',
-        title: intl.formatMessage({id: 'udapp.createNewAccount'})
-      })
-      break
-
-    case 'vm-shanghai':
-      setPlusOpt({
-        classList: '',
-        title: intl.formatMessage({id: 'udapp.createNewAccount'})
-      })
-      break
-
-    case 'web3':
-      if (!props.personalMode) {
+      case 'injected':
         setPlusOpt({
-          classList: 'disableMouseEvents',
-          title: intl.formatMessage({id: 'udapp.web3Title'})
+          classList: 'udapp_disableMouseEvents',
+          title: intl.formatMessage({ id: 'udapp.injectedTitle' }),
         })
-      } else {
+        break
+
+      case 'vm-merge':
         setPlusOpt({
           classList: '',
-          title: intl.formatMessage({id: 'udapp.createNewAccount'})
+          title: intl.formatMessage({ id: 'udapp.createNewAccount' }),
         })
-      }
-      break
+        break
 
-    default:
-      setPlusOpt({
-        classList: 'disableMouseEvents',
-        title: intl.formatMessage({id: 'udapp.defaultTitle'}, {selectExEnv: props.selectExEnv})
-      })
+      case 'vm-london':
+        setPlusOpt({
+          classList: '',
+          title: intl.formatMessage({ id: 'udapp.createNewAccount' }),
+        })
+        break
+
+      case 'vm-berlin':
+        setPlusOpt({
+          classList: '',
+          title: intl.formatMessage({ id: 'udapp.createNewAccount' }),
+        })
+        break
+
+      case 'vm-shanghai':
+        setPlusOpt({
+          classList: '',
+          title: intl.formatMessage({ id: 'udapp.createNewAccount' }),
+        })
+        break
+
+      case 'web3':
+        if (!props.personalMode) {
+          setPlusOpt({
+            classList: 'disableMouseEvents',
+            title: intl.formatMessage({ id: 'udapp.web3Title' }),
+          })
+        } else {
+          setPlusOpt({
+            classList: '',
+            title: intl.formatMessage({ id: 'udapp.createNewAccount' }),
+          })
+        }
+        break
+
+      default:
+        setPlusOpt({
+          classList: 'disableMouseEvents',
+          title: intl.formatMessage({ id: 'udapp.defaultTitle' }, { selectExEnv: props.selectExEnv }),
+        })
     }
     // this._deps.config.get('settings/personal-mode')
   }, [props.selectExEnv, props.personalMode])
@@ -87,28 +87,28 @@ export function AccountUI(props: AccountProps) {
 
   const signMessage = () => {
     if (!accounts[0]) {
-      return props.tooltip(intl.formatMessage({id: 'udapp.tooltipText1'}))
+      return props.tooltip(intl.formatMessage({ id: 'udapp.tooltipText1' }))
     }
 
     if (props.selectExEnv === 'web3') {
       return props.modal(
-        intl.formatMessage({id: 'udapp.modalTitle1'}),
-        <PassphrasePrompt message={intl.formatMessage({id: 'udapp.modalMessage1'})} setPassphrase={props.setPassphrase} />,
-        intl.formatMessage({id: 'udapp.ok'}),
+        intl.formatMessage({ id: 'udapp.modalTitle1' }),
+        <PassphrasePrompt message={intl.formatMessage({ id: 'udapp.modalMessage1' })} setPassphrase={props.setPassphrase} />,
+        intl.formatMessage({ id: 'udapp.ok' }),
         () => {
           props.modal(
-            intl.formatMessage({id: 'udapp.signAMessage'}),
+            intl.formatMessage({ id: 'udapp.signAMessage' }),
             signMessagePrompt(),
-            intl.formatMessage({id: 'udapp.ok'}),
+            intl.formatMessage({ id: 'udapp.ok' }),
             () => {
               props.signMessageWithAddress(selectedAccount, messageRef.current, signedMessagePrompt, props.passphrase)
               props.setPassphrase('')
             },
-            intl.formatMessage({id: 'udapp.cancel'}),
+            intl.formatMessage({ id: 'udapp.cancel' }),
             null
           )
         },
-        intl.formatMessage({id: 'udapp.cancel'}),
+        intl.formatMessage({ id: 'udapp.cancel' }),
         () => {
           props.setPassphrase('')
         }
@@ -116,13 +116,13 @@ export function AccountUI(props: AccountProps) {
     }
 
     props.modal(
-      intl.formatMessage({id: 'udapp.signAMessage'}),
+      intl.formatMessage({ id: 'udapp.signAMessage' }),
       signMessagePrompt(),
-      intl.formatMessage({id: 'udapp.ok'}),
+      intl.formatMessage({ id: 'udapp.ok' }),
       () => {
         props.signMessageWithAddress(selectedAccount, messageRef.current, signedMessagePrompt)
       },
-      intl.formatMessage({id: 'udapp.cancel'}),
+      intl.formatMessage({ id: 'udapp.cancel' }),
       null
     )
   }
@@ -157,7 +157,7 @@ export function AccountUI(props: AccountProps) {
           id="prompt_text"
           className="bg-light text-light"
           data-id="signMessageTextarea"
-          style={{width: '100%'}}
+          style={{ width: '100%' }}
           rows={4}
           cols={50}
           onInput={handleMessageInput}
@@ -214,8 +214,8 @@ export function AccountUI(props: AccountProps) {
             </option>
           ))}
         </select>
-        <div style={{marginLeft: -5}}>
-          <CopyToClipboard tip={intl.formatMessage({id: 'udapp.copyAccount'})} content={selectedAccount} direction="top" />
+        <div style={{ marginLeft: -5 }}>
+          <CopyToClipboard tip={intl.formatMessage({ id: 'udapp.copyAccount' })} content={selectedAccount} direction="top" />
         </div>
         <CustomTooltip placement={'top-start'} tooltipClasses="text-nowrap" tooltipId="remixSignMsgTooltip" tooltipText={<FormattedMessage id="udapp.signMsgUsingAccount" />}>
           <i id="remixRunSignMsg" data-id="settingsRemixRunSignMsg" className="mx-1 fas fa-edit udapp_icon" aria-hidden="true" onClick={signMessage}></i>

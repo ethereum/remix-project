@@ -1,9 +1,9 @@
-import React, {useRef, useEffect, useState} from 'react' // eslint-disable-line
-import {useIntl} from 'react-intl'
-import {action, FileExplorerContextMenuProps} from '../types'
+import React, { useRef, useEffect, useState } from 'react' // eslint-disable-line
+import { useIntl } from 'react-intl'
+import { action, FileExplorerContextMenuProps } from '../types'
 
 import '../css/file-explorer-context-menu.css'
-import {customAction} from '@remixproject/plugin-api'
+import { customAction } from '@remixproject/plugin-api'
 import UploadFile from './upload-file'
 
 declare global {
@@ -126,7 +126,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
             >
               {intl.formatMessage({
                 id: `filePanel.${item.id}`,
-                defaultMessage: item.label || item.name
+                defaultMessage: item.label || item.name,
               })}
             </li>
           )
@@ -145,7 +145,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
             >
               {intl.formatMessage({
                 id: `filePanel.${item.id}`,
-                defaultMessage: item.label || item.name
+                defaultMessage: item.label || item.name,
               })}
             </li>
           )
@@ -158,77 +158,77 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
             onClick={(e) => {
               e.stopPropagation()
               switch (item.name) {
-              case 'New File':
-                createNewFile(path)
-                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'newFile'])
-                break
-              case 'New Folder':
-                createNewFolder(path)
-                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'newFolder'])
-                break
-              case 'Rename':
-                renamePath(path, type)
-                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'rename'])
-                break
-              case 'Delete':
-                deletePath(getPath())
-                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'delete'])
-                break
-              case 'Download':
-                downloadPath(path)
-                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'download'])
-                break
-              case 'Push changes to gist':
-                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'pushToChangesoGist'])
-                pushChangesToGist(path, type)
-                break
-              case 'Publish folder to gist':
-                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishFolderToGist'])
-                publishFolderToGist(path, type)
-                break
-              case 'Publish file to gist':
-                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishFileToGist'])
-                publishFileToGist(path, type)
-                break
-              case 'Run':
-                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'runScript'])
-                runScript(path)
-                break
-              case 'Copy':
-                copy(path, type)
-                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copy'])
-                break
-              case 'Copy name':
-                copyFileName(path, type)
-                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copy'])
-                break
-              case 'Copy path':
-                copyPath(path, type)
-                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copy'])
-                break
-              case 'Paste':
-                paste(path, type)
-                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'paste'])
-                break
-              case 'Delete All':
-                deletePath(getPath())
-                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'deleteAll'])
-                break
-              case 'Publish Workspace to Gist':
-                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishWorkspace'])
-                publishFolderToGist(path, type)
-                break
-              default:
-                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', `${item.id}/${item.name}`])
-                emit && emit({...item, path: [path]} as customAction)
-                break
+                case 'New File':
+                  createNewFile(path)
+                  _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'newFile'])
+                  break
+                case 'New Folder':
+                  createNewFolder(path)
+                  _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'newFolder'])
+                  break
+                case 'Rename':
+                  renamePath(path, type)
+                  _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'rename'])
+                  break
+                case 'Delete':
+                  deletePath(getPath())
+                  _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'delete'])
+                  break
+                case 'Download':
+                  downloadPath(path)
+                  _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'download'])
+                  break
+                case 'Push changes to gist':
+                  _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'pushToChangesoGist'])
+                  pushChangesToGist(path, type)
+                  break
+                case 'Publish folder to gist':
+                  _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishFolderToGist'])
+                  publishFolderToGist(path, type)
+                  break
+                case 'Publish file to gist':
+                  _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishFileToGist'])
+                  publishFileToGist(path, type)
+                  break
+                case 'Run':
+                  _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'runScript'])
+                  runScript(path)
+                  break
+                case 'Copy':
+                  copy(path, type)
+                  _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copy'])
+                  break
+                case 'Copy name':
+                  copyFileName(path, type)
+                  _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copy'])
+                  break
+                case 'Copy path':
+                  copyPath(path, type)
+                  _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copy'])
+                  break
+                case 'Paste':
+                  paste(path, type)
+                  _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'paste'])
+                  break
+                case 'Delete All':
+                  deletePath(getPath())
+                  _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'deleteAll'])
+                  break
+                case 'Publish Workspace to Gist':
+                  _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishWorkspace'])
+                  publishFolderToGist(path, type)
+                  break
+                default:
+                  _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', `${item.id}/${item.name}`])
+                  emit && emit({ ...item, path: [path] } as customAction)
+                  break
               }
               hideContextMenu()
             }}
           >
             {intl.formatMessage({
               id: `filePanel.${item.id}`,
-              defaultMessage: item.label || item.name
+              defaultMessage: item.label || item.name,
             })}
           </li>
         )
@@ -240,7 +240,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
     <div
       id="menuItemsContainer"
       className="p-1 remixui_contextContainer bg-light shadow border"
-      style={{left: pageX, top: pageY}}
+      style={{ left: pageX, top: pageY }}
       ref={contextMenuRef}
       onBlur={hideContextMenu}
       tabIndex={500}

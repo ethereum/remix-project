@@ -1,7 +1,7 @@
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
-import {FormattedMessage} from 'react-intl'
-import {AbstractProvider} from './abstract-provider'
+import { FormattedMessage } from 'react-intl'
+import { AbstractProvider } from './abstract-provider'
 
 const profile = {
   name: 'foundry-provider',
@@ -9,7 +9,7 @@ const profile = {
   kind: 'provider',
   description: 'Foundry Anvil provider',
   methods: ['sendAsync', 'init'],
-  version: packageJson.version
+  version: packageJson.version,
 }
 
 export class FoundryProvider extends AbstractProvider {
@@ -36,7 +36,7 @@ export class FoundryProvider extends AbstractProvider {
                 <a href="https://github.com/foundry-rs/foundry" target="_blank">
                   {chunks}
                 </a>
-              )
+              ),
             }}
           />
         </div>

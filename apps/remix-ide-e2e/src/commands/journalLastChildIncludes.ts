@@ -6,7 +6,7 @@ import EventEmitter from 'events'
 */
 class JournalLastChildIncludes extends EventEmitter {
   command(this: NightwatchBrowser, val: string): NightwatchBrowser {
-     this.api
+    this.api
       .waitForElementPresent({
         selector: `//*[@data-id='terminalJournal' and contains(.,'${val}')]`,
         timeout: 10000,

@@ -1,8 +1,8 @@
 // eslint-disable-next-line no-use-before-define
-import {CustomTooltip} from '@remix-ui/helper'
+import { CustomTooltip } from '@remix-ui/helper'
 import React from 'react'
-import {FormattedMessage} from 'react-intl'
-import {GasPriceProps} from '../types'
+import { FormattedMessage } from 'react-intl'
+import { GasPriceProps } from '../types'
 
 export function GasPriceUI(props: GasPriceProps) {
   const handleGasLimit = (e) => {

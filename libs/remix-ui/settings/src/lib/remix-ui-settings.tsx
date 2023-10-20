@@ -1,6 +1,6 @@
-import React, {useState, useReducer, useEffect, useCallback} from 'react' // eslint-disable-line
+import React, { useState, useReducer, useEffect, useCallback } from 'react' // eslint-disable-line
 
-import {labels, textDark, textSecondary} from './constants'
+import { labels, textDark, textSecondary } from './constants'
 
 import './remix-ui-settings.css'
 import {
@@ -14,16 +14,16 @@ import {
   saveIpfsSettingsToast,
   useAutoCompletion,
   useShowGasInEditor,
-  useDisplayErrors
+  useDisplayErrors,
 } from './settingsAction'
-import {initialState, toastInitialState, toastReducer, settingReducer} from './settingsReducer'
-import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
-import {RemixUiThemeModule, ThemeModule} from '@remix-ui/theme-module'
-import {RemixUiLocaleModule, LocaleModule} from '@remix-ui/locale-module'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {GithubSettings} from './github-settings'
-import {EtherscanSettings} from './etherscan-settings'
-import {CustomTooltip} from '@remix-ui/helper'
+import { initialState, toastInitialState, toastReducer, settingReducer } from './settingsReducer'
+import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
+import { RemixUiThemeModule, ThemeModule } from '@remix-ui/theme-module'
+import { RemixUiLocaleModule, LocaleModule } from '@remix-ui/locale-module'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { GithubSettings } from './github-settings'
+import { EtherscanSettings } from './etherscan-settings'
+import { CustomTooltip } from '@remix-ui/helper'
 
 /* eslint-disable-next-line */
 export interface RemixUiSettingsProps {
@@ -69,14 +69,14 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const token = props.config.get('settings/' + labels['gist'].key)
     if (token) {
       setTokenValue((prevState) => {
-        return {...prevState, gist: token}
+        return { ...prevState, gist: token }
       })
     }
 
     const etherscantoken = props.config.get('settings/' + labels['etherscan'].key)
     if (etherscantoken) {
       setTokenValue((prevState) => {
-        return {...prevState, etherscan: etherscantoken}
+        return { ...prevState, etherscan: etherscantoken }
       })
     }
     const configPrivateBeeAddress = props.config.get('settings/swarm-private-bee-address')
@@ -327,7 +327,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             id="saveswarmsettings"
             data-id="settingsTabSaveSwarmSettings"
             onClick={() => saveSwarmSettings()}
-            value={intl.formatMessage({id: 'settings.save'})}
+            value={intl.formatMessage({ id: 'settings.save' })}
             type="button"
             disabled={privateBeeAddress === ''}
           ></input>
@@ -443,7 +443,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             id="saveIpfssettings"
             data-id="settingsTabSaveIpfsSettings"
             onClick={() => saveIpfsSettings()}
-            value={intl.formatMessage({id: 'settings.save'})}
+            value={intl.formatMessage({ id: 'settings.save' })}
             type="button"
           ></input>
         </div>

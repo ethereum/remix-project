@@ -1,7 +1,7 @@
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
-import {FormattedMessage} from 'react-intl'
-import {AbstractProvider} from './abstract-provider'
+import { FormattedMessage } from 'react-intl'
+import { AbstractProvider } from './abstract-provider'
 
 const profile = {
   name: 'basic-http-provider',
@@ -9,7 +9,7 @@ const profile = {
   kind: 'provider',
   description: 'External Http Provider',
   methods: ['sendAsync', 'init'],
-  version: packageJson.version
+  version: packageJson.version,
 }
 
 export class ExternalHttpProvider extends AbstractProvider {
@@ -29,7 +29,7 @@ export class ExternalHttpProvider extends AbstractProvider {
                 <a href="https://geth.ethereum.org/docs/rpc/server" target="_blank" rel="noreferrer">
                   {chunks}
                 </a>
-              )
+              ),
             }}
           />
           <div className="border p-1">geth --http --http.corsdomain https://remix.ethereum.org</div>
@@ -41,7 +41,7 @@ export class ExternalHttpProvider extends AbstractProvider {
                 <a href="https://geth.ethereum.org/getting-started/dev-mode" target="_blank" rel="noreferrer">
                   {chunks}
                 </a>
-              )
+              ),
             }}
           />
           <div className="border p-1">
@@ -49,7 +49,7 @@ export class ExternalHttpProvider extends AbstractProvider {
           </div>
           <br />
           <br />
-          <FormattedMessage id="udapp.externalHttpProviderText3" values={{b: (chunks) => <b>{chunks}</b>}} />
+          <FormattedMessage id="udapp.externalHttpProviderText3" values={{ b: (chunks) => <b>{chunks}</b> }} />
           <br />
           <br />
           <FormattedMessage
@@ -59,7 +59,7 @@ export class ExternalHttpProvider extends AbstractProvider {
                 <a href="https://remix-ide.readthedocs.io/en/latest/run.html#more-about-web3-provider" target="_blank" rel="noreferrer">
                   {chunks}
                 </a>
-              )
+              ),
             }}
           />
           <br />

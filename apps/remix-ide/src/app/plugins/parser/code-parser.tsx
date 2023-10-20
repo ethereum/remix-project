@@ -1,14 +1,14 @@
 'use strict'
-import {Plugin} from '@remixproject/engine'
-import {sourceMappingDecoder} from '@remix-project/remix-debug'
-import {CompilerAbstract} from '@remix-project/remix-solidity'
-import {CompilationResult} from '@remix-project/remix-solidity'
+import { Plugin } from '@remixproject/engine'
+import { sourceMappingDecoder } from '@remix-project/remix-debug'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
+import { CompilationResult } from '@remix-project/remix-solidity'
 import CodeParserGasService from './services/code-parser-gas-service'
 import CodeParserCompiler from './services/code-parser-compiler'
 import CodeParserAntlrService from './services/code-parser-antlr-service'
-import CodeParserImports, {CodeParserImportsData} from './services/code-parser-imports'
+import CodeParserImports, { CodeParserImportsData } from './services/code-parser-imports'
 import React from 'react'
-import {Profile} from '@remixproject/plugin-utils'
+import { Profile } from '@remixproject/plugin-utils'
 import {
   ContractDefinitionAstNode,
   EventDefinitionAstNode,
@@ -19,11 +19,11 @@ import {
   ModifierDefinitionAstNode,
   SourceUnitAstNode,
   StructDefinitionAstNode,
-  VariableDeclarationAstNode
+  VariableDeclarationAstNode,
 } from '@remix-project/remix-analyzer'
-import {lastCompilationResult, RemixApi} from '@remixproject/plugin-api'
-import {antlr} from './types'
-import {ParseResult} from './types/antlr-types'
+import { lastCompilationResult, RemixApi } from '@remixproject/plugin-api'
+import { antlr } from './types'
+import { ParseResult } from './types/antlr-types'
 
 const profile: Profile = {
   name: 'codeParser',
@@ -59,10 +59,10 @@ const profile: Profile = {
     'gasEstimation',
     'declarationOf',
     'getGasEstimates',
-    'getImports'
+    'getImports',
   ],
   events: [],
-  version: '0.0.1'
+  version: '0.0.1',
 }
 
 export function isNodeDefinition(node: genericASTNode) {
@@ -131,7 +131,7 @@ export class CodeParser extends Plugin {
     this.nodeIndex = {
       declarations: [[]],
       flatReferences: [],
-      nodesPerFile: {}
+      nodesPerFile: {},
     }
   }
 
@@ -302,7 +302,7 @@ export class CodeParser extends Plugin {
           node.gasEstimate = this._getContractGasEstimate(node, node.name, fileName, compilationResult)
           nodesByContract.contracts[node.name] = {
             contractDefinition: node,
-            contractNodes: flatNodes
+            contractNodes: flatNodes,
           }
           const baseNodes = {}
           const baseNodesWithBaseContractScope = {}
@@ -368,11 +368,11 @@ export class CodeParser extends Plugin {
             } else if (visibility === 'private' || visibility === 'internal') {
               executionCost = estimationObj === null ? '-' : estimationObj.internal[fn]
             }
-            return {executionCost}
+            return { executionCost }
           } else {
             return {
               creationCost: estimationObj === null ? '-' : estimationObj.creation.totalCost,
-              codeDepositCost: estimationObj === null ? '-' : estimationObj.creation.codeDepositCost
+              codeDepositCost: estimationObj === null ? '-' : estimationObj.creation.codeDepositCost,
             }
           }
         }
@@ -478,8 +478,8 @@ export class CodeParser extends Plugin {
   async definitionAtPosition(position: number) {
     const nodes = await this.nodesAtPosition(position)
     const nodeDefinition = {
-      'ast': null,
-      'parser': null
+      ast: null,
+      parser: null,
     }
     let node: genericASTNode
     if (nodes && nodes.length) {
@@ -524,9 +524,9 @@ export class CodeParser extends Plugin {
     if (nodeDefinition.ast && nodeDefinition.parser) {
       if (nodeDefinition.ast.name === nodeDefinition.parser.name && nodeDefinition.ast.nodeType === nodeDefinition.parser.type) {
         return nodeDefinition.ast
-      }else{
+      } else {
         // if there is a difference and the compiler has compiled correctly assume the ast node is the definition
-        if(this.compilerService.errorState === false){
+        if (this.compilerService.errorState === false) {
           return nodeDefinition.ast
         }
       }
@@ -536,9 +536,7 @@ export class CodeParser extends Plugin {
       return nodeDefinition.ast
     }
 
-
     return nodeDefinition.parser
-
   }
 
   async getContractNodes(contractName: string) {
