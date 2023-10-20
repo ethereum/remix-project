@@ -297,7 +297,7 @@ export class Compiler {
 
     this.state.worker.addEventListener('message', (msg: Record<'data', MessageFromWorker>) => {
       const data: MessageFromWorker = msg.data
-      if (this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger && data.timestamp !== this.state.compilationStartTime) {
+      if (this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger && data.timestamp < this.state.compilationStartTime) {
         // drop message from previous compilation
         console.log("dropping compilation result from previous compilation")
         console.log("current compilation start time: " + this.state.compilationStartTime)
