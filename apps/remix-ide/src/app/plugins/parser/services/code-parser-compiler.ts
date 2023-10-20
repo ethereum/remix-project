@@ -176,6 +176,7 @@ export default class CodeParserCompiler {
         this.compiler.compile(sources, this.plugin.currentFile)
       }
     } catch (e) {
+      console.log(JSON.stringify(e))
       // do nothing
     }
   }
