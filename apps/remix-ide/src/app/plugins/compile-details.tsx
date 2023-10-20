@@ -19,16 +19,25 @@ export class CompilationDetailsPlugin extends ViewPlugin {
   dispatch: React.Dispatch<any> = () => {}
   appManager: RemixAppManager
   element: HTMLDivElement
+  payload: any
   constructor(appManager: RemixAppManager) {
     super(profile)
     this.appManager = appManager
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'compileDetails')
+    this.payload = {
+      contractProperties: {} as any,
+      intl: {} as any,
+      selectedContract: '',
+      help: {} as any,
+      insertValue: {} as any,
+      saveAs: {} as any,
+    }
   }
 
   async onActivation() {
+    await this.call('tabs', 'focus', 'compilationdetails')
     this.renderComponent()
-    // await this.call('tabs', 'focus', 'compilationdetails')
     _paq.push(['trackEvent', 'plugin', 'activated', 'compilationDetails'])
   }
 
@@ -36,8 +45,9 @@ export class CompilationDetailsPlugin extends ViewPlugin {
 
   }
 
-  async showDetails() {
+  async showDetails(sentPayload: any) {
     await this.call('tabs', 'focus', 'compilationdetails')
+    this.payload = sentPayload
     this.renderComponent()
   }
 
@@ -54,8 +64,8 @@ export class CompilationDetailsPlugin extends ViewPlugin {
 
   renderComponent() {
     this.dispatch({
-      ...this
-
+      ...this,
+      ...this.payload
     })
   }
 
@@ -63,6 +73,12 @@ export class CompilationDetailsPlugin extends ViewPlugin {
     return (
       <RemixUiCompileDetails
         plugin={this}
+        contractProperties={state.contractProperties}
+        intl={state.intl}
+        selectedContract={state.selectedContract}
+        saveAs={state.saveAs}
+        help={state.help}
+        insertValue={state.insertValue}
       />
     )
   }
