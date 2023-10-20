@@ -190,7 +190,6 @@ export class RemixURLResolver {
     for (let i = 0; i < npm_urls.length; i++) {
       try {
         const req = npm_urls[i] + url
-        console.log('try to load ' + req)
         const response: AxiosResponse = await axios.get(req, { transformResponse: [] })
         content = response.data
         break
