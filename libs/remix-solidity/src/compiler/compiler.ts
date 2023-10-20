@@ -101,7 +101,6 @@ export class Compiler {
   compile(files: Source, target: string): void {
     this.state.target = target
     this.state.compilationStartTime = new Date().getTime()
-    console.log('compilation started', this.state.compilationStartTime)
     this.event.trigger('compilationStarted', [])
     this.internalCompile(files, null, this.state.compilationStartTime)
   }
@@ -186,8 +185,6 @@ export class Compiler {
           source: source
         }
       }
-      console.log('compilation finished', JSON.stringify(data))
-      console.log('compilation finished data', JSON.stringify(data))
       this.event.trigger('compilationFinished', [true, data, source, input, version])
     }
   }
@@ -298,9 +295,6 @@ export class Compiler {
       const data: MessageFromWorker = msg.data
       if (this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger && data.timestamp < this.state.compilationStartTime) {
         // drop message from previous compilation
-        console.log("dropping compilation result from previous compilation")
-        console.log("current compilation start time: " + this.state.compilationStartTime)
-        console.log("timestamp: " + data.timestamp)
         return
       }
       switch (data.cmd) {
