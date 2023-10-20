@@ -83,9 +83,6 @@ export class Compiler {
 
   internalCompile(files: Source, missingInputs?: string[], timeStamp?: number): void {
     if(timeStamp != this.state.compilationStartTime && this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger ) {
-      console.log("dropping compilation result from previous compilation")
-      console.log("current compilation start time: " + this.state.compilationStartTime)
-      console.log("timestamp: " + timeStamp)
       return
     }
     this.gatherImports(files, missingInputs, (error, input) => {
@@ -299,6 +296,9 @@ export class Compiler {
       const data: MessageFromWorker = msg.data
       if (this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger && data.timestamp !== this.state.compilationStartTime) {
         // drop message from previous compilation
+        console.log("dropping compilation result from previous compilation")
+        console.log("current compilation start time: " + this.state.compilationStartTime)
+        console.log("timestamp: " + data.timestamp)
         return
       }
       switch (data.cmd) {
