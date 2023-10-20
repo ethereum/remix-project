@@ -138,10 +138,11 @@ export default class CodeParserCompiler {
      * @returns 
      */
   async compile() {
-    console.log('compile')
+    
     try {
       this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
       if (this.plugin.currentFile && this.plugin.currentFile.endsWith('.sol')) {
+        console.log('compile')
         const state = await this.plugin.call('solidity', 'getCompilerState')
         this.compiler.set('optimize', state.optimize)
         this.compiler.set('evmVersion', state.evmVersion)
