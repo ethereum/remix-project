@@ -150,10 +150,8 @@ class Editor extends Plugin {
   }
 
   async _onChange (file) {
-    console.log('onChange', file)
     this.triggerEvent('didChangeFile', [file])
     const currentFile = await this.call('fileManager', 'file')
-    console.log('currentFile', currentFile)
     if (!currentFile) {
       return
     }
@@ -161,7 +159,6 @@ class Editor extends Plugin {
       return
     }
     const input = this.get(currentFile)
-    console.log('input', input)
     if (!input) {
       return
     }
@@ -178,7 +175,6 @@ class Editor extends Plugin {
     }
 
     this.saveTimeout = window.setTimeout(() => {
-      console.log('trigger changed', currentFile)
       this.triggerEvent('contentChanged', [currentFile, input])
       this.triggerEvent('requiringToSaveCurrentfile', [currentFile])
     }, 500)

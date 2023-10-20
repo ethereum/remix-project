@@ -320,7 +320,7 @@ module.exports = {
   
   'Should run free function which logs in the terminal #group10 #flaky': function (browser: NightwatchBrowser) {
     const script = `// SPDX-License-Identifier: MIT
-    pragma solidity ^0.8.21;
+    pragma solidity ^0.8.18;
     
     import "hardhat/console.sol";
     
@@ -339,8 +339,6 @@ module.exports = {
     const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"    
     const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething" in the Remix VM']`
     browser
-      .clickLaunchIcon('solidity')
-      .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js')
       .addFile('test.sol', { content: script })
       .scrollToLine(3)
       .useXpath()
