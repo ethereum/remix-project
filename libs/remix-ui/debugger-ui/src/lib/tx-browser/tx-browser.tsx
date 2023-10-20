@@ -1,12 +1,11 @@
-import {CustomTooltip, isValidHash} from '@remix-ui/helper'
+import {CustomTooltip} from '@remix-ui/helper'
 import React, {useState, useEffect, useRef} from 'react' //eslint-disable-line
 import {useIntl, FormattedMessage} from 'react-intl'
 import './tx-browser.css'
 
 export const TxBrowser = ({requestDebug, updateTxNumberFlag, unloadRequested, transactionNumber, debugging}) => {
   const [state, setState] = useState({
-    txNumber: '',
-    isTxNumberValid: false
+    txNumber: ''
   })
 
   const inputValue = useRef(null)
@@ -17,14 +16,12 @@ export const TxBrowser = ({requestDebug, updateTxNumberFlag, unloadRequested, tr
     setState((prevState) => {
       return {
         ...prevState,
-        txNumber: transactionNumber,
-        isTxNumberValid: isValidHash(transactionNumber),
+        txNumber: transactionNumber
       }
     })
-  }, [transactionNumber, debugging])
+  }, [transactionNumber])
 
   const handleSubmit = () => {
-    if (!state.txNumber || !state.isTxNumberValid) return
     if (debugging) {
       unload()
     } else {
@@ -37,10 +34,14 @@ export const TxBrowser = ({requestDebug, updateTxNumberFlag, unloadRequested, tr
   }
 
   const txInputChanged = (value) => {
+    // todo check validation of txnumber in the input element, use
+    // required
+    // oninvalid="setCustomValidity('Please provide a valid transaction number, must start with 0x and have length of 22')"
+    // pattern="^0[x,X]+[0-9a-fA-F]{22}"
+    // this.state.txNumberInput.setCustomValidity('')
     setState((prevState) => {
       return {
         ...prevState,
-        isTxNumberValid: isValidHash(value),
         txNumber: value
       }
     })
@@ -49,20 +50,19 @@ export const TxBrowser = ({requestDebug, updateTxNumberFlag, unloadRequested, tr
   const txInputOnInput = () => {
     updateTxNumberFlag(!inputValue.current.value)
   }
-
   const customJSX = (
     <div
       id="debuggerTransactionStartButtonContainer"
       data-id="debuggerTransactionStartButton"
       onClick={handleSubmit}
-      className={`${!state.isTxNumberValid ? 'disabled ' : ''} btn btn-primary btn-sm btn-block text-decoration-none`}
+      className="btn btn-primary btn-sm btn-block text-decoration-none"
     >
       <button
-        className={`${!state.isTxNumberValid ? 'disabled ' : ''} btn btn-link btn-sm btn-block h-75 p-0 m-0 text-decoration-none`}
+        className="btn btn-link btn-sm btn-block h-75 p-0 m-0 text-decoration-none"
         id="load"
         onClick={handleSubmit}
         data-id="debuggerTransactionStartButton"
-        disabled={!state.txNumber || !state.isTxNumberValid}
+        disabled={!state.txNumber}
         style={{pointerEvents: 'none', color: 'white'}}
       >
         <span>
@@ -91,7 +91,7 @@ export const TxBrowser = ({requestDebug, updateTxNumberFlag, unloadRequested, tr
         <div className="d-flex justify-content-center w-100 btn-group py-1">
           <CustomTooltip
             placement="bottom"
-            tooltipText={<FormattedMessage id={`debugger.${!state.isTxNumberValid ? 'provideTxNumber' : debugging ? 'stopDebugging' : 'startDebugging'}`} />}
+            tooltipText={<FormattedMessage id={`debugger.${debugging ? 'stopDebugging' : 'startDebugging'}`} />}
             tooltipId={'debuggingButtontooltip'}
             tooltipClasses="text-nowrap"
           >

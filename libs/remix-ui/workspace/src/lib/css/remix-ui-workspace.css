@@ -40,7 +40,7 @@
     cursor            : pointer;
   }
   .remixui_treeview {
-    overflow-x        : hidden;
+    overflow-y        : auto;
   }
   .remixui_dialog {
     display: flex;

@@ -34,7 +34,7 @@ export class TxRunnerVM {
   constructor (vmaccounts, api, getVMObject) {
     this.event = new EventManager()
     this.logsManager = new LogsManager()
-    // has a default for now for backwards compatibility
+    // has a default for now for backwards compatability
     this.getVMObject = getVMObject
     this.commonContext = this.getVMObject().common
     this.blockNumber = 0

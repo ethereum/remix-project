@@ -66,11 +66,13 @@ export const ButtonNavigation = ({
   }
 
   const stepBtnStyle = 'd-flex align-items-center justify-content-center btn btn-primary btn-sm stepButton h-75 m-0 p-1'
+  const disableStepBtnStyle = 'stepButtonDisabled'
+  const disableJumpBtnStyle = 'jumpButtonDisabled'
   const stepMarkupStructure = {
     stepOverBackJSX: {
       markup: (
         <div
-          className={`${state.overBackDisabled ? 'disabled ' : ''} ${stepBtnStyle}`}
+          className={state.overBackDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}` : `${stepBtnStyle}`}
           onClick={() => {
             stepOverBack && stepOverBack()
           }}
@@ -95,7 +97,7 @@ export const ButtonNavigation = ({
     stepBackJSX: {
       markup: (
         <div
-          className={`${state.intoBackDisabled ? 'disabled ' : ''} ${stepBtnStyle}`}
+          className={state.intoBackDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}` : `${stepBtnStyle}`}
           onClick={() => {
             stepIntoBack && stepIntoBack()
           }}
@@ -124,7 +126,7 @@ export const ButtonNavigation = ({
     stepIntoJSX: {
       markup: (
         <div
-          className={`${state.intoForwardDisabled ? 'disabled ' : ''} ${stepBtnStyle}`}
+          className={state.intoForwardDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}` : `${stepBtnStyle}`}
           onClick={() => {
             stepIntoForward && stepIntoForward()
           }}
@@ -152,7 +154,7 @@ export const ButtonNavigation = ({
     stepOverForwardJSX: {
       markup: (
         <div
-          className={`${state.overForwardDisabled ? 'disabled ' : ''} ${stepBtnStyle}`}
+          className={state.overForwardDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}` : `${stepBtnStyle}`}
           onClick={() => {
             stepOverForward && stepOverForward()
           }}
@@ -181,7 +183,7 @@ export const ButtonNavigation = ({
     jumpPreviousBreakpointJSX: {
       markup: (
         <div
-          className={`${state.jumpPreviousBreakpointDisabled ? 'disabled ' : ''} ${stepBtnStyle}`}
+          className={state.jumpPreviousBreakpointDisabled ? `${stepBtnStyle} ${disableJumpBtnStyle}` : `${stepBtnStyle}`}
           id="buttonNavigatorJumpPreviousBreakpointContainer"
           onClick={() => {
             jumpPreviousBreakpoint && jumpPreviousBreakpoint()
@@ -189,7 +191,7 @@ export const ButtonNavigation = ({
           data-id="buttonNavigatorJumpPreviousBreakpoint"
         >
           <button
-            className="btn btn-link btn-sm m-0 p-0"
+            className="btn btn-link btn-sm jumpButton m-0 p-0"
             id="jumppreviousbreakpoint"
             data-id="buttonNavigatorJumpPreviousBreakpoint"
             onClick={() => {
@@ -213,7 +215,7 @@ export const ButtonNavigation = ({
     jumpOutJSX: {
       markup: (
         <div
-          className={`${state.jumpOutDisabled ? 'disabled ' : ''} ${stepBtnStyle}`}
+          className={state.jumpOutDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}` : `${stepBtnStyle}`}
           onClick={() => {
             jumpOut && jumpOut()
           }}
@@ -221,7 +223,7 @@ export const ButtonNavigation = ({
           id="buttonNavigatorJumpOutContainer"
         >
           <button
-            className="btn btn-link btn-sm m-0 p-0"
+            className="btn btn-link btn-sm jumpButton m-0 p-0"
             id="jumpout"
             onClick={() => {
               jumpOut && jumpOut()
@@ -245,7 +247,7 @@ export const ButtonNavigation = ({
     jumpNextBreakpointJSX: {
       markup: (
         <div
-          className={`${state.jumpNextBreakpointDisabled ? 'disabled ' : ''} ${stepBtnStyle}`}
+          className={state.jumpNextBreakpointDisabled ? `${stepBtnStyle} ${disableStepBtnStyle}` : `${stepBtnStyle}`}
           onClick={() => {
             jumpNextBreakpoint && jumpNextBreakpoint()
           }}
@@ -253,7 +255,7 @@ export const ButtonNavigation = ({
           id="buttonNavigatorJumpNextBreakpointContainer"
         >
           <button
-            className={`${state.jumpNextBreakpointDisabled ? 'disabled' : ''} btn btn-link btn-sm m-0 p-0`}
+            className="btn btn-link btn-sm jumpButton m-0 p-0"
             id="jumpnextbreakpoint"
             data-id="buttonNavigatorJumpNextBreakpoint"
             onClick={() => {
@@ -274,7 +276,7 @@ export const ButtonNavigation = ({
 
   return (
     <div className="buttons">
-      <div className="w-100 btn-group py-1">
+      <div className="stepButtons btn-group py-1">
         {Object.keys(stepMarkupStructure).map((x) => (
           <CustomTooltip
             placement={stepMarkupStructure[x].placement}
@@ -287,7 +289,7 @@ export const ButtonNavigation = ({
         ))}
       </div>
 
-      <div className="w-100 btn-group py-1">
+      <div className="jumpButtons btn-group py-1">
         {Object.keys(jumpMarkupStructure).map((x) => (
           <CustomTooltip
             placement={jumpMarkupStructure[x].placement}

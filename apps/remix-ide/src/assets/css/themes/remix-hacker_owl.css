@@ -2111,7 +2111,6 @@ textarea.form-control.is-invalid {
   }
 }
 .btn {
-  cursor: pointer;
   display: inline-block;
   font-weight: 400;
   color: #fff;
@@ -2143,7 +2142,6 @@ textarea.form-control.is-invalid {
 .btn.disabled,
 .btn:disabled {
   opacity: 0.65;
-  cursor: not-allowed;
 }
 a.btn.disabled,
 fieldset:disabled a.btn {

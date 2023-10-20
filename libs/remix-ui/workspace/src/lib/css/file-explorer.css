@@ -33,11 +33,7 @@ input[type="file"] {
     margin-left       : 20px;
 }
 .remixui_items              {
-    display           : inline;
-    white-space       : nowrap;
-    overflow          : hidden;
-    text-overflow     : ellipsis;
-    max-width         : 90%;
+    display           : inline
 }
 .remixui_remove             {
     margin-left       : auto;

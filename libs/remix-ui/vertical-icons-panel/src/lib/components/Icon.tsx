@@ -86,11 +86,7 @@ const Icon = ({iconRecord, verticalIconPlugin, contextMenuAction, theme}: IconPr
 
   return (
     <>
-      <CustomTooltip
-        placement={name === 'settings' ? 'right' : name === 'search' ? 'top' : name === 'udapp' ? 'bottom' : 'top'}
-        tooltipText={title}
-        delay={{show: 1000, hide: 0}}
-      >
+      <CustomTooltip placement={name === 'settings' ? 'right' : name === 'search' ? 'top' : name === 'udapp' ? 'bottom' : 'top'} tooltipText={title} delay={{show: 1000, hide: 0}}>
         <div
           className={`remixui_icon m-2  pt-1`}
           onClick={() => {

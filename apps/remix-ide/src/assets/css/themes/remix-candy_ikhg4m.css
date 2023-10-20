@@ -2314,7 +2314,6 @@ textarea.form-control.is-invalid {
 }
 
 .btn {
-  cursor: pointer;
   display: inline-block;
   font-weight: 400;
   color: #0f7292;
@@ -2347,7 +2346,6 @@ textarea.form-control.is-invalid {
 .btn.disabled,
 .btn:disabled {
   opacity: 0.7;
-  cursor: not-allowed
 }
 
 a.btn.disabled,
@@ -4373,7 +4371,6 @@ input[type="button"].btn-block {
 
 .card-title {
   margin-bottom: 0.75rem;
-  color: var(--text);
 }
 
 .card-subtitle {

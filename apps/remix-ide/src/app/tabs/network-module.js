@@ -53,7 +53,7 @@ export class NetworkModule extends Plugin {
     this.blockchain.addProvider({ name: network.name, provider })
   }
 
-  /** Remove a network to the list of available networks */
+  /** Remove a network to the list of availble networks */
   removeNetwork (name) {
     this.blockchain.removeProvider(name)
   }
