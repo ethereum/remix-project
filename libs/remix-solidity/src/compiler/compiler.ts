@@ -83,6 +83,9 @@ export class Compiler {
 
   internalCompile(files: Source, missingInputs?: string[], timeStamp?: number): void {
     if(timeStamp != this.state.compilationStartTime && this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger ) {
+      console.log("dropping compilation result from previous compilation")
+      console.log("current compilation start time: " + this.state.compilationStartTime)
+      console.log("timestamp: " + timeStamp)
       return
     }
     this.gatherImports(files, missingInputs, (error, input) => {
