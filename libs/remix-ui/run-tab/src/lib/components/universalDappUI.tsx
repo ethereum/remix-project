@@ -268,8 +268,8 @@ export function UniversalDappUI(props: UdappProps) {
 
                           return key === funcIndex
                             ? Object.keys(response || {}).map((innerkey, index) => {
-                                return renderData(props.instance.decodedResponse[key][innerkey], response, innerkey, innerkey)
-                              })
+                              return renderData(props.instance.decodedResponse[key][innerkey], response, innerkey, innerkey)
+                            })
                             : null
                         })}
                       </TreeView>
