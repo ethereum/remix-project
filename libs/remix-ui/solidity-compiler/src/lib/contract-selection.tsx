@@ -158,7 +158,6 @@ export const ContractSelection = (props: ContractSelectionProps) => {
 
   const payload = {
     saveAs: saveAs,
-    intl: intl,
     contractProperties: {},
     selectedContract: '',
     help: {},

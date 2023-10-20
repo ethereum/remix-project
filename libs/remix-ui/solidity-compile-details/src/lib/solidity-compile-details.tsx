@@ -1,11 +1,12 @@
 import { CopyToClipboard } from '@remix-ui/clipboard'
+import { CustomTooltip } from '@remix-ui/helper'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import React from 'react'
+import { useIntl } from 'react-intl'
 
 export interface RemixUiCompileDetailsProps {
   plugin: any
   contractProperties: any
-  intl: any
   selectedContract: string
   help: any
   insertValue: any
@@ -14,16 +15,20 @@ export interface RemixUiCompileDetailsProps {
 
 const _paq = (window._paq = window._paq || [])
 
-export function RemixUiCompileDetails({ plugin, contractProperties, intl, selectedContract, saveAs, help, insertValue }: RemixUiCompileDetailsProps) {
+export function RemixUiCompileDetails({ plugin, contractProperties, selectedContract, saveAs, help, insertValue }: RemixUiCompileDetailsProps) {
 
+  const intl = useIntl()
   const downloadFn = () => {
     _paq.push(['trackEvent', 'compiler', 'compilerDetails', 'download'])
     saveAs(new Blob([JSON.stringify(contractProperties, null, '\t')]), `${selectedContract}_compData.json`)
   }
   return (
     <>
-      <div>
-        <span>{selectedContract}</span><span>Download Compile details</span>
+      <div className="d-flex justify-content-between align-items-center mr-1">
+        <span className="lead">{selectedContract}</span>
+        <CustomTooltip tooltipText={intl.formatMessage({id: 'solidity.compileDetails'})}>
+          <span className="btn btn-outline-success border-success mr-1" onClick={downloadFn}>Download</span>
+        </CustomTooltip>
       </div>
       <div className="remixui_detailsJSON">
         <TreeView>
