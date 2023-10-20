@@ -292,8 +292,8 @@ export function ContractGUI(props: ContractGUIProps) {
             toggleUpgradeImp && !proxyAddress
               ? intl.formatMessage({ id: 'udapp.tooltipText11' })
               : props.inputs !== '' && basicInput === ''
-              ? intl.formatMessage({ id: 'udapp.tooltipText12' })
-              : buttonOptions.title
+                ? intl.formatMessage({ id: 'udapp.tooltipText12' })
+                : buttonOptions.title
           }
         >
           <div className="d-flex btn p-0 wrapperElement" onClick={handleActionClick} data-id={buttonOptions.dataId} data-title={buttonOptions.title}>

@@ -46,23 +46,23 @@ const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, 
       </div>
       {showTableHash.includes(tx.hash)
         ? showTable(
-            {
-              hash: tx.hash,
-              status: receipt ? receipt.status : null,
-              isCall: tx.isCall,
-              contractAddress: tx.contractAddress,
-              data: tx,
-              from,
-              to,
-              gas: tx.gas,
-              input: tx.input,
-              'decoded output': ' - ',
-              val: tx.value,
-              transactionCost: tx.transactionCost,
-              executionCost: tx.executionCost,
-            },
-            showTableHash
-          )
+          {
+            hash: tx.hash,
+            status: receipt ? receipt.status : null,
+            isCall: tx.isCall,
+            contractAddress: tx.contractAddress,
+            data: tx,
+            from,
+            to,
+            gas: tx.gas,
+            input: tx.input,
+            'decoded output': ' - ',
+            val: tx.value,
+            transactionCost: tx.transactionCost,
+            executionCost: tx.executionCost,
+          },
+          showTableHash
+        )
         : null}
     </span>
   )

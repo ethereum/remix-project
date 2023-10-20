@@ -56,24 +56,24 @@ const RenderCall = ({ tx, resolvedData, logs, index, plugin, showTableHash, txDe
       </div>
       {showTableHash.includes(tx.hash)
         ? showTable(
-            {
-              hash: tx.hash,
-              isCall: tx.isCall,
-              contractAddress: tx.contractAddress,
-              data: tx,
-              from,
-              to,
-              gas: tx.gas,
-              input: tx.input,
-              'decoded input': resolvedData && resolvedData.params ? JSON.stringify(typeConversion.stringify(resolvedData.params), null, '\t') : ' - ',
-              'decoded output': resolvedData && resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(resolvedData.decodedReturnValue), null, '\t') : ' - ',
-              val: tx.value,
-              logs: logs,
-              transactionCost: tx.transactionCost,
-              executionCost: tx.executionCost,
-            },
-            showTableHash
-          )
+          {
+            hash: tx.hash,
+            isCall: tx.isCall,
+            contractAddress: tx.contractAddress,
+            data: tx,
+            from,
+            to,
+            gas: tx.gas,
+            input: tx.input,
+            'decoded input': resolvedData && resolvedData.params ? JSON.stringify(typeConversion.stringify(resolvedData.params), null, '\t') : ' - ',
+            'decoded output': resolvedData && resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(resolvedData.decodedReturnValue), null, '\t') : ' - ',
+            val: tx.value,
+            logs: logs,
+            transactionCost: tx.transactionCost,
+            executionCost: tx.executionCost,
+          },
+          showTableHash
+        )
         : null}
     </span>
   )

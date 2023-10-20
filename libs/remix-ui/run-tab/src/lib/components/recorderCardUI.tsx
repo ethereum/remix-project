@@ -91,8 +91,8 @@ export function RecorderUI(props: RecorderProps) {
               props.count === 0
                 ? intl.formatMessage({ id: 'udapp.transactionSaveTooltip1' })
                 : props.count === 1
-                ? intl.formatMessage({ id: 'udapp.transactionSaveTooltip2' }, { count: props.count })
-                : intl.formatMessage({ id: 'udapp.transactionSaveTooltip3' }, { count: props.count })
+                  ? intl.formatMessage({ id: 'udapp.transactionSaveTooltip2' }, { count: props.count })
+                  : intl.formatMessage({ id: 'udapp.transactionSaveTooltip3' }, { count: props.count })
             }
           >
             <span>

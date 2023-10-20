@@ -32,9 +32,9 @@ const ModalWrapper = (props: ModalWrapperProps) => {
     } else if (ref.current) {
       props.okFn
         ? // @ts-ignore: Object is possibly 'null'.
-          props.okFn(ref.current.value)
+        props.okFn(ref.current.value)
         : // @ts-ignore: Object is possibly 'null'.
-          props.resolve(ref.current.value)
+        props.resolve(ref.current.value)
     }
   }
 
@@ -100,30 +100,30 @@ const ModalWrapper = (props: ModalWrapperProps) => {
     data.current = props.data
     if (props.modalType) {
       switch (props.modalType) {
-        case ModalTypes.prompt:
-        case ModalTypes.password:
-          setState({
-            ...props,
-            okFn: onFinishPrompt,
-            cancelFn: onCancelFn,
-            message: createModalMessage(props.defaultValue, { valid: true }),
-          })
-          break
-        case ModalTypes.form:
-          setState({
-            ...props,
-            okFn: onFinishPrompt,
-            cancelFn: onCancelFn,
-            message: createForm({ valid: true }),
-          })
-          break
-        default:
-          setState({
-            ...props,
-            okFn: onOkFn,
-            cancelFn: onCancelFn,
-          })
-          break
+      case ModalTypes.prompt:
+      case ModalTypes.password:
+        setState({
+          ...props,
+          okFn: onFinishPrompt,
+          cancelFn: onCancelFn,
+          message: createModalMessage(props.defaultValue, { valid: true }),
+        })
+        break
+      case ModalTypes.form:
+        setState({
+          ...props,
+          okFn: onFinishPrompt,
+          cancelFn: onCancelFn,
+          message: createForm({ valid: true }),
+        })
+        break
+      default:
+        setState({
+          ...props,
+          okFn: onOkFn,
+          cancelFn: onCancelFn,
+        })
+        break
       }
     } else {
       setState({

@@ -178,21 +178,21 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   useEffect(() => {
     if (compilerContainer.compiler.mode) {
       switch (compilerContainer.compiler.mode) {
-        case 'startingCompilation':
-          startingCompilation()
-          break
-        case 'compilationDuration':
-          compilationDuration(compilerContainer.compiler.args[0])
-          break
-        case 'loadingCompiler':
-          loadingCompiler()
-          break
-        case 'compilerLoaded':
-          compilerLoaded(compilerContainer.compiler.args[1])
-          break
-        case 'compilationFinished':
-          compilationFinished()
-          break
+      case 'startingCompilation':
+        startingCompilation()
+        break
+      case 'compilationDuration':
+        compilationDuration(compilerContainer.compiler.args[0])
+        break
+      case 'loadingCompiler':
+        loadingCompiler()
+        break
+      case 'compilerLoaded':
+        compilerLoaded(compilerContainer.compiler.args[1])
+        break
+      case 'compilationFinished':
+        compilationFinished()
+        break
       }
     }
   }, [compilerContainer.compiler.mode])
@@ -200,14 +200,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   useEffect(() => {
     if (compilerContainer.editor.mode) {
       switch (compilerContainer.editor.mode) {
-        case 'sessionSwitched':
-          sessionSwitched()
-          resetEditorMode()(dispatch)
-          break
-        case 'contentChanged':
-          contentChanged()
-          resetEditorMode()(dispatch)
-          break
+      case 'sessionSwitched':
+        sessionSwitched()
+        resetEditorMode()(dispatch)
+        break
+      case 'contentChanged':
+        contentChanged()
+        resetEditorMode()(dispatch)
+        break
       }
     }
   }, [compilerContainer.editor.mode])
@@ -1036,8 +1036,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                     configFilePath === ''
                       ? () => {}
                       : async () => {
-                          await openFile()
-                        }
+                        await openFile()
+                      }
                   }
                   className="py-2 remixui_compilerConfigPath"
                 >
@@ -1113,8 +1113,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                           id: 'solidity.noFileSelected',
                         })}>`
                       : `<${intl.formatMessage({
-                          id: 'solidity.noFileSelected',
-                        })}>`}
+                        id: 'solidity.noFileSelected',
+                      })}>`}
                   </span>
                 </div>
               </div>

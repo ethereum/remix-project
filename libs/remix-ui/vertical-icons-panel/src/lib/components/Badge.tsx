@@ -19,21 +19,21 @@ function Badge({ badgeStatus }: BadgeProps) {
   function resolveClasses(key: string, type: string) {
     let classes = 'remixui_status'
     switch (key) {
-      case 'succeed':
-        classes += ' fas fa-check-circle text-' + type + ' ' + 'remixui_statusCheck'
-        break
-      case 'edited':
-        classes += ' fas fa-sync text-' + type + ' ' + 'remixui_statusCheck'
-        break
-      case 'loading':
-        classes += ' fas fa-spinner text-' + type + ' ' + 'remixui_statusCheck'
-        break
-      case 'failed':
-        classes += ' fas fa-exclamation-triangle text-' + type + ' ' + 'remixui_statusCheck'
-        break
-      default: {
-        classes += ' badge badge-pill badge-' + type
-      }
+    case 'succeed':
+      classes += ' fas fa-check-circle text-' + type + ' ' + 'remixui_statusCheck'
+      break
+    case 'edited':
+      classes += ' fas fa-sync text-' + type + ' ' + 'remixui_statusCheck'
+      break
+    case 'loading':
+      classes += ' fas fa-spinner text-' + type + ' ' + 'remixui_statusCheck'
+      break
+    case 'failed':
+      classes += ' fas fa-exclamation-triangle text-' + type + ' ' + 'remixui_statusCheck'
+      break
+    default: {
+      classes += ' badge badge-pill badge-' + type
+    }
     }
     return classes
   }

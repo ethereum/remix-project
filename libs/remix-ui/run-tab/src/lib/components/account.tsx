@@ -23,60 +23,60 @@ export function AccountUI(props: AccountProps) {
 
   useEffect(() => {
     switch (props.selectExEnv) {
-      case 'injected':
-        setPlusOpt({
-          classList: 'udapp_disableMouseEvents',
-          title: intl.formatMessage({ id: 'udapp.injectedTitle' }),
-        })
-        break
+    case 'injected':
+      setPlusOpt({
+        classList: 'udapp_disableMouseEvents',
+        title: intl.formatMessage({ id: 'udapp.injectedTitle' }),
+      })
+      break
 
-      case 'vm-merge':
-        setPlusOpt({
-          classList: '',
-          title: intl.formatMessage({ id: 'udapp.createNewAccount' }),
-        })
-        break
+    case 'vm-merge':
+      setPlusOpt({
+        classList: '',
+        title: intl.formatMessage({ id: 'udapp.createNewAccount' }),
+      })
+      break
 
-      case 'vm-london':
-        setPlusOpt({
-          classList: '',
-          title: intl.formatMessage({ id: 'udapp.createNewAccount' }),
-        })
-        break
+    case 'vm-london':
+      setPlusOpt({
+        classList: '',
+        title: intl.formatMessage({ id: 'udapp.createNewAccount' }),
+      })
+      break
 
-      case 'vm-berlin':
-        setPlusOpt({
-          classList: '',
-          title: intl.formatMessage({ id: 'udapp.createNewAccount' }),
-        })
-        break
+    case 'vm-berlin':
+      setPlusOpt({
+        classList: '',
+        title: intl.formatMessage({ id: 'udapp.createNewAccount' }),
+      })
+      break
 
-      case 'vm-shanghai':
-        setPlusOpt({
-          classList: '',
-          title: intl.formatMessage({ id: 'udapp.createNewAccount' }),
-        })
-        break
+    case 'vm-shanghai':
+      setPlusOpt({
+        classList: '',
+        title: intl.formatMessage({ id: 'udapp.createNewAccount' }),
+      })
+      break
 
-      case 'web3':
-        if (!props.personalMode) {
-          setPlusOpt({
-            classList: 'disableMouseEvents',
-            title: intl.formatMessage({ id: 'udapp.web3Title' }),
-          })
-        } else {
-          setPlusOpt({
-            classList: '',
-            title: intl.formatMessage({ id: 'udapp.createNewAccount' }),
-          })
-        }
-        break
-
-      default:
+    case 'web3':
+      if (!props.personalMode) {
         setPlusOpt({
           classList: 'disableMouseEvents',
-          title: intl.formatMessage({ id: 'udapp.defaultTitle' }, { selectExEnv: props.selectExEnv }),
+          title: intl.formatMessage({ id: 'udapp.web3Title' }),
         })
+      } else {
+        setPlusOpt({
+          classList: '',
+          title: intl.formatMessage({ id: 'udapp.createNewAccount' }),
+        })
+      }
+      break
+
+    default:
+      setPlusOpt({
+        classList: 'disableMouseEvents',
+        title: intl.formatMessage({ id: 'udapp.defaultTitle' }, { selectExEnv: props.selectExEnv }),
+      })
     }
     // this._deps.config.get('settings/personal-mode')
   }, [props.selectExEnv, props.personalMode])

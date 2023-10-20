@@ -15,10 +15,10 @@ const StaticAnalyserButton = ({ onClick, buttonText, disabled, title, classList 
     disabled && classList.length > 0
       ? `${classList} disabled`
       : classList.length === 0 && disabled
-      ? `${defaultStyle} disabled`
-      : classList.length > 0
-      ? `${classList}`
-      : defaultStyle
+        ? `${defaultStyle} disabled`
+        : classList.length > 0
+          ? `${classList}`
+          : defaultStyle
 
   const buttonWithoutTooltip = () => (
     <button id="staticAnalysisRunBtn" className={newclassList} disabled={disabled} onClick={onClick}>

@@ -71,8 +71,8 @@ const RemixUiVerticalIconsPanel = ({ verticalIconsPlugin, icons }: RemixUiVertic
             scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight
               ? 'remixui_default-icons-container remixui_requiredSection'
               : activateScroll && activateScroll.scrollState
-              ? 'remixui_default-icons-container remixui_requiredSection'
-              : 'remixui_requiredSection'
+                ? 'remixui_default-icons-container remixui_requiredSection'
+                : 'remixui_requiredSection'
           }
         >
           <IconList
@@ -91,8 +91,8 @@ const RemixUiVerticalIconsPanel = ({ verticalIconsPlugin, icons }: RemixUiVertic
             scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight
               ? 'remixui_default-icons-container remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'
               : activateScroll && activateScroll.scrollState
-              ? 'remixui_default-icons-container remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'
-              : 'remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'
+                ? 'remixui_default-icons-container remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'
+                : 'remixui_scrollable-container remixui_scrollbar remixui_hide-scroll'
           }
           ref={scrollableRef}
         >

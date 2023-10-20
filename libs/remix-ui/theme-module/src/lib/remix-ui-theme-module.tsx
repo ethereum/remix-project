@@ -25,24 +25,24 @@ export function RemixUiThemeModule({ themeModule }: RemixUiThemeModuleProps) {
         <div className="card-text themes-container">
           {themeModule.getThemes()
             ? themeModule.getThemes().map((theme, idx) => (
-                <div className="radio custom-control custom-radio mb-1 form-check" key={idx}>
-                  <input
-                    type="radio"
-                    onChange={(event) => {
-                      themeModule.switchTheme(theme.name)
-                      setThemeName(theme.name)
-                    }}
-                    className="align-middle custom-control-input"
-                    name="theme"
-                    id={theme.name}
-                    data-id={`settingsTabTheme${theme.name}`}
-                    checked={themeModule.active === theme.name.toLocaleLowerCase()}
-                  />
-                  <label className="form-check-label custom-control-label" data-id={`settingsTabThemeLabel${theme.name}`} htmlFor={theme.name}>
-                    {theme.name} ({theme.quality})
-                  </label>
-                </div>
-              ))
+              <div className="radio custom-control custom-radio mb-1 form-check" key={idx}>
+                <input
+                  type="radio"
+                  onChange={(event) => {
+                    themeModule.switchTheme(theme.name)
+                    setThemeName(theme.name)
+                  }}
+                  className="align-middle custom-control-input"
+                  name="theme"
+                  id={theme.name}
+                  data-id={`settingsTabTheme${theme.name}`}
+                  checked={themeModule.active === theme.name.toLocaleLowerCase()}
+                />
+                <label className="form-check-label custom-control-label" data-id={`settingsTabThemeLabel${theme.name}`} htmlFor={theme.name}>
+                  {theme.name} ({theme.quality})
+                </label>
+              </div>
+            ))
             : null}
         </div>
       </div>

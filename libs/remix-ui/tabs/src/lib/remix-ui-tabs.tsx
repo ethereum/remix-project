@@ -41,19 +41,19 @@ const initialTabsState: ITabsState = {
 
 const tabsReducer = (state: ITabsState, action: ITabsAction) => {
   switch (action.type) {
-    case 'SELECT_INDEX':
-      return {
-        ...state,
-        currentExt: action.ext,
-        selectedIndex: action.payload,
-      }
-    case 'SET_FILE_DECORATIONS':
-      return {
-        ...state,
-        fileDecorations: action.payload as fileDecoration[],
-      }
-    default:
-      return state
+  case 'SELECT_INDEX':
+    return {
+      ...state,
+      currentExt: action.ext,
+      selectedIndex: action.payload,
+    }
+  case 'SET_FILE_DECORATIONS':
+    return {
+      ...state,
+      fileDecorations: action.payload as fileDecoration[],
+    }
+  default:
+    return state
   }
 }
 

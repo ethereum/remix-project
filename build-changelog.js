@@ -10,11 +10,11 @@ const prCount = inDone.filter((card) => {
 console.log(prCount, 'PRs found!\n')
 data = prCount + ' PRs found!\n\n'
 for (let card of inDone) {
-    if (card.node.content.url && card.node.content.merged) {
-      data += ` - [${card.node.content.title}](${card.node.content.url}) (@${card.node.content.author.login})\n`
-      data += `       participants: (${card.node.content.participants.edges.map((p) => { return ` @${p.node.login}` })})`
-      data += '\n\n'
-    }
+  if (card.node.content.url && card.node.content.merged) {
+    data += ` - [${card.node.content.title}](${card.node.content.url}) (@${card.node.content.author.login})\n`
+    data += `       participants: (${card.node.content.participants.edges.map((p) => { return ` @${p.node.login}` })})`
+    data += '\n\n'
+  }
 }
 console.log('change-log.txt updated')
 fs.writeFileSync('./change-log.txt', data)
@@ -51,7 +51,7 @@ fs.writeFileSync('./change-log.txt', data)
                       cursor
                       node {
                         id
-                        note                        
+                        note
                         state
                         content {
                           ... on PullRequest {

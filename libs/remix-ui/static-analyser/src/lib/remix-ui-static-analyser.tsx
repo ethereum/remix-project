@@ -199,16 +199,16 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       <span className='h6 font-weight-bold'>${name}</span>
       ${warning}
       ${
-        more ? (
-          <span>
-            <a href={more} target="_blank">
+  more ? (
+    <span>
+      <a href={more} target="_blank">
               more
-            </a>
-          </span>
-        ) : (
-          <span> </span>
-        )
-      }
+      </a>
+    </span>
+  ) : (
+    <span> </span>
+  )
+}
       <span className="" title={Position in ${fileName}}>Pos: ${locationString}</span>
       </span>`
   }
@@ -370,8 +370,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         slitherWarnings.length + ssaWarnings.length + hints.length === 0
           ? -1
           : !solhintEnabled && !basicEnabled && !slitherEnabled
-          ? -1
-          : slitherWarnings.length + ssaWarnings.length + hints.length,
+            ? -1
+            : slitherWarnings.length + ssaWarnings.length + hints.length,
       ])
     }
     if (hideWarnings) {
@@ -498,46 +498,46 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 <Fragment>
                   {!hideWarnings
                     ? hints.map((hint, index) => (
-                        <div
-                          key={index}
-                          className={`${hint.type === 'warning' ? 'alert alert-warning' : 'alert alert-danger'}`}
-                          style={{
-                            cursor: 'pointer',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                          }}
-                          onClick={async () => {
-                            await props.analysisModule.call('editor', 'discardHighlight')
-                            await props.analysisModule.call(
-                              'editor',
-                              'highlight',
-                              {
-                                end: {
-                                  line: hint.line,
-                                  column: hint.column + 1,
-                                },
-                                start: {
-                                  line: hint.line,
-                                  column: hint.column,
-                                },
+                      <div
+                        key={index}
+                        className={`${hint.type === 'warning' ? 'alert alert-warning' : 'alert alert-danger'}`}
+                        style={{
+                          cursor: 'pointer',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                        onClick={async () => {
+                          await props.analysisModule.call('editor', 'discardHighlight')
+                          await props.analysisModule.call(
+                            'editor',
+                            'highlight',
+                            {
+                              end: {
+                                line: hint.line,
+                                column: hint.column + 1,
                               },
-                              state.file,
-                              '',
-                              { focus: true }
-                            )
-                          }}
-                        >
-                          <div>
-                            <span className="text-wrap">{hint.formattedMessage}</span>
-                            <br />
-                            <CustomTooltip placement="right" tooltipId="errorTooltip" tooltipText={`Position in ${state.file}`} tooltipClasses="text-nowrap">
-                              <span>{`Pos: ${hint.column}:${hint.line}`}</span>
-                            </CustomTooltip>
-                          </div>
+                              start: {
+                                line: hint.line,
+                                column: hint.column,
+                              },
+                            },
+                            state.file,
+                            '',
+                            { focus: true }
+                          )
+                        }}
+                      >
+                        <div>
+                          <span className="text-wrap">{hint.formattedMessage}</span>
+                          <br />
+                          <CustomTooltip placement="right" tooltipId="errorTooltip" tooltipText={`Position in ${state.file}`} tooltipClasses="text-nowrap">
+                            <span>{`Pos: ${hint.column}:${hint.line}`}</span>
+                          </CustomTooltip>
                         </div>
-                      ))
+                      </div>
+                    ))
                     : !hideWarnings && !showLibsWarning && !basicEnabled && solhintEnabled
-                    ? hints.map((hint, index) => (
+                      ? hints.map((hint, index) => (
                         <div
                           key={index}
                           className={`${hint.type === 'warning' ? 'alert alert-warning' : 'alert alert-danger'}`}
@@ -576,7 +576,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                           </div>
                         </div>
                       ))
-                    : hintErrors.map((hint, index) => (
+                      : hintErrors.map((hint, index) => (
                         <div
                           key={index}
                           className="alert alert-danger"
@@ -660,21 +660,8 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                 <div>
                   {!hideWarnings && !showLibsWarning && ssaWarnings.length > 0
                     ? ssaWarnings
-                        .filter((x) => !x.options.isLibrary && x.hasWarning)
-                        .map((x, i) => (
-                          <div data-id={`staticAnalysisModule${x.warningModuleName}${i}`} id={`staticAnalysisModule${x.warningModuleName}${i}`} key={i}>
-                            <ErrorRenderer
-                              name={`staticAnalysisModule${x.warningModuleName}${i}`}
-                              message={x.msg}
-                              opt={x.options}
-                              warningErrors={''}
-                              ssaState={state}
-                              editor={props.analysisModule}
-                            />
-                          </div>
-                        ))
-                    : !hideWarnings && showLibsWarning && ssaWarnings.length > 0
-                    ? ssaWarnings.map((x, i) => (
+                      .filter((x) => !x.options.isLibrary && x.hasWarning)
+                      .map((x, i) => (
                         <div data-id={`staticAnalysisModule${x.warningModuleName}${i}`} id={`staticAnalysisModule${x.warningModuleName}${i}`} key={i}>
                           <ErrorRenderer
                             name={`staticAnalysisModule${x.warningModuleName}${i}`}
@@ -686,22 +673,35 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                           />
                         </div>
                       ))
-                    : !hideWarnings && !showLibsWarning && basicEnabled
-                    ? ssaWarnings
-                        .filter((x) => !x.options.isLibrary && x.hasWarning)
-                        .map((x, i) => (
-                          <div data-id={`staticAnalysisModule${x.warningModuleName}${i}`} id={`staticAnalysisModule${x.warningModuleName}${i}`} key={i}>
-                            <ErrorRenderer
-                              name={`staticAnalysisModule${x.warningModuleName}${i}`}
-                              message={x.msg}
-                              opt={x.options}
-                              warningErrors={''}
-                              ssaState={state}
-                              editor={props.analysisModule}
-                            />
-                          </div>
-                        ))
-                    : null}
+                    : !hideWarnings && showLibsWarning && ssaWarnings.length > 0
+                      ? ssaWarnings.map((x, i) => (
+                        <div data-id={`staticAnalysisModule${x.warningModuleName}${i}`} id={`staticAnalysisModule${x.warningModuleName}${i}`} key={i}>
+                          <ErrorRenderer
+                            name={`staticAnalysisModule${x.warningModuleName}${i}`}
+                            message={x.msg}
+                            opt={x.options}
+                            warningErrors={''}
+                            ssaState={state}
+                            editor={props.analysisModule}
+                          />
+                        </div>
+                      ))
+                      : !hideWarnings && !showLibsWarning && basicEnabled
+                        ? ssaWarnings
+                          .filter((x) => !x.options.isLibrary && x.hasWarning)
+                          .map((x, i) => (
+                            <div data-id={`staticAnalysisModule${x.warningModuleName}${i}`} id={`staticAnalysisModule${x.warningModuleName}${i}`} key={i}>
+                              <ErrorRenderer
+                                name={`staticAnalysisModule${x.warningModuleName}${i}`}
+                                message={x.msg}
+                                opt={x.options}
+                                warningErrors={''}
+                                ssaState={state}
+                                editor={props.analysisModule}
+                              />
+                            </div>
+                          ))
+                        : null}
                 </div>
               </div>
             </div>
@@ -739,43 +739,43 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                   {!hideWarnings
                     ? showLibsWarning
                       ? slitherWarnings.map((warning, index) => (
-                          <div data-id={`staticAnalysisModule${warning.warningModuleName}${index}`} id={`staticAnalysisModule${warning.warningModuleName}${index}`} key={index}>
-                            <ErrorRenderer
-                              name={`staticAnalysisModule${warning.warningModuleName}${index}`}
-                              message={warning.msg}
-                              opt={warning.options}
-                              ssaState={state}
-                              warningErrors={''}
-                              editor={props.analysisModule}
-                            />
-                          </div>
-                        ))
+                        <div data-id={`staticAnalysisModule${warning.warningModuleName}${index}`} id={`staticAnalysisModule${warning.warningModuleName}${index}`} key={index}>
+                          <ErrorRenderer
+                            name={`staticAnalysisModule${warning.warningModuleName}${index}`}
+                            message={warning.msg}
+                            opt={warning.options}
+                            ssaState={state}
+                            warningErrors={''}
+                            editor={props.analysisModule}
+                          />
+                        </div>
+                      ))
                       : noLibSlitherWarnings.map((warning, index) => (
-                          <div data-id={`staticAnalysisModule${warning.warningModuleName}${index}`} id={`staticAnalysisModule${warning.warningModuleName}${index}`} key={index}>
-                            <ErrorRenderer
-                              name={`staticAnalysisModule${warning.warningModuleName}${index}`}
-                              message={warning.msg}
-                              opt={warning.options}
-                              warningErrors={''}
-                              ssaState={state}
-                              editor={props.analysisModule}
-                            />
-                          </div>
-                        ))
+                        <div data-id={`staticAnalysisModule${warning.warningModuleName}${index}`} id={`staticAnalysisModule${warning.warningModuleName}${index}`} key={index}>
+                          <ErrorRenderer
+                            name={`staticAnalysisModule${warning.warningModuleName}${index}`}
+                            message={warning.msg}
+                            opt={warning.options}
+                            warningErrors={''}
+                            ssaState={state}
+                            editor={props.analysisModule}
+                          />
+                        </div>
+                      ))
                     : slitherWarnings
-                        .filter((x) => x.options.type === 'error')
-                        .map((warning, index) => (
-                          <div data-id={`staticAnalysisModule${warning.warningModuleName}${index}`} id={`staticAnalysisModule${warning.warningModuleName}${index}`} key={index}>
-                            <ErrorRenderer
-                              name={`staticAnalysisModule${warning.warningModuleName}${index}`}
-                              message={warning.msg}
-                              opt={warning.options}
-                              ssaState={state}
-                              warningErrors={''}
-                              editor={props.analysisModule}
-                            />
-                          </div>
-                        ))}
+                      .filter((x) => x.options.type === 'error')
+                      .map((warning, index) => (
+                        <div data-id={`staticAnalysisModule${warning.warningModuleName}${index}`} id={`staticAnalysisModule${warning.warningModuleName}${index}`} key={index}>
+                          <ErrorRenderer
+                            name={`staticAnalysisModule${warning.warningModuleName}${index}`}
+                            message={warning.msg}
+                            opt={warning.options}
+                            ssaState={state}
+                            warningErrors={''}
+                            editor={props.analysisModule}
+                          />
+                        </div>
+                      ))}
                 </Fragment>
               </div>
             </div>

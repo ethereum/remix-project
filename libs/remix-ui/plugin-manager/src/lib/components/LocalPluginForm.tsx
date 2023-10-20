@@ -66,11 +66,11 @@ function LocalPluginForm({ closeModal, visible, pluginManager }: LocalPluginForm
       const newMethods =
         typeof methods === 'string'
           ? methods
-              .split(',')
-              .filter((val) => val)
-              .map((val) => {
-                return val.trim()
-              })
+            .split(',')
+            .filter((val) => val)
+            .map((val) => {
+              return val.trim()
+            })
           : []
       const targetPlugin = {
         name: name,
@@ -88,11 +88,11 @@ function LocalPluginForm({ closeModal, visible, pluginManager }: LocalPluginForm
         canActivate:
           typeof canactivate === 'string'
             ? canactivate
-                .split(',')
-                .filter((val) => val)
-                .map((val) => {
-                  return val.trim()
-                })
+              .split(',')
+              .filter((val) => val)
+              .map((val) => {
+                return val.trim()
+              })
             : [],
       }
       const localPlugin = type === 'iframe' ? new IframePlugin(initialState) : new WebsocketPlugin(initialState)

@@ -109,11 +109,11 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     const { contractMap, contractsDetails, target, input } = compilationDetails
     const contractList = contractMap
       ? Object.keys(contractMap).map((key) => {
-          return {
-            name: key,
-            file: getFileName(contractMap[key].file),
-          }
-        })
+        return {
+          name: key,
+          file: getFileName(contractMap[key].file),
+        }
+      })
       : []
 
     setContractsFile({
