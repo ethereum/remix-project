@@ -49,10 +49,10 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
       browser.execute(function () { 
         (window as any).logs = []
         console.log = function () {
-          (window as any).logs.push(arguments)
+          (window as any).logs.push(JSON.stringify(arguments))
         }
         console.error = function () {
-          (window as any).logs.push(arguments)
+          (window as any).logs.push(JSON.stringify(arguments))
         }
       })
     })
