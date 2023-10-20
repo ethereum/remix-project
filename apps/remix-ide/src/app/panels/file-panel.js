@@ -189,7 +189,7 @@ module.exports = class Filepanel extends ViewPlugin {
         return el === workspaceName
       })) {
         recents = ([workspaceName, ...recents])
-        recents.filter((el) => { return el != "" })
+        recents = recents.filter((el) => { return el != "" })
         localStorage.setItem('recentWorkspaces', JSON.stringify(recents))
       }
     }
