@@ -49,6 +49,9 @@ export default class CodeParserCompiler {
 
     this.onAstFinished = async (success, data: CompilationResult, source: CompilationSourceCode, input: any, version) => {
       console.log('onAstFinished')
+      console.log(JSON.stringify(data))
+      console.log(JSON.stringify(source))
+      console.log(JSON.stringify(input))
       await this.plugin.call('editor', 'clearAnnotations')
       this.errorState = true
       const result = new CompilerAbstract('soljson', data, source, input)
