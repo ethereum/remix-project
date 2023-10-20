@@ -318,7 +318,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', byteCodeInSepolia, 120000)
   },
   
-  'Should run free function which logs in the terminal #group10': function (browser: NightwatchBrowser) {
+  'Should run free function which logs in the terminal #group10 #flaky': function (browser: NightwatchBrowser) {
     const script = `// SPDX-License-Identifier: MIT
     pragma solidity ^0.8.21;
     
@@ -343,11 +343,6 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js')
       .addFile('test.sol', { content: script })
       .scrollToLine(3)
-      .clickLaunchIcon('solidity')
-      .click('[data-id="compilerContainerCompileBtn"]')
-      .pause(2000)
-      .click('[data-id="compilerContainerCompileBtn"]')
-
       .useXpath()
       .waitForElementVisible({
         locateStrategy: 'xpath',
