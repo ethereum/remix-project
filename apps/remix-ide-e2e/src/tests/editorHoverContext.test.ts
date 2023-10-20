@@ -25,7 +25,7 @@ module.exports = {
             .pause(4000) // wait for the compiler to finish
             .scrollToLine(37)
     },
-    'Should show hover over contract in editor #group1': function (browser: NightwatchBrowser) {
+    'Should show hover over contract in editor #group1 #flaky': function (browser: NightwatchBrowser) {
         const path = "//*[contains(text(),'BallotHoverTest')]"
         checkEditorHoverContent(browser, path, 'contract BallotHoverTest is BallotHoverTest')
         checkEditorHoverContent(browser, path, 'contracts/3_Ballot.sol 10:0')
@@ -86,31 +86,13 @@ module.exports = {
         const expectedContent = 'StructDefinition'
         checkEditorHoverContent(browser, path, expectedContent)
     },
-    'Add token file #group11 #flaky': function (browser: NightwatchBrowser) {
+    'Add token file #group1': function (browser: NightwatchBrowser) {
         browser
         .clickLaunchIcon('solidity')
-        .waitForElementVisible('[for="autoCompile"]')
-        .click('[for="autoCompile"]')
         .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js')
         .addFile('contracts/mytoken.sol', {
-            content: storageContract
-        })
-        //.getBrowserLogs()
-        .pause(2000)
-        //.getBrowserLogs()
-        .clickLaunchIcon('solidity')
-        .click('*[data-id="compilerContainerCompileBtn"]')
-        .useXpath()
-        .pause(5000)
-        .perform(() => {
-           browser.execute(function () {
-            return (window as any).logs
-           },[], function (result) {
-            console.log(result)
-           })
-        })
-        .waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
-        .pause()
+            content: myToken
+        }).useXpath().waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
     },
     // here we change quickly between files to test the files being parsed correctly when switching between them
     'Should show ERC20 hover over contract in editor #group1': function (browser: NightwatchBrowser) {
@@ -119,7 +101,7 @@ module.exports = {
         const expectedContent = 'contract ERC20Burnable is ERC20Burnable, ERC20, IERC20Errors, IERC20Metadata, IERC20, Context'
         checkEditorHoverContent(browser, path, expectedContent, 25)
     },
-    'Go back to ballot file #group1': function (browser: NightwatchBrowser) {
+    'Go back to ballot file': function (browser: NightwatchBrowser) {
         browser.openFile('contracts/3_Ballot.sol')
             .useXpath().waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
     },
@@ -134,7 +116,7 @@ module.exports = {
         expectedContent = "@dev Give 'voter' the right to vote on this ballot. May only be called by 'chairperson'"
         checkEditorHoverContent(browser, path, expectedContent)
     },
-    'Open token file #group1': function (browser: NightwatchBrowser) {
+    'Open token file': function (browser: NightwatchBrowser) {
         browser.openFile('contracts/mytoken.sol')
             .useXpath().waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
     },
@@ -335,34 +317,3 @@ contract MyToken is ERC20, ERC20Burnable, ERC20Pausable, Ownable, ERC20Permit {
 }
 
 `
-
-const storageContract = `
-// SPDX-License-Identifier: GPL-3.0
-
-pragma solidity >=0.8.2 <0.9.0;
-
-/**
- * @title Storage
- * @dev Store & retrieve value in a variable
- * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
- */
-contract Storage {
-
-    uint256 number;
-
-    /**
-     * @dev Store value in variable
-     * @param num value to store
-     */
-    function store(uint256 num) public {
-        number = num;
-    }
-
-    /**
-     * @dev Return value 
-     * @return value of 'number'
-     */
-    function retrieve() public view returns (uint256){
-        return number;
-    }
-}`
