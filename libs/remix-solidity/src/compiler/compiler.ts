@@ -49,7 +49,6 @@ export class Compiler {
       if (success && this.state.compilationStartTime) {
         this.event.trigger('compilationDuration', [(new Date().getTime()) - this.state.compilationStartTime])
       }
-      this.state.compilationStartTime = null
     })
 
     this.event.register('compilationStarted', () => {

@@ -48,10 +48,6 @@ export default class CodeParserCompiler {
   init() {
 
     this.onAstFinished = async (success, data: CompilationResult, source: CompilationSourceCode, input: any, version) => {
-      console.log('onAstFinished')
-      console.log(JSON.stringify(data))
-      console.log(JSON.stringify(source))
-      console.log(JSON.stringify(input))
       await this.plugin.call('editor', 'clearAnnotations')
       this.errorState = true
       const result = new CompilerAbstract('soljson', data, source, input)
@@ -67,7 +63,6 @@ export default class CodeParserCompiler {
             allErrors = [...allErrors, errorMarker]
           }
         } else {
-          console.log('data.errors', JSON.stringify(data.errors))
           for (const error of data.errors) {
             if (!error.sourceLocation) {
               // mark this file as error
@@ -100,7 +95,6 @@ export default class CodeParserCompiler {
         if (displayErrors) await this.plugin.call('editor', 'addErrorMarker', allErrors)
         await this.addDecorators(allErrors, sources)
       } else {
-        console.log('clear error markers')
         await this.plugin.call('editor', 'clearErrorMarkers', result.getSourceCode().sources)
         await this.clearDecorators(result.getSourceCode().sources)
       }
@@ -142,7 +136,6 @@ export default class CodeParserCompiler {
     try {
       this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
       if (this.plugin.currentFile && this.plugin.currentFile.endsWith('.sol')) {
-        console.log('compile')
         const state = await this.plugin.call('solidity', 'getCompilerState')
         this.compiler.set('optimize', state.optimize)
         this.compiler.set('evmVersion', state.evmVersion)
@@ -169,15 +162,12 @@ export default class CodeParserCompiler {
 
         this.compiler.set('configFileContent', JSON.stringify(configFileContent))
         this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
-        console.log('this.plugin.currentFile', this.plugin.currentFile)
         if (!this.plugin.currentFile) return
         const content = await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile)
-        console.log('content', content)
         const sources = { [this.plugin.currentFile]: { content } }
         this.compiler.compile(sources, this.plugin.currentFile)
       }
     } catch (e) {
-      console.log(JSON.stringify(e))
       // do nothing
     }
   }
