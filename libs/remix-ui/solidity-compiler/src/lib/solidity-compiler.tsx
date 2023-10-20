@@ -13,7 +13,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     api,
     api: {currentFile, compileTabLogic, configurationSettings}
   } = props
-  console.log({ props })
+
   const [state, setState] = useState({
     isHardhatProject: false,
     isTruffleProject: false,
