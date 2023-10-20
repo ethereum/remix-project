@@ -187,6 +187,8 @@ export class Compiler {
           source: source
         }
       }
+      console.log('compilation finished', JSON.stringify(data))
+      console.log('compilation finished data', JSON.stringify(data))
       this.event.trigger('compilationFinished', [true, data, source, input, version])
     }
   }
