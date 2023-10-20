@@ -91,6 +91,7 @@ module.exports = {
       .click('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deploying ERC1967 >= 5.0.0 as proxy...')
   },
 
   'Should interact with deployed contract via ERC1967 (proxy) #group1': function (browser: NightwatchBrowser) {
@@ -142,6 +143,7 @@ module.exports = {
       .click('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deploying ERC1967 >= 5.0.0 as proxy...')
   },
 
   'Should interact with initialized contract to verify parameters #group1': function (browser: NightwatchBrowser) {
@@ -165,6 +167,7 @@ module.exports = {
 
   'Should upgrade contract by selecting a previously deployed proxy address from dropdown (MyTokenV1 to MyTokenV2) #group1': function (browser: NightwatchBrowser) {
     browser
+      .click('*[data-id="terminalClearConsole"]') 
       .waitForElementPresent('[data-id="deployAndRunClearInstances"]')
       .click('[data-id="deployAndRunClearInstances"]')
       .openFile('myTokenV2.sol')
@@ -196,6 +199,7 @@ module.exports = {
         })
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Using ERC1967 >= 5.0.0 for the proxy upgrade...')
   },
 
   'Should interact with upgraded function in contract MyTokenV2 #group1': function (browser: NightwatchBrowser) {
@@ -210,6 +214,7 @@ module.exports = {
 
   'Should upgrade contract by providing proxy address in input field (MyTokenV1 to MyTokenV2) #group1': function (browser: NightwatchBrowser) {
     browser
+      .click('*[data-id="terminalClearConsole"]') 
       .waitForElementPresent('[data-id="deployAndRunClearInstances"]')
       .click('[data-id="deployAndRunClearInstances"]')
       .openFile('myTokenV2.sol')
@@ -233,17 +238,30 @@ module.exports = {
       .click('[data-id="confirmProxyDeployment-modal-footer-ok-react"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander0"]')
       .waitForElementPresent('[data-id="universalDappUiTitleExpander1"]')
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Using ERC1967 >= 5.0.0 for the proxy upgrade...')
   },
 
   'Should interact with upgraded contract through provided proxy address #group1': function (browser: NightwatchBrowser) {
     browser
+      .clearConsole()
       .clickInstance(1)
       .perform((done) => {
         browser.testConstantFunction(firstProxyAddress, 'version - call', null, '0:\nstring: MyTokenV2!').perform(() => {
           done()
         })
       })
-      .end()
+  },
+  'Should debug the call': function(browser: NightwatchBrowser) {
+    browser
+    .debugTransaction(0)
+    .waitForElementVisible({
+      locateStrategy: 'xpath',
+      selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"7")]',
+      timeout: 60000
+    })
+    .goToVMTraceStep(129)
+    .waitForElementContainsText('*[data-id="functionPanel"]', 'version()', 60000)
+    .end()
   }
 }
 
