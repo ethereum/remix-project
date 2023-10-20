@@ -27,7 +27,6 @@ export class CompilationDetailsPlugin extends ViewPlugin {
     this.element.setAttribute('id', 'compileDetails')
     this.payload = {
       contractProperties: {} as any,
-      intl: {} as any,
       selectedContract: '',
       help: {} as any,
       insertValue: {} as any,
@@ -74,7 +73,6 @@ export class CompilationDetailsPlugin extends ViewPlugin {
       <RemixUiCompileDetails
         plugin={this}
         contractProperties={state.contractProperties}
-        intl={state.intl}
         selectedContract={state.selectedContract}
         saveAs={state.saveAs}
         help={state.help}
