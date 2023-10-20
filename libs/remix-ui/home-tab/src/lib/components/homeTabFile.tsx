@@ -14,7 +14,7 @@ interface HomeTabFileProps {
 const loadingInitialState = {
   tooltip: '',
   showModalDialog: false,
-  importSource: '',
+  importSource: ''
 }
 
 const loadingReducer = (state = loadingInitialState, action) => {
@@ -22,7 +22,7 @@ const loadingReducer = (state = loadingInitialState, action) => {
     ...state,
     tooltip: action.tooltip,
     showModalDialog: false,
-    importSource: '',
+    importSource: ''
   }
 }
 
@@ -45,7 +45,7 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
     modalInfo: { title: '', loadItem: '', examples: [], prefix: '' },
     importSource: '',
     toasterMsg: '',
-    recentWorkspaces: [],
+    recentWorkspaces: []
   })
 
   const [, dispatch] = useReducer(loadingReducer, loadingInitialState)
@@ -150,9 +150,8 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
     `
     const { newPath } = await plugin.call('fileManager', 'writeFileNoRewrite', '/contracts/helloWorld.sol', content)
     await plugin.call('fileManager', 'open', newPath)
-
-    //await plugin.call('fileManager', 'open', '/contracts/helloWorld.sol')
   }
+  
   const uploadFile = async (target) => {
     _paq.push(['trackEvent', 'hometab', 'filesSection', 'uploadFile'])
     await plugin.call('filePanel', 'uploadFile', target)

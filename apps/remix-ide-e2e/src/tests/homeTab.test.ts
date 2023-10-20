@@ -4,14 +4,14 @@ import init from '../helpers/init'
 
 module.exports = {
 
-    before: function (browser: NightwatchBrowser, done: VoidFunction) {
-        init(browser, done)
-    },
-  
-    'Should create new file': function (browser: NightwatchBrowser) {
-        browser
-        .waitForElementVisible('*[data-id="homeTabStartCoding"]')
-        .click('*[data-id="homeTabStartCoding"]')
-        .waitForElementVisible('div[data-id="treeViewDivtreeViewItemcontracts/helloWorld.sol"]')
-    }
+  before: function (browser: NightwatchBrowser, done: VoidFunction) {
+    init(browser, done)
+  },
+
+  'Should start coding': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible('*[data-id="homeTabStartCoding"]')
+      .click('*[data-id="homeTabStartCoding"]')
+      .waitForElementVisible('div[data-id="treeViewDivtreeViewItemcontracts/helloWorld.sol"]')
+  }
 }
