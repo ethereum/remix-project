@@ -7,6 +7,7 @@ import {indexedDBFileSystem} from '../files/filesystems/indexedDB'
 import {localStorageFS} from '../files/filesystems/localStorage'
 import {fileSystemUtility, migrationTestData} from '../files/filesystems/fileSystemUtility'
 import './styles/preload.css'
+import isElectron from 'is-electron'
 const _paq = (window._paq = window._paq || [])
 
 export const Preload = () => {
@@ -28,10 +29,14 @@ export const Preload = () => {
   )
 
   function loadAppComponent() {
+    console.log('app import', new Date().toLocaleString())
     import('../../app')
       .then((AppComponent) => {
+        console.log('app loaded', new Date().toLocaleString())
         const appComponent = new AppComponent.default()
+        console.log('app run', new Date().toLocaleString())
         appComponent.run().then(() => {
+          console.log('Remix loaded', new Date().toLocaleString())
           render(
             <>
               <RemixApp app={appComponent} />
@@ -68,7 +73,6 @@ export const Preload = () => {
       testBlockStorage.current ? null : localStorageFileSystem.current
     ])
     if (fsLoaded) {
-      console.log(fsLoaded.name + ' activated')
       _paq.push(['trackEvent', 'Storage', 'activate', fsLoaded.name])
       loadAppComponent()
     } else {
@@ -85,6 +89,10 @@ export const Preload = () => {
   }
 
   useEffect(() => {
+    if(isElectron()){
+      loadAppComponent()
+      return
+    }
     async function loadStorage() {
       ;(await remixFileSystems.current.addFileSystem(remixIndexedDB.current)) || _paq.push(['trackEvent', 'Storage', 'error', 'indexedDB not supported'])
       ;(await remixFileSystems.current.addFileSystem(localStorageFileSystem.current)) || _paq.push(['trackEvent', 'Storage', 'error', 'localstorage not supported'])

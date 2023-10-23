@@ -2,7 +2,7 @@
 import { Message } from '@remixproject/plugin-utils'
 import { contextBridge, ipcRenderer } from 'electron'
 
-console.log('preload.ts')
+console.log('preload.ts', new Date().toLocaleTimeString())
 
 /* preload script needs statically defined API for each plugin */
 

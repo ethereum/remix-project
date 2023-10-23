@@ -424,6 +424,9 @@ class AppComponent {
     } catch (e) {
       console.log("couldn't register iframe plugins", e.message)
     }
+    if(isElectron()){
+      await this.appManager.activatePlugin(['fs'])
+    }
     await this.appManager.activatePlugin(['layout'])
     await this.appManager.activatePlugin(['notification'])
     await this.appManager.activatePlugin(['editor'])
@@ -460,7 +463,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if(isElectron()){
-      await this.appManager.activatePlugin(['fs', 'isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep'])
+      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep'])
     }
 
     this.appManager.on(
