@@ -53,6 +53,7 @@ import { isoGitPlugin } from './app/plugins/electron/isoGitPlugin'
 import { electronConfig } from './app/plugins/electron/electronConfigPlugin'
 import { electronTemplates } from './app/plugins/electron/templatesPlugin'
 import { xtermPlugin } from './app/plugins/electron/xtermPlugin'
+import { ripgrepPlugin } from './app/plugins/electron/ripgrepPlugin'
 import {OpenAIGpt} from './app/plugins/openaigpt'
 
 const isElectron = require('is-electron')
@@ -341,6 +342,8 @@ class AppComponent {
       this.engine.register([templatesPlugin])
       const xterm = new xtermPlugin()
       this.engine.register([xterm])
+      const ripgrep = new ripgrepPlugin()
+      this.engine.register([ripgrep])
     }
 
     // LAYOUT & SYSTEM VIEWS
@@ -452,11 +455,12 @@ class AppComponent {
       'gistHandler'
     ])
     await this.appManager.activatePlugin(['settings'])
+
     await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if(isElectron()){
-      await this.appManager.activatePlugin(['fs', 'isogit', 'electronconfig', 'electronTemplates', 'xterm'])
+      await this.appManager.activatePlugin(['fs', 'isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep'])
     }
 
     this.appManager.on(

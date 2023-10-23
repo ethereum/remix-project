@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@electron/rebuild": "^3.2.13",
+    "@types/byline": "^4.2.35",
     "cross-env": "^7.0.3",
     "electron": "^25.0.1",
     "electron-builder": "^23.6.0",
@@ -40,7 +41,8 @@
     "@remixproject/engine-electron": "0.3.37",
     "@remixproject/plugin": "0.3.37",
     "@remixproject/plugin-electron": "0.3.37",
-    "@vscode/ripgrep": "^1.15.4",
+    "@vscode/ripgrep": "^1.15.6",
+    "byline": "^5.0.0",
     "chokidar": "^3.5.3",
     "glob": "9.3.5",
     "isomorphic-git": "^1.24.2",
