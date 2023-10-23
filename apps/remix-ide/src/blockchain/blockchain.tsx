@@ -870,7 +870,7 @@ export class Blockchain extends Plugin {
             const isVM = this.executionContext.isVM()
             if (isVM && tx.useCall) {
               try {
-                result.transactionHash = await this.web3().eth.getHashFromTagBySimulator(timestamp)
+                result.transactionHash = await this.web3().testPlugin.getHashFromTagBySimulator(timestamp)
               } catch (e) {
                 console.log('unable to retrieve back the "call" hash', e)
               }
