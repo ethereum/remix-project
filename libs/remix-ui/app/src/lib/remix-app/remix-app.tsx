@@ -8,7 +8,7 @@ import {AppProvider} from './context/provider'
 import AppDialogs from './components/modals/dialogs'
 import DialogViewPlugin from './components/modals/dialogViewPlugin'
 import { AppContext } from './context/context'
-import { IntlProvider } from 'react-intl'
+import { FormattedMessage, IntlProvider } from 'react-intl'
 import { CustomTooltip } from '@remix-ui/helper';
 import { RemixUiXterminals } from '@remix-ui/xterm'
 

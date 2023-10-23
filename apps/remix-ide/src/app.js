@@ -51,32 +51,6 @@ import { isoGitPlugin } from './app/plugins/electron/isoGitPlugin'
 import { electronConfig } from './app/plugins/electron/electronConfigPlugin'
 import { electronTemplates } from './app/plugins/electron/templatesPlugin'
 import { xtermPlugin } from './app/plugins/electron/xtermPlugin'
-
-
-import {ConfigPlugin} from './app/plugins/config'
-import {StoragePlugin} from './app/plugins/storage'
-import {Layout} from './app/panels/layout'
-import {NotificationPlugin} from './app/plugins/notification'
-import {Blockchain} from './blockchain/blockchain'
-import {MergeVMProvider, LondonVMProvider, BerlinVMProvider, ShanghaiVMProvider} from './app/providers/vm-provider'
-import {MainnetForkVMProvider} from './app/providers/mainnet-vm-fork-provider'
-import {SepoliaForkVMProvider} from './app/providers/sepolia-vm-fork-provider'
-import {GoerliForkVMProvider} from './app/providers/goerli-vm-fork-provider'
-import {CustomForkVMProvider} from './app/providers/custom-vm-fork-provider'
-import {HardhatProvider} from './app/providers/hardhat-provider'
-import {GanacheProvider} from './app/providers/ganache-provider'
-import {FoundryProvider} from './app/providers/foundry-provider'
-import {ExternalHttpProvider} from './app/providers/external-http-provider'
-import {InjectedProviderDefault} from './app/providers/injected-provider-default'
-import {InjectedProviderTrustWallet} from './app/providers/injected-provider-trustwallet'
-import {Injected0ptimismProvider} from './app/providers/injected-optimism-provider'
-import {InjectedArbitrumOneProvider} from './app/providers/injected-arbitrum-one-provider'
-import {InjectedEphemeryTestnetProvider} from './app/providers/injected-ephemery-testnet-provider'
-import {InjectedSKALEChaosTestnetProvider} from './app/providers/injected-skale-chaos-testnet-provider'
-import {FileDecorator} from './app/plugins/file-decorator'
-import {CodeFormat} from './app/plugins/code-format'
-import {SolidityUmlGen} from './app/plugins/solidity-umlgen'
-import {ContractFlattener} from './app/plugins/contractFlattener'
 import {OpenAIGpt} from './app/plugins/openaigpt'
 
 const isElectron = require('is-electron')
@@ -86,8 +60,6 @@ const remixLib = require('@remix-project/remix-lib')
 import { QueryParams } from '@remix-project/remix-lib'
 import { SearchPlugin } from './app/tabs/search'
 import { ElectronProvider } from './app/files/electronProvider'
-import {QueryParams} from '@remix-project/remix-lib'
-import {SearchPlugin} from './app/tabs/search'
 
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
