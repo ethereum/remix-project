@@ -17,7 +17,7 @@ export class TxRunnerWeb3 {
     this._api = api
   }
 
-  _executeTx (tx, network, txFee, api, promptCb, callback) {
+  async _executeTx (tx, network, txFee, api, promptCb, callback) {
     if (network && network.lastBlock && network.lastBlock.baseFeePerGas) {
       // the sending stack (web3.js / metamask need to have the type defined)
       // this is to avoid the following issue: https://github.com/MetaMask/metamask-extension/issues/11824
@@ -63,15 +63,27 @@ export class TxRunnerWeb3 {
 
     if (api.personalMode()) {
       promptCb(
-        (value) => {
-          (this.getWeb3() as any).eth.personal.sendTransaction({...tx, value}).then((res)=>cb(null,res.transactionHash)).catch((e)=>callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `))
+        async (value) => {
+          try {
+            const res = await (this.getWeb3() as any).eth.personal.sendTransaction({...tx, value})
+            cb(null, res.transactionHash)
+          } catch (e)  {
+            console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
+            cb(null, e.receipt.transactionHash)
+          }
         },
         () => {
           return callback('Canceled by user.')
         }
       )
     } else {
-      this.getWeb3().eth.sendTransaction(tx).then((res)=>cb(null,res.transactionHash)).catch((e)=>callback(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `))
+      try {
+        const res = await this.getWeb3().eth.sendTransaction(tx)
+        cb(null, res.transactionHash)
+      } catch (e)  {
+        console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
+        cb(null, e.receipt.transactionHash)
+      }
     }
   }
 
