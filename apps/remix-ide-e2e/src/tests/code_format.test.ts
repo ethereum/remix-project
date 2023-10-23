@@ -27,7 +27,7 @@ module.exports = {
   'Format code': function (browser: NightwatchBrowser) {
     browser
       .perform(function () {
-        const actions = this.actions({ async: true });
+        const actions = this.actions({ async: true })
         return actions
           .keyDown(this.Keys.SHIFT)
           .keyDown(this.Keys.ALT)
@@ -57,7 +57,7 @@ module.exports = {
     browser
 
       .perform(function () {
-        const actions = this.actions({ async: true });
+        const actions = this.actions({ async: true })
         return actions
           .keyDown(this.Keys.SHIFT)
           .keyDown(this.Keys.ALT)

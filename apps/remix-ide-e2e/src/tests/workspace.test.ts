@@ -123,10 +123,10 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem.prettierrc.json"]')
       .execute(function () {
         const fileList = document.querySelector('*[data-id="treeViewUltreeViewMenu"]')
-        return fileList.getElementsByTagName('li').length;
+        return fileList.getElementsByTagName('li').length
       }, [], function (result) {
-        browser.assert.equal(result.value, 1, 'Incorrect number of files');
-      });
+        browser.assert.equal(result.value, 1, 'Incorrect number of files')
+      })
   },
 
   'Should create ERC20 workspace with files #group1': function (browser: NightwatchBrowser) {

@@ -102,7 +102,7 @@ module.exports = {
         _name = name_;
         _symbol = symbol_;
     }`) !== -1,
-          'current displayed content is not from the ERC20 source code')
+        'current displayed content is not from the ERC20 source code')
       })
       .goToVMTraceStep(10)
       .waitForElementVisible({

@@ -17,7 +17,7 @@ export class DocGenClient extends PluginClient {
   public docs: string[] = []
   private fileName: string = ''
   private contractPath: string = ''
-  
+
   constructor() {
     super()
     this.eventEmitter = new EventEmitter()
@@ -30,11 +30,11 @@ export class DocGenClient extends PluginClient {
 
   async setListeners() {
     this.currentTheme = await this.call('theme', 'currentTheme')
-    
+
     this.on('theme', 'themeChanged', (theme: any) => {
       this.currentTheme = theme
       this.eventEmitter.emit('themeChanged', this.currentTheme)
-    });
+    })
     this.eventEmitter.emit('themeChanged', this.currentTheme)
 
     this.on('solidity', 'compilationFinished', (fileName: string, source: SourceWithTarget, languageVersion: string, data: CompilationResult) => {

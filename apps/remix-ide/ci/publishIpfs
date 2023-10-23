@@ -2,7 +2,7 @@
 
 const IpfsHttpClient = require('ipfs-http-client')
 const { globSource } = IpfsHttpClient
-const folder = process.cwd() + '/dist/apps/remix-ide';
+const folder = process.cwd() + '/dist/apps/remix-ide'
 
 (async () => {
   const host = 'ipfs.infura.io'

@@ -174,8 +174,8 @@ ace.define("ace/theme/remixDark",["require","exports","module","ace/lib/dom"], f
   color: #000;\
   }\
   ";
-  
-  var dom = acequire("../lib/dom");
-  dom.importCssString(exports.cssText, exports.cssClass);
-  
-  });
+
+  var dom = acequire("../lib/dom")
+  dom.importCssString(exports.cssText, exports.cssClass)
+
+  })

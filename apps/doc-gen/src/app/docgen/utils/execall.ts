@@ -4,15 +4,15 @@
  * current position.
  */
 export function* execAll(re: RegExp, text: string) {
-  re = new RegExp(re, re.flags + (re.sticky ? '' : 'y'));
+  re = new RegExp(re, re.flags + (re.sticky ? '' : 'y'))
 
   while (true) {
-    const match = re.exec(text);
+    const match = re.exec(text)
 
     // We break out of the loop if there is no match or if the empty string is
     // matched because no progress will be made and it will loop indefinitely.
-    if (!match?.[0]) break;
+    if (!match?.[0]) break
 
-    yield match;
+    yield match
   }
 }

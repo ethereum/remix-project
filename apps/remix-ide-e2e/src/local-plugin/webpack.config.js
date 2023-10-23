@@ -21,5 +21,5 @@ module.exports = composePlugins(withNx(), (config) => {
     ignored: /node_modules/
   }
 
-  return config;
-});
+  return config
+})
