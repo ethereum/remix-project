@@ -121,6 +121,7 @@ jobs:
               - remixdesktop-linux-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
         - run: 
             command: |
+                node -v
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build/remix-ide
                 cd apps/remixdesktop/
