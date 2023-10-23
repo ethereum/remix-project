@@ -22,7 +22,7 @@ contract BallotTest {
         Assert.equal(ballotToTest.winnerName(), bytes32("candidate1"), "candidate1 should be the winner name");
     }
 
-    function checkWinninProposalWithReturnValue () public view returns (bool) {
+    function checkWinningProposalWithReturnValue () public view returns (bool) {
         return ballotToTest.winningProposal() == 0;
     }
 }
