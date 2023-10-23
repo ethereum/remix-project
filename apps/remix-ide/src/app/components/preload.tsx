@@ -29,6 +29,7 @@ export const Preload = () => {
   )
 
   function loadAppComponent() {
+    // log time
     console.log('app import', new Date().toLocaleString())
     import('../../app')
       .then((AppComponent) => {
