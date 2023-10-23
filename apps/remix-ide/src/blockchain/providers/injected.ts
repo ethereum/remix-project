@@ -1,5 +1,5 @@
 import Web3 from 'web3'
-import { hashPersonalMessage } from '@ethereumjs/util'
+import { hashPersonalMessage, isHexString } from '@ethereumjs/util'
 import { ExecutionContext } from '../execution-context'
 
 export class InjectedProvider {
@@ -35,6 +35,7 @@ export class InjectedProvider {
   signMessage (message, account, _passphrase, cb) {
     const messageHash = hashPersonalMessage(Buffer.from(message))
     try {
+      message = isHexString(message) ? message : Web3.utils.utf8ToHex(message)
       this.executionContext.web3().eth.personal.sign(message, account, (error, signedData) => {
         cb(error, '0x' + messageHash.toString('hex'), signedData)
       })
