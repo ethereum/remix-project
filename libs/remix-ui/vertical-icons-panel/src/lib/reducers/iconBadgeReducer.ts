@@ -1,7 +1,5 @@
-import { checkSpecialChars } from '@remix-ui/helper'
+import { checkSpecialChars, bleach } from '@remix-ui/helper'
 import { BadgeStatus, IconStatus } from '../components/Icon'
-import { bleach } from '@remix-ui/helper'
-
 
 export type IconBadgeReducerAction = {
   readonly type: string
