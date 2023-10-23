@@ -22,6 +22,7 @@ export class RemixEngine extends Engine {
     if (name === 'udapp') return { queueTimeout: 60000 * 4 }
     if (name === 'fs') return { queueTimeout: 60000 * 4 }
     if (name === 'isogit') return { queueTimeout: 60000 * 4 }
+    if (name === 'circuit-compiler') return { queueTimeout: 60000 * 4 }
     return { queueTimeout: 10000 }
   }
 

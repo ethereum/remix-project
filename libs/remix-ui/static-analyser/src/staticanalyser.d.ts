@@ -12,6 +12,9 @@ export declare class AnalysisTab extends ViewPlugin {
     column: number;
     line: number;
   }[]
+  basicEnabled: boolean;
+  solhintEnabled: boolean;
+  slitherEnabled: boolean;
   internalCount: number
   registry: Registry;
   element: HTMLDivElement;

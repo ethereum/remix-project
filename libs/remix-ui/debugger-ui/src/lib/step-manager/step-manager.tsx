@@ -1,8 +1,22 @@
-import React, { useState, useEffect } from 'react' // eslint-disable-line
+import React, {useState, useEffect} from 'react' // eslint-disable-line
 import Slider from '../slider/slider' // eslint-disable-line
 import ButtonNavigator from '../button-navigator/button-navigator' // eslint-disable-line
 
-export const StepManager = ({ stepManager: { jumpTo, traceLength, stepIntoBack, stepIntoForward, stepOverBack, stepOverForward, jumpOut, jumpNextBreakpoint, jumpPreviousBreakpoint, jumpToException, registerEvent } }) => {
+export const StepManager = ({
+  stepManager: {
+    jumpTo,
+    traceLength,
+    stepIntoBack,
+    stepIntoForward,
+    stepOverBack,
+    stepOverForward,
+    jumpOut,
+    jumpNextBreakpoint,
+    jumpPreviousBreakpoint,
+    jumpToException,
+    registerEvent
+  }
+}) => {
   const [state, setState] = useState({
     sliderValue: -1,
     revertWarning: '',
@@ -16,17 +30,17 @@ export const StepManager = ({ stepManager: { jumpTo, traceLength, stepIntoBack, 
   }, [registerEvent])
 
   const setRevertWarning = (warning) => {
-    setState(prevState => {
-      return { ...prevState, revertWarning: warning }
+    setState((prevState) => {
+      return {...prevState, revertWarning: warning}
     })
   }
 
   const updateStep = (step, stepState, jumpOutDisabled) => {
-    setState(prevState => {
-      return { ...prevState, sliderValue: step, stepState, jumpOutDisabled }
+    setState((prevState) => {
+      return {...prevState, sliderValue: step, stepState, jumpOutDisabled}
     })
   }
-  const { sliderValue, revertWarning, stepState, jumpOutDisabled } = state
+  const {sliderValue, revertWarning, stepState, jumpOutDisabled} = state
 
   return (
     <div className="py-1">

@@ -40,8 +40,6 @@
 .remixui_sol.success a,
 .remixui_sol.error a,
 .remixui_sol.warning a {
-  position: absolute;
   bottom: 0;
   right: 0;
-  padding: 0.25rem;
 }

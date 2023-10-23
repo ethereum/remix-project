@@ -5,5 +5,5 @@
  * @returns {{ status, message, succeed }} receiptStatus
  */
 export const receiptStatus = async (apikey: string, guid: string, isProxyContract?: boolean) => {
-    return await remix.call('etherscan' as any,  'receiptStatus', guid, apikey, isProxyContract)
+  return await remix.call('etherscan' as any,  'receiptStatus', guid, apikey, isProxyContract)
 }

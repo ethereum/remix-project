@@ -45,9 +45,9 @@ This is not strictly speaking a release. Updating the remix site is done through
  - git reset --hard -master-commit-hash-
  - git push -f origin remix_live
 
- CircleCI will build automaticaly and remix.ethereum.org will be updated
+ CircleCI will build automatically and remix.ethereum.org will be updated
 
 # remix-alpha.ethereum.org update
 
-remix-alpha.ethereum.org is automaticaly updated every time commits are pushed to master
+remix-alpha.ethereum.org is automatically updated every time commits are pushed to master
  

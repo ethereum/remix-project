@@ -47,7 +47,7 @@ export class CompileTabLogic {
       this.evmVersion === 'null' || 
       !this.evmVersion || 
       !this.evmVersions.includes(this.evmVersion)) {
-        this.evmVersion = null
+      this.evmVersion = null
     }
     this.api.setCompilerParameters({ evmVersion: this.evmVersion })
     this.compiler.set('evmVersion', this.evmVersion)

@@ -64,7 +64,7 @@ export const findLinesInStringWithMatch = (str: string, re: RegExp) => {
 
 const matchesInString = (str: string, re: RegExp) => {
   let a: RegExpExecArray
-  const results: RegExpExecArray[] = [];
+  const results:RegExpExecArray[] = [];
   while ((a = re.exec(str || '')) !== null) {
     results.push(a);
   }
@@ -73,11 +73,11 @@ const matchesInString = (str: string, re: RegExp) => {
 
 const splitLines = (matchResult: RegExpExecArray[], lineNumber: number) => {
   return matchResult.map((matchResultPart, i) => {
-    const result: SearchResultLineLine = {
+    const result:SearchResultLineLine = {
       left: matchResultPart.input.substring(0, matchResultPart.index),
       right: matchResultPart.input.substring(matchResultPart.index + matchResultPart[0].length),
       center: matchResultPart[0],
-      position: {
+      position : {
         start: {
           line: lineNumber,
           column: matchResultPart.index,

@@ -97,7 +97,7 @@ module.exports = {
       .switchEnvironment('vm-london')
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="treeViewDivtreeViewItem"]') // make sure we create the file at the root folder
+      .click('*[data-id="treeViewDivMenu"]') // make sure we create the file at the root folder
       .addFile('deployWithEthersJs.js', { content: deployWithEthersJs })
       // .openFile('deployWithEthersJs.js')
       .pause(1000)
@@ -562,7 +562,7 @@ describe("Storage", function () {
             contractName: 'StorageWithLib',
             sourceName: 'contracts/StorageWithLib.sol',
             abi: metadata.abi,
-            bytecode: '0x' + metadata.data.bytecode.object,
+            bytecode: metadata.data.bytecode.object,
             deployedBytecode:  '0x' + metadata.data.deployedBytecode.object,
             linkReferences: metadata.data.bytecode.linkReferences,
             deployedLinkReferences: metadata.data.deployedBytecode.linkReferences,
@@ -700,7 +700,7 @@ const scriptAutoExec = {
               contractName: 'Lib',
               sourceName: 'contracts/1_Storage.sol',
               abi: metadataLib.abi,
-              bytecode: '0x' + metadataLib.data.bytecode.object,
+              bytecode: metadataLib.data.bytecode.object,
               deployedBytecode:  '0x' + metadataLib.data.deployedBytecode.object,
               linkReferences: metadataLib.data.bytecode.linkReferences,
               deployedLinkReferences: metadataLib.data.deployedBytecode.linkReferences,
@@ -720,7 +720,7 @@ const scriptAutoExec = {
               contractName: 'Storage',
               sourceName: 'contracts/1_Storage.sol',
               abi: metadata.abi,
-              bytecode: '0x' + metadata.data.bytecode.object,
+              bytecode: metadata.data.bytecode.object,
               deployedBytecode:  '0x' + metadata.data.deployedBytecode.object,
               linkReferences: metadata.data.bytecode.linkReferences,
               deployedLinkReferences: metadata.data.deployedBytecode.linkReferences,
