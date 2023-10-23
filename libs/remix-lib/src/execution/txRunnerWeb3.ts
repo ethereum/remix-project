@@ -22,6 +22,8 @@ export class TxRunnerWeb3 {
       // the sending stack (web3.js / metamask need to have the type defined)
       // this is to avoid the following issue: https://github.com/MetaMask/metamask-extension/issues/11824
       tx.type = '0x2'
+    } else {
+      tx.type = '0x1'
     }
     if (txFee) {
       if (txFee.baseFeePerGas) {
@@ -117,7 +119,7 @@ export class TxRunnerWeb3 {
           txCopy.maxFeePerGas = Math.ceil(Number((toBigInt(network.lastBlock.baseFeePerGas) + toBigInt(network.lastBlock.baseFeePerGas) / BigInt(3)).toString()))
         } else {
           txCopy.type = '0x1'
-          txCopy.gasPrice = toBigInt(network.lastBlock.baseFeePerGas).toString()
+          txCopy.gasPrice = undefined
         }
       }
       this.getWeb3().eth.estimateGas(txCopy)
