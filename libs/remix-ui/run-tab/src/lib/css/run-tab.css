@@ -101,8 +101,6 @@
   align-items: center;
   margin-top: 13px;
 }
-.udapp_transaction {
-}
 .udapp_atAddress {
   margin: 0;
   min-width: 100px;
@@ -113,12 +111,15 @@
   border-bottom-right-radius: 0;
   border-right: 0;
 }
+.udapp_atAddress:focus {
+  outline: none;
+  box-shadow: none;
+}
 .udapp_atAddressSect {
   margin-top: 8px;
   height: 32px;
 }
 .udapp_atAddressSect input {
-  height: 32px;
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
 }
@@ -363,9 +364,6 @@
   width: 100px;
   margin:0;
   word-break: inherit;
-}
-.udapp_contractProperty button:disabled {
-  cursor: not-allowed;
 }
 .udapp_contractProperty.udapp_constant button {
   min-width: 100px;

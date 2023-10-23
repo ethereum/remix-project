@@ -1,32 +1,43 @@
-
-import React, { useEffect, useState } from 'react'
-import { RemixPlugin } from './Client'
-import { Logger } from './logger'
-import { filePanelProfile } from '@remixproject/plugin-api'
-import { filSystemProfile } from '@remixproject/plugin-api'
-import { dGitProfile } from '@remixproject/plugin-api'
-import { editorProfile } from '@remixproject/plugin-api'
-import { settingsProfile } from '@remixproject/plugin-api'
-import { networkProfile } from '@remixproject/plugin-api'
-import { udappProfile } from '@remixproject/plugin-api'
-import { compilerProfile } from '@remixproject/plugin-api'
-import { contentImportProfile } from '@remixproject/plugin-api'
-import { windowProfile } from '@remixproject/plugin-api'
-import { pluginManagerProfile } from '@remixproject/plugin-api'
-import { Profile } from '@remixproject/plugin-utils'
+import React, {useEffect, useState} from 'react'
+import {RemixPlugin} from './Client'
+import {Logger} from './logger'
+import {filePanelProfile} from '@remixproject/plugin-api'
+import {filSystemProfile} from '@remixproject/plugin-api'
+import {dGitProfile} from '@remixproject/plugin-api'
+import {editorProfile} from '@remixproject/plugin-api'
+import {settingsProfile} from '@remixproject/plugin-api'
+import {networkProfile} from '@remixproject/plugin-api'
+import {udappProfile} from '@remixproject/plugin-api'
+import {compilerProfile} from '@remixproject/plugin-api'
+import {contentImportProfile} from '@remixproject/plugin-api'
+import {windowProfile} from '@remixproject/plugin-api'
+import {pluginManagerProfile} from '@remixproject/plugin-api'
+import {Profile} from '@remixproject/plugin-utils'
 
 import './app.css'
 
 const client = new RemixPlugin()
 
-function App () {
+function App() {
   const [payload, setPayload] = useState<string>('')
   const [log, setLog] = useState<any>()
   const [started, setStarted] = useState<boolean>(false)
   const [events, setEvents] = useState<any>()
-  const [profiles, setProfiles] = useState<Profile[]>([pluginManagerProfile, filePanelProfile, filSystemProfile, dGitProfile, networkProfile, settingsProfile, editorProfile, compilerProfile, udappProfile, contentImportProfile, windowProfile])
+  const [profiles, setProfiles] = useState<Profile[]>([
+    pluginManagerProfile,
+    filePanelProfile,
+    filSystemProfile,
+    dGitProfile,
+    networkProfile,
+    settingsProfile,
+    editorProfile,
+    compilerProfile,
+    udappProfile,
+    contentImportProfile,
+    windowProfile
+  ])
 
-  const handleChange = ({ target }: any) => {
+  const handleChange = ({target}: any) => {
     setPayload(target.value)
   }
 
@@ -44,7 +55,7 @@ function App () {
         const p = await client.call('manager', 'getProfile', name)
         addProfiles = [...addProfiles, p]
       }
-      setProfiles(profiles => [...profiles, ...addProfiles])
+      setProfiles((profiles) => [...profiles, ...addProfiles])
 
       profiles.map((profile: Profile) => {
         if (profile.events) {
@@ -77,8 +88,10 @@ function App () {
       let ob: any = null
       try {
         ob = JSON.parse(payload)
-        if (ob && !Array.isArray(ob)) { ob = [ob] }
-      } catch (e) { }
+        if (ob && !Array.isArray(ob)) {
+          ob = [ob]
+        }
+      } catch (e) {}
       const args = ob || [payload]
       setStarted(true)
       setLog('')
@@ -97,30 +110,41 @@ function App () {
   return (
     <div className="App container-fluid">
       <h5>PLUGIN API TESTER</h5>
-      <label id='callStatus'>{started ? <>start</> : <>stop</> }</label><br></br>
+      <label id="callStatus">{started ? <>start</> : <>stop</>}</label>
+      <br></br>
       <label>method results</label>
-      <Logger id='methods' log={log}></Logger>
+      <Logger id="methods" log={log}></Logger>
       <label>events</label>
-      <Logger id='events' log={events}></Logger>
-      <input
-        className='form-control w-100'
-        type="text"
-        id="payload"
-        placeholder="Enter payload here..."
-        value={payload}
-        onChange={handleChange}
-        data-id="payload-input"
-      />
+      <Logger id="events" log={events}></Logger>
+      <input className="form-control w-100" type="text" id="payload" placeholder="Enter payload here..." value={payload} onChange={handleChange} data-id="payload-input" />
       {profiles.map((profile: Profile) => {
         const methods = profile.methods.map((method: string) => {
-          return <button data-id={`${profile.name}:${method}`} key={method} className='btn btn-primary btn-sm ml-1 mb-1' onClick={async () => await clientMethod(profile, method)}>{method}</button>
+          return (
+            <button data-id={`${profile.name}:${method}`} key={method} className="btn btn-primary btn-sm ml-1 mb-1" onClick={async () => await clientMethod(profile, method)}>
+              {method}
+            </button>
+          )
         })
-        const events = profile.events ? profile.events.map((event: string) => {
-          return <label key={event} className='m-1'>{event}</label>
-        }) : null
-        return <div key={profile.name} className='small border-bottom'><label className='text-uppercase'>{profile.name}</label><br></br>{methods}<br></br>{events ? <label>EVENTS:</label> : null}{events}</div>
+        const events = profile.events
+          ? profile.events.map((event: string) => {
+            return (
+              <label key={event} className="m-1">
+                {event}
+              </label>
+            )
+          })
+          : null
+        return (
+          <div key={profile.name} className="small border-bottom">
+            <label className="text-uppercase">{profile.name}</label>
+            <br></br>
+            {methods}
+            <br></br>
+            {events ? <label>EVENTS:</label> : null}
+            {events}
+          </div>
+        )
       })}
-
     </div>
   )
 }

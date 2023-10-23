@@ -160,7 +160,7 @@ export enum CompilerRetriggerMode {
 }
 
 export interface CompilerState {
-    compileJSON: ((input: SourceWithTarget) => void) | null,
+    compileJSON: ((input: SourceWithTarget, timeStamp?:  number) => void) | null,
     worker: any,
     currentVersion: string| null| undefined,
     compilerLicense: string| null
@@ -502,6 +502,6 @@ export interface BytecodeObject {
     }
   }
 
-  export interface EsWebWorkerHandlerInterface {
+export interface EsWebWorkerHandlerInterface {
     getWorker(): Worker
   }

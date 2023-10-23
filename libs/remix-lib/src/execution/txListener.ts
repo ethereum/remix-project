@@ -36,7 +36,7 @@ export class TxListener {
   
   constructor (opt, executionContext) {
     this.event = new EventManager()
-    // has a default for now for backwards compatability
+    // has a default for now for backwards compatibility
     this.executionContext = executionContext
     this._api = opt.api
     this._resolvedTransactions = {}

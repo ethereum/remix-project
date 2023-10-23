@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react"
-import { DocViewer } from "./docviewer"
+import React, {useEffect, useState} from 'react'
+import {DocViewer} from './docviewer'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
@@ -11,12 +11,11 @@ export default function App() {
     client.eventEmitter.on('contentsReady', (fileContents: string) => {
       setContents(fileContents)
     })
-
   }, [])
   return (
     <>
       <div className="m-5 p-2">
-        <ReactMarkdown children={contents} remarkPlugins={[remarkGfm]}/>
+        <ReactMarkdown children={contents} remarkPlugins={[remarkGfm]} />
       </div>
     </>
   )

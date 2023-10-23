@@ -2,14 +2,12 @@ import React from 'react'
 
 /* eslint-disable-next-line */
 export interface ShouldRenderProps {
-  children?: React.ReactNode,
+  children?: React.ReactNode
   if: boolean
 }
 
 export const ShouldRender = (props: ShouldRenderProps) => {
-  return props.if ? (
-    props.children
-  ) : null
+  return props.if ? props.children : null
 }
 
 export default ShouldRender

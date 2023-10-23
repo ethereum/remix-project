@@ -1,10 +1,10 @@
-const { composePlugins, withNx } = require('@nrwl/webpack')
-const { withReact } = require('@nrwl/react')
+const {composePlugins, withNx} = require('@nrwl/webpack')
+const {withReact} = require('@nrwl/react')
 const webpack = require('webpack')
 const version = require('../../package.json').version
 const fs = require('fs')
-const TerserPlugin = require("terser-webpack-plugin")
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
+const TerserPlugin = require('terser-webpack-plugin')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 
 const versionData = {
   version: version,
@@ -22,55 +22,51 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   // add fallback for node modules
   config.resolve.fallback = {
     ...config.resolve.fallback,
-    "crypto": require.resolve("crypto-browserify"),
-    "stream": require.resolve("stream-browserify"),
-    "path": require.resolve("path-browserify"),
-    "http": require.resolve("stream-http"),
-    "https": require.resolve("https-browserify"),
-    "constants": require.resolve("constants-browserify"),
-    "os": false, //require.resolve("os-browserify/browser"),
-    "timers": false, // require.resolve("timers-browserify"),
-    "zlib": require.resolve("browserify-zlib"),
-    "fs": false,
-    "module": false,
-    "tls": false,
-    "net": false,
-    "readline": false,
-    "child_process": false,
-    "buffer": require.resolve("buffer/"),
-    "vm": require.resolve('vm-browserify'),
+    crypto: require.resolve('crypto-browserify'),
+    stream: require.resolve('stream-browserify'),
+    path: require.resolve('path-browserify'),
+    http: require.resolve('stream-http'),
+    https: require.resolve('https-browserify'),
+    constants: require.resolve('constants-browserify'),
+    os: false, //require.resolve("os-browserify/browser"),
+    timers: false, // require.resolve("timers-browserify"),
+    zlib: require.resolve('browserify-zlib'),
+    fs: false,
+    module: false,
+    tls: false,
+    net: false,
+    readline: false,
+    child_process: false,
+    buffer: require.resolve('buffer/'),
+    vm: require.resolve('vm-browserify')
   }
-  
 
   // add externals
   config.externals = {
     ...config.externals,
-    solc: 'solc',
+    solc: 'solc'
   }
 
   // add public path
   config.output.publicPath = '/'
-
-
 
   // add copy & provide plugin
   config.plugins.push(
     new webpack.ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
       url: ['url', 'URL'],
-      process: 'process/browser',
+      process: 'process/browser'
     })
   )
 
   // souce-map loader
   config.module.rules.push({
     test: /\.js$/,
-    use: ["source-map-loader"],
-    enforce: "pre"
+    use: ['source-map-loader'],
+    enforce: 'pre'
   })
 
   config.ignoreWarnings = [/Failed to parse source map/] // ignore source-map-loader warnings
-
 
   // set minimizer
   config.optimization.minimizer = [
@@ -81,17 +77,17 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
         compress: false,
         mangle: false,
         format: {
-          comments: false,
-        },
+          comments: false
+        }
       },
-      extractComments: false,
+      extractComments: false
     }),
-    new CssMinimizerPlugin(),
-  ];
+    new CssMinimizerPlugin()
+  ]
 
   config.watchOptions = {
     ignored: /node_modules/
   }
 
-  return config;
-});
+  return config
+})
