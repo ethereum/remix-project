@@ -1,6 +1,6 @@
 import Web3, { FMT_BYTES, FMT_NUMBER, LegacySendAsyncProvider } from 'web3'
 import { fromWei, toBigInt } from 'web3-utils'
-import { privateToAddress, hashPersonalMessage } from '@ethereumjs/util'
+import { privateToAddress, hashPersonalMessage, isHexString } from '@ethereumjs/util'
 import { extend, JSONRPCRequestPayload, JSONRPCResponseCallback } from '@remix-project/remix-simulator'
 import { ExecutionContext } from '../execution-context'
 
@@ -105,6 +105,7 @@ export class VMProvider {
 
   signMessage (message, account, _passphrase, cb) {
     const messageHash = hashPersonalMessage(Buffer.from(message))
+    message = isHexString(message) ? message : Web3.utils.utf8ToHex(message)
     this.web3.eth.sign(message, account)
       .then(signedData => cb(null, '0x' + messageHash.toString('hex'), signedData))
       .catch(error => cb(error))
