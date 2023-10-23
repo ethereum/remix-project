@@ -8,7 +8,7 @@ export const getDirectory = async (dir: string, plugin: any) => {
 
   if (isElectron()) {
 
-    const files = await plugin.call('fs', 'glob', dir, '**/*')
+    const files = await plugin.call('ripgrep', 'glob', dir, '**/*')
     // only get path property of files
     result = files.map(x => x.path)
   } else {

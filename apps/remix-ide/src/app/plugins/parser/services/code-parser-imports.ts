@@ -41,7 +41,7 @@ export default class CodeParserImports {
 
   setFileTree = async () => {
     if (isElectron()) {
-      const files = await this.plugin.call('fs', 'glob', '/', '**/*.sol')
+      const files = await this.plugin.call('ripgrep', 'glob', '/', '**/*.sol')
       // only get path property of files
       this.data.files = files.map((x) => x.path)
     } else {

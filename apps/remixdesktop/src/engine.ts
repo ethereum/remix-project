@@ -7,6 +7,7 @@ import git from 'isomorphic-git'
 import { IsoGitPlugin } from './plugins/isoGitPlugin';
 import { ConfigPlugin } from './plugins/configPlugin';
 import { TemplatesPlugin } from './plugins/templates';
+import { RipgrepPlugin } from './plugins/ripgrepPlugin';
 
 const engine = new Engine()
 const appManager = new PluginManager()
@@ -15,16 +16,17 @@ const xtermPlugin = new XtermPlugin()
 const isoGitPlugin = new IsoGitPlugin()
 const configPlugin = new ConfigPlugin()
 const templatesPlugin = new TemplatesPlugin()
+const ripgrepPlugin = new RipgrepPlugin()
 engine.register(appManager)
 engine.register(fsPlugin)
 engine.register(xtermPlugin)
 engine.register(isoGitPlugin)
 engine.register(configPlugin)
 engine.register(templatesPlugin)
+engine.register(ripgrepPlugin)
 
 appManager.activatePlugin('electronconfig')
 appManager.activatePlugin('fs')
-
 
 ipcMain.handle('manager:activatePlugin', async (event, plugin) => {
   return await appManager.call(plugin, 'createClient', event.sender.id)
