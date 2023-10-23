@@ -87,12 +87,21 @@ export class TxRunnerWeb3 {
     if (!from) return callback('the value of "from" is not defined. Please make sure an account is selected.')
     if (useCall) {
       tx['gas'] = gasLimit
-      if (this._api && this._api.isVM()) tx['timestamp'] = timestamp
-      this.getWeb3().eth.call(tx)
-        .then((result: any) => callback(null, {
-          result: result
-        }))
-        .catch(error => callback(error))
+      if (this._api && this._api.isVM()) {
+        tx['timestamp'] = timestamp;
+        (this.getWeb3() as any).testPlugin.callBySimulator(tx)
+          .then((result: any) => callback(null, {
+            result: result
+          }))
+          .catch(error => callback(error))
+      } else {
+        this.getWeb3().eth.call(tx)
+          .then((result: any) => callback(null, {
+            result: result
+          }))
+          .catch(error => callback(error))
+      }
+      return
     }
     this._api.detectNetwork((errNetWork, network) => {
       if (errNetWork) {

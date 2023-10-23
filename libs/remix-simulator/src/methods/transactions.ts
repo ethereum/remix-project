@@ -72,7 +72,8 @@ export class Transactions {
       eth_getTransactionByBlockNumberAndIndex: this.eth_getTransactionByBlockNumberAndIndex.bind(this),
       eth_getExecutionResultFromSimulator: this.eth_getExecutionResultFromSimulator.bind(this),
       eth_getHHLogsForTx: this.eth_getHHLogsForTx.bind(this),
-      eth_getHashFromTagBySimulator: this.eth_getHashFromTagBySimulator.bind(this)
+      eth_getHashFromTagBySimulator: this.eth_getHashFromTagBySimulator.bind(this),
+      eth_callBySimulator: this.eth_callBySimulator.bind(this)
     }
   }
 
@@ -188,6 +189,12 @@ export class Transactions {
     })
   }
 
+  eth_callBySimulator (payload, cb) {
+    this.eth_call(payload, (error, returnValue) => {
+      cb(error, returnValue)
+    })
+  }
+
   eth_call (payload, cb) {
     // from might be lowercased address (web3)
     if (payload.params && payload.params.length > 0 && payload.params[0].from) {
@@ -198,9 +205,7 @@ export class Transactions {
     }
 
     payload.params[0].value = undefined
-
-    const tag = payload.params[0].timestamp // e2e reference
-
+    const tag = payload.params[0].timestamp
     processTx(this.txRunnerInstance, payload, true, (error, result: VMexecutionResult) => {
       if (!error && result) {
         this.vmContext.addBlock(result.block, null, true)
@@ -215,9 +220,9 @@ export class Transactions {
           logs: result.result.execResult.logs,
           returnValue: returnValue
         }
-        this.vmContext.trackExecResult(hash, execResult)
-        this.tags[tag] = result.transactionHash
         // calls are not supposed to return a transaction hash. we do this for keeping track of it and allowing debugging calls.
+        this.tags[tag] = result.transactionHash
+        this.vmContext.trackExecResult(hash, execResult)
         return cb(null, returnValue)
       }
       cb(error)

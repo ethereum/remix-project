@@ -161,4 +161,11 @@ class Web3TestPlugin extends Web3PluginBase {
       params: [timestamp]
     })
   }
+
+  public callBySimulator(payload) {
+    return this.requestManager.send({
+      method: 'eth_callBySimulator',
+      params: [payload]
+    })
+  }
 }
