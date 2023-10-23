@@ -42,6 +42,25 @@ module.exports = {
       })
   },
 
+  'Should execute `writeMultipleFiles` api from file manager external api #group1': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('writeMultipleFiles.js', { content: executeWriteMultipleFiles })
+      .executeScriptInTerminal('remix.exeCurrent()')
+      .pause(2000)
+      .openFile('contracts/new_contract_1.sol')
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf('pragma solidity ^0.6.0') !== -1, 'content does not contain "pragma solidity ^0.6.0"')
+      })
+      .openFile('new_contract_2.sol')
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf('pragma solidity ^0.8.0') !== -1, 'content does not contain "pragma solidity ^0.8.0"')
+      })
+      .openFile('testing.txt')
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf('test') !== -1, 'content does not contain "test"')
+      })
+  },
+
   'Should execute `readFile` api from file manager external api #group2': function (browser: NightwatchBrowser) {
     browser
       .addFile('writeFile.js', { content: executeWriteFile })
@@ -138,6 +157,14 @@ const executeOpen = `
 const executeWriteFile = `
   const run = async () => {
     await remix.call('fileManager', 'writeFile', 'new_contract.sol', 'pragma solidity ^0.6.0')
+  }
+
+  run()
+`
+
+const executeWriteMultipleFiles = `
+  const run = async () => {
+    await remix.call('fileManager', 'writeMultipleFiles', ['contracts/new_contract_1.sol', 'new_contract_2.sol', 'testing.txt'], ['pragma solidity ^0.6.0', 'pragma solidity ^0.8.0', 'test'], '/')
   }
 
   run()
