@@ -32,7 +32,6 @@ function verifyContracts (browser: NightwatchBrowser, compiledContractNames: str
           .waitForElementVisible('*[data-id="treeViewLiversion"]')
           .assert.containsText('*[data-id="treeViewLiversion"]', `${opts.version}`)
           .assert.visible('*[id="compileDetails"]')
-          // .click('[data-id="workspacesModalDialog-modal-footer-cancel-react"]')
           .perform(() => {
             done()
             callback()
@@ -51,7 +50,6 @@ function verifyContracts (browser: NightwatchBrowser, compiledContractNames: str
           .waitForElementVisible('*[data-id="treeViewDivruns"]')
           .assert.containsText('*[data-id="treeViewDivruns"]', `${opts.runs}`)
           .assert.visible('*[id="compileDetails"]')
-        // .click('[data-id="workspacesModalDialog-modal-footer-cancel-react"]')
           .perform(() => {
             done()
             callback()
