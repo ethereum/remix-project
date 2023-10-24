@@ -25,6 +25,7 @@ export class Transactions {
   txRunnerVMInstance
   txRunnerInstance
   TX_INDEX = '0x0' // currently there's always only 1 tx per block, so the transaction index will always be 0x0
+  comingCallId
 
   constructor (vmContext) {
     this.vmContext = vmContext
@@ -73,7 +74,8 @@ export class Transactions {
       eth_getExecutionResultFromSimulator: this.eth_getExecutionResultFromSimulator.bind(this),
       eth_getHHLogsForTx: this.eth_getHHLogsForTx.bind(this),
       eth_getHashFromTagBySimulator: this.eth_getHashFromTagBySimulator.bind(this),
-      eth_callBySimulator: this.eth_callBySimulator.bind(this)
+      eth_callBySimulator: this.eth_callBySimulator.bind(this),
+      eth_registerCallId: this.eth_registerCallId.bind(this)
     }
   }
 
@@ -195,6 +197,11 @@ export class Transactions {
     })
   }
 
+  eth_registerCallId (payload, cb) {
+    this.comingCallId = payload.params[0]
+    cb()
+  }
+
   eth_call (payload, cb) {
     // from might be lowercased address (web3)
     if (payload.params && payload.params.length > 0 && payload.params[0].from) {
@@ -221,7 +228,12 @@ export class Transactions {
           returnValue: returnValue
         }
         // calls are not supposed to return a transaction hash. we do this for keeping track of it and allowing debugging calls.
-        this.tags[tag] = result.transactionHash
+        // either the tag is specified as a timestamp in a tx or the caller should call registerCallId before calling the call.
+        if (tag) this.tags[tag] = result.transactionHash
+        else if (this.comingCallId) {
+          this.tags[this.comingCallId] = result.transactionHash
+          this.comingCallId = null
+        }
         this.vmContext.trackExecResult(hash, execResult)
         return cb(null, returnValue)
       }

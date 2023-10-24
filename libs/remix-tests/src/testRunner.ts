@@ -250,7 +250,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
     if (func.constant) {
       sendParams = {}
       const tagTimestamp = 'remix_tests_tag' + Date.now()
-      sendParams.timestamp = tagTimestamp
+      if (web3.testPlugin && web3.testPlugin.registerCallId) web3.testPlugin.registerCallId(tagTimestamp)
       method.call(sendParams).then(async (result) => {
         const time = (Date.now() - startTime) / 1000.0
         let tagTxHash
