@@ -116,9 +116,6 @@ jobs:
         - attach_workspace:
             at: .
         - run: unzip ./persist/desktopbuild.zip
-        - restore_cache:
-            keys:
-              - remixdesktop-linux-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
         - run: 
             command: |
                 node -v
