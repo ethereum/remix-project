@@ -87,7 +87,8 @@ export const browserInitialState: BrowserState = {
       removedMenuItems: [],
       error: null
     },
-    fileState: []
+    fileState: [],
+    recentFolders: []
   },
   localhost: {
     sharedFolder: '',
