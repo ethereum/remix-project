@@ -27,8 +27,7 @@ export class Web3ProviderModule extends Plugin {
         async (result) => {
           if (result) {
             const provider = this.blockchain.web3().currentProvider
-            // see https://github.com/ethereum/web3.js/pull/1018/files#diff-d25786686c1053b786cc2626dc6e048675050593c0ebaafbf0814e1996f22022R129
-            provider[provider.sendAsync ? 'sendAsync' : 'send'](payload, async (error, message) => {
+            const resultFn = async (error, message) => {
               if (error) {
                 // Handle 'The method "debug_traceTransaction" does not exist / is not available.' error
                 if(error.message && error.code && error.code === -32601) {
@@ -55,7 +54,12 @@ export class Web3ProviderModule extends Plugin {
                 }
               }
               resolve(message)
-            })
+            }
+            try {
+              resultFn(null, await provider.sendAsync(payload))
+            } catch (e) {
+              resultFn(e.message)
+            }
           } else {
             reject(new Error('User denied permission'))
           }

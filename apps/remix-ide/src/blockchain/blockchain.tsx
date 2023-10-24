@@ -552,7 +552,6 @@ export class Blockchain extends Plugin {
   }
 
   web3() {
-    // @todo(https://github.com/ethereum/remix-project/issues/431)
     const isVM = this.executionContext.isVM()
     if (isVM) {
       return (this.providers.vm as VMProvider).web3
