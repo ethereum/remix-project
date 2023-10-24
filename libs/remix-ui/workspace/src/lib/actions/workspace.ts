@@ -5,7 +5,7 @@ import axios, { AxiosResponse } from 'axios'
 import { addInputFieldSuccess, cloneRepositoryFailed, cloneRepositoryRequest, cloneRepositorySuccess, createWorkspaceError, createWorkspaceRequest, createWorkspaceSuccess, displayNotification, displayPopUp, fetchWorkspaceDirectoryError, fetchWorkspaceDirectoryRequest, fetchWorkspaceDirectorySuccess, hideNotification, setCurrentWorkspace, setCurrentWorkspaceBranches, setCurrentWorkspaceCurrentBranch, setDeleteWorkspace, setMode, setReadOnlyMode, setRenameWorkspace, setCurrentWorkspaceIsGitRepo, setGitConfig } from './payload'
 import { addSlash, checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
-import { JSONStandardInput, WorkspaceTemplate } from '../types'
+import { FileTree, JSONStandardInput, WorkspaceTemplate } from '../types'
 import { QueryParams } from '@remix-project/remix-lib'
 import * as templateWithContent from '@remix-project/remix-ws-templates'
 import { ROOT_PATH, slitherYml, solTestYml, tsSolTestYml } from '../utils/constants'
@@ -58,8 +58,8 @@ export const setPlugin = (filePanelPlugin, reducerDispatch) => {
 
 export const addInputField = async (type: 'file' | 'folder', path: string, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
   const provider = plugin.fileManager.currentFileProvider()
-  const promise = new Promise((resolve, reject) => {
-    provider.resolveDirectory(path, (error, fileTree) => {
+  const promise: Promise<FileTree> = new Promise((resolve, reject) => {
+    provider.resolveDirectory(path, (error, fileTree: FileTree) => {
       if (error) {
         cb && cb(error)
         return reject(error)
@@ -85,7 +85,7 @@ const removeSlash = (s: string) => {
 export const createWorkspace = async (workspaceName: string, workspaceTemplateName: WorkspaceTemplate, opts = null, isEmpty = false, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void, isGitRepo: boolean = false, createCommit: boolean = true) => {
   await plugin.fileManager.closeAllFiles()
   const promise = createWorkspaceTemplate(workspaceName, workspaceTemplateName)
-  dispatch(createWorkspaceRequest(promise))
+  dispatch(createWorkspaceRequest())
   promise.then(async () => {
     dispatch(createWorkspaceSuccess({ name: workspaceName, isGitRepo }))
     await plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
@@ -139,7 +139,7 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
     // this call needs to be here after the callback because it calls dGitProvider which also calls this function and that would cause an infinite loop
     await plugin.setWorkspaces(await getWorkspaces())
   }).catch((error) => {
-    dispatch(createWorkspaceError({ error }))
+    dispatch(createWorkspaceError(error.message))
     cb && cb(error)
   })
   return promise
@@ -269,19 +269,19 @@ export const workspaceExists = async (name: string) => {
 export const fetchWorkspaceDirectory = async (path: string) => {
   if (!path) return
   const provider = plugin.fileManager.currentFileProvider()
-  const promise = new Promise((resolve) => {
-    provider.resolveDirectory(path, (error, fileTree) => {
+  const promise: Promise<FileTree> = new Promise((resolve) => {
+    provider.resolveDirectory(path, (error, fileTree: FileTree) => {
       if (error) console.error(error)
 
       resolve(fileTree)
     })
   })
 
-  dispatch(fetchWorkspaceDirectoryRequest(promise))
+  dispatch(fetchWorkspaceDirectoryRequest())
   promise.then((fileTree) => {
     dispatch(fetchWorkspaceDirectorySuccess(path, fileTree))
   }).catch((error) => {
-    dispatch(fetchWorkspaceDirectoryError({ error }))
+    dispatch(fetchWorkspaceDirectoryError(error.message))
   })
   return promise
 }
