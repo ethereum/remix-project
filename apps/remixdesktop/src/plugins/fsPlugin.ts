@@ -5,7 +5,6 @@ import chokidar from 'chokidar'
 import { dialog } from "electron";
 import { createWindow, isPackaged } from "../main";
 import { writeConfig } from "../utils/config";
-import { glob, GlobOptions } from 'glob'
 import { Path } from 'path-scurry'
 import {rgPath} from '@vscode/ripgrep'
 import byline from 'byline';
