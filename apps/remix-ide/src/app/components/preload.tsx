@@ -74,6 +74,7 @@ export const Preload = () => {
       testBlockStorage.current ? null : localStorageFileSystem.current
     ])
     if (fsLoaded) {
+      console.log(fsLoaded.name + ' activated')
       _paq.push(['trackEvent', 'Storage', 'activate', fsLoaded.name])
       loadAppComponent()
     } else {

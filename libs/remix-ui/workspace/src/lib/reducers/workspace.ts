@@ -35,7 +35,7 @@ export interface BrowserState {
     }
     fileState: fileDecoration[]
     recentFolders: string[]
-  },
+  }
   localhost: {
     sharedFolder: string
     files: {[x: string]: Record<string, FileType>}
@@ -87,8 +87,7 @@ export const browserInitialState: BrowserState = {
       removedMenuItems: [],
       error: null
     },
-    fileState: [],
-    recentFolders: []
+    fileState: []
   },
   localhost: {
     sharedFolder: '',
@@ -850,25 +849,26 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
     }
   }
 
-    case 'SET_GIT_CONFIG': {
-      const payload: { username: string, token: string, email: string } = action.payload
-      return {
-        ...state,
-        gitConfig: payload
+  case 'SET_GIT_CONFIG': {
+    const payload: {username: string; token: string; email: string} =
+        action.payload
+    return {
+      ...state,
+      gitConfig: payload
+    }
+  }
+
+
+  case 'SET_ELECTRON_RECENT_FOLDERS': {
+    const payload: string[] = action.payload
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        recentFolders: payload
       }
     }
-
-    case 'SET_ELECTRON_RECENT_FOLDERS': {
-      const payload: string[] = action.payload
-      return {
-        ...state,
-        browser: {
-          ...state.browser,
-          recentFolders: payload
-        }
-      }
-    }
-
+  }
 
   default:
     throw new Error()
