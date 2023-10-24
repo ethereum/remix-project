@@ -122,9 +122,6 @@ jobs:
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build/remix-ide
                 cd apps/remixdesktop/
-                yarn
-                yarn dist --linux
-                rm -rf release/*-unpacked
         - save_cache:
             key: remixdesktop-linux-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
             paths:
