@@ -3,7 +3,7 @@ import {useIntl} from 'react-intl'
 import {TreeView} from '@remix-ui/tree-view' // eslint-disable-line
 import {FileExplorerMenu} from './file-explorer-menu' // eslint-disable-line
 import {FileExplorerContextMenu} from './file-explorer-context-menu' // eslint-disable-line
-import {FileExplorerProps, FileType, WorkSpaceState} from '../types'
+import {FileExplorerProps, FileType, WorkSpaceState, WorkspaceElement} from '../types'
 
 import '../css/file-explorer.css'
 import {checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath} from '@remix-ui/helper'
@@ -151,7 +151,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     )
   }
 
-  const handleClickFile = (path: string, type: 'folder' | 'file' | 'gist') => {
+  const handleClickFile = (path: string, type: WorkspaceElement) => {
     if (!state.ctrlKey) {
       props.dispatchHandleClickFile(path, type)
     } else {

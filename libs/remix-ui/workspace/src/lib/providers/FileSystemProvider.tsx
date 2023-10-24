@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useReducer, useState, useEffect, SyntheticEvent} from 'react'
+import {useReducer, useState, useEffect, SyntheticEvent} from 'react'
 import {ModalDialog} from '@remix-ui/modal-dialog' // eslint-disable-line
 import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
