@@ -1,7 +1,8 @@
 {
   "tabWidth": 2,
+  "printWidth": 500,
+  "bracketSpacing": false,
   "useTabs": false,
-  "printWidth": 180,
   "semi": false,
   "singleQuote": true
 }
