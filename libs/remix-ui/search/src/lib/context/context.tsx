@@ -307,7 +307,7 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
     }
     setTimeout(async () => {
       await fetchWorkspace()
-    }, 500)
+    }, 5000)
 
     return () => {
       plugin.off('fileManager', 'fileChanged')
