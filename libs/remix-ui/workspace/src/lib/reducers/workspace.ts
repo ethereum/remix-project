@@ -1,5 +1,5 @@
 import {extractNameFromKey} from '@remix-ui/helper'
-import {action, Actions, FileType} from '../types'
+import {action, Actions, FileType, WorkspaceElement} from '../types'
 import * as _ from 'lodash'
 import {fileDecoration} from '@remix-ui/file-decorators'
 import {ROOT_PATH} from '../utils/constants'
@@ -59,7 +59,7 @@ export interface BrowserState {
   readonly: boolean
   popup: string
   focusEdit: string
-  focusElement: {key: string; type: 'file' | 'folder' | 'gist'}[]
+  focusElement: {key: string; type: WorkspaceElement}[]
   initializingFS: boolean
   gitConfig: {username: string; email: string; token: string}
 }
