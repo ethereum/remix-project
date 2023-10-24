@@ -63,7 +63,7 @@ export class TxListener {
       let returnValue
       let execResult
       if (this.executionContext.isVM()) {
-        execResult = await this.executionContext.web3().testPlugin.getExecutionResultFromSimulator(txResult.transactionHash)
+        execResult = await this.executionContext.web3().remix.getExecutionResultFromSimulator(txResult.transactionHash)
         returnValue = toBuffer(execResult.returnValue)
       } else {
         returnValue = toBuffer(addHexPrefix(txResult.result))
@@ -97,7 +97,7 @@ export class TxListener {
       this.executionContext.web3().eth.getTransaction(txResult.transactionHash).then(async tx=>{
         let execResult
         if (this.executionContext.isVM()) {
-          execResult = await this.executionContext.web3().testPlugin.getExecutionResultFromSimulator(txResult.transactionHash)
+          execResult = await this.executionContext.web3().remix.getExecutionResultFromSimulator(txResult.transactionHash)
         }
 
         addExecutionCosts(txResult, tx, execResult)

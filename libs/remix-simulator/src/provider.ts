@@ -133,13 +133,13 @@ export class Provider {
 }
 
 export function extend (web3) {
-  if(!web3.testPlugin){
+  if(!web3.remix){
     web3.registerPlugin(new Web3TestPlugin())
   }
 }
 
 class Web3TestPlugin extends Web3PluginBase {
-  public pluginNamespace = 'testPlugin'
+  public pluginNamespace = 'remix'
 
   public getExecutionResultFromSimulator(transactionHash) {
     return this.requestManager.send({

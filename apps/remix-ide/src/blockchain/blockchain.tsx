@@ -748,7 +748,7 @@ export class Blockchain extends Plugin {
             if (error) return reject(error)
             try {
               if (this.executionContext.isVM()) {
-                const execResult = await this.web3().testPlugin.getExecutionResultFromSimulator(result.transactionHash)
+                const execResult = await this.web3().remix.getExecutionResultFromSimulator(result.transactionHash)
                 resolve(resultToRemixTx(result, execResult))
               } else resolve(resultToRemixTx(result))
             } catch (e) {
@@ -869,7 +869,7 @@ export class Blockchain extends Plugin {
             const isVM = this.executionContext.isVM()
             if (isVM && tx.useCall) {
               try {
-                result.transactionHash = await this.web3().testPlugin.getHashFromTagBySimulator(timestamp)
+                result.transactionHash = await this.web3().remix.getHashFromTagBySimulator(timestamp)
               } catch (e) {
                 console.log('unable to retrieve back the "call" hash', e)
               }
@@ -910,7 +910,7 @@ export class Blockchain extends Plugin {
       let execResult
       let returnValue = null
       if (isVM) {
-        const hhlogs = await this.web3().testPlugin.getHHLogsForTx(txResult.transactionHash)
+        const hhlogs = await this.web3().remix.getHHLogsForTx(txResult.transactionHash)
 
         if (hhlogs && hhlogs.length) {
           const finalLogs = (
@@ -936,7 +936,7 @@ export class Blockchain extends Plugin {
           _paq.push(['trackEvent', 'udapp', 'hardhat', 'console.log'])
           this.call('terminal', 'logHtml', finalLogs)
         }
-        execResult = await this.web3().testPlugin.getExecutionResultFromSimulator(txResult.transactionHash)
+        execResult = await this.web3().remix.getExecutionResultFromSimulator(txResult.transactionHash)
         
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.

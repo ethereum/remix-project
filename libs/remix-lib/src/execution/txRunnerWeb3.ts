@@ -103,7 +103,7 @@ export class TxRunnerWeb3 {
       tx['gas'] = gasLimit
       if (this._api && this._api.isVM()) {
         tx['timestamp'] = timestamp;
-        (this.getWeb3() as any).testPlugin.callBySimulator(tx)
+        (this.getWeb3() as any).remix.callBySimulator(tx)
           .then((result: any) => callback(null, {
             result: result
           }))

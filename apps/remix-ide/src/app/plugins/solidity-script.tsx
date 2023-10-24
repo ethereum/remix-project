@@ -81,7 +81,7 @@ export class SolidityScript extends Plugin {
     }
     const receiptCall = await web3.eth.sendTransaction(tx)
 
-    const hhlogs = await web3.testPlugin.getHHLogsForTx(receiptCall.transactionHash)
+    const hhlogs = await web3.remix.getHHLogsForTx(receiptCall.transactionHash)
 
     if (hhlogs && hhlogs.length) {
       const finalLogs = (

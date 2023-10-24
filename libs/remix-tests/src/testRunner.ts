@@ -250,12 +250,12 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
     if (func.constant) {
       sendParams = {}
       const tagTimestamp = 'remix_tests_tag' + Date.now()
-      if (web3.testPlugin && web3.testPlugin.registerCallId) web3.testPlugin.registerCallId(tagTimestamp)
+      if (web3.remix && web3.remix.registerCallId) web3.remix.registerCallId(tagTimestamp)
       method.call(sendParams).then(async (result) => {
         const time = (Date.now() - startTime) / 1000.0
         let tagTxHash
-        if (web3.testPlugin && web3.testPlugin.getHashFromTagBySimulator) tagTxHash = await web3.testPlugin.getHashFromTagBySimulator(tagTimestamp)
-        if (web3.testPlugin && web3.testPlugin.getHHLogsForTx) hhLogs = await web3.testPlugin.getHHLogsForTx(tagTxHash)
+        if (web3.remix && web3.remix.getHashFromTagBySimulator) tagTxHash = await web3.remix.getHashFromTagBySimulator(tagTimestamp)
+        if (web3.remix && web3.remix.getHHLogsForTx) hhLogs = await web3.remix.getHHLogsForTx(tagTxHash)
         debugTxHash = tagTxHash
         if (result) {
           const resp: TestResultInterface = {
@@ -302,7 +302,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
       method.send(sendParams).on('receipt', async (receipt) => {
         try {
           debugTxHash = receipt.transactionHash
-          if (web3.testPlugin && web3.testPlugin.getHHLogsForTx) hhLogs = await web3.testPlugin.getHHLogsForTx(receipt.transactionHash)
+          if (web3.remix && web3.remix.getHHLogsForTx) hhLogs = await web3.remix.getHHLogsForTx(receipt.transactionHash)
           const time: number = (Date.now() - startTime) / 1000.0
           const assertionEventHashes = assertionEvents.map(e => Web3.utils.sha3(e.name + '(' + e.params.join() + ')'))
           let testPassed = false
@@ -397,7 +397,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
         else if (err.message.includes('Transaction has been reverted by the EVM')) {
           txHash = JSON.parse(err.message.replace('Transaction has been reverted by the EVM:', '')).transactionHash
         }
-        if (web3.testPlugin && web3.testPlugin.getHHLogsForTx && txHash) hhLogs = await web3.testPlugin.getHHLogsForTx(txHash)
+        if (web3.remix && web3.remix.getHHLogsForTx && txHash) hhLogs = await web3.remix.getHHLogsForTx(txHash)
         if (hhLogs && hhLogs.length) resp.hhLogs = hhLogs
         resp.debugTxHash = txHash
         testCallback(undefined, resp)
