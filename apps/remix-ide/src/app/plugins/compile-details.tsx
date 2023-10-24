@@ -35,7 +35,7 @@ export class CompilationDetailsPlugin extends ViewPlugin {
   }
 
   async onActivation() {
-    await this.call('tabs', 'focus', 'compilationdetails')
+    await this.call('tabs', 'focus', 'compilationDetails')
     this.renderComponent()
     _paq.push(['trackEvent', 'plugin', 'activated', 'compilationDetails'])
   }
@@ -45,7 +45,7 @@ export class CompilationDetailsPlugin extends ViewPlugin {
   }
 
   async showDetails(sentPayload: any) {
-    await this.call('tabs', 'focus', 'compilationdetails')
+    await this.call('tabs', 'focus', 'compilationDetails')
     this.payload = sentPayload
     this.renderComponent()
   }
