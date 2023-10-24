@@ -125,6 +125,7 @@ jobs:
                 rm -rf yarn.lock
                 yarn add node-pty
                 yarn
+                yarn add @remix-project/remix-ws-templates
                 yarn dist --linux
                 rm -rf release/*-unpacked
         - save_cache:
