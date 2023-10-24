@@ -116,12 +116,19 @@ jobs:
         - attach_workspace:
             at: .
         - run: unzip ./persist/desktopbuild.zip
+        - restore_cache:
+            keys:
+              - remixdesktop-linux-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
         - run: 
             command: |
                 node -v
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build/remix-ide
                 cd apps/remixdesktop/
+                yarn add node-pty
+                yarn
+                yarn dist --linux
+                rm -rf release/*-unpacked
         - save_cache:
             key: remixdesktop-linux-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
             paths:
