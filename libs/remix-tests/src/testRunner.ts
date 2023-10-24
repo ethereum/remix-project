@@ -214,6 +214,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
   let passingNum = 0
   let failureNum = 0
   let timePassed = 0
+  const failedTransactions = {}
   const isJSONInterfaceAvailable = testObject && testObject.options && testObject.options.jsonInterface
   if (!isJSONInterfaceAvailable) { return resultsCallback(new Error('Contract interface not available'), { passingNum, failureNum, timePassed }) }
   const runList: RunListInterface[] = createRunList(testObject.options.jsonInterface, fileAST, testName)
@@ -378,6 +379,8 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
         }
       }).on('error', async (err) => {
         const time: number = (Date.now() - startTime) / 1000.0
+        if (failedTransactions[err.receipt.transactionHash]) return // we are already aware of this transaction failing.
+        failedTransactions[err.receipt.transactionHash] = time
         let errMsg = err.message
         let txHash
         if (err.reason) errMsg = `transaction reverted with the reason: ${err.reason}`
