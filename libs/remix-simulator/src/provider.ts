@@ -168,4 +168,11 @@ class Web3TestPlugin extends Web3PluginBase {
       params: [payload]
     })
   }
+
+  public registerCallId(id) {
+    return this.requestManager.send({
+      method: 'eth_registerCallId',
+      params: [id]
+    })
+  }
 }
