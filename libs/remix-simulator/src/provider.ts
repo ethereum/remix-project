@@ -162,13 +162,6 @@ class Web3TestPlugin extends Web3PluginBase {
     })
   }
 
-  public callBySimulator(payload) {
-    return this.requestManager.send({
-      method: 'eth_callBySimulator',
-      params: [payload]
-    })
-  }
-
   public registerCallId(id) {
     return this.requestManager.send({
       method: 'eth_registerCallId',

@@ -74,7 +74,6 @@ export class Transactions {
       eth_getExecutionResultFromSimulator: this.eth_getExecutionResultFromSimulator.bind(this),
       eth_getHHLogsForTx: this.eth_getHHLogsForTx.bind(this),
       eth_getHashFromTagBySimulator: this.eth_getHashFromTagBySimulator.bind(this),
-      eth_callBySimulator: this.eth_callBySimulator.bind(this),
       eth_registerCallId: this.eth_registerCallId.bind(this)
     }
   }
@@ -188,12 +187,6 @@ export class Transactions {
         console.dir(error)
       }
       cb(error, result)
-    })
-  }
-
-  eth_callBySimulator (payload, cb) {
-    this.eth_call(payload, (error, returnValue) => {
-      cb(error, returnValue)
     })
   }
 
