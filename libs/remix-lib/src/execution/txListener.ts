@@ -157,7 +157,7 @@ export class TxListener {
   }
 
   async _startListenOnNetwork () {
-    let lastSeenBlock = this.executionContext.lastBlock?.number - 1
+    let lastSeenBlock = this.executionContext.lastBlock?.number - BigInt(1)
     let processingBlock = false
 
     const processBlocks = async () => {
