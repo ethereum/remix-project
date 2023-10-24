@@ -1,5 +1,6 @@
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
+import {isBigInt} from 'web3-validator'
 
 export const profile = {
   name: 'web3Provider',
@@ -8,6 +9,11 @@ export const profile = {
   methods: ['sendAsync'],
   version: packageJson.version,
   kind: 'provider'
+}
+
+const replacer = (key, value) => {
+  if (isBigInt(value)) value = value.toString()
+  return value
 }
 
 export class Web3ProviderModule extends Plugin {
@@ -23,7 +29,7 @@ export class Web3ProviderModule extends Plugin {
   sendAsync(payload) {
 
     return new Promise((resolve, reject) => {
-      this.askUserPermission('sendAsync', `Calling ${payload.method} with parameters ${JSON.stringify(payload.params, null, '\t')}`).then(
+      this.askUserPermission('sendAsync', `Calling ${payload.method} with parameters ${JSON.stringify(payload.params, replacer, '\t')}`).then(
         async (result) => {
           if (result) {
             const provider = this.blockchain.web3().currentProvider
