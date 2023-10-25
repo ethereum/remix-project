@@ -1,10 +1,13 @@
-import { PluginClient } from "@remixproject/plugin";
-import { Profile } from "@remixproject/plugin-utils";
-import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
-import path from "path";
-import { rgPath } from "@vscode/ripgrep";
-import byline from "byline";
-import { spawn } from "child_process";
+import {PluginClient} from '@remixproject/plugin'
+import {Profile} from '@remixproject/plugin-utils'
+import {
+  ElectronBasePlugin,
+  ElectronBasePluginClient,
+} from '@remixproject/plugin-electron'
+import path from 'path'
+import {rgPath} from '@vscode/ripgrep'
+import byline from 'byline'
+import {spawn} from 'child_process'
 
 const profile: Profile = {
   name: 'ripgrep',
@@ -15,7 +18,6 @@ const profile: Profile = {
 const convertPathToPosix = (pathName: string): string => {
   return pathName.split(path.sep).join(path.posix.sep)
 }
-
 
 export class RipgrepPlugin extends ElectronBasePlugin {
   clients: RipgrepPluginClient[] = []
@@ -29,20 +31,19 @@ const clientProfile: Profile = {
   name: 'ripgrep',
   displayName: 'ripgrep',
   description: 'ripgrep plugin',
-  methods: ['glob']
+  methods: ['glob'],
 }
 
 export class RipgrepPluginClient extends ElectronBasePluginClient {
   workingDir: string = ''
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
-    
+
     this.onload(() => {
       this.on('fs' as any, 'workingDirChanged', async (path: string) => {
         this.workingDir = path
       })
     })
-    
   }
 
   async glob(path: string, pattern: string, options?: any) {
@@ -50,17 +51,22 @@ export class RipgrepPluginClient extends ElectronBasePluginClient {
     console.log('path', path, this.workingDir)
 
     return new Promise((c, e) => {
-
       // replace packed app path with unpacked app path for release on windows
-      const customRgPath = rgPath.replace('/app.asar/', '/app.asar.unpacked/')
+
+      const customRgPath = rgPath.includes('app.asar.unpacked')
+        ? rgPath
+        : rgPath.replace('app.asar', 'app.asar.unpacked')
       const rg = spawn(customRgPath, ['.', '-l', path])
 
       const resultrg: any[] = []
 
       const stream = byline(rg.stdout.setEncoding('utf8'))
       stream.on('data', (rgresult: string) => {
-        console.log('rgresult', rgresult) 
-        let pathWithoutWorkingDir = rgresult.replace(convertPathToPosix(this.workingDir), '')
+        console.log('rgresult', rgresult)
+        let pathWithoutWorkingDir = rgresult.replace(
+          convertPathToPosix(this.workingDir),
+          ''
+        )
         if (pathWithoutWorkingDir.endsWith('/')) {
           pathWithoutWorkingDir = pathWithoutWorkingDir.slice(0, -1)
         }
@@ -71,7 +77,7 @@ export class RipgrepPluginClient extends ElectronBasePluginClient {
           pathWithoutWorkingDir = pathWithoutWorkingDir.slice(1)
         }
         resultrg.push({
-          path:convertPathToPosix(pathWithoutWorkingDir),
+          path: convertPathToPosix(pathWithoutWorkingDir),
           isDirectory: false,
         })
       })
@@ -79,7 +85,6 @@ export class RipgrepPluginClient extends ElectronBasePluginClient {
         c(resultrg)
       })
     })
-
   }
 
   fixPath(path: string): string {

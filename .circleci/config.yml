@@ -122,9 +122,8 @@ jobs:
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build/remix-ide
                 cd apps/remixdesktop/
-                rm -rf yarn.lock
                 yarn add node-pty
-                yarn
+                yarn --ignore-optional
                 yarn add @remix-project/remix-ws-templates
                 yarn dist --linux
                 rm -rf release/*-unpacked
@@ -170,7 +169,6 @@ jobs:
               cp -r dist/apps/remix-ide apps/remixdesktop/build/remix-ide
               cd apps/remixdesktop/
               yarn
-              yarn add @remix-project/remix-ws-templates
               yarn dist --win
               rm -rf release/*-unpacked
       - save_cache:
