@@ -116,7 +116,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   useEffect(() => {
     fetchAllVersion((allversions, selectedVersion, isURL) => {
-      console.log('allversions', allversions, selectedVersion, isURL)
       setState((prevState) => {
         return {...prevState, allversions}
       })
