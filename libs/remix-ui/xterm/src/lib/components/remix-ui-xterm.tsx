@@ -19,29 +19,29 @@ export interface RemixUiXtermProps {
 }
 
 const RemixUiXterm = (props: RemixUiXtermProps) => {
-    const { plugin, pid, send, timeStamp } = props
-    const xtermRef = React.useRef(null)
+  const { plugin, pid, send, timeStamp } = props
+  const xtermRef = React.useRef(null)
 
 
-    useEffect(() => {
-        props.setTerminalRef(pid, xtermRef.current)
-    }, [xtermRef.current])
+  useEffect(() => {
+    props.setTerminalRef(pid, xtermRef.current)
+  }, [xtermRef.current])
 
-    const onKey = (event: { key: string; domEvent: KeyboardEvent }) => {
-        send(event.key, pid)
-    }
+  const onKey = (event: { key: string; domEvent: KeyboardEvent }) => {
+    send(event.key, pid)
+  }
 
-    return (
+  return (
 
-        <Xterm
-            addons={[fitAddon]}
-            options={{ theme: { background: props.theme.backgroundColor, foreground: props.theme.textColor } }}
-            onRender={() => fitAddon.fit()}
-            ref={xtermRef}
-            onKey={onKey}></Xterm>
+    <Xterm
+      addons={[fitAddon]}
+      options={{ theme: { background: props.theme.backgroundColor, foreground: props.theme.textColor } }}
+      onRender={() => fitAddon.fit()}
+      ref={xtermRef}
+      onKey={onKey}></Xterm>
 
 
-    )
+  )
 
 }
 
