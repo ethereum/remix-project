@@ -48,7 +48,6 @@ export class RipgrepPluginClient extends ElectronBasePluginClient {
 
   async glob(path: string, pattern: string, options?: any) {
     path = convertPathToPosix(this.fixPath(path))
-    console.log('path', path, this.workingDir)
 
     return new Promise((c, e) => {
       // replace packed app path with unpacked app path for release on windows
@@ -62,7 +61,6 @@ export class RipgrepPluginClient extends ElectronBasePluginClient {
 
       const stream = byline(rg.stdout.setEncoding('utf8'))
       stream.on('data', (rgresult: string) => {
-        console.log('rgresult', rgresult)
         let pathWithoutWorkingDir = rgresult.replace(
           convertPathToPosix(this.workingDir),
           ''

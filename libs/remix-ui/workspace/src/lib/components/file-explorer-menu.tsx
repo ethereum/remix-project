@@ -1,11 +1,13 @@
 import {CustomTooltip} from '@remix-ui/helper'
-import React, {useState, useEffect} from 'react' //eslint-disable-line
+import React, {useState, useEffect, useContext} from 'react' //eslint-disable-line
 import {FormattedMessage} from 'react-intl'
 import {Placement} from 'react-bootstrap/esm/Overlay'
 import {FileExplorerMenuProps} from '../types'
+import { FileSystemContext } from '../contexts'
 const _paq = (window._paq = window._paq || [])
 
 export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
+  const global = useContext(FileSystemContext)
   const [state, setState] = useState({
     menuItems: [
       {
@@ -66,7 +68,9 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
   }, [])
 
   return (
+    (!global.fs.browser.isSuccessfulWorkspace ? null :
     <>
+      
       <span data-id="spanContaining" className="pl-0 pb-1 w-50">
         {state.menuItems.map(({action, title, icon, placement}, index) => {
           if (action === 'uploadFile') {
@@ -166,7 +170,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
           }
         })}
       </span>
-    </>
+    </>)
   )
 }
 
