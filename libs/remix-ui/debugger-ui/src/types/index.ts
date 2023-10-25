@@ -18,6 +18,8 @@ export type ExtractFunc = (json: any, parent?: any) => ExtractData
 export type FormatSelfFunc = (key: string | number, data: ExtractData) => JSX.Element
 export type RegisterEventType = (type: string, listener: any) => void // listener is a function
 export type TriggerEventType = (type: string, payload: Array<any>) => void
+export type HandleExpandFunc = (keyPath: string) => void
+export type FormatClassNamesFunc = (key: string | number, data: ExtractData) => string
 export interface DropdownPanelProps {
     dropdownName: string,
     className?: string,
@@ -30,6 +32,8 @@ export interface DropdownPanelProps {
     extractFunc?: ExtractFunc,
     formatSelfFunc?: FormatSelfFunc,
     registerEvent?: RegisterEventType,
+    handleExpandFunc?: HandleExpandFunc,
+    formatClassNamesFunc?: FormatClassNamesFunc
     triggerEvent?: TriggerEventType,
     loadMoreEvent?: string,
     loadMoreCompletedEvent?: string,
