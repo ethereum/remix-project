@@ -51,7 +51,9 @@ export class RipgrepPluginClient extends ElectronBasePluginClient {
 
     return new Promise((c, e) => {
 
-      const rg = spawn(rgPath, ['.', '-l', path])
+      // replace packed app path with unpacked app path for release on windows
+      const customRgPath = rgPath.replace('/app.asar/', '/app.asar.unpacked/')
+      const rg = spawn(customRgPath, ['.', '-l', path])
 
       const resultrg: any[] = []
 
