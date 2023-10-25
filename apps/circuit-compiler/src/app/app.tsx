@@ -12,7 +12,6 @@ const plugin = new CircomPluginClient()
 
 function App() {
   const [appState, dispatch] = useReducer(appReducer, appInitialState)
-  const [plugin, setPlugin] = useState<CircomPluginClient>(null)
   const [locale, setLocale] = useState<{code: string; messages: any}>({
     code: 'en',
     messages: null
@@ -40,7 +39,6 @@ function App() {
           plugin.parse(path, content)
         }
       })
-      setPlugin(plugin)
     })
 
     // compiling events
