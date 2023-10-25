@@ -69,7 +69,7 @@ const clientProfile: Profile = {
     name: 'xterm',
     displayName: 'xterm',
     description: 'xterm plugin',
-    methods: ['createTerminal', 'close', 'keystroke', 'getShells']
+    methods: ['createTerminal', 'close', 'keystroke', 'getShells', 'resize']
 }
 
 class XtermPluginClient extends ElectronBasePluginClient {
@@ -133,6 +133,19 @@ class XtermPluginClient extends ElectronBasePluginClient {
         delete this.terminals[pid]
         this.emit('close', pid)
     }
+
+    async resize(pid: number, {cols, rows}: {cols: number; rows: number}) {
+        if (this.terminals[pid]) {
+          try {
+            this.terminals[pid].resize(cols, rows);
+          } catch (_err) {
+            const err = _err as {stack: any};
+            console.error(err.stack);
+          }
+        } else {
+          console.warn('Warning: Attempted to resize a session with no pty');
+        }
+      }
 
     async closeAll(): Promise<void> {
         for (const pid in this.terminals) {
