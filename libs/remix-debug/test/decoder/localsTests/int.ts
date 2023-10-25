@@ -63,6 +63,11 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
             st.equals(functions3.length, 1)
 
             st.equal(functions1[0].gasCost, 54)
+            st.equal(functions1[1].gasCost, 436)
+
+            st.equal(functions2[0].gasCost, 23)
+            st.equal(functions2[1].gasCost, 54)
+            st.equal(functions2[2].gasCost, 436)
   
             st.equals(Object.keys(functions1[0])[0], 'functionDefinition')
             st.equals(Object.keys(functions1[0])[1], 'inputs')

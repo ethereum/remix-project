@@ -165,7 +165,6 @@ export class InternalCallTree {
     const scope = this.findScope(vmtraceIndex)
     if (!scope) return []
     let scopeId = this.scopeStarts[scope.firstStep]
-    const scopeDetail = this.scopes[scopeId]
     const functions = []
     if (!scopeId) return functions
     let i = 0
@@ -174,6 +173,7 @@ export class InternalCallTree {
       i += 1
       if (i > 1000) throw new Error('retrieFunctionStack: recursion too deep')
       const functionDefinition = this.functionDefinitionsByScope[scopeId]
+      const scopeDetail = this.scopes[scopeId]
       if (functionDefinition !== undefined) {
         functions.push({ ...functionDefinition, ...scopeDetail })
       }
@@ -280,7 +280,10 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
     const stepDetail: StepDetail = tree.traceManager.trace[step]
     const nextStepDetail: StepDetail = tree.traceManager.trace[step + 1]
     if (stepDetail && nextStepDetail) {
+      // for complicated opcodes which don't have a static gas cost:
       stepDetail.gasCost = parseInt(stepDetail.gas as string) - parseInt(nextStepDetail.gas as string)
+    } else {
+      stepDetail.gasCost = parseInt(stepDetail.gasCost as unknown as string)
     }
         
     // gas per line
