@@ -31,7 +31,7 @@ const App: React.FC = () => {
   const [state, setState] = useState<AppState>({
     status: 'idle',
     environment: 'local',
-    localUrl: 'http://localhost:8000/compile'
+    localUrl: 'http://localhost:8000'
   })
 
   useEffect(() => {
@@ -61,7 +61,7 @@ const App: React.FC = () => {
   }
 
   function compilerUrl() {
-    return state.environment === 'remote' ? 'https://vyper.remixproject.org/compile' : state.localUrl
+    return state.environment === 'remote' ? 'https://vyper.remixproject.org' : state.localUrl
   }
 
   return (
