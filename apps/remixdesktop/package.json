@@ -36,7 +36,6 @@
     "typescript": "^5.1.3"
   },
   "dependencies": {
-    "@remix-project/remix-ws-templates": "^1.0.27",
     "@remixproject/engine": "0.3.37",
     "@remixproject/engine-electron": "0.3.37",
     "@remixproject/plugin": "0.3.37",
@@ -48,6 +47,9 @@
     "isomorphic-git": "^1.24.2",
     "node-pty": "^0.10.1",
     "yarn": "^1.22.19"
+  },
+  "optionalDependencies": {
+    "@remix-project/remix-ws-templates": "^1.0.27"
   },
   "build": {
     "productName": "Remix IDE",
