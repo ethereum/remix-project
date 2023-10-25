@@ -174,7 +174,7 @@ module.exports = {
     browser
       .clickLaunchIcon('solidity')
       .click('.remixui_compilerConfigSection')
-      .setValue('#evmVersionSelector option[data-id="selected"]', 'london') // Set EVM version as fork version
+      .setValue('#evmVersionSelector', 'london') // Set EVM version as fork version
       .clearTransactions()
       .switchEnvironment('vm-london') // switch to London fork
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite
