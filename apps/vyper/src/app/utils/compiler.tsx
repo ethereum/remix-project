@@ -43,10 +43,16 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
   if (extension !== 'vy') {
     throw new Error('Use extension .vy for Vyper.')
   }
-  const response = await fetch(url, {
+
+  const files = new FormData();
+  const content = new Blob([contract.content], {
+    type: 'text/plain'
+  });
+  files.append("file", content, 'contract.vy');
+  let response = await fetch(url + '/compile', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({code: contract.content})
+    body: files
   })
 
   if (response.status === 404) {
@@ -55,7 +61,30 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
   /*if (response.status === 400) {
     throw new Error(`Vyper compilation failed: ${response.statusText}`)
   }*/
-  return response.json()
+
+  const initCallResult = await response.json()
+
+  let apiCallFinished = false
+  while (!apiCallFinished) {
+    response = await fetch(url + '/status/' + initCallResult.id , {
+      method: 'Get'
+    })
+    const res = await response.json()
+    if (res.status === 'SUCCESS') {
+      response = await fetch(url + '/compiled_artifact/' + initCallResult.id , {
+        method: 'Get'
+      })
+      apiCallFinished = true
+      return response.json()
+    } else if (res.status === 'FAILED') {
+      response = await fetch(url + '/exceptions/' + initCallResult.id , {
+        method: 'Get'
+      })
+      apiCallFinished = true
+      return response.json()
+    }
+    await new Promise((resolve) => setTimeout(() => resolve({}), 2000))
+  }
 }
 
 /**
