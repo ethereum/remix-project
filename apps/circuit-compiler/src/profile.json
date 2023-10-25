@@ -1,7 +1,7 @@
 {
   "name": "circuit-compiler",
   "kind": "provider",
-  "displayName": "Circuit Compiler",
+  "displayName": "Circom ZKP compiler",
   "events": [],
   "version": "2.0.0",
   "methods": ["init", "parse"],
