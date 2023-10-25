@@ -123,14 +123,14 @@ export const listenOnProviderEvents = (provider) => (reducerDispatch: React.Disp
     if (config.get('currentFile') === path) {
       // if it's the current file and the content is different:
       if(showAlert){
-      dispatch(displayNotification(
-        path + ' changed',
-        'This file has been changed outside of Remix IDE.',
-        'Replace by the new content', 'Keep the content displayed in Remix',
-        () => {
-          editor.setText(path, content)
-        }
-      ))}else{
+        dispatch(displayNotification(
+          path + ' changed',
+          'This file has been changed outside of Remix IDE.',
+          'Replace by the new content', 'Keep the content displayed in Remix',
+          () => {
+            editor.setText(path, content)
+          }
+        ))}else{
         editor.setText(path, content)
       }
     } else {

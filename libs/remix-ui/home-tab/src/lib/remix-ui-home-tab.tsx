@@ -59,8 +59,8 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
           <div className="px-2 pl-3 justify-content-start d-flex border-right flex-column" id="remixUIHTLeft" style={{width: 'inherit'}}>
             <HomeTabTitle />
             {!isElectron()?
-            <HomeTabFile plugin={plugin} />:
-            <HomeTabFileElectron plugin={plugin}></HomeTabFileElectron>}
+              <HomeTabFile plugin={plugin} />:
+              <HomeTabFileElectron plugin={plugin}></HomeTabFileElectron>}
             <HomeTabLearn plugin={plugin} />
           </div>
           <div className="pl-2 pr-3 justify-content-start d-flex flex-column" style={{width: '65%'}} id="remixUIHTRight">
