@@ -8,6 +8,8 @@ import {appInitialState, appReducer} from './reducers/state'
 import {CircomPluginClient} from './services/circomPluginClient'
 import { compileCircuit } from './actions'
 
+const plugin = new CircomPluginClient()
+
 function App() {
   const [appState, dispatch] = useReducer(appReducer, appInitialState)
   const [plugin, setPlugin] = useState<CircomPluginClient>(null)
@@ -18,8 +20,6 @@ function App() {
   const [isContentChanged, setIsContentChanged] = useState<boolean>(false)
 
   useEffect(() => {
-    const plugin = new CircomPluginClient()
-
     plugin.internalEvents.on('circom_activated', () => {
       // @ts-ignore
       plugin.on('locale', 'localeChanged', (locale: any) => {
