@@ -16,7 +16,7 @@ export class fsPlugin extends ElectronPlugin {
       name: 'fs',
       description: 'fs',
     })
-    this.methods = ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'setWorkingDir', 'getRecentFolders', 'glob', 'openWindow']
+    this.methods = ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'setWorkingDir', 'getRecentFolders', 'openWindow']
 
     // List of commands all filesystems are expected to provide. `rm` is not
     // included since it may not exist and must be handled as a special case
@@ -47,11 +47,6 @@ export class fsPlugin extends ElectronPlugin {
       readdir: async (path: string) => {
         path = fixPath(path)
         const files = await this.call('fs', 'readdir', path)
-        return files
-      },
-      glob: async (path: string, pattern: string, options?: any) => {
-        path = fixPath(path)
-        const files = await this.call('fs', 'glob', path, pattern, options)
         return files
       },
       unlink: async (path: string) => {
@@ -131,7 +126,7 @@ export class fsPlugin extends ElectronPlugin {
 
   async onActivation() {
 
-    (window as any).remixFileSystem = this.fs;
+    (window as any).remixFileSystem = this.fs
 
 
     this.on('fs', 'workingDirChanged', async (path: string) => {
