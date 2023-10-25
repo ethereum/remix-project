@@ -921,6 +921,7 @@ export function Workspace() {
                   </span>
                 </div>
                 <div className='mx-2'>
+                {!isElectron() ? (
                   <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
                     <Dropdown.Toggle
                       as={CustomToggle}
@@ -987,10 +988,12 @@ export function Workspace() {
                       )}
                     </Dropdown.Menu>
                   </Dropdown>
+                                  ):null}
                 </div>
               </div>
             </header>
           </div>
+          <ElectronMenu></ElectronMenu>     
           <div
             className="h-100 remixui_fileExplorerTree"
             onFocus={() => {

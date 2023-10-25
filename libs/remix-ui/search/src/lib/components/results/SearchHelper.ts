@@ -10,7 +10,6 @@ export const getDirectory = async (dir: string, plugin: any) => {
 
     const files = await plugin.call('ripgrep', 'glob', dir, '**/*')
     // only get path property of files
-    console.log(files)
     result = files.map(x => x.path)
   } else {
 
