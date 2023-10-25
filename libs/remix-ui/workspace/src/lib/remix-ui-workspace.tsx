@@ -921,74 +921,74 @@ export function Workspace() {
                   </span>
                 </div>
                 <div className='mx-2'>
-                {!isElectron() ? (
-                  <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
-                    <Dropdown.Toggle
-                      as={CustomToggle}
-                      id="dropdown-custom-components"
-                      className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control mt-1"
-                      icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}
-                    >
-                      {selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly('localhost') : NO_WORKSPACE}
-                    </Dropdown.Toggle>
+                  {!isElectron() ? (
+                    <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
+                      <Dropdown.Toggle
+                        as={CustomToggle}
+                        id="dropdown-custom-components"
+                        className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control mt-1"
+                        icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}
+                      >
+                        {selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly('localhost') : NO_WORKSPACE}
+                      </Dropdown.Toggle>
 
-                    <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
-                      <Dropdown.Item
-                        onClick={() => {
-                          createWorkspace()
-                        }}
-                      >
-                        {
-                          <span className="pl-3">
-                            {' '}
-                            - <FormattedMessage id="filePanel.createNewWorkspace" /> -{' '}
-                          </span>
-                        }
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        onClick={() => {
-                          switchWorkspace(LOCALHOST)
-                        }}
-                      >
-                        {currentWorkspace === LOCALHOST ? (
-                          <span>&#10003; localhost </span>
-                        ) : (
-                          <span className="pl-3">
-                            {' '}
-                            <FormattedMessage id="filePanel.connectToLocalhost" />{' '}
-                          </span>
-                        )}
-                      </Dropdown.Item>
-                      {global.fs.browser.workspaces.map(({name, isGitRepo}, index) => (
+                      <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
                         <Dropdown.Item
-                          key={index}
                           onClick={() => {
-                            switchWorkspace(name)
+                            createWorkspace()
                           }}
-                          data-id={`dropdown-item-${name}`}
                         >
-                          {isGitRepo ? (
-                            <div className="d-flex justify-content-between">
-                              <span>{currentWorkspace === name ? <span>&#10003; {name} </span> : <span className="pl-3">{name}</span>}</span>
-                              <i className="fas fa-code-branch pt-1"></i>
-                            </div>
+                          {
+                            <span className="pl-3">
+                              {' '}
+                            - <FormattedMessage id="filePanel.createNewWorkspace" /> -{' '}
+                            </span>
+                          }
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                          onClick={() => {
+                            switchWorkspace(LOCALHOST)
+                          }}
+                        >
+                          {currentWorkspace === LOCALHOST ? (
+                            <span>&#10003; localhost </span>
                           ) : (
-                            <span>{currentWorkspace === name ? <span>&#10003; {name} </span> : <span className="pl-3">{name}</span>}</span>
+                            <span className="pl-3">
+                              {' '}
+                              <FormattedMessage id="filePanel.connectToLocalhost" />{' '}
+                            </span>
                           )}
                         </Dropdown.Item>
-                      ))}
-                      {(global.fs.browser.workspaces.length <= 0 || currentWorkspace === NO_WORKSPACE) && (
-                        <Dropdown.Item
-                          onClick={() => {
-                            switchWorkspace(NO_WORKSPACE)
-                          }}
-                        >
-                          {<span className="pl-3">NO_WORKSPACE</span>}
-                        </Dropdown.Item>
-                      )}
-                    </Dropdown.Menu>
-                  </Dropdown>
-                                  ):null}
+                        {global.fs.browser.workspaces.map(({name, isGitRepo}, index) => (
+                          <Dropdown.Item
+                            key={index}
+                            onClick={() => {
+                              switchWorkspace(name)
+                            }}
+                            data-id={`dropdown-item-${name}`}
+                          >
+                            {isGitRepo ? (
+                              <div className="d-flex justify-content-between">
+                                <span>{currentWorkspace === name ? <span>&#10003; {name} </span> : <span className="pl-3">{name}</span>}</span>
+                                <i className="fas fa-code-branch pt-1"></i>
+                              </div>
+                            ) : (
+                              <span>{currentWorkspace === name ? <span>&#10003; {name} </span> : <span className="pl-3">{name}</span>}</span>
+                            )}
+                          </Dropdown.Item>
+                        ))}
+                        {(global.fs.browser.workspaces.length <= 0 || currentWorkspace === NO_WORKSPACE) && (
+                          <Dropdown.Item
+                            onClick={() => {
+                              switchWorkspace(NO_WORKSPACE)
+                            }}
+                          >
+                            {<span className="pl-3">NO_WORKSPACE</span>}
+                          </Dropdown.Item>
+                        )}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  ):null}
                 </div>
               </div>
             </header>
