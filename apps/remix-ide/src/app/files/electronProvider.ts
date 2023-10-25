@@ -18,25 +18,25 @@ export class ElectronProvider extends FileProvider {
   async init() {
     this._appManager.on('fs', 'change', (event, path) => {
       switch (event) {
-        case 'add':
-          this.event.emit('fileAdded', path)
-          break
-        case 'unlink':
-          this.event.emit('fileRemoved', path)
-          break
-        case 'change':
-          this.get(path, (_error, content) => {
-            this.event.emit('fileExternallyChanged', path, content, false)
-          })
-          break
-        case 'rename':
-          this.event.emit('fileRenamed', path)
-          break
-        case 'addDir':
-          this.event.emit('folderAdded', path)
-          break
-        case 'unlinkDir':
-          this.event.emit('fileRemoved', path)
+      case 'add':
+        this.event.emit('fileAdded', path)
+        break
+      case 'unlink':
+        this.event.emit('fileRemoved', path)
+        break
+      case 'change':
+        this.get(path, (_error, content) => {
+          this.event.emit('fileExternallyChanged', path, content, false)
+        })
+        break
+      case 'rename':
+        this.event.emit('fileRenamed', path)
+        break
+      case 'addDir':
+        this.event.emit('folderAdded', path)
+        break
+      case 'unlinkDir':
+        this.event.emit('fileRemoved', path)
       }
     })
   }
