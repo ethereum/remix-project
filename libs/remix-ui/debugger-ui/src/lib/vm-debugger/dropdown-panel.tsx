@@ -20,6 +20,8 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     extractFunc,
     formatSelfFunc,
     registerEvent,
+    handleExpandFunc,
+    formatClassNamesFunc,
     triggerEvent,
     loadMoreEvent,
     loadMoreCompletedEvent,
@@ -135,9 +137,9 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
         toggleDropdown: !prevState.toggleDropdown
       }
     })
-  }
+  };
 
-  const handleExpand = (keyPath) => {
+  const handleExpand = handleExpandFunc || function (keyPath) {
     if (!state.expandPath.includes(keyPath)) {
       state.expandPath.push(keyPath)
     } else {
@@ -221,6 +223,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
           label={formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data)}
           onClick={() => handleExpand(keyPath)}
           expand={state.expandPath.includes(keyPath)}
+          labelClass={formatClassNamesFunc && formatClassNamesFunc(key, data)}
         >
           <TreeView id={`treeView${key}`} key={keyPath}>
             {children}
@@ -246,6 +249,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
           label={formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data)}
           onClick={() => handleExpand(keyPath)}
           expand={state.expandPath.includes(keyPath)}
+          labelClass={formatClassNamesFunc && formatClassNamesFunc(key, data)}
         />
       )
     }
