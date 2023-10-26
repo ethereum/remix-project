@@ -17,6 +17,7 @@ function App() {
     messages: null
   })
   const [isContentChanged, setIsContentChanged] = useState<boolean>(false)
+  const [isPluginActivated, setIsPluginActivated] = useState<boolean>(false)
 
   useEffect(() => {
     plugin.internalEvents.on('circom_activated', () => {
@@ -39,6 +40,7 @@ function App() {
           plugin.parse(path, content)
         }
       })
+      setIsPluginActivated(true)
     })
 
     // compiling events
@@ -88,10 +90,10 @@ function App() {
   }, [appState.autoCompile, isContentChanged])
 
   useEffect(() => {
-    if (plugin) {
+    if (isPluginActivated) {
       setCurrentLocale()
     }
-  }, [plugin])
+  }, [isPluginActivated])
 
   useEffect(() => {
     if (appState.filePath) {
