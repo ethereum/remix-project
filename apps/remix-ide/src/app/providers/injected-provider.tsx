@@ -104,16 +104,23 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
       if (error.data && error.data.originalError && error.data.originalError.data) {
         resolve({
           jsonrpc: '2.0',
-          error: error.data.originalError.message,
+          error: { message: error.data.originalError.message },
           errorData: error.data.originalError.data,
           id: data.id
         })
-      } else
+      } else if (error.data && error.data.message) {
         resolve({
           jsonrpc: '2.0',
-          error: error.data && error.data.message ? error.data.message : error.message,
+          error: { message: error.data && error.data.message },
           id: data.id
         })
+      } else {
+        resolve({
+          jsonrpc: '2.0',
+          error: { message: error.message },
+          id: data.id
+        })
+      }
     }
   }
 }
