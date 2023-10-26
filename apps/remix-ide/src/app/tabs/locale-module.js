@@ -10,10 +10,10 @@ import frJson from './locales/fr'
 const _paq = window._paq = window._paq || []
 
 const locales = [
-  { code: 'en', name: 'English', localeName: 'English', messages: enJson },
   { code: 'zh', name: 'Chinese Simplified', localeName: '简体中文', messages: zhJson },
-  { code: 'es', name: 'Spanish', localeName: 'Español', messages: esJson },
-  { code: 'fr', name: 'French', localeName: 'Français', messages: frJson }
+  { code: 'en', name: 'English', localeName: 'English', messages: enJson },
+  { code: 'fr', name: 'French', localeName: 'Français', messages: frJson },
+  { code: 'es', name: 'Spanish', localeName: 'Español', messages: esJson }
 ]
 
 const profile = {
